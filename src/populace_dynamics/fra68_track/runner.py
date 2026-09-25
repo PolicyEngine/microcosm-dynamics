@@ -35,8 +35,10 @@ Governance interlock: a ``registered_real`` cohort is refused unless a
 registration pointer (the issue #42 comment) is supplied, the E1
 specification block (``docs/design/urban2010_fra68_comparison.md``
 section 21) is ratified, lists no decision awaiting Max, records his
-ruling on every d188 decision field under ``decisions`` with the
-configuration following each, and equals the code and the configuration
+ruling on every field he ruled on (d188 and d196, 2026-09-24; the code's
+:data:`~populace_dynamics.fra68_track.config.MAX_RULINGS`) under
+``decisions`` with the configuration following each and each ruling
+equal to the code's, and equals the code and the configuration
 (schedules, primary schedule, rows, C1 anchor age).  A7 refuses the
 missing pointer independently.  "Ratified" is A7's fail-closed test
 (``cola_age_profile.specification_unratified_fields``, with E1's extra
@@ -98,7 +100,7 @@ from populace_dynamics.fra68_track.benefits import (
 )
 from populace_dynamics.fra68_track.config import (
     E1_RULINGS,
-    PENDING_DECISIONS,
+    MAX_RULINGS,
     SPECIFICATION_ID,
     STATISTIC_ID,
     TRACK_A_ROW_BY_WAVE,
@@ -108,7 +110,7 @@ from populace_dynamics.fra68_track.config import (
     SurvivorRetirementAge,
     builder_defaults,
     decision_value,
-    pending_decisions,
+    max_rulings,
     row_labels,
 )
 from populace_dynamics.fra68_track.reform import (
@@ -243,10 +245,11 @@ def check_specification_for_registered_run(
     ``cola_age_profile.specification_unratified_fields``, with E1's extra
     ``referee`` marker; ``E1_RULINGS.unratified_fields``), the test by
     which each row's tabulation records its ratification status.  It must
-    also list no decision awaiting Max, record Max's ruling on every d188
-    decision field under ``decisions`` (``{field: {"ruling": value,
-    ...}}``) with the configuration following each ruling, and agree with
-    the code.
+    also list no decision awaiting Max, record Max's ruling on every field
+    of :data:`~populace_dynamics.fra68_track.config.MAX_RULINGS` under
+    ``decisions`` (``{field: {"ruling": value, ...}}``, the A1 section 21
+    form; d188 and d196), with the configuration following each ruling
+    and each ruling equal to the code's, and agree with the code.
     """
 
     for name in E1_RULINGS.unratified_fields(block):
@@ -259,31 +262,43 @@ def check_specification_for_registered_run(
     if awaiting:
         raise ValueError(
             "the E1 specification still lists decisions awaiting Max "
-            f"({sorted(awaiting)}; decision record d188): no real-data "
-            "statistic before he rules"
+            f"({sorted(awaiting)}; decision records d188 and d196): no "
+            "real-data statistic before he rules"
         )
     rulings = block.get("decisions") or {}
     unruled = [
         name
-        for name in PENDING_DECISIONS
+        for name in MAX_RULINGS
         if not isinstance(rulings.get(name), Mapping)
         or "ruling" not in rulings[name]
     ]
     if unruled:
         raise ValueError(
             "the E1 specification records no ruling by Max for "
-            f"{unruled} (decision record d188): no real-data statistic "
-            "before he rules"
+            f"{unruled} (decision records d188 and d196): no real-data "
+            "statistic before he rules"
         )
     departures = [
         name
-        for name in PENDING_DECISIONS
+        for name in MAX_RULINGS
         if decision_value(config, name) != rulings[name]["ruling"]
     ]
     if departures:
         raise ValueError(
             f"the configuration departs from Max's rulings on {departures}; "
             "a registered run follows every ruling"
+        )
+    # The block and the code record the same rulings: a block edited to
+    # another ruling, with a configuration that follows it, is refused.
+    unequal = [
+        name
+        for name, ruling in MAX_RULINGS.items()
+        if rulings[name]["ruling"] != ruling["ruling"]
+    ]
+    if unequal:
+        raise ValueError(
+            f"the E1 specification's rulings on {unequal} differ from the "
+            "code's record of Max's rulings (fra68_track.config.MAX_RULINGS)"
         )
     check = specification_code_check(block, config)
     if not check["consistent"]:
@@ -944,14 +959,15 @@ def run_fra68(
         "registration_pointer": registration_pointer,
         "labels": list(labels),
         "config": config.as_dict(),
-        "pending_decisions": pending_decisions(config),
+        "max_rulings": max_rulings(config),
         "builder_defaults": builder_defaults(config),
         "track_a_conventions": {
             "note": (
                 "the shared projection and the benefit-level and auxiliary "
                 "rules are Track A's; Max ruled these for exercise 1 (d074, "
-                "d075). Whether they carry over to exercise 3 is part of "
-                "d188 item (a)"
+                "d075) and ruled on 2026-09-24 that exercise 3 runs exactly "
+                "like Track A (d188 item (a); d196 items (2) and (3) carry "
+                "over the COLA horizon and the opening-stock basis)"
             ),
             "config": track_config.as_dict(),
             "benefit_computation_years": (

@@ -1,26 +1,31 @@
-"""Configuration, registered rows F0-F8 and pending decisions (exercise 3).
+"""Configuration, registered rows F0-F8 and Max's rulings (exercise 3).
 
 Every exercise-3 convention is an explicit field of :class:`FRA68Config`.
-Nothing here is ratified.  Two kinds are kept apart:
+Two kinds are kept apart:
 
-* **Decisions awaiting Max** (decision record d188, open; plan
-  ``critical-path-fra68-20260923.md`` section 11): the claim class, the
-  oracle's scope (the FRA-schedule override, the per-cohort survivor
-  reduction span and the carried-over DI-level approximation), the two
-  other exercise-1 rulings E1 relies on (the oracle COLA horizon, d074
-  decision 2(a), and the opening-stock basis, d075), the acceptance rule,
-  the primary phase-in schedule and the registered row set.  Each is a
-  field whose default is the plan's recommendation;
-  :func:`pending_decisions` lists them with the configured value.  The
-  survivor span and the two carry-overs are not named in d188 as filed
-  (``named_in_d188_as_filed``; E1 referee report, required change 7).  A
-  ``registered_real`` run refuses to start while any is open
+* **Max's rulings.**  Max ruled decision records d188 and d196 on
+  2026-09-24 (plan ``critical-path-fra68-20260923.md`` section 11),
+  adopting every proposed default; the E1 specification
+  (``docs/design/urban2010_fra68_comparison.md``, sections 21-22) records
+  them.  They fix the claim class, the oracle's scope (the FRA-schedule
+  override, the per-cohort survivor reduction span and the carried-over
+  DI-level approximation), the two other exercise-1 rulings E1 relies on
+  (the oracle COLA horizon, d074 decision 2(a), and the opening-stock
+  basis, d075), the benefit computation years exercise 3 inherits from
+  Track A, the acceptance rule, the primary phase-in schedule and the
+  registered row set.  :data:`MAX_RULINGS` holds them and
+  :func:`max_rulings` reports, for a configuration, whether each field
+  follows its ruling.  The survivor span and the two carry-overs are not
+  named in d188 as filed (``named_in_d188_as_filed``; E1 referee report,
+  required change 7): d196 rules on them by name.  A ``registered_real``
+  run refuses a configuration that departs from a ruling, and an E1 block
+  whose recorded rulings differ from these
   (:mod:`~populace_dynamics.fra68_track.runner`).
-* **Builder conventions** that no ruling covers yet (the C1 anchor age,
-  the survivor mapping of row F0, the claim age the claiming transforms
+* **Builder conventions** that no ruling names (the C1 anchor age, the
+  survivor mapping of row F0, the claim age the claiming transforms
   read, the union statistic of F3/F4): :func:`builder_defaults` lists
   each with its source and the referee question of the E1 specification
-  (``docs/design/urban2010_fra68_comparison.md``) that asks about it.
+  that asks about it.  The ratified E1 fixes them.
 
 The A7 tabulation conventions E1 fixes (statistic, membership, age,
 benefit period, components, draws and floor) are :data:`E1_RULINGS`,
@@ -31,7 +36,8 @@ a ratified E1 or still awaits ratification.
 
 The projection conventions (TR2008 inputs, mortality, DI, the claim table,
 the benefit-level and auxiliary rules) are Track A's, ruled or ratified
-for exercise 1 (``cola_track_a.config``); :meth:`FRA68Config.
+for exercise 1 (``cola_track_a.config``), and Max ruled that exercise 3
+runs exactly like Track A (d188, 2026-09-24); :meth:`FRA68Config.
 track_a_config` builds the Track A configuration the shared projection
 runs under.
 """
@@ -42,6 +48,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
+from populace_dynamics.cola_track_a import benefits as track_benefits
 from populace_dynamics.cola_track_a.config import (
     INVENTED_COHORT_LABEL,
     OPENING_STOCK_BASIS,
@@ -70,6 +77,7 @@ from populace_dynamics.fra68_track.reform import (
     SCHEDULE_ORDER,
     SCHEDULES,
 )
+from populace_dynamics.ss.statutory_aime import ComputationYears
 
 __all__ = [
     "DRY_RUN_HEADER",
@@ -77,8 +85,9 @@ __all__ = [
     "E1_RULINGS",
     "FRA68_LABELS",
     "INVENTED_COHORT_LABEL",
+    "MAX_RULINGS",
     "MECHANICAL_INCIDENCE_LABEL",
-    "PENDING_DECISIONS",
+    "RULED_ON",
     "SPECIFICATION_ID",
     "STATISTIC_ID",
     "STYLIZED_RESPONSE_LABEL",
@@ -89,9 +98,10 @@ __all__ = [
     "SurvivorRetirementAge",
     "builder_defaults",
     "decision_value",
-    "pending_decisions",
+    "max_rulings",
     "registered_rows",
     "row_labels",
+    "rulings_departures",
 ]
 
 #: The A7 statistic identifier of exercise 3 (plan section 8, item 4).
@@ -279,27 +289,43 @@ def row_labels(row: FRA68Row, cohort_labels: tuple[str, ...]) -> tuple:
     )
 
 
-_D188 = "Max, decision record d188 (open; plan section 11)"
 #: The survivor reduction span of E1 section 11 rule 5: exact by the
 #: survivor's cohort (416(l)(2) mapping) in both scenarios, and exercise
 #: 1's alternative, the oracle's fixed 84 months.
 SURVIVOR_REDUCTION_SPAN = "exact_by_cohort_both_scenarios"
 TRACK_A_SURVIVOR_REDUCTION_SPAN = SurvivorRetirementAge.TRACK_A_FIXED_84.value
+#: When and by whom the rulings below were made (E1 section 22).
+RULED_ON = "2026-09-24"
+_RULED_BY = f"Max, {RULED_ON} (E1 section 22)"
 
 
-#: Decisions awaiting Max for exercise 3 (d188; plan section 11).  Each
-#: ``proposed_default`` is the plan's recommendation and the configuration
-#: default; nothing here is ruled.
-PENDING_DECISIONS: dict[str, dict[str, Any]] = {
+#: Max's rulings of 2026-09-24 on exercise 3: decision record d188 (the
+#: plan's section 11 items 1-4 and 6-7) and its supplement d196, which
+#: names the fields d188 as filed does not.  Each adopts the plan's
+#: proposed default, which is also the configuration default; the
+#: benefit computation years, which no plan item or decision record puts
+#: to Max, are Track A's value, covered by d188's ruling to run exercise
+#: 3 exactly like Track A.  ``declined`` lists the alternatives put to
+#: Max that he did not choose, in the E1 block's vocabulary
+#: (``declined_config_value`` gives the configuration value where the two
+#: differ); it is empty where none was put to him.  The E1 section 21
+#: block records the same rulings under ``decisions``; a registered run
+#: refuses a block or a configuration that departs from one (``runner.
+#: check_specification_for_registered_run``).
+MAX_RULINGS: dict[str, dict[str, Any]] = {
     "claim_class": {
-        "proposed_default": "track_a_reported_not_gated_psid_oracle",
-        "alternatives": ["hold_for_track_b", "hold_for_track_c_axiom"],
-        "awaiting": _D188 + ", item (a); plan item 1",
+        "ruling": "track_a_reported_not_gated_psid_oracle",
+        "declined": ["hold_for_track_b", "hold_for_track_c_axiom"],
+        "decided": "d188 item (a); plan section 11 item 1",
+        "decision_record": "d188",
+        "item": "(a)",
     },
     "oracle_fra_schedule_override": {
-        "proposed_default": True,
-        "alternatives": [False],
-        "awaiting": _D188 + ", item (a); plan item 2(a)",
+        "ruling": True,
+        "declined": [False],
+        "decided": "d188 item (a); plan section 11 item 2(a)",
+        "decision_record": "d188",
+        "item": "(a)",
         "note": (
             "the reform runs as an override of SSAParameters."
             "fra_months_by_birth_year; it adds no statutory rule coverage. "
@@ -308,11 +334,11 @@ PENDING_DECISIONS: dict[str, dict[str, Any]] = {
         ),
     },
     "survivor_reduction_span": {
-        "proposed_default": SURVIVOR_REDUCTION_SPAN,
-        "alternatives": [TRACK_A_SURVIVOR_REDUCTION_SPAN],
-        "awaiting": (
-            _D188 + ", item (a); plan item 2(a); not named in d188 as filed"
-        ),
+        "ruling": SURVIVOR_REDUCTION_SPAN,
+        "declined": [TRACK_A_SURVIVOR_REDUCTION_SPAN],
+        "decided": "d196 item (1); plan section 11 item 2(a)",
+        "decision_record": "d196",
+        "item": "(1)",
         "named_in_d188_as_filed": False,
         "note": (
             "an override of SSAParameters.survivor_reduction_period_months "
@@ -325,12 +351,11 @@ PENDING_DECISIONS: dict[str, dict[str, Any]] = {
         ),
     },
     "oracle_cola_horizon_extension_to_2030": {
-        "proposed_default": True,
-        "alternatives": [False],
-        "awaiting": (
-            _D188 + ", item (a); carries over d074 decision 2(a); not named "
-            "in d188 as filed"
-        ),
+        "ruling": True,
+        "declined": [False],
+        "decided": "d196 item (2); carries over d074 decision 2(a)",
+        "decision_record": "d196",
+        "item": "(2)",
         "carries_over": "d074 decision 2(a)",
         "named_in_d188_as_filed": False,
         "note": (
@@ -340,12 +365,11 @@ PENDING_DECISIONS: dict[str, dict[str, Any]] = {
         ),
     },
     "opening_stock_basis": {
-        "proposed_default": OPENING_STOCK_BASIS,
-        "alternatives": ["rebased_on_later_simulated_events"],
-        "awaiting": (
-            _D188 + ", item (a); carries over d075 (A1 referee question "
-            "11); not named in d188 as filed"
-        ),
+        "ruling": OPENING_STOCK_BASIS,
+        "declined": ["rebased_on_later_simulated_events"],
+        "decided": "d196 item (3); carries over d075 (A1 referee question 11)",
+        "decision_record": "d196",
+        "item": "(3)",
         "carries_over": "d075 referee question 11",
         "named_in_d188_as_filed": False,
         "note": (
@@ -355,42 +379,80 @@ PENDING_DECISIONS: dict[str, dict[str, Any]] = {
         ),
     },
     "di_benefit_level": {
-        "proposed_default": LevelPolicy.DISCLOSED_ORACLE_APPROXIMATION.value,
-        "alternatives": [LevelPolicy.EXCLUDE.value],
-        "awaiting": _D188 + ", item (a); plan item 2(b)",
+        "ruling": LevelPolicy.DISCLOSED_ORACLE_APPROXIMATION.value,
+        "declined": ["exclude_until_axiom_di_rule"],
+        "declined_config_value": LevelPolicy.EXCLUDE.value,
+        "decided": "d188 item (a); plan section 11 item 2(b)",
+        "decision_record": "d188",
+        "item": "(a)",
+        "carries_over": "d074 decision 2(b)",
         "note": (
             "carries over exercise 1's ruling (d074, decision 2(b)); DI "
             "levels are weights only, and every DI ratio is 1"
         ),
     },
+    "benefit_computation_years": {
+        "ruling": ComputationYears.LEGACY_FIXED_35.value,
+        # No record put the statutory 415(b)(2) count to Max, so none is
+        # recorded as declined; Track A has not chosen it either
+        # (cola_track_a.benefits module docstring).
+        "declined": [],
+        "decided": (
+            "d188 item (a): run exercise 3 exactly like Track A; d188 as "
+            "filed does not list this field by name"
+        ),
+        "decision_record": "d188",
+        "item": "(a)",
+        "named_in_d188_as_filed": False,
+        "note": (
+            "exercise 3's levels are Track A's (the inherited "
+            "_Calculator._level): the oracle AIME divides by a fixed 35 "
+            "computation years, the arithmetic of exercise 1's Registration "
+            "13 (cola_track_a.benefits.TRACK_A_COMPUTATION_YEARS), not the "
+            "415(b)(2) count (E1 section 11 rule 1, section 12)"
+        ),
+    },
     "acceptance_rule": {
-        "proposed_default": None,
-        "alternatives": ["numerical_rule_set_by_max_before_registration"],
-        "awaiting": _D188 + ", item (a); plan item 3",
+        "ruling": None,
+        "declined": ["numerical_rule_set_by_max_before_registration"],
+        "decided": "d188 item (a); plan section 11 item 3",
+        "decision_record": "d188",
+        "item": "(a)",
     },
     "primary_schedule_id": {
-        "proposed_default": PLAN_RECOMMENDED_PRIMARY_SCHEDULE,
-        "alternatives": [
+        "ruling": PLAN_RECOMMENDED_PRIMARY_SCHEDULE,
+        "declined": [
             sid
             for sid in SCHEDULE_ORDER
             if sid != PLAN_RECOMMENDED_PRIMARY_SCHEDULE
         ],
-        "awaiting": _D188 + ", item (b); plan item 4",
-        "note": "the other two schedules are registered as F1 and F2",
+        "decided": "d188 item (b); plan section 11 item 4",
+        "decision_record": "d188",
+        "item": "(b)",
+        "note": (
+            "declined as the primary only: the other two schedules are "
+            "registered as F1 and F2"
+        ),
     },
     "rows": {
-        "proposed_default": [f"F{index}" for index in range(9)],
-        "alternatives": [],
-        "awaiting": _D188 + ", item (b); plan item 4 (confirm F0-F8)",
+        "ruling": [f"F{index}" for index in range(9)],
+        "declined": [],
+        "decided": (
+            "d196 item (4), rows F0-F8 as E1 section 18 lists them; d188 "
+            "item (b); plan section 11 item 4"
+        ),
+        "decision_record": "d196",
+        "item": "(4)",
     },
 }
 
 
-#: What ratifies E1 (E1 section 22 item 5): Max's ruling on d188 item
-#: (c), ratifying the specification by merging.
+#: What ratifies E1 (E1 section 22 ruling 7): Max's ruling on d188 item
+#: (c), ratifying the specification by merging.  Tabulations cite it only
+#: against a header that is not ratified.
 E1_RATIFICATION = (
     "E1 specification ratification (decision record d188 item (c); E1 "
-    "section 22 item 5)"
+    "section 22 ruling 7)"
 )
 #: The A7 tabulation conventions the E1 specification fixes, each with
 #: E1's proposed primary (what the runner passes to A7 for row F0), its
@@ -398,12 +460,12 @@ E1_RATIFICATION = (
 #: exercise-3 tabulation records its conventions against this table and
 #: the E1 block header, not A1's: E1 follows A1's section numbering, but
 #: its membership is scenario-specific, it registers no December-amount
-#: row and the DI-level approximation awaits d188.  The E1 ratification
-#: test also refuses a ``referee`` marker, on top of A7's markers (the
-#: drafts' statuses were ``draft_for_referee_not_ratified`` and, after the
-#: referee pass, ``draft_refereed_not_ratified``; the marker matches
-#: both).  Nothing here is ratified: the tabulation derives each status
-#: from the header.
+#: row and it carries the DI-level approximation over by d188 item (a).
+#: The E1 ratification test also refuses a ``referee`` marker, on top of
+#: A7's markers (the drafts' statuses were ``draft_for_referee_not_ratified``
+#: and, after the referee pass, ``draft_refereed_not_ratified``; the marker
+#: matches both).  The table stores no status: the tabulation derives each
+#: status from the header it is given.
 E1_RULINGS = SpecificationRulings(
     specification=SPECIFICATION_ID,
     statistic_id=STATISTIC_ID,
@@ -493,8 +555,8 @@ E1_RULINGS = SpecificationRulings(
                 "component vocabulary is closed; unknown names are "
                 "refused. DI benefit levels enter as the disclosed oracle "
                 "approximation of exercise 1's ruling (d074 decision "
-                "2(b)); whether it carries over to exercise 3 awaits Max "
-                "(decision record d188 item (a); E1 section 22 item 2)"
+                "2(b)), which Max carried over to exercise 3 on 2026-09-24 "
+                "(decision record d188 item (a); E1 section 22 ruling 3)"
             ),
         },
         {
@@ -532,20 +594,24 @@ E1_RULINGS = SpecificationRulings(
 
 @dataclass(frozen=True)
 class FRA68Config:
-    """Every exercise-3 convention; defaults are the plan's proposals."""
+    """Every exercise-3 convention; defaults are the plan's proposals.
+
+    Every field Max ruled on (:data:`MAX_RULINGS`, 2026-09-24) defaults to
+    his ruling, which adopted the plan's proposal in each case.
+    """
 
     reference_year: int = 2030
     draw_indices: tuple[int, ...] = tuple(range(20))
     floor_seeds: tuple[int, ...] = (0, 1, 2, 3, 4)
     rows: tuple[str, ...] = tuple(f"F{index}" for index in range(9))
-    # --- decisions awaiting Max (d188) ---------------------------------
+    # --- ruled by Max 2026-09-24 (d188 and d196; MAX_RULINGS) ----------
     claim_class: str = "track_a_reported_not_gated_psid_oracle"
     oracle_fra_schedule_override: bool = True
     di_benefit_level: LevelPolicy = LevelPolicy.DISCLOSED_ORACLE_APPROXIMATION
     acceptance_rule: str | None = None
     primary_schedule_id: str = PLAN_RECOMMENDED_PRIMARY_SCHEDULE
     #: Not named in d188 as filed (E1 referee report, required change 7);
-    #: each is runnable only at its proposed default.
+    #: ruled by name in d196 and runnable only at the ruled value.
     survivor_reduction_span: str = SURVIVOR_REDUCTION_SPAN
     oracle_cola_horizon_extension_to_2030: bool = True
     opening_stock_basis: str = OPENING_STOCK_BASIS
@@ -586,6 +652,20 @@ class FRA68Config:
 
     def row(self, row_id: str) -> FRA68Row:
         return self.registered[row_id]
+
+    @property
+    def benefit_computation_years(self) -> str:
+        """The AIME computation years of exercise 3's levels (read-only).
+
+        Exercise 3's levels are Track A's (``_Calculator._level``, which
+        ``ScenarioCalculator`` inherits), so this reads Track A's constant
+        ``cola_track_a.benefits.TRACK_A_COMPUTATION_YEARS`` when asked; it
+        is not a setting.  Max's ruling (:data:`MAX_RULINGS`) and E1
+        section 21 ``amounts.benefit_computation_years`` hold it at
+        Registration 13's legacy fixed 35, so a registered run refuses if
+        Track A's count changes.
+        """
+        return track_benefits.TRACK_A_COMPUTATION_YEARS.value
 
     @property
     def anchor_waves(self) -> tuple[int, ...]:
@@ -632,25 +712,32 @@ class FRA68Config:
         )
 
     def check_runnable(self) -> None:
-        """Refuse settings under which exercise 3 has nothing to compute."""
+        """Refuse settings under which exercise 3 has nothing to compute.
 
-        if (
-            self.claim_class
-            != PENDING_DECISIONS["claim_class"]["proposed_default"]
-        ):
+        Each refusal departs from a ruling of Max (2026-09-24, d188 or
+        d196).  A departure that still computes something (another primary
+        schedule or row set, ``di_benefit_level="exclude"``) runs as an
+        invented-data sensitivity; only a ``registered_real`` run refuses
+        it (:func:`rulings_departures`).
+        """
+
+        if self.claim_class != MAX_RULINGS["claim_class"]["ruling"]:
             raise ValueError(
                 f"claim_class {self.claim_class!r} holds the first score for "
-                "another track; this assembly computes the Track A class only"
+                "another track; Max ruled the Track A class (d188 item (a)) "
+                "and this assembly computes it only"
             )
         if not self.oracle_fra_schedule_override:
             raise ValueError(
-                "without the oracle FRA-schedule override (d188 item (a)) "
-                "the reform has no implementation in this assembly"
+                "without the oracle FRA-schedule override (ruled yes by Max, "
+                "d188 item (a)) the reform has no implementation in this "
+                "assembly"
             )
         if self.acceptance_rule is not None:
             raise ValueError(
-                "an acceptance rule was supplied; the plan proposes none "
-                "(d188 item (a)), and none may be set after registration"
+                "an acceptance rule was supplied, but Max ruled no numerical "
+                "acceptance threshold (d188 item (a)); none may be set after "
+                "registration"
             )
         if self.survivor_reduction_span != SURVIVOR_REDUCTION_SPAN:
             raise ValueError(
@@ -658,20 +745,20 @@ class FRA68Config:
                 "is not implemented for exercise 3; this assembly spreads "
                 "the widow(er) reduction over the survivor cohort's exact "
                 f"span in both scenarios ({SURVIVOR_REDUCTION_SPAN!r}, E1 "
-                "section 11 rule 5, awaiting Max)"
+                "section 11 rule 5, ruled by Max, d196 item (1))"
             )
         if not self.oracle_cola_horizon_extension_to_2030:
             raise ValueError(
                 "without the oracle COLA horizon extension (d074 decision "
-                "2(a), carried over pending d188) the oracle COLA path stops "
-                "at 2022 and no 2030 benefit exists"
+                "2(a), carried over by Max, d196 item (2)) the oracle COLA "
+                "path stops at 2022 and no 2030 benefit exists"
             )
         if self.opening_stock_basis != OPENING_STOCK_BASIS:
             raise ValueError(
                 f"opening_stock_basis {self.opening_stock_basis!r} is not "
                 "implemented; the assembly freezes the basis at the opening "
-                f"year ({OPENING_STOCK_BASIS!r}, d075, carried over pending "
-                "d188)"
+                f"year ({OPENING_STOCK_BASIS!r}, d075, carried over by Max, "
+                "d196 item (3))"
             )
 
     def as_dict(self) -> dict[str, Any]:
@@ -715,30 +802,46 @@ def _config_value(config: FRA68Config, name: str) -> Any:
 
 
 def decision_value(config: FRA68Config, name: str) -> Any:
-    """A d188 decision field's configured value, in the block's vocabulary."""
+    """A ruled decision field's configured value, in the block's vocabulary."""
 
-    if name not in PENDING_DECISIONS:
-        raise KeyError(f"{name!r} is not a d188 decision field")
+    if name not in MAX_RULINGS:
+        raise KeyError(f"{name!r} is not a field Max ruled on (d188, d196)")
     return _config_value(config, name)
 
 
-def pending_decisions(config: FRA68Config | None = None) -> list[dict]:
-    """The d188 decisions with the configured value; none is ruled."""
+def max_rulings(config: FRA68Config | None = None) -> list[dict]:
+    """Max's rulings, each with the configured value and whether it follows.
+
+    These are not pending: Max ruled them on 2026-09-24 (d188, d196).  A
+    configuration may still depart from one for an invented-data
+    sensitivity (another primary schedule, ``di_benefit_level="exclude"``),
+    and the entry then says so.
+    """
 
     config = config or FRA68Config()
     out = []
-    for name, decision in PENDING_DECISIONS.items():
+    for name, ruling in MAX_RULINGS.items():
         value = _config_value(config, name)
         out.append(
             {
                 "field": name,
                 "value": value,
-                **decision,
-                "ruled": False,
-                "is_proposed_default": value == decision["proposed_default"],
+                **ruling,
+                "ruled_by": _RULED_BY,
+                "follows_ruling": value == ruling["ruling"],
             }
         )
     return out
+
+
+def rulings_departures(config: FRA68Config) -> list[str]:
+    """The fields whose configured value departs from Max's ruling."""
+
+    return [
+        item["field"]
+        for item in max_rulings(config)
+        if not item["follows_ruling"]
+    ]
 
 
 _BUILDER = "exercise-3 builder default; no ruling covers it"
