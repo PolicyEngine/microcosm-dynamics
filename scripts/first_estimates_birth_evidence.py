@@ -234,6 +234,13 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # beside the sealed ss.benefits, which it calls but does not edit; the
     # historical ledger never imports it.
     Path("src/populace_dynamics/ss/statutory_aime.py"),
+    # The opt-in Track M layer (DynaSim exercise 4, the minimum benefit)
+    # calls the oracle but is never imported by the historical reducer;
+    # the transitive reachability test guards it.
+    Path("src/populace_dynamics/min_benefit_track_m/__init__.py"),
+    Path("src/populace_dynamics/min_benefit_track_m/coverage.py"),
+    Path("src/populace_dynamics/min_benefit_track_m/policy.py"),
+    Path("src/populace_dynamics/min_benefit_track_m/rules.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(

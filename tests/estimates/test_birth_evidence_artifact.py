@@ -131,6 +131,10 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/estimates/adjusted_poverty.py"),
         Path("src/populace_dynamics/estimates/uniform_cut_tabulation.py"),
         Path("src/populace_dynamics/ss/statutory_aime.py"),
+        Path("src/populace_dynamics/min_benefit_track_m/__init__.py"),
+        Path("src/populace_dynamics/min_benefit_track_m/coverage.py"),
+        Path("src/populace_dynamics/min_benefit_track_m/policy.py"),
+        Path("src/populace_dynamics/min_benefit_track_m/rules.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -413,6 +417,19 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
     assert statutory_aime not in reachable, (
         "the opt-in statutory AIME became reachable from the "
         "birth-evidence reducer"
+    )
+    track_m_modules = {"populace_dynamics.min_benefit_track_m"} | {
+        f"populace_dynamics.min_benefit_track_m.{name}"
+        for name in (
+            "coverage",
+            "policy",
+            "rules",
+        )
+    }
+    assert track_m_modules.issubset(module_paths)
+    assert track_m_modules.isdisjoint(reachable), (
+        "the opt-in Track M layer became reachable from the "
+        f"birth-evidence reducer: {sorted(track_m_modules & reachable)}"
     )
 
 
