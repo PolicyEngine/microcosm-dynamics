@@ -372,7 +372,16 @@ draft should confirm or correct each reading before ratification (§18).
    item is known and every mentioned type is a spouse's, survivor's or
    dependent's benefit; so an unknown, "other" or combination code counts
    as own receipt. A year of auxiliary receipt only is a year without own
-   receipt (rule 2).
+   receipt (rule 2). **Size of the reading** (independent review,
+   2026-09-25; structural count over all records, not by window, at
+   `a1986950`): of the 2,306 records with own receipt, 145 have a first
+   own receipt of unknown type, 107 of them a one-member family's
+   year-before-last "yes" and 38 a person-level unknown or combination
+   code; 76 of the 145 are disability origin by rule 1's age rule alone
+   (60 of them on a family's "yes"). A survivor's benefit first received
+   at 60 or 61 and reported only as a family's "yes" or a combination code
+   is read as a worker's own disability-origin receipt. The ratification
+   should keep or change this reading knowingly (§18).
 2. **Observations.** Person-level items (the individual file, waves
    1984-1992 and 2005-2023, and the 1993 family file's head and wife
    items) take precedence. A family-level item identifies a person only
@@ -382,10 +391,16 @@ draft should confirm or correct each reading before ratification (§18).
    year-before-last "yes" is a one-member family's receipt. The 2009,
    2011, 2013 and 2015 family files keep the year-before-last whether
    item (R20) alone, for 2007, 2009, 2011 and 2013 (an M3 finding); their
-   "yes" is receipt of an unknown type. They add observed years without
-   receipt after 2006, so, by rule 2, they can only move an entitlement
-   year later, in some records across a policy year (for a record with
-   no observation from 2003 to 2006, for example).
+   "yes" is receipt of an unknown type. Their "no" adds observed years
+   without receipt after 2006, which, by rule 2, can only move an
+   entitlement year later, in some records across a policy year (for a
+   record with no observation from 2003 to 2006, for example). Their
+   "yes" adds own receipt of an unknown type (item 1), which can make an
+   earlier year the first own receipt, and so move an entitlement year
+   earlier and, before the year of attaining 62, make the record
+   disability origin by the age rule. (Independent review, 2026-09-25:
+   this item said the files "can only move an entitlement year later";
+   that holds for their "no" only.)
 3. **Rule 2 before rule 3.** Rule 2's second bullet sends to rule 3 only
    a record with receipt in its first observed year. So a record with an
    observed year without own receipt takes rule 2's earliest consistent
@@ -419,7 +434,18 @@ draft should confirm or correct each reading before ratification (§18).
    is the earliest year consistent with their receipt of a survivor type
    (else of any receipt), no earlier than the death year and the year of
    attaining 60; the earliest over the linking survivors is a death-basis
-   record's window year. A spouse's claim year is the latest of their own
+   record's window year. Only an observed year that shows no survivor's
+   benefit bounds it: a year without receipt, or receipt whose survivor
+   item is known and not mentioned. A receipt year whose survivor item is
+   unknown (a combination code, an unknown code, a DK or NA flag, a
+   one-member family's whether-only "yes") is consistent with a survivor's
+   benefit and does not. (Independent review, 2026-09-25: the build had
+   let such a year bound the claim year; on the staged PSID that set 18
+   of the 134 claim years that rest on a survivor mention later, every
+   one through a one-member family's year-before-last "yes" of unknown
+   type, and moved the window year of 8 death-basis records. The fix
+   changes none of §10's counts, including the threshold years the
+   windows need.) A spouse's claim year is the latest of their own
    entitlement year (or, with no own record, rule 2's earliest year
    consistent with their receipt, no earlier than 62), the worker's
    entitlement year and the year of attaining 62, and never after 2022.
@@ -824,8 +850,17 @@ count of the funnel above is unchanged. Unweighted counts only; no
 years of coverage, PIA, threshold, minimum, flag or share was computed,
 and, as §11 reserves them for the registered run, no count of in-window
 records or exposed persons, of unlinked auxiliaries or of persons in
-MS5's scope: of the windows, only the threshold years their records need
-(§4, §7), as years and bases.
+MS5's scope was reported: of the windows, only the threshold years their
+records need (§4, §7), as years and bases. **Correction (independent
+review, 2026-09-25):** at `7c1198ce` the script's
+`structural_counts_before_registration` built its output from
+`cohort_structure`, so that run computed, in memory, the in-window
+record counts, the unlinked auxiliaries and the MS5 scope, and dropped
+them unwritten. The review's fix (`a1986950`) computes only what it
+returns; its rerun (`EVID/track-m-structure-r4-20260925/`, SHA-256
+`cdbd9868…`, clean tree, the same 91 PSID files with the same hashes)
+computed no such count, and every count below is unchanged, with the
+survivor claim-year fix of §4c item 6 in the code.
 
 - **The 2,135 persons:** 2,112 have an own worker record; 2,055 report
   own receipt in 2022 and 80 auxiliary receipt only. Marital state at the
@@ -1212,9 +1247,13 @@ Blocked, with the plan's effort estimates (lane-days):
    referee's required changes, and of the M3-M5 build's readings (§4c;
    §5's two findings, one of which would change this draft if adopted),
    then the ratified text (`m1-ratified-1`, status and version only)
-   merged under d219 item 9. Ratification alone authorizes no run: the
-   ratified block still lists the other blockers, and the gate refuses a
-   block that lists any (§19).
+   merged under d219 item 9. The first check is
+   `EVID/track-m-2-review-20260925.md`; the second,
+   `EVID/track-m-3-review-20260925.md`, confirmed §4c items 1-5, 7 and 8
+   and both §5 findings (codebook text), corrected item 6 in the code
+   and item 2's text, and sized item 1 for the ratification (§4c).
+   Ratification alone authorizes no run: the ratified block still lists
+   the other blockers, and the gate refuses a block that lists any (§19).
 
 ## 19. Machine-readable parameter block
 
@@ -1903,6 +1942,27 @@ it did not open those outputs, and nothing it wrote rests on them. It
 computed no years of coverage, PIA, threshold, minimum, flag or share on
 real data.
 
+**Independent review of the M2-M5 build (2026-09-25, Claude Code
+subagent, Opus 5.5):** read `EVID/RESTRICTED-FILES.md` first
+(`2fc9bdbf…`) and nothing it restricts; the branch diff from `596c365b`,
+this specification's §§1-11, 18, 19 and 22-23, the builder's report and
+the previous review. It re-verified every label the M3 readers use (97
+individual-file and 140 family-file variables) with its own parser of
+the Stata setup files, checked their columns against the SPSS setup
+files and every type, flag and accuracy code against the individual
+file's Stata formats, and read the codebook entries of the family-file
+codes the readers adjudicate. It checked the quarter-of-coverage capture
+against the 2008 Trustees Report's Table V.C2 (1978-2008, in
+`EVID/tr2008-inputs-20260922/`), the Federal Register's annual
+determination notices (1996-2026) and its own exact recomputation of
+413(d): no difference in any year. On the staged PSID it ran the
+structural counts (§10, `EVID/track-m-structure-r4-20260925/`) and counts
+of survivor claim years and of first own receipts of unknown type (§4c
+items 1 and 6); it computed no years of coverage, PIA, threshold,
+minimum, flag, share or in-window count on real data. It did not open
+the interrupted lane's `smoke.json` or pickle. Its report is
+`EVID/track-m-3-review-20260925.md`.
+
 ## 23. Changelog
 
 - `m1-draft-1` (2026-09-24): first draft, with the Track M rules module,
@@ -1964,3 +2024,14 @@ real data.
   §22. `blocked_by` drops the M3, M4 and M5 items, names the Census years
   1982-2002 and the comparator seal's hash, and asks the independent check
   to cover the M3-M5 readings.
+- `m1-draft-2`, independent review of the M2-M5 build (2026-09-25; no
+  ruling, default, row, cell, frozen choice or block field changed, so the
+  version and the §19 block stand): §4c item 6's survivor claim year now
+  holds as written in the code (`a1986950`: a receipt year whose survivor
+  item is unknown no longer bounds it);
+  `structural_counts_before_registration` no longer computes §11's
+  reserved diagnostics in memory (§10 records the earlier run's
+  in-memory computation and the rerun);
+  §4c item 2's "can only move an entitlement year later" is limited to the
+  files' "no", and item 1 records the size of its reading; §18 item 4 and
+  §22 record the review.
