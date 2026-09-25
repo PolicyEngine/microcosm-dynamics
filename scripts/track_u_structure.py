@@ -1,10 +1,13 @@
 """Structural counts of the Track U age-67 population (counts only).
 
-Builds the exercise-2 age-67 observations (rows U0 and U1) from the
+Builds the exercise-2 age-67 observations (every builder row of
+:data:`populace_dynamics.cohorts.age67.ROWS`: U0, U1 and U0-F) from the
 staged PSID with :mod:`populace_dynamics.cohorts.age67` and writes
 ``track-u-structure.json``: persons, observations, dispositions, family
-units, design strata, the wealth blockers, threshold-free receipt counts
-and the family-income and WEALTH1 reconciliation counts.
+units, design strata, the wealth blockers, the marital-resolution paths
+and annuitant age sources, threshold-free receipt counts (including farm
+and the head's annuity and IRA income) and the family-income and WEALTH1
+reconciliation counts.
 
 It computes **no** income concept, annuity, threshold, poverty status or
 poverty rate: plan ``critical-path-uniform-cut-20260923.md`` section 8

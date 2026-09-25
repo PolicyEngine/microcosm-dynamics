@@ -17,13 +17,24 @@ Statistic (plan section 7), per cell ``c`` with observation weights
     delta = P_R - P_B   (percentage points)
 
 ``delta`` is the headline; ``P_B`` and ``P_R`` are the secondary rows
-(the Table 19 and Table 21 analogues).  Cells: ``all`` (headline),
-``men``, ``women``, ``married`` and ``non_married`` (the reporting
-splits the plan reads in the Report's methods, plan section 7), the four
-sex-by-marital cells (optional) and one diagnostic cell per birth year
-(not scored).  An empty cell, or one with
-zero total weight, is undefined and reported with its reason, never
-imputed.
+(the Table 19 and Table 21 analogues).  Cells (specification section 9,
+u1-draft-5, after the second referee's S2): the Report's Tables 19 and 21
+carry 36 rows (cleared exercise-2 definitions extract), of which Track U
+v1 computes fifteen in the 1936-45 column: ``all`` (Total, headline);
+the scored ``women``, ``men``, ``married``, ``widowed``, ``divorced`` and
+``never_married`` (Gender; Marital Status); and the eight secondary
+sex-by-marital cells (Gender and Marital Status), compared and reported
+with their counts.  :data:`REPORT_ROWS` names each cell's Report row;
+:data:`NOT_COMPUTED_REPORT_ROWS` lists the other 21 rows (race and
+ethnicity, education, labor-force experience, lifetime earnings) as named
+omissions.  One diagnostic cell per birth year is not compared.  The
+marital cells read ``marital_status_4``
+(:func:`populace_dynamics.cohorts.age67.marital_status_4`); a member with
+no four-way status (``unclassified``) enters ``all``, ``women`` and
+``men`` and no marital cell, and each marital cell reports how many were
+left out (``unclassified_marital_cells="excluded_counted"``, pending the
+freeze).  An empty cell, or one with zero total weight, is undefined and
+reported with its reason, never imputed.
 
 Uncertainty (plan field F15; the run is deterministic, K = 1):
 
@@ -48,10 +59,16 @@ Uncertainty (plan field F15; the run is deterministic, K = 1):
   ratio with the PSID sampling-error stratum and cluster (ER31996,
   ER31997): ``z_i = w_i (y_i - r) / sum w`` inside the cell and 0 outside
   it, summed by cluster; ``var = sum_h n_h/(n_h - 1) sum_c (z_hc -
-  mean_h)^2`` over the strata and clusters present in the input rows.
-  Strata with a single cluster are left out and counted.  This is the
-  subpopulation estimator relative to the tabulated rows, not to the whole
-  PSID sample; clusters with no tabulated row do not enter.
+  mean_h)^2``.  ``design_se_domain="full_sample_design"`` (default, the
+  specification's section 10 after the referee's Q5): a domain estimator
+  on the full sample design, where every (stratum, cluster) pair of the
+  ``design`` frame (the pairs of persons with a positive cross-section
+  weight in the observation waves) enters, with ``z = 0`` for a cluster
+  that holds no observation of the cell; a row whose pair is not in the
+  frame is refused.  ``tabulated_rows`` (the u1-draft-3 estimator) uses
+  only the pairs present in the input rows.  Strata with a single
+  cluster cannot contribute a variance term: they are left out, counted
+  and listed.
 
 Provenance: ``data_provenance="invented"`` prefixes the invented-data
 label; ``"registered_real"`` requires the issue #42 registration pointer,
@@ -76,26 +93,36 @@ from populace_dynamics.estimates.adjusted_poverty import (
     INVENTED,
     OUTPUT_LABELS,
     REGISTERED_REAL,
+    PendingDecision,
 )
 from populace_dynamics.harness.panel import split_panel_by_person
 
 __all__ = [
     "CELL_DEFINITIONS",
+    "COMPARATOR_COLUMN",
     "DEFAULT_CELLS",
+    "DESIGN_SE_DOMAINS",
     "DEFAULT_FLOOR_SEEDS",
     "DIAGNOSTIC_BIRTH_YEAR_CELLS",
     "FLOOR_FRACTION",
     "FLOOR_SPLIT_UNIT",
     "INVENTED_DATA_LABEL",
+    "MARITAL_STATUSES",
     "MIN_FLOOR_SEEDS",
+    "NOT_COMPUTED_REPORT_ROWS",
     "OPTIONAL_CELLS",
+    "REPORT_ROWS",
     "REQUIRED_COLUMNS",
     "SCHEMA_VERSION",
     "STATISTICS",
     "STATISTIC_ID",
     "TabulationConfig",
+    "UNCLASSIFIED",
+    "UNCLASSIFIED_MARITAL_CELL_RULES",
     "UniformCutTabulationError",
+    "cell_mask",
     "floor_split_units",
+    "pending_decisions",
     "tabulate_uniform_cut",
     "tabulation_rows",
 ]
@@ -112,7 +139,7 @@ REQUIRED_COLUMNS: tuple[str, ...] = (
     "family_unit_id",
     "weight",
     "sex",
-    "married",
+    "marital_status_4",
     "birth_year",
     "stratum",
     "cluster",
@@ -127,30 +154,136 @@ STATISTIC_DEFINITIONS = {
     "reform_rate": "100 * sum w 1{R < T} / sum w (the Table 21 analogue)",
 }
 
+#: The Report's column the comparator reads (Tables 19 and 21, "Birth
+#: Cohort"; cleared exercise-2 definitions extract).
+COMPARATOR_COLUMN = "1936-45"
+#: The values of ``marital_status_4`` that the marital cells read, in the
+#: order of the Report's "Marital Status" rows, and the value of a member
+#: none of them holds (equal to
+#: :data:`populace_dynamics.cohorts.age67.MARITAL_STATUS_4` and
+#: ``UNCLASSIFIED_MARITAL_STATUS``, which a test holds).
+MARITAL_STATUSES: tuple[str, ...] = (
+    "married",
+    "widowed",
+    "divorced",
+    "never_married",
+)
+UNCLASSIFIED = "unclassified"
+_SEXES = (("women", "female"), ("men", "male"))
+#: The Report's row labels, as printed (cleared extract).
+_MARITAL_LABELS = {
+    "married": "Married",
+    "widowed": "Widowed",
+    "divorced": "Divorced",
+    "never_married": "Never married",
+}
+#: Each computed cell's row in Tables 19 and 21 ("section: label" as
+#: printed; the Total row has no section header).
+REPORT_ROWS: dict[str, str] = {
+    "all": "Total",
+    "women": "Gender: Female",
+    "men": "Gender: Male",
+    **{
+        status: f"Marital Status: {label}"
+        for status, label in _MARITAL_LABELS.items()
+    },
+    **{
+        f"{cell}_{status}": (
+            f"Gender and Marital Status: "
+            f"{'Female' if sex == 'female' else 'Male'}: {label}"
+        )
+        for cell, sex in _SEXES
+        for status, label in _MARITAL_LABELS.items()
+    },
+}
+#: Headline and scored cells (the Total, Gender and Marital Status rows).
+DEFAULT_CELLS: tuple[str, ...] = ("all", "women", "men", *MARITAL_STATUSES)
+#: Secondary cells, compared and reported with their counts (the Gender
+#: and Marital Status rows).
+OPTIONAL_CELLS: tuple[str, ...] = tuple(
+    f"{cell}_{status}" for cell, _ in _SEXES for status in MARITAL_STATUSES
+)
 CELL_DEFINITIONS: dict[str, str] = {
     "all": "every observation (headline)",
-    "men": "sex == male",
     "women": "sex == female",
-    "married": "legally married at the end of the income year (F12)",
-    "non_married": "not legally married (cohabitors included, F12)",
-    "men_married": "optional: male and married",
-    "men_non_married": "optional: male and not married",
-    "women_married": "optional: female and married",
-    "women_non_married": "optional: female and not married",
+    "men": "sex == male",
+    "married": (
+        "married at the end of the income year (F12; separated counts as "
+        "married; by the marriage history or the relationship code)"
+    ),
+    "widowed": "widowed at the end of the income year (marriage history)",
+    "divorced": "divorced at the end of the income year (marriage history)",
+    "never_married": "never married (marriage history)",
+    **{
+        f"{cell}_{status}": f"secondary: {sex} and {status}"
+        for cell, sex in _SEXES
+        for status in MARITAL_STATUSES
+    },
 }
-DEFAULT_CELLS: tuple[str, ...] = (
-    "all",
-    "men",
-    "women",
-    "married",
-    "non_married",
-)
-OPTIONAL_CELLS: tuple[str, ...] = (
-    "men_married",
-    "men_non_married",
-    "women_married",
-    "women_non_married",
-)
+#: The Report rows of Tables 19 and 21 that Track U v1 does not compute
+#: (specification section 9, named omissions; cleared extract).
+NOT_COMPUTED_REPORT_ROWS: dict[str, dict[str, Any]] = {
+    "race_ethnicity": {
+        "section": "Race/Ethnicity",
+        "rows": (
+            "White, non-hispanic",
+            "Black, non-hispanic",
+            "Hispanic",
+            "Other",
+        ),
+        "reason": "Track U v1 has no reader for race and ethnicity",
+    },
+    "education": {
+        "section": "Education",
+        "rows": (
+            "High school dropout",
+            "High school graduate",
+            "College graduate",
+        ),
+        "reason": (
+            "Track U v1 has no reader for education, and the Report does "
+            "not say whether 'High school graduate' includes some college"
+        ),
+    },
+    "labor_force_experience": {
+        "section": "Labor Force Experience",
+        "rows": (
+            "Less than 20 years",
+            "20 to 29 years",
+            "30 to 34 years",
+            "35 or more years",
+        ),
+        "reason": (
+            "Track U v1 has no reader for it, and the Report does not "
+            "define the measure"
+        ),
+    },
+    **{
+        f"lifetime_earnings_{kind}": {
+            "section": f"Lifetime Earnings ({kind.title()})",
+            "rows": tuple(
+                f"{n} Quintile" for n in ("1st", "2nd", "3rd", "4th", "5th")
+            ),
+            "reason": (
+                "Track U v1 has no reader for it; the measure averages "
+                "wage-indexed earnings at ages 22-62, which the PSID does "
+                "not observe at every one of those ages for these cohorts "
+                "(its first income year is 1967, and odd income years from "
+                "1997 on are not observed), and the Report does not say "
+                "over which population the quintiles are cut"
+            ),
+        }
+        for kind in ("own", "shared")
+    },
+}
+#: How members with no four-way marital status enter the marital cells.
+UNCLASSIFIED_MARITAL_CELL_RULES: dict[str, str] = {
+    "excluded_counted": (
+        "a member whose marital_status_4 is 'unclassified' enters all, "
+        "women and men and no marital cell; each marital cell reports how "
+        "many were left out (second referee S2)"
+    ),
+}
 #: Diagnostic cells, one per birth year present (not scored).
 DIAGNOSTIC_BIRTH_YEAR_CELLS = "birth_year_<yyyy>"
 
@@ -160,6 +293,18 @@ MIN_FLOOR_SEEDS = 2
 #: The half-split unit: family units merged through shared persons
 #: (:func:`floor_split_units`).
 FLOOR_SPLIT_UNIT = "family_unit_id_linked_by_person_id"
+#: The population of clusters the design-based standard error sums over.
+DESIGN_SE_DOMAINS: dict[str, str] = {
+    "full_sample_design": (
+        "domain estimation on the full sample design: every (stratum, "
+        "cluster) pair of the design frame enters, z = 0 for clusters "
+        "without an observation of the cell (referee Q5)"
+    ),
+    "tabulated_rows": (
+        "the (stratum, cluster) pairs present in the tabulated rows only "
+        "(u1-draft-3)"
+    ),
+}
 
 
 class UniformCutTabulationError(ValueError):
@@ -171,9 +316,11 @@ class TabulationConfig:
     """Cells and uncertainty settings; defaults are the plan's proposal."""
 
     cells: tuple[str, ...] = DEFAULT_CELLS + OPTIONAL_CELLS
+    unclassified_marital_cells: str = "excluded_counted"
     birth_year_diagnostics: bool = True
     floor_seeds: tuple[int, ...] = DEFAULT_FLOOR_SEEDS
     design_standard_errors: bool = True
+    design_se_domain: str = "full_sample_design"
     notes: tuple[str, ...] = field(default=())
 
     def __post_init__(self) -> None:
@@ -189,16 +336,30 @@ class TabulationConfig:
             raise UniformCutTabulationError(
                 "floor seeds must be distinct >= 0"
             )
+        if self.design_se_domain not in DESIGN_SE_DOMAINS:
+            raise UniformCutTabulationError(
+                f"design_se_domain must be one of {sorted(DESIGN_SE_DOMAINS)}"
+            )
+        if self.unclassified_marital_cells not in (
+            UNCLASSIFIED_MARITAL_CELL_RULES
+        ):
+            raise UniformCutTabulationError(
+                "unclassified_marital_cells must be one of "
+                f"{sorted(UNCLASSIFIED_MARITAL_CELL_RULES)}"
+            )
 
     def as_dict(self) -> dict[str, Any]:
         return {
             "cells": list(self.cells),
+            "comparator_column": COMPARATOR_COLUMN,
+            "unclassified_marital_cells": self.unclassified_marital_cells,
             "birth_year_diagnostics": self.birth_year_diagnostics,
             "floor_seeds": list(self.floor_seeds),
             "floor_fraction": FLOOR_FRACTION,
             "floor_split_unit": FLOOR_SPLIT_UNIT,
             "min_floor_seeds": MIN_FLOOR_SEEDS,
             "design_standard_errors": self.design_standard_errors,
+            "design_se_domain": self.design_se_domain,
             "draws": 1,
             "notes": list(self.notes),
         }
@@ -231,7 +392,14 @@ def _normalize(rows: pd.DataFrame) -> pd.DataFrame:
     sexes = set(out["sex"].astype(str))
     if not sexes <= {"male", "female"}:
         raise UniformCutTabulationError(f"sex outside male/female: {sexes}")
-    for column in ("married", "poor_baseline", "poor_reform"):
+    statuses = out["marital_status_4"]
+    allowed = {*MARITAL_STATUSES, UNCLASSIFIED}
+    if statuses.isna().any() or not set(statuses.astype(str)) <= allowed:
+        raise UniformCutTabulationError(
+            f"marital_status_4 outside {sorted(allowed)}"
+        )
+    out["marital_status_4"] = statuses.astype(str)
+    for column in ("poor_baseline", "poor_reform"):
         values = out[column]
         if (
             values.isna().any()
@@ -245,24 +413,60 @@ def _normalize(rows: pd.DataFrame) -> pd.DataFrame:
             "person_id, stratum, cluster and family_unit_id must be present"
         )
     out["birth_year"] = out["birth_year"].astype("int64")
+    for column in ("stratum", "cluster"):
+        out[column] = out[column].astype("int64")
     return out
 
 
+def _cell_parts(name: str) -> tuple[str | None, str | None]:
+    """``(sex, marital status)`` a cell restricts to (``None``: any)."""
+
+    if name == "all":
+        return None, None
+    for cell, sex in _SEXES:
+        if name == cell:
+            return sex, None
+        if name.startswith(f"{cell}_") and name[len(cell) + 1 :] in (
+            MARITAL_STATUSES
+        ):
+            return sex, name[len(cell) + 1 :]
+    if name in MARITAL_STATUSES:
+        return None, name
+    raise UniformCutTabulationError(f"unknown cell {name!r}")
+
+
+def cell_mask(rows: pd.DataFrame, name: str) -> np.ndarray:
+    """The observations of cell ``name`` (columns ``sex`` and
+    ``marital_status_4``).
+
+    A marital cell holds the members whose ``marital_status_4`` is its
+    status; an ``unclassified`` member is in no marital cell
+    (``unclassified_marital_cells="excluded_counted"``).
+    """
+
+    sex, status = _cell_parts(name)
+    mask = np.ones(len(rows), dtype=bool)
+    if sex is not None:
+        mask &= rows["sex"].astype(str).eq(sex).to_numpy()
+    if status is not None:
+        mask &= rows["marital_status_4"].astype(str).eq(status).to_numpy()
+    return mask
+
+
+def _unclassified_left_out(rows: pd.DataFrame, name: str) -> int | None:
+    """How many members of a marital cell's sex domain are unclassified."""
+
+    sex, status = _cell_parts(name)
+    if status is None:
+        return None
+    domain = rows["marital_status_4"].eq(UNCLASSIFIED).to_numpy()
+    if sex is not None:
+        domain = domain & rows["sex"].eq(sex).to_numpy()
+    return int(domain.sum())
+
+
 def _cell_masks(rows: pd.DataFrame, config: TabulationConfig) -> dict:
-    male = rows["sex"].eq("male").to_numpy()
-    married = rows["married"].to_numpy()
-    masks = {
-        "all": np.ones(len(rows), dtype=bool),
-        "men": male,
-        "women": ~male,
-        "married": married,
-        "non_married": ~married,
-        "men_married": male & married,
-        "men_non_married": male & ~married,
-        "women_married": ~male & married,
-        "women_non_married": ~male & ~married,
-    }
-    out = {name: masks[name] for name in config.cells}
+    out = {name: cell_mask(rows, name) for name in config.cells}
     if config.birth_year_diagnostics:
         for year in sorted(set(rows["birth_year"].tolist())):
             out[f"birth_year_{year}"] = rows["birth_year"].eq(year).to_numpy()
@@ -293,8 +497,30 @@ def _rates(rows: pd.DataFrame, mask: np.ndarray) -> dict[str, Any]:
     }
 
 
+def _design_clusters(design: pd.DataFrame | None) -> pd.MultiIndex | None:
+    """The distinct (stratum, cluster) pairs of a design frame."""
+
+    if design is None:
+        return None
+    if not isinstance(design, pd.DataFrame):
+        raise UniformCutTabulationError("design must be a DataFrame")
+    missing = [c for c in ("stratum", "cluster") if c not in design.columns]
+    if missing:
+        raise UniformCutTabulationError(f"design lacks columns {missing}")
+    pairs = design[["stratum", "cluster"]]
+    if pairs.isna().any().any():
+        raise UniformCutTabulationError("design stratum/cluster missing")
+    pairs = pairs.astype("int64").drop_duplicates()
+    if pairs.empty:
+        raise UniformCutTabulationError("the design frame has no clusters")
+    return pd.MultiIndex.from_frame(pairs.sort_values(["stratum", "cluster"]))
+
+
 def _design_se(
-    rows: pd.DataFrame, mask: np.ndarray, indicator: np.ndarray
+    rows: pd.DataFrame,
+    mask: np.ndarray,
+    indicator: np.ndarray,
+    clusters_all: pd.MultiIndex | None = None,
 ) -> dict[str, Any]:
     weight = rows["weight"].to_numpy()
     in_cell = weight * mask
@@ -307,6 +533,8 @@ def _design_se(
         {"stratum": rows["stratum"], "cluster": rows["cluster"], "z": z}
     )
     clusters = frame.groupby(["stratum", "cluster"], sort=True)["z"].sum()
+    if clusters_all is not None:
+        clusters = clusters.reindex(clusters_all, fill_value=0.0)
     variance = 0.0
     used = 0
     singleton = 0
@@ -326,16 +554,35 @@ def _design_se(
 
 
 def _cell_entry(
-    rows: pd.DataFrame, name: str, mask: np.ndarray, config: TabulationConfig
+    rows: pd.DataFrame,
+    name: str,
+    mask: np.ndarray,
+    config: TabulationConfig,
+    clusters_all: pd.MultiIndex | None = None,
 ) -> dict[str, Any]:
     entry: dict[str, Any] = {
         "cell": name,
         "definition": CELL_DEFINITIONS.get(
-            name, "diagnostic: birth year (not scored)"
+            name, "diagnostic: birth year (not compared)"
         ),
-        "scored_candidate": name in DEFAULT_CELLS,
-        "optional": name in OPTIONAL_CELLS,
+        "report_row": REPORT_ROWS.get(name),
+        "role": (
+            "headline"
+            if name == "all"
+            else (
+                "scored"
+                if name in DEFAULT_CELLS
+                else ("secondary" if name in OPTIONAL_CELLS else "diagnostic")
+            )
+        ),
+        "scored": name in DEFAULT_CELLS,
+        "secondary": name in OPTIONAL_CELLS,
         "diagnostic": name.startswith("birth_year_"),
+        "n_marital_unclassified_left_out": (
+            None
+            if name.startswith("birth_year_")
+            else _unclassified_left_out(rows, name)
+        ),
         "n_observations": int(mask.sum()),
         "n_persons": int(rows.loc[mask, "person_id"].nunique()),
         "n_family_units": int(rows.loc[mask, "family_unit_id"].nunique()),
@@ -348,9 +595,9 @@ def _cell_entry(
         base = rows["poor_baseline"].to_numpy().astype(np.float64)
         reform = rows["poor_reform"].to_numpy().astype(np.float64)
         entry["design_se"] = {
-            "delta": _design_se(rows, mask, reform - base),
-            "baseline_rate": _design_se(rows, mask, base),
-            "reform_rate": _design_se(rows, mask, reform),
+            "delta": _design_se(rows, mask, reform - base, clusters_all),
+            "baseline_rate": _design_se(rows, mask, base, clusters_all),
+            "reform_rate": _design_se(rows, mask, reform, clusters_all),
         }
     return entry
 
@@ -460,6 +707,55 @@ def _floors(
     return per_seed, floors
 
 
+def pending_decisions() -> tuple[PendingDecision, ...]:
+    """The open choices of :class:`TabulationConfig`, with their defaults.
+
+    None is ratified; each awaits the specification freeze.
+    """
+
+    config = TabulationConfig()
+    freeze = "U1 specification freeze (Max's ratification by merge)"
+    return (
+        PendingDecision(
+            "design_se_domain",
+            config.design_se_domain,
+            ("tabulated_rows",),
+            "referee (boomers2004-referee-20260924.md) Q5/R10: domain "
+            "estimation on the full sample design, every (stratum, "
+            "cluster) pair of the observation waves' positive-weight "
+            "persons with z = 0 outside the cell; relative to the "
+            "tabulated rows only, every stratum with one cluster present "
+            "drops out and the variance is understated",
+            freeze,
+        ),
+        PendingDecision(
+            "cells",
+            list(config.cells),
+            (),
+            "second referee S2 (boomers2004-referee-2-20260924.md) and the "
+            "cleared exercise-2 definitions extract: Tables 19 and 21 carry "
+            "36 rows; Track U v1 computes the Total, Gender and Marital "
+            "Status rows (all headline; women, men, married, widowed, "
+            "divorced, never_married scored) and the eight Gender and "
+            "Marital Status rows (secondary) in the 1936-45 column; the "
+            "other 21 rows are named omissions (NOT_COMPUTED_REPORT_ROWS)",
+            freeze,
+        ),
+        PendingDecision(
+            "unclassified_marital_cells",
+            config.unclassified_marital_cells,
+            (),
+            "second referee S2: a member with no four-way marital status "
+            "(an unresolved state the relationship code does not resolve; "
+            "34 of U0's 483 observations and 24 of U0-F's 320 on the staged "
+            "PSID, structural counts) enters all, women and men and no "
+            "marital cell, and each marital cell reports how many were "
+            "left out",
+            freeze,
+        ),
+    )
+
+
 def tabulation_rows(
     members: pd.DataFrame, adjusted: pd.DataFrame
 ) -> pd.DataFrame:
@@ -508,14 +804,18 @@ def tabulate_uniform_cut(
     labels: Sequence[str] = OUTPUT_LABELS,
     upstream_spec: dict[str, Any] | None = None,
     pending_decisions: Sequence[dict[str, Any]] = (),
+    design: pd.DataFrame | None = None,
 ) -> dict[str, Any]:
     """Tabulate the exercise-2 statistic from per-observation rows.
 
     ``rows`` has the columns of :data:`REQUIRED_COLUMNS` (extra columns are
     ignored).  ``upstream_spec`` (the income-concept specification that
     produced the poverty flags) and ``pending_decisions`` are recorded
-    verbatim.  Returns a JSON-serializable mapping; an undefined cell is
-    reported with its reason, never raised.
+    verbatim.  ``design`` (columns ``stratum`` and ``cluster``) is the
+    sample design the ``full_sample_design`` standard error sums over; it
+    is required when design standard errors use that domain.  Returns a
+    JSON-serializable mapping; an undefined cell is reported with its
+    reason, never raised.
     """
 
     config = TabulationConfig() if config is None else config
@@ -569,8 +869,43 @@ def tabulate_uniform_cut(
         )
     normalized = _normalize(rows)
     masks = _cell_masks(normalized, config)
+    clusters_all = None
+    design_summary: dict[str, Any] = {"domain": config.design_se_domain}
+    if config.design_standard_errors:
+        if config.design_se_domain == "full_sample_design":
+            clusters_all = _design_clusters(design)
+            if clusters_all is None:
+                raise UniformCutTabulationError(
+                    "the full_sample_design standard error needs the "
+                    "design frame (every stratum and cluster of the "
+                    "observation waves' positive-weight persons)"
+                )
+            present = pd.MultiIndex.from_frame(
+                normalized[["stratum", "cluster"]].astype("int64")
+            )
+            outside = present[~present.isin(clusters_all)].unique()
+            if len(outside):
+                raise UniformCutTabulationError(
+                    f"{len(outside)} (stratum, cluster) pairs of the rows "
+                    f"are not in the design frame (first: {list(outside)[:3]})"
+                )
+            sizes = pd.Series(1, index=clusters_all).groupby(level=0).sum()
+        else:
+            sizes = (
+                normalized[["stratum", "cluster"]]
+                .drop_duplicates()
+                .groupby("stratum")["cluster"]
+                .count()
+            )
+        design_summary.update(
+            n_strata=int(len(sizes)),
+            n_clusters=int(sizes.sum()),
+            singleton_strata=[int(s) for s in sizes[sizes < 2].index],
+        )
+    elif design is not None:
+        _design_clusters(design)
     cells = [
-        _cell_entry(normalized, name, mask, config)
+        _cell_entry(normalized, name, mask, config, clusters_all)
         for name, mask in masks.items()
     ]
     per_seed, floors = _floors(normalized, masks, config)
@@ -594,11 +929,22 @@ def tabulate_uniform_cut(
         "statistic_definitions": dict(STATISTIC_DEFINITIONS),
         "upstream_spec": dict(upstream_spec or {}),
         "pending_decisions": [dict(item) for item in pending_decisions],
+        "design": design_summary,
         "input_summary": {
             "n_observations": int(len(normalized)),
             "n_persons": int(normalized["person_id"].nunique()),
             "n_family_units": int(normalized["family_unit_id"].nunique()),
             "n_zero_weight": int((normalized["weight"] == 0).sum()),
+            "marital_status_4": {
+                str(key): int(value)
+                for key, value in normalized["marital_status_4"]
+                .value_counts()
+                .sort_index()
+                .items()
+            },
+            "n_marital_unclassified": int(
+                normalized["marital_status_4"].eq(UNCLASSIFIED).sum()
+            ),
         },
         "cells": cells,
         "undefined_cells": undefined,

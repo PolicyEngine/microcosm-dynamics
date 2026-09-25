@@ -90,6 +90,9 @@ def _row(observation_id: str, **overrides) -> dict:
     row.update(
         observation_id=observation_id,
         family_unit_id=observation_id,
+        # an invented member who turns 67 in income year 2010, so the
+        # primary's 2004 cut start reaches it
+        birth_year=1943,
         income_year=2010,
         member_role="head",
         member_age=2,
@@ -97,11 +100,11 @@ def _row(observation_id: str, **overrides) -> dict:
         member_married_coresident=False,
         spouse_age=None,
         spouse_sex=None,
-        head_age=2,
-        head_sex="male",
-        wife_age=None,
-        wife_sex=None,
-        fu_legal_wife_present=False,
+        fu_head_age=2,
+        fu_head_sex="male",
+        fu_head_spouse_present=False,
+        fu_head_spouse_age=None,
+        fu_head_spouse_sex=None,
         wife_present=False,
         fu_size=1,
         n_children=0,
@@ -314,46 +317,224 @@ def test_negative_wealth_buys_no_annuity():
 
 
 def test_joint_annuity_for_a_married_coresident_member():
-    out = _run(
-        _row(
-            "a",
-            member_married_coresident=True,
-            spouse_age=2,
-            spouse_sex="female",
-            wealth1=1024,
-            fu_size=2,
-            wife_present=True,
-        )
+    row = _row(
+        "a",
+        member_married_coresident=True,
+        spouse_age=2,
+        spouse_sex="female",
+        fu_head_spouse_present=True,
+        fu_head_spouse_age=2,
+        fu_head_spouse_sex="female",
+        wealth1=1024,
+        fu_size=2,
+        wife_present=True,
     )
-    # 0.8 * 1024 / 1.024 = 800
-    assert out.loc["a", "annuity"] == pytest.approx(800.0)
-    assert out.loc["a", "annuity_basis"] == "joint:male2+female2"
-    assert out.loc["a", "threshold"] == 1300.0
+    # the member is the head: both rules price the same couple
+    for lives in ("fu_head_rule", "member_rule"):
+        out = _run(row, annuity_lives=lives)
+        # 0.8 * 1024 / 1.024 = 800
+        assert out.loc["a", "annuity"] == pytest.approx(800.0)
+        assert out.loc["a", "annuity_basis"] == "joint:male2+female2"
+        assert out.loc["a", "threshold"] == 1300.0
 
 
-def test_fu_head_rule_prices_on_the_head_and_legal_wife():
+def test_fu_head_rule_prices_on_the_head_and_legal_spouse():
+    """Section 13: an OFUM woman aged 3 in a family headed by a man aged 2
+    and his legal wife aged 2 (INVENTED; WEALTH1 1,024).
+
+    fu_head_rule (default): joint 1.024, annuity 0.8 * 1024 / 1.024 = 800.
+    member_rule: single life on the female OFUM aged 3, t_p_x = 1, .75, 0
+    -> .75 * .8 = .6, annuity 0.8 * 1024 / .6 = 1,365.33.
+    """
+
+    assert ap.AdjustedPovertySpec().annuity_lives == "fu_head_rule"
     rows = [
         _row(
             "ofum",
             member_role="ofum",
             member_age=3,
             member_sex="female",
-            head_age=2,
-            head_sex="male",
-            wife_age=2,
-            wife_sex="female",
-            fu_legal_wife_present=True,
+            fu_head_age=2,
+            fu_head_sex="male",
+            fu_head_spouse_present=True,
+            fu_head_spouse_age=2,
+            fu_head_spouse_sex="female",
             wife_present=True,
             fu_size=3,
             wealth1=1024,
         )
     ]
-    member = _run(*rows)
-    head = _run(*rows, annuity_lives="fu_head_rule")
-    # member rule: single life on the female OFUM aged 3 ->
-    # t_p_x = 1, .75, 0 -> .75*.8 = .6
-    assert member.loc["ofum", "annuity_factor"] == pytest.approx(0.6)
+    head = _run(*rows)
+    member = _run(*rows, annuity_lives="member_rule")
     assert head.loc["ofum", "annuity_factor"] == pytest.approx(1.024)
+    assert head.loc["ofum", "annuity"] == pytest.approx(800.0)
+    assert member.loc["ofum", "annuity_factor"] == pytest.approx(0.6)
+    assert member.loc["ofum", "annuity"] == pytest.approx(0.8 * 1024 / 0.6)
+
+
+def test_fu_head_rule_with_a_legal_husband():
+    """A female head aged 2 with a legal husband (code 90) aged 2: the
+    builder records him as the head's legal spouse, so the joint price is
+    .5 * (1.152 + .896) = 1.024 (INVENTED)."""
+
+    out = _run(
+        _row(
+            "h",
+            member_role="ofum",
+            member_sex="male",
+            fu_head_sex="female",
+            fu_head_spouse_present=True,
+            fu_head_spouse_age=2,
+            fu_head_spouse_sex="male",
+            wealth1=1024,
+            fu_size=2,
+        )
+    )
+    assert out.loc["h", "annuity_factor"] == pytest.approx(1.024)
+    assert out.loc["h", "annuity_basis"] == "joint:female2+male2"
+
+
+def test_fu_head_rule_needs_the_annuitants_ages():
+    with pytest.raises(ap.AdjustedPovertyError, match="annuitant age"):
+        _run(_row("a", fu_head_age=None))
+    with pytest.raises(ap.AdjustedPovertyError, match="annuitant age"):
+        _run(
+            _row(
+                "a",
+                fu_head_spouse_present=True,
+                fu_head_spouse_sex="female",
+                fu_head_spouse_age=None,
+            )
+        )
+
+
+def test_head_annuity_and_ira_income_is_removed_under_replace():
+    """F4a (INVENTED): money income 1,200 of which the head's annuity and
+    IRA income is 200.
+
+    remove_head: B = 1,200 - 200 = 1,000; keep: B = 1,200; U5 (keep
+    reported asset income) keeps it too.  In the 2013 file (income year
+    2012) HEAD ANNUITIES 150 and HEAD IRAS 50 are both removed.
+    """
+
+    row = _row(
+        "a",
+        head_annuities=200,
+        hw_transfer=200,
+        head_ss=1000,
+        total_family_income=1200,
+    )
+    assert ap.AdjustedPovertySpec().retirement_account_income_rule == (
+        "remove_head"
+    )
+    removed = _run(row)
+    assert removed.loc["a", "retirement_account_income_removed"] == 200
+    assert removed.loc["a", "asset_income_removed"] == 200
+    assert removed.loc["a", "baseline_income"] == pytest.approx(1000.0)
+    kept = _run(row, retirement_account_income_rule="keep")
+    assert kept.loc["a", "retirement_account_income_removed"] == 0
+    assert kept.loc["a", "baseline_income"] == pytest.approx(1200.0)
+    u5 = _run(row, asset_income_rule="keep")
+    assert u5.loc["a", "asset_income_removed"] == 0
+    assert u5.loc["a", "baseline_income"] == pytest.approx(1200.0)
+    with pytest.raises(ap.AdjustedPovertyError):
+        ap.AdjustedPovertySpec(retirement_account_income_rule="remove_all")
+
+
+def test_head_iras_enter_only_where_the_family_file_has_them():
+    thresholds_2012 = ap.PovertyThresholds(
+        weighted_average={2012: _WA_2010},
+        matrix={},
+        provenance={"kind": "invented"},
+    )
+    ssi_2012 = ap.SsiParameters(
+        fbr_individual_monthly={2012: 50.0},
+        fbr_couple_monthly={2012: 75.0},
+        general_income_exclusion_monthly=20.0,
+        earned_income_exclusion_monthly=65.0,
+        earned_income_share_excluded=0.5,
+        resource_limit_individual=2000.0,
+        resource_limit_couple=3000.0,
+        provenance={"kind": "invented"},
+    )
+
+    def run(*rows):
+        return ap.adjusted_incomes(
+            _frame(*rows),
+            ap.AdjustedPovertySpec(real_interest_rate=RATE),
+            data_provenance=ap.INVENTED,
+            life_table=MOCK_LIFE_TABLE,
+            thresholds=thresholds_2012,
+            ssi=ssi_2012,
+        ).set_index("observation_id")
+
+    row_2012 = _row(
+        "b",
+        income_year=2012,
+        head_annuities=150,
+        head_iras=50,
+        hw_transfer=200,
+        total_family_income=1200,
+    )
+    out = run(row_2012)
+    assert out.loc["b", "retirement_account_income_removed"] == 200
+    assert out.loc["b", "baseline_income"] == pytest.approx(1000.0)
+    # a 2012 row without HEAD IRAS is refused (the 2013 file has it)
+    missing = dict(row_2012)
+    missing.pop("head_iras")
+    with pytest.raises(ap.AdjustedPovertyError, match="head_iras"):
+        run(missing)
+    # before 2013 IRA income is inside HEAD ANNUITIES: a nonzero
+    # head_iras there is refused, a missing one is zero
+    with pytest.raises(ap.AdjustedPovertyError, match="head_iras"):
+        _run(_row("c", head_iras=10))
+    out = _run(
+        _row("c", head_annuities=40, hw_transfer=40, total_family_income=40),
+        _row("d", head_iras=None, total_family_income=10),
+    )
+    assert out.loc["c", "retirement_account_income_removed"] == 40
+    assert out.loc["d", "retirement_account_income_removed"] == 0
+
+
+def test_farm_asset_share_imputes_farm_asset_income():
+    """F4b (INVENTED): positive farm income 400 and a farm loss of 300.
+
+    share 0.5 (default): remove 200 of the income (B = 1,400 - 200) and
+    the whole loss (B = 700 + 300 = 1,000); share 0: nothing removed.
+    """
+
+    rows = [
+        _row(
+            "gain",
+            head_farm=400,
+            hw_taxable=400,
+            head_ss=1000,
+            total_family_income=1400,
+        ),
+        _row(
+            "loss",
+            head_farm=-300,
+            hw_taxable=-300,
+            head_ss=1000,
+            total_family_income=700,
+        ),
+    ]
+    assert ap.AdjustedPovertySpec().farm_asset_share == 0.5
+    out = _run(*rows)
+    assert out["farm_asset_income_removed"].to_dict() == {
+        "gain": 200.0,
+        "loss": -300.0,
+    }
+    assert out.loc["gain", "baseline_income"] == pytest.approx(1200.0)
+    assert out.loc["loss", "baseline_income"] == pytest.approx(1000.0)
+    none = _run(*rows, farm_asset_share=0.0)
+    assert (none["farm_asset_income_removed"] == 0).all()
+    assert none.loc["gain", "baseline_income"] == pytest.approx(1400.0)
+    assert none.loc["loss", "baseline_income"] == pytest.approx(700.0)
+    kept = _run(*rows, asset_income_rule="keep")
+    assert (kept["farm_asset_income_removed"] == 0).all()
+    with pytest.raises(ap.AdjustedPovertyError, match="farm_asset_share"):
+        ap.AdjustedPovertySpec(farm_asset_share=1.5)
 
 
 def test_ssi_offset_for_existing_recipients():
@@ -410,6 +591,66 @@ def test_ssi_offset_for_existing_recipients():
     none = _run(*rows, ssi_rule="none")
     assert (none["ssi_offset"] == 0).all()
     assert (none["ssi_new"] == 0).all()
+
+
+def test_cut_start_year_leaves_earlier_age67_years_uncut():
+    """Primary (2004, second referee S5): the 1936 birth year (67 in 2003)
+    is uncut; the unregistered ``cut_start_year=None`` cuts everyone.
+
+    INVENTED rows, threshold T = 1,000 (one person, 65+ row):
+
+    * "1936": B = 1,050 (not poor). ``None``: cut 0.13 * 1,050 = 136.5,
+      R = 913.5 (poor). Primary: 1936 + 67 = 2003 < 2004, no cut,
+      R = 1,050.
+    * "1937": 1937 + 67 = 2004 >= 2004, cut under both: R = 913.5.
+    * "ssi": birth year 1936, SSI recipient with SS 1,000, SSI 100:
+      ``None`` offset (1,000 - 240) - (870 - 240) = 130 (cap 500); the
+      primary has no cut, so no fall in countable income and no offset.
+    """
+
+    rows = [
+        _row("1936", birth_year=1936, head_ss=1050, total_family_income=1050),
+        _row("1937", birth_year=1937, head_ss=1050, total_family_income=1050),
+        _row(
+            "ssi",
+            birth_year=1936,
+            head_ss=1000,
+            head_ssi=100,
+            hw_transfer=100,
+            total_family_income=1100,
+        ),
+    ]
+    assert ap.AdjustedPovertySpec().cut_start_year == 2004
+    everyone = _run(*rows, cut_start_year=None)
+    assert everyone["cut_applies"].all()
+    assert everyone.loc["1936", "cut"] == pytest.approx(136.5)
+    assert everyone.loc["1936", "reform_income"] == pytest.approx(913.5)
+    assert everyone.loc["1936", "poor_reform"]
+    assert everyone.loc["ssi", "ssi_offset"] == pytest.approx(130.0)
+    primary = _run(*rows)
+    assert primary["cut_applies"].to_dict() == {
+        "1936": False,
+        "1937": True,
+        "ssi": False,
+    }
+    assert primary.loc["1936", "cut"] == 0.0
+    assert primary.loc["1936", "reform_income"] == pytest.approx(1050.0)
+    assert not primary.loc["1936", "poor_reform"]
+    assert primary.loc["1937", "reform_income"] == pytest.approx(913.5)
+    assert primary.loc["1937", "poor_reform"]
+    assert primary.loc["ssi", "ssi_offset"] == 0.0
+    assert primary.loc["ssi", "reform_income"] == pytest.approx(
+        primary.loc["ssi", "baseline_income"]
+    )
+    # full static recomputation: an uncut unit cannot become newly eligible
+    u3 = _run(*rows, ssi_rule="full_static_recomputation")
+    assert (u3.loc[["1936", "ssi"], "ssi_new"] == 0).all()
+
+
+@pytest.mark.parametrize("value", [True, "2004", 1989, 2031, 2004.0])
+def test_cut_start_year_must_be_a_year_or_none(value):
+    with pytest.raises(ap.AdjustedPovertyError, match="cut_start_year"):
+        ap.AdjustedPovertySpec(cut_start_year=value)
 
 
 def test_full_static_recomputation_enrols_newly_eligible_units():
@@ -539,6 +780,16 @@ def test_spec_validation_and_pending_decisions():
     assert spec.real_interest_rate == 0.03
     assert spec.ssi_rule == "offset_existing_recipients"
     decisions = {item.field: item for item in ap.pending_decisions()}
+    # the referee's 2 percent sensitivity (R6) and the new F4a/F4b fields
+    assert decisions["real_interest_rate"].alternatives == (0.02,)
+    assert "administrative costs" in (
+        decisions["real_interest_rate"].default_basis
+    )
+    assert decisions["retirement_account_income_rule"].alternatives == (
+        "keep",
+    )
+    assert decisions["farm_asset_share"].alternatives == (0.0,)
+    assert decisions["annuity_lives"].alternatives == ("member_rule",)
     assert decisions["ssi_rule"].awaiting.startswith("Max")
     assert "d189" in decisions["ssi_rule"].awaiting
     for name, item in decisions.items():
@@ -558,3 +809,52 @@ def test_rows_are_validated():
         _run(_row("a"), _row("a"))
     with pytest.raises(ap.AdjustedPovertyError, match="member_role"):
         _run(_row("a", member_role="lodger"))
+
+
+def test_u1_cut_follows_each_members_age67_year_within_a_family():
+    """Specification section 9: B, R and T are family-level under
+    ``fu_head_rule`` except in U4 and under U1, where the primary's 2004
+    cut start follows each member's age-67 year.  Regression (independent
+    review, 2026-09-24): the exception was not stated.
+
+    INVENTED: one family unit "f" with family Social Security 1,000 and
+    money income 1,000 holds two cohort members, born 1936 (the head) and
+    1938 (the wife), as U1 observes them in income year 2004.  Primary
+    (start 2004): 1936 + 67 = 2003 < 2004, so the head's observation is
+    uncut (R = 1,000); 1938 + 67 = 2005 >= 2004, so the wife's is cut
+    (0.13 * 1,000 = 130, R = 870).  ``cut_start_year=None``: both are cut,
+    R = 870.  B and T stay equal across the two members.
+    """
+
+    rows = [
+        _row(
+            "head",
+            family_unit_id="f",
+            birth_year=1936,
+            head_ss=1000,
+            total_family_income=1000,
+            fu_size=2,
+            wife_present=True,
+        ),
+        _row(
+            "wife",
+            family_unit_id="f",
+            member_role="wife",
+            member_sex="female",
+            birth_year=1938,
+            head_ss=1000,
+            total_family_income=1000,
+            fu_size=2,
+            wife_present=True,
+        ),
+    ]
+    everyone = _run(*rows, cut_start_year=None)
+    assert everyone["reform_income"].tolist() == pytest.approx([870.0, 870.0])
+    primary = _run(*rows)
+    assert primary["cut_applies"].to_dict() == {"head": False, "wife": True}
+    assert primary.loc["head", "reform_income"] == pytest.approx(1000.0)
+    assert primary.loc["wife", "reform_income"] == pytest.approx(870.0)
+    for column in ("baseline_income", "threshold", "annuity"):
+        assert (
+            primary.loc["head", column] == primary.loc["wife", column]
+        ), column

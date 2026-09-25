@@ -23,21 +23,41 @@ primary, and :func:`pending_decisions` lists them):
   unit (head and wife rent, dividends, interest, trusts/royalties and the
   asset part of business income; the OFUM asset total under the FU basis)
   is removed and the annuity added.  ``keep`` (row U5): the annuity is
-  added and reported asset income kept.
+  added and reported asset income kept, and nothing below is removed.
+  Under ``replace`` two more items go (specification section 4):
+  ``retirement_account_income_rule="remove_head"`` (F4a) removes the
+  head's income from annuities and IRAs (``HEAD ANNUITIES``, "Head's
+  Income from Annuities and IRAs" in the 2005-2011 codebooks; ``HEAD
+  ANNUITIES`` plus ``HEAD IRAS`` in 2013), because WEALTH1 holds the
+  balances that produce it (W22, "private annuities or IRAs") and they
+  are annuitized; ``keep`` leaves it in income.  The wife's and the
+  OFUMs' combined retirement items stay in every wave.
+  ``farm_asset_share`` (F4b, 0.5) imputes the asset part of farm income
+  by the PSID's business convention: that share of positive farm income,
+  and the whole of a farm loss when the share is positive, is removed;
+  0 keeps farm income whole.
 * **Annuity** (F5-F9).  ``annuitized_share`` (0.8) times the FU's
   imputed wealth excluding home equity (WEALTH1), floored at zero (F9),
   divided by the price of a real, level annuity of 1 per year:
   annuity-immediate (payments at the end of each year the annuitant
   survives) at ``real_interest_rate`` (3 percent: the real return on
-  government bonds after 2001 that the plan reads on the Report's p. 22,
-  a choice, not a known DYNASIM annuity parameter), no load, on the NCHS
-  2000 life tables by sex (``mortality_basis``; row U9 the SSA period
-  life table for 2004).
-  A married member with a co-resident spouse gets a joint annuity that
-  pays 1 while both live and ``survivor_share`` (0.5) to the survivor;
-  under independent lives its price is
+  government bonds after 2001 that the Report assumes for DC and IRA
+  accumulation, p. 22; the same paragraph subtracts 1 percentage point
+  for administrative costs, so 2 percent is a reported sensitivity;
+  neither is stated to be DYNASIM's annuity-pricing rate), no load, on
+  the NCHS 2000 life tables by sex (``mortality_basis``; row U9 the SSA
+  period life table for 2004).
+  ``annuity_lives="fu_head_rule"`` (default, the referee's Q1 answer)
+  prices the family's WEALTH1 on the lives of its main owners: a joint
+  annuity on the family head and the head's co-resident legal spouse
+  (code 20 or 90) that pays 1 while both live and ``survivor_share``
+  (0.5) to the survivor, a single life on the head otherwise, so every
+  member of a family unit gets the same annuity.  ``member_rule`` prices
+  it on the member and a co-resident legal spouse (joint) or the member
+  alone.  Under independent lives the joint price is
   ``s*a_x + s*a_y + (1-2s)*a_xy`` (``0.5*(a_x + a_y)`` at s = 0.5).
-  Anyone else gets a single-life annuity on the member's age and sex.
+  Ages are the builder's income-year ages
+  (:mod:`populace_dynamics.cohorts.age67`, ``annuitant_age_source``).
 * **Threshold** (F10).  ``census_weighted_average_65plus``: the Census
   weighted-average poverty threshold of the income year for the unit's
   size, using the "65 years and over" column for sizes 1 and 2 (the
@@ -49,16 +69,28 @@ primary, and :func:`pending_decisions` lists them):
   Census thresholds are **not captured** in this repository yet (see
   :func:`load_poverty_thresholds`).
 * **Cut** (F11).  Reform income subtracts ``cut_rate`` (0.13) times all
-  Social Security of the unit; there is no behavioural response.
+  Social Security of the unit; there is no behavioural response (Report
+  p. 37, fn. 19, as quoted in the cleared exercise-2 definitions
+  extract).  ``cut_start_year`` (default 2004, the Report's "cut
+  immediately (beginning in 2004)", p. 37, cleared extract): an
+  observation is cut only when the year its member turns 67 (birth year
+  + 67) is at or after it, so every U0 and U0-F observation is cut and,
+  under U1, the 1936 birth year (67 in 2003, observed at 68) is not.
+  ``None`` (every observation cut, the u1-draft-4 primary) is an
+  unregistered alternative; row U6, which carried 2004 on U1, was
+  withdrawn in u1-draft-5 (second referee S5).  Max's confirmation of
+  the scorecard's "from 2004" wording is pending (plan section 10,
+  decision 8).
 * **SSI response** (F13, pending Max, decision record d189).
   ``offset_existing_recipients`` (proposed primary): for each SSI unit
   with baseline SSI, SSI rises by the fall in countable Social Security
   income (after the $20 monthly general income exclusion), capped so SSI
   does not exceed the federal benefit rate (FBR); nobody newly enrols.
-  ``none`` (row U2).  ``full_static_recomputation`` (row U3, an upper
-  bound): the offset, plus every head/wife unit that the cut makes newly
-  income-eligible and whose resource proxy passes the resource limit
-  takes up SSI.
+  ``none`` (row U2).  ``full_static_recomputation`` (row U3, the largest
+  SSI response of the three registered rules, not a bound on DYNASIM's
+  simulation): the offset, plus every head/wife unit that the cut makes
+  newly income-eligible and whose resource proxy passes the resource
+  limit takes up SSI.
 * **Poverty**: poor when income is below the threshold (Census
   convention); baseline and reform status per row.
 
@@ -99,6 +131,10 @@ from populace_dynamics.data import family_income
 __all__ = [
     "ANNUITY_LIVES",
     "ASSET_INCOME_RULES",
+    "CUT_START_YEAR_RULE",
+    "FARM_LOSS_RULE",
+    "RETIREMENT_ACCOUNT_INCOME_CONCEPTS",
+    "RETIREMENT_ACCOUNT_INCOME_RULES",
     "DATA_PROVENANCES",
     "INCOME_UNITS",
     "INVENTED",
@@ -126,6 +162,7 @@ __all__ = [
     "annuity_factor_joint",
     "annuity_factor_single",
     "countable_income",
+    "cut_applies",
     "load_life_table",
     "load_nchs_2000_life_table",
     "load_poverty_thresholds",
@@ -189,15 +226,42 @@ INCOME_UNITS: dict[str, str] = {
     ),
 }
 ANNUITY_LIVES: dict[str, str] = {
+    "fu_head_rule": (
+        "joint-and-survivor on the FU head and the head's co-resident legal "
+        "spouse (code 20 or 90) if present, else single life on the head: "
+        "the family's wealth priced on its main owners (referee Q1)"
+    ),
     "member_rule": (
         "joint-and-survivor on the member and a co-resident legal spouse "
-        "if married, else single life on the member (F6 as written)"
-    ),
-    "fu_head_rule": (
-        "joint-and-survivor on the FU head and a co-resident legal wife if "
-        "present, else single life on the head (not registered)"
+        "if married, else single life on the member (F6 as the plan wrote "
+        "it)"
     ),
 }
+RETIREMENT_ACCOUNT_INCOME_RULES: dict[str, str] = {
+    "remove_head": (
+        "under asset_income_rule 'replace', remove the head's income from "
+        "annuities and IRAs (HEAD ANNUITIES; plus HEAD IRAS in 2013), whose "
+        "balances WEALTH1 annuitizes (F4a, referee R3)"
+    ),
+    "keep": "keep the head's annuity and IRA income (u1-draft-3 behaviour)",
+}
+#: The head's annuity and IRA income items (``head_iras`` exists in the
+#: 2013 family file only; earlier files fold IRA income into
+#: ``head_annuities``, "Head's Income from Annuities and IRAs").
+RETIREMENT_ACCOUNT_INCOME_CONCEPTS: tuple[str, ...] = (
+    "head_annuities",
+    "head_iras",
+)
+#: How a farm loss is treated under ``farm_asset_share`` (F4b).
+FARM_LOSS_RULE = "removed_whole_when_share_positive"
+#: The rule ``cut_start_year`` applies (F11 primary).
+CUT_START_YEAR_RULE = "cut_when_birth_year_plus_67_at_or_after_start"
+#: Income years whose family file carries ``head_iras``.
+_HEAD_IRA_INCOME_YEARS: frozenset[int] = frozenset(
+    wave - 1
+    for wave in family_income.INCOME_WAVES
+    if "head_iras" in family_income.income_variables(wave)
+)
 MORTALITY_BASES: dict[str, str] = {
     "nchs_2000": "NCHS United States Life Tables, 2000, by sex (F8)",
     "ssa_period_2004": (
@@ -228,7 +292,9 @@ SSI_RULES: dict[str, str] = {
     "none": "no SSI response (row U2)",
     "full_static_recomputation": (
         "the offset plus take-up by every newly income- and "
-        "resource-eligible head/wife unit (row U3, an upper bound)"
+        "resource-eligible head/wife unit (row U3: the largest SSI "
+        "response of the three registered rules, not a bound on "
+        "DYNASIM's simulation)"
     ),
 }
 SSI_DEEMING: dict[str, str] = {
@@ -309,6 +375,7 @@ class AdjustedPovertySpec:
     """Every income-concept choice; defaults are the plan's primary."""
 
     cut_rate: float = 0.13
+    cut_start_year: int | None = 2004
     annuitized_share: float = 0.8
     real_interest_rate: float = 0.03
     annuity_timing: str = "immediate"
@@ -318,7 +385,9 @@ class AdjustedPovertySpec:
     terminal_closure: str = "table_end"
     asset_income_rule: str = "replace"
     income_unit: str = "family_unit"
-    annuity_lives: str = "member_rule"
+    retirement_account_income_rule: str = "remove_head"
+    farm_asset_share: float = 0.5
+    annuity_lives: str = "fu_head_rule"
     negative_wealth_rule: str = "annuity_floored_at_zero"
     threshold_rule: str = "census_weighted_average_65plus"
     ssi_rule: str = "offset_existing_recipients"
@@ -331,6 +400,7 @@ class AdjustedPovertySpec:
             ("annuitized_share", 0.0, 1.0),
             ("survivor_share", 0.0, 1.0),
             ("annuity_load", 0.0, 1.0),
+            ("farm_asset_share", 0.0, 1.0),
         ):
             value = getattr(self, name)
             if isinstance(value, bool) or not (low <= float(value) <= high):
@@ -340,6 +410,16 @@ class AdjustedPovertySpec:
         rate = self.real_interest_rate
         if isinstance(rate, bool) or not (-0.5 < float(rate) < 1.0):
             raise AdjustedPovertyError("real_interest_rate out of range")
+        start = self.cut_start_year
+        if start is not None and (
+            isinstance(start, bool)
+            or not isinstance(start, int)
+            or not 1990 <= start <= 2030
+        ):
+            raise AdjustedPovertyError(
+                "cut_start_year must be None or an integer year in "
+                "1990-2030"
+            )
         _choice(self.annuity_timing, ANNUITY_TIMINGS, "annuity_timing")
         _choice(self.mortality_basis, MORTALITY_BASES, "mortality_basis")
         _choice(self.terminal_closure, TERMINAL_CLOSURES, "terminal_closure")
@@ -347,6 +427,11 @@ class AdjustedPovertySpec:
             self.asset_income_rule, ASSET_INCOME_RULES, "asset_income_rule"
         )
         _choice(self.income_unit, INCOME_UNITS, "income_unit")
+        _choice(
+            self.retirement_account_income_rule,
+            RETIREMENT_ACCOUNT_INCOME_RULES,
+            "retirement_account_income_rule",
+        )
         _choice(self.annuity_lives, ANNUITY_LIVES, "annuity_lives")
         _choice(
             self.negative_wealth_rule,
@@ -384,6 +469,7 @@ class PendingDecision:
 
 _PLAN = "plan proposal (critical-path-uniform-cut-20260923.md section 7)"
 _BUILDER = "builder choice; the plan is silent"
+_REFEREE = "referee (boomers2004-referee-20260924.md)"
 _MAX_D189 = "Max (cos decision d189, open)"
 _FREEZE = "U1 specification freeze (Max's ratification by merge)"
 
@@ -407,11 +493,31 @@ def pending_decisions() -> tuple[PendingDecision, ...]:
             "cut_rate",
             spec.cut_rate,
             (),
-            "plan section 2, citing Report p. 22 (OCACT: benefits reduced "
-            "immediately by 13 "
-            "percent); the scenario's start year and coverage are unread "
-            "(plan section 10 decisions 2 and 8)",
+            "Report p. 22 (OCACT estimates 'that benefits would need to be "
+            "reduced immediately by 13 percent') and p. 37 ('cut "
+            "immediately (beginning in 2004) by 13 percent', cleared "
+            "exercise-2 definitions extract); the Report does not say "
+            "which benefit types the cut covers or whether SSI is "
+            "recomputed",
             _FREEZE,
+        ),
+        PendingDecision(
+            "cut_start_year",
+            spec.cut_start_year,
+            (None,),
+            "second referee S5 (boomers2004-referee-2-20260924.md): the "
+            "Report cuts 'current and future benefits ... immediately "
+            "(beginning in 2004)' (p. 37; also p. 44) and analyses each "
+            "person 'when they reach age 67' (p. 24), both as quoted in the "
+            "cleared exercise-2 definitions extract; the cut applies when "
+            "the member's age-67 year (birth year + 67) is 2004 or later, "
+            "so every U0 and U0-F observation is cut and only U1's 1936 "
+            "birth year (67 in 2003) is not; None (every observation cut, "
+            "the u1-draft-4 primary) has no source and is not registered; "
+            "the Report gives no month within 2004",
+            "Max (plan section 10 decision 8: confirming the scorecard's "
+            "'from 2004' wording; not yet on a decision card) and the "
+            "specification freeze",
         ),
         PendingDecision(
             "income_unit",
@@ -429,6 +535,32 @@ def pending_decisions() -> tuple[PendingDecision, ...]:
             _FREEZE,
         ),
         PendingDecision(
+            "retirement_account_income_rule",
+            spec.retirement_account_income_rule,
+            ("keep",),
+            f"{_REFEREE} R3: HEAD ANNUITIES is 'Head's Income from "
+            "Annuities and IRAs' in the 2005-2011 codebooks (HEAD "
+            "ANNUITIES plus HEAD IRAS in 2013); WEALTH1 includes the "
+            "balances ('private annuities or IRAs', W22) and annuitizes "
+            "them, and the Report contrasts its annuity with Census "
+            "income, which counts withdrawals (p. 24); applies only under "
+            "asset_income_rule 'replace'",
+            _FREEZE,
+        ),
+        PendingDecision(
+            "farm_asset_share",
+            spec.farm_asset_share,
+            (0.0,),
+            f"{_REFEREE} Q2/R4: the Report's financial assets include farm "
+            "equity (p. 22); the PSID reports one farm item with labor and "
+            "asset portions and splits a working owner's business income "
+            "equally, coding a loss wholly as asset income (codebook text "
+            "for ER52216); the same convention imputes the asset part of "
+            "farm income (0 keeps farm income whole, the u1-draft-3 "
+            "behaviour); applies only under asset_income_rule 'replace'",
+            _FREEZE,
+        ),
+        PendingDecision(
             "annuitized_share",
             spec.annuitized_share,
             (),
@@ -439,11 +571,14 @@ def pending_decisions() -> tuple[PendingDecision, ...]:
         PendingDecision(
             "real_interest_rate",
             spec.real_interest_rate,
-            (),
-            f"{_PLAN} F7 (the plan cites Report p. 22: 3.0 percent real "
-            "return on "
-            "government bonds after 2001); not a known DYNASIM annuity "
-            "parameter",
+            (0.02,),
+            f"{_PLAN} F7: Report p. 22 assumes a 3.0 percent real return "
+            "on government bonds after 2001 for DC and IRA accumulation, "
+            "and the same paragraph subtracts 1 percentage point from "
+            "stock and bond returns for administrative costs (net 2 "
+            "percent); neither is stated to be DYNASIM's annuity-pricing "
+            f"rate; 0.02 is a reported, unscored sensitivity ({_REFEREE} "
+            "R6)",
             _FREEZE,
         ),
         PendingDecision(
@@ -486,10 +621,13 @@ def pending_decisions() -> tuple[PendingDecision, ...]:
         PendingDecision(
             "annuity_lives",
             spec.annuity_lives,
-            ("fu_head_rule",),
-            f"{_PLAN} F6 as written (member's age and sex if non-married; "
-            "joint if married); the plan does not say whose lives price "
-            "an OFUM member's FU wealth",
+            ("member_rule",),
+            f"{_REFEREE} Q1/R7: WEALTH1 is the family unit's wealth, "
+            "which the head and the head's spouse mostly own, so it is "
+            "priced on their lives (joint on the head and a co-resident "
+            "legal spouse, code 20 or 90, else the head); the rules "
+            "coincide for heads and legal wives and differ for OFUMs and "
+            "cohabiting partners; member_rule is plan F6 as written",
             _FREEZE,
         ),
         PendingDecision(
@@ -512,7 +650,13 @@ def pending_decisions() -> tuple[PendingDecision, ...]:
             spec.ssi_deeming,
             ("recipients_only",),
             f"{_BUILDER} (PSID reports SSI and Social Security by head, "
-            "wife and OFUM total, not by SSI unit)",
+            "wife and OFUM total, not by SSI unit); endorsed as the "
+            f"default by the {_REFEREE} (Q3): under 20 CFR 416.1163 "
+            "nothing is deemed when the ineligible spouse's income after "
+            "allocations is at most the couple-minus-individual FBR, so "
+            "full attribution can only overstate the offset; "
+            "recipients_only errs the other way, and the two bracket the "
+            "rule",
             _FREEZE,
         ),
         PendingDecision(
@@ -958,17 +1102,18 @@ REQUIRED_COLUMNS: tuple[str, ...] = (
     "observation_id",
     "family_unit_id",
     "income_year",
+    "birth_year",
     "member_role",
     "member_age",
     "member_sex",
     "member_married_coresident",
     "spouse_age",
     "spouse_sex",
-    "head_age",
-    "head_sex",
-    "wife_age",
-    "wife_sex",
-    "fu_legal_wife_present",
+    "fu_head_age",
+    "fu_head_sex",
+    "fu_head_spouse_present",
+    "fu_head_spouse_age",
+    "fu_head_spouse_sex",
     "wife_present",
     "fu_size",
     "n_children",
@@ -983,6 +1128,7 @@ REQUIRED_COLUMNS: tuple[str, ...] = (
     "wife_tanf",
     "head_other_welfare",
     "wife_other_welfare",
+    "head_annuities",
     "census_needs_standard",
     "wealth1",
     "vehicles",
@@ -1021,6 +1167,56 @@ def _validate_provenance(
             "rows built from staged PSID files cannot be processed as "
             "invented data; a real-data run needs the #42 registration"
         )
+
+
+def _head_retirement_account_income(rows: pd.DataFrame) -> np.ndarray:
+    """The head's annuity and IRA income per row (F4a).
+
+    ``head_annuities`` in every wave plus ``head_iras`` where the wave's
+    family file carries it (2013, income year 2012); a row of such a year
+    without it, or a row of another year with it nonzero, is refused.
+    """
+
+    total = rows["head_annuities"].to_numpy(dtype=np.float64)
+    years = rows["income_year"].astype("int64").to_numpy()
+    with_iras = np.isin(years, sorted(_HEAD_IRA_INCOME_YEARS))
+    if "head_iras" in rows.columns:
+        iras = pd.to_numeric(rows["head_iras"], errors="raise")
+        missing = iras.isna().to_numpy()
+        if (missing & with_iras).any():
+            raise AdjustedPovertyError(
+                "head_iras missing for an income year whose family file "
+                "carries HEAD IRAS"
+            )
+        iras = iras.fillna(0.0).to_numpy(dtype=np.float64)
+        if ((iras != 0) & ~with_iras).any():
+            raise AdjustedPovertyError(
+                "head_iras nonzero for an income year whose family file "
+                "has no HEAD IRAS item"
+            )
+        total = total + iras
+    elif with_iras.any():
+        raise AdjustedPovertyError(
+            "rows of income year 2012 need head_iras (HEAD IRAS-2012)"
+        )
+    return total
+
+
+def _farm_asset_income(
+    rows: pd.DataFrame, spec: AdjustedPovertySpec
+) -> np.ndarray:
+    """The imputed asset part of head and wife farm income (F4b).
+
+    ``farm_asset_share`` of positive farm income; the whole of a farm
+    loss when the share is positive (the PSID codes a business loss wholly
+    in the asset part, codebook text for ER52216); nothing at share 0.
+    """
+
+    farm = rows["head_farm"].to_numpy(dtype=np.float64)
+    share = float(spec.farm_asset_share)
+    if share == 0.0:
+        return np.zeros(len(rows), dtype=np.float64)
+    return np.where(farm > 0, share * farm, farm)
 
 
 def _unit_frame(rows: pd.DataFrame, spec: AdjustedPovertySpec) -> dict:
@@ -1071,10 +1267,13 @@ def _annuity_factors(
                 (str(row.spouse_sex), _int_or_none(row.spouse_age)),
             )
         else:
-            joint = bool(row.fu_legal_wife_present)
+            joint = bool(row.fu_head_spouse_present)
             lives = (
-                (str(row.head_sex), _int_or_none(row.head_age)),
-                (str(row.wife_sex), _int_or_none(row.wife_age)),
+                (str(row.fu_head_sex), _int_or_none(row.fu_head_age)),
+                (
+                    str(row.fu_head_spouse_sex),
+                    _int_or_none(row.fu_head_spouse_age),
+                ),
             )
         (sex_1, age_1), (sex_2, age_2) = lives
         if age_1 is None or (joint and age_2 is None):
@@ -1115,11 +1314,26 @@ def _int_or_none(value: Any) -> int | None:
     return int(value)
 
 
+def cut_applies(rows: pd.DataFrame, spec: AdjustedPovertySpec) -> np.ndarray:
+    """Whether the cut reaches each observation (``cut_start_year``).
+
+    Every observation when ``cut_start_year`` is ``None``; otherwise
+    those whose member turns 67 (``birth_year + 67``) in or after the
+    start year.
+    """
+
+    if spec.cut_start_year is None:
+        return np.ones(len(rows), dtype=bool)
+    age67_year = rows["birth_year"].to_numpy(dtype=np.int64) + 67
+    return age67_year >= int(spec.cut_start_year)
+
+
 def _ssi_response(
     rows: pd.DataFrame,
     spec: AdjustedPovertySpec,
     units: dict,
     ssi: SsiParameters | None,
+    cut_rates: np.ndarray,
 ) -> tuple[np.ndarray, np.ndarray]:
     n = len(rows)
     offset = np.zeros(n, dtype=np.float64)
@@ -1129,8 +1343,8 @@ def _ssi_response(
     if ssi is None:
         raise AdjustedPovertyError(f"ssi_rule {spec.ssi_rule} needs SSI data")
     general = _MONTHS * ssi.general_income_exclusion_monthly
-    cut = spec.cut_rate
     for i, row in enumerate(rows.itertuples(index=False)):
+        cut = float(cut_rates[i])
         year = int(row.income_year)
         head_ssi, wife_ssi = float(row.head_ssi), float(row.wife_ssi)
         hw_ssi = head_ssi + wife_ssi
@@ -1196,9 +1410,12 @@ def adjusted_incomes(
     and the annuitant and threshold attributes.  Returns one row per input
     row with ``observation_id``, ``family_unit_id``, ``income_basis``
     (``family_unit`` or ``head_wife``), ``money_income``,
-    ``asset_income_reported``, ``asset_income_removed``,
+    ``asset_income_reported``, ``retirement_account_income_removed``,
+    ``farm_asset_income_removed``, ``asset_income_removed`` (their sum
+    with the reported asset income under ``replace``),
     ``financial_assets``, ``annuity_basis``, ``annuity_factor``,
-    ``annuity``, ``baseline_income``, ``social_security``, ``cut``,
+    ``annuity``, ``baseline_income``, ``social_security``,
+    ``cut_applies``, ``cut``,
     ``ssi_offset``, ``ssi_new``, ``reform_income``, ``unit_size``,
     ``threshold``, ``threshold_cell``, ``poor_baseline`` and
     ``poor_reform``.
@@ -1248,14 +1465,24 @@ def adjusted_incomes(
     if not np.all(factors > 0):
         raise AdjustedPovertyError("non-positive annuity factor")
     annuity = annuitized / factors
+    replace = spec.asset_income_rule == "replace"
+    zeros = np.zeros(len(rows), dtype=np.float64)
+    retirement_removed = (
+        _head_retirement_account_income(rows)
+        if replace and spec.retirement_account_income_rule == "remove_head"
+        else zeros
+    )
+    farm_removed = _farm_asset_income(rows, spec) if replace else zeros
     removed = (
-        units["asset_income"]
-        if spec.asset_income_rule == "replace"
-        else np.zeros(len(rows))
+        (units["asset_income"] if replace else zeros)
+        + retirement_removed
+        + farm_removed
     )
     baseline = units["money"] - removed + annuity
-    cut = spec.cut_rate * units["social_security"]
-    offset, new = _ssi_response(rows, spec, units, ssi)
+    applies = cut_applies(rows, spec)
+    cut_rates = np.where(applies, spec.cut_rate, 0.0)
+    cut = cut_rates * units["social_security"]
+    offset, new = _ssi_response(rows, spec, units, ssi, cut_rates)
     reform = baseline - cut + offset + new
     thresholds_out = np.zeros(len(rows), dtype=np.float64)
     cells: list[str] = []
@@ -1285,6 +1512,8 @@ def adjusted_incomes(
             "income_basis": np.where(units["fu"], "family_unit", "head_wife"),
             "money_income": units["money"],
             "asset_income_reported": units["asset_income"],
+            "retirement_account_income_removed": retirement_removed,
+            "farm_asset_income_removed": farm_removed,
             "asset_income_removed": removed,
             "financial_assets": assets,
             "annuity_basis": bases,
@@ -1292,6 +1521,7 @@ def adjusted_incomes(
             "annuity": annuity,
             "baseline_income": baseline,
             "social_security": units["social_security"],
+            "cut_applies": applies,
             "cut": cut,
             "ssi_offset": offset,
             "ssi_new": new,
