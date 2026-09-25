@@ -1,4 +1,4 @@
-"""Capture the parameters Track U's income concept reads (plan item U3).
+"""Capture the parameters Tracks U and M read (plan items U3 and M2).
 
 Two captures, each written to ``data/external`` and pinned by SHA-256 in
 :mod:`populace_dynamics.estimates.adjusted_poverty`:
@@ -29,11 +29,32 @@ Two captures, each written to ``data/external`` and pinned by SHA-256 in
   year (:func:`parse_threshold_rows`, :func:`check_matrix_moves_together`).
   Re-running it on the committed workbooks reproduces the committed
   capture byte for byte (``tests/track_u/test_census_threshold_capture.py``).
+* ``--track-m-census-dir DIR`` writes ``census_poverty_thresholds_2003_2022.json``
+  for Track M (DynaSim exercise 4, the minimum benefit) from the twenty
+  workbooks ``thresh03.xlsx`` ... ``thresh22.xlsx``: the nine above,
+  ``thresh03.xlsx`` (staged under d194 with them) and ``thresh13.xlsx`` ...
+  ``thresh22.xlsx`` (fetched on 2026-09-25 by the orchestrating Claude
+  Code session after Max approved the download in cos decision d279).
+  All twenty are committed in ``data/external/
+  census_poverty_thresholds/`` and pinned in :data:`CENSUS_WORKBOOK_SHA256`.
+  The same parser reads them.  Inspected cell by cell (2026-09-25), the
+  2013-2022 workbooks print the 2003-2012 table in the same cells with the
+  same labels; the parser accepts exactly two departures, each pinned to
+  its year (:data:`EMPTY_EXTRA_SHEETS`, :data:`WEIGHTED_AVERAGE_UNIT`):
+  ``thresh19.xlsx`` carries two further worksheets, ``Sheet2`` and
+  ``Sheet3``, that must be empty, and ``thresh22.xlsx`` prints every
+  weighted average rounded to $10 while its matrix cells stay whole
+  dollars.  Track M reads the weighted average for one person aged 65 and
+  over (``one_65_plus``) as printed; the pin is
+  ``min_benefit_track_m.thresholds.TRACK_M_THRESHOLDS_SHA256``, and
+  ``tests/min_benefit_track_m/test_threshold_capture.py`` re-runs the
+  capture and compares it with the workbook cells.
 
 Usage::
 
     python scripts/capture_track_u_parameters.py --ssi [--pe-us-dir DIR]
     python scripts/capture_track_u_parameters.py --census-dir DIR
+    python scripts/capture_track_u_parameters.py --track-m-census-dir DIR
 """
 
 from __future__ import annotations
@@ -56,6 +77,9 @@ if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
 from populace_dynamics.estimates import adjusted_poverty  # noqa: E402
+from populace_dynamics.min_benefit_track_m import (  # noqa: E402
+    thresholds as track_m_thresholds,
+)
 
 #: Income years the exact-age primary and the pooled row observe.
 YEARS: tuple[int, ...] = tuple(range(2004, 2013))
@@ -196,11 +220,18 @@ def build_ssi_capture(pe_us_dir: Path | None = None) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 #: The committed copies of the Census workbooks the capture reads.
 CENSUS_WORKBOOK_DIR = ROOT / "data" / "external" / "census_poverty_thresholds"
-#: SHA-256 of each Census workbook the capture reads: the files staged on
-#: 2026-09-24 under cos decision d194 from :data:`CENSUS_URL_BASE` and
-#: committed in :data:`CENSUS_WORKBOOK_DIR`.  A workbook with other bytes
-#: is refused before it is parsed.
+#: SHA-256 of each Census workbook the captures read, from
+#: :data:`CENSUS_URL_BASE` and committed in :data:`CENSUS_WORKBOOK_DIR`:
+#: ``thresh03.xlsx`` ... ``thresh12.xlsx`` fetched on 2026-09-24 under cos
+#: decision d194 and ``thresh13.xlsx`` ... ``thresh22.xlsx`` on 2026-09-25
+#: under cos decision d279, each by the orchestrating Claude Code session
+#: after Max approved the download (the ``SHA256SUMS`` that session wrote
+#: lists the same twenty digests).  A workbook with other bytes is refused
+#: before it is parsed.
 CENSUS_WORKBOOK_SHA256: dict[str, str] = {
+    "thresh03.xlsx": (
+        "f91f2a70062c52b21391e74dc0486bf9adc898c8c923212ecaa7db7a0db24895"
+    ),
     "thresh04.xlsx": (
         "9cae1bcff6c3ff80faedaa11c28068d9a640f10f5a7679e3cfb0430779bbb5b8"
     ),
@@ -228,7 +259,50 @@ CENSUS_WORKBOOK_SHA256: dict[str, str] = {
     "thresh12.xlsx": (
         "26da2dc48de0a0799905c15aa6634d5b942dd57b801bdaf9564eacf4cc365f36"
     ),
+    "thresh13.xlsx": (
+        "4114b7a98043842fc6ec9cc688d6918ce1461f84ed5fc96ffe0c8a3076083f2b"
+    ),
+    "thresh14.xlsx": (
+        "c9fad68272d238036bf01e24ea33c1de97f71c6d56b310276f173b5b21153ce8"
+    ),
+    "thresh15.xlsx": (
+        "9658e7c7fa63fe25a396f1abfcc9c90db385edbeb19ffdabf5e6d14eaf650e41"
+    ),
+    "thresh16.xlsx": (
+        "5d16803e3904430564b7df980b7968563634a9e0619b96bcbc079b1dcb854e45"
+    ),
+    "thresh17.xlsx": (
+        "edf7af0544b48cd8de86cfd12d018c5dcc596677cc9f532c070eb18262db3e65"
+    ),
+    "thresh18.xlsx": (
+        "f1abec2ee137a39e04466ec5cf189412228d2c1e5a2d56fd5195bb90ca6ffa55"
+    ),
+    "thresh19.xlsx": (
+        "e9252e05ef17d0787243eeadec1228524170211f57ac3b58efe32ee909e8ff57"
+    ),
+    "thresh20.xlsx": (
+        "5739e473550312b7663479711f41d254b477a7d020d92847cb6164dc506767f8"
+    ),
+    "thresh21.xlsx": (
+        "9399f4564ed22776f286fbceb72bab288f0cf0c1a70181f3805b3321332734e5"
+    ),
+    "thresh22.xlsx": (
+        "5874eb8ecc525f5d26daab34b81165416c669daf62771e65ef52847bd3cbf89f"
+    ),
 }
+#: Worksheets a workbook may carry beyond the table's, by income year; each
+#: must be empty.  Only ``thresh19.xlsx`` has any (inspected 2026-09-25):
+#: ``Sheet2`` and ``Sheet3``, with no cell value.
+EMPTY_EXTRA_SHEETS: dict[int, tuple[str, ...]] = {2019: ("Sheet2", "Sheet3")}
+#: The dollar unit the weighted averages are printed to, by income year
+#: (whole dollars unless listed).  Every weighted average in thresh22.xlsx
+#: is a multiple of $10 and its matrix cells are whole dollars, so the
+#: size-1 age rows print 15,230 and 14,040 beside single matrix cells of
+#: 15,225 and 14,036 (inspected 2026-09-25).  For such a year every
+#: weighted average must be a multiple of the unit, and it may lie up to
+#: half the unit outside its row's matrix cells; in every other year the
+#: weighted average must lie within them exactly.
+WEIGHTED_AVERAGE_UNIT: dict[int, int] = {2022: 10}
 
 #: The caption every real workbook prints in A1, above the title (lower
 #: case, whitespace collapsed).
@@ -514,11 +588,26 @@ def _validate_year(
     two age rows; the weighted averages rise with size from two persons;
     and each row's weighted average lies within the range of that row's
     matrix cells (a weighted average of them), which for sizes 1 ties the
-    two columns together.
+    two columns together.  A year listed in :data:`WEIGHTED_AVERAGE_UNIT`
+    prints its weighted averages rounded to that unit: each must be a
+    multiple of it and may lie up to half of it outside the range.
     """
 
     if set(weighted) != set(adjusted_poverty.THRESHOLD_ROW_KEYS):
         raise ValueError(f"{year}: rows {sorted(weighted)}")
+    unit = WEIGHTED_AVERAGE_UNIT.get(year, 1)
+    if unit > 1:
+        off_unit = sorted(
+            key
+            for key, value in (*weighted.items(), *all_ages.items())
+            if value % unit
+        )
+        if off_unit:
+            raise ValueError(
+                f"{year}: weighted averages {off_unit} are not multiples of "
+                f"${unit}, the unit this year's workbook prints them to"
+            )
+    slack = unit / 2 if unit > 1 else 0
     for size in ("one", "two"):
         young, old = weighted[f"{size}_under_65"], weighted[f"{size}_65_plus"]
         if not old < young:
@@ -536,10 +625,15 @@ def _validate_year(
         raise ValueError(f"{year}: weighted averages not increasing in size")
     for key, value in weighted.items():
         cells = matrix[key].values()
-        if not min(cells) <= value <= max(cells):
+        if not min(cells) - slack <= value <= max(cells) + slack:
             raise ValueError(
                 f"{year}: row {key} weighted average {value} outside its "
                 f"matrix cells {min(cells)}-{max(cells)}"
+                + (
+                    f" (+/- ${slack:g} for its ${unit} rounding)"
+                    if slack
+                    else ""
+                )
             )
 
 
@@ -580,36 +674,55 @@ def check_matrix_moves_together(
     return ratio
 
 
-def read_workbook_rows(path: Path) -> tuple[str, list[list[Any]]]:
-    """The one worksheet's title and cell values (formulas as text)."""
+def read_workbook_rows(
+    path: Path, year: int | None = None
+) -> tuple[str, list[list[Any]]]:
+    """The table worksheet's title and cell values (formulas as text).
+
+    A workbook holds one worksheet, except that a year listed in
+    :data:`EMPTY_EXTRA_SHEETS` may carry exactly the worksheets named there
+    after the table's, each without any cell value (whitespace-only cells
+    count as blank).  Any other extra worksheet is refused.
+    """
 
     import openpyxl
 
     workbook = openpyxl.load_workbook(path, data_only=False)
     try:
-        if len(workbook.worksheets) != 1:
+        sheets = workbook.worksheets
+        allowed = EMPTY_EXTRA_SHEETS.get(year, ()) if year is not None else ()
+        extra = tuple(sheet.title for sheet in sheets[1:])
+        if len(sheets) != 1 and extra != allowed:
             raise ValueError(
-                f"{path.name}: {len(workbook.worksheets)} worksheets, "
-                "expected 1"
+                f"{path.name}: {len(sheets)} worksheets {[s.title for s in sheets]}, "
+                f"expected 1"
+                + (f" plus the empty {list(allowed)}" if allowed else "")
             )
-        sheet = workbook.worksheets[0]
+        for sheet in sheets[1:]:
+            filled = [
+                cell.coordinate
+                for row in sheet.iter_rows()
+                for cell in row
+                if not _blank(cell.value)
+            ]
+            if filled:
+                raise ValueError(
+                    f"{path.name}: worksheet {sheet.title!r} is not empty "
+                    f"({filled[:3]})"
+                )
+        sheet = sheets[0]
         rows = [list(row) for row in sheet.iter_rows(values_only=True)]
         return sheet.title, rows
     finally:
         workbook.close()
 
 
-def build_threshold_capture(
+def _parse_years(
     census_dir: Path,
-    *,
-    expected_sha256: dict[str, str] | None = CENSUS_WORKBOOK_SHA256,
+    years: tuple[int, ...],
+    expected_sha256: dict[str, str] | None,
 ) -> dict[str, Any]:
-    """Parse the nine workbooks in ``census_dir`` into the capture.
-
-    Each workbook's SHA-256 must equal ``expected_sha256`` (the pinned
-    Census files) before it is parsed; ``None`` skips the pin and is for
-    tests on INVENTED workbooks only (the command line always pins).
-    """
+    """Parse ``years``' workbooks in ``census_dir`` in order, pinned first."""
 
     census_dir = Path(census_dir)
     weighted: dict[str, Any] = {}
@@ -618,7 +731,7 @@ def build_threshold_capture(
     sources: dict[str, Any] = {}
     ratios: dict[str, float] = {}
     previous: dict[str, dict[int, int]] | None = None
-    for year in YEARS:
+    for year in years:
         name = f"thresh{year % 100:02d}.xlsx"
         path = census_dir / name
         if not path.is_file():
@@ -629,7 +742,7 @@ def build_threshold_capture(
                 f"{path} sha256 {digest} != pinned "
                 f"{expected_sha256.get(name)}: not the captured Census file"
             )
-        sheet, rows = read_workbook_rows(path)
+        sheet, rows = read_workbook_rows(path, year)
         parsed = parse_threshold_rows(rows, year)
         if previous is not None:
             ratios[f"{year - 1}-{year}"] = round(
@@ -653,6 +766,33 @@ def build_threshold_capture(
             "source_line": parsed["source_line"],
             "cps_asec_year": parsed["cps_asec_year"],
         }
+    return {
+        "weighted": weighted,
+        "all_ages": all_ages,
+        "matrix": matrix,
+        "sources": sources,
+        "ratios": ratios,
+    }
+
+
+def build_threshold_capture(
+    census_dir: Path,
+    *,
+    expected_sha256: dict[str, str] | None = CENSUS_WORKBOOK_SHA256,
+) -> dict[str, Any]:
+    """Parse the nine workbooks in ``census_dir`` into the capture.
+
+    Each workbook's SHA-256 must equal ``expected_sha256`` (the pinned
+    Census files) before it is parsed; ``None`` skips the pin and is for
+    tests on INVENTED workbooks only (the command line always pins).
+    """
+
+    parsed = _parse_years(census_dir, YEARS, expected_sha256)
+    weighted = parsed["weighted"]
+    all_ages = parsed["all_ages"]
+    matrix = parsed["matrix"]
+    sources = parsed["sources"]
+    ratios = parsed["ratios"]
     return {
         "schema_version": adjusted_poverty.THRESHOLDS_SCHEMA_VERSION,
         "description": (
@@ -696,6 +836,93 @@ def build_threshold_capture(
     }
 
 
+def build_track_m_threshold_capture(
+    census_dir: Path,
+    *,
+    expected_sha256: dict[str, str] | None = CENSUS_WORKBOOK_SHA256,
+) -> dict[str, Any]:
+    """Parse the twenty workbooks 2003-2022 into Track M's capture.
+
+    The same parser and checks as :func:`build_threshold_capture`, over
+    ``min_benefit_track_m.thresholds.TRACK_M_THRESHOLD_YEARS``, with each year's
+    layout variant recorded (its worksheets and the unit its weighted
+    averages are printed to).  Track M reads ``weighted_average[year]
+    ["one_65_plus"]``: the Census weighted average for one person aged 65
+    and over (the M1 specification's threshold, section 7).
+    """
+
+    years = track_m_thresholds.TRACK_M_THRESHOLD_YEARS
+    parsed = _parse_years(census_dir, years, expected_sha256)
+    layouts = {
+        str(year): {
+            "worksheets": 1 + len(EMPTY_EXTRA_SHEETS.get(year, ())),
+            "empty_extra_worksheets": list(EMPTY_EXTRA_SHEETS.get(year, ())),
+            "weighted_average_unit_dollars": WEIGHTED_AVERAGE_UNIT.get(
+                year, 1
+            ),
+        }
+        for year in years
+    }
+    return {
+        "schema_version": adjusted_poverty.THRESHOLDS_SCHEMA_VERSION,
+        "description": (
+            "U.S. Census Bureau poverty thresholds for income years "
+            f"{years[0]}-{years[-1]}, as printed in the Census historical "
+            "threshold workbooks, for Track M (DynaSim exercise 4, the "
+            "minimum benefit; Python rules, not Axiom), which reads the "
+            "weighted average for one person aged 65 and over "
+            "(one_65_plus). Same content and schema as the Track U "
+            "capture: weighted averages by family size (with the under-65 "
+            "and 65-and-over rows for one and two persons), the size-1 and "
+            "size-2 weighted averages over both ages, and the "
+            "size-by-related-children matrix, in dollars"
+        ),
+        "years": [years[0], years[-1]],
+        "decision_records": {
+            "d194": "thresh03-thresh12 staged 2026-09-24 (exercise 2)",
+            "d279": (
+                "thresh13-thresh22 downloaded 2026-09-25 for Track M; "
+                "capture, hash and pin like the 2003-2012 capture"
+            ),
+        },
+        "sources": parsed["sources"],
+        "generated_by": (
+            "scripts/capture_track_u_parameters.py --track-m-census-dir"
+        ),
+        "checks": {
+            "workbook_sha256": (
+                "pinned (CENSUS_WORKBOOK_SHA256)"
+                if expected_sha256 is not None
+                else "not pinned (INVENTED workbooks)"
+            ),
+            "layout": (
+                "title names the year, source and note name the next "
+                "year's CPS ASEC, header and thirteen row labels as "
+                "printed, whole-dollar cells in the expected columns, "
+                "nothing else in the table's sheet; 2019 alone may carry "
+                "the empty worksheets Sheet2 and Sheet3"
+            ),
+            "within_year": (
+                "65-and-over below under-65 (sizes 1, 2); size-1 and "
+                "size-2 all-ages averages between their age rows; "
+                "weighted averages rise with size from two; each weighted "
+                "average within its row's matrix cells, or, in 2022, whose "
+                "workbook prints weighted averages rounded to $10, a "
+                "multiple of $10 within $5 of them"
+            ),
+            "cross_year": (
+                "every matrix cell moves by one ratio from the previous "
+                f"year within ${_CROSS_YEAR_TOLERANCE:.0f}"
+            ),
+            "matrix_ratio_by_year_pair": parsed["ratios"],
+            "layout_by_year": layouts,
+        },
+        "weighted_average": parsed["weighted"],
+        "weighted_average_all_ages": parsed["all_ages"],
+        "matrix": parsed["matrix"],
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--ssi", action="store_true")
@@ -707,9 +934,19 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--census-output", type=Path, default=adjusted_poverty.THRESHOLDS_PATH
     )
+    parser.add_argument("--track-m-census-dir", type=Path, default=None)
+    parser.add_argument(
+        "--track-m-output",
+        type=Path,
+        default=track_m_thresholds.TRACK_M_THRESHOLDS_PATH,
+    )
     args = parser.parse_args(argv)
-    if not args.ssi and args.census_dir is None:
-        parser.error("pass --ssi and/or --census-dir")
+    if (
+        not args.ssi
+        and args.census_dir is None
+        and args.track_m_census_dir is None
+    ):
+        parser.error("pass --ssi, --census-dir and/or --track-m-census-dir")
     if args.ssi:
         capture = build_ssi_capture(args.pe_us_dir)
         args.ssi_output.write_text(
@@ -722,6 +959,12 @@ def main(argv: list[str] | None = None) -> int:
             json.dumps(capture, indent=2) + "\n", encoding="utf-8"
         )
         print(args.census_output, _sha256(args.census_output))
+    if args.track_m_census_dir is not None:
+        capture = build_track_m_threshold_capture(args.track_m_census_dir)
+        args.track_m_output.write_text(
+            json.dumps(capture, indent=2) + "\n", encoding="utf-8"
+        )
+        print(args.track_m_output, _sha256(args.track_m_output))
     return 0
 
 

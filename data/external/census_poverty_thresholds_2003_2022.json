@@ -1,0 +1,2133 @@
+{
+  "schema_version": "populace_dynamics.census_poverty_thresholds.v1",
+  "description": "U.S. Census Bureau poverty thresholds for income years 2003-2022, as printed in the Census historical threshold workbooks, for Track M (DynaSim exercise 4, the minimum benefit; Python rules, not Axiom), which reads the weighted average for one person aged 65 and over (one_65_plus). Same content and schema as the Track U capture: weighted averages by family size (with the under-65 and 65-and-over rows for one and two persons), the size-1 and size-2 weighted averages over both ages, and the size-by-related-children matrix, in dollars",
+  "years": [
+    2003,
+    2022
+  ],
+  "decision_records": {
+    "d194": "thresh03-thresh12 staged 2026-09-24 (exercise 2)",
+    "d279": "thresh13-thresh22 downloaded 2026-09-25 for Track M; capture, hash and pin like the 2003-2012 capture"
+  },
+  "sources": {
+    "2003": {
+      "file": "thresh03.xlsx",
+      "url": "https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/thresh03.xlsx",
+      "sha256": "f91f2a70062c52b21391e74dc0486bf9adc898c8c923212ecaa7db7a0db24895",
+      "bytes": 12179,
+      "sheet": "thresh03",
+      "title": "Poverty Thresholds for 2003 by Size of Family and Number of Related Children Under 18 Years",
+      "source_line": "Source: U.S. Census Bureau, 2004.",
+      "cps_asec_year": 2004
+    },
+    "2004": {
+      "file": "thresh04.xlsx",
+      "url": "https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/thresh04.xlsx",
+      "sha256": "9cae1bcff6c3ff80faedaa11c28068d9a640f10f5a7679e3cfb0430779bbb5b8",
+      "bytes": 12163,
+      "sheet": "thresh04",
+      "title": "Poverty Thresholds for 2004 by Size of Family and Number of Related Children Under 18 Years",
+      "source_line": "Source: U.S. Census Bureau, 2005.",
+      "cps_asec_year": 2005
+    },
+    "2005": {
+      "file": "thresh05.xlsx",
+      "url": "https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/thresh05.xlsx",
+      "sha256": "9c626a9757232d500167349c9c47dc254a5f1ac34c6ba3468acd1a624df52888",
+      "bytes": 12183,
+      "sheet": "thresh05",
+      "title": "Poverty Thresholds for 2005 by Size of Family and Number of Related Children Under 18 Years",
+      "source_line": "Source: U.S. Census Bureau, 2006.",
+      "cps_asec_year": 2006
+    },
+    "2006": {
+      "file": "thresh06.xlsx",
+      "url": "https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/thresh06.xlsx",
+      "sha256": "7ace9e1c3990348b252698da9026aea082c7a52bcc073c0315721b01b9c09a45",
+      "bytes": 12153,
+      "sheet": "thresh06",
+      "title": "Poverty Thresholds for 2006 by Size of Family and Number of Related Children Under 18 Years",
+      "source_line": "Source: U.S. Census Bureau, 2007.",
+      "cps_asec_year": 2007
+    },
+    "2007": {
+      "file": "thresh07.xlsx",
+      "url": "https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/thresh07.xlsx",
+      "sha256": "1209903a9c1071f9a76ee5a50dc9eb83faa93024134a72e73a3cdc6b558a4327",
+      "bytes": 11031,
+      "sheet": "Sheet1",
+      "title": "Poverty Thresholds for 2007 by Size of Family and Number of Related Children Under 18 Years",
+      "source_line": "Source: U.S. Census Bureau, 2008.",
+      "cps_asec_year": 2008
+    },
+    "2008": {
+      "file": "thresh08.xlsx",
+      "url": "https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/thresh08.xlsx",
+      "sha256": "7e7222d431411aa82734d9580cc8f6bce246d1cd330e688a8306748bc46f09ae",
+      "bytes": 12295,
+      "sheet": "Sheet1",
+      "title": "Poverty Thresholds for 2008 by Size of Family and Number of Related Children Under 18 Years",
+      "source_line": "Source: U.S. Census Bureau, 2009.",
+      "cps_asec_year": 2009
+    },
+    "2009": {
+      "file": "thresh09.xlsx",
+      "url": "https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/thresh09.xlsx",
+      "sha256": "7f997506d189bb1899bab1255ae5e991a384ffaf8d72d63ca4497d1912e1175e",
+      "bytes": 13612,
+      "sheet": "Sheet1",
+      "title": "Poverty Thresholds for 2009 by Size of Family and Number of Related Children Under 18 Years",
+      "source_line": "Source: U.S. Census Bureau, 2010.",
+      "cps_asec_year": 2010
+    },
+    "2010": {
+      "file": "thresh10.xlsx",
+      "url": "https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/thresh10.xlsx",
+      "sha256": "75360b3d852669c76f77df20d2292d1abe1d90e1b58a9d3e0611bb37570a45b9",
+      "bytes": 13592,
+      "sheet": "Sheet1",
+      "title": "Poverty Thresholds for 2010 by Size of Family and Number of Related Children Under 18 Years",
+      "source_line": "Source: U.S. Census Bureau, 2011.",
+      "cps_asec_year": 2011
+    },
+    "2011": {
+      "file": "thresh11.xlsx",
+      "url": "https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/thresh11.xlsx",
+      "sha256": "ec2758efc4b6797b171fbe4cda135e5f08396734bdc2d606f0b990219f42bab6",
+      "bytes": 13644,
+      "sheet": "Sheet1",
+      "title": "Poverty Thresholds for 2011 by Size of Family and Number of Related Children Under 18 Years",
+      "source_line": "Source: U.S. Census Bureau, 2012.",
+      "cps_asec_year": 2012
+    },
+    "2012": {
+      "file": "thresh12.xlsx",
+      "url": "https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/thresh12.xlsx",
+      "sha256": "26da2dc48de0a0799905c15aa6634d5b942dd57b801bdaf9564eacf4cc365f36",
+      "bytes": 13692,
+      "sheet": "Sheet1",
+      "title": "Poverty Thresholds for 2012 by Size of Family and Number of Related Children Under 18 Years",
+      "source_line": "Source: U.S. Census Bureau, 2013.",
+      "cps_asec_year": 2013
+    },
+    "2013": {
+      "file": "thresh13.xlsx",
+      "url": "https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/thresh13.xlsx",
+      "sha256": "4114b7a98043842fc6ec9cc688d6918ce1461f84ed5fc96ffe0c8a3076083f2b",
+      "bytes": 11833,
+      "sheet": "Sheet1",
+      "title": "Poverty Thresholds for 2013 by Size of Family and Number of Related Children Under 18 Years",
+      "source_line": "Source: U.S. Census Bureau, 2014.",
+      "cps_asec_year": 2014
+    },
+    "2014": {
+      "file": "thresh14.xlsx",
+      "url": "https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/thresh14.xlsx",
+      "sha256": "c9fad68272d238036bf01e24ea33c1de97f71c6d56b310276f173b5b21153ce8",
+      "bytes": 21121,
+      "sheet": "Sheet1",
+      "title": "Poverty Thresholds for 2014 by Size of Family and Number of Related Children Under 18 Years",
+      "source_line": "Source: U.S. Census Bureau, 2015.",
+      "cps_asec_year": 2015
+    },
+    "2015": {
+      "file": "thresh15.xlsx",
+      "url": "https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/thresh15.xlsx",
+      "sha256": "9658e7c7fa63fe25a396f1abfcc9c90db385edbeb19ffdabf5e6d14eaf650e41",
+      "bytes": 22863,
+      "sheet": "Sheet1",
+      "title": "Poverty Thresholds for 2015 by Size of Family and Number of Related Children Under 18 Years",
+      "source_line": "Source: U.S. Census Bureau, 2016.",
+      "cps_asec_year": 2016
+    },
+    "2016": {
+      "file": "thresh16.xlsx",
+      "url": "https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/thresh16.xlsx",
+      "sha256": "5d16803e3904430564b7df980b7968563634a9e0619b96bcbc079b1dcb854e45",
+      "bytes": 14284,
+      "sheet": "Sheet1",
+      "title": "Poverty Thresholds for 2016 by Size of Family and Number of Related Children Under 18 Years",
+      "source_line": "Source: U.S. Census Bureau, 2017.",
+      "cps_asec_year": 2017
+    },
+    "2017": {
+      "file": "thresh17.xlsx",
+      "url": "https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/thresh17.xlsx",
+      "sha256": "edf7af0544b48cd8de86cfd12d018c5dcc596677cc9f532c070eb18262db3e65",
+      "bytes": 14293,
+      "sheet": "Sheet1",
+      "title": "Poverty Thresholds for 2017 by Size of Family and Number of Related Children Under 18 Years",
+      "source_line": "Source: U.S. Census Bureau, 2018.",
+      "cps_asec_year": 2018
+    },
+    "2018": {
+      "file": "thresh18.xlsx",
+      "url": "https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/thresh18.xlsx",
+      "sha256": "f1abec2ee137a39e04466ec5cf189412228d2c1e5a2d56fd5195bb90ca6ffa55",
+      "bytes": 13626,
+      "sheet": "Sheet1",
+      "title": "Poverty Thresholds for 2018 by Size of Family and Number of Related Children Under 18 Years",
+      "source_line": "Source: U.S. Census Bureau, 2019.",
+      "cps_asec_year": 2019
+    },
+    "2019": {
+      "file": "thresh19.xlsx",
+      "url": "https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/thresh19.xlsx",
+      "sha256": "e9252e05ef17d0787243eeadec1228524170211f57ac3b58efe32ee909e8ff57",
+      "bytes": 14999,
+      "sheet": "Sheet1",
+      "title": "Poverty Thresholds for 2019 by Size of Family and Number of Related Children Under 18 Years",
+      "source_line": "Source: U.S. Census Bureau, 2020.",
+      "cps_asec_year": 2020
+    },
+    "2020": {
+      "file": "thresh20.xlsx",
+      "url": "https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/thresh20.xlsx",
+      "sha256": "5739e473550312b7663479711f41d254b477a7d020d92847cb6164dc506767f8",
+      "bytes": 13751,
+      "sheet": "Sheet1",
+      "title": "Poverty Thresholds for 2020 by Size of Family and Number of Related Children Under 18 Years",
+      "source_line": "Source: U.S. Census Bureau, 2021.",
+      "cps_asec_year": 2021
+    },
+    "2021": {
+      "file": "thresh21.xlsx",
+      "url": "https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/thresh21.xlsx",
+      "sha256": "9399f4564ed22776f286fbceb72bab288f0cf0c1a70181f3805b3321332734e5",
+      "bytes": 13581,
+      "sheet": "Sheet1",
+      "title": "Poverty Thresholds for 2021 by Size of Family and Number of Related Children Under 18 Years",
+      "source_line": "Source: U.S. Census Bureau, 2022.",
+      "cps_asec_year": 2022
+    },
+    "2022": {
+      "file": "thresh22.xlsx",
+      "url": "https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/thresh22.xlsx",
+      "sha256": "5874eb8ecc525f5d26daab34b81165416c669daf62771e65ef52847bd3cbf89f",
+      "bytes": 13573,
+      "sheet": "Sheet1",
+      "title": "Poverty Thresholds for 2022 by Size of Family and Number of Related Children Under 18 Years",
+      "source_line": "Source: U.S. Census Bureau, 2023.",
+      "cps_asec_year": 2023
+    }
+  },
+  "generated_by": "scripts/capture_track_u_parameters.py --track-m-census-dir",
+  "checks": {
+    "workbook_sha256": "pinned (CENSUS_WORKBOOK_SHA256)",
+    "layout": "title names the year, source and note name the next year's CPS ASEC, header and thirteen row labels as printed, whole-dollar cells in the expected columns, nothing else in the table's sheet; 2019 alone may carry the empty worksheets Sheet2 and Sheet3",
+    "within_year": "65-and-over below under-65 (sizes 1, 2); size-1 and size-2 all-ages averages between their age rows; weighted averages rise with size from two; each weighted average within its row's matrix cells, or, in 2022, whose workbook prints weighted averages rounded to $10, a multiple of $10 within $5 of them",
+    "cross_year": "every matrix cell moves by one ratio from the previous year within $2",
+    "matrix_ratio_by_year_pair": {
+      "2003-2004": 1.026626,
+      "2004-2005": 1.03388,
+      "2005-2006": 1.03226,
+      "2006-2007": 1.028478,
+      "2007-2008": 1.0384,
+      "2008-2009": 0.996441,
+      "2009-2010": 1.016405,
+      "2010-2011": 1.031562,
+      "2011-2012": 1.020695,
+      "2012-2013": 1.01465,
+      "2013-2014": 1.016222,
+      "2014-2015": 1.001189,
+      "2015-2016": 1.012613,
+      "2016-2017": 1.0213,
+      "2017-2018": 1.024425,
+      "2018-2019": 1.018121,
+      "2019-2020": 1.012336,
+      "2020-2021": 1.046979,
+      "2021-2022": 1.080027
+    },
+    "layout_by_year": {
+      "2003": {
+        "worksheets": 1,
+        "empty_extra_worksheets": [],
+        "weighted_average_unit_dollars": 1
+      },
+      "2004": {
+        "worksheets": 1,
+        "empty_extra_worksheets": [],
+        "weighted_average_unit_dollars": 1
+      },
+      "2005": {
+        "worksheets": 1,
+        "empty_extra_worksheets": [],
+        "weighted_average_unit_dollars": 1
+      },
+      "2006": {
+        "worksheets": 1,
+        "empty_extra_worksheets": [],
+        "weighted_average_unit_dollars": 1
+      },
+      "2007": {
+        "worksheets": 1,
+        "empty_extra_worksheets": [],
+        "weighted_average_unit_dollars": 1
+      },
+      "2008": {
+        "worksheets": 1,
+        "empty_extra_worksheets": [],
+        "weighted_average_unit_dollars": 1
+      },
+      "2009": {
+        "worksheets": 1,
+        "empty_extra_worksheets": [],
+        "weighted_average_unit_dollars": 1
+      },
+      "2010": {
+        "worksheets": 1,
+        "empty_extra_worksheets": [],
+        "weighted_average_unit_dollars": 1
+      },
+      "2011": {
+        "worksheets": 1,
+        "empty_extra_worksheets": [],
+        "weighted_average_unit_dollars": 1
+      },
+      "2012": {
+        "worksheets": 1,
+        "empty_extra_worksheets": [],
+        "weighted_average_unit_dollars": 1
+      },
+      "2013": {
+        "worksheets": 1,
+        "empty_extra_worksheets": [],
+        "weighted_average_unit_dollars": 1
+      },
+      "2014": {
+        "worksheets": 1,
+        "empty_extra_worksheets": [],
+        "weighted_average_unit_dollars": 1
+      },
+      "2015": {
+        "worksheets": 1,
+        "empty_extra_worksheets": [],
+        "weighted_average_unit_dollars": 1
+      },
+      "2016": {
+        "worksheets": 1,
+        "empty_extra_worksheets": [],
+        "weighted_average_unit_dollars": 1
+      },
+      "2017": {
+        "worksheets": 1,
+        "empty_extra_worksheets": [],
+        "weighted_average_unit_dollars": 1
+      },
+      "2018": {
+        "worksheets": 1,
+        "empty_extra_worksheets": [],
+        "weighted_average_unit_dollars": 1
+      },
+      "2019": {
+        "worksheets": 3,
+        "empty_extra_worksheets": [
+          "Sheet2",
+          "Sheet3"
+        ],
+        "weighted_average_unit_dollars": 1
+      },
+      "2020": {
+        "worksheets": 1,
+        "empty_extra_worksheets": [],
+        "weighted_average_unit_dollars": 1
+      },
+      "2021": {
+        "worksheets": 1,
+        "empty_extra_worksheets": [],
+        "weighted_average_unit_dollars": 1
+      },
+      "2022": {
+        "worksheets": 1,
+        "empty_extra_worksheets": [],
+        "weighted_average_unit_dollars": 10
+      }
+    }
+  },
+  "weighted_average": {
+    "2003": {
+      "one_under_65": 9573,
+      "one_65_plus": 8825,
+      "two_under_65": 12384,
+      "two_65_plus": 11133,
+      "three": 14680,
+      "four": 18810,
+      "five": 22245,
+      "six": 25122,
+      "seven": 28544,
+      "eight": 31589,
+      "nine_plus": 37656
+    },
+    "2004": {
+      "one_under_65": 9827,
+      "one_65_plus": 9060,
+      "two_under_65": 12714,
+      "two_65_plus": 11430,
+      "three": 15066,
+      "four": 19307,
+      "five": 22830,
+      "six": 25787,
+      "seven": 29233,
+      "eight": 32641,
+      "nine_plus": 39062
+    },
+    "2005": {
+      "one_under_65": 10160,
+      "one_65_plus": 9367,
+      "two_under_65": 13145,
+      "two_65_plus": 11815,
+      "three": 15577,
+      "four": 19971,
+      "five": 23613,
+      "six": 26683,
+      "seven": 30249,
+      "eight": 33610,
+      "nine_plus": 40288
+    },
+    "2006": {
+      "one_under_65": 10488,
+      "one_65_plus": 9669,
+      "two_under_65": 13569,
+      "two_65_plus": 12201,
+      "three": 16079,
+      "four": 20614,
+      "five": 24382,
+      "six": 27560,
+      "seven": 31205,
+      "eight": 34774,
+      "nine_plus": 41499
+    },
+    "2007": {
+      "one_under_65": 10787,
+      "one_65_plus": 9944,
+      "two_under_65": 13954,
+      "two_65_plus": 12550,
+      "three": 16530,
+      "four": 21203,
+      "five": 25080,
+      "six": 28323,
+      "seven": 32233,
+      "eight": 35816,
+      "nine_plus": 42739
+    },
+    "2008": {
+      "one_under_65": 11201,
+      "one_65_plus": 10326,
+      "two_under_65": 14489,
+      "two_65_plus": 13030,
+      "three": 17163,
+      "four": 22025,
+      "five": 26049,
+      "six": 29456,
+      "seven": 33529,
+      "eight": 37220,
+      "nine_plus": 44346
+    },
+    "2009": {
+      "one_under_65": 11161,
+      "one_65_plus": 10289,
+      "two_under_65": 14439,
+      "two_65_plus": 12982,
+      "three": 17098,
+      "four": 21954,
+      "five": 25991,
+      "six": 29405,
+      "seven": 33372,
+      "eight": 37252,
+      "nine_plus": 44366
+    },
+    "2010": {
+      "one_under_65": 11344,
+      "one_65_plus": 10458,
+      "two_under_65": 14676,
+      "two_65_plus": 13194,
+      "three": 17374,
+      "four": 22314,
+      "five": 26439,
+      "six": 29897,
+      "seven": 34009,
+      "eight": 37934,
+      "nine_plus": 45220
+    },
+    "2011": {
+      "one_under_65": 11702,
+      "one_65_plus": 10788,
+      "two_under_65": 15139,
+      "two_65_plus": 13609,
+      "three": 17916,
+      "four": 23021,
+      "five": 27251,
+      "six": 30847,
+      "seven": 35085,
+      "eight": 39064,
+      "nine_plus": 46572
+    },
+    "2012": {
+      "one_under_65": 11945,
+      "one_65_plus": 11011,
+      "two_under_65": 15450,
+      "two_65_plus": 13892,
+      "three": 18284,
+      "four": 23492,
+      "five": 27827,
+      "six": 31471,
+      "seven": 35743,
+      "eight": 39688,
+      "nine_plus": 47297
+    },
+    "2013": {
+      "one_under_65": 12119,
+      "one_65_plus": 11173,
+      "two_under_65": 15679,
+      "two_65_plus": 14095,
+      "three": 18552,
+      "four": 23834,
+      "five": 28265,
+      "six": 31925,
+      "seven": 36384,
+      "eight": 40484,
+      "nine_plus": 48065
+    },
+    "2014": {
+      "one_under_65": 12316,
+      "one_65_plus": 11354,
+      "two_under_65": 15934,
+      "two_65_plus": 14326,
+      "three": 18850,
+      "four": 24230,
+      "five": 28695,
+      "six": 32473,
+      "seven": 36927,
+      "eight": 40968,
+      "nine_plus": 49021
+    },
+    "2015": {
+      "one_under_65": 12331,
+      "one_65_plus": 11367,
+      "two_under_65": 15952,
+      "two_65_plus": 14342,
+      "three": 18871,
+      "four": 24257,
+      "five": 28741,
+      "six": 32542,
+      "seven": 36998,
+      "eight": 41029,
+      "nine_plus": 49177
+    },
+    "2016": {
+      "one_under_65": 12486,
+      "one_65_plus": 11511,
+      "two_under_65": 16151,
+      "two_65_plus": 14522,
+      "three": 19105,
+      "four": 24563,
+      "five": 29111,
+      "six": 32928,
+      "seven": 37458,
+      "eight": 41781,
+      "nine_plus": 49721
+    },
+    "2017": {
+      "one_under_65": 12752,
+      "one_65_plus": 11756,
+      "two_under_65": 16493,
+      "two_65_plus": 14828,
+      "three": 19515,
+      "four": 25094,
+      "five": 29714,
+      "six": 33618,
+      "seven": 38173,
+      "eight": 42684,
+      "nine_plus": 50681
+    },
+    "2018": {
+      "one_under_65": 13064,
+      "one_65_plus": 12043,
+      "two_under_65": 16889,
+      "two_65_plus": 15193,
+      "three": 19985,
+      "four": 25701,
+      "five": 30459,
+      "six": 34533,
+      "seven": 39194,
+      "eight": 43602,
+      "nine_plus": 51393
+    },
+    "2019": {
+      "one_under_65": 13300,
+      "one_65_plus": 12261,
+      "two_under_65": 17196,
+      "two_65_plus": 15468,
+      "three": 20335,
+      "four": 26172,
+      "five": 31021,
+      "six": 35129,
+      "seven": 40016,
+      "eight": 44461,
+      "nine_plus": 52875
+    },
+    "2020": {
+      "one_under_65": 13465,
+      "one_65_plus": 12413,
+      "two_under_65": 17413,
+      "two_65_plus": 15659,
+      "three": 20591,
+      "four": 26496,
+      "five": 31417,
+      "six": 35499,
+      "seven": 40406,
+      "eight": 44755,
+      "nine_plus": 53905
+    },
+    "2021": {
+      "one_under_65": 14097,
+      "one_65_plus": 12996,
+      "two_under_65": 18231,
+      "two_65_plus": 16400,
+      "three": 21559,
+      "four": 27740,
+      "five": 32865,
+      "six": 37161,
+      "seven": 42156,
+      "eight": 47093,
+      "nine_plus": 56325
+    },
+    "2022": {
+      "one_under_65": 15230,
+      "one_65_plus": 14040,
+      "two_under_65": 19690,
+      "two_65_plus": 17710,
+      "three": 23280,
+      "four": 29950,
+      "five": 35510,
+      "six": 40160,
+      "seven": 45690,
+      "eight": 51010,
+      "nine_plus": 60300
+    }
+  },
+  "weighted_average_all_ages": {
+    "2003": {
+      "one": 9393,
+      "two": 12015
+    },
+    "2004": {
+      "one": 9646,
+      "two": 12335
+    },
+    "2005": {
+      "one": 9973,
+      "two": 12755
+    },
+    "2006": {
+      "one": 10294,
+      "two": 13167
+    },
+    "2007": {
+      "one": 10590,
+      "two": 13540
+    },
+    "2008": {
+      "one": 10991,
+      "two": 14051
+    },
+    "2009": {
+      "one": 10956,
+      "two": 13991
+    },
+    "2010": {
+      "one": 11139,
+      "two": 14218
+    },
+    "2011": {
+      "one": 11484,
+      "two": 14657
+    },
+    "2012": {
+      "one": 11720,
+      "two": 14937
+    },
+    "2013": {
+      "one": 11888,
+      "two": 15142
+    },
+    "2014": {
+      "one": 12071,
+      "two": 15379
+    },
+    "2015": {
+      "one": 12082,
+      "two": 15391
+    },
+    "2016": {
+      "one": 12228,
+      "two": 15569
+    },
+    "2017": {
+      "one": 12488,
+      "two": 15877
+    },
+    "2018": {
+      "one": 12784,
+      "two": 16247
+    },
+    "2019": {
+      "one": 13011,
+      "two": 16521
+    },
+    "2020": {
+      "one": 13171,
+      "two": 16733
+    },
+    "2021": {
+      "one": 13788,
+      "two": 17529
+    },
+    "2022": {
+      "one": 14880,
+      "two": 18900
+    }
+  },
+  "matrix": {
+    "2003": {
+      "one_under_65": {
+        "0": 9573
+      },
+      "one_65_plus": {
+        "0": 8825
+      },
+      "two_under_65": {
+        "0": 12321,
+        "1": 12682
+      },
+      "two_65_plus": {
+        "0": 11122,
+        "1": 12634
+      },
+      "three": {
+        "0": 14393,
+        "1": 14810,
+        "2": 14824
+      },
+      "four": {
+        "0": 18979,
+        "1": 19289,
+        "2": 18660,
+        "3": 18725
+      },
+      "five": {
+        "0": 22887,
+        "1": 23220,
+        "2": 22509,
+        "3": 21959,
+        "4": 21623
+      },
+      "six": {
+        "0": 26324,
+        "1": 26429,
+        "2": 25884,
+        "3": 25362,
+        "4": 24586,
+        "5": 24126
+      },
+      "seven": {
+        "0": 30289,
+        "1": 30479,
+        "2": 29827,
+        "3": 29372,
+        "4": 28526,
+        "5": 27538,
+        "6": 26454
+      },
+      "eight": {
+        "0": 33876,
+        "1": 34175,
+        "2": 33560,
+        "3": 33021,
+        "4": 32256,
+        "5": 31286,
+        "6": 30275,
+        "7": 30019
+      },
+      "nine_plus": {
+        "0": 40751,
+        "1": 40948,
+        "2": 40404,
+        "3": 39947,
+        "4": 39196,
+        "5": 38163,
+        "6": 37229,
+        "7": 36998,
+        "8": 35572
+      }
+    },
+    "2004": {
+      "one_under_65": {
+        "0": 9827
+      },
+      "one_65_plus": {
+        "0": 9060
+      },
+      "two_under_65": {
+        "0": 12649,
+        "1": 13020
+      },
+      "two_65_plus": {
+        "0": 11418,
+        "1": 12971
+      },
+      "three": {
+        "0": 14776,
+        "1": 15205,
+        "2": 15219
+      },
+      "four": {
+        "0": 19484,
+        "1": 19803,
+        "2": 19157,
+        "3": 19223
+      },
+      "five": {
+        "0": 23497,
+        "1": 23838,
+        "2": 23108,
+        "3": 22543,
+        "4": 22199
+      },
+      "six": {
+        "0": 27025,
+        "1": 27133,
+        "2": 26573,
+        "3": 26037,
+        "4": 25241,
+        "5": 24768
+      },
+      "seven": {
+        "0": 31096,
+        "1": 31290,
+        "2": 30621,
+        "3": 30154,
+        "4": 29285,
+        "5": 28271,
+        "6": 27159
+      },
+      "eight": {
+        "0": 34778,
+        "1": 35086,
+        "2": 34454,
+        "3": 33901,
+        "4": 33115,
+        "5": 32119,
+        "6": 31082,
+        "7": 30818
+      },
+      "nine_plus": {
+        "0": 41836,
+        "1": 42039,
+        "2": 41480,
+        "3": 41010,
+        "4": 40240,
+        "5": 39179,
+        "6": 38220,
+        "7": 37983,
+        "8": 36520
+      }
+    },
+    "2005": {
+      "one_under_65": {
+        "0": 10160
+      },
+      "one_65_plus": {
+        "0": 9367
+      },
+      "two_under_65": {
+        "0": 13078,
+        "1": 13461
+      },
+      "two_65_plus": {
+        "0": 11805,
+        "1": 13410
+      },
+      "three": {
+        "0": 15277,
+        "1": 15720,
+        "2": 15735
+      },
+      "four": {
+        "0": 20144,
+        "1": 20474,
+        "2": 19806,
+        "3": 19874
+      },
+      "five": {
+        "0": 24293,
+        "1": 24646,
+        "2": 23891,
+        "3": 23307,
+        "4": 22951
+      },
+      "six": {
+        "0": 27941,
+        "1": 28052,
+        "2": 27474,
+        "3": 26920,
+        "4": 26096,
+        "5": 25608
+      },
+      "seven": {
+        "0": 32150,
+        "1": 32350,
+        "2": 31658,
+        "3": 31176,
+        "4": 30277,
+        "5": 29229,
+        "6": 28079
+      },
+      "eight": {
+        "0": 35957,
+        "1": 36274,
+        "2": 35621,
+        "3": 35049,
+        "4": 34237,
+        "5": 33207,
+        "6": 32135,
+        "7": 31862
+      },
+      "nine_plus": {
+        "0": 43254,
+        "1": 43463,
+        "2": 42885,
+        "3": 42400,
+        "4": 41603,
+        "5": 40507,
+        "6": 39515,
+        "7": 39270,
+        "8": 37757
+      }
+    },
+    "2006": {
+      "one_under_65": {
+        "0": 10488
+      },
+      "one_65_plus": {
+        "0": 9669
+      },
+      "two_under_65": {
+        "0": 13500,
+        "1": 13896
+      },
+      "two_65_plus": {
+        "0": 12186,
+        "1": 13843
+      },
+      "three": {
+        "0": 15769,
+        "1": 16227,
+        "2": 16242
+      },
+      "four": {
+        "0": 20794,
+        "1": 21134,
+        "2": 20444,
+        "3": 20516
+      },
+      "five": {
+        "0": 25076,
+        "1": 25441,
+        "2": 24662,
+        "3": 24059,
+        "4": 23691
+      },
+      "six": {
+        "0": 28842,
+        "1": 28957,
+        "2": 28360,
+        "3": 27788,
+        "4": 26938,
+        "5": 26434
+      },
+      "seven": {
+        "0": 33187,
+        "1": 33394,
+        "2": 32680,
+        "3": 32182,
+        "4": 31254,
+        "5": 30172,
+        "6": 28985
+      },
+      "eight": {
+        "0": 37117,
+        "1": 37444,
+        "2": 36770,
+        "3": 36180,
+        "4": 35342,
+        "5": 34278,
+        "6": 33171,
+        "7": 32890
+      },
+      "nine_plus": {
+        "0": 44649,
+        "1": 44865,
+        "2": 44269,
+        "3": 43768,
+        "4": 42945,
+        "5": 41813,
+        "6": 40790,
+        "7": 40536,
+        "8": 38975
+      }
+    },
+    "2007": {
+      "one_under_65": {
+        "0": 10787
+      },
+      "one_65_plus": {
+        "0": 9944
+      },
+      "two_under_65": {
+        "0": 13884,
+        "1": 14291
+      },
+      "two_65_plus": {
+        "0": 12533,
+        "1": 14237
+      },
+      "three": {
+        "0": 16218,
+        "1": 16689,
+        "2": 16705
+      },
+      "four": {
+        "0": 21386,
+        "1": 21736,
+        "2": 21027,
+        "3": 21100
+      },
+      "five": {
+        "0": 25791,
+        "1": 26166,
+        "2": 25364,
+        "3": 24744,
+        "4": 24366
+      },
+      "six": {
+        "0": 29664,
+        "1": 29782,
+        "2": 29168,
+        "3": 28579,
+        "4": 27705,
+        "5": 27187
+      },
+      "seven": {
+        "0": 34132,
+        "1": 34345,
+        "2": 33610,
+        "3": 33098,
+        "4": 32144,
+        "5": 31031,
+        "6": 29810
+      },
+      "eight": {
+        "0": 38174,
+        "1": 38511,
+        "2": 37818,
+        "3": 37210,
+        "4": 36348,
+        "5": 35255,
+        "6": 34116,
+        "7": 33827
+      },
+      "nine_plus": {
+        "0": 45921,
+        "1": 46143,
+        "2": 45529,
+        "3": 45014,
+        "4": 44168,
+        "5": 43004,
+        "6": 41952,
+        "7": 41691,
+        "8": 40085
+      }
+    },
+    "2008": {
+      "one_under_65": {
+        "0": 11201
+      },
+      "one_65_plus": {
+        "0": 10326
+      },
+      "two_under_65": {
+        "0": 14417,
+        "1": 14840
+      },
+      "two_65_plus": {
+        "0": 13014,
+        "1": 14784
+      },
+      "three": {
+        "0": 16841,
+        "1": 17330,
+        "2": 17346
+      },
+      "four": {
+        "0": 22207,
+        "1": 22570,
+        "2": 21834,
+        "3": 21910
+      },
+      "five": {
+        "0": 26781,
+        "1": 27170,
+        "2": 26338,
+        "3": 25694,
+        "4": 25301
+      },
+      "six": {
+        "0": 30803,
+        "1": 30925,
+        "2": 30288,
+        "3": 29677,
+        "4": 28769,
+        "5": 28230
+      },
+      "seven": {
+        "0": 35442,
+        "1": 35664,
+        "2": 34901,
+        "3": 34369,
+        "4": 33379,
+        "5": 32223,
+        "6": 30955
+      },
+      "eight": {
+        "0": 39640,
+        "1": 39990,
+        "2": 39270,
+        "3": 38639,
+        "4": 37744,
+        "5": 36608,
+        "6": 35426,
+        "7": 35125
+      },
+      "nine_plus": {
+        "0": 47684,
+        "1": 47915,
+        "2": 47278,
+        "3": 46743,
+        "4": 45864,
+        "5": 44656,
+        "6": 43563,
+        "7": 43292,
+        "8": 41624
+      }
+    },
+    "2009": {
+      "one_under_65": {
+        "0": 11161
+      },
+      "one_65_plus": {
+        "0": 10289
+      },
+      "two_under_65": {
+        "0": 14366,
+        "1": 14787
+      },
+      "two_65_plus": {
+        "0": 12968,
+        "1": 14731
+      },
+      "three": {
+        "0": 16781,
+        "1": 17268,
+        "2": 17285
+      },
+      "four": {
+        "0": 22128,
+        "1": 22490,
+        "2": 21756,
+        "3": 21832
+      },
+      "five": {
+        "0": 26686,
+        "1": 27074,
+        "2": 26245,
+        "3": 25603,
+        "4": 25211
+      },
+      "six": {
+        "0": 30693,
+        "1": 30815,
+        "2": 30180,
+        "3": 29571,
+        "4": 28666,
+        "5": 28130
+      },
+      "seven": {
+        "0": 35316,
+        "1": 35537,
+        "2": 34777,
+        "3": 34247,
+        "4": 33260,
+        "5": 32108,
+        "6": 30845
+      },
+      "eight": {
+        "0": 39498,
+        "1": 39847,
+        "2": 39130,
+        "3": 38501,
+        "4": 37610,
+        "5": 36478,
+        "6": 35300,
+        "7": 35000
+      },
+      "nine_plus": {
+        "0": 47514,
+        "1": 47744,
+        "2": 47109,
+        "3": 46576,
+        "4": 45701,
+        "5": 44497,
+        "6": 43408,
+        "7": 43138,
+        "8": 41476
+      }
+    },
+    "2010": {
+      "one_under_65": {
+        "0": 11344
+      },
+      "one_65_plus": {
+        "0": 10458
+      },
+      "two_under_65": {
+        "0": 14602,
+        "1": 15030
+      },
+      "two_65_plus": {
+        "0": 13180,
+        "1": 14973
+      },
+      "three": {
+        "0": 17057,
+        "1": 17552,
+        "2": 17568
+      },
+      "four": {
+        "0": 22491,
+        "1": 22859,
+        "2": 22113,
+        "3": 22190
+      },
+      "five": {
+        "0": 27123,
+        "1": 27518,
+        "2": 26675,
+        "3": 26023,
+        "4": 25625
+      },
+      "six": {
+        "0": 31197,
+        "1": 31320,
+        "2": 30675,
+        "3": 30056,
+        "4": 29137,
+        "5": 28591
+      },
+      "seven": {
+        "0": 35896,
+        "1": 36120,
+        "2": 35347,
+        "3": 34809,
+        "4": 33805,
+        "5": 32635,
+        "6": 31351
+      },
+      "eight": {
+        "0": 40146,
+        "1": 40501,
+        "2": 39772,
+        "3": 39133,
+        "4": 38227,
+        "5": 37076,
+        "6": 35879,
+        "7": 35575
+      },
+      "nine_plus": {
+        "0": 48293,
+        "1": 48527,
+        "2": 47882,
+        "3": 47340,
+        "4": 46451,
+        "5": 45227,
+        "6": 44120,
+        "7": 43845,
+        "8": 42156
+      }
+    },
+    "2011": {
+      "one_under_65": {
+        "0": 11702
+      },
+      "one_65_plus": {
+        "0": 10788
+      },
+      "two_under_65": {
+        "0": 15063,
+        "1": 15504
+      },
+      "two_65_plus": {
+        "0": 13596,
+        "1": 15446
+      },
+      "three": {
+        "0": 17595,
+        "1": 18106,
+        "2": 18123
+      },
+      "four": {
+        "0": 23201,
+        "1": 23581,
+        "2": 22811,
+        "3": 22891
+      },
+      "five": {
+        "0": 27979,
+        "1": 28386,
+        "2": 27517,
+        "3": 26844,
+        "4": 26434
+      },
+      "six": {
+        "0": 32181,
+        "1": 32309,
+        "2": 31643,
+        "3": 31005,
+        "4": 30056,
+        "5": 29494
+      },
+      "seven": {
+        "0": 37029,
+        "1": 37260,
+        "2": 36463,
+        "3": 35907,
+        "4": 34872,
+        "5": 33665,
+        "6": 32340
+      },
+      "eight": {
+        "0": 41414,
+        "1": 41779,
+        "2": 41027,
+        "3": 40368,
+        "4": 39433,
+        "5": 38247,
+        "6": 37011,
+        "7": 36697
+      },
+      "nine_plus": {
+        "0": 49818,
+        "1": 50059,
+        "2": 49393,
+        "3": 48835,
+        "4": 47917,
+        "5": 46654,
+        "6": 45512,
+        "7": 45229,
+        "8": 43487
+      }
+    },
+    "2012": {
+      "one_under_65": {
+        "0": 11945
+      },
+      "one_65_plus": {
+        "0": 11011
+      },
+      "two_under_65": {
+        "0": 15374,
+        "1": 15825
+      },
+      "two_65_plus": {
+        "0": 13878,
+        "1": 15765
+      },
+      "three": {
+        "0": 17959,
+        "1": 18480,
+        "2": 18498
+      },
+      "four": {
+        "0": 23681,
+        "1": 24069,
+        "2": 23283,
+        "3": 23364
+      },
+      "five": {
+        "0": 28558,
+        "1": 28974,
+        "2": 28087,
+        "3": 27400,
+        "4": 26981
+      },
+      "six": {
+        "0": 32847,
+        "1": 32978,
+        "2": 32298,
+        "3": 31647,
+        "4": 30678,
+        "5": 30104
+      },
+      "seven": {
+        "0": 37795,
+        "1": 38031,
+        "2": 37217,
+        "3": 36651,
+        "4": 35594,
+        "5": 34362,
+        "6": 33009
+      },
+      "eight": {
+        "0": 42271,
+        "1": 42644,
+        "2": 41876,
+        "3": 41204,
+        "4": 40249,
+        "5": 39038,
+        "6": 37777,
+        "7": 37457
+      },
+      "nine_plus": {
+        "0": 50849,
+        "1": 51095,
+        "2": 50416,
+        "3": 49845,
+        "4": 48908,
+        "5": 47620,
+        "6": 46454,
+        "7": 46165,
+        "8": 44387
+      }
+    },
+    "2013": {
+      "one_under_65": {
+        "0": 12119
+      },
+      "one_65_plus": {
+        "0": 11173
+      },
+      "two_under_65": {
+        "0": 15600,
+        "1": 16057
+      },
+      "two_65_plus": {
+        "0": 14081,
+        "1": 15996
+      },
+      "three": {
+        "0": 18222,
+        "1": 18751,
+        "2": 18769
+      },
+      "four": {
+        "0": 24028,
+        "1": 24421,
+        "2": 23624,
+        "3": 23707
+      },
+      "five": {
+        "0": 28977,
+        "1": 29398,
+        "2": 28498,
+        "3": 27801,
+        "4": 27376
+      },
+      "six": {
+        "0": 33329,
+        "1": 33461,
+        "2": 32771,
+        "3": 32110,
+        "4": 31128,
+        "5": 30545
+      },
+      "seven": {
+        "0": 38349,
+        "1": 38588,
+        "2": 37763,
+        "3": 37187,
+        "4": 36115,
+        "5": 34865,
+        "6": 33493
+      },
+      "eight": {
+        "0": 42890,
+        "1": 43269,
+        "2": 42490,
+        "3": 41807,
+        "4": 40839,
+        "5": 39610,
+        "6": 38331,
+        "7": 38006
+      },
+      "nine_plus": {
+        "0": 51594,
+        "1": 51844,
+        "2": 51154,
+        "3": 50575,
+        "4": 49625,
+        "5": 48317,
+        "6": 47134,
+        "7": 46842,
+        "8": 45037
+      }
+    },
+    "2014": {
+      "one_under_65": {
+        "0": 12316
+      },
+      "one_65_plus": {
+        "0": 11354
+      },
+      "two_under_65": {
+        "0": 15853,
+        "1": 16317
+      },
+      "two_65_plus": {
+        "0": 14309,
+        "1": 16256
+      },
+      "three": {
+        "0": 18518,
+        "1": 19055,
+        "2": 19073
+      },
+      "four": {
+        "0": 24418,
+        "1": 24817,
+        "2": 24008,
+        "3": 24091
+      },
+      "five": {
+        "0": 29447,
+        "1": 29875,
+        "2": 28960,
+        "3": 28252,
+        "4": 27820
+      },
+      "six": {
+        "0": 33869,
+        "1": 34004,
+        "2": 33303,
+        "3": 32631,
+        "4": 31633,
+        "5": 31041
+      },
+      "seven": {
+        "0": 38971,
+        "1": 39214,
+        "2": 38375,
+        "3": 37791,
+        "4": 36701,
+        "5": 35431,
+        "6": 34036
+      },
+      "eight": {
+        "0": 43586,
+        "1": 43970,
+        "2": 43179,
+        "3": 42485,
+        "4": 41501,
+        "5": 40252,
+        "6": 38953,
+        "7": 38622
+      },
+      "nine_plus": {
+        "0": 52430,
+        "1": 52685,
+        "2": 51984,
+        "3": 51396,
+        "4": 50430,
+        "5": 49101,
+        "6": 47899,
+        "7": 47601,
+        "8": 45768
+      }
+    },
+    "2015": {
+      "one_under_65": {
+        "0": 12331
+      },
+      "one_65_plus": {
+        "0": 11367
+      },
+      "two_under_65": {
+        "0": 15871,
+        "1": 16337
+      },
+      "two_65_plus": {
+        "0": 14326,
+        "1": 16275
+      },
+      "three": {
+        "0": 18540,
+        "1": 19078,
+        "2": 19096
+      },
+      "four": {
+        "0": 24447,
+        "1": 24847,
+        "2": 24036,
+        "3": 24120
+      },
+      "five": {
+        "0": 29482,
+        "1": 29911,
+        "2": 28995,
+        "3": 28286,
+        "4": 27853
+      },
+      "six": {
+        "0": 33909,
+        "1": 34044,
+        "2": 33342,
+        "3": 32670,
+        "4": 31670,
+        "5": 31078
+      },
+      "seven": {
+        "0": 39017,
+        "1": 39260,
+        "2": 38421,
+        "3": 37835,
+        "4": 36745,
+        "5": 35473,
+        "6": 34077
+      },
+      "eight": {
+        "0": 43637,
+        "1": 44023,
+        "2": 43230,
+        "3": 42536,
+        "4": 41551,
+        "5": 40300,
+        "6": 38999,
+        "7": 38668
+      },
+      "nine_plus": {
+        "0": 52493,
+        "1": 52747,
+        "2": 52046,
+        "3": 51457,
+        "4": 50490,
+        "5": 49159,
+        "6": 47956,
+        "7": 47658,
+        "8": 45822
+      }
+    },
+    "2016": {
+      "one_under_65": {
+        "0": 12486
+      },
+      "one_65_plus": {
+        "0": 11511
+      },
+      "two_under_65": {
+        "0": 16072,
+        "1": 16543
+      },
+      "two_65_plus": {
+        "0": 14507,
+        "1": 16480
+      },
+      "three": {
+        "0": 18774,
+        "1": 19318,
+        "2": 19337
+      },
+      "four": {
+        "0": 24755,
+        "1": 25160,
+        "2": 24339,
+        "3": 24424
+      },
+      "five": {
+        "0": 29854,
+        "1": 30288,
+        "2": 29360,
+        "3": 28643,
+        "4": 28205
+      },
+      "six": {
+        "0": 34337,
+        "1": 34473,
+        "2": 33763,
+        "3": 33082,
+        "4": 32070,
+        "5": 31470
+      },
+      "seven": {
+        "0": 39509,
+        "1": 39756,
+        "2": 38905,
+        "3": 38313,
+        "4": 37208,
+        "5": 35920,
+        "6": 34507
+      },
+      "eight": {
+        "0": 44188,
+        "1": 44578,
+        "2": 43776,
+        "3": 43072,
+        "4": 42075,
+        "5": 40809,
+        "6": 39491,
+        "7": 39156
+      },
+      "nine_plus": {
+        "0": 53155,
+        "1": 53413,
+        "2": 52702,
+        "3": 52106,
+        "4": 51127,
+        "5": 49779,
+        "6": 48561,
+        "7": 48259,
+        "8": 46400
+      }
+    },
+    "2017": {
+      "one_under_65": {
+        "0": 12752
+      },
+      "one_65_plus": {
+        "0": 11756
+      },
+      "two_under_65": {
+        "0": 16414,
+        "1": 16895
+      },
+      "two_65_plus": {
+        "0": 14816,
+        "1": 16831
+      },
+      "three": {
+        "0": 19173,
+        "1": 19730,
+        "2": 19749
+      },
+      "four": {
+        "0": 25283,
+        "1": 25696,
+        "2": 24858,
+        "3": 24944
+      },
+      "five": {
+        "0": 30490,
+        "1": 30933,
+        "2": 29986,
+        "3": 29253,
+        "4": 28805
+      },
+      "six": {
+        "0": 35069,
+        "1": 35208,
+        "2": 34482,
+        "3": 33787,
+        "4": 32753,
+        "5": 32140
+      },
+      "seven": {
+        "0": 40351,
+        "1": 40603,
+        "2": 39734,
+        "3": 39129,
+        "4": 38001,
+        "5": 36685,
+        "6": 35242
+      },
+      "eight": {
+        "0": 45129,
+        "1": 45528,
+        "2": 44708,
+        "3": 43990,
+        "4": 42971,
+        "5": 41678,
+        "6": 40332,
+        "7": 39990
+      },
+      "nine_plus": {
+        "0": 54287,
+        "1": 54550,
+        "2": 53825,
+        "3": 53216,
+        "4": 52216,
+        "5": 50840,
+        "6": 49595,
+        "7": 49287,
+        "8": 47389
+      }
+    },
+    "2018": {
+      "one_under_65": {
+        "0": 13064
+      },
+      "one_65_plus": {
+        "0": 12043
+      },
+      "two_under_65": {
+        "0": 16815,
+        "1": 17308
+      },
+      "two_65_plus": {
+        "0": 15178,
+        "1": 17242
+      },
+      "three": {
+        "0": 19642,
+        "1": 20212,
+        "2": 20231
+      },
+      "four": {
+        "0": 25900,
+        "1": 26324,
+        "2": 25465,
+        "3": 25554
+      },
+      "five": {
+        "0": 31234,
+        "1": 31689,
+        "2": 30718,
+        "3": 29967,
+        "4": 29509
+      },
+      "six": {
+        "0": 35925,
+        "1": 36068,
+        "2": 35324,
+        "3": 34612,
+        "4": 33553,
+        "5": 32925
+      },
+      "seven": {
+        "0": 41336,
+        "1": 41594,
+        "2": 40705,
+        "3": 40085,
+        "4": 38929,
+        "5": 37581,
+        "6": 36102
+      },
+      "eight": {
+        "0": 46231,
+        "1": 46640,
+        "2": 45800,
+        "3": 45064,
+        "4": 44021,
+        "5": 42696,
+        "6": 41317,
+        "7": 40967
+      },
+      "nine_plus": {
+        "0": 55613,
+        "1": 55883,
+        "2": 55140,
+        "3": 54516,
+        "4": 53491,
+        "5": 52082,
+        "6": 50807,
+        "7": 50491,
+        "8": 48546
+      }
+    },
+    "2019": {
+      "one_under_65": {
+        "0": 13300
+      },
+      "one_65_plus": {
+        "0": 12261
+      },
+      "two_under_65": {
+        "0": 17120,
+        "1": 17622
+      },
+      "two_65_plus": {
+        "0": 15453,
+        "1": 17555
+      },
+      "three": {
+        "0": 19998,
+        "1": 20578,
+        "2": 20598
+      },
+      "four": {
+        "0": 26370,
+        "1": 26801,
+        "2": 25926,
+        "3": 26017
+      },
+      "five": {
+        "0": 31800,
+        "1": 32263,
+        "2": 31275,
+        "3": 30510,
+        "4": 30044
+      },
+      "six": {
+        "0": 36576,
+        "1": 36721,
+        "2": 35965,
+        "3": 35239,
+        "4": 34161,
+        "5": 33522
+      },
+      "seven": {
+        "0": 42085,
+        "1": 42348,
+        "2": 41442,
+        "3": 40811,
+        "4": 39635,
+        "5": 38262,
+        "6": 36757
+      },
+      "eight": {
+        "0": 47069,
+        "1": 47485,
+        "2": 46630,
+        "3": 45881,
+        "4": 44818,
+        "5": 43470,
+        "6": 42066,
+        "7": 41709
+      },
+      "nine_plus": {
+        "0": 56621,
+        "1": 56895,
+        "2": 56139,
+        "3": 55503,
+        "4": 54460,
+        "5": 53025,
+        "6": 51727,
+        "7": 51406,
+        "8": 49426
+      }
+    },
+    "2020": {
+      "one_under_65": {
+        "0": 13465
+      },
+      "one_65_plus": {
+        "0": 12413
+      },
+      "two_under_65": {
+        "0": 17331,
+        "1": 17839
+      },
+      "two_65_plus": {
+        "0": 15644,
+        "1": 17771
+      },
+      "three": {
+        "0": 20244,
+        "1": 20832,
+        "2": 20852
+      },
+      "four": {
+        "0": 26695,
+        "1": 27131,
+        "2": 26246,
+        "3": 26338
+      },
+      "five": {
+        "0": 32193,
+        "1": 32661,
+        "2": 31661,
+        "3": 30887,
+        "4": 30414
+      },
+      "six": {
+        "0": 37027,
+        "1": 37174,
+        "2": 36408,
+        "3": 35674,
+        "4": 34582,
+        "5": 33935
+      },
+      "seven": {
+        "0": 42605,
+        "1": 42871,
+        "2": 41954,
+        "3": 41314,
+        "4": 40124,
+        "5": 38734,
+        "6": 37210
+      },
+      "eight": {
+        "0": 47650,
+        "1": 48071,
+        "2": 47205,
+        "3": 46447,
+        "4": 45371,
+        "5": 44006,
+        "6": 42585,
+        "7": 42224
+      },
+      "nine_plus": {
+        "0": 57319,
+        "1": 57597,
+        "2": 56831,
+        "3": 56188,
+        "4": 55132,
+        "5": 53679,
+        "6": 52366,
+        "7": 52040,
+        "8": 50035
+      }
+    },
+    "2021": {
+      "one_under_65": {
+        "0": 14097
+      },
+      "one_65_plus": {
+        "0": 12996
+      },
+      "two_under_65": {
+        "0": 18145,
+        "1": 18677
+      },
+      "two_65_plus": {
+        "0": 16379,
+        "1": 18606
+      },
+      "three": {
+        "0": 21196,
+        "1": 21811,
+        "2": 21831
+      },
+      "four": {
+        "0": 27949,
+        "1": 28406,
+        "2": 27479,
+        "3": 27575
+      },
+      "five": {
+        "0": 33705,
+        "1": 34195,
+        "2": 33148,
+        "3": 32338,
+        "4": 31843
+      },
+      "six": {
+        "0": 38767,
+        "1": 38921,
+        "2": 38119,
+        "3": 37350,
+        "4": 36207,
+        "5": 35529
+      },
+      "seven": {
+        "0": 44606,
+        "1": 44885,
+        "2": 43925,
+        "3": 43255,
+        "4": 42009,
+        "5": 40554,
+        "6": 38958
+      },
+      "eight": {
+        "0": 49888,
+        "1": 50329,
+        "2": 49423,
+        "3": 48629,
+        "4": 47503,
+        "5": 46073,
+        "6": 44585,
+        "7": 44207
+      },
+      "nine_plus": {
+        "0": 60012,
+        "1": 60303,
+        "2": 59501,
+        "3": 58828,
+        "4": 57722,
+        "5": 56201,
+        "6": 54826,
+        "7": 54485,
+        "8": 52386
+      }
+    },
+    "2022": {
+      "one_under_65": {
+        "0": 15225
+      },
+      "one_65_plus": {
+        "0": 14036
+      },
+      "two_under_65": {
+        "0": 19597,
+        "1": 20172
+      },
+      "two_65_plus": {
+        "0": 17689,
+        "1": 20095
+      },
+      "three": {
+        "0": 22892,
+        "1": 23556,
+        "2": 23578
+      },
+      "four": {
+        "0": 30186,
+        "1": 30679,
+        "2": 29678,
+        "3": 29782
+      },
+      "five": {
+        "0": 36402,
+        "1": 36932,
+        "2": 35801,
+        "3": 34926,
+        "4": 34391
+      },
+      "six": {
+        "0": 41869,
+        "1": 42035,
+        "2": 41169,
+        "3": 40339,
+        "4": 39104,
+        "5": 38373
+      },
+      "seven": {
+        "0": 48176,
+        "1": 48477,
+        "2": 47440,
+        "3": 46717,
+        "4": 45371,
+        "5": 43800,
+        "6": 42076
+      },
+      "eight": {
+        "0": 53881,
+        "1": 54357,
+        "2": 53378,
+        "3": 52521,
+        "4": 51304,
+        "5": 49760,
+        "6": 48153,
+        "7": 47745
+      },
+      "nine_plus": {
+        "0": 64815,
+        "1": 65129,
+        "2": 64263,
+        "3": 63536,
+        "4": 62342,
+        "5": 60699,
+        "6": 59213,
+        "7": 58845,
+        "8": 56578
+      }
+    }
+  }
+}
