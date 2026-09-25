@@ -236,9 +236,13 @@ def test_threshold_rules_refuse_missing_inputs():
         )
 
 
-def test_census_thresholds_are_not_captured():
+def test_an_absent_or_unpinned_census_capture_is_refused(tmp_path):
     with pytest.raises(ap.ThresholdsNotCapturedError, match="thresh04"):
-        ap.load_poverty_thresholds()
+        ap.load_poverty_thresholds(tmp_path / "missing.json")
+    path = tmp_path / "capture.json"
+    path.write_text("{}")
+    with pytest.raises(ap.ThresholdsNotCapturedError, match="no pin"):
+        ap.load_poverty_thresholds(path, expected_sha256=None)
 
 
 def test_countable_income_by_hand():

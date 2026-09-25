@@ -149,7 +149,7 @@ precision only from the cleared extract.
 | NCHS United States Life Tables, 2000 | Annuity mortality (F8) | Committed, `data/external/nchs_life_tables_2000.json`, SHA-256 pinned |
 | SSA period life table for 2004 (2008 vintage) | Row U9 | Committed, `data/external/tr2008/ssa_2008_vintage.json` |
 | SSI federal benefit rates 2004–2012, exclusions, resource limits | SSI response (F13); F17 SSI diagnostic | Captured from policyengine-us revision `a03e82e503`: `data/external/track_u_ssi_parameters.json`, SHA-256 `79e641a1…3c523`; checked against the Federal Register and eCFR (§8) |
-| Census poverty thresholds 2004–2012 | Threshold (F10) | **Not captured** (§6; cos decision d194) |
+| Census poverty thresholds 2004–2012 (`thresh04.xlsx` … `thresh12.xlsx`, www2.census.gov) | Threshold (F10) | Captured (§6; cos decision d194): `data/external/census_poverty_thresholds_2004_2012.json`, SHA-256 `dc21a787…0eec5`, from the nine workbooks committed in `data/external/census_poverty_thresholds/` (each SHA-256 pinned); every captured cell checked against the workbook XML without the parser |
 | SSA, *Annual Statistical Supplement, 2025*, Table 5.A4 | F17 Social Security diagnostic | Committed snapshot `data/external/snapshots/ssa_level_anchors_vintage1/supplement2025_5a.html`, SHA-256 `d61e9484…aa8e` |
 | Survey of Consumer Finances wealth tables | F17 WEALTH1 comparator (plan §11) | **Not committed or saved**: WEALTH1 is summarized without a published comparison |
 | PSID 2011 User Guide §2.4; individual-file codebook (ER34102, ER34103, ER34137–ER34143); family-file codebook (`# IN FU`, the individual-record count) | The institution income rule (§3) | Staged documentation, read for the rule |
@@ -528,25 +528,74 @@ matrix threshold by family size, number under 18 and householder age,
 adjusted for composition changes during the year (householder age, not
 the 65-and-over rule).
 
-**Capture status: not captured.** The Census historical thresholds page
-lists one spreadsheet per year, `thresh04.xlsx` … `thresh12.xlsx`, under
+**Capture status: captured** (cos decision d194, decided). The Census
+historical thresholds page lists one workbook per year under
 `https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/`.
-The files have not been downloaded (downloads need Max's approval in
-this environment, cos decision d194). d194's text names ten files,
-`thresh03.xlsx`–`thresh12.xlsx`; the income years need only the nine
-from `thresh04`, and the capture reads each year's file by name
-(`thresh04.xlsx` … `thresh12.xlsx`), so a staged `thresh03.xlsx` is not
-read. Once the nine files are staged in a directory, `scripts/capture_track_u_parameters.py --census-dir DIR`
-parses them by their printed labels, checks that the 65-and-over rows
-sit below the under-65 rows and that thresholds rise with size, records
-each file's URL, bytes and SHA-256, and writes
-`data/external/census_poverty_thresholds_2004_2012.json`; the pin
-`adjusted_poverty.THRESHOLDS_SHA256` must then be set. The parser has run
-only on invented workbooks, and the labels it expects ("65 years and
-over", "Householder 65 years and over") have not been checked against
-the real 2004–2012 files; the first real capture must be checked by eye.
-Until then `load_poverty_thresholds` refuses and no primary threshold can
-be assigned.
+d194's card named ten, `thresh03.xlsx`–`thresh12.xlsx`, and all ten were
+staged on 2026-09-24. The capture covers income years 2004–2012 (the
+span of the SSI capture) and reads the nine files from `thresh04.xlsx`.
+The registered rows read only the even income years 2004, 2006, 2008,
+2010 and 2012 (waves 2005–2013), and no row needs 2003: U1's 1936 birth
+year is observed at 68 in income year 2004
+(`test_capture_covers_every_income_year_the_rows_read`). So
+`thresh03.xlsx` (SHA-256 `f91f2a70…4895`) was inspected for its layout
+and is neither read by the capture nor committed. The nine workbooks are
+committed in `data/external/census_poverty_thresholds/`, each with its
+SHA-256 pinned in `scripts/capture_track_u_parameters.py`
+(`CENSUS_WORKBOOK_SHA256`) and checked before it is parsed.
+`scripts/capture_track_u_parameters.py --census-dir DIR` wrote
+`data/external/census_poverty_thresholds_2004_2012.json` (SHA-256
+`dc21a78736f5085872cf56c9cf291258034c1293572b77455cba689a1ed0eec5`),
+which records each workbook's URL, bytes, SHA-256, sheet, title and
+source line; the pin `adjusted_poverty.THRESHOLDS_SHA256` holds that
+hash, so `load_poverty_thresholds` and the registered run accept exactly
+this capture. Re-running the capture on the committed copies reproduces
+the file byte for byte.
+
+The ten real workbooks share one layout, inspected cell by cell (only
+the sheet name differs: `threshYY` to 2006, `Sheet1` from 2007): the
+title in A2, "(In dollars)", a header row "Size of family unit" |
+"Weighted average thresholds" | "Related children under 18 years" over
+the children headers "None" … "Eight or more" (columns C–K), thirteen
+labelled rows in rows 8–22 (the size-1 and size-2 rows over both ages;
+"Under 65 years", "65 years and over", "Householder under 65 years",
+"Householder 65 years and over"; three to eight people; "Nine people or
+more"), then "Source: U.S. Census Bureau, <year + 1>." and a note naming
+the <year + 1> CPS ASEC. The labels the parser expected ("65 years and
+over", "Householder 65 years and over") are the printed ones. The parser
+now requires that layout and refuses any other: a title, source or note
+naming another year; other row or column labels or another order; a
+value that is not a positive whole number of dollars or that sits
+outside its row's children columns; any other value in the sheet. It
+treats whitespace-only cells (`thresh07`, `thresh11`, `thresh12`) as
+blank. Within each year it checks that the 65-and-over rows lie below the
+under-65 rows, that the size-1 and size-2 averages over both ages lie
+between their two age rows, that the weighted averages rise with size
+from two persons, and that each weighted average lies within its row's
+matrix cells. Across years it checks that every matrix cell moves from
+the previous year by one common ratio, to within $2. The 2009 workbook's
+note says the thresholds are updated each year by the change in the
+average annual CPI-U; the observed ratios run from 0.9964 (2008 to 2009)
+to 1.0384 (2007 to 2008).
+
+A separate check reads each workbook's XML without the parser or
+openpyxl (`EVID/track-u-census-capture-20260924/verify_thresholds_direct.py`;
+in the tests, `test_capture_equals_the_workbook_cells`). It finds all 61
+captured cells of each year (11 weighted averages, the 2 all-ages
+averages and 48 matrix cells) equal to the workbook's. The primary reads
+these two cells for sizes 1 and 2 (dollars):
+
+| Income year | One person, 65 and over (B10) | Two persons, householder 65 and over (B14) |
+|---|---|---|
+| 2004 | 9,060 | 11,430 |
+| 2005 | 9,367 | 11,815 |
+| 2006 | 9,669 | 12,201 |
+| 2007 | 9,944 | 12,550 |
+| 2008 | 10,326 | 13,030 |
+| 2009 | 10,289 | 12,982 |
+| 2010 | 10,458 | 13,194 |
+| 2011 | 10,788 | 13,609 |
+| 2012 | 11,011 | 13,892 |
 
 ## 7. The cut
 
@@ -829,7 +878,7 @@ different one (`scripts/run_track_u_registered.py --headline-row`).
 | U7 | Financial assets | Plus employer DC balances | **No** (label investigation); must be built before registration or removed |
 | U8 | Threshold | PSID `CENSUS NEEDS STANDARD` | Yes |
 | U9 | Mortality | SSA period life table 2004 | Yes |
-| U10 | Threshold | Census size-by-children matrix | Yes (needs the capture) |
+| U10 | Threshold | Census size-by-children matrix | Yes |
 | U2-F … U10-F | as U2 … U10 | on U0-F's population | Yes; with U0-F, they await the fallback rule |
 
 Institutionalized persons (sequence 51–59) are outside the universe and
@@ -965,7 +1014,8 @@ reachability guard:
   Δ/P_B/P_R, half-split floors, design SE on the full sample design;
   refuses real data without a registration pointer.
 - `scripts/capture_track_u_parameters.py` (SSI capture written; Census
-  parser ready), `scripts/track_u_structure.py` (counts only).
+  capture written from the committed workbooks and pinned, §6),
+  `scripts/track_u_structure.py` (counts only).
 - `src/populace_dynamics/uniform_cut_track_u/` (`u1-draft-3`, extended
   here): `rows.py` (the registered rows, held equal to §15's rows,
   including the -F alternatives on U0-F's population, and the headline
@@ -1010,11 +1060,9 @@ Blocked:
    and 1939 until staged, adjudicated and read; under the fallback rule
    U0-F is then the headline, the rows defined on U0 or U1 are
    reported as blocked, and the -F alternatives are computed.
-2. **Census thresholds** (download approval, cos decision d194): no
-   primary threshold until captured; the dry run uses an INVENTED table.
-3. **Registration** on issue #42 after ratification; no real-data poverty
+2. **Registration** on issue #42 after ratification; no real-data poverty
    statistic may be computed before it.
-4. **Row U7** is not built (label investigation of the P-section
+3. **Row U7** is not built (label investigation of the P-section
    employer DC items); it must be built or removed before registration.
 
 ## 15. Machine-readable parameter block
@@ -1108,7 +1156,11 @@ holds it to the code's defaults.
     "rule": "census_weighted_average_65plus",
     "years": [2004, 2012],
     "values": "weighted_averages_as_printed_in_thresh_workbooks",
-    "capture_status": "not_captured",
+    "capture_status": "captured",
+    "capture": {
+      "file": "data/external/census_poverty_thresholds_2004_2012.json",
+      "sha256": "dc21a78736f5085872cf56c9cf291258034c1293572b77455cba689a1ed0eec5"
+    },
     "poor_if": "income_below_threshold"
   },
   "cut": {
@@ -1228,7 +1280,6 @@ holds it to the code's defaults.
   ],
   "blocked_by": [
     "psid_2005_2007_wealth_supplements_not_staged",
-    "census_thresholds_not_captured",
     "issue_42_registration_absent",
     "max_ruling_d189_open",
     "row_u7_not_built"
@@ -1277,8 +1328,8 @@ ruling.
   alternatives whether or not the supplements are staged; Max may
   instead keep the alternatives on U0 only (blocked under the fallback).
 
-Approval to download the Census threshold files is on its own card (cos
-decision d194, open).
+The Census threshold files had their own card (cos decision d194); it is
+decided, and the capture is committed and pinned (§6).
 
 **Awaiting the specification freeze (defaults shown):** cut rate (0.13;
 the code lists it), cut base (all Social Security of the unit; not a code
@@ -1508,6 +1559,16 @@ the transfer-item labels in `data/family_income.py`; the cos records of
 d189 and d194 (their text only); and the Census "Poverty measures"
 guidance page (fetched 2026-09-24). It opened no page of the Report PDF.
 
+The threshold capture (2026-09-24, cos decision d194; no rule, default
+or row changed) read: the ten staged Census workbooks `thresh03.xlsx` …
+`thresh12.xlsx` cell by cell (every non-empty cell, with openpyxl) and
+again as XML by the separate check of §6; `EVID/RESTRICTED-FILES.md`;
+the capture script, `estimates/adjusted_poverty.py`, the Track U runner,
+registered script, dry run and their tests; and `cohorts.age67.
+observation_plan` for the income years the rows read. It opened no page
+of the Report PDF and no comparator file, and computed no income,
+threshold assignment or poverty status on PSID data.
+
 **Ran on staged PSID:** label verification, the component-identity
 reconciliation counts and the structural counts of §3, the F17 component
 summaries of §9 for row U0 (`u1-draft-3`), and (`u1-draft-4`) a design
@@ -1521,8 +1582,11 @@ computed on PSID data.
 **Did not verify:** why OFUM taxable income differs from OFUM labor
 plus asset income by more than $10 in 21 families (2005), 34 (2007) and
 4 (2013) (the OFUM items enter the primary only through TOTAL FAMILY
-INCOME and the OFUM asset total); the Census threshold values and the
-real layout of the Census spreadsheets; the effective date of 20 CFR
+INCOME and the OFUM asset total); the Census threshold values against
+any Census source other than the `threshYY.xlsx` workbooks (for example
+Historical Poverty Table 1, which may differ by the referee's reading of
+the Census page, §6); the
+effective date of 20 CFR
 416.1124(c)(22) for 2004–2012; 20 CFR 416.1161, 416.1218 and 416.1806;
 the names, IDs and contents of the 2005 and 2007 wealth supplements;
 whether PSID Social Security amounts are net of Medicare premiums;
@@ -1542,6 +1606,22 @@ Heeringa 2008); any SCF wealth aggregate (none is committed or saved).
 
 ## 19. Changelog
 
+- `u1-draft-5`, Census threshold capture (2026-09-24, cos decision d194;
+  no rule, default or row changed): the nine Census workbooks
+  `thresh04.xlsx` … `thresh12.xlsx` are committed with their SHA-256
+  pinned, and `data/external/census_poverty_thresholds_2004_2012.json`
+  is captured from them and pinned (`adjusted_poverty.THRESHOLDS_SHA256
+  = dc21a787…0eec5`). The parser was rewritten against the real layout,
+  which all ten staged workbooks share, and refuses any other; it adds
+  within-year and cross-year checks. A check that reads the workbook XML
+  without the parser finds every captured cell equal to the workbook's.
+  §2, §6, §11 (U10), §14, §15 (`threshold.capture_status: captured`, the
+  capture's file and hash, `census_thresholds_not_captured` removed from
+  `blocked_by`), §16 and §18 are updated. The dry run keeps its INVENTED
+  thresholds, because its invented near-threshold singles are placed
+  against them, and records that the capture loads under its pin. No
+  income, threshold assignment or poverty status was computed on PSID
+  data.
 - `u1-draft-5`, independent review corrections (2026-09-24; no rule,
   default or row changed): §15's `cut` block gains an `awaiting` for
   plan decision 8 (Max's confirmation of the scorecard's "from 2004"

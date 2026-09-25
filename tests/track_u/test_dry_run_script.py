@@ -82,9 +82,14 @@ def test_the_dry_run_checks_hold(output):
         if status == "blocked"
     }
     assert checks["registered_guard_refuses_invented_inputs"]["refused"]
-    assert checks["census_thresholds_not_captured"]["error"] == (
-        "ThresholdsNotCapturedError"
-    )
+    census = checks["census_threshold_capture"]
+    assert census["loads_under_pin"] is True
+    assert census["sha256"] == ap.THRESHOLDS_SHA256
+    assert census["years"] == [2004, 2012]
+    assert census["used_by_this_dry_run"] is False
+    refusal = census["registered_check_refuses_invented_thresholds"]
+    assert refusal["refused"] and refusal["error"] == "TrackURunError"
+    assert "Census threshold" in refusal["message"]
     for identities in checks["invented_family_income_reconciliation"].values():
         for counts in identities.values():
             assert counts["n_exact"] == counts["n_families"]

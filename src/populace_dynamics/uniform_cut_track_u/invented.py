@@ -62,7 +62,10 @@ invented wealth in the 2009 component layout.
 
 The threshold table (:func:`invented_poverty_thresholds`) is INVENTED
 too: round numbers in the shape of the Census tables, not Census values.
-The Census thresholds are not captured (cos decision d194).
+The dry run keeps it, because the invented near-threshold singles are
+placed against it (``near_threshold_single``); no dry-run computation
+reads the Census capture (cos decision d194), which the registered run
+reads.
 
 Provenance: the inputs record ``kind="invented"``, the seed, the
 supplement flag and the SHA-256 of their frames, which the age-67 builder
@@ -105,8 +108,9 @@ INVENTED_INPUTS_LABEL = (
 )
 INVENTED_THRESHOLDS_LABEL = (
     "INVENTED THRESHOLDS: made-up round numbers in the shape of the Census "
-    "poverty-threshold tables, not Census values; the Census thresholds "
-    "are not captured (cos decision d194)"
+    "poverty-threshold tables, not Census values; the invented "
+    "near-threshold singles are placed against them, and no dry-run "
+    "computation reads the Census capture"
 )
 DEFAULT_SEED = 20260924
 _GENERATOR = (

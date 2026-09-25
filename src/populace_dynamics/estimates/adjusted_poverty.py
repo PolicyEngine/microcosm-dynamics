@@ -66,8 +66,9 @@ primary, and :func:`pending_decisions` lists them):
   rows for sizes 1 and 2; PSID "# CHILDREN IN FU" stands in for related
   children).  Row
   U8: PSID's own ``CENSUS NEEDS STANDARD`` for the income year.  The
-  Census thresholds are **not captured** in this repository yet (see
-  :func:`load_poverty_thresholds`).
+  Census thresholds are captured from the Census historical threshold
+  workbooks for income years 2004-2012 and pinned by SHA-256
+  (:func:`load_poverty_thresholds`).
 * **Cut** (F11).  Reform income subtracts ``cut_rate`` (0.13) times all
   Social Security of the unit; there is no behavioural response (Report
   p. 37, fn. 19, as quoted in the cleared exercise-2 definitions
@@ -187,11 +188,15 @@ SSI_PARAMETERS_SHA256 = (
     "79e641a10d95afba81c8d831852fb52ef0a801e7175e06df17e6cc7cc3e3c523"
 )
 SSI_SCHEMA_VERSION = "populace_dynamics.track_u_ssi_parameters.v1"
-#: The Census poverty-threshold capture.  It does not exist yet: the Census
-#: files have not been downloaded (the capture script parses them once
-#: staged), so there is no pin and :func:`load_poverty_thresholds` refuses.
+#: The Census poverty-threshold capture for income years 2004-2012
+#: (``scripts/capture_track_u_parameters.py --census-dir``, from the nine
+#: Census workbooks committed in ``data/external/census_poverty_thresholds``
+#: and pinned there by SHA-256; cos decision d194).  The registered run
+#: accepts exactly this capture.
 THRESHOLDS_PATH = _EXTERNAL / "census_poverty_thresholds_2004_2012.json"
-THRESHOLDS_SHA256: str | None = None
+THRESHOLDS_SHA256: str | None = (
+    "dc21a78736f5085872cf56c9cf291258034c1293572b77455cba689a1ed0eec5"
+)
 THRESHOLDS_SCHEMA_VERSION = "populace_dynamics.census_poverty_thresholds.v1"
 
 INVENTED = "invented"
@@ -900,13 +905,15 @@ def load_poverty_thresholds(
 ) -> PovertyThresholds:
     """The committed Census threshold capture, refused unless pinned.
 
-    No capture exists yet.  The Census tables for 2004-2012 are
-    spreadsheets on www2.census.gov (``thresh04.xlsx`` ... ``thresh12.xlsx``
-    under ``programs-surveys/cps/tables/time-series/historical-poverty-
-    thresholds/``, as listed on the Census historical thresholds page);
-    they have not been downloaded.  Once staged locally,
+    The Census tables for 2004-2012 are spreadsheets on www2.census.gov
+    (``thresh04.xlsx`` ... ``thresh12.xlsx`` under ``programs-surveys/cps/
+    tables/time-series/historical-poverty-thresholds/``, as listed on the
+    Census historical thresholds page), committed in
+    ``data/external/census_poverty_thresholds``;
     ``scripts/capture_track_u_parameters.py --census-dir DIR`` writes the
-    capture, and the pin here must be set to its SHA-256.
+    capture, whose SHA-256 is :data:`THRESHOLDS_SHA256`.  A missing file or
+    an unset pin raises :class:`ThresholdsNotCapturedError`; any other
+    SHA-256 or schema raises :class:`AdjustedPovertyError`.
     """
 
     if expected_sha256 is None or not Path(path).is_file():

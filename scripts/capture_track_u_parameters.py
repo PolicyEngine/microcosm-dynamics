@@ -14,15 +14,21 @@ Two captures, each written to ``data/external`` and pinned by SHA-256 in
   SHA-256, the checkout revision and each file's cited reference.  These
   are assumptions for the SSI response rule, not comparator values.
 * ``--census-dir DIR`` writes ``census_poverty_thresholds_2004_2012.json``
-  from the Census Bureau's threshold spreadsheets for income years
-  2004-2012 staged in ``DIR`` as ``thresh04.xlsx`` ... ``thresh12.xlsx``
-  (the file names the Census historical thresholds page lists under
+  from the Census Bureau's threshold workbooks for income years 2004-2012
+  staged in ``DIR`` as ``thresh04.xlsx`` ... ``thresh12.xlsx`` (the file
+  names the Census historical thresholds page lists under
   ``https://www2.census.gov/programs-surveys/cps/tables/time-series/
-  historical-poverty-thresholds/``).  The spreadsheets were **not**
-  downloaded by the builder, so the parser below has been exercised only
-  on an invented workbook; the first real capture must be checked by eye
-  against the files.  The parser locates rows and columns by their
-  printed labels and refuses any layout it does not recognize.
+  historical-poverty-thresholds/``).  The nine workbooks were staged on
+  2026-09-24 under cos decision d194 and are committed in
+  ``data/external/census_poverty_thresholds/``; each one's SHA-256 is
+  pinned in :data:`CENSUS_WORKBOOK_SHA256` and checked before it is
+  parsed.  The parser was written against the real layout (inspected cell
+  by cell in every workbook, ``thresh03.xlsx`` included), locates rows
+  and columns by their printed labels and refuses any other layout, and
+  checks every year's values within the year and against the previous
+  year (:func:`parse_threshold_rows`, :func:`check_matrix_moves_together`).
+  Re-running it on the committed workbooks reproduces the committed
+  capture byte for byte (``tests/track_u/test_census_threshold_capture.py``).
 
 Usage::
 
@@ -188,185 +194,361 @@ def build_ssi_capture(pe_us_dir: Path | None = None) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 # Census thresholds
 # ---------------------------------------------------------------------------
-_ROW_LABELS: dict[str, str] = {
-    "under 65 years": "under_65",
-    "65 years and over": "65_plus",
-    "householder under 65 years": "under_65",
-    "householder 65 years and over": "65_plus",
+#: The committed copies of the Census workbooks the capture reads.
+CENSUS_WORKBOOK_DIR = ROOT / "data" / "external" / "census_poverty_thresholds"
+#: SHA-256 of each Census workbook the capture reads: the files staged on
+#: 2026-09-24 under cos decision d194 from :data:`CENSUS_URL_BASE` and
+#: committed in :data:`CENSUS_WORKBOOK_DIR`.  A workbook with other bytes
+#: is refused before it is parsed.
+CENSUS_WORKBOOK_SHA256: dict[str, str] = {
+    "thresh04.xlsx": (
+        "9cae1bcff6c3ff80faedaa11c28068d9a640f10f5a7679e3cfb0430779bbb5b8"
+    ),
+    "thresh05.xlsx": (
+        "9c626a9757232d500167349c9c47dc254a5f1ac34c6ba3468acd1a624df52888"
+    ),
+    "thresh06.xlsx": (
+        "7ace9e1c3990348b252698da9026aea082c7a52bcc073c0315721b01b9c09a45"
+    ),
+    "thresh07.xlsx": (
+        "1209903a9c1071f9a76ee5a50dc9eb83faa93024134a72e73a3cdc6b558a4327"
+    ),
+    "thresh08.xlsx": (
+        "7e7222d431411aa82734d9580cc8f6bce246d1cd330e688a8306748bc46f09ae"
+    ),
+    "thresh09.xlsx": (
+        "7f997506d189bb1899bab1255ae5e991a384ffaf8d72d63ca4497d1912e1175e"
+    ),
+    "thresh10.xlsx": (
+        "75360b3d852669c76f77df20d2292d1abe1d90e1b58a9d3e0611bb37570a45b9"
+    ),
+    "thresh11.xlsx": (
+        "ec2758efc4b6797b171fbe4cda135e5f08396734bdc2d606f0b990219f42bab6"
+    ),
+    "thresh12.xlsx": (
+        "26da2dc48de0a0799905c15aa6634d5b942dd57b801bdaf9564eacf4cc365f36"
+    ),
 }
-_SIZE_WORDS = {
-    "one": 1,
-    "two": 2,
-    "three": 3,
-    "four": 4,
-    "five": 5,
-    "six": 6,
-    "seven": 7,
-    "eight": 8,
-    "nine": 9,
-}
-_CHILD_HEADERS = {
-    "none": 0,
-    "one": 1,
-    "two": 2,
-    "three": 3,
-    "four": 4,
-    "five": 5,
-    "six": 6,
-    "seven": 7,
-    "eight or more": 8,
-}
+
+#: The table title, matched in full (lower case, whitespace collapsed).
+_TITLE = re.compile(
+    r"poverty thresholds for (\d{4}) by size of family and number of "
+    r"related children under 18 years"
+)
+_UNITS = "(in dollars)"
+_SOURCE = re.compile(r"source: u\.s\. census bureau, (\d{4})\.?")
+#: The note's first sentence (the 2009 note adds two more).
+_NOTE = re.compile(
+    r"note: the source of the weighted average thresholds is the (\d{4}) "
+    r"current population survey annual social and economic supplement "
+    r"\(cps asec\)\."
+)
+#: The table's labelled rows in printed order: (label, key, number of
+#: related-children columns the row fills).  ``one_all`` and ``two_all``
+#: are the size-1 and size-2 rows over both age groups, which print a
+#: weighted average only.
+_TABLE_ROWS: tuple[tuple[str, str, int], ...] = (
+    ("one person (unrelated individual)", "one_all", 0),
+    ("under 65 years", "one_under_65", 1),
+    ("65 years and over", "one_65_plus", 1),
+    ("two people", "two_all", 0),
+    ("householder under 65 years", "two_under_65", 2),
+    ("householder 65 years and over", "two_65_plus", 2),
+    ("three people", "three", 3),
+    ("four people", "four", 4),
+    ("five people", "five", 5),
+    ("six people", "six", 6),
+    ("seven people", "seven", 7),
+    ("eight people", "eight", 8),
+    ("nine people or more", "nine_plus", 9),
+)
+_ALL_AGES = {"one_all": "one", "two_all": "two"}
+#: The related-children column headers, in printed order (0 ... 8).
+_CHILD_HEADERS: tuple[str, ...] = (
+    "none",
+    "one",
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+    "eight or more",
+)
+#: Columns: row label, weighted average, then the nine children columns.
+_LABEL_COL, _WEIGHTED_COL, _FIRST_CHILD_COL = 0, 1, 2
+_TABLE_WIDTH = _FIRST_CHILD_COL + len(_CHILD_HEADERS)
+#: Largest distance, in dollars, of a matrix cell from the previous
+#: year's cell times the year's common ratio (whole-dollar rounding of
+#: both years moves a cell by at most about $1).
+_CROSS_YEAR_TOLERANCE = 2.0
 
 
-def _clean(value: Any) -> str:
-    text = "" if value is None else str(value)
-    text = text.replace("…", " ").replace(".", " ")
-    return " ".join(text.lower().split())
+def _text(value: Any) -> str:
+    return " ".join(str(value).split()).lower()
 
 
-def _number(value: Any) -> float | None:
-    if value is None:
-        return None
-    if isinstance(value, int | float):
-        return float(value)
-    text = str(value).replace(",", "").replace("$", "").strip()
-    if not text or not re.fullmatch(r"\d+(\.\d+)?", text):
-        return None
-    return float(text)
+def _label(value: Any) -> str:
+    """A printed row or column label without its dot leaders or colon."""
+
+    return re.sub(r"[\s.:…]+$", "", _text("" if value is None else value))
 
 
-def parse_threshold_rows(
-    rows: list[list[Any]], year: int
-) -> dict[str, dict[str, Any]]:
-    """Parse one year's threshold table from its cell rows.
+def _blank(value: Any) -> bool:
+    return value is None or (isinstance(value, str) and not value.strip())
 
-    Returns ``{"weighted_average": {row_key: value}, "matrix": {row_key:
-    {children: value}}, "title": str}``.  Refuses a table whose title
-    does not name ``year``, whose header lacks the weighted-average or
-    children columns, or which misses any of the eleven rows.
+
+def _dollars(value: Any, where: str) -> int:
+    """A threshold cell: a positive whole number of dollars, or refused."""
+
+    if isinstance(value, bool) or not isinstance(value, int | float):
+        raise ValueError(f"{where}: {value!r} is not a number")
+    if not float(value).is_integer() or value <= 0:
+        raise ValueError(f"{where}: {value!r} is not a positive whole dollar")
+    return int(value)
+
+
+def parse_threshold_rows(rows: list[list[Any]], year: int) -> dict[str, Any]:
+    """Parse one year's Census threshold table from its cell rows.
+
+    The layout is the one every ``thresh03.xlsx`` ... ``thresh12.xlsx``
+    shares (checked on the real workbooks, 2026-09-24): text above the
+    header (a caption, the title, "(In dollars)"); a header row "Size of
+    family unit" | "Weighted average thresholds" | "Related children
+    under 18 years" over a row of the nine children headers "None" ...
+    "Eight or more"; the thirteen labelled rows of :data:`_TABLE_ROWS`
+    in order; then "Source: U.S. Census Bureau, <year + 1>." and a note
+    naming the <year + 1> CPS ASEC.  Everything else must be blank
+    (whitespace-only cells count as blank).
+
+    Refuses a table whose title does not name ``year``, whose source or
+    note does not name ``year + 1``, whose header or row labels differ,
+    whose threshold cells are not positive whole numbers or fill other
+    children columns than their row allows, with a value anywhere else,
+    or whose values fail :func:`_validate_year`.
+
+    Returns ``{"weighted_average": {row_key: dollars}, "all_ages":
+    {"one": dollars, "two": dollars}, "matrix": {row_key: {children:
+    dollars}}, "title": str, "source_line": str, "cps_asec_year": int}``.
     """
 
-    title = next(
-        (
-            " ".join(str(cell).split())
-            for row in rows
-            for cell in row
-            if cell is not None
-            and re.search(rf"poverty thresholds for {year}\b", _clean(cell))
-        ),
-        None,
-    )
-    if title is None:
-        raise ValueError(f"no 'Poverty Thresholds for {year}' title found")
-    header_index = None
-    weighted_col = None
-    child_cols: dict[int, int] = {}
-    for index, row in enumerate(rows):
-        cleaned = [_clean(cell) for cell in row]
-        if any(cell.startswith("weighted") for cell in cleaned):
-            weighted_col = next(
-                i
-                for i, cell in enumerate(cleaned)
-                if cell.startswith("weighted")
-            )
-            for scan in range(index, min(index + 4, len(rows))):
-                for i, cell in enumerate(_clean(c) for c in rows[scan]):
-                    if cell in _CHILD_HEADERS:
-                        child_cols.setdefault(_CHILD_HEADERS[cell], i)
-            header_index = index
-            break
-    if header_index is None or weighted_col is None:
-        raise ValueError(f"{year}: no weighted-average header row")
-    if sorted(child_cols) != list(range(9)):
-        raise ValueError(
-            f"{year}: children columns {sorted(child_cols)} != 0-8"
+    width = max([_TABLE_WIDTH, *(len(row) for row in rows)])
+    grid = [list(row) + [None] * (width - len(row)) for row in rows]
+
+    def refuse(message: str) -> ValueError:
+        return ValueError(f"{year}: {message}")
+
+    titles = [
+        (i, cell, match)
+        for i, row in enumerate(grid)
+        for cell in row
+        if isinstance(cell, str) and (match := _TITLE.fullmatch(_text(cell)))
+    ]
+    if len(titles) != 1:
+        raise refuse(
+            "expected one 'Poverty Thresholds for <year> by Size of Family "
+            "and Number of Related Children Under 18 Years' title, found "
+            f"{len(titles)}"
         )
-    weighted: dict[str, float] = {}
-    matrix: dict[str, dict[int, float]] = {}
-    current_size: int | None = None
-    for row in rows[header_index + 1 :]:
-        if not row:
-            continue
-        label = _clean(row[0])
-        size_match = re.match(
-            r"^(one|two|three|four|five|six|seven|eight|nine)"
-            r" (person|people|persons)",
-            label,
+    title_row, title_cell, title_match = titles[0]
+    if int(title_match.group(1)) != year:
+        raise refuse(f"the title names {title_match.group(1)}")
+    header = [
+        i
+        for i, row in enumerate(grid)
+        if _label(row[_LABEL_COL]) == "size of family unit"
+    ]
+    if len(header) != 1:
+        raise refuse("expected one 'Size of family unit' header row")
+    h = header[0]
+    if title_row >= h:
+        raise refuse("the title is not above the header")
+    above = [cell for row in grid[:h] for cell in row if not _blank(cell)]
+    if any(not isinstance(cell, str) for cell in above):
+        raise refuse("a value above the header row")
+    if _UNITS not in {_text(cell) for cell in above}:
+        raise refuse("no '(In dollars)' line above the header")
+    top = grid[h]
+    if _label(top[_WEIGHTED_COL]) != "weighted average thresholds":
+        raise refuse("column B of the header is not 'Weighted average'")
+    if _label(top[_FIRST_CHILD_COL]) != "related children under 18 years":
+        raise refuse("column C of the header is not 'Related children'")
+    if any(not _blank(cell) for cell in top[_FIRST_CHILD_COL + 1 :]):
+        raise refuse("unexpected cells in the header row")
+    if h + 1 >= len(grid):
+        raise refuse("no children header row")
+    children = grid[h + 1]
+    printed = [
+        _label(cell) for cell in children[_FIRST_CHILD_COL:_TABLE_WIDTH]
+    ]
+    if (
+        printed != list(_CHILD_HEADERS)
+        or not all(_blank(cell) for cell in children[:_FIRST_CHILD_COL])
+        or not all(_blank(cell) for cell in children[_TABLE_WIDTH:])
+    ):
+        raise refuse(f"children headers {printed} != {list(_CHILD_HEADERS)}")
+    sources = [
+        i
+        for i, row in enumerate(grid)
+        if isinstance(row[_LABEL_COL], str)
+        and _text(row[_LABEL_COL]).startswith("source:")
+    ]
+    if len(sources) != 1 or sources[0] <= h + 1:
+        raise refuse("expected one 'Source:' line below the table")
+    s = sources[0]
+    source_line = " ".join(str(grid[s][_LABEL_COL]).split())
+    source_match = _SOURCE.fullmatch(_text(source_line))
+    if source_match is None or int(source_match.group(1)) != year + 1:
+        raise refuse(
+            f"source line {source_line!r} is not 'Source: U.S. Census "
+            f"Bureau, {year + 1}.'"
         )
-        key: str | None = None
-        if size_match:
-            current_size = _SIZE_WORDS[size_match.group(1)]
-            if current_size >= 3:
-                key = (
-                    "nine_plus"
-                    if current_size == 9
-                    else {
-                        3: "three",
-                        4: "four",
-                        5: "five",
-                        6: "six",
-                        7: "seven",
-                        8: "eight",
-                    }[current_size]
-                )
-        elif label in _ROW_LABELS and current_size in (1, 2):
-            prefix = "one" if current_size == 1 else "two"
-            key = f"{prefix}_{_ROW_LABELS[label]}"
-        if key is None:
+    note = grid[s + 1][_LABEL_COL] if s + 1 < len(grid) else None
+    note_match = None if _blank(note) else _NOTE.match(_text(note))
+    if note_match is None or int(note_match.group(1)) != year + 1:
+        raise refuse(f"the note does not name the {year + 1} CPS ASEC")
+    trailer = [grid[s][_LABEL_COL + 1 :], grid[s + 1][_LABEL_COL + 1 :]]
+    trailer.extend(grid[s + 2 :])
+    if any(not _blank(cell) for row in trailer for cell in row):
+        raise refuse("a value beside or below the source and note")
+    labelled = []
+    for row in grid[h + 2 : s]:
+        if _blank(row[_LABEL_COL]):
+            if any(not _blank(cell) for cell in row):
+                raise refuse("a value in an unlabelled row")
             continue
-        value = _number(row[weighted_col]) if weighted_col < len(row) else None
-        if value is None:
-            raise ValueError(f"{year}: row {label!r} has no weighted average")
-        weighted[key] = value
-        matrix[key] = {
-            children: number
-            for children, col in child_cols.items()
-            if col < len(row) and (number := _number(row[col])) is not None
+        labelled.append(row)
+    labels = [_label(row[_LABEL_COL]) for row in labelled]
+    expected = [label for label, _, _ in _TABLE_ROWS]
+    if labels != expected:
+        raise refuse(f"row labels {labels} != {expected}")
+    weighted: dict[str, int] = {}
+    all_ages: dict[str, int] = {}
+    matrix: dict[str, dict[int, int]] = {}
+    for (label, key, n_columns), row in zip(
+        _TABLE_ROWS, labelled, strict=True
+    ):
+        where = f"{year} row {label!r}"
+        value = _dollars(row[_WEIGHTED_COL], f"{where} weighted average")
+        cells = {
+            k: _dollars(cell, f"{where} column {_CHILD_HEADERS[k]!r}")
+            for k, cell in enumerate(row[_FIRST_CHILD_COL:_TABLE_WIDTH])
+            if not _blank(cell)
         }
-    missing = set(adjusted_poverty.THRESHOLD_ROW_KEYS) - set(weighted)
-    if missing:
-        raise ValueError(f"{year}: rows missing {sorted(missing)}")
-    _validate_year(year, weighted, matrix)
-    return {"weighted_average": weighted, "matrix": matrix, "title": title}
+        if sorted(cells) != list(range(n_columns)):
+            raise refuse(
+                f"row {label!r} fills children columns {sorted(cells)}, "
+                f"expected {list(range(n_columns))}"
+            )
+        if any(not _blank(cell) for cell in row[_TABLE_WIDTH:]):
+            raise refuse(f"row {label!r} has a value beyond the table")
+        if key in _ALL_AGES:
+            all_ages[_ALL_AGES[key]] = value
+        else:
+            weighted[key] = value
+            matrix[key] = cells
+    _validate_year(year, weighted, all_ages, matrix)
+    return {
+        "weighted_average": weighted,
+        "all_ages": all_ages,
+        "matrix": matrix,
+        "title": " ".join(str(title_cell).split()),
+        "source_line": source_line,
+        "cps_asec_year": int(note_match.group(1)),
+    }
 
 
 def _validate_year(
     year: int,
-    weighted: dict[str, float],
-    matrix: dict[str, dict[int, float]],
+    weighted: dict[str, int],
+    all_ages: dict[str, int],
+    matrix: dict[str, dict[int, int]],
 ) -> None:
+    """Relations every Census threshold table satisfies, or refused.
+
+    The 65-and-over rows lie below the under-65 rows (sizes 1 and 2); the
+    size-1 and size-2 weighted averages over both ages lie between their
+    two age rows; the weighted averages rise with size from two persons;
+    and each row's weighted average lies within the range of that row's
+    matrix cells (a weighted average of them), which for sizes 1 ties the
+    two columns together.
+    """
+
+    if set(weighted) != set(adjusted_poverty.THRESHOLD_ROW_KEYS):
+        raise ValueError(f"{year}: rows {sorted(weighted)}")
     for size in ("one", "two"):
-        if not weighted[f"{size}_65_plus"] < weighted[f"{size}_under_65"]:
+        young, old = weighted[f"{size}_under_65"], weighted[f"{size}_65_plus"]
+        if not old < young:
             raise ValueError(
                 f"{year}: 65-and-over threshold not below under-65 ({size})"
+            )
+        if not old <= all_ages[size] <= young:
+            raise ValueError(
+                f"{year}: the {size}-person weighted average over both ages "
+                "is not between its two age rows"
             )
     larger = ["three", "four", "five", "six", "seven", "eight", "nine_plus"]
     chain = [weighted["two_under_65"], *(weighted[key] for key in larger)]
     if any(b <= a for a, b in zip(chain, chain[1:], strict=False)):
         raise ValueError(f"{year}: weighted averages not increasing in size")
-    expected_columns = {
-        "one_under_65": [0],
-        "one_65_plus": [0],
-        "two_under_65": [0, 1],
-        "two_65_plus": [0, 1],
-        **{
-            key: list(range(min(size - 1, 8) + 1))
-            for key, size in zip(larger, range(3, 10), strict=True)
-        },
-    }
-    for key, columns in expected_columns.items():
-        if sorted(matrix[key]) != columns:
+    for key, value in weighted.items():
+        cells = matrix[key].values()
+        if not min(cells) <= value <= max(cells):
             raise ValueError(
-                f"{year}: matrix row {key} has children columns "
-                f"{sorted(matrix[key])}, expected {columns}"
+                f"{year}: row {key} weighted average {value} outside its "
+                f"matrix cells {min(cells)}-{max(cells)}"
             )
 
 
+def check_matrix_moves_together(
+    earlier: dict[str, dict[int, int]],
+    later: dict[str, dict[int, int]],
+    year: int,
+) -> float:
+    """Refuse a year whose matrix cells do not all move by one ratio.
+
+    The 2009 workbook's note says the thresholds are updated each year by
+    the change in the average annual CPI-U, and every cell of the real
+    2003-2012 workbooks moves year on year by one ratio to within about
+    $1 of whole-dollar rounding; a cell read from the wrong row or column
+    moves by far more.  Returns the median ratio of ``year`` to
+    ``year - 1``.
+    """
+
+    pairs = [
+        (earlier[key][k], later[key][k])
+        for key in adjusted_poverty.THRESHOLD_ROW_KEYS
+        for k in later[key]
+    ]
+    ratios = sorted(new / old for old, new in pairs)
+    middle = len(ratios) // 2
+    ratio = (
+        ratios[middle]
+        if len(ratios) % 2
+        else 0.5 * (ratios[middle - 1] + ratios[middle])
+    )
+    worst = max(abs(new - ratio * old) for old, new in pairs)
+    if worst > _CROSS_YEAR_TOLERANCE:
+        raise ValueError(
+            f"{year}: a matrix cell is ${worst:.2f} from {year - 1}'s times "
+            f"the common ratio {ratio:.6f} (tolerance "
+            f"${_CROSS_YEAR_TOLERANCE:.0f})"
+        )
+    return ratio
+
+
 def read_workbook_rows(path: Path) -> tuple[str, list[list[Any]]]:
+    """The one worksheet's title and cell values (formulas as text)."""
+
     import openpyxl
 
-    workbook = openpyxl.load_workbook(path, read_only=True, data_only=True)
+    workbook = openpyxl.load_workbook(path, data_only=False)
     try:
+        if len(workbook.worksheets) != 1:
+            raise ValueError(
+                f"{path.name}: {len(workbook.worksheets)} worksheets, "
+                "expected 1"
+            )
         sheet = workbook.worksheets[0]
         rows = [list(row) for row in sheet.iter_rows(values_only=True)]
         return sheet.title, rows
@@ -374,19 +556,46 @@ def read_workbook_rows(path: Path) -> tuple[str, list[list[Any]]]:
         workbook.close()
 
 
-def build_threshold_capture(census_dir: Path) -> dict[str, Any]:
+def build_threshold_capture(
+    census_dir: Path,
+    *,
+    expected_sha256: dict[str, str] | None = CENSUS_WORKBOOK_SHA256,
+) -> dict[str, Any]:
+    """Parse the nine workbooks in ``census_dir`` into the capture.
+
+    Each workbook's SHA-256 must equal ``expected_sha256`` (the pinned
+    Census files) before it is parsed; ``None`` skips the pin and is for
+    tests on INVENTED workbooks only (the command line always pins).
+    """
+
     census_dir = Path(census_dir)
     weighted: dict[str, Any] = {}
+    all_ages: dict[str, Any] = {}
     matrix: dict[str, Any] = {}
     sources: dict[str, Any] = {}
+    ratios: dict[str, float] = {}
+    previous: dict[str, dict[int, int]] | None = None
     for year in YEARS:
         name = f"thresh{year % 100:02d}.xlsx"
         path = census_dir / name
         if not path.is_file():
             raise FileNotFoundError(f"missing Census file {path}")
+        digest = _sha256(path)
+        if expected_sha256 is not None and digest != expected_sha256.get(name):
+            raise ValueError(
+                f"{path} sha256 {digest} != pinned "
+                f"{expected_sha256.get(name)}: not the captured Census file"
+            )
         sheet, rows = read_workbook_rows(path)
         parsed = parse_threshold_rows(rows, year)
+        if previous is not None:
+            ratios[f"{year - 1}-{year}"] = round(
+                check_matrix_moves_together(previous, parsed["matrix"], year),
+                6,
+            )
+        previous = parsed["matrix"]
         weighted[str(year)] = parsed["weighted_average"]
+        all_ages[str(year)] = parsed["all_ages"]
         matrix[str(year)] = {
             key: {str(k): v for k, v in cells.items()}
             for key, cells in parsed["matrix"].items()
@@ -394,22 +603,52 @@ def build_threshold_capture(census_dir: Path) -> dict[str, Any]:
         sources[str(year)] = {
             "file": name,
             "url": CENSUS_URL_BASE + name,
-            "sha256": _sha256(path),
+            "sha256": digest,
             "bytes": path.stat().st_size,
             "sheet": sheet,
             "title": parsed["title"],
+            "source_line": parsed["source_line"],
+            "cps_asec_year": parsed["cps_asec_year"],
         }
     return {
         "schema_version": adjusted_poverty.THRESHOLDS_SCHEMA_VERSION,
         "description": (
             "U.S. Census Bureau poverty thresholds for income years "
-            "2004-2012: weighted averages by family size (with the "
-            "under-65 and 65-and-over rows for one and two persons) and "
-            "the size-by-related-children matrix"
+            "2004-2012, as printed in the Census historical threshold "
+            "workbooks: weighted averages by family size (with the "
+            "under-65 and 65-and-over rows for one and two persons), the "
+            "size-1 and size-2 weighted averages over both ages, and the "
+            "size-by-related-children matrix, in dollars"
         ),
+        "years": [YEARS[0], YEARS[-1]],
         "sources": sources,
         "generated_by": "scripts/capture_track_u_parameters.py --census-dir",
+        "checks": {
+            "workbook_sha256": (
+                "pinned (CENSUS_WORKBOOK_SHA256)"
+                if expected_sha256 is not None
+                else "not pinned (INVENTED workbooks)"
+            ),
+            "layout": (
+                "title names the year, source and note name the next "
+                "year's CPS ASEC, header and thirteen row labels as "
+                "printed, whole-dollar cells in the expected columns, "
+                "nothing else in the sheet"
+            ),
+            "within_year": (
+                "65-and-over below under-65 (sizes 1, 2); size-1 and "
+                "size-2 all-ages averages between their age rows; "
+                "weighted averages rise with size from two; each weighted "
+                "average within its row's matrix cells"
+            ),
+            "cross_year": (
+                "every matrix cell moves by one ratio from the previous "
+                f"year within ${_CROSS_YEAR_TOLERANCE:.0f}"
+            ),
+            "matrix_ratio_by_year_pair": ratios,
+        },
         "weighted_average": weighted,
+        "weighted_average_all_ages": all_ages,
         "matrix": matrix,
     }
 

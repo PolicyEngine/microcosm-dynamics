@@ -192,10 +192,10 @@ def committed_parameters(
 ) -> TrackUParameters:
     """The committed SSI capture and life tables, with ``thresholds``.
 
-    The dry run passes the invented threshold table (the Census capture
-    does not exist yet, cos decision d194); the registered run passes
-    :func:`populace_dynamics.estimates.adjusted_poverty.
-    load_poverty_thresholds`, which refuses until the capture is pinned.
+    The dry run passes the invented threshold table (its invented
+    near-threshold singles are placed against it); the registered run
+    passes :func:`populace_dynamics.estimates.adjusted_poverty.
+    load_poverty_thresholds`, the pinned Census capture.
     """
 
     return TrackUParameters(
@@ -225,9 +225,9 @@ def _check_parameters(params: TrackUParameters, data_provenance: str) -> None:
     thresholds = (
         {} if params.thresholds is None else dict(params.thresholds.provenance)
     )
-    # Until the capture is committed the pin is None, and a table whose
-    # provenance simply omits its SHA-256 would otherwise compare equal to
-    # it: no threshold table passes while nothing is pinned.
+    # With no pin (None), a table whose provenance simply omits its
+    # SHA-256 would otherwise compare equal to it: no threshold table
+    # passes while nothing is pinned.
     if (
         ap.THRESHOLDS_SHA256 is None
         or thresholds.get("kind") != "census_capture"
