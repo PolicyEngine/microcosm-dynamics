@@ -399,6 +399,10 @@ LEGACY_CONVENTION_USERS = {
     # legacy AIME beside it, and refuses to run if Track A's convention
     # changes.
     "scripts/track_c_aime_agreement.py",
+    # Exercise 3 (FRA to 68) reads Track A's convention so its projection
+    # stays identical to exercise 1's (E1 e1-ratified-1; Max's rulings d188
+    # item (a) and, by name, d281 on 2026-09-25).
+    "src/populace_dynamics/fra68_track/config.py",
 }
 
 

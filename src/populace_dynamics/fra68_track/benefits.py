@@ -59,11 +59,11 @@ and with these scenario rules layered on:
   worker's own claim for the spouse's excess enters the scenario in its
   conversion year and is counted as above.
 * **Opening stock** (the basis frozen at the opening year, Max's ruling
-  d075 for exercise 1, whose carry-over awaits him as the
-  ``opening_stock_basis`` field of d188): the observed amount carried on
-  the baseline path, times the component's reform-to-baseline age-factor
-  ratio for a retired-worker or spouse record claimed at 62 or later
-  (``reform.opening_stock_factor_ratio``); 1 for every other record.
+  d075 for exercise 1, which he carried over to exercise 3 as the
+  ``opening_stock_basis`` field, d196 item (3)): the observed amount
+  carried on the baseline path, times the component's reform-to-baseline
+  age-factor ratio for a retired-worker or spouse record claimed at 62 or
+  later (``reform.opening_stock_factor_ratio``); 1 for every other record.
 
 :func:`union_benefit_rows` pairs a baseline and a reform scenario into A7
 input rows: one row per person alive in the reference year with a
