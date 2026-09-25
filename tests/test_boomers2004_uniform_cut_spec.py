@@ -196,8 +196,16 @@ def test_income_concept_matches_the_spec_defaults(block):
         )
     }
     assert block["threshold"]["rule"] == spec.threshold_rule
-    assert block["threshold"]["capture_status"] == "not_captured"
-    assert ap.THRESHOLDS_SHA256 is None
+    # captured under cos decision d194: the block names the pinned capture
+    assert block["threshold"]["capture_status"] == "captured"
+    assert block["threshold"]["capture"] == {
+        "file": str(ap.THRESHOLDS_PATH.relative_to(ROOT)),
+        "sha256": ap.THRESHOLDS_SHA256,
+    }
+    assert ap.load_poverty_thresholds().provenance["sha256"] == (
+        block["threshold"]["capture"]["sha256"]
+    )
+    assert "census_thresholds_not_captured" not in block["blocked_by"]
     ssi = block["ssi"]
     assert ssi["rule"] == spec.ssi_rule
     assert ssi["deeming"] == spec.ssi_deeming

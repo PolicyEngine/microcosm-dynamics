@@ -39,10 +39,13 @@ comment exists, at exactly the commit that comment registers:
 The artifact publishes regardless of outcome.  It never reads the sealed
 comparator; the seal is opened only after this artifact is committed.
 
-As of this script's writing none of these preconditions holds: the
-specification is a draft (``u1-draft-5``), Max has not ruled on exercise
-2 (cos decision d189) or on the fallback rule, the Census thresholds are
-not captured (d194) and the 2005/2007 wealth supplements are not staged.
+As of this script's writing the specification is a draft
+(``u1-draft-5``), Max has not ruled on exercise 2 (cos decision d189) or
+on the fallback rule, and the 2005/2007 wealth supplements are not
+staged.  The Census thresholds are captured and pinned (cos decision
+d194; ``data/external/census_poverty_thresholds_2004_2012.json``), and
+the specification's threshold block records ``capture_status:
+captured``.
 
 Usage::
 

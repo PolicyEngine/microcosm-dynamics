@@ -371,7 +371,9 @@ def test_blocked_waves_and_design_frame():
     )
 
 
-def test_a_registered_run_needs_the_committed_pinned_parameters(params):
+def test_a_registered_run_needs_the_committed_pinned_parameters(
+    params, monkeypatch
+):
     with pytest.raises(runner.TrackURunError, match="Census threshold"):
         runner._check_parameters(params, ap.REGISTERED_REAL)
     fake_capture = dataclasses.replace(
@@ -381,14 +383,15 @@ def test_a_registered_run_needs_the_committed_pinned_parameters(params):
             provenance={"kind": "census_capture", "sha256": "0" * 64},
         ),
     )
-    # the capture is not pinned yet (THRESHOLDS_SHA256 is None), so no
-    # threshold table can pass
-    assert ap.THRESHOLDS_SHA256 is None
+    # the committed capture is pinned, and a table claiming another
+    # SHA-256 does not pass
+    assert ap.THRESHOLDS_SHA256 is not None
     with pytest.raises(runner.TrackURunError, match="pinned"):
         runner._check_parameters(fake_capture, ap.REGISTERED_REAL)
     # regression (independent review, 2026-09-24): a table labelled as the
     # capture whose provenance omits its SHA-256, or records None, matched
-    # the unset pin (None == None) and passed
+    # an unset pin (None == None) and passed; with no pin, nothing passes
+    monkeypatch.setattr(ap, "THRESHOLDS_SHA256", None)
     for provenance in (
         {"kind": "census_capture"},
         {"kind": "census_capture", "sha256": None},
@@ -404,8 +407,9 @@ def test_a_registered_run_needs_the_committed_pinned_parameters(params):
 
 
 def test_a_pinned_capture_passes_the_parameter_check(params, monkeypatch):
-    """Once a capture is pinned, a table recording that SHA-256 passes and
-    any other is refused (the pin here is INVENTED; nothing is captured)."""
+    """A table recording the pinned SHA-256 passes and any other is
+    refused (the pin here is INVENTED, standing in for the committed one;
+    ``test_census_threshold_capture.py`` passes the real capture)."""
 
     pin = "a" * 64
     monkeypatch.setattr(ap, "THRESHOLDS_SHA256", pin)

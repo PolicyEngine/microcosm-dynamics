@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import copy
 import importlib.util
+import json
 from pathlib import Path
 
 import pytest
@@ -234,9 +235,20 @@ def test_the_headline_row_must_match_the_staging():
         script.check_headline("U0-F", _Staging(()))
 
 
-def test_uncaptured_thresholds_stop_the_run_before_any_psid_read(
-    tmp_path, monkeypatch
+@pytest.mark.parametrize(
+    "capture, error",
+    [
+        ("missing", ap.ThresholdsNotCapturedError),
+        ("tampered", ap.AdjustedPovertyError),
+    ],
+)
+def test_a_bad_threshold_capture_stops_the_run_before_any_psid_read(
+    tmp_path, monkeypatch, capture, error
 ):
+    """The committed capture is pinned; a missing or tampered one is
+    refused before any PSID file is read (the loader is pointed at a
+    copy, with the committed pin)."""
+
     script = _script()
     monkeypatch.setattr(script, "preflight", lambda **_: {"head": COMMIT})
 
@@ -244,8 +256,17 @@ def test_uncaptured_thresholds_stop_the_run_before_any_psid_read(
         raise AssertionError("PSID read before the threshold check")
 
     monkeypatch.setattr(script.age67, "load_age67_inputs", no_psid)
+    path = tmp_path / "census_poverty_thresholds_2004_2012.json"
+    if capture == "tampered":
+        data = json.loads(ap.THRESHOLDS_PATH.read_text())
+        data["weighted_average"]["2012"]["two_65_plus"] += 1
+        path.write_text(json.dumps(data, indent=2) + "\n")
+    load = ap.load_poverty_thresholds
+    monkeypatch.setattr(
+        script.ap, "load_poverty_thresholds", lambda: load(path)
+    )
     output = tmp_path / "run.json"
-    with pytest.raises(ap.ThresholdsNotCapturedError):
+    with pytest.raises(error):
         script.main(
             [
                 "--registration-pointer",

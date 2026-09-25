@@ -1,7 +1,8 @@
 """The committed parameters Track U reads, pinned by SHA-256.
 
 Artifact tier: reads committed files under ``data/external`` (the SSI
-capture ``track_u_ssi_parameters.json``, the NCHS 2000 life tables) and
+capture ``track_u_ssi_parameters.json``, the Census threshold capture
+``census_poverty_thresholds_2004_2012.json``, the NCHS 2000 life tables) and
 the TR2008-vintage SSA period life table for 2004.  It checks their pins,
 their shape and properties any real table has (the price of a life
 annuity falls with age and is higher for women than men at 67).  It
@@ -21,6 +22,9 @@ from populace_dynamics.estimates import adjusted_poverty as ap
 ROOT = Path(__file__).resolve().parents[2]
 SSI_CAPTURE = ROOT / "data" / "external" / "track_u_ssi_parameters.json"
 NCHS_2000 = ROOT / "data" / "external" / "nchs_life_tables_2000.json"
+CENSUS_CAPTURE = (
+    ROOT / "data" / "external" / "census_poverty_thresholds_2004_2012.json"
+)
 
 
 def test_ssi_capture_matches_its_pin():
@@ -71,8 +75,14 @@ def test_ssa_2004_period_life_table_loads():
     assert ap.load_life_table("ssa_period_2004").qx == table.qx
 
 
-def test_census_thresholds_are_not_yet_captured():
-    assert ap.THRESHOLDS_SHA256 is None
-    assert not ap.THRESHOLDS_PATH.exists()
-    with pytest.raises(ap.ThresholdsNotCapturedError):
-        ap.load_poverty_thresholds()
+def test_census_threshold_capture_matches_its_pin():
+    """Captured under cos decision d194; the capture's own checks are in
+    ``test_census_threshold_capture.py``."""
+
+    assert ap.THRESHOLDS_PATH == CENSUS_CAPTURE
+    digest = hashlib.sha256(CENSUS_CAPTURE.read_bytes()).hexdigest()
+    assert digest == ap.THRESHOLDS_SHA256
+    thresholds = ap.load_poverty_thresholds()
+    assert thresholds.provenance["sha256"] == ap.THRESHOLDS_SHA256
+    with pytest.raises(ap.AdjustedPovertyError, match="sha256"):
+        ap.load_poverty_thresholds(expected_sha256="0" * 64)
