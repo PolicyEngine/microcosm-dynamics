@@ -67,16 +67,19 @@ def _real_rows(script, year: int) -> list[list]:
 # Pins and reproduction
 # -------------------------------------------------------------------------
 def test_committed_workbooks_match_their_pins(script):
-    """The directory also holds the 2003 and 2013-2022 workbooks Track M
-    reads (cos d279); this capture reads the nine of 2004-2012."""
+    """The directory also holds the workbooks Track M reads (1982, 1986,
+    1988, 1989, 1991, 1992, 1994-2003 and 2013-2022; cos d279); this
+    capture reads the nine of 2004-2012."""
 
     assert script.CENSUS_WORKBOOK_DIR == WORKBOOKS
     assert script.YEARS == YEARS
+    track_m_years = (1982, 1986, 1988, 1989, 1991, 1992, *range(1994, 2023))
     assert (
         sorted(p.name for p in WORKBOOKS.glob("*.xlsx"))
         == sorted(script.CENSUS_WORKBOOK_SHA256)
-        == [_name(year) for year in range(2003, 2023)]
+        == sorted(_name(year) for year in track_m_years)
     )
+    assert set(map(_name, YEARS)) <= set(script.CENSUS_WORKBOOK_SHA256)
     provenance = (WORKBOOKS / "provenance.md").read_text()
     for name, pin in script.CENSUS_WORKBOOK_SHA256.items():
         digest = hashlib.sha256((WORKBOOKS / name).read_bytes()).hexdigest()

@@ -25,8 +25,10 @@ The shapes follow the M1 specification so that every rule runs:
   factor (``rules.claim_factor``) and the COLA factor (``rules.cola_factor``
   over the COLA rates the caller passes).
 
-Every in-window record's threshold year is 2003 or later, the years the
-Census capture covers; the dry run checks a record with an earlier one
+Every in-window record's threshold year is 2003 or later
+(:data:`INVENTED_THRESHOLD_YEARS`, the years the invented thresholds of
+:func:`invented_parameters` cover; the real Census capture also covers
+fifteen years before 2003); the dry run checks records with other years
 separately (the named error of referee R8).
 """
 
@@ -57,12 +59,18 @@ from populace_dynamics.ss.params import SSAParameters
 
 __all__ = [
     "INVENTED_LABEL",
+    "INVENTED_THRESHOLD_YEARS",
     "PANEL_YEARS",
     "invented_parameters",
     "invented_track_m_inputs",
 ]
 
 INVENTED_LABEL = DRY_RUN_HEADER
+#: The years :func:`invented_parameters` gives an invented threshold: the
+#: years the invented cohort's in-window records need (2003-2022).  Fixed
+#: here rather than read from the real capture's years, so that the
+#: invented tests' refusals of a year before 2003 do not move with it.
+INVENTED_THRESHOLD_YEARS: tuple[int, ...] = tuple(range(2003, 2023))
 #: The earnings panel's income years: every year 1968-1996, even years
 #: 1998-2022 (``data/family.py``).
 PANEL_YEARS: tuple[int, ...] = (
@@ -454,9 +462,10 @@ def invented_parameters() -> tuple[TrackMParameters, dict[int, float]]:
     base, PIA factors (90, 32 and 15 percent), full retirement ages and
     reduction rates; quarter-of-coverage amounts of 2.4 percent of that
     wage index; one-person 65+ thresholds of $8,000 in 2003 growing 2.5
-    percent a year to 2022; and COLAs of 2.5 percent for 1979-2021.  None
-    is an SSA, Census or PSID value.  Returns the parameters and the COLA
-    rates.
+    percent a year to 2022 (:data:`INVENTED_THRESHOLD_YEARS`: the invented
+    cohort's years, not the real capture's, which also holds fifteen years
+    before 2003); and COLAs of 2.5 percent for 1979-2021.  None is an SSA,
+    Census or PSID value.  Returns the parameters and the COLA rates.
     """
 
     nawi = {
@@ -479,7 +488,7 @@ def invented_parameters() -> tuple[TrackMParameters, dict[int, float]]:
     thresholds = rules.AgedThresholds(
         {
             year: round(8_000.0 * 1.025 ** (year - 2003), 0)
-            for year in rules.TRACK_M_THRESHOLD_YEARS
+            for year in INVENTED_THRESHOLD_YEARS
         },
         {"kind": "INVENTED", "years": [2003, 2022]},
     )
