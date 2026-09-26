@@ -130,7 +130,14 @@ NAMED_DELTAS: tuple[str, ...] = (
     "so removing its income understates income",
     "employer DC (401(k)) balances outside IRAs are not in WEALTH1 though "
     "the Report counts them (p. 24): the primary annuity is understated "
-    "for their holders (row U7)",
+    "for their holders; row U7 adds the balances the PSID pension section "
+    "records on the questionnaires' route (the head's and wife's "
+    "current-job account and up to two previous employers' accounts left "
+    "to accumulate, as reported: not imputed, a DK or refused amount "
+    "counted as zero) and still misses a second tax-deferred plan on the "
+    'current job, a third previous plan, an OFUM\'s account and a "both" '
+    "plan's account reported only in the account items its checkpoint "
+    "re-asks",
     "PSID other assets (W34) include cash value of life insurance, "
     "collections and rights in a trust or estate, which the Report's list "
     "(p. 22) does not name",
@@ -426,6 +433,9 @@ def _income_counts(adjusted: pd.DataFrame) -> dict[str, Any]:
         "n_financial_assets_negative": int(
             (adjusted["financial_assets"] < 0).sum()
         ),
+        "n_employer_dc_added_positive": int(
+            (adjusted["employer_dc_added"] > 0).sum()
+        ),
         "n_asset_income_removed_nonzero": int(
             (adjusted["asset_income_removed"] != 0).sum()
         ),
@@ -600,7 +610,8 @@ def run_track_u(
 ) -> dict[str, Any]:
     """Every registered row, the F17 diagnostics and the provenance.
 
-    Rows not built (U7) are reported with their reason.  The headline row
+    A row not built would be reported with its reason (since u1-draft-7
+    every registered row is built).  The headline row
     is :func:`headline_row`'s (the fallback rule); a row whose waves lack
     WEALTH1 is reported as blocked with its counts unless
     ``allow_blocked`` (then its blocked observations are left out and

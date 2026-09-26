@@ -132,6 +132,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/fra68_track/reform.py"),
         Path("src/populace_dynamics/fra68_track/runner.py"),
         Path("src/populace_dynamics/data/family_income.py"),
+        Path("src/populace_dynamics/data/employer_dc.py"),
         Path("src/populace_dynamics/cohorts/age67.py"),
         Path("src/populace_dynamics/estimates/adjusted_poverty.py"),
         Path("src/populace_dynamics/estimates/uniform_cut_tabulation.py"),
@@ -428,6 +429,7 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
     )
     track_u_modules = {
         "populace_dynamics.data.family_income",
+        "populace_dynamics.data.employer_dc",
         "populace_dynamics.cohorts.age67",
         "populace_dynamics.estimates.adjusted_poverty",
         "populace_dynamics.estimates.uniform_cut_tabulation",

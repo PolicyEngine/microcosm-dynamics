@@ -23,7 +23,10 @@ U0-F becomes the headline while the rows that need 2005 or 2007 are
 reported as blocked with their counts), that the registered-run guards
 refuse invented inputs, and that the committed Census threshold capture
 loads under its pin while a threshold table without that pin is
-refused.
+refused.  Since u1-draft-7 row U7 (WEALTH1 plus the employer DC balances
+of the PSID pension section) and U7-F run with the rest, on invented
+pension-section records, and the checks record the invented records'
+U7 paths and that U7 differs from U0 only through the annuity.
 
 Usage::
 
@@ -51,7 +54,7 @@ if str(ROOT / "src") not in sys.path:
 import pandas as pd  # noqa: E402
 
 from populace_dynamics.cohorts import age67  # noqa: E402
-from populace_dynamics.data import family_income  # noqa: E402
+from populace_dynamics.data import employer_dc, family_income  # noqa: E402
 from populace_dynamics.estimates import adjusted_poverty as ap  # noqa: E402
 from populace_dynamics.uniform_cut_track_u import (  # noqa: E402
     DRY_RUN_HEADER,
@@ -160,6 +163,55 @@ def checks(seed: int, params: runner.TrackUParameters) -> dict[str, Any]:
             )
         ),
         "census_threshold_capture": _census_capture(params),
+        "employer_dc_u7": _employer_dc_check(staged, params),
+    }
+
+
+def _employer_dc_check(
+    staged: age67.Age67Inputs, params: runner.TrackUParameters
+) -> dict[str, Any]:
+    """Row U7 on invented records: the paths the invented families take,
+    and U7 against U0 on the same rows (the annuity is the only change)."""
+
+    reconciliation = {
+        str(wave): employer_dc.reconcile_employer_dc(frame, wave)
+        for wave, frame in sorted(staged.employer_dc.items())
+    }
+    cohort = age67.build_age67_cohort(staged)
+    members = age67.income_rows(cohort, staged)
+    runs = {
+        name: ap.adjusted_incomes(
+            members,
+            ap.AdjustedPovertySpec(financial_assets=name),
+            data_provenance=ap.INVENTED,
+            life_table=params.life_tables["nchs_2000"],
+            thresholds=invented.invented_poverty_thresholds(),
+            ssi=params.ssi,
+        ).set_index("observation_id")
+        for name in ap.FINANCIAL_ASSETS
+    }
+    u0, u7 = runs["wealth1"], runs["wealth1_plus_employer_dc"]
+    added = u7["annuity"] - u0["annuity"]
+    return {
+        "invented_records_by_wave": reconciliation,
+        "u0_observations_with_employer_dc": int(
+            (members["employer_dc"] > 0).sum()
+        ),
+        "u7_minus_u0_annuity_never_negative": bool((added >= -1e-9).all()),
+        "u7_minus_u0_baseline_equals_annuity_change": bool(
+            ((u7["baseline_income"] - u0["baseline_income"]) - added)
+            .abs()
+            .max()
+            < 1e-6
+        ),
+        "u7_minus_u0_reform_equals_annuity_change": bool(
+            ((u7["reform_income"] - u0["reform_income"]) - added).abs().max()
+            < 1e-6
+        ),
+        "poor_under_u7_implies_poor_under_u0": bool(
+            not (u7["poor_baseline"] & ~u0["poor_baseline"]).any()
+            and not (u7["poor_reform"] & ~u0["poor_reform"]).any()
+        ),
     }
 
 
@@ -406,6 +458,18 @@ def results_markdown(result: dict[str, Any]) -> str:
             ]["refused"]
         )
         + ".",
+        "",
+        "- Row U7 on invented pension-section records: "
+        f"{check['employer_dc_u7']['u0_observations_with_employer_dc']} "
+        "U0 observations have a positive invented balance; U7 minus U0 "
+        "changes the annuity only (annuity never lower: "
+        f"{check['employer_dc_u7']['u7_minus_u0_annuity_never_negative']}; "
+        "baseline and reform move by the annuity change: "
+        f"{check['employer_dc_u7']['u7_minus_u0_baseline_equals_annuity_change']}"
+        " and "
+        f"{check['employer_dc_u7']['u7_minus_u0_reform_equals_annuity_change']}"
+        "; nobody poor under U7 is not poor under U0: "
+        f"{check['employer_dc_u7']['poor_under_u7_implies_poor_under_u0']}).",
         "",
         "## Pending decisions",
         "",

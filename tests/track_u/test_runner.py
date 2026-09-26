@@ -51,14 +51,13 @@ def _all(entry: dict) -> dict:
     )
 
 
-def test_every_row_runs_and_u7_is_reported_not_built(result):
+def test_every_row_runs_including_u7(result):
+    """Since u1-draft-7 every registered row, U7 and U7-F included, is
+    built and computed (INVENTED data)."""
+
     assert list(result["rows"]) == list(rows.REGISTERED_ROWS)
-    assert result["rows"]["U7"]["status"] == "not_built"
-    assert result["rows"]["U7"]["tabulation"] is None
     for row_id, entry in result["rows"].items():
-        if row_id == "U7":
-            continue
-        assert entry["status"] == "computed"
+        assert entry["status"] == "computed", row_id
         assert entry["tabulation"]["data_provenance"] == ap.INVENTED
         assert entry["tabulation"]["labels"][0] == ut.INVENTED_DATA_LABEL
         cell = _all(entry)
@@ -321,7 +320,6 @@ def test_the_fallback_rule_with_the_supplements_refused(params):
     assert result["headline"]["wealth_refused_waves"] == [2005, 2007]
     statuses = {row: entry["status"] for row, entry in result["rows"].items()}
     assert statuses.pop("U0-F") == "computed"
-    assert statuses.pop("U7") == "not_built"
     # second referee S8: the -F alternatives are computed under the
     # fallback; the U0 and U1 versions are blocked
     for alternative in rows.FALLBACK_ALTERNATIVES.values():
@@ -333,6 +331,7 @@ def test_the_fallback_rule_with_the_supplements_refused(params):
         "U3",
         "U4",
         "U5",
+        "U7",
         "U8",
         "U9",
         "U10",
