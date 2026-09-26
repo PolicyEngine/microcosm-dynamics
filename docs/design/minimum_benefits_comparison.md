@@ -2248,8 +2248,10 @@ Opus 5.5) read:**
   20:05), and the hashes and last entry dates of its saved copies in
   `EVID/revisions/`;
 - the review `EVID/track-m-3-review-20260925.md`, for its form;
-- the branch diff `10433474..ad0de470` in full, and this specification's
-  header and §§2, 4-7 and 18-23;
+- the branch diff `10433474..ad0de470` in full (so every part of §§2, 4,
+  6, 7, 18-20, 22 and 23 the range changed), and of this specification
+  the header, §§4a and 4b, §5's first item and the unchanged text of §18
+  item 4 and §19; it did not read §21 or the rest of §§5-7;
 - all thirty-five Census workbooks, with openpyxl by row label, and the
   staging directory's `SHA256SUMS` and `PROVENANCE-thresh95.md`;
 - the committed HTML Table 1, and the Internet Archive's CDX index (index
@@ -2393,6 +2395,9 @@ on real data. Its dry run is on INVENTED cohorts
     compared differ, all averages over several thresholds.
   - **Tests.** The loader's and the capture's year guards gain
     regression and Hypothesis tests. Before, removing any one of the
-    three guards failed no test.
+    three guards failed no test. The track-m-3 review's survivor-claim
+    property now draws histories that carry a mention instead of
+    filtering for one; it had failed Hypothesis's `filter_too_much`
+    health check on 17 of 60 seeds.
   - **Other.** §22 records what the review read. The invented dry run is
     rerun into `EVID/track-m-dry-run-r6-20260925/`.
