@@ -3,8 +3,10 @@
 No PSID file is read and no statistic is computed: only the preflight
 guards of ``scripts/run_track_u_registered.py`` run, with a fake ``git``
 and hand-built specification headers, plus runs of ``main`` whose
-preflight is replaced to show that the rulings, headline and threshold
-refusals come before any PSID read.
+preflight is replaced, or run with the fake ``git``, to show that the
+ratified block passes every gate before the PSID read, that the
+``u1-draft-7`` header is refused, and that the rulings, headline and
+threshold refusals come before any PSID read.
 """
 
 from __future__ import annotations
@@ -238,6 +240,114 @@ def test_a_ratified_block_whose_rulings_differ_stops_the_run(
                 str(output),
             ]
         )
+    assert not output.exists()
+    assert not output.with_suffix(".env.json").exists()
+
+
+class _PsidReached(Exception):
+    """Raised by the stand-in PSID loader: every earlier gate passed."""
+
+
+def _draft_7(block: dict) -> dict:
+    """The committed block with ``u1-draft-7``'s header restored: its
+    version, status and blocker, and ``plan_decisions`` (decision 7
+    awaiting Max) in place of ``decisions``, as the draft carried them
+    before the ratification."""
+
+    draft = copy.deepcopy(block)
+    del draft["decisions"]
+    draft.update(
+        version="u1-draft-7",
+        status="draft_for_referee",
+        blocked_by=["issue_42_registration_absent"],
+        plan_decisions={
+            "7": {
+                "item": (
+                    "ratify by merge; post the #42 registration; run the "
+                    "one-shot"
+                ),
+                "status": "awaiting_max",
+                "card": "specification section 20",
+                "awaiting": (
+                    "Max (plan section 10 decision 7: ratify U1 by merge, "
+                    "authorize the #42 registration and the one-shot)"
+                ),
+            }
+        },
+    )
+    return draft
+
+
+def _run_main(script, output) -> None:
+    script.main(
+        [
+            "--registration-pointer",
+            POINTER,
+            "--registered-commit",
+            COMMIT,
+            "--headline-row",
+            "U0",
+            "--output",
+            str(output),
+        ]
+    )
+
+
+def test_the_ratified_block_passes_every_gate_before_the_psid_read(
+    tmp_path, monkeypatch
+):
+    """u1-ratified-1 (cos decision d411): with a fake ``git`` standing in
+    for the registered commit on a clean tree, ``main`` runs the real
+    preflight on the committed specification, the rows and rulings
+    checks, the pinned Census capture, the committed parameters and the
+    block's headline check, and reaches the PSID loader, which is
+    replaced so that no PSID file is read and nothing is written."""
+
+    script = _script()
+    preflight = script.preflight
+    monkeypatch.setattr(
+        script, "preflight", lambda **kw: preflight(git=_git(), **kw)
+    )
+
+    def psid_reached(**_):
+        raise _PsidReached
+
+    monkeypatch.setattr(script.age67, "load_age67_inputs", psid_reached)
+    output = tmp_path / "run.json"
+    with pytest.raises(_PsidReached):
+        _run_main(script, output)
+    assert not output.exists()
+    assert not output.with_suffix(".env.json").exists()
+
+
+def test_the_draft_7_block_is_refused_before_anything_is_read(
+    tmp_path, monkeypatch
+):
+    """The same run on ``u1-draft-7``'s header stops at the ratification
+    check, before the thresholds or any PSID file are read; the rulings
+    check refuses it too, since the draft records no ruling by Max."""
+
+    script = _script()
+    draft = _draft_7(rows.specification_block())
+    with pytest.raises(ValueError, match="authorizes no run"):
+        script.check_specification_ratified(draft)
+    assert script._awaiting(draft) == ["plan_decisions.7.awaiting"]
+    with pytest.raises(ValueError, match="no ruling by Max"):
+        rows.check_rulings_against_block(draft)
+    preflight = script.preflight
+    monkeypatch.setattr(
+        script, "preflight", lambda **kw: preflight(git=_git(), **kw)
+    )
+    monkeypatch.setattr(script.rows, "specification_block", lambda: draft)
+
+    def not_reached(*_, **__):
+        raise AssertionError("read before the ratification check")
+
+    monkeypatch.setattr(script.ap, "load_poverty_thresholds", not_reached)
+    monkeypatch.setattr(script.age67, "load_age67_inputs", not_reached)
+    output = tmp_path / "run.json"
+    with pytest.raises(ValueError, match="authorizes no run"):
+        _run_main(script, output)
     assert not output.exists()
     assert not output.with_suffix(".env.json").exists()
 
