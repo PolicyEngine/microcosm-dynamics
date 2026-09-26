@@ -25,8 +25,9 @@ run the block does not authorize.  A run is authorized only when:
 ``m1-draft-3`` records Max's rulings and fails the first test: it awaits
 the independent review of d430's sensitivity build, then ratification by
 merge.  Its ``blocked_by`` also still lists the open blockers (that review
-and ratification, the registration package and the registration; the
-Census years before 2003 and the statute capture were cleared on
+and ratification, the 1990 Census threshold d430's sensitivity needs, the
+registration package and the registration; the Census years before 2003
+the scored rows need and the statute capture were cleared on
 2026-09-25).
 """
 

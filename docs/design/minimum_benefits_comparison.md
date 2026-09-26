@@ -19,8 +19,10 @@
   F1 knowingly; record F2, F3a, F3b and O1 as named deltas (§15). This
   version builds that sensitivity. The independent checks of `m1-draft-2`
   and of the M3-M5 readings are done (§18); an independent check of this
-  version's sensitivity build comes before the ratified text (§18). This
-  draft authorizes no real-data run: the one-shot entry point
+  version's sensitivity build comes before the ratified text (§18), and
+  the sensitivity needs the 1990 Census threshold, not yet captured,
+  before the registration (§§10, 18). This draft authorizes no real-data
+  run: the one-shot entry point
   (`scripts/run_track_m_registered.py`) refuses a block whose status or
   version is not ratified (§19).
 - **Specification:** `urban2006_minimum_benefits_exercise4`, version
@@ -312,6 +314,12 @@ value (§20); `REGISTERED_ROWS` holds MS0-MS6 (§14).
   captured, hashed and pinned with 2003-2022 (§7), so every threshold
   year M4's count shows is present. Any other year (1983-1985, 1987,
   1990, 1993, before 1982 or after 2022) is still refused.
+  **d430's sensitivity** (2026-09-26; §10, years and bases only): its
+  window, MS0's, needs the same years and also **1990**, the years before
+  2003 again for old-age and death-basis records only. 1990 is not
+  captured, so the registered run, which requires the sensitivity (§11),
+  refuses before computing anything until 1990's workbook is captured
+  under d279 (§18 item 5).
 
 ### 4a. The years that define each record (frozen)
 
@@ -472,7 +480,12 @@ draft should confirm or correct each reading before ratification (§18).
    evaluation reads changes. Whether the share rises or falls is not
    fixed: the basis, the threshold year, *Y*, *P* and the claim factors
    move as well. §10 counts these records over all records, "other"
-   included.
+   included (2026-09-26): of the 453 records whose first own receipt
+   precedes the year of attaining 62, 80 name neither a retirement nor a
+   disability benefit there, 76 with a type unknown and 4 with an "other"
+   mention and every type item known (which the count above, of unknown
+   types only, left out); 138 records have such receipt somewhere before
+   62.
 2. **Observations.** Person-level items (the individual file, waves
    1984-1992 and 2005-2023, and the 1993 family file's head and wife
    items) take precedence. A family-level item identifies a person only
@@ -865,6 +878,8 @@ section 3).
     passed) and records that need 1993 and 1981 (refused) (§18). If the
     ratification changes a reading that moves the years needed (§4c), a
     newly needed year is refused until it is downloaded and captured.
+    d430's sensitivity reading needs one such year, **1990** (§10), which
+    the capture lacks: §18's blocker 5.
 - **Price indexing (options 2 and 4):** the threshold of the year
   itself (the thresholds move with prices, D5).
 - **Wage indexing (options 3 and 5; G9):**
@@ -1050,6 +1065,54 @@ survivor claim-year fix of §4c item 6 in the code.
   44,058; the next wave's items 11,034; an odd year 1997-2021 the gap rule
   can fill 4,535; before 1968 4,284; unobserved 30,271. The panel also
   observes 1,235 person-years before 22.
+
+**d430's structural count** (2026-09-26; `scripts/track_m_structure.py`
+at commit `137e6456` on a clean tree, evidence
+`EVID/track-m-structure-r5-20260926/track-m-structure.json`, SHA-256
+`1110abe6…`, the same 91 PSID files with the same hashes as r4). Every
+count of the funnel, the M4 cohort and the M5 history sources above is
+unchanged (`compare_with_r4.py` in that folder: each part equal). Over
+all worker records with own receipt, never by window, under the scored
+reading (`cohort.first_own_receipt_type_before_62`; unweighted records):
+
+| First own receipt *F* | Records |
+|---|---|
+| Records with own receipt | 2,306 |
+| *F* before the year of attaining 62 | 453 |
+| Of which *F* names a retirement or disability benefit | 373 |
+| Of which *F* names neither (unknown or "other" type; the records d430's sensitivity reaches) | **80** |
+| Of those, *F* names no type, a type item unknown | 76 |
+| Of those, *F* mentions only "other" | **4** (every type item known in all 4) |
+| Of the 80, *F* from a one-member family's year-before-last "yes" / the individual file / the 1993 family file | 60 / 18 / 2 |
+| Records with such receipt anywhere before 62 | 138 |
+
+- **Check.** `EVID/track-m-structure-r5-20260926/
+  first_receipt_type_sizing_r5.py` recounts every number above by brute
+  force from the receipt histories, without calling the count's code,
+  and finds no difference. It also recounts the independent review's
+  definition of 2026-09-25 (§4c item 1: an *F* at any age with a type item
+  unknown, and the disability-origin records among them with no
+  disability mention): 145 and 76, as the review found.
+- **What the counts mean (not a result).** The 80 are the records whose
+  classification the sensitivity can change (§4c item 1); how many are in
+  MS0's window, and what they do to the share, only the registered run
+  computes (§11). A record of the 80 can keep its basis, window year and
+  onset, and a link can also change through such receipt after *F* (a
+  spouse's 2022 own-receipt test) or through a late spouse left with no
+  own record. Every worker record the two readings can treat differently,
+  or link to differently, is among the 138.
+- **The sensitivity's threshold years** (the cohort under the sensitivity
+  reading; years and bases only, as for the rows above): its window,
+  MS0's, needs threshold years from **1982**, and before 2003 the years
+  1982, 1986, 1988, 1989, **1990**, 1991, 1992 and 1994-2002, for old-age
+  and death-basis records. That is MS0's list under the scored reading
+  plus 1990, which the Census capture lacks (§7): the registered run
+  would refuse before computing anything (§11), so 1990 is a blocker
+  (§18 item 5). The years also show that no sensitivity record in the
+  window has a bend-point year before 1979, which `careers` would refuse.
+- **Not computed:** no count of in-window records or persons, no years
+  of coverage, PIA, threshold, minimum, flag or share, under either
+  reading.
 
 **Deltas of the population** (named, not fixed): exposed cohorts born
 1942–1960 against DYNASIM's 1945–1963; the whole 62+ age structure;
@@ -1486,7 +1549,8 @@ guard:
   sensitivity.
 - `.../structure.py` and `scripts/track_m_structure.py`: the structural
   counts of §10, M4's included under §11's limits, and d430's count and
-  the sensitivity's threshold years (§10).
+  the sensitivity's threshold years (§10; `EVID/track-m-structure-r5-
+  20260926/`).
 - `scripts/capture_track_u_parameters.py --track-m-census-dir` and the
   committed workbooks, capture and cross-check source (§7);
   `scripts/capture_track_m_quarter_of_coverage.py` and
@@ -1505,8 +1569,9 @@ guard:
   headed "INVENTED DATA - NOT A COMPARISON", is in
   `EVID/track-m-dry-run-r7-20260926/` (earlier runs:
   `EVID/track-m-dry-run-20260925/`, `-r2/`, `-r3-`, `-r4-`, `-r5-` and
-  `-r6-`); its rows MS0-MS6 are byte-identical to the previous build's
-  (`EVID/track-m-5-build-20260926/`).
+  `-r6-`); its rows MS0-MS6 are byte-identical to those of the build
+  before d430 (`672e6770`, `EVID/track-m-5-build-20260926/
+  dry-run-baseline-672e6770/`) and of r6.
 - `scripts/run_track_m_registered.py`: the one-shot entry point. It
   refuses this draft at its preflight (§19). With an authorizing block it
   refuses, before reading any PSID file, while a component is missing
@@ -1519,6 +1584,8 @@ guard:
   count shows the in-window records need is now captured (§7). It builds
   the same PSID read under d430's sensitivity reading too and passes it
   as `own_receipt_sensitivity`, which a registered run requires (§11).
+  Until the 1990 threshold is captured, it refuses at the sensitivity's
+  threshold-year check (item 5).
 - Tests: `tests/min_benefit_track_m/` (the capture before 2003, its
   differential by row label, the cross-check against Census's Table 1,
   the threshold invariants and the loader's and capture's year guards in
@@ -1642,9 +1709,17 @@ Blocked, with the plan's effort estimates (lane-days):
      ($11.50 for each year of coverage over 10, or that amount as
      increased under 415(i)), with its own years of coverage, at most 30,
      defined in (C)(ii).
-     Neither this specification nor the code mentions it. Whether option
-     1, or the count of people receiving a minimum, should account for it
-     is open.
+     Neither this specification nor the code models it. d430 records
+     it as a named delta (§15): neither option 1 nor the count of people
+     receiving a minimum accounts for it.
+5. **The 1990 Census threshold for d430's sensitivity** (found
+   2026-09-26, §10). The sensitivity's window needs threshold year 1990,
+   which `census_poverty_thresholds_1982_2022.json` does not capture; the
+   scored rows do not need it. d279 covers "any earlier year the build
+   proves it needs": `thresh90.xlsx` would be staged, captured, hashed and
+   pinned as the fifteen earlier years were (§7), with the capture's
+   SHA-256 in `sources` and the entry script's pins. Until then the
+   registered run refuses before computing anything.
 
 ## 19. Machine-readable parameter block
 
@@ -2184,6 +2259,7 @@ statute capture, which is evidence the code does not read.
   },
   "blocked_by": [
     "independent_review_of_the_d430_sensitivity_build_m1_draft_3_then_ratification_by_merge",
+    "census_threshold_1990_needed_by_the_d430_sensitivity_not_captured",
     "registration_package_m10_needs_the_comparator_seal_hash",
     "issue_42_registration_absent"
   ]
@@ -2658,12 +2734,13 @@ Code subagent, Opus 5.5), read:**
   the sensitivity touches, and every test the sixth lane added or
   changed; `tests/conftest.py` and the tier recount script.
 
-On the staged PSID it ran `scripts/track_m_structure.py` at a clean
-committed tree (§10) and one check script,
-`EVID/track-m-structure-r5-20260926/first_receipt_type_sizing_r5.py`,
-which recounts d430's count by brute force over all records: the M4 cohort
-under both readings, reporting of the sensitivity reading only the
-threshold years its window needs, as years. It computed no years of
+On the staged PSID it ran, at commit `137e6456` on a clean tree,
+`scripts/track_m_structure.py` (§10: the M4 cohort under both readings,
+reporting of the sensitivity reading only the threshold years its window
+needs, as years) and one check script,
+`EVID/track-m-structure-r5-20260926/first_receipt_type_sizing_r5.py`
+(the scored cohort only), which recounts d430's count by brute force over
+all records. It computed no years of
 coverage, PIA, threshold, minimum, flag, share, in-window count or
 reserved diagnostic on real data. Its other checks are on INVENTED data
 (`EVID/track-m-5-build-20260926/`: the exhaustive direction check, the
@@ -2837,14 +2914,17 @@ either scratchpad archive, or any exercise-1 or exercise-3 result.
     restated as the review of 2026-09-25 restated them and checked again
     against the captured statute text; F1 and (j) kept knowingly; the
     own-receipt reading bounded by the sensitivity.
-  - **Counts (§§4c, 10).** d430's structural count over all records
-    (first own receipts before 62 by type, "other" included, and the
-    combined unknown-or-other count) and the threshold years the
-    sensitivity's window needs, as years, in
-    `EVID/track-m-structure-r5-20260926/`.
+  - **Counts (§§4, 4c, 7, 10).** d430's structural count over all
+    records (first own receipts before 62 by type, "other" included, and
+    the combined unknown-or-other count: 80 of 453, 4 of them "other"
+    only) and the threshold years the sensitivity's window needs, as
+    years, in `EVID/track-m-structure-r5-20260926/`, with a brute-force
+    recount; every earlier count is unchanged. The sensitivity needs the
+    1990 threshold, which the capture lacks.
   - **`blocked_by` (§§18, 19).** The finished independent check of
     `m1-draft-2` and the M3-M5 readings gives way to the independent
-    review of this build, then the ratification by merge.
+    review of this build, then the ratification by merge; the 1990
+    threshold the sensitivity needs is a new blocker (§18 item 5).
   - **The seventh lane's corrections to the sixth's work.** A test
     asserted that every record whose first own receipt is of unknown or
     "other" type before 62 is classified differently; a record can keep

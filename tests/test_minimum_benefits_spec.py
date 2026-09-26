@@ -97,9 +97,17 @@ def test_block_identity_and_status(block):
     assert block["blocked_by"] == [
         "independent_review_of_the_d430_sensitivity_build_m1_draft_3_then_"
         "ratification_by_merge",
+        # found by d430's structural count (2026-09-26): the sensitivity's
+        # window needs the 1990 threshold, which the capture lacks
+        "census_threshold_1990_needed_by_the_d430_sensitivity_not_captured",
         "registration_package_m10_needs_the_comparator_seal_hash",
         "issue_42_registration_absent",
     ]
+    # the blocker names a year the recorded capture lacks (another test
+    # holds the recorded capture to the loader's)
+    census = block["sources"]["census_thresholds"]
+    assert 1990 in census["years_not_captured"]
+    assert 1990 not in census["captured_years"]
 
 
 def test_the_block_records_the_census_and_statute_captures(block):
