@@ -17,10 +17,11 @@ import json
 import re
 from pathlib import Path
 
+import numpy as np
 import pytest
 
 from populace_dynamics.cohorts import age67
-from populace_dynamics.data import family_income
+from populace_dynamics.data import employer_dc, family_income
 from populace_dynamics.estimates import adjusted_poverty as ap
 from populace_dynamics.estimates import uniform_cut_tabulation as ut
 from populace_dynamics.uniform_cut_track_u import rows as track_u_rows
@@ -51,7 +52,7 @@ def _section(text: str, number: str, following: str) -> str:
 
 def test_block_identity_and_status(block):
     assert block["specification"] == "boomers2004_uniform_cut_exercise2"
-    assert block["version"] == "u1-draft-6"
+    assert block["version"] == "u1-draft-7"
     assert block["status"] == "draft_for_referee"
     # Max ruled on exercise 2 (cos decision d189, 2026-09-24): the claim
     # class is decided and no longer awaited
@@ -62,19 +63,15 @@ def test_block_identity_and_status(block):
     )
     assert block["acceptance_rule"] is None
     assert block["labels"] == list(ap.OUTPUT_LABELS)
-    # u1-draft-6: the supplements are read and d189 is decided, so only
-    # the registration and row U7 still block
-    assert block["blocked_by"] == [
-        "issue_42_registration_absent",
-        "row_u7_not_built",
-    ]
+    # u1-draft-7: row U7 is built, so only the #42 registration blocks
+    assert block["blocked_by"] == ["issue_42_registration_absent"]
 
 
 def test_status_line_does_not_claim_ratification(text):
     status = text.split("- **Specification:**")[0]
     assert "draft for the referee" in status
     assert "Nothing here is ratified" in status
-    assert "`u1-draft-6`" in text.split("- **Plan item:**")[0]
+    assert "`u1-draft-7`" in text.split("- **Plan item:**")[0]
     assert "cos decision d189, decided" in " ".join(status.split())
     assert "Two" in status and "referee passes are recorded" in status
 
@@ -169,12 +166,11 @@ def test_headline_rule_matches_the_code(block):
     headline = block["population"]["headline"]
     assert headline["rule"] == track_u_rows.HEADLINE_RULE
     assert headline["fallback_row"] == track_u_rows.FALLBACK_ROW
-    assert headline["awaiting"]
-    # with the supplements staged and adjudicated the rule gives U0
+    # u1-draft-7: with the supplements staged and adjudicated the rule gives
+    # U0, and the rule is resolved on that source (no awaiting note)
     assert headline["staged_psid_headline"] == track_u_rows.PRIMARY_ROW
-    assert "decision 3, the downloads, is decided: d189" in (
-        headline["awaiting"]
-    )
+    assert "awaiting" not in headline
+    assert headline["resolved"].startswith("u1-draft-7")
     assert block["population"]["primary_row"] == track_u_rows.PRIMARY_ROW
     fallback = age67.observation_plan(age67.Age67Spec(row="U0-F"))
     assert sorted({b for b, _, _, _ in fallback}) == list(
@@ -204,6 +200,44 @@ def test_income_concept_matches_the_spec_defaults(block):
             for wave in family_income.INCOME_WAVES
         )
     assert concept["farm_asset_share"] == spec.farm_asset_share
+    # row U7 (u1-draft-7): the primary's financial assets and U7's rule
+    assert concept["financial_assets"] == spec.financial_assets == "wealth1"
+    assert set(ap.FINANCIAL_ASSETS) == {
+        "wealth1",
+        "wealth1_plus_employer_dc",
+    }
+    dc = concept["employer_dc"]
+    assert dc["row"] == "U7"
+    assert dc["persons"] == list(employer_dc.PERSONS)
+    assert dc["previous_plans"] == list(employer_dc.PREVIOUS_PLANS)
+    assert employer_dc.COUNTED_DISPOSITION == 3
+    assert employer_dc.EXCLUDED_IRA_DISPOSITION == 2
+    assert dc["counted_disposition"] == "left_to_accumulate"
+    assert dc["excluded"] == [
+        "rolled_over_into_ira",
+        "both_plan_account_items_reasked",
+        "off_route",
+    ]
+    # the questionnaires' routes the reader applies (checkpoint P62A asks
+    # the account items of a formula or DK-type plan after a DK expected
+    # benefit; independent review of u1-draft-7)
+    assert dc["route_source"] == "questionnaires_checkpoint_p62a"
+    assert dc["previous_routes"] == {
+        "both_items": ["both"],
+        "account_items": ["account", "formula", "dk"],
+    }
+    for wave in employer_dc.EMPLOYER_DC_WAVES:
+        codes = employer_dc.plan_type_codes(wave)
+        plan_type = np.array(
+            [codes["previous_" + key] for key in ("formula", "account")]
+            + [codes["previous_both"], codes["previous_dk"], 9, 0]
+        )
+        both = employer_dc._account_route("combo", plan_type, wave)
+        account = employer_dc._account_route("dc", plan_type, wave)
+        assert both.tolist() == [False, False, True, False, False, False]
+        assert account.tolist() == [True, True, False, True, False, False]
+    assert dc["reader"] == "data/employer_dc.py"
+    assert (ROOT / "src" / "populace_dynamics" / dc["reader"]).is_file()
     assert concept["farm_loss"] == ap.FARM_LOSS_RULE
     assert concept["annuitized_share"] == spec.annuitized_share
     annuity = concept["annuity"]
@@ -281,6 +315,12 @@ def test_cut_and_threshold_years_match_the_code(block):
     ]
     assert decision.alternatives == (None,)
     assert "S5" in decision.default_basis
+    # u1-draft-7: plan decision 8 is settled by the Report's "beginning in
+    # 2004" (cleared extract), so the cut no longer awaits Max
+    assert "awaiting" not in cut
+    assert "beginning in 2004" in cut["start_year_basis"]
+    assert "decision 8" in decision.default_basis
+    assert not decision.awaiting.startswith("Max")
     assert cut["start_year_rule"] == ap.CUT_START_YEAR_RULE
     # not code parameters: the cut base and behaviour are fixed in
     # adjusted_incomes (specification section 16 lists them as pending)
@@ -304,11 +344,16 @@ def test_statistic_and_comparison_match_the_tabulation(block):
     comparison = block["comparison"]
     assert comparison["gap"] == "model_minus_report"
     assert comparison["acceptance"]["rule"] is None
-    # the pending acceptance rule is an "awaiting" key the registered run's
-    # ratification scan finds
+    # u1-draft-7: plan decision 6 is a default consistent with Max's
+    # rulings for exercises 1, 3 and 4, and is not recorded as his ruling
+    # for exercise 2
+    basis = comparison["acceptance"]["basis"]
+    for record in ("d074 item 3", "d188 item (a)", "d219 item 8"):
+        assert record in basis, record
+    assert "not a ruling by Max for exercise 2" in basis
+    assert "awaiting" not in comparison["acceptance"]
     module = _registered_script()
-    assert "comparison.acceptance.awaiting" in module._awaiting(block)
-    assert "population.headline.awaiting" in module._awaiting(block)
+    assert module._awaiting(block) == ["plan_decisions.7.awaiting"]
 
 
 def _registered_script():
@@ -321,19 +366,19 @@ def _registered_script():
 
 
 def test_every_choice_awaiting_max_is_awaited_in_the_block(block):
-    """Every code parameter whose pending decision awaits Max (other than
-    the freeze, Max's ratification by merge) carries an ``awaiting`` key in
-    the section 15 block, so the registered run's ratification scan refuses
+    """Every choice that awaits Max carries an ``awaiting`` key in the
+    section 15 block, so the registered run's ratification scan refuses
     the block until Max rules.
 
-    Regression (independent review of u1-draft-5, 2026-09-24): withdrawing
-    row U6 removed the block's only ``awaiting`` for plan decision 8 (the
-    cut's start year, now the primary's ``cut_start_year = 2004``), which
-    ``adjusted_poverty.pending_decisions`` and section 16 still list as
-    awaiting Max's confirmation of the scorecard's "from 2004" wording.
+    Since u1-draft-7 no code parameter awaits Max (plan decision 8, the
+    cut's start year, is settled by the Report's "beginning in 2004"), and
+    the block's only ``awaiting`` is plan decision 7, ratification by merge
+    and the #42 registration.  Regression history (independent review of
+    u1-draft-5): withdrawing row U6 once removed the block's only
+    ``awaiting`` for decision 8 while the code still listed it as awaiting
+    Max; this test holds the two together.
     """
 
-    where = {"cut_start_year": "cut.awaiting"}
     awaiting_max = {
         item.field
         for decisions in (
@@ -344,15 +389,10 @@ def test_every_choice_awaiting_max_is_awaited_in_the_block(block):
         for item in decisions
         if item.awaiting.startswith("Max")
     }
-    assert awaiting_max == set(where)
+    assert awaiting_max == set()
     found = _registered_script()._awaiting(block)
-    for field, path in where.items():
-        assert path in found, field
-    decision = {item.field: item for item in ap.pending_decisions()}[
-        "cut_start_year"
-    ]
-    assert "decision 8" in decision.awaiting
-    assert "decision 8" in block["cut"]["awaiting"]
+    assert found == ["plan_decisions.7.awaiting"]
+    assert "decision 7" in block["plan_decisions"]["7"]["awaiting"]
     # d189 decided the SSI rule and the claim class (2026-09-24): neither
     # is awaited any more
     assert "ssi.awaiting" not in found
@@ -361,9 +401,68 @@ def test_every_choice_awaiting_max_is_awaited_in_the_block(block):
     assert block["ssi"]["rule"] == ap.AdjustedPovertySpec().ssi_rule
 
 
+def test_plan_decisions_record_status_and_basis(block):
+    """u1-draft-7: each plan section 10 decision is recorded with its
+    status and basis; decisions 6 and 9 are defaults consistent with Max's
+    precedent, not rulings for exercise 2, and only decision 7 awaits
+    him."""
+
+    decisions = block["plan_decisions"]
+    assert set(decisions) == {str(n) for n in range(1, 10)} | {"fallback_rule"}
+    status = {key: entry["status"] for key, entry in decisions.items()}
+    assert status == {
+        "1": "decided",
+        "2": "settled_by_source",
+        "3": "decided",
+        "4": "settled_by_source",
+        "5": "decided",
+        "6": "default_consistent_with_precedent",
+        "7": "awaiting_max",
+        "8": "settled_by_source",
+        "9": "default_consistent_with_precedent",
+        "fallback_rule": "settled_by_source",
+    }
+    for key in ("1", "3", "5"):
+        assert decisions[key]["decision_record"] == "d189"
+    for key, entry in decisions.items():
+        if entry["status"] != "decided":
+            assert "decision_record" not in entry, key
+        if entry["status"] != "awaiting_max":
+            assert entry["basis"], key
+            assert "awaiting" not in entry, key
+    assert "not a ruling by Max for exercise 2" in decisions["6"]["basis"]
+    assert "not a ruling by Max for exercise 2" in decisions["9"]["basis"]
+    assert "d196 item (5)" in decisions["9"]["basis"]
+    assert "Python income concept, not Axiom" in decisions["4"]["basis"]
+    assert "beginning in 2004" in decisions["8"]["basis"]
+    assert "cleared" in decisions["2"]["basis"]
+    assert decisions["7"]["card"] == "specification section 20"
+
+
+def test_the_card_for_max_closes_the_specification(text):
+    """u1-draft-7: what still needs Max is one consolidated card, the
+    last section, and it asks for decision 7 with the recorded defaults
+    (none of them presented as a ruling already made)."""
+
+    headings = re.findall(r"^## (\d+)\. ", text, re.MULTILINE)
+    assert headings[-1] == "20"
+    card = " ".join(
+        text.split("## 20. Card for Max (consolidated)")[1].split()
+    )
+    assert "ratify the U1 specification by merge as `u1-ratified-1`" in card
+    assert "post the issue #42 registration and run the one-shot" in card
+    for item in ("(a)", "(b)", "(c)", "(d)", "(e)", "(f)", "(g)"):
+        assert f"- {item} " in card, item
+    for record in ("d074 item 3", "d188 item (a)", "d219 item 8"):
+        assert record in card
+    assert "d196 item (5)" in card
+    assert "this draft files nothing" in card
+    assert "EVID/u1-ratification-changes-20260925.md" in card
+
+
 def test_rows_name_real_alternatives(block):
     rows = block["rows"]
-    fallback = {f"{row}-F" for row in ("U2", "U3", "U4", "U5")} | {
+    fallback = {f"{row}-F" for row in ("U2", "U3", "U4", "U5", "U7")} | {
         f"{row}-F" for row in ("U8", "U9", "U10")
     }
     # second referee S5 and S7 withdrew U6 and U-inst; S8 added the -F
@@ -389,7 +488,8 @@ def test_rows_name_real_alternatives(block):
     for base, alternative in track_u_rows.FALLBACK_ALTERNATIVES.items():
         entry = dict(rows[alternative])
         assert entry.pop("population") == "birth_years_1941_1943_1945"
-        assert entry.pop("awaiting") == rows["U0-F"]["awaiting"]
+        # u1-draft-7: the fallback rule is resolved; no row awaits Max
+        assert "awaiting" not in entry
         assert entry == rows[base], alternative
     for row in rows.values():
         if row.get("status") == "not_built":
@@ -403,8 +503,11 @@ def test_rows_name_real_alternatives(block):
     assert rows["U1"]["population"] == "all_ten_birth_years"
     assert rows["U0-F"]["population"] == "birth_years_1941_1943_1945"
     assert rows["U0-F"]["on"] == "U0"
-    # every row but U7 is built, and the code's rows equal the block's
-    assert [name for name, row in rows.items() if "status" in row] == ["U7"]
+    # u1-draft-7: every row is built (U7 and U7-F included), and the code's
+    # rows equal the block's
+    assert [name for name, row in rows.items() if "status" in row] == []
+    assert rows["U7"] == {"financial_assets": "wealth1_plus_employer_dc"}
+    assert "awaiting" not in rows["U0-F"]
     assert track_u_rows.check_rows_against_block(block)["rows_equal_the_block"]
 
 
@@ -449,7 +552,7 @@ def test_named_deltas_equal_the_runner(text):
 def test_pending_decisions_are_listed_in_the_text(text):
     section = _section(text, "16", "17")
     assert "d189" in section
-    assert "decision 8" in section and "cut_start_year = 2004" in section
+    assert "Decision 8" in section and "cut_start_year = 2004" in section
     assert "the institution income rule (used by no registered row" in (
         " ".join(section.split())
     )
@@ -462,20 +565,32 @@ def test_pending_decisions_are_listed_in_the_text(text):
     flat = " ".join(section.split())
     assert "Decided by Max (cos decision d189, 2026-09-24)" in flat
     assert "offset for existing recipients (Max's ruling" in flat
-    # the items still open after d189, stated exactly
-    still_open = flat.split("Still awaiting Max")[1].split(
+    # u1-draft-7: the source-settled decisions, the precedent defaults
+    # (not rulings for exercise 2) and the one item awaiting Max
+    settled = flat.split("Settled by sources (`u1-draft-7`).")[1].split(
+        "Defaults consistent with Max's precedent"
+    )[0]
+    for item in (
+        "Decision 2 (",
+        "Decision 4 (",
+        "Decision 8 (",
+        "The fallback rule (§11)",
+    ):
+        assert item in settled, item
+    assert "None is a ruling by Max" in settled
+    defaults = flat.split("Defaults consistent with Max's precedent")[1].split(
+        "Awaiting Max: one card (§20)."
+    )[0]
+    assert "These are not rulings by Max for exercise 2." in defaults
+    for item in ("Decision 6 (acceptance rule)", "Decision 9 (optional"):
+        assert item in defaults, item
+    for record in ("d074 item 3", "d188 item (a)", "d219 item 8"):
+        assert record in defaults, record
+    awaiting = flat.split("Awaiting Max: one card (§20).")[1].split(
         "The Census threshold files"
     )[0]
-    assert "these six remain open after d189" in still_open
-    for item in (
-        "decision 2 (",
-        "decision 4 (",
-        "decision 6 (",
-        "decision 7 (",
-        "decision 8 (",
-        "the fallback rule of §11",
-    ):
-        assert item in still_open, item
+    assert "Plan decision 7" in awaiting
+    assert "plan_decisions.7.awaiting" in awaiting
     for phrase in (
         "retirement-account income (remove the head's)",
         "farm asset share (0.5",
@@ -485,8 +600,9 @@ def test_pending_decisions_are_listed_in_the_text(text):
         "design SE (full-design domain)",
         "real rate (3 percent; 2 percent sensitivity)",
         "cut start year (2004)",
-        "U2-F … U10-F",
-        "no card or ruling by Max on it was found",
+        "U2-F … U10-F, including U7-F",
+        "financial assets (WEALTH1; WEALTH1 plus the observed employer DC",
+        "No card or ruling by Max on it was found",
     ):
         assert phrase in flat, phrase
     # every pending field of the code is listed by the code
@@ -497,6 +613,7 @@ def test_pending_decisions_are_listed_in_the_text(text):
     for name in (
         "retirement_account_income_rule",
         "farm_asset_share",
+        "financial_assets",
         "annuity_lives",
         "real_interest_rate",
     ):

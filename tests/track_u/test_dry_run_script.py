@@ -104,7 +104,8 @@ def test_the_dry_run_checks_hold(output):
 def test_every_built_row_is_tabulated(output):
     result = json.loads((output / "result.json").read_text())
     statuses = {row: entry["status"] for row, entry in result["rows"].items()}
-    assert statuses.pop("U7") == "not_built"
+    # u1-draft-7: U7 and U7-F are built and computed with the rest
+    assert {"U7", "U7-F"} <= set(statuses)
     assert set(statuses.values()) == {"computed"}
     assert result["headline"]["row"] == "U0"
     # the main run has the supplements' wealth, as the staged PSID does
@@ -113,3 +114,28 @@ def test_every_built_row_is_tabulated(output):
     text = (output / "RESULTS.md").read_text()
     assert "Headline row U0" in text and "full sample design" in text
     assert "`design_se_domain` = `full_sample_design`" in text
+
+
+def test_the_dry_run_checks_row_u7(output):
+    """u1-draft-7: the invented pension-section records take every U7
+    path, and U7 differs from U0 only through the annuity (INVENTED)."""
+
+    result = json.loads((output / "result.json").read_text())
+    check = result["checks"]["employer_dc_u7"]
+    assert check["u0_observations_with_employer_dc"] > 0
+    assert check["u7_minus_u0_annuity_never_negative"] is True
+    assert check["u7_minus_u0_baseline_equals_annuity_change"] is True
+    assert check["u7_minus_u0_reform_equals_annuity_change"] is True
+    assert check["poor_under_u7_implies_poor_under_u0"] is True
+    by_wave = check["invented_records_by_wave"]
+    assert sorted(by_wave) == ["2005", "2007", "2009", "2011", "2013"]
+    for key in (
+        "families_current_positive",
+        "families_previous_positive",
+        "families_with_unreported_amount",
+        "families_with_ira_rollover_excluded",
+        "families_with_off_route_amount",
+    ):
+        assert sum(counts[key] for counts in by_wave.values()) > 0, key
+    text = (output / "RESULTS.md").read_text()
+    assert "Row U7 on invented pension-section records" in text

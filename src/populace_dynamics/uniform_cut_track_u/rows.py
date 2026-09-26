@@ -5,10 +5,10 @@ Each row of the exercise-2 specification
 15) differs from the primary U0 in one field; U1 (all ten birth years)
 and U0-F (U0 restricted to the birth years 1941, 1943 and 1945) change
 the population itself.  Each one-field alternative defined on U0 (U2,
-U3, U4, U5, U8, U9, U10) is also registered on U0-F's population as its
-``-F`` row (U2-F ... U10-F; :data:`FALLBACK_ALTERNATIVES`), so that the
-registration carries its alternatives whether or not the 2005 and 2007
-wealth supplements are staged (second referee, S8).  A row here is a set
+U3, U4, U5, U7, U8, U9, U10) is also registered on U0-F's population as
+its ``-F`` row (U2-F ... U10-F; :data:`FALLBACK_ALTERNATIVES`), so that
+the registration carries its alternatives whether or not the 2005 and
+2007 wealth supplements are staged (second referee, S8).  A row here is a set
 of overrides of :class:`populace_dynamics.cohorts.age67.Age67Spec` and
 :class:`populace_dynamics.estimates.adjusted_poverty.
 AdjustedPovertySpec`; the defaults of those two classes are U0.
@@ -20,20 +20,24 @@ would equal U1; the Census cannot determine poverty status for people in
 institutional group quarters, and on the staged PSID U-inst would add one
 U0 observation (born 1937) and none to U0-F.
 
-:data:`HEADLINE_RULE` is the specification's fallback rule (pending Max):
-U0 is the headline when the 2005 and 2007 wealth supplements are staged,
+:data:`HEADLINE_RULE` is the specification's fallback rule: U0 is the
+headline when the 2005 and 2007 wealth supplements are staged,
 adjudicated and read before the #42 registration, U0-F otherwise, by
 staging status only.  Plan section 10 decision 3 (Max downloads the
 supplements) is decided (cos decision d189), and since u1-draft-6 the
 supplements are staged and adjudicated, so on the staged PSID the rule
-gives U0; whether U0-F and the -F alternatives stay registered is the
-part of the rule still awaiting Max.
+gives U0.  Since u1-draft-7 the rule is resolved on that source: U0 is
+the headline, and U0-F and the -F rows stay registered as alternatives
+(the second referee's S8 default, a freeze default that Max's
+ratification confirms), so they no longer carry an ``awaiting`` note.
 
 :func:`check_rows_against_block` holds :data:`REGISTERED_ROWS` to the
 specification's machine-readable block, so a row a run computes is the
-row the specification registers.  U7 (employer DC balances) is not
-built: it needs a label investigation of the PSID P-section items, and
-it must be built or removed before registration.
+row the specification registers.  U7 (employer DC balances; built in
+u1-draft-7 after the label investigation of the PSID pension section,
+:mod:`populace_dynamics.data.employer_dc`) adds the head's and wife's
+employer DC account balances the pension section observes to WEALTH1
+(``financial_assets="wealth1_plus_employer_dc"``).
 """
 
 from __future__ import annotations
@@ -78,7 +82,7 @@ _POPULATION_ROWS = {
 _AGE67_FIELDS = frozenset(f.name for f in fields(age67.Age67Spec))
 _INCOME_FIELDS = frozenset(f.name for f in fields(ap.AdjustedPovertySpec))
 #: Block keys that describe a row without being a parameter.
-_METADATA_KEYS = frozenset({"status", "awaiting", "financial_assets"})
+_METADATA_KEYS = frozenset({"status", "awaiting"})
 
 
 @dataclass(frozen=True)
@@ -125,15 +129,12 @@ class TrackURow:
         }
 
 
-_FALLBACK_AWAITING = (
-    "Max (the fallback rule of specification section 11; plan section 10 "
-    "decision 3, the downloads, is decided: d189)"
-)
 #: The one-field alternatives defined on U0 that are also registered on
-#: U0-F's population, and the name of each ``-F`` row (second referee S8).
+#: U0-F's population, and the name of each ``-F`` row (second referee S8;
+#: U7-F since U7 is built, u1-draft-7).
 FALLBACK_ALTERNATIVES: dict[str, str] = {
     row_id: f"{row_id}-F"
-    for row_id in ("U2", "U3", "U4", "U5", "U8", "U9", "U10")
+    for row_id in ("U2", "U3", "U4", "U5", "U7", "U8", "U9", "U10")
 }
 
 _BASE_ROWS: tuple[TrackURow, ...] = (
@@ -186,17 +187,14 @@ _BASE_ROWS: tuple[TrackURow, ...] = (
         "the 2005 and 2007 wealth supplements are not staged before "
         "the #42 registration",
         age67={"row": FALLBACK_ROW},
-        awaiting=_FALLBACK_AWAITING,
     ),
     TrackURow(
         "U7",
         "financial assets",
-        "WEALTH1 plus employer DC balances",
-        built=False,
-        not_built_reason=(
-            "needs a label investigation of the PSID P-section pension "
-            "account items (plan section 4); not built"
-        ),
+        "WEALTH1 plus the head's and wife's employer DC account balances "
+        "the PSID pension section observes (the current job's account; "
+        "previous employers' accounts left to accumulate)",
+        income={"financial_assets": "wealth1_plus_employer_dc"},
     ),
     TrackURow(
         "U8",
@@ -230,7 +228,6 @@ def _on_fallback(row: TrackURow) -> TrackURow:
         "1943 and 1945)",
         age67={**dict(row.age67), "row": FALLBACK_ROW},
         income=dict(row.income),
-        awaiting=_FALLBACK_AWAITING,
     )
 
 

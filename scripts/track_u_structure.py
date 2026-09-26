@@ -8,8 +8,11 @@ units, design strata, each observation's wealth source (the family file,
 the 2005 and 2007 wealth supplements, or blocked), the marital-resolution
 paths and annuitant age sources, threshold-free receipt counts (including
 farm and the head's annuity and IRA income), the family-income and
-WEALTH1 reconciliation counts and the wealth supplements' family-ID join
-counts.
+WEALTH1 reconciliation counts, the wealth supplements' family-ID join
+counts, and (row U7, u1-draft-7) the PSID pension section's employer DC
+items: per wave, the records against the questionnaires' routing and the
+families by what the U7 rule finds, and per observation cell the same
+counts for the cohort's families (never an amount).
 
 It computes **no** income concept, annuity, threshold, poverty status or
 poverty rate: plan ``critical-path-uniform-cut-20260923.md`` section 8
@@ -37,7 +40,7 @@ if str(ROOT / "src") not in sys.path:
 import pandas as pd  # noqa: E402
 
 from populace_dynamics.cohorts import age67  # noqa: E402
-from populace_dynamics.data import family_income  # noqa: E402
+from populace_dynamics.data import employer_dc, family_income  # noqa: E402
 
 FORBIDDEN_MODULES = (
     "populace_dynamics.estimates.adjusted_poverty",
@@ -106,6 +109,10 @@ def build(data_dir: Path | None = None) -> dict:
         },
         "wealth_refusals": {
             str(k): v for k, v in sorted(inputs.wealth_refusals.items())
+        },
+        "employer_dc_reconciliation": {
+            str(wave): employer_dc.reconcile_employer_dc(frame, wave)
+            for wave, frame in sorted(inputs.employer_dc.items())
         },
         "rows": rows,
         "pending_decisions": [

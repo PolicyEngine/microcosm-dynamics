@@ -23,7 +23,7 @@ def block() -> dict:
 def test_the_code_rows_equal_the_committed_block(block):
     check = rows.check_rows_against_block(block)
     assert check["rows_equal_the_block"]
-    assert check["specification_version"] == block["version"] == "u1-draft-6"
+    assert check["specification_version"] == block["version"] == "u1-draft-7"
     assert check["rows_checked"] == sorted(rows.REGISTERED_ROWS)
 
 
@@ -44,8 +44,14 @@ def test_each_row_changes_the_field_the_plan_names():
     assert registered["U0"].income_spec().cut_start_year == 2004
     assert registered["U1"].income_spec().cut_start_year == 2004
     assert registered["U0"].age67_spec().presence == "in_family"
-    assert not registered["U7"].built
-    assert "label investigation" in registered["U7"].not_built_reason
+    # u1-draft-7: U7 is built (the PSID pension section's employer DC
+    # balances added to WEALTH1)
+    assert registered["U7"].built
+    assert registered["U7"].income_spec() == ap.AdjustedPovertySpec(
+        financial_assets="wealth1_plus_employer_dc"
+    )
+    assert registered["U0"].income_spec().financial_assets == "wealth1"
+    assert all(row.built for row in registered.values())
     assert registered["U8"].income_spec().threshold_rule == (
         "psid_census_needs_standard"
     )
@@ -55,17 +61,17 @@ def test_each_row_changes_the_field_the_plan_names():
     assert registered["U10"].income_spec().threshold_rule == (
         "census_matrix_65plus"
     )
-    # U0-F is U0 on the fallback birth years; its headline status awaits
-    # Max's ruling on the fallback rule
+    # U0-F is U0 on the fallback birth years; since u1-draft-7 the
+    # fallback rule is resolved (U0 the headline) and no row awaits Max
     fallback = registered[rows.FALLBACK_ROW]
     assert fallback.age67_spec() == age67.Age67Spec(row="U0-F")
     assert fallback.income_spec() == ap.AdjustedPovertySpec()
-    assert "fallback rule" in fallback.awaiting
+    assert all(row.awaiting is None for row in registered.values())
 
 
 def test_the_one_field_alternatives_are_registered_on_u0f_too():
     """Second referee S8: U2-F ... U10-F carry the field and value of U2
-    ... U10 on U0-F's population, each awaiting the fallback rule."""
+    ... U10 on U0-F's population (U7-F since u1-draft-7)."""
 
     registered = rows.REGISTERED_ROWS
     assert rows.FALLBACK_ALTERNATIVES == {
@@ -73,6 +79,7 @@ def test_the_one_field_alternatives_are_registered_on_u0f_too():
         "U3": "U3-F",
         "U4": "U4-F",
         "U5": "U5-F",
+        "U7": "U7-F",
         "U8": "U8-F",
         "U9": "U9-F",
         "U10": "U10-F",
@@ -82,7 +89,7 @@ def test_the_one_field_alternatives_are_registered_on_u0f_too():
         assert row.age67_spec() == age67.Age67Spec(row=rows.FALLBACK_ROW)
         assert row.income_spec() == registered[base].income_spec()
         assert row.field_changed == registered[base].field_changed
-        assert row.awaiting == registered[rows.FALLBACK_ROW].awaiting
+        assert row.awaiting is None
         assert row.built
     # the -F rows need no wave without WEALTH1
     assert {
@@ -122,9 +129,21 @@ def test_row_from_block_reads_populations_and_overrides():
         "built": True,
         "awaiting": "y",
     }
-    assert not rows.row_from_block(
-        "U7", {"financial_assets": "y", "status": "not_built"}
-    )["built"]
+    assert not rows.row_from_block("U7", {"status": "not_built"})["built"]
+    # u1-draft-7: financial_assets is an income-concept field, not a
+    # description
+    assert rows.row_from_block(
+        "U7-F",
+        {
+            "population": "birth_years_1941_1943_1945",
+            "financial_assets": "wealth1_plus_employer_dc",
+        },
+    ) == {
+        "age67": {"row": "U0-F"},
+        "income": {"financial_assets": "wealth1_plus_employer_dc"},
+        "built": True,
+        "awaiting": None,
+    }
     assert rows.row_from_block(
         "U0-F",
         {
@@ -157,22 +176,25 @@ def test_row_from_block_reads_populations_and_overrides():
         ("U4-F", {"income_unit": "family_unit"}),
         ("U9-F", {"population": "all_ten_birth_years"}),
         ("U0-F", {"population": "all_ten_birth_years"}),
-        ("U7", {"status": None}),
+        ("U7", {"status": "not_built"}),
+        ("U7", {"financial_assets": "wealth1"}),
+        ("U7-F", {"financial_assets": "wealth1"}),
     ],
 )
 def test_a_block_that_differs_from_the_code_is_refused(block, row_id, edit):
     changed = copy.deepcopy(block)
     changed["rows"][row_id].update(edit)
-    if edit.get("status", "keep") is None:
-        del changed["rows"][row_id]["status"]
-        del changed["rows"][row_id]["financial_assets"]
     with pytest.raises(ValueError, match=f"row {row_id} differs"):
         rows.check_rows_against_block(changed)
 
 
 def test_a_resolved_awaiting_note_must_be_resolved_in_both_places(block):
+    """An ``awaiting`` note on a block row that the code does not carry
+    (or the reverse) is refused; since u1-draft-7 neither side carries one
+    (the fallback rule is resolved)."""
+
     changed = copy.deepcopy(block)
-    del changed["rows"]["U10-F"]["awaiting"]
+    changed["rows"]["U10-F"]["awaiting"] = "Max (the fallback rule)"
     with pytest.raises(ValueError, match="row U10-F differs"):
         rows.check_rows_against_block(changed)
     withdrawn = copy.deepcopy(block)
