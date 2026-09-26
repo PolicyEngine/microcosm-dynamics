@@ -153,6 +153,11 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/min_benefit_track_m/invented.py"),
         Path("src/populace_dynamics/min_benefit_track_m/pipeline.py"),
         Path("src/populace_dynamics/min_benefit_track_m/tabulation.py"),
+        Path("src/populace_dynamics/data/social_security_receipt.py"),
+        Path("src/populace_dynamics/data/prior_year_labor_income.py"),
+        Path("src/populace_dynamics/min_benefit_track_m/cohort.py"),
+        Path("src/populace_dynamics/min_benefit_track_m/careers.py"),
+        Path("src/populace_dynamics/min_benefit_track_m/invented_psid.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -451,21 +456,31 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "the opt-in statutory AIME became reachable from the "
         "birth-evidence reducer"
     )
-    track_m_modules = {"populace_dynamics.min_benefit_track_m"} | {
-        f"populace_dynamics.min_benefit_track_m.{name}"
-        for name in (
-            "coverage",
-            "evaluation",
-            "invented",
-            "pipeline",
-            "policy",
-            "rules",
-            "specification",
-            "structure",
-            "tabulation",
-            "thresholds",
-        )
-    }
+    track_m_modules = (
+        {"populace_dynamics.min_benefit_track_m"}
+        | {
+            f"populace_dynamics.min_benefit_track_m.{name}"
+            for name in (
+                "careers",
+                "cohort",
+                "coverage",
+                "evaluation",
+                "invented",
+                "invented_psid",
+                "pipeline",
+                "policy",
+                "rules",
+                "specification",
+                "structure",
+                "tabulation",
+                "thresholds",
+            )
+        }
+        | {
+            "populace_dynamics.data.social_security_receipt",
+            "populace_dynamics.data.prior_year_labor_income",
+        }
+    )
     assert track_m_modules.issubset(module_paths)
     assert track_m_modules.isdisjoint(reachable), (
         "the opt-in Track M layer became reachable from the "

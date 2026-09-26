@@ -63,10 +63,22 @@ def test_every_row_and_cell_is_reported(document):
         assert f"| {row} |" in markdown
     parameters = result["result"]["parameters"]
     assert parameters["thresholds"]["kind"] == "census_capture"
-    assert parameters["quarter_of_coverage"]["kind"] == (
-        "policyengine_us_checkout"
-    )
+    assert parameters["quarter_of_coverage"]["kind"] == "committed_capture"
     assert result["result"]["inputs"]["provenance_kind"] == "invented"
+    # The invented PSID-shaped cohort ran through M4 and M5 as well.
+    m45 = result["m4_m5"]
+    assert list(m45["summary"]) == [f"MS{i}" for i in range(7)]
+    assert m45["result"]["inputs"]["provenance_kind"] == "invented"
+    assert m45["result"]["inputs"]["source"]["careers"] == (
+        "min_benefit_track_m.careers"
+    )
+    assert m45["cohort_structure"]["persons"] > 0
+    assert set(m45["cohort_structure"]["records_by_basis"]) <= {
+        "old_age",
+        "disability",
+        "death",
+    }
+    assert "## The invented PSID-shaped cohort through M4 and M5" in markdown
 
 
 def test_the_checks_record_every_guard(document):
@@ -90,16 +102,30 @@ def test_the_checks_record_every_guard(document):
         "psid_kind_records_refused_with_a_pointer_under_the_draft",
         "a_registered_subset_of_rows_is_refused",
         "registered_floor_seeds_cannot_be_changed",
-        "entry_point_refuses_before_any_psid_read",
+        "entry_point_preflight_refuses_the_committed_draft",
+        "psid_hashed_records_refused_outside_the_registered_run",
+        "psid_hashed_records_refused_with_a_supplied_block",
+        "psid_hashed_records_refused_under_the_committed_draft",
+        "a_psid_hashed_cohort_cannot_be_marked_invented",
+        "an_unconstrained_m4_cohort_needing_pre_2003_years_is_refused",
     ):
         assert checks[name]["refused"], name
     assert "every registered row" in (
         checks["a_registered_subset_of_rows_is_refused"]["message"]
     )
-    assert checks["entry_point_missing_components"] == [
-        "M3/M4 beneficiary cohort",
-        "M5 realized careers",
+    # Every component exists; the specification gate is what refuses.
+    assert checks["entry_point_missing_components"] == []
+    assert "authorizes no real-data run" in (
+        checks["entry_point_preflight_refuses_the_committed_draft"]["message"]
+    )
+    assert "supplied block" in (
+        checks["psid_hashed_records_refused_with_a_supplied_block"]["message"]
+    )
+    unconstrained = checks[
+        "an_unconstrained_m4_cohort_needing_pre_2003_years_is_refused"
     ]
+    assert unconstrained["error"] == "ThresholdYearMissingError"
+    assert checks["m4_universe_equals_the_structural_funnel"]["passed"]
 
 
 def test_the_plan_cases_match_section_16(document):
@@ -131,6 +157,8 @@ def test_the_provenance_pins_the_specification_and_parameters(document):
     assert spec["path"] == "docs/design/minimum_benefits_comparison.md"
     assert len(spec["sha256"]) == 64
     assert provenance["census_thresholds"]["sha256"].startswith("65bbcd83")
-    assert provenance["quarter_of_coverage"]["sha256"].startswith("12354a05")
+    qc = provenance["quarter_of_coverage"]
+    assert qc["sha256"].startswith("6f964e8f")
+    assert qc["captured_from_sha256"].startswith("12354a05")
     assert "not opened" in provenance["comparator_seal"]
     assert spec["sha256"] in markdown

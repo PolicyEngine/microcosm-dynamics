@@ -38,15 +38,26 @@ What this package holds:
 * :mod:`.pipeline`: every registered row MS0-MS6 end to end, after the
   provenance guard and the threshold-year check (plan item M10).
 * :mod:`.invented`: an INVENTED PSID-shaped cohort for the dry run.
+* :mod:`.cohort`: the beneficiary cohort (plan item M4): section 4b's
+  rules applied to the label-verified receipt histories of plan item M3
+  (:mod:`populace_dynamics.data.social_security_receipt`), with the
+  universe, the worker records and the spouse and survivor links.
+* :mod:`.careers`: the realized careers (plan item M5): the one history
+  per worker, the claim factors and months early, and MS5's inputs, as
+  the records :mod:`.evaluation` reads.
+* :mod:`.invented_psid`: INVENTED PSID-shaped frames that run through
+  :mod:`.cohort` and :mod:`.careers` end to end.
 * :mod:`.specification`: reads the M1 specification's parameter block and
   refuses a registered run the block does not authorize.
 * :mod:`.structure`: structural counts of the plan's population.  It
   computes no years of coverage, no PIA, no threshold, no minimum and no
   share receiving a minimum.
 
-The PSID readers of plan items M3-M5 (the beneficiary cohort and the
-realized careers) are not built, so nothing here can compute the share on
-real data.
+The PSID readers of plan items M3-M5 exist, but the share is computed on
+real data only by the registered entry point, whose gate refuses the
+committed draft specification: the tabulation and the pipeline refuse
+records read from PSID files without the issue #42 registration pointer
+and an authorizing specification.
 
 Submodules are imported explicitly; this initializer imports none of them,
 so the structural-count script can prove it never loaded the rules.

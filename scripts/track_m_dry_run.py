@@ -1,13 +1,20 @@
-"""Track M end-to-end DRY RUN on an INVENTED cohort (plan item M10).
+"""Track M end-to-end DRY RUN on INVENTED cohorts (plan item M10).
 
-INVENTED DATA - NOT A COMPARISON.  The cohort is the invented population
-of :mod:`populace_dynamics.min_benefit_track_m.invented` (persons, family
-units, weights, design variables, entitlements, deaths, earnings histories
-and observed benefits all invented), run through the real Track M code for
-every registered row MS0-MS6 (:func:`populace_dynamics.min_benefit_track_m.
-pipeline.run_track_m`): section 4a's years, the one history, years of
-coverage, the PIA through the oracle, the options, receipt and the Table 6
-tabulation with its floors and design-based standard errors.  The
+INVENTED DATA - NOT A COMPARISON.  Two invented cohorts run through the
+real Track M code for every registered row MS0-MS6
+(:func:`populace_dynamics.min_benefit_track_m.pipeline.run_track_m`):
+section 4a's years, the one history, years of coverage, the PIA through
+the oracle, the options, receipt and the Table 6 tabulation with its
+floors and design-based standard errors.  The first is the invented
+population of :mod:`populace_dynamics.min_benefit_track_m.invented`
+(records built directly).  The second is
+:mod:`populace_dynamics.min_benefit_track_m.invented_psid`'s PSID-shaped
+frames (the 2023 anchor, receipt histories, family-level items, marriage
+history, deaths, earnings panel and next-wave labor income, all
+invented), run through the same M4 cohort
+(:func:`~populace_dynamics.min_benefit_track_m.cohort.build_cohort`) and M5
+careers (:func:`~populace_dynamics.min_benefit_track_m.careers.
+build_track_m_inputs`) code the registered run uses on the PSID.  The
 parameters are real and committed or read from the policyengine-us
 checkout the oracle reads: the oracle's wage index, bend points and
 reductions, the quarter-of-coverage amounts, the Census one-person 65+
@@ -22,9 +29,13 @@ needs is captured, and that a record needing an earlier year is refused
 before anything is computed (referee R8); that MS5 read benefit-implied
 PIAs and MS0 none; that the registered path refuses invented records,
 PSID-kind records without the issue #42 pointer or an authorizing
-specification, a subset of rows and other floor seeds; that the one-shot
-entry point still refuses because the PSID readers (M3-M5) are not built;
-and the plan's INVENTED worked cases (M1 section 16).
+specification, a subset of rows and other floor seeds; that records
+carrying PSID file hashes are refused outside the registered run and
+with a supplied specification block; that an invented M4 cohort drawn
+without the capture constraint (as the PSID is) is refused for its
+threshold years before anything is computed; that the one-shot entry
+point finds every component and refuses the committed draft at its
+preflight; and the plan's INVENTED worked cases (M1 section 16).
 
 Usage::
 
@@ -57,14 +68,19 @@ from populace_dynamics.estimates.parameters import (  # noqa: E402
 )
 from populace_dynamics.min_benefit_track_m import (  # noqa: E402
     DRY_RUN_HEADER,
+    careers,
+    cohort,
     coverage,
     invented,
+    invented_psid,
     pipeline,
     rules,
     specification,
+    structure,
     tabulation,
 )
 from populace_dynamics.min_benefit_track_m.evaluation import (  # noqa: E402
+    INVENTED,
     PSID_FILES,
     TrackMInputs,
     TrackMParameters,
@@ -317,10 +333,163 @@ def checks(
             )
         ),
         "entry_point_missing_components": entry.missing_components(),
-        "entry_point_refuses_before_any_psid_read": _refusal(
-            entry.check_runnable
+        "entry_point_preflight_refuses_the_committed_draft": _refusal(
+            lambda: entry.preflight(
+                registration_pointer=_GUARD_POINTER,
+                registered_commit="0" * 40,
+                output=ROOT / "runs" / "track-m-dry-run-never-written.json",
+                git=_clean_git("0" * 40),
+            )
         ),
         "plan_invented_cases": plan_cases(),
+    }
+
+
+def _clean_git(head: str):
+    """A stand-in ``git`` for the preflight check: the registered commit
+    and a clean tree, so that the specification gate is what refuses."""
+
+    def fake(*args: str) -> str:
+        if args == ("rev-parse", "HEAD"):
+            return head
+        if args == ("status", "--porcelain"):
+            return ""
+        raise AssertionError(args)
+
+    return fake
+
+
+def m4_m5_run(
+    parameters: TrackMParameters,
+    extra: dict[str, Any],
+    *,
+    seed: int,
+    n_family_units: int,
+) -> dict[str, Any]:
+    """The invented PSID-shaped cohort through M4, M5 and the pipeline."""
+
+    frames = invented_psid.invented_cohort_inputs(
+        seed=seed, n_family_units=n_family_units
+    )
+    built = cohort.build_cohort(frames)
+    records = careers.build_track_m_inputs(
+        built,
+        earnings=frames.earnings,
+        prior_year=frames.prior_year_labor,
+        params=parameters.params,
+        cola_rates=extra["cola_rates"],
+        provenance_kind=INVENTED,
+        source={**dict(frames.provenance)},
+    )
+    result = pipeline.run_track_m(
+        records, parameters, data_provenance=INVENTED
+    )
+    return {
+        "frames": frames,
+        "cohort": built,
+        "records": records,
+        "result": result,
+    }
+
+
+def m4_m5_checks(
+    run: dict[str, Any],
+    parameters: TrackMParameters,
+    extra: dict[str, Any],
+    *,
+    seed: int,
+    n_family_units: int,
+) -> dict[str, Any]:
+    """The M4/M5 path's guards, each recorded (no PSID file is read)."""
+
+    block = specification.m1_parameter_block()
+    unblocked = {
+        **json.loads(json.dumps(block)),
+        "status": "ratified_frozen",
+        "version": "m1-ratified-1",
+        "blocked_by": [],
+    }
+    records = run["records"]
+    hashed = dataclasses.replace(
+        records,
+        provenance_kind=PSID_FILES,
+        source={
+            **dict(records.source),
+            pipeline.PSID_FILES_SOURCE_KEY: {"INVENTED.txt": "0" * 64},
+        },
+    )
+    hashed_cohort = dataclasses.replace(
+        run["cohort"],
+        provenance={
+            **dict(run["cohort"].provenance),
+            pipeline.PSID_FILES_SOURCE_KEY: {"INVENTED.txt": "0" * 64},
+        },
+    )
+    # At least 300 family units, so that the unconstrained draw holds
+    # records needing years before the capture (as the PSID does).
+    unconstrained = invented_psid.invented_cohort_inputs(
+        seed=seed,
+        n_family_units=max(n_family_units, 300),
+        threshold_years_from=None,
+    )
+
+    def unconstrained_run() -> None:
+        built = cohort.build_cohort(unconstrained)
+        pipeline.run_track_m(
+            careers.build_track_m_inputs(
+                built,
+                earnings=unconstrained.earnings,
+                prior_year=unconstrained.prior_year_labor,
+                params=parameters.params,
+                cola_rates=extra["cola_rates"],
+                provenance_kind=INVENTED,
+            ),
+            parameters,
+            data_provenance=INVENTED,
+        )
+
+    return {
+        "m4_universe_equals_the_structural_funnel": {
+            "passed": len(run["cohort"].persons)
+            == structure.structural_counts(run["frames"].structure_inputs)[
+                "funnel"
+            ]["receives_oasdi_person_level"],
+        },
+        "psid_hashed_records_refused_outside_the_registered_run": _refusal(
+            lambda: pipeline.run_track_m(
+                hashed, parameters, data_provenance=INVENTED
+            )
+        ),
+        "psid_hashed_records_refused_with_a_supplied_block": _refusal(
+            lambda: pipeline.run_track_m(
+                hashed,
+                parameters,
+                data_provenance=tabulation.REGISTERED_REAL,
+                registration_pointer=_GUARD_POINTER,
+                specification=unblocked,
+            )
+        ),
+        "psid_hashed_records_refused_under_the_committed_draft": _refusal(
+            lambda: pipeline.run_track_m(
+                hashed,
+                parameters,
+                data_provenance=tabulation.REGISTERED_REAL,
+                registration_pointer=_GUARD_POINTER,
+            )
+        ),
+        "a_psid_hashed_cohort_cannot_be_marked_invented": _refusal(
+            lambda: careers.build_track_m_inputs(
+                hashed_cohort,
+                earnings=run["frames"].earnings,
+                prior_year=run["frames"].prior_year_labor,
+                params=parameters.params,
+                cola_rates=extra["cola_rates"],
+                provenance_kind=INVENTED,
+            )
+        ),
+        "an_unconstrained_m4_cohort_needing_pre_2003_years_is_refused": (
+            _refusal(unconstrained_run)
+        ),
     }
 
 
@@ -350,8 +519,9 @@ def provenance(
     """What a registration package pins, as far as the dry run knows it.
 
     The specification and code, the parameter files and the invented
-    generator.  The PSID file hashes need the M3-M5 readers; the
-    comparator seal is not opened or hashed by a builder lane.
+    generator.  The PSID file hashes are recorded by the M3-M5 readers'
+    structural run (``scripts/track_m_structure.py``); the comparator seal
+    is not opened or hashed by a builder lane.
     """
 
     return {
@@ -368,9 +538,36 @@ def provenance(
             key: extra["cola_provenance"][key]
             for key in ("path", "sha256", "content_sha256")
         },
-        "psid_files": "none read (the M3-M5 readers are not built)",
+        "psid_files": (
+            "none read: both cohorts are invented (the M3-M5 readers' "
+            "structural run, scripts/track_m_structure.py, records the "
+            "PSID file hashes)"
+        ),
         "comparator_seal": "not opened and not hashed by this lane",
     }
+
+
+def _share_table(summary: dict[str, Any]) -> list[str]:
+    lines = [
+        "| Row | "
+        + " | ".join(
+            f"Opt {n} {r}" for n in TABLE6_OPTIONS for r in TABLE6_ROWS
+        )
+        + " |",
+        "|---|" + "---:|" * (len(TABLE6_OPTIONS) * len(TABLE6_ROWS)),
+    ]
+    for row, cells in summary.items():
+        values = [
+            cells[f"{n}:{r}"]["share_percent"]
+            for n in TABLE6_OPTIONS
+            for r in TABLE6_ROWS
+        ]
+        lines.append(
+            f"| {row} | "
+            + " | ".join("—" if v is None else f"{v:.1f}" for v in values)
+            + " |"
+        )
+    return lines
 
 
 def _markdown(document: dict[str, Any]) -> str:
@@ -380,7 +577,7 @@ def _markdown(document: dict[str, Any]) -> str:
         f"# {DRY_RUN_HEADER}",
         "",
         "Track M (DynaSim exercise 4, the minimum benefit) end-to-end dry "
-        "run on an **INVENTED** PSID-shaped cohort. Every person, family "
+        "run on two **INVENTED** cohorts. Every person, family "
         "unit, weight, design variable, entitlement, death, earnings "
         "history and observed benefit is invented; the numbers below are "
         "not PSID values and not a result, and they compare with nothing. "
@@ -403,24 +600,23 @@ def _markdown(document: dict[str, Any]) -> str:
         "",
         "## Invented shares receiving a minimum (percent), by row",
         "",
-        "| Row | "
-        + " | ".join(
-            f"Opt {n} {r}" for n in TABLE6_OPTIONS for r in TABLE6_ROWS
-        )
-        + " |",
-        "|---|" + "---:|" * (len(TABLE6_OPTIONS) * len(TABLE6_ROWS)),
+        *_share_table(document["summary"]),
     ]
-    for row, cells in document["summary"].items():
-        values = [
-            cells[f"{n}:{r}"]["share_percent"]
-            for n in TABLE6_OPTIONS
-            for r in TABLE6_ROWS
-        ]
-        lines.append(
-            f"| {row} | "
-            + " | ".join("—" if v is None else f"{v:.1f}" for v in values)
-            + " |"
-        )
+    m45 = document["m4_m5"]
+    structure_ = m45["cohort_structure"]
+    lines += [
+        "",
+        "## The invented PSID-shaped cohort through M4 and M5",
+        "",
+        "The same code the registered run applies to the PSID (the M4 "
+        "cohort and the M5 careers) on INVENTED PSID-shaped frames: "
+        f"{structure_['persons']} persons, {structure_['records']} worker "
+        f"records ({', '.join(f'{k} {v}' for k, v in structure_['records_by_basis'].items())}), "
+        f"{sum(structure_['links_by_kind'].values())} links. Invented "
+        "shares, percent:",
+        "",
+        *_share_table(m45["summary"]),
+    ]
     head = document["summary"]["MS0"]["2:all"]
     floor = head["floor_mean"]
     lines += [
@@ -444,7 +640,7 @@ def _markdown(document: dict[str, Any]) -> str:
         elif isinstance(value, dict) and "passed" in value:
             lines.append(f"- `{name}`: passed = {value['passed']}")
         elif name == "entry_point_missing_components":
-            lines.append(f"- `{name}`: {', '.join(value)}")
+            lines.append(f"- `{name}`: {', '.join(value) or 'none'}")
         elif name == "specification_block_equals_code":
             lines.append(f"- `{name}`: {value['consistent']}")
         elif name == "threshold_years_needed_by_the_invented_cohort":
@@ -498,6 +694,12 @@ def main(argv: list[str] | None = None) -> int:
     result = pipeline.run_track_m(
         inputs, parameters, data_provenance="invented"
     )
+    m45 = m4_m5_run(
+        parameters,
+        extra,
+        seed=args.seed,
+        n_family_units=args.family_units,
+    )
     document = {
         "header": DRY_RUN_HEADER,
         "description": (
@@ -507,9 +709,29 @@ def main(argv: list[str] | None = None) -> int:
             "result, not a comparison."
         ),
         "summary": _summary(result),
-        "checks": checks(inputs, parameters, result),
+        "checks": {
+            **checks(inputs, parameters, result),
+            **m4_m5_checks(
+                m45,
+                parameters,
+                extra,
+                seed=args.seed,
+                n_family_units=args.family_units,
+            ),
+        },
         "provenance": provenance(parameters, extra),
         "result": result,
+        "m4_m5": {
+            "description": (
+                "An INVENTED PSID-shaped cohort (min_benefit_track_m."
+                "invented_psid) through the M4 cohort, the M5 careers and "
+                "the pipeline, the code the registered run applies to the "
+                "PSID"
+            ),
+            "summary": _summary(m45["result"]),
+            "cohort_structure": cohort.cohort_structure(m45["cohort"]),
+            "result": m45["result"],
+        },
         "run": {
             "started": started,
             "finished": datetime.datetime.now(

@@ -57,21 +57,30 @@ of the two neighboring years, or the one neighbor that exists; never a
 neighbor after the count's end year).  A year still unobserved after that
 counts as zero in both and is flagged.
 
-The quarter-of-coverage amounts load from the policyengine-us checkout the
-oracle already reads (``quarters_of_coverage_threshold.yaml``, which cites
-42 USC 413(d)(2), 20 CFR 404.143 and SSA's QC table), with the checkout's
-revision and the file's SHA-256 recorded.  That is a read of the local
-parameter tree, not a committed capture.
+The quarter-of-coverage amounts load from a committed capture (plan item
+M2): ``data/external/ssa_quarter_of_coverage_amounts.json``, pinned by
+SHA-256 (:data:`QC_CAPTURE_SHA256`, :func:`load_qc_amounts`).
+``scripts/capture_track_m_quarter_of_coverage.py`` writes it from the
+policyengine-us parameter file the oracle's checkout carries
+(``quarters_of_coverage_threshold.yaml``, which cites 42 USC 413(d)(2), 20
+CFR 404.143 and SSA's QC table; revision ``a03e82e503``, SHA-256
+``12354a05…``) after checking every year, 1978-2026, against the amount
+42 USC 413(d) sets from the oracle's wage index
+(:func:`statutory_qc_amounts`).  :func:`load_qc_amounts_from_checkout`
+reads the checkout; only the capture script uses it.
 """
 
 from __future__ import annotations
 
 import hashlib
+import json
 import math
 import os
 import subprocess
 from collections.abc import Mapping
 from dataclasses import dataclass
+from decimal import Decimal
+from fractions import Fraction
 from pathlib import Path
 from typing import Any
 
@@ -92,11 +101,17 @@ __all__ = [
     "QC_PARAMETER_PATH",
     "CoverageCount",
     "OneHistory",
+    "QC_1978",
+    "QC_CAPTURE_PATH",
+    "QC_CAPTURE_SHA256",
     "QuarterOfCoverageAmounts",
     "annual_coverage_amount",
     "count_coverage_years",
     "load_qc_amounts",
+    "load_qc_amounts_from_checkout",
     "one_history",
+    "round_to_ten",
+    "statutory_qc_amounts",
 ]
 
 #: The first year of the annual quarter-of-coverage amount (the
@@ -160,11 +175,16 @@ def _resolve_pe_us(pe_us_dir: Path | None) -> Path:
     return Path(env).expanduser() if env else _PE_US_DEFAULT
 
 
-def load_qc_amounts(pe_us_dir: Path | None = None) -> QuarterOfCoverageAmounts:
+def load_qc_amounts_from_checkout(
+    pe_us_dir: Path | None = None,
+) -> QuarterOfCoverageAmounts:
     """Read the quarter-of-coverage amounts from policyengine-us.
 
     Each ``values`` key is a date; its year keys the amount.  The file's
-    SHA-256 and the checkout's short revision are recorded.
+    SHA-256 and the checkout's short revision are recorded.  Only the
+    capture script (``scripts/capture_track_m_quarter_of_coverage.py``)
+    and its tests read the checkout; Track M reads the committed capture
+    (:func:`load_qc_amounts`).
     """
 
     root = _resolve_pe_us(pe_us_dir)
@@ -456,4 +476,141 @@ def one_history(
         next_wave_years=tuple(sorted(reported)),
         imputed_years=tuple(imputed),
         last_year=last_year,
+    )
+
+
+#: 42 USC 413(d)(1): the quarter-of-coverage amount of 1978.
+QC_1978 = 250.0
+#: 42 USC 413(d)(2)(B): the base year of the wage-index ratio.
+QC_BASE_WAGE_INDEX_YEAR = 1976
+
+
+def _exact(amount: Any) -> Fraction:
+    """``amount`` as an exact rational: a float by its shortest decimal
+    representation (``repr``), so that a wage index read as ``9226.48``
+    is 9226.48 exactly, not its binary neighbor."""
+
+    if isinstance(amount, bool):
+        raise TypeError(f"amount must be a number, not {amount!r}")
+    if isinstance(amount, Fraction):
+        return amount
+    if isinstance(amount, (int, Decimal)):
+        if isinstance(amount, Decimal) and not amount.is_finite():
+            raise ValueError(f"amount must be finite, not {amount!r}")
+        return Fraction(amount)
+    value = float(amount)
+    if not math.isfinite(value):
+        raise ValueError(f"amount must be finite, not {amount!r}")
+    return Fraction(repr(value))
+
+
+def round_to_ten(amount: Any) -> float:
+    """413(d)(2)'s rounding: to the nearest multiple of $10, except that a
+    multiple of $5 that is not a multiple of $10 rounds up.
+
+    Exact: the amount is read as a rational (a float by its shortest
+    decimal representation), so a product that is exactly midway between
+    multiples of $10 rounds up however it was reached.
+    """
+
+    tens = _exact(amount) / 10
+    low = math.floor(tens)
+    rest = tens - low
+    return float(10 * (low + 1 if rest >= Fraction(1, 2) else low))
+
+
+def statutory_qc_amounts(
+    nawi: Mapping[int, float], last_year: int
+) -> dict[int, float]:
+    """The quarter-of-coverage amounts 42 USC 413(d) sets, 1978-last_year.
+
+    413(d)(1): $250 in 1978.  413(d)(2): for each later year, determined
+    in the year before it, the larger of (A) the amount in effect in the
+    year of the determination and (B) $250 times the national average
+    wage index of the year before the determination over that of 1976,
+    rounded by :func:`round_to_ten`.  So the amount of year *y* is
+    ``max(QC(y - 1), round_to_ten(250 * AWI(y - 2) / AWI(1976)))``, the
+    product computed exactly from the wage index as written.  The statute
+    was read in the law.cornell.edu copy saved with the evidence
+    (``track-m-review-20260924/usc-42-413-cornell.txt``, SHA-256
+    ``7d226c0a…``, lines 101-109).
+    """
+
+    if QC_BASE_WAGE_INDEX_YEAR not in nawi:
+        raise KeyError(f"no average wage index for {QC_BASE_WAGE_INDEX_YEAR}")
+    base = _exact(nawi[QC_BASE_WAGE_INDEX_YEAR])
+    if base <= 0:
+        raise ValueError("the 1976 average wage index must be positive")
+    out = {FIRST_QC_YEAR: QC_1978}
+    for year in range(FIRST_QC_YEAR + 1, int(last_year) + 1):
+        if year - 2 not in nawi:
+            raise KeyError(f"no average wage index for {year - 2}")
+        product = Fraction(int(QC_1978)) * _exact(nawi[year - 2]) / base
+        out[year] = max(out[year - 1], round_to_ten(product))
+    return out
+
+
+#: The committed capture of the quarter-of-coverage amounts (plan item M2)
+#: that ``scripts/capture_track_m_quarter_of_coverage.py`` writes from
+#: the policyengine-us file at revision ``a03e82e503`` (SHA-256
+#: ``12354a05…``) after checking every value against
+#: :func:`statutory_qc_amounts`, and its pin.
+QC_CAPTURE_PATH = (
+    Path(__file__).resolve().parents[3]
+    / "data"
+    / "external"
+    / "ssa_quarter_of_coverage_amounts.json"
+)
+QC_CAPTURE_SCHEMA = "populace_dynamics.ssa_quarter_of_coverage_amounts.v1"
+QC_CAPTURE_SHA256 = (
+    "6f964e8fad41deb0985115b3cb18b4b92ea9b7ea10a11273e5e8ecc6834ae1f8"
+)
+
+
+def load_qc_amounts(
+    path: Path = QC_CAPTURE_PATH,
+    *,
+    expected_sha256: str | None = None,
+) -> QuarterOfCoverageAmounts:
+    """The committed quarter-of-coverage capture (plan item M2).
+
+    Refuses a file whose SHA-256 is not :data:`QC_CAPTURE_SHA256` (or
+    ``expected_sha256``) or whose schema differs, and returns every year's
+    amount with the capture's provenance: its own SHA-256 and the
+    policyengine-us file, revision and SHA-256 it was captured from.
+    """
+
+    expected = (
+        QC_CAPTURE_SHA256 if expected_sha256 is None else expected_sha256
+    )
+    path = Path(path)
+    if not path.is_file():
+        raise FileNotFoundError(
+            f"the quarter-of-coverage capture {path} is missing: run "
+            "scripts/capture_track_m_quarter_of_coverage.py"
+        )
+    raw = path.read_bytes()
+    digest = hashlib.sha256(raw).hexdigest()
+    if digest != expected:
+        raise ValueError(
+            f"{path} sha256 {digest} != pinned {expected}: not the "
+            "committed quarter-of-coverage capture"
+        )
+    document = json.loads(raw)
+    if document.get("schema_version") != QC_CAPTURE_SCHEMA:
+        raise ValueError(f"{path}: schema {document.get('schema_version')!r}")
+    amounts = {
+        int(year): float(value) for year, value in document["amounts"].items()
+    }
+    source = document["source"]
+    return QuarterOfCoverageAmounts(
+        amounts=amounts,
+        source={
+            "kind": "committed_capture",
+            "path": "data/external/ssa_quarter_of_coverage_amounts.json",
+            "sha256": digest,
+            "captured_from": str(source["path"]),
+            "captured_from_sha256": str(source["sha256"]),
+            "pe_us_revision": str(source["pe_us_revision"]),
+        },
     )

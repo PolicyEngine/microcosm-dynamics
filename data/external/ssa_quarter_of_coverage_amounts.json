@@ -1,0 +1,108 @@
+{
+  "amounts": {
+    "1978": 250,
+    "1979": 260,
+    "1980": 290,
+    "1981": 310,
+    "1982": 340,
+    "1983": 370,
+    "1984": 390,
+    "1985": 410,
+    "1986": 440,
+    "1987": 460,
+    "1988": 470,
+    "1989": 500,
+    "1990": 520,
+    "1991": 540,
+    "1992": 570,
+    "1993": 590,
+    "1994": 620,
+    "1995": 630,
+    "1996": 640,
+    "1997": 670,
+    "1998": 700,
+    "1999": 740,
+    "2000": 780,
+    "2001": 830,
+    "2002": 870,
+    "2003": 890,
+    "2004": 900,
+    "2005": 920,
+    "2006": 970,
+    "2007": 1000,
+    "2008": 1050,
+    "2009": 1090,
+    "2010": 1120,
+    "2011": 1120,
+    "2012": 1130,
+    "2013": 1160,
+    "2014": 1200,
+    "2015": 1220,
+    "2016": 1260,
+    "2017": 1300,
+    "2018": 1320,
+    "2019": 1360,
+    "2020": 1410,
+    "2021": 1470,
+    "2022": 1510,
+    "2023": 1640,
+    "2024": 1730,
+    "2025": 1810,
+    "2026": 1890
+  },
+  "captured_by": "scripts/capture_track_m_quarter_of_coverage.py",
+  "description": "The amount of wages and self-employment income that credits one Social Security quarter of coverage, by calendar year (42 USC 413(d)); four times it is the covered earnings of a work year for Track M (M1 specification section 5)",
+  "schema_version": "populace_dynamics.ssa_quarter_of_coverage_amounts.v1",
+  "source": {
+    "description": "The US credits one Social Security quarter of coverage when a person earns at least this amount.",
+    "path": "policyengine_us/parameters/gov/ssa/social_security/quarters_of_coverage_threshold.yaml",
+    "pe_us_revision": "a03e82e503",
+    "references": [
+      {
+        "href": "https://www.law.cornell.edu/uscode/text/42/413#d_2",
+        "title": "42 U.S.C. \u00a7 413(d)(2)"
+      },
+      {
+        "href": "https://www.law.cornell.edu/cfr/text/20/404.143",
+        "title": "20 CFR \u00a7 404.143"
+      },
+      {
+        "href": "https://www.ssa.gov/OACT/COLA/QC.html",
+        "title": "Social Security Quarters of Coverage"
+      }
+    ],
+    "sha256": "12354a0585756dbffcd9fae6aa6b49b2420619e9ec8e47c5ef953c41693f242b",
+    "values_comment": "Historical values from SSA.gov/OACT/COLA/QC.html"
+  },
+  "unit": "dollars",
+  "value_check": {
+    "differences": [],
+    "rule": "QC(1978) = 250; QC(y) = max(QC(y - 1), round_to_ten(250 * AWI(y - 2) / AWI(1976))), a multiple of $5 not of $10 rounding up (min_benefit_track_m.coverage.statutory_qc_amounts)",
+    "statute": {
+      "copy": "track-m-review-20260924/usc-42-413-cornell.txt",
+      "copy_sha256": "7d226c0a476d5bf83f07c06deef8b4563cbdc633a6ddf4b5921bc0afc654671c",
+      "evidence_root": "~/microcosm-launch-evidence/dynasim-parity-20260909",
+      "lines": "101-109",
+      "provision": "42 USC 413(d)(1)-(2)"
+    },
+    "table2_label_check": {
+      "four_quarters": 3880.0,
+      "passes": true,
+      "ruling": "C5 (formula unit tests only)",
+      "year": 2006
+    },
+    "wage_index": {
+      "path": "policyengine_us/parameters/gov/ssa/nawi.yaml",
+      "pe_us_revision": "a03e82e503",
+      "sha256": "9db55fe9ea25447a139767c7719b32920982dd2a65887c8fc0ddb12a2dcf7c53"
+    },
+    "years_checked": [
+      1978,
+      2026
+    ]
+  },
+  "years": [
+    1978,
+    2026
+  ]
+}

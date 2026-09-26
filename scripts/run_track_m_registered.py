@@ -35,28 +35,29 @@ registration comment exists, at exactly the commit that comment registers.
 
 * every pipeline component must exist (:func:`missing_components`): the
   pinned Census threshold capture (M2), the beneficiary cohort (M3, M4),
-  the realized careers (M5), the tabulation (M8) and the pipeline (M10).
-  The cohort and careers are not built, so :func:`check_runnable` refuses
-  today;
+  the realized careers (M5), the tabulation (M8) and the pipeline (M10);
 * the parameters must be the files the specification records
-  (:func:`check_parameter_pins`): the Census capture and the
-  policyengine-us quarter-of-coverage file, each by SHA-256;
+  (:func:`check_parameter_pins`): the Census capture and the committed
+  quarter-of-coverage capture, each by SHA-256;
 * the environment the sidecar records is resolved (Track A's resolver).
 
-**The computation** (:func:`run_pipeline`) hands M4's cohort and M5's
-careers to ``min_benefit_track_m.pipeline.run_track_m``, which refuses
-again, before evaluating any record, unless the records are marked as
-built from staged PSID files, the pointer is an issue #42 comment, the
-specification authorizes the run, every registered row runs with the
-registered floor seeds, and every threshold year the in-window records
-need is captured (referee R8).  Until the M3-M5 readers exist it raises;
-``scripts/track_m_dry_run.py`` runs the same pipeline on an INVENTED
-cohort.
+**The computation** (:func:`run_pipeline`) reads the staged PSID
+through M4's cohort (``min_benefit_track_m.cohort``) and M5's careers
+(``min_benefit_track_m.careers``) and hands the records, marked as built
+from staged PSID files and carrying every file's SHA-256, to
+``min_benefit_track_m.pipeline.run_track_m``, which refuses again, before
+evaluating any record, unless the pointer is an issue #42 comment, the
+committed specification authorizes the run (a supplied block cannot reach
+real records), every registered row runs with the registered floor seeds,
+and every threshold year the in-window records need is captured (referee
+R8).  ``scripts/track_m_dry_run.py`` runs the same pipeline on INVENTED
+cohorts, one of them through the same M4 and M5 code.
 
 The artifact publishes regardless of outcome and carries the Track M
-labels and the covered-earnings disclosure (d280).  It never reads the
-sealed comparator; the seal is opened only after this artifact is
-committed.  Nothing here has been run on real data.
+labels, the covered-earnings disclosure (d280), the PSID files' SHA-256
+and M4's structural counts.  It never reads the sealed comparator; the
+seal is opened only after this artifact is committed.  Nothing here has
+been run on real data: the committed draft specification refuses it.
 
 Usage::
 
@@ -94,6 +95,7 @@ from populace_dynamics.min_benefit_track_m import (  # noqa: E402
     tabulation,
 )
 from populace_dynamics.min_benefit_track_m.evaluation import (  # noqa: E402
+    PSID_FILES,
     TrackMParameters,
 )
 from populace_dynamics.min_benefit_track_m.policy import (  # noqa: E402
@@ -123,6 +125,12 @@ DEFAULT_OUTPUT = (
 REGISTRATION_POINTER = tabulation.REGISTRATION_POINTER
 #: The pipeline's modules by plan item; each is missing until it exists.
 PIPELINE_MODULES = {
+    "M3 Social Security receipt readers": (
+        "populace_dynamics.data.social_security_receipt"
+    ),
+    "M3 next-wave labor income reader": (
+        "populace_dynamics.data.prior_year_labor_income"
+    ),
     "M3/M4 beneficiary cohort": "populace_dynamics.min_benefit_track_m.cohort",
     "M5 realized careers": "populace_dynamics.min_benefit_track_m.careers",
     "M8 tabulation": "populace_dynamics.min_benefit_track_m.tabulation",
@@ -197,6 +205,10 @@ def missing_components() -> list[str]:
         rules.load_aged_thresholds()
     except rules.ThresholdsNotCapturedError:
         missing.append("M2 Census one-person 65+ threshold capture")
+    try:
+        coverage.load_qc_amounts()
+    except FileNotFoundError:
+        missing.append("M2 quarter-of-coverage capture")
     for item, module in PIPELINE_MODULES.items():
         if importlib.util.find_spec(module) is None:
             missing.append(item)
@@ -286,26 +298,54 @@ def _environment(*, ssa_parameters_revision: str) -> dict[str, Any]:
 
 
 def run_pipeline(
-    parameters: TrackMParameters, *, registration_pointer: str
+    parameters: TrackMParameters,
+    *,
+    registration_pointer: str,
+    data_dir: Path | None = None,
 ) -> dict[str, Any]:
     """The registered computation: M4's cohort and M5's careers into
     ``min_benefit_track_m.pipeline.run_track_m``.
 
-    Once they exist this reads the staged PSID through them into
-    ``TrackMInputs`` marked ``psid_files`` and calls ``run_track_m(inputs,
-    parameters, data_provenance="registered_real", registration_pointer=
-    registration_pointer)``, which refuses again before evaluating any
-    record (module docstring).  The PSID readers of plan items M3-M5 do
-    not exist, so this refuses; the pipeline runs on INVENTED records in
-    ``scripts/track_m_dry_run.py``.
+    Reads the staged PSID through ``cohort.load_cohort_inputs`` (recording
+    every file's SHA-256), builds the cohort (M4) and its records (M5,
+    marked ``psid_files`` and carrying the file hashes, with the committed
+    COLA history for MS5), and calls ``run_track_m(inputs, parameters,
+    data_provenance="registered_real", registration_pointer=...)``.  That
+    call refuses again before evaluating any record: the committed
+    specification must authorize the run (no supplied block reaches real
+    records), every registered row runs with the registered floor seeds,
+    and every threshold year the in-window records need must be captured
+    (referee R8).  Called only by :func:`main`, after the preflight, the
+    component check and the parameter pins.
     """
 
-    raise NotImplementedError(
-        "plan items M3-M5 (the beneficiary cohort and realized careers "
-        "from the PSID) are not built; min_benefit_track_m.pipeline."
-        "run_track_m takes their records once they are, and nothing is "
-        "computed on real data until then (M10)"
+    from populace_dynamics.estimates.parameters import load_cola_history
+    from populace_dynamics.min_benefit_track_m import (
+        careers,
+        cohort,
+        pipeline,
     )
+
+    inputs = cohort.load_cohort_inputs(data_dir=data_dir)
+    built = cohort.build_cohort(inputs)
+    cola = load_cola_history()
+    records = careers.build_track_m_inputs(
+        built,
+        earnings=inputs.earnings,
+        prior_year=inputs.prior_year_labor,
+        params=parameters.params,
+        cola_rates=cola,
+        provenance_kind=PSID_FILES,
+        source={"cola_history": dict(cola.provenance)},
+    )
+    result = pipeline.run_track_m(
+        records,
+        parameters,
+        data_provenance=tabulation.REGISTERED_REAL,
+        registration_pointer=registration_pointer,
+    )
+    result["cohort_structure"] = cohort.cohort_structure(built)
+    return result
 
 
 def _write_new(path: Path, text: str) -> None:

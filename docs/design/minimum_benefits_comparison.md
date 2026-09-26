@@ -72,6 +72,18 @@
     reconciliation or values scan, or the scratchpad archive. It read no
     PSID file and computed no statistic on real data; its dry run's
     cohort is invented (§18).
+  - A fourth builder lane (Claude Code subagent, Opus 5.5) built the M2
+    quarter-of-coverage capture, the M3 readers, the M4 cohort and the M5
+    careers on 2026-09-25, reviewing and correcting the uncommitted work
+    two interrupted lanes had left. It read `EVID/RESTRICTED-FILES.md`
+    (SHA-256 `2fc9bdbf…`) before any other file and opened nothing it
+    restricts: not the Report in any copy, any comparator directory,
+    seal, reconciliation or values scan, the uncleared sources, the
+    scratchpad archive or any exercise-1 result. On the staged PSID it
+    read setup-file labels, SAS format blocks and codebook and
+    questionnaire text, and ran the structural counts of §10, M4's under
+    §18's limits; it computed no years of coverage, PIA, threshold,
+    minimum, flag or share on real data. §22 lists what it read.
 - **Disclosure that travels with this specification (plan section 11,
   R5):** the clearance follow-up of 2026-09-24 14:15 found that the
   withheld Table 5 note sentence (ruling C2) lies inside the text lines
@@ -136,8 +148,8 @@ builder lane).
 | Referee report, `EVID/minimum-benefits-referee-20260924.md` (`49091254…`) | Required changes R1-R10, answers to §21's questions | Read in full; applied (§21) |
 | Oracle, `src/populace_dynamics/ss/` | AIME, PIA, reductions, credits, spouse's and widow(er)'s benefits | Read; called unchanged |
 | `cola_track_a/benefits.approximate_pia` | The DI PIA under MS6 | Read; called unchanged |
-| policyengine-us `quarters_of_coverage_threshold.yaml` at `a03e82e503` (SHA-256 `12354a05…`) | Quarter-of-coverage amounts, 1978 on | Read from the checkout; not a committed capture (M2) |
-| PSID 2023 wave, family files 1968-2023, marriage history | Structural counts (§10) | Staged; labels verified |
+| policyengine-us `quarters_of_coverage_threshold.yaml` at `a03e82e503` (SHA-256 `12354a05…`) | Quarter-of-coverage amounts, 1978 on | **Captured** (M2): `data/external/ssa_quarter_of_coverage_amounts.json` (SHA-256 `6f964e8f…`), every year 1978-2026 checked against 42 USC 413(d) (§5) |
+| PSID 2023 wave, family files 1968-2023, marriage history | Structural counts (§10); M3's receipt and labor-income items (§§4c, 5, 6) | Staged; labels verified (`tests/data/test_track_m_psid_labels.py`, labels and format blocks only) |
 | Census historical poverty-threshold workbooks `thresh03.xlsx`-`thresh22.xlsx` | The threshold that defines the minimum (G8, §7) | **Captured** 2003-2022 (d194, d279): `data/external/census_poverty_thresholds_2003_2022.json` (SHA-256 `65bbcd83…`) |
 | 42 USC 413(a)-(d); 20 CFR 404.141 and 404.143 | Quarters of coverage (§5), DI coverage end (§4a) | **Not captured** (M2). Review copies: 413 and 20 CFR 404.141 and 404.143 in `EVID/track-m-review-20260924/`; 402 in `EVID/minimum-benefits-referee-20260924/`; the oracle's `statutory_aime` quotes 415(b) (text `5b41d1cd…`) |
 | 42 USC 415(b)(2)(B)(ii) | The end of an old-age PIA's history (§4a) | Read in the text `5b41d1cd…` (encoder workspace copy) |
@@ -226,7 +238,12 @@ value (§20); `REGISTERED_ROWS` holds MS0-MS6 (§14).
   it applies to the receipt histories (the person-level Social Security
   items of waves 1984-1992 and 2005-2023, the 2005 and 2007 "year before
   last" items, family-file head and wife items, and the age rule for
-  later entrants). Nothing here classifies anyone.
+  later entrants). **Built** (2026-09-25): `min_benefit_track_m.cohort`
+  applies them to the M3 readers' histories
+  (`data/social_security_receipt.py`); §4c records the readings the
+  build made where the rules leave a choice, and the sources M3 found
+  beyond those named (the whether-only year-before-last items of the
+  2009-2015 family files).
 - **Finding (threshold years before *Y*₀).** Under G4 the window keys
   on the year the PIA was first calculated, while G8 takes the threshold
   of the §4a threshold year. A worker who first claims in or after *Y*₀
@@ -236,12 +253,16 @@ value (§20); `REGISTERED_ROWS` holds MS0-MS6 (§14).
   have a threshold year earlier still. A disability-origin record cannot:
   its onset year is its entitlement year less one (§4b rule 4), so at
   *Y*₀ = 2004 its threshold year is 2003 or later. M2 has captured the
-  Census one-person 65+ weighted-average thresholds for 2003-2022 (§7);
-  M4's structural count of in-window records reports the earliest
-  threshold year needed (a year, not a threshold). The registered run
-  refuses, before computing anything, if a needed year is missing, and
-  the M10 dry run checks that every threshold year the invented cohort
-  needs is present.
+  Census one-person 65+ weighted-average thresholds for 2003-2022 (§7).
+  **M4's structural count** (2026-09-25; §10, years and bases only, no
+  count of in-window records): the earliest threshold year the in-window
+  records of any registered row need is **1982**, and the years before
+  2003 they need are 1982, 1986, 1988, 1989, 1991, 1992 and 1994-2002
+  (MS1's window needs the same less 1988 and 1989), all for old-age and
+  death-basis records, as this finding expected; no disability-origin
+  record needs one. The registered run refuses, before computing
+  anything, while a needed year is missing (§7), and the M10 dry run
+  checks that every threshold year the invented cohort needs is present.
 
 ### 4a. The years that define each record (frozen)
 
@@ -341,6 +362,108 @@ history at its last year and computes the PIA at its threshold year.
 7. **Sex.** ER32000 code 9 counts in All and in neither Men nor Women.
    The current universe has none (§10).
 
+### 4c. As built (M4, 2026-09-25): the readings, not new rules
+
+`min_benefit_track_m.cohort` applies §4b as written. Where the rules
+leave a choice, it reads them as follows; the independent check of this
+draft should confirm or correct each reading before ratification (§18).
+
+1. **Own receipt.** An observed year is own receipt unless every type
+   item is known and every mentioned type is a spouse's, survivor's or
+   dependent's benefit; so an unknown, "other" or combination code counts
+   as own receipt. A year of auxiliary receipt only is a year without own
+   receipt (rule 2). **Size of the reading** (independent review,
+   2026-09-25; structural count over all records, not by window, at
+   `a1986950`): of the 2,306 records with own receipt, 145 have a first
+   own receipt of unknown type, 107 of them a one-member family's
+   year-before-last "yes" and 38 a person-level unknown or combination
+   code; 76 of the 145 are disability origin by rule 1's age rule alone
+   (60 of them on a family's "yes"). A survivor's benefit first received
+   at 60 or 61 and reported only as a family's "yes" or a combination code
+   is read as a worker's own disability-origin receipt. The ratification
+   should keep or change this reading knowingly (§18).
+2. **Observations.** Person-level items (the individual file, waves
+   1984-1992 and 2005-2023, and the 1993 family file's head and wife
+   items) take precedence. A family-level item identifies a person only
+   as M3 reads it: a family reporting none (a zero family total, income
+   years 1993-2002, the head's only for the 1996 file's 1995 total; a
+   year-before-last "no") is every member's non-receipt, and a
+   year-before-last "yes" is a one-member family's receipt. The 2009,
+   2011, 2013 and 2015 family files keep the year-before-last whether
+   item (R20) alone, for 2007, 2009, 2011 and 2013 (an M3 finding); their
+   "yes" is receipt of an unknown type. Their "no" adds observed years
+   without receipt after 2006, which, by rule 2, can only move an
+   entitlement year later, in some records across a policy year (for a
+   record with no observation from 2003 to 2006, for example). Their
+   "yes" adds own receipt of an unknown type (item 1), which can make an
+   earlier year the first own receipt, and so move an entitlement year
+   earlier and, before the year of attaining 62, make the record
+   disability origin by the age rule. (Independent review, 2026-09-25:
+   this item said the files "can only move an entitlement year later";
+   that holds for their "no" only.)
+3. **Rule 2 before rule 3.** Rule 2's second bullet sends to rule 3 only
+   a record with receipt in its first observed year. So a record with an
+   observed year without own receipt takes rule 2's earliest consistent
+   year even when the year just before the policy year is unobserved.
+   Rule 3's clause for "receipt in 2004 and unknown status in 2003" also
+   reads on such records; the structural count finds 209 whose last
+   observed year without own receipt precedes 2003 while their first own
+   receipt is in 2004 or later, of which the two readings place 2
+   differently at *Y*₀ = 2004 (1 of 19 at 2007).
+4. **Rule 3's age rule.** "A retirement type" is a retirement mention in
+   the first own observation, or an old-age basis (the age rule for a
+   type that is unknown or other). The record's window year is the
+   earliest year consistent with rule 3's membership: the year of
+   attaining 62 for old age (which reproduces the birth-year cutoffs 1942
+   and 1945), and for disability origin 2007 or 2004 when rule 3 places
+   it in a window, or 2003, the latest year consistent with its being
+   out of both. A record whose first observation, before 2004, is already
+   own receipt is out of both windows (its entitlement precedes 2004); its
+   window year is the year of attaining 62 (old age) or its first receipt
+   year (disability origin).
+5. **Links.** The marital state at the end of 2022
+   (`cohorts.psid2010.marital_state_at`; a separated spouse counts as
+   married). A spouse's link when the spouse has an own record, is alive
+   and has own receipt in 2022; a survivor's link when widowed and the
+   late spouse's death year is known (a range's last year for a late
+   spouse with an own record, an exact year for a death-basis record).
+   A link to a worker the oracle cannot compute (attaining 62 before
+   1975) is dropped when its window year precedes 2004, and refused
+   otherwise.
+6. **Claim years** (rule 5). A survivor's first entitlement on the record
+   is the earliest year consistent with their receipt of a survivor type
+   (else of any receipt), no earlier than the death year and the year of
+   attaining 60; the earliest over the linking survivors is a death-basis
+   record's window year. Only an observed year that shows no survivor's
+   benefit bounds it: a year without receipt, or receipt whose survivor
+   item is known and not mentioned. A receipt year whose survivor item is
+   unknown (a combination code, an unknown code, a DK or NA flag, a
+   one-member family's whether-only "yes") is consistent with a survivor's
+   benefit and does not. (Independent review, 2026-09-25: the build had
+   let such a year bound the claim year; on the staged PSID that set 18
+   of the 134 claim years that rest on a survivor mention later, every
+   one through a one-member family's year-before-last "yes" of unknown
+   type, and moved the window year of 8 death-basis records. The fix
+   changes none of §10's counts, including the threshold years the
+   windows need.) A spouse's claim year is the latest of their own
+   entitlement year (or, with no own record, rule 2's earliest year
+   consistent with their receipt, no earlier than 62), the worker's
+   entitlement year and the year of attaining 62, and never after 2022.
+   Months early: a spouse's against their own full retirement age; a
+   survivor's against the oracle's survivor span, 60 to 67 for every
+   cohort (`ss.params`, a documented simplification; a named delta).
+7. **Paid in 2022.** A person is paid their own worker benefit when their
+   2022 observation is own receipt; MS5's scope (§6) is a 2022 mention of
+   retirement or disability only, every type item known. An unlinked
+   auxiliary (§9) mentions a survivor's benefit in 2022 without a
+   survivor's link, or a dependent's benefit without a spouse's link.
+8. **Refusals before computing** (`careers.check_oracle_domain`): a
+   worker attaining 62 before 1975, whom the oracle cannot compute, and a
+   record in a policy window whose bend-point year precedes 1979 (the
+   oracle's PIA formula is the 1979 one: `ss.params` scales the 1979 bend
+   points by the wage index for every year). M4's count finds neither
+   among the in-window records (the earliest threshold year is 1982).
+
 ## 5. Years of coverage
 
 `min_benefit_track_m.coverage.count_coverage_years` (G6, G7):
@@ -355,12 +478,23 @@ history at its last year and computes the PIA at its threshold year.
   (named delta). Max's ruling adds that the convention is disclosed here
   and in every result; the tabulation carries
   `COVERED_EARNINGS_DISCLOSURE`.
-- **Quarter-of-coverage amounts, 1978 on:** read from the
-  policyengine-us checkout the oracle reads (the file cites 42 USC
-  413(d)(2), 20 CFR 404.143 and SSA's QC table), with its revision and
-  SHA-256 recorded (`load_qc_amounts`). This is not the committed
-  capture M2 calls for. Check: four times the 2006 amount is $3,880,
-  the figure Table 2 prints in the label of rows 3a-3d (§17).
+- **Quarter-of-coverage amounts, 1978 on (captured, M2):**
+  `data/external/ssa_quarter_of_coverage_amounts.json` (SHA-256
+  `6f964e8f…`, pinned in `coverage.QC_CAPTURE_SHA256` and read by
+  `coverage.load_qc_amounts`), written by
+  `scripts/capture_track_m_quarter_of_coverage.py` from the
+  policyengine-us file the oracle's checkout carries (the file cites 42
+  USC 413(d)(2), 20 CFR 404.143 and SSA's QC table; revision
+  `a03e82e503`, SHA-256 `12354a05…`). Before writing, the script checks
+  every year, 1978-2026, against the amount 42 USC 413(d) sets ($250 in
+  1978; for each later year the larger of the year before's amount and
+  $250 times the wage index of two years before over that of 1976,
+  rounded to $10, a multiple of $5 rounding up; read in the saved copy
+  `usc-42-413-cornell.txt`, `7d226c0a…`, computed exactly by
+  `coverage.statutory_qc_amounts` from the oracle's wage index) and
+  refuses to write on any difference; there is none. Check: four times
+  the 2006 amount is $3,880, the figure Table 2 prints in the label of
+  rows 3a-3d (§17).
 - **Before 1978 (statute, frozen):** 42 USC 413(a)(2)(A)(i) and 20 CFR
   404.141(b) credit a quarter of coverage for $50 of wages paid in it or
   $100 of self-employment income credited to it. With annual amounts,
@@ -405,6 +539,30 @@ history at its last year and computes the PIA at its threshold year.
   year still unobserved after that counts as zero and is flagged. The
   years of coverage and the PIA read this one history (§4a;
   `coverage.one_history`). The alternative `"zero"` is not registered.
+- **Built (M3, M5; 2026-09-25):** `data/prior_year_labor_income.py`
+  reads, label-verified in every wave 2003-2023, the reference person's
+  and the spouse's whether-employed item, amount, time unit and accuracy
+  code for each odd year 2001-2021. An item becomes an annual amount as
+  follows: not employed, a loss and a zero amount are observed zero; an
+  unknown whether-employed code, a DK or NA amount and an unknown time
+  unit are unobserved (the gap rule then applies); a positive amount is
+  multiplied by its time unit's periods in a full year (2,080 hours, 260
+  days, 52 weeks, 26 two-week periods, 12 months), a named delta: the
+  files also carry the weeks employed, which are not used.
+  `careers.build_track_m_inputs` passes the observed items as each
+  record's next-wave years. **M3's concept finding** (labels and codebook
+  text only): every item asks for all work for money, "including jobs,
+  businesses, self-employment and part-time work", while the panel's
+  constructed totals exclude farm and unincorporated-business income
+  from income year 1993 on and assign every missing value; the item
+  leaves a DK or NA amount unassigned and carries a time unit. That is a
+  named delta (§15); nothing adjusts for it. **A second finding, not
+  used:** the individual file carries person-level annual earnings for
+  1997, 1999 and 2001 (ER33537N, ER33628N, ER33728N; persons 18 or older
+  in the family unit; missing data not assigned), so "never asked" holds
+  for the family files only. The frozen source is the family files'
+  next-wave items, so 1997 and 1999 still take the gap rule; using the
+  individual-file series would be a change to this draft (§18).
 - **Unobserved years** (neither observed nor imputed) count as zero
   and are flagged, over a flag window from the year of attaining 22
   (builder default, matching G12's start).
@@ -471,6 +629,20 @@ of §4a, cut at its last year. What the oracle does, as read:
   through 2021. `evaluation.TrackMInputs` refuses a record marked in
   MS5's scope that a survivor's link names (a deceased worker) or that is
   not the own record of a person paid their own worker benefit.
+  **Built (M3, M5; 2026-09-25):** ER35219 is, by its codebook entry, the
+  total Social Security income received during 2022 in whole dollars,
+  top-coded at $99,999 (no universe member is top-coded), with all
+  missing data assigned (accuracy codes 1 and 5). Neither the 2023
+  questionnaire's G34 nor the 2015 question-by-question notes mention the
+  Medicare premium, so the amount is read as gross
+  (`social_security_receipt.AMOUNT_2023_READING`). No months-of-receipt
+  item is released for 2022, so *B* = ER35219 / 12, which understates a
+  benefit first paid during 2022 (a named delta).
+  `careers.build_track_m_inputs` supplies *B*, the record's own claim
+  factor and `rules.cola_factor` from its threshold year; the committed
+  COLA history begins with the COLA determined in 1979, and a record in
+  MS5's scope inside a policy window whose threshold year precedes it is
+  refused (one outside every window keeps the MS0 PIA and is counted).
 
 *P* is monthly, in the threshold year's dollars, at the first
 calculation. So is the minimum (§7), so the dollar level cancels (plan
@@ -524,12 +696,18 @@ section 3).
     survivor type mention; those are candidates, not in-window counts.
     Whether any record of either kind is in the window is M4's structural
     count (the earliest threshold year among in-window records; a year,
-    not a threshold), which needs M3's receipt readers.
-  - **No year before 2003 is captured.** If M4 reports one, it needs a
-    Census download before the registered run: d279 covers "any earlier
-    year the build proves it needs", captured, hashed and pinned like the
-    2003-2022 capture. `rules.check_threshold_years` refuses a cohort that
-    needs a missing year before anything is computed, with a named error
+    not a threshold). **M4 reports it** (2026-09-25; §4, §10): 1982, and
+    the years 1982, 1986, 1988, 1989, 1991, 1992 and 1994-2002, for
+    old-age and death-basis records.
+  - **No year before 2003 is captured, and M4 shows fifteen are
+    needed.** d279 covers "any earlier year the build proves it needs",
+    captured, hashed and pinned like the 2003-2022 capture: the Census
+    historical one-person 65+ weighted averages for 1982, 1986, 1988,
+    1989, 1991, 1992 and 1994-2002. This builder lane made no download;
+    the workbooks' layouts before 2003 are unverified, and the parser
+    refuses a layout it does not know. `rules.check_threshold_years`
+    refuses a cohort that needs a missing year before anything is
+    computed, with a named error
     (`ThresholdYearMissingError`, not a `KeyError`), and
     `AgedThresholds.for_year` raises the same error. `pipeline.run_track_m`
     calls it on `evaluation.needed_threshold_years` (every in-window
@@ -664,6 +842,62 @@ not in the wave 61,000.
   (how many is not counted here); the gap-year rule (§5) would then
   decide 1997, 1999 and the odd years of other members.
 
+**M3-M5 structural counts** (2026-09-25; `scripts/track_m_structure.py`
+at commit `7c1198ce` on a clean tree, evidence
+`EVID/track-m-structure-r3-20260925/track-m-structure.json`, SHA-256
+`cebde010…`, which records the SHA-256 of the 91 PSID files read). Every
+count of the funnel above is unchanged. Unweighted counts only; no
+years of coverage, PIA, threshold, minimum, flag or share was computed,
+and, as §11 reserves them for the registered run, no count of in-window
+records or exposed persons, of unlinked auxiliaries or of persons in
+MS5's scope was reported: of the windows, only the threshold years their
+records need (§4, §7), as years and bases. **Correction (independent
+review, 2026-09-25):** at `7c1198ce` the script's
+`structural_counts_before_registration` built its output from
+`cohort_structure`, so that run computed, in memory, the in-window
+record counts, the unlinked auxiliaries and the MS5 scope, and dropped
+them unwritten. The review's fix (`a1986950`) computes only what it
+returns; its rerun (`EVID/track-m-structure-r4-20260925/`, SHA-256
+`cdbd9868…`, clean tree, the same 91 PSID files with the same hashes)
+computed no such count, and every count below is unchanged, with the
+survivor claim-year fix of §4c item 6 in the code.
+
+- **The 2,135 persons:** 2,112 have an own worker record; 2,055 report
+  own receipt in 2022 and 80 auxiliary receipt only. Marital state at the
+  end of 2022: married 1,305, widowed 294, divorced 309, never married
+  118, unknown 50, no marriage history 59.
+- **Worker records:** 2,391 (279 of linked spouses outside the universe):
+  old age 1,751, disability origin 555, died before any own entitlement
+  85. Resolved by rule 2 (an observed year without own receipt) 2,210;
+  by rule 3's age rule, unresolved, 75 (first own receipt in 2004: 10;
+  later: 65; old age 58, disability origin 17); receipt in the first
+  observation before 2004, 21. First own receipt observed in 1983-1992:
+  100; in 1993-2003, family-level items only: 42; in 2004-2022: 2,164.
+  Records of deceased workers: 85 death basis (31 died at 62 or older),
+  47 disability origin, 120 old age. No record is outside the oracle.
+- **Old-age entitlement ages** (all records; rule 2's earliest consistent
+  year): 62: 662; 63: 215; 64: 185; 65: 249; 66: 222; 67: 84; 68: 41; 69:
+  27; 70: 32; 71 or older: 34 (up to 87). The last group are records
+  whose non-receipt is observed at 70 or older; §4b rule 2 enters them
+  as observed (a named delta).
+- **Links:** 985 spouse's links and 252 survivor's links (1,237 persons).
+  Survivor claim years from a survivor mention 134, from any receipt 118.
+  Married with no spouse's link 313: the spouse has no own record 223,
+  reports no own receipt in 2022 66, is unobserved in 2022 13, is
+  deceased 11. Widowed without a link: the late spouse is not recorded
+  deceased 15, has an unresolved birth year 3; one survivor's link to a
+  worker born before 1913 outside every window was dropped.
+- **The next wave's labor income items** (every reference person and
+  spouse, waves 2003-2023): annual amount 102,414; not employed 36,267;
+  DK or NA amount 9,234; unknown time unit 105; loss 51; zero 78. Time
+  units: year 99,147; hour 1,695; month 766; week 579; two weeks 329;
+  day 3.
+- **Where each record's history years come from** (from the year of
+  attaining 22 through §4a's last year; person-years): the earnings panel
+  44,058; the next wave's items 11,034; an odd year 1997-2021 the gap rule
+  can fill 4,535; before 1968 4,284; unobserved 30,271. The panel also
+  observes 1,235 person-years before 22.
+
 **Deltas of the population** (named, not fixed): exposed cohorts born
 1942–1960 against DYNASIM's 1945–1963; the whole 62+ age structure;
 DYNASIM's 1992 noninstitutionalized base (D12) against the PSID weight;
@@ -787,7 +1021,23 @@ building:
 - **found:** thresholds are needed for eligibility years before *Y*₀
   (§4, §7);
 - **found:** the 2022 Census workbook prints weighted averages rounded to
-  $10 (one person 65+: 14,040 against a matrix cell of 14,036; §7).
+  $10 (one person 65+: 14,040 against a matrix cell of 14,036; §7);
+- **found (M3-M5, 2026-09-25; each carried in
+  `pipeline.NAMED_DELTAS`):** the next wave's labor income counts farm,
+  business and self-employment earnings the panel's totals exclude, and
+  leaves a DK or NA amount unassigned (§5); sub-annual amounts are
+  annualized at full-year factors; a loss counts as zero covered
+  earnings; the individual file's 1997, 1999 and 2001 earnings are not
+  read (§5); own receipt is read from self-reported types, and
+  family-level items identify a person only as §4c reads them; a late
+  spouse with no observed own receipt is read as having died before any
+  own entitlement, even when they died at 62 or older or in a year no
+  person-level item records (1993-2003 and the odd years 2005-2021);
+  entitlement years rest on observed non-receipt, even at 70 or older
+  (§10); spouses are linked by the marital state at the end of 2022 only
+  (divorced spouses and the late spouses of remarried survivors are not
+  linked); MS5's *B* is the 2022 total over 12 (§6); the oracle's
+  survivor reduction runs from 60 to 67 for every cohort (§4c).
 
 ## 16. Invented worked cases
 
@@ -892,16 +1142,18 @@ The SSI columns (3 and 4) are outside Track M and were not checked.
 
 ## 18. What is built and what is blocked
 
-Built on branch `dynamics-ex4-track-m-2-20260925`, which carries PR
-#460's Track M foundation and PR #462's Track U Census capture (all
-opt-in; each module registered in `POST_REVIEW_SOURCE_EXCLUSIONS`, the
-pinned tuple and the reachability guard):
+Built on branches `dynamics-ex4-track-m-2-20260925` (merged to master
+with PR #460 at `596c365b`) and `dynamics-ex4-track-m-3-20260925` (M2's
+quarter-of-coverage capture and M3-M5, 2026-09-25). Every module is
+opt-in and registered in `POST_REVIEW_SOURCE_EXCLUSIONS`, the pinned
+tuple and the reachability guard:
 
 - `src/populace_dynamics/min_benefit_track_m/policy.py`: options 1-5,
   `TrackMPolicy`, rows MS0-MS6, Max's rulings (`MAX_RULINGS`) and the
   frozen choices.
 - `.../coverage.py`: years of coverage and the one history per worker
-  (§5), the quarter-of-coverage loader.
+  (§5); the committed quarter-of-coverage capture's loader and the
+  413(d) series it was checked against.
 - `.../thresholds.py`: the pinned 2003-2022 Census capture and the
   threshold-year check (§7).
 - `.../rules.py`: §§4a and 6-9 (the record years, schedules, indexing,
@@ -909,6 +1161,27 @@ pinned tuple and the reachability guard):
   the oracle; the claim and COLA factors).
 - `.../specification.py`: this block's reader and the registered-run
   gate.
+- `src/populace_dynamics/data/social_security_receipt.py` (M3): the
+  label-verified receipt items: person-level amounts and types, waves
+  1984-1992 and 2005-2023; the 1993 family file's head and wife items;
+  the family totals of waves 1994-2003; the year-before-last items of
+  2005 and 2007 (whether, types, amount) and 2009-2015 (whether only);
+  whose receipt the family-level items record; ER35219's unit, top code
+  and Medicare reading (§6).
+- `src/populace_dynamics/data/prior_year_labor_income.py` (M3): the
+  next wave's year-before-last labor income of the reference person and
+  spouse, odd years 2001-2021, with its concept checked against the
+  panel's totals (§5).
+- `.../cohort.py` (M4): §4b applied (§4c): the universe, each worker
+  record's basis, entitlement and onset, the resolution and unresolved
+  counts at 2004 and 2007, spouse and survivor links, claim years, sex,
+  unlinked auxiliaries; and the structural counts real files may give
+  before the registration (`structural_counts_before_registration`).
+- `.../careers.py` (M5): the records the evaluation reads: one history
+  per worker (panel years, next-wave odd years, then the gap rule), claim
+  factors, months early and MS5's inputs; the refusals of records outside
+  the oracle (§4c); records read from PSID files carry every file's
+  SHA-256.
 - `.../evaluation.py` (M8, the rules side of M5): worker and person
   records to each person's *A*ₖ under a row's policy, and the §11
   diagnostics.
@@ -916,62 +1189,71 @@ pinned tuple and the reachability guard):
   it refuses PSID-built rows without the issue #42 pointer and an
   authorizing block.
 - `.../pipeline.py` (M10): every registered row end to end, after the
-  provenance guard and the threshold-year check (§7).
-- `.../invented.py` (M10): an INVENTED PSID-shaped cohort with records of
-  all three §4a bases, couples, widow(er)s, unlinked auxiliaries, other
-  members, unresolved records and MS5 inputs.
+  provenance guard and the threshold-year check (§7). Records carrying
+  PSID file hashes are evaluated only by the registered run and only
+  against the committed specification block (the 2026-09-25 review's
+  residual: a supplied block cannot reach real records).
+- `.../invented.py` and `.../invented_psid.py` (M10): INVENTED cohorts:
+  records built directly, and PSID-shaped frames that run through M4 and
+  M5.
 - `.../structure.py` and `scripts/track_m_structure.py`: the structural
-  counts of §10.
+  counts of §10, M4's included under §11's limits.
 - `scripts/capture_track_u_parameters.py --track-m-census-dir` and the
-  committed workbooks and capture (§7).
-- `scripts/track_m_dry_run.py` (M10): the pipeline on the invented cohort
-  with the real parameters (the oracle's, the quarter-of-coverage file,
-  the Census capture, the SSA COLA history), every row MS0-MS6 including
-  MS5, the plan's worked cases (§16) and every guard. Its output, headed
-  "INVENTED DATA - NOT A COMPARISON", is in
-  `EVID/track-m-dry-run-20260925/`.
+  committed workbooks and capture (§7);
+  `scripts/capture_track_m_quarter_of_coverage.py` and
+  `data/external/ssa_quarter_of_coverage_amounts.json` (§5).
+- `scripts/track_m_dry_run.py` (M10): the pipeline on both invented
+  cohorts with the real parameters (the oracle's, the quarter-of-coverage
+  capture, the Census capture, the SSA COLA history), every row MS0-MS6
+  including MS5, the plan's worked cases (§16) and every guard, among
+  them the refusal of an invented M4 cohort that needs a threshold year
+  before 2003. Its output, headed "INVENTED DATA - NOT A COMPARISON", is
+  in `EVID/track-m-dry-run-r3-20260925/` (earlier runs:
+  `EVID/track-m-dry-run-20260925/` and `-r2/`).
 - `scripts/run_track_m_registered.py`: the one-shot entry point. It
-  refuses this draft (§19), and with an authorizing block it refuses,
-  before reading any PSID file, while a component is missing
-  (`missing_components`: today the M4 cohort and M5 careers) or while a
-  parameter file differs from the SHA-256 in `sources`
-  (`check_parameter_pins`: the Census capture and the quarter-of-coverage
-  file); its computation passes M4's and M5's records to
-  `pipeline.run_track_m`, which refuses again (§11) and raises until
-  they exist.
-- Tests: `tests/min_benefit_track_m/` and
+  refuses this draft at its preflight (§19). With an authorizing block it
+  refuses, before reading any PSID file, while a component is missing
+  (`missing_components`: none today) or while a parameter file differs
+  from the SHA-256 in `sources` (`check_parameter_pins`: the Census
+  capture and the quarter-of-coverage capture). Its computation reads the
+  PSID through M4 and M5 and passes the records, marked as read from
+  PSID files, to `pipeline.run_track_m`, which refuses again (§11) and,
+  today, would refuse the cohort's threshold years before 2003 (§7).
+- Tests: `tests/min_benefit_track_m/`,
+  `tests/data/test_social_security_receipt.py`,
+  `tests/data/test_prior_year_labor_income.py`,
+  `tests/data/test_track_m_psid_labels.py` (staged-file labels only) and
   `tests/test_minimum_benefits_spec.py`.
 
 Blocked, with the plan's effort estimates (lane-days):
 
-1. **M2's remaining captures** (part of 1.5): a Census workbook for any
-   threshold year before 2003 that M4's count shows is needed (d279
-   covers the download); the quarter-of-coverage amounts as a committed
-   capture with a hash; the statute text of 413, 415 (including 415(i)),
-   402(k) and 423 (the waiting period), with SHA-256.
-2. **M3 readers** (2.5): person-level Social Security amounts and types
-   for waves 1984-1992 and 2005-2023; the 2005 and 2007 "year before
-   last" items, including whose receipt they record; head and wife items
-   for 1993-2003; the next-wave labor income for the odd years 2001-2021,
-   with time units and accuracy codes, and its concept checked against
-   the panel's totals; ER35219's unit and top code; whether amounts are
-   net of the Medicare premium.
-3. **M4 cohort** (5): §4b's rules at 2004 and 2007, DI origin and onset,
-   spouse links (living and deceased), types, claim ages, provenance;
-   structural counts of records by basis, unresolved counts and the
-   earliest threshold year needed (§7).
-4. **M5 careers** (4): realized histories 1968-2022 through
-   `coverage.one_history`; *Y* and *P* per §4a; MS5's inputs (§6).
-5. **M10's registration package** (part of 1.5): the specification's
+1. **Census thresholds before 2003** (part of M2's 1.5): M4's count shows
+   the in-window records need 1982, 1986, 1988, 1989, 1991, 1992 and
+   1994-2002 (§7). d279 covers the download ("any earlier year the build
+   proves it needs"); the workbooks, their layouts before 2003 and a
+   parser that accepts them are to be captured, hashed and pinned like
+   the 2003-2022 capture. No builder lane has downloaded them.
+2. **The statute text** (part of M2's 1.5): 413, 415 (including 415(i)),
+   402(k) and 423 (the waiting period), with SHA-256. Review copies of
+   413, 20 CFR 404.141 and 404.143, 402 and parts of 415 exist in
+   `EVID/` (§2); 423 has not been read.
+3. **M10's registration package** (part of 1.5): the specification's
    SHA-256, the code SHA and the parameter hashes are in the dry run's
-   provenance; the PSID file hashes need the M3-M5 readers. The comparator
-   seal's hash is the orchestrator's to add (builder lanes do not open
-   it). Then **M11 registration and one-shot** (3).
-6. **Ratification:** an independent check that `m1-draft-2` applies the
-   referee's required changes, then the ratified text (`m1-ratified-1`,
-   status and version only) merged under d219 item 9. Ratification alone
-   authorizes no run: the ratified block still lists the other blockers,
-   and the gate refuses a block that lists any (§19).
+   provenance, and the SHA-256 of the 91 PSID files the cohort reads is in
+   the structural run (§10). The comparator seal's hash is the
+   orchestrator's to add (builder lanes do not open it). Then **M11
+   registration and one-shot** (3).
+4. **Ratification:** an independent check that `m1-draft-2` applies the
+   referee's required changes, and of the M3-M5 build's readings (§4c;
+   §5's two findings, one of which would change this draft if adopted),
+   then the ratified text (`m1-ratified-1`, status and version only)
+   merged under d219 item 9. The first check is
+   `EVID/track-m-2-review-20260925.md`; the second,
+   `EVID/track-m-3-review-20260925.md`, confirmed §4c items 1-5, 7 and 8
+   and both §5 findings (codebook text), corrected item 6 in the code
+   and item 2's text, and sized item 1 for the ratification (§4c).
+   Ratification alone authorizes no run: the ratified block still lists
+   the other blockers, and the gate refuses a block that lists any (§19).
 
 ## 19. Machine-readable parameter block
 
@@ -994,7 +1276,10 @@ same gate to PSID-built rows. As in Track U, each blocker is removed from
 `blocked_by` as it is resolved, and `issue_42_registration_absent` in the
 commit the registration comment then registers; the registered commit's
 block lists none. The entry script also refuses parameter files whose
-SHA-256 differs from `sources` (§18).
+SHA-256 differs from `sources` (§18); `sources.quarter_of_coverage_amounts`
+records the committed capture and the policyengine-us file it came from,
+and a test holds that record, and the Census capture's, to what the
+loaders read.
 
 ```json
 {
@@ -1339,10 +1624,17 @@ SHA-256 differs from `sources` (§18).
       "use": "formula_unit_tests_only"
     },
     "quarter_of_coverage_amounts": {
-      "file": "policyengine_us/parameters/gov/ssa/social_security/quarters_of_coverage_threshold.yaml",
-      "pe_us_revision": "a03e82e503",
-      "sha256": "12354a0585756dbffcd9fae6aa6b49b2420619e9ec8e47c5ef953c41693f242b",
-      "status": "read_from_checkout_not_captured"
+      "file": "data/external/ssa_quarter_of_coverage_amounts.json",
+      "sha256": "6f964e8fad41deb0985115b3cb18b4b92ea9b7ea10a11273e5e8ecc6834ae1f8",
+      "years": [
+        1978,
+        2026
+      ],
+      "captured_from": "policyengine_us/parameters/gov/ssa/social_security/quarters_of_coverage_threshold.yaml",
+      "captured_from_pe_us_revision": "a03e82e503",
+      "captured_from_sha256": "12354a0585756dbffcd9fae6aa6b49b2420619e9ec8e47c5ef953c41693f242b",
+      "value_check": "every_year_equals_42_usc_413_d",
+      "status": "committed_capture"
     },
     "census_thresholds": {
       "file": "data/external/census_poverty_thresholds_2003_2022.json",
@@ -1364,13 +1656,10 @@ SHA-256 differs from `sources` (§18).
     }
   },
   "blocked_by": [
-    "independent_check_of_m1_draft_2_then_ratification_by_merge",
-    "census_thresholds_before_2003_if_m4_needs_them",
+    "independent_check_of_m1_draft_2_and_the_m3_to_m5_readings_then_ratification_by_merge",
+    "census_thresholds_1982_to_2002_needed_by_m4_not_captured",
     "statute_413_415_402_423_not_captured_m2",
-    "person_level_social_security_readers_m3",
-    "beneficiary_cohort_m4",
-    "realized_careers_m5",
-    "registration_package_m10_needs_m3_to_m5",
+    "registration_package_m10_needs_the_comparator_seal_hash",
     "issue_42_registration_absent"
   ]
 }
@@ -1627,6 +1916,53 @@ cohort (all 84 cells of rows MS0-MS6), in scripts that import no
 repository code. It read no PSID file and computed no statistic on real
 data. Its report is `EVID/track-m-2-review-20260925.md`.
 
+**The M2-M5 build lane (2026-09-25, Claude Code subagent, Opus 5.5)
+read:** `EVID/RESTRICTED-FILES.md` first (`2fc9bdbf…`); this
+specification in full; the referee report in full (`49091254…`); the
+review of the M8/M10 build (`e27c24ca…`); the plan (revision 2,
+`976ec7f6…`), its revision notes and sections 1-13; the Track M code and
+tests at `596c365b` and the uncommitted work two interrupted lanes had
+left, which it reviewed, kept in part and corrected; the oracle's
+`ss/benefits.py` (the PIA, spouse's and widow(er)'s functions),
+`ss/params.py` (bend points, the survivor span) and `ss/statutory_aime.py`
+(the AIME, computation and indexing years and their date checks);
+`data/family.py`, `data/deaths.py` and `cohorts/psid2010.marital_state_at`;
+42 USC 413(d) in `usc-42-413-cornell.txt` (`7d226c0a…`). On the staged
+PSID: setup-file labels of the individual file and the family files of
+1990-2023, the individual file's SAS format blocks (through the reader's
+check), the codebook entries of the variables the M3 readers use and of
+the searches §§4c and 5 report (family files 1996, 2003-2023; individual
+file 2023), the 2023 questionnaire's Social Security questions and the
+2015 question-by-question notes. It ran the tests, the structural counts
+(§10) and the invented dry run (§18). It found that an interrupted lane
+had run the M4 cohort's full counts, which include in-window counts, on
+the staged PSID into the orchestrating session's scratchpad
+(`smoke.json`, 2026-09-25 17:01-17:03, with a pickle of the PSID inputs);
+it did not open those outputs, and nothing it wrote rests on them. It
+computed no years of coverage, PIA, threshold, minimum, flag or share on
+real data.
+
+**Independent review of the M2-M5 build (2026-09-25, Claude Code
+subagent, Opus 5.5):** read `EVID/RESTRICTED-FILES.md` first
+(`2fc9bdbf…`) and nothing it restricts; the branch diff from `596c365b`,
+this specification's §§1-11, 18, 19 and 22-23, the builder's report and
+the previous review. It re-verified every label the M3 readers use (97
+individual-file and 140 family-file variables) with its own parser of
+the Stata setup files, checked their columns against the SPSS setup
+files and every type, flag and accuracy code against the individual
+file's Stata formats, and read the codebook entries of the family-file
+codes the readers adjudicate. It checked the quarter-of-coverage capture
+against the 2008 Trustees Report's Table V.C2 (1978-2008, in
+`EVID/tr2008-inputs-20260922/`), the Federal Register's annual
+determination notices (1996-2026) and its own exact recomputation of
+413(d): no difference in any year. On the staged PSID it ran the
+structural counts (§10, `EVID/track-m-structure-r4-20260925/`) and counts
+of survivor claim years and of first own receipts of unknown type (§4c
+items 1 and 6); it computed no years of coverage, PIA, threshold,
+minimum, flag, share or in-window count on real data. It did not open
+the interrupted lane's `smoke.json` or pickle. Its report is
+`EVID/track-m-3-review-20260925.md`.
+
 ## 23. Changelog
 
 - `m1-draft-1` (2026-09-24): first draft, with the Track M rules module,
@@ -1677,3 +2013,25 @@ data. Its report is `EVID/track-m-2-review-20260925.md`.
   record in MS5's scope that a survivor's link names, or that is not the
   own record of a person paid their own worker benefit); §22 records the
   review.
+- `m1-draft-2`, M2-M5 build (2026-09-25; no ruling, default, row, cell or
+  frozen choice changed, so the version stands): the quarter-of-coverage
+  capture (§§2, 5; the block's `sources` records it, so the entry
+  script's pins match the committed files); the M3 readers, the M4 cohort
+  and the M5 careers (§§4, 4c, 5, 6, 18), with §4c's readings and §5's two
+  findings for the independent check; M4's structural counts (§10) and
+  the fifteen Census years before 2003 they show the in-window records
+  need (§§4, 7); the found named deltas (§15); the builder boundary and
+  §22. `blocked_by` drops the M3, M4 and M5 items, names the Census years
+  1982-2002 and the comparator seal's hash, and asks the independent check
+  to cover the M3-M5 readings.
+- `m1-draft-2`, independent review of the M2-M5 build (2026-09-25; no
+  ruling, default, row, cell, frozen choice or block field changed, so the
+  version and the §19 block stand): §4c item 6's survivor claim year now
+  holds as written in the code (`a1986950`: a receipt year whose survivor
+  item is unknown no longer bounds it);
+  `structural_counts_before_registration` no longer computes §11's
+  reserved diagnostics in memory (§10 records the earlier run's
+  in-memory computation and the rerun);
+  §4c item 2's "can only move an entitlement year later" is limited to the
+  files' "no", and item 1 records the size of its reading; §18 item 4 and
+  §22 record the review.

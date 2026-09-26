@@ -267,6 +267,15 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/min_benefit_track_m/invented.py"),
     Path("src/populace_dynamics/min_benefit_track_m/pipeline.py"),
     Path("src/populace_dynamics/min_benefit_track_m/tabulation.py"),
+    # The Track M PSID readers (M3: Social Security receipt histories and
+    # the next wave's year-before-last labor income), the beneficiary
+    # cohort (M4), the realized careers (M5) and their invented
+    # PSID-shaped generator are opt-in; nothing historical imports them.
+    Path("src/populace_dynamics/data/social_security_receipt.py"),
+    Path("src/populace_dynamics/data/prior_year_labor_income.py"),
+    Path("src/populace_dynamics/min_benefit_track_m/cohort.py"),
+    Path("src/populace_dynamics/min_benefit_track_m/careers.py"),
+    Path("src/populace_dynamics/min_benefit_track_m/invented_psid.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(

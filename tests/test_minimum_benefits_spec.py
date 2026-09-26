@@ -65,15 +65,23 @@ def test_block_identity_and_status(block):
     )
     assert "max_ruling_d219_open" not in block["blocked_by"]
     assert (
-        "independent_check_of_m1_draft_2_then_ratification_by_merge"
-        in block["blocked_by"]
+        "independent_check_of_m1_draft_2_and_the_m3_to_m5_readings_then_"
+        "ratification_by_merge" in block["blocked_by"]
     )
-    # M8 and the M10 dry run are built; the PSID readers are not
-    assert "tabulation_m8_and_dry_run_m10" not in block["blocked_by"]
-    for blocker in (
+    # M8, the M10 dry run and the M3-M5 readers are built
+    for built in (
+        "tabulation_m8_and_dry_run_m10",
         "person_level_social_security_readers_m3",
         "beneficiary_cohort_m4",
         "realized_careers_m5",
+        "registration_package_m10_needs_m3_to_m5",
+    ):
+        assert built not in block["blocked_by"], built
+    # M4's count shows Census years before 2003 are needed (section 7)
+    for blocker in (
+        "census_thresholds_1982_to_2002_needed_by_m4_not_captured",
+        "statute_413_415_402_423_not_captured_m2",
+        "registration_package_m10_needs_the_comparator_seal_hash",
         "issue_42_registration_absent",
     ):
         assert blocker in block["blocked_by"], blocker
@@ -176,8 +184,10 @@ def _ratified(block: dict) -> dict:
 
 def test_a_ratified_block_still_listing_blockers_authorizes_nothing(block):
     """Ratification alone does not authorize the run: the block's
-    ``blocked_by`` still names the unbuilt PSID readers, and the gate
-    refuses a block that names any blocker (or has no list)."""
+    ``blocked_by`` still names the open blockers (the Census years before
+    2003, the statute, the registration package and the registration),
+    and the gate refuses a block that names any blocker (or has no
+    list)."""
 
     ratified = _ratified(block)
     assert ratified["blocked_by"]

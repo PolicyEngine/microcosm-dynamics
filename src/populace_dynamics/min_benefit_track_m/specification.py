@@ -23,7 +23,9 @@ run the block does not authorize.  A run is authorized only when:
 
 ``m1-draft-2`` records Max's rulings and fails the first test: it awaits an
 independent check of the referee's changes, then ratification by merge.
-Its ``blocked_by`` also still lists the unbuilt PSID readers (M3-M5).
+Its ``blocked_by`` also still lists the open blockers (the independent
+check and ratification, any Census year before 2003 the cohort needs, the
+statute capture, the registration package and the registration).
 """
 
 from __future__ import annotations
