@@ -234,6 +234,7 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # and its tabulation) is post-compute and unreachable from the
     # historical projection; the transitive reachability test guards it.
     Path("src/populace_dynamics/data/family_income.py"),
+    Path("src/populace_dynamics/data/employer_dc.py"),
     Path("src/populace_dynamics/cohorts/age67.py"),
     Path("src/populace_dynamics/estimates/adjusted_poverty.py"),
     Path("src/populace_dynamics/estimates/uniform_cut_tabulation.py"),

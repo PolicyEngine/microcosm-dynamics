@@ -36,8 +36,18 @@ primary, and :func:`pending_decisions` lists them):
   by the PSID's business convention: that share of positive farm income,
   and the whole of a farm loss when the share is positive, is removed;
   0 keeps farm income whole.
-* **Annuity** (F5-F9).  ``annuitized_share`` (0.8) times the FU's
-  imputed wealth excluding home equity (WEALTH1), floored at zero (F9),
+* **Financial assets** (F5).  ``financial_assets="wealth1"`` (the
+  primary): the FU's imputed wealth excluding home equity (WEALTH1).
+  ``wealth1_plus_employer_dc`` (row U7): WEALTH1 plus the head's and
+  wife's employer DC account balances the PSID pension section observes
+  (``employer_dc``, :mod:`populace_dynamics.data.employer_dc`: the
+  current job's account and previous employers' accounts left to
+  accumulate; accounts rolled over into an IRA are already in WEALTH1).
+  The Report's financial assets include 401(k) balances (p. 24);
+  WEALTH1 holds none outside IRAs.  The U3 resource proxy stays on
+  WEALTH1 in either case.
+* **Annuity** (F5-F9).  ``annuitized_share`` (0.8) times the financial
+  assets, floored at zero (F9),
   divided by the price of a real, level annuity of 1 per year:
   annuity-immediate (payments at the end of each year the annuitant
   survives) at ``real_interest_rate`` (3 percent: the real return on
@@ -79,9 +89,10 @@ primary, and :func:`pending_decisions` lists them):
   under U1, the 1936 birth year (67 in 2003, observed at 68) is not.
   ``None`` (every observation cut, the u1-draft-4 primary) is an
   unregistered alternative; row U6, which carried 2004 on U1, was
-  withdrawn in u1-draft-5 (second referee S5).  Max's confirmation of
-  the scorecard's "from 2004" wording is pending (plan section 10,
-  decision 8).
+  withdrawn in u1-draft-5 (second referee S5).  Plan section 10
+  decision 8 (the scorecard's "from 2004") is settled by that source
+  since u1-draft-7: the cleared extract says the scorecard's "from 2004"
+  agrees with the Report's "beginning in 2004".
 * **SSI response** (F13; Max's ruling, cos decision d189, 2026-09-24:
   "Yes to Track U with the SSI offset rule for existing recipients").
   ``offset_existing_recipients`` (the primary): for each SSI unit
@@ -136,6 +147,7 @@ __all__ = [
     "CUT_START_YEAR_RULE",
     "D189_RULING",
     "FARM_LOSS_RULE",
+    "FINANCIAL_ASSETS",
     "RETIREMENT_ACCOUNT_INCOME_CONCEPTS",
     "RETIREMENT_ACCOUNT_INCOME_RULES",
     "DATA_PROVENANCES",
@@ -222,6 +234,17 @@ ASSET_INCOME_RULES: dict[str, str] = {
         "interest and dividends)"
     ),
     "keep": "keep reported asset income and add the annuity (row U5)",
+}
+FINANCIAL_ASSETS: dict[str, str] = {
+    "wealth1": (
+        "the family unit's WEALTH1, imputed wealth excluding home equity "
+        "(F5 primary)"
+    ),
+    "wealth1_plus_employer_dc": (
+        "WEALTH1 plus the head's and wife's employer DC account balances "
+        "the PSID pension section observes: the current job's account and "
+        "previous employers' accounts left to accumulate (row U7)"
+    ),
 }
 INCOME_UNITS: dict[str, str] = {
     "family_unit": (
@@ -392,6 +415,7 @@ class AdjustedPovertySpec:
     terminal_closure: str = "table_end"
     asset_income_rule: str = "replace"
     income_unit: str = "family_unit"
+    financial_assets: str = "wealth1"
     retirement_account_income_rule: str = "remove_head"
     farm_asset_share: float = 0.5
     annuity_lives: str = "fu_head_rule"
@@ -434,6 +458,7 @@ class AdjustedPovertySpec:
             self.asset_income_rule, ASSET_INCOME_RULES, "asset_income_rule"
         )
         _choice(self.income_unit, INCOME_UNITS, "income_unit")
+        _choice(self.financial_assets, FINANCIAL_ASSETS, "financial_assets")
         _choice(
             self.retirement_account_income_rule,
             RETIREMENT_ACCOUNT_INCOME_RULES,
@@ -526,10 +551,12 @@ def pending_decisions() -> tuple[PendingDecision, ...]:
             "so every U0 and U0-F observation is cut and only U1's 1936 "
             "birth year (67 in 2003) is not; None (every observation cut, "
             "the u1-draft-4 primary) has no source and is not registered; "
-            "the Report gives no month within 2004",
-            "Max (plan section 10 decision 8: confirming the scorecard's "
-            "'from 2004' wording; not yet on a decision card) and the "
-            "specification freeze",
+            "the Report gives no month within 2004; plan section 10 "
+            "decision 8 (the scorecard's 'from 2004', which the plan could "
+            "not source) is settled by that source since u1-draft-7: the "
+            "cleared extract quotes the Report's 'beginning in 2004' and "
+            "notes that the scorecard's wording agrees with it",
+            _FREEZE,
         ),
         PendingDecision(
             "income_unit",
@@ -570,6 +597,23 @@ def pending_decisions() -> tuple[PendingDecision, ...]:
             "for ER52216); the same convention imputes the asset part of "
             "farm income (0 keeps farm income whole, the u1-draft-3 "
             "behaviour); applies only under asset_income_rule 'replace'",
+            _FREEZE,
+        ),
+        PendingDecision(
+            "financial_assets",
+            spec.financial_assets,
+            ("wealth1_plus_employer_dc",),
+            "specification section 4 F5 and section 11 row U7: the Report's "
+            "financial assets are non-pension wealth plus IRA, Keogh and "
+            "401(k) balances (p. 24, cleared exercise-2 definitions "
+            "extract); WEALTH1 holds IRAs (W22) but no employer DC account "
+            "outside an IRA; the PSID pension section observes the head's "
+            "and wife's current-job account and up to two previous "
+            "employers' accounts left to accumulate, as reported (not "
+            "imputed; DK or refused amounts count as 0), and no balance for "
+            "a second tax-deferred plan on the current job, a third "
+            "previous plan or an OFUM, so WEALTH1 stays the primary and "
+            "WEALTH1 plus those balances is row U7 (first referee R5)",
             _FREEZE,
         ),
         PendingDecision(
@@ -1233,6 +1277,36 @@ def _farm_asset_income(
     return np.where(farm > 0, share * farm, farm)
 
 
+def _employer_dc(rows: pd.DataFrame, spec: AdjustedPovertySpec) -> np.ndarray:
+    """The employer DC balances added to WEALTH1 per row (row U7).
+
+    Zero under ``financial_assets="wealth1"``.  Under
+    ``wealth1_plus_employer_dc`` the rows need ``employer_dc``
+    (:func:`populace_dynamics.data.employer_dc.employer_dc_balances`, the
+    family's head and wife balances), a whole, non-negative dollar amount
+    for every row; anything else is refused.
+    """
+
+    if spec.financial_assets == "wealth1":
+        return np.zeros(len(rows), dtype=np.float64)
+    if "employer_dc" not in rows.columns:
+        raise AdjustedPovertyError(
+            "financial_assets 'wealth1_plus_employer_dc' needs the "
+            "employer_dc column (row U7)"
+        )
+    values = pd.to_numeric(rows["employer_dc"], errors="coerce")
+    if values.isna().any():
+        raise AdjustedPovertyError(
+            f"employer_dc missing for {int(values.isna().sum())} rows"
+        )
+    values = values.to_numpy(dtype=np.float64)
+    if (values < 0).any() or (values != np.floor(values)).any():
+        raise AdjustedPovertyError(
+            "employer_dc must be whole, non-negative dollars"
+        )
+    return values
+
+
 def _unit_frame(rows: pd.DataFrame, spec: AdjustedPovertySpec) -> dict:
     ofum_member = rows["member_role"].eq("ofum").to_numpy()
     fu = np.ones(len(rows), dtype=bool)
@@ -1427,7 +1501,9 @@ def adjusted_incomes(
     ``asset_income_reported``, ``retirement_account_income_removed``,
     ``farm_asset_income_removed``, ``asset_income_removed`` (their sum
     with the reported asset income under ``replace``),
-    ``financial_assets``, ``annuity_basis``, ``annuity_factor``,
+    ``employer_dc_added`` (0 unless ``financial_assets`` is
+    ``wealth1_plus_employer_dc``), ``financial_assets`` (WEALTH1 plus
+    that), ``annuity_basis``, ``annuity_factor``,
     ``annuity``, ``baseline_income``, ``social_security``,
     ``cut_applies``, ``cut``,
     ``ssi_offset``, ``ssi_new``, ``reform_income``, ``unit_size``,
@@ -1473,7 +1549,8 @@ def adjusted_incomes(
             )
     rows = rows.reset_index(drop=True)
     units = _unit_frame(rows, spec)
-    assets = rows["wealth1"].to_numpy(dtype=np.float64)
+    employer_dc = _employer_dc(rows, spec)
+    assets = rows["wealth1"].to_numpy(dtype=np.float64) + employer_dc
     annuitized = spec.annuitized_share * np.maximum(assets, 0.0)
     factors, bases = _annuity_factors(rows, spec, life_table)
     if not np.all(factors > 0):
@@ -1529,6 +1606,7 @@ def adjusted_incomes(
             "retirement_account_income_removed": retirement_removed,
             "farm_asset_income_removed": farm_removed,
             "asset_income_removed": removed,
+            "employer_dc_added": employer_dc,
             "financial_assets": assets,
             "annuity_basis": bases,
             "annuity_factor": factors,
