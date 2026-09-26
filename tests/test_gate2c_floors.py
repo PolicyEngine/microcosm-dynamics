@@ -43,7 +43,16 @@ ARTIFACT = ROOT / "runs" / "gate2c_floors_v1.json"
 SCRIPTS = ROOT / "scripts"
 
 REAL_DATA = Path("~/PolicyEngine/psid-data").expanduser()
-PE_US_DIR = os.environ.get("POPULACE_DYNAMICS_PE_US_DIR")
+# The reproduction pin's AIME chain (``build_couple_panel()`` loads the SSA
+# parameters itself) defaults to the checkout the floor was built against
+# (``revision_pins.pe_us_revision``) unless the environment overrides it.
+# The setting is read here but exported only while this module's tests run
+# (``_pe_us_dir_env``), as in the gate-2c candidate reproduction pins.
+PE_US_ENV = "POPULACE_DYNAMICS_PE_US_DIR"
+PE_US_DIR = os.environ.get(
+    PE_US_ENV,
+    str(Path("~/PolicyEngine/policyengine-us-main").expanduser()),
+)
 needs_real = pytest.mark.skipif(
     not (REAL_DATA / "mh85_23").is_dir()
     or not (REAL_DATA / "family").is_dir()
@@ -55,6 +64,14 @@ needs_real = pytest.mark.skipif(
 )
 
 FLOOR_KEY = "noise_floor_seeds_0_99"
+
+
+@pytest.fixture(scope="module", autouse=True)
+def _pe_us_dir_env():
+    """Point the oracle loaders at ``PE_US_DIR`` for this module only."""
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setenv(PE_US_ENV, PE_US_DIR)
+        yield
 
 
 def _artifact() -> dict:
