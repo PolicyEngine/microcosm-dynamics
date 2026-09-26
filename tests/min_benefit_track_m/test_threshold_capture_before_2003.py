@@ -1037,3 +1037,121 @@ def test_property_the_threshold_year_check_refuses_exactly_the_missing(
     named = refused.value.args[0].split(" are not in the capture")[0]
     named_years = {int(y) for y in re.findall(r"\b(\d{4})\b", named)}
     assert named_years == set(missing)
+
+
+# -------------------------------------------------------------------------
+# The loader's and the capture's year guards (independent review,
+# 2026-09-25: each guard was added with the years before 2003 but had no
+# test)
+# -------------------------------------------------------------------------
+def _repinned(directory: Path, edit) -> tuple[Path, str]:
+    """The committed capture with ``edit`` applied, written to
+    ``directory`` and returned with its own SHA-256 (so that the loader's
+    pin check passes and its year guards are what is exercised)."""
+
+    data = json.loads(CAPTURE.read_text())
+    edit(data)
+    raw = (json.dumps(data, indent=2) + "\n").encode()
+    path = directory / CAPTURE.name
+    path.write_bytes(raw)
+    return path, hashlib.sha256(raw).hexdigest()
+
+
+def _drop_captured_1998(data):
+    data["captured_years"].remove(1998)
+
+
+def _add_captured_1993(data):
+    data["captured_years"] = sorted([*data["captured_years"], 1993])
+
+
+def _add_weighted_1993(data):
+    data["weighted_average"]["1993"] = data["weighted_average"]["1994"]
+
+
+def _drop_weighted_1998(data):
+    del data["weighted_average"]["1998"]
+
+
+@pytest.mark.parametrize(
+    "edit, message",
+    [
+        (_drop_captured_1998, "captured years"),
+        (_add_captured_1993, "captured years"),
+        (_add_weighted_1993, "weighted averages for other years"),
+        (_drop_weighted_1998, "weighted averages for other years"),
+    ],
+    ids=[
+        "captured_years_lacks_1998",
+        "captured_years_adds_1993",
+        "weighted_averages_add_1993",
+        "weighted_averages_lack_1998",
+    ],
+)
+def test_the_loader_refuses_a_capture_of_other_years(tmp_path, edit, message):
+    """A capture whose SHA-256 matches its pin but whose captured years, or
+    whose weighted averages' years, are not exactly
+    ``TRACK_M_THRESHOLD_YEARS`` is refused with a ValueError naming the
+    guard (without the guards, the first two loaded and the last raised a
+    bare KeyError)."""
+
+    path, digest = _repinned(tmp_path, edit)
+    with pytest.raises(ValueError, match=message):
+        rules.load_aged_thresholds(path, expected_sha256=digest)
+
+
+def test_the_loader_accepts_the_committed_content_repinned(tmp_path):
+    path, digest = _repinned(tmp_path, lambda data: None)
+    loaded = rules.load_aged_thresholds(path, expected_sha256=digest)
+    assert loaded.annual == rules.load_aged_thresholds().annual
+
+
+@settings(max_examples=40, deadline=None)
+@given(
+    st.sets(st.sampled_from(YEARS), max_size=3),
+    st.sets(st.sampled_from((1981, *NOT_CAPTURED, 2023)), max_size=3),
+    st.sets(st.sampled_from(YEARS), max_size=3),
+    st.sets(st.sampled_from((1981, *NOT_CAPTURED, 2023)), max_size=3),
+)
+def test_property_the_loader_accepts_exactly_the_captured_years(
+    drop_listed, add_listed, drop_values, add_values
+):
+    """Invariant: the loader accepts a (re-pinned) capture iff its
+    ``captured_years`` and the years of its weighted averages are both
+    exactly ``TRACK_M_THRESHOLD_YEARS``; then it returns every one of those
+    years and no other."""
+
+    import tempfile
+
+    def edit(data):
+        data["captured_years"] = sorted(
+            (set(data["captured_years"]) - drop_listed) | add_listed
+        )
+        values = data["weighted_average"]
+        template = dict(values["1994"])
+        for year in drop_values:
+            del values[str(year)]
+        for year in add_values:
+            values[str(year)] = dict(template)
+
+    with tempfile.TemporaryDirectory() as directory:
+        path, digest = _repinned(Path(directory), edit)
+        exact = not (drop_listed or add_listed or drop_values or add_values)
+        if exact:
+            loaded = rules.load_aged_thresholds(path, expected_sha256=digest)
+            assert sorted(loaded.annual) == sorted(YEARS)
+        else:
+            with pytest.raises(ValueError):
+                rules.load_aged_thresholds(path, expected_sha256=digest)
+
+
+@pytest.mark.parametrize(
+    "years", [(1994, 1992), (1994, 1994, 1995)], ids=["unordered", "repeated"]
+)
+def test_the_capture_refuses_years_not_strictly_increasing(years):
+    """The cross-year check pairs each captured year with the one before it
+    in the list, so the list must be strictly increasing (a guard added
+    with the gaps before 2003)."""
+
+    with pytest.raises(ValueError, match="not strictly increasing"):
+        SCRIPT._parse_years(WORKBOOKS, years, SCRIPT.CENSUS_WORKBOOK_SHA256)
