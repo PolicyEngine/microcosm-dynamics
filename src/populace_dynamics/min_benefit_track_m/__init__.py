@@ -10,10 +10,14 @@ plan ``critical-path-minimum-benefit-20260924.md`` (revision 2) measures
 that share on a static PSID snapshot for income year 2022: Track M.  Max
 accepted all nine defaults of the plan's card on 2026-09-24 (cos decision
 d219), ruled PSID labor income covered earnings on 2026-09-25 (d280) and
-had the 2013-2022 Census thresholds downloaded (d279).  The M1
-specification (``docs/design/minimum_benefits_comparison.md``,
-``m1-draft-2``) is not ratified yet: an independent check of the referee's
-changes comes first, then the merge.
+had the 2013-2022 Census thresholds downloaded (d279).  On 2026-09-26 he
+ruled d430: ratify by merge, keeping section 4c item 1's own-receipt
+reading for the scored rows with a pre-registered, unscored sensitivity
+(:data:`.policy.SENSITIVITIES`), built and reviewed before the
+registration.  The M1 specification
+(``docs/design/minimum_benefits_comparison.md``, ``m1-draft-3``) is not
+ratified yet: an independent review of that build comes first, then the
+merge.
 
 What this package holds:
 
@@ -36,7 +40,10 @@ What this package holds:
   issue #42 registration pointer and an M1 specification the registered-
   run gate authorizes (ratified, nothing awaiting Max, nothing blocking).
 * :mod:`.pipeline`: every registered row MS0-MS6 end to end, after the
-  provenance guard and the threshold-year check (plan item M10).
+  provenance guard and the threshold-year check (plan item M10), and cos
+  d430's unscored sensitivity: MS0 under the other own-receipt reading and
+  the share of the universe resting on a record the readings classify
+  differently.
 * :mod:`.invented`: an INVENTED PSID-shaped cohort for the dry run.
 * :mod:`.cohort`: the beneficiary cohort (plan item M4): section 4b's
   rules applied to the label-verified receipt histories of plan item M3

@@ -40,6 +40,18 @@ computed; that the one-shot entry
 point finds every component and refuses the committed draft at its
 preflight; and the plan's INVENTED worked cases (M1 section 16).
 
+Cos d430's sensitivity (M1 sections 4c, 11 and 19) runs on the invented
+PSID-shaped cohort twice: on the default draw, whose type items are all
+known, so that no record or person may differ between the readings; and
+on a draw with receipt of unknown or "other" type before 62
+(``invented_psid``'s ``unknown_or_other_before_62``), which shows MS0's
+cells under both readings, the share of the universe resting on a record
+the readings classify differently and the bound that share sets.  The
+checks record that the rows MS0-MS6 are the same with and without the
+sensitivity, that the registered path refuses a run without it, scored
+records built under the sensitivity's reading and a sensitivity of another
+universe, and that no window year is earlier under the sensitivity.
+
 Usage::
 
     python scripts/track_m_dry_run.py --output-dir <dir> [--seed N]
@@ -91,6 +103,8 @@ from populace_dynamics.min_benefit_track_m.evaluation import (  # noqa: E402
     needed_threshold_years,
 )
 from populace_dynamics.min_benefit_track_m.policy import (  # noqa: E402
+    OWN_RECEIPT_PRE62_UNKNOWN_OR_OTHER_UNOBSERVED,
+    OWN_RECEIPT_SENSITIVITY_ID,
     REGISTERED_ROWS,
     TABLE6_OPTIONS,
     TABLE6_ROWS,
@@ -105,6 +119,9 @@ _GUARD_POINTER = (
     "#issuecomment-0"
 )
 DEFAULT_SEED = 20260925
+#: The share of invented persons given receipt of an unknown or "other"
+#: type before 62 in the d430 sensitivity's second invented cohort.
+SENSITIVITY_SHARE = 0.5
 
 
 def _git(*args: str) -> str:
@@ -401,30 +418,166 @@ def m4_m5_run(
     *,
     seed: int,
     n_family_units: int,
+    unknown_or_other_before_62: float = 0.0,
 ) -> dict[str, Any]:
-    """The invented PSID-shaped cohort through M4, M5 and the pipeline."""
+    """The invented PSID-shaped cohort through M4, M5 and the pipeline,
+    under the scored reading, with cos d430's sensitivity (the same frames
+    under the sensitivity reading)."""
 
     frames = invented_psid.invented_cohort_inputs(
-        seed=seed, n_family_units=n_family_units
+        seed=seed,
+        n_family_units=n_family_units,
+        unknown_or_other_before_62=unknown_or_other_before_62,
     )
     built = cohort.build_cohort(frames)
-    records = careers.build_track_m_inputs(
-        built,
-        earnings=frames.earnings,
-        prior_year=frames.prior_year_labor,
-        params=parameters.params,
-        cola_rates=extra["cola_rates"],
-        provenance_kind=INVENTED,
-        source={**dict(frames.provenance)},
+    built_sensitivity = cohort.build_cohort(
+        frames,
+        own_receipt_reading=OWN_RECEIPT_PRE62_UNKNOWN_OR_OTHER_UNOBSERVED,
     )
+
+    def records_of(built_cohort: cohort.TrackMCohort) -> TrackMInputs:
+        return careers.build_track_m_inputs(
+            built_cohort,
+            earnings=frames.earnings,
+            prior_year=frames.prior_year_labor,
+            params=parameters.params,
+            cola_rates=extra["cola_rates"],
+            provenance_kind=INVENTED,
+            source={**dict(frames.provenance)},
+        )
+
+    records = records_of(built)
+    sensitivity = records_of(built_sensitivity)
     result = pipeline.run_track_m(
-        records, parameters, data_provenance=INVENTED
+        records,
+        parameters,
+        data_provenance=INVENTED,
+        own_receipt_sensitivity=sensitivity,
     )
     return {
         "frames": frames,
         "cohort": built,
+        "cohort_sensitivity": built_sensitivity,
         "records": records,
+        "records_sensitivity": sensitivity,
         "result": result,
+    }
+
+
+def d430_checks(
+    run: dict[str, Any],
+    run_with_unknown: dict[str, Any],
+    parameters: TrackMParameters,
+) -> dict[str, Any]:
+    """Cos d430's sensitivity guards and properties, each recorded."""
+
+    block = specification.m1_parameter_block()
+    unblocked = {
+        **json.loads(json.dumps(block)),
+        "status": "ratified_frozen",
+        "version": "m1-ratified-1",
+        "blocked_by": [],
+    }
+    records = run["records"]
+    without = pipeline.run_track_m(
+        records, parameters, data_provenance=INVENTED
+    )
+    same_rows = json.dumps(without["rows"], allow_nan=False) == json.dumps(
+        run["result"]["rows"], allow_nan=False
+    )
+    default_sensitivity = run["result"]["sensitivities"][
+        OWN_RECEIPT_SENSITIVITY_ID
+    ]
+    sensitivity = run_with_unknown["result"]["sensitivities"][
+        OWN_RECEIPT_SENSITIVITY_ID
+    ]
+    bound_holds = True
+    for cell in sensitivity["receipt_under_both_readings"].values():
+        if not cell["defined"]:
+            continue
+        resting = cell["resting_weighted_share_percent"]
+        for option in cell["options"].values():
+            bound_holds &= (
+                abs(option["change_percent_points"]) <= resting + 1e-9
+                and option["moved_out_percent"] <= resting + 1e-9
+                and option["moved_in_percent"] <= resting + 1e-9
+            )
+    psid_kind = dataclasses.replace(records, provenance_kind=PSID_FILES)
+    # the sensitivity reading's records with one weight changed: another
+    # universe (the readings share the universe and its weights)
+    moved = run["records_sensitivity"].persons
+    other_universe = dataclasses.replace(
+        run["records_sensitivity"],
+        persons=(
+            dataclasses.replace(moved[0], weight=moved[0].weight + 1.0),
+            *moved[1:],
+        ),
+    )
+    changes = sensitivity["reclassification"]["worker_record_changes"]
+    return {
+        "d430_rows_ms0_to_ms6_identical_with_and_without_the_sensitivity": {
+            "passed": same_rows
+        },
+        "d430_default_draw_no_record_or_person_differs": {
+            "passed": (
+                default_sensitivity["reclassification"][
+                    "worker_records_classified_differently"
+                ]
+                == 0
+                and default_sensitivity["reclassification"][
+                    "persons_resting_on_a_record_classified_differently"
+                ]
+                == 0
+            )
+        },
+        "d430_draw_with_unknown_or_other_receipt_differs": {
+            "passed": sensitivity["reclassification"][
+                "worker_records_classified_differently"
+            ]
+            > 0,
+            "reclassification": sensitivity["reclassification"],
+        },
+        "d430_share_gap_within_the_resting_share": {"passed": bound_holds},
+        "d430_no_window_year_earlier_under_the_sensitivity": {
+            "passed": changes.get(
+                "window_year_earlier_under_the_sensitivity", 0
+            )
+            == 0
+        },
+        "d430_a_registered_run_without_the_sensitivity_is_refused": _refusal(
+            lambda: pipeline.run_track_m(
+                psid_kind,
+                parameters,
+                data_provenance=tabulation.REGISTERED_REAL,
+                registration_pointer=_GUARD_POINTER,
+                specification=unblocked,
+            )
+        ),
+        "d430_scored_records_under_the_sensitivity_reading_are_refused": (
+            _refusal(
+                lambda: pipeline.run_track_m(
+                    run["records_sensitivity"],
+                    parameters,
+                    data_provenance=INVENTED,
+                )
+            )
+        ),
+        "d430_a_sensitivity_of_another_universe_is_refused": _refusal(
+            lambda: pipeline.run_track_m(
+                records,
+                parameters,
+                data_provenance=INVENTED,
+                own_receipt_sensitivity=other_universe,
+            )
+        ),
+        "d430_a_sensitivity_under_the_scored_reading_is_refused": _refusal(
+            lambda: pipeline.run_track_m(
+                records,
+                parameters,
+                data_provenance=INVENTED,
+                own_receipt_sensitivity=records,
+            )
+        ),
     }
 
 
@@ -564,6 +717,68 @@ def _summary(result: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
+def _sensitivity_summary(result: dict[str, Any]) -> dict[str, Any]:
+    """d430's sensitivity in brief: MS0 under both readings by cell, and
+    the resting shares."""
+
+    entry = result["sensitivities"][OWN_RECEIPT_SENSITIVITY_ID]
+    out = {
+        "weighted_share_of_the_universe_resting_percent": entry[
+            "weighted_share_of_the_universe_resting_percent"
+        ],
+        "reclassification": entry["reclassification"],
+        "cells": {},
+    }
+    for cell, value in entry["receipt_under_both_readings"].items():
+        if not value["defined"]:
+            continue
+        out["cells"][cell] = {
+            "resting_weighted_share_percent": value[
+                "resting_weighted_share_percent"
+            ],
+            **{
+                number: {
+                    key: option[key]
+                    for key in (
+                        "share_percent_scored_reading",
+                        "share_percent_sensitivity_reading",
+                        "change_percent_points",
+                        "moved_out_percent",
+                        "moved_in_percent",
+                    )
+                }
+                for number, option in value["options"].items()
+            },
+        }
+    return out
+
+
+def _sensitivity_table(summary: dict[str, Any]) -> list[str]:
+    lines = [
+        "| Cell | Resting | "
+        + " | ".join(
+            f"Opt {n}: scored / sensitivity / change" for n in TABLE6_OPTIONS
+        )
+        + " |",
+        "|---|---:|" + "---:|" * len(TABLE6_OPTIONS),
+    ]
+    for cell, value in summary["cells"].items():
+        parts = []
+        for number in TABLE6_OPTIONS:
+            option = value[str(number)]
+            parts.append(
+                f"{option['share_percent_scored_reading']:.1f} / "
+                f"{option['share_percent_sensitivity_reading']:.1f} / "
+                f"{option['change_percent_points']:+.1f}"
+            )
+        lines.append(
+            f"| {cell} | {value['resting_weighted_share_percent']:.1f} | "
+            + " | ".join(parts)
+            + " |"
+        )
+    return lines
+
+
 def provenance(
     parameters: TrackMParameters, extra: dict[str, Any]
 ) -> dict[str, Any]:
@@ -669,6 +884,30 @@ def _markdown(document: dict[str, Any]) -> str:
         "",
         *_share_table(m45["summary"]),
     ]
+    d430 = document["m4_m5_own_receipt_sensitivity"]
+    changes = d430["sensitivity_summary"]["reclassification"]
+    lines += [
+        "",
+        "## Cos d430's sensitivity on invented data (unscored)",
+        "",
+        "MS0 under the scored own-receipt reading (section 4c item 1: "
+        "receipt of an unknown or 'other' type counts as own receipt) and "
+        "under d430's sensitivity reading (such receipt before 62 read as "
+        "neither own receipt nor non-receipt), on an INVENTED PSID-shaped "
+        "cohort drawn with receipt of those types before 62 "
+        f"({d430['persons_changed_by_the_draw']['persons_changed']}). "
+        f"{changes['worker_records_classified_differently']} worker "
+        "records are classified differently and "
+        f"{changes['persons_resting_on_a_record_classified_differently']} "
+        "persons rest on one. Resting: the weighted share of the cell "
+        "whose A_k rests on such a record, which bounds each change. "
+        "Invented shares, percent:",
+        "",
+        *_sensitivity_table(d430["sensitivity_summary"]),
+        "",
+        "On the default invented draw (every type item known) no record "
+        "or person differs between the readings.",
+    ]
     head = document["summary"]["MS0"]["2:all"]
     floor = head["floor_mean"]
     lines += [
@@ -752,6 +991,13 @@ def main(argv: list[str] | None = None) -> int:
         seed=args.seed,
         n_family_units=args.family_units,
     )
+    m45_unknown = m4_m5_run(
+        parameters,
+        extra,
+        seed=args.seed,
+        n_family_units=args.family_units,
+        unknown_or_other_before_62=SENSITIVITY_SHARE,
+    )
     document = {
         "header": DRY_RUN_HEADER,
         "description": (
@@ -770,6 +1016,7 @@ def main(argv: list[str] | None = None) -> int:
                 seed=args.seed,
                 n_family_units=args.family_units,
             ),
+            **d430_checks(m45, m45_unknown, parameters),
         },
         "provenance": provenance(parameters, extra),
         "result": result,
@@ -783,6 +1030,28 @@ def main(argv: list[str] | None = None) -> int:
             "summary": _summary(m45["result"]),
             "cohort_structure": cohort.cohort_structure(m45["cohort"]),
             "result": m45["result"],
+        },
+        "m4_m5_own_receipt_sensitivity": {
+            "description": (
+                "Cos d430's sensitivity on an INVENTED PSID-shaped cohort "
+                "drawn with receipt of unknown or 'other' type before 62 "
+                "(invented_psid, unknown_or_other_before_62 = "
+                f"{SENSITIVITY_SHARE}): every registered row under the "
+                "scored reading, and MS0 under the sensitivity reading"
+            ),
+            "persons_changed_by_the_draw": dict(
+                m45_unknown["frames"].provenance["unknown_or_other_before_62"]
+            ),
+            "first_own_receipt_type_before_62": (
+                cohort.first_own_receipt_type_before_62(m45_unknown["cohort"])
+            ),
+            "summary": _summary(m45_unknown["result"]),
+            "sensitivity_summary": _sensitivity_summary(m45_unknown["result"]),
+            "cohort_structure": cohort.cohort_structure(m45_unknown["cohort"]),
+            "cohort_structure_sensitivity_reading": cohort.cohort_structure(
+                m45_unknown["cohort_sensitivity"]
+            ),
+            "result": m45_unknown["result"],
         },
         "run": {
             "started": started,

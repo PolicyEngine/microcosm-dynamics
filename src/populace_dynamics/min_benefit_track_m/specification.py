@@ -15,17 +15,18 @@ run the block does not authorize.  A run is authorized only when:
   missing capture, reader or registration) authorizes nothing, as Track
   U's entry point refuses one;
 * it records a ruling under ``decisions`` for every field Max ruled on
-  (cos d219's nine items, d279 and d280), each entry equal to the code's
-  record of it (:data:`~.policy.MAX_RULINGS`), and the configuration
-  follows each ruling;
+  (cos d219's nine items, d279, d280 and d430), each entry equal to the
+  code's record of it (:data:`~.policy.MAX_RULINGS`), and the
+  configuration follows each ruling;
 * it agrees with the code (options, schedules, cuts, rows, cells, labels,
-  the policy, the statistic and the uncertainty the tabulation computes).
+  the policy, the pre-registered sensitivities, the statistic and the
+  uncertainty the tabulation computes).
 
-``m1-draft-2`` records Max's rulings and fails the first test: it awaits an
-independent check of the referee's changes, then ratification by merge.
-Its ``blocked_by`` also still lists the open blockers (the independent
-check and ratification, the registration package and the registration;
-the Census years before 2003 and the statute capture were cleared on
+``m1-draft-3`` records Max's rulings and fails the first test: it awaits
+the independent review of d430's sensitivity build, then ratification by
+merge.  Its ``blocked_by`` also still lists the open blockers (that review
+and ratification, the registration package and the registration; the
+Census years before 2003 and the statute capture were cleared on
 2026-09-25).
 """
 
@@ -44,6 +45,7 @@ from populace_dynamics.min_benefit_track_m.policy import (
     MAX_RULINGS,
     OPTIONS,
     REGISTERED_ROWS,
+    SENSITIVITIES,
     SPECIFICATION_ID,
     TABLE6_OPTIONS,
     TABLE6_ROWS,
@@ -107,7 +109,8 @@ def unratified_fields(block: Mapping[str, Any]) -> list[str]:
 
 
 def ruled_fields() -> tuple[str, ...]:
-    """Every field Max ruled on (d219, d279, d280), in the code's order."""
+    """Every field Max ruled on (d219, d279, d280, d430), in the code's
+    order."""
 
     return tuple(MAX_RULINGS)
 
@@ -129,8 +132,9 @@ def decision_value(policy: TrackMPolicy, name: str) -> Any:
 
     A field of :class:`TrackMPolicy` reads the policy; a process decision
     (target cells, claim class, module placement, acceptance rule,
-    ratification, the threshold download) reads the code's fixed value,
-    which only a code change can alter.
+    ratification, the threshold download) and the scored cohort's
+    own-receipt reading (d430) read the code's fixed value, which only a
+    code change can alter.
     """
 
     if name not in MAX_RULINGS:
@@ -190,6 +194,7 @@ def specification_code_check(
         },
         "labels": list(OUTPUT_LABELS),
         "decisions": expected_decisions(),
+        "sensitivities": json.loads(json.dumps(SENSITIVITIES)),
         "statistic": tabulation.statistic_block(),
         "uncertainty": tabulation.uncertainty_block(),
     }
@@ -243,7 +248,7 @@ def check_specification_for_registered_run(
     if unruled:
         raise ValueError(
             f"the M1 specification records no ruling by Max for {unruled} "
-            f"(decision records {DECISION_RECORD}, d279, d280): no "
+            f"(decision records {DECISION_RECORD}, d279, d280, d430): no "
             "real-data statistic before he rules"
         )
     recorded = json.loads(json.dumps(dict(rulings)))

@@ -96,7 +96,7 @@ def test_the_registered_state_passes_preflight(tmp_path):
         ({"registered_commit": "abc123"}, "full 40-hex"),
         ({"git": _git(head="b" * 40)}, "is not the registered commit"),
         ({"git": _git(porcelain=" M src/x.py")}, "clean"),
-        # The committed draft (m1-draft-2), read from the document.
+        # The committed draft (m1-draft-3), read from the document.
         ({"specification": None}, "authorizes no real-data run"),
         (
             {"specification": {**_ratified(), "version": "m1-draft-3"}},
@@ -255,6 +255,67 @@ def test_the_computation_refuses_psid_records_under_the_draft(monkeypatch):
     with pytest.raises(Exception, match="does not authorize a real-data"):
         script.run_pipeline(parameters, registration_pointer=POINTER)
     assert evaluated == []
+
+
+def test_the_computation_passes_d430s_sensitivity(monkeypatch):
+    """``run_pipeline`` builds the same PSID read twice, under the scored
+    reading and under cos d430's sensitivity reading, and passes the
+    second as ``own_receipt_sensitivity`` (the pipeline refuses a
+    registered run without it).  The PSID read is INVENTED frames marked
+    as read from files; the pipeline call is captured, not run."""
+
+    from populace_dynamics.min_benefit_track_m import (
+        cohort,
+        invented,
+        invented_psid,
+        pipeline,
+    )
+    from populace_dynamics.min_benefit_track_m import policy as pol
+
+    script = _script()
+    frames = invented_psid.invented_cohort_inputs(
+        seed=4, n_family_units=40, unknown_or_other_before_62=0.5
+    )
+    marked = type(frames)(
+        structure_inputs=frames.structure_inputs,
+        individual_receipt=frames.individual_receipt,
+        family_1993_receipt=frames.family_1993_receipt,
+        family_level_receipt=frames.family_level_receipt,
+        prior_year_labor=frames.prior_year_labor,
+        provenance={"psid_files_sha256": {"INVENTED.txt": "0" * 64}},
+    )
+    monkeypatch.setattr(cohort, "load_cohort_inputs", lambda **_: marked)
+    parameters, cola = invented.invented_parameters()
+    monkeypatch.setattr(
+        "populace_dynamics.estimates.parameters.load_cola_history",
+        lambda: _Cola(cola),
+    )
+    seen = {}
+
+    def capture(records, parameters, **kwargs):
+        seen.update(kwargs, records=records)
+        return {"sensitivities": {pol.OWN_RECEIPT_SENSITIVITY_ID: {}}}
+
+    monkeypatch.setattr(pipeline, "run_track_m", capture)
+    out = script.run_pipeline(parameters, registration_pointer=POINTER)
+    scored, other = seen["records"], seen["own_receipt_sensitivity"]
+    assert seen["data_provenance"] == "registered_real"
+    assert (
+        scored.own_receipt_reading == pol.OWN_RECEIPT_UNKNOWN_OR_OTHER_IS_OWN
+    )
+    assert other.own_receipt_reading == (
+        pol.OWN_RECEIPT_PRE62_UNKNOWN_OR_OTHER_UNOBSERVED
+    )
+    assert other.provenance_kind == scored.provenance_kind == "psid_files"
+    assert other.source["psid_files_sha256"] == (
+        scored.source["psid_files_sha256"]
+    )
+    assert other.workers != scored.workers
+    assert "cohort_structure" in out
+    assert (
+        "cohort_structure"
+        in out["sensitivities"][pol.OWN_RECEIPT_SENSITIVITY_ID]
+    )
 
 
 class _Cola(dict):

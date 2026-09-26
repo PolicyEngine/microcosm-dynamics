@@ -35,6 +35,22 @@ Person-level items take precedence.  An observation is:
   benefit; a year of auxiliary receipt only is a year "without own
   receipt" (rule 2).
 
+**The own-receipt reading** (``own_receipt_reading``; cos d430, ruled
+2026-09-26).  The scored reading, and the default, is the one above
+(:data:`~.policy.OWN_RECEIPT_UNKNOWN_OR_OTHER_IS_OWN`, section 4c item 1).
+d430's pre-registered, unscored sensitivity
+(:data:`~.policy.OWN_RECEIPT_PRE62_UNKNOWN_OR_OTHER_UNOBSERVED`) reads a
+receipt year before the year of attaining 62 that names neither a
+retirement nor a disability benefit (:func:`unknown_or_other_own_receipt`:
+own receipt only because a type is unknown or "other" or the code is a
+combination) as neither own receipt nor non-receipt: as if unobserved,
+wherever own receipt is read (:func:`own_receipt_view`), that is, in the
+worker record's classification (:func:`classify_own_record`) and in a
+spouse link's 2022 own-receipt test.  Survivor claim years read survivor
+items, not own receipt, and are the same under both readings; so is the
+universe.  Under the default the view is the history itself, so the
+cohort is unchanged.
+
 **Section 4b, as applied** (:func:`classify_own_record`):
 
 1. *Basis.*  A person with an ``own`` year has a worker record.  With
@@ -126,6 +142,11 @@ from populace_dynamics.data import psid
 from populace_dynamics.data import social_security_receipt as ssr
 from populace_dynamics.estimates import career
 from populace_dynamics.min_benefit_track_m import structure
+from populace_dynamics.min_benefit_track_m.policy import (
+    OWN_RECEIPT_PRE62_UNKNOWN_OR_OTHER_UNOBSERVED,
+    OWN_RECEIPT_READINGS,
+    OWN_RECEIPT_UNKNOWN_OR_OTHER_IS_OWN,
+)
 
 __all__ = [
     "AUXILIARY",
@@ -146,14 +167,18 @@ __all__ = [
     "build_cohort",
     "classify_own_record",
     "cohort_structure",
+    "first_own_receipt_type_before_62",
     "history_source_counts",
     "load_cohort_inputs",
     "observation",
+    "own_receipt_view",
     "receipt_histories",
     "record_years",
+    "sensitivity_threshold_years_before_registration",
     "spouse_claim_year",
     "structural_counts_before_registration",
     "survivor_claim_year",
+    "unknown_or_other_own_receipt",
     "unlinked_kind",
 ]
 
@@ -322,14 +347,71 @@ class OwnRecordClass:
         return self.window_year >= policy_year
 
 
+_WORKER_TYPES = frozenset(ssr.WORKER_TYPES)
+
+
+def unknown_or_other_own_receipt(obs: ReceiptObservation) -> bool:
+    """Own receipt that names no worker's benefit (d430's sensitivity).
+
+    True for an observation that section 4c item 1 counts as own receipt
+    although it mentions neither a retirement nor a disability benefit: a
+    type unknown (a combination code, an unknown code, a DK or NA flag, a
+    one-member family's whether-only "yes"), an "other" mention, or no type
+    named at all.  An observation that mentions a worker's benefit is not
+    (whatever else it mentions or leaves unknown), nor is no receipt or
+    auxiliary receipt.
+    """
+
+    return obs.status == OWN and not (obs.types & _WORKER_TYPES)
+
+
+def _check_reading(reading: str) -> None:
+    if reading not in OWN_RECEIPT_READINGS:
+        raise ValueError(
+            f"own_receipt_reading must be one of {OWN_RECEIPT_READINGS}, "
+            f"not {reading!r}"
+        )
+
+
+def own_receipt_view(
+    history: Mapping[int, ReceiptObservation],
+    birth_year: int,
+    own_receipt_reading: str = OWN_RECEIPT_UNKNOWN_OR_OTHER_IS_OWN,
+) -> dict[int, ReceiptObservation]:
+    """The observations own receipt is read from, under a reading.
+
+    The scored reading (the default) reads every observation: the view is
+    a copy of ``history``.  d430's sensitivity reading drops each year
+    before the year of attaining 62 whose observation is
+    :func:`unknown_or_other_own_receipt`: such a year is neither own
+    receipt nor non-receipt, as if unobserved.
+    """
+
+    _check_reading(own_receipt_reading)
+    observations = dict(history)
+    if own_receipt_reading == OWN_RECEIPT_UNKNOWN_OR_OTHER_IS_OWN:
+        return observations
+    attains_62 = int(birth_year) + _ELIGIBILITY_AGE
+    return {
+        year: obs
+        for year, obs in observations.items()
+        if not (year < attains_62 and unknown_or_other_own_receipt(obs))
+    }
+
+
 def classify_own_record(
     history: Mapping[int, ReceiptObservation] | Iterable[ReceiptObservation],
     birth_year: int,
+    *,
+    own_receipt_reading: str = OWN_RECEIPT_UNKNOWN_OR_OTHER_IS_OWN,
 ) -> OwnRecordClass | None:
     """Section 4b rules 1-4 for one person (``None`` without own receipt).
 
     ``history`` is the person's observations (a year may appear once).
     See the module docstring for the rules as applied.
+    ``own_receipt_reading`` is the scored reading by default; d430's
+    sensitivity reading classifies :func:`own_receipt_view`'s observations,
+    the history less its pre-62 receipt years of unknown or "other" type.
     """
 
     observations = (
@@ -340,6 +422,9 @@ def classify_own_record(
     for year, obs in observations.items():
         if int(year) != obs.year:
             raise ValueError(f"observation keyed {year} is for {obs.year}")
+    observations = own_receipt_view(
+        observations, birth_year, own_receipt_reading
+    )
     birth = int(birth_year)
     own_years = sorted(y for y, o in observations.items() if o.status == OWN)
     if not own_years:
@@ -708,7 +793,9 @@ class TrackMCohort:
     ``death_after_62``).  ``links``: one row per link (``person_id``,
     ``kind``, ``record_id``, ``claim_year``, ``claim_source``).
     ``design``: the 2023 design frame.  ``diagnostics``: counts that
-    arise while building.
+    arise while building.  ``histories`` are every observation, under
+    either reading; ``own_receipt_reading`` is the reading the records
+    and links were built under (d430).
     """
 
     persons: pd.DataFrame
@@ -718,6 +805,7 @@ class TrackMCohort:
     histories: Mapping[int, Mapping[int, ReceiptObservation]]
     diagnostics: Mapping[str, Any]
     provenance: Mapping[str, Any] = field(default_factory=dict)
+    own_receipt_reading: str = OWN_RECEIPT_UNKNOWN_OR_OTHER_IS_OWN
 
 
 def record_id(person_id: int) -> str:
@@ -881,9 +969,20 @@ def _oracle_domain(
     return links[keep].reset_index(drop=True)
 
 
-def build_cohort(inputs: TrackMCohortInputs) -> TrackMCohort:
-    """The universe, its worker records and links (module docstring)."""
+def build_cohort(
+    inputs: TrackMCohortInputs,
+    *,
+    own_receipt_reading: str = OWN_RECEIPT_UNKNOWN_OR_OTHER_IS_OWN,
+) -> TrackMCohort:
+    """The universe, its worker records and links (module docstring).
 
+    ``own_receipt_reading`` is the scored reading by default (section 4c
+    item 1, kept by d430); d430's sensitivity reading reads own receipt
+    through :func:`own_receipt_view` in the records' classification and in
+    a spouse link's 2022 own-receipt test, and nowhere else.
+    """
+
+    _check_reading(own_receipt_reading)
     universe = _universe(inputs)
     universe_ids = set(int(pid) for pid in universe["person_id"])
     deaths = inputs.structure_inputs.death_records.set_index("person_id")
@@ -933,7 +1032,11 @@ def build_cohort(inputs: TrackMCohortInputs) -> TrackMCohort:
     for pid in sorted(everyone):
         if pid not in births:
             continue
-        found = classify_own_record(histories.get(pid, {}), births[pid])
+        found = classify_own_record(
+            histories.get(pid, {}),
+            births[pid],
+            own_receipt_reading=own_receipt_reading,
+        )
         if found is not None:
             classes[pid] = found
 
@@ -970,7 +1073,13 @@ def build_cohort(inputs: TrackMCohortInputs) -> TrackMCohort:
         ):
             spouse = int(state["spouse_person_id"])
             spouse_class = classes.get(spouse)
-            spouse_2022 = histories.get(spouse, {}).get(INCOME_YEAR)
+            spouse_history = histories.get(spouse, {})
+            if spouse in births:
+                # the 2022 own-receipt test reads own receipt (d430)
+                spouse_history = own_receipt_view(
+                    spouse_history, births[spouse], own_receipt_reading
+                )
+            spouse_2022 = spouse_history.get(INCOME_YEAR)
             alive = (
                 spouse not in deaths.index
                 or str(deaths.loc[spouse, "death_status"]) == "not_deceased"
@@ -1197,6 +1306,7 @@ def build_cohort(inputs: TrackMCohortInputs) -> TrackMCohort:
         histories=histories,
         diagnostics=dict(diagnostics),
         provenance=dict(inputs.provenance),
+        own_receipt_reading=own_receipt_reading,
     )
 
 
@@ -1469,6 +1579,54 @@ _ROW_WINDOWS: tuple[tuple[str, int, bool], ...] = (
     ("2004_after", 2004, True),
     ("2007_in_or_after", 2007, False),
 )
+#: The window of d430's sensitivity: MS0's (2004, in or after).
+_SENSITIVITY_WINDOWS: tuple[tuple[str, int, bool], ...] = (
+    ("2004_in_or_after", 2004, False),
+)
+
+
+def _threshold_years_by_window(
+    records: pd.DataFrame,
+    windows: tuple[tuple[str, int, bool], ...],
+    *,
+    union_key: str | None,
+) -> dict[str, Any]:
+    """For each window, the threshold *years* its records need (section
+    4a) and the bases that need a year before 2003: years and names, never
+    how many records (section 11 reserves in-window counts)."""
+
+    years: dict[str, Any] = {}
+    union: set[int] = set()
+    bases: set[str] = set()
+    for key, year, strictly in windows:
+        window = (
+            records["window_year"] > year
+            if strictly
+            else records["window_year"] >= year
+        )
+        # the years and bases of the window's records, never their number
+        needed = sorted(
+            {int(y) for y in records.loc[window, "threshold_year"]}
+        )
+        early = window & (records["threshold_year"] < 2003)
+        early_bases = sorted(set(records.loc[early, "basis"]))
+        union |= set(needed)
+        years[key] = {
+            "earliest_threshold_year": needed[0] if needed else None,
+            "threshold_years_before_2003": [y for y in needed if y < 2003],
+            # which section 4a rows need them: names, never counts
+            "bases_needing_years_before_2003": early_bases,
+        }
+        bases |= set(early_bases)
+    if union_key is not None:
+        years[union_key] = {
+            "earliest_threshold_year": min(union) if union else None,
+            "threshold_years_before_2003": sorted(
+                y for y in union if y < 2003
+            ),
+            "bases_needing_years_before_2003": sorted(bases),
+        }
+    return years
 
 
 def structural_counts_before_registration(
@@ -1500,35 +1658,9 @@ def structural_counts_before_registration(
     records = cohort.records
     out: dict[str, Any] = _counts_outside_the_windows(cohort)
     out["unresolved_rule3"] = _unresolved_counts(records)
-    years: dict[str, Any] = {}
-    union: set[int] = set()
-    bases: set[str] = set()
-    for key, year, strictly in _ROW_WINDOWS:
-        window = (
-            records["window_year"] > year
-            if strictly
-            else records["window_year"] >= year
-        )
-        # the years and bases of the window's records, never their number
-        needed = sorted(
-            {int(y) for y in records.loc[window, "threshold_year"]}
-        )
-        early = window & (records["threshold_year"] < 2003)
-        early_bases = sorted(set(records.loc[early, "basis"]))
-        union |= set(needed)
-        years[key] = {
-            "earliest_threshold_year": needed[0] if needed else None,
-            "threshold_years_before_2003": [y for y in needed if y < 2003],
-            # which section 4a rows need them: names, never counts
-            "bases_needing_years_before_2003": early_bases,
-        }
-        bases |= set(early_bases)
-    years["any_registered_row"] = {
-        "earliest_threshold_year": min(union) if union else None,
-        "threshold_years_before_2003": sorted(y for y in union if y < 2003),
-        "bases_needing_years_before_2003": sorted(bases),
-    }
-    out["threshold_years_needed"] = years
+    out["threshold_years_needed"] = _threshold_years_by_window(
+        records, _ROW_WINDOWS, union_key="any_registered_row"
+    )
     boundary: dict[str, Any] = {}
     for year in POLICY_YEARS:
         gap, by_rule_2, age_rule = _boundary_readings(records, year)
@@ -1546,6 +1678,150 @@ def structural_counts_before_registration(
         "persons in MS5's scope",
     ]
     return out
+
+
+def _first_receipt_kind(obs: ReceiptObservation) -> str:
+    """What an own first receipt that names no worker's benefit mentions
+    (:func:`first_own_receipt_type_before_62`)."""
+
+    auxiliary = frozenset(ssr.AUXILIARY_TYPES)
+    if obs.types == frozenset({"other"}):
+        return "mentions_only_other"
+    if "other" in obs.types:
+        return "mentions_other_and_an_auxiliary_type"
+    if obs.types and obs.types <= auxiliary:
+        return "mentions_an_auxiliary_type_with_a_type_unknown"
+    if obs.unknown_types:
+        return "names_no_type_with_a_type_unknown"
+    return "names_no_type_every_type_item_known"
+
+
+def first_own_receipt_type_before_62(cohort: TrackMCohort) -> dict[str, Any]:
+    """d430's structural count: first own receipts before 62 by type.
+
+    Over **all** worker records with own receipt (never split by window;
+    counts only): how many have a first own receipt *F* before the year of
+    attaining 62, and of those, how many name no worker's benefit
+    (:func:`unknown_or_other_own_receipt`), which are the records d430's
+    sensitivity reading can classify differently (a record whose *F*
+    names a worker's benefit classifies the same under both readings).
+    They are split by what *F* mentions, with "mentions only other" split
+    by whether every other type item is known (the independent review of
+    2026-09-25 counted first receipts with an unknown item only, so an
+    "other" mention with every item known went uncounted), and by the
+    source of *F*'s observation.  For a cross-check with that review, it
+    also recounts its definition (every *F*, before or after 62, with a
+    type item unknown, and of those the disability-origin records with no
+    disability mention at *F*).
+
+    Reads each record's basis, first own year and birth year and the
+    observation at *F*; it reads no window year, threshold year, onset or
+    link, and computes no in-window or reserved count (section 11).
+    """
+
+    records = cohort.records
+    own = records[records["basis"] != BASIS_DEATH]
+    kinds: Counter[str] = Counter()
+    sources: Counter[str] = Counter()
+    only_other: Counter[str] = Counter()
+    before_62 = worker_named = 0
+    anywhere_before_62 = 0
+    review_unknown = review_age_only = 0
+    for row in own.itertuples(index=False):
+        pid = int(row.person_id)
+        history = cohort.histories[pid]
+        first = int(row.first_own_year)
+        obs = history[first]
+        attains_62 = int(row.birth_year) + _ELIGIBILITY_AGE
+        if obs.unknown_types:
+            review_unknown += 1
+            if row.basis == BASIS_DISABILITY and "disability" not in obs.types:
+                review_age_only += 1
+        if any(
+            year < attains_62 and unknown_or_other_own_receipt(seen)
+            for year, seen in history.items()
+        ):
+            anywhere_before_62 += 1
+        if first >= attains_62:
+            continue
+        before_62 += 1
+        if not unknown_or_other_own_receipt(obs):
+            worker_named += 1
+            continue
+        kind = _first_receipt_kind(obs)
+        kinds[kind] += 1
+        sources[obs.source] += 1
+        if kind == "mentions_only_other":
+            only_other[
+                (
+                    "some_type_item_unknown"
+                    if obs.unknown_types
+                    else "every_type_item_known"
+                )
+            ] += 1
+    reached = sum(kinds.values())
+    return {
+        "scope": (
+            "all worker records with own receipt, never split by window; "
+            "counts only"
+        ),
+        "own_receipt_reading": cohort.own_receipt_reading,
+        "records_with_own_receipt": int(len(own)),
+        "first_own_receipt_before_62": before_62,
+        "first_own_receipt_before_62_names_a_workers_benefit": worker_named,
+        "first_own_receipt_before_62_unknown_or_other": reached,
+        "first_own_receipt_before_62_unknown_or_other_by_kind": dict(
+            sorted(kinds.items())
+        ),
+        "first_own_receipt_before_62_mentions_only_other": {
+            "records": int(kinds["mentions_only_other"]),
+            "every_type_item_known": int(only_other["every_type_item_known"]),
+            "some_type_item_unknown": int(
+                only_other["some_type_item_unknown"]
+            ),
+        },
+        "first_own_receipt_before_62_unknown_or_other_by_source": dict(
+            sorted(sources.items())
+        ),
+        "records_with_any_unknown_or_other_own_receipt_before_62": (
+            anywhere_before_62
+        ),
+        "review_20260925_definition": {
+            "first_own_receipt_with_a_type_item_unknown": review_unknown,
+            "of_which_disability_origin_without_a_disability_mention": (
+                review_age_only
+            ),
+        },
+    }
+
+
+def sensitivity_threshold_years_before_registration(
+    sensitivity: TrackMCohort,
+) -> dict[str, Any]:
+    """The threshold *years* d430's sensitivity needs (years, no counts).
+
+    ``sensitivity`` is the cohort built under d430's sensitivity reading.
+    The registered run refuses, before computing anything, a threshold
+    year the Census capture lacks, for the sensitivity's records as for
+    the scored rows' (``pipeline.run_track_m``), so the years its window
+    (MS0's: 2004, in or after) needs are listed here, as
+    :func:`structural_counts_before_registration` lists the scored rows':
+    the earliest year, the years before 2003 and the bases that need
+    them, and never how many records.
+    """
+
+    if sensitivity.own_receipt_reading != (
+        OWN_RECEIPT_PRE62_UNKNOWN_OR_OTHER_UNOBSERVED
+    ):
+        raise ValueError(
+            "the cohort is not built under d430's sensitivity reading"
+        )
+    return {
+        "own_receipt_reading": sensitivity.own_receipt_reading,
+        "threshold_years_needed": _threshold_years_by_window(
+            sensitivity.records, _SENSITIVITY_WINDOWS, union_key=None
+        ),
+    }
 
 
 def history_source_counts(

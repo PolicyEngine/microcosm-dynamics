@@ -187,3 +187,57 @@ def test_the_provenance_pins_the_specification_and_parameters(document):
     assert qc["captured_from_sha256"].startswith("12354a05")
     assert "not opened" in provenance["comparator_seal"]
     assert spec["sha256"] in markdown
+
+
+def test_d430s_sensitivity_runs_on_both_invented_cohorts(document):
+    """Cos d430's sensitivity (M1 sections 4c, 11 and 19) on the invented
+    PSID-shaped cohorts: no difference on the default draw (every type
+    item known), and MS0 under both readings, with the resting share and
+    its bound, on a draw with receipt of unknown or "other" type before
+    62.  The rows MS0-MS6 are the same with and without the sensitivity,
+    and the registered path refuses without it."""
+
+    result, markdown = document
+    checks = result["checks"]
+    for name in (
+        "d430_rows_ms0_to_ms6_identical_with_and_without_the_sensitivity",
+        "d430_default_draw_no_record_or_person_differs",
+        "d430_draw_with_unknown_or_other_receipt_differs",
+        "d430_share_gap_within_the_resting_share",
+        "d430_no_window_year_earlier_under_the_sensitivity",
+    ):
+        assert checks[name]["passed"], name
+    for name, fragment in (
+        (
+            "d430_a_registered_run_without_the_sensitivity_is_refused",
+            "d430 sensitivity",
+        ),
+        (
+            "d430_scored_records_under_the_sensitivity_reading_are_refused",
+            "scored under the own-receipt reading",
+        ),
+        ("d430_a_sensitivity_of_another_universe_is_refused", "same"),
+        ("d430_a_sensitivity_under_the_scored_reading_is_refused", "built"),
+    ):
+        assert checks[name]["refused"], name
+        assert fragment in checks[name]["message"], name
+    identifier = "own_receipt_reading_d430"
+    default = result["m4_m5"]["result"]["sensitivities"][identifier]
+    assert default["scored"] is False
+    assert (
+        default["reclassification"]["worker_records_classified_differently"]
+        == 0
+    )
+    drawn = result["m4_m5_own_receipt_sensitivity"]
+    assert drawn["persons_changed_by_the_draw"]["share"] == 0.5
+    entry = drawn["result"]["sensitivities"][identifier]
+    assert all(not cell["scored"] for cell in entry["tabulation"]["cells"])
+    assert list(drawn["summary"]) == [f"MS{i}" for i in range(7)]
+    assert set(drawn["sensitivity_summary"]["cells"]) <= {
+        "all",
+        "men",
+        "women",
+    }
+    counts = drawn["first_own_receipt_type_before_62"]
+    assert counts["first_own_receipt_before_62_unknown_or_other"] > 0
+    assert "## Cos d430's sensitivity on invented data (unscored)" in markdown

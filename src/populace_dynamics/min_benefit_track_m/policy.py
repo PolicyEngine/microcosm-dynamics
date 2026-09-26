@@ -29,14 +29,21 @@ Two kinds of choice are kept apart, as exercise 3's
   the specification and every result).  Each ruled field defaults to its
   ruling; :func:`max_rulings` reports whether a configuration follows each
   one, and a registered run refuses a configuration that departs from any.
+  On 2026-09-26 he ruled d430: section 4c item 1's own-receipt reading
+  stays the scored reading, with a pre-registered, unscored sensitivity
+  (:data:`SENSITIVITIES`); the odd-year source (card item (j)) and the
+  onset year (statute finding F1) are kept knowingly.
 * **Frozen choices** (:func:`frozen_choices`): the rules the plan leaves to
   the builder or the specification, frozen in ``m1-draft-2`` on the
   referee's answers.  The merge that ratifies the specification (d219 item
   9) fixes them; no ruling of Max's names them.
 
 :data:`REGISTERED_ROWS` holds the one-field changes of the registered rows.
-The specification itself is not ratified: ``m1-draft-2`` awaits an
-independent check of the referee's changes, and then the merge.
+:data:`SENSITIVITIES` holds d430's sensitivity, which changes the cohort's
+reading of own receipt rather than a policy field, so it is a section 11
+diagnostic of MS0 rather than a row (M1 specification sections 11 and 14).
+The specification itself is not ratified: ``m1-draft-3`` awaits the
+independent review of the sensitivity's build, then the merge.
 """
 
 from __future__ import annotations
@@ -53,6 +60,8 @@ __all__ = [
     "COUNT_OWN_ONLY",
     "COUNT_OWN_OR_LINKED",
     "COVERED_LABOR_INCOME",
+    "D430_AS_FILED",
+    "D430_RULING",
     "DEATH_FIRST_PIA_ON_RECORD",
     "DEATH_PIA_STATUTORY",
     "DECISION_RECORD",
@@ -74,6 +83,10 @@ __all__ = [
     "OLD_AGE_HISTORY_BEFORE_ENTITLEMENT",
     "ONSET_ENTITLEMENT_MINUS_1",
     "OPTIONS",
+    "OWN_RECEIPT_PRE62_UNKNOWN_OR_OTHER_UNOBSERVED",
+    "OWN_RECEIPT_READINGS",
+    "OWN_RECEIPT_SENSITIVITY_ID",
+    "OWN_RECEIPT_UNKNOWN_OR_OTHER_IS_OWN",
     "ORDER_CUT_AFTER_FLOOR",
     "ORDER_FLOOR_AFTER_CUT",
     "Option",
@@ -87,6 +100,7 @@ __all__ = [
     "REGISTERED_ROWS",
     "REPORT_POLICY_YEAR",
     "RULES_MODULE_PLACEMENT",
+    "SENSITIVITIES",
     "SNAPSHOT_INCOME_YEAR",
     "SNAPSHOT_WAVE",
     "SPECIFICATION_ID",
@@ -343,6 +357,30 @@ MINIMUM_ROUNDING_NONE = "none"
 #: rounds a monthly benefit down to $1: M2's statute capture,
 #: ``EVID/track-m-statute-20260925/READING.md``).
 MINIMUM_ROUNDING_DIME = "dime_floor"
+#: Section 4c item 1 as built (M4), kept for the scored row by d430
+#: (ruled 2026-09-26): an observed receipt year is own receipt unless every
+#: type item is known and every mentioned type is a spouse's, survivor's or
+#: dependent's benefit, so receipt of an unknown type, an "other" type or a
+#: combination code counts as own receipt, before the year of attaining 62
+#: as after it.  A cohort-level reading (``cohort.build_cohort``), not a
+#: :class:`TrackMPolicy` field: it decides which records exist and how they
+#: are classified, before any policy applies.
+OWN_RECEIPT_UNKNOWN_OR_OTHER_IS_OWN = (
+    "unknown_other_or_combination_type_counts_as_own_receipt"
+)
+#: d430's pre-registered, unscored sensitivity: a receipt year before the
+#: year of attaining 62 that names neither a retirement nor a disability
+#: benefit, and so is own receipt under the scored reading only because a
+#: type is unknown or "other" or the code is a combination, is read as
+#: neither own receipt nor non-receipt (as if unobserved).  Every other
+#: observation reads as under the scored reading.
+OWN_RECEIPT_PRE62_UNKNOWN_OR_OTHER_UNOBSERVED = (
+    "pre_62_unknown_or_other_type_neither_own_receipt_nor_non_receipt"
+)
+OWN_RECEIPT_READINGS: tuple[str, ...] = (
+    OWN_RECEIPT_UNKNOWN_OR_OTHER_IS_OWN,
+    OWN_RECEIPT_PRE62_UNKNOWN_OR_OTHER_UNOBSERVED,
+)
 
 _CHOICES: dict[str, tuple[Any, ...]] = {
     "policy_year": (HEADLINE_POLICY_YEAR, REPORT_POLICY_YEAR),
@@ -404,14 +442,16 @@ class TrackMPolicy:
       ``wage_index_lag_years`` (G9, frozen: 2).
     * ``covered_earnings_rule`` (d280, ruled 2026-09-25),
       ``pre_1978_coverage_rule`` (frozen by R6: the statute),
-      ``gap_year_rule`` and ``odd_year_source`` (frozen by R7),
+      ``gap_year_rule`` (frozen by R7) and ``odd_year_source`` (R7; kept
+      knowingly by d430, card item (j)),
       ``unobserved_window_start_age`` (frozen: 22) and
       ``quarters_per_work_year`` (Table 5's column head: "work year = 4
       CQ").
     * ``old_age_history_end``, ``di_coverage_end`` and
       ``death_first_pia_year`` (frozen by R3: section 4a);
-      ``entitlement_year_rule``, ``onset_year_rule`` and
-      ``survivor_own_amount`` (frozen by R4: section 4b).
+      ``entitlement_year_rule`` and ``survivor_own_amount`` (frozen by
+      R4: section 4b) and ``onset_year_rule`` (R4; kept knowingly by d430,
+      statute finding F1).
     * ``minimum_rounding`` (frozen: none), ``couples_cap`` and
       ``unlinked_auxiliary`` (G13, frozen).
     """
@@ -525,6 +565,9 @@ _FIXED_DECISION_VALUES: dict[str, Any] = {
     "acceptance_rule": ACCEPTANCE_RULE,
     "ratification_and_registration": RATIFICATION_AND_REGISTRATION,
     "census_threshold_download": CENSUS_THRESHOLD_DOWNLOAD,
+    # The scored cohort's reading (d430); the registered run refuses
+    # scored records built under any other (``pipeline.run_track_m``).
+    "own_receipt_reading": OWN_RECEIPT_UNKNOWN_OR_OTHER_IS_OWN,
 }
 
 #: The nine items of cos decision d219 as filed (the cos record's text,
@@ -621,10 +664,55 @@ def _d219_entry(item: int) -> dict[str, Any]:
     return entry
 
 
+#: cos decision d430 as filed (the ratification card of 2026-09-25,
+#: ``EV/m1-ratification-card-draft-20260925.md``, amended by the skeptic
+#: pass before filing), and Max's ruling (``ruled_at`` 2026-09-26T07:42).
+D430_AS_FILED = (
+    "DynaSim exercise 4 (Track M): ratify the specification (m1-draft to "
+    "m1-ratified-1) by merge with the recorded defaults, and authorize its "
+    "#42 registration and one-shot once section 18's blockers clear. Keep "
+    "(a) (pre-62 receipt of unknown or 'other' type counts as own receipt) "
+    "as the scored reading AND require a pre-registered unscored "
+    "sensitivity (MS0 with those years read as neither receipt nor "
+    "non-receipt, plus the share resting on them), built and reviewed "
+    "before registration; keep (j) (no individual-file 1997/99/01 "
+    "earnings) and F1 (onset = entitlement - 1) knowingly; record F2, F3a, "
+    "F3b and O1 (current-law special minimum not modeled) as named deltas"
+)
+D430_RULING = (
+    "Ratify + bound (a): keep (a) for the scored row and require the "
+    "pre-registered unscored sensitivity (built and reviewed before "
+    "registration); keep (j) and F1 knowingly; record F2, F3a, F3b and O1 "
+    "as named deltas (Max in chat, 2026-09-26)"
+)
+_D430_RULED_ON = "2026-09-26"
+#: The id under which the registered run publishes d430's sensitivity.
+OWN_RECEIPT_SENSITIVITY_ID = "own_receipt_reading_d430"
+
+
+def _d430_entry(
+    ruling: Any, card_item: str, as_filed: str, **extra: Any
+) -> dict[str, Any]:
+    if as_filed not in D430_AS_FILED:
+        raise AssertionError(f"{as_filed!r} is not part of d430 as filed")
+    return {
+        "ruling": ruling,
+        "decision_record": "d430",
+        "item": None,
+        "card_item": card_item,
+        "ruled_on": _D430_RULED_ON,
+        "as_filed": as_filed,
+        "ruling_text": D430_RULING,
+        **extra,
+    }
+
+
 #: Every field Max ruled on, keyed by field, as the M1 specification's
 #: section 19 block records it under ``decisions``.  ``as_filed`` is the
-#: decision text as filed in cos; the rulings are the cos records' (d219:
-#: "Accept all nine", 2026-09-24 21:44; d279 and d280: 2026-09-25 06:24).
+#: decision text as filed in cos (for d430, the clause that names the
+#: field); the rulings are the cos records' (d219: "Accept all nine",
+#: 2026-09-24 21:44; d279 and d280: 2026-09-25 06:24; d430: 2026-09-26
+#: 07:42).
 MAX_RULINGS: dict[str, dict[str, Any]] = {
     **{_D219[item][0]: _d219_entry(item) for item in sorted(_D219)},
     "covered_earnings_rule": {
@@ -670,8 +758,52 @@ MAX_RULINGS: dict[str, dict[str, Any]] = {
             "census_poverty_thresholds_1982_2022.json"
         ),
     },
+    "own_receipt_reading": _d430_entry(
+        OWN_RECEIPT_UNKNOWN_OR_OTHER_IS_OWN,
+        "(a)",
+        "Keep (a) (pre-62 receipt of unknown or 'other' type counts as own "
+        "receipt) as the scored reading AND require a pre-registered "
+        "unscored sensitivity (MS0 with those years read as neither "
+        "receipt nor non-receipt, plus the share resting on them), built "
+        "and reviewed before registration",
+        sensitivity_registered_as=OWN_RECEIPT_SENSITIVITY_ID,
+    ),
+    "odd_year_source": _d430_entry(
+        ODD_YEARS_NEXT_WAVE,
+        "(j)",
+        "keep (j) (no individual-file 1997/99/01 earnings) and F1 (onset = "
+        "entitlement - 1) knowingly",
+    ),
+    "onset_year_rule": _d430_entry(
+        ONSET_ENTITLEMENT_MINUS_1,
+        "F1",
+        "keep (j) (no individual-file 1997/99/01 earnings) and F1 (onset = "
+        "entitlement - 1) knowingly",
+    ),
 }
 _RULED_BY = "Max"
+
+#: The pre-registered sensitivities (M1 specification sections 11, 14 and
+#: 19; the block's ``sensitivities`` must equal this).  Each is unscored and
+#: computed only alongside the registered rows; a registered run refuses to
+#: run without the inputs each needs (``pipeline.run_track_m``).
+SENSITIVITIES: dict[str, dict[str, Any]] = {
+    OWN_RECEIPT_SENSITIVITY_ID: {
+        "decision_record": "d430",
+        "scored": False,
+        "placement": "section_11_diagnostic_of_ms0_registered_run_only",
+        "row": "MS0",
+        "reading_field": "own_receipt_reading",
+        "scored_reading": OWN_RECEIPT_UNKNOWN_OR_OTHER_IS_OWN,
+        "sensitivity_reading": OWN_RECEIPT_PRE62_UNKNOWN_OR_OTHER_UNOBSERVED,
+        "reports": [
+            "ms0_cells_under_the_sensitivity_reading",
+            "weighted_share_of_the_universe_resting_on_a_record_"
+            "classified_differently",
+        ],
+        "required_in_registered_run": True,
+    },
+}
 
 
 def d219_items() -> dict[int, tuple[str, str]]:
@@ -762,7 +894,13 @@ _FROZEN = (
 
 
 def frozen_choices() -> tuple[Decision, ...]:
-    """The choices no ruling of Max's names, frozen in ``m1-draft-2``."""
+    """The choices no ruling of Max's names, frozen in ``m1-draft-2``.
+
+    ``odd_year_source`` (referee R7) and ``onset_year_rule`` (referee R4,
+    the builder default) were frozen here until d430 (2026-09-26) kept
+    them knowingly (card item (j) and statute finding F1); they are now
+    Max's rulings (:data:`MAX_RULINGS`), with the same values.
+    """
 
     policy = TrackMPolicy()
     return tuple(
@@ -839,12 +977,6 @@ def frozen_choices() -> tuple[Decision, ...]:
                 "of estimates.career; 'zero' is not registered",
             ),
             (
-                "odd_year_source",
-                (),
-                "referee R7: the next wave's year-before-last labor income "
-                "of the reference person and spouse, before any imputation",
-            ),
-            (
                 "old_age_history_end",
                 (),
                 "referee R3: 42 USC 415(b)(2)(B)(ii)(I) ends an old-age "
@@ -867,11 +999,6 @@ def frozen_choices() -> tuple[Decision, ...]:
                 "entitlement_year_rule",
                 (),
                 "referee R4 (section 4b rule 2)",
-            ),
-            (
-                "onset_year_rule",
-                (),
-                "referee R4 (section 4b rule 4), builder default",
             ),
             (
                 "survivor_own_amount",
