@@ -385,19 +385,34 @@ MAX_RULINGS: dict[str, dict[str, Any]] = {
 }
 
 
+def _canonical(value: Any) -> str:
+    """A JSON text that tells ``true`` from ``1`` and ``2004`` from
+    ``2004.0``, which Python's ``==`` does not."""
+
+    return json.dumps(value, sort_keys=True, allow_nan=False)
+
+
 def check_rulings_against_block(block: Mapping[str, Any]) -> dict[str, Any]:
     """Refuse a block whose ``decisions`` differ from :data:`MAX_RULINGS`.
 
-    The block must record ``ruled_by`` "Max" and a ``ruled_on`` date, and
-    exactly the fields of :data:`MAX_RULINGS`, each equal to the code's.
+    The block must record ``ruled_by`` "Max" and a ``ruled_on`` date
+    (``YYYY-MM-DD``), and exactly the fields of :data:`MAX_RULINGS`, each
+    equal to the code's as JSON (so a ``1`` for ``true``, or ``2004.0``
+    for ``2004``, is a difference).  The block is not modified.
     """
 
-    decisions = dict(block.get("decisions") or {})
-    if decisions.pop("ruled_by", None) != "Max" or not decisions.pop(
-        "ruled_on", None
+    recorded = block.get("decisions")
+    if not isinstance(recorded, Mapping):
+        raise ValueError("the block records no ruling by Max")
+    decisions = dict(recorded)
+    ruled_by = decisions.pop("ruled_by", None)
+    ruled_on = decisions.pop("ruled_on", None)
+    if ruled_by != "Max" or not (
+        isinstance(ruled_on, str)
+        and re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", ruled_on)
     ):
         raise ValueError("the block records no ruling by Max")
-    if decisions != MAX_RULINGS:
+    if _canonical(decisions) != _canonical(MAX_RULINGS):
         raise ValueError(
             "the block's decisions differ from the code's MAX_RULINGS: "
             f"{sorted(set(decisions) ^ set(MAX_RULINGS))} or their values"

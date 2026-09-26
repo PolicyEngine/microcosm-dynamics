@@ -2211,24 +2211,25 @@ Heeringa 2008); any SCF wealth aggregate (none is committed or saved).
   and `blocked_by` is empty; §16 becomes "Decisions (ruled by Max)"; §20
   records the ratification and the card's correction of 2026-09-25. The
   code's `MAX_RULINGS` holds the rulings, and the registered run refuses a
-  block whose rulings differ. `pending_decisions()` says "fixed by the
-  ratification" in place of "awaiting the freeze". Where the ruling
-  differs from the defaults filed with the card, the ruling governs: item
-  (g) adds the memo's small-cell rule (a flag on each cell with an
-  unweighted *n* under 30, and "uncertainty not estimable" for a cell in
-  which nobody's poverty status changes; §10a, §16 ruling 14, §15
-  `comparison.memo_small_cells` and `decisions.memo_small_cells`) in place
-  of the default, no small-cell flag. It is a reporting rule for the
-  comparison memo: no computation of the code or the run artifact changes.
-  As the ruling states, the claim class says the exercise is a static
-  simulation on PSID-observed incomes (the class keeps d189's name), and
-  §7 discloses that U0 omits the 1936 birth year, which this specification
-  reads as uncut in the Report, while U1 matches the column's birth-year
-  mix. The "pending the freeze" notes of §§3–5, 7 and 9 now say "frozen",
-  and §§3, 4, 11 and 14 cite the ruling where they said the choice was
-  still Max's. §11 now names the -F rows as U2-F–U5-F and U7-F–U10-F, so
-  no range there spans the withdrawn row (§7). No code rule, row,
-  parameter, named delta or worked case changed.
+  block whose rulings differ (compared as JSON, so a changed type is a
+  difference). `pending_decisions()` says "fixed by the ratification" in
+  place of "awaiting the freeze". Where the ruling differs from the
+  defaults filed with the card, the ruling governs: item (g) adds the
+  memo's small-cell rule (a flag on each cell with an unweighted *n* under
+  30, and "uncertainty not estimable" for a cell in which nobody's poverty
+  status changes; §10a, §16 ruling 14, §15 `comparison.memo_small_cells`
+  and `decisions.memo_small_cells`) in place of the default, no small-cell
+  flag. It is a reporting rule for the comparison memo: no computation of
+  the code or the run artifact changes. As the ruling states, the claim
+  class says the exercise is a static simulation on PSID-observed incomes
+  (the class keeps d189's name), and §7 discloses that U0 omits the 1936
+  birth year, which this specification reads as uncut in the Report, while
+  U1 matches the column's birth-year mix. The "pending the freeze" notes
+  of §§3–5, 7 and 9 now say "frozen", and §§3, 4, 11 and 14 cite the
+  ruling where they said the choice was still Max's. §11 now names the -F
+  rows as U2-F–U5-F and U7-F–U10-F, so no range there spans the withdrawn
+  row (§7). No code rule, row, parameter, named delta or worked case
+  changed.
 - `u1-draft-7`, independent review (2026-09-25; Claude Code subagent,
   Opus 5.5; report `EVID/track-u-3-review-20260925.md`). It read
   `RESTRICTED-FILES.md` first and opened nothing it restricts; it

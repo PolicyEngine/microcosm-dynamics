@@ -7,8 +7,12 @@ model output and no comparator value.
 from __future__ import annotations
 
 import copy
+import datetime
+import json
 
 import pytest
+from hypothesis import assume, given, settings
+from hypothesis import strategies as st
 
 from populace_dynamics.cohorts import age67
 from populace_dynamics.estimates import adjusted_poverty as ap
@@ -287,3 +291,167 @@ def test_a_block_whose_rulings_differ_is_refused(block, edit, match):
         rows.check_rulings_against_block(changed)
     with pytest.raises(ValueError, match="no ruling by Max"):
         rows.check_rulings_against_block(_without(block, "decisions"))
+
+
+# Invariant of the rulings gate (u1-ratified-1, cos decision d411): for
+# every block, ``check_rulings_against_block`` passes exactly when the
+# block's ``decisions`` record ``ruled_by`` "Max", a ``YYYY-MM-DD``
+# ``ruled_on`` and, besides those two keys, a mapping equal to
+# ``MAX_RULINGS`` as JSON (key order free, list order and value types
+# not); it never modifies the block.  The properties below execute both
+# directions on generated blocks; no value in them is a PSID value.
+
+
+def _paths(value, path=()):
+    """Every key or index path into ``value``, leaves and containers."""
+
+    if isinstance(value, dict):
+        items = value.items()
+    elif isinstance(value, list):
+        items = enumerate(value)
+    else:
+        return
+    for key, item in items:
+        yield (*path, key)
+        yield from _paths(item, (*path, key))
+
+
+def _leaf_paths(value):
+    def leaf(path):
+        target = value
+        for key in path:
+            target = target[key]
+        return not isinstance(target, dict | list)
+
+    return tuple(path for path in _paths(value) if leaf(path))
+
+
+_ALL_PATHS = tuple(_paths(rows.MAX_RULINGS))
+_LEAF_PATHS = _leaf_paths(rows.MAX_RULINGS)
+_JSON_VALUES = st.recursive(
+    st.none()
+    | st.booleans()
+    | st.integers(-5, 3000)
+    | st.floats(allow_nan=False, allow_infinity=False)
+    | st.text(max_size=12),
+    lambda children: st.lists(children, max_size=3)
+    | st.dictionaries(st.text(max_size=6), children, max_size=3),
+    max_leaves=6,
+)
+
+
+def _json(value) -> str:
+    return json.dumps(value, sort_keys=True)
+
+
+def _parent(decisions: dict, path: tuple):
+    target = decisions
+    for key in path[:-1]:
+        target = target[key]
+    return target
+
+
+def test_the_rulings_have_leaves_and_containers_to_mutate():
+    assert len(_LEAF_PATHS) > 60
+    assert len(_ALL_PATHS) > len(_LEAF_PATHS)
+    assert ("rows", "ruling", 0) in _LEAF_PATHS
+    assert ("memo_small_cells", "ruling", "flag_unweighted_n_below") in (
+        _LEAF_PATHS
+    )
+
+
+@settings(max_examples=100, deadline=None)
+@given(
+    ruled_on=st.dates().map(datetime.date.isoformat),
+    order=st.permutations(sorted(rows.MAX_RULINGS)),
+)
+def test_equal_rulings_pass_in_any_key_order_and_are_not_modified(
+    ruled_on, order
+):
+    decisions = {"ruled_by": "Max", "ruled_on": ruled_on}
+    for name in order:
+        decisions[name] = copy.deepcopy(rows.MAX_RULINGS[name])
+    candidate = {"decisions": decisions}
+    before = _json(candidate)
+    check = rows.check_rulings_against_block(candidate)
+    assert check == {
+        "rulings_checked": sorted(rows.MAX_RULINGS),
+        "rulings_equal": True,
+    }
+    assert _json(candidate) == before
+
+
+@settings(max_examples=200, deadline=None)
+@given(path=st.sampled_from(_LEAF_PATHS), value=_JSON_VALUES)
+def test_any_changed_ruling_value_is_refused(block, path, value):
+    changed = copy.deepcopy(block)
+    parent = _parent(changed["decisions"], path)
+    assume(_json(parent[path[-1]]) != _json(value))
+    parent[path[-1]] = value
+    with pytest.raises(ValueError, match="differ from the code's MAX_RULINGS"):
+        rows.check_rulings_against_block(changed)
+
+
+@settings(max_examples=150, deadline=None)
+@given(path=st.sampled_from(_ALL_PATHS))
+def test_any_removed_ruling_key_or_item_is_refused(block, path):
+    changed = copy.deepcopy(block)
+    del _parent(changed["decisions"], path)[path[-1]]
+    with pytest.raises(ValueError, match="differ from the code's MAX_RULINGS"):
+        rows.check_rulings_against_block(changed)
+
+
+@settings(max_examples=100, deadline=None)
+@given(
+    ruled_by=_JSON_VALUES.filter(lambda value: value != "Max"),
+    ruled_on=_JSON_VALUES,
+)
+def test_a_ruling_not_by_max_or_undated_is_refused(block, ruled_by, ruled_on):
+    by_other = copy.deepcopy(block)
+    by_other["decisions"]["ruled_by"] = ruled_by
+    with pytest.raises(ValueError, match="no ruling by Max"):
+        rows.check_rulings_against_block(by_other)
+    undated = copy.deepcopy(block)
+    undated["decisions"]["ruled_on"] = ruled_on
+    digits = set("0123456789")
+    dated = (
+        isinstance(ruled_on, str)
+        and len(ruled_on) == 10
+        and ruled_on[4] == ruled_on[7] == "-"
+        and set(ruled_on[:4] + ruled_on[5:7] + ruled_on[8:]) <= digits
+    )
+    if dated:
+        assert rows.check_rulings_against_block(undated)["rulings_equal"]
+    else:
+        with pytest.raises(ValueError, match="no ruling by Max"):
+            rows.check_rulings_against_block(undated)
+
+
+@pytest.mark.parametrize(
+    ("path", "value"),
+    [
+        (("ratification_and_registration", "publishes_regardless"), 1),
+        (("cut_start_year", "ruling"), 2004.0),
+        (("memo_small_cells", "ruling", "flag_unweighted_n_below"), 30.0),
+        (("acceptance_rule", "ruling"), False),
+        (("cut_start_year", "declined", 0), 0),
+    ],
+    ids=["true-as-1", "2004-as-float", "30-as-float", "null-as-false", "none"],
+)
+def test_a_ruling_equal_only_under_python_equality_is_refused(
+    block, path, value
+):
+    """Python's ``==`` takes ``1`` for ``True`` and ``2004.0`` for
+    ``2004``; the gate compares as JSON, so a block that changes a
+    ruling's type is refused."""
+
+    changed = copy.deepcopy(block)
+    _parent(changed["decisions"], path)[path[-1]] = value
+    with pytest.raises(ValueError, match="differ from the code's MAX_RULINGS"):
+        rows.check_rulings_against_block(changed)
+
+
+@pytest.mark.parametrize("decisions", [None, [], ["ab"], "Max", 0], ids=repr)
+def test_decisions_that_are_not_a_mapping_are_refused(decisions):
+    with pytest.raises(ValueError, match="no ruling by Max"):
+        rows.check_rulings_against_block({"decisions": decisions})
