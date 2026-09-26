@@ -6,11 +6,13 @@ that block to the code (the options, the policy defaults, the registered
 rows, the cells, the labels and the structural-count universe), check that
 the draft cannot authorize a registered run, and recompute the draft's
 INVENTED worked cases.  They use only the document and the code: no PSID
-value, no model output and no comparator value.
+value, no model output and no comparator value.  One test also hashes the
+statute capture the block pins, when its evidence folder is present.
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -31,6 +33,10 @@ SPEC_PATH = (
     / "docs"
     / "design"
     / "minimum_benefits_comparison.md"
+)
+#: ``EVID`` of the specification: the evidence folder outside this checkout.
+EVIDENCE = (
+    Path.home() / "microcosm-launch-evidence" / "dynasim-parity-20260909"
 )
 
 
@@ -77,14 +83,98 @@ def test_block_identity_and_status(block):
         "registration_package_m10_needs_m3_to_m5",
     ):
         assert built not in block["blocked_by"], built
-    # M4's count shows Census years before 2003 are needed (section 7)
-    for blocker in (
+    # The Census years before 2003 that M4's count shows are needed and
+    # the statute text are captured (section 18, blockers 1 and 2,
+    # 2026-09-25); the registration package and the registration remain.
+    for cleared in (
         "census_thresholds_1982_to_2002_needed_by_m4_not_captured",
         "statute_413_415_402_423_not_captured_m2",
+    ):
+        assert cleared not in block["blocked_by"], cleared
+    assert block["blocked_by"] == [
+        "independent_check_of_m1_draft_2_and_the_m3_to_m5_readings_then_"
+        "ratification_by_merge",
         "registration_package_m10_needs_the_comparator_seal_hash",
         "issue_42_registration_absent",
-    ):
-        assert blocker in block["blocked_by"], blocker
+    ]
+
+
+def test_the_block_records_the_census_and_statute_captures(block):
+    """Section 19's sources record the 1982-2022 Census capture as the
+    loader reads it, with the capture it replaced and its cross-check,
+    and the statute capture M2 made (evidence, not read by code)."""
+
+    from populace_dynamics.min_benefit_track_m import thresholds
+
+    census = block["sources"]["census_thresholds"]
+    loaded = rules.load_aged_thresholds().source
+    assert census["file"] == loaded["path"]
+    assert census["sha256"] == loaded["sha256"]
+    assert census["sha256"] == thresholds.TRACK_M_THRESHOLDS_SHA256
+    assert census["years"] == loaded["years"] == [1982, 2022]
+    assert census["captured_years"] == loaded["captured_years"]
+    assert census["captured_years"] == list(thresholds.TRACK_M_THRESHOLD_YEARS)
+    assert (
+        sorted(set(range(1982, 2023)) - set(census["captured_years"]))
+        == census["years_not_captured"]
+    )
+    assert census["replaces"]["sha256"].startswith("65bbcd83")
+    assert census["internet_archive_copies"] == ["thresh95.xlsx"]
+    root = SPEC_PATH.parents[2]
+    import hashlib
+
+    crosscheck = root / census["crosscheck"]["file"]
+    assert (
+        hashlib.sha256(crosscheck.read_bytes()).hexdigest()
+        == census["crosscheck"]["sha256"]
+    )
+    statute = block["sources"]["statute"]
+    assert statute["status"] == "captured_m2"
+    assert statute["sections"] == [
+        "42 USC 413",
+        "42 USC 415",
+        "42 USC 402",
+        "42 USC 423",
+    ]
+    assert statute["findings_for_ratification"] == [
+        "F1",
+        "F2",
+        "F3a",
+        "F3b",
+        "F4",
+        "O1",
+    ]
+    assert len(statute["reading"]["sha256"]) == 64
+
+
+def test_the_statute_pins_are_the_captured_files(block, text):
+    """Section 19's statute pins are the files in the capture folder, and
+    section 2 prints the same short hashes (independent review of
+    2026-09-25: the lane corrected ``READING.md`` after writing the pins,
+    so both pins named superseded bytes).  The folder is outside this
+    checkout; without it only the section 2 check runs."""
+
+    statute = block["sources"]["statute"]
+    sums = statute["sha256sums_sha256"]
+    reading = statute["reading"]["sha256"]
+    sources = text[text.index("## 2. Sources") : text.index("## 3. Policy")]
+    assert f"`SHA256SUMS` `{sums[:8]}…`" in sources
+    assert f"`READING.md` (`{reading[:8]}…`)" in sources
+    folder = EVIDENCE / statute["folder"]
+    if not folder.is_dir():
+        pytest.skip("the statute capture is outside this checkout")
+    listing = (folder / "SHA256SUMS").read_bytes()
+    assert hashlib.sha256(listing).hexdigest() == sums
+    readme = (folder / statute["reading"]["file"]).read_bytes()
+    assert hashlib.sha256(readme).hexdigest() == reading
+    listed = {}
+    for line in listing.decode("utf-8").splitlines():
+        digest, name = line.split()
+        listed[name] = digest
+    assert statute["reading"]["file"] in listed
+    for name, digest in listed.items():
+        actual = hashlib.sha256((folder / name).read_bytes()).hexdigest()
+        assert actual == digest, name
 
 
 def test_statistic_and_uncertainty_are_the_tabulations(block):
@@ -184,10 +274,10 @@ def _ratified(block: dict) -> dict:
 
 def test_a_ratified_block_still_listing_blockers_authorizes_nothing(block):
     """Ratification alone does not authorize the run: the block's
-    ``blocked_by`` still names the open blockers (the Census years before
-    2003, the statute, the registration package and the registration),
-    and the gate refuses a block that names any blocker (or has no
-    list)."""
+    ``blocked_by`` still names the open blockers (the registration package
+    and the registration; the Census years before 2003 and the statute
+    were cleared on 2026-09-25), and the gate refuses a block that names
+    any blocker (or has no list)."""
 
     ratified = _ratified(block)
     assert ratified["blocked_by"]

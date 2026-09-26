@@ -1,14 +1,16 @@
-"""Track M's Census threshold capture, 2003-2022 (plan item M2; cos d279).
+"""Track M's Census threshold capture, 1982-2022 (plan item M2; cos d279).
 
-Artifact tier: reads the twenty Census workbooks committed in
-``data/external/census_poverty_thresholds`` (``thresh03.xlsx`` ...
-``thresh22.xlsx``; d194 and d279) and the capture
-``data/external/census_poverty_thresholds_2003_2022.json``.  It checks the
+Artifact tier: reads the thirty-five Census workbooks committed in
+``data/external/census_poverty_thresholds`` (1982, 1986, 1988, 1989, 1991,
+1992 and 1994-2022; d194 and d279) and the capture
+``data/external/census_poverty_thresholds_1982_2022.json``.  It checks the
 pin, re-runs the capture, compares the one-person 65-and-over weighted
 average of every year with the workbook cell read without the parser or
-openpyxl, and exercises the two layout departures the parser accepts
-(2019's empty extra worksheets, 2022's weighted averages rounded to $10)
-and their refusals.  No PSID file is read.
+openpyxl, and exercises the two layout departures of 2019 and 2022 (empty
+extra worksheets, weighted averages rounded to $10) and their refusals.
+The departures before 2003, the differential by row label, the cross-check
+against Census's HTML Table 1 and the invariants are in
+``test_threshold_capture_before_2003.py``.  No PSID file is read.
 """
 
 from __future__ import annotations
@@ -31,9 +33,9 @@ from populace_dynamics.min_benefit_track_m import rules, thresholds
 ROOT = Path(__file__).resolve().parents[2]
 WORKBOOKS = ROOT / "data" / "external" / "census_poverty_thresholds"
 CAPTURE = (
-    ROOT / "data" / "external" / "census_poverty_thresholds_2003_2022.json"
+    ROOT / "data" / "external" / "census_poverty_thresholds_1982_2022.json"
 )
-YEARS = tuple(range(2003, 2023))
+YEARS = (1982, 1986, 1988, 1989, 1991, 1992, *range(1994, 2023))
 _MAIN = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
 _REL = (
     "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id"
@@ -96,9 +98,9 @@ def _first_sheet_cells(path: Path) -> tuple[int, dict[str, object]]:
 # Pins and reproduction
 # -------------------------------------------------------------------------
 def test_every_workbook_is_committed_and_pinned(script):
-    assert sorted(script.CENSUS_WORKBOOK_SHA256) == [
+    assert sorted(script.CENSUS_WORKBOOK_SHA256) == sorted(
         _name(year) for year in YEARS
-    ]
+    )
     provenance = (WORKBOOKS / "provenance.md").read_text()
     for name, pin in script.CENSUS_WORKBOOK_SHA256.items():
         digest = hashlib.sha256((WORKBOOKS / name).read_bytes()).hexdigest()
@@ -146,11 +148,16 @@ def test_the_capture_is_pinned_and_loads():
     assert sorted(loaded.annual) == list(YEARS)
     assert loaded.source == {
         "kind": "census_capture",
-        "path": "data/external/census_poverty_thresholds_2003_2022.json",
+        "path": "data/external/census_poverty_thresholds_1982_2022.json",
         "sha256": thresholds.TRACK_M_THRESHOLDS_SHA256,
         "row": "one_65_plus",
-        "years": [2003, 2022],
+        "years": [1982, 2022],
+        "captured_years": list(YEARS),
     }
+    # the retired 2003-2022 capture is gone, and nothing reads it
+    assert not (
+        CAPTURE.parent / "census_poverty_thresholds_2003_2022.json"
+    ).exists()
     # rules re-exports the loader and its errors
     assert rules.load_aged_thresholds is thresholds.load_aged_thresholds
     assert rules.AgedThresholds is thresholds.AgedThresholds
@@ -183,25 +190,60 @@ def test_the_capture_agrees_with_track_us_where_they_overlap(capture):
 
 
 def test_capture_records_sources_layouts_and_ratios(capture, script):
-    assert capture["years"] == [2003, 2022]
-    assert set(capture["decision_records"]) == {"d194", "d279"}
+    assert capture["years"] == [1982, 2022]
+    assert capture["captured_years"] == list(YEARS)
+    assert capture["years_not_captured"] == [
+        1983,
+        1984,
+        1985,
+        1987,
+        1990,
+        1993,
+    ]
+    assert set(capture["decision_records"]) == {
+        "d194",
+        "d279",
+        "d279_earlier_years",
+    }
     assert capture["checks"]["workbook_sha256"].startswith("pinned")
     layouts = capture["checks"]["layout_by_year"]
     for year in YEARS:
         source = capture["sources"][str(year)]
         assert source["file"] == _name(year)
         assert source["sha256"] == script.CENSUS_WORKBOOK_SHA256[_name(year)]
-        assert source["cps_asec_year"] == year + 1
+        survey = (
+            "cps_asec"
+            if year >= 2002
+            else "cps_ads" if year == 2001 else "march_cps"
+        )
+        if survey == "cps_asec":
+            assert source["cps_asec_year"] == year + 1
+            assert "note_survey" not in source
+        else:
+            assert "cps_asec_year" not in source
+            assert source["note_survey"] == survey
+            assert source["note_survey_year"] == year + 1
+        revision = {
+            1982: "Revised on 4/19/2022 due to rounding issues.",
+            2000: "Revised on 2/1/2023 due to a formatting error.",
+        }.get(year)
+        assert source.get("revision_line") == revision, year
+        assert ("retrieval" in source) == (year == 1995), year
         expected = {
             "worksheets": 3 if year == 2019 else 1,
             "empty_extra_worksheets": (
                 ["Sheet2", "Sheet3"] if year == 2019 else []
             ),
             "weighted_average_unit_dollars": 10 if year == 2022 else 1,
+            "note_survey": survey,
+            "size_row_noun": "persons" if year == 2001 else "people",
+            "revision_line": revision,
         }
         assert layouts[str(year)] == expected, year
     ratios = capture["checks"]["matrix_ratio_by_year_pair"]
-    assert list(ratios) == [f"{y - 1}-{y}" for y in YEARS[1:]]
+    assert list(ratios) == [
+        f"{a}-{b}" for a, b in zip(YEARS, YEARS[1:], strict=False)
+    ]
 
 
 @pytest.mark.parametrize("year", YEARS)
@@ -212,9 +254,16 @@ def test_the_track_m_row_equals_the_workbook_cell(capture, year):
     n_sheets, cells = _first_sheet_cells(WORKBOOKS / _name(year))
     assert n_sheets == (3 if year == 2019 else 1)
     assert cells["A2"].startswith(f"Poverty Thresholds for {year} by")
-    assert cells["A8"] == "One person (unrelated individual):"
+    # as printed: a colon after the size-1 label, except 2001's dot
+    # leaders; "Weighted Average Thresholds" capitalized in 1988, 1994 and
+    # 1998 (compared in lower case)
+    assert cells["A8"] == (
+        "One person (unrelated individual)......"
+        if year == 2001
+        else "One person (unrelated individual):"
+    )
     assert cells["A10"] == "65 years and over......"
-    assert cells["B5"] == "Weighted\naverage\nthresholds"
+    assert cells["B5"].lower() == "weighted\naverage\nthresholds"
     value = capture["weighted_average"][str(year)]["one_65_plus"]
     assert cells["B10"] == value
     assert rules.load_aged_thresholds().for_year(year) == value
@@ -306,14 +355,15 @@ def test_every_real_layout_parses_and_moves_by_one_ratio(script, capture):
             == capture["weighted_average"][str(year)]
         )
         if previous is not None:
+            earlier_year, earlier = previous
             ratio = script.check_matrix_moves_together(
-                previous, parsed["matrix"], year
+                earlier, parsed["matrix"], year, earlier_year
             )
-            key = f"{year - 1}-{year}"
+            key = f"{earlier_year}-{year}"
             assert round(ratio, 6) == pytest.approx(
                 capture["checks"]["matrix_ratio_by_year_pair"][key]
             )
-        previous = parsed["matrix"]
+        previous = (year, parsed["matrix"])
 
 
 def test_a_tampered_or_missing_workbook_is_refused(script, tmp_path):
@@ -328,6 +378,9 @@ def test_a_tampered_or_missing_workbook_is_refused(script, tmp_path):
         script.build_track_m_threshold_capture(tmp_path, expected_sha256=None)
     (tmp_path / "thresh03.xlsx").unlink()
     with pytest.raises(FileNotFoundError, match="thresh03"):
+        script.build_track_m_threshold_capture(tmp_path)
+    (tmp_path / "thresh95.xlsx").unlink()
+    with pytest.raises(FileNotFoundError, match="thresh95"):
         script.build_track_m_threshold_capture(tmp_path)
 
 
@@ -347,14 +400,26 @@ def test_a_tampered_or_missing_capture_is_refused(tmp_path, capture):
 
 def test_a_missing_threshold_year_is_a_named_error():
     loaded = rules.load_aged_thresholds()
+    # every year M4's structural count shows the in-window records need
+    rules.check_threshold_years(
+        {1982: 1, 1986: 1, 1988: 1, 1989: 1, 1991: 1, 1992: 1, 1998: 3},
+        loaded,
+    )
     rules.check_threshold_years({2003: 4, 2022: 1}, loaded)
     with pytest.raises(rules.ThresholdYearMissingError) as refused:
-        rules.check_threshold_years({1996: 2, 2002: 1, 2004: 9}, loaded)
+        rules.check_threshold_years(
+            {1981: 1, 1987: 2, 1993: 1, 1996: 5, 2023: 1}, loaded
+        )
     message = str(refused.value)
-    assert "1996 (2 records), 2002 (1 records)" in message
-    assert "2004" not in re.sub(r"captured: \d+-\d+", "", message)
+    assert (
+        "threshold years 1981 (1 records), 1987 (2 records), 1993 (1 "
+        "records), 2023 (1 records) are not in the capture" in message
+    )
+    assert "captured: 1982, 1986, 1988-1989, 1991-1992, 1994-2022" in message
+    assert "1996" not in message
     assert "d279" in message
-    with pytest.raises(rules.ThresholdYearMissingError, match="2002"):
-        loaded.for_year(2002)
+    for year in (1981, 1983, 1984, 1985, 1987, 1990, 1993, 2023):
+        with pytest.raises(rules.ThresholdYearMissingError, match=str(year)):
+            loaded.for_year(year)
     # a named error, not a KeyError
     assert not issubclass(rules.ThresholdYearMissingError, KeyError)

@@ -279,13 +279,16 @@ def invented_cohort_inputs(
 ) -> TrackMCohortInputs:
     """INVENTED cohort inputs in the PSID's shapes (module docstring).
 
-    ``threshold_years_from`` (2003, the first captured Census year) keeps
-    every record in a policy window to threshold years the capture holds:
-    a worker whose year of attaining 62 precedes it claims before the
-    window opens, and a late spouse who died before any own entitlement
-    died in or after it.  ``None`` draws without that constraint, as the
-    PSID is (its in-window records need earlier years), so that the dry
-    run can show the pipeline refusing such a cohort before computing.
+    ``threshold_years_from`` (2003, the first year of the invented
+    thresholds, ``invented.INVENTED_THRESHOLD_YEARS``) keeps every record
+    in a policy window to threshold years from that year on: a worker
+    whose year of attaining 62 precedes it claims before the window
+    opens, and a late spouse who died before any own entitlement died in
+    or after it.  ``None`` draws without that constraint, as the PSID is
+    (its in-window records need years before 2003), so that the dry run
+    can show the pipeline refusing, before computing, a cohort that needs
+    a threshold year the real capture lacks (one of 1983-1985, 1987, 1990
+    and 1993, or a year before 1982).
     """
 
     draw = _Draw(seed, threshold_years_from)

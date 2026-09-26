@@ -1486,8 +1486,9 @@ def structural_counts_before_registration(
     before the registration").  So this computes, and returns, only:
     persons, records and links by class; unresolved records in total and
     by basis; for each registered window, the earliest threshold year its
-    records need, the years before the capture (2003) they need and the
-    section 4a bases that need them, as years and names without counts;
+    records need, the years before 2003 they need (those the first
+    capture, of 2003-2022, lacked; section 7) and the section 4a bases
+    that need them, as years and names without counts;
     and, for the rule-2 records whose year before a policy year is
     unobserved, how many there are and on how many rule 2 and rule 3's
     age rule disagree.  It never calls :func:`cohort_structure` (the

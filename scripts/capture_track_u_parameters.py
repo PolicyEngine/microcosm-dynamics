@@ -29,26 +29,35 @@ Two captures, each written to ``data/external`` and pinned by SHA-256 in
   year (:func:`parse_threshold_rows`, :func:`check_matrix_moves_together`).
   Re-running it on the committed workbooks reproduces the committed
   capture byte for byte (``tests/track_u/test_census_threshold_capture.py``).
-* ``--track-m-census-dir DIR`` writes ``census_poverty_thresholds_2003_2022.json``
-  for Track M (DynaSim exercise 4, the minimum benefit) from the twenty
-  workbooks ``thresh03.xlsx`` ... ``thresh22.xlsx``: the nine above,
-  ``thresh03.xlsx`` (staged under d194 with them) and ``thresh13.xlsx`` ...
-  ``thresh22.xlsx`` (fetched on 2026-09-25 by the orchestrating Claude
-  Code session after Max approved the download in cos decision d279).
-  All twenty are committed in ``data/external/
-  census_poverty_thresholds/`` and pinned in :data:`CENSUS_WORKBOOK_SHA256`.
-  The same parser reads them.  Inspected cell by cell (2026-09-25), the
-  2013-2022 workbooks print the 2003-2012 table in the same cells with the
-  same labels; the parser accepts exactly two departures, each pinned to
-  its year (:data:`EMPTY_EXTRA_SHEETS`, :data:`WEIGHTED_AVERAGE_UNIT`):
-  ``thresh19.xlsx`` carries two further worksheets, ``Sheet2`` and
-  ``Sheet3``, that must be empty, and ``thresh22.xlsx`` prints every
-  weighted average rounded to $10 while its matrix cells stay whole
-  dollars.  Track M reads the weighted average for one person aged 65 and
-  over (``one_65_plus``) as printed; the pin is
+* ``--track-m-census-dir DIR`` writes ``census_poverty_thresholds_1982_2022.json``
+  for Track M (DynaSim exercise 4, the minimum benefit) from the
+  thirty-five workbooks of 1982, 1986, 1988, 1989, 1991, 1992 and
+  1994-2022: the nine above, ``thresh03.xlsx`` (staged under d194 with
+  them), ``thresh13.xlsx`` ... ``thresh22.xlsx`` (fetched on 2026-09-25 by
+  the orchestrating Claude Code session after Max approved the download in
+  cos decision d279) and the fifteen years before 2003 that M4's
+  structural count shows the in-window records need (staged on 2026-09-25
+  under d279's "any earlier year the build proves it needs";
+  ``thresh95.xlsx`` from the Internet Archive's copy of its Census URL,
+  :data:`ARCHIVE_RETRIEVALS`).  All thirty-five are committed in
+  ``data/external/census_poverty_thresholds/`` and pinned in
+  :data:`CENSUS_WORKBOOK_SHA256`.  The same parser reads them.  Inspected
+  cell by cell (2026-09-25), every workbook prints the 2003-2012 table in
+  the same cells with the same labels; the parser accepts exactly these
+  departures, each pinned to its years: ``thresh19.xlsx`` carries two
+  further worksheets, ``Sheet2`` and ``Sheet3``, that must be empty
+  (:data:`EMPTY_EXTRA_SHEETS`); ``thresh22.xlsx`` prints every weighted
+  average rounded to $10 while its matrix cells stay whole dollars
+  (:data:`WEIGHTED_AVERAGE_UNIT`); the notes of 1982-2000 name the March
+  CPS and 2001's the CPS ADS (:data:`NOTE_SURVEY_BEFORE_2002`); 2001's
+  size rows say "persons" (:data:`PERSONS_ROW_LABEL_YEARS`); and 1982 and
+  2000 print one revision line below the note (:data:`REVISION_LINES`).
+  Track M reads the weighted average for one person aged 65 and over
+  (``one_65_plus``) as printed; the pin is
   ``min_benefit_track_m.thresholds.TRACK_M_THRESHOLDS_SHA256``, and
-  ``tests/min_benefit_track_m/test_threshold_capture.py`` re-runs the
-  capture and compares it with the workbook cells.
+  ``tests/min_benefit_track_m/test_threshold_capture.py`` and
+  ``test_threshold_capture_before_2003.py`` re-run the capture and compare
+  it with the workbook cells and with Census's HTML Table 1.
 
 Usage::
 
@@ -225,8 +234,9 @@ CENSUS_WORKBOOK_DIR = ROOT / "data" / "external" / "census_poverty_thresholds"
 #: ``thresh03.xlsx`` ... ``thresh12.xlsx`` fetched on 2026-09-24 under cos
 #: decision d194 and ``thresh13.xlsx`` ... ``thresh22.xlsx`` on 2026-09-25
 #: under cos decision d279, each by the orchestrating Claude Code session
-#: after Max approved the download (the ``SHA256SUMS`` that session wrote
-#: lists the same twenty digests).  A workbook with other bytes is refused
+#: after Max approved the download, and the fifteen years before 2003
+#: below (the staging directory's ``SHA256SUMS`` lists all thirty-five
+#: digests as of 2026-09-25).  A workbook with other bytes is refused
 #: before it is parsed.
 CENSUS_WORKBOOK_SHA256: dict[str, str] = {
     "thresh03.xlsx": (
@@ -289,11 +299,135 @@ CENSUS_WORKBOOK_SHA256: dict[str, str] = {
     "thresh22.xlsx": (
         "5874eb8ecc525f5d26daab34b81165416c669daf62771e65ef52847bd3cbf89f"
     ),
+    # The fifteen years before 2003 that M4's structural count shows the
+    # in-window records need (1982, 1986, 1988, 1989, 1991, 1992 and
+    # 1994-2002), staged on 2026-09-25 under cos decision d279 ("any
+    # earlier year the build proves it needs") in the directory whose
+    # SHA256SUMS lists all thirty-five digests: fourteen from
+    # CENSUS_URL_BASE and thresh95.xlsx from the Internet Archive's copy
+    # of its Census URL (ARCHIVE_RETRIEVALS).
+    "thresh82.xlsx": (
+        "88a5fb3aaba6008e430bce327b862fca03ba85340c32c1375b902dfb60093b78"
+    ),
+    "thresh86.xlsx": (
+        "49c00638209721b4cf25e4039728255b97874efd54f36ff085860113b2d077b2"
+    ),
+    "thresh88.xlsx": (
+        "f22fc66ea80677c34bf36d00f9c26aff3038a0f115f90673a1ebd42c7f19fd11"
+    ),
+    "thresh89.xlsx": (
+        "bed78af3dd2425349f33391163cc76a1218080403eeaa6e7c0de15d359847d73"
+    ),
+    "thresh91.xlsx": (
+        "a06989525bc712f609fa40cde808ec1cfb5bf8ce1d8194eeb362f2ec7847249c"
+    ),
+    "thresh92.xlsx": (
+        "ac5262b83d0f63cff97caa5ad8fb80096f8b16db501f79dd88cca19e9b4fd3d5"
+    ),
+    "thresh94.xlsx": (
+        "593b5a45109ed58ea35648e0f9c6ba749050741e4e935ab69cce9bbc15d38006"
+    ),
+    "thresh95.xlsx": (
+        "32bb678f3e0847b71c96c7c3c2b2ca8151a5c82307466df2807e9438ab2138f8"
+    ),
+    "thresh96.xlsx": (
+        "28a0cb77b312f861dd55b51d68cf83452d8a17c93f7b111e1b6da9930e27db78"
+    ),
+    "thresh97.xlsx": (
+        "aa463ec2d30e7d89a8626cd0ea73caeb15e2351b566e20163625dff0d8389754"
+    ),
+    "thresh98.xlsx": (
+        "c8ab5b79a49a756952a31c684a961f5da7de8dce46ce60c50128c618618964bb"
+    ),
+    "thresh99.xlsx": (
+        "a513a440417c603a7db00dbec785cb5c23851bb156bc0bfc4fc28e460a2f3a63"
+    ),
+    "thresh00.xlsx": (
+        "46a08f5146c5cfdb6cc6c6fb9e2a50deb78e68acbfa5917fbd5bfaa2d211f3bb"
+    ),
+    "thresh01.xlsx": (
+        "ac7deb00d0feee4fe0ca8124ecb19ef85d87bf11fdc39ac608d078b5bfe468d2"
+    ),
+    "thresh02.xlsx": (
+        "40609e1d94d2e1972cfbab6904ebee9e03d94686eaf9af54dafe782d4d7f648d"
+    ),
+}
+#: Workbooks not fetched from their Census URL, and how they were, as the
+#: staging directory's ``PROVENANCE-thresh95.md`` records it (copied into
+#: ``census_poverty_thresholds/provenance.md``).  On 2026-09-25 the Census
+#: server answered the thresh95.xlsx URL, and only that one, with its WAF
+#: page "Request Rejected" (HTTP 200, 247 bytes of HTML).  The file is the
+#: Internet Archive's raw (``id_``) copy of that URL, fetched from two
+#: captures 3.5 years apart that are byte-identical once the 2023 one is
+#: decompressed, each matching the SHA-1 digest the Archive's CDX index
+#: records for it.
+ARCHIVE_RETRIEVALS: dict[str, dict[str, Any]] = {
+    "thresh95.xlsx": {
+        "retrieved_from": "internet_archive",
+        "reason": (
+            "the Census server answered this URL, and only this one, with "
+            "its WAF page 'Request Rejected' (HTTP 200, 247 bytes of HTML) "
+            "on 2026-09-25"
+        ),
+        "archive_captures": [
+            {
+                "url": (
+                    "http://web.archive.org/web/20230226205734id_/"
+                    + CENSUS_URL_BASE
+                    + "thresh95.xlsx"
+                ),
+                "served": "gzip-encoded; decompressed",
+                "cdx_sha1_base32": "ARBZSSCAOHTKTGHH6INRSDDWBDJVFVAB",
+                "cdx_sha1_of": "the gzip body as served",
+            },
+            {
+                "url": (
+                    "http://web.archive.org/web/20260820215832id_/"
+                    + CENSUS_URL_BASE
+                    + "thresh95.xlsx"
+                ),
+                "served": "the file itself",
+                "cdx_sha1_base32": "ZCDVY76QW2OH6NA6RLKWJPMJCNTMZIAQ",
+                "cdx_sha1_of": "the file",
+            },
+        ],
+        "captures_identical": True,
+        "to_do": (
+            "retry the Census URL when its WAF allows it and confirm the "
+            "SHA-256"
+        ),
+    },
 }
 #: Worksheets a workbook may carry beyond the table's, by income year; each
 #: must be empty.  Only ``thresh19.xlsx`` has any (inspected 2026-09-25):
 #: ``Sheet2`` and ``Sheet3``, with no cell value.
 EMPTY_EXTRA_SHEETS: dict[int, tuple[str, ...]] = {2019: ("Sheet2", "Sheet3")}
+#: The survey each year's note names as the source of its weighted
+#: averages, for the years before 2002 (inspected cell by cell,
+#: 2026-09-25): 1982-2000 print "the March <year + 1> Current Population
+#: Survey (CPS)", 2001 "the 2002 Current Population Survey Annual
+#: Demographic Supplement (CPS ADS)".  From 2002 every note names the
+#: <year + 1> CPS ASEC.  A year before 2002 that is not listed has no
+#: inspected layout and is refused.
+NOTE_SURVEY_BEFORE_2002: dict[int, str] = {
+    **{
+        year: "march_cps"
+        for year in (1982, 1986, 1988, 1989, 1991, 1992, *range(1994, 2001))
+    },
+    2001: "cps_ads",
+}
+#: Income years whose size rows read "Two persons" ... "Nine persons or
+#: more" where every other year prints "people" (thresh01.xlsx only,
+#: inspected 2026-09-25).
+PERSONS_ROW_LABEL_YEARS: frozenset[int] = frozenset({2001})
+#: The one line a workbook may print below its note, by income year, as
+#: printed (whitespace collapsed; inspected 2026-09-25).  Census revised
+#: thresh82.xlsx and thresh00.xlsx after first publishing them; no other
+#: year carries such a line.
+REVISION_LINES: dict[int, str] = {
+    1982: "Revised on 4/19/2022 due to rounding issues.",
+    2000: "Revised on 2/1/2023 due to a formatting error.",
+}
 #: The dollar unit the weighted averages are printed to, by income year
 #: (whole dollars unless listed).  Every weighted average in thresh22.xlsx
 #: is a multiple of $10 and its matrix cells are whole dollars, so the
@@ -316,12 +450,32 @@ _TITLE = re.compile(
 )
 _UNITS = "(in dollars)"
 _SOURCE = re.compile(r"source: u\.s\. census bureau, (\d{4})\.?")
-#: The note's first sentence (the 2009 note adds two more).
-_NOTE = re.compile(
-    r"note: the source of the weighted average thresholds is the (\d{4}) "
-    r"current population survey annual social and economic supplement "
-    r"\(cps asec\)\."
-)
+#: The note's first sentence, by the survey it names (the 2009 note adds
+#: two more).  Which survey each year's note must name is
+#: :func:`note_survey`'s.
+_NOTE_PATTERNS: dict[str, re.Pattern[str]] = {
+    "cps_asec": re.compile(
+        r"note: the source of the weighted average thresholds is the "
+        r"(\d{4}) current population survey annual social and economic "
+        r"supplement \(cps asec\)\."
+    ),
+    "cps_ads": re.compile(
+        r"note: the source of the weighted average thresholds is the "
+        r"(\d{4}) current population survey annual demographic supplement "
+        r"\(cps ads\)\."
+    ),
+    "march_cps": re.compile(
+        r"note: the source of the weighted average thresholds is the march "
+        r"(\d{4}) current population survey \(cps\)\."
+    ),
+}
+_NOTE = _NOTE_PATTERNS["cps_asec"]
+#: How the refusals name each survey.
+_SURVEY_NAMES = {
+    "cps_asec": "CPS ASEC",
+    "cps_ads": "CPS ADS",
+    "march_cps": "March CPS",
+}
 #: The only text the note may carry after its first sentence: the two
 #: sentences of the 2009 note (a year whose average annual CPI-U fell),
 #: with ``{year}`` the table's year and ``{previous}`` the year before.
@@ -352,6 +506,43 @@ _TABLE_ROWS: tuple[tuple[str, str, int], ...] = (
     ("nine people or more", "nine_plus", 9),
 )
 _ALL_AGES = {"one_all": "one", "two_all": "two"}
+
+
+def note_survey(year: int) -> str:
+    """The survey ``year``'s note must name (a key of the note patterns).
+
+    The CPS ASEC from 2002; before that, the year's inspected layout
+    (:data:`NOTE_SURVEY_BEFORE_2002`).  A year before 2002 with no inspected
+    layout is refused.
+    """
+
+    if year >= 2002:
+        return "cps_asec"
+    if year not in NOTE_SURVEY_BEFORE_2002:
+        raise ValueError(
+            f"{year}: no inspected layout for a Census threshold workbook "
+            "before 2002 (NOTE_SURVEY_BEFORE_2002 lists "
+            f"{sorted(NOTE_SURVEY_BEFORE_2002)})"
+        )
+    return NOTE_SURVEY_BEFORE_2002[year]
+
+
+def row_labels(year: int) -> list[str]:
+    """The thirteen row labels ``year``'s table prints, in order.
+
+    Every year prints :data:`_TABLE_ROWS`' labels, except that a year in
+    :data:`PERSONS_ROW_LABEL_YEARS` prints "persons" for "people" in the
+    size rows ("Two persons" ... "Nine persons or more").
+    """
+
+    labels = [label for label, _, _ in _TABLE_ROWS]
+    if year in PERSONS_ROW_LABEL_YEARS:
+        labels = [
+            re.sub(r"(?<=\w) people\b", " persons", label) for label in labels
+        ]
+    return labels
+
+
 #: The related-children column headers, in printed order (0 ... 8).
 _CHILD_HEADERS: tuple[str, ...] = (
     "none",
@@ -412,16 +603,31 @@ def parse_threshold_rows(rows: list[list[Any]], year: int) -> dict[str, Any]:
     :data:`_NOTE_CPI_FALL` (the 2009 note).  Everything else must be
     blank (whitespace-only cells count as blank).
 
+    The workbooks before 2003 (inspected cell by cell, 2026-09-25) print
+    the same table in the same cells, with three departures, each pinned
+    to its years: the note names the March <year + 1> CPS (1982-2000) or
+    the <year + 1> CPS ADS (2001) instead of the CPS ASEC
+    (:func:`note_survey`); 2001's size rows say "persons" for "people"
+    (:func:`row_labels`); and 1982 and 2000 print one revision line below
+    the note (:data:`REVISION_LINES`), which must be exactly that line.
+    Header capitalization and line breaks ("Weighted Average Thresholds",
+    "Eight or more" over three lines) do not matter: labels are compared
+    in lower case with whitespace collapsed.
+
     Refuses a table whose title does not name ``year``, whose source or
-    note does not name ``year + 1``, with other text above the header or
-    in the note, whose header or row labels differ, whose threshold cells
-    are not positive whole numbers or fill other children columns than
-    their row allows, with a value anywhere else, or whose values fail
-    :func:`_validate_year`.
+    note does not name ``year + 1`` (and, in the note, the year's survey),
+    with other text above the header or in the note, with a line below
+    the note other than its year's revision line, whose header or row
+    labels differ, whose threshold cells are not positive whole numbers
+    or fill other children columns than their row allows, with a value
+    anywhere else, or whose values fail :func:`_validate_year`.
 
     Returns ``{"weighted_average": {row_key: dollars}, "all_ages":
     {"one": dollars, "two": dollars}, "matrix": {row_key: {children:
-    dollars}}, "title": str, "source_line": str, "cps_asec_year": int}``.
+    dollars}}, "title": str, "source_line": str, "survey": str,
+    "survey_year": int, "revision_line": str | None}``, plus
+    ``"cps_asec_year"`` (the survey year) when the survey is the CPS
+    ASEC.
     """
 
     width = max([_TABLE_WIDTH, *(len(row) for row in rows)])
@@ -514,18 +720,36 @@ def parse_threshold_rows(rows: list[list[Any]], year: int) -> dict[str, Any]:
             f"source line {source_line!r} is not 'Source: U.S. Census "
             f"Bureau, {year + 1}.'"
         )
+    survey = note_survey(year)
     note = grid[s + 1][_LABEL_COL] if s + 1 < len(grid) else None
-    note_match = None if _blank(note) else _NOTE.match(_text(note))
+    note_match = (
+        None if _blank(note) else _NOTE_PATTERNS[survey].match(_text(note))
+    )
     if note_match is None or int(note_match.group(1)) != year + 1:
-        raise refuse(f"the note does not name the {year + 1} CPS ASEC")
+        raise refuse(
+            f"the note does not name the {year + 1} {_SURVEY_NAMES[survey]}"
+        )
     tail = _text(note)[note_match.end() :].strip()
     if tail not in ("", _NOTE_CPI_FALL.format(year=year, previous=year - 1)):
         raise refuse(
-            "the note says more than the CPS ASEC sentence (and, for a "
-            f"year whose CPI-U fell, the two CPI-U sentences): {tail!r}"
+            f"the note says more than the {_SURVEY_NAMES[survey]} sentence "
+            "(and, for a year whose CPI-U fell, the two CPI-U sentences): "
+            f"{tail!r}"
         )
     trailer = [grid[s][_LABEL_COL + 1 :], grid[s + 1][_LABEL_COL + 1 :]]
-    trailer.extend(grid[s + 2 :])
+    below = grid[s + 2 :]
+    revision_line = None
+    if year in REVISION_LINES:
+        printed = below[0][_LABEL_COL] if below else None
+        if _blank(printed) or _text(printed) != _text(REVISION_LINES[year]):
+            raise refuse(
+                f"expected the revision line {REVISION_LINES[year]!r} "
+                f"below the note, found {printed!r}"
+            )
+        revision_line = " ".join(str(printed).split())
+        trailer.append(below[0][_LABEL_COL + 1 :])
+        below = below[1:]
+    trailer.extend(below)
     if any(not _blank(cell) for row in trailer for cell in row):
         raise refuse("a value beside or below the source and note")
     labelled = []
@@ -536,7 +760,7 @@ def parse_threshold_rows(rows: list[list[Any]], year: int) -> dict[str, Any]:
             continue
         labelled.append(row)
     labels = [_label(row[_LABEL_COL]) for row in labelled]
-    expected = [label for label, _, _ in _TABLE_ROWS]
+    expected = row_labels(year)
     if labels != expected:
         raise refuse(f"row labels {labels} != {expected}")
     weighted: dict[str, int] = {}
@@ -565,14 +789,19 @@ def parse_threshold_rows(rows: list[list[Any]], year: int) -> dict[str, Any]:
             weighted[key] = value
             matrix[key] = cells
     _validate_year(year, weighted, all_ages, matrix)
-    return {
+    parsed = {
         "weighted_average": weighted,
         "all_ages": all_ages,
         "matrix": matrix,
         "title": " ".join(str(title_cell).split()),
         "source_line": source_line,
-        "cps_asec_year": int(note_match.group(1)),
+        "survey": survey,
+        "survey_year": int(note_match.group(1)),
+        "revision_line": revision_line,
     }
+    if survey == "cps_asec":
+        parsed["cps_asec_year"] = parsed["survey_year"]
+    return parsed
 
 
 def _validate_year(
@@ -641,6 +870,7 @@ def check_matrix_moves_together(
     earlier: dict[str, dict[int, int]],
     later: dict[str, dict[int, int]],
     year: int,
+    earlier_year: int | None = None,
 ) -> float:
     """Refuse a year whose matrix cells do not all move by one ratio.
 
@@ -648,9 +878,15 @@ def check_matrix_moves_together(
     the change in the average annual CPI-U, and every cell of the real
     2003-2012 workbooks moves year on year by one ratio to within about
     $1 of whole-dollar rounding; a cell read from the wrong row or column
-    moves by far more.  Returns the median ratio of ``year`` to
-    ``year - 1``.
+    moves by far more.  ``earlier`` is the matrix of ``earlier_year``
+    (default ``year - 1``); across a gap of several years (the Track M
+    capture before 2003) a common ratio still holds, since each year's
+    update multiplies every cell by the same factor.  Returns the median
+    ratio of ``year`` to ``earlier_year``.
     """
+
+    if earlier_year is None:
+        earlier_year = year - 1
 
     pairs = [
         (earlier[key][k], later[key][k])
@@ -667,8 +903,8 @@ def check_matrix_moves_together(
     worst = max(abs(new - ratio * old) for old, new in pairs)
     if worst > _CROSS_YEAR_TOLERANCE:
         raise ValueError(
-            f"{year}: a matrix cell is ${worst:.2f} from {year - 1}'s times "
-            f"the common ratio {ratio:.6f} (tolerance "
+            f"{year}: a matrix cell is ${worst:.2f} from {earlier_year}'s "
+            f"times the common ratio {ratio:.6f} (tolerance "
             f"${_CROSS_YEAR_TOLERANCE:.0f})"
         )
     return ratio
@@ -730,7 +966,9 @@ def _parse_years(
     matrix: dict[str, Any] = {}
     sources: dict[str, Any] = {}
     ratios: dict[str, float] = {}
-    previous: dict[str, dict[int, int]] | None = None
+    previous: tuple[int, dict[str, dict[int, int]]] | None = None
+    if list(years) != sorted(set(years)):
+        raise ValueError(f"years {years} are not strictly increasing")
     for year in years:
         name = f"thresh{year % 100:02d}.xlsx"
         path = census_dir / name
@@ -745,18 +983,21 @@ def _parse_years(
         sheet, rows = read_workbook_rows(path, year)
         parsed = parse_threshold_rows(rows, year)
         if previous is not None:
-            ratios[f"{year - 1}-{year}"] = round(
-                check_matrix_moves_together(previous, parsed["matrix"], year),
+            earlier_year, earlier = previous
+            ratios[f"{earlier_year}-{year}"] = round(
+                check_matrix_moves_together(
+                    earlier, parsed["matrix"], year, earlier_year
+                ),
                 6,
             )
-        previous = parsed["matrix"]
+        previous = (year, parsed["matrix"])
         weighted[str(year)] = parsed["weighted_average"]
         all_ages[str(year)] = parsed["all_ages"]
         matrix[str(year)] = {
             key: {str(k): v for k, v in cells.items()}
             for key, cells in parsed["matrix"].items()
         }
-        sources[str(year)] = {
+        source: dict[str, Any] = {
             "file": name,
             "url": CENSUS_URL_BASE + name,
             "sha256": digest,
@@ -764,8 +1005,19 @@ def _parse_years(
             "sheet": sheet,
             "title": parsed["title"],
             "source_line": parsed["source_line"],
-            "cps_asec_year": parsed["cps_asec_year"],
         }
+        # The CPS ASEC years keep the record Track U's capture pins; the
+        # earlier notes name another survey, recorded as printed.
+        if parsed["survey"] == "cps_asec":
+            source["cps_asec_year"] = parsed["cps_asec_year"]
+        else:
+            source["note_survey"] = parsed["survey"]
+            source["note_survey_year"] = parsed["survey_year"]
+        if parsed["revision_line"] is not None:
+            source["revision_line"] = parsed["revision_line"]
+        if name in ARCHIVE_RETRIEVALS:
+            source["retrieval"] = ARCHIVE_RETRIEVALS[name]
+        sources[str(year)] = source
     return {
         "weighted": weighted,
         "all_ages": all_ages,
@@ -841,14 +1093,20 @@ def build_track_m_threshold_capture(
     *,
     expected_sha256: dict[str, str] | None = CENSUS_WORKBOOK_SHA256,
 ) -> dict[str, Any]:
-    """Parse the twenty workbooks 2003-2022 into Track M's capture.
+    """Parse the thirty-five workbooks 1982-2022 into Track M's capture.
 
     The same parser and checks as :func:`build_threshold_capture`, over
-    ``min_benefit_track_m.thresholds.TRACK_M_THRESHOLD_YEARS``, with each year's
-    layout variant recorded (its worksheets and the unit its weighted
-    averages are printed to).  Track M reads ``weighted_average[year]
-    ["one_65_plus"]``: the Census weighted average for one person aged 65
-    and over (the M1 specification's threshold, section 7).
+    ``min_benefit_track_m.thresholds.TRACK_M_THRESHOLD_YEARS`` (1982, 1986,
+    1988, 1989, 1991, 1992 and 1994-2022; the years before 2003 are those
+    M4's structural count shows the in-window records need), with each
+    year's layout variant recorded (its worksheets, the unit its weighted
+    averages are printed to, the survey its note names, the noun of its
+    size rows and any revision line) and the years within 1982-2022 that
+    are not captured listed.  The cross-year check runs between
+    consecutive captured years, across the gaps too.  Track M reads
+    ``weighted_average[year]["one_65_plus"]``: the Census weighted average
+    for one person aged 65 and over (the M1 specification's threshold,
+    section 7).
     """
 
     years = track_m_thresholds.TRACK_M_THRESHOLD_YEARS
@@ -860,29 +1118,44 @@ def build_track_m_threshold_capture(
             "weighted_average_unit_dollars": WEIGHTED_AVERAGE_UNIT.get(
                 year, 1
             ),
+            "note_survey": note_survey(year),
+            "size_row_noun": (
+                "persons" if year in PERSONS_ROW_LABEL_YEARS else "people"
+            ),
+            "revision_line": REVISION_LINES.get(year),
         }
         for year in years
     }
+    not_captured = sorted(set(range(years[0], years[-1] + 1)) - set(years))
     return {
         "schema_version": adjusted_poverty.THRESHOLDS_SCHEMA_VERSION,
         "description": (
             "U.S. Census Bureau poverty thresholds for income years "
-            f"{years[0]}-{years[-1]}, as printed in the Census historical "
-            "threshold workbooks, for Track M (DynaSim exercise 4, the "
-            "minimum benefit; Python rules, not Axiom), which reads the "
-            "weighted average for one person aged 65 and over "
-            "(one_65_plus). Same content and schema as the Track U "
-            "capture: weighted averages by family size (with the under-65 "
-            "and 65-and-over rows for one and two persons), the size-1 and "
-            "size-2 weighted averages over both ages, and the "
+            f"{years[0]}-{years[-1]} (the captured_years only), as printed "
+            "in the Census historical threshold workbooks, for Track M "
+            "(DynaSim exercise 4, the minimum benefit; Python rules, not "
+            "Axiom), which reads the weighted average for one person aged "
+            "65 and over (one_65_plus). Same content and schema as the "
+            "Track U capture: weighted averages by family size (with the "
+            "under-65 and 65-and-over rows for one and two persons), the "
+            "size-1 and size-2 weighted averages over both ages, and the "
             "size-by-related-children matrix, in dollars"
         ),
         "years": [years[0], years[-1]],
+        "captured_years": list(years),
+        "years_not_captured": not_captured,
         "decision_records": {
             "d194": "thresh03-thresh12 staged 2026-09-24 (exercise 2)",
             "d279": (
                 "thresh13-thresh22 downloaded 2026-09-25 for Track M; "
                 "capture, hash and pin like the 2003-2012 capture"
+            ),
+            "d279_earlier_years": (
+                "thresh82, thresh86, thresh88, thresh89, thresh91, thresh92 "
+                "and thresh94-thresh02 staged 2026-09-25 under d279 (any "
+                "earlier year the build proves it needs: M4's structural "
+                "count of the threshold years the in-window records need); "
+                "thresh95 from the Internet Archive's copy of its Census URL"
             ),
         },
         "sources": parsed["sources"],
@@ -897,10 +1170,13 @@ def build_track_m_threshold_capture(
             ),
             "layout": (
                 "title names the year, source and note name the next "
-                "year's CPS ASEC, header and thirteen row labels as "
-                "printed, whole-dollar cells in the expected columns, "
-                "nothing else in the table's sheet; 2019 alone may carry "
-                "the empty worksheets Sheet2 and Sheet3"
+                "year's survey (the March CPS 1982-2000, the CPS ADS 2001, "
+                "the CPS ASEC from 2002), header and thirteen row labels "
+                "as printed (2001's size rows say persons), whole-dollar "
+                "cells in the expected columns, nothing else in the "
+                "table's sheet but 1982's and 2000's revision lines below "
+                "the note; 2019 alone may carry the empty worksheets "
+                "Sheet2 and Sheet3"
             ),
             "within_year": (
                 "65-and-over below under-65 (sizes 1, 2); size-1 and "
@@ -912,7 +1188,7 @@ def build_track_m_threshold_capture(
             ),
             "cross_year": (
                 "every matrix cell moves by one ratio from the previous "
-                f"year within ${_CROSS_YEAR_TOLERANCE:.0f}"
+                f"captured year within ${_CROSS_YEAR_TOLERANCE:.0f}"
             ),
             "matrix_ratio_by_year_pair": parsed["ratios"],
             "layout_by_year": layouts,

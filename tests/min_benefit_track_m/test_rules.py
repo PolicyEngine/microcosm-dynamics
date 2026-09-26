@@ -317,7 +317,16 @@ def test_monthly_minimum_rounding():
 def test_thresholds_load_from_the_census_capture():
     # the capture itself is tested in test_threshold_capture.py
     loaded = rules.load_aged_thresholds()
-    assert sorted(loaded.annual) == list(range(2003, 2023))
+    assert sorted(loaded.annual) == [
+        1982,
+        1986,
+        1988,
+        1989,
+        1991,
+        1992,
+        *range(1994, 2023),
+    ]
+    assert list(loaded.annual) == list(rules.TRACK_M_THRESHOLD_YEARS)
     assert loaded.source["kind"] == "census_capture"
 
 

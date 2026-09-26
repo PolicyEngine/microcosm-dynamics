@@ -22,8 +22,8 @@ What this package holds:
   Max's rulings (:data:`.policy.MAX_RULINGS`) and the frozen choices.
 * :mod:`.coverage`: years of coverage from the one history per worker
   (field G6; referee R6 and R7).
-* :mod:`.thresholds`: the pinned Census one-person 65+ thresholds,
-  2003-2022 (plan item M2).
+* :mod:`.thresholds`: the pinned Census one-person 65+ thresholds of
+  1982, 1986, 1988, 1989, 1991, 1992 and 1994-2022 (plan item M2).
 * :mod:`.rules`: the minimum-benefit arithmetic (fields G5, G7-G13, G22 and
   G23) and the years that define each record (section 4a).  It computes
   the PIA and the auxiliary benefits by calling the existing oracle

@@ -731,6 +731,39 @@ def _survivor_histories(draw):
     return birth, death, out
 
 
+@st.composite
+def _survivor_histories_with_a_mention(draw):
+    """:func:`_survivor_histories` with an observed survivor mention in a
+    year a survivor's benefit is allowed (the death year and the year of
+    attaining 60 or later), so that the claim year always rests on a
+    mention.  (Independent review of 2026-09-25: filtering the plain
+    histories for one rejected most draws, and the property below failed
+    Hypothesis's ``filter_too_much`` health check on 17 of 60 seeds.)"""
+
+    birth, death, history = draw(_survivor_histories())
+    earliest = max(death, birth + 60)
+    year = draw(
+        st.sampled_from([y for y in _OBSERVABLE_YEARS if y >= earliest])
+    )
+    if not (year in history and history[year].mentions_survivor):
+        types = {
+            name: draw(st.sampled_from(_TYPE_VALUES)) for name in ssr.SS_TYPES
+        }
+        types["survivor"] = True
+        history = {
+            **history,
+            year: cohort.observation(
+                year,
+                receipt=True,
+                types=types,
+                source=draw(
+                    st.sampled_from(("individual", "year_before_last"))
+                ),
+            ),
+        }
+    return birth, death, history
+
+
 def _brute_force_claim(history, birth, death):
     earliest = max(death, birth + 60)
     mentions = sorted(
@@ -847,13 +880,13 @@ def test_a_survivors_claim_year_is_the_earliest_consistent_year(case):
 
 
 @settings(max_examples=400, deadline=None)
-@given(_survivor_histories(), st.data())
+@given(_survivor_histories_with_a_mention(), st.data())
 def test_an_unknown_type_year_never_delays_a_survivors_claim(case, data):
     birth, death, history = case
     before, source = cohort.survivor_claim_year(
         history, birth_year=birth, death_year=death
     )
-    assume(source == "survivor_mention")
+    assert source == "survivor_mention"
     candidates = [
         y
         for y in _OBSERVABLE_YEARS

@@ -18,6 +18,7 @@
 
 # Preserve byte-pinned external HTML response bodies exactly.
 data/external/*.source.html binary
+data/external/census_poverty_thresholds/crosscheck/*.html binary
 
 # Locator-pinned codebook artifacts are canonical UTF-8 JSON with LF bytes.
 data/external/psid_codebook_field_evidence/*.json text eol=lf
