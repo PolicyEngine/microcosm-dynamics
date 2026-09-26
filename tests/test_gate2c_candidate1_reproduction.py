@@ -26,14 +26,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-# The couple earnings axis needs the certified pe-us AIME chain; default the
-# checkout the floor was built against unless the environment overrides it.
-os.environ.setdefault(
-    "POPULACE_DYNAMICS_PE_US_DIR",
-    str(Path("~/PolicyEngine/policyengine-us-main").expanduser()),
-)
-
-from populace_dynamics.data import (  # noqa: E402
+from populace_dynamics.data import (
     births,
     deaths,
     family,
@@ -44,20 +37,30 @@ from populace_dynamics.data import (  # noqa: E402
 from populace_dynamics.data import (
     couple_earnings as ce,
 )
-from populace_dynamics.harness import panel as hpanel  # noqa: E402
-from populace_dynamics.models import (  # noqa: E402
+from populace_dynamics.harness import panel as hpanel
+from populace_dynamics.models import (
     couple_formation_sim_v1 as cfs,
 )
-from populace_dynamics.models.family_transitions.common import (  # noqa: E402
+from populace_dynamics.models.family_transitions.common import (
     marriage_order_map,
 )
-from populace_dynamics.ss.params import load_ssa_parameters  # noqa: E402
+from populace_dynamics.ss.params import load_ssa_parameters
 
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACT = ROOT / "runs" / "gate2c_hazard_v1.json"
 FLOOR = ROOT / "runs" / "gate2c_floors_v1.json"
 PSID_DATA = Path("~/PolicyEngine/psid-data").expanduser()
-PE_US_DIR = Path(os.environ["POPULACE_DYNAMICS_PE_US_DIR"])
+# The couple earnings axis needs the certified pe-us AIME chain; default the
+# checkout the floor was built against unless the environment overrides it.
+# The setting is read here but exported only while this module's tests run
+# (``_pe_us_dir_env``): writing it into ``os.environ`` at import would point
+# every oracle test collected in the same session at this checkout.
+PE_US_ENV = "POPULACE_DYNAMICS_PE_US_DIR"
+PE_US_DIR_SETTING = os.environ.get(
+    PE_US_ENV,
+    str(Path("~/PolicyEngine/policyengine-us-main").expanduser()),
+)
+PE_US_DIR = Path(PE_US_DIR_SETTING)
 
 needs_data = pytest.mark.skipif(
     not (PSID_DATA / "MX23REL").is_dir() or not PE_US_DIR.is_dir(),
@@ -70,6 +73,14 @@ N_DRAWS = 20
 DRAW_SEED_BASE = 5200
 SPLIT_COLUMN = "component_id"
 EXACT_ATOL = 1e-12
+
+
+@pytest.fixture(scope="module", autouse=True)
+def _pe_us_dir_env():
+    """Point the oracle loaders at ``PE_US_DIR`` for this module only."""
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setenv(PE_US_ENV, PE_US_DIR_SETTING)
+        yield
 
 
 @pytest.fixture(scope="module")
