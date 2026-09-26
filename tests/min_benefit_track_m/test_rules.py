@@ -317,11 +317,13 @@ def test_monthly_minimum_rounding():
 def test_thresholds_load_from_the_census_capture():
     # the capture itself is tested in test_threshold_capture.py
     loaded = rules.load_aged_thresholds()
+    # 1990, which d430's sensitivity needs, joined on 2026-09-26
     assert sorted(loaded.annual) == [
         1982,
         1986,
         1988,
         1989,
+        1990,
         1991,
         1992,
         *range(1994, 2023),

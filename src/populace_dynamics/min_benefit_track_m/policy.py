@@ -755,7 +755,11 @@ MAX_RULINGS: dict[str, dict[str, Any]] = {
             "staged on 2026-09-25 under this ruling (thresh95 from the "
             "Internet Archive's copy of its Census URL) and are captured, "
             "hashed and pinned with 2003-2022 in "
-            "census_poverty_thresholds_1982_2022.json"
+            "census_poverty_thresholds_1982_2022.json. d430's sensitivity "
+            "count (sections 4, 7 and 10) proved 1990 needed too; the "
+            "orchestrating session fetched thresh90 from its Census URL on "
+            "2026-09-26 under this ruling, and it is captured, hashed and "
+            "pinned in the same file"
         ),
     },
     "own_receipt_reading": _d430_entry(

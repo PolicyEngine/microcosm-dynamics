@@ -94,11 +94,13 @@ def test_the_checks_record_every_guard(document):
     years = checks["threshold_years_needed_by_the_invented_cohort"]
     assert min(int(year) for year in years) >= 2003
     captured = checks["threshold_years_all_captured"]["captured"]
-    assert captured[:6] == [1982, 1986, 1988, 1989, 1991, 1992]
-    assert captured[6:] == list(range(1994, 2023))
-    # 1998 is captured (d279, 2026-09-25); 1993 and 1981 are not.
-    passes = checks["a_record_needing_1998_passes_the_threshold_check"]
-    assert not passes["refused"] and passes["threshold_year"] == 1998
+    assert captured[:7] == [1982, 1986, 1988, 1989, 1990, 1991, 1992]
+    assert captured[7:] == list(range(1994, 2023))
+    # 1998 is captured (d279, 2026-09-25), and 1990, which d430's
+    # sensitivity needs (d279, 2026-09-26); 1993 and 1981 are not.
+    for year in (1998, 1990):
+        passes = checks[f"a_record_needing_{year}_passes_the_threshold_check"]
+        assert not passes["refused"] and passes["threshold_year"] == year
     for year in (1993, 1981):
         early = checks[
             f"a_record_needing_{year}_is_refused_before_any_computation"
@@ -137,7 +139,7 @@ def test_the_checks_record_every_guard(document):
         "an_unconstrained_m4_cohort_needing_years_not_captured_is_refused"
     ]
     assert unconstrained["error"] == "ThresholdYearMissingError"
-    assert "captured: 1982, 1986, 1988-1989, 1991-1992, 1994-2022" in (
+    assert "captured: 1982, 1986, 1988-1992, 1994-2022" in (
         unconstrained["message"]
     )
     # the refusal names exactly the years the draw needs and lacks
@@ -178,7 +180,7 @@ def test_the_provenance_pins_the_specification_and_parameters(document):
     spec = provenance["m1_specification"]
     assert spec["path"] == "docs/design/minimum_benefits_comparison.md"
     assert len(spec["sha256"]) == 64
-    assert provenance["census_thresholds"]["sha256"].startswith("4493b8d5")
+    assert provenance["census_thresholds"]["sha256"].startswith("288399c4")
     assert provenance["census_thresholds"]["path"] == (
         "data/external/census_poverty_thresholds_1982_2022.json"
     )
@@ -218,9 +220,22 @@ def test_d430s_sensitivity_runs_on_both_invented_cohorts(document):
         ),
         ("d430_a_sensitivity_of_another_universe_is_refused", "same"),
         ("d430_a_sensitivity_under_the_scored_reading_is_refused", "built"),
+        (
+            "d430_a_sensitivity_record_needing_1993_is_refused_first",
+            "threshold years 1993 (1 records) are not in the capture",
+        ),
     ):
         assert checks[name]["refused"], name
         assert fragment in checks[name]["message"], name
+    # the sensitivity's threshold-year check passes a record needing 1990
+    # on the real capture (captured 2026-09-26 for d430's sensitivity)
+    passes = checks[
+        "d430_a_sensitivity_record_needing_1990_passes_the_threshold_check"
+    ]
+    assert not passes["refused"] and passes["threshold_year"] == 1990
+    assert 1990 in passes["needed_before_2003"]
+    refused = checks["d430_a_sensitivity_record_needing_1993_is_refused_first"]
+    assert refused["error"] == "ThresholdYearMissingError"
     identifier = "own_receipt_reading_d430"
     default = result["m4_m5"]["result"]["sensitivities"][identifier]
     assert default["scored"] is False

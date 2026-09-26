@@ -68,12 +68,12 @@ def _real_rows(script, year: int) -> list[list]:
 # -------------------------------------------------------------------------
 def test_committed_workbooks_match_their_pins(script):
     """The directory also holds the workbooks Track M reads (1982, 1986,
-    1988, 1989, 1991, 1992, 1994-2003 and 2013-2022; cos d279); this
-    capture reads the nine of 2004-2012."""
+    1988-1992, 1994-2003 and 2013-2022; cos d279); this capture reads the
+    nine of 2004-2012."""
 
     assert script.CENSUS_WORKBOOK_DIR == WORKBOOKS
     assert script.YEARS == YEARS
-    track_m_years = (1982, 1986, 1988, 1989, 1991, 1992, *range(1994, 2023))
+    track_m_years = (1982, 1986, *range(1988, 1993), *range(1994, 2023))
     assert (
         sorted(p.name for p in WORKBOOKS.glob("*.xlsx"))
         == sorted(script.CENSUS_WORKBOOK_SHA256)

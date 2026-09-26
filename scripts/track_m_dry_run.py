@@ -18,17 +18,18 @@ build_track_m_inputs`) code the registered run uses on the PSID.  The
 parameters are real and committed or read from the policyengine-us
 checkout the oracle reads: the oracle's wage index, bend points and
 reductions, the quarter-of-coverage amounts, the Census one-person 65+
-thresholds of 1982, 1986, 1988, 1989, 1991, 1992 and 1994-2022 (the pinned
-capture) and the SSA COLA history (for the invented MS5 benefits).  No PSID file is opened and no comparator
-value is read.
+thresholds of 1982, 1986, 1988-1992 and 1994-2022 (the pinned capture)
+and the SSA COLA history (for the invented MS5 benefits).  No PSID file
+is opened and no comparator value is read.
 
 The checks record that the specification block equals the code and the
 committed draft authorizes no real-data run (nor would a ratified copy
 that still lists blockers); that every threshold year the invented cohort
-needs is captured, that a record needing a year before 2003 the capture
-holds (1998) passes the threshold check, and that records needing a year
-it lacks (1993, inside the captured span; 1981, before it) are refused
-before anything is computed (referee R8); that MS5 read benefit-implied
+needs is captured, that records needing a year before 2003 the capture
+holds (1998; 1990, the year d430's sensitivity needs) pass the threshold
+check, and that records needing a year it lacks (1993, inside the
+captured span; 1981, before it) are refused before anything is computed
+(referee R8); that MS5 read benefit-implied
 PIAs and MS0 none; that the registered path refuses invented records,
 PSID-kind records without the issue #42 pointer or an authorizing
 specification, a subset of rows and other floor seeds; that records
@@ -106,6 +107,7 @@ from populace_dynamics.min_benefit_track_m.policy import (  # noqa: E402
     OWN_RECEIPT_PRE62_UNKNOWN_OR_OTHER_UNOBSERVED,
     OWN_RECEIPT_SENSITIVITY_ID,
     REGISTERED_ROWS,
+    SENSITIVITIES,
     TABLE6_OPTIONS,
     TABLE6_ROWS,
     policy_for_row,
@@ -240,7 +242,8 @@ def checks(
     )
 
     # Old-age workers entitled in 2004 whose year of attaining 62 is a
-    # year the capture holds (1998, born 1936, entitled at 68), a year
+    # year the capture holds (1998, born 1936, entitled at 68; 1990, born
+    # 1928, entitled at 76, the year d430's sensitivity needs), a year
     # inside the captured span it lacks (1993, born 1931) and a year before
     # it (1981, born 1919).
     def early_worker(birth: int) -> WorkerRecord:
@@ -264,6 +267,7 @@ def checks(
         )
 
     captured_1998 = early_worker(1936)
+    captured_1990 = early_worker(1928)
     gap_1993 = early_worker(1931)
     before_1981 = early_worker(1919)
     psid_kind = dataclasses.replace(inputs, provenance_kind=PSID_FILES)
@@ -314,6 +318,12 @@ def checks(
             )
         )
         | {"threshold_year": captured_1998.birth_year + 62},
+        "a_record_needing_1990_passes_the_threshold_check": _refusal(
+            lambda: rules.check_threshold_years(
+                needed_with(captured_1990), parameters.thresholds
+            )
+        )
+        | {"threshold_year": captured_1990.birth_year + 62},
         "a_record_needing_1993_is_refused_before_any_computation": _refusal(
             lambda: pipeline.run_track_m(
                 with_worker(gap_1993), parameters, data_provenance="invented"
@@ -514,6 +524,30 @@ def d430_checks(
         ),
     )
     changes = sensitivity["reclassification"]["worker_record_changes"]
+
+    # The sensitivity reading's records with one invented old-age record
+    # added, entitled in 2004, whose year of attaining 62 is 1990 (born
+    # 1928; the year d430's sensitivity needs on the PSID, captured
+    # 2026-09-26) or 1993 (born 1931; a year the capture lacks).  The
+    # universe is unchanged, so the pipeline's first refusal is the
+    # sensitivity's threshold-year check.
+    def sensitivity_with(birth: int) -> TrackMInputs:
+        worker = WorkerRecord(
+            f"INVENTED-SENSITIVITY-{birth + 62}",
+            birth,
+            rules.BASIS_OLD_AGE,
+            2004,
+            {year: 30_000.0 for year in range(1968, 1997)},
+        )
+        base = run["records_sensitivity"]
+        return dataclasses.replace(
+            base, workers={**base.workers, worker.record_id: worker}
+        )
+
+    needs_1990 = needed_threshold_years(
+        sensitivity_with(1928).workers.values(),
+        [policy_for_row(SENSITIVITIES[OWN_RECEIPT_SENSITIVITY_ID]["row"])],
+    )
     return {
         "d430_rows_ms0_to_ms6_identical_with_and_without_the_sensitivity": {
             "passed": same_rows
@@ -578,6 +612,29 @@ def d430_checks(
                 own_receipt_sensitivity=records,
             )
         ),
+        # the check the pipeline applies to the sensitivity's records
+        # (its window, MS0's), on the real capture
+        "d430_a_sensitivity_record_needing_1990_passes_the_threshold_check": (
+            _refusal(
+                lambda: rules.check_threshold_years(
+                    needs_1990, parameters.thresholds
+                )
+            )
+            | {
+                "threshold_year": 1990,
+                "needed_before_2003": sorted(
+                    year for year in needs_1990 if year < 2003
+                ),
+            }
+        ),
+        "d430_a_sensitivity_record_needing_1993_is_refused_first": _refusal(
+            lambda: pipeline.run_track_m(
+                records,
+                parameters,
+                data_provenance=INVENTED,
+                own_receipt_sensitivity=sensitivity_with(1931),
+            )
+        ),
     }
 
 
@@ -617,7 +674,7 @@ def m4_m5_checks(
     # At least 600 family units, so that the unconstrained draw holds
     # records needing threshold years the capture lacks (as the PSID
     # would, were a year it needs not captured).  Since the capture holds
-    # 1982, 1986, 1988, 1989, 1991, 1992 and 1994-2022, only a draw that
+    # 1982, 1986, 1988-1992 and 1994-2022, only a draw that
     # reaches a gap year (or one before 1982) is refused; the check
     # records those years so that a draw reaching none shows as such.
     unconstrained = invented_psid.invented_cohort_inputs(
@@ -849,7 +906,7 @@ def _markdown(document: dict[str, Any]) -> str:
         "not PSID values and not a result, and they compare with nothing. "
         "The parameters are real: the oracle's (policyengine-us), the "
         "quarter-of-coverage amounts, the pinned Census one-person 65+ "
-        "thresholds (1982, 1986, 1988, 1989, 1991, 1992 and 1994-2022) and "
+        "thresholds (1982, 1986, 1988-1992 and 1994-2022) and "
         "the SSA COLA history.",
         "",
         f"- Labels: {'; '.join(result['labels'])}",

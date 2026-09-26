@@ -89,25 +89,25 @@ def test_block_identity_and_status(block):
     # The Census years before 2003 that M4's count shows are needed and
     # the statute text are captured (section 18, blockers 1 and 2,
     # 2026-09-25); the registration package and the registration remain.
+    # The 1990 threshold d430's sensitivity needs (found by its structural
+    # count, section 18 blocker 5) is captured too (2026-09-26).
     for cleared in (
         "census_thresholds_1982_to_2002_needed_by_m4_not_captured",
         "statute_413_415_402_423_not_captured_m2",
+        "census_threshold_1990_needed_by_the_d430_sensitivity_not_captured",
     ):
         assert cleared not in block["blocked_by"], cleared
     assert block["blocked_by"] == [
         "independent_review_of_the_d430_sensitivity_build_m1_draft_3_then_"
         "ratification_by_merge",
-        # found by d430's structural count (2026-09-26): the sensitivity's
-        # window needs the 1990 threshold, which the capture lacks
-        "census_threshold_1990_needed_by_the_d430_sensitivity_not_captured",
         "registration_package_m10_needs_the_comparator_seal_hash",
         "issue_42_registration_absent",
     ]
-    # the blocker names a year the recorded capture lacks (another test
+    # the cleared blocker's year is in the recorded capture (another test
     # holds the recorded capture to the loader's)
     census = block["sources"]["census_thresholds"]
-    assert 1990 in census["years_not_captured"]
-    assert 1990 not in census["captured_years"]
+    assert 1990 in census["captured_years"]
+    assert 1990 not in census["years_not_captured"]
 
 
 def test_the_block_records_the_census_and_statute_captures(block):
@@ -130,6 +130,19 @@ def test_the_block_records_the_census_and_statute_captures(block):
         == census["years_not_captured"]
     )
     assert census["replaces"]["sha256"].startswith("65bbcd83")
+    # the pin before 1990 was captured (2026-09-26), and why it moved
+    assert census["previous_pin"] == {
+        "sha256": (
+            "4493b8d5823ea12912212d892f98ef4777098ce34b01857cedc35d444a8b99cd"
+        ),
+        "lacked": [1990],
+        "superseded_on": "2026-09-26",
+        "why": "own_receipt_reading_d430_needs_1990",
+    }
+    assert census["previous_pin"]["sha256"] != census["sha256"]
+    assert set(census["previous_pin"]["lacked"]) <= set(
+        census["captured_years"]
+    )
     assert census["internet_archive_copies"] == ["thresh95.xlsx"]
     root = SPEC_PATH.parents[2]
     import hashlib

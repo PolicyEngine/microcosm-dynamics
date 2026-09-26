@@ -31,19 +31,22 @@ Two captures, each written to ``data/external`` and pinned by SHA-256 in
   capture byte for byte (``tests/track_u/test_census_threshold_capture.py``).
 * ``--track-m-census-dir DIR`` writes ``census_poverty_thresholds_1982_2022.json``
   for Track M (DynaSim exercise 4, the minimum benefit) from the
-  thirty-five workbooks of 1982, 1986, 1988, 1989, 1991, 1992 and
-  1994-2022: the nine above, ``thresh03.xlsx`` (staged under d194 with
-  them), ``thresh13.xlsx`` ... ``thresh22.xlsx`` (fetched on 2026-09-25 by
-  the orchestrating Claude Code session after Max approved the download in
-  cos decision d279) and the fifteen years before 2003 that M4's
-  structural count shows the in-window records need (staged on 2026-09-25
-  under d279's "any earlier year the build proves it needs";
-  ``thresh95.xlsx`` from the Internet Archive's copy of its Census URL,
-  :data:`ARCHIVE_RETRIEVALS`).  All thirty-five are committed in
+  thirty-six workbooks of 1982, 1986, 1988-1992 and 1994-2022: the nine
+  above, ``thresh03.xlsx`` (staged under d194 with them),
+  ``thresh13.xlsx`` ... ``thresh22.xlsx`` (fetched on 2026-09-25 by the
+  orchestrating Claude Code session after Max approved the download in
+  cos decision d279), the fifteen years before 2003 that M4's structural
+  count shows the in-window records need (staged on 2026-09-25 under
+  d279's "any earlier year the build proves it needs"; ``thresh95.xlsx``
+  from the Internet Archive's copy of its Census URL,
+  :data:`ARCHIVE_RETRIEVALS`) and 1990, which d430's sensitivity's window
+  needs by its structural count of 2026-09-26 (fetched from its Census URL
+  on 2026-09-26 under the same ruling).  All thirty-six are committed in
   ``data/external/census_poverty_thresholds/`` and pinned in
   :data:`CENSUS_WORKBOOK_SHA256`.  The same parser reads them.  Inspected
-  cell by cell (2026-09-25), every workbook prints the 2003-2012 table in
-  the same cells with the same labels; the parser accepts exactly these
+  cell by cell (2026-09-25; ``thresh90.xlsx`` on 2026-09-26), every
+  workbook prints the 2003-2012 table in the same cells with the same
+  labels; the parser accepts exactly these
   departures, each pinned to its years: ``thresh19.xlsx`` carries two
   further worksheets, ``Sheet2`` and ``Sheet3``, that must be empty
   (:data:`EMPTY_EXTRA_SHEETS`); ``thresh22.xlsx`` prints every weighted
@@ -234,9 +237,9 @@ CENSUS_WORKBOOK_DIR = ROOT / "data" / "external" / "census_poverty_thresholds"
 #: ``thresh03.xlsx`` ... ``thresh12.xlsx`` fetched on 2026-09-24 under cos
 #: decision d194 and ``thresh13.xlsx`` ... ``thresh22.xlsx`` on 2026-09-25
 #: under cos decision d279, each by the orchestrating Claude Code session
-#: after Max approved the download, and the fifteen years before 2003
-#: below (the staging directory's ``SHA256SUMS`` lists all thirty-five
-#: digests as of 2026-09-25).  A workbook with other bytes is refused
+#: after Max approved the download, and the sixteen years before 2003
+#: below (the staging directory's ``SHA256SUMS`` lists all thirty-six
+#: digests as of 2026-09-26).  A workbook with other bytes is refused
 #: before it is parsed.
 CENSUS_WORKBOOK_SHA256: dict[str, str] = {
     "thresh03.xlsx": (
@@ -303,9 +306,10 @@ CENSUS_WORKBOOK_SHA256: dict[str, str] = {
     # in-window records need (1982, 1986, 1988, 1989, 1991, 1992 and
     # 1994-2002), staged on 2026-09-25 under cos decision d279 ("any
     # earlier year the build proves it needs") in the directory whose
-    # SHA256SUMS lists all thirty-five digests: fourteen from
-    # CENSUS_URL_BASE and thresh95.xlsx from the Internet Archive's copy
-    # of its Census URL (ARCHIVE_RETRIEVALS).
+    # SHA256SUMS then listed all thirty-five digests (thirty-six with
+    # thresh90.xlsx, below): fourteen from CENSUS_URL_BASE and
+    # thresh95.xlsx from the Internet Archive's copy of its Census URL
+    # (ARCHIVE_RETRIEVALS).
     "thresh82.xlsx": (
         "88a5fb3aaba6008e430bce327b862fca03ba85340c32c1375b902dfb60093b78"
     ),
@@ -317,6 +321,16 @@ CENSUS_WORKBOOK_SHA256: dict[str, str] = {
     ),
     "thresh89.xlsx": (
         "bed78af3dd2425349f33391163cc76a1218080403eeaa6e7c0de15d359847d73"
+    ),
+    # 1990: d430's sensitivity reading needs it (its structural count of
+    # 2026-09-26, the threshold years its window, MS0's, needs); fetched
+    # from CENSUS_URL_BASE on 2026-09-26 by the orchestrating Claude Code
+    # session under d279's "any earlier year the build proves it needs"
+    # (12,171 bytes; its SHA-1 in base 32 is
+    # NU6BR4ASTR4TF4JXSCGNKJSXXA3V24HH, the digest the Internet Archive's
+    # CDX index records for that URL by the orchestrator's check).
+    "thresh90.xlsx": (
+        "6a955422a86d5bea399fd9c23567779cbb279ce00b2d1c678018e802a67bfdf4"
     ),
     "thresh91.xlsx": (
         "a06989525bc712f609fa40cde808ec1cfb5bf8ce1d8194eeb362f2ec7847249c"
@@ -404,15 +418,19 @@ ARCHIVE_RETRIEVALS: dict[str, dict[str, Any]] = {
 EMPTY_EXTRA_SHEETS: dict[int, tuple[str, ...]] = {2019: ("Sheet2", "Sheet3")}
 #: The survey each year's note names as the source of its weighted
 #: averages, for the years before 2002 (inspected cell by cell,
-#: 2026-09-25): 1982-2000 print "the March <year + 1> Current Population
-#: Survey (CPS)", 2001 "the 2002 Current Population Survey Annual
-#: Demographic Supplement (CPS ADS)".  From 2002 every note names the
-#: <year + 1> CPS ASEC.  A year before 2002 that is not listed has no
-#: inspected layout and is refused.
+#: 2026-09-25; ``thresh90.xlsx`` on 2026-09-26): 1982-2000 print "the
+#: March <year + 1> Current Population Survey (CPS)", 2001 "the 2002
+#: Current Population Survey Annual Demographic Supplement (CPS ADS)".
+#: From 2002 every note names the <year + 1> CPS ASEC.  A year before 2002
+#: that is not listed has no inspected layout and is refused.
+#: ``thresh90.xlsx`` prints 1989's and 1991's layout exactly: one
+#: worksheet, the same 91 non-blank cells in the same places, "people"
+#: rows, the March 1991 CPS note (with a trailing space, as 1986's, 1988's
+#: and 2000's notes have) and no revision line.
 NOTE_SURVEY_BEFORE_2002: dict[int, str] = {
     **{
         year: "march_cps"
-        for year in (1982, 1986, 1988, 1989, 1991, 1992, *range(1994, 2001))
+        for year in (1982, 1986, *range(1988, 1993), *range(1994, 2001))
     },
     2001: "cps_ads",
 }
@@ -1093,12 +1111,13 @@ def build_track_m_threshold_capture(
     *,
     expected_sha256: dict[str, str] | None = CENSUS_WORKBOOK_SHA256,
 ) -> dict[str, Any]:
-    """Parse the thirty-five workbooks 1982-2022 into Track M's capture.
+    """Parse the thirty-six workbooks 1982-2022 into Track M's capture.
 
     The same parser and checks as :func:`build_threshold_capture`, over
     ``min_benefit_track_m.thresholds.TRACK_M_THRESHOLD_YEARS`` (1982, 1986,
-    1988, 1989, 1991, 1992 and 1994-2022; the years before 2003 are those
-    M4's structural count shows the in-window records need), with each
+    1988-1992 and 1994-2022; the years before 2003 are those M4's
+    structural count shows the in-window records need, and 1990, which
+    d430's sensitivity's window needs), with each
     year's layout variant recorded (its worksheets, the unit its weighted
     averages are printed to, the survey its note names, the noun of its
     size rows and any revision line) and the years within 1982-2022 that
@@ -1156,6 +1175,11 @@ def build_track_m_threshold_capture(
                 "earlier year the build proves it needs: M4's structural "
                 "count of the threshold years the in-window records need); "
                 "thresh95 from the Internet Archive's copy of its Census URL"
+            ),
+            "d279_1990": (
+                "thresh90 fetched 2026-09-26 under d279 (any earlier year "
+                "the build proves it needs: d430's sensitivity's structural "
+                "count of the threshold years its window needs)"
             ),
         },
         "sources": parsed["sources"],

@@ -462,8 +462,8 @@ def invented_cohort_inputs(
     or after it.  ``None`` draws without that constraint, as the PSID is
     (its in-window records need years before 2003), so that the dry run
     can show the pipeline refusing, before computing, a cohort that needs
-    a threshold year the real capture lacks (one of 1983-1985, 1987, 1990
-    and 1993, or a year before 1982).
+    a threshold year the real capture lacks (one of 1983-1985, 1987 and
+    1993, or a year before 1982).
     """
 
     draw = _Draw(seed, threshold_years_from)
