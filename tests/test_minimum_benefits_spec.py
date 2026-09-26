@@ -6,11 +6,13 @@ that block to the code (the options, the policy defaults, the registered
 rows, the cells, the labels and the structural-count universe), check that
 the draft cannot authorize a registered run, and recompute the draft's
 INVENTED worked cases.  They use only the document and the code: no PSID
-value, no model output and no comparator value.
+value, no model output and no comparator value.  One test also hashes the
+statute capture the block pins, when its evidence folder is present.
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -31,6 +33,10 @@ SPEC_PATH = (
     / "docs"
     / "design"
     / "minimum_benefits_comparison.md"
+)
+#: ``EVID`` of the specification: the evidence folder outside this checkout.
+EVIDENCE = (
+    Path.home() / "microcosm-launch-evidence" / "dynasim-parity-20260909"
 )
 
 
@@ -139,6 +145,36 @@ def test_the_block_records_the_census_and_statute_captures(block):
         "O1",
     ]
     assert len(statute["reading"]["sha256"]) == 64
+
+
+def test_the_statute_pins_are_the_captured_files(block, text):
+    """Section 19's statute pins are the files in the capture folder, and
+    section 2 prints the same short hashes (independent review of
+    2026-09-25: the lane corrected ``READING.md`` after writing the pins,
+    so both pins named superseded bytes).  The folder is outside this
+    checkout; without it only the section 2 check runs."""
+
+    statute = block["sources"]["statute"]
+    sums = statute["sha256sums_sha256"]
+    reading = statute["reading"]["sha256"]
+    sources = text[text.index("## 2. Sources") : text.index("## 3. Policy")]
+    assert f"`SHA256SUMS` `{sums[:8]}…`" in sources
+    assert f"`READING.md` (`{reading[:8]}…`)" in sources
+    folder = EVIDENCE / statute["folder"]
+    if not folder.is_dir():
+        pytest.skip("the statute capture is outside this checkout")
+    listing = (folder / "SHA256SUMS").read_bytes()
+    assert hashlib.sha256(listing).hexdigest() == sums
+    readme = (folder / statute["reading"]["file"]).read_bytes()
+    assert hashlib.sha256(readme).hexdigest() == reading
+    listed = {}
+    for line in listing.decode("utf-8").splitlines():
+        digest, name = line.split()
+        listed[name] = digest
+    assert statute["reading"]["file"] in listed
+    for name, digest in listed.items():
+        actual = hashlib.sha256((folder / name).read_bytes()).hexdigest()
+        assert actual == digest, name
 
 
 def test_statistic_and_uncertainty_are_the_tabulations(block):

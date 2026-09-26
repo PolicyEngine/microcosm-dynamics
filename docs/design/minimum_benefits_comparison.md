@@ -86,9 +86,13 @@
     minimum, flag or share on real data. §22 lists what it read.
   - A fifth builder lane (Claude Code subagent, Opus 5.5) cleared §18's
     blockers 1 and 2 on 2026-09-25: the Census workbooks before 2003 and
-    the statute capture. It read `EVID/RESTRICTED-FILES.md` (SHA-256
-    `2fc9bdbf…`; after the orchestrator's 19:35 entry, `e5a72860…`, which
-    it re-read) before any other file and opened nothing it restricts:
+    the statute capture. It read `EVID/RESTRICTED-FILES.md` before any
+    other file, in the version whose last entry is dated 2026-09-25 19:15
+    (the orchestrator's pre-edit copy of that version in `EVID/revisions/`
+    has SHA-256 `624be4f2…`; the lane did not hash the file at first read,
+    and this entry first gave `2fc9bdbf…`, an earlier version's hash), and
+    re-read it after the orchestrator's 19:35 entry (`e5a72860…`). It
+    opened nothing either version restricts:
     not the Report in any copy, the plan, the cleared files, any
     comparator directory, seal, reconciliation or values scan, the
     uncleared sources, either scratchpad archive or any exercise-1 result.
@@ -162,7 +166,7 @@ builder lane).
 | PSID 2023 wave, family files 1968-2023, marriage history | Structural counts (§10); M3's receipt and labor-income items (§§4c, 5, 6) | Staged; labels verified (`tests/data/test_track_m_psid_labels.py`, labels and format blocks only) |
 | Census historical poverty-threshold workbooks of 1982, 1986, 1988, 1989, 1991, 1992 and 1994-2022 (`thresh82.xlsx`-`thresh22.xlsx`; `thresh95.xlsx` is the Internet Archive's copy of its Census URL) | The threshold that defines the minimum (G8, §7) | **Captured** (d194, d279): `data/external/census_poverty_thresholds_1982_2022.json` (SHA-256 `4493b8d5…`); it replaced the 2003-2022 capture (`65bbcd83…`), whose content it keeps (§7) |
 | Census historical poverty Table 1, HTML edition of 2009 (`hstpov1.html`, Internet Archive capture `20100209011620`, SHA-256 `d219cb20…`) | An independent check of the captured weighted averages, 1982-2006, and of their CPI-U updating (§7) | Committed in `data/external/census_poverty_thresholds/crosscheck/`; read by the tests |
-| 42 USC 413, 415 (including 415(i)), 402 (including 402(k), (q) and (w)) and 423: uscode.house.gov, 'prelim' edition, laws in effect on 2026-09-24 | Quarters of coverage (§5), the years of §4a, the PIA and COLAs (§6), dual entitlement (§4b rule 5), the DI waiting period (§4b rule 4) | **Captured** (M2, 2026-09-25): `EVID/track-m-statute-20260925/` (HTML, plain text, verbatim excerpts; `SHA256SUMS` `6a268716…`). Its `READING.md` (`9c043b4e…`) gives each rule the code relies on a verdict (§18). 20 CFR 404.141 and 404.143 stay review copies in `EVID/track-m-review-20260924/` |
+| 42 USC 413, 415 (including 415(i)), 402 (including 402(k), (q) and (w)) and 423: uscode.house.gov, 'prelim' edition, laws in effect on 2026-09-24 | Quarters of coverage (§5), the years of §4a, the PIA and COLAs (§6), dual entitlement (§4b rule 5), the DI waiting period (§4b rule 4) | **Captured** (M2, 2026-09-25): `EVID/track-m-statute-20260925/` (HTML, plain text, verbatim excerpts; `SHA256SUMS` `a5b411f5…`). Its `READING.md` (`8a5095ab…`) gives each rule the code relies on a verdict (§18). 20 CFR 404.141 and 404.143 stay review copies in `EVID/track-m-review-20260924/` |
 | 42 USC 415(b)(2)(B)(ii) | The end of an old-age PIA's history (§4a) | Read in the text `5b41d1cd…` (encoder workspace copy); confirmed in M2's capture (`READING.md` rules 5 and 6) |
 | 42 USC 402(k)(3)(A) | The survivor's own amount (§4b rule 5) | Read in the referee's extract (`43d5e10a…`) and its page copy (`e5bb977c…`); M2's capture reads it with 402(q)(3) and (w) (`READING.md` rule 14) |
 | 42 USC 415(i)(2)(A)(iii) | MS5's COLA factor (§6) | Read in `EVID/tr2008-inputs-20260922/usc-42-415-excerpts.txt` (`a323ca47…`); confirmed in M2's capture (`READING.md` rule 13) |
@@ -1284,8 +1288,9 @@ tuple and the reachability guard:
   them the refusal of an invented M4 cohort that needs a threshold year
   the capture lacks, and of records that need 1993 and 1981, while a
   record that needs 1998 now passes. Its output, headed "INVENTED DATA -
-  NOT A COMPARISON", is in `EVID/track-m-dry-run-r5-20260925/` (earlier
-  runs: `EVID/track-m-dry-run-20260925/`, `-r2/`, `-r3-` and `-r4-`).
+  NOT A COMPARISON", is in `EVID/track-m-dry-run-r6-20260925/` (earlier
+  runs: `EVID/track-m-dry-run-20260925/`, `-r2/`, `-r3-`, `-r4-` and
+  `-r5-`).
 - `scripts/run_track_m_registered.py`: the one-shot entry point. It
   refuses this draft at its preflight (§19). With an authorizing block it
   refuses, before reading any PSID file, while a component is missing
@@ -1297,8 +1302,9 @@ tuple and the reachability guard:
   refuses any threshold year the capture lacks. Every year M4's structural
   count shows the in-window records need is now captured (§7).
 - Tests: `tests/min_benefit_track_m/` (the capture before 2003, its
-  differential by row label, the cross-check against Census's Table 1 and
-  the threshold invariants in `test_threshold_capture_before_2003.py`),
+  differential by row label, the cross-check against Census's Table 1,
+  the threshold invariants and the loader's and capture's year guards in
+  `test_threshold_capture_before_2003.py`),
   `tests/data/test_social_security_receipt.py`,
   `tests/data/test_prior_year_labor_income.py`,
   `tests/data/test_track_m_psid_labels.py` (staged-file labels only) and
@@ -1355,33 +1361,57 @@ Blocked, with the plan's effort estimates (lane-days):
    lane did not change.
    - **F1** (§4b rule 4). 423(a)(1) and (c)(2) start DI entitlement with
      the first month after a waiting period of five full calendar months
-     of disability, so onset is in the entitlement year or earlier.
+     of disability (or, in 423(a)(1)'s two waivers, amyotrophic lateral
+     sclerosis and a new disability within 60 months of an earlier one,
+     with the first full month of disability), so onset is in the
+     entitlement year or earlier.
      Entitlement − 1 is a convention inside that bound (the builder
      default), not statute; onset = the entitlement year is equally
      consistent with the text.
-   - **F2** (§4a, disability row). 413(a)(2)(B)(i) removes only the
-     quarters inside a period of disability other than its first and
-     last, and 415(b)(2)(B)(ii) keeps as a computation base year any year
-     not entirely in a period of disability. Ending *Y* and *P*'s history
-     at onset − 1 drops the onset year's earnings before the disability:
-     an approximation like the death row's, but unnamed.
+   - **F2** (§4a, disability row). For *Y*: 413(a)(2)(B)(i) removes only
+     the quarters inside a period of disability other than its first and
+     last, so the onset year's quarters before the period, and its
+     initial quarter, can be quarters of coverage. For *P*: 423(a)(2)
+     computes the DI PIA as though old-age entitlement began in the month
+     of the DI application, so 415(b)(2)(B)(ii)(I) ends the computation
+     base years before the application year, and (ii) excludes only a
+     year entirely in a period of disability. The onset year is therefore
+     a base year when the application falls in a later calendar year;
+     when it is filed in the onset year, the text ends *P*'s history at
+     onset − 1, as the code does. Ending *Y*'s history, and in the first
+     case *P*'s, at onset − 1 drops the onset year's earnings before the
+     disability: an approximation like the death row's, but unnamed.
+     (The independent review of 2026-09-25 added the condition on the
+     application year; `READING.md` states the *P* half without it.)
    - **F3a** (§4b rule 5, survivors). For a survivor entitled to an own DI
-     benefit *D*, 402(q)(3)(C) with 402(k)(3)(A) pays the widow(er)'s
+     benefit *D* in the first month of the widow(er)'s benefit,
+     402(q)(3)(A)(ii) and (C) with 402(k)(3)(A) pay the widow(er)'s
      excess (*W* − *D*)(1 − *r*), positive whenever *W* > *D*. The oracle's
      test, *W*(1 − *r*) > *D*, reports some of those as not paid.
    - **F3b** (§4b rule 5, spouses). 402(q)(3)(B) with 402(k)(3)(A) gives
-     the oracle's (*S* − *O*)(1 − *r*) when the spouse's own benefit was
-     first taken before retirement age, or is a DI benefit (402(q)(3)(C)).
-     For a spouse whose own old-age benefit began at or after retirement
-     age, or after the spouse's benefit, the text gives *S*(1 − *r*) −
-     *O*(1 + *c*), with *c* the 402(w) credit. That can be zero or less
-     when *S* > *O*, where the oracle reports the spouse's benefit paid.
+     the oracle's (*S* − *O*)(1 − *r*) when, in the first month of the
+     spouse's benefit, the spouse is entitled to an own old-age benefit
+     first taken before retirement age, or to a DI benefit
+     (402(q)(3)(C)). Otherwise 402(q)(3)(A) does not apply: the spouse's
+     benefit is reduced under 402(q)(1), to *S*(1 − *r*), and then by the
+     own benefit as paid. For an own old-age benefit begun at or after
+     retirement age that gives *S*(1 − *r*) − *O*(1 + *c*), with *c* the
+     402(w) credit. For one begun after the spouse's benefit but before
+     retirement age it gives *S*(1 − *r*) − *O*(1 − *r*ₒ), with *r*ₒ the
+     own reduction; 402(r)'s presumed filing leaves that case only to a
+     spouse not yet eligible for an own old-age benefit when the spouse's
+     benefit began. Either can be zero or less when *S* > *O*, where the
+     oracle reports the spouse's benefit paid. (The independent review of
+     2026-09-25 separated the two cases; `READING.md` gives the
+     *O*(1 + *c*) form for both.)
    - **F4.** In the captured text, 415(g) rounds a monthly benefit down to
      $1; a PIA's dime rounding is 415(a)(1)(A). Track M's citation is
      corrected (§7; `policy.py`). The oracle's docstrings still cite
      415(g); `ss/` is called unchanged.
    - **O1.** 415(a)(1)(C)(i) sets current law's special minimum PIA
-     ($11.50 for each year of coverage over 10, raised by the COLAs).
+     ($11.50 for each year of coverage over 10, or that amount as
+     increased under 415(i)), with its own years of coverage, at most 30,
+     defined in (C)(ii).
      Neither this specification nor the code mentions it. Whether option
      1, or the count of people receiving a minimum, should account for it
      is open.
@@ -1855,10 +1885,10 @@ statute capture, which is evidence the code does not read.
         "42 USC 402",
         "42 USC 423"
       ],
-      "sha256sums_sha256": "6a26871698361ff485b07b9c526e438842e49c7a6135f59431317dfe424107b3",
+      "sha256sums_sha256": "a5b411f5621c4a2d1127f970cd3c2ea3f67561527f7e5bff20770ae075dbb8f3",
       "reading": {
         "file": "READING.md",
-        "sha256": "9c043b4ecd5ce0b197d49a26473159be6caad013815b329514a3852fecdb7a81"
+        "sha256": "8a5095ab0b929fdb76824f24657754739175abe3be2800c259b2b23dc3b91313"
       },
       "findings_for_ratification": [
         "F1",
@@ -2183,8 +2213,11 @@ the interrupted lane's `smoke.json` or pickle. Its report is
 
 **The lane that cleared §18's blockers 1 and 2 (2026-09-25, Claude Code
 subagent, Opus 5.5) read:**
-- `EVID/RESTRICTED-FILES.md` first (`2fc9bdbf…`), and again after the
-  orchestrator's 19:35 entry (`e5a72860…`);
+- `EVID/RESTRICTED-FILES.md` first, in the version whose last entry is
+  dated 2026-09-25 19:15 (its pre-edit copy in `EVID/revisions/` has
+  SHA-256 `624be4f2…`; this line first gave `2fc9bdbf…`, an earlier
+  version's hash), and again after the orchestrator's 19:35 entry
+  (`e5a72860…`);
 - this specification's header and §§1-8, 18-20 and 22-23;
 - the review `EVID/track-m-3-review-20260925.md`;
 - the Track M code and tests at `10433474` that touch the thresholds, the
@@ -2208,6 +2241,33 @@ It did not download `hstpov1.xlsx`, Census's current workbook edition of
 Table 1: the brief allowed a public HTML table only. It read no PSID file,
 ran no structural count and computed no statistic on real data. Its dry
 run is on INVENTED cohorts (`EVID/track-m-dry-run-r5-20260925/`).
+
+**The independent review of that lane (2026-09-25, Claude Code subagent,
+Opus 5.5) read:**
+- `EVID/RESTRICTED-FILES.md` first (`02148069…`, last entry 2026-09-25
+  20:05), and the hashes and last entry dates of its saved copies in
+  `EVID/revisions/`;
+- the review `EVID/track-m-3-review-20260925.md`, for its form;
+- the branch diff `10433474..ad0de470` in full, and this specification's
+  header and §§2, 4-7 and 18-23;
+- all thirty-five Census workbooks, with openpyxl by row label, and the
+  staging directory's `SHA256SUMS` and `PROVENANCE-thresh95.md`;
+- the committed HTML Table 1, and the Internet Archive's CDX index (index
+  records only) for `thresh95.xlsx`'s Census URL and for that page;
+- the statute capture: `SHA256SUMS`, `READING.md`, the four `.txt` files
+  at every line `READING.md` cites and at 402(r), `to_text.py` (rerun on
+  the HTML) and the excerpts; the law.cornell.edu copy of 413
+  (`7d226c0a…`);
+- the Track M and oracle code `READING.md` cites (the onset rule, the
+  claim factors, the auxiliary tests, `ss/benefits.py`'s spouse's and
+  widow(er)'s functions);
+- the lane's working folder `EVID/track-m-4-census-20260925/`, including
+  its unapplied `spec_correction.py`.
+
+It read no PSID file, ran no structural count and computed no statistic
+on real data. Its dry run is on INVENTED cohorts
+(`EVID/track-m-dry-run-r6-20260925/`). Its report is
+`EVID/track-m-4-review-20260925.md`.
 
 ## 23. Changelog
 
@@ -2294,7 +2354,8 @@ run is on INVENTED cohorts (`EVID/track-m-dry-run-r5-20260925/`).
     capture and §7. The parser accepts the layouts before 2003, each
     pinned to its years. Census's 2009 HTML Table 1 cross-checks the
     capture: G8's row is equal in every captured year 1982-2006, and 37
-    of 247 multi-threshold averages differ.
+    of the 247 weighted averages compared differ, all averages over
+    several thresholds.
   - **Statute (§§2, 6, 7, 18, 19).** 42 USC 413, 415, 402 and 423 are
     captured from uscode.house.gov (`EVID/track-m-statute-20260925/`), and
     each rule the code relies on is read against the text. Findings F1-F4
@@ -2311,3 +2372,27 @@ run is on INVENTED cohorts (`EVID/track-m-dry-run-r5-20260925/`).
     rerun into `EVID/track-m-dry-run-r5-20260925/`: 1998 now passes the
     threshold check, and 1993, 1981 and the unconstrained M4 cohort (which
     needs 1987) are refused.
+- `m1-draft-2`, independent review of §18's blockers 1 and 2 (2026-09-25;
+  no ruling, default, row, cell or frozen choice changed, so the version
+  stands). Changes by section:
+  - **Statute pins (§§2, 19).** `sources.statute` and §2 now pin the
+    capture as it stands: `SHA256SUMS` `a5b411f5…` and `READING.md`
+    `8a5095ab…`. The lane corrected `READING.md`'s blindness line after
+    it committed and did not update the pins (`6a268716…`, `9c043b4e…`).
+    A test holds the pins to the folder when it is present, and §2's
+    short hashes to §19's.
+  - **Blindness record (header, §22).** The lane's first read of
+    `EVID/RESTRICTED-FILES.md` is the version whose last entry is dated
+    19:15 (`624be4f2…`), as `READING.md` says, not `2fc9bdbf…`.
+  - **Findings (§18 item 4).** F2's *P* half is conditional on the DI
+    application's year; F3b separates an own benefit begun at or after
+    retirement age from one begun after the spouse's benefit; F1 names
+    423's two waivers, F3a the month the widow(er)'s benefit begins, and
+    O1 415(a)(1)(C)(ii)'s years of coverage. No frozen rule changes.
+  - **The lane's entry (§23)** says 37 of the 247 weighted averages
+    compared differ, all averages over several thresholds.
+  - **Tests.** The loader's and the capture's year guards gain
+    regression and Hypothesis tests. Before, removing any one of the
+    three guards failed no test.
+  - **Other.** §22 records what the review read. The invented dry run is
+    rerun into `EVID/track-m-dry-run-r6-20260925/`.
