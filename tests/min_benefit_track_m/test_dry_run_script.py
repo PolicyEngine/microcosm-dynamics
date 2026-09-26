@@ -12,6 +12,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import os
+import re
 from pathlib import Path
 
 import pytest
@@ -92,8 +93,19 @@ def test_the_checks_record_every_guard(document):
     assert not checks["threshold_years_all_captured"]["refused"]
     years = checks["threshold_years_needed_by_the_invented_cohort"]
     assert min(int(year) for year in years) >= 2003
-    early = checks["a_record_needing_1998_is_refused_before_any_computation"]
-    assert early["refused"] and early["error"] == "ThresholdYearMissingError"
+    captured = checks["threshold_years_all_captured"]["captured"]
+    assert captured[:6] == [1982, 1986, 1988, 1989, 1991, 1992]
+    assert captured[6:] == list(range(1994, 2023))
+    # 1998 is captured (d279, 2026-09-25); 1993 and 1981 are not.
+    passes = checks["a_record_needing_1998_passes_the_threshold_check"]
+    assert not passes["refused"] and passes["threshold_year"] == 1998
+    for year in (1993, 1981):
+        early = checks[
+            f"a_record_needing_{year}_is_refused_before_any_computation"
+        ]
+        assert early["refused"], year
+        assert early["error"] == "ThresholdYearMissingError", year
+        assert f"threshold years {year} (1 records)" in early["message"]
     assert checks["ms5_reads_benefit_implied_pias_and_ms0_none"]["passed"]
     for name in (
         "registered_path_refuses_invented_records",
@@ -107,7 +119,7 @@ def test_the_checks_record_every_guard(document):
         "psid_hashed_records_refused_with_a_supplied_block",
         "psid_hashed_records_refused_under_the_committed_draft",
         "a_psid_hashed_cohort_cannot_be_marked_invented",
-        "an_unconstrained_m4_cohort_needing_pre_2003_years_is_refused",
+        "an_unconstrained_m4_cohort_needing_years_not_captured_is_refused",
     ):
         assert checks[name]["refused"], name
     assert "every registered row" in (
@@ -122,9 +134,19 @@ def test_the_checks_record_every_guard(document):
         checks["psid_hashed_records_refused_with_a_supplied_block"]["message"]
     )
     unconstrained = checks[
-        "an_unconstrained_m4_cohort_needing_pre_2003_years_is_refused"
+        "an_unconstrained_m4_cohort_needing_years_not_captured_is_refused"
     ]
     assert unconstrained["error"] == "ThresholdYearMissingError"
+    assert "captured: 1982, 1986, 1988-1989, 1991-1992, 1994-2022" in (
+        unconstrained["message"]
+    )
+    # the refusal names exactly the years the draw needs and lacks
+    missing = unconstrained["needed_years_not_captured"]
+    assert missing
+    named = unconstrained["message"].split(" are not in the capture")[0]
+    assert sorted(int(y) for y in re.findall(r"\b(\d{4})\b", named)) == (
+        missing
+    )
     assert checks["m4_universe_equals_the_structural_funnel"]["passed"]
 
 
@@ -156,7 +178,10 @@ def test_the_provenance_pins_the_specification_and_parameters(document):
     spec = provenance["m1_specification"]
     assert spec["path"] == "docs/design/minimum_benefits_comparison.md"
     assert len(spec["sha256"]) == 64
-    assert provenance["census_thresholds"]["sha256"].startswith("65bbcd83")
+    assert provenance["census_thresholds"]["sha256"].startswith("4493b8d5")
+    assert provenance["census_thresholds"]["path"] == (
+        "data/external/census_poverty_thresholds_1982_2022.json"
+    )
     qc = provenance["quarter_of_coverage"]
     assert qc["sha256"].startswith("6f964e8f")
     assert qc["captured_from_sha256"].startswith("12354a05")

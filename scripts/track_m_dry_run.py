@@ -18,22 +18,25 @@ build_track_m_inputs`) code the registered run uses on the PSID.  The
 parameters are real and committed or read from the policyengine-us
 checkout the oracle reads: the oracle's wage index, bend points and
 reductions, the quarter-of-coverage amounts, the Census one-person 65+
-thresholds 2003-2022 (the pinned capture) and the SSA COLA history (for
-the invented MS5 benefits).  No PSID file is opened and no comparator
+thresholds of 1982, 1986, 1988, 1989, 1991, 1992 and 1994-2022 (the pinned
+capture) and the SSA COLA history (for the invented MS5 benefits).  No PSID file is opened and no comparator
 value is read.
 
 The checks record that the specification block equals the code and the
 committed draft authorizes no real-data run (nor would a ratified copy
 that still lists blockers); that every threshold year the invented cohort
-needs is captured, and that a record needing an earlier year is refused
+needs is captured, that a record needing a year before 2003 the capture
+holds (1998) passes the threshold check, and that records needing a year
+it lacks (1993, inside the captured span; 1981, before it) are refused
 before anything is computed (referee R8); that MS5 read benefit-implied
 PIAs and MS0 none; that the registered path refuses invented records,
 PSID-kind records without the issue #42 pointer or an authorizing
 specification, a subset of rows and other floor seeds; that records
 carrying PSID file hashes are refused outside the registered run and
 with a supplied specification block; that an invented M4 cohort drawn
-without the capture constraint (as the PSID is) is refused for its
-threshold years before anything is computed; that the one-shot entry
+without the capture constraint (as the PSID is) is refused for the
+threshold years it needs that the capture lacks, before anything is
+computed; that the one-shot entry
 point finds every component and refuses the committed draft at its
 preflight; and the plan's INVENTED worked cases (M1 section 16).
 
@@ -218,18 +221,34 @@ def checks(
         inputs.workers.values(),
         [policy_for_row(row) for row in REGISTERED_ROWS],
     )
-    # A record needing a threshold year before the capture: a worker born
-    # 1936, entitled at 68 in 2004, whose year of attaining 62 is 1998.
-    early = WorkerRecord(
-        "INVENTED-EARLY",
-        1936,
-        rules.BASIS_OLD_AGE,
-        2004,
-        {year: 30_000.0 for year in range(1968, 1997)},
-    )
-    with_early = dataclasses.replace(
-        inputs, workers={**inputs.workers, early.record_id: early}
-    )
+
+    # Old-age workers entitled in 2004 whose year of attaining 62 is a
+    # year the capture holds (1998, born 1936, entitled at 68), a year
+    # inside the captured span it lacks (1993, born 1931) and a year before
+    # it (1981, born 1919).
+    def early_worker(birth: int) -> WorkerRecord:
+        return WorkerRecord(
+            f"INVENTED-EARLY-{birth + 62}",
+            birth,
+            rules.BASIS_OLD_AGE,
+            2004,
+            {year: 30_000.0 for year in range(1968, 1997)},
+        )
+
+    def with_worker(worker: WorkerRecord) -> TrackMInputs:
+        return dataclasses.replace(
+            inputs, workers={**inputs.workers, worker.record_id: worker}
+        )
+
+    def needed_with(worker: WorkerRecord) -> dict[int, int]:
+        return needed_threshold_years(
+            [*inputs.workers.values(), worker],
+            [policy_for_row(row) for row in REGISTERED_ROWS],
+        )
+
+    captured_1998 = early_worker(1936)
+    gap_1993 = early_worker(1931)
+    before_1981 = early_worker(1919)
     psid_kind = dataclasses.replace(inputs, provenance_kind=PSID_FILES)
     ratified = json.loads(json.dumps(block))
     ratified["status"], ratified["version"] = (
@@ -267,10 +286,27 @@ def checks(
         "threshold_years_all_captured": _refusal(
             lambda: rules.check_threshold_years(needed, parameters.thresholds)
         )
-        | {"captured": parameters.thresholds.source["years"]},
-        "a_record_needing_1998_is_refused_before_any_computation": _refusal(
+        | {
+            "captured": parameters.thresholds.source.get(
+                "captured_years", parameters.thresholds.source["years"]
+            )
+        },
+        "a_record_needing_1998_passes_the_threshold_check": _refusal(
+            lambda: rules.check_threshold_years(
+                needed_with(captured_1998), parameters.thresholds
+            )
+        )
+        | {"threshold_year": captured_1998.birth_year + 62},
+        "a_record_needing_1993_is_refused_before_any_computation": _refusal(
             lambda: pipeline.run_track_m(
-                with_early, parameters, data_provenance="invented"
+                with_worker(gap_1993), parameters, data_provenance="invented"
+            )
+        ),
+        "a_record_needing_1981_is_refused_before_any_computation": _refusal(
+            lambda: pipeline.run_track_m(
+                with_worker(before_1981),
+                parameters,
+                data_provenance="invented",
             )
         ),
         "ms5_reads_benefit_implied_pias_and_ms0_none": {
@@ -425,27 +461,36 @@ def m4_m5_checks(
             pipeline.PSID_FILES_SOURCE_KEY: {"INVENTED.txt": "0" * 64},
         },
     )
-    # At least 300 family units, so that the unconstrained draw holds
-    # records needing years before the capture (as the PSID does).
+    # At least 600 family units, so that the unconstrained draw holds
+    # records needing threshold years the capture lacks (as the PSID
+    # would, were a year it needs not captured).  Since the capture holds
+    # 1982, 1986, 1988, 1989, 1991, 1992 and 1994-2022, only a draw that
+    # reaches a gap year (or one before 1982) is refused; the check
+    # records those years so that a draw reaching none shows as such.
     unconstrained = invented_psid.invented_cohort_inputs(
         seed=seed,
-        n_family_units=max(n_family_units, 300),
+        n_family_units=max(n_family_units, 600),
         threshold_years_from=None,
     )
 
+    def unconstrained_records() -> TrackMInputs:
+        return careers.build_track_m_inputs(
+            cohort.build_cohort(unconstrained),
+            earnings=unconstrained.earnings,
+            prior_year=unconstrained.prior_year_labor,
+            params=parameters.params,
+            cola_rates=extra["cola_rates"],
+            provenance_kind=INVENTED,
+        )
+
+    unconstrained_needed = needed_threshold_years(
+        unconstrained_records().workers.values(),
+        [policy_for_row(row) for row in REGISTERED_ROWS],
+    )
+
     def unconstrained_run() -> None:
-        built = cohort.build_cohort(unconstrained)
         pipeline.run_track_m(
-            careers.build_track_m_inputs(
-                built,
-                earnings=unconstrained.earnings,
-                prior_year=unconstrained.prior_year_labor,
-                params=parameters.params,
-                cola_rates=extra["cola_rates"],
-                provenance_kind=INVENTED,
-            ),
-            parameters,
-            data_provenance=INVENTED,
+            unconstrained_records(), parameters, data_provenance=INVENTED
         )
 
     return {
@@ -487,8 +532,14 @@ def m4_m5_checks(
                 provenance_kind=INVENTED,
             )
         ),
-        "an_unconstrained_m4_cohort_needing_pre_2003_years_is_refused": (
+        "an_unconstrained_m4_cohort_needing_years_not_captured_is_refused": (
             _refusal(unconstrained_run)
+            | {
+                "needed_years_not_captured": sorted(
+                    set(unconstrained_needed)
+                    - set(parameters.thresholds.annual)
+                )
+            }
         ),
     }
 
@@ -583,7 +634,8 @@ def _markdown(document: dict[str, Any]) -> str:
         "not PSID values and not a result, and they compare with nothing. "
         "The parameters are real: the oracle's (policyengine-us), the "
         "quarter-of-coverage amounts, the pinned Census one-person 65+ "
-        "thresholds 2003-2022 and the SSA COLA history.",
+        "thresholds (1982, 1986, 1988, 1989, 1991, 1992 and 1994-2022) and "
+        "the SSA COLA history.",
         "",
         f"- Labels: {'; '.join(result['labels'])}",
         f"- Disclosure (d280): {result['disclosure']}",

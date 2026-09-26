@@ -84,6 +84,15 @@
     questionnaire text, and ran the structural counts of §10, M4's under
     §18's limits; it computed no years of coverage, PIA, threshold,
     minimum, flag or share on real data. §22 lists what it read.
+  - A fifth builder lane (Claude Code subagent, Opus 5.5) cleared §18's
+    blocker 1 on 2026-09-25: the Census workbooks before 2003. It read `EVID/RESTRICTED-FILES.md` (SHA-256
+    `2fc9bdbf…`; after the orchestrator's 19:35 entry, `e5a72860…`, which
+    it re-read) before any other file and opened nothing it restricts:
+    not the Report in any copy, the plan, the cleared files, any
+    comparator directory, seal, reconciliation or values scan, the
+    uncleared sources, either scratchpad archive or any exercise-1 result.
+    It read no PSID file and computed no statistic on real data. §22 lists
+    what it read.
 - **Disclosure that travels with this specification (plan section 11,
   R5):** the clearance follow-up of 2026-09-24 14:15 found that the
   withheld Table 5 note sentence (ruling C2) lies inside the text lines
@@ -150,7 +159,8 @@ builder lane).
 | `cola_track_a/benefits.approximate_pia` | The DI PIA under MS6 | Read; called unchanged |
 | policyengine-us `quarters_of_coverage_threshold.yaml` at `a03e82e503` (SHA-256 `12354a05…`) | Quarter-of-coverage amounts, 1978 on | **Captured** (M2): `data/external/ssa_quarter_of_coverage_amounts.json` (SHA-256 `6f964e8f…`), every year 1978-2026 checked against 42 USC 413(d) (§5) |
 | PSID 2023 wave, family files 1968-2023, marriage history | Structural counts (§10); M3's receipt and labor-income items (§§4c, 5, 6) | Staged; labels verified (`tests/data/test_track_m_psid_labels.py`, labels and format blocks only) |
-| Census historical poverty-threshold workbooks `thresh03.xlsx`-`thresh22.xlsx` | The threshold that defines the minimum (G8, §7) | **Captured** 2003-2022 (d194, d279): `data/external/census_poverty_thresholds_2003_2022.json` (SHA-256 `65bbcd83…`) |
+| Census historical poverty-threshold workbooks of 1982, 1986, 1988, 1989, 1991, 1992 and 1994-2022 (`thresh82.xlsx`-`thresh22.xlsx`; `thresh95.xlsx` is the Internet Archive's copy of its Census URL) | The threshold that defines the minimum (G8, §7) | **Captured** (d194, d279): `data/external/census_poverty_thresholds_1982_2022.json` (SHA-256 `4493b8d5…`); it replaced the 2003-2022 capture (`65bbcd83…`), whose content it keeps (§7) |
+| Census historical poverty Table 1, HTML edition of 2009 (`hstpov1.html`, Internet Archive capture `20100209011620`, SHA-256 `d219cb20…`) | An independent check of the captured weighted averages, 1982-2006, and of their CPI-U updating (§7) | Committed in `data/external/census_poverty_thresholds/crosscheck/`; read by the tests |
 | 42 USC 413(a)-(d); 20 CFR 404.141 and 404.143 | Quarters of coverage (§5), DI coverage end (§4a) | **Not captured** (M2). Review copies: 413 and 20 CFR 404.141 and 404.143 in `EVID/track-m-review-20260924/`; 402 in `EVID/minimum-benefits-referee-20260924/`; the oracle's `statutory_aime` quotes 415(b) (text `5b41d1cd…`) |
 | 42 USC 415(b)(2)(B)(ii) | The end of an old-age PIA's history (§4a) | Read in the text `5b41d1cd…` (encoder workspace copy) |
 | 42 USC 402(k)(3)(A) | The survivor's own amount (§4b rule 5) | Read in the referee's extract (`43d5e10a…`) and its page copy (`e5bb977c…`) |
@@ -252,7 +262,7 @@ value (§20); `REGISTERED_ROWS` holds MS0-MS6 (§14).
   eligible in 1996; a worker who died before any entitlement (§4a) can
   have a threshold year earlier still. A disability-origin record cannot:
   its onset year is its entitlement year less one (§4b rule 4), so at
-  *Y*₀ = 2004 its threshold year is 2003 or later. M2 has captured the
+  *Y*₀ = 2004 its threshold year is 2003 or later. M2 first captured the
   Census one-person 65+ weighted-average thresholds for 2003-2022 (§7).
   **M4's structural count** (2026-09-25; §10, years and bases only, no
   count of in-window records): the earliest threshold year the in-window
@@ -263,6 +273,10 @@ value (§20); `REGISTERED_ROWS` holds MS0-MS6 (§14).
   record needs one. The registered run refuses, before computing
   anything, while a needed year is missing (§7), and the M10 dry run
   checks that every threshold year the invented cohort needs is present.
+  **Captured** (2026-09-25): the fifteen years' Census workbooks are
+  captured, hashed and pinned with 2003-2022 (§7), so every threshold
+  year M4's count shows is present. Any other year (1983-1985, 1987,
+  1990, 1993, before 1982 or after 2022) is still refused.
 
 ### 4a. The years that define each record (frozen)
 
@@ -652,25 +666,77 @@ section 3).
 
 - **Threshold (G8):** the Census weighted-average poverty threshold for
   one person aged 65 and older, of the record's threshold year (§4a).
-  **Captured** (M2; cos decisions d194 and d279): the twenty Census
-  workbooks `thresh03.xlsx`-`thresh22.xlsx` are committed in
+  **Captured** (M2; cos decisions d194 and d279): the thirty-five Census
+  workbooks of 1982, 1986, 1988, 1989, 1991, 1992 and 1994-2022
+  (`thresh82.xlsx`-`thresh22.xlsx`) are committed in
   `data/external/census_poverty_thresholds/` and pinned by SHA-256, and
   `scripts/capture_track_u_parameters.py --track-m-census-dir` writes
-  `data/external/census_poverty_thresholds_2003_2022.json` (SHA-256
-  `65bbcd83…`, pinned in `min_benefit_track_m.thresholds`).
-  `rules.load_aged_thresholds` reads its `one_65_plus` weighted average
-  ("One person (unrelated individual)", "65 years and over") for
-  2003-2022. Table 2's HHS threshold is not borrowed (D15).
+  `data/external/census_poverty_thresholds_1982_2022.json` (SHA-256
+  `4493b8d5…`, pinned in `min_benefit_track_m.thresholds`), which lists
+  its captured years and the years 1983-1985, 1987, 1990 and 1993 it
+  lacks. It replaced the 2003-2022 capture (`65bbcd83…`), whose
+  weighted averages, matrix, sources and year-pair ratios it keeps
+  unchanged. `rules.load_aged_thresholds` reads its `one_65_plus`
+  weighted average ("One person (unrelated individual)", "65 years and
+  over") for every captured year. Table 2's HHS threshold is not
+  borrowed (D15).
+- **Provenance of the years before 2003** (d279: "any earlier year the
+  build proves it needs"): the fifteen workbooks were staged on
+  2026-09-25 with the others in `~/PolicyEngine/census-poverty-thresholds`,
+  whose `SHA256SUMS` lists all thirty-five. Fourteen came from the Census
+  URL. The Census server answered `thresh95.xlsx`'s URL, and only that
+  one, with its WAF page "Request Rejected". The file is the Internet
+  Archive's raw copy of that URL, byte-identical in two captures 3.5
+  years apart (`20230226205734` and `20260820215832`), each matching the
+  SHA-1 digest the Archive's CDX index records for it (SHA-256
+  `32bb678f…`). The capture carries this in `sources["1995"]["retrieval"]`,
+  and `census_poverty_thresholds/provenance.md` in full. To do: retry
+  the Census URL when its WAF allows it and confirm the hash.
 - **Layouts** (every workbook inspected cell by cell, 2026-09-25): all
-  twenty print one table in the same 91 cells. The parser, extended from
-  Track U's rather than duplicated, accepts two departures, each pinned
-  to its year: `thresh19.xlsx` carries two further worksheets that must
-  be empty, and `thresh22.xlsx` prints every weighted average rounded to
-  $10 while its matrix cells stay whole dollars. For one person 65+ it
-  prints 14,040 beside a single matrix cell of 14,036; Track M reads the
-  weighted average as printed (a $4 named delta in 2022 only). Every
-  matrix cell moves from one year to the next by one ratio within $2,
-  2003-2022.
+  thirty-five print one table in the same cells (91 non-blank; 92 in 1982
+  and 2000). The parser, extended from Track U's rather than duplicated,
+  accepts these departures, each pinned to its years:
+  - `thresh19.xlsx` carries two further worksheets that must be empty;
+  - `thresh22.xlsx` prints every weighted average rounded to $10 while its
+    matrix cells stay whole dollars: for one person 65+ it prints 14,040
+    beside a single matrix cell of 14,036, and Track M reads the weighted
+    average as printed (a $4 named delta in 2022 only);
+  - the notes of 1982-2000 name the next year's March CPS and 2001's the
+    CPS ADS, where later notes name the CPS ASEC;
+  - `thresh01.xlsx` labels its size rows "persons" where every other year
+    prints "people";
+  - `thresh82.xlsx` and `thresh00.xlsx` print one revision line below the
+    note ("Revised on 4/19/2022 due to rounding issues." and "Revised on
+    2/1/2023 due to a formatting error."), which the parser requires
+    exactly and records.
+
+  It refuses each departure in any other year, and a year before 2002
+  whose layout was not inspected. G8's row is "65 years and over" under
+  "One person (unrelated individual)" in every year, found by its label.
+  It is a single threshold: its weighted average equals its one matrix
+  cell in every year but 2022. Every matrix cell moves from one captured
+  year to the next by one ratio within $2, across the gaps too.
+- **Cross-check** (2026-09-25): Census's own HTML edition of its
+  historical poverty Table 1 (1959-2006, page of September 29, 2009;
+  Internet Archive capture, SHA-256 `d219cb20…`, committed in
+  `census_poverty_thresholds/crosscheck/`) is an independent publication
+  of the weighted averages.
+  - It prints G8's row (unrelated individuals, 65 or older) equal to the
+    capture in all nineteen captured years 1982-2006.
+  - Of the 247 weighted averages compared, 37 differ. All are averages
+    over several thresholds (a family size over its children cells, or a
+    size over both ages) in 1989, 1991, 1992, 1999 and 2000, by $1-$23,
+    and $90 for nine or more people in 2000. Table 1's footnotes flag
+    1999 and 2000 (the Census 2000 population controls; a sample
+    expansion); neither source says why the workbooks differ. No
+    one-person row by age differs.
+  - Between captured years through 2006, each year pair's matrix ratio
+    equals Table 1's CPI-U ratio within rounding (at most 0.02 percent
+    apart).
+  - Every threshold rises from one captured year to the next except
+    2008-2009, when every cell falls: the one year whose note says the
+    CPI-U fell. The eight and nine-or-more weighted averages rose that
+    year while their cells fell.
 - **Which threshold years Track M needs, and why:**
   - **Wage-indexed options 3 and 5** need the policy year's threshold:
     *T*(2004) for MS0 and MS2-MS6, and *T*(2007) for MS1.
@@ -699,21 +765,23 @@ section 3).
     not a threshold). **M4 reports it** (2026-09-25; §4, §10): 1982, and
     the years 1982, 1986, 1988, 1989, 1991, 1992 and 1994-2002, for
     old-age and death-basis records.
-  - **No year before 2003 is captured, and M4 shows fifteen are
-    needed.** d279 covers "any earlier year the build proves it needs",
-    captured, hashed and pinned like the 2003-2022 capture: the Census
-    historical one-person 65+ weighted averages for 1982, 1986, 1988,
-    1989, 1991, 1992 and 1994-2002. This builder lane made no download;
-    the workbooks' layouts before 2003 are unverified, and the parser
-    refuses a layout it does not know. `rules.check_threshold_years`
-    refuses a cohort that needs a missing year before anything is
-    computed, with a named error
+  - **The fifteen years before 2003 that M4 shows are needed are
+    captured** (2026-09-25; d279 covers "any earlier year the build
+    proves it needs"): the Census historical one-person 65+ weighted
+    averages for 1982, 1986, 1988, 1989, 1991, 1992 and 1994-2002,
+    captured, hashed and pinned with 2003-2022 (above).
+    `rules.check_threshold_years` still refuses a cohort that needs a year
+    the capture lacks (1983-1985, 1987, 1990, 1993, before 1982 or after
+    2022) before anything is computed, with a named error
     (`ThresholdYearMissingError`, not a `KeyError`), and
-    `AgedThresholds.for_year` raises the same error. `pipeline.run_track_m`
-    calls it on `evaluation.needed_threshold_years` (every in-window
-    record's threshold year under any registered row's policy, and both
-    policy years) before it evaluates any record; the M10 dry run checks
-    the invented cohort and a record that needs 1998 (§18).
+    `AgedThresholds.for_year` raises the same error.
+    `pipeline.run_track_m` calls it on `evaluation.needed_threshold_years`
+    (every in-window record's threshold year under any registered row's
+    policy, and both policy years) before it evaluates any record. The
+    M10 dry run checks the invented cohort, a record that needs 1998 (now
+    passed) and records that need 1993 and 1981 (refused) (§18). If the
+    ratification changes a reading that moves the years needed (§4c), a
+    newly needed year is refused until it is downloaded and captured.
 - **Price indexing (options 2 and 4):** the threshold of the year
   itself (the thresholds move with prices, D5).
 - **Wage indexing (options 3 and 5; G9):**
@@ -1154,8 +1222,8 @@ tuple and the reachability guard:
 - `.../coverage.py`: years of coverage and the one history per worker
   (§5); the committed quarter-of-coverage capture's loader and the
   413(d) series it was checked against.
-- `.../thresholds.py`: the pinned 2003-2022 Census capture and the
-  threshold-year check (§7).
+- `.../thresholds.py`: the pinned Census capture (1982, 1986, 1988, 1989,
+  1991, 1992 and 1994-2022) and the threshold-year check (§7).
 - `.../rules.py`: §§4a and 6-9 (the record years, schedules, indexing,
   proration, window, order, flag, auxiliaries, receipt; the PIA through
   the oracle; the claim and COLA factors).
@@ -1199,7 +1267,7 @@ tuple and the reachability guard:
 - `.../structure.py` and `scripts/track_m_structure.py`: the structural
   counts of §10, M4's included under §11's limits.
 - `scripts/capture_track_u_parameters.py --track-m-census-dir` and the
-  committed workbooks and capture (§7);
+  committed workbooks, capture and cross-check source (§7);
   `scripts/capture_track_m_quarter_of_coverage.py` and
   `data/external/ssa_quarter_of_coverage_amounts.json` (§5).
 - `scripts/track_m_dry_run.py` (M10): the pipeline on both invented
@@ -1207,9 +1275,10 @@ tuple and the reachability guard:
   capture, the Census capture, the SSA COLA history), every row MS0-MS6
   including MS5, the plan's worked cases (§16) and every guard, among
   them the refusal of an invented M4 cohort that needs a threshold year
-  before 2003. Its output, headed "INVENTED DATA - NOT A COMPARISON", is
-  in `EVID/track-m-dry-run-r3-20260925/` (earlier runs:
-  `EVID/track-m-dry-run-20260925/` and `-r2/`).
+  the capture lacks, and of records that need 1993 and 1981, while a
+  record that needs 1998 now passes. Its output, headed "INVENTED DATA -
+  NOT A COMPARISON", is in `EVID/track-m-dry-run-r5-20260925/` (earlier
+  runs: `EVID/track-m-dry-run-20260925/`, `-r2/`, `-r3-` and `-r4-`).
 - `scripts/run_track_m_registered.py`: the one-shot entry point. It
   refuses this draft at its preflight (§19). With an authorizing block it
   refuses, before reading any PSID file, while a component is missing
@@ -1217,9 +1286,12 @@ tuple and the reachability guard:
   from the SHA-256 in `sources` (`check_parameter_pins`: the Census
   capture and the quarter-of-coverage capture). Its computation reads the
   PSID through M4 and M5 and passes the records, marked as read from
-  PSID files, to `pipeline.run_track_m`, which refuses again (§11) and,
-  today, would refuse the cohort's threshold years before 2003 (§7).
-- Tests: `tests/min_benefit_track_m/`,
+  PSID files, to `pipeline.run_track_m`, which refuses again (§11) and
+  refuses any threshold year the capture lacks. Every year M4's structural
+  count shows the in-window records need is now captured (§7).
+- Tests: `tests/min_benefit_track_m/` (the capture before 2003, its
+  differential by row label, the cross-check against Census's Table 1 and
+  the threshold invariants in `test_threshold_capture_before_2003.py`),
   `tests/data/test_social_security_receipt.py`,
   `tests/data/test_prior_year_labor_income.py`,
   `tests/data/test_track_m_psid_labels.py` (staged-file labels only) and
@@ -1227,12 +1299,15 @@ tuple and the reachability guard:
 
 Blocked, with the plan's effort estimates (lane-days):
 
-1. **Census thresholds before 2003** (part of M2's 1.5): M4's count shows
-   the in-window records need 1982, 1986, 1988, 1989, 1991, 1992 and
-   1994-2002 (§7). d279 covers the download ("any earlier year the build
-   proves it needs"); the workbooks, their layouts before 2003 and a
-   parser that accepts them are to be captured, hashed and pinned like
-   the 2003-2022 capture. No builder lane has downloaded them.
+1. **Census thresholds before 2003: cleared (2026-09-25).** The years
+   M4's count shows the in-window records need (1982, 1986, 1988, 1989,
+   1991, 1992 and 1994-2002) are captured, hashed and pinned with
+   2003-2022 in `census_poverty_thresholds_1982_2022.json` (§7; d279),
+   and the parser accepts their layouts. What remains is not a blocker:
+   retry `thresh95.xlsx`'s Census URL when its WAF allows it and confirm
+   the hash (the file is the Internet Archive's copy, §7). A year a
+   ratified reading newly needs would need a new download; the run
+   refuses it first.
 2. **The statute text** (part of M2's 1.5): 413, 415 (including 415(i)),
    402(k) and 423 (the waiting period), with SHA-256. Review copies of
    413, 20 CFR 404.141 and 404.143, 402 and parts of 415 exist in
@@ -1278,8 +1353,8 @@ commit the registration comment then registers; the registered commit's
 block lists none. The entry script also refuses parameter files whose
 SHA-256 differs from `sources` (§18); `sources.quarter_of_coverage_amounts`
 records the committed capture and the policyengine-us file it came from,
-and a test holds that record, and the Census capture's, to what the
-loaders read.
+and a test holds that record, and the Census capture's (file, SHA-256 and
+captured years), to what the loaders read.
 
 ```json
 {
@@ -1601,7 +1676,7 @@ loaders read.
       "ruled_on": "2026-09-25",
       "as_filed": "download Census historical poverty-threshold workbooks thresh13-thresh22 (plus any earlier year the build proves it needs) from www2.census.gov",
       "ruling_text": "Yes (Max in chat 2026-09-25): download thresh13-thresh22 and any earlier year the build proves it needs; capture, hash and pin like the 2003-2012 capture",
-      "note": "Max approved the download; the orchestrating Claude Code session fetched thresh13-thresh22 on 2026-09-25. With thresh03-thresh12 (d194) they are captured as 2003-2022. No earlier year is captured: whether one is needed is M4's earliest-threshold-year count (M1 specification, section 7)"
+      "note": "Max approved the download; the orchestrating Claude Code session fetched thresh13-thresh22 on 2026-09-25. With thresh03-thresh12 (d194) they were captured as 2003-2022. M4's earliest-threshold-year count (M1 specification, sections 4, 7 and 10) proved the years 1982, 1986, 1988, 1989, 1991, 1992 and 1994-2002 needed; their workbooks were staged on 2026-09-25 under this ruling (thresh95 from the Internet Archive's copy of its Census URL) and are captured, hashed and pinned with 2003-2022 in census_poverty_thresholds_1982_2022.json"
     }
   },
   "sources": {
@@ -1637,14 +1712,74 @@ loaders read.
       "status": "committed_capture"
     },
     "census_thresholds": {
-      "file": "data/external/census_poverty_thresholds_2003_2022.json",
-      "sha256": "65bbcd83cad97b94526b8c71417b9b4986a5bc878285b87832cfb102bc11e3c5",
+      "file": "data/external/census_poverty_thresholds_1982_2022.json",
+      "sha256": "4493b8d5823ea12912212d892f98ef4777098ce34b01857cedc35d444a8b99cd",
       "years": [
-        2003,
+        1982,
         2022
       ],
+      "captured_years": [
+        1982,
+        1986,
+        1988,
+        1989,
+        1991,
+        1992,
+        1994,
+        1995,
+        1996,
+        1997,
+        1998,
+        1999,
+        2000,
+        2001,
+        2002,
+        2003,
+        2004,
+        2005,
+        2006,
+        2007,
+        2008,
+        2009,
+        2010,
+        2011,
+        2012,
+        2013,
+        2014,
+        2015,
+        2016,
+        2017,
+        2018,
+        2019,
+        2020,
+        2021,
+        2022
+      ],
+      "years_not_captured": [
+        1983,
+        1984,
+        1985,
+        1987,
+        1990,
+        1993
+      ],
       "row": "one_65_plus",
-      "workbooks": "data/external/census_poverty_thresholds/thresh03.xlsx-thresh22.xlsx",
+      "workbooks": "data/external/census_poverty_thresholds/thresh82.xlsx-thresh22.xlsx",
+      "internet_archive_copies": [
+        "thresh95.xlsx"
+      ],
+      "crosscheck": {
+        "file": "data/external/census_poverty_thresholds/crosscheck/hstpov1-20100209011620.html",
+        "sha256": "d219cb20f4a6978ffabf265e4feabe1ad02b5446705c5cc1bda73cb9c91f038f",
+        "one_65_plus_equal_every_captured_year": [
+          1982,
+          2006
+        ]
+      },
+      "replaces": {
+        "file": "data/external/census_poverty_thresholds_2003_2022.json",
+        "sha256": "65bbcd83cad97b94526b8c71417b9b4986a5bc878285b87832cfb102bc11e3c5"
+      },
       "decision_records": [
         "d194",
         "d279"
@@ -1657,7 +1792,6 @@ loaders read.
   },
   "blocked_by": [
     "independent_check_of_m1_draft_2_and_the_m3_to_m5_readings_then_ratification_by_merge",
-    "census_thresholds_1982_to_2002_needed_by_m4_not_captured",
     "statute_413_415_402_423_not_captured_m2",
     "registration_package_m10_needs_the_comparator_seal_hash",
     "issue_42_registration_absent"
@@ -1735,9 +1869,13 @@ card proposed.
     `thresh03.xlsx`-`thresh12.xlsx` under d194 on 2026-09-24, and wrote the
     `SHA256SUMS` that lists all twenty files (independent review of
     2026-09-25, from that session's record; earlier text credited the
-    download to Max). They are captured, hashed and pinned as 2003-2022
-    (§7). No earlier year is captured, because the build has not yet shown
-    one is needed: that is M4's count (§7).
+    download to Max). They were captured, hashed and pinned as 2003-2022
+    (§7). M4's count (§7) then showed fifteen earlier years needed (1982,
+    1986, 1988, 1989, 1991, 1992 and 1994-2002). Their workbooks were
+    staged on 2026-09-25 under this ruling (`thresh95.xlsx` from the
+    Internet Archive's copy of its Census URL) and are captured, hashed
+    and pinned with 2003-2022 in `census_poverty_thresholds_1982_2022.json`
+    (§7).
 
 **Frozen by this version on the referee's answers (§21), and ratified
 with the specification by the merge** (`policy.frozen_choices()`; no
@@ -1963,6 +2101,32 @@ minimum, flag, share or in-window count on real data. It did not open
 the interrupted lane's `smoke.json` or pickle. Its report is
 `EVID/track-m-3-review-20260925.md`.
 
+**The lane that cleared §18's blocker 1 (2026-09-25, Claude Code
+subagent, Opus 5.5) read:**
+- `EVID/RESTRICTED-FILES.md` first (`2fc9bdbf…`), and again after the
+  orchestrator's 19:35 entry (`e5a72860…`);
+- this specification's header and §§1-8, 18-20 and 22-23;
+- the review `EVID/track-m-3-review-20260925.md`;
+- the Track M code and tests at `10433474` that touch the thresholds, the
+  dry run, the entry script's pins, the specification block, the
+  statute citations and dual entitlement: `thresholds.py`, `rules.py`,
+  `coverage.py`'s 413 functions, `cohort.py`'s onset rule, `careers.py`'s
+  claim factors, `evaluation.py`'s auxiliary test, `policy.py`, the
+  invented generators and `scripts/track_m_dry_run.py`;
+- the oracle's `ss/statutory_aime.py` (docstring and constants) and
+  `ss/benefits.py`'s spouse's and widow(er)'s functions;
+- `scripts/capture_track_u_parameters.py` and the Track U threshold tests;
+- all thirty-five Census workbooks, cell by cell;
+- the staging directory's `SHA256SUMS` and `PROVENANCE-thresh95.md`;
+- Census's historical-thresholds and historical-poverty pages (HTML,
+  fetched 2026-09-25) and, through the Internet Archive, the 2009 HTML
+  edition of Table 1 and its footnotes page;
+
+It did not download `hstpov1.xlsx`, Census's current workbook edition of
+Table 1: the brief allowed a public HTML table only. It read no PSID file,
+ran no structural count and computed no statistic on real data. Its dry
+run is on INVENTED cohorts (`EVID/track-m-dry-run-r5-20260925/`).
+
 ## 23. Changelog
 
 - `m1-draft-1` (2026-09-24): first draft, with the Track M rules module,
@@ -2035,3 +2199,26 @@ the interrupted lane's `smoke.json` or pickle. Its report is
   §4c item 2's "can only move an entitlement year later" is limited to the
   files' "no", and item 1 records the size of its reading; §18 item 4 and
   §22 record the review.
+- `m1-draft-2`, §18's blocker 1 cleared (2026-09-25; no ruling, default,
+  row, cell or frozen choice changed, so the version stands, as in the
+  earlier builds' entries). Changes by section:
+  - **Census (§§2, 4, 7, 18, 19, 20).** The Census workbooks of the
+    fifteen years before 2003 that M4's count shows are needed (d279) are
+    captured, hashed and pinned with 2003-2022 in
+    `census_poverty_thresholds_1982_2022.json` (`4493b8d5…`). It replaces
+    `census_poverty_thresholds_2003_2022.json` (`65bbcd83…`); the
+    2003-2022 content is unchanged. `thresh95.xlsx` is the Internet
+    Archive's copy of its Census URL, with its provenance carried into the
+    capture and §7. The parser accepts the layouts before 2003, each
+    pinned to its years. Census's 2009 HTML Table 1 cross-checks the
+    capture: G8's row is equal in every captured year 1982-2006, and 37
+    of 247 multi-threshold averages differ.
+  - **The block (§19).** `sources.census_thresholds` records the new
+    capture, its years, the cross-check and the capture it replaces; the
+    d279 record's note (in `policy.MAX_RULINGS` and `decisions`) records
+    the capture; `blocked_by` drops
+    `census_thresholds_1982_to_2002_needed_by_m4_not_captured`.
+  - **Other.** §22 records what the lane read. The invented dry run is
+    rerun into `EVID/track-m-dry-run-r5-20260925/`: 1998 now passes the
+    threshold check, and 1993, 1981 and the unconstrained M4 cohort (which
+    needs 1987) are refused.

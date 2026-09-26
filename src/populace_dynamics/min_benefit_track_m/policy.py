@@ -657,9 +657,14 @@ MAX_RULINGS: dict[str, dict[str, Any]] = {
         "note": (
             "Max approved the download; the orchestrating Claude Code "
             "session fetched thresh13-thresh22 on 2026-09-25. With "
-            "thresh03-thresh12 (d194) they are captured as 2003-2022. No "
-            "earlier year is captured: whether one is needed is M4's "
-            "earliest-threshold-year count (M1 specification, section 7)"
+            "thresh03-thresh12 (d194) they were captured as 2003-2022. "
+            "M4's earliest-threshold-year count (M1 specification, "
+            "sections 4, 7 and 10) proved the years 1982, 1986, 1988, "
+            "1989, 1991, 1992 and 1994-2002 needed; their workbooks were "
+            "staged on 2026-09-25 under this ruling (thresh95 from the "
+            "Internet Archive's copy of its Census URL) and are captured, "
+            "hashed and pinned with 2003-2022 in "
+            "census_poverty_thresholds_1982_2022.json"
         ),
     },
 }
