@@ -23,7 +23,9 @@ def block() -> dict:
 def test_the_code_rows_equal_the_committed_block(block):
     check = rows.check_rows_against_block(block)
     assert check["rows_equal_the_block"]
-    assert check["specification_version"] == block["version"] == "u1-draft-7"
+    assert (
+        check["specification_version"] == block["version"] == "u1-ratified-1"
+    )
     assert check["rows_checked"] == sorted(rows.REGISTERED_ROWS)
 
 
@@ -214,3 +216,74 @@ def test_rows_validate_their_fields():
         rows.TrackURow("X", "-", "x", built=False)
     with pytest.raises(ap.AdjustedPovertyError):
         rows.TrackURow("X", "-", "x", income={"cut_start_year": 1900})
+
+
+def test_the_code_rulings_equal_the_committed_block(block):
+    """u1-ratified-1: the block's ``decisions`` equal ``MAX_RULINGS``
+    (cos decisions d189 and d411)."""
+
+    check = rows.check_rulings_against_block(block)
+    assert check == {
+        "rulings_checked": sorted(rows.MAX_RULINGS),
+        "rulings_equal": True,
+    }
+    assert rows.MAX_RULINGS["rows"]["ruling"] == list(rows.REGISTERED_ROWS)
+    assert rows.MAX_RULINGS["headline_row"]["ruling"] == rows.PRIMARY_ROW
+    assert rows.MAX_RULINGS["headline_row"]["rule"] == rows.HEADLINE_RULE
+
+
+def _without(mapping: dict, key: str) -> dict:
+    out = copy.deepcopy(mapping)
+    del out[key]
+    return out
+
+
+@pytest.mark.parametrize(
+    ("edit", "match"),
+    [
+        (
+            lambda d: d["ssi_rule"].update(ruling="none"),
+            "differ from the code's MAX_RULINGS",
+        ),
+        (
+            lambda d: d["memo_small_cells"]["ruling"].update(
+                flag_unweighted_n_below=20
+            ),
+            "differ from the code's MAX_RULINGS",
+        ),
+        (
+            lambda d: d["rows"]["ruling"].append("U6"),
+            "differ from the code's MAX_RULINGS",
+        ),
+        (
+            lambda d: d.pop("freeze_defaults"),
+            r"\['freeze_defaults'\]",
+        ),
+        (
+            lambda d: d.update(extra={"ruling": "x"}),
+            r"\['extra'\]",
+        ),
+        (lambda d: d.pop("ruled_by"), "no ruling by Max"),
+        (lambda d: d.update(ruled_by="the orchestrator"), "no ruling by Max"),
+        (lambda d: d.pop("ruled_on"), "no ruling by Max"),
+        (lambda d: d.clear(), "no ruling by Max"),
+    ],
+    ids=[
+        "changed-ruling",
+        "changed-memo-threshold",
+        "withdrawn-row",
+        "missing-field",
+        "extra-field",
+        "no-ruled-by",
+        "other-ruler",
+        "no-ruled-on",
+        "no-decisions",
+    ],
+)
+def test_a_block_whose_rulings_differ_is_refused(block, edit, match):
+    changed = copy.deepcopy(block)
+    edit(changed["decisions"])
+    with pytest.raises(ValueError, match=match):
+        rows.check_rulings_against_block(changed)
+    with pytest.raises(ValueError, match="no ruling by Max"):
+        rows.check_rulings_against_block(_without(block, "decisions"))

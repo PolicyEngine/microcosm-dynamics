@@ -17,14 +17,14 @@ income against the same thresholds, reported asset income kept, no
 annuity, no cut).
 
 The headline row follows the specification's fallback rule
-(:data:`populace_dynamics.uniform_cut_track_u.rows.HEADLINE_RULE`, pending
-Max): U0 when every wave has WEALTH1, otherwise U0-F; a row whose
-observation waves include a wave without WEALTH1 is reported as blocked,
-with its structural counts, and not computed (unless ``allow_blocked``,
-which leaves the blocked observations out and is refused for a
-registered run).  The rule depends on staging status only.  Since the
-specification's u1-draft-6 (2026-09-25) the 2005 and 2007 wealth
-supplements are staged and adjudicated
+(:data:`populace_dynamics.uniform_cut_track_u.rows.HEADLINE_RULE`, ruled
+by Max, cos decision d411 item (a)): U0 when every wave has WEALTH1,
+otherwise U0-F; a row whose observation waves include a wave without
+WEALTH1 is reported as blocked, with its structural counts, and not
+computed (unless ``allow_blocked``, which leaves the blocked observations
+out and is refused for a registered run).  The rule depends on staging
+status only.  Since the specification's u1-draft-6 (2026-09-25) the 2005
+and 2007 wealth supplements are staged and adjudicated
 (:func:`populace_dynamics.data.family_income.read_family_wealth`), so on
 the staged PSID every wave has WEALTH1, U0 is the headline and no row is
 blocked; the blocked path remains for inputs that carry a refusal.

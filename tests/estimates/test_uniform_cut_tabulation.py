@@ -517,7 +517,7 @@ def test_pending_decisions_name_the_config_defaults():
     assert "Q5" in decisions["design_se_domain"].default_basis
     assert decisions["cells"].default == list(config.cells)
     assert "S2" in decisions["cells"].default_basis
-    assert "freeze" in decisions["cells"].awaiting
+    assert "ratification of u1-ratified-1" in decisions["cells"].awaiting
     item = decisions["unclassified_marital_cells"]
     assert item.default == config.unclassified_marital_cells
     assert item.default == "excluded_counted"

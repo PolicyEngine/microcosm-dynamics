@@ -2,9 +2,9 @@
 
 No PSID file is read and no statistic is computed: only the preflight
 guards of ``scripts/run_track_u_registered.py`` run, with a fake ``git``
-and hand-built specification headers, plus one run of ``main`` whose
-preflight is replaced to show the threshold refusal comes before any PSID
-read.
+and hand-built specification headers, plus runs of ``main`` whose
+preflight is replaced to show that the rulings, headline and threshold
+refusals come before any PSID read.
 """
 
 from __future__ import annotations
@@ -25,14 +25,19 @@ POINTER = (
     "#issuecomment-1"
 )
 COMMIT = "a" * 40
-#: A hand-built header of a ratified, complete block (not the committed
-#: specification, which is a draft).
+#: A hand-built header of a ratified, complete block, with Max's rulings
+#: as the code records them (cos decisions d189 and d411).
 RATIFIED = {
     "status": "ratified_frozen",
     "version": "u1-ratified-1",
     "threshold": {"capture_status": "captured"},
     "blocked_by": [],
     "claim_class": {"accepted": "track_u", "decision": "d189"},
+    "decisions": {
+        "ruled_by": "Max",
+        "ruled_on": "2026-09-26",
+        **copy.deepcopy(rows.MAX_RULINGS),
+    },
 }
 
 
@@ -166,16 +171,75 @@ def test_non_registered_states_are_refused(tmp_path, overrides, match):
         _script().preflight(**_arguments(tmp_path, **overrides))
 
 
-def test_the_committed_specification_authorizes_no_run(tmp_path):
+def test_the_committed_specification_is_ratified():
+    """u1-ratified-1 (cos decision d411): the committed block passes the
+    ratification test, its rows and rulings equal the code's, and the
+    same block with a draft header, an ``awaiting`` key or a blocker is
+    still refused."""
+
+    script = _script()
     block = rows.specification_block()
-    with pytest.raises(ValueError, match="authorizes no run"):
-        _script().check_specification_ratified(block)
-    # even with a ratified header, the committed draft still awaits
-    # decisions and is blocked
-    header = copy.deepcopy(block)
-    header.update(status="ratified_frozen", version="u1-ratified-1")
-    with pytest.raises(ValueError, match="awaited"):
-        _script().check_specification_ratified(header)
+    assert script.check_specification_ratified(block) is None
+    assert rows.check_rows_against_block(block)["rows_equal_the_block"]
+    assert rows.check_rulings_against_block(block)["rulings_equal"]
+    for edit, match in (
+        ({"status": "draft_for_referee"}, "authorizes no run"),
+        ({"version": "u1-draft-7"}, "authorizes no run"),
+        ({"blocked_by": ["issue_42_registration_absent"]}, "blocked"),
+        (
+            {"comparison": {**block["comparison"], "awaiting": "Max"}},
+            "awaited",
+        ),
+    ):
+        changed = copy.deepcopy(block)
+        changed.update(edit)
+        with pytest.raises(ValueError, match=match):
+            script.check_specification_ratified(changed)
+
+
+@pytest.mark.parametrize(
+    "edit",
+    [
+        lambda d: d["cut_start_year"].update(ruling=None),
+        lambda d: d.pop("memo_small_cells"),
+        lambda d: d.pop("ruled_by"),
+    ],
+    ids=["changed-ruling", "missing-ruling", "no-ruled-by"],
+)
+def test_a_ratified_block_whose_rulings_differ_stops_the_run(
+    tmp_path, monkeypatch, edit
+):
+    """A ratified block whose ``decisions`` differ from the code's
+    ``MAX_RULINGS`` stops the run before the thresholds or any PSID file
+    are read and before anything is written."""
+
+    script = _script()
+    monkeypatch.setattr(script, "preflight", lambda **_: {"head": COMMIT})
+    changed = rows.specification_block()
+    edit(changed["decisions"])
+    monkeypatch.setattr(script.rows, "specification_block", lambda: changed)
+
+    def not_reached(*_, **__):
+        raise AssertionError("read before the rulings check")
+
+    monkeypatch.setattr(script.ap, "load_poverty_thresholds", not_reached)
+    monkeypatch.setattr(script.age67, "load_age67_inputs", not_reached)
+    output = tmp_path / "run.json"
+    with pytest.raises(ValueError, match="MAX_RULINGS|no ruling by Max"):
+        script.main(
+            [
+                "--registration-pointer",
+                POINTER,
+                "--registered-commit",
+                COMMIT,
+                "--headline-row",
+                "U0",
+                "--output",
+                str(output),
+            ]
+        )
+    assert not output.exists()
+    assert not output.with_suffix(".env.json").exists()
 
 
 @pytest.mark.parametrize("existing", ["run.json", "run.env.json"])

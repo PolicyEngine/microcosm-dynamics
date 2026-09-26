@@ -28,16 +28,18 @@ supplements) is decided (cos decision d189), and since u1-draft-6 the
 supplements are staged and adjudicated, so on the staged PSID the rule
 gives U0.  Since u1-draft-7 the rule is resolved on that source: U0 is
 the headline, and U0-F and the -F rows stay registered as alternatives
-(the second referee's S8 default, a freeze default that Max's
-ratification confirms), so they no longer carry an ``awaiting`` note.
+(the second referee's S8 default), so they no longer carry an
+``awaiting`` note; Max ruled both at ratification (cos decision d411
+item (a), u1-ratified-1).
 
 :func:`check_rows_against_block` holds :data:`REGISTERED_ROWS` to the
 specification's machine-readable block, so a row a run computes is the
-row the specification registers.  U7 (employer DC balances; built in
-u1-draft-7 after the label investigation of the PSID pension section,
-:mod:`populace_dynamics.data.employer_dc`) adds the head's and wife's
-employer DC account balances the pension section observes to WEALTH1
-(``financial_assets="wealth1_plus_employer_dc"``).
+row the specification registers, and :func:`check_rulings_against_block`
+holds :data:`MAX_RULINGS` to its ``decisions``.  U7 (employer DC
+balances; built in u1-draft-7 after the label investigation of the PSID
+pension section, :mod:`populace_dynamics.data.employer_dc`) adds the
+head's and wife's employer DC account balances the pension section
+observes to WEALTH1 (``financial_assets="wealth1_plus_employer_dc"``).
 """
 
 from __future__ import annotations
@@ -56,11 +58,13 @@ __all__ = [
     "FALLBACK_ALTERNATIVES",
     "FALLBACK_ROW",
     "HEADLINE_RULE",
+    "MAX_RULINGS",
     "PRIMARY_ROW",
     "REGISTERED_ROWS",
     "SPECIFICATION_PATH",
     "TrackURow",
     "check_rows_against_block",
+    "check_rulings_against_block",
     "row_from_block",
     "specification_block",
 ]
@@ -72,7 +76,8 @@ SPECIFICATION_PATH = (
 PRIMARY_ROW = "U0"
 #: The registered fallback row (U0 on 1941, 1943 and 1945).
 FALLBACK_ROW = "U0-F"
-#: The specification's headline rule (section 11; pending Max).
+#: The specification's headline rule (section 11; ruled by Max, d411
+#: item (a)).
 HEADLINE_RULE = "u0_if_2005_2007_wealth_staged_before_registration_else_u0f"
 #: Block ``population`` values and the builder row they select.
 _POPULATION_ROWS = {
@@ -242,6 +247,162 @@ REGISTERED_ROWS: dict[str, TrackURow] = {
         ),
     )
 }
+
+
+#: Max's rulings on exercise 2 (cos decisions d189, 2026-09-24, and d411,
+#: 2026-09-26; specification section 16).  The section 15 block records
+#: the same rulings under ``decisions``; a registered run refuses a block
+#: whose rulings differ (:func:`check_rulings_against_block`).  d411 adopts
+#: the defaults filed with the ``u1-draft-7`` card, except that item (g)
+#: adds the comparison memo's small-cell rule (``memo_small_cells``), a
+#: reporting rule for the memo that changes no computation here.
+MAX_RULINGS: dict[str, dict[str, Any]] = {
+    "claim_class": {
+        "ruling": "track_u_psid_realized_measurement_not_a_projection",
+        "declined": ["hold_exercise_2_for_track_v"],
+        "plan_section_10": "decision 1",
+        "decision_record": "d189",
+    },
+    "ssi_rule": {
+        "ruling": "offset_existing_recipients",
+        "declined_as_primary": ["none", "full_static_recomputation"],
+        "registered_as": ["U2", "U3"],
+        "plan_section_10": "decision 5",
+        "decision_record": "d189",
+    },
+    "wealth_supplements": {
+        "ruling": "downloaded_by_max",
+        "plan_section_10": "decision 3",
+        "decision_record": "d189",
+    },
+    "ratification_and_registration": {
+        "ruling": "ratify_by_merge_post_42_registration_run_one_shot",
+        "publishes_regardless": True,
+        "registration_describes": (
+            "static_simulation_on_psid_observed_incomes"
+        ),
+        "plan_section_10": "decision 7",
+        "decision_record": "d411",
+    },
+    "headline_row": {
+        "ruling": "U0",
+        "rule": "u0_if_2005_2007_wealth_staged_before_registration_else_u0f",
+        "registration_states": [
+            "u1_matches_the_report_birth_year_mix",
+            "u0_omits_the_uncut_1936_birth_year",
+        ],
+        "decision_record": "d411",
+        "item": "(a)",
+    },
+    "rows": {
+        "ruling": [
+            "U0",
+            "U1",
+            "U2",
+            "U3",
+            "U4",
+            "U5",
+            "U0-F",
+            "U7",
+            "U8",
+            "U9",
+            "U10",
+            "U2-F",
+            "U3-F",
+            "U4-F",
+            "U5-F",
+            "U7-F",
+            "U8-F",
+            "U9-F",
+            "U10-F",
+        ],
+        "declined": ["alternatives_on_u0_only"],
+        "decision_record": "d411",
+        "item": "(a)",
+    },
+    "financial_assets": {
+        "ruling": "wealth1",
+        "declined_as_primary": ["wealth1_plus_employer_dc"],
+        "registered_as": ["U7", "U7-F"],
+        "decision_record": "d411",
+        "item": "(b)",
+    },
+    "acceptance_rule": {
+        "ruling": None,
+        "declined": ["numerical_rule_set_by_max_before_registration"],
+        "plan_section_10": "decision 6",
+        "decision_record": "d411",
+        "item": "(c)",
+    },
+    "cut_start_year": {
+        "ruling": 2004,
+        "declined": [None],
+        "plan_section_10": "decision 8",
+        "decision_record": "d411",
+        "item": "(d)",
+    },
+    "definitions_extract": {
+        "ruling": "cleared_extract_used_as_builder_input",
+        "sha256": (
+            "a3978b683b4275424b6d12e9fe45f021fae277ccf9731a7883952564b6ed0384"
+        ),
+        "plan_section_10": "decision 2",
+        "decision_record": "d411",
+        "item": "(e)",
+    },
+    "rules_implementation": {
+        "ruling": "python_income_concept_not_axiom",
+        "declined": ["axiom_executed_ssi"],
+        "plan_section_10": "decision 4",
+        "decision_record": "d411",
+        "item": "(e)",
+        "named_in": "d189 as filed",
+    },
+    "clarification_request": {
+        "ruling": "none_before_the_one_shot_gaps_reported_as_results",
+        "declined": ["urban_clarification_request"],
+        "plan_section_10": "decision 9",
+        "decision_record": "d411",
+        "item": "(f)",
+    },
+    "freeze_defaults": {
+        "ruling": "specification_section_16_frozen_list",
+        "except": ["memo_small_cells"],
+        "decision_record": "d411",
+        "item": "(g)",
+    },
+    "memo_small_cells": {
+        "ruling": {
+            "flag_unweighted_n_below": 30,
+            "unweighted_n": "n_observations",
+            "no_switcher_cell": "uncertainty_not_estimable",
+        },
+        "declined": ["no_small_cell_flag"],
+        "basis": "second referee O1; independent skeptic check, 2026-09-25",
+        "decision_record": "d411",
+        "item": "(g)",
+    },
+}
+
+
+def check_rulings_against_block(block: Mapping[str, Any]) -> dict[str, Any]:
+    """Refuse a block whose ``decisions`` differ from :data:`MAX_RULINGS`.
+
+    The block must record ``ruled_by`` "Max" and a ``ruled_on`` date, and
+    exactly the fields of :data:`MAX_RULINGS`, each equal to the code's.
+    """
+
+    decisions = dict(block.get("decisions") or {})
+    if decisions.pop("ruled_by", None) != "Max" or not decisions.pop(
+        "ruled_on", None
+    ):
+        raise ValueError("the block records no ruling by Max")
+    if decisions != MAX_RULINGS:
+        raise ValueError(
+            "the block's decisions differ from the code's MAX_RULINGS: "
+            f"{sorted(set(decisions) ^ set(MAX_RULINGS))} or their values"
+        )
+    return {"rulings_checked": sorted(MAX_RULINGS), "rulings_equal": True}
 
 
 def specification_block(path: Path = SPECIFICATION_PATH) -> dict[str, Any]:
