@@ -455,3 +455,91 @@ def test_a_ruling_equal_only_under_python_equality_is_refused(
 def test_decisions_that_are_not_a_mapping_are_refused(decisions):
     with pytest.raises(ValueError, match="no ruling by Max"):
         rows.check_rulings_against_block({"decisions": decisions})
+
+
+# Reviewer regression (2026-09-26): the JSON-only comparison accepted a
+# block that Python's ``==`` refuses, because a tuple and a list serialize
+# alike, so the gate was not at least as strict as the ratification
+# package's ``==`` gate (6a).  Executed counterexample:
+# ``ssi_rule.registered_as = ("U2", "U3")`` was accepted.
+
+
+def _package_gate(block: dict) -> bool:
+    """The ratification package's gate (6a), as written: ``True`` when it
+    accepts the block."""
+
+    decisions = dict(block.get("decisions") or {})
+    if decisions.pop("ruled_by", None) != "Max" or not decisions.pop(
+        "ruled_on", None
+    ):
+        return False
+    return decisions == rows.MAX_RULINGS
+
+
+def _gate_accepts(block: dict) -> bool:
+    try:
+        rows.check_rulings_against_block(block)
+    except ValueError:
+        return False
+    return True
+
+
+def _twin(value):
+    """A value that one of ``==`` and JSON takes for ``value`` and the
+    other does not (``value`` itself when there is none)."""
+
+    if isinstance(value, bool):
+        return int(value)
+    if isinstance(value, int):
+        return float(value)
+    if isinstance(value, list):
+        return tuple(value)
+    return value
+
+
+@pytest.mark.parametrize(
+    ("path", "value"),
+    [
+        (("ssi_rule", "registered_as"), ("U2", "U3")),
+        (("rows", "ruling"), tuple(rows.MAX_RULINGS["rows"]["ruling"])),
+        (("memo_small_cells", "declined"), ("no_small_cell_flag",)),
+    ],
+    ids=["registered-as-tuple", "rows-as-tuple", "declined-as-tuple"],
+)
+def test_a_ruling_equal_only_as_json_is_refused(block, path, value):
+    changed = copy.deepcopy(block)
+    _parent(changed["decisions"], path)[path[-1]] = value
+    assert _json(changed) == _json(block)
+    assert not _package_gate(changed)
+    with pytest.raises(ValueError, match="differ from the code's MAX_RULINGS"):
+        rows.check_rulings_against_block(changed)
+
+
+def test_a_non_string_ruling_key_is_refused_as_a_difference(block):
+    changed = copy.deepcopy(block)
+    changed["decisions"][1] = {"ruling": "x"}
+    with pytest.raises(ValueError, match=r"\[1\] or their values"):
+        rows.check_rulings_against_block(changed)
+
+
+@settings(max_examples=300, deadline=None)
+@given(
+    path=st.sampled_from(_ALL_PATHS),
+    twin=st.booleans(),
+    value=_JSON_VALUES,
+)
+def test_the_gate_accepts_only_blocks_the_package_gate_accepts(
+    block, path, twin, value
+):
+    """Differential invariant against the package's gate: for any block
+    made by changing one key or item of the committed rulings (to any
+    JSON value, or to its ``==``/JSON twin), if this gate accepts it then
+    the package's ``==`` gate accepts it, and its rulings are the code's
+    as JSON."""
+
+    changed = copy.deepcopy(block)
+    parent = _parent(changed["decisions"], path)
+    parent[path[-1]] = _twin(parent[path[-1]]) if twin else value
+    if _gate_accepts(changed):
+        assert _package_gate(changed)
+        assert _json(changed["decisions"]) == _json(block["decisions"])

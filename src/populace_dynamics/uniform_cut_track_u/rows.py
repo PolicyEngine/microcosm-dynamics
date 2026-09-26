@@ -397,8 +397,11 @@ def check_rulings_against_block(block: Mapping[str, Any]) -> dict[str, Any]:
 
     The block must record ``ruled_by`` "Max" and a ``ruled_on`` date
     (``YYYY-MM-DD``), and exactly the fields of :data:`MAX_RULINGS`, each
-    equal to the code's as JSON (so a ``1`` for ``true``, or ``2004.0``
-    for ``2004``, is a difference).  The block is not modified.
+    equal to the code's both under Python's ``==`` and as JSON (so a
+    ``1`` for ``true``, ``2004.0`` for ``2004``, or a tuple for a list,
+    is a difference).  It therefore refuses every block that the plain
+    ``==`` comparison of the ratification package refuses, and more.  The
+    block is not modified.
     """
 
     recorded = block.get("decisions")
@@ -412,10 +415,16 @@ def check_rulings_against_block(block: Mapping[str, Any]) -> dict[str, Any]:
         and re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", ruled_on)
     ):
         raise ValueError("the block records no ruling by Max")
-    if _canonical(decisions) != _canonical(MAX_RULINGS):
+    # ``==`` first: it refuses what JSON cannot tell apart (a tuple for a
+    # list, an integer key for its string); the JSON text then refuses
+    # what ``==`` cannot tell apart (``1`` for ``true``).
+    if decisions != MAX_RULINGS or _canonical(decisions) != _canonical(
+        MAX_RULINGS
+    ):
+        differing = sorted(set(decisions) ^ set(MAX_RULINGS), key=str)
         raise ValueError(
             "the block's decisions differ from the code's MAX_RULINGS: "
-            f"{sorted(set(decisions) ^ set(MAX_RULINGS))} or their values"
+            f"{differing} or their values"
         )
     return {"rulings_checked": sorted(MAX_RULINGS), "rulings_equal": True}
 
