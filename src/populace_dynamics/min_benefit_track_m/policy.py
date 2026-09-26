@@ -337,8 +337,11 @@ ONSET_ENTITLEMENT_MINUS_1 = "entitlement_year_minus_1"
 SURVIVOR_OWN_BENEFIT_AFTER_402Q = "own_benefit_after_402q"
 #: Frozen (referee Q7): the monthly minimum is compared unrounded.
 MINIMUM_ROUNDING_NONE = "none"
-#: Not registered: floor the monthly minimum to a dime, as 415(g) rounds a
-#: PIA (the oracle's ``ss.benefits.pia`` convention).
+#: Not registered: floor the monthly minimum to a dime, as 42 USC
+#: 415(a)(1)(A) rounds a PIA (the oracle's ``ss.benefits.pia`` convention;
+#: its docstring cites 415(g), which in the text in effect on 2026-09-24
+#: rounds a monthly benefit down to $1: M2's statute capture,
+#: ``EVID/track-m-statute-20260925/READING.md``).
 MINIMUM_ROUNDING_DIME = "dime_floor"
 
 _CHOICES: dict[str, tuple[Any, ...]] = {

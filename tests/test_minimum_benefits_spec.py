@@ -77,17 +77,17 @@ def test_block_identity_and_status(block):
         "registration_package_m10_needs_m3_to_m5",
     ):
         assert built not in block["blocked_by"], built
-    # The Census years before 2003 that M4's count shows are needed are
-    # captured (section 18, blocker 1, 2026-09-25); the statute capture,
-    # the registration package and the registration remain.
+    # The Census years before 2003 that M4's count shows are needed and
+    # the statute text are captured (section 18, blockers 1 and 2,
+    # 2026-09-25); the registration package and the registration remain.
     for cleared in (
         "census_thresholds_1982_to_2002_needed_by_m4_not_captured",
+        "statute_413_415_402_423_not_captured_m2",
     ):
         assert cleared not in block["blocked_by"], cleared
     assert block["blocked_by"] == [
         "independent_check_of_m1_draft_2_and_the_m3_to_m5_readings_then_"
         "ratification_by_merge",
-        "statute_413_415_402_423_not_captured_m2",
         "registration_package_m10_needs_the_comparator_seal_hash",
         "issue_42_registration_absent",
     ]
@@ -95,7 +95,8 @@ def test_block_identity_and_status(block):
 
 def test_the_block_records_the_census_and_statute_captures(block):
     """Section 19's sources record the 1982-2022 Census capture as the
-    loader reads it, with the capture it replaced and its cross-check."""
+    loader reads it, with the capture it replaced and its cross-check,
+    and the statute capture M2 made (evidence, not read by code)."""
 
     from populace_dynamics.min_benefit_track_m import thresholds
 
@@ -121,6 +122,23 @@ def test_the_block_records_the_census_and_statute_captures(block):
         hashlib.sha256(crosscheck.read_bytes()).hexdigest()
         == census["crosscheck"]["sha256"]
     )
+    statute = block["sources"]["statute"]
+    assert statute["status"] == "captured_m2"
+    assert statute["sections"] == [
+        "42 USC 413",
+        "42 USC 415",
+        "42 USC 402",
+        "42 USC 423",
+    ]
+    assert statute["findings_for_ratification"] == [
+        "F1",
+        "F2",
+        "F3a",
+        "F3b",
+        "F4",
+        "O1",
+    ]
+    assert len(statute["reading"]["sha256"]) == 64
 
 
 def test_statistic_and_uncertainty_are_the_tabulations(block):
@@ -220,10 +238,10 @@ def _ratified(block: dict) -> dict:
 
 def test_a_ratified_block_still_listing_blockers_authorizes_nothing(block):
     """Ratification alone does not authorize the run: the block's
-    ``blocked_by`` still names the open blockers (the statute, the
-    registration package and the registration; the Census years before
-    2003 were cleared on 2026-09-25), and the gate refuses a block that
-    names any blocker (or has no list)."""
+    ``blocked_by`` still names the open blockers (the registration package
+    and the registration; the Census years before 2003 and the statute
+    were cleared on 2026-09-25), and the gate refuses a block that names
+    any blocker (or has no list)."""
 
     ratified = _ratified(block)
     assert ratified["blocked_by"]

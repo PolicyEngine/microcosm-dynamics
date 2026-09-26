@@ -85,7 +85,8 @@
     §18's limits; it computed no years of coverage, PIA, threshold,
     minimum, flag or share on real data. §22 lists what it read.
   - A fifth builder lane (Claude Code subagent, Opus 5.5) cleared §18's
-    blocker 1 on 2026-09-25: the Census workbooks before 2003. It read `EVID/RESTRICTED-FILES.md` (SHA-256
+    blockers 1 and 2 on 2026-09-25: the Census workbooks before 2003 and
+    the statute capture. It read `EVID/RESTRICTED-FILES.md` (SHA-256
     `2fc9bdbf…`; after the orchestrator's 19:35 entry, `e5a72860…`, which
     it re-read) before any other file and opened nothing it restricts:
     not the Report in any copy, the plan, the cleared files, any
@@ -161,10 +162,10 @@ builder lane).
 | PSID 2023 wave, family files 1968-2023, marriage history | Structural counts (§10); M3's receipt and labor-income items (§§4c, 5, 6) | Staged; labels verified (`tests/data/test_track_m_psid_labels.py`, labels and format blocks only) |
 | Census historical poverty-threshold workbooks of 1982, 1986, 1988, 1989, 1991, 1992 and 1994-2022 (`thresh82.xlsx`-`thresh22.xlsx`; `thresh95.xlsx` is the Internet Archive's copy of its Census URL) | The threshold that defines the minimum (G8, §7) | **Captured** (d194, d279): `data/external/census_poverty_thresholds_1982_2022.json` (SHA-256 `4493b8d5…`); it replaced the 2003-2022 capture (`65bbcd83…`), whose content it keeps (§7) |
 | Census historical poverty Table 1, HTML edition of 2009 (`hstpov1.html`, Internet Archive capture `20100209011620`, SHA-256 `d219cb20…`) | An independent check of the captured weighted averages, 1982-2006, and of their CPI-U updating (§7) | Committed in `data/external/census_poverty_thresholds/crosscheck/`; read by the tests |
-| 42 USC 413(a)-(d); 20 CFR 404.141 and 404.143 | Quarters of coverage (§5), DI coverage end (§4a) | **Not captured** (M2). Review copies: 413 and 20 CFR 404.141 and 404.143 in `EVID/track-m-review-20260924/`; 402 in `EVID/minimum-benefits-referee-20260924/`; the oracle's `statutory_aime` quotes 415(b) (text `5b41d1cd…`) |
-| 42 USC 415(b)(2)(B)(ii) | The end of an old-age PIA's history (§4a) | Read in the text `5b41d1cd…` (encoder workspace copy) |
-| 42 USC 402(k)(3)(A) | The survivor's own amount (§4b rule 5) | Read in the referee's extract (`43d5e10a…`) and its page copy (`e5bb977c…`) |
-| 42 USC 415(i)(2)(A)(iii) | MS5's COLA factor (§6) | Read in `EVID/tr2008-inputs-20260922/usc-42-415-excerpts.txt` (`a323ca47…`) |
+| 42 USC 413, 415 (including 415(i)), 402 (including 402(k), (q) and (w)) and 423: uscode.house.gov, 'prelim' edition, laws in effect on 2026-09-24 | Quarters of coverage (§5), the years of §4a, the PIA and COLAs (§6), dual entitlement (§4b rule 5), the DI waiting period (§4b rule 4) | **Captured** (M2, 2026-09-25): `EVID/track-m-statute-20260925/` (HTML, plain text, verbatim excerpts; `SHA256SUMS` `6a268716…`). Its `READING.md` (`9c043b4e…`) gives each rule the code relies on a verdict (§18). 20 CFR 404.141 and 404.143 stay review copies in `EVID/track-m-review-20260924/` |
+| 42 USC 415(b)(2)(B)(ii) | The end of an old-age PIA's history (§4a) | Read in the text `5b41d1cd…` (encoder workspace copy); confirmed in M2's capture (`READING.md` rules 5 and 6) |
+| 42 USC 402(k)(3)(A) | The survivor's own amount (§4b rule 5) | Read in the referee's extract (`43d5e10a…`) and its page copy (`e5bb977c…`); M2's capture reads it with 402(q)(3) and (w) (`READING.md` rule 14) |
+| 42 USC 415(i)(2)(A)(iii) | MS5's COLA factor (§6) | Read in `EVID/tr2008-inputs-20260922/usc-42-415-excerpts.txt` (`a323ca47…`); confirmed in M2's capture (`READING.md` rule 13) |
 
 ## 3. Policy
 
@@ -640,7 +641,11 @@ of §4a, cut at its last year. What the oracle does, as read:
   history file records that from 1983 each COLA is effective in December
   of its determination year and first reflected in January payments of
   the next, so benefits paid for 2022 reflect the COLAs determined
-  through 2021. `evaluation.TrackMInputs` refuses a record marked in
+  through 2021. M2's statute capture confirms 415(i)(2)(A)(ii)-(iii) and
+  (B) (`EVID/track-m-statute-20260925/READING.md`, rule 13) and records
+  that the text floors each increased PIA to a dime, which the product
+  leaves out: a named approximation of MS5, under $0.10 a COLA step.
+  `evaluation.TrackMInputs` refuses a record marked in
   MS5's scope that a survivor's link names (a deceased worker) or that is
   not the own record of a person paid their own worker benefit.
   **Built (M3, M5; 2026-09-25):** ER35219 is, by its codebook entry, the
@@ -790,8 +795,10 @@ section 3).
   wage-indexed minimum equals the price-indexed one. The AWI is the
   oracle's `SSAParameters.nawi`.
 - **Monthly minimum:** *M*ₖ = *s*ₖ(*Y*\*)·*T*/12, unrounded (frozen,
-  referee Q7; the alternative floors it to a dime as 415(g) rounds a PIA,
-  and is not registered).
+  referee Q7; the alternative floors it to a dime as 415(a)(1)(A) rounds
+  a PIA, and is not registered. The earlier text cited 415(g), which in
+  the captured statute rounds a monthly benefit down to $1: finding F4
+  of M2's statute capture, §18).
 - **No re-determination** after the first calculation (fn. 26(2)).
 
 ## 8. Order of the cut and the minimum, and the worker flag
@@ -1308,10 +1315,22 @@ Blocked, with the plan's effort estimates (lane-days):
    the hash (the file is the Internet Archive's copy, §7). A year a
    ratified reading newly needs would need a new download; the run
    refuses it first.
-2. **The statute text** (part of M2's 1.5): 413, 415 (including 415(i)),
-   402(k) and 423 (the waiting period), with SHA-256. Review copies of
-   413, 20 CFR 404.141 and 404.143, 402 and parts of 415 exist in
-   `EVID/` (§2); 423 has not been read.
+2. **The statute text: cleared (2026-09-25).** 42 USC 413, 415
+   (including 415(i)), 402 (including 402(k), (q) and (w)) and 423 are
+   captured from uscode.house.gov with SHA-256 in
+   `EVID/track-m-statute-20260925/` (§2). Its `READING.md` gives each rule
+   the code relies on a verdict:
+   - supported: 413(d), 413(a)(2) (the work year and the pre-1978
+     rule), 415(b)(2)(B)(ii)(I), the death row's named approximation,
+     415(b)(2)(A) and (B)(iii) (computation and elapsed years, the
+     dropout), 415(b)(3)(A) (indexing), the bend-point and threshold
+     years, and 415(i) (MS5's COLA span);
+   - partly supported or a convention: the disability row's history
+     end (F2), the onset year (F1) and dual entitlement (F3a, F3b);
+   - a wrong citation: 415(g) for a PIA's dime rounding (F4, corrected).
+
+   The findings are listed under item 4. 20 CFR 404.141 and 404.143 stay
+   review copies (§2).
 3. **M10's registration package** (part of 1.5): the specification's
    SHA-256, the code SHA and the parameter hashes are in the dry run's
    provenance, and the SHA-256 of the 91 PSID files the cohort reads is in
@@ -1329,6 +1348,43 @@ Blocked, with the plan's effort estimates (lane-days):
    and item 2's text, and sized item 1 for the ratification (§4c).
    Ratification alone authorizes no run: the ratified block still lists
    the other blockers, and the gate refuses a block that lists any (§19).
+
+   M2's statute capture (2026-09-25, `EVID/track-m-statute-20260925/
+   READING.md`) adds these findings for the ratification. None
+   contradicts a ruling of Max's; F1-F3 bear on frozen rules, which that
+   lane did not change.
+   - **F1** (§4b rule 4). 423(a)(1) and (c)(2) start DI entitlement with
+     the first month after a waiting period of five full calendar months
+     of disability, so onset is in the entitlement year or earlier.
+     Entitlement − 1 is a convention inside that bound (the builder
+     default), not statute; onset = the entitlement year is equally
+     consistent with the text.
+   - **F2** (§4a, disability row). 413(a)(2)(B)(i) removes only the
+     quarters inside a period of disability other than its first and
+     last, and 415(b)(2)(B)(ii) keeps as a computation base year any year
+     not entirely in a period of disability. Ending *Y* and *P*'s history
+     at onset − 1 drops the onset year's earnings before the disability:
+     an approximation like the death row's, but unnamed.
+   - **F3a** (§4b rule 5, survivors). For a survivor entitled to an own DI
+     benefit *D*, 402(q)(3)(C) with 402(k)(3)(A) pays the widow(er)'s
+     excess (*W* − *D*)(1 − *r*), positive whenever *W* > *D*. The oracle's
+     test, *W*(1 − *r*) > *D*, reports some of those as not paid.
+   - **F3b** (§4b rule 5, spouses). 402(q)(3)(B) with 402(k)(3)(A) gives
+     the oracle's (*S* − *O*)(1 − *r*) when the spouse's own benefit was
+     first taken before retirement age, or is a DI benefit (402(q)(3)(C)).
+     For a spouse whose own old-age benefit began at or after retirement
+     age, or after the spouse's benefit, the text gives *S*(1 − *r*) −
+     *O*(1 + *c*), with *c* the 402(w) credit. That can be zero or less
+     when *S* > *O*, where the oracle reports the spouse's benefit paid.
+   - **F4.** In the captured text, 415(g) rounds a monthly benefit down to
+     $1; a PIA's dime rounding is 415(a)(1)(A). Track M's citation is
+     corrected (§7; `policy.py`). The oracle's docstrings still cite
+     415(g); `ss/` is called unchanged.
+   - **O1.** 415(a)(1)(C)(i) sets current law's special minimum PIA
+     ($11.50 for each year of coverage over 10, raised by the COLAs).
+     Neither this specification nor the code mentions it. Whether option
+     1, or the count of people receiving a minimum, should account for it
+     is open.
 
 ## 19. Machine-readable parameter block
 
@@ -1354,7 +1410,8 @@ block lists none. The entry script also refuses parameter files whose
 SHA-256 differs from `sources` (§18); `sources.quarter_of_coverage_amounts`
 records the committed capture and the policyengine-us file it came from,
 and a test holds that record, and the Census capture's (file, SHA-256 and
-captured years), to what the loaders read.
+captured years), to what the loaders read. `sources.statute` records M2's
+statute capture, which is evidence the code does not read.
 
 ```json
 {
@@ -1788,11 +1845,34 @@ captured years), to what the loaders read.
     "referee_report": {
       "file": "minimum-benefits-referee-20260924.md",
       "required_changes": "R1-R10"
+    },
+    "statute": {
+      "folder": "track-m-statute-20260925",
+      "source": "uscode.house.gov prelim edition, laws in effect on 2026-09-24 (currentthrough 20260918_119-111)",
+      "sections": [
+        "42 USC 413",
+        "42 USC 415",
+        "42 USC 402",
+        "42 USC 423"
+      ],
+      "sha256sums_sha256": "6a26871698361ff485b07b9c526e438842e49c7a6135f59431317dfe424107b3",
+      "reading": {
+        "file": "READING.md",
+        "sha256": "9c043b4ecd5ce0b197d49a26473159be6caad013815b329514a3852fecdb7a81"
+      },
+      "findings_for_ratification": [
+        "F1",
+        "F2",
+        "F3a",
+        "F3b",
+        "F4",
+        "O1"
+      ],
+      "status": "captured_m2"
     }
   },
   "blocked_by": [
     "independent_check_of_m1_draft_2_and_the_m3_to_m5_readings_then_ratification_by_merge",
-    "statute_413_415_402_423_not_captured_m2",
     "registration_package_m10_needs_the_comparator_seal_hash",
     "issue_42_registration_absent"
   ]
@@ -2101,7 +2181,7 @@ minimum, flag, share or in-window count on real data. It did not open
 the interrupted lane's `smoke.json` or pickle. Its report is
 `EVID/track-m-3-review-20260925.md`.
 
-**The lane that cleared §18's blocker 1 (2026-09-25, Claude Code
+**The lane that cleared §18's blockers 1 and 2 (2026-09-25, Claude Code
 subagent, Opus 5.5) read:**
 - `EVID/RESTRICTED-FILES.md` first (`2fc9bdbf…`), and again after the
   orchestrator's 19:35 entry (`e5a72860…`);
@@ -2121,6 +2201,8 @@ subagent, Opus 5.5) read:**
 - Census's historical-thresholds and historical-poverty pages (HTML,
   fetched 2026-09-25) and, through the Internet Archive, the 2009 HTML
   edition of Table 1 and its footnotes page;
+- 42 USC 413, 415, 402 and 423 as captured (§2), and the law.cornell.edu
+  copy of 413 (`7d226c0a…`), compared with the capture.
 
 It did not download `hstpov1.xlsx`, Census's current workbook edition of
 Table 1: the brief allowed a public HTML table only. It read no PSID file,
@@ -2199,9 +2281,9 @@ run is on INVENTED cohorts (`EVID/track-m-dry-run-r5-20260925/`).
   §4c item 2's "can only move an entitlement year later" is limited to the
   files' "no", and item 1 records the size of its reading; §18 item 4 and
   §22 record the review.
-- `m1-draft-2`, §18's blocker 1 cleared (2026-09-25; no ruling, default,
-  row, cell or frozen choice changed, so the version stands, as in the
-  earlier builds' entries). Changes by section:
+- `m1-draft-2`, §18's blockers 1 and 2 cleared (2026-09-25; no ruling,
+  default, row, cell or frozen choice changed, so the version stands, as
+  in the earlier builds' entries). Changes by section:
   - **Census (§§2, 4, 7, 18, 19, 20).** The Census workbooks of the
     fifteen years before 2003 that M4's count shows are needed (d279) are
     captured, hashed and pinned with 2003-2022 in
@@ -2213,11 +2295,18 @@ run is on INVENTED cohorts (`EVID/track-m-dry-run-r5-20260925/`).
     pinned to its years. Census's 2009 HTML Table 1 cross-checks the
     capture: G8's row is equal in every captured year 1982-2006, and 37
     of 247 multi-threshold averages differ.
+  - **Statute (§§2, 6, 7, 18, 19).** 42 USC 413, 415, 402 and 423 are
+    captured from uscode.house.gov (`EVID/track-m-statute-20260925/`), and
+    each rule the code relies on is read against the text. Findings F1-F4
+    and O1 go to the ratification (§18 item 4). The 415(g) citation for a
+    PIA's dime rounding is corrected to 415(a)(1)(A) in §7 and
+    `policy.py`.
   - **The block (§19).** `sources.census_thresholds` records the new
-    capture, its years, the cross-check and the capture it replaces; the
-    d279 record's note (in `policy.MAX_RULINGS` and `decisions`) records
-    the capture; `blocked_by` drops
-    `census_thresholds_1982_to_2002_needed_by_m4_not_captured`.
+    capture, its years, the cross-check and the capture it replaces;
+    `sources.statute` records the statute capture; the d279 record's note
+    (in `policy.MAX_RULINGS` and `decisions`) records the capture;
+    `blocked_by` drops `census_thresholds_1982_to_2002_needed_by_m4_not_captured`
+    and `statute_413_415_402_423_not_captured_m2`.
   - **Other.** §22 records what the lane read. The invented dry run is
     rerun into `EVID/track-m-dry-run-r5-20260925/`: 1998 now passes the
     threshold check, and 1993, 1981 and the unconstrained M4 cohort (which
