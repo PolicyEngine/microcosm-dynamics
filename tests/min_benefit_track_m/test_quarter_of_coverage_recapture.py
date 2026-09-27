@@ -46,6 +46,12 @@ def _captured():
     return json.loads(coverage.QC_CAPTURE_PATH.read_text())
 
 
+def _without_revisions(document):
+    document["source"].pop("pe_us_revision")
+    document["value_check"]["wage_index"].pop("pe_us_revision")
+    return document
+
+
 def _skip_unless_captured_files(root, committed):
     """Skip unless the checkout holds the files the capture records."""
     unpinned = []
@@ -71,18 +77,27 @@ def _skip_unless_captured_revision(root, committed):
     Read from git directly rather than through the loaders under test, so
     a change to how they record the revision still fails the recapture.
     """
-    completed = subprocess.run(
-        ["git", "log", "-1", "--format=%h"],
-        cwd=root,
-        capture_output=True,
-        text=True,
-        check=False,
+    try:
+        completed = subprocess.run(
+            ["git", "log", "-1", "--format=%h"],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except FileNotFoundError:  # no git: the revision cannot be the pin
+        completed = None
+    revision = (
+        completed.stdout.strip()
+        if completed is not None and completed.returncode == 0
+        else ""
     )
-    revision = completed.stdout.strip() if completed.returncode == 0 else ""
     recorded = {
         committed["source"]["pe_us_revision"],
         committed["value_check"]["wage_index"]["pe_us_revision"],
     }
+    # One checkout was captured; two revisions would make this skip forever.
+    assert len(recorded) == 1, recorded
     if recorded != {revision}:
         pytest.skip(
             f"policyengine-us checkout {root} is at {revision!r}, not the "
@@ -95,9 +110,13 @@ def test_the_recapture_equals_the_committed_file():
     root = coverage._resolve_pe_us(None)
     _skip_unless_captured_files(root, committed)
     script = _script()
-    # build() checks every amount against the statute; only the bytes
-    # below need the captured commit.
+    # build() checks every amount against the statute, and the captured
+    # files fix every field but the two recorded revisions, so compare the
+    # rest at any commit; only the bytes need the captured one.
     fresh = script.serialize(script.build())
+    assert _without_revisions(json.loads(fresh)) == _without_revisions(
+        _captured()
+    )
     _skip_unless_captured_revision(root, committed)
     assert fresh == coverage.QC_CAPTURE_PATH.read_bytes()
 

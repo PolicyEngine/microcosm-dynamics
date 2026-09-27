@@ -57,14 +57,21 @@ def _skip_unless_captured_revision(root: Path, *, exact: bool) -> str:
     captured = json.loads(statutory.CAPTURE_PATH.read_text())["source"][
         "policyengine_us_revision"
     ]
-    completed = subprocess.run(
-        ["git", "log", "-1", "--format=%h"],
-        cwd=root,
-        capture_output=True,
-        text=True,
-        check=False,
+    try:
+        completed = subprocess.run(
+            ["git", "log", "-1", "--format=%h"],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except FileNotFoundError:  # no git: the revision cannot be the pin
+        completed = None
+    revision = (
+        completed.stdout.strip()
+        if completed is not None and completed.returncode == 0
+        else ""
     )
-    revision = completed.stdout.strip() if completed.returncode == 0 else ""
     if not (revision == captured if exact else revision.startswith(captured)):
         pytest.skip(
             f"policyengine-us checkout {root} is at {revision!r}, not the "
@@ -80,7 +87,13 @@ def test_capture_script_reproduces_the_committed_capture(tmp_path):
     assert (
         module.main(["--pe-us-dir", str(root), "--output", str(output)]) == 0
     )
-    # The script's own checks ran above; only the bytes need the commit.
+    # Pinned files fix every field but the recorded revision, so compare
+    # the rest at any commit; only the bytes need the captured one.
+    fresh = json.loads(output.read_text())
+    committed = json.loads(statutory.CAPTURE_PATH.read_text())
+    for document in (fresh, committed):
+        document["source"].pop("policyengine_us_revision")
+    assert fresh == committed
     _skip_unless_captured_revision(root, exact=True)
     assert output.read_bytes() == statutory.CAPTURE_PATH.read_bytes()
 
