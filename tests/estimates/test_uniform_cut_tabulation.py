@@ -14,6 +14,8 @@ import math
 import numpy as np
 import pandas as pd
 import pytest
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 from populace_dynamics.estimates import uniform_cut_tabulation as ut
 from populace_dynamics.estimates.adjusted_poverty import OUTPUT_LABELS
@@ -517,7 +519,7 @@ def test_pending_decisions_name_the_config_defaults():
     assert "Q5" in decisions["design_se_domain"].default_basis
     assert decisions["cells"].default == list(config.cells)
     assert "S2" in decisions["cells"].default_basis
-    assert "freeze" in decisions["cells"].awaiting
+    assert "ratification of u1-ratified-1" in decisions["cells"].awaiting
     item = decisions["unclassified_marital_cells"]
     assert item.default == config.unclassified_marital_cells
     assert item.default == "excluded_counted"
@@ -535,3 +537,75 @@ def test_config_validation():
         ut.TabulationConfig(cells=("all", "non_married"))
     with pytest.raises(ut.UniformCutTabulationError):
         ut.TabulationConfig(unclassified_marital_cells="non_married")
+
+
+#: One INVENTED observation for the property below: sex, four-way marital
+#: status, weight (zero allowed), stratum, cluster and the two poverty
+#: flags.  Nothing here is a PSID value.
+_INVENTED_OBSERVATION = st.tuples(
+    st.sampled_from(("male", "female")),
+    st.sampled_from((*ut.MARITAL_STATUSES, ut.UNCLASSIFIED)),
+    st.sampled_from((0.0, 0.5, 1.0, 2.0, 3.5)),
+    st.integers(1, 3),
+    st.integers(1, 2),
+    st.booleans(),
+    st.booleans(),
+)
+
+
+@settings(max_examples=60, deadline=None)
+@given(
+    observations=st.lists(_INVENTED_OBSERVATION, min_size=1, max_size=24),
+    cell=st.sampled_from(ut.DEFAULT_CELLS),
+)
+def test_a_cell_where_nobody_switches_has_zero_change_se_and_floor(
+    observations, cell
+):
+    """Invariant behind the memo's small-cell rule (cos decision d411 item
+    (g); specification section 10a), for every INVENTED input: in a cell
+    where nobody's poverty status changes between baseline and reform,
+    the change is exactly 0, its design SE is exactly 0, and the half-split
+    floor is 0 wherever it is defined (undefined, never 0, with fewer than
+    ``MIN_FLOOR_SEEDS`` usable seeds).  So a design SE of 0 there says
+    nothing about precision, which is why the memo reports that cell's
+    uncertainty as not estimable.  The cell's ``n_observations``, which
+    the memo flags under 30, is its unweighted count of rows."""
+
+    n = len(observations)
+    rows = pd.DataFrame(
+        {
+            "observation_id": [f"o{i}" for i in range(n)],
+            "person_id": list(range(1, n + 1)),
+            "family_unit_id": [100 + i for i in range(n)],
+            "weight": [o[2] for o in observations],
+            "sex": [o[0] for o in observations],
+            "marital_status_4": [o[1] for o in observations],
+            "birth_year": [1937 + 2 * (i % 5) for i in range(n)],
+            "stratum": [o[3] for o in observations],
+            "cluster": [o[4] for o in observations],
+            "poor_baseline": [o[5] for o in observations],
+            "poor_reform": [o[6] for o in observations],
+        }
+    )
+    mask = ut.cell_mask(rows, cell)
+    # nobody in the cell switches; rows outside it keep their flags
+    rows.loc[mask, "poor_reform"] = rows.loc[mask, "poor_baseline"]
+    result = ut.tabulate_uniform_cut(
+        rows, data_provenance="invented", design=_design(rows)
+    )
+    entry = next(c for c in result["cells"] if c["cell"] == cell)
+    assert entry["n_observations"] == int(mask.sum())
+    floor = entry["floor"]["delta"]
+    if entry["defined"]:
+        assert entry["delta"] == 0.0
+        assert entry["baseline_rate"] == entry["reform_rate"]
+        assert entry["design_se"]["delta"]["se"] == 0.0
+    else:
+        assert "delta" not in entry
+    if floor["defined"]:
+        assert floor["n_seeds"] >= ut.MIN_FLOOR_SEEDS
+        assert floor["mean"] == floor["max"] == floor["sd"] == 0.0
+    else:
+        assert floor["mean"] is None
+        assert floor["n_seeds"] < ut.MIN_FLOOR_SEEDS
+    assert all(value == 0.0 for value in floor["values"])
