@@ -520,4 +520,7 @@ def test_the_script_shares_the_exercise_1_ratification_test():
     assert script.DEFAULT_OUTPUT == (
         ROOT / "runs" / "replication_boomers2004_uniform_cut_v1.json"
     )
-    assert not script.DEFAULT_OUTPUT.exists()
+    # The registered one-shot has run (Registration 16): its artifact is
+    # committed at DEFAULT_OUTPUT and pinned by
+    # tests/test_replication_boomers2004_uniform_cut.py.  The preflight's
+    # refusal of an existing output is tested above on a temporary path.
