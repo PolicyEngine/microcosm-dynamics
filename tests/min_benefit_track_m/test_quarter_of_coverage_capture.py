@@ -127,6 +127,16 @@ _growth = st.lists(
 )
 
 
+def _invented_wage_index(growth, awi_1976):
+    """An INVENTED wage index: 1976's value, then a growth rate a year."""
+
+    nawi = {1975: awi_1976 / 1.07, 1976: awi_1976}
+    for offset, rate in enumerate(growth):
+        year = 1977 + offset
+        nawi[year] = nawi[year - 1] * (1 + rate)
+    return nawi
+
+
 @settings(max_examples=60, deadline=None)
 @given(_growth, st.floats(min_value=5_000, max_value=15_000))
 @example(growth=[0.0] * 59 + [0.06], awi_1976=9297.737135264473)
@@ -146,10 +156,7 @@ def test_the_statutory_amounts_are_a_ratchet_of_rounded_wage_ratios(
     $265 rounds to $260 (the float product is 265.0), and one of exactly
     $265 rounds up to $270."""
 
-    nawi = {1975: awi_1976 / 1.07, 1976: awi_1976}
-    for offset, rate in enumerate(growth):
-        year = 1977 + offset
-        nawi[year] = nawi[year - 1] * (1 + rate)
+    nawi = _invented_wage_index(growth, awi_1976)
     last = 1977 + len(growth) + 1
     amounts = coverage.statutory_qc_amounts(nawi, last)
     assert amounts[1978] == 250.0
@@ -160,6 +167,20 @@ def test_the_statutory_amounts_are_a_ratchet_of_rounded_wage_ratios(
         assert amounts[year] == max(amounts[year - 1], wage_amount)
         assert amounts[year] >= amounts[year - 1]
         assert amounts[year] % 10 == 0
+
+
+def test_a_product_just_below_a_multiple_of_five_rounds_down():
+    """The property's two examples as literal amounts, so they do not
+    lean on :func:`coverage.round_to_ten`: a product about 1e-14 below
+    $265, which is 265.0 in floats, gives $260; one of exactly $265
+    rounds up to $270."""
+
+    below = _invented_wage_index([0.0] * 59 + [0.06], 9297.737135264473)
+    assert 250 * below[2036] / below[1976] == 265.0
+    assert coverage.statutory_qc_amounts(below, 2038)[2038] == 260.0
+    tie = _invented_wage_index([0.06] + [0.0] * 59, 8000.0)
+    assert tie[1977] == 8_480.0
+    assert coverage.statutory_qc_amounts(tie, 1979)[1979] == 270.0
 
 
 def test_the_statutory_amounts_need_the_1976_wage_index():
