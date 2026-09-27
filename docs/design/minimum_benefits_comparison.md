@@ -808,12 +808,17 @@ section 3).
 - **Provenance of 1990** (d279 again; the need is d430's sensitivity's,
   §10): the orchestrating Claude Code session fetched `thresh90.xlsx`
   from its Census URL on 2026-09-26 into the same directory and listed it
-  in `SHA256SUMS` (12,171 bytes, SHA-256 `6a955422…`). It reports that
-  the file's SHA-1 equals the digest the Internet Archive's CDX index
-  records for that URL (`NU6BR4AS…`); the capturing lane confirmed the
-  SHA-256, the size, the `SHA256SUMS` entry and the SHA-1, but the CDX
-  index was offline when it queried it, so the match with the index is
-  the orchestrator's check.
+  in `SHA256SUMS` (12,171 bytes, SHA-256 `6a955422…`; the capturing
+  lane confirmed the SHA-256, the size and the entry). Its SHA-1 in base
+  32 is `NU6BR4AS…`. The Internet Archive's CDX index for that URL, which
+  was offline when the capturing lane queried it and which the
+  independent review of 2026-09-26 read, records two digests:
+  `NU6BR4AS…` on six captures from 2023-05-21 to 2026-08-20, the latest
+  included, and `D2G5YAKM…` on five captures from 2023-02-26 to
+  2025-01-23 and one revisit. For `thresh95.xlsx` the second digest was
+  the gzip body as served (`census_poverty_thresholds/provenance.md`);
+  for `thresh90.xlsx` no capture was fetched, so what `D2G5YAKM…` holds
+  is unchecked.
 - **Layouts** (every workbook inspected cell by cell, 2026-09-25;
   `thresh90.xlsx` on 2026-09-26): all thirty-six print one table in the
   same cells (91 non-blank; 92 in 1982 and 2000). `thresh90.xlsx` prints
@@ -1283,9 +1288,12 @@ promoted afterwards.
 | MS6 | `di_pia_rule` | Track A's DI approximation (35-year divisor) | Yes |
 
 **d430's sensitivity is registered, unscored, and is not a row**
-(`own_receipt_reading_d430`; §§4c, 11, 19). Max's d430 left the choice
-between an unscored row MS7 and a §11 diagnostic open; this version takes
-the smaller correct change, the diagnostic. A row changes one
+(`own_receipt_reading_d430`; §§4c, 11, 19). d430 requires a
+pre-registered, unscored sensitivity and does not say whether it is a
+row or a diagnostic (the ratification card had said that bounding would
+need a new registered row; the build's brief allowed an unscored row MS7
+or a §11 diagnostic); this version takes the smaller correct change, the
+diagnostic. A row changes one
 `TrackMPolicy` field over one set of records (`policy._check_rows`,
 `pipeline.run_track_m`), while the sensitivity changes the records
 themselves: which worker records exist, and their basis and years. As a
@@ -1604,11 +1612,12 @@ guard:
   its threshold-year check, which passes a sensitivity record that needs
   1990 and refuses one that needs 1993 before anything is computed. Its
   output, headed "INVENTED DATA - NOT A COMPARISON", is in
-  `EVID/track-m-dry-run-r8-20260926/` (earlier runs:
+  `EVID/track-m-dry-run-r9-20260926/`, run by the independent review of
+  2026-09-26 at its head (earlier runs:
   `EVID/track-m-dry-run-20260925/`, `-r2/`, `-r3-`, `-r4-`, `-r5-`,
-  `-r6-` and `-r7-`); its rows MS0-MS6 are byte-identical to those of the
-  build before d430 (`672e6770`, `EVID/track-m-5-build-20260926/
-  dry-run-baseline-672e6770/`), of r6 and of r7.
+  `-r6-`, `-r7-` and `-r8-`); its rows MS0-MS6 are byte-identical to those
+  of the build before d430 (`672e6770`, `EVID/track-m-5-build-20260926/
+  dry-run-baseline-672e6770/`), of r6, of r7 and of r8.
 - `scripts/run_track_m_registered.py`: the one-shot entry point. It
   refuses this draft at its preflight (§19). With an authorizing block it
   refuses, before reading any PSID file, while a component is missing
@@ -2849,6 +2858,48 @@ Report in any copy, the plan, the change package, the cleared files, any compara
 directory, seal, reconciliation or values scan, the uncleared sources,
 either scratchpad archive, or any exercise-1 or exercise-3 result.
 
+**The independent review of the sensitivity build and the 1990 capture
+(2026-09-26, Claude Code subagent, Opus 5.5;
+`EVID/track-m-5-review-20260926.md`) read:**
+- its brief, then its batch's shared rules (which the brief names
+  first), then `EVID/RESTRICTED-FILES.md` (`02148069…`) before any other
+  file;
+- the cos records of d430, d219, d279 and d280 (`decisions show`);
+- the seventh lane's brief and report
+  (`EVID/subfleet-briefs-20260926/m-sensitivity.md` and `.report.md`),
+  the review `EVID/track-m-4-review-20260925.md` in full (for form) and
+  the ratification card draft in full;
+- the whole diff `672e6770..4e180486` and the code it touches, among it
+  `evaluation.evaluate` and `_receipts`, `rules.survivor_excess_paid`,
+  `careers.own_claim_factor` and `scripts/run_track_m_registered.py`;
+- the statute capture `EVID/track-m-statute-20260925/` (its `SHA256SUMS`
+  checked) at 413 lines 48-54, 423 lines 59-63, 415 lines 48-60 and
+  104-113, and 402 lines 339, 370-386 and 425-430;
+- `thresh89.xlsx`, `thresh90.xlsx` and `thresh91.xlsx` with openpyxl,
+  the staging `SHA256SUMS` and `PROVENANCE-thresh95.md`, the committed
+  Table 1 HTML, and the Internet Archive's CDX index for
+  `thresh90.xlsx`'s URL (the index only; no capture fetched);
+- the lanes' working folders `EVID/track-m-5-build-20260926/` and
+  `EVID/track-m-thresh90-capture-20260926/`, the dry runs r6-r8, and
+  `EVID/track-m-structure-r5-20260926/` (its `SHA256SUMS`, its run
+  record, and of `track-m-structure.json` d430's count and the threshold
+  years, which §10 prints).
+
+On the staged PSID it ran `scripts/track_m_structure.py` once, at
+`137e6456` on a clean tree
+(`EVID/track-m-5-review-20260926/structure-rerun-137e6456/`), whose
+output is byte-identical to r5's (`1110abe6…`). Its full-suite runs at
+`4e180486` and at `origin/master` collected every tier, so they also ran
+the repository's existing `integration_psid` tests, which read the
+staged PSID; none is a Track M test, and none computes a share, flag,
+threshold or in-window count of this specification. Its other checks are
+on INVENTED data. It computed no years of coverage, PIA, threshold,
+minimum, flag, share, in-window count or reserved diagnostic on real
+data. It did not open the Report in any copy, the plan, the change
+package, the cleared files, any comparator directory, seal,
+reconciliation or values scan, the uncleared sources, either scratchpad
+archive, or any exercise-1 or exercise-3 result.
+
 ## 23. Changelog
 
 - `m1-draft-1` (2026-09-24): first draft, with the Track M rules module,
@@ -3069,3 +3120,26 @@ either scratchpad archive, or any exercise-1 or exercise-3 result.
     that records needing 1990, under the scored rows and under the
     sensitivity, pass the threshold-year check, and that a sensitivity
     record needing 1993 is refused before anything is computed.
+- `m1-draft-3`, independent review of the sensitivity build and the
+  1990 capture (2026-09-26; `EVID/track-m-5-review-20260926.md`; no
+  ruling, default, row, cell, frozen choice or sensitivity changed, so the
+  version stands). Changes:
+  - **Tests.** d430's structural count's guard now also refuses a window
+    year recomputed from the histories (`classify_own_record`,
+    `own_receipt_view`, `record_years`, `OwnRecordClass.in_window` and the
+    claim-year functions) and pins the count's keys at every level, each
+    other leaf a count: before, a count recomputed from the histories
+    under a neutral key, or a split by first receipt in or after 2004,
+    passed it. The entry point's test now holds one PSID read built under
+    both readings, and a new test reads the written artifact back for
+    `sensitivities`: before, neither a second read nor a dropped
+    sensitivity failed any test. 1990's provenance test holds both CDX
+    digests.
+  - **Text.** §14 no longer says d430 left the choice between a row and a
+    diagnostic open (its text names neither; the build's brief allowed
+    both). §7, `provenance.md` and the capture script's comment record
+    that the CDX index lists two digests for `thresh90.xlsx`'s URL, the
+    committed file's on the six captures from 2023-05-21 (the latest
+    included), and that the other is unchecked. §18 names the dry run the
+    review reran at its head (`EVID/track-m-dry-run-r9-20260926/`); §22
+    records what the review read.

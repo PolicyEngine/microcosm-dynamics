@@ -138,8 +138,9 @@ def test_the_captured_years_are_m4s_and_2003_to_2022():
 def test_thresh90_is_the_year_d430s_sensitivity_added(capture):
     """1990 is the one year beyond M4's fifteen: d430's sensitivity needs
     it.  The orchestrating session fetched it from its Census URL on
-    2026-09-26 under d279; its SHA-1 in base 32 is the Internet Archive
-    CDX digest the orchestrator reports for that URL."""
+    2026-09-26 under d279; its SHA-1 in base 32 is one of the two digests
+    the Internet Archive's CDX index records for that URL, and the
+    provenance names both (independent review of 2026-09-26, D4)."""
 
     import base64
 
@@ -176,6 +177,8 @@ def test_thresh90_is_the_year_d430s_sensitivity_added(capture):
     provenance = " ".join((WORKBOOKS / "provenance.md").read_text().split())
     for text in (
         "NU6BR4ASTR4TF4JXSCGNKJSXXA3V24HH",
+        "D2G5YAKMJLJZFQIRALVQM4UR6P7KNKAE",
+        "records two digests",
         THRESH90_SHA256,
         "d430's sensitivity",
     ):

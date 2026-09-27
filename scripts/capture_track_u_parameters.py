@@ -327,8 +327,10 @@ CENSUS_WORKBOOK_SHA256: dict[str, str] = {
     # from CENSUS_URL_BASE on 2026-09-26 by the orchestrating Claude Code
     # session under d279's "any earlier year the build proves it needs"
     # (12,171 bytes; its SHA-1 in base 32 is
-    # NU6BR4ASTR4TF4JXSCGNKJSXXA3V24HH, the digest the Internet Archive's
-    # CDX index records for that URL by the orchestrator's check).
+    # NU6BR4ASTR4TF4JXSCGNKJSXXA3V24HH, one of the two digests the Internet
+    # Archive's CDX index records for that URL, on its captures from
+    # 2023-05-21 to 2026-08-20; the other, D2G5YAKMJLJZFQIRALVQM4UR6P7KNKAE,
+    # is unchecked: census_poverty_thresholds/provenance.md).
     "thresh90.xlsx": (
         "6a955422a86d5bea399fd9c23567779cbb279ce00b2d1c678018e802a67bfdf4"
     ),

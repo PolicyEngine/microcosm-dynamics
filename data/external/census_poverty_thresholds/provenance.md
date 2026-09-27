@@ -49,14 +49,18 @@ Claude Code session fetched it directly from the Census address above into
 the same directory on 2026-09-26, as its brief to the capturing lane
 records, and listed it in `SHA256SUMS` (12,171
 bytes, SHA-256
-`6a955422a86d5bea399fd9c23567779cbb279ce00b2d1c678018e802a67bfdf4`). It
-reports that the file's SHA-1 equals the digest the Internet Archive's CDX
-index records for that URL, `NU6BR4ASTR4TF4JXSCGNKJSXXA3V24HH`. The
+`6a955422a86d5bea399fd9c23567779cbb279ce00b2d1c678018e802a67bfdf4`). The
 builder lane that captured it confirmed the SHA-256, the size, the
-`SHA256SUMS` entry and that the file's SHA-1 in base 32 is that string;
-the CDX index itself was offline ("Temporarily Offline") when the lane
-queried it on 2026-09-26, so the match with the index is the
-orchestrator's check.
+`SHA256SUMS` entry and that the file's SHA-1 in base 32 is
+`NU6BR4ASTR4TF4JXSCGNKJSXXA3V24HH`; the Internet Archive's CDX index was
+offline ("Temporarily Offline") when the lane queried it. The
+independent review of 2026-09-26 read the index for that URL: it records
+two digests, `NU6BR4ASTR4TF4JXSCGNKJSXXA3V24HH` (the file's) on six
+captures from 2023-05-21 to 2026-08-20, the latest included, and
+`D2G5YAKMJLJZFQIRALVQM4UR6P7KNKAE` on five captures from 2023-02-26 to
+2025-01-23 and one revisit. For `thresh95.xlsx` the second digest was the
+gzip body as served (above); for `thresh90.xlsx` no capture was fetched,
+so what `D2G5YAKMJLJZFQIRALVQM4UR6P7KNKAE` holds is unchecked.
 
 The capture records `thresh95.xlsx`'s retrieval in `sources["1995"]["retrieval"]`
 (`ARCHIVE_RETRIEVALS` in the capture script). Each file's SHA-256 is
