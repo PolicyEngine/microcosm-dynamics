@@ -1,16 +1,19 @@
-"""Consistency checks for the exercise 4 (Track M) specification draft.
+"""Consistency checks for the exercise 4 (Track M) specification.
 
 ``docs/design/minimum_benefits_comparison.md`` is read by downstream code
 through its machine-readable JSON block (section 19).  These tests hold
 that block to the code (the options, the policy defaults, the registered
 rows, the cells, the labels and the structural-count universe), check that
-the draft cannot authorize a registered run, and recompute the draft's
-INVENTED worked cases.  They use only the document and the code: no PSID
-value, no model output and no comparator value.
+the committed block cannot authorize a registered run while it names a
+blocker, and recompute the specification's INVENTED worked cases.  They
+use only the document and the code: no PSID
+value, no model output and no comparator value.  One test also hashes the
+statute capture the block pins, when its evidence folder is present.
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -32,6 +35,10 @@ SPEC_PATH = (
     / "design"
     / "minimum_benefits_comparison.md"
 )
+#: ``EVID`` of the specification: the evidence folder outside this checkout.
+EVIDENCE = (
+    Path.home() / "microcosm-launch-evidence" / "dynasim-parity-20260909"
+)
 
 
 @pytest.fixture(scope="module")
@@ -51,8 +58,9 @@ def block(text: str) -> dict:
 def test_block_identity_and_status(block):
     assert spec.M1_SPECIFICATION_PATH == SPEC_PATH
     assert block["specification"] == pol.SPECIFICATION_ID
-    assert block["version"] == "m1-draft-2"
-    assert block["status"] == "draft_referee_changes_applied"
+    assert block["version"] == "m1-ratified-1"
+    assert block["status"] == "ratified_frozen"
+    assert spec.unratified_fields(block) == []
     assert block["claim_class"] == {
         "ruled": pol.CLAIM_CLASS,
         "decision_record": pol.DECISION_RECORD,
@@ -64,9 +72,12 @@ def test_block_identity_and_status(block):
         "sealed_comparator_side_not_opened_by_builder"
     )
     assert "max_ruling_d219_open" not in block["blocked_by"]
+    # The independent checks of m1-draft-2 and the M3-M5 readings are done
+    # (d430 was ruled on them, 2026-09-26), and so is the review of d430's
+    # sensitivity build (2026-09-26), whose entry ratification drops.
     assert (
         "independent_check_of_m1_draft_2_and_the_m3_to_m5_readings_then_"
-        "ratification_by_merge" in block["blocked_by"]
+        "ratification_by_merge" not in block["blocked_by"]
     )
     # M8, the M10 dry run and the M3-M5 readers are built
     for built in (
@@ -77,14 +88,121 @@ def test_block_identity_and_status(block):
         "registration_package_m10_needs_m3_to_m5",
     ):
         assert built not in block["blocked_by"], built
-    # M4's count shows Census years before 2003 are needed (section 7)
-    for blocker in (
+    # The Census years before 2003 that M4's count shows are needed and
+    # the statute text are captured (section 18, blockers 1 and 2,
+    # 2026-09-25); the registration package and the registration remain.
+    # The 1990 threshold d430's sensitivity needs (found by its structural
+    # count, section 18 blocker 5) is captured too (2026-09-26).
+    for cleared in (
         "census_thresholds_1982_to_2002_needed_by_m4_not_captured",
         "statute_413_415_402_423_not_captured_m2",
+        "census_threshold_1990_needed_by_the_d430_sensitivity_not_captured",
+    ):
+        assert cleared not in block["blocked_by"], cleared
+    assert (
+        "independent_review_of_the_d430_sensitivity_build_m1_draft_3_then_"
+        "ratification_by_merge" not in block["blocked_by"]
+    )
+    assert block["blocked_by"] == [
         "registration_package_m10_needs_the_comparator_seal_hash",
         "issue_42_registration_absent",
-    ):
-        assert blocker in block["blocked_by"], blocker
+    ]
+    # the cleared blocker's year is in the recorded capture (another test
+    # holds the recorded capture to the loader's)
+    census = block["sources"]["census_thresholds"]
+    assert 1990 in census["captured_years"]
+    assert 1990 not in census["years_not_captured"]
+
+
+def test_the_block_records_the_census_and_statute_captures(block):
+    """Section 19's sources record the 1982-2022 Census capture as the
+    loader reads it, with the capture it replaced and its cross-check,
+    and the statute capture M2 made (evidence, not read by code)."""
+
+    from populace_dynamics.min_benefit_track_m import thresholds
+
+    census = block["sources"]["census_thresholds"]
+    loaded = rules.load_aged_thresholds().source
+    assert census["file"] == loaded["path"]
+    assert census["sha256"] == loaded["sha256"]
+    assert census["sha256"] == thresholds.TRACK_M_THRESHOLDS_SHA256
+    assert census["years"] == loaded["years"] == [1982, 2022]
+    assert census["captured_years"] == loaded["captured_years"]
+    assert census["captured_years"] == list(thresholds.TRACK_M_THRESHOLD_YEARS)
+    assert (
+        sorted(set(range(1982, 2023)) - set(census["captured_years"]))
+        == census["years_not_captured"]
+    )
+    assert census["replaces"]["sha256"].startswith("65bbcd83")
+    # the pin before 1990 was captured (2026-09-26), and why it moved
+    assert census["previous_pin"] == {
+        "sha256": (
+            "4493b8d5823ea12912212d892f98ef4777098ce34b01857cedc35d444a8b99cd"
+        ),
+        "lacked": [1990],
+        "superseded_on": "2026-09-26",
+        "why": "own_receipt_reading_d430_needs_1990",
+    }
+    assert census["previous_pin"]["sha256"] != census["sha256"]
+    assert set(census["previous_pin"]["lacked"]) <= set(
+        census["captured_years"]
+    )
+    assert census["internet_archive_copies"] == ["thresh95.xlsx"]
+    root = SPEC_PATH.parents[2]
+    import hashlib
+
+    crosscheck = root / census["crosscheck"]["file"]
+    assert (
+        hashlib.sha256(crosscheck.read_bytes()).hexdigest()
+        == census["crosscheck"]["sha256"]
+    )
+    statute = block["sources"]["statute"]
+    assert statute["status"] == "captured_m2"
+    assert statute["sections"] == [
+        "42 USC 413",
+        "42 USC 415",
+        "42 USC 402",
+        "42 USC 423",
+    ]
+    assert statute["findings_for_ratification"] == [
+        "F1",
+        "F2",
+        "F3a",
+        "F3b",
+        "F4",
+        "O1",
+    ]
+    assert len(statute["reading"]["sha256"]) == 64
+
+
+def test_the_statute_pins_are_the_captured_files(block, text):
+    """Section 19's statute pins are the files in the capture folder, and
+    section 2 prints the same short hashes (independent review of
+    2026-09-25: the lane corrected ``READING.md`` after writing the pins,
+    so both pins named superseded bytes).  The folder is outside this
+    checkout; without it only the section 2 check runs."""
+
+    statute = block["sources"]["statute"]
+    sums = statute["sha256sums_sha256"]
+    reading = statute["reading"]["sha256"]
+    sources = text[text.index("## 2. Sources") : text.index("## 3. Policy")]
+    assert f"`SHA256SUMS` `{sums[:8]}…`" in sources
+    assert f"`READING.md` (`{reading[:8]}…`)" in sources
+    folder = EVIDENCE / statute["folder"]
+    if not folder.is_dir():
+        pytest.skip("the statute capture is outside this checkout")
+    listing = (folder / "SHA256SUMS").read_bytes()
+    assert hashlib.sha256(listing).hexdigest() == sums
+    readme = (folder / statute["reading"]["file"]).read_bytes()
+    assert hashlib.sha256(readme).hexdigest() == reading
+    listed = {}
+    for line in listing.decode("utf-8").splitlines():
+        digest, name = line.split()
+        listed[name] = digest
+    assert statute["reading"]["file"] in listed
+    for name, digest in listed.items():
+        actual = hashlib.sha256((folder / name).read_bytes()).hexdigest()
+        assert actual == digest, name
 
 
 def test_statistic_and_uncertainty_are_the_tabulations(block):
@@ -102,14 +220,15 @@ def test_statistic_and_uncertainty_are_the_tabulations(block):
     )
 
 
-def test_status_line_records_the_rulings_and_claims_no_ratification(text):
-    status = text.split("- **Specification:**")[0]
-    assert "draft with the referee's required changes applied" in status
-    assert "Nothing here is ratified" in status
-    for record in ("d219", "d279", "d280"):
+def test_status_line_records_the_ratification_and_every_ruling(text):
+    status = " ".join(text.split("- **Specification:**")[0].split())
+    assert "ratified and frozen" in status
+    assert "Nothing here is ratified" not in status
+    for record in ("d219", "d279", "d280", "d430"):
         assert record in status
     assert "ruled 2026-09-24 21:44" in status
-    assert "independent check" in status
+    assert "track-m-5-review-20260926.md" in status
+    assert "refuses a block that lists any blocker" in status
     assert "pending" not in status
 
 
@@ -166,10 +285,21 @@ def test_every_ruling_is_recorded_as_the_code_records_it(block):
     assert decisions["census_threshold_download"]["decision_record"] == (
         "d279"
     )
+    for name in ("own_receipt_reading", "odd_year_source", "onset_year_rule"):
+        assert decisions[name]["decision_record"] == "d430"
+        assert decisions[name]["ruled_on"] == "2026-09-26"
+        assert decisions[name]["ruling_text"] == pol.D430_RULING
+    assert decisions["own_receipt_reading"]["sensitivity_registered_as"] == (
+        pol.OWN_RECEIPT_SENSITIVITY_ID
+    )
 
 
-def test_the_draft_cannot_authorize_a_registered_run(block):
-    with pytest.raises(ValueError, match="authorizes no real-data run"):
+def test_the_committed_block_cannot_authorize_a_registered_run(block):
+    """Ratified, but blocked: the gate refuses while any blocker is
+    listed (section 18 item 4)."""
+
+    assert spec.unratified_fields(block) == []
+    with pytest.raises(ValueError, match="still blocked by"):
         spec.check_specification_for_registered_run(block)
 
 
@@ -184,10 +314,10 @@ def _ratified(block: dict) -> dict:
 
 def test_a_ratified_block_still_listing_blockers_authorizes_nothing(block):
     """Ratification alone does not authorize the run: the block's
-    ``blocked_by`` still names the open blockers (the Census years before
-    2003, the statute, the registration package and the registration),
-    and the gate refuses a block that names any blocker (or has no
-    list)."""
+    ``blocked_by`` still names the open blockers (the registration package
+    and the registration; the Census years before 2003 and the statute
+    were cleared on 2026-09-25), and the gate refuses a block that names
+    any blocker (or has no list)."""
 
     ratified = _ratified(block)
     assert ratified["blocked_by"]
@@ -247,7 +377,7 @@ def test_the_decisions_section_lists_every_ruling(text):
     section = text.split("## 20. Decisions (ruled by Max")[1].split("## 21.")[
         0
     ]
-    for record in ("d219", "d279", "d280"):
+    for record in ("d219", "d279", "d280", "d430"):
         assert record in section
     for name in pol.MAX_RULINGS:
         assert f"`{name}`" in section, name
@@ -256,9 +386,18 @@ def test_the_decisions_section_lists_every_ruling(text):
         "statutory computation years",
         "statutory death computation",
         "$50 a quarter",
-        "next-wave labor income",
     ):
         assert phrase in frozen
+    # d430 now rules the odd-year source and the onset year (kept
+    # knowingly), so the frozen list no longer holds them
+    ruled = section.split("**Frozen by this version")[0]
+    for phrase in (
+        "kept knowingly",
+        pol.D430_RULING,
+        pol.OWN_RECEIPT_SENSITIVITY_ID,
+    ):
+        assert phrase in " ".join(ruled.split()), phrase
+    assert "next-wave labor income" not in frozen
 
 
 def test_the_referee_section_records_every_required_change(text):
@@ -302,3 +441,60 @@ def test_invented_cases_in_the_text_match_the_code(text):
         assert f"{sign}{abs(relative):.2f}%" in row, name
         if two.minimum:
             assert f"${two.minimum:,.2f}" in row, name
+
+
+def test_the_block_registers_d430s_sensitivity(block):
+    """Cos d430's unscored sensitivity is registered in the block, held to
+    the code, and the gate refuses a block that drops or changes it."""
+
+    assert block["sensitivities"] == pol.SENSITIVITIES
+    assert list(block)[list(block).index("decisions") + 1] == "sensitivities"
+    ratified = {**_ratified(block), "blocked_by": []}
+    spec.check_specification_for_registered_run(ratified)
+    dropped = {k: v for k, v in ratified.items() if k != "sensitivities"}
+    with pytest.raises(ValueError, match="sensitivities"):
+        spec.check_specification_for_registered_run(dropped)
+    changed = json.loads(json.dumps(ratified))
+    changed["sensitivities"][pol.OWN_RECEIPT_SENSITIVITY_ID]["scored"] = True
+    with pytest.raises(ValueError, match="sensitivities"):
+        spec.check_specification_for_registered_run(changed)
+    without = json.loads(json.dumps(ratified))
+    del without["decisions"]["own_receipt_reading"]
+    with pytest.raises(ValueError, match="own_receipt_reading"):
+        spec.check_specification_for_registered_run(without)
+
+
+def test_the_text_records_d430s_sensitivity(text):
+    """Sections 4c, 11, 14 and 19 describe the sensitivity; section 15
+    names d430's deltas; section 23 records m1-draft-3 and
+    m1-ratified-1, and section 20 the ratification."""
+
+    from populace_dynamics.min_benefit_track_m import pipeline
+
+    flat = " ".join(text.split())
+
+    def section(start: str, end: str) -> str:
+        return " ".join(text.split(start)[1].split(end)[0].split())
+
+    for start, end in (
+        ("### 4c. As built", "## 5. Years of coverage"),
+        ("## 11. Statistic", "## 12. Uncertainty"),
+        ("## 14. Registered rows", "## 15. Named deltas"),
+        ("## 19. Machine-readable parameter block", "```json"),
+    ):
+        body = section(start, end)
+        assert pol.OWN_RECEIPT_SENSITIVITY_ID in body, start
+        assert "d430" in body, start
+    deltas = section("## 15. Named deltas", "## 16. Invented worked cases")
+    for name in ("F2", "F3a", "F3b", "O1"):
+        assert f"**{name}**" in deltas, name
+        assert any(
+            delta.startswith(f"{name}: ") for delta in pipeline.NAMED_DELTAS
+        ), name
+    assert "F1" in deltas and "(j)" in deltas
+    changelog = section("## 23. Changelog", "\n## 24")
+    assert "`m1-draft-3`" in changelog
+    assert "- `m1-ratified-1` (" in changelog
+    assert "m1-ratified-1" in flat.split("- **Specification:**")[1][:200]
+    assert "**Ratification record.**" in flat
+    assert "This version is not that text" not in flat

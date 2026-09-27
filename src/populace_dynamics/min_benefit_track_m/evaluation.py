@@ -42,6 +42,8 @@ import pandas as pd
 from populace_dynamics.min_benefit_track_m import coverage, rules
 from populace_dynamics.min_benefit_track_m.policy import (
     OPTIONS,
+    OWN_RECEIPT_READINGS,
+    OWN_RECEIPT_UNKNOWN_OR_OTHER_IS_OWN,
     PIA_BENEFIT_IMPLIED,
     TABLE6_OPTIONS,
     TrackMPolicy,
@@ -224,6 +226,10 @@ class TrackMInputs:
     :mod:`.invented`'s; the tabulation refuses the first without the issue
     #42 registration pointer.  ``design`` is the sample design frame
     (``stratum``, ``cluster``) the full-sample standard error sums over.
+    ``own_receipt_reading`` is the cohort reading the records were built
+    under (cos d430): the scored reading by default, or d430's
+    sensitivity reading (``cohort.build_cohort``); the pipeline scores
+    only the first and evaluates the second only as d430's sensitivity.
     """
 
     workers: Mapping[str, WorkerRecord]
@@ -231,11 +237,16 @@ class TrackMInputs:
     provenance_kind: str
     design: pd.DataFrame
     source: Mapping[str, Any] = field(default_factory=dict)
+    own_receipt_reading: str = OWN_RECEIPT_UNKNOWN_OR_OTHER_IS_OWN
 
     def __post_init__(self) -> None:
         if self.provenance_kind not in PROVENANCE_KINDS:
             raise ValueError(
                 f"provenance_kind must be one of {PROVENANCE_KINDS}"
+            )
+        if self.own_receipt_reading not in OWN_RECEIPT_READINGS:
+            raise ValueError(
+                f"own_receipt_reading must be one of {OWN_RECEIPT_READINGS}"
             )
         for key, record in self.workers.items():
             if key != record.record_id:

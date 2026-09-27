@@ -46,9 +46,9 @@ label, the registered floor seeds, and an M1 specification block the
 registered-run gate authorizes
 (``specification.check_specification_for_registered_run``: ratified,
 nothing awaiting Max, every ruling recorded, nothing blocking it, block
-equal to code).  The committed ``m1-draft-2`` authorizes none (it is a
-draft, and its ``blocked_by`` names the open blockers), so nothing computes
-the share on real data.
+equal to code).  The committed ``m1-ratified-1`` authorizes none (its
+``blocked_by`` names the open blockers), so nothing computes the share on
+real data.
 
 Every result carries the Track M labels and the covered-earnings
 disclosure Max's d280 ruling requires.
@@ -442,6 +442,7 @@ def tabulate_track_m(
     labels: Sequence[str] = OUTPUT_LABELS,
     floor_seeds: Sequence[int] = DEFAULT_FLOOR_SEEDS,
     specification: Mapping[str, Any] | None = None,
+    scored: bool = True,
 ) -> dict[str, Any]:
     """Table 6's twelve cells for one registered row, with uncertainty.
 
@@ -452,9 +453,15 @@ def tabulate_track_m(
     tabulation also refuses floor seeds other than the registered ones.
     Returns a JSON-serializable mapping; an undefined cell is reported
     with its reason, never raised.  Each defined cell's ``design_se``
-    holds the standard error ``se`` in percentage points.
+    holds the standard error ``se`` in percentage points.  ``scored``
+    marks each cell: Table 6's cells of a registered row are its scored
+    cells (the default); a pre-registered sensitivity's cells, such as
+    cos d430's (``pipeline.run_track_m``), are computed the same way and
+    marked unscored.
     """
 
+    if not isinstance(scored, bool):
+        raise TrackMTabulationError("scored must be a bool")
     check_provenance(
         rows,
         data_provenance=data_provenance,
@@ -492,8 +499,9 @@ def tabulate_track_m(
             entry: dict[str, Any] = {
                 "option": number,
                 "row": row,
-                "headline": (number, row) == HEADLINE_CELL,
-                "scored": True,
+                # only a scored row has the designated headline cell
+                "headline": scored and (number, row) == HEADLINE_CELL,
+                "scored": scored,
                 **_share(normalized, mask, number),
             }
             if entry["defined"]:

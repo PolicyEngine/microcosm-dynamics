@@ -45,8 +45,11 @@ uses the statutory death computation (``death_year=death``).  Nothing is
 added to ``ss/``.
 
 The threshold (G8) is the Census weighted average for one person aged 65
-and over, read from the pinned capture of the 2003-2022 Census workbooks
-(:func:`load_aged_thresholds`); a threshold year the capture lacks raises
+and over, read from the pinned capture of the Census workbooks of 1982,
+1986, 1988-1992 and 1994-2022 (:func:`load_aged_thresholds`; the years
+before 2003 are those M4's structural count shows the in-window records
+need, and 1990, which d430's sensitivity also needs); a threshold year
+the capture lacks raises
 :class:`ThresholdYearMissingError`, and :func:`check_threshold_years`
 refuses a cohort that needs one before anything is computed.
 

@@ -20,10 +20,11 @@ registration comment exists, at exactly the commit that comment registers.
   version must each say "ratified" as a word, with no negating word and
   no candidate, draft, not-merged, not-ratified or referee marker; it may
   list no decision awaiting Max and no blocker (``blocked_by`` empty);
-  it must record his ruling on every ruled field (cos d219, d279, d280)
-  as the code records it, with the configuration following each; and it
-  must equal the code, the statistic and the uncertainty included.  The
-  committed draft (``m1-draft-2``) is refused;
+  it must record his ruling on every ruled field (cos d219, d279, d280,
+  d430) as the code records it, with the configuration following each;
+  and it must equal the code, the statistic, the uncertainty and the
+  pre-registered sensitivities included.  The committed
+  ``m1-ratified-1`` is refused while its ``blocked_by`` names a blocker;
 * the output artifact and its sidecar must not exist yet (one shot, no
   overwrite; both are created exclusively, so a file that appears during
   the run is not overwritten either);
@@ -50,14 +51,22 @@ evaluating any record, unless the pointer is an issue #42 comment, the
 committed specification authorizes the run (a supplied block cannot reach
 real records), every registered row runs with the registered floor seeds,
 and every threshold year the in-window records need is captured (referee
-R8).  ``scripts/track_m_dry_run.py`` runs the same pipeline on INVENTED
-cohorts, one of them through the same M4 and M5 code.
+R8).  The same PSID read is built a second time under cos d430's
+sensitivity reading (receipt before 62 of unknown or "other" type read as
+neither own receipt nor non-receipt) and passed as
+``own_receipt_sensitivity``: the pipeline refuses a registered run without
+it, checks its threshold years before computing anything, and publishes
+MS0's cells under that reading and the share of the universe resting on a
+record the readings classify differently, unscored, beside MS0-MS6.
+``scripts/track_m_dry_run.py`` runs the same pipeline on INVENTED cohorts,
+one of them through the same M4 and M5 code.
 
 The artifact publishes regardless of outcome and carries the Track M
 labels, the covered-earnings disclosure (d280), the PSID files' SHA-256
 and M4's structural counts.  It never reads the sealed comparator; the
 seal is opened only after this artifact is committed.  Nothing here has
-been run on real data: the committed draft specification refuses it.
+been run on real data: the committed specification refuses it while its
+``blocked_by`` names a blocker.
 
 Usage::
 
@@ -325,26 +334,42 @@ def run_pipeline(
         cohort,
         pipeline,
     )
+    from populace_dynamics.min_benefit_track_m.policy import (
+        OWN_RECEIPT_PRE62_UNKNOWN_OR_OTHER_UNOBSERVED,
+        OWN_RECEIPT_SENSITIVITY_ID,
+    )
 
     inputs = cohort.load_cohort_inputs(data_dir=data_dir)
     built = cohort.build_cohort(inputs)
-    cola = load_cola_history()
-    records = careers.build_track_m_inputs(
-        built,
-        earnings=inputs.earnings,
-        prior_year=inputs.prior_year_labor,
-        params=parameters.params,
-        cola_rates=cola,
-        provenance_kind=PSID_FILES,
-        source={"cola_history": dict(cola.provenance)},
+    # Cos d430's sensitivity: the same PSID read, under the other reading.
+    built_sensitivity = cohort.build_cohort(
+        inputs,
+        own_receipt_reading=OWN_RECEIPT_PRE62_UNKNOWN_OR_OTHER_UNOBSERVED,
     )
+    cola = load_cola_history()
+
+    def records_of(built_cohort):
+        return careers.build_track_m_inputs(
+            built_cohort,
+            earnings=inputs.earnings,
+            prior_year=inputs.prior_year_labor,
+            params=parameters.params,
+            cola_rates=cola,
+            provenance_kind=PSID_FILES,
+            source={"cola_history": dict(cola.provenance)},
+        )
+
     result = pipeline.run_track_m(
-        records,
+        records_of(built),
         parameters,
         data_provenance=tabulation.REGISTERED_REAL,
         registration_pointer=registration_pointer,
+        own_receipt_sensitivity=records_of(built_sensitivity),
     )
     result["cohort_structure"] = cohort.cohort_structure(built)
+    result["sensitivities"][OWN_RECEIPT_SENSITIVITY_ID]["cohort_structure"] = (
+        cohort.cohort_structure(built_sensitivity)
+    )
     return result
 
 

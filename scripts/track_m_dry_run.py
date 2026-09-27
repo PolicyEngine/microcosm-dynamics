@@ -18,24 +18,41 @@ build_track_m_inputs`) code the registered run uses on the PSID.  The
 parameters are real and committed or read from the policyengine-us
 checkout the oracle reads: the oracle's wage index, bend points and
 reductions, the quarter-of-coverage amounts, the Census one-person 65+
-thresholds 2003-2022 (the pinned capture) and the SSA COLA history (for
-the invented MS5 benefits).  No PSID file is opened and no comparator
-value is read.
+thresholds of 1982, 1986, 1988-1992 and 1994-2022 (the pinned capture)
+and the SSA COLA history (for the invented MS5 benefits).  No PSID file
+is opened and no comparator value is read.
 
 The checks record that the specification block equals the code and the
-committed draft authorizes no real-data run (nor would a ratified copy
-that still lists blockers); that every threshold year the invented cohort
-needs is captured, and that a record needing an earlier year is refused
-before anything is computed (referee R8); that MS5 read benefit-implied
+committed block authorizes no real-data run (it is ratified but still
+lists blockers); that every threshold year the invented cohort
+needs is captured, that records needing a year before 2003 the capture
+holds (1998; 1990, the year d430's sensitivity needs) pass the threshold
+check, and that records needing a year it lacks (1993, inside the
+captured span; 1981, before it) are refused before anything is computed
+(referee R8); that MS5 read benefit-implied
 PIAs and MS0 none; that the registered path refuses invented records,
 PSID-kind records without the issue #42 pointer or an authorizing
 specification, a subset of rows and other floor seeds; that records
 carrying PSID file hashes are refused outside the registered run and
 with a supplied specification block; that an invented M4 cohort drawn
-without the capture constraint (as the PSID is) is refused for its
-threshold years before anything is computed; that the one-shot entry
-point finds every component and refuses the committed draft at its
-preflight; and the plan's INVENTED worked cases (M1 section 16).
+without the capture constraint (as the PSID is) is refused for the
+threshold years it needs that the capture lacks, before anything is
+computed; that the one-shot entry
+point finds every component and refuses the committed block at its
+preflight while it lists a blocker; and the plan's INVENTED worked cases
+(M1 section 16).
+
+Cos d430's sensitivity (M1 sections 4c, 11 and 19) runs on the invented
+PSID-shaped cohort twice: on the default draw, whose type items are all
+known, so that no record or person may differ between the readings; and
+on a draw with receipt of unknown or "other" type before 62
+(``invented_psid``'s ``unknown_or_other_before_62``), which shows MS0's
+cells under both readings, the share of the universe resting on a record
+the readings classify differently and the bound that share sets.  The
+checks record that the rows MS0-MS6 are the same with and without the
+sensitivity, that the registered path refuses a run without it, scored
+records built under the sensitivity's reading and a sensitivity of another
+universe, and that no window year is earlier under the sensitivity.
 
 Usage::
 
@@ -88,7 +105,10 @@ from populace_dynamics.min_benefit_track_m.evaluation import (  # noqa: E402
     needed_threshold_years,
 )
 from populace_dynamics.min_benefit_track_m.policy import (  # noqa: E402
+    OWN_RECEIPT_PRE62_UNKNOWN_OR_OTHER_UNOBSERVED,
+    OWN_RECEIPT_SENSITIVITY_ID,
     REGISTERED_ROWS,
+    SENSITIVITIES,
     TABLE6_OPTIONS,
     TABLE6_ROWS,
     policy_for_row,
@@ -102,6 +122,9 @@ _GUARD_POINTER = (
     "#issuecomment-0"
 )
 DEFAULT_SEED = 20260925
+#: The share of invented persons given receipt of an unknown or "other"
+#: type before 62 in the d430 sensitivity's second invented cohort.
+SENSITIVITY_SHARE = 0.5
 
 
 def _git(*args: str) -> str:
@@ -218,18 +241,36 @@ def checks(
         inputs.workers.values(),
         [policy_for_row(row) for row in REGISTERED_ROWS],
     )
-    # A record needing a threshold year before the capture: a worker born
-    # 1936, entitled at 68 in 2004, whose year of attaining 62 is 1998.
-    early = WorkerRecord(
-        "INVENTED-EARLY",
-        1936,
-        rules.BASIS_OLD_AGE,
-        2004,
-        {year: 30_000.0 for year in range(1968, 1997)},
-    )
-    with_early = dataclasses.replace(
-        inputs, workers={**inputs.workers, early.record_id: early}
-    )
+
+    # Old-age workers entitled in 2004 whose year of attaining 62 is a
+    # year the capture holds (1998, born 1936, entitled at 68; 1990, born
+    # 1928, entitled at 76, the year d430's sensitivity needs), a year
+    # inside the captured span it lacks (1993, born 1931) and a year before
+    # it (1981, born 1919).
+    def early_worker(birth: int) -> WorkerRecord:
+        return WorkerRecord(
+            f"INVENTED-EARLY-{birth + 62}",
+            birth,
+            rules.BASIS_OLD_AGE,
+            2004,
+            {year: 30_000.0 for year in range(1968, 1997)},
+        )
+
+    def with_worker(worker: WorkerRecord) -> TrackMInputs:
+        return dataclasses.replace(
+            inputs, workers={**inputs.workers, worker.record_id: worker}
+        )
+
+    def needed_with(worker: WorkerRecord) -> dict[int, int]:
+        return needed_threshold_years(
+            [*inputs.workers.values(), worker],
+            [policy_for_row(row) for row in REGISTERED_ROWS],
+        )
+
+    captured_1998 = early_worker(1936)
+    captured_1990 = early_worker(1928)
+    gap_1993 = early_worker(1931)
+    before_1981 = early_worker(1919)
     psid_kind = dataclasses.replace(inputs, provenance_kind=PSID_FILES)
     ratified = json.loads(json.dumps(block))
     ratified["status"], ratified["version"] = (
@@ -267,10 +308,33 @@ def checks(
         "threshold_years_all_captured": _refusal(
             lambda: rules.check_threshold_years(needed, parameters.thresholds)
         )
-        | {"captured": parameters.thresholds.source["years"]},
-        "a_record_needing_1998_is_refused_before_any_computation": _refusal(
+        | {
+            "captured": parameters.thresholds.source.get(
+                "captured_years", parameters.thresholds.source["years"]
+            )
+        },
+        "a_record_needing_1998_passes_the_threshold_check": _refusal(
+            lambda: rules.check_threshold_years(
+                needed_with(captured_1998), parameters.thresholds
+            )
+        )
+        | {"threshold_year": captured_1998.birth_year + 62},
+        "a_record_needing_1990_passes_the_threshold_check": _refusal(
+            lambda: rules.check_threshold_years(
+                needed_with(captured_1990), parameters.thresholds
+            )
+        )
+        | {"threshold_year": captured_1990.birth_year + 62},
+        "a_record_needing_1993_is_refused_before_any_computation": _refusal(
             lambda: pipeline.run_track_m(
-                with_early, parameters, data_provenance="invented"
+                with_worker(gap_1993), parameters, data_provenance="invented"
+            )
+        ),
+        "a_record_needing_1981_is_refused_before_any_computation": _refusal(
+            lambda: pipeline.run_track_m(
+                with_worker(before_1981),
+                parameters,
+                data_provenance="invented",
             )
         ),
         "ms5_reads_benefit_implied_pias_and_ms0_none": {
@@ -365,30 +429,213 @@ def m4_m5_run(
     *,
     seed: int,
     n_family_units: int,
+    unknown_or_other_before_62: float = 0.0,
 ) -> dict[str, Any]:
-    """The invented PSID-shaped cohort through M4, M5 and the pipeline."""
+    """The invented PSID-shaped cohort through M4, M5 and the pipeline,
+    under the scored reading, with cos d430's sensitivity (the same frames
+    under the sensitivity reading)."""
 
     frames = invented_psid.invented_cohort_inputs(
-        seed=seed, n_family_units=n_family_units
+        seed=seed,
+        n_family_units=n_family_units,
+        unknown_or_other_before_62=unknown_or_other_before_62,
     )
     built = cohort.build_cohort(frames)
-    records = careers.build_track_m_inputs(
-        built,
-        earnings=frames.earnings,
-        prior_year=frames.prior_year_labor,
-        params=parameters.params,
-        cola_rates=extra["cola_rates"],
-        provenance_kind=INVENTED,
-        source={**dict(frames.provenance)},
+    built_sensitivity = cohort.build_cohort(
+        frames,
+        own_receipt_reading=OWN_RECEIPT_PRE62_UNKNOWN_OR_OTHER_UNOBSERVED,
     )
+
+    def records_of(built_cohort: cohort.TrackMCohort) -> TrackMInputs:
+        return careers.build_track_m_inputs(
+            built_cohort,
+            earnings=frames.earnings,
+            prior_year=frames.prior_year_labor,
+            params=parameters.params,
+            cola_rates=extra["cola_rates"],
+            provenance_kind=INVENTED,
+            source={**dict(frames.provenance)},
+        )
+
+    records = records_of(built)
+    sensitivity = records_of(built_sensitivity)
     result = pipeline.run_track_m(
-        records, parameters, data_provenance=INVENTED
+        records,
+        parameters,
+        data_provenance=INVENTED,
+        own_receipt_sensitivity=sensitivity,
     )
     return {
         "frames": frames,
         "cohort": built,
+        "cohort_sensitivity": built_sensitivity,
         "records": records,
+        "records_sensitivity": sensitivity,
         "result": result,
+    }
+
+
+def d430_checks(
+    run: dict[str, Any],
+    run_with_unknown: dict[str, Any],
+    parameters: TrackMParameters,
+) -> dict[str, Any]:
+    """Cos d430's sensitivity guards and properties, each recorded."""
+
+    block = specification.m1_parameter_block()
+    unblocked = {
+        **json.loads(json.dumps(block)),
+        "status": "ratified_frozen",
+        "version": "m1-ratified-1",
+        "blocked_by": [],
+    }
+    records = run["records"]
+    without = pipeline.run_track_m(
+        records, parameters, data_provenance=INVENTED
+    )
+    same_rows = json.dumps(without["rows"], allow_nan=False) == json.dumps(
+        run["result"]["rows"], allow_nan=False
+    )
+    default_sensitivity = run["result"]["sensitivities"][
+        OWN_RECEIPT_SENSITIVITY_ID
+    ]
+    sensitivity = run_with_unknown["result"]["sensitivities"][
+        OWN_RECEIPT_SENSITIVITY_ID
+    ]
+    bound_holds = True
+    for cell in sensitivity["receipt_under_both_readings"].values():
+        if not cell["defined"]:
+            continue
+        resting = cell["resting_weighted_share_percent"]
+        for option in cell["options"].values():
+            bound_holds &= (
+                abs(option["change_percent_points"]) <= resting + 1e-9
+                and option["moved_out_percent"] <= resting + 1e-9
+                and option["moved_in_percent"] <= resting + 1e-9
+            )
+    psid_kind = dataclasses.replace(records, provenance_kind=PSID_FILES)
+    # the sensitivity reading's records with one weight changed: another
+    # universe (the readings share the universe and its weights)
+    moved = run["records_sensitivity"].persons
+    other_universe = dataclasses.replace(
+        run["records_sensitivity"],
+        persons=(
+            dataclasses.replace(moved[0], weight=moved[0].weight + 1.0),
+            *moved[1:],
+        ),
+    )
+    changes = sensitivity["reclassification"]["worker_record_changes"]
+
+    # The sensitivity reading's records with one invented old-age record
+    # added, entitled in 2004, whose year of attaining 62 is 1990 (born
+    # 1928; the year d430's sensitivity needs on the PSID, captured
+    # 2026-09-26) or 1993 (born 1931; a year the capture lacks).  The
+    # universe is unchanged, so the pipeline's first refusal is the
+    # sensitivity's threshold-year check.
+    def sensitivity_with(birth: int) -> TrackMInputs:
+        worker = WorkerRecord(
+            f"INVENTED-SENSITIVITY-{birth + 62}",
+            birth,
+            rules.BASIS_OLD_AGE,
+            2004,
+            {year: 30_000.0 for year in range(1968, 1997)},
+        )
+        base = run["records_sensitivity"]
+        return dataclasses.replace(
+            base, workers={**base.workers, worker.record_id: worker}
+        )
+
+    needs_1990 = needed_threshold_years(
+        sensitivity_with(1928).workers.values(),
+        [policy_for_row(SENSITIVITIES[OWN_RECEIPT_SENSITIVITY_ID]["row"])],
+    )
+    return {
+        "d430_rows_ms0_to_ms6_identical_with_and_without_the_sensitivity": {
+            "passed": same_rows
+        },
+        "d430_default_draw_no_record_or_person_differs": {
+            "passed": (
+                default_sensitivity["reclassification"][
+                    "worker_records_classified_differently"
+                ]
+                == 0
+                and default_sensitivity["reclassification"][
+                    "persons_resting_on_a_record_classified_differently"
+                ]
+                == 0
+            )
+        },
+        "d430_draw_with_unknown_or_other_receipt_differs": {
+            "passed": sensitivity["reclassification"][
+                "worker_records_classified_differently"
+            ]
+            > 0,
+            "reclassification": sensitivity["reclassification"],
+        },
+        "d430_share_gap_within_the_resting_share": {"passed": bound_holds},
+        "d430_no_window_year_earlier_under_the_sensitivity": {
+            "passed": changes.get(
+                "window_year_earlier_under_the_sensitivity", 0
+            )
+            == 0
+        },
+        "d430_a_registered_run_without_the_sensitivity_is_refused": _refusal(
+            lambda: pipeline.run_track_m(
+                psid_kind,
+                parameters,
+                data_provenance=tabulation.REGISTERED_REAL,
+                registration_pointer=_GUARD_POINTER,
+                specification=unblocked,
+            )
+        ),
+        "d430_scored_records_under_the_sensitivity_reading_are_refused": (
+            _refusal(
+                lambda: pipeline.run_track_m(
+                    run["records_sensitivity"],
+                    parameters,
+                    data_provenance=INVENTED,
+                )
+            )
+        ),
+        "d430_a_sensitivity_of_another_universe_is_refused": _refusal(
+            lambda: pipeline.run_track_m(
+                records,
+                parameters,
+                data_provenance=INVENTED,
+                own_receipt_sensitivity=other_universe,
+            )
+        ),
+        "d430_a_sensitivity_under_the_scored_reading_is_refused": _refusal(
+            lambda: pipeline.run_track_m(
+                records,
+                parameters,
+                data_provenance=INVENTED,
+                own_receipt_sensitivity=records,
+            )
+        ),
+        # the check the pipeline applies to the sensitivity's records
+        # (its window, MS0's), on the real capture
+        "d430_a_sensitivity_record_needing_1990_passes_the_threshold_check": (
+            _refusal(
+                lambda: rules.check_threshold_years(
+                    needs_1990, parameters.thresholds
+                )
+            )
+            | {
+                "threshold_year": 1990,
+                "needed_before_2003": sorted(
+                    year for year in needs_1990 if year < 2003
+                ),
+            }
+        ),
+        "d430_a_sensitivity_record_needing_1993_is_refused_first": _refusal(
+            lambda: pipeline.run_track_m(
+                records,
+                parameters,
+                data_provenance=INVENTED,
+                own_receipt_sensitivity=sensitivity_with(1931),
+            )
+        ),
     }
 
 
@@ -425,27 +672,36 @@ def m4_m5_checks(
             pipeline.PSID_FILES_SOURCE_KEY: {"INVENTED.txt": "0" * 64},
         },
     )
-    # At least 300 family units, so that the unconstrained draw holds
-    # records needing years before the capture (as the PSID does).
+    # At least 600 family units, so that the unconstrained draw holds
+    # records needing threshold years the capture lacks (as the PSID
+    # would, were a year it needs not captured).  Since the capture holds
+    # 1982, 1986, 1988-1992 and 1994-2022, only a draw that
+    # reaches a gap year (or one before 1982) is refused; the check
+    # records those years so that a draw reaching none shows as such.
     unconstrained = invented_psid.invented_cohort_inputs(
         seed=seed,
-        n_family_units=max(n_family_units, 300),
+        n_family_units=max(n_family_units, 600),
         threshold_years_from=None,
     )
 
+    def unconstrained_records() -> TrackMInputs:
+        return careers.build_track_m_inputs(
+            cohort.build_cohort(unconstrained),
+            earnings=unconstrained.earnings,
+            prior_year=unconstrained.prior_year_labor,
+            params=parameters.params,
+            cola_rates=extra["cola_rates"],
+            provenance_kind=INVENTED,
+        )
+
+    unconstrained_needed = needed_threshold_years(
+        unconstrained_records().workers.values(),
+        [policy_for_row(row) for row in REGISTERED_ROWS],
+    )
+
     def unconstrained_run() -> None:
-        built = cohort.build_cohort(unconstrained)
         pipeline.run_track_m(
-            careers.build_track_m_inputs(
-                built,
-                earnings=unconstrained.earnings,
-                prior_year=unconstrained.prior_year_labor,
-                params=parameters.params,
-                cola_rates=extra["cola_rates"],
-                provenance_kind=INVENTED,
-            ),
-            parameters,
-            data_provenance=INVENTED,
+            unconstrained_records(), parameters, data_provenance=INVENTED
         )
 
     return {
@@ -487,8 +743,14 @@ def m4_m5_checks(
                 provenance_kind=INVENTED,
             )
         ),
-        "an_unconstrained_m4_cohort_needing_pre_2003_years_is_refused": (
+        "an_unconstrained_m4_cohort_needing_years_not_captured_is_refused": (
             _refusal(unconstrained_run)
+            | {
+                "needed_years_not_captured": sorted(
+                    set(unconstrained_needed)
+                    - set(parameters.thresholds.annual)
+                )
+            }
         ),
     }
 
@@ -511,6 +773,68 @@ def _summary(result: dict[str, Any]) -> dict[str, Any]:
             for key in ("ratio_of_rates", "ratio_of_weighted_counts")
         }
     return out
+
+
+def _sensitivity_summary(result: dict[str, Any]) -> dict[str, Any]:
+    """d430's sensitivity in brief: MS0 under both readings by cell, and
+    the resting shares."""
+
+    entry = result["sensitivities"][OWN_RECEIPT_SENSITIVITY_ID]
+    out = {
+        "weighted_share_of_the_universe_resting_percent": entry[
+            "weighted_share_of_the_universe_resting_percent"
+        ],
+        "reclassification": entry["reclassification"],
+        "cells": {},
+    }
+    for cell, value in entry["receipt_under_both_readings"].items():
+        if not value["defined"]:
+            continue
+        out["cells"][cell] = {
+            "resting_weighted_share_percent": value[
+                "resting_weighted_share_percent"
+            ],
+            **{
+                number: {
+                    key: option[key]
+                    for key in (
+                        "share_percent_scored_reading",
+                        "share_percent_sensitivity_reading",
+                        "change_percent_points",
+                        "moved_out_percent",
+                        "moved_in_percent",
+                    )
+                }
+                for number, option in value["options"].items()
+            },
+        }
+    return out
+
+
+def _sensitivity_table(summary: dict[str, Any]) -> list[str]:
+    lines = [
+        "| Cell | Resting | "
+        + " | ".join(
+            f"Opt {n}: scored / sensitivity / change" for n in TABLE6_OPTIONS
+        )
+        + " |",
+        "|---|---:|" + "---:|" * len(TABLE6_OPTIONS),
+    ]
+    for cell, value in summary["cells"].items():
+        parts = []
+        for number in TABLE6_OPTIONS:
+            option = value[str(number)]
+            parts.append(
+                f"{option['share_percent_scored_reading']:.1f} / "
+                f"{option['share_percent_sensitivity_reading']:.1f} / "
+                f"{option['change_percent_points']:+.1f}"
+            )
+        lines.append(
+            f"| {cell} | {value['resting_weighted_share_percent']:.1f} | "
+            + " | ".join(parts)
+            + " |"
+        )
+    return lines
 
 
 def provenance(
@@ -583,7 +907,8 @@ def _markdown(document: dict[str, Any]) -> str:
         "not PSID values and not a result, and they compare with nothing. "
         "The parameters are real: the oracle's (policyengine-us), the "
         "quarter-of-coverage amounts, the pinned Census one-person 65+ "
-        "thresholds 2003-2022 and the SSA COLA history.",
+        "thresholds (1982, 1986, 1988-1992 and 1994-2022) and "
+        "the SSA COLA history.",
         "",
         f"- Labels: {'; '.join(result['labels'])}",
         f"- Disclosure (d280): {result['disclosure']}",
@@ -616,6 +941,30 @@ def _markdown(document: dict[str, Any]) -> str:
         "shares, percent:",
         "",
         *_share_table(m45["summary"]),
+    ]
+    d430 = document["m4_m5_own_receipt_sensitivity"]
+    changes = d430["sensitivity_summary"]["reclassification"]
+    lines += [
+        "",
+        "## Cos d430's sensitivity on invented data (unscored)",
+        "",
+        "MS0 under the scored own-receipt reading (section 4c item 1: "
+        "receipt of an unknown or 'other' type counts as own receipt) and "
+        "under d430's sensitivity reading (such receipt before 62 read as "
+        "neither own receipt nor non-receipt), on an INVENTED PSID-shaped "
+        "cohort drawn with receipt of those types before 62 "
+        f"({d430['persons_changed_by_the_draw']['persons_changed']}). "
+        f"{changes['worker_records_classified_differently']} worker "
+        "records are classified differently and "
+        f"{changes['persons_resting_on_a_record_classified_differently']} "
+        "persons rest on one. Resting: the weighted share of the cell "
+        "whose A_k rests on such a record, which bounds each change. "
+        "Invented shares, percent:",
+        "",
+        *_sensitivity_table(d430["sensitivity_summary"]),
+        "",
+        "On the default invented draw (every type item known) no record "
+        "or person differs between the readings.",
     ]
     head = document["summary"]["MS0"]["2:all"]
     floor = head["floor_mean"]
@@ -700,6 +1049,13 @@ def main(argv: list[str] | None = None) -> int:
         seed=args.seed,
         n_family_units=args.family_units,
     )
+    m45_unknown = m4_m5_run(
+        parameters,
+        extra,
+        seed=args.seed,
+        n_family_units=args.family_units,
+        unknown_or_other_before_62=SENSITIVITY_SHARE,
+    )
     document = {
         "header": DRY_RUN_HEADER,
         "description": (
@@ -718,6 +1074,7 @@ def main(argv: list[str] | None = None) -> int:
                 seed=args.seed,
                 n_family_units=args.family_units,
             ),
+            **d430_checks(m45, m45_unknown, parameters),
         },
         "provenance": provenance(parameters, extra),
         "result": result,
@@ -731,6 +1088,28 @@ def main(argv: list[str] | None = None) -> int:
             "summary": _summary(m45["result"]),
             "cohort_structure": cohort.cohort_structure(m45["cohort"]),
             "result": m45["result"],
+        },
+        "m4_m5_own_receipt_sensitivity": {
+            "description": (
+                "Cos d430's sensitivity on an INVENTED PSID-shaped cohort "
+                "drawn with receipt of unknown or 'other' type before 62 "
+                "(invented_psid, unknown_or_other_before_62 = "
+                f"{SENSITIVITY_SHARE}): every registered row under the "
+                "scored reading, and MS0 under the sensitivity reading"
+            ),
+            "persons_changed_by_the_draw": dict(
+                m45_unknown["frames"].provenance["unknown_or_other_before_62"]
+            ),
+            "first_own_receipt_type_before_62": (
+                cohort.first_own_receipt_type_before_62(m45_unknown["cohort"])
+            ),
+            "summary": _summary(m45_unknown["result"]),
+            "sensitivity_summary": _sensitivity_summary(m45_unknown["result"]),
+            "cohort_structure": cohort.cohort_structure(m45_unknown["cohort"]),
+            "cohort_structure_sensitivity_reading": cohort.cohort_structure(
+                m45_unknown["cohort_sensitivity"]
+            ),
+            "result": m45_unknown["result"],
         },
         "run": {
             "started": started,

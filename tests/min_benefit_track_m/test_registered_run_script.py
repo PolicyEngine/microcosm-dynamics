@@ -96,8 +96,9 @@ def test_the_registered_state_passes_preflight(tmp_path):
         ({"registered_commit": "abc123"}, "full 40-hex"),
         ({"git": _git(head="b" * 40)}, "is not the registered commit"),
         ({"git": _git(porcelain=" M src/x.py")}, "clean"),
-        # The committed draft (m1-draft-2), read from the document.
-        ({"specification": None}, "authorizes no real-data run"),
+        # The committed block (m1-ratified-1), read from the document: it
+        # is ratified, but it still names blockers.
+        ({"specification": None}, "still blocked by"),
         (
             {"specification": {**_ratified(), "version": "m1-draft-3"}},
             "authorizes no real-data run",
@@ -257,8 +258,142 @@ def test_the_computation_refuses_psid_records_under_the_draft(monkeypatch):
     assert evaluated == []
 
 
+def test_the_computation_passes_d430s_sensitivity(monkeypatch):
+    """``run_pipeline`` reads the PSID once and builds that one read
+    twice, under the scored reading and under cos d430's sensitivity
+    reading, and passes the second as ``own_receipt_sensitivity`` (the
+    pipeline refuses a registered run without it).  The PSID read is
+    INVENTED frames marked as read from files; the pipeline call is
+    captured, not run."""
+
+    from populace_dynamics.min_benefit_track_m import (
+        cohort,
+        invented,
+        invented_psid,
+        pipeline,
+    )
+    from populace_dynamics.min_benefit_track_m import policy as pol
+
+    script = _script()
+    frames = invented_psid.invented_cohort_inputs(
+        seed=4, n_family_units=40, unknown_or_other_before_62=0.5
+    )
+    marked = type(frames)(
+        structure_inputs=frames.structure_inputs,
+        individual_receipt=frames.individual_receipt,
+        family_1993_receipt=frames.family_1993_receipt,
+        family_level_receipt=frames.family_level_receipt,
+        prior_year_labor=frames.prior_year_labor,
+        provenance={"psid_files_sha256": {"INVENTED.txt": "0" * 64}},
+    )
+    reads = []
+
+    def load(**kwargs):
+        reads.append(kwargs)
+        return marked
+
+    monkeypatch.setattr(cohort, "load_cohort_inputs", load)
+    built = []
+    build_cohort = cohort.build_cohort
+
+    def build(inputs, **kwargs):
+        reading = kwargs.get(
+            "own_receipt_reading", pol.OWN_RECEIPT_UNKNOWN_OR_OTHER_IS_OWN
+        )
+        built.append((inputs, reading))
+        return build_cohort(inputs, **kwargs)
+
+    monkeypatch.setattr(cohort, "build_cohort", build)
+    parameters, cola = invented.invented_parameters()
+    monkeypatch.setattr(
+        "populace_dynamics.estimates.parameters.load_cola_history",
+        lambda: _Cola(cola),
+    )
+    seen = {}
+
+    def capture(records, parameters, **kwargs):
+        seen.update(kwargs, records=records)
+        return {"sensitivities": {pol.OWN_RECEIPT_SENSITIVITY_ID: {}}}
+
+    monkeypatch.setattr(pipeline, "run_track_m", capture)
+    out = script.run_pipeline(parameters, registration_pointer=POINTER)
+    scored, other = seen["records"], seen["own_receipt_sensitivity"]
+    # one PSID read, built under both readings (independent review of
+    # 2026-09-26, D2: a second read went undetected)
+    assert len(reads) == 1
+    assert len(built) == 2
+    assert all(inputs is marked for inputs, _ in built)
+    assert {reading for _, reading in built} == set(pol.OWN_RECEIPT_READINGS)
+    assert seen["data_provenance"] == "registered_real"
+    assert (
+        scored.own_receipt_reading == pol.OWN_RECEIPT_UNKNOWN_OR_OTHER_IS_OWN
+    )
+    assert other.own_receipt_reading == (
+        pol.OWN_RECEIPT_PRE62_UNKNOWN_OR_OTHER_UNOBSERVED
+    )
+    assert other.provenance_kind == scored.provenance_kind == "psid_files"
+    assert other.source["psid_files_sha256"] == (
+        scored.source["psid_files_sha256"]
+    )
+    assert other.workers != scored.workers
+    assert "cohort_structure" in out
+    assert (
+        "cohort_structure"
+        in out["sensitivities"][pol.OWN_RECEIPT_SENSITIVITY_ID]
+    )
+
+
 class _Cola(dict):
     provenance = {"kind": "INVENTED"}
+
+
+def test_main_publishes_the_sensitivity_in_the_artifact(tmp_path, monkeypatch):
+    """The artifact carries ``run_pipeline``'s result whole: d430's
+    sensitivity is published under ``sensitivities`` beside the rows
+    (independent review of 2026-09-26, D2: dropping it went undetected).
+    The preflight, the parameters and the computation are stand-ins; the
+    result is INVENTED."""
+
+    from populace_dynamics.min_benefit_track_m import policy as pol
+
+    script = _script()
+    monkeypatch.setattr(script, "preflight", lambda **_: {"head": COMMIT})
+    monkeypatch.setattr(script, "missing_components", lambda: [])
+    monkeypatch.setattr(
+        script,
+        "committed_parameters",
+        lambda block: (_Parameters(), {"pinned": "INVENTED"}),
+    )
+    monkeypatch.setattr(script, "_environment", lambda **_: {})
+    result = {
+        "rows": {"MS0": {"INVENTED": True}},
+        "sensitivities": {
+            pol.OWN_RECEIPT_SENSITIVITY_ID: {
+                "scored": False,
+                "INVENTED": True,
+            }
+        },
+    }
+    monkeypatch.setattr(
+        script,
+        "run_pipeline",
+        lambda parameters, **_: json.loads(json.dumps(result)),
+    )
+    output = tmp_path / "run.json"
+    script.main(
+        [
+            "--registration-pointer",
+            POINTER,
+            "--registered-commit",
+            COMMIT,
+            "--output",
+            str(output),
+        ]
+    )
+    artifact = json.loads(output.read_text())
+    assert artifact["sensitivities"] == result["sensitivities"]
+    assert artifact["rows"] == result["rows"]
+    assert output.with_suffix(".env.json").exists()
 
 
 def test_the_parameters_must_be_the_files_the_block_records():

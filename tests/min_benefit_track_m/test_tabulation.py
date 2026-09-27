@@ -205,7 +205,7 @@ def test_each_seed_splits_whole_family_units():
             "registration pointer",
         ),
         ("invented", "registered_real", POINTER, "contradicts"),
-        # the committed draft (m1-draft-2) authorizes no real-data run
+        # the committed block (m1-ratified-1, still blocked) authorizes none
         ("psid_files", "registered_real", POINTER, "does not authorize"),
         (None, "invented", None, "must say so"),
         ("invented", "published", None, "data_provenance"),
