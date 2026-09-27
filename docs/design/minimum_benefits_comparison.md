@@ -22,11 +22,15 @@
   `m1-draft-2` and of the M3-M5 readings came before d430, and the
   independent review of the sensitivity build and the 1990 capture
   (`EVID/track-m-5-review-20260926.md`, approved after fixes) came before
-  this text (§18). Ratification alone authorizes no real-data run: the
+  this text (§18). Ratification alone authorized no real-data run: the
   one-shot entry point (`scripts/run_track_m_registered.py`) refuses a
-  block that lists any blocker, and this block still lists the comparator
-  seal's hash for the registration package and the issue #42 registration
-  (§§18, 19).
+  block that lists any blocker, and the ratified block listed the
+  comparator seal's hash for the registration package and the issue #42
+  registration. The registered-commit edit of 2026-09-27 records the
+  seal's hash (§18 item 3) and empties `blocked_by`, as §19 prescribes,
+  without changing the version or the status. The commit that carries it
+  is the one the issue #42 registration (Registration 17) is to name, and
+  the one-shot is to run once, only there (§§18-20, 23).
 - **Specification:** `urban2006_minimum_benefits_exercise4`, version
   `m1-ratified-1`: the text of `m1-draft-3` (drafted 2026-09-24, revised
   2026-09-25 to apply the independent referee's required changes R1-R10,
@@ -146,6 +150,16 @@
     full test suite ran, before it stopped them, 134 of the repository's
     existing `integration_psid` tests, which read the staged PSID (none
     of them Track M's; §22). §22 lists what it read.
+  - A ninth lane (Claude Code subagent, Opus 5.5) made the
+    registered-commit edit on 2026-09-27 (§23). It read
+    `EVID/RESTRICTED-FILES.md` (`64fcd354…`, last changelog entry
+    2026-09-27 01:20) before any other file and opened nothing it
+    restricts: not the Report in any copy, the plan, the cleared files,
+    any comparator directory, the seal (whose hash the orchestrating
+    session supplied), any reconciliation or values scan, the uncleared
+    sources, either scratchpad archive or any exercise-1, -2 or -3
+    result. It read no PSID file and computed nothing on real data; its
+    dry run is on INVENTED cohorts. §22 lists what it read.
 - **Disclosure that travels with this specification (plan section 11,
   R5):** the clearance follow-up of 2026-09-24 14:15 found that the
   withheld Table 5 note sentence (ruling C2) lies inside the text lines
@@ -196,8 +210,8 @@ item Y1) describes it. Neither builder lane has seen the table.
   section 12) and are out of this specification.
 
 The comparator values are sealed on the comparator side
-(`EVID/exercise4-comparator-seal-20260924.json`, not opened by either
-builder lane).
+(`EVID/exercise4-comparator-seal-20260924.json`, not opened by any
+builder lane; the hash of its bytes is in §18 item 3).
 
 ## 2. Sources
 
@@ -1190,8 +1204,11 @@ disclosure. It refuses rows its provenance does not authorize before
 computing anything: invented rows must be marked invented, and rows
 built from PSID files need `registered_real`, the issue #42 comment
 pointer, the registered floor seeds and a block the registered-run gate
-authorizes (§19), so nothing computes the share on real data before the
-registration. §19's `statistic` equals `tabulation.STATISTIC`.
+authorizes (§19). The committed block passes the gate since the
+registered-commit edit (2026-09-27), and the code checks the pointer's
+form only, so that nothing computes the share on real data before the
+registration rests on the registration's procedure (§20) as well as on
+the code. §19's `statistic` equals `tabulation.STATISTIC`.
 
 **Diagnostics (registered run only; not scored; G21 and the referee's
 O2; `evaluation`):** worker records by basis, in total and in the window;
@@ -1614,21 +1631,30 @@ guard:
   readings, the resting share and its bound, and the sensitivity's
   guards, among them
   its threshold-year check, which passes a sensitivity record that needs
-  1990 and refuses one that needs 1993 before anything is computed. Its
-  output, headed "INVENTED DATA - NOT A COMPARISON", is in
-  `EVID/track-m-dry-run-r9-20260926/`, run by the independent review of
-  2026-09-26 at its head (earlier runs:
-  `EVID/track-m-dry-run-20260925/`, `-r2/`, `-r3-`, `-r4-`, `-r5-`,
-  `-r6-`, `-r7-` and `-r8-`); its rows MS0-MS6 are byte-identical to those
-  of the build before d430 (`672e6770`, `EVID/track-m-5-build-20260926/
-  dry-run-baseline-672e6770/`), of r6, of r7 and of r8.
-- `scripts/run_track_m_registered.py`: the one-shot entry point. It
-  refuses the committed block at its preflight while its `blocked_by`
-  names a blocker (§19). With an authorizing block it
-  refuses, before reading any PSID file, while a component is missing
-  (`missing_components`: none today) or while a parameter file differs
-  from the SHA-256 in `sources` (`check_parameter_pins`: the Census
-  capture and the quarter-of-coverage capture). Its computation reads the
+  1990 and refuses one that needs 1993 before anything is computed. Since
+  the registered-commit edit it also records that the committed block
+  passes the gate and the entry point's preflight at the registered
+  commit, and each refusal that remains. Its output, headed "INVENTED
+  DATA - NOT A COMPARISON", is in `EVID/track-m-dry-run-r10-20260927/`,
+  run by the lane that made the registered-commit edit at that edit's
+  commit (earlier runs: `EVID/track-m-dry-run-20260925/`, `-r2/`,
+  `-r3-`, `-r4-`, `-r5-`, `-r6-`, `-r7-`, `-r8-` and `-r9-`, the last
+  run by the independent review of 2026-09-26 at its head); its rows
+  MS0-MS6 are byte-identical to those of the build before d430
+  (`672e6770`, `EVID/track-m-5-build-20260926/
+  dry-run-baseline-672e6770/`), of r6, of r7 and of r8, and r10's rows,
+  sensitivities and worked cases equal r9's.
+- `scripts/run_track_m_registered.py`: the one-shot entry point. Its
+  preflight refuses a pointer other than an issue #42 comment, a `HEAD`
+  other than the registered commit, a dirty tree, an existing output and
+  a block that lists any blocker (§19). The committed block lists none
+  since the registered-commit edit (2026-09-27, item 3), so at the
+  registered commit on a clean tree the preflight passes. With an
+  authorizing block it refuses, before reading any PSID file, while a
+  component is missing (`missing_components`: none today) or while a
+  parameter file differs from the SHA-256 in `sources`
+  (`check_parameter_pins`: the Census capture and the
+  quarter-of-coverage capture). Its computation reads the
   PSID through M4 and M5 and passes the records, marked as read from
   PSID files, to `pipeline.run_track_m`, which refuses again (§11) and
   refuses any threshold year the capture lacks. Every year M4's structural
@@ -1649,7 +1675,8 @@ guard:
   `tests/data/test_track_m_psid_labels.py` (staged-file labels only) and
   `tests/test_minimum_benefits_spec.py`.
 
-Blocked, with the plan's effort estimates (lane-days):
+Blocked, with the plan's effort estimates (lane-days); all cleared as of
+2026-09-27:
 
 1. **Census thresholds before 2003: cleared (2026-09-25).** The years
    M4's count shows the in-window records need (1982, 1986, 1988, 1989,
@@ -1676,12 +1703,23 @@ Blocked, with the plan's effort estimates (lane-days):
 
    The findings are listed under item 4. 20 CFR 404.141 and 404.143 stay
    review copies (§2).
-3. **M10's registration package** (part of 1.5): the specification's
-   SHA-256, the code SHA and the parameter hashes are in the dry run's
-   provenance, and the SHA-256 of the 91 PSID files the cohort reads is in
-   the structural run (§10). The comparator seal's hash is the
-   orchestrator's to add (builder lanes do not open it). Then **M11
-   registration and one-shot** (3).
+3. **M10's registration package: complete (2026-09-27)** (part of 1.5).
+   The specification's SHA-256, the code SHA and the parameter hashes are
+   in the dry run's provenance, and the SHA-256 of the 91 PSID files the
+   cohort reads is in the structural run (§10). The comparator seal's
+   hash was the orchestrator's to add (builder lanes do not open it): the
+   seal `EVID/exercise4-comparator-seal-20260924.json` has SHA-256
+   `112dcf427671da5af54d436d10719f195c65596df42fcdb8ad0e9fe54f75e63c`.
+   The orchestrating session computed it on 2026-09-27 as a hash of the
+   file's bytes and reports that it did not open the seal; the lane that
+   recorded it here neither opened nor hashed the seal. The issue #42
+   registration comment is to state the same hash. With it recorded,
+   `registration_package_m10_needs_the_comparator_seal_hash` leaves
+   `blocked_by`. Then **M11 registration and one-shot** (3). The
+   registration (Registration 17) is to name the commit that carries this
+   edit, the registered commit, so `issue_42_registration_absent` leaves
+   `blocked_by` in that commit too, as §19 prescribes, and its block
+   lists none. The one-shot is to run once, at that commit (§20).
 4. **Ratification: done by this version (`m1-ratified-1`).** An
    independent check that `m1-draft-2` applies the referee's required
    changes, and of the M3-M5 build's readings (§4c; §5's two findings),
@@ -1701,9 +1739,10 @@ Blocked, with the plan's effort estimates (lane-days):
    item 9 and d430. The ratified text is `m1-draft-3` at `100827f9` with
    its status and version changed, the review's entry dropped from
    `blocked_by`, and the prose that described the draft updated (§23).
-   Ratification alone authorizes no run: the ratified block still lists
+   Ratification alone authorized no run: the ratified block still listed
    the other blockers (item 3), and the gate refuses a block that lists
-   any (§19).
+   any (§19). The registered-commit edit of 2026-09-27 dropped both
+   (item 3; §23), so the committed block lists none.
 
    M2's statute capture (2026-09-25, `EVID/track-m-statute-20260925/
    READING.md`) adds these findings for the ratification. None
@@ -1807,11 +1846,24 @@ refuses a registered run without the sensitivity's records (§11). The tabulatio
 same gate to PSID-built rows. As in Track U, each blocker is removed from
 `blocked_by` as it is resolved, and `issue_42_registration_absent` in the
 commit the registration comment then registers; the registered commit's
-block lists none. At `m1-ratified-1` the status and version say ratified
-and `blocked_by` still names the comparator seal's hash for the
-registration package and the issue #42 registration, so the gate refuses
-this block ("still blocked by"). The entry script also refuses parameter
-files whose
+block lists none. As ratified, `m1-ratified-1`'s `blocked_by` still
+named the comparator seal's hash for the registration package and the
+issue #42 registration, so the gate refused that block ("still blocked
+by"). The registered-commit edit of 2026-09-27 recorded the seal's hash
+(§18 item 3) and dropped both, so `blocked_by` is empty and the gate
+accepts this block under the default configuration (`TrackMPolicy()`).
+The issue #42 registration (Registration 17) is to name the commit that
+carries the edit. The version and status stand, because the ratified
+text prescribes the change (§23). What the code still refuses: the entry
+script's preflight refuses a pointer that is not in the form of an issue
+#42 comment, a `HEAD` other than the commit given as
+`--registered-commit`, a dirty tree and an existing output, and the
+tabulation and the pipeline refuse PSID-built rows without such a
+pointer. The code checks the pointer's form, not that the comment exists
+or names the commit; that the run happens once, after Registration 17 is
+posted and at the commit it names, is the registration's procedure
+(§20), as in Track U. The entry script also refuses parameter files
+whose
 SHA-256 differs from `sources` (§18); `sources.quarter_of_coverage_amounts`
 records the committed capture and the policyengine-us file it came from,
 and a test holds that record, and the Census capture's (file, SHA-256 and
@@ -2328,10 +2380,7 @@ statute capture, which is evidence the code does not read.
       "status": "captured_m2"
     }
   },
-  "blocked_by": [
-    "registration_package_m10_needs_the_comparator_seal_hash",
-    "issue_42_registration_absent"
-  ]
+  "blocked_by": []
 }
 ```
 
@@ -2505,7 +2554,10 @@ only once the comparator seal's hash is in the registration package
 (§19). It names that commit, the headline cell (option 2, All, in row
 MS0) and this file's SHA-256 at that commit. The registered run
 (`scripts/run_track_m_registered.py`) runs once at that commit and is
-published regardless of outcome (§13).
+published regardless of outcome (§13). The registered-commit edit of
+2026-09-27 put the seal's hash in the package and emptied `blocked_by`
+(§§18 item 3, 19, 23); the commit that carries it is the one Registration
+17 is to name.
 
 ## 21. Referee pass
 
@@ -2934,6 +2986,48 @@ package, the cleared files, any comparator directory, seal,
 reconciliation or values scan, the uncleared sources, either scratchpad
 archive, or any exercise-1 or exercise-3 result.
 
+**The ninth lane, which made the registered-commit edit (2026-09-27,
+Claude Code subagent, Opus 5.5), read:**
+- its brief, then `EVID/RESTRICTED-FILES.md` (`64fcd354…`, last entry
+  2026-09-27 01:20) before any other file;
+- this specification's header and §§1-2 (the seal's line), 11 (the
+  guard), 13 and 18-23;
+- of the U1 specification its changelog entry for `u1-ratified-1` and its
+  entry-point line (§14), and of E1's the end of its changelog (§26) and
+  parts of §27 (Registration 14's refusal);
+- the ratification commit `c3060971` in full, and every earlier version of
+  this file's `blocked_by` (to list the blockers it named);
+- the Track M code the edit touches: `specification.py`, the package
+  docstring, `tabulation.py`'s guard, `pipeline.py`'s guards and
+  `run_track_m`, `scripts/run_track_m_registered.py` and
+  `scripts/track_m_dry_run.py`; Track A's environment resolver and
+  `ss/params.load_ssa_parameters`; the source exclusions of
+  `scripts/first_estimates_birth_evidence.py`; the tests that held the
+  committed block blocked and the guard tests beside them, Track U's
+  `tests/track_u/test_registered_script.py`, `tests/conftest.py`'s tier
+  classifier, `tests/test_tier_policy.py` and the tier recount script;
+- the r9 dry run's `result.json`, to compare r10 with it.
+
+It did not open or hash the seal: the orchestrating session supplied the
+hash of its bytes. It read no PSID file, ran no structural count and
+computed nothing on real data. The tests it ran exclude the
+`integration_psid` tier; to recount the tiers it collected the whole
+suite without running it. Its dry run is on INVENTED cohorts
+(`EVID/track-m-dry-run-r10-20260927/`). It did not open the Report in
+any copy, the plan, the change package, the cleared files, any
+comparator directory, seal, reconciliation or values scan, the uncleared
+sources, either scratchpad archive, or any exercise-1, -2 or -3 result.
+
+**An independent review of that edit (2026-09-27, Claude Code subagent,
+Opus 5.5)** read `EVID/RESTRICTED-FILES.md` first, then the uncommitted
+diff, this specification at the diff and (its JSON block) at every
+earlier commit, the Track M code and tests the diff touches, the tier
+classifier, the lane's working files and the r9 dry run. It opened
+nothing the list restricts, did not open or hash the seal and read no
+PSID file; its checks ran on INVENTED data. It approved with fixes, which
+this text applies (`EVID/track-m-registered-commit-20260927/
+review-report.md`, with the lane's record of each fix).
+
 ## 23. Changelog
 
 - `m1-draft-1` (2026-09-24): first draft, with the Track M rules module,
@@ -3204,3 +3298,73 @@ archive, or any exercise-1 or exercise-3 result.
   row, cell, option, frozen choice, sensitivity, named delta, parameter,
   pin, worked case or count; `decisions`, `sensitivities` and
   `policy.MAX_RULINGS` are unchanged.
+- `m1-ratified-1`, registered-commit edit (2026-09-27): clears §18's
+  last two blockers, as the ratified text prescribes (§19: "each blocker
+  is removed from `blocked_by` as it is resolved, and
+  `issue_42_registration_absent` in the commit the registration comment
+  then registers; the registered commit's block lists none"). The text
+  anticipates the change, so the version and status stand. Changes by
+  section:
+  - **§19 block.** `blocked_by` is empty. It drops
+    `registration_package_m10_needs_the_comparator_seal_hash`, because the
+    package now has the seal's hash, and `issue_42_registration_absent`,
+    because the issue #42 registration (Registration 17) is to name the
+    commit that carries this edit. No other field of the block changes.
+  - **§18.** Item 3 records the comparator seal's hash for the
+    registration package: `EVID/exercise4-comparator-seal-20260924.json`,
+    SHA-256 `112dcf42…`, a hash of the file's bytes that the orchestrating
+    session computed on 2026-09-27 without opening the seal. It also says
+    that Registration 17 is to name this commit. Item 4 says ratification
+    alone authorized no run and that this edit dropped the other blockers.
+    The entry point's line lists the preflight's remaining refusals and
+    says the committed block passes at the registered commit. The
+    "Blocked" list says all are cleared, and the dry run's line names
+    r10.
+  - **§19 prose.** It says the gate refused the block as ratified and
+    accepts it now under the default configuration, and that Registration
+    17 is to name this commit. It lists what the code still refuses (the
+    preflight's refusals, and the tabulation's and pipeline's need for an
+    issue #42 comment pointer), and it says that the code checks the
+    pointer's form only, so the run's timing and commit rest on the
+    registration's procedure (§20), as in Track U.
+  - **Header, §§1, 11, 20 and 22.** The status says the same. §1's seal
+    line points to the hash. §11's guard sentence no longer says the code
+    alone keeps real data out before the registration. The builder
+    boundary and §22 record the lane that made the edit; §22 also records
+    the independent review of it, which approved with fixes that this
+    text applies. §20's ratification record says the seal's hash is in
+    the package.
+  - **Code.** Docstrings (`specification`, the package, `tabulation`,
+    the entry and dry-run scripts) no longer call the committed block
+    blocked; no guard changes. The dry-run script's checks change with
+    the block. It records the committed block passing the gate and the
+    entry point's preflight (a stand-in `git` at the registered commit;
+    nothing is written), and refuses a copy that still lists the blockers
+    it was ratified with (`BLOCKERS_AT_RATIFICATION`). It records five
+    preflight refusals (another issue's pointer, another `HEAD`, a dirty
+    tree, an existing output, a blocked block). It also records the
+    refusal of records carrying PSID file hashes without the pointer or
+    with a pointer to another issue. Its supplied-block check uses a
+    block the gate passes (`supplied`, with another snapshot), and its
+    provenance's seal note points to §18 item 3. It is rerun into
+    `EVID/track-m-dry-run-r10-20260927/`, and its rows, sensitivities and
+    worked cases equal r9's.
+  - **Tests.** Tests that held the committed block blocked now hold it
+    unblocked: the gate accepts it with the default `TrackMPolicy`, and
+    the entry point's preflight and pre-PSID checks pass it with a
+    stand-in `git` at the registered commit
+    (`tests/min_benefit_track_m/test_registered_commit.py`). The refusals
+    are tested on explicit copies that list blockers, the block as
+    ratified among them, and by Hypothesis properties: the gate passes
+    `blocked_by` only when it is the empty list; the preflight refuses
+    any other pointer, another `HEAD` and a dirty tree, and an existing
+    output or sidecar; the tabulation refuses PSID-built rows without an
+    issue #42 comment pointer. Records carrying PSID file hashes are still
+    refused without the pointer and with a supplied block that the gate
+    would pass but that is not the committed one. The new tests add 17 to
+    the suite (8,395 to 8,412: 13 `unit`, 4 `oracle_policyengine`),
+    recorded in `tests/tier_counts.json` and `tests/README-tiers.md`.
+
+  No ruling, rule, default, row, cell, option, frozen choice, sensitivity,
+  named delta, parameter, pin, worked case or count changed; `decisions`,
+  `sensitivities`, `sources` and `policy.MAX_RULINGS` are unchanged.
