@@ -17,8 +17,9 @@ reading for the scored rows with a pre-registered, unscored sensitivity
 registration.  The M1 specification
 (``docs/design/minimum_benefits_comparison.md``, ``m1-ratified-1``) is
 ratified by merge (d219 item 9, d430) after the independent review of that
-build, but its block still lists open blockers, so it authorizes no
-real-data run yet.
+build.  Its registered-commit edit (2026-09-27) emptied the block's
+``blocked_by``, so the block passes the registered-run gate; the one-shot
+is to run once, at the commit the issue #42 registration names.
 
 What this package holds:
 
@@ -62,11 +63,13 @@ What this package holds:
   share receiving a minimum.
 
 The PSID readers of plan items M3-M5 exist, but the share is computed on
-real data only by the registered entry point, whose gate refuses the
-committed specification while its block names a blocker: the tabulation
-and the pipeline refuse
-records read from PSID files without the issue #42 registration pointer
-and an authorizing specification.
+real data only by the registered entry point, whose preflight refuses to
+run unless ``HEAD`` is the commit it is given as registered, on a clean
+tree, with a pointer in the form of an issue #42 comment (the code checks
+the form; the registration's procedure supplies the comment): the
+tabulation and the pipeline refuse
+records read from PSID files without that pointer and an authorizing
+specification.
 
 Submodules are imported explicitly; this initializer imports none of them,
 so the structural-count script can prove it never loaded the rules.

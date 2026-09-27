@@ -22,25 +22,31 @@ thresholds of 1982, 1986, 1988-1992 and 1994-2022 (the pinned capture)
 and the SSA COLA history (for the invented MS5 benefits).  No PSID file
 is opened and no comparator value is read.
 
-The checks record that the specification block equals the code and the
-committed block authorizes no real-data run (it is ratified but still
-lists blockers); that every threshold year the invented cohort
+The checks record that the specification block equals the code and that
+the committed block passes the registered-run gate (its registered-commit
+edit of 2026-09-27 emptied ``blocked_by``), while a copy that still lists
+the blockers it was ratified with is refused; that every threshold year
+the invented cohort
 needs is captured, that records needing a year before 2003 the capture
 holds (1998; 1990, the year d430's sensitivity needs) pass the threshold
 check, and that records needing a year it lacks (1993, inside the
 captured span; 1981, before it) are refused before anything is computed
 (referee R8); that MS5 read benefit-implied
 PIAs and MS0 none; that the registered path refuses invented records,
-PSID-kind records without the issue #42 pointer or an authorizing
-specification, a subset of rows and other floor seeds; that records
-carrying PSID file hashes are refused outside the registered run and
-with a supplied specification block; that an invented M4 cohort drawn
+PSID-kind records without the issue #42 pointer or under a block that
+lists a blocker, a subset of rows and other floor seeds; that records
+carrying PSID file hashes are refused outside the registered run,
+without the issue #42 pointer or with a pointer to another issue, and
+with a supplied specification block other than the committed one (even
+one the gate would pass); that an invented M4 cohort drawn
 without the capture constraint (as the PSID is) is refused for the
 threshold years it needs that the capture lacks, before anything is
-computed; that the one-shot entry
-point finds every component and refuses the committed block at its
-preflight while it lists a blocker; and the plan's INVENTED worked cases
-(M1 section 16).
+computed; that the one-shot entry point finds every component, and that
+its preflight passes the committed block at the registered commit on a
+clean tree but refuses another pointer, another ``HEAD``, a dirty tree,
+an existing output and a block that lists a blocker (a stand-in ``git``;
+nothing is written); and the plan's INVENTED worked cases (M1 section
+16).
 
 Cos d430's sensitivity (M1 sections 4c, 11 and 19) runs on the invented
 PSID-shaped cohort twice: on the default draw, whose type items are all
@@ -125,6 +131,13 @@ DEFAULT_SEED = 20260925
 #: The share of invented persons given receipt of an unknown or "other"
 #: type before 62 in the d430 sensitivity's second invented cohort.
 SENSITIVITY_SHARE = 0.5
+#: The blockers ``m1-ratified-1``'s block listed when it was ratified;
+#: the registered-commit edit (2026-09-27) dropped both.  A copy that
+#: still lists them shows the gate's refusal of a blocked block.
+BLOCKERS_AT_RATIFICATION = (
+    "registration_package_m10_needs_the_comparator_seal_hash",
+    "issue_42_registration_absent",
+)
 
 
 def _git(*args: str) -> str:
@@ -278,28 +291,42 @@ def checks(
         "m1-ratified-1",
     )
     unblocked = {**ratified, "blocked_by": []}
+    # The committed block as it was ratified, before the registered-commit
+    # edit: the gate refuses it.
+    blocked = {**ratified, "blocked_by": list(BLOCKERS_AT_RATIFICATION)}
     entry = _entry_script()
     sources = {
         row: entry_["diagnostics"]["pia_source_by_record"]
         for row, entry_ in result["rows"].items()
     }
+
+    def preflight(**changes: Any) -> dict[str, Any]:
+        """The entry point's preflight in the registered state (the
+        committed block, a stand-in ``git`` at the registered commit on a
+        clean tree, an output that does not exist), with ``changes``."""
+
+        arguments = {
+            "registration_pointer": _GUARD_POINTER,
+            "registered_commit": "0" * 40,
+            "output": ROOT / "runs" / "track-m-dry-run-never-written.json",
+            "git": _clean_git("0" * 40),
+            **changes,
+        }
+        return _refusal(lambda: entry.preflight(**arguments))
+
     return {
         "specification_block_equals_code": (
             specification.specification_code_check(block)
         ),
-        "committed_draft_authorizes_no_real_run": _refusal(
+        "the_committed_block_passes_the_specification_gate": _refusal(
             lambda: specification.check_specification_for_registered_run(block)
         ),
+        "the_committed_block_equals_a_ratified_unblocked_copy": {
+            "passed": block == unblocked
+        },
         "a_ratified_copy_still_listing_blockers_is_refused": _refusal(
             lambda: specification.check_specification_for_registered_run(
-                ratified
-            )
-        ),
-        "a_ratified_unblocked_copy_would_pass_the_specification_gate": (
-            _refusal(
-                lambda: specification.check_specification_for_registered_run(
-                    unblocked
-                )
+                blocked
             )
         ),
         "threshold_years_needed_by_the_invented_cohort": {
@@ -368,12 +395,15 @@ def checks(
                 data_provenance=tabulation.REGISTERED_REAL,
             )
         ),
-        "psid_kind_records_refused_with_a_pointer_under_the_draft": _refusal(
-            lambda: pipeline.run_track_m(
-                psid_kind,
-                parameters,
-                data_provenance=tabulation.REGISTERED_REAL,
-                registration_pointer=_GUARD_POINTER,
+        "psid_kind_records_refused_with_a_pointer_under_a_blocked_block": (
+            _refusal(
+                lambda: pipeline.run_track_m(
+                    psid_kind,
+                    parameters,
+                    data_provenance=tabulation.REGISTERED_REAL,
+                    registration_pointer=_GUARD_POINTER,
+                    specification=blocked,
+                )
             )
         ),
         "a_registered_subset_of_rows_is_refused": _refusal(
@@ -397,27 +427,41 @@ def checks(
             )
         ),
         "entry_point_missing_components": entry.missing_components(),
-        "entry_point_preflight_refuses_the_committed_draft": _refusal(
-            lambda: entry.preflight(
-                registration_pointer=_GUARD_POINTER,
-                registered_commit="0" * 40,
-                output=ROOT / "runs" / "track-m-dry-run-never-written.json",
-                git=_clean_git("0" * 40),
+        # The preflight writes nothing: it passes the registered state and
+        # refuses each departure from it.
+        "entry_point_preflight_passes_the_registered_state": preflight(),
+        "entry_point_preflight_refuses_a_pointer_to_another_issue": (
+            preflight(
+                registration_pointer=_GUARD_POINTER.replace("/42#", "/420#")
             )
+        ),
+        "entry_point_preflight_refuses_another_head": preflight(
+            git=_clean_git("1" * 40)
+        ),
+        "entry_point_preflight_refuses_a_dirty_tree": preflight(
+            git=_clean_git("0" * 40, porcelain=" M INVENTED.py")
+        ),
+        # an output that exists: the committed specification itself, which
+        # the preflight refuses to overwrite (it opens nothing for writing)
+        "entry_point_preflight_refuses_an_existing_output": preflight(
+            output=specification.M1_SPECIFICATION_PATH
+        ),
+        "entry_point_preflight_refuses_a_blocked_block": preflight(
+            specification=blocked
         ),
         "plan_invented_cases": plan_cases(),
     }
 
 
-def _clean_git(head: str):
-    """A stand-in ``git`` for the preflight check: the registered commit
-    and a clean tree, so that the specification gate is what refuses."""
+def _clean_git(head: str, porcelain: str = ""):
+    """A stand-in ``git`` for the preflight check: ``head`` as ``HEAD``
+    and ``porcelain`` as the tree's status (clean by default)."""
 
     def fake(*args: str) -> str:
         if args == ("rev-parse", "HEAD"):
             return head
         if args == ("status", "--porcelain"):
-            return ""
+            return porcelain
         raise AssertionError(args)
 
     return fake
@@ -650,11 +694,12 @@ def m4_m5_checks(
     """The M4/M5 path's guards, each recorded (no PSID file is read)."""
 
     block = specification.m1_parameter_block()
-    unblocked = {
+    # A supplied block the gate would pass but that is not the committed
+    # one (another snapshot, a field the gate does not hold to the code):
+    # records carrying PSID file hashes are refused under it all the same.
+    supplied = {
         **json.loads(json.dumps(block)),
-        "status": "ratified_frozen",
-        "version": "m1-ratified-1",
-        "blocked_by": [],
+        "snapshot": {"wave": 2021, "income_year": 2020},
     }
     records = run["records"]
     hashed = dataclasses.replace(
@@ -722,15 +767,33 @@ def m4_m5_checks(
                 parameters,
                 data_provenance=tabulation.REGISTERED_REAL,
                 registration_pointer=_GUARD_POINTER,
-                specification=unblocked,
+                specification=supplied,
             )
-        ),
-        "psid_hashed_records_refused_under_the_committed_draft": _refusal(
+        )
+        | {
+            "supplied_block_passes_the_gate": not _refusal(
+                lambda: specification.check_specification_for_registered_run(
+                    supplied
+                )
+            )["refused"]
+        },
+        "psid_hashed_records_refused_without_the_42_pointer": _refusal(
             lambda: pipeline.run_track_m(
                 hashed,
                 parameters,
                 data_provenance=tabulation.REGISTERED_REAL,
-                registration_pointer=_GUARD_POINTER,
+            )
+        ),
+        "psid_hashed_records_refused_with_a_pointer_to_another_issue": (
+            _refusal(
+                lambda: pipeline.run_track_m(
+                    hashed,
+                    parameters,
+                    data_provenance=tabulation.REGISTERED_REAL,
+                    registration_pointer=_GUARD_POINTER.replace(
+                        "/42#", "/420#"
+                    ),
+                )
             )
         ),
         "a_psid_hashed_cohort_cannot_be_marked_invented": _refusal(
@@ -845,7 +908,8 @@ def provenance(
     The specification and code, the parameter files and the invented
     generator.  The PSID file hashes are recorded by the M3-M5 readers'
     structural run (``scripts/track_m_structure.py``); the comparator seal
-    is not opened or hashed by a builder lane.
+    is not opened or hashed by a builder lane (the orchestrator's hash of
+    its bytes is in the M1 specification, section 18 item 3).
     """
 
     return {
@@ -867,7 +931,11 @@ def provenance(
             "structural run, scripts/track_m_structure.py, records the "
             "PSID file hashes)"
         ),
-        "comparator_seal": "not opened and not hashed by this lane",
+        "comparator_seal": (
+            "not opened and not hashed by this lane; the orchestrator's "
+            "SHA-256 of its bytes is recorded in the M1 specification "
+            "(section 18 item 3)"
+        ),
     }
 
 
