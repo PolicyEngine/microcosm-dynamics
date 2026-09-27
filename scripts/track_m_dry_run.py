@@ -23,8 +23,8 @@ and the SSA COLA history (for the invented MS5 benefits).  No PSID file
 is opened and no comparator value is read.
 
 The checks record that the specification block equals the code and the
-committed draft authorizes no real-data run (nor would a ratified copy
-that still lists blockers); that every threshold year the invented cohort
+committed block authorizes no real-data run (it is ratified but still
+lists blockers); that every threshold year the invented cohort
 needs is captured, that records needing a year before 2003 the capture
 holds (1998; 1990, the year d430's sensitivity needs) pass the threshold
 check, and that records needing a year it lacks (1993, inside the
@@ -38,8 +38,9 @@ with a supplied specification block; that an invented M4 cohort drawn
 without the capture constraint (as the PSID is) is refused for the
 threshold years it needs that the capture lacks, before anything is
 computed; that the one-shot entry
-point finds every component and refuses the committed draft at its
-preflight; and the plan's INVENTED worked cases (M1 section 16).
+point finds every component and refuses the committed block at its
+preflight while it lists a blocker; and the plan's INVENTED worked cases
+(M1 section 16).
 
 Cos d430's sensitivity (M1 sections 4c, 11 and 19) runs on the invented
 PSID-shaped cohort twice: on the default draw, whose type items are all

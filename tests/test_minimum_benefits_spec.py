@@ -1,11 +1,12 @@
-"""Consistency checks for the exercise 4 (Track M) specification draft.
+"""Consistency checks for the exercise 4 (Track M) specification.
 
 ``docs/design/minimum_benefits_comparison.md`` is read by downstream code
 through its machine-readable JSON block (section 19).  These tests hold
 that block to the code (the options, the policy defaults, the registered
 rows, the cells, the labels and the structural-count universe), check that
-the draft cannot authorize a registered run, and recompute the draft's
-INVENTED worked cases.  They use only the document and the code: no PSID
+the committed block cannot authorize a registered run while it names a
+blocker, and recompute the specification's INVENTED worked cases.  They
+use only the document and the code: no PSID
 value, no model output and no comparator value.  One test also hashes the
 statute capture the block pins, when its evidence folder is present.
 """
@@ -57,8 +58,9 @@ def block(text: str) -> dict:
 def test_block_identity_and_status(block):
     assert spec.M1_SPECIFICATION_PATH == SPEC_PATH
     assert block["specification"] == pol.SPECIFICATION_ID
-    assert block["version"] == "m1-draft-3"
-    assert block["status"] == "draft_referee_changes_applied"
+    assert block["version"] == "m1-ratified-1"
+    assert block["status"] == "ratified_frozen"
+    assert spec.unratified_fields(block) == []
     assert block["claim_class"] == {
         "ruled": pol.CLAIM_CLASS,
         "decision_record": pol.DECISION_RECORD,
@@ -71,8 +73,8 @@ def test_block_identity_and_status(block):
     )
     assert "max_ruling_d219_open" not in block["blocked_by"]
     # The independent checks of m1-draft-2 and the M3-M5 readings are done
-    # (d430 was ruled on them, 2026-09-26); d430's sensitivity build needs
-    # its own review before the ratification (and before registration).
+    # (d430 was ruled on them, 2026-09-26), and so is the review of d430's
+    # sensitivity build (2026-09-26), whose entry ratification drops.
     assert (
         "independent_check_of_m1_draft_2_and_the_m3_to_m5_readings_then_"
         "ratification_by_merge" not in block["blocked_by"]
@@ -97,9 +99,11 @@ def test_block_identity_and_status(block):
         "census_threshold_1990_needed_by_the_d430_sensitivity_not_captured",
     ):
         assert cleared not in block["blocked_by"], cleared
-    assert block["blocked_by"] == [
+    assert (
         "independent_review_of_the_d430_sensitivity_build_m1_draft_3_then_"
-        "ratification_by_merge",
+        "ratification_by_merge" not in block["blocked_by"]
+    )
+    assert block["blocked_by"] == [
         "registration_package_m10_needs_the_comparator_seal_hash",
         "issue_42_registration_absent",
     ]
@@ -216,14 +220,15 @@ def test_statistic_and_uncertainty_are_the_tabulations(block):
     )
 
 
-def test_status_line_records_the_rulings_and_claims_no_ratification(text):
-    status = text.split("- **Specification:**")[0]
-    assert "draft with the referee's required changes applied" in status
-    assert "Nothing here is ratified" in status
+def test_status_line_records_the_ratification_and_every_ruling(text):
+    status = " ".join(text.split("- **Specification:**")[0].split())
+    assert "ratified and frozen" in status
+    assert "Nothing here is ratified" not in status
     for record in ("d219", "d279", "d280", "d430"):
         assert record in status
     assert "ruled 2026-09-24 21:44" in status
-    assert "independent check" in status
+    assert "track-m-5-review-20260926.md" in status
+    assert "refuses a block that lists any blocker" in status
     assert "pending" not in status
 
 
@@ -289,8 +294,12 @@ def test_every_ruling_is_recorded_as_the_code_records_it(block):
     )
 
 
-def test_the_draft_cannot_authorize_a_registered_run(block):
-    with pytest.raises(ValueError, match="authorizes no real-data run"):
+def test_the_committed_block_cannot_authorize_a_registered_run(block):
+    """Ratified, but blocked: the gate refuses while any blocker is
+    listed (section 18 item 4)."""
+
+    assert spec.unratified_fields(block) == []
+    with pytest.raises(ValueError, match="still blocked by"):
         spec.check_specification_for_registered_run(block)
 
 
@@ -457,7 +466,8 @@ def test_the_block_registers_d430s_sensitivity(block):
 
 def test_the_text_records_d430s_sensitivity(text):
     """Sections 4c, 11, 14 and 19 describe the sensitivity; section 15
-    names d430's deltas; section 23 records m1-draft-3."""
+    names d430's deltas; section 23 records m1-draft-3 and
+    m1-ratified-1, and section 20 the ratification."""
 
     from populace_dynamics.min_benefit_track_m import pipeline
 
@@ -484,4 +494,7 @@ def test_the_text_records_d430s_sensitivity(text):
     assert "F1" in deltas and "(j)" in deltas
     changelog = section("## 23. Changelog", "\n## 24")
     assert "`m1-draft-3`" in changelog
-    assert "m1-draft-3" in flat.split("- **Specification:**")[1][:200]
+    assert "- `m1-ratified-1` (" in changelog
+    assert "m1-ratified-1" in flat.split("- **Specification:**")[1][:200]
+    assert "**Ratification record.**" in flat
+    assert "This version is not that text" not in flat

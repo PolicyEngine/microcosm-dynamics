@@ -15,9 +15,10 @@ ruled d430: ratify by merge, keeping section 4c item 1's own-receipt
 reading for the scored rows with a pre-registered, unscored sensitivity
 (:data:`.policy.SENSITIVITIES`), built and reviewed before the
 registration.  The M1 specification
-(``docs/design/minimum_benefits_comparison.md``, ``m1-draft-3``) is not
-ratified yet: an independent review of that build comes first, then the
-merge.
+(``docs/design/minimum_benefits_comparison.md``, ``m1-ratified-1``) is
+ratified by merge (d219 item 9, d430) after the independent review of that
+build, but its block still lists open blockers, so it authorizes no
+real-data run yet.
 
 What this package holds:
 
@@ -62,7 +63,8 @@ What this package holds:
 
 The PSID readers of plan items M3-M5 exist, but the share is computed on
 real data only by the registered entry point, whose gate refuses the
-committed draft specification: the tabulation and the pipeline refuse
+committed specification while its block names a blocker: the tabulation
+and the pipeline refuse
 records read from PSID files without the issue #42 registration pointer
 and an authorizing specification.
 
