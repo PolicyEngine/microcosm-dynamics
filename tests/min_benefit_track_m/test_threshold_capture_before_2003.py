@@ -2,13 +2,17 @@
 
 M4's structural count shows the in-window records need the threshold
 years 1982, 1986, 1988, 1989, 1991, 1992 and 1994-2002 (M1 specification,
-sections 4, 7 and 10).  Their fifteen Census workbooks are committed in
-``data/external/census_poverty_thresholds`` and captured with 2003-2022 in
-``census_poverty_thresholds_1982_2022.json``.  This module checks:
+sections 4, 7 and 10), and d430's sensitivity's count (2026-09-26) shows
+its window, MS0's, needs 1990 as well.  Their sixteen Census workbooks are
+committed in ``data/external/census_poverty_thresholds`` and captured with
+2003-2022 in ``census_poverty_thresholds_1982_2022.json``.  This module
+checks:
 
 * the parser on each layout before 2003 (the March CPS and CPS ADS notes,
   2001's "persons" rows, the revision lines of 1982 and 2000) and its
   refusals of those departures in any other year;
+* ``thresh90.xlsx`` (captured 2026-09-26): its pins and provenance, and
+  that it prints 1989's and 1991's layout cell for cell;
 * a differential: every captured value equals the workbook cell read by
   its row label from the sheet XML, with code that shares nothing with the
   capture script or openpyxl;
@@ -55,9 +59,15 @@ TABLE1_HTML = WORKBOOKS / "crosscheck" / "hstpov1-20100209011620.html"
 TABLE1_SHA256 = (
     "d219cb20f4a6978ffabf265e4feabe1ad02b5446705c5cc1bda73cb9c91f038f"
 )
-BEFORE_2003 = (1982, 1986, 1988, 1989, 1991, 1992, *range(1994, 2003))
+#: M4's fifteen years before 2003 (captured 2026-09-25)
+M4_BEFORE_2003 = (1982, 1986, 1988, 1989, 1991, 1992, *range(1994, 2003))
+#: and 1990, which d430's sensitivity also needs (captured 2026-09-26)
+BEFORE_2003 = tuple(sorted((*M4_BEFORE_2003, 1990)))
 YEARS = (*BEFORE_2003, *range(2003, 2023))
-NOT_CAPTURED = (1983, 1984, 1985, 1987, 1990, 1993)
+NOT_CAPTURED = (1983, 1984, 1985, 1987, 1993)
+THRESH90_SHA256 = (
+    "6a955422a86d5bea399fd9c23567779cbb279ce00b2d1c678018e802a67bfdf4"
+)
 REVISION_LINES = {
     1982: "Revised on 4/19/2022 due to rounding issues.",
     2000: "Revised on 2/1/2023 due to a formatting error.",
@@ -123,6 +133,95 @@ def test_the_captured_years_are_m4s_and_2003_to_2022():
     assert sorted(p.name for p in WORKBOOKS.glob("thresh*.xlsx")) == sorted(
         _name(year) for year in YEARS
     )
+
+
+def test_thresh90_is_the_year_d430s_sensitivity_added(capture):
+    """1990 is the one year beyond M4's fifteen: d430's sensitivity needs
+    it.  The orchestrating session fetched it from its Census URL on
+    2026-09-26 under d279; its SHA-1 in base 32 is one of the two digests
+    the Internet Archive's CDX index records for that URL, and the
+    provenance names both (independent review of 2026-09-26, D4)."""
+
+    import base64
+
+    assert set(BEFORE_2003) - set(M4_BEFORE_2003) == {1990}
+    assert 1990 in thresholds.TRACK_M_THRESHOLD_YEARS_BEFORE_2003
+    assert 1990 not in capture["years_not_captured"]
+    raw = (WORKBOOKS / "thresh90.xlsx").read_bytes()
+    assert len(raw) == 12_171
+    assert hashlib.sha256(raw).hexdigest() == THRESH90_SHA256
+    assert SCRIPT.CENSUS_WORKBOOK_SHA256["thresh90.xlsx"] == THRESH90_SHA256
+    assert (
+        base64.b32encode(hashlib.sha1(raw).digest()).decode()
+        == "NU6BR4ASTR4TF4JXSCGNKJSXXA3V24HH"
+    )
+    source = capture["sources"]["1990"]
+    assert source == {
+        "file": "thresh90.xlsx",
+        "url": SCRIPT.CENSUS_URL_BASE + "thresh90.xlsx",
+        "sha256": THRESH90_SHA256,
+        "bytes": 12_171,
+        "sheet": "thresh90",
+        "title": (
+            "Poverty Thresholds for 1990 by Size of Family and Number of "
+            "Related Children Under 18 Years"
+        ),
+        "source_line": "Source: U.S. Census Bureau, 1991.",
+        "note_survey": "march_cps",
+        "note_survey_year": 1991,
+    }
+    # fetched from its Census URL: no retrieval record, unlike thresh95
+    assert "thresh90.xlsx" not in SCRIPT.ARCHIVE_RETRIEVALS
+    record = capture["decision_records"]["d279_1990"]
+    assert "d430" in record and "2026-09-26" in record
+    provenance = " ".join((WORKBOOKS / "provenance.md").read_text().split())
+    for text in (
+        "NU6BR4ASTR4TF4JXSCGNKJSXXA3V24HH",
+        "D2G5YAKMJLJZFQIRALVQM4UR6P7KNKAE",
+        "records two digests",
+        THRESH90_SHA256,
+        "d430's sensitivity",
+    ):
+        assert text in provenance, text
+    # the pair across the old gap gives way to the two new pairs
+    ratios = capture["checks"]["matrix_ratio_by_year_pair"]
+    assert "1989-1991" not in ratios
+    assert {"1989-1990", "1990-1991"} <= set(ratios)
+
+
+def _year_free(value: object, year: int) -> object:
+    """A cell with ``year`` and ``year + 1`` written as placeholders."""
+
+    if not isinstance(value, str):
+        return value
+    text = " ".join(value.split())
+    return text.replace(str(year + 1), "<next>").replace(str(year), "<year>")
+
+
+@pytest.mark.parametrize("neighbour", [1989, 1991])
+def test_thresh90_prints_its_neighbours_layout_cell_for_cell(neighbour):
+    """The layout pin for 1990 (NOTE_SURVEY_BEFORE_2002's March CPS year,
+    no other departure) rests on this: read from the sheet XML, 1990 fills
+    exactly the cells 1989 and 1991 fill, and every text cell equals
+    theirs with the years written as placeholders (whitespace collapsed:
+    1990's note ends in a space, as 1986's, 1988's and 2000's do)."""
+
+    grid90 = _sheet_grid(WORKBOOKS / "thresh90.xlsx")
+    other = _sheet_grid(WORKBOOKS / _name(neighbour))
+    assert set(grid90) == set(other)
+    assert len(grid90) == 91
+    for where, value in grid90.items():
+        if isinstance(value, str):
+            assert _year_free(value, 1990) == _year_free(
+                other[where], neighbour
+            ), where
+        else:
+            assert isinstance(other[where], float), where
+    assert SCRIPT.note_survey(1990) == "march_cps"
+    assert 1990 not in SCRIPT.PERSONS_ROW_LABEL_YEARS
+    assert 1990 not in SCRIPT.REVISION_LINES
+    assert 1990 not in SCRIPT.EMPTY_EXTRA_SHEETS
+    assert 1990 not in SCRIPT.WEIGHTED_AVERAGE_UNIT
 
 
 def test_thresh95s_internet_archive_provenance_is_carried(capture):
@@ -295,6 +394,43 @@ _REFUSALS = [
         2000,
         lambda r: _set(r, 24, 3, 1),
         "below the source",
+    ),
+    (
+        "1990's note naming the March 1990 CPS",
+        1990,
+        lambda r: _set(r, 23, 0, r[23][0].replace("1991", "1990")),
+        "does not name the 1991 March CPS",
+    ),
+    (
+        "1990's note naming the CPS ADS",
+        1990,
+        lambda r: _set(
+            r,
+            23,
+            0,
+            "Note: The source of the weighted average thresholds is the "
+            "1991 Current Population Survey Annual Demographic Supplement "
+            "(CPS ADS).",
+        ),
+        "does not name the 1991 March CPS",
+    ),
+    (
+        "1982's revision line in 1990",
+        1990,
+        lambda r: _set(r, 24, 0, REVISION_LINES[1982]),
+        "below the source",
+    ),
+    (
+        "1990's size rows saying persons",
+        1990,
+        lambda r: _set(r, 15, 0, "Three persons"),
+        "row labels",
+    ),
+    (
+        "1990's G8 cell moved to the under-65 row's value",
+        1990,
+        lambda r: _set(_set(r, 9, 1, 6800), 9, 2, 6800),
+        "not below under-65",
     ),
     (
         "the 65-and-over row above the under-65 row (1994)",
@@ -599,12 +735,12 @@ def _captured_average(capture, year: int, row: str) -> int:
 
 def test_g8s_row_agrees_with_censuss_table_1_every_year_to_2006(capture):
     """The row Track M reads (one person, 65 and over), and the under-65
-    row, equal Table 1's unrelated individuals by age in all nineteen
-    captured years 1982-2006."""
+    row, equal Table 1's unrelated individuals by age in all twenty
+    captured years 1982-2006 (1990 among them, captured 2026-09-26)."""
 
     table = _table1()
     years = [y for y in YEARS if y <= 2006]
-    assert len(years) == 19
+    assert len(years) == 20 and 1990 in years
     for year in years:
         for row in ("one_under_65", "one_65_plus"):
             assert table[year][row] == _captured_average(capture, year, row)
@@ -614,10 +750,10 @@ def test_g8s_row_agrees_with_censuss_table_1_every_year_to_2006(capture):
 
 
 def test_every_other_weighted_average_agrees_but_the_recorded(capture):
-    """Differential over the 13 weighted averages x 19 years: every one
+    """Differential over the 13 weighted averages x 20 years: every one
     equals Table 1 except the 37 recorded in :data:`TABLE1_DIFFERENCES`,
     none of them a one-person row by age (a single threshold, which no
-    weighting changes)."""
+    weighting changes).  All thirteen of 1990's equal Table 1."""
 
     table = _table1()
     found = {}
@@ -629,6 +765,7 @@ def test_every_other_weighted_average_agrees_but_the_recorded(capture):
                 found[(year, row)] = (printed, captured)
     assert found == TABLE1_DIFFERENCES
     assert {year for year, _ in found} == {1989, 1991, 1992, 1999, 2000}
+    assert sum(1 for y in YEARS if y <= 2006) * len(_ROWS_COMPARED) == 260
     assert not any(row in ("one_under_65", "one_65_plus") for _, row in found)
     # each differing average is still one the workbook's own matrix
     # brackets (the parser's within-year check), and Table 1's footnote
@@ -1009,9 +1146,31 @@ def test_property_the_captured_years_text_round_trips(years):
 
 def test_the_captured_years_text_of_the_capture():
     assert thresholds.captured_years_text(YEARS) == (
-        "1982, 1986, 1988-1989, 1991-1992, 1994-2022"
+        "1982, 1986, 1988-1992, 1994-2022"
     )
     assert thresholds.captured_years_text([]) == "none"
+
+
+def test_the_threshold_year_check_accepts_1990_and_refuses_the_gaps():
+    """1990 (d430's sensitivity) now passes; 1983-1985, 1987 and 1993 are
+    still refused, each by name, before and after 1990 joined."""
+
+    loaded = rules.load_aged_thresholds()
+    rules.check_threshold_years({1990: 1}, loaded)
+    rules.check_threshold_years([*M4_BEFORE_2003, 1990], loaded)
+    assert loaded.for_year(1990) == 6268.0
+    for year in NOT_CAPTURED:
+        with pytest.raises(rules.ThresholdYearMissingError, match=str(year)):
+            rules.check_threshold_years({1990: 1, year: 1}, loaded)
+        with pytest.raises(rules.ThresholdYearMissingError, match=str(year)):
+            loaded.for_year(year)
+    with pytest.raises(rules.ThresholdYearMissingError) as refused:
+        rules.check_threshold_years([1990, *NOT_CAPTURED], loaded)
+    named = refused.value.args[0].split(" are not in the capture")[0]
+    assert "1990" not in named
+    assert {int(y) for y in re.findall(r"\b(\d{4})\b", named)} == set(
+        NOT_CAPTURED
+    )
 
 
 @settings(max_examples=200, deadline=None)

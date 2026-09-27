@@ -1,7 +1,7 @@
-# Census poverty thresholds, income years 1982-2022 (35 years)
+# Census poverty thresholds, income years 1982-2022 (36 years)
 
-The thirty-five U.S. Census Bureau workbooks of income years 1982, 1986,
-1988, 1989, 1991, 1992 and 1994-2022 (`thresh82.xlsx` ... `thresh22.xlsx`),
+The thirty-six U.S. Census Bureau workbooks of income years 1982, 1986,
+1988-1992 and 1994-2022 (`thresh82.xlsx` ... `thresh22.xlsx`),
 from
 `https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/`
 (the file names the Census historical poverty thresholds page lists),
@@ -18,7 +18,8 @@ The fifteen workbooks before 2003 are the years M4's structural count
 shows Track M's in-window records need (exercise-4 specification, sections
 4, 7 and 10), which d279 covers ("any earlier year the build proves it
 needs"). They were staged in the same directory on 2026-09-25, whose
-`SHA256SUMS` lists all thirty-five digests; the builder lane that captured
+`SHA256SUMS` then listed all thirty-five digests (thirty-six with
+`thresh90.xlsx`, below); the builder lane that captured
 them (2026-09-25) did not fetch them, and the staging record does not name
 who did. Fourteen came from the Census address above. `thresh95.xlsx` did
 not; the staging directory's `PROVENANCE-thresh95.md` records:
@@ -40,7 +41,28 @@ not; the staging directory's `PROVENANCE-thresh95.md` records:
   capture (its gzip body as served).
 - To do: retry the Census URL when its WAF allows it and confirm the hash.
 
-The capture records this retrieval in `sources["1995"]["retrieval"]`
+`thresh90.xlsx` is the one year d430's sensitivity added (exercise-4
+specification, sections 4, 7, 10 and 18): the structural count of
+2026-09-26 shows that its window, MS0's, needs threshold year 1990 as well
+as the fifteen years above, which d279 covers too. The orchestrating
+Claude Code session fetched it directly from the Census address above into
+the same directory on 2026-09-26, as its brief to the capturing lane
+records, and listed it in `SHA256SUMS` (12,171
+bytes, SHA-256
+`6a955422a86d5bea399fd9c23567779cbb279ce00b2d1c678018e802a67bfdf4`). The
+builder lane that captured it confirmed the SHA-256, the size, the
+`SHA256SUMS` entry and that the file's SHA-1 in base 32 is
+`NU6BR4ASTR4TF4JXSCGNKJSXXA3V24HH`; the Internet Archive's CDX index was
+offline ("Temporarily Offline") when the lane queried it. The
+independent review of 2026-09-26 read the index for that URL: it records
+two digests, `NU6BR4ASTR4TF4JXSCGNKJSXXA3V24HH` (the file's) on six
+captures from 2023-05-21 to 2026-08-20, the latest included, and
+`D2G5YAKMJLJZFQIRALVQM4UR6P7KNKAE` on five captures from 2023-02-26 to
+2025-01-23 and one revisit. For `thresh95.xlsx` the second digest was the
+gzip body as served (above); for `thresh90.xlsx` no capture was fetched,
+so what `D2G5YAKMJLJZFQIRALVQM4UR6P7KNKAE` holds is unchecked.
+
+The capture records `thresh95.xlsx`'s retrieval in `sources["1995"]["retrieval"]`
 (`ARCHIVE_RETRIEVALS` in the capture script). Each file's SHA-256 is
 pinned in `scripts/capture_track_u_parameters.py` (`CENSUS_WORKBOOK_SHA256`),
 which refuses any other bytes before parsing.
@@ -51,6 +73,7 @@ which refuses any other bytes before parsing.
 | `thresh86.xlsx` | 12,232 | `49c00638209721b4cf25e4039728255b97874efd54f36ff085860113b2d077b2` | d279 (2026-09-25) |
 | `thresh88.xlsx` | 12,194 | `f22fc66ea80677c34bf36d00f9c26aff3038a0f115f90673a1ebd42c7f19fd11` | d279 (2026-09-25) |
 | `thresh89.xlsx` | 12,222 | `bed78af3dd2425349f33391163cc76a1218080403eeaa6e7c0de15d359847d73` | d279 (2026-09-25) |
+| `thresh90.xlsx` | 12,171 | `6a955422a86d5bea399fd9c23567779cbb279ce00b2d1c678018e802a67bfdf4` | d279 (2026-09-26; d430's sensitivity) |
 | `thresh91.xlsx` | 12,937 | `a06989525bc712f609fa40cde808ec1cfb5bf8ce1d8194eeb362f2ec7847249c` | d279 (2026-09-25) |
 | `thresh92.xlsx` | 12,148 | `ac5262b83d0f63cff97caa5ad8fb80096f8b16db501f79dd88cca19e9b4fd3d5` | d279 (2026-09-25) |
 | `thresh94.xlsx` | 12,155 | `593b5a45109ed58ea35648e0f9c6ba749050741e4e935ab69cce9bbc15d38006` | d279 (2026-09-25) |
@@ -94,18 +117,23 @@ Two captures read them, and each reproduces byte for byte:
 - `python scripts/capture_track_u_parameters.py --track-m-census-dir
   data/external/census_poverty_thresholds` writes
   `data/external/census_poverty_thresholds_1982_2022.json` from all
-  thirty-five (Track M; SHA-256 pinned as
+  thirty-six (Track M; SHA-256 pinned as
   `min_benefit_track_m.thresholds.TRACK_M_THRESHOLDS_SHA256`). It lists the
-  captured years and the years 1983-1985, 1987, 1990 and 1993 it does not
+  captured years and the years 1983-1985, 1987 and 1993 it does not
   capture. Track M reads the weighted average for one person aged 65 and
   over. See the exercise-4 specification,
   `docs/design/minimum_benefits_comparison.md`, section 7. It replaced
   `census_poverty_thresholds_2003_2022.json` (SHA-256 `65bbcd83…`) on
   2026-09-25; its 2003-2022 content (weighted averages, all-ages averages,
-  matrix, sources and year-pair ratios) is unchanged.
+  matrix, sources and year-pair ratios) is unchanged. On 2026-09-26 it
+  gained 1990 (SHA-256 `4493b8d5…` before, `288399c4…` after): every
+  other year's weighted averages, all-ages averages, matrix and sources
+  are unchanged, the year pair 1989-1991 gives way to 1989-1990 and
+  1990-1991, and `decision_records` gains `d279_1990`.
 
-**Layouts** (every workbook inspected cell by cell, 2026-09-25). All
-thirty-five print one table in the same cells: the caption, title and "(In dollars)"
+**Layouts** (every workbook inspected cell by cell, 2026-09-25;
+`thresh90.xlsx` on 2026-09-26). All thirty-six print one table in the
+same cells: the caption, title and "(In dollars)"
 in A1-A3, the header in rows 5-6, the thirteen labelled rows in rows 8-22,
 the source line in A23 and the note in A24, with 91 non-blank cells (92 in
 1982 and 2000, which add a revision line). The differences, each pinned to
@@ -122,7 +150,8 @@ its year in the capture script:
   (`WEIGHTED_AVERAGE_UNIT`).
 
 - The note names another survey before 2002 (`NOTE_SURVEY_BEFORE_2002`):
-  "the March <year + 1> Current Population Survey (CPS)" in 1982-2000 and
+  "the March <year + 1> Current Population Survey (CPS)" in 1982-2000
+  (1990 included: "the March 1991 Current Population Survey (CPS)") and
   "the 2002 Current Population Survey Annual Demographic Supplement (CPS
   ADS)" in 2001. From 2002 it names the <year + 1> CPS ASEC.
 - `thresh01.xlsx` alone labels its size rows "Two persons" ... "Nine
@@ -138,6 +167,13 @@ its year in the capture script:
   labels are compared in lower case with whitespace collapsed, so these
   need no exception. `thresh82.xlsx` names its worksheet `Sheet1`; the
   others before 2003 name it after the file.
+- `thresh90.xlsx` prints `thresh89.xlsx`'s and `thresh91.xlsx`'s layout
+  exactly: one worksheet (`thresh90`), the same 91 non-blank cells in the
+  same places, the header in lower case, " None" with its leading space,
+  "Eight or more" on one line, "people" rows, no revision line, and a
+  note ending in a space, as 1986's, 1988's and 2000's do (whitespace is
+  collapsed before comparing). It needed no new exception: the capture
+  script lists 1990 among the March CPS years.
 
 The 2009 note adds two sentences on the fall in the CPI-U; the parser
 accepts them only when they name the table's year and the year before.
@@ -161,4 +197,6 @@ says footnote 11/ on 1999 is the Census 2000 population controls, 12/ on
 2004 a correction to the weights of the 2005 ASEC.
 `tests/min_benefit_track_m/test_threshold_capture_before_2003.py` checks
 every weighted average of the capture against it, 1982-2006, and every
-year-pair matrix ratio against its CPI-U.
+year-pair matrix ratio against its CPI-U. All thirteen 1990 weighted
+averages equal Table 1's, and the pairs 1989-1990 and 1990-1991 move with
+its CPI-U (124.0, 130.7, 136.2) within rounding.

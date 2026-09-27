@@ -28,7 +28,7 @@ The shapes follow the M1 specification so that every rule runs:
 Every in-window record's threshold year is 2003 or later
 (:data:`INVENTED_THRESHOLD_YEARS`, the years the invented thresholds of
 :func:`invented_parameters` cover; the real Census capture also covers
-fifteen years before 2003); the dry run checks records with other years
+sixteen years before 2003); the dry run checks records with other years
 separately (the named error of referee R8).
 """
 
@@ -463,7 +463,7 @@ def invented_parameters() -> tuple[TrackMParameters, dict[int, float]]:
     reduction rates; quarter-of-coverage amounts of 2.4 percent of that
     wage index; one-person 65+ thresholds of $8,000 in 2003 growing 2.5
     percent a year to 2022 (:data:`INVENTED_THRESHOLD_YEARS`: the invented
-    cohort's years, not the real capture's, which also holds fifteen years
+    cohort's years, not the real capture's, which also holds sixteen years
     before 2003); and COLAs of 2.5 percent for 1979-2021.  None is an SSA,
     Census or PSID value.  Returns the parameters and the COLA rates.
     """

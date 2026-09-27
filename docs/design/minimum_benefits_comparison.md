@@ -11,15 +11,24 @@
   d279 (download the Census threshold workbooks for 2013-2022, plus any
   earlier year the build proves it needs) and d280 (PSID labor income
   treated as covered earnings, disclosed in the specification and every
-  result); §20 records both. An independent check that this version
-  applies the referee's required changes comes before the ratified text
-  (§18). This draft authorizes no real-data run: the one-shot entry point
-  (`scripts/run_track_m_registered.py`) refuses a block whose status or
-  version is not ratified (§19).
+  result); §20 records both. On 2026-09-26 he ruled d430 (ruled
+  2026-09-26 07:42; §20): ratify by merge with the recorded defaults, and
+  keep §4c item 1's reading of own receipt for the scored row, bounded by
+  a pre-registered, unscored sensitivity built and reviewed before the
+  registration (§§4c, 11, 14, 19); keep card item (j) and statute finding
+  F1 knowingly; record F2, F3a, F3b and O1 as named deltas (§15). This
+  version builds that sensitivity. The independent checks of `m1-draft-2`
+  and of the M3-M5 readings are done (§18); an independent check of this
+  version's sensitivity build comes before the ratified text (§18). The
+  1990 Census threshold the sensitivity needs was captured on 2026-09-26
+  (§§7, 10, 18). This draft authorizes no real-data run: the one-shot
+  entry point (`scripts/run_track_m_registered.py`) refuses a block whose
+  status or version is not ratified (§19).
 - **Specification:** `urban2006_minimum_benefits_exercise4`, version
-  `m1-draft-2`, drafted 2026-09-24 and revised 2026-09-25 to apply the
-  independent referee's required changes R1-R10 (§21). §23 is the
-  changelog.
+  `m1-draft-3`, drafted 2026-09-24, revised 2026-09-25 to apply the
+  independent referee's required changes R1-R10 (§21), and revised
+  2026-09-26 to build the sensitivity Max's d430 requires and to capture
+  the 1990 Census threshold it needs. §23 is the changelog.
 - **Plan item:** M1 of the blind plan
   `EVID/critical-path-minimum-benefit-20260924.md`, revision 2
   (SHA-256 `976ec7f6…`), where `EVID` =
@@ -98,6 +107,41 @@
     uncleared sources, either scratchpad archive or any exercise-1 result.
     It read no PSID file and computed no statistic on real data. §22 lists
     what it read.
+  - A sixth builder lane (Claude Code subagent, Opus 5.5) began d430's
+    sensitivity (`m1-draft-3`) on 2026-09-26 and was interrupted before
+    it committed anything; its uncommitted work is saved as
+    `EVID/interrupted-lanes-20260926/dynamics-ex4-track-m-5-20260926.patch`
+    (SHA-256 `1897e96d…`). Its record says it read
+    `EVID/RESTRICTED-FILES.md` (SHA-256 `02148069…`, last changelog entry
+    2026-09-25 20:05) before any other file and opened nothing it
+    restricts. Its draft of this header said it had run the structural
+    counts on the staged PSID; it left no output of such a run, and every
+    real-data count below is the seventh lane's.
+  - A seventh builder lane (Claude Code subagent, Opus 5.5) checked,
+    completed and corrected that work on 2026-09-26. It read its brief,
+    then `EVID/RESTRICTED-FILES.md` (`02148069…`) before any other file,
+    and opened nothing it restricts: not the Report in any copy, the plan,
+    the cleared files, any comparator directory, seal, reconciliation or
+    values scan, the uncleared sources, either scratchpad archive or any
+    exercise-1 or exercise-3 result. On the staged PSID it ran only the
+    structural counts of §10 (the M4 cohort under both readings; of the
+    sensitivity reading, only the threshold years its window needs, as
+    years) and a check of d430's count over all records; it computed no
+    years of coverage, PIA, threshold, minimum, flag, share or in-window
+    count on real data. §22 lists what both lanes read.
+  - An eighth builder lane (Claude Code subagent, Opus 5.5) cleared §18's
+    blocker 5 on 2026-09-26: it captured the 1990 Census threshold. It
+    read its brief, its batch's shared rules and the seventh lane's report
+    the brief names (in one command), then `EVID/RESTRICTED-FILES.md`
+    (`02148069…`) before any other file, and opened nothing it restricts: not the Report in any
+    copy, the plan, the cleared files, any comparator directory, seal,
+    reconciliation or values scan, the uncleared sources, either
+    scratchpad archive or any exercise-1 or exercise-3 result. Its own
+    scripts read no PSID file, and it computed no Track M statistic on
+    real data; its dry run is on INVENTED cohorts. Its attempts at the
+    full test suite ran, before it stopped them, 134 of the repository's
+    existing `integration_psid` tests, which read the staged PSID (none
+    of them Track M's; §22). §22 lists what it read.
 - **Disclosure that travels with this specification (plan section 11,
   R5):** the clearance follow-up of 2026-09-24 14:15 found that the
   withheld Table 5 note sentence (ruling C2) lies inside the text lines
@@ -164,7 +208,7 @@ builder lane).
 | `cola_track_a/benefits.approximate_pia` | The DI PIA under MS6 | Read; called unchanged |
 | policyengine-us `quarters_of_coverage_threshold.yaml` at `a03e82e503` (SHA-256 `12354a05…`) | Quarter-of-coverage amounts, 1978 on | **Captured** (M2): `data/external/ssa_quarter_of_coverage_amounts.json` (SHA-256 `6f964e8f…`), every year 1978-2026 checked against 42 USC 413(d) (§5) |
 | PSID 2023 wave, family files 1968-2023, marriage history | Structural counts (§10); M3's receipt and labor-income items (§§4c, 5, 6) | Staged; labels verified (`tests/data/test_track_m_psid_labels.py`, labels and format blocks only) |
-| Census historical poverty-threshold workbooks of 1982, 1986, 1988, 1989, 1991, 1992 and 1994-2022 (`thresh82.xlsx`-`thresh22.xlsx`; `thresh95.xlsx` is the Internet Archive's copy of its Census URL) | The threshold that defines the minimum (G8, §7) | **Captured** (d194, d279): `data/external/census_poverty_thresholds_1982_2022.json` (SHA-256 `4493b8d5…`); it replaced the 2003-2022 capture (`65bbcd83…`), whose content it keeps (§7) |
+| Census historical poverty-threshold workbooks of 1982, 1986, 1988-1992 and 1994-2022 (`thresh82.xlsx`-`thresh22.xlsx`; `thresh95.xlsx` is the Internet Archive's copy of its Census URL; `thresh90.xlsx`, for d430's sensitivity, was added on 2026-09-26) | The threshold that defines the minimum (G8, §7) | **Captured** (d194, d279): `data/external/census_poverty_thresholds_1982_2022.json` (SHA-256 `288399c4…`); it replaced the 2003-2022 capture (`65bbcd83…`), whose content it keeps, and gained 1990 on 2026-09-26 (`4493b8d5…` before), every other year unchanged (§7) |
 | Census historical poverty Table 1, HTML edition of 2009 (`hstpov1.html`, Internet Archive capture `20100209011620`, SHA-256 `d219cb20…`) | An independent check of the captured weighted averages, 1982-2006, and of their CPI-U updating (§7) | Committed in `data/external/census_poverty_thresholds/crosscheck/`; read by the tests |
 | 42 USC 413, 415 (including 415(i)), 402 (including 402(k), (q) and (w)) and 423: uscode.house.gov, 'prelim' edition, laws in effect on 2026-09-24 | Quarters of coverage (§5), the years of §4a, the PIA and COLAs (§6), dual entitlement (§4b rule 5), the DI waiting period (§4b rule 4) | **Captured** (M2, 2026-09-25): `EVID/track-m-statute-20260925/` (HTML, plain text, verbatim excerpts; `SHA256SUMS` `a5b411f5…`). Its `READING.md` (`8a5095ab…`) gives each rule the code relies on a verdict (§18). 20 CFR 404.141 and 404.143 stay review copies in `EVID/track-m-review-20260924/` |
 | 42 USC 415(b)(2)(B)(ii) | The end of an old-age PIA's history (§4a) | Read in the text `5b41d1cd…` (encoder workspace copy); confirmed in M2's capture (`READING.md` rules 5 and 6) |
@@ -280,8 +324,16 @@ value (§20); `REGISTERED_ROWS` holds MS0-MS6 (§14).
   checks that every threshold year the invented cohort needs is present.
   **Captured** (2026-09-25): the fifteen years' Census workbooks are
   captured, hashed and pinned with 2003-2022 (§7), so every threshold
-  year M4's count shows is present. Any other year (1983-1985, 1987,
-  1990, 1993, before 1982 or after 2022) is still refused.
+  year M4's count shows is present.
+  **d430's sensitivity** (2026-09-26; §10, years and bases only): its
+  window, MS0's, needs the same years and also **1990**, the years before
+  2003 again for old-age and death-basis records only. 1990 was not
+  captured, so the registered run, which requires the sensitivity (§11),
+  would have refused before computing anything (§18 item 5).
+  **Captured** (2026-09-26): 1990's workbook, fetched under d279, is
+  captured, hashed and pinned with the others (§7), so every threshold
+  year either count shows is present. Any other year (1983-1985, 1987,
+  1993, before 1982 or after 2022) is still refused.
 
 ### 4a. The years that define each record (frozen)
 
@@ -360,6 +412,8 @@ history at its last year and computes the PIA at its threshold year.
    - The DI waiting period puts onset in the entitlement year or earlier.
      Neither the referee nor the `m1-draft-2` lane read 42 USC 423; M2's
      statute capture confirms it.
+   - Max kept entitlement − 1 knowingly (d430, statute finding F1; §20
+     ruling 14): a convention inside that bound, not statute (§15).
 5. **Auxiliary benefits paid (G13).**
    - A spouse's benefit is possible only when the linked worker is alive
      and receives OASDI in 2022. It is paid when
@@ -401,6 +455,51 @@ draft should confirm or correct each reading before ratification (§18).
    at 60 or 61 and reported only as a family's "yes" or a combination code
    is read as a worker's own disability-origin receipt. The ratification
    should keep or change this reading knowingly (§18).
+   **Ruling (d430, 2026-09-26):** Max kept this reading for the scored row
+   and required a pre-registered, unscored sensitivity, built and
+   reviewed before the registration (§20 ruling 12). **The sensitivity**
+   (`own_receipt_reading_d430`; §§11, 14, 19) reads each receipt year
+   before the year of attaining 62 that names neither a retirement nor a
+   disability benefit (`cohort.unknown_or_other_own_receipt`: own receipt
+   under this item only because a type is unknown, as for a combination
+   code, an unknown code, a DK or NA flag or a whether-only "yes", or
+   because it mentions "other") as neither own receipt nor non-receipt:
+   as if unobserved. `cohort.build_cohort(inputs,
+   own_receipt_reading=...)` builds the cohort under either reading; the
+   default is the scored reading, under which the cohort and every output
+   of rows MS0-MS6 are unchanged (§18). The sensitivity reads own receipt
+   through `cohort.own_receipt_view` wherever own receipt is read: in each
+   record's classification (§4b rules 1-4) and in a spouse link's 2022
+   own-receipt test (item 5). Survivor claim years (item 6) read survivor
+   items and any receipt, not own receipt, and are the same under both
+   readings, as are the universe, its weights and its design. A late
+   spouse whose every own receipt is such a year has no own record under
+   the sensitivity, so the survivor's link either points to a record of a
+   worker who died before any own entitlement (an exact death year) or is
+   not made (item 5).
+   **What it can change** (read from `classify_own_record`; checked by
+   Hypothesis properties and by an exhaustive check of 1,835,008 invented
+   histories, `EVID/track-m-5-build-20260926/direction_exhaustive.py`, with
+   no counterexample): such a year changes a record's classification only
+   when it is the record's first own receipt *F*. The sensitivity then
+   takes the next own receipt as *F*, so *F* moves later and the last
+   observed year without own receipt before it, *L*, can only move later;
+   every branch of rules 2 and 3 then gives a window year no earlier than
+   the scored reading's, and a record resting on such receipt alone has no
+   own record. So the scored reading never gives a record a later window
+   year than the sensitivity does: the sensitivity can move a record into
+   a policy window, never out of one, unless it leaves the record no own
+   record. A record whose *F* is such a year can also keep its basis,
+   window year and onset (when *L* does not move), and then nothing the
+   evaluation reads changes. Whether the share rises or falls is not
+   fixed: the basis, the threshold year, *Y*, *P* and the claim factors
+   move as well. §10 counts these records over all records, "other"
+   included (2026-09-26): of the 453 records whose first own receipt
+   precedes the year of attaining 62, 80 name neither a retirement nor a
+   disability benefit there, 76 with a type unknown and 4 with an "other"
+   mention and every type item known (which the count above, of unknown
+   types only, left out); 138 records have such receipt somewhere before
+   62.
 2. **Observations.** Person-level items (the individual file, waves
    1984-1992 and 2005-2023, and the 1993 family file's head and wife
    items) take precedence. A family-level item identifies a person only
@@ -581,7 +680,9 @@ draft should confirm or correct each reading before ratification (§18).
   in the family unit; missing data not assigned), so "never asked" holds
   for the family files only. The frozen source is the family files'
   next-wave items, so 1997 and 1999 still take the gap rule; using the
-  individual-file series would be a change to this draft (§18).
+  individual-file series would be a change to this draft (§18). Max kept
+  the frozen source knowingly (d430, card item (j), 2026-09-26; §20
+  ruling 13), so it stays, and the finding stays a named delta (§15).
 - **Unobserved years** (neither observed nor imputed) count as zero
   and are flagged, over a flag window from the year of attaining 22
   (builder default, matching G12's start).
@@ -675,25 +776,28 @@ section 3).
 
 - **Threshold (G8):** the Census weighted-average poverty threshold for
   one person aged 65 and older, of the record's threshold year (§4a).
-  **Captured** (M2; cos decisions d194 and d279): the thirty-five Census
-  workbooks of 1982, 1986, 1988, 1989, 1991, 1992 and 1994-2022
+  **Captured** (M2; cos decisions d194 and d279): the thirty-six Census
+  workbooks of 1982, 1986, 1988-1992 and 1994-2022
   (`thresh82.xlsx`-`thresh22.xlsx`) are committed in
   `data/external/census_poverty_thresholds/` and pinned by SHA-256, and
   `scripts/capture_track_u_parameters.py --track-m-census-dir` writes
   `data/external/census_poverty_thresholds_1982_2022.json` (SHA-256
-  `4493b8d5…`, pinned in `min_benefit_track_m.thresholds`), which lists
-  its captured years and the years 1983-1985, 1987, 1990 and 1993 it
-  lacks. It replaced the 2003-2022 capture (`65bbcd83…`), whose
-  weighted averages, matrix, sources and year-pair ratios it keeps
-  unchanged. `rules.load_aged_thresholds` reads its `one_65_plus`
+  `288399c4…`, pinned in `min_benefit_track_m.thresholds`), which lists
+  its captured years and the years 1983-1985, 1987 and 1993 it lacks.
+  It replaced the 2003-2022 capture (`65bbcd83…`), whose weighted
+  averages, matrix, sources and year-pair ratios it keeps unchanged. On
+  2026-09-26 it gained 1990 (`4493b8d5…` before): every other year's
+  weighted averages, matrix and sources are unchanged, and the year pair
+  1989-1991 gives way to 1989-1990 and 1990-1991.
+  `rules.load_aged_thresholds` reads its `one_65_plus`
   weighted average ("One person (unrelated individual)", "65 years and
   over") for every captured year. Table 2's HHS threshold is not
   borrowed (D15).
 - **Provenance of the years before 2003** (d279: "any earlier year the
   build proves it needs"): the fifteen workbooks were staged on
   2026-09-25 with the others in `~/PolicyEngine/census-poverty-thresholds`,
-  whose `SHA256SUMS` lists all thirty-five. Fourteen came from the Census
-  URL. The Census server answered `thresh95.xlsx`'s URL, and only that
+  whose `SHA256SUMS` then listed all thirty-five (thirty-six with
+  1990's, below). Fourteen came from the Census URL. The Census server answered `thresh95.xlsx`'s URL, and only that
   one, with its WAF page "Request Rejected". The file is the Internet
   Archive's raw copy of that URL, byte-identical in two captures 3.5
   years apart (`20230226205734` and `20260820215832`), each matching the
@@ -701,10 +805,27 @@ section 3).
   `32bb678f…`). The capture carries this in `sources["1995"]["retrieval"]`,
   and `census_poverty_thresholds/provenance.md` in full. To do: retry
   the Census URL when its WAF allows it and confirm the hash.
-- **Layouts** (every workbook inspected cell by cell, 2026-09-25): all
-  thirty-five print one table in the same cells (91 non-blank; 92 in 1982
-  and 2000). The parser, extended from Track U's rather than duplicated,
-  accepts these departures, each pinned to its years:
+- **Provenance of 1990** (d279 again; the need is d430's sensitivity's,
+  §10): the orchestrating Claude Code session fetched `thresh90.xlsx`
+  from its Census URL on 2026-09-26 into the same directory and listed it
+  in `SHA256SUMS` (12,171 bytes, SHA-256 `6a955422…`; the capturing
+  lane confirmed the SHA-256, the size and the entry). Its SHA-1 in base
+  32 is `NU6BR4AS…`. The Internet Archive's CDX index for that URL, which
+  was offline when the capturing lane queried it and which the
+  independent review of 2026-09-26 read, records two digests:
+  `NU6BR4AS…` on six captures from 2023-05-21 to 2026-08-20, the latest
+  included, and `D2G5YAKM…` on five captures from 2023-02-26 to
+  2025-01-23 and one revisit. For `thresh95.xlsx` the second digest was
+  the gzip body as served (`census_poverty_thresholds/provenance.md`);
+  for `thresh90.xlsx` no capture was fetched, so what `D2G5YAKM…` holds
+  is unchecked.
+- **Layouts** (every workbook inspected cell by cell, 2026-09-25;
+  `thresh90.xlsx` on 2026-09-26): all thirty-six print one table in the
+  same cells (91 non-blank; 92 in 1982 and 2000). `thresh90.xlsx` prints
+  1989's and 1991's layout cell for cell, so its pin is one more March
+  CPS year and no new exception. The parser, extended from Track U's
+  rather than duplicated, accepts these departures, each pinned to its
+  years:
   - `thresh19.xlsx` carries two further worksheets that must be empty;
   - `thresh22.xlsx` prints every weighted average rounded to $10 while its
     matrix cells stay whole dollars: for one person 65+ it prints 14,040
@@ -731,14 +852,14 @@ section 3).
   `census_poverty_thresholds/crosscheck/`) is an independent publication
   of the weighted averages.
   - It prints G8's row (unrelated individuals, 65 or older) equal to the
-    capture in all nineteen captured years 1982-2006.
-  - Of the 247 weighted averages compared, 37 differ. All are averages
-    over several thresholds (a family size over its children cells, or a
-    size over both ages) in 1989, 1991, 1992, 1999 and 2000, by $1-$23,
-    and $90 for nine or more people in 2000. Table 1's footnotes flag
-    1999 and 2000 (the Census 2000 population controls; a sample
-    expansion); neither source says why the workbooks differ. No
-    one-person row by age differs.
+    capture in all twenty captured years 1982-2006.
+  - Of the 260 weighted averages compared, 37 differ (none of 1990's
+    thirteen). All are averages over several thresholds (a family size
+    over its children cells, or a size over both ages) in 1989, 1991,
+    1992, 1999 and 2000, by $1-$23, and $90 for nine or more people in
+    2000. Table 1's footnotes flag 1999 and 2000 (the Census 2000
+    population controls; a sample expansion); neither source says why
+    the workbooks differ. No one-person row by age differs.
   - Between captured years through 2006, each year pair's matrix ratio
     equals Table 1's CPI-U ratio within rounding (at most 0.02 percent
     apart).
@@ -780,17 +901,22 @@ section 3).
     averages for 1982, 1986, 1988, 1989, 1991, 1992 and 1994-2002,
     captured, hashed and pinned with 2003-2022 (above).
     `rules.check_threshold_years` still refuses a cohort that needs a year
-    the capture lacks (1983-1985, 1987, 1990, 1993, before 1982 or after
-    2022) before anything is computed, with a named error
+    the capture lacks (1983-1985, 1987, 1993, before 1982 or after 2022)
+    before anything is computed, with a named error
     (`ThresholdYearMissingError`, not a `KeyError`), and
     `AgedThresholds.for_year` raises the same error.
     `pipeline.run_track_m` calls it on `evaluation.needed_threshold_years`
     (every in-window record's threshold year under any registered row's
     policy, and both policy years) before it evaluates any record. The
-    M10 dry run checks the invented cohort, a record that needs 1998 (now
-    passed) and records that need 1993 and 1981 (refused) (§18). If the
-    ratification changes a reading that moves the years needed (§4c), a
-    newly needed year is refused until it is downloaded and captured.
+    M10 dry run checks the invented cohort, records that need 1998 and
+    1990 (passed) and records that need 1993 and 1981 (refused) (§18). If
+    the ratification changes a reading that moves the years needed (§4c),
+    a newly needed year is refused until it is downloaded and captured.
+    d430's sensitivity reading needed one such year, **1990** (§10):
+    §18's blocker 5, cleared on 2026-09-26 by its capture (above). The
+    dry run checks that a sensitivity record needing 1990 passes the
+    sensitivity's threshold-year check and one needing 1993 is refused
+    before anything is computed.
 - **Price indexing (options 2 and 4):** the threshold of the year
   itself (the thresholds move with prices, D5).
 - **Wage indexing (options 3 and 5; G9):**
@@ -977,6 +1103,56 @@ survivor claim-year fix of §4c item 6 in the code.
   can fill 4,535; before 1968 4,284; unobserved 30,271. The panel also
   observes 1,235 person-years before 22.
 
+**d430's structural count** (2026-09-26; `scripts/track_m_structure.py`
+at commit `137e6456` on a clean tree, evidence
+`EVID/track-m-structure-r5-20260926/track-m-structure.json`, SHA-256
+`1110abe6…`, the same 91 PSID files with the same hashes as r4). Every
+count of the funnel, the M4 cohort and the M5 history sources above is
+unchanged (`compare_with_r4.py` in that folder: each part equal). Over
+all worker records with own receipt, never by window, under the scored
+reading (`cohort.first_own_receipt_type_before_62`; unweighted records):
+
+| First own receipt *F* | Records |
+|---|---|
+| Records with own receipt | 2,306 |
+| *F* before the year of attaining 62 | 453 |
+| Of which *F* names a retirement or disability benefit | 373 |
+| Of which *F* names neither (unknown or "other" type; the records d430's sensitivity reaches) | **80** |
+| Of those, *F* names no type, a type item unknown | 76 |
+| Of those, *F* mentions only "other" | **4** (every type item known in all 4) |
+| Of the 80, *F* from a one-member family's year-before-last "yes" / the individual file / the 1993 family file | 60 / 18 / 2 |
+| Records with such receipt anywhere before 62 | 138 |
+
+- **Check.** `EVID/track-m-structure-r5-20260926/
+  first_receipt_type_sizing_r5.py` recounts every number above by brute
+  force from the receipt histories, without calling the count's code,
+  and finds no difference. It also recounts the independent review's
+  definition of 2026-09-25 (§4c item 1: an *F* at any age with a type item
+  unknown, and the disability-origin records among them with no
+  disability mention): 145 and 76, as the review found.
+- **What the counts mean (not a result).** The 80 are the records whose
+  classification the sensitivity can change (§4c item 1); how many are in
+  MS0's window, and what they do to the share, only the registered run
+  computes (§11). A record of the 80 can keep its basis, window year and
+  onset, and a link can also change through such receipt after *F* (a
+  spouse's 2022 own-receipt test) or through a late spouse left with no
+  own record. Every worker record the two readings can treat differently,
+  or link to differently, is among the 138.
+- **The sensitivity's threshold years** (the cohort under the sensitivity
+  reading; years and bases only, as for the rows above): its window,
+  MS0's, needs threshold years from **1982**, and before 2003 the years
+  1982, 1986, 1988, 1989, **1990**, 1991, 1992 and 1994-2002, for old-age
+  and death-basis records. That is MS0's list under the scored reading
+  plus 1990, which the Census capture then lacked (§7): the registered
+  run would have refused before computing anything (§11), so 1990 was a
+  blocker (§18 item 5). It was captured on 2026-09-26, so every year the
+  sensitivity's window needs is now in the capture. The years also show
+  that no sensitivity record in the window has a bend-point year before
+  1979, which `careers` would refuse.
+- **Not computed:** no count of in-window records or persons, no years
+  of coverage, PIA, threshold, minimum, flag or share, under either
+  reading.
+
 **Deltas of the population** (named, not fixed): exposed cohorts born
 1942–1960 against DYNASIM's 1945–1963; the whole 62+ age structure;
 DYNASIM's 1992 noninstitutionalized base (D12) against the PSID weight;
@@ -1027,6 +1203,50 @@ the history PIA); the ratio of the benefit-implied to the history PIA
 where both exist (median, 10th and 90th percentiles); weighted and
 unweighted N. None may be computed on real data before the registration.
 
+**d430's sensitivity (registered run only; not scored;
+`own_receipt_reading_d430`, `policy.SENSITIVITIES`; §4c item 1):** the
+registered run builds the same PSID read twice, under the scored reading
+and under the sensitivity reading, and passes the second to
+`pipeline.run_track_m` as `own_receipt_sensitivity`. It publishes, under
+`sensitivities`, beside MS0-MS6 and unscored:
+
+- MS0's twelve cells under the sensitivity reading, from the same
+  evaluation and tabulation as the rows (§12's floor and design-based
+  standard error included), each cell marked `"scored": false` and none
+  the headline; with the evaluation's diagnostics above and the threshold
+  years the sensitivity's records need;
+- which worker records the two readings' inputs differ on
+  (`pipeline.own_receipt_reclassification`, which compares every field
+  the evaluation reads: present under one reading only, or a different
+  basis, window, onset or death year, unresolved flag or MS5 input), how
+  they differ (with how many window years move later and earlier), and
+  which persons' *A*ₖ rests on one: a person whose own or linked record,
+  under either reading, differs, whose links differ, or whose person
+  record otherwise differs;
+- **the weighted share of the universe whose *A*ₖ rests on a record
+  classified differently** (and of each Table 6 row), with, for each
+  option and row, the share receiving under each reading, the change,
+  the shares moved out (receiving under the scored reading only) and in,
+  and the shares receiving and resting (`pipeline.
+  receipt_under_both_readings`).
+
+A person outside that set reads the same inputs under both readings (their
+person record and every worker record their *A* reads), so their *A*ₖ is
+the same under both: the change in each cell is at most the cell's
+resting share and equals the share moved in less the share moved out.
+The run checks that every person whose *A* differs is among those
+resting, and refuses to continue otherwise. A record whose first own
+receipt the sensitivity moves but whose basis, window year and onset it
+keeps (§4c item 1) is not among the records that differ, and does not
+enter the resting share. The denominator does not
+change: the universe, its weights and its design are the same under both
+readings, and the run refuses sensitivity records whose persons, weights,
+sexes, design variables, provenance or PSID files differ from the scored
+records'. It also refuses, before computing anything, scored records
+built under the sensitivity reading, a sensitivity built under the scored
+reading, a registered run without the sensitivity, and a threshold year
+the sensitivity's records need that the capture lacks.
+
 ## 12. Uncertainty
 
 The Track U pattern (G19), with Track U's estimators reused unchanged
@@ -1066,6 +1286,27 @@ promoted afterwards.
 | MS4 | `window_rule` | After *Y*₀ | Yes |
 | MS5 | `pia_rule` | Benefit-implied PIA | Arithmetic yes; its inputs are M4's and M5's (§6) |
 | MS6 | `di_pia_rule` | Track A's DI approximation (35-year divisor) | Yes |
+
+**d430's sensitivity is registered, unscored, and is not a row**
+(`own_receipt_reading_d430`; §§4c, 11, 19). d430 requires a
+pre-registered, unscored sensitivity and does not say whether it is a
+row or a diagnostic (the ratification card had said that bounding would
+need a new registered row; the build's brief allowed an unscored row MS7
+or a §11 diagnostic); this version takes the smaller correct change, the
+diagnostic. A row changes one
+`TrackMPolicy` field over one set of records (`policy._check_rows`,
+`pipeline.run_track_m`), while the sensitivity changes the records
+themselves: which worker records exist, and their basis and years. As a
+row it would need either a policy field the evaluation never reads, which
+would change every row's recorded policy, or a second record set per row.
+As a diagnostic of MS0 it computes the same twelve cells through the same
+evaluation and tabulation, marked unscored, and adds the share resting on
+records the readings classify differently, which no single row can
+compute. It is registered all the same: §19's block records it under
+`sensitivities`, the gate holds that to the code, and the pipeline
+refuses a registered run without the sensitivity's records. MS0-MS6 do not
+depend on it; on the invented dry run their outputs are byte-identical
+with and without it, and to the previous build's (§18).
 
 ## 15. Named deltas
 
@@ -1117,6 +1358,60 @@ building:
   (divorced spouses and the late spouses of remarried survivors are not
   linked); MS5's *B* is the 2022 total over 12 (§6); the oracle's
   survivor reduction runs from 60 to 67 for every cohort (§4c).
+- **recorded by Max's d430 (2026-09-26), restated against the captured
+  statute text (§18 item 4; `EVID/track-m-4-review-20260925.md`); each is
+  carried in `pipeline.NAMED_DELTAS`:**
+  - **F2** (§4a, disability row). Ending *Y*'s history at onset − 1
+    drops quarters the text can count: 413(a)(2)(B)(i) removes only the
+    quarters any part of which lies in a period of disability, other than
+    its initial and last quarter, so the onset year's quarters before the
+    period, and its initial quarter, can be quarters of coverage. Ending
+    *P*'s history there matches the text only when the DI application is
+    filed in the onset year: 423(a)(2) deems old-age entitlement in the
+    application month, 415(b)(2)(B)(ii)(I) then ends the computation base
+    years before the application year, and 415(b)(2)(B)(ii) excludes only
+    years entirely in a period of disability. An unnamed approximation of
+    the death row's kind, now named.
+  - **F3a** (§4b rule 5, survivors with own DI). For a survivor entitled
+    to DI benefit *D* in the first month of the widow(er)'s benefit,
+    402(q)(3)(A)(ii) and (C) with 402(k)(3)(A) pay (*W* − *D*)(1 −
+    *r*_w), positive whenever *W* > *D* (*W* before the survivor's own
+    402(q) reduction). The oracle's test `widow_benefit(...) >
+    own_amount` pays only when *W*(1 − *r*_w) > *D*, and Track M sets a
+    disability-origin record's own factor to 1, so it reports "not paid"
+    when *W*(1 − *r*_w) ≤ *D* < *W*.
+  - **F3b** (§4b rule 5, spouses). 402(q)(3)(B) with 402(k)(3)(A) gives
+    the oracle's (*S* − *O*)(1 − *r*_s) when, in the first month of the
+    spouse's benefit, the spouse is entitled to an own old-age benefit
+    first taken before retirement age, or to DI (402(q)(3)(C)).
+    Otherwise the spouse's benefit is *S*(1 − *r*_s) under 402(q)(1),
+    less the own benefit as paid: *O*(1 + *c*) with the 402(w) credit for
+    an own benefit begun at or after retirement age, or *O*(1 − *r*_o)
+    for one begun after the spouse's benefit but before retirement age
+    (402(r)(2) confines that case to a spouse not yet eligible for an own
+    old-age benefit when the spouse's benefit began). Either difference
+    can be zero or less while *S* > *O*, where the oracle, fed the own
+    PIA, reports the spouse's benefit paid.
+  - **O1** (§3, option 1). Current law's special minimum is not
+    modeled: 415(a)(1)(C)(i)
+    sets no PIA under (A) below $11.50 for each year of coverage over 10
+    (or that amount as increased under 415(i)), with its own years of
+    coverage, at most 30, defined in (C)(ii). Neither option 1 nor the
+    count of people receiving a minimum accounts for it.
+- **kept knowingly by d430:** **F1** (§4b rule 4): onset = the
+  entitlement year − 1 is a convention inside 423's bound (the waiting
+  period puts onset in the entitlement year or earlier), not statute;
+  onset = the entitlement year is equally consistent with the text, and
+  the choice moves a disability-origin record's threshold year,
+  bend-point year, *D* and history end by one year each. Card item
+  **(j)** (§5): the individual file's 1997, 1999 and 2001 earnings are
+  not read (the delta above).
+- **§4c item 1's own-receipt reading, bounded by d430's sensitivity:**
+  receipt of an unknown or "other" type, or a combination code, counts as
+  own receipt, before the year of attaining 62 too; the unscored
+  sensitivity `own_receipt_reading_d430` reads such receipt before 62 as
+  neither own receipt nor non-receipt and publishes MS0 under that
+  reading with the share resting on it (§11).
 
 ## 16. Invented worked cases
 
@@ -1222,10 +1517,12 @@ The SSI columns (3 and 4) are outside Track M and were not checked.
 ## 18. What is built and what is blocked
 
 Built on branches `dynamics-ex4-track-m-2-20260925` (merged to master
-with PR #460 at `596c365b`) and `dynamics-ex4-track-m-3-20260925` (M2's
-quarter-of-coverage capture and M3-M5, 2026-09-25). Every module is
-opt-in and registered in `POST_REVIEW_SOURCE_EXCLUSIONS`, the pinned
-tuple and the reachability guard:
+with PR #460 at `596c365b`), `dynamics-ex4-track-m-3-20260925` (M2's
+quarter-of-coverage capture and M3-M5, 2026-09-25) and
+`dynamics-ex4-track-m-5-20260926` (d430's sensitivity, 2026-09-26, on
+the Track M-4 head `672e6770`). Every module is opt-in and registered in
+`POST_REVIEW_SOURCE_EXCLUSIONS`, the pinned tuple and the reachability
+guard:
 
 - `src/populace_dynamics/min_benefit_track_m/policy.py`: options 1-5,
   `TrackMPolicy`, rows MS0-MS6, Max's rulings (`MAX_RULINGS`) and the
@@ -1233,8 +1530,8 @@ tuple and the reachability guard:
 - `.../coverage.py`: years of coverage and the one history per worker
   (§5); the committed quarter-of-coverage capture's loader and the
   413(d) series it was checked against.
-- `.../thresholds.py`: the pinned Census capture (1982, 1986, 1988, 1989,
-  1991, 1992 and 1994-2022) and the threshold-year check (§7).
+- `.../thresholds.py`: the pinned Census capture (1982, 1986, 1988-1992
+  and 1994-2022) and the threshold-year check (§7).
 - `.../rules.py`: §§4a and 6-9 (the record years, schedules, indexing,
   proration, window, order, flag, auxiliaries, receipt; the PIA through
   the oracle; the claim and COLA factors).
@@ -1256,6 +1553,13 @@ tuple and the reachability guard:
   counts at 2004 and 2007, spouse and survivor links, claim years, sex,
   unlinked auxiliaries; and the structural counts real files may give
   before the registration (`structural_counts_before_registration`).
+  **d430 (2026-09-26):** the own-receipt reading
+  (`build_cohort(..., own_receipt_reading=...)`, `classify_own_record`,
+  `own_receipt_view`, `unknown_or_other_own_receipt`; the scored reading
+  by default, §4c item 1), d430's structural count over all records
+  (`first_own_receipt_type_before_62`) and the threshold years, as years,
+  that the sensitivity's window needs
+  (`sensitivity_threshold_years_before_registration`); §10.
 - `.../careers.py` (M5): the records the evaluation reads: one history
   per worker (panel years, next-wave odd years, then the gap rule), claim
   factors, months early and MS5's inputs; the refusals of records outside
@@ -1271,12 +1575,24 @@ tuple and the reachability guard:
   provenance guard and the threshold-year check (§7). Records carrying
   PSID file hashes are evaluated only by the registered run and only
   against the committed specification block (the 2026-09-25 review's
-  residual: a supplied block cannot reach real records).
+  residual: a supplied block cannot reach real records). **d430
+  (2026-09-26):** the sensitivity (`own_receipt_sensitivity`,
+  `own_receipt_reclassification`, `receipt_under_both_readings`; §11) and
+  its guards; `evaluation.TrackMInputs` carries the reading its records
+  were built under, `careers` passes the cohort's on, and
+  `tabulation.tabulate_track_m` marks a sensitivity's cells unscored
+  (`scored=False`); `policy.MAX_RULINGS` records d430 and
+  `policy.SENSITIVITIES` the registered sensitivity.
 - `.../invented.py` and `.../invented_psid.py` (M10): INVENTED cohorts:
   records built directly, and PSID-shaped frames that run through M4 and
-  M5.
+  M5. `invented_psid`'s `unknown_or_other_before_62` (off by default,
+  from a second seeded stream, so the default draw is unchanged) adds
+  INVENTED receipt of unknown or "other" type before 62 for d430's
+  sensitivity.
 - `.../structure.py` and `scripts/track_m_structure.py`: the structural
-  counts of §10, M4's included under §11's limits.
+  counts of §10, M4's included under §11's limits, and d430's count and
+  the sensitivity's threshold years (§10; `EVID/track-m-structure-r5-
+  20260926/`).
 - `scripts/capture_track_u_parameters.py --track-m-census-dir` and the
   committed workbooks, capture and cross-check source (§7);
   `scripts/capture_track_m_quarter_of_coverage.py` and
@@ -1286,11 +1602,22 @@ tuple and the reachability guard:
   capture, the Census capture, the SSA COLA history), every row MS0-MS6
   including MS5, the plan's worked cases (§16) and every guard, among
   them the refusal of an invented M4 cohort that needs a threshold year
-  the capture lacks, and of records that need 1993 and 1981, while a
-  record that needs 1998 now passes. Its output, headed "INVENTED DATA -
-  NOT A COMPARISON", is in `EVID/track-m-dry-run-r6-20260925/` (earlier
-  runs: `EVID/track-m-dry-run-20260925/`, `-r2/`, `-r3-`, `-r4-` and
-  `-r5-`).
+  the capture lacks, and of records that need 1993 and 1981, while
+  records that need 1998 and 1990 now pass. d430's sensitivity runs on
+  the invented PSID-shaped cohort twice: on the default draw, where no
+  record or person differs between the readings, and on a draw with
+  receipt of unknown or "other" type before 62, with MS0 under both
+  readings, the resting share and its bound, and the sensitivity's
+  guards, among them
+  its threshold-year check, which passes a sensitivity record that needs
+  1990 and refuses one that needs 1993 before anything is computed. Its
+  output, headed "INVENTED DATA - NOT A COMPARISON", is in
+  `EVID/track-m-dry-run-r9-20260926/`, run by the independent review of
+  2026-09-26 at its head (earlier runs:
+  `EVID/track-m-dry-run-20260925/`, `-r2/`, `-r3-`, `-r4-`, `-r5-`,
+  `-r6-`, `-r7-` and `-r8-`); its rows MS0-MS6 are byte-identical to those
+  of the build before d430 (`672e6770`, `EVID/track-m-5-build-20260926/
+  dry-run-baseline-672e6770/`), of r6, of r7 and of r8.
 - `scripts/run_track_m_registered.py`: the one-shot entry point. It
   refuses this draft at its preflight (§19). With an authorizing block it
   refuses, before reading any PSID file, while a component is missing
@@ -1300,11 +1627,18 @@ tuple and the reachability guard:
   PSID through M4 and M5 and passes the records, marked as read from
   PSID files, to `pipeline.run_track_m`, which refuses again (§11) and
   refuses any threshold year the capture lacks. Every year M4's structural
-  count shows the in-window records need is now captured (§7).
+  count shows the in-window records need is now captured (§7). It builds
+  the same PSID read under d430's sensitivity reading too and passes it
+  as `own_receipt_sensitivity`, which a registered run requires (§11).
+  Every year the sensitivity's structural count shows its window needs is
+  captured too, 1990 included since 2026-09-26 (item 5).
 - Tests: `tests/min_benefit_track_m/` (the capture before 2003, its
   differential by row label, the cross-check against Census's Table 1,
-  the threshold invariants and the loader's and capture's year guards in
-  `test_threshold_capture_before_2003.py`),
+  the threshold invariants, the loader's and capture's year guards and
+  1990's pins, provenance and layout in
+  `test_threshold_capture_before_2003.py`; d430's sensitivity, its
+  invariants and guards and its structural count in
+  `test_own_receipt_sensitivity.py`),
   `tests/data/test_social_security_receipt.py`,
   `tests/data/test_prior_year_labor_income.py`,
   `tests/data/test_track_m_psid_labels.py` (staged-file labels only) and
@@ -1352,13 +1686,23 @@ Blocked, with the plan's effort estimates (lane-days):
    `EVID/track-m-3-review-20260925.md`, confirmed §4c items 1-5, 7 and 8
    and both §5 findings (codebook text), corrected item 6 in the code
    and item 2's text, and sized item 1 for the ratification (§4c).
-   Ratification alone authorizes no run: the ratified block still lists
-   the other blockers, and the gate refuses a block that lists any (§19).
+   Both checks and a skeptic pass done, Max ruled d430 on 2026-09-26
+   (§20): ratify by merge with the recorded defaults, keeping item 1's
+   reading bounded by a sensitivity built and reviewed before the
+   registration. `m1-draft-3` builds it (§§4c, 11, 14, 19); an
+   independent check of that build comes before the ratified text
+   (`blocked_by`'s first entry), and the sensitivity must be reviewed
+   before the registration in any case (d430). Ratification alone
+   authorizes no run: the ratified block still lists the other blockers,
+   and the gate refuses a block that lists any (§19).
 
    M2's statute capture (2026-09-25, `EVID/track-m-statute-20260925/
    READING.md`) adds these findings for the ratification. None
    contradicts a ruling of Max's; F1-F3 bear on frozen rules, which that
-   lane did not change.
+   lane did not change. **d430 (2026-09-26)** kept F1 knowingly (§20
+   ruling 14) and recorded F2, F3a, F3b and O1 as named deltas (§15, as
+   restated by the review of 2026-09-25); F4's citation was corrected
+   earlier. No rule changes.
    - **F1** (§4b rule 4). 423(a)(1) and (c)(2) start DI entitlement with
      the first month after a waiting period of five full calendar months
      of disability (or, in 423(a)(1)'s two waivers, amyotrophic lateral
@@ -1412,9 +1756,20 @@ Blocked, with the plan's effort estimates (lane-days):
      ($11.50 for each year of coverage over 10, or that amount as
      increased under 415(i)), with its own years of coverage, at most 30,
      defined in (C)(ii).
-     Neither this specification nor the code mentions it. Whether option
-     1, or the count of people receiving a minimum, should account for it
-     is open.
+     Neither this specification nor the code models it. d430 records
+     it as a named delta (§15): neither option 1 nor the count of people
+     receiving a minimum accounts for it.
+5. **The 1990 Census threshold for d430's sensitivity: cleared
+   (2026-09-26).** Found the same day (§10): the sensitivity's window
+   needs threshold year 1990, which the scored rows do not need and the
+   capture then lacked. Under d279 ("any earlier year the build proves it
+   needs") the orchestrating session fetched `thresh90.xlsx` from its
+   Census URL, and it is captured, hashed and pinned as the fifteen
+   earlier years were (§7): the workbook's SHA-256 in
+   `CENSUS_WORKBOOK_SHA256`, 1990 among the March CPS layouts, the
+   capture `census_poverty_thresholds_1982_2022.json` regenerated
+   (`288399c4…`) and pinned in `thresholds.py` and in `sources`, which
+   the entry script checks. Every 1990 value equals Census's Table 1.
 
 ## 19. Machine-readable parameter block
 
@@ -1423,16 +1778,23 @@ Downstream code reads this block:
 `check_specification_for_registered_run` (the entry script), and
 `tests/test_minimum_benefits_spec.py`, which holds it to the code.
 `decisions` records Max's rulings, one entry per ruled field
-(`{field: {"ruling": value, ...}}`): the nine d219 fields of 2026-09-24
-and the d279 and d280 fields of 2026-09-25, each equal to the code's
+(`{field: {"ruling": value, ...}}`): the nine d219 fields of 2026-09-24,
+the d279 and d280 fields of 2026-09-25 and the three d430 fields of
+2026-09-26 (`own_receipt_reading`, the scored cohort's reading, with the
+sensitivity registered as `own_receipt_reading_d430`; `odd_year_source`,
+card item (j); `onset_year_rule`, finding F1), each equal to the code's
 record (`min_benefit_track_m.policy.MAX_RULINGS`); `decisions_awaiting_max`
-is empty. A registered run still refuses unless the status and version
-say ratified, nothing awaits Max, `blocked_by` is present and empty,
-every ruled field carries a ruling equal to the code's, the
+is empty. `sensitivities` registers d430's unscored sensitivity
+(`own_receipt_reading_d430`: MS0 under the sensitivity reading and the
+share resting on records classified differently, §11), equal to
+`policy.SENSITIVITIES`. A registered run still refuses unless the status
+and version say ratified, nothing awaits Max, `blocked_by` is present and
+empty, every ruled field carries a ruling equal to the code's, the
 configuration follows each ruling and the block equals the code: the
-options, cells, policy, rows and labels, and `statistic` and
-`uncertainty`, which must equal the tabulation's (`tabulation.STATISTIC`
-and `tabulation.UNCERTAINTY`). The tabulation and the pipeline apply the
+options, cells, policy, rows, labels and sensitivities, and `statistic`
+and `uncertainty`, which must equal the tabulation's
+(`tabulation.STATISTIC` and `tabulation.UNCERTAINTY`); and the pipeline
+refuses a registered run without the sensitivity's records (§11). The tabulation and the pipeline apply the
 same gate to PSID-built rows. As in Track U, each blocker is removed from
 `blocked_by` as it is resolved, and `issue_42_registration_absent` in the
 commit the registration comment then registers; the registered commit's
@@ -1446,7 +1808,7 @@ statute capture, which is evidence the code does not read.
 ```json
 {
   "specification": "urban2006_minimum_benefits_exercise4",
-  "version": "m1-draft-2",
+  "version": "m1-draft-3",
   "status": "draft_referee_changes_applied",
   "claim_class": {
     "ruled": "track_m_static_psid_snapshot_income_year_2022",
@@ -1763,7 +2125,51 @@ statute capture, which is evidence the code does not read.
       "ruled_on": "2026-09-25",
       "as_filed": "download Census historical poverty-threshold workbooks thresh13-thresh22 (plus any earlier year the build proves it needs) from www2.census.gov",
       "ruling_text": "Yes (Max in chat 2026-09-25): download thresh13-thresh22 and any earlier year the build proves it needs; capture, hash and pin like the 2003-2012 capture",
-      "note": "Max approved the download; the orchestrating Claude Code session fetched thresh13-thresh22 on 2026-09-25. With thresh03-thresh12 (d194) they were captured as 2003-2022. M4's earliest-threshold-year count (M1 specification, sections 4, 7 and 10) proved the years 1982, 1986, 1988, 1989, 1991, 1992 and 1994-2002 needed; their workbooks were staged on 2026-09-25 under this ruling (thresh95 from the Internet Archive's copy of its Census URL) and are captured, hashed and pinned with 2003-2022 in census_poverty_thresholds_1982_2022.json"
+      "note": "Max approved the download; the orchestrating Claude Code session fetched thresh13-thresh22 on 2026-09-25. With thresh03-thresh12 (d194) they were captured as 2003-2022. M4's earliest-threshold-year count (M1 specification, sections 4, 7 and 10) proved the years 1982, 1986, 1988, 1989, 1991, 1992 and 1994-2002 needed; their workbooks were staged on 2026-09-25 under this ruling (thresh95 from the Internet Archive's copy of its Census URL) and are captured, hashed and pinned with 2003-2022 in census_poverty_thresholds_1982_2022.json. d430's sensitivity count (sections 4, 7 and 10) proved 1990 needed too; the orchestrating session fetched thresh90 from its Census URL on 2026-09-26 under this ruling, and it is captured, hashed and pinned in the same file"
+    },
+    "own_receipt_reading": {
+      "ruling": "unknown_other_or_combination_type_counts_as_own_receipt",
+      "decision_record": "d430",
+      "item": null,
+      "card_item": "(a)",
+      "ruled_on": "2026-09-26",
+      "as_filed": "Keep (a) (pre-62 receipt of unknown or 'other' type counts as own receipt) as the scored reading AND require a pre-registered unscored sensitivity (MS0 with those years read as neither receipt nor non-receipt, plus the share resting on them), built and reviewed before registration",
+      "ruling_text": "Ratify + bound (a): keep (a) for the scored row and require the pre-registered unscored sensitivity (built and reviewed before registration); keep (j) and F1 knowingly; record F2, F3a, F3b and O1 as named deltas (Max in chat, 2026-09-26)",
+      "sensitivity_registered_as": "own_receipt_reading_d430"
+    },
+    "odd_year_source": {
+      "ruling": "next_wave_reference_person_and_spouse",
+      "decision_record": "d430",
+      "item": null,
+      "card_item": "(j)",
+      "ruled_on": "2026-09-26",
+      "as_filed": "keep (j) (no individual-file 1997/99/01 earnings) and F1 (onset = entitlement - 1) knowingly",
+      "ruling_text": "Ratify + bound (a): keep (a) for the scored row and require the pre-registered unscored sensitivity (built and reviewed before registration); keep (j) and F1 knowingly; record F2, F3a, F3b and O1 as named deltas (Max in chat, 2026-09-26)"
+    },
+    "onset_year_rule": {
+      "ruling": "entitlement_year_minus_1",
+      "decision_record": "d430",
+      "item": null,
+      "card_item": "F1",
+      "ruled_on": "2026-09-26",
+      "as_filed": "keep (j) (no individual-file 1997/99/01 earnings) and F1 (onset = entitlement - 1) knowingly",
+      "ruling_text": "Ratify + bound (a): keep (a) for the scored row and require the pre-registered unscored sensitivity (built and reviewed before registration); keep (j) and F1 knowingly; record F2, F3a, F3b and O1 as named deltas (Max in chat, 2026-09-26)"
+    }
+  },
+  "sensitivities": {
+    "own_receipt_reading_d430": {
+      "decision_record": "d430",
+      "scored": false,
+      "placement": "section_11_diagnostic_of_ms0_registered_run_only",
+      "row": "MS0",
+      "reading_field": "own_receipt_reading",
+      "scored_reading": "unknown_other_or_combination_type_counts_as_own_receipt",
+      "sensitivity_reading": "pre_62_unknown_or_other_type_neither_own_receipt_nor_non_receipt",
+      "reports": [
+        "ms0_cells_under_the_sensitivity_reading",
+        "weighted_share_of_the_universe_resting_on_a_record_classified_differently"
+      ],
+      "required_in_registered_run": true
     }
   },
   "sources": {
@@ -1800,7 +2206,7 @@ statute capture, which is evidence the code does not read.
     },
     "census_thresholds": {
       "file": "data/external/census_poverty_thresholds_1982_2022.json",
-      "sha256": "4493b8d5823ea12912212d892f98ef4777098ce34b01857cedc35d444a8b99cd",
+      "sha256": "288399c475ae3ff02e6d8367425ee0a568b50d239da5656f24d0d2dfafabfb53",
       "years": [
         1982,
         2022
@@ -1810,6 +2216,7 @@ statute capture, which is evidence the code does not read.
         1986,
         1988,
         1989,
+        1990,
         1991,
         1992,
         1994,
@@ -1847,7 +2254,6 @@ statute capture, which is evidence the code does not read.
         1984,
         1985,
         1987,
-        1990,
         1993
       ],
       "row": "one_65_plus",
@@ -1866,6 +2272,14 @@ statute capture, which is evidence the code does not read.
       "replaces": {
         "file": "data/external/census_poverty_thresholds_2003_2022.json",
         "sha256": "65bbcd83cad97b94526b8c71417b9b4986a5bc878285b87832cfb102bc11e3c5"
+      },
+      "previous_pin": {
+        "sha256": "4493b8d5823ea12912212d892f98ef4777098ce34b01857cedc35d444a8b99cd",
+        "lacked": [
+          1990
+        ],
+        "superseded_on": "2026-09-26",
+        "why": "own_receipt_reading_d430_needs_1990"
       },
       "decision_records": [
         "d194",
@@ -1902,20 +2316,21 @@ statute capture, which is evidence the code does not read.
     }
   },
   "blocked_by": [
-    "independent_check_of_m1_draft_2_and_the_m3_to_m5_readings_then_ratification_by_merge",
+    "independent_review_of_the_d430_sensitivity_build_m1_draft_3_then_ratification_by_merge",
     "registration_package_m10_needs_the_comparator_seal_hash",
     "issue_42_registration_absent"
   ]
 }
 ```
 
-## 20. Decisions (ruled by Max, 2026-09-24 and 2026-09-25)
+## 20. Decisions (ruled by Max, 2026-09-24 to 2026-09-26)
 
-Max ruled decision record d219 on 2026-09-24 and d279 and d280 on
-2026-09-25, in chat with the orchestrating session. The rulings are
-recorded in Max's decision ledger
+Max ruled decision record d219 on 2026-09-24, d279 and d280 on
+2026-09-25 and d430 on 2026-09-26, in chat with the orchestrating
+session. The rulings are recorded in Max's decision ledger
 (`~/chief-of-staff/state/decisions/decisions.jsonl`, status `decided`;
-d219 `ruled_at` 2026-09-24T21:44, d279 and d280 2026-09-25T06:24). d219's
+d219 `ruled_at` 2026-09-24T21:44, d279 and d280 2026-09-25T06:24, d430
+2026-09-26T07:42). d219's
 ruling reads "Accept all nine (Max in chat 2026-09-24): score Table 6 2025
 share first via Track M (PSID 2022 snapshot, policy dates shifted 3
 years, literal 2007 dating registered); poverty later vs 2050; ratify by
@@ -1985,7 +2400,52 @@ card proposed.
     staged on 2026-09-25 under this ruling (`thresh95.xlsx` from the
     Internet Archive's copy of its Census URL) and are captured, hashed
     and pinned with 2003-2022 in `census_poverty_thresholds_1982_2022.json`
-    (§7).
+    (§7). d430's sensitivity count (§10) then showed 1990 needed too; the
+    orchestrating session fetched `thresh90.xlsx` from its Census URL on
+    2026-09-26 under this ruling, and it is captured, hashed and pinned in
+    the same file (§7).
+
+Rulings 12-14 record d430 (2026-09-26), the ratification card of
+2026-09-25 (`EVID/m1-ratification-card-draft-20260925.md`) as amended by
+the skeptic pass before filing. Filed as "DynaSim exercise 4 (Track M):
+ratify the specification (m1-draft to m1-ratified-1) by merge with the
+recorded defaults, and authorize its #42 registration and one-shot once
+section 18's blockers clear. Keep (a) (pre-62 receipt of unknown or
+'other' type counts as own receipt) as the scored reading AND require a
+pre-registered unscored sensitivity (MS0 with those years read as neither
+receipt nor non-receipt, plus the share resting on them), built and
+reviewed before registration; keep (j) (no individual-file 1997/99/01
+earnings) and F1 (onset = entitlement - 1) knowingly; record F2, F3a, F3b
+and O1 (current-law special minimum not modeled) as named deltas".
+**Ruling:** "Ratify + bound (a): keep (a) for the scored row and require
+the pre-registered unscored sensitivity (built and reviewed before
+registration); keep (j) and F1 knowingly; record F2, F3a, F3b and O1 as
+named deltas (Max in chat, 2026-09-26)". Each entry under `decisions`
+quotes the clause of the filed text that names its field (`as_filed`)
+and the ruling (`ruling_text`), with the card's letter (`card_item`).
+The ratification itself stays d219 item 9's merge; the named deltas are
+in §15.
+
+12. **Own-receipt reading** (`own_receipt_reading`; d430, card item
+    (a)). **Ruling:** §4c item 1's reading is the scored reading: receipt
+    of an unknown or "other" type, or a combination code, counts as own
+    receipt, before the year of attaining 62 too. The scored cohort is
+    built under it (`cohort.build_cohort`'s default; the pipeline refuses
+    scored records built under any other). The sensitivity it requires is
+    registered as `own_receipt_reading_d430` (§§4c, 11, 14, 19), unscored
+    and computed only by the registered run; it must be reviewed before
+    the registration.
+13. **Odd-year source** (`odd_year_source`; d430, card item (j)).
+    **Ruling:** kept knowingly: the next wave's year-before-last labor
+    income of the reference person and spouse, before any imputation
+    (referee R7), and not the individual file's 1997, 1999 and 2001
+    earnings (§5; a named delta, §15). Frozen by `m1-draft-2` until this
+    ruling.
+14. **Onset year** (`onset_year_rule`; d430, statute finding F1).
+    **Ruling:** kept knowingly: a disability-origin record's onset is its
+    entitlement year less one (§4b rule 4, the builder default), a
+    convention inside 423's bound (§§15, 18). Frozen by `m1-draft-2` until
+    this ruling.
 
 **Frozen by this version on the referee's answers (§21), and ratified
 with the specification by the merge** (`policy.frozen_choices()`; no
@@ -1999,14 +2459,15 @@ ruling of Max's names them):
 - death PIA rule: the statutory death computation;
 - the years that define each record (§4a) and the classification rules
   (§4b): the old-age history end, the DI coverage end, the death-basis
-  window year, the entitlement-year rule, the onset-year rule and the
-  survivor's own amount;
+  window year, the entitlement-year rule and the survivor's own amount
+  (the onset-year rule is ruling 14);
 - DI proration start age 22; prorated years unrounded;
 - the threshold: the Census weighted average for one person aged 65 and
   older, of the threshold year in §4a;
 - wage-index lag 2;
 - pre-1978 coverage: the statute's $50 a quarter;
-- odd-year source: next-wave labor income, then the neighbor law;
+- gap years: an odd year still unobserved after the next-wave items
+  takes the neighbor law (the odd-year source itself is ruling 13);
 - unobserved-window start age 22;
 - couples' cap: none;
 - unlinked auxiliaries: not receiving, counted separately;
@@ -2271,6 +2732,174 @@ on real data. Its dry run is on INVENTED cohorts
 (`EVID/track-m-dry-run-r6-20260925/`). Its report is
 `EVID/track-m-4-review-20260925.md`.
 
+**The sixth lane, which began d430's sensitivity (2026-09-26, Claude Code
+subagent, Opus 5.5; interrupted), records that it read:**
+- `EVID/RESTRICTED-FILES.md` first (`02148069…`, last entry 2026-09-25
+  20:05);
+- the cos record of d430 (its filed text and ruling);
+- this specification's header, §§1-4c, §5's passage on the odd-year
+  source and §§10-23;
+- the ratification card draft (`EVID/m1-ratification-card-draft-
+  20260925.md`) in full; of the change package (`EVID/m1-ratification-
+  changes-20260925.md`) its header and §0 (preconditions);
+- of the review `EVID/track-m-4-review-20260925.md` its verdict, its
+  findings for the ratification, its checks 4-6, its open items, its
+  reading record and its evidence table;
+- the skeptic pass's findings on card item (a) (the orchestrating
+  session's task output, key `m1_a`);
+- the review `EVID/track-m-3-review-20260925/`'s
+  `first_receipt_type_sizing.py`;
+- the Track M code and tests at `672e6770` that the sensitivity touches:
+  `cohort.py`, `policy.py`, `evaluation.py`, `tabulation.py`,
+  `pipeline.py`, `careers.py`, `specification.py`, `invented_psid.py`,
+  `scripts/track_m_dry_run.py`, `scripts/track_m_structure.py` and
+  `scripts/run_track_m_registered.py`; `data/social_security_receipt.py`'s
+  type constants and code tables; `test_cohort.py`, `test_policy.py`,
+  `test_pipeline.py`, `test_dry_run_script.py`,
+  `tests/test_minimum_benefits_spec.py` and parts of
+  `test_registered_run_script.py` and `test_structure.py`; the test-tier
+  classifier (`tests/conftest.py`, `tests/test_tier_policy.py`).
+
+Its draft of this section said it ran `scripts/track_m_structure.py` on
+the staged PSID; it left no output of such a run. It ran the invented dry
+run before and during its build (`EVID/track-m-5-build-20260926/`,
+`dry-run-baseline-672e6770/` and `dry-run-wip/`, both INVENTED).
+
+**The seventh lane, which checked and completed it (2026-09-26, Claude
+Code subagent, Opus 5.5), read:**
+- its brief, then `EVID/RESTRICTED-FILES.md` (`02148069…`) before any
+  other file;
+- the cos record of d430 (`decisions show d430`; the code's record equals
+  its filed text and ruling byte for byte);
+- the sixth lane's patch (`1897e96d…`), which equals the worktree's
+  uncommitted diff, and that diff in full;
+- this specification at `672e6770`: the header through §5 (lines 1-600)
+  and §§10-23;
+- the ratification card draft in full;
+- of `EVID/track-m-4-review-20260925.md` its header and verdict, D4, its
+  findings for the ratification, its checks 4-6, its open items and its
+  reading record;
+- of the statute capture `EVID/track-m-statute-20260925/` (its
+  `SHA256SUMS`, checked: every file matches) the lines F2, F3a, F3b and O1
+  rest on: 413 line 54; 423 lines 59-63; 415 lines 50-62 and 109-112; 402
+  lines 339, 370-390 and 420-430 (402(q)(3), (q)(10)-(11) and (r));
+- `EVID/track-m-3-review-20260925/first_receipt_type_sizing.py` and its
+  output;
+- the sixth lane's working folder `EVID/track-m-5-build-20260926/`;
+- the Track M code: `cohort.py` (the observation, classification, cohort
+  and count functions), `pipeline.py`, `evaluation.py`, the parts of
+  `careers.py` that build the records, `policy.py`'s rulings, register and
+  sensitivities, `rules.py`'s auxiliary tests, `invented.
+  invented_parameters`, `invented_psid.py`'s new draw, the three scripts
+  the sensitivity touches, and every test the sixth lane added or
+  changed; `tests/conftest.py` and the tier recount script.
+
+On the staged PSID it ran, at commit `137e6456` on a clean tree,
+`scripts/track_m_structure.py` (§10: the M4 cohort under both readings,
+reporting of the sensitivity reading only the threshold years its window
+needs, as years) and one check script,
+`EVID/track-m-structure-r5-20260926/first_receipt_type_sizing_r5.py`
+(the scored cohort only), which recounts d430's count by brute force over
+all records. It computed no years of
+coverage, PIA, threshold, minimum, flag, share, in-window count or
+reserved diagnostic on real data. Its other checks are on INVENTED data
+(`EVID/track-m-5-build-20260926/`: the exhaustive direction check, the
+scored-path digests at `672e6770` and at this build, and the mutation
+check), and its dry run is on INVENTED cohorts
+(`EVID/track-m-dry-run-r7-20260926/`). It did not open the Report in any
+copy, the plan, the change package, the cleared files, any comparator
+directory, seal, reconciliation or values scan, the uncleared sources,
+either scratchpad archive, or any exercise-1 or exercise-3 result.
+
+**The eighth lane, which captured the 1990 threshold (2026-09-26, Claude
+Code subagent, Opus 5.5), read:**
+- its brief, its batch's shared rules and the seventh lane's report
+  the brief names (`EVID/subfleet-briefs-20260926/m-sensitivity.report.md`,
+  printed in the same command as the rules), then
+  `EVID/RESTRICTED-FILES.md` (`02148069…`) before any other file;
+- commits `4055bd39` (the capture of the fifteen years before 2003) and
+  `781ebae5` (the 1990 blocker) in full;
+- `thresh90.xlsx`, with `thresh89.xlsx` and `thresh91.xlsx` beside it,
+  cell by cell with openpyxl
+  (`EVID/track-m-thresh90-capture-20260926/inspect_layout.py`) and from
+  the sheet XML (the tests); the staging directory's `SHA256SUMS` and
+  `PROVENANCE-thresh95.md`;
+- this specification's header and §§2, 4, 7, 10 and 18-23; the capture
+  script, `thresholds.py`, the threshold text of `rules.py`, `policy.py`
+  and the invented modules, `scripts/track_m_dry_run.py`,
+  `pipeline.run_track_m`'s threshold-year checks and sensitivity guards,
+  `census_poverty_thresholds/provenance.md`, and the tests the capture
+  touches;
+- the r7 dry run's `RESULTS.md` and the threshold checks in its
+  `result.json`;
+- to diagnose the suite's two failures in
+  `tests/cola_track_a/test_statutory_capture_oracle.py` (a pre-existing
+  order dependence: `tests/test_gate2c_candidate1_reproduction.py` and
+  `candidate2`'s set `POPULACE_DYNAMICS_PE_US_DIR` at import): that test,
+  the revision lookup in `ss/params.py`, the capture script's source
+  block, `tests/conftest.py`'s tier classifier, the two gate-2c lines and
+  the head of `tests/data/test_panels.py`'s noise-floor test.
+
+It queried the Internet Archive's CDX index for `thresh90.xlsx`'s URL,
+which answered "Temporarily Offline". Its own scripts read no PSID file,
+and it computed no Track M statistic on real data; its dry run is on
+INVENTED cohorts (`EVID/track-m-dry-run-r8-20260926/`). Its first
+attempts at the full test suite collected every tier, so before it
+stopped them they ran 134 of the repository's existing `integration_psid`
+tests, which read the staged PSID: the PSID readers' tests in
+`tests/data/` (birth history, deaths, disability, employer DC plans,
+family, family income, household composition, marriage history, panels,
+the last stopped while it ran) and three cohort integration tests
+(`tests/cohorts/`). None is a Track M test, and none computes a share,
+flag, threshold or in-window count of this specification; the tests it
+then ran exclude the `integration_psid` and `reproduction_legacy`
+tiers (`EVID/track-m-thresh90-capture-20260926/`). It did not open the
+Report in any copy, the plan, the change package, the cleared files, any comparator
+directory, seal, reconciliation or values scan, the uncleared sources,
+either scratchpad archive, or any exercise-1 or exercise-3 result.
+
+**The independent review of the sensitivity build and the 1990 capture
+(2026-09-26, Claude Code subagent, Opus 5.5;
+`EVID/track-m-5-review-20260926.md`) read:**
+- its brief, then its batch's shared rules (which the brief names
+  first), then `EVID/RESTRICTED-FILES.md` (`02148069…`) before any other
+  file;
+- the cos records of d430, d219, d279 and d280 (`decisions show`);
+- the seventh lane's brief and report
+  (`EVID/subfleet-briefs-20260926/m-sensitivity.md` and `.report.md`),
+  the review `EVID/track-m-4-review-20260925.md` in full (for form) and
+  the ratification card draft in full;
+- the whole diff `672e6770..4e180486` and the code it touches, among it
+  `evaluation.evaluate` and `_receipts`, `rules.survivor_excess_paid`,
+  `careers.own_claim_factor` and `scripts/run_track_m_registered.py`;
+- the statute capture `EVID/track-m-statute-20260925/` (its `SHA256SUMS`
+  checked) at 413 lines 48-54, 423 lines 59-63, 415 lines 48-60 and
+  104-113, and 402 lines 339, 370-386 and 425-430;
+- `thresh89.xlsx`, `thresh90.xlsx` and `thresh91.xlsx` with openpyxl,
+  the staging `SHA256SUMS` and `PROVENANCE-thresh95.md`, the committed
+  Table 1 HTML, and the Internet Archive's CDX index for
+  `thresh90.xlsx`'s URL (the index only; no capture fetched);
+- the lanes' working folders `EVID/track-m-5-build-20260926/` and
+  `EVID/track-m-thresh90-capture-20260926/`, the dry runs r6-r8, and
+  `EVID/track-m-structure-r5-20260926/` (its `SHA256SUMS`, its run
+  record, and of `track-m-structure.json` d430's count and the threshold
+  years, which §10 prints).
+
+On the staged PSID it ran `scripts/track_m_structure.py` once, at
+`137e6456` on a clean tree
+(`EVID/track-m-5-review-20260926/structure-rerun-137e6456/`), whose
+output is byte-identical to r5's (`1110abe6…`). Its full-suite runs at
+`4e180486` and at `origin/master` collected every tier, so they also ran
+the repository's existing `integration_psid` tests, which read the
+staged PSID; none is a Track M test, and none computes a share, flag,
+threshold or in-window count of this specification. Its other checks are
+on INVENTED data. It computed no years of coverage, PIA, threshold,
+minimum, flag, share, in-window count or reserved diagnostic on real
+data. It did not open the Report in any copy, the plan, the change
+package, the cleared files, any comparator directory, seal,
+reconciliation or values scan, the uncleared sources, either scratchpad
+archive, or any exercise-1 or exercise-3 result.
+
 ## 23. Changelog
 
 - `m1-draft-1` (2026-09-24): first draft, with the Track M rules module,
@@ -2401,3 +3030,116 @@ on real data. Its dry run is on INVENTED cohorts
     health check on 17 of 60 seeds.
   - **Other.** §22 records what the review read. The invented dry run is
     rerun into `EVID/track-m-dry-run-r6-20260925/`.
+- `m1-draft-3` (2026-09-26): builds the sensitivity Max's d430 requires
+  and records d430 (ruled 2026-09-26T07:42). A sixth lane began it and was
+  interrupted before committing; a seventh checked, completed and
+  corrected its work (header, §22). No row, cell, option, statistic,
+  uncertainty, frozen value or worked case changes, and under the default
+  reading the cohort and every output of rows MS0-MS6 are unchanged
+  (pinned against the build before d430, `672e6770`, and byte-identical
+  on the invented dry run); the version changes because the block gains
+  d430's rulings and a registered sensitivity. Changes by section:
+  - **The reading (§4c item 1; `cohort`).** `build_cohort` and
+    `classify_own_record` take the own-receipt reading, the scored
+    reading by default; d430's sensitivity reads receipt before 62 that
+    names neither a retirement nor a disability benefit as neither own
+    receipt nor non-receipt, in the records' classification and a spouse
+    link's 2022 test only. Its direction (the scored reading never gives
+    a later window year) was read from the code, then tested by Hypothesis
+    and checked exhaustively on 1,835,008 invented histories.
+  - **The sensitivity (§§11, 14, 19; `pipeline`, `tabulation`,
+    `evaluation`, `careers`, `scripts/run_track_m_registered.py`).** A
+    §11 diagnostic of MS0, not a row (§14 says why): MS0's cells under
+    the sensitivity reading, unscored, and the weighted share of the
+    universe resting on records the readings classify differently, with
+    the bound it sets. The registered run builds both readings and the
+    pipeline refuses one without the sensitivity; the block registers it
+    under `sensitivities`, which the gate holds to the code.
+  - **Rulings (§§4b, 5, 19, 20; `policy.MAX_RULINGS`).** d430 as rulings
+    12-14: `own_receipt_reading` (card item (a)), `odd_year_source` (card
+    item (j)) and `onset_year_rule` (F1), the last two moved from the
+    frozen choices, with their values unchanged.
+  - **Named deltas (§15; `pipeline.NAMED_DELTAS`).** F2, F3a, F3b and O1,
+    restated as the review of 2026-09-25 restated them and checked again
+    against the captured statute text; F1 and (j) kept knowingly; the
+    own-receipt reading bounded by the sensitivity.
+  - **Counts (§§4, 4c, 7, 10).** d430's structural count over all
+    records (first own receipts before 62 by type, "other" included, and
+    the combined unknown-or-other count: 80 of 453, 4 of them "other"
+    only) and the threshold years the sensitivity's window needs, as
+    years, in `EVID/track-m-structure-r5-20260926/`, with a brute-force
+    recount; every earlier count is unchanged. The sensitivity needs the
+    1990 threshold, which the capture lacks.
+  - **`blocked_by` (§§18, 19).** The finished independent check of
+    `m1-draft-2` and the M3-M5 readings gives way to the independent
+    review of this build, then the ratification by merge; the 1990
+    threshold the sensitivity needs is a new blocker (§18 item 5).
+  - **The seventh lane's corrections to the sixth's work.** A test
+    asserted that every record whose first own receipt is of unknown or
+    "other" type before 62 is classified differently; a record can keep
+    its basis, window year and onset (§4c item 1), so the test now holds
+    the inclusion and a hand case shows the exception. The "off is
+    identical" property now compares with the implementation before d430
+    and pins the cohort and every row's flags to `672e6770`'s; the rows'
+    independence of the sensitivity is a Hypothesis property; the cohort
+    property checks that every record or link only the scored reading has
+    rests on such receipt. §4c item 1 records the survivor's links a
+    sensitivity can change and states the direction more plainly;
+    the header and §22 no longer record a structural run the sixth lane
+    did not leave.
+  - **Other.** The header, §18 and §22 record the build and what the
+    lanes read; the invented dry run is rerun into
+    `EVID/track-m-dry-run-r7-20260926/`, with the sensitivity on two
+    invented cohorts (`invented_psid`'s `unknown_or_other_before_62`, off
+    by default).
+- `m1-draft-3`, §18's blocker 5 cleared (2026-09-26; no ruling, default,
+  row, cell, frozen choice or sensitivity changed, so the version stands,
+  as in the earlier builds' entries). Changes by section:
+  - **Census (§§2, 4, 7, 10, 18, 20).** 1990's Census workbook, fetched
+    by the orchestrating session under d279 once d430's sensitivity count
+    showed it needed, is captured, hashed and pinned with the others in
+    `census_poverty_thresholds_1982_2022.json` (`288399c4…`, replacing
+    the pin `4493b8d5…`; every other year's content unchanged). Its
+    layout is 1989's and 1991's cell for cell, so the parser lists it
+    among the March CPS years and needs no new exception. Census's Table
+    1 prints all thirteen of its weighted averages equal, and the pairs
+    1989-1990 and 1990-1991 move with Table 1's CPI-U.
+  - **The block (§19).** `sources.census_thresholds` records the new pin,
+    1990 among the captured years and the pin it supersedes
+    (`previous_pin`); the d279 record's note (in `policy.MAX_RULINGS` and
+    `decisions`) records the capture; `blocked_by` drops
+    `census_threshold_1990_needed_by_the_d430_sensitivity_not_captured`.
+  - **Tests.** 1990's pins, provenance and layout (cell for cell against
+    1989 and 1991, from the sheet XML); five refusals of departures in
+    1990's layout; the sheet-XML differential; the Table 1 cross-check
+    over the twenty captured years through 2006 (260 averages, the same
+    37 differ); the invariants across 1989-1991; and the threshold-year
+    check, which accepts 1990 and still refuses 1983-1985, 1987 and 1993.
+  - **Other.** The header and §22 record the lane. The invented dry run
+    is rerun into `EVID/track-m-dry-run-r8-20260926/`, with new checks
+    that records needing 1990, under the scored rows and under the
+    sensitivity, pass the threshold-year check, and that a sensitivity
+    record needing 1993 is refused before anything is computed.
+- `m1-draft-3`, independent review of the sensitivity build and the
+  1990 capture (2026-09-26; `EVID/track-m-5-review-20260926.md`; no
+  ruling, default, row, cell, frozen choice or sensitivity changed, so the
+  version stands). Changes:
+  - **Tests.** d430's structural count's guard now also refuses a window
+    year recomputed from the histories (`classify_own_record`,
+    `own_receipt_view`, `record_years`, `OwnRecordClass.in_window` and the
+    claim-year functions) and pins the count's keys at every level, each
+    other leaf a count: before, a count recomputed from the histories
+    under a neutral key, or a split by first receipt in or after 2004,
+    passed it. The entry point's test now holds one PSID read built under
+    both readings, and a new test reads the written artifact back for
+    `sensitivities`: before, neither a second read nor a dropped
+    sensitivity failed any test. 1990's provenance test holds both CDX
+    digests.
+  - **Text.** §14 no longer says d430 left the choice between a row and a
+    diagnostic open (its text names neither; the build's brief allowed
+    both). §7, `provenance.md` and the capture script's comment record
+    that the CDX index lists two digests for `thresh90.xlsx`'s URL, the
+    committed file's on the six captures from 2023-05-21 (the latest
+    included), and that the other is unchecked. §18 names the dry run the
+    review reran at its head (`EVID/track-m-dry-run-r9-20260926/`); §22
+    records what the review read.
