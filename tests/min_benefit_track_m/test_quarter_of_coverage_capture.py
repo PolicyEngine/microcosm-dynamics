@@ -13,10 +13,11 @@ import hashlib
 import json
 import math
 import shutil
+from fractions import Fraction
 from pathlib import Path
 
 import pytest
-from hypothesis import given, settings
+from hypothesis import example, given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.min_benefit_track_m import coverage
@@ -128,13 +129,22 @@ _growth = st.lists(
 
 @settings(max_examples=60, deadline=None)
 @given(_growth, st.floats(min_value=5_000, max_value=15_000))
+@example(growth=[0.0] * 59 + [0.06], awi_1976=9297.737135264473)
+@example(growth=[0.06] + [0.0] * 59, awi_1976=8000.0)
 def test_the_statutory_amounts_are_a_ratchet_of_rounded_wage_ratios(
     growth, awi_1976
 ):
     """For any wage path: $250 in 1978; each year the larger of the year
     before and $250 x AWI(y - 2) / AWI(1976), rounded to $10; so the
     series never falls, is a multiple of $10 after 1978 and moves with
-    the wage index."""
+    the wage index.
+
+    The expected product is exact, from each index as written (its
+    shortest decimal): in floats a product just below a multiple of $5
+    can land on it and round up, which 413(d)(2) does only for an exact
+    multiple.  The examples pin both sides: a product about 1e-14 below
+    $265 rounds to $260 (the float product is 265.0), and one of exactly
+    $265 rounds up to $270."""
 
     nawi = {1975: awi_1976 / 1.07, 1976: awi_1976}
     for offset, rate in enumerate(growth):
@@ -143,8 +153,10 @@ def test_the_statutory_amounts_are_a_ratchet_of_rounded_wage_ratios(
     last = 1977 + len(growth) + 1
     amounts = coverage.statutory_qc_amounts(nawi, last)
     assert amounts[1978] == 250.0
+    base = Fraction(repr(awi_1976))
     for year in range(1979, last + 1):
-        wage_amount = coverage.round_to_ten(250 * nawi[year - 2] / awi_1976)
+        product = 250 * Fraction(repr(nawi[year - 2])) / base
+        wage_amount = coverage.round_to_ten(product)
         assert amounts[year] == max(amounts[year - 1], wage_amount)
         assert amounts[year] >= amounts[year - 1]
         assert amounts[year] % 10 == 0
