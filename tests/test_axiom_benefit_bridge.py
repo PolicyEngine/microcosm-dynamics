@@ -3,7 +3,8 @@
 Every earnings amount, wage index and cohort member in the unit tests is
 INVENTED for mechanics only.  The integration tests run the actual
 axiom-rules-engine binary on SSA's published 2026 Case A and Case B inputs
-and skip when that engine or its retained evidence is absent.
+and skip when that engine or its retained evidence is absent or is not the
+pinned file (``unpinned_engine_inputs``).
 """
 
 from __future__ import annotations
@@ -12,6 +13,7 @@ import dataclasses
 import hashlib
 import json
 import os
+import re
 import stat
 import sys
 from decimal import Decimal
@@ -131,6 +133,27 @@ class RecordingRunner:
 
 def _sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def unpinned_engine_inputs(binding):
+    """The bound files ``binding.verify()`` rejects as absent or changed.
+
+    These are local inputs (a rebuilt engine receipt, a moved evidence
+    file), so the actual-engine tests skip on them as they skip on absent
+    evidence.  The manifest-binds-engine check is deliberately not here:
+    once every file is the pinned one it can fail only on the repository's
+    own pins, and then the test must fail.
+    """
+    unpinned = []
+    for bound in binding.files:
+        if bound.path.is_symlink() or not bound.path.is_file():
+            unpinned.append(f"{bound.role} is absent: {bound.path}")
+        elif (observed := _sha(bound.path)) != bound.sha256:
+            unpinned.append(
+                f"{bound.role} is not the pinned file: {bound.path} "
+                f"(sha256 {observed}, pinned {bound.sha256})"
+            )
+    return unpinned
 
 
 @pytest.fixture
@@ -787,6 +810,66 @@ def test_subprocess_path_runs_an_executable_fake_engine(tmp_path):
     )
 
 
+def test_unpinned_inputs_are_exactly_the_files_verify_rejects(
+    fake_binding, tmp_path
+):
+    """Differential: the skip list is non-empty iff verify() rejects a file."""
+    assert unpinned_engine_inputs(fake_binding) == []
+    fake_binding.verify()
+    for bound in fake_binding.files:
+        original = bound.path.read_bytes()
+        target = tmp_path / "symlink-target"
+        target.write_bytes(original)
+        for drift in ("changed", "absent", "symlink"):
+            if drift == "changed":
+                bound.path.write_bytes(original + b"INVENTED")
+            elif drift == "absent":
+                bound.path.unlink()
+            else:
+                bound.path.unlink()
+                bound.path.symlink_to(target)
+            unpinned = unpinned_engine_inputs(fake_binding)
+            assert len(unpinned) == 1
+            assert unpinned[0].startswith(bound.role + " is ")
+            with pytest.raises(
+                bridge.BindingMismatch, match=re.escape(bound.role)
+            ):
+                fake_binding.verify()
+            bound.path.unlink(missing_ok=True)
+            bound.path.write_bytes(original)
+        assert unpinned_engine_inputs(fake_binding) == []
+    fake_binding.verify()
+
+
+def test_a_manifest_that_does_not_bind_the_engine_is_not_skipped(
+    fake_binding, tmp_path
+):
+    """With every file pinned, a manifest mismatch still fails verify()."""
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "binary_sha256": "INVENTED-other-engine",
+                "source_commit": fake_binding.engine_source_commit,
+                "official_no_build_verified": True,
+            }
+        )
+    )
+    binding = dataclasses.replace(
+        fake_binding,
+        supporting=(
+            *fake_binding.supporting,
+            bridge.BoundFile(
+                "engine_binding_manifest", manifest, _sha(manifest)
+            ),
+        ),
+        engine_manifest_role="engine_binding_manifest",
+    )
+    assert unpinned_engine_inputs(binding) == []
+    with pytest.raises(bridge.BindingMismatch, match="does not bind engine"):
+        binding.verify()
+
+
 def test_reviewed_binding_pins_cannot_be_overridden(tmp_path, monkeypatch):
     monkeypatch.setenv(bridge.ENGINE_ROOT_ENV, str(tmp_path / "engine"))
     monkeypatch.setenv(bridge.EVIDENCE_DIR_ENV, str(tmp_path / "evidence"))
@@ -1052,14 +1135,19 @@ def _published_case(name, digest):
     ).expanduser()
     binding = bridge.reviewed_case_a_binding()
     transport = evidence / "ssa-aime-pia-first-comparison-20260922" / name
-    missing = [str(p) for p in binding.missing_files()]
+    unpinned = unpinned_engine_inputs(binding)
     if not transport.is_file():
-        missing.append(str(transport))
-    if missing:
-        pytest.skip(
-            "actual Axiom engine or evidence absent: " + ", ".join(missing)
+        unpinned.append(f"transport is absent: {transport}")
+    elif (observed := _sha(transport)) != digest:
+        unpinned.append(
+            f"transport is not the pinned file: {transport} "
+            f"(sha256 {observed}, pinned {digest})"
         )
-    assert _sha(transport) == digest
+    if unpinned:
+        pytest.skip(
+            "actual Axiom engine or evidence is absent or not pinned: "
+            + "; ".join(unpinned)
+        )
     source = json.loads(transport.read_text())
     rows = source["annual_observations"]
     history = bridge.CallerSuppliedHistory.from_mapping(
