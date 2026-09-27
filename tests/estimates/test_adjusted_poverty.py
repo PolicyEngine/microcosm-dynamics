@@ -795,9 +795,11 @@ def test_spec_validation_and_pending_decisions():
     assert decisions["farm_asset_share"].alternatives == (0.0,)
     assert decisions["annuity_lives"].alternatives == ("member_rule",)
     # Max ruled the SSI rule in cos decision d189 (2026-09-24): the
-    # decision records the ruling and awaits only the specification freeze
+    # decision records the ruling, and the ratification of u1-ratified-1
+    # (cos decision d411) fixes it with the rest
     assert not decisions["ssi_rule"].awaiting.startswith("Max")
-    assert "freeze" in decisions["ssi_rule"].awaiting
+    assert "ratification of u1-ratified-1" in decisions["ssi_rule"].awaiting
+    assert "d411" in decisions["ssi_rule"].awaiting
     assert ap.D189_RULING in decisions["ssi_rule"].default_basis
     assert "offset rule for existing recipients" in ap.D189_RULING
     assert "d189" in ap.SSI_RULES["offset_existing_recipients"]
