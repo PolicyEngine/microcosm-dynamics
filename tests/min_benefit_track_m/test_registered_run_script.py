@@ -258,11 +258,12 @@ def test_the_computation_refuses_psid_records_under_the_draft(monkeypatch):
 
 
 def test_the_computation_passes_d430s_sensitivity(monkeypatch):
-    """``run_pipeline`` builds the same PSID read twice, under the scored
-    reading and under cos d430's sensitivity reading, and passes the
-    second as ``own_receipt_sensitivity`` (the pipeline refuses a
-    registered run without it).  The PSID read is INVENTED frames marked
-    as read from files; the pipeline call is captured, not run."""
+    """``run_pipeline`` reads the PSID once and builds that one read
+    twice, under the scored reading and under cos d430's sensitivity
+    reading, and passes the second as ``own_receipt_sensitivity`` (the
+    pipeline refuses a registered run without it).  The PSID read is
+    INVENTED frames marked as read from files; the pipeline call is
+    captured, not run."""
 
     from populace_dynamics.min_benefit_track_m import (
         cohort,
@@ -284,7 +285,24 @@ def test_the_computation_passes_d430s_sensitivity(monkeypatch):
         prior_year_labor=frames.prior_year_labor,
         provenance={"psid_files_sha256": {"INVENTED.txt": "0" * 64}},
     )
-    monkeypatch.setattr(cohort, "load_cohort_inputs", lambda **_: marked)
+    reads = []
+
+    def load(**kwargs):
+        reads.append(kwargs)
+        return marked
+
+    monkeypatch.setattr(cohort, "load_cohort_inputs", load)
+    built = []
+    build_cohort = cohort.build_cohort
+
+    def build(inputs, **kwargs):
+        reading = kwargs.get(
+            "own_receipt_reading", pol.OWN_RECEIPT_UNKNOWN_OR_OTHER_IS_OWN
+        )
+        built.append((inputs, reading))
+        return build_cohort(inputs, **kwargs)
+
+    monkeypatch.setattr(cohort, "build_cohort", build)
     parameters, cola = invented.invented_parameters()
     monkeypatch.setattr(
         "populace_dynamics.estimates.parameters.load_cola_history",
@@ -299,6 +317,12 @@ def test_the_computation_passes_d430s_sensitivity(monkeypatch):
     monkeypatch.setattr(pipeline, "run_track_m", capture)
     out = script.run_pipeline(parameters, registration_pointer=POINTER)
     scored, other = seen["records"], seen["own_receipt_sensitivity"]
+    # one PSID read, built under both readings (independent review of
+    # 2026-09-26, D2: a second read went undetected)
+    assert len(reads) == 1
+    assert len(built) == 2
+    assert all(inputs is marked for inputs, _ in built)
+    assert {reading for _, reading in built} == set(pol.OWN_RECEIPT_READINGS)
     assert seen["data_provenance"] == "registered_real"
     assert (
         scored.own_receipt_reading == pol.OWN_RECEIPT_UNKNOWN_OR_OTHER_IS_OWN
@@ -320,6 +344,55 @@ def test_the_computation_passes_d430s_sensitivity(monkeypatch):
 
 class _Cola(dict):
     provenance = {"kind": "INVENTED"}
+
+
+def test_main_publishes_the_sensitivity_in_the_artifact(tmp_path, monkeypatch):
+    """The artifact carries ``run_pipeline``'s result whole: d430's
+    sensitivity is published under ``sensitivities`` beside the rows
+    (independent review of 2026-09-26, D2: dropping it went undetected).
+    The preflight, the parameters and the computation are stand-ins; the
+    result is INVENTED."""
+
+    from populace_dynamics.min_benefit_track_m import policy as pol
+
+    script = _script()
+    monkeypatch.setattr(script, "preflight", lambda **_: {"head": COMMIT})
+    monkeypatch.setattr(script, "missing_components", lambda: [])
+    monkeypatch.setattr(
+        script,
+        "committed_parameters",
+        lambda block: (_Parameters(), {"pinned": "INVENTED"}),
+    )
+    monkeypatch.setattr(script, "_environment", lambda **_: {})
+    result = {
+        "rows": {"MS0": {"INVENTED": True}},
+        "sensitivities": {
+            pol.OWN_RECEIPT_SENSITIVITY_ID: {
+                "scored": False,
+                "INVENTED": True,
+            }
+        },
+    }
+    monkeypatch.setattr(
+        script,
+        "run_pipeline",
+        lambda parameters, **_: json.loads(json.dumps(result)),
+    )
+    output = tmp_path / "run.json"
+    script.main(
+        [
+            "--registration-pointer",
+            POINTER,
+            "--registered-commit",
+            COMMIT,
+            "--output",
+            str(output),
+        ]
+    )
+    artifact = json.loads(output.read_text())
+    assert artifact["sensitivities"] == result["sensitivities"]
+    assert artifact["rows"] == result["rows"]
+    assert output.with_suffix(".env.json").exists()
 
 
 def test_the_parameters_must_be_the_files_the_block_records():

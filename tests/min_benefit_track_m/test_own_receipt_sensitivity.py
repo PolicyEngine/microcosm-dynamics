@@ -1193,12 +1193,47 @@ def test_the_first_receipt_count_is_a_brute_force_count(cohorts):
     assert again["first_own_receipt_before_62_unknown_or_other"] == 0
 
 
+#: Every key d430's structural count may report, at each level.  The count
+#: runs on the staged PSID before the registration, so its output is pinned
+#: whole: a new key (a split by window, by year or by anything else) fails
+#: :func:`test_the_count_computes_no_in_window_or_reserved_count` until it
+#: is added here deliberately (independent review of 2026-09-26, D1).
+_COUNT_KEYS = frozenset(
+    {
+        "scope",
+        "own_receipt_reading",
+        "records_with_own_receipt",
+        "first_own_receipt_before_62",
+        "first_own_receipt_before_62_names_a_workers_benefit",
+        "first_own_receipt_before_62_unknown_or_other",
+        "first_own_receipt_before_62_unknown_or_other_by_kind",
+        "first_own_receipt_before_62_mentions_only_other",
+        "first_own_receipt_before_62_unknown_or_other_by_source",
+        "records_with_any_unknown_or_other_own_receipt_before_62",
+        "review_20260925_definition",
+    }
+)
+_COUNT_KINDS = frozenset(
+    {
+        "mentions_only_other",
+        "mentions_other_and_an_auxiliary_type",
+        "mentions_an_auxiliary_type_with_a_type_unknown",
+        "names_no_type_with_a_type_unknown",
+        "names_no_type_every_type_item_known",
+    }
+)
+_COUNT_SOURCES = frozenset(
+    {"individual", "family_1993", "year_before_last", "total"}
+)
+
+
 def test_the_count_computes_no_in_window_or_reserved_count(
     cohorts, monkeypatch
 ):
     """Guard: the d430 count reads no window year, threshold year, onset,
-    resolution or link, and calls none of the functions that count by
-    window or compute section 11's reserved diagnostics."""
+    resolution or link, calls none of the functions that count by window,
+    classify a record or compute section 11's reserved diagnostics, and
+    reports exactly its registered keys, each a count."""
 
     scored, _ = cohorts
     full = cohort.first_own_receipt_type_before_62(scored)
@@ -1212,8 +1247,16 @@ def test_the_count_computes_no_in_window_or_reserved_count(
         "_boundary_readings",
         "_threshold_years_by_window",
         "structural_counts_before_registration",
+        # a window year recomputed from the histories (review D1)
+        "classify_own_record",
+        "own_receipt_view",
+        "record_years",
+        "build_cohort",
+        "survivor_claim_year",
+        "spouse_claim_year",
     ):
         monkeypatch.setattr(cohort, name, refuse)
+    monkeypatch.setattr(cohort.OwnRecordClass, "in_window", refuse)
     keep = ["record_id", "person_id", "birth_year", "basis", "first_own_year"]
     stripped = dataclasses.replace(
         scored,
@@ -1232,6 +1275,37 @@ def test_the_count_computes_no_in_window_or_reserved_count(
     for key in keys(full):
         for word in ("window", "threshold", "exposed", "share", "link"):
             assert word not in key, key
+    # the output is pinned whole: no key beyond the registered count's
+    assert set(full) == _COUNT_KEYS
+    assert set(
+        full["first_own_receipt_before_62_unknown_or_other_by_kind"]
+    ) <= (_COUNT_KINDS)
+    assert set(
+        full["first_own_receipt_before_62_unknown_or_other_by_source"]
+    ) <= (_COUNT_SOURCES)
+    assert set(full["first_own_receipt_before_62_mentions_only_other"]) == {
+        "records",
+        "every_type_item_known",
+        "some_type_item_unknown",
+    }
+    assert set(full["review_20260925_definition"]) == {
+        "first_own_receipt_with_a_type_item_unknown",
+        "of_which_disability_origin_without_a_disability_mention",
+    }
+
+    def leaves(value, key=None):
+        if isinstance(value, dict):
+            for inner_key, inner in value.items():
+                yield from leaves(inner, inner_key)
+        else:
+            yield key, value
+
+    for key, value in leaves(full):
+        if key in ("scope", "own_receipt_reading"):
+            assert isinstance(value, str), key
+        else:
+            # counts only: every other leaf is a whole number of records
+            assert type(value) is int and value >= 0, (key, value)
 
 
 def test_the_sensitivitys_threshold_years_are_years_only(cohorts):
