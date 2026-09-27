@@ -129,7 +129,8 @@ def test_the_checks_record_every_guard(document):
     )
     # Every component exists; the specification gate is what refuses.
     assert checks["entry_point_missing_components"] == []
-    assert "authorizes no real-data run" in (
+    # The committed block is ratified (m1-ratified-1) but still blocked.
+    assert "still blocked by" in (
         checks["entry_point_preflight_refuses_the_committed_draft"]["message"]
     )
     assert "supplied block" in (

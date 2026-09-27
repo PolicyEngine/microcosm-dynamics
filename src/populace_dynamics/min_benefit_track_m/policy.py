@@ -42,8 +42,8 @@ Two kinds of choice are kept apart, as exercise 3's
 :data:`SENSITIVITIES` holds d430's sensitivity, which changes the cohort's
 reading of own receipt rather than a policy field, so it is a section 11
 diagnostic of MS0 rather than a row (M1 specification sections 11 and 14).
-The specification itself is not ratified: ``m1-draft-3`` awaits the
-independent review of the sensitivity's build, then the merge.
+The specification is ratified as ``m1-ratified-1`` (d219 item 9, d430),
+after the independent review of the sensitivity's build.
 """
 
 from __future__ import annotations

@@ -46,9 +46,9 @@ label, the registered floor seeds, and an M1 specification block the
 registered-run gate authorizes
 (``specification.check_specification_for_registered_run``: ratified,
 nothing awaiting Max, every ruling recorded, nothing blocking it, block
-equal to code).  The committed ``m1-draft-3`` authorizes none (it is a
-draft, and its ``blocked_by`` names the open blockers), so nothing computes
-the share on real data.
+equal to code).  The committed ``m1-ratified-1`` authorizes none (its
+``blocked_by`` names the open blockers), so nothing computes the share on
+real data.
 
 Every result carries the Track M labels and the covered-earnings
 disclosure Max's d280 ruling requires.

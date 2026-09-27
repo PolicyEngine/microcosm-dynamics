@@ -22,13 +22,13 @@ run the block does not authorize.  A run is authorized only when:
   the policy, the pre-registered sensitivities, the statistic and the
   uncertainty the tabulation computes).
 
-``m1-draft-3`` records Max's rulings and fails the first test: it awaits
-the independent review of d430's sensitivity build, then ratification by
-merge.  Its ``blocked_by`` also still lists the open blockers (that review
-and ratification, the registration package and the registration; the
-Census years before 2003 the scored rows need and the statute capture
-were cleared on 2026-09-25, and the 1990 Census threshold d430's
-sensitivity needs on 2026-09-26).
+``m1-ratified-1`` is ratified (d219 item 9, d430) and records Max's
+rulings, and it fails the third test: its ``blocked_by`` still lists the
+open blockers (the registration package, which needs the comparator
+seal's hash, and the registration; the Census years before 2003 the scored
+rows need and the statute capture were cleared on 2026-09-25, the 1990
+Census threshold d430's sensitivity needs on 2026-09-26, and the
+independent review of d430's sensitivity build on 2026-09-26).
 """
 
 from __future__ import annotations

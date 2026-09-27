@@ -23,8 +23,8 @@ registration comment exists, at exactly the commit that comment registers.
   it must record his ruling on every ruled field (cos d219, d279, d280,
   d430) as the code records it, with the configuration following each;
   and it must equal the code, the statistic, the uncertainty and the
-  pre-registered sensitivities included.  The committed draft
-  (``m1-draft-3``) is refused;
+  pre-registered sensitivities included.  The committed
+  ``m1-ratified-1`` is refused while its ``blocked_by`` names a blocker;
 * the output artifact and its sidecar must not exist yet (one shot, no
   overwrite; both are created exclusively, so a file that appears during
   the run is not overwritten either);
@@ -65,7 +65,8 @@ The artifact publishes regardless of outcome and carries the Track M
 labels, the covered-earnings disclosure (d280), the PSID files' SHA-256
 and M4's structural counts.  It never reads the sealed comparator; the
 seal is opened only after this artifact is committed.  Nothing here has
-been run on real data: the committed draft specification refuses it.
+been run on real data: the committed specification refuses it while its
+``blocked_by`` names a blocker.
 
 Usage::
 

@@ -1,13 +1,13 @@
 # Minimum benefits comparison: specification draft for DynaSim scorecard exercise 4
 
-- **Status:** draft with the referee's required changes applied
-  (`EVID/minimum-benefits-referee-20260924.md`). Nothing here is ratified
-  until the merge described next. Max ruled on exercise 4 on 2026-09-24:
+- **Status:** ratified and frozen. This version applies the referee's
+  required changes (`EVID/minimum-benefits-referee-20260924.md`) and
+  records every ruling Max made on exercise 4. Max ruled on exercise 4 on 2026-09-24:
   he accepted all nine defaults of the consolidated card (cos decision
   d219, status decided, ruled 2026-09-24 21:44; §20 records each item).
-  Item 9 makes ratification a merge: merging the PR that carries the
-  ratified text of this specification ratifies it, and the issue #42
-  registration and the one-shot run follow. On 2026-09-25 he also ruled
+  Item 9 makes ratification a merge: merging the PR that carries this
+  version ratifies it, and the issue #42 registration and the one-shot
+  run follow. On 2026-09-25 he also ruled
   d279 (download the Census threshold workbooks for 2013-2022, plus any
   earlier year the build proves it needs) and d280 (PSID labor income
   treated as covered earnings, disclosed in the specification and every
@@ -16,19 +16,23 @@
   keep §4c item 1's reading of own receipt for the scored row, bounded by
   a pre-registered, unscored sensitivity built and reviewed before the
   registration (§§4c, 11, 14, 19); keep card item (j) and statute finding
-  F1 knowingly; record F2, F3a, F3b and O1 as named deltas (§15). This
-  version builds that sensitivity. The independent checks of `m1-draft-2`
-  and of the M3-M5 readings are done (§18); an independent check of this
-  version's sensitivity build comes before the ratified text (§18). The
-  1990 Census threshold the sensitivity needs was captured on 2026-09-26
-  (§§7, 10, 18). This draft authorizes no real-data run: the one-shot
-  entry point (`scripts/run_track_m_registered.py`) refuses a block whose
-  status or version is not ratified (§19).
+  F1 knowingly; record F2, F3a, F3b and O1 as named deltas (§15).
+  `m1-draft-3` built that sensitivity and captured the 1990 Census
+  threshold it needs (§§7, 10, 18). The independent checks of
+  `m1-draft-2` and of the M3-M5 readings came before d430, and the
+  independent review of the sensitivity build and the 1990 capture
+  (`EVID/track-m-5-review-20260926.md`, approved after fixes) came before
+  this text (§18). Ratification alone authorizes no real-data run: the
+  one-shot entry point (`scripts/run_track_m_registered.py`) refuses a
+  block that lists any blocker, and this block still lists the comparator
+  seal's hash for the registration package and the issue #42 registration
+  (§§18, 19).
 - **Specification:** `urban2006_minimum_benefits_exercise4`, version
-  `m1-draft-3`, drafted 2026-09-24, revised 2026-09-25 to apply the
-  independent referee's required changes R1-R10 (§21), and revised
-  2026-09-26 to build the sensitivity Max's d430 requires and to capture
-  the 1990 Census threshold it needs. §23 is the changelog.
+  `m1-ratified-1`: the text of `m1-draft-3` (drafted 2026-09-24, revised
+  2026-09-25 to apply the independent referee's required changes R1-R10,
+  §21, and revised 2026-09-26 to build the sensitivity Max's d430
+  requires and to capture the 1990 Census threshold it needs), ratified
+  by merge under d219 item 9 and d430 (§20). §23 is the changelog.
 - **Plan item:** M1 of the blind plan
   `EVID/critical-path-minimum-benefit-20260924.md`, revision 2
   (SHA-256 `976ec7f6…`), where `EVID` =
@@ -1619,7 +1623,8 @@ guard:
   of the build before d430 (`672e6770`, `EVID/track-m-5-build-20260926/
   dry-run-baseline-672e6770/`), of r6, of r7 and of r8.
 - `scripts/run_track_m_registered.py`: the one-shot entry point. It
-  refuses this draft at its preflight (§19). With an authorizing block it
+  refuses the committed block at its preflight while its `blocked_by`
+  names a blocker (§19). With an authorizing block it
   refuses, before reading any PSID file, while a component is missing
   (`missing_components`: none today) or while a parameter file differs
   from the SHA-256 in `sources` (`check_parameter_pins`: the Census
@@ -1677,24 +1682,28 @@ Blocked, with the plan's effort estimates (lane-days):
    the structural run (§10). The comparator seal's hash is the
    orchestrator's to add (builder lanes do not open it). Then **M11
    registration and one-shot** (3).
-4. **Ratification:** an independent check that `m1-draft-2` applies the
-   referee's required changes, and of the M3-M5 build's readings (§4c;
-   §5's two findings, one of which would change this draft if adopted),
-   then the ratified text (`m1-ratified-1`, status and version only)
-   merged under d219 item 9. The first check is
-   `EVID/track-m-2-review-20260925.md`; the second,
-   `EVID/track-m-3-review-20260925.md`, confirmed §4c items 1-5, 7 and 8
-   and both §5 findings (codebook text), corrected item 6 in the code
-   and item 2's text, and sized item 1 for the ratification (§4c).
-   Both checks and a skeptic pass done, Max ruled d430 on 2026-09-26
-   (§20): ratify by merge with the recorded defaults, keeping item 1's
-   reading bounded by a sensitivity built and reviewed before the
-   registration. `m1-draft-3` builds it (§§4c, 11, 14, 19); an
-   independent check of that build comes before the ratified text
-   (`blocked_by`'s first entry), and the sensitivity must be reviewed
-   before the registration in any case (d430). Ratification alone
-   authorizes no run: the ratified block still lists the other blockers,
-   and the gate refuses a block that lists any (§19).
+4. **Ratification: done by this version (`m1-ratified-1`).** An
+   independent check that `m1-draft-2` applies the referee's required
+   changes, and of the M3-M5 build's readings (§4c; §5's two findings),
+   came first. The first check is `EVID/track-m-2-review-20260925.md`;
+   the second, `EVID/track-m-3-review-20260925.md`, confirmed §4c items
+   1-5, 7 and 8 and both §5 findings (codebook text), corrected item 6 in
+   the code and item 2's text, and sized item 1 for the ratification
+   (§4c). Both checks and a skeptic pass done, Max ruled d430 on
+   2026-09-26 (§20): ratify by merge with the recorded defaults, keeping
+   item 1's reading bounded by a sensitivity built and reviewed before the
+   registration. `m1-draft-3` built it (§§4c, 11, 14, 19), and the
+   independent review of that build and of the 1990 capture,
+   `EVID/track-m-5-review-20260926.md`, approved it after fixes (D1-D4,
+   applied in `4669f6f8` and `100827f9`). That review is the review of
+   the sensitivity d430 requires before the registration. Merging the PR
+   that carries `m1-ratified-1` ratifies the specification under d219
+   item 9 and d430. The ratified text is `m1-draft-3` at `100827f9` with
+   its status and version changed, the review's entry dropped from
+   `blocked_by`, and the prose that described the draft updated (§23).
+   Ratification alone authorizes no run: the ratified block still lists
+   the other blockers (item 3), and the gate refuses a block that lists
+   any (§19).
 
    M2's statute capture (2026-09-25, `EVID/track-m-statute-20260925/
    READING.md`) adds these findings for the ratification. None
@@ -1798,7 +1807,11 @@ refuses a registered run without the sensitivity's records (§11). The tabulatio
 same gate to PSID-built rows. As in Track U, each blocker is removed from
 `blocked_by` as it is resolved, and `issue_42_registration_absent` in the
 commit the registration comment then registers; the registered commit's
-block lists none. The entry script also refuses parameter files whose
+block lists none. At `m1-ratified-1` the status and version say ratified
+and `blocked_by` still names the comparator seal's hash for the
+registration package and the issue #42 registration, so the gate refuses
+this block ("still blocked by"). The entry script also refuses parameter
+files whose
 SHA-256 differs from `sources` (§18); `sources.quarter_of_coverage_amounts`
 records the committed capture and the policyengine-us file it came from,
 and a test holds that record, and the Census capture's (file, SHA-256 and
@@ -1808,8 +1821,8 @@ statute capture, which is evidence the code does not read.
 ```json
 {
   "specification": "urban2006_minimum_benefits_exercise4",
-  "version": "m1-draft-3",
-  "status": "draft_referee_changes_applied",
+  "version": "m1-ratified-1",
+  "status": "ratified_frozen",
   "claim_class": {
     "ruled": "track_m_static_psid_snapshot_income_year_2022",
     "decision_record": "d219",
@@ -2316,7 +2329,6 @@ statute capture, which is evidence the code does not read.
     }
   },
   "blocked_by": [
-    "independent_review_of_the_d430_sensitivity_build_m1_draft_3_then_ratification_by_merge",
     "registration_package_m10_needs_the_comparator_seal_hash",
     "issue_42_registration_absent"
   ]
@@ -2373,8 +2385,9 @@ card proposed.
    d219 item 9). **Ruling:** ratify by merge, then the issue #42
    registration and the one-shot run. A process step, not a content
    decision: merging the PR that carries `m1-ratified-1` under this
-   authorization ratifies it. This version is not that text: an
-   independent check of the referee's changes comes first (§18).
+   authorization ratifies it. This version is that text: the independent
+   checks of the referee's changes and of the M3-M5 readings, and the
+   independent review of d430's sensitivity build, came first (§18).
 10. **Covered earnings** (`covered_earnings_rule`; d280, 2026-09-25).
     Filed as "treat PSID labor income as covered earnings (PSID does not
     observe coverage), as exercises 1 and 3 and Track C do". **Ruling:**
@@ -2472,6 +2485,27 @@ ruling of Max's names them):
 - couples' cap: none;
 - unlinked auxiliaries: not receiving, counted separately;
 - minimum rounding: none.
+
+**Ratification record.** Merging the PR that carries `m1-ratified-1`
+ratifies this specification, under d219 item 9 ("ratify by merge then
+#42 registration and one-shot") and d430 (`ruled_at` 2026-09-26T07:42;
+"Ratify + bound (a): keep (a) for the scored row and require the
+pre-registered unscored sensitivity (built and reviewed before
+registration); keep (j) and F1 knowingly; record F2, F3a, F3b and O1 as
+named deltas (Max in chat, 2026-09-26)"). The ratified text is
+`m1-draft-3` at `100827f9`, after the independent review of its
+sensitivity build and the 1990 capture
+(`EVID/track-m-5-review-20260926.md`, approved after fixes), with its
+status and version changed and that review's `blocked_by` entry dropped.
+Rulings 1-14, the frozen choices above, the sensitivity
+(`own_receipt_reading_d430`) and the named deltas (§15) stand as
+`m1-draft-3` recorded them. The issue #42 registration comment follows
+only once the comparator seal's hash is in the registration package
+(§18 item 3), and it registers a commit whose `blocked_by` is empty
+(§19). It names that commit, the headline cell (option 2, All, in row
+MS0) and this file's SHA-256 at that commit. The registered run
+(`scripts/run_track_m_registered.py`) runs once at that commit and is
+published regardless of outcome (§13).
 
 ## 21. Referee pass
 
@@ -3143,3 +3177,30 @@ archive, or any exercise-1 or exercise-3 result.
     included), and that the other is unchecked. §18 names the dry run the
     review reran at its head (`EVID/track-m-dry-run-r9-20260926/`); §22
     records what the review read.
+- `m1-ratified-1` (2026-09-26; d219 item 9 and cos d430, `ruled_at`
+  2026-09-26T07:42): ratifies `m1-draft-3` at `100827f9` by merge, after
+  the independent review of its sensitivity build and the 1990 capture
+  (`EVID/track-m-5-review-20260926.md`, approved after fixes D1-D4,
+  applied in `4669f6f8` and `100827f9`). Changes by section:
+  - **Header.** The status says ratified and frozen and names the review
+    and the two blockers left; the specification line names
+    `m1-ratified-1`.
+  - **§18.** Item 4 records the ratification; the entry point's line says
+    it refuses the committed block while `blocked_by` names a blocker.
+  - **§19.** `version` is `m1-ratified-1` and `status`
+    `ratified_frozen`; `blocked_by` drops
+    `independent_review_of_the_d430_sensitivity_build_m1_draft_3_then_ratification_by_merge`
+    and keeps the comparator seal's hash for the registration package and
+    the issue #42 registration, so the gate still refuses; the prose says
+    so.
+  - **§20.** Ruling 9 says this version is the ratified text, and the
+    ratification record is added.
+  - **Code and tests.** Docstrings no longer call the committed block a
+    draft; the tests pin `m1-ratified-1` and `ratified_frozen` and expect
+    the gate's "still blocked by" refusal of the committed block in place
+    of "authorizes no real-data run".
+
+  No ruling of d219, d279, d280 or d430 changed, and no rule, default,
+  row, cell, option, frozen choice, sensitivity, named delta, parameter,
+  pin, worked case or count; `decisions`, `sensitivities` and
+  `policy.MAX_RULINGS` are unchanged.

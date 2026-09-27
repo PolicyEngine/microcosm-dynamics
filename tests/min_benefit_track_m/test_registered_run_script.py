@@ -96,8 +96,9 @@ def test_the_registered_state_passes_preflight(tmp_path):
         ({"registered_commit": "abc123"}, "full 40-hex"),
         ({"git": _git(head="b" * 40)}, "is not the registered commit"),
         ({"git": _git(porcelain=" M src/x.py")}, "clean"),
-        # The committed draft (m1-draft-3), read from the document.
-        ({"specification": None}, "authorizes no real-data run"),
+        # The committed block (m1-ratified-1), read from the document: it
+        # is ratified, but it still names blockers.
+        ({"specification": None}, "still blocked by"),
         (
             {"specification": {**_ratified(), "version": "m1-draft-3"}},
             "authorizes no real-data run",
