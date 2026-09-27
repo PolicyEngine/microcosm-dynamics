@@ -2,9 +2,10 @@
 
 Oracle tier: reads the policyengine-us checkout that
 ``POPULACE_DYNAMICS_PE_US_DIR`` (default ``~/PolicyEngine/policyengine-us``)
-names, and skips when the checkout is absent or its parameter files are
+names, and skips when the checkout is absent, its parameter files are
 not the ones the repository pins
-(``estimates.parameters.SSA_PARAMETER_SHA256``).
+(``estimates.parameters.SSA_PARAMETER_SHA256``), or the loader reports a
+revision other than the one the committed capture records.
 """
 
 from __future__ import annotations
@@ -30,7 +31,16 @@ def _capture_script():
     return module
 
 
-def _pinned_checkout() -> Path:
+def _pinned_checkout(*, exact_revision: bool) -> Path:
+    """The checkout, or a skip when it is not the one the capture pins.
+
+    The capture records the loader's revision string as well as the file
+    digests, so a checkout at another commit (or one whose revision git
+    cannot report) is a different input even when the files match.
+    ``exact_revision`` demands the recorded string itself, as a
+    byte-for-byte recapture does; otherwise the recorded abbreviation
+    must prefix the loader's, as the oracle check asserts.
+    """
     root = ss_params._resolve_pe_us(None)
     for relative, expected in parameters.SSA_PARAMETER_SHA256.items():
         path = root / relative
@@ -38,11 +48,24 @@ def _pinned_checkout() -> Path:
             pytest.skip(f"policyengine-us parameter file absent: {path}")
         if parameters._sha256(path.read_bytes()) != expected:
             pytest.skip(f"policyengine-us file {path} is not the pinned one")
+    captured = json.loads(statutory.CAPTURE_PATH.read_text())["source"][
+        "policyengine_us_revision"
+    ]
+    revision = ss_params.load_ssa_parameters(root).pe_us_revision
+    if not (
+        revision == captured
+        if exact_revision
+        else revision.startswith(captured)
+    ):
+        pytest.skip(
+            f"policyengine-us checkout {root} reports revision "
+            f"{revision!r}, not the captured {captured!r}"
+        )
     return root
 
 
 def test_capture_script_reproduces_the_committed_capture(tmp_path):
-    root = _pinned_checkout()
+    root = _pinned_checkout(exact_revision=True)
     module = _capture_script()
     output = tmp_path / "capture.json"
     assert (
@@ -58,7 +81,7 @@ def test_oracle_parameters_pass_every_statutory_check():
     )
     from populace_dynamics.estimates.parameters import load_cola_history
 
-    root = _pinned_checkout()
+    root = _pinned_checkout(exact_revision=False)
     runtime = tr2008_ssa_parameters(ss_params.load_ssa_parameters(root))
     checks = statutory.statutory_value_checks(
         runtime,
