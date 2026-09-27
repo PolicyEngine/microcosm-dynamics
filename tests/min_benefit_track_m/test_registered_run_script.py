@@ -2,8 +2,13 @@
 
 No PSID file is read and no statistic is computed: only the preflight,
 the parameter pins and the pipeline guard of
-``scripts/run_track_m_registered.py`` run, with a fake ``git`` and a
-ratified, unblocked copy of the committed block built in memory.
+``scripts/run_track_m_registered.py`` run, with a fake ``git``.  The
+committed block is ratified and, since the registered-commit edit of
+2026-09-27, unblocked, so the preflight passes it at the registered
+commit on a clean tree; the refusals of a blocked block are shown on
+copies built in memory.  ``test_registered_commit.py`` runs the checks
+before the PSID read on the committed block (it needs the oracle's
+parameters).
 """
 
 from __future__ import annotations
@@ -13,6 +18,8 @@ import json
 from pathlib import Path
 
 import pytest
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 from populace_dynamics.min_benefit_track_m import rules
 from populace_dynamics.min_benefit_track_m import specification as spec
@@ -23,6 +30,16 @@ POINTER = (
     "#issuecomment-1"
 )
 COMMIT = "a" * 40
+#: A path the preflight must never find (and nothing here writes).  It
+#: names no evidence directory, so the tier classifier (tests/conftest.py)
+#: keeps this module in the unit tier: it reads no committed artifact.
+NEVER_WRITTEN = Path(__file__).with_name("never-written-by-the-preflight.out")
+#: The blockers ``m1-ratified-1``'s block listed when it was ratified; the
+#: registered-commit edit (2026-09-27) dropped both.
+BLOCKERS_AT_RATIFICATION = (
+    "registration_package_m10_needs_the_comparator_seal_hash",
+    "issue_42_registration_absent",
+)
 
 
 def _script():
@@ -47,7 +64,8 @@ def _git(head: str = COMMIT, porcelain: str = ""):
 def _ratified() -> dict:
     """The committed block ratified and unblocked, as the registered
     commit's block must be: status and version ratified, ``blocked_by``
-    empty."""
+    empty.  Since the registered-commit edit it equals the committed
+    block (tested below)."""
 
     ratified = json.loads(json.dumps(spec.m1_parameter_block()))
     ratified["status"] = "ratified_frozen"
@@ -56,19 +74,39 @@ def _ratified() -> dict:
     return ratified
 
 
+def _blocked(blockers=BLOCKERS_AT_RATIFICATION) -> dict:
+    """The committed block listing ``blockers``: by default the block as
+    ratified, before the registered-commit edit."""
+
+    return {**_ratified(), "blocked_by": list(blockers)}
+
+
 def _without(block: dict, key: str) -> dict:
     return {name: value for name, value in block.items() if name != key}
 
 
-def test_the_registered_state_passes_preflight(tmp_path):
+def test_the_committed_block_is_the_ratified_unblocked_block():
+    assert spec.m1_parameter_block() == _ratified()
+    assert spec.m1_parameter_block()["blocked_by"] == []
+
+
+@pytest.mark.parametrize(
+    "specification", [None, _ratified()], ids=["committed", "copy"]
+)
+def test_the_registered_state_passes_preflight(tmp_path, specification):
+    """The committed block (read from the document when ``specification``
+    is None, as the entry script reads it) at the registered commit on a
+    clean tree, with an issue #42 comment pointer and no output yet."""
+
     state = _script().preflight(
         registration_pointer=POINTER,
         registered_commit=COMMIT,
         output=tmp_path / "run.json",
         git=_git(),
-        specification=_ratified(),
+        specification=specification,
     )
     assert state == {"head": COMMIT}
+    assert not (tmp_path / "run.json").exists()
 
 
 @pytest.mark.parametrize(
@@ -96,9 +134,9 @@ def test_the_registered_state_passes_preflight(tmp_path):
         ({"registered_commit": "abc123"}, "full 40-hex"),
         ({"git": _git(head="b" * 40)}, "is not the registered commit"),
         ({"git": _git(porcelain=" M src/x.py")}, "clean"),
-        # The committed block (m1-ratified-1), read from the document: it
-        # is ratified, but it still names blockers.
-        ({"specification": None}, "still blocked by"),
+        # The block as ratified, before the registered-commit edit: it
+        # still named the registration package and the registration.
+        ({"specification": _blocked()}, "still blocked by"),
         (
             {"specification": {**_ratified(), "version": "m1-draft-3"}},
             "authorizes no real-data run",
@@ -148,7 +186,7 @@ def test_the_registered_state_passes_preflight(tmp_path):
         "short-sha",
         "wrong-head",
         "dirty-tree",
-        "committed-draft",
+        "blocked-as-ratified",
         "draft-version",
         "decision-pending",
         "still-blocked",
@@ -157,29 +195,108 @@ def test_the_registered_state_passes_preflight(tmp_path):
     ],
 )
 def test_non_registered_states_are_refused(tmp_path, kwargs, match):
+    """Each departure from the registered state is refused, against the
+    committed block (``specification=None``: read from the document)
+    unless the case supplies another."""
+
     arguments = {
         "registration_pointer": POINTER,
         "registered_commit": COMMIT,
         "output": tmp_path / "run.json",
         "git": _git(),
-        "specification": _ratified(),
+        "specification": None,
         **kwargs,
     }
     with pytest.raises(ValueError, match=match):
         _script().preflight(**arguments)
 
 
-def test_an_existing_artifact_is_refused(tmp_path):
-    output = tmp_path / "run.json"
-    output.write_text("{}\n", encoding="utf-8")
+@pytest.mark.parametrize("existing", ["run.json", "run.env.json"])
+def test_an_existing_artifact_is_refused(tmp_path, existing):
+    """The artifact or its sidecar: either refuses a second shot, under
+    the committed block."""
+
+    (tmp_path / existing).write_text("{}\n", encoding="utf-8")
     with pytest.raises(ValueError, match="one-shot"):
         _script().preflight(
             registration_pointer=POINTER,
             registered_commit=COMMIT,
-            output=output,
+            output=tmp_path / "run.json",
             git=_git(),
-            specification=_ratified(),
         )
+    assert (tmp_path / existing).read_text(encoding="utf-8") == "{}\n"
+
+
+def _preflight(**changes):
+    """The preflight in the registered state, under the committed block,
+    with ``changes``; the output is a path that never exists."""
+
+    return _script().preflight(
+        **{
+            "registration_pointer": POINTER,
+            "registered_commit": COMMIT,
+            "output": NEVER_WRITTEN,
+            "git": _git(),
+            **changes,
+        }
+    )
+
+
+def _is_42_comment(pointer: str) -> bool:
+    from populace_dynamics.min_benefit_track_m import tabulation
+
+    return tabulation.REGISTRATION_POINTER.fullmatch(pointer) is not None
+
+
+_NOT_A_42_COMMENT = st.one_of(
+    st.text(max_size=120),
+    st.builds(
+        "https://github.com/PolicyEngine/microcosm-dynamics/issues/{}"
+        "#issuecomment-{}".format,
+        st.integers(min_value=0).filter(lambda issue: issue != 42),
+        st.integers(min_value=0),
+    ),
+    st.builds(
+        (POINTER + "{}").format,
+        st.text(min_size=1, max_size=20).filter(
+            lambda tail: not tail.isdecimal() or not tail.isascii()
+        ),
+    ),
+).filter(lambda pointer: not _is_42_comment(pointer))
+
+
+@settings(max_examples=150, deadline=None)
+@given(_NOT_A_42_COMMENT)
+def test_property_any_other_pointer_is_refused(pointer):
+    """Invariant: the preflight refuses every pointer that is not an issue
+    #42 comment URL, whatever the rest of the state."""
+
+    with pytest.raises(ValueError, match="issue #42"):
+        _preflight(registration_pointer=pointer)
+    assert not NEVER_WRITTEN.exists()
+
+
+@settings(max_examples=100, deadline=None)
+@given(
+    st.text(alphabet="0123456789abcdef", min_size=40, max_size=40).filter(
+        lambda head: head != COMMIT
+    )
+)
+def test_property_any_other_head_is_refused(head):
+    """Invariant: a ``HEAD`` other than the registered commit is refused."""
+
+    with pytest.raises(ValueError, match="is not the registered commit"):
+        _preflight(git=_git(head=head))
+
+
+@settings(max_examples=100, deadline=None)
+@given(st.text(min_size=1, max_size=80))
+def test_property_any_dirty_tree_is_refused(porcelain):
+    """Invariant: any ``git status --porcelain`` output but the empty
+    string (a clean tree) is refused."""
+
+    with pytest.raises(ValueError, match="clean"):
+        _preflight(git=_git(porcelain=porcelain))
 
 
 def test_the_artifact_is_created_exclusively(tmp_path):
@@ -191,9 +308,9 @@ def test_the_artifact_is_created_exclusively(tmp_path):
     assert path.read_text(encoding="utf-8") == "first\n"
 
 
-def test_every_component_exists_and_the_gate_is_what_refuses():
-    """M3-M5 are built, so no component is missing; the preflight's
-    specification gate refuses the committed draft (above)."""
+def test_every_component_exists():
+    """M3-M5 are built, so no component is missing (the preflight passes
+    the committed block at the registered commit, above)."""
 
     script = _script()
     assert script.missing_components() == []
@@ -219,12 +336,10 @@ def test_a_missing_component_is_named(monkeypatch):
         script.check_runnable()
 
 
-def test_the_computation_refuses_psid_records_under_the_draft(monkeypatch):
-    """``run_pipeline`` reads the PSID through M4 and M5 and hands records
-    carrying the files' hashes to the pipeline, which refuses them under
-    the committed draft before evaluating any record.  The PSID read is
-    replaced by INVENTED frames marked as read from files; the refusal is
-    the pipeline's."""
+def _marked_psid_read(monkeypatch):
+    """Replace the PSID read with INVENTED frames marked as read from
+    files, and the COLA history with the invented one; return the
+    invented parameters and a list that records any evaluation."""
 
     from populace_dynamics.min_benefit_track_m import (
         cohort,
@@ -233,7 +348,6 @@ def test_the_computation_refuses_psid_records_under_the_draft(monkeypatch):
         pipeline,
     )
 
-    script = _script()
     frames = invented_psid.invented_cohort_inputs(seed=4, n_family_units=40)
     marked = type(frames)(
         structure_inputs=frames.structure_inputs,
@@ -253,8 +367,48 @@ def test_the_computation_refuses_psid_records_under_the_draft(monkeypatch):
     monkeypatch.setattr(
         pipeline, "evaluate", lambda *a, **k: evaluated.append(1)
     )
+    return parameters, evaluated
+
+
+@pytest.mark.parametrize(
+    "pointer",
+    [
+        "https://example.org/x",
+        POINTER.replace("/42#", "/420#"),
+        "https://github.com/PolicyEngine/microcosm-dynamics/issues/42",
+    ],
+    ids=["pointer", "other-issue", "issue-not-comment"],
+)
+def test_the_computation_refuses_psid_records_without_the_42_pointer(
+    monkeypatch, pointer
+):
+    """``run_pipeline`` reads the PSID through M4 and M5 and hands records
+    carrying the files' hashes to the pipeline, which refuses them without
+    an issue #42 comment pointer before evaluating any record, although
+    the committed block now authorizes the run.  The PSID read is
+    replaced by INVENTED frames marked as read from files; the refusal is
+    the pipeline's."""
+
+    parameters, evaluated = _marked_psid_read(monkeypatch)
+    with pytest.raises(Exception, match="registration pointer"):
+        _script().run_pipeline(parameters, registration_pointer=pointer)
+    assert evaluated == []
+
+
+def test_the_computation_refuses_psid_records_under_a_blocked_block(
+    monkeypatch,
+):
+    """Were the committed block still blocked (as ratified), the pipeline
+    would refuse the records it is handed even with an issue #42 comment
+    pointer, before evaluating any record: it reads the committed block
+    itself.  The committed block is replaced in memory; the PSID read is
+    INVENTED frames marked as read from files."""
+
+    parameters, evaluated = _marked_psid_read(monkeypatch)
+    blocked = _blocked()
+    monkeypatch.setattr(spec, "m1_parameter_block", lambda *a: blocked)
     with pytest.raises(Exception, match="does not authorize a real-data"):
-        script.run_pipeline(parameters, registration_pointer=POINTER)
+        _script().run_pipeline(parameters, registration_pointer=POINTER)
     assert evaluated == []
 
 

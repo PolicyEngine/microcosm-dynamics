@@ -23,12 +23,15 @@ run the block does not authorize.  A run is authorized only when:
   uncertainty the tabulation computes).
 
 ``m1-ratified-1`` is ratified (d219 item 9, d430) and records Max's
-rulings, and it fails the third test: its ``blocked_by`` still lists the
-open blockers (the registration package, which needs the comparator
-seal's hash, and the registration; the Census years before 2003 the scored
-rows need and the statute capture were cleared on 2026-09-25, the 1990
-Census threshold d430's sensitivity needs on 2026-09-26, and the
-independent review of d430's sensitivity build on 2026-09-26).
+rulings.  As ratified it failed the third test: its ``blocked_by`` still
+listed the registration package, which needed the comparator seal's hash,
+and the issue #42 registration.  The registered-commit edit of 2026-09-27
+recorded the seal's hash and emptied ``blocked_by``, as the ratified text
+prescribes, so the committed block passes every test here under the
+default configuration.  The gate is not the only refusal: the entry
+script's preflight needs the issue #42 pointer, the registered commit at
+``HEAD`` on a clean tree and a new output, and the tabulation and the
+pipeline refuse PSID-built rows without that pointer.
 """
 
 from __future__ import annotations
