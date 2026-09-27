@@ -37,7 +37,9 @@ def _require_pinned_poppler():
     source ("Poppler version drift before semantic parsing"), so on such a
     machine these source rebuilds cannot run at all.
     """
-    pinned = builder.extraction.PDFTOTEXT_VERSION
+    # The literal both scripts compare against (rebuild ...:1140, replay
+    # ...:532), not the extraction module's constant.
+    pinned = "26.04.0"
     try:
         version = builder.extraction.pdftotext_version()
     except FileNotFoundError:

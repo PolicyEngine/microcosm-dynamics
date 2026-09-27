@@ -4,9 +4,9 @@ Needs the policyengine-us checkout the oracle reads
 (``POPULACE_DYNAMICS_PE_US_DIR`` or ``~/PolicyEngine/policyengine-us``);
 skipped without it.  The capture script's in-memory recapture must equal
 the committed file byte for byte (skipped unless the checkout holds the
-files and revisions the committed file records), and every committed amount must equal
-the one 42 USC 413(d) sets from the oracle's wage index (a differential
-check of the file against the statute).
+files and the revision the committed file records), and every committed
+amount must equal the one 42 USC 413(d) sets from the oracle's wage index
+(a differential check of the file against the statute).
 """
 
 from __future__ import annotations
@@ -15,6 +15,7 @@ import hashlib
 import importlib.util
 import json
 import os
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -41,41 +42,22 @@ def _script():
     return module
 
 
-def _require_the_captured_checkout():
-    """Skip unless the checkout holds what the committed capture records.
+def _captured():
+    return json.loads(coverage.QC_CAPTURE_PATH.read_text())
 
-    The capture's bytes carry the quarter-of-coverage file, the wage-index
-    file and the revision each loader reported, so any of them differing
-    is a different input, not a different recapture.
-    """
-    from populace_dynamics.ss.params import load_ssa_parameters
 
-    committed = json.loads(coverage.QC_CAPTURE_PATH.read_text())
-    root = coverage._resolve_pe_us(None)
-    source = committed["source"]
-    wage_index = committed["value_check"]["wage_index"]
+def _skip_unless_captured_files(root, committed):
+    """Skip unless the checkout holds the files the capture records."""
     unpinned = []
-    for record in (source, wage_index):
+    for record in (
+        committed["source"],
+        committed["value_check"]["wage_index"],
+    ):
         path = root / record["path"]
         if not path.is_file():
             unpinned.append(f"{path} is absent")
         elif hashlib.sha256(path.read_bytes()).hexdigest() != record["sha256"]:
             unpinned.append(f"{path} is not the captured file")
-    if not unpinned:
-        revisions = (
-            (source, coverage.load_qc_amounts_from_checkout().source),
-            (
-                wage_index,
-                {"pe_us_revision": load_ssa_parameters().pe_us_revision},
-            ),
-        )
-        for record, observed in revisions:
-            if observed["pe_us_revision"] != record["pe_us_revision"]:
-                unpinned.append(
-                    f"{record['path']} was read at revision "
-                    f"{observed['pe_us_revision']!r}, not the captured "
-                    f"{record['pe_us_revision']!r}"
-                )
     if unpinned:
         pytest.skip(
             f"policyengine-us checkout {root} is not the captured one: "
@@ -83,10 +65,40 @@ def _require_the_captured_checkout():
         )
 
 
+def _skip_unless_captured_revision(root, committed):
+    """Skip unless git reports the revision the capture records.
+
+    Read from git directly rather than through the loaders under test, so
+    a change to how they record the revision still fails the recapture.
+    """
+    completed = subprocess.run(
+        ["git", "log", "-1", "--format=%h"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    revision = completed.stdout.strip() if completed.returncode == 0 else ""
+    recorded = {
+        committed["source"]["pe_us_revision"],
+        committed["value_check"]["wage_index"]["pe_us_revision"],
+    }
+    if recorded != {revision}:
+        pytest.skip(
+            f"policyengine-us checkout {root} is at {revision!r}, not the "
+            f"captured {sorted(recorded)!r}"
+        )
+
+
 def test_the_recapture_equals_the_committed_file():
-    _require_the_captured_checkout()
+    committed = _captured()
+    root = coverage._resolve_pe_us(None)
+    _skip_unless_captured_files(root, committed)
     script = _script()
+    # build() checks every amount against the statute; only the bytes
+    # below need the captured commit.
     fresh = script.serialize(script.build())
+    _skip_unless_captured_revision(root, committed)
     assert fresh == coverage.QC_CAPTURE_PATH.read_bytes()
 
 

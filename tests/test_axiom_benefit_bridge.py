@@ -13,6 +13,7 @@ import dataclasses
 import hashlib
 import json
 import os
+import re
 import stat
 import sys
 from decimal import Decimal
@@ -830,7 +831,9 @@ def test_unpinned_inputs_are_exactly_the_files_verify_rejects(
             unpinned = unpinned_engine_inputs(fake_binding)
             assert len(unpinned) == 1
             assert unpinned[0].startswith(bound.role + " is ")
-            with pytest.raises(bridge.BindingMismatch, match=bound.role):
+            with pytest.raises(
+                bridge.BindingMismatch, match=re.escape(bound.role)
+            ):
                 fake_binding.verify()
             bound.path.unlink(missing_ok=True)
             bound.path.write_bytes(original)
