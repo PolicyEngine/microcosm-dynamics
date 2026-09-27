@@ -4,14 +4,15 @@ Python rules (not Axiom).  The M1 specification's threshold (section 7) is
 the Census Bureau's weighted-average poverty threshold for one person aged
 65 and over, of the record's section 4a threshold year.  This module loads
 it from the committed capture of the Census historical threshold workbooks
-of 1982, 1986, 1988, 1989, 1991, 1992 and 1994-2022 (``thresh82.xlsx`` ...
+of 1982, 1986, 1988-1992 and 1994-2022 (``thresh82.xlsx`` ...
 ``thresh22.xlsx`` in ``data/external/census_poverty_thresholds/``, each
 pinned by SHA-256 in ``scripts/capture_track_u_parameters.py``; staged
 under cos decisions d194 and d279), refuses a capture whose SHA-256
 differs from the pin, and refuses, with a named error, any threshold year
 the capture lacks (referee R8): a year before 1982, a year after 2022, and
-the years 1983-1985, 1987, 1990 and 1993, which no in-window record needs
-by M4's structural count.  It reads no PSID file and no comparator value.
+the years 1983-1985, 1987 and 1993, which no in-window record needs by
+M4's structural count, nor any record in the window of d430's
+sensitivity by its count.  It reads no PSID file and no comparator value.
 """
 
 from __future__ import annotations
@@ -42,18 +43,21 @@ _ROOT = Path(__file__).resolve().parents[3]
 
 #: The threshold years before 2003 that M4's structural count (M1
 #: specification sections 4, 7 and 10) shows the in-window records of the
-#: registered rows need, downloaded under cos d279 ("any earlier year the
-#: build proves it needs").
+#: registered rows need (fifteen, captured 2026-09-25), and 1990, which
+#: d430's sensitivity reading also needs in its window, MS0's (its
+#: structural count of 2026-09-26; captured 2026-09-26), each downloaded
+#: under cos d279 ("any earlier year the build proves it needs").
 TRACK_M_THRESHOLD_YEARS_BEFORE_2003: tuple[int, ...] = (
     1982,
     1986,
     1988,
     1989,
+    1990,
     1991,
     1992,
     *range(1994, 2003),
 )
-#: The threshold years the Track M capture covers: those fifteen, and every
+#: The threshold years the Track M capture covers: those sixteen, and every
 #: Census workbook from ``thresh03.xlsx`` (staged under cos d194) to
 #: ``thresh22.xlsx`` (downloaded under cos d279).  Section 7 of the M1
 #: specification says which of them Track M needs and why; any other year
@@ -68,7 +72,7 @@ TRACK_M_THRESHOLDS_PATH = (
     _ROOT / "data" / "external" / "census_poverty_thresholds_1982_2022.json"
 )
 TRACK_M_THRESHOLDS_SHA256 = (
-    "4493b8d5823ea12912212d892f98ef4777098ce34b01857cedc35d444a8b99cd"
+    "288399c475ae3ff02e6d8367425ee0a568b50d239da5656f24d0d2dfafabfb53"
 )
 _THRESHOLDS_SCHEMA_VERSION = "populace_dynamics.census_poverty_thresholds.v1"
 #: The capture row G8 reads: the weighted average for one person aged 65

@@ -1,8 +1,8 @@
 """Track M's Census threshold capture, 1982-2022 (plan item M2; cos d279).
 
-Artifact tier: reads the thirty-five Census workbooks committed in
-``data/external/census_poverty_thresholds`` (1982, 1986, 1988, 1989, 1991,
-1992 and 1994-2022; d194 and d279) and the capture
+Artifact tier: reads the thirty-six Census workbooks committed in
+``data/external/census_poverty_thresholds`` (1982, 1986, 1988-1992 and
+1994-2022; d194 and d279) and the capture
 ``data/external/census_poverty_thresholds_1982_2022.json``.  It checks the
 pin, re-runs the capture, compares the one-person 65-and-over weighted
 average of every year with the workbook cell read without the parser or
@@ -35,7 +35,7 @@ WORKBOOKS = ROOT / "data" / "external" / "census_poverty_thresholds"
 CAPTURE = (
     ROOT / "data" / "external" / "census_poverty_thresholds_1982_2022.json"
 )
-YEARS = (1982, 1986, 1988, 1989, 1991, 1992, *range(1994, 2023))
+YEARS = (1982, 1986, *range(1988, 1993), *range(1994, 2023))
 _MAIN = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
 _REL = (
     "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id"
@@ -197,14 +197,15 @@ def test_capture_records_sources_layouts_and_ratios(capture, script):
         1984,
         1985,
         1987,
-        1990,
         1993,
     ]
     assert set(capture["decision_records"]) == {
         "d194",
         "d279",
         "d279_earlier_years",
+        "d279_1990",
     }
+    assert "d430" in capture["decision_records"]["d279_1990"]
     assert capture["checks"]["workbook_sha256"].startswith("pinned")
     layouts = capture["checks"]["layout_by_year"]
     for year in YEARS:
@@ -405,6 +406,9 @@ def test_a_missing_threshold_year_is_a_named_error():
         {1982: 1, 1986: 1, 1988: 1, 1989: 1, 1991: 1, 1992: 1, 1998: 3},
         loaded,
     )
+    # and 1990, which d430's sensitivity also needs (captured 2026-09-26)
+    rules.check_threshold_years({1990: 1}, loaded)
+    assert loaded.for_year(1990) > 0
     rules.check_threshold_years({2003: 4, 2022: 1}, loaded)
     with pytest.raises(rules.ThresholdYearMissingError) as refused:
         rules.check_threshold_years(
@@ -415,10 +419,10 @@ def test_a_missing_threshold_year_is_a_named_error():
         "threshold years 1981 (1 records), 1987 (2 records), 1993 (1 "
         "records), 2023 (1 records) are not in the capture" in message
     )
-    assert "captured: 1982, 1986, 1988-1989, 1991-1992, 1994-2022" in message
+    assert "captured: 1982, 1986, 1988-1992, 1994-2022" in message
     assert "1996" not in message
     assert "d279" in message
-    for year in (1981, 1983, 1984, 1985, 1987, 1990, 1993, 2023):
+    for year in (1981, 1983, 1984, 1985, 1987, 1993, 2023):
         with pytest.raises(rules.ThresholdYearMissingError, match=str(year)):
             loaded.for_year(year)
     # a named error, not a KeyError

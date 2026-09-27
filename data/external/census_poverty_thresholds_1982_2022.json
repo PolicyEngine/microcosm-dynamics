@@ -10,6 +10,7 @@
     1986,
     1988,
     1989,
+    1990,
     1991,
     1992,
     1994,
@@ -47,13 +48,13 @@
     1984,
     1985,
     1987,
-    1990,
     1993
   ],
   "decision_records": {
     "d194": "thresh03-thresh12 staged 2026-09-24 (exercise 2)",
     "d279": "thresh13-thresh22 downloaded 2026-09-25 for Track M; capture, hash and pin like the 2003-2012 capture",
-    "d279_earlier_years": "thresh82, thresh86, thresh88, thresh89, thresh91, thresh92 and thresh94-thresh02 staged 2026-09-25 under d279 (any earlier year the build proves it needs: M4's structural count of the threshold years the in-window records need); thresh95 from the Internet Archive's copy of its Census URL"
+    "d279_earlier_years": "thresh82, thresh86, thresh88, thresh89, thresh91, thresh92 and thresh94-thresh02 staged 2026-09-25 under d279 (any earlier year the build proves it needs: M4's structural count of the threshold years the in-window records need); thresh95 from the Internet Archive's copy of its Census URL",
+    "d279_1990": "thresh90 fetched 2026-09-26 under d279 (any earlier year the build proves it needs: d430's sensitivity's structural count of the threshold years its window needs)"
   },
   "sources": {
     "1982": {
@@ -100,6 +101,17 @@
       "source_line": "Source: U.S. Census Bureau, 1990.",
       "note_survey": "march_cps",
       "note_survey_year": 1990
+    },
+    "1990": {
+      "file": "thresh90.xlsx",
+      "url": "https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-poverty-thresholds/thresh90.xlsx",
+      "sha256": "6a955422a86d5bea399fd9c23567779cbb279ce00b2d1c678018e802a67bfdf4",
+      "bytes": 12171,
+      "sheet": "thresh90",
+      "title": "Poverty Thresholds for 1990 by Size of Family and Number of Related Children Under 18 Years",
+      "source_line": "Source: U.S. Census Bureau, 1991.",
+      "note_survey": "march_cps",
+      "note_survey_year": 1991
     },
     "1991": {
       "file": "thresh91.xlsx",
@@ -453,7 +465,8 @@
       "1982-1986": 1.13593,
       "1986-1988": 1.079595,
       "1988-1989": 1.048183,
-      "1989-1991": 1.098387,
+      "1989-1990": 1.054025,
+      "1990-1991": 1.042082,
       "1991-1992": 1.030105,
       "1992-1994": 1.056305,
       "1994-1995": 1.028345,
@@ -511,6 +524,14 @@
         "revision_line": null
       },
       "1989": {
+        "worksheets": 1,
+        "empty_extra_worksheets": [],
+        "weighted_average_unit_dollars": 1,
+        "note_survey": "march_cps",
+        "size_row_noun": "people",
+        "revision_line": null
+      },
+      "1990": {
         "worksheets": 1,
         "empty_extra_worksheets": [],
         "weighted_average_unit_dollars": 1,
@@ -823,6 +844,19 @@
       "seven": 19160,
       "eight": 21323,
       "nine_plus": 25496
+    },
+    "1990": {
+      "one_under_65": 6800,
+      "one_65_plus": 6268,
+      "two_under_65": 8794,
+      "two_65_plus": 7905,
+      "three": 10419,
+      "four": 13359,
+      "five": 15792,
+      "six": 17839,
+      "seven": 20241,
+      "eight": 22582,
+      "nine_plus": 26848
     },
     "1991": {
       "one_under_65": 7086,
@@ -1245,6 +1279,10 @@
       "one": 6313,
       "two": 8078
     },
+    "1990": {
+      "one": 6652,
+      "two": 8509
+    },
     "1991": {
       "one": 6932,
       "two": 8865
@@ -1657,6 +1695,78 @@
         "6": 25089,
         "7": 24933,
         "8": 23973
+      }
+    },
+    "1990": {
+      "one_under_65": {
+        "0": 6800
+      },
+      "one_65_plus": {
+        "0": 6268
+      },
+      "two_under_65": {
+        "0": 8752,
+        "1": 9009
+      },
+      "two_65_plus": {
+        "0": 7900,
+        "1": 8975
+      },
+      "three": {
+        "0": 10223,
+        "1": 10520,
+        "2": 10530
+      },
+      "four": {
+        "0": 13481,
+        "1": 13701,
+        "2": 13254,
+        "3": 13301
+      },
+      "five": {
+        "0": 16257,
+        "1": 16494,
+        "2": 15989,
+        "3": 15598,
+        "4": 15359
+      },
+      "six": {
+        "0": 18699,
+        "1": 18773,
+        "2": 18386,
+        "3": 18015,
+        "4": 17464,
+        "5": 17137
+      },
+      "seven": {
+        "0": 21515,
+        "1": 21650,
+        "2": 21187,
+        "3": 20864,
+        "4": 20262,
+        "5": 19561,
+        "6": 18791
+      },
+      "eight": {
+        "0": 24063,
+        "1": 24276,
+        "2": 23839,
+        "3": 23456,
+        "4": 22913,
+        "5": 22223,
+        "6": 21505,
+        "7": 21323
+      },
+      "nine_plus": {
+        "0": 28946,
+        "1": 29087,
+        "2": 28700,
+        "3": 28375,
+        "4": 27842,
+        "5": 27108,
+        "6": 26445,
+        "7": 26280,
+        "8": 25268
       }
     },
     "1991": {
