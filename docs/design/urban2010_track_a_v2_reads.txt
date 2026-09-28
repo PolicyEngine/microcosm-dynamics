@@ -58,7 +58,6 @@ Runtime imports, pytest collection and test fixture reads are additionally repre
 .cache/a2_finalize_bundle.py
 .cache/a2_recount.py
 .cache/a2_refresh_inventories.py
-.cache/a2_unit_shard.py
 .cache/a2_unit_shard.py (loaded by pytest)
 .cache/a2_verify_final_dry.py
 .cache/a2_verify_unit_completion.py
@@ -78,34 +77,29 @@ Runtime imports, pytest collection and test fixture reads are additionally repre
 .venv/lib/python3.14t/site-packages/sklearn/ensemble/_hist_gradient_boosting/gradient_boosting.py
 .venv/lib/python3.14t/site-packages/sklearn/utils/_openmp_helpers.pyx
 .venv/pyvenv.cfg
-/Users/maxghenis/TheAxiomFoundation/_worktrees/dynamics-lazy-lifetime-20260922/target/release/axiom-rules-engine (read or hashed by existing unit source-fixture tests; not manually opened)
-/Users/maxghenis/TheAxiomFoundation/_worktrees/dynamics-lazy-lifetime-20260922/target/release/axiom-rules-engine.provenance.json
-/Users/maxghenis/TheAxiomFoundation/_worktrees/dynamics-lazy-lifetime-20260922/target/release/axiom-rules-engine.provenance.json (SHA-256 read by inherited unit binding verification; not opened separately)
-/Users/maxghenis/TheAxiomFoundation/_worktrees/dynamics-lazy-lifetime-20260922/target/release/axiom-rules-engine.provenance.json (read or hashed by existing unit source-fixture tests; not manually opened)
+/Users/maxghenis/TheAxiomFoundation/_worktrees/dynamics-lazy-lifetime-20260922/target/release/axiom-rules-engine (hashed by inherited unit binding.verify before refusal; not independently reopened)
+/Users/maxghenis/TheAxiomFoundation/_worktrees/dynamics-lazy-lifetime-20260922/target/release/axiom-rules-engine.provenance.json (hashed by inherited unit binding.verify before refusal; not independently reopened)
 /Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/RESTRICTED-FILES.md
-/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/parallel-oasdi-20260920/encoder-recovery/replay-415-b-nested-lifetime-20260922/compile/415-b.compiled.json (read or hashed by existing unit source-fixture tests; not manually opened)
-/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/parallel-oasdi-20260920/encoder-recovery/replay-415-b-nested-lifetime-20260922/rulespec-us/us/statutes/42/415/b.yaml (read or hashed by existing unit source-fixture tests; not manually opened)
-/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/parallel-oasdi-20260920/encoder-recovery/ssa-aime-pia-first-comparison-20260922/integrated-experiment/aime-pia.compiled.json (read or hashed by existing unit source-fixture tests; not manually opened)
-/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/parallel-oasdi-20260920/encoder-recovery/ssa-aime-pia-first-comparison-20260922/integrated-experiment/compile-receipt.json (read or hashed by existing unit source-fixture tests; not manually opened)
-/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/parallel-oasdi-20260920/encoder-recovery/ssa-aime-pia-first-comparison-20260922/integrated-experiment/rulespec-us/us/policies/ssa/pia-bend-points/2026.yaml (read or hashed by existing unit source-fixture tests; not manually opened)
-/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/parallel-oasdi-20260920/encoder-recovery/ssa-aime-pia-first-comparison-20260922/integrated-experiment/rulespec-us/us/statutes/42/415/a.yaml (read or hashed by existing unit source-fixture tests; not manually opened)
-/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/parallel-oasdi-20260920/encoder-recovery/ssa-aime-pia-first-comparison-20260922/integrated-experiment/rulespec-us/us/statutes/42/415/b.yaml (read or hashed by existing unit source-fixture tests; not manually opened)
-/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/parallel-oasdi-20260920/encoder-recovery/ssa-aime-pia-first-comparison-20260922/lazy-engine-binding.json (read or hashed by existing unit source-fixture tests; not manually opened)
+/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/parallel-oasdi-20260920/encoder-recovery/replay-415-b-nested-lifetime-20260922/compile/415-b.compiled.json (hashed by inherited unit binding.verify before refusal; not independently reopened)
+/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/parallel-oasdi-20260920/encoder-recovery/replay-415-b-nested-lifetime-20260922/rulespec-us/us/statutes/42/415/b.yaml (hashed by inherited unit binding.verify before refusal; not independently reopened)
+/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/parallel-oasdi-20260920/encoder-recovery/ssa-aime-pia-first-comparison-20260922/integrated-experiment/aime-pia.compiled.json (hashed by inherited unit binding.verify before refusal; not independently reopened)
+/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/parallel-oasdi-20260920/encoder-recovery/ssa-aime-pia-first-comparison-20260922/integrated-experiment/compile-receipt.json (hashed by inherited unit binding.verify before refusal; not independently reopened)
+/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/parallel-oasdi-20260920/encoder-recovery/ssa-aime-pia-first-comparison-20260922/integrated-experiment/rulespec-us/us/policies/ssa/pia-bend-points/2026.yaml (hashed by inherited unit binding.verify before refusal; not independently reopened)
+/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/parallel-oasdi-20260920/encoder-recovery/ssa-aime-pia-first-comparison-20260922/integrated-experiment/rulespec-us/us/statutes/42/415/a.yaml (hashed by inherited unit binding.verify before refusal; not independently reopened)
+/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/parallel-oasdi-20260920/encoder-recovery/ssa-aime-pia-first-comparison-20260922/integrated-experiment/rulespec-us/us/statutes/42/415/b.yaml (hashed by inherited unit binding.verify before refusal; not independently reopened)
+/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/parallel-oasdi-20260920/encoder-recovery/ssa-aime-pia-first-comparison-20260922/lazy-engine-binding.json (hashed by inherited unit binding.verify before refusal; not independently reopened)
 /Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/parallel-oasdi-20260920/encoder-recovery/ssa-aime-pia-first-comparison-20260922/primary-source-2026-case-a/source-data-transport.json (read or hashed by existing unit source-fixture tests; not manually opened)
 /Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/parallel-oasdi-20260920/encoder-recovery/ssa-aime-pia-first-comparison-20260922/primary-source-2026-case-b/source-data-transport-v2.json (read or hashed by existing unit source-fixture tests; not manually opened)
 /Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/phase2-20260927/prompts/common.md
 CLAUDE.md
 docs/design/boomers2004_1946_55_comparison.md
-docs/design/urban2010_cola_comparison.md
 docs/design/urban2010_cola_comparison.md (section 21 parsed by manifest tests)
-docs/design/urban2010_fra68_comparison.md
 docs/design/urban2010_fra68_comparison.md (section 21 parsed by manifest tests)
 docs/design/urban2010_track_a_v2.md
 docs/design/urban2010_track_a_v2_implementation.md
 docs/design/urban2010_track_a_v2_invariants.md
 docs/design/urban2010_track_a_v2_reads.txt
 pyproject.toml
-reviewed_case_a_binding().files (all bound files hashed by inherited unit verification; retained traceback abbreviates their full paths; root Case-A binding ledger enumerates them)
 scripts/build_amendment12_tier2_targeted_sweeps.py
 scripts/build_amendment13_tier2_repairs.py
 scripts/first_estimates_birth_evidence.py
@@ -117,7 +111,6 @@ scripts/track_a_v2_hash_manifest.py
 scripts/track_a_v2_registered.py
 scripts/track_a_v2_structural_count.py
 scripts/track_c_aime_agreement.py (pytest failure trace and unit execution)
-src/populace_dynamics/axiom_benefit_bridge.py
 src/populace_dynamics/axiom_benefit_bridge.py (pytest failure trace and unit execution)
 src/populace_dynamics/cohorts/psid2010.py
 src/populace_dynamics/cola_track_a/adapters.py
@@ -187,14 +180,12 @@ tests/fra68_track/test_runner.py
 tests/harness/test_metrics.py
 tests/min_benefit_track_m/test_cohort.py
 tests/ss/test_statutory_aime.py
-tests/test_axiom_benefit_bridge.py
 tests/test_axiom_benefit_bridge.py (pytest failure trace and unit execution)
 tests/test_build_amendment12_tier2_targeted_sweeps.py
 tests/test_build_amendment13_tier2_repairs.py
 tests/test_m6_accounting_history.py
 tests/test_m6_stock_flow.py
 tests/test_tier_policy.py
-tests/test_track_c_aime_agreement.py
 tests/test_track_c_aime_agreement.py (pytest failure trace and unit execution)
 tests/tier_counts.json
 tests/track_a_v2/_invented.py
