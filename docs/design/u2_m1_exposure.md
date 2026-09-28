@@ -1,0 +1,591 @@
+# U2 milestone 1 complete task exposure record
+
+Workspace: `/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1`. 393 distinct task/source/test paths below. The separate [runtime inventory](u2_m1_runtime_exposure.json) records 3364 Python read-open paths including dependency and temporary files.
+
+- Restriction ledger read first by each builder. No Boomers Report PDF, restricted comparator/seal/transcription, uncleared availability, values scan or restricted scratchpad opened. No held-out value or direction inferred. The four permitted public result memos were not opened.
+- PSID access was documentary: setup/format files, codebooks, questionnaires and weighting guides. Metadata listings displayed raw filenames without opening them. Early excerpts incidentally showed published whole-file frequency columns/setup row counts and weight-report descriptive tables; none were used for routing. Later codebook extracts strip frequencies.
+- U1 registered artifact and sidecar were opened only as bytes for SHA-256 equality. Historical isolation tests inspect existing source/artifact metadata; only the selected identity/reachability tests were executed, never an estimator.
+- A task-local Python audit hook refused staged PSID .txt/.zip reads and logged read opens during root verification. Complete observed runtime paths, including dependencies and temporary test fixtures, are in u2_m1_runtime_exposure.json. Native Git metadata/packfiles and dependency installation internals are not represented as documentary content reads.
+- SSI agent disclosed a newly authored helper briefly under /tmp/u2_ssi_download.py before moving it inside the assigned workspace. It was removed; no caller files were written. Initial pytest used its default temporary location and emitted permission warnings attempting cleanup of unrelated stale pytest directories; final tests use an explicit workspace-local --basetemp.
+- Git writes to shared metadata were rejected; commits and bundle use workspace-local .u2-git. No shared history was rewritten or pushed. Directory listings, failed HTTP downloads and search snippets are distinguished from opened source files.
+
+## Every task/source/test file opened
+
+- `.disk-guard-removing.acl` — automated Python import/test/AST/hash read
+- `.git` — direct tool/content, documentary parse, source inspection, or hash read
+- `.gitignore` — automated Python import/test/AST/hash read
+- `.pytest_cache/v/cache/lastfailed` — automated Python import/test/AST/hash read
+- `.pytest_cache/v/cache/nodeids` — automated Python import/test/AST/hash read
+- `.u2-git/config` — direct tool/content, documentary parse, source inspection, or hash read
+- `.u2-git/info/exclude` — direct tool/content, documentary parse, source inspection, or hash read
+- `.u2-pension-work/2013.json` — Task-generated metadata extraction helper/cache; read while constructing registry; removed before delivery.
+- `.u2-pension-work/2015.json` — Task-generated metadata extraction helper/cache; read while constructing registry; removed before delivery.
+- `.u2-pension-work/2017.json` — Task-generated metadata extraction helper/cache; read while constructing registry; removed before delivery.
+- `.u2-pension-work/2019.json` — Task-generated metadata extraction helper/cache; read while constructing registry; removed before delivery.
+- `.u2-pension-work/2021.json` — Task-generated metadata extraction helper/cache; read while constructing registry; removed before delivery.
+- `.u2-pension-work/2023.json` — Task-generated metadata extraction helper/cache; read while constructing registry; removed before delivery.
+- `.u2-pension-work/extract.py` — Task-generated metadata extraction helper/cache; read while constructing registry; removed before delivery.
+- `.u2-pension-work/finalize.py` — Task-generated metadata extraction helper/cache; read while constructing registry; removed before delivery.
+- `.u2-work/build_adjudication.py` — direct tool/content, documentary parse, source inspection, or hash read
+- `.u2-work/build_exposure.py` — direct tool/content, documentary parse, source inspection, or hash read
+- `.u2-work/build_individual.py` — direct tool/content, documentary parse, source inspection, or hash read
+- `.u2-work/build_report.py` — direct tool/content, documentary parse, source inspection, or hash read
+- `.u2-work/build_weights.py` — direct tool/content, documentary parse, source inspection, or hash read
+- `.u2-work/commit-documentation.txt` — direct tool/content, documentary parse, source inspection, or hash read
+- `.u2-work/commit-sources.txt` — direct tool/content, documentary parse, source inspection, or hash read
+- `.u2-work/metadata.py` — direct tool/content, documentary parse, source inspection, or hash read
+- `.u2-work/pytest-isolation-final/test_source_reachability_inclu0/__init__.py` — automated Python import/test/AST/hash read
+- `.u2-work/pytest-isolation-final/test_source_reachability_inclu0/consumer.py` — automated Python import/test/AST/hash read
+- `.u2-work/pytest-isolation-final/test_source_reachability_inclu0/hidden.py` — automated Python import/test/AST/hash read
+- `.u2-work/pytest-isolation-final/test_source_reachability_inclu0/leaf.py` — automated Python import/test/AST/hash read
+- `.u2-work/pytest-isolation-final/test_source_reachability_inclu1/__init__.py` — automated Python import/test/AST/hash read
+- `.u2-work/pytest-isolation-final/test_source_reachability_inclu1/consumer.py` — automated Python import/test/AST/hash read
+- `.u2-work/pytest-isolation-final/test_source_reachability_inclu1/hidden.py` — automated Python import/test/AST/hash read
+- `.u2-work/pytest-isolation-final/test_source_reachability_inclu1/leaf.py` — automated Python import/test/AST/hash read
+- `.u2-work/pytest-isolation-final/test_source_reachability_inclu2/__init__.py` — automated Python import/test/AST/hash read
+- `.u2-work/pytest-isolation-final/test_source_reachability_inclu2/consumer.py` — automated Python import/test/AST/hash read
+- `.u2-work/pytest-isolation-final/test_source_reachability_inclu2/hidden.py` — automated Python import/test/AST/hash read
+- `.u2-work/pytest-isolation-final/test_source_reachability_inclu2/leaf.py` — automated Python import/test/AST/hash read
+- `.u2-work/pytest-isolation-final/test_source_reachability_inclu3/__init__.py` — automated Python import/test/AST/hash read
+- `.u2-work/pytest-isolation-final/test_source_reachability_inclu3/consumer.py` — automated Python import/test/AST/hash read
+- `.u2-work/pytest-isolation-final/test_source_reachability_inclu3/hidden.py` — automated Python import/test/AST/hash read
+- `.u2-work/runtime-reads.jsonl` — direct tool/content, documentary parse, source inspection, or hash read
+- `.u2-work/sitecustomize.py` — direct tool/content, documentary parse, source inspection, or hash read
+- `/Users/maxghenis/AGENTS.md` — direct tool/content, documentary parse, source inspection, or hash read
+- `/Users/maxghenis/PolicyEngine/policyengine-us/policyengine_us/parameters/gov/ssa/ssi/amount/couple.yaml` — document/source read, parsed or hashed
+- `/Users/maxghenis/PolicyEngine/policyengine-us/policyengine_us/parameters/gov/ssa/ssi/amount/individual.yaml` — document/source read, parsed or hashed
+- `/Users/maxghenis/PolicyEngine/policyengine-us/policyengine_us/parameters/gov/ssa/ssi/eligibility/resources/limit/couple.yaml` — document/source read, parsed or hashed
+- `/Users/maxghenis/PolicyEngine/policyengine-us/policyengine_us/parameters/gov/ssa/ssi/eligibility/resources/limit/individual.yaml` — document/source read, parsed or hashed
+- `/Users/maxghenis/PolicyEngine/policyengine-us/policyengine_us/parameters/gov/ssa/ssi/income/exclusions/earned.yaml` — document/source read, parsed or hashed
+- `/Users/maxghenis/PolicyEngine/policyengine-us/policyengine_us/parameters/gov/ssa/ssi/income/exclusions/earned_share.yaml` — document/source read, parsed or hashed
+- `/Users/maxghenis/PolicyEngine/policyengine-us/policyengine_us/parameters/gov/ssa/ssi/income/exclusions/general.yaml` — document/source read, parsed or hashed
+- `/Users/maxghenis/PolicyEngine/psid-data/documentation/capture1/UserGuide2017.pdf` — Documentation only. Full programmatic text extraction/search or hash; reviewed weight construction/revision and individual/design/role metadata. No raw record file opened.
+- `/Users/maxghenis/PolicyEngine/psid-data/documentation/capture1/cross_sec_weights_13.pdf` — direct tool/content, documentary parse, source inspection, or hash read
+- `/Users/maxghenis/PolicyEngine/psid-data/documentation/capture1/cross_sec_weights_15.pdf` — direct tool/content, documentary parse, source inspection, or hash read
+- `/Users/maxghenis/PolicyEngine/psid-data/documentation/capture1/cross_sec_weights_17.pdf` — direct tool/content, documentary parse, source inspection, or hash read; Documentation only. Full programmatic text extraction/search or hash; reviewed weight construction/revision and individual/design/role metadata. No raw record file opened.
+- `/Users/maxghenis/PolicyEngine/psid-data/documentation/capture1/cross_sec_weights_19.pdf` — direct tool/content, documentary parse, source inspection, or hash read; Documentation only. Full programmatic text extraction/search or hash; reviewed weight construction/revision and individual/design/role metadata. No raw record file opened.
+- `/Users/maxghenis/PolicyEngine/psid-data/documentation/capture1/cross_sec_weights_21.pdf` — direct tool/content, documentary parse, source inspection, or hash read
+- `/Users/maxghenis/PolicyEngine/psid-data/documentation/capture1/q2013.pdf` — Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.
+- `/Users/maxghenis/PolicyEngine/psid-data/documentation/capture1/q2015.pdf` — Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.
+- `/Users/maxghenis/PolicyEngine/psid-data/documentation/capture1/q2017.pdf` — Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.
+- `/Users/maxghenis/PolicyEngine/psid-data/documentation/capture1/q2019.pdf` — Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.
+- `/Users/maxghenis/PolicyEngine/psid-data/documentation/capture1/q2021.pdf` — Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.
+- `/Users/maxghenis/PolicyEngine/psid-data/documentation/capture1/q2023.pdf` — Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.
+- `/Users/maxghenis/PolicyEngine/psid-data/family/2013/FAM2013ER.sps` — direct tool/content, documentary parse, source inspection, or hash read; Family setup layouts and variable labels only; Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.
+- `/Users/maxghenis/PolicyEngine/psid-data/family/2013/FAM2013ER_codebook.pdf` — direct tool/content, documentary parse, source inspection, or hash read; Documentary PDF parsed; retained excerpts strip frequency columns; Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.
+- `/Users/maxghenis/PolicyEngine/psid-data/family/2015/FAM2015ER.sps` — Family setup layouts and variable labels only; Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.
+- `/Users/maxghenis/PolicyEngine/psid-data/family/2015/FAM2015ER_codebook.pdf` — direct tool/content, documentary parse, source inspection, or hash read; Documentary PDF parsed; retained excerpts strip frequency columns; Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.
+- `/Users/maxghenis/PolicyEngine/psid-data/family/2017/FAM2017ER.sps` — Family setup layouts and variable labels only; Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.
+- `/Users/maxghenis/PolicyEngine/psid-data/family/2017/FAM2017ER_codebook.pdf` — direct tool/content, documentary parse, source inspection, or hash read; Documentary PDF parsed; retained excerpts strip frequency columns; Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.
+- `/Users/maxghenis/PolicyEngine/psid-data/family/2019/FAM2019ER.sps` — Family setup layouts and variable labels only; Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.
+- `/Users/maxghenis/PolicyEngine/psid-data/family/2019/fam2019er_codebook.pdf` — direct tool/content, documentary parse, source inspection, or hash read; Documentary PDF parsed; retained excerpts strip frequency columns; Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.
+- `/Users/maxghenis/PolicyEngine/psid-data/family/2021/FAM2021ER.sps` — Family setup layouts and variable labels only; Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.
+- `/Users/maxghenis/PolicyEngine/psid-data/family/2021/FAM2021ER_codebook.pdf` — direct tool/content, documentary parse, source inspection, or hash read; Documentary PDF parsed; retained excerpts strip frequency columns; Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.
+- `/Users/maxghenis/PolicyEngine/psid-data/family/2021/FAM2021ER_formats.sps` — Categorical family formats for independent domain citations; Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.
+- `/Users/maxghenis/PolicyEngine/psid-data/family/2023/FAM2023ER.sps` — direct tool/content, documentary parse, source inspection, or hash read; Family setup layouts and variable labels only; Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.
+- `/Users/maxghenis/PolicyEngine/psid-data/family/2023/FAM2023ER_codebook.pdf` — direct tool/content, documentary parse, source inspection, or hash read; Documentary PDF parsed; retained excerpts strip frequency columns; Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.
+- `/Users/maxghenis/PolicyEngine/psid-data/family/2023/FAM2023ER_formats.sps` — Categorical family formats for independent domain citations; Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.
+- `/Users/maxghenis/PolicyEngine/psid-data/ind2023er/IND2023ER.sps` — direct tool/content, documentary parse, source inspection, or hash read; Documentation only. Full programmatic text extraction/search or hash; reviewed weight construction/revision and individual/design/role metadata. No raw record file opened.
+- `/Users/maxghenis/PolicyEngine/psid-data/ind2023er/IND2023ER_codebook.pdf` — direct tool/content, documentary parse, source inspection, or hash read; Documentation only. Full programmatic text extraction/search or hash; reviewed weight construction/revision and individual/design/role metadata. No raw record file opened.
+- `/Users/maxghenis/PolicyEngine/psid-data/ind2023er/IND2023ER_formats.sps` — direct tool/content, documentary parse, source inspection, or hash read; Documentation only. Full programmatic text extraction/search or hash; reviewed weight construction/revision and individual/design/role metadata. No raw record file opened.
+- `/Users/maxghenis/PolicyEngine/psid-data/mh85_23/MH85_23.sps` — direct tool/content, documentary parse, source inspection, or hash read; Documentation only. Full programmatic text extraction/search or hash; reviewed weight construction/revision and individual/design/role metadata. No raw record file opened.
+- `/Users/maxghenis/PolicyEngine/psid-data/mh85_23/MH85_23_Codebook.pdf` — direct tool/content, documentary parse, source inspection, or hash read; Documentation only. Full programmatic text extraction/search or hash; reviewed weight construction/revision and individual/design/role metadata. No raw record file opened.
+- `/Users/maxghenis/PolicyEngine/psid-data/mh85_23/MH85_23_formats.sps` — direct tool/content, documentary parse, source inspection, or hash read; Documentation only. Full programmatic text extraction/search or hash; reviewed weight construction/revision and individual/design/role metadata. No raw record file opened.
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/RESTRICTED-FILES.md` — direct tool/content, documentary parse, source inspection, or hash read; Read first in this lane, full boundary ledger; rehashed; Read first, in full.; document/source read, parsed or hashed
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/phase2-20260927/prompts/common.md` — direct tool/content, documentary parse, source inspection, or hash read; Read full common instructions; rehashed; Read in full.; document/source read, parsed or hashed
+- `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/u2-target-availability-cleared-20260928.md` — direct tool/content, documentary parse, source inspection, or hash read
+- `/tmp/u2_ssi_download.py` — transient helper
+- `CLAUDE.md` — direct tool/content, documentary parse, source inspection, or hash read; Read full repository instructions; rehashed; Read in full.; document/source read, parsed or hashed
+- `data/external/census_poverty_thresholds_1982_2022.json` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `data/external/census_poverty_thresholds_2004_2012.json` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `data/external/track_u2/design.json` — direct tool/content, documentary parse, source inspection, or hash read; Content read for independent documentary review, source capture, or pension correction/testing.; Independent review of root loader/schema tests and generated documentary registries; JSON parsing and synthetic in-memory schema mutations only; automated Python import/test/AST/hash read
+- `data/external/track_u2/income.json` — direct tool/content, documentary parse, source inspection, or hash read; Generated documentary registry inspected by author; Independent review of root loader/schema tests and generated documentary registries; JSON parsing and synthetic in-memory schema mutations only; automated Python import/test/AST/hash read
+- `data/external/track_u2/individual.json` — direct tool/content, documentary parse, source inspection, or hash read; Content read for independent documentary review, source capture, or pension correction/testing.; Independent review of root loader/schema tests and generated documentary registries; JSON parsing and synthetic in-memory schema mutations only; automated Python import/test/AST/hash read
+- `data/external/track_u2/pension.json` — direct tool/content, documentary parse, source inspection, or hash read; Task-generated deliverable; content read for verification.; Independent review of root loader/schema tests and generated documentary registries; JSON parsing and synthetic in-memory schema mutations only; automated Python import/test/AST/hash read
+- `data/external/track_u2/roles.json` — direct tool/content, documentary parse, source inspection, or hash read; Content read for independent documentary review, source capture, or pension correction/testing.; Independent review of root loader/schema tests and generated documentary registries; JSON parsing and synthetic in-memory schema mutations only; automated Python import/test/AST/hash read
+- `data/external/track_u2/support.json` — direct tool/content, documentary parse, source inspection, or hash read; Content read for independent documentary review, source capture, or pension correction/testing.; Independent review of root loader/schema tests and generated documentary registries; JSON parsing and synthetic in-memory schema mutations only; automated Python import/test/AST/hash read
+- `data/external/track_u2/u1_identity.json` — direct tool/content, documentary parse, source inspection, or hash read; automated Python import/test/AST/hash read
+- `data/external/track_u2/wealth.json` — direct tool/content, documentary parse, source inspection, or hash read; Generated documentary registry inspected by author; Independent review of root loader/schema tests and generated documentary registries; JSON parsing and synthetic in-memory schema mutations only; automated Python import/test/AST/hash read
+- `data/external/track_u2/weights.json` — direct tool/content, documentary parse, source inspection, or hash read; Content read for independent documentary review, source capture, or pension correction/testing.; Independent review of root loader/schema tests and generated documentary registries; JSON parsing and synthetic in-memory schema mutations only; automated Python import/test/AST/hash read
+- `data/external/track_u2_ssi_parameters_2012_2022.json` — document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `data/external/track_u_ssi_parameters.json` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `docs/design/boomers2004_1946_55_comparison.md` — direct tool/content, documentary parse, source inspection, or hash read; SHA-256 only; Read full U2 specification; rehashed; Read in full in overlapping chunks; searches for exact line citations.; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `docs/design/boomers2004_uniform_cut_comparison.md` — direct tool/content, documentary parse, source inspection, or hash read; SHA-256 only; Read U1 template selected source/method sections and text-search matches; rehashed; Pension specification lines 559–700 and search hits elsewhere in the same file; inherited structural-count text was visible, not used as later-wave routing evidence.; SSI section and search matches only; no external report PDF opened; automated Python import/test/AST/hash read
+- `docs/design/u2_m1_captured_sources.md` — direct tool/content, documentary parse, source inspection, or hash read
+- `docs/design/u2_m1_exposure.json` — direct tool/content, documentary parse, source inspection, or hash read
+- `docs/design/u2_m1_exposure.md` — direct tool/content, documentary parse, source inspection, or hash read
+- `docs/design/u2_m1_income_wealth_adjudication.md` — direct tool/content, documentary parse, source inspection, or hash read; Generated route-by-route source adjudication authored and inspected
+- `docs/design/u2_m1_income_wealth_exposure.json` — direct tool/content, documentary parse, source inspection, or hash read; exposure inventory integration; Running exposure record authored and inspected; self-hash omitted
+- `docs/design/u2_m1_pension_adjudication.md` — direct tool/content, documentary parse, source inspection, or hash read; Task-generated deliverable; content read for verification.
+- `docs/design/u2_m1_pension_exposure.json` — direct tool/content, documentary parse, source inspection, or hash read; exposure inventory integration; Task-generated deliverable; content read for verification.
+- `docs/design/u2_m1_report.md` — direct tool/content, documentary parse, source inspection, or hash read
+- `docs/design/u2_m1_root_exposure.json` — direct tool/content, documentary parse, source inspection, or hash read
+- `docs/design/u2_m1_runtime_exposure.json` — direct tool/content, documentary parse, source inspection, or hash read
+- `docs/design/u2_m1_source_adjudication.md` — direct tool/content, documentary parse, source inspection, or hash read
+- `docs/design/u2_m1_ssi_adjudication.md` — direct tool/content, documentary parse, source inspection, or hash read; document/source read, parsed or hashed
+- `docs/design/u2_m1_ssi_exposure.json` — direct tool/content, documentary parse, source inspection, or hash read; exposure inventory integration
+- `gates.yaml` — SHA-256 only; automated Python import/test/AST/hash read
+- `popen-gw5` — automated Python import/test/AST/hash read
+- `pyproject.toml` — direct tool/content, documentary parse, source inspection, or hash read; Content read for independent documentary review, source capture, or pension correction/testing.; read by Black, Ruff and pytest configuration discovery; automated Python import/test/AST/hash read
+- `runs/replication_boomers2004_uniform_cut_v1.env.json` — SHA-256 only; automated Python import/test/AST/hash read
+- `runs/replication_boomers2004_uniform_cut_v1.json` — SHA-256 only; automated Python import/test/AST/hash read
+- `scripts/_u2_ssi_download_work.py` — transient helper
+- `scripts/build_mortality_floors.py` — automated Python import/test/AST/hash read
+- `scripts/capture_track_u2_income_wealth.py` — direct tool/content, documentary parse, source inspection, or hash read; Documentary generator authored, executed and inspected; automated Python import/test/AST/hash read
+- `scripts/capture_track_u2_ssi_parameters.py` — direct tool/content, documentary parse, source inspection, or hash read; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `scripts/capture_track_u2_ssi_sources.py` — document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `scripts/capture_track_u_parameters.py` — SHA-256 only; lines 1–270, documentary parameter code only; not executed/imported; automated Python import/test/AST/hash read
+- `scripts/first_estimates_birth_evidence.py` — direct tool/content, documentary parse, source inspection, or hash read; automated Python import/test/AST/hash read
+- `scripts/registered_m6_candidate2_inputs.py` — automated Python import/test/AST/hash read
+- `scripts/registered_m6_candidate3_inputs.py` — automated Python import/test/AST/hash read
+- `scripts/registered_m6_inputs.py` — automated Python import/test/AST/hash read
+- `scripts/run_track_u_registered.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `scripts/track_u_dry_run.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `src/policyengine_social_security_model.egg-info/entry_points.txt` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/__init__.py` — Focused registry-test import or documentary weight-capture manifest/hash verification; PDF bytes hashed without rendering; automated Python import/test/AST/hash read
+- `src/populace_dynamics/artifacts.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/claiming.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/cohorts/__init__.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/cohorts/age67.py` — direct tool/content, documentary parse, source inspection, or hash read; SHA-256 only; automated Python import/test/AST/hash read
+- `src/populace_dynamics/cohorts/psid2010.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/contract.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/data/__init__.py` — Focused registry-test import or documentary weight-capture manifest/hash verification; PDF bytes hashed without rendering; automated Python import/test/AST/hash read
+- `src/populace_dynamics/data/asec_firm_size.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/data/births.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/data/couple_earnings.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/data/cps_tenure.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/data/deaths.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/data/deployment_frame.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/data/disability.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/data/employer_dc.py` — direct tool/content, documentary parse, source inspection, or hash read; SHA-256 only; Selected pension constants/maps; later read in full by Python AST, without import or execution, to compare all 24 U1 2013 mappings.; automated Python import/test/AST/hash read
+- `src/populace_dynamics/data/family.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `src/populace_dynamics/data/family_income.py` — direct tool/content, documentary parse, source inspection, or hash read; SHA-256 only; U1 immutable route templates and constants; automated Python import/test/AST/hash read
+- `src/populace_dynamics/data/household_composition.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/data/marriage.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/data/panels.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/data/psid.py` — direct tool/content, documentary parse, source inspection, or hash read; SHA-256 only; automated Python import/test/AST/hash read
+- `src/populace_dynamics/data/relmap.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/data/social_security_income.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/data/transitions.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/data/u2_source_registry.py` — direct tool/content, documentary parse, source inspection, or hash read; Content read for independent documentary review, source capture, or pension correction/testing.; Independent review of root loader/schema tests and generated documentary registries; JSON parsing and synthetic in-memory schema mutations only; subsequently edited to address review findings and checked with focused pytest, Black and Ruff; automated Python import/test/AST/hash read
+- `src/populace_dynamics/engine/__init__.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/engine/assembly.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/engine/candidates.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/engine/composition.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/engine/disability.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/engine/earnings_domain.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/engine/forward_earnings.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/engine/loop.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `src/populace_dynamics/engine/marital.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/engine/panel_builders.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/engine/refit.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/engine/rng.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/engine/steps.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `src/populace_dynamics/engine/support.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/estimates/__init__.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/estimates/adjusted_poverty.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `src/populace_dynamics/estimates/career.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `src/populace_dynamics/estimates/coordinator.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/estimates/first_report.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/estimates/ledgers.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/estimates/parameters.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/estimates/preparation.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/estimates/publication.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/estimates/runner.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/estimates/uniform_cut_tabulation.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `src/populace_dynamics/evaluation.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/firms/__init__.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/firms/banding.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/harness/__init__.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/harness/holdout.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/harness/m6_candidate2_runner.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/harness/m6_candidate3_runner.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/harness/m6_cells.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/harness/m6_inputs.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/harness/m6_population.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/harness/m6_preflight.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/harness/m6_projection.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/harness/m6_reporting.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/harness/m6_runner.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/harness/m6_scoring.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/harness/metrics.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/harness/moments.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/harness/panel.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/harness/views.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/__init__.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/couple_formation_sim_v1.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/couple_formation_sim_v2.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/disability_hazard_sim.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/family_transitions/__init__.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/family_transitions/common.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/family_transitions/components/__init__.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/family_transitions/components/divorce.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/family_transitions/components/fertility.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/family_transitions/components/first_marriage.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/family_transitions/components/first_marriage_support_aware.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/family_transitions/components/initial_states.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/family_transitions/components/remarriage.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/family_transitions/components/spousal_age_gap.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/family_transitions/components/widowhood.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/family_transitions/fitted.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/family_transitions/registry.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/family_transitions/simulator.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/household_composition/__init__.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/household_composition/base_simulator.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/household_composition/common.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/household_composition/components/__init__.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/household_composition/components/child_attribution.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/household_composition/components/cohabitation_overlay.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/household_composition/components/fertility_core_lift.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/household_composition/components/household_size.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/household_composition/components/legal_spouse_residual.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/household_composition/components/marital_core_adapter.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/household_composition/components/multigenerational_occupancy.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/household_composition/components/nonfamily_bridge.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/household_composition/components/parental_home_exit.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/household_composition/components/skip_generation_state.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/household_composition/data.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/household_composition/fitted.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/household_composition/registry.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/models/household_composition/simulator.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/ss/__init__.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/ss/benefits.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/ss/params.py` — automated Python import/test/AST/hash read
+- `src/populace_dynamics/uniform_cut_track_u/__init__.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `src/populace_dynamics/uniform_cut_track_u/diagnostics.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `src/populace_dynamics/uniform_cut_track_u/invented.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `src/populace_dynamics/uniform_cut_track_u/rows.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `src/populace_dynamics/uniform_cut_track_u/runner.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `test_an_acl_that_denies_keeps_0` — automated Python import/test/AST/hash read
+- `tests/cohorts/test_age67.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/cohorts/test_age67_integration.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/conftest.py` — direct tool/content, documentary parse, source inspection, or hash read; Loaded implicitly by pytest; not read as substantive documentary evidence.; document/source read, parsed or hashed
+- `tests/data/test_employer_dc.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/data/test_employer_dc_integration.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/data/test_family_income.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/data/test_family_income_integration.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/data/test_track_u2_income_wealth.py` — direct tool/content, documentary parse, source inspection, or hash read; Documentary schema, inherited-route and identity coverage tests authored and executed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/psid_sources/cross_sec_weights_17.pdf` — SHA-256 only; Downloaded official original PDF or generated retrieval manifest; PDF reopened to verify recorded hash.; Focused registry-test import or documentary weight-capture manifest/hash verification; PDF bytes hashed without rendering; automated Python import/test/AST/hash read
+- `tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf` — direct tool/content, documentary parse, source inspection, or hash read; SHA-256 only; Content read for independent documentary review, source capture, or pension correction/testing.; Focused registry-test import or documentary weight-capture manifest/hash verification; PDF bytes hashed without rendering; automated Python import/test/AST/hash read
+- `tests/data/track_u2/psid_sources/weights17_manifest.json` — direct tool/content, documentary parse, source inspection, or hash read; Downloaded official original PDF or generated retrieval manifest; PDF reopened to verify recorded hash.; Focused registry-test import or documentary weight-capture manifest/hash verification; PDF bytes hashed without rendering; automated Python import/test/AST/hash read
+- `tests/data/track_u2/psid_sources/weights23_manifest.json` — direct tool/content, documentary parse, source inspection, or hash read; Content read for independent documentary review, source capture, or pension correction/testing.; Focused registry-test import or documentary weight-capture manifest/hash verification; PDF bytes hashed without rendering; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_capture_manifest.json` — direct tool/content, documentary parse, source inspection, or hash read; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1112.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1121.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1124.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1161.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1163.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1205.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1218.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1806.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1112.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1121.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1124.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1161.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1163.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1205.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1218.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1806.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1112.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1121.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1124.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1161.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1163.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1205.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1218.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1806.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1112.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1121.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1124.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1161.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1163.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1205.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1218.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1806.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1112.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1121.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1124.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1161.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1163.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1205.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1218.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1806.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1112.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1121.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1124.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1161.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1163.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1205.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1218.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1806.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1112.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1121.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1124.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1161.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1163.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1205.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1218.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1806.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1112.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1121.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1124.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1161.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1163.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1205.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1218.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1806.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1112.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1121.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1124.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1161.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1163.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1205.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1218.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1806.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1112.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1121.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1124.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1161.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1163.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1205.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1218.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1806.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1112.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1121.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1124.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1161.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1163.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1205.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1218.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1806.xml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/fr_ssi_2012.html` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/fr_ssi_2013.html` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/fr_ssi_2014.html` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/fr_ssi_2015.html` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/fr_ssi_2016.html` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/fr_ssi_2017.html` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/fr_ssi_2018.html` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/fr_ssi_2019.html` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/fr_ssi_2020.html` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/fr_ssi_2021.html` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/fr_ssi_2022.html` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/manifest.json` — direct tool/content, documentary parse, source inspection, or hash read; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/policyengine_us/amount/couple.yaml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/policyengine_us/amount/individual.yaml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/policyengine_us/eligibility/resources/limit/couple.yaml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/policyengine_us/eligibility/resources/limit/individual.yaml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/policyengine_us/income/exclusions/earned.yaml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/policyengine_us/income/exclusions/earned_share.yaml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/data/track_u2/ssi_sources/policyengine_us/income/exclusions/general.yaml` — SHA-256 only; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `tests/estimates/test_adjusted_poverty.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/estimates/test_adjusted_poverty_u7.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/estimates/test_birth_evidence_artifact.py` — direct tool/content, documentary parse, source inspection, or hash read; automated Python import/test/AST/hash read
+- `tests/estimates/test_first_estimates_fixture.py` — automated Python import/test/AST/hash read
+- `tests/estimates/test_preparation.py` — automated Python import/test/AST/hash read
+- `tests/estimates/test_uniform_cut_tabulation.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/test_boomers2004_uniform_cut_spec.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/test_replication_boomers2004_uniform_cut.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/track_u/__init__.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/track_u/test_census_threshold_capture.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/track_u/test_committed_parameters.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/track_u/test_component_diagnostics_integration.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/track_u/test_diagnostics.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/track_u/test_diagnostics_published.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/track_u/test_dry_run_script.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/track_u/test_invented_generator.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/track_u/test_invented_pipeline.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/track_u/test_registered_script.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/track_u/test_rows.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/track_u/test_runner.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/track_u/test_ssi_capture_oracle.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/track_u/test_threshold_capture_parser.py` — SHA-256 only; automated Python import/test/AST/hash read
+- `tests/track_u2/test_pension_registry.py` — direct tool/content, documentary parse, source inspection, or hash read; Content read for independent documentary review, source capture, or pension correction/testing.; automated Python import/test/AST/hash read
+- `tests/track_u2/test_source_registries.py` — direct tool/content, documentary parse, source inspection, or hash read; Content read for independent documentary review, source capture, or pension correction/testing.; Independent review of root loader/schema tests and generated documentary registries; JSON parsing and synthetic in-memory schema mutations only; subsequently edited to address review findings and checked with focused pytest, Black and Ruff; automated Python import/test/AST/hash read
+- `tests/track_u2/test_ssi_capture.py` — direct tool/content, documentary parse, source inspection, or hash read; document/source read, parsed or hashed; automated Python import/test/AST/hash read
+- `u2-m1.bundle` — direct tool/content, documentary parse, source inspection, or hash read
+- `wt` — automated Python import/test/AST/hash read
+
+## Online exposure
+
+URLs include source pages and snippets returned by searches; only primary PSID/govinfo sources were used for findings. Failed URL spelling/query variants returned HTTP403 and no PDF contents. SSI contributor ledger records source requests in detail.
+
+- https://arxiv.org/abs/2312.13018
+- https://en.wikipedia.org/wiki/Consolidated_Appropriations_Act%2C_2018
+- https://github.com/Morningstar/PSID
+- https://hrs.isr.umich.edu/news/data-announcements/cross-wave-social-security-weights
+- https://psidonline.isr.umich.edu/
+- https://psidonline.isr.umich.edu/CDS/Guide/FAQ.aspx
+- https://psidonline.isr.umich.edu/GettingStarted.aspx
+- https://psidonline.isr.umich.edu/Guide/FAQ.aspx?type=0
+- https://psidonline.isr.umich.edu/Guide/default.aspx
+- https://psidonline.isr.umich.edu/Guide/documents.aspx
+- https://psidonline.isr.umich.edu/Publications/Bibliography/BrowseKeywordsQ.aspx?ID=1
+- https://psidonline.isr.umich.edu/Publications/Bibliography/BrowseKeywordsQ.aspx?ID=11
+- https://psidonline.isr.umich.edu/Publications/Bibliography/BrowseKeywordsQ.aspx?ID=14
+- https://psidonline.isr.umich.edu/Publications/Bibliography/BrowseKeywordsQ.aspx?ID=23
+- https://psidonline.isr.umich.edu/Publications/Bibliography/BrowseKeywordsQ.aspx?ID=5
+- https://psidonline.isr.umich.edu/Publications/Bibliography/BrowseKeywordsQ.aspx?ID=6
+- https://psidonline.isr.umich.edu/VideoTutorial.aspx
+- https://psidonline.isr.umich.edu/cds/TAS17_UserGuide.pdf
+- https://psidonline.isr.umich.edu/data/Documentation/UserGuide2015.pdf
+- https://psidonline.isr.umich.edu/data/Documentation/UserGuide2017.pdf
+- https://psidonline.isr.umich.edu/data/Documentation/UserGuide2019.pdf
+- https://psidonline.isr.umich.edu/data/Documentation/UserGuide2021.pdf
+- https://psidonline.isr.umich.edu/data/Documentation/UserGuide2023.pdf
+- https://psidonline.isr.umich.edu/data/documentation/userguide2021.pdf
+- https://psidonline.isr.umich.edu/data/weights/cross_sec_weights_17.pdf
+- https://psidonline.isr.umich.edu/data/weights/cross_sec_weights_19.pdf
+- https://psidonline.isr.umich.edu/data/weights/cross_sec_weights_21.pdf
+- https://psidonline.isr.umich.edu/data/weights/cross_sec_weights_23.pdf
+- https://psidonline.isr.umich.edu/data/weights/long_weight_19.pdf
+- https://psidonline.isr.umich.edu/data/weights/long_weight_21.pdf
+- https://psidonline.isr.umich.edu/guide/faq.aspx
+- https://psidonline.isr.umich.edu/publications/Papers/
+- https://psidtest.isr.umich.edu/Guide/FAQ.aspx
+- https://psidtest.isr.umich.edu/Guide/FAQ.aspx?Type=10
+- https://psidtest.isr.umich.edu/Guide/FAQ.aspx?Type=2
+- https://public-inspection.federalregister.gov/2018-00735.pdf?1516283125=
+- https://raw.githubusercontent.com/PolicyEngine/policyengine-us/a03e82e503f8e0285125ee0c5380410a964c8e8a/policyengine_us/parameters/gov/ssa/ssi/amount/couple.yaml
+- https://raw.githubusercontent.com/PolicyEngine/policyengine-us/a03e82e503f8e0285125ee0c5380410a964c8e8a/policyengine_us/parameters/gov/ssa/ssi/amount/individual.yaml
+- https://raw.githubusercontent.com/PolicyEngine/policyengine-us/a03e82e503f8e0285125ee0c5380410a964c8e8a/policyengine_us/parameters/gov/ssa/ssi/eligibility/resources/limit/couple.yaml
+- https://raw.githubusercontent.com/PolicyEngine/policyengine-us/a03e82e503f8e0285125ee0c5380410a964c8e8a/policyengine_us/parameters/gov/ssa/ssi/eligibility/resources/limit/individual.yaml
+- https://raw.githubusercontent.com/PolicyEngine/policyengine-us/a03e82e503f8e0285125ee0c5380410a964c8e8a/policyengine_us/parameters/gov/ssa/ssi/income/exclusions/earned.yaml
+- https://raw.githubusercontent.com/PolicyEngine/policyengine-us/a03e82e503f8e0285125ee0c5380410a964c8e8a/policyengine_us/parameters/gov/ssa/ssi/income/exclusions/earned_share.yaml
+- https://raw.githubusercontent.com/PolicyEngine/policyengine-us/a03e82e503f8e0285125ee0c5380410a964c8e8a/policyengine_us/parameters/gov/ssa/ssi/income/exclusions/general.yaml
+- https://regulations.justia.com/regulations/fedreg/2016/10/27/2016-26026.html
+- https://regulations.justia.com/regulations/fedreg/2025/11/03/2025-19763.html
+- https://thefederalregister.org/citation/83-FR-53702
+- https://thefederalregister.org/documents/2025-19763/cost-of-living-increase-and-other-determinations-for-2026
+- https://www.dol.gov/agencies/owcp/FECA/directives-archive/2011Circulars
+- https://www.govinfo.gov/app/details/CDOC-111hdoc156
+- https://www.govinfo.gov/content/pkg/BILLS-110s1326is/pdf/BILLS-110s1326is.pdf
+- https://www.govinfo.gov/content/pkg/BILLS-114s3471pcs/pdf/BILLS-114s3471pcs.pdf
+- https://www.govinfo.gov/content/pkg/BUDGET-2018-APP/pdf/BUDGET-2018-APP-1-16.pdf
+- https://www.govinfo.gov/content/pkg/CFR-2012-title20-vol2/xml/CFR-2012-title20-vol2-sec416-1112.xml
+- https://www.govinfo.gov/content/pkg/CFR-2012-title20-vol2/xml/CFR-2012-title20-vol2-sec416-1121.xml
+- https://www.govinfo.gov/content/pkg/CFR-2012-title20-vol2/xml/CFR-2012-title20-vol2-sec416-1124.xml
+- https://www.govinfo.gov/content/pkg/CFR-2012-title20-vol2/xml/CFR-2012-title20-vol2-sec416-1161.xml
+- https://www.govinfo.gov/content/pkg/CFR-2012-title20-vol2/xml/CFR-2012-title20-vol2-sec416-1163.xml
+- https://www.govinfo.gov/content/pkg/CFR-2012-title20-vol2/xml/CFR-2012-title20-vol2-sec416-1205.xml
+- https://www.govinfo.gov/content/pkg/CFR-2012-title20-vol2/xml/CFR-2012-title20-vol2-sec416-1218.xml
+- https://www.govinfo.gov/content/pkg/CFR-2012-title20-vol2/xml/CFR-2012-title20-vol2-sec416-1806.xml
+- https://www.govinfo.gov/content/pkg/CFR-2013-title20-vol2/xml/CFR-2013-title20-vol2-sec416-1112.xml
+- https://www.govinfo.gov/content/pkg/CFR-2013-title20-vol2/xml/CFR-2013-title20-vol2-sec416-1121.xml
+- https://www.govinfo.gov/content/pkg/CFR-2013-title20-vol2/xml/CFR-2013-title20-vol2-sec416-1124.xml
+- https://www.govinfo.gov/content/pkg/CFR-2013-title20-vol2/xml/CFR-2013-title20-vol2-sec416-1161.xml
+- https://www.govinfo.gov/content/pkg/CFR-2013-title20-vol2/xml/CFR-2013-title20-vol2-sec416-1163.xml
+- https://www.govinfo.gov/content/pkg/CFR-2013-title20-vol2/xml/CFR-2013-title20-vol2-sec416-1205.xml
+- https://www.govinfo.gov/content/pkg/CFR-2013-title20-vol2/xml/CFR-2013-title20-vol2-sec416-1218.xml
+- https://www.govinfo.gov/content/pkg/CFR-2013-title20-vol2/xml/CFR-2013-title20-vol2-sec416-1806.xml
+- https://www.govinfo.gov/content/pkg/CFR-2014-title20-vol2/xml/CFR-2014-title20-vol2-sec416-1112.xml
+- https://www.govinfo.gov/content/pkg/CFR-2014-title20-vol2/xml/CFR-2014-title20-vol2-sec416-1121.xml
+- https://www.govinfo.gov/content/pkg/CFR-2014-title20-vol2/xml/CFR-2014-title20-vol2-sec416-1124.xml
+- https://www.govinfo.gov/content/pkg/CFR-2014-title20-vol2/xml/CFR-2014-title20-vol2-sec416-1161.xml
+- https://www.govinfo.gov/content/pkg/CFR-2014-title20-vol2/xml/CFR-2014-title20-vol2-sec416-1163.xml
+- https://www.govinfo.gov/content/pkg/CFR-2014-title20-vol2/xml/CFR-2014-title20-vol2-sec416-1205.xml
+- https://www.govinfo.gov/content/pkg/CFR-2014-title20-vol2/xml/CFR-2014-title20-vol2-sec416-1218.xml
+- https://www.govinfo.gov/content/pkg/CFR-2014-title20-vol2/xml/CFR-2014-title20-vol2-sec416-1806.xml
+- https://www.govinfo.gov/content/pkg/CFR-2015-title20-vol2/xml/CFR-2015-title20-vol2-sec416-1112.xml
+- https://www.govinfo.gov/content/pkg/CFR-2015-title20-vol2/xml/CFR-2015-title20-vol2-sec416-1121.xml
+- https://www.govinfo.gov/content/pkg/CFR-2015-title20-vol2/xml/CFR-2015-title20-vol2-sec416-1124.xml
+- https://www.govinfo.gov/content/pkg/CFR-2015-title20-vol2/xml/CFR-2015-title20-vol2-sec416-1161.xml
+- https://www.govinfo.gov/content/pkg/CFR-2015-title20-vol2/xml/CFR-2015-title20-vol2-sec416-1163.xml
+- https://www.govinfo.gov/content/pkg/CFR-2015-title20-vol2/xml/CFR-2015-title20-vol2-sec416-1205.xml
+- https://www.govinfo.gov/content/pkg/CFR-2015-title20-vol2/xml/CFR-2015-title20-vol2-sec416-1218.xml
+- https://www.govinfo.gov/content/pkg/CFR-2015-title20-vol2/xml/CFR-2015-title20-vol2-sec416-1806.xml
+- https://www.govinfo.gov/content/pkg/CFR-2016-title20-vol2/xml/CFR-2016-title20-vol2-sec416-1112.xml
+- https://www.govinfo.gov/content/pkg/CFR-2016-title20-vol2/xml/CFR-2016-title20-vol2-sec416-1121.xml
+- https://www.govinfo.gov/content/pkg/CFR-2016-title20-vol2/xml/CFR-2016-title20-vol2-sec416-1124.xml
+- https://www.govinfo.gov/content/pkg/CFR-2016-title20-vol2/xml/CFR-2016-title20-vol2-sec416-1161.xml
+- https://www.govinfo.gov/content/pkg/CFR-2016-title20-vol2/xml/CFR-2016-title20-vol2-sec416-1163.xml
+- https://www.govinfo.gov/content/pkg/CFR-2016-title20-vol2/xml/CFR-2016-title20-vol2-sec416-1205.xml
+- https://www.govinfo.gov/content/pkg/CFR-2016-title20-vol2/xml/CFR-2016-title20-vol2-sec416-1218.xml
+- https://www.govinfo.gov/content/pkg/CFR-2016-title20-vol2/xml/CFR-2016-title20-vol2-sec416-1806.xml
+- https://www.govinfo.gov/content/pkg/CFR-2017-title20-vol2/xml/CFR-2017-title20-vol2-sec416-1112.xml
+- https://www.govinfo.gov/content/pkg/CFR-2017-title20-vol2/xml/CFR-2017-title20-vol2-sec416-1121.xml
+- https://www.govinfo.gov/content/pkg/CFR-2017-title20-vol2/xml/CFR-2017-title20-vol2-sec416-1124.xml
+- https://www.govinfo.gov/content/pkg/CFR-2017-title20-vol2/xml/CFR-2017-title20-vol2-sec416-1161.xml
+- https://www.govinfo.gov/content/pkg/CFR-2017-title20-vol2/xml/CFR-2017-title20-vol2-sec416-1163.xml
+- https://www.govinfo.gov/content/pkg/CFR-2017-title20-vol2/xml/CFR-2017-title20-vol2-sec416-1205.xml
+- https://www.govinfo.gov/content/pkg/CFR-2017-title20-vol2/xml/CFR-2017-title20-vol2-sec416-1218.xml
+- https://www.govinfo.gov/content/pkg/CFR-2017-title20-vol2/xml/CFR-2017-title20-vol2-sec416-1806.xml
+- https://www.govinfo.gov/content/pkg/CFR-2018-title20-vol2/xml/CFR-2018-title20-vol2-sec416-1112.xml
+- https://www.govinfo.gov/content/pkg/CFR-2018-title20-vol2/xml/CFR-2018-title20-vol2-sec416-1121.xml
+- https://www.govinfo.gov/content/pkg/CFR-2018-title20-vol2/xml/CFR-2018-title20-vol2-sec416-1124.xml
+- https://www.govinfo.gov/content/pkg/CFR-2018-title20-vol2/xml/CFR-2018-title20-vol2-sec416-1161.xml
+- https://www.govinfo.gov/content/pkg/CFR-2018-title20-vol2/xml/CFR-2018-title20-vol2-sec416-1163.xml
+- https://www.govinfo.gov/content/pkg/CFR-2018-title20-vol2/xml/CFR-2018-title20-vol2-sec416-1205.xml
+- https://www.govinfo.gov/content/pkg/CFR-2018-title20-vol2/xml/CFR-2018-title20-vol2-sec416-1218.xml
+- https://www.govinfo.gov/content/pkg/CFR-2018-title20-vol2/xml/CFR-2018-title20-vol2-sec416-1806.xml
+- https://www.govinfo.gov/content/pkg/CFR-2019-title20-vol2/xml/CFR-2019-title20-vol2-sec416-1112.xml
+- https://www.govinfo.gov/content/pkg/CFR-2019-title20-vol2/xml/CFR-2019-title20-vol2-sec416-1121.xml
+- https://www.govinfo.gov/content/pkg/CFR-2019-title20-vol2/xml/CFR-2019-title20-vol2-sec416-1124.xml
+- https://www.govinfo.gov/content/pkg/CFR-2019-title20-vol2/xml/CFR-2019-title20-vol2-sec416-1161.xml
+- https://www.govinfo.gov/content/pkg/CFR-2019-title20-vol2/xml/CFR-2019-title20-vol2-sec416-1163.xml
+- https://www.govinfo.gov/content/pkg/CFR-2019-title20-vol2/xml/CFR-2019-title20-vol2-sec416-1205.xml
+- https://www.govinfo.gov/content/pkg/CFR-2019-title20-vol2/xml/CFR-2019-title20-vol2-sec416-1218.xml
+- https://www.govinfo.gov/content/pkg/CFR-2019-title20-vol2/xml/CFR-2019-title20-vol2-sec416-1806.xml
+- https://www.govinfo.gov/content/pkg/CFR-2020-title20-vol2/xml/CFR-2020-title20-vol2-sec416-1112.xml
+- https://www.govinfo.gov/content/pkg/CFR-2020-title20-vol2/xml/CFR-2020-title20-vol2-sec416-1121.xml
+- https://www.govinfo.gov/content/pkg/CFR-2020-title20-vol2/xml/CFR-2020-title20-vol2-sec416-1124.xml
+- https://www.govinfo.gov/content/pkg/CFR-2020-title20-vol2/xml/CFR-2020-title20-vol2-sec416-1161.xml
+- https://www.govinfo.gov/content/pkg/CFR-2020-title20-vol2/xml/CFR-2020-title20-vol2-sec416-1163.xml
+- https://www.govinfo.gov/content/pkg/CFR-2020-title20-vol2/xml/CFR-2020-title20-vol2-sec416-1205.xml
+- https://www.govinfo.gov/content/pkg/CFR-2020-title20-vol2/xml/CFR-2020-title20-vol2-sec416-1218.xml
+- https://www.govinfo.gov/content/pkg/CFR-2020-title20-vol2/xml/CFR-2020-title20-vol2-sec416-1806.xml
+- https://www.govinfo.gov/content/pkg/CFR-2021-title20-vol2/xml/CFR-2021-title20-vol2-sec416-1112.xml
+- https://www.govinfo.gov/content/pkg/CFR-2021-title20-vol2/xml/CFR-2021-title20-vol2-sec416-1121.xml
+- https://www.govinfo.gov/content/pkg/CFR-2021-title20-vol2/xml/CFR-2021-title20-vol2-sec416-1124.xml
+- https://www.govinfo.gov/content/pkg/CFR-2021-title20-vol2/xml/CFR-2021-title20-vol2-sec416-1161.xml
+- https://www.govinfo.gov/content/pkg/CFR-2021-title20-vol2/xml/CFR-2021-title20-vol2-sec416-1163.xml
+- https://www.govinfo.gov/content/pkg/CFR-2021-title20-vol2/xml/CFR-2021-title20-vol2-sec416-1205.xml
+- https://www.govinfo.gov/content/pkg/CFR-2021-title20-vol2/xml/CFR-2021-title20-vol2-sec416-1218.xml
+- https://www.govinfo.gov/content/pkg/CFR-2021-title20-vol2/xml/CFR-2021-title20-vol2-sec416-1806.xml
+- https://www.govinfo.gov/content/pkg/CFR-2022-title20-vol2/xml/CFR-2022-title20-vol2-sec416-1112.xml
+- https://www.govinfo.gov/content/pkg/CFR-2022-title20-vol2/xml/CFR-2022-title20-vol2-sec416-1121.xml
+- https://www.govinfo.gov/content/pkg/CFR-2022-title20-vol2/xml/CFR-2022-title20-vol2-sec416-1124.xml
+- https://www.govinfo.gov/content/pkg/CFR-2022-title20-vol2/xml/CFR-2022-title20-vol2-sec416-1161.xml
+- https://www.govinfo.gov/content/pkg/CFR-2022-title20-vol2/xml/CFR-2022-title20-vol2-sec416-1163.xml
+- https://www.govinfo.gov/content/pkg/CFR-2022-title20-vol2/xml/CFR-2022-title20-vol2-sec416-1205.xml
+- https://www.govinfo.gov/content/pkg/CFR-2022-title20-vol2/xml/CFR-2022-title20-vol2-sec416-1218.xml
+- https://www.govinfo.gov/content/pkg/CFR-2022-title20-vol2/xml/CFR-2022-title20-vol2-sec416-1806.xml
+- https://www.govinfo.gov/content/pkg/CRPT-118hrpt129/pdf/CRPT-118hrpt129.pdf
+- https://www.govinfo.gov/content/pkg/FR-2011-10-25/html/2011-27496.htm
+- https://www.govinfo.gov/content/pkg/FR-2011-10-25/pdf/2011-27496.pdf
+- https://www.govinfo.gov/content/pkg/FR-2012-10-30/html/2012-26663.htm
+- https://www.govinfo.gov/content/pkg/FR-2012-10-30/pdf/2012-26663.pdf
+- https://www.govinfo.gov/content/pkg/FR-2013-11-05/html/2013-26569.htm
+- https://www.govinfo.gov/content/pkg/FR-2013-11-05/pdf/2013-26569.pdf
+- https://www.govinfo.gov/content/pkg/FR-2014-10-29/html/2014-25802.htm
+- https://www.govinfo.gov/content/pkg/FR-2014-10-29/pdf/2014-25802.pdf
+- https://www.govinfo.gov/content/pkg/FR-2015-10-30/html/2015-27828.htm
+- https://www.govinfo.gov/content/pkg/FR-2015-10-30/pdf/2015-27828.pdf
+- https://www.govinfo.gov/content/pkg/FR-2016-10-27/html/2016-26026.htm
+- https://www.govinfo.gov/content/pkg/FR-2016-10-27/pdf/2016-26026.pdf
+- https://www.govinfo.gov/content/pkg/FR-2017-12-15/html/2017-27105.htm
+- https://www.govinfo.gov/content/pkg/FR-2017-12-15/pdf/2017-27105.pdf
+- https://www.govinfo.gov/content/pkg/FR-2018-10-24/html/2018-23193.htm
+- https://www.govinfo.gov/content/pkg/FR-2018-10-24/pdf/2018-23193.pdf
+- https://www.govinfo.gov/content/pkg/FR-2019-10-22/html/2019-22921.htm
+- https://www.govinfo.gov/content/pkg/FR-2019-10-22/pdf/2019-22921.pdf
+- https://www.govinfo.gov/content/pkg/FR-2020-10-22/html/2020-23442.htm
+- https://www.govinfo.gov/content/pkg/FR-2020-10-22/pdf/2020-23442.pdf
+- https://www.govinfo.gov/content/pkg/FR-2021-10-22/html/2021-23031.htm
+- https://www.govinfo.gov/content/pkg/FR-2021-10-22/pdf/2021-23031.pdf
+- https://www.govinfo.gov/content/pkg/PLAW-115publ91/html/PLAW-115publ91.htm
+- https://www.govinfo.gov/content/pkg/USCODE-2010-title42/html/USCODE-2010-title42-chap7-subchapXVIII-partB-sec1395w-4.htm
+- https://www.govinfo.gov/content/pkg/USCODE-2024-title5/html/USCODE-2024-title5-partIII-subpartD-chap53.htm
+- https://www.govinfo.gov/link/fr/76/66111
+- https://www.govinfo.gov/link/fr/77/65754
+- https://www.govinfo.gov/link/fr/78/66413
+- https://www.govinfo.gov/link/fr/79/64455
+- https://www.govinfo.gov/link/fr/80/66963
+- https://www.govinfo.gov/link/fr/81/74854
+- https://www.govinfo.gov/link/fr/82/59937
+- https://www.govinfo.gov/link/fr/83/53702
+- https://www.govinfo.gov/link/fr/84/56515
+- https://www.govinfo.gov/link/fr/85/67413
+- https://www.govinfo.gov/link/fr/86/58715
+- https://www.ssa.gov/news/en/press/releases/2010-10-15.html
+- https://www.ssa.gov/oact/cola/positivecola.html
+- https://www.ssa.gov/policy/docs/statcomps/supplement/2011/2a8-2a19.html
