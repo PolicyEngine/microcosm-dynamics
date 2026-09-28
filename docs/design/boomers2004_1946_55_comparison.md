@@ -1,7 +1,7 @@
 # Boomers 2004, 1946–55: specification for held-out target U2
 
-- **Version:** `u2-draft-3` (round 2).
-- **Status:** decisions ruled. On 2026-09-28 Max approved the §16 defaults and ratification of this specification (d514, in chat). Per §20, the version becomes `u2-ratified-1` by the merge that completes §20 steps 2–5 and materializes the final parameter block; that merge needs no further ruling unless it changes this document's substance. Not registered or authorized for execution.
+- **Version:** `u2-draft-4` (milestone 1b, 2026-09-28): proposed amendments 1–6 in §16a, pending Max's ruling. Previous version: `u2-draft-3` (round 2).
+- **Status:** decisions ruled for `u2-draft-3`. On 2026-09-28 Max approved the §16 defaults and ratification of that draft (d514, in chat). Per §20, the version becomes `u2-ratified-1` by the merge that completes §20 steps 2–5 and materializes the final parameter block; that merge needs no further ruling unless it changes this document's substance. `u2-draft-4` adds §16a, whose proposed amendments change substance, so each needs Max's ruling first. Not registered or authorized for execution.
 - **Intended file:** `docs/design/boomers2004_1946_55_comparison.md`.
 - **Specification identity:** `boomers2004_1946_55_uniform_cut`.
 - **Target identity:** `U2`. Row identifiers are local to this specification: **row U2** means “no SSI response.”
@@ -1044,7 +1044,7 @@ Ratification requires code/block equality, completed manifests and replacement o
 {
   "specification": "boomers2004_1946_55_uniform_cut",
   "target_id": "U2",
-  "version": "u2-draft-3",
+  "version": "u2-draft-4",
   "status": "draft",
   "inherits": {
     "file": "docs/design/boomers2004_uniform_cut_comparison.md",
@@ -1372,21 +1372,193 @@ The pre-registration allowance matches U1. Additional mapping-completion require
 
 These are proposed U2 defaults. U1’s d189/d411 rulings are precedent, not U2 execution authorization.
 
+## 16a. Proposed amendments for `u2-draft-4` (pending Max's ruling)
+
+> **PROPOSED — not ratified.** Every amendment in this section is a proposal for Max's ruling. Until he rules on an amendment, §§3–15 govern exactly as written in `u2-draft-3`, and the source registries keep refusing every route this section leaves open. Ruling on one amendment does not rule on another.
+
+The amendments carry out the independent adjudication of milestone 1 (`EV/phase2-20260927/out/u2-adjudicate.md`, SHA-256 `a891762bf9be39e05509e59c5b7cd3fdab0eb34feb9ad5b9bb4a8ec3afc39662`; its amendment numbers are kept). Milestone 1b's documentary research updates them (`docs/design/u2_m1b_psid_research.md`; sources in `tests/data/track_u2/psid_docs/manifest.json`). Amendment 7 of the adjudication (18 citation corrections) needed no ruling and is already applied to the registries and `docs/design/u2_m1_source_adjudication.md`.
+
+**How options are recommended.** Where a blocker stays open, the recommended option is the one that puts no undocumented assumption about PSID's processing into any estimate and is fixed before any count or outcome exists. No option here was chosen, or may be chosen, by its effect on any result. No result, count or outcome has been computed for this draft. A count enters only through the authorized pre-registration structural pass (§4), and only where an option names it.
+
+### Amendment 1 (proposed): relationship routing by wave
+
+Replace the single rule set in the §3 relationship table with the wave-specific routing below. Income roles, spouse-slot membership, annuity lives and marital resolution are recorded separately for each wave.
+
+| Code | 2013 | 2015 | 2017 | 2019, 2021, 2023 |
+|---|---|---|---|---|
+| 10 | Head | Head | Reference person | Reference person |
+| 20 | Spouse slot (legal wife) | Spouse slot; see blocker B1 | Spouse slot, either sex | Spouse slot, either sex |
+| 22 | Spouse slot ("wife" cohabitor) | Spouse slot (female cohabitor) | Spouse slot (partner, either sex) | Spouse slot (partner, either sex) |
+| 88 | OFUM (1c) | OFUM (1c) | OFUM (1c) | OFUM (1c) |
+| 90 | OFUM; inherited 2013 rule | OFUM (documented) | OFUM (documented) | Financial route refused; see blocker B2 |
+| 92 | Absent | Absent | OFUM, nonspouse (documented) | Financial route refused; see blocker B2 |
+
+**1a. Documented routes accepted.** Accept the routes the adjudication resolved from documents (disposition D):
+
+- 2015 code 90 is an OFUM income role outside the spouse loop. The spouse income and pension loops admit only 'CYAQRTH=202, 222' (q2015 pp. 89, 166), and the Big OFUM series admits 'FUP1YEAR[I].AQRTH.ORD>222' (q2015 p. 104). The PSID FAQ (question 74) adds that a Husband of Head, code 9 or 90, 'was asked the same questions as an Ofum'.
+- 2017 codes 90 and 92 are OFUM income roles outside the spouse loop. q2017 p. 5 lists 901/902 and 921/922, and p. 95 sends the spouse repeat to 'CYAQRTH=201-222' and the OFUM series to 'AQRTH>222'.
+- Code 90 keeps the co-resident legal-spouse annuity life and relationship-based marital resolution. Code 92 keeps §3's nonspouse conventions: it is not a legal-spouse life and never resolves a head's history as married.
+
+**1b. 2013.** 2013 keeps the inherited meanings: code 90 is 'Legal husband of Head' (IND2023ER codebook p. 916), with the rules on the §3 lines 147, 150, 156 and 175.
+
+**1c. Code 88 convention (adjudication A, all six waves).** A first-year cohabitor:
+
+- has an OFUM income role on the family basis, and its SSI falls in §8's OFUM unit ('OFUM SSI totals form one individual unit');
+- does not occupy the spouse slot;
+- is not a legal-spouse annuity life;
+- never resolves the head's or reference person's marital history as married by relationship code alone;
+- keeps the recorded legal marital history;
+- keeps the inherited administrative birth support.
+
+The OFUM income gates include codes 881/882 in every wave (q2013 p. 97; q2015 p. 104; q2017 p. 95; q2019 p. 103; q2021 p. 205; q2023 p. 203). FAQ question 75 says 'Boyfriends and Girlfriends are treated like other family members who are not Reference Person ('Head' prior to 2017), Spouse or Partner.' A 2015 same-sex partner is code 98 with ER34304=1 (IND2023ER codebook p. 978). Such a person keeps the ordinary OFUM role, and no legal-spouse life follows from the code.
+
+**1d. Blocker B1: a male legal spouse in 2015 code 20.** Part B verdict: **PARTIAL.** Official documentation routes every documented kind of male legal spouse in 2015 away from code 20:
+
+- A husband in a heterosexual couple is Head: UserGuide2017 PDF p. 13, 'From 1968-2015, PSID conformed to the Census Bureau conventions' ... by designating the husband in households with heterosexual married adults, the 'Head''. FAQ question 73 says the same.
+- A husband who is not Head is 'Husband of Head', code 9 or 90, and 'was asked the same questions as an Ofum' (FAQ question 74). The 2015 interviewer instructions call making 'a male spouse into Husband of Head instead of Head' a rare designation that needs study-staff permission (fam2015 QxQs p. 144).
+- A same-sex partner is code 98, 'Other nonrelatives (includes same-sex partners ...)', flagged by ER34304 (IND2023ER codebook p. 978; UserGuide2015 PDF p. 33). Only 'As of 2017' are same-sex partners 'designated as Spouse/Partner ... rather than as an OFUM' (UserGuide2017 PDF p. 35).
+
+What remains open: no document says in words that 2015 code 20 is never male, and FAQ question 70 says generally that from 2015 'Spouse indicates a legal marriage, while Partner is a cohabiting, non-legally married partner, where the couple can consist of heterosexual or same sex couples'. So the documents do not settle how the legally married same-sex spouse of a male Head was coded in 2015. If he was coded 20 (CYAQRTH 201), the 2015 spouse loops (202 and 222 only) and the OFUM gate (>222) would both have skipped him. Options:
+
+1. **Recommended: documented rule plus a halting guard.** 2015 code 20 occupies the spouse slot as documented. The authorized structural pass counts, and counts only, 2015 code-20 persons recorded male (ER32000=1) in family units that supply any U2 observation. If the count is zero, no male code-20 person exists to route and nothing is assumed. If it is nonzero, registration stops and the question in `docs/design/u2_m1b_psid_research.md` §1 goes to PSID; there is no exclusion, reassignment, zero-fill or imputation. Trade-off: the guard can stop registration, and then Max rules again.
+2. **Documented rule plus exclusion.** As option 1, but a 2015 family-unit observation containing a male code-20 person is excluded from every row under a named disposition, and the count is disclosed after the structural pass. Trade-off: registration always proceeds, and the population changes by a count that is unknown now.
+3. **Hold the 2015 wave for PSID's answer.** Trade-off: 2015 supplies U0's 1947 cell and U1's 1946 and 1948 half-observations, so the headline row waits indefinitely. Contact with PSID is Max's call.
+
+Option 1 is recommended: it never routes an undocumented category and never changes the population.
+
+**1e. Blocker B2: codes 90 and 92 in 2019–2023.** Part B verdict: **PARTIAL.** The instruments document that these persons get no Section G income questions:
+
+- The spouse series admits 'CYAQRTH=201-222' (q2019 p. 102; q2021 p. 204; q2023 p. 202).
+- The Big and Little OFUM series admit 'CYAQRTH=301-882 or 951-982' (q2019 pp. 103, 125; q2021 pp. 205, 243; q2023 pp. 203, 241).
+- FAQ question 74 says codes 90 and 92 'are used when one half of the couple is adamant about not giving information about the other half, or when one half adamantly refuses to have their information included'.
+
+No online document states whether any of their income, Social Security or SSI is edited or imputed into the family-file aggregates. The 2019, 2021 and 2023 codebooks mention uncooperative spouses only in relationship-code lists, marital and couple status, sample status and fertility variables. Options:
+
+1. **Recommended: exclude and disclose.** Every 2019, 2021 or 2023 family-unit observation containing a code-90 or code-92 person is excluded from every row under a named disposition ('uncooperative spouse or partner in family unit'). This applies whether the target person is the reference person, the uncooperative spouse or partner, or another member. The count is disclosed after the authorized structural pass. The rule is fixed now, before any count, and is vacuous if no such unit supplies an observation. Trade-off: the population loses these units. Their number is unknown now; FAQ question 74 describes only the institutional use of these codes as rare.
+2. **Stated convention.** Use the family-file aggregates as released. The code-90 or code-92 person gets no separately recorded income, Social Security or SSI and no SSI unit of their own. Code 90 keeps the legal-spouse annuity life and marital resolution; code 92 keeps its nonspouse conventions. The count is disclosed. Trade-off: the persons stay in, but the estimate embeds undocumented processing, and family resources may fall short of the Report's concept, which includes a spouse's resources (cleared U2 statement).
+3. **Wait for PSID documentation.** Trade-off: these waves supply U0's 1951, 1953 and 1955 cells and five of U1's half-observation cells, so most of the target waits indefinitely. Contact with PSID is Max's call.
+
+Option 1 is recommended: it is the only immediate option that places no assumption about the undocumented processing into any estimate.
+
+**1f. No waiver by counts.** No refusal in amendment 1 is waived by observed absence. A count enters only as options 1d-1, 1d-2 and 1e-1 state, inside the authorized structural pass.
+
+### Amendment 2 (proposed): annuitant input precedence
+
+For annuity lives and every age- or sex-dependent rule, use each person's recorded sex (ER32000) and derived income-year age (§3 Annuitant ages). The family-file spouse age and sex variables are slot metadata only:
+
+| Wave | Spouse age | Spouse sex |
+|---|---|---|
+| 2015 | ER60019 | ER60020 |
+| 2017 | ER66019 | ER66020 |
+| 2019 | ER72019 | ER72020 |
+| 2021 | ER78019 | ER78020 |
+| 2023 | ER82020 | ER82021 |
+
+Their 'Head is female or single male' or 'Reference Person is female or single male' inapplicability wording never decides whether a person occupies the spouse slot. Slot occupancy comes from amendment 1. This amendment repairs no refused financial mapping.
+
+Registry effect after a ruling: the ten `wife_age` and `wife_sex` records become metadata-only records with a no-slot-inference rule.
+
+### Amendment 3 (proposed): historical spouse-retirement crosswalk
+
+The six `wife_retirement_annuities` crosswalk records (2013–2023) stay non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the later separately documented spouse pension, annuity, IRA and other-retirement items (for example 2017 ER71369, ER71371, ER71373 and ER71375; FAM2017ER pp. 2015–2016). Those components, spouse IRA income included, stay inside total family money income under §4. They are never added a second time. No row changes.
+
+### Amendment 4 (proposed): wealth accuracy-flag erratum
+
+The registries already record the nine corrected targets (adjudication D). The literal codebook wording is preserved in `codebook_text` and `source_wording_conflict`.
+
+| Flag | Codebook says 'Accuracy of' | Corrected target |
+|---|---|---|
+| 2013 ER58212 (WEALTH2) | ER58209 | ER58211 |
+| 2013 ER58162 (checking/saving) | ER581614 (no such variable) | ER58161 |
+| 2015 ER65409 (WEALTH2) | ER65406 | ER65408 |
+| 2015 ER65359 (checking/saving) | ER653584 (no such variable) | ER65358 |
+| 2017 ER71486 (WEALTH2) | ER71483 | ER71485 |
+| 2017 ER71436 (checking/saving) | ER714354 (no such variable) | ER71435 |
+| 2019 ER77512 (WEALTH2) | ER77509 | ER77511 |
+| 2021 ER81839 (WEALTH2) | ER81836 | ER81838 |
+| 2023 ER85693 (WEALTH2) | ER85690 | ER85692 |
+
+Proposed rule: use these flags only for the specified imputation diagnostics. The corrections never change an amount or a sample-inclusion decision.
+
+### Amendment 5 (proposed): pension predicates and source precedence
+
+**5a. 2017–2023 (adjudication D).** Replace the generic previous-employer account route in §15 with wave-specific routes. Only P46=5 (DC only) reaches P64/P65. Formula (P46=1), combined (7), DK, refused and NA plans are off-route for P64/P65 and carry a named disposition. Evidence: P62ACKPT on q2017 p. 152, q2019 p. 163, q2021 p. 304 and q2023 p. 302, which reads '1. DB Only (P46=1)', '3. DC Only (P46=5)' and '5. All Others'; the first and third go to P69. Combined plans use P48/P49 once; disposition 3 (left to accumulate) is counted and disposition 2 (IRA rollover) is excluded.
+
+**5b. 2015 (adjudication A).** Admit the documentary intersection: P46=5 reaches P64/P65, and P46=7 reaches P48/P49. Refuse the disputed P62ACKPT branch, pending PSID clarification. Its heading reads 'P46=1 AND P52=1 AND P62AMT= DK/RF', while its branch label reads only '1. P62AMT =DK/RF' (q2015 p. 164), and FAM2015ER p. 692 (ER62057) makes P65 inapplicable for 'defined benefit retirement plan or combination plan (ER61990=1 or 7)' and 'NA or RF type of retirement plan (ER61990=9)', but not for DK (8). An amount reached only through that branch is off-route under a named disposition, never zero-filled.
+
+**5c. U7's 2015 spouse slot.** The adjudication's F refusal stands: P70CKPT admits only 'CYAQRTH=202, 222' (q2015 p. 166). If Max adopts option 1d-1 or 1d-2, U7's 2015 spouse slot is the documented female spouse or partner slot, and the same guard or exclusion applies to U7. Without a ruling on 1d, U7 stays unavailable, and no assumption of absence or zero balance is permitted. Removing U7 would need its own reviewed amendment.
+
+Proposed replacement for §15 `income_concept.employer_dc.previous_routes`:
+
+```json
+"previous_routes": {
+  "both_items": ["both"],
+  "account_items_by_wave": {
+    "2013": ["account", "formula", "dk"],
+    "2015": ["account"],
+    "2017": ["account"],
+    "2019": ["account"],
+    "2021": ["account"],
+    "2023": ["account"]
+  },
+  "refused_branches": {
+    "2015": "P62ACKPT: P46=1 AND P52=1 AND P62AMT=DK/RF"
+  }
+}
+```
+
+2013 keeps the route inherited from U1 (registry `pension:2013.route.formula_unknown_checkpoint`). After a ruling, the registry releases the P64/P65 records blocked by `pension:{2017,2019,2021,2023}.route.inherited_route_amendment`.
+
+### Amendment 6 (proposed): 2017 individual cross-sectional weight
+
+**Identity.** The 2017 observation weight is ER34651, 'CORE/IMM INDIVIDUAL CROSS-SECTION WT 17', as released in the 1968–2023 individual file. Its codebook note reads 'This variable has been updated for all individuals in 2017 including the Immigrant 2017 sample' (IND2023ER codebook p. 1224). Selection is positive weight. There is no immigrant exclusion, no reconstructed weight and no recalibration.
+
+**Blocker B3: construction documentation.** Part B verdict: **NOT DOCUMENTED ONLINE.**
+
+- The May 2019 release notes say 'the weights for the 2017 Immigrant individuals remain zero and will be updated in Release 3' (DataRelease-May2019 p. 1). UserGuide2017 PDF p. 62 then documents the update.
+- The February 2019 construction report has the same content digest as the Internet Archive capture of 15 June 2019, the only archived version. It post-stratifies 2017 to 'population totals that excluded the foreign-born individuals who entered the U.S. after 1997'. It says the 2017 sample's 'weighting methodology will be available from the PSID website' (cross_sec_weights_17 PDF pp. 3, 9).
+- The 2019 report says only that 'A cross-sectional family weight was created in 2017' to include that sample (cross_sec_weights_19 PDF p. 2).
+- The official documents page lists no such methodology (Internet Archive, 13 August 2026), and neither does the technical-paper list (Internet Archive, 17 September 2025).
+
+Options:
+
+1. **Recommended: use the released weight and disclose.** Use ER34651 as released. Registration states that PSID has not published the construction or calibration of the revised 2017 weight. The §3 sentence 'The weight construction and immigrant-refreshment coverage must be documented before registration' is met for 2017 by the documented coverage plus this disclosure. The exact question in `docs/design/u2_m1b_psid_research.md` §3 is queued for Max to send or not. Trade-off: the 2017 population controls are unknown; the builder changes nothing in PSID's released weight.
+2. **Hold registration for PSID's construction document.** Trade-off: 2017 supplies U0's 1949 cell and U1's 1948 and 1950 half-observations, so the headline row waits indefinitely.
+3. **Substitute the documented longitudinal weight ER34650 for 2017.** Trade-off: a different estimand. The weight is zero for the 2017 immigrant sample and its construction differs from the other waves' cross-sectional weights; this contradicts §3. Not recommended.
+
+Option 1 is recommended. It follows the adjudication, and the builder makes no assumption about or modification to the released weight. Option 2 is the stricter alternative if Max wants the §3 sentence kept literally.
+
+### Registry effect of the rulings
+
+| Amendment | On ruling |
+|---|---|
+| 1 | Record 1a–1c. Replace the eight F refusals with the chosen B1 and B2 options. Release dependents accordingly |
+| 2 | Resolve the ten spouse age/sex records as metadata-only |
+| 3 | Resolve the six crosswalk records as non-executable metadata |
+| 4 | None; already recorded |
+| 5 | Resolve the 2015 checkpoint as 5b. Release the 2017–2023 P64/P65 records. Replace the §15 fragment |
+| 6 | Resolve the 2017 weight record under the chosen option |
+
+Each registry change after a ruling is its own reviewed commit. No ruling changes a U1 file.
+
 ## 17. Review record and outstanding work
 
-The adversarial review of `u2-draft-1` returned **RATIFIABLE AFTER EDITS**. Rev1 (`u2-draft-2`) applied those edits. Its round-diff check returned **REVISE**, identifying R1–R8. This round-2 document (`u2-draft-3`) applies every exact edit and retains the earlier resolutions; it does not claim a new referee verdict or completed implementation.
+The adversarial review of `u2-draft-1` returned **RATIFIABLE AFTER EDITS**. Rev1 (`u2-draft-2`) applied those edits. Its round-diff check returned **REVISE**, identifying R1–R8. Round 2 (`u2-draft-3`) applied every exact edit and retained the earlier resolutions.
 
-Before ratification:
+Milestone 1 then built the documentary source registries (`data/external/track_u2/`, master record `docs/design/u2_m1_source_adjudication.md`). The independent adjudication of that work (`EV/phase2-20260927/out/u2-adjudicate.md`) returned **ERRORS FOUND**: 18 wrong citations, now corrected; 16 items resolvable from documents, now resolved; 8 routes refused, now encoded as explicit refusals; and 24 items that need conventions, still open. Milestone 1b researched the three documentary blockers from official PSID documentation and wrote `u2-draft-4` (§16a). No amendment in §16a is ratified, and this document claims no new referee verdict and no completed implementation.
 
-1. Independently adjudicate all required later income, wealth, debt, individual and pension routes.
-2. Resolve the explicit relationship-source inconsistencies, including 2015 male-code-20 routing and code-90/code-92 OFUM versus spouse-slot routing.
-3. Verify identification support, observation plans, weight documentation and refreshed design domains.
-4. Complete SSI capture, notice verification, constancy checks and pins.
-5. Complete historical-isolation and cross-cohort refusal tests.
-6. Produce U2 invented dry-run and exact U1 differential evidence.
-7. Complete the pre-registration structural, reconciliation and F17 component pass.
-8. Check specification, literal named deltas, parameter block, manifests and ten-row implementation for equality.
-9. Obtain ratification, then a fresh forecast and independent forecast check.
+What remains before ratification:
+
+1. Max rules on amendments 1–6 in §16a, choosing one option each for blocker B1 (2015 male code 20; Part B PARTIAL), B2 (codes 90 and 92 in 2019–2023; Part B PARTIAL) and B3 (construction of the revised 2017 weight; Part B NOT DOCUMENTED ONLINE).
+2. Each ruling is applied to the registries in its own reviewed commit. Until then the 24 TO VERIFY records stay open, the 8 refusals stand and the 2017–2023 P64/P65 records stay blocked.
+3. If Max chooses an option that asks PSID, the exact questions are in `docs/design/u2_m1b_psid_research.md`. Nobody has contacted PSID.
+4. Verify identification support, observation plans and refreshed design domains; weight documentation follows the amendment 6 ruling.
+5. Pin the SSI parameter file in §15. The capture exists and the adjudication reconfirmed all 106 source hashes.
+6. Complete historical-isolation and cross-cohort refusal tests (milestone 2).
+7. Produce U2 invented dry-run and exact U1 differential evidence (milestone 2).
+8. Complete the pre-registration structural, reconciliation and F17 component pass, including only the counts that the chosen B1 and B2 options name.
+9. Check the specification, literal named deltas, parameter block (with the amendment 5 fragment if ruled), manifests and ten-row implementation for equality.
+10. Obtain ratification, then a fresh forecast and an independent forecast check.
 
 Required fields remain **TO VERIFY** until source adjudication is complete. Neither empty empirical categories nor observed outputs may substitute for documentary resolution.
 
@@ -1511,11 +1683,21 @@ Round-2 verification comprised read-only source inspection, the three metadata h
 
 **No files were written, no commit was made, no model test or model run was executed, and no outcome or structural statistic was computed on real PSID data.** Existing workspace changes were preserved. The explicit no-files instruction governs this deliverable.
 
+**`u2-draft-4` (milestone 1b, proposed; pending Max's ruling):**
+
+- Applied the independent adjudication to the source registries and master record: 18 citation corrections (amendment 7), 16 documentary resolutions and 8 explicit refusals. 24 items stay TO VERIFY. A builder-found fix points the six code-88 citations at line 190 instead of line 198.
+- Researched the three documentary blockers from official PSID documentation: B1 PARTIAL, B2 PARTIAL, B3 NOT DOCUMENTED ONLINE (`docs/design/u2_m1b_psid_research.md`; sources and hashes in `tests/data/track_u2/psid_docs/manifest.json`).
+- Added §16a: proposed amendments 1–6, each open blocker's options with trade-offs, and a recommendation chosen by the stated conservatism rule and never by effect on results.
+- Rewrote §17's outstanding work, updated §20 and bumped the version line and the §15 `version` key.
+- Changed no line that a registry cites. Lines 1–1374 keep their draft-3 numbering, and every cited line keeps its draft-3 text; `tests/track_u2/test_adjudication_applied.py` pins both.
+
+Milestone-1b verification comprised documentary source checks, the registry and birth-evidence tests, and Black and Ruff. No model run was made, no estimator was executed and no statistic was computed on real PSID data. Reading and exposure are recorded in `docs/design/u2_m1b_exposure.md`.
+
 ## 20. Ratification and execution record
 
 **Pending.**
 
-1. Resolve the proposed decisions and source-verification blockers. **Decisions: done (Max, d514, 2026-09-28, adopting every §16 default).** Source-verification blockers remain for steps 2–5.
+1. Resolve the proposed decisions and source-verification blockers. **Decisions: done (Max, d514, 2026-09-28, adopting every §16 default).** Source-verification blockers remain for steps 2–5. **`u2-draft-4` amendments 1–6 (§16a): proposed, pending Max's ruling**, including the options for blockers B1, B2 and B3.
 2. Complete implementation, manifests and parameter capture.
 3. Complete independent mapping review, invented tests, historical-isolation checks and exact U1 differential evidence.
 4. Complete the authorized pre-registration structural, reconciliation and F17 component pass; resolve mapping failures.
