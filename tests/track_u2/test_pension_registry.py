@@ -104,7 +104,13 @@ def test_later_checkpoint_does_not_inherit_formula_unknown_route(
     assert documented["accepted_plan_types"] == [5]
     assert set(documented["rejected_plan_types"]) == {1, 7, 8, 9}
     amendment = by_id[f"{wave}.route.inherited_route_amendment"]
-    assert amendment["status"] == "TO VERIFY"
+    # Independent adjudication D: the documents resolve the DC-only route,
+    # but application waits for Max's ruling on u2-draft-4 amendment 5.
+    assert amendment["status"] == "RESOLVED"
+    assert amendment["adjudication"]["disposition"] == "D"
+    assert amendment["action"] == "refuse_pending_amendment_5_ruling"
+    with pytest.raises(registry.SourceAdjudicationError, match="amendment_5"):
+        registry.require_resolved("pension", amendment["id"])
     for person in ("head", "wife"):
         for plan in (1, 2):
             entry = by_id[f"{wave}.{person}_prev{plan}_dc_amount"]

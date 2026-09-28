@@ -9199,12 +9199,22 @@
         {
           "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
           "page": 692
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 123
         }
       ],
       "finding": "The 2015 P62ACKPT heading requires P46=1 AND P52=1 AND P62AMT=DK/RF, but its displayed branch label says only P62AMT=DK/RF. P64/P65 codebook Inap. descriptions exclude formula and combined types.",
       "required_amendment": "Replace generic inherited previous_routes with a wave-specific 2015 P62ACKPT predicate after source adjudication.",
-      "question": "Does the 2015 instrument route only formula plans expecting benefits with P62AMT DK/RF, or any P62AMT DK/RF (including unknown or combined plans)? Obtain a PSID documentary clarification of heading versus branch label and the codebook conflict; preregister the exact accepted plan types and expectation gate before executing. No observed category may resolve this.",
-      "refusal": "Do not execute this pension route until independent documentary adjudication and any stated preregistration amendment are complete."
+      "question": "Does the 2015 instrument route only formula plans expecting benefits with P62AMT DK/RF, or any P62AMT DK/RF (including unknown or combined plans)? Obtain a PSID documentary clarification of heading versus branch label and the codebook conflict; preregister the exact accepted plan types and expectation gate before executing. No observed category may resolve this. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 5, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 123).",
+      "refusal": "Do not execute this pension route until independent documentary adjudication and any stated preregistration amendment are complete.",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 123,
+        "disposition": "A",
+        "amendment": 5
+      }
     },
     {
       "id": "2015.route.ira_rollovers",
@@ -9389,7 +9399,7 @@
       "id": "2015.route.respondent_slots",
       "wave": 2015,
       "kind": "route",
-      "status": "TO VERIFY",
+      "status": "RESOLVED",
       "citations": [
         {
           "file": "PSID/documentation/capture1/q2015.pdf",
@@ -9402,12 +9412,15 @@
         {
           "file": "docs/design/boomers2004_1946_55_comparison.md",
           "line": 309
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 124
         }
       ],
       "finding": "The pension loop covers the family-file head/reference-person slot and designated spouse/partner slot. Other family members are not separate pension-loop respondents. P70CKPT supplies the explicit spouse-loop family-list relationship gate. Individual-record role assignment remains the separate U2 role registry task.",
       "requires_role_registry": true,
-      "question": "q2015 p.166 P70CKPT admits CYAQRTH=202,222 only, while U2 code 20 is legal spouse irrespective of sex and family labels say SP. What official documentation maps a male code-20 person to this 2015 pension spouse slot? Refuse that person-slot route pending the section 3 role-source adjudication and explicit reviewed amendment.",
-      "refusal": "Do not assign a 2015 male code-20 person to the pension spouse slot without resolved documentary evidence.",
+      "refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 124; disposition F, amendment 5): q2015 p. 166 P70CKPT reads 'WHETHER WIFE/“WIFE” IN FU (CYFUHU=1, 4 & CYAQRTH=202, 222)' and supplies no male code-20 pension-slot bridge. U7 remains unavailable as specified; no assumption of absence or zero balance is permitted.",
       "family_list_gate": {
         "CYFUHU": [
           1,
@@ -9419,8 +9432,16 @@
         ]
       },
       "blocking_dependencies": [
-        "roles:2015.relationship.90"
-      ]
+        "roles:2015.relationship.20"
+      ],
+      "action": "refuse_male_code20_pension_slot_per_u2_adjudicate_F",
+      "part_b_finding": "See roles:2015.relationship.20. Documented 2015 male legal spouses are Head, code 90 or code 98 and are not pension-loop spouse respondents; the residual male code-20 question is open (docs/design/u2_m1b_psid_research.md).",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 124,
+        "disposition": "F",
+        "amendment": 5
+      }
     },
     {
       "id": "2015.route.other_current_plan",
@@ -13325,7 +13346,7 @@
       "id": "2017.route.inherited_route_amendment",
       "wave": 2017,
       "kind": "route",
-      "status": "TO VERIFY",
+      "status": "RESOLVED",
       "citations": [
         {
           "file": "PSID/documentation/capture1/q2017.pdf",
@@ -13338,12 +13359,23 @@
         {
           "file": "docs/design/boomers2004_1946_55_comparison.md",
           "line": 1173
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 125
         }
       ],
       "finding": "The draft parameter contract lists account/formula/dk previous account routes for U2, while this wave questionnaire permits only account P46=5.",
       "required_amendment": "2017: previous account-item accepted_plan_types=[5]; formula/unknown/combined excluded.",
-      "question": "Before registration, replace the generic inherited account/formula/dk route in U2 section 15 with a wave-specific 2017 P46=5-only P64/P65 route, and explicitly disposition all formula/DK/combined amounts as off-route. Independent review must approve that documentary correction; do not silently widen the questionnaire universe.",
-      "refusal": "Do not execute this pension route until independent documentary adjudication and any stated preregistration amendment are complete."
+      "refusal": "The documentary route is resolved, but the ratified section 15 contract still lists the generic account/formula/dk previous route. Application stays refused, and dependent P64/P65 entries stay blocked, until Max rules on u2-draft-4 amendment 5 (independent adjudication D; EV/phase2-20260927/out/u2-adjudicate.md line 125).",
+      "resolution": "Independent adjudication D (amendment 5): q2017 p. 152 P62ACKPT gives '1. DB Only (P46=1)', '3. DC Only (P46=5)', '5. All Others (P46=7 or DK/RF)'; DB-only and all others go to P69. Only P46=5 (DC only) reaches P63-P65; formula, combined, DK, refused and NA plans are off-route for P64/P65. Combined-plan P48/P49 is counted once, disposition 3 is retained and IRA-rollover disposition 2 is excluded.",
+      "action": "refuse_pending_amendment_5_ruling",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 125,
+        "disposition": "D",
+        "amendment": 5
+      }
     },
     {
       "id": "2017.route.ira_rollovers",
@@ -13554,11 +13586,7 @@
           201,
           222
         ]
-      },
-      "blocking_dependencies": [
-        "roles:2017.relationship.90",
-        "roles:2017.relationship.92"
-      ]
+      }
     },
     {
       "id": "2017.route.other_current_plan",
@@ -17435,7 +17463,7 @@
       "id": "2019.route.inherited_route_amendment",
       "wave": 2019,
       "kind": "route",
-      "status": "TO VERIFY",
+      "status": "RESOLVED",
       "citations": [
         {
           "file": "PSID/documentation/capture1/q2019.pdf",
@@ -17448,12 +17476,23 @@
         {
           "file": "docs/design/boomers2004_1946_55_comparison.md",
           "line": 1173
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 126
         }
       ],
       "finding": "The draft parameter contract lists account/formula/dk previous account routes for U2, while this wave questionnaire permits only account P46=5.",
       "required_amendment": "2019: previous account-item accepted_plan_types=[5]; formula/unknown/combined excluded.",
-      "question": "Before registration, replace the generic inherited account/formula/dk route in U2 section 15 with a wave-specific 2019 P46=5-only P64/P65 route, and explicitly disposition all formula/DK/combined amounts as off-route. Independent review must approve that documentary correction; do not silently widen the questionnaire universe.",
-      "refusal": "Do not execute this pension route until independent documentary adjudication and any stated preregistration amendment are complete."
+      "refusal": "The documentary route is resolved, but the ratified section 15 contract still lists the generic account/formula/dk previous route. Application stays refused, and dependent P64/P65 entries stay blocked, until Max rules on u2-draft-4 amendment 5 (independent adjudication D; EV/phase2-20260927/out/u2-adjudicate.md line 126).",
+      "resolution": "Independent adjudication D (amendment 5): q2019 p. 163 P62ACKPT gives the same three P62ACKPT branches, followed by 'Plan with Former Employer - Defined Contribution (P46=DC Only)'. Only P46=5 (DC only) reaches P63-P65; formula, combined, DK, refused and NA plans are off-route for P64/P65. Combined-plan P48/P49 is counted once, disposition 3 is retained and IRA-rollover disposition 2 is excluded.",
+      "action": "refuse_pending_amendment_5_ruling",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 126,
+        "disposition": "D",
+        "amendment": 5
+      }
     },
     {
       "id": "2019.route.ira_rollovers",
@@ -21923,7 +21962,7 @@
       "id": "2021.route.inherited_route_amendment",
       "wave": 2021,
       "kind": "route",
-      "status": "TO VERIFY",
+      "status": "RESOLVED",
       "citations": [
         {
           "file": "PSID/documentation/capture1/q2021.pdf",
@@ -21936,12 +21975,23 @@
         {
           "file": "docs/design/boomers2004_1946_55_comparison.md",
           "line": 1173
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 127
         }
       ],
       "finding": "The draft parameter contract lists account/formula/dk previous account routes for U2, while this wave questionnaire permits only account P46=5.",
       "required_amendment": "2021: previous account-item accepted_plan_types=[5]; formula/unknown/combined excluded.",
-      "question": "Before registration, replace the generic inherited account/formula/dk route in U2 section 15 with a wave-specific 2021 P46=5-only P64/P65 route, and explicitly disposition all formula/DK/combined amounts as off-route. Independent review must approve that documentary correction; do not silently widen the questionnaire universe.",
-      "refusal": "Do not execute this pension route until independent documentary adjudication and any stated preregistration amendment are complete."
+      "refusal": "The documentary route is resolved, but the ratified section 15 contract still lists the generic account/formula/dk previous route. Application stays refused, and dependent P64/P65 entries stay blocked, until Max rules on u2-draft-4 amendment 5 (independent adjudication D; EV/phase2-20260927/out/u2-adjudicate.md line 127).",
+      "resolution": "Independent adjudication D (amendment 5): q2021 p. 304 P62ACKPT gives '3. DC Only (P46=5)' versus '5. All Others (P46=7, DK, RF, NA)'; all others go to P69. Only P46=5 (DC only) reaches P63-P65; formula, combined, DK, refused and NA plans are off-route for P64/P65. Combined-plan P48/P49 is counted once, disposition 3 is retained and IRA-rollover disposition 2 is excluded.",
+      "action": "refuse_pending_amendment_5_ruling",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 127,
+        "disposition": "D",
+        "amendment": 5
+      }
     },
     {
       "id": "2021.route.ira_rollovers",
@@ -22166,15 +22216,37 @@
         },
         {
           "file": "PSID/documentation/capture1/q2021.pdf",
+          "page": 292
+        },
+        {
+          "file": "PSID/documentation/capture1/q2021.pdf",
           "page": 293
         },
         {
           "file": "docs/design/boomers2004_1946_55_comparison.md",
           "line": 309
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 60
         }
       ],
       "finding": "P42 asks about additional tax-deferred plans on the current job; the subsequent P43/P44 questions ask employer contributions and then lead to P45. The U1/U2 balance scope does not invent a second current-job account balance.",
-      "included": false
+      "included": false,
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 60,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "added": {
+          "file": "PSID/documentation/capture1/q2021.pdf",
+          "page": 292
+        },
+        "reason": "q2021 p. 292, omitted between the cited pages, holds P44: 'What amount or percent of pay does [your / his / her] employer contribute?' and directs 'GO TO P45'."
+      }
     },
     {
       "id": "2021.route.plan_type_nonresponse_release_note",
@@ -26444,7 +26516,7 @@
       "id": "2023.route.inherited_route_amendment",
       "wave": 2023,
       "kind": "route",
-      "status": "TO VERIFY",
+      "status": "RESOLVED",
       "citations": [
         {
           "file": "PSID/documentation/capture1/q2023.pdf",
@@ -26457,12 +26529,23 @@
         {
           "file": "docs/design/boomers2004_1946_55_comparison.md",
           "line": 1173
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 128
         }
       ],
       "finding": "The draft parameter contract lists account/formula/dk previous account routes for U2, while this wave questionnaire permits only account P46=5.",
       "required_amendment": "2023: previous account-item accepted_plan_types=[5]; formula/unknown/combined excluded.",
-      "question": "Before registration, replace the generic inherited account/formula/dk route in U2 section 15 with a wave-specific 2023 P46=5-only P64/P65 route, and explicitly disposition all formula/DK/combined amounts as off-route. Independent review must approve that documentary correction; do not silently widen the questionnaire universe.",
-      "refusal": "Do not execute this pension route until independent documentary adjudication and any stated preregistration amendment are complete."
+      "refusal": "The documentary route is resolved, but the ratified section 15 contract still lists the generic account/formula/dk previous route. Application stays refused, and dependent P64/P65 entries stay blocked, until Max rules on u2-draft-4 amendment 5 (independent adjudication D; EV/phase2-20260927/out/u2-adjudicate.md line 128).",
+      "resolution": "Independent adjudication D (amendment 5): q2023 p. 302 P62ACKPT gives '3. DC Only (P46=5)' versus '5. All Others (P46=7, DK, RF, NA)'; all others go to P69. Only P46=5 (DC only) reaches P63-P65; formula, combined, DK, refused and NA plans are off-route for P64/P65. Combined-plan P48/P49 is counted once, disposition 3 is retained and IRA-rollover disposition 2 is excluded.",
+      "action": "refuse_pending_amendment_5_ruling",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 128,
+        "disposition": "D",
+        "amendment": 5
+      }
     },
     {
       "id": "2023.route.ira_rollovers",
@@ -26687,15 +26770,37 @@
         },
         {
           "file": "PSID/documentation/capture1/q2023.pdf",
+          "page": 290
+        },
+        {
+          "file": "PSID/documentation/capture1/q2023.pdf",
           "page": 291
         },
         {
           "file": "docs/design/boomers2004_1946_55_comparison.md",
           "line": 309
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 61
         }
       ],
       "finding": "P42 asks about additional tax-deferred plans on the current job; the subsequent P43/P44 questions ask employer contributions and then lead to P45. The U1/U2 balance scope does not invent a second current-job account balance.",
-      "included": false
+      "included": false,
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 61,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "added": {
+          "file": "PSID/documentation/capture1/q2023.pdf",
+          "page": 290
+        },
+        "reason": "q2023 p. 290, omitted between the cited pages, holds P44: 'What amount or percent of pay does [your / his / her] employer contribute?' and directs 'GO TO P45'."
+      }
     },
     {
       "id": "2023.route.plan_type_nonresponse_release_note",
@@ -26723,5 +26828,12 @@
       "finding": "P46 codebook explicitly says DK and NA/refused were corrected for this variable because their paths differ. Preserve codes 8 and 9 distinctly; never infer a later wave code set from U1 _NEW_CODES_WAVES."
     }
   ],
-  "target_id": "U2"
+  "target_id": "U2",
+  "independent_adjudication": {
+    "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+    "sha256": "a891762bf9be39e05509e59c5b7cd3fdab0eb34feb9ad5b9bb4a8ec3afc39662",
+    "bytes": 26564,
+    "applied_by": "u2-m1b",
+    "note": "Independent adjudication of milestone 1 (VERDICT: ERRORS FOUND). Amendment 7 citation corrections, D resolutions and F refusals are applied here; A items stay TO VERIFY pending u2-draft-4 amendments 1-6 and Max's ruling."
+  }
 }

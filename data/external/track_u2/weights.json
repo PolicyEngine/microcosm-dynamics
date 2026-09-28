@@ -199,12 +199,43 @@
         {
           "file": "tests/data/track_u2/psid_sources/cross_sec_weights_17.pdf",
           "page": 6
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 129
+        },
+        {
+          "file": "tests/data/track_u2/psid_docs/DataRelease-May2019.pdf",
+          "page": 1
+        },
+        {
+          "file": "tests/data/track_u2/psid_docs/UserGuide2017.pdf",
+          "page": 62
+        },
+        {
+          "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+          "page": 2
+        },
+        {
+          "file": "tests/data/track_u2/psid_sources/cross_sec_weights_17.pdf",
+          "page": 3
+        },
+        {
+          "file": "tests/data/track_u2/psid_sources/cross_sec_weights_17.pdf",
+          "page": 9
         }
       ],
       "selection": "positive recorded cross-sectional weight; do not infer a domain from empirical ranges printed in codebook",
       "purpose": "Use reporting-wave individual cross-sectional weight times documentary plan multiplier. No cohort reweighting or immigrant exclusion.",
       "construction": "UserGuide2017 p. 62 explicitly identifies the Release 2 revision: ER34651 individual and ER71571 family cross-sectional weights include the NIS-2017 sample. The staged February 2019 construction report excludes post-1997 immigrants from its ACS calibration population; the currently served official report is byte-identical. The release chronology is documented, but the construction/calibration matching the revised ER34651 remains unresolved.",
-      "question": "Where is the construction/calibration documentation matching ER34651 after Release 2, which UserGuide2017 p. 62 says includes NIS-2017? The February 2019 construction report excludes post-1997 immigrants from ACS controls and remains the currently served official PDF. Reconcile the technical calibration with the documented revision; do not remove immigrants to match the older report."
+      "question": "Which PSID document describes the construction and calibration of the revised 2017 individual cross-sectional weight ER34651 that includes the 2017 Immigrant sample, and were its population controls the ACS totals including post-1997 immigrants (unlike the February 2019 report, which excluded them)? Where is the construction/calibration documentation matching ER34651 after Release 2, which UserGuide2017 p. 62 says includes NIS-2017? The February 2019 construction report excludes post-1997 immigrants from ACS controls and remains the currently served official PDF. Reconcile the technical calibration with the documented revision; do not remove immigrants to match the older report. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 6, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 129).",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 129,
+        "disposition": "A",
+        "amendment": 6
+      },
+      "part_b_finding": "NOT DOCUMENTED ONLINE (u2-m1b Part B, docs/design/u2_m1b_psid_research.md). The May 2019 release notes say the weights for the 2017 Immigrant individuals 'remain zero and will be updated in Release 3'; UserGuide2017 PDF p. 62 documents the later update; the 2019 cross-sectional report (PDF p. 2) says a 2017 cross-sectional family weight was created to include the 2017 New Immigrant Sample. The February 2019 construction report, unchanged since at least June 2019, still excludes the sample and promises that its weighting methodology 'will be available from the PSID website'; no such document is listed on the official documents page (Wayback, 13 August 2026)."
     },
     {
       "id": "2019.cross_section_weight",
@@ -382,5 +413,12 @@
       ],
       "finding": "Original June 2026 PDF staged with retrieval UTC, bytes and SHA-256; see weights23_manifest.json."
     }
-  ]
+  ],
+  "independent_adjudication": {
+    "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+    "sha256": "a891762bf9be39e05509e59c5b7cd3fdab0eb34feb9ad5b9bb4a8ec3afc39662",
+    "bytes": 26564,
+    "applied_by": "u2-m1b",
+    "note": "Independent adjudication of milestone 1 (VERDICT: ERRORS FOUND). Amendment 7 citation corrections, D resolutions and F refusals are applied here; A items stay TO VERIFY pending u2-draft-4 amendments 1-6 and Max's ruling."
+  }
 }

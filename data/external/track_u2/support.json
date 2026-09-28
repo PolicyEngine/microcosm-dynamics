@@ -72,7 +72,7 @@
       "citations": [
         {
           "file": "docs/design/boomers2004_1946_55_comparison.md",
-          "line": 67
+          "line": 88
         },
         {
           "file": "PSID/ind2023er/IND2023ER.sps",
@@ -97,8 +97,26 @@
         {
           "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
           "page": 976
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 44
         }
-      ]
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 44,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 88 is the specification's calendar row for birth year 1946."
+      }
     },
     {
       "id": "1946.2015",
@@ -113,7 +131,7 @@
       "citations": [
         {
           "file": "docs/design/boomers2004_1946_55_comparison.md",
-          "line": 67
+          "line": 88
         },
         {
           "file": "PSID/ind2023er/IND2023ER.sps",
@@ -138,8 +156,26 @@
         {
           "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
           "page": 1094
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 45
         }
-      ]
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 45,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 88 is the specification's calendar row for birth year 1946."
+      }
     },
     {
       "id": "1947.2015",
@@ -154,7 +190,7 @@
       "citations": [
         {
           "file": "docs/design/boomers2004_1946_55_comparison.md",
-          "line": 67
+          "line": 74
         },
         {
           "file": "PSID/ind2023er/IND2023ER.sps",
@@ -179,8 +215,26 @@
         {
           "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
           "page": 1094
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 46
         }
-      ]
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 46,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 74 is the specification's calendar row for birth year 1947."
+      }
     },
     {
       "id": "1948.2015",
@@ -195,7 +249,7 @@
       "citations": [
         {
           "file": "docs/design/boomers2004_1946_55_comparison.md",
-          "line": 67
+          "line": 89
         },
         {
           "file": "PSID/ind2023er/IND2023ER.sps",
@@ -220,8 +274,26 @@
         {
           "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
           "page": 1094
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 47
         }
-      ]
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 47,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 89 is the specification's calendar row for birth year 1948."
+      }
     },
     {
       "id": "1948.2017",
@@ -236,7 +308,7 @@
       "citations": [
         {
           "file": "docs/design/boomers2004_1946_55_comparison.md",
-          "line": 67
+          "line": 89
         },
         {
           "file": "PSID/ind2023er/IND2023ER.sps",
@@ -261,8 +333,26 @@
         {
           "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
           "page": 1224
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 48
         }
-      ]
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 48,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 89 is the specification's calendar row for birth year 1948."
+      }
     },
     {
       "id": "1949.2017",
@@ -277,7 +367,7 @@
       "citations": [
         {
           "file": "docs/design/boomers2004_1946_55_comparison.md",
-          "line": 67
+          "line": 75
         },
         {
           "file": "PSID/ind2023er/IND2023ER.sps",
@@ -302,8 +392,26 @@
         {
           "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
           "page": 1224
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 49
         }
-      ]
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 49,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 75 is the specification's calendar row for birth year 1949."
+      }
     },
     {
       "id": "1950.2017",
@@ -318,7 +426,7 @@
       "citations": [
         {
           "file": "docs/design/boomers2004_1946_55_comparison.md",
-          "line": 67
+          "line": 90
         },
         {
           "file": "PSID/ind2023er/IND2023ER.sps",
@@ -343,8 +451,26 @@
         {
           "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
           "page": 1224
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 50
         }
-      ]
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 50,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 90 is the specification's calendar row for birth year 1950."
+      }
     },
     {
       "id": "1950.2019",
@@ -359,7 +485,7 @@
       "citations": [
         {
           "file": "docs/design/boomers2004_1946_55_comparison.md",
-          "line": 67
+          "line": 90
         },
         {
           "file": "PSID/ind2023er/IND2023ER.sps",
@@ -384,8 +510,26 @@
         {
           "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
           "page": 1345
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 51
         }
-      ]
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 51,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 90 is the specification's calendar row for birth year 1950."
+      }
     },
     {
       "id": "1951.2019",
@@ -400,7 +544,7 @@
       "citations": [
         {
           "file": "docs/design/boomers2004_1946_55_comparison.md",
-          "line": 67
+          "line": 76
         },
         {
           "file": "PSID/ind2023er/IND2023ER.sps",
@@ -425,8 +569,26 @@
         {
           "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
           "page": 1345
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 52
         }
-      ]
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 52,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 76 is the specification's calendar row for birth year 1951."
+      }
     },
     {
       "id": "1952.2019",
@@ -441,7 +603,7 @@
       "citations": [
         {
           "file": "docs/design/boomers2004_1946_55_comparison.md",
-          "line": 67
+          "line": 91
         },
         {
           "file": "PSID/ind2023er/IND2023ER.sps",
@@ -466,8 +628,26 @@
         {
           "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
           "page": 1345
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 53
         }
-      ]
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 53,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 91 is the specification's calendar row for birth year 1952."
+      }
     },
     {
       "id": "1952.2021",
@@ -482,7 +662,7 @@
       "citations": [
         {
           "file": "docs/design/boomers2004_1946_55_comparison.md",
-          "line": 67
+          "line": 91
         },
         {
           "file": "PSID/ind2023er/IND2023ER.sps",
@@ -507,8 +687,26 @@
         {
           "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
           "page": 1466
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 54
         }
-      ]
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 54,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 91 is the specification's calendar row for birth year 1952."
+      }
     },
     {
       "id": "1953.2021",
@@ -523,7 +721,7 @@
       "citations": [
         {
           "file": "docs/design/boomers2004_1946_55_comparison.md",
-          "line": 67
+          "line": 77
         },
         {
           "file": "PSID/ind2023er/IND2023ER.sps",
@@ -548,8 +746,26 @@
         {
           "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
           "page": 1466
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 55
         }
-      ]
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 55,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 77 is the specification's calendar row for birth year 1953."
+      }
     },
     {
       "id": "1954.2021",
@@ -564,7 +780,7 @@
       "citations": [
         {
           "file": "docs/design/boomers2004_1946_55_comparison.md",
-          "line": 67
+          "line": 92
         },
         {
           "file": "PSID/ind2023er/IND2023ER.sps",
@@ -589,8 +805,26 @@
         {
           "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
           "page": 1466
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 56
         }
-      ]
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 56,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 92 is the specification's calendar row for birth year 1954."
+      }
     },
     {
       "id": "1954.2023",
@@ -605,7 +839,7 @@
       "citations": [
         {
           "file": "docs/design/boomers2004_1946_55_comparison.md",
-          "line": 67
+          "line": 92
         },
         {
           "file": "PSID/ind2023er/IND2023ER.sps",
@@ -630,8 +864,26 @@
         {
           "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
           "page": 1587
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 57
         }
-      ]
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 57,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 92 is the specification's calendar row for birth year 1954."
+      }
     },
     {
       "id": "1955.2023",
@@ -646,7 +898,7 @@
       "citations": [
         {
           "file": "docs/design/boomers2004_1946_55_comparison.md",
-          "line": 67
+          "line": 78
         },
         {
           "file": "PSID/ind2023er/IND2023ER.sps",
@@ -671,8 +923,26 @@
         {
           "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
           "page": 1587
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 58
         }
-      ]
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 58,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 78 is the specification's calendar row for birth year 1955."
+      }
     },
     {
       "id": "common.birth_derivation",
@@ -690,5 +960,12 @@
         }
       ]
     }
-  ]
+  ],
+  "independent_adjudication": {
+    "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+    "sha256": "a891762bf9be39e05509e59c5b7cd3fdab0eb34feb9ad5b9bb4a8ec3afc39662",
+    "bytes": 26564,
+    "applied_by": "u2-m1b",
+    "note": "Independent adjudication of milestone 1 (VERDICT: ERRORS FOUND). Amendment 7 citation corrections, D resolutions and F refusals are applied here; A items stay TO VERIFY pending u2-draft-4 amendments 1-6 and Max's ruling."
+  }
 }
