@@ -415,7 +415,9 @@ def run_joint(
             )
             attempt["uncomputed_rows"].remove(key)
         attempt["status"] = "completed"
-    except (ValueError, KeyError, TypeError, AssertionError) as error:
+    except (Exception, KeyboardInterrupt) as error:
+        # §10 reports infrastructure failures and interrupted attempts too;
+        # preserve progress instead of letting an outer script lose counters.
         attempt["status"] = "refused"
         attempt["refusal"] = {
             "type": type(error).__name__,

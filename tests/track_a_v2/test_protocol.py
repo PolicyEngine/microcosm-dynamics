@@ -279,3 +279,48 @@ def test_script_refusal_does_not_load_inputs(
         )
     assert loaded == []
     assert not Path(frozen["output"]).exists()
+
+
+@pytest.mark.parametrize("entry", ["registered", "structural_count"])
+def test_interrupted_loader_writes_refusal_artifact(
+    entry, frozen, monkeypatch, tmp_path
+):
+    """An interruption after exclusive creation leaves a recorded refusal."""
+    import importlib
+
+    script = importlib.import_module(f"scripts.track_a_v2_{entry}")
+    checked = check(frozen)
+    monkeypatch.setattr(script, "preflight", lambda **kwargs: checked)
+
+    def interrupted(*args):
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(script, "load_registered_inputs", interrupted)
+    request = tmp_path / "invented-protocol.json"
+    request.write_text(json.dumps(frozen))
+    status = script.main(
+        [
+            "--registration-pointer",
+            POINTER,
+            "--registered-commit",
+            COMMIT,
+            "--protocol",
+            str(request),
+            "--protocol-sha256",
+            object_sha256(frozen),
+            "--output",
+            frozen["output"],
+        ]
+    )
+    artifact = json.loads(Path(frozen["output"]).read_text())
+    assert status == 2
+    assert artifact["attempt"]["status"] == "refused"
+    assert artifact["attempt"]["refusal"] == "KeyboardInterrupt"
+    assert set(artifact) == {"header", "attempt", "preflight"}
+    if entry == "registered":
+        assert artifact["attempt"]["uncomputed_rows"] == list(
+            protocol.FROZEN_ROWS
+        )
+        assert artifact["attempt"]["counters"] == {}
+    else:
+        assert artifact["attempt"]["uncomputed_draws"] == list(range(20))

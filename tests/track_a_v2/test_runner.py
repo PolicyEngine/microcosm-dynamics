@@ -239,3 +239,29 @@ def test_real_label_requires_preflight_before_projecting():
     )
     with pytest.raises(ValueError, match="validated preflight"):
         runner._before_projection(inputs, runner.JointConfig(), None, None)
+
+
+@pytest.mark.parametrize("failure", (RuntimeError, KeyboardInterrupt))
+def test_infrastructure_interrupt_retains_partial_attempt(
+    staged, monkeypatch, failure
+):
+    """Intended infrastructure interruption preserves counts and all remaining rows."""
+    inputs, _, _ = staged
+    seen = 0
+
+    def interrupt(*args, **kwargs):
+        nonlocal seen
+        seen += 1
+        if seen == 2:
+            raise failure("intended infrastructure interruption")
+        return [_row()], Counter({"computed_before_interrupt": 7})
+
+    monkeypatch.setattr(benefits, "collect_reference_benefit_rows", interrupt)
+    result = runner.run_joint(inputs, draw_indices=(0,))
+    assert result["attempt"]["status"] == "refused"
+    assert result["attempt"]["step"] == 3
+    assert result["attempt"]["refusal"]["type"] == failure.__name__
+    assert result["attempt"]["counters"]["computed_before_interrupt"] == 7
+    assert result["benefit_counters"]["L×R0"]["computed_before_interrupt"] == 7
+    assert len(result["attempt"]["uncomputed_rows"]) == 68
+    assert not result["rows"]

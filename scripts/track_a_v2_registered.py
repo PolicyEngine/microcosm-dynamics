@@ -51,12 +51,12 @@ def main(argv=None):
                 registration_pointer=args.registration_pointer,
                 registration=checked,
             )
-        except Exception as error:
+        except (Exception, KeyboardInterrupt) as error:
             artifact = {
                 "header": REGISTERED_HEADER,
                 "attempt": {
                     "status": "refused",
-                    "refusal": str(error),
+                    "refusal": str(error) or type(error).__name__,
                     "first_failing_person_draw": None,
                     "step": "input_loading_or_infrastructure",
                     "uncomputed_rows": list(FROZEN_ROWS),

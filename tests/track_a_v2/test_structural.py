@@ -260,3 +260,52 @@ def test_structural_entry_preserves_partial_attempt_and_avoids_diagnostics(
     assert artifact["attempt"]["status"] == "refused"
     assert artifact["attempt"]["uncomputed_draws"] == [0]
     assert artifact["counts"]["d_unsupported_histories"] == 1
+
+
+def test_interrupted_projection_preserves_completed_structural_counts(
+    monkeypatch,
+):
+    """An interrupted later draw retains earlier counts without outcome fields."""
+    from populace_dynamics.track_a_v2 import structural
+    from populace_dynamics.track_a_v2.manifest import SPECIFICATION_SHA256
+    from populace_dynamics.track_a_v2.protocol import PreflightRecord
+
+    result, cohort, params = fixture()
+    cohort.data_provenance = "invented"
+    cohort.initial_slice = result.slices[0]
+    inputs = SimpleNamespace(
+        cohort=cohort,
+        params=params,
+        claiming_pmf={},
+        population_mortality=None,
+        di_rates=None,
+    )
+    monkeypatch.setattr(structural, "claiming_schedule", lambda *a, **kw: None)
+    monkeypatch.setattr(structural, "build_period_modules", lambda **kw: None)
+
+    def project(*args, **kwargs):
+        if kwargs["draw_index"] == 1:
+            raise KeyboardInterrupt
+        return result
+
+    monkeypatch.setattr(structural.ProjectionEngine, "project", project)
+    registration = PreflightRecord(
+        "1" * 40, SPECIFICATION_SHA256, "invented", "0" * 64, "structural"
+    )
+    artifact = structural.run_structural(
+        inputs, registration=registration, draw_indices=(0, 1)
+    )
+    assert artifact["attempt"]["status"] == "refused"
+    assert artifact["attempt"]["completed_draws"] == [0]
+    assert artifact["attempt"]["uncomputed_draws"] == [1]
+    assert artifact["attempt"]["refusal"]["reason"] == "KeyboardInterrupt"
+    assert artifact["attempt"]["refusal"]["step"] == "projection"
+    assert artifact["counts"] == count_projection(result, cohort, params)
+    validate_count_outputs(artifact["counts"])
+    assert set(artifact) == {
+        "header",
+        "protocol_sha256",
+        "attempt",
+        "count_units",
+        "counts",
+    }

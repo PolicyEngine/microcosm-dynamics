@@ -49,12 +49,12 @@ def main(argv=None):
                 load_registered_inputs(checked), registration=checked
             )
             validate_count_outputs(artifact["counts"])
-        except Exception as error:
+        except (Exception, KeyboardInterrupt) as error:
             artifact = {
                 "header": REGISTERED_HEADER,
                 "attempt": {
                     "status": "refused",
-                    "refusal": str(error),
+                    "refusal": str(error) or type(error).__name__,
                     "first_failing_person_draw": None,
                     "step": "structural_input_loading_or_infrastructure",
                     "uncomputed_draws": list(range(20)),

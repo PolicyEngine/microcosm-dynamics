@@ -360,7 +360,7 @@ def run_structural(
                 "draw": draw,
                 "step": "structural_history_or_filing",
             }
-        except Exception as error:
+        except (Exception, KeyboardInterrupt) as error:
             counts = {
                 "d_unsupported_histories": 0,
                 "s_ordering_classes": {
@@ -371,7 +371,7 @@ def run_structural(
                 "opening_proxy_applications": 0,
             }
             refusal = {
-                "reason": str(error),
+                "reason": str(error) or type(error).__name__,
                 "person_id": None,
                 "draw": draw,
                 "step": step,
