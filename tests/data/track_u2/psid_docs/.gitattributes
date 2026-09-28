@@ -1,0 +1,4 @@
+# Archived PSID source bytes are pinned by SHA-256 in manifest.json;
+# never normalize their line endings.
+*.pdf binary
+*.html binary

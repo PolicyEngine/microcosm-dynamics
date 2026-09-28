@@ -315,7 +315,11 @@ def test_psid_documentation_manifest():
         "uncooperative_90_92_2019_2023",
         "revised_2017_weights",
     }
-    saved = sorted(p.name for p in DOCS.iterdir() if p.name != "manifest.json")
+    saved = sorted(
+        p.name
+        for p in DOCS.iterdir()
+        if p.name not in ("manifest.json", ".gitattributes")
+    )
     assert saved == sorted(
         Path(source["file"]).name for source in manifest["sources"]
     )
