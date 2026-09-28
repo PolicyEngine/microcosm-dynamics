@@ -705,7 +705,7 @@ def execute(
             raise ValueError("registered source changed during replay")
         claims_reproduction = (
             result.get("status") == "REPRODUCED"
-            or result.get("equal") is True
+            or bool(result.get("equal"))
             or result.get("admitted_scope", "none") != "none"
         )
         if claims_reproduction and reference is None:

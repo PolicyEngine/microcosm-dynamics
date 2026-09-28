@@ -726,6 +726,7 @@ def test_unserializable_result_still_publishes_a_mismatch_record(
         {"status": "MATCH", "equal": True, "admitted_scope": "none"},
         {"status": "MATCH", "equal": False, "admitted_scope": "person_level"},
         {"status": "BASELINE_REPLAY_MISMATCH", "equal": True},
+        {"status": "MATCH", "equal": 1},
     ],
 )
 def test_no_status_can_claim_equality_or_scope_without_admitted_reference(
