@@ -175,3 +175,18 @@ def test_receipt_start_exactly_at62_is_not_a_clamp_proxy():
         HistoryValidator(result, cohort).validate(1, 2010)
         == "d_proxy_a3_receipt_start"
     )
+
+
+@pytest.mark.parametrize(
+    "person",
+    [
+        dict(id=1, opening_status="disabled_worker", awards=(2017,)),
+        dict(id=1, opening_di=True, awards=(2010,)),
+    ],
+)
+def test_intended_opening_branch_metadata_disagreement_refuses(person):
+    """O1/S1 follow the requested record branch; inconsistent flags cannot switch it."""
+    cohort, result = build([person])
+    validator = HistoryValidator(result, cohort)
+    with pytest.raises(HistoryRefusal, match="O1|S1"):
+        validator.validate_requested()

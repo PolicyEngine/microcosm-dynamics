@@ -10,6 +10,7 @@ from __future__ import annotations
 import warnings
 from collections import Counter
 from collections.abc import Mapping
+from dataclasses import fields
 from typing import Any
 
 import pandas as pd
@@ -37,7 +38,11 @@ from .filing import (
 )
 from .histories import HistoryRefusal, HistoryValidator, nullable
 from .manifest import INVENTED_HEADER, REGISTERED_HEADER
-from .protocol import STRUCTURAL_OUTPUTS, PreflightRecord
+from .protocol import (
+    STRUCTURAL_OUTPUTS,
+    PreflightRecord,
+    refuse_unresolved_structural_execution,
+)
 
 ORDERING_CLASSES = (
     "di_first",
@@ -286,6 +291,89 @@ def validate_count_outputs(counts: Mapping[str, Any]) -> None:
             )
 
 
+def validate_structural_artifact(artifact: Mapping[str, Any]) -> None:
+    """§16.7 permits only the counts and fixed attempt/provenance metadata."""
+    keys = set(artifact) - {"preflight"}
+    normal = {"header", "protocol_sha256", "attempt", "count_units", "counts"}
+    fallback = {"header", "attempt"}
+    if keys not in (normal, fallback):
+        raise ValueError("only frozen structural artifact fields are allowed")
+    if artifact["header"] not in (INVENTED_HEADER, REGISTERED_HEADER):
+        raise ValueError("unknown structural artifact header")
+    if "preflight" in artifact:
+        preflight = artifact["preflight"]
+        if set(preflight) != {
+            field.name for field in fields(PreflightRecord)
+        } or any(not isinstance(value, str) for value in preflight.values()):
+            raise ValueError("structural preflight metadata fields differ")
+    attempt = artifact["attempt"]
+    if keys == fallback:
+        if set(attempt) != {
+            "status",
+            "refusal",
+            "first_failing_person_draw",
+            "step",
+            "uncomputed_draws",
+        } or (
+            attempt["status"] != "refused"
+            or not isinstance(attempt["refusal"], str)
+            or not attempt["refusal"]
+            or attempt["first_failing_person_draw"] is not None
+            or attempt["step"] != "structural_input_loading_or_infrastructure"
+            or attempt["uncomputed_draws"] != list(range(20))
+        ):
+            raise ValueError("structural infrastructure refusal fields differ")
+        return
+    if set(attempt) != {
+        "status",
+        "refusal",
+        "completed_draws",
+        "uncomputed_draws",
+    }:
+        raise ValueError("only frozen structural attempt fields are allowed")
+    if attempt["status"] not in ("completed", "refused"):
+        raise ValueError("unknown structural attempt status")
+    refusal = attempt["refusal"]
+    if attempt["status"] == "completed":
+        if refusal is not None or attempt["uncomputed_draws"]:
+            raise ValueError("completed structural attempt has a refusal")
+    elif not isinstance(refusal, dict) or set(refusal) != {
+        "reason",
+        "person_id",
+        "draw",
+        "step",
+    }:
+        raise ValueError("only frozen structural refusal fields are allowed")
+    elif (
+        not isinstance(refusal["reason"], str)
+        or not refusal["reason"]
+        or (
+            refusal["person_id"] is not None
+            and type(refusal["person_id"]) is not int
+        )
+        or type(refusal["draw"]) is not int
+        or refusal["draw"] not in range(20)
+        or refusal["step"]
+        not in ("projection", "structural_history_or_filing")
+    ):
+        raise ValueError("structural refusal metadata differs")
+    draws = attempt["completed_draws"] + attempt["uncomputed_draws"]
+    if any(
+        type(draw) is not int or draw not in range(20) for draw in draws
+    ) or len(set(draws)) != len(draws):
+        raise ValueError("structural attempt draw metadata differs")
+    digest = artifact["protocol_sha256"]
+    if (
+        not isinstance(digest, str)
+        or len(digest) != 64
+        or any(character not in "0123456789abcdef" for character in digest)
+    ):
+        raise ValueError("structural artifact lacks its protocol hash")
+    if artifact["count_units"] != COUNT_UNITS:
+        raise ValueError("structural count units differ")
+    validate_count_outputs(artifact["counts"])
+
+
 def run_structural(
     inputs, *, registration: PreflightRecord, draw_indices=tuple(range(20))
 ):
@@ -303,6 +391,7 @@ def run_structural(
             "a separately validated structural protocol is required"
         )
     if inputs.cohort.data_provenance != "invented":
+        refuse_unresolved_structural_execution()
         registration.validate_inputs(inputs)
     if inputs.cohort.data_provenance != "invented" and tuple(draw_indices) != (
         tuple(range(20))

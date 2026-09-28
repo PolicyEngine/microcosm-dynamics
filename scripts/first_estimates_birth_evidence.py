@@ -301,6 +301,7 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/track_a_v2/protocol.py"),
     Path("src/populace_dynamics/track_a_v2/runner.py"),
     Path("src/populace_dynamics/track_a_v2/structural.py"),
+    Path("src/populace_dynamics/track_a_v2/structural_inputs.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(

@@ -40,6 +40,23 @@ FROZEN_ROWS = tuple(
         *(f"U{i}" for i in range(3)),
     )
 )
+STRUCTURAL_EXECUTION_CONFLICT = (
+    "a2-ratified-1 §16.7 prohibits weight sums, but the frozen mortality "
+    "projection computes weighted aggregates and diagnostics "
+    "(engine/di_entitlement.py:690–717); real structural execution requires "
+    "a ratified resolution before input loading"
+)
+
+
+def refuse_unresolved_structural_execution() -> None:
+    """Keep the literal §16.7 restriction until its engine conflict is resolved.
+
+    Weighted expected deaths at engine/di_entitlement.py:690–702 affect
+    transition probabilities; raw diagnostic sums at :713–717 are also
+    unconditional. Silently removing the former changes the frozen engine.
+    This barrier has no runtime bypass or implicit interpretation.
+    """
+    raise ValueError(STRUCTURAL_EXECUTION_CONFLICT)
 
 
 @dataclass(frozen=True)
@@ -62,11 +79,22 @@ class PreflightRecord:
         manifest = json.loads(self.frozen_manifest_json)
         root = Path(self.repository_root)
         verify_manifest(manifest, root=root)
+        self.validate_input_sources(inputs.cohort.source_provenance)
+        actual = runtime_parameter_bundle(inputs)
+        runtime = manifest["parameter_bundles"].get("runtime")
+        if not runtime or runtime["sha256"] != object_sha256(actual):
+            raise ValueError(
+                "effective runtime parameter bundle differs from manifest"
+            )
+
+    def validate_input_sources(self, provenance) -> None:
+        """Reject unmatched source files before any cohort construction."""
+        manifest = json.loads(self.frozen_manifest_json)
+        root = Path(self.repository_root)
         expected = {
             str((root / item["path"]).resolve()): item["sha256"]
             for item in manifest["inputs"].values()
         }
-        provenance = inputs.cohort.source_provenance
         files = provenance.get("psid_files_sha256", {})
         if not files or not provenance.get("psid_data_dir"):
             raise ValueError("runtime cohort has no sealed source-file record")
@@ -76,12 +104,64 @@ class PreflightRecord:
                 raise ValueError(
                     f"runtime input absent or changed in manifest: {name}"
                 )
-        actual = runtime_parameter_bundle(inputs)
-        runtime = manifest["parameter_bundles"].get("runtime")
-        if not runtime or runtime["sha256"] != object_sha256(actual):
-            raise ValueError(
-                "effective runtime parameter bundle differs from manifest"
-            )
+
+
+def _structural_binding(binding, *, root):
+    """§11 binds the prior check, authorized by the §16.7 d513 ruling."""
+    from .structural import validate_structural_artifact
+
+    if not isinstance(binding, dict) or binding.get("authorization") != (
+        "Max d513, 2026-09-28, item 7"
+    ):
+        raise ValueError(
+            "registered package lacks structural-check authorization record"
+        )
+    if binding.get("status") != "performed":
+        raise ValueError(
+            "registered package requires the authorized structural attempt"
+        )
+    records = {}
+    for key in ("protocol", "artifact"):
+        record = binding.get(key)
+        if (
+            not isinstance(record, dict)
+            or file_record(Path(record["path"]), root=root) != record
+        ):
+            raise ValueError(f"missing or changed structural {key}")
+        records[key] = json.loads((root / record["path"]).read_text())
+    frozen, artifact = records["protocol"], records["artifact"]
+    digest = object_sha256(frozen)
+    if (
+        binding.get("protocol_sha256") != digest
+        or artifact.get("protocol_sha256") != digest
+    ):
+        raise ValueError(
+            "structural attempt does not match its frozen protocol"
+        )
+    if (
+        frozen.get("mode") != "structural"
+        or frozen.get("specification_sha256") != SPECIFICATION_SHA256
+    ):
+        raise ValueError("structural protocol has wrong mode or specification")
+    if frozen.get("authorization") != binding["authorization"] or frozen.get(
+        "permitted_outputs"
+    ) != list(STRUCTURAL_OUTPUTS):
+        raise ValueError(
+            "structural protocol authorization or permitted counts differ"
+        )
+    attempt = artifact.get("attempt")
+    if not isinstance(attempt, dict) or attempt.get("status") not in (
+        "completed",
+        "refused",
+    ):
+        raise ValueError(
+            "structural artifact lacks a published attempt record"
+        )
+    validate_structural_artifact(artifact)
+    if artifact.get("header") != REGISTERED_HEADER:
+        raise ValueError(
+            "invented check cannot stand in for a registered structural attempt"
+        )
 
 
 def git_output(root: Path, *args: str) -> str:
@@ -191,6 +271,7 @@ def preflight(
             "frozen manifest lacks the effective runtime parameter bundle"
         )
     if mode == "registered":
+        _structural_binding(protocol.get("structural_check"), root=root)
         if protocol.get("rows") != list(FROZEN_ROWS):
             raise ValueError("registered matrix must contain exactly 68 rows")
         if protocol.get("headlines") != ["D×R0", "D×F0"]:
@@ -245,6 +326,9 @@ def load_registered_inputs(registration: PreflightRecord):
     entry (scripts/run_fra68_registered.py:218–259), without its second
     population or a projection/benefit invocation.
     """
+    if registration.mode == "structural":
+        refuse_unresolved_structural_execution()
+
     from populace_dynamics.cohorts import psid2010
     from populace_dynamics.cola_track_a import (
         TrackAInputs,
@@ -281,12 +365,20 @@ def load_registered_inputs(registration: PreflightRecord):
         data_dir=Path(roots["psid"]),
         claiming_reference_path=input_path("claiming_reference"),
     )
-    source = psid2010.build_psid2010_cohort(
-        raw, psid2010.Psid2010CohortSpec(anchor_wave=2011)
-    )
-    cohort = prepare_track_a_cohort(
-        source, data_provenance="registered_real", config=config
-    )
+    registration.validate_input_sources(raw.provenance)
+    if registration.mode == "structural":
+        from .structural_inputs import prepare_structural_cohort
+
+        cohort = prepare_structural_cohort(
+            raw, data_provenance="registered_real", config=config
+        )
+    else:
+        source = psid2010.build_psid2010_cohort(
+            raw, psid2010.Psid2010CohortSpec(anchor_wave=2011)
+        )
+        cohort = prepare_track_a_cohort(
+            source, data_provenance="registered_real", config=config
+        )
     baseline_parameters = load_ssa_parameters(Path(roots["policyengine_us"]))
     params = tr2008_ssa_parameters(
         baseline_parameters, alternative=config.tr2008_alternative

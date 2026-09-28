@@ -155,10 +155,6 @@ def _profile(rows, config, subset):
 
 
 def _floors(rows, config, statistic):
-    # §§3.4/7.3 retain the inherited row-specific family frame. §9's
-    # workers-only statistic identities concern per-draw estimands; if S
-    # adds a spouse-only family with zero selected worker benefits, floors
-    # may change. Do not alter v1 filtering to force uncertainty equality.
     per_seed = []
     unit_frame = pd.DataFrame({a7.FAMILY_UNIT: rows.family_unit_id.tolist()})
     for seed in config.floor_seeds:
@@ -202,17 +198,68 @@ def _floors(rows, config, statistic):
     return per_seed, floors
 
 
+class WorkerFloorMismatch(ValueError):
+    """A paired worker-only population changed before tabulation (§10)."""
+
+    def __init__(self, person_id, draw):
+        super().__init__("paired worker-only amounts or population differ")
+        self.person_id = person_id
+        self.draw = draw
+
+
+def _worker_floor_rows(rows, reference, config, row):
+    """Retain paired legacy family splits for the §9 worker-only identities."""
+    if row.mechanism not in ("S", "DS") or row.row_id not in ("R5", "F6"):
+        raise ValueError("paired floor inputs require an S/DS worker-only row")
+    floor_rows = normalize_rows(reference, config)
+
+    def selected_people(normalized):
+        return {
+            (int(normalized.draw[i]), normalized.person_id[i]): (
+                normalized.selected_base[i],
+                normalized.selected_reform[i],
+                normalized.weight[i],
+                normalized.birth_year[i],
+                normalized.family_unit_id[i],
+            )
+            for i in range(normalized.n)
+            if normalized.selected_base[i] > 0
+            or normalized.selected_reform[i] > 0
+        }
+
+    people, reference_people = selected_people(rows), selected_people(
+        floor_rows
+    )
+    for key in sorted(
+        set(people) | set(reference_people), key=lambda k: (k[0], str(k[1]))
+    ):
+        if people.get(key) != reference_people.get(key):
+            raise WorkerFloorMismatch(person_id=key[1], draw=key[0])
+    return floor_rows
+
+
+def validate_worker_floor_pair(
+    records, reference, row, *, draw_indices=tuple(range(20))
+):
+    """Validate every paired floor before any joint tabulation (§10)."""
+    config = a7_config(row, draw_indices=draw_indices)
+    _worker_floor_rows(normalize_rows(records, config), reference, config, row)
+
+
 def tabulate_rows(
     records: Iterable[Mapping[str, Any]],
     row: MatrixRow,
     *,
     draw_indices: tuple[int, ...] = tuple(range(20)),
     floor_seeds: tuple[int, ...] = tuple(range(5)),
+    floor_records: Iterable[Mapping[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Tabulate a guarded row; no pooled ratios or undefined-draw deletion.
 
     The joint runner must complete every row's guard before invoking this
-    function (§10). R retains the final A7 membership check as well.
+    function (§10). R retains the final A7 membership check as well. For
+    S/DS worker-only rows, the joint runner supplies corresponding L/D
+    floor_records to preserve the explicit §§9/12.9 row identities.
     """
     config = a7_config(row, draw_indices=draw_indices, floor_seeds=floor_seeds)
     rows = normalize_rows(records, config)
@@ -221,10 +268,32 @@ def tabulate_rows(
     ):
         raise a7.MembershipDifferenceError("R selected memberships differ")
     profile = _profile(rows, config, np.ones(rows.n, dtype=bool))
-    per_seed, floors = _floors(rows, config, row.statistic)
+    # §§9/12.9 require worker-only row equality, including uncertainty.
+    # §7.3 and A1 §16 fix the split rule but do not specify how to reconcile
+    # spouse-only families added by S with that identity. Conservatively
+    # retain the corresponding L/D worker-equivalent frame for floors only;
+    # point statistics retain this mechanism's realized membership (§3.4).
+    floor_rows = (
+        rows
+        if floor_records is None
+        else _worker_floor_rows(rows, floor_records, config, row)
+    )
+    per_seed, floors = _floors(floor_rows, config, row.statistic)
     groups = []
     for group, cells in zip(config.age_groups, profile, strict=True):
         summary = a7._draw_summary(cells, row.statistic)
+        if not row.row_id.startswith("U"):
+            # §7.1 reserves all-alive means and denominators for the frame
+            # retaining double zeros. R/F retain their inherited filters,
+            # so their supplied records cannot describe all-alive levels.
+            for cell in cells:
+                for field in (
+                    "all_alive_weight",
+                    "all_alive_count",
+                    "all_alive_mean_base",
+                    "all_alive_mean_reform",
+                ):
+                    cell.pop(field)
         groups.append(
             {
                 **group.as_dict(),

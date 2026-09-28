@@ -178,7 +178,7 @@ def run_joint(
 ) -> dict[str, Any]:
     """Execute §§10's six stages; every refusal retains all uncomputed rows."""
     from .benefits import collect_reference_benefit_rows, scenario_benefits
-    from .estimands import tabulate_rows
+    from .estimands import tabulate_rows, validate_worker_floor_pair
     from .histories import HistoryValidator
     from .matrix import MATRIX, MECHANISMS
     from .membership import guard_membership
@@ -270,6 +270,8 @@ def run_joint(
             inputs.cohort, inputs.params, inputs.baseline, config.track_a()
         )
         cache = {}
+        first_mutation_draw = None
+        artifact["projection_hashes_after_mechanism"] = {}
         for mechanism in MECHANISMS:
             for draw, result in results.items():
                 if progress is not None:
@@ -371,22 +373,35 @@ def run_joint(
                         {f"reform_{k}": v for k, v in count.items()}
                     )
                     counters.update(count)
-            # §3.2 requires re-hashing after every mechanism has built inputs.
-            for draw, result in results.items():
-                if projection_hash(result) != hashes[str(draw)]:
-                    person_draw["draw"] = draw
-                    attempt["step"] = 4
-                    raise ValueError(
-                        "projection slices changed during benefits"
-                    )
+            # §3.2 requires each post-mechanism snapshot; §10 requires every
+            # step-3 benefit refusal to precede the step-4 mutation refusal.
+            # Remember the first mismatch even if a later mechanism restores
+            # the slices, rather than losing that intermediate violation.
+            snapshot = {
+                str(draw): projection_hash(result)
+                for draw, result in results.items()
+            }
+            artifact["projection_hashes_after_mechanism"][mechanism] = snapshot
+            for draw in results:
+                if (
+                    first_mutation_draw is None
+                    and snapshot[str(draw)] != hashes[str(draw)]
+                ):
+                    first_mutation_draw = draw
         stage(4)
         artifact["projection_hashes_after"] = {
             str(draw): projection_hash(result)
             for draw, result in results.items()
         }
+        if first_mutation_draw is not None:
+            person_draw["draw"] = first_mutation_draw
+            # §10 is silent on attributing whole-slice hash mismatches.
+            # Keep person_id null rather than inventing an affected person.
+            raise ValueError("projection slices changed during benefits")
         if artifact["projection_hashes_after"] != hashes:
             raise ValueError("projection slices changed during benefits")
         stage(5)
+        floor_inputs = {}
         for row in MATRIX:
             key = f"{row.mechanism}×{row.row_id}"
             params = (
@@ -400,6 +415,17 @@ def run_joint(
                 baseline_params=inputs.params,
                 reform_params=params,
             )
+            # §§9/12.9 fix worker-only S=L and DS=D, including floors.
+            # Validate paired inputs at step 5, before any tabulation (§10).
+            if row.mechanism in ("S", "DS") and row.row_id in ("R5", "F6"):
+                reference = "L" if row.mechanism == "S" else "D"
+                floor_inputs[key] = prepared[f"{reference}×{row.row_id}"]
+                validate_worker_floor_pair(
+                    prepared[key],
+                    floor_inputs[key],
+                    row,
+                    draw_indices=config.draw_indices,
+                )
         artifact["membership"] = membership
         artifact["benefit_counters"] = {
             key: dict(value) for key, value in row_counters.items()
@@ -412,6 +438,7 @@ def run_joint(
                 row,
                 draw_indices=config.draw_indices,
                 floor_seeds=config.floor_seeds,
+                floor_records=floor_inputs.get(key),
             )
             attempt["uncomputed_rows"].remove(key)
         attempt["status"] = "completed"

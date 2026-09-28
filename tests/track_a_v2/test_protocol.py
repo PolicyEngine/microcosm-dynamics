@@ -36,7 +36,7 @@ def frozen(tmp_path, monkeypatch):
     record_path = tmp_path / "invented-freeze.txt"
     record_path.write_text("INVENTED DATA - NOT A COMPARISON\n")
     package_record = file_record(record_path, root=ROOT)
-    return {
+    package = {
         "version": "a2-ratified-1",
         "mode": "registered",
         "implementation_commit": COMMIT,
@@ -84,6 +84,8 @@ def frozen(tmp_path, monkeypatch):
         "exposure_record": package_record,
         "forecasts": package_record,
     }
+    bind_invented_structural_attempt(package, tmp_path)
+    return package
 
 
 def check(frozen, **changes):
@@ -181,6 +183,7 @@ def test_artifact_is_exclusive_even_after_preflight(frozen):
 
 def structural_protocol(frozen):
     frozen = copy.deepcopy(frozen)
+    frozen.pop("structural_check", None)
     for key in ("rows", "headlines", "floor_seeds", "floor_fraction"):
         del frozen[key]
     frozen.update(
@@ -206,6 +209,103 @@ def test_structural_check_requires_its_authorization(frozen):
     del frozen["authorization"]
     with pytest.raises(ValueError, match="explicit authorization"):
         check(frozen, mode="structural")
+
+
+def test_registered_package_requires_structural_check_binding(frozen):
+    """§11 cannot omit the attempt and counts of the authorized check."""
+    binding = frozen.pop("structural_check")
+    with pytest.raises(ValueError, match="structural-check authorization"):
+        check(frozen)
+    frozen["structural_check"] = {
+        "status": "not_performed",
+        "authorization": binding["authorization"],
+        "reason": "An explicit omission still lacks the required attempt.",
+    }
+    with pytest.raises(ValueError, match="authorized structural attempt"):
+        check(frozen)
+
+
+def bind_invented_structural_attempt(frozen, tmp_path):
+    """Bind invented records without executing a real structural check."""
+    from populace_dynamics.track_a_v2.structural import (
+        COUNT_UNITS,
+        ORDERING_CLASSES,
+    )
+
+    prior = structural_protocol(frozen)
+    digest = object_sha256(prior)
+    protocol_path = tmp_path / "invented-prior-protocol.json"
+    protocol_path.write_text(json.dumps(prior))
+    rows = [
+        *(f"R{i}" for i in range(6)),
+        *(f"F{i}" for i in range(8)),
+        *(f"U{i}" for i in range(3)),
+    ]
+    counts = {
+        "d_unsupported_histories": 0,
+        "s_refused_earlier_spells": 0,
+        "opening_proxy_applications": 0,
+        "s_ordering_classes": {
+            f"{row}/{scenario}": dict.fromkeys(ORDERING_CLASSES, 0)
+            for row in rows
+            for scenario in ("baseline", "reform")
+        },
+    }
+    artifact = {
+        "header": REGISTERED_HEADER,
+        "protocol_sha256": digest,
+        "attempt": {
+            "status": "completed",
+            "refusal": None,
+            "completed_draws": list(range(20)),
+            "uncomputed_draws": [],
+        },
+        "count_units": COUNT_UNITS,
+        "counts": counts,
+    }
+    artifact_path = tmp_path / "invented-prior-attempt.json"
+    artifact_path.write_text(json.dumps(artifact))
+    frozen["structural_check"] = {
+        "status": "performed",
+        "authorization": prior["authorization"],
+        "protocol": file_record(protocol_path, root=ROOT),
+        "artifact": file_record(artifact_path, root=ROOT),
+        "protocol_sha256": digest,
+    }
+    return artifact, artifact_path
+
+
+def test_registered_package_binds_structural_attempt_and_exact_counts(
+    frozen, tmp_path
+):
+    """A prior structural attempt must match its own frozen protocol and counts."""
+    artifact, artifact_path = bind_invented_structural_attempt(
+        frozen, tmp_path
+    )
+    check(frozen)
+    artifact["counts"]["weight_sum"] = 1
+    artifact_path.write_text(json.dumps(artifact))
+    frozen["structural_check"]["artifact"] = file_record(
+        artifact_path, root=ROOT
+    )
+    with pytest.raises(ValueError, match="only the four frozen"):
+        check(frozen)
+    artifact["counts"].pop("weight_sum")
+    artifact["protocol_sha256"] = "0" * 64
+    artifact_path.write_text(json.dumps(artifact))
+    frozen["structural_check"]["artifact"] = file_record(
+        artifact_path, root=ROOT
+    )
+    with pytest.raises(ValueError, match="frozen protocol"):
+        check(frozen)
+    artifact["protocol_sha256"] = frozen["structural_check"]["protocol_sha256"]
+    artifact["benefits"] = {"invented": 1}
+    artifact_path.write_text(json.dumps(artifact))
+    frozen["structural_check"]["artifact"] = file_record(
+        artifact_path, root=ROOT
+    )
+    with pytest.raises(ValueError, match="only frozen structural artifact"):
+        check(frozen)
 
 
 def test_runtime_input_and_parameter_binding_refuses_substitution(
@@ -289,6 +389,12 @@ def test_interrupted_loader_writes_refusal_artifact(
     import importlib
 
     script = importlib.import_module(f"scripts.track_a_v2_{entry}")
+    if entry == "structural_count":
+        # Intended test bypass: the loader below only raises an invented
+        # interruption; no real input or engine call becomes reachable.
+        monkeypatch.setattr(
+            script, "refuse_unresolved_structural_execution", lambda: None
+        )
     checked = check(frozen)
     monkeypatch.setattr(script, "preflight", lambda **kwargs: checked)
 
@@ -324,3 +430,108 @@ def test_interrupted_loader_writes_refusal_artifact(
         assert artifact["attempt"]["counters"] == {}
     else:
         assert artifact["attempt"]["uncomputed_draws"] == list(range(20))
+
+
+@pytest.mark.parametrize("extra", ["benefits", "weight_sums", "tabulations"])
+def test_structural_script_refuses_extra_artifact_outputs(
+    extra, frozen, tmp_path, monkeypatch
+):
+    """Intended injected outcome fields never escape the structural artifact."""
+    from scripts import track_a_v2_structural_count as script
+
+    artifact, _ = bind_invented_structural_attempt(frozen, tmp_path)
+    artifact[extra] = {"invented": 1}
+    frozen = structural_protocol(frozen)
+    checked = check(frozen, mode="structural")
+    monkeypatch.setattr(script, "preflight", lambda **kwargs: checked)
+    # Intended test bypass reaches only a fake loader and fake count result.
+    monkeypatch.setattr(
+        script, "refuse_unresolved_structural_execution", lambda: None
+    )
+    monkeypatch.setattr(
+        script, "load_registered_inputs", lambda *args: object()
+    )
+    monkeypatch.setattr(
+        script, "run_structural", lambda *args, **kwargs: artifact
+    )
+    request = tmp_path / "invented-structural.json"
+    request.write_text(json.dumps(frozen))
+    status = script.main(
+        [
+            "--registration-pointer",
+            POINTER,
+            "--registered-commit",
+            COMMIT,
+            "--protocol",
+            str(request),
+            "--protocol-sha256",
+            object_sha256(frozen),
+            "--output",
+            frozen["output"],
+        ]
+    )
+    written = json.loads(Path(frozen["output"]).read_text())
+    assert status == 2
+    assert extra not in written
+    assert "only frozen structural artifact" in written["attempt"]["refusal"]
+    assert set(written) == {"header", "attempt", "preflight"}
+
+
+def test_structural_script_refuses_unresolved_weight_arithmetic_before_loading(
+    frozen, tmp_path, monkeypatch
+):
+    """The literal §16.7 conflict refuses before real loading or projection."""
+    from types import SimpleNamespace
+
+    from populace_dynamics.track_a_v2 import structural
+    from scripts import track_a_v2_structural_count as script
+
+    frozen = structural_protocol(frozen)
+    checked = check(frozen, mode="structural")
+    monkeypatch.setattr(script, "preflight", lambda **kwargs: checked)
+    reached = []
+    monkeypatch.setattr(
+        script, "load_registered_inputs", lambda *args: reached.append("load")
+    )
+    monkeypatch.setattr(
+        script,
+        "run_structural",
+        lambda *args, **kwargs: reached.append("project"),
+    )
+    request = tmp_path / "invented-structural.json"
+    request.write_text(json.dumps(frozen))
+    status = script.main(
+        [
+            "--registration-pointer",
+            POINTER,
+            "--registered-commit",
+            COMMIT,
+            "--protocol",
+            str(request),
+            "--protocol-sha256",
+            object_sha256(frozen),
+            "--output",
+            frozen["output"],
+        ]
+    )
+    written = json.loads(Path(frozen["output"]).read_text())
+    assert reached == []
+    assert status == 2
+    assert (
+        written["attempt"]["refusal"] == protocol.STRUCTURAL_EXECUTION_CONFLICT
+    )
+    with pytest.raises(ValueError, match="§16.7 prohibits weight sums"):
+        protocol.load_registered_inputs(checked)
+    monkeypatch.setattr(
+        structural.ProjectionEngine,
+        "project",
+        lambda *args, **kwargs: reached.append("engine"),
+    )
+    with pytest.raises(ValueError, match="§16.7 prohibits weight sums"):
+        structural.run_structural(
+            SimpleNamespace(
+                cohort=SimpleNamespace(data_provenance="registered_real")
+            ),
+            registration=checked,
+        )
+    assert reached == []

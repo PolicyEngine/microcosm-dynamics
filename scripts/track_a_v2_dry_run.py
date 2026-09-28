@@ -15,6 +15,7 @@ from populace_dynamics.track_a_v2.histories import HistoryValidator
 from populace_dynamics.track_a_v2.invented import invented_inputs
 from populace_dynamics.track_a_v2.manifest import (
     build_manifest,
+    file_record,
     runtime_parameter_bundle,
 )
 from populace_dynamics.track_a_v2.runner import _canonical, legacy, run_joint
@@ -35,10 +36,45 @@ def _output_directory(path: Path) -> Path:
     return path
 
 
-def dry_run(output_dir: Path, *, progress=None) -> dict:
-    """Exercise real projection/calculation paths on invented inputs only."""
-    output_dir = _output_directory(output_dir)
+def _implementation_files() -> list[Path]:
+    return sorted(
+        [
+            *(ROOT / "src/populace_dynamics/track_a_v2").glob("*.py"),
+            *(ROOT / "scripts").glob("track_a_v2_*.py"),
+        ],
+        key=str,
+    )
+
+
+def _implementation_records() -> list[dict]:
+    return [file_record(path, root=ROOT) for path in _implementation_files()]
+
+
+def _write_json(path: Path, artifact: dict) -> None:
+    if artifact.get("header") != INVENTED_HEADER:
+        raise ValueError("invented output requires its explicit header")
+    path.write_text(json.dumps(artifact, indent=2, allow_nan=False) + "\n")
+
+
+def _execute(output_dir: Path, implementation: list[dict], progress) -> dict:
     inputs = invented_inputs()
+    input_path = output_dir / "invented-inputs.json"
+    input_record = {
+        "header": INVENTED_HEADER,
+        "seed": 7,
+        "cohort_seal": inputs.cohort.seal,
+        "persons": _canonical(inputs.cohort.persons.to_dict("records")),
+        "initial_slice": _canonical(
+            inputs.cohort.initial_slice.to_dict("records")
+        ),
+        "careers": _canonical(dict(inputs.cohort.careers)),
+        "opening": {
+            str(pid): record.as_dict()
+            for pid, record in inputs.cohort.opening.items()
+        },
+    }
+    _write_json(input_path, input_record)
+    parameter_bundle = runtime_parameter_bundle(inputs)
     captured = {}
     project = legacy._project_population
 
@@ -49,6 +85,9 @@ def dry_run(output_dir: Path, *, progress=None) -> dict:
 
     with patch.object(legacy, "_project_population", capture):
         result = run_joint(inputs, progress=progress)
+    # §§10/17.4 require the actual attempt even if this dry-run assertion
+    # fails. Never lose a returned refusal by checking its status first.
+    _write_json(output_dir / "result.json", result)
     if result["attempt"]["status"] != "completed" or len(result["rows"]) != 68:
         raise AssertionError(
             f"invented complete run refused: {result['attempt']}"
@@ -66,48 +105,32 @@ def dry_run(output_dir: Path, *, progress=None) -> dict:
         legacy, "_project_population", return_value=(projected, diagnostics)
     ):
         refusal = run_joint(inputs)
+    _write_json(output_dir / "forced-refusal.json", refusal)
     assert refusal["attempt"]["status"] == "refused"
     assert refusal["attempt"]["step"] == 2
     assert len(refusal["attempt"]["uncomputed_rows"]) == 68
     assert not refusal["rows"]
 
-    output_dir.mkdir(parents=True, exist_ok=True)
-    input_path = output_dir / "invented-inputs.json"
-    input_record = {
-        "header": INVENTED_HEADER,
-        "seed": 7,
-        "cohort_seal": inputs.cohort.seal,
-        "persons": _canonical(inputs.cohort.persons.to_dict("records")),
-        "initial_slice": _canonical(
-            inputs.cohort.initial_slice.to_dict("records")
-        ),
-        "careers": _canonical(dict(inputs.cohort.careers)),
-        "opening": {
-            str(pid): record.as_dict()
-            for pid, record in inputs.cohort.opening.items()
-        },
-    }
-    input_path.write_text(
-        json.dumps(input_record, indent=2, allow_nan=False) + "\n"
-    )
+    # §17.6 is silent on edits during an invented run. Conservatively
+    # refuse a manifest rather than bind outputs to implementation bytes
+    # different from those present when this attempt started.
+    if _implementation_records() != implementation:
+        raise ValueError("implementation changed during the invented run")
     manifest = build_manifest(
         root=ROOT,
-        implementation=[
-            *sorted((ROOT / "src/populace_dynamics/track_a_v2").glob("*.py")),
-            *sorted((ROOT / "scripts").glob("track_a_v2_*.py")),
-        ],
+        implementation=[ROOT / record["path"] for record in implementation],
         inputs={"invented_population": input_path},
-        parameter_bundles={"runtime": runtime_parameter_bundle(inputs)},
+        parameter_bundles={"runtime": parameter_bundle},
         invented=True,
     )
-    for name, artifact in (
-        ("result.json", result),
-        ("forced-refusal.json", refusal),
-        ("hash-manifest.json", manifest),
+    if (
+        manifest["implementation"] != implementation
+        or _implementation_records() != implementation
     ):
-        (output_dir / name).write_text(
-            json.dumps(artifact, indent=2, allow_nan=False) + "\n"
+        raise ValueError(
+            "implementation changed while building the invented manifest"
         )
+    _write_json(output_dir / "hash-manifest.json", manifest)
     lines = [
         INVENTED_HEADER,
         "registered, one-shot, post hoc, not blind",
@@ -121,6 +144,32 @@ def dry_run(output_dir: Path, *, progress=None) -> dict:
     ]
     (output_dir / "RESULTS.md").write_text("\n".join(lines) + "\n")
     return result
+
+
+def dry_run(output_dir: Path, *, progress=None) -> dict:
+    """Keep one invented attempt and bind its manifest to unchanged code."""
+    output_dir = _output_directory(output_dir)
+    # §17.4 does not authorize replacing earlier invented evidence. Reserve
+    # a new directory before computing anything, including an empty prior
+    # directory, so failed and interrupted attempts remain distinguishable.
+    output_dir.mkdir(parents=True, exist_ok=False)
+    try:
+        implementation = _implementation_records()
+        _write_json(
+            output_dir / "implementation-start.json",
+            {"header": INVENTED_HEADER, "implementation": implementation},
+        )
+        return _execute(output_dir, implementation, progress)
+    except (Exception, KeyboardInterrupt) as error:
+        _write_json(
+            output_dir / "dry-run-failure.json",
+            {
+                "header": INVENTED_HEADER,
+                "type": type(error).__name__,
+                "reason": str(error),
+            },
+        )
+        raise
 
 
 def main(argv=None):

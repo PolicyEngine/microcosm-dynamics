@@ -118,6 +118,27 @@ def test_empty_population_and_empty_draws_are_undefined():
         assert result["undefined_draws"][0]["draw"] == 1
 
 
+def test_only_union_cells_publish_all_alive_diagnostics():
+    """Only U's retained double-zero frame reports all-alive denominators."""
+    records = [item(10, 9), item(0, 0, person=2, weight=3)]
+    for row_id in ("R0", "F0", "U0"):
+        row = get_row("D", row_id)
+        result = tabulate_rows(
+            records if row_id == "U0" else records[:1],
+            row,
+            draw_indices=(0,),
+        )
+        cell = result["groups"][2]["cells"][0]
+        if row_id == "U0":
+            assert cell["all_alive_count"] == 2
+            assert cell["all_alive_weight"] == 4
+            assert cell["all_alive_mean_base"] == 2.5
+            assert cell["all_alive_mean_reform"] == 2.25
+        else:
+            assert not any(key.startswith("all_alive_") for key in cell)
+        assert result["groups"][2][row.statistic]["mean"] == pytest.approx(-10)
+
+
 def test_mean_of_draw_statistics_and_sample_sd_are_not_pooled():
     """Draw summaries average percentages and use the K−1 SD divisor."""
     rows = [item(10, 9), item(1000, 800, draw=1)]
@@ -275,11 +296,15 @@ def test_twenty_draw_count_and_fixed_sampling_protocol():
     assert result["mean"] == pytest.approx(-10)
 
 
-def test_intended_workers_only_floor_change_from_zero_selected_family():
-    """Intended floor inequality preserves legacy frames and equal estimands."""
+@pytest.mark.parametrize("row_id", ("R5", "F6"))
+@pytest.mark.parametrize("mechanism,reference", (("S", "L"), ("DS", "D")))
+def test_workers_only_paired_floor_preserves_identity_and_legacy_replay(
+    row_id, mechanism, reference
+):
+    """Extra zero-worker spouse families cannot change paired worker floors."""
     # Minimal fixture: two positive worker families plus one S-only spouse
-    # family. §§3.4/7.3 keep the inherited input frame; §9's identity is the
-    # worker-selected estimand, not an instruction to change family splits.
+    # family. §§9/12.9 require equal uncertainty as well as point statistics;
+    # preserve the corresponding L/D family frame and A1 §16 split rule.
     legacy = [item(100, 90, person=3), item(100, 80, person=4)]
     spouse = item(0, 0, person=1)
     spouse.update(
@@ -289,10 +314,45 @@ def test_intended_workers_only_floor_change_from_zero_selected_family():
         benefit_reform=90,
     )
     spouse["benefit_components"]["spouse"] = {"base": 100, "reform": 90}
-    old = summary(legacy, "R5")
-    new = summary([spouse, *legacy], "R5")
-    assert old["mean"] == new["mean"] == pytest.approx(-15)
-    assert old["floor"]["n_seeds"] == 1
-    assert old["floor"]["mean"] is None
-    assert new["floor"]["n_seeds"] == 3
-    assert new["floor"]["mean"] == pytest.approx(10)
+    old_row = get_row(reference, row_id)
+    new_row = get_row(mechanism, row_id)
+    old = tabulate_rows(legacy, old_row, draw_indices=(0,))
+    new = tabulate_rows(
+        [spouse, *legacy], new_row, draw_indices=(0,), floor_records=legacy
+    )
+    for old_group, new_group in zip(old["groups"], new["groups"], strict=True):
+        assert old_group[old_row.statistic] == new_group[new_row.statistic]
+    assert old["floor_per_seed"] == new["floor_per_seed"]
+    selected = old["groups"][2][old_row.statistic]
+    assert selected["mean"] == pytest.approx(-15)
+    assert selected["floor"]["n_seeds"] == 1
+    assert selected["floor"]["mean"] is None
+    inherited = a7._normalize(legacy, a7_config(old_row, draw_indices=(0,)))
+    _, legacy_floors = a7._floors(
+        inherited, a7_config(old_row, draw_indices=(0,))
+    )
+    assert selected["floor"] == legacy_floors["65-69"][old_row.statistic]
+
+
+@pytest.mark.parametrize("field", ("benefit", "weight", "family", "birth"))
+def test_paired_worker_floor_refuses_changed_selected_inputs(field):
+    """Pairing floors refuses changed worker amounts, weights or fixed cells."""
+    legacy = [item(100, 90)]
+    changed = deepcopy(legacy)
+    if field == "benefit":
+        changed[0] = item(100, 89)
+    else:
+        changed[0][
+            {
+                "weight": "weight",
+                "family": "family_unit_id",
+                "birth": "birth_year",
+            }[field]
+        ] += 1
+    with pytest.raises(ValueError, match="worker-only amounts or population"):
+        tabulate_rows(
+            changed,
+            get_row("S", "R5"),
+            draw_indices=(0,),
+            floor_records=legacy,
+        )

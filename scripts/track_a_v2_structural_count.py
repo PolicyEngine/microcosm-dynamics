@@ -18,10 +18,11 @@ from populace_dynamics.track_a_v2.manifest import (  # noqa: E402
 from populace_dynamics.track_a_v2.protocol import (  # noqa: E402
     load_registered_inputs,
     preflight,
+    refuse_unresolved_structural_execution,
 )
 from populace_dynamics.track_a_v2.structural import (  # noqa: E402
     run_structural,
-    validate_count_outputs,
+    validate_structural_artifact,
 )
 
 
@@ -45,10 +46,11 @@ def main(argv=None):
     )
     with args.output.open("x", encoding="utf-8") as handle:
         try:
+            refuse_unresolved_structural_execution()
             artifact = run_structural(
                 load_registered_inputs(checked), registration=checked
             )
-            validate_count_outputs(artifact["counts"])
+            validate_structural_artifact(artifact)
         except (Exception, KeyboardInterrupt) as error:
             artifact = {
                 "header": REGISTERED_HEADER,
@@ -61,6 +63,7 @@ def main(argv=None):
                 },
             }
         artifact["preflight"] = asdict(checked)
+        validate_structural_artifact(artifact)
         json.dump(artifact, handle, indent=2, allow_nan=False)
         handle.write("\n")
     print(args.output)

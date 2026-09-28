@@ -118,7 +118,23 @@ class HistoryValidator:
             and nullable(first.di_conversion_year) is None,
             "opening recovery/conversion date is not null",
         )
-        opening = bool(first.di_entitled)
+        # §4.6 attaches O1–O5 to the first worker_record branch, not
+        # to whichever predicates the initial entitlement flag can pass
+        # (cola_track_a/benefits.py:309–320). Contradictory cohort/state
+        # metadata must therefore fail O1 or S1 rather than switch tests.
+        opening = (
+            str(self.cohort.persons_by_id.at[person_id, "opening_status"])
+            == "disabled_worker"
+            and nullable(last.di_recovery_year) is None
+        )
+        require(
+            bool(first.di_entitled) == opening,
+            (
+                "O1 opening DI entitlement missing"
+                if opening
+                else "S1 projected record has opening DI entitlement"
+            ),
+        )
         if opening:
             require(
                 counts["award"] == 0, "O2 projected award after opening DI"

@@ -178,6 +178,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/track_a_v2/protocol.py"),
         Path("src/populace_dynamics/track_a_v2/runner.py"),
         Path("src/populace_dynamics/track_a_v2/structural.py"),
+        Path("src/populace_dynamics/track_a_v2/structural_inputs.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -365,6 +366,7 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "populace_dynamics.track_a_v2.protocol",
         "populace_dynamics.track_a_v2.runner",
         "populace_dynamics.track_a_v2.structural",
+        "populace_dynamics.track_a_v2.structural_inputs",
     }
     assert track_a_v2_modules.issubset(module_paths)
     assert track_a_v2_modules.isdisjoint(reachable), (
