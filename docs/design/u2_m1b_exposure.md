@@ -123,7 +123,7 @@ Every saved source, with URL, retrieval time, bytes and SHA-256, is in `tests/da
   - `tests/track_u2/test_source_registries.py`
   - `tests/track_u2/test_pension_registry.py`
   - `tests/data/test_track_u2_income_wealth.py`
-- Sources: `tests/data/track_u2/psid_docs/` (twelve source files and `manifest.json`).
+- Sources: `tests/data/track_u2/psid_docs/` (twelve source files, `manifest.json`, and a directory `.gitattributes` that marks the archived PDF and HTML bytes binary so Git never normalizes their line endings).
 
 No engine file, `gates.yaml`, `runs/*.json`, `data/family.py`, `data/psid.py`, `estimates/career.py`, loader code or other milestone-2 module was edited.
 
