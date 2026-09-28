@@ -61,7 +61,7 @@ def seam(tmp_path, monkeypatch):
     state = SimpleNamespace(
         root=root,
         source=source,
-        output=tmp_path / "new-attempt",
+        output=root / ".cache" / "new-attempt",
         results=[_attempt("completed"), _attempt("refused", step=2)],
         runs=0,
         manifests=0,
@@ -133,7 +133,7 @@ def test_existing_output_directory_refuses_before_inputs(
     seam, monkeypatch, populated
 ):
     """An existing attempt directory, even empty, is never overwritten."""
-    seam.output.mkdir()
+    seam.output.mkdir(parents=True)
     if populated:
         (seam.output / "prior.json").write_text("prior bytes\n")
     monkeypatch.setattr(
