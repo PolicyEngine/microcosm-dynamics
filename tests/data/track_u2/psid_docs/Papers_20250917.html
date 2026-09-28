@@ -1,0 +1,618 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>
+	PSID Technical Paper Series
+</title><link rel="shortcut icon" href="../../favicon.ico" type="image/x-icon" />
+  <title>Panel Study of Income Dynamics - PSID Technical Paper Series</title>
+  <meta name="description" content="psid technical paper series" />
+  <meta name="keywords" content="psid,panel study of income dynamics,survey,psid technical paper series" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes" /><link href="../../CSS/reset.css" rel="stylesheet" type="text/css" media="Screen" /><link href="../../CSS/PSIDOnline.css" rel="stylesheet" type="text/css" media="Screen" /><link href="../../CSS/print.css" rel="stylesheet" type="text/css" media="print" /><link href="../../CSS/jquery.fancybox.css" rel="stylesheet" type="text/css" /> 
+    
+    <script type="text/javascript">
+      function SetYear() {
+        var thisDate = new Date();
+        var thisYear = thisDate.getFullYear();
+        document.getElementById('copyR').innerHTML = "<span class=pagetext_8> &copy; " + thisYear + " PSID</span>";
+      }
+      function toggle() {
+        var ele = document.getElementById("toggleText");
+        var text = document.getElementById("displayText");
+        if (ele.style.display == "block") {
+          ele.style.display = "none";
+        }
+        else {
+          ele.style.display = "block";
+        }
+      }
+      window.onscroll = function () { scrollFunction() };
+
+      function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+          document.getElementById("myBtn").style.display = "block";
+        } else {
+          document.getElementById("myBtn").style.display = "none";
+        }
+      }
+
+      // When the user clicks on the button, scroll to the top of the document
+      function topFunction() {
+        document.body.scrollTop = 0; // For Chrome, Safari and Opera
+        document.documentElement.scrollTop = 0; // For IE and Firefox
+      }
+    </script>
+   <script src="https://simba.isr.umich.edu/jsLib/jquery-3.5.1.js" type="text/javascript"></script>
+    <script src="https://simba.isr.umich.edu/jsLib/jquery.fancybox.js" type="text/javascript"></script>   
+    <style type="text/css">
+      .fancybox-slide--video .fancybox-content {
+	      width  : 700px;
+	      height : 500px;
+	      max-width  : 80%;
+	      max-height : 80%;
+      }
+    </style> 
+  <link href="/WebResource.axd?d=QKX1AO1vX8ebWKfbb4eOTCf097MXYDDzjkoR_TEEFotfZPe2a0rcZnXWnwK4jBekRObrdBJuc7Lt7avX2lnw938YcI8k4KDL38lA0xpJtz2sWadjXKx7M8Zz5gk7szOF0&amp;t=637144937660000000" type="text/css" rel="stylesheet" class="Telerik_stylesheet" /><link href="/WebResource.axd?d=abSXP-RgNuAsfhlSYpnpbOZkgpJhde7LWu5SP9ngcOUFW-l4X9v6O00vi3PMGOhPB3Y49yYNtY_oTlJVgSMasr97VilSaFEd-5-kzKChMg6ULK_yKrp-A502TvKosqXZivCKTYk_TWSdE4dykM1V5Q2&amp;t=637144937660000000" type="text/css" rel="stylesheet" class="Telerik_stylesheet" /></head>
+  <body>
+    <form method="post" action="./" id="form1">
+<input type="hidden" name="RadScriptManager1_TSM" id="RadScriptManager1_TSM" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="cPsA1a4tP0xfNduR8BA7fj5LrOCHvoYDgEs/oRTlGNbevSfdKR7gg60/k8RlJT9fZJcN53yUlhjUPSZzaI7oMQNB0dwFE51vGohHDkchQdv08W9wGJ48/el9r3DOqvCfL7J95rrDtTpMdZ0DlgPa8zJobUnw+C/6z0KLPCkJVh8BItAxLWaRrYnAp8D4qmcId2JR/sxBOtikinuUFwO7Hc7Vw32CSwdwU7QCGQzPhKwRFME24spqnvd0C6EHLyf+xHcQGTqIdJ8fi5uQb2hEBB1rBrd5Y6M6Ql6HBaEtPiSytDgmAoEljxI4qAWkMYVDPDjclC7xiYEElLQtfE8O627GS9WDGsnJ2CGJWcFNpZbMSn0Tu/9Jcv2CJgyLPGmLlVVru1kgl/+B8yg702M0Nd+CUhcOzOjTPSAbGrhi6RBJ8QUyu84tQLftH3QyiZ+IKTQTFOMNhFSNqr4KUTPDxgssr6EAwBoE8yksIXHkyHO3gLYDCSrwUNyRnR5uIGZSH7LGfrLlSKft/OOrnzgQYYxLhyTxSdnVnxYIIg0+J+iDbM/0HIg/kFk0KZVwbTzwGnEIJBteUzgiJz5TQZWRq+7Ik0xFLEICtC023nFSj3QlW8QIgS0efHyTj9kIiFZ8Ohf0HZbBHuynNxG+HDqjSw==" />
+
+
+<script src="/Telerik.Web.UI.WebResource.axd?_TSM_HiddenField_=RadScriptManager1_TSM&amp;compress=1&amp;_TSM_CombinedScripts_=%3b%3bSystem.Web.Extensions%2c+Version%3d4.0.0.0%2c+Culture%3dneutral%2c+PublicKeyToken%3d31bf3856ad364e35%3aen-US%3a95047a2c-8908-49e3-b68e-d249be89f134%3aea597d4b%3bTelerik.Web.UI%2c+Version%3d2020.1.114.45%2c+Culture%3dneutral%2c+PublicKeyToken%3d121fae78165ba3d4%3aen-US%3a40a36146-6362-49db-b4b5-57ab81f34dac%3a16e4e7cd%3af7645509%3a24ee1bba%3af46195d3%3ab2e06756%3a92fe8ea0%3afa31b949%3a4877f69a%3a33715776%3ac128760b%3a19620875%3a874f8ea2%3a490a9d4e%3abd8f85e4" type="text/javascript"></script>
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="E307CA78" />
+                  		      
+      <div id="toggleText" style="display: none;width:1150px;margin-left: auto ;	margin-right: auto ;">        
+      <script type="text/javascript">
+        (function () {
+          var cx = '018171321042756076064:u8bkftq3zvi';
+          var gcse = document.createElement('script');
+          gcse.type = 'text/javascript';
+          gcse.async = true;
+          gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+          var s = document.getElementsByTagName('script')[0];
+          s.parentNode.insertBefore(gcse, s);
+        })();
+      </script>
+      <gcse:search enableHistory="false"></gcse:search>
+      </div>
+
+      <div id="Main">
+        <div id="headercontent" >									
+					<a href="https://psidonline.isr.umich.edu/default.aspx" style="text-decoration: none; " >     
+						<img id="imgBanner" src="../../images/PSIDbanner.jpg" />                  									 
+					</a>	 									        
+					
+				</div>		
+        <div id="HorizontalMenu">
+					<ul class="HMenu_ul">
+            <li class="ul_item"><a href="../../GettingStarted.aspx">GETTING STARTED</a></li>
+						<li class="ul_item"><a href="../../Studies.aspx">STUDIES</a></li>
+						<li class="ul_item"><a href="../../Guide/default.aspx">DOCUMENTATION</a></li>
+						<li class="ul_item"><a href="https://simba.isr.umich.edu/data/data.aspx">DATA</a></li>
+						<li class="ul_item"><a href="../">PUBS & MEETINGS</a></li>
+						<li class="ul_item"><a href="../../Guide/People.aspx">PEOPLE</a></li>
+						<li class="ul_item"><a href="../../Guide/News.aspx">NEWS</a></li>
+						<!-- <li class="ul_item"><a href="../../Funding/Opportunities.aspx">RESEARCH OPPS</a></li>						 -->
+          </ul>
+        </div>        
+        <div id="HorizontalMenu2">
+	      <ul class="HMenu_ul2">
+		      <li class="mag"><a title="Search" id="displayText" href="javascript:toggle()"><img id="img1" src='/images/magglass.png'  alt="Search" /></a></li>							
+		      <li class="bsky"><a target="_blank" href="https://bsky.app/profile/umpsid.bsky.social" title="Follow PSID on Bluesky"><img alt="Bluesky" title="PSID Bluesky" src='/images/Bluesky_Logo.png' /></a></li>
+		      <li class="cart"><a href="https://simba.isr.umich.edu/cart/default.aspx"><img src='/images/shopping-cart-wheel-new.png' alt="" title="Data Center Cart" /></a></li>
+          <li class="youtube"><a target="_blank" href="https://www.youtube.com/channel/UCRKjqCqPGtOZommz9SyaCyQ" title="PSID YouTube"><img src='/images/youtube_psid.png' alt="Youtube" /></a></li>
+          <li class="gear"><a href="https://simba.isr.umich.edu/U/Login.aspx" title="Data Center Login" style="text-decoration:none;"><img src='/images/Sm_gear-person.png' alt="Login" /></a><span style="font-size:xx-small;visibility:hidden;">&#9660;</span></li>
+	      </ul>		
+      </div>	
+      <hr class="hr2" />    
+      </div>
+      
+      <div id="SiteMessage">
+			  IMPORTANT MESSAGE: PSID websites will be unavailable between 6:30am-10:00am on Wednesday the 17th
+				<!-- -->
+		  </div>
+
+      <div id="SubMain"> 
+   <div>                          
+        <div id="breadcrumb_row">				          
+          <div id="leftcontent_homepage_toprow">
+            <table>
+              <tr><td><span id="SiteMapPath1"><a href="#SiteMapPath1_SkipLink">Skip Navigation Links</a><span><a title="Home" href="/default.aspx">Home</a></span><span> &gt; </span><span><a title="Pubs &amp; Meetings" href="/Publications/default.aspx">Pubs, Meetings, &amp; Media</a></span><span> &gt; </span><span>Technical Paper Series</span><a id="SiteMapPath1_SkipLink"></a></span></td></tr>
+            </table>
+          </div>
+        </div>
+        
+        <div id="leftcontent_homepage">
+            
+  <div style="width: 100%; display: table;">
+    <div style="display: table-row">
+      <div class="OneColumn">
+        <span class="montserrat-regular_12">2022</span>
+      </div>
+    </div>
+    <div style="display: table-row">
+       <ul class="circle2">				 
+				 <li><a target="_blank" href="tsp/2022-01_Geocode_Update.pdf">Updating the Geospatial Data in the PSID Restricted Data Enclave for 2005-2017</a></li>				 				  				 
+	     </ul>
+    </div>
+		<div style="display: table-row">&nbsp;</div>
+		<div style="display: table-row">
+      <div class="OneColumn">
+        <span class="montserrat-regular_12">2021</span>
+      </div>
+    </div>
+    <div style="display: table-row">
+       <ul class="circle2">				 
+ 				 <li><a target="_blank" href="tsp/2021-02_Overview_PSID_Other_US_HH.pdf">An Overview of Data Comparisons between PSID and Other US Household Surveys</a></li>
+				 <li><a target="_blank" href="tsp/2021-01_Short_Term_Coresidence_PSID.pdf">Short-Term Coresidence in the Panel Study of Income Dynamics</a></li>              
+	     </ul>
+    </div>
+		<div style="display: table-row">&nbsp;</div>    
+		<div style="display: table-row">
+      <div class="OneColumn">
+        <span class="montserrat-regular_12">2020</span>
+      </div>
+    </div>
+		<div style="display: table-row">
+       <ul class="circle2">				 
+				 <li><a target="_blank" href="tsp/2020-03_FPS_Debugging_Relational_Extraction.pdf">Field Properties Values: A Tool to Identify and Adjust Missing Data from ‘Relational’ Extraction</a></li>          
+         <li><a target="_blank" href="tsp/2020_02_Linking_1940_Census_Data_to_PSID.pdf">Linking 1940 U.S. Census Data to the Panel Study of Income Dynamics</a></li>          
+				 <li><a target="_blank" href="tsp/2020-01_Multiple_Imputation_w_Massive_Data.pdf">Multiple Imputation with Massive Data: an Application to the Panel Study of Income Dynamics</a></li>          
+	     </ul>
+    </div>
+		<div style="display: table-row">&nbsp;</div>    
+    <div style="display: table-row">
+      <div class="OneColumn">
+        <span class="montserrat-regular_12">2019</span>
+      </div>
+    </div>		
+    <div style="display: table-row">
+       <ul class="circle2">
+         <li><a target="_blank" href="tsp/2019-03_Recent_Dev_in_Web_Based_Data_Collection.pdf">Recent Developments in Web-Based Data Collection for Longitudinal Studies</a></li>
+         <li><a target="_blank" href="tsp/2019-02_Evaluation_TimeUse_data.pdf">Evaluation of the Time Use data in PSID with comparisons to ATUS</a></li>
+         <li><a target="_blank" href="tsp/2019-01_AD8_Dementia_PSID.pdf">Adding the AD8 Dementia Screen to the Panel Study of Income Dynamics</a></li>        
+	     </ul>
+    </div>
+    <div style="display: table-row">&nbsp;</div>    
+    <div style="display: table-row">
+      <div class="OneColumn">
+        <span class="montserrat-regular_12">2018</span>
+      </div>
+    </div>
+    <div style="display: table-row">
+       <ul class="circle2">         
+         <li><a target="_blank" href="tsp/2018-01_6815CRR_68SP.pdf">Panel Study of Income Dynamics (PSID) 1968-2015 Cumulative Response Rates for 1968 Sample Persons</a></li>        
+	     </ul>
+    </div>
+
+    <div style="display: table-row">&nbsp;</div>
+    <div style="display: table-row">
+      <div class="OneColumn">
+        <span class="montserrat-regular_12">2017</span>
+      </div>
+    </div>
+    <div style="display: table-row">
+       <ul class="circle2">
+         <li><a target="_blank" href="tsp/2017-03_Resp_Uncertainty_EHC.pdf">Respondent Uncertainty about the Timing of Residential Changes and Employment-Related Events</a></li>
+         <li><a target="_blank" href="tsp/2017-02_Trans_Test_Web_Tele_Instr.pdf">Web Development in the PSID: Translation & Testing of a Web Version of the 2015 PSID Telephone Instrument</a></li>
+        <li><a target="_blank" href="tsp/2017-01_Health_Data_update_2015.pdf">Comparing Health Estimates in the PSID and NHIS, 2001-2015</a></li>
+	     </ul>
+    </div>
+    <div style="display: table-row">&nbsp;</div>
+    <div style="display: table-row">
+	    <div class="OneColumn">
+		    <span class="montserrat-regular_12">2016</span>
+	    </div>
+    </div>
+    <div style="display: table-row">
+	     <ul class="circle2">     
+        <li><a target="_blank" href="tsp/2016-02_Data-out_Blaise5.pdf">Data-out Experience and Challenges in Blaise 5</a></li>
+	      <li><a target="_blank" href="tsp/2016-01_Est_Multi_Gen_Black_Fam.pdf">Generating Nationally Representative Estimates of Multi-Generational Families and Related Statistics for Blacks in the PSID</a></li>
+	     </ul>
+    </div>
+    <div style="display: table-row">&nbsp;</div>
+    <div style="display: table-row">
+	    <div class="OneColumn">
+		    <span class="montserrat-regular_12">2015</span>
+	    </div>
+    </div>
+    <div style="display: table-row">
+	  <ul class="circle2">				
+	    <li><a target="_blank" href="tsp/2015-02_Comp_Est_Loan_psid-tas.pdf">Comparing Estimates of Student Loans Measured in the PSID-TAS with National Postsecondary Student Aid Survey</a></li>
+	    <li><a target="_blank" href="tsp/2015-01_Determinants_of_Wealth_Fluctuation.pdf">Determinants of Wealth Fluctuation</a></li>					
+	   </ul>  
+    </div>
+    <div style="display: table-row">&nbsp;</div>
+    <div style="display: table-row">
+	    <div class="OneColumn">
+		    <span class="montserrat-regular_12">2014</span>
+	    </div>
+    </div>
+    <div style="display: table-row">
+      <ul class="circle2">				
+				<li><a target="_blank" href="tsp/2014-03_ Measuring_Wealth_and_Wealth_Inequality.pdf">Measuring Wealth and Wealth Inequality: Comparing Two U.S. Surveys</a></li>
+				<li><a target="_blank" href="tsp/2014-02_Achievement.pdf">Achievement Tests in the Panel Study of Income Dynamics Child Development Supplement</a></li>
+				<li><a target="_blank" href="tsp/2014-01_PSIDMedicare.pdf">The Panel Study of Income Dynamics Linked Medicare Claims Data</a></li>
+			</ul>  	 
+    </div>
+    <div style="display: table-row">&nbsp;</div>
+    <div style="display: table-row">
+	  <div class="OneColumn">
+		  <span class="montserrat-regular_12">2012</span>
+	  </div>
+  </div>
+  <div style="display: table-row">
+		<ul class="circle2">
+			<li><a target="_blank" href="tsp/2012-03_Blaise-to-SAS-Transformation.pdf#page=1">Programming and Use of Blaise to SAS Transformation Tool for Streamlining Processing in the Panel Study of Income Dynamics</a></li>
+			<li><a target="_blank" href="tsp/2012-02_Mortgage_distress_financial_liquidity.pdf#page=1">Mortgage distress and financial liquidity: How U.S. families are handling savings, mortgages and other debts</a></li>
+			<li><a target="_blank" href="tsp/2012-01_National_Representativeness_Children_2007_psid.pdf#page=1">An assessment of the national representativeness of children in the 2007 Panel Study of Income Dynamics</a></li>
+		</ul>  
+  </div>
+    <div style="display: table-row">&nbsp;</div>
+  <div style="display: table-row">
+	  <div class="OneColumn">
+		  <span class="montserrat-regular_12">2011</span>
+	  </div>
+  </div>
+  <div style="display: table-row">
+		<ul class="circle2">
+			<li><a target="_blank" href="tsp/2011-05_Heeringa_Berglung_Khan.pdf#page=1">Sampling error estimation in design-based analysis of the PSID data</a></li>
+			<li><a target="_blank" href="tsp/2011-04_Disparities_Interview_Length.pdf#page=1">Disparities in the length of interviews among PSID respondents</a></li>
+			<li><a target="_blank" href="tsp/2011-03_Duffy.pdf#page=1">2007 PSID income and wage imputation methodology</a></li>
+			<li><a target="_blank" href="tsp/2011-02_Killewald_Andreski_Schoeni.pdf#page=1">Trends in item non-response in the PSID, 1968-2009</a></li>
+			<li><a target="_blank" href="tsp/2011-01_Estimates of Time Use_DUST.pdf#page=1">Comparing estimates of time use in the PSID’s supplement on Disability and Use of Time and the American Time Use Survey</a></li>
+		</ul>  
+  </div>
+    <div style="display: table-row">&nbsp;</div>
+  <div style="display: table-row">
+	  <div class="OneColumn">
+		  <span class="montserrat-regular_12">2010</span>
+	  </div>
+  </div>
+  <div style="display: table-row">
+		<ul class="circle2">
+			<li><a target="_blank" href="tsp/2010-02_McGonagle_wave35_wealth_transfer.pdf#page=1">The PSID wave 35 wealth transfer module: brief report on content, data quality, and descriptive statistics</a></li>
+			<li><a target="_blank" href="tsp/2010-01_comparing_estimates_of_fam.pdf">Comparing estimates of family income in the Panel Study of Income Dynamics and the March Current Population Survey, 1968-2007</a></li>
+		</ul>	
+  </div>
+  <div style="display: table-row">&nbsp;</div>
+  <div style="display: table-row">
+	  <div class="OneColumn">
+		  <span class="montserrat-regular_12">2009</span>
+	  </div>
+  </div>
+  <div style="display: table-row">
+		<ul class="circle2">
+				<li><a target="_blank" href="tsp/2009-03_Trends_in_Household_Wealth.pdf">Trends in household wealth dynamics 2005-2007</a>
+				<li><a target="_blank" href="tsp/2009-02_Quality_Health_Data_PSID_.pdf">An analysis of the quality of the health data in the Panel Study of Income Dynamics</a>
+				<li><a target="_blank" href="tsp/2009-01_Dev_Prog_Emp_Hist.pdf">Development and programming of an employment event history calendar</a>
+				<li><a target="_blank" href="http://surveypractice.wordpress.com/2009/06/29/panel-contacts/">An experimental test of a strategy to maintain contact with families between waves of a panel study</a>						
+			</ul>
+  </div>
+  <div style="display: table-row">&nbsp;</div>
+  <div style="display: table-row">
+	  <div class="OneColumn">
+		  <span class="montserrat-regular_12">2008</span>
+	  </div>
+  </div>
+  <div style="display: table-row">
+	 	<ul class="circle2">			
+			<li><a target="_blank" href="tsp/2008-06_PSID_t-2_report.pdf">Assessing the PSID t-2 income data</a></li>
+			<li><a target="_blank" href="tsp/2008-05_PSID_Revised_Longitudinal_Weights_1993-2005 .pdf">Panel Study of Income Dynamics revised longitudinal weights 1993-2005</a></li>
+			<li><a target="_blank" href="tsp/2008-04_Accurately_Measuring_Poverty_in_the_US.pdf">Accurately measuring poverty in the United States</a></li>
+			<li><a target="_blank" href="tsp/2008-03_PSID_Sample_Leaver_Tracking.pdf">The PSID sample leaver tracking project</a></li>
+			<li><a target="_blank" href="tsp/2008-01_Gulf_Families.pdf">Tracking PSID families in the gulf states of Louisiana, Mississippi, and Alabama</a></li>
+		</ul>
+  </div>
+  <div style="display: table-row">&nbsp;</div>
+  <div style="display: table-row">
+	  <div class="OneColumn">
+		  <span class="montserrat-regular_12">2007</span>
+	  </div>
+  </div>
+  <div style="display: table-row">
+    <ul class="circle2">
+			<li><a target="_blank" href="tsp/2007-07_Trends_in_Household_Wealth.pdf">Trends in household wealth dynamics, 2003-2005</a></li>
+			<li><a target="_blank" href="tsp/2007-05_PSID_Health_Insurance_Data_Documentation.pdf">Health insurance data in the PSID</a></li>
+			<li><a target="_blank" href="tsp/2007-04_Analysis_of_the_Qual_of_Hlth_Data.pdf">An analysis of the quality of health data in the Panel Study of Income Dynamics</a></li>
+			<li><a target="_blank" href="tsp/2007-02_Experiences_Using_EHC_in_PSID.pdf">Experiences using an event history calendar in the Panel Study of Income Dynamics</a></li>
+			<li><a target="_blank" href="tsp/2007-01_Comparing_Estimates_PSID.pdf">Comparing estimates of family income in the Panel Study of Income Dynamics and the March Current Population Survey, 1968-2005</a></li>
+		</ul>
+  </div>
+  <div style="display: table-row">&nbsp;</div>
+  <div style="display: table-row">
+	  <div class="OneColumn">
+		  <span class="montserrat-regular_12">2006</span>
+	  </div>
+  </div>
+  <div style="display: table-row">
+		<ul class="circle2">
+			<li><a target="_blank" href="tsp/2006-03_PSID_Cognitive.pdf">Results of cognitive testing of the consumption expenditure questions in the PSID</a></li>
+			<li><a target="_blank" href="tsp/2006-02_Guide_to_Disab_Statistics_from_PSID_May_06.pdf">A guide to disability statistics from the Panel Study of Income Dynamics</a></li>
+			<li><a target="_blank" href="tsp/2006-01_PSID_Overview_and_summary_40_years.pdf">The Panel Study of Income Dynamics: overview & summary of scientific contributions after nearly 40 years</a></li>
+		</ul>
+  </div>
+  <div style="display: table-row">&nbsp;</div>
+  <div style="display: table-row">
+	  <div class="OneColumn">
+		  <span class="montserrat-regular_12">2005</span>
+	  </div>
+  </div>
+  <div style="display: table-row">
+		<ul class="circle2">
+			<li><a target="_blank" href="tsp/2005-04_Data_Qual_of_Household_Hours-_Dishes.pdf">Data quality of housework hours in the Panel Study of Income Dynamics: who really does the dishes?</a></li>
+			<li><a target="_blank" href="tsp/2005-03_Trends_in_Household_01_03_July_05.pdf">Trends in household wealth dynamics, 2001 - 2003</a></li>
+		</ul> 
+  </div>
+  <div style="display: table-row">&nbsp;</div>
+  <div style="display: table-row">
+	  <div class="OneColumn">
+		  <span class="montserrat-regular_12">2003</span>
+	  </div>
+  </div>  
+  <div style="display: table-row">
+	 	<ul class="circle2">
+			<li><a target="_blank" href="tsp/2003-01_EHC.pdf">The integration of a computer assisted interviewing event history calendar in the Panel Study of Income Dynamics</a></li>
+		</ul>
+  </div>
+  <div style="display: table-row">&nbsp;</div>
+  <div style="display: table-row">
+	  <div class="OneColumn">
+		  <span class="montserrat-regular_12">2002</span>
+	  </div>
+  </div>
+  <div style="display: table-row">
+		<ul class="circle2">
+				<li><a target="_blank" href="tsp/2002-02_Trends_in_Household_Wealth_Sep_02.pdf">Trends in household wealth dynamics, 1999 - 2001</a></li>
+				<li><a target="_blank" href="tsp/2002-01_Evolution_and_Change.pdf">Evolution and change in family income, wealth and health: the Panel Study of Income Dynamics, 1968-2000 and beyond</a></li>
+			</ul>
+  </div>
+  <div style="display: table-row">&nbsp;</div>
+  <div style="display: table-row">
+	  <div class="OneColumn">
+		  <span class="montserrat-regular_12">2001</span>
+	  </div>
+  </div>
+  <div style="display: table-row">
+	 	<ul class="circle2">
+		  <li><a target="_blank" href="tsp/2001-01_The_Obesity_Drift.pdf">The obesity drift: generational weight (BMI) patterns and health effects</a></li>
+	  </ul>
+  </div>
+  <div style="display: table-row">&nbsp;</div>
+  <div style="display: table-row">
+	  <div class="OneColumn">
+		  <span class="montserrat-regular_12">2000</span>
+	  </div>
+  </div>
+  <div style="display: table-row">
+		<ul class="circle2">
+			<li><a target="_blank" href="tsp/2000-04_Imm_Sample_Addition.pdf">Information on the PSID immigrant sample addition of 1997/1999</a></li>
+			<li><a target="_blank" href="tsp/2000-03_Quality_of_PSID_Income_Data_1990s_Beyond.pdf">The quality of PSID income data in the 1990’s and beyond</a></li>
+			<li><a target="_blank" href="tsp/2000-02_Cross_Section_Wealth_and_Fin_Wealth.pdf">Cross-sectional wealth and financial wealth</a></li>
+			<li><a target="_blank" href="tsp/2000-01_Five_Years_Older.pdf">Five years older: much richer or deeper in debt?</a></li>
+		</ul>
+  </div>
+  <div style="display: table-row">&nbsp;</div>
+  <div style="display: table-row">
+	  <div class="OneColumn">
+		  <span class="montserrat-regular_12">1999</span>
+	  </div>
+  </div>
+  <div style="display: table-row">
+    <ul class="circle2">
+	    <li><a target="_blank" href="tsp/1999-02_PSID_and_me.pdf">The PSID and me</a></li>
+	    <li><a target="_blank" href="tsp/1999-01_Notes_on_income_plus_files.pdf">Notes on the 'income plus' files</a></li>
+    </ul>
+  </div>
+  <div style="display: table-row">&nbsp;</div>  
+  <div style="display: table-row">
+	  <div class="OneColumn">
+		  <span class="montserrat-regular_12">1996</span>
+	  </div>
+  </div>
+  <div style="display: table-row">
+		<ul class="circle2">
+			<li><a target="_blank" href="tsp/1996-03_Notes_on_the_SEO_C_Brown.pdf">Notes on the "SEO" or "census" component of the PSID</a></li>
+			<li><a target="_blank" href="tsp/1996-02_ICPSR_psid_paper.pdf">Panel Study of Income Dynamics: an overview </a></li>
+			<li><a target="_blank" href="tsp/1996-01_Yeung_Chinese_article.pdf">The origin development of the Panel Study of Income Dynamics</a></li>
+		</ul>
+  </div>
+  <div style="display: table-row">&nbsp;</div>
+  <div style="display: table-row">
+	  <div class="OneColumn">
+		  <span class="montserrat-regular_12">1995</span>
+	  </div>
+  </div>
+  <div style="display: table-row">
+		<ul class="circle2">
+			<li><a target="_blank" href="tsp/1995-01_Reducing_Item_Nonresponse.pdf">Unfolding brackets for reducing item nonresponse in economic surveys</a></li>
+			<li><a target="_blank" href="tsp/1995-02_Eval_Central_Decentral.pdf">Results of an experiment designed to evaluate central and decentral data collection methods</a></li>
+		</ul>
+  </div>
+  <div style="display: table-row">&nbsp;</div>
+  <div style="display: table-row">
+	  <div class="OneColumn">
+		  <span class="montserrat-regular_12">1994</span>
+	  </div>
+  </div>
+  <div style="display: table-row">
+		<ul class="circle2">
+			<li><a target="_blank" href="tsp/1994-01_Using_PSID_to_study_poverty_and_welf_dyn.pdf">Using the Panel Study of Income Dynamics to study poverty and welfare dynamics</a></li>
+		</ul>
+  </div>
+  <div style="display: table-row">&nbsp;</div>
+  <div style="display: table-row">
+	  <div class="OneColumn">
+		  <span class="montserrat-regular_12">1990</span>
+	  </div>
+  </div>
+  <div style="display: table-row">
+    <ul class="circle2">
+			<li><a target="_blank" href="tsp/1990-01_Duncan_User_Guide.pdf">Draft chapters from the 1990 revision of the PSID user guide</a></li>
+		</ul>
+  </div>
+  <div style="display: table-row">&nbsp;</div>
+  <div style="display: table-row">
+	  <div class="OneColumn">
+		  <span class="montserrat-regular_12">1989</span>
+	  </div>
+  </div>
+  <div style="display: table-row">
+	 	<ul class="circle2">
+		  <li><a target="_blank" href="tsp/1989-01_Estimates_Wealth.pdf">Survey estimates of wealth: an assessment of quality</a></li>
+	  </ul>
+  </div>
+  <div style="display: table-row">&nbsp;</div>
+  <div style="display: table-row">
+	  <div class="OneColumn">
+		  <span class="montserrat-regular_12">1979</span>
+	  </div>
+  </div>
+  <div style="display: table-row">
+	  <ul class="circle2">
+		  <li><a target="_blank" href="tsp/1979-01_Morgan.pdf">Memo on representativeness of the Panel Study of Income Dynamics</a></li>
+	  </ul>
+  </div>
+  <div style="display: table-row">&nbsp;</div>
+  <div style="display: table-row">
+	  <div class="OneColumn">
+		  <span class="montserrat-regular_12">1971</span>
+	  </div>
+  </div>
+  <div style="display: table-row">
+  	<ul class="circle2">
+		  <li><a target="_blank" href="tsp/1971-01_Intelli_achiv.pdf">Measuring intelligence and achievement motivation in surveys</a></li>
+	  </ul>	 
+  </div>
+  </div>
+	        
+        </div>
+</div>
+
+<div id="rightcontent_homepage">
+        <div id="QuickLinks">
+				<ul style="list-style-type:none;">
+				  <li>
+            <span class="recent_index">Quick Links</span><br />
+            <hr class="hr3" />
+				  </li>        				
+          <li class="FAQItem"><a href="../../PSID50thAnniv.aspx" target="_blank">PSID turns 50</a></li>
+          <li class="FAQItem"><a href="../Bibliography/Search.aspx" target="_blank">Bibliography</a></li>								
+          <li class="FAQItem"><a href="../../Guide/documents.aspx" target="_blank">Documentation</a></li>        
+          <li class="FAQItem"><a href="../../data/Documentation/UserGuide2023.pdf" target="_blank">User Guide</a></li>
+          <li class="FAQItem"><a href="../../VideoTutorial.aspx" target="_blank">Video Tutorials</a></li>
+          <li class="FAQItem"><a href="../../Guide/FAQ.aspx" target="_blank">FAQs</a></li>								
+          <li class="FAQItem"><a target="_blank" href='https://simba.isr.umich.edu/default.aspx'>Data Center</a></li>	
+          <li class="FAQItem"><a target="_blank" href='https://simba.isr.umich.edu/DC/s.aspx'>Variable search</a></li>				
+          <li class="FAQItem"><a href="https://psidonline.isr.umich.edu/Guide/Contact_Us.aspx" target="_blank">Help desk</a></li>
+          <li class="FAQItem"><a target="_blank" href='https://simba.isr.umich.edu/U/login.aspx?Tabid=1'>Register</a></li>
+          <li class="FAQItem"><a href="../../Guide/suggestions.aspx" target="_blank">Suggestions?</a></li>				       
+				</ul>							                
+			</div>  
+</div>
+       <div id="footer">								
+					<span id="copyR"> </span>
+          <br />
+          <div id="HorizontalMenu3">
+             <ul style="list-style-type: none;padding: 0;margin: 0;">
+              <li class="footer_item1">
+                <a target="_blank" href="https://www.isr.umich.edu">Institute for Social Research</a>
+              </li>
+              <li class="footer_item2">
+                <a target="_blank" href="https://simba.isr.umich.edu/U/Privacy.aspx">Privacy</a>
+              </li>
+              <li class="footer_item3">
+                <a target="_blank" href="https://simba.isr.umich.edu/U/CondUse.aspx">Conditions of use</a>
+              </li>
+               <li class="footer_item4">
+                <a target="_blank" href="https://psidonline.isr.umich.edu/Guide/sponsorship.aspx">Sponsors</a>
+              </li>
+              <li class="footer_item2">
+                <a target="_blank" href="https://psidonline.isr.umich.edu/sitemap.aspx">Site map</a>
+              </li>
+            </ul>
+          </div>
+			  </div>     
+         <button type="button" onclick="topFunction();" id="myBtn" title="Go to top">^</button> 
+    </div>
+
+			<div id="ctl00_RadWindowManager1" style="display:none;">
+	<!-- 2020.1.114.45 --><div id="ctl00_RadWindowManager1_alerttemplate" style="display:none;">
+		<div class="rwDialogPopup radalert">			
+			<div class="rwDialogText">
+			{1}				
+			</div>
+			
+			<div>
+				<a  onclick="$find('{0}').close(true);"
+				class="rwPopupButton" href="javascript:void(0);">
+					<span class="rwOuterSpan">
+						<span class="rwInnerSpan">##LOC[OK]##</span>
+					</span>
+				</a>				
+			</div>
+		</div>
+		</div><div id="ctl00_RadWindowManager1_prompttemplate" style="display:none;">
+		 <div class="rwDialogPopup radprompt">			
+			    <div class="rwDialogText">
+			    {1}				
+			    </div>		
+			    <div>
+				    <script type="text/javascript">
+				    function RadWindowprompt_detectenter(id, ev, input)
+				    {							
+					    if (!ev) ev = window.event;                
+					    if (ev.keyCode == 13)
+					    {															        
+					        var but = input.parentNode.parentNode.getElementsByTagName("A")[0];					        
+					        if (but)
+						    {							
+							    if (but.click) but.click();
+							    else if (but.onclick)
+							    {
+							        but.focus(); var click = but.onclick; but.onclick = null; if (click) click.call(but);							 
+							    }
+						    }
+					       return false;
+					    } 
+					    else return true;
+				    }	 
+				    </script>
+				    <input title="Enter Value" onkeydown="return RadWindowprompt_detectenter('{0}', event, this);" type="text"  class="rwDialogInput" value="{2}" />
+			    </div>
+			    <div>
+				    <a onclick="$find('{0}').close(this.parentNode.parentNode.getElementsByTagName('input')[0].value);"				
+					    class="rwPopupButton" href="javascript:void(0);" ><span class="rwOuterSpan"><span class="rwInnerSpan">##LOC[OK]##</span></span></a>
+				    <a onclick="$find('{0}').close(null);" class="rwPopupButton"  href="javascript:void(0);"><span class="rwOuterSpan"><span class="rwInnerSpan">##LOC[Cancel]##</span></span></a>
+			    </div>
+		    </div>				       
+		</div><div id="ctl00_RadWindowManager1_confirmtemplate" style="display:none;">
+		<div class="rwDialogPopup radconfirm">			
+			<div class="rwDialogText">
+			{1}				
+			</div>						
+			<div>
+				<a onclick="$find('{0}').close(true);"  class="rwPopupButton" href="javascript:void(0);" ><span class="rwOuterSpan"><span class="rwInnerSpan">##LOC[OK]##</span></span></a>
+				<a onclick="$find('{0}').close(false);" class="rwPopupButton"  href="javascript:void(0);"><span class="rwOuterSpan"><span class="rwInnerSpan">##LOC[Cancel]##</span></span></a>
+			</div>
+		</div>		
+		</div><input id="ctl00_RadWindowManager1_ClientState" name="ctl00_RadWindowManager1_ClientState" type="hidden" />
+</div>								
+				<script type="text/javascript">
+				  window.onload = function () {SetYear();}
+				</script>
+      <br />
+    
+
+<script type="text/javascript">
+//<![CDATA[
+window.__TsmHiddenField = $get('RadScriptManager1_TSM');Sys.Application.add_init(function() {
+    $create(Telerik.Web.UI.RadWindowManager, {"clientStateFieldID":"ctl00_RadWindowManager1_ClientState","formID":"form1","iconUrl":"","minimizeIconUrl":"","name":"RadWindowManager1","skin":"Default","visibleStatusbar":false,"windowControls":"[]"}, null, null, $get("ctl00_RadWindowManager1"));
+});
+//]]>
+</script>
+</form>
+  </body>
+</html>

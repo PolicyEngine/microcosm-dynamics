@@ -1,0 +1,338 @@
+{
+  "purpose": "U2 milestone 1b Part B: official PSID documentation consulted for three documentary blockers. Documentation only; no survey records.",
+  "created_utc": "2026-09-28T23:11:56Z",
+  "research_record": "docs/design/u2_m1b_psid_research.md",
+  "live_site_status": "Every live request to psidonline.isr.umich.edu on 2026-09-28 (curl, urllib and WebFetch) returned HTTP 403 with a Cloudflare security challenge, so sources come from Internet Archive raw snapshots of the official URLs or from the local browser capture of the official documentation page. Snapshot bytes were compared with the local capture where both exist.",
+  "sources": [
+    {
+      "file": "tests/data/track_u2/psid_docs/UserGuide2015.pdf",
+      "url": "https://psidonline.isr.umich.edu/data/Documentation/UserGuide2015.pdf",
+      "bytes": 1231661,
+      "sha256": "a928cd4f7ff329c4c1db0fe00d5277e3f418dc09cb6e3dcf851304b3741676c7",
+      "retrieved_at_utc": "2026-09-28T21:37:00Z",
+      "retrieval": "Internet Archive raw snapshot (id_) of the official URL; live site returned a Cloudflare challenge",
+      "archive_url": "https://web.archive.org/web/20240927062358id_/https://psidonline.isr.umich.edu/data/Documentation/UserGuide2015.pdf",
+      "archive_timestamp": "20240927062358",
+      "local_capture": {
+        "path": "PSID/documentation/capture1/UserGuide2015.pdf",
+        "identical": true
+      },
+      "cited": "PDF p. 14 (section 2.5, new terminology in 2015); PDF p. 33 (section 6.1: ER34304 same-sex partner of Head, an OFUM indicator)",
+      "blockers": [
+        "male_code20_2015"
+      ],
+      "live_fetch": {
+        "attempted_at_utc": "2026-09-28T23:10:55Z",
+        "result": "HTTP 403 cloudflare security challenge"
+      }
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/UserGuide2017.pdf",
+      "url": "https://psidonline.isr.umich.edu/data/Documentation/UserGuide2017.pdf",
+      "bytes": 1957833,
+      "sha256": "206d5225ee3efa4b746f80d2567229466e4236ebace4e91b1c5481ed505474d5",
+      "retrieved_at_utc": "2026-09-28T21:37:09Z",
+      "retrieval": "Internet Archive raw snapshot (id_) of the official URL; live site returned a Cloudflare challenge",
+      "archive_url": "https://web.archive.org/web/20260302094310id_/https://psidonline.isr.umich.edu/data/Documentation/UserGuide2017.pdf",
+      "archive_timestamp": "20260302094310",
+      "local_capture": {
+        "path": "PSID/documentation/capture1/UserGuide2017.pdf",
+        "identical": true
+      },
+      "cited": "PDF p. 13 (section 2.5: husband designated Head from 1968 to 2015); PDF p. 35 (same-sex partners designated Spouse/Partner as of 2017 rather than as an OFUM); PDF p. 62 (ER34651 and ER71571 updated to include NIS-2017)",
+      "blockers": [
+        "male_code20_2015",
+        "revised_2017_weights"
+      ],
+      "live_fetch": {
+        "attempted_at_utc": "2026-09-28T23:10:56Z",
+        "result": "HTTP 403 cloudflare security challenge"
+      }
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/UserGuide2023.pdf",
+      "url": "https://psidonline.isr.umich.edu/data/Documentation/UserGuide2023.pdf",
+      "bytes": 1055566,
+      "sha256": "ebccdb30845693123a5ae01d29cff351344b9f5c35038dbd7df3982573942853",
+      "retrieved_at_utc": "2026-09-28T21:37:13Z",
+      "retrieval": "Internet Archive raw snapshot (id_) of the official URL; live site returned a Cloudflare challenge",
+      "archive_url": "https://web.archive.org/web/20250715011806id_/https://psidonline.isr.umich.edu/data/Documentation/UserGuide2023.pdf",
+      "archive_timestamp": "20250715011806",
+      "local_capture": {
+        "path": "PSID/documentation/capture1/UserGuide2023.pdf",
+        "identical": true
+      },
+      "cited": "Searched in full; no statement on uncooperative spouse or partner income processing or on revised 2017 weight construction",
+      "blockers": [
+        "uncooperative_90_92_2019_2023",
+        "revised_2017_weights"
+      ],
+      "live_fetch": {
+        "attempted_at_utc": "2026-09-28T23:10:58Z",
+        "result": "HTTP 403 cloudflare security challenge"
+      }
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "url": "https://psidonline.isr.umich.edu/data/weights/cross_sec_weights_19.pdf",
+      "bytes": 1095404,
+      "sha256": "6ef4795c5af79828aacb6f549bef58c9deffbf67f87651050bc03db4e991fc84",
+      "retrieved_at_utc": "2026-09-28T21:37:15Z",
+      "retrieval": "Internet Archive raw snapshot (id_) of the official URL; live site returned a Cloudflare challenge",
+      "archive_url": "https://web.archive.org/web/20220617123829id_/https://psidonline.isr.umich.edu/data/weights/cross_sec_weights_19.pdf",
+      "archive_timestamp": "20220617123829",
+      "local_capture": {
+        "path": "PSID/documentation/capture1/cross_sec_weights_19.pdf",
+        "identical": true
+      },
+      "cited": "PDF p. 2: a cross-sectional family weight was created in 2017 to include the 2017 New Immigrant Sample",
+      "blockers": [
+        "revised_2017_weights"
+      ],
+      "live_fetch": {
+        "attempted_at_utc": "2026-09-28T23:10:59Z",
+        "result": "HTTP 403 cloudflare security challenge"
+      }
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/long_weight_19.pdf",
+      "url": "https://psidonline.isr.umich.edu/data/weights/long_weight_19.pdf",
+      "bytes": 1313318,
+      "sha256": "37e35413fc38319cc452145a345dff9f489da433ee9a52bc0d87a021ccc4ae57",
+      "retrieved_at_utc": "2026-09-28T21:37:21Z",
+      "retrieval": "Internet Archive raw snapshot (id_) of the official URL; live site returned a Cloudflare challenge",
+      "archive_url": "https://web.archive.org/web/20220617123840id_/https://psidonline.isr.umich.edu/data/weights/long_weight_19.pdf",
+      "archive_timestamp": "20220617123840",
+      "local_capture": {
+        "path": "PSID/documentation/capture1/long_weight_19.pdf",
+        "identical": true
+      },
+      "cited": "PDF p. 2: documents the 2017 Immigrant sample design for the 2019 longitudinal weights; no 2017 cross-sectional construction",
+      "blockers": [
+        "revised_2017_weights"
+      ],
+      "live_fetch": {
+        "attempted_at_utc": "2026-09-28T23:10:59Z",
+        "result": "HTTP 403 cloudflare security challenge"
+      }
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/UserGuide2019.pdf",
+      "url": "https://psidonline.isr.umich.edu/data/Documentation/UserGuide2019.pdf",
+      "bytes": 1823069,
+      "sha256": "894f81e412b4d9524ad47c6b2ef2a19a376c883958df81d2cc6badd016986f23",
+      "retrieved_at_utc": "2026-07-31T01:02:48Z",
+      "retrieval": "Copied from the local browser capture of the official documentation page (PSID/documentation/capture1, completed 2026-07-31T01:02:48Z; per-file time not recorded). SHA-256 and bytes match that capture's browser_digests.txt. The newest Internet Archive snapshot is an older revision, and the live site returned a Cloudflare challenge.",
+      "local_capture": {
+        "path": "PSID/documentation/capture1/UserGuide2019.pdf",
+        "identical": true,
+        "browser_digest_listed": true
+      },
+      "cited": "Searched in full; no statement on uncooperative spouse or partner income processing; PDF p. 38 notes revised 1997-2003 weights only",
+      "blockers": [
+        "uncooperative_90_92_2019_2023",
+        "revised_2017_weights"
+      ],
+      "live_fetch": {
+        "attempted_at_utc": "2026-09-28T23:10:57Z",
+        "result": "HTTP 403 cloudflare security challenge"
+      }
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/UserGuide2021.pdf",
+      "url": "https://psidonline.isr.umich.edu/data/Documentation/UserGuide2021.pdf",
+      "bytes": 1383400,
+      "sha256": "1b457258542ff15d07265f314e2ba02c090ca14b3cd1c68dee5a09ad2262fd99",
+      "retrieved_at_utc": "2026-07-31T01:02:48Z",
+      "retrieval": "Copied from the local browser capture of the official documentation page (PSID/documentation/capture1, completed 2026-07-31T01:02:48Z; per-file time not recorded). SHA-256 and bytes match that capture's browser_digests.txt. The newest Internet Archive snapshot is an older revision, and the live site returned a Cloudflare challenge.",
+      "local_capture": {
+        "path": "PSID/documentation/capture1/UserGuide2021.pdf",
+        "identical": true,
+        "browser_digest_listed": true
+      },
+      "cited": "Searched in full; no statement on uncooperative spouse or partner income processing or on revised 2017 weight construction",
+      "blockers": [
+        "uncooperative_90_92_2019_2023",
+        "revised_2017_weights"
+      ],
+      "live_fetch": {
+        "attempted_at_utc": "2026-09-28T23:10:57Z",
+        "result": "HTTP 403 cloudflare security challenge"
+      }
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/DataRelease-May2019.pdf",
+      "url": "https://psidonline.isr.umich.edu/help/DataRelease-May2019.pdf",
+      "bytes": 602228,
+      "sha256": "f4ec6f402d12c3e0d9937b598051e1c425f52ec917dff4d406b165fda4b2eeac",
+      "retrieved_at_utc": "2026-09-28T21:05:55Z",
+      "retrieval": "Internet Archive raw snapshot (id_) of the official URL",
+      "archive_url": "https://web.archive.org/web/20190615165826id_/https://psidonline.isr.umich.edu/help/DataRelease-May2019.pdf",
+      "archive_timestamp": "20190615165826",
+      "cited": "p. 1: 'Users should note the weights for the 2017 Immigrant individuals remain zero and will be updated in Release 3.'",
+      "blockers": [
+        "revised_2017_weights"
+      ],
+      "live_fetch": {
+        "attempted_at_utc": "2026-09-28T23:11:00Z",
+        "result": "HTTP 403 cloudflare security challenge"
+      }
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "url": "https://psidonline.isr.umich.edu/Guide/FAQ.aspx",
+      "bytes": 195429,
+      "sha256": "14d47269d592c9e81bc66624cd5339b6ef2342402dacc199571d17aeb63beca6",
+      "retrieved_at_utc": "2026-09-28T21:29:42Z",
+      "retrieval": "Internet Archive raw snapshot (id_) of the official URL; gzip transfer encoding decoded before saving; live site returned a Cloudflare challenge",
+      "archive_url": "https://web.archive.org/web/20260813185816id_/https://psidonline.isr.umich.edu/Guide/FAQ.aspx",
+      "archive_timestamp": "20260813185816",
+      "cited": "Questions 69, 70, 73, 74, 75 and 79 (lines 793, 797, 830, 834, 836, 840, 842, 844, 846 and 874 of the saved HTML)",
+      "blockers": [
+        "male_code20_2015",
+        "uncooperative_90_92_2019_2023"
+      ],
+      "live_fetch": {
+        "attempted_at_utc": "2026-09-28T23:11:00Z",
+        "result": "HTTP 403 cloudflare security challenge"
+      }
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/documents_20260813.html",
+      "url": "https://psidonline.isr.umich.edu/Guide/documents.aspx",
+      "bytes": 662457,
+      "sha256": "1c55f28dc13afff877895cb05ae4e40d11ce7e17087f8328b08f1af949650e2b",
+      "retrieved_at_utc": "2026-09-28T21:21:03Z",
+      "retrieval": "Internet Archive raw snapshot (id_) of the official URL; gzip transfer encoding decoded before saving; live site returned a Cloudflare challenge",
+      "archive_url": "https://web.archive.org/web/20260813185816id_/https://psidonline.isr.umich.edu/Guide/documents.aspx",
+      "archive_timestamp": "20260813185816",
+      "cited": "Official documentation page: the weights section lists cross-sectional reports 2009-2021 and no 2017 immigrant-sample weighting document",
+      "blockers": [
+        "revised_2017_weights"
+      ],
+      "live_fetch": {
+        "attempted_at_utc": "2026-09-28T23:11:00Z",
+        "result": "HTTP 403 cloudflare security challenge"
+      }
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/Papers_20250917.html",
+      "url": "https://psidonline.isr.umich.edu/publications/Papers/",
+      "bytes": 33984,
+      "sha256": "d65c1d9ab9fddc1a3c31363363c7c1b6a45f529b34660ceb372141fe49cd986a",
+      "retrieved_at_utc": "2026-09-28T21:26:13Z",
+      "retrieval": "Internet Archive raw snapshot (id_) of the official URL; gzip transfer encoding decoded before saving; live site returned a Cloudflare challenge",
+      "archive_url": "https://web.archive.org/web/20250917085636id_/https://psidonline.isr.umich.edu/publications/Papers/",
+      "archive_timestamp": "20250917085636",
+      "cited": "Technical-paper list: no paper on 2017 immigrant-sample weights or on uncooperative-spouse income",
+      "blockers": [
+        "revised_2017_weights",
+        "uncooperative_90_92_2019_2023"
+      ],
+      "live_fetch": {
+        "attempted_at_utc": "2026-09-28T23:11:00Z",
+        "result": "HTTP 403 cloudflare security challenge"
+      }
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/fam2015_QxQs.pdf",
+      "url": "https://psidonline.isr.umich.edu/data/Documentation/Fam/2015/QxQs.pdf",
+      "bytes": 706353,
+      "sha256": "124dd1643783ffe8f6a14cba0c66a24d16e00efd66d80d25fccfaaed0caa43b7",
+      "retrieved_at_utc": "2026-07-31T01:02:48Z",
+      "retrieval": "Copied from the local browser capture of the official documentation page (PSID/documentation/capture1/fam2015_QxQs.pdf, completed 2026-07-31T01:02:48Z; per-file time not recorded). SHA-256 and bytes match that capture's browser_digests.txt.",
+      "local_capture": {
+        "path": "PSID/documentation/capture1/fam2015_QxQs.pdf",
+        "identical": true,
+        "browser_digest_listed": true
+      },
+      "cited": "PDF p. 3 ('Husband of Head: Do not make someone Husband of Head without permission') and PDF p. 144 (IO10: making 'a male spouse into Husband of Head instead of Head' needs study-staff permission)",
+      "blockers": [
+        "male_code20_2015"
+      ]
+    }
+  ],
+  "pinned_elsewhere": [
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_17.pdf",
+      "url": "https://psidonline.isr.umich.edu/data/weights/cross_sec_weights_17.pdf",
+      "sha256": "b35b5d9c99e74983c84d519383ba2b586c5db33f6b666d16370c54dbdb7a5438",
+      "note": "Captured by milestone 1 (weights17_manifest.json). Its Internet Archive digest (20190615183854) equals the current bytes, so the construction report has not changed since at least June 2019. PDF p. 3 and p. 9: the 2017 New Immigrant sample is not covered and its weighting methodology 'will be available from the PSID website'.",
+      "blockers": [
+        "revised_2017_weights"
+      ]
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "sha256": "4878100887dce1a7b7831af272a9f19b01ec33dcea091a5c7352625ecd464308",
+      "note": "Staged codebook already pinned by the registries; not copied. Printed p. 978: ER34303 codes 90 and 98 ('Other nonrelatives (includes same-sex partners ...)') and ER34304 ('Whether this person is the same-sex partner of Head').",
+      "blockers": [
+        "male_code20_2015"
+      ]
+    },
+    {
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "sha256": "f3a4613bc8c1017f7cb40b30db4034d5f9a9234aad8022679ecd5c399f42e4e8",
+      "note": "Pinned by the pension registry. PDF pp. 5, 89, 104, 166.",
+      "blockers": [
+        "male_code20_2015"
+      ]
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "sha256": "e848a2a8ea5bb7cfb14f87f98410a33b4ca7de85c51916acb7c8a49503c92835",
+      "note": "Pinned by the pension registry. PDF pp. 102, 103, 125, 131.",
+      "blockers": [
+        "uncooperative_90_92_2019_2023"
+      ]
+    },
+    {
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "sha256": "6c639ec32bfdd2176b5823d31815e31ac0db732a46ed05f22aa6a892cc1c31fb",
+      "note": "Pinned by the pension registry. PDF pp. 204, 205, 243, 251.",
+      "blockers": [
+        "uncooperative_90_92_2019_2023"
+      ]
+    },
+    {
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "sha256": "adc9975e1d7e901eb7192e6c6498f53be0eda62e0393ef1b06de0c85c511cad8",
+      "note": "Pinned by the pension registry. PDF pp. 202, 203, 241, 249.",
+      "blockers": [
+        "uncooperative_90_92_2019_2023"
+      ]
+    },
+    {
+      "file": "PSID/family/2019/fam2019er_codebook.pdf",
+      "sha256": "ce637e37e0f5e306dd7f10455e85069b56c9b13d5c138d3eb4b9c8d6a8452406",
+      "note": "Pinned by the income registry. p. 2015 (total family income definition); 'uncooperative' appears only on pp. 591-596, 2058-2059, 2064, 2070-2075.",
+      "blockers": [
+        "uncooperative_90_92_2019_2023"
+      ]
+    },
+    {
+      "file": "PSID/family/2021/FAM2021ER_codebook.pdf",
+      "sha256": "e3b88ef394952fa05b9b98eb7f05bf9a99896840515942562aa37399e1bcd462",
+      "note": "Pinned by the income registry. 'Uncooperative' appears only on pp. 637-642, 1422-1423, 1428, 1434-1439.",
+      "blockers": [
+        "uncooperative_90_92_2019_2023"
+      ]
+    },
+    {
+      "file": "PSID/family/2023/FAM2023ER_codebook.pdf",
+      "sha256": "85a4078ebb79146d023df3d9d4e2d2ef6017eced849656ca39f4b740cb5a5688",
+      "note": "Pinned by the income registry. 'Uncooperative' appears only on pp. 624-628, 1340-1341, 1346, 1352-1357.",
+      "blockers": [
+        "uncooperative_90_92_2019_2023"
+      ]
+    },
+    {
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "sha256": "733a9be8591080e09179857e672808d8cbf9b9ff351b2adf2c9e8200d893d9dc",
+      "note": "Pinned by the pension registry. PDF pp. 5, 95.",
+      "blockers": [
+        "uncooperative_90_92_2019_2023"
+      ]
+    }
+  ]
+}
