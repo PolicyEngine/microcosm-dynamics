@@ -5,7 +5,6 @@
     "data/external/census_poverty_thresholds_1982_2022.json": "288399c475ae3ff02e6d8367425ee0a568b50d239da5656f24d0d2dfafabfb53",
     "data/external/census_poverty_thresholds_2004_2012.json": "dc21a78736f5085872cf56c9cf291258034c1293572b77455cba689a1ed0eec5",
     "data/external/track_u_ssi_parameters.json": "79e641a10d95afba81c8d831852fb52ef0a801e7175e06df17e6cc7cc3e3c523",
-    "docs/design/boomers2004_1946_55_comparison.md": "7badf89e896ece28abcea1cb2db9bd55d468346b405ed06eb357aaf5c7b51df2",
     "docs/design/boomers2004_uniform_cut_comparison.md": "830b0ab4c18273563add529fecf21f843eb418996da741d087d785c4f882781f",
     "gates.yaml": "596eb4840f4c2e8ef16d883cff8b2fa63828f1b9f8c406037563733d3a2637af",
     "runs/replication_boomers2004_uniform_cut_v1.env.json": "4041a19ada1cb4c05628cf31bf10cbfdb364bdd2d5d62455a3121143913e0ed9",
@@ -53,5 +52,38 @@
     "tests/track_u/test_runner.py": "15a2a60eefd3e1730c216384b8182bfe6d66dfe32117e0e3f4e2e37881779ce1",
     "tests/track_u/test_ssi_capture_oracle.py": "f22d10b089c5810cb0d4836641c92de15568a09a9d7e7972952b8a13c635bf41",
     "tests/track_u/test_threshold_capture_parser.py": "4af1e0e9b85857d7e7fbce535e00a19c3d058a9e5a3ef19372760a06e4d3b88c"
+  },
+  "u2_specification": {
+    "path": "docs/design/boomers2004_1946_55_comparison.md",
+    "note": "Moved out of the unchanged-byte list by u2-m1b: Part C writes the proposed revision u2-draft-4 into the specification. The draft-3 hash is the milestone-1 pin; the current hash pins u2-draft-4; every line a registry cites keeps its draft-3 number and text.",
+    "draft_3_sha256": "7badf89e896ece28abcea1cb2db9bd55d468346b405ed06eb357aaf5c7b51df2",
+    "version": "u2-draft-4",
+    "sha256": "f7128f48af59e921c4c68bd8f7313998f5a5370485cdd2c033bbe92402af5efc",
+    "cited_lines_sha256": {
+      "74": "7b299c9e4473fd51d04bdfec51af83268e517181ab734d3e76ccd1c744f6daa9",
+      "75": "44454cc04e6a50863035d69ccb53edec175b4ad70a19d8877437901d2deb8428",
+      "76": "cc8ae9bce0570338007e76d31018f84178e51d34fe435ae53eff81698d4c007e",
+      "77": "9bcc7f54a1e1208e8a7c8b9bdc5154e6aca3826b7c049bd958fbd8a2aea781ed",
+      "78": "b795739ee2d26b3e3a53fee316f9ae17de9182e0570ade95efc2e9c8742f0355",
+      "88": "8d0c948345f07bc7ca8c68cce1e4ba3bbdd40fb940e002560aa799c36a1ede10",
+      "89": "9764c76857e7d8fc1a8e575fc825bedcbed3ab7e4ebeafa388fd021b31e2ae49",
+      "90": "b0b07e6b77d02f4432e785effa7acad5ce9379241fc10e19769997027bf1a1c5",
+      "91": "a92dac76c2f84bf734d2ec53b91aac5d69b621a0c63b10d1cde635bab2f165ac",
+      "92": "366d0f736cf7fe0e397060f638803604de9e77eaa94ce04f22035371e5459c36",
+      "108": "53aacfdddb378e93f27be36e9038fb426345c952db532990ad5e0749d396ca88",
+      "144": "7c50d165f8a20aaff39b22b4922d50f493c974e12d991722bbf9ed86b77bc65f",
+      "145": "d7176c711f108b02bde5cdf4a757ea853d235b31d78e812199d3222d597bb0e7",
+      "146": "7712386e0b2ae3ec699ec570565ded6b3ca2ba63cdde177c8d67a9e59937a3b8",
+      "147": "bd973983bf8753105066208072078345eb73656c1a9e0fee4da9a747c54ca937",
+      "150": "5cf239c6b5861bd27f51a18864967148c38068f86955ccc050e8c0f0a7bd09ef",
+      "152": "91febc03f7c27dcec521851fbea78ca3ab83acf18b1cfa505391cb861152b176",
+      "154": "34d567fda3ee7ff858f94850262b27027a2828f8c25a5cb299f63ac5d3e4c264",
+      "156": "46fea9e3b982421fb0020ac45bfe244eb9d0df6650765cf71ce662b9d0d7de48",
+      "175": "bd0b035cbda534d29b3ebba2a42c703367a4b70a1d82686c7222cabae4fafd47",
+      "190": "ce13193f3868e41496577b9f69beb6aed23e384b9a3fa273b06be63603bf5b6e",
+      "309": "43ec042631b6a78cf47f8f57580a30130722ab4ac0802dc7e6bc650964c9a31b",
+      "1173": "af3a0fa5b07c6383be8358d747c89f60aa8f71e323bfddca10e54fc7abc86922",
+      "1185": "5a1c9477e6cd271798b5d794766597b1039e55bbd03a287e4a3d8439dcbf5bb2"
+    }
   }
 }
