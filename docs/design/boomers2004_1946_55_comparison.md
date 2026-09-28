@@ -1,7 +1,7 @@
 # Boomers 2004, 1946–55: specification for held-out target U2
 
 - **Version:** `u2-draft-3` (round 2).
-- **Status:** draft; not ratified, registered or authorized for execution.
+- **Status:** decisions ruled. On 2026-09-28 Max approved the §16 defaults and ratification of this specification (d514, in chat). Per §20, the version becomes `u2-ratified-1` by the merge that completes §20 steps 2–5 and materializes the final parameter block; that merge needs no further ruling unless it changes this document's substance. Not registered or authorized for execution.
 - **Intended file:** `docs/design/boomers2004_1946_55_comparison.md`.
 - **Specification identity:** `boomers2004_1946_55_uniform_cut`.
 - **Target identity:** `U2`. Row identifiers are local to this specification: **row U2** means “no SSI response.”
@@ -1515,7 +1515,7 @@ Round-2 verification comprised read-only source inspection, the three metadata h
 
 **Pending.**
 
-1. Resolve the proposed decisions and source-verification blockers.
+1. Resolve the proposed decisions and source-verification blockers. **Decisions: done (Max, d514, 2026-09-28, adopting every §16 default).** Source-verification blockers remain for steps 2–5.
 2. Complete implementation, manifests and parameter capture.
 3. Complete independent mapping review, invented tests, historical-isolation checks and exact U1 differential evidence.
 4. Complete the authorized pre-registration structural, reconciliation and F17 component pass; resolve mapping failures.
