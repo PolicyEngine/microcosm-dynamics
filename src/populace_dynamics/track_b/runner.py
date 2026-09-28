@@ -703,10 +703,16 @@ def execute(
             result.update(operation(root, destination, baseline))
         if source_guard(root, expected_commit) != source:
             raise ValueError("registered source changed during replay")
-        if result.get("status") == "REPRODUCED" and reference is None:
+        claims_reproduction = (
+            result.get("status") == "REPRODUCED"
+            or result.get("equal") is True
+            or result.get("admitted_scope", "none") != "none"
+        )
+        if claims_reproduction and reference is None:
             raise ValueError(
                 "REPRODUCED requires a historical reference admitted by the "
-                "committed HISTORICAL_REFERENCE_SHA256"
+                "committed HISTORICAL_REFERENCE_SHA256; without one, no "
+                "status may claim equality or an admitted scope"
             )
     except Exception as error:
         result.update(

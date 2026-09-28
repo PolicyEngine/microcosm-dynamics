@@ -720,6 +720,32 @@ def test_unserializable_result_still_publishes_a_mismatch_record(
     assert result["partial_files"] == []
 
 
+@pytest.mark.parametrize(
+    "claim",
+    [
+        {"status": "MATCH", "equal": True, "admitted_scope": "none"},
+        {"status": "MATCH", "equal": False, "admitted_scope": "person_level"},
+        {"status": "BASELINE_REPLAY_MISMATCH", "equal": True},
+    ],
+)
+def test_no_status_can_claim_equality_or_scope_without_admitted_reference(
+    repository, monkeypatch, claim
+):
+    """Invariant: without an admitted reference, every published result has
+    equal=False and admitted_scope="none", whatever status an operation
+    returns."""
+    _baseline_protocol(repository)
+    monkeypatch.setattr(
+        runner, "source_guard", lambda *args: {"commit": "b" * 40}
+    )
+    result = _execute(repository, lambda *args: dict(claim))
+
+    assert result["status"] == "BASELINE_REPLAY_MISMATCH"
+    assert result["equal"] is False
+    assert result["admitted_scope"] == "none"
+    assert "REPRODUCED requires" in result["abort"]["message"]
+
+
 def test_operation_cannot_publish_reproduced_without_admitted_reference(
     repository, monkeypatch
 ):
