@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import json
+import types
 
 import numpy as np
 import pandas as pd
@@ -261,3 +262,123 @@ def test_balanced_earnings_changes_cannot_hide_behind_aggregate_equality():
     actual.loc[2, "earnings"] -= 100
     assert expected["earnings"].sum() == actual["earnings"].sum()
     assert len(compare_frames(expected, actual)["differences"]) == 2
+
+
+def _single(expected_fit, actual_fit) -> dict:
+    """Compare one invented seed/draw whose payloads differ only in fit."""
+    expected, actual = _payload(), _payload()
+    expected["fit_signature"] = expected_fit
+    actual["fit_signature"] = actual_fit
+    return compare_replay(
+        {(0, 0): expected},
+        {(0, 0): actual},
+        registered_seeds=(0,),
+        registered_draws=(0,),
+    )
+
+
+def test_int_and_bool_signature_keys_do_not_match():
+    # The pre-fix checker compared keys with ==, so this returned REPRODUCED.
+    report = _single({1: "a"}, {True: "a"})
+    assert report["status"] == "BASELINE_REPLAY_MISMATCH"
+    assert report["equal"] is False
+    assert [item["kind"] for item in report["differences"]] == [
+        "signature_key_type"
+    ]
+    difference = report["differences"][0]
+    assert difference["path"] == ["fit_signature", "1"]
+    assert difference["expected_key"]["type"] == "builtins.int"
+    assert difference["actual_key"]["type"] == "builtins.bool"
+    json.dumps(report, allow_nan=False)
+    assert _single({True: "a"}, {1: "a"})["status"] == (
+        "BASELINE_REPLAY_MISMATCH"
+    )
+
+
+def test_retyped_key_with_changed_value_reports_both():
+    report = _single({1: "a"}, {True: "b"})
+    assert [
+        (item["kind"], item["path"]) for item in report["differences"]
+    ] == [
+        ("signature_key_type", ["fit_signature", "1"]),
+        ("signature_value", ["fit_signature", "1"]),
+    ]
+
+
+def test_unequal_keys_of_different_types_are_missing_and_extra():
+    report = _single({1: "a"}, {"1": "a"})
+    assert {
+        (item["kind"], item["key"]["type"]) for item in report["differences"]
+    } == {
+        ("missing_signature_field", "builtins.int"),
+        ("extra_signature_field", "builtins.str"),
+    }
+
+
+@pytest.mark.parametrize("field", ["fit_signature", "rng_signature"])
+def test_signature_mapping_type_is_material(field):
+    expected, actual = _runs(), _runs()
+    actual[0, 1][field] = types.MappingProxyType(dict(actual[0, 1][field]))
+    report = _compare(expected, actual)
+    assert report["status"] == "BASELINE_REPLAY_MISMATCH"
+    assert report["differences"] == [
+        {
+            "seed": 0,
+            "draw": 1,
+            "kind": "signature_mapping_type",
+            "path": [field],
+            "expected_type": "builtins.dict",
+            "actual_type": "builtins.mappingproxy",
+        }
+    ]
+
+
+def test_nested_retyped_key_has_full_path():
+    expected, actual = _runs(), _runs()
+    expected[1, 1]["rng_signature"]["codes"] = {0: "gate"}
+    actual[1, 1]["rng_signature"]["codes"] = {False: "gate"}
+    report = _compare(expected, actual)
+    assert [
+        (item["kind"], item["path"]) for item in report["differences"]
+    ] == [("signature_key_type", ["rng_signature", "codes", "0"])]
+
+
+def test_unsupported_or_colliding_signature_keys_fail_closed():
+    tuple_keys = _single({(1, 2): "a"}, {(1, 2): "a"})
+    assert {item["kind"] for item in tuple_keys["differences"]} == {
+        "unsupported_signature_key"
+    }
+    first, second = float("nan"), float("nan")
+    colliding = _single({first: "a", second: "b"}, {first: "a", second: "b"})
+    assert colliding["status"] == "BASELINE_REPLAY_MISMATCH"
+    assert {item["kind"] for item in colliding["differences"]} == {
+        "duplicate_signature_key"
+    }
+
+
+@settings(deadline=None)
+@given(
+    keys=st.lists(
+        st.integers(min_value=-5, max_value=5),
+        min_size=1,
+        max_size=6,
+        unique=True,
+    ),
+    data=st.data(),
+)
+def test_any_equal_but_retyped_key_is_reported(keys, data):
+    """Property: dict equality merges these keys; the checker must not."""
+    values = {key: f"value-{key}" for key in keys}
+    target = data.draw(st.sampled_from(keys))
+    retypes = [float, np.int64] + ([bool] if target in (0, 1) else [])
+    retype = data.draw(st.sampled_from(retypes))
+    retyped = {
+        (retype(key) if key == target else key): value
+        for key, value in values.items()
+    }
+    assert retyped == values
+    report = _single(values, retyped)
+    assert [
+        (item["kind"], item["path"]) for item in report["differences"]
+    ] == [("signature_key_type", ["fit_signature", str(target)])]
+    assert _single(values, copy.deepcopy(values))["status"] == "REPRODUCED"

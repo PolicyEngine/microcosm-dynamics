@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import copy
+import dataclasses
+import importlib.util
 import json
 import subprocess
 from pathlib import Path
@@ -11,6 +14,7 @@ import numpy as np
 import pytest
 
 from populace_dynamics.engine.support import StartWaveWeightSnapshot
+from populace_dynamics.harness import m6_projection
 from populace_dynamics.track_b import runner
 from tests.test_track_b_replay import _inputs
 
@@ -244,7 +248,14 @@ def _invented_differential_inputs():
         ),
     )
     seeds, draws = (0, 1), (0, 1)
-    baseline = {"family_a": {"per_seed": []}}
+    lineage = {
+        "q_invariant_fit_signature_sha256": "a" * 64,
+        "rank_refresh_fit_audit": {"invented_refresh_rows": [1, 2]},
+        "resolved_spec_sha256s": {"forward_earnings_adapter": "c" * 64},
+        "refit_provenance": {"earnings": {"invented_seed": 0}},
+        "boundary_year": 2014,
+    }
+    baseline = {"family_a": {"per_seed": []}, "lineage": lineage}
     for seed in seeds:
         cells = {
             name: {"per_draw_rate": []} for name in runner.EARNINGS_CELL_NAMES
@@ -264,7 +275,8 @@ def _invented_differential_inputs():
     return {
         "populations": {seed: population for seed in seeds},
         "generator": inputs["generator"],
-        "fit_signature": {"invented_fit_sha256": "a" * 64},
+        # The replay side's refit, built from its own copy of the lineage.
+        "fit_signature": runner._fit_lineage_signature(copy.deepcopy(lineage)),
         "baseline": baseline,
         "seeds": seeds,
         "draws": draws,
@@ -326,6 +338,59 @@ def test_changed_registered_cell_cannot_be_hidden_by_exact_loop_agreement(
     assert differences[0]["cell"] == name
 
 
+def test_original_rng_is_sized_by_the_harness_not_the_replay(
+    tmp_path, monkeypatch
+):
+    # The registry size does not change any stream, so only the recorded
+    # n_periods differs; before the fix both sides used RNG_N_PERIODS.
+    monkeypatch.setattr(m6_projection, "PROJECTION_END_YEAR", 2023)
+    supplied = _invented_differential_inputs()
+    result = runner.run_differential(**supplied, output=tmp_path)
+
+    differences = result["differential"]["differences"]
+    assert len(differences) == 4
+    for difference in differences:
+        assert difference["kind"] == "signature_value"
+        assert difference["path"] == ["rng_signature", "n_periods"]
+        assert difference["expected"]["repr"] == "9"
+        assert difference["actual"]["repr"] == "8"
+    assert result["registered_per_draw_cells"]["equal"] is True
+
+
+def test_original_fit_side_comes_from_the_committed_lineage(tmp_path):
+    supplied = _invented_differential_inputs()
+    supplied["baseline"]["lineage"]["q_invariant_fit_signature_sha256"] = (
+        "d" * 64
+    )
+    supplied["baseline"]["lineage"]["boundary_year"] = 2015
+    result = runner.run_differential(**supplied, output=tmp_path)
+
+    differences = result["differential"]["differences"]
+    # boundary_year is outside FIT_SIGNATURE_KEYS and stays immaterial.
+    assert [item["path"] for item in differences] == [
+        ["fit_signature", "q_invariant_fit_signature_sha256"]
+    ] * 4
+    assert result["differential"]["equal"] is False
+    payload = json.loads((tmp_path / "seed_0_draw_0.json").read_bytes())
+    assert payload["original_fit_signature"][
+        "q_invariant_fit_signature_sha256"
+    ] == ("d" * 64)
+    assert payload["replay_fit_signature"] == supplied["fit_signature"]
+
+
+def test_fit_signature_uses_the_artifact_json_types():
+    lineage = {
+        key: {"values": (1, 2.5), "flag": True}
+        for key in runner.FIT_SIGNATURE_KEYS
+    }
+    signature = runner._fit_lineage_signature(lineage)
+    assert signature == {
+        key: {"values": [1, 2.5], "flag": True}
+        for key in runner.FIT_SIGNATURE_KEYS
+    }
+    assert lineage[runner.FIT_SIGNATURE_KEYS[0]]["values"] == (1, 2.5)
+
+
 def test_frame_writer_retains_signed_zero_and_nan_payload_bits():
     import pandas as pd
 
@@ -362,10 +427,11 @@ def _invented_historical_manifest(supplied):
                     "scored": runner.frame_payload(
                         runner._scored_surface(original, population)
                     ),
-                    "fit_signature": supplied["fit_signature"],
+                    "fit_signature": copy.deepcopy(supplied["fit_signature"]),
                     "rng_signature": runner.earnings_rng_signature(
                         all_person_ids=population.holdout_ids,
                         draw_index=draw,
+                        n_periods=m6_projection.PROJECTION_END_YEAR - 2014,
                     ),
                 }
             )
@@ -377,14 +443,180 @@ def _invented_historical_manifest(supplied):
     }
 
 
-def test_invented_original_reference_allows_exact_reproduction(tmp_path):
+def _write_reference(path: Path, manifest: dict) -> str:
+    path.write_bytes(runner.json_bytes(manifest))
+    return runner.sha256(path.read_bytes())
+
+
+def test_committed_build_admits_no_historical_reference():
+    assert runner.HISTORICAL_REFERENCE_SHA256 is None
+
+
+def test_regenerated_reference_is_refused_while_no_hash_is_committed(
+    tmp_path,
+):
+    # Before the fix, this regenerated file returned REPRODUCED because the
+    # caller supplied its hash; custody now comes only from the constant.
     supplied = _invented_differential_inputs()
-    manifest = _invented_historical_manifest(supplied)
     reference = tmp_path / "invented_original_reference.json"
-    reference.write_bytes(runner.json_bytes(manifest))
-    historical = runner.read_historical_reference(
-        reference, runner.sha256(reference.read_bytes())
+    digest = _write_reference(
+        reference, _invented_historical_manifest(supplied)
     )
+
+    with pytest.raises(ValueError, match="refuses every historical"):
+        runner.read_historical_reference(reference)
+    unread = runner.HistoricalReference(reference.read_bytes())
+    assert unread.digest == digest
+    with pytest.raises(ValueError, match="refuses every historical"):
+        runner.run_differential(
+            **supplied, output=tmp_path, historical_reference=unread
+        )
+    assert not list(tmp_path.glob("seed_*_draw_*.json"))
+
+
+def test_reference_cannot_be_relabelled_or_edited_after_reading(
+    tmp_path, monkeypatch
+):
+    supplied = _invented_differential_inputs()
+    honest = _invented_historical_manifest(supplied)
+    perturbed = copy.deepcopy(honest)
+    earnings = next(
+        column
+        for column in perturbed["records"][3]["scored"]["columns"]
+        if column["name"] == "earnings"
+    )
+    value = np.frombuffer(
+        bytes.fromhex(earnings["values"][0]["float64_hex"]),
+        dtype=np.float64,
+    )[0]
+    earnings["values"][0] = runner._scalar(np.nextafter(value, np.inf))
+    committed = tmp_path / "invented_committed.json"
+    regenerated = tmp_path / "invented_regenerated.json"
+    digest = _write_reference(committed, perturbed)
+    regenerated_digest = _write_reference(regenerated, honest)
+    assert regenerated_digest != digest
+    output = tmp_path / "evidence"
+    output.mkdir()
+    monkeypatch.setattr(
+        runner, "HISTORICAL_REFERENCE_SHA256", regenerated_digest
+    )
+    honest_records = runner.authenticated_records(
+        runner.HistoricalReference(regenerated.read_bytes())
+    )
+    monkeypatch.setattr(runner, "HISTORICAL_REFERENCE_SHA256", digest)
+
+    # Other bytes cannot borrow the committed hash: it is recomputed.
+    substituted = runner.HistoricalReference(regenerated.read_bytes())
+    with pytest.raises(ValueError, match="differs from the committed"):
+        runner.run_differential(
+            **supplied, output=output, historical_reference=substituted
+        )
+    reference = runner.read_historical_reference(committed)
+    with pytest.raises(dataclasses.FrozenInstanceError):
+        reference.payload = regenerated.read_bytes()
+    # Splicing the honest record into parsed records cannot reach the
+    # comparison, which re-parses the committed bytes.
+    edited = runner.authenticated_records(reference)
+    edited[1, 1] = honest_records[1, 1]
+    result = runner.run_differential(
+        **supplied, output=output, historical_reference=reference
+    )
+    assert result["status"] == "BASELINE_REPLAY_MISMATCH"
+    failures = result["historical_equality"]["differences"]
+    assert [(item["seed"], item["draw"]) for item in failures] == [(1, 1)]
+
+
+@pytest.mark.parametrize("committed", [None, "0" * 64])
+def test_execute_refuses_uncommitted_reference_and_publishes_abort(
+    repository, monkeypatch, committed
+):
+    _baseline_protocol(repository)
+    monkeypatch.setattr(
+        runner, "source_guard", lambda *args: {"commit": "b" * 40}
+    )
+    monkeypatch.setattr(runner, "HISTORICAL_REFERENCE_SHA256", committed)
+    reference = repository / "invented_regenerated_reference.json"
+    reference.write_bytes(b'{"origin":"historical_candidate3_run"}\n')
+
+    result = runner.execute(
+        root=repository,
+        registration_id="9999999999",
+        expected_commit="b" * 40,
+        operation=lambda *args: pytest.fail("data operation invoked"),
+        historical_reference=reference,
+    )
+
+    assert result["status"] == "BASELINE_REPLAY_MISMATCH"
+    assert result["equal"] is False
+    assert result["admitted_scope"] == "none"
+    assert "HISTORICAL_REFERENCE_SHA256" in result["abort"]["message"]
+    # The refusal is recorded; the refused file's hash appears in the abort
+    # message whenever it was read (a None constant refuses before reading).
+    assert result["historical_reference"] == {
+        "path": str(reference),
+        "committed_sha256": committed,
+    }
+    if committed is not None:
+        assert runner.sha256(reference.read_bytes()) in (
+            result["abort"]["message"]
+        )
+    assert (
+        json.loads(
+            (repository / runner.DEFAULT_OUTPUT / "result.json").read_text()
+        )
+        == result
+    )
+
+
+def test_cli_has_no_hash_that_could_override_the_committed_constant(
+    monkeypatch, capsys
+):
+    script = Path(__file__).resolve().parents[1] / "scripts/run_track_b_b1.py"
+    spec = importlib.util.spec_from_file_location("run_track_b_b1", script)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    calls = []
+
+    def execute(**kwargs):
+        calls.append(kwargs)
+        return {"status": "BASELINE_REPLAY_MISMATCH"}
+
+    monkeypatch.setattr(module, "execute", execute)
+    arguments = [
+        "--registration-id",
+        "9999999999",
+        "--expected-commit",
+        "b" * 40,
+        "--historical-reference",
+        "invented.json",
+    ]
+    with pytest.raises(SystemExit) as exit_info:
+        module.main([*arguments, "--historical-reference-sha256", "0" * 64])
+    assert exit_info.value.code == 2
+    assert "--historical-reference-sha256" in capsys.readouterr().err
+    assert calls == []
+
+    assert module.main(arguments) == 2
+    assert set(calls[0]) == {
+        "root",
+        "registration_id",
+        "expected_commit",
+        "output",
+        "historical_reference",
+    }
+
+
+def test_reference_matching_monkeypatched_constant_is_accepted(
+    tmp_path, monkeypatch
+):
+    supplied = _invented_differential_inputs()
+    reference = tmp_path / "invented_original_reference.json"
+    digest = _write_reference(
+        reference, _invented_historical_manifest(supplied)
+    )
+    monkeypatch.setattr(runner, "HISTORICAL_REFERENCE_SHA256", digest)
+    historical = runner.read_historical_reference(reference)
+    assert historical.digest == digest
     result = runner.run_differential(
         **supplied, output=tmp_path, historical_reference=historical
     )
@@ -397,7 +629,9 @@ def test_invented_original_reference_allows_exact_reproduction(tmp_path):
     assert len(result["historical_equality"]["comparisons"]) == 4
 
 
-def test_one_person_historical_perturbation_blocks_reproduction(tmp_path):
+def test_one_person_historical_perturbation_blocks_reproduction(
+    tmp_path, monkeypatch
+):
     supplied = _invented_differential_inputs()
     manifest = _invented_historical_manifest(supplied)
     earnings = next(
@@ -411,10 +645,9 @@ def test_one_person_historical_perturbation_blocks_reproduction(tmp_path):
     )[0]
     earnings["values"][0] = runner._scalar(np.nextafter(value, np.inf))
     reference = tmp_path / "invented_perturbed_reference.json"
-    reference.write_bytes(runner.json_bytes(manifest))
-    historical = runner.read_historical_reference(
-        reference, runner.sha256(reference.read_bytes())
-    )
+    digest = _write_reference(reference, manifest)
+    monkeypatch.setattr(runner, "HISTORICAL_REFERENCE_SHA256", digest)
+    historical = runner.read_historical_reference(reference)
     result = runner.run_differential(
         **supplied, output=tmp_path, historical_reference=historical
     )
@@ -431,17 +664,93 @@ def test_one_person_historical_perturbation_blocks_reproduction(tmp_path):
     assert failures[0]["column"] == "earnings"
 
 
-def test_historical_file_hash_and_duplicate_record_are_fail_closed(tmp_path):
+def test_historical_file_hash_and_duplicate_record_are_fail_closed(
+    tmp_path, monkeypatch
+):
     supplied = _invented_differential_inputs()
     manifest = _invented_historical_manifest(supplied)
     reference = tmp_path / "invented_reference.json"
-    reference.write_bytes(runner.json_bytes(manifest))
-    with pytest.raises(ValueError, match="SHA256 differs"):
-        runner.read_historical_reference(reference, "0" * 64)
+    _write_reference(reference, manifest)
+    monkeypatch.setattr(runner, "HISTORICAL_REFERENCE_SHA256", "0" * 64)
+    with pytest.raises(ValueError, match="differs from the committed"):
+        runner.read_historical_reference(reference)
 
     manifest["records"].append(manifest["records"][0])
-    reference.write_bytes(runner.json_bytes(manifest))
+    digest = _write_reference(reference, manifest)
+    monkeypatch.setattr(runner, "HISTORICAL_REFERENCE_SHA256", digest)
     with pytest.raises(ValueError, match="duplicate historical reference"):
-        runner.read_historical_reference(
-            reference, runner.sha256(reference.read_bytes())
+        runner.read_historical_reference(reference)
+
+
+@pytest.mark.parametrize(
+    "unserializable", [object(), float("nan")], ids=["object", "nan"]
+)
+def test_unserializable_result_still_publishes_a_mismatch_record(
+    repository, monkeypatch, unserializable
+):
+    _baseline_protocol(repository)
+    monkeypatch.setattr(
+        runner, "source_guard", lambda *args: {"commit": "b" * 40}
+    )
+    result = _execute(
+        repository,
+        lambda *args: {
+            "status": "BASELINE_REPLAY_MISMATCH",
+            "equal": False,
+            "admitted_scope": "none",
+            "diagnostic": unserializable,
+        },
+    )
+
+    published = json.loads(
+        (repository / runner.DEFAULT_OUTPUT / "result.json").read_text()
+    )
+    assert published == result
+    assert result["status"] == "BASELINE_REPLAY_MISMATCH"
+    assert result["equal"] is False
+    assert result["admitted_scope"] == "none"
+    assert result["publishes_regardless"] is True
+    assert result["registration_id"] == "9999999999"
+    assert result["publication_error"]["type"] in {"TypeError", "ValueError"}
+    assert result["serializable_result_fields"]["source"] == {
+        "commit": "b" * 40
+    }
+    assert result["unserializable_result_fields"] == ["diagnostic"]
+    assert "'diagnostic'" in result["unserializable_result_repr"]
+    assert result["partial_files"] == []
+
+
+def test_operation_cannot_publish_reproduced_without_admitted_reference(
+    repository, monkeypatch
+):
+    _baseline_protocol(repository)
+    monkeypatch.setattr(
+        runner, "source_guard", lambda *args: {"commit": "b" * 40}
+    )
+    result = _execute(
+        repository,
+        lambda *args: {
+            "status": "REPRODUCED",
+            "equal": True,
+            "admitted_scope": "invented attempted admission",
+        },
+    )
+
+    assert result["status"] == "BASELINE_REPLAY_MISMATCH"
+    assert result["equal"] is False
+    assert result["admitted_scope"] == "none"
+    assert "REPRODUCED requires" in result["abort"]["message"]
+    assert (
+        json.loads(
+            (repository / runner.DEFAULT_OUTPUT / "result.json").read_text()
         )
+        == result
+    )
+
+
+def test_replay_fit_signature_is_compared_in_json_types(tmp_path):
+    supplied = _invented_differential_inputs()
+    audit = supplied["fit_signature"]["rank_refresh_fit_audit"]
+    audit["invented_refresh_rows"] = tuple(audit["invented_refresh_rows"])
+    result = runner.run_differential(**supplied, output=tmp_path)
+    assert result["differential"]["equal"] is True

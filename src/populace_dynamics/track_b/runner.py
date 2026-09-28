@@ -13,6 +13,7 @@ import platform
 import subprocess
 import traceback
 from collections.abc import Callable, Mapping
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -20,6 +21,7 @@ import numpy as np
 import pandas as pd
 
 from populace_dynamics.engine.support import PresenceBasis
+from populace_dynamics.harness import m6_projection
 from populace_dynamics.harness.m6_cells import earnings_cells
 from populace_dynamics.harness.m6_projection import (
     prepare_gated_realized_support,
@@ -47,6 +49,17 @@ ENVIRONMENT_SHA256 = (
 )
 REGISTERED_SEEDS = tuple(range(5))
 REGISTERED_DRAWS = tuple(range(20))
+# SHA-256 of the only historical person-level reference B1 may read. Custody
+# is bound by committing it here: source_guard hashes this file at the
+# registered commit, and no command-line value can replace it. None refuses
+# every reference, so no reference can yield REPRODUCED.
+HISTORICAL_REFERENCE_SHA256: str | None = None
+FIT_SIGNATURE_KEYS = (
+    "q_invariant_fit_signature_sha256",
+    "rank_refresh_fit_audit",
+    "resolved_spec_sha256s",
+    "refit_provenance",
+)
 BASELINE_SOURCES = (
     "src/populace_dynamics/harness/m6_projection.py",
     "src/populace_dynamics/harness/m6_runner.py",
@@ -119,26 +132,61 @@ def frame_payload(frame: pd.DataFrame) -> dict:
     }
 
 
-def read_historical_reference(path: Path, expected_sha256: str) -> dict:
-    """Read a registration-authenticated archive; never infer its origin.
+def _json_canonical(value: Any) -> Any:
+    """``value`` in the JSON types a committed artifact records."""
+    return json.loads(json_bytes(value))
 
-    The registration must attest historical custody of this hash. A newly
-    regenerated file cannot be promoted to a historical reference.
+
+def _fit_lineage_signature(lineage: Mapping[str, Any]) -> dict:
+    """The registered fit-lineage fields, in the artifact's JSON types."""
+    return _json_canonical({key: lineage[key] for key in FIT_SIGNATURE_KEYS})
+
+
+@dataclass(frozen=True)
+class HistoricalReference:
+    """Raw reference bytes; records are parsed only after re-hashing them.
+
+    No hash label or parsed record is stored, so a caller can neither
+    relabel other bytes nor edit records after authentication.
     """
-    payload = path.read_bytes()
-    if sha256(payload) != expected_sha256:
+
+    payload: bytes
+
+    @property
+    def digest(self) -> str:
+        return sha256(self.payload)
+
+
+def _committed_reference_sha256() -> str:
+    if HISTORICAL_REFERENCE_SHA256 is None:
         raise ValueError(
-            "historical reference SHA256 differs from registration"
+            "no HISTORICAL_REFERENCE_SHA256 is committed; B1 refuses every "
+            "historical reference"
         )
-    reference = json.loads(payload)
+    return HISTORICAL_REFERENCE_SHA256
+
+
+def authenticated_records(reference: HistoricalReference) -> dict:
+    """Re-hash the reference bytes against the committed constant, then parse.
+
+    Every call parses afresh from the immutable payload, never infers the
+    origin, and refuses any bytes whose SHA-256 is not committed.
+    """
+    expected_sha256 = _committed_reference_sha256()
+    if reference.digest != expected_sha256:
+        raise ValueError(
+            f"historical reference SHA256 {reference.digest} differs from "
+            f"the committed HISTORICAL_REFERENCE_SHA256 {expected_sha256}"
+        )
+    content = json.loads(reference.payload)
     if (
-        reference.get("schema_version") != "track_b_b1_historical_reference.v1"
-        or reference.get("baseline_sha256") != BASELINE_SHA256
-        or reference.get("origin") != "historical_candidate3_run"
+        content.get("schema_version") != "track_b_b1_historical_reference.v1"
+        or content.get("baseline_sha256") != BASELINE_SHA256
+        or content.get("origin") != "historical_candidate3_run"
     ):
         raise ValueError("historical reference identity is not candidate 3")
     records = {}
-    for row in reference["records"]:
+    for row in content["records"]:
         if type(row["seed"]) is not int or type(row["draw"]) is not int:
             raise ValueError("historical seed and draw must be integers")
         key = (row["seed"], row["draw"])
@@ -168,6 +216,20 @@ def read_historical_reference(path: Path, expected_sha256: str) -> dict:
             "rng_signature": row["rng_signature"],
         }
     return records
+
+
+def read_historical_reference(path: Path) -> HistoricalReference:
+    """Read the committed-hash archive; never infer its origin.
+
+    Only bytes hashing to ``HISTORICAL_REFERENCE_SHA256`` are admitted, and
+    that value changes only through a reviewed commit. While it is None the
+    file is not read. A newly regenerated file cannot be promoted to a
+    historical reference.
+    """
+    _committed_reference_sha256()
+    reference = HistoricalReference(path.read_bytes())
+    authenticated_records(reference)  # Fail before any data access.
+    return reference
 
 
 def _git(root: Path, *args: str) -> bytes:
@@ -207,6 +269,63 @@ def _write_new(path: Path, value: Any) -> str:
     with path.open("xb") as stream:
         stream.write(payload)
     return sha256(payload)
+
+
+def _evidence_files(destination: Path) -> list[dict]:
+    return [
+        {"path": path.name, "sha256": sha256(path.read_bytes())}
+        for path in sorted(destination.glob("seed_*_draw_*.json"))
+    ]
+
+
+def _publish(destination: Path, result: dict) -> dict:
+    """Write result.json; an unserializable result publishes a fallback.
+
+    ``json_bytes`` fails before the file is opened, so the fallback record is
+    the only write. It keeps every top-level field that serializes on its
+    own, plus a repr of the whole result, and it never reports a
+    reproduction.
+    """
+    unserializable = (TypeError, ValueError, RecursionError)
+    try:
+        _write_new(destination / "result.json", result)
+        return result
+    except unserializable as error:
+        try:
+            attempted = repr(result)
+        except Exception as repr_error:
+            attempted = f"<repr failed: {type(repr_error).__name__}>"
+        kept, dropped = {}, []
+        for key, value in result.items():
+            if key in {"status", "equal", "admitted_scope"}:
+                continue
+            try:
+                json_bytes(value)
+            except unserializable:
+                dropped.append(str(key))
+            else:
+                kept[str(key)] = value
+        fallback = {
+            "schema_version": SCHEMA_VERSION,
+            "registration_id": str(result.get("registration_id")),
+            "verification_class": "reproduction",
+            "status": "BASELINE_REPLAY_MISMATCH",
+            "equal": False,
+            "admitted_scope": "none",
+            "disclosure": DISCLOSURE,
+            "publishes_regardless": True,
+            "publication_error": {
+                "type": type(error).__name__,
+                "message": str(error),
+                "traceback": traceback.format_exc(),
+            },
+            "serializable_result_fields": kept,
+            "unserializable_result_fields": sorted(dropped),
+            "unserializable_result_repr": attempted,
+            "partial_files": _evidence_files(destination),
+        }
+        _write_new(destination / "result.json", fallback)
+        return fallback
 
 
 def source_guard(root: Path, expected_commit: str) -> dict:
@@ -284,13 +403,35 @@ def run_differential(
     output: Path,
     seeds: tuple[int, ...] = REGISTERED_SEEDS,
     draws: tuple[int, ...] = REGISTERED_DRAWS,
-    historical_reference: Mapping | None = None,
+    historical_reference: HistoricalReference | None = None,
 ) -> dict:
     """Compare every original scored row to the copied loop on supplied data.
 
     This seam accepts invented populations. Production fixes seeds/draws to
     the registered full product; no best-seed selection or tolerances exist.
     """
+    historical_records = (
+        None
+        if historical_reference is None
+        else authenticated_records(historical_reference)
+    )
+    replay_fit = _json_canonical(fit_signature)
+    # Both loops receive the one generator in ``arguments``, so neither has
+    # a fit signature of its own. The original side carries the committed
+    # candidate-3 lineage and the copy carries the supplied refit. These are
+    # independent sources, but the check repeats production's
+    # ``registered_fit`` comparison and cannot tell the two loops apart. A
+    # per-loop fit signature would need a hook inside m6_projection.py, a
+    # protected historical source that returns only the scored frame.
+    original_fit = _fit_lineage_signature(baseline["lineage"])
+    # The incumbent sizes its registry from its own PROJECTION_END_YEAR
+    # (m6_projection.py:198-200); the copy uses replay.RNG_N_PERIODS. Only
+    # n_periods is sourced independently: periods, ordinals and codes still
+    # come from the copy's _rng_signature over the same IDs, and registry
+    # size changes no stream (rng.py:66-67 spawns child ``period`` of a fresh
+    # root). This check catches registry-size drift only; stream equality is
+    # evidenced by the scored-frame comparison.
+    original_n_periods = m6_projection.PROJECTION_END_YEAR - 2014
     expected, observed, files, cell_differences = {}, {}, [], []
     for seed in seeds:
         population = populations[seed]
@@ -309,16 +450,18 @@ def run_differential(
             replay = replay_earnings_on_realized_support(**arguments)
             copied = _scored_surface(replay.scored, population)
             original_rng = earnings_rng_signature(
-                all_person_ids=population.holdout_ids, draw_index=draw
+                all_person_ids=population.holdout_ids,
+                draw_index=draw,
+                n_periods=original_n_periods,
             )
             expected[seed, draw] = dict(
                 scored=original,
-                fit_signature=fit_signature,
+                fit_signature=original_fit,
                 rng_signature=original_rng,
             )
             observed[seed, draw] = dict(
                 scored=copied,
-                fit_signature=fit_signature,
+                fit_signature=replay_fit,
                 rng_signature=replay.rng_signature,
             )
             cells = earnings_cells(original)
@@ -353,7 +496,8 @@ def run_differential(
                 "annual_history": frame_payload(replay.history),
                 "original_scored": frame_payload(original),
                 "replay_scored": frame_payload(copied),
-                "fit_signature": fit_signature,
+                "original_fit_signature": original_fit,
+                "replay_fit_signature": replay_fit,
                 "original_rng_signature": original_rng,
                 "replay_rng_signature": replay.rng_signature,
             }
@@ -366,9 +510,9 @@ def run_differential(
     differential["verification_class"] = "differential_test"
     if differential["equal"]:
         differential["status"] = "MATCH"
-    if historical_reference is not None:
+    if historical_records is not None:
         historical = compare_replay(
-            historical_reference,
+            historical_records,
             observed,
             registered_seeds=seeds,
             registered_draws=draws,
@@ -426,7 +570,7 @@ def production_replay(
     output: Path,
     baseline: dict,
     *,
-    historical_reference: Mapping | None = None,
+    historical_reference: HistoricalReference | None = None,
 ) -> dict:
     """Lazy registered-input path; never called by invented-data tests."""
     import registered_m6_candidate3_inputs
@@ -450,14 +594,8 @@ def production_replay(
     if inputs.refit_inputs is not plan.fit_inputs:
         raise ValueError("input plan replaced the preflighted fit inputs")
     phase = materialize_m6_refit_phase(inputs, bundle)
-    fit_keys = (
-        "q_invariant_fit_signature_sha256",
-        "rank_refresh_fit_audit",
-        "resolved_spec_sha256s",
-        "refit_provenance",
-    )
-    fit = {key: phase.lineage[key] for key in fit_keys}
-    expected_fit = {key: baseline["lineage"][key] for key in fit_keys}
+    fit = _fit_lineage_signature(phase.lineage)
+    expected_fit = _fit_lineage_signature(baseline["lineage"])
     fit_equal = json_bytes(fit) == json_bytes(expected_fit)
     provenance = inputs.provenance.to_artifact()
     provenance_equal = json_bytes(provenance) == json_bytes(
@@ -509,9 +647,14 @@ def execute(
     output: Path | str = DEFAULT_OUTPUT,
     operation: Callable[[Path, Path, dict], dict] = production_replay,
     historical_reference: Path | None = None,
-    historical_reference_sha256: str | None = None,
 ) -> dict:
-    """Reserve output, check registration/source, then compute or record abort."""
+    """Reserve output, check registration/source, then compute or record abort.
+
+    A historical reference is admitted only when its bytes hash to the
+    committed ``HISTORICAL_REFERENCE_SHA256``; there is no caller-supplied
+    hash. While that constant is None, every reference aborts the attempt.
+    No operation can publish REPRODUCED without such an admitted reference.
+    """
     from populace_dynamics.harness.m6_candidate3_runner import (
         validate_candidate3_registration_id,
     )
@@ -539,20 +682,14 @@ def execute(
         ):
             raise ValueError("registered seed/draw protocol changed")
         result["source"] = source
-        if (historical_reference is None) != (
-            historical_reference_sha256 is None
-        ):
-            raise ValueError(
-                "historical reference path and SHA256 must be supplied together"
-            )
+        reference = None
         if historical_reference is not None:
-            reference = read_historical_reference(
-                historical_reference, historical_reference_sha256
-            )
             result["historical_reference"] = {
                 "path": str(historical_reference),
-                "sha256": historical_reference_sha256,
+                "committed_sha256": HISTORICAL_REFERENCE_SHA256,
             }
+            reference = read_historical_reference(historical_reference)
+            result["historical_reference"]["sha256"] = reference.digest
             if operation is not production_replay:
                 raise ValueError(
                     "historical references require the production operation"
@@ -566,6 +703,11 @@ def execute(
             result.update(operation(root, destination, baseline))
         if source_guard(root, expected_commit) != source:
             raise ValueError("registered source changed during replay")
+        if result.get("status") == "REPRODUCED" and reference is None:
+            raise ValueError(
+                "REPRODUCED requires a historical reference admitted by the "
+                "committed HISTORICAL_REFERENCE_SHA256"
+            )
     except Exception as error:
         result.update(
             status="BASELINE_REPLAY_MISMATCH",
@@ -577,9 +719,5 @@ def execute(
                 "traceback": traceback.format_exc(),
             },
         )
-        result["partial_files"] = [
-            {"path": path.name, "sha256": sha256(path.read_bytes())}
-            for path in sorted(destination.glob("seed_*_draw_*.json"))
-        ]
-    _write_new(destination / "result.json", result)
-    return result
+        result["partial_files"] = _evidence_files(destination)
+    return _publish(destination, result)

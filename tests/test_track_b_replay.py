@@ -20,10 +20,14 @@ from populace_dynamics.engine.rng import (
     ProjectionModule,
     ProjectionRNGRegistry,
 )
+from populace_dynamics.engine.steps import apply_earnings
+from populace_dynamics.harness import m6_projection
 from populace_dynamics.harness.m6_projection import (
     project_earnings_on_realized_support,
 )
+from populace_dynamics.track_b import replay as replay_module
 from populace_dynamics.track_b.replay import (
+    RNG_N_PERIODS,
     earnings_rng_signature,
     replay_earnings_on_realized_support,
 )
@@ -31,6 +35,8 @@ from tests.test_m6_engine_forward_earnings import (
     _fit_panel,
     _RecordingQRFFactory,
 )
+
+HARNESS_N_PERIODS = m6_projection.PROJECTION_END_YEAR - 2014
 
 
 def _inputs(seed: int = 0) -> dict[str, object]:
@@ -122,7 +128,9 @@ def test_copied_loop_matches_original_scored_bytes(seed, draw_index):
     pd.testing.assert_frame_equal(replay.scored, incumbent, check_exact=True)
     assert _frame_bytes(replay.scored) == _frame_bytes(incumbent)
     assert replay.rng_signature == earnings_rng_signature(
-        all_person_ids=inputs["all_person_ids"], draw_index=draw_index
+        all_person_ids=inputs["all_person_ids"],
+        draw_index=draw_index,
+        n_periods=HARNESS_N_PERIODS,
     )
     assert replay.history["year"].unique().tolist() == list(range(2014, 2019))
     for _, annual in replay.history.groupby("year"):
@@ -196,7 +204,7 @@ def test_seed_draw_row_order_property(seed, draw_index, order):
 
 def test_rng_signature_preserves_registry_and_substream_coordinates():
     signature = earnings_rng_signature(
-        all_person_ids=[20, 1, 10], draw_index=7
+        all_person_ids=[20, 1, 10], draw_index=7, n_periods=HARNESS_N_PERIODS
     )
     assert signature["n_periods"] == 8
     assert signature["draw_seed"] == 5207
@@ -237,3 +245,71 @@ def test_rng_signature_preserves_registry_and_substream_coordinates():
                 row["period_index"], ProjectionModule.EARNINGS, ordinal
             ).bytes(64)
             assert expected == observed
+
+
+def test_replay_registry_size_equals_the_harness_constant():
+    assert RNG_N_PERIODS == m6_projection.PROJECTION_END_YEAR - 2014
+
+
+class _RecordingPandas:
+    """Delegate to pandas, recording each ``concat`` input list."""
+
+    def __init__(self):
+        self.concatenated = []
+
+    def __getattr__(self, name):
+        return getattr(pd, name)
+
+    def concat(self, frames, *args, **kwargs):
+        frames = list(frames)
+        self.concatenated.append(frames)
+        return pd.concat(frames, *args, **kwargs)
+
+
+def _buffer_sharing_step(frame, context, rng, *, model):
+    """The engine step, but untouched columns share the input's buffers."""
+    stepped = apply_earnings(frame, context, rng, model=model)
+    changed = {
+        column: stepped[column]
+        for column in stepped.columns
+        if column not in frame or not stepped[column].equals(frame[column])
+    }
+    return frame.assign(**changed)[list(stepped.columns)]
+
+
+@pytest.mark.parametrize("step", ["engine", "buffer_sharing"])
+def test_2014_history_snapshot_shares_no_memory_with_later_snapshots(
+    monkeypatch, step
+):
+    # apply_earnings returns a copy, so the "buffer_sharing" step checks
+    # that replay.py's own copies detach the snapshots. Any one of its three
+    # copies suffices; this pins the property, not a particular copy.
+    if step == "buffer_sharing":
+        monkeypatch.setattr(
+            replay_module, "apply_earnings", _buffer_sharing_step
+        )
+    recorder = _RecordingPandas()
+    monkeypatch.setattr(replay_module, "pd", recorder)
+    replay_earnings_on_realized_support(**_inputs(), draw_index=0)
+
+    snapshots = next(
+        frames for frames in recorder.concatenated if len(frames) == 5
+    )
+    assert [frame["period"].unique().tolist() for frame in snapshots] == [
+        [year] for year in range(2014, 2019)
+    ]
+    anchor, later = snapshots[0], snapshots[1:]
+    # Extension-dtype to_numpy() always allocates, so only NumPy dtypes can
+    # witness shared buffers.
+    numeric = [
+        column
+        for column in anchor.columns
+        if isinstance(anchor[column].dtype, np.dtype)
+        and anchor[column].dtype.kind in "biuf"
+    ]
+    assert {"person_id", "age", "earnings", "period"} <= set(numeric)
+    for snapshot in later:
+        for column in numeric:
+            assert not np.shares_memory(
+                anchor[column].to_numpy(), snapshot[column].to_numpy()
+            ), column

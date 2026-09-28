@@ -92,15 +92,20 @@ def _rng_signature(
 
 
 def earnings_rng_signature(
-    *, all_person_ids: Iterable[object], draw_index: int
+    *, all_person_ids: Iterable[object], draw_index: int, n_periods: int
 ) -> dict[str, object]:
-    """Describe the candidate-3 addresses without consuming any draw."""
+    """Describe the candidate-3 addresses without consuming any draw.
+
+    ``n_periods`` has no default: the B1 runner passes the incumbent
+    harness's own registry size, so this side is not sized by
+    ``RNG_N_PERIODS``, the constant the copied loop uses.
+    """
     ordinals = {
         person_id: index
         for index, person_id in enumerate(sorted(set(all_person_ids)))
     }
     return _rng_signature(
-        ProjectionRNGRegistry(int(draw_index), RNG_N_PERIODS), ordinals
+        ProjectionRNGRegistry(int(draw_index), int(n_periods)), ordinals
     )
 
 

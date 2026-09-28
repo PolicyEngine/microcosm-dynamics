@@ -1,7 +1,10 @@
 # Track B B1: fixed-roster candidate-3 replay registration draft
 
 **Status: draft; no real-data computation has been performed for this build.**
-Post this text as a new comment on issue #42 before invoking the command.
+**Held: no registration is posted until Max rules on the baseline definition
+(see "Baseline definition: held for Max's ruling" below).** After that
+ruling, post this text as a new comment on issue #42 before invoking the
+command.
 The verification class is **reproduction attempted, not validation**. This
 registration freezes an earnings-only replay of M6 candidate 3, with annual
 histories for 2014–2018. It changes no model law, fit boundary, population,
@@ -11,8 +14,13 @@ acceptance gate or admit any new scientific claim.
 ## Exact command and source identity
 
 Run from the clean B1 checkout with the candidate-3 fitting environment
-installed at `.venv`. Substitute only the new registration comment ID and the
-reviewed B1 build commit below:
+installed at `.venv`. Substitute only the two placeholders below, both
+**TO FILL**:
+
+- `<NEW_ISSUE42_COMMENT_ID>` (**TO FILL**): the ID of the new issue #42
+  comment that posts this registration.
+- `<B1_BUILD_COMMIT>` (**TO FILL**): the full 40-character SHA of the
+  reviewed B1 build commit.
 
 ```bash
 env OMP_WAIT_POLICY=ACTIVE \
@@ -44,7 +52,16 @@ The inherited source commit is
 issue #42 comment `5064153427`. That consumed comment ID is not the new B1
 registration. The new runner records the B1 commit and its source hash
 manifest and checks the frozen original source against the inherited commit.
-The baseline artifact and source bindings include:
+The baseline artifact and source bindings include the table below. Its eight
+source and floor rows are the blobs at `f10cca5`. The two
+`runs/gate_m6_candidate3_v1.json*` rows do not exist at `f10cca5`: they are
+the blobs added by the candidate-3 verdict commit `65d151b0` (#283), a
+descendant of `f10cca5`. All ten are unchanged at `81eee7b5`, the B1
+build the review read, and in this revision. B1 checks the artifact and
+sidecar hashes, and byte-compares the seven source rows with `f10cca5`.
+**B1 does not check the `runs/m6_holdout_floors_v4.json` hash**: no code in
+`src/populace_dynamics/track_b/` or `scripts/run_track_b_b1.py` reads it, so
+that row records the value only.
 
 | Input or original source | SHA-256 |
 |---|---|
@@ -105,17 +122,23 @@ input adapters, retaining their dating and external-vintage restrictions:
 
 The B1 pass rule is exact equality, for every registered seed and draw, of
 the **original per-person scored earnings, person-period support, F6 weights,
-fit signatures, and RNG signatures**. Canonical person-period ordering makes
-row order immaterial; numeric values must match exactly, without tolerances
-or rounding. A single person's changed earnings, weight, support key, or
-signature is a mismatch. Empty or missing references cannot pass. Aggregate
-agreement alone cannot satisfy this conjunction.
+fit signatures, and RNG signatures**. Keyed person-period matching makes row
+and column order immaterial; numeric values must match exactly, without
+tolerances or rounding. Signature mapping keys match by exact type, so `1`
+and `True` are different keys. A single person's changed earnings, weight,
+support key, or signature is a mismatch. Empty or missing references cannot
+pass. Aggregate agreement alone cannot satisfy this conjunction.
 
 The build reconstructs the original scored path with the unchanged original
 loop and compares its full person-level output with the copied loop. It also
 compares fit signatures and all six committed earnings cells for every seed
-and draw. It records the original and replay RNG address signatures. These
-are explicitly **reconstructed-original differential diagnostics**.
+and draw. It records the original and replay RNG address signatures. The
+original side's RNG signature is sized by the harness's own
+`PROJECTION_END_YEAR - 2014`, and its fit signature is the committed
+candidate-3 lineage. The replay side uses `replay.RNG_N_PERIODS` and the
+refit. Both loops receive the same fitted generator, so the fit comparison
+repeats the registered-fit check rather than distinguishing the loops.
+These are explicitly **reconstructed-original differential diagnostics**.
 
 **The committed candidate-3 artifact does not contain archived person-level
 scored earnings, support, weights, or original-run RNG signatures.** It
@@ -125,20 +148,29 @@ Reconstructing the original loop today does not establish equality to
 unavailable historical person-level bytes: multiple different person-level
 outputs can have the same aggregate cells.
 
-Consequently, the command above records `BASELINE_REPLAY_MISMATCH` with
-`historical_person_level_reference_unavailable` even if every available
-differential, fit, and aggregate diagnostic agrees. A fresh computation
-cannot silently become its own historical reference. B1 remains unadmitted
-until an authenticated original-run person-level reference and RNG record
-are recovered and bound in a prospective registration. Any amendment to
-that evidentiary requirement must be explicit and reviewed before outcomes;
-it is not an alternative pass rule in this registration.
+**Rule.** Without an authenticated historical person-level reference, the
+attempt records `BASELINE_REPLAY_MISMATCH` with reason
+`historical_person_level_reference_unavailable`, whatever the differential,
+fit, and aggregate diagnostics show. A fresh computation cannot become its
+own historical reference. This build commits no reference hash, so the rule
+governs the command above and makes this version of the registration moot
+as a route to admission. B1 remains unadmitted until an authenticated
+original-run person-level reference and RNG record are recovered and bound
+in a prospective registration. Any amendment to that evidentiary requirement
+must be explicit and reviewed before outcomes; it is not an alternative pass
+rule in this registration.
 
-The runner also implements optional paired flags `--historical-reference`
-and `--historical-reference-sha256`. They are **not part of the command
-registered here**. If original-run records are recovered, a prospective
-registration must freeze their path, SHA-256, and evidence of historical
-custody before using those flags. The supported manifest is
+The runner also implements an optional `--historical-reference` flag. It is
+**not part of the command registered here**. The runner admits a reference
+only if its bytes hash to `HISTORICAL_REFERENCE_SHA256`, a constant committed
+in `src/populace_dynamics/track_b/runner.py`, and no command-line hash can
+override it. This build commits `None`, so every reference is refused: the
+attempt records the supplied path and the committed value and aborts with
+`BASELINE_REPLAY_MISMATCH`. No operation can publish `REPRODUCED` without an
+admitted reference. If original-run records are recovered, a new B1 build
+commit must set that constant, and a prospective registration must pin that
+commit and freeze the reference path and evidence of historical custody
+before the flag is used. The supported manifest is
 `track_b_b1_historical_reference.v1`, bound to the candidate-3 artifact hash,
 with origin `historical_candidate3_run` and one record per seed/draw carrying
 typed scored columns, fit signatures, and RNG signatures. An asserted
@@ -153,6 +185,26 @@ signatures. The output never labels a mismatch, absent reference, or
 incomplete run a reproduction. Output includes the annual histories,
 per-seed/per-person comparison record, and provenance; mismatch records
 admit no downstream B1 scope.
+
+## Baseline definition: held for Max's ruling
+
+As written, this registration's pass rule needs an authenticated historical
+person-level reference that the committed candidate-3 artifact does not
+contain. A new registered B1 version may instead define a weaker,
+reconstructed baseline. The B1 review suggests these components:
+
+- bit-exact equality of all 600 committed per-draw cells (5 seeds × 20
+  draws × 6 cells);
+- exact equality of the committed fit lineage;
+- exact person-level equality between the unchanged original loop and the
+  copy;
+- provenance equality, with the `ssa_revision` question (see "Build-only
+  verification") settled before registration;
+- an admitted scope labelled "reconstructed reproduction", which is weaker
+  than the design's §3.2 "bit for bit".
+
+This draft does not adopt that definition. **No registration is posted
+until Max rules** on which baseline B1 registers.
 
 ## Inherited certification boundary: full disclosure
 
@@ -177,6 +229,9 @@ registration decision; the build does not change the frozen loader.
 
 The delivery lane runs only invented-input pytest/Hypothesis checks: copied
 versus original loop equality at the same addresses, row-order invariance,
-single-person perturbation detection, determinism, and exclusive output
-paths. It does not invoke the staged-PSID factory. This file is a draft for
-the later registered real-data attempt, not a record of an executed replay.
+single-person perturbation detection, determinism, exclusive output paths,
+refusal of any historical reference whose hash is not the committed
+constant, typed signature-key matching, and publication of a fallback
+record when a result cannot be serialized. It does not invoke the
+staged-PSID factory. This file is a draft for the later registered
+real-data attempt, not a record of an executed replay.

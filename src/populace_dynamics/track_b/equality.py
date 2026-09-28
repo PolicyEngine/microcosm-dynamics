@@ -2,7 +2,9 @@
 
 No tolerances or aggregate substitutes are used. Frame row and column order
 are immaterial, but each keyed value, its dtype, and its floating-point bits
-are material. Diagnostics retain every discrepancy and are JSON serializable.
+are material. Signature mapping keys match by typed token, so ``1`` and
+``True`` are different keys, and mapping types must agree. Diagnostics
+retain every discrepancy and are JSON serializable.
 """
 
 from __future__ import annotations
@@ -190,6 +192,60 @@ def compare_frames(
     return result
 
 
+def _type_name(value: Any) -> str:
+    return f"{type(value).__module__}.{type(value).__qualname__}"
+
+
+def _key_tokens(
+    mapping: Mapping[Any, Any],
+    side: str,
+    path: list[Any],
+    differences: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Index keys by exact typed token; ``==`` would merge 1 and True.
+
+    Keys match by type and bits, so NaN keys with identical payloads match.
+    Intended fail-closed cases, even when comparing a mapping with itself:
+    unsupported key types (e.g. tuples) and distinct keys sharing a token
+    (e.g. two NaN objects). JSON-derived signatures contain neither.
+    """
+    tokens: dict[str, Any] = {}
+    for key in mapping:
+        try:
+            token = _token(key)
+        except TypeError as error:
+            _difference(
+                differences,
+                "unsupported_signature_key",
+                path=path,
+                side=side,
+                key_repr=repr(key),
+                detail=str(error),
+            )
+            continue
+        if token in tokens:
+            # Distinct keys sharing a token (e.g. two NaN objects) would
+            # otherwise shadow one another, so they fail closed.
+            _difference(
+                differences,
+                "duplicate_signature_key",
+                path=path,
+                side=side,
+                key=json.loads(token),
+            )
+            continue
+        tokens[token] = key
+    return tokens
+
+
+def _same_dict_key(left: Any, right: Any) -> bool:
+    """Whether a dict would treat two keys as one (hash and ``==``)."""
+    try:
+        return hash(left) == hash(right) and bool(left == right)
+    except Exception:
+        return False
+
+
 def _compare_signature(
     expected: Any,
     actual: Any,
@@ -197,19 +253,61 @@ def _compare_signature(
     differences: list[dict[str, Any]],
 ) -> None:
     if isinstance(expected, Mapping) and isinstance(actual, Mapping):
-        for key in sorted(set(expected) | set(actual), key=repr):
-            location = [*path, str(key)]
-            if key not in actual:
-                _difference(
-                    differences, "missing_signature_field", path=location
-                )
-            elif key not in expected:
-                _difference(
-                    differences, "extra_signature_field", path=location
-                )
-            else:
+        if type(expected) is not type(actual):
+            _difference(
+                differences,
+                "signature_mapping_type",
+                path=path,
+                expected_type=_type_name(expected),
+                actual_type=_type_name(actual),
+            )
+        left = _key_tokens(expected, "expected", path, differences)
+        right = _key_tokens(actual, "actual", path, differences)
+        # Pair keys that differ only in type, such as 1 and True, so the
+        # diagnostic names the type change rather than a missing field.
+        retyped: dict[str, str] = {}
+        extra = [token for token in sorted(right) if token not in left]
+        for token in sorted(set(left) - set(right)):
+            for candidate in extra:
+                if _same_dict_key(left[token], right[candidate]):
+                    retyped[token] = candidate
+                    extra.remove(candidate)
+                    break
+        for token in sorted(set(left) | set(right)):
+            if token in left and token in right:
+                location = [*path, str(left[token])]
                 _compare_signature(
-                    expected[key], actual[key], location, differences
+                    expected[left[token]],
+                    actual[right[token]],
+                    location,
+                    differences,
+                )
+            elif token in retyped:
+                key, other = left[token], right[retyped[token]]
+                location = [*path, str(key)]
+                _difference(
+                    differences,
+                    "signature_key_type",
+                    path=location,
+                    expected_key=_scalar(key),
+                    actual_key=_scalar(other),
+                )
+                _compare_signature(
+                    expected[key], actual[other], location, differences
+                )
+            elif token in left:
+                _difference(
+                    differences,
+                    "missing_signature_field",
+                    path=[*path, str(left[token])],
+                    key=_scalar(left[token]),
+                )
+            elif token in extra:
+                _difference(
+                    differences,
+                    "extra_signature_field",
+                    path=[*path, str(right[token])],
+                    key=_scalar(right[token]),
                 )
         return
     if isinstance(expected, (list, tuple)) and isinstance(

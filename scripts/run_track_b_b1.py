@@ -27,11 +27,11 @@ def main(argv=None) -> int:
     parser.add_argument(
         "--historical-reference",
         type=Path,
-        help="Historical person-level archive authenticated in registration",
-    )
-    parser.add_argument(
-        "--historical-reference-sha256",
-        help="Archive SHA256 frozen in the reproduction registration",
+        help=(
+            "Historical person-level archive; admitted only if its SHA256 "
+            "equals the committed runner.HISTORICAL_REFERENCE_SHA256 "
+            "(None refuses every archive)"
+        ),
     )
     args = parser.parse_args(argv)
     result = execute(
@@ -40,7 +40,6 @@ def main(argv=None) -> int:
         expected_commit=args.expected_commit,
         output=args.out,
         historical_reference=args.historical_reference,
-        historical_reference_sha256=args.historical_reference_sha256,
     )
     print(f"{result['status']}: {args.out / 'result.json'}; reproduction only")
     return 0 if result["status"] == "REPRODUCED" else 2
