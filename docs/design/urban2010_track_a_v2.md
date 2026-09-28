@@ -1,6 +1,6 @@
 # Urban 2010 Track A v2: specification for the joint post hoc rerun of exercises 1 and 3
 
-- **Status:** draft for ratification. Version `a2-draft-3`, dated 2026-09-28. This is revision 2, applying every required edit and precision correction in `a2-rev1-check.md` while retaining the earlier resolutions. Appendix A preserves the original review map; Appendix C maps the round-diff check.
+- **Status:** ratified. Version `a2-ratified-1`, ratified 2026-09-28 by Max's explicit ruling d513 (in chat) on items 5, 7, 8, 9 and this version (§16), and by the merge of PR #480. The text is revision 2 (`a2-draft-3`), unchanged except this line and §16's record of the ruling; Appendix A preserves the original review map and Appendix C the round-diff check.
 - **Destination:** `docs/design/urban2010_track_a_v2.md`. On ratification the version becomes `a2-ratified-1`. Any later change is a new version.
 - **Execution status:** this document is not a registration. No real-data computation was performed. Source inspection and in-memory invented-arithmetic checks were completed; implementation tests remain prerequisites. No files were written and no commit was created.
 - **Authority:** Max’s ruling d479 of 2026-09-27, as the phase-2 brief records it:
@@ -949,9 +949,9 @@ Each item is resolved in the text or explicitly open for Max.
 2. **Refusal scope:** resolved—joint stop before tabulation; no dropping, substitution or fallback.
 3. **Application function:** resolved in §§5.2–5.3—prior claim before DI entitlement, otherwise scheduled baseline conversion; July annual mapping; fixed across C0/C1/C2; deferral to 62. Opening receipt is a separately counted proxy.
 4. **Membership guards:** resolved in §9, including exercise-1 checks before filtering.
-5. **Fixed application versus E1 conversion rule — open.** Recommended: keep H fixed, including records converted in reform (§5.6 group 4). The alternative would retain E1 rule 3 for converted records and use H only while disabled, making application scenario-dependent.
+5. **Fixed application versus E1 conversion rule — ruled (d513, 2026-09-28): keep H fixed.** Recommendation adopted: keep H fixed, including records converted in reform (§5.6 group 4). The alternative would retain E1 rule 3 for converted records and use H only while disabled, making application scenario-dependent.
 6. **Opening DI without an opening record:** resolved default—retain and count Track A’s start-year proxy. Max may instead require refusal under a changed registered version.
-7. **Structural pre-count — open.**
+7. **Structural pre-count — ruled (d513, 2026-09-28): authorized.** Max authorized one lane that computes only the frozen structural counts below, before outcome registration, under its own frozen protocol.
    - Count D-unsupported histories and S ordering classes on the real projection before outcome registration, **after freezing the check’s own protocol**.
    - Include S-refused earlier spells and opening-proxy applications.
    - Require Max’s explicit authorization and pre-execution recording of implementation, inputs, permitted count outputs and procedure.
@@ -961,11 +961,11 @@ Each item is resolved in the text or explicitly open for Max.
    - **Recommended:** authorize a lane computing nothing else; publish its attempt and counts; bind its protocol and record into issue #42 registration.
    - If any D-unsupported-history or S-refused-ordering count is nonzero, Max chooses between registering an attempt that will refuse and first registering the required extension as a new version. Ordinary ordering/proxy counts do not themselves imply refusal.
    - If unauthorized, omit the pre-count. The registered joint attempt retains every history and ordering refusal.
-8. **D’s scope — open.** Should D also change death computations, ordinary retirement counts or cutoff? Recommended: no; isolate DI computation years. Any expansion requires separate registration.
-9. **S filing assumption — open.** E1 §27 option 1 could support filing at first eligibility. Recommended: retain §5.2’s prior-claim/conversion function. First-eligibility filing would broaden the intervention.
+8. **D’s scope — ruled (d513, 2026-09-28): DI computation years only.** Should D also change death computations, ordinary retirement counts or cutoff? Recommended: no; isolate DI computation years. Any expansion requires separate registration.
+9. **S filing assumption — ruled (d513, 2026-09-28): the §5.2 prior-claim/conversion function.** E1 §27 option 1 could support filing at first eligibility. Recommended: retain §5.2’s prior-claim/conversion function. First-eligibility filing would broaden the intervention.
 10. **Union as primary:** resolved—no. D×F0 remains headline; U rows remain alternatives.
 11. **Matrix scope:** resolved—68 tabulations; R6/F8 stay historical only.
-12. **Ratification route — open.** Recommended: explicit ruling on items 5, 7, 8, 9 and this version. Merge alone does not resolve the behavioral choices in 5 and 9.
+12. **Ratification route — ruled (d513, 2026-09-28): explicit ruling on items 5, 7, 8, 9 and this version, then merge.** Recommended: explicit ruling on items 5, 7, 8, 9 and this version. Merge alone does not resolve the behavioral choices in 5 and 9.
 
 ## 17. Execution prerequisites
 
