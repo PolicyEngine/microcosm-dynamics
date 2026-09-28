@@ -3,8 +3,9 @@
 These four files are exact committed bytes from PolicyEngine US commit
 `a03e82e503f8e0285125ee0c5380410a964c8e8a`, captured with `git show` from an
 available local checkout. `manifest.json` records each immutable source URL,
-retrieval time in UTC, byte length and SHA-256. They provide an independent
-implementation comparison without requiring a live checkout or network.
+retrieval time in UTC, byte length and SHA-256. They give a diagnostic
+comparison against a second transcription without requiring a live checkout or
+network.
 
 The search found no existing RET parameter implementation under this
 repository's `src/`. PolicyEngine US has both these parameter files and an

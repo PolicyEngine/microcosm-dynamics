@@ -206,7 +206,8 @@ def test_statutory_projection_backtest_matches_published_history(
 )
 def test_rounding_to_nearest_120_ties_up(kind, distance_from_tie, expected):
     # A monthly $1005 tie becomes annual $12060. Inputs are derived using
-    # exact fractions so no binary floating-point error decides the tie.
+    # exact fractions so no binary floating-point error decides the tie. The
+    # prior amount sits below 12000 so the floor cannot mask a rounding bug.
     base_amount, base_nawi = (
         (8040, Fraction("22935.42"))
         if kind == "lower"
@@ -217,7 +218,7 @@ def test_rounding_to_nearest_120_ties_up(kind, distance_from_tie, expected):
         project_exempt_amount(
             kind=kind,
             nawi=nawi,
-            prior_amount=12000,
+            prior_amount=11880,
             preceding_december_cola="0.1",
         )
         == expected
