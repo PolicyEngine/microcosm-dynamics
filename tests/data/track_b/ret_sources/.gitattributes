@@ -1,2 +1,2 @@
 # Preserve exact HTTP body bytes for the manifest's SHA-256 identities.
-*.html -text
+*.html binary
