@@ -283,6 +283,11 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/track_b/parameters/__init__.py"),
     Path("src/populace_dynamics/track_b/parameters/ret_v1.yaml"),
     Path("src/populace_dynamics/track_b/ret_params.py"),
+    # Track B B1 is an opt-in replay harness and equality checker; nothing in the
+    # historical projection imports it.
+    Path("src/populace_dynamics/track_b/equality.py"),
+    Path("src/populace_dynamics/track_b/replay.py"),
+    Path("src/populace_dynamics/track_b/runner.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
