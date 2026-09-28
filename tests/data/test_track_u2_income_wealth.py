@@ -96,17 +96,45 @@ def test_documented_composite_identities_and_split_accounts(wave):
 
 def test_documentary_accuracy_conflicts_are_preserved():
     entries = registry("wealth")["entries"]
+    by_id = {entry["id"]: entry for entry in entries}
+    resolved = 0
     for entry in entries:
         if entry["route"] == "wealth2_acc" or (
             entry["route"] == "checking_saving_acc" and entry["wave"] < 2019
         ):
-            assert entry["status"] == "TO VERIFY"
-            assert "codebook states Accuracy of" in entry["question"]
+            # Independent adjudication D (amendment 4): the corrected target
+            # is recorded and the contradictory codebook wording is kept.
+            assert entry["status"] == "RESOLVED"
+            assert "question" not in entry
+            assert entry["adjudication"]["disposition"] == "D"
+            conflict = entry["source_wording_conflict"]
+            wrong = conflict["codebook_states_accuracy_of"]
+            target = conflict["resolved_accuracy_for_variable"]
+            assert target == entry["accuracy_for_variable"] != wrong
+            assert f"Accuracy of {wrong}" in entry["codebook_text"]
+            amount = by_id[entry["id"].removesuffix("_acc")]
+            assert amount["variable"] == target
+            assert "never changes amounts" in entry["use_restriction"]
+            resolved += 1
+    assert resolved == 9
 
 
 def test_later_income_slot_maps_cannot_waive_role_blockers():
+    roles = {entry["id"]: entry for entry in registry("roles")["entries"]}
     for entry in registry("income")["entries"]:
         if entry["wave"] > 2013 and entry["route"].startswith(
             ("head_", "wife_", "hw_", "ofum_")
         ):
+            if entry["wave"] == 2017:
+                # Both 2017 blockers (codes 90 and 92) were resolved from
+                # documents by the independent adjudication (D).
+                assert "blocking_dependencies" not in entry
+                for code in (90, 92):
+                    role = roles[f"2017.relationship.{code}"]
+                    assert role["status"] == "RESOLVED"
+                    assert role["action"] == "documented_rule"
+                continue
             assert entry["blocking_dependencies"]
+            for dependency in entry["blocking_dependencies"]:
+                role = roles[dependency.removeprefix("roles:")]
+                assert role["action"].startswith("refuse")

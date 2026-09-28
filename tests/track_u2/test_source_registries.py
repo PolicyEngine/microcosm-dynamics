@@ -301,11 +301,28 @@ def test_relationship_labels_and_routing_blockers_are_wave_specific():
             )
             assert not by_key[wave, 92]["legal_spouse_annuity"]
             assert not by_key[wave, 92]["marital_resolution"]
-        if wave >= 2015:
-            assert by_key[wave, 90]["status"] == "TO VERIFY"
-        if wave >= 2017:
-            assert by_key[wave, 92]["status"] == "TO VERIFY"
-    assert by_key[2015, 20]["action"] == "refuse_male_code20"
+        for code in (90, 92):
+            if wave < 2015 or (code == 92 and wave < 2017):
+                continue
+            entry = by_key[wave, code]
+            assert entry["status"] == "RESOLVED"
+            if wave <= 2017:
+                # Independent adjudication D: OFUM collection documented.
+                assert entry["adjudication"]["disposition"] == "D"
+                assert entry["action"] == "documented_rule"
+                assert entry["income_role"] == "ofum"
+                assert not entry["spouse_slot"]
+            else:
+                # Independent adjudication F: OFUM assignment refused.
+                assert entry["adjudication"]["disposition"] == "F"
+                assert entry["action"] == (
+                    "refuse_ofum_assignment_per_u2_adjudicate_F"
+                )
+                assert entry["refused_income_role"] == "ofum"
+    code20 = by_key[2015, 20]
+    assert code20["action"] == "refuse_male_code20_per_u2_adjudicate_F"
+    assert code20["refusal_condition"] == {"sex": 1}
+    assert code20["adjudication"]["disposition"] == "F"
 
 
 def test_documentary_calendar_support():
@@ -341,6 +358,12 @@ def test_u1_and_protected_sources_remain_byte_identical():
         (registry.REGISTRY_DIRECTORY / "u1_identity.json").read_text()
     )
     assert pins["base_commit"] == "d978d966270f"
+    # Milestone 1b moved the U2 specification, which Part C revises, to its
+    # own revision pin (see test_adjudication_applied.py); the U1 files stay.
+    assert len(pins["sha256"]) == 50
+    assert (
+        "docs/design/boomers2004_uniform_cut_comparison.md" in pins["sha256"]
+    )
     for path, expected in pins["sha256"].items():
         assert (
             hashlib.sha256((ROOT / path).read_bytes()).hexdigest() == expected

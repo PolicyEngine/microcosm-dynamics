@@ -705,7 +705,7 @@
       "wave": 2013,
       "route": "wealth2_acc",
       "variable": "ER58212",
-      "status": "TO VERIFY",
+      "status": "RESOLVED",
       "citations": [
         {
           "file": "PSID/family/2013/FAM2013ER.sps",
@@ -720,6 +720,10 @@
         {
           "file": "PSID/family/2013/FAM2013ER_codebook.pdf",
           "page": 1852
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 88
         }
       ],
       "label": "ACC WEALTH W/ EQUITY (WEALTH2) 2013",
@@ -734,7 +738,18 @@
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
       "accuracy_for_variable": "ER58211",
-      "question": "Setup label 'ACC WEALTH W/ EQUITY (WEALTH2) 2013' links this flag to ER58211, but the codebook states Accuracy of ER58209. Which target is correct? Retain both documentary claims and obtain source correction before applying this flag."
+      "resolution": "Independent adjudication D (amendment 4): the setup label 'ACC WEALTH W/ EQUITY (WEALTH2) 2013' identifies the flag's amount as ER58211 ('IMP WEALTH W/ EQUITY (WEALTH2) 2013'); the prose reference ER58209 is WEALTH1, the excluding-equity amount, while the flag's own parenthetical reads 'CONSTRUCTED WEALTH VAR, INCLUDING EQUITY'. The flag is the accuracy code for ER58211. The contradictory literal codebook wording is kept in codebook_text and source_wording_conflict. This establishes the intended association, not PSID's imputation algorithm.",
+      "source_wording_conflict": {
+        "codebook_states_accuracy_of": "ER58209",
+        "resolved_accuracy_for_variable": "ER58211"
+      },
+      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, pending Max's ruling).",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 88,
+        "disposition": "D",
+        "amendment": 4
+      }
     },
     {
       "id": "wealth.2013.home_equity_acc",
@@ -811,7 +826,7 @@
       "wave": 2013,
       "route": "checking_saving_acc",
       "variable": "ER58162",
-      "status": "TO VERIFY",
+      "status": "RESOLVED",
       "citations": [
         {
           "file": "PSID/family/2013/FAM2013ER.sps",
@@ -826,6 +841,10 @@
         {
           "file": "PSID/family/2013/FAM2013ER_codebook.pdf",
           "page": 1841
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 89
         }
       ],
       "label": "ACC VAL CHECKING/SAVING (W28) 2013",
@@ -840,7 +859,18 @@
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
       "accuracy_for_variable": "ER58161",
-      "question": "Setup label 'ACC VAL CHECKING/SAVING (W28) 2013' links this flag to ER58161, but the codebook states Accuracy of ER581614. Which target is correct? Retain both documentary claims and obtain source correction before applying this flag."
+      "resolution": "Independent adjudication D (amendment 4): the setup label 'ACC VAL CHECKING/SAVING (W28) 2013' identifies the flag's amount as ER58161 ('IMP VAL CHECKING/SAVING (W28) 2013'); the prose reference ER581614 is not a variable in FAM2013ER.sps (zero occurrences). The flag is the accuracy code for ER58161. The contradictory literal codebook wording is kept in codebook_text and source_wording_conflict. This establishes the intended association, not PSID's imputation algorithm.",
+      "source_wording_conflict": {
+        "codebook_states_accuracy_of": "ER581614",
+        "resolved_accuracy_for_variable": "ER58161"
+      },
+      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, pending Max's ruling).",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 89,
+        "disposition": "D",
+        "amendment": 4
+      }
     },
     {
       "id": "wealth.2013.stocks_acc",
@@ -2090,7 +2120,7 @@
       "wave": 2015,
       "route": "wealth2_acc",
       "variable": "ER65409",
-      "status": "TO VERIFY",
+      "status": "RESOLVED",
       "citations": [
         {
           "file": "PSID/family/2015/FAM2015ER.sps",
@@ -2105,6 +2135,10 @@
         {
           "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
           "page": 1992
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 90
         }
       ],
       "label": "ACC WEALTH W/ EQUITY (WEALTH2) 2015",
@@ -2119,7 +2153,18 @@
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
       "accuracy_for_variable": "ER65408",
-      "question": "Setup label 'ACC WEALTH W/ EQUITY (WEALTH2) 2015' links this flag to ER65408, but the codebook states Accuracy of ER65406. Which target is correct? Retain both documentary claims and obtain source correction before applying this flag."
+      "resolution": "Independent adjudication D (amendment 4): the setup label 'ACC WEALTH W/ EQUITY (WEALTH2) 2015' identifies the flag's amount as ER65408 ('IMP WEALTH W/ EQUITY (WEALTH2) 2015'); the prose reference ER65406 is WEALTH1, while the flag's own parenthetical reads 'Constructed Wealth Variable, Including Equity', which describes ER65408. The flag is the accuracy code for ER65408. The contradictory literal codebook wording is kept in codebook_text and source_wording_conflict. This establishes the intended association, not PSID's imputation algorithm.",
+      "source_wording_conflict": {
+        "codebook_states_accuracy_of": "ER65406",
+        "resolved_accuracy_for_variable": "ER65408"
+      },
+      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, pending Max's ruling).",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 90,
+        "disposition": "D",
+        "amendment": 4
+      }
     },
     {
       "id": "wealth.2015.home_equity_acc",
@@ -2196,7 +2241,7 @@
       "wave": 2015,
       "route": "checking_saving_acc",
       "variable": "ER65359",
-      "status": "TO VERIFY",
+      "status": "RESOLVED",
       "citations": [
         {
           "file": "PSID/family/2015/FAM2015ER.sps",
@@ -2211,6 +2256,10 @@
         {
           "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
           "page": 1980
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 91
         }
       ],
       "label": "ACC VAL CHECKING/SAVING (W28) 2015",
@@ -2225,7 +2274,18 @@
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
       "accuracy_for_variable": "ER65358",
-      "question": "Setup label 'ACC VAL CHECKING/SAVING (W28) 2015' links this flag to ER65358, but the codebook states Accuracy of ER653584. Which target is correct? Retain both documentary claims and obtain source correction before applying this flag."
+      "resolution": "Independent adjudication D (amendment 4): the setup label 'ACC VAL CHECKING/SAVING (W28) 2015' identifies the flag's amount as ER65358 ('IMP VAL CHECKING/SAVING (W28) 2015'); the prose reference ER653584 is not a variable in FAM2015ER.sps (zero occurrences). The flag is the accuracy code for ER65358. The contradictory literal codebook wording is kept in codebook_text and source_wording_conflict. This establishes the intended association, not PSID's imputation algorithm.",
+      "source_wording_conflict": {
+        "codebook_states_accuracy_of": "ER653584",
+        "resolved_accuracy_for_variable": "ER65358"
+      },
+      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, pending Max's ruling).",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 91,
+        "disposition": "D",
+        "amendment": 4
+      }
     },
     {
       "id": "wealth.2015.stocks_acc",
@@ -3475,7 +3535,7 @@
       "wave": 2017,
       "route": "wealth2_acc",
       "variable": "ER71486",
-      "status": "TO VERIFY",
+      "status": "RESOLVED",
       "citations": [
         {
           "file": "PSID/family/2017/FAM2017ER.sps",
@@ -3494,6 +3554,10 @@
         {
           "file": "PSID/family/2017/FAM2017ER_codebook.pdf",
           "page": 2046
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 92
         }
       ],
       "label": "ACC WEALTH W/ EQUITY (WEALTH2) 2017",
@@ -3508,7 +3572,18 @@
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
       "accuracy_for_variable": "ER71485",
-      "question": "Setup label 'ACC WEALTH W/ EQUITY (WEALTH2) 2017' links this flag to ER71485, but the codebook states Accuracy of ER71483. Which target is correct? Retain both documentary claims and obtain source correction before applying this flag."
+      "resolution": "Independent adjudication D (amendment 4): the setup label 'ACC WEALTH W/ EQUITY (WEALTH2) 2017' identifies the flag's amount as ER71485 ('IMP WEALTH W/ EQUITY (WEALTH2) 2017'); the prose reference ER71483 is WEALTH1, while the flag's own parenthetical reads 'Constructed Wealth Variable, Including Equity', which describes ER71485. The flag is the accuracy code for ER71485. The contradictory literal codebook wording is kept in codebook_text and source_wording_conflict. This establishes the intended association, not PSID's imputation algorithm.",
+      "source_wording_conflict": {
+        "codebook_states_accuracy_of": "ER71483",
+        "resolved_accuracy_for_variable": "ER71485"
+      },
+      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, pending Max's ruling).",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 92,
+        "disposition": "D",
+        "amendment": 4
+      }
     },
     {
       "id": "wealth.2017.home_equity_acc",
@@ -3585,7 +3660,7 @@
       "wave": 2017,
       "route": "checking_saving_acc",
       "variable": "ER71436",
-      "status": "TO VERIFY",
+      "status": "RESOLVED",
       "citations": [
         {
           "file": "PSID/family/2017/FAM2017ER.sps",
@@ -3600,6 +3675,14 @@
         {
           "file": "PSID/family/2017/FAM2017ER_codebook.pdf",
           "page": 2033
+        },
+        {
+          "file": "PSID/family/2017/FAM2017ER_codebook.pdf",
+          "page": 2032
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 93
         }
       ],
       "label": "ACC VAL CHECKING/SAVING (W28) 2017",
@@ -3614,7 +3697,18 @@
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
       "accuracy_for_variable": "ER71435",
-      "question": "Setup label 'ACC VAL CHECKING/SAVING (W28) 2017' links this flag to ER71435, but the codebook states Accuracy of ER714354. Which target is correct? Retain both documentary claims and obtain source correction before applying this flag."
+      "resolution": "Independent adjudication D (amendment 4): the setup label 'ACC VAL CHECKING/SAVING (W28) 2017' identifies the flag's amount as ER71435 ('IMP VAL CHECKING/SAVING (W28) 2017'); the prose reference ER714354 is not a variable in FAM2017ER.sps (zero occurrences). The flag is the accuracy code for ER71435. The contradictory literal codebook wording is kept in codebook_text and source_wording_conflict. This establishes the intended association, not PSID's imputation algorithm.",
+      "source_wording_conflict": {
+        "codebook_states_accuracy_of": "ER714354",
+        "resolved_accuracy_for_variable": "ER71435"
+      },
+      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, pending Max's ruling).",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 93,
+        "disposition": "D",
+        "amendment": 4
+      }
     },
     {
       "id": "wealth.2017.stocks_acc",
@@ -4900,7 +4994,7 @@
       "wave": 2019,
       "route": "wealth2_acc",
       "variable": "ER77512",
-      "status": "TO VERIFY",
+      "status": "RESOLVED",
       "citations": [
         {
           "file": "PSID/family/2019/FAM2019ER.sps",
@@ -4915,6 +5009,10 @@
         {
           "file": "PSID/family/2019/fam2019er_codebook.pdf",
           "page": 2031
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 94
         }
       ],
       "label": "ACC WEALTH W/ EQUITY (WEALTH2) 2019",
@@ -4929,7 +5027,18 @@
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
       "accuracy_for_variable": "ER77511",
-      "question": "Setup label 'ACC WEALTH W/ EQUITY (WEALTH2) 2019' links this flag to ER77511, but the codebook states Accuracy of ER77509. Which target is correct? Retain both documentary claims and obtain source correction before applying this flag."
+      "resolution": "Independent adjudication D (amendment 4): the setup label 'ACC WEALTH W/ EQUITY (WEALTH2) 2019' identifies the flag's amount as ER77511 ('IMP WEALTH W/ EQUITY (WEALTH2) 2019'); the prose reference ER77509 is WEALTH1, while the flag's own parenthetical reads 'Constructed Wealth Variable, Including Equity', which describes ER77511. The flag is the accuracy code for ER77511. The contradictory literal codebook wording is kept in codebook_text and source_wording_conflict. This establishes the intended association, not PSID's imputation algorithm.",
+      "source_wording_conflict": {
+        "codebook_states_accuracy_of": "ER77509",
+        "resolved_accuracy_for_variable": "ER77511"
+      },
+      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, pending Max's ruling).",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 94,
+        "disposition": "D",
+        "amendment": 4
+      }
     },
     {
       "id": "wealth.2019.home_equity_acc",
@@ -6364,7 +6473,7 @@
       "wave": 2021,
       "route": "wealth2_acc",
       "variable": "ER81839",
-      "status": "TO VERIFY",
+      "status": "RESOLVED",
       "citations": [
         {
           "file": "PSID/family/2021/FAM2021ER.sps",
@@ -6383,6 +6492,10 @@
         {
           "file": "PSID/family/2021/FAM2021ER_formats.sps",
           "line": 37472
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 95
         }
       ],
       "label": "ACC WEALTH W/ EQUITY (WEALTH2) 2021",
@@ -6398,7 +6511,18 @@
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
       "format_text": "1  'Imputed'\r\n    0  'Inap.:  not imputed; does not have any assets or home equity'",
       "accuracy_for_variable": "ER81838",
-      "question": "Setup label 'ACC WEALTH W/ EQUITY (WEALTH2) 2021' links this flag to ER81838, but the codebook states Accuracy of ER81836. Which target is correct? Retain both documentary claims and obtain source correction before applying this flag."
+      "resolution": "Independent adjudication D (amendment 4): the setup label 'ACC WEALTH W/ EQUITY (WEALTH2) 2021' identifies the flag's amount as ER81838 ('IMP WEALTH W/ EQUITY (WEALTH2) 2021'); the prose reference ER81836 is WEALTH1, while the flag's own parenthetical reads 'Constructed Wealth Variable, Including Equity', which describes ER81838. The flag is the accuracy code for ER81838. The contradictory literal codebook wording is kept in codebook_text and source_wording_conflict. This establishes the intended association, not PSID's imputation algorithm.",
+      "source_wording_conflict": {
+        "codebook_states_accuracy_of": "ER81836",
+        "resolved_accuracy_for_variable": "ER81838"
+      },
+      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, pending Max's ruling).",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 95,
+        "disposition": "D",
+        "amendment": 4
+      }
     },
     {
       "id": "wealth.2021.home_equity_acc",
@@ -7913,7 +8037,7 @@
       "wave": 2023,
       "route": "wealth2_acc",
       "variable": "ER85693",
-      "status": "TO VERIFY",
+      "status": "RESOLVED",
       "citations": [
         {
           "file": "PSID/family/2023/FAM2023ER.sps",
@@ -7932,6 +8056,10 @@
         {
           "file": "PSID/family/2023/FAM2023ER_formats.sps",
           "line": 35056
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 96
         }
       ],
       "label": "ACC WEALTH W/ EQUITY (WEALTH2) 2023",
@@ -7947,7 +8075,18 @@
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
       "format_text": "1  'Imputed'\r\n    0  'Inap.:  not imputed; does not have any assets or home equity'",
       "accuracy_for_variable": "ER85692",
-      "question": "Setup label 'ACC WEALTH W/ EQUITY (WEALTH2) 2023' links this flag to ER85692, but the codebook states Accuracy of ER85690. Which target is correct? Retain both documentary claims and obtain source correction before applying this flag."
+      "resolution": "Independent adjudication D (amendment 4): the setup label 'ACC WEALTH W/ EQUITY (WEALTH2) 2023' identifies the flag's amount as ER85692 ('IMP WEALTH W/ EQUITY (WEALTH2) 2023'); the prose reference ER85690 is WEALTH1, while the flag's own parenthetical reads 'Constructed Wealth Variable, Including Equity', which describes ER85692. The flag is the accuracy code for ER85692. The contradictory literal codebook wording is kept in codebook_text and source_wording_conflict. This establishes the intended association, not PSID's imputation algorithm.",
+      "source_wording_conflict": {
+        "codebook_states_accuracy_of": "ER85690",
+        "resolved_accuracy_for_variable": "ER85692"
+      },
+      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, pending Max's ruling).",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 96,
+        "disposition": "D",
+        "amendment": 4
+      }
     },
     {
       "id": "wealth.2023.home_equity_acc",
@@ -8864,5 +9003,12 @@
     }
   },
   "status_scope": "RESOLVED means the family-file documentary variable mapping and its printed domain. Individual relationship-to-income-slot assignment is separately refused by the U2 role registry; this registry does not resolve that assignment.",
-  "raw_data_read": false
+  "raw_data_read": false,
+  "independent_adjudication": {
+    "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+    "sha256": "a891762bf9be39e05509e59c5b7cd3fdab0eb34feb9ad5b9bb4a8ec3afc39662",
+    "bytes": 26564,
+    "applied_by": "u2-m1b",
+    "note": "Independent adjudication of milestone 1 (VERDICT: ERRORS FOUND). Amendment 7 citation corrections, D resolutions and F refusals are applied here; A items stay TO VERIFY pending u2-draft-4 amendments 1-6 and Max's ruling."
+  }
 }
