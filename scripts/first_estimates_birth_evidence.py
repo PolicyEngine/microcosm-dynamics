@@ -276,6 +276,13 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/min_benefit_track_m/cohort.py"),
     Path("src/populace_dynamics/min_benefit_track_m/careers.py"),
     Path("src/populace_dynamics/min_benefit_track_m/invented_psid.py"),
+    # Track B R1 is an opt-in, source-pinned parameter module; nothing in the
+    # historical projection imports it.
+    Path("src/populace_dynamics/track_b/README.md"),
+    Path("src/populace_dynamics/track_b/__init__.py"),
+    Path("src/populace_dynamics/track_b/parameters/__init__.py"),
+    Path("src/populace_dynamics/track_b/parameters/ret_v1.yaml"),
+    Path("src/populace_dynamics/track_b/ret_params.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
