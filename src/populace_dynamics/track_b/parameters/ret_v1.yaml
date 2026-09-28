@@ -1,0 +1,451 @@
+# Track B R1: realized SSA history, separate from forecast inputs.
+# Each sources entry resolves to a captured URL, UTC retrieval time and SHA-256.
+# Authority: Social Security Act 203(f)(3), (8); SSA rtea.html/rtdet.html.
+schema_version: 1
+parameter_version: ret_v1
+verification_class: statutory_conformance_and_historical_source_check
+scope:
+  first_year: 2000
+  last_realized_year: 2026
+  projection_formula_first_year: 2003
+  forecast_vintage: null
+  admitted_scope: Parameter values for listed years only; projections require an
+    explicitly permitted input vintage.
+sources:
+  ssa_ret_history:
+    url: https://www.ssa.gov/OACT/COLA/rtea.html
+    retrieved_at: '2026-09-28T16:02:50Z'
+    sha256: b03f940a2cfe7b12f7c0c5edaf1b5c46dc79786ffd22a023a154e4fec76b2b5d
+  ssa_ret_determination:
+    url: https://www.ssa.gov/OACT/COLA/rtdet.html
+    retrieved_at: '2026-09-28T16:02:51Z'
+    sha256: bede06d5ab0aff9b620b143afb2e45cb1e0ab39de1aaeb5abdff08499c40c226
+  ssa_nawi_history:
+    url: https://www.ssa.gov/OACT/COLA/AWI.html
+    retrieved_at: '2026-09-28T16:02:51Z'
+    sha256: ec58015bb689fbd8a1342eeda54f03b50656c60da1f9ddc8a660e5290fd23c18
+  ssa_cola_history:
+    url: https://www.ssa.gov/OACT/COLA/colaseries.html
+    retrieved_at: '2026-09-28T16:02:51Z'
+    sha256: 41bb09736bb40be233625d2c1c724dee643f16666ab59a01d5e68a1d6d70d14f
+  ssa_act_203:
+    url: https://www.ssa.gov/OP_Home/ssact/title02/0203.htm
+    retrieved_at: '2026-09-28T16:02:51Z'
+    sha256: ea000092e140d2ff8ce058138a9f919fac4eeac0004bb71364d6e2bade53cf54
+rates:
+  lower_withholding_rate:
+    value: 1/2
+    status: realized
+    sources:
+    - ssa_act_203
+  higher_withholding_rate:
+    value: 1/3
+    status: realized
+    sources:
+    - ssa_act_203
+years:
+  2000:
+    lower_exempt_amount:
+      value: 10080
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 17000
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2001:
+    lower_exempt_amount:
+      value: 10680
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 25000
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2002:
+    lower_exempt_amount:
+      value: 11280
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 30000
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2003:
+    lower_exempt_amount:
+      value: 11520
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 30720
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2004:
+    lower_exempt_amount:
+      value: 11640
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 31080
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2005:
+    lower_exempt_amount:
+      value: 12000
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 31800
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2006:
+    lower_exempt_amount:
+      value: 12480
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 33240
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2007:
+    lower_exempt_amount:
+      value: 12960
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 34440
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2008:
+    lower_exempt_amount:
+      value: 13560
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 36120
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2009:
+    lower_exempt_amount:
+      value: 14160
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 37680
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2010:
+    lower_exempt_amount:
+      value: 14160
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 37680
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2011:
+    lower_exempt_amount:
+      value: 14160
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 37680
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2012:
+    lower_exempt_amount:
+      value: 14640
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 38880
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2013:
+    lower_exempt_amount:
+      value: 15120
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 40080
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2014:
+    lower_exempt_amount:
+      value: 15480
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 41400
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2015:
+    lower_exempt_amount:
+      value: 15720
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 41880
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2016:
+    lower_exempt_amount:
+      value: 15720
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 41880
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2017:
+    lower_exempt_amount:
+      value: 16920
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 44880
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2018:
+    lower_exempt_amount:
+      value: 17040
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 45360
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2019:
+    lower_exempt_amount:
+      value: 17640
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 46920
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2020:
+    lower_exempt_amount:
+      value: 18240
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 48600
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2021:
+    lower_exempt_amount:
+      value: 18960
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 50520
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2022:
+    lower_exempt_amount:
+      value: 19560
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 51960
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2023:
+    lower_exempt_amount:
+      value: 21240
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 56520
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2024:
+    lower_exempt_amount:
+      value: 22320
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 59520
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2025:
+    lower_exempt_amount:
+      value: 23400
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 62160
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+  2026:
+    lower_exempt_amount:
+      value: 24480
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
+    higher_exempt_amount:
+      value: 65160
+      status: realized
+      sources:
+      - ssa_ret_history
+      - ssa_ret_determination
+      - ssa_act_203
