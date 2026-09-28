@@ -1,0 +1,367 @@
+{
+  "agent": "pensions",
+  "files": [
+    {
+      "path": "/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/RESTRICTED-FILES.md",
+      "access": "Read first, in full."
+    },
+    {
+      "path": "/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/phase2-20260927/prompts/common.md",
+      "access": "Read in full."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/CLAUDE.md",
+      "access": "Read in full."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/docs/design/boomers2004_1946_55_comparison.md",
+      "access": "Read in full in overlapping chunks; searches for exact line citations."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/docs/design/boomers2004_uniform_cut_comparison.md",
+      "access": "Pension specification lines 559\u2013700 and search hits elsewhere in the same file; inherited structural-count text was visible, not used as later-wave routing evidence."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/src/populace_dynamics/data/employer_dc.py",
+      "access": "Selected pension constants/maps; later read in full by Python AST, without import or execution, to compare all 24 U1 2013 mappings."
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/family/2013/FAM2013ER.sps",
+      "access": "Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.",
+      "sha256": "526595b50a2087adc635da3c1288a396aa7179b075c11506f10338ab6348a0b5"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/family/2013/FAM2013ER_codebook.pdf",
+      "access": "Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.",
+      "sha256": "40cc2de6af801b94b93518f7252e24c7c95098e713fc97f9ead1af74c4ce25d6"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/documentation/capture1/q2013.pdf",
+      "access": "Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.",
+      "sha256": "5f966b9268ed428acd9454263296b31006220c69b33b6b36b8f6364436332c0d"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/family/2015/FAM2015ER.sps",
+      "access": "Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.",
+      "sha256": "6500c8e88a2353e7a6c5322a898f3879662228fdefa329e0901eb254fc9e3fff"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/family/2015/FAM2015ER_codebook.pdf",
+      "access": "Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.",
+      "sha256": "7dcb71f823e309a286b904531410243d58cde48b8f50079401856de9ac762238"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/documentation/capture1/q2015.pdf",
+      "access": "Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.",
+      "sha256": "f3a4613bc8c1017f7cb40b30db4034d5f9a9234aad8022679ecd5c399f42e4e8"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/family/2017/FAM2017ER.sps",
+      "access": "Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.",
+      "sha256": "24abae319022d4e3da9bce8052455dfee6b00b7b9c642004eddcfa06cb8d59e5"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/family/2017/FAM2017ER_codebook.pdf",
+      "access": "Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.",
+      "sha256": "19bfba9f7a3fecc82a18711466e2b2a5f00b49c9d3db0f9f8587795fad2bf8c1"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/documentation/capture1/q2017.pdf",
+      "access": "Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.",
+      "sha256": "733a9be8591080e09179857e672808d8cbf9b9ff351b2adf2c9e8200d893d9dc"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/family/2019/FAM2019ER.sps",
+      "access": "Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.",
+      "sha256": "c9f8ba8698779aeaf239c0eea4b1f98d32975b1c77767acfd35601fcb883a5b0"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/family/2019/fam2019er_codebook.pdf",
+      "access": "Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.",
+      "sha256": "ce637e37e0f5e306dd7f10455e85069b56c9b13d5c138d3eb4b9c8d6a8452406"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/documentation/capture1/q2019.pdf",
+      "access": "Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.",
+      "sha256": "e848a2a8ea5bb7cfb14f87f98410a33b4ca7de85c51916acb7c8a49503c92835"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/family/2021/FAM2021ER.sps",
+      "access": "Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.",
+      "sha256": "50526906dafd86271074ba15fd426ab7030c2b62f29acf3d819b577fdc9442e2"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/family/2021/FAM2021ER_codebook.pdf",
+      "access": "Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.",
+      "sha256": "e3b88ef394952fa05b9b98eb7f05bf9a99896840515942562aa37399e1bcd462"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/documentation/capture1/q2021.pdf",
+      "access": "Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.",
+      "sha256": "6c639ec32bfdd2176b5823d31815e31ac0db732a46ed05f22aa6a892cc1c31fb"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/family/2021/FAM2021ER_formats.sps",
+      "access": "Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.",
+      "sha256": "863f151a4cab1282060aa3bfe4f6648bbbc1822e6f739bcfd502ff13b40a952c"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/family/2023/FAM2023ER.sps",
+      "access": "Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.",
+      "sha256": "915755685965a41743e96e42abbbfdddd7eab1df33234e462b0813b25d4df169"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/family/2023/FAM2023ER_codebook.pdf",
+      "access": "Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.",
+      "sha256": "85a4078ebb79146d023df3d9d4e2d2ef6017eced849656ca39f4b740cb5a5688"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/documentation/capture1/q2023.pdf",
+      "access": "Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.",
+      "sha256": "adc9975e1d7e901eb7192e6c6498f53be0eda62e0393ef1b06de0c85c511cad8"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/family/2023/FAM2023ER_formats.sps",
+      "access": "Documentation only, text/layout parsing and SHA-256; never opened named raw-data file. Full PDF text extraction was programmatic; reviewed pension fields/pages. Published frequency columns were stripped from retained codebook excerpts.",
+      "sha256": "89e4f2be4bea66fe83e0f11682bdcfab2590c01310bd697833846377d64a59f2"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/.u2-pension-work/extract.py",
+      "access": "Task-generated metadata extraction helper/cache; read while constructing registry; removed before delivery."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/.u2-pension-work/finalize.py",
+      "access": "Task-generated metadata extraction helper/cache; read while constructing registry; removed before delivery."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/.u2-pension-work/2013.json",
+      "access": "Task-generated metadata extraction helper/cache; read while constructing registry; removed before delivery."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/.u2-pension-work/2015.json",
+      "access": "Task-generated metadata extraction helper/cache; read while constructing registry; removed before delivery."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/.u2-pension-work/2017.json",
+      "access": "Task-generated metadata extraction helper/cache; read while constructing registry; removed before delivery."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/.u2-pension-work/2019.json",
+      "access": "Task-generated metadata extraction helper/cache; read while constructing registry; removed before delivery."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/.u2-pension-work/2021.json",
+      "access": "Task-generated metadata extraction helper/cache; read while constructing registry; removed before delivery."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/.u2-pension-work/2023.json",
+      "access": "Task-generated metadata extraction helper/cache; read while constructing registry; removed before delivery."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/data/external/track_u2/pension.json",
+      "access": "Task-generated deliverable; content read for verification."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/docs/design/u2_m1_pension_adjudication.md",
+      "access": "Task-generated deliverable; content read for verification."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/docs/design/u2_m1_pension_exposure.json",
+      "access": "Task-generated deliverable; content read for verification."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/data/external/track_u2/individual.json",
+      "access": "Content read for independent documentary review, source capture, or pension correction/testing."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/data/external/track_u2/roles.json",
+      "access": "Content read for independent documentary review, source capture, or pension correction/testing."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/data/external/track_u2/support.json",
+      "access": "Content read for independent documentary review, source capture, or pension correction/testing."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/data/external/track_u2/design.json",
+      "access": "Content read for independent documentary review, source capture, or pension correction/testing."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/data/external/track_u2/weights.json",
+      "access": "Content read for independent documentary review, source capture, or pension correction/testing."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/src/populace_dynamics/data/u2_source_registry.py",
+      "access": "Content read for independent documentary review, source capture, or pension correction/testing."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/track_u2/test_source_registries.py",
+      "access": "Content read for independent documentary review, source capture, or pension correction/testing."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/track_u2/test_pension_registry.py",
+      "access": "Content read for independent documentary review, source capture, or pension correction/testing."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/pyproject.toml",
+      "access": "Content read for independent documentary review, source capture, or pension correction/testing."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "access": "Content read for independent documentary review, source capture, or pension correction/testing."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/psid_sources/weights23_manifest.json",
+      "access": "Content read for independent documentary review, source capture, or pension correction/testing."
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/documentation/capture1/cross_sec_weights_17.pdf",
+      "access": "Documentation only. Full programmatic text extraction/search or hash; reviewed weight construction/revision and individual/design/role metadata. No raw record file opened."
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/documentation/capture1/UserGuide2017.pdf",
+      "access": "Documentation only. Full programmatic text extraction/search or hash; reviewed weight construction/revision and individual/design/role metadata. No raw record file opened."
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/documentation/capture1/cross_sec_weights_19.pdf",
+      "access": "Documentation only. Full programmatic text extraction/search or hash; reviewed weight construction/revision and individual/design/role metadata. No raw record file opened."
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/ind2023er/IND2023ER.sps",
+      "access": "Documentation only. Full programmatic text extraction/search or hash; reviewed weight construction/revision and individual/design/role metadata. No raw record file opened."
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/ind2023er/IND2023ER_formats.sps",
+      "access": "Documentation only. Full programmatic text extraction/search or hash; reviewed weight construction/revision and individual/design/role metadata. No raw record file opened."
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/ind2023er/IND2023ER_codebook.pdf",
+      "access": "Documentation only. Full programmatic text extraction/search or hash; reviewed weight construction/revision and individual/design/role metadata. No raw record file opened."
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/mh85_23/MH85_23.sps",
+      "access": "Documentation only. Full programmatic text extraction/search or hash; reviewed weight construction/revision and individual/design/role metadata. No raw record file opened."
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/mh85_23/MH85_23_formats.sps",
+      "access": "Documentation only. Full programmatic text extraction/search or hash; reviewed weight construction/revision and individual/design/role metadata. No raw record file opened."
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/psid-data/mh85_23/MH85_23_Codebook.pdf",
+      "access": "Documentation only. Full programmatic text extraction/search or hash; reviewed weight construction/revision and individual/design/role metadata. No raw record file opened."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/conftest.py",
+      "access": "Loaded implicitly by pytest; not read as substantive documentary evidence."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/psid_sources/cross_sec_weights_17.pdf",
+      "access": "Downloaded official original PDF or generated retrieval manifest; PDF reopened to verify recorded hash."
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/psid_sources/weights17_manifest.json",
+      "access": "Downloaded official original PDF or generated retrieval manifest; PDF reopened to verify recorded hash."
+    }
+  ],
+  "boundaries": [
+    "No Boomers Report, comparator, seal, restricted directory, raw PSID record, model estimate or outcome opened or computed.",
+    "Filename-only listing of documentation directories also occurred; listed files not otherwise named were not opened.",
+    "Python interpreter and installed utility/library internals are not task source exposures and are not enumerated."
+  ],
+  "incidental_metadata": [
+    "Exploratory FAM2023ER_codebook.pdf printed pages 875\u2013877 displayed published frequency columns. They were not used to adjudicate any route and are not reproduced in deliverables.",
+    "A later printed-page 1\u20132 metadata check displayed a published case-count sentence and variable total. These were not used or reproduced as findings.",
+    "The permitted U1 specification includes historical structural-count prose; no later-wave route was inferred from those counts.",
+    "FAM2023ER_codebook.pdf printed pp. 6\u20137 were inspected for spouse age/sex metadata in the independent role audit.",
+    "Published sample-distribution tables in PSID weight-construction documentation were incidentally visible in programmatic search excerpts and web results. They were not used to adjudicate routes or compute outcomes."
+  ],
+  "web_exposures": [
+    {
+      "url": "https://psidonline.isr.umich.edu/Guide/documents.aspx",
+      "access": "Opened through browser text or direct original-PDF request."
+    },
+    {
+      "url": "https://psidonline.isr.umich.edu/data/weights/cross_sec_weights_17.pdf",
+      "access": "Opened through browser text or direct original-PDF request."
+    },
+    {
+      "url": "https://psidonline.isr.umich.edu/data/weights/cross_sec_weights_23.pdf",
+      "access": "Opened through browser text or direct original-PDF request."
+    },
+    {
+      "url": "https://psidonline.isr.umich.edu/data/Documentation/UserGuide2017.pdf",
+      "access": "Opened through browser text or direct original-PDF request."
+    },
+    {
+      "url": "https://psidonline.isr.umich.edu/guide/faq.aspx",
+      "access": "Search-result snippet only; linked document not opened through this result."
+    },
+    {
+      "url": "https://psidonline.isr.umich.edu/data/Documentation/UserGuide2019.pdf",
+      "access": "Search-result snippet only; linked document not opened through this result."
+    },
+    {
+      "url": "https://psidonline.isr.umich.edu/data/Documentation/UserGuide2021.pdf",
+      "access": "Search-result snippet only; linked document not opened through this result."
+    },
+    {
+      "url": "https://psidonline.isr.umich.edu/data/Documentation/UserGuide2015.pdf",
+      "access": "Search-result snippet only; linked document not opened through this result."
+    },
+    {
+      "url": "https://psidonline.isr.umich.edu/data/documentation/userguide2021.pdf",
+      "access": "Search-result snippet only; linked document not opened through this result."
+    },
+    {
+      "url": "https://psidonline.isr.umich.edu/CDS/Guide/FAQ.aspx",
+      "access": "Search-result snippet only; linked document not opened through this result."
+    },
+    {
+      "url": "https://psidonline.isr.umich.edu/publications/Papers/",
+      "access": "Search-result snippet only; linked document not opened through this result."
+    },
+    {
+      "url": "https://psidonline.isr.umich.edu/Publications/Bibliography/BrowseKeywordsQ.aspx?ID=14",
+      "access": "Search-result snippet only; linked document not opened through this result."
+    },
+    {
+      "url": "https://psidonline.isr.umich.edu/data/weights/long_weight_19.pdf",
+      "access": "Search-result snippet only; linked document not opened through this result."
+    },
+    {
+      "url": "https://psidonline.isr.umich.edu/cds/TAS17_UserGuide.pdf",
+      "access": "Search-result snippet only; linked document not opened through this result."
+    },
+    {
+      "url": "https://psidonline.isr.umich.edu/data/weights/long_weight_21.pdf",
+      "access": "Search-result snippet only; linked document not opened through this result."
+    },
+    {
+      "url": "https://psidonline.isr.umich.edu/data/weights/cross_sec_weights_19.pdf",
+      "access": "Search-result snippet only; linked document not opened through this result."
+    },
+    {
+      "url": "https://psidonline.isr.umich.edu/Publications/Bibliography/BrowseKeywordsQ.aspx?ID=23",
+      "access": "Search-result snippet only; linked document not opened through this result."
+    },
+    {
+      "url": "https://psidonline.isr.umich.edu/Publications/Bibliography/BrowseKeywordsQ.aspx?ID=6",
+      "access": "Search-result snippet only; linked document not opened through this result."
+    },
+    {
+      "url": "https://psidonline.isr.umich.edu/Publications/Bibliography/BrowseKeywordsQ.aspx?ID=5",
+      "access": "Search-result snippet only; linked document not opened through this result."
+    },
+    {
+      "url": "https://psidonline.isr.umich.edu/Publications/Bibliography/BrowseKeywordsQ.aspx?ID=11",
+      "access": "Search-result snippet only; linked document not opened through this result."
+    },
+    {
+      "url": "https://psidonline.isr.umich.edu/Publications/Bibliography/BrowseKeywordsQ.aspx?ID=1",
+      "access": "Search-result snippet only; linked document not opened through this result."
+    },
+    {
+      "url": "https://psidonline.isr.umich.edu/data/weights/cross_sec_weights_21.pdf",
+      "access": "Search-result snippet only; linked document not opened through this result."
+    }
+  ]
+}
