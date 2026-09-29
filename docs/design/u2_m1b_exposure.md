@@ -222,3 +222,28 @@ None concerns the 1946–55 cohort or the Boomers report, none is used for a fin
 - this section
 
 No U1 file, engine file, `gates.yaml`, `runs/*.json` or milestone-2 module was edited. `SCRATCH2` holds the draft-3 copy, the text extractions, the search scripts and their output, and the page image. The workspace `.venv` (Python 3.13; `uv pip install -e . pytest hypothesis`) is ignored by Git.
+
+### Verification pass and follow-up reading (2026-09-29)
+
+An in-session verifier (Claude Code subagent, Opus 5.5, told to obey `EV/RESTRICTED-FILES.md` and write nothing) reviewed commits `4f3e911..f9845ff`. By its own report it opened:
+
+- `EV/RESTRICTED-FILES.md` and `EV/phase2-20260927/out/u2-m1b-review.md`;
+- in `WS`: the specification (current and draft 3 through `git show f7412e00`, copied to `/tmp/u2verify/draft3.md`), the research record, the diffs of the master record, this file, the manifest and the `roles`, `weights` and `u1_identity` registries, the 2015 and 2017 code-90 and code-92 role entries, `weights23_manifest.json`, both touched test files, and `.github/workflows/tests.yml` (search only);
+- PDF text of `cross_sec_weights_23.pdf` pp. 1–10, 13 (numbers masked) and 14, `psid_docs/cross_sec_weights_19.pdf` pp. 1–4 and 6–18, `UserGuide2017.pdf` p. 62, `DataRelease-May2019.pdf` p. 1, the title page of `cross_sec_weights_17.pdf`, and the cited lines of `FAQ_20260813.html`, plus a link search of `documents_20260813.html`;
+- `PSID/documentation/` (listing only) and the text layers of all 494 PDFs in `PSID/documentation/capture1/`, extracted to `/tmp/u2verify/txt` and searched, with closer reads of `cross_sec_weights_21.pdf` (parts), `long_weight_17.pdf` and `long_weight_19.pdf` (search) and the q2019 and ta25 search hits.
+
+It opened no raw data file. It reported seeing published whole-sample statistics (`cross_sec_weights_19` Table A1; one Table A1 row and a few PSID-to-ACS ratios from `cross_sec_weights_21`), none about the 1946–55 cohort, and reproduced none. It ran the two touched test files and mutation copies under `/tmp/u2verify/repo`.
+
+The builder's follow-up reads:
+
+- `/tmp/u2m1bfix/draft3.md`: lines 1380–1385.
+- `tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf`: pp. 6, 7, 12 and 13 again.
+- `PSID/documentation/capture1/cross_sec_weights_21.pdf`: full text extraction. Pages 1–7, 10, 11, 13 and 14 were displayed through a paragraph search, including its Tables A1 and A2 (published whole-sample sample sizes and weight distributions). Also hashed.
+- `PSID/documentation/capture1/q2009.pdf`: the context of its lookup hits on pp. 51, 109, 167, 177, 180, 183, 185 and 188. Also hashed.
+- Page-level searches, with whitespace collapsed across line breaks, of all 494 extracted documentation PDFs for `RTH Lookup` and for printed three-digit relationship values. Contexts were displayed for non-codebook files only.
+- Lookup-list hits from the same extraction, displayed for non-codebook files. For codebooks, only the matching phrase was shown.
+- Quote locations, page numbers only, in `PSID/family/2013/FAM2013ER_codebook.pdf` (p. 1852), the 2015, 2017, 2019, 2021 and 2023 family codebooks (pp. 6, 7 and 689–698), q2015 p. 164, q2017 p. 152, q2019 p. 163, q2021 p. 304, q2023 p. 302, and `IND2023ER_codebook.pdf` pp. 916 and 1224.
+- `src/populace_dynamics/data/family_income.py` line 45 and search hits for 'WIFE RETIREMENT' (lines 272, 394, 516, 638 and 761). `data/external/track_u2/income.json` search hits for 'RETIREMENT/ANNUIT'. `PSID/family/2013/FAM2013ER.sps` line 6956. The `wealth.2013.wealth2_acc` entry of `data/external/track_u2/wealth.json`.
+- The ranges of the two touched test files needed for editing, and the `sources` lists of all eight registries through scripts.
+
+The verification pass exposed nothing more about the 1946–55 cohort or the Boomers report.

@@ -22,6 +22,37 @@ ADJUDICATION_SHA256 = (
 SPEC = "docs/design/boomers2004_1946_55_comparison.md"
 MASTER = ROOT / "docs/design/u2_m1_source_adjudication.md"
 DOCS = ROOT / "tests/data/track_u2/psid_docs"
+RESEARCH = ROOT / "docs/design/u2_m1b_psid_research.md"
+# Quote-mark, dash and soft-hyphen folding, by code point.
+FOLD = (
+    {c: "'" for c in (0x2018, 0x2019, 0x201A, 0x201B, 0x2032, 0x60, 0xB4)}
+    | {c: '"' for c in (0x201C, 0x201D, 0x201E, 0x201F, 0x2033)}
+    | {c: "-" for c in (*range(0x2010, 0x2016), 0x2212)}
+    | {0xAD: None}
+)
+OPENING = re.compile(r"(?:^|(?<=[\s(\[:]))'(?=\S)")
+CLOSING = re.compile(r"(?<=\S)'(?=[\s.,;:)\]]|$)")
+
+
+def fold(text):
+    return " ".join(text.translate(FOLD).split())
+
+
+def quoted_spans(markdown):
+    """Single-quoted spans outside code spans and verbatim blockquotes."""
+    spans = []
+    for line in re.sub(r"`[^`]*`", " ", markdown).split("\n"):
+        if line.startswith(("> ", "**Question for PSID staff")):
+            continue
+        start = 0
+        while opening := OPENING.search(line, start):
+            closing = CLOSING.search(line, opening.end())
+            if closing is None:
+                break
+            spans.append(line[opening.end() : closing.start()])
+            start = closing.end()
+    return spans
+
 
 # Registry: (RESOLVED mappings, REFUSED by disposition F, TO VERIFY).
 EXPECTED_COUNTS = {
@@ -337,6 +368,69 @@ def test_section_16a_quotes_draft_3_verbatim():
     for number, text in quoted:
         assert text == draft_3[int(number) - 1], number
     assert draft_3[1390].startswith("Required fields remain **TO VERIFY**")
+    # §16a says draft-3 line 1391 "now closes §17": it is §17's last line.
+    spec = (ROOT / SPEC).read_text(encoding="utf-8")
+    section_17 = spec[spec.index("## 17. ") : spec.index("## 18. ")]
+    assert section_17.strip().split("\n")[-1] == draft_3[1390]
+    assert "draft-3 line 1391 now closes §17" in spec
+
+
+def test_section_16a_quotes_are_sourced():
+    """Every §16a quote is registered with a PSID source or is draft 3's."""
+    record = json.loads(
+        (registry.REGISTRY_DIRECTORY / "u1_identity.json").read_text()
+    )["u2_specification"]
+    draft_3 = fold(draft_3_bytes(record).decode("utf-8"))
+    spec = (ROOT / SPEC).read_text(encoding="utf-8")
+    section = spec[spec.index("## 16a. ") : spec.index("## 17. ")]
+    registered = [
+        fold(quote["text"])
+        for quote in json.loads((DOCS / "manifest.json").read_text())[
+            "spec_quotes"
+        ]
+    ]
+    folded = fold(section)
+    for text in registered:
+        for part in re.split(r"\s*\.\.\.\s*", text):
+            assert part in folded, part
+    spans = quoted_spans(section)
+    assert len(spans) >= 50
+    unsourced = [
+        span
+        for span in spans
+        if not any(fold(span) in text for text in registered)
+        and fold(span) not in draft_3
+    ]
+    assert not unsourced, unsourced
+
+
+def test_part_b_verdicts_agree():
+    """B1, B2 and B3 carry one verdict everywhere: PARTIAL."""
+    research = RESEARCH.read_text(encoding="utf-8")
+    rows = re.findall(
+        r"^\| (B[123])\. [^|]+\| \*\*([A-Z ]+)\*\* \|", research, re.M
+    )
+    assert rows == [("B1", "PARTIAL"), ("B2", "PARTIAL"), ("B3", "PARTIAL")]
+    headings = re.findall(r"^## [123]\. .*\(([A-Z ]+)\)$", research, re.M)
+    assert headings == ["PARTIAL"] * 3
+    assert "NOT DOCUMENTED ONLINE" not in research
+    spec = (ROOT / SPEC).read_text(encoding="utf-8")
+    section = spec[spec.index("## 16a. ") : spec.index("## 17. ")]
+    verdicts = re.findall(r"Part B verdict: \*\*([A-Z ]+)\.\*\*", section)
+    assert verdicts == ["PARTIAL"] * 3
+    outstanding = spec[spec.index("## 17. ") : spec.index("## 18. ")]
+    assert re.findall(r"Part B ([A-Z]+)\)", outstanding) == ["PARTIAL"] * 3
+    weights = {
+        e["id"]: e for e in registry.load_registry("weights")["entries"]
+    }
+    finding = weights["2017.cross_section_weight"]["part_b_finding"]
+    assert finding.startswith("PARTIAL")
+    master = MASTER.read_text(encoding="utf-8")
+    assert (
+        "| Revised 2017 individual-weight construction | TO VERIFY "
+        "(adjudication A); Part B PARTIAL |" in master
+    )
+    assert "NOT DOCUMENTED ONLINE" not in master
 
 
 def test_released_dependencies(documents):
@@ -419,7 +513,7 @@ def test_psid_documentation_manifest():
                 "sha256"
             ]
     pinned_files = [pinned["file"] for pinned in manifest["pinned_elsewhere"]]
-    assert len(pinned_files) == len(set(pinned_files)) == 14
+    assert len(pinned_files) == len(set(pinned_files)) == 16
     assert not set(pinned_files) & {s["file"] for s in manifest["sources"]}
     for pinned in manifest["pinned_elsewhere"]:
         assert re.fullmatch(r"[0-9a-f]{64}", pinned["sha256"])
@@ -439,7 +533,7 @@ def test_psid_documentation_manifest():
         ):
             assert claimed in registry_hashes[pinned["file"]], pinned["file"]
     assert "cross_sec_weights_23.pdf" in " ".join(pinned_files)
-    # Every quoted document is archived here or pinned.
+    # Every document the research record quotes is archived or pinned here.
     known = pinned_files + [s["file"] for s in manifest["sources"]]
     assert {quote["file"] for quote in manifest["research_quotes"]} <= set(
         known
@@ -471,8 +565,8 @@ def test_faq_line_citations_count_lf_lines():
     manifest = json.loads((DOCS / "manifest.json").read_text())
     pairs = [
         (quote["question"], quote["line"])
-        for quote in manifest["research_quotes"]
-        if "line" in quote
+        for quote in manifest["research_quotes"] + manifest["spec_quotes"]
+        if quote["file"].endswith("FAQ_20260813.html")
     ]
     research = (ROOT / manifest["research_record"]).read_text(encoding="utf-8")
     pairs += [
