@@ -389,12 +389,6 @@ def test_interrupted_loader_writes_refusal_artifact(
     import importlib
 
     script = importlib.import_module(f"scripts.track_a_v2_{entry}")
-    if entry == "structural_count":
-        # Intended test bypass: the loader below only raises an invented
-        # interruption; no real input or engine call becomes reachable.
-        monkeypatch.setattr(
-            script, "refuse_unresolved_structural_execution", lambda: None
-        )
     checked = check(frozen)
     monkeypatch.setattr(script, "preflight", lambda **kwargs: checked)
 
@@ -432,7 +426,9 @@ def test_interrupted_loader_writes_refusal_artifact(
         assert artifact["attempt"]["uncomputed_draws"] == list(range(20))
 
 
-@pytest.mark.parametrize("extra", ["benefits", "weight_sums", "tabulations"])
+@pytest.mark.parametrize(
+    "extra", ["benefits", "weight_sums", "weighted_totals", "tabulations"]
+)
 def test_structural_script_refuses_extra_artifact_outputs(
     extra, frozen, tmp_path, monkeypatch
 ):
@@ -444,10 +440,6 @@ def test_structural_script_refuses_extra_artifact_outputs(
     frozen = structural_protocol(frozen)
     checked = check(frozen, mode="structural")
     monkeypatch.setattr(script, "preflight", lambda **kwargs: checked)
-    # Intended test bypass reaches only a fake loader and fake count result.
-    monkeypatch.setattr(
-        script, "refuse_unresolved_structural_execution", lambda: None
-    )
     monkeypatch.setattr(
         script, "load_registered_inputs", lambda *args: object()
     )
@@ -477,26 +469,55 @@ def test_structural_script_refuses_extra_artifact_outputs(
     assert set(written) == {"header", "attempt", "preflight"}
 
 
-def test_structural_script_refuses_unresolved_weight_arithmetic_before_loading(
+def test_structural_script_runs_invented_weighted_projection_end_to_end(
     frozen, tmp_path, monkeypatch
 ):
-    """The literal §16.7 conflict refuses before real loading or projection."""
-    from types import SimpleNamespace
+    """d603 permits weighted transitions; only frozen counts reach the file."""
+    from dataclasses import replace
 
+    from populace_dynamics.cola_track_a import benefits, invented
+    from populace_dynamics.engine import di_entitlement
     from populace_dynamics.track_a_v2 import structural
+    from populace_dynamics.track_a_v2.invented import invented_inputs
+    from populace_dynamics.track_a_v2.manifest import INVENTED_HEADER
+    from populace_dynamics.track_a_v2.structural_inputs import (
+        prepare_structural_cohort,
+    )
     from scripts import track_a_v2_structural_count as script
 
     frozen = structural_protocol(frozen)
-    checked = check(frozen, mode="structural")
-    monkeypatch.setattr(script, "preflight", lambda **kwargs: checked)
-    reached = []
-    monkeypatch.setattr(
-        script, "load_registered_inputs", lambda *args: reached.append("load")
+    monkeypatch.setattr(protocol, "git_output", lambda root, *a: fake_git(*a))
+    inputs = invented_inputs(seed=7)
+    inputs = replace(
+        inputs,
+        cohort=prepare_structural_cohort(
+            invented.invented_psid2010_inputs(seed=7),
+            data_provenance="invented",
+        ),
     )
+    loaded = []
+
+    def load_invented(checked):
+        assert checked.mode == "structural"
+        assert checked.protocol_sha256 == object_sha256(frozen)
+        assert Path(frozen["output"]).exists()
+        loaded.append(True)
+        return inputs
+
+    weighted_calls = []
+    unchanged_weighted_transition = di_entitlement._net_of_di_origin
+
+    def weighted_transition(*args, **kwargs):
+        weighted_calls.append(True)
+        return unchanged_weighted_transition(*args, **kwargs)
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError("structural projection requested benefits")
+
+    monkeypatch.setattr(benefits._Calculator, "_level", forbidden)
+    monkeypatch.setattr(script, "load_registered_inputs", load_invented)
     monkeypatch.setattr(
-        script,
-        "run_structural",
-        lambda *args, **kwargs: reached.append("project"),
+        di_entitlement, "_net_of_di_origin", weighted_transition
     )
     request = tmp_path / "invented-structural.json"
     request.write_text(json.dumps(frozen))
@@ -515,23 +536,56 @@ def test_structural_script_refuses_unresolved_weight_arithmetic_before_loading(
         ]
     )
     written = json.loads(Path(frozen["output"]).read_text())
-    assert reached == []
-    assert status == 2
-    assert (
-        written["attempt"]["refusal"] == protocol.STRUCTURAL_EXECUTION_CONFLICT
+    assert loaded == [True]
+    assert len(weighted_calls) == 20 * 20
+    assert status == 0
+    assert written["header"] == INVENTED_HEADER
+    assert written["attempt"]["status"] == "completed"
+    assert written["attempt"]["completed_draws"] == list(range(20))
+    structural.validate_structural_artifact(written)
+    assert set(written["counts"]) == set(protocol.STRUCTURAL_OUTPUTS)
+    assert set(written) == {
+        "header",
+        "protocol_sha256",
+        "attempt",
+        "count_units",
+        "counts",
+        "preflight",
+    }
+
+
+def test_structural_loader_requires_frozen_protocol_before_loading(
+    monkeypatch,
+):
+    """d603 removes no §11 input-binding or pre-execution prerequisite."""
+    from populace_dynamics.cohorts import psid2010
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError("population load occurred before freeze")
+
+    monkeypatch.setattr(psid2010, "load_psid2010_inputs", forbidden)
+    checked = protocol.PreflightRecord(
+        COMMIT, SPECIFICATION_SHA256, POINTER, "0" * 64, "structural"
     )
-    with pytest.raises(ValueError, match="§16.7 prohibits weight sums"):
+    with pytest.raises(ValueError, match="fully frozen protocol"):
         protocol.load_registered_inputs(checked)
-    monkeypatch.setattr(
-        structural.ProjectionEngine,
-        "project",
-        lambda *args, **kwargs: reached.append("engine"),
-    )
-    with pytest.raises(ValueError, match="§16.7 prohibits weight sums"):
-        structural.run_structural(
-            SimpleNamespace(
-                cohort=SimpleNamespace(data_provenance="registered_real")
-            ),
-            registration=checked,
-        )
-    assert reached == []
+
+
+@pytest.mark.parametrize(
+    "field",
+    [
+        "implementation_commit",
+        "specification_sha256",
+        "registration_pointer",
+        "procedure",
+        "attempt_policy",
+        "authorization",
+        "permitted_outputs",
+    ],
+)
+def test_structural_protocol_requires_pre_execution_record(frozen, field):
+    """The structural exception still requires its own complete frozen record."""
+    frozen = structural_protocol(frozen)
+    del frozen[field]
+    with pytest.raises(ValueError):
+        check(frozen, mode="structural")

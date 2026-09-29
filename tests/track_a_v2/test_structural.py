@@ -175,7 +175,15 @@ def test_structural_counts_are_independent_of_weights(weight):
 
 
 @pytest.mark.parametrize(
-    "extra", ["benefits", "weight_sum", "tabulations", "mean", "anything_else"]
+    "extra",
+    [
+        "benefits",
+        "weight_sum",
+        "weighted_totals",
+        "tabulations",
+        "mean",
+        "anything_else",
+    ],
 )
 def test_structural_outputs_refuse_every_extra_category(extra):
     """Intended violation: no amount, weight sum or extra output can escape."""
@@ -185,7 +193,9 @@ def test_structural_outputs_refuse_every_extra_category(extra):
         validate_count_outputs(counts)
 
 
-@pytest.mark.parametrize("mutation", ["amount", "row", "float", "negative"])
+@pytest.mark.parametrize(
+    "mutation", ["amount", "row", "float", "negative", "bool", "bin_bool"]
+)
 def test_structural_outputs_refuse_hidden_outcome_fields(mutation):
     """Even allowed containers accept only fixed nonnegative integer bins."""
     counts = copy.deepcopy(count_projection(*fixture()))
@@ -195,6 +205,10 @@ def test_structural_outputs_refuse_hidden_outcome_fields(mutation):
         counts["s_ordering_classes"]["unregistered/baseline"] = {}
     elif mutation == "float":
         counts["opening_proxy_applications"] = 1.0
+    elif mutation == "bool":
+        counts["opening_proxy_applications"] = True
+    elif mutation == "bin_bool":
+        counts["s_ordering_classes"]["R0/baseline"]["di_first"] = True
     else:
         counts["d_unsupported_histories"] = -1
     with pytest.raises(ValueError):
@@ -309,3 +323,82 @@ def test_interrupted_projection_preserves_completed_structural_counts(
         "count_units",
         "counts",
     }
+
+
+@given(
+    seed=st.integers(min_value=0, max_value=2**32 - 1),
+    draw=st.integers(min_value=0, max_value=19),
+)
+@settings(deadline=None, max_examples=10)
+def test_invented_projection_outputs_only_nonnegative_integer_counts(
+    seed, draw
+):
+    """Every generated projection exposes only permitted keys and count leaves."""
+    from populace_dynamics.track_a_v2.invented import invented_inputs
+    from populace_dynamics.track_a_v2.manifest import SPECIFICATION_SHA256
+    from populace_dynamics.track_a_v2.protocol import (
+        STRUCTURAL_OUTPUTS,
+        PreflightRecord,
+    )
+    from populace_dynamics.track_a_v2.structural import (
+        ORDERING_CLASSES,
+        run_structural,
+        validate_structural_artifact,
+    )
+
+    registration = PreflightRecord(
+        "1" * 40, SPECIFICATION_SHA256, "invented", "0" * 64, "structural"
+    )
+    artifact = run_structural(
+        invented_inputs(seed=seed),
+        registration=registration,
+        draw_indices=(draw,),
+    )
+    validate_structural_artifact(artifact)
+    counts = artifact["counts"]
+    assert set(counts) <= set(STRUCTURAL_OUTPUTS)
+    values = [
+        value for key, value in counts.items() if key != "s_ordering_classes"
+    ]
+    permitted_rows = {
+        f"{row}/{scenario}"
+        for row in [
+            *(f"R{i}" for i in range(6)),
+            *(f"F{i}" for i in range(8)),
+            *(f"U{i}" for i in range(3)),
+        ]
+        for scenario in ("baseline", "reform")
+    }
+    assert set(counts["s_ordering_classes"]) <= permitted_rows
+    for bins in counts["s_ordering_classes"].values():
+        assert set(bins) <= set(ORDERING_CLASSES)
+        values.extend(bins.values())
+    assert all(type(value) is int and value >= 0 for value in values)
+
+
+@pytest.mark.parametrize("mode", [None, "registered", "structural"])
+def test_structural_execution_retains_registration_and_input_binding(mode):
+    """Missing protocol or runtime bindings refuse before any projection."""
+    from populace_dynamics.track_a_v2.manifest import SPECIFICATION_SHA256
+    from populace_dynamics.track_a_v2.protocol import PreflightRecord
+    from populace_dynamics.track_a_v2.structural import run_structural
+
+    registration = (
+        None
+        if mode is None
+        else PreflightRecord(
+            "1" * 40, SPECIFICATION_SHA256, "invented", "0" * 64, mode
+        )
+    )
+    inputs = SimpleNamespace(
+        cohort=SimpleNamespace(data_provenance="registered_real")
+    )
+    with pytest.raises(
+        ValueError,
+        match=(
+            "frozen runtime-input binding"
+            if mode == "structural"
+            else "separately validated structural protocol"
+        ),
+    ):
+        run_structural(inputs, registration=registration)

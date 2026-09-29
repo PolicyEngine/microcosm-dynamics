@@ -40,23 +40,6 @@ FROZEN_ROWS = tuple(
         *(f"U{i}" for i in range(3)),
     )
 )
-STRUCTURAL_EXECUTION_CONFLICT = (
-    "a2-ratified-1 §16.7 prohibits weight sums, but the frozen mortality "
-    "projection computes weighted aggregates and diagnostics "
-    "(engine/di_entitlement.py:690–717); real structural execution requires "
-    "a ratified resolution before input loading"
-)
-
-
-def refuse_unresolved_structural_execution() -> None:
-    """Keep the literal §16.7 restriction until its engine conflict is resolved.
-
-    Weighted expected deaths at engine/di_entitlement.py:690–702 affect
-    transition probabilities; raw diagnostic sums at :713–717 are also
-    unconditional. Silently removing the former changes the frozen engine.
-    This barrier has no runtime bypass or implicit interpretation.
-    """
-    raise ValueError(STRUCTURAL_EXECUTION_CONFLICT)
 
 
 @dataclass(frozen=True)
@@ -326,9 +309,6 @@ def load_registered_inputs(registration: PreflightRecord):
     entry (scripts/run_fra68_registered.py:218–259), without its second
     population or a projection/benefit invocation.
     """
-    if registration.mode == "structural":
-        refuse_unresolved_structural_execution()
-
     from populace_dynamics.cohorts import psid2010
     from populace_dynamics.cola_track_a import (
         TrackAInputs,

@@ -1,9 +1,10 @@
 """Count-only input preparation for a2-ratified-1 §16.7.
 
 Compose the inherited A3 transformations, preserving projection inputs,
-without invoking A3/A5 diagnostics. Those diagnostics compute forbidden
-weight sums (cohorts/psid2010.py:1342–1346,2166 and
-cola_track_a/opening.py:599). No protected function is modified.
+without retaining A3/A5 diagnostic weight sums in the count-only path
+(cohorts/psid2010.py:1342–1346,2166 and cola_track_a/opening.py:599).
+Max's d603 ruling permits internal weighted arithmetic; its outputs remain
+restricted to the frozen structural counts. No protected function changes.
 """
 
 from __future__ import annotations
@@ -136,9 +137,9 @@ def _source_provenance(source, data_provenance):
 def prepare_structural_cohort(raw, *, data_provenance, config=None):
     """Preserve opening records and states without benefit or weight totals.
 
-    §16.7 forbids diagnostics even when discarded. Therefore compose
-    opening.py:555–584's input transformations directly, then construct
-    the same cohort with empty diagnostics. The opening-record helper
+    Compose opening.py:555–584's input transformations directly, then
+    construct the same cohort with empty diagnostics for the count-only
+    output boundary. The opening-record helper
     only copies an observed amount (:364–374), never a derived benefit.
     """
     config = config or TrackAConfig(rows=tuple(f"R{i}" for i in range(6)))

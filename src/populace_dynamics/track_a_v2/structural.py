@@ -2,7 +2,8 @@
 
 This module never asks a calculator for a PIA, benefit, weight total or
 tabulation. Its request discovery and filing classification use event and
-cohort metadata only. No structural run is performed during development.
+cohort metadata only. The unchanged projection may use weighted arithmetic
+under Max's d603 ruling; only invented inputs are used during development.
 """
 
 from __future__ import annotations
@@ -41,7 +42,6 @@ from .manifest import INVENTED_HEADER, REGISTERED_HEADER
 from .protocol import (
     STRUCTURAL_OUTPUTS,
     PreflightRecord,
-    refuse_unresolved_structural_execution,
 )
 
 ORDERING_CLASSES = (
@@ -377,12 +377,11 @@ def validate_structural_artifact(artifact: Mapping[str, Any]) -> None:
 def run_structural(
     inputs, *, registration: PreflightRecord, draw_indices=tuple(range(20))
 ):
-    """Project and count only; intentionally omit v1 weighted diagnostics.
+    """Run the unchanged projection and emit only §16.7 structural counts.
 
-    The otherwise shared cola_track_a.runner._project_population ends in
-    _draw_diagnostics (runner.py:624–629), which computes weighted DI
-    summaries. §16.7 forbids those, so use its identical engine/modules
-    directly, without invoking that diagnostic helper.
+    Max's d603 ruling permits the engine's weighted DI transitions. Use
+    the same engine/modules as cola_track_a.runner._project_population,
+    omitting its outcome diagnostics from this count-only path.
     """
     if not isinstance(registration, PreflightRecord) or registration.mode != (
         "structural"
@@ -391,7 +390,6 @@ def run_structural(
             "a separately validated structural protocol is required"
         )
     if inputs.cohort.data_provenance != "invented":
-        refuse_unresolved_structural_execution()
         registration.validate_inputs(inputs)
     if inputs.cohort.data_provenance != "invented" and tuple(draw_indices) != (
         tuple(range(20))
