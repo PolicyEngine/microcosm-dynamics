@@ -65,7 +65,7 @@ SUPPORT_SHARE = {"full_support": 1.0, "side_a": 0.5}
 
 #: M6 v4's published 2016/2018 floor sigma for ``earn_autocorr_lag2``, and
 #: its minimum weaker-half support count (persons), from
-#: ``docs/amendments/gate_m6_amendment_1_closed_domain_floors.md:72``.
+#: ``docs/amendments/gate_m6_amendment_1_closed_domain_floors.md:70``.
 #: Not B2 data; used only as a labelled planning illustration (Q5).
 M6_LAG2_FLOOR_SIGMA = 0.033346
 M6_LAG2_WEAKER_HALF_SUPPORT = 5636

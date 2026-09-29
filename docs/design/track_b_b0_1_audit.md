@@ -1,22 +1,40 @@
 # Track B B0.1: source, exposure, access and power audit for B2
 
-**Status: audit record for B2, not yet reviewed.** The structural-audit
-protocol at the end of this file was committed and pushed at `e51216f`
-before any count ran. The count script then ran once, from a clean
-worktree at that commit, and wrote `docs/design/track_b_b0_1_counts.json`.
-Every number below comes from that file unless another source is cited.
+**Status: audit record for B2, revision 1 (2026-09-29). It is a partial
+freeze, and B2 cannot register on it.** The structural-audit protocol at
+the end of this file was committed and pushed at `e51216f` before any
+count ran. The count script then ran once, from a clean worktree at that
+commit, and wrote `docs/design/track_b_b0_1_counts.json`. Every count
+below comes from that file unless another source is cited.
+
+Revision 1 answers the blinded review of the first version (`94623ee`).
+It changes no count and no byte of the protocol. It adds three things:
+
+- a mechanical exposure inventory,
+  `docs/design/track_b_b0_1_exposure_inventory.json`, written once by
+  `scripts/track_b_b0_1_exposure_inventory.py` from a clean worktree at
+  `de08c69`;
+- a power analysis that names its scoring basis for every figure
+  (`scripts/track_b_b0_1_review_power.py`);
+- an eighth question for Max.
+
+Section 15 lists each review finding and what changed.
 
 Verification class: **source audit** (design §3.2, line 144). It admits
-nothing scientific. Before B2 registers, the design requires two more
+nothing scientific. Before B2 registers, the design requires three more
 things:
 
+- a frozen record of all ten §5.2 elements plus the named power
+  procedure (design line 288). This record freezes four elements and
+  records a fifth; the rest wait on Max's rulings (section 2);
 - a blinded review of prospective feasibility and power (design §3.1
   row B0, line 120);
 - a B1 replay that clears B2's dependency (line 121). Whether a B1 v2
   "reconstructed reproduction" pass suffices is Max's pending decision
   d622 (`docs/design/track_b_b1_v2_amendment.md:75-79`).
 
-This record also leaves seven questions for Max (section 12).
+This record leaves eight questions for Max (section 12). Each states the
+facts, the options and a recommended default. None is decided here.
 
 "The design" means `microcosm-launch-evidence/dynasim-parity-20260909/trackb-design-20260928.md`
 (revision 3), which sits outside this repository. Max approved its §10
@@ -26,34 +44,55 @@ defaults in d515 on 2026-09-28. Design line numbers refer to that file.
 
 - **Sources.** B2 reads the PSID family files and the cross-year
   individual file already staged for M6. Every variable resolves under
-  the repository's label checks (section 4). The pinned 2010 NAWI prefix
-  in policyengine-us 1.752.2 matches the repository pin byte for byte.
+  the repository's label checks. The codebooks define head and spouse
+  labor income the same way in all three waves, except that the 2015
+  head entry no longer lists market gardening among its components
+  (section 4). The pinned 2010 NAWI prefix in policyengine-us 1.752.2
+  matches the repository pin byte for byte.
 - **Exposure.** Reference years 2012 and 2014 offer no unused
-  holdout. Two public selection ledgers ran the forward law from a 2010
-  pseudo-boundary and scored B2's own six M6-retained cells against
-  realized 2012 and 2014 earnings. One ledger includes candidate 3's
-  exact law (q = 0.55, ρ = −0.60). A third public artifact compared two
-  of those cells draw by draw. The ledgers also publish the
-  2010-boundary floor that B2 would derive for the six cells, and five
-  floor seeds for all 21 earnings cells (section 5).
+  holdout.
+  - The q\* and ρ\* selectors scored each pseudo-boundary b on reference
+    years b, b + 2 and b + 4. So boundary 2010 scored realized 2012 and
+    2014, and boundary 2008 scored realized 2012, on B2's six
+    M6-retained cells.
+  - Both public ledgers publish the floors, the truth moments and the
+    projected moments for every q and ρ rung at both boundaries.
+    Candidate 3's exact law (q = 0.55, ρ = −0.60) is one of the rungs.
+  - A scan of every tracked file finds 20 files that hold or may state
+    such content (section 5).
 - **Population.** The domain is 13,542 heads and spouses with a valid
   2010 row, drawn from 23,134 persons present with positive weight at
   the 2011 wave. B2 scores 10,165 rows at 2012 and 9,310 at 2014.
   These counts equal the committed selector ledgers' counts exactly
   (section 7).
-- **Power.** Under M6's own operating characteristic, a surface of 6
-  uncapped floor-derived cells has p_gate = 0.974 and one of 16 has
-  0.859, so the full battery cannot clear 0.90 without pruning. The design's §5.2 bound
-  rule and §5.4's M6 discipline conflict at M6's k = 3 tolerance: on
-  M6's side-A scoring basis a faithful cell passes the bound rule with
-  probability 0.48 alone and 0 in a family of 6 (section 11).
-- **§5.3 limits.** If applied to B2, lag-2 persistence at 0.05 is
-  infeasible on B2's support at every family size. Participation at 3
-  percentage points is feasible on Kish sizes for up to 6 cells but not
-  under the worst-case household bound (section 11).
-- **Seven open questions** need Max's ruling (section 12).
+- **Power under M6's operating characteristic.** A surface of 6 uncapped
+  floor-derived cells has p_gate = 0.974 and one of 16 has 0.859. So the
+  full battery cannot clear 0.90 without pruning (section 11.1).
+- **Power under §5.2's bound rule.** The answer depends on the scoring
+  basis and on the gap's standard-error convention, and the design fixes
+  neither (Q2). Take a faithful cell at M6's k = 3 tolerance, before
+  estimation error, for m = 1, 6 and 16 cells:
+  - under M6's convention it passes with probability 0.48, 0 and 0;
+  - on side-A scoring, with probability at least 0.898, 0.662 and 0.479,
+    so it misses 0.90 even for one cell;
+  - on full-support scoring, with probability at least 0.998, 0.986 and
+    0.967.
 
-## 2. The §5.2 elements and where this record freezes them
+  Estimation error lowers all three, and this audit does not bound it
+  (section 11.2).
+- **§5.3 limits.** Their text names B3's bands, not B2 (Q4). Even
+  applied to B2, sample sizes alone do not settle them. Each turns on a
+  planning value that this audit may not compute from 2012 or 2014: a
+  participation rate, a dispersion, or a correlation and its tails (Q5).
+  The first version's claim that lag-2 persistence at 0.05 is infeasible
+  at every family size is withdrawn (section 11.3).
+- **Freeze status.** Elements 1-3 and 10 are frozen and element 4 is
+  recorded. Elements 5-9 and the planning values wait on Q1-Q5 and Q8.
+  A post-ruling addendum, with its own blinded review, freezes the rest
+  before B2 registers (section 13).
+- **Eight open questions** need Max's ruling (section 12).
+
+## 2. The §5.2 elements and where this record stands on each
 
 Design §5.2 (lines 282-288) lists, for every empirical gate: source
 release, variables, population, exposure history, holdout partition,
@@ -66,16 +105,22 @@ power procedure.
 | Element | Section | Status |
 |---|---|---|
 | 1. Source release | 4 | Frozen |
-| 2. Variables | 4 | Frozen |
+| 2. Variables | 4 | Frozen; codebook concept check added in revision 1 |
 | 3. Population | 7 | Frozen |
-| 4. Exposure history | 5 | Recorded; its consequence needs Q1 |
-| 5. Holdout partition | 8 | Frozen; no unused partition exists |
-| 6. Critical cells | 9 | Candidate family frozen; surface needs Q1 |
-| 7. Numerical tolerances | 9 | Floor-derivation rule frozen; §5.3 use needs Q4 |
-| 8. Uncertainty treatment | 10 | Needs Q2 and Q3 |
-| 9. Pass conjunction | 10 | Inherited M6 conjunction recorded; needs Q2 |
+| 4. Exposure history | 5 | Recorded from a mechanical inventory; its consequences need Q1 and Q8 |
+| 5. Holdout partition | 8 | Open. Estimation and evaluation years are fixed; the split unit needs Q3; no unused partition exists (Q8) |
+| 6. Critical cells | 9 | Open. Candidate family listed; surface needs Q1 |
+| 7. Numerical tolerances | 9 | Open. Floor-derivation rule drafted; the role of §5.3 needs Q4 |
+| 8. Uncertainty treatment | 10 | Open. Needs Q2 and Q3 |
+| 9. Pass conjunction | 10 | Open. Inherited M6 conjunction recorded; needs Q2 |
 | 10. Reference dates vs availability | 4.3 | Frozen |
 | Named power procedure | 11 | Named; planning values need Q5 |
+
+"Frozen" means fixed by this record, subject to the blinded review. The
+record is therefore a partial freeze. Design line 288 says "A gate cannot
+register until its record is frozen", so this record supports the
+questions in section 12 and the post-ruling addendum, not B2's
+registration.
 
 ## 3. What B2 is
 
@@ -172,10 +217,37 @@ inside B2's window, both at the 2015 wave:
 - the spouse accuracy flag splits into wage and miscellaneous parts
   (`family.py:301-305`, `:539-548`).
 
-The loader treats both years' spouse income as one concept. This audit
-checked labels only. It did not check the codebooks for a change of
-concept. No pre-1994 concept seam lies inside B2's window
-(`family.py:25-32`).
+The loader treats both years' spouse income as one concept.
+
+**Codebook concept check (revision 1).** Revision 1 read the codebook
+definitions of the six labor-income variables in the staged
+`FAM2011ER`, `FAM2013ER` and `FAM2015ER` codebooks. Every digit was
+masked and each entry was cut off before its frequency table
+(section 14). What the definitions say:
+
+- All six define the concept as labor income "Excluding Farm and
+  Unincorporated Business Income". Each notes that farm income and the
+  labor portion of business income are not included, and that missing
+  data were assigned.
+- `ER52249` and `ER58050` are the wife's labor income. `ER65244` is the
+  "Spouse's/Partner's". The 2011 and 2013 wife entries list no
+  components. The 2015 spouse entry lists wages and salaries, bonuses,
+  overtime, tips, commissions, professional practice or trade,
+  additional job income and miscellaneous labor income.
+- The head entries `ER52237` (2011) and `ER58038` (2013) list those
+  components plus market gardening. `ER65216` (2015) does not list
+  market gardening.
+
+The concept therefore reads the same across B2's window. The one
+difference is that market gardening is absent from the 2015 component
+lists. Whether the 2015 instrument dropped or moved that component was
+not checked. B2's registration should record this check, definitions
+only.
+
+These codebook entries also print unweighted frequency tables, zero
+counts included. For the 2013 and 2015 waves those tables describe B2's
+target years, so a concept check must stop before them (Q6). No
+pre-1994 concept seam lies inside B2's window (`family.py:25-32`).
 
 ### 4.3 Reference dates, collection and availability (element 10)
 
@@ -195,7 +267,7 @@ income-reference years 2012 and 2014, collected in 2013 and 2015
 
 All staged files are retrospective releases, made 9 to 13 years after
 their reference years. The selectors record the same fact
-(`select_m6_qstar_train_only.py:645`). This audit did not verify any
+(`select_m6_qstar_train_only.py:646`). This audit did not verify any
 wave's first public release date, or when SSA first published NAWI for
 2010. B2 is therefore not a real-time or 2010-vintage exercise; §3.2
 already says so (design line 150).
@@ -216,51 +288,87 @@ already says so (design line 150).
 3. **M6 truth.** M6's change cells pair 2014 with 2016
    (`src/populace_dynamics/harness/m6_cells.py:37`, `:481`), so 2014
    levels entered M6's scored truth.
-4. **Train-only selection at pseudo-boundary 2010, on B2's own
+4. **Train-only selection at pseudo-boundaries 2008 and 2010, on B2's own
    estimand.** The q\* and ρ\* selectors refit the complete forward law
-   on rows dated ≤ 2010. They projected 2010 → 2012 → 2014 and scored
-   six cells against realized 2012 and 2014 earnings on the support B2
-   would use (`docs/design/m6_projection_engine.md:1076-1140`;
-   `select_m6_qstar_train_only.py:1410-1565`). The six cells are
-   `earn_p10.prime`, `earn_dlog_mean.prime`, `earn_dlog_sd.older`,
-   `earn_mob_h1_diag`, `earn_autocorr_lag2` and `earn_zero_rate.older`.
-   The objective J(q) summed standardized squared scores over boundaries
-   2006, 2008 and 2010 (`m6_projection_engine.md:1133-1140`). q = 0.55
-   was selected on it (`docs/design/m6_candidate3_program.md:202-228`).
+   on rows dated ≤ b. They then scored reference years b, b + 2 and
+   b + 4 (`select_m6_qstar_train_only.py:1444`): level cells on b + 2
+   and b + 4, and change cells over b → b + 2 → b + 4 (`:1475-1476`).
+   The six cells are `earn_p10.prime`, `earn_dlog_mean.prime`,
+   `earn_dlog_sd.older`, `earn_mob_h1_diag`, `earn_autocorr_lag2` and
+   `earn_zero_rate.older`.
+   - **Boundary 2010** projected 2010 → 2012 → 2014 and scored the six
+     cells against realized 2012 and 2014 earnings, on the support B2
+     would use (`docs/design/m6_projection_engine.md:1076-1140`;
+     `select_m6_qstar_train_only.py:1410-1565`).
+   - **Boundary 2008** projected 2008 → 2010 → 2012 and scored the same
+     cells on realized 2010 and 2012 levels and on the 2008 → 2010 →
+     2012 changes. Its 2012 level is one of B2's two level years, and
+     its 2010 → 2012 change is one of B2's two change steps. Both ledgers
+     record a `2012` key in `boundaries["2008"].support.truth_support_rows_by_period`.
+   - **Boundary 2006** scored reference years 2006 to 2010, all inside
+     B2's estimation window. It touches no B2 target year.
+   - The objective J(q) summed standardized squared scores over
+     boundaries 2006, 2008 and 2010 (`m6_projection_engine.md:1133-1140`),
+     and q = 0.55 was selected on it
+     (`docs/design/m6_candidate3_program.md:202-228`). The ρ\* selection
+     did the same over ρ rungs at fixed q = 0.55
+     (`m6_projection_engine.md` §2.7.8.5, from line 1415). Both ledgers
+     keep every rung's block at all three boundaries, so candidate 3's
+     law (ρ = −0.60) has 2008 and 2010 blocks.
 5. **F1 mechanism diagnostic.** At boundary 2010 with q = 0.55, it
    compared projected and realized 2012 and 2014 mean Δlog earnings
    (prime) and lag-2 autocorrelation, draw by draw. It carries the caveat
    that "the evaluated waves sat inside q\*'s selection evidence"
-   (`m6_candidate3_program.md:237-253`).
+   (`m6_candidate3_program.md:237-253`). The ρ\* ledger also carries a
+   `train_f1_analog_disclosure` block for every ρ rung at each of the
+   three boundaries.
 6. **The paper.** Figure `fig-m6-frontier` plots q\* objective
-   contributions summed over the three pseudo-boundaries, 2010 included
-   (`paper/paper.qmd:2246`; `scripts/build_paper_figures.py:571-625`).
-7. **Marital selectors at pseudo-boundary 2010.** The first-marriage
-   and remarriage selectors also used boundaries 2006, 2008 and 2010
-   (for example `docs/analysis/m6_first_marriage_c_selection.md`). They
-   bear on B4, not on B2's earnings surface, and are recorded here for
-   B0.2.
+   contributions summed over the three pseudo-boundaries, 2008 and 2010
+   included (`paper/paper.qmd:2238-2248`;
+   `paper/figures/m6_q_frontier.svg`;
+   `scripts/build_paper_figures.py:571-625`).
+7. **Prose restatements.** `m6_projection_engine.md` §2.7.8 (from line
+   1258) states boundary-2010 diagnostic outcomes in prose. The blinded
+   review reports a standardized cell score, a 2012 wage-index projection
+   error and a persistence diagnostic at lines 1266, 1290 and 1311.
+   Revision 1 confirmed only that those lines name boundary 2010 and
+   carry decimal numbers; it did not read them. The inventory (section
+   5.5) finds further value-bearing ranges in the same file and in 15
+   other text files, among them the candidate-2 and candidate-3
+   programs, both lock addenda and the q\* and ρ\* analysis notes.
+8. **Marital selectors at pseudo-boundaries 2008 and 2010.** The
+   first-marriage and remarriage selectors also used boundaries 2006,
+   2008 and 2010 (for example `docs/analysis/m6_first_marriage_c_selection.md`).
+   They bear on B4, not on B2's earnings surface, and are recorded here
+   for B0.2.
 
-### 5.2 What the committed artifacts contain for boundary 2010
+### 5.2 What the committed JSON artifacts contain for boundaries 2008 and 2010
 
-This audit read the artifacts' key names, metadata strings and count
-fields. It read no value field.
+The first version read the artifacts' key names, metadata strings and
+count fields. Revision 1 read the key names of the 2008 blocks and the
+rung blocks. Neither read a value field. Section 15.2 records both as a
+deviation from protocol input 6.
 
-| Artifact | SHA-256 | Merged | 2010-boundary content (by field name) |
+| Artifact | SHA-256 | Merged | Content at boundaries 2008 and 2010 (by field name) |
 |---|---|---|---|
-| `docs/analysis/m6_qstar_train_only_selection_results.json` | `d25b8e15…25bb` | #255, 2026-07-18 | 100-seed floor (mean, SD, realized σ, events) and full-support truth moments for the six cells; half-split scores and event counts at floor seeds 0-4 for all 21 earnings cells; aggregate projected moments and objective contributions for 21 q rungs |
-| `docs/analysis/m6_rhostar_train_only_selection_results.json` | `db7fe835…63ff` | #273, 2026-07-23 | Same floor, truth and seed-detail fields; aggregates for 17 ρ rungs at fixed q = 0.55, including ρ = −0.60, candidate 3's law |
-| `docs/analysis/m6_c3_f1_mechanism_diagnostic_results.json` | `dcd1bf35…a0bb` | #271, 2026-07-22 | Per-draw projected and realized mean Δlog (prime) and lag-2 autocorrelation at q = 0.55 |
+| `docs/analysis/m6_qstar_train_only_selection_results.json` | `d25b8e15…25bb` | #255, 2026-07-18 | Per boundary: the 100-seed floor (mean, SD, realized σ, events) and full-support truth moments for the six cells, and half-split scores and event counts at floor seeds 0-4 for all 21 earnings cells. Per boundary for each of 21 q rungs: the refit's fit record, projected aggregates for the six cells (all 20 draws and each half of them), a per-draw summary with moment ranges, truth moments, regeneration checks and objective contributions, delete-one included |
+| `docs/analysis/m6_rhostar_train_only_selection_results.json` | `db7fe835…63ff` | #273, 2026-07-23 | The same for 17 ρ rungs at fixed q = 0.55, ρ = −0.60 (candidate 3's law) included. Each rung also has per-draw transition-pair counts and a `train_f1_analog_disclosure` block at each boundary, and the ledger has a ρ = 0 equivalence preflight at each boundary |
+| `docs/analysis/m6_c3_f1_mechanism_diagnostic_results.json` | `dcd1bf35…a0bb` | #271, 2026-07-22 | Boundary 2010 only: per-draw projected and realized mean Δlog (prime) and lag-2 autocorrelation at q = 0.55 |
 
 The 21 cells in the seed detail are the 16 gateable cells plus 5
 report-only cells (section 9). The q\* reducer states that it removed the
 per-draw projected records
 (`m6_qstar_train_only_selection_results.json`, field `reducer.removed`).
 This audit did not check which cells the removed records covered.
-Across all tracked files, only these three artifacts hold 2010-boundary
-earnings content; the other matches are the marital selectors.
 
-The repository is public, so all three have been public since they
+Among tracked JSON artifacts, these three are the only ones with
+boundary-keyed earnings blocks or `pseudo_boundary` fields at 2008 or
+2010; the others the inventory finds are marital. A fourth JSON file,
+`docs/forecasts/timeline_ledger.json`, holds prose strings that name a
+boundary year or the train-only selector next to a number. Prose files
+are covered in section 5.5.
+
+The repository is public, so all of these have been public since they
 merged.
 
 ### 5.3 Who has seen them
@@ -269,26 +377,78 @@ merged.
   under Max Ghenis's GitHub account.
 - **Anyone reading the public repository or paper figure 5.**
 - **The Track B design's authors.** They state that 2012/2014 were
-  selection evidence (design lines 121, 150, 333). Their current-run
-  inventory (design lines 507-553) lists none of these artifacts, so this
-  audit has no evidence that they read the values.
-- **This audit's author.** See section 14.
+  selection evidence (design lines 121, 150, 333), and that outcomes
+  after all three pseudo-boundaries were used for selection (line 55).
+  Their current-run inventory (design lines 507-553) lists none of these
+  artifacts, so this audit has no evidence that they read the values.
+- **This audit's authors.** See section 14.
 
 ### 5.4 Consequences for B2
 
 - **No unused partition exists on B2's target years.** Design line 286:
   "Previously inspected outcomes remain regression evidence". §3.2
   already classes B2 as retrospective regression (design line 150).
+- **That meets the trigger of `EXPOSURE_UNRESOLVED`.** Design line 455
+  triggers the condition when "B0 cannot establish access or an unused
+  partition". It stops "That admission and its dependants", and "A
+  registered fallback may proceed only with its own narrower scope".
+  B2's dependants are H and B3L (design line 121). Whether B2's
+  retrospective-regression class answers the condition, or it blocks H
+  and B3L until a narrower fallback registers, is Q8.
 - **The six cells' floor already exists.** Under the default
   translation in section 9, B2's floor for the six M6-retained cells is
   by construction the floor the selectors published. The constructions
   match: same anchor, domain, split order, seeds, reducer, years and
   fixed weights (`select_m6_qstar_train_only.py:1416-1479`). The
   selectors published candidate-3-law outcomes on the same cells in the
-  same record.
+  same record, at boundary 2010 and, for realized 2012, at boundary
+  2008.
 - **What the ordering rule can still bind.** "Floors derived before
   candidate outcomes" (design line 332) can bind B2's own registered run,
   but not what is already public (Q1).
+
+### 5.5 Mechanical exposure inventory
+
+The first version built its exposure list by hand, and the review found
+it incomplete. Revision 1 replaces the list with
+`scripts/track_b_b0_1_exposure_inventory.py`. It was committed at
+`de08c69` and run once from a clean worktree at that commit. It scanned
+1,647 tracked files, leaving out the eight B0.1 files. It searched for
+six pattern families:
+
+- a pseudo-boundary;
+- the train-only phrase;
+- a boundary year (2006, 2008 or 2010);
+- the q\* or ρ\* selector names, or J(q) and J(ρ);
+- the F1 mechanism diagnostic;
+- the frontier figure.
+
+It records no line content, and no JSON value other than the boundary
+years. Its rules are:
+
+- **Targets.** A boundary touches B2's targets when one of its scored
+  periods b, b + 2 or b + 4 is 2012 or 2014. That makes boundaries 2008
+  and 2010 the relevant ones.
+- **JSON.** A JSON file is value-bearing when it has one of three
+  things:
+  - a non-marital block keyed by 2008 or 2010;
+  - a `pseudo_boundary` field equal to 2008 or 2010;
+  - a string that names the selection next to a decimal number or a
+    target year.
+- **Text.** A text range (hit lines ± 5) is value-bearing when it names
+  the selection and contains a decimal number or a target year. The
+  train-only phrase alone does not count as naming the selection.
+- **Marital.** Paths or keys about marriage, remarriage, widowhood,
+  divorce or dissolution are marital, which is B4's surface.
+- **Code.** Python source under `src/` and `scripts/` computes outcomes
+  rather than recording them, so it is listed as code. Test modules are
+  scanned as text.
+
+The result is 20 value-bearing files, 45 marital, 24 code and 31 that
+only mention a phrase. Section 15.4 lists the 20 value-bearing files and
+the parts a blinded reviewer should not open. The rules are
+deliberately broad: a range that names q\* next to 0.55 counts, so some
+listed ranges state only candidate 3's public parameters.
 
 ## 6. Access
 
@@ -428,7 +588,7 @@ These counts include every valid row. Cells on log earnings (quantiles,
 Δlog moments, mobility, autocorrelation) use only positive earners, so
 the counts above are upper bounds for those cells.
 
-## 8. Holdout partition (element 5)
+## 8. Holdout partition (element 5, open)
 
 - **Estimation.** Earnings rows with reference year ≤ 2010
   (`forward_earnings.py:1021-1024`), fitted at ages 25-64. NAWI is
@@ -439,11 +599,15 @@ the counts above are upper bounds for those cells.
   split "side A" and score it (`src/populace_dynamics/harness/m6_scoring.py:394-425`,
   `:624-733`). Floor seeds 0-99 split the full anchor into halves
   (`m6_cells.py:614-689`).
+- **Split unit, open.** Whether floor and gate seeds split by person, as
+  in M6, or by 2011 household is Q3. Until it is ruled, the partition is
+  not frozen.
 - **No unused partition.** Every evaluation row lies in the years
   section 5 lists as exposed. "'Later' or 'external' does not establish
-  an unused holdout" (design line 286).
+  an unused holdout" (design line 286). What that means for B2's
+  dependants is Q8.
 
-## 9. Cells and floor-derivation rule (elements 6 and 7)
+## 9. Cells and floor-derivation rule (elements 6 and 7, open)
 
 ### 9.1 The candidate cell family
 
@@ -468,14 +632,16 @@ The first six rows are the 16 gateable cells (metrics and caps:
 autocorrelation is undefined, as in M6 (`m6_cells.py:564-586`).
 
 Which of these cells B2 gates is open (Q1). The six M6-retained cells
-are the most exposed (section 5.2). The other ten have published
-five-seed floor detail at boundary 2010 but no published candidate
+are the most exposed: the ledgers hold candidate-3-law outcomes for them
+at boundaries 2008 and 2010 (section 5.2). The other ten have published
+five-seed floor detail at both boundaries but no published candidate
 outcome.
 
-### 9.2 Floor-derivation rule, to run before any B2 candidate outcome
+### 9.2 Draft floor-derivation rule, to run before any B2 candidate outcome
 
 This carries forward M6's discipline (design lines 330-333) with B2's
-years. It uses no 2016/2018 tolerance.
+years. It uses no 2016/2018 tolerance. The post-ruling addendum freezes
+it (section 13).
 
 1. B2's registration on #42 pins the floor builder's commit and this
    rule before the builder runs.
@@ -502,10 +668,11 @@ years. It uses no 2016/2018 tolerance.
    (`m6_cells.py:48`, `:691-698`, `:746-752`). Whether §5.3's limits
    also cap B2 is open (Q4).
 7. The surface is selected by the ruled rule (Q1). The builder computes
-   the operating characteristic of section 11 and requires p_gate ≥ 0.90
-   (`m6_cells.py:64`). It also applies the vacuity guards: not every
-   tolerance at its cap, and at least `MIN_GATED_CELLS_FOR_POWER`
-   cells where the ruling keeps that guard (`m6_cells.py:67`).
+   the operating characteristic of section 11 on the ruled basis (Q2)
+   and requires p_gate ≥ 0.90 (`m6_cells.py:64`). It also applies the
+   vacuity guards: not every tolerance at its cap, and at least
+   `MIN_GATED_CELLS_FOR_POWER` cells where the ruling keeps that guard
+   (`m6_cells.py:67`).
 8. The builder publishes the floor artifact and its hash. B2's candidate
    runs only after the floor is committed.
 
@@ -514,7 +681,7 @@ floor, and the five-seed detail must equal the published seed detail. A
 B2 build can test that differentially. That equality is also why the
 six-cell floor is not new information (section 5.4).
 
-## 10. Uncertainty treatment and pass conjunction (elements 8 and 9)
+## 10. Uncertainty treatment and pass conjunction (elements 8 and 9, open)
 
 **Inherited M6 rule** (design §5.4, lines 330-333):
 
@@ -538,12 +705,20 @@ conjunction.
 
 The two rules conflict in two ways, quantified in section 11:
 
-- **The pass rule.** At the k = 3 floor tolerance, a faithful candidate
-  almost never passes the bound rule on M6's side-A basis (Q2).
+- **The pass rule.** At the k = 3 floor tolerance, the bound rule's pass
+  probability depends on the scoring basis and on the gap's
+  standard-error convention. Under M6's convention, and on side A at the
+  upper-bound standard error, it falls below 0.90 before any estimation
+  error (Q2).
 - **The split unit.** M6 splits earnings by person
-  (`gates.yaml:5533-5537`), which places spouses in different halves.
-  §5.2 asks resampling to respect family clusters. In B2's domain, 4,635
-  of 13,542 persons share a 2011 household with a domain head (Q3).
+  (`gates.yaml:5533-5537`), which can place spouses in different halves.
+  §5.2 asks resampling to respect family clusters. B2's 13,542 domain
+  persons live in 8,907 2011 households, each with its domain head, so
+  all 4,635 domain spouses share a household with a domain head. If no
+  family holds more than one spouse or partner, 4,635 households hold
+  two domain persons, and 9,270 persons (68%) sit in two-person
+  clusters. The frozen record does not count persons per household, so
+  that condition is stated rather than verified (Q3).
 
 ## 11. Prospective power and feasibility
 
@@ -558,7 +733,30 @@ P(|gap| + z\* se ≤ tolerance | faithful), with se covering survey,
 simulation and estimation error.
 
 Everything below uses only sample sizes, weights and the rules' algebra.
-It uses no B2 outcome.
+It uses no B2 outcome. Revision 1's figures come from
+`scripts/track_b_b0_1_review_power.py`, which reads only the frozen
+record's sample sizes and reuses the frozen script's functions;
+`tests/test_track_b_b0_1_audit_record.py` pins every one.
+
+**Gap conventions.** σ is a cell's half-split floor σ, and K = 20.
+
+- **M6's convention.** A faithful cell's gap has standard error σ. M6's
+  operating characteristic treats the gap this way
+  (`m6_cells.py:701-734`), and so did the frozen record's bound-rule
+  column.
+- **Side A.** This is M6's scoring (section 10). A half's statistic has
+  variance σ²/2, and the mean of K draws adds 1/K of that. So the gap's
+  survey-plus-simulation standard error is at most
+  σ·√((1 + 1/K)/2) ≈ 0.725 σ.
+- **Full support.** The same on the whole domain: at most
+  σ·√(1 + 1/K)/2 ≈ 0.512 σ.
+
+The two scoring bases give upper bounds. Side-A truth and side-A
+projections start from the same persons' 2010 anchors, so the part of a
+statistic's sampling variation that the anchors explain cancels in the
+gap. A design-based resampled gap standard error would measure how much
+cancels, but it needs outcome data (Q5). No convention includes
+estimation error.
 
 ### 11.1 M6 rule: structural limits
 
@@ -588,161 +786,355 @@ from K = 4 or K = 8. K = 20 meets both.
 
 ### 11.2 §5.2 bound rule
 
-Tolerance/se needed for 0.90 power:
+A faithful cell passes when its gap plus z\* standard errors lies within
+the tolerance. At M6's k = 3 floor tolerance (2.606 σ), before
+estimation error, the pass probability is:
 
-| Family size m | z\* (Bonferroni 95%) | Needed tol/se | Pass probability at the k = 3 floor tolerance, side-A basis | k a floor tolerance would need |
-|---:|---:|---:|---:|---:|
-| 1 | 1.960 | 3.605 | 0.482 | 4.66 |
-| 6 | 2.638 | 4.283 | 0.000 | 5.78 |
-| 16 | 2.955 | 4.600 | 0.000 | 6.31 |
+| m | z\* (Bonferroni 95%) | Needed tol/se | M6 convention (se = σ) | Side A (se ≤ 0.725 σ) | Full support (se ≤ 0.512 σ) |
+|---:|---:|---:|---:|---:|---:|
+| 1 | 1.960 | 3.605 | 0.482 | ≥ 0.898 | ≥ 0.998 |
+| 6 | 2.638 | 4.283 | 0.000 | ≥ 0.662 | ≥ 0.986 |
+| 16 | 2.955 | 4.600 | 0.000 | ≥ 0.479 | ≥ 0.967 |
 
-On M6's own basis, where a faithful candidate's gap has the half-split
-σ, the k = 3 tolerance of 2.61 σ leaves a margin of 2.61 − z\* over the
-Bonferroni critical value. The pass probability falls from 0.48 at
-m = 1 to 0.28, 0.17, 0.09 and 0.02 at m = 2 to 5. From m = 6, z\*
-exceeds 2.61, so the bound rule cannot pass at all. These intermediate
-values come from the same functions and are outcome-free.
+The k a floor tolerance round(mean + k SD) needs for 0.90 power, before
+estimation error:
 
-The following figures were derived after the run from the frozen record
-by outcome-free arithmetic; they are not part of the frozen record.
-With full-support scoring instead of side A, the gap se is at least
-se_full × √(1 + 1/K), so the k = 3 tolerance is 5.09 of those units.
-The bound rule then passes with probability 0.998, 0.986 and 0.967 for
-m = 1, 6 and 16. That holds only if estimation uncertainty adds no more
-than 104%, 43% and 23% of that variance. This audit did not bound the
-estimation term (Q2).
+| m | M6 convention | Side A | Full support |
+|---:|---:|---:|---:|
+| 1 | 4.66 | 3.01 | 1.74 |
+| 6 | 5.78 | 3.82 | 2.32 |
+| 16 | 6.31 | 4.21 | 2.59 |
+
+- **M6's convention.** The pass probability falls from 0.48 at m = 1 to
+  0.28, 0.17, 0.09 and 0.02 at m = 2 to 5. From m = 6, z\* exceeds 2.61,
+  so the bound rule cannot pass at all. The first version reported only
+  this column. It is one end of the range, not the answer.
+- **Side A.** The conflict at m ≥ 6 is real but not total. At the
+  upper-bound standard error there is no room for estimation error at
+  any m. The largest estimation variance compatible with 0.90 power is
+  negative: −0.4%, −29% and −39% of the gap variance at m = 1, 6 and
+  16. The shared-anchor reduction could make room; its size needs
+  outcome data.
+- **Full support.** The bound rule reaches 0.90 if estimation error adds
+  at most 99%, 41% and 22% of the survey-plus-simulation gap variance
+  se_full²·(1 + 1/K) at m = 1, 6 and 16. The first version gave these as
+  104%, 43% and 23% "of that variance" without naming the reference,
+  which was se_full² alone.
+- **Estimation error.** Nothing here bounds it, and its size decides
+  whether any basis clears 0.90 (Q2).
 
 ### 11.3 §5.3 earnings limits evaluated on B2's support
 
 §5.3's earnings row (design line 312) was written for B3's bands at
-ages 62-69. Whether it applies to B2 is open (Q4). This section shows
-what it would demand. Each figure uses the bound rule with K = 20 and
-no estimation term, so each is a necessary condition only.
+ages 62-69. Whether it applies to B2 is Q4. This section shows what it
+would demand.
 
-**Participation, 3 percentage points, worst case p = 1/2.** Required
-n_eff is 3,790 for m = 1, 5,351 for m = 6 and 6,172 for m = 16.
+Each figure uses the bound rule with K = 20 and no estimation term.
+Adding estimation error can only raise a requirement, so in that
+respect the figures understate it. But each also fixes a planning
+quantity at a worst case or a normal-theory value, and in that respect
+it can overstate the requirement. The figures are therefore neither
+necessary nor sufficient conditions. They are bounds conditional on the
+stated planning value, and the first version was wrong to call them
+necessary conditions.
 
-| Cohort | Kish n_eff | Household-worst n_eff | Feasible at m = 1 / 6 / 16 (Kish) | Feasible (household-worst) |
-|---|---:|---:|---|---|
-| Prime | 6,122 | 2,303 | yes / yes / no | no at any m |
-| Older | 5,952 | 2,100 | yes / yes / no | no at any m |
+Side-A sizes are half the recorded full-support sizes. That is exact in
+expectation for the Kish size under a 50% person split, and
+conservative for the household-worst size.
+
+**Participation, 3 percentage points.** A cell with participation rate
+p needs an effective size of N(m)·4p(1 − p). N(m) = 3,790, 5,351 and
+6,172 for m = 1, 6 and 16 is the worst case, p = 1/2. The table gives
+the smallest p at which each size suffices; by symmetry the cell is also
+feasible at 1 − p. "Any" means every p.
+
+| Cohort and basis | Kish n_eff | Smallest feasible p (Kish), m = 1 / 6 / 16 | Household-worst n_eff | Smallest feasible p (household-worst), m = 1 / 6 / 16 |
+|---|---:|---|---:|---|
+| Prime, full support | 6,122 | any / any / 0.545 | 2,303 | 0.813 / 0.877 / 0.896 |
+| Older, full support | 5,952 | any / any / 0.594 | 2,100 | 0.834 / 0.890 / 0.906 |
+| Prime, side A | 3,061 | 0.719 / 0.827 / 0.855 | 1,152 | 0.917 / 0.943 / 0.951 |
+| Older, side A | 2,976 | 0.732 / 0.833 / 0.860 | 1,050 | 0.925 / 0.948 / 0.955 |
+
+So "fails under the household-worst bound" holds only for participation
+rates in a band around 1/2. The band runs from about 0.19-0.81 (full
+support, m = 1) to about 0.045-0.955 (side A, m = 16). Where B2's rates
+lie is a planning value (Q5).
 
 **Positive-earnings quantiles, 10% (tolerance ln 1.1).** Under a
 log-normal planning model with every row positive, the largest
 log-earnings SD a cell tolerates at m = 6 is:
 
-| Cohort | p10 or p90, Kish / worst | p50, Kish / worst |
-|---|---|---|
-| Prime | 0.99 / 0.61 | 1.36 / 0.83 |
-| Older | 0.98 / 0.58 | 1.34 / 0.79 |
+| Cohort | p10 or p90, full support (Kish / worst) | p10 or p90, side A | p50, full support | p50, side A |
+|---|---|---|---|---|
+| Prime | 0.99 / 0.61 | 0.70 / 0.43 | 1.36 / 0.83 | 0.96 / 0.59 |
+| Older | 0.98 / 0.58 | 0.69 / 0.41 | 1.34 / 0.79 | 0.95 / 0.56 |
 
 With positive share π, each limit scales by √π. Other family sizes are
 in the counts file. Feasibility turns on a dispersion planning value
 this audit may not compute from 2012 or 2014 (Q5).
 
-**Persistence correlation, 0.05.** Using the delta-method bound
-se(r) ≤ 1/√n, the required effective positive pairs are 5,458, 7,705
-and 8,887 for m = 1, 6 and 16.
+**Persistence correlation, 0.05.** The first version used the bound
+se(r) ≤ 1/√n and found that 5,458, 7,705 and 8,887 effective positive
+pairs are required for m = 1, 6 and 16. The bound has two problems:
 
-| Pairs | Kish n_eff | Household-worst n_eff | Minimum positive share, m = 1 / 6 / 16 (Kish) | Household-worst |
-|---|---:|---:|---|---|
-| Lag 1 (two-year steps, pooled) | 11,369 | 3,825 | 0.48 / 0.68 / 0.78 | above 1 at every m |
-| Lag 2 (2010-2014) | 5,310 | 3,448 | 1.03 / 1.45 / 1.67 | above 1 at every m |
+- Under normal theory se(r) = (1 − ρ²)/√n, so 1/√n is its value at
+  ρ = 0. The figures above are therefore the largest normal-theory
+  requirement, not a necessary condition.
+- For heavy-tailed data the variance of r is larger by a fourth-moment
+  factor λ. For elliptical distributions λ = 1 + κ, where κ is the
+  kurtosis parameter. So se(r) can exceed 1/√n.
 
-Lag-2 persistence at 0.05 cannot be met on B2's support at any family
-size, even if every pair were positive, under either effective size.
-Under the design's blocking rule (design line 445), that is a
-`WEAK_POWER_OR_VACUITY` case needing prospective rescoping before any
-candidate outcome (design line 454).
+The requirement is N0(m)·λ·(1 − ρ²)² effective positive pairs, where
+N0(m) is the figure above. With every pair positive, the cell is
+feasible when ρ is at least the value shown ("any" means every ρ ≥ 0).
+With positive-pair share s, replace n_eff by s·n_eff.
+
+| Pairs and basis | Size | n_eff | Smallest ρ, λ = 1, m = 1 / 6 / 16 | Smallest ρ, λ = 2, m = 1 / 6 / 16 |
+|---|---|---:|---|---|
+| Lag 1 (two-year steps, pooled), full support | Kish | 11,369 | any / any / any | any / 0.38 / 0.45 |
+| | household-worst | 3,825 | 0.40 / 0.54 / 0.59 | 0.64 / 0.71 / 0.73 |
+| Lag 1, side A | Kish | 5,685 | any / 0.38 / 0.45 | 0.53 / 0.63 / 0.66 |
+| | household-worst | 1,912 | 0.64 / 0.71 / 0.73 | 0.76 / 0.80 / 0.82 |
+| Lag 2 (2010-2014), full support | Kish | 5,310 | 0.12 / 0.41 / 0.48 | 0.55 / 0.64 / 0.67 |
+| | household-worst | 3,448 | 0.45 / 0.58 / 0.61 | 0.66 / 0.73 / 0.75 |
+| Lag 2, side A | Kish | 2,655 | 0.55 / 0.64 / 0.67 | 0.71 / 0.76 / 0.78 |
+| | household-worst | 1,724 | 0.66 / 0.73 / 0.75 | 0.78 / 0.82 / 0.83 |
+
+Two published facts bear on λ and on the planning value without using
+B2 data:
+
+- **The 1/√n bound is not established for PSID earnings.** M6 v4's
+  published 2016/2018 lag-2 floor has realized σ = 0.0333
+  (`gate_m6_amendment_1_closed_domain_floors.md:70`). So a half's
+  standard error was about 0.0236. That is at most 1/√n only if the
+  weaker half held fewer than about 1,800 effective positive 2014-2018
+  pairs. The recorded minimum weaker-half support is 5,636, which for
+  this cell counts persons in the change frame (`m6_cells.py:584`,
+  `:656-660`). That is an upper bound on pairs, so the published figures
+  do not settle it. Nothing in the record shows
+  that 1/√n bounds se(r) on real PSID earnings.
+- **M6's σ as a planning value (Q5).** On full support, that σ implies a
+  standard error of about 0.0167. Before estimation error, the bound
+  rule at 0.05 allows at most 0.0135, 0.0114 and 0.0106 at m = 1, 6 and
+  16. So lag-2 at 0.05 would need B2's effective positive-pair support
+  to be 1.52, 2.14 or 2.47 times M6's on full support, and 3.03, 4.28
+  or 4.94 times on side A. That points toward infeasibility. But it
+  rests on a planning value, and on a ratio of the two supports that
+  this audit has not measured.
+
+**Withdrawn.** The first version said lag-2 persistence at 0.05 "cannot
+be met on B2's support at any family size, even if every pair were
+positive, under either effective size". It then called that a
+`WEAK_POWER_OR_VACUITY` case needing prospective rescoping (design lines
+445, 454). Both statements rested on the 1/√n bound, and both are
+withdrawn. Whether any §5.3 limit is infeasible on B2's support is
+decided by the planning-value ruling (Q5), and matters only if Q4
+applies the limits to B2. Any rescoping still happens before any
+candidate outcome.
 
 ### 11.4 What this analysis does not settle
 
 - **Estimation uncertainty.** It is not bounded here. The fit uses
   321,500 rows dated ≤ 2010: that is the selectors' `fit_input_rows`,
   a count read from the ledgers.
-- **Planning values.** Positive-earner shares, log-earnings dispersion
-  and the true household design effect need planning values (Q5).
+- **Shared-anchor variance.** The side-A and full-support standard
+  errors are upper bounds. A design-based resampled gap standard error
+  needs outcome data.
+- **Planning values.** Participation rates, positive-earner shares,
+  log-earnings dispersion, the lag-1 and lag-2 correlations with their
+  fourth-moment factors, and the true household design effect (Q5).
 - **The blinded review.** It has not run (Q6).
 
 ## 12. Open questions for Max
 
+Each question gives the facts, the options and a recommended default.
+The defaults are proposals; none is adopted here.
+
 1. **Which cells does B2 gate, given the exposure in section 5?**
-   - The six M6-retained cells already have a public 2010-boundary
-     floor, public truth moments and public candidate-3-law outcomes.
-   - The other ten gateable cells have public five-seed floor detail
-     only.
+   - Facts:
+     - The six M6-retained cells have public floors, truth moments and
+       candidate-3-law outcomes at boundaries 2008 and 2010. Those cover
+       realized 2012 at both boundaries and realized 2014 at 2010.
+     - The other ten gateable cells have public five-seed floor detail
+       at both boundaries and no published candidate outcome.
    - Options:
      - (a) the six retained cells, knowing B2 largely re-scores a
        published computation with new draw seeds;
      - (b) the 16-cell battery, pruned by a candidate-blind rule on
-       B2's own floor, such as M6's ladder (`gates.yaml:5590-5599`);
-       on the half-normal basis at most 12 uncapped cells clear 0.90;
-     - (c) another candidate-blind rule.
-   - A related question: does "floors derived before candidate outcomes"
-     bind only B2's own registered run?
+       B2's own floor, such as M6's ladder (`gates.yaml:5590-5599`).
+       On M6's half-normal basis at most 12 uncapped cells clear 0.90;
+     - (c) the ten cells with no published candidate outcome, pruned
+       the same way;
+     - (d) another candidate-blind rule.
+   - **Recommended default: (b).** It is the floor, cap and power
+     discipline that design §5.4 says B2 carries forward, and it picks
+     cells without reference to any outcome. The six cells' exposure is
+     disclosed, not used to choose. (c) is the choice if re-scoring
+     published cells matters more than continuity with M6.
+   - Related: does "floors derived before candidate outcomes" bind only
+     B2's own registered run? **Recommended default: yes.** B2's floor
+     builder is pinned and committed before B2's candidate runs, and
+     the public selector floors are recorded as prior exposure.
 2. **How do §5.2's bound rule and §5.4's M6 discipline combine?**
-   - At M6's k = 3 tolerance on side-A scoring, a faithful cell passes
-     the bound rule with probability 0.48 alone and 0 in a family of 6
-     or 16.
+   - Facts: at the k = 3 tolerance, before estimation error, a faithful
+     cell passes the bound rule as follows (m = 1, 6 and 16):
+     - 0.48, 0 and 0 under M6's convention;
+     - at least 0.898, 0.662 and 0.479 on side A;
+     - at least 0.998, 0.986 and 0.967 on full support.
+
+     The estimation term is unbounded (section 11.2).
    - Options:
-     - the M6 rule alone;
-     - the bound rule with full-support scoring and a registered bound
-       on estimation uncertainty;
-     - a floor tolerance with k near 5.8 (m = 6);
-     - another composition.
+     - (a) the M6 rule alone (half-normal operating characteristic, 4
+       of 5 seeds), with the bound rule reported but not gating;
+     - (b) the bound rule on full-support scoring, keeping the k = 3
+       floor tolerance. The gap standard error would come from a
+       design-based, household-clustered resampling, with a registered
+       bound on estimation variance;
+     - (c) the bound rule on side-A scoring with a larger k, about 3.8
+       at m = 6 before estimation error;
+     - (d) another composition.
+   - **Recommended default: (b).** §5.2 requires the bound rule for
+     every empirical gate. Full support is the only basis on which the
+     k = 3 floor tolerance leaves room for estimation error: 41% of the
+     gap variance at m = 6.
+     - The default holds only if the post-ruling addendum bounds the
+       estimation term below that headroom, from ≤ 2010 data. If it
+       cannot, the gate is `WEAK_POWER_OR_VACUITY` and is rescoped
+       before any candidate outcome.
+     - (b) also replaces M6's side-A seed conjunction, which design
+       §5.4 says B2 carries forward. So it needs Max to rule that the
+       bound rule takes precedence.
 3. **Should the floor and gate seeds split by person, as M6 does, or by
-   2011 household, as §5.2's "respects family clusters" implies?** The
-   worst-case household design effect cuts effective sizes by a factor
-   of 1.5 to 3.0.
-4. **Do §5.3's earnings limits apply to B2 at all?** They were written
-   for B3's bands at ages 62-69. If they do apply:
-   - lag-2 persistence at 0.05 is infeasible on B2's support;
-   - lag-1 persistence needs a positive-pair share of at least 0.48 to
-     0.78;
-   - participation at 3 points fails under the household-worst bound.
-5. **Which planning values may the B2 registration use for dispersion,
-   positive shares and the household design effect?** Options:
-   - B2's own ≤ 2010 training window;
-   - M6's published 2016/2018 floor;
-   - none, keeping this audit's sample-size bounds.
+   2011 household, as §5.2's "respects family clusters" implies?**
+   - Facts: all 4,635 domain spouses share a household with a domain
+     head (section 10). The worst-case household design effect cuts
+     effective sizes by a factor of 1.5 to 3.0.
+   - Options: (a) by person; (b) by 2011 household.
+   - **Recommended default: (b).** §5.2 requires resampling to respect
+     family clusters, and a household split lets the floor σ carry the
+     cluster correlation instead of ignoring it.
+4. **Do §5.3's earnings limits apply to B2 at all?**
+   - Facts:
+     - §5.3's earnings row names B3's bands at ages 62-69, with B3L as
+       regression evidence.
+     - §5.4's B2 row specifies floor-derived tolerances.
+     - If the limits did apply, sample sizes alone would not settle
+       them. Participation fails under the household-worst bound only
+       for rates near 1/2. Persistence and quantile feasibility depend
+       on planning values (section 11.3).
+   - Options: (a) no; (b) yes, as caps on B2's floor-derived
+     tolerances.
+   - **Recommended default: (a),** on the text of §5.3 and §5.4. Section
+     11.3's figures then pass to B0.2 as inputs to B3's power review.
+5. **Which planning values may the B2 registration use?** The values
+   needed are participation rates, positive shares, dispersion, the
+   correlations and their fourth-moment factors, the household design
+   effect and an estimation-variance bound.
+   - Options:
+     - (a) B2's own ≤ 2010 estimation window, computed under a new,
+       frozen, outcome-blind protocol version;
+     - (b) M6's published 2016/2018 floor. It is not B2 data and is
+       available now, but it covers only the six retained cells, and
+       M6's population and years;
+     - (c) none, keeping this audit's conditional bounds, which cannot
+       decide feasibility.
+   - **Recommended default: (a), with (b) as a cross-check where a cell
+     exists.** Rows dated ≤ 2010 are already in B2's estimation window,
+     so they expose nothing about 2012 or 2014, and they describe B2's
+     own domain. This needs a new protocol version, because B0.1's
+     frozen protocol forbids counting zero or positive earnings for any
+     year.
 6. **Who performs the blinded review that design §3.1 requires for B0,
-   and what may that reviewer not open?** This audit's author is not
-   blind (section 14). A candidate exclusion list:
-   - the three 2010-boundary artifacts in section 5.2;
-   - `m6_candidate3_program.md:200-253`;
-   - paper figure `fig-m6-frontier`;
-   - the q\* and ρ\* analysis notes.
+   and what may that reviewer not open?** Neither this audit's first
+   author nor revision 1's author is blind (section 14).
+   - Options: (a) an independent review lane with no prior Track B or
+     M6-selection reading; (b) the validation-only lane pattern used
+     for held-out targets.
+   - **Recommended default: (a).** The reviewer is briefed with the
+     exclusion list in section 15.4, the inventory's `q6_exclusions`.
+     It must log every path it reads, as the U2 M1 builder did
+     (`docs/design/u2_m1_runtime_exposure.json`).
+     - The list covers 20 files, whole or by line range. It replaces
+       the first version's hand list, which missed boundary 2008,
+       `m6_projection_engine.md` §2.7.8, both lock addenda, the
+       candidate-2 program and `docs/forecasts/timeline_ledger.json`.
+     - The reviewer must not read the 2013 or 2015 family codebooks'
+       frequency tables for labor income or its components. Concept
+       checks use the variable descriptions only (section 4.2).
+     - The reviewer may run the inventory script, which prints no
+       content.
 7. **Is a count of the population H will start from part of B2's
-   registration, or does it move to B0.2 with H?** B2 scores only the
-   closed 2010 domain at ages 25-64. 950 domain persons under 25 and
-   1,526 aged 65+ at 2011 are projected but never scored at those ages.
-   982 and 1,672 in-support rows outside the domain at 2012 and 2014
-   are not scored at all.
+   registration, or does it move to B0.2 with H?**
+   - Facts:
+     - B2 scores only the closed 2010 domain at ages 25-64.
+     - 950 domain persons under 25 and 1,526 aged 65+ at 2011 are
+       projected but never scored at those ages.
+     - 982 and 1,672 in-support rows outside the domain at 2012 and
+       2014 are not scored at all.
+   - **Recommended default: B0.2 with H.** H's starting population is
+     one of H's elements, and B2's registration states its closed-domain
+     scope.
+8. **Does the finding that no unused partition exists fire
+   `EXPOSURE_UNRESOLVED` for B2?**
+   - Facts:
+     - Design line 455 triggers the condition when "B0 cannot establish
+       access or an unused partition". It stops "That admission and its
+       dependants", and "A registered fallback may proceed only with
+       its own narrower scope".
+     - Section 5.4 finds no unused partition on B2's target years.
+     - B2's dependants are H and B3L (design line 121).
+   - Options:
+     - (a) B2's retrospective-regression class (design line 150)
+       already admits no held-out claim, so the condition does not
+       apply to it;
+     - (b) the condition fires, and B2's registration is itself the
+       registered fallback. Before any candidate outcome, it registers
+       with the narrower §3.2 scope ("2010→2014 continuity on the
+       stated surface, ages 25–64. Not a 2010-vintage forecast"). It
+       states that H and B3L may rely on it only within that scope;
+     - (c) the condition fires and blocks B2's admission, H and B3L
+       until some other fallback registers.
+   - **Recommended default: (b).** It meets the condition's literal
+     trigger with the fallback clause the design provides, at the cost
+     of one explicit registration statement. (a) reads into line 455
+     an exemption its text does not state. (c) would block H and B3L
+     although B2 already claims only regression scope.
 
 d622, on B1 v2 unlocking B2, is already queued and is not repeated here.
 
 ## 13. Handoffs
 
+- **To the post-ruling B0.1 addendum.** After Max rules on Q1-Q5 and
+  Q8, an addendum does four things:
+  - freezes elements 5-9 and the planning values;
+  - derives the planning values under a new protocol version, if Q5
+    chooses (a);
+  - recomputes the named power procedure on the ruled basis;
+  - goes to its own blinded review.
+
+  B2 registers only on that frozen record (design line 288).
 - **To B0.2.**
   - Record B2's result as exposed before J's holdout is chosen (design
     lines 297, 368).
-  - The marital selectors' pseudo-boundary 2010 bears on B4.
+  - The marital selectors' pseudo-boundaries 2008 and 2010 bear on B4.
   - B3L's 2006 boundary coincides with a q\* and ρ\* pseudo-boundary
     whose floor and outcomes are also in the ledgers.
+  - Section 11.3's §5.3 figures, if Q4 assigns the limits to B3.
 - **To B2.**
   - State collection-wave age and the reference-year versus
     collection-wave mapping (section 4.3).
   - Label the wage vintage separately from `ols_log_nawi_2005_2014`.
   - Reuse the 80-file hash set in `b2_read_set_sha256` as its source
     pin.
+  - Record the codebook concept check, definitions only (section 4.2).
   - Carry the §2 candidate-3 disclosure in full.
 
 ## 14. Files read and this audit's exposure
 
-This audit read `RESTRICTED-FILES.md` first and opened no restricted
-file and no DYNASIM comparator value.
+Both authors read `RESTRICTED-FILES.md` before opening any evidence
+file, and opened no restricted file and no DYNASIM comparator value.
 
-It read:
+**First version.** It read:
 
 - design §§1-13;
 - d515 and d622 in the decision log;
@@ -766,19 +1158,139 @@ It read:
 From the three 2010-boundary artifacts it read key names, metadata
 strings, provenance, hashes and the count fields listed in the protocol.
 
-**Exposure.** `m6_candidate3_program.md:218-228`, read for this audit,
-states 2010-boundary objective contributions: the lag-2 autocorrelation
-term at q = 0.55 and q = 1, and the mobility term at q = 1. They are
-standardized squared scores of B2 cells on 2012 and 2014. This audit's
-author is therefore not blind to part of B2's candidate outcomes. The
-author also read M6 v4's 2016/2018 floor table, and a search printed one
-row of that amendment's candidate-1 seed-score table
-(`gate_m6_amendment_1_closed_domain_floors.md:143`). Neither is B2 data.
-The count run computed no B2 cell, floor or candidate outcome; its
+**First version's exposure.** `m6_candidate3_program.md:218-228`, read
+for this audit, states 2010-boundary objective contributions: the lag-2
+autocorrelation term at q = 0.55 and q = 1, and the mobility term at
+q = 1. They are standardized squared scores of B2 cells on 2012 and 2014.
+This audit's first author is therefore not blind to part of B2's
+candidate outcomes. The author also read M6 v4's 2016/2018 floor table,
+and a search printed one row of that amendment's candidate-1 seed-score
+table (`gate_m6_amendment_1_closed_domain_floors.md:143`). Neither is B2
+data. The count run computed no B2 cell, floor or candidate outcome; its
 `outcome_blind` block and the unit test pinning its invariance to
 earnings values record that.
 
-## 15. Protocol record
+**Revision 1.** Its author read:
+
+- the blinded review's findings;
+- design lines 25-60, 115-155, 275-340 and 435-470;
+- this audit, the count script's power and ledger-reading code, the
+  count record's power block and count fields, and the audit-record
+  test;
+- `select_m6_qstar_train_only.py:640-650` and `:1400-1480`;
+- `m6_cells.py:477-600`;
+- `family.py:596-620` and `:821-860`;
+- `gate_m6_amendment_1_closed_domain_floors.md:56-80`, M6 v4's
+  2016/2018 floor table, which is not B2 data.
+
+It read key names only in:
+
+- both ledgers' top levels, 2008 boundary blocks and rung blocks
+  (q = 0.55, ρ = −0.60), with their objective and F1-analog structure;
+- the F1 artifact;
+- the selection-evidence pointers in `runs/gate_m6_candidate3_v1.json`;
+- the candidate-2 conformance artifact's rows;
+- two `data/external/psid_codebook_field_evidence` files.
+
+It read structure without content:
+
+- section headings of `m6_projection_engine.md` (lines 1000-1560 and
+  4027-4300), `m6_candidate3_program.md` and the amendment-4 lock
+  addendum;
+- token-shape summaries of those files, `m6_candidate3_lock_addendum.md`,
+  the q\* and ρ\* notes, `paper.qmd` and string values in five JSON
+  files.
+  These list the matching pattern families and a count of decimal
+  numbers per line, with no line content.
+
+It also read the codebook definitions of `ER52237`, `ER52249`,
+`ER58038`, `ER58050`, `ER65216` and `ER65244`, with every digit masked
+and each entry cut off before its frequency table. The text extracts
+were deleted after use.
+
+**Revision 1's exposure.** Revision 1's author read no 2008- or
+2010-boundary value, truth moment, objective contribution or per-draw
+output, and no prose that states one. The token-shape summaries show
+only which lines carry numbers. The author did read M6 v4's 2016/2018
+floor table, which is not B2 data. A search for the lag-2 cell's name
+also printed two later lines of that amendment: `:143`, a row of M6
+candidate 1's 2016/2018 seed-score ranges, and `:165`, the v4 tolerance
+list. Neither is B2 data. The author has read the design, this audit
+and the exposure structure, so it is not a suitable blinded reviewer
+either.
+
+## 15. Revision 1: response to the blinded review
+
+### 15.1 Findings and what changed
+
+| # | Severity | Finding | Change |
+|---:|---|---|---|
+| 1 | medium | The exposure history left out boundary 2008, which scored realized 2012, the §2.7.8 prose and other restatements. "Only these three artifacts" held for JSON only | Sections 5.1, 5.2 and 5.5 and the Q6 list (section 15.4) now come from a mechanical inventory. The "only" claim is rescoped to JSON artifacts |
+| 2 | medium | §11.3 called worst-case and normal-theory bounds necessary conditions, and recommended `WEAK_POWER_OR_VACUITY` on that basis | Section 11.3 restates feasibility as a function of ρ, λ, s and p, adds M6's published σ as a labelled planning illustration, and withdraws the infeasibility claim and the recommendation. The summary, Q4 and Q5 follow |
+| 3 | medium | §11.2 and §11.3 used different, unstated scoring bases | Section 11 names the gap convention and basis for every figure. Q2 gives the full range |
+| 4 | medium | Element 5 was marked frozen, several elements were unfrozen, and "freezes" overstated the record | Section 2 marks the record a partial freeze and element 5 open. Section 13 plans a post-ruling addendum with its own blinded review. The PR body is corrected |
+| 5 | medium | `EXPOSURE_UNRESOLVED` was not addressed | Section 5.4 and Q8 |
+| 6 | low | No codebook concept check; frequency tables are an exposure risk | Section 4.2 and Q6 |
+| 7 | low | The count of persons in clusters was understated | Section 10, stated under the one-spouse-per-family condition the frozen record cannot verify |
+| 8 | low | The reference variance was unnamed, and post-run figures were unpinned | Section 11.2 names both references, and the audit-record test pins every revision-1 figure |
+| 9 | low | The deviation from protocol input 6 was undisclosed, and one citation was off by one | Section 15.2; the citation is now `select_m6_qstar_train_only.py:646` |
+
+### 15.2 Protocol deviation, recorded 2026-09-29
+
+Protocol input 6 says no ledger field beyond the listed count fields is
+read. The count script honoured it: `_ledger_support_counts` reads only
+those fields (`scripts/track_b_b0_1_counts.py:812-836`). The written
+audit did not. The first version read key names, metadata strings and
+provenance fields of both ledgers and of the F1 artifact, for example
+`reducer.removed`. Revision 1 read the key names of both ledgers' 2008
+boundary blocks and rung blocks, the rung labels, and the F1 artifact's
+key names. No value field was read. This is recorded as a deviation of the written audit from the
+frozen protocol. The protocol block itself stays byte-identical.
+
+### 15.3 What revision 1 added
+
+- `scripts/track_b_b0_1_exposure_inventory.py` and its one output,
+  `docs/design/track_b_b0_1_exposure_inventory.json` (section 5.5).
+- `scripts/track_b_b0_1_review_power.py` (section 11). It reads only the
+  frozen record's sample sizes and M6 v4's published lag-2 floor σ.
+- `tests/test_track_b_b0_1_revision1_tools.py`: invented-data and
+  property tests for both scripts.
+- New pins in `tests/test_track_b_b0_1_audit_record.py` for the
+  inventory's provenance and findings and for every revision-1 figure.
+
+### 15.4 The Q6 exclusion list
+
+These are the inventory's `q6_exclusions`, at `de08c69`. A file with 500
+or fewer lines, a JSON file or a figure is excluded whole. Otherwise
+the listed line ranges are.
+
+| File | Exclude |
+|---|---|
+| `docs/amendments/m6_amendment_4_qstar_lock_addendum.md` | whole file |
+| `docs/analysis/m6_c3_f1_mechanism_diagnostic_results.json` | whole file |
+| `docs/analysis/m6_candidate2_registered_abort_execution_v1.txt` | whole file |
+| `docs/analysis/m6_qstar_train_only_selection.md` | whole file |
+| `docs/analysis/m6_qstar_train_only_selection_results.json` | whole file |
+| `docs/analysis/m6_rhostar_train_only_selection.md` | whole file |
+| `docs/analysis/m6_rhostar_train_only_selection_results.json` | whole file |
+| `docs/design/m6_candidate2_program.md` | lines 431-452, 607-628, 661-692, 700-711, 855-876, 943-954, 957-980, 1003-1024 |
+| `docs/design/m6_candidate3_lock_addendum.md` | whole file |
+| `docs/design/m6_candidate3_program.md` | whole file |
+| `docs/design/m6_projection_engine.md` | lines 929-943, 1071-1090, 1168-1185, 1192-1216, 1261-1295, 1302-1327, 1338-1349, 1362-1378, 1396-1406, 1410-1421, 1424-1434, 1441-1476, 1487-1504, 1507-1526, 3485-3496, 4076-4100, 4108-4118 |
+| `docs/forecasts/timeline_ledger.json` | whole file |
+| `gates.yaml` | lines 5775-5785, 5888-5896 |
+| `paper/figures/m6_q_frontier.svg` | whole file |
+| `paper/paper.qmd` | lines 2233-2253 |
+| `tests/test_m6_c3_f1_mechanism_diagnostic.py` | whole file |
+| `tests/test_m6_candidate2_runner.py` | lines 160-170, 675-690, 722-740 |
+| `tests/test_m6_candidate3_runner.py` | lines 144-154, 662-699, 733-772 |
+| `tests/test_m6_qstar_selection.py` | lines 110-120, 742-752, 822-832, 838-848 |
+| `tests/test_m6_rhostar_selection.py` | lines 119-138, 205-215, 439-449 |
+
+Line ranges refer to the files at `de08c69`. If a listed file changes
+before the review, rerun the inventory to a new path.
+
+## 16. Protocol record
 
 The block below is byte-identical to the protocol committed at
 `e51216f` before any count ran. Its SHA-256, over the text from the

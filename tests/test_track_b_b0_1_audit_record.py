@@ -2,8 +2,13 @@
 
 The audit (docs/design/track_b_b0_1_audit.md) quotes counts and power
 figures from docs/design/track_b_b0_1_counts.json, which the count script
-wrote once from the protocol-freeze commit. These tests read only those
-two committed files and the script source.
+wrote once from the protocol-freeze commit. Revision 1 adds the exposure
+inventory (docs/design/track_b_b0_1_exposure_inventory.json, written once
+by scripts/track_b_b0_1_exposure_inventory.py) and basis-explicit power
+figures (scripts/track_b_b0_1_review_power.py). These tests read those
+committed files, the scripts, M6 v4's published floor table and, for the
+differential rescan, the value-bearing files the inventory names. They
+print nothing from those files.
 """
 
 from __future__ import annotations
@@ -19,6 +24,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import track_b_b0_1_counts as script  # noqa: E402
+import track_b_b0_1_exposure_inventory as inventory  # noqa: E402
+import track_b_b0_1_review_power as review_power  # noqa: E402
 
 AUDIT = ROOT / "docs" / "design" / "track_b_b0_1_audit.md"
 COUNTS = ROOT / "docs" / "design" / "track_b_b0_1_counts.json"
@@ -190,4 +197,347 @@ def test_audit_quotes_the_recorded_figures(record, audit_text):
         assert text in prose
     assert f"at most {rule['max_uncapped_cells_at_0_90']} uncapped" in (
         prose.lower()
+    )
+
+
+# --------------------------------------------------------------------------
+# Revision 1: the exposure inventory and the basis-explicit power figures
+# --------------------------------------------------------------------------
+
+INVENTORY = ROOT / "docs" / "design" / "track_b_b0_1_exposure_inventory.json"
+INVENTORY_SCRIPT = ROOT / "scripts" / "track_b_b0_1_exposure_inventory.py"
+#: The commit that added the inventory script; it ran once from there.
+INVENTORY_COMMIT = "de08c69f3383baa3159cba1dd6edd766a57f1c14"
+QSTAR = "docs/analysis/m6_qstar_train_only_selection_results.json"
+RHOSTAR = "docs/analysis/m6_rhostar_train_only_selection_results.json"
+F1 = "docs/analysis/m6_c3_f1_mechanism_diagnostic_results.json"
+M6_FLOORS = (
+    ROOT
+    / "docs"
+    / "amendments"
+    / ("gate_m6_amendment_1_closed_domain_floors.md")
+)
+
+
+@pytest.fixture(scope="module")
+def exposure():
+    return json.loads(INVENTORY.read_text(encoding="utf-8"))
+
+
+@pytest.fixture(scope="module")
+def by_path(exposure):
+    return {entry["path"]: entry for entry in exposure["files"]}
+
+
+@pytest.fixture(scope="module")
+def revision_power(record):
+    return review_power.review_power_record(record["counts"])
+
+
+def _prose(text: str) -> str:
+    return " ".join(text.split())
+
+
+def test_inventory_was_written_by_the_committed_script(exposure):
+    assert exposure["schema"] == inventory.SCHEMA
+    assert exposure["repository_head"] == INVENTORY_COMMIT
+    assert exposure["worktree_clean"] is True
+    digest = hashlib.sha256(INVENTORY_SCRIPT.read_bytes()).hexdigest()
+    assert (
+        exposure["script_sha256"] == digest
+    ), "the inventory script changed after its recorded run"
+    assert exposure["content_recorded"] is False
+
+
+def test_inventory_geometry_and_totals(exposure):
+    assert exposure["boundaries_touching_b2_targets"] == {
+        "2008": [2012],
+        "2010": [2012, 2014],
+    }
+    assert exposure["tracked_files_scanned"] == 1647
+    assert exposure["tier_counts"] == {
+        "boundary_values": 20,
+        "code": 24,
+        "marital": 45,
+        "mentions": 31,
+    }
+    assert all("track_b_b0_1" in p for p in exposure["excluded_self_paths"])
+    assert len(exposure["q6_exclusions"]) == 20
+
+
+@pytest.mark.parametrize(("path", "rungs"), [(QSTAR, 21), (RHOSTAR, 17)])
+def test_both_ledgers_hold_2008_and_2010_blocks(by_path, path, rungs):
+    entry = by_path[path]
+    assert entry["tier"] == "boundary_values"
+    blocks = {
+        block["path"]: block for block in entry["json"]["boundary_blocks"]
+    }
+    top = blocks["/boundaries/{year}"]
+    assert top["years"] == [2006, 2008, 2010]
+    assert top["earnings_cells"] and not top["marital"]
+    assert {"2012", "2014"} <= set(top["descendant_year_keys"])
+    rung = blocks["/rungs/{rung}/boundaries/{year}"]
+    assert rung["years"] == [2006, 2008, 2010]
+    assert rung["n_blocks"] == 3 * rungs
+    assert {"aggregates", "truth_moments", "floor"} <= set(rung["field_names"])
+    assert "/rungs/{rung}/objectives/all_20/by_boundary/{year}" in blocks
+
+
+def test_f1_artifact_is_a_2010_boundary_record(by_path):
+    entry = by_path[F1]
+    assert entry["tier"] == "boundary_values"
+    assert {
+        "path": "/protocol",
+        "values": [2010],
+        "n": 1,
+        "marital": False,
+    } in entry["json"]["pseudo_boundary_fields"]
+
+
+def _value_ranges(entry):
+    return [
+        (r["start"], r["end"])
+        for r in entry["ranges"]
+        if inventory.range_is_value_bearing(r)
+    ]
+
+
+def test_inventory_flags_the_prose_the_first_version_missed(by_path):
+    engine = _value_ranges(by_path["docs/design/m6_projection_engine.md"])
+    for line in (1266, 1290, 1311):
+        assert any(start <= line <= end for start, end in engine), line
+    paper = _value_ranges(by_path["paper/paper.qmd"])
+    assert any(start <= 2238 and 2248 <= end for start, end in paper)
+    for path in (
+        "docs/amendments/m6_amendment_4_qstar_lock_addendum.md",
+        "docs/design/m6_candidate3_lock_addendum.md",
+        "docs/design/m6_candidate3_program.md",
+        "docs/design/m6_candidate2_program.md",
+        "docs/forecasts/timeline_ledger.json",
+    ):
+        assert by_path[path]["tier"] == "boundary_values", path
+
+
+def _git_blob_sha1(path: Path) -> str:
+    data = path.read_bytes()
+    return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
+
+
+def test_inventory_rescan_agrees_for_unchanged_files(exposure):
+    """Differential: rescanning an unchanged value-bearing file reproduces
+    its recorded entry."""
+    checked = 0
+    for entry in exposure["files"]:
+        if entry["tier"] != "boundary_values":
+            continue
+        path = ROOT / entry["path"]
+        if not path.exists() or _git_blob_sha1(path) != entry["blob_sha1"]:
+            continue
+        fresh = inventory.scan_file(
+            entry["path"], path.read_text(encoding="utf-8")
+        )
+        expected = {k: v for k, v in entry.items() if k != "blob_sha1"}
+        assert fresh == expected, entry["path"]
+        checked += 1
+    assert checked >= 3
+
+
+def test_audit_lists_every_q6_exclusion(exposure, audit_text):
+    for item in exposure["q6_exclusions"]:
+        if item["scope"] == "whole_file":
+            row = f"| `{item['path']}` | whole file |"
+        else:
+            spans = ", ".join(f"{a}-{b}" for a, b in item["lines"])
+            row = f"| `{item['path']}` | lines {spans} |"
+        assert row in audit_text, row
+
+
+def test_audit_couples_figure(record, audit_text):
+    counts = record["counts"]
+    spouses = counts["domain_by_role"]["spouse"]
+    persons = counts["domain_persons"]
+    prose = _prose(audit_text)
+    assert (
+        f"{2 * spouses:,} persons ({round(100 * 2 * spouses / persons)}%)"
+        in (prose)
+    )
+
+
+def test_m6_planning_constants_match_the_published_floor():
+    row = M6_FLOORS.read_text(encoding="utf-8").splitlines()[69]
+    assert row.startswith("| `earn_autocorr_lag2` |")
+    assert str(review_power.M6_LAG2_FLOOR_SIGMA) in row
+    assert f"{review_power.M6_LAG2_WEAKER_HALF_SUPPORT:,}" in row
+
+
+def test_revision1_bound_rule_values(revision_power, record):
+    bound = revision_power["bound_rule_at_k3"]
+    frozen_rule = record["power"]["section_5_2_bound_rule"]
+    pinned = {
+        "1": (0.4819, 0.8984, 0.9982),
+        "6": (0.0, 0.6623, 0.9857),
+        "16": (0.0, 0.4791, 0.967),
+    }
+    for m, values in pinned.items():
+        got = tuple(
+            bound[m][basis]["pass_probability_no_estimation"]
+            for basis in review_power.BASES
+        )
+        assert got == values
+        assert bound[m]["m6_convention"][
+            "pass_probability_no_estimation"
+        ] == pytest.approx(
+            frozen_rule[m][
+                "pass_probability_at_m6_floor_tolerance_gap_sigma_half"
+            ],
+            abs=1e-4,
+        )
+    assert revision_power["full_support_headroom_share_of_se_full_sq"] == {
+        "1": 1.041,
+        "6": 0.4311,
+        "16": 0.2341,
+    }
+
+
+def test_audit_quotes_the_revision1_power_figures(
+    revision_power, record, audit_text
+):
+    prose = _prose(audit_text)
+    bound = revision_power["bound_rule_at_k3"]
+    frozen_rule = record["power"]["section_5_2_bound_rule"]
+    for m in ("1", "6", "16"):
+        cells = [
+            f"{bound[m][basis]['pass_probability_no_estimation']:.3f}"
+            for basis in review_power.BASES
+        ]
+        row = (
+            f"| {m} | {frozen_rule[m]['bonferroni_z']:.3f} | "
+            f"{frozen_rule[m]['required_tol_over_se']:.3f} | {cells[0]} | "
+            f"≥ {cells[1]} | ≥ {cells[2]} |"
+        )
+        assert row in audit_text, row
+        ks = " | ".join(
+            f"{bound[m][basis]['k_needed']:.2f}"
+            for basis in review_power.BASES
+        )
+        assert f"| {m} | {ks} |" in audit_text
+    over_gap = ", ".join(
+        f"{round(100 * bound[m]['full_support']['estimation_headroom_share_of_gap_variance'])}%"
+        for m in ("1", "6")
+    )
+    assert f"{over_gap} and 22%" in prose
+    side_a = [
+        bound[m]["side_a"]["estimation_headroom_share_of_gap_variance"]
+        for m in ("1", "6", "16")
+    ]
+    assert f"−{abs(side_a[0]) * 100:.1f}%" == "−0.4%"
+    assert [round(100 * v) for v in side_a[1:]] == [-29, -39]
+    assert "−0.4%, −29% and −39%" in prose
+    assert "104%, 43% and 23%" in prose
+
+    participation = revision_power["participation_3pp"]["by_cell"]
+
+    def thresholds(key):
+        values = participation[key]["min_p"]
+        return " / ".join(
+            "any" if values[m] == 0.5 else f"{values[m]:.3f}"
+            for m in ("1", "6", "16")
+        )
+
+    for cohort, label in (("prime", "Prime"), ("older", "Older")):
+        for basis, basis_label in (
+            ("full_support", "full support"),
+            ("side_a", "side A"),
+        ):
+            kish = f"{cohort}.{basis}.kish_n_eff"
+            worst = f"{cohort}.{basis}.cluster_worst_n_eff"
+            row = (
+                f"| {label}, {basis_label} | "
+                f"{participation[kish]['n_eff']:,} | {thresholds(kish)} | "
+                f"{participation[worst]['n_eff']:,} | {thresholds(worst)} |"
+            )
+            assert row in audit_text, row
+
+    quantiles = revision_power["quantile_10pct_max_log_sd_m6"]
+    for cohort, label in (("prime", "Prime"), ("older", "Older")):
+        cells = []
+        for q in ("p10", "p50"):
+            kish = quantiles[f"{cohort}.{q}.kish_n_eff"]
+            worst = quantiles[f"{cohort}.{q}.cluster_worst_n_eff"]
+            cells.append(
+                f"{kish['full_support']:.2f} / {worst['full_support']:.2f}"
+            )
+            cells.append(f"{kish['side_a']:.2f} / {worst['side_a']:.2f}")
+        row = f"| {label} | " + " | ".join(cells) + " |"
+        assert row in audit_text, row
+
+    persistence = revision_power["persistence_0_05"]["by_pairs"]
+
+    def rhos(values):
+        return " / ".join(
+            "any" if values[m] == 0.0 else f"{values[m]:.2f}"
+            for m in ("1", "6", "16")
+        )
+
+    labels = {
+        (
+            "lag1",
+            "full_support",
+        ): "Lag 1 (two-year steps, pooled), full support",
+        ("lag1", "side_a"): "Lag 1, side A",
+        ("lag2", "full_support"): "Lag 2 (2010-2014), full support",
+        ("lag2", "side_a"): "Lag 2, side A",
+    }
+    for (lag, basis), label in labels.items():
+        kish = persistence[f"{lag}.{basis}.kish_n_eff"]
+        worst = persistence[f"{lag}.{basis}.cluster_worst_n_eff"]
+        first = (
+            f"| {label} | Kish | {kish['n_eff']:,} | "
+            f"{rhos(kish['min_rho_normal'])} | "
+            f"{rhos(kish['min_rho_factor_2'])} |"
+        )
+        second = (
+            f"| | household-worst | {worst['n_eff']:,} | "
+            f"{rhos(worst['min_rho_normal'])} | "
+            f"{rhos(worst['min_rho_factor_2'])} |"
+        )
+        assert first in audit_text, first
+        assert second in audit_text, second
+
+    plan = revision_power["m6_lag2_planning_illustration"]
+    assert f"about {plan['se_per_half']:.4f}" in prose
+    assert f"about {plan['se_full_support']:.4f}" in prose
+    by_m = plan["by_family_size"]
+    allowed = [f"{by_m[m]['se_full_allowed']:.4f}" for m in ("1", "6", "16")]
+    assert f"{allowed[0]}, {allowed[1]} and {allowed[2]}" in prose
+    full = [
+        f"{by_m[m]['support_multiple_of_m6_needed_full_support']:.2f}"
+        for m in ("1", "6", "16")
+    ]
+    side = [
+        f"{by_m[m]['support_multiple_of_m6_needed_side_a']:.2f}"
+        for m in ("1", "6", "16")
+    ]
+    assert f"{full[0]}, {full[1]} or {full[2]} times M6's" in prose
+    assert f"{side[0]}, {side[1]} or {side[2]} times on side A" in prose
+    pairs = plan["pairs_below_which_se_half_is_within_1_over_sqrt_n"]
+    assert f"about {round(pairs, -2):,.0f} effective positive" in prose
+
+    summary = {
+        basis: [
+            bound[m][basis]["pass_probability_no_estimation"]
+            for m in ("1", "6", "16")
+        ]
+        for basis in review_power.BASES
+    }
+    assert "probability 0.48, 0 and 0" in prose
+    side_a = summary["side_a"]
+    assert side_a[0] < 0.90
+    side_a_text = f"{side_a[0]:.3f}, {side_a[1]:.3f} and {side_a[2]:.3f}"
+    assert f"at least {side_a_text}, so it misses 0.90" in prose
+    assert f"at least {side_a_text} on side A" in prose
+    full_summary = ", ".join(f"{v:.3f}" for v in summary["full_support"][:2])
+    assert (
+        f"at least {full_summary} and {summary['full_support'][2]:.3f}"
+        in prose
     )
