@@ -54,6 +54,18 @@ def statutory_di_pia(history, *, birth_year, eligibility_year, params):
     )
 
 
+def attach_attempt(error, counters, person_id):
+    """§10: an interrupted person keeps its counters and identity.
+
+    Any failure or interruption inside a per-person body carries the
+    collector's cumulative counters. An inner person attribution, such as
+    a linked spouse's refusal, is kept rather than replaced.
+    """
+    error.counters = dict(counters)
+    if not hasattr(error, "person_id"):
+        error.person_id = person_id
+
+
 def pia_parameter_fingerprint(params, eligibility_year):
     """§4.3: bind AWI, wage bases, actual bend points, and PIA factors."""
     return hashlib.sha256(
@@ -317,55 +329,59 @@ def collect_reference_benefit_rows(
     )
     rows = []
     for pid in sorted(int(i) for i in lookups.final.index):
-        state = lookups.final.loc[pid]
-        opener = context.cohort.opening.get(pid)
-        intact = opener is not None and not (
-            opener.status == "disabled_worker"
-            and nullable(state.di_recovery_year) is not None
-        )
-        statics = context.cohort.persons_by_id.loc[pid]
-        receipt = statics.ss_receipt_opening
-        if opener is not None and not intact:
-            counters["opening_di_basis_ended_by_recovery"] += 1
-        if opener is None and not pd.isna(receipt) and bool(receipt):
-            counters["opening_recipient_without_record"] += 1
-        components, count = (
-            calculator.opening_person(opener, state)
-            if intact
-            else calculator.projected_person(pid, state)
-        )
-        basis = "opening_stock" if intact else "projected"
-        base = sum(pair[0] for pair in components.values())
-        reform = sum(pair[1] for pair in components.values())
-        if base > 0:
-            counters[f"beneficiaries_{basis}"] += 1
-            if (
-                intact
-                and opener.entitlement_clamped
-                and row.exposure_clock is sb.ExposureClock.ENTITLEMENT
-            ):
-                counters["beneficiaries_opening_entitlement_clamped"] += 1
-            if pd.isna(receipt):
-                counters["beneficiaries_ss_opening_year_unobserved"] += 1
-        rows.append(
-            {
-                "draw": int(draw),
-                "person_id": pid,
-                "family_unit_id": int(statics.family_unit_id),
-                "weight": float(state.weight),
-                "birth_year": int(state.birth_year),
-                "beneficiary_base": base > 0,
-                "beneficiary_reform": reform > 0,
-                "benefit_base": 12 * base,
-                "benefit_reform": 12 * reform,
-                "benefit_components": {
-                    name: {"base": 12 * pair[0], "reform": 12 * pair[1]}
-                    for name, pair in components.items()
-                },
-                "basis": basis,
-                "reduced_increases": count,
-            }
-        )
+        try:
+            state = lookups.final.loc[pid]
+            opener = context.cohort.opening.get(pid)
+            intact = opener is not None and not (
+                opener.status == "disabled_worker"
+                and nullable(state.di_recovery_year) is not None
+            )
+            statics = context.cohort.persons_by_id.loc[pid]
+            receipt = statics.ss_receipt_opening
+            if opener is not None and not intact:
+                counters["opening_di_basis_ended_by_recovery"] += 1
+            if opener is None and not pd.isna(receipt) and bool(receipt):
+                counters["opening_recipient_without_record"] += 1
+            components, count = (
+                calculator.opening_person(opener, state)
+                if intact
+                else calculator.projected_person(pid, state)
+            )
+            basis = "opening_stock" if intact else "projected"
+            base = sum(pair[0] for pair in components.values())
+            reform = sum(pair[1] for pair in components.values())
+            if base > 0:
+                counters[f"beneficiaries_{basis}"] += 1
+                if (
+                    intact
+                    and opener.entitlement_clamped
+                    and row.exposure_clock is sb.ExposureClock.ENTITLEMENT
+                ):
+                    counters["beneficiaries_opening_entitlement_clamped"] += 1
+                if pd.isna(receipt):
+                    counters["beneficiaries_ss_opening_year_unobserved"] += 1
+            rows.append(
+                {
+                    "draw": int(draw),
+                    "person_id": pid,
+                    "family_unit_id": int(statics.family_unit_id),
+                    "weight": float(state.weight),
+                    "birth_year": int(state.birth_year),
+                    "beneficiary_base": base > 0,
+                    "beneficiary_reform": reform > 0,
+                    "benefit_base": 12 * base,
+                    "benefit_reform": 12 * reform,
+                    "benefit_components": {
+                        name: {"base": 12 * pair[0], "reform": 12 * pair[1]}
+                        for name, pair in components.items()
+                    },
+                    "basis": basis,
+                    "reduced_increases": count,
+                }
+            )
+        except (Exception, KeyboardInterrupt) as error:
+            attach_attempt(error, counters, pid)
+            raise
     return rows, counters
 
 
@@ -399,44 +415,48 @@ def scenario_benefits(
     )
     out = {}
     for pid in sorted(int(i) for i in lookups.final.index):
-        state = lookups.final.loc[pid]
-        opener = context.cohort.opening.get(pid)
-        intact = opener is not None and not (
-            opener.status == "disabled_worker"
-            and nullable(state.di_recovery_year) is not None
-        )
-        if intact:
-            components, ratio = calculator.opening_scenario(opener, state)
-            label = next(iter(components))
-            if (
-                opener.component == "disabled_worker"
-                and label == "retired_worker"
-            ):
-                label = "converted_di"
-            out[pid] = fra.PersonScenario(
-                components,
-                "opening_stock",
-                f"opening_{label}",
-                opener.entitlement_year,
-                None,
-                ratio,
+        try:
+            state = lookups.final.loc[pid]
+            opener = context.cohort.opening.get(pid)
+            intact = opener is not None and not (
+                opener.status == "disabled_worker"
+                and nullable(state.di_recovery_year) is not None
             )
-            continue
-        pairs, _ = calculator.projected_person(pid, state)
-        own = calculator.own_record_uncounted(pid, state)
-        paid = (
-            own is not None
-            and own.entitlement_year <= context.config.reference_year
-        )
-        out[pid] = fra.PersonScenario(
-            {name: value[0] for name, value in pairs.items()},
-            "projected",
-            own.kind if paid else None,
-            own.entitlement_year if paid else None,
-            (
-                min(own.entitlement_year - int(state.birth_year), 70)
-                if paid and own.kind == "retired"
-                else None
-            ),
-        )
+            if intact:
+                components, ratio = calculator.opening_scenario(opener, state)
+                label = next(iter(components))
+                if (
+                    opener.component == "disabled_worker"
+                    and label == "retired_worker"
+                ):
+                    label = "converted_di"
+                out[pid] = fra.PersonScenario(
+                    components,
+                    "opening_stock",
+                    f"opening_{label}",
+                    opener.entitlement_year,
+                    None,
+                    ratio,
+                )
+                continue
+            pairs, _ = calculator.projected_person(pid, state)
+            own = calculator.own_record_uncounted(pid, state)
+            paid = (
+                own is not None
+                and own.entitlement_year <= context.config.reference_year
+            )
+            out[pid] = fra.PersonScenario(
+                {name: value[0] for name, value in pairs.items()},
+                "projected",
+                own.kind if paid else None,
+                own.entitlement_year if paid else None,
+                (
+                    min(own.entitlement_year - int(state.birth_year), 70)
+                    if paid and own.kind == "retired"
+                    else None
+                ),
+            )
+        except (Exception, KeyboardInterrupt) as error:
+            attach_attempt(error, counters, pid)
+            raise
     return out, counters
