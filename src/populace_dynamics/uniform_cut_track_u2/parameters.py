@@ -33,13 +33,19 @@ an invented run, invented values).  For a registered run it also checks
 content, not labels: every threshold, SSI parameter and life-table
 ``qx`` must equal the values read afresh from the pinned files
 (:func:`parameters_content_sha256`), so a bundle that keeps the pinned
-provenance but alters one value refuses (review round 1, finding 3).
+provenance but alters one value refuses (review round 1, finding 3).  The
+digest reads only the pinned loaders' exact types, so no extra key,
+subclass or shadowing attribute can hide an altered value, and a
+registered run computes with the fresh read, never the caller's objects
+(review round 2).
 """
 
 from __future__ import annotations
 
+import dataclasses
 import hashlib
 import json
+import math
 import re
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -386,81 +392,204 @@ def _canonical_sha256(value: Any) -> str:
     return _sha256(encoded.encode("utf-8"))
 
 
+# Review round 2, finding 1: the digest's domain is exactly what the pinned
+# loaders build (``load_u2_thresholds``, ``load_u2_ssi_parameters`` and the
+# inherited life-table loaders, ``adjusted_poverty.py:763-815``).  The
+# round-1 digest stringified keys with ``int()``/``str()``, so a key such as
+# ``2012.5`` or ``"2012"`` could stand beside the real ``2012``, hold the
+# pinned value and hide an altered one the estimator reads by exact key
+# (``adjusted_poverty.py:1033-1054``, ``:1069-1075``); a mapping or tuple
+# subclass, a parameter subclass or an instance attribute could likewise
+# keep the pinned fields while a lookup, slice or method
+# (``fbr_annual``, ``resource_limit``) read other numbers.  Refusing every
+# other type makes the key stringification injective and leaves nothing
+# but the digested fields for the estimator to read.
+def _exact_instance(value: Any, cls: type, what: str) -> Any:
+    if type(value) is not cls:
+        raise U2ParameterError(
+            f"{what} is a {type(value).__qualname__}, not exactly "
+            f"{cls.__qualname__}: a subclass can override the lookups and "
+            "methods the estimator reads, so a registered bundle holds only "
+            "the pinned loaders' classes (section 14)"
+        )
+    fields = {field.name for field in dataclasses.fields(cls)}
+    attributes = set(vars(value))
+    if attributes != fields:
+        raise U2ParameterError(
+            f"{what} carries instance attribute(s) "
+            f"{sorted(attributes ^ fields)} beyond or instead of its "
+            "fields: an instance attribute can shadow a method the "
+            "estimator calls (section 14)"
+        )
+    return value
+
+
+def _plain(value: Any, kind: type, what: str) -> Any:
+    if type(value) is not kind:
+        raise U2ParameterError(
+            f"{what} is a {type(value).__qualname__}, not a plain "
+            f"{kind.__name__}: a subclass can return other values than it "
+            "lists, so a registered bundle holds only the pinned loaders' "
+            "containers (section 14)"
+        )
+    return value
+
+
+def _key(key: Any, kind: type, what: str) -> str:
+    if type(key) is not kind:
+        raise U2ParameterError(
+            f"{what} has a {type(key).__qualname__} key {key!r}; the pinned "
+            f"loaders key it by {kind.__name__} alone, and any other key "
+            "could stand beside a pinned one under the same content digest "
+            "(section 14)"
+        )
+    return str(key)
+
+
+def _number(value: Any, what: str) -> float:
+    """A value as the float it equals: a float, or an int exactly equal to
+    a float (an integer-valued float stored as an int changes nothing).
+    The sign of zero is dropped, since the two zeros are equal numbers."""
+
+    if type(value) is float:
+        number = value
+    elif type(value) is int:
+        try:
+            number = float(value)
+        except OverflowError:
+            number = math.nan
+        if number != value:
+            raise U2ParameterError(
+                f"{what} is the int {value}, not a float or an int exactly "
+                "equal to one"
+            )
+    else:
+        raise U2ParameterError(
+            f"{what} is a {type(value).__qualname__} value, not a float "
+            "(or an int exactly equal to one), as the pinned loaders build"
+        )
+    return number + 0.0
+
+
+def _schedule(mapping: Any, what: str) -> dict[str, float]:
+    return {
+        _key(year, int, what): _number(value, f"{what}[{year}]")
+        for year, value in _plain(mapping, dict, what).items()
+    }
+
+
 def parameters_content_sha256(params: U2Parameters) -> dict[str, Any]:
     """SHA-256 of each component's values, never of its provenance.
 
     ``thresholds``: every weighted average and matrix cell by income
     year; ``ssi``: both FBR schedules and the five constant parameters;
-    ``life_tables``: each table's name and ``qx`` by sex and age.  Keys
-    are stringified and values taken as floats, so the digest depends on
-    the numbers only (a dict's insertion order, or an integer-valued
-    float stored as an int, changes nothing).
+    ``life_tables``: each table's name and ``qx`` by sex and age.
+
+    The digest reads exactly the pinned loaders' types and refuses any
+    other (:class:`U2ParameterError`): the classes :class:`U2Parameters`,
+    ``PovertyThresholds``, ``SsiParameters`` and ``LifeTable`` with no
+    instance attribute beyond their fields; plain ``dict`` and ``tuple``
+    containers; ``int`` years and child counts; ``str`` rows, sexes,
+    bases and names; ``float`` values, or ``int`` values exactly equal to
+    a float.  On that domain the key encoding is injective, so two
+    bundles have equal digests iff they have the same keys and every
+    value is the same number; a dict's insertion order, an integer-valued
+    float stored as an int, or the sign of a zero changes nothing.
     """
 
-    thresholds = params.thresholds
-    ssi = params.ssi
+    _exact_instance(params, U2Parameters, "the parameter bundle")
+    thresholds = _exact_instance(
+        params.thresholds, ap.PovertyThresholds, "the thresholds"
+    )
+    ssi = _exact_instance(params.ssi, ap.SsiParameters, "the SSI parameters")
+    weighted = _plain(thresholds.weighted_average, dict, "weighted_average")
+    matrix = _plain(thresholds.matrix, dict, "the threshold matrix")
+    tables = _plain(params.life_tables, dict, "the life tables")
+
+    def rows_of(rows: Any, what: str) -> dict[str, float]:
+        return {
+            _key(row, str, what): _number(value, f"{what}[{row!r}]")
+            for row, value in _plain(rows, dict, what).items()
+        }
+
+    def cells_of(cells: Any, what: str) -> dict[str, float]:
+        return {
+            _key(children, int, what): _number(value, f"{what}[{children}]")
+            for children, value in _plain(cells, dict, what).items()
+        }
+
+    def table_of(basis: str, table: Any) -> dict[str, Any]:
+        what = f"life table {basis!r}"
+        table = _exact_instance(table, ap.LifeTable, what)
+        if type(table.name) is not str:
+            raise U2ParameterError(f"{what} has a non-str name")
+        return {
+            "name": table.name,
+            "qx": {
+                _key(sex, str, f"{what} qx"): [
+                    _number(q, f"{what} qx[{sex!r}][{age}]")
+                    for age, q in enumerate(
+                        _plain(values, tuple, f"{what} qx[{sex!r}]")
+                    )
+                ]
+                for sex, values in _plain(table.qx, dict, f"{what} qx").items()
+            },
+        }
+
     return {
         "thresholds": _canonical_sha256(
             {
                 "weighted_average": {
-                    str(int(year)): {
-                        str(row): float(value) for row, value in rows.items()
-                    }
-                    for year, rows in thresholds.weighted_average.items()
+                    _key(year, int, "weighted_average"): rows_of(
+                        rows, f"weighted_average[{year}]"
+                    )
+                    for year, rows in weighted.items()
                 },
                 "matrix": {
-                    str(int(year)): {
-                        str(row): {
-                            str(int(children)): float(value)
-                            for children, value in cells.items()
-                        }
-                        for row, cells in rows.items()
+                    _key(year, int, "the threshold matrix"): {
+                        _key(row, str, f"matrix[{year}]"): cells_of(
+                            cells, f"matrix[{year}][{row!r}]"
+                        )
+                        for row, cells in _plain(
+                            rows, dict, f"matrix[{year}]"
+                        ).items()
                     }
-                    for year, rows in thresholds.matrix.items()
+                    for year, rows in matrix.items()
                 },
             }
         ),
         "ssi": _canonical_sha256(
             {
-                "fbr_individual_monthly": {
-                    str(int(year)): float(value)
-                    for year, value in ssi.fbr_individual_monthly.items()
+                "fbr_individual_monthly": _schedule(
+                    ssi.fbr_individual_monthly, "fbr_individual_monthly"
+                ),
+                "fbr_couple_monthly": _schedule(
+                    ssi.fbr_couple_monthly, "fbr_couple_monthly"
+                ),
+                **{
+                    name: _number(getattr(ssi, name), f"SSI {name}")
+                    for name in (
+                        "general_income_exclusion_monthly",
+                        "earned_income_exclusion_monthly",
+                        "earned_income_share_excluded",
+                        "resource_limit_individual",
+                        "resource_limit_couple",
+                    )
                 },
-                "fbr_couple_monthly": {
-                    str(int(year)): float(value)
-                    for year, value in ssi.fbr_couple_monthly.items()
-                },
-                "general_income_exclusion_monthly": float(
-                    ssi.general_income_exclusion_monthly
-                ),
-                "earned_income_exclusion_monthly": float(
-                    ssi.earned_income_exclusion_monthly
-                ),
-                "earned_income_share_excluded": float(
-                    ssi.earned_income_share_excluded
-                ),
-                "resource_limit_individual": float(
-                    ssi.resource_limit_individual
-                ),
-                "resource_limit_couple": float(ssi.resource_limit_couple),
             }
         ),
         "life_tables": {
-            str(basis): _canonical_sha256(
-                {
-                    "name": table.name,
-                    "qx": {
-                        str(sex): [float(q) for q in values]
-                        for sex, values in table.qx.items()
-                    },
-                }
+            _key(basis, str, "the life tables"): _canonical_sha256(
+                table_of(basis, table)
             )
-            for basis, table in params.life_tables.items()
+            for basis, table in tables.items()
         },
     }
 
 
-def check_u2_parameters(params: U2Parameters, data_provenance: str) -> None:
+def check_u2_parameters(
+    params: U2Parameters, data_provenance: str
+) -> U2Parameters:
     """Refuse parameters that are not U2's for ``data_provenance``.
 
     Every run: a U2 bundle, life tables filed under their own basis (or
@@ -470,7 +599,14 @@ def check_u2_parameters(params: U2Parameters, data_provenance: str) -> None:
     tables with their pinned SHA-256 -- and, since a provenance label is
     only a claim, every value equal to the pinned files' (the content
     digests of :func:`parameters_content_sha256`, recomputed here from the
-    bundle and from a fresh, hash-verified read of the pinned files).
+    bundle and from a fresh, hash-verified read of the pinned files; the
+    digest refuses any type the pinned loaders do not build).
+
+    Returns the bundle the run computes with: ``params`` for an invented
+    run, and for a registered run the fresh read of the pinned files that
+    ``params`` was just shown equal to, so nothing the caller still holds
+    (a later in-place edit, a callback) can reach the estimator (review
+    round 2).
     """
 
     if not isinstance(params, U2Parameters):
@@ -495,7 +631,7 @@ def check_u2_parameters(params: U2Parameters, data_provenance: str) -> None:
                 f"life table {table.name!r} is filed under {basis!r}"
             )
     if data_provenance != ap.REGISTERED_REAL:
-        return
+        return params
     thresholds = dict(params.thresholds.provenance)
     if (
         thresholds.get("kind") != "census_capture"
@@ -539,8 +675,11 @@ def check_u2_parameters(params: U2Parameters, data_provenance: str) -> None:
     # Review round 1, finding 3: the labels above are claims; the values
     # must be the pinned files' (section 14: "caller-supplied expected
     # hashes cannot bypass the target-bound parameter bundle").
+    # Review round 2, finding 1: the digest refuses every type the pinned
+    # loaders do not build, so equal digests mean equal keys and values.
     observed = parameters_content_sha256(params)
-    pinned = parameters_content_sha256(committed_u2_parameters())
+    fresh = committed_u2_parameters()
+    pinned = parameters_content_sha256(fresh)
     for component in ("thresholds", "ssi", "life_tables"):
         if observed[component] != pinned[component]:
             raise U2ParameterError(
@@ -549,3 +688,4 @@ def check_u2_parameters(params: U2Parameters, data_provenance: str) -> None:
                 "files: a provenance label cannot stand in for the content "
                 "(section 14)"
             )
+    return fresh

@@ -470,3 +470,374 @@ def test_any_single_altered_value_refuses_the_registered_check(where, value):
         return
     with pytest.raises(parameters.U2ParameterError, match="provenance label"):
         parameters.check_u2_parameters(altered, ap.REGISTERED_REAL)
+
+
+# ---------------------------------------------------------------------------
+# Review round 2, finding 1: the content digest must be injective.  It
+# stringified keys with ``int()``/``str()``, so a non-integer or string key
+# could stand beside a real one, hold the pinned value and hide an altered
+# value the estimator reads by exact ``int``/``str`` key
+# (``adjusted_poverty.py:1033-1054``, ``:1069-1075``).  Mapping or tuple
+# subclasses, parameter subclasses and instance attributes could likewise
+# keep the pinned fields while the estimator's methods and lookups read
+# other numbers.  The digest now reads exactly the pinned loaders' types.
+# Every altered value below is INVENTED (1.0 or 12.0).
+# ---------------------------------------------------------------------------
+class _StrShadow:
+    """A key whose ``str()`` is a pinned key but which is not equal to it."""
+
+    def __init__(self, text: str) -> None:
+        self.text = text
+
+    def __str__(self) -> str:
+        return self.text
+
+    def __repr__(self) -> str:
+        return f"_StrShadow({self.text!r})"
+
+
+_KEYED = ("weighted_average", "matrix", "fbr_individual_monthly")
+_KEYED += ("fbr_couple_monthly",)
+
+
+def _shadow_key(key, kind):
+    if kind == "half":
+        return key + 0.5
+    if kind == "text":
+        return str(key)
+    assert kind == "shadow", kind
+    return _StrShadow(key)
+
+
+def _collide(params, component, location, level, kind, value):
+    """``params`` with the value at ``location`` set to ``value`` and, at
+    key depth ``level``, a colliding key (``kind``) inserted after the real
+    one and holding the pinned value or subtree.  Every provenance label
+    is kept."""
+
+    if component in ("weighted_average", "matrix"):
+        table = _nested_copy(getattr(params.thresholds, component))
+    else:
+        table = dict(getattr(params.ssi, component))
+    node = table
+    for key in location[:level]:
+        node = node[key]
+    real = location[level]
+    node[_shadow_key(real, kind)] = copy.deepcopy(node[real])
+    target = table
+    for key in location[:-1]:
+        target = target[key]
+    target[location[-1]] = value
+    if component in ("weighted_average", "matrix"):
+        return dataclasses.replace(
+            params,
+            thresholds=dataclasses.replace(
+                params.thresholds, **{component: table}
+            ),
+        )
+    return dataclasses.replace(
+        params, ssi=dataclasses.replace(params.ssi, **{component: table})
+    )
+
+
+def _refuses(bundle) -> bool:
+    try:
+        parameters.check_u2_parameters(bundle, ap.REGISTERED_REAL)
+    except parameters.U2ParameterError:
+        return True
+    return False
+
+
+@pytest.mark.parametrize(
+    "component, location, level, kind, read, expected",
+    [
+        # The round-2 review's three minimized cases.
+        (
+            "weighted_average",
+            (2012, "one_65_plus"),
+            0,
+            "half",
+            lambda b: ap.threshold_for(
+                b.thresholds, 2012, 1, 0, "census_weighted_average_65plus"
+            )[0],
+            1.0,
+        ),
+        (
+            "fbr_couple_monthly",
+            (2018,),
+            0,
+            "half",
+            lambda b: b.ssi.fbr_annual(2018, couple=True),
+            12.0,
+        ),
+        (
+            "matrix",
+            (2016, "three", 0),
+            2,
+            "half",
+            lambda b: ap.threshold_for(
+                b.thresholds, 2016, 3, 0, "census_matrix_65plus"
+            )[0],
+            1.0,
+        ),
+        # This lane's further cases: a string year key and an object row
+        # key whose str() is the row name.
+        (
+            "weighted_average",
+            (2012, "one_65_plus"),
+            0,
+            "text",
+            lambda b: ap.threshold_for(
+                b.thresholds, 2012, 1, 0, "census_weighted_average_65plus"
+            )[0],
+            1.0,
+        ),
+        (
+            "weighted_average",
+            (2012, "one_65_plus"),
+            1,
+            "shadow",
+            lambda b: ap.threshold_for(
+                b.thresholds, 2012, 1, 0, "census_weighted_average_65plus"
+            )[0],
+            1.0,
+        ),
+    ],
+    ids=[
+        "year-2012.5",
+        "ssi-year-2018.5",
+        "children-0.5",
+        "year-'2012'",
+        "row-str-shadow",
+    ],
+)
+def test_a_colliding_key_cannot_hide_an_altered_value(
+    pinned, component, location, level, kind, read, expected
+):
+    # INVENTED altered value: 1.0 (a monthly FBR of 1.0 reads as 12.0 a
+    # year).
+    bundle = _collide(pinned, component, location, level, kind, 1.0)
+    # The run would read the INVENTED altered value ...
+    assert read(bundle) == expected
+    assert read(bundle) != read(pinned)
+    # ... under the pinned labels, so the check must refuse the bundle.
+    assert bundle.thresholds.provenance == pinned.thresholds.provenance
+    assert bundle.ssi.provenance == pinned.ssi.provenance
+    with pytest.raises(parameters.U2ParameterError, match="key"):
+        parameters.check_u2_parameters(bundle, ap.REGISTERED_REAL)
+
+
+_COLLISION_SITES = [
+    (component, location, level)
+    for component, location in _LOCATIONS
+    if component in _KEYED
+    for level in range(len(location))
+]
+
+
+@settings(max_examples=200, deadline=None)
+@given(
+    site=st.sampled_from(_COLLISION_SITES),
+    data=st.data(),
+    value=st.floats(
+        min_value=1e-6, max_value=1e6, allow_nan=False, allow_infinity=False
+    ),
+)
+def test_no_colliding_key_passes_the_registered_check(site, data, value):
+    """Invariant (restated invariant 13, round 2): the content digest is
+    injective, so a bundle carrying any key beside the pinned keys refuses
+    whatever its values -- in particular a colliding key holding the
+    pinned value cannot hide an altered one, at any key depth of any
+    threshold or SSI schedule."""
+
+    component, location, level = site
+    key = location[level]
+    kind = data.draw(
+        st.sampled_from(("half", "text") if type(key) is int else ("shadow",))
+    )
+    bundle = _collide(_PINNED, component, location, level, kind, value)
+    assert _refuses(bundle)
+
+
+@settings(max_examples=60, deadline=None)
+@given(seed=st.integers(0, 2**32 - 1), as_int=st.booleans())
+def test_a_canonical_rebuild_of_the_pinned_values_passes(seed, as_int):
+    """Invariant (restated invariant 13, the other direction): a bundle
+    rebuilt from the pinned values in fresh plain dicts and tuples, in any
+    insertion order and with integer-valued floats stored as ints, passes
+    -- the type rules refuse only what the pinned loaders never produce."""
+
+    import random
+
+    rng = random.Random(seed)
+
+    def value(v):
+        return int(v) if as_int and float(v).is_integer() else v
+
+    def shuffled(mapping):
+        items = list(mapping.items())
+        rng.shuffle(items)
+        return items
+
+    def rebuild(mapping):
+        return {
+            k: rebuild(v) if isinstance(v, dict) else value(v)
+            for k, v in shuffled(mapping)
+        }
+
+    thresholds = dataclasses.replace(
+        _PINNED.thresholds,
+        weighted_average=rebuild(_PINNED.thresholds.weighted_average),
+        matrix=rebuild(_PINNED.thresholds.matrix),
+    )
+    ssi = dataclasses.replace(
+        _PINNED.ssi,
+        fbr_individual_monthly=rebuild(_PINNED.ssi.fbr_individual_monthly),
+        fbr_couple_monthly=rebuild(_PINNED.ssi.fbr_couple_monthly),
+    )
+    tables = {
+        basis: dataclasses.replace(
+            table,
+            qx={
+                sex: tuple(value(q) for q in qs)
+                for sex, qs in shuffled(table.qx)
+            },
+        )
+        for basis, table in shuffled(_PINNED.life_tables)
+    }
+    bundle = dataclasses.replace(
+        _PINNED, thresholds=thresholds, ssi=ssi, life_tables=tables
+    )
+    parameters.check_u2_parameters(bundle, ap.REGISTERED_REAL)
+
+
+class _LyingDict(dict):
+    """Lists the pinned rows but returns an INVENTED 1.0 for 2012."""
+
+    def __getitem__(self, key):
+        rows = dict.__getitem__(self, key)
+        return {**rows, "one_65_plus": 1.0} if key == 2012 else rows
+
+
+class _LyingTuple(tuple):
+    """Holds the pinned qx but slices to INVENTED 1.0s."""
+
+    def __getitem__(self, key):
+        out = tuple.__getitem__(self, key)
+        if isinstance(key, slice):
+            return tuple(1.0 for _ in out)
+        return out
+
+
+class _LyingSsi(ap.SsiParameters):
+    """Holds the pinned fields but reports an INVENTED FBR."""
+
+    def fbr_annual(self, year, couple):
+        return 12.0
+
+
+def _ssi_subclass(params):
+    fields = {
+        f.name: getattr(params.ssi, f.name)
+        for f in dataclasses.fields(params.ssi)
+    }
+    return dataclasses.replace(params, ssi=_LyingSsi(**fields))
+
+
+def _ssi_shadowed(params):
+    ssi = dataclasses.replace(params.ssi)
+    object.__setattr__(ssi, "fbr_annual", lambda year, couple: 12.0)
+    return dataclasses.replace(params, ssi=ssi)
+
+
+def _lying_mapping(params):
+    table = _LyingDict(_nested_copy(params.thresholds.weighted_average))
+    return dataclasses.replace(
+        params,
+        thresholds=dataclasses.replace(
+            params.thresholds, weighted_average=table
+        ),
+    )
+
+
+def _lying_tuple(params):
+    table = params.life_tables["nchs_2000"]
+    qx = {**table.qx, "female": _LyingTuple(table.qx["female"])}
+    return dataclasses.replace(
+        params,
+        life_tables={
+            **params.life_tables,
+            "nchs_2000": dataclasses.replace(table, qx=qx),
+        },
+    )
+
+
+def _read_wa(bundle):
+    return ap.threshold_for(
+        bundle.thresholds, 2012, 1, 0, "census_weighted_average_65plus"
+    )[0]
+
+
+def _read_survival(bundle):
+    curve = ap.survival_curve(bundle.life_tables["nchs_2000"], "female", 70)
+    return float(curve[1])
+
+
+@pytest.mark.parametrize(
+    "build, read, message",
+    [
+        (_lying_mapping, _read_wa, "plain dict"),
+        (_lying_tuple, _read_survival, "plain tuple"),
+        (_ssi_subclass, lambda b: b.ssi.fbr_annual(2018, True), "exactly"),
+        (_ssi_shadowed, lambda b: b.ssi.fbr_annual(2018, True), "attribute"),
+    ],
+    ids=["dict-subclass", "tuple-subclass", "ssi-subclass", "ssi-shadow"],
+)
+def test_pinned_fields_cannot_hide_other_reads(pinned, build, read, message):
+    """Every field holds the pinned numbers, yet the estimator's lookup,
+    slice or method reads an INVENTED one: the check refuses by type."""
+
+    bundle = build(pinned)
+    assert read(bundle) != read(pinned)
+    with pytest.raises(parameters.U2ParameterError, match=message):
+        parameters.check_u2_parameters(bundle, ap.REGISTERED_REAL)
+
+
+class _SameFloat(float):
+    """A float subclass (numpy's float64 is one)."""
+
+
+@pytest.mark.parametrize(
+    "convert",
+    [str, _SameFloat, lambda v: 2**53 + 1, lambda v: True],
+    ids=[
+        "str-of-pinned",
+        "float-subclass-of-pinned",
+        "int-not-a-double",
+        "bool",
+    ],
+)
+def test_a_value_of_another_type_refuses(pinned, convert):
+    """Values are floats, or ints exactly equal to a float (the as-int
+    case above).  Anything else refuses as outside the loaders' domain,
+    even where it converts to the pinned number (the str and float-subclass
+    cases, which the old digest accepted; no read differs for them, so they
+    are refused as non-canonical, not shown to be bypasses)."""
+
+    where = ("weighted_average", (2014, "one_65_plus"))
+    bundle = _alter(pinned, *where, convert(_current(pinned, *where)))
+    with pytest.raises(parameters.U2ParameterError, match="not a float"):
+        parameters.check_u2_parameters(bundle, ap.REGISTERED_REAL)
+
+
+def test_a_bundle_subclass_refuses(pinned):
+    class Bundle(parameters.U2Parameters):
+        pass
+
+    bundle = Bundle(
+        thresholds=pinned.thresholds,
+        ssi=pinned.ssi,
+        life_tables=pinned.life_tables,
+    )
+    with pytest.raises(parameters.U2ParameterError, match="exactly"):
+        parameters.check_u2_parameters(bundle, ap.REGISTERED_REAL)
