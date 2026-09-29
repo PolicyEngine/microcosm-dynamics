@@ -288,6 +288,20 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/track_b/equality.py"),
     Path("src/populace_dynamics/track_b/replay.py"),
     Path("src/populace_dynamics/track_b/runner.py"),
+    # Track A v2 is opt-in; exact exclusions preserve the historical seal.
+    Path("src/populace_dynamics/track_a_v2/__init__.py"),
+    Path("src/populace_dynamics/track_a_v2/benefits.py"),
+    Path("src/populace_dynamics/track_a_v2/estimands.py"),
+    Path("src/populace_dynamics/track_a_v2/filing.py"),
+    Path("src/populace_dynamics/track_a_v2/histories.py"),
+    Path("src/populace_dynamics/track_a_v2/invented.py"),
+    Path("src/populace_dynamics/track_a_v2/manifest.py"),
+    Path("src/populace_dynamics/track_a_v2/matrix.py"),
+    Path("src/populace_dynamics/track_a_v2/membership.py"),
+    Path("src/populace_dynamics/track_a_v2/protocol.py"),
+    Path("src/populace_dynamics/track_a_v2/runner.py"),
+    Path("src/populace_dynamics/track_a_v2/structural.py"),
+    Path("src/populace_dynamics/track_a_v2/structural_inputs.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(

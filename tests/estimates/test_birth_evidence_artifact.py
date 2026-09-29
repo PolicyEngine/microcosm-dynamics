@@ -166,6 +166,19 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/track_b/equality.py"),
         Path("src/populace_dynamics/track_b/replay.py"),
         Path("src/populace_dynamics/track_b/runner.py"),
+        Path("src/populace_dynamics/track_a_v2/__init__.py"),
+        Path("src/populace_dynamics/track_a_v2/benefits.py"),
+        Path("src/populace_dynamics/track_a_v2/estimands.py"),
+        Path("src/populace_dynamics/track_a_v2/filing.py"),
+        Path("src/populace_dynamics/track_a_v2/histories.py"),
+        Path("src/populace_dynamics/track_a_v2/invented.py"),
+        Path("src/populace_dynamics/track_a_v2/manifest.py"),
+        Path("src/populace_dynamics/track_a_v2/matrix.py"),
+        Path("src/populace_dynamics/track_a_v2/membership.py"),
+        Path("src/populace_dynamics/track_a_v2/protocol.py"),
+        Path("src/populace_dynamics/track_a_v2/runner.py"),
+        Path("src/populace_dynamics/track_a_v2/structural.py"),
+        Path("src/populace_dynamics/track_a_v2/structural_inputs.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -339,6 +352,26 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
             )
             - reachable
         )
+
+    track_a_v2_modules = {
+        "populace_dynamics.track_a_v2",
+        "populace_dynamics.track_a_v2.benefits",
+        "populace_dynamics.track_a_v2.estimands",
+        "populace_dynamics.track_a_v2.filing",
+        "populace_dynamics.track_a_v2.histories",
+        "populace_dynamics.track_a_v2.invented",
+        "populace_dynamics.track_a_v2.manifest",
+        "populace_dynamics.track_a_v2.matrix",
+        "populace_dynamics.track_a_v2.membership",
+        "populace_dynamics.track_a_v2.protocol",
+        "populace_dynamics.track_a_v2.runner",
+        "populace_dynamics.track_a_v2.structural",
+        "populace_dynamics.track_a_v2.structural_inputs",
+    }
+    assert track_a_v2_modules.issubset(module_paths)
+    assert track_a_v2_modules.isdisjoint(
+        reachable
+    ), "Track A v2 became reachable from the historical birth reducer"
 
     assert psid_exclusions.isdisjoint(reachable), (
         "historically excluded PSID modules became reachable from the "
