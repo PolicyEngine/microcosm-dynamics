@@ -34,6 +34,8 @@ SPEC_QUOTES = MANIFEST["spec_quotes"]
 REGISTERED = [("research", q) for q in QUOTES] + [
     ("spec", q) for q in SPEC_QUOTES
 ]
+ANCHORS = MANIFEST["page_anchors"]
+CITATION = re.compile(r"\b(?:PDF )?pp?\. (\d+)(?:[\N{EN DASH}-](\d+))?")
 ELLIPSIS = re.compile(r"\s*(?:\.\.\.|\u2026)\s*")
 OPENING = re.compile(r"(?:^|(?<=[\s(\[\u2014:]))'(?=\S)")
 CLOSING = re.compile(r"(?<=\S)'(?=[\s.,;:)\]]|$)")
@@ -259,3 +261,148 @@ def test_quoted_documents_are_pinned():
         (registry.REGISTRY_DIRECTORY / "u1_identity.json").read_text()
     )["sha256"]
     assert code and code <= set(identity)
+
+
+@pytest.mark.parametrize(
+    "anchor",
+    ANCHORS,
+    ids=[f"{a['record']}:{a['cited_as'][:32]}" for a in ANCHORS],
+)
+def test_page_anchor_is_on_the_cited_page(anchor):
+    """A paraphrased page citation: its phrase is on each page it names."""
+    blocks_of = {
+        "research": blocks(RESEARCH.read_text(encoding="utf-8")),
+        "spec": blocks(SPEC.read_text(encoding="utf-8")),
+    }
+    assert any(anchor["cited_as"] in b for b in blocks_of[anchor["record"]])
+    pages = pdf_pages(pinned_path(anchor["file"]))
+    for page, phrase in anchor["checks"]:
+        found = normalize(phrase) in pages[page - 1]
+        assert found, f"{anchor['file']} p. {page}: {phrase!r}"
+
+
+def test_every_page_citation_is_checked():
+    """Each page citation in the research record and in section 16a is
+    checked by a quote or page anchor that cites the same page in the same
+    paragraph or list item. Documentary: no survey record is read."""
+    spec = SPEC.read_text(encoding="utf-8")
+    records = {
+        "research": RESEARCH.read_text(encoding="utf-8"),
+        "spec": spec[spec.index("## 16a. ") : spec.index("## 17. ")],
+    }
+    checked = {
+        "research": [
+            (q["cited_as"], {q["page"]}) for q in QUOTES if "page" in q
+        ],
+        "spec": [
+            (q["cited_as"], {q["page"]})
+            for q in SPEC_QUOTES
+            if "page" in q and "cited_as" in q
+        ],
+    }
+    for anchor in ANCHORS:
+        checked[anchor["record"]].append(
+            (anchor["cited_as"], {page for page, _ in anchor["checks"]})
+        )
+    unchecked = []
+    for record, text in records.items():
+        for block in blocks(text):
+            for found in CITATION.finditer(block):
+                first = int(found.group(1))
+                cited = set(range(first, int(found.group(2) or first) + 1))
+                number = re.escape(found.group(0).split(". ", 1)[1])
+                if not any(
+                    cited_as in block
+                    and pages & cited
+                    and re.search(rf"(?<!\d){number}(?!\d)", cited_as)
+                    for cited_as, pages in checked[record]
+                ):
+                    unchecked.append((record, found.group(0), block[:50]))
+    assert not unchecked, unchecked
+
+
+def pages_matching(file, pattern):
+    pages = pdf_pages(pinned_path(file))
+    return [n for n, text in enumerate(pages, 1) if re.search(pattern, text)]
+
+
+def test_rth_lookup_list_is_referenced_but_never_printed():
+    """Research record section 1: the questionnaires refer to the RTH
+    Lookup List on six pages. (The record's search covered all 494
+    documentation PDFs; this pins the questionnaires, which hold every
+    reference.)"""
+    lookup = r"(?i)RTH\s*Look\s*-?\s*up"
+    found = {
+        year: pages_matching(
+            f"PSID/documentation/capture1/q{year}.pdf", lookup
+        )
+        for year in (2009, 2011, 2013, 2015, 2017, 2019, 2021, 2023)
+    }
+    assert found == {
+        2009: [109],
+        2011: [105],
+        2013: [5, 115],
+        2015: [5, 131],
+        2017: [],
+        2019: [],
+        2021: [],
+        2023: [],
+    }
+    research = RESEARCH.read_text(encoding="utf-8")
+    assert sum(map(len, found.values())) == 6
+    assert "The only 'RTH Lookup' hits are the six references above" in (
+        research
+    )
+
+
+def test_2015_instrument_never_names_201():
+    """Research record section 1, item 11: in q2015 the token 201 is
+    only p. 201's page number; q2017 names it on p. 5's code list and in
+    routing conditions on 20 further pages."""
+    q2015 = "PSID/documentation/capture1/q2015.pdf"
+    q2017 = "PSID/documentation/capture1/q2017.pdf"
+    token = r"(?<![\d,.])201(?![\d])"
+    assert pages_matching(q2015, token) == [201]
+    for file in (q2015, q2017):
+        page_201 = pdf_pages(pinned_path(file))[200]
+        assert page_201.startswith("201 ")
+        assert len(re.findall(token, page_201)) == 1
+    named = pages_matching(q2017, token)
+    assert named[0] == 5 and 201 in named
+    conditions = len([n for n in named if n not in (5, 201)])
+    assert conditions == 20
+    # The records state the computed count.
+    for record in (RESEARCH, SPEC):
+        stated = f"routing conditions on {conditions} pages"
+        assert stated in record.read_text(encoding="utf-8"), record.name
+
+
+def test_uncooperative_appears_only_where_listed():
+    """Research record section 2, items 7 and 8."""
+    listed = {
+        "PSID/family/2019/fam2019er_codebook.pdf": [
+            (591, 596),
+            (2058, 2059),
+            (2064, 2064),
+            (2070, 2075),
+        ],
+        "PSID/family/2021/FAM2021ER_codebook.pdf": [
+            (637, 642),
+            (1422, 1423),
+            (1428, 1428),
+            (1434, 1439),
+        ],
+        "PSID/family/2023/FAM2023ER_codebook.pdf": [
+            (624, 628),
+            (1340, 1341),
+            (1346, 1346),
+            (1352, 1357),
+        ],
+    }
+    for file, ranges in listed.items():
+        found = pages_matching(file, r"(?i)uncooperative")
+        assert all(any(a <= n <= b for a, b in ranges) for n in found), file
+        assert all(any(a <= n <= b for n in found) for a, b in ranges), file
+    for year in (2019, 2021, 2023):
+        guide = f"tests/data/track_u2/psid_docs/UserGuide{year}.pdf"
+        assert not pages_matching(guide, r"(?i)uncooperative"), guide

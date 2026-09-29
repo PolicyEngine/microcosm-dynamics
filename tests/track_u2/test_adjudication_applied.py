@@ -98,6 +98,93 @@ RELEASED = {
     "roles:2017.relationship.90",
     "roles:2017.relationship.92",
 }
+# §16a's inline quotes of draft 3: (quote, draft-3 line, the citation that
+# must sit beside the quote in §16a).
+DRAFT_3_INLINE_QUOTES = [
+    ("the 2015 male code-20 blocker", 154, "Line 154's"),
+    (
+        "Resolve the explicit relationship-source inconsistencies, including "
+        "2015 male-code-20 routing and code-90/code-92 OFUM versus "
+        "spouse-slot routing",
+        1382,
+        "line 1382",
+    ),
+    (
+        "Verify identification support, observation plans, weight "
+        "documentation and refreshed design domains",
+        1383,
+        "line 1383",
+    ),
+    ("OFUM SSI totals form one individual unit", 436, "\N{SECTION SIGN}8's"),
+    (
+        "Counts cannot establish routing, justify assuming such records "
+        "absent, or waive this blocker",
+        160,
+        "Line 160",
+    ),
+    (
+        "Neither empty empirical categories nor observed outputs may "
+        "substitute for documentary resolution",
+        1391,
+        "line 1391",
+    ),
+    ("it may not be established from counts", 154, "line 154"),
+    (
+        "Source documentation must resolve this before registration",
+        160,
+        "line 160's",
+    ),
+    (
+        "under the same standard as the 2015 male code-20 blocker",
+        152,
+        "(line 152)",
+    ),
+    ("like the 2015 male code-20 blocker", 154, "(line 154)"),
+    ("Legal Spouse", 160, "(draft-3 line 160)"),
+    (
+        "The weight construction and immigrant-refreshment coverage must be "
+        "documented before registration.",
+        134,
+        "Line 134",
+    ),
+]
+# What §16a asks Max to rule on: every recommendation and every option's
+# amendment statement. A change here must be deliberate.
+RECOMMENDATIONS = [
+    "Recommendation for B1: send the PSID question in "
+    "`docs/design/u2_m1b_psid_research.md` \N{SECTION SIGN}1 now, and adopt "
+    "option 1 only as an explicitly ratified amendment to draft-3 lines 154, "
+    "160 and 1391.",
+    "Recommendation for B2: send the PSID question in "
+    "`docs/design/u2_m1b_psid_research.md` \N{SECTION SIGN}2 now, and adopt "
+    "option 1 only as an explicitly ratified amendment to draft-3 lines 152, "
+    "154 and 158.",
+    "Recommendation for B3: option 1, adopted as an explicitly ratified "
+    "amendment to draft-3 line 134.",
+]
+OPTIONS = {
+    "**1d. ": [
+        "Documented rule plus a halting guard. Amends draft-3 lines 154, 160 "
+        "and 1391.",
+        "Documented rule plus exclusion. Amends draft-3 line 160.",
+        "Hold the 2015 wave for PSID's answer. Draft 3 as written; amends "
+        "nothing.",
+    ],
+    "**1e. ": [
+        "Exclude and disclose. Amends draft-3 lines 152, 154 and 158 for "
+        "2019\N{EN DASH}2023.",
+        "Stated convention. Amends draft-3 lines 152, 154 and 158 for "
+        "2019\N{EN DASH}2023.",
+        "Wait for PSID documentation. Draft 3 as written; amends nothing.",
+        "Documented rule plus a halting guard. Amends draft-3 lines 152, 154, "
+        "158 and 1391.",
+    ],
+    "### Amendment 6 ": [
+        "Use the released weight and disclose. Amends draft-3 line 134.",
+        "Hold registration for PSID's construction document.",
+        "Substitute the documented longitudinal weight ER34650 for 2017.",
+    ],
+}
 
 
 @pytest.fixture(scope="module")
@@ -404,6 +491,78 @@ def test_section_16a_quotes_are_sourced():
     assert not unsourced, unsourced
 
 
+def test_section_16a_cites_the_draft_3_lines_it_quotes():
+    """Each inline draft-3 quote is on the line §16a cites, next to it."""
+    record = json.loads(
+        (registry.REGISTRY_DIRECTORY / "u1_identity.json").read_text()
+    )["u2_specification"]
+    draft_3 = draft_3_bytes(record).decode("utf-8").split("\n")
+    spec = (ROOT / SPEC).read_text(encoding="utf-8")
+    section = spec[spec.index("## 16a. ") : spec.index("## 17. ")]
+    folded = fold(section)
+    for quote, line, anchor in DRAFT_3_INLINE_QUOTES:
+        assert fold(quote) in fold(draft_3[line - 1]), (quote, line)
+        # The citation precedes the quote by at most 200 characters or
+        # follows it by at most 60; a wrong line number fails here.
+        assert any(
+            fold(anchor)
+            in folded[max(0, found.start() - 200) : found.end() + 60]
+            for found in re.finditer(re.escape(fold(quote)), folded)
+        ), (quote, anchor)
+    # Line 436, cited by its section, lies in draft 3's section 8.
+    section_8 = [
+        number
+        for number, text in enumerate(draft_3, 1)
+        if text.startswith(("## 8. ", "## 9. "))
+    ]
+    assert section_8[0] < 436 < section_8[1]
+    # Every §16a quote that no PSID source supplies is in the register.
+    registered = [
+        fold(quote["text"])
+        for quote in json.loads((DOCS / "manifest.json").read_text())[
+            "spec_quotes"
+        ]
+    ]
+    unregistered = [
+        span
+        for span in quoted_spans(section)
+        if not any(fold(span) in text for text in registered)
+        and not any(
+            fold(span) in fold(quote) for quote, _, _ in DRAFT_3_INLINE_QUOTES
+        )
+    ]
+    assert not unregistered, unregistered
+
+
+def test_section_16a_recommendations_and_options():
+    """The options and recommendations put to Max, and their amendments."""
+    spec = (ROOT / SPEC).read_text(encoding="utf-8")
+    section = spec[spec.index("## 16a. ") : spec.index("## 17. ")]
+    assert (
+        re.findall(r"^\*\*(Recommendation for B[123]: .*?)\*\*", section, re.M)
+        == RECOMMENDATIONS
+    )
+    for start, expected in OPTIONS.items():
+        block = section[section.index(start) :]
+        block = block[: block.index("**Recommendation for B")]
+        assert re.findall(r"^\d\. \*\*(.*?)\*\*", block, re.M) == expected
+    counts = section[section.index("**1g. ") :]
+    assert "no refusal in amendment 1 is waived by observed absence" in counts
+    assert (
+        "a guard exists only as the explicitly ratified amendment its option "
+        "names" in counts
+    )
+    outstanding = spec[spec.index("## 17. ") : spec.index("## 18. ")]
+    assert (
+        "takes effect only if Max also ratifies the amendment to draft-3 "
+        "lines 152\N{EN DASH}160 or 1391 that the option names" in outstanding
+    )
+    assert (
+        "B3's option 1 likewise takes effect only if Max ratifies its "
+        "amendment to draft-3 line 134." in outstanding
+    )
+
+
 def test_part_b_verdicts_agree():
     """B1, B2 and B3 carry one verdict everywhere: PARTIAL."""
     research = RESEARCH.read_text(encoding="utf-8")
@@ -431,6 +590,21 @@ def test_part_b_verdicts_agree():
         "(adjudication A); Part B PARTIAL |" in master
     )
     assert "NOT DOCUMENTED ONLINE" not in master
+    for blocker in (
+        "2015 male code 20",
+        "Code 90, 2015\N{EN DASH}2023",
+        "Code 92, 2017\N{EN DASH}2023",
+    ):
+        status = re.search(rf"^\| {blocker} \| ([^|]+) \|", master, re.M)
+        assert status.group(1).endswith("; Part B PARTIAL"), blocker
+    # Verification pass 2: FAQ question 70 leaves room for a male code 20.
+    roles = registry.load_registry("roles")
+    for text in (master, json.dumps(roles), research):
+        assert "places no male in 2015 code 20" not in text
+    code_20 = next(
+        e for e in roles["entries"] if e["id"] == "2015.relationship.20"
+    )
+    assert "FAQ question 70" in code_20["part_b_finding"]
 
 
 def test_released_dependencies(documents):
@@ -513,7 +687,7 @@ def test_psid_documentation_manifest():
                 "sha256"
             ]
     pinned_files = [pinned["file"] for pinned in manifest["pinned_elsewhere"]]
-    assert len(pinned_files) == len(set(pinned_files)) == 16
+    assert len(pinned_files) == len(set(pinned_files)) == 21
     assert not set(pinned_files) & {s["file"] for s in manifest["sources"]}
     for pinned in manifest["pinned_elsewhere"]:
         assert re.fullmatch(r"[0-9a-f]{64}", pinned["sha256"])
