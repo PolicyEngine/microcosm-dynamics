@@ -520,6 +520,39 @@ def compare_evidence_differential(
             if payload is None:
                 differences.append({"kind": "missing_evidence", **where})
                 continue
+            # Match compare_replay's scored-frame contract. Two identical
+            # payloads with both earnings or both weights removed are not
+            # person-level evidence, even if copied cell summaries remain.
+            for side, field in (
+                ("expected", "original_scored"),
+                ("actual", "replay_scored"),
+            ):
+                frame = payload.get(field)
+                columns = (
+                    frame.get("columns")
+                    if isinstance(frame, Mapping)
+                    else None
+                )
+                names = (
+                    [
+                        column.get("name")
+                        for column in columns
+                        if isinstance(column, Mapping)
+                    ]
+                    if isinstance(columns, list)
+                    else []
+                )
+                for column in ("earnings", "weight"):
+                    if column not in names:
+                        differences.append(
+                            {
+                                "kind": "missing_required_column",
+                                **where,
+                                "side": side,
+                                "field": "scored",
+                                "column": column,
+                            }
+                        )
             differences.extend(
                 {**where, "field": "scored", **item}
                 for item in compare_frame_payloads(

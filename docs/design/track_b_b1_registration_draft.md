@@ -1,11 +1,11 @@
-# Track B B1: fixed-roster candidate-3 replay registration draft
+# Track B B1 v2: reconstructed reproduction registration draft
 
 **Status: draft; no real-data computation has been performed for this build.**
-**Held: no registration is posted until Max rules on the baseline definition
-(see "Baseline definition: held for Max's ruling" below).** After that
-ruling, post this text as a new comment on issue #42 before invoking the
-command.
-The verification class is **reproduction attempted, not validation**. This
+**Prospective rule under Max's d571 ruling, dated 2026-09-28.** Post this
+text as a new comment on issue #42 before invoking the command, with every
+TO FILL field completed and the build and environment frozen.
+The verification class is **reproduction**, with success restricted to
+**reconstructed reproduction (weaker than bit-for-bit)**. This
 registration freezes an earnings-only replay of M6 candidate 3, with annual
 histories for 2014–2018. It changes no model law, fit boundary, population,
 support rule, weight, threshold, or RNG address. It does not re-run the M6
@@ -14,7 +14,11 @@ acceptance gate or admit any new scientific claim.
 ## Exact command and source identity
 
 Run from the clean B1 checkout with the candidate-3 fitting environment
-installed at `.venv`. Substitute only the two placeholders below, both
+installed at `scratch/track_b/baseline-f10cca5/.venv` under the separate
+clean baseline checkout specified in "SSA revision: pinned environment".
+Install this B1 checkout editable into that environment so its imported
+runner resolves to the registered B1 source. Substitute only the two
+placeholders below, both
 **TO FILL**:
 
 - `<NEW_ISSUE42_COMMENT_ID>` (**TO FILL**): the ID of the new issue #42
@@ -28,18 +32,23 @@ env OMP_WAIT_POLICY=ACTIVE \
   POPULACE_FIT_PREDICT_WORKERS=8 OMP_NUM_THREADS=8 \
   OPENBLAS_NUM_THREADS=8 MKL_NUM_THREADS=8 \
   VECLIB_MAXIMUM_THREADS=8 NUMEXPR_NUM_THREADS=8 \
-  .venv/bin/python scripts/run_track_b_b1.py \
+  scratch/track_b/baseline-f10cca5/.venv/bin/python \
+  scripts/run_track_b_b1.py \
   --registration-id <NEW_ISSUE42_COMMENT_ID> \
   --expected-commit <B1_BUILD_COMMIT> \
-  --out scratch/track_b/b1_v1
+  --baseline-version reconstructed \
+  --out scratch/track_b/b1_v2
 ```
 
 The command sets the original thread environment. The inherited
 runtime/source guard verifies these conditions before the input factory reads
 PSID. The inherited factory also requires `POPULACE_DYNAMICS_PE_US_DIR` to
 resolve to the installed, metadata-versioned policyengine-us `1.752.2`
-parameter tree; the environment's package and source-tree pins must already
-match the committed candidate-3 sidecar.
+parameter tree inside that baseline environment; the environment's package
+and source-tree pins must already match the committed candidate-3 sidecar.
+This prospective replay command preserves its registered thread settings.
+Build-only pytest commands instead always set `OMP_NUM_THREADS=1` and
+`POLARS_MAX_THREADS=1`; the delivery lane must not invoke this replay.
 
 The output is an exclusive new directory. An existing output, a destination
 under `runs/`, or a destination outside the checkout is not an alternative
@@ -118,9 +127,9 @@ input adapters, retaining their dating and external-vintage restrictions:
   2014/2016/2018 realized domain support and original F6 start weights.
   Intermediate annual records carry no newly admitted empirical scope.
 
-## Exact equality and the historical-reference limitation
+## Exact equality and the distinct v1 historical-reference path
 
-The B1 pass rule is exact equality, for every registered seed and draw, of
+The v1 bit-for-bit pass rule requires exact equality for every seed and draw of
 the **original per-person scored earnings, person-period support, F6 weights,
 fit signatures, and RNG signatures**. Keyed person-period matching makes row
 and column order immaterial; numeric values must match exactly, without
@@ -148,20 +157,21 @@ Reconstructing the original loop today does not establish equality to
 unavailable historical person-level bytes: multiple different person-level
 outputs can have the same aggregate cells.
 
-**Rule.** Without an authenticated historical person-level reference, the
+**v1 rule.** Without an authenticated historical person-level reference, the
 attempt records `BASELINE_REPLAY_MISMATCH` with reason
 `historical_person_level_reference_unavailable`, whatever the differential,
 fit, and aggregate diagnostics show. A fresh computation cannot become its
 own historical reference. This build commits no reference hash, so the rule
-governs the command above and makes this version of the registration moot
-as a route to admission. B1 remains unadmitted until an authenticated
-original-run person-level reference and RNG record are recovered and bound
-in a prospective registration. Any amendment to that evidentiary requirement
-must be explicit and reviewed before outcomes; it is not an alternative pass
-rule in this registration.
+governs the default `--baseline-version bit-for-bit` mode. That mode has no
+route to admission until an authenticated original-run person-level reference
+and RNG record are recovered and bound in a prospective registration. The
+separately selected v2 rule below changes neither that requirement nor v1's
+reported status. Its weaker admission must never be described as equality
+to historical person-level output.
 
 The runner also implements an optional `--historical-reference` flag. It is
-**not part of the command registered here**. The runner admits a reference
+**not part of the command registered here**, and v2 rejects the flag. The
+v1 runner admits a reference
 only if its bytes hash to `HISTORICAL_REFERENCE_SHA256`, a constant committed
 in `src/populace_dynamics/track_b/runner.py`, and no command-line hash can
 override it. This build commits `None`, so every reference is refused: the
@@ -181,30 +191,71 @@ missing, duplicate, extra, or altered references cannot pass.
 
 Other mismatches retain full available diagnostics identifying the seed,
 draw, person-period key, component, and expected/observed values or byte
-signatures. The output never labels a mismatch, absent reference, or
-incomplete run a reproduction. Output includes the annual histories,
+signatures. The output never labels a mismatch or incomplete run a
+reproduction, and v1 never admits an absent reference. Output includes the
+annual histories,
 per-seed/per-person comparison record, and provenance; mismatch records
 admit no downstream B1 scope.
 
-## Baseline definition: held for Max's ruling
+## Baseline definition: ruled v2 reconstructed reproduction
 
-As written, this registration's pass rule needs an authenticated historical
-person-level reference that the committed candidate-3 artifact does not
-contain. A new registered B1 version may instead define a weaker,
-reconstructed baseline. The B1 review suggests these components:
+Max's ruling d571, **2026-09-28**, as supplied in the build brief:
 
-- bit-exact equality of all 600 committed per-draw cells (5 seeds × 20
-  draws × 6 cells);
-- exact equality of the committed fit lineage;
-- exact person-level equality between the unchanged original loop and the
-  copy;
-- provenance equality, with the `ssa_revision` question (see "Build-only
-  verification") settled before registration;
-- an admitted scope labelled "reconstructed reproduction", which is weaker
-  than the design's §3.2 "bit for bit".
+> A new registered B1 version, **v2, "reconstructed reproduction"**, labelled weaker than §3.2's bit-for-bit. Its baseline is exact equality, with no tolerances, on four things:
+>
+> 1. **All 600 committed per-draw cells** (5 registered seeds × 20 draws × 6 cells) in `runs/gate_m6_candidate3_v1.json`, compared with the replay's per-draw cells.
+> 2. **The committed fit lineage.**
+> 3. **The original loop against the copy, person by person.**
+> 4. **Provenance.** All registered provenance fields must be equal.
 
-This draft does not adopt that definition. **No registration is posted
-until Max rules** on which baseline B1 registers.
+This registration adopts that rule only for the explicit
+`--baseline-version reconstructed` mode, schema `track_b_b1.v2`:
+
+1. `per_draw_cells`: compare each committed earnings cell with the copied
+   loop's corresponding cell and the unchanged original loop's cell. Cover
+   exactly seeds 0–4, draws 0–19, and the six registered earnings cells.
+   Match by `(seed, draw, cell)`; compare floating-point bits without
+   rounding or tolerances. Cell order is immaterial; missing, extra,
+   duplicate or mistyped registered entries fail.
+2. `fit_lineage`: compare the entire committed `lineage` record with the
+   refit's lineage, including the original gate's `floor_run` and
+   `floor_sha256` binding. Matching only selected fit signatures is
+   insufficient. The floor binding records the pinned contract; it does not
+   add a read or hash check of the floor artifact itself.
+3. `person_level_differential`: run the unchanged `m6_projection` loop and
+   the copied `track_b/replay.py` loop on the same population and fitted
+   generator for each seed and draw. Require exact equality of scored
+   person-period earnings, support, F6 weights, fit signatures and RNG
+   signatures. Preserve the eight-period RNG registry. Keyed rows and
+   named columns make their order immaterial; no person-period discrepancy
+   is excused by aggregate agreement.
+4. `provenance`: compare every field of the committed artifact's
+   `provenance` and `runtime_identity` records and the environment sidecar's
+   `environment.candidate3_gate_freeze` record. Require the separately
+   checked SSA revision environment below, with no rewrite or mapping of
+   `ssa_revision`.
+
+Only the conjunction of these four exact checks, with no historical
+person-level reference used, may produce `RECONSTRUCTED_REPRODUCTION` and
+`admitted_scope = "reconstructed reproduction (weaker than bit-for-bit)"`.
+Any failed or unevaluated condition requires `BASELINE_REPLAY_MISMATCH`,
+`admitted_scope = "none"`, and diagnostics naming the affected condition.
+Publish aborts and partial evidence too. The no-reference guard must
+rederive the checks from the registered records and published evidence;
+reported pass booleans alone cannot authorize this claim. It must refuse
+`REPRODUCED` and every other admission without an authenticated historical
+reference. Only v1's distinct committed-hash path may yield `REPRODUCED`.
+
+The implementation is in `track_b/reconstructed.py:183` (cells), `:302`
+(lineage), `:843` (original/copy pair), `:887` (person-level differential),
+`:555` and `:635` (registered provenance), `:757` (conjunction), and `:1166`
+(guard), under `src/populace_dynamics/`. These are rules for a prospective
+attempt; this draft reports no real-data pass or mismatch.
+
+The [v2 amendment](track_b_b1_v2_amendment.md) records the chosen reading of
+the design: v2 substitutes a weaker, explicitly labelled replay prerequisite
+for B2 under d571; it does not satisfy the design's literal bit-for-bit B1
+claim. A v2 mismatch still stops B2 and all work built on that replay.
 
 ## Inherited certification boundary: full disclosure
 
@@ -214,24 +265,71 @@ B1 supplies no new validation, no mortality certification, no 2030 forecast,
 no ages-65–69 extension, no RET effect, and no validated monthly timing. The
 full disclosure above accompanies every inherited-pass claim.
 
+## SSA revision: pinned environment
+
+V2 chooses ruling option **(a): run in the pinned environment where the
+unchanged loader itself reports `f10cca5`**. There is no committed mapping,
+normalization, truncation of a different abbreviation, or override of the
+recorded provenance value.
+
+The exact calculation is `subprocess.run(["git", "log", "-1",
+"--format=%h"], cwd=root, capture_output=True, text=True,
+check=True).stdout.strip()`. The loader resolves `root` from the explicit
+argument, `POPULACE_DYNAMICS_PE_US_DIR`, or its default, and records
+`"unknown"` if Git fails. It stores the result as `pe_us_revision`
+(`src/populace_dynamics/ss/params.py:187–193`, `:218`, `:308–326`).
+`src/populace_dynamics/harness/m6_inputs.py:391` and `:417` copy that value
+into `external_details.ssa_revision`. Thus the recorded value identifies
+the Git repository discovered from the parameter directory. An installed
+wheel beneath a dynamics checkout can report that checkout's abbreviated
+HEAD; the value is not a policyengine-us package commit obtained from
+package metadata.
+
+Before registration, construct the prospective environment as follows:
+
+1. Create a separate, workspace-local clone at
+   `scratch/track_b/baseline-f10cca5`, checked out at the full commit
+   `f10cca5457b16d12b9284d00628e7331871f23e7`. Keep tracked files and the
+   index clean. Set that clone's local `core.abbrev` to `7`.
+2. Install the frozen candidate-3 runtime and policyengine-us `1.752.2`
+   into a virtual environment physically inside that clone at `.venv`.
+   Install the reviewed B1 checkout editable in that environment; leave the
+   baseline clone's tracked source unchanged. Retain every runtime,
+   source-tree, package-location and thread pin of the original environment
+   guard (`harness/m6_candidate3_runner.py:619–725`). This setup changes no
+   inherited source or environment-comparison rule.
+3. Set `POPULACE_DYNAMICS_PE_US_DIR` to the installed distribution's parent
+   directory containing `policyengine_us`, inside that environment. The
+   inherited factory requires its resolved SSA tree to be the tree from
+   metadata-versioned policyengine-us `1.752.2`
+   (`scripts/registered_m6_inputs.py:133–178`). Use no `GIT_*` environment
+   variables, so repository discovery cannot be redirected.
+4. Before any input factory or PSID access, require the unchanged Git
+   command to return exactly `f10cca5`, its discovered full HEAD to equal
+   the full baseline SHA above, and its tracked worktree and index to be
+   clean. Record the resolved package root, discovered repository,
+   abbreviation configuration and empty Git environment. A different
+   abbreviation, including `f10cca54`, fails; do not shorten it after the
+   fact. Reprobe before accepting a result and require the recorded probe
+   to remain identical.
+
+The v2 checks are `track_b/reconstructed.py:584–632`, `:698–739`,
+`:947–954`, and `:1127–1146`, under `src/populace_dynamics/`. The frozen
+environment check still runs first. This resolves how `ssa_revision` must
+be reproduced; it makes no claim that a real replay has met this or any
+other condition.
+
 ## Build-only verification
 
-One additional provenance risk is retained without normalization: the inherited
-SSA parameter loader obtains `pe_us_revision` using Git from the installed
-parameter package directory. When that package lives inside a checkout's
-virtual environment, Git may discover the containing dynamics checkout. The
-registered artifact records `external_details.ssa_revision=f10cca5`; a B1
-checkout may instead report its new commit. B1 compares the full recorded
-input provenance exactly and will retain that discrepancy as
-`BASELINE_REPLAY_MISMATCH`, even if the fitted earnings signature agrees.
-Resolving this source-identity issue requires an explicit prospective
-registration decision; the build does not change the frozen loader.
-
-The delivery lane runs only invented-input pytest/Hypothesis checks: copied
-versus original loop equality at the same addresses, row-order invariance,
-single-person perturbation detection, determinism, exclusive output paths,
-refusal of any historical reference whose hash is not the committed
-constant, typed signature-key matching, and publication of a fallback
-record when a result cannot be serialized. It does not invoke the
-staged-PSID factory. This file is a draft for the later registered
-real-data attempt, not a record of an executed replay.
+The delivery lane runs only invented-input pytest/Hypothesis checks. These
+include independent mutations of a cell, lineage field, person-period value
+and provenance field; conjunction success; detection of any one changed
+cell among all 600; cell-order invariance; unchanged v1 behavior; and refusal
+of forged no-reference claims. Existing checks cover original/copy equality,
+person-period ordering, determinism, exclusive outputs, the committed
+historical-reference hash, typed signatures and fallback publication. Run
+all Track B tests and the birth-evidence seal with `OMP_NUM_THREADS=1
+POLARS_MAX_THREADS=1`. Minimize and execute counterexamples before calling
+them bugs. The delivery lane does not invoke the staged-PSID factory. This
+file is a draft for the later registered real-data attempt, not a record of
+an executed replay.

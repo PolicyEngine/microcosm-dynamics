@@ -355,6 +355,38 @@ def _publish(destination: Path, result: dict) -> dict:
         # their original fields.
         if isinstance(result.get("baseline_version"), str):
             fallback["baseline_version"] = result["baseline_version"]
+        if result.get("baseline_version") == RECONSTRUCTED:
+            from populace_dynamics.track_b import reconstructed
+
+            reported = kept.get("condition_status")
+            reported = reported if isinstance(reported, Mapping) else {}
+            statuses = {
+                name: (
+                    reported.get(name)
+                    if reported.get(name)
+                    in (
+                        reconstructed.PASS,
+                        reconstructed.FAIL,
+                        reconstructed.NOT_EVALUATED,
+                    )
+                    else reconstructed.NOT_EVALUATED
+                )
+                for name in reconstructed.CONDITIONS
+            }
+            # Publication failure admits nothing, while retaining which
+            # scientific checks failed or were not evaluated. It does not
+            # turn an evaluated check into a fabricated failure.
+            fallback["condition_status"] = statuses
+            fallback["failed_conditions"] = [
+                name
+                for name, status in statuses.items()
+                if status == reconstructed.FAIL
+            ]
+            fallback["not_evaluated_conditions"] = [
+                name
+                for name, status in statuses.items()
+                if status == reconstructed.NOT_EVALUATED
+            ]
         _write_new(destination / "result.json", fallback)
         return fallback
 

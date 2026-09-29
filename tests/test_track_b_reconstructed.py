@@ -487,6 +487,97 @@ def test_payload_comparison_fails_closed_on_malformed_payloads():
         assert kind in kinds
 
 
+@pytest.mark.parametrize("dropped", ["earnings", "weight"])
+def test_evidence_differential_requires_earnings_and_weight(dropped):
+    # Identical payloads that both lack a scored column compare equal as
+    # frames, but they are not person-level evidence: condition 3 fails
+    # and names the missing column on each side.
+    frame = pd.DataFrame(
+        {
+            "person_id": [1, 2],
+            "period": [2016, 2016],
+            "earnings": [1.0, 2.0],
+            "weight": [1.5, 1.5],
+        }
+    )
+    signature = {"invented": "signature"}
+
+    def payloads(scored):
+        encoded = runner.frame_payload(scored)
+        return {
+            (0, 0): {
+                "original_scored": encoded,
+                "replay_scored": copy.deepcopy(encoded),
+                "original_fit_signature": signature,
+                "replay_fit_signature": dict(signature),
+                "original_rng_signature": signature,
+                "replay_rng_signature": dict(signature),
+            }
+        }
+
+    complete = reconstructed.compare_evidence_differential(
+        payloads(frame), seeds=[0], draws=[0]
+    )
+    assert complete["status"] == reconstructed.PASS
+    stripped_frame = frame.drop(columns=dropped)
+    assert (
+        reconstructed.compare_frame_payloads(
+            runner.frame_payload(stripped_frame),
+            runner.frame_payload(stripped_frame),
+        )
+        == []
+    )
+    stripped = reconstructed.compare_evidence_differential(
+        payloads(stripped_frame), seeds=[0], draws=[0]
+    )
+    assert stripped["status"] == reconstructed.FAIL
+    assert stripped["equal"] is False
+    assert [
+        (item["side"], item["column"])
+        for item in stripped["differences"]
+        if item["kind"] == "missing_required_column"
+    ] == [("expected", dropped), ("actual", dropped)]
+
+
+def test_v2_publication_fallback_keeps_condition_statuses(tmp_path):
+    # An unserializable v2 result publishes a mismatch that admits nothing,
+    # keeps each evaluated condition's status, and marks anything missing
+    # or malformed as not evaluated rather than failed.
+    result = {
+        "schema_version": reconstructed.SCHEMA_VERSION,
+        "registration_id": "9999999999",
+        "baseline_version": runner.RECONSTRUCTED,
+        "status": reconstructed.RECONSTRUCTED_REPRODUCTION,
+        "equal": True,
+        "admitted_scope": reconstructed.ADMITTED_SCOPE,
+        "condition_status": {
+            "per_draw_cells": reconstructed.PASS,
+            "fit_lineage": reconstructed.FAIL,
+            "person_level_differential": "invented",
+        },
+        "diagnostic": object(),
+    }
+    published = runner._publish(tmp_path, result)
+
+    assert json.loads((tmp_path / "result.json").read_text()) == published
+    assert published["status"] == "BASELINE_REPLAY_MISMATCH"
+    assert published["equal"] is False
+    assert published["admitted_scope"] == "none"
+    assert published["baseline_version"] == runner.RECONSTRUCTED
+    assert published["condition_status"] == {
+        "per_draw_cells": reconstructed.PASS,
+        "fit_lineage": reconstructed.FAIL,
+        "person_level_differential": reconstructed.NOT_EVALUATED,
+        "provenance": reconstructed.NOT_EVALUATED,
+    }
+    assert published["failed_conditions"] == ["fit_lineage"]
+    assert published["not_evaluated_conditions"] == [
+        "person_level_differential",
+        "provenance",
+    ]
+    assert published["unserializable_result_fields"] == ["diagnostic"]
+
+
 # ---------------------------------------------------------------------------
 # The four conditions end to end on invented loops
 # ---------------------------------------------------------------------------
@@ -754,9 +845,14 @@ def test_anchor_reporting_another_abbreviation_fails_only_condition_4(
 
 
 def _passing_provenance_inputs():
-    registered = reconstructed.registered_provenance(
-        {"provenance": PROVENANCE, "runtime_identity": RUNTIME_IDENTITY},
-        {"environment": {"candidate3_gate_freeze": FREEZE}},
+    # registered_provenance returns the records it is given, so copy them:
+    # a test that relabels the registered side must not rewrite the
+    # module-level fixtures for every later test.
+    registered = copy.deepcopy(
+        reconstructed.registered_provenance(
+            {"provenance": PROVENANCE, "runtime_identity": RUNTIME_IDENTITY},
+            {"environment": {"candidate3_gate_freeze": FREEZE}},
+        )
     )
     actual = copy.deepcopy(registered)
     return registered, actual, copy.deepcopy(ANCHOR)
