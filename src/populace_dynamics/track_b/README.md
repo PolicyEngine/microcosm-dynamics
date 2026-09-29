@@ -105,6 +105,12 @@ the 403(a) family maximum (and the 403(a)(6) disability maximum), original
 benefits, the proportional reduction for the maximum, the RS 00615.768
 dual-entitlement redistribution, age reductions after the maximum, the
 402(k)(3)(A) dual-entitlement offset and the 215(g) whole-dollar payment.
+`household_benefits` computes every record a household draws on together,
+and refuses anyone entitled as an auxiliary on two records rather than
+computing them one record at a time. `check_savings_clause` refuses a month
+in which 403(a)(5) would raise a family's total, which this one-month layer
+does not apply.
+
 Verification class: **statutory conformance**, for supported family
 configurations only. Unsupported configurations raise
 `FAMILY_CONFIG_UNSUPPORTED` and stay in denominators. The design note is

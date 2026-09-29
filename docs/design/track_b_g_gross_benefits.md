@@ -17,13 +17,14 @@ now, with Axiom differentials as diagnostics once a pinned rule exists.
 - Code: `src/populace_dynamics/track_b/gross_benefits.py`.
 - Tests:
   - `tests/test_track_b_gross_benefits.py` covers the worked examples,
-    boundaries and refusals.
+    boundaries, households, the 403(a)(5) detector and refusals.
   - `tests/test_track_b_gross_benefits_properties.py` holds the Hypothesis
-    invariants and the float-oracle differential.
+    invariants and the differentials against `ss/benefits.py` and the sealed
+    ledger's rounding.
   - `tests/test_track_b_gross_benefits_oracle.py` checks the policyengine-us
-    bundle.
-- Sources: `tests/data/track_b/gross_benefit_sources/` (the manifest pins URLs,
-  UTC retrieval times, bytes and SHA-256).
+    bundle (skipped without a checkout).
+- Sources: `tests/data/track_b/gross_benefit_sources/`. The manifest pins each
+  URL, UTC retrieval time, byte count and SHA-256.
 
 ## What it computes, in statutory order
 
@@ -38,7 +39,10 @@ For one worker's record and one benefit month:
      the dime.
    - Disability records use 403(a)(6) when initial DIB entitlement came after
      June 1980 (RS 00615.740-.742). The maximum is min(max(85% AIME, PIA),
-     150% PIA), floored to the dime.
+     150% PIA).
+   - 403(a)(6) itself states no rounding. The disability maximum is floored to
+     the dime because the Social Security Bulletin says family amounts "would
+     actually be rounded down to the nearest dime" (75(3), Table 2 note).
    - COLAs then raise the PIA and the maximum alike, dime-floored after each
      increase (215(i)(2)(A)(ii)).
 2. **Original benefits (OB).**
@@ -70,10 +74,17 @@ For one worker's record and one benefit month:
    - The RIB-LIM applies next (402(e)(2)(D); RS 00615.320).
 6. **Dual entitlement** (402(k)(3)(A)). The auxiliary benefit is reduced, but
    not below zero, by the own benefit after 402(q).
-   - Aged spouses whose own benefit came first use method C (402(q)(3)(B)/(C);
-     RS 00615.250). Delayed credits on the own RIB follow RS 00615.694.
+   - An aged spouse entitled to the own benefit in or before the spouse
+     benefit's first month uses method C (402(q)(3)(B)/(C); RS 00615.250).
+     Only the excess over the own PIA takes the spouse reduction. Delayed
+     credits on the own RIB follow RS 00615.694.
+   - A spouse entitled first, with the RIB later, uses method B
+     (RS 00615.240). The spouse benefit keeps its 402(q)(1) reduction and is
+     paid in excess of the RIB.
    - Widow(er)s use method B: both benefits are reduced independently
-     (RS 00615.020A.3).
+     (402(q)(3)(E); RS 00615.020A.3).
+   - A spouse with a child in care is never reduced for age (402(q)(5)(A)(ii))
+     and is paid the excess over the reduced RIB (RS 00615.020A.3 note).
    - A spouse is not entitled when the own PIA is at least half the worker's
      PIA (202(b)(1)(D)).
    - A widow(er) is not entitled when the own RIB is at least the deemed PIA
@@ -89,6 +100,43 @@ equivalents "often" give an answer 10 cents lower (RS 00615.005B). Statutory
 rates are cross-checked against the repository's policyengine-us bundle and
 then used as exact fractions. NAWI and the 402(w) credit schedule come from
 that bundle.
+
+## Households
+
+A family that draws on more than one record cannot be computed one record at
+a time. `household_benefits` takes every record in a household and runs
+`check_household_records` first. The check does three things:
+
+- A child entitled on two or more records raises `combined_family_maximum`,
+  because 403(a)(3)(A) may combine the maximums (RS 00615.770).
+- Anyone else entitled as an auxiliary or survivor on two or more records
+  raises `multiple_auxiliary_records` (RS 00615.768A).
+- A living worker who is also an auxiliary on another record must declare
+  that record's RIB or DIB as `own_benefit`. The check compares kind, PIA,
+  reduction months and credits. A mismatch, a worker with two records, or a
+  deceased worker entered as a beneficiary raises `InvalidFamilyInput`.
+
+## 403(a)(5)
+
+403(a)(5) holds a family's total up after a PIA increase while the maximum
+applies to two or more persons. It depends on the previous month, and G
+computes one month, so G does not apply it. `check_savings_clause(previous,
+current)` takes one record's results for two consecutive months. It raises
+`savings_clause_403a5` when four things hold:
+
+- the PIA rose;
+- the maximum bound in both months;
+- two or more persons were subject to it in the earlier month;
+- the total after 403(a) and 402(q) fell.
+
+In that case raising the binding maximum would raise some benefit. The
+guarantee also carries forward, so the monthly calendar (I) must refuse the
+record's later months. A pair that passes is one in which the guarantee
+changes nothing. The worked refusal is a master-record PIA $0.10 higher with
+an unchanged maximum. With the statutory maximum, a COLA never trips the
+check for families that are not dually entitled: a property test asserts
+this. A COLA raises the maximum by at least as many dimes as the PIA, so the
+room left for auxiliaries never shrinks.
 
 ## Supported and refused configurations
 
@@ -107,7 +155,8 @@ It never falls back to a single-worker computation.
 | `eligibility_before_1983` | Pre-June-1982 maximums rounded up (RS 00615.736B.3); pre-1979 table maximums |
 | `payment_month_before_1983` | Months outside the post-May-1982 rounding rules |
 | `di_entitlement_before_july_1980` | The pre-1980 disability maximum |
-| `combined_family_maximum` | A child entitled on another record (403(a)(3)(A)) |
+| `combined_family_maximum` | A child entitled on another record (403(a)(3)(A)), declared or found by the household check |
+| `multiple_auxiliary_records` | Anyone else entitled as an auxiliary or survivor on two records (household check) |
 | `deemed_or_putative_spouse` | 403(a)(3)(D) |
 | `parent_benefit` | 402(h) |
 | `disabled_widow_under_60` | Disabled widow(er)'s benefits before 60 |
@@ -116,17 +165,21 @@ It never falls back to a single-worker computation.
 | `workers_compensation_offset` | Section 224 |
 | `government_pension_offset` | 202(k)(5) |
 | `administrative_finality` | Protected rates (RS 00615.754A.3) |
-| `dual_entitlement_sequence` | Spouse B-then-A (method B), widow(er) with DIB, widow(er) born before 1929 |
+| `dual_entitlement_sequence` | A spouse's DIB after the spouse benefit (RS 00615.260), a widow(er) with DIB, a widow(er) born before 1929 (RS 00615.020B method D) |
 | `parisi_redistribution_ambiguous` | The "payable before any age reduction" amount has two readings |
 | `parisi_before_october_1999` | A binding maximum with dual entitlement before 10/99 |
+| `independently_entitled_divorced_spouse` | A divorced spouse whose living ex-spouse is not entitled (402(b)(4)(A), (c)(4)(A)) |
+| `non_aime_formula_pia` | Old-start, special-minimum and frozen-minimum PIAs (RS 00615.740B.1) |
+| `savings_clause_403a5` | A month in which 403(a)(5) would raise the family's total |
 
-`evaluate_family` and `count_family_outcomes` keep unsupported rows in every
-denominator, by reason and weight. `weighted_record_total` and
-`weighted_mean_record_total` raise `FamilyTargetBlocked` rather than drop them.
-Invalid inputs raise `InvalidFamilyInput`; they are errors, not coverage gaps,
-and are never absorbed as unsupported rows.
+`evaluate_family` and `count_family_outcomes` keep unsupported rows, whether
+single records or households, in every denominator by reason and weight.
+`weighted_record_total` and `weighted_mean_record_total` raise
+`FamilyTargetBlocked` rather than drop them. Invalid inputs raise
+`InvalidFamilyInput`. They are errors, not coverage gaps, and are never
+absorbed as unsupported rows.
 
-## Invariants (all executed as property tests)
+## Invariants (all executed as tests)
 
 1. **The family maximum binds only where the statute says it does.** The
    worker's PIA plus every amount subject to the maximum never exceeds it.
@@ -148,13 +201,21 @@ and are never absorbed as unsupported rows.
      another's benefit under RS 00615.768E. The minimized counterexample is
      pinned as intended.
 5. **Dual entitlement never leaves a person below their own benefit.** The
-   auxiliary amount is never negative. Under method B and for unreduced
-   auxiliaries, the person receives the larger of the two benefits.
+   auxiliary amount is never negative, and the person receives the larger of
+   the own benefit and the age-adjusted auxiliary benefit.
 6. **Unsupported configurations always raise**, including when injected
-   anywhere in a valid family, and the denominators always keep them.
-7. **Results are deterministic and independent of beneficiary order.** Every
+   anywhere in a valid family or shared between two records of a household,
+   and the denominators always keep them.
+7. **Households are their records.** A household of unrelated records gives
+   each record's own result, and its total is their sum.
+8. **Results are deterministic and independent of beneficiary order.** Every
    amount is a dime multiple, and each whole-dollar payment is the floor of its
    amount.
+9. **Differentials.** The reduction fractions, `spousal_benefit`,
+   `widow_benefit` and `delayed_credit` in `ss/benefits.py` agree with G
+   within their documented rounding. The sealed ledger's float path
+   (`estimates.ledgers.floor_to_dime` over `early_reduction`) is never above
+   G's exact amount, and never more than a dime below it.
 
 ## Worked examples reproduced exactly
 
@@ -165,36 +226,46 @@ and are never absorbed as unsupported rows.
 | RS 00615.682 | $101.90 each; then the surviving divorced spouse at $145.70, outside the maximum, and children capped at $152.90 |
 | RS 00615.768 | Examples 1 and 2 (the Parisi rule): $125.00 each; $30 / $270 |
 | RS 00615.320 | RIB-LIM $350, with the $309.20 floor |
+| RS 00615.240 | Spouse then RIB (method B): $450.00 spouse, $200.00 RIB, $250.00 paid as a spouse |
 | RS 00615.694 | Spouse payment $290 after delayed credits on the own RIB |
 | RS 00615.005, .101, .201, .301, .692 | $780.50 (not $780.40); every chart fraction; $819.60; $1,175 |
 | RS 00615.736 | Unrounded $659.02 / $647.89 / $625.23 / $759.238, and the pre-1982 round-up that is refused |
 | RS 00605.900, .910 | All bend points and chart constants, 1979-2026 |
 | OACT family maximum | 2026 bend points from NAWI(2024) |
-| SSB 75(3) | Tables 1, 2, A-1, A-2 (dollar presentation rounding) |
+| SSB 75(3) | Tables 1, 2, A-1, A-2 (dollar presentation rounding); A-2 also as a two-record household ($1,900) |
 
 ## Findings recorded along the way
 
 - **Source erratum.** RS 00605.910 prints `899.52` for 1981's third constant.
   The statute gives `889.52`, and RS 00615.736's 1981 example agrees with the
   statute. The test pins both figures.
-- **The float oracle is off by a dime about 3.5 percent of the time.** The
-  existing `ss.benefits.early_reduction` uses policyengine-us's decimal
-  `0.00555556`, and `estimates.ledgers.floor_to_dime`, applied to that
-  product, lands a dime low in 11,685 of 334,320 (PIA, reduction-month) cells
-  tried. POMS's own example is one of them ($802.80 over 5 months gives
+- **The sealed ledger's float path lands a dime low about 3.5 percent of the
+  time.** `ss.benefits.early_reduction` uses policyengine-us's decimals
+  `0.00555556` and `0.00416667`. `estimates.ledgers.floor_to_dime` applied to
+  that product can therefore only land low. Over every PIA from $0.10 to
+  $557.20 by dime and 1-60 reduction months (334,320 cells), it lands a dime
+  low in 11,572 cells (3.46 percent) and never high. A test pins these
+  counts. Over PIAs to $4,500.00 (2,700,000 cells) the count is 94,530
+  (3.50 percent); that wider figure comes from a one-off script, not a test.
+  POMS's own example is one of the low cells ($802.80 over 5 months gives
   $780.40, not $780.50). G uses exact fractions and pins this example. The
   sealed ledger is not edited here.
 - **No Axiom differential yet.** rulespec-us at `83abd9ece` (origin/main,
   2026-09-29) has no `us/statutes/42/403` encoding. Its 402(a)/(q)/(w) and
   415(a)/(b)/(i) encodings do not cover the maximum. Per d515 the
   differential waits for a pinned rule and stays diagnostic when it comes.
+- **Capture integrity.** Three POMS captures (RS 00605.900, RS 00615.756 and
+  .768) were re-fetched on 2026-09-29 and matched their manifest SHA-256
+  byte for byte. Every Bulletin figure the tests quote was found on the live
+  page the same day.
 
 ## Not in scope
 
 - RET deductions and their ordering against the maximum (403(a)(4) first
   sentence) are R2's.
 - ARF and recomputation are R3's.
-- Monthly timing and event journals are I's.
+- Monthly timing and event journals are I's, including refusing the months
+  after a `savings_clause_403a5` refusal.
 - No population, behavioral or forecast claim is admitted.
 - `engine/loop.py`, `engine/steps.py`, `gates.yaml` and committed `runs/` are
   untouched.

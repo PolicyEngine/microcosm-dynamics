@@ -1,10 +1,12 @@
 """Track B milestone G: property-based invariants over invented families.
 
 Families are invented by Hypothesis: records from the statutory maximum
-(SSA-published NAWI, eligibility 1983-2026, random COLAs), with random
-spouses, children, widow(er)s, mother/fathers and divorced beneficiaries,
-reductions and dual entitlement. Each property is stated in the PR and in
-``docs/design/track_b_g_gross_benefits.md``.
+(SSA-published NAWI, eligibility 1983-2026, random COLAs, RIB-LIM
+survivors), with random spouses, children, widow(er)s, mother/fathers and
+divorced beneficiaries, age reductions, credit-increased widow(er) OBs and
+dual entitlement (reduced, credited or disability own benefits; spouses by
+method B or C). Households pair two such records. Each property is stated
+in the PR and in ``docs/design/track_b_g_gross_benefits.md``.
 
 Intended violations are labelled: adding a *dually entitled* auxiliary can
 raise another auxiliary's benefit under POMS RS 00615.768 (the Parisi
@@ -329,12 +331,15 @@ def test_dual_entitlement_never_goes_below_the_own_benefit(family):
             continue
         assert row.auxiliary_payable >= 0
         assert row.total_received >= row.own_benefit
-        if row.entitled and row.role is not g.Role.SPOUSE:
-            # 402(k)(3)(A) for method-B and unreduced auxiliaries: the
-            # person receives the larger of the two benefits.
+        if row.entitled:
+            # 402(k)(3)(A): the auxiliary benefit (after 402(q), including
+            # method C's 402(q)(3) reduction) is offset by the own benefit,
+            # so the person receives the larger of the two.
             assert row.total_received == max(
                 row.own_benefit, row.age_adjusted_rate
             )
+        else:
+            assert row.auxiliary_payable == 0
 
 
 # ===========================================================================
@@ -744,3 +749,62 @@ def test_savings_clause_contract_across_a_cola(family, tenths):
             + (state.kind is not g.FamilyKind.SURVIVOR)
             < 2
         )
+
+
+@settings(max_examples=400, deadline=None)
+@given(
+    st.sampled_from(list(g.FamilyKind)),
+    years,
+    dimes,
+    cola_lists,
+    st.integers(1, 90),
+    st.data(),
+)
+def test_formula_maximums_with_a_cola_never_trip_the_savings_clause(
+    kind, year, pia, colas, tenths, data
+):
+    """With the statutory maximum, a COLA never trips the 403(a)(5) check.
+
+    A COLA of c raises the maximum by floor(10 x FMAX x c) dimes and the
+    PIA by floor(10 x PIA x c) dimes, and FMAX >= PIA, so the room left
+    for auxiliaries never shrinks. This property checks that the protected
+    total never falls either, for families that are not dually entitled.
+    The detector is for PIA increases that do not carry the maximum.
+    """
+    extra = {}
+    if kind is g.FamilyKind.DISABILITY:
+        extra["aime"] = data.draw(st.integers(0, 20_000))
+        extra["first_dib_entitlement"] = g.YearMonth(year, 1)
+
+    def state(increases):
+        record = g.WorkerRecord(
+            kind, year, pia, cola_percents=tuple(increases), **extra
+        )
+        return g.record_state(record, PARAMS)
+
+    before_state = state(colas)
+    after_state = state([*colas, F(tenths, 10)])
+    size = data.draw(st.integers(1, 6))
+    members = [
+        data.draw(beneficiaries(before_state, index, dual=False))
+        for index in range(size)
+    ]
+    raised_members = [
+        (
+            m
+            if m.original_benefit_basis is None
+            else dataclasses.replace(
+                m,
+                original_benefit_basis=g.increase_by_colas(
+                    m.original_benefit_basis, [F(tenths, 10)]
+                ),
+            )
+        )
+        for m in members
+    ]
+    try:
+        before = _compute(before_state, members, g.YearMonth(2025, 11))
+        after = _compute(after_state, raised_members, g.YearMonth(2025, 12))
+    except g.FamilyConfigurationUnsupported:
+        assume(False)
+    g.check_savings_clause(before, after)
