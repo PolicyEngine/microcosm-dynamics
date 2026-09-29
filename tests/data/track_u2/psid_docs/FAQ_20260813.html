@@ -1,0 +1,1437 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head><title>
+	PSID FAQ
+</title><link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />	
+  <script type="text/javascript">
+    function expandAllCollapsiblePanels() {
+      var currentBehavior = null;
+      var allBehaviors = Sys.Application.getComponents();
+      for (var loopIndex = 0 ; loopIndex < allBehaviors.length; loopIndex++) {
+        currentBehavior = allBehaviors[loopIndex];
+        if (currentBehavior.get_name() == "CollapsiblePanelBehavior") {
+          if (currentBehavior.get_Collapsed()) {
+            //currentBehavior.expandPanel(currentBehavior.get_element());   
+            currentBehavior.set_Collapsed(false);
+          }
+        }
+      }
+    }
+
+    function collapseAllCollapsiblePanels() {
+      var currentBehavior = null;
+      var allBehaviors = Sys.Application.getComponents();
+      for (var loopIndex = 0; loopIndex < allBehaviors.length; loopIndex++) {
+        currentBehavior = allBehaviors[loopIndex];
+        if (currentBehavior.get_name() == "CollapsiblePanelBehavior") {
+          if (!currentBehavior.get_Collapsed()) {
+            //currentBehavior.collapsePanel(currentBehavior.get_element());
+            currentBehavior.set_Collapsed(true);
+          }
+        }
+      }
+    }
+
+    function pageLoad(sender, args) {
+      smoothAnimation();
+    }
+
+    function smoothAnimation() {
+
+      var currentBehavior = null;
+      var allBehaviors = Sys.Application.getComponents();
+      for (var loopIndex = 0; loopIndex < allBehaviors.length; loopIndex++) {
+        currentBehavior = allBehaviors[loopIndex];
+        if (currentBehavior.get_name() == "CollapsiblePanelBehavior") {
+          currentBehavior._animation._fps = 45;
+          currentBehavior._animation._duration = 0.40;
+        }
+      }
+    }
+  </script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes" /><link href="../CSS/reset.css" rel="stylesheet" type="text/css" media="Screen" /><link href="../CSS/PSIDOnline.css" rel="stylesheet" type="text/css" media="Screen" /><link href="../CSS/print.css" rel="stylesheet" type="text/css" media="print" /><link href="../CSS/jquery.fancybox.css" rel="stylesheet" type="text/css" /> 
+    
+    <script type="text/javascript">
+      function SetYear() {
+        var thisDate = new Date();
+        var thisYear = thisDate.getFullYear();
+        document.getElementById('copyR').innerHTML = "<span class=pagetext_8> &copy; " + thisYear + " PSID</span>";
+      }
+      function toggle() {
+        var ele = document.getElementById("toggleText");
+        var text = document.getElementById("displayText");
+        if (ele.style.display == "block") {
+          ele.style.display = "none";
+        }
+        else {
+          ele.style.display = "block";
+        }
+      }
+      window.onscroll = function () { scrollFunction() };
+
+      function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+          document.getElementById("myBtn").style.display = "block";
+        } else {
+          document.getElementById("myBtn").style.display = "none";
+        }
+      }
+
+      // When the user clicks on the button, scroll to the top of the document
+      function topFunction() {
+        document.body.scrollTop = 0; // For Chrome, Safari and Opera
+        document.documentElement.scrollTop = 0; // For IE and Firefox
+      }
+    </script>
+   <script src="https://simba.isr.umich.edu/jsLib/jquery-3.5.1.js" type="text/javascript"></script>
+    <script src="https://simba.isr.umich.edu/jsLib/jquery.fancybox.js" type="text/javascript"></script>   
+    <style type="text/css">
+      .fancybox-slide--video .fancybox-content {
+	      width  : 700px;
+	      height : 500px;
+	      max-width  : 80%;
+	      max-height : 80%;
+      }
+    </style> 
+  <link href="/WebResource.axd?d=UT1Cj7SEzX8U-GEgOjD-qyHErga19G_3g9sCQazfbRBJjAn1xrQ0C7bkJAbRE8J3rYCAp9ojP8tZXIwAxj6I4JBD9ZtDzdRe4Ief_4NJPQkUvM28Y5aPti4A3REsYQ5EXU428BygJ_EMi4J-4RbR3Q2&amp;t=637654013236808953" type="text/css" rel="stylesheet" /><link href="/WebResource.axd?d=QKX1AO1vX8ebWKfbb4eOTCf097MXYDDzjkoR_TEEFotfZPe2a0rcZnXWnwK4jBekRObrdBJuc7Lt7avX2lnw938YcI8k4KDL38lA0xpJtz2sWadjXKx7M8Zz5gk7szOF0&amp;t=637654013243377572" type="text/css" rel="stylesheet" class="Telerik_stylesheet" /><link href="/WebResource.axd?d=abSXP-RgNuAsfhlSYpnpbOZkgpJhde7LWu5SP9ngcOUFW-l4X9v6O00vi3PMGOhPB3Y49yYNtY_oTlJVgSMasr97VilSaFEd-5-kzKChMg6ULK_yKrp-A502TvKosqXZivCKTYk_TWSdE4dykM1V5Q2&amp;t=637654013243377572" type="text/css" rel="stylesheet" class="Telerik_stylesheet" /></head>
+  <body>
+    <form method="post" action="./FAQ.aspx" id="form1">
+<div class="aspNetHidden">
+<input type="hidden" name="RadScriptManager1_TSM" id="RadScriptManager1_TSM" value="" />
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="eZq5iTFHXj0Xn8IBzXoup/lM2OckveUV3NqA4myrlVVclF54na0j2Vtyw0O6uueyrOErRV1OBTVJLE62JKx0kdbLCzZVIWmrNkRhQHBTWdVKzLabx1i2q4Lq/MOqcWAXE9wz3vcmwdaydiPrl8Wl59Kse0Umw5hb+887kbju3PqMvHfawLLZGhDtUBA46iSs3AcukmG/Re5d4ZpAtpKvLnyjM/0EufAcqfyHQ3cO/Aier9k8+QiC2tqOIuUJberjC5/6QRv4IHCpqOZBdIAoyErFJFe4zcl+ugdS8q8aoYpQbXlpwow8wDfH2hEIQqph3sLtnGLCHHj9dcsUrR2tdVzfi72Wj2v2uTyazTyG31VTWV18f5zos0AQzPhCs+r+e2CB+b7lZBuJaOVc/qbzkhlsXGozYup2hWs99RPcQHBz9MlmxOLiBd7gNkpisNKbGMnQxi0HS2VAgtaLC5Y2lmHbp9ok0n1q+T9T7C+piljxds1jXZp6EbDk5sLMuGQ9ghFnzsJbuW/4nWyMVPiexXu0TWLEVD1ErDM0x0v1RzgRt1/SfqZVfXsWSHovzHhfTbk46O5hiH3McdGX9ULbcweiGsLD3Dj/RIBbatxYbfliwKVZ8Khl5nQp/GBC6ZhroQmbCnwTNc1W9LNBQTISBA==" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/WebResource.axd?d=pynGkmcFUV13He1Qd6_TZKyJM8mcz1_3QyZPVr1W4XLVFwQDgQebjSOiLgWdWTkQkwCy6j9hW03_xpMEtuYvNg2&amp;t=639190599605538696" type="text/javascript"></script>
+
+
+<script src="/Telerik.Web.UI.WebResource.axd?_TSM_HiddenField_=RadScriptManager1_TSM&amp;compress=1&amp;_TSM_CombinedScripts_=%3b%3bSystem.Web.Extensions%2c+Version%3d4.0.0.0%2c+Culture%3dneutral%2c+PublicKeyToken%3d31bf3856ad364e35%3aen-US%3a44715eca-1ae9-42ec-b817-38b6cdd5d2ea%3aea597d4b%3ab25378d2%3bTelerik.Web.UI%2c+Version%3d2020.1.114.45%2c+Culture%3dneutral%2c+PublicKeyToken%3d121fae78165ba3d4%3aen-US%3a40a36146-6362-49db-b4b5-57ab81f34dac%3a16e4e7cd%3af7645509%3a24ee1bba%3af46195d3%3ab2e06756%3a92fe8ea0%3afa31b949%3a4877f69a%3a33715776%3ac128760b%3a19620875%3a874f8ea2%3a490a9d4e%3abd8f85e4%3bAjaxControlToolkit%2c+Version%3d15.1.3.0%2c+Culture%3dneutral%2c+PublicKeyToken%3d28f01b0e84b6d53e%3aen-US%3a9d84295e-a27a-4932-9480-5fa4088f2695%3acd9be5ef%3a10439726%3af2800037%3a2761bb61%3a98f9cc63%3adffb332%3a257268cd" type="text/javascript"></script>
+<script type="text/javascript">
+//<![CDATA[
+if (typeof(Sys) === 'undefined') throw new Error('ASP.NET Ajax client-side framework failed to load.');
+//]]>
+</script>
+
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="69654FE9" />
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="aE5vIGWTkfYlRSkYr02Vaba4ZglTC0cnftefopOcVX8ASlhpEL5qKMGL4Fb3X1ZIbhcvkCizYzYEUE8vxh/8pWTu1IDhXlq4flHnS0sJzu4sUpcwrCC2WEs0HxUevp/rHWRW/TzliGOdN1TPlyebcAzzwW+9dVe9ZNHA9UuwSkqmCkz9xS27OmXwullLucGHJETj0JpR6He92t6Lh2xOG4BtZeDg49PFflKjSoXmPuJeHHYXCz9o7/iM/CwoFx3H1xcqzbvIvunczjQtxJSMZn/s5w7txPMh7P1jCDirO0uaQ+A5xngIxkV6/SAIDOiwtFuCqSvgz2JhGSZRGMMrgUPT8UMCZakeujoLZ45FwsdDUmSlujdeIEWav6vwzRdGW1AhffVjAyzWrq6EzBEuS3AphIgkmwC4ikCJuGpAYNPX8wWO+dmAI1lIGO9QOCEW5Rc3WYL9cB+ieMtrt30PeyAJSHd9zfPybQsaS/Btzwnv97y9ML+os8Rmjippf4F/2fwHnTVJamxVwomj+PhZH8zpW0dlqZHDBQqgKXAXHVeO5rRYszycbEjujI3mYhamzX91ze8KtSxHi2Zh24KuSQGKfG+ZxBLbRANo0YZrH/peZqbbbxRqBH/IgxYbM4mhA7aBOzT1rl0t1mgH7poX++wugLD3ITGocPfnDqlZf0VFgG9bTCWX5ay/LtHhQ+s1cLG6b347K4WlyPPBZzz9JdROL3tbYJhDp0kUnycRyGgK9Z+YYuONQY9TLVdlnSWc2MQKQcXdtFFVOCw0QTGHi0VCsQ5cqsNtnRUQz4JraLbOCMWgC1MueccRYWapNdIC0/1YEbUYAOXNcazVZqHtC8hRcVca9DdbUiHejKBurD16xE7+lHg88rC8mX9TmUVxQY5XH2R4pYnu5H4XwuPBBRnquOA2rlcCloz4b6TS14D6pyVbgLiIE/Zi+mfgOm1nczHlWRcXpUhHc2+eowlct+Pttti/Fx2UmltVAOAD4SU4W5QnEIvgtNqtwdrTGTbUAXpeEUBINqFOlL1hO3xTHysr8ttKvuhD4WZNfrPij/NBn3eB5Ul39GHM1bKVX3LfpBgP78upw/oCn4fj/+2P8ihpJLLw0HmzdIp5oV0bn+xP1iY9sDWKb5jXWvb/33k0ZuTVF5rXV4Erv51jyl29B+PKz6LFPzve/X1ghy5zZr411Ji+JwzW4lYxTwlt1H1eaiTw63y+c+s9aud8JIe87o6MI2VAjSbwtDer4TxfjtYBYSAgXIWTYJ4EJJ5RFNF/FN0FK082ITfCss0sIUxqcPHpVzEfcSJW6qdZbpuxQLbvWRNZN7NWZhv8wMz5r3pWiggMTtk+h0EaV3rXqV4ZZBdSsvlOLv2emFDic8uDO8Gfb+QHbG/GKNqIUTO+Pf1BLO9fOHu5bQSpQKnSPrFjrL+YCRsQr5pk5fMWers/EoMRzSCFVZ8ORFGrCA+OrIemUAo2IVYiY+F3nyxaV8LW4ow9NTe5Wxg3bX6BP5nJxZxfiLBvv97HTWZzJvoPk8K1KadO1+qwaKEGOJSe0ZGtxxFUf64jguUsgGxsxC8L9N3Z1FmUmUf9V8ZgPI+t+Cn7m7xgj9ERBt8/kRMGZImYkiLmEkGiUn6tS7dksknTtwl+bTP9nw/KjlLF5QonZYEyBwn1TECvzBtK7/RlcbFKXOzBZtcHPvKNd/ObO3jXlkoIvOmdMvd+boUw1Cv8LCbatrWki6oQ+r9Ur2zTD2T42COk1jNubwHBOvHLx/pkfg21bWj8QoP5KcUCzM257eVDXH9Fuf6ycf7QPjNAYNCnlIiapeDrc1mpwImmwbJ56/kbEUEWgux0lzO8KBHvbQ4WrHZqlZTcJiDQw2iDB064nZ+C2NgzOpN03w+gRUqnF71y4l+KFubcul7+F0gNmgrlu312NcHdCoG+zn6AiK3vn82m/pfsJxAXGpXy5p+bXE+U3MbtMOyxCjQVW4asGFw0yCM/UEAgHWsXonJFbFCOg9ba2Jjplz9iKikelgP5Ra1dEoKIogLVDkcgeB/znPMK/Fe2QR8IVYj19S0Fxq7OxMvnLRWwjMLRCUEw9BGls2A=" />
+</div>
+      <script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('ctl00$RadScriptManager1', 'form1', ['tctl00$ContentPlaceHolder1$UpdatePanel1','ContentPlaceHolder1_UpdatePanel1'], [], [], 90, 'ctl00');
+//]]>
+</script>
+            		      
+      <div id="toggleText" style="display: none;width:1150px;margin-left: auto ;	margin-right: auto ;">        
+      <script type="text/javascript">
+        (function () {
+          var cx = '018171321042756076064:u8bkftq3zvi';
+          var gcse = document.createElement('script');
+          gcse.type = 'text/javascript';
+          gcse.async = true;
+          gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+          var s = document.getElementsByTagName('script')[0];
+          s.parentNode.insertBefore(gcse, s);
+        })();
+      </script>
+      <gcse:search enableHistory="false"></gcse:search>
+      </div>
+
+      <div id="Main">
+        <div id="headercontent" >									
+					<a href="https://psidonline.isr.umich.edu/default.aspx" style="text-decoration: none; " >     
+						<img id="imgBanner" src="../images/PSIDbanner.jpg" />                  									 
+					</a>	 									        
+					
+				</div>		
+        <div id="HorizontalMenu">
+					<ul class="HMenu_ul">
+            <li class="ul_item"><a href="../GettingStarted.aspx">GETTING STARTED</a></li>
+						<li class="ul_item"><a href="../Studies.aspx">STUDIES</a></li>
+						<li class="ul_item"><a href="default.aspx">DOCUMENTATION</a></li>
+						<li class="ul_item"><a href="https://simba.isr.umich.edu/data/data.aspx">DATA</a></li>
+						<li class="ul_item"><a href="../Publications/">PUBS & MEETINGS</a></li>
+						<li class="ul_item"><a href="People.aspx">PEOPLE</a></li>
+						<li class="ul_item"><a href="News.aspx">NEWS</a></li>
+						<!-- <li class="ul_item"><a href="../Funding/Opportunities.aspx">RESEARCH OPPS</a></li>						 -->
+          </ul>
+        </div>        
+        <div id="HorizontalMenu2">
+	      <ul class="HMenu_ul2">
+		      <li class="mag"><a title="Search" id="displayText" href="javascript:toggle()"><img id="img1" src='/images/magglass.png'  alt="Search" /></a></li>							
+		      <li class="bsky"><a target="_blank" href="https://bsky.app/profile/umpsid.bsky.social" title="Follow PSID on Bluesky"><img alt="Bluesky" title="PSID Bluesky" src='/images/Bluesky_Logo.png' /></a></li>
+		      <li class="cart"><a href="https://simba.isr.umich.edu/cart/default.aspx"><img src='/images/shopping-cart-wheel-new.png' alt="" title="Data Center Cart" /></a></li>
+          <li class="youtube"><a target="_blank" href="https://www.youtube.com/channel/UCRKjqCqPGtOZommz9SyaCyQ" title="PSID YouTube"><img src='/images/youtube_psid.png' alt="Youtube" /></a></li>
+          <li class="gear"><a href="https://simba.isr.umich.edu/U/Login.aspx" title="Data Center Login" style="text-decoration:none;"><img src='/images/Sm_gear-person.png' alt="Login" /></a><span style="font-size:xx-small;visibility:hidden;">&#9660;</span></li>
+	      </ul>		
+      </div>	
+      <hr class="hr2" />    
+      </div>
+      
+      <div id="SiteMessage">
+			  
+				<!-- -->
+		  </div>
+
+      <div id="SubMain"> 
+   <div>                          
+        <div id="breadcrumb_row">				          
+          <div id="leftcontent_homepage_toprow">
+            <table>
+              <tr><td><span id="SiteMapPath1"><a href="#SiteMapPath1_SkipLink" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;">Skip Navigation Links</a><span><a title="Home" href="/default.aspx">Home</a></span><span> &gt; </span><span><a title="Documentation" href="/Guide/default.aspx">Documentation</a></span><span> &gt; </span><span>FAQs</span><a id="SiteMapPath1_SkipLink"></a></span></td></tr>
+            </table>
+          </div>
+        </div>
+        
+        <div id="leftcontent_homepage">
+          
+<div style="width: 100%; display: table;">
+  <div style="display: table-row">        
+    <div class="SameSizeCols">
+      <ul class="FAQcircle">
+				<li><a href="../Guide/FAQ.aspx">All FAQs</a></li>
+        <li>Restricted use data:<br />
+					&nbsp;-&nbsp;&nbsp;<a href="../Guide/FAQ.aspx?Type=3">Obtaining the data</a><br />
+					&nbsp;-&nbsp;&nbsp;<a href="../Guide/FAQ.aspx?Type=4">Existing contract holders</a>
+				</li>									  				
+			</ul>
+    </div>
+    <div class="SameSizeColsSep">&nbsp;</div>
+    <div class="SameSizeCols">
+      <ul class="FAQcircle">		
+        <li><a href="../Guide/FAQ.aspx?Type=2">Child Development Supplement</a></li>
+				<li><a href="../Guide/FAQ.aspx?Type=8">Citation and sponsorship</a></li>					
+				<li><a href="../Guide/FAQ.aspx?Type=1">How to use the data</a></li>						
+				<li><a href="../Guide/FAQ.aspx?Type=9">Interviewing procedures</a></li>        
+			</ul>
+    </div>
+    <div class="SameSizeColsSep">&nbsp;</div>
+    <div class="SameSizeCols">
+      <ul class="FAQcircle">
+        <li><a href="../Guide/FAQ.aspx?Type=6">Obtaining the data</a></li>
+        <li><a href="../Guide/FAQ.aspx?Type=5">PSID terminology</a></li>
+				<li><a href="../Guide/FAQ.aspx?Type=10">Sample weights</a></li>					
+				<li><a href="../Guide/FAQ.aspx?Type=7">Survey content/variables</a></li>					
+			</ul>
+    </div>
+  </div>
+</div>			  
+<hr class="pagebreak">
+  <br />
+  
+  <input class="btn btn-small btn-blue btn-radius" id="btnExpand" type="button" value="Expand All" onclick="expandAllCollapsiblePanels(); return false;" />
+  <input class="btn btn-small btn-blue btn-radius" id="btnCollapse" type="button" value="Collapse All" onclick="collapseAllCollapsiblePanels(); return false;" />
+  
+  <br />
+  
+    <table style="width:98%">
+      <tr><td><table width='100%'><tr class='faq_main_header'><td align='center'>ALL FAQs</td></tr></table></td></tr>
+      <tr>
+        <td>     
+          <div id="ContentPlaceHolder1_UpdatePanel1">
+	      
+          <div id="ContentPlaceHolder1_pH0" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">1.</td><td class="pagetext_11">How can I get started analyzing PSID data?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB0" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The <a target="_blank" href="/data/Documentation/UserGuide2017.pdf">PSID user guide</a> provides historical context and basic design features of the PSID.  There are several 
+
+<a target="_blank"  target="_blank"  href="/VideoTutorial.aspx">tutorials</a> which provide step-by-step instructions on downloading and analyzing the data in a variety of ways. <br /><br />
+
+The <a  target="_blank" href="http://simba.isr.umich.edu/default.aspx">Data Center</a> is the most popular means for obtaining PSID data, and it delivers thousands of customized data 
+
+files to researchers and quantitative social science students each year.  The <a target="_blank"  href="http://simba.isr.umich.edu/default.aspx">Data Center</a> is fully automated and allows for user-specified 
+
+subsetting criteria when downloading and merging data.  Data can be generated in a variety of formats including ASCII, SAS, SPSS, and Stata.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe0_ClientState" id="ContentPlaceHolder1_cpe0_ClientState" /><div id="ContentPlaceHolder1_pH1" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">2.</td><td class="pagetext_11">How do I merge family- and individual- level files?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB1" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The <a href="http://simba.isr.umich.edu/default.aspx">Data Center</a> provides automatic and customized merges of files. For the analyst who prefers to write their own programming code to merge data downloaded from our zip packages, <a target="_blank" href="/Guide/FileStructure.pdf">sample SAS and SPSS programs</a> have also been prepared to assist users with creating cross-year analysis files.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe1_ClientState" id="ContentPlaceHolder1_cpe1_ClientState" /><div id="ContentPlaceHolder1_pH2" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">3.</td><td class="pagetext_11">How can I identify families from year to year?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB2" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Each family unit in a specific wave is assigned a unique "Family Interview (ID) Number" valid for that wave only.  In addition, each family also has a "1968 Family Identifier", also known as the "1968 ID".  This is the Family Interview (ID) Number that was assigned to the original family in the 1968 interviewing wave.  When sample members in any family move out and establish their own household, we interview them (these families are called "splitoffs", in the first year they are formed).  These new "splitoff" families have the same 1968 ID as the family they moved out of, and keep that same 1968 ID each year.  All families with the same 1968 ID contain at least one of the original members from the 1968 family or their lineal descendents born after 1968.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe2_ClientState" id="ContentPlaceHolder1_cpe2_ClientState" /><div id="ContentPlaceHolder1_pH3" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">4.</td><td class="pagetext_11">Do family ID numbers vary from year to year?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB3" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>For each family, the family ID number will most certainly vary from year to year. Yearly IDs are assigned based on the order in which interviews are received--the first interview in from field is numbered 1, the second, 2, and so on. This means it's very unlikely that a family with the Family ID Number 1234 in one year will get the same Family ID Number the next year, or any other year.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe3_ClientState" id="ContentPlaceHolder1_cpe3_ClientState" /><div id="ContentPlaceHolder1_pH4" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">5.</td><td class="pagetext_11">When is a new Reference Person ('Head' prior to 2017) selected?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB4" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>A new Reference Person (the term ‘Reference Person’ has replaced ‘Head’ in 2017) is selected if any of the following conditions apply:<br />
+<ul class="circle2">
+<li>last year's Reference Person moved out of the FU (family unit), died, (in some cases) became incapacitated; or </li>
+<li>a female Reference Person has gotten married to a male, or now has a male Partner; or </li>
+<li>this is a splitoff family.  (Note that this new Reference Person may have been the Reference Person of the family this new family split off from)</li></td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe4_ClientState" id="ContentPlaceHolder1_cpe4_ClientState" /><div id="ContentPlaceHolder1_pH5" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">6.</td><td class="pagetext_11">How can I tell the current Reference Person and Spouse/Partner from mover-out Reference Person and Spouse/Partner? Why is this important? (the term ‘Reference Person’ has replaced ‘Head’ in 2017)&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB5" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>To tell the current Reference Person (starting with the 2017 wave, the term ‘Reference Person’ has replaced ‘Head') and Spouse/Partner from mover-out Reference Person and Spouse/Partner, use the Sequence Number (SN) from the individual file.  The current Reference Person will always have SN=1, the current Spouse/Partner (if there is one) will always be SN=2.  A mover-out Reference Person or Spouse/Partner will have a SN in the range 50-89, depending on the move-out circumstances.  The SN allows you to identify an individual's status with regard to the family unit and determine family composition change.  It's important to understand family composition change to avoid spurious correlations in a longitudinal analysis where you are looking at variables pertinent to the same person(s) over time.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe5_ClientState" id="ContentPlaceHolder1_cpe5_ClientState" /><div id="ContentPlaceHolder1_pH6" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">7.</td><td class="pagetext_11">How do I assemble a Reference Person/Spouse file from an individual file? (the term ‘Reference Person’ has replaced ‘Head’ in 2017)&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB6" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The easiest way to do this is by visiting the PSID Data Center which will create a customized dataset for you automatically.
+<br /><br />
+Instructions for creating Reference Person (starting with the 2017 wave, the term ‘Reference Person’ has replaced ‘Head')/Spouse file from an individual file by writing your own programming code:
+
+<br /><br />
+To create a single year Reference Person (‘Head’ prior to 2017)/Spouse file:  Select individuals with Relationship to Reference Person of "Reference Person" (a code value of 1 for 1968-1982; code 10 from 1983 onward) and with the Sequence Number=1.  The reason for using the Sequence Number variable is that non-response movers out have relationships to the PREVIOUS YEAR's Reference Person, so two individuals within one family may have relationships of Reference Person.  One, however, is the real, current Reference Person; the other is a mover out.  (The type of mover-out can be determined from the value for Sequence Number.  Refer to the individual file codebook for details.)  To illustrate the importance of Sequence Number, assume that in the last wave we have an elderly married couple. He is the Reference Person (‘Head’ prior to 2017) and she is the Spouse--Sequence Number=1 and Relationship to Reference Person=10 for him, Sequence Number=2 and Relationship to Reference Person=20 for her.  When we find them for the new interview, he has died and she has become the new Reference Person--his Sequence Number=81 and Relationship to Reference Person=10, her Sequence Number=1 and Relationship to Reference Person=10.  All the family data items about Reference Person in the current wave refer to HER, not to him.  Information about his income, etc. is located in OFUM (other family unit members) variables only. Similarly, to subset Spouses or Partners in a current wave--select Relationship to Reference Person=20 or 22 and Sequence Number = 2.
+
+<br /><br />
+To create a cross-year Reference Person (‘Head’ prior to 2017)/Spouse file:  These concepts can be expanded to subset persons who have been the Reference Person over a period of years--the yearly values for Sequence Number must be 1,  and 1 or 10 for Relationship to Reference Person.  As a corollary, to select individuals who have been either Reference Persons or Spouses/Partners, yearly Sequence Numbers must equal 1 or 2 and yearly Relationships to Reference Person must be in the range 1, 2, 10, 20, or 22.  Once that subset is made and family data are merged, information about an individual can be found in Reference Person variables (Reference Person's work hours, Reference Person's labor income, etc.) when his or her Relationship to Reference Person=1 or 10.  When Relationship to Reference Person is 2, 20, or 22, then his or her information is found in variables about the Spouse/Partner.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe6_ClientState" id="ContentPlaceHolder1_cpe6_ClientState" /><div id="ContentPlaceHolder1_pH7" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">8.</td><td class="pagetext_11">How can I identify splitoffs from the main family?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB7" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Select only current Reference Person (starting with the 2017 wave, the term ‘Reference Person’ has replaced ‘Head') (Sequence Number=1 and Relationship to Head/Reference Person=10) from the individual file for the wave in question. Then, if Reference Person's moved in/out indicator=1 and month moved in/out=0, it's a splitoff. Otherwise it's a main family.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe7_ClientState" id="ContentPlaceHolder1_cpe7_ClientState" /><div id="ContentPlaceHolder1_pH8" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">9.</td><td class="pagetext_11">How is an individual uniquely identified?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB8" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The combination of the 1968 ID and the person number uniquely identify each individual.
+
+<br /><br />
+
+To identify an individual across waves use the 1968 ID and Person Number (Summary Variables ER30001 and ER30002). Though you can combine them uniquely in many ways we find that many researchers use the following method:<br />
+
+<br />
+
+<center>(ER30001 * 1000) + ER30002</center>
+ <br /><br />
+
+<center>(1968 ID multiplied by 1000) plus Person Number
+</center></td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe8_ClientState" id="ContentPlaceHolder1_cpe8_ClientState" /><div id="ContentPlaceHolder1_pH9" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">10.</td><td class="pagetext_11">Why is using the latest version of the Cross Year Individual File essential?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB9" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The Cross Year Individual File has records for every person who has ever lived in a PSID study family (including some who moved out just before the initial interviewing year for each part of the sample, or were institutional in the first interviewing year; see the codebook for ER30002).  Each study individual has a record for each study year; years when that individual was not listed in a study family are zero-filled.  The file is organized by ID68, PN, and year.  
+<br /><br />
+In addition to those variables, the file contains individual-level information such as YEARID, SN, Relationship to Head/Reference Person (starting with the 2017 wave, the term ‘Reference Person’ has replaced ‘Head'), AGE, SEX, birthdates, move-in and move-out dates, follow status, type of individual, why non-response, several health insurance variables, variables indicating eligibility for supplementary studies such as CDS and DUST, and individual level longitudinal and cross-sectional weights.
+<br /><br />
+<u>It is essential to use the latest version of the file for analysis</u>.  The entire file is regenerated for every wave’s release not only to add the latest wave’s info, but to make corrections based on information received in the latest wave’s interviewing.  These corrections are often to information such as birthdate or Relationship to Head/Reference Person, and may affect several waves of data.  
+<br /><br />
+<u>Most importantly, however, we also make corrections to ID68 and PNs</u>, based on new information.  Sometimes we discover that a person we believed to be a separate individual is actually the same as a family member we already know about, with a different person number.  If the two individuals were response in different waves, we can combine the information into one record, keeping the record for one PN and deleting the record for the other.  In other cases, we might learn that someone we thought was the biological child of a sample member actually isn’t.  This would necessitate a change in PN from the "born-in sample" range (030-169) to the 170-and-up range, and also a change in follow status, since on the new information the child would no longer be sample.   In another instance, we found that a woman in the immigrant sample with PN 170 was actually a spouse who had moved out prior to the first year of immigrant interviewing (1997 for this case), so should have had PN 227 (a PN with special meaning, see the codebook for ER30002).  
+<br /><br />
+Currently, we uncover about 100 of these person-number fixes each wave.  So failure to use the latest cross-year individual file may result in errors in both data and analysis.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe9_ClientState" id="ContentPlaceHolder1_cpe9_ClientState" /><div id="ContentPlaceHolder1_pH10" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">11.</td><td class="pagetext_11">How can I determine if data will be collected about an individual who is not present in an interviewed family?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB10" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body><p>
+It depends on the situation.  <br />
+<ul class="circle2">
+
+<li>For persons who are mover out deceased, some OFUM (other family unit member) information is collected for the wave they are reported to have died.</li> 
+<li>For persons moving out to an institution, some OFUM information is collected during the wave they are reported to have moved out from the family. </li>
+<li>For persons moving out to another household but no interviews are conducted with the new family unit, some OFUM information is collected the wave they are reported to have moved out. </li>
+<li>For persons already in institutions, no new information is collected.</li> 
+<li>For persons who attrited from the study, no new information is collected.  However, a large recontact effort was initiated in 1992. </li>
+<li>For persons not yet born or not yet appearing in the study, no information is collected that wave.</li> 
+</ul>
+<br />
+Beginning with the 1999 wave, when the PSID switched from annual to biennial interviews, the following rules for movers out apply only if the person moved out in the calendar year before the interview.  For example, in the 2007 data, there will be information for movers out on or after 1/1/2006, but no information for movers out before that date.
+</p></td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe10_ClientState" id="ContentPlaceHolder1_cpe10_ClientState" /><div id="ContentPlaceHolder1_pH11" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">12.</td><td class="pagetext_11">How can I determine which variables are comparable across years?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB11" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The <a href="http://simba.isr.umich.edu/DC/i.aspx">cross-year index</a> can help you identify comparable variables across the years. 
+
+<br /><br />
+
+You can also look at the ‘Years Available’ section of each variable’s codebook entry for a year-by-year listing of when that variable is available in the data center.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe11_ClientState" id="ContentPlaceHolder1_cpe11_ClientState" /><div id="ContentPlaceHolder1_pH12" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">13.</td><td class="pagetext_11">How can I tell if a variable value is actual or imputed?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB12" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>A missing data value is either identified as such (value=9) or an imputed value is assigned in lieu of a missing data code. If an imputed value is assigned, an associated "accuracy code" variable describes the nature of the assignment.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe12_ClientState" id="ContentPlaceHolder1_cpe12_ClientState" /><div id="ContentPlaceHolder1_pH13" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">14.</td><td class="pagetext_11">How can I identify the SEO (Survey of Economic Opportunity) sample and the SRC (Survey Research Center) sample?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB13" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>You will need to look at the 1968 family interview number available in the individual-level files (variable ER30001).<br /><br />
+SRC sample families have values less than 3000.<br />
+SEO sample families have values greater than 5000 and less than 7000.<br /><br />
+
+Immigrant sample families have values greater than 3000 and less than 5000. (Values from 3001 to 3441 indicate that the original family was first interviewed in 1997; values from 3442 to 3511 indicate the original family was first interviewed in 1999; values from 4001-4851 indicate the original family was first interviewed in 2017; values from 4700-4851 indicate the original family was first interviewed in 2019.)<br /><br />
+
+Latino sample families have values greater than 7000 and less than 9309. (Values from 7001 to 9043 indicate the original family was first interviewed in 1990; values from 9044 to 9308 indicate the original family was first interviewed in 1992.)</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe13_ClientState" id="ContentPlaceHolder1_cpe13_ClientState" /><div id="ContentPlaceHolder1_pH14" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">15.</td><td class="pagetext_11">For what years are Latino data available?  How do Latino data differ from immigrant data?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB14" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>In 1990 the PSID added 2,000 Latino households consisting of families originally from Mexico, Puerto Rico, and Cuba. But while this sample did represent three major groups of immigrants, it missed out on the full range of post-1968 immigrants, Asians in particular. Because of this crucial shortcoming, and a lack of sufficient funding, the Latino sample was dropped after 1995, and a sample of 441 post-1968 immigrant families was added in 1997. In 1999, an additional 70 families were added in for a total of 511 immigrant families as of 1999. These families are included on the files along with the core PSID families</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe14_ClientState" id="ContentPlaceHolder1_cpe14_ClientState" /><div id="ContentPlaceHolder1_pH15" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">16.</td><td class="pagetext_11">Where can I find information on the 1997-1999 and 2017-2019 Immigrant Samples?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB15" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Information on the Immigrant Sample is available in the <a href="/Guide/documents.aspx">1997 and 1999 main interview documentation</a>.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe15_ClientState" id="ContentPlaceHolder1_cpe15_ClientState" /><div id="ContentPlaceHolder1_pH16" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">17.</td><td class="pagetext_11">Codebook information for some variables does not show index information.  Why?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB16" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Variables from supplemental files, with the exception of CDS and TAS, are not yet in the index.  We plan to add these variables to the index in the future.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe16_ClientState" id="ContentPlaceHolder1_cpe16_ClientState" /><div id="ContentPlaceHolder1_pH17" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">18.</td><td class="pagetext_11">Why do some supplemental files have fewer observations than the main family files?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB17" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Some supplemental files were created only for sub-samples. For example, the Disability and Use of Time Supplement (DUST) only collects information on Heads ('Reference Person' starting in the 2017 wave) and Spouse/Partners of a certain age.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe17_ClientState" id="ContentPlaceHolder1_cpe17_ClientState" /><div id="ContentPlaceHolder1_pH18" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">19.</td><td class="pagetext_11">What identification variables should I download?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB18" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The Data Center automatically includes all appropriate identification variables for your file.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe18_ClientState" id="ContentPlaceHolder1_cpe18_ClientState" /><div id="ContentPlaceHolder1_pH19" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">20.</td><td class="pagetext_11">How does one analyze data from families from one wave to the next?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB19" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>
+<p>
+Users often want to look at data from the "same" family in adjacent waves. It is important to understand that there is no absolute definition of "same" family. Families are made up of individuals who may move in or out of study families from wave to wave. It is up to the user to decide what he or she means by "same" family. The user may want to restrict this definition to option 1) absolutely no changes in the composition of the family since the previous wave. All the individuals that were in the prior wave are still in the current wave - no one has moved in and no one has moved out. Alternatively, the user may want define "same" family as option 2) those who have the same Reference Person (starting with the 2017 wave, the term ‘Reference Person’ has replaced ‘Head') in both waves. 
+<br /><br />
+In order to subset those cases which the user has defined as "same" family, he or she will find the Family Composition Change variable most useful. The Family Composition Change variable indicates the degree of change in this family since the prior wave's data collection. For option 1, the user would subset the families in the current wave where Family Composition Change variable = 0. For option 2, the user would subset the families in the current wave where Family Composition Change variable in (0,1, 2).
+<br /><br />
+For 2019, for example, the Family Composition Change variable is ER72007.
+</p></td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe19_ClientState" id="ContentPlaceHolder1_cpe19_ClientState" /><div id="ContentPlaceHolder1_pH20" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">21.</td><td class="pagetext_11">What is the CDS and how does it relate to the PSID?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB20" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The Child Development Supplement (CDS) is one research component of the Panel Study of Income Dynamics (PSID).
+<br /><br />
+While the PSID has always collected some information about children, in 1997, PSID supplemented its main data collection with additional information on 0-12 year-old children and their parents. 
+The objective was to provide researchers with a comprehensive, nationally representative, and longitudinal data base of children and their families with which to study the dynamic process of early human capital formation. 
+The Original CDS was collected in three waves: CDS-I in 1997, CDS-II in 2002/2003, and CDS-III in 2007/2008.
+<br /><br />
+In 2014 the CDS methodology was changed to a steady state design, collecting information on all sample children aged 0-17. For more information on the Ongoing CDS, please see the <a href=" https://psidonline.isr.umich.edu/CDS/CDS2014_UserGuide.pdf">CDS-2014 User Guide</a>, the <a href=" https://psidonline.isr.umich.edu/CDS/CDS2019_UserGuide.pdf">CDS-2019 User Guide</a>, the <a href=" https://psidonline.isr.umich.edu/CDS/CDS2020_UserGuide.pdf">CDS-2020 User Guide</a>, the <a href=" https://psidonline.isr.umich.edu/CDS/CDS2021_UserGuide.pdf">CDS-2021 User Guide</a>.
+<br /><br />
+By nature of the CDS being a supplement to the PSID, the study takes advantage of an extensive amount of family demographic and economic data about the CDS target child's family, providing more extensive family data than any other nationally-representative longitudinal survey of children and youth in the U.S. In addition, the PSID-CDS data are "intergenerational" in structure with information contained in several decades of data about multiple family members. This rich data structure allows analysts a unique opportunity to fully link information on children, their parents, their grandparents, and other relatives to take advantage of the rich intergenerational and long-panel dimensions of the data.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe20_ClientState" id="ContentPlaceHolder1_cpe20_ClientState" /><div id="ContentPlaceHolder1_pH21" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">22.</td><td class="pagetext_11">What information does the CDS collect about its sample children?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB21" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body><p>Within the context of family, neighborhood, and school environments, CDS studies a broad array of developmental outcomes including (but not limited to) physical health, emotional well-being, intellectual achievement, and social relationships with family and peers. These outcomes are measured through reliable, age-graded assessments of cognitive and behavioral development and health status indicators obtained from the primary caregiver and the sample children/youth themselves; anthropometric measures of height and weight of the sample children/youth; a comprehensive accounting of parental (or caregiver) time inputs to children/youth as well as other aspects of the way the children/youth spent their time; and other-than-time use measures of other resources for example, the learning environment in the home (using the HOME Scale measures), school resources, as reported through the National Center for Education Statistics Common Core of Data, and decennial-census-based measurement of neighborhood resources. The multi-level, interdisciplinary, and longitudinal nature of the research design facilitates analysis of the relationships between these developmental measures and changes in family structure and living arrangements, neighborhood economic and social conditions, and school resources and programs.</p></td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe21_ClientState" id="ContentPlaceHolder1_cpe21_ClientState" /><div id="ContentPlaceHolder1_pH22" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">23.</td><td class="pagetext_11">Who funds the CDS?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB22" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The Original CDS (1997-2007) was made possible by the generous funding of the <a href="http://www.nichd.nih.gov/"> National Institute of Child Health and Human Development</a>, the <a href="http://www.nsf.gov/"> National Science Foundation</a>, and the <a href="http://www.ers.usda.gov/"> Economic Research Service </a> of U.S. Department of Agriculture.
+
+<br /> <br />
+
+The <a href="http://www.wtgrantfoundation.org/"> William T. Grant Foundation</a>, the <a href="http://www.aecf.org/""> Annie E. Casey Foundation</a>, and the <a href="http://www.ed.gov/"> U.S. Department of Education</a> provided additional funding for CDS-I.
+<br /> <br />
+
+The Ongoing CDS (2014 and beyond) is made possible by the <a href="http://www.nichd.nih.gov/">Eunice Kennedy Shriver National Institute of Child Health and Human Development</a>, <a href="http://www.ers.usda.gov/">the Economic Research Service of the US Department of Agriculture</a>, MARS-Waltham, and the <a href="https://philanthropy.iupui.edu/">Center on Philanthropy at Indiana University</a>.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe22_ClientState" id="ContentPlaceHolder1_cpe22_ClientState" /><div id="ContentPlaceHolder1_pH23" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">24.</td><td class="pagetext_11">Where can I obtain copies of the questionnaires and other study documentation?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB23" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Questionnaires and supporting documentation for the PSID and its supplemental studies are located on the <a href="/Guide/documents.aspx">questionnaires and supporting documents</a> page.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe23_ClientState" id="ContentPlaceHolder1_cpe23_ClientState" /><div id="ContentPlaceHolder1_pH24" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">25.</td><td class="pagetext_11">Do I need to use the sample weights with CDS and TAS data?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB24" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body><p>
+The Original CDS-TAS sample was drawn from PSID families with children 0-12 years in 1997, and the Ongoing CDS sample was drawn from PSID families with children 0-17 years old in 2014, 2019, 2020, and 2021.
+The PSID sample combines the SRC (Survey Research Center) and SEO (Survey of Economic Opportunity) samples. 
+Both the CDS-TAS and PSID samples are probability samples (i.e., samples for which every element in the population has a known nonzero chance 
+of selection). Their combination is also a probability sample. The combination, however, is a sample with unequal selection probabilities, and as a result, 
+compensatory weighting is needed in estimation, at least for descriptive statistics. Weight adjustments are also needed to attempt to 
+compensate for differential nonresponse across waves. Weights supplied on CDS and TAS data files are designed to compensate for both unequal selection probabilities and differential attrition.
+</p>  
+<br /> <br />
+<p>
+In the 2002, 2007, 2014, 2019 and 2021 CDS demographic files, you will find a set of indicator variables for each module that specify (a) 
+if a case was eligible for that module and (b) if a record exists for that case in the corresponding data file. 
+These variables are helpful to merge onto your Data Center data request if you are merging variables from multiple CDS modules.  
+The sample weight in the Demographic file is adjusted only for the non-response in the main module, Primary Caregiver (sections A-H, J).  
+The module indicator variables, however, will inform you about item missing data across modules.  It is up to you to then decide on your preferred 
+approach for addressing item missing data that results from differential response rates across modules (for example, you may leave it as missing, 
+impute scores, etc). The TAS data files contain wave-specific sample weights.
+</p>  
+<br /> <br />
+<p>More documentation on the CDS and TAS weights can be found on <a href="/Guide/documents.aspx">the documentation page</a>.</p></td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe24_ClientState" id="ContentPlaceHolder1_cpe24_ClientState" /><div id="ContentPlaceHolder1_pH25" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">26.</td><td class="pagetext_11">How do I find information about the CDS Target Child's demographic background?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB25" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Every individual in the PSID - including the children - has both an "ID68" (1968 Family Identifier - ER30001) and "PN" (Person Number - ER30002) that combine to uniquely identify that individual. As a user of the CDS data, you can use these identifiers to find information about the CDS targeted child and caregivers in the PSID data files. Background information about the CDS target child, such as birth date, sex, and relationship to the PSID family household Reference Person (starting with the 2017 wave, the term ‘Reference Person’ has replaced ‘Head') can be obtained from the PSID individual and sampling variables files. Use the ER30001 and ER30002 combination to select the PSID variables for just the CDS target child sample, or, when you get to the "Output Options" page in the Data Center, after selecting the variables you want, select "CDS Children" at the bottom.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe25_ClientState" id="ContentPlaceHolder1_cpe25_ClientState" /><div id="ContentPlaceHolder1_pH26" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">27.</td><td class="pagetext_11">Are there additional data files from the PSID that would be useful to me as a CDS data user?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB26" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body><p>
+There are two <a href="http://simba.isr.umich.edu/Zips/ZipMain.aspx">PSID family history files</a> that may be of particular interest to CDS users: the Childbirth and Adoption History File and the Parent Identification File.<br /><br />
+
+<i>Childbirth and Adoption History File</i>: 
+The Childbirth and Adoption History File is specifically designed to facilitate access to detailed information collected since 1985 regarding histories of childbirth and adoption. Variables on this file include the identifiers for each parent and child, month and year of birth for both parent and child, birth order, birth weight and date of death for a child, year of most recent report and number of births/adoptions, etc. Data on this file are structured in a one-record-per-event format, with each record representing a specific childbirth or adoption event.<br /><br />
+<i>Parent Identification File</i>: 
+The Parent Identifier File synopsizes information collected from various sources since the 1983 wave of PSID about parent-child relationships. This file consists of identifier variables that link children with their parents. The file is intended to be used to facilitate linking children's and parents' data records from the Individual File. Linkages can be done from either the child's or a parent's standpoint.
+</p></td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe26_ClientState" id="ContentPlaceHolder1_cpe26_ClientState" /><div id="ContentPlaceHolder1_pH27" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">28.</td><td class="pagetext_11">How do I obtain information collected in the main PSID about the CDS target child's caregivers?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB27" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>There are a large number of variables in the PSID that can be used along with CDS.
+<br /><br />
+Demographic, health, economic, and other family data about PCG (primary caregivers) and OCG (other caregivers) can be found in the PSID data files. Every individual in the PSID has 
+both "ID68" (1968 Family Identifier - ER30001) and "PN" (Person Number- ER30002) that combine to uniquely identify that individual. As a user of the CDS data, you can use these identifiers 
+to find information about the CDS targeted child and caregivers in the PSID data files. These identifier variables are available through a Child to Caregiver Map, provided with each Data Center download.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe27_ClientState" id="ContentPlaceHolder1_cpe27_ClientState" /><div id="ContentPlaceHolder1_pH28" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">29.</td><td class="pagetext_11">How do I find the identification numbers of the CDS target child's caregivers?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB28" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The child to caregiver map, provided with each CDS data download, provides "1968 INTERVIEW NUMBER" (ID68) and "PERSON NUMBER 68" (PN) for CDS individuals. 
+
+These CDS individuals are the target child, the target child's primary caregiver (PCG) in both the Original and Ongoing CDS, as well as the target child's other caregiver (OCG) in the Original CDS, 
+
+if one exists. Missing data means that the child did not have an OCG for the CDS interview year. <br /><br />
+
+All CDS files, by default, contain variables ER30001 (1968 INTERVIEW NUMBER) and ER30002 (PERSON NUMBER 68). Since these variables are also in the map file, the map file can be used to merge PCG and OCG data from PSID Individual data to CDS Child level data in a two step process.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe28_ClientState" id="ContentPlaceHolder1_cpe28_ClientState" /><div id="ContentPlaceHolder1_pH29" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">30.</td><td class="pagetext_11">How do I identify siblings in the CDS data files?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB29" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>There are two steps to locating data for siblings in the CDS data files:<br /><br />
+
+In the Demographic Data File, there is a sibling indicator variable that tells you if a CDS target child had a sibling who also participated in the CDS data collection.<br /><br />
+
+Automatically appended to your data download is the "Family Interview Identification Number" for the corresponding PSID main interview. This variable uniquely identifies the family.<br /><br />
+
+Using these two variables, you can locate data on a wide range of information about the target children and their siblings in the CDS.<br /><br />
+
+See also the codebook explanation text for the family identification number. There is a variable for any year in the PSID in both 
+the individual and family files.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe29_ClientState" id="ContentPlaceHolder1_cpe29_ClientState" /><div id="ContentPlaceHolder1_pH30" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">31.</td><td class="pagetext_11">How was height and weight measured in the CDS?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB30" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Original CDS: In CDS-I, height of the child was measured by the interviewer and weight was reported by the parent. In CDS-II and CDS-III, both height and weight were measured by the interviewer.
+<br /><br />
+Ongoing CDS: In CDS-2014, CDS-2019, CDS-2020 and CDS-2021 height and weight were measured by the interviewer for families that participated in the in-home module. For children not included in the in-home module, height and weight were reported by the parent.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe30_ClientState" id="ContentPlaceHolder1_cpe30_ClientState" /><div id="ContentPlaceHolder1_pH31" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">32.</td><td class="pagetext_11">What is the Behavior Problem Index (BPI) and how is it scored?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB31" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The Behavior Problem Index was originally developed by James Peterson and Nicholas Zill from the Achenbach Behavior Problems Checklist to measure in a survey setting the incidence and severity of child behavior problems. The BPI scale is based on responses by the primary caregiver as to whether a set of 32 problem behaviors is often, sometimes, or never true of the targeted child.
+<br /><br />
+These items are then divided into two subscales: 1) a measure of externalizing or aggressive behavior and 2) a measure of internalizing, withdrawn or sad behavior. The User Guide specifies the individual items that map into the internalizing and externalizing subscales.
+<br /><br />
+We performed a confirmatory factor analysis on our two expected subscales. The results showed that the items grouped into these two factors quite readily, with one variable overlapping on both subscales, as did in CDS-I, and two variables not loading at all. We constructed an overall or total BPI score, using all 32 items, as well as separate scores for each of the two subscales, internal or withdrawn and external or aggressive. Before scoring, the individual items are recoded such that a score of "1" becomes "0" and a score of "2" or "3" become a "1". Scores for the total BPI and Externalizing and Internalizing are sum scores. Higher scores on these measures imply a greater level of behavior problems. Cases were included if they had data approximately 75% valid data on the variables contributing to the BPI Indices.
+<br /><br />
+In CDS-2020, PSID transitioned from using the BPI to the Strengths and Difficulties Questionnaire (SDQ) for assessing children’s personality and behavior. Please see the FAQ 19 (of CDS only FAQs) or 39 (of all PSID FAQs) for more information on the SDQ.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe31_ClientState" id="ContentPlaceHolder1_cpe31_ClientState" /><div id="ContentPlaceHolder1_pH32" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">33.</td><td class="pagetext_11">What is the HOME-SF and how is it scored?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB32" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body><p>
+The Home Observation for Measurement of the Environment-Short Form from the Caldwell and Bradley HOME Inventory is used as a measure of cognitive stimulation and emotional support that parents provide to their children. The particular items used in the PSID Child Development Supplement were taken directly from the National Longitudinal Survey of Youth, Mother-Child Supplement so that the scales would be as similar as possible. The HOME-SF items include both parent/caregiver-reported items and interviewer observations of the home and neighborhood environment. The HOME-SF is divided into four parts: <br /><br />
+<ul class="circle2">
+<li><b>Infant/Toddler (IT) HOME</b>, designed for use during infancy (birth to age three);</li>
+<li><b>Early Childhood (EC) HOME</b>, designed for use between 3 and 6 years of age;</li>
+<li><b>Middle Childhood (MC) HOME</b>, for use between 6 and 10 years; and</li>
+<li><b>Early Adolescent (EA) HOME</b>, designed for use from 10 to 15 years old.</li>
+</ul><br />
+We have included three scores for HOME-SF for each age module appropriate for CDS-II and CDS-III data: 1) a total raw score, 2) an emotional support subscale raw score, and 3) a cognitive stimulation subscale raw score. The total and subscale raw scores for the HOME-SF are a summation of the recoded individual item scores and varies by age group, as the number of individual items varies according to the age of the targeted child / youth.<br /><br />
+Additional information about the HOME-SF in the CDS can be found in the <a href="/Guide/documents.aspx">CDS User Guide</a>.
+</p></td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe32_ClientState" id="ContentPlaceHolder1_cpe32_ClientState" /><div id="ContentPlaceHolder1_pH33" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">34.</td><td class="pagetext_11">What is the Woodcock-Johnson Revised Test of Achievement and how is it scored?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB33" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The Woodcock-Johnson Psycho-Educational Battery-Revised (WJ-R) provides a normed set of tests for measuring cognitive abilities and academic achievement. In the Original CDS, CDS-I-III, we selected three subtests as a measure of reading and match achievement: the Letter-Word, the Passage Comprehension, and the Applied Problems tests (the Calculation test was additionally administered in CDS-I. These scales can be used individually, or in the case of the four subscales, combined to create scores for Broad Reading and Broad Math. When applicable, the Spanish version of the WJ-R (Batería-R, Form A), was used for children whose primary language was Spanish. <br /><br /> The Woodcock-Johnson Revised (WJ-R) tests of achievement have standardized administrative and scoring protocols. The tests are designed to provide a normative score that shows the CDS target child's reading and match abilities in comparison to national average for the child's age. The normed scores are constructed based on the child's raw score on the test (essentially the number of correct items completed) and the child's age to the nearest month. Raw scores are charted on normative tables based on the child's age and what percentile the child falls into. More information on scoring is provided in the 
+<a href="/Guide/documents.aspx">CDS User Guides</a>.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe33_ClientState" id="ContentPlaceHolder1_cpe33_ClientState" /><div id="ContentPlaceHolder1_pH34" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">35.</td><td class="pagetext_11">Why isn't there a Broad Math Score for CDS-II?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB34" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>In CDS I, we included two Woodcock Johnson - Revised math-skill tests:  Calculations and Applied Problems.  A broad math score was constructed based on these two tests.  In CDS II, we only included the Applied Problems; hence, no broad math score can be constructed - just a score for applied problems.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe34_ClientState" id="ContentPlaceHolder1_cpe34_ClientState" /><div id="ContentPlaceHolder1_pH35" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">36.</td><td class="pagetext_11">How do I know if PSID or CDS data files have been updated?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB35" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>File release information is available through the <a target="_blank" href="/Guide/News.aspx">News</a> section of our website. You can also sign up to have the news delivered to your 
+
+email by logging in and selecting to receive updates on the "Settings" page.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe35_ClientState" id="ContentPlaceHolder1_cpe35_ClientState" /><div id="ContentPlaceHolder1_pH36" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">37.</td><td class="pagetext_11">Why won't the Data Center let me create a file merging CDS Time Diary data files with other data?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB36" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Only one file is allowed in your cart if CDS Time Diary is selected.  To add CDS Time Diary variables to your cart, you must select variables from just one file, and there cannot be any variables from other files in your cart.  Time diary data are not at an individual or family level (like other data in the data center), so the data center cannot merge them automatically.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe36_ClientState" id="ContentPlaceHolder1_cpe36_ClientState" /><div id="ContentPlaceHolder1_pH37" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">38.</td><td class="pagetext_11">How do I open my data files from my Data Center download?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB37" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>To open the .txt files into Stata (SAS, or SPSS), save both the .txt and .do (.sas. or .spss) file from your download to your machine and take note of the path where the .txt file is located.
+<br /> <br />
+Once you save the .txt file to your computer you will open the read-in statements (.do, .sas, or .spss) into your statistical program. Replace the section of the read-in statements “[path]” with the path of where you saved your data text file, for example, C:/yourcomputer/yourfiles/. Once you have identified the path (the location of the .txt file) you will run the read-in statements and the program will read-in the data and label your variables accordingly. You can then save the resulting data set as a data file.
+<br /> <br />
+For step-by-step instructions, please see the web tutorial <a href=" https://psidonline.isr.umich.edu/VideoTutorial.aspx"> Accessing and Downloading PSID Data</a>.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe37_ClientState" id="ContentPlaceHolder1_cpe37_ClientState" /><div id="ContentPlaceHolder1_pH38" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">39.</td><td class="pagetext_11">What is the Strengths and Difficulties Questionnaire (SDQ) and how is it scored?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB38" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The Strengths and Difficulties Questionnaire (SDQ) was originally developed by Robert N. Goodman. It consists of 25 items that are used for assessing children’s personality and behavior. As of CDS-2020, PSID has transitioned from using the Behavior Problems Index (BPI) to the SDQ. Please see FAQ 12 (of CDS only FAQs) or 32 (of all PSID FAQs) for more information on the BPI.
+<br /><br />
+The SDQ is based on responses by the primary caregiver (PCG) for all children aged 3-18 years on whether behaviors are not true, somewhat true, or certainly true according about the child’s behavior over the last 6 months. 
+<br /><br />
+These items are divided into 5 subscales of 5 items each that assess: 1) prosocial behavior; 2) hyperactivity/inattention; 3). emotional problems; 4). conduct problems; and, 5). peer relationship problems. The prosocial subscale is available for all cases with a valid response to each of the five items in the scale. The subscales for hyperactivity/inattention, emotional problems, conduct problems, and peer relationship problems are the rounded mean of non-missing responses and are only calculated when at least 3 or the 5 component items have a valid response. 
+<br /><br />
+Additional information about the SDQ can be found in the <a href="https://psidonline.isr.umich.edu/Guide/documents.aspx">CDS User Guides.
+</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe38_ClientState" id="ContentPlaceHolder1_cpe38_ClientState" /><div id="ContentPlaceHolder1_pH39" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">40.</td><td class="pagetext_11">How does the geographic information in the public release files differ from the restricted files?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB39" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The public release files, which can be downloaded directly from the PSID website, contain geographic information of a more generalized nature such as region and state of residence. A collapsed version of the Beale rural-urban code is available for some years in the data center, as well as in the supplemental files located here:
+
+<br /><br />
+
+<a target="_blank" href="http://simba.isr.umich.edu/Zips/AuxiliaryFiles.aspx?pane=TURBC">http://simba.isr.umich.edu/Zips/AuxiliaryFiles.aspx?pane=TURBC</a>
+
+<br /><br />
+
+These data will meet the needs of most users. Users in need of more specialized geographic
+
+information may want to request use of the restricted PSID Geocode Match files. These files
+
+include the identification codes necessary to link data from the PSID annual family files to 
+
+Census data. This linkage allows the addition of information regarding the characteristics 
+
+of the geographic area in which individuals and families lived (e.g., the neighborhood and/
+
+or the labor market area) to the PSID individual- or family-level data. This should in turn 
+
+allow investigation of the effects of non-family "context" variables on family and individual 
+
+outcomes. 
+
+<br /><br />
+
+In the past, we provided selected variables from the Census in aggregated forms (i.e., 
+
+Census Extract Files); however, we no longer support these files. In recent years, there has 
+
+been a rapid growth of external sources that provide an increasing variety of measures of 
+
+the neighborhood environment.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe39_ClientState" id="ContentPlaceHolder1_cpe39_ClientState" /><div id="ContentPlaceHolder1_pH40" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">41.</td><td class="pagetext_11">Who may obtain restricted data?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB40" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Individuals who conduct scientific research and hold a full-time, permanent, doctoral-level faculty appointment and obtains the approval of their research and data protection plan through a human subjects institutional review board may request use of restricted data.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe40_ClientState" id="ContentPlaceHolder1_cpe40_ClientState" /><div id="ContentPlaceHolder1_pH41" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">42.</td><td class="pagetext_11">What application materials need to be submitted to obtain restricted data?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB41" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The following materials must be submitted:
+<br />
+<br />
+1. Curriculum vitae<br />
+2. Research plan<br />
+3. Institutional Review Board (IRB) approval<br />
+4. <a target="_blank" href="http://simba.isr.umich.edu/restricted/docs/orderform/orderform.pdf">Data request form</a><br />
+5. <a target="_blank" href="http://simba.isr.umich.edu/restricted/docs/contractrestricteddata/AcceptableUsePolicy.pdf">MiCDA acceptable use policy (AUP)</a><br />
+6. <a target="_blank" href="http://simba.isr.umich.edu/restricted/docs/contractrestricteddata/VDI.pdf">VDI-Data security plan</a><br />
+7. <a target="_blank" href="http://simba.isr.umich.edu/restricted/docs/contractrestricteddata/ISRConfidentialityPledge.pdf">Institute for Social Research Confidentiality pledge Confidentiality pledge</a><br /></td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe41_ClientState" id="ContentPlaceHolder1_cpe41_ClientState" /><div id="ContentPlaceHolder1_pH42" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">43.</td><td class="pagetext_11">How long does the process take to obtain restricted data?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB42" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Once all application materials have been submitted, review by the PSID restricted data committee usually occurs within two weeks. Once the application is approved, the contracts must be signed and submitted along with the non-refundable administrative fee. After these steps have been completed, the data are provided via secure remote access through a Virtual Data Enclave. The average processing time is between one to two months and on rare occasions as long as six months. The vast majority of delays occur as a result of contract language change requests by the requesting institution.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe42_ClientState" id="ContentPlaceHolder1_cpe42_ClientState" /><div id="ContentPlaceHolder1_pH43" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">44.</td><td class="pagetext_11">May more than one type of restricted data set be requested?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB43" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Yes, more than one type of restricted data may be requested; however, the researcher must document in their research plan the need and purpose for use of more than one type of data set.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe43_ClientState" id="ContentPlaceHolder1_cpe43_ClientState" /><div id="ContentPlaceHolder1_pH44" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">45.</td><td class="pagetext_11">May the restricted data be used for more than one research project?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB44" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>No.  Each contract is project specific and is validated through the research plan.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe44_ClientState" id="ContentPlaceHolder1_cpe44_ClientState" /><div id="ContentPlaceHolder1_pH45" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">46.</td><td class="pagetext_11">May more than one person use the restricted data for their own specific project?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB45" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Multiple investigators may use the restricted data if they are all involved in the same research project and named on the 
+research plan and on the IRB.  All investigators must provide a CV, an AUP, DSP and Pledge of Confidentiality and sign the restricted data contract.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe45_ClientState" id="ContentPlaceHolder1_cpe45_ClientState" /><div id="ContentPlaceHolder1_pH46" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">47.</td><td class="pagetext_11">Can other researchers who are not members of my institution work on my restricted use research project?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB46" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Yes.  A PI may include investigators from other institutions who are collaborating on the research project by describing 
+their roles and qualifications in the research plan, and naming them in the IRB.  
+All investigators must provide a CV, an AUP, DSP and Pledge of Confidentiality and sign the restricted data contract.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe46_ClientState" id="ContentPlaceHolder1_cpe46_ClientState" /><div id="ContentPlaceHolder1_pH47" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">48.</td><td class="pagetext_11">I am a graduate student. May I obtain the PSID restricted data files?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB47" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Graduate students must work with the restricted data under the supervision of a full-time, permanent, doctoral level faculty person at their institution. The faculty advisor is named as the Investigator on the contract and is responsible for ensuring that all confidentiality and security measures are upheld. Should a faculty advisor leave the receiving institution, they are responsible for notifying the PSID of this change. Graduate students must then obtain a new faculty advisor who will be named on the contract until their research project is completed.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe47_ClientState" id="ContentPlaceHolder1_cpe47_ClientState" /><div id="ContentPlaceHolder1_pH48" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">49.</td><td class="pagetext_11">My research project is quite complex and may take some time to complete.  Is there a time limit on a contract?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB48" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Contracts are limited to three years with possible three year extension. IRB update paperwork due annually, as requested by the PSID contract administrator.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe48_ClientState" id="ContentPlaceHolder1_cpe48_ClientState" /><div id="ContentPlaceHolder1_pH49" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">50.</td><td class="pagetext_11">My role will be an acting faculty advisor to a graduate student.  What are my responsibilities as faculty advisor?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB49" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The faculty adviser is named as the Investigator on the contract, and assumes responsibility for everyone on the project accessing the PSID restricted data.  
+They are also responsible for ensuring the contract paperwork is kept current. This includes returning a complete Request for Extension form to the PSID 
+every 180 days while the contract remains active. The faculty adviser must also be responsible for ensuring that security measures are kept in force for all 
+restricted data work, and for seeing that the contract closure occurs once the dissertation has been published.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe49_ClientState" id="ContentPlaceHolder1_cpe49_ClientState" /><div id="ContentPlaceHolder1_pH50" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">51.</td><td class="pagetext_11">As a faculty advisor, am I able to use my student's restricted data through their contract?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB50" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Multiple contracts for a number of research projects are permissible as long as an individual contract is submitted for each research project. A contract will be processed and established for each research project requested. Each contract has its own paperwork, contract and fee.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe50_ClientState" id="ContentPlaceHolder1_cpe50_ClientState" /><div id="ContentPlaceHolder1_pH51" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">52.</td><td class="pagetext_11">My institution does not have an IRB.  How may we meet this application requirement?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB51" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Your institution may have a Board that approves, monitors, and reviews research  in order to protect human subjects from risk and harm. 
+These boards may be known by various names including an Independent Ethics Committee (IEC), Ethical Review Board (ERB),or Research Ethics Board (REB).
+<br />
+<br />
+If your institution does not have any such group, please contact the <a target="_blank" href="/Guide/Contact_Us.aspx">help desk</a> for further assistance at 
+<a target="_blank" href="/cdn-cgi/l/email-protection#1262617b767a777e6252677f7b717a3c777667"><span class="__cf_email__" data-cfemail="0f7f7c666b676a637f4f7a62666c67216a6b7a">[email&#160;protected]</span></a>, as an alternative must be established.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe51_ClientState" id="ContentPlaceHolder1_cpe51_ClientState" /><div id="ContentPlaceHolder1_pH52" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">53.</td><td class="pagetext_11">Our IRB only responds via email when approval has been obtained.  How can we provide the PSID with this information?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB52" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Researchers may forward the email approval to the PSID.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe52_ClientState" id="ContentPlaceHolder1_cpe52_ClientState" /><div id="ContentPlaceHolder1_pH53" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">54.</td><td class="pagetext_11">Our IRB only grants approval for one year.  Since contracts are for three years, how can we fulfill this requirement?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB53" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The researcher is responsible for maintaining active IRB approval during the entire course of the contract and must submit updates or renewals to the PSID.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe53_ClientState" id="ContentPlaceHolder1_cpe53_ClientState" /><div id="ContentPlaceHolder1_pH54" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">55.</td><td class="pagetext_11">One application requirement is the Curriculum Vita [CV].  Whose CV should be submitted with the application materials?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB54" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Everyone involved in the research project should submit a CV. Graduate students should submit their CV as well as the most recent CV for their faculty advisor.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe54_ClientState" id="ContentPlaceHolder1_cpe54_ClientState" /><div id="ContentPlaceHolder1_pH55" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">56.</td><td class="pagetext_11">My research project has received approval from the PSID restricted data committee.  What is required next?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB55" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Researchers or graduate students are required to obtain signatures on the original contract and submit it to the PSID so it may be fully 
+executed through the University of Michigan. An electronic signed contract will be returned to your institution.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe55_ClientState" id="ContentPlaceHolder1_cpe55_ClientState" /><div id="ContentPlaceHolder1_pH56" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">57.</td><td class="pagetext_11">We are confused regarding the signatures on the contract -  who signs where?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB56" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The “Representative of the Receiving Institution” is someone who is able to legally enter into negotiations with the University of Michigan. 
+The faculty adviser signs as Principal Investigator. Co-investigators may also sign, where applicable. There is also a Supplemental Agreement 
+form where Computing Support and Research Assistants may sign when appropriate, at which time the Investigator must also sign at the bottom 
+of the supplemental page.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe56_ClientState" id="ContentPlaceHolder1_cpe56_ClientState" /><div id="ContentPlaceHolder1_pH57" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">58.</td><td class="pagetext_11">Our state has its own legal requirements regarding entering into contracts, is the contract language negotiable?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB57" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Possibly. Please contact the <a href="/Guide/Contact_Us.aspx">help desk</a> about any concerns regarding contract language issues. It is important to understand that any requests for language modification can create significant delays in fully executing the contract and access to the data.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe57_ClientState" id="ContentPlaceHolder1_cpe57_ClientState" /><div id="ContentPlaceHolder1_pH58" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">59.</td><td class="pagetext_11">As a researcher, what are my responsibilities during the contract period?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB58" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>During the three year period, the PSID will send the primary contract holder a Request for Extension every 180 days which requests updated contact information 
+and must be returned to the PSID in order to keep the contract active. After the three year period, or at the conclusion of the project if this occurs before three 
+years, access to the PSID data will be discontinued.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe58_ClientState" id="ContentPlaceHolder1_cpe58_ClientState" /><div id="ContentPlaceHolder1_pH59" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">60.</td><td class="pagetext_11">What paperwork will be required for the new contract [second contract]?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB59" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The new contract will require all the same application documents as the first contract.  For ease of transition, updated or modified documents are acceptable.  An updated or new IRB approval must also be submitted.  Once these are submitted, a new contract must be signed.  The researcher may request updated restricted data if a new version has been released since their original project began.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe59_ClientState" id="ContentPlaceHolder1_cpe59_ClientState" /><div id="ContentPlaceHolder1_pH60" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">61.</td><td class="pagetext_11">What happens if I do not submit the updated DSP/VDI form?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB60" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Your contract is considered Out-of-Compliance. Contracts that are active and in compliance are eligible to request Restricted Data Set updates. The updated data is provided at no additional charge to these researchers; however no such updates are provided in the event that a contract is out of compliance. Also, failure to submit this documentation during a contract could jeopardize a researcher's future request for restricted data. Sometimes unavoidable circumstances can cause delays in the submission of the Extension form and PSID staff are more than willing to work with institutions to facilitate the process.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe60_ClientState" id="ContentPlaceHolder1_cpe60_ClientState" /><div id="ContentPlaceHolder1_pH61" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">62.</td><td class="pagetext_11">Another researcher wants to use my restricted use data files. Is this possible?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB61" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>No. Under no circumstances can the restricted data be shared with individuals who are not named on the contract. 
+Contracts are "project specific" - each researcher must obtain their own contract/user name and password for their 
+research to ensure that they maintain respondent confidentiality.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe61_ClientState" id="ContentPlaceHolder1_cpe61_ClientState" /><div id="ContentPlaceHolder1_pH62" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">63.</td><td class="pagetext_11">I have completed my research using the restricted use data. What are the next steps that need to be taken?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB62" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Contact the <a href="/Guide/Contact_Us.aspx">help desk</a> to coordinate contract closure paperwork at <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="58282b313c303d3428182d35313b30763d3c2d">[email&#160;protected]</a></td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe62_ClientState" id="ContentPlaceHolder1_cpe62_ClientState" /><div id="ContentPlaceHolder1_pH63" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">64.</td><td class="pagetext_11">Can I keep all my data files that were created with the restricted data files?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB63" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>All restricted data and derived files must either be destroyed or returned to the PSID for secured storage.  Many researchers elect to return their files to the PSID for secured storage allowing them to use the data in the future.  PSID Help will coordinate with a researcher the paperwork requirements and return of previously created data sets and derived files.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe63_ClientState" id="ContentPlaceHolder1_cpe63_ClientState" /><div id="ContentPlaceHolder1_pH64" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">65.</td><td class="pagetext_11">The data files that are posted for each new wave are called Public Release.  What does Public Release mean?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB64" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body><p>
+
+All Public Release data files have been processed and edited, and should meet the research needs of all users.  <br /><br />
+
+
+
+Over the past several years the PSID staff, using Computer Assisted Telephone Interview (CATI) technology and companion processing software, have significantly improved the quality and reliability of the timely release of data files. We now refer to the files posted for each new wave as <b>Public Release Data</b>. Note that:
+
+<br /><br />
+
+
+
+1.	Longitudinal data are subject to revision based on the most recent information received from individuals and families.  New information that we find during family composition and economic editing in one wave may require revisions to previous waves.  As additional data are collected through time on our two year collection cycle, prior files may be edited in light of the new information. Both the values of the variables themselves and the relationships of individuals to the families to which they are connected may be edited. Normally such changes are made only for a small number of cases. 
+
+<br /><br />
+
+2.	An extensive set of computed or generated variables are included in the Public Release Data. As time and resources allow we occasionally add selected new generated variables for later release.
+
+
+
+<br /><br />
+
+Since the PSID data files, as with the data files from any complex longitudinal study, are subject to minor changes and subsequent updated releases, due primarily to economic and family composition editing activities, <b>it is therefore highly recommended that users retain and save all data files that are downloaded from this site and upon which individual research analysis is dependent. Only the most current data files are retained by PSID staff for distribution</b>.
+
+</p></td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe64_ClientState" id="ContentPlaceHolder1_cpe64_ClientState" /><div id="ContentPlaceHolder1_pH65" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">66.</td><td class="pagetext_11">Some older documents reference Public Release II and Public Release I data; what does that mean?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB65" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The term "Public Release I" is used to refer to files released for general public use after they have been reviewed for data quality checks and consistency in both the reported family listing and the relationships among family members (this review process is called "family composition editing").<br /><br />
+The term "Public Release II" was previously used to refer to files which had undergone additional data checks to correct a very small number of cases and had been formatted in a more convenient form.<br /><br />
+Because of successive improvements in our Computer Assisted Telephone Interviewing (CATI) software that PSID began using in 1993, the quality of the Public Release I files improved in recent waves, allowing the use of these data with confidence. There is now no longer a necessity to release two versions of the Public Release files.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe65_ClientState" id="ContentPlaceHolder1_cpe65_ClientState" /><div id="ContentPlaceHolder1_pH66" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">67.</td><td class="pagetext_11">What is the definition of a main family, a reinterview family, and a split-off?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB66" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>A reinterview family is a family unit that was interviewed in the prior wave.  <br /><br />
+
+A main family is one that is the source of a splitoff family (a new study family formed by a sample member who moves out and forms his or her own family unit).  In some divorce or separation situations, both resulting families will contain sample members, so both will be interviewed.  We interview the first spouse we are able to contact as the main family, while the other spouse will be in the splitoff family.  In the case of children leaving home, the main family is almost always the parental family.<br /><br />
+
+A split-off family consists of a person or group of people (at least one of whom is a "follow" person of any age) who moved out from a main family since the prior wave's interview to form a new, economically independent family unit living in a separate housing unit. Several criteria must be met for a split-off to occur. In addition to having moved out since the prior wave, and to being 'followable', the person or group of people in general may not have moved to an institution such as college or prison or to another family unit within the panel study. Moreover, the person or group of people who have moved out and formed their own family unit must be economically independent from the family unit from which they split off. These are general rules, however, and sometimes unique situations arise that determine whether a person or group of persons becomes a split-off. For example, while moving to an institution such as college does not generally meet the criteria for becoming a split-off, if the person is working, paying their own living expenses, and paying their own educational expenses in addition to attending school, then this person could be interviewed as a split-off. The living situation and interview data for each and every possible split-off case are first reviewed before split-off status is granted.  Note that a splitoff family is only designated as a splitoff in the wave in which the family is newly formed and interviewed for the first time.  In subsequent waves, they are considered a reinterview family.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe66_ClientState" id="ContentPlaceHolder1_cpe66_ClientState" /><div id="ContentPlaceHolder1_pH67" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">68.</td><td class="pagetext_11">What is the difference between a family unit (FU), a household unit (HU), and a family unit member?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB67" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body><p>
+In the PSID study, we are attempting to learn about our sample members, and the families in which they live.  Each of these families is called a family unit (FU). The FU is defined as a group of people living together as a family. They are almost always related by blood, marriage, or adoption.  And they must all be living in the same HU (see below). <br /><br />
+
+Occasionally, unrelated persons can be part of an FU.  They need to be permanently living with the family and share both income and expenses.  <br /><br />
+
+Any person in a study family is a family unit member.  The term "other family unit member" (OFUM) is used of members who are not the Reference Person (the term ‘Reference Person’ has replaced ‘Head’ in 2017) or Spouse/Partner.<br /><br />
+
+The household unit (HU) is the physical dwelling where the members of the FU reside.  It can be a house, townhouse, apartment, a room in a rooming house, even a tent or a car.  <br /><br />
+
+Not everyone living in an HU is automatically part of the FU.  There may be other people living in the HU temporarily who do not meet the criteria of relatedness and economic integration.  The PSID data is about FU Members only.
+</p></td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe67_ClientState" id="ContentPlaceHolder1_cpe67_ClientState" /><div id="ContentPlaceHolder1_pH68" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">69.</td><td class="pagetext_11">What is the difference between 'Head' and 'Reference Person'?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB68" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Historically, PSID has used the term Head to refer to the husband in a heterosexual married couple and to a single adult of either sex. Starting in 2017, the term ‘Reference Person’ has replaced ‘Head.’ From 1968-2015, PSID conformed to the Census Bureau conventions’ in place at the time the study began by designating the husband in households with heterosexual married adults, the ‘Head’. In the last 50 years, however, substantial diversification in both family formation and composition has taken place. In order to reflect these changes in societal norms, as of 2017 the term ‘Head’ has been replaced by ‘Reference Person’. This change is not retroactive, however, so in historical contexts in 2015 and before we will continue to use the term head.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe68_ClientState" id="ContentPlaceHolder1_cpe68_ClientState" /><div id="ContentPlaceHolder1_pH69" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">70.</td><td class="pagetext_11">What is the difference between 'Wife/"Wife"' and 'Spouse/Partner'?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB69" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The term Wife has been used for a female in a married couple, and “Wife” for a cohabiting female. This terminology was adopted from the Census Bureau in 1968 at the start of the PSID and has been maintained for consistency through the 2013 wave. Starting with the 2015 wave, the term Spouse/Partner has replaced Wife/“Wife”. Spouse indicates a legal marriage, while Partner is a cohabiting, non-legally married partner, where the couple can consist of heterosexual or same sex couples.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe69_ClientState" id="ContentPlaceHolder1_cpe69_ClientState" /><div id="ContentPlaceHolder1_pH70" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">71.</td><td class="pagetext_11">Who is a Sample Member and what is Follow Status?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB70" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body><p>
+Sample Members are individuals who were living in the original family unit (FU) at the time of the very first interview and their lineal descendants born after 1968. (For subsequent samples, such as the immigrants, the year of the first interview serves as the base for determining who is an original sample member, and all individuals present in the family at that time qualify.)  <br /><br />
+
+Follow status indicates whether we are interested in continuing to interview an individual. In general, sample members are always considered Followable. Non-Sample Members can be Followable too, if they represent a population of current interest. For example, we have in the past, followed such people as Non-Sample parents of sample children who were aged 25 or younger. <br /><br />
+
+You can tell who is a sample member by looking at the individual's Person Number and Follow Status. Original Sample Members who were living in the original study FU in the first year of interviewing were given Person Numbers in the range of 001-019. Any Reference Person's (the term ‘Reference Person’ has replaced ‘Head’ in 2017) Spouse in the original interviewing year who was living in an institution was given a Person Number of 020. In addition, children of the Reference Person (and Spouse/Partner, if present) who were under age 25 and in an institution the first year were considered Original Sample members and given Person Numbers in the range 0021-029. All of these people are followable.
+<br /><br />
+
+Individuals who were born into a sample family after the first interviewing year and have a sample parent are considered "born-in Sample Members" and receive Person Numbers in the range of 030-169.  All born in sample members are followable. <br /><br />
+
+Some individuals who qualify as sample members (because they have a sample parent) are not born into a study family, but move in later.  These "Moved in Sample Members" have Person Numbers of 170 or greater and are Followable.  <br /><br />
+
+All other people who have ever lived in a PSID family are not sample individuals.  They also receive Person Numbers of 170 or greater, but are not Followable.
+</p></td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe70_ClientState" id="ContentPlaceHolder1_cpe70_ClientState" /><div id="ContentPlaceHolder1_pH71" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">72.</td><td class="pagetext_11">What is the difference between response and nonresponse family unit members?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB71" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body><p>Response family unit members are those residing in an interviewed family at the time of interview.  Nonresponse family unit members are those not residing in an interviewed family at the time of interview; they may have attrited, not yet appeared in the study, or not yet been born by a particular wave.</p>
+<br /><br />
+<p>The phrase "main family nonresponse" means that both the individual and his or her family have at that time become lost to our study, although either or both may reappear in the study in subsequent waves. In the wave just prior to becoming nonresponse, the individual was connected with a family interviewed by our study; thus, both family and individual data are available for that prior year, and the individual's Sequence Number at that time was 01-59. However, data were collected for neither the individual nor his or her family in the nonresponse wave. The data for the wave in which nonresponse occurs (and all subsequent waves if and until the individual reappears as a member of a responding family unit, including a recontact family) are zeroes excepting the variables for type of individual record and reason for nonresponse, and if an individual was selected for recontact, follow status and reason for following the individual.</p>
+<br /><br />
+<p>In contrast, mover-out nonresponse individuals have left a family that was still in the study. Since such individuals were usually present in that family for at least part of the calendar year preceding nonresponse, they have some additional nonzero data for the wave in which they became nonresponse, such as part-year income information. In later waves, mover-out nonresponse individuals are treated in two ways, depending on why they left the family. Those who moved out to institutions have several variables (Sequence Number, age, sex, Relationship to Reference Person--in 2017 the term 'Reference Person' replaced 'Head', type of individual and reason for nonresponse) with nonzero values, although income, housework, and other individual-level variables are filled with zeroes. Eventually, such an individual may (a) become response by moving into a family or by becoming a splitoff, (b) move from the institution and remain mover-out nonresponse (shown when Sequence Number=71-89), or (c) become main family nonresponse because the family itself became nonresponse. (See the preceding paragraph for an explanation of main family nonresponse data records.) The other type of mover-out nonresponse individual has either moved out, but not to an institution, or died. Later waves of data contain zeroes, as described above for main family nonresponse, unless they subsequently rejoined a responding family or were selected for recontact.</p>
+<br /><br />
+<p>The data are released as one file, which includes not only those individuals with nonzero data records in the current data collection year (i.e., current response plus mover-out nonresponse), but also all other individuals-those who have zero data records for the current year (i.e., current year main family nonresponse and all nonresponse of either kind from earlier waves.</p></td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe71_ClientState" id="ContentPlaceHolder1_cpe71_ClientState" /><div id="ContentPlaceHolder1_pH72" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">73.</td><td class="pagetext_11">How is Reference Person defined in the PSID? (the term ‘Reference Person’ has replaced ‘Head’ in 2017)&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB72" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Within each wave of data, each FU (family unit) has one, and only one, current Reference Person (starting with the 2017 wave, the term ‘Reference Person’ has replaced ‘Head'). Originally, if the family contained a husband-wife pair, the husband was arbitrarily designated the Reference Person to conform with Census Bureau definitions in effect at the time the study began. The person designated as Reference Person may change over time as a result of other changes affecting the family. When a new Reference Person must be chosen (see conditions for selecting a new Reference Person below), the following rules apply:
+<br /><br />
+<blockquote>The Reference Person (‘Head’ prior to 2017) of the FU must be at least 18 years old and the person with the most financial responsibility for the FU. If this person is female and she has a (male) spouse or partner in the FU, then he is designated as Reference Person.  If she has a boyfriend with whom she has been living for at least one year, then he is Reference Person. However, if the husband or boyfriend is incapacitated and unable to fulfill the functions of Reference Person, then the FU will have a female Reference Person.</blockquote></td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe72_ClientState" id="ContentPlaceHolder1_cpe72_ClientState" /><div id="ContentPlaceHolder1_pH73" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">74.</td><td class="pagetext_11">What is a Husband of Reference Person, Uncooperative Spouse, or Uncooperative Partner? (the term ‘Reference Person’ has replaced ‘Head’ in 2017)&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB73" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>From 1968 to 2015, a married male Head ('Reference Person' starting in the 2017 wave) might become incapacitated in some way.  (He might still be in the FU, or in an institution such as a nursing home.)  In these  cases, the female half of the couple was made Head and the husband became Husband of Head.  A Husband of Head was asked  the same questions as an Ofum.  A male Head could also have been made Husband of Head if the female half of the couple insisted on being the Head, the female half of the couple was adamant about not giving out information about her husband, or the husband was adamant about not wanting to be included in the study.   A Husband of Head had the Relationship to Head code 9 or 90.
+
+Once the study started coding same sex relationships in 2017, the Husband of Head Relationship was dropped. In its place, the study uses Uncooperative Spouse (Relationship to Reference Person (‘Head’ before 2017) code 90), or Uncooperative Partner (Relationship to Reference Person code 92). These designations are used when one half of the couple is adamant about not giving information about the other half, or when one half adamantly refuses to have their information included. In rare cases, these Relationships to Reference Person will be used when the sample half of a couple has moved out of the FU (family unit) and into an institution and is still in an institution the next wave.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe73_ClientState" id="ContentPlaceHolder1_cpe73_ClientState" /><div id="ContentPlaceHolder1_pH74" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">75.</td><td class="pagetext_11">Are cohabitors treated differently from legally married couples?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB74" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Prior to 2017, when a new (opposite sex) romantic partner of Head ('Reference Person' starting in the 2017 wave) moved into the FU (family unit), but had been living there less than 1 year at the time of the interview, that person was labeled a Boyfriend or Girlfriend (code 88).  However, if the cohabitor had been living in the FU one year or more, the couple was designated (male)Head and "Wife" (code 22 from 1983 on).  If a Girlfriend or Boyfriend was still in the FU in the next wave, and the couple were not married, they became (male) Head and "Wife". If the person who moves in is married to the Head, they are of course, male Head and Wife (code 20), regardless of time living in the FU.  <br /><br />
+
+Boyfriends and Girlfriends are  treated like other family members who are not Reference Person (‘Head' prior to 2017), Spouse or Partner.  Considerably less information is obtained about them.  In the waves since the late 1970s, information typically gathered for a Spouse has been gathered as well about a Partner ("Wife" before 2017).  <br /><br />
+
+Starting in 2017, the Girlfriend or Boyfriend can be the same sex as the Reference Person (‘Head' prior to 2017).  In unmarried male plus female couples, the male still becomes the Reference Person once the "living in the FU for at least one year" criterion has been met, and the female half of the couple would be Partner.   However, in same sex couples, the sample member, whether male or female, remains the Reference Person and the other person becomes the Partner.  <br /><br />
+
+Prior to 1983, the Relationship to Head ('Reference Person' starting in the 2017 wave) codes did not distinguish between legal Wives and long-term female cohabitors. However, first year cohabitors can be detected prior to 1983 with a little bit of work. For example, their Relationship to Head would be 8 (nonrelative), their gender would be the opposite of Head's, and in subsequent years they may become Wives or Heads, while the Head would stay as Head or become a Wife.  Anyone fitting this pattern can be decisively identified as a cohabitor.  PSID did not distinctively label same sex cohabitors prior to 2017.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe74_ClientState" id="ContentPlaceHolder1_cpe74_ClientState" /><div id="ContentPlaceHolder1_pH75" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">76.</td><td class="pagetext_11">Why are data available as "Packaged" if they are also in the Data Center?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB75" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Before the Data Center was created, PSID data were distributed as "packaged" files. Because some users prefer the packaged files, we continue to provide data in this format.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe75_ClientState" id="ContentPlaceHolder1_cpe75_ClientState" /><div id="ContentPlaceHolder1_pH76" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">77.</td><td class="pagetext_11">How long are my data available for download after they are created?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB76" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Data files are deleted from our servers when they are 7 days old. After that, you can re-create your data file by logging into the 
+
+<a href="http://simba.isr.umich.edu/default.aspx">Data Center</a> and selecting "<a href="http://simba.isr.umich.edu/DC/c.aspx">Previous carts</a>".</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe76_ClientState" id="ContentPlaceHolder1_cpe76_ClientState" /><div id="ContentPlaceHolder1_pH77" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">78.</td><td class="pagetext_11">The website seems to be displaying incorrectly, why is this?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB77" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>For security reasons, we are no longer supporting some older web browsers. Make sure your web browser is up-to-date, and please note that we suggest the following web browsers:
+<br /><br />
+<ul class='circle2'>
+  <li>Google <a href="https://www.google.com/chrome/browser/desktop/index.html?brand=CHBD&gclid=EAIaIQobChMIht2D-oOF2AIVzFcNCh2N7QMcEAAYASAAEgKMJfD_BwE">Chrome</a></li>
+  <li>Mozilla <a href="https://www.mozilla.org/en-US/firefox/?utm_source=google&utm_medium=cpc&utm_campaign=Firefox-Brand-US-GGL-Exact&utm_term=mozilla%20firefox&utm_content=A144_A203_A006337&gclid=EAIaIQobChMIhNj7goSF2AIVAVgNCh1JiQsDEAAYASAAEgIrSfD_BwE&gclsrc=aw.ds">Firefox</a></li>
+  <li>Microsoft <a href="https://www.microsoft.com/en-us/windows/microsoft-edge"> Edge</a> (Windows only) </li>
+</ul>
+<br />
+If you are using the latest version of Internet Explorer and are having display problems, click on Settings>Compatibility View Settings> and add psid.org to your list.
+<br /> <br />
+If problems persist, please contact us at <a href="https://psidonline.isr.umich.edu/Guide/Contact_Us.aspx"> <span class="__cf_email__" data-cfemail="83f3f0eae7ebe6eff3c3f6eeeae0ebade6e7f6">[email&#160;protected]</span></a>.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe77_ClientState" id="ContentPlaceHolder1_cpe77_ClientState" /><div id="ContentPlaceHolder1_pH78" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">79.</td><td class="pagetext_11">How does the amount of data collected in each wave vary by family unit members?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB78" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>In general, a substantial amount of detailed data is collected for the Reference Person (the term ‘Reference Person’ has replaced ‘Head’ in 2017) and Spouse/Partner, if present. Considerably less detail is collected for other family unit members (OFUMs).</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe78_ClientState" id="ContentPlaceHolder1_cpe78_ClientState" /><div id="ContentPlaceHolder1_pH79" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">80.</td><td class="pagetext_11">What data are available in the area of housing?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB79" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The PSID collects many data elements about housing, including housing type, characteristics, ownership, tax, insurance, etc. A list of such items collected in each wave is available <a target="_blank" href="/data/sl/Housing-PSID.pdf">here</a>.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe79_ClientState" id="ContentPlaceHolder1_cpe79_ClientState" /><div id="ContentPlaceHolder1_pH80" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">81.</td><td class="pagetext_11">Where can I obtain information regarding release dates for files?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB80" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>File release information is available through the <a href="/Guide/News.aspx">News</a> section of our website.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe80_ClientState" id="ContentPlaceHolder1_cpe80_ClientState" /><div id="ContentPlaceHolder1_pH81" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">82.</td><td class="pagetext_11">How does the PSID distinguish between main and secondary jobs in the data files?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB81" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body><p>
+Up through the 2001 interviewing year, the PSID distinguished between Main and Extra jobs.  Someone could not have an Extra job unless he/she held a Main job during the same time period.  The extra job must be held simultaneously with the main job. We made this distinction between main and extra jobs throughout. If two (or more) employers overlapped, the interviewer was supposed to ask which was the main one during that time and note in an open ended question the overlap and the hours and earnings of both jobs. Then this overlap period was to be included in the extra job sequences (BD82-BD106/CE74-CE98). Those who are only temporarily laid off are still employed at a main job and, therefore, could have an extra job during that time period. However, those who are unemployed, whether looking or not, have no main job employer during the time in question. Hence, any small job they may have is considered a main job--since it's the ONLY job. Use the month strings and dates of beginning and ending employment in the work history to tell whether time at B/D72-74a or C/E64-66a is temporary layoff or unemployment.
+<br /><br />
+Beginning with the 2003 interviewing year, the PSID dropped the main vs. extra job distinction as defined above.  Jobs are now classified as "current main job", "most recent main job" or "other" job.  If someone reports 2 or more current jobs, or 2 or more recent jobs that ended at the same time, the interviewer asks which job he/she considers his/her main job.  That one is listed as the current (or most recent) main job.  Any other job is listed as an "other" job.  A job can be an "other" job even when it does not overlap with a current or most recent main job.  This situation could arise, for instance, when someone reports two jobs, with the current main job beginning before the old ("other") job ended.
+</p></td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe81_ClientState" id="ContentPlaceHolder1_cpe81_ClientState" /><div id="ContentPlaceHolder1_pH82" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">83.</td><td class="pagetext_11">What information about physical and mental health is collected by the PSID?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB82" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The PSID contains a wealth of information that can be used to study the health of Americans and their family members. Information collected in the main interview is summarized <a target="_blank" href="/data/sl/Health-PSID.pdf">here</a>. Health information collected in the Child Development Supplement is summarized <a target="_blank" href="/data/sl/Food-CDS.pdf">here</a>.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe82_ClientState" id="ContentPlaceHolder1_cpe82_ClientState" /><div id="ContentPlaceHolder1_pH83" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">84.</td><td class="pagetext_11">How has the occupation-industry code classification system changed?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB83" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The PSID used a one-digit, and later a two-digit, occupation code until 1981 when the three-digit 1970 Census code became standard for the main jobs of employed Reference Persons (starting with the 2017 wave, the term ‘Reference Person’ has replaced ‘Head') and Spouses/Partners. It was also used for the most recent jobs held by Reference Persons and Spouses/Partners who were currently unemployed and looking for work and for any job held in 1980 by a Reference Person or Spouse/Partner who was currently retired or no longer in the labor force. From 2003, all occupation-industry data was coded using the three-digit 2000 Census code. <b>A retrospective coding project used the 2000 Census to code first occupation and industry of all Reference Persons and Spouses as of 2003 and that of their fathers and mothers.  Starting in 2017, the study is using the 4-digit 2010 occupation and 2012 industry codes.</b></td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe83_ClientState" id="ContentPlaceHolder1_cpe83_ClientState" /><div id="ContentPlaceHolder1_pH84" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">85.</td><td class="pagetext_11">In some cases there are discrepancies from wave to wave for the age of the individual. Why is this?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB84" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Ages of individuals are asked and reported in each wave of the study.  But interviews are seldom taken exactly twelve months apart for the same family from wave to wave.  In fact, a family responding early in the interviewing period one year might respond late in the next year’s interviewing period, with 18 or more months between interviews for annual interviews (from 1968-1997).  Conversely, a late responder in one wave could be an early responder in the next wave.  Since the PSID transitioned to biennial interviewing (1999 through the present), the age gap can widen even further.  Because of interview dates, there is a good possibility that an individual appears to have aged excessively or not at all.
+
+Also, individuals’ ages or birthdates can be misreported.  Consistency checks for age discrepancies have always been done internally, but they are not altered if it cannot be determined which age is correct.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe84_ClientState" id="ContentPlaceHolder1_cpe84_ClientState" /><div id="ContentPlaceHolder1_pH85" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">86.</td><td class="pagetext_11">Why does fertility appear to be higher in the PSID than in the US for Black individuals in some birth cohorts?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB85" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>A modest upward distortion in the weighted estimates of Black individuals with children has been identified in PSID, beginning in the late 1990s, for selected cohorts.  We recommend analysts use caution in estimating with the PSID beginning in 1997 the percentages with children in the household (and related statistics such as childlessness and fertility) for Black women born in the late 1960s and in the 1970s, and for Black men born in the late 1960s, 1970s, and early 1980s. This distortion may also affect estimates of multigenerational Black families in later years.  Analysts who are not addressing questions of this type can reasonably ignore this concern.  When estimating multivariate models with fertility-related outcomes for any year, we recommend that analysts include as a control variable the CDS eligibility indicator available on the 1997 Individual File (ER33418). Some analysts may wish to post-stratify the assigned PSID weights for Black individuals to the Current Population Survey (CPS) totals by presence of a child under the age of 13. 
+<a target="_blank" href="https://psidonline.isr.umich.edu/Publications/Papers/tsp/2016-01_Est_Multi_Gen_Black_Fam.pdf">PSID Technical Series Paper 16-01</a> provides additional details.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe85_ClientState" id="ContentPlaceHolder1_cpe85_ClientState" /><div id="ContentPlaceHolder1_pH86" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">87.</td><td class="pagetext_11">How do I cite my use of PSID data?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB86" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>PSID reminds data users to cite the data and acknowledge our funding source in all publications using the data in one of two ways:
+<br /><br />
+
+<ol type="a" style="padding-left:40px;">
+  <li><u>Citation</u>: <br />
+  	Panel Study of Income Dynamics, public use dataset [restricted use data, if appropriate]. Produced and distributed by the Survey Research Center, Institute for Social Research, University of Michigan, Ann Arbor, MI (year data were downloaded).
+<br />
+<br />
+
+  </li>
+  <li>
+  	<u>BiblaTex</u> <br />
+		@dataset{PSID,
+<br />
+							author       = {{Social Research Center}},
+<br />
+							title        = {Panel Study of Income Dynamics, public use dataset [restricted use data, if appropriate].},
+<br />
+							publisher    = {Institute for Social Research, University of Michigan},<br />
+							address      = {Ann Arbor, MI},<br />
+							urldate      = {date data was downloaded}
+<br />
+						}<br />  	
+  	</li>  
+	</ol>  
+<br />
+Acknowledgement: The collection of data used in this study was partly supported by the National Institutes of Health under grant number R01 HD069609 and R01 AG040213, and the National Science Foundation under award numbers SES 1157698 and 1623684.
+
+
+
+<br /><br />
+Effective May 25, 2008, anyone submitting an application, proposal, or progress report to the NIH
+must include the PubMed Central reference number (PMCID) or NIH Manuscript Submission
+reference number when citing applicable articles that arise from their NIH funded
+research: http://publicaccess.nih.gov/citation_methods.htm. In consideration of this policy, PSID
+requests that all journal articles based on analysis of PSID data or its supplements (either public
+or restricted-use) receive a PubMed Central reference number (PMCID). Journal articles must be
+submitted to PubMed Central to receive a PMCID. The method of PubMed Central submission and
+Investigator responsibility for submission depend on the journal and its publisher:
+<br /><br />
+<ul style="list-style-type: none;padding-left:20px;">
+	<li>
+		Some journals automatically submit published articles to PubMed
+		Central, while other journal publishers may submit the articles to PubMed Central automatically or
+		upon request by the author.
+	</li>
+	<li style="padding-top:20px;">
+		If neither the journal nor the journal publisher will submit the article to PubMed
+		Central, the Investigator will be responsible for the submission. For detailed instructions
+		on the process of submitting a journal article to PubMed Central, please see the NIH
+		website: https://pmc.ncbi.nlm.nih.gov/about/public-access-info/
+	</li>
+</ul>
+<br />
+Researchers with PSID restricted-use contracts should include PMCIDs in their list of PSID
+publications submitted in biennial reports.
+<br /><br />
+Researchers using PSID public-use data should send citations based on PSID publications you
+have authored which have PMCIDs to <a href="/cdn-cgi/l/email-protection#ec9c9f85888489809cac9981858f84c2898899"><span class="__cf_email__" data-cfemail="1d6d6e74797578716d5d6870747e7533787968">[email&#160;protected]</span></a>.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe86_ClientState" id="ContentPlaceHolder1_cpe86_ClientState" /><div id="ContentPlaceHolder1_pH87" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">88.</td><td class="pagetext_11">The Journal I am publishing in wants me to submit my data, am I allowed to do that?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB87" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Though your code may be posted to other sites, the data itself should not be, per our <a href=" https://simba.isr.umich.edu/u/conduse.aspx"> Conditions of Use</a>. We now have an account through the ICPSR’s our <a href=" https://www.openicpsr.org/openicpsr/psid"> Data Repository </a>, where you can safely store your data extracts, code, and documentation for your project.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe87_ClientState" id="ContentPlaceHolder1_cpe87_ClientState" /><div id="ContentPlaceHolder1_pH88" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">89.</td><td class="pagetext_11">When is data collected for each wave of the study?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB88" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The interview period (field season) is roughly between March and November, with a few years being exceptions and going into December. If a user is interested in when a specific interview was conducted, there is a variable in the dataset (Date of Interview) which indicates month and day of interview.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe88_ClientState" id="ContentPlaceHolder1_cpe88_ClientState" /><div id="ContentPlaceHolder1_pH89" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">90.</td><td class="pagetext_11">How often are main interview data collected for the PSID study?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB89" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Between 1968 and 1997, data were collected every year. Starting in 1999, the PSID collected data biennially (i.e., every other year). All waves of data starting with 1968 are available on the website, with each wave's public release file being posted on the website as soon as editing and processing can be completed.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe89_ClientState" id="ContentPlaceHolder1_cpe89_ClientState" /><div id="ContentPlaceHolder1_pH90" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">91.</td><td class="pagetext_11">Why does the PSID provide weights for analysis?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB90" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>The PSID sample combines the SRC (Survey Research Center) and SEO (Survey of Economic Opportunity) samples. Both samples are probability 
+
+samples (i.e., samples for which every element in the population has a known nonzero chance of selection). Their combination is also a probability sample. 
+
+The combination, however, is a sample with unequal selection probabilities, and as a result, compensatory weighting is needed in estimation, at least for descriptive statistics. 
+
+Weight adjustments are also needed to attempt to compensate for differential nonresponse in 1968 and subsequent waves. Weights supplied on PSID data files are designed 
+
+to compensate for both unequal selection probabilities and differential attrition.
+
+<br /><br />
+
+In 1997, the Panel Study of Income Dynamics (PSID) underwent several important design changes that would affect weighting. Leading these changes was a roughly 1/3 reduction in the number of PSID Core 
+
+families that will be eligible for continuous longitudinal data collection. A second important change to the 1997 PSID was the addition of a nationally representative sample of immigrant households and individuals 
+
+that would not be eligible for PSID under the original 1968 sample recruitment and sample family "following rules". The 1997 data collection year also began the transition to every second year data collection for PSID. 
+
+Finally, the 1997 PSID data collection included a special supplemental study of children age 0-12 in PSID Core and Immigrant Supplement families. Additional documentation describing the weights is provided on the 
+<a target="_blank" href="/Guide/documents.aspx">documentation page</a>.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe90_ClientState" id="ContentPlaceHolder1_cpe90_ClientState" /><div id="ContentPlaceHolder1_pH91" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">92.</td><td class="pagetext_11">What variables should I use for complex sample survey variance estimation?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB91" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>Variables ER31996 and ER31997 are used for computing complex sample design corrected standard errors/variance estimates via the 
+
+Taylor Series Linearization or Repeated Replication methods.  These variables may be used with a variety of software programs that 
+
+incorporate the complex sample design into variance estimation, including Stata, SAS, Sudaan, SPSS and others. The Sampling Error Stratum 
+
+variable (ER31996) may be specified as the "Stratum variable" in the design specification and the Sampling Error Cluster variable (ER31997) 
+
+may be specified as the "Cluster Variable". Sampling error estimation in design-based analysis of the PSID data can be found 
+
+<a target="_blank" href="/Publications/Papers/tsp/2011-05_Heeringa_Berglung_Khan.pdf">here</a>.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe91_ClientState" id="ContentPlaceHolder1_cpe91_ClientState" /><div id="ContentPlaceHolder1_pH92" class="faq_header">
+		<table class="hoverTable" border="1" width="100%"><tr><td style="width:3%;" class="pagetext_11">93.</td><td class="pagetext_11">Why do some cases exist where there is data available for certain variables, but the family weight is equal to zero?&nbsp;</td></tr></table>
+	</div><div id="ContentPlaceHolder1_pB92" class="pagetext_10">
+		<table border="1" width="100%" cellpadding="0" cellspacing="0"  class="pagetext_10"><tr><td class=faq_body>These are families that contained no sample members. These are not mistakes in the data, but rather show cases where information was gathered about individuals not directly linked to a sample member. The PSID purposely followed some nonsample individuals, e.g., the nonsample elderly (1990-1996), nonsample parents (1994-2003). In some cases, families are response and contain only followable but nonsample individuals and therefore all the individual weights and thus the family weight for these cases are zero.</td></tr></table> <hr class=hrFAQ />
+	</div><input type="hidden" name="ctl00$ContentPlaceHolder1$cpe92_ClientState" id="ContentPlaceHolder1_cpe92_ClientState" />
+</div>
+        </td>
+      </tr>
+    </table>
+  
+        
+        </div>
+</div>
+
+<div id="rightcontent_homepage">
+        <div id="QuickLinks">
+				<ul style="list-style-type:none;">
+				  <li>
+            <span class="recent_index">Quick Links</span><br />
+            <hr class="hr3" />
+				  </li>        				
+          <li class="FAQItem"><a href="../PSID50thAnniv.aspx" target="_blank">PSID turns 50</a></li>
+          <li class="FAQItem"><a href="../Publications/Bibliography/Search.aspx" target="_blank">Bibliography</a></li>								
+          <li class="FAQItem"><a href="documents.aspx" target="_blank">Documentation</a></li>        
+          <li class="FAQItem"><a href="../data/Documentation/UserGuide2023.pdf" target="_blank">User Guide</a></li>
+          <li class="FAQItem"><a href="../VideoTutorial.aspx" target="_blank">Video Tutorials</a></li>
+          <li class="FAQItem"><a href="FAQ.aspx" target="_blank">FAQs</a></li>								
+          <li class="FAQItem"><a target="_blank" href='https://simba.isr.umich.edu/default.aspx'>Data Center</a></li>	
+          <li class="FAQItem"><a target="_blank" href='https://simba.isr.umich.edu/DC/s.aspx'>Variable search</a></li>				
+          <li class="FAQItem"><a href="https://psidonline.isr.umich.edu/Guide/Contact_Us.aspx" target="_blank">Help desk</a></li>
+          <li class="FAQItem"><a target="_blank" href='https://simba.isr.umich.edu/U/login.aspx?Tabid=1'>Register</a></li>
+          <li class="FAQItem"><a href="suggestions.aspx" target="_blank">Suggestions?</a></li>				       
+				</ul>							                
+			</div>  
+</div>
+       <div id="footer">								
+					<span id="copyR"> </span>
+          <br />
+          <div id="HorizontalMenu3">
+             <ul style="list-style-type: none;padding: 0;margin: 0;">
+              <li class="footer_item1">
+                <a target="_blank" href="https://www.isr.umich.edu">Institute for Social Research</a>
+              </li>
+              <li class="footer_item2">
+                <a target="_blank" href="https://simba.isr.umich.edu/U/Privacy.aspx">Privacy</a>
+              </li>
+              <li class="footer_item3">
+                <a target="_blank" href="https://simba.isr.umich.edu/U/CondUse.aspx">Conditions of use</a>
+              </li>
+               <li class="footer_item4">
+                <a target="_blank" href="https://psidonline.isr.umich.edu/Guide/sponsorship.aspx">Sponsors</a>
+              </li>
+              <li class="footer_item2">
+                <a target="_blank" href="https://psidonline.isr.umich.edu/sitemap.aspx">Site map</a>
+              </li>
+            </ul>
+          </div>
+			  </div>     
+         <button type="button" onclick="topFunction();" id="myBtn" title="Go to top">^</button> 
+    </div>
+
+			<div id="ctl00_RadWindowManager1" style="display:none;">
+	<!-- 2020.1.114.45 --><div id="ctl00_RadWindowManager1_alerttemplate" style="display:none;">
+		<div class="rwDialogPopup radalert">			
+			<div class="rwDialogText">
+			{1}				
+			</div>
+			
+			<div>
+				<a  onclick="$find('{0}').close(true);"
+				class="rwPopupButton" href="javascript:void(0);">
+					<span class="rwOuterSpan">
+						<span class="rwInnerSpan">##LOC[OK]##</span>
+					</span>
+				</a>				
+			</div>
+		</div>
+		</div><div id="ctl00_RadWindowManager1_prompttemplate" style="display:none;">
+		 <div class="rwDialogPopup radprompt">			
+			    <div class="rwDialogText">
+			    {1}				
+			    </div>		
+			    <div>
+				    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/javascript">
+				    function RadWindowprompt_detectenter(id, ev, input)
+				    {							
+					    if (!ev) ev = window.event;                
+					    if (ev.keyCode == 13)
+					    {															        
+					        var but = input.parentNode.parentNode.getElementsByTagName("A")[0];					        
+					        if (but)
+						    {							
+							    if (but.click) but.click();
+							    else if (but.onclick)
+							    {
+							        but.focus(); var click = but.onclick; but.onclick = null; if (click) click.call(but);							 
+							    }
+						    }
+					       return false;
+					    } 
+					    else return true;
+				    }	 
+				    </script>
+				    <input title="Enter Value" onkeydown="return RadWindowprompt_detectenter('{0}', event, this);" type="text"  class="rwDialogInput" value="{2}" />
+			    </div>
+			    <div>
+				    <a onclick="$find('{0}').close(this.parentNode.parentNode.getElementsByTagName('input')[0].value);"				
+					    class="rwPopupButton" href="javascript:void(0);" ><span class="rwOuterSpan"><span class="rwInnerSpan">##LOC[OK]##</span></span></a>
+				    <a onclick="$find('{0}').close(null);" class="rwPopupButton"  href="javascript:void(0);"><span class="rwOuterSpan"><span class="rwInnerSpan">##LOC[Cancel]##</span></span></a>
+			    </div>
+		    </div>				       
+		</div><div id="ctl00_RadWindowManager1_confirmtemplate" style="display:none;">
+		<div class="rwDialogPopup radconfirm">			
+			<div class="rwDialogText">
+			{1}				
+			</div>						
+			<div>
+				<a onclick="$find('{0}').close(true);"  class="rwPopupButton" href="javascript:void(0);" ><span class="rwOuterSpan"><span class="rwInnerSpan">##LOC[OK]##</span></span></a>
+				<a onclick="$find('{0}').close(false);" class="rwPopupButton"  href="javascript:void(0);"><span class="rwOuterSpan"><span class="rwInnerSpan">##LOC[Cancel]##</span></span></a>
+			</div>
+		</div>		
+		</div><input id="ctl00_RadWindowManager1_ClientState" name="ctl00_RadWindowManager1_ClientState" type="hidden" />
+</div>								
+				<script type="text/javascript">
+				  window.onload = function () {SetYear();}
+				</script>
+      <br />
+    
+
+<script type="text/javascript">
+//<![CDATA[
+window.__TsmHiddenField = $get('RadScriptManager1_TSM');Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe0_ClientState","CollapseControlID":"ContentPlaceHolder1_pH0","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH0","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader0","id":"BehaviorID0"}, null, null, $get("ContentPlaceHolder1_pB0"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe1_ClientState","CollapseControlID":"ContentPlaceHolder1_pH1","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH1","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader1","id":"BehaviorID1"}, null, null, $get("ContentPlaceHolder1_pB1"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe2_ClientState","CollapseControlID":"ContentPlaceHolder1_pH2","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH2","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader2","id":"BehaviorID2"}, null, null, $get("ContentPlaceHolder1_pB2"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe3_ClientState","CollapseControlID":"ContentPlaceHolder1_pH3","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH3","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader3","id":"BehaviorID3"}, null, null, $get("ContentPlaceHolder1_pB3"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe4_ClientState","CollapseControlID":"ContentPlaceHolder1_pH4","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH4","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader4","id":"BehaviorID4"}, null, null, $get("ContentPlaceHolder1_pB4"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe5_ClientState","CollapseControlID":"ContentPlaceHolder1_pH5","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH5","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader5","id":"BehaviorID5"}, null, null, $get("ContentPlaceHolder1_pB5"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe6_ClientState","CollapseControlID":"ContentPlaceHolder1_pH6","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH6","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader6","id":"BehaviorID6"}, null, null, $get("ContentPlaceHolder1_pB6"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe7_ClientState","CollapseControlID":"ContentPlaceHolder1_pH7","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH7","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader7","id":"BehaviorID7"}, null, null, $get("ContentPlaceHolder1_pB7"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe8_ClientState","CollapseControlID":"ContentPlaceHolder1_pH8","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH8","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader8","id":"BehaviorID8"}, null, null, $get("ContentPlaceHolder1_pB8"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe9_ClientState","CollapseControlID":"ContentPlaceHolder1_pH9","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH9","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader9","id":"BehaviorID9"}, null, null, $get("ContentPlaceHolder1_pB9"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe10_ClientState","CollapseControlID":"ContentPlaceHolder1_pH10","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH10","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader10","id":"BehaviorID10"}, null, null, $get("ContentPlaceHolder1_pB10"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe11_ClientState","CollapseControlID":"ContentPlaceHolder1_pH11","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH11","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader11","id":"BehaviorID11"}, null, null, $get("ContentPlaceHolder1_pB11"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe12_ClientState","CollapseControlID":"ContentPlaceHolder1_pH12","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH12","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader12","id":"BehaviorID12"}, null, null, $get("ContentPlaceHolder1_pB12"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe13_ClientState","CollapseControlID":"ContentPlaceHolder1_pH13","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH13","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader13","id":"BehaviorID13"}, null, null, $get("ContentPlaceHolder1_pB13"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe14_ClientState","CollapseControlID":"ContentPlaceHolder1_pH14","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH14","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader14","id":"BehaviorID14"}, null, null, $get("ContentPlaceHolder1_pB14"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe15_ClientState","CollapseControlID":"ContentPlaceHolder1_pH15","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH15","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader15","id":"BehaviorID15"}, null, null, $get("ContentPlaceHolder1_pB15"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe16_ClientState","CollapseControlID":"ContentPlaceHolder1_pH16","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH16","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader16","id":"BehaviorID16"}, null, null, $get("ContentPlaceHolder1_pB16"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe17_ClientState","CollapseControlID":"ContentPlaceHolder1_pH17","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH17","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader17","id":"BehaviorID17"}, null, null, $get("ContentPlaceHolder1_pB17"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe18_ClientState","CollapseControlID":"ContentPlaceHolder1_pH18","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH18","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader18","id":"BehaviorID18"}, null, null, $get("ContentPlaceHolder1_pB18"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe19_ClientState","CollapseControlID":"ContentPlaceHolder1_pH19","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH19","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader19","id":"BehaviorID19"}, null, null, $get("ContentPlaceHolder1_pB19"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe20_ClientState","CollapseControlID":"ContentPlaceHolder1_pH20","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH20","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader20","id":"BehaviorID20"}, null, null, $get("ContentPlaceHolder1_pB20"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe21_ClientState","CollapseControlID":"ContentPlaceHolder1_pH21","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH21","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader21","id":"BehaviorID21"}, null, null, $get("ContentPlaceHolder1_pB21"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe22_ClientState","CollapseControlID":"ContentPlaceHolder1_pH22","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH22","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader22","id":"BehaviorID22"}, null, null, $get("ContentPlaceHolder1_pB22"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe23_ClientState","CollapseControlID":"ContentPlaceHolder1_pH23","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH23","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader23","id":"BehaviorID23"}, null, null, $get("ContentPlaceHolder1_pB23"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe24_ClientState","CollapseControlID":"ContentPlaceHolder1_pH24","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH24","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader24","id":"BehaviorID24"}, null, null, $get("ContentPlaceHolder1_pB24"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe25_ClientState","CollapseControlID":"ContentPlaceHolder1_pH25","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH25","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader25","id":"BehaviorID25"}, null, null, $get("ContentPlaceHolder1_pB25"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe26_ClientState","CollapseControlID":"ContentPlaceHolder1_pH26","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH26","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader26","id":"BehaviorID26"}, null, null, $get("ContentPlaceHolder1_pB26"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe27_ClientState","CollapseControlID":"ContentPlaceHolder1_pH27","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH27","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader27","id":"BehaviorID27"}, null, null, $get("ContentPlaceHolder1_pB27"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe28_ClientState","CollapseControlID":"ContentPlaceHolder1_pH28","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH28","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader28","id":"BehaviorID28"}, null, null, $get("ContentPlaceHolder1_pB28"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe29_ClientState","CollapseControlID":"ContentPlaceHolder1_pH29","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH29","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader29","id":"BehaviorID29"}, null, null, $get("ContentPlaceHolder1_pB29"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe30_ClientState","CollapseControlID":"ContentPlaceHolder1_pH30","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH30","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader30","id":"BehaviorID30"}, null, null, $get("ContentPlaceHolder1_pB30"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe31_ClientState","CollapseControlID":"ContentPlaceHolder1_pH31","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH31","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader31","id":"BehaviorID31"}, null, null, $get("ContentPlaceHolder1_pB31"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe32_ClientState","CollapseControlID":"ContentPlaceHolder1_pH32","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH32","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader32","id":"BehaviorID32"}, null, null, $get("ContentPlaceHolder1_pB32"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe33_ClientState","CollapseControlID":"ContentPlaceHolder1_pH33","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH33","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader33","id":"BehaviorID33"}, null, null, $get("ContentPlaceHolder1_pB33"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe34_ClientState","CollapseControlID":"ContentPlaceHolder1_pH34","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH34","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader34","id":"BehaviorID34"}, null, null, $get("ContentPlaceHolder1_pB34"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe35_ClientState","CollapseControlID":"ContentPlaceHolder1_pH35","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH35","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader35","id":"BehaviorID35"}, null, null, $get("ContentPlaceHolder1_pB35"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe36_ClientState","CollapseControlID":"ContentPlaceHolder1_pH36","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH36","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader36","id":"BehaviorID36"}, null, null, $get("ContentPlaceHolder1_pB36"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe37_ClientState","CollapseControlID":"ContentPlaceHolder1_pH37","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH37","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader37","id":"BehaviorID37"}, null, null, $get("ContentPlaceHolder1_pB37"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe38_ClientState","CollapseControlID":"ContentPlaceHolder1_pH38","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH38","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader38","id":"BehaviorID38"}, null, null, $get("ContentPlaceHolder1_pB38"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe39_ClientState","CollapseControlID":"ContentPlaceHolder1_pH39","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH39","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader39","id":"BehaviorID39"}, null, null, $get("ContentPlaceHolder1_pB39"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe40_ClientState","CollapseControlID":"ContentPlaceHolder1_pH40","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH40","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader40","id":"BehaviorID40"}, null, null, $get("ContentPlaceHolder1_pB40"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe41_ClientState","CollapseControlID":"ContentPlaceHolder1_pH41","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH41","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader41","id":"BehaviorID41"}, null, null, $get("ContentPlaceHolder1_pB41"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe42_ClientState","CollapseControlID":"ContentPlaceHolder1_pH42","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH42","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader42","id":"BehaviorID42"}, null, null, $get("ContentPlaceHolder1_pB42"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe43_ClientState","CollapseControlID":"ContentPlaceHolder1_pH43","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH43","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader43","id":"BehaviorID43"}, null, null, $get("ContentPlaceHolder1_pB43"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe44_ClientState","CollapseControlID":"ContentPlaceHolder1_pH44","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH44","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader44","id":"BehaviorID44"}, null, null, $get("ContentPlaceHolder1_pB44"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe45_ClientState","CollapseControlID":"ContentPlaceHolder1_pH45","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH45","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader45","id":"BehaviorID45"}, null, null, $get("ContentPlaceHolder1_pB45"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe46_ClientState","CollapseControlID":"ContentPlaceHolder1_pH46","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH46","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader46","id":"BehaviorID46"}, null, null, $get("ContentPlaceHolder1_pB46"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe47_ClientState","CollapseControlID":"ContentPlaceHolder1_pH47","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH47","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader47","id":"BehaviorID47"}, null, null, $get("ContentPlaceHolder1_pB47"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe48_ClientState","CollapseControlID":"ContentPlaceHolder1_pH48","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH48","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader48","id":"BehaviorID48"}, null, null, $get("ContentPlaceHolder1_pB48"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe49_ClientState","CollapseControlID":"ContentPlaceHolder1_pH49","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH49","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader49","id":"BehaviorID49"}, null, null, $get("ContentPlaceHolder1_pB49"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe50_ClientState","CollapseControlID":"ContentPlaceHolder1_pH50","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH50","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader50","id":"BehaviorID50"}, null, null, $get("ContentPlaceHolder1_pB50"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe51_ClientState","CollapseControlID":"ContentPlaceHolder1_pH51","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH51","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader51","id":"BehaviorID51"}, null, null, $get("ContentPlaceHolder1_pB51"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe52_ClientState","CollapseControlID":"ContentPlaceHolder1_pH52","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH52","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader52","id":"BehaviorID52"}, null, null, $get("ContentPlaceHolder1_pB52"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe53_ClientState","CollapseControlID":"ContentPlaceHolder1_pH53","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH53","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader53","id":"BehaviorID53"}, null, null, $get("ContentPlaceHolder1_pB53"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe54_ClientState","CollapseControlID":"ContentPlaceHolder1_pH54","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH54","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader54","id":"BehaviorID54"}, null, null, $get("ContentPlaceHolder1_pB54"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe55_ClientState","CollapseControlID":"ContentPlaceHolder1_pH55","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH55","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader55","id":"BehaviorID55"}, null, null, $get("ContentPlaceHolder1_pB55"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe56_ClientState","CollapseControlID":"ContentPlaceHolder1_pH56","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH56","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader56","id":"BehaviorID56"}, null, null, $get("ContentPlaceHolder1_pB56"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe57_ClientState","CollapseControlID":"ContentPlaceHolder1_pH57","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH57","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader57","id":"BehaviorID57"}, null, null, $get("ContentPlaceHolder1_pB57"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe58_ClientState","CollapseControlID":"ContentPlaceHolder1_pH58","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH58","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader58","id":"BehaviorID58"}, null, null, $get("ContentPlaceHolder1_pB58"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe59_ClientState","CollapseControlID":"ContentPlaceHolder1_pH59","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH59","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader59","id":"BehaviorID59"}, null, null, $get("ContentPlaceHolder1_pB59"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe60_ClientState","CollapseControlID":"ContentPlaceHolder1_pH60","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH60","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader60","id":"BehaviorID60"}, null, null, $get("ContentPlaceHolder1_pB60"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe61_ClientState","CollapseControlID":"ContentPlaceHolder1_pH61","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH61","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader61","id":"BehaviorID61"}, null, null, $get("ContentPlaceHolder1_pB61"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe62_ClientState","CollapseControlID":"ContentPlaceHolder1_pH62","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH62","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader62","id":"BehaviorID62"}, null, null, $get("ContentPlaceHolder1_pB62"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe63_ClientState","CollapseControlID":"ContentPlaceHolder1_pH63","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH63","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader63","id":"BehaviorID63"}, null, null, $get("ContentPlaceHolder1_pB63"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe64_ClientState","CollapseControlID":"ContentPlaceHolder1_pH64","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH64","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader64","id":"BehaviorID64"}, null, null, $get("ContentPlaceHolder1_pB64"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe65_ClientState","CollapseControlID":"ContentPlaceHolder1_pH65","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH65","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader65","id":"BehaviorID65"}, null, null, $get("ContentPlaceHolder1_pB65"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe66_ClientState","CollapseControlID":"ContentPlaceHolder1_pH66","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH66","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader66","id":"BehaviorID66"}, null, null, $get("ContentPlaceHolder1_pB66"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe67_ClientState","CollapseControlID":"ContentPlaceHolder1_pH67","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH67","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader67","id":"BehaviorID67"}, null, null, $get("ContentPlaceHolder1_pB67"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe68_ClientState","CollapseControlID":"ContentPlaceHolder1_pH68","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH68","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader68","id":"BehaviorID68"}, null, null, $get("ContentPlaceHolder1_pB68"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe69_ClientState","CollapseControlID":"ContentPlaceHolder1_pH69","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH69","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader69","id":"BehaviorID69"}, null, null, $get("ContentPlaceHolder1_pB69"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe70_ClientState","CollapseControlID":"ContentPlaceHolder1_pH70","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH70","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader70","id":"BehaviorID70"}, null, null, $get("ContentPlaceHolder1_pB70"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe71_ClientState","CollapseControlID":"ContentPlaceHolder1_pH71","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH71","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader71","id":"BehaviorID71"}, null, null, $get("ContentPlaceHolder1_pB71"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe72_ClientState","CollapseControlID":"ContentPlaceHolder1_pH72","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH72","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader72","id":"BehaviorID72"}, null, null, $get("ContentPlaceHolder1_pB72"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe73_ClientState","CollapseControlID":"ContentPlaceHolder1_pH73","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH73","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader73","id":"BehaviorID73"}, null, null, $get("ContentPlaceHolder1_pB73"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe74_ClientState","CollapseControlID":"ContentPlaceHolder1_pH74","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH74","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader74","id":"BehaviorID74"}, null, null, $get("ContentPlaceHolder1_pB74"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe75_ClientState","CollapseControlID":"ContentPlaceHolder1_pH75","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH75","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader75","id":"BehaviorID75"}, null, null, $get("ContentPlaceHolder1_pB75"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe76_ClientState","CollapseControlID":"ContentPlaceHolder1_pH76","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH76","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader76","id":"BehaviorID76"}, null, null, $get("ContentPlaceHolder1_pB76"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe77_ClientState","CollapseControlID":"ContentPlaceHolder1_pH77","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH77","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader77","id":"BehaviorID77"}, null, null, $get("ContentPlaceHolder1_pB77"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe78_ClientState","CollapseControlID":"ContentPlaceHolder1_pH78","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH78","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader78","id":"BehaviorID78"}, null, null, $get("ContentPlaceHolder1_pB78"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe79_ClientState","CollapseControlID":"ContentPlaceHolder1_pH79","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH79","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader79","id":"BehaviorID79"}, null, null, $get("ContentPlaceHolder1_pB79"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe80_ClientState","CollapseControlID":"ContentPlaceHolder1_pH80","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH80","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader80","id":"BehaviorID80"}, null, null, $get("ContentPlaceHolder1_pB80"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe81_ClientState","CollapseControlID":"ContentPlaceHolder1_pH81","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH81","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader81","id":"BehaviorID81"}, null, null, $get("ContentPlaceHolder1_pB81"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe82_ClientState","CollapseControlID":"ContentPlaceHolder1_pH82","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH82","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader82","id":"BehaviorID82"}, null, null, $get("ContentPlaceHolder1_pB82"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe83_ClientState","CollapseControlID":"ContentPlaceHolder1_pH83","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH83","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader83","id":"BehaviorID83"}, null, null, $get("ContentPlaceHolder1_pB83"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe84_ClientState","CollapseControlID":"ContentPlaceHolder1_pH84","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH84","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader84","id":"BehaviorID84"}, null, null, $get("ContentPlaceHolder1_pB84"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe85_ClientState","CollapseControlID":"ContentPlaceHolder1_pH85","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH85","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader85","id":"BehaviorID85"}, null, null, $get("ContentPlaceHolder1_pB85"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe86_ClientState","CollapseControlID":"ContentPlaceHolder1_pH86","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH86","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader86","id":"BehaviorID86"}, null, null, $get("ContentPlaceHolder1_pB86"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe87_ClientState","CollapseControlID":"ContentPlaceHolder1_pH87","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH87","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader87","id":"BehaviorID87"}, null, null, $get("ContentPlaceHolder1_pB87"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe88_ClientState","CollapseControlID":"ContentPlaceHolder1_pH88","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH88","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader88","id":"BehaviorID88"}, null, null, $get("ContentPlaceHolder1_pB88"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe89_ClientState","CollapseControlID":"ContentPlaceHolder1_pH89","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH89","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader89","id":"BehaviorID89"}, null, null, $get("ContentPlaceHolder1_pB89"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe90_ClientState","CollapseControlID":"ContentPlaceHolder1_pH90","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH90","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader90","id":"BehaviorID90"}, null, null, $get("ContentPlaceHolder1_pB90"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe91_ClientState","CollapseControlID":"ContentPlaceHolder1_pH91","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH91","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader91","id":"BehaviorID91"}, null, null, $get("ContentPlaceHolder1_pB91"));
+});
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.CollapsiblePanelBehavior, {"ClientStateFieldID":"ContentPlaceHolder1_cpe92_ClientState","CollapseControlID":"ContentPlaceHolder1_pH92","Collapsed":true,"ExpandControlID":"ContentPlaceHolder1_pH92","SuppressPostBack":true,"TextLabelID":"ContentPlaceHolder1_litHeader92","id":"BehaviorID92"}, null, null, $get("ContentPlaceHolder1_pB92"));
+});
+Sys.Application.add_init(function() {
+    $create(Telerik.Web.UI.RadWindowManager, {"clientStateFieldID":"ctl00_RadWindowManager1_ClientState","formID":"form1","iconUrl":"","minimizeIconUrl":"","name":"RadWindowManager1","skin":"Default","visibleStatusbar":false,"windowControls":"[]"}, null, null, $get("ctl00_RadWindowManager1"));
+});
+//]]>
+</script>
+</form>
+  </body>
+</html>

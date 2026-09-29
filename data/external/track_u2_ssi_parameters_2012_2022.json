@@ -1,0 +1,1017 @@
+{
+  "schema_version": "populace_dynamics.track_u2_ssi_parameters.v1",
+  "target_id": "U2",
+  "years": [
+    2012,
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022
+  ],
+  "source": {
+    "policyengine_us_revision": "a03e82e503f8e0285125ee0c5380410a964c8e8a",
+    "policyengine_us_files_sha256": {
+      "policyengine_us/parameters/gov/ssa/ssi/amount/individual.yaml": "9dc3d2ed15f1f86e073e7ef06e06bd79c43d8d8b48419dcee87de25a5cdd0eaf",
+      "policyengine_us/parameters/gov/ssa/ssi/amount/couple.yaml": "fa8d7cee418f6b4c02df757f2cc591936eb835efcdde17534dffd9d9d90e459e",
+      "policyengine_us/parameters/gov/ssa/ssi/income/exclusions/general.yaml": "dc77f88b148bd06771a267ab0775e80898043ec7581adea5b9431eff8267f9b1",
+      "policyengine_us/parameters/gov/ssa/ssi/income/exclusions/earned.yaml": "50bc791fec4bf24b444a394e23f5ad19b86f758e71739bfd17665b3c11a96f4b",
+      "policyengine_us/parameters/gov/ssa/ssi/income/exclusions/earned_share.yaml": "f9efb4c19445cbc5fc38dcbeabcde0920396365fb3ba5de4e29a93e469257ec6",
+      "policyengine_us/parameters/gov/ssa/ssi/eligibility/resources/limit/individual.yaml": "155d6728a2ae00ea5da441ada685ad638f21d1faaa8cadd0e991ef6a40b94cc7",
+      "policyengine_us/parameters/gov/ssa/ssi/eligibility/resources/limit/couple.yaml": "341b821e70c50a269741152f2e616cc4dc0663bfeab5fcfe0ded1b32a316dfc9"
+    },
+    "references": {
+      "fbr_individual": [
+        {
+          "title": "SSI Federal Payment Amounts",
+          "href": "https://www.ssa.gov/oact/cola/SSIamts.html"
+        }
+      ],
+      "fbr_couple": [
+        {
+          "title": "SSI Federal Payment Amounts",
+          "href": "https://www.ssa.gov/oact/cola/SSIamts.html"
+        }
+      ],
+      "general_income_exclusion": [
+        {
+          "title": "20 CFR § 416.1112 - Earned income we do not count.",
+          "href": "https://www.law.cornell.edu/cfr/text/20/416.1112#c_4"
+        }
+      ],
+      "earned_income_exclusion": [
+        {
+          "title": "20 CFR § 416.1112 - Earned income we do not count.",
+          "href": "https://www.law.cornell.edu/cfr/text/20/416.1112#c_5"
+        }
+      ],
+      "earned_income_share_excluded": [
+        {
+          "title": "20 CFR § 416.1112 - Earned income we do not count.",
+          "href": "https://www.law.cornell.edu/cfr/text/20/416.1112#c_7"
+        }
+      ],
+      "resource_limit_individual": [
+        {
+          "title": "20 CFR § 416.1205 - Limitation on resources.",
+          "href": "https://www.law.cornell.edu/cfr/text/20/416.1205#c"
+        }
+      ],
+      "resource_limit_couple": [
+        {
+          "title": "20 CFR § 416.1205 - Limitation on resources.",
+          "href": "https://www.law.cornell.edu/cfr/text/20/416.1205#c"
+        }
+      ]
+    },
+    "rule": "value in force on January 1 of the income year",
+    "effective_dates": {
+      "fbr_individual": {
+        "2012": "2012-01-01",
+        "2013": "2013-01-01",
+        "2014": "2014-01-01",
+        "2015": "2015-01-01",
+        "2016": "2016-01-01",
+        "2017": "2017-01-01",
+        "2018": "2018-01-01",
+        "2019": "2019-01-01",
+        "2020": "2020-01-01",
+        "2021": "2021-01-01",
+        "2022": "2022-01-01"
+      },
+      "fbr_couple": {
+        "2012": "2012-01-01",
+        "2013": "2013-01-01",
+        "2014": "2014-01-01",
+        "2015": "2015-01-01",
+        "2016": "2016-01-01",
+        "2017": "2017-01-01",
+        "2018": "2018-01-01",
+        "2019": "2019-01-01",
+        "2020": "2020-01-01",
+        "2021": "2021-01-01",
+        "2022": "2022-01-01"
+      },
+      "general_income_exclusion": {
+        "2012": "1975-01-01",
+        "2013": "1975-01-01",
+        "2014": "1975-01-01",
+        "2015": "1975-01-01",
+        "2016": "1975-01-01",
+        "2017": "1975-01-01",
+        "2018": "1975-01-01",
+        "2019": "1975-01-01",
+        "2020": "1975-01-01",
+        "2021": "1975-01-01",
+        "2022": "1975-01-01"
+      },
+      "earned_income_exclusion": {
+        "2012": "1975-01-01",
+        "2013": "1975-01-01",
+        "2014": "1975-01-01",
+        "2015": "1975-01-01",
+        "2016": "1975-01-01",
+        "2017": "1975-01-01",
+        "2018": "1975-01-01",
+        "2019": "1975-01-01",
+        "2020": "1975-01-01",
+        "2021": "1975-01-01",
+        "2022": "1975-01-01"
+      },
+      "earned_income_share_excluded": {
+        "2012": "1975-01-01",
+        "2013": "1975-01-01",
+        "2014": "1975-01-01",
+        "2015": "1975-01-01",
+        "2016": "1975-01-01",
+        "2017": "1975-01-01",
+        "2018": "1975-01-01",
+        "2019": "1975-01-01",
+        "2020": "1975-01-01",
+        "2021": "1975-01-01",
+        "2022": "1975-01-01"
+      },
+      "resource_limit_individual": {
+        "2012": "1989-01-01",
+        "2013": "1989-01-01",
+        "2014": "1989-01-01",
+        "2015": "1989-01-01",
+        "2016": "1989-01-01",
+        "2017": "1989-01-01",
+        "2018": "1989-01-01",
+        "2019": "1989-01-01",
+        "2020": "1989-01-01",
+        "2021": "1989-01-01",
+        "2022": "1989-01-01"
+      },
+      "resource_limit_couple": {
+        "2012": "1989-01-01",
+        "2013": "1989-01-01",
+        "2014": "1989-01-01",
+        "2015": "1989-01-01",
+        "2016": "1989-01-01",
+        "2017": "1989-01-01",
+        "2018": "1989-01-01",
+        "2019": "1989-01-01",
+        "2020": "1989-01-01",
+        "2021": "1989-01-01",
+        "2022": "1989-01-01"
+      }
+    },
+    "generated_by": "scripts/capture_track_u2_ssi_parameters.py",
+    "manifest": "tests/data/track_u2/ssi_sources/manifest.json",
+    "manifest_sha256": "a7d09d735fa595e3c7060fb7972d088f0ee062a4c8bb31f739ef3ee578e82e53"
+  },
+  "federal_benefit_rate_monthly": {
+    "individual": {
+      "2012": 698.0,
+      "2013": 710.0,
+      "2014": 721.0,
+      "2015": 733.0,
+      "2016": 733.0,
+      "2017": 735.0,
+      "2018": 750.0,
+      "2019": 771.0,
+      "2020": 783.0,
+      "2021": 794.0,
+      "2022": 841.0
+    },
+    "couple": {
+      "2012": 1048.0,
+      "2013": 1066.0,
+      "2014": 1082.0,
+      "2015": 1100.0,
+      "2016": 1100.0,
+      "2017": 1103.0,
+      "2018": 1125.0,
+      "2019": 1157.0,
+      "2020": 1175.0,
+      "2021": 1191.0,
+      "2022": 1261.0
+    }
+  },
+  "general_income_exclusion_monthly": 20.0,
+  "earned_income_exclusion_monthly": 65.0,
+  "earned_income_share_excluded": 0.5,
+  "resource_limit": {
+    "individual": 2000.0,
+    "couple": 3000.0
+  },
+  "verification": {
+    "annual_notices": {
+      "2012": {
+        "individual": 698.0,
+        "couple": 1048.0,
+        "source": "tests/data/track_u2/ssi_sources/fr_ssi_2012.html",
+        "sha256": "13c161631f42b85d5c08bae0fcfd078792fc29081dcec06155b1d7466be3c55b",
+        "citation": "76 FR 66111",
+        "printed_page": 66113,
+        "verified_excerpt": "monthly amounts for 2012-- $698, $1,048,"
+      },
+      "2013": {
+        "individual": 710.0,
+        "couple": 1066.0,
+        "source": "tests/data/track_u2/ssi_sources/fr_ssi_2013.html",
+        "sha256": "53dd828de99163cec069f3b398cfe9871c249863a1ecc1489528298060ce252a",
+        "citation": "77 FR 65754",
+        "printed_page": 65756,
+        "verified_excerpt": "monthly amounts for 2013-- $710, $1,066,"
+      },
+      "2014": {
+        "individual": 721.0,
+        "couple": 1082.0,
+        "source": "tests/data/track_u2/ssi_sources/fr_ssi_2014.html",
+        "sha256": "a97ca41984de59d4ab7e1ebac91128d3de3d19141ec18072a1c8a4495b6deb29",
+        "citation": "78 FR 66413",
+        "printed_page": 66414,
+        "verified_excerpt": "monthly amounts for 2014- $721, $1,082,"
+      },
+      "2015": {
+        "individual": 733.0,
+        "couple": 1100.0,
+        "source": "tests/data/track_u2/ssi_sources/fr_ssi_2015.html",
+        "sha256": "98816a22e1e2380df24e6e1461ca4d7d376c44bc90c41874f22ccabd08ac0d32",
+        "citation": "79 FR 64455",
+        "printed_page": 64457,
+        "verified_excerpt": "monthly amounts for 2015--$733, $1,100,"
+      },
+      "2016": {
+        "individual": 733.0,
+        "couple": 1100.0,
+        "source": "tests/data/track_u2/ssi_sources/fr_ssi_2016.html",
+        "sha256": "668fabcce462eade1d1d8030295fee130e63ef908fdfd57f0ec481bc9a47bb65",
+        "citation": "80 FR 66963",
+        "printed_page": 66964,
+        "verified_excerpt": "benefit amounts for 2016 under title XVI of the Act will remain $733 for an eligible individual, $1,100"
+      },
+      "2017": {
+        "individual": 735.0,
+        "couple": 1103.0,
+        "source": "tests/data/track_u2/ssi_sources/fr_ssi_2017.html",
+        "sha256": "efaba020476f8df6713f1c56c5963e53d24d6db76327c874439a2d58136f5bb8",
+        "citation": "81 FR 74854",
+        "printed_page": 74856,
+        "verified_excerpt": "monthly amounts for 2017--$735, $1,103,"
+      },
+      "2018": {
+        "individual": 750.0,
+        "couple": 1125.0,
+        "source": "tests/data/track_u2/ssi_sources/fr_ssi_2018.html",
+        "sha256": "bbff750f2bc36e279e12a5f89ce23dd582fc8cc52e322822af902f4336bc2f2e",
+        "citation": "82 FR 59937",
+        "printed_page": 59939,
+        "verified_excerpt": "monthly amounts for 2018--$750, $1,125,"
+      },
+      "2019": {
+        "individual": 771.0,
+        "couple": 1157.0,
+        "source": "tests/data/track_u2/ssi_sources/fr_ssi_2019.html",
+        "sha256": "058d1f78b6f7c19d567dac418a9a21ca853140e59438e724b05b4bc77e93e8e2",
+        "citation": "83 FR 53702",
+        "printed_page": 53703,
+        "verified_excerpt": "monthly amounts for 2019--$771, $1,157,"
+      },
+      "2020": {
+        "individual": 783.0,
+        "couple": 1175.0,
+        "source": "tests/data/track_u2/ssi_sources/fr_ssi_2020.html",
+        "sha256": "58ff9e9cf4ec28adb85801ec5f968a330237f33e212089e05e34853b4dbbebe0",
+        "citation": "84 FR 56515",
+        "printed_page": 56516,
+        "verified_excerpt": "monthly amounts for 2020--$783, $1,175,"
+      },
+      "2021": {
+        "individual": 794.0,
+        "couple": 1191.0,
+        "source": "tests/data/track_u2/ssi_sources/fr_ssi_2021.html",
+        "sha256": "b9a7c7e04ecf210153283a7ff1748ef4c9c336737c2e3f15435d4abbea211101",
+        "citation": "85 FR 67413",
+        "printed_page": 67415,
+        "verified_excerpt": "monthly amounts for 2021--$794, $1,191,"
+      },
+      "2022": {
+        "individual": 841.0,
+        "couple": 1261.0,
+        "source": "tests/data/track_u2/ssi_sources/fr_ssi_2022.html",
+        "sha256": "246c83ecda7d914833f385f4acbd8127a2b1426e0e6b35681d6d8650a030ac6b",
+        "citation": "86 FR 58715",
+        "printed_page": 58717,
+        "verified_excerpt": "monthly amounts for 2022--$841, $1,261,"
+      }
+    },
+    "historical_cfr": {
+      "416.1112": {
+        "status": "RESOLVED",
+        "annual_editions": {
+          "2012": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1112.xml",
+            "edition_date": "2012-04-01",
+            "text_sha256": "344d101bbed999a3269e6ef09cc783b6fd3174ee96e5a9ec3ef444361635cbc4",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 48 FR 21943, May 16, 1983; 50 FR 48574, Nov. 26, 1985; 58 FR 63889, Dec. 3, 1993; 59 FR 41405, Aug. 12, 1994; 65 FR 82912, Dec. 29, 2000; 71 FR 45378, Aug. 9, 2006; 71 FR 66866, Nov. 17, 2006; 75 FR 54287, Sept. 7, 2010]"
+          },
+          "2013": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1112.xml",
+            "edition_date": "2013-04-01",
+            "text_sha256": "344d101bbed999a3269e6ef09cc783b6fd3174ee96e5a9ec3ef444361635cbc4",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 48 FR 21943, May 16, 1983; 50 FR 48574, Nov. 26, 1985; 58 FR 63889, Dec. 3, 1993; 59 FR 41405, Aug. 12, 1994; 65 FR 82912, Dec. 29, 2000; 71 FR 45378, Aug. 9, 2006; 71 FR 66866, Nov. 17, 2006; 75 FR 54287, Sept. 7, 2010]"
+          },
+          "2014": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1112.xml",
+            "edition_date": "2014-04-01",
+            "text_sha256": "344d101bbed999a3269e6ef09cc783b6fd3174ee96e5a9ec3ef444361635cbc4",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 48 FR 21943, May 16, 1983; 50 FR 48574, Nov. 26, 1985; 58 FR 63889, Dec. 3, 1993; 59 FR 41405, Aug. 12, 1994; 65 FR 82912, Dec. 29, 2000; 71 FR 45378, Aug. 9, 2006; 71 FR 66866, Nov. 17, 2006; 75 FR 54287, Sept. 7, 2010]"
+          },
+          "2015": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1112.xml",
+            "edition_date": "2015-04-01",
+            "text_sha256": "344d101bbed999a3269e6ef09cc783b6fd3174ee96e5a9ec3ef444361635cbc4",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 48 FR 21943, May 16, 1983; 50 FR 48574, Nov. 26, 1985; 58 FR 63889, Dec. 3, 1993; 59 FR 41405, Aug. 12, 1994; 65 FR 82912, Dec. 29, 2000; 71 FR 45378, Aug. 9, 2006; 71 FR 66866, Nov. 17, 2006; 75 FR 54287, Sept. 7, 2010]"
+          },
+          "2016": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1112.xml",
+            "edition_date": "2016-04-01",
+            "text_sha256": "344d101bbed999a3269e6ef09cc783b6fd3174ee96e5a9ec3ef444361635cbc4",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 48 FR 21943, May 16, 1983; 50 FR 48574, Nov. 26, 1985; 58 FR 63889, Dec. 3, 1993; 59 FR 41405, Aug. 12, 1994; 65 FR 82912, Dec. 29, 2000; 71 FR 45378, Aug. 9, 2006; 71 FR 66866, Nov. 17, 2006; 75 FR 54287, Sept. 7, 2010]"
+          },
+          "2017": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1112.xml",
+            "edition_date": "2017-04-01",
+            "text_sha256": "344d101bbed999a3269e6ef09cc783b6fd3174ee96e5a9ec3ef444361635cbc4",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 48 FR 21943, May 16, 1983; 50 FR 48574, Nov. 26, 1985; 58 FR 63889, Dec. 3, 1993; 59 FR 41405, Aug. 12, 1994; 65 FR 82912, Dec. 29, 2000; 71 FR 45378, Aug. 9, 2006; 71 FR 66866, Nov. 17, 2006; 75 FR 54287, Sept. 7, 2010]"
+          },
+          "2018": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1112.xml",
+            "edition_date": "2018-04-01",
+            "text_sha256": "344d101bbed999a3269e6ef09cc783b6fd3174ee96e5a9ec3ef444361635cbc4",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 48 FR 21943, May 16, 1983; 50 FR 48574, Nov. 26, 1985; 58 FR 63889, Dec. 3, 1993; 59 FR 41405, Aug. 12, 1994; 65 FR 82912, Dec. 29, 2000; 71 FR 45378, Aug. 9, 2006; 71 FR 66866, Nov. 17, 2006; 75 FR 54287, Sept. 7, 2010]"
+          },
+          "2019": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1112.xml",
+            "edition_date": "2019-04-01",
+            "text_sha256": "344d101bbed999a3269e6ef09cc783b6fd3174ee96e5a9ec3ef444361635cbc4",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 48 FR 21943, May 16, 1983; 50 FR 48574, Nov. 26, 1985; 58 FR 63889, Dec. 3, 1993; 59 FR 41405, Aug. 12, 1994; 65 FR 82912, Dec. 29, 2000; 71 FR 45378, Aug. 9, 2006; 71 FR 66866, Nov. 17, 2006; 75 FR 54287, Sept. 7, 2010]"
+          },
+          "2020": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1112.xml",
+            "edition_date": "2020-04-01",
+            "text_sha256": "344d101bbed999a3269e6ef09cc783b6fd3174ee96e5a9ec3ef444361635cbc4",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 48 FR 21943, May 16, 1983; 50 FR 48574, Nov. 26, 1985; 58 FR 63889, Dec. 3, 1993; 59 FR 41405, Aug. 12, 1994; 65 FR 82912, Dec. 29, 2000; 71 FR 45378, Aug. 9, 2006; 71 FR 66866, Nov. 17, 2006; 75 FR 54287, Sept. 7, 2010]"
+          },
+          "2021": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1112.xml",
+            "edition_date": "2021-04-01",
+            "text_sha256": "344d101bbed999a3269e6ef09cc783b6fd3174ee96e5a9ec3ef444361635cbc4",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 48 FR 21943, May 16, 1983; 50 FR 48574, Nov. 26, 1985; 58 FR 63889, Dec. 3, 1993; 59 FR 41405, Aug. 12, 1994; 65 FR 82912, Dec. 29, 2000; 71 FR 45378, Aug. 9, 2006; 71 FR 66866, Nov. 17, 2006; 75 FR 54287, Sept. 7, 2010]"
+          },
+          "2022": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1112.xml",
+            "edition_date": "2022-04-01",
+            "text_sha256": "344d101bbed999a3269e6ef09cc783b6fd3174ee96e5a9ec3ef444361635cbc4",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 48 FR 21943, May 16, 1983; 50 FR 48574, Nov. 26, 1985; 58 FR 63889, Dec. 3, 1993; 59 FR 41405, Aug. 12, 1994; 65 FR 82912, Dec. 29, 2000; 71 FR 45378, Aug. 9, 2006; 71 FR 66866, Nov. 17, 2006; 75 FR 54287, Sept. 7, 2010]"
+          }
+        },
+        "constancy": "all eleven normalized section texts equal",
+        "normalization": "whitespace; 416.1163 example 4 '$80+$86.' -> '$80 + $86.'"
+      },
+      "416.1121": {
+        "status": "RESOLVED",
+        "annual_editions": {
+          "2012": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1121.xml",
+            "edition_date": "2012-04-01",
+            "text_sha256": "9775777fa57662cb1963708cc534cdf3b9f66f5e674529c68b49058acf4387a0",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 56 FR 36000, July 30, 1991; 59 FR 43471, Aug. 24, 1994; 70 FR 6345, Feb. 7, 2005]"
+          },
+          "2013": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1121.xml",
+            "edition_date": "2013-04-01",
+            "text_sha256": "9775777fa57662cb1963708cc534cdf3b9f66f5e674529c68b49058acf4387a0",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 56 FR 36000, July 30, 1991; 59 FR 43471, Aug. 24, 1994; 70 FR 6345, Feb. 7, 2005]"
+          },
+          "2014": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1121.xml",
+            "edition_date": "2014-04-01",
+            "text_sha256": "9775777fa57662cb1963708cc534cdf3b9f66f5e674529c68b49058acf4387a0",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 56 FR 36000, July 30, 1991; 59 FR 43471, Aug. 24, 1994; 70 FR 6345, Feb. 7, 2005]"
+          },
+          "2015": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1121.xml",
+            "edition_date": "2015-04-01",
+            "text_sha256": "9775777fa57662cb1963708cc534cdf3b9f66f5e674529c68b49058acf4387a0",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 56 FR 36000, July 30, 1991; 59 FR 43471, Aug. 24, 1994; 70 FR 6345, Feb. 7, 2005]"
+          },
+          "2016": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1121.xml",
+            "edition_date": "2016-04-01",
+            "text_sha256": "9775777fa57662cb1963708cc534cdf3b9f66f5e674529c68b49058acf4387a0",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 56 FR 36000, July 30, 1991; 59 FR 43471, Aug. 24, 1994; 70 FR 6345, Feb. 7, 2005]"
+          },
+          "2017": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1121.xml",
+            "edition_date": "2017-04-01",
+            "text_sha256": "9775777fa57662cb1963708cc534cdf3b9f66f5e674529c68b49058acf4387a0",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 56 FR 36000, July 30, 1991; 59 FR 43471, Aug. 24, 1994; 70 FR 6345, Feb. 7, 2005]"
+          },
+          "2018": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1121.xml",
+            "edition_date": "2018-04-01",
+            "text_sha256": "9775777fa57662cb1963708cc534cdf3b9f66f5e674529c68b49058acf4387a0",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 56 FR 36000, July 30, 1991; 59 FR 43471, Aug. 24, 1994; 70 FR 6345, Feb. 7, 2005]"
+          },
+          "2019": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1121.xml",
+            "edition_date": "2019-04-01",
+            "text_sha256": "9775777fa57662cb1963708cc534cdf3b9f66f5e674529c68b49058acf4387a0",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 56 FR 36000, July 30, 1991; 59 FR 43471, Aug. 24, 1994; 70 FR 6345, Feb. 7, 2005]"
+          },
+          "2020": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1121.xml",
+            "edition_date": "2020-04-01",
+            "text_sha256": "9775777fa57662cb1963708cc534cdf3b9f66f5e674529c68b49058acf4387a0",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 56 FR 36000, July 30, 1991; 59 FR 43471, Aug. 24, 1994; 70 FR 6345, Feb. 7, 2005]"
+          },
+          "2021": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1121.xml",
+            "edition_date": "2021-04-01",
+            "text_sha256": "9775777fa57662cb1963708cc534cdf3b9f66f5e674529c68b49058acf4387a0",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 56 FR 36000, July 30, 1991; 59 FR 43471, Aug. 24, 1994; 70 FR 6345, Feb. 7, 2005]"
+          },
+          "2022": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1121.xml",
+            "edition_date": "2022-04-01",
+            "text_sha256": "9775777fa57662cb1963708cc534cdf3b9f66f5e674529c68b49058acf4387a0",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 56 FR 36000, July 30, 1991; 59 FR 43471, Aug. 24, 1994; 70 FR 6345, Feb. 7, 2005]"
+          }
+        },
+        "constancy": "all eleven normalized section texts equal",
+        "normalization": "whitespace; 416.1163 example 4 '$80+$86.' -> '$80 + $86.'"
+      },
+      "416.1124": {
+        "status": "RESOLVED",
+        "annual_editions": {
+          "2012": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1124.xml",
+            "edition_date": "2012-04-01",
+            "text_sha256": "bb3f6ffb61bd755dfd63add0d0ac782c04c1310199db638120633fe10b4a05bb",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 47 FR 55213, Dec. 8, 1982; 48 FR 21943, May 16, 1983; 48 FR 33258, July 21, 1983; 48 FR 57127, Dec. 28, 1983; 50 FR 48574, Nov. 26, 1985; 51 FR 39523, Oct. 29, 1986; 54 FR 19164, May 4, 1989; 55 FR 28378, July 11, 1990; 57 FR 1384, Jan. 14, 1992; 57 FR 53850, Nov. 13, 1992; 58 FR 63888, Dec. 3, 1993; 61 FR 1712, Jan. 23, 1996; 61 FR 49964, Sept. 24, 1996; 61 FR 67207, Dec. 20, 1996; 70 FR 6345, Feb. 7, 2005; 70 FR 41137, July 18, 2005; 71 FR 45378, Aug. 9, 2006; 75 FR 7554, Feb. 22, 2010; 75 FR 54287, Sept. 7, 2010]"
+          },
+          "2013": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1124.xml",
+            "edition_date": "2013-04-01",
+            "text_sha256": "bb3f6ffb61bd755dfd63add0d0ac782c04c1310199db638120633fe10b4a05bb",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 47 FR 55213, Dec. 8, 1982; 48 FR 21943, May 16, 1983; 48 FR 33258, July 21, 1983; 48 FR 57127, Dec. 28, 1983; 50 FR 48574, Nov. 26, 1985; 51 FR 39523, Oct. 29, 1986; 54 FR 19164, May 4, 1989; 55 FR 28378, July 11, 1990; 57 FR 1384, Jan. 14, 1992; 57 FR 53850, Nov. 13, 1992; 58 FR 63888, Dec. 3, 1993; 61 FR 1712, Jan. 23, 1996; 61 FR 49964, Sept. 24, 1996; 61 FR 67207, Dec. 20, 1996; 70 FR 6345, Feb. 7, 2005; 70 FR 41137, July 18, 2005; 71 FR 45378, Aug. 9, 2006; 75 FR 7554, Feb. 22, 2010; 75 FR 54287, Sept. 7, 2010]"
+          },
+          "2014": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1124.xml",
+            "edition_date": "2014-04-01",
+            "text_sha256": "bb3f6ffb61bd755dfd63add0d0ac782c04c1310199db638120633fe10b4a05bb",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 47 FR 55213, Dec. 8, 1982; 48 FR 21943, May 16, 1983; 48 FR 33258, July 21, 1983; 48 FR 57127, Dec. 28, 1983; 50 FR 48574, Nov. 26, 1985; 51 FR 39523, Oct. 29, 1986; 54 FR 19164, May 4, 1989; 55 FR 28378, July 11, 1990; 57 FR 1384, Jan. 14, 1992; 57 FR 53850, Nov. 13, 1992; 58 FR 63888, Dec. 3, 1993; 61 FR 1712, Jan. 23, 1996; 61 FR 49964, Sept. 24, 1996; 61 FR 67207, Dec. 20, 1996; 70 FR 6345, Feb. 7, 2005; 70 FR 41137, July 18, 2005; 71 FR 45378, Aug. 9, 2006; 75 FR 7554, Feb. 22, 2010; 75 FR 54287, Sept. 7, 2010]"
+          },
+          "2015": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1124.xml",
+            "edition_date": "2015-04-01",
+            "text_sha256": "bb3f6ffb61bd755dfd63add0d0ac782c04c1310199db638120633fe10b4a05bb",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 47 FR 55213, Dec. 8, 1982; 48 FR 21943, May 16, 1983; 48 FR 33258, July 21, 1983; 48 FR 57127, Dec. 28, 1983; 50 FR 48574, Nov. 26, 1985; 51 FR 39523, Oct. 29, 1986; 54 FR 19164, May 4, 1989; 55 FR 28378, July 11, 1990; 57 FR 1384, Jan. 14, 1992; 57 FR 53850, Nov. 13, 1992; 58 FR 63888, Dec. 3, 1993; 61 FR 1712, Jan. 23, 1996; 61 FR 49964, Sept. 24, 1996; 61 FR 67207, Dec. 20, 1996; 70 FR 6345, Feb. 7, 2005; 70 FR 41137, July 18, 2005; 71 FR 45378, Aug. 9, 2006; 75 FR 7554, Feb. 22, 2010; 75 FR 54287, Sept. 7, 2010]"
+          },
+          "2016": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1124.xml",
+            "edition_date": "2016-04-01",
+            "text_sha256": "bb3f6ffb61bd755dfd63add0d0ac782c04c1310199db638120633fe10b4a05bb",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 47 FR 55213, Dec. 8, 1982; 48 FR 21943, May 16, 1983; 48 FR 33258, July 21, 1983; 48 FR 57127, Dec. 28, 1983; 50 FR 48574, Nov. 26, 1985; 51 FR 39523, Oct. 29, 1986; 54 FR 19164, May 4, 1989; 55 FR 28378, July 11, 1990; 57 FR 1384, Jan. 14, 1992; 57 FR 53850, Nov. 13, 1992; 58 FR 63888, Dec. 3, 1993; 61 FR 1712, Jan. 23, 1996; 61 FR 49964, Sept. 24, 1996; 61 FR 67207, Dec. 20, 1996; 70 FR 6345, Feb. 7, 2005; 70 FR 41137, July 18, 2005; 71 FR 45378, Aug. 9, 2006; 75 FR 7554, Feb. 22, 2010; 75 FR 54287, Sept. 7, 2010]"
+          },
+          "2017": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1124.xml",
+            "edition_date": "2017-04-01",
+            "text_sha256": "bb3f6ffb61bd755dfd63add0d0ac782c04c1310199db638120633fe10b4a05bb",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 47 FR 55213, Dec. 8, 1982; 48 FR 21943, May 16, 1983; 48 FR 33258, July 21, 1983; 48 FR 57127, Dec. 28, 1983; 50 FR 48574, Nov. 26, 1985; 51 FR 39523, Oct. 29, 1986; 54 FR 19164, May 4, 1989; 55 FR 28378, July 11, 1990; 57 FR 1384, Jan. 14, 1992; 57 FR 53850, Nov. 13, 1992; 58 FR 63888, Dec. 3, 1993; 61 FR 1712, Jan. 23, 1996; 61 FR 49964, Sept. 24, 1996; 61 FR 67207, Dec. 20, 1996; 70 FR 6345, Feb. 7, 2005; 70 FR 41137, July 18, 2005; 71 FR 45378, Aug. 9, 2006; 75 FR 7554, Feb. 22, 2010; 75 FR 54287, Sept. 7, 2010]"
+          },
+          "2018": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1124.xml",
+            "edition_date": "2018-04-01",
+            "text_sha256": "bb3f6ffb61bd755dfd63add0d0ac782c04c1310199db638120633fe10b4a05bb",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 47 FR 55213, Dec. 8, 1982; 48 FR 21943, May 16, 1983; 48 FR 33258, July 21, 1983; 48 FR 57127, Dec. 28, 1983; 50 FR 48574, Nov. 26, 1985; 51 FR 39523, Oct. 29, 1986; 54 FR 19164, May 4, 1989; 55 FR 28378, July 11, 1990; 57 FR 1384, Jan. 14, 1992; 57 FR 53850, Nov. 13, 1992; 58 FR 63888, Dec. 3, 1993; 61 FR 1712, Jan. 23, 1996; 61 FR 49964, Sept. 24, 1996; 61 FR 67207, Dec. 20, 1996; 70 FR 6345, Feb. 7, 2005; 70 FR 41137, July 18, 2005; 71 FR 45378, Aug. 9, 2006; 75 FR 7554, Feb. 22, 2010; 75 FR 54287, Sept. 7, 2010]"
+          },
+          "2019": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1124.xml",
+            "edition_date": "2019-04-01",
+            "text_sha256": "bb3f6ffb61bd755dfd63add0d0ac782c04c1310199db638120633fe10b4a05bb",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 47 FR 55213, Dec. 8, 1982; 48 FR 21943, May 16, 1983; 48 FR 33258, July 21, 1983; 48 FR 57127, Dec. 28, 1983; 50 FR 48574, Nov. 26, 1985; 51 FR 39523, Oct. 29, 1986; 54 FR 19164, May 4, 1989; 55 FR 28378, July 11, 1990; 57 FR 1384, Jan. 14, 1992; 57 FR 53850, Nov. 13, 1992; 58 FR 63888, Dec. 3, 1993; 61 FR 1712, Jan. 23, 1996; 61 FR 49964, Sept. 24, 1996; 61 FR 67207, Dec. 20, 1996; 70 FR 6345, Feb. 7, 2005; 70 FR 41137, July 18, 2005; 71 FR 45378, Aug. 9, 2006; 75 FR 7554, Feb. 22, 2010; 75 FR 54287, Sept. 7, 2010]"
+          },
+          "2020": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1124.xml",
+            "edition_date": "2020-04-01",
+            "text_sha256": "bb3f6ffb61bd755dfd63add0d0ac782c04c1310199db638120633fe10b4a05bb",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 47 FR 55213, Dec. 8, 1982; 48 FR 21943, May 16, 1983; 48 FR 33258, July 21, 1983; 48 FR 57127, Dec. 28, 1983; 50 FR 48574, Nov. 26, 1985; 51 FR 39523, Oct. 29, 1986; 54 FR 19164, May 4, 1989; 55 FR 28378, July 11, 1990; 57 FR 1384, Jan. 14, 1992; 57 FR 53850, Nov. 13, 1992; 58 FR 63888, Dec. 3, 1993; 61 FR 1712, Jan. 23, 1996; 61 FR 49964, Sept. 24, 1996; 61 FR 67207, Dec. 20, 1996; 70 FR 6345, Feb. 7, 2005; 70 FR 41137, July 18, 2005; 71 FR 45378, Aug. 9, 2006; 75 FR 7554, Feb. 22, 2010; 75 FR 54287, Sept. 7, 2010]"
+          },
+          "2021": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1124.xml",
+            "edition_date": "2021-04-01",
+            "text_sha256": "bb3f6ffb61bd755dfd63add0d0ac782c04c1310199db638120633fe10b4a05bb",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 47 FR 55213, Dec. 8, 1982; 48 FR 21943, May 16, 1983; 48 FR 33258, July 21, 1983; 48 FR 57127, Dec. 28, 1983; 50 FR 48574, Nov. 26, 1985; 51 FR 39523, Oct. 29, 1986; 54 FR 19164, May 4, 1989; 55 FR 28378, July 11, 1990; 57 FR 1384, Jan. 14, 1992; 57 FR 53850, Nov. 13, 1992; 58 FR 63888, Dec. 3, 1993; 61 FR 1712, Jan. 23, 1996; 61 FR 49964, Sept. 24, 1996; 61 FR 67207, Dec. 20, 1996; 70 FR 6345, Feb. 7, 2005; 70 FR 41137, July 18, 2005; 71 FR 45378, Aug. 9, 2006; 75 FR 7554, Feb. 22, 2010; 75 FR 54287, Sept. 7, 2010]"
+          },
+          "2022": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1124.xml",
+            "edition_date": "2022-04-01",
+            "text_sha256": "bb3f6ffb61bd755dfd63add0d0ac782c04c1310199db638120633fe10b4a05bb",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 47 FR 55213, Dec. 8, 1982; 48 FR 21943, May 16, 1983; 48 FR 33258, July 21, 1983; 48 FR 57127, Dec. 28, 1983; 50 FR 48574, Nov. 26, 1985; 51 FR 39523, Oct. 29, 1986; 54 FR 19164, May 4, 1989; 55 FR 28378, July 11, 1990; 57 FR 1384, Jan. 14, 1992; 57 FR 53850, Nov. 13, 1992; 58 FR 63888, Dec. 3, 1993; 61 FR 1712, Jan. 23, 1996; 61 FR 49964, Sept. 24, 1996; 61 FR 67207, Dec. 20, 1996; 70 FR 6345, Feb. 7, 2005; 70 FR 41137, July 18, 2005; 71 FR 45378, Aug. 9, 2006; 75 FR 7554, Feb. 22, 2010; 75 FR 54287, Sept. 7, 2010]"
+          }
+        },
+        "constancy": "all eleven normalized section texts equal",
+        "normalization": "whitespace; 416.1163 example 4 '$80+$86.' -> '$80 + $86.'"
+      },
+      "416.1161": {
+        "status": "RESOLVED",
+        "annual_editions": {
+          "2012": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1161.xml",
+            "edition_date": "2012-04-01",
+            "text_sha256": "a05cf9f434ab661ff832ea951993f71bad717d7cd6bfaec109aa1e4cb4610d6f",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 46 FR 57276, Nov. 23, 1981; 48 FR 33259, July 21, 1983; 50 FR 48576, Nov. 26, 1985; 51 FR 39523, Oct. 29, 1986; 52 FR 8883, Mar. 20, 1987; 52 FR 44971, Nov. 24, 1987; 55 FR 28378, July 11, 1990; 58 FR 63888, 63890, Dec. 3, 1993; 61 FR 1712, Jan. 23, 1996; 61 FR 49964, Sept. 24, 1996; 67 FR 11034, Mar. 12, 2002; 71 FR 45378, Aug. 9, 2006; 71 FR 66866, Nov. 17, 2006; 75 FR 7554, Feb. 22, 2010]"
+          },
+          "2013": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1161.xml",
+            "edition_date": "2013-04-01",
+            "text_sha256": "a05cf9f434ab661ff832ea951993f71bad717d7cd6bfaec109aa1e4cb4610d6f",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 46 FR 57276, Nov. 23, 1981; 48 FR 33259, July 21, 1983; 50 FR 48576, Nov. 26, 1985; 51 FR 39523, Oct. 29, 1986; 52 FR 8883, Mar. 20, 1987; 52 FR 44971, Nov. 24, 1987; 55 FR 28378, July 11, 1990; 58 FR 63888, 63890, Dec. 3, 1993; 61 FR 1712, Jan. 23, 1996; 61 FR 49964, Sept. 24, 1996; 67 FR 11034, Mar. 12, 2002; 71 FR 45378, Aug. 9, 2006; 71 FR 66866, Nov. 17, 2006; 75 FR 7554, Feb. 22, 2010]"
+          },
+          "2014": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1161.xml",
+            "edition_date": "2014-04-01",
+            "text_sha256": "a05cf9f434ab661ff832ea951993f71bad717d7cd6bfaec109aa1e4cb4610d6f",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 46 FR 57276, Nov. 23, 1981; 48 FR 33259, July 21, 1983; 50 FR 48576, Nov. 26, 1985; 51 FR 39523, Oct. 29, 1986; 52 FR 8883, Mar. 20, 1987; 52 FR 44971, Nov. 24, 1987; 55 FR 28378, July 11, 1990; 58 FR 63888, 63890, Dec. 3, 1993; 61 FR 1712, Jan. 23, 1996; 61 FR 49964, Sept. 24, 1996; 67 FR 11034, Mar. 12, 2002; 71 FR 45378, Aug. 9, 2006; 71 FR 66866, Nov. 17, 2006; 75 FR 7554, Feb. 22, 2010]"
+          },
+          "2015": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1161.xml",
+            "edition_date": "2015-04-01",
+            "text_sha256": "a05cf9f434ab661ff832ea951993f71bad717d7cd6bfaec109aa1e4cb4610d6f",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 46 FR 57276, Nov. 23, 1981; 48 FR 33259, July 21, 1983; 50 FR 48576, Nov. 26, 1985; 51 FR 39523, Oct. 29, 1986; 52 FR 8883, Mar. 20, 1987; 52 FR 44971, Nov. 24, 1987; 55 FR 28378, July 11, 1990; 58 FR 63888, 63890, Dec. 3, 1993; 61 FR 1712, Jan. 23, 1996; 61 FR 49964, Sept. 24, 1996; 67 FR 11034, Mar. 12, 2002; 71 FR 45378, Aug. 9, 2006; 71 FR 66866, Nov. 17, 2006; 75 FR 7554, Feb. 22, 2010]"
+          },
+          "2016": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1161.xml",
+            "edition_date": "2016-04-01",
+            "text_sha256": "a05cf9f434ab661ff832ea951993f71bad717d7cd6bfaec109aa1e4cb4610d6f",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 46 FR 57276, Nov. 23, 1981; 48 FR 33259, July 21, 1983; 50 FR 48576, Nov. 26, 1985; 51 FR 39523, Oct. 29, 1986; 52 FR 8883, Mar. 20, 1987; 52 FR 44971, Nov. 24, 1987; 55 FR 28378, July 11, 1990; 58 FR 63888, 63890, Dec. 3, 1993; 61 FR 1712, Jan. 23, 1996; 61 FR 49964, Sept. 24, 1996; 67 FR 11034, Mar. 12, 2002; 71 FR 45378, Aug. 9, 2006; 71 FR 66866, Nov. 17, 2006; 75 FR 7554, Feb. 22, 2010]"
+          },
+          "2017": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1161.xml",
+            "edition_date": "2017-04-01",
+            "text_sha256": "a05cf9f434ab661ff832ea951993f71bad717d7cd6bfaec109aa1e4cb4610d6f",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 46 FR 57276, Nov. 23, 1981; 48 FR 33259, July 21, 1983; 50 FR 48576, Nov. 26, 1985; 51 FR 39523, Oct. 29, 1986; 52 FR 8883, Mar. 20, 1987; 52 FR 44971, Nov. 24, 1987; 55 FR 28378, July 11, 1990; 58 FR 63888, 63890, Dec. 3, 1993; 61 FR 1712, Jan. 23, 1996; 61 FR 49964, Sept. 24, 1996; 67 FR 11034, Mar. 12, 2002; 71 FR 45378, Aug. 9, 2006; 71 FR 66866, Nov. 17, 2006; 75 FR 7554, Feb. 22, 2010]"
+          },
+          "2018": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1161.xml",
+            "edition_date": "2018-04-01",
+            "text_sha256": "a05cf9f434ab661ff832ea951993f71bad717d7cd6bfaec109aa1e4cb4610d6f",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 46 FR 57276, Nov. 23, 1981; 48 FR 33259, July 21, 1983; 50 FR 48576, Nov. 26, 1985; 51 FR 39523, Oct. 29, 1986; 52 FR 8883, Mar. 20, 1987; 52 FR 44971, Nov. 24, 1987; 55 FR 28378, July 11, 1990; 58 FR 63888, 63890, Dec. 3, 1993; 61 FR 1712, Jan. 23, 1996; 61 FR 49964, Sept. 24, 1996; 67 FR 11034, Mar. 12, 2002; 71 FR 45378, Aug. 9, 2006; 71 FR 66866, Nov. 17, 2006; 75 FR 7554, Feb. 22, 2010]"
+          },
+          "2019": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1161.xml",
+            "edition_date": "2019-04-01",
+            "text_sha256": "a05cf9f434ab661ff832ea951993f71bad717d7cd6bfaec109aa1e4cb4610d6f",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 46 FR 57276, Nov. 23, 1981; 48 FR 33259, July 21, 1983; 50 FR 48576, Nov. 26, 1985; 51 FR 39523, Oct. 29, 1986; 52 FR 8883, Mar. 20, 1987; 52 FR 44971, Nov. 24, 1987; 55 FR 28378, July 11, 1990; 58 FR 63888, 63890, Dec. 3, 1993; 61 FR 1712, Jan. 23, 1996; 61 FR 49964, Sept. 24, 1996; 67 FR 11034, Mar. 12, 2002; 71 FR 45378, Aug. 9, 2006; 71 FR 66866, Nov. 17, 2006; 75 FR 7554, Feb. 22, 2010]"
+          },
+          "2020": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1161.xml",
+            "edition_date": "2020-04-01",
+            "text_sha256": "a05cf9f434ab661ff832ea951993f71bad717d7cd6bfaec109aa1e4cb4610d6f",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 46 FR 57276, Nov. 23, 1981; 48 FR 33259, July 21, 1983; 50 FR 48576, Nov. 26, 1985; 51 FR 39523, Oct. 29, 1986; 52 FR 8883, Mar. 20, 1987; 52 FR 44971, Nov. 24, 1987; 55 FR 28378, July 11, 1990; 58 FR 63888, 63890, Dec. 3, 1993; 61 FR 1712, Jan. 23, 1996; 61 FR 49964, Sept. 24, 1996; 67 FR 11034, Mar. 12, 2002; 71 FR 45378, Aug. 9, 2006; 71 FR 66866, Nov. 17, 2006; 75 FR 7554, Feb. 22, 2010]"
+          },
+          "2021": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1161.xml",
+            "edition_date": "2021-04-01",
+            "text_sha256": "a05cf9f434ab661ff832ea951993f71bad717d7cd6bfaec109aa1e4cb4610d6f",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 46 FR 57276, Nov. 23, 1981; 48 FR 33259, July 21, 1983; 50 FR 48576, Nov. 26, 1985; 51 FR 39523, Oct. 29, 1986; 52 FR 8883, Mar. 20, 1987; 52 FR 44971, Nov. 24, 1987; 55 FR 28378, July 11, 1990; 58 FR 63888, 63890, Dec. 3, 1993; 61 FR 1712, Jan. 23, 1996; 61 FR 49964, Sept. 24, 1996; 67 FR 11034, Mar. 12, 2002; 71 FR 45378, Aug. 9, 2006; 71 FR 66866, Nov. 17, 2006; 75 FR 7554, Feb. 22, 2010]"
+          },
+          "2022": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1161.xml",
+            "edition_date": "2022-04-01",
+            "text_sha256": "a05cf9f434ab661ff832ea951993f71bad717d7cd6bfaec109aa1e4cb4610d6f",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 46 FR 57276, Nov. 23, 1981; 48 FR 33259, July 21, 1983; 50 FR 48576, Nov. 26, 1985; 51 FR 39523, Oct. 29, 1986; 52 FR 8883, Mar. 20, 1987; 52 FR 44971, Nov. 24, 1987; 55 FR 28378, July 11, 1990; 58 FR 63888, 63890, Dec. 3, 1993; 61 FR 1712, Jan. 23, 1996; 61 FR 49964, Sept. 24, 1996; 67 FR 11034, Mar. 12, 2002; 71 FR 45378, Aug. 9, 2006; 71 FR 66866, Nov. 17, 2006; 75 FR 7554, Feb. 22, 2010]"
+          }
+        },
+        "constancy": "all eleven normalized section texts equal",
+        "normalization": "whitespace; 416.1163 example 4 '$80+$86.' -> '$80 + $86.'"
+      },
+      "416.1163": {
+        "status": "RESOLVED",
+        "annual_editions": {
+          "2012": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1163.xml",
+            "edition_date": "2012-04-01",
+            "text_sha256": "8c880eeccb3333c13793c25a669da90f23943970e2eba2f42b6c5e0de72a1f02",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 50 FR 48576, Nov. 26, 1985; 52 FR 8883, Mar. 20, 1987; 53 FR 25151, July 5, 1988; 54 FR 19164, May 4, 1989; 64 FR 31974, June 15, 1999]"
+          },
+          "2013": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1163.xml",
+            "edition_date": "2013-04-01",
+            "text_sha256": "8c880eeccb3333c13793c25a669da90f23943970e2eba2f42b6c5e0de72a1f02",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 50 FR 48576, Nov. 26, 1985; 52 FR 8883, Mar. 20, 1987; 53 FR 25151, July 5, 1988; 54 FR 19164, May 4, 1989; 64 FR 31974, June 15, 1999]"
+          },
+          "2014": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1163.xml",
+            "edition_date": "2014-04-01",
+            "text_sha256": "8c880eeccb3333c13793c25a669da90f23943970e2eba2f42b6c5e0de72a1f02",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 50 FR 48576, Nov. 26, 1985; 52 FR 8883, Mar. 20, 1987; 53 FR 25151, July 5, 1988; 54 FR 19164, May 4, 1989; 64 FR 31974, June 15, 1999]"
+          },
+          "2015": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1163.xml",
+            "edition_date": "2015-04-01",
+            "text_sha256": "8c880eeccb3333c13793c25a669da90f23943970e2eba2f42b6c5e0de72a1f02",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 50 FR 48576, Nov. 26, 1985; 52 FR 8883, Mar. 20, 1987; 53 FR 25151, July 5, 1988; 54 FR 19164, May 4, 1989; 64 FR 31974, June 15, 1999]"
+          },
+          "2016": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1163.xml",
+            "edition_date": "2016-04-01",
+            "text_sha256": "6c8a4deb8681247ae20470c8a86cb8e6f44fb9a1e7eb30430a44b36e808c44e8",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 50 FR 48576, Nov. 26, 1985; 52 FR 8883, Mar. 20, 1987; 53 FR 25151, July 5, 1988; 54 FR 19164, May 4, 1989; 64 FR 31974, June 15, 1999]"
+          },
+          "2017": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1163.xml",
+            "edition_date": "2017-04-01",
+            "text_sha256": "6c8a4deb8681247ae20470c8a86cb8e6f44fb9a1e7eb30430a44b36e808c44e8",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 50 FR 48576, Nov. 26, 1985; 52 FR 8883, Mar. 20, 1987; 53 FR 25151, July 5, 1988; 54 FR 19164, May 4, 1989; 64 FR 31974, June 15, 1999]"
+          },
+          "2018": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1163.xml",
+            "edition_date": "2018-04-01",
+            "text_sha256": "6c8a4deb8681247ae20470c8a86cb8e6f44fb9a1e7eb30430a44b36e808c44e8",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 50 FR 48576, Nov. 26, 1985; 52 FR 8883, Mar. 20, 1987; 53 FR 25151, July 5, 1988; 54 FR 19164, May 4, 1989; 64 FR 31974, June 15, 1999]"
+          },
+          "2019": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1163.xml",
+            "edition_date": "2019-04-01",
+            "text_sha256": "6c8a4deb8681247ae20470c8a86cb8e6f44fb9a1e7eb30430a44b36e808c44e8",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 50 FR 48576, Nov. 26, 1985; 52 FR 8883, Mar. 20, 1987; 53 FR 25151, July 5, 1988; 54 FR 19164, May 4, 1989; 64 FR 31974, June 15, 1999]"
+          },
+          "2020": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1163.xml",
+            "edition_date": "2020-04-01",
+            "text_sha256": "6c8a4deb8681247ae20470c8a86cb8e6f44fb9a1e7eb30430a44b36e808c44e8",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 50 FR 48576, Nov. 26, 1985; 52 FR 8883, Mar. 20, 1987; 53 FR 25151, July 5, 1988; 54 FR 19164, May 4, 1989; 64 FR 31974, June 15, 1999]"
+          },
+          "2021": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1163.xml",
+            "edition_date": "2021-04-01",
+            "text_sha256": "6c8a4deb8681247ae20470c8a86cb8e6f44fb9a1e7eb30430a44b36e808c44e8",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 50 FR 48576, Nov. 26, 1985; 52 FR 8883, Mar. 20, 1987; 53 FR 25151, July 5, 1988; 54 FR 19164, May 4, 1989; 64 FR 31974, June 15, 1999]"
+          },
+          "2022": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1163.xml",
+            "edition_date": "2022-04-01",
+            "text_sha256": "6c8a4deb8681247ae20470c8a86cb8e6f44fb9a1e7eb30430a44b36e808c44e8",
+            "amendment_history": "[45 FR 65547, Oct. 3, 1980, as amended at 50 FR 48576, Nov. 26, 1985; 52 FR 8883, Mar. 20, 1987; 53 FR 25151, July 5, 1988; 54 FR 19164, May 4, 1989; 64 FR 31974, June 15, 1999]"
+          }
+        },
+        "constancy": "all eleven normalized section texts equal",
+        "normalization": "whitespace; 416.1163 example 4 '$80+$86.' -> '$80 + $86.'"
+      },
+      "416.1205": {
+        "status": "RESOLVED",
+        "annual_editions": {
+          "2012": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1205.xml",
+            "edition_date": "2012-04-01",
+            "text_sha256": "62dd95b3b9390c37abca7588d35add67369a474d8039675234982870b2a12421",
+            "amendment_history": "[50 FR 38982, Sept. 26, 1985]"
+          },
+          "2013": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1205.xml",
+            "edition_date": "2013-04-01",
+            "text_sha256": "62dd95b3b9390c37abca7588d35add67369a474d8039675234982870b2a12421",
+            "amendment_history": "[50 FR 38982, Sept. 26, 1985]"
+          },
+          "2014": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1205.xml",
+            "edition_date": "2014-04-01",
+            "text_sha256": "62dd95b3b9390c37abca7588d35add67369a474d8039675234982870b2a12421",
+            "amendment_history": "[50 FR 38982, Sept. 26, 1985]"
+          },
+          "2015": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1205.xml",
+            "edition_date": "2015-04-01",
+            "text_sha256": "62dd95b3b9390c37abca7588d35add67369a474d8039675234982870b2a12421",
+            "amendment_history": "[50 FR 38982, Sept. 26, 1985]"
+          },
+          "2016": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1205.xml",
+            "edition_date": "2016-04-01",
+            "text_sha256": "62dd95b3b9390c37abca7588d35add67369a474d8039675234982870b2a12421",
+            "amendment_history": "[50 FR 38982, Sept. 26, 1985]"
+          },
+          "2017": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1205.xml",
+            "edition_date": "2017-04-01",
+            "text_sha256": "62dd95b3b9390c37abca7588d35add67369a474d8039675234982870b2a12421",
+            "amendment_history": "[50 FR 38982, Sept. 26, 1985]"
+          },
+          "2018": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1205.xml",
+            "edition_date": "2018-04-01",
+            "text_sha256": "62dd95b3b9390c37abca7588d35add67369a474d8039675234982870b2a12421",
+            "amendment_history": "[50 FR 38982, Sept. 26, 1985]"
+          },
+          "2019": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1205.xml",
+            "edition_date": "2019-04-01",
+            "text_sha256": "62dd95b3b9390c37abca7588d35add67369a474d8039675234982870b2a12421",
+            "amendment_history": "[50 FR 38982, Sept. 26, 1985]"
+          },
+          "2020": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1205.xml",
+            "edition_date": "2020-04-01",
+            "text_sha256": "62dd95b3b9390c37abca7588d35add67369a474d8039675234982870b2a12421",
+            "amendment_history": "[50 FR 38982, Sept. 26, 1985]"
+          },
+          "2021": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1205.xml",
+            "edition_date": "2021-04-01",
+            "text_sha256": "62dd95b3b9390c37abca7588d35add67369a474d8039675234982870b2a12421",
+            "amendment_history": "[50 FR 38982, Sept. 26, 1985]"
+          },
+          "2022": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1205.xml",
+            "edition_date": "2022-04-01",
+            "text_sha256": "62dd95b3b9390c37abca7588d35add67369a474d8039675234982870b2a12421",
+            "amendment_history": "[50 FR 38982, Sept. 26, 1985]"
+          }
+        },
+        "constancy": "all eleven normalized section texts equal",
+        "normalization": "whitespace; 416.1163 example 4 '$80+$86.' -> '$80 + $86.'"
+      },
+      "416.1218": {
+        "status": "RESOLVED",
+        "annual_editions": {
+          "2012": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1218.xml",
+            "edition_date": "2012-04-01",
+            "text_sha256": "b9476ac44df08e7d33294fdef23dbe714806aaf3391df5fdf406128ada700814",
+            "amendment_history": "[40 FR 48915, Oct. 20, 1975, as amended at 44 FR 43266, July 24, 1979; 50 FR 42687, Oct. 22, 1985; 70 FR 6345, Feb. 7, 2005]"
+          },
+          "2013": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1218.xml",
+            "edition_date": "2013-04-01",
+            "text_sha256": "b9476ac44df08e7d33294fdef23dbe714806aaf3391df5fdf406128ada700814",
+            "amendment_history": "[40 FR 48915, Oct. 20, 1975, as amended at 44 FR 43266, July 24, 1979; 50 FR 42687, Oct. 22, 1985; 70 FR 6345, Feb. 7, 2005]"
+          },
+          "2014": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1218.xml",
+            "edition_date": "2014-04-01",
+            "text_sha256": "b9476ac44df08e7d33294fdef23dbe714806aaf3391df5fdf406128ada700814",
+            "amendment_history": "[40 FR 48915, Oct. 20, 1975, as amended at 44 FR 43266, July 24, 1979; 50 FR 42687, Oct. 22, 1985; 70 FR 6345, Feb. 7, 2005]"
+          },
+          "2015": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1218.xml",
+            "edition_date": "2015-04-01",
+            "text_sha256": "b9476ac44df08e7d33294fdef23dbe714806aaf3391df5fdf406128ada700814",
+            "amendment_history": "[40 FR 48915, Oct. 20, 1975, as amended at 44 FR 43266, July 24, 1979; 50 FR 42687, Oct. 22, 1985; 70 FR 6345, Feb. 7, 2005]"
+          },
+          "2016": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1218.xml",
+            "edition_date": "2016-04-01",
+            "text_sha256": "b9476ac44df08e7d33294fdef23dbe714806aaf3391df5fdf406128ada700814",
+            "amendment_history": "[40 FR 48915, Oct. 20, 1975, as amended at 44 FR 43266, July 24, 1979; 50 FR 42687, Oct. 22, 1985; 70 FR 6345, Feb. 7, 2005]"
+          },
+          "2017": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1218.xml",
+            "edition_date": "2017-04-01",
+            "text_sha256": "b9476ac44df08e7d33294fdef23dbe714806aaf3391df5fdf406128ada700814",
+            "amendment_history": "[40 FR 48915, Oct. 20, 1975, as amended at 44 FR 43266, July 24, 1979; 50 FR 42687, Oct. 22, 1985; 70 FR 6345, Feb. 7, 2005]"
+          },
+          "2018": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1218.xml",
+            "edition_date": "2018-04-01",
+            "text_sha256": "b9476ac44df08e7d33294fdef23dbe714806aaf3391df5fdf406128ada700814",
+            "amendment_history": "[40 FR 48915, Oct. 20, 1975, as amended at 44 FR 43266, July 24, 1979; 50 FR 42687, Oct. 22, 1985; 70 FR 6345, Feb. 7, 2005]"
+          },
+          "2019": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1218.xml",
+            "edition_date": "2019-04-01",
+            "text_sha256": "b9476ac44df08e7d33294fdef23dbe714806aaf3391df5fdf406128ada700814",
+            "amendment_history": "[40 FR 48915, Oct. 20, 1975, as amended at 44 FR 43266, July 24, 1979; 50 FR 42687, Oct. 22, 1985; 70 FR 6345, Feb. 7, 2005]"
+          },
+          "2020": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1218.xml",
+            "edition_date": "2020-04-01",
+            "text_sha256": "b9476ac44df08e7d33294fdef23dbe714806aaf3391df5fdf406128ada700814",
+            "amendment_history": "[40 FR 48915, Oct. 20, 1975, as amended at 44 FR 43266, July 24, 1979; 50 FR 42687, Oct. 22, 1985; 70 FR 6345, Feb. 7, 2005]"
+          },
+          "2021": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1218.xml",
+            "edition_date": "2021-04-01",
+            "text_sha256": "b9476ac44df08e7d33294fdef23dbe714806aaf3391df5fdf406128ada700814",
+            "amendment_history": "[40 FR 48915, Oct. 20, 1975, as amended at 44 FR 43266, July 24, 1979; 50 FR 42687, Oct. 22, 1985; 70 FR 6345, Feb. 7, 2005]"
+          },
+          "2022": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1218.xml",
+            "edition_date": "2022-04-01",
+            "text_sha256": "b9476ac44df08e7d33294fdef23dbe714806aaf3391df5fdf406128ada700814",
+            "amendment_history": "[40 FR 48915, Oct. 20, 1975, as amended at 44 FR 43266, July 24, 1979; 50 FR 42687, Oct. 22, 1985; 70 FR 6345, Feb. 7, 2005]"
+          }
+        },
+        "constancy": "all eleven normalized section texts equal",
+        "normalization": "whitespace; 416.1163 example 4 '$80+$86.' -> '$80 + $86.'"
+      },
+      "416.1806": {
+        "status": "RESOLVED",
+        "annual_editions": {
+          "2012": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1806.xml",
+            "edition_date": "2012-04-01",
+            "text_sha256": "262ef5381e0da3282f99efc866e0413c6eb9041943dd19fd03cfca3971174f8d",
+            "amendment_history": "[60 FR 16376, Mar. 30, 1995]"
+          },
+          "2013": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1806.xml",
+            "edition_date": "2013-04-01",
+            "text_sha256": "262ef5381e0da3282f99efc866e0413c6eb9041943dd19fd03cfca3971174f8d",
+            "amendment_history": "[60 FR 16376, Mar. 30, 1995]"
+          },
+          "2014": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1806.xml",
+            "edition_date": "2014-04-01",
+            "text_sha256": "262ef5381e0da3282f99efc866e0413c6eb9041943dd19fd03cfca3971174f8d",
+            "amendment_history": "[60 FR 16376, Mar. 30, 1995]"
+          },
+          "2015": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1806.xml",
+            "edition_date": "2015-04-01",
+            "text_sha256": "262ef5381e0da3282f99efc866e0413c6eb9041943dd19fd03cfca3971174f8d",
+            "amendment_history": "[60 FR 16376, Mar. 30, 1995]"
+          },
+          "2016": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1806.xml",
+            "edition_date": "2016-04-01",
+            "text_sha256": "262ef5381e0da3282f99efc866e0413c6eb9041943dd19fd03cfca3971174f8d",
+            "amendment_history": "[60 FR 16376, Mar. 30, 1995]"
+          },
+          "2017": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1806.xml",
+            "edition_date": "2017-04-01",
+            "text_sha256": "262ef5381e0da3282f99efc866e0413c6eb9041943dd19fd03cfca3971174f8d",
+            "amendment_history": "[60 FR 16376, Mar. 30, 1995]"
+          },
+          "2018": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1806.xml",
+            "edition_date": "2018-04-01",
+            "text_sha256": "262ef5381e0da3282f99efc866e0413c6eb9041943dd19fd03cfca3971174f8d",
+            "amendment_history": "[60 FR 16376, Mar. 30, 1995]"
+          },
+          "2019": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1806.xml",
+            "edition_date": "2019-04-01",
+            "text_sha256": "262ef5381e0da3282f99efc866e0413c6eb9041943dd19fd03cfca3971174f8d",
+            "amendment_history": "[60 FR 16376, Mar. 30, 1995]"
+          },
+          "2020": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1806.xml",
+            "edition_date": "2020-04-01",
+            "text_sha256": "262ef5381e0da3282f99efc866e0413c6eb9041943dd19fd03cfca3971174f8d",
+            "amendment_history": "[60 FR 16376, Mar. 30, 1995]"
+          },
+          "2021": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1806.xml",
+            "edition_date": "2021-04-01",
+            "text_sha256": "262ef5381e0da3282f99efc866e0413c6eb9041943dd19fd03cfca3971174f8d",
+            "amendment_history": "[60 FR 16376, Mar. 30, 1995]"
+          },
+          "2022": {
+            "source": "tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1806.xml",
+            "edition_date": "2022-04-01",
+            "text_sha256": "262ef5381e0da3282f99efc866e0413c6eb9041943dd19fd03cfca3971174f8d",
+            "amendment_history": "[60 FR 16376, Mar. 30, 1995]"
+          }
+        },
+        "constancy": "all eleven normalized section texts equal",
+        "normalization": "whitespace; 416.1163 example 4 '$80+$86.' -> '$80 + $86.'"
+      }
+    },
+    "historical_parameter_values": {
+      "status": "RESOLVED",
+      "parameters": {
+        "general_income_exclusion": 20.0,
+        "earned_income_exclusion": 65.0,
+        "earned_income_share_excluded": 0.5,
+        "resource_limit_individual": 2000.0,
+        "resource_limit_couple": 3000.0
+      },
+      "general_exclusion": {
+        "section": "416.1124(c)(12)",
+        "text": "(12) The first $20 of any unearned income in a month other than income in the form of in-kind support and maintenance received in the household of another (see § 416.1131) and income based on need. Income based on need is a benefit that uses financial need as measured by your income as a factor to determine your eligibility. The $20 exclusion does not apply to a benefit based on need that is totally or partially funded by the Federal government or by a nongovernmental agency. However, assistance which is based on need and funded wholly by a State or one of its political subdivisions is excluded totally from income as described in § 416.1124(c)(2). If you have less than $20 of unearned income in a month and you have earned income in that month, we will use the rest of the $20 exclusion to reduce the amount of your countable earned income;"
+      },
+      "earned_exclusion": {
+        "section": "416.1112(c)(5)",
+        "text": "(5) $65 of earned income in a month;"
+      },
+      "earned_share": {
+        "section": "416.1112(c)(7)",
+        "text": "(7) One-half of remaining earned income in a month;"
+      },
+      "carryover": {
+        "section": "416.1112(c)(4)",
+        "text": "(4) Any portion of the $20 monthly exclusion in § 416.1124(c)(10) which has not been excluded from your unearned income in that same month;"
+      },
+      "resource_limits": {
+        "section": "416.1205(c)",
+        "row": [
+          "Jan. 1, 1989",
+          "2,000",
+          "$3,000"
+        ]
+      },
+      "cross_reference_note": "416.1112(c)(4) retains a reference to 416.1124(c)(10); the historical editions put the $20 exclusion at (c)(12)",
+      "scope": "Historical CFR text verification, not a claim that U2's income-unit, vehicle or full-attribution approximations implement all applicable SSI law"
+    },
+    "constant_parameters": {
+      "general_income_exclusion": [
+        2012,
+        2013,
+        2014,
+        2015,
+        2016,
+        2017,
+        2018,
+        2019,
+        2020,
+        2021,
+        2022
+      ],
+      "earned_income_exclusion": [
+        2012,
+        2013,
+        2014,
+        2015,
+        2016,
+        2017,
+        2018,
+        2019,
+        2020,
+        2021,
+        2022
+      ],
+      "earned_income_share_excluded": [
+        2012,
+        2013,
+        2014,
+        2015,
+        2016,
+        2017,
+        2018,
+        2019,
+        2020,
+        2021,
+        2022
+      ],
+      "resource_limit_individual": [
+        2012,
+        2013,
+        2014,
+        2015,
+        2016,
+        2017,
+        2018,
+        2019,
+        2020,
+        2021,
+        2022
+      ],
+      "resource_limit_couple": [
+        2012,
+        2013,
+        2014,
+        2015,
+        2016,
+        2017,
+        2018,
+        2019,
+        2020,
+        2021,
+        2022
+      ]
+    },
+    "u1_ssi_2012": "all seven parameters equal",
+    "u1_ssi_sha256": "79e641a10d95afba81c8d831852fb52ef0a801e7175e06df17e6cc7cc3e3c523",
+    "census_reuse": {
+      "status": "RESOLVED",
+      "path": "data/external/census_poverty_thresholds_1982_2022.json",
+      "sha256": "288399c475ae3ff02e6d8367425ee0a568b50d239da5656f24d0d2dfafabfb53",
+      "required_income_years": [
+        2012,
+        2014,
+        2016,
+        2018,
+        2020,
+        2022
+      ],
+      "complete_2003_2022": true,
+      "overlap_2012": "every weighted average, all-ages average and matrix entry equal",
+      "u1_sha256": "dc21a78736f5085872cf56c9cf291258034c1293572b77455cba689a1ed0eec5",
+      "weighted_average_unit_dollars_2022": 10,
+      "stored_dollars": "used as captured; no multiplication by ten"
+    }
+  }
+}
