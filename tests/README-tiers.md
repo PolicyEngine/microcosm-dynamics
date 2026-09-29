@@ -49,3 +49,5 @@ pytest --collect-only -q -m oracle_policyengine | tail -1
 | **Total** | **8,904** |
 | `unit` | 4,304 |
 | **Total** | **9,088** |
+| `unit` | 4,329 |
+| **Total** | **9,113** |

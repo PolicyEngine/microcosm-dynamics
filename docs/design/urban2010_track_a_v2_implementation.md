@@ -24,6 +24,54 @@ on a changed provenance receipt before invoking Axiom. These existing
 source-fixture reads are disclosed below and in the ledger, rather than
 being represented as newly invented fixtures.
 
+## PR #483 follow-up: P2 and d603
+
+The review's P2 fix catches `Exception` and `KeyboardInterrupt` around each
+complete person body in both collectors. It attaches cumulative local
+counters and preserves any existing person attribution before re-raising.
+The d603 changes remove the unresolved-weight-arithmetic refusals, retain
+the frozen structural protocol and pre-execution interlocks, and strengthen
+the count-only output tests. The ratified specification and protected/v1
+production modules are unchanged.
+
+The interruption regression was first replayed against the original
+`2ad791e` benefit module, loaded in memory without changing the working
+files: **4 failed, 2 passed, 26 deselected in 170.17s**. Both `RuntimeError`
+and `KeyboardInterrupt` lost person 2's identity in each collector; the
+`ValueError` controls passed. The two invented retirees are born in 1960,
+claim in 2027 and each have `{1987: 840000}` earnings.
+
+Focused d603 validation completed with **71 passed, 12 warnings in
+2629.17s** across `test_protocol.py`, `test_structural.py` and
+`test_structural_inputs.py`. The warnings concern temporary-directory
+cleanup permissions. The end-to-end test executes twenty invented draws
+and all 400 calls through the unchanged weighted DI transition function.
+The generated-input property checks permitted keys and nonnegative integer
+count leaves. No real population was loaded or projected.
+
+The full requested command completed successfully:
+
+```sh
+OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 .venv/bin/python -m pytest \
+  tests/track_a_v2 tests/estimates/test_birth_evidence_artifact.py -q --tb=short
+```
+
+Result: **494 passed, 6 warnings in 2025.65s (0:33:45)**: 481 Track A v2
+tests and 13 birth-evidence tests. All warnings concern cleanup of an
+existing temporary directory whose ACL denies removal. The requested
+birth-evidence tests read their existing committed historical artifact;
+they do not load or project a real population.
+
+All pytest invocations use `OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1`.
+Black and Ruff pass for the 33 Python files comprising the v2 package,
+scripts, tests and the requested birth-evidence test. The latter received
+only an assertion-formatting change.
+
+The requested `recount-tiers.py .` completed with 4,329 unit, 3,152 artifact,
+930 integration-PSID, 520 legacy-reproduction and 182 oracle tests: 9,113
+total. The 25 added tests are all in the unit tier. No real-data tests were
+executed by this collection-only recount.
+
 ## Files and contract map
 
 New package: `src/populace_dynamics/track_a_v2/` contains `__init__.py`,

@@ -369,9 +369,9 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "populace_dynamics.track_a_v2.structural_inputs",
     }
     assert track_a_v2_modules.issubset(module_paths)
-    assert track_a_v2_modules.isdisjoint(reachable), (
-        "Track A v2 became reachable from the historical birth reducer"
-    )
+    assert track_a_v2_modules.isdisjoint(
+        reachable
+    ), "Track A v2 became reachable from the historical birth reducer"
 
     assert psid_exclusions.isdisjoint(reachable), (
         "historically excluded PSID modules became reachable from the "
