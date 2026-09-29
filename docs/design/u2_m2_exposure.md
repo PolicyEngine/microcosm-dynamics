@@ -1,6 +1,6 @@
 # U2 milestone 2 exposure record
 
-This record covers every lane that built or reviewed U2 milestone 2 (the implementation of specification §§13–14 on invented data), and the lane that finished it on 2026-09-29. The machine-readable inventory is [`u2_m2_exposure.json`](u2_m2_exposure.json). It holds every path each lane read, wrote, searched or named in a command, plus the restricted-path check.
+This record covers every lane that built or reviewed U2 milestone 2 (the implementation of specification §§13–14 on invented data), the lane that finished it on 2026-09-29, and the lane that fixed the round-1 review's findings ("Round-1 fix lane", below). The machine-readable inventory is [`u2_m2_exposure.json`](u2_m2_exposure.json). It holds every path each lane read, wrote, searched or named in a command, plus the restricted-path check.
 
 `EV` is the evidence directory `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909`. `REFS` is `/Users/maxghenis/PolicyEngine/dynasim-refs`. `PSID` is `~/PolicyEngine/psid-data`.
 
@@ -126,3 +126,51 @@ The lane saw only the pass count. Logging audit hooks show that no `tests/track_
 ## Reproducing the inventory
 
 The inventory was built by two scratch scripts, `extract_calls.py` and `inventory.py`. They read each transcript line by line, keep only `tool_use` blocks from assistant messages (`Read`, `Write`, `Edit`, `Grep`, `Glob`, `Bash`, `Agent`), and resolve relative paths against the lane's worktree. `paths_named_in_commands` over-includes by design: it lists any existing path a command or subagent prompt names, whether the command read, wrote, ran, hashed or only mentioned it.
+
+## Round-1 fix lane
+
+This lane was a blind builder: a workflow subagent (Claude Opus 5.5), 2026-09-29. It fixed the independent review's findings on `f946334` in `0d742fd`, `8ec6953`, `9368931` and `b211ee7` (see the report's "Round 1 review fixes"). It worked in `/Users/maxghenis/PolicyEngine/_worktrees/dynamics-u2-m2-20260928` and kept scratch files in its session scratchpad. The machine-readable list is `round_1_fix_lane` in [`u2_m2_exposure.json`](u2_m2_exposure.json).
+
+**Evidence directory (all builder-allowed):**
+
+- `EV/RESTRICTED-FILES.md` in full, read first, including the 2026-09-29 02:40 entry (see the disclosure above; nothing here depends on it);
+- `EV/phase2-20260927/prompts/common.md`, `u2-m2-continue.md` and `u2-m2-resume.md`, in full;
+- `EV/phase2-20260927/out/u2-m2-build-and-review.json`:
+  - its `review` part, which gives the verdict, findings, summary, evidence and the reviewer's files-opened list;
+  - the `build` part was not printed;
+- `EV/merge-watchers/recount-tiers.py`, read in full and run (collection only).
+
+It did not open the cleared U2 availability statement or the public memos (not needed), any Boomers 2004 or Urban report page, any comparator lane or seal, any U2 or PPI availability or values-scan file, any scratchpad archive, or anything under REFS.
+
+**Repository:** the files the fixes touch, in full or in the ranges needed. These are:
+
+- `loader.py`, `parameters.py`, `identity.py`, `runner.py`, and parts of `sources.py`, `cohort.py` and `estimator.py`;
+- the three U2 scripts it changed, and part of `u2_u1_differential.py`;
+- the U2 test files it changed, and parts of `test_u2_pipeline.py` and `test_u2_isolation.py`;
+- parts of `adjusted_poverty.py`, `data/psid.py` and `cohorts/psid2010.py`, read only;
+- the specification's §14 and §20 and the §4 mapping-pass text;
+- this record, the report and `CLAUDE.md`.
+
+The registry `data/external/track_u2/individual.json` was parsed for entry ids, statuses, layouts, `codes` keys and the code lines of `codebook_text`. That text is PSID documentation, not survey values. No protected file was edited.
+
+**Executed, all on invented data:**
+
+- every `tests/track_u2` file, one per command, with `-p no:xdist` (the plain run);
+- the same files again under two logging audit hooks: one on the PSID directory, one on the evidence directory and REFS;
+- the §13 U1 suite and `tests/estimates/test_birth_evidence_artifact.py`. These ran with HOME and `POPULACE_DYNAMICS_PSID_DIR` pointed at an empty directory, and an audit hook refusing any open or listing under `~/PolicyEngine/psid-data`. It refused nothing, so the PSID-dependent U1 tests skipped. The three evidence-dependent U1 spec tests also skipped, because HOME was empty;
+- `black` and `ruff`, and `recount-tiers.py` (collection only);
+- two scratch scripts:
+  - a before/after demonstration of the review's four cases, on invented staged files through the real loader with the tests' patches, against `f946334`'s code and the fixed code;
+  - a floating-point probe of \(R-B\) over 1,500 drawn invented frames.
+
+**Measured test exposure:**
+
+- The logging hooks show that no test opens anything under the evidence directory or REFS.
+- Under the PSID directory, only `tests/track_u2/test_psid_research_sources.py` opens anything: 32 documentation files, the same as the finishing lane recorded. They are 24 under `documentation/capture1` and 8 codebook or readme PDFs under `family/<wave>/` and `ind2023er/`. No survey record file was opened, and the lane saw only pass counts.
+- One artifact of the measurement: under the PSID logging hook, `test_u2_differential.py` failed one test. The hook's own `realpath` call issues `lstat` calls that the test's access recorder counts. Without the hook the file passes 8 of 8.
+
+**Values:** the lane stated and inferred no 1946–55 value or direction. Every number it added is one of these:
+
+- an invented value, such as altered parameters, invented file digests or the invented population;
+- a documented code or range copied from the registry's codebook text;
+- a count of tests or of invented rows.

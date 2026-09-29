@@ -12,6 +12,7 @@ The exposure record is [`u2_m2_exposure.md`](u2_m2_exposure.md).
 
 - **Branch:** `dynamics-u2-m2-20260928`, rebased onto `b948d6b` (milestone 1b's fixed head, which includes milestone 1 and the applied source adjudication at `883ea48`).
 - **Code-final commit:** `12e1db0`. Later commits change only `tests/tier_counts.json`, `tests/README-tiers.md` and `docs/design/` (this report, the exposure record and the differential's report).
+- **Round 1 review fixes:** `0d742fd`, `8ec6953`, `9368931` and `b211ee7` answer the independent review of `f946334` ("Round 1 review fixes", the last section).
 - **Blindness:** no lane opened any file `RESTRICTED-FILES.md` restricts, and nothing here states or implies a 1946–55 value or direction. Every number in the code, tests and dry run is invented, a policy parameter or a committed public parameter capture.
 
 ## §13 and §14 completeness audit
@@ -313,3 +314,115 @@ Where the specification is silent, the code takes the most conservative reading 
 - **Ratification of `u2-draft-4` and the §16a amendments by Max.** Until then the registries' open and refused routes refuse, and so does the registered preflight.
 - **The optional structure-only U1 load (§13).** It needs Max's explicit OK.
 - **Independent review of `9491fb0` and `12e1db0`.** These two commits postdate the three review rounds; they are small and fully tested.
+
+## Round 1 review fixes (2026-09-29)
+
+The independent review of `f946334` returned **U2-M2: REQUEST CHANGES**: one blocking finding, one to fix before ratification, one low and two informational. A blind builder lane (workflow subagent, Claude Opus 5.5) fixed all five. For findings 1–3 and info 5 it wrote tests, ran them against `f946334`'s code, where they failed, and against the fix, where they passed. Info 4 strengthens an existing property, which passes on both. The exposure record for this lane is in [`u2_m2_exposure.md`](u2_m2_exposure.md#round-1-fix-lane). **INVENTED DATA - NOT A COMPARISON:** every case below uses invented persons, invented staged files or invented altered values.
+
+| Finding | Fix | Commit | Tests |
+|---|---|---|---|
+| 1 (medium, blocking): individual-file values never checked against the registry's documented codes | `loader.check_individual_values` (`loader.py:852`) refuses any value outside the entry's `codes`, or outside the restated codebook range for fields without codes (`loader.py:141`), with the named `U2UndocumentedValue`. Sex maps 1/2/9 explicitly. `RoleContext.rule` (`sources.py:829`) refuses a code the wave does not document, and code 0 on an in-family member, instead of returning the OFUM rule | `0d742fd` | `test_u2_loader.py`: 12 undocumented cases (the review's sex 2→5 and relationship 90→99 among them), 4 documented controls, message, codebook-text, role-rule and one Hypothesis property |
+| 2 (medium, fix before ratification): PSID file hashes and frame digest neither bound nor rechecked | a pre-registration evidence record (`loader.preregistration_evidence`, `loader.py:657`), written by `track_u2_structure.py`; `load_u2_inputs(evidence=…)` rehashes every frozen file before any parse and refuses a changed file set or frame digest (`loader.py:709`, `:734`); the registered preflight refuses while the record is absent and binds its hash, file hashes and frame digest (`run_track_u2_registered.py:177`, `:297`); a registered run needs the sealed recheck (`runner.py:146`) | `8ec6953` | `test_u2_loader.py` (one-byte, missing-file, frame-digest, unfrozen-file, malformed-record, forged-seal cases and a Hypothesis property); `test_u2_scripts.py` (binding, absent record, other identities, `main` wiring and a Hypothesis property) |
+| 3 (low): the registered parameter check trusted the provenance label | `parameters_content_sha256` (`parameters.py:389`) digests the numbers only; the registered branch compares them with a fresh hash-verified read of the pinned files (`parameters.py:542`) | `9368931` | `test_u2_parameters.py`: 9 single altered values under pinned labels, in-place edit, extra year, digest semantics and one Hypothesis property |
+| Info 4: monotonicity property low power | 200 examples (was 25) and an 8-ulp bound on max(\|B\|, \|R\|, S) instead of an absolute 1e-6 | `b211ee7` | `test_u2_properties.py` |
+| Info 5: an anchor person missing from `persons` read as sex unknown | `cohort.check_person_joins` (`cohort.py:687`) refuses, in the build and the birth derivation | `b211ee7` | `test_u2_plans.py::test_an_anchor_person_without_a_persons_record_refuses` |
+
+The dry run now also records the round-1 refusals (`track_u2_dry_run.py:156`), and `test_u2_scripts.py` asserts the error class of each.
+
+### Before and after
+
+The review's exact cases were run as a script against `f946334`'s code and then against the fixed code. The script used the invented population, invented staged files and the real loader with the tests' four patches.
+
+| Case (invented) | `f946334` | Fixed |
+|---|---|---|
+| Sex 2→5 for 700031 | loaded; sex read as `na` | `U2UndocumentedValue` (`common.sex`, undocumented code 5) |
+| Relationship 90→99 for 700142, 2015 | loaded; code 99 kept | `U2UndocumentedValue` (`2015.relationship`, undocumented code 99) |
+| One digit changed in `family/2019/FAM2019ER.txt` after freezing | loaded, with a changed frame digest | `U2FrozenIdentityMismatch` (1 frozen file changed), before any record is parsed |
+| Weighted average set to 1.0 under the pinned Track M label | accepted by the registered check | `U2ParameterError` (content differs from the pinned captures) |
+
+New tests against `f946334`'s code:
+
+- **Finding 1:** 16 failed and 4 passed. The 4 documented-value controls pass on both sides. Ten undocumented cases loaded silently. A negative weight was refused only by the old generic check. A blank field crashed with `IntCastingNaNError`.
+- **Finding 2:** every new test fails, because the APIs do not exist.
+- **Finding 3:** 13 of 14 fail; the pinned-bundle control passes.
+- **Info 5:** the new test fails, and `derive_u2_births` accepted the unjoined person.
+
+After the fix, every new test passes.
+
+### Invariants stated and tested (round 1)
+
+10. **Documented domain.** For every individual-file field U2 reads and every integer value, the value check refuses a record holding it iff the registry does not document it. This is `test_u2_loader.py::test_the_individual_check_accepts_exactly_the_documented_domain`, 200 examples. The restated ranges are held to every wave's codebook text.
+11. **Frozen bytes.** Changing any single byte of any frozen file to any other byte makes the pre-read recheck refuse; with the bytes restored, it passes. This is `::test_every_single_byte_change_to_any_frozen_file_refuses`, 100 examples.
+12. **Binding injectivity.** Changing any one frozen file hash, or the frame digest, changes the registration binding's SHA-256. This is `test_u2_scripts.py::test_the_binding_changes_with_every_frozen_identity`, 100 examples.
+13. **Parameter content.** The registered check accepts a bundle under the pinned labels iff every value equals the pinned files'. Moving one value anywhere in the thresholds, SSI or life tables refuses. This is `test_u2_parameters.py::test_any_single_altered_value_refuses_the_registered_check`, 150 examples.
+14. **Monotonicity bound.** Invariant 1 is now checked as \(R_i\le B_i+8\,\mathrm{ulp}(\max(|B_i|,|R_i|,S_i))\).
+    - The estimator computes \(R=((B-\mathrm{cut})+\mathrm{offset})+\mathrm{new}\) (`estimator.py`, `u2_adjusted_incomes`), so R can exceed B only by rounding.
+    - Over 71,670 invented observation-rows (1,500 drawn frames, every registered row), the largest excess was 1 ulp. Exact comparison would therefore be wrong.
+
+### Conservative readings (round 1)
+
+9. **Domains for fields the registry lists no codes for** (§14; `loader.py:141`). These are restated from each entry's `codebook_text`, and a test holds them to that text:
+   - age: 0, 1–125 or 999;
+   - year born: the entry's `missing_codes` (0, 9999), or 1870 through the wave year;
+   - interview: 0–99,999, the five-column field;
+   - the 1968 family and person numbers: at least 1;
+   - weight: finite and nonnegative, because the registry says not to infer a domain from the printed range.
+
+   A field with neither codes nor a restated domain refuses.
+10. **Relationship code 0 on an in-family member refuses** (§14; `sources.py:829`). The codebooks document 0 as "Inap.", not a relationship to the head.
+11. **The evidence record's format and place** (§14, §20 steps 4 and 8). This supersedes reading 5's "no evidence-file format is specified, so none is invented": the review answered that a hashed evidence record is needed.
+    - The schema is `populace_dynamics.track_u2_preregistration_evidence.v1`, holding exactly the target, specification, registry pins, cited-source hashes, PSID file hashes, their bundle and the frame digest.
+    - It records no data-directory path; files are keyed relative to that directory.
+    - Once reviewed, it is committed at `docs/design/u2_preregistration_evidence.json`. `runs/` and `data/external/` are held unchanged by `test_u2_isolation.py`.
+    - It does not exist yet, so the registered preflight refuses. The existing `blocked_by` refusal is unchanged.
+12. **A registered run requires the sealed recheck** (§14, "execution rechecks their frozen identities"; `runner.py:146`). This goes beyond the finding, which asked only for the preflight and the loader: `run_track_u2` itself refuses registered inputs the loader did not recheck. The source-gate check now runs before the input guard, so the declared-gate refusal keeps its name.
+13. **Invented runs keep label-only parameter checks.** The content check applies to registered runs, whose only admissible values are the pinned captures.
+
+### Test results (round 1, final code `b211ee7`)
+
+**Every `tests/track_u2` file, one per command, with `-p no:xdist`: 995 passed, 10 skipped, 0 failed.** The 10 skips are the registered artifact's absence.
+
+| File | Result |
+|---|---|
+| `test_adjudication_applied.py` | 20 passed |
+| `test_pension_registry.py` | 12 passed |
+| `test_psid_research_sources.py` | 391 passed |
+| `test_source_registries.py` | 80 passed |
+| `test_ssi_capture.py` | 31 passed |
+| `test_u2_design_floor.py` | 14 passed |
+| `test_u2_differential.py` | 8 passed |
+| `test_u2_employer_dc.py` | 32 passed |
+| `test_u2_estimator.py` | 25 passed |
+| `test_u2_identity.py` | 22 passed |
+| `test_u2_isolation.py` | 4 passed |
+| `test_u2_loader.py` | 58 passed (was 13) |
+| `test_u2_mappings.py` | 55 passed |
+| `test_u2_memo.py` | 14 passed |
+| `test_u2_parameters.py` | 32 passed (was 18) |
+| `test_u2_pipeline.py` | 26 passed, 10 skipped |
+| `test_u2_plans.py` | 39 passed (was 38) |
+| `test_u2_properties.py` | 17 passed |
+| `test_u2_roles.py` | 71 passed |
+| `test_u2_scripts.py` | 30 passed (was 26) |
+| `test_u2_worked_cases.py` | 14 passed |
+
+Other runs:
+
+- **`tests/estimates/test_birth_evidence_artifact.py`:** 13 passed.
+- **The §13 U1 suite, unmodified:** 390 passed, 39 skipped, 0 failed, the same files and counts as above.
+  - It ran with HOME and `POPULACE_DYNAMICS_PSID_DIR` pointed at an empty directory.
+  - An audit hook refused any open or listing under `~/PolicyEngine/psid-data`; it refused nothing.
+- **Black (`-l 79`) and ruff** are clean on every changed file.
+- **Tiers** (`recount-tiers.py`, collection only):
+  - unit 4,154 (+46);
+  - artifact 3,276 (+18);
+  - integration_psid 1,341;
+  - reproduction_legacy 520;
+  - oracle_policyengine 182;
+  - total 9,473.
+- **Isolation:** no protected file changed (`data/family.py`, `data/psid.py`, `estimates/career.py`, `engine/*`, `gates.yaml`, `runs/*.json`), and no new source module was added, so `POST_REVIEW_SOURCE_EXCLUSIONS` is unchanged. `test_u2_isolation.py` and the birth-evidence test pass.
+
+### Not done (round 1)
+
+- **The evidence record itself.** It is written by the §20 step-4 structure pass on real data, which is separately authorized. This lane ran nothing on real data.
+- **Independent review of `0d742fd`–`b211ee7`.**

@@ -874,5 +874,76 @@
    }
   ],
   "genuine_restricted_reads": 0
+ },
+ "round_1_fix_lane": {
+  "lane": "u2-m2 round-1 review fixes (workflow subagent, Claude Opus 5.5, blind builder, 2026-09-29)",
+  "commits": [
+   "0d742fd",
+   "8ec6953",
+   "9368931",
+   "b211ee7"
+  ],
+  "evidence_directory_opened": [
+   "EV/RESTRICTED-FILES.md (full, first; includes the 2026-09-29 02:40 changelog entry)",
+   "EV/phase2-20260927/prompts/common.md (full)",
+   "EV/phase2-20260927/prompts/u2-m2-continue.md (full)",
+   "EV/phase2-20260927/prompts/u2-m2-resume.md (full)",
+   "EV/phase2-20260927/out/u2-m2-build-and-review.json (the review part: verdict, findings, summary, evidence, files_opened; the build part was not printed)",
+   "EV/merge-watchers/recount-tiers.py (full; executed, collection only)"
+  ],
+  "repository_opened": [
+   "CLAUDE.md (lines 1-150)",
+   "docs/design/boomers2004_1946_55_comparison.md (heading list; lines 315-335, 961-1036, 1758-1777)",
+   "docs/design/u2_m2_report.md (headings; lines 1-20, 128-240, 295-315)",
+   "docs/design/u2_m2_exposure.md (lines 1-128); docs/design/u2_m2_exposure.json (keys and this_lane entries)",
+   "data/external/track_u2/individual.json (parsed: entry ids, statuses, layouts, codes keys, missing_codes, selection notes and the code lines of codebook_text; PSID documentation text)",
+   "src/populace_dynamics/uniform_cut_track_u2/loader.py (full)",
+   "src/populace_dynamics/uniform_cut_track_u2/parameters.py (full)",
+   "src/populace_dynamics/uniform_cut_track_u2/identity.py (full)",
+   "src/populace_dynamics/uniform_cut_track_u2/runner.py (lines 1-504)",
+   "src/populace_dynamics/uniform_cut_track_u2/sources.py (lines 140-300, 415-560, 600-1070)",
+   "src/populace_dynamics/uniform_cut_track_u2/cohort.py (lines 95-160, 380-580, 630-700, 880-1000, 1287-1327, 1375-1395)",
+   "src/populace_dynamics/uniform_cut_track_u2/estimator.py (lines 300-395)",
+   "src/populace_dynamics/uniform_cut_track_u2/invented.py (grep only)",
+   "src/populace_dynamics/estimates/adjusted_poverty.py (definitions grep; lines 725-830, 915-960, 1050-1090)",
+   "src/populace_dynamics/data/psid.py (lines 290-380)",
+   "src/populace_dynamics/cohorts/psid2010.py (lines 930-970)",
+   "scripts/run_track_u2_registered.py (full)",
+   "scripts/track_u2_structure.py (full)",
+   "scripts/track_u2_dry_run.py (lines 1-80, 102-122, 380-500, 540-720, 820-925)",
+   "scripts/u2_u1_differential.py (lines 200-420)",
+   "tests/track_u2/conftest.py (lines 1-80)",
+   "tests/track_u2/test_u2_loader.py (full)",
+   "tests/track_u2/test_u2_scripts.py (lines 1-60, 110-560)",
+   "tests/track_u2/test_u2_parameters.py (lines 1-40, 125-245)",
+   "tests/track_u2/test_u2_properties.py (lines 1-80, 150-260, 880-940)",
+   "tests/track_u2/test_u2_pipeline.py (lines 150-280)",
+   "tests/track_u2/test_u2_isolation.py (lines 1-200)",
+   "tests/track_u2/test_u2_plans.py (lines 320-335)",
+   "tests/test_tier_policy.py (lines 1-60)"
+  ],
+  "executed": [
+   "every tests/track_u2 file, one per command, -p no:xdist (plain run)",
+   "every tests/track_u2 file again under a logging audit hook on the PSID directory, and again under one on the evidence directory and REFS",
+   "tests/estimates/test_birth_evidence_artifact.py and the section 13 U1 suite, one file per command, with HOME and POPULACE_DYNAMICS_PSID_DIR pointed at an empty scratch directory and an audit hook refusing any open or listing under ~/PolicyEngine/psid-data (no access refused)",
+   "black -l 79 and ruff on the changed files; recount-tiers.py (collection only)",
+   "a before/after demonstration script of the review's four cases (invented staged files, the real loader with the tests' patches) against f946334's code and the fixed code",
+   "a floating-point probe of R - B over 1,500 drawn invented frames (every registered row)"
+  ],
+  "psid_documentation_opened_by_tests": {
+   "test": "tests/track_u2/test_psid_research_sources.py (the only U2 test file that opened anything under the PSID directory, measured with a logging audit hook on the plain per-file run)",
+   "count": 32,
+   "locations": [
+    "PSID/documentation/capture1 (24 files)",
+    "PSID/family/<wave>/*codebook*.pdf and Fam2017er_readme.pdf (7 files)",
+    "PSID/ind2023er/IND2023ER_codebook.pdf (1 file)"
+   ]
+  },
+  "evidence_directory_opened_by_tests": [],
+  "not_opened": [
+   "any Boomers 2004 or Urban report page, any comparator lane or seal, any U2 or PPI availability or values-scan file, any scratchpad archive, anything under REFS",
+   "EV/u2-target-availability-cleared-20260928.md and the four public result memos (allowed; not needed)",
+   "any raw PSID record file"
+  ]
  }
 }
