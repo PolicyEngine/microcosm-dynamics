@@ -12,7 +12,7 @@ It computes **no** income concept, annuity, threshold, poverty status or
 poverty rate and never imports the income concept or the tabulation
 (:data:`FORBIDDEN_MODULES`, checked before and after).  Until every
 required route is resolved, the loader refuses before opening any PSID
-file, so running it today writes nothing.
+file, so running it at the adjudicated registries writes nothing.
 
 Usage::
 

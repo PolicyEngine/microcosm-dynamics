@@ -270,11 +270,89 @@ def _invariants(
             ),
             "ssi_new_nonnegative": bool((adjusted["ssi_new"] >= 0).all()),
             "zero_cut_identity": bool(
-                np.allclose(zero["reform_income"], zero["baseline_income"])
+                np.array_equal(zero["reform_income"], zero["baseline_income"])
                 and (zero["poor_reform"] == zero["poor_baseline"]).all()
             ),
             "n_ssi_new_positive": int((adjusted["ssi_new"] > 0).sum()),
             "n_ssi_offset_positive": int((adjusted["ssi_offset"] > 0).sum()),
+        }
+    return out
+
+
+#: The output column each one-field row changes (section 11), and the
+#: unscored two-percent sensitivity's.
+_ROW_FIELD_COLUMNS: dict[str, str] = {
+    "U2": "ssi_offset",
+    "U3": "ssi_new",
+    "U4": "income_basis",
+    "U5": "asset_income_removed",
+    "U7": "employer_dc_added",
+    "U8": "threshold_cell",
+    "U9": "annuity_factor",
+    "U10": "threshold_cell",
+    "real_interest_rate_0.02": "annuity_factor",
+}
+
+
+def _row_branches(
+    inputs: cohort.U2Inputs, params: parameters.U2Parameters
+) -> dict[str, Any]:
+    """How many U0 observations each row's one changed field moves.
+
+    Evidence that every row's branch runs on the invented population
+    (section 14: "exercise all ten rows"): each income-concept row is
+    evaluated on U0's observations and compared with U0 in its own
+    column; row U1 changes the population instead.
+    """
+
+    context = sources.RoleContext.declared()
+    births = cohort.derive_u2_births(inputs)
+    u0 = cohort.build_u2_cohort(
+        inputs, cohort.U2CohortSpec(), role_context=context, births=births
+    )
+    u1 = cohort.build_u2_cohort(
+        inputs,
+        cohort.U2CohortSpec(row="U1"),
+        role_context=context,
+        births=births,
+    )
+    members = cohort.income_rows(u0, inputs)
+
+    def estimate(spec: estimator.U2IncomeSpec) -> pd.DataFrame:
+        return estimator.u2_adjusted_incomes(
+            members,
+            spec,
+            context=estimator.U2EstimatorContext(context.kind),
+            data_provenance=ap.INVENTED,
+            life_table=params.life_tables[spec.mortality_basis],
+            thresholds=params.thresholds,
+            ssi=params.ssi,
+        )
+
+    base = estimate(estimator.U2IncomeSpec())
+    specs = {
+        row_id: rows.REGISTERED_ROWS[row_id].income_spec()
+        for row_id in _ROW_FIELD_COLUMNS
+        if row_id in rows.REGISTERED_ROWS
+    }
+    specs["real_interest_rate_0.02"] = estimator.U2IncomeSpec(
+        real_interest_rate=0.02
+    )
+    out: dict[str, Any] = {
+        "U1": {
+            "field": "population",
+            "n_observations_u0": int(len(u0.observations)),
+            "n_observations_u1": int(len(u1.observations)),
+            "n_birth_years_u1": int(u1.observations["birth_year"].nunique()),
+        }
+    }
+    for name, spec in specs.items():
+        column = _ROW_FIELD_COLUMNS[name]
+        changed = estimate(spec)[column].to_numpy() != base[column].to_numpy()
+        out[name] = {
+            "field": column,
+            "n_observations": int(len(base)),
+            "n_changed_from_u0": int(changed.sum()),
         }
     return out
 
@@ -380,6 +458,27 @@ def checks(
                 for key, rule in registry_roles.rules.items()
                 if rule.refusal is None
             ),
+            # Every relationship code the committed roles registry
+            # refuses, each by its own registry entry.
+            "registry_rule_refusals": {
+                f"{wave}.{code}": _refusal(
+                    lambda wave=wave, code=code: registry_roles.rule(
+                        wave, code
+                    )
+                )
+                for (wave, code), rule in sorted(registry_roles.rules.items())
+                if rule.refusal
+            },
+            "invented_members_with_refused_codes": {
+                f"{wave}.{code}": int(
+                    inputs.anchors[wave]["sequence"]
+                    .between(1, 20)
+                    .mul(inputs.anchors[wave]["relationship"].eq(code))
+                    .sum()
+                )
+                for (wave, code), rule in sorted(registry_roles.rules.items())
+                if rule.refusal and rule.present
+            },
         },
         "loader_preflight": _refusal(loader.source_preflight),
         "registered_guard_refuses_invented_inputs": _refusal(
@@ -447,6 +546,7 @@ def checks(
             ),
         },
         "invariants": _invariants(inputs, params),
+        "row_branches": _row_branches(inputs, params),
     }
 
 
@@ -623,6 +723,18 @@ def results_markdown(result: dict[str, Any]) -> str:
             for row_id, entry in result["monotonicity"].items()
         )
         + ".",
+        "- Row branches on U0's invented observations (observations whose "
+        "changed field differs from U0): "
+        + ", ".join(
+            f"{name} {entry['n_changed_from_u0']}/{entry['n_observations']}"
+            f" ({entry['field']})"
+            for name, entry in check["row_branches"].items()
+            if name != "U1"
+        )
+        + "; U1 "
+        f"{check['row_branches']['U1']['n_observations_u1']} observations "
+        f"over {check['row_branches']['U1']['n_birth_years_u1']} birth "
+        f"years against U0's {check['row_branches']['U1']['n_observations_u0']}.",
         "",
         "## Named deltas",
         "",

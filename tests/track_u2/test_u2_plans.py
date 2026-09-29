@@ -284,3 +284,16 @@ def test_invented_provenance_is_checked(u2_inputs, declared):
     )
     with pytest.raises(cohort.U2CohortError, match="invented"):
         cohort.build_u2_cohort(tampered, role_context=declared)
+
+
+def test_every_u1_cell_holds_an_invented_observation(u1_cohort):
+    """The invented population reaches all fifteen of row U1's planned
+    cells, so the dry run exercises every birth year and wave."""
+
+    obs = u1_cohort.observations
+    for birth, wave, _, age, _ in cohort.plan_cells(
+        cohort.U2CohortSpec(row="U1")
+    ):
+        cell = obs[obs["birth_year"].eq(birth) & obs["wave"].eq(wave)]
+        assert len(cell) > 0, (birth, wave, age)
+    assert obs["birth_year"].nunique() == 10

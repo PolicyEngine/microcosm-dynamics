@@ -21,9 +21,9 @@ estimator.U2IncomeSpec`; the defaults of those classes are U0.
   record it.  :func:`check_u2_rulings_against_block` refuses a block
   whose ``decisions`` differ, and refuses U1's ``MAX_RULINGS`` outright:
   copying U1's authorization is insufficient (section 14).  The current
-  ``u2-draft-3`` block still records ``u2_ratification: pending_Max``;
-  section 20 step 5 materializes the final block, so a registered run
-  refuses today.
+  ``u2-draft-4`` block still records ``u2_ratification: pending_Max``
+  (and section 16a's amendments await Max's ruling); section 20 step 5
+  materializes the final block, so a registered run refuses.
 """
 
 from __future__ import annotations

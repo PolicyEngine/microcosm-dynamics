@@ -21,9 +21,10 @@ population:
   legal spouse, never resolves); a head whose marriage history cannot be
   dated with a code-20 spouse without a record; a parent living as an
   OFUM (code 50) in an adult child's family with a grandchild;
-* **plans** (section 3): every U0 birth year at 67; even birth years at
-  66 and 68, 1946 at 66 in the 2013 wave; an even-birth member who moves
-  out before the second observation (no weight transfer);
+* **plans** (section 3): every U0 birth year at 67; every even birth
+  year 1946-1954 at 66 and 68 (every one of row U1's fifteen cells holds
+  an observation), 1946 at 66 in the 2013 wave; an even-birth member who
+  moves out before the second observation (no weight transfer);
 * **dispositions**: an institutionalized member (sequence 51), a
   decedent (81), a zero-weight member, a member of unknown sex, and
   members born 1945 and 1956 (outside the column);
@@ -123,6 +124,7 @@ FAMILY_COUNTS: dict[str, int] = {
     "sex_unknown": 1,
     "refresher_stratum": 3,
     "separated": 2,
+    "even_birth_1954": 2,
 }
 #: WEALTH1's documented components by concept (section 4; held equal to
 #: the wealth registry identities by the tests).
@@ -464,6 +466,21 @@ def _family_spec(kind: str, index: int, rng: np.random.Generator) -> dict:
         roster = _roster({1: (1, 10)})
         spec["income"] = {"head_ss": 15_000}
         spec["wealth"] = 35_000
+    elif kind == "even_birth_1954":
+        # Row U1's last even birth year: observed at 66 (2021) and 68
+        # (2023), a married couple (index 0) and a never-married man.
+        if index == 0:
+            persons = [
+                _person(1, "female", 1954, "married", spouse_slot=2),
+                _person(2, "male", 1952, "married", spouse_slot=1),
+            ]
+            roster = _roster({1: (1, 10), 2: (2, 20)})
+            spec["income"] = {"head_ss": 13_000, "wife_ss": 17_000}
+        else:
+            persons = [_person(1, "male", 1954, "never")]
+            roster = _roster({1: (1, 10)})
+            spec["income"] = {"head_ss": 11_500}
+        spec["wealth"] = 20_000
     elif kind == "missing_second_observation":
         persons = [_person(1, "female", 1948 + 4 * (index % 2), "divorced")]
         birth = persons[0]["birth_year"]

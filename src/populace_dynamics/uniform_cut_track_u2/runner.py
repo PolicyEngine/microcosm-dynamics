@@ -18,7 +18,8 @@ Guards, before anything is computed:
 
 * ``invented``: the inputs must re-generate from the invented U2
   generator's seed; any role context may run (the registry context then
-  refuses on the TO VERIFY codes, which the dry run records).
+  refuses on the refused and TO VERIFY codes, which the dry run
+  records).
 * ``registered_real``: an issue #42 comment pointer; inputs sealed by the
   U2 loader (``psid_files``); the committed-registry role context; U2's
   pinned parameters (:func:`~populace_dynamics.uniform_cut_track_u2.

@@ -2,8 +2,9 @@
 
 Specification sections 14 and 20.  This is the only entry point that
 would compute the U2 statistic on real data.  It is built but not
-authorized: the specification is ``u2-draft-3`` and the registries hold
-open routes, so its preflight refuses today, before any PSID file is
+authorized: the specification is ``u2-draft-4`` (unratified; section
+16a's amendments await Max's ruling) and the registries hold open and
+refused routes, so its preflight refuses before any PSID file is
 opened.  :func:`preflight` verifies, in order:
 
 1. the registration pointer is an issue #42 comment URL;
@@ -29,7 +30,7 @@ opened.  :func:`preflight` verifies, in order:
    -- hashes to the ``--binding-sha256`` the #42 registration quotes;
 8. the independent mapping review is complete: every registry entry a U2
    run applies is RESOLVED with no blocker (the loader's source
-   preflight), which today refuses.
+   preflight), which refuses at the adjudicated registries.
 
 Only then are PSID files read (:func:`populace_dynamics.
 uniform_cut_track_u2.loader.load_u2_inputs`, which rechecks the frozen

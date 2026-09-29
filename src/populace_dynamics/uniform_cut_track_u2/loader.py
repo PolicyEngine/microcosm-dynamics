@@ -1,4 +1,4 @@
-"""The registered U2 real-data loader (built; refuses today).
+"""The registered U2 real-data loader (built; refuses before reading).
 
 Specification sections 4 and 14 ("Registered-run preflight: before
 reading raw PSID records, verify ... completed independent mapping
@@ -11,9 +11,12 @@ a later stage when an earlier one refuses:
    each support wave, the anchors, weights, design and sex variables,
    the support plan and the role of every amended relationship code --
    must be RESOLVED with no blocking dependency, under the committed,
-   pinned registries.  Today it refuses: milestone 1 records 48 open
-   documentary entries, and every 2015-2023 income entry depends on the
-   open code-90/92 (and 2015 code-20) routing.
+   pinned registries.  It refuses at the adjudicated registries
+   (commit 883ea48): the 2015 income and pension entries depend on the
+   refused 2015 code-20 route, the 2019-2023 ones on the refused
+   code-90/92 routes, the 2017 spouse age/sex slot metadata and the
+   revised 2017 cross-section weight are TO VERIFY, and every
+   2017-2023 P64/P65 record waits on the amendment 5 ruling.
 2. **Source identity**: each staged setup file and codebook the
    registries cite is rehashed against the registry's recorded SHA-256,
    and every registry layout is cross-checked against the staged
@@ -328,8 +331,8 @@ def read_family_records(
 def load_u2_inputs(*, data_dir: Path | None = None) -> cohort.U2Inputs:
     """Read every U2 input from the staged PSID, or refuse first.
 
-    Stage 1 (:func:`source_preflight`) refuses today, before any PSID
-    file is opened.
+    Stage 1 (:func:`source_preflight`) refuses at the adjudicated
+    registries, before any PSID file is opened.
     """
 
     registries = sources.RegistrySet.committed()

@@ -1,7 +1,8 @@
 """Held-out target U2: Boomers 2004, 1946-55 column, uniform 13% cut.
 
 Specification ``docs/design/boomers2004_1946_55_comparison.md``
-(``u2-draft-3``), sections 3-15.  U2 extends U1's static measurement
+(``u2-draft-4``), sections 3-15; section 16a's amendments are proposals
+pending Max's ruling and change nothing here.  U2 extends U1's static measurement
 (:mod:`populace_dynamics.uniform_cut_track_u`) to the 1946-55 birth
 cohort on the 2013-2023 PSID waves.  It never edits a U1 module: U1's
 constants, defaults, registered behaviour, parameter captures and

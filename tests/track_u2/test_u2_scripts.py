@@ -100,6 +100,15 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
     assert roles["code_88_under_declared_context"]["refused"]
     assert roles["declared_context_on_non_invented_inputs"]["refused"]
     assert roles["registry_rules_equal_declared_where_resolved"]
+    refusals = roles["registry_rule_refusals"]
+    assert refusals and all(entry["refused"] for entry in refusals.values())
+    for key in ("2015.20", "2019.90", "2021.92", "2023.90", "2013.88"):
+        assert key in refusals, key
+    members = roles["invented_members_with_refused_codes"]
+    # The invented population holds a member of every refused code
+    # except code 88, which the separate code-88 variant adds.
+    for key, count in members.items():
+        assert (count > 0) == (not key.endswith(".88")), key
     assert checks["loader_preflight"]["refused"]
     assert checks["registered_guard_refuses_invented_inputs"]["refused"]
     assert checks["registered_parameter_check_refuses_invented_thresholds"][
@@ -117,6 +126,14 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
             and entry["cells_both_halves_every_seed"]
         )
     assert checks["invariants"]["U3"]["n_ssi_new_positive"] > 0
+    branches = checks["row_branches"]
+    assert set(branches) == {*rows.ROW_IDS[1:], "real_interest_rate_0.02"}
+    for name, entry in branches.items():
+        if name == "U1":
+            assert entry["n_birth_years_u1"] == 10
+            assert entry["n_observations_u1"] > entry["n_observations_u0"]
+        else:
+            assert entry["n_changed_from_u0"] > 0, name
 
 
 def test_dry_run_markdown_names_the_refusals(dry_run):
@@ -184,6 +201,63 @@ def _reachable(root: str) -> set[str]:
         seen.add(name)
         pending.extend(_imports(name, modules[name], modules) - seen)
     return seen
+
+
+@pytest.mark.parametrize(
+    "script", ["track_u2_structure", "track_u2_component_diagnostics"]
+)
+def test_pre_registration_scripts_refuse_before_opening_psid(script, tmp_path):
+    """Section 20 step 4 is not authorized and the registries hold open
+    routes: each structural entry point, run in a fresh interpreter,
+    refuses in the loader's source preflight before any file under the
+    PSID directory is opened, with no poverty module loaded, and writes
+    nothing."""
+
+    import subprocess
+    import sys
+
+    data_dir = tmp_path / "psid"
+    data_dir.mkdir()
+    output_dir = tmp_path / "out"
+    path = ROOT / "scripts" / f"{script}.py"
+    probe = f"""
+import json, runpy, sys
+opened = []
+def spy(event, args):
+    if event == "open" and args and str(args[0]).startswith({str(data_dir)!r}):
+        opened.append(str(args[0]))
+sys.addaudithook(spy)
+sys.argv = [{str(path)!r}, "--output-dir", {str(output_dir)!r},
+            "--data-dir", {str(data_dir)!r}]
+refusal = None
+try:
+    runpy.run_path({str(path)!r}, run_name="__main__")
+except BaseException as error:
+    refusal = [type(error).__name__, str(error)]
+forbidden = [
+    name for name in (
+        "populace_dynamics.estimates.adjusted_poverty",
+        "populace_dynamics.uniform_cut_track_u2.estimator",
+        "populace_dynamics.uniform_cut_track_u2.tabulation",
+    )
+    if name in sys.modules
+]
+print(json.dumps({{"refusal": refusal, "opened": opened,
+                  "forbidden": forbidden}}))
+"""
+    done = subprocess.run(
+        [sys.executable, "-c", probe],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    record = json.loads(done.stdout.strip().splitlines()[-1])
+    assert record["refusal"][0] == "U2LoaderRefusal", record
+    assert "registry blockers" in record["refusal"][1]
+    assert record["opened"] == []
+    assert record["forbidden"] == []
+    assert not output_dir.exists()
 
 
 @pytest.mark.parametrize(

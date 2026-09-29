@@ -44,6 +44,13 @@ Code  Income role and spouse slot     Annuity life    Marital resolution
 92    OFUM, 2017-2023 only            no              never
 ====  ==============================  ==============  ===================
 
+This is the section 3 table (``u2-draft-3``'s, which governs while
+section 16a's amendments are proposed).  The committed roles registry
+resolves the same rule for 2013-2017 code 90 and 2017 code 92
+(adjudication disposition D) and refuses 2015 code 20 and 2019-2023
+codes 90 and 92 (disposition F); the registry gate follows the
+registry.
+
 Any other in-family code keeps the inherited OFUM income role with no
 spouse status.  Legacy identifiers ``wife``, ``wife_present`` and
 ``head_wife`` name the spouse *income slot*, not a sex (section 3).
@@ -529,10 +536,12 @@ def _registry_role_rules(
 class RoleContext:
     """The role rules a U2 build applies, and whether it may run on data.
 
-    ``registry``: the committed roles registry; any TO VERIFY code refuses
-    (codes 88, 90 and 92, and code 20 in 2015, today).  ``invented_declared``:
-    the section 3 declared rules (code 88 still refuses); accepted only
-    with invented inputs.
+    ``registry``: the committed roles registry; any code the loader's
+    ``require_resolved`` refuses, refuses here (at commit 883ea48: code
+    88 in every wave, TO VERIFY; 2015 code 20 and 2019-2023 codes 90
+    and 92, adjudication disposition F; code 92's absence in 2013 and
+    2015).  ``invented_declared``: the section 3 declared rules (code 88
+    still refuses); accepted only with invented inputs.
     """
 
     kind: str
