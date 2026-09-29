@@ -100,23 +100,25 @@ Each entry is a pytest test function's invariant docstring; parametrization expa
 - `tests/track_a_v2/test_protocol.py:472` — d603 permits weighted transitions; only frozen counts reach the file.
 - `tests/track_a_v2/test_protocol.py:557` — d603 removes no §11 input-binding or pre-execution prerequisite.
 - `tests/track_a_v2/test_protocol.py:586` — The structural exception still requires its own complete frozen record.
-- `tests/track_a_v2/test_runner.py:101` — All 68 rows share one ensemble; every original slice stays identical.
-- `tests/track_a_v2/test_runner.py:118` — An intended unsupported history stops step 2 before any amount or row.
-- `tests/track_a_v2/test_runner.py:145` — Intended unequal R membership in either direction blocks all 68 rows.
-- `tests/track_a_v2/test_runner.py:177` — An intended unexplained F C0 difference stops every tabulation at 5.
-- `tests/track_a_v2/test_runner.py:205` — An intended mutation of a shared slice refuses at step 4, with no rows.
-- `tests/track_a_v2/test_runner.py:228` — Identity hashing is deterministic and detects even adjacent floats.
-- `tests/track_a_v2/test_runner.py:240` — No registered population can enter projection without frozen preflight.
-- `tests/track_a_v2/test_runner.py:253` — Intended infrastructure interruption preserves counts and all remaining rows.
-- `tests/track_a_v2/test_runner.py:336` — Person 2's interrupted L×R0 level keeps person 1's count and person 2.
-- `tests/track_a_v2/test_runner.py:364` — Exercise 3's collector also keeps its partial counts and person 2.
-- `tests/track_a_v2/test_runner.py:415` — Any interrupted person carries its identity and every prior count.
-- `tests/track_a_v2/test_runner.py:442` — An inner failure already attributed to another person keeps it.
-- `tests/track_a_v2/test_runner.py:475` — Person 2's interrupted draw-1 step 2 keeps draw 0, person 1 and 2.
-- `tests/track_a_v2/test_runner.py:544` — Person 2's interrupted L×F0 pairing keeps person 1's pair count and 2.
-- `tests/track_a_v2/test_runner.py:632` — A later stop never keeps fewer counts: reform, pairing, then filter.
-- `tests/track_a_v2/test_runner.py:694` — Any failed read of a person's paired scenarios names that person.
-- `tests/track_a_v2/test_runner.py:773` — Rows, row and key order, and counter order equal one v1 union call.
+- `tests/track_a_v2/test_runner.py:102` — All 68 rows share one ensemble; every original slice stays identical.
+- `tests/track_a_v2/test_runner.py:119` — An intended unsupported history stops step 2 before any amount or row.
+- `tests/track_a_v2/test_runner.py:146` — Intended unequal R membership in either direction blocks all 68 rows.
+- `tests/track_a_v2/test_runner.py:178` — An intended unexplained F C0 difference stops every tabulation at 5.
+- `tests/track_a_v2/test_runner.py:206` — An intended mutation of a shared slice refuses at step 4, with no rows.
+- `tests/track_a_v2/test_runner.py:229` — Identity hashing is deterministic and detects even adjacent floats.
+- `tests/track_a_v2/test_runner.py:241` — No registered population can enter projection without frozen preflight.
+- `tests/track_a_v2/test_runner.py:254` — Intended infrastructure interruption preserves counts and all remaining rows.
+- `tests/track_a_v2/test_runner.py:337` — Person 2's interrupted L×R0 level keeps person 1's count and person 2.
+- `tests/track_a_v2/test_runner.py:365` — Exercise 3's collector also keeps its partial counts and person 2.
+- `tests/track_a_v2/test_runner.py:416` — Any interrupted person carries its identity and every prior count.
+- `tests/track_a_v2/test_runner.py:443` — An inner failure already attributed to another person keeps it.
+- `tests/track_a_v2/test_runner.py:476` — Draw-1 person 2 stops step 2: keeps draw 0, 2, and 1 once validated.
+- `tests/track_a_v2/test_runner.py:545` — Person 2's interrupted L×F0 pairing keeps person 1's pair count and 2.
+- `tests/track_a_v2/test_runner.py:636` — A later stop never keeps fewer counts: reform, pairing, then filter.
+- `tests/track_a_v2/test_runner.py:705` — Any failed read of a person's paired scenarios names that person.
+- `tests/track_a_v2/test_runner.py:757` — A stop in person 2's double-zero row names 2 and keeps only 1's counts.
+- `tests/track_a_v2/test_runner.py:780` — A stop after v1's union returns person 3 keeps only 1 and 2's counts.
+- `tests/track_a_v2/test_runner.py:851` — Rows, row and key order, and counter order equal one v1 union call.
 - `tests/track_a_v2/test_runner_contract.py:11` — F keeps v1's union input for floors; U preserves all-alive double zeros.
 - `tests/track_a_v2/test_runner_contract.py:40` — A step-3 refusal retains preceding and failing-row counters, no rows.
 - `tests/track_a_v2/test_runner_contract.py:62` — A step-5 refusal retains earlier classifications and all pair counters.

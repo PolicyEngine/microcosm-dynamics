@@ -82,11 +82,15 @@ Both now use the collectors' `attach_attempt` helper. It moved from
 `benefits.py` to `histories.py`, because `benefits.py` imports
 `histories.py`.
 
-Invariant: whenever a per-person body at stage 2 or 3 fails or is
-interrupted (any `Exception` or `KeyboardInterrupt`), the attempt names the
-person being processed, or keeps an identity the error already carries, and
-keeps every counter computed before the stop. Nothing changes when no
-person fails.
+Invariant: when a per-person loop at stage 2 or 3 fails or is interrupted
+(any `Exception` or `KeyboardInterrupt`), the attempt names the person being
+processed, unless the error already names one. The loops are history
+discovery and validation, both benefit collectors and the paired union. At
+any stage-2 or stage-3 stop, the attempt keeps every counter computed before
+it, except increments v1's union made for the failing person (reading 20).
+A later stop therefore never keeps fewer counts than an earlier one. Stops
+outside these loops, such as the inherited filters, name no person. Nothing
+changes when no person fails.
 
 - Stage 2 discovery and validation wrap each person's body. A failure while
   reading a linked spouse's record names the person in progress. A
@@ -98,8 +102,8 @@ person fails.
   order equal one inherited call; a Hypothesis differential checks this
   against the pre-change algorithm. The attached counters are the completed
   persons' pair counts. Increments that v1 makes for the failing person
-  before it stops stay in v1's local counter, which only an edit to v1
-  could expose.
+  before it stops stay in v1's local counter, which v1 does not return when
+  it stops; this change does not read it back through the traceback.
 - A pairing stop now also keeps that row's reform-scenario counters. They
   are computed before the pairing but, on success, merged after it, so the
   attempt used to drop them: stopping in a pairing kept fewer counts than
@@ -107,7 +111,33 @@ person fails.
   their pair and scenario counters before the inherited filter, as R rows
   already did, so a stop in the filter keeps them too.
 
-__P3_VALIDATION__
+The 24 new tests were written first. Against the b2495a7 implementation
+the first 18 gave **17 failed, 1 passed**: the pass is the success-path
+differential, which must pass on both. The review then added the filter
+stop, which failed before its fix (14 rather than 16 `spouse_unlinked`),
+and deterministic stops inside the double-zero row, after v1's union
+returns and on the F/U row counters. Each of these kills a mutant that
+the Hypothesis property alone caught only on some seeds or not at all:
+the double-zero branch outside the attribution, pair counters merged
+before a person's rows are kept, and row counters merged after the filter.
+A 23-mutant review run left no other survivor.
+
+Hypothesis runs 60 examples for each attribution property and 100 for the
+success-path differential; 300 to 400 examples each also passed. Complete
+invented `run_joint` artifacts and progress logs are byte-identical under
+the b2495a7 runner and this one, for single and married retirees,
+two-draw awardees and a mixed population with double zeros.
+
+```sh
+OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 .venv/bin/python -m pytest \
+  -p no:xdist tests/track_a_v2 tests/estimates/test_birth_evidence_artifact.py -q
+```
+
+Result, after merging master through #489: **518 passed**, 505 Track A v2
+and 13 birth-evidence tests. `recount-tiers.py .` then gave 5,013 unit,
+3,331 artifact, 1,341 integration-PSID, 520 legacy-reproduction and 182
+oracle tests: 10,387 in all, the 24 added tests all in the unit tier. No
+PSID or real-population input was read.
 
 ## Files and contract map
 
@@ -187,8 +217,8 @@ It includes:
   mismatched persons, weights and fixed metadata refuse.
 - Frozen 68-row order/headlines, deterministic row-order behavior, every
   refusal preceding tabulation, and retention of all uncomputed rows/counters.
-- Any failure inside a stage-2 or stage-3 person names that person and keeps
-  completed persons' counters; a later stop never keeps fewer counts.
+- A failure inside a stage-2 or stage-3 per-person loop names that person;
+  stops keep earlier counters, so a later stop never keeps fewer counts.
 - D/Track M differential uses the difference of floored averages and only
   aligned eligibility years; positive displacement can round to zero;
   post-62 raw awards keep their distinct cutoff and bend-point years.
@@ -282,7 +312,8 @@ It includes:
 20. §10 does not say how a per-person loop inside an unedited v1 function
     reports an interrupted person. `_paired_scenarios` calls v1's union once
     per person, so the attempt names the person and keeps completed persons'
-    pair counts. The failing person's partial v1 increments are not kept.
+    pair counts. The failing person's partial v1 increments are not kept:
+    v1 does not return them on failure, and reading its frame is avoided.
 21. §10's "all counters computed before the stop" includes a row's
     reform-scenario counters when its pairing stops. Reading 2 merges them
     per row after the pairing, before the filter; a pairing stop merges them
