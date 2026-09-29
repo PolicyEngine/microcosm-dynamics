@@ -41,15 +41,18 @@ Each entry is a pytest test function's invariant docstring; parametrization expa
 - `tests/track_a_v2/test_filing.py:373` — Excess is bounded by half-worker less own; more early months cannot raise it.
 - `tests/track_a_v2/test_filing.py:385` — Where L already pays, S baseline months early equals retained helper.
 - `tests/track_a_v2/test_filing.py:402` — An intended ended spell refuses on S reach, even before unpaid gates.
-- `tests/track_a_v2/test_histories.py:15` — One continuous spell conserves its award through conversion and death.
-- `tests/track_a_v2/test_histories.py:45` — Intended violations refuse; no latest-spell substitution is permitted.
-- `tests/track_a_v2/test_histories.py:61` — Every stored date and entitlement agrees with immutable annual events.
-- `tests/track_a_v2/test_histories.py:76` — Opening proxy classification preserves the inherited eligibility clock.
-- `tests/track_a_v2/test_histories.py:105` — Fallback and clamped award proxies are distinct and counted exactly.
-- `tests/track_a_v2/test_histories.py:128` — Single-spell acceptance is deterministic and bounded to one proxy count.
-- `tests/track_a_v2/test_histories.py:137` — Unsupported requests remain counted; joint refusal uses first person.
-- `tests/track_a_v2/test_histories.py:151` — Equal dates do not erase the inherited A3 clock-rule provenance.
-- `tests/track_a_v2/test_histories.py:187` — O1/S1 follow the requested record branch; inconsistent flags cannot switch it.
+- `tests/track_a_v2/test_histories.py:18` — One continuous spell conserves its award through conversion and death.
+- `tests/track_a_v2/test_histories.py:48` — Intended violations refuse; no latest-spell substitution is permitted.
+- `tests/track_a_v2/test_histories.py:64` — Every stored date and entitlement agrees with immutable annual events.
+- `tests/track_a_v2/test_histories.py:79` — Opening proxy classification preserves the inherited eligibility clock.
+- `tests/track_a_v2/test_histories.py:108` — Fallback and clamped award proxies are distinct and counted exactly.
+- `tests/track_a_v2/test_histories.py:131` — Single-spell acceptance is deterministic and bounded to one proxy count.
+- `tests/track_a_v2/test_histories.py:140` — Unsupported requests remain counted; joint refusal uses first person.
+- `tests/track_a_v2/test_histories.py:154` — Equal dates do not erase the inherited A3 clock-rule provenance.
+- `tests/track_a_v2/test_histories.py:190` — O1/S1 follow the requested record branch; inconsistent flags cannot switch it.
+- `tests/track_a_v2/test_histories.py:249` — Any failed §4.6 discovery or validation call names its own person.
+- `tests/track_a_v2/test_histories.py:273` — Reading a linked spouse's record belongs to the person in progress.
+- `tests/track_a_v2/test_histories.py:297` — An inner failure already naming another person keeps that identity.
 - `tests/track_a_v2/test_manifest.py:33` — Spec, code, inputs, parameters, A1/E1 and source records are bound.
 - `tests/track_a_v2/test_manifest.py:49` — Mapping order cannot change a digest; changing input bytes must.
 - `tests/track_a_v2/test_manifest.py:59` — Unprovided archived POMS bytes are never falsely marked verified.
@@ -93,16 +96,27 @@ Each entry is a pytest test function's invariant docstring; parametrization expa
 - `tests/track_a_v2/test_protocol.py:311` — An unrelated frozen file or changed runtime bundle cannot authorize data.
 - `tests/track_a_v2/test_protocol.py:352` — Entry preflight failure is ordered before all real input loading.
 - `tests/track_a_v2/test_protocol.py:385` — An interruption after exclusive creation leaves a recorded refusal.
-- `tests/track_a_v2/test_protocol.py:436` — Intended injected outcome fields never escape the structural artifact.
-- `tests/track_a_v2/test_protocol.py:480` — The literal §16.7 conflict refuses before real loading or projection.
-- `tests/track_a_v2/test_runner.py:93` — All 68 rows share one ensemble; every original slice stays identical.
-- `tests/track_a_v2/test_runner.py:110` — An intended unsupported history stops step 2 before any amount or row.
-- `tests/track_a_v2/test_runner.py:137` — Intended unequal R membership in either direction blocks all 68 rows.
-- `tests/track_a_v2/test_runner.py:169` — An intended unexplained F C0 difference stops every tabulation at 5.
-- `tests/track_a_v2/test_runner.py:197` — An intended mutation of a shared slice refuses at step 4, with no rows.
-- `tests/track_a_v2/test_runner.py:220` — Identity hashing is deterministic and detects even adjacent floats.
-- `tests/track_a_v2/test_runner.py:232` — No registered population can enter projection without frozen preflight.
-- `tests/track_a_v2/test_runner.py:245` — Intended infrastructure interruption preserves counts and all remaining rows.
+- `tests/track_a_v2/test_protocol.py:432` — Intended injected outcome fields never escape the structural artifact.
+- `tests/track_a_v2/test_protocol.py:472` — d603 permits weighted transitions; only frozen counts reach the file.
+- `tests/track_a_v2/test_protocol.py:557` — d603 removes no §11 input-binding or pre-execution prerequisite.
+- `tests/track_a_v2/test_protocol.py:586` — The structural exception still requires its own complete frozen record.
+- `tests/track_a_v2/test_runner.py:101` — All 68 rows share one ensemble; every original slice stays identical.
+- `tests/track_a_v2/test_runner.py:118` — An intended unsupported history stops step 2 before any amount or row.
+- `tests/track_a_v2/test_runner.py:145` — Intended unequal R membership in either direction blocks all 68 rows.
+- `tests/track_a_v2/test_runner.py:177` — An intended unexplained F C0 difference stops every tabulation at 5.
+- `tests/track_a_v2/test_runner.py:205` — An intended mutation of a shared slice refuses at step 4, with no rows.
+- `tests/track_a_v2/test_runner.py:228` — Identity hashing is deterministic and detects even adjacent floats.
+- `tests/track_a_v2/test_runner.py:240` — No registered population can enter projection without frozen preflight.
+- `tests/track_a_v2/test_runner.py:253` — Intended infrastructure interruption preserves counts and all remaining rows.
+- `tests/track_a_v2/test_runner.py:336` — Person 2's interrupted L×R0 level keeps person 1's count and person 2.
+- `tests/track_a_v2/test_runner.py:364` — Exercise 3's collector also keeps its partial counts and person 2.
+- `tests/track_a_v2/test_runner.py:415` — Any interrupted person carries its identity and every prior count.
+- `tests/track_a_v2/test_runner.py:442` — An inner failure already attributed to another person keeps it.
+- `tests/track_a_v2/test_runner.py:475` — Person 2's interrupted draw-1 step 2 keeps draw 0, person 1 and 2.
+- `tests/track_a_v2/test_runner.py:544` — Person 2's interrupted L×F0 pairing keeps person 1's pair count and 2.
+- `tests/track_a_v2/test_runner.py:609` — A later stop never retains fewer counts: reform, then its pairing.
+- `tests/track_a_v2/test_runner.py:667` — Any failed read of a person's paired scenarios names that person.
+- `tests/track_a_v2/test_runner.py:746` — Rows, row and key order, and counter order equal one v1 union call.
 - `tests/track_a_v2/test_runner_contract.py:11` — F keeps v1's union input for floors; U preserves all-alive double zeros.
 - `tests/track_a_v2/test_runner_contract.py:40` — A step-3 refusal retains preceding and failing-row counters, no rows.
 - `tests/track_a_v2/test_runner_contract.py:62` — A step-5 refusal retains earlier classifications and all pair counters.
@@ -114,10 +128,12 @@ Each entry is a pytest test function's invariant docstring; parametrization expa
 - `tests/track_a_v2/test_structural.py:137` — S reaches H/earlier-spell checks even when no linked amount is payable.
 - `tests/track_a_v2/test_structural.py:154` — A filing-integrity refusal carries already computed permitted counts.
 - `tests/track_a_v2/test_structural.py:170` — Permitted structural counts are unweighted, deterministic integers.
-- `tests/track_a_v2/test_structural.py:180` — Intended violation: no amount, weight sum or extra output can escape.
-- `tests/track_a_v2/test_structural.py:189` — Even allowed containers accept only fixed nonnegative integer bins.
-- `tests/track_a_v2/test_structural.py:204` — Poisoning all legacy amount and summary calls leaves counts usable.
-- `tests/track_a_v2/test_structural.py:219` — A failed draw preserves prior counters without any weighted diagnostic.
-- `tests/track_a_v2/test_structural.py:265` — An interrupted later draw retains earlier counts without outcome fields.
+- `tests/track_a_v2/test_structural.py:188` — Intended violation: no amount, weight sum or extra output can escape.
+- `tests/track_a_v2/test_structural.py:199` — Even allowed containers accept only fixed nonnegative integer bins.
+- `tests/track_a_v2/test_structural.py:218` — Poisoning all legacy amount and summary calls leaves counts usable.
+- `tests/track_a_v2/test_structural.py:233` — A failed draw preserves prior counters without any weighted diagnostic.
+- `tests/track_a_v2/test_structural.py:279` — An interrupted later draw retains earlier counts without outcome fields.
+- `tests/track_a_v2/test_structural.py:333` — Every generated projection exposes only permitted keys and count leaves.
+- `tests/track_a_v2/test_structural.py:380` — Missing protocol or runtime bindings refuse before any projection.
 - `tests/track_a_v2/test_structural_inputs.py:16` — Omitting diagnostics preserves every projection/record input exactly.
 - `tests/track_a_v2/test_structural_inputs.py:65` — Count-only preparation retains the source-provenance boundary.

@@ -578,45 +578,72 @@ def test_interruption_inside_paired_person_keeps_counts_and_identity(
     assert not result["rows"]
 
 
-def _stopped_counters(monkeypatch, failure, stop):
-    """Attempt counters when the first L×F0 reform or its pairing stops."""
-    inputs = _joint_inputs(monkeypatch, married=True)
-    original = benefits.scenario_benefits
-    injection, injected = _interrupt_first_level(
-        failure, 2, benefits.ScenarioCalculator
-    )
-    calls = []
+class _Unreadable(dict):
+    """An invented paired row whose inherited-filter read fails."""
 
-    def scenario(*args, **kwargs):
-        calls.append(kwargs["scenario"].name)
-        if stop == "reform" and len(calls) == 2:
-            with injection:
-                return original(*args, **kwargs)
-        people, counts = original(*args, **kwargs)
-        if stop == "pairing" and len(calls) == 1:
-            people[1], _ = _tripwire(people[1], failure, reads=1)
-        return people, counts
+    def __init__(self, row, failure):
+        super().__init__(row)
+        self.failure = failure
 
-    monkeypatch.setattr(benefits, "scenario_benefits", scenario)
-    result = runner.run_joint(inputs, draw_indices=(0,))
+    def __getitem__(self, name):
+        if name == "benefit_base":
+            raise self.failure("intended interruption in the F-row filter")
+        return super().__getitem__(name)
+
+
+def _stopped_counters(failure, stop):
+    """Attempt counters when the first L×F0 reform, pairing or filter stops."""
+    with pytest.MonkeyPatch.context() as patched:
+        inputs = _joint_inputs(patched, married=True)
+        original = benefits.scenario_benefits
+        paired = runner._paired_scenarios
+        injection, injected = _interrupt_first_level(
+            failure, 2, benefits.ScenarioCalculator
+        )
+        calls = []
+
+        def scenario(*args, **kwargs):
+            calls.append(kwargs["scenario"].name)
+            if stop == "reform" and len(calls) == 2:
+                with injection:
+                    return original(*args, **kwargs)
+            people, counts = original(*args, **kwargs)
+            if stop == "pairing" and len(calls) == 1:
+                people[1], _ = _tripwire(people[1], failure, reads=1)
+            return people, counts
+
+        def pair(*args, **kwargs):
+            rows, counts = paired(*args, **kwargs)
+            if stop == "filter":
+                rows[1] = _Unreadable(rows[1], failure)
+            return rows, counts
+
+        patched.setattr(benefits, "scenario_benefits", scenario)
+        patched.setattr(runner, "_paired_scenarios", pair)
+        result = runner.run_joint(inputs, draw_indices=(0,))
     assert calls[0] == "baseline" and calls[1] != "baseline"
     assert injected == ([2] if stop == "reform" else [])
     assert result["attempt"]["step"] == 3
+    assert result["attempt"]["refusal"]["type"] == failure.__name__
     return Counter(result["attempt"]["counters"])
 
 
 @pytest.mark.parametrize("failure", (RuntimeError, KeyboardInterrupt))
-def test_later_pairing_stop_keeps_every_earlier_scenario_count(
-    monkeypatch, failure
-):
-    """A later stop never retains fewer counts: reform, then its pairing."""
-    earlier = _stopped_counters(monkeypatch, failure, "reform")
-    later = _stopped_counters(monkeypatch, failure, "pairing")
+def test_later_pairing_stop_keeps_every_earlier_scenario_count(failure):
+    """A later stop never keeps fewer counts: reform, pairing, then filter."""
+    reform = _stopped_counters(failure, "reform")
+    pairing = _stopped_counters(failure, "pairing")
+    filtered = _stopped_counters(failure, "filter")
     # Person 1 finished the reform scenario before person 2 stopped it.
-    assert earlier["spouse_unlinked"] == 6 * 2 + 2 + 1
-    # The pairing stop keeps both completed scenarios' counts (§10).
-    assert later["spouse_unlinked"] == 6 * 2 + 2 + 2
-    assert all(later[key] >= value for key, value in earlier.items())
+    assert reform["spouse_unlinked"] == 6 * 2 + 2 + 1
+    # A pairing stop keeps both completed scenarios' counts (§10).
+    assert pairing["spouse_unlinked"] == 6 * 2 + 2 + 2
+    assert pairing["beneficiaries_projected"] == 6 * 2
+    # A filter stop after pairing also keeps both people's pair counts.
+    assert filtered["spouse_unlinked"] == 6 * 2 + 2 + 2
+    assert filtered["beneficiaries_projected"] == 6 * 2 + 2
+    for earlier, later in ((reform, pairing), (pairing, filtered)):
+        assert all(later[key] >= value for key, value in earlier.items())
 
 
 _KINDS = (None, "retired", "converted", "disabled")

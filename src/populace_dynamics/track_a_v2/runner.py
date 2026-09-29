@@ -386,6 +386,17 @@ def run_joint(
                         counters.update(count)
                         raise
                     key = f"{mechanism}×{row.row_id}"
+                    # As for R rows, merge before the filter so that a later
+                    # stop never keeps fewer counts (§10).
+                    row_counters[key].update(pair_counts)
+                    counters.update(pair_counts)
+                    row_counters[key].update(
+                        {f"baseline_{k}": v for k, v in base_counts.items()}
+                    )
+                    row_counters[key].update(
+                        {f"reform_{k}": v for k, v in count.items()}
+                    )
+                    counters.update(count)
                     # §7 retains E1's recipient-union inputs for F, including
                     # its family-split universe. U additionally retains every
                     # alive double-zero person for population denominators.
@@ -396,15 +407,6 @@ def run_joint(
                         or item["benefit_base"] > 0
                         or item["benefit_reform"] > 0
                     )
-                    row_counters[key].update(pair_counts)
-                    counters.update(pair_counts)
-                    row_counters[key].update(
-                        {f"baseline_{k}": v for k, v in base_counts.items()}
-                    )
-                    row_counters[key].update(
-                        {f"reform_{k}": v for k, v in count.items()}
-                    )
-                    counters.update(count)
             # §3.2 requires each post-mechanism snapshot; §10 requires every
             # step-3 benefit refusal to precede the step-4 mutation refusal.
             # Remember the first mismatch even if a later mechanism restores

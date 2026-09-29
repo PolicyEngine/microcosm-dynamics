@@ -72,6 +72,43 @@ The requested `recount-tiers.py .` completed with 4,329 unit, 3,152 artifact,
 total. The 25 added tests are all in the unit tier. No real-data tests were
 executed by this collection-only recount.
 
+## PR #483 re-review P3: stage 2 and pairing attribution
+
+The re-review found two per-person paths that still lost the interrupted
+person. Stage 2's `HistoryValidator.validate_requested` attached counters
+only to `HistoryRefusal`, and its request discovery attached nothing. v1's
+`union_benefit_rows`, called by `_paired_scenarios`, attached nothing.
+Both now use the collectors' `attach_attempt` helper. It moved from
+`benefits.py` to `histories.py`, because `benefits.py` imports
+`histories.py`.
+
+Invariant: whenever a per-person body at stage 2 or 3 fails or is
+interrupted (any `Exception` or `KeyboardInterrupt`), the attempt names the
+person being processed, or keeps an identity the error already carries, and
+keeps every counter computed before the stop. Nothing changes when no
+person fails.
+
+- Stage 2 discovery and validation wrap each person's body. A failure while
+  reading a linked spouse's record names the person in progress. A
+  `HistoryRefusal` still names the refused record's person, with the same
+  counters as before.
+- §11 forbids editing `fra68_track/`, so `_paired_scenarios` calls
+  `union_benefit_rows` once per person, in its sorted order, inside the
+  wrapper. Rows, row order, row key order, counter values and counter key
+  order equal one inherited call; a Hypothesis differential checks this
+  against the pre-change algorithm. The attached counters are the completed
+  persons' pair counts. Increments that v1 makes for the failing person
+  before it stops stay in v1's local counter, which only an edit to v1
+  could expose.
+- A pairing stop now also keeps that row's reform-scenario counters. They
+  are computed before the pairing but, on success, merged after it, so the
+  attempt used to drop them: stopping in a pairing kept fewer counts than
+  stopping earlier, inside the reform scenario. F and U rows now also merge
+  their pair and scenario counters before the inherited filter, as R rows
+  already did, so a stop in the filter keeps them too.
+
+__P3_VALIDATION__
+
 ## Files and contract map
 
 New package: `src/populace_dynamics/track_a_v2/` contains `__init__.py`,
@@ -109,7 +146,7 @@ No protected v1 module, engine loop/steps, gate or committed run was edited.
 | §7 | `estimands.py`: A7 normalization, R/U definedness, draw summaries and family splits | `test_matrix_estimands.py` |
 | §8 | `matrix.py`: exact order, components, labels and two fixed headlines | `test_matrix_estimands.py`, `test_runner.py` |
 | §9 | `membership.py`, `runner.py`: unfiltered R checks and exact F/U guards | `test_membership.py`, `test_runner_contract.py` |
-| §10 | `runner.py`, `protocol.py`: six stages, joint stop and cumulative counters | `test_runner.py`, `test_runner_contract.py`, `test_protocol.py` |
+| §10 | `runner.py`, `histories.py`, `protocol.py`: six stages, joint stop, person attribution and cumulative counters | `test_runner.py`, `test_runner_contract.py`, `test_histories.py`, `test_protocol.py` |
 | §11 | `protocol.py`, three frozen-entry/manifest scripts | `test_protocol.py`, `test_manifest.py` |
 | §12 | all new calculator/reporting modules | all `tests/track_a_v2/test_*.py` |
 | §17 | invented dry-run script, manifest generator, frozen entry points | `test_runner.py`, `test_manifest.py`, `test_structural.py`; 20-draw dry run |
@@ -150,6 +187,8 @@ It includes:
   mismatched persons, weights and fixed metadata refuse.
 - Frozen 68-row order/headlines, deterministic row-order behavior, every
   refusal preceding tabulation, and retention of all uncomputed rows/counters.
+- Any failure inside a stage-2 or stage-3 person names that person and keeps
+  completed persons' counters; a later stop never keeps fewer counts.
 - D/Track M differential uses the difference of floored averages and only
   aligned eligibility years; positive displacement can round to zero;
   post-62 raw awards keep their distinct cutoff and bend-point years.
@@ -240,6 +279,17 @@ It includes:
     emission enforce the exact structural artifact schema, including attempt
     metadata and count units
     (`src/populace_dynamics/track_a_v2/structural.py:294`).
+20. §10 does not say how a per-person loop inside an unedited v1 function
+    reports an interrupted person. `_paired_scenarios` calls v1's union once
+    per person, so the attempt names the person and keeps completed persons'
+    pair counts. The failing person's partial v1 increments are not kept.
+21. §10's "all counters computed before the stop" includes a row's
+    reform-scenario counters when its pairing stops. Reading 2 merges them
+    per row after the pairing, before the filter; a pairing stop merges them
+    once, for that row, before re-raising.
+22. §10 does not define attribution for reading a linked record. Stage 2
+    discovery names the person whose iteration reads it, as the collectors
+    do; a `HistoryRefusal` keeps the refused record's person.
 
 ## Exposure and reads
 
