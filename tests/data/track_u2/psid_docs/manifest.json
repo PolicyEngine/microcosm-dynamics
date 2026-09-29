@@ -85,7 +85,7 @@
         "path": "PSID/documentation/capture1/cross_sec_weights_19.pdf",
         "identical": true
       },
-      "cited": "PDF p. 2: a cross-sectional family weight was created in 2017 to include the 2017 New Immigrant Sample",
+      "cited": "PDF p. 2: a cross-sectional family weight was created in 2017 to include the 2017 New Immigrant Sample. For the 2017 individual weight: p. 4 (Chang et al. (2021) for the 2017 Immigrant sample's recruitment); p. 7 (a different calibration approach since 2017); p. 17 Table A2a (2017 row beside the ACS one-year PUMS total, CPS 'Not Used', donut-hole and group-quarters exclusions from the 2017 ACS estimate) and Table A2b; p. 18 Table A3 (ER34651); pp. 19-22 Tables A4-A7 (2017 ACS comparisons). No 2017 base weights or raking dimensions.",
       "blockers": [
         "revised_2017_weights"
       ],
