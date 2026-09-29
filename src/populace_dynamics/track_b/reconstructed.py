@@ -285,11 +285,14 @@ CELL_INPUT_COLUMNS = ("person_id", "period", "cohort", "earnings", "weight")
 
 
 def frame_from_payload(encoded: Any) -> pd.DataFrame | None:
-    """Invert ``runner.frame_payload``, or None for a malformed payload.
+    """Invert ``runner.frame_payload``, or None for a non-canonical payload.
 
-    Floats come back from their recorded bits and every column is rebuilt
-    at its recorded dtype, so the cells recomputed from a decoded frame are
-    the cells of the frame that was published.
+    Each column is rebuilt at its recorded dtype, and the rebuilt frame must
+    re-encode to exactly the published payload. A payload the encoder could
+    not have produced, such as float64 bits under a float32 label, which
+    would round to a different value when rebuilt, is refused rather than
+    scored, so the cells recomputed from a decoded frame are the cells of
+    the frame that was published.
     """
     columns = encoded.get("columns") if isinstance(encoded, Mapping) else None
     if not isinstance(columns, list) or not columns:
@@ -313,7 +316,12 @@ def frame_from_payload(encoded: Any) -> pd.DataFrame | None:
             return None
     if len({len(series) for series in data.values()}) != 1:
         return None
-    return pd.DataFrame(data)
+    frame = pd.DataFrame(data)
+    try:
+        canonical = runner.frame_payload(frame) == encoded
+    except (TypeError, ValueError):
+        return None
+    return frame if canonical else None
 
 
 def _decode_cell(encoded: Any) -> Any:

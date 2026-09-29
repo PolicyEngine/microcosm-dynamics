@@ -1235,6 +1235,27 @@ def _moved_anchor(result, output):
     }
 
 
+def _relabel_period_dtype_both_frames(result, output):
+    # float64 bits under a float32 label would round back to the gated year
+    # when rebuilt, hiding a row the recorded bits place outside it.
+    name = result["files"][0]["path"]
+
+    def change(payload):
+        for side in ("original_scored", "replay_scored"):
+            column = next(
+                column
+                for column in payload[side]["columns"]
+                if column["name"] == "period"
+            )
+            column["dtype"] = "float32"
+            index = column["values"].index(2016)
+            column["values"][index] = {
+                "float64_hex": np.float64(2016 + 2**-20).tobytes().hex()
+            }
+
+    _rewrite(result, output, name, change)
+
+
 def _shift_non_cell_column_both_frames(result, output):
     name = result["files"][0]["path"]
 
@@ -1294,6 +1315,7 @@ def test_guard_admits_identical_edits_that_move_no_gated_cell(
         (_tamper_cell, ["per_draw_cells"]),
         (_tamper_both_frames, ["per_draw_cells"]),
         (_drop_cell_input_both_frames, ["per_draw_cells"]),
+        (_relabel_period_dtype_both_frames, ["per_draw_cells"]),
         (_tamper_row, ["person_level_differential"]),
         (_stale_hash, ["per_draw_cells", "person_level_differential"]),
         (_missing_lineage, ["fit_lineage"]),
@@ -1303,6 +1325,7 @@ def test_guard_admits_identical_edits_that_move_no_gated_cell(
         "cell",
         "both-frames",
         "cell-input-column",
+        "dtype-relabel",
         "row",
         "stale-hash",
         "lineage",
