@@ -9436,6 +9436,7 @@
       ],
       "action": "refuse_male_code20_pension_slot_per_u2_adjudicate_F",
       "part_b_finding": "See roles:2015.relationship.20. Documented 2015 male legal spouses are Head, code 90 or code 98 and are not pension-loop spouse respondents; the residual male code-20 question is open (docs/design/u2_m1b_psid_research.md).",
+      "open_question": "If any 2015 Relation to Head code-20 person is male (family-listing CYAQRTH 201), which family-file variables hold his employer-pension items, given that P70CKPT admits only CYAQRTH 202 and 222 to the 2015 spouse pension loop? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 1; not sent. It is answered from documentation only, never from observed records.)",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 124,
