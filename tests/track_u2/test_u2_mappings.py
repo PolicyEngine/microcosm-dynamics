@@ -487,3 +487,100 @@ def test_registry_documents_are_read_only(committed_registries):
     assert json.loads(json.dumps(committed_registries.documents["design"]))
     with pytest.raises(loader.U2LoaderRefusal, match="registry blockers"):
         loader.source_preflight(committed_registries)
+
+
+# ---------------------------------------------------------------------------
+# The third review: final classes, copies, pickles and the shared cache
+# ---------------------------------------------------------------------------
+def test_gates_and_registry_sets_are_final():
+    with pytest.raises(TypeError, match="final"):
+
+        class _Gate(sources.SourceGate):  # noqa: F841
+            pass
+
+    with pytest.raises(TypeError, match="final"):
+
+        class _Registries(sources.RegistrySet):  # noqa: F841
+            pass
+
+
+def test_registry_set_copies_and_pickles_keep_their_binding(
+    committed_registries,
+):
+    import copy
+    import pickle
+
+    assert copy.copy(committed_registries) is committed_registries
+    assert copy.deepcopy(committed_registries) is committed_registries
+    restored = pickle.loads(pickle.dumps(committed_registries))
+    assert restored.kind == "committed"
+    assert type(restored.documents["pension"]) is sources.FrozenDocument
+    with pytest.raises(TypeError, match="read-only"):
+        restored.entry("pension", "2021.route.previous_dc_only")[
+            "status"
+        ] = "RESOLVED"
+    with pytest.raises(loader.U2LoaderRefusal, match="registry blockers"):
+        loader.source_preflight(restored)
+
+
+def test_a_committed_set_built_from_plain_documents_is_frozen():
+    import json
+
+    documents = {
+        name: json.loads(sources.registry_path(name).read_text())
+        for name in sources.REGISTRY_SHA256
+    }
+    built = sources.RegistrySet(
+        documents, dict(sources.REGISTRY_SHA256), "committed"
+    )
+    entry = built.entry("roles", "2015.relationship.20")
+    assert type(entry) is sources.FrozenDocument
+    with pytest.raises(TypeError, match="read-only"):
+        entry["action"] = "apply"
+    with pytest.raises(TypeError, match="read-only"):
+        entry.__init__({"status": "RESOLVED"})
+    # The caller's own documents are untouched and still editable.
+    documents["roles"]["entries"][0]["x"] = 1
+    invented_set = sources.RegistrySet.from_documents(built.documents)
+    assert invented_set.kind == "invented"
+
+
+def test_a_tampered_shared_document_is_caught_by_the_next_check(tmp_path):
+    """Even a C-level edit of the shared, cached committed document (which
+    ``FrozenDocument`` cannot block) is caught: every committed set, the
+    registry gate and the loader's source preflight recheck the pinned
+    bytes.  Run in a fresh interpreter so this process's cache is not
+    touched."""
+
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[2]
+    script = tmp_path / "tamper.py"
+    script.write_text(
+        "import sys\n"
+        f"sys.path.insert(0, {str(root / 'src')!r})\n"
+        "from populace_dynamics.uniform_cut_track_u2 import loader, sources\n"
+        "committed = sources.RegistrySet.committed()\n"
+        "entry = committed.entry('pension',\n"
+        "    '2021.route.inherited_route_amendment')\n"
+        "dict.__setitem__(entry, 'action', 'apply')\n"
+        "for call in (sources.RegistrySet.committed,\n"
+        "             lambda: loader.source_preflight(committed),\n"
+        "             lambda: sources.SourceGate(sources.REGISTRY,\n"
+        "                                        committed)):\n"
+        "    try:\n"
+        "        call()\n"
+        "        print('ACCEPTED')\n"
+        "    except sources.U2SourceRefusal as error:\n"
+        "        print('REFUSED', 'labelled committed' in str(error))\n"
+    )
+    result = subprocess.run(
+        [sys.executable, str(script)],
+        capture_output=True,
+        text=True,
+        check=True,
+        cwd=root,
+    )
+    assert result.stdout.split("\n")[:3] == ["REFUSED True"] * 3, result.stdout

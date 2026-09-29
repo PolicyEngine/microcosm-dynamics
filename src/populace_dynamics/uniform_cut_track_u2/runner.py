@@ -96,9 +96,9 @@ def check_inputs(
 ) -> dict[str, Any]:
     """The provenance guards (U1's order and wording, U2's identity)."""
 
-    if not isinstance(inputs, cohort.U2Inputs):
+    if type(inputs) is not cohort.U2Inputs:
         raise U2RunError("a U2 run needs U2Inputs")
-    if not isinstance(role_context, sources.RoleContext):
+    if type(role_context) is not sources.RoleContext:
         raise U2RunError("a U2 run needs an explicit RoleContext")
     identity.check_target(inputs.target_id, "the inputs")
     if data_provenance == ap.INVENTED:
@@ -408,7 +408,7 @@ def run_track_u2(
         inputs, data_provenance, registration_pointer, role_context
     )
     if source_gate is not None:
-        if not isinstance(source_gate, sources.SourceGate):
+        if type(source_gate) is not sources.SourceGate:
             raise U2RunError("source_gate must be a SourceGate")
         if (
             data_provenance == ap.REGISTERED_REAL

@@ -71,10 +71,14 @@ declared role rules the committed roles registry refuses:
 ``dataclasses.replace`` drops both seals, so relabelled frames -- a
 loader's included -- are refused: a copied invented label has no seal, a
 ``psid_files`` label has no loader seal, and any other label is
-``caller_frames``, which the declared context refuses.  (Python cannot
-stop a caller who sets a seal with ``object.__setattr__``; for invented
-inputs the regeneration still refuses such frames.)  The income rows
-and the component rows join only the inputs the cohort was built from.
+``caller_frames``, which the declared context refuses.  The seals and a
+built cohort's provenance are read-only, ``U2Inputs`` and ``U2Cohort``
+are final, and every input frame must be exactly a ``pandas.DataFrame``
+(so a frame cannot misreport its own digest).  The income rows and the
+component rows join only the inputs the cohort was built from.  These
+checks stop relabelling and mixing through the public API; Python cannot
+stop deliberate tampering with private state (``object.__setattr__``,
+replacing module functions), which the registered path never performs.
 This module computes no income concept, threshold, annuity, poverty
 status or statistic.
 """
@@ -87,6 +91,7 @@ import json
 import sys
 from collections.abc import Mapping
 from dataclasses import asdict, dataclass, field
+from types import MappingProxyType
 from typing import Any
 
 import pandas as pd
@@ -419,11 +424,19 @@ class U2Inputs:
         default=None, init=False, repr=False, compare=False
     )
 
+    def __init_subclass__(cls, **kwargs: Any) -> None:
+        raise TypeError("U2Inputs is final")
+
     def __post_init__(self) -> None:
         identity.check_target(self.target_id, "U2Inputs")
 
 
 def _frame_digest(digest: Any, name: str, frame: pd.DataFrame) -> None:
+    if type(frame) is not pd.DataFrame:
+        raise U2CohortError(
+            f"input frame {name} is a {type(frame).__name__}, not a "
+            "pandas.DataFrame: a frame's digest must come from its data"
+        )
     digest.update(f"{name}\n".encode())
     digest.update(json.dumps([str(c) for c in frame.columns]).encode())
     digest.update(json.dumps([str(t) for t in frame.dtypes]).encode())
@@ -450,14 +463,22 @@ def input_frames_sha256(inputs: U2Inputs) -> str:
 
 
 _INVENTED_MODULE = "populace_dynamics.uniform_cut_track_u2.invented"
-#: Frame digests the invented generator has regenerated in this process.
-_REGENERATED: set[str] = set()
+#: (digest, generator, seed, variant) the invented generator has
+#: regenerated in this process.
+_REGENERATED: set[tuple[Any, ...]] = set()
 
 
 def _regenerate_invented(inputs: U2Inputs, frames: str) -> None:
     """Refuse invented inputs the loaded generator does not regenerate."""
 
-    if frames in _REGENERATED:
+    recorded = dict(inputs.provenance or {})
+    key = (
+        frames,
+        recorded.get("generator"),
+        recorded.get("seed"),
+        recorded.get("variant"),
+    )
+    if key in _REGENERATED:
         return
     generator = sys.modules.get(_INVENTED_MODULE)
     if generator is None:
@@ -472,7 +493,7 @@ def _regenerate_invented(inputs: U2Inputs, frames: str) -> None:
             f"inputs claim invented provenance but do not regenerate: "
             f"{error}"
         ) from error
-    _REGENERATED.add(frames)
+    _REGENERATED.add(key)
 
 
 def _input_provenance(inputs: U2Inputs) -> dict[str, Any]:
@@ -520,9 +541,20 @@ def _input_provenance(inputs: U2Inputs) -> dict[str, Any]:
                 "inputs claim psid_files provenance but were not returned "
                 "by the U2 loader"
             )
-        if dict(inputs.loader_seal).get("input_frames_sha256") != frames:
+        bundle = hashlib.sha256(
+            (json.dumps(dict(files), sort_keys=True) + "\n").encode()
+        ).hexdigest()
+        if (
+            dict(inputs.loader_seal)
+            != {
+                "input_frames_sha256": frames,
+                "psid_files_bundle_sha256": bundle,
+            }
+            or recorded.get("psid_files_bundle_sha256") != bundle
+        ):
             raise U2CohortError(
-                "the frames changed after the U2 loader sealed them"
+                "the frames or PSID file hashes changed after the U2 "
+                "loader sealed them"
             )
         return {
             "kind": PSID_FILES,
@@ -546,7 +578,7 @@ def _input_provenance(inputs: U2Inputs) -> dict[str, Any]:
 def _check_role_context(
     role_context: sources.RoleContext, provenance_kind: str
 ) -> None:
-    if not isinstance(role_context, sources.RoleContext):
+    if type(role_context) is not sources.RoleContext:
         raise U2CohortError("a U2 build needs an explicit RoleContext")
     if (
         role_context.kind == sources.INVENTED_DECLARED
@@ -702,13 +734,23 @@ def derive_u2_births(inputs: U2Inputs) -> U2Births:
 # ===========================================================================
 @dataclass(frozen=True)
 class U2Cohort:
-    """The built U2 observations and dispositions (as U1's cohort)."""
+    """The built U2 observations and dispositions (as U1's cohort).
+
+    ``provenance`` is set by :func:`build_u2_cohort` alone (read-only; a
+    constructed or ``dataclasses.replace``-d cohort has none, so its rows
+    cannot be joined to any inputs).
+    """
 
     observations: pd.DataFrame
     dispositions: pd.DataFrame
     spec: U2CohortSpec
     diagnostics: Mapping[str, Any]
-    provenance: Mapping[str, Any] = field(default_factory=dict)
+    provenance: Mapping[str, Any] = field(
+        default_factory=lambda: MappingProxyType({}), init=False
+    )
+
+    def __init_subclass__(cls, **kwargs: Any) -> None:
+        raise TypeError("U2Cohort is final")
 
 
 def _sequence_group(sequence: int) -> str:
@@ -1059,15 +1101,17 @@ def build_u2_cohort(
     object.__setattr__(
         cohort,
         "provenance",
-        {
-            **provenance,
-            "set_by": (
-                "populace_dynamics.uniform_cut_track_u2.cohort."
-                "build_u2_cohort"
-            ),
-            "spec": spec.as_dict(),
-            "role_context": role_context.kind,
-        },
+        MappingProxyType(
+            {
+                **provenance,
+                "set_by": (
+                    "populace_dynamics.uniform_cut_track_u2.cohort."
+                    "build_u2_cohort"
+                ),
+                "spec": spec.as_dict(),
+                "role_context": role_context.kind,
+            }
+        ),
     )
     return cohort
 
@@ -1168,7 +1212,7 @@ def check_cohort_inputs(cohort: U2Cohort, inputs: U2Inputs) -> str:
     observations always carry the provenance the cohort recorded.
     """
 
-    if not isinstance(cohort, U2Cohort) or not isinstance(inputs, U2Inputs):
+    if type(cohort) is not U2Cohort or type(inputs) is not U2Inputs:
         raise U2CohortError("a U2Cohort and its U2Inputs are required")
     recorded = cohort.provenance.get("input_frames_sha256")
     observed = input_frames_sha256(inputs)

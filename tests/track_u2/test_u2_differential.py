@@ -38,6 +38,16 @@ def differential():
     return module
 
 
+def _probe_namespace(differential, monkeypatch) -> dict:
+    """The probe's definitions, executed in this process with ``sys.path``
+    restored afterwards (the probe prepends the checkout's paths)."""
+
+    monkeypatch.setattr(sys, "path", list(sys.path))
+    namespace: dict = {"__name__": "_probe_definitions"}
+    exec(differential.PROBE_DEFINITIONS, namespace)  # noqa: S102
+    return namespace
+
+
 def _good_parity(differential) -> dict:
     out = {}
     for case, expected in differential.EXPECTED_REFUSALS.items():
@@ -198,8 +208,7 @@ def test_the_loader_guard_records_every_access_under_the_fake_root(
     ``/INVENTED/psid-data`` are each refused and recorded, so the
     harness's empty-access requirement is not vacuous."""
 
-    namespace: dict = {"__name__": "_probe_definitions"}
-    exec(differential.PROBE_DEFINITIONS, namespace)  # noqa: S102
+    namespace = _probe_namespace(differential, monkeypatch)
     age67 = namespace["age67"]
     original = age67.load_age67_inputs
 
@@ -222,12 +231,11 @@ def test_the_loader_guard_records_every_access_under_the_fake_root(
     assert not Path("/INVENTED/psid-data/z").exists()
 
 
-def test_the_probe_encoding_has_no_default(differential):
+def test_the_probe_encoding_has_no_default(differential, monkeypatch):
     """The probe's canonical encoder has no ``default``: a value JSON
     cannot represent fails the probe instead of being stringified."""
 
-    namespace: dict = {"__name__": "_probe_definitions"}
-    exec(differential.PROBE_DEFINITIONS, namespace)  # noqa: S102
+    namespace = _probe_namespace(differential, monkeypatch)
     canonical = namespace["canonical"]
     assert canonical({"b": [1, 2], "a": None}) == '{"a":null,"b":[1,2]}'
     with pytest.raises(TypeError):

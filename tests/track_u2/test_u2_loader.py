@@ -382,3 +382,23 @@ def test_loader_inputs_cannot_join_an_invented_cohort(
 
     with pytest.raises(cohort.U2CohortError, match="built from"):
         cohort.income_rows(u0_cohort, loaded["inputs"])
+
+
+def test_the_loader_seal_is_read_only_and_bound_to_the_file_hashes(loaded):
+    import dataclasses
+
+    inputs = loaded["inputs"]
+    with pytest.raises(TypeError):
+        inputs.loader_seal["input_frames_sha256"] = "0" * 64
+    # A seal whose file bundle no longer matches the recorded file
+    # hashes is refused (as U1's loader seal is).
+    relabelled = dataclasses.replace(
+        inputs,
+        provenance={
+            **inputs.provenance,
+            "psid_files_sha256": {"family/2019/FAM2019ER.txt": "0" * 64},
+        },
+    )
+    object.__setattr__(relabelled, "loader_seal", dict(inputs.loader_seal))
+    with pytest.raises(cohort.U2CohortError, match="sealed"):
+        cohort._input_provenance(relabelled)

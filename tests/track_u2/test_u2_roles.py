@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import dataclasses
 
+import pandas as pd
 import pytest
 
 from populace_dynamics.estimates import adjusted_poverty as ap
@@ -542,3 +543,43 @@ def test_invented_inputs_need_the_generator_loaded(tmp_path):
     )
     assert result.stdout.startswith("REFUSED"), result.stdout
     assert "generator is not loaded" in result.stdout
+
+
+def test_role_contexts_inputs_and_cohorts_are_final():
+    """Review 3, finding 1: a subclass could override ``rule`` while
+    carrying the registry kind; none can be defined."""
+
+    for base in (sources.RoleContext, cohort.U2Inputs, cohort.U2Cohort):
+        with pytest.raises(TypeError, match="final"):
+            type("_Sub", (base,), {})
+
+
+def test_seals_are_read_only_and_bound_to_the_label(u2_inputs, declared):
+    with pytest.raises(TypeError):
+        u2_inputs.invented_seal["seed"] = 12345  # type: ignore[index]
+    relabelled = dataclasses.replace(
+        u2_inputs,
+        provenance={**u2_inputs.provenance, "seed": 12345},
+    )
+    object.__setattr__(
+        relabelled, "invented_seal", dict(u2_inputs.invented_seal)
+    )
+    with pytest.raises(cohort.U2CohortError, match="seed"):
+        cohort.build_u2_cohort(relabelled, role_context=declared)
+
+
+def test_a_frame_must_be_a_plain_dataframe(u2_inputs, declared):
+    """Review 3, finding 6: a DataFrame subclass could report another
+    frame's text to the digest; input frames must be exactly
+    ``pandas.DataFrame``."""
+
+    class _Lying(pd.DataFrame):
+        pass
+
+    anchors = dict(u2_inputs.anchors)
+    anchors[2019] = _Lying(anchors[2019])
+    changed = dataclasses.replace(u2_inputs, anchors=anchors)
+    with pytest.raises(cohort.U2CohortError, match="pandas.DataFrame"):
+        cohort.input_frames_sha256(changed)
+    with pytest.raises(cohort.U2CohortError, match="pandas.DataFrame"):
+        cohort.build_u2_cohort(changed, role_context=declared)

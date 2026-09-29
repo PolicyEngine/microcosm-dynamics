@@ -44,6 +44,7 @@ import hashlib
 import json
 from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
+from types import MappingProxyType
 from typing import Any
 
 import pandas as pd
@@ -175,10 +176,13 @@ def source_preflight(
     registries = (
         sources.RegistrySet.committed() if registries is None else registries
     )
-    if registries.kind != "committed":
+    if type(registries) is not sources.RegistrySet or (
+        registries.kind != "committed"
+    ):
         raise U2LoaderRefusal(
             "the loader applies only the committed, pinned registries"
         )
+    registries.verify()
     plan = cohort.check_plan_against_support_registry(registries)
     refused: list[str] = []
     entries = required_entries(registries)
@@ -298,7 +302,7 @@ def read_family_records(
     (:func:`~populace_dynamics.uniform_cut_track_u2.sources.
     parse_fixed_width`)."""
 
-    if not isinstance(gate, sources.SourceGate):
+    if type(gate) is not sources.SourceGate:
         raise U2LoaderRefusal("family records are read through a SourceGate")
     specs = family_record_specs(wave, gate)
     raw = sources.parse_fixed_width(lines, specs)
@@ -404,10 +408,12 @@ def load_u2_inputs(*, data_dir: Path | None = None) -> cohort.U2Inputs:
     object.__setattr__(
         inputs,
         "loader_seal",
-        {
-            "input_frames_sha256": cohort.input_frames_sha256(inputs),
-            "psid_files_bundle_sha256": bundle,
-        },
+        MappingProxyType(
+            {
+                "input_frames_sha256": cohort.input_frames_sha256(inputs),
+                "psid_files_bundle_sha256": bundle,
+            }
+        ),
     )
     return inputs
 

@@ -331,3 +331,31 @@ def test_rows_join_only_the_inputs_the_cohort_was_built_from(
     assert len(cohort.income_rows(u0_cohort, u2_inputs)) == len(
         u0_cohort.observations
     )
+
+
+def test_a_cohorts_provenance_is_set_by_the_builder_alone(
+    u2_inputs, u0_cohort
+):
+    """Review 3, finding 2: the digest the rows are bound to cannot be
+    re-pointed: the provenance is read-only, cannot be passed to the
+    constructor or ``dataclasses.replace``, and a rebuilt cohort has
+    none, so its rows join no inputs."""
+
+    with pytest.raises(TypeError):
+        u0_cohort.provenance["input_frames_sha256"] = "0" * 64
+    with pytest.raises((TypeError, ValueError)):
+        dataclasses.replace(u0_cohort, provenance={})
+    rebuilt = dataclasses.replace(
+        u0_cohort, observations=u0_cohort.observations
+    )
+    assert dict(rebuilt.provenance) == {}
+    with pytest.raises(cohort.U2CohortError, match="built from"):
+        cohort.income_rows(rebuilt, u2_inputs)
+    constructed = cohort.U2Cohort(
+        u0_cohort.observations,
+        u0_cohort.dispositions,
+        u0_cohort.spec,
+        u0_cohort.diagnostics,
+    )
+    with pytest.raises(cohort.U2CohortError, match="built from"):
+        cohort.income_rows(constructed, u2_inputs)

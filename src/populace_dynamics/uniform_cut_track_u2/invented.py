@@ -67,6 +67,7 @@ from __future__ import annotations
 
 import dataclasses
 from collections.abc import Mapping
+from types import MappingProxyType
 from typing import Any
 
 import numpy as np
@@ -1108,12 +1109,14 @@ def _sealed(
     object.__setattr__(
         out,
         "invented_seal",
-        {
-            "generator": _GENERATOR,
-            "seed": int(seed),
-            "variant": variant,
-            "input_frames_sha256": digest,
-        },
+        MappingProxyType(
+            {
+                "generator": _GENERATOR,
+                "seed": int(seed),
+                "variant": variant,
+                "input_frames_sha256": digest,
+            }
+        ),
     )
     return out
 

@@ -45,6 +45,18 @@ roles registry's rules and an ``invented_declared`` context exactly the
 declared table (both read-only), and :mod:`.cohort` accepts the declared
 context only on inputs the invented generator sealed.
 
+**What the guards defend.**  They stop relabelling and mixing through
+the public API and ordinary mistakes: :class:`RegistrySet`,
+:class:`SourceGate` and :class:`RoleContext` are final (no subclass can
+override a check), their documents and rules are read-only, a copied or
+unpickled registry set is rebuilt through its checks, and the committed
+documents are re-verified against the pinned bytes whenever a committed
+set is built and again in the loader's source preflight.  Python cannot
+stop deliberate tampering with private state (``object.__setattr__``,
+``dict.__setitem__`` on a frozen document, replacing module functions);
+the registered path builds every object it uses itself and rechecks the
+pinned identities before any PSID record is read.
+
 **Role rules** (section 3 relationship-code amendment):
 
 ====  ==============================  ==============  ===================
@@ -308,6 +320,13 @@ def _canonical_sha256(document: Mapping[str, Any]) -> str:
     return _sha256(json.dumps(document, sort_keys=True).encode("utf-8"))
 
 
+def _final(cls: type) -> None:
+    raise TypeError(
+        f"{cls.__mro__[1].__name__} is final: a subclass could override "
+        "the checks that bind it (section 14 refusals)"
+    )
+
+
 class FrozenDocument(dict):
     """A read-only JSON object (a ``dict`` for ``json`` and ``isinstance``).
 
@@ -328,6 +347,11 @@ class FrozenDocument(dict):
     __setitem__ = __delitem__ = _refuse
     clear = pop = popitem = setdefault = update = _refuse
     __ior__ = _refuse
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        if len(self):
+            self._refuse()
+        super().__init__(*args, **kwargs)
 
     def __deepcopy__(self, memo: dict[int, Any]) -> dict[str, Any]:
         return {key: _thaw(value, memo) for key, value in self.items()}
@@ -368,9 +392,12 @@ def _committed_frozen(name: str) -> FrozenDocument:
 
 @functools.cache
 def _committed_canonical_sha256(name: str) -> str:
-    """The canonical-JSON digest of the pinned committed document."""
+    """The canonical-JSON digest of the pinned committed document, from
+    a fresh parse of the pinned bytes (never from a shared object)."""
 
-    return _canonical_sha256(_committed_frozen(name))
+    return _canonical_sha256(
+        json.loads(_committed_document(name, REGISTRY_SHA256[name]))
+    )
 
 
 @dataclass(frozen=True)
@@ -390,6 +417,8 @@ class RegistrySet:
     sha256: Mapping[str, str]
     kind: str
 
+    __init_subclass__ = classmethod(_final)
+
     def __post_init__(self) -> None:
         if self.kind not in ("committed", "invented"):
             raise ValueError("registry set kind is committed or invented")
@@ -398,22 +427,7 @@ class RegistrySet:
                 f"a registry set holds exactly {registry.REGISTRY_NAMES}"
             )
         if self.kind == "committed":
-            changed = [
-                name
-                for name in registry.REGISTRY_NAMES
-                if self.sha256.get(name) != REGISTRY_SHA256[name]
-                or (
-                    self.documents[name] is not _committed_frozen(name)
-                    and _canonical_sha256(self.documents[name])
-                    != _committed_canonical_sha256(name)
-                )
-            ]
-            if changed:
-                raise U2SourceRefusal(
-                    f"registries {changed} are labelled committed but are "
-                    "not the pinned milestone-1 files (section 14: changed "
-                    "source bytes refuse execution)"
-                )
+            self._verify_committed(self.documents, self.sha256)
         object.__setattr__(
             self,
             "documents",
@@ -438,6 +452,44 @@ class RegistrySet:
             },
         )
 
+    @staticmethod
+    def _verify_committed(
+        documents: Mapping[str, Any], sha256: Mapping[str, str]
+    ) -> None:
+        changed = [
+            name
+            for name in registry.REGISTRY_NAMES
+            if sha256.get(name) != REGISTRY_SHA256[name]
+            or _canonical_sha256(documents[name])
+            != _committed_canonical_sha256(name)
+        ]
+        if changed:
+            raise U2SourceRefusal(
+                f"registries {changed} are labelled committed but are not "
+                "the pinned milestone-1 files (section 14: changed source "
+                "bytes refuse execution)"
+            )
+
+    def verify(self) -> RegistrySet:
+        """Recheck a committed set against the pinned bytes (again)."""
+
+        if self.kind == "committed":
+            self._verify_committed(self.documents, self.sha256)
+        return self
+
+    def __copy__(self) -> RegistrySet:
+        return self
+
+    def __deepcopy__(self, memo: dict[int, Any]) -> RegistrySet:
+        return self
+
+    def __reduce__(self) -> tuple[Any, ...]:
+        # Unpickling rebuilds the set through its checks.
+        return (
+            RegistrySet,
+            (_thaw(self.documents), dict(self.sha256), self.kind),
+        )
+
     @classmethod
     def committed(cls) -> RegistrySet:
         documents = {name: _committed_frozen(name) for name in REGISTRY_SHA256}
@@ -450,10 +502,11 @@ class RegistrySet:
         """Invented registry documents, schema-validated (tests only)."""
 
         digests = {}
-        for name, document in documents.items():
-            registry.validate_registry(dict(document), expected_name=name)
+        thawed = {name: _thaw(doc) for name, doc in documents.items()}
+        for name, document in thawed.items():
+            registry.validate_registry(document, expected_name=name)
             digests[name] = _canonical_sha256(document)
-        return cls(dict(documents), digests, "invented")
+        return cls(thawed, digests, "invented")
 
     def entry(self, name: str, entry_id: str) -> Mapping[str, Any]:
         index = self._index.get(name)  # type: ignore[attr-defined]
@@ -508,14 +561,20 @@ class SourceGate:
     applied: list[str] = field(default_factory=list)
     would_refuse: dict[str, list[str]] = field(default_factory=dict)
 
+    __init_subclass__ = classmethod(_final)
+
     def __post_init__(self) -> None:
         if self.kind not in GATES:
             raise ValueError(f"gate kind must be one of {GATES}")
-        if self.kind == REGISTRY and self.registries.kind != "committed":
-            raise U2SourceRefusal(
-                "the registry gate applies only the committed, pinned "
-                "milestone-1 registries"
-            )
+        if type(self.registries) is not RegistrySet:
+            raise U2SourceRefusal("a source gate needs a RegistrySet")
+        if self.kind == REGISTRY:
+            if self.registries.kind != "committed":
+                raise U2SourceRefusal(
+                    "the registry gate applies only the committed, pinned "
+                    "milestone-1 registries"
+                )
+            self.registries.verify()
 
     def require(self, name: str, entry_id: str) -> Mapping[str, Any]:
         entry = self.registries.entry(name, entry_id)
@@ -683,6 +742,8 @@ class RoleContext:
 
     kind: str
     rules: Mapping[tuple[int, int], RoleRule]
+
+    __init_subclass__ = classmethod(_final)
 
     def __post_init__(self) -> None:
         if self.kind not in ROLE_CONTEXT_KINDS:
