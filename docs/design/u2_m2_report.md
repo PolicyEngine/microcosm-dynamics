@@ -354,7 +354,7 @@ After the fix, every new test passes.
 10. **Documented domain.** For every individual-file field U2 reads and every integer value, the value check refuses a record holding it iff the registry does not document it. This is `test_u2_loader.py::test_the_individual_check_accepts_exactly_the_documented_domain`, 200 examples. The restated ranges are held to every wave's codebook text.
 11. **Frozen bytes.** Changing any single byte of any frozen file to any other byte makes the pre-read recheck refuse; with the bytes restored, it passes. This is `::test_every_single_byte_change_to_any_frozen_file_refuses`, 100 examples.
 12. **Binding injectivity.** Changing any one frozen file hash, or the frame digest, changes the registration binding's SHA-256. This is `test_u2_scripts.py::test_the_binding_changes_with_every_frozen_identity`, 100 examples.
-13. **Parameter content.** The registered check accepts a bundle under the pinned labels iff every value equals the pinned files'. Moving one value anywhere in the thresholds, SSI or life tables refuses. This is `test_u2_parameters.py::test_any_single_altered_value_refuses_the_registered_check`, 150 examples.
+13. **Parameter content** (restated in round 2; the round-1 wording, "accepts ... iff every value equals the pinned files'", was false, see [round 2](#round-2-review-fixes-2026-09-29)). The registered check accepts a bundle iff two things hold. First, it is built only from the pinned loaders' types: `U2Parameters`, `PovertyThresholds`, `SsiParameters` and `LifeTable` exactly, with no instance attribute beyond their fields; plain `dict` and `tuple` containers; `int` years and child counts; `str` rows, sexes, bases and names; and `float` values, or `int` values exactly equal to a float. Second, it has the pinned files' keys, and every value equals, as a number, the value read afresh from them. Moving one value anywhere in the thresholds, SSI or life tables refuses (`test_u2_parameters.py::test_any_single_altered_value_refuses_the_registered_check`, 150 examples). So does adding any colliding key at any depth of any threshold or SSI schedule (`::test_no_colliding_key_passes_the_registered_check`, 200 examples). A rebuild of the pinned values in fresh containers, in any order, passes (`::test_a_canonical_rebuild_of_the_pinned_values_passes`, 60 examples).
 14. **Monotonicity bound.** Invariant 1 is now checked as \(R_i\le B_i+8\,\mathrm{ulp}(\max(|B_i|,|R_i|,S_i))\).
     - The estimator computes \(R=((B-\mathrm{cut})+\mathrm{offset})+\mathrm{new}\) (`estimator.py`, `u2_adjusted_incomes`), so R can exceed B only by rounding.
     - Over 71,670 invented observation-rows (1,500 drawn frames, every registered row), the largest excess was 1 ulp. Exact comparison would therefore be wrong.
@@ -426,3 +426,122 @@ Other runs:
 
 - **The evidence record itself.** It is written by the §20 step-4 structure pass on real data, which is separately authorized. This lane ran nothing on real data.
 - **Independent review of `0d742fd`–`b211ee7`.**
+
+## Round 2 review fixes (2026-09-29)
+
+The independent review of `eeb4850` returned **U2-M2: REQUEST CHANGES**. Round 1's findings 1 and 2 and info items 4 and 5 were resolved. Finding 3 was partial, one low finding, which was the only change requested. There were also two informational items. A blind builder lane (workflow subagent, Claude Opus 5.5) fixed the low finding and both informational items, and closed one related gap the review did not name. For each fix it wrote tests first and ran them against `eeb4850`'s code, where they failed, then against the fix, where they pass. The exposure record for this lane is in [`u2_m2_exposure.md`](u2_m2_exposure.md#round-2-fix-lane). **INVENTED DATA - NOT A COMPARISON:** every altered value below is invented (1.0, or a monthly FBR of 1.0 read as 12.0 a year), every input is the invented population or its invented staged files, and no real PSID record was read.
+
+| Finding | Fix | Commit | Tests |
+|---|---|---|---|
+| 1 (low): the content digest was not injective. `str(int(key))` let a key such as `2012.5` stand beside `2012`, hold the pinned value and hide an altered one that the estimator reads by exact key (`adjusted_poverty.py:1028-1054`, `:1069-1075`) | `parameters_content_sha256` (`parameters.py:481`) reads only the pinned loaders' exact types. The classes must match exactly with no extra instance attribute (`_exact_instance`, `parameters.py:407`); containers must be plain `dict` or `tuple` (`_plain`, `:427`); keys must be exact `int` or `str` (`_key`, `:438`); values must be floats or ints exactly equal to a float (`_number`, `:449`). On that domain the key encoding is injective, and any other type raises `U2ParameterError` | `f78df52` | `test_u2_parameters.py`: the review's three collisions plus a string year key and an object row key; dict-subclass, tuple-subclass, `SsiParameters`-subclass and shadowed-method bundles, each shown to change what the run reads; four value types; a bundle subclass; a Hypothesis property over every key depth (200 examples); and a converse property (60 examples) |
+| Beyond the findings: check, then use | `check_u2_parameters` now returns the bundle a run computes with. For a registered run that is the fresh read of the pinned files the caller's bundle was just shown equal to (`parameters.py:691`), and `run_track_u2` uses it (`runner.py:485`). Anything the caller still holds, such as an in-place edit made from the progress callback, cannot reach a row | `b1d95c8` | `test_u2_loader.py::test_a_registered_run_computes_with_the_fresh_pinned_read` |
+| Info 2: `check_inputs` accepted any 64-hex sealed evidence hash and never compared it with the bound one | `check_inputs` and `run_track_u2` take `preregistration_evidence_sha256`. A registered run refuses unless it is given and equals the loader's sealed hash (`runner.py:172-185`); an invented run refuses one (`runner.py:124`). `main` passes the hash its preflight bound (`run_track_u2_registered.py:367`) | `b1d95c8`; `f16f1b9` names the given value in the malformed-hash refusal | `test_u2_loader.py`: unnamed, other-record and malformed hashes, an invented run naming one, and a mismatch refusing before any computation; `test_u2_scripts.py::test_the_registered_main_passes_the_bound_evidence_hash_to_the_run` |
+| Info 3: the open question on the spouse-sex lookup | No code change; the reviewer's answer was checked against the code (below) | none | `test_u2_plans.py::test_an_anchor_person_without_a_persons_record_refuses` (round 1) |
+
+The dry run records the round-2 refusals (`track_u2_dry_run.py:228`), and `test_u2_scripts.py` asserts the error class of each: the three collisions, an `SsiParameters` subclass and an invented run naming an evidence hash.
+
+**Info 3, checked against the code.** The spouse-sex lookup `sex.get(int(spouse), "na")` (`cohort.py:1053`) runs only when `coresident` is true. That requires `int(spouse) in members` (`cohort.py:1044-1047`), where `members` are the family's rows. Those rows are the in-family rows of `inputs.anchors[wave]` (`cohort.py:941-950`, `:989`), and `build_u2_cohort` first calls `check_person_joins` (`cohort.py:922`). That function refuses any anchor person without a `persons` record (`cohort.py:687-706`), so the lookup cannot silently read `na` for a missing join. The review said the same of the head, slot and legal-spouse lookups (`cohort.py:1104-1133`). This lane did not reread those lines.
+
+### Before and after
+
+Each case was run as a script, or as a temporary uncommitted test, against `eeb4850`'s code and then against the fixed code. Every provenance label named the pinned captures.
+
+| Case (invented altered value) | `eeb4850` | Fixed |
+|---|---|---|
+| Weighted-average key `2012.5` holding the pinned 2012 rows, `2012` `one_65_plus` set to 1.0 (review case 1b) | accepted; the run reads 1.0 | `U2ParameterError` (float key) |
+| Couple FBR key `2018.5` holding the pinned value, 2018 set to 1.0 a month (review case 2) | accepted; the run reads 12.0 a year | `U2ParameterError` (float key) |
+| Matrix child key `0.5` holding the pinned cell, 2016 `three` column 0 set to 1.0 (review case 3) | accepted; the run reads 1.0 | `U2ParameterError` (float key) |
+| Year key `"2012"` (a string) holding the pinned rows | accepted; the run reads 1.0 | `U2ParameterError` (str key) |
+| A row key object whose `str()` is `one_65_plus` | accepted; the run reads 1.0 | `U2ParameterError` (non-str key) |
+| A `dict` subclass whose `__getitem__` returns 1.0 for 2012 | accepted; the run reads 1.0 | `U2ParameterError` (not a plain dict) |
+| A `tuple` subclass slicing NCHS female `qx` to 1.0 | accepted; the survival curve reads the 1.0s | `U2ParameterError` (not a plain tuple) |
+| An `SsiParameters` subclass overriding `fbr_annual` | accepted; the run reads 12.0 | `U2ParameterError` (not exactly `SsiParameters`) |
+| An instance attribute shadowing `fbr_annual` | accepted; the run reads 12.0 | `U2ParameterError` (instance attribute) |
+| A `float` subclass in `qx` whose `float()` is the pinned value | accepted; the run reads the pinned value, so not a bypass | `U2ParameterError` (non-canonical type) |
+| The caller edits its bundle after the check (from the progress callback) | the row read the edited 1.0 | the row reads the fresh pinned bundle |
+| Registered `check_inputs` with loader-rechecked inputs and no bound hash named | accepted | `U2RunError` (must name the bound hash); another hash also refuses |
+
+New tests against `eeb4850`'s code:
+
+- **Finding 1:** 15 of 16 new tests fail.
+  - Twelve fail with `DID NOT RAISE`: the five collision cases, the four pinned-field routes, the `str` and float-subclass values, and the bundle subclass.
+  - The collision property fails on its first example.
+  - The int beyond 2^53 and the bool fail on the message only: the old content comparison refused them because they differ from the pinned number, not because of their type.
+  - The converse property passes on both sides, as intended.
+- **Info 2 and the check-then-use gap:** all 8 new tests fail, 7 with `TypeError` (the keyword did not exist) and the `main` wiring test because `main` passed no hash. The existing registered-path test was updated to the new keyword. The table's last two rows are the temporary probe's behavioural evidence.
+
+After the fix, every new test passes.
+
+### Invariants stated and tested (round 2)
+
+13. **Parameter content**, restated above. It adds the collision property and its converse.
+15. **Fresh parameters.** A registered run computes with the fresh read of the pinned files, never the caller's objects, so an edit to the caller's bundle after the check reaches no row (`test_u2_loader.py::test_a_registered_run_computes_with_the_fresh_pinned_read`).
+16. **Bound evidence.** A registered run proceeds only if the evidence hash the loader sealed equals the hash the registration binds, and `main` passes the bound one (`test_u2_loader.py::test_a_registered_run_needs_the_evidence_its_registration_binds`, `test_u2_scripts.py::test_the_registered_main_passes_the_bound_evidence_hash_to_the_run`).
+
+### Conservative readings (round 2)
+
+14. **Exact types in a registered bundle** (§14; `parameters.py:407-478`). A float subclass (numpy's `float64` among them), a `str` or `bool` value, or an int no float equals refuses, even where it converts to the pinned number. The pinned loaders build none of these, so no genuine registered bundle is refused (the converse property).
+15. **Integer-valued floats stored as ints still pass, and the sign of zero is ignored** (`parameters.py:449`). These are equal numbers, and round 1's digest test already allowed the first.
+16. **A registered run substitutes the fresh pinned read only after proving equality** (§14; `parameters.py:691`). It never substitutes silently: any other bundle still refuses.
+
+### Test results (round 2, final code `f16f1b9`)
+
+**Every `tests/track_u2` file, one per command, with `-p no:xdist`: 1,018 passed, 10 skipped, 0 failed.** The 10 skips are the registered artifact's absence.
+
+| File | Result |
+|---|---|
+| `test_adjudication_applied.py` | 20 passed |
+| `test_pension_registry.py` | 12 passed |
+| `test_psid_research_sources.py` | 391 passed |
+| `test_source_registries.py` | 80 passed |
+| `test_ssi_capture.py` | 31 passed |
+| `test_u2_design_floor.py` | 14 passed |
+| `test_u2_differential.py` | 8 passed |
+| `test_u2_employer_dc.py` | 32 passed |
+| `test_u2_estimator.py` | 25 passed |
+| `test_u2_identity.py` | 22 passed |
+| `test_u2_isolation.py` | 4 passed |
+| `test_u2_loader.py` | 64 passed (was 58) |
+| `test_u2_mappings.py` | 55 passed |
+| `test_u2_memo.py` | 14 passed |
+| `test_u2_parameters.py` | 48 passed (was 32) |
+| `test_u2_pipeline.py` | 26 passed, 10 skipped |
+| `test_u2_plans.py` | 39 passed |
+| `test_u2_properties.py` | 17 passed |
+| `test_u2_roles.py` | 71 passed |
+| `test_u2_scripts.py` | 31 passed (was 30) |
+| `test_u2_worked_cases.py` | 14 passed |
+
+Other runs:
+
+- **`tests/estimates/test_birth_evidence_artifact.py`:** 13 passed.
+- **The §13 U1 suite, unmodified:** 390 passed, 39 skipped, 0 failed; the same files and counts as round 1.
+  - It ran with HOME and `POPULACE_DYNAMICS_PSID_DIR` pointed at an empty directory.
+  - An audit hook refused any open, listing or stat under `~/PolicyEngine/psid-data`. It refused nothing.
+- **U1 differential, rerun at `f16f1b9` against `9cee2423`** (`git clone --shared` clones in a scratch directory, with the refusing hook active):
+  - `all_equal` and `all_checks_passed` are true;
+  - dry-run `result.json` and `RESULTS.md` are byte-equal;
+  - the contract probe is equal (`49e47726…` on both sides, as in round 1);
+  - refusal expectations are met at both commits;
+  - no loader file was accessed.
+
+  The report is committed as [`u2_m2_u1_differential_f16f1b9.json`](u2_m2_u1_differential_f16f1b9.json) (SHA-256 `bd347db0b1dcbe680e28c1bd9a577cad1ff9dbb82b75b93def7806f80f0a8e02`). An earlier run at `b1d95c8` gave the same verdicts. The commit that records the report changes no Python file.
+- **Black (`-l 79`) and ruff** are clean on `src/populace_dynamics/uniform_cut_track_u2/`, `tests/track_u2/` and the two changed U2 scripts.
+- **Tiers** (`recount-tiers.py`, collection only, `PYTEST_ADDOPTS=-p no:xdist`, the refusing hook active and never triggered):
+  - unit 4,160 (+6);
+  - artifact 3,293 (+17);
+  - integration_psid 1,341;
+  - reproduction_legacy 520;
+  - oracle_policyengine 182;
+  - total 9,496.
+
+  `test_tier_policy.py` passes against the full collection: 1 passed, 9,495 deselected.
+- **Isolation:**
+  - No protected file changed: `data/family.py`, `data/psid.py`, `estimates/career.py`, `engine/*`, `gates.yaml` and `runs/*.json`.
+  - No new source module was added, so `POST_REVIEW_SOURCE_EXCLUSIONS` is unchanged.
+  - No milestone-1b-owned file was touched.
+
+### Not done (round 2)
+
+- **The evidence record itself**, as in round 1. It is written by the §20 step-4 structure pass on real data, which is separately authorized.
+- **Independent review of `f78df52`, `b1d95c8` and `f16f1b9`.**

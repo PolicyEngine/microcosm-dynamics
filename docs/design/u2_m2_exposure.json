@@ -945,5 +945,72 @@
    "EV/u2-target-availability-cleared-20260928.md and the four public result memos (allowed; not needed)",
    "any raw PSID record file"
   ]
+ },
+ "round_2_fix_lane": {
+  "lane": "u2-m2 round-2 review fixes (workflow subagent, Claude Opus 5.5, blind builder, 2026-09-29)",
+  "commits": [
+   "f78df52",
+   "b1d95c8",
+   "f16f1b9"
+  ],
+  "evidence_directory_opened": [
+   "EV/RESTRICTED-FILES.md (full, first; includes the 2026-09-29 02:40 changelog entry)",
+   "EV/phase2-20260927/prompts/common.md (full)",
+   "EV/phase2-20260927/prompts/u2-m2-continue.md (full)",
+   "EV/phase2-20260927/prompts/u2-m2-resume.md (full)",
+   "EV/merge-watchers/recount-tiers.py (full; executed, collection only)"
+  ],
+  "review_received_as_task_text": "the round-2 review JSON came in the task prompt; EV/phase2-20260927/out/u2-m2-build-and-review.json was not opened",
+  "specification": "not opened; one repository grep for 'u1_differential_' printed line 1345 of docs/design/boomers2004_1946_55_comparison.md, the key name 'invented_dry_run_and_u1_differential_evidence' (no value)",
+  "repository_opened": [
+   "CLAUDE.md (lines 1-80)",
+   "src/populace_dynamics/uniform_cut_track_u2/parameters.py (full)",
+   "src/populace_dynamics/uniform_cut_track_u2/runner.py (lines 15-45, 90-190, 395-490)",
+   "src/populace_dynamics/uniform_cut_track_u2/cohort.py (lines 687-712, 915-990 filtered, 1036-1060)",
+   "src/populace_dynamics/estimates/adjusted_poverty.py (definition greps; lines 725-830, 915-1115)",
+   "src/populace_dynamics/data/tr2008.py (lines 474-486, 1020-1060)",
+   "scripts/run_track_u2_registered.py (imports grep; lines 230-420)",
+   "scripts/track_u2_dry_run.py (lines 30-50, 100-215, 565-600, 770-800, 940-960, 1015-1035; greps)",
+   "scripts/u2_u1_differential.py (lines 1-60, 530-620; grep)",
+   "tests/track_u2/test_u2_parameters.py (lines 1-60, 245-480)",
+   "tests/track_u2/test_u2_loader.py (lines 29-70, 280-330, 686-746, 940-990; greps)",
+   "tests/track_u2/test_u2_pipeline.py (lines 130-265)",
+   "tests/track_u2/test_u2_scripts.py (lines 170-232, 655-712; greps)",
+   "tests/track_u2/conftest.py (grep only)",
+   "tests/test_boomers2004_uniform_cut_spec.py and tests/test_replication_boomers2004_uniform_cut.py (path greps only)",
+   "docs/design/u2_m2_report.md (headings; lines 144-272, 298-428)",
+   "docs/design/u2_m2_exposure.md (headings; lines 130-end); docs/design/u2_m2_exposure.json (keys; round_1_fix_lane)",
+   "pyproject.toml, pytest.ini, setup.cfg (grep for addopts/xdist only)"
+  ],
+  "executed": [
+   "every tests/track_u2 file, one per command, -p no:xdist (plain run), at b1d95c8 and at f16f1b9",
+   "every tests/track_u2 file again under a logging audit hook on the PSID directory, the evidence directory and REFS (abspath-based; a first realpath-based attempt perturbed test_u2_differential's own access recorder, as in round 1, and was discarded)",
+   "tests/estimates/test_birth_evidence_artifact.py and the section 13 U1 suite, one file per command, at b1d95c8 and at f16f1b9, with HOME and POPULACE_DYNAMICS_PSID_DIR pointed at an empty scratch directory and an audit hook refusing any open, listing or stat under ~/PolicyEngine/psid-data (no access refused; its self-test was refused before opening a nonexistent probe path)",
+   "scripts/u2_u1_differential.py at b1d95c8 and at f16f1b9 against 9cee2423 (git clone --shared clones in the scratchpad; refusing hook active)",
+   "black -l 79 and ruff on the changed files; recount-tiers.py (collection only, PYTEST_ADDOPTS=-p no:xdist)",
+   "a scratch probe of eight altered-parameter routes (invented values) against eeb4850's check and the fixed check",
+   "a temporary, uncommitted test on eeb4850's runner (fresh-bundle and evidence-hash behaviour), removed before commit",
+   "the new parameter tests against eeb4850's parameters.py (swapped in, then restored with git checkout)",
+   "scripts/track_u2_dry_run.py into the scratchpad (invented data)"
+  ],
+  "psid_documentation_opened_by_tests": {
+   "test": "tests/track_u2/test_psid_research_sources.py (the only U2 test file that opened anything under the PSID directory, measured with a logging audit hook on the per-file run)",
+   "count": 32,
+   "locations": [
+    "PSID/documentation/capture1 (24 files: 23 PDFs and browser_digests.txt)",
+    "PSID/family/<wave>/*codebook*.pdf and Fam2017er_readme.pdf (7 files)",
+    "PSID/ind2023er/IND2023ER_codebook.pdf (1 file)"
+   ],
+   "same_as_round_1": true
+  },
+  "evidence_directory_opened_by_tests": [],
+  "values_printed": "invented altered values (1.0; 12.0 a year); test counts; hashes; and three public parameter values from the committed captures printed by the probe (a Census weighted-average threshold, an SSI couple FBR, two NCHS 2000 survival values). No 1946-55 value or direction.",
+  "not_opened": [
+   "any Boomers 2004 or Urban report page, any comparator lane or seal, any U2 or PPI availability or values-scan file, any scratchpad archive, anything under REFS",
+   "docs/design/boomers2004_1946_55_comparison.md (the specification; one grep line only, above)",
+   "EV/u2-target-availability-cleared-20260928.md and the four public result memos (allowed; not needed)",
+   "EV/phase2-20260927/out/u2-m2-build-and-review.json (the review came as task text)",
+   "any raw PSID record file"
+  ]
  }
 }

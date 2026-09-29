@@ -174,3 +174,67 @@ The registry `data/external/track_u2/individual.json` was parsed for entry ids, 
 - an invented value, such as altered parameters, invented file digests or the invented population;
 - a documented code or range copied from the registry's codebook text;
 - a count of tests or of invented rows.
+
+## Round-2 fix lane
+
+This lane was a blind builder: a workflow subagent (Claude Opus 5.5), 2026-09-29. It fixed the round-2 review of `eeb4850` in `f78df52`, `b1d95c8` and `f16f1b9`, and recorded the fixes in the commit that adds this section (see the report's "Round 2 review fixes"). It worked in `/Users/maxghenis/PolicyEngine/_worktrees/dynamics-u2-m2-20260928` and kept scratch files in its session scratchpad. The machine-readable list is `round_2_fix_lane` in [`u2_m2_exposure.json`](u2_m2_exposure.json).
+
+**Evidence directory (all builder-allowed):**
+
+- `EV/RESTRICTED-FILES.md` in full, read first, including the 2026-09-29 02:40 entry (see the disclosure above; nothing here depends on it);
+- `EV/phase2-20260927/prompts/common.md`, `u2-m2-continue.md` and `u2-m2-resume.md`, in full;
+- `EV/merge-watchers/recount-tiers.py`, read in full and run (collection only).
+
+The round-2 review reached this lane as text in its task. It did not open `EV/phase2-20260927/out/u2-m2-build-and-review.json`.
+
+It did not open:
+
+- the cleared U2 availability statement or the public memos (not needed);
+- any Boomers 2004 or Urban report page;
+- any comparator lane or seal;
+- any U2 or PPI availability or values-scan file;
+- any scratchpad archive;
+- anything under REFS.
+
+**Specification:** not opened. One repository grep for `u1_differential_` matched one line of `docs/design/boomers2004_1946_55_comparison.md` (line 1345). It printed only the key name `invented_dry_run_and_u1_differential_evidence`, with no value.
+
+**Repository:** the files the fixes touch, in full or in the ranges needed. These are:
+
+- `parameters.py` in full;
+- parts of `runner.py` and `cohort.py`: the lines `check_person_joins` and the spouse-sex lookup use, for info 3;
+- parts of `adjusted_poverty.py` (the life-table, threshold and SSI definitions and loaders) and of `data/tr2008.py` (the 2004 period-table reader), read only;
+- the two U2 scripts it changed, and parts of `u2_u1_differential.py`;
+- the U2 test files it changed, and part of `test_u2_pipeline.py`;
+- path greps of the two Boomers U1 specification tests, to confirm an empty HOME makes their evidence-directory reads skip;
+- this record, the report and `CLAUDE.md`.
+
+No protected file and no milestone-1b-owned file was edited.
+
+**Executed, all on invented data:**
+
+- every `tests/track_u2` file, one per command, with `-p no:xdist`: the plain run, at `b1d95c8` and again at `f16f1b9`;
+- the same files again under a logging audit hook on the PSID directory, the evidence directory and REFS.
+  - The first attempt used `os.path.realpath`. It made `test_u2_differential.py` fail one test, the artifact round 1 also recorded.
+  - The hook was changed to `os.path.abspath`, which touches no file, and the whole pass was rerun: every file passed.
+- the §13 U1 suite and `tests/estimates/test_birth_evidence_artifact.py`, at `b1d95c8` and at `f16f1b9`.
+  - They ran with HOME and `POPULACE_DYNAMICS_PSID_DIR` pointed at an empty directory, and an audit hook refusing any open, listing or stat under `~/PolicyEngine/psid-data`.
+  - It refused nothing. Its self-test tried to open a nonexistent probe path there, and the hook refused that before any open.
+- the U1 differential (`scripts/u2_u1_differential.py`), at `b1d95c8` and at `f16f1b9` against `9cee2423`, on `git clone --shared` clones in the scratchpad, with the refusing hook active;
+- `black`, `ruff` and `recount-tiers.py` (collection only, `-p no:xdist`);
+- scratch probes and temporary uncommitted tests:
+  - a probe running eight altered-parameter routes against `eeb4850`'s check and the fixed one;
+  - a temporary test on `eeb4850`'s runner (removed before commit);
+  - the new parameter tests run once against `eeb4850`'s `parameters.py`, swapped in and restored from git;
+  - the invented dry run, written into the scratchpad.
+
+**Measured test exposure:**
+
+- The logging hook shows that no test opens anything under the evidence directory or REFS.
+- Under the PSID directory, only `tests/track_u2/test_psid_research_sources.py` opens anything: 32 documentation files, the same set as round 1. They are 24 under `documentation/capture1` (23 PDFs and `browser_digests.txt`) and 8 codebook or readme PDFs under `family/<wave>/` and `ind2023er/`. The lane printed their names and extensions, never their contents, and opened no survey record file.
+
+**Values:** the lane stated and inferred no 1946–55 value or direction. Every number it added or printed is one of these:
+
+- an invented value (1.0, or 12.0 a year);
+- a count of tests;
+- a hash;
+- one of three public parameter values its probe printed from the committed captures: a Census weighted-average threshold, an SSI couple FBR and two NCHS 2000 survival values.
