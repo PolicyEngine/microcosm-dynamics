@@ -98,7 +98,7 @@
       {
         "component": "Historical earnings",
         "dynasim": "Lifetime histories from survey plus linked administrative inputs",
-        "ours": "PSID 1968–2022 panel; gate 1 passed (13th candidate)"
+        "ours": "PSID 1968–2022 head and spouse panel, unreported years imputed or set to zero; gate 1 passed for the generated backcast process; the DynaSim tests read the recorded careers"
       },
       {
         "component": "Family structure",
@@ -108,7 +108,7 @@
       {
         "component": "Disability",
         "dynasim": "Documented health and work-limitation modules",
-        "ours": "Gate m4 passed, anchored to SSA administrative tables"
+        "ours": "Gate m4 passed for self-reported work limitation, anchored to the shape of SSA's DI statistics; the SSDI entitlement the tests use is built, not gated"
       },
       {
         "component": "Base population",
@@ -118,12 +118,12 @@
       {
         "component": "Forward projection",
         "dynasim": "Annual updating and alignment",
-        "ours": "Temporal-holdout gate m6 passed; forward gate pre-lock"
+        "ours": "Temporal-holdout gate m6 passed (2016/2018 earnings, 2015–2019 flows; nothing certified on mortality drift); forward gate not yet run; the DynaSim tests do not yet draw forward earnings"
       },
       {
         "component": "Social Security rule engine",
         "dynasim": "Rule-based, code not public",
-        "ours": "Open PolicyEngine-US engine plus AIME/PIA oracle (built, not gated)"
+        "ours": "Python AIME/PIA oracle using PolicyEngine-US parameters (built, not gated); the Axiom engine matches its statutory AIME for 7,486 of 7,486 people (diagnostic)"
       },
       {
         "component": "Claiming behavior",
@@ -138,7 +138,7 @@
       {
         "component": "Wealth, assets, and LTSS",
         "dynasim": "Major documented strength",
-        "ours": "Design-only — a later extension track"
+        "ours": "No wealth projection (a later extension track); exercise 2 annuitizes PSID wealth statically"
       }
     ]
   }
