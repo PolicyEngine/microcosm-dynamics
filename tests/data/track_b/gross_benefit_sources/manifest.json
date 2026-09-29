@@ -1,0 +1,458 @@
+{
+  "schema_version": 1,
+  "purpose": "Track B milestone G statutory worked examples and rules; no population data",
+  "capture_formats": {
+    "http_body": "Decoded HTTP response body (curl --compressed, browser User-Agent), unmodified.",
+    "browser_text": "www.ssa.gov answered curl with HTTP 403 on 2026-09-29, so the page was opened in the Claude desktop in-app browser. The file is the rendered document text of the cited passages, checked substring-by-substring against the live page; served_bodies records the byte count and SHA-256 of the raw response the browser fetched at the same time.",
+    "http_text_excerpt": "Verbatim excerpts of a decoded HTTP response body (curl --compressed), after stripping tags, decoding entities, collapsing whitespace and straightening curly apostrophes; served_bodies records the byte count and SHA-256 of each full body."
+  },
+  "sources": [
+    {
+      "id": "poms_rs_00605_900",
+      "citation": "POMS RS 00605.900 List of RAW PIA and Family Maximum Computations",
+      "poms_transmittal": "TN 141 (11-25)",
+      "page_date": "11/21/2025",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300605900",
+      "retrieved_at_utc": "2026-09-29T18:20:40Z",
+      "capture": "http_body",
+      "file": "poms_rs_00605_900.html",
+      "bytes": 39703,
+      "sha256": "6c6e22435bc4fbb18addd78dcaa602c3042ea7456fd996317ea62cf2181531b8"
+    },
+    {
+      "id": "poms_rs_00605_910",
+      "citation": "POMS RS 00605.910 Family Maximum Chart",
+      "poms_transmittal": "TN 141 (11-25)",
+      "page_date": "11/21/2025",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300605910",
+      "retrieved_at_utc": "2026-09-29T18:20:40Z",
+      "capture": "http_body",
+      "file": "poms_rs_00605_910.html",
+      "bytes": 71104,
+      "sha256": "d93cf03ad949dc2de601846dc74b8951c5ec8e39e44bc65e54c7c952a3113e84"
+    },
+    {
+      "id": "poms_rs_00615_005",
+      "citation": "POMS RS 00615.005 Reduced Benefits",
+      "poms_transmittal": "TN 24 (09-02)",
+      "page_date": "09/16/2002",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615005",
+      "retrieved_at_utc": "2026-09-29T18:20:41Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_005.html",
+      "bytes": 35278,
+      "sha256": "c6a3aed427c9bd6bbd4a24daf7ed28a9fcf2f90566feeb9125ef3b12a77ac023"
+    },
+    {
+      "id": "poms_rs_00615_020",
+      "citation": "POMS RS 00615.020 Dual Entitlement Overview",
+      "poms_transmittal": "TN 41 (12-23)",
+      "page_date": "12/05/2023",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615020",
+      "retrieved_at_utc": "2026-09-29T18:20:38Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_020.html",
+      "bytes": 43216,
+      "sha256": "90b200b670b49b5e7ea7f0ddc186c78cc289186ec87017cf3e1f88839cf11b19"
+    },
+    {
+      "id": "poms_rs_00615_101",
+      "citation": "POMS RS 00615.101 Reduced RIB",
+      "poms_transmittal": "TN 24 (09-02)",
+      "page_date": "03/29/2017",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615101",
+      "retrieved_at_utc": "2026-09-29T18:27:25Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_101.html",
+      "bytes": 56312,
+      "sha256": "36099e73939d13a2115dba175a177d832a58f2d49644500a6185eae328b98655"
+    },
+    {
+      "id": "poms_rs_00615_201",
+      "citation": "POMS RS 00615.201 Reduced Spouse's Benefits",
+      "poms_transmittal": "TN 53 (12-23)",
+      "page_date": "12/07/2023",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615201",
+      "retrieved_at_utc": "2026-09-29T18:20:38Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_201.html",
+      "bytes": 64158,
+      "sha256": "d2a38cb3b36bc3f1637106805a6c39037b7e421f2b434364dbcf207eeaa5bc92"
+    },
+    {
+      "id": "poms_rs_00615_210",
+      "citation": "POMS RS 00615.210 Reduced Spouse's Benefit Where the Family Maximum is Involved",
+      "poms_transmittal": "TN 24 (09-02)",
+      "page_date": "09/16/2002",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615210",
+      "retrieved_at_utc": "2026-09-29T18:20:38Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_210.html",
+      "bytes": 18130,
+      "sha256": "f5e8b4c2d69f3bb452726d6228e69db985a5bacd86ba10bf0d7b24cf2bda3ce2"
+    },
+    {
+      "id": "poms_rs_00615_240",
+      "citation": "POMS RS 00615.240 Entitled to Reduced Spouse's Benefit for Month Before Entitlement to Reduced RIB (B then A)",
+      "poms_transmittal": "TN 59 (12-23)",
+      "page_date": "12/14/2023",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615240",
+      "retrieved_at_utc": "2026-09-29T20:59:04Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_240.html",
+      "bytes": 21092,
+      "sha256": "d9c7b5fe938d66afd6cfd98a469112fb38c041f0b361dcd9c0bb25b7d6a5ee4b"
+    },
+    {
+      "id": "poms_rs_00615_250",
+      "citation": "POMS RS 00615.250 Entitled to Reduced Spouse's Benefit for Months Simultaneous With or After Entitlement to Reduced RIB (A then B or B with A)",
+      "poms_transmittal": "TN 24 (09-02)",
+      "page_date": "12/08/2008",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615250",
+      "retrieved_at_utc": "2026-09-29T20:59:05Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_250.html",
+      "bytes": 26171,
+      "sha256": "0dcde241013f26e1172b9a0f359ff5b4a57c9fdcdec65d7ca7244a5a4d5c5891"
+    },
+    {
+      "id": "poms_rs_00615_260",
+      "citation": "POMS RS 00615.260 Reduced Spouse's Benefit and DIB Entitlement (B, HA)",
+      "poms_transmittal": "TN 42 (12-23)",
+      "page_date": "01/04/2017",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615260",
+      "retrieved_at_utc": "2026-09-29T20:59:05Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_260.html",
+      "bytes": 26310,
+      "sha256": "d938b1f5f4a13903fd7004326a3c8cf305d9a72af958551d900e5a132951f72c"
+    },
+    {
+      "id": "poms_rs_00615_301",
+      "citation": "POMS RS 00615.301 Reduced Widow(er)'s Benefits",
+      "poms_transmittal": "TN 43 (12-23)",
+      "page_date": "12/05/2023",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615301",
+      "retrieved_at_utc": "2026-09-29T18:20:39Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_301.html",
+      "bytes": 49791,
+      "sha256": "60dada526931a9d714619c6496f9b1e6ed6a45ac37221f4594e9be6249c7cf4f"
+    },
+    {
+      "id": "poms_rs_00615_320",
+      "citation": "POMS RS 00615.320 Reduced WIB — Deceased NH Entitled to Reduced RIB or Reduced DIB Prior to Death-RIB LIM",
+      "poms_transmittal": "TN 62 (12-23)",
+      "page_date": "12/14/2023",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615320",
+      "retrieved_at_utc": "2026-09-29T18:27:25Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_320.html",
+      "bytes": 33496,
+      "sha256": "864fec1510445a230bc310314d7c9445e7fa500bd3b0a2a795a11f8a66ce22cd"
+    },
+    {
+      "id": "poms_rs_00615_680",
+      "citation": "POMS RS 00615.680 Divorced Spouse or Surviving Divorced Spouse Entitlement Disregarded for Family Maximum and Minimum Benefit Purposes",
+      "poms_transmittal": "TN 24 (09-02)",
+      "page_date": "08/12/2003",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615680",
+      "retrieved_at_utc": "2026-09-29T18:20:39Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_680.html",
+      "bytes": 20106,
+      "sha256": "786de87bbd02fb63e254ddf10cd6c02e93f485f368f297acee2beb8218db8587"
+    },
+    {
+      "id": "poms_rs_00615_682",
+      "citation": "POMS RS 00615.682 Family Benefits Where a Divorced Spouse or a Surviving Divorced Spouse is Entitled",
+      "poms_transmittal": "TN 24 (09-02)",
+      "page_date": "09/16/2002",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615682",
+      "retrieved_at_utc": "2026-09-29T18:20:39Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_682.html",
+      "bytes": 17689,
+      "sha256": "949fee38b82eaacac31ccb0da85d8c7b92d83cee86b90217dd081d49d1c238eb"
+    },
+    {
+      "id": "poms_rs_00615_684",
+      "citation": "POMS RS 00615.684 Benefits When A Legal Spouse and A Deemed or Putative Spouse are Entitled",
+      "poms_transmittal": "TN 24 (09-02)",
+      "page_date": "08/15/2012",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615684",
+      "retrieved_at_utc": "2026-09-29T18:20:39Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_684.html",
+      "bytes": 18330,
+      "sha256": "43425e2eca3908b0a72986bced5ad21e7feb1aa2c7d245c7f116d13483b3a969"
+    },
+    {
+      "id": "poms_rs_00615_692",
+      "citation": "POMS RS 00615.692 Computing the Amount of the Delayed Retirement Credits (DRC)",
+      "poms_transmittal": "TN 28 (11-14)",
+      "page_date": "11/14/2014",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615692",
+      "retrieved_at_utc": "2026-09-29T18:27:24Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_692.html",
+      "bytes": 92227,
+      "sha256": "80121425f03c001a0036dc772a740721fbcbe72e56bcd80d1b22295d62628864"
+    },
+    {
+      "id": "poms_rs_00615_694",
+      "citation": "POMS RS 00615.694 DRCs in Dual-Entitlement Cases",
+      "poms_transmittal": "TN 45 (12-23)",
+      "page_date": "12/06/2023",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615694",
+      "retrieved_at_utc": "2026-09-29T18:22:16Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_694.html",
+      "bytes": 20944,
+      "sha256": "0aecbf70eda3d5688ae381608a869c4de5843b9df601a2e2066f12b6ea0eaa66"
+    },
+    {
+      "id": "poms_rs_00615_695",
+      "citation": "POMS RS 00615.695 Family Maximum and Auxiliary Benefits (DRC)",
+      "poms_transmittal": "TN 24 (09-02)",
+      "page_date": "09/16/2002",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615695",
+      "retrieved_at_utc": "2026-09-29T18:20:39Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_695.html",
+      "bytes": 16816,
+      "sha256": "fd9ae5fb8b7ba2f9607628c9d93a7c22ca8489cfe06a0f7db5c1444e396d2fcb"
+    },
+    {
+      "id": "poms_rs_00615_710",
+      "citation": "POMS RS 00615.710 Widow(er)'s Benefit — DRCs And The Family Maximum Involved",
+      "poms_transmittal": "TN 69 (12-23)",
+      "page_date": "12/15/2023",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615710",
+      "retrieved_at_utc": "2026-09-29T18:20:39Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_710.html",
+      "bytes": 25021,
+      "sha256": "65cdeb99016861a252d4985e5b888aa7572736714705f2d2b32e661486da864b"
+    },
+    {
+      "id": "poms_rs_00615_730",
+      "citation": "POMS RS 00615.730 Maximum Family Benefits",
+      "poms_transmittal": "TN 24 (09-02)",
+      "page_date": "09/16/2002",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615730",
+      "retrieved_at_utc": "2026-09-29T18:20:34Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_730.html",
+      "bytes": 22271,
+      "sha256": "6eab8bb9478162a7fe33f262a5db7da96c5b47c3ff4b500ef698622a82cff253"
+    },
+    {
+      "id": "poms_rs_00615_736",
+      "citation": "POMS RS 00615.736 Determining Maximum Family Benefits Effective January 1979",
+      "poms_transmittal": "TN 57 (12-23)",
+      "page_date": "12/14/2023",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615736",
+      "retrieved_at_utc": "2026-09-29T18:20:35Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_736.html",
+      "bytes": 34421,
+      "sha256": "918f805a196bc7791a6d2c79ecc83c58293dee33a3816a46a30c353ff5f38dd8"
+    },
+    {
+      "id": "poms_rs_00615_740",
+      "citation": "POMS RS 00615.740 1980 Disability Maximum — General",
+      "poms_transmittal": "TN 26 (01-04)",
+      "page_date": "01/09/2004",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615740",
+      "retrieved_at_utc": "2026-09-29T18:20:35Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_740.html",
+      "bytes": 20450,
+      "sha256": "f213beed725ad6b927b74371db2fd213fcb36951f7d124aab54fb4c378da3960"
+    },
+    {
+      "id": "poms_rs_00615_742",
+      "citation": "POMS RS 00615.742 Maximum Family Benefits Based on DIB Eligibility After 1978 — Initial Entitlement After June 1980",
+      "poms_transmittal": "TN 24 (09-02)",
+      "page_date": "11/14/2016",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615742",
+      "retrieved_at_utc": "2026-09-29T18:20:36Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_742.html",
+      "bytes": 21119,
+      "sha256": "08912c9cce862b4a11ca05c702e8883f7c08904ab06fe3f4f10f95cd01595583"
+    },
+    {
+      "id": "poms_rs_00615_752",
+      "citation": "POMS RS 00615.752 Determining Total Benefits Before Adjustment - Family Maximum",
+      "poms_transmittal": "TN 24 (09-02)",
+      "page_date": "09/16/2002",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615752",
+      "retrieved_at_utc": "2026-09-29T18:20:36Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_752.html",
+      "bytes": 17498,
+      "sha256": "4b357c2dcc32fb999296dee922bc2fd57464eba812d527e307aea76a851c3fbe"
+    },
+    {
+      "id": "poms_rs_00615_754",
+      "citation": "POMS RS 00615.754 Determining the Amount of Each Benefit When Total Benefits Exceed the Maximum",
+      "poms_transmittal": "TN 24 (09-02)",
+      "page_date": "05/23/2006",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615754",
+      "retrieved_at_utc": "2026-09-29T18:20:36Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_754.html",
+      "bytes": 25024,
+      "sha256": "b216b17c378aa2856b6d59f2307d10d25b02c2ecf920d4d256ca5ca0b2e03f50"
+    },
+    {
+      "id": "poms_rs_00615_756",
+      "citation": "POMS RS 00615.756 Adjusting Benefits for the Family Maximum (FMAX)",
+      "poms_transmittal": "TN 31 (11-18)",
+      "page_date": "11/29/2018",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615756",
+      "retrieved_at_utc": "2026-09-29T18:20:37Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_756.html",
+      "bytes": 29411,
+      "sha256": "709e99201b0635cf96e6f9b76232830b0d35110a0a68b06c51d40c6fbc8ee8b2"
+    },
+    {
+      "id": "poms_rs_00615_766",
+      "citation": "POMS RS 00615.766 Relationship of Deductions to Maximum Provisions",
+      "poms_transmittal": "TN 24 (09-02)",
+      "page_date": "09/16/2002",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615766",
+      "retrieved_at_utc": "2026-09-29T18:20:37Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_766.html",
+      "bytes": 16889,
+      "sha256": "93623a81ddb85f8c06ff04dbb9ad8074a96afd1852eb9d1081cfcabf76cfed44"
+    },
+    {
+      "id": "poms_rs_00615_768",
+      "citation": "POMS RS 00615.768 Adjustment in Simultaneous and Dual Entitlement Cases",
+      "poms_transmittal": "TN 55 (12-23)",
+      "page_date": "09/22/2004",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615768",
+      "retrieved_at_utc": "2026-09-29T18:20:37Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_768.html",
+      "bytes": 33955,
+      "sha256": "be173b85838dba4680195b7636305a42870a761ae580a1380ee435972db276ce"
+    },
+    {
+      "id": "ssa_oact_familymax",
+      "citation": "SSA Office of the Chief Actuary, Formula for Family Maximum Benefit",
+      "url": "https://www.ssa.gov/oact/cola/familymax.html",
+      "retrieved_at_utc": "2026-09-29T18:34:47Z",
+      "capture": "browser_text",
+      "file": "ssa_oact_familymax.txt",
+      "bytes": 2116,
+      "sha256": "4a9d58226a03a4b2e1a9c532ab9b270de1bcd451798f6017f651515ba372b62c",
+      "served_bodies": [
+        {
+          "url": "https://www.ssa.gov/oact/cola/familymax.html",
+          "bytes": 35406,
+          "sha256": "141a0c991b5f60648f6fb2771e19fc92b02982ebe8e5318e4aedfb7dbf0c730e"
+        }
+      ]
+    },
+    {
+      "id": "ssa_oact_dibfamilymax",
+      "citation": "SSA Office of the Chief Actuary, Maximum Benefit for a Disabled-Worker Family",
+      "url": "https://www.ssa.gov/oact/cola/dibfamilymax.html",
+      "retrieved_at_utc": "2026-09-29T18:34:47Z",
+      "capture": "browser_text",
+      "file": "ssa_oact_dibfamilymax.txt",
+      "bytes": 451,
+      "sha256": "45344f713fe48314c3fc3d8375d8cbb53d5e90d57b327dd6ad44985aac5ce066",
+      "served_bodies": [
+        {
+          "url": "https://www.ssa.gov/oact/cola/dibfamilymax.html",
+          "bytes": 11895,
+          "sha256": "4f5e4910754feae3bd533f02a294ea60d8f4476a1da2351495f7c191d9e8858f"
+        }
+      ]
+    },
+    {
+      "id": "ssa_ssb_v75n3_family_maximum",
+      "citation": "Social Security Bulletin 75(3), 2015: Understanding the Social Security Family Maximum (excerpts)",
+      "url": "https://www.ssa.gov/policy/docs/ssb/v75n3/v75n3p1.html",
+      "retrieved_at_utc": "2026-09-29T18:34:47Z",
+      "capture": "browser_text",
+      "file": "ssa_ssb_v75n3_family_maximum_excerpts.txt",
+      "bytes": 6738,
+      "sha256": "e161084a266c1acc9f58cd9157ce7bc0c694e6d8847b8085272a024e338ee630",
+      "served_bodies": [
+        {
+          "url": "https://www.ssa.gov/policy/docs/ssb/v75n3/v75n3p1.html",
+          "bytes": 94325,
+          "sha256": "1338bd6f201e5aee9ce5b614397c8bac1c0cea8612b53e148517f2d21c5adc8c"
+        }
+      ]
+    },
+    {
+      "id": "ssa_act_202_215",
+      "citation": "Social Security Act sections 202 and 215 (excerpts)",
+      "url": "https://www.ssa.gov/OP_Home/ssact/title02/0202.htm",
+      "retrieved_at_utc": "2026-09-29T18:34:47Z",
+      "capture": "browser_text",
+      "file": "ssa_act_202_215_excerpts.txt",
+      "bytes": 11723,
+      "sha256": "f546b3df836ace22acba6ca0af5d3e89186251efae27f0b21b798cf44a87957c",
+      "additional_urls": [
+        "https://www.ssa.gov/OP_Home/ssact/title02/0215.htm"
+      ],
+      "served_bodies": [
+        {
+          "url": "https://www.ssa.gov/OP_Home/ssact/title02/0202.htm",
+          "bytes": 208831,
+          "sha256": "9983b24c054b0e2cf3fa0f6c5184ac7a8aa1609e2fb45acced2e630db31e2946"
+        },
+        {
+          "url": "https://www.ssa.gov/OP_Home/ssact/title02/0215.htm",
+          "bytes": 111617,
+          "sha256": "fd8082cd30e327713e989d7dede902d3e19e67b673e2bf7b6955571e309f191a"
+        }
+      ]
+    },
+    {
+      "id": "lii_usc_402_415",
+      "citation": "42 U.S.C. 402(b)(4)(A), (c)(4)(A), (q)(5)(A) and 415(i)(2)(A)(ii)-(iii), Legal Information Institute (excerpts)",
+      "url": "https://www.law.cornell.edu/uscode/text/42/402",
+      "additional_urls": [
+        "https://www.law.cornell.edu/uscode/text/42/415"
+      ],
+      "retrieved_at_utc": "2026-09-29T20:58:57Z",
+      "capture": "http_text_excerpt",
+      "file": "lii_usc_402_415_excerpts.txt",
+      "bytes": 5443,
+      "sha256": "f9ef8c5529fccff27303e8f8a607497d6606ad304b9f91fa176dc20abe9218b9",
+      "served_bodies": [
+        {
+          "url": "https://www.law.cornell.edu/uscode/text/42/402",
+          "bytes": 1089709,
+          "sha256": "e5bb977c3ab381c2c3bd4f6bb320b86f25e2f0ad2b629e01333be56727d3823b"
+        },
+        {
+          "url": "https://www.law.cornell.edu/uscode/text/42/415",
+          "bytes": 481427,
+          "sha256": "c3262e82e8e674caf43709c522ce60760eafb0b133e1f99221ca7aa97d54ea3a"
+        }
+      ]
+    },
+    {
+      "id": "ssa_act_203",
+      "citation": "Social Security Act section 203 (42 U.S.C. 403), captured by R1",
+      "url": "https://www.ssa.gov/OP_Home/ssact/title02/0203.htm",
+      "retrieved_at_utc": "2026-09-28T16:02:51Z",
+      "capture": "http_body",
+      "file": "../ret_sources/ssa_act_203.html",
+      "bytes": 99348,
+      "sha256": "ea000092e140d2ff8ce058138a9f919fac4eeac0004bb71364d6e2bade53cf54"
+    }
+  ]
+}

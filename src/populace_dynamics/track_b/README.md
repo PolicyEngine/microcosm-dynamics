@@ -97,3 +97,16 @@ realized statutory constants.
 
 No PSID data, empirical outcomes, or DYNASIM comparator values are used.
 The engine, gates, and committed run artifacts are not part of R1.
+
+## G: gross-benefit layer
+
+`gross_benefits.py` computes gross monthly benefits on one worker's record:
+the 403(a) family maximum (and the 403(a)(6) disability maximum), original
+benefits, the proportional reduction for the maximum, the RS 00615.768
+dual-entitlement redistribution, age reductions after the maximum, the
+402(k)(3)(A) dual-entitlement offset and the 215(g) whole-dollar payment.
+Verification class: **statutory conformance**, for supported family
+configurations only. Unsupported configurations raise
+`FAMILY_CONFIG_UNSUPPORTED` and stay in denominators. The design note is
+`docs/design/track_b_g_gross_benefits.md`; the worked-example sources are
+under `tests/data/track_b/gross_benefit_sources/`.
