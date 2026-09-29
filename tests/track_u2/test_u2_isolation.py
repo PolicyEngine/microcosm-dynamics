@@ -6,8 +6,9 @@
   U1's specification, parameter captures, registered artifact and
   environment sidecar, and U1's code and tests -- keep the bytes the
   milestone-1 manifest (``data/external/track_u2/u1_identity.json``)
-  records, and no U2 commit or merge resolution changed a committed
-  ``runs/*.json`` or any other protected path.
+  records, and no U2 commit or merge resolution (attributed by path; see
+  ``test_no_committed_run_engine_gate_or_u1_file_changed``) changed a
+  committed ``runs/*.json`` or any other protected path.
 * Every U2 milestone-2 module is an exact file exclusion in
   ``POST_REVIEW_SOURCE_EXCLUSIONS`` (the exact-tuple and transitive
   reachability tests live in ``tests/estimates/
@@ -137,16 +138,19 @@ def test_no_committed_run_engine_gate_or_u1_file_changed():
     The check is per commit, not a tree diff against ``BASE``: master keeps
     moving (new runs, gates and other tracks' test data land there), and a
     tree diff would charge those to U2 once this branch merges master or
-    lands on it. A merge counts as U2's when its own resolution or hand
-    edits (``--cc``) touch a U2-owned path, and it is then held to the
-    protected paths the same way.
+    lands on it. A merge counts as U2's when its merged bytes
+    (``--cc --name-only``: paths that differ from every parent, including
+    conflict resolutions and hand edits) touch a U2-owned path, and it is
+    then held to the protected paths the same way.
 
-    Attribution is by path: a commit or merge that touches only protected
-    paths is not recognised as U2's and is not caught here. ``gates.yaml``, the
-    engine loop and steps, family/psid/career and U1's files and artifact
-    stay byte-pinned by ``test_protected_bytes_match_the_milestone_1_manifest``;
-    other runs and engine modules rely on review. U2's own artifact and
-    sidecar may be added once and never modified.
+    Attribution is by path: a commit or merge that touches no U2-owned
+    path (for example one that changes only shared files such as the
+    reducer or the tier counts, plus protected paths) is not recognised as
+    U2's and is not caught here. ``gates.yaml``, the engine loop and
+    steps, family/psid/career and U1's files and artifact stay byte-pinned
+    by ``test_protected_bytes_match_the_milestone_1_manifest``; other runs
+    and engine modules rely on review. U2's own artifact and sidecar may
+    be added once and never modified, by any commit or merge.
     """
     if _git("cat-file", "-e", f"{BASE}^{{commit}}").returncode != 0:
         pytest.skip("the U1 base commit is not in this clone's history")
@@ -197,6 +201,7 @@ def test_no_committed_run_engine_gate_or_u1_file_changed():
             offending[merge] = own.stdout.split()
     rewritten = _git(
         "log",
+        "-m",
         "--full-history",
         "--diff-filter=MDRT",
         "--format=%H",
