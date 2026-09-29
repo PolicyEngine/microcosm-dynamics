@@ -98,7 +98,7 @@
       {
         "component": "Historical earnings",
         "dynasim": "Lifetime histories from survey plus linked administrative inputs",
-        "ours": "PSID 1968–2022 head and spouse panel, unreported years imputed or set to zero; gate 1 passed for the generated backcast process; the DynaSim tests read the recorded careers"
+        "ours": "PSID 1968–2022 head and spouse panel, unreported years imputed or set to zero; gate 1 passed for the generated backcast process; exercises 1, 3 and 4 read the recorded careers"
       },
       {
         "component": "Family structure",
@@ -118,7 +118,7 @@
       {
         "component": "Forward projection",
         "dynasim": "Annual updating and alignment",
-        "ours": "Temporal-holdout gate m6 passed (2016/2018 earnings, 2015–2019 flows; nothing certified on mortality drift); forward gate not yet run; the DynaSim tests do not yet draw forward earnings"
+        "ours": "Temporal-holdout gate m6 passed (2016/2018 earnings, 2015–2019 flows; nothing certified on mortality drift); forward gate (gate 3) unlocked and not yet run; the DynaSim tests do not yet draw forward earnings"
       },
       {
         "component": "Social Security rule engine",

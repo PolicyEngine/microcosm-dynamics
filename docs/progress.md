@@ -296,11 +296,11 @@ Component-by-component against DYNASIM, the main non-governmental dynamic benchm
 
 | Component | DYNASIM | This project |
 |---|---|---|
-| Historical earnings | Lifetime histories from survey plus linked administrative inputs | PSID 1968–2022 head and spouse panel, unreported years imputed or set to zero; gate 1 passed for the generated backcast process; the DynaSim tests read the recorded careers |
+| Historical earnings | Lifetime histories from survey plus linked administrative inputs | PSID 1968–2022 head and spouse panel, unreported years imputed or set to zero; gate 1 passed for the generated backcast process; exercises 1, 3 and 4 read the recorded careers |
 | Family structure | Marriage, divorce, and family in the annual simulation | Gates 2, 2b, 2c passed across three tranches |
 | Disability | Documented health and work-limitation modules | Gate m4 passed for self-reported work limitation, anchored to the shape of SSA's DI statistics; the SSDI entitlement the tests use is built, not gated |
 | Base population | SIPP-based starting sample | Certified CPS synthetic frame; transport gate w1 passed |
-| Forward projection | Annual updating and alignment | Temporal-holdout gate m6 passed (2016/2018 earnings, 2015–2019 flows; nothing certified on mortality drift); forward gate not yet run; the DynaSim tests do not yet draw forward earnings |
+| Forward projection | Annual updating and alignment | Temporal-holdout gate m6 passed (2016/2018 earnings, 2015–2019 flows; nothing certified on mortality drift); forward gate (gate 3) unlocked and not yet run; the DynaSim tests do not yet draw forward earnings |
 | Social Security rule engine | Rule-based, code not public | Python AIME/PIA oracle using PolicyEngine-US parameters (built, not gated); the Axiom engine matches its statutory AIME for 7,486 of 7,486 people (diagnostic) |
 | Claiming behavior | Retirement-and-timing model | Reduced-form claim-age distribution (built, reported, not gated) |
 | Auxiliary benefits | Spouse and survivor analysis in natural domain | Spousal, survivor, widow incl. dual-entitlement logic (built, not gated) |
