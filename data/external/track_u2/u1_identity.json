@@ -57,6 +57,8 @@
     "path": "docs/design/boomers2004_1946_55_comparison.md",
     "note": "Moved out of the unchanged-byte list by u2-m1b: Part C writes the proposed revision u2-draft-4 into the specification. The draft-3 hash is the milestone-1 pin; the current hash pins u2-draft-4; every line a registry cites keeps its draft-3 number and text.",
     "draft_3_sha256": "7badf89e896ece28abcea1cb2db9bd55d468346b405ed06eb357aaf5c7b51df2",
+    "draft_3_commit": "f7412e00cdcdba6ee1156b74fa93039f5329cb8f",
+    "draft_3_git_blob": "e07ee0d589d20f3b6d100e5d4ce173f9a653f5e9",
     "version": "u2-draft-4",
     "sha256": "8fdc33be8dd651268a788cbb66bd6c4fc0ca86758aed56ba1ec9a06bed3bb97c",
     "cited_lines_sha256": {
