@@ -98,7 +98,7 @@ The quotes are from the archived copies in `~/PolicyEngine/dynasim-refs` (outsid
 | `103050-five-dem.txt` | `955d4376bb6951815e028467a3eccc2822f2d6dced08bdcff8c94c6719e16706` |
 | `103050-five-dem.pdf` | `659e331b37306b220aec668425518eb613e24faf9852397b2845ffb935753a5f` |
 
-`tests/test_anchor_provenance_erratum.py` checks every quote above against these files when they are present, and pins the corrected strings in the scripts.
+`tests/test_anchor_provenance_erratum.py` checks every quote above against these files when they are present, and pins the corrected strings in the scripts and the paper.
 
 ## What this change corrects
 

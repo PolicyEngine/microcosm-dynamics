@@ -33,6 +33,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
 ERRATUM = ROOT / "docs" / "errata" / "2026-09-29-anchor-provenance.md"
+PAPER = ROOT / "paper" / "paper.qmd"
 SOURCE_TEXTS = Path("~/PolicyEngine/dynasim-refs").expanduser()
 
 # ---------------------------------------------------------------------
@@ -72,6 +73,12 @@ EXPECTED_MERMIN_TABLE1_CITATION = (
     "DYNASIM3 Runid 432. seventy_five_year_payroll_pct is the table's "
     "75-year deficit/surplus row: Congressional Budget Office (2005) "
     "estimates as reported in Mermin (2005), not DYNASIM3 output"
+)
+#: The paper's cost-ordering paragraph, whitespace-normalized.
+EXPECTED_PAPER_ANCHOR_SENTENCE = (
+    "That anchor column is the Congressional Budget Office's 2005 scoring "
+    "of the four options, which @mermin2005benefitreductions reports in "
+    "the same table as its DYNASIM3 benefits."
 )
 
 # ---------------------------------------------------------------------
@@ -200,6 +207,13 @@ def test_mermin_rows_table1_citation_names_cbo_for_the_payroll_row():
         block["seventy_five_year_payroll_pct"]
         is mermin_rows.ANCHOR_TABLE1_PAYROLL_PCT
     )
+
+
+def test_paper_names_cbo_as_the_t2_anchor():
+    text = PAPER.read_text(encoding="utf-8")
+    prose = " ".join(text.split())
+    assert EXPECTED_PAPER_ANCHOR_SENTENCE in prose
+    assert OLD_PAPER_WORDING not in prose
 
 
 def test_no_prose_or_code_outside_the_erratum_repeats_an_old_label():

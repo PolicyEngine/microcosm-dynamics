@@ -1282,10 +1282,11 @@ retirement-age increase above progressive price indexing, where
 the anchor ranks them the other way. That anchor column is the
 Congressional Budget Office's 2005 scoring of the four options, which
 @mermin2005benefitreductions reports in the same table as its DYNASIM3
-benefits, and DYNASIM3's 2050 benefit row for ages 62 to 67 orders
-the pair the same way (progressive price indexing at 81.8 percent of
-scheduled, the retirement-age increase at 85.2). The mechanism is the compressed
-support the earlier anchors already named — on these observed careers
+benefits. DYNASIM3's own 2050 row for ages 62 to 67 orders the pair
+the same way: benefits fall to 81.8 percent of scheduled under
+progressive price indexing and to 85.2 percent under the
+retirement-age increase. The mechanism is the compressed support the
+earlier anchors already named — on these observed careers
 most indexed earnings sit below the thirtieth-percentile bend that
 progressive price indexing protects, so it bites lightly (−11.0
 percent) while the uniform retirement-age reduction cuts across the
