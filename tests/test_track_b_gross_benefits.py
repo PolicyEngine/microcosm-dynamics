@@ -988,6 +988,19 @@ def test_child_on_two_records_needs_a_combined_maximum():
                 "W", _retired(1000, 1750), [g.Beneficiary("W", g.Role.CHILD)]
             )
         },
+        # An input error on a person entitled on two records is still an
+        # input error, never absorbed as a combined-maximum refusal.
+        lambda: {
+            "dead": g.HouseholdRecord("Dead", _survivor_state()),
+            "a": g.HouseholdRecord(
+                "A",
+                _retired(1000, 1750),
+                [g.Beneficiary("Dead", g.Role.CHILD)],
+            ),
+            "b": g.HouseholdRecord(
+                "B", _retired(900, 1500), [g.Beneficiary("Dead", g.Role.CHILD)]
+            ),
+        },
     ],
 )
 def test_household_inputs_that_are_not_legal_families(build):

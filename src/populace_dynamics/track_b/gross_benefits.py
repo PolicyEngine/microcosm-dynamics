@@ -1789,39 +1789,42 @@ def check_household_records(records: Mapping[str, HouseholdRecord]) -> None:
             held.setdefault(beneficiary.beneficiary_id, []).append(
                 (record_id, beneficiary)
             )
+    # Input errors first, so a coverage refusal never masks one.
     for person, entitlements in sorted(held.items()):
-        if len(entitlements) > 1:
-            ids = sorted(record_id for record_id, _ in entitlements)
-            if all(b.role is Role.CHILD for _, b in entitlements):
-                raise FamilyConfigurationUnsupported(
-                    UnsupportedReason.COMBINED_FAMILY_MAXIMUM,
-                    f"a child entitled on records {ids}; 403(a)(3)(A) may "
-                    "combine their maximums (POMS RS 00615.770)",
-                    beneficiary_id=person,
-                )
-            raise FamilyConfigurationUnsupported(
-                UnsupportedReason.MULTIPLE_AUXILIARY_RECORDS,
-                f"entitled as an auxiliary or survivor on records {ids} "
-                "(simultaneous or dual entitlement across records, POMS RS "
-                "00615.768A) is not implemented",
-                beneficiary_id=person,
-            )
         own_record_id = workers.get(person)
         if own_record_id is None:
             continue
-        record_id, beneficiary = entitlements[0]
         actual = _own_benefit_on_record(records[own_record_id].state)
-        if actual is None:
-            raise InvalidFamilyInput(
-                f"{person} is the deceased worker on record {own_record_id} "
-                f"and a beneficiary on record {record_id}"
+        for record_id, beneficiary in entitlements:
+            if actual is None:
+                raise InvalidFamilyInput(
+                    f"{person} is the deceased worker on record "
+                    f"{own_record_id} and a beneficiary on record {record_id}"
+                )
+            if not _same_own_benefit(beneficiary.own_benefit, actual):
+                raise InvalidFamilyInput(
+                    f"{person} is the worker on record {own_record_id}; on "
+                    f"record {record_id} their own_benefit must be that "
+                    "record's benefit (402(k)(3)(A))"
+                )
+    for person, entitlements in sorted(held.items()):
+        if len(entitlements) < 2:
+            continue
+        ids = sorted(record_id for record_id, _ in entitlements)
+        if all(b.role is Role.CHILD for _, b in entitlements):
+            raise FamilyConfigurationUnsupported(
+                UnsupportedReason.COMBINED_FAMILY_MAXIMUM,
+                f"a child entitled on records {ids}; 403(a)(3)(A) may "
+                "combine their maximums (POMS RS 00615.770)",
+                beneficiary_id=person,
             )
-        if not _same_own_benefit(beneficiary.own_benefit, actual):
-            raise InvalidFamilyInput(
-                f"{person} is the worker on record {own_record_id}; on "
-                f"record {record_id} their own_benefit must be that "
-                "record's benefit (402(k)(3)(A))"
-            )
+        raise FamilyConfigurationUnsupported(
+            UnsupportedReason.MULTIPLE_AUXILIARY_RECORDS,
+            f"entitled as an auxiliary or survivor on records {ids} "
+            "(simultaneous or dual entitlement across records, POMS RS "
+            "00615.768A) is not implemented",
+            beneficiary_id=person,
+        )
 
 
 def household_benefits(
