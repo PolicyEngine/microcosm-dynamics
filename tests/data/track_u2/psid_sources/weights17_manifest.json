@@ -1,0 +1,11 @@
+{
+  "sources": [
+    {
+      "url": "https://psidonline.isr.umich.edu/data/weights/cross_sec_weights_17.pdf",
+      "retrieved_at_utc": "2026-09-28T17:56:50.584049+00:00",
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_17.pdf",
+      "bytes": 471205,
+      "sha256": "b35b5d9c99e74983c84d519383ba2b586c5db33f6b666d16370c54dbdb7a5438"
+    }
+  ]
+}

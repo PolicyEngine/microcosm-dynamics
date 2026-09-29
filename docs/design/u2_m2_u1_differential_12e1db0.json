@@ -1,0 +1,142 @@
+{
+  "base": {
+    "path": "/private/tmp/claude-501/-Users-maxghenis-Library-Application-Support-Claude-scratch-workspaces-ee3763f4-e7ea-4177-bcaf-1362266768c1-4457aa9d-2dc0-4bcf-a128-e50adae6be25-scratch-2026-09-22-b65ec9/5375eb02-4610-4f48-9370-cbbb89cde150/scratchpad/diff-base",
+    "head": "9cee2423f048683e15838aa5fee330afd072f85f"
+  },
+  "candidate": {
+    "path": "/private/tmp/claude-501/-Users-maxghenis-Library-Application-Support-Claude-scratch-workspaces-ee3763f4-e7ea-4177-bcaf-1362266768c1-4457aa9d-2dc0-4bcf-a128-e50adae6be25-scratch-2026-09-22-b65ec9/5375eb02-4610-4f48-9370-cbbb89cde150/scratchpad/diff-candidate",
+    "head": "12e1db0944281564b98bcdf30b794207f8736e56"
+  },
+  "python": "/Users/maxghenis/PolicyEngine/_worktrees/dynamics-u2-m2-20260928/.venv/bin/python",
+  "seed": 20260924,
+  "tolerance": "zero: byte equality",
+  "excluded_json_paths": [
+    "/run/git_head",
+    "/run/date"
+  ],
+  "ratified_u1_block_sha256": "aed6e724053a44da76e4d08069930c88fe6c978a5ff58fce42beffd3a78785eb",
+  "dry_run": {
+    "result_json_equal": true,
+    "results_md_equal": true,
+    "result_json_sha256": {
+      "base": "8d7dd8ef2d88ae18058edccdf7524fff533847f0381d78c5aa3ed391032ad07a",
+      "candidate": "8d7dd8ef2d88ae18058edccdf7524fff533847f0381d78c5aa3ed391032ad07a"
+    },
+    "results_md_sha256": {
+      "base": "407b490245005224757d8dbf33442db42a7e49d5f9315617d4f9a9122b009ff2",
+      "candidate": "407b490245005224757d8dbf33442db42a7e49d5f9315617d4f9a9122b009ff2"
+    },
+    "first_json_difference": null,
+    "first_md_difference": null,
+    "run": {
+      "base": {
+        "date": "2026-09-29",
+        "invented_seed": 20260924,
+        "git_head": "9cee2423f048683e15838aa5fee330afd072f85f",
+        "git_clean": true,
+        "python": "3.14.7",
+        "command": "python scripts/track_u_dry_run.py --output-dir /var/folders/9l/_wztzgbx7mgc7l1r0416cy7m0000gn/T/u1-differential-65ls6wvt/same-output --seed 20260924"
+      },
+      "candidate": {
+        "date": "2026-09-29",
+        "invented_seed": 20260924,
+        "git_head": "12e1db0944281564b98bcdf30b794207f8736e56",
+        "git_clean": true,
+        "python": "3.14.7",
+        "command": "python scripts/track_u_dry_run.py --output-dir /var/folders/9l/_wztzgbx7mgc7l1r0416cy7m0000gn/T/u1-differential-65ls6wvt/same-output --seed 20260924"
+      }
+    }
+  },
+  "refusal_expectations": {
+    "base": {
+      "met": true,
+      "failures": {}
+    },
+    "candidate": {
+      "met": true,
+      "failures": {}
+    }
+  },
+  "loader_file_accesses_empty": true,
+  "contract_checks": {
+    "equal": true,
+    "sha256": {
+      "base": "49e47726948dc6faf4f39e0ae1ff60054e178b5feb4701cbb8b84400b6bdccd9",
+      "candidate": "49e47726948dc6faf4f39e0ae1ff60054e178b5feb4701cbb8b84400b6bdccd9"
+    },
+    "first_difference": null,
+    "checked": [
+      "actual_loader",
+      "age67.WAVES",
+      "input_frames_sha256",
+      "observation_plan",
+      "pending_decisions",
+      "refusal_parity",
+      "rows.MAX_RULINGS",
+      "runner.NAMED_DELTAS",
+      "uniform_cut_tabulation.COMPARATOR_COLUMN",
+      "uniform_cut_tabulation.REPORT_ROWS"
+    ],
+    "refusal_parity": {
+      "existing_artifact": {
+        "class": "ValueError",
+        "message": "/INVENTED/u1-refusal-parity/replication_boomers2004_uniform_cut_v1.json already exists: the registered run is one-shot",
+        "module": "builtins"
+      },
+      "existing_sidecar": {
+        "class": "ValueError",
+        "message": "/INVENTED/u1-refusal-parity/replication_boomers2004_uniform_cut_v1.json already exists: the registered run is one-shot",
+        "module": "builtins"
+      },
+      "invalid_provenance": {
+        "class": "TrackURunError",
+        "message": "data_provenance must be one of ('invented', 'registered_real')",
+        "module": "populace_dynamics.uniform_cut_track_u.runner"
+      },
+      "invalid_registration_url": {
+        "class": "TrackURunError",
+        "message": "a registered run needs an issue #42 comment URL as its registration pointer (https://github.com/PolicyEngine/microcosm-dynamics/issues/42#issuecomment-<id>)",
+        "module": "populace_dynamics.uniform_cut_track_u.runner"
+      },
+      "invented_labeled_registered": {
+        "class": "TrackURunError",
+        "message": "a registered run reads the staged PSID through age67.load_age67_inputs; these inputs record 'invented'",
+        "module": "populace_dynamics.uniform_cut_track_u.runner"
+      },
+      "invented_with_pointer": {
+        "class": "TrackURunError",
+        "message": "an invented run carries no registration pointer",
+        "module": "populace_dynamics.uniform_cut_track_u.runner"
+      },
+      "u2_seed_under_u1": {
+        "class": "ValueError",
+        "message": "seed_wave_rule must be earliest_presence_wave",
+        "module": "builtins"
+      },
+      "wrong_registered_headline": {
+        "class": "ValueError",
+        "message": "the registration names headline row U0, but the staged PSID gives U0-F under the fallback rule (WEALTH1 refused for waves [2005, 2007]): the staging changed after registration, so this is not the registered run",
+        "module": "builtins"
+      },
+      "wrong_ssi_hash": {
+        "class": "TrackURunError",
+        "message": "a registered run needs the committed SSI capture; the SSI parameters record {'kind': 'policyengine_us_capture', 'sha256': '0000000000000000000000000000000000000000000000000000000000000000'}",
+        "module": "populace_dynamics.uniform_cut_track_u.runner"
+      },
+      "wrong_threshold_hash": {
+        "class": "TrackURunError",
+        "message": "a registered run needs the committed, pinned Census threshold capture (adjusted_poverty.THRESHOLDS_SHA256 is 'dc21a78736f5085872cf56c9cf291258034c1293572b77455cba689a1ed0eec5'); the thresholds record {'kind': 'census_capture', 'sha256': '0000000000000000000000000000000000000000000000000000000000000000'}",
+        "module": "populace_dynamics.uniform_cut_track_u.runner"
+      }
+    },
+    "loader_opened_under_fake_root": {
+      "base:supplements_refused": [],
+      "base:supplements_staged": [],
+      "candidate:supplements_refused": [],
+      "candidate:supplements_staged": []
+    }
+  },
+  "all_equal": true,
+  "dry_run_skipped": false,
+  "all_checks_passed": true
+}

@@ -244,7 +244,10 @@ ANCHOR_COLA_62_67_TABLE1_2050 = 98.3
 #: types 80-85) reads 92.0 -- the 92.0-92.4 band the registration cites.
 ANCHOR_COLA_80_85_ALL = 92.4
 ANCHOR_COLA_80_85_TABLE5_ALL = 92.0
-#: Table 1 (2050 row) 75-year OASDI effect (percent of taxable payroll).
+#: Table 1, "75-year deficit/surplus (percentage of taxable payroll)" row:
+#: Congressional Budget Office (2005) estimates as reported in Mermin
+#: (2005), not DYNASIM3 output (the table's benefit rows are DYNASIM3
+#: Runid 432). See docs/errata/2026-09-29-anchor-provenance.md.
 ANCHOR_TABLE1_PAYROLL_PCT = {
     "scheduled_deficit": -1.69,
     "reduced_cola": -1.12,
@@ -880,7 +883,13 @@ def anchor_provenance() -> dict[str, Any]:
             ),
         },
         "table1_ages_62_67_by_year": {
-            "citation": "Table 1 (printed p., DYNASIM3 Runid 432); 2050 row",
+            "citation": (
+                "Table 1 (PDF p.15); 2050 row of the percent-of-scheduled "
+                "block, DYNASIM3 Runid 432. seventy_five_year_payroll_pct "
+                "is the table's 75-year deficit/surplus row: Congressional "
+                "Budget Office (2005) estimates as reported in Mermin "
+                "(2005), not DYNASIM3 output"
+            ),
             "cola_pct_of_scheduled_2050": ANCHOR_COLA_62_67_TABLE1_2050,
             "nra_pct_of_scheduled_2050": 85.2,
             "note": (

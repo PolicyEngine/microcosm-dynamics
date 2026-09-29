@@ -288,6 +288,49 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/track_b/equality.py"),
     Path("src/populace_dynamics/track_b/replay.py"),
     Path("src/populace_dynamics/track_b/runner.py"),
+    # Track A v2 is opt-in; exact exclusions preserve the historical seal.
+    Path("src/populace_dynamics/track_a_v2/__init__.py"),
+    Path("src/populace_dynamics/track_a_v2/benefits.py"),
+    Path("src/populace_dynamics/track_a_v2/estimands.py"),
+    Path("src/populace_dynamics/track_a_v2/filing.py"),
+    Path("src/populace_dynamics/track_a_v2/histories.py"),
+    Path("src/populace_dynamics/track_a_v2/invented.py"),
+    Path("src/populace_dynamics/track_a_v2/manifest.py"),
+    Path("src/populace_dynamics/track_a_v2/matrix.py"),
+    Path("src/populace_dynamics/track_a_v2/membership.py"),
+    Path("src/populace_dynamics/track_a_v2/protocol.py"),
+    Path("src/populace_dynamics/track_a_v2/runner.py"),
+    Path("src/populace_dynamics/track_a_v2/structural.py"),
+    Path("src/populace_dynamics/track_a_v2/structural_inputs.py"),
+    # Track B B1 v2 (the reconstructed-reproduction baseline, decision d571)
+    # is opt-in through the B1 runner; nothing in the historical projection
+    # imports it.
+    Path("src/populace_dynamics/track_b/reconstructed.py"),
+    # U2 documentary metadata stays outside the historical projection.
+    Path("src/populace_dynamics/data/u2_source_registry.py"),
+    Path("scripts/capture_track_u2_income_wealth.py"),
+    Path("scripts/capture_track_u2_ssi_parameters.py"),
+    Path("scripts/capture_track_u2_ssi_sources.py"),
+    # U2 milestone 2 (cohort, adapters, estimator, tabulation, runner and
+    # entry points) is opt-in and unreachable from the historical reducer.
+    Path("src/populace_dynamics/uniform_cut_track_u2/__init__.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/cohort.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/diagnostics.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/estimator.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/identity.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/invented.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/loader.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/memo.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/parameters.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/rows.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/runner.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/sources.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/tabulation.py"),
+    Path("scripts/track_u2_dry_run.py"),
+    Path("scripts/track_u2_structure.py"),
+    Path("scripts/track_u2_component_diagnostics.py"),
+    Path("scripts/run_track_u2_registered.py"),
+    Path("scripts/u2_u1_differential.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(

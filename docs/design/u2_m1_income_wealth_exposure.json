@@ -1,0 +1,135 @@
+{
+  "lane": "income_wealth",
+  "files": [
+    {
+      "file": "/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/RESTRICTED-FILES.md",
+      "purpose": "Read first in this lane, full boundary ledger; rehashed",
+      "sha256": "35a4a2007d9e8ff01fff79c285eda3b4a33c53c1efdd04f01f9471f78d702840"
+    },
+    {
+      "file": "/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/phase2-20260927/prompts/common.md",
+      "purpose": "Read full common instructions; rehashed",
+      "sha256": "b265c501f74752575558875d085465636a53593fafee25c93a1d17518461159e"
+    },
+    {
+      "file": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/CLAUDE.md",
+      "purpose": "Read full repository instructions; rehashed",
+      "sha256": "6e494a3bb48449ca082a4c7c708518b3d2c7184605b2cab1dee4d6b15b20cc8d"
+    },
+    {
+      "file": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/docs/design/boomers2004_1946_55_comparison.md",
+      "purpose": "Read full U2 specification; rehashed",
+      "sha256": "7badf89e896ece28abcea1cb2db9bd55d468346b405ed06eb357aaf5c7b51df2"
+    },
+    {
+      "file": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/docs/design/boomers2004_uniform_cut_comparison.md",
+      "purpose": "Read U1 template selected source/method sections and text-search matches; rehashed",
+      "sha256": "830b0ab4c18273563add529fecf21f843eb418996da741d087d785c4f882781f"
+    },
+    {
+      "file": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/scripts/capture_track_u2_income_wealth.py",
+      "purpose": "Documentary generator authored, executed and inspected",
+      "sha256": "5253b4173e6f4e460625ee785a6124700c6a709a1d76e80cfd3aa572ae4c98e5"
+    },
+    {
+      "file": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/test_track_u2_income_wealth.py",
+      "purpose": "Documentary schema, inherited-route and identity coverage tests authored and executed",
+      "sha256": "b7a8ac21bb55896ae81e3547f0b7da7caa4df3e16239d883a2eea26a18f74fe3"
+    },
+    {
+      "file": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/src/populace_dynamics/data/family_income.py",
+      "purpose": "U1 immutable route templates and constants",
+      "sha256": "394d0ac7eb52eb1c6cfbcd66a6f46f38826e83b2192fee213bbc4106d91dd51f"
+    },
+    {
+      "file": "/Users/maxghenis/PolicyEngine/psid-data/family/2013/FAM2013ER.sps",
+      "purpose": "Family setup layouts and variable labels only",
+      "sha256": "526595b50a2087adc635da3c1288a396aa7179b075c11506f10338ab6348a0b5"
+    },
+    {
+      "file": "/Users/maxghenis/PolicyEngine/psid-data/family/2013/FAM2013ER_codebook.pdf",
+      "purpose": "Documentary PDF parsed; retained excerpts strip frequency columns",
+      "sha256": "40cc2de6af801b94b93518f7252e24c7c95098e713fc97f9ead1af74c4ce25d6"
+    },
+    {
+      "file": "/Users/maxghenis/PolicyEngine/psid-data/family/2015/FAM2015ER.sps",
+      "purpose": "Family setup layouts and variable labels only",
+      "sha256": "6500c8e88a2353e7a6c5322a898f3879662228fdefa329e0901eb254fc9e3fff"
+    },
+    {
+      "file": "/Users/maxghenis/PolicyEngine/psid-data/family/2015/FAM2015ER_codebook.pdf",
+      "purpose": "Documentary PDF parsed; retained excerpts strip frequency columns",
+      "sha256": "7dcb71f823e309a286b904531410243d58cde48b8f50079401856de9ac762238"
+    },
+    {
+      "file": "/Users/maxghenis/PolicyEngine/psid-data/family/2017/FAM2017ER.sps",
+      "purpose": "Family setup layouts and variable labels only",
+      "sha256": "24abae319022d4e3da9bce8052455dfee6b00b7b9c642004eddcfa06cb8d59e5"
+    },
+    {
+      "file": "/Users/maxghenis/PolicyEngine/psid-data/family/2017/FAM2017ER_codebook.pdf",
+      "purpose": "Documentary PDF parsed; retained excerpts strip frequency columns",
+      "sha256": "19bfba9f7a3fecc82a18711466e2b2a5f00b49c9d3db0f9f8587795fad2bf8c1"
+    },
+    {
+      "file": "/Users/maxghenis/PolicyEngine/psid-data/family/2019/FAM2019ER.sps",
+      "purpose": "Family setup layouts and variable labels only",
+      "sha256": "c9f8ba8698779aeaf239c0eea4b1f98d32975b1c77767acfd35601fcb883a5b0"
+    },
+    {
+      "file": "/Users/maxghenis/PolicyEngine/psid-data/family/2019/fam2019er_codebook.pdf",
+      "purpose": "Documentary PDF parsed; retained excerpts strip frequency columns",
+      "sha256": "ce637e37e0f5e306dd7f10455e85069b56c9b13d5c138d3eb4b9c8d6a8452406"
+    },
+    {
+      "file": "/Users/maxghenis/PolicyEngine/psid-data/family/2021/FAM2021ER.sps",
+      "purpose": "Family setup layouts and variable labels only",
+      "sha256": "50526906dafd86271074ba15fd426ab7030c2b62f29acf3d819b577fdc9442e2"
+    },
+    {
+      "file": "/Users/maxghenis/PolicyEngine/psid-data/family/2021/FAM2021ER_codebook.pdf",
+      "purpose": "Documentary PDF parsed; retained excerpts strip frequency columns",
+      "sha256": "e3b88ef394952fa05b9b98eb7f05bf9a99896840515942562aa37399e1bcd462"
+    },
+    {
+      "file": "/Users/maxghenis/PolicyEngine/psid-data/family/2021/FAM2021ER_formats.sps",
+      "purpose": "Categorical family formats for independent domain citations",
+      "sha256": "863f151a4cab1282060aa3bfe4f6648bbbc1822e6f739bcfd502ff13b40a952c"
+    },
+    {
+      "file": "/Users/maxghenis/PolicyEngine/psid-data/family/2023/FAM2023ER.sps",
+      "purpose": "Family setup layouts and variable labels only",
+      "sha256": "915755685965a41743e96e42abbbfdddd7eab1df33234e462b0813b25d4df169"
+    },
+    {
+      "file": "/Users/maxghenis/PolicyEngine/psid-data/family/2023/FAM2023ER_codebook.pdf",
+      "purpose": "Documentary PDF parsed; retained excerpts strip frequency columns",
+      "sha256": "85a4078ebb79146d023df3d9d4e2d2ef6017eced849656ca39f4b740cb5a5688"
+    },
+    {
+      "file": "/Users/maxghenis/PolicyEngine/psid-data/family/2023/FAM2023ER_formats.sps",
+      "purpose": "Categorical family formats for independent domain citations",
+      "sha256": "89e4f2be4bea66fe83e0f11682bdcfab2590c01310bd697833846377d64a59f2"
+    },
+    {
+      "file": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/data/external/track_u2/income.json",
+      "purpose": "Generated documentary registry inspected by author",
+      "sha256": "1a2a8da0063ccb7a0baf4c593012c4644f39d9233a1eb6e3b3ecf684f8a70eb2"
+    },
+    {
+      "file": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/data/external/track_u2/wealth.json",
+      "purpose": "Generated documentary registry inspected by author",
+      "sha256": "39e3808f148f57633527486d600b6c599b8b74eb0371254cde833842ef90eb25"
+    },
+    {
+      "file": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/docs/design/u2_m1_income_wealth_adjudication.md",
+      "purpose": "Generated route-by-route source adjudication authored and inspected",
+      "sha256": "31f9fb1e41fdb70f2f8f27281dc996441b3de8ce2971f9eaefa090393072a9a5"
+    },
+    {
+      "file": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/docs/design/u2_m1_income_wealth_exposure.json",
+      "purpose": "Running exposure record authored and inspected; self-hash omitted"
+    }
+  ],
+  "incidental_exposure": "Published whole-sample frequency columns on family 2023 codebook printed pages 1290\u20131292 and 2023 setup header row count were incidentally displayed during initial format inspection. They were not used or reproduced as findings. Subsequent retained codebook excerpts remove frequency columns. Entire six family-codebook PDFs were also parsed in memory for a documentary uncooperative-spouse term search; only source definitions were displayed. No raw PSID records, report/comparator/seal, public result memo or restricted evidence file was opened."
+}

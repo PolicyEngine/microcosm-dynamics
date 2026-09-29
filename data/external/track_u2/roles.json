@@ -1,0 +1,1760 @@
+{
+  "schema_version": 1,
+  "target_id": "U2",
+  "registry": "roles",
+  "waves": [
+    2013,
+    2015,
+    2017,
+    2019,
+    2021,
+    2023
+  ],
+  "scope": "documentary source registry; no observation or estimator implementation",
+  "sources": [
+    {
+      "file": "PSID/ind2023er/IND2023ER.sps",
+      "bytes": 270821,
+      "sha256": "92d32d0efd65d50e984e971c681f6e9231b720973444cdc8f20f397039c9a462"
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_formats.sps",
+      "bytes": 1418347,
+      "sha256": "b42b3560fb3116af0cc6bf0740824cbc24b0ff94d7a1fd4891e40c7a12f93dc4"
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "bytes": 3937820,
+      "sha256": "4878100887dce1a7b7831af272a9f19b01ec33dcea091a5c7352625ecd464308"
+    },
+    {
+      "file": "PSID/family/2013/FAM2013ER_codebook.pdf",
+      "bytes": 4688123,
+      "sha256": "40cc2de6af801b94b93518f7252e24c7c95098e713fc97f9ead1af74c4ce25d6"
+    },
+    {
+      "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+      "bytes": 4945025,
+      "sha256": "7dcb71f823e309a286b904531410243d58cde48b8f50079401856de9ac762238"
+    },
+    {
+      "file": "PSID/family/2017/FAM2017ER_codebook.pdf",
+      "bytes": 5095504,
+      "sha256": "19bfba9f7a3fecc82a18711466e2b2a5f00b49c9d3db0f9f8587795fad2bf8c1"
+    },
+    {
+      "file": "PSID/family/2019/fam2019er_codebook.pdf",
+      "bytes": 5096192,
+      "sha256": "ce637e37e0f5e306dd7f10455e85069b56c9b13d5c138d3eb4b9c8d6a8452406"
+    },
+    {
+      "file": "PSID/family/2021/FAM2021ER_codebook.pdf",
+      "bytes": 3628755,
+      "sha256": "e3b88ef394952fa05b9b98eb7f05bf9a99896840515942562aa37399e1bcd462"
+    },
+    {
+      "file": "PSID/family/2023/FAM2023ER_codebook.pdf",
+      "bytes": 3439538,
+      "sha256": "85a4078ebb79146d023df3d9d4e2d2ef6017eced849656ca39f4b740cb5a5688"
+    }
+  ],
+  "entries": [
+    {
+      "id": "2013.relationship.10",
+      "wave": 2013,
+      "code": 10,
+      "variable": "ER34203",
+      "present": true,
+      "label": "Head in 2013; 2011 Head who was mover-out nonresponse by the time of the 2013 interview",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 21918
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 915
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 916
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 144
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "documented_rule",
+      "income_role": "head",
+      "spouse_slot": false,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false,
+      "annuity_role": "head_reference_person"
+    },
+    {
+      "id": "2013.relationship.20",
+      "wave": 2013,
+      "code": 20,
+      "variable": "ER34203",
+      "present": true,
+      "label": "Legal Wife in 2013; 2011 Wife who was mover-out nonresponse by the time of the 2013 interview",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 21919
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 915
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 916
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 145
+        },
+        {
+          "file": "PSID/family/2013/FAM2013ER_codebook.pdf",
+          "page": 6
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "documented_rule",
+      "income_role": "spouse",
+      "spouse_slot": true,
+      "legal_spouse_annuity": true,
+      "marital_resolution": true
+    },
+    {
+      "id": "2013.relationship.22",
+      "wave": 2013,
+      "code": 22,
+      "variable": "ER34203",
+      "present": true,
+      "label": "\"Wife\"--female cohabitor who has lived with Head for 12 months or more; 2011 \"Wife\" who was mover-out nonresponse...",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 21920
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 915
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 916
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 146
+        },
+        {
+          "file": "PSID/family/2013/FAM2013ER_codebook.pdf",
+          "page": 6
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "documented_rule",
+      "income_role": "spouse",
+      "spouse_slot": true,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false
+    },
+    {
+      "id": "2013.relationship.88",
+      "wave": 2013,
+      "code": 88,
+      "variable": "ER34203",
+      "present": true,
+      "label": "First-year cohabitor of Head",
+      "status": "TO VERIFY",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 21945
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 915
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 916
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 190
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 102
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "refuse_substantive_routing",
+      "income_role": null,
+      "spouse_slot": false,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false,
+      "question": "Only administrative birth support is inherited. Which family income/SSI slot and substantive annuity or marital rule, if any, is authorized for first-year cohabitors? No legal-spouse status follows from the label. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 1, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 102).",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 102,
+        "disposition": "A",
+        "amendment": 1
+      },
+      "citation_correction": {
+        "amendment": 7,
+        "found_by": "u2-m1b builder (not in the independent adjudication)",
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 198
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:198 is the 2013 row of the staged-materials table; line 190 states code 88's inherited administrative birth support and its open substantive routing. The adjudication checked only RESOLVED entries, so it did not review this TO VERIFY citation."
+      }
+    },
+    {
+      "id": "2013.relationship.90",
+      "wave": 2013,
+      "code": 90,
+      "variable": "ER34203",
+      "present": true,
+      "label": "Legal husband of Head",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 21946
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 915
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 916
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 147
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 150
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 156
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 175
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 59
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "documented_rule",
+      "income_role": "ofum",
+      "spouse_slot": false,
+      "legal_spouse_annuity": true,
+      "marital_resolution": true,
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 59,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 154
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:154 concerns the later-wave code-90 definition; lines 147, 150, 156 and 175 state the code-90 role, the 2013 meanings, the annuity pairing and the 2013 label test. The 2013 label remains 'Legal husband of Head' (IND2023ER_codebook.pdf p. 916)."
+      }
+    },
+    {
+      "id": "2013.relationship.92",
+      "wave": 2013,
+      "code": 92,
+      "variable": "ER34203",
+      "present": false,
+      "label": null,
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 21918
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 915
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 916
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 152
+        }
+      ],
+      "administrative_birth_support": false,
+      "action": "refuse_absent_code",
+      "income_role": null,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false
+    },
+    {
+      "id": "2015.relationship.10",
+      "wave": 2015,
+      "code": 10,
+      "variable": "ER34303",
+      "present": true,
+      "label": "Head in 2015; 2013 Head who was mover-out nonresponse by the time of the 2015 interview",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 22969
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 977
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 978
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 144
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "documented_rule",
+      "income_role": "head",
+      "spouse_slot": false,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false,
+      "annuity_role": "head_reference_person"
+    },
+    {
+      "id": "2015.relationship.20",
+      "wave": 2015,
+      "code": 20,
+      "variable": "ER34303",
+      "present": true,
+      "label": "Legal Spouse in 2015; 2013 Spouse who was mover-out nonresponse by the time of the 2015 interview",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 22970
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 977
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 978
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 145
+        },
+        {
+          "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+          "page": 6
+        },
+        {
+          "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+          "page": 6
+        },
+        {
+          "file": "PSID/documentation/capture1/q2015.pdf",
+          "page": 89
+        },
+        {
+          "file": "PSID/documentation/capture1/q2015.pdf",
+          "page": 166
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 103
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "refuse_male_code20_per_u2_adjudicate_F",
+      "income_role": "spouse",
+      "spouse_slot": true,
+      "legal_spouse_annuity": true,
+      "marital_resolution": true,
+      "refusal_condition": {
+        "sex": 1
+      },
+      "refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 103; disposition F, amendment 1): q2015 pp. 89 and 166 gate the spouse income and pension loops on 'CYAQRTH=202, 222' and FAM2015ER ER60020 (p. 6) lists only '2 Female', so no documented family-file spouse-slot route exists for a male code-20 person. The refusal removes the asserted financial mapping, not the person; it does not authorize exclusion, zero-filling, reassignment or fallback. The loader refuses this whole entry; refusal_condition records that the gap concerns sex=1.",
+      "part_b_finding": "PARTIAL (u2-m1b Part B, docs/design/u2_m1b_psid_research.md section 1): official documentation routes every documented kind of male legal spouse in 2015 away from code 20. Through 2015 the husband of a heterosexual couple is Head (UserGuide2017 PDF p. 13; FAQ question 73), a husband who is not Head is 'Husband of Head' code 90 and 'was asked the same questions as an Ofum' (FAQ question 74), and 2015 same-sex partners are code 98 'Other nonrelatives (includes same-sex partners ...)' flagged by ER34304 (IND2023ER_codebook p. 978; UserGuide2015 PDF p. 33; UserGuide2017 PDF p. 35). The 2015 Section J qualifier classes values 102-222 as female, where the 2017 qualifier classes 101, 201 and 221 as male (research record section 1, item 11; q2015 p. 190; q2017 p. 184). No document states that code 20 is never male in 2015, and FAQ question 70 says generally that from 2015 a Spouse/Partner couple 'can consist of heterosexual or same sex couples', so the documents do not settle how a male Head's legally married same-sex spouse was coded. The 2015 'RTH Lookup List' named for CYAQRTH (q2015 p. 5) is absent from the staged documentation. Registry status follows the adjudication until Max rules on u2-draft-4 amendment 1.",
+      "open_question": "In the 2015 wave, how was the legally married same-sex spouse of a male Head coded: Relation to Head ER34303 = 20 (and, if so, under which family-listing CYAQRTH value), or 98 with ER34304 = 1? If any 2015 code-20 person is male, in which family-file variables were his income, Social Security, SSI and employer-pension items stored, given that the 2015 spouse income and pension loops admit only CYAQRTH 202 and 222? And could PSID share the 2015 \"RTH Lookup List\" for the family-listing item CYAQRTH (q2015 p. 5), in particular whether it offered the value 201? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 1; not sent. It is answered from documentation only, never from observed records.)",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 103,
+        "disposition": "F",
+        "amendment": 1
+      }
+    },
+    {
+      "id": "2015.relationship.22",
+      "wave": 2015,
+      "code": 22,
+      "variable": "ER34303",
+      "present": true,
+      "label": "Partner--female cohabitor who has lived with Head for 12 months or more; 2013 Partner who was mover-out...",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 22971
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 977
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 978
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 146
+        },
+        {
+          "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+          "page": 6
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "documented_rule",
+      "income_role": "spouse",
+      "spouse_slot": true,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false
+    },
+    {
+      "id": "2015.relationship.88",
+      "wave": 2015,
+      "code": 88,
+      "variable": "ER34303",
+      "present": true,
+      "label": "First-year cohabitor of Head",
+      "status": "TO VERIFY",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 22996
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 977
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 978
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 190
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 104
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "refuse_substantive_routing",
+      "income_role": null,
+      "spouse_slot": false,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false,
+      "question": "Only administrative birth support is inherited. Which family income/SSI slot and substantive annuity or marital rule, if any, is authorized for first-year cohabitors? No legal-spouse status follows from the label. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 1, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 104).",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 104,
+        "disposition": "A",
+        "amendment": 1
+      },
+      "citation_correction": {
+        "amendment": 7,
+        "found_by": "u2-m1b builder (not in the independent adjudication)",
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 198
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:198 is the 2013 row of the staged-materials table; line 190 states code 88's inherited administrative birth support and its open substantive routing. The adjudication checked only RESOLVED entries, so it did not review this TO VERIFY citation."
+      }
+    },
+    {
+      "id": "2015.relationship.90",
+      "wave": 2015,
+      "code": 90,
+      "variable": "ER34303",
+      "present": true,
+      "label": "Uncooperative legal spouse of Head (this individual is unable or unwilling to be designated as Head)",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 22997
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 977
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 978
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 154
+        },
+        {
+          "file": "PSID/documentation/capture1/q2015.pdf",
+          "page": 89
+        },
+        {
+          "file": "PSID/documentation/capture1/q2015.pdf",
+          "page": 104
+        },
+        {
+          "file": "PSID/documentation/capture1/q2015.pdf",
+          "page": 166
+        },
+        {
+          "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+          "line": 833
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 105
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "documented_rule",
+      "spouse_slot": false,
+      "legal_spouse_annuity": true,
+      "marital_resolution": true,
+      "income_role": "ofum",
+      "resolution": "Independent adjudication D (amendment 1): OFUM income collection and exclusion from the standard spouse loop are documented. I p. 978: 'Uncooperative legal spouse of Head'. The 2015 spouse income and pension loops admit only the Wife/'Wife' codes (q2015 p. 89 G49CKPT and p. 166 P70CKPT: 'CYFUHU=1, 4 & CYAQRTH=202, 222'), while the Big OFUM income series admits 'FUP1YEAR[I].AQRTH.ORD>222' (q2015 p. 104). Code-90 income is collected in the OFUM series and excluded from the standard spouse loop. The declared legal-spouse annuity and marital-resolution conventions are unchanged.",
+      "corroboration": "Corroborated by the PSID FAQ (Wayback snapshot of 13 August 2026, question 74, saved-file line 833): 'From 1968 to 2015, ... the husband became Husband of Head. A Husband of Head was asked the same questions as an Ofum. A male Head could also have been made Husband of Head if the female half of the couple insisted on being the Head, the female half of the couple was adamant about not giving out information about her husband, or the husband was adamant about not wanting to be included in the study. A Husband of Head had the Relationship to Head code 9 or 90.' The route is documented; how completely a withheld husband's OFUM income was reported is not, and this resolution concerns routing, not how much is reported.",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 105,
+        "disposition": "D",
+        "amendment": 1
+      }
+    },
+    {
+      "id": "2015.relationship.92",
+      "wave": 2015,
+      "code": 92,
+      "variable": "ER34303",
+      "present": false,
+      "label": null,
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 22969
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 977
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 978
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 152
+        }
+      ],
+      "administrative_birth_support": false,
+      "action": "refuse_absent_code",
+      "income_role": null,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false
+    },
+    {
+      "id": "2017.relationship.10",
+      "wave": 2017,
+      "code": 10,
+      "variable": "ER34503",
+      "present": true,
+      "label": "Reference Person in 2017; 2015 Reference Person who was mover-out nonresponse by the time of the 2017 interview",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 24449
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1095
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1096
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1097
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 144
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "documented_rule",
+      "income_role": "head",
+      "spouse_slot": false,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false,
+      "annuity_role": "head_reference_person"
+    },
+    {
+      "id": "2017.relationship.20",
+      "wave": 2017,
+      "code": 20,
+      "variable": "ER34503",
+      "present": true,
+      "label": "Legal Spouse in 2017; 2015 Spouse who was mover-out nonresponse by the time of the 2017 interview",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 24450
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1095
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1096
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1097
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 145
+        },
+        {
+          "file": "PSID/family/2017/FAM2017ER_codebook.pdf",
+          "page": 7
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "documented_rule",
+      "income_role": "spouse",
+      "spouse_slot": true,
+      "legal_spouse_annuity": true,
+      "marital_resolution": true
+    },
+    {
+      "id": "2017.relationship.22",
+      "wave": 2017,
+      "code": 22,
+      "variable": "ER34503",
+      "present": true,
+      "label": "Partner--cohabitor who has lived with Reference Person for 12 months or more; 2015 Partner who was mover-out...",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 24451
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1095
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1096
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1097
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 146
+        },
+        {
+          "file": "PSID/family/2017/FAM2017ER_codebook.pdf",
+          "page": 7
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "documented_rule",
+      "income_role": "spouse",
+      "spouse_slot": true,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false
+    },
+    {
+      "id": "2017.relationship.88",
+      "wave": 2017,
+      "code": 88,
+      "variable": "ER34503",
+      "present": true,
+      "label": "First-year cohabitor of Reference Person",
+      "status": "TO VERIFY",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 24476
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1095
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1096
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1097
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 190
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 106
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "refuse_substantive_routing",
+      "income_role": null,
+      "spouse_slot": false,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false,
+      "question": "Only administrative birth support is inherited. Which family income/SSI slot and substantive annuity or marital rule, if any, is authorized for first-year cohabitors? No legal-spouse status follows from the label. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 1, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 106).",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 106,
+        "disposition": "A",
+        "amendment": 1
+      },
+      "citation_correction": {
+        "amendment": 7,
+        "found_by": "u2-m1b builder (not in the independent adjudication)",
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 198
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:198 is the 2013 row of the staged-materials table; line 190 states code 88's inherited administrative birth support and its open substantive routing. The adjudication checked only RESOLVED entries, so it did not review this TO VERIFY citation."
+      }
+    },
+    {
+      "id": "2017.relationship.90",
+      "wave": 2017,
+      "code": 90,
+      "variable": "ER34503",
+      "present": true,
+      "label": "Uncooperative legal spouse of Reference Person (this individual is unable or unwilling to be designated as...",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 24477
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1095
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1096
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1097
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 154
+        },
+        {
+          "file": "PSID/documentation/capture1/q2017.pdf",
+          "page": 5
+        },
+        {
+          "file": "PSID/documentation/capture1/q2017.pdf",
+          "page": 95
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 107
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "documented_rule",
+      "spouse_slot": false,
+      "legal_spouse_annuity": true,
+      "marital_resolution": true,
+      "income_role": "ofum",
+      "resolution": "Independent adjudication D (amendment 1): OFUM income collection and exclusion from the standard spouse loop are documented. q2017 p. 5 lists '901. Uncooperative Male Spouse' and '902. Uncooperative Female Spouse'; p. 95 routes the spouse income repeat to 'Spouse/Partner (CYAQRTH=201-222, CYFUHU=FU, FUMI)' and the Big OFUM series to 'AQRTH>222'. Codes 901/902 fall in the OFUM gate and outside the spouse loop. The declared legal-spouse annuity and marital-resolution conventions are unchanged.",
+      "corroboration": "PSID FAQ question 74 (Wayback 13 August 2026) says codes 90 and 92 are 'used when one half of the couple is adamant about not giving information about the other half, or when one half adamantly refuses to have their information included'. The 2017 instrument still routes any collected income through the OFUM series; this resolution concerns routing, not how much is reported.",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 107,
+        "disposition": "D",
+        "amendment": 1
+      }
+    },
+    {
+      "id": "2017.relationship.92",
+      "wave": 2017,
+      "code": 92,
+      "variable": "ER34503",
+      "present": true,
+      "label": "Uncooperative partner of Reference Person (this individual is unable or unwilling to be designated as Partner)",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 24478
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1095
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1096
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1097
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 152
+        },
+        {
+          "file": "PSID/documentation/capture1/q2017.pdf",
+          "page": 5
+        },
+        {
+          "file": "PSID/documentation/capture1/q2017.pdf",
+          "page": 95
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 108
+        }
+      ],
+      "administrative_birth_support": false,
+      "action": "documented_rule",
+      "spouse_slot": false,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false,
+      "income_role": "ofum",
+      "resolution": "Independent adjudication D (amendment 1): OFUM income collection and exclusion from the standard spouse loop are documented. q2017 p. 5 lists '921. Uncooperative Male Partner' and '922. Uncooperative Female Partner'; p. 95's spouse gate (CYAQRTH=201-222) excludes them and its OFUM gate (AQRTH>222) includes them. I p. 1097: 'Uncooperative partner of Reference Person'. The declared legal-spouse annuity and marital-resolution conventions are unchanged.",
+      "corroboration": "PSID FAQ question 74 (Wayback 13 August 2026): see the code-90 note; routing, not reporting, is resolved here.",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 108,
+        "disposition": "D",
+        "amendment": 1
+      }
+    },
+    {
+      "id": "2019.relationship.10",
+      "wave": 2019,
+      "code": 10,
+      "variable": "ER34703",
+      "present": true,
+      "label": "Reference Person in 2019; 2017 Reference Person who was mover-out nonresponse by the time of the 2019 interview",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 25976
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1225
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1226
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1227
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 144
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "documented_rule",
+      "income_role": "head",
+      "spouse_slot": false,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false,
+      "annuity_role": "head_reference_person"
+    },
+    {
+      "id": "2019.relationship.20",
+      "wave": 2019,
+      "code": 20,
+      "variable": "ER34703",
+      "present": true,
+      "label": "Legal Spouse in 2019; 2017 Spouse who was mover-out nonresponse by the time of the 2019 interview",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 25977
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1225
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1226
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1227
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 145
+        },
+        {
+          "file": "PSID/family/2019/fam2019er_codebook.pdf",
+          "page": 6
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "documented_rule",
+      "income_role": "spouse",
+      "spouse_slot": true,
+      "legal_spouse_annuity": true,
+      "marital_resolution": true
+    },
+    {
+      "id": "2019.relationship.22",
+      "wave": 2019,
+      "code": 22,
+      "variable": "ER34703",
+      "present": true,
+      "label": "Partner--cohabitor who has lived with Reference Person for 12 months or more; 2017 Partner who was mover-out...",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 25978
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1225
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1226
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1227
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 146
+        },
+        {
+          "file": "PSID/family/2019/fam2019er_codebook.pdf",
+          "page": 6
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "documented_rule",
+      "income_role": "spouse",
+      "spouse_slot": true,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false
+    },
+    {
+      "id": "2019.relationship.88",
+      "wave": 2019,
+      "code": 88,
+      "variable": "ER34703",
+      "present": true,
+      "label": "First-year cohabitor of Reference Person",
+      "status": "TO VERIFY",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 26003
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1225
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1226
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1227
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 190
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 109
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "refuse_substantive_routing",
+      "income_role": null,
+      "spouse_slot": false,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false,
+      "question": "Only administrative birth support is inherited. Which family income/SSI slot and substantive annuity or marital rule, if any, is authorized for first-year cohabitors? No legal-spouse status follows from the label. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 1, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 109).",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 109,
+        "disposition": "A",
+        "amendment": 1
+      },
+      "citation_correction": {
+        "amendment": 7,
+        "found_by": "u2-m1b builder (not in the independent adjudication)",
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 198
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:198 is the 2013 row of the staged-materials table; line 190 states code 88's inherited administrative birth support and its open substantive routing. The adjudication checked only RESOLVED entries, so it did not review this TO VERIFY citation."
+      }
+    },
+    {
+      "id": "2019.relationship.90",
+      "wave": 2019,
+      "code": 90,
+      "variable": "ER34703",
+      "present": true,
+      "label": "Uncooperative legal spouse of Reference Person (this individual is unable or unwilling to be designated as...",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 26004
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1225
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1226
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1227
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 154
+        },
+        {
+          "file": "PSID/documentation/capture1/q2019.pdf",
+          "page": 103
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 110
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "refuse_ofum_assignment_per_u2_adjudicate_F",
+      "spouse_slot": false,
+      "legal_spouse_annuity": true,
+      "marital_resolution": true,
+      "income_role": "refused",
+      "refused_income_role": "ofum",
+      "refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 110; disposition F, amendment 1): the q2019 p. 103 Big OFUM gate admits 'CYAQRTH=301-882 or 951-982', excluding 901/902, and the spouse gate admits 201-222. The asserted OFUM financial assignment is refused. The refusal removes the mapping, not the person; it does not authorize exclusion, zero-filling, reassignment or fallback.",
+      "part_b_finding": "PARTIAL (u2-m1b Part B, docs/design/u2_m1b_psid_research.md): the instrument asks 901/902 no Section G income questions in 2019 (spouse series CYAQRTH=201-222; Big and Little OFUM series 301-882 or 951-982), and PSID FAQ question 74 says the code is used when one half of the couple withholds information about the other or refuses to have their information included. No online document states whether any of the person's income enters the family-file aggregates.",
+      "open_question": "In 2019, the Section G spouse series (CYAQRTH=201-222) and the Big and Little OFUM series (CYAQRTH=301-882 or 951-982) both exclude CYAQRTH 901/902. Is any income, Social Security or SSI of a relationship-code-90 person reported, edited or imputed into the family-file aggregates (total family income and its seven components), or is it excluded from them? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 2; not sent. It is answered from documentation only, never from observed records.)",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 110,
+        "disposition": "F",
+        "amendment": 1
+      }
+    },
+    {
+      "id": "2019.relationship.92",
+      "wave": 2019,
+      "code": 92,
+      "variable": "ER34703",
+      "present": true,
+      "label": "Uncooperative partner of Reference Person (this individual is unable or unwilling to be designated as Partner)",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 26005
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1225
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1226
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1227
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 152
+        },
+        {
+          "file": "PSID/documentation/capture1/q2019.pdf",
+          "page": 103
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 111
+        }
+      ],
+      "administrative_birth_support": false,
+      "action": "refuse_ofum_assignment_per_u2_adjudicate_F",
+      "spouse_slot": false,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false,
+      "income_role": "refused",
+      "refused_income_role": "ofum",
+      "refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 111; disposition F, amendment 1): the q2019 p. 103 Big OFUM gate admits 'CYAQRTH=301-882 or 951-982', excluding 921/922, and the spouse gate admits 201-222. The asserted OFUM financial assignment is refused. The refusal removes the mapping, not the person; it does not authorize exclusion, zero-filling, reassignment or fallback.",
+      "part_b_finding": "PARTIAL (u2-m1b Part B, docs/design/u2_m1b_psid_research.md): the instrument asks 921/922 no Section G income questions in 2019 (spouse series CYAQRTH=201-222; Big and Little OFUM series 301-882 or 951-982), and PSID FAQ question 74 says the code is used when one half of the couple withholds information about the other or refuses to have their information included. No online document states whether any of the person's income enters the family-file aggregates.",
+      "open_question": "In 2019, the Section G spouse series (CYAQRTH=201-222) and the Big and Little OFUM series (CYAQRTH=301-882 or 951-982) both exclude CYAQRTH 921/922. Is any income, Social Security or SSI of a relationship-code-92 person reported, edited or imputed into the family-file aggregates (total family income and its seven components), or is it excluded from them? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 2; not sent. It is answered from documentation only, never from observed records.)",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 111,
+        "disposition": "F",
+        "amendment": 1
+      }
+    },
+    {
+      "id": "2021.relationship.10",
+      "wave": 2021,
+      "code": 10,
+      "variable": "ER34903",
+      "present": true,
+      "label": "Reference Person in 2021; 2019 Reference Person who was mover-out nonresponse by the time of the 20121 interview",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 27558
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1346
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1347
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1348
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 144
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "documented_rule",
+      "income_role": "head",
+      "spouse_slot": false,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false,
+      "annuity_role": "head_reference_person"
+    },
+    {
+      "id": "2021.relationship.20",
+      "wave": 2021,
+      "code": 20,
+      "variable": "ER34903",
+      "present": true,
+      "label": "Legal Spouse in 2021; 2019 Spouse who was mover-out nonresponse by the time of the 2021 interview",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 27559
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1346
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1347
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1348
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 145
+        },
+        {
+          "file": "PSID/family/2021/FAM2021ER_codebook.pdf",
+          "page": 7
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "documented_rule",
+      "income_role": "spouse",
+      "spouse_slot": true,
+      "legal_spouse_annuity": true,
+      "marital_resolution": true
+    },
+    {
+      "id": "2021.relationship.22",
+      "wave": 2021,
+      "code": 22,
+      "variable": "ER34903",
+      "present": true,
+      "label": "Partner--cohabitor who has lived with Reference Person for 12 months or more; 2019 Partner who was mover-out...",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 27560
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1346
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1347
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1348
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 146
+        },
+        {
+          "file": "PSID/family/2021/FAM2021ER_codebook.pdf",
+          "page": 7
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "documented_rule",
+      "income_role": "spouse",
+      "spouse_slot": true,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false
+    },
+    {
+      "id": "2021.relationship.88",
+      "wave": 2021,
+      "code": 88,
+      "variable": "ER34903",
+      "present": true,
+      "label": "First-year cohabitor of Reference Person",
+      "status": "TO VERIFY",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 27585
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1346
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1347
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1348
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 190
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 112
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "refuse_substantive_routing",
+      "income_role": null,
+      "spouse_slot": false,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false,
+      "question": "Only administrative birth support is inherited. Which family income/SSI slot and substantive annuity or marital rule, if any, is authorized for first-year cohabitors? No legal-spouse status follows from the label. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 1, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 112).",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 112,
+        "disposition": "A",
+        "amendment": 1
+      },
+      "citation_correction": {
+        "amendment": 7,
+        "found_by": "u2-m1b builder (not in the independent adjudication)",
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 198
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:198 is the 2013 row of the staged-materials table; line 190 states code 88's inherited administrative birth support and its open substantive routing. The adjudication checked only RESOLVED entries, so it did not review this TO VERIFY citation."
+      }
+    },
+    {
+      "id": "2021.relationship.90",
+      "wave": 2021,
+      "code": 90,
+      "variable": "ER34903",
+      "present": true,
+      "label": "Uncooperative legal spouse of Reference Person (this individual is unable or unwilling to be designated as...",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 27586
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1346
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1347
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1348
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 154
+        },
+        {
+          "file": "PSID/documentation/capture1/q2021.pdf",
+          "page": 205
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 113
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "refuse_ofum_assignment_per_u2_adjudicate_F",
+      "spouse_slot": false,
+      "legal_spouse_annuity": true,
+      "marital_resolution": true,
+      "income_role": "refused",
+      "refused_income_role": "ofum",
+      "refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 113; disposition F, amendment 1): the q2021 p. 205 Big OFUM gate admits 'CYAQRTH=301-882 or 951-982', excluding 901/902, and the spouse gate admits 201-222. The asserted OFUM financial assignment is refused. The refusal removes the mapping, not the person; it does not authorize exclusion, zero-filling, reassignment or fallback.",
+      "part_b_finding": "PARTIAL (u2-m1b Part B, docs/design/u2_m1b_psid_research.md): the instrument asks 901/902 no Section G income questions in 2021 (spouse series CYAQRTH=201-222; Big and Little OFUM series 301-882 or 951-982), and PSID FAQ question 74 says the code is used when one half of the couple withholds information about the other or refuses to have their information included. No online document states whether any of the person's income enters the family-file aggregates.",
+      "open_question": "In 2021, the Section G spouse series (CYAQRTH=201-222) and the Big and Little OFUM series (CYAQRTH=301-882 or 951-982) both exclude CYAQRTH 901/902. Is any income, Social Security or SSI of a relationship-code-90 person reported, edited or imputed into the family-file aggregates (total family income and its seven components), or is it excluded from them? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 2; not sent. It is answered from documentation only, never from observed records.)",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 113,
+        "disposition": "F",
+        "amendment": 1
+      }
+    },
+    {
+      "id": "2021.relationship.92",
+      "wave": 2021,
+      "code": 92,
+      "variable": "ER34903",
+      "present": true,
+      "label": "Uncooperative partner of Reference Person (this individual is unable or unwilling to be designated as Partner)",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 27587
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1346
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1347
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1348
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 152
+        },
+        {
+          "file": "PSID/documentation/capture1/q2021.pdf",
+          "page": 205
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 114
+        }
+      ],
+      "administrative_birth_support": false,
+      "action": "refuse_ofum_assignment_per_u2_adjudicate_F",
+      "spouse_slot": false,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false,
+      "income_role": "refused",
+      "refused_income_role": "ofum",
+      "refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 114; disposition F, amendment 1): the q2021 p. 205 Big OFUM gate admits 'CYAQRTH=301-882 or 951-982', excluding 921/922, and the spouse gate admits 201-222. The asserted OFUM financial assignment is refused. The refusal removes the mapping, not the person; it does not authorize exclusion, zero-filling, reassignment or fallback.",
+      "part_b_finding": "PARTIAL (u2-m1b Part B, docs/design/u2_m1b_psid_research.md): the instrument asks 921/922 no Section G income questions in 2021 (spouse series CYAQRTH=201-222; Big and Little OFUM series 301-882 or 951-982), and PSID FAQ question 74 says the code is used when one half of the couple withholds information about the other or refuses to have their information included. No online document states whether any of the person's income enters the family-file aggregates.",
+      "open_question": "In 2021, the Section G spouse series (CYAQRTH=201-222) and the Big and Little OFUM series (CYAQRTH=301-882 or 951-982) both exclude CYAQRTH 921/922. Is any income, Social Security or SSI of a relationship-code-92 person reported, edited or imputed into the family-file aggregates (total family income and its seven components), or is it excluded from them? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 2; not sent. It is answered from documentation only, never from observed records.)",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 114,
+        "disposition": "F",
+        "amendment": 1
+      }
+    },
+    {
+      "id": "2023.relationship.10",
+      "wave": 2023,
+      "code": 10,
+      "variable": "ER35103",
+      "present": true,
+      "label": "Reference Person in 2023; 2021 Reference Person who was mover-out nonresponse by the time of the 20121 interview",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 29154
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1467
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1468
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1469
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 144
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "documented_rule",
+      "income_role": "head",
+      "spouse_slot": false,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false,
+      "annuity_role": "head_reference_person"
+    },
+    {
+      "id": "2023.relationship.20",
+      "wave": 2023,
+      "code": 20,
+      "variable": "ER35103",
+      "present": true,
+      "label": "Legal Spouse in 2023; 2021 Spouse who was mover-out nonresponse by the time of the 2023 interview",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 29155
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1467
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1468
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1469
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 145
+        },
+        {
+          "file": "PSID/family/2023/FAM2023ER_codebook.pdf",
+          "page": 7
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "documented_rule",
+      "income_role": "spouse",
+      "spouse_slot": true,
+      "legal_spouse_annuity": true,
+      "marital_resolution": true
+    },
+    {
+      "id": "2023.relationship.22",
+      "wave": 2023,
+      "code": 22,
+      "variable": "ER35103",
+      "present": true,
+      "label": "Partner--cohabitor who has lived with Reference Person for 12 months or more; 2021 Partner who was mover-out...",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 29156
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1467
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1468
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1469
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 146
+        },
+        {
+          "file": "PSID/family/2023/FAM2023ER_codebook.pdf",
+          "page": 7
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "documented_rule",
+      "income_role": "spouse",
+      "spouse_slot": true,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false
+    },
+    {
+      "id": "2023.relationship.88",
+      "wave": 2023,
+      "code": 88,
+      "variable": "ER35103",
+      "present": true,
+      "label": "First-year cohabitor of Reference Person",
+      "status": "TO VERIFY",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 29181
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1467
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1468
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1469
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 190
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 115
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "refuse_substantive_routing",
+      "income_role": null,
+      "spouse_slot": false,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false,
+      "question": "Only administrative birth support is inherited. Which family income/SSI slot and substantive annuity or marital rule, if any, is authorized for first-year cohabitors? No legal-spouse status follows from the label. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 1, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 115).",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 115,
+        "disposition": "A",
+        "amendment": 1
+      },
+      "citation_correction": {
+        "amendment": 7,
+        "found_by": "u2-m1b builder (not in the independent adjudication)",
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 198
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:198 is the 2013 row of the staged-materials table; line 190 states code 88's inherited administrative birth support and its open substantive routing. The adjudication checked only RESOLVED entries, so it did not review this TO VERIFY citation."
+      }
+    },
+    {
+      "id": "2023.relationship.90",
+      "wave": 2023,
+      "code": 90,
+      "variable": "ER35103",
+      "present": true,
+      "label": "Uncooperative legal spouse of Reference Person (this individual is unable or unwilling to be designated as...",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 29182
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1467
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1468
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1469
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 154
+        },
+        {
+          "file": "PSID/documentation/capture1/q2023.pdf",
+          "page": 203
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 116
+        }
+      ],
+      "administrative_birth_support": true,
+      "action": "refuse_ofum_assignment_per_u2_adjudicate_F",
+      "spouse_slot": false,
+      "legal_spouse_annuity": true,
+      "marital_resolution": true,
+      "income_role": "refused",
+      "refused_income_role": "ofum",
+      "refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 116; disposition F, amendment 1): the q2023 p. 203 Big OFUM gate admits 'CYAQRTH=301-882 or 951-982', excluding 901/902, and the spouse gate admits 201-222. The asserted OFUM financial assignment is refused. The refusal removes the mapping, not the person; it does not authorize exclusion, zero-filling, reassignment or fallback.",
+      "part_b_finding": "PARTIAL (u2-m1b Part B, docs/design/u2_m1b_psid_research.md): the instrument asks 901/902 no Section G income questions in 2023 (spouse series CYAQRTH=201-222; Big and Little OFUM series 301-882 or 951-982), and PSID FAQ question 74 says the code is used when one half of the couple withholds information about the other or refuses to have their information included. No online document states whether any of the person's income enters the family-file aggregates.",
+      "open_question": "In 2023, the Section G spouse series (CYAQRTH=201-222) and the Big and Little OFUM series (CYAQRTH=301-882 or 951-982) both exclude CYAQRTH 901/902. Is any income, Social Security or SSI of a relationship-code-90 person reported, edited or imputed into the family-file aggregates (total family income and its seven components), or is it excluded from them? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 2; not sent. It is answered from documentation only, never from observed records.)",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 116,
+        "disposition": "F",
+        "amendment": 1
+      }
+    },
+    {
+      "id": "2023.relationship.92",
+      "wave": 2023,
+      "code": 92,
+      "variable": "ER35103",
+      "present": true,
+      "label": "Uncooperative partner of Reference Person (this individual is unable or unwilling to be designated as Partner)",
+      "status": "RESOLVED",
+      "citations": [
+        {
+          "file": "PSID/ind2023er/IND2023ER_formats.sps",
+          "line": 29183
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1467
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1468
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1469
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 152
+        },
+        {
+          "file": "PSID/documentation/capture1/q2023.pdf",
+          "page": 203
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 117
+        }
+      ],
+      "administrative_birth_support": false,
+      "action": "refuse_ofum_assignment_per_u2_adjudicate_F",
+      "spouse_slot": false,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false,
+      "income_role": "refused",
+      "refused_income_role": "ofum",
+      "refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 117; disposition F, amendment 1): the q2023 p. 203 Big OFUM gate admits 'CYAQRTH=301-882 or 951-982', excluding 921/922, and the spouse gate admits 201-222. The asserted OFUM financial assignment is refused. The refusal removes the mapping, not the person; it does not authorize exclusion, zero-filling, reassignment or fallback.",
+      "part_b_finding": "PARTIAL (u2-m1b Part B, docs/design/u2_m1b_psid_research.md): the instrument asks 921/922 no Section G income questions in 2023 (spouse series CYAQRTH=201-222; Big and Little OFUM series 301-882 or 951-982), and PSID FAQ question 74 says the code is used when one half of the couple withholds information about the other or refuses to have their information included. No online document states whether any of the person's income enters the family-file aggregates.",
+      "open_question": "In 2023, the Section G spouse series (CYAQRTH=201-222) and the Big and Little OFUM series (CYAQRTH=301-882 or 951-982) both exclude CYAQRTH 921/922. Is any income, Social Security or SSI of a relationship-code-92 person reported, edited or imputed into the family-file aggregates (total family income and its seven components), or is it excluded from them? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 2; not sent. It is answered from documentation only, never from observed records.)",
+      "adjudication": {
+        "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+        "line": 117,
+        "disposition": "F",
+        "amendment": 1
+      }
+    }
+  ],
+  "independent_adjudication": {
+    "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+    "sha256": "a891762bf9be39e05509e59c5b7cd3fdab0eb34feb9ad5b9bb4a8ec3afc39662",
+    "bytes": 26564,
+    "applied_by": "u2-m1b",
+    "note": "Independent adjudication of milestone 1 (VERDICT: ERRORS FOUND). Amendment 7 citation corrections, D resolutions and F refusals are applied here; A items stay TO VERIFY pending u2-draft-4 amendments 1-6 and Max's ruling."
+  }
+}
