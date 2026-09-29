@@ -172,9 +172,9 @@ def check_inputs(
     bound = preregistration_evidence_sha256
     if not isinstance(bound, str) or not _HEX64.fullmatch(bound):
         raise U2RunError(
-            "a registered U2 run must name the pre-registration evidence "
-            "hash its registration binds (64 hex); none was given "
-            "(section 14)"
+            "a registered U2 run must name, as 64 lowercase hex, the "
+            "pre-registration evidence hash its registration binds; it "
+            f"was given {bound!r} (section 14)"
         )
     if evidence != bound:
         raise U2RunError(
