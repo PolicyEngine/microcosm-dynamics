@@ -407,10 +407,10 @@ def _canonical_sha256(value: Any) -> str:
 def _exact_instance(value: Any, cls: type, what: str) -> Any:
     if type(value) is not cls:
         raise U2ParameterError(
-            f"{what} is a {type(value).__qualname__}, not exactly "
-            f"{cls.__qualname__}: a subclass can override the lookups and "
-            "methods the estimator reads, so a registered bundle holds only "
-            "the pinned loaders' classes (section 14)"
+            f"{what} must be exactly {cls.__qualname__}, not a "
+            f"{type(value).__qualname__}: a subclass can override the "
+            "lookups and methods the estimator reads, so a registered "
+            "bundle holds only the pinned loaders' classes (section 14)"
         )
     fields = {field.name for field in dataclasses.fields(cls)}
     attributes = set(vars(value))
@@ -427,10 +427,10 @@ def _exact_instance(value: Any, cls: type, what: str) -> Any:
 def _plain(value: Any, kind: type, what: str) -> Any:
     if type(value) is not kind:
         raise U2ParameterError(
-            f"{what} is a {type(value).__qualname__}, not a plain "
-            f"{kind.__name__}: a subclass can return other values than it "
-            "lists, so a registered bundle holds only the pinned loaders' "
-            "containers (section 14)"
+            f"{what} must be a plain {kind.__name__}, not a "
+            f"{type(value).__qualname__}: a subclass can return other "
+            "values than it lists, so a registered bundle holds only the "
+            "pinned loaders' containers (section 14)"
         )
     return value
 

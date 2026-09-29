@@ -44,6 +44,11 @@ invented data.  The checks record the refusals the real path gives:
   while no frozen pre-registration evidence record exists (and none can
   be recorded from invented inputs), and the registered parameter check
   refuses an INVENTED altered threshold under the pinned label;
+* the round-2 review's refusals: an INVENTED altered threshold, matrix
+  cell or SSI FBR hidden behind a colliding key that holds the pinned
+  value, and an SSI parameter subclass under the pinned label, each
+  refuse the registered parameter check; an invented run naming a
+  pre-registration evidence hash refuses the input guard;
 * per-observation monotonicity (R <= B, poverty never lost) in every row
   and both halves of every split.
 
@@ -209,6 +214,83 @@ def _round_1_refusals(
         )["refused"],
         "altered_threshold_under_the_pinned_label": _refusal(
             lambda: parameters.check_u2_parameters(altered, ap.REGISTERED_REAL)
+        ),
+    }
+
+
+class _SsiSubclass(ap.SsiParameters):
+    """Holds the pinned SSI fields but reports an INVENTED FBR."""
+
+    def fbr_annual(self, year: int, couple: bool) -> float:
+        return 12.0
+
+
+def _round_2_refusals(
+    inputs: cohort.U2Inputs,
+    params: parameters.U2Parameters,
+    census: Any,
+) -> dict[str, Any]:
+    """The refusals the round-2 review of milestone 2 asked for, each on
+    INVENTED inputs or an INVENTED altered value under the pinned labels:
+    a colliding key holding the pinned value beside an altered one, a
+    parameter subclass, and an invented run naming an evidence hash."""
+
+    pinned = dataclasses.replace(params, thresholds=census)
+
+    def with_thresholds(name: str, table: Any) -> parameters.U2Parameters:
+        return dataclasses.replace(
+            pinned,
+            thresholds=dataclasses.replace(census, **{name: table}),
+        )
+
+    weighted = copy.deepcopy(dict(census.weighted_average))
+    weighted[2012.5] = copy.deepcopy(weighted[2012])
+    weighted[2012]["one_65_plus"] = 1.0  # INVENTED altered value
+    matrix = copy.deepcopy(dict(census.matrix))
+    matrix[2016]["three"][0.5] = matrix[2016]["three"][0]
+    matrix[2016]["three"][0] = 1.0  # INVENTED altered value
+    couple = dict(pinned.ssi.fbr_couple_monthly)
+    couple[2018.5] = couple[2018]
+    couple[2018] = 1.0  # INVENTED altered value
+    ssi_collision = dataclasses.replace(
+        pinned,
+        ssi=dataclasses.replace(pinned.ssi, fbr_couple_monthly=couple),
+    )
+    subclass = dataclasses.replace(
+        pinned,
+        ssi=_SsiSubclass(
+            **{
+                field.name: getattr(pinned.ssi, field.name)
+                for field in dataclasses.fields(pinned.ssi)
+            }
+        ),
+    )
+
+    def registered(bundle: parameters.U2Parameters) -> dict[str, Any]:
+        return _refusal(
+            lambda: parameters.check_u2_parameters(bundle, ap.REGISTERED_REAL)
+        )
+
+    return {
+        "pinned_parameters_pass_the_typed_content_check": not registered(
+            pinned
+        )["refused"],
+        "colliding_year_key_under_the_pinned_label": registered(
+            with_thresholds("weighted_average", weighted)
+        ),
+        "colliding_children_key_under_the_pinned_label": registered(
+            with_thresholds("matrix", matrix)
+        ),
+        "colliding_ssi_year_under_the_pinned_label": registered(ssi_collision),
+        "ssi_subclass_under_the_pinned_label": registered(subclass),
+        "invented_run_naming_an_evidence_hash": _refusal(
+            lambda: runner.check_inputs(
+                inputs,
+                ap.INVENTED,
+                None,
+                sources.RoleContext.declared(),
+                preregistration_evidence_sha256="0" * 64,
+            )
         ),
     }
 
@@ -783,6 +865,7 @@ def checks(
         "round_1_refusals": _round_1_refusals(
             inputs, params, census, registries, registry_roles
         ),
+        "round_2_refusals": _round_2_refusals(inputs, params, census),
         "census_capture": {
             "sha256": census.provenance["sha256"],
             "overlap_2012": census.provenance["overlap_2012"],
@@ -944,6 +1027,7 @@ def results_markdown(result: dict[str, Any]) -> str:
         "registered_parameter_check_refuses_invented_thresholds"
     ]["refused"]
     round_1 = check["round_1_refusals"]
+    round_2 = check["round_2_refusals"]
     u1_branch = check["row_branches"]["U1"]
     lines += [
         "",
@@ -1024,6 +1108,15 @@ def results_markdown(result: dict[str, Any]) -> str:
         + ", ".join(
             f"{name} {entry['refused']}"
             for name, entry in round_1.items()
+            if isinstance(entry, dict)
+        )
+        + ".",
+        "- Round-2 review refusals (invented; the pinned parameters pass "
+        "the typed content check: "
+        f"{round_2['pinned_parameters_pass_the_typed_content_check']}): "
+        + ", ".join(
+            f"{name} {entry['refused']}"
+            for name, entry in round_2.items()
             if isinstance(entry, dict)
         )
         + ".",

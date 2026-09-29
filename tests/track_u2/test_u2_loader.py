@@ -28,6 +28,7 @@ hashes and the seal -- is the code a registered run executes.
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import os
 import pwd
@@ -46,6 +47,7 @@ from populace_dynamics.uniform_cut_track_u2 import (
     cohort,
     invented,
     loader,
+    parameters,
     runner,
     sources,
 )
@@ -315,7 +317,11 @@ def test_loaded_inputs_take_the_registered_path_only(
         runner.check_inputs(inputs, ap.REGISTERED_REAL, POINTER, registry)
     rechecked = frozen_load["inputs"]
     assert runner.check_inputs(
-        rechecked, ap.REGISTERED_REAL, POINTER, registry
+        rechecked,
+        ap.REGISTERED_REAL,
+        POINTER,
+        registry,
+        preregistration_evidence_sha256=frozen_load["sha256"],
     ) == {cohort.EVIDENCE_KEY: frozen_load["sha256"]}
     with pytest.raises(runner.U2RunError, match="invented"):
         runner.check_inputs(inputs, ap.INVENTED, None, registry)
@@ -1063,3 +1069,107 @@ def test_the_loader_seal_is_read_only_and_bound_to_the_file_hashes(loaded):
     object.__setattr__(relabelled, "loader_seal", dict(inputs.loader_seal))
     with pytest.raises(cohort.U2CohortError, match="sealed"):
         cohort._input_provenance(relabelled)
+
+
+# ---------------------------------------------------------------------------
+# Review round 2, info 2: a registered run compares the loader's sealed
+# evidence hash with the hash its registration binds (not only its shape).
+# INVENTED DATA - NOT A COMPARISON: the inputs are the staged invented files.
+# ---------------------------------------------------------------------------
+@pytest.mark.parametrize(
+    "bound, message",
+    [
+        (None, "binds"),
+        ("0" * 64, "binds"),
+        ("not-a-hash", "binds"),
+    ],
+    ids=["unnamed", "another-record", "malformed"],
+)
+def test_a_registered_run_needs_the_evidence_its_registration_binds(
+    frozen_load, bound, message
+):
+    registry = sources.RoleContext.from_registry()
+    with pytest.raises(runner.U2RunError, match=message):
+        runner.check_inputs(
+            frozen_load["inputs"],
+            ap.REGISTERED_REAL,
+            POINTER,
+            registry,
+            preregistration_evidence_sha256=bound,
+        )
+
+
+def test_an_invented_run_binds_no_evidence(u2_inputs, declared):
+    with pytest.raises(runner.U2RunError, match="binds no"):
+        runner.check_inputs(
+            u2_inputs,
+            ap.INVENTED,
+            None,
+            declared,
+            preregistration_evidence_sha256="0" * 64,
+        )
+
+
+class _Reached(Exception):
+    pass
+
+
+def test_a_mismatched_evidence_hash_refuses_before_any_computation(
+    frozen_load, monkeypatch
+):
+    def reached(*args, **kwargs):
+        raise _Reached
+
+    monkeypatch.setattr(cohort, "derive_u2_births", reached)
+    with pytest.raises(runner.U2RunError, match="binds"):
+        runner.run_track_u2(
+            frozen_load["inputs"],
+            parameters.committed_u2_parameters(),
+            data_provenance=ap.REGISTERED_REAL,
+            role_context=sources.RoleContext.from_registry(),
+            registration_pointer=POINTER,
+            preregistration_evidence_sha256="0" * 64,
+        )
+
+
+def test_a_registered_run_computes_with_the_fresh_pinned_read(
+    frozen_load, monkeypatch
+):
+    """Review round 2: the check verifies the caller's bundle, and the
+    run then computes with the fresh read of the pinned files, so an edit
+    the caller makes after the check (here, from the progress callback,
+    an INVENTED 1.0) never reaches a row."""
+
+    caller = copy.deepcopy(parameters.committed_u2_parameters())
+    pinned_value = caller.thresholds.weighted_average[2020]["one_65_plus"]
+    seen = []
+
+    def compute_row(row, inputs, params, births, **kwargs):
+        seen.append(params)
+        raise _Reached
+
+    def progress(message):
+        caller.thresholds.weighted_average[2020]["one_65_plus"] = 1.0
+
+    monkeypatch.setattr(runner, "_compute_row", compute_row)
+    with pytest.raises(_Reached):
+        runner.run_track_u2(
+            frozen_load["inputs"],
+            caller,
+            data_provenance=ap.REGISTERED_REAL,
+            role_context=sources.RoleContext.from_registry(),
+            registration_pointer=POINTER,
+            preregistration_evidence_sha256=frozen_load["sha256"],
+            progress=progress,
+        )
+    assert caller.thresholds.weighted_average[2020]["one_65_plus"] == 1.0
+    (used,) = seen
+    assert used is not caller
+    assert used.thresholds.weighted_average[2020]["one_65_plus"] == (
+        pinned_value
+    )
+    assert parameters.parameters_content_sha256(used) == (
+        parameters.parameters_content_sha256(
+            parameters.committed_u2_parameters()
+        )
+    )

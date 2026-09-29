@@ -197,6 +197,19 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
         for name, entry in round_1.items()
         if isinstance(entry, dict)
     } == expected_errors
+    round_2 = checks["round_2_refusals"]
+    assert round_2["pinned_parameters_pass_the_typed_content_check"] is True
+    assert {
+        name: entry["error"]
+        for name, entry in round_2.items()
+        if isinstance(entry, dict)
+    } == {
+        "colliding_year_key_under_the_pinned_label": "U2ParameterError",
+        "colliding_children_key_under_the_pinned_label": "U2ParameterError",
+        "colliding_ssi_year_under_the_pinned_label": "U2ParameterError",
+        "ssi_subclass_under_the_pinned_label": "U2ParameterError",
+        "invented_run_naming_an_evidence_hash": "U2RunError",
+    }
     for row_id, entry in checks["invariants"].items():
         for key, value in entry.items():
             if not key.startswith("n_"):
@@ -224,6 +237,7 @@ def test_dry_run_markdown_names_the_refusals(dry_run):
     assert "not a comparison" in text.lower()
     assert "Loader preflight refuses" in text
     assert "Round-1 review refusals (invented;" in text
+    assert "Round-2 review refusals (invented;" in text
     assert "routes from other data to the invented declared rules" in text
     assert "Named invented variants" in text
     for delta in rows.NAMED_DELTAS:
@@ -695,6 +709,57 @@ def test_the_registered_main_passes_the_evidence_to_the_loader(
             ]
         )
     assert calls == [{"evidence": evidence}]
+
+
+def test_the_registered_main_passes_the_bound_evidence_hash_to_the_run(
+    registered, monkeypatch
+):
+    """Review round 2, info 2: ``main`` hands the run the evidence hash
+    the preflight bound, and the run compares it with the loader's seal
+    (``test_u2_loader.py``)."""
+
+    from populace_dynamics.uniform_cut_track_u2 import loader
+
+    bound = "e" * 64
+    params = object()
+    inputs = object()
+    calls = []
+
+    class Stop(Exception):
+        pass
+
+    monkeypatch.setattr(
+        registered,
+        "preflight",
+        lambda **kwargs: {
+            "evidence": {"invented": True},
+            "params": params,
+            "evidence_sha256": bound,
+        },
+    )
+    monkeypatch.setattr(loader, "load_u2_inputs", lambda **kwargs: inputs)
+
+    def run(*args, **kwargs):
+        calls.append((args, kwargs))
+        raise Stop
+
+    monkeypatch.setattr(registered.runner, "run_track_u2", run)
+    with pytest.raises(Stop):
+        registered.main(
+            [
+                "--registration-pointer",
+                POINTER,
+                "--registered-commit",
+                COMMIT,
+                "--binding-sha256",
+                "0" * 64,
+                "--headline-row",
+                "U0",
+            ]
+        )
+    ((args, kwargs),) = calls
+    assert args == (inputs, params)
+    assert kwargs["preregistration_evidence_sha256"] == bound
 
 
 def test_registered_headline_choice_is_only_u0(registered):

@@ -364,6 +364,7 @@ def main(argv: list[str] | None = None) -> int:
         role_context=sources.RoleContext.from_registry(),
         registration_pointer=args.registration_pointer,
         progress=lambda message: print(message, file=sys.stderr),
+        preregistration_evidence_sha256=state["evidence_sha256"],
     )
     artifact = {
         "header": REGISTERED_HEADER,

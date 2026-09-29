@@ -22,11 +22,14 @@ Guards, before anything is computed:
   which the dry run records).
 * ``registered_real``: an issue #42 comment pointer; inputs sealed by the
   U2 loader (``psid_files``) after it rechecked them against the frozen
-  pre-registration evidence (the seal's ``preregistration_evidence_
-  sha256``, section 14); the committed-registry role context; U2's
+  pre-registration evidence, whose hash (the seal's
+  ``preregistration_evidence_sha256``, section 14) must equal the one the
+  caller's registration binds; the committed-registry role context; U2's
   pinned parameters, by content (:func:`~populace_dynamics.
-  uniform_cut_track_u2.parameters.check_u2_parameters`); and, when a
-  source gate's audit is recorded, the registry gate only.
+  uniform_cut_track_u2.parameters.check_u2_parameters`), after which the
+  run computes with the fresh read of the pinned files, not the caller's
+  bundle; and, when a source gate's audit is recorded, the registry gate
+  only.
 
 The output records the U2 identity, the ten rows, the literal named
 deltas, U2's rulings record and the fixed headline.
@@ -96,8 +99,17 @@ def check_inputs(
     data_provenance: str,
     registration_pointer: str | None,
     role_context: sources.RoleContext,
+    *,
+    preregistration_evidence_sha256: str | None = None,
 ) -> dict[str, Any]:
-    """The provenance guards (U1's order and wording, U2's identity)."""
+    """The provenance guards (U1's order and wording, U2's identity).
+
+    ``preregistration_evidence_sha256`` is the evidence hash the
+    registration binds (``run_track_u2_registered.py`` passes the one its
+    preflight bound).  A registered run needs it and refuses unless it
+    equals the hash the loader sealed after its recheck; an invented run
+    binds none (review round 2).
+    """
 
     if type(inputs) is not cohort.U2Inputs:
         raise U2RunError("a U2 run needs U2Inputs")
@@ -107,6 +119,10 @@ def check_inputs(
     if data_provenance == ap.INVENTED:
         if registration_pointer is not None:
             raise U2RunError("an invented run carries no registration pointer")
+        if preregistration_evidence_sha256 is not None:
+            raise U2RunError(
+                "an invented run binds no pre-registration evidence"
+            )
         try:
             return {"invented_inputs": invented.check_invented_inputs(inputs)}
         except ValueError as error:
@@ -150,6 +166,21 @@ def check_inputs(
             "against the frozen pre-registration evidence (PSID file "
             "hashes and frame digest); these inputs carry no such recheck "
             "(section 14)"
+        )
+    # Review round 2, info 2: the seal proves a recheck against *some*
+    # evidence record; the run must name the record its registration binds.
+    bound = preregistration_evidence_sha256
+    if not isinstance(bound, str) or not _HEX64.fullmatch(bound):
+        raise U2RunError(
+            "a registered U2 run must name the pre-registration evidence "
+            "hash its registration binds (64 hex); none was given "
+            "(section 14)"
+        )
+    if evidence != bound:
+        raise U2RunError(
+            "the registration binds pre-registration evidence "
+            f"{bound[:12]}..., but the loader rechecked these inputs against "
+            f"{evidence[:12]}...: not the registered state (section 14)"
         )
     return {cohort.EVIDENCE_KEY: evidence}
 
@@ -412,8 +443,13 @@ def run_track_u2(
     row_set: Mapping[str, rows.U2Row] | None = None,
     source_gate: sources.SourceGate | None = None,
     progress: Callable[[str], None] | None = None,
+    preregistration_evidence_sha256: str | None = None,
 ) -> dict[str, Any]:
-    """Every registered U2 row, the F17 diagnostics and the provenance."""
+    """Every registered U2 row, the F17 diagnostics and the provenance.
+
+    A registered run passes ``preregistration_evidence_sha256``, the
+    evidence hash its registration binds (:func:`check_inputs`).
+    """
 
     row_set = rows.REGISTERED_ROWS if row_set is None else row_set
     if list(row_set) != list(rows.ROW_IDS):
@@ -437,10 +473,16 @@ def run_track_u2(
                 "gate applies to invented records alone"
             )
     checks = check_inputs(
-        inputs, data_provenance, registration_pointer, role_context
+        inputs,
+        data_provenance,
+        registration_pointer,
+        role_context,
+        preregistration_evidence_sha256=preregistration_evidence_sha256,
     )
     try:
-        parameters.check_u2_parameters(params, data_provenance)
+        # A registered run computes with the fresh read of the pinned files
+        # the caller's bundle was just shown equal to (review round 2).
+        params = parameters.check_u2_parameters(params, data_provenance)
     except parameters.U2ParameterError as error:
         raise U2RunError(str(error)) from error
     say = progress or (lambda message: None)
