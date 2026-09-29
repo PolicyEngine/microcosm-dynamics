@@ -217,8 +217,9 @@ It includes:
   mismatched persons, weights and fixed metadata refuse.
 - Frozen 68-row order/headlines, deterministic row-order behavior, every
   refusal preceding tabulation, and retention of all uncomputed rows/counters.
-- A failure inside a stage-2 or stage-3 per-person loop names that person;
-  stops keep earlier counters, so a later stop never keeps fewer counts.
+- A failure inside a stage-2 or stage-3 per-person loop names that person,
+  unless the error already names one; stops keep earlier counters, except
+  v1's partial increments (reading 20), so a later stop never keeps fewer.
 - D/Track M differential uses the difference of floored averages and only
   aligned eligibility years; positive displacement can round to zero;
   post-62 raw awards keep their distinct cutoff and bend-point years.
