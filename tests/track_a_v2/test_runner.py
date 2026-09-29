@@ -658,7 +658,7 @@ _PEOPLE = st.lists(
 )
 
 
-@settings(max_examples=24, deadline=None)
+@settings(max_examples=60, deadline=None)
 @given(
     people=_PEOPLE,
     data=st.data(),
@@ -741,7 +741,7 @@ def _single_union_pairing(base, reform, calc):
     return sorted(rows, key=lambda item: item["person_id"]), counters
 
 
-@settings(max_examples=40, deadline=None)
+@settings(max_examples=100, deadline=None)
 @given(people=_PEOPLE)
 def test_per_person_pairing_replays_one_inherited_union_call(people):
     """Rows, row and key order, and counter order equal one v1 union call."""

@@ -240,7 +240,7 @@ def _traced(failure=None, at=None):
         yield trace
 
 
-@settings(max_examples=40, deadline=None)
+@settings(max_examples=60, deadline=None)
 @given(
     kinds=st.lists(st.sampled_from(sorted(_SHAPES)), min_size=2, max_size=4),
     data=st.data(),
