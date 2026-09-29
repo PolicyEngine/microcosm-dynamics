@@ -868,6 +868,213 @@ def test_disabled_worker_family_can_leave_nothing_for_auxiliaries():
     assert _payable(result) == {"C": F(0)}
 
 
+@pytest.mark.parametrize("pia", ["850.00", "1105.00", "1275.00", "1700.00"])
+def test_disability_maximum_boundaries_at_its_two_kinks(pia):
+    """403(a)(6) bends where 85% of AIME meets the PIA and 150% of it.
+
+    AIME 20/17 x PIA puts 85% of AIME exactly on the PIA; 30/17 x PIA
+    puts it on 150% of the PIA. One dollar of AIME either side moves the
+    maximum by 85 cents (dime-floored) or not at all.
+    """
+    amount = F(pia)
+    at_pia = amount * 20 / 17
+    at_cap = amount * 30 / 17
+    assert at_pia.denominator == at_cap.denominator == 1
+    dmax = g.disability_family_maximum
+    low, high = int(at_pia), int(at_cap)
+    assert dmax(amount, low - 1) == amount  # the PIA floor binds
+    assert dmax(amount, low) == amount  # 85% of AIME equals the PIA
+    assert dmax(amount, low + 1) == g.floor_dime(amount + F(85, 100))
+    assert dmax(amount, high - 1) == g.floor_dime(amount * 3 / 2 - F(85, 100))
+    assert dmax(amount, high) == amount * 3 / 2  # 85% of AIME is the cap
+    assert dmax(amount, high + 1) == amount * 3 / 2  # the cap binds
+
+
+# ===========================================================================
+# Households: every record a family draws on, computed together
+# ===========================================================================
+def _ssb_a2_household(spouse_own=None):
+    """SSB 75(3) Table A-2 as two records: the spouse has her own RIB."""
+    own = g.RecordState(
+        g.FamilyKind.RETIREMENT,
+        F(100),
+        F(150),
+        worker=g.OwnBenefit(OLD_AGE, F(100)),
+    )
+    spouse = g.Beneficiary(
+        "Spouse",
+        g.Role.SPOUSE,
+        own_benefit=(
+            g.OwnBenefit(OLD_AGE, F(100)) if spouse_own is None else spouse_own
+        ),
+    )
+    children = [g.Beneficiary(f"Child {i}", g.Role.CHILD) for i in (1, 2)]
+    return {
+        "worker": g.HouseholdRecord(
+            "Worker", _disability_state("1200", 2253), [spouse, *children]
+        ),
+        "spouse": g.HouseholdRecord("Spouse", own),
+    }
+
+
+def test_ssb_table_a2_as_a_household():
+    result = g.household_benefits(
+        _ssb_a2_household(), payment_month=g.YearMonth(2015, 6), params=PARAMS
+    )
+    worker = result.records["worker"].by_id()
+    assert worker["Spouse"].auxiliary_payable == F(100)
+    assert worker["Child 1"].auxiliary_payable == F(250)
+    assert result.records["spouse"].worker_benefit == F(100)
+    # SSB Table A-2: the family receives $1,900 in all.
+    assert result.record_total == F(1900)
+    assert result.record_total_whole_dollars == 1900
+
+
+@pytest.mark.parametrize(
+    "declared",
+    [
+        None,
+        g.OwnBenefit(OLD_AGE, F(90)),
+        g.OwnBenefit(OLD_AGE, F(100), reduction_months=12),
+        g.OwnBenefit(DISABILITY, F(100)),
+    ],
+)
+def test_household_worker_must_declare_their_own_record_benefit(declared):
+    household = _ssb_a2_household(spouse_own=declared)
+    if declared is None:
+        worker = household["worker"]
+        spouse = dataclasses.replace(worker.beneficiaries[0], own_benefit=None)
+        household["worker"] = dataclasses.replace(
+            worker, beneficiaries=(spouse, *worker.beneficiaries[1:])
+        )
+    with pytest.raises(g.InvalidFamilyInput, match="own_benefit"):
+        g.check_household_records(household)
+
+
+def test_child_on_two_records_needs_a_combined_maximum():
+    child = g.Beneficiary("Kid", g.Role.CHILD)
+    household = {
+        "mother": g.HouseholdRecord("Mom", _retired(1000, 1750), [child]),
+        "father": g.HouseholdRecord("Dad", _survivor_state(), [child]),
+    }
+    with pytest.raises(g.FamilyConfigurationUnsupported) as caught:
+        g.household_benefits(household, payment_month=NOW, params=PARAMS)
+    assert caught.value.reason is g.UnsupportedReason.COMBINED_FAMILY_MAXIMUM
+    assert caught.value.beneficiary_id == "Kid"
+    # Each record alone computes, which is exactly the silent single-worker
+    # answer the household check exists to refuse.
+    for record in household.values():
+        assert _family(record.state, record.beneficiaries)
+
+
+@pytest.mark.parametrize(
+    "build",
+    [
+        lambda: {},
+        lambda: {
+            "a": g.HouseholdRecord("W", _retired(1000, 1750)),
+            "b": g.HouseholdRecord("W", _survivor_state()),
+        },
+        lambda: {
+            "a": g.HouseholdRecord("Dead", _survivor_state()),
+            "b": g.HouseholdRecord(
+                "W",
+                _retired(1000, 1750),
+                [g.Beneficiary("Dead", g.Role.CHILD)],
+            ),
+        },
+        lambda: {
+            "a": g.HouseholdRecord(
+                "W", _retired(1000, 1750), [g.Beneficiary("W", g.Role.CHILD)]
+            )
+        },
+    ],
+)
+def test_household_inputs_that_are_not_legal_families(build):
+    with pytest.raises(g.InvalidFamilyInput):
+        g.check_household_records(build())
+
+
+def test_households_stay_in_denominators():
+    ok = g.evaluate_family(
+        "ok",
+        2,
+        lambda: g.household_benefits(
+            _ssb_a2_household(),
+            payment_month=g.YearMonth(2015, 6),
+            params=PARAMS,
+        ),
+    )
+    child = g.Beneficiary("Kid", g.Role.CHILD)
+    blocked = g.evaluate_family(
+        "cfm",
+        1,
+        lambda: g.household_benefits(
+            {
+                "a": g.HouseholdRecord("A", _retired(1000, 1750), [child]),
+                "b": g.HouseholdRecord("B", _survivor_state(), [child]),
+            },
+            payment_month=NOW,
+            params=PARAMS,
+        ),
+    )
+    denominator = g.count_family_outcomes([ok, blocked])
+    assert (denominator.rows, denominator.unsupported_rows) == (2, 1)
+    assert g.weighted_record_total([ok]) == 2 * 1900
+    with pytest.raises(g.FamilyTargetBlocked, match="combined_family"):
+        g.weighted_mean_record_total([ok, blocked])
+
+
+# ===========================================================================
+# 403(a)(5): refused, never approximated
+# ===========================================================================
+def test_savings_clause_refuses_a_falling_total_after_a_pia_increase():
+    # A master-record PIA $0.10 higher with the maximum unchanged: $499.90
+    # is left for two children, so each falls to $249.90 and the total
+    # after 403(a) and 402(q) falls from $1,500.00 to $1,499.90.
+    before, after = _savings_clause_pair(F("1000.10"), F(1500))
+    assert after.subject_total < before.subject_total
+    with pytest.raises(g.FamilyConfigurationUnsupported) as caught:
+        g.check_savings_clause(before, after)
+    assert caught.value.reason is g.UnsupportedReason.SAVINGS_CLAUSE
+
+
+def test_savings_clause_passes_when_the_guarantee_changes_nothing():
+    # A 2.8 percent COLA on both the PIA and the maximum.
+    colas = ["2.8"]
+    pia = g.increase_by_colas(F(1000), colas)
+    maximum = g.increase_by_colas(F(1500), colas)
+    g.check_savings_clause(*_savings_clause_pair(pia, maximum))
+    # No PIA increase: 403(a)(5) does not apply.
+    g.check_savings_clause(*_savings_clause_pair(F(1000), F("1499.90")))
+    # The maximum no longer binds after the increase.
+    g.check_savings_clause(*_savings_clause_pair(F("1000.10"), F(3000)))
+    # 403(a)(5) needs two or more persons: a lone widow whose credit-
+    # increased OB exceeds a (given) maximum is capped, and her total may
+    # fall, but the guarantee does not reach her.
+    widow = [g.Beneficiary("W", g.Role.WIDOW, original_benefit_basis=1300)]
+    before = _family(
+        g.RecordState(g.FamilyKind.SURVIVOR, F(1000), F(1200)),
+        widow,
+        month=g.YearMonth(2025, 11),
+    )
+    after = _family(
+        g.RecordState(g.FamilyKind.SURVIVOR, F("1000.10"), F("1199.90")),
+        widow,
+        month=g.YearMonth(2025, 12),
+    )
+    assert before.family_maximum_binding and after.family_maximum_binding
+    assert after.subject_total < before.subject_total
+    g.check_savings_clause(before, after)
+
+
+def test_savings_clause_needs_consecutive_months():
+    before, after = _savings_clause_pair(F("1000.10"), F(1500))
+    later = dataclasses.replace(after, payment_month=g.YearMonth(2026, 1))
+    with pytest.raises(g.InvalidFamilyInput):
+        g.check_savings_clause(before, later)
+
+
 # ===========================================================================
 # Refusals: every unsupported configuration raises, by name
 # ===========================================================================
@@ -1027,7 +1234,38 @@ def _unsupported_cases():
             ),
             PARAMS,
         ),
+        g.UnsupportedReason.MULTIPLE_AUXILIARY_RECORDS: lambda: (
+            g.household_benefits(
+                {
+                    "A": g.HouseholdRecord(
+                        "A",
+                        _retired(1000, 1750),
+                        [g.Beneficiary("P", g.Role.DIVORCED_SPOUSE)],
+                    ),
+                    "B": g.HouseholdRecord(
+                        "B",
+                        _survivor_state(),
+                        [g.Beneficiary("P", g.Role.MOTHER_FATHER)],
+                    ),
+                },
+                payment_month=NOW,
+                params=PARAMS,
+            )
+        ),
+        g.UnsupportedReason.SAVINGS_CLAUSE: lambda: g.check_savings_clause(
+            *_savings_clause_pair(F("1000.10"), F(1500))
+        ),
     }
+
+
+def _savings_clause_pair(pia_after, maximum_after, children=2):
+    """November at PIA $1,000 / maximum $1,500, then December's record."""
+    kids = [g.Beneficiary(f"C{i}", g.Role.CHILD) for i in range(children)]
+    before = _family(_retired(1000, 1500), kids, month=g.YearMonth(2025, 11))
+    after = _family(
+        _retired(pia_after, maximum_after), kids, month=g.YearMonth(2025, 12)
+    )
+    return before, after
 
 
 def test_every_unsupported_reason_has_a_refusal_case():

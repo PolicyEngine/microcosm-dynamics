@@ -20,9 +20,11 @@ What this layer computes, for one insured worker's record and one month:
    applied to the maximum (POMS RS 00615.736A.1; 215(i)(2)(A)(ii)(III),
    dime-floored after each increase). Disability families use 403(a)(6):
    the smaller of 85 percent of AIME (or 100 percent of the PIA, if larger)
-   and 150 percent of the PIA, rounded down to a dime (SSA, Social Security
-   Bulletin 75(3), 2015), for initial DIB entitlement after June 1980 (POMS
-   RS 00615.740-.742).
+   and 150 percent of the PIA, for initial DIB entitlement after June 1980
+   (POMS RS 00615.740-.742). 403(a)(6) itself states no rounding; the
+   result is rounded down to a dime because SSA says family amounts "would
+   actually be rounded down to the nearest dime" (Social Security Bulletin
+   75(3), 2015, Table 2 note), and every COLA on it is dime-floored.
 2. **Original benefits.** 402(b)/(c)(2) spouse 1/2, 402(d)(2) child 1/2
    (3/4 of a deceased worker's PIA), 402(e)/(f)(2)(A) widow(er) 100 percent
    of the PIA as determined under (2)(B)-(C) (windexing, or the PIA deemed
@@ -74,8 +76,9 @@ Which record and PIA to supply. The family maximum is computed once, from
 the PIA for the year of first eligibility before COLAs (RS 00615.736A.1),
 and COLAs then raise it with the PIA. The eligibility year is the year the
 worker initially became eligible for old-age or disability benefits, or
-died before becoming so eligible (403(a)(2)(A)-(B)), except that a worker entitled to DIB in any of the 12 months before
-eligibility or death keeps the DIB eligibility year (403(a)(2)(D)). The
+died before becoming so eligible (403(a)(2)(A)-(B)), except that a worker
+entitled to DIB in any of the 12 months before eligibility or death keeps
+the DIB eligibility year (403(a)(2)(D)). The
 403(a)(6) disability maximum applies only while DIB entitlement continues;
 when the DIB converts to a RIB or the worker dies, build a retirement or
 survivor record, whose maximum is the ordinary AIME maximum (RS
@@ -90,9 +93,19 @@ used; NAWI and delayed-credit rates come from that bundle.
 
 Unsupported configurations raise :class:`FamilyConfigurationUnsupported`
 (code ``FAMILY_CONFIG_UNSUPPORTED``, design §7) and never fall back to a
-single-worker computation. :func:`evaluate_family`,
-:func:`count_family_outcomes` and the weighted aggregates keep such rows in
-every denominator and block totals that would need them.
+single-worker computation. :func:`household_benefits` computes every
+record in a household together and refuses a person entitled as an
+auxiliary on more than one record (403(a)(3)(A) combined maximums, RS
+00615.768A), so a multi-worker family cannot be computed one record at a
+time by accident. :func:`evaluate_family`, :func:`count_family_outcomes`
+and the weighted aggregates keep unsupported rows in every denominator and
+block totals that would need them.
+
+Not implemented, and refused rather than approximated: 403(a)(5), which
+holds a family's total up after a PIA increase while the maximum applies.
+It needs the previous month's total; :func:`check_savings_clause` compares
+two consecutive months and refuses a pair in which it would change a
+benefit.
 """
 
 from __future__ import annotations
@@ -128,6 +141,8 @@ __all__ = [
     "FamilyKind",
     "FamilyOutcome",
     "FamilyTargetBlocked",
+    "HouseholdBenefits",
+    "HouseholdRecord",
     "InvalidFamilyInput",
     "OwnBenefit",
     "OwnBenefitKind",
@@ -140,6 +155,8 @@ __all__ = [
     "YearMonth",
     "applicable_cola_percents",
     "ceil_dime",
+    "check_household_records",
+    "check_savings_clause",
     "count_family_outcomes",
     "disability_family_maximum",
     "evaluate_family",
@@ -147,6 +164,7 @@ __all__ = [
     "family_maximum_bend_points",
     "family_maximum_formula",
     "floor_dime",
+    "household_benefits",
     "increase_by_colas",
     "original_benefit",
     "own_monthly_benefit",
@@ -239,6 +257,8 @@ class UnsupportedReason(Enum):
     PARISI_BEFORE_OCTOBER_1999 = "parisi_before_october_1999"
     INDEPENDENT_DIVORCED_SPOUSE = "independently_entitled_divorced_spouse"
     NON_AIME_FORMULA_PIA = "non_aime_formula_pia"
+    MULTIPLE_AUXILIARY_RECORDS = "multiple_auxiliary_records"
+    SAVINGS_CLAUSE = "savings_clause_403a5"
 
 
 class FamilyConfigurationUnsupported(Exception):
@@ -1657,6 +1677,250 @@ def family_benefits(
 
 
 # ---------------------------------------------------------------------------
+# Households: every record a family draws on, computed together
+# ---------------------------------------------------------------------------
+@dataclass(frozen=True)
+class HouseholdRecord:
+    """One insured worker's record within a household.
+
+    ``worker_id`` is the insured worker (the deceased, on a survivor
+    record). Each beneficiary's ``beneficiary_id`` must be that person's
+    household-wide identifier, which is how :func:`check_household_records`
+    recognizes a person entitled on more than one record, or a worker who
+    is also an auxiliary on someone else's record.
+    """
+
+    worker_id: str
+    state: RecordState
+    beneficiaries: tuple[Beneficiary, ...] = ()
+
+    def __post_init__(self):
+        if not isinstance(self.worker_id, str) or not self.worker_id:
+            raise InvalidFamilyInput("worker_id must be a nonempty str")
+        if not isinstance(self.state, RecordState):
+            raise TypeError("state must be a RecordState")
+        object.__setattr__(self, "beneficiaries", tuple(self.beneficiaries))
+        for beneficiary in self.beneficiaries:
+            if not isinstance(beneficiary, Beneficiary):
+                raise TypeError("beneficiaries must be Beneficiary objects")
+            if beneficiary.beneficiary_id == self.worker_id:
+                raise InvalidFamilyInput(
+                    f"{self.worker_id} cannot be a beneficiary on their own "
+                    "record"
+                )
+
+
+@dataclass(frozen=True)
+class HouseholdBenefits:
+    """Gross monthly benefits on every record in a household for a month.
+
+    Totals count what is paid on the household's records: each living
+    worker's own benefit once (on their own record) and every auxiliary
+    payment. A dually entitled person's own benefit from a record outside
+    the household is reported on their row but not counted here.
+    """
+
+    payment_month: YearMonth
+    records: Mapping[str, FamilyBenefits]
+
+    @property
+    def record_total(self) -> Fraction:
+        return sum(
+            (result.record_total for result in self.records.values()),
+            Fraction(0),
+        )
+
+    @property
+    def record_total_whole_dollars(self) -> int:
+        return sum(
+            result.record_total_whole_dollars
+            for result in self.records.values()
+        )
+
+
+def _own_benefit_on_record(state: RecordState) -> OwnBenefit | None:
+    """The living worker's own RIB or DIB on their record."""
+    if state.kind is FamilyKind.RETIREMENT:
+        return state.worker
+    if state.kind is FamilyKind.DISABILITY:
+        return OwnBenefit(OwnBenefitKind.DISABILITY, state.pia)
+    return None
+
+
+def _same_own_benefit(declared: OwnBenefit | None, actual: OwnBenefit) -> bool:
+    if declared is None:
+        return False
+    names = ("kind", "pia", "reduction_months", "delayed_credit_months")
+    if any(getattr(declared, n) != getattr(actual, n) for n in names):
+        return False
+    return not actual.delayed_credit_months or (
+        declared.birth_year == actual.birth_year
+    )
+
+
+def check_household_records(records: Mapping[str, HouseholdRecord]) -> None:
+    """Refuse a household that one-record computations would misstate.
+
+    * A person entitled as an auxiliary or survivor on two or more records
+      raises :class:`FamilyConfigurationUnsupported`: a child on several
+      records with ``combined_family_maximum`` (403(a)(3)(A); POMS RS
+      00615.770), anyone else with ``multiple_auxiliary_records``
+      (simultaneous or dual entitlement across records, RS 00615.768A).
+    * A living worker who is also an auxiliary on another record must
+      declare that record's RIB or DIB as ``own_benefit`` (402(k)(3)(A)).
+      A mismatch, a worker with two records, or a deceased worker entered
+      as someone's beneficiary raises :class:`InvalidFamilyInput`.
+    """
+    if not isinstance(records, Mapping) or not records:
+        raise InvalidFamilyInput("A household needs at least one record")
+    workers: dict[str, str] = {}
+    for record_id, record in records.items():
+        if not isinstance(record, HouseholdRecord):
+            raise TypeError("records must map ids to HouseholdRecords")
+        if record.worker_id in workers:
+            raise InvalidFamilyInput(
+                f"worker {record.worker_id} has two records "
+                f"({workers[record.worker_id]}, {record_id})"
+            )
+        workers[record.worker_id] = record_id
+    held: dict[str, list[tuple[str, Beneficiary]]] = {}
+    for record_id, record in records.items():
+        for beneficiary in record.beneficiaries:
+            held.setdefault(beneficiary.beneficiary_id, []).append(
+                (record_id, beneficiary)
+            )
+    for person, entitlements in sorted(held.items()):
+        if len(entitlements) > 1:
+            ids = sorted(record_id for record_id, _ in entitlements)
+            if all(b.role is Role.CHILD for _, b in entitlements):
+                raise FamilyConfigurationUnsupported(
+                    UnsupportedReason.COMBINED_FAMILY_MAXIMUM,
+                    f"a child entitled on records {ids}; 403(a)(3)(A) may "
+                    "combine their maximums (POMS RS 00615.770)",
+                    beneficiary_id=person,
+                )
+            raise FamilyConfigurationUnsupported(
+                UnsupportedReason.MULTIPLE_AUXILIARY_RECORDS,
+                f"entitled as an auxiliary or survivor on records {ids} "
+                "(simultaneous or dual entitlement across records, POMS RS "
+                "00615.768A) is not implemented",
+                beneficiary_id=person,
+            )
+        own_record_id = workers.get(person)
+        if own_record_id is None:
+            continue
+        record_id, beneficiary = entitlements[0]
+        actual = _own_benefit_on_record(records[own_record_id].state)
+        if actual is None:
+            raise InvalidFamilyInput(
+                f"{person} is the deceased worker on record {own_record_id} "
+                f"and a beneficiary on record {record_id}"
+            )
+        if not _same_own_benefit(beneficiary.own_benefit, actual):
+            raise InvalidFamilyInput(
+                f"{person} is the worker on record {own_record_id}; on "
+                f"record {record_id} their own_benefit must be that "
+                "record's benefit (402(k)(3)(A))"
+            )
+
+
+def household_benefits(
+    records: Mapping[str, HouseholdRecord],
+    *,
+    payment_month: YearMonth,
+    params: SSAParameters,
+) -> HouseholdBenefits:
+    """Every record in a household for one month, checked together.
+
+    :func:`check_household_records` runs first, then
+    :func:`family_benefits` on each record.
+    """
+    check_household_records(records)
+    results = {
+        record_id: family_benefits(
+            record.state,
+            record.beneficiaries,
+            payment_month=payment_month,
+            params=params,
+        )
+        for record_id, record in records.items()
+    }
+    return HouseholdBenefits(payment_month, MappingProxyType(results))
+
+
+# ---------------------------------------------------------------------------
+# 403(a)(5): detected between consecutive months, never approximated
+# ---------------------------------------------------------------------------
+def _savings_clause_total(result: FamilyBenefits) -> Fraction:
+    """The total 403(a)(5) protects: after 403(a) and 402(q).
+
+    The worker's own benefit plus each beneficiary subject to the maximum
+    after age reduction and before the 402(k)(3)(A) offset. Divorced
+    beneficiaries are outside 403(a) (403(a)(3)(C)).
+    """
+    return (result.worker_benefit or Fraction(0)) + sum(
+        (
+            row.age_adjusted_rate
+            for row in result.beneficiaries
+            if row.subject_to_family_maximum
+        ),
+        Fraction(0),
+    )
+
+
+def _next_month(month: YearMonth) -> YearMonth:
+    if month.month == 12:
+        return YearMonth(month.year + 1, 1)
+    return YearMonth(month.year, month.month + 1)
+
+
+def check_savings_clause(
+    previous: FamilyBenefits, current: FamilyBenefits
+) -> None:
+    """Refuse a month in which 403(a)(5) would raise a family's benefits.
+
+    403(a)(5): when the maximum applies to two or more persons for a month
+    and the PIA is increased for the following month, that month's total
+    is treated as increased by the smallest amount needed to keep later
+    totals (after 403(a) and 402(q)) from falling below it. This layer
+    computes one month without history and does not apply the guarantee.
+
+    Given one record's results for two consecutive months, this raises
+    ``savings_clause_403a5`` when the PIA rose, the maximum bound in both
+    months, two or more persons were subject to it in the earlier month
+    and the protected total fell. Raising a binding maximum raises some
+    benefit, so the guarantee would change that month; it then carries to
+    later months, which the caller must also refuse. Every pair this
+    passes is one the guarantee leaves unchanged: the total did not fall,
+    the PIA did not rise, or no maximum binds.
+    """
+    for result in (previous, current):
+        if not isinstance(result, FamilyBenefits):
+            raise TypeError("check_savings_clause compares FamilyBenefits")
+    if current.payment_month != _next_month(previous.payment_month):
+        raise InvalidFamilyInput("current must be the month after previous")
+    persons = sum(
+        row.subject_to_family_maximum for row in previous.beneficiaries
+    ) + (previous.kind is not FamilyKind.SURVIVOR)
+    if (
+        current.pia <= previous.pia
+        or not previous.family_maximum_binding
+        or not current.family_maximum_binding
+        or persons < 2
+    ):
+        return
+    before = _savings_clause_total(previous)
+    after = _savings_clause_total(current)
+    if after < before:
+        raise FamilyConfigurationUnsupported(
+            UnsupportedReason.SAVINGS_CLAUSE,
+            f"the PIA rose from {previous.pia} to {current.pia} while the "
+            f"maximum bound, and the protected total fell from {before} "
+            f"to {after}; 403(a)(5) would raise it (not implemented)",
+        )
+
+
+# ---------------------------------------------------------------------------
 # Denominators: unsupported rows stay in, and block totals that need them
 # ---------------------------------------------------------------------------
 @dataclass(frozen=True)
@@ -1665,7 +1929,7 @@ class FamilyOutcome:
 
     key: str
     weight: Fraction
-    benefits: FamilyBenefits | None
+    benefits: FamilyBenefits | HouseholdBenefits | None
     unsupported: FamilyConfigurationUnsupported | None
 
     def __post_init__(self):
@@ -1682,19 +1946,23 @@ class FamilyOutcome:
 
 
 def evaluate_family(
-    key: str, weight: object, compute: Callable[[], FamilyBenefits]
+    key: str,
+    weight: object,
+    compute: Callable[[], FamilyBenefits | HouseholdBenefits],
 ) -> FamilyOutcome:
     """Run ``compute``; keep an unsupported configuration as an outcome.
 
-    Only :class:`FamilyConfigurationUnsupported` is caught. Invalid inputs
-    and bugs still raise, so an error never masquerades as a coverage gap.
+    ``compute`` returns one record's :class:`FamilyBenefits` or a whole
+    household's :class:`HouseholdBenefits`. Only
+    :class:`FamilyConfigurationUnsupported` is caught. Invalid inputs and
+    bugs still raise, so an error never masquerades as a coverage gap.
     """
     try:
         benefits = compute()
     except FamilyConfigurationUnsupported as error:
         return FamilyOutcome(key, weight, None, error)
-    if not isinstance(benefits, FamilyBenefits):
-        raise TypeError("compute must return FamilyBenefits")
+    if not isinstance(benefits, (FamilyBenefits, HouseholdBenefits)):
+        raise TypeError("compute must return family or household benefits")
     return FamilyOutcome(key, weight, benefits, None)
 
 
