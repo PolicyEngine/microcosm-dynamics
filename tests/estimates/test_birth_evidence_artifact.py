@@ -179,6 +179,29 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/track_a_v2/runner.py"),
         Path("src/populace_dynamics/track_a_v2/structural.py"),
         Path("src/populace_dynamics/track_a_v2/structural_inputs.py"),
+        Path("src/populace_dynamics/track_b/reconstructed.py"),
+        Path("src/populace_dynamics/data/u2_source_registry.py"),
+        Path("scripts/capture_track_u2_income_wealth.py"),
+        Path("scripts/capture_track_u2_ssi_parameters.py"),
+        Path("scripts/capture_track_u2_ssi_sources.py"),
+        Path("src/populace_dynamics/uniform_cut_track_u2/__init__.py"),
+        Path("src/populace_dynamics/uniform_cut_track_u2/cohort.py"),
+        Path("src/populace_dynamics/uniform_cut_track_u2/diagnostics.py"),
+        Path("src/populace_dynamics/uniform_cut_track_u2/estimator.py"),
+        Path("src/populace_dynamics/uniform_cut_track_u2/identity.py"),
+        Path("src/populace_dynamics/uniform_cut_track_u2/invented.py"),
+        Path("src/populace_dynamics/uniform_cut_track_u2/loader.py"),
+        Path("src/populace_dynamics/uniform_cut_track_u2/memo.py"),
+        Path("src/populace_dynamics/uniform_cut_track_u2/parameters.py"),
+        Path("src/populace_dynamics/uniform_cut_track_u2/rows.py"),
+        Path("src/populace_dynamics/uniform_cut_track_u2/runner.py"),
+        Path("src/populace_dynamics/uniform_cut_track_u2/sources.py"),
+        Path("src/populace_dynamics/uniform_cut_track_u2/tabulation.py"),
+        Path("scripts/track_u2_dry_run.py"),
+        Path("scripts/track_u2_structure.py"),
+        Path("scripts/track_u2_component_diagnostics.py"),
+        Path("scripts/run_track_u2_registered.py"),
+        Path("scripts/u2_u1_differential.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -311,8 +334,38 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "populace_dynamics.track_b.equality",
         "populace_dynamics.track_b.replay",
         "populace_dynamics.track_b.runner",
+        "populace_dynamics.track_b.reconstructed",
     }
     assert track_b_modules.issubset(module_paths)
+    u2_registry = "populace_dynamics.data.u2_source_registry"
+    assert u2_registry in module_paths
+    u2_captures = {
+        "scripts.capture_track_u2_income_wealth",
+        "scripts.capture_track_u2_ssi_parameters",
+        "scripts.capture_track_u2_ssi_sources",
+    }
+    assert u2_captures.issubset(module_paths)
+    u2_milestone2 = {
+        "populace_dynamics.uniform_cut_track_u2",
+        "populace_dynamics.uniform_cut_track_u2.cohort",
+        "populace_dynamics.uniform_cut_track_u2.diagnostics",
+        "populace_dynamics.uniform_cut_track_u2.estimator",
+        "populace_dynamics.uniform_cut_track_u2.identity",
+        "populace_dynamics.uniform_cut_track_u2.invented",
+        "populace_dynamics.uniform_cut_track_u2.loader",
+        "populace_dynamics.uniform_cut_track_u2.memo",
+        "populace_dynamics.uniform_cut_track_u2.parameters",
+        "populace_dynamics.uniform_cut_track_u2.rows",
+        "populace_dynamics.uniform_cut_track_u2.runner",
+        "populace_dynamics.uniform_cut_track_u2.sources",
+        "populace_dynamics.uniform_cut_track_u2.tabulation",
+        "scripts.track_u2_dry_run",
+        "scripts.track_u2_structure",
+        "scripts.track_u2_component_diagnostics",
+        "scripts.run_track_u2_registered",
+        "scripts.u2_u1_differential",
+    }
+    assert u2_milestone2.issubset(module_paths)
     assert psid_exclusions.issubset(module_paths)
     graph_exclusions = {
         name
@@ -378,6 +431,12 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         f"birth-evidence reducer: {sorted(psid_exclusions & reachable)}"
     )
     assert track_b_modules.isdisjoint(reachable)
+    assert u2_registry not in reachable
+    assert u2_captures.isdisjoint(reachable)
+    assert u2_milestone2.isdisjoint(reachable), (
+        "U2 milestone-2 modules became reachable from the birth-evidence "
+        f"reducer: {sorted(u2_milestone2 & reachable)}"
+    )
     assert graph_exclusions.isdisjoint(reachable), (
         "opt-in graph modules became reachable from the birth-evidence "
         f"reducer: {sorted(graph_exclusions & reachable)}"

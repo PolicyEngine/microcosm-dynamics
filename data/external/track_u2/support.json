@@ -1,0 +1,971 @@
+{
+  "schema_version": 1,
+  "target_id": "U2",
+  "registry": "support",
+  "waves": [
+    2013,
+    2015,
+    2017,
+    2019,
+    2021,
+    2023
+  ],
+  "scope": "documentary source registry; no observation or estimator implementation",
+  "sources": [
+    {
+      "file": "PSID/ind2023er/IND2023ER.sps",
+      "bytes": 270821,
+      "sha256": "92d32d0efd65d50e984e971c681f6e9231b720973444cdc8f20f397039c9a462"
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_formats.sps",
+      "bytes": 1418347,
+      "sha256": "b42b3560fb3116af0cc6bf0740824cbc24b0ff94d7a1fd4891e40c7a12f93dc4"
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "bytes": 3937820,
+      "sha256": "4878100887dce1a7b7831af272a9f19b01ec33dcea091a5c7352625ecd464308"
+    },
+    {
+      "file": "PSID/family/2013/FAM2013ER_codebook.pdf",
+      "bytes": 4688123,
+      "sha256": "40cc2de6af801b94b93518f7252e24c7c95098e713fc97f9ead1af74c4ce25d6"
+    },
+    {
+      "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+      "bytes": 4945025,
+      "sha256": "7dcb71f823e309a286b904531410243d58cde48b8f50079401856de9ac762238"
+    },
+    {
+      "file": "PSID/family/2017/FAM2017ER_codebook.pdf",
+      "bytes": 5095504,
+      "sha256": "19bfba9f7a3fecc82a18711466e2b2a5f00b49c9d3db0f9f8587795fad2bf8c1"
+    },
+    {
+      "file": "PSID/family/2019/fam2019er_codebook.pdf",
+      "bytes": 5096192,
+      "sha256": "ce637e37e0f5e306dd7f10455e85069b56c9b13d5c138d3eb4b9c8d6a8452406"
+    },
+    {
+      "file": "PSID/family/2021/FAM2021ER_codebook.pdf",
+      "bytes": 3628755,
+      "sha256": "e3b88ef394952fa05b9b98eb7f05bf9a99896840515942562aa37399e1bcd462"
+    },
+    {
+      "file": "PSID/family/2023/FAM2023ER_codebook.pdf",
+      "bytes": 3439538,
+      "sha256": "85a4078ebb79146d023df3d9d4e2d2ef6017eced849656ca39f4b740cb5a5688"
+    }
+  ],
+  "entries": [
+    {
+      "id": "1946.2013",
+      "wave": 2013,
+      "status": "RESOLVED",
+      "birth_year": 1946,
+      "income_year": 2012,
+      "age": 66,
+      "multiplier": 0.5,
+      "primary_observation": false,
+      "support": "documentary calendar and staged anchors only; no claim that a positive-weight observed record exists",
+      "citations": [
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 88
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 641
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 2849
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 918
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 672
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 2943
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 976
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 44
+        }
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 44,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 88 is the specification's calendar row for birth year 1946."
+      }
+    },
+    {
+      "id": "1946.2015",
+      "wave": 2015,
+      "status": "RESOLVED",
+      "birth_year": 1946,
+      "income_year": 2014,
+      "age": 68,
+      "multiplier": 0.5,
+      "primary_observation": false,
+      "support": "documentary calendar and staged anchors only; no claim that a positive-weight observed record exists",
+      "citations": [
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 88
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 674
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 2950
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 980
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 720
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3087
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1094
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 45
+        }
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 45,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 88 is the specification's calendar row for birth year 1946."
+      }
+    },
+    {
+      "id": "1947.2015",
+      "wave": 2015,
+      "status": "RESOLVED",
+      "birth_year": 1947,
+      "income_year": 2014,
+      "age": 67,
+      "multiplier": 1,
+      "primary_observation": true,
+      "support": "documentary calendar and staged anchors only; no claim that a positive-weight observed record exists",
+      "citations": [
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 74
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 674
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 2950
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 980
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 720
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3087
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1094
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 46
+        }
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 46,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 74 is the specification's calendar row for birth year 1947."
+      }
+    },
+    {
+      "id": "1948.2015",
+      "wave": 2015,
+      "status": "RESOLVED",
+      "birth_year": 1948,
+      "income_year": 2014,
+      "age": 66,
+      "multiplier": 0.5,
+      "primary_observation": false,
+      "support": "documentary calendar and staged anchors only; no claim that a positive-weight observed record exists",
+      "citations": [
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 89
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 674
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 2950
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 980
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 720
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3087
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1094
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 47
+        }
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 47,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 89 is the specification's calendar row for birth year 1948."
+      }
+    },
+    {
+      "id": "1948.2017",
+      "wave": 2017,
+      "status": "RESOLVED",
+      "birth_year": 1948,
+      "income_year": 2016,
+      "age": 68,
+      "multiplier": 0.5,
+      "primary_observation": false,
+      "support": "documentary calendar and staged anchors only; no claim that a positive-weight observed record exists",
+      "citations": [
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 89
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 722
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3093
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1098
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 770
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3238
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1224
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 48
+        }
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 48,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 89 is the specification's calendar row for birth year 1948."
+      }
+    },
+    {
+      "id": "1949.2017",
+      "wave": 2017,
+      "status": "RESOLVED",
+      "birth_year": 1949,
+      "income_year": 2016,
+      "age": 67,
+      "multiplier": 1,
+      "primary_observation": true,
+      "support": "documentary calendar and staged anchors only; no claim that a positive-weight observed record exists",
+      "citations": [
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 75
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 722
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3093
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1098
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 770
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3238
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1224
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 49
+        }
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 49,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 75 is the specification's calendar row for birth year 1949."
+      }
+    },
+    {
+      "id": "1950.2017",
+      "wave": 2017,
+      "status": "RESOLVED",
+      "birth_year": 1950,
+      "income_year": 2016,
+      "age": 66,
+      "multiplier": 0.5,
+      "primary_observation": false,
+      "support": "documentary calendar and staged anchors only; no claim that a positive-weight observed record exists",
+      "citations": [
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 90
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 722
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3093
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1098
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 770
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3238
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1224
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 50
+        }
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 50,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 90 is the specification's calendar row for birth year 1950."
+      }
+    },
+    {
+      "id": "1950.2019",
+      "wave": 2019,
+      "status": "RESOLVED",
+      "birth_year": 1950,
+      "income_year": 2018,
+      "age": 68,
+      "multiplier": 0.5,
+      "primary_observation": false,
+      "support": "documentary calendar and staged anchors only; no claim that a positive-weight observed record exists",
+      "citations": [
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 90
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 772
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3244
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1228
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 825
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3402
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1345
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 51
+        }
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 51,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 90 is the specification's calendar row for birth year 1950."
+      }
+    },
+    {
+      "id": "1951.2019",
+      "wave": 2019,
+      "status": "RESOLVED",
+      "birth_year": 1951,
+      "income_year": 2018,
+      "age": 67,
+      "multiplier": 1,
+      "primary_observation": true,
+      "support": "documentary calendar and staged anchors only; no claim that a positive-weight observed record exists",
+      "citations": [
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 76
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 772
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3244
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1228
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 825
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3402
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1345
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 52
+        }
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 52,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 76 is the specification's calendar row for birth year 1951."
+      }
+    },
+    {
+      "id": "1952.2019",
+      "wave": 2019,
+      "status": "RESOLVED",
+      "birth_year": 1952,
+      "income_year": 2018,
+      "age": 66,
+      "multiplier": 0.5,
+      "primary_observation": false,
+      "support": "documentary calendar and staged anchors only; no claim that a positive-weight observed record exists",
+      "citations": [
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 91
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 772
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3244
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1228
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 825
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3402
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1345
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 53
+        }
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 53,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 91 is the specification's calendar row for birth year 1952."
+      }
+    },
+    {
+      "id": "1952.2021",
+      "wave": 2021,
+      "status": "RESOLVED",
+      "birth_year": 1952,
+      "income_year": 2020,
+      "age": 68,
+      "multiplier": 0.5,
+      "primary_observation": false,
+      "support": "documentary calendar and staged anchors only; no claim that a positive-weight observed record exists",
+      "citations": [
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 91
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 827
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3408
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1349
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 880
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3567
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1466
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 54
+        }
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 54,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 91 is the specification's calendar row for birth year 1952."
+      }
+    },
+    {
+      "id": "1953.2021",
+      "wave": 2021,
+      "status": "RESOLVED",
+      "birth_year": 1953,
+      "income_year": 2020,
+      "age": 67,
+      "multiplier": 1,
+      "primary_observation": true,
+      "support": "documentary calendar and staged anchors only; no claim that a positive-weight observed record exists",
+      "citations": [
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 77
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 827
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3408
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1349
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 880
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3567
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1466
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 55
+        }
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 55,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 77 is the specification's calendar row for birth year 1953."
+      }
+    },
+    {
+      "id": "1954.2021",
+      "wave": 2021,
+      "status": "RESOLVED",
+      "birth_year": 1954,
+      "income_year": 2020,
+      "age": 66,
+      "multiplier": 0.5,
+      "primary_observation": false,
+      "support": "documentary calendar and staged anchors only; no claim that a positive-weight observed record exists",
+      "citations": [
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 92
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 827
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3408
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1349
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 880
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3567
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1466
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 56
+        }
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 56,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 92 is the specification's calendar row for birth year 1954."
+      }
+    },
+    {
+      "id": "1954.2023",
+      "wave": 2023,
+      "status": "RESOLVED",
+      "birth_year": 1954,
+      "income_year": 2022,
+      "age": 68,
+      "multiplier": 0.5,
+      "primary_observation": false,
+      "support": "documentary calendar and staged anchors only; no claim that a positive-weight observed record exists",
+      "citations": [
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 92
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 882
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3573
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1470
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 935
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3732
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1587
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 57
+        }
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 57,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 92 is the specification's calendar row for birth year 1954."
+      }
+    },
+    {
+      "id": "1955.2023",
+      "wave": 2023,
+      "status": "RESOLVED",
+      "birth_year": 1955,
+      "income_year": 2022,
+      "age": 67,
+      "multiplier": 1,
+      "primary_observation": true,
+      "support": "documentary calendar and staged anchors only; no claim that a positive-weight observed record exists",
+      "citations": [
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 78
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 882
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3573
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1470
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 935
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER.sps",
+          "line": 3732
+        },
+        {
+          "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+          "page": 1587
+        },
+        {
+          "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 58
+        }
+      ],
+      "citation_correction": {
+        "amendment": 7,
+        "adjudication": {
+          "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+          "line": 58,
+          "disposition": "WRONG",
+          "amendment": 7
+        },
+        "replaced": {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 67
+        },
+        "reason": "docs/design/boomers2004_1946_55_comparison.md:67 is blank; line 78 is the specification's calendar row for birth year 1955."
+      }
+    },
+    {
+      "id": "common.birth_derivation",
+      "wave": null,
+      "status": "RESOLVED",
+      "rule": "Reuse existing history precedence; common support changes seeds only. No cohort implementation in milestone 1.",
+      "citations": [
+        {
+          "file": "src/populace_dynamics/estimates/career.py",
+          "line": 652
+        },
+        {
+          "file": "docs/design/boomers2004_1946_55_comparison.md",
+          "line": 108
+        }
+      ]
+    }
+  ],
+  "independent_adjudication": {
+    "file": "EV/phase2-20260927/out/u2-adjudicate.md",
+    "sha256": "a891762bf9be39e05509e59c5b7cd3fdab0eb34feb9ad5b9bb4a8ec3afc39662",
+    "bytes": 26564,
+    "applied_by": "u2-m1b",
+    "note": "Independent adjudication of milestone 1 (VERDICT: ERRORS FOUND). Amendment 7 citation corrections, D resolutions and F refusals are applied here; A items stay TO VERIFY pending u2-draft-4 amendments 1-6 and Max's ruling."
+  }
+}
