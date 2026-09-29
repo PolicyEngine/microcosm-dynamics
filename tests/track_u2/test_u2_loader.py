@@ -28,6 +28,7 @@ hashes and the seal -- is the code a registered run executes.
 
 from __future__ import annotations
 
+import hashlib
 import os
 import pwd
 import sys
@@ -156,8 +157,18 @@ def _stage(root, inputs: cohort.U2Inputs, registries) -> set[str]:
     return staged
 
 
-def _load(root, inputs: cohort.U2Inputs) -> cohort.U2Inputs:
-    """Run the real loader on ``root`` with the four named patches."""
+def _load(
+    root,
+    inputs: cohort.U2Inputs,
+    *,
+    evidence=None,
+    history: pd.DataFrame | None = None,
+) -> cohort.U2Inputs:
+    """Run the real loader on ``root`` with the four named patches
+    (``evidence`` is passed through; ``history`` replaces the invented
+    marriage history the patched reader returns)."""
+
+    history = inputs.marriage_history if history is None else history
 
     # The committed role rules are cached on first use; compute them
     # before ``blockers`` is patched so the cache holds the real rules.
@@ -171,7 +182,7 @@ def _load(root, inputs: cohort.U2Inputs) -> cohort.U2Inputs:
         patch.setattr(
             marriage,
             "marriage_history",
-            lambda *, data_dir=None, nrows=None: inputs.marriage_history,
+            lambda *, data_dir=None, nrows=None: history,
         )
         patch.setattr(
             family,
@@ -179,7 +190,9 @@ def _load(root, inputs: cohort.U2Inputs) -> cohort.U2Inputs:
             lambda *, waves=None, data_dir=None: inputs.observed_earnings,
         )
         _GUARD["active"], _GUARD["opened"] = True, []
-        return loader.load_u2_inputs(data_dir=root)
+        if evidence is None:
+            return loader.load_u2_inputs(data_dir=root)
+        return loader.load_u2_inputs(data_dir=root, evidence=evidence)
     finally:
         _GUARD["active"] = False
         patch.undo()
@@ -287,17 +300,23 @@ def test_stage_three_applies_the_registry_dc_route(
         patch.undo()
 
 
-def test_loaded_inputs_take_the_registered_path_only(loaded, declared):
-    """Sealed psid_files inputs: the registered guard accepts them, the
-    declared role context refuses them, and the committed roles registry
-    refuses the build on the refused codes (2015 code 20 among them)."""
+def test_loaded_inputs_take_the_registered_path_only(
+    loaded, frozen_load, declared
+):
+    """Sealed psid_files inputs: the registered guard accepts them only
+    once the loader rechecked them against the frozen pre-registration
+    evidence (review round 1, finding 2); the declared role context
+    refuses them, and the committed roles registry refuses the build on
+    the refused codes (2015 code 20 among them)."""
 
     inputs = loaded["inputs"]
     registry = sources.RoleContext.from_registry()
-    assert (
+    with pytest.raises(runner.U2RunError, match="frozen pre-registration"):
         runner.check_inputs(inputs, ap.REGISTERED_REAL, POINTER, registry)
-        == {}
-    )
+    rechecked = frozen_load["inputs"]
+    assert runner.check_inputs(
+        rechecked, ap.REGISTERED_REAL, POINTER, registry
+    ) == {cohort.EVIDENCE_KEY: frozen_load["sha256"]}
     with pytest.raises(runner.U2RunError, match="invented"):
         runner.check_inputs(inputs, ap.INVENTED, None, registry)
     with pytest.raises(cohort.U2CohortError, match="invented inputs"):
@@ -663,6 +682,357 @@ def test_an_undocumented_relationship_code_has_no_ofum_rule(declared):
         for wave in (2013, 2015):
             with pytest.raises(sources.U2RoleRefusal):
                 context.rule(wave, 92)
+
+
+# ---------------------------------------------------------------------------
+# Review round 1, finding 2: the frozen PSID file and frame identities.
+# ---------------------------------------------------------------------------
+@pytest.fixture(scope="module")
+def evidence(loaded):
+    """The evidence record the step-4 pass would write from the staged
+    invented files (INVENTED DATA - NOT A COMPARISON)."""
+
+    return loader.preregistration_evidence(loaded["inputs"])
+
+
+@pytest.fixture(scope="module")
+def frozen_load(loaded, evidence, u2_inputs):
+    """The same staged directory reloaded against its frozen evidence."""
+
+    inputs = _load(loaded["root"], u2_inputs, evidence=evidence)
+    return {
+        "inputs": inputs,
+        "sha256": loader.preregistration_evidence_sha256(evidence),
+    }
+
+
+def test_the_evidence_freezes_every_file_read_and_the_frame_digest(
+    loaded, evidence
+):
+    inputs = loaded["inputs"]
+    assert evidence["target_id"] == "U2"
+    assert evidence["psid_files_sha256"] == dict(
+        sorted(inputs.provenance["psid_files_sha256"].items())
+    )
+    assert set(evidence["psid_files_sha256"]) == loaded["staged"]
+    assert evidence["input_frames_sha256"] == (
+        inputs.loader_seal["input_frames_sha256"]
+    )
+    assert evidence["psid_files_bundle_sha256"] == (
+        inputs.loader_seal["psid_files_bundle_sha256"]
+    )
+    assert evidence["registries_sha256"] == dict(
+        sorted(sources.REGISTRY_SHA256.items())
+    )
+    assert "psid_data_dir" not in evidence
+    assert loader.check_preregistration_evidence(evidence) == evidence
+
+
+def test_a_frozen_reload_matches_and_seals_the_evidence(
+    loaded, frozen_load, evidence
+):
+    inputs = frozen_load["inputs"]
+    assert _GUARD["opened"] == []
+    assert inputs.loader_seal[cohort.EVIDENCE_KEY] == frozen_load["sha256"]
+    assert inputs.provenance[cohort.EVIDENCE_KEY] == frozen_load["sha256"]
+    provenance = cohort._input_provenance(inputs)
+    assert provenance[cohort.EVIDENCE_KEY] == frozen_load["sha256"]
+    assert provenance["input_frames_sha256"] == (
+        evidence["input_frames_sha256"]
+    )
+    # The unfrozen load's seal is unchanged (no evidence key).
+    assert cohort.EVIDENCE_KEY not in loaded["inputs"].loader_seal
+
+
+def _flip_one_byte(path: Path, offset: int) -> bytes:
+    raw = path.read_bytes()
+    old = raw[offset : offset + 1]
+    new = b"7" if old != b"7" else b"8"
+    path.write_bytes(raw[:offset] + new + raw[offset + 1 :])
+    return raw
+
+
+def _amount_offset(root, committed_registries) -> int:
+    """The byte offset of a digit inside a 2019 amount field, so the
+    changed file still parses (the unfrozen load accepts it)."""
+
+    gate = sources.SourceGate(sources.INVENTED_DECLARED, committed_registries)
+    spec = next(
+        spec
+        for spec in loader.family_record_specs(2019, gate)
+        if spec.concept == "head_labor"
+    )
+    first = (
+        (root / "family" / "2019" / "FAM2019ER.txt")
+        .read_text(encoding="ascii")
+        .splitlines()[0]
+    )
+    return spec.end - 1 if first[spec.end - 1].isdigit() else spec.end - 2
+
+
+def test_one_changed_byte_refuses_the_frozen_load(
+    tmp_path, u2_inputs, committed_registries, evidence
+):
+    """Section 14: "changed source bytes ... refuse execution".  A digit
+    changed in a 2019 amount field leaves a parseable file the unfrozen
+    load accepts with other frames; against the frozen evidence the same
+    change refuses before any record is parsed."""
+
+    _stage(tmp_path, u2_inputs, committed_registries)
+    path = tmp_path / "family" / "2019" / "FAM2019ER.txt"
+    _flip_one_byte(path, _amount_offset(tmp_path, committed_registries))
+    changed = _load(tmp_path, u2_inputs)
+    assert changed.loader_seal["input_frames_sha256"] != (
+        evidence["input_frames_sha256"]
+    )
+    parsed = []
+    patch = pytest.MonkeyPatch()
+    original = sources.parse_fixed_width
+    patch.setattr(
+        sources,
+        "parse_fixed_width",
+        lambda *a, **k: parsed.append(1) or original(*a, **k),
+    )
+    try:
+        with pytest.raises(
+            loader.U2LoaderRefusal, match="changed source bytes"
+        ) as refusal:
+            _load(tmp_path, u2_inputs, evidence=evidence)
+    finally:
+        patch.undo()
+    assert type(refusal.value).__name__ == "U2FrozenIdentityMismatch"
+    assert "family/2019/FAM2019ER.txt" in str(refusal.value)
+    assert parsed == []
+    assert _GUARD["opened"] == []
+
+
+@pytest.mark.parametrize(
+    "relative",
+    [
+        "ind2023er/IND2023ER.txt",
+        "ind2023er/IND2023ER.sps",
+        "family/2013/FAM2013ER.sps",
+        "family/2023/FAM2023ER.txt",
+    ],
+)
+def test_any_changed_or_missing_staged_file_refuses(
+    tmp_path, u2_inputs, committed_registries, evidence, relative
+):
+    _stage(tmp_path, u2_inputs, committed_registries)
+    _flip_one_byte(tmp_path / relative, 0)
+    with pytest.raises(loader.U2LoaderRefusal, match="1 frozen PSID file"):
+        _load(tmp_path, u2_inputs, evidence=evidence)
+    (tmp_path / relative).unlink()
+    with pytest.raises(loader.U2LoaderRefusal, match="1 missing"):
+        _load(tmp_path, u2_inputs, evidence=evidence)
+
+
+def test_a_changed_frame_digest_refuses(
+    tmp_path, u2_inputs, committed_registries, evidence
+):
+    """Section 14: "changed frame digests ... refuse".  Every staged file
+    is unchanged, but the (patched) marriage-history reader returns other
+    frames: the digest check after reading refuses."""
+
+    _stage(tmp_path, u2_inputs, committed_registries)
+    history = u2_inputs.marriage_history.iloc[1:].reset_index(drop=True)
+    with pytest.raises(loader.U2LoaderRefusal, match="frame digest|digest"):
+        _load(tmp_path, u2_inputs, evidence=evidence, history=history)
+
+
+def test_a_file_read_but_not_frozen_refuses(
+    tmp_path, u2_inputs, committed_registries, evidence
+):
+    _stage(tmp_path, u2_inputs, committed_registries)
+    files = dict(evidence["psid_files_sha256"])
+    files.pop("family/2017/FAM2017ER.txt")
+    narrower = {
+        **evidence,
+        "psid_files_sha256": files,
+        "psid_files_bundle_sha256": loader.files_bundle_sha256(files),
+    }
+    with pytest.raises(loader.U2LoaderRefusal, match="read but not frozen"):
+        _load(tmp_path, u2_inputs, evidence=narrower)
+
+
+def _altered(evidence, **changes):
+    record = {**evidence, **changes}
+    return record
+
+
+@pytest.mark.parametrize(
+    "change, message",
+    [
+        (lambda e: _altered(e, schema_version="v0"), "schema"),
+        (lambda e: _altered(e, target_id="U1"), "not 'U2'"),
+        (lambda e: _altered(e, specification="other"), "specification"),
+        (
+            lambda e: _altered(
+                e,
+                registries_sha256={
+                    **e["registries_sha256"],
+                    "roles": "0" * 64,
+                },
+            ),
+            "registries other than",
+        ),
+        (
+            lambda e: _altered(e, input_frames_sha256="ABC"),
+            "input_frames_sha256",
+        ),
+        (
+            lambda e: _altered(e, psid_files_bundle_sha256="0" * 64),
+            "bundle",
+        ),
+        (
+            lambda e: _altered(
+                e,
+                psid_files_sha256={"/etc/passwd": "0" * 64},
+                psid_files_bundle_sha256=loader.files_bundle_sha256(
+                    {"/etc/passwd": "0" * 64}
+                ),
+            ),
+            "relative",
+        ),
+        (
+            lambda e: _altered(
+                e,
+                psid_files_sha256={"../x.txt": "0" * 64},
+                psid_files_bundle_sha256=loader.files_bundle_sha256(
+                    {"../x.txt": "0" * 64}
+                ),
+            ),
+            "relative",
+        ),
+        (
+            lambda e: _altered(
+                e,
+                psid_files_sha256={},
+                psid_files_bundle_sha256=loader.files_bundle_sha256({}),
+            ),
+            "no PSID file",
+        ),
+        (lambda e: {**e, "extra": 1}, "not exactly"),
+        (
+            lambda e: {k: v for k, v in e.items() if k != "target_id"},
+            "not exactly",
+        ),
+    ],
+)
+def test_a_malformed_evidence_record_refuses(evidence, change, message):
+    with pytest.raises(loader.U2LoaderRefusal, match=message):
+        loader.check_preregistration_evidence(change(dict(evidence)))
+
+
+def test_an_absent_evidence_record_refuses(tmp_path):
+    with pytest.raises(loader.U2LoaderRefusal, match="no pre-registration"):
+        loader.read_preregistration_evidence(tmp_path / "absent.json")
+    path = tmp_path / "evidence.json"
+    path.write_text("not json")
+    with pytest.raises(loader.U2LoaderRefusal, match="not JSON"):
+        loader.read_preregistration_evidence(path)
+
+
+def test_the_committed_evidence_record_is_absent_so_registration_refuses():
+    """At this commit the section 20 step-4 pass has not run: there is no
+    committed evidence record, so the registered run cannot bind one."""
+
+    assert not loader.PREREGISTRATION_EVIDENCE_PATH.exists()
+    with pytest.raises(loader.U2LoaderRefusal, match="no pre-registration"):
+        loader.read_preregistration_evidence()
+
+
+def test_evidence_is_recorded_only_from_loader_sealed_inputs(
+    loaded, u2_inputs
+):
+    with pytest.raises(loader.U2LoaderRefusal, match="loader sealed"):
+        loader.preregistration_evidence(u2_inputs)
+    labelled = cohort.replace_provenance(u2_inputs, kind=cohort.PSID_FILES)
+    with pytest.raises(cohort.U2CohortError, match="U2 loader"):
+        loader.preregistration_evidence(labelled)
+
+
+def test_a_forged_evidence_seal_refuses(loaded, frozen_load):
+    """The evidence hash counts only when the seal and the provenance
+    both carry it, as the loader wrote them."""
+
+    import dataclasses
+
+    unfrozen = loaded["inputs"]
+    forged = dataclasses.replace(
+        unfrozen,
+        provenance={
+            **unfrozen.provenance,
+            cohort.EVIDENCE_KEY: frozen_load["sha256"],
+        },
+    )
+    object.__setattr__(forged, "loader_seal", dict(unfrozen.loader_seal))
+    with pytest.raises(cohort.U2CohortError, match="sealed"):
+        cohort._input_provenance(forged)
+    rechecked = frozen_load["inputs"]
+    stripped = dataclasses.replace(
+        rechecked,
+        provenance={
+            k: v
+            for k, v in rechecked.provenance.items()
+            if k != cohort.EVIDENCE_KEY
+        },
+    )
+    object.__setattr__(stripped, "loader_seal", dict(rechecked.loader_seal))
+    with pytest.raises(cohort.U2CohortError, match="sealed"):
+        cohort._input_provenance(stripped)
+
+
+@pytest.fixture(scope="module")
+def frozen_stage(tmp_path_factory, u2_inputs, committed_registries):
+    root = tmp_path_factory.mktemp("frozen-stage")
+    _stage(root, u2_inputs, committed_registries)
+    files = {
+        relative: hashlib.sha256((root / relative).read_bytes()).hexdigest()
+        for relative in sorted(
+            str(path.relative_to(root))
+            for path in root.rglob("*")
+            if path.is_file()
+        )
+    }
+    record = {
+        "schema_version": loader.PREREGISTRATION_SCHEMA,
+        "target_id": "U2",
+        "specification": "boomers2004_1946_55_uniform_cut",
+        "registries_sha256": dict(sources.REGISTRY_SHA256),
+        "cited_sources_sha256": {},
+        "psid_files_sha256": files,
+        "psid_files_bundle_sha256": loader.files_bundle_sha256(files),
+        "input_frames_sha256": "0" * 64,
+    }
+    return {"root": root, "evidence": record, "files": sorted(files)}
+
+
+@settings(max_examples=100, deadline=None)
+@given(data=st.data())
+def test_every_single_byte_change_to_any_frozen_file_refuses(
+    frozen_stage, data
+):
+    """Invariant: for every frozen file, byte offset and replacement byte,
+    the pre-read recheck refuses; with the bytes restored it passes."""
+
+    root, record = frozen_stage["root"], frozen_stage["evidence"]
+    relative = data.draw(st.sampled_from(frozen_stage["files"]))
+    path = root / relative
+    raw = path.read_bytes()
+    offset = data.draw(st.integers(0, len(raw) - 1))
+    byte = data.draw(
+        st.integers(0, 255).filter(lambda value: value != raw[offset])
+    )
+    path.write_bytes(raw[:offset] + bytes([byte]) + raw[offset + 1 :])
+    try:
+        with pytest.raises(loader.U2FrozenIdentityMismatch, match="changed"):
+            loader.check_frozen_files(record, root)
+    finally:
+        path.write_bytes(raw)
+    assert loader.check_frozen_files(record, root) == (
+        record["psid_files_sha256"]
+    )
 
 
 def test_loader_inputs_cannot_join_an_invented_cohort(

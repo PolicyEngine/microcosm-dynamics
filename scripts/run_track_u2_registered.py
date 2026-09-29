@@ -26,20 +26,30 @@ opened.  :func:`preflight` verifies, in order:
 6. row U1's observation plan (and so U0's) equals milestone 1's
    committed support registry, cell by cell;
 7. the parameter bundle is complete (every required income year,
-   2012 included) and U2-pinned;
-8. the registration binding -- target, specification SHA-256, rows,
-   plans, registry (map) SHA-256s, source identities and parameter pins
-   -- hashes to the ``--binding-sha256`` the #42 registration quotes;
-9. the independent mapping review is complete: every registry entry a U2
-   run applies is RESOLVED with no blocker (the loader's source
-   preflight, which rechecks the plan), which refuses at the adjudicated
-   registries.
+   2012 included), U2-pinned and, by content, the pinned captures'
+   values (a relabelled or altered value refuses);
+8. the pre-registration evidence exists: the committed record the
+   section 20 step-4 structure pass wrote
+   (:data:`~populace_dynamics.uniform_cut_track_u2.loader.
+   PREREGISTRATION_EVIDENCE_PATH`), holding the SHA-256 of every PSID
+   file the loader reads and the sealed ``input_frames_sha256``, under
+   this checkout's pinned registries; while it is absent the run refuses;
+9. the registration binding -- target, specification SHA-256, rows,
+   plans, registry (map) SHA-256s, source identities, parameter pins and
+   the frozen input identities (the evidence record's SHA-256, every
+   PSID file's SHA-256 and the frame digest) -- hashes to the
+   ``--binding-sha256`` the #42 registration quotes;
+10. the independent mapping review is complete: every registry entry a
+    U2 run applies is RESOLVED with no blocker (the loader's source
+    preflight, which rechecks the plan), which refuses at the adjudicated
+    registries.
 
 Only then are PSID files read (:func:`populace_dynamics.
-uniform_cut_track_u2.loader.load_u2_inputs`, which rechecks the frozen
-source identities), and the artifact and sidecar are created
-exclusively.  The artifact publishes regardless of outcome and never
-reads the sealed comparator.
+uniform_cut_track_u2.loader.load_u2_inputs` with the evidence record: it
+rehashes every frozen file before parsing any record and refuses a
+changed byte, a different file set or a different frame digest; section
+14), and the artifact and sidecar are created exclusively.  The artifact
+publishes regardless of outcome and never reads the sealed comparator.
 
 Usage::
 
@@ -164,9 +174,19 @@ def check_specification_ratified(block: Mapping[str, Any]) -> None:
         raise ValueError("the block's headline is not the fixed U0")
 
 
-def registration_binding(specification_sha256: str) -> dict[str, Any]:
-    """Everything the #42 registration binds, as one canonical record."""
+def registration_binding(
+    specification_sha256: str, evidence: Mapping[str, Any]
+) -> dict[str, Any]:
+    """Everything the #42 registration binds, as one canonical record.
 
+    ``evidence`` is the frozen pre-registration record
+    (:func:`~populace_dynamics.uniform_cut_track_u2.loader.
+    check_preregistration_evidence`): its SHA-256, every PSID file's
+    SHA-256 and the sealed frame digest are bound (section 14 and
+    section 20 step 8, "input and parameter pins").
+    """
+
+    frozen = loader.check_preregistration_evidence(evidence)
     return {
         "target": identity.identity(),
         "specification_sha256": specification_sha256,
@@ -195,12 +215,20 @@ def registration_binding(specification_sha256: str) -> dict[str, Any]:
             key: list(value)
             for key, value in rows.SENSITIVITIES_UNSCORED.items()
         },
+        "preregistration_evidence": {
+            "sha256": loader.preregistration_evidence_sha256(frozen),
+            "psid_files_sha256": dict(frozen["psid_files_sha256"]),
+            "psid_files_bundle_sha256": frozen["psid_files_bundle_sha256"],
+            "input_frames_sha256": frozen["input_frames_sha256"],
+        },
     }
 
 
-def binding_sha256(specification_sha256: str) -> str:
+def binding_sha256(
+    specification_sha256: str, evidence: Mapping[str, Any]
+) -> str:
     return hashlib.sha256(
-        _canonical(registration_binding(specification_sha256))
+        _canonical(registration_binding(specification_sha256, evidence))
     ).hexdigest()
 
 
@@ -213,8 +241,14 @@ def preflight(
     git: Any = _git,
     specification: Mapping[str, Any] | None = None,
     specification_sha256: str | None = None,
+    evidence: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Refuse to run unless this is the registered U2 one-shot state."""
+    """Refuse to run unless this is the registered U2 one-shot state.
+
+    ``specification``, ``specification_sha256`` and ``evidence`` default
+    to the committed specification block, its file hash and the committed
+    pre-registration evidence record (tests pass invented ones).
+    """
 
     if not REGISTRATION_POINTER.fullmatch(registration_pointer):
         raise ValueError(
@@ -259,7 +293,12 @@ def preflight(
         if specification_sha256 is None
         else specification_sha256
     )
-    expected = binding_sha256(spec_sha)
+    frozen = (
+        loader.read_preregistration_evidence()
+        if evidence is None
+        else loader.check_preregistration_evidence(evidence)
+    )
+    expected = binding_sha256(spec_sha, frozen)
     if binding != expected:
         raise ValueError(
             f"the registration binds {binding}, but this checkout's binding "
@@ -276,6 +315,8 @@ def preflight(
         "plan": plan_check,
         "mapping_review": review,
         "params": params,
+        "evidence": frozen,
+        "evidence_sha256": loader.preregistration_evidence_sha256(frozen),
     }
 
 
@@ -315,7 +356,7 @@ def main(argv: list[str] | None = None) -> int:
         output=args.output,
         binding=args.binding_sha256,
     )
-    inputs = loader.load_u2_inputs()
+    inputs = loader.load_u2_inputs(evidence=state["evidence"])
     result = runner.run_track_u2(
         inputs,
         state["params"],
@@ -340,6 +381,7 @@ def main(argv: list[str] | None = None) -> int:
             "plan": state["plan"],
             "mapping_review": state["mapping_review"],
             "binding_sha256": state["binding_sha256"],
+            "preregistration_evidence_sha256": state["evidence_sha256"],
         },
         "run": {
             "started": started,

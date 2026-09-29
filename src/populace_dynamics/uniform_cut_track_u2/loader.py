@@ -35,6 +35,21 @@ a later stage when an earlier one refuses:
    (:class:`U2UndocumentedValue`), as the family-file parse refuses
    out-of-domain values (``sources._check_domain``).
 
+**Frozen identities** (section 14: "changed source bytes, changed frame
+digests ... refuse execution.  Pre-registration mapping checks resolve
+these before the one-shot; execution rechecks their frozen
+identities").  The section 20 step-4 structure pass records, from the
+loader-sealed inputs, the SHA-256 of every PSID file the loader read and
+the sealed ``input_frames_sha256`` (:func:`preregistration_evidence`,
+written by ``scripts/track_u2_structure.py``); the committed record lives
+at :data:`PREREGISTRATION_EVIDENCE_PATH`, and the registered run binds its
+hash, file hashes and frame digest into the registration binding.  Given
+that record, :func:`load_u2_inputs` rehashes every frozen file before any
+record is parsed and refuses a changed or missing one, then refuses a
+read file set or frame digest other than the frozen ones
+(:class:`U2FrozenIdentityMismatch`); the seal then records the evidence
+hash, which a registered run requires.
+
 This module computes no income concept, threshold, annuity or poverty
 status.  No real PSID record is read in development: the tests run
 stage 1 as committed (it refuses) and stages 2 and 3 on an invented
@@ -48,8 +63,9 @@ from __future__ import annotations
 import dataclasses
 import hashlib
 import json
+import re
 from collections.abc import Iterable, Mapping, Sequence
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from types import MappingProxyType
 from typing import Any
 
@@ -61,15 +77,24 @@ from populace_dynamics.uniform_cut_track_u2 import cohort, identity, sources
 
 __all__ = [
     "ANCHOR_CONCEPTS",
+    "PREREGISTRATION_EVIDENCE_PATH",
+    "PREREGISTRATION_SCHEMA",
+    "U2FrozenIdentityMismatch",
     "U2LoaderRefusal",
     "U2UndocumentedValue",
+    "check_frozen_files",
     "check_individual_values",
     "check_layouts_against_setup",
+    "check_preregistration_evidence",
     "check_source_hashes",
     "family_record_specs",
+    "files_bundle_sha256",
     "individual_specs",
     "load_u2_inputs",
+    "preregistration_evidence",
+    "preregistration_evidence_sha256",
     "read_family_records",
+    "read_preregistration_evidence",
     "required_entries",
     "source_preflight",
 ]
@@ -121,6 +146,28 @@ _POSITIVE_IDENTIFIERS: tuple[str, ...] = ("person_family_id", "person_number")
 #: ``common.sex`` codes (ER32000: 1 Male, 2 Female, 9 NA).
 _PERSON_SEX: dict[int, str] = {1: "male", 2: "female", 9: "na"}
 
+#: The pre-registration evidence record (section 14 frozen identities).
+PREREGISTRATION_SCHEMA = (
+    "populace_dynamics.track_u2_preregistration_evidence.v1"
+)
+#: Where the committed record lives once the section 20 step-4 pass has
+#: written it (``scripts/track_u2_structure.py``) and it is reviewed and
+#: committed; the registered run refuses while it is absent.
+PREREGISTRATION_EVIDENCE_PATH = (
+    identity.ROOT / "docs" / "design" / "u2_preregistration_evidence.json"
+)
+_EVIDENCE_KEYS: tuple[str, ...] = (
+    "schema_version",
+    "target_id",
+    "specification",
+    "registries_sha256",
+    "cited_sources_sha256",
+    "psid_files_sha256",
+    "psid_files_bundle_sha256",
+    "input_frames_sha256",
+)
+_HEX64 = re.compile(r"[0-9a-f]{64}")
+
 
 class U2LoaderRefusal(sources.U2SourceRefusal):
     """The U2 loader refuses before reading (or on changed sources)."""
@@ -130,6 +177,11 @@ class U2UndocumentedValue(U2LoaderRefusal):
     """An individual-file value lies outside its registry entry's
     documented codes or range: it refuses, never maps to ``na`` or falls
     back (section 14)."""
+
+
+class U2FrozenIdentityMismatch(U2LoaderRefusal):
+    """A PSID file, the read file set or the frame digest differs from the
+    frozen pre-registration evidence (section 14)."""
 
 
 def required_entries(
@@ -382,13 +434,28 @@ def read_family_records(
     }
 
 
-def load_u2_inputs(*, data_dir: Path | None = None) -> cohort.U2Inputs:
+def load_u2_inputs(
+    *,
+    data_dir: Path | None = None,
+    evidence: Mapping[str, Any] | None = None,
+) -> cohort.U2Inputs:
     """Read every U2 input from the staged PSID, or refuse first.
 
     Stage 1 (:func:`source_preflight`) refuses at the adjudicated
     registries, before any PSID file is opened.
+
+    ``evidence`` is the frozen pre-registration record
+    (:func:`check_preregistration_evidence`).  The registered run passes
+    it; the section 20 step-4 pass, which writes it, passes nothing.  With
+    it, every frozen file is rehashed before any record is parsed
+    (:func:`check_frozen_files`), and after reading, the files read and
+    the frame digest must equal the frozen ones, or the load refuses
+    (:class:`U2FrozenIdentityMismatch`).
     """
 
+    frozen = (
+        None if evidence is None else check_preregistration_evidence(evidence)
+    )
     registries = sources.RegistrySet.committed()
     preflight = source_preflight(registries)
     # Stages 2 and 3 run only once every required route is resolved.
@@ -398,6 +465,14 @@ def load_u2_inputs(*, data_dir: Path | None = None) -> cohort.U2Inputs:
     gate = sources.SourceGate(sources.REGISTRY, registries)
     data_root = psid._resolve_data_dir(data_dir)
     source_hashes = check_source_hashes(registries, data_root)
+    if frozen is not None:
+        if source_hashes != frozen["cited_sources_sha256"]:
+            raise U2FrozenIdentityMismatch(
+                "the cited setup files and codebooks differ from the frozen "
+                "pre-registration evidence: changed source bytes refuse "
+                "execution (section 14)"
+            )
+        check_frozen_files(frozen, data_root)
     with psid2010.record_files_read(data_root) as files:
         incomes, wealth, pensions = {}, {}, {}
         for wave in sources.SUPPORT_WAVES:
@@ -426,31 +501,263 @@ def load_u2_inputs(*, data_dir: Path | None = None) -> cohort.U2Inputs:
         family_wealth=wealth,
         employer_dc=pensions,
     )
-    bundle = hashlib.sha256(
+    bundle = files_bundle_sha256(files)
+    frames_sha256 = cohort.input_frames_sha256(inputs)
+    provenance: dict[str, Any] = {
+        "kind": cohort.PSID_FILES,
+        "psid_data_dir": str(data_root),
+        "psid_files_sha256": dict(files),
+        "psid_files_bundle_sha256": bundle,
+        "registries": preflight["registries"],
+        "cited_sources_sha256": source_hashes,
+    }
+    seal = {
+        "input_frames_sha256": frames_sha256,
+        "psid_files_bundle_sha256": bundle,
+    }
+    if frozen is not None:
+        _check_against_frozen(frozen, dict(files), frames_sha256)
+        digest = preregistration_evidence_sha256(frozen)
+        provenance[cohort.EVIDENCE_KEY] = digest
+        seal[cohort.EVIDENCE_KEY] = digest
+    inputs = dataclasses.replace(inputs, provenance=provenance)
+    object.__setattr__(inputs, "loader_seal", MappingProxyType(seal))
+    return inputs
+
+
+# ===========================================================================
+# Frozen identities (section 14)
+# ===========================================================================
+def files_bundle_sha256(files: Mapping[str, str]) -> str:
+    """The loader's digest of ``{relative path: sha256}`` (as U1's)."""
+
+    return hashlib.sha256(
         (json.dumps(dict(files), sort_keys=True) + "\n").encode()
     ).hexdigest()
-    inputs = dataclasses.replace(
-        inputs,
-        provenance={
-            "kind": cohort.PSID_FILES,
-            "psid_data_dir": str(data_root),
-            "psid_files_sha256": dict(files),
-            "psid_files_bundle_sha256": bundle,
-            "registries": preflight["registries"],
-            "cited_sources_sha256": source_hashes,
-        },
+
+
+def _canonical(value: Any) -> bytes:
+    return json.dumps(
+        value, sort_keys=True, separators=(",", ":"), allow_nan=False
+    ).encode("utf-8")
+
+
+def _hex_map(value: Any, what: str, *, paths: bool) -> dict[str, str]:
+    if not isinstance(value, Mapping):
+        raise U2FrozenIdentityMismatch(f"the evidence's {what} is no mapping")
+    out = {}
+    for key, digest in value.items():
+        if not isinstance(key, str) or not isinstance(digest, str):
+            raise U2FrozenIdentityMismatch(
+                f"the evidence's {what} holds a non-string entry"
+            )
+        if not _HEX64.fullmatch(digest):
+            raise U2FrozenIdentityMismatch(
+                f"the evidence's {what} holds a digest that is not a "
+                "lowercase 64-hex SHA-256"
+            )
+        if paths:
+            relative = PurePosixPath(key)
+            if (
+                relative.is_absolute()
+                or ".." in relative.parts
+                or str(relative) != key
+                or key in ("", ".")
+            ):
+                raise U2FrozenIdentityMismatch(
+                    f"the evidence's {what} names {key!r}, not a path "
+                    "relative to the PSID directory"
+                )
+        out[key] = digest
+    return dict(sorted(out.items()))
+
+
+def check_preregistration_evidence(record: Any) -> dict[str, Any]:
+    """Refuse a pre-registration evidence record that is not U2's, not
+    made under this checkout's pinned registries, or not self-consistent;
+    return a normalized copy.
+
+    It must hold exactly :data:`_EVIDENCE_KEYS`: the schema, target U2,
+    U2's specification id, the registry pins equal to
+    :data:`~populace_dynamics.uniform_cut_track_u2.sources.
+    REGISTRY_SHA256`, the cited-source hashes, a nonempty map of PSID
+    files (paths relative to the PSID directory) to SHA-256, their bundle
+    digest (recomputed here) and the sealed frame digest.
+    """
+
+    if not isinstance(record, Mapping):
+        raise U2FrozenIdentityMismatch("the evidence record is no mapping")
+    if set(record) != set(_EVIDENCE_KEYS):
+        raise U2FrozenIdentityMismatch(
+            f"the evidence record holds keys {sorted(record)}, not exactly "
+            f"{sorted(_EVIDENCE_KEYS)}"
+        )
+    if record["schema_version"] != PREREGISTRATION_SCHEMA:
+        raise U2FrozenIdentityMismatch(
+            f"evidence schema {record['schema_version']!r} is not "
+            f"{PREREGISTRATION_SCHEMA!r}"
+        )
+    try:
+        identity.check_target(record["target_id"], "the evidence record")
+    except identity.U2IdentityError as error:
+        raise U2FrozenIdentityMismatch(str(error)) from error
+    if record["specification"] != identity.SPECIFICATION_ID:
+        raise U2FrozenIdentityMismatch(
+            f"the evidence records specification "
+            f"{record['specification']!r}, not U2's"
+        )
+    registries = _hex_map(
+        record["registries_sha256"], "registries_sha256", paths=False
     )
-    object.__setattr__(
-        inputs,
-        "loader_seal",
-        MappingProxyType(
-            {
-                "input_frames_sha256": cohort.input_frames_sha256(inputs),
-                "psid_files_bundle_sha256": bundle,
-            }
+    if registries != dict(sorted(sources.REGISTRY_SHA256.items())):
+        raise U2FrozenIdentityMismatch(
+            "the evidence was recorded under registries other than this "
+            "checkout's pinned ones"
+        )
+    files = _hex_map(
+        record["psid_files_sha256"], "psid_files_sha256", paths=True
+    )
+    if not files:
+        raise U2FrozenIdentityMismatch("the evidence freezes no PSID file")
+    bundle = record["psid_files_bundle_sha256"]
+    if bundle != files_bundle_sha256(files):
+        raise U2FrozenIdentityMismatch(
+            "the evidence's file bundle digest does not match its file "
+            "hashes"
+        )
+    frames = record["input_frames_sha256"]
+    if not isinstance(frames, str) or not _HEX64.fullmatch(frames):
+        raise U2FrozenIdentityMismatch(
+            "the evidence's input_frames_sha256 is not a 64-hex SHA-256"
+        )
+    return {
+        "schema_version": PREREGISTRATION_SCHEMA,
+        "target_id": identity.TARGET_ID,
+        "specification": identity.SPECIFICATION_ID,
+        "registries_sha256": registries,
+        "cited_sources_sha256": _hex_map(
+            record["cited_sources_sha256"],
+            "cited_sources_sha256",
+            paths=False,
         ),
+        "psid_files_sha256": files,
+        "psid_files_bundle_sha256": bundle,
+        "input_frames_sha256": frames,
+    }
+
+
+def preregistration_evidence_sha256(record: Mapping[str, Any]) -> str:
+    """SHA-256 of the record's canonical JSON (what the binding quotes)."""
+
+    return hashlib.sha256(
+        _canonical(check_preregistration_evidence(record))
+    ).hexdigest()
+
+
+def preregistration_evidence(inputs: cohort.U2Inputs) -> dict[str, Any]:
+    """The frozen identities of loader-sealed inputs (section 20 step 4).
+
+    Refuses inputs the U2 loader did not seal, or whose frames or file
+    hashes changed after sealing (``cohort._input_provenance``).  The data
+    directory is not recorded: files are keyed relative to it.
+    """
+
+    if type(inputs) is not cohort.U2Inputs:
+        raise U2LoaderRefusal("evidence is recorded from U2Inputs only")
+    provenance = cohort._input_provenance(inputs)
+    if provenance["kind"] != cohort.PSID_FILES:
+        raise U2LoaderRefusal(
+            "pre-registration evidence is recorded only from inputs the U2 "
+            f"loader sealed, not {provenance['kind']!r}"
+        )
+    return check_preregistration_evidence(
+        {
+            "schema_version": PREREGISTRATION_SCHEMA,
+            "target_id": identity.TARGET_ID,
+            "specification": identity.SPECIFICATION_ID,
+            "registries_sha256": dict(sources.REGISTRY_SHA256),
+            "cited_sources_sha256": dict(
+                inputs.provenance.get("cited_sources_sha256") or {}
+            ),
+            "psid_files_sha256": dict(provenance["psid_files_sha256"]),
+            "psid_files_bundle_sha256": provenance["psid_files_bundle_sha256"],
+            "input_frames_sha256": provenance["input_frames_sha256"],
+        }
     )
-    return inputs
+
+
+def read_preregistration_evidence(
+    path: Path = PREREGISTRATION_EVIDENCE_PATH,
+) -> dict[str, Any]:
+    """The committed evidence record; refuses while it is absent."""
+
+    if not Path(path).is_file():
+        raise U2FrozenIdentityMismatch(
+            f"no pre-registration evidence record at {path}: the section "
+            "20 step-4 pass has not frozen the PSID file and frame "
+            "identities, so a registered run refuses (section 14)"
+        )
+    try:
+        record = json.loads(Path(path).read_text(encoding="utf-8"))
+    except ValueError as error:
+        raise U2FrozenIdentityMismatch(
+            f"the evidence record at {path} is not JSON: {error}"
+        ) from error
+    return check_preregistration_evidence(record)
+
+
+def check_frozen_files(
+    evidence: Mapping[str, Any], data_root: Path
+) -> dict[str, str]:
+    """Rehash every frozen file under ``data_root`` before any record is
+    parsed; a missing file or one changed byte refuses."""
+
+    frozen = check_preregistration_evidence(evidence)
+    root = Path(data_root)
+    changed, missing = [], []
+    for relative, expected in frozen["psid_files_sha256"].items():
+        path = root / relative
+        if not path.is_file():
+            missing.append(relative)
+            continue
+        if hashlib.sha256(path.read_bytes()).hexdigest() != expected:
+            changed.append(relative)
+    if missing or changed:
+        raise U2FrozenIdentityMismatch(
+            f"{len(changed)} frozen PSID file(s) changed and {len(missing)} "
+            f"missing (changed {changed[:5]}, missing {missing[:5]}): "
+            "changed source bytes refuse execution (section 14)"
+        )
+    return dict(frozen["psid_files_sha256"])
+
+
+def _check_against_frozen(
+    frozen: Mapping[str, Any], files: Mapping[str, str], frames: str
+) -> None:
+    """After reading: the files read and the frame digest must be the
+    frozen ones (a file read but not frozen, frozen but not read, or
+    changed while read refuses; so does a different frame digest)."""
+
+    expected = frozen["psid_files_sha256"]
+    if dict(files) != dict(expected):
+        unfrozen = sorted(set(files) - set(expected))
+        unread = sorted(set(expected) - set(files))
+        changed = sorted(
+            name
+            for name in set(files) & set(expected)
+            if files[name] != expected[name]
+        )
+        raise U2FrozenIdentityMismatch(
+            "the PSID files read differ from the frozen pre-registration "
+            f"evidence (read but not frozen {unfrozen[:5]}, frozen but not "
+            f"read {unread[:5]}, changed {changed[:5]}): section 14"
+        )
+    if frames != frozen["input_frames_sha256"]:
+        raise U2FrozenIdentityMismatch(
+            "the loaded input frames' digest differs from the frozen "
+            "pre-registration evidence: changed frame digests refuse "
+            "execution (section 14)"
+        )
 
 
 def individual_specs(

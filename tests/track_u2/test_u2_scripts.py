@@ -21,11 +21,14 @@ from __future__ import annotations
 
 import ast
 import copy
+import functools
 import importlib.util
 import json
 from pathlib import Path
 
 import pytest
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 from populace_dynamics.uniform_cut_track_u2 import (
     DRY_RUN_HEADER,
@@ -351,9 +354,14 @@ def _git(head: str = COMMIT, porcelain: str = ""):
     return fake
 
 
+@functools.cache
+def _registered_module():
+    return _script("run_track_u2_registered")
+
+
 @pytest.fixture(scope="module")
 def registered():
-    return _script("run_track_u2_registered")
+    return _registered_module()
 
 
 def _ratified_block():
@@ -376,6 +384,32 @@ def _ratified_block():
     return block
 
 
+#: INVENTED file digests standing in for the frozen PSID identities the
+#: section 20 step-4 pass would record (no real file is hashed here).
+_INVENTED_FILES = {
+    "family/2013/FAM2013ER.txt": "1" * 64,
+    "ind2023er/IND2023ER.txt": "2" * 64,
+}
+
+
+def _invented_evidence(**changes):
+    from populace_dynamics.uniform_cut_track_u2 import loader, sources
+
+    files = changes.pop("psid_files_sha256", _INVENTED_FILES)
+    record = {
+        "schema_version": loader.PREREGISTRATION_SCHEMA,
+        "target_id": identity.TARGET_ID,
+        "specification": identity.SPECIFICATION_ID,
+        "registries_sha256": dict(sources.REGISTRY_SHA256),
+        "cited_sources_sha256": {},
+        "psid_files_sha256": dict(files),
+        "psid_files_bundle_sha256": loader.files_bundle_sha256(files),
+        "input_frames_sha256": "3" * 64,
+    }
+    record.update(changes)
+    return record
+
+
 def _preflight(registered, **overrides):
     kwargs = {
         "registration_pointer": POINTER,
@@ -385,6 +419,7 @@ def _preflight(registered, **overrides):
         "git": _git(),
         "specification": _ratified_block(),
         "specification_sha256": "b" * 64,
+        "evidence": _invented_evidence(),
     }
     kwargs.update(overrides)
     return registered.preflight(**kwargs)
@@ -448,7 +483,7 @@ def test_preflight_refuses_incomplete_specifications(
 def test_preflight_refuses_a_wrong_binding_then_the_open_mapping(registered):
     with pytest.raises(ValueError, match="binds"):
         _preflight(registered)
-    binding = registered.binding_sha256("b" * 64)
+    binding = registered.binding_sha256("b" * 64, _invented_evidence())
     from populace_dynamics.uniform_cut_track_u2 import loader
 
     with pytest.raises(loader.U2LoaderRefusal, match="registry blockers"):
@@ -482,7 +517,7 @@ def test_preflight_checks_the_plan_before_the_mapping_review(
         return original(registries)
 
     monkeypatch.setattr(cohort, "check_plan_against_support_registry", spy)
-    binding = registered.binding_sha256("b" * 64)
+    binding = registered.binding_sha256("b" * 64, _invented_evidence())
     with pytest.raises(loader.U2LoaderRefusal, match="registry blockers"):
         _preflight(registered, binding=binding)
     # Once in the preflight, once again in the loader's source preflight.
@@ -510,7 +545,10 @@ def test_existing_artifact_or_sidecar_refuses(registered, monkeypatch):
 
 
 def test_binding_covers_every_registered_identity(registered):
-    binding = registered.registration_binding("c" * 64)
+    from populace_dynamics.uniform_cut_track_u2 import loader
+
+    evidence = _invented_evidence()
+    binding = registered.registration_binding("c" * 64, evidence)
     assert binding["target"] == identity.identity()
     assert [row["row"] for row in binding["rows"]] == list(rows.ROW_IDS)
     assert set(binding["plans"]) == {"U0", "U1"}
@@ -518,9 +556,128 @@ def test_binding_covers_every_registered_identity(registered):
     assert binding["parameters"]["ssi_sha256"].startswith("a58d55c1")
     assert binding["parameters"]["thresholds_sha256"].startswith("288399c4")
     assert binding["named_deltas"] == list(rows.NAMED_DELTAS)
-    assert registered.binding_sha256("c" * 64) != registered.binding_sha256(
-        "d" * 64
+    # Review round 1, finding 2: the frozen input identities are bound.
+    assert binding["preregistration_evidence"] == {
+        "sha256": loader.preregistration_evidence_sha256(evidence),
+        "psid_files_sha256": dict(sorted(_INVENTED_FILES.items())),
+        "psid_files_bundle_sha256": loader.files_bundle_sha256(
+            _INVENTED_FILES
+        ),
+        "input_frames_sha256": "3" * 64,
+    }
+    assert registered.binding_sha256(
+        "c" * 64, evidence
+    ) != registered.binding_sha256("d" * 64, evidence)
+
+
+def test_preflight_refuses_while_the_evidence_record_is_absent(registered):
+    """Section 14: execution rechecks the frozen identities, so without
+    the committed pre-registration evidence record (none exists at this
+    commit) the preflight refuses before comparing the binding."""
+
+    from populace_dynamics.uniform_cut_track_u2 import loader
+
+    assert not loader.PREREGISTRATION_EVIDENCE_PATH.exists()
+    with pytest.raises(loader.U2LoaderRefusal, match="no pre-registration"):
+        _preflight(registered, evidence=None)
+    with pytest.raises(loader.U2LoaderRefusal, match="registries other"):
+        _preflight(
+            registered,
+            evidence=_invented_evidence(
+                registries_sha256={
+                    **_invented_evidence()["registries_sha256"],
+                    "income": "0" * 64,
+                }
+            ),
+        )
+
+
+def test_a_binding_for_other_frozen_identities_refuses(registered):
+    """A registration that quoted the binding of other frozen files or
+    another frame digest does not match this evidence."""
+
+    quoted = registered.binding_sha256("b" * 64, _invented_evidence())
+    for other in (
+        _invented_evidence(input_frames_sha256="4" * 64),
+        _invented_evidence(
+            psid_files_sha256={**_INVENTED_FILES, "ind2023er/x.sps": "5" * 64}
+        ),
+        _invented_evidence(
+            psid_files_sha256={
+                **_INVENTED_FILES,
+                "ind2023er/IND2023ER.txt": "6" * 64,
+            }
+        ),
+    ):
+        with pytest.raises(ValueError, match="binds"):
+            _preflight(registered, binding=quoted, evidence=other)
+
+
+@settings(max_examples=100, deadline=None)
+@given(
+    key=st.sampled_from(sorted(_INVENTED_FILES) + ["frames"]),
+    digest=st.text(alphabet="0123456789abcdef", min_size=64, max_size=64),
+)
+def test_the_binding_changes_with_every_frozen_identity(key, digest):
+    """Invariant: changing any one frozen file hash or the frame digest
+    changes the registration binding's SHA-256 (so a registration quotes
+    exactly one set of frozen input identities)."""
+
+    registered = _registered_module()
+    base = _invented_evidence()
+    if key == "frames":
+        other = _invented_evidence(input_frames_sha256=digest)
+        same = digest == base["input_frames_sha256"]
+    else:
+        other = _invented_evidence(
+            psid_files_sha256={**_INVENTED_FILES, key: digest}
+        )
+        same = digest == _INVENTED_FILES[key]
+    assert (
+        registered.binding_sha256("b" * 64, other)
+        == registered.binding_sha256("b" * 64, base)
+    ) == same
+
+
+def test_the_registered_main_passes_the_evidence_to_the_loader(
+    registered, monkeypatch
+):
+    """The one-shot reads PSID only through the loader with the frozen
+    evidence the preflight bound (never an unfrozen load)."""
+
+    from populace_dynamics.uniform_cut_track_u2 import loader
+
+    evidence = loader.check_preregistration_evidence(_invented_evidence())
+    calls = []
+
+    class Stop(Exception):
+        pass
+
+    monkeypatch.setattr(
+        registered,
+        "preflight",
+        lambda **kwargs: {"evidence": evidence, "params": None},
     )
+
+    def load(**kwargs):
+        calls.append(kwargs)
+        raise Stop
+
+    monkeypatch.setattr(loader, "load_u2_inputs", load)
+    with pytest.raises(Stop):
+        registered.main(
+            [
+                "--registration-pointer",
+                POINTER,
+                "--registered-commit",
+                COMMIT,
+                "--binding-sha256",
+                "0" * 64,
+                "--headline-row",
+                "U0",
+            ]
+        )
+    assert calls == [{"evidence": evidence}]
 
 
 def test_registered_headline_choice_is_only_u0(registered):

@@ -8,6 +8,17 @@ committed-registry role context and writes ``track-u2-structure.json``:
 dispositions, observations, roles, pairings, design strata, the family
 income and WEALTH1 identity counts per wave and the registry status.
 
+It also writes ``track-u2-preregistration-evidence.json``: the frozen
+input identities section 14 says execution rechecks -- the SHA-256 of
+every PSID file the loader read and the sealed ``input_frames_sha256``
+(:func:`populace_dynamics.uniform_cut_track_u2.loader.
+preregistration_evidence`).  Once reviewed, that record is committed at
+``docs/design/u2_preregistration_evidence.json``
+(:data:`~populace_dynamics.uniform_cut_track_u2.loader.
+PREREGISTRATION_EVIDENCE_PATH`); the registered run binds its hash and
+refuses while it is absent, and its loader refuses any changed file byte
+or frame digest.
+
 It computes **no** income concept, annuity, threshold, poverty status or
 poverty rate and never imports the income concept or the tabulation
 (:data:`FORBIDDEN_MODULES`, checked before and after).  Until every
@@ -38,6 +49,7 @@ from populace_dynamics.uniform_cut_track_u2 import (  # noqa: E402
     sources,
 )
 
+EVIDENCE_NAME = "track-u2-preregistration-evidence.json"
 FORBIDDEN_MODULES = (
     "populace_dynamics.estimates.adjusted_poverty",
     "populace_dynamics.estimates.uniform_cut_tabulation",
@@ -110,6 +122,7 @@ def build(data_dir: Path | None = None) -> dict[str, Any]:
         "registry_status": sources.registry_status_summary(registries),
         "identities": identities,
         "rows": rows,
+        "preregistration_evidence": loader.preregistration_evidence(inputs),
         "forbidden_modules_loaded": _leaked(),
     }
 
@@ -126,7 +139,16 @@ def main(argv: list[str] | None = None) -> int:
         json.dumps(result, indent=2, sort_keys=True, default=str) + "\n",
         encoding="utf-8",
     )
+    evidence = args.output_dir / EVIDENCE_NAME
+    evidence.write_text(
+        json.dumps(
+            result["preregistration_evidence"], indent=2, sort_keys=True
+        )
+        + "\n",
+        encoding="utf-8",
+    )
     print(path)
+    print(evidence)
     return 0
 
 

@@ -21,10 +21,12 @@ Guards, before anything is computed:
   registry context then refuses on the refused and TO VERIFY codes,
   which the dry run records).
 * ``registered_real``: an issue #42 comment pointer; inputs sealed by the
-  U2 loader (``psid_files``); the committed-registry role context; U2's
-  pinned parameters (:func:`~populace_dynamics.uniform_cut_track_u2.
-  parameters.check_u2_parameters`); and, when a source gate's audit is
-  recorded, the registry gate only.
+  U2 loader (``psid_files``) after it rechecked them against the frozen
+  pre-registration evidence (the seal's ``preregistration_evidence_
+  sha256``, section 14); the committed-registry role context; U2's
+  pinned parameters, by content (:func:`~populace_dynamics.
+  uniform_cut_track_u2.parameters.check_u2_parameters`); and, when a
+  source gate's audit is recorded, the registry gate only.
 
 The output records the U2 identity, the ten rows, the literal named
 deltas, U2's rulings record and the fixed headline.
@@ -70,6 +72,7 @@ REGISTRATION_POINTER = re.compile(
     r"https://github\.com/PolicyEngine/microcosm-dynamics/issues/42"
     r"#issuecomment-[0-9]+"
 )
+_HEX64 = re.compile(r"[0-9a-f]{64}")
 OFFICIAL_CONCEPT_CELLS: tuple[str, ...] = tabulation.DEFAULT_CELLS
 
 
@@ -133,7 +136,22 @@ def check_inputs(
         raise U2RunError(
             "a registered U2 run applies the committed roles registry"
         )
-    return {}
+    # Section 14: "execution rechecks their frozen identities".  Only the
+    # loader, given the frozen pre-registration evidence, seals this hash
+    # (and only after the PSID files and frame digest matched it).
+    try:
+        provenance = cohort._input_provenance(inputs)
+    except cohort.U2CohortError as error:
+        raise U2RunError(str(error)) from error
+    evidence = provenance.get(cohort.EVIDENCE_KEY)
+    if not isinstance(evidence, str) or not _HEX64.fullmatch(evidence):
+        raise U2RunError(
+            "a registered U2 run needs inputs the U2 loader rechecked "
+            "against the frozen pre-registration evidence (PSID file "
+            "hashes and frame digest); these inputs carry no such recheck "
+            "(section 14)"
+        )
+    return {cohort.EVIDENCE_KEY: evidence}
 
 
 def official_concept_rates(
@@ -404,9 +422,8 @@ def run_track_u2(
             "nothing is omitted or added"
         )
     check_headline(rows.HEADLINE_ROW)
-    checks = check_inputs(
-        inputs, data_provenance, registration_pointer, role_context
-    )
+    # The source gate is checked before the inputs (it depends on nothing
+    # else), so a registered run with the declared gate refuses by name.
     if source_gate is not None:
         if type(source_gate) is not sources.SourceGate:
             raise U2RunError("source_gate must be a SourceGate")
@@ -419,6 +436,9 @@ def run_track_u2(
                 f"gate, not {source_gate.kind!r}: the invented declared "
                 "gate applies to invented records alone"
             )
+    checks = check_inputs(
+        inputs, data_provenance, registration_pointer, role_context
+    )
     try:
         parameters.check_u2_parameters(params, data_provenance)
     except parameters.U2ParameterError as error:

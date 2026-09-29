@@ -106,6 +106,7 @@ __all__ = [
     "DESIGN_VALID_CLUSTERS",
     "DESIGN_VALID_STRATA",
     "EVEN_BIRTH_YEARS",
+    "EVIDENCE_KEY",
     "INVENTED",
     "MARITAL_STATUS_4",
     "NO_HEAD_PAIRING",
@@ -152,6 +153,10 @@ U1_EVEN_BIRTH_AGES: tuple[int, int] = (66, 68)
 INVENTED = "invented"
 PSID_FILES = "psid_files"
 CALLER_FRAMES = "caller_frames"
+#: The loader seal's and provenance's record of the frozen pre-registration
+#: evidence the inputs were rechecked against (section 14; set only by
+#: :func:`~populace_dynamics.uniform_cut_track_u2.loader.load_u2_inputs`).
+EVIDENCE_KEY = "preregistration_evidence_sha256"
 MARITAL_STATUS_4: tuple[str, ...] = (
     "married",
     "widowed",
@@ -545,19 +550,26 @@ def _input_provenance(inputs: U2Inputs) -> dict[str, Any]:
         bundle = hashlib.sha256(
             (json.dumps(dict(files), sort_keys=True) + "\n").encode()
         ).hexdigest()
+        seal = dict(inputs.loader_seal)
+        expected = {
+            "input_frames_sha256": frames,
+            "psid_files_bundle_sha256": bundle,
+        }
+        # The frozen-evidence recheck (section 14) is sealed only when the
+        # loader ran it; the provenance must record the same hash.
+        evidence = seal.get(EVIDENCE_KEY)
+        if evidence is not None:
+            expected[EVIDENCE_KEY] = evidence
         if (
-            dict(inputs.loader_seal)
-            != {
-                "input_frames_sha256": frames,
-                "psid_files_bundle_sha256": bundle,
-            }
+            seal != expected
             or recorded.get("psid_files_bundle_sha256") != bundle
+            or recorded.get(EVIDENCE_KEY) != evidence
         ):
             raise U2CohortError(
                 "the frames or PSID file hashes changed after the U2 "
                 "loader sealed them"
             )
-        return {
+        out = {
             "kind": PSID_FILES,
             "target_id": identity.TARGET_ID,
             "psid_data_dir": recorded.get("psid_data_dir"),
@@ -568,6 +580,9 @@ def _input_provenance(inputs: U2Inputs) -> dict[str, Any]:
             "registries": recorded.get("registries"),
             "input_frames_sha256": frames,
         }
+        if evidence is not None:
+            out[EVIDENCE_KEY] = evidence
+        return out
     return {
         "kind": CALLER_FRAMES,
         "target_id": identity.TARGET_ID,
