@@ -6,8 +6,8 @@
   U1's specification, parameter captures, registered artifact and
   environment sidecar, and U1's code and tests -- keep the bytes the
   milestone-1 manifest (``data/external/track_u2/u1_identity.json``)
-  records, and no U2 commit changed a committed ``runs/*.json`` or any
-  other protected path.
+  records, and no U2 commit or merge resolution changed a committed
+  ``runs/*.json`` or any other protected path.
 * Every U2 milestone-2 module is an exact file exclusion in
   ``POST_REVIEW_SOURCE_EXCLUSIONS`` (the exact-tuple and transitive
   reachability tests live in ``tests/estimates/
@@ -29,6 +29,7 @@ import pytest
 from populace_dynamics.cohorts import age67
 from populace_dynamics.data import employer_dc, family_income
 from populace_dynamics.estimates import adjusted_poverty as ap
+from populace_dynamics.uniform_cut_track_u2 import identity
 from scripts import first_estimates_birth_evidence as reducer
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -60,6 +61,13 @@ U2_OWNED = (
     "scripts/*track_u2*",
     "scripts/u2_*",
     "docs/design/u2_*",
+    "docs/design/boomers2004_1946_55_comparison.md",
+)
+#: U2's own registered artifact and sidecar may be added once, by the
+#: authorized registered run, and never modified afterwards.
+U2_ARTIFACTS = tuple(
+    path.relative_to(identity.ROOT).as_posix()
+    for path in (identity.ARTIFACT_PATH, identity.SIDECAR_PATH)
 )
 PROTECTED = (
     "src/populace_dynamics/data/family.py",
@@ -68,6 +76,28 @@ PROTECTED = (
     "src/populace_dynamics/engine/loop.py",
     "src/populace_dynamics/engine/steps.py",
     "gates.yaml",
+)
+
+#: Paths no U2 commit or merge resolution may change.
+PROTECTED_PATHSPECS = (
+    "runs",
+    "gates.yaml",
+    "src/populace_dynamics/engine",
+    "src/populace_dynamics/data/family.py",
+    "src/populace_dynamics/data/psid.py",
+    "src/populace_dynamics/estimates/career.py",
+    "src/populace_dynamics/cohorts/age67.py",
+    "src/populace_dynamics/estimates/adjusted_poverty.py",
+    "src/populace_dynamics/estimates/uniform_cut_tabulation.py",
+    "src/populace_dynamics/uniform_cut_track_u",
+    "data/external",
+    "tests/track_u",
+    "tests/cohorts",
+    "tests/data",
+    "tests/test_boomers2004_uniform_cut_spec.py",
+    "tests/test_replication_boomers2004_uniform_cut.py",
+    *U2_PATHS,
+    *(f":(exclude){path}" for path in U2_ARTIFACTS),
 )
 
 
@@ -89,7 +119,13 @@ def _git(*args: str) -> subprocess.CompletedProcess:
 def _u2_commits() -> list[str]:
     """Non-merge commits since ``BASE`` that touch a U2-owned path."""
     log = _git(
-        "log", "--no-merges", "--format=%H", f"{BASE}..HEAD", "--", *U2_OWNED
+        "log",
+        "--no-merges",
+        "--full-history",
+        "--format=%H",
+        f"{BASE}..HEAD",
+        "--",
+        *U2_OWNED,
     )
     assert log.returncode == 0, log.stderr
     return log.stdout.split()
@@ -101,7 +137,16 @@ def test_no_committed_run_engine_gate_or_u1_file_changed():
     The check is per commit, not a tree diff against ``BASE``: master keeps
     moving (new runs, gates and other tracks' test data land there), and a
     tree diff would charge those to U2 once this branch merges master or
-    lands on it.
+    lands on it. A merge counts as U2's when its own resolution or hand
+    edits (``--cc``) touch a U2-owned path, and it is then held to the
+    protected paths the same way.
+
+    Attribution is by path: a commit or merge that touches only protected
+    paths is not recognised as U2's and is not caught here. ``gates.yaml``, the
+    engine loop and steps, family/psid/career and U1's files and artifact
+    stay byte-pinned by ``test_protected_bytes_match_the_milestone_1_manifest``;
+    other runs and engine modules rely on review. U2's own artifact and
+    sidecar may be added once and never modified.
     """
     if _git("cat-file", "-e", f"{BASE}^{{commit}}").returncode != 0:
         pytest.skip("the U1 base commit is not in this clone's history")
@@ -116,27 +161,52 @@ def test_no_committed_run_engine_gate_or_u1_file_changed():
             "-r",
             commit,
             "--",
-            "runs",
-            "gates.yaml",
-            "src/populace_dynamics/engine",
-            "src/populace_dynamics/data/family.py",
-            "src/populace_dynamics/data/psid.py",
-            "src/populace_dynamics/estimates/career.py",
-            "src/populace_dynamics/cohorts/age67.py",
-            "src/populace_dynamics/estimates/adjusted_poverty.py",
-            "src/populace_dynamics/estimates/uniform_cut_tabulation.py",
-            "src/populace_dynamics/uniform_cut_track_u",
-            "data/external",
-            "tests/track_u",
-            "tests/cohorts",
-            "tests/data",
-            "tests/test_boomers2004_uniform_cut_spec.py",
-            "tests/test_replication_boomers2004_uniform_cut.py",
-            *U2_PATHS,
+            *PROTECTED_PATHSPECS,
         )
         assert changed.returncode == 0, changed.stderr
         if changed.stdout.split():
             offending[commit] = changed.stdout.split()
+    merges = _git("log", "--merges", "--format=%H", f"{BASE}..HEAD")
+    assert merges.returncode == 0, merges.stderr
+    for merge in merges.stdout.split():
+        own_u2 = _git(
+            "diff-tree",
+            "--cc",
+            "--no-commit-id",
+            "--name-only",
+            "-r",
+            merge,
+            "--",
+            *U2_OWNED,
+        )
+        assert own_u2.returncode == 0, own_u2.stderr
+        if not own_u2.stdout.split():
+            continue
+        own = _git(
+            "diff-tree",
+            "--cc",
+            "--no-commit-id",
+            "--name-only",
+            "-r",
+            merge,
+            "--",
+            *PROTECTED_PATHSPECS,
+        )
+        assert own.returncode == 0, own.stderr
+        if own.stdout.split():
+            offending[merge] = own.stdout.split()
+    rewritten = _git(
+        "log",
+        "--full-history",
+        "--diff-filter=MDRT",
+        "--format=%H",
+        f"{BASE}..HEAD",
+        "--",
+        *U2_ARTIFACTS,
+    )
+    assert rewritten.returncode == 0, rewritten.stderr
+    for commit in rewritten.stdout.split():
+        offending[commit] = list(U2_ARTIFACTS)
     assert offending == {}
 
 
