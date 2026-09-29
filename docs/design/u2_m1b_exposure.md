@@ -138,3 +138,87 @@ No engine file, `gates.yaml`, `runs/*.json`, `data/family.py`, `data/psid.py`, `
   The edit scripts assert the milestone-1 pre-state before editing. Their effect is fully recorded in the committed diffs: every changed registry entry carries an `adjudication` or `citation_correction` object. No caller-worktree file was written.
 - **Tool calls moved to background.** The machine's load average was above 200 throughout, so several tool calls ran past their time limit and were moved to the background by the harness; each result was read when it completed. The first registry test run took 40 minutes.
 - **Virtual environment.** The workspace `.venv` was created with `uv venv -p cpython-3.14t .venv` and `uv pip install -e '.[dev,model]' hypothesis pyyaml`.
+
+## Revision after the independent review (2026-09-29)
+
+Complete list of what the revision builder opened (Claude Code, Opus 5.5, headless Subfleet job `20260928-230312-u2-m1b-fix`), working blind. It did not open the Boomers 2004 report, any comparator lane or seal, the cleared or uncleared U2 availability statement, any public result memo, `EV/parity-phase2-plan-20260927.md`, its review, `EV/dynasim-scorecard.md`, the adjudication `EV/phase2-20260927/out/u2-adjudicate.md`, or anything else `EV/RESTRICTED-FILES.md` restricts. It states and guesses no 1946–55 value or direction. No raw PSID data file was opened, no web request was made, and no poverty, benefit or estimator run was made.
+
+Roots as above, except `WS` = the revision workspace `/Users/maxghenis/.subfleet/worktrees/20260928-230312-u2-m1b-fix` (a detached checkout of branch `dynamics-u2-impl-20260928` at `883ea488`) and `SCRATCH2` = `/tmp/u2m1bfix`.
+
+### Instructions and review
+
+- `EV/RESTRICTED-FILES.md`: read in full, first.
+- `EV/phase2-20260927/prompts/common.md`: read in full.
+- `EV/phase2-20260927/out/u2-m1b-review.md`: read in full.
+- `/Users/maxghenis/.claude/CLAUDE.md` and `WS/CLAUDE.md`: injected at session start.
+
+### Repository files (workspace)
+
+Read in full:
+
+- `docs/design/u2_m1b_psid_research.md`
+- `docs/design/u2_m1b_exposure.md`
+- `tests/track_u2/test_adjudication_applied.py`
+- `tests/data/track_u2/psid_docs/manifest.json`
+- `tests/data/track_u2/psid_sources/weights23_manifest.json`
+- `tests/conftest.py`
+- `tests/tier_counts.json`
+
+Read in part:
+
+- `docs/design/boomers2004_1946_55_comparison.md`: lines 1–240 and 1352 to the end, plus lines 134 and 152–160 again. Draft 3 (`git show f7412e00:docs/design/boomers2004_1946_55_comparison.md`, saved to `SCRATCH2/draft3.md`): lines 134, 152–160 and 1391, and a full diff against draft 4.
+- `src/populace_dynamics/data/u2_source_registry.py`: lines 1–200 and 355–439.
+- `src/populace_dynamics/data/psid.py`: lines 75–125.
+- `src/populace_dynamics/__init__.py` and `src/populace_dynamics/data/__init__.py`: first 30 lines.
+- `pyproject.toml`: lines 1–80 and 115–140.
+- `tests/test_tier_policy.py`: lines 1–80.
+- `.github/workflows/tests.yml`: lines 1–60.
+- `tests/track_u2/test_source_registries.py`: lines 264–330 and 360–401, plus search hits.
+- `data/external/track_u2/weights.json`: the `2017.cross_section_weight` entry.
+- `data/external/track_u2/roles.json`: lines 535–565 and 820–888 (the 2015 and 2017 code-90 and code-92 entries).
+- `data/external/track_u2/u1_identity.json`: its keys, the `u2_specification` record, and its 50 U1 hashes through a script.
+- All eight registries: top-level keys and `sources` lists, through scripts.
+- `docs/design/u2_m1_source_adjudication.md`: lines 1–30, 36, 50–60, 1777 and 1815–1825.
+- `docs/design/u2_m1_captured_sources.md`: lines 1–20 and line 114. `docs/design/u2_m1_exposure.md` lines 269 and 439 and `docs/design/u2_m1_report.md` line 102: search hits only.
+- A search for 'served at' also printed eight unrelated lines of `docs/design/boomers2004_uniform_cut_comparison.md` (lines 221, 222, 800, 881, 895, 991 and 992) and `docs/design/minimum_benefits_comparison.md` (line 1104). Neither concerns the 1946–55 cohort.
+- Git metadata: logs, `git diff origin/master...HEAD --stat` and `--name-status`, and the diffs of `scripts/first_estimates_birth_evidence.py` and `tests/estimates/test_birth_evidence_artifact.py`.
+
+Archived and pinned sources in the workspace:
+
+- `tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf`: full text extraction. PDF pp. 1–3 and 6–10 read; p. 13 read as text and as a rendered page image (110 dpi, `SCRATCH2/csw23_p13-13.png`); p. 14 read. Search hits displayed one Table A1 row.
+- `tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf`: full text extraction. Pages 1–13: paragraphs mentioning 2017 or the construction steps. PDF p. 14, Table A1 on p. 16, and Tables A2a to A7 on pp. 17–22 displayed.
+- `tests/data/track_u2/psid_docs/FAQ_20260813.html`: lines 788–875 displayed as text; `grep -n` searches; byte counts of CR and LF.
+- `tests/data/track_u2/psid_docs/UserGuide2017.pdf` p. 62, `DataRelease-May2019.pdf` p. 1, `long_weight_19.pdf` pp. 1–2 and `tests/data/track_u2/psid_sources/cross_sec_weights_17.pdf` p. 1 read. `documents_20260813.html`: searched for weight-report links.
+- Every PDF in `tests/data/track_u2/psid_docs/` and `psid_sources/`: text layers searched by scripts that printed only the pages holding each research quote.
+- Every file in the manifest: hashed.
+
+### PSID documentation (staged, local)
+
+- `PSID/documentation/`: directory listing. Its only subdirectory is `capture1`.
+- `PSID/documentation/capture1/`: all 494 PDFs text-extracted to `SCRATCH2/txt/` and searched for the 2015 RTH Lookup List. For non-codebook files, the matching lines were displayed. For codebooks, only file and page were displayed, except one variable-header line on `IND2023ER_codebook.pdf` p. 523 (ER33219, labelled 'RELATIONSHIP TO RESPONDENT 95').
+  - Pages read: q2015 pp. 5, 131 and 217 (context around the matches), q2017 p. 5, fam2015 QxQs p. 3, and the first 1,500 characters and four matching lines (pp. 27, 28 and 137) of `2014_FieldManual.pdf`, a Child Development Supplement manual.
+  - Matching lines displayed from q1999, q2001, q2003, q2011, q2013, q2019, q2021, q2023, q2025, `Coverscreen.pdf`, `CDS2019_Coverscreen-Qnaire.pdf`, `cds-19_child.pdf`, `cds-19_pcg.pdf`, `dust13_Questionnaire.pdf`, `TA11_UserGuide.pdf` and `fam1978_78FAM.PDF`.
+  - `psid_documents_index.html`, `psid_documents_inventory.json`, `browser_digests.txt`, `capture_completed_utc.txt` and `name_disambiguation.txt`: searched or read in part. `__test.bin` and `__test2.bin`: file type and size only.
+- `PSID/ind2023er/IND2023ER_codebook.pdf`, `PSID/family/2015/FAM2015ER_codebook.pdf` and `PSID/documentation/capture1/q2011.pdf` to `q2023.pdf`: text layers searched by scripts that printed only page numbers for each quote. No codebook page text was displayed.
+- `PSID/family/2019/fam2019er_codebook.pdf`, `PSID/family/2021/FAM2021ER_codebook.pdf` and `PSID/family/2023/FAM2023ER_codebook.pdf`: hashed only.
+
+### Incidental exposure
+
+Published whole-sample PSID documentation statistics were displayed:
+
+- the 2023 cross-sectional report's Table A2 and one row of its Table A1;
+- the 2019 cross-sectional report's Tables A1 to A7: sample sizes, weight distributions, and weighted age, sex, race and region shares for PSID, the ACS and the CPS.
+
+None concerns the 1946–55 cohort or the Boomers report, none is used for a finding, and none is reproduced in any document. A process listing, run to check a package install, showed other jobs' command lines; nothing from it was used.
+
+### Files written
+
+- `docs/design/boomers2004_1946_55_comparison.md` (§§16a, 17 and 19 and the version line; nothing before §16a except line 3)
+- `docs/design/u2_m1b_psid_research.md`
+- `docs/design/u2_m1_source_adjudication.md` (the 2017 weight rows and one FAQ citation)
+- `data/external/track_u2/weights.json`, `roles.json` and `u1_identity.json` (the U2 specification pin only; the 50 U1 hashes are unchanged)
+- `tests/data/track_u2/psid_docs/manifest.json`
+- `tests/track_u2/test_adjudication_applied.py` and the new `tests/track_u2/test_psid_research_sources.py`
+- this section
+
+No U1 file, engine file, `gates.yaml`, `runs/*.json` or milestone-2 module was edited. `SCRATCH2` holds the draft-3 copy, the text extractions, the search scripts and their output, and the page image. The workspace `.venv` (Python 3.13; `uv pip install -e . pytest hypothesis`) is ignored by Git.
