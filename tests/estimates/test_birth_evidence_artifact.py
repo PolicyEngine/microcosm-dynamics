@@ -163,6 +163,9 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/track_b/parameters/__init__.py"),
         Path("src/populace_dynamics/track_b/parameters/ret_v1.yaml"),
         Path("src/populace_dynamics/track_b/ret_params.py"),
+        Path("src/populace_dynamics/track_b/equality.py"),
+        Path("src/populace_dynamics/track_b/replay.py"),
+        Path("src/populace_dynamics/track_b/runner.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -288,12 +291,15 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "populace_dynamics.data.psid_questionnaire_inventory",
     }
     assert root_module in module_paths
-    track_b_r1 = {
+    track_b_modules = {
         "populace_dynamics.track_b",
         "populace_dynamics.track_b.parameters",
         "populace_dynamics.track_b.ret_params",
+        "populace_dynamics.track_b.equality",
+        "populace_dynamics.track_b.replay",
+        "populace_dynamics.track_b.runner",
     }
-    assert track_b_r1.issubset(module_paths)
+    assert track_b_modules.issubset(module_paths)
     assert psid_exclusions.issubset(module_paths)
     graph_exclusions = {
         name
@@ -338,7 +344,7 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "historically excluded PSID modules became reachable from the "
         f"birth-evidence reducer: {sorted(psid_exclusions & reachable)}"
     )
-    assert track_b_r1.isdisjoint(reachable)
+    assert track_b_modules.isdisjoint(reachable)
     assert graph_exclusions.isdisjoint(reachable), (
         "opt-in graph modules became reachable from the birth-evidence "
         f"reducer: {sorted(graph_exclusions & reachable)}"
