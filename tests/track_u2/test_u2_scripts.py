@@ -51,13 +51,19 @@ def _script(name: str):
 @pytest.fixture(scope="module")
 def dry_run(tmp_path_factory) -> Path:
     directory = tmp_path_factory.mktemp("track_u2_dry_run")
-    assert _script("track_u2_dry_run").main(["--output-dir", str(directory)]) == 0
+    assert (
+        _script("track_u2_dry_run").main(["--output-dir", str(directory)]) == 0
+    )
     return directory
 
 
 def test_every_dry_run_output_is_headed_invented(dry_run):
     result = json.loads((dry_run / "result.json").read_text())
-    assert result["header"] == DRY_RUN_HEADER == "INVENTED DATA - NOT A COMPARISON"
+    assert (
+        result["header"]
+        == DRY_RUN_HEADER
+        == "INVENTED DATA - NOT A COMPARISON"
+    )
     assert result["labels"][0] == DRY_RUN_HEADER
     text = (dry_run / "RESULTS.md").read_text()
     assert text.splitlines()[0] == f"# {DRY_RUN_HEADER}"
@@ -77,7 +83,9 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
     assert checks["plans"]["u1_pairs"] == 15
     assert checks["plans"]["u1_birth_years"] == 10
     assert checks["plans"]["wave_2013_cells"] == [[1946, 2013, 2012, 66, 0.5]]
-    assert checks["identification"]["identical_births_and_annuitant_attributes"]
+    assert checks["identification"][
+        "identical_births_and_annuitant_attributes"
+    ]
     for wave, entry in checks["mapping"]["by_wave"].items():
         assert entry["round_trip_equal"], wave
         assert entry["income_equal_to_invented_frame"], wave
@@ -103,7 +111,11 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
             if not key.startswith("n_"):
                 assert value is True, (row_id, key)
     for row_id, entry in result["monotonicity"].items():
-        assert entry["cells_full_sample"] and entry["cells_both_halves_every_seed"]
+        assert entry["per_observation"] == checks["invariants"][row_id]
+        assert (
+            entry["cells_full_sample"]
+            and entry["cells_both_halves_every_seed"]
+        )
     assert checks["invariants"]["U3"]["n_ssi_new_positive"] > 0
 
 
@@ -133,7 +145,9 @@ def _modules() -> dict[str, Path]:
 
 def _imports(name: str, path: Path, modules: dict[str, Path]) -> set[str]:
     tree = ast.parse(path.read_text(encoding="utf-8"))
-    package = name.split(".") if path.name == "__init__.py" else name.split(".")[:-1]
+    package = (
+        name.split(".") if path.name == "__init__.py" else name.split(".")[:-1]
+    )
     found: set[str] = set()
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
@@ -208,13 +222,13 @@ def _ratified_block():
     block["status"] = "ratified_frozen"
     block["version"] = "u2-ratified-1"
     block["blocked_by"] = []
-    block["ssi"]["parameters"]["sha256"] = (
-        "a58d55c160b48cd3e21f730d45265374bd3c8a9eb7eae947469a5a5dc0b23762"
-    )
+    block["ssi"]["parameters"][
+        "sha256"
+    ] = "a58d55c160b48cd3e21f730d45265374bd3c8a9eb7eae947469a5a5dc0b23762"
     block["income_concept"]["employer_dc"]["reader"] = "u2_employer_dc_adapter"
-    block["income_concept"]["employer_dc"]["later_wave_mapping_status"] = (
-        "RESOLVED"
-    )
+    block["income_concept"]["employer_dc"][
+        "later_wave_mapping_status"
+    ] = "RESOLVED"
     block["decisions"] = {
         "ruled_by": "Max",
         "ruled_on": "2026-09-28",
@@ -251,7 +265,9 @@ def _preflight(registered, **overrides):
         ({"output": ROOT / "runs" / "other.json"}, "not U2's artifact"),
     ],
 )
-def test_preflight_refuses_before_the_specification(registered, overrides, message):
+def test_preflight_refuses_before_the_specification(
+    registered, overrides, message
+):
     with pytest.raises(ValueError, match=message):
         _preflight(registered, **overrides)
 
@@ -281,7 +297,9 @@ def test_preflight_refuses_the_draft_specification(registered):
         (lambda b: b.update(target_id="U1"), "not 'U2'"),
     ],
 )
-def test_preflight_refuses_incomplete_specifications(registered, change, message):
+def test_preflight_refuses_incomplete_specifications(
+    registered, change, message
+):
     block = _ratified_block()
     change(block)
     with pytest.raises(ValueError, match=message):
@@ -301,8 +319,8 @@ def test_preflight_refuses_a_wrong_binding_then_the_open_mapping(registered):
 def test_existing_artifact_or_sidecar_refuses(registered, monkeypatch):
     artifact = identity.ARTIFACT_PATH
     sidecar = identity.SIDECAR_PATH
+    original = Path.exists
     for existing in (artifact, sidecar):
-        original = Path.exists
 
         def exists(path, existing=existing):
             if path in (artifact, sidecar):

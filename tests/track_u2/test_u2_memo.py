@@ -125,8 +125,12 @@ def test_zero_uncertainty_never_divides():
 
 def test_undefined_cells_keep_their_reason():
     line = memo.memo_cell(
-        {"cell": "men_widowed", "defined": False, "n_observations": 0,
-         "undefined_reason": "empty cell"},
+        {
+            "cell": "men_widowed",
+            "defined": False,
+            "n_observations": 0,
+            "undefined_reason": "empty cell",
+        },
         10,
         13,
     )

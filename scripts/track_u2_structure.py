@@ -70,7 +70,9 @@ def build(data_dir: Path | None = None) -> dict[str, Any]:
     rows = {}
     for row in cohort.ROWS:
         built = cohort.build_u2_cohort(
-            inputs, cohort.U2CohortSpec(row=row), role_context=roles,
+            inputs,
+            cohort.U2CohortSpec(row=row),
+            role_context=roles,
             births=births,
         )
         rows[row] = cohort.structural_summary(built)
@@ -100,7 +102,9 @@ def build(data_dir: Path | None = None) -> dict[str, Any]:
         "labels": ["PSID-realized outcomes (not a projection)", "counts only"],
         "code_commit": _git("rev-parse", "HEAD"),
         "provenance": {
-            k: v for k, v in inputs.provenance.items() if k != "psid_files_sha256"
+            k: v
+            for k, v in inputs.provenance.items()
+            if k != "psid_files_sha256"
         },
         "psid_files_sha256": dict(inputs.provenance["psid_files_sha256"]),
         "registry_status": sources.registry_status_summary(registries),

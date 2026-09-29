@@ -54,10 +54,21 @@ def test_every_row_is_computed_with_the_u2_identity(u2_run):
         assert table["labels"][0] == DRY_RUN_HEADER
         cells = [c["cell"] for c in table["cells"]]
         assert cells[:15] == [
-            "all", "women", "men", "married", "widowed", "divorced",
-            "never_married", "women_married", "women_widowed",
-            "women_divorced", "women_never_married", "men_married",
-            "men_widowed", "men_divorced", "men_never_married",
+            "all",
+            "women",
+            "men",
+            "married",
+            "widowed",
+            "divorced",
+            "never_married",
+            "women_married",
+            "women_widowed",
+            "women_divorced",
+            "women_never_married",
+            "men_married",
+            "men_widowed",
+            "men_divorced",
+            "men_never_married",
         ]
 
 
@@ -108,7 +119,11 @@ def test_sensitivity_and_f17_diagnostics(u2_run):
     components = f17["components"]
     assert components["target_id"] == "U2"
     assert set(components["social_security"]) == {
-        "2014", "2016", "2018", "2020", "2022"
+        "2014",
+        "2016",
+        "2018",
+        "2020",
+        "2022",
     }
 
 
@@ -171,14 +186,19 @@ def test_runner_refuses_a_partial_row_set(u2_inputs, u2_params, declared):
         )
 
 
-def test_runner_refuses_tampered_invented_inputs(u2_inputs, u2_params, declared):
+def test_runner_refuses_tampered_invented_inputs(
+    u2_inputs, u2_params, declared
+):
     tampered = cohort.replace_provenance(
         dataclasses.replace(
             u2_inputs,
             design=u2_inputs.design.assign(cluster=1),
         ),
-        **{k: v for k, v in u2_inputs.provenance.items()
-           if k != "input_frames_sha256"},
+        **{
+            k: v
+            for k, v in u2_inputs.provenance.items()
+            if k != "input_frames_sha256"
+        },
     )
     with pytest.raises(ValueError, match="not the"):
         runner.run_track_u2(

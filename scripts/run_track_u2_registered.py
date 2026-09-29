@@ -104,6 +104,9 @@ def _canonical(value: Any) -> bytes:
 
 
 def _find(value: Any, needle: str, path: str = "") -> list[str]:
+    """``path=value`` of every string under ``value`` containing
+    ``needle`` (the value is named so a refusal says what is open)."""
+
     found: list[str] = []
     if isinstance(value, Mapping):
         for key, item in value.items():
@@ -112,7 +115,7 @@ def _find(value: Any, needle: str, path: str = "") -> list[str]:
         for index, item in enumerate(value):
             found += _find(item, needle, f"{path}[{index}]")
     elif isinstance(value, str) and needle in value:
-        found.append(path)
+        found.append(f"{path}={value!r}")
     return found
 
 
@@ -233,8 +236,10 @@ def preflight(
         raise ValueError(
             f"{output} already exists: the registered run is one-shot"
         )
-    block = rows.specification_block() if specification is None else (
-        specification
+    block = (
+        rows.specification_block()
+        if specification is None
+        else (specification)
     )
     check_specification_ratified(block)
     row_check = rows.check_rows_against_block(block)

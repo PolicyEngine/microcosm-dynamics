@@ -337,19 +337,34 @@ U2_RULINGS: dict[str, dict[str, Any]] = {
     },
 }
 _RULED_ON = "2026-09-28"
+_BLOCK_SECTION = "\n## 15. Machine-readable parameter block"
 
 
 def specification_block(
     path: Path = identity.SPECIFICATION_PATH,
 ) -> dict[str, Any]:
-    """The U2 specification's machine-readable JSON block (section 15)."""
+    """The U2 specification's machine-readable JSON block (section 15).
+
+    Only section 15 is searched, and it must hold exactly one JSON block.
+    Other sections may quote JSON fragments (``u2-draft-4``'s section 16a
+    proposes a replacement ``previous_routes`` fragment); a proposal is
+    not the contract, so it is never read as the block.
+    """
 
     identity.refuse_u1_identity({"path": path}, what="specification_block")
     text = Path(path).read_text(encoding="utf-8")
-    blocks = re.findall(r"```json\n(.*?)\n```", text, re.DOTALL)
+    start = text.find(_BLOCK_SECTION)
+    end = text.find("\n## 16.", start + 1)
+    if start < 0 or end < 0:
+        raise ValueError(
+            f"{path} has no section 15 ({_BLOCK_SECTION!r}) followed by "
+            "section 16"
+        )
+    blocks = re.findall(r"```json\n(.*?)\n```", text[start:end], re.DOTALL)
     if len(blocks) != 1:
         raise ValueError(
-            f"{path} must hold exactly one JSON block, found {len(blocks)}"
+            f"{path} section 15 must hold exactly one JSON block, found "
+            f"{len(blocks)}"
         )
     block = json.loads(blocks[0])
     identity.refuse_u1_identity(
@@ -396,9 +411,10 @@ def check_rows_against_block(
         )
     for row_id, entry in registered.items():
         parsed = _parse_block_row(row_id, entry)
-        mine = {"cohort": dict(rows[row_id].cohort), "income": dict(
-            rows[row_id].income
-        )}
+        mine = {
+            "cohort": dict(rows[row_id].cohort),
+            "income": dict(rows[row_id].income),
+        }
         if parsed != mine:
             raise ValueError(
                 f"row {row_id} differs from the specification block: code "
@@ -488,7 +504,9 @@ def check_named_deltas_against_specification(
     if documented != NAMED_DELTAS:
         differing = [
             i + 1
-            for i, (a, b) in enumerate(zip(documented, NAMED_DELTAS, strict=True))
+            for i, (a, b) in enumerate(
+                zip(documented, NAMED_DELTAS, strict=True)
+            )
             if a != b
         ]
         raise ValueError(f"named deltas differ from section 12: {differing}")

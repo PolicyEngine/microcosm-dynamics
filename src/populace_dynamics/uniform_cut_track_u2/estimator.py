@@ -320,7 +320,8 @@ def u2_adjusted_incomes(
     zeros = np.zeros(len(rows), dtype=np.float64)
     retirement_removed = (
         _head_retirement_account_income(rows)
-        if replace and inherited.retirement_account_income_rule == "remove_head"
+        if replace
+        and inherited.retirement_account_income_rule == "remove_head"
         else zeros
     )
     farm_removed = ap._farm_asset_income(rows, inherited) if replace else zeros

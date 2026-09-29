@@ -101,7 +101,7 @@ def classify(value: float, interval: tuple[float, float]) -> str:
 
 def _uncertainty(cell: Mapping[str, Any], statistic: str) -> dict[str, Any]:
     se = ((cell.get("design_se") or {}).get(statistic) or {}).get("se")
-    floor = ((cell.get("floor") or {}).get(statistic) or {})
+    floor = (cell.get("floor") or {}).get(statistic) or {}
     return {
         "design_se": se,
         "floor_mean": floor.get("mean") if floor.get("defined") else None,

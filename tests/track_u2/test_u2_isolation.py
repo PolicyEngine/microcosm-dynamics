@@ -32,7 +32,18 @@ from scripts import first_estimates_birth_evidence as reducer
 
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / "data" / "external" / "track_u2" / "u1_identity.json"
-BASE = "79451eb4b633"
+#: The repository reference of the U2 specification (header): U1's
+#: registered state.  Milestone 1 and every later U2 lane change only U2
+#: paths (``track_u2`` registries, captures and documentary sources), so
+#: the U1 paths below must be byte-identical to this commit.
+BASE = "9cee2423f048"
+#: U2's own milestone-1 data: allowed to differ from ``BASE``.
+U2_PATHS = (
+    ":(exclude)data/external/track_u2",
+    ":(exclude)data/external/track_u2_ssi_parameters_2012_2022.json",
+    ":(exclude)tests/data/track_u2",
+    ":(exclude)tests/data/test_track_u2_*",
+)
 PROTECTED = (
     "src/populace_dynamics/data/family.py",
     "src/populace_dynamics/data/psid.py",
@@ -58,9 +69,9 @@ def _git(*args: str) -> subprocess.CompletedProcess:
     )
 
 
-def test_no_committed_run_engine_or_gate_changed_since_milestone_1():
+def test_no_committed_run_engine_gate_or_u1_file_changed():
     if _git("cat-file", "-e", f"{BASE}^{{commit}}").returncode != 0:
-        pytest.skip("milestone-1 commit not in this clone's history")
+        pytest.skip("the U1 base commit is not in this clone's history")
     changed = _git(
         "diff",
         "--name-only",
@@ -76,22 +87,21 @@ def test_no_committed_run_engine_or_gate_changed_since_milestone_1():
         "src/populace_dynamics/estimates/adjusted_poverty.py",
         "src/populace_dynamics/estimates/uniform_cut_tabulation.py",
         "src/populace_dynamics/uniform_cut_track_u",
-        "src/populace_dynamics/data/u2_source_registry.py",
         "data/external",
         "tests/track_u",
         "tests/cohorts",
         "tests/data",
         "tests/test_boomers2004_uniform_cut_spec.py",
         "tests/test_replication_boomers2004_uniform_cut.py",
-    ).stdout.split()
-    assert changed == []
+        *U2_PATHS,
+    )
+    assert changed.returncode == 0, changed.stderr
+    assert changed.stdout.split() == []
 
 
 def test_every_u2_module_is_an_exact_historical_exclusion():
     package = ROOT / "src" / "populace_dynamics" / "uniform_cut_track_u2"
-    modules = {
-        path.relative_to(ROOT) for path in sorted(package.glob("*.py"))
-    }
+    modules = {path.relative_to(ROOT) for path in sorted(package.glob("*.py"))}
     exclusions = set(reducer.POST_REVIEW_SOURCE_EXCLUSIONS)
     assert modules <= exclusions, sorted(modules - exclusions)
     for script in (
@@ -111,7 +121,9 @@ def test_u1_wave_pins_and_shared_constants_are_unchanged():
     assert family_income.INCOME_WAVES == (2005, 2007, 2009, 2011, 2013)
     assert employer_dc.EMPLOYER_DC_WAVES == (2005, 2007, 2009, 2011, 2013)
     assert ap._HEAD_IRA_INCOME_YEARS == frozenset({2012})
-    assert ap.THRESHOLDS_PATH.name == "census_poverty_thresholds_2004_2012.json"
+    assert (
+        ap.THRESHOLDS_PATH.name == "census_poverty_thresholds_2004_2012.json"
+    )
     assert ap.SSI_PARAMETERS_PATH.name == "track_u_ssi_parameters.json"
     assert age67.Age67Spec().as_dict() == {
         "row": "U0",

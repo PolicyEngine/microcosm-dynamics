@@ -50,7 +50,10 @@ def u2_births(u2_inputs):
 @pytest.fixture(scope="session")
 def u0_cohort(u2_inputs, declared, u2_births):
     return cohort.build_u2_cohort(
-        u2_inputs, cohort.U2CohortSpec(), role_context=declared, births=u2_births
+        u2_inputs,
+        cohort.U2CohortSpec(),
+        role_context=declared,
+        births=u2_births,
     )
 
 

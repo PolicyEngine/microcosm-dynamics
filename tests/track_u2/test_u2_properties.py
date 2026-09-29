@@ -79,7 +79,9 @@ def observation(draw, index: int = 0) -> dict:
         "member_sex": draw(st.sampled_from(["male", "female"])),
         "member_married_coresident": joint,
         "spouse_age": draw(st.integers(55, 90)) if joint else pd.NA,
-        "spouse_sex": draw(st.sampled_from(["male", "female"])) if joint else pd.NA,
+        "spouse_sex": (
+            draw(st.sampled_from(["male", "female"])) if joint else pd.NA
+        ),
         "fu_head_age": draw(st.integers(40, 95)),
         "fu_head_sex": draw(st.sampled_from(["male", "female"])),
         "fu_head_spouse_present": joint,
@@ -116,7 +118,10 @@ def observation(draw, index: int = 0) -> dict:
         row[concept] = draw(st.sampled_from([0, 0, 1_000]))
     row["hw_taxable"] = sum(
         row[c]
-        for c in (*family_income.HW_EARNED_CONCEPTS, *family_income.ASSET_INCOME_CONCEPTS)
+        for c in (
+            *family_income.HW_EARNED_CONCEPTS,
+            *family_income.ASSET_INCOME_CONCEPTS,
+        )
         if c != "ofum_asset"
     )
     row["hw_transfer"] = (
@@ -175,7 +180,9 @@ def _estimate(frame, spec, params):
 def test_reform_never_exceeds_baseline_in_any_row(frame, params):
     for row_id, row in rows.REGISTERED_ROWS.items():
         out = _estimate(frame, row.income_spec(), params)
-        assert (out["reform_income"] <= out["baseline_income"] + 1e-6).all(), row_id
+        assert (
+            out["reform_income"] <= out["baseline_income"] + 1e-6
+        ).all(), row_id
         assert (out["poor_reform"] | ~out["poor_baseline"]).all(), row_id
         assert (out["ssi_offset"] >= 0).all() and (out["ssi_new"] >= 0).all()
         assert (out["ssi_offset"] + out["ssi_new"] <= out["cut"] + 1e-6).all()
@@ -219,7 +226,9 @@ def test_offset_bounds(ss, cut, ssi, year, couple, params):
     year=st.sampled_from(YEARS),
     couple=st.booleans(),
 )
-def test_new_enrollment_bounds(unearned, earned, ss, cut, year, couple, params):
+def test_new_enrollment_bounds(
+    unearned, earned, ss, cut, year, couple, params
+):
     ssi = params.ssi
     fbr = ssi.fbr_annual(year, couple)
     before = ap.countable_income(unearned + ss, earned, ssi)
@@ -239,18 +248,30 @@ def tabulation_rows(draw) -> pd.DataFrame:
     frame = pd.DataFrame(
         {
             "observation_id": [f"{i}:2019" for i in range(n)],
-            "person_id": [draw(st.integers(0, n // 2 + 1)) * 10 + i % 2 for i in range(n)],
-            "family_unit_id": [201_900_000 + draw(st.integers(0, n)) for _ in range(n)],
+            "person_id": [
+                draw(st.integers(0, n // 2 + 1)) * 10 + i % 2 for i in range(n)
+            ],
+            "family_unit_id": [
+                201_900_000 + draw(st.integers(0, n)) for _ in range(n)
+            ],
             "weight": draw(
                 st.lists(st.floats(0.5, 50.0), min_size=n, max_size=n)
             ),
             "sex": draw(
-                st.lists(st.sampled_from(["male", "female"]), min_size=n, max_size=n)
+                st.lists(
+                    st.sampled_from(["male", "female"]), min_size=n, max_size=n
+                )
             ),
             "marital_status_4": draw(
                 st.lists(
                     st.sampled_from(
-                        ["married", "widowed", "divorced", "never_married", "unclassified"]
+                        [
+                            "married",
+                            "widowed",
+                            "divorced",
+                            "never_married",
+                            "unclassified",
+                        ]
                     ),
                     min_size=n,
                     max_size=n,
@@ -259,8 +280,12 @@ def tabulation_rows(draw) -> pd.DataFrame:
             "birth_year": draw(
                 st.lists(st.sampled_from([1949, 1951]), min_size=n, max_size=n)
             ),
-            "stratum": draw(st.lists(st.sampled_from([1, 2, 90]), min_size=n, max_size=n)),
-            "cluster": draw(st.lists(st.sampled_from([1, 2]), min_size=n, max_size=n)),
+            "stratum": draw(
+                st.lists(st.sampled_from([1, 2, 90]), min_size=n, max_size=n)
+            ),
+            "cluster": draw(
+                st.lists(st.sampled_from([1, 2]), min_size=n, max_size=n)
+            ),
             "poor_baseline": base,
             "poor_reform": [a or b for a, b in zip(base, extra, strict=True)],
         }
@@ -386,3 +411,244 @@ def test_rate_bound_counterexample_is_a_one_ulp_rounding():
     ]
     assert rate == 100.00000000000001
     assert rate - 100.0 < BOUND_ULP
+
+
+# ---------------------------------------------------------------------------
+# A literal section 7-8 reference for the cut and the SSI response
+# (differential), and the one-field structure of the rows
+# ---------------------------------------------------------------------------
+def _reference_countable(unearned: float, earned: float, ssi) -> float:
+    """Section 8's countable income, written from the text alone: the
+    general exclusion applies to unearned income first and any remainder
+    to earnings, then the earned exclusion and the earned-share
+    exclusion (twelve times the monthly amounts)."""
+
+    general = 12 * ssi.general_income_exclusion_monthly
+    flat = 12 * ssi.earned_income_exclusion_monthly
+    unearned, earned = max(0.0, unearned), max(0.0, earned)
+    remainder = max(0.0, general - unearned)
+    earned_left = max(0.0, earned - remainder - flat)
+    return max(0.0, unearned - general) + earned_left * (
+        1 - ssi.earned_income_share_excluded
+    )
+
+
+def _reference_fall(s: float, c: float, g: float) -> float:
+    """Section 8: fall = max(0, S - G) - max(0, (1 - c) S - G)."""
+
+    return max(0.0, s - g) - max(0.0, (1 - c) * s - g)
+
+
+def _fbr(ssi, year: int, couple: bool) -> float:
+    monthly = ssi.fbr_couple_monthly if couple else ssi.fbr_individual_monthly
+    return 12 * float(monthly[year])
+
+
+def _reference(row: dict, spec: estimator.U2IncomeSpec, ssi) -> dict:
+    """The cut, offset and new enrollment of one observation from the
+    literal formulas of sections 7 and 8, with the section 13 bounds of
+    every unit checked on the way."""
+
+    c = spec.cut_rate if row["birth_year"] + 67 >= spec.cut_start_year else 0.0
+    family = spec.income_unit == "family_unit" or row["member_role"] == "ofum"
+    hw_ss = float(row["head_ss"] + row["wife_ss"])
+    unit_ss = hw_ss + (float(row["ofum_ss"]) if family else 0.0)
+    out = {"cut": c * unit_ss, "offset": 0.0, "new": 0.0}
+    if spec.ssi_rule == "none":
+        return out
+    g = 12 * ssi.general_income_exclusion_monthly
+    year = int(row["income_year"])
+    hw_ssi = float(row["head_ssi"] + row["wife_ssi"])
+    if hw_ssi > 0:
+        couple = row["head_ssi"] > 0 and row["wife_ssi"] > 0
+        fall = _reference_fall(hw_ss, c, g)
+        room = max(0.0, _fbr(ssi, year, couple) - hw_ssi)
+        offset = min(fall, room)
+        assert -1e-9 <= offset <= fall + 1e-9 <= c * hw_ss + 2e-9
+        assert fall == 0 or hw_ss > g
+        assert offset <= room
+        out["offset"] += offset
+    elif spec.ssi_rule == "full_static_recomputation":
+        couple = bool(row["wife_present"])
+        f = _fbr(ssi, year, couple)
+        unearned = max(
+            0.0,
+            row["hw_transfer"]
+            - hw_ssi
+            - row["head_tanf"]
+            - row["wife_tanf"]
+            - row["head_other_welfare"]
+            - row["wife_other_welfare"],
+        )
+        earned = sum(
+            max(0.0, float(row[concept]))
+            for concept in family_income.HW_EARNED_CONCEPTS
+        )
+        before = _reference_countable(unearned + hw_ss, earned, ssi)
+        after = _reference_countable(unearned + (1 - c) * hw_ss, earned, ssi)
+        limit = (
+            ssi.resource_limit_couple
+            if couple
+            else ssi.resource_limit_individual
+        )
+        resources = max(0.0, float(row["wealth1"]) - float(row["vehicles"]))
+        if before >= f and after < f and resources <= limit:
+            new = f - after
+            assert 0 <= new <= min(f - after, before - after) + 1e-9
+            out["new"] = new
+    if family and row["ofum_ssi"] > 0:
+        fall = _reference_fall(float(row["ofum_ss"]), c, g)
+        room = max(0.0, _fbr(ssi, year, False) - float(row["ofum_ssi"]))
+        offset = min(fall, room)
+        assert -1e-9 <= offset <= fall + 1e-9 <= c * row["ofum_ss"] + 2e-9
+        out["offset"] += offset
+    return out
+
+
+@SETTINGS
+@given(frame=frames())
+def test_cut_and_ssi_response_equal_the_section_8_reference(frame, params):
+    """Differential: the estimator's cut, offset and new enrollment equal
+    the literal section 7-8 formulas for every row and observation."""
+
+    for row_id, row in rows.REGISTERED_ROWS.items():
+        spec = row.income_spec()
+        out = _estimate(frame, spec, params)
+        for record, (_, estimate) in zip(
+            frame.to_dict("records"), out.iterrows(), strict=True
+        ):
+            expected = _reference(record, spec, params.ssi)
+            for key, column in (
+                ("cut", "cut"),
+                ("offset", "ssi_offset"),
+                ("new", "ssi_new"),
+            ):
+                assert math.isclose(
+                    estimate[column], expected[key], rel_tol=0, abs_tol=1e-6
+                ), (row_id, key, estimate[column], expected[key])
+
+
+#: What each one-field row may change relative to U0 (section 11): every
+#: other output column must equal U0's exactly.
+_ROW_FIELDS: dict[str, frozenset[str]] = {
+    "U2": frozenset({"ssi_offset", "ssi_new", "reform_income", "poor_reform"}),
+    "U3": frozenset({"ssi_new", "reform_income", "poor_reform"}),
+    "U5": frozenset(
+        {
+            "asset_income_removed",
+            "retirement_account_income_removed",
+            "farm_asset_income_removed",
+            "baseline_income",
+            "reform_income",
+            "poor_baseline",
+            "poor_reform",
+        }
+    ),
+    "U7": frozenset(
+        {
+            "employer_dc_added",
+            "financial_assets",
+            "annuity",
+            "baseline_income",
+            "reform_income",
+            "poor_baseline",
+            "poor_reform",
+        }
+    ),
+    "U8": frozenset(
+        {"threshold", "threshold_cell", "poor_baseline", "poor_reform"}
+    ),
+    "U9": frozenset(
+        {
+            "annuity_factor",
+            "annuity",
+            "baseline_income",
+            "reform_income",
+            "poor_baseline",
+            "poor_reform",
+        }
+    ),
+    "U10": frozenset(
+        {"threshold", "threshold_cell", "poor_baseline", "poor_reform"}
+    ),
+}
+
+
+@SETTINGS
+@given(frame=frames())
+def test_one_field_rows_change_only_their_field(frame, params):
+    """Each of rows U2-U10 (U4 aside) differs from U0 only in the columns
+    its one changed field reaches; U4 changes nothing for an OFUM member.
+    Row U1 changes the population, not the income concept."""
+
+    base = _estimate(frame, estimator.U2IncomeSpec(), params)
+    for row_id, fields in _ROW_FIELDS.items():
+        out = _estimate(
+            frame, rows.REGISTERED_ROWS[row_id].income_spec(), params
+        )
+        for column in base.columns:
+            if column in fields:
+                continue
+            assert base[column].equals(out[column]), (row_id, column)
+    head_wife = _estimate(
+        frame, rows.REGISTERED_ROWS["U4"].income_spec(), params
+    )
+    ofum = frame["member_role"].eq("ofum").to_numpy()
+    for column in base.columns:
+        assert base.loc[ofum, column].equals(
+            head_wife.loc[ofum, column]
+        ), column
+    assert (head_wife.loc[~ofum, "income_basis"] == "head_wife").all()
+    assert rows.REGISTERED_ROWS["U1"].income == {}
+
+
+@SETTINGS
+@given(frame=frames())
+def test_annuity_price_falls_with_the_interest_rate(frame, params):
+    """Intended monotonicity: the two-percent sensitivity prices every
+    annuity at least as high as three percent, so no annuity rises."""
+
+    primary = _estimate(frame, estimator.U2IncomeSpec(), params)
+    lower = _estimate(
+        frame, estimator.U2IncomeSpec(real_interest_rate=0.02), params
+    )
+    assert (lower["annuity_factor"] > primary["annuity_factor"]).all()
+    assert (lower["annuity"] <= primary["annuity"] + 1e-9).all()
+
+
+def test_per_observation_monotone_in_every_half_of_every_split(
+    u2_inputs, u2_params, declared, u2_births
+):
+    """Section 13: R <= B and poverty never lost for every observation of
+    every row inside each side of each floor split (the inherited split
+    of family units linked by persons, seeds 0-4)."""
+
+    from populace_dynamics.estimates import uniform_cut_tabulation as ut
+    from populace_dynamics.harness.panel import split_panel_by_person
+
+    for row_id, row in rows.REGISTERED_ROWS.items():
+        built = cohort.build_u2_cohort(
+            u2_inputs,
+            row.cohort_spec(),
+            role_context=declared,
+            births=u2_births,
+        )
+        members = cohort.income_rows(built, u2_inputs)
+        adjusted = _estimate(members, row.income_spec(), u2_params)
+        joined = tabulation.tabulation_rows(members, adjusted)
+        incomes = adjusted.set_index("observation_id").loc[
+            joined["observation_id"]
+        ]
+        monotone = (
+            incomes["reform_income"] <= incomes["baseline_income"] + 1e-9
+        ).to_numpy() & (
+            joined["poor_reform"] | ~joined["poor_baseline"]
+        ).to_numpy()
+        units = pd.DataFrame({"split_unit": ut.floor_split_units(joined)})
+        for seed in ut.DEFAULT_FLOOR_SEEDS:
+            side_a, side_b = split_panel_by_person(
+                units, "split_unit", fraction=ut.FLOOR_FRACTION, seed=seed
+            )
+            assert len(side_a) and len(side_b), (row_id, seed)
+            for side in (side_a, side_b):
+                assert monotone[side.index.to_numpy()].all(), (row_id, seed)

@@ -50,9 +50,7 @@ SSI_PATH = (
     / "external"
     / "track_u2_ssi_parameters_2012_2022.json"
 )
-SSI_SHA256 = (
-    "a58d55c160b48cd3e21f730d45265374bd3c8a9eb7eae947469a5a5dc0b23762"
-)
+SSI_SHA256 = "a58d55c160b48cd3e21f730d45265374bd3c8a9eb7eae947469a5a5dc0b23762"
 
 
 def federal_benefit_rates(path: Path = SSI_PATH) -> dict[str, Any]:

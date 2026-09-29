@@ -116,10 +116,7 @@ def required_entries(
                 [*sources.WEALTH_CONCEPTS, *identity_terms]
             )
         ]
-        out += [
-            ("pension", f"{wave}.{spec}")
-            for spec in _pension_concepts()
-        ]
+        out += [("pension", f"{wave}.{spec}") for spec in _pension_concepts()]
         out += [("pension", f"{wave}.route.{route}") for route in _DC_ROUTES]
         if wave >= 2017:
             out.append(("pension", f"{wave}.route.inherited_route_amendment"))
@@ -302,7 +299,9 @@ def read_family_records(
         )
     )
     wealth = raw[wealth_columns].copy()
-    dc_specs = [spec for spec in specs if spec.registry_id.startswith("pension")]
+    dc_specs = [
+        spec for spec in specs if spec.registry_id.startswith("pension")
+    ]
     dc_raw = raw[["interview", *(spec.concept for spec in dc_specs)]]
     dc = sources.employer_dc_balances(
         dc_raw,

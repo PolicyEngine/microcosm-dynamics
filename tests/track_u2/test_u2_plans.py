@@ -53,13 +53,17 @@ def test_wave_2013_is_an_observation_only_for_1946_at_66():
     for row in cohort.ROWS:
         cells = cohort.plan_cells(cohort.U2CohortSpec(row=row))
         in_2013 = [cell for cell in cells if cell[1] == 2013]
-        assert in_2013 == ([(1946, 2013, 2012, 66, 0.5)] if row == "U1" else [])
+        assert in_2013 == (
+            [(1946, 2013, 2012, 66, 0.5)] if row == "U1" else []
+        )
 
 
 def test_u1_plan_does_not_alter_u1_of_track_u():
     assert age67.WAVES == identity.U1_WAVES == (2005, 2007, 2009, 2011, 2013)
     assert age67.observation_plan(age67.Age67Spec(row="U0")) == tuple(
-        sorted((b, b + 68, b + 67, 1.0) for b in (1937, 1939, 1941, 1943, 1945))
+        sorted(
+            (b, b + 68, b + 67, 1.0) for b in (1937, 1939, 1941, 1943, 1945)
+        )
     )
 
 
@@ -196,9 +200,13 @@ def test_cohort_bounds_and_outside_births(u0_cohort, u1_cohort, u2_births):
     for built in (u0_cohort, u1_cohort):
         obs = built.observations
         assert obs["birth_year"].between(1946, 1955).all()
-        assert (obs["member_age"] == obs["income_year"] - obs["birth_year"]).all()
+        assert (
+            obs["member_age"] == obs["income_year"] - obs["birth_year"]
+        ).all()
         assert (obs["income_year"] == obs["wave"] - 1).all()
-        assert (obs["weight"] == obs["weight_raw"] * obs["weight_multiplier"]).all()
+        assert (
+            obs["weight"] == obs["weight_raw"] * obs["weight_multiplier"]
+        ).all()
         assert (
             obs["family_unit_id"] == obs["wave"] * 100_000 + obs["interview"]
         ).all()

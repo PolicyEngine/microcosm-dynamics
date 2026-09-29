@@ -51,7 +51,7 @@ SEED = 20260924
 EXCLUDED_JSON_PATHS = ("/run/git_head", "/run/date")
 
 #: The probe run inside each checkout (U1 code only; stdout is JSON).
-PROBE = r'''
+PROBE = r"""
 import contextlib, dataclasses, hashlib, json, sys
 from dataclasses import replace
 from pathlib import Path
@@ -300,16 +300,16 @@ record = {
     "refusal_parity": refusal_parity(ratified_u1),
 }
 sys.stdout.write(canonical(record))
-'''
+"""
 
 #: Reads U1's full section 15 block once at the base commit.
-BLOCK_PROBE = r'''
+BLOCK_PROBE = r"""
 import json, sys
 from pathlib import Path
 sys.path.insert(0, str(Path.cwd() / "src"))
 from populace_dynamics.uniform_cut_track_u import rows
 sys.stdout.write(json.dumps(rows.specification_block(), sort_keys=True))
-'''
+"""
 
 
 def canonical(value: Any) -> bytes:
@@ -392,7 +392,11 @@ def _first_difference(left: bytes, right: bytes) -> dict[str, Any] | None:
     if left == right:
         return None
     index = next(
-        (i for i, (a, b) in enumerate(zip(left, right)) if a != b),
+        (
+            i
+            for i, (a, b) in enumerate(zip(left, right, strict=False))
+            if a != b
+        ),
         min(len(left), len(right)),
     )
     return {

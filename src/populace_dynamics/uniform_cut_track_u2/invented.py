@@ -324,9 +324,7 @@ def _family_spec(kind: str, index: int, rng: np.random.Generator) -> dict:
     elif kind == "cohabiting_partner_22":
         persons = [
             _person(1, "male", 1951, "never"),
-            _person(
-                2, "female", 1950, "none", earnings=True, reported=False
-            ),
+            _person(2, "female", 1950, "none", earnings=True, reported=False),
         ]
         roster = _roster({1: (1, 10), 2: (2, 22)})
         spec["income"] = {"head_ss": 14_000, "wife_ss": 8_000}
@@ -377,9 +375,7 @@ def _family_spec(kind: str, index: int, rng: np.random.Generator) -> dict:
             _person(3, "female", 1953, "widowed"),
             _person(4, "male", 2009, "none"),
         ]
-        roster = _roster(
-            {1: (1, 10), 2: (2, 20), 3: (3, 50), 4: (4, 60)}
-        )
+        roster = _roster({1: (1, 10), 2: (2, 20), 3: (3, 50), 4: (4, 60)})
         spec["income"] = {
             "head_labor": 38_000,
             "wife_labor": 30_000,
@@ -437,8 +433,14 @@ def _family_spec(kind: str, index: int, rng: np.random.Generator) -> dict:
         spec["wealth"] = 3_000
         spec["vehicles"] = 3_000
     elif kind == "near_threshold_single":
-        persons = [_person(1, "male" if index % 2 else "female",
-                           1949 + 2 * (index % 3), "widowed")]
+        persons = [
+            _person(
+                1,
+                "male" if index % 2 else "female",
+                1949 + 2 * (index % 3),
+                "widowed",
+            )
+        ]
         roster = _roster({1: (1, 10)})
         spec["income"] = {"head_ss": 7_000}
         spec["near_threshold"] = 250 + 150 * (index % 3)
@@ -456,8 +458,9 @@ def _family_spec(kind: str, index: int, rng: np.random.Generator) -> dict:
         spec["offset_edge"] = True
         spec["wealth"] = 0
     elif kind == "even_birth_1946":
-        persons = [_person(1, "male" if index % 2 else "female", 1946,
-                           "widowed")]
+        persons = [
+            _person(1, "male" if index % 2 else "female", 1946, "widowed")
+        ]
         roster = _roster({1: (1, 10)})
         spec["income"] = {"head_ss": 15_000}
         spec["wealth"] = 35_000
@@ -466,11 +469,7 @@ def _family_spec(kind: str, index: int, rng: np.random.Generator) -> dict:
         birth = persons[0]["birth_year"]
         roster = _roster(
             {1: (1, 10)},
-            {
-                wave: {1: (71, 10)}
-                for wave in _WAVES
-                if wave >= birth + 69
-            },
+            {wave: {1: (71, 10)} for wave in _WAVES if wave >= birth + 69},
         )
         spec["income"] = {"head_ss": 12_000}
     elif kind == "institution":
@@ -479,9 +478,10 @@ def _family_spec(kind: str, index: int, rng: np.random.Generator) -> dict:
         spec["income"] = {"head_ss": 16_000}
     elif kind == "died":
         persons = [_person(1, "female", 1951, "widowed")]
-        roster = _roster({1: (1, 10)}, {2019: {1: (81, 10)},
-                                        2021: {1: (0, 0)},
-                                        2023: {1: (0, 0)}})
+        roster = _roster(
+            {1: (1, 10)},
+            {2019: {1: (81, 10)}, 2021: {1: (0, 0)}, 2023: {1: (0, 0)}},
+        )
         spec["income"] = {"head_ss": 12_000}
     elif kind == "zero_weight":
         persons = [_person(1, "male", 1953, "divorced")]
@@ -501,9 +501,7 @@ def _family_spec(kind: str, index: int, rng: np.random.Generator) -> dict:
         spec["income"] = {"head_ss": 10_000}
     elif kind == "refresher_stratum":
         persons = [_person(1, "female", 1951, "never_imm")]
-        roster = _roster(
-            {1: (1, 10)}, {2013: {1: (0, 0)}, 2015: {1: (0, 0)}}
-        )
+        roster = _roster({1: (1, 10)}, {2013: {1: (0, 0)}, 2015: {1: (0, 0)}})
         spec["income"] = {"head_ss": 9_500, "head_labor": 3_000}
         spec["stratum"] = (88, 90, 94)[index % 3]
     elif kind == "separated":
@@ -683,7 +681,9 @@ def _marriage_rows(family: Mapping[str, Any]) -> list[dict[str, Any]]:
                 last_known_status="separated",
             )
         elif marital == "unknown":
-            base.update(married, how_ended="other", last_known_status="married")
+            base.update(
+                married, how_ended="other", last_known_status="married"
+            )
         rows.append(base)
     return rows
 
@@ -773,7 +773,9 @@ def _income_raw(family: Mapping[str, Any], wave: int) -> dict[str, int]:
         if slot
         else 0
     )
-    growth = {key: _grow(value, wave) for key, value in family["income"].items()}
+    growth = {
+        key: _grow(value, wave) for key, value in family["income"].items()
+    }
     jitter = family["jitter"]
     for key, value in growth.items():
         row[key] = value + (jitter if key.endswith("_ss") else 0)
@@ -853,9 +855,12 @@ def _income_raw(family: Mapping[str, Any], wave: int) -> dict[str, int]:
     )
     for concept in sources.INCOME_CONCEPTS:
         if concept.endswith("_acc"):
-            row[concept] = 1 if row[concept.removesuffix("_acc")] and (
-                family["fid"] % 5 == 0
-            ) else 0
+            row[concept] = (
+                1
+                if row[concept.removesuffix("_acc")]
+                and (family["fid"] % 5 == 0)
+                else 0
+            )
     return row
 
 
@@ -901,7 +906,9 @@ def _wealth_raw(family: Mapping[str, Any], wave: int) -> dict[str, int]:
     row = {"interview": _interview(family, wave), **assets, **debts}
     row["wealth1"] = sum(assets.values()) - sum(debts.values())
     row["wealth1_acc"] = 1 if family["fid"] % 4 == 0 else 0
-    row["home_equity"] = 80_000 if family["kind"] != "near_threshold_single" else 0
+    row["home_equity"] = (
+        80_000 if family["kind"] != "near_threshold_single" else 0
+    )
     return row
 
 
@@ -928,8 +935,13 @@ def _dc_raw(family: Mapping[str, Any], wave: int) -> dict[str, int]:
         row[f"{person}_current_type"] = 0
         row[f"{person}_current_amount"] = 0
         for plan in (1, 2):
-            for item in ("type", "combo_disposition", "combo_amount",
-                         "dc_disposition", "dc_amount"):
+            for item in (
+                "type",
+                "combo_disposition",
+                "combo_amount",
+                "dc_disposition",
+                "dc_amount",
+            ):
                 row[f"{person}_prev{plan}_{item}"] = 0
     if family["dc"] == "single_account":
         row.update({"head_current_type": 5, "head_current_amount": 60_000})
@@ -978,14 +990,18 @@ def _dc_raw(family: Mapping[str, Any], wave: int) -> dict[str, int]:
 
 def _dc_frame(families: list[dict], wave: int) -> pd.DataFrame:
     rows = [
-        _dc_raw(family, wave) for family in families if _in_family(family, wave)
+        _dc_raw(family, wave)
+        for family in families
+        if _in_family(family, wave)
     ]
     raw = pd.DataFrame(rows).astype("int64")
     widths = {
         concept: DC_AMOUNT_WIDTHS[
-            "current"
-            if "current" in concept
-            else ("combo" if "combo" in concept else "dc")
+            (
+                "current"
+                if "current" in concept
+                else ("combo" if "combo" in concept else "dc")
+            )
         ]
         for concept in raw.columns
         if concept.endswith("_amount")

@@ -106,7 +106,9 @@ def _mapping_checks(inputs: cohort.U2Inputs) -> dict[str, Any]:
         records = invented.invented_fixed_width_records(inputs, wave, declared)
         parsed = loader.read_family_records(records["lines"], wave, declared)
         raw = records["raw"]
-        reparsed = sources.parse_fixed_width(records["lines"], records["specs"])
+        reparsed = sources.parse_fixed_width(
+            records["lines"], records["specs"]
+        )
         route = sources.dc_route(wave, declared)
         identity_terms = sources.wealth1_identity(wave, declared)
         strict = sources.SourceGate(sources.REGISTRY, registries)
@@ -190,7 +192,9 @@ def _parse_negative(inputs: cohort.U2Inputs, registries: Any) -> None:
     sources.parse_fixed_width(lines, records["specs"])
 
 
-def _monotone(result: dict[str, Any]) -> dict[str, Any]:
+def _monotone(
+    result: dict[str, Any], invariants: dict[str, Any]
+) -> dict[str, Any]:
     """Every cell's change, full sample and each half, is at least zero."""
 
     out = {}
@@ -209,7 +213,7 @@ def _monotone(result: dict[str, Any]) -> dict[str, Any]:
             if side[name]["defined"]
         )
         out[row_id] = {
-            "per_observation": entry["invariants"],
+            "per_observation": invariants[row_id],
             "cells_full_sample": full,
             "cells_both_halves_every_seed": halves,
         }
@@ -250,8 +254,10 @@ def _invariants(
         )
         out[row_id] = {
             "reform_le_baseline": bool(
-                (adjusted["reform_income"] <= adjusted["baseline_income"] + 1e-9)
-                .all()
+                (
+                    adjusted["reform_income"]
+                    <= adjusted["baseline_income"] + 1e-9
+                ).all()
             ),
             "poverty_never_lost": bool(
                 (~(adjusted["poor_baseline"] & ~adjusted["poor_reform"])).all()
@@ -289,7 +295,8 @@ def checks(
         life_tables=params.life_tables,
     )
     u1_ssi = parameters.U2Parameters(
-        thresholds=census, ssi=ap.load_ssi_parameters(),
+        thresholds=census,
+        ssi=ap.load_ssi_parameters(),
         life_tables=params.life_tables,
     )
     births = cohort.derive_u2_births(inputs)
@@ -306,9 +313,9 @@ def checks(
         u1.observations, on="observation_id", suffixes=("_u0", "_u1")
     )
     same_attributes = all(
-        shared[f"{column}_u0"].astype(str).equals(
-            shared[f"{column}_u1"].astype(str)
-        )
+        shared[f"{column}_u0"]
+        .astype(str)
+        .equals(shared[f"{column}_u1"].astype(str))
         for column in (
             "birth_year",
             "fu_head_age",
@@ -331,9 +338,12 @@ def checks(
                 cohort.observation_plan(cohort.U2CohortSpec(row="U1"))
             ),
             "u1_birth_years": len(
-                {b for b, *_ in cohort.observation_plan(
-                    cohort.U2CohortSpec(row="U1")
-                )}
+                {
+                    b
+                    for b, *_ in cohort.observation_plan(
+                        cohort.U2CohortSpec(row="U1")
+                    )
+                }
             ),
             "support_registry": cohort.check_plan_against_support_registry(
                 registries
@@ -346,9 +356,7 @@ def checks(
         },
         "identification": {
             "shared_observations": int(len(shared)),
-            "identical_births_and_annuitant_attributes": bool(
-                same_attributes
-            ),
+            "identical_births_and_annuitant_attributes": bool(same_attributes),
         },
         "mapping": _mapping_checks(inputs),
         "role_refusals": {
@@ -358,9 +366,7 @@ def checks(
                 )
             ),
             "code_88_under_declared_context": _refusal(
-                lambda: cohort.build_u2_cohort(
-                    code88, role_context=declared
-                )
+                lambda: cohort.build_u2_cohort(code88, role_context=declared)
             ),
             "declared_context_on_non_invented_inputs": _refusal(
                 lambda: cohort.build_u2_cohort(
@@ -418,12 +424,19 @@ def checks(
                 )
             ),
             "u1_specification_under_u2": _refusal(
-                lambda: rows.specification_block(identity.U1_SPECIFICATION_PATH)
+                lambda: rows.specification_block(
+                    identity.U1_SPECIFICATION_PATH
+                )
             ),
             "u1_rulings_under_u2": _refusal(
                 lambda: rows.check_u2_rulings_against_block(
-                    {"decisions": {"ruled_by": "Max", "ruled_on": "2026-09-26",
-                                   "decision_record": "d411"}}
+                    {
+                        "decisions": {
+                            "ruled_by": "Max",
+                            "ruled_on": "2026-09-26",
+                            "decision_record": "d411",
+                        }
+                    }
                 )
             ),
             "u2_seed_rule_under_u1": _refusal(
@@ -481,7 +494,8 @@ def results_markdown(result: dict[str, Any]) -> str:
         "file was opened, no comparator value was read, and nothing below "
         "is a result, a forecast or a comparison with DYNASIM.",
         "",
-        "Labels: " + "; ".join(f"*{label}*" for label in result["labels"])
+        "Labels: "
+        + "; ".join(f"*{label}*" for label in result["labels"])
         + ".",
         "",
         "## What ran",
@@ -667,11 +681,12 @@ def main(argv: list[str] | None = None) -> int:
         source_gate=gate,
         progress=lambda message: print(message, file=sys.stderr),
     )
+    recorded = checks(args.seed, inputs, params)
     result = {
         "header": DRY_RUN_HEADER,
         **result,
-        "monotonicity": _monotone(result),
-        "checks": checks(args.seed, inputs, params),
+        "monotonicity": _monotone(result, recorded["invariants"]),
+        "checks": recorded,
         "run": {
             "date": datetime.date.today().isoformat(),
             "invented_seed": args.seed,

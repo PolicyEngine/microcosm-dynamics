@@ -106,9 +106,7 @@ class U2TabulationConfig:
             what="U2TabulationConfig",
         )
         if self.comparator_column != COMPARATOR_COLUMN:
-            raise U2TabulationError(
-                f"the U2 column is {COMPARATOR_COLUMN!r}"
-            )
+            raise U2TabulationError(f"the U2 column is {COMPARATOR_COLUMN!r}")
         if tuple(self.cells) != DEFAULT_CELLS + OPTIONAL_CELLS:
             raise U2TabulationError(
                 "U2 tabulates exactly the fifteen section 9 cells"
@@ -202,15 +200,19 @@ def tabulate_u2(
     # Section 10a: a cell where nobody changes poverty status is a
     # no-switcher cell; the memo reports its change uncertainty as not
     # estimable, so each cell records how many observations switch.
-    switched = rows["poor_baseline"].astype(bool).to_numpy() != rows[
-        "poor_reform"
-    ].astype(bool).to_numpy()
+    switched = (
+        rows["poor_baseline"].astype(bool).to_numpy()
+        != rows["poor_reform"].astype(bool).to_numpy()
+    )
     for cell in result["cells"]:
         name = cell["cell"]
         if name.startswith("birth_year_"):
-            mask = rows["birth_year"].astype("int64").eq(
-                int(name.removeprefix("birth_year_"))
-            ).to_numpy()
+            mask = (
+                rows["birth_year"]
+                .astype("int64")
+                .eq(int(name.removeprefix("birth_year_")))
+                .to_numpy()
+            )
         else:
             mask = ut.cell_mask(rows, name)
         cell["n_switchers"] = int((mask & switched).sum())

@@ -28,7 +28,9 @@ from populace_dynamics.uniform_cut_track_u2 import (
 
 ROOT = Path(__file__).resolve().parents[2]
 U2_SSI = ROOT / "data" / "external" / "track_u2_ssi_parameters_2012_2022.json"
-TRACK_M = ROOT / "data" / "external" / "census_poverty_thresholds_1982_2022.json"
+TRACK_M = (
+    ROOT / "data" / "external" / "census_poverty_thresholds_1982_2022.json"
+)
 
 
 @pytest.fixture(scope="module")
@@ -176,9 +178,14 @@ def test_registered_check_needs_every_u2_pin(u2_params, thresholds):
 def test_u1_runner_refuses_the_track_m_and_u2_captures(thresholds, ssi):
     params = u1_runner.committed_parameters(ap.load_poverty_thresholds())
     track_m_thresholds = dataclasses.replace(
-        params, thresholds=dataclasses.replace(
-            thresholds, provenance={"kind": "census_capture", "sha256": parameters.THRESHOLDS_SHA256}
-        )
+        params,
+        thresholds=dataclasses.replace(
+            thresholds,
+            provenance={
+                "kind": "census_capture",
+                "sha256": parameters.THRESHOLDS_SHA256,
+            },
+        ),
     )
     with pytest.raises(u1_runner.TrackURunError, match="Census"):
         u1_runner._check_parameters(track_m_thresholds, ap.REGISTERED_REAL)
@@ -195,7 +202,10 @@ def test_diagnostics_pin_equals_the_parameter_pin():
     assert diagnostics.SSI_SHA256 == parameters.SSI_SHA256
     assert diagnostics.SSI_PATH == parameters.SSI_PATH
     rates = diagnostics.federal_benefit_rates()
-    assert rates["individual"] == parameters.load_u2_ssi_parameters().fbr_individual_monthly
+    assert (
+        rates["individual"]
+        == parameters.load_u2_ssi_parameters().fbr_individual_monthly
+    )
 
 
 def test_invented_fbr_placement_table_equals_the_capture():

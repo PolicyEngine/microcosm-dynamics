@@ -67,9 +67,7 @@ COMPARATOR_COLUMN = "1946-55"
 BIRTH_YEARS: tuple[int, ...] = tuple(range(1946, 1956))
 TARGET_AGE = 67
 #: The frozen statistic's identity (distinct from U1's).
-STATISTIC_ID = (
-    "boomers2004_uniform_13pct_cut_adjusted_poverty_at_67_1946_55"
-)
+STATISTIC_ID = "boomers2004_uniform_13pct_cut_adjusted_poverty_at_67_1946_55"
 #: Section 10a: the U2 machine-readable interval identifier ends in
 #: ``_open``; U1's identifier is unchanged.
 COMPARATOR_INTERVAL = "whole_number_rounding_level_0_5_difference_1_open"

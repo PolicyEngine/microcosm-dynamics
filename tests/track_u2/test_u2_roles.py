@@ -140,6 +140,18 @@ def test_administrative_birth_support_is_administrative_only():
         assert not rules[(wave, 92)].administrative_birth_support
 
 
+#: The role entries the adjudicated registries refuse (commit 883ea48):
+#: code 88 everywhere (TO VERIFY); 2015 code 20 (disposition F, the
+#: loader refuses the whole entry); code 92's absence in 2013 and 2015;
+#: codes 90 and 92 in 2019-2023 (disposition F).  2013 and 2015-2017
+#: code 90 and 2017 code 92 are documented rules (disposition D).
+REFUSED_ROLES = frozenset(
+    {(wave, 88) for wave in sources.SUPPORT_WAVES}
+    | {(2015, 20), (2013, 92), (2015, 92)}
+    | {(wave, code) for wave in (2019, 2021, 2023) for code in (90, 92)}
+)
+
+
 def test_registry_rules_equal_declared_rules_where_resolved(
     committed_registries,
 ):
@@ -149,24 +161,57 @@ def test_registry_rules_equal_declared_rules_where_resolved(
     assert resolved
     for key in resolved:
         assert registry.rules[key] == declared.rules[key], key
-    refused = sorted(k for k, r in registry.rules.items() if r.refusal)
-    # Today: code 88 in every wave; 90 from 2015; 92 from 2017 (and its
-    # absence in 2013/2015); code 20 in 2015.
-    assert (2015, 20) in refused
-    assert all((wave, 88) in refused for wave in sources.SUPPORT_WAVES)
-    assert all((wave, 90) in refused for wave in (2015, 2017, 2019, 2021, 2023))
-    assert all((wave, 92) in refused for wave in sources.SUPPORT_WAVES)
-    assert (2013, 90) not in refused and (2017, 20) not in refused
+    refused = {k for k, r in registry.rules.items() if r.refusal}
+    assert refused == REFUSED_ROLES
+    assert {(2013, 90), (2015, 90), (2017, 90), (2017, 92)} <= set(resolved)
 
 
-def test_registry_context_refuses_to_verify_codes(u2_inputs, u2_births):
+@pytest.mark.parametrize("wave", sources.SUPPORT_WAVES)
+@pytest.mark.parametrize("code", sources.RELATIONSHIP_CODES)
+def test_role_refusals_agree_with_the_loader_api(wave, code):
+    """Differential: the role context refuses exactly what the milestone-1
+    loader's ``require_resolved`` refuses (absent codes aside, which the
+    loader resolves and the builder refuses on sight)."""
+
+    from populace_dynamics.data import u2_source_registry as registry
+
+    context = sources.RoleContext.from_registry()
+    entry_id = f"{wave}.relationship.{code}"
+    try:
+        entry = registry.require_resolved("roles", entry_id)
+    except registry.SourceAdjudicationError:
+        with pytest.raises(sources.U2RoleRefusal) as refusal:
+            context.rule(wave, code)
+        assert entry_id in str(refusal.value)
+        assert (wave, code) in REFUSED_ROLES
+        return
+    if entry["present"]:
+        assert context.rule(wave, code).present
+        assert (wave, code) not in REFUSED_ROLES
+    else:
+        with pytest.raises(sources.U2RoleRefusal, match="absent"):
+            context.rule(wave, code)
+
+
+def test_registry_context_refuses_refused_codes(u2_inputs, u2_births):
     registry = sources.RoleContext.from_registry()
-    with pytest.raises(sources.U2RoleRefusal, match="TO VERIFY"):
+    with pytest.raises(sources.U2RoleRefusal, match="roles:"):
         cohort.build_u2_cohort(
             u2_inputs, role_context=registry, births=u2_births
         )
     with pytest.raises(sources.U2RoleRefusal, match="code 92 absent in 2015"):
         registry.rule(2015, 92)
+    with pytest.raises(
+        sources.U2RoleRefusal, match="refuse_male_code20_per_u2_adjudicate_F"
+    ):
+        registry.rule(2015, 20)
+    for wave in (2019, 2021, 2023):
+        for code in (90, 92):
+            with pytest.raises(
+                sources.U2RoleRefusal,
+                match="refuse_ofum_assignment_per_u2_adjudicate_F",
+            ):
+                registry.rule(wave, code)
 
 
 def test_code_88_refuses_under_every_context(u2_inputs):
@@ -304,7 +349,9 @@ def test_ambiguous_pairing_stays_unresolved_and_counted(u2_inputs, declared):
     # be dated: the pairing is ambiguous, so the head stays unresolved.
     obs = cohort.build_u2_cohort(u2_inputs, role_context=declared).observations
     target = obs[
-        obs["marital_resolution"].eq("relationship_code_head_with_legal_spouse")
+        obs["marital_resolution"].eq(
+            "relationship_code_head_with_legal_spouse"
+        )
         & obs["fu_head_spouse_relationship"].eq(20)
     ].iloc[0]
     wave, interview = int(target["wave"]), int(target["interview"])
@@ -324,7 +371,10 @@ def test_ambiguous_pairing_stays_unresolved_and_counted(u2_inputs, declared):
             [frame, pd.DataFrame([row])], ignore_index=True
         ).astype(frame.dtypes.to_dict())
     persons = pd.concat(
-        [u2_inputs.persons, pd.DataFrame([{"person_id": extra, "sex": "female"}])],
+        [
+            u2_inputs.persons,
+            pd.DataFrame([{"person_id": extra, "sex": "female"}]),
+        ],
         ignore_index=True,
     ).astype({"person_id": "int64", "sex": "string"})
     design = pd.concat(
@@ -334,9 +384,15 @@ def test_ambiguous_pairing_stays_unresolved_and_counted(u2_inputs, declared):
         ],
         ignore_index=True,
     ).astype("int64")
-    inputs = _restamped(u2_inputs, anchors=anchors, persons=persons, design=design)
-    rebuilt = cohort.build_u2_cohort(inputs, role_context=declared).observations
-    row = rebuilt[rebuilt["observation_id"].eq(target["observation_id"])].iloc[0]
+    inputs = _restamped(
+        u2_inputs, anchors=anchors, persons=persons, design=design
+    )
+    rebuilt = cohort.build_u2_cohort(
+        inputs, role_context=declared
+    ).observations
+    row = rebuilt[rebuilt["observation_id"].eq(target["observation_id"])].iloc[
+        0
+    ]
     assert row["legal_spouse_pairing"] == "ambiguous"
     assert row["marital_resolution"] == "unresolved_non_married"
     assert row["marital_status_4"] == "unclassified"
@@ -347,9 +403,9 @@ def test_spouse_slot_disagreement_refuses(u2_inputs, declared):
     wave = 2019
     income = u2_inputs.family_income[wave].copy()
     obs = cohort.build_u2_cohort(u2_inputs, role_context=declared).observations
-    single = obs[
-        obs["wave"].eq(wave) & ~obs["spouse_slot_occupied_roster"]
-    ]["interview"].iloc[0]
+    single = obs[obs["wave"].eq(wave) & ~obs["spouse_slot_occupied_roster"]][
+        "interview"
+    ].iloc[0]
     income.loc[income["interview"].eq(single), "wife_present"] = True
     inputs = _restamped(
         u2_inputs, family_income={**u2_inputs.family_income, wave: income}

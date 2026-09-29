@@ -131,28 +131,31 @@ GATES: tuple[str, ...] = (REGISTRY, INVENTED_DECLARED)
 ROLE_CONTEXT_KINDS = GATES
 DECLARED = INVENTED_DECLARED
 
-#: SHA-256 of the committed milestone-1 registries (commit 79451eb4).
+#: SHA-256 of the committed milestone-1 registries as adjudicated (commit
+#: 883ea48: 0eae214 applied the independent source adjudication).  A
+#: registry change after a ruling is its own reviewed commit and moves
+#: these pins in the same commit (section 16a, "Registry effect").
 REGISTRY_SHA256: dict[str, str] = {
     "income": (
-        "1a2a8da0063ccb7a0baf4c593012c4644f39d9233a1eb6e3b3ecf684f8a70eb2"
+        "6e3034f35b5d8f614a2f05addae90441052141a85483bb8ee128c0b6ae6ac910"
     ),
     "wealth": (
-        "39e3808f148f57633527486d600b6c599b8b74eb0371254cde833842ef90eb25"
+        "3a22247849ea2eccbef6e522c0d74c901beb90195f92fd2e7b23b123fab6b816"
     ),
     "individual": (
         "4eab8e0abc69668c287310931baa049b8546d3f3e265a106f1b945b948c7649e"
     ),
     "pension": (
-        "c7228384743ae2c9f83737dbe03259d07c84cdedb7eef6980bb077256b58443e"
+        "49b4bdad682b8defa4fc628257b366bab46087baacea82e60b57657c99392978"
     ),
     "roles": (
-        "e88a32090aa9b5a58a8703b42add5d4d5152116da8db4dc7236bbee56e71769a"
+        "de76550e3502173d6456f2ff00856ba69ca20a1bd9c27e2b6fd50cbb0c534895"
     ),
     "support": (
-        "da7d7a184eaa2694308e1f2546fc7d3bb8460b84d1100f1a69b4a4472392236c"
+        "5102825d8555e1e8648dfafbd4e6c72eef78d09e453a6d25279ec3b9298d5109"
     ),
     "weights": (
-        "7d4a8affee36dc3bf287c8f6047371e284357a7ebb28354d1e16d6b504dab142"
+        "0413a7f425f31bdbb83ed71612ba1d8eccf4be4d62e9caa6ef91b95d3e11b10f"
     ),
     "design": (
         "56181372d412811af6d06f5c0d8d1e071049f7fb73c34bd394aaff8f5e0c2fd6"
@@ -253,7 +256,7 @@ def _sha256(raw: bytes) -> str:
     return hashlib.sha256(raw).hexdigest()
 
 
-@functools.lru_cache(maxsize=None)
+@functools.cache
 def _committed_document(name: str, digest: str) -> str:
     """The committed registry text (cached per name and pinned digest)."""
 
@@ -458,16 +461,21 @@ def declared_role_rules() -> dict[tuple[int, int], RoleRule]:
 
     out: dict[tuple[int, int], RoleRule] = {}
     for wave in SUPPORT_WAVES:
-        out[(wave, 10)] = RoleRule(wave, 10, True, "head", False, False,
-                                   False, True)
-        out[(wave, 20)] = RoleRule(wave, 20, True, "wife", True, True,
-                                   True, True)
-        out[(wave, 22)] = RoleRule(wave, 22, True, "wife", True, False,
-                                   False, True)
-        out[(wave, 88)] = RoleRule(wave, 88, True, None, False, False,
-                                   False, True, _CODE_88_REFUSAL)
-        out[(wave, 90)] = RoleRule(wave, 90, True, "ofum", False, True,
-                                   True, True)
+        out[(wave, 10)] = RoleRule(
+            wave, 10, True, "head", False, False, False, True
+        )
+        out[(wave, 20)] = RoleRule(
+            wave, 20, True, "wife", True, True, True, True
+        )
+        out[(wave, 22)] = RoleRule(
+            wave, 22, True, "wife", True, False, False, True
+        )
+        out[(wave, 88)] = RoleRule(
+            wave, 88, True, None, False, False, False, True, _CODE_88_REFUSAL
+        )
+        out[(wave, 90)] = RoleRule(
+            wave, 90, True, "ofum", False, True, True, True
+        )
         out[(wave, 92)] = (
             RoleRule(wave, 92, True, "ofum", False, False, False, False)
             if wave >= 2017
@@ -544,8 +552,8 @@ class RoleContext:
     def from_registry(
         cls, registries: RegistrySet | None = None
     ) -> RoleContext:
-        registries = RegistrySet.committed() if registries is None else (
-            registries
+        registries = (
+            RegistrySet.committed() if registries is None else (registries)
         )
         if registries.kind != "committed":
             raise U2SourceRefusal(
@@ -583,8 +591,7 @@ class RoleContext:
         return {
             "kind": self.kind,
             "rules": [
-                rule.as_dict()
-                for _, rule in sorted(self.rules.items())
+                rule.as_dict() for _, rule in sorted(self.rules.items())
             ],
         }
 
@@ -791,8 +798,10 @@ def _check_domain(values: np.ndarray, spec: FieldSpec) -> None:
     elif kind == "wealth_accuracy":
         bad = ~np.isin(values, list(_WEALTH_ACC_CODES))
     elif kind in ("amount", "dc_amount"):
-        bad = values < 0 if not spec.negative_allowed else np.zeros(
-            len(values), dtype=bool
+        bad = (
+            values < 0
+            if not spec.negative_allowed
+            else np.zeros(len(values), dtype=bool)
         )
     elif kind in DC_CODE_DOMAINS:
         bad = ~np.isin(values, sorted(DC_CODE_DOMAINS[kind]))
@@ -1122,15 +1131,14 @@ def employer_dc_balances(
                 disposition = raw[f"{stem}_disposition"].to_numpy(
                     dtype=np.int64
                 )
-                amount, value, reported, dk, topped = decoded(
-                    f"{stem}_amount"
-                )
+                amount, value, reported, dk, topped = decoded(f"{stem}_amount")
                 if part == "combo":
                     on_route = both_plan
                 else:
-                    on_route = np.isin(
-                        plan_type, route.previous_account_items
-                    ) & ~both_plan
+                    on_route = (
+                        np.isin(plan_type, route.previous_account_items)
+                        & ~both_plan
+                    )
                 left = disposition == route.counted_disposition
                 counted = on_route & left
                 previous += np.where(counted, value, 0)

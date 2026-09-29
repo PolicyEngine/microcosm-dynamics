@@ -144,8 +144,17 @@ _SEQUENCE_GROUPS: tuple[tuple[str, int, int], ...] = (
 _MAX_AGE_CODE = 125
 _FAMILY_UNIT_SCALE = 100_000
 _UNRESOLVED_STATES = ("unknown", "no_marriage_history")
-_OMITTED_ROWS = ("U0-F", "U2-F", "U3-F", "U4-F", "U5-F", "U7-F", "U8-F",
-                 "U9-F", "U10-F")
+_OMITTED_ROWS = (
+    "U0-F",
+    "U2-F",
+    "U3-F",
+    "U4-F",
+    "U5-F",
+    "U7-F",
+    "U8-F",
+    "U9-F",
+    "U10-F",
+)
 
 
 class U2CohortError(ValueError):
@@ -477,7 +486,9 @@ def _present(anchor: pd.DataFrame) -> pd.Series:
 
 def _seed_frame(rows: list[pd.DataFrame]) -> pd.DataFrame:
     if not rows:
-        return pd.DataFrame(columns=["person_id", "year", "anchor_wave", "age"])
+        return pd.DataFrame(
+            columns=["person_id", "year", "anchor_wave", "age"]
+        )
     return (
         pd.concat(rows, ignore_index=True)
         .sort_values(["person_id", "anchor_wave"], kind="stable")
@@ -795,7 +806,9 @@ def build_u2_cohort(
                     and head is not None
                     and legal_spouse == pid
                 ):
-                    resolution = f"relationship_code_legal_spouse_{relationship}"
+                    resolution = (
+                        f"relationship_code_legal_spouse_{relationship}"
+                    )
                     spouse = head
                 married = resolution != "unresolved_non_married"
             members = set(family_rows["person_id"].astype(int))

@@ -55,7 +55,9 @@ def test_u2_identity_is_separate():
     assert record["comparator_column"] == "1946-55"
     assert record["birth_years"] == [1946, 1955]
     assert record["artifact"] == "runs/replication_boomers2004_1946_55_v1.json"
-    assert record["sidecar"] == "runs/replication_boomers2004_1946_55_v1.env.json"
+    assert (
+        record["sidecar"] == "runs/replication_boomers2004_1946_55_v1.env.json"
+    )
     assert record["comparator_interval"].endswith("_open")
     assert tabulation.COMPARATOR_COLUMN != ut.COMPARATOR_COLUMN
     assert tabulation.STATISTIC_ID != ut.STATISTIC_ID
@@ -93,8 +95,11 @@ def test_u2_refuses_the_u1_specification_block():
 
 
 def test_u2_refuses_u1_rulings_and_max_rulings():
-    decisions = {"ruled_by": "Max", "ruled_on": "2026-09-26",
-                 **u1_rows.MAX_RULINGS}
+    decisions = {
+        "ruled_by": "Max",
+        "ruled_on": "2026-09-26",
+        **u1_rows.MAX_RULINGS,
+    }
     with pytest.raises(ValueError, match="copying U1"):
         rows.check_u2_rulings_against_block({"decisions": decisions})
 
@@ -103,8 +108,11 @@ def test_draft_block_rulings_are_refused_until_materialized():
     with pytest.raises(ValueError, match="no ruling by Max"):
         rows.check_u2_rulings_against_block(rows.specification_block())
     ruled = {
-        "decisions": {"ruled_by": "Max", "ruled_on": "2026-09-28",
-                      **rows.U2_RULINGS}
+        "decisions": {
+            "ruled_by": "Max",
+            "ruled_on": "2026-09-28",
+            **rows.U2_RULINGS,
+        }
     }
     assert rows.check_u2_rulings_against_block(ruled)["rulings_equal"]
     altered = {"decisions": {**ruled["decisions"], "downloads": {"ruling": 1}}}
@@ -119,14 +127,21 @@ def test_u1_guards_refuse_u2_seed_and_rows():
         age67.Age67Spec(row="U2")
     with pytest.raises(ValueError):
         u1_rows.check_rulings_against_block(
-            {"decisions": {"ruled_by": "Max", "ruled_on": "2026-09-28",
-                           **rows.U2_RULINGS}}
+            {
+                "decisions": {
+                    "ruled_by": "Max",
+                    "ruled_on": "2026-09-28",
+                    **rows.U2_RULINGS,
+                }
+            }
         )
 
 
 def test_u2_seed_refusal_message_is_u1s_unchanged():
     with pytest.raises(ValueError) as error:
-        age67.Age67Spec(seed_wave_rule="earliest_presence_in_common_support_waves")
+        age67.Age67Spec(
+            seed_wave_rule="earliest_presence_in_common_support_waves"
+        )
     assert str(error.value) == "seed_wave_rule must be earliest_presence_wave"
 
 

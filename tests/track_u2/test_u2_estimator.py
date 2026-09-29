@@ -52,7 +52,9 @@ def _u2(members, spec, params, **kwargs):
 
 
 @pytest.mark.parametrize("row_id", rows.ROW_IDS)
-def test_u2_estimator_equals_u1_on_rows_both_accept(row_id, members, u2_params):
+def test_u2_estimator_equals_u1_on_rows_both_accept(
+    row_id, members, u2_params
+):
     """Differential: U1's primitives through U1's entry point and U2's.
 
     U1 accepts HEAD IRAS only in income year 2012; zeroing it elsewhere
@@ -80,12 +82,12 @@ def test_u2_estimator_equals_u1_on_rows_both_accept(row_id, members, u2_params):
 def test_head_ira_income_is_removed_in_every_u2_income_year(
     members, u2_params
 ):
-    assert estimator.HEAD_IRA_INCOME_YEARS == frozenset(
-        range(2012, 2023, 2)
-    )
+    assert estimator.HEAD_IRA_INCOME_YEARS == frozenset(range(2012, 2023, 2))
     adjusted = _u2(members, estimator.U2IncomeSpec(), u2_params)
     expected = (members["head_annuities"] + members["head_iras"]).to_numpy()
-    assert (adjusted["retirement_account_income_removed"].to_numpy() == expected).all()
+    assert (
+        adjusted["retirement_account_income_removed"].to_numpy() == expected
+    ).all()
     assert (members.loc[members["income_year"] > 2012, "head_iras"] > 0).any()
     # U1's constant is untouched: HEAD IRAS only in income year 2012.
     assert ap._HEAD_IRA_INCOME_YEARS == frozenset({2012})
@@ -118,7 +120,10 @@ def test_u2_income_spec_refuses_unregistered_values(overrides):
 
 
 def test_two_percent_sensitivity_is_registered_and_unscored():
-    assert estimator.U2IncomeSpec(real_interest_rate=0.02).real_interest_rate == 0.02
+    assert (
+        estimator.U2IncomeSpec(real_interest_rate=0.02).real_interest_rate
+        == 0.02
+    )
     assert rows.SENSITIVITIES_UNSCORED == {"real_interest_rate": (0.02,)}
 
 

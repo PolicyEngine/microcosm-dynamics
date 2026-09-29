@@ -256,7 +256,9 @@ def _compute_row(
         inputs, cohort_spec, role_context=role_context, births=births
     )
     expected = (
-        cohort.INVENTED if data_provenance == ap.INVENTED else cohort.PSID_FILES
+        cohort.INVENTED
+        if data_provenance == ap.INVENTED
+        else cohort.PSID_FILES
     )
     if built.provenance.get("kind") != expected:
         raise U2RunError(
@@ -310,7 +312,11 @@ def _compute_row(
                 if not built.dispositions.empty
                 else {}
             ),
-            **{k: v for k, v in built.diagnostics.items() if k.startswith("n_")},
+            **{
+                k: v
+                for k, v in built.diagnostics.items()
+                if k.startswith("n_")
+            },
         },
         "income_concept_counts": _income_counts(adjusted),
         "tabulation": table,

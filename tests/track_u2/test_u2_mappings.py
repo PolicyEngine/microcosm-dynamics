@@ -10,6 +10,8 @@ INVENTED DATA - NOT A COMPARISON.
 
 from __future__ import annotations
 
+import functools
+
 import pandas as pd
 import pytest
 
@@ -72,7 +74,9 @@ def test_specs_carry_exact_registry_labels_positions_and_widths(
 
 
 @pytest.mark.parametrize("wave", sources.SUPPORT_WAVES)
-def test_invented_records_round_trip_every_field(wave, u2_inputs, declared_gate):
+def test_invented_records_round_trip_every_field(
+    wave, u2_inputs, declared_gate
+):
     records = invented.invented_fixed_width_records(
         u2_inputs, wave, declared_gate
     )
@@ -154,21 +158,23 @@ def test_parse_refuses_blank_truncated_and_duplicate_records(
 ):
     lines, specs = _one_record(u2_inputs, declared_gate)
     interview = next(spec for spec in specs if spec.concept == "interview")
-    blank = lines[0][: interview.start - 1] + " " * interview.width + lines[0][
-        interview.end :
-    ]
+    blank = (
+        lines[0][: interview.start - 1]
+        + " " * interview.width
+        + lines[0][interview.end :]
+    )
     with pytest.raises(sources.U2SourceRefusal, match="blank"):
         sources.parse_fixed_width([blank], specs)
     with pytest.raises(sources.U2SourceRefusal, match="truncated"):
-        sources.parse_fixed_width([lines[0][: max(s.end for s in specs) - 1]], specs)
+        sources.parse_fixed_width(
+            [lines[0][: max(s.end for s in specs) - 1]], specs
+        )
     with pytest.raises(sources.U2SourceRefusal, match="duplicate"):
         sources.parse_fixed_width([lines[0], lines[0]], specs)
 
 
 @pytest.mark.parametrize("wave", sources.SUPPORT_WAVES)
-def test_wealth1_identity_seven_or_eight_assets_debt_once(
-    wave, declared_gate
-):
+def test_wealth1_identity_seven_or_eight_assets_debt_once(wave, declared_gate):
     identity = sources.wealth1_identity(wave, declared_gate)
     assert len(identity["assets"]) == (7 if wave <= 2017 else 8)
     assert tuple(identity["assets"]) == invented.WEALTH_ASSETS[wave]
@@ -211,16 +217,58 @@ def test_crosswalks_are_never_executable_inputs(declared_gate):
         )
 
 
+#: The first registry blocker each later wave's family-record specs meet
+#: (income concepts are read first, in :data:`sources.INCOME_CONCEPTS`
+#: order): 2015's income entries depend on the refused 2015 code-20
+#: route; 2017's income entries are resolved (codes 90 and 92 are
+#: documented OFUM roles) except the spouse age/sex slot metadata, still
+#: TO VERIFY; 2019-2023's depend on the refused code-90/92 routes.
+FIRST_BLOCKER = {
+    2015: "blocked by roles:2015.relationship.20",
+    2017: "income:income.2017.wife_age: TO VERIFY",
+    2019: "blocked by roles:2019.relationship.90",
+    2021: "blocked by roles:2021.relationship.90",
+    2023: "blocked by roles:2023.relationship.90",
+}
+
+
 def test_registry_gate_refuses_every_open_wave(registry_gate):
     # 2013: every mapping U2 reads is resolved (the 2013 meanings are
-    # U1's); 2015-2023: every income entry waits on the open role routing.
+    # U1's); 2015-2023: each wave meets a TO VERIFY or refused entry.
     specs = loader.family_record_specs(2013, registry_gate)
     concepts = {spec.concept for spec in specs}
     assert set(sources.INCOME_CONCEPTS) <= concepts
     assert {"wealth1", "vehicles", "head_current_amount"} <= concepts
-    for wave in (2015, 2017, 2019, 2021, 2023):
-        with pytest.raises(sources.U2SourceRefusal, match="roles:"):
+    for wave, blocker in FIRST_BLOCKER.items():
+        with pytest.raises(sources.U2SourceRefusal) as error:
             loader.family_record_specs(wave, registry_gate)
+        assert blocker in str(error.value), (wave, str(error.value)[:200])
+
+
+@pytest.mark.parametrize("wave", sources.SUPPORT_WAVES)
+def test_registry_gate_agrees_with_the_loader_api(wave, monkeypatch):
+    """Differential: every entry a U2 run applies passes the registry
+    gate exactly when the milestone-1 loader's ``require_resolved``
+    returns it.  ``load_registry`` is memoized for the test only (the
+    loader rereads and revalidates a whole registry per call); the rule
+    under test is ``require_resolved``'s own."""
+
+    cached = functools.lru_cache(maxsize=None)(registry.load_registry)
+    monkeypatch.setattr(registry, "load_registry", cached)
+    registries = sources.RegistrySet.committed()
+    for name, entry_id in loader.required_entries(registries):
+        if registries.entry(name, entry_id).get("wave") != wave:
+            continue
+        gate = sources.SourceGate(sources.REGISTRY, registries)
+        try:
+            registry.require_resolved(name, entry_id)
+        except registry.SourceAdjudicationError:
+            with pytest.raises(sources.U2SourceRefusal):
+                gate.require(name, entry_id)
+        else:
+            assert gate.require(name, entry_id) is registries.entry(
+                name, entry_id
+            )
 
 
 def test_registry_gate_only_accepts_committed_registries(committed_registries):
@@ -242,7 +290,11 @@ def test_declared_gate_records_what_the_registry_gate_refuses(
     assert audit["gate"] == sources.INVENTED_DECLARED
     refused = audit["would_refuse_under_registry_gate"]
     assert "income:income.2019.wife_age" in refused
-    assert any("roles:2019.relationship.92" in reason for reasons in refused.values() for reason in reasons)
+    assert any(
+        "roles:2019.relationship.92" in reason
+        for reasons in refused.values()
+        for reason in reasons
+    )
 
 
 def test_source_preflight_refuses_before_opening_any_psid_file(

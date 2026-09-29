@@ -38,9 +38,11 @@ def _items(**values: int) -> pd.DataFrame:
 def _widths(frame: pd.DataFrame) -> dict[str, int]:
     return {
         column: WIDTHS[
-            "current"
-            if "current" in column
-            else ("combo" if "combo" in column else "dc")
+            (
+                "current"
+                if "current" in column
+                else ("combo" if "combo" in column else "dc")
+            )
         ]
         for column in frame.columns
         if column.endswith("_amount")
@@ -52,7 +54,11 @@ def _declared(wave: int = 2019) -> sources.DcRoute:
         wave,
         *(
             sources.DECLARED_DC_ROUTE_TYPES[key]
-            for key in ("current_account", "previous_both", "previous_account_items")
+            for key in (
+                "current_account",
+                "previous_both",
+                "previous_account_items",
+            )
         ),
         3,
         2,
@@ -68,7 +74,10 @@ def _balance(route: sources.DcRoute | None = None, **values: int) -> dict:
     return out.iloc[0][list(sources.DC_BALANCE_COLUMNS)].to_dict()
 
 
-@pytest.mark.parametrize("plan_type, counted", [(5, True), (7, True), (1, False), (8, False), (9, False), (0, False)])
+@pytest.mark.parametrize(
+    "plan_type, counted",
+    [(5, True), (7, True), (1, False), (8, False), (9, False), (0, False)],
+)
 def test_current_job_account_or_combined_plan(plan_type, counted):
     out = _balance(head_current_type=plan_type, head_current_amount=40_000)
     assert out["employer_dc_current"] == (40_000 if counted else 0)
@@ -184,10 +193,17 @@ def test_later_wave_routes_refuse_under_the_registry_gate(
         sources.pension_field_specs(wave, gate)
 
 
-def test_registry_documents_dc_only_checkpoints_from_2017(committed_registries):
-    # The documentary finding the pending amendment would adopt: the
-    # 2017-2023 checkpoint routes DC-only plans (P46 = 5).  U2 records it
-    # and refuses; it does not silently narrow or widen the route.
+def test_registry_documents_dc_only_checkpoints_from_2017(
+    committed_registries,
+):
+    # The documentary finding the pending amendment 5 would adopt: the
+    # 2017-2023 checkpoint routes DC-only plans (P46 = 5).  The
+    # adjudication resolved it (disposition D) but its application waits
+    # on Max's ruling, so the loader refuses the amendment entry and every
+    # P64/P65 record that depends on it.  U2 records the finding and
+    # refuses; it does not silently narrow or widen the route.
+    from populace_dynamics.data import u2_source_registry as loader_api
+
     for wave in (2017, 2019, 2021, 2023):
         entry = committed_registries.entry(
             "pension", f"{wave}.route.formula_unknown_checkpoint"
@@ -196,8 +212,24 @@ def test_registry_documents_dc_only_checkpoints_from_2017(committed_registries):
         amendment = committed_registries.entry(
             "pension", f"{wave}.route.inherited_route_amendment"
         )
-        assert amendment["status"] == "TO VERIFY"
-    declared = sources.SourceGate(sources.INVENTED_DECLARED, committed_registries)
+        assert amendment["status"] == "RESOLVED"
+        assert amendment["action"] == "refuse_pending_amendment_5_ruling"
+        with pytest.raises(
+            loader_api.SourceAdjudicationError,
+            match="refuse_pending_amendment_5_ruling",
+        ):
+            loader_api.require_resolved(
+                "pension", f"{wave}.route.inherited_route_amendment"
+            )
+        with pytest.raises(
+            loader_api.SourceAdjudicationError, match="blocked"
+        ):
+            loader_api.require_resolved(
+                "pension", f"{wave}.route.previous_dc_only"
+            )
+    declared = sources.SourceGate(
+        sources.INVENTED_DECLARED, committed_registries
+    )
     route = sources.dc_route(2019, declared)
     assert route.source == "section_15_declared_route_invented_only"
     assert "pension:2019.route.inherited_route_amendment" in (
@@ -216,7 +248,9 @@ def test_invented_dc_frames_exercise_every_path(u2_inputs):
 
 def test_dc_code_domains_equal_the_registry_routes(committed_registries):
     for wave in sources.SUPPORT_WAVES:
-        route = committed_registries.entry("pension", f"{wave}.route.current_job")
+        route = committed_registries.entry(
+            "pension", f"{wave}.route.current_job"
+        )
         assert set(route["accepted_current_types"]) | set(
             route["rejected_current_types"]
         ) == set(sources.DC_CODE_DOMAINS["current_type"])

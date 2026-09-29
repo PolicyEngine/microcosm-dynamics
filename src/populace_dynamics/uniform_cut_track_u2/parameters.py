@@ -77,9 +77,7 @@ REQUIRED_INCOME_YEARS: tuple[int, ...] = (2012, 2014, 2016, 2018, 2020, 2022)
 _TEN_DOLLAR_YEAR = 2022
 
 SSI_PATH = _EXTERNAL / "track_u2_ssi_parameters_2012_2022.json"
-SSI_SHA256 = (
-    "a58d55c160b48cd3e21f730d45265374bd3c8a9eb7eae947469a5a5dc0b23762"
-)
+SSI_SHA256 = "a58d55c160b48cd3e21f730d45265374bd3c8a9eb7eae947469a5a5dc0b23762"
 SSI_SCHEMA_VERSION = "populace_dynamics.track_u2_ssi_parameters.v1"
 SSI_YEARS: tuple[int, ...] = tuple(range(2012, 2023))
 U1_SSI_PATH = _EXTERNAL / "track_u_ssi_parameters.json"
@@ -234,7 +232,9 @@ def _projection_2012(data: Mapping[str, Any]) -> dict[str, float]:
         "earned_income_share_excluded": float(
             data["earned_income_share_excluded"]
         ),
-        "resource_limit_individual": float(data["resource_limit"]["individual"]),
+        "resource_limit_individual": float(
+            data["resource_limit"]["individual"]
+        ),
         "resource_limit_couple": float(data["resource_limit"]["couple"]),
     }
 
@@ -382,7 +382,10 @@ def check_u2_parameters(params: U2Parameters, data_provenance: str) -> None:
     if not isinstance(params, U2Parameters):
         raise U2ParameterError("a U2 run needs a U2Parameters bundle")
     identity.check_target(params.target_id, "the parameter bundle")
-    for name, value in (("thresholds", params.thresholds), ("ssi", params.ssi)):
+    for name, value in (
+        ("thresholds", params.thresholds),
+        ("ssi", params.ssi),
+    ):
         sha = dict(value.provenance).get("sha256")
         if sha in (identity.U1_THRESHOLDS_SHA256, identity.U1_SSI_SHA256):
             raise U2ParameterError(

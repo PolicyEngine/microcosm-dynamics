@@ -97,7 +97,9 @@ def test_zero_contribution_clusters_enter_the_variance():
     )
     a = next(c for c in with_extra["cells"] if c["cell"] == "all")
     b = next(c for c in plain["cells"] if c["cell"] == "all")
-    assert with_extra["design"]["n_clusters"] == plain["design"]["n_clusters"] + 1
+    assert (
+        with_extra["design"]["n_clusters"] == plain["design"]["n_clusters"] + 1
+    )
     assert a["design_se"]["delta"]["se"] != b["design_se"]["delta"]["se"]
 
 
@@ -123,7 +125,8 @@ def test_paired_change_se_uses_the_indicator_difference():
     paired = ut._design_se(
         rows,
         mask,
-        rows["poor_reform"].to_numpy(float) - rows["poor_baseline"].to_numpy(float),
+        rows["poor_reform"].to_numpy(float)
+        - rows["poor_baseline"].to_numpy(float),
         clusters,
     )["se"]
     assert cell["design_se"]["delta"]["se"] == pytest.approx(paired)
@@ -138,14 +141,23 @@ def test_rows_outside_the_design_frame_refuse():
     rows = _rows()
     design = _design(rows)
     design = design[~design["stratum"].eq(88)]
-    with pytest.raises(tabulation.U2TabulationError, match="not in the design"):
-        tabulation.tabulate_u2(rows, data_provenance=ap.INVENTED, design=design)
+    with pytest.raises(
+        tabulation.U2TabulationError, match="not in the design"
+    ):
+        tabulation.tabulate_u2(
+            rows, data_provenance=ap.INVENTED, design=design
+        )
 
 
 def test_split_units_link_family_units_transitively():
     rows = pd.DataFrame(
         {
-            "family_unit_id": [201_700_005, 201_900_003, 202_100_009, 201_900_007],
+            "family_unit_id": [
+                201_700_005,
+                201_900_003,
+                202_100_009,
+                201_900_007,
+            ],
             "person_id": [1, 1, 2, 2],
         }
     )
@@ -158,7 +170,7 @@ def test_split_units_link_family_units_transitively():
 def test_both_observations_of_a_person_fall_on_one_side(u1_cohort):
     obs = u1_cohort.observations
     units = pd.Series(ut.floor_split_units(obs), index=obs.index)
-    for pid, rows in obs.groupby("person_id"):
+    for _, rows in obs.groupby("person_id"):
         assert units.loc[rows.index].nunique() == 1
 
 
@@ -180,7 +192,9 @@ def test_undefined_floors_and_the_required_seed_count():
 
 def test_floor_is_not_rescaled_and_uses_sample_sd(u2_run):
     cell = next(
-        c for c in u2_run["rows"]["U0"]["tabulation"]["cells"] if c["cell"] == "all"
+        c
+        for c in u2_run["rows"]["U0"]["tabulation"]["cells"]
+        if c["cell"] == "all"
     )
     floor = cell["floor"]["delta"]
     assert floor["defined"]
