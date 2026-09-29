@@ -302,6 +302,10 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/track_a_v2/runner.py"),
     Path("src/populace_dynamics/track_a_v2/structural.py"),
     Path("src/populace_dynamics/track_a_v2/structural_inputs.py"),
+    # Track B B1 v2 (the reconstructed-reproduction baseline, decision d571)
+    # is opt-in through the B1 runner; nothing in the historical projection
+    # imports it.
+    Path("src/populace_dynamics/track_b/reconstructed.py"),
     # U2 documentary metadata stays outside the historical projection.
     Path("src/populace_dynamics/data/u2_source_registry.py"),
     Path("scripts/capture_track_u2_income_wealth.py"),
