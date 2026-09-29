@@ -74,11 +74,10 @@ EXPECTED_MERMIN_TABLE1_CITATION = (
     "75-year deficit/surplus row: Congressional Budget Office (2005) "
     "estimates as reported in Mermin (2005), not DYNASIM3 output"
 )
-#: The paper's cost-ordering paragraph, whitespace-normalized.
+#: The paper's "Comparisons beyond DYNASIM" paragraph, whitespace-normalized.
 EXPECTED_PAPER_ANCHOR_SENTENCE = (
-    "That anchor column is the Congressional Budget Office's 2005 scoring "
-    "of the four options, which @mermin2005benefitreductions reports in "
-    "the same table as its DYNASIM3 benefits."
+    "It sets the model's cost ordering of four benefit reductions against "
+    "CBO's 2005 estimates as @mermin2005benefitreductions reports them"
 )
 
 # ---------------------------------------------------------------------
