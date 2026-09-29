@@ -1162,7 +1162,10 @@ def rederive_conditions(
     Cells and person-level rows come from the hash-verified evidence files.
     Each side's cells are recomputed from that side's published scored
     frame, and the file's reported cells must equal them exactly, so an
-    edit applied identically to both frames cannot pass. The lineage and
+    identical edit to both frames fails when it moves a gated cell. Without
+    a historical reference nothing else binds the frames: an identical edit
+    that moves no gated cell (a non-cell column, a sign of zero, a row
+    outside the gated years) still passes. The lineage and
     provenance actuals come from the result and are compared with the
     registered records that ``execute`` loaded itself. The anchor is probed
     again now and must equal the one the run reported.

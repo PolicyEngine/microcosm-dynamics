@@ -262,7 +262,11 @@ The implementation is in `src/populace_dynamics/track_b/reconstructed.py`:
 (provenance), `admission` (conjunction), and `rederive_conditions` and
 `guard_claim` (guard). The guard recomputes each side's cells from that
 side's published scored frame, which must carry the five columns the cells
-read, and requires the file's reported cells to equal them bit for bit. These are rules for a prospective
+read, and requires the file's reported cells to equal them bit for bit. The
+guard binds the published frames only through the gated cells and the
+frame-to-frame equality: an identical edit to both frames that moves no
+gated cell, such as a change to a non-cell column or a zero's sign, still
+passes. No v2 check can close that without a historical reference. These are rules for a prospective
 attempt; this draft reports no real-data pass or mismatch.
 
 The [v2 amendment](track_b_b1_v2_amendment.md) proposes a reading of design

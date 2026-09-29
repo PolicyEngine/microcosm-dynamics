@@ -1235,6 +1235,59 @@ def _moved_anchor(result, output):
     }
 
 
+def _shift_non_cell_column_both_frames(result, output):
+    name = result["files"][0]["path"]
+
+    def change(payload):
+        for side in ("original_scored", "replay_scored"):
+            column = next(
+                column
+                for column in payload[side]["columns"]
+                if column["name"] == "age"
+            )
+            column["values"][0] += 1
+
+    _rewrite(result, output, name, change)
+
+
+def _negate_a_zero_both_frames(result, output):
+    name = result["files"][0]["path"]
+
+    def change(payload):
+        for side in ("original_scored", "replay_scored"):
+            column = next(
+                column
+                for column in payload[side]["columns"]
+                if column["name"] == "earnings"
+            )
+            index = next(
+                index
+                for index, value in enumerate(column["values"])
+                if reconstructed._decode_cell(value) == 0.0
+            )
+            column["values"][index] = runner._scalar(-0.0)
+
+    _rewrite(result, output, name, change)
+
+
+@pytest.mark.parametrize(
+    "mutate",
+    [_shift_non_cell_column_both_frames, _negate_a_zero_both_frames],
+    ids=["non-cell-column", "negative-zero"],
+)
+def test_guard_admits_identical_edits_that_move_no_gated_cell(
+    repository, passing_run, mutate
+):
+    """Intended limit, not a bug: without a historical reference the guard
+    binds the published frames only through the gated cells and the
+    frame-to-frame equality, so these tampered results are still admitted.
+    The registration draft discloses this."""
+    result = _execute(repository, _replayed(passing_run, mutate))
+
+    assert result["status"] == reconstructed.RECONSTRUCTED_REPRODUCTION
+    assert result["equal"] is True
+
+
 @pytest.mark.parametrize(
     "mutate, failed",
     [
