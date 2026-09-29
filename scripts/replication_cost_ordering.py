@@ -14,11 +14,15 @@ already committed --
 
 -- is scored ONCE on a single common frame, and the resulting aggregate
 cost deltas are tested ORDINALLY against the anchors' published cost
-columns: Mermin's 75-year payroll effects (Table 1) and the Five-Approaches
-actuarial-balance A-table (Table 3). No level matching is claimed: our
-frame is observed completed careers under the Phase-A 2050 transport, not a
-Trustees-assumption projection (Phase E), so units differ by construction
--- signs and orderings are the transportable content.
+columns: the 75-year payroll effects in Mermin's Table 1 (Congressional
+Budget Office 2005 estimates that Mermin reports, not DYNASIM3 output --
+the table's benefit rows are DYNASIM3 Runid 432) and the Five-Approaches
+actuarial-balance A-table (Table 3, DYNASIM4 ID980). Provenance erratum:
+docs/errata/2026-09-29-anchor-provenance.md. No level matching is
+claimed: our frame is observed completed careers under the Phase-A 2050
+transport, not a Trustees-assumption projection (Phase E), so units
+differ by construction -- signs and orderings are the transportable
+content.
 
 Frozen spec: issue #42 comment 4931034068. The registration wins over any
 disagreement.
@@ -200,7 +204,14 @@ PROGRAM_DESIGN_ISSUE = (
 # =====================================================================
 #: Mermin (2005), Urban 411260, Table 1 ("Annual Mean Social Security
 #: Benefits at Ages 62 to 67, by Policy Scenario"), "75-year deficit/surplus
-#: (percent of taxable payroll)" row. Column headers verified: Price
+#: (percentage of taxable payroll)" row. The row is Congressional Budget
+#: Office (2005) estimates, not DYNASIM3 output: Mermin's text says "The
+#: last row of table 1 presents Congressional Budget Office (CBO)
+#: estimates" (411260-benefit-reductions.txt:212), and the table's source
+#: line reads "Author's calculations from DYNASIM3 (Runid: 432) and the
+#: Congressional Budget Office (2005)." (:521). The benefit rows above it
+#: are DYNASIM3's. Provenance erratum:
+#: docs/errata/2026-09-29-anchor-provenance.md. Column headers verified: Price
 #: indexing +0.68; Progressive price indexing -0.14; Reduced cost of living
 #: adjustment -1.12; Normal retirement age raised to 70 -0.5. Scheduled
 #: deficit -1.69; payable 0. PDF p.15; narrative printed p.5-6 (the 1.69pp
@@ -224,20 +235,24 @@ MERMIN_PCT_SCHEDULED_2050 = {
     "nra_raised_to_70": 85.2,
 }
 MERMIN_ANCHOR_CITE = (
-    "Mermin (2005), Urban Institute 411260, DYNASIM3 Runid 432, Table 1 "
-    "('Annual Mean Social Security Benefits at Ages 62 to 67, by Policy "
-    "Scenario'), '75-year deficit/surplus (percent of taxable payroll)' "
-    "row; verified against 411260-benefit-reductions.{txt,pdf} PDF p.15, "
-    "narrative printed p.5-6"
+    "Congressional Budget Office (2005) estimates as reported in Mermin "
+    "(2005), Urban Institute 411260, Table 1 ('Annual Mean Social Security "
+    "Benefits at Ages 62 to 67, by Policy Scenario'), '75-year "
+    "deficit/surplus (percentage of taxable payroll)' row -- CBO's "
+    "estimates, not DYNASIM3 output (the table's benefit rows are DYNASIM3, "
+    "Runid: 432); verified against 411260-benefit-reductions.{txt,pdf} "
+    "PDF p.15, narrative printed p.5-6"
 )
 #: Smith/Johnson/Favreault (2020), Urban 103050, Table 3 (actuarial balance
 #: as a percentage of taxable payroll, 2019-93), "Provide caregiver
 #: credits" row: Biden -0.12, Buttigieg -0.51, Klobuchar -0.12, Warren
 #: -0.30 (the Sanders column is blank -- no caregiver credit). Negative =
 #: a cost / actuarial-balance reduction, so a bigger benefit expansion is a
-#: more-negative anchor entry. Printed p.19 (PDF p.29).
+#: more-negative anchor entry. Printed p.19 (PDF p.29). The table's source
+#: line reads "Source: DYNASIM4 ID980." (103050-five-dem.txt:1052): the
+#: anchor is DYNASIM4, not DYNASIM3 (see the provenance erratum above).
 CAREGIVER_ANCHOR_CITE = (
-    "Smith/Johnson/Favreault (2020), Urban Institute 103050, DYNASIM3 "
+    "Smith/Johnson/Favreault (2020), Urban Institute 103050, DYNASIM4 "
     "ID980, Table 3 (actuarial balance as a percentage of taxable payroll, "
     "2019-93), 'Provide caregiver credits' row; verified against "
     "103050-five-dem.{txt,pdf} printed p.19 (PDF p.29)"
@@ -717,8 +732,13 @@ def _named_deltas() -> list[str]:
         "compressed relative to the bends (most AIME below the second "
         "bend), so progressive price indexing -- which bites only ABOVE the "
         "30th-percentile bend -- cuts LESS than the uniform NRA actuarial "
-        "reduction on our frame, flipping PPI and NRA versus DYNASIM's "
-        "fuller projected careers (documented in the ppi_mermin artifact)",
+        "reduction on our frame, flipping PPI and NRA versus the anchor's "
+        "order (the anchor is CBO's 2005 75-year estimates as Mermin "
+        "reports them; Mermin's DYNASIM3 2050 percent-of-scheduled row, on "
+        "fuller projected careers, orders the pair the same way: PPI "
+        f"{MERMIN_PCT_SCHEDULED_2050['progressive_price_indexing']}, NRA "
+        f"{MERMIN_PCT_SCHEDULED_2050['nra_raised_to_70']}) (documented in "
+        "the ppi_mermin artifact)",
         "caregiver frame omits DI interactions (the registration's named "
         "T3 delta) and models Biden's phase-out as the uniform "
         "top-up-to-credit mechanic",
