@@ -3,6 +3,11 @@
 The committed M6 artifact contains aggregate cells, not historical person
 rows. Reconstructing the original loop is a differential witness only. An
 absent authenticated historical reference must never become REPRODUCED.
+
+Two baseline versions are registered. ``bit-for-bit`` (v1) is the only one
+that may yield REPRODUCED, and only with an admitted historical reference.
+``reconstructed`` (v2, decision d571, ``track_b.reconstructed``) may yield
+only RECONSTRUCTED_REPRODUCTION, a weaker, separately labelled admission.
 """
 
 from __future__ import annotations
@@ -31,7 +36,11 @@ from populace_dynamics.harness.m6_scoring import (
     EARNINGS_CELL_NAMES,
     restrict_earnings_domain_support,
 )
-from populace_dynamics.track_b.equality import compare_replay
+from populace_dynamics.track_b.equality import (
+    MISMATCH,
+    REPRODUCED,
+    compare_replay,
+)
 from populace_dynamics.track_b.replay import (
     earnings_rng_signature,
     replay_earnings_on_realized_support,
@@ -54,6 +63,13 @@ REGISTERED_DRAWS = tuple(range(20))
 # registered commit, and no command-line value can replace it. None refuses
 # every reference, so no reference can yield REPRODUCED.
 HISTORICAL_REFERENCE_SHA256: str | None = None
+# Registered baseline versions (CLI ``--baseline-version``). The default is
+# v1; v2 is selected only explicitly and never changes what v1 reports.
+BIT_FOR_BIT = "bit-for-bit"
+RECONSTRUCTED = "reconstructed"
+BASELINE_VERSIONS = (BIT_FOR_BIT, RECONSTRUCTED)
+BIT_FOR_BIT_SCOPE = "candidate-3 registered earnings reproduction only"
+SIDECAR_PATH = Path(f"{BASELINE_PATH}.env.json")
 FIT_SIGNATURE_KEYS = (
     "q_invariant_fit_signature_sha256",
     "rank_refresh_fit_audit",
@@ -241,15 +257,21 @@ def _git(root: Path, *args: str) -> bytes:
     ).stdout
 
 
-def reserve_output(root: Path, output: Path | str) -> Path:
-    """Reserve only the B1 directory, exclusively, before loading any input."""
+def reserve_output(
+    root: Path, output: Path | str, *, location: Path = DEFAULT_OUTPUT
+) -> Path:
+    """Reserve only the B1 directory, exclusively, before loading any input.
+
+    ``location`` is the registered directory of the selected baseline
+    version; v1 keeps ``DEFAULT_OUTPUT``.
+    """
     root = root.resolve()
     requested = Path(output)
     if not requested.is_absolute():
         requested = root / requested
-    expected = root / DEFAULT_OUTPUT
+    expected = root / location
     if requested != expected:
-        raise ValueError(f"B1 output must be {DEFAULT_OUTPUT}")
+        raise ValueError(f"B1 output must be {location}")
     for path in (expected, *expected.parents):
         if path == root:
             break
@@ -257,7 +279,7 @@ def reserve_output(root: Path, output: Path | str) -> Path:
             raise ValueError("B1 output and its parents must not be symlinks")
     if expected.resolve() != expected:
         raise ValueError("B1 output escaped its exclusive location")
-    if _git(root, "ls-files", "--", DEFAULT_OUTPUT.as_posix()).strip():
+    if _git(root, "ls-files", "--", location.as_posix()).strip():
         raise ValueError("B1 output collides with tracked files")
     expected.parent.mkdir(parents=True, exist_ok=True)
     expected.mkdir()  # exist_ok=False also closes the concurrent-run race.
@@ -305,8 +327,13 @@ def _publish(destination: Path, result: dict) -> dict:
                 dropped.append(str(key))
             else:
                 kept[str(key)] = value
+        schema_version = result.get("schema_version")
         fallback = {
-            "schema_version": SCHEMA_VERSION,
+            "schema_version": (
+                schema_version
+                if isinstance(schema_version, str)
+                else SCHEMA_VERSION
+            ),
             "registration_id": str(result.get("registration_id")),
             "verification_class": "reproduction",
             "status": "BASELINE_REPLAY_MISMATCH",
@@ -324,12 +351,22 @@ def _publish(destination: Path, result: dict) -> dict:
             "unserializable_result_repr": attempted,
             "partial_files": _evidence_files(destination),
         }
+        # Only v2 results carry a baseline version, so v1 fallbacks keep
+        # their original fields.
+        if isinstance(result.get("baseline_version"), str):
+            fallback["baseline_version"] = result["baseline_version"]
         _write_new(destination / "result.json", fallback)
         return fallback
 
 
-def source_guard(root: Path, expected_commit: str) -> dict:
-    """Bind the new registered commit and the untouched historical sources."""
+def source_guard(
+    root: Path, expected_commit: str, *, extra_sources: tuple[str, ...] = ()
+) -> dict:
+    """Bind the new registered commit and the untouched historical sources.
+
+    ``extra_sources`` are further files a baseline version requires to be
+    byte-identical to ``BASELINE_COMMIT``; v1 passes none.
+    """
     head = _git(root, "rev-parse", "HEAD").decode().strip()
     if head != expected_commit:
         raise ValueError("HEAD does not equal --expected-commit")
@@ -339,7 +376,7 @@ def source_guard(root: Path, expected_commit: str) -> dict:
     if imported != root / "src/populace_dynamics/track_b/runner.py":
         raise ValueError("B1 imported code outside the registered worktree")
     hashes = {}
-    for name in BASELINE_SOURCES:
+    for name in (*BASELINE_SOURCES, *extra_sources):
         original = _git(root, "show", f"{BASELINE_COMMIT}:{name}")
         current = (root / name).read_bytes()
         if current != original:
@@ -394,6 +431,73 @@ def _scored_surface(frame: pd.DataFrame, population: Any) -> pd.DataFrame:
     ).projection
 
 
+def _replay_pair(
+    population: Any, generator: Any, draw: int
+) -> tuple[pd.DataFrame, Any, pd.DataFrame]:
+    """Run the unchanged original loop, then the copy, on one draw's inputs.
+
+    Returns the original scored surface, the copy's replay record and the
+    copy's scored surface. Both loops receive the same arguments, including
+    the one fitted generator.
+    """
+    arguments = dict(
+        initial_slice=population.initial_slice,
+        truth_support=population.earnings_support,
+        generator=generator,
+        domain_person_ids=population.earnings_domain_ids,
+        all_person_ids=population.holdout_ids,
+        draw_index=draw,
+    )
+    original = _scored_surface(
+        project_earnings_on_realized_support(**arguments), population
+    )
+    replay = replay_earnings_on_realized_support(**arguments)
+    return original, replay, _scored_surface(replay.scored, population)
+
+
+def _original_rng_signature(population: Any, draw: int) -> dict:
+    """The original side's RNG addresses, sized by the incumbent harness.
+
+    The incumbent sizes its registry from its own PROJECTION_END_YEAR
+    (m6_projection.py:198-200); the copy uses replay.RNG_N_PERIODS. Only
+    n_periods is sourced independently: periods, ordinals and codes still
+    come from the copy's _rng_signature over the same IDs, and registry
+    size changes no stream (rng.py:66-67 spawns child ``period`` of a fresh
+    root). This check catches registry-size drift only; stream equality is
+    evidenced by the scored-frame comparison.
+    """
+    return earnings_rng_signature(
+        all_person_ids=population.holdout_ids,
+        draw_index=draw,
+        n_periods=m6_projection.PROJECTION_END_YEAR - 2014,
+    )
+
+
+def _evidence_payload(
+    *,
+    seed: int,
+    draw: int,
+    replay: Any,
+    original: pd.DataFrame,
+    copied: pd.DataFrame,
+    original_fit: Mapping[str, Any],
+    replay_fit: Mapping[str, Any],
+    original_rng: Mapping[str, Any],
+) -> dict:
+    """One seed/draw evidence file, in the v1 format."""
+    return {
+        "seed": seed,
+        "draw": draw,
+        "annual_history": frame_payload(replay.history),
+        "original_scored": frame_payload(original),
+        "replay_scored": frame_payload(copied),
+        "original_fit_signature": original_fit,
+        "replay_fit_signature": replay_fit,
+        "original_rng_signature": original_rng,
+        "replay_rng_signature": replay.rng_signature,
+    }
+
+
 def run_differential(
     *,
     populations: Mapping[int, Any],
@@ -424,36 +528,15 @@ def run_differential(
     # per-loop fit signature would need a hook inside m6_projection.py, a
     # protected historical source that returns only the scored frame.
     original_fit = _fit_lineage_signature(baseline["lineage"])
-    # The incumbent sizes its registry from its own PROJECTION_END_YEAR
-    # (m6_projection.py:198-200); the copy uses replay.RNG_N_PERIODS. Only
-    # n_periods is sourced independently: periods, ordinals and codes still
-    # come from the copy's _rng_signature over the same IDs, and registry
-    # size changes no stream (rng.py:66-67 spawns child ``period`` of a fresh
-    # root). This check catches registry-size drift only; stream equality is
-    # evidenced by the scored-frame comparison.
-    original_n_periods = m6_projection.PROJECTION_END_YEAR - 2014
     expected, observed, files, cell_differences = {}, {}, [], []
     for seed in seeds:
         population = populations[seed]
         for draw in draws:
-            arguments = dict(
-                initial_slice=population.initial_slice,
-                truth_support=population.earnings_support,
-                generator=generator,
-                domain_person_ids=population.earnings_domain_ids,
-                all_person_ids=population.holdout_ids,
-                draw_index=draw,
+            original, replay, copied = _replay_pair(
+                population, generator, draw
             )
-            original = _scored_surface(
-                project_earnings_on_realized_support(**arguments), population
-            )
-            replay = replay_earnings_on_realized_support(**arguments)
-            copied = _scored_surface(replay.scored, population)
-            original_rng = earnings_rng_signature(
-                all_person_ids=population.holdout_ids,
-                draw_index=draw,
-                n_periods=original_n_periods,
-            )
+            # Sized by the incumbent harness, not RNG_N_PERIODS.
+            original_rng = _original_rng_signature(population, draw)
             expected[seed, draw] = dict(
                 scored=original,
                 fit_signature=original_fit,
@@ -490,17 +573,16 @@ def run_differential(
                         )
                     )
             name = f"seed_{seed}_draw_{draw}.json"
-            payload = {
-                "seed": seed,
-                "draw": draw,
-                "annual_history": frame_payload(replay.history),
-                "original_scored": frame_payload(original),
-                "replay_scored": frame_payload(copied),
-                "original_fit_signature": original_fit,
-                "replay_fit_signature": replay_fit,
-                "original_rng_signature": original_rng,
-                "replay_rng_signature": replay.rng_signature,
-            }
+            payload = _evidence_payload(
+                seed=seed,
+                draw=draw,
+                replay=replay,
+                original=original,
+                copied=copied,
+                original_fit=original_fit,
+                replay_fit=replay_fit,
+                original_rng=original_rng,
+            )
             files.append(
                 {"path": name, "sha256": _write_new(output / name, payload)}
             )
@@ -526,11 +608,7 @@ def run_differential(
             "status": "REPRODUCED" if equal else "BASELINE_REPLAY_MISMATCH",
             "equal": equal,
             "verification_class": "reproduction",
-            "admitted_scope": (
-                "candidate-3 registered earnings reproduction only"
-                if equal
-                else "none"
-            ),
+            "admitted_scope": BIT_FOR_BIT_SCOPE if equal else "none",
             "baseline_kind": "authenticated_historical_person_level_reference",
             "historical_person_level_reference_available": True,
             "historical_equality": historical,
@@ -639,14 +717,52 @@ def production_replay(
     return result
 
 
+def claims_admission(result: Mapping[str, Any]) -> bool:
+    """Whether a result claims anything beyond a plain mismatch.
+
+    Any status other than BASELINE_REPLAY_MISMATCH (including a missing
+    status), any truthy ``equal`` and any admitted scope other than "none"
+    is a claim that the version's guard must authorize.
+    """
+    return (
+        result.get("status") != MISMATCH
+        or bool(result.get("equal"))
+        or result.get("admitted_scope", "none") != "none"
+    )
+
+
+def _guard_bit_for_bit_claim(
+    result: Mapping[str, Any], reference: HistoricalReference | None
+) -> None:
+    """v1 may claim only REPRODUCED, and only with an admitted reference."""
+    if not claims_admission(result):
+        return
+    if reference is None:
+        raise ValueError(
+            "REPRODUCED requires a historical reference admitted by the "
+            "committed HISTORICAL_REFERENCE_SHA256; without one, no "
+            "status may claim equality or an admitted scope"
+        )
+    if not (
+        result.get("status") == REPRODUCED
+        and result.get("equal") is True
+        and result.get("admitted_scope") == BIT_FOR_BIT_SCOPE
+    ):
+        raise ValueError(
+            "the bit-for-bit baseline may claim only REPRODUCED, with "
+            f"equal=True and admitted scope {BIT_FOR_BIT_SCOPE!r}"
+        )
+
+
 def execute(
     *,
     root: Path,
     registration_id: str,
     expected_commit: str,
-    output: Path | str = DEFAULT_OUTPUT,
-    operation: Callable[[Path, Path, dict], dict] = production_replay,
+    output: Path | str | None = None,
+    operation: Callable[[Path, Path, dict], dict] | None = None,
     historical_reference: Path | None = None,
+    baseline_version: str = BIT_FOR_BIT,
 ) -> dict:
     """Reserve output, check registration/source, then compute or record abort.
 
@@ -654,26 +770,69 @@ def execute(
     committed ``HISTORICAL_REFERENCE_SHA256``; there is no caller-supplied
     hash. While that constant is None, every reference aborts the attempt.
     No operation can publish REPRODUCED without such an admitted reference.
+
+    ``baseline_version`` selects a registered version. ``bit-for-bit`` (v1,
+    the default) keeps its output directory, schema and operation. The
+    ``reconstructed`` version (v2) uses no historical reference, writes
+    only to its own directory, and its guard admits
+    RECONSTRUCTED_REPRODUCTION only when it re-derives all four registered
+    conditions from the published evidence. v2 never yields REPRODUCED.
     """
     from populace_dynamics.harness.m6_candidate3_runner import (
         validate_candidate3_registration_id,
     )
 
+    if baseline_version not in BASELINE_VERSIONS:
+        raise ValueError(
+            f"unregistered B1 baseline version {baseline_version!r}; "
+            f"registered versions are {list(BASELINE_VERSIONS)}"
+        )
+    reconstructed_mode = baseline_version == RECONSTRUCTED
+    if reconstructed_mode:
+        from populace_dynamics.track_b import reconstructed
+
+        if historical_reference is not None:
+            raise ValueError(
+                "the reconstructed baseline (B1 v2) uses no historical "
+                "person-level reference"
+            )
+        location = reconstructed.DEFAULT_OUTPUT
+        schema_version = reconstructed.SCHEMA_VERSION
+        default_operation = reconstructed.production_reconstructed
+        extra_sources = reconstructed.RECONSTRUCTED_SOURCES
+    else:
+        location, schema_version = DEFAULT_OUTPUT, SCHEMA_VERSION
+        default_operation, extra_sources = production_replay, ()
+    output = location if output is None else output
+    operation = default_operation if operation is None else operation
+
     root = root.resolve()
     registration = validate_candidate3_registration_id(registration_id)
     if registration.rsplit("issuecomment-", 1)[-1] == "5064153427":
         raise ValueError("B1 requires a fresh reproduction registration")
-    destination = reserve_output(root, output)
+    destination = reserve_output(root, output, location=location)
     result = {
-        "schema_version": SCHEMA_VERSION,
+        "schema_version": schema_version,
         "registration_id": registration,
         "verification_class": "reproduction",
         "admitted_scope": "none",
         "disclosure": DISCLOSURE,
         "publishes_regardless": True,
     }
+    if reconstructed_mode:
+        result["baseline_version"] = RECONSTRUCTED
+        result["historical_person_level_reference_used"] = False
+
+    def guard() -> dict:
+        # v1 calls source_guard exactly as before; v2 adds its sources.
+        if extra_sources:
+            return source_guard(
+                root, expected_commit, extra_sources=extra_sources
+            )
+        return source_guard(root, expected_commit)
+
     try:
-        source = source_guard(root, expected_commit)
+        source = guard()
         baseline = json.loads((root / BASELINE_PATH).read_text())
         if (
             tuple(baseline["protocol"]["gate_seeds"]) != REGISTERED_SEEDS
@@ -701,19 +860,14 @@ def execute(
             )
         else:
             result.update(operation(root, destination, baseline))
-        if source_guard(root, expected_commit) != source:
+        if guard() != source:
             raise ValueError("registered source changed during replay")
-        claims_reproduction = (
-            result.get("status") == "REPRODUCED"
-            or bool(result.get("equal"))
-            or result.get("admitted_scope", "none") != "none"
-        )
-        if claims_reproduction and reference is None:
-            raise ValueError(
-                "REPRODUCED requires a historical reference admitted by the "
-                "committed HISTORICAL_REFERENCE_SHA256; without one, no "
-                "status may claim equality or an admitted scope"
+        if reconstructed_mode:
+            reconstructed.guard_claim(
+                result, root=root, baseline=baseline, destination=destination
             )
+        else:
+            _guard_bit_for_bit_claim(result, reference)
     except Exception as error:
         result.update(
             status="BASELINE_REPLAY_MISMATCH",
@@ -726,4 +880,6 @@ def execute(
             },
         )
         result["partial_files"] = _evidence_files(destination)
+        if reconstructed_mode:
+            reconstructed.record_abort(result, error)
     return _publish(destination, result)
