@@ -158,6 +158,28 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/min_benefit_track_m/cohort.py"),
         Path("src/populace_dynamics/min_benefit_track_m/careers.py"),
         Path("src/populace_dynamics/min_benefit_track_m/invented_psid.py"),
+        Path("src/populace_dynamics/track_b/README.md"),
+        Path("src/populace_dynamics/track_b/__init__.py"),
+        Path("src/populace_dynamics/track_b/parameters/__init__.py"),
+        Path("src/populace_dynamics/track_b/parameters/ret_v1.yaml"),
+        Path("src/populace_dynamics/track_b/ret_params.py"),
+        Path("src/populace_dynamics/track_b/equality.py"),
+        Path("src/populace_dynamics/track_b/replay.py"),
+        Path("src/populace_dynamics/track_b/runner.py"),
+        Path("src/populace_dynamics/track_a_v2/__init__.py"),
+        Path("src/populace_dynamics/track_a_v2/benefits.py"),
+        Path("src/populace_dynamics/track_a_v2/estimands.py"),
+        Path("src/populace_dynamics/track_a_v2/filing.py"),
+        Path("src/populace_dynamics/track_a_v2/histories.py"),
+        Path("src/populace_dynamics/track_a_v2/invented.py"),
+        Path("src/populace_dynamics/track_a_v2/manifest.py"),
+        Path("src/populace_dynamics/track_a_v2/matrix.py"),
+        Path("src/populace_dynamics/track_a_v2/membership.py"),
+        Path("src/populace_dynamics/track_a_v2/protocol.py"),
+        Path("src/populace_dynamics/track_a_v2/runner.py"),
+        Path("src/populace_dynamics/track_a_v2/structural.py"),
+        Path("src/populace_dynamics/track_a_v2/structural_inputs.py"),
+        Path("src/populace_dynamics/track_b/reconstructed.py"),
         Path("src/populace_dynamics/data/u2_source_registry.py"),
         Path("scripts/capture_track_u2_income_wealth.py"),
         Path("scripts/capture_track_u2_ssi_parameters.py"),
@@ -305,6 +327,16 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "populace_dynamics.data.psid_questionnaire_inventory",
     }
     assert root_module in module_paths
+    track_b_modules = {
+        "populace_dynamics.track_b",
+        "populace_dynamics.track_b.parameters",
+        "populace_dynamics.track_b.ret_params",
+        "populace_dynamics.track_b.equality",
+        "populace_dynamics.track_b.replay",
+        "populace_dynamics.track_b.runner",
+        "populace_dynamics.track_b.reconstructed",
+    }
+    assert track_b_modules.issubset(module_paths)
     u2_registry = "populace_dynamics.data.u2_source_registry"
     assert u2_registry in module_paths
     u2_captures = {
@@ -374,10 +406,31 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
             - reachable
         )
 
+    track_a_v2_modules = {
+        "populace_dynamics.track_a_v2",
+        "populace_dynamics.track_a_v2.benefits",
+        "populace_dynamics.track_a_v2.estimands",
+        "populace_dynamics.track_a_v2.filing",
+        "populace_dynamics.track_a_v2.histories",
+        "populace_dynamics.track_a_v2.invented",
+        "populace_dynamics.track_a_v2.manifest",
+        "populace_dynamics.track_a_v2.matrix",
+        "populace_dynamics.track_a_v2.membership",
+        "populace_dynamics.track_a_v2.protocol",
+        "populace_dynamics.track_a_v2.runner",
+        "populace_dynamics.track_a_v2.structural",
+        "populace_dynamics.track_a_v2.structural_inputs",
+    }
+    assert track_a_v2_modules.issubset(module_paths)
+    assert track_a_v2_modules.isdisjoint(
+        reachable
+    ), "Track A v2 became reachable from the historical birth reducer"
+
     assert psid_exclusions.isdisjoint(reachable), (
         "historically excluded PSID modules became reachable from the "
         f"birth-evidence reducer: {sorted(psid_exclusions & reachable)}"
     )
+    assert track_b_modules.isdisjoint(reachable)
     assert u2_registry not in reachable
     assert u2_captures.isdisjoint(reachable)
     assert u2_milestone2.isdisjoint(reachable), (

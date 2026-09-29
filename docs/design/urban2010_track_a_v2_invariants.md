@@ -1,0 +1,123 @@
+# Track A v2 test invariant inventory
+
+INVENTED DATA - NOT A COMPARISON
+
+Each entry is a pytest test function's invariant docstring; parametrization expands concrete cases. See the implementation report for execution summaries.
+
+- `tests/track_a_v2/test_benefits.py:44` — Computation years equal elapsed less capped fifth, with minimum two.
+- `tests/track_a_v2/test_benefits.py:53` — D selects N highest values with ties/zero padding; levels keep floors.
+- `tests/track_a_v2/test_benefits.py:102` — Intended unsupported dates/base years refuse instead of falling back.
+- `tests/track_a_v2/test_benefits.py:117` — Cap then index; inclusive cutoff and e bend points produce 428/368.9.
+- `tests/track_a_v2/test_benefits.py:182` — Nonnegative earnings monotonicity, D>=L, N bounds and frozen cutoff.
+- `tests/track_a_v2/test_benefits.py:231` — Same-e AIME difference equals the difference of floors, not dollars.
+- `tests/track_a_v2/test_benefits.py:284` — Own plus excess accounting conserves total against an unchanged worker.
+- `tests/track_a_v2/test_benefits.py:337` — Linked DI inputs may change auxiliaries; intact observed own stays fixed.
+- `tests/track_a_v2/test_benefits.py:393` — L replays v1 exactly; shared caches and invocation order cannot leak D.
+- `tests/track_a_v2/test_benefits.py:470` — D retains eligibility/policy exclusions and never passes death with DI.
+- `tests/track_a_v2/test_benefits.py:495` — Shared caches bind AWI, wage bases, factors and evaluated bend points.
+- `tests/track_a_v2/test_benefits.py:529` — C0 nonincrease, worker-only S identity, and DS D-level/S-time composition.
+- `tests/track_a_v2/test_benefits.py:608` — Every frozen F row's L scenarios and paired union inputs replay v1.
+- `tests/track_a_v2/test_cross_cutting.py:57` — DS uses D own PIA and S's fixed age-62 timing, with one own payment.
+- `tests/track_a_v2/test_cross_cutting.py:88` — Both mechanisms change this fixture; DS composition is nonvacuous.
+- `tests/track_a_v2/test_cross_cutting.py:102` — S/L and DS/D workers-only cells, ratios, SDs and floors are identical.
+- `tests/track_a_v2/test_cross_cutting.py:170` — Shared caches isolate mechanisms and award years in interleaved draws.
+- `tests/track_a_v2/test_dry_run_protocol.py:111` — Successful manifests match start bytes and retain returned attempts.
+- `tests/track_a_v2/test_dry_run_protocol.py:132` — An existing attempt directory, even empty, is never overwritten.
+- `tests/track_a_v2/test_dry_run_protocol.py:152` — Any intended source-content or file-list change blocks the manifest.
+- `tests/track_a_v2/test_dry_run_protocol.py:181` — A source change inside manifest construction cannot escape the seal.
+- `tests/track_a_v2/test_dry_run_protocol.py:202` — An unexpected returned refusal retains its step and computed counters.
+- `tests/track_a_v2/test_dry_run_protocol.py:218` — An incorrect forced-refusal result is preserved without a manifest.
+- `tests/track_a_v2/test_dry_run_protocol.py:233` — Unexpected exceptions retain prior attempts without invented results.
+- `tests/track_a_v2/test_filing.py:44` — Each supported ordering has explicit Formula-F amount; own stays 600.
+- `tests/track_a_v2/test_filing.py:66` — Intended spouse-first ordering refuses; it must not get concurrent F.
+- `tests/track_a_v2/test_filing.py:80` — Null claim selects Q; only scheduled year decides horizon payment.
+- `tests/track_a_v2/test_filing.py:157` — S keeps own DI and H fixed; null policy preserves both component paths.
+- `tests/track_a_v2/test_filing.py:189` — A prior opening application is counted and deferred, never withheld.
+- `tests/track_a_v2/test_filing.py:208` — H stays fixed after reform conversion; group 4 uses the scenario FRA.
+- `tests/track_a_v2/test_filing.py:257` — Zero own DI permits positive S excess in both conversion labels.
+- `tests/track_a_v2/test_filing.py:301` — C1/C2 leave H fixed; worker exact months and annual gate both apply.
+- `tests/track_a_v2/test_filing.py:328` — Unpaid eligibility/link gaps create no excess; only existing gaps count.
+- `tests/track_a_v2/test_filing.py:356` — Intended ended spell/re-award refuses every reached supported mechanism.
+- `tests/track_a_v2/test_filing.py:373` — Excess is bounded by half-worker less own; more early months cannot raise it.
+- `tests/track_a_v2/test_filing.py:385` — Where L already pays, S baseline months early equals retained helper.
+- `tests/track_a_v2/test_filing.py:402` — An intended ended spell refuses on S reach, even before unpaid gates.
+- `tests/track_a_v2/test_histories.py:15` — One continuous spell conserves its award through conversion and death.
+- `tests/track_a_v2/test_histories.py:45` — Intended violations refuse; no latest-spell substitution is permitted.
+- `tests/track_a_v2/test_histories.py:61` — Every stored date and entitlement agrees with immutable annual events.
+- `tests/track_a_v2/test_histories.py:76` — Opening proxy classification preserves the inherited eligibility clock.
+- `tests/track_a_v2/test_histories.py:105` — Fallback and clamped award proxies are distinct and counted exactly.
+- `tests/track_a_v2/test_histories.py:128` — Single-spell acceptance is deterministic and bounded to one proxy count.
+- `tests/track_a_v2/test_histories.py:137` — Unsupported requests remain counted; joint refusal uses first person.
+- `tests/track_a_v2/test_histories.py:151` — Equal dates do not erase the inherited A3 clock-rule provenance.
+- `tests/track_a_v2/test_histories.py:187` — O1/S1 follow the requested record branch; inconsistent flags cannot switch it.
+- `tests/track_a_v2/test_manifest.py:33` — Spec, code, inputs, parameters, A1/E1 and source records are bound.
+- `tests/track_a_v2/test_manifest.py:49` — Mapping order cannot change a digest; changing input bytes must.
+- `tests/track_a_v2/test_manifest.py:59` — Unprovided archived POMS bytes are never falsely marked verified.
+- `tests/track_a_v2/test_manifest.py:69` — Intended mutation: invented source bytes cannot impersonate statute.
+- `tests/track_a_v2/test_manifest.py:77` — The script computes its manifest and never overwrites an artifact.
+- `tests/track_a_v2/test_matrix_estimands.py:50` — Exactly 68 immutable rows retain fixed headlines and inherited fields.
+- `tests/track_a_v2/test_matrix_estimands.py:104` — U needs positive baseline totals; R also needs both recipient bases.
+- `tests/track_a_v2/test_matrix_estimands.py:111` — Empty cells and missing draws are undefined rather than discarded.
+- `tests/track_a_v2/test_matrix_estimands.py:121` — Only U's retained double-zero frame reports all-alive denominators.
+- `tests/track_a_v2/test_matrix_estimands.py:142` — Draw summaries average percentages and use the K−1 SD divisor.
+- `tests/track_a_v2/test_matrix_estimands.py:151` — Either undefined half drops the seed; fewer than two never means zero.
+- `tests/track_a_v2/test_matrix_estimands.py:179` — U conserves totals, equals all-alive mean change, and ignores double zeros.
+- `tests/track_a_v2/test_matrix_estimands.py:208` — Retained R/F statistics and half-split floors reproduce A7 exactly.
+- `tests/track_a_v2/test_matrix_estimands.py:227` — Per-person input order cannot change statistics or family split floors.
+- `tests/track_a_v2/test_matrix_estimands.py:235` — A null reform has exactly zero incidence under each mechanism.
+- `tests/track_a_v2/test_matrix_estimands.py:247` — Scenario pairing preserves people, weights and fixed cohort attributes.
+- `tests/track_a_v2/test_matrix_estimands.py:268` — Nonnegative finite components and exact accounting are required.
+- `tests/track_a_v2/test_matrix_estimands.py:279` — F5 uses individual ratios on the intersection, not scenario means.
+- `tests/track_a_v2/test_matrix_estimands.py:286` — Registered defaults are twenty draws and five family half-split seeds.
+- `tests/track_a_v2/test_matrix_estimands.py:301` — Extra zero-worker spouse families cannot change paired worker floors.
+- `tests/track_a_v2/test_matrix_estimands.py:338` — Pairing floors refuses changed worker amounts, weights or fixed cells.
+- `tests/track_a_v2/test_membership.py:70` — Both unexplained C0 directions refuse before any tabulation (§10.5).
+- `tests/track_a_v2/test_membership.py:83` — R catches baseline-zero reform-only people before the legacy filter.
+- `tests/track_a_v2/test_membership.py:98` — Two false selected-recipient flags agree and do not trigger refusal.
+- `tests/track_a_v2/test_membership.py:105` — Workers-only R5 and F6 use selected components before filtering.
+- `tests/track_a_v2/test_membership.py:124` — R retains the per-person all-component refusal before selected filtering.
+- `tests/track_a_v2/test_membership.py:135` — The complete legacy conjunction excuses C0 only under L and D.
+- `tests/track_a_v2/test_membership.py:162` — Dropping any legacy predicate condition cannot excuse a C0 difference.
+- `tests/track_a_v2/test_membership.py:194` — C1/C2 count and allow both directions; legacy matches are diagnostic.
+- `tests/track_a_v2/test_membership.py:204` — Positive factors can cross zero after flooring; no C0 exception exists.
+- `tests/track_a_v2/test_membership.py:216` — Refusal identity and counts do not depend on per-person row order.
+- `tests/track_a_v2/test_protocol.py:105` — Exact specification, commit, clean state and complete package pass.
+- `tests/track_a_v2/test_protocol.py:130` — Every interlock fails before a population loader could run.
+- `tests/track_a_v2/test_protocol.py:156` — A package omission never silently inherits an execution default.
+- `tests/track_a_v2/test_protocol.py:163` — Even a document claiming ratification fails when its bytes differ.
+- `tests/track_a_v2/test_protocol.py:172` — An existing artifact or creation race never overwrites an attempt.
+- `tests/track_a_v2/test_protocol.py:197` — The authorized structural exception cannot authorize outcomes.
+- `tests/track_a_v2/test_protocol.py:206` — No generic protocol can stand in for the §16.7 authorization.
+- `tests/track_a_v2/test_protocol.py:214` — §11 cannot omit the attempt and counts of the authorized check.
+- `tests/track_a_v2/test_protocol.py:278` — A prior structural attempt must match its own frozen protocol and counts.
+- `tests/track_a_v2/test_protocol.py:311` — An unrelated frozen file or changed runtime bundle cannot authorize data.
+- `tests/track_a_v2/test_protocol.py:352` — Entry preflight failure is ordered before all real input loading.
+- `tests/track_a_v2/test_protocol.py:385` — An interruption after exclusive creation leaves a recorded refusal.
+- `tests/track_a_v2/test_protocol.py:436` — Intended injected outcome fields never escape the structural artifact.
+- `tests/track_a_v2/test_protocol.py:480` — The literal §16.7 conflict refuses before real loading or projection.
+- `tests/track_a_v2/test_runner.py:93` — All 68 rows share one ensemble; every original slice stays identical.
+- `tests/track_a_v2/test_runner.py:110` — An intended unsupported history stops step 2 before any amount or row.
+- `tests/track_a_v2/test_runner.py:137` — Intended unequal R membership in either direction blocks all 68 rows.
+- `tests/track_a_v2/test_runner.py:169` — An intended unexplained F C0 difference stops every tabulation at 5.
+- `tests/track_a_v2/test_runner.py:197` — An intended mutation of a shared slice refuses at step 4, with no rows.
+- `tests/track_a_v2/test_runner.py:220` — Identity hashing is deterministic and detects even adjacent floats.
+- `tests/track_a_v2/test_runner.py:232` — No registered population can enter projection without frozen preflight.
+- `tests/track_a_v2/test_runner.py:245` — Intended infrastructure interruption preserves counts and all remaining rows.
+- `tests/track_a_v2/test_runner_contract.py:11` — F keeps v1's union input for floors; U preserves all-alive double zeros.
+- `tests/track_a_v2/test_runner_contract.py:40` — A step-3 refusal retains preceding and failing-row counters, no rows.
+- `tests/track_a_v2/test_runner_contract.py:62` — A step-5 refusal retains earlier classifications and all pair counters.
+- `tests/track_a_v2/test_runner_contract.py:95` — An intended later filing refusal precedes an earlier hash mismatch.
+- `tests/track_a_v2/test_runner_contract.py:123` — Restoring a later slice cannot erase an intended earlier mutation.
+- `tests/track_a_v2/test_runner_contract.py:154` — Intended unequal worker-only inputs refuse all rows at step 5.
+- `tests/track_a_v2/test_structural.py:114` — No earnings amount, index, PIA or weight arithmetic is needed.
+- `tests/track_a_v2/test_structural.py:127` — A re-award cannot erase the unsupported earlier spell in event counts.
+- `tests/track_a_v2/test_structural.py:137` — S reaches H/earlier-spell checks even when no linked amount is payable.
+- `tests/track_a_v2/test_structural.py:154` — A filing-integrity refusal carries already computed permitted counts.
+- `tests/track_a_v2/test_structural.py:170` — Permitted structural counts are unweighted, deterministic integers.
+- `tests/track_a_v2/test_structural.py:180` — Intended violation: no amount, weight sum or extra output can escape.
+- `tests/track_a_v2/test_structural.py:189` — Even allowed containers accept only fixed nonnegative integer bins.
+- `tests/track_a_v2/test_structural.py:204` — Poisoning all legacy amount and summary calls leaves counts usable.
+- `tests/track_a_v2/test_structural.py:219` — A failed draw preserves prior counters without any weighted diagnostic.
+- `tests/track_a_v2/test_structural.py:265` — An interrupted later draw retains earlier counts without outcome fields.
+- `tests/track_a_v2/test_structural_inputs.py:16` — Omitting diagnostics preserves every projection/record input exactly.
+- `tests/track_a_v2/test_structural_inputs.py:65` — Count-only preparation retains the source-provenance boundary.

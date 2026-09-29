@@ -6,7 +6,8 @@
   U1's specification, parameter captures, registered artifact and
   environment sidecar, and U1's code and tests -- keep the bytes the
   milestone-1 manifest (``data/external/track_u2/u1_identity.json``)
-  records, and no committed ``runs/*.json`` changed.
+  records, and no U2 commit changed a committed ``runs/*.json`` or any
+  other protected path.
 * Every U2 milestone-2 module is an exact file exclusion in
   ``POST_REVIEW_SOURCE_EXCLUSIONS`` (the exact-tuple and transitive
   reachability tests live in ``tests/estimates/
@@ -44,6 +45,22 @@ U2_PATHS = (
     ":(exclude)tests/data/track_u2",
     ":(exclude)tests/data/test_track_u2_*",
 )
+#: Paths only U2 work writes.  A commit that touches one of these is a U2
+#: commit; the isolation check below holds every such commit to the
+#: protected paths.  Other tracks' commits reach this branch through merges
+#: of master and are not U2's to police here.
+U2_OWNED = (
+    "src/populace_dynamics/uniform_cut_track_u2",
+    "src/populace_dynamics/data/u2_source_registry.py",
+    "data/external/track_u2",
+    "data/external/track_u2_ssi_parameters_2012_2022.json",
+    "tests/data/track_u2",
+    "tests/data/test_track_u2_*",
+    "tests/track_u2",
+    "scripts/*track_u2*",
+    "scripts/u2_*",
+    "docs/design/u2_*",
+)
 PROTECTED = (
     "src/populace_dynamics/data/family.py",
     "src/populace_dynamics/data/psid.py",
@@ -69,34 +86,58 @@ def _git(*args: str) -> subprocess.CompletedProcess:
     )
 
 
+def _u2_commits() -> list[str]:
+    """Non-merge commits since ``BASE`` that touch a U2-owned path."""
+    log = _git(
+        "log", "--no-merges", "--format=%H", f"{BASE}..HEAD", "--", *U2_OWNED
+    )
+    assert log.returncode == 0, log.stderr
+    return log.stdout.split()
+
+
 def test_no_committed_run_engine_gate_or_u1_file_changed():
+    """No U2 commit touches a committed run, the engine, a gate or U1.
+
+    The check is per commit, not a tree diff against ``BASE``: master keeps
+    moving (new runs, gates and other tracks' test data land there), and a
+    tree diff would charge those to U2 once this branch merges master or
+    lands on it.
+    """
     if _git("cat-file", "-e", f"{BASE}^{{commit}}").returncode != 0:
         pytest.skip("the U1 base commit is not in this clone's history")
-    changed = _git(
-        "diff",
-        "--name-only",
-        BASE,
-        "--",
-        "runs",
-        "gates.yaml",
-        "src/populace_dynamics/engine",
-        "src/populace_dynamics/data/family.py",
-        "src/populace_dynamics/data/psid.py",
-        "src/populace_dynamics/estimates/career.py",
-        "src/populace_dynamics/cohorts/age67.py",
-        "src/populace_dynamics/estimates/adjusted_poverty.py",
-        "src/populace_dynamics/estimates/uniform_cut_tabulation.py",
-        "src/populace_dynamics/uniform_cut_track_u",
-        "data/external",
-        "tests/track_u",
-        "tests/cohorts",
-        "tests/data",
-        "tests/test_boomers2004_uniform_cut_spec.py",
-        "tests/test_replication_boomers2004_uniform_cut.py",
-        *U2_PATHS,
-    )
-    assert changed.returncode == 0, changed.stderr
-    assert changed.stdout.split() == []
+    commits = _u2_commits()
+    assert commits, "no U2 commit found since the U1 base"
+    offending = {}
+    for commit in commits:
+        changed = _git(
+            "diff-tree",
+            "--no-commit-id",
+            "--name-only",
+            "-r",
+            commit,
+            "--",
+            "runs",
+            "gates.yaml",
+            "src/populace_dynamics/engine",
+            "src/populace_dynamics/data/family.py",
+            "src/populace_dynamics/data/psid.py",
+            "src/populace_dynamics/estimates/career.py",
+            "src/populace_dynamics/cohorts/age67.py",
+            "src/populace_dynamics/estimates/adjusted_poverty.py",
+            "src/populace_dynamics/estimates/uniform_cut_tabulation.py",
+            "src/populace_dynamics/uniform_cut_track_u",
+            "data/external",
+            "tests/track_u",
+            "tests/cohorts",
+            "tests/data",
+            "tests/test_boomers2004_uniform_cut_spec.py",
+            "tests/test_replication_boomers2004_uniform_cut.py",
+            *U2_PATHS,
+        )
+        assert changed.returncode == 0, changed.stderr
+        if changed.stdout.split():
+            offending[commit] = changed.stdout.split()
+    assert offending == {}
 
 
 def test_every_u2_module_is_an_exact_historical_exclusion():
@@ -113,7 +154,9 @@ def test_every_u2_module_is_an_exact_historical_exclusion():
     ):
         assert Path(f"scripts/{script}.py") in exclusions
     # Exact files, never directories.
-    assert all(path.suffix == ".py" for path in exclusions)
+    assert all((ROOT / path).is_file() for path in exclusions), sorted(
+        path for path in exclusions if not (ROOT / path).is_file()
+    )
 
 
 def test_u1_wave_pins_and_shared_constants_are_unchanged():
