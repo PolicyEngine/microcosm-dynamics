@@ -39,7 +39,7 @@
         "path": "PSID/documentation/capture1/UserGuide2017.pdf",
         "identical": true
       },
-      "cited": "PDF p. 13 (section 2.5: husband designated Head from 1968 to 2015); PDF p. 35 (same-sex partners designated Spouse/Partner as of 2017 rather than as an OFUM); PDF p. 62 (ER34651 and ER71571 updated to include NIS-2017)",
+      "cited": "PDF p. 13 (section 2.5: husband designated Head from 1968 to 2015); PDF p. 35 (same-sex partners designated Spouse/Partner as of 2017 rather than as an OFUM); PDF p. 62 (ER34651 and ER71571 updated to include NIS-2017 'with Release 2 of PSID-2017 data', which conflicts with the May 2019 release notes' Release 3)",
       "blockers": [
         "male_code20_2015",
         "revised_2017_weights"
@@ -169,7 +169,7 @@
       "retrieval": "Internet Archive raw snapshot (id_) of the official URL",
       "archive_url": "https://web.archive.org/web/20190615165826id_/https://psidonline.isr.umich.edu/help/DataRelease-May2019.pdf",
       "archive_timestamp": "20190615165826",
-      "cited": "p. 1: 'Users should note the weights for the 2017 Immigrant individuals remain zero and will be updated in Release 3.'",
+      "cited": "p. 1, cross-wave individual file 1968-2017, Release 2 notes: 'Users should note the weights for the 2017 Immigrant individuals remain zero and will be updated in Release 3.' Conflicts on the release number with UserGuide2017 p. 62.",
       "blockers": [
         "revised_2017_weights"
       ],
@@ -206,7 +206,7 @@
       "retrieval": "Internet Archive raw snapshot (id_) of the official URL; gzip transfer encoding decoded before saving; live site returned a Cloudflare challenge",
       "archive_url": "https://web.archive.org/web/20260813185816id_/https://psidonline.isr.umich.edu/Guide/documents.aspx",
       "archive_timestamp": "20260813185816",
-      "cited": "Official documentation page: the weights section lists cross-sectional reports 2009-2021 and no 2017 immigrant-sample weighting document",
+      "cited": "Official documentation page: the weights section lists cross-sectional reports 2009-2021 and no 2017 immigrant-sample weighting document. It also lists no 2023 weight report, although milestone 1 retrieved the June 2026 report (cross_sec_weights_23.pdf) from its official URL on 2026-09-28, so the page's silence cannot show that a document is absent online.",
       "blockers": [
         "revised_2017_weights"
       ],
@@ -258,6 +258,15 @@
       "url": "https://psidonline.isr.umich.edu/data/weights/cross_sec_weights_17.pdf",
       "sha256": "b35b5d9c99e74983c84d519383ba2b586c5db33f6b666d16370c54dbdb7a5438",
       "note": "Captured by milestone 1 (weights17_manifest.json). Its Internet Archive digest (20190615183854) equals the current bytes, so the construction report has not changed since at least June 2019. PDF p. 3 and p. 9: the 2017 New Immigrant sample is not covered and its weighting methodology 'will be available from the PSID website'.",
+      "blockers": [
+        "revised_2017_weights"
+      ]
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "url": "https://psidonline.isr.umich.edu/data/weights/cross_sec_weights_23.pdf",
+      "sha256": "58411f56001e6089226ce5fc9ebcd132e85f9e917571d3fe54dcdc5139e63983",
+      "note": "Retrieved by milestone 1 from the official URL at 2026-09-28T17:41:53Z (weights23_manifest.json); report dated June 2026. What it documents about 2017: PDF p. 2 notes 2-3 (calibration to ACS estimates since 2015; the 2017 new immigrant sample has zero longitudinal family weight in 2017); p. 3 (the 2017 Immigrant sample; Chang et al. (2021), the 2019 longitudinal report, for its recruitment); p. 6 (a different approach to selecting calibration variables since 2017); p. 13 Table A2 (the 2017 sum of individual weights beside the ACS one-year PUMS population total, CPS 'Not Used'; donut-hole families and group-quarters post-1997 immigrants 'were excluded from the ACS estimate in 2017'); p. 14 Table A3 (2017 individual weight ER34651). The 2017 base weights and raking dimensions are not documented.",
       "blockers": [
         "revised_2017_weights"
       ]
