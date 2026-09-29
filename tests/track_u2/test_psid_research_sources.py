@@ -277,6 +277,7 @@ def assert_in_order(quote, text):
 def test_pinned_document_bytes(pinned):
     raw = resolve(pinned["file"]).read_bytes()
     assert raw.startswith(b"%PDF")
+    assert len(raw) == pinned["bytes"]
     assert hashlib.sha256(raw).hexdigest() == pinned["sha256"]
 
 

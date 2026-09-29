@@ -247,3 +247,57 @@ The builder's follow-up reads:
 - The ranges of the two touched test files needed for editing, and the `sources` lists of all eight registries through scripts.
 
 The verification pass exposed nothing more about the 1946–55 cohort or the Boomers report.
+
+## Resumed revision: second-pass completion and third verification (2026-09-29)
+
+The first revision job stopped at a session limit while applying the second verification pass's fixes, leaving them uncommitted on `dd7a057`. A resumed job (Claude Code, Opus 5.5, headless Subfleet job `20260928-230312-u2-m1b-fix`, same workspace `WS2` = `/Users/maxghenis/.subfleet/worktrees/20260928-230312-u2-m1b-fix`) completed them in `ce14db6`, ran a third verification with three in-session subagents and fixed its findings in `c2c386c` and the commit that adds this section. It worked blind under `EV/RESTRICTED-FILES.md`, opened nothing that file restricts, opened no raw PSID data file, and states and guesses no 1946–55 value or direction. `SCRATCH3` = `/tmp/u2m1bfix3`.
+
+### Instructions and job records
+
+- `EV/RESTRICTED-FILES.md` and `EV/phase2-20260927/prompts/common.md`: read in full, first.
+- `EV/phase2-20260927/out/u2-m1b-review.md`: read in full.
+- The first job's session log (`~/.claude/projects/-Users-maxghenis--subfleet-worktrees-20260928-230312-u2-m1b-fix/bbade00e-d149-442d-b1cd-021d5f659501.jsonl`): its last 60 actions, by script. Its second verifier's log (`…/subagents/agent-af7bd50ecb8573f7f.jsonl`): the final report only, which lists the files that verifier opened (dd7a057's section above does not; they were the specification and draft 3, the research record, the master record, the weights, roles, pension and identity registries, the manifest, both test files, `src/populace_dynamics/data/u2_source_registry.py` and `family_income.py` line 45, and PSID documentation text only, including `long_weight_17` and `long_weight_21` p. 4, the FAM2015–FAM2023 codebooks' pp. 6–7 and the DUST 2009 and 2013 household codebooks). That verifier reported displaying one whole-sample row of Table A1 of `cross_sec_weights_21` and whole-sample DUST relationship frequencies.
+- `/Users/maxghenis/.claude/CLAUDE.md` and `WS2/CLAUDE.md`: injected at session start.
+
+### Repository files (workspace)
+
+- Read in full: `docs/design/u2_m1b_psid_research.md`, `tests/track_u2/test_adjudication_applied.py`, `tests/track_u2/test_psid_research_sources.py`.
+- Read in part: `docs/design/boomers2004_1946_55_comparison.md` (lines 60–170, 650–660, 1352–1600 and 1687–1770, plus searches); draft 3 through `git show f7412e00:…` (saved to `SCRATCH3/draft3.md`; lines 100–105, 650–660, 1378–1392) and line 1563 of `9a93560` and `883ea48`; `docs/design/u2_m1_source_adjudication.md` (lines 20–40 and the registry rows, by script); this file (lines 1–30 and 150–249); `data/external/track_u2/*.json` (the `sources` lists, the `2017.cross_section_weight`, `2015.relationship.20`, `2015.relationship.90`, `2017.relationship.90`, `2017.relationship.92` and `2015.route.respondent_slots` entries, by script); `tests/data/track_u2/psid_docs/manifest.json` and `tests/data/track_u2/psid_sources/weights{17,23}_manifest.json` (parsed); `src/populace_dynamics/data/u2_source_registry.py` (lines 330–440); `tests/track_u2/test_source_registries.py` (lines 356–420 and searches); `.github/workflows/tests.yml` (lines 1–80).
+- Git metadata: logs, the blob of every spec revision (hashed), `git diff origin/master...HEAD --name-only` and `--stat`, `git diff 883ea48 HEAD --stat`.
+
+### PSID documentation (text layers only)
+
+- `PSID/documentation/capture1/`: all 494 PDFs extracted to `SCRATCH3/txt/` and searched for `RTH Lookup`, lookup lists and printed three-digit relationship values; directory listing. Contexts displayed, with numbers masked where a page holds tables: q2015 pp. 5, 150, 161–163, 190, 201 and every CYAQRTH condition; q2017 pp. 5, 89, 184, 201, 255 and 265 and every page naming 201; q2013 CYAQRTH conditions; q1999 p. 147, q2001 p. 143, q2003 pp. 1 and 102; `cross_sec_weights_11` p. 13, `_13` p. 12, `_15` p. 14 and `_17` pp. 13–14 (calibration-table contexts); `fam1977_77FAM` p. 98, `psid77w10` p. 188, `psid87w20v1` p. 109, `fam2011_QxQs` and `qxq2011_QxQs` p. 101; `dust09_hh_codebook` pp. 1 and 3–6 and `dust13_hh_codebook` pp. 1 and 4–7 (codes and labels only); `dust09_UserGuide` p. 1; `dust13_UserGuide` pp. 1–3; `long_weight_17` pp. 1 and 9; `long_weight_21` pp. 1 and 4; `cross_sec_weights_21` p. 11; the capture's copy of `IND2023ER_codebook.pdf` p. 523. `psid_documents_inventory.json` and `browser_digests.txt`: searched.
+- `PSID/ind2023er/IND2023ER_codebook.pdf` p. 523 (ER33219's note and code labels; counts masked).
+- `PSID/family/2015/FAM2015ER_codebook.pdf` pp. 1966–1980 (variable scan; pp. 1968–1969 displayed with numbers masked, and ER65317's definition unmasked), `PSID/family/2017/FAM2017ER_codebook.pdf` pp. 2 and 2019–2029 (p. 2021 masked; the Release 2 lines of pp. 2 and 2090), `PSID/family/2017/Fam2017er_readme.pdf` p. 1 (release notes), `PSID/family/2019/fam2019er_codebook.pdf` pp. 2005–2015 (p. 2006 masked), and the full text of the 2019, 2021 and 2023 family codebooks, searched for `uncooperative` (page numbers only). `ls` of `PSID/family/2017` showed data file names; none was opened.
+- Archived sources: `long_weight_19` pp. 8 and 13–16 (masked) and a full-text search; `cross_sec_weights_19` pp. 9, 10 and 14; `cross_sec_weights_17` pp. 1 and 5 and keyword page lists; `cross_sec_weights_23` pp. 2 and 10; `UserGuide2019` p. 38; `documents_20260813.html` (search for DUST).
+- Through the tests and probe scripts, which print only booleans or page numbers: every page cited in the research record, §16a and the registry quotes and anchors, and their neighbouring pages.
+- GitHub's public `actions/runner-images` Ubuntu 24.04 readme, fetched with `gh api` and searched for Poppler.
+
+### Third verification (three in-session Opus 5.5 subagents)
+
+Each was told to obey `EV/RESTRICTED-FILES.md`, write nothing in the workspace and list what it opened. By their reports:
+
+- **Logic:** `EV/RESTRICTED-FILES.md`; the review; the specification (lines 60–170, 96, 104, 656, 1375–1600, 1688–1767) and draft 3 (lines 1, 12, 104, 134, 150–162, 188, 656, 660, 751, 1083–1084, 1358, 1369, 1376–1394, 1475, 1528, 1566, 1581, 1606, some shown by a search) and `883ea48`'s lines 84, 1423, 1425, 1437, 1439, 1443, 1516, 1526 and 1563; the research record; the roles and weights registries (entries named above) and all registries by script; the master record (lines 1–101); both test files in part; both weights manifests; `cross_sec_weights_17` p. 9 (masked); q2015 p. 190; a search of this file; incidental search lines of the saved FAQ (lines 420 and 508) and `tests/test_gate1_qrf_candidate6.py` line 192.
+- **Sources:** `EV/RESTRICTED-FILES.md`; the research record; the specification (§16a); the weights and roles entries; the saved FAQ, documents page and technical-paper list; `DataRelease-May2019`, the five user guides, `fam2015_QxQs`, `cross_sec_weights_23` and the weights manifests; `FAM2015ER` pp. 6 and 1967–1980, `FAM2017ER` pp. 2020–2029, its readme and introduction (p. 1), the 2019, 2021 and 2023 family codebooks (search; 2019 pp. 2005–2015 viewed), `IND2023ER_codebook` pp. 523, 916, 978 and 1224 with its readme and introduction; the text of all 494 capture PDFs (searched), with pages viewed in q1999, q2001, q2003, q2009 and q2015–q2023, the weight reports of 2009–2021, the DUST household codebooks and `dust13_UserGuide` p. 1. It reported displaying small whole-file percentages for the 2015 OFUM accuracy codes, DUST 2009 household counts, whole-file counts on `IND2023ER_codebook` pp. 523 and 916, two ACS population totals from Table A2a of `cross_sec_weights_19`, and `long_weight_19` p. 20's remark that the 2017 immigrant sample's average weights exceed the Core sample's.
+- **Tests and provenance:** `EV/RESTRICTED-FILES.md`; the review; the three test files; the manifest; the research record; the specification (lines 68–94 and 1375–1599); the registries (parsed); `.github/workflows/tests.yml`; draft 3; the text layers of every cited PDF (counts and page numbers only); the 50 U1-pinned files (hashed). It ran mutation copies under `/tmp/u2verify3-tests/`, reading draft 3 from the workspace's Git objects without writing to them.
+
+### Incidental exposure
+
+Whole-sample PSID documentation figures were displayed: the numeric cells that matched the value search in the 2011–2017 cross-sectional weight reports' calibration tables, the DUST 2013 file sizes in its user guide's contents, and, by the verifiers, the items listed above. None concerns the 1946–55 cohort or the Boomers report, none is used for a finding, and none is reproduced in any document.
+
+### Files written
+
+- `docs/design/boomers2004_1946_55_comparison.md` (§§16a, 17 and 19 only), `docs/design/u2_m1b_psid_research.md`, `docs/design/u2_m1_source_adjudication.md` (two summary rows and two registry rows), this section.
+- `data/external/track_u2/weights.json` (`2017.cross_section_weight`), `roles.json` (`2015.relationship.20`) and `u1_identity.json` (the specification pin only).
+- `tests/data/track_u2/psid_docs/manifest.json`, `tests/track_u2/test_adjudication_applied.py`, `tests/track_u2/test_psid_research_sources.py`.
+- Scratch: `SCRATCH3`. Early in the job three helper scripts (`page.sh`, `varscan.py`, `pagesof.py`) were written into the first job's scratch `/tmp/u2m1bfix`, and its `lw19.txt` was rewritten with the same extraction.
+
+No U1 file, engine file, `gates.yaml`, `runs/*.json` or milestone-2 module was edited.
+
+### Checks the review could not run
+
+Run at the final state:
+
+- SHA-256 and byte size: all 12 archived sources match the manifest, and all 24 pinned documents match their SHA-256 and byte size. Every `identical: true` local-capture claim holds.
+- U1: the branch's merge base with `origin/master` is `d978d966`, the pinned `base_commit`. None of the 50 U1-pinned files is among the 164 files that `git diff origin/master...HEAD` lists, all 50 hash to their pins, and `origin/master` has not changed any of them since. No engine, `gates.yaml` or `runs/` file changed.

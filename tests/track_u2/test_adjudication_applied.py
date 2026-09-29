@@ -828,6 +828,7 @@ def test_psid_documentation_manifest():
             # In the repository: hash it here. PSID/ files are hashed by
             # test_psid_research_sources.py against the staged root.
             raw = (ROOT / pinned["file"]).read_bytes()
+            assert len(raw) == pinned["bytes"]
             assert hashlib.sha256(raw).hexdigest() == pinned["sha256"]
         # Wherever a registry pins the same file, the digests agree, and a
         # note that names a pinning registry is true.
