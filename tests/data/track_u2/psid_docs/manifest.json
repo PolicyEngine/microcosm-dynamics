@@ -2,6 +2,12 @@
   "purpose": "U2 milestone 1b Part B: official PSID documentation consulted for three documentary blockers. Documentation only; no survey records.",
   "created_utc": "2026-09-28T23:11:56Z",
   "research_record": "docs/design/u2_m1b_psid_research.md",
+  "psid_root": {
+    "symbol": "PSID",
+    "environment_variable": "POPULACE_DYNAMICS_PSID_DIR",
+    "default": "~/PolicyEngine/psid-data",
+    "note": "Paths beginning 'PSID/' resolve against this root with the precedence of populace_dynamics.data.psid: the environment variable, else the default. The research record's PSID is /Users/maxghenis/PolicyEngine/psid-data. Tests that need a file under the root skip with an explicit reason when it is not staged."
+  },
   "live_site_status": "Every live request to psidonline.isr.umich.edu on 2026-09-28 (curl, urllib and WebFetch) returned HTTP 403 with a Cloudflare security challenge, so sources come from Internet Archive raw snapshots of the official URLs or from the local browser capture of the official documentation page. Snapshot bytes were compared with the local capture where both exist.",
   "sources": [
     {
@@ -282,7 +288,7 @@
     {
       "file": "PSID/documentation/capture1/q2015.pdf",
       "sha256": "f3a4613bc8c1017f7cb40b30db4034d5f9a9234aad8022679ecd5c399f42e4e8",
-      "note": "Pinned by the pension registry. PDF pp. 5 (CYAQRTH '101 \u2013 982; RTH Lookup List'), 89, 104, 131 (G105RTHLAB 'RTH Lookup'), 166 and 217 (OS66CKPT).",
+      "note": "Pinned by the pension registry. PDF pp. 5 (CYAQRTH '101 – 982; RTH Lookup List'), 89, 104, 131 (G105RTHLAB 'RTH Lookup'), 166 and 217 (OS66CKPT).",
       "blockers": [
         "male_code20_2015"
       ]
@@ -363,6 +369,433 @@
       "file": "PSID/documentation/capture1/q2011.pdf",
       "sha256": "f3e0e374cd53c4164b37ae37a6e6eb0ab04dde0fa37fb339f8bb959fea70853f",
       "note": "Not pinned by any registry; pinned here. PDF p. 105: refers to an 'RTH Lookup' without printing it (the 2015 lookup-list search).",
+      "blockers": [
+        "male_code20_2015"
+      ]
+    }
+  ],
+  "research_quotes": [
+    {
+      "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+      "page": 6,
+      "text": "2 Female"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "page": 89,
+      "text": "CYAQRTH=202, 222"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "page": 166,
+      "text": "CYAQRTH=202, 222"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/UserGuide2017.pdf",
+      "page": 13,
+      "text": "From 1968-2015, PSID conformed to the Census Bureau conventions' in place at the time the study began by designating the husband in households with heterosexual married adults, the 'Head'."
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 792,
+      "text": "From 1968-2015, PSID conformed to the Census Bureau conventions' in place at the time the study began by designating the husband in households with heterosexual married adults, the 'Head'.",
+      "question": 69
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 829,
+      "text": "If this person is female and she has a (male) spouse or partner in the FU, then he is designated as Reference Person. ... However, if the husband or boyfriend is incapacitated and unable to fulfill the functions of Reference Person, then the FU will have a female Reference Person.",
+      "question": 73
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 833,
+      "text": "From 1968 to 2015, a married male Head ... might become incapacitated in some way. ... In these cases, the female half of the couple was made Head and the husband became Husband of Head. A Husband of Head was asked the same questions as an Ofum. A male Head could also have been made Husband of Head if the female half of the couple insisted on being the Head, the female half of the couple was adamant about not giving out information about her husband, or the husband was adamant about not wanting to be included in the study. A Husband of Head had the Relationship to Head code 9 or 90.",
+      "question": 74
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/fam2015_QxQs.pdf",
+      "page": 144,
+      "text": "Here we are double-checking that you got permission from study staff to make a male spouse into Husband of Head instead of Head. ... It means that a lot of data that should have been collected about the person didn't get collected."
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 839,
+      "text": "If the person who moves in is married to the Head, they are of course, male Head and Wife (code 20), regardless of time living in the FU.",
+      "question": 75
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 843,
+      "text": "Starting in 2017, the Girlfriend or Boyfriend can be the same sex as the Reference Person",
+      "question": 75
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 845,
+      "text": "PSID did not distinctively label same sex cohabitors prior to 2017.",
+      "question": 75
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "page": 978,
+      "text": "90 Uncooperative legal spouse of Head (this individual is unable or unwilling to be designated as Head)"
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "page": 978,
+      "text": "98 Other nonrelatives (includes same-sex partners, friends of children of the FU, etc.)"
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "page": 978,
+      "text": "WTR SAME SEX PARTNER OF HD 15"
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "page": 978,
+      "text": "Whether this person is the same-sex partner of Head. This variable was new for the 2015 Wave."
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "page": 978,
+      "text": "This person was identified by the interviewer as the same sex-partner of Head"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/UserGuide2015.pdf",
+      "page": 33,
+      "text": "The other new variable added to the Individual File in 2015 is an indicator whether an OFUM reported living in the Family Unit is the same-sex partner of Head (ER34304)."
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/UserGuide2017.pdf",
+      "page": 35,
+      "text": "As of 2017, same-sex partners of the Reference Person are now designated as Spouse/Partner in the Relation to Reference Person variable (ER34503) rather than as an OFUM. Therefore the 2015 indicator ... (ER34304) is redundant and has been dropped for 2017."
+    },
+    {
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "page": 104,
+      "text": "FUP1YEAR[I].AQRTH.ORD>222"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 873,
+      "text": "Considerably less detail is collected for other family unit members (OFUMs).",
+      "question": 79
+    },
+    {
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "page": 217,
+      "text": "R=Head and there is a FU(MI) Wife/”Wife” or Girlfriend; or R=Female Head and there is a FU(MI) Husband of Head or Boyfriend"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 796,
+      "text": "Starting with the 2015 wave, the term Spouse/Partner has replaced Wife/“Wife”. Spouse indicates a legal marriage, while Partner is a cohabiting, non-legally married partner, where the couple can consist of heterosexual or same sex couples.",
+      "question": 70
+    },
+    {
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "page": 5,
+      "text": "101 – 982; RTH Lookup List"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "page": 131,
+      "text": "RTH Lookup"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2013.pdf",
+      "page": 5,
+      "text": "101 – 982; RTH Lookup List"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2013.pdf",
+      "page": 115,
+      "text": "RTH Lookup"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2011.pdf",
+      "page": 105,
+      "text": "RTH Lookup"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "page": 5,
+      "text": "101. Male Head 102. Female Head 201. Male Spouse 202. Female Spouse 221. Male Partner"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "page": 131,
+      "text": "901. Uncooperative Male Spouse"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "page": 131,
+      "text": "902. Uncooperative Female Spouse"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "page": 131,
+      "text": "921. Uncooperative Male Partner"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "page": 131,
+      "text": "922. Uncooperative Female Partner"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "page": 251,
+      "text": "901. Uncooperative Male Spouse"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "page": 251,
+      "text": "902. Uncooperative Female Spouse"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "page": 251,
+      "text": "921. Uncooperative Male Partner"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "page": 251,
+      "text": "922. Uncooperative Female Partner"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "page": 249,
+      "text": "901. Uncooperative Male Spouse"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "page": 249,
+      "text": "902. Uncooperative Female Spouse"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "page": 249,
+      "text": "921. Uncooperative Male Partner"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "page": 249,
+      "text": "922. Uncooperative Female Partner"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "page": 102,
+      "text": "Spouse/Partner (CYAQRTH=201-222, CYFUHU=FU, FUMI)"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "page": 102,
+      "text": "G49 Rule"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "page": 204,
+      "text": "G49 RULE: Whether Spouse-Partner in FU (CYAQRTH=201-222, CYFUHU=FU, FUMI)"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "page": 202,
+      "text": "G49 RULE: Whether Spouse-Partner in FU (CYAQRTH=201-222, CYFUHU=FU, FUMI)"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "page": 103,
+      "text": "CYAQRTH=301-882 or 951-982"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "page": 125,
+      "text": "CYAQRTH=301-882 or 951-982"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "page": 205,
+      "text": "CYAQRTH=301-882 or 951-982"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "page": 243,
+      "text": "CYAQRTH=301-882 or 951-982"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "page": 203,
+      "text": "CYAQRTH=301-882 or 951-982"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "page": 241,
+      "text": "CYAQRTH=301-882 or 951-982"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "page": 95,
+      "text": "AQRTH>222"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 835,
+      "text": "Once the study started coding same sex relationships in 2017, the Husband of Head Relationship was dropped. In its place, the study uses Uncooperative Spouse (... code 90), or Uncooperative Partner (... code 92). These designations are used when one half of the couple is adamant about not giving information about the other half, or when one half adamantly refuses to have their information included. In rare cases, these Relationships to Reference Person will be used when the sample half of a couple has moved out of the FU (family unit) and into an institution and is still in an institution the next wave.",
+      "question": 74
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/UserGuide2017.pdf",
+      "page": 62,
+      "text": "Weight variables CORE/IMM INDIVIDUAL CROSS-SECTION WT (ER34651) on the individual file and the 2017 CROSS-SECTIONAL FAMILY WEIGHT (ER71571) on the family file have been updated to include the NIS-2017 sample with Release 2 of PSID-2017 data."
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/DataRelease-May2019.pdf",
+      "page": 1,
+      "text": "CROSS WAVE INDIVIDUAL FILE 1968-2017"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/DataRelease-May2019.pdf",
+      "page": 1,
+      "text": "Release 2 notes: ... Users should note the weights for the 2017 Immigrant individuals remain zero and will be updated in Release 3."
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_17.pdf",
+      "page": 3,
+      "text": "This 2017 New Immigrant sample is not covered by this document but detailed information about the post-1997 immigrant sample will be available from the PSID website."
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_17.pdf",
+      "page": 9,
+      "text": "The 2017 cross-sectional weights were post-stratified to the population totals that excluded the foreign-born individuals who entered the U.S. after 1997 ... detailed information about 2017 New Immigrant sample and its weighting methodology will be available from the PSID website."
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 1,
+      "text": "2019 PSID Cross-Sectional Individual and Family Unit Weights"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 2,
+      "text": "A cross-sectional family weight was created in 2017 to represent U.S. families - including those with post-1997 immigrants added as part of the 2017 New Immigrant Sample."
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 7,
+      "text": "we started to use a different approach to do the calibration since 2017 that accounts for the correlation between the survey response and calibration dimensions."
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 17,
+      "text": "Distribution of PSID Cross-Sectional Individual Weights: 1997-2019"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 17,
+      "text": "Not Used"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 17,
+      "text": "group quarters were excluded from the ACS estimate in 2017"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 17,
+      "text": "Donut hole family units were excluded from the ACS estimate in 2017"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 4,
+      "text": "See Chang et al. (2021) for the details of the sample recruitment of the 2017 Immigrant sample."
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/long_weight_19.pdf",
+      "page": 1,
+      "text": "Construction and Evaluation of the 2019 Longitudinal Individual and Family Weights"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/long_weight_19.pdf",
+      "page": 2,
+      "text": "This technical report documents the sample design of the 2017 Immigrant sample and the methodological approach to creating the longitudinal weights constructed for the family units and individuals from the 2019 Panel Study of Income Dynamics (PSID-2019)."
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 1,
+      "text": "June 2026"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 14,
+      "text": "Variable Names for PSID Cross-Sectional Weights"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 13,
+      "text": "Distribution of PSID Cross-Sectional Individual Weights: 1997-2023"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 13,
+      "text": "Not Used"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 13,
+      "text": "recent immigrants born between 1960 and 1971 (as well as post-1997 immigrants who co-reside with individuals born in these years) were not part of the PSID NIS-2017 sample"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 13,
+      "text": "the ‘donut hole’ group"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 13,
+      "text": "Individuals living in the donut hole families and individuals who are recent (post-1997) immigrants but live in group quarters were excluded from the ACS estimate in 2017"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 2,
+      "text": "The population characteristics used for calibration were based on CPS estimates from 1997 to 2013 and have been based on ACS estimates since 2015."
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 2,
+      "text": "The 2017 new immigrant sample have zero longitudinal family weight in 2017 so they would be excluded from the estimates in 2017."
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 6,
+      "text": "we started to use a different approach to select the calibration variables since 2017 that ensures that calibration variables are ones that are correlated with both survey response and survey outcome variables."
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 3,
+      "text": "In 2017, a baseline sample of post-1997 immigrant families and individuals was added to PSID."
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 3,
+      "text": "See Chang et al. (2021) for the details of the sample recruitment of the 2017 Immigrant sample."
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "page": 1224,
+      "text": "This variable has been updated for all individuals in 2017 including the Immigrant 2017 sample."
+    }
+  ],
+  "documentation_searches": [
+    {
+      "question": "Where is the 2015 'RTH Lookup List' that q2015 p. 5 names for CYAQRTH?",
+      "searched_utc": "2026-09-29",
+      "scope": "PSID/documentation (its only subdirectory is capture1): the text layers of all 494 PDFs (Poppler pdftotext -layout 26.09.0) and the HTML, JSON and text metadata files. Documentation only; no data file was searched.",
+      "patterns": [
+        "RTH Lookup (any case)",
+        "lookup list / look-up list (any case)",
+        "printed three-digit relationship values 101, 201, 202 or 901 followed by a relationship word"
+      ],
+      "result": "Absent. 'RTH Lookup' occurs only as references: q2011 p. 105, q2013 pp. 5 and 115, q2015 pp. 5 and 131. Every other lookup-list hit is a state, country, car-model or Child Development Supplement list. The first instrument that prints the CYAQRTH values is q2017 p. 5; q2019 pp. 130-131, q2021 p. 251 and q2023 p. 249 follow.",
       "blockers": [
         "male_code20_2015"
       ]

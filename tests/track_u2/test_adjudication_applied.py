@@ -4,8 +4,10 @@ Documentary checks only: no survey records, counts or outcome calculations.
 """
 
 import hashlib
+import html
 import json
 import re
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -255,6 +257,27 @@ def test_corrected_specification_citations(documents):
         assert entry["citation_correction"]["found_by"].startswith("u2-m1b")
 
 
+def draft_3_bytes(record):
+    """Read ratified draft 3 from Git history (CI fetches full history)."""
+    blob = f"{record['draft_3_commit']}:{SPEC}"
+    found = subprocess.run(
+        ["git", "-C", str(ROOT), "rev-parse", blob],
+        capture_output=True,
+        text=True,
+    )
+    assert (
+        found.returncode == 0
+    ), f"draft 3 must come from Git history, not a copy: {found.stderr}"
+    assert found.stdout.strip() == record["draft_3_git_blob"]
+    raw = subprocess.run(
+        ["git", "-C", str(ROOT), "cat-file", "blob", blob],
+        capture_output=True,
+        check=True,
+    ).stdout
+    assert hashlib.sha256(raw).hexdigest() == record["draft_3_sha256"]
+    return raw
+
+
 def test_specification_revision_keeps_cited_lines(documents):
     pins = json.loads(
         (registry.REGISTRY_DIRECTORY / "u1_identity.json").read_text()
@@ -266,8 +289,10 @@ def test_specification_revision_keeps_cited_lines(documents):
     assert record["draft_3_sha256"] == (
         "7badf89e896ece28abcea1cb2db9bd55d468346b405ed06eb357aaf5c7b51df2"
     )
-    lines = raw.decode("utf-8").split("\n")
-    assert lines[2].startswith("- **Version:** `u2-draft-4`")
+    lines = raw.split(b"\n")
+    draft_3 = draft_3_bytes(record).split(b"\n")
+    assert lines[2].startswith(b"- **Version:** `u2-draft-4`")
+    assert draft_3[2].startswith(b"- **Version:** `u2-draft-3`")
     cited = {
         citation["line"]
         for document in documents.values()
@@ -277,10 +302,41 @@ def test_specification_revision_keeps_cited_lines(documents):
     }
     assert {int(line) for line in record["cited_lines_sha256"]} == cited
     for line in cited:
-        text = lines[line - 1]
-        assert text.strip(), line
-        digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        # Byte-equal to draft 3's line with the same number.
+        assert lines[line - 1] == draft_3[line - 1], line
+        assert lines[line - 1].strip(), line
+        digest = hashlib.sha256(lines[line - 1]).hexdigest()
         assert digest == record["cited_lines_sha256"][str(line)], line
+    # §16a is inserted where draft 3 had §17, so every earlier line keeps its
+    # draft-3 number and text except the version, status and §15 version.
+    section_16a = lines.index(
+        b"## 16a. Proposed amendments for `u2-draft-4` (pending Max's ruling)"
+    )
+    assert draft_3[section_16a].startswith(b"## 17. ")
+    changed = {
+        number
+        for number in range(1, section_16a + 1)
+        if lines[number - 1] != draft_3[number - 1]
+    }
+    assert changed == {3, 4, 1047}
+    assert cited < set(range(1, section_16a + 1))
+
+
+def test_section_16a_quotes_draft_3_verbatim():
+    record = json.loads(
+        (registry.REGISTRY_DIRECTORY / "u1_identity.json").read_text()
+    )["u2_specification"]
+    draft_3 = draft_3_bytes(record).decode("utf-8").split("\n")
+    quoted = re.findall(
+        r"^> (\d+): (.*)$",
+        (ROOT / SPEC).read_text(encoding="utf-8"),
+        re.M,
+    )
+    # Draft-3 lines that bar counts or require documents before registration.
+    assert [int(number) for number, _ in quoted] == [152, 154, 158, 160, 1391]
+    for number, text in quoted:
+        assert text == draft_3[int(number) - 1], number
+    assert draft_3[1390].startswith("Required fields remain **TO VERIFY**")
 
 
 def test_released_dependencies(documents):
@@ -353,8 +409,104 @@ def test_psid_documentation_manifest():
             assert source["archive_url"].endswith(source["url"])
     covered = {b for s in manifest["sources"] for b in s["blockers"]}
     assert covered == blockers
+    root = manifest["psid_root"]
+    assert root["symbol"] == "PSID"
+    assert root["default"] == "~/PolicyEngine/psid-data"
+    registry_hashes = {}
+    for name in registry.REGISTRY_NAMES:
+        for source in registry.load_registry(name)["sources"]:
+            registry_hashes.setdefault(source["file"], {})[name] = source[
+                "sha256"
+            ]
+    pinned_files = [pinned["file"] for pinned in manifest["pinned_elsewhere"]]
+    assert len(pinned_files) == len(set(pinned_files)) == 14
+    assert not set(pinned_files) & {s["file"] for s in manifest["sources"]}
     for pinned in manifest["pinned_elsewhere"]:
-        path = ROOT / pinned["file"]
+        assert re.fullmatch(r"[0-9a-f]{64}", pinned["sha256"])
+        assert set(pinned["blockers"]) <= blockers and pinned["blockers"]
+        assert pinned["file"].startswith(("tests/", "PSID/")), pinned
         if pinned["file"].startswith("tests/"):
-            digest = hashlib.sha256(path.read_bytes()).hexdigest()
-            assert digest == pinned["sha256"]
+            # In the repository: hash it here. PSID/ files are hashed by
+            # test_psid_research_sources.py against the staged root.
+            raw = (ROOT / pinned["file"]).read_bytes()
+            assert hashlib.sha256(raw).hexdigest() == pinned["sha256"]
+        # Wherever a registry pins the same file, the digests agree, and a
+        # note that names a pinning registry is true.
+        for digest in registry_hashes.get(pinned["file"], {}).values():
+            assert digest == pinned["sha256"], pinned["file"]
+        for claimed in re.findall(
+            r"Pinned by the (\w+) registry", pinned["note"]
+        ):
+            assert claimed in registry_hashes[pinned["file"]], pinned["file"]
+    assert "cross_sec_weights_23.pdf" in " ".join(pinned_files)
+    # Every quoted document is archived here or pinned.
+    known = pinned_files + [s["file"] for s in manifest["sources"]]
+    assert {quote["file"] for quote in manifest["research_quotes"]} <= set(
+        known
+    )
+
+
+def faq_questions():
+    """Map each saved-FAQ line (grep -n numbering) to its question number."""
+    lines = (DOCS / "FAQ_20260813.html").read_bytes().decode("utf-8")
+    question, owner = None, {}
+    for number, line in enumerate(lines.split("\n"), 1):
+        text = " ".join(html.unescape(re.sub(r"<[^>]+>", " ", line)).split())
+        heading = re.match(r"(\d+)\. \S", text)
+        if heading:
+            question = int(heading.group(1))
+        elif text:
+            owner[number] = question
+    return owner
+
+
+def test_faq_line_citations_count_lf_lines():
+    """Finding 3: every FAQ line cited lies in the question it is cited for."""
+    raw = (DOCS / "FAQ_20260813.html").read_bytes()
+    # One bare CR, on line 625: splitlines() numbering runs one high after
+    # it, which is how the first version of the research record miscounted.
+    bare = [m.start() for m in re.finditer(rb"\r(?!\n)", raw)]
+    assert [raw[:at].count(b"\n") + 1 for at in bare] == [625]
+    owner = faq_questions()
+    manifest = json.loads((DOCS / "manifest.json").read_text())
+    pairs = [
+        (quote["question"], quote["line"])
+        for quote in manifest["research_quotes"]
+        if "line" in quote
+    ]
+    research = (ROOT / manifest["research_record"]).read_text(encoding="utf-8")
+    pairs += [
+        (int(q), int(line))
+        for q, line in re.findall(r"question (\d+) \(line (\d+)\)", research)
+    ]
+    pairs += [
+        (int(q), int(line))
+        for q, line in re.findall(
+            r"question (\d+), saved-file line (\d+)",
+            json.dumps(registry.load_registry("roles")),
+        )
+    ]
+    assert len(pairs) >= 18
+    for question, line in pairs:
+        assert owner.get(line) == question, (question, line)
+    faq = next(
+        s
+        for s in manifest["sources"]
+        if s["file"].endswith("FAQ_20260813.html")
+    )
+    listed = re.search(r"lines ([\d, and]+) of the saved HTML", faq["cited"])
+    cited = [int(n) for n in re.findall(r"\d+", listed.group(1))]
+    assert cited == [792, 796, 829, 833, 835, 839, 841, 843, 845, 873]
+    questions = {int(n) for n in re.findall(r"\b(\d\d)\b", faq["cited"][:40])}
+    assert (
+        {owner[line] for line in cited}
+        == questions
+        == {69, 70, 73, 74, 75, 79}
+    )
+    roles = {e["id"]: e for e in registry.load_registry("roles")["entries"]}
+    faq_citations = [
+        c["line"]
+        for c in roles["2015.relationship.90"]["citations"]
+        if c["file"].endswith("FAQ_20260813.html")
+    ]
+    assert faq_citations == [833] and owner[833] == 74
