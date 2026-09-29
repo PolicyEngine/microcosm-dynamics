@@ -168,9 +168,20 @@ ROLE_CONTEXT_KINDS = GATES
 DECLARED = INVENTED_DECLARED
 
 #: SHA-256 of the committed milestone-1 registries as adjudicated (commit
-#: 883ea48: 0eae214 applied the independent source adjudication).  A
-#: registry change after a ruling is its own reviewed commit and moves
-#: these pins in the same commit (section 16a, "Registry effect").
+#: 883ea48: 0eae214 applied the independent source adjudication) and as
+#: revised by milestone 1b (b948d6b).  Milestone 1b changed only the roles
+#: and weights registries, and only their citations and prose
+#: (``part_b_finding``, ``open_question``, ``corroboration``,
+#: ``construction``, ``question``); no status, disposition, dependency,
+#: action or layout field moved, so every route that refused before still
+#: refuses.  One refusal's wording changed: the loader quotes a TO VERIFY
+#: entry's ``question`` in its message (``u2_source_registry.py:427``),
+#: and 1b revised the 2017 cross-sectional weight's question.
+#: ``tests/track_u2/test_u2_mappings.py``,
+#: ``test_milestone_1b_moved_only_citations_and_prose``, pins each
+#: registry's gate projection at 883ea48.  A registry change after a
+#: ruling is its own reviewed commit and moves these pins in the same
+#: commit (section 16a, "Registry effect").
 REGISTRY_SHA256: dict[str, str] = {
     "income": (
         "6e3034f35b5d8f614a2f05addae90441052141a85483bb8ee128c0b6ae6ac910"
@@ -185,13 +196,13 @@ REGISTRY_SHA256: dict[str, str] = {
         "49b4bdad682b8defa4fc628257b366bab46087baacea82e60b57657c99392978"
     ),
     "roles": (
-        "de76550e3502173d6456f2ff00856ba69ca20a1bd9c27e2b6fd50cbb0c534895"
+        "5dbd2c13c169e312e7db7fa033af738388a7997887e89a54d53c2c67e24a2228"
     ),
     "support": (
         "5102825d8555e1e8648dfafbd4e6c72eef78d09e453a6d25279ec3b9298d5109"
     ),
     "weights": (
-        "0413a7f425f31bdbb83ed71612ba1d8eccf4be4d62e9caa6ef91b95d3e11b10f"
+        "356fcbd8dd19f4baf3e34406d75b4a6ae608dc25330d975ecdb9c2d9bb5cf84f"
     ),
     "design": (
         "56181372d412811af6d06f5c0d8d1e071049f7fb73c34bd394aaff8f5e0c2fd6"

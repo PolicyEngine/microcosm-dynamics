@@ -11,6 +11,8 @@ INVENTED DATA - NOT A COMPARISON.
 from __future__ import annotations
 
 import functools
+import hashlib
+import json
 
 import pandas as pd
 import pytest
@@ -34,6 +36,115 @@ def test_registries_are_the_pinned_milestone_1_bytes(committed_registries):
     assert dict(committed_registries.sha256) == sources.REGISTRY_SHA256
     assert tuple(sorted(committed_registries.documents)) == tuple(
         sorted(registry.REGISTRY_NAMES)
+    )
+
+
+#: Keys that hold citations or prose only.  The loader type-checks them
+#: (``u2_source_registry.py:262`` and ``:357-360``) and quotes ``question``
+#: in a TO VERIFY refusal message (``:427``), but no gate decision reads
+#: them: ``require_resolved`` refuses on status, blocking dependencies and
+#: a refusal action (``:425-436``).
+_PROSE_KEYS = frozenset(
+    {
+        "citations",
+        "construction",
+        "corroboration",
+        "open_question",
+        "part_b_finding",
+        "question",
+    }
+)
+
+#: SHA-256 of each registry's gate projection (every field except
+#: :data:`_PROSE_KEYS`, at any depth, as canonical JSON) at the
+#: adjudicated registries of commit 883ea48.  Milestone 1b (b948d6b)
+#: moved the roles and weights bytes, so :data:`sources.REGISTRY_SHA256`
+#: moved with them; these projection pins did not move, which is the
+#: evidence that milestone 1b changed citations and prose only.
+_ADJUDICATED_GATE_PROJECTION_SHA256 = {
+    "income": (
+        "51a568d57911e2beabc1ae39af2f9ac34c3f9005a97ab3325f1dc4a647d79555"
+    ),
+    "wealth": (
+        "6e325c1aca974e24cc85e9c6ed0443a5f330d4d971e2a1f3a6e3883c8e89cf9d"
+    ),
+    "individual": (
+        "4f53d5d2c3157e55c7ca62fb82cf82895ac37616838c3a48fe9769c0f2ea0b74"
+    ),
+    "pension": (
+        "66f51b857304b7718d7ec2a6fe07c924c80586f222a13c002f14108dca6022cf"
+    ),
+    "roles": (
+        "0fd3b8374e40430456aa06a788d13617bc766dee115bf262b6c3fd234887d285"
+    ),
+    "support": (
+        "0cddbbc5a6997850ea2bce0b90c1762da193f6eb251f3d00f0120d2c63f96bc6"
+    ),
+    "weights": (
+        "dd943cbe9cee30a1bd87724449a642999c7770e22c1134e79685078e73439969"
+    ),
+    "design": (
+        "16d455a184005365bb540ce660834c1250093f42e4d5a30cd2a1946cf9948e35"
+    ),
+}
+
+
+def _gate_projection(value):
+    if isinstance(value, dict):
+        return {
+            key: _gate_projection(item)
+            for key, item in value.items()
+            if key not in _PROSE_KEYS
+        }
+    if isinstance(value, list):
+        return [_gate_projection(item) for item in value]
+    return value
+
+
+def test_milestone_1b_moved_only_citations_and_prose():
+    """The milestone-1b pin test ``sources.REGISTRY_SHA256`` cites.
+
+    Every status, disposition, dependency, action, role and layout field
+    is where the adjudicated registries put it, so every route that
+    refused at 883ea48 still refuses at the current pins.
+    """
+    assert set(_ADJUDICATED_GATE_PROJECTION_SHA256) == set(
+        sources.REGISTRY_SHA256
+    )
+    for name, expected in _ADJUDICATED_GATE_PROJECTION_SHA256.items():
+        raw = (registry.REGISTRY_DIRECTORY / f"{name}.json").read_bytes()
+        assert hashlib.sha256(raw).hexdigest() == sources.REGISTRY_SHA256[name]
+        projection = json.dumps(
+            _gate_projection(json.loads(raw)),
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=False,
+            allow_nan=False,
+        ).encode("utf-8")
+        assert hashlib.sha256(projection).hexdigest() == expected, name
+
+
+def test_the_gate_projection_sees_a_moved_gate_field():
+    """A changed status is not prose: the projection hash moves."""
+    raw = (registry.REGISTRY_DIRECTORY / "weights.json").read_bytes()
+    document = json.loads(raw)
+    target = next(
+        entry
+        for entry in document["entries"]
+        if entry.get("status") == "TO VERIFY"
+    )
+    target["status"] = "RESOLVED"
+    target["question"] = "prose moves are ignored"
+    projection = json.dumps(
+        _gate_projection(document),
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        allow_nan=False,
+    ).encode("utf-8")
+    assert (
+        hashlib.sha256(projection).hexdigest()
+        != _ADJUDICATED_GATE_PROJECTION_SHA256["weights"]
     )
 
 
