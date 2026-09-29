@@ -323,6 +323,7 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "scripts.capture_track_u2_income_wealth",
         "scripts.capture_track_u2_ssi_parameters",
         "scripts.capture_track_u2_ssi_sources",
+    }
     assert u2_captures.issubset(module_paths)
     assert psid_exclusions.issubset(module_paths)
     graph_exclusions = {
