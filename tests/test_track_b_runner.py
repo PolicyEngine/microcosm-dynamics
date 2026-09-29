@@ -603,7 +603,11 @@ def test_cli_has_no_hash_that_could_override_the_committed_constant(
         "expected_commit",
         "output",
         "historical_reference",
+        "baseline_version",
     }
+    # v1 stays the default version, output and pass status.
+    assert calls[0]["baseline_version"] == runner.BIT_FOR_BIT
+    assert calls[0]["output"] == runner.DEFAULT_OUTPUT
 
 
 def test_reference_matching_monkeypatched_constant_is_accepted(
