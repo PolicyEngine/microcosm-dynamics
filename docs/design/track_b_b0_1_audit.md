@@ -838,15 +838,16 @@ necessary nor sufficient conditions. They are bounds conditional on the
 stated planning value, and the first version was wrong to call them
 necessary conditions.
 
-Side-A sizes are half the recorded full-support sizes. That is exact in
-expectation for the Kish size under a 50% person split, and
-conservative for the household-worst size.
+Side-A sizes are half the recorded full-support sizes. Under a 50%
+person split that is about the expected Kish size. It underestimates the
+household-worst size, because side A keeps at least half of it.
 
 **Participation, 3 percentage points.** A cell with participation rate
 p needs an effective size of N(m)·4p(1 − p). N(m) = 3,790, 5,351 and
 6,172 for m = 1, 6 and 16 is the worst case, p = 1/2. The table gives
-the smallest p at which each size suffices; by symmetry the cell is also
-feasible at 1 − p. "Any" means every p.
+the smallest p ≥ 1/2 at which each size suffices. The cell is feasible
+at any rate at least that far from 1/2, on either side. "Any" means
+every p.
 
 | Cohort and basis | Kish n_eff | Smallest feasible p (Kish), m = 1 / 6 / 16 | Household-worst n_eff | Smallest feasible p (household-worst), m = 1 / 6 / 16 |
 |---|---:|---|---:|---|
@@ -1055,9 +1056,11 @@ The defaults are proposals; none is adopted here.
      It must log every path it reads, as the U2 M1 builder did
      (`docs/design/u2_m1_runtime_exposure.json`).
      - The list covers 20 files, whole or by line range. It replaces
-       the first version's hand list, which missed boundary 2008,
-       `m6_projection_engine.md` §2.7.8, both lock addenda, the
-       candidate-2 program and `docs/forecasts/timeline_ledger.json`.
+       the first version's hand list. That list missed all 17
+       value-bearing ranges of `m6_projection_engine.md`, §2.7.8 among
+       them. It also missed both lock addenda, the candidate-2 program,
+       the rest of the candidate-3 program and
+       `docs/forecasts/timeline_ledger.json`.
      - The reviewer must not read the 2013 or 2015 family codebooks'
        frequency tables for labor income or its components. Concept
        checks use the variable descriptions only (section 4.2).
@@ -1199,9 +1202,8 @@ It read structure without content:
   addendum;
 - token-shape summaries of those files, `m6_candidate3_lock_addendum.md`,
   the q\* and ρ\* notes, `paper.qmd` and string values in five JSON
-  files.
-  These list the matching pattern families and a count of decimal
-  numbers per line, with no line content.
+  files. These list the matching pattern families and a count of
+  decimal numbers per line, with no line content.
 
 It also read the codebook definitions of `ER52237`, `ER52249`,
 `ER58038`, `ER58050`, `ER65216` and `ER65244`, with every digit masked
