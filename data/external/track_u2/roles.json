@@ -543,7 +543,7 @@
         },
         {
           "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
-          "line": 834
+          "line": 833
         },
         {
           "file": "EV/phase2-20260927/out/u2-adjudicate.md",
@@ -557,7 +557,7 @@
       "marital_resolution": true,
       "income_role": "ofum",
       "resolution": "Independent adjudication D (amendment 1): OFUM income collection and exclusion from the standard spouse loop are documented. I p. 978: 'Uncooperative legal spouse of Head'. The 2015 spouse income and pension loops admit only the Wife/'Wife' codes (q2015 p. 89 G49CKPT and p. 166 P70CKPT: 'CYFUHU=1, 4 & CYAQRTH=202, 222'), while the Big OFUM income series admits 'FUP1YEAR[I].AQRTH.ORD>222' (q2015 p. 104). Code-90 income is collected in the OFUM series and excluded from the standard spouse loop. The declared legal-spouse annuity and marital-resolution conventions are unchanged.",
-      "corroboration": "Corroborated by the PSID FAQ (Wayback snapshot of 13 August 2026, question 74): 'From 1968 to 2015, ... the husband became Husband of Head. A Husband of Head was asked the same questions as an Ofum. ... A Husband of Head had the Relationship to Head code 9 or 90.'",
+      "corroboration": "Corroborated by the PSID FAQ (Wayback snapshot of 13 August 2026, question 74, saved-file line 833): 'From 1968 to 2015, ... the husband became Husband of Head. A Husband of Head was asked the same questions as an Ofum. A male Head could also have been made Husband of Head if the female half of the couple insisted on being the Head, the female half of the couple was adamant about not giving out information about her husband, or the husband was adamant about not wanting to be included in the study. A Husband of Head had the Relationship to Head code 9 or 90.' The route is documented; how completely a withheld husband's OFUM income was reported is not, and this resolution concerns routing, not how much is reported.",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 105,

@@ -187,7 +187,7 @@
       "retrieval": "Internet Archive raw snapshot (id_) of the official URL; gzip transfer encoding decoded before saving; live site returned a Cloudflare challenge",
       "archive_url": "https://web.archive.org/web/20260813185816id_/https://psidonline.isr.umich.edu/Guide/FAQ.aspx",
       "archive_timestamp": "20260813185816",
-      "cited": "Questions 69, 70, 73, 74, 75 and 79 (lines 793, 797, 830, 834, 836, 840, 842, 844, 846 and 874 of the saved HTML)",
+      "cited": "Questions 69, 70, 73, 74, 75 and 79 (lines 792, 796, 829, 833, 835, 839, 841, 843, 845 and 873 of the saved HTML, counted as grep -n counts LF-terminated lines; recounted 2026-09-29. The first count split on a bare carriage return at line 625 and ran one line high.)",
       "blockers": [
         "male_code20_2015",
         "uncooperative_90_92_2019_2023"
@@ -282,7 +282,7 @@
     {
       "file": "PSID/documentation/capture1/q2015.pdf",
       "sha256": "f3a4613bc8c1017f7cb40b30db4034d5f9a9234aad8022679ecd5c399f42e4e8",
-      "note": "Pinned by the pension registry. PDF pp. 5, 89, 104, 166.",
+      "note": "Pinned by the pension registry. PDF pp. 5 (CYAQRTH '101 \u2013 982; RTH Lookup List'), 89, 104, 131 (G105RTHLAB 'RTH Lookup'), 166 and 217 (OS66CKPT).",
       "blockers": [
         "male_code20_2015"
       ]
@@ -338,9 +338,33 @@
     {
       "file": "PSID/documentation/capture1/q2017.pdf",
       "sha256": "733a9be8591080e09179857e672808d8cbf9b9ff351b2adf2c9e8200d893d9dc",
-      "note": "Pinned by the pension registry. PDF pp. 5, 95.",
+      "note": "Pinned by the pension registry. PDF pp. 5 (the first instrument that prints the CYAQRTH values, 101 to 982), 95.",
       "blockers": [
         "uncooperative_90_92_2019_2023"
+      ]
+    },
+    {
+      "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+      "sha256": "7dcb71f823e309a286b904531410243d58cde48b8f50079401856de9ac762238",
+      "note": "Pinned by the income registry. p. 6: ER60020, the 2015 spouse-sex variable, lists only '2 Female'.",
+      "blockers": [
+        "male_code20_2015"
+      ]
+    },
+    {
+      "file": "PSID/documentation/capture1/q2013.pdf",
+      "sha256": "5f966b9268ed428acd9454263296b31006220c69b33b6b36b8f6364436332c0d",
+      "note": "Pinned by the pension registry. PDF pp. 5 and 115: refer to the 'RTH Lookup List' without printing it (the 2015 lookup-list search).",
+      "blockers": [
+        "male_code20_2015"
+      ]
+    },
+    {
+      "file": "PSID/documentation/capture1/q2011.pdf",
+      "sha256": "f3e0e374cd53c4164b37ae37a6e6eb0ab04dde0fa37fb339f8bb959fea70853f",
+      "note": "Not pinned by any registry; pinned here. PDF p. 105: refers to an 'RTH Lookup' without printing it (the 2015 lookup-list search).",
+      "blockers": [
+        "male_code20_2015"
       ]
     }
   ]

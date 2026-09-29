@@ -58,7 +58,7 @@
     "note": "Moved out of the unchanged-byte list by u2-m1b: Part C writes the proposed revision u2-draft-4 into the specification. The draft-3 hash is the milestone-1 pin; the current hash pins u2-draft-4; every line a registry cites keeps its draft-3 number and text.",
     "draft_3_sha256": "7badf89e896ece28abcea1cb2db9bd55d468346b405ed06eb357aaf5c7b51df2",
     "version": "u2-draft-4",
-    "sha256": "862d3e9a7e220015b20a91c1c1c5365984d177f45e1cdeaeaab5d30b1c04b3fa",
+    "sha256": "ba11e27d0ae7872cbbceb2cfb412b4f5808cd0333e748040164751e0fd88d5a7",
     "cited_lines_sha256": {
       "74": "7b299c9e4473fd51d04bdfec51af83268e517181ab734d3e76ccd1c744f6daa9",
       "75": "44454cc04e6a50863035d69ccb53edec175b4ad70a19d8877437901d2deb8428",
