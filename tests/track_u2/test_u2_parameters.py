@@ -15,6 +15,8 @@ import json
 from pathlib import Path
 
 import pytest
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 from populace_dynamics.estimates import adjusted_poverty as ap
 from populace_dynamics.min_benefit_track_m import thresholds as track_m
@@ -238,3 +240,233 @@ def test_invented_life_table_only_in_an_invented_run(u2_params):
     parameters.check_u2_parameters(bundle, ap.INVENTED)
     with pytest.raises(parameters.U2ParameterError):
         parameters.check_u2_parameters(bundle, ap.REGISTERED_REAL)
+
+
+# ---------------------------------------------------------------------------
+# Review round 1, finding 3: the registered check verifies content, not the
+# provenance label.  Every altered value below is INVENTED.
+# ---------------------------------------------------------------------------
+@pytest.fixture(scope="module")
+def pinned():
+    """U2's registered bundle, read from the pinned files."""
+
+    return parameters.committed_u2_parameters()
+
+
+def _nested_copy(mapping):
+    return {
+        key: (_nested_copy(value) if isinstance(value, dict) else value)
+        for key, value in mapping.items()
+    }
+
+
+def _alter(params, component: str, location: tuple, value: float):
+    """``params`` with one value replaced and every provenance kept."""
+
+    if component in ("weighted_average", "matrix"):
+        table = _nested_copy(getattr(params.thresholds, component))
+        node = table
+        for key in location[:-1]:
+            node = node[key]
+        node[location[-1]] = value
+        return dataclasses.replace(
+            params,
+            thresholds=dataclasses.replace(
+                params.thresholds, **{component: table}
+            ),
+        )
+    if component in ("fbr_individual_monthly", "fbr_couple_monthly"):
+        schedule = dict(getattr(params.ssi, component))
+        schedule[location[0]] = value
+        return dataclasses.replace(
+            params,
+            ssi=dataclasses.replace(params.ssi, **{component: schedule}),
+        )
+    if component == "ssi_constant":
+        return dataclasses.replace(
+            params,
+            ssi=dataclasses.replace(params.ssi, **{location[0]: value}),
+        )
+    assert component == "qx", component
+    basis, sex, age = location
+    table = params.life_tables[basis]
+    qx = {key: tuple(values) for key, values in table.qx.items()}
+    qx[sex] = qx[sex][:age] + (value,) + qx[sex][age + 1 :]
+    return dataclasses.replace(
+        params,
+        life_tables={
+            **params.life_tables,
+            basis: dataclasses.replace(table, qx=qx),
+        },
+    )
+
+
+def test_the_pinned_bundle_passes_and_labels_are_unchanged(pinned):
+    parameters.check_u2_parameters(pinned, ap.REGISTERED_REAL)
+    assert pinned.thresholds.provenance["sha256"] == (
+        parameters.THRESHOLDS_SHA256
+    )
+
+
+@pytest.mark.parametrize(
+    "component, location",
+    [
+        # The round-1 review's case: one weighted average set to an
+        # INVENTED 1.0 under the pinned Track M provenance.
+        ("weighted_average", (2014, "one_65_plus")),
+        ("weighted_average", (2012, "two_65_plus")),
+        ("matrix", (2022, "one_65_plus", 0)),
+        ("fbr_individual_monthly", (2016,)),
+        ("fbr_couple_monthly", (2012,)),
+        ("ssi_constant", ("general_income_exclusion_monthly",)),
+        ("ssi_constant", ("resource_limit_couple",)),
+        ("qx", ("nchs_2000", "female", 67)),
+        ("qx", ("ssa_period_2004", "male", 80)),
+    ],
+)
+def test_an_altered_value_under_the_pinned_label_refuses(
+    pinned, component, location
+):
+    altered = _alter(pinned, component, location, 1.0)
+    assert parameters.parameters_content_sha256(altered) != (
+        parameters.parameters_content_sha256(pinned)
+    )
+    # The label still names the pinned captures ...
+    assert altered.thresholds.provenance == pinned.thresholds.provenance
+    assert altered.ssi.provenance == pinned.ssi.provenance
+    # ... and the invented run's checks still accept it (labels only) ...
+    parameters.check_u2_parameters(altered, ap.INVENTED)
+    # ... but the registered check reads the content.
+    with pytest.raises(parameters.U2ParameterError, match="provenance label"):
+        parameters.check_u2_parameters(altered, ap.REGISTERED_REAL)
+
+
+def test_an_in_place_edit_after_loading_refuses(pinned):
+    """The frozen dataclasses hold plain dicts: an in-place edit of a
+    loaded bundle is caught because the check rehashes the content."""
+
+    bundle = copy.deepcopy(pinned)
+    parameters.check_u2_parameters(bundle, ap.REGISTERED_REAL)
+    bundle.thresholds.weighted_average[2020]["one_65_plus"] += 1.0
+    with pytest.raises(parameters.U2ParameterError, match="thresholds"):
+        parameters.check_u2_parameters(bundle, ap.REGISTERED_REAL)
+
+
+def test_an_extra_threshold_year_refuses(pinned):
+    extra = _nested_copy(pinned.thresholds.weighted_average)
+    extra[2030] = dict(extra[2022])
+    bundle = dataclasses.replace(
+        pinned,
+        thresholds=dataclasses.replace(
+            pinned.thresholds, weighted_average=extra
+        ),
+    )
+    with pytest.raises(parameters.U2ParameterError, match="thresholds"):
+        parameters.check_u2_parameters(bundle, ap.REGISTERED_REAL)
+
+
+def test_the_content_digest_reads_numbers_not_labels_or_order(pinned):
+    digest = parameters.parameters_content_sha256(pinned)
+    relabelled = dataclasses.replace(
+        pinned,
+        thresholds=dataclasses.replace(
+            pinned.thresholds, provenance={"kind": "anything"}
+        ),
+    )
+    assert parameters.parameters_content_sha256(relabelled) == digest
+    reordered = dataclasses.replace(
+        pinned,
+        thresholds=dataclasses.replace(
+            pinned.thresholds,
+            weighted_average=dict(
+                reversed(list(pinned.thresholds.weighted_average.items()))
+            ),
+        ),
+    )
+    assert parameters.parameters_content_sha256(reordered) == digest
+    whole = {
+        year: {
+            row: int(v) if float(v).is_integer() else v for row, v in r.items()
+        }
+        for year, r in pinned.thresholds.weighted_average.items()
+    }
+    as_int = dataclasses.replace(
+        pinned,
+        thresholds=dataclasses.replace(
+            pinned.thresholds, weighted_average=whole
+        ),
+    )
+    assert parameters.parameters_content_sha256(as_int) == digest
+
+
+def _locations(pinned):
+    """Every value location the registered check covers."""
+
+    out = []
+    for year, rows in pinned.thresholds.weighted_average.items():
+        out += [("weighted_average", (year, row)) for row in rows]
+    for year, rows in pinned.thresholds.matrix.items():
+        for row, cells in rows.items():
+            out += [("matrix", (year, row, cell)) for cell in cells]
+    for name in ("fbr_individual_monthly", "fbr_couple_monthly"):
+        out += [(name, (year,)) for year in getattr(pinned.ssi, name)]
+    out += [
+        ("ssi_constant", (name,))
+        for name in (
+            "general_income_exclusion_monthly",
+            "earned_income_exclusion_monthly",
+            "earned_income_share_excluded",
+            "resource_limit_individual",
+            "resource_limit_couple",
+        )
+    ]
+    for basis, table in pinned.life_tables.items():
+        for sex, values in table.qx.items():
+            out += [("qx", (basis, sex, age)) for age in range(len(values))]
+    return out
+
+
+def _current(pinned, component, location):
+    if component in ("weighted_average", "matrix"):
+        node = getattr(pinned.thresholds, component)
+        for key in location:
+            node = node[key]
+        return float(node)
+    if component in ("fbr_individual_monthly", "fbr_couple_monthly"):
+        return float(getattr(pinned.ssi, component)[location[0]])
+    if component == "ssi_constant":
+        return float(getattr(pinned.ssi, location[0]))
+    basis, sex, age = location
+    return float(pinned.life_tables[basis].qx[sex][age])
+
+
+_PINNED = parameters.committed_u2_parameters()
+_LOCATIONS = _locations(_PINNED)
+
+
+@settings(max_examples=150, deadline=None)
+@given(
+    where=st.sampled_from(_LOCATIONS),
+    value=st.floats(
+        min_value=1e-6, max_value=1.0, allow_nan=False, allow_infinity=False
+    )
+    | st.floats(
+        min_value=1.0, max_value=1e6, allow_nan=False, allow_infinity=False
+    ),
+)
+def test_any_single_altered_value_refuses_the_registered_check(where, value):
+    """Invariant: the registered check accepts a bundle whose provenance
+    names the pinned captures iff every value equals the pinned files'.
+    One value moved anywhere (threshold, SSI or life-table ``qx``) under
+    the unchanged labels refuses."""
+
+    component, location = where
+    if component == "qx":
+        value = min(value, 1.0)
+    old = _current(_PINNED, component, location)
+    altered = _alter(_PINNED, component, location, value)
+    if value == old:
+        parameters.check_u2_parameters(altered, ap.REGISTERED_REAL)
+        return
+    with pytest.raises(parameters.U2ParameterError, match="provenance label"):
+        parameters.check_u2_parameters(altered, ap.REGISTERED_REAL)

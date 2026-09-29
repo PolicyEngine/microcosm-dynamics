@@ -29,7 +29,11 @@ The objects returned are :class:`populace_dynamics.estimates.
 adjusted_poverty.PovertyThresholds` and ``SsiParameters`` whose
 provenance records ``target_id: U2``; :func:`check_u2_parameters`
 refuses a bundle whose provenance is not U2's pinned captures (or, for
-an invented run, invented values).
+an invented run, invented values).  For a registered run it also checks
+content, not labels: every threshold, SSI parameter and life-table
+``qx`` must equal the values read afresh from the pinned files
+(:func:`parameters_content_sha256`), so a bundle that keeps the pinned
+provenance but alters one value refuses (review round 1, finding 3).
 """
 
 from __future__ import annotations
@@ -60,6 +64,7 @@ __all__ = [
     "U2Parameters",
     "check_u2_parameters",
     "committed_u2_parameters",
+    "parameters_content_sha256",
     "load_u2_ssi_parameters",
     "load_u2_thresholds",
 ]
@@ -369,6 +374,92 @@ def committed_u2_parameters(
     )
 
 
+def _canonical_sha256(value: Any) -> str:
+    try:
+        encoded = json.dumps(
+            value, sort_keys=True, separators=(",", ":"), allow_nan=False
+        )
+    except ValueError as error:
+        raise U2ParameterError(
+            f"a parameter value is not finite: {error}"
+        ) from error
+    return _sha256(encoded.encode("utf-8"))
+
+
+def parameters_content_sha256(params: U2Parameters) -> dict[str, Any]:
+    """SHA-256 of each component's values, never of its provenance.
+
+    ``thresholds``: every weighted average and matrix cell by income
+    year; ``ssi``: both FBR schedules and the five constant parameters;
+    ``life_tables``: each table's name and ``qx`` by sex and age.  Keys
+    are stringified and values taken as floats, so the digest depends on
+    the numbers only (a dict's insertion order, or an integer-valued
+    float stored as an int, changes nothing).
+    """
+
+    thresholds = params.thresholds
+    ssi = params.ssi
+    return {
+        "thresholds": _canonical_sha256(
+            {
+                "weighted_average": {
+                    str(int(year)): {
+                        str(row): float(value) for row, value in rows.items()
+                    }
+                    for year, rows in thresholds.weighted_average.items()
+                },
+                "matrix": {
+                    str(int(year)): {
+                        str(row): {
+                            str(int(children)): float(value)
+                            for children, value in cells.items()
+                        }
+                        for row, cells in rows.items()
+                    }
+                    for year, rows in thresholds.matrix.items()
+                },
+            }
+        ),
+        "ssi": _canonical_sha256(
+            {
+                "fbr_individual_monthly": {
+                    str(int(year)): float(value)
+                    for year, value in ssi.fbr_individual_monthly.items()
+                },
+                "fbr_couple_monthly": {
+                    str(int(year)): float(value)
+                    for year, value in ssi.fbr_couple_monthly.items()
+                },
+                "general_income_exclusion_monthly": float(
+                    ssi.general_income_exclusion_monthly
+                ),
+                "earned_income_exclusion_monthly": float(
+                    ssi.earned_income_exclusion_monthly
+                ),
+                "earned_income_share_excluded": float(
+                    ssi.earned_income_share_excluded
+                ),
+                "resource_limit_individual": float(
+                    ssi.resource_limit_individual
+                ),
+                "resource_limit_couple": float(ssi.resource_limit_couple),
+            }
+        ),
+        "life_tables": {
+            str(basis): _canonical_sha256(
+                {
+                    "name": table.name,
+                    "qx": {
+                        str(sex): [float(q) for q in values]
+                        for sex, values in table.qx.items()
+                    },
+                }
+            )
+            for basis, table in params.life_tables.items()
+        },
+    }
+
+
 def check_u2_parameters(params: U2Parameters, data_provenance: str) -> None:
     """Refuse parameters that are not U2's for ``data_provenance``.
 
@@ -376,7 +467,10 @@ def check_u2_parameters(params: U2Parameters, data_provenance: str) -> None:
     invented tables in an invented run), U1's threshold and SSI captures
     refused by hash.  A registered run: exactly U2's pinned Census and
     SSI captures, each recording ``target_id: U2``, and the committed life
-    tables with their pinned SHA-256.
+    tables with their pinned SHA-256 -- and, since a provenance label is
+    only a claim, every value equal to the pinned files' (the content
+    digests of :func:`parameters_content_sha256`, recomputed here from the
+    bundle and from a fresh, hash-verified read of the pinned files).
     """
 
     if not isinstance(params, U2Parameters):
@@ -442,3 +536,16 @@ def check_u2_parameters(params: U2Parameters, data_provenance: str) -> None:
         raise U2ParameterError(
             f"parameter coverage lacks income years {missing}"
         )
+    # Review round 1, finding 3: the labels above are claims; the values
+    # must be the pinned files' (section 14: "caller-supplied expected
+    # hashes cannot bypass the target-bound parameter bundle").
+    observed = parameters_content_sha256(params)
+    pinned = parameters_content_sha256(committed_u2_parameters())
+    for component in ("thresholds", "ssi", "life_tables"):
+        if observed[component] != pinned[component]:
+            raise U2ParameterError(
+                f"the registered {component} values differ from U2's pinned "
+                "captures although their provenance names the pinned "
+                "files: a provenance label cannot stand in for the content "
+                "(section 14)"
+            )
