@@ -261,6 +261,7 @@
   "pinned_elsewhere": [
     {
       "file": "tests/data/track_u2/psid_sources/cross_sec_weights_17.pdf",
+      "bytes": 471205,
       "url": "https://psidonline.isr.umich.edu/data/weights/cross_sec_weights_17.pdf",
       "sha256": "b35b5d9c99e74983c84d519383ba2b586c5db33f6b666d16370c54dbdb7a5438",
       "note": "Captured by milestone 1 (weights17_manifest.json). Its Internet Archive digest (20190615183854) equals the current bytes, so the construction report has not changed since at least June 2019. PDF p. 3 and p. 9: the 2017 New Immigrant sample is not covered and its weighting methodology 'will be available from the PSID website'. PDF p. 1: authors Chang, Nishimura, Heeringa, McGonagle and Johnson; the text layer never mentions IPUMS or Core-S families. The April 2021 and September 2023 reports cite a 2019 version of this title with Sastry in McGonagle's place for content this report lacks (research record section 3, item 12).",
@@ -270,6 +271,7 @@
     },
     {
       "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "bytes": 276444,
       "url": "https://psidonline.isr.umich.edu/data/weights/cross_sec_weights_23.pdf",
       "sha256": "58411f56001e6089226ce5fc9ebcd132e85f9e917571d3fe54dcdc5139e63983",
       "note": "Retrieved by milestone 1 from the official URL at 2026-09-28T17:41:53Z (weights23_manifest.json); report dated June 2026. What it documents about 2017: PDF p. 2 notes 2-3 (calibration to ACS estimates since 2015; the 2017 new immigrant sample has zero longitudinal family weight in 2017); p. 3 (the 2017 Immigrant sample; Chang et al. (2021), the 2019 longitudinal report, for its recruitment); p. 6 (a different approach to selecting calibration variables since 2017); p. 13 Table A2 (the 2017 sum of individual weights beside the ACS one-year PUMS population total, CPS 'Not Used'; donut-hole families and group-quarters post-1997 immigrants 'were excluded from the ACS estimate in 2017'); p. 14 Table A3 (2017 individual weight ER34651). It does not document which starting weights the revised 2017 weight used for the 2017 Immigrant sample, or the complete 2017 raking specification.",
@@ -279,6 +281,7 @@
     },
     {
       "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "bytes": 3937820,
       "sha256": "4878100887dce1a7b7831af272a9f19b01ec33dcea091a5c7352625ecd464308",
       "note": "Staged codebook already pinned by the registries; not copied. Printed p. 978: ER34303 codes 90 and 98 ('Other nonrelatives (includes same-sex partners ...)') and ER34304 ('Whether this person is the same-sex partner of Head'). Printed p. 523: ER33219 (1995), whose note states the gender digit of the three-digit relationship values; no 201 in its list.",
       "blockers": [
@@ -287,6 +290,7 @@
     },
     {
       "file": "PSID/documentation/capture1/q2015.pdf",
+      "bytes": 2031595,
       "sha256": "f3a4613bc8c1017f7cb40b30db4034d5f9a9234aad8022679ecd5c399f42e4e8",
       "note": "Pinned by the pension registry. PDF pp. 5 (CYAQRTH '101 – 982; RTH Lookup List'), 89, 104, 131 (G105RTHLAB 'RTH Lookup'), 166, 190 (J1CKPT: a new male head is CYAQRTH 101, a new female head, wife or \"wife\" 102-222) and 217 (OS66CKPT). The token 201 occurs in q2015 only as the page number of p. 201, and q2015 never names 901.",
       "blockers": [
@@ -295,6 +299,7 @@
     },
     {
       "file": "PSID/documentation/capture1/q2019.pdf",
+      "bytes": 3283370,
       "sha256": "e848a2a8ea5bb7cfb14f87f98410a33b4ca7de85c51916acb7c8a49503c92835",
       "note": "Pinned by the pension registry. PDF pp. 102, 103, 125 and 130-131 (the CYAQRTH value list starts on p. 130; codes 901/902 and 921/922 are on p. 131).",
       "blockers": [
@@ -303,6 +308,7 @@
     },
     {
       "file": "PSID/documentation/capture1/q2021.pdf",
+      "bytes": 3923957,
       "sha256": "6c639ec32bfdd2176b5823d31815e31ac0db732a46ed05f22aa6a892cc1c31fb",
       "note": "Pinned by the pension registry. PDF pp. 204, 205, 243 and 251-252 (the CYAQRTH value list; codes 901/902 and 921/922 are on p. 251).",
       "blockers": [
@@ -311,6 +317,7 @@
     },
     {
       "file": "PSID/documentation/capture1/q2023.pdf",
+      "bytes": 9128941,
       "sha256": "adc9975e1d7e901eb7192e6c6498f53be0eda62e0393ef1b06de0c85c511cad8",
       "note": "Pinned by the pension registry. PDF pp. 202, 203, 241 and 249-250 (the CYAQRTH value list; codes 901/902 and 921/922 are on p. 249).",
       "blockers": [
@@ -319,6 +326,7 @@
     },
     {
       "file": "PSID/family/2019/fam2019er_codebook.pdf",
+      "bytes": 5096192,
       "sha256": "ce637e37e0f5e306dd7f10455e85069b56c9b13d5c138d3eb4b9c8d6a8452406",
       "note": "Pinned by the income registry. p. 2015 (total family income definition); pp. 2006-2013 (ER77416, the 'sum of all 2018 OFUM labor income data after individual imputations were made', to ER77441; each OFUM income amount says 'All missing data were assigned'); 'uncooperative' appears only on pp. 591-596, 2058-2059, 2064, 2070-2075.",
       "blockers": [
@@ -327,6 +335,7 @@
     },
     {
       "file": "PSID/family/2021/FAM2021ER_codebook.pdf",
+      "bytes": 3628755,
       "sha256": "e3b88ef394952fa05b9b98eb7f05bf9a99896840515942562aa37399e1bcd462",
       "note": "Pinned by the income registry. 'Uncooperative' appears only on pp. 637-642, 1422-1423, 1428, 1434-1439.",
       "blockers": [
@@ -335,6 +344,7 @@
     },
     {
       "file": "PSID/family/2023/FAM2023ER_codebook.pdf",
+      "bytes": 3439538,
       "sha256": "85a4078ebb79146d023df3d9d4e2d2ef6017eced849656ca39f4b740cb5a5688",
       "note": "Pinned by the income registry. 'Uncooperative' appears only on pp. 624-628, 1340-1341, 1346, 1352-1357.",
       "blockers": [
@@ -343,6 +353,7 @@
     },
     {
       "file": "PSID/documentation/capture1/q2017.pdf",
+      "bytes": 2114531,
       "sha256": "733a9be8591080e09179857e672808d8cbf9b9ff351b2adf2c9e8200d893d9dc",
       "note": "Pinned by the pension registry. PDF pp. 5 (the first instrument that prints the CYAQRTH value list, 101 to 982), 89 (a question-text fill conditioned on 'MALE CYAQRTH=101, 201, 221'), 95 and 184 (J1CKPT: 'Male (CYAQRTH=101, 201, 221)'). It names the value 201 in routing conditions or question-text fills on 20 pages.",
       "blockers": [
@@ -351,6 +362,7 @@
     },
     {
       "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+      "bytes": 4945025,
       "sha256": "7dcb71f823e309a286b904531410243d58cde48b8f50079401856de9ac762238",
       "note": "Pinned by the income registry. p. 6: ER60020, the 2015 spouse-sex variable, lists only '2 Female'. pp. 1968-1975: ER65317, OFUM labor income, the 'sum of all 2014 OFUM labor income data after individual imputations were made'; its accuracy variable ER65318 (p. 1969) has a code for 'Imputed by PSID staff during data cleaning and editing'; every OFUM income amount from ER65317 to ER65342 says 'All missing data were assigned'.",
       "blockers": [
@@ -360,6 +372,7 @@
     },
     {
       "file": "PSID/documentation/capture1/q2013.pdf",
+      "bytes": 4471936,
       "sha256": "5f966b9268ed428acd9454263296b31006220c69b33b6b36b8f6364436332c0d",
       "note": "Pinned by the pension registry. PDF pp. 5 and 115: refer to the 'RTH Lookup List' without printing it (the 2015 lookup-list search).",
       "blockers": [
@@ -368,6 +381,7 @@
     },
     {
       "file": "PSID/documentation/capture1/q2011.pdf",
+      "bytes": 3617314,
       "sha256": "f3e0e374cd53c4164b37ae37a6e6eb0ab04dde0fa37fb339f8bb959fea70853f",
       "note": "Not pinned by any registry; pinned here. PDF p. 105: refers to an 'RTH Lookup' without printing it (the 2015 lookup-list search).",
       "blockers": [
@@ -376,6 +390,7 @@
     },
     {
       "file": "PSID/documentation/capture1/q2009.pdf",
+      "bytes": 2948164,
       "sha256": "d1108cc07bfd1562fe494d6076ef4fb540f26faa9f496d1f325e68baee78516e",
       "note": "Not pinned by any registry; pinned here. PDF p. 109: refers to an 'RTH Lookup' without printing it (the 2015 lookup-list search).",
       "blockers": [
@@ -384,6 +399,7 @@
     },
     {
       "file": "PSID/documentation/capture1/cross_sec_weights_21.pdf",
+      "bytes": 827293,
       "sha256": "b7b128e71233f60998fa265e3cc08e6c1f4990c26d977f5d5ca9c59c3a012d4c",
       "note": "Pinned by the weights registry. September 2023. PDF p. 2: the post-1997 immigrant families 'did not have a longitudinal weight in 2017 due to the anticipation of adding more post-1997 immigrant families in 2019'; p. 6 (fair shares for every wave since 1997); p. 7 (calibration approach since 2017). PDF p. 11: the reference entry for the 2019 version of 'PSID Cross-Sectional Individual Weights, 1997-2017' with Sastry among its authors.",
       "blockers": [
@@ -392,6 +408,7 @@
     },
     {
       "file": "PSID/family/2017/FAM2017ER_codebook.pdf",
+      "bytes": 5095504,
       "sha256": "19bfba9f7a3fecc82a18711466e2b2a5f00b49c9d3db0f9f8587795fad2bf8c1",
       "url": null,
       "blockers": [
@@ -402,6 +419,7 @@
     },
     {
       "file": "PSID/documentation/capture1/long_weight_21.pdf",
+      "bytes": 977556,
       "sha256": "10e2eae090f40b0c041d92d81860dd3b4d17eeea74fd5c18ea7d6be371b241df",
       "url": "https://psidonline.isr.umich.edu/data/weights/long_weight_21.pdf",
       "blockers": [
@@ -411,6 +429,7 @@
     },
     {
       "file": "PSID/documentation/capture1/dust09_hh_codebook.pdf",
+      "bytes": 32713,
       "sha256": "d88af94a1cbff1f9c1b0db9f43361792e5b70af0cef8a3f90a3422def83d9274",
       "url": "https://psidonline.isr.umich.edu/DUST/dust09_hh_codebook.pdf",
       "blockers": [
@@ -420,6 +439,7 @@
     },
     {
       "file": "PSID/documentation/capture1/dust13_hh_codebook.pdf",
+      "bytes": 39338,
       "sha256": "f69124389fc8bbb734ab325fb418995768b1141b64fe3ed7ac57a88bc0822657",
       "url": "https://psidonline.isr.umich.edu/DUST/dust13_hh_codebook.pdf",
       "blockers": [
@@ -429,6 +449,7 @@
     },
     {
       "file": "PSID/documentation/capture1/dust13_UserGuide.pdf",
+      "bytes": 1333930,
       "sha256": "9f71d7a481e155f9e6bda9cd51a114f8e136cd6ec2b14e0202be8b4c7a8e145b",
       "url": "https://psidonline.isr.umich.edu/DUST/dust13_UserGuide.pdf",
       "blockers": [
@@ -438,6 +459,7 @@
     },
     {
       "file": "PSID/documentation/capture1/q2003.pdf",
+      "bytes": 1004156,
       "sha256": "7981d65d3eccffcbc6b5a2cc0bb8a472062ad7335b59bff3fbfda8962460599e",
       "url": "https://psidonline.isr.umich.edu/documents/psid/questionnaires/q2003.pdf",
       "blockers": [
@@ -447,6 +469,7 @@
     },
     {
       "file": "PSID/documentation/capture1/long_weight_17.pdf",
+      "bytes": 156322,
       "sha256": "19570628b9ad1a125374d7fdf9001b8e39dfde9373ed0ab34c63ed9a8f45594c",
       "url": "https://psidonline.isr.umich.edu/data/weights/long_weight_17.pdf",
       "blockers": [
@@ -456,6 +479,7 @@
     },
     {
       "file": "PSID/family/2017/Fam2017er_readme.pdf",
+      "bytes": 65924,
       "sha256": "9eb2d59872c6afbb3e5b851df6d87193b7e239c13065b1aa698ed4a910255c8b",
       "url": null,
       "blockers": [
