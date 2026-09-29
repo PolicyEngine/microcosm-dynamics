@@ -36,6 +36,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 from populace_dynamics.data import family, marriage, psid
 from populace_dynamics.estimates import adjusted_poverty as ap
@@ -397,6 +399,270 @@ def test_a_repeated_record_refuses_the_load(
     ):
         _load(tmp_path, u2_inputs)
     assert _GUARD["opened"] == []
+
+
+# ---------------------------------------------------------------------------
+# Review round 1, finding 1: individual-file values against the registry's
+# documented codes.  Each case rewrites one field of one staged record.
+# ---------------------------------------------------------------------------
+def _rewrite_individual_field(root, registries, person_id, key, text):
+    """Put ``text`` (right-justified) in field ``key`` of ``person_id``'s
+    staged individual record; return the field's previous text."""
+
+    specs = {
+        spec.concept: spec for spec in loader.individual_specs(registries)
+    }
+    family, number = (
+        specs["common.person_family_id"],
+        specs["common.person_number"],
+    )
+    target = specs[key]
+    path = root / "ind2023er" / "IND2023ER.txt"
+    lines = path.read_text(encoding="ascii").splitlines()
+    for index, line in enumerate(lines):
+        pid = int(line[family.start - 1 : family.end]) * 1000 + int(
+            line[number.start - 1 : number.end]
+        )
+        if pid != person_id:
+            continue
+        assert len(text) <= target.width, (key, text)
+        old = line[target.start - 1 : target.end]
+        lines[index] = (
+            line[: target.start - 1]
+            + text.rjust(target.width)
+            + line[target.end :]
+        )
+        path.write_text("\n".join(lines) + "\n", encoding="ascii")
+        return old.strip()
+    raise AssertionError(f"no staged record for {person_id}")
+
+
+#: ``(key, person, documented staged value, undocumented replacement)``.
+#: The first two are the round-1 review's minimal cases: single head
+#: 700031's sex 2 -> 5 (accepted and set to "na" before the fix, dropping
+#: an observation), and 700142 -- the 2015 legal spouse (code 90) of U0
+#: head 700141 -- relationship 90 -> 99 (99 is undocumented in every
+#: wave; before the fix the head silently lost the legal-spouse pairing).
+UNDOCUMENTED_CASES = [
+    ("common.sex", 700031, "2", "5"),
+    ("2015.relationship", 700142, "90", "99"),
+    ("2013.relationship", 700142, None, "92"),
+    ("2019.sequence", 700142, None, "30"),
+    ("common.stratum", 700142, None, "95"),
+    ("common.cluster", 700142, None, "3"),
+    ("2021.age", 700142, None, "126"),
+    ("2017.reported_birth_year", 700142, None, "2018"),
+    ("2023.interview", 700142, None, "-1"),
+    ("2019.weight", 700142, None, "-1"),
+    ("common.person_number", 700142, None, "0"),
+    ("2015.relationship", 700142, None, ""),
+]
+
+
+@pytest.mark.parametrize(
+    "key, person, before, value",
+    UNDOCUMENTED_CASES,
+    ids=[f"{case[0]}={case[3] or 'blank'}" for case in UNDOCUMENTED_CASES],
+)
+def test_an_undocumented_individual_value_refuses_the_load(
+    tmp_path, u2_inputs, committed_registries, key, person, before, value
+):
+    """Section 14 ("refuse, never fall back"): one undocumented value in
+    one staged individual record refuses the whole load with the named
+    :class:`loader.U2UndocumentedValue`, as the family-file parse refuses
+    out-of-domain values."""
+
+    _stage(tmp_path, u2_inputs, committed_registries)
+    old = _rewrite_individual_field(
+        tmp_path, committed_registries, person, key, value
+    )
+    if before is not None:
+        assert old == before
+    with pytest.raises(loader.U2LoaderRefusal) as refusal:
+        _load(tmp_path, u2_inputs)
+    assert type(refusal.value).__name__ == "U2UndocumentedValue"
+    assert f"individual:{key}" in str(refusal.value)
+    assert _GUARD["opened"] == []
+
+
+def test_the_undocumented_value_message_prints_codes_never_identifiers(
+    tmp_path, u2_inputs, committed_registries
+):
+    _stage(tmp_path, u2_inputs, committed_registries)
+    _rewrite_individual_field(
+        tmp_path, committed_registries, 700031, "common.sex", "5"
+    )
+    with pytest.raises(loader.U2LoaderRefusal, match=r"codes \[5\]"):
+        _load(tmp_path, u2_inputs)
+    _stage(tmp_path / "ids", u2_inputs, committed_registries)
+    _rewrite_individual_field(
+        tmp_path / "ids", committed_registries, 700142, "2021.age", "126"
+    )
+    with pytest.raises(loader.U2LoaderRefusal) as refusal:
+        _load(tmp_path / "ids", u2_inputs)
+    assert "126" not in str(refusal.value)
+    assert "700142" not in str(refusal.value)
+
+
+@pytest.mark.parametrize(
+    "key, person, value",
+    [
+        ("common.sex", 700031, "9"),
+        ("2015.relationship", 700142, "98"),
+        ("2021.age", 700142, "999"),
+        ("2017.reported_birth_year", 700142, "9999"),
+    ],
+)
+def test_a_documented_value_still_loads(
+    tmp_path, u2_inputs, committed_registries, key, person, value
+):
+    """The check refuses only undocumented values: a documented code
+    (sex 9 NA, relationship 98, age 999, year born 9999) still loads, and
+    sex 9 is the only code read as "na"."""
+
+    _stage(tmp_path, u2_inputs, committed_registries)
+    _rewrite_individual_field(
+        tmp_path, committed_registries, person, key, value
+    )
+    inputs = _load(tmp_path, u2_inputs)
+    if key == "common.sex":
+        sex = inputs.persons.set_index("person_id")["sex"]
+        assert sex.loc[person] == "na"
+        assert set(sex) <= {"male", "female", "na"}
+
+
+def _raw_individual(inputs, registries) -> pd.DataFrame:
+    """The invented population as the individual reader's raw columns."""
+
+    specs = loader.individual_specs(registries)
+    lines = _individual_lines(inputs, specs)
+    return pd.DataFrame(
+        {
+            spec.variable: [
+                int(line[spec.start - 1 : spec.end]) for line in lines
+            ]
+            for spec in specs
+        }
+    )
+
+
+def _documented_by_codebook(entry, value: int) -> bool:
+    """The test's own oracle: the entry's ``codes`` or the codebook range
+    (the ranges are held to the registry text below)."""
+
+    if entry["codes"]:
+        return str(value) in entry["codes"]
+    concept = entry["concept"]
+    if concept == "age":
+        return value in (0, 999) or 1 <= value <= 125
+    if concept == "reported_birth_year":
+        return value in (0, 9999) or 1870 <= value <= int(entry["wave"])
+    if concept == "interview":
+        return 0 <= value <= 99_999
+    if concept == "weight":
+        return value >= 0
+    assert concept in ("person_family_id", "person_number"), concept
+    return value >= 1
+
+
+_KEYS = [
+    spec.concept
+    for spec in loader.individual_specs(sources.RegistrySet.committed())
+]
+
+
+@pytest.fixture(scope="module")
+def raw_individual(u2_inputs, committed_registries):
+    return _raw_individual(u2_inputs, committed_registries)
+
+
+@settings(max_examples=200, deadline=None)
+@given(
+    key=st.sampled_from(_KEYS),
+    value=st.one_of(
+        st.integers(min_value=-5, max_value=130),
+        st.integers(min_value=1860, max_value=2030),
+        st.sampled_from([999, 9998, 9999, 99_999, 100_000]),
+    ),
+    row=st.integers(min_value=0, max_value=75),
+)
+def test_the_individual_check_accepts_exactly_the_documented_domain(
+    raw_individual, committed_registries, key, value, row
+):
+    """Invariant: for every field U2 reads and every integer value, the
+    check refuses one record holding it iff the registry does not
+    document it (and leaves every documented value to load)."""
+
+    raw = raw_individual.copy()
+    assert loader.check_individual_values(raw, committed_registries)
+    entry = committed_registries.entry("individual", key)
+    raw.loc[row % len(raw), entry["variable"]] = value
+    documented = _documented_by_codebook(entry, value)
+    if documented:
+        checked = loader.check_individual_values(raw, committed_registries)
+        assert checked[key] == len(raw)
+    else:
+        with pytest.raises(loader.U2UndocumentedValue, match=key):
+            loader.check_individual_values(raw, committed_registries)
+
+
+def test_the_documented_ranges_are_the_registry_codebook_text(
+    committed_registries,
+):
+    """The ranges the loader restates for fields without ``codes`` are
+    the ones every wave's codebook text prints; the sex codes it maps are
+    exactly common.sex's."""
+
+    for wave in sources.SUPPORT_WAVES:
+        age = committed_registries.entry("individual", f"{wave}.age")
+        assert age["codes"] == {}
+        for line in (
+            "1 Newborn up to second birthday",
+            "2 - 125 Actual age",
+            "999 DK; NA; refused",
+            "0 Inap.",
+        ):
+            assert line in age["codebook_text"], (wave, line)
+        born = committed_registries.entry(
+            "individual", f"{wave}.reported_birth_year"
+        )
+        assert list(born["missing_codes"]) == [0, 9999]
+        assert (
+            f"1,870 - {wave // 1000},{wave % 1000:03d} Actual year of birth"
+            in born["codebook_text"]
+        )
+        interview = committed_registries.entry(
+            "individual", f"{wave}.interview"
+        )
+        assert interview["codes"] == {}
+        assert interview["layout"]["width"] == 5
+        assert "0 Inap." in interview["codebook_text"]
+        weight = committed_registries.entry("individual", f"{wave}.weight")
+        assert "do not infer a domain" in weight["selection"]
+    sex = committed_registries.entry("individual", "common.sex")
+    assert {int(code) for code in sex["codes"]} == set(loader._PERSON_SEX)
+    assert loader._AGE_CODES == (0, 999)
+    assert loader._AGE_RANGE == (1, 125)
+    assert loader._FIRST_BIRTH_YEAR == 1870
+
+
+def test_an_undocumented_relationship_code_has_no_ofum_rule(declared):
+    """Finding 1's second path: a relationship code no wave documents
+    (99), code 92 before 2017, and code 0 ("Inap.") on an in-family
+    member refuse in both role contexts; a documented code outside
+    section 3's table still takes the inherited OFUM rule."""
+
+    registry = sources.RoleContext.from_registry()
+    for context in (registry, declared):
+        for wave in sources.SUPPORT_WAVES:
+            for code in (99, 1, 0):
+                with pytest.raises(sources.U2RoleRefusal):
+                    context.rule(wave, code)
+            rule = context.rule(wave, 30)
+            assert (rule.income_role, rule.spouse_slot) == ("ofum", False)
+        for wave in (2013, 2015):
+            with pytest.raises(sources.U2RoleRefusal):
+                context.rule(wave, 92)
 
 
 def test_loader_inputs_cannot_join_an_invented_cohort(

@@ -735,6 +735,30 @@ def _committed_role_rules() -> Mapping[tuple[int, int], RoleRule]:
     return MappingProxyType(_registry_role_rules(RegistrySet.committed()))
 
 
+#: Relationship code 0: "Inap." in every support wave's codebook.
+_RELATIONSHIP_INAP = 0
+
+
+@functools.cache
+def _documented_relationship_codes() -> Mapping[int, frozenset[int]]:
+    """Each support wave's documented relationship codes: the committed
+    individual registry's ``<wave>.relationship`` ``codes`` (pinned
+    bytes; read once)."""
+
+    registries = RegistrySet.committed()
+    return MappingProxyType(
+        {
+            wave: frozenset(
+                int(code)
+                for code in registries.entry(
+                    "individual", f"{wave}.relationship"
+                )["codes"]
+            )
+            for wave in SUPPORT_WAVES
+        }
+    )
+
+
 @dataclass(frozen=True)
 class RoleContext:
     """The role rules a U2 build applies, and whether it may run on data.
@@ -803,12 +827,33 @@ class RoleContext:
         return cls(REGISTRY, _registry_role_rules(registries))
 
     def rule(self, wave: int, code: int) -> RoleRule:
-        """The rule of ``code`` in ``wave``; refused rules raise."""
+        """The rule of ``code`` in ``wave``; refused rules raise.
+
+        A code outside section 3's table takes the inherited OFUM rule
+        only when the wave's individual registry documents it as a
+        relationship to the head: an undocumented code, or code 0
+        (documented as "Inap.", no relationship to any head), refuses
+        (section 14: refuse, never fall back).
+        """
 
         key = (int(wave), int(code))
         if key not in self.rules:
             if int(code) in RELATIONSHIP_CODES:
                 raise U2RoleRefusal(f"no rule for code {code} in {wave}")
+            documented = _documented_relationship_codes().get(int(wave))
+            if documented is None or int(code) not in documented:
+                raise U2RoleRefusal(
+                    f"wave {wave}, relationship code {code}: not a code the "
+                    "individual registry documents for that wave; an "
+                    "undocumented code refuses, never takes the OFUM rule "
+                    "(section 14)"
+                )
+            if int(code) == _RELATIONSHIP_INAP:
+                raise U2RoleRefusal(
+                    f"wave {wave}, relationship code 0 is documented as "
+                    "'Inap.' (not in a family): an in-family member "
+                    "holding it refuses (section 14)"
+                )
             return RoleRule(int(wave), int(code), **OFUM_RULE)
         rule = self.rules[key]
         if rule.refusal:
