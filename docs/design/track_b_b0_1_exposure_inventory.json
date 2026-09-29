@@ -1,0 +1,7717 @@
+{
+  "b2_target_years": [
+    2012,
+    2014
+  ],
+  "boundaries_touching_b2_targets": {
+    "2008": [
+      2012
+    ],
+    "2010": [
+      2012,
+      2014
+    ]
+  },
+  "content_recorded": false,
+  "context_lines": 5,
+  "excluded_self_paths": [
+    "docs/design/track_b_b0_1_audit.md",
+    "docs/design/track_b_b0_1_counts.json",
+    "scripts/track_b_b0_1_counts.py",
+    "scripts/track_b_b0_1_exposure_inventory.py",
+    "scripts/track_b_b0_1_review_power.py",
+    "tests/test_track_b_b0_1_audit_record.py",
+    "tests/test_track_b_b0_1_counts.py",
+    "tests/test_track_b_b0_1_revision1_tools.py"
+  ],
+  "files": [
+    {
+      "blob_sha1": "276d322efe2bcc8515253b49926bd99754b56a5c",
+      "families": {
+        "f1_mechanism": 4,
+        "selector": 3
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": []
+      },
+      "kind": "json",
+      "lines": 5760,
+      "path": ".test_durations",
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "ea13a71dc235d0483befb3d499402e2d8f7fa44d",
+      "families": {
+        "boundary_year": 2,
+        "pseudo_boundary": 1,
+        "selector": 10,
+        "train_only": 3
+      },
+      "kind": "text",
+      "lines": 200,
+      "path": "docs/amendments/m6_amendment_4_qstar_lock_addendum.md",
+      "ranges": [
+        {
+          "decimal_tokens": 3,
+          "end": 29,
+          "families": [
+            "boundary_year",
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 6,
+          "start": 1,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 42,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 32,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 4,
+          "end": 109,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 99,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 143,
+          "families": [
+            "boundary_year"
+          ],
+          "hit_lines": 1,
+          "start": 133,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 5,
+          "end": 200,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 7,
+          "start": 170,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "boundary_values"
+    },
+    {
+      "blob_sha1": "814ecefb93d9a899bb43ed3305c1e47518288c18",
+      "families": {
+        "boundary_year": 2,
+        "f1_mechanism": 2,
+        "pseudo_boundary": 1,
+        "selector": 8,
+        "train_only": 4
+      },
+      "json": {
+        "boundary_blocks": [
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "mapping_sha256",
+              "prefix_bytes",
+              "prefix_sha256"
+            ],
+            "marital": false,
+            "n_blocks": 3,
+            "path": "/information_boundary/source_audit/expected_boundary_nawi/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          }
+        ],
+        "pseudo_boundary_fields": [
+          {
+            "marital": false,
+            "n": 1,
+            "path": "/protocol",
+            "values": [
+              2010
+            ]
+          }
+        ],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/authority/pattern",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/cross_pins/qstar_ledger_path",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/cross_pins/qstar_schema",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "f1_mechanism"
+            ],
+            "n": 1,
+            "path": "/findings/primary_f1_mean_dlog/label",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "f1_mechanism"
+            ],
+            "n": 1,
+            "path": "/schema",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/status",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "selector"
+            ],
+            "n": 1,
+            "path": "/validity_caveats_verbatim",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 1984,
+      "path": "docs/analysis/m6_c3_f1_mechanism_diagnostic_results.json",
+      "tier": "boundary_values"
+    },
+    {
+      "blob_sha1": "9e2f670e2e1413dff44454447c7e8973e1bf8172",
+      "families": {
+        "pseudo_boundary": 5539,
+        "train_only": 2
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [
+          {
+            "marital": true,
+            "n": 3,
+            "path": "/boundaries/[]",
+            "values": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "marital": true,
+            "n": 120,
+            "path": "/paired_draw_invariants/rows/[]",
+            "values": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "marital": true,
+            "n": 3,
+            "path": "/postrepair_residual_transport/boundaries/[]",
+            "values": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "marital": true,
+            "n": 132,
+            "path": "/relabel_ledger/aggregates_by_boundary_year_origin_sex_age/[]",
+            "values": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "marital": true,
+            "n": 5280,
+            "path": "/relabel_ledger/atomic_rows/[]",
+            "values": [
+              2006,
+              2008,
+              2010
+            ]
+          }
+        ],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/postrepair_residual_transport/source_path",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 224836,
+      "path": "docs/analysis/m6_candidate2_entry_dissolved_conformance.json",
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "cc0d1817b42aae352429d759ec10341fd23eeffb",
+      "families": {
+        "boundary_year": 1,
+        "pseudo_boundary": 3,
+        "train_only": 8
+      },
+      "kind": "text",
+      "lines": 224,
+      "path": "docs/analysis/m6_candidate2_entry_dissolved_conformance.md",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 19,
+          "families": [
+            "pseudo_boundary",
+            "train_only"
+          ],
+          "hit_lines": 3,
+          "start": 5,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 45,
+          "families": [
+            "boundary_year",
+            "pseudo_boundary",
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 33,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 60,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 50,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 114,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 104,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 162,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 152,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 190,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 179,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 10,
+          "end": 203,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 193,
+          "target_year_tokens": 1
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "d2e6518000e5584727d38c6a8e879ae1ea6ece31",
+      "families": {
+        "train_only": 3
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/protocol/input_path",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/status",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 292,
+      "path": "docs/analysis/m6_candidate2_preflight1_law_delta.json",
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "511e692120e9ec41252efddf8ef805f4c3a1715b",
+      "families": {
+        "train_only": 1
+      },
+      "kind": "text",
+      "lines": 106,
+      "path": "docs/analysis/m6_candidate2_preflight1_law_delta.md",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 44,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 34,
+          "target_year_tokens": 2
+        }
+      ],
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "ad4c70713e7d5486b4451151ba9cf53242e1f005",
+      "families": {
+        "boundary_year": 1,
+        "pseudo_boundary": 1,
+        "selector": 1
+      },
+      "kind": "text",
+      "lines": 231,
+      "path": "docs/analysis/m6_candidate2_registered_abort_execution_v1.txt",
+      "ranges": [
+        {
+          "decimal_tokens": 7890,
+          "end": 231,
+          "families": [
+            "boundary_year",
+            "pseudo_boundary",
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 226,
+          "target_year_tokens": 15
+        }
+      ],
+      "tier": "boundary_values"
+    },
+    {
+      "blob_sha1": "7a6dba9369cc518f0769fd8dfec50a338731b0fd",
+      "families": {
+        "boundary_year": 1,
+        "pseudo_boundary": 1,
+        "selector": 1
+      },
+      "json": {
+        "boundary_blocks": [
+          {
+            "descendant_year_keys": [
+              "1900",
+              "1910",
+              "1920",
+              "1930",
+              "1940",
+              "1950",
+              "1960",
+              "1970",
+              "1980",
+              "1990",
+              "2007",
+              "2008",
+              "2009",
+              "2010",
+              "2011",
+              "2012",
+              "2013",
+              "2014"
+            ],
+            "earnings_cells": false,
+            "field_names": [
+              "calendar_rows",
+              "evaluation_frame",
+              "fit_frame",
+              "rungs"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/first_marriage_diagnostics/selection_ledger/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [],
+            "marital": true,
+            "n_blocks": 27,
+            "path": "/first_marriage_diagnostics/selection_ledger/selection/candidates/[]/boundary_deviances/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          }
+        ],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "boundary_year"
+            ],
+            "n": 3,
+            "path": "/first_marriage_diagnostics/selection_ledger/boundaries/{year}/evaluation_frame/label",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "boundary_year"
+            ],
+            "n": 3,
+            "path": "/first_marriage_diagnostics/selection_ledger/boundaries/{year}/fit_frame/label",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 1,
+      "path": "docs/analysis/m6_candidate2_registered_abort_v1.json",
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "5e3d84ca477021fdc553d65b7b4f870af7a613c1",
+      "families": {
+        "train_only": 1
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": []
+      },
+      "kind": "json",
+      "lines": 262,
+      "path": "docs/analysis/m6_candidate2_registration10_execution_incident_v1.json",
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "be1423f300e5bfd70b233ac6f9f9a280beddb699",
+      "families": {
+        "train_only": 1
+      },
+      "kind": "text",
+      "lines": 186,
+      "path": "docs/analysis/m6_candidate2_registration10_execution_incident_v1.md",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 124,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 114,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "f38cc939c29fccd308419ccd459c4f0f9c2eabeb",
+      "families": {
+        "train_only": 3
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/information_boundary/basis",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 175,
+      "path": "docs/analysis/m6_candidate2_registration9_execution_incident_v1.json",
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "cb403e2aae80e91bba9984dab2e4916f7f30b0fe",
+      "families": {
+        "train_only": 1
+      },
+      "kind": "text",
+      "lines": 155,
+      "path": "docs/analysis/m6_candidate2_registration9_execution_incident_v1.md",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 101,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 91,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "e60adec04f24780502cd860da56ad6444372be39",
+      "families": {
+        "train_only": 2
+      },
+      "kind": "text",
+      "lines": 223,
+      "path": "docs/analysis/m6_candidate2_registration9_execution_incident_v1.txt",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 221,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 210,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "94e46b7ee6b95a37f4ad8624e33979c32befa1cb",
+      "families": {
+        "train_only": 3
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/information_boundary/basis",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 188,
+      "path": "docs/analysis/m6_candidate2_registration9_execution_incident_v2.json",
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "bca5a7c61d0e68e4401e99d632db0b10f95275ea",
+      "families": {
+        "train_only": 1
+      },
+      "kind": "text",
+      "lines": 159,
+      "path": "docs/analysis/m6_candidate2_registration9_execution_incident_v2.md",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 113,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 103,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "a5aa7bde1de53ba2000274a622bb6a7af44e2782",
+      "families": {
+        "train_only": 2
+      },
+      "kind": "text",
+      "lines": 31,
+      "path": "docs/analysis/m6_candidate2_registration9_execution_incident_v2.txt",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 29,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 18,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "972eaa3dc04c094dc85e54370dffc00b8c842fa6",
+      "families": {
+        "train_only": 1
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": []
+      },
+      "kind": "json",
+      "lines": 249,
+      "path": "docs/analysis/m6_candidate2_registration9_execution_incident_v3.json",
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "44d23d3c1f2119f129d942cb4529d78e831afd17",
+      "families": {
+        "boundary_year": 1,
+        "pseudo_boundary": 1,
+        "train_only": 2
+      },
+      "kind": "text",
+      "lines": 132,
+      "path": "docs/analysis/m6_first_marriage_c_selection.md",
+      "ranges": [
+        {
+          "decimal_tokens": 26,
+          "end": 18,
+          "families": [
+            "boundary_year",
+            "pseudo_boundary",
+            "train_only"
+          ],
+          "hit_lines": 3,
+          "start": 2,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 85,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 75,
+          "target_year_tokens": 1
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "062772ea89ce41a76d61b8cd1960c72885b20bbf",
+      "families": {
+        "boundary_year": 6,
+        "pseudo_boundary": 2
+      },
+      "json": {
+        "boundary_blocks": [
+          {
+            "descendant_year_keys": [
+              "1900",
+              "1910",
+              "1920",
+              "1930",
+              "1940",
+              "1950",
+              "1960",
+              "1970",
+              "1980",
+              "1990",
+              "2007",
+              "2008",
+              "2009",
+              "2010",
+              "2011",
+              "2012",
+              "2013",
+              "2014"
+            ],
+            "earnings_cells": false,
+            "field_names": [
+              "calendar_rows",
+              "evaluation_frame",
+              "fit_frame",
+              "rungs"
+            ],
+            "marital": false,
+            "n_blocks": 3,
+            "path": "/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [],
+            "marital": false,
+            "n_blocks": 27,
+            "path": "/selection/candidates/[]/boundary_deviances/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          }
+        ],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "boundary_year"
+            ],
+            "n": 3,
+            "path": "/boundaries/{year}/evaluation_frame/label",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "boundary_year"
+            ],
+            "n": 3,
+            "path": "/boundaries/{year}/fit_frame/label",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 13405,
+      "path": "docs/analysis/m6_first_marriage_c_selection_findings.json",
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "201e461d221f25cbeb49d034b6292e7e8f36fb0f",
+      "families": {
+        "boundary_year": 6,
+        "pseudo_boundary": 3,
+        "train_only": 1
+      },
+      "json": {
+        "boundary_blocks": [
+          {
+            "descendant_year_keys": [
+              "1900",
+              "1910",
+              "1920",
+              "1930",
+              "1940",
+              "1950",
+              "1960",
+              "1970",
+              "1980",
+              "1990",
+              "2007",
+              "2008",
+              "2009",
+              "2010",
+              "2011",
+              "2012",
+              "2013",
+              "2014"
+            ],
+            "earnings_cells": false,
+            "field_names": [
+              "calendar_rows",
+              "evaluation_frame",
+              "fit_frame",
+              "intended_evaluation_years",
+              "observed_evaluation_years",
+              "rungs"
+            ],
+            "marital": false,
+            "n_blocks": 3,
+            "path": "/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [],
+            "marital": false,
+            "n_blocks": 27,
+            "path": "/selection/candidates/[]/boundary_deviances/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "boundary",
+              "every_relevant_context_date_field_asserted",
+              "field_maxima",
+              "person_year_and_event_interview_provenance_nonmissing"
+            ],
+            "marital": true,
+            "n_blocks": 4,
+            "path": "/source_audit/context_boundary_audits/{year}",
+            "years": [
+              2006,
+              2008,
+              2010,
+              2014
+            ]
+          }
+        ],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "boundary_year"
+            ],
+            "n": 3,
+            "path": "/boundaries/{year}/evaluation_frame/label",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "boundary_year"
+            ],
+            "n": 3,
+            "path": "/boundaries/{year}/fit_frame/label",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/source_audit/mode",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 25276,
+      "path": "docs/analysis/m6_first_marriage_c_selection_full.json",
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "c348206a4ffbe70fafcb45b98a5de670da83db2c",
+      "families": {
+        "boundary_year": 3
+      },
+      "kind": "text",
+      "lines": 6,
+      "path": "docs/analysis/m6_first_marriage_c_selection_progress.txt",
+      "ranges": [
+        {
+          "decimal_tokens": 1,
+          "end": 6,
+          "families": [
+            "boundary_year"
+          ],
+          "hit_lines": 3,
+          "start": 1,
+          "target_year_tokens": 1
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "59e65295c7b2d8594f04542a545fc850b554cb0a",
+      "families": {
+        "pseudo_boundary": 1,
+        "train_only": 2
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/registration_disposition/required_next_step",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/status",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 224,
+      "path": "docs/analysis/m6_first_marriage_registry_spec_prefreeze_v1.json",
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "c7cdeb9ea98e6da48541cdc3a400cd086f24d58b",
+      "families": {
+        "pseudo_boundary": 2,
+        "selector": 3,
+        "train_only": 10
+      },
+      "kind": "text",
+      "lines": 444,
+      "path": "docs/analysis/m6_qstar_train_only_selection.md",
+      "ranges": [
+        {
+          "decimal_tokens": 7,
+          "end": 36,
+          "families": [
+            "pseudo_boundary",
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 6,
+          "start": 1,
+          "target_year_tokens": 3
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 80,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 70,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 214,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 201,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 228,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 218,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 283,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 273,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 8,
+          "end": 384,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 374,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 5,
+          "end": 413,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 403,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 5,
+          "end": 428,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 418,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 444,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 439,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "boundary_values"
+    },
+    {
+      "blob_sha1": "f9bf78651b731c3b057db6e8847c0495409f156e",
+      "families": {
+        "pseudo_boundary": 1,
+        "selector": 7,
+        "train_only": 4
+      },
+      "json": {
+        "boundary_blocks": [
+          {
+            "descendant_year_keys": [
+              "2006",
+              "2007",
+              "2008",
+              "2009",
+              "2010",
+              "2011",
+              "2012",
+              "2013",
+              "2014"
+            ],
+            "earnings_cells": true,
+            "field_names": [
+              "cutoff",
+              "fit_input_checksum",
+              "fit_input_max_period",
+              "fit_input_rows",
+              "floor",
+              "floor_gate_seed_detail",
+              "nawi_checksum",
+              "nawi_field_read",
+              "nawi_key_max",
+              "rng_registry",
+              "standardizers",
+              "support",
+              "truth_moments"
+            ],
+            "marital": false,
+            "n_blocks": 3,
+            "path": "/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [
+              "2006",
+              "2008",
+              "2010",
+              "2012",
+              "2014"
+            ],
+            "earnings_cells": true,
+            "field_names": [
+              "aggregates",
+              "cutoff",
+              "fit",
+              "floor",
+              "nawi_checksum",
+              "nawi_field_read",
+              "nawi_key_max",
+              "per_draw_summary",
+              "q0_equivalence",
+              "regeneration",
+              "rng_registry_sha256",
+              "standardizers",
+              "support",
+              "truth_moments"
+            ],
+            "marital": false,
+            "n_blocks": 63,
+            "path": "/rungs/{rung}/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [],
+            "marital": false,
+            "n_blocks": 63,
+            "path": "/rungs/{rung}/objectives/all_20/by_boundary/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [],
+            "marital": false,
+            "n_blocks": 1260,
+            "path": "/rungs/{rung}/objectives/delete_one/[]/by_boundary/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [],
+            "marital": false,
+            "n_blocks": 63,
+            "path": "/rungs/{rung}/objectives/first_10/by_boundary/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [],
+            "marital": false,
+            "n_blocks": 63,
+            "path": "/rungs/{rung}/objectives/second_10/by_boundary/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "mapping_sha256",
+              "prefix_bytes",
+              "prefix_sha256"
+            ],
+            "marital": false,
+            "n_blocks": 3,
+            "path": "/source_audit/expected_boundary_nawi/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          }
+        ],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "selector"
+            ],
+            "n": 1,
+            "path": "/freeze/branch",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "selector"
+            ],
+            "n": 1,
+            "path": "/freeze/local_populace_dynamics/import_paths/earnings_cells",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "selector"
+            ],
+            "n": 1,
+            "path": "/freeze/local_populace_dynamics/import_paths/family",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "selector"
+            ],
+            "n": 1,
+            "path": "/freeze/local_populace_dynamics/import_paths/forward_earnings",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "selector"
+            ],
+            "n": 1,
+            "path": "/freeze/local_populace_dynamics/import_paths/panels",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "selector"
+            ],
+            "n": 1,
+            "path": "/freeze/local_populace_dynamics/import_paths/refit_earnings_chained_generator",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "selector"
+            ],
+            "n": 1,
+            "path": "/freeze/local_populace_dynamics/source_root",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/implementation/runner",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/schema",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 50418,
+      "path": "docs/analysis/m6_qstar_train_only_selection_results.json",
+      "tier": "boundary_values"
+    },
+    {
+      "blob_sha1": "5839d909f737c5395f62ed72baf079d4b52cb37d",
+      "families": {
+        "boundary_year": 3,
+        "pseudo_boundary": 1,
+        "train_only": 2
+      },
+      "kind": "text",
+      "lines": 117,
+      "path": "docs/analysis/m6_remarriage_round2_selection.md",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 15,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 1,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 47,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 37,
+          "target_year_tokens": 2
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 65,
+          "families": [
+            "boundary_year"
+          ],
+          "hit_lines": 3,
+          "start": 51,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "9060b2ed115f7429d510aef74662563df5b83bff",
+      "families": {
+        "boundary_year": 8,
+        "selector": 1,
+        "train_only": 1
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/authority/round1_ledger_path",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "boundary_year"
+            ],
+            "n": 1,
+            "path": "/failure/last_progress_message",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "boundary_year"
+            ],
+            "n": 2,
+            "path": "/not_reached/[]",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 211,
+      "path": "docs/analysis/m6_remarriage_round2_selection_execution_defect.json",
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "3ffbd01ebbbb813953368d6b6611d5237bf4638b",
+      "families": {
+        "boundary_year": 4
+      },
+      "kind": "text",
+      "lines": 82,
+      "path": "docs/analysis/m6_remarriage_round2_selection_execution_defect.txt",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 37,
+          "families": [
+            "boundary_year"
+          ],
+          "hit_lines": 4,
+          "start": 1,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "7532ade8d3160c0dc6236679c90e590c7d488b06",
+      "families": {
+        "boundary_year": 1,
+        "train_only": 1
+      },
+      "kind": "text",
+      "lines": 169,
+      "path": "docs/analysis/m6_remarriage_round3_selection.md",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 8,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 122,
+          "families": [
+            "boundary_year"
+          ],
+          "hit_lines": 1,
+          "start": 112,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "8ef834a0e984d308ce6b80634518fcab174e814d",
+      "families": {
+        "selector": 1,
+        "train_only": 1
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/authority/round1_ledger_path",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 301,
+      "path": "docs/analysis/m6_remarriage_round3_selection_execution_defect.json",
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "2a7016669d5782995f72d0a1145352ffe3f664a1",
+      "families": {
+        "train_only": 3
+      },
+      "json": {
+        "boundary_blocks": [
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "anchor_households_before_marital_intersection",
+              "anchor_persons_before_marital_intersection",
+              "anchor_waves",
+              "boundary",
+              "entry_dissolved_carriers",
+              "evaluation_years",
+              "fit",
+              "laws",
+              "projected_persons",
+              "pseudo_input_hashes",
+              "support_checksum",
+              "truth",
+              "truth_origin",
+              "truth_required_interview_year_max",
+              "truth_same_year_ysd0_event_weight",
+              "truth_same_year_ysd0_events",
+              "truth_support_key_sha256",
+              "truth_support_rows"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "B_W",
+              "checks",
+              "g",
+              "omega",
+              "pass"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/selection/eligibility/R_D50_W00/rules/rule_2_per_origin_construction_and_budget/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "B_W",
+              "checks",
+              "g",
+              "omega",
+              "pass"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/selection/eligibility/R_D50_W05/rules/rule_2_per_origin_construction_and_budget/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "B_W",
+              "checks",
+              "g",
+              "omega",
+              "pass"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/selection/eligibility/R_D75_W00/rules/rule_2_per_origin_construction_and_budget/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "B_W",
+              "checks",
+              "g",
+              "omega",
+              "pass"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/selection/eligibility/R_D75_W05/rules/rule_2_per_origin_construction_and_budget/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "divorced_direct_deviance",
+              "exposure_error",
+              "g_widowed_log_qdir_ratio",
+              "pooled_direct_deviance",
+              "rate_error",
+              "widowed_direct_deviance",
+              "widowed_direct_risk_exposure",
+              "widowed_matchable_positive_weight_event_rows",
+              "working_age_widow_exposure_error"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/selection/metrics/R0/boundary/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "divorced_direct_deviance",
+              "exposure_error",
+              "g_widowed_log_qdir_ratio",
+              "pooled_direct_deviance",
+              "rate_error",
+              "widowed_direct_deviance",
+              "widowed_direct_risk_exposure",
+              "widowed_matchable_positive_weight_event_rows",
+              "working_age_widow_exposure_error"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/selection/metrics/R_D50_W00/boundary/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "divorced_direct_deviance",
+              "exposure_error",
+              "g_widowed_log_qdir_ratio",
+              "pooled_direct_deviance",
+              "rate_error",
+              "widowed_direct_deviance",
+              "widowed_direct_risk_exposure",
+              "widowed_matchable_positive_weight_event_rows",
+              "working_age_widow_exposure_error"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/selection/metrics/R_D50_W05/boundary/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "divorced_direct_deviance",
+              "exposure_error",
+              "g_widowed_log_qdir_ratio",
+              "pooled_direct_deviance",
+              "rate_error",
+              "widowed_direct_deviance",
+              "widowed_direct_risk_exposure",
+              "widowed_matchable_positive_weight_event_rows",
+              "working_age_widow_exposure_error"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/selection/metrics/R_D75_W00/boundary/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "divorced_direct_deviance",
+              "exposure_error",
+              "g_widowed_log_qdir_ratio",
+              "pooled_direct_deviance",
+              "rate_error",
+              "widowed_direct_deviance",
+              "widowed_direct_risk_exposure",
+              "widowed_matchable_positive_weight_event_rows",
+              "working_age_widow_exposure_error"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/selection/metrics/R_D75_W05/boundary/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          }
+        ],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/authority/round1_ledger/path",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/input_and_file_open_audit/observed_open_paths/[]",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/input_and_file_open_audit/selection_relevant_reads/[]",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 401051,
+      "path": "docs/analysis/m6_remarriage_round3_selection_full.json",
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "d53653da800c7265bb8801e4c6e75538de7bb24f",
+      "families": {
+        "boundary_year": 78
+      },
+      "kind": "text",
+      "lines": 106,
+      "path": "docs/analysis/m6_remarriage_round3_selection_progress.txt",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 106,
+          "families": [
+            "boundary_year"
+          ],
+          "hit_lines": 78,
+          "start": 1,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "27a63d988d2579a4769ab081786e87ced2eb48ec",
+      "families": {
+        "train_only": 3
+      },
+      "json": {
+        "boundary_blocks": [
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "anchor_households_before_marital_intersection",
+              "anchor_persons_before_marital_intersection",
+              "anchor_waves",
+              "boundary",
+              "entry_dissolved_carriers",
+              "evaluation_years",
+              "fit",
+              "laws",
+              "projected_persons",
+              "pseudo_input_hashes",
+              "support_checksum",
+              "truth",
+              "truth_origin",
+              "truth_required_interview_year_max",
+              "truth_same_year_ysd0_event_weight",
+              "truth_same_year_ysd0_events",
+              "truth_support_key_sha256",
+              "truth_support_rows"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "B_W",
+              "checks",
+              "g",
+              "omega",
+              "pass"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/selection/eligibility/R_D50_W00/rules/rule_2_per_origin_construction_and_budget/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "B_W",
+              "checks",
+              "g",
+              "omega",
+              "pass"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/selection/eligibility/R_D50_W05/rules/rule_2_per_origin_construction_and_budget/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "B_W",
+              "checks",
+              "g",
+              "omega",
+              "pass"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/selection/eligibility/R_D75_W00/rules/rule_2_per_origin_construction_and_budget/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "B_W",
+              "checks",
+              "g",
+              "omega",
+              "pass"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/selection/eligibility/R_D75_W05/rules/rule_2_per_origin_construction_and_budget/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "divorced_direct_deviance",
+              "exposure_error",
+              "g_widowed_log_qdir_ratio",
+              "pooled_direct_deviance",
+              "rate_error",
+              "widowed_direct_deviance",
+              "widowed_direct_risk_exposure",
+              "widowed_matchable_positive_weight_event_rows",
+              "working_age_widow_exposure_error"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/selection/metrics/R0/boundary/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "divorced_direct_deviance",
+              "exposure_error",
+              "g_widowed_log_qdir_ratio",
+              "pooled_direct_deviance",
+              "rate_error",
+              "widowed_direct_deviance",
+              "widowed_direct_risk_exposure",
+              "widowed_matchable_positive_weight_event_rows",
+              "working_age_widow_exposure_error"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/selection/metrics/R_D50_W00/boundary/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "divorced_direct_deviance",
+              "exposure_error",
+              "g_widowed_log_qdir_ratio",
+              "pooled_direct_deviance",
+              "rate_error",
+              "widowed_direct_deviance",
+              "widowed_direct_risk_exposure",
+              "widowed_matchable_positive_weight_event_rows",
+              "working_age_widow_exposure_error"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/selection/metrics/R_D50_W05/boundary/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "divorced_direct_deviance",
+              "exposure_error",
+              "g_widowed_log_qdir_ratio",
+              "pooled_direct_deviance",
+              "rate_error",
+              "widowed_direct_deviance",
+              "widowed_direct_risk_exposure",
+              "widowed_matchable_positive_weight_event_rows",
+              "working_age_widow_exposure_error"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/selection/metrics/R_D75_W00/boundary/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "divorced_direct_deviance",
+              "exposure_error",
+              "g_widowed_log_qdir_ratio",
+              "pooled_direct_deviance",
+              "rate_error",
+              "widowed_direct_deviance",
+              "widowed_direct_risk_exposure",
+              "widowed_matchable_positive_weight_event_rows",
+              "working_age_widow_exposure_error"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/selection/metrics/R_D75_W05/boundary/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          }
+        ],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/authority/round1_ledger/path",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/input_and_file_open_audit/observed_open_paths/[]",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/input_and_file_open_audit/selection_relevant_reads/[]",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 151475,
+      "path": "docs/analysis/m6_remarriage_round3_selection_results.json",
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "ebd5099d006fc0efe49bb7be46712c228a722d07",
+      "families": {
+        "boundary_year": 9,
+        "train_only": 1
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "boundary_year"
+            ],
+            "n": 3,
+            "path": "/not_reached_by_reducer/[]",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/round4_file_open_audit/explicit_reducer_repository_reads/[]",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 274,
+      "path": "docs/analysis/m6_remarriage_round4_reduction_execution_defect.json",
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "820e0fc35ddd6a5fc6d53c7bf71f991ed85daa7e",
+      "families": {
+        "train_only": 1
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/round5_file_open_audit/explicit_reducer_repository_reads/[]",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 247,
+      "path": "docs/analysis/m6_remarriage_round5_reduction_disagreement.json",
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "02ed56c27743630f077d84513538bb6cc0173f60",
+      "families": {
+        "train_only": 1
+      },
+      "kind": "text",
+      "lines": 153,
+      "path": "docs/analysis/m6_remarriage_round6_reduction_execution.txt",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 126,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 116,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "73ea8eae127a811456412acc387e9ee2a55e46c1",
+      "families": {
+        "boundary_year": 1,
+        "pseudo_boundary": 1,
+        "train_only": 15
+      },
+      "kind": "text",
+      "lines": 428,
+      "path": "docs/analysis/m6_remarriage_train_only_delta.md",
+      "ranges": [
+        {
+          "decimal_tokens": 2,
+          "end": 29,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 4,
+          "start": 1,
+          "target_year_tokens": 2
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 227,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 217,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 254,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 235,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 274,
+          "families": [
+            "boundary_year",
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 257,
+          "target_year_tokens": 2
+        },
+        {
+          "decimal_tokens": 21,
+          "end": 314,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 296,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 395,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 385,
+          "target_year_tokens": 3
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 417,
+          "families": [
+            "pseudo_boundary",
+            "train_only"
+          ],
+          "hit_lines": 3,
+          "start": 404,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 428,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 422,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "3099182ef94d2c814c4cd8e82dba804c684bada1",
+      "families": {
+        "pseudo_boundary": 1,
+        "train_only": 1
+      },
+      "json": {
+        "boundary_blocks": [
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "anchor_households_before_marital_intersection",
+              "anchor_persons_before_marital_intersection",
+              "anchor_waves",
+              "boundary",
+              "entry_dissolved_carriers",
+              "evaluation_years",
+              "fit",
+              "laws",
+              "projected_persons",
+              "support_checksum",
+              "truth",
+              "truth_origin",
+              "truth_required_interview_year_max",
+              "truth_same_year_ysd0_event_weight",
+              "truth_same_year_ysd0_events",
+              "truth_support_rows"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          }
+        ],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/schema",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 2211,
+      "path": "docs/analysis/m6_remarriage_train_only_delta_results.json",
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "91c5ff1cad8dda060590b24a9355be27e756a0b2",
+      "families": {
+        "boundary_year": 1,
+        "pseudo_boundary": 1,
+        "selector": 3,
+        "train_only": 5
+      },
+      "kind": "text",
+      "lines": 79,
+      "path": "docs/analysis/m6_rhostar_train_only_selection.md",
+      "ranges": [
+        {
+          "decimal_tokens": 7,
+          "end": 18,
+          "families": [
+            "boundary_year",
+            "pseudo_boundary",
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 4,
+          "start": 1,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 49,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 28,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 79,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 3,
+          "start": 66,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "boundary_values"
+    },
+    {
+      "blob_sha1": "40143e838a0366eb14c918d475014be09b939b90",
+      "families": {
+        "pseudo_boundary": 1,
+        "selector": 5,
+        "train_only": 9
+      },
+      "json": {
+        "boundary_blocks": [
+          {
+            "descendant_year_keys": [
+              "2006",
+              "2007",
+              "2008",
+              "2009",
+              "2010",
+              "2011",
+              "2012",
+              "2013",
+              "2014"
+            ],
+            "earnings_cells": true,
+            "field_names": [
+              "cutoff",
+              "fit_input_checksum",
+              "fit_input_max_period",
+              "fit_input_rows",
+              "floor",
+              "floor_gate_seed_detail",
+              "nawi_checksum",
+              "nawi_field_read",
+              "nawi_key_max",
+              "rng_registry",
+              "standardizers",
+              "support",
+              "truth_moments"
+            ],
+            "marital": false,
+            "n_blocks": 3,
+            "path": "/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [
+              "2006",
+              "2007",
+              "2008",
+              "2009",
+              "2010",
+              "2011",
+              "2012",
+              "2013",
+              "2014"
+            ],
+            "earnings_cells": false,
+            "field_names": [
+              "fit",
+              "fit_input_checksum",
+              "fit_input_max_period",
+              "fit_input_rows",
+              "nawi_checksum",
+              "nawi_field_read",
+              "nawi_key_max",
+              "passed",
+              "per_draw",
+              "rng_registry",
+              "support"
+            ],
+            "marital": false,
+            "n_blocks": 3,
+            "path": "/preflights/records/rho_zero_candidate2_equivalence/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [
+              "2006",
+              "2008",
+              "2010",
+              "2012",
+              "2014"
+            ],
+            "earnings_cells": true,
+            "field_names": [
+              "aggregates",
+              "cutoff",
+              "fit",
+              "floor",
+              "nawi_checksum",
+              "nawi_field_read",
+              "nawi_key_max",
+              "per_draw_summary",
+              "regeneration",
+              "rng_registry_sha256",
+              "standardizers",
+              "support",
+              "transition_pair_counts",
+              "truth_moments"
+            ],
+            "marital": false,
+            "n_blocks": 51,
+            "path": "/rungs/{rung}/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [],
+            "marital": false,
+            "n_blocks": 51,
+            "path": "/rungs/{rung}/objectives/all_20/by_boundary/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [],
+            "marital": false,
+            "n_blocks": 1020,
+            "path": "/rungs/{rung}/objectives/delete_one/[]/by_boundary/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [],
+            "marital": false,
+            "n_blocks": 51,
+            "path": "/rungs/{rung}/objectives/first_10/by_boundary/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [],
+            "marital": false,
+            "n_blocks": 51,
+            "path": "/rungs/{rung}/objectives/second_10/by_boundary/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "gap_truth_minus_projected",
+              "objective_contribution",
+              "projected_moment",
+              "registered_score",
+              "standardized_score",
+              "truth_moment"
+            ],
+            "marital": false,
+            "n_blocks": 51,
+            "path": "/rungs/{rung}/train_f1_analog_disclosure/by_boundary/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "mapping_sha256",
+              "prefix_bytes",
+              "prefix_sha256"
+            ],
+            "marital": false,
+            "n_blocks": 3,
+            "path": "/source_audit/expected_boundary_nawi/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          }
+        ],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/cross_pins/qstar_ledger_path",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/cross_pins/qstar_ledger_schema",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/implementation/generated_findings_path",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/implementation/generated_progress_path",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/implementation/parent_selector_machinery",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/implementation/runner",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/schema",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 69919,
+      "path": "docs/analysis/m6_rhostar_train_only_selection_results.json",
+      "tier": "boundary_values"
+    },
+    {
+      "blob_sha1": "1eba7ff6366bad1999de36c9f7261ad6939ad86a",
+      "families": {
+        "selector": 2
+      },
+      "kind": "text",
+      "lines": 56304,
+      "path": "docs/design/covered_earnings_correction.md",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 34584,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 34574,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 34639,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 34629,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "2bba4875be8c6a89a2ee602c514093566f249ca9",
+      "families": {
+        "train_only": 8
+      },
+      "kind": "text",
+      "lines": 413,
+      "path": "docs/design/m6_candidate2_decision9_readjudication.md",
+      "ranges": [
+        {
+          "decimal_tokens": 1,
+          "end": 22,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 12,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 60,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 50,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 91,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 3,
+          "start": 62,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 136,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 126,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 347,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 337,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 388,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 378,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "5eb7ecafe81b9dde9aa1cfbf3200def459fd6e3c",
+      "families": {
+        "pseudo_boundary": 7,
+        "selector": 11,
+        "train_only": 24
+      },
+      "kind": "text",
+      "lines": 1331,
+      "path": "docs/design/m6_candidate2_program.md",
+      "ranges": [
+        {
+          "decimal_tokens": 1,
+          "end": 428,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 418,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 10,
+          "end": 452,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 3,
+          "start": 431,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 476,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 466,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 574,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 564,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 5,
+          "end": 628,
+          "families": [
+            "pseudo_boundary",
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 4,
+          "start": 607,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 652,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 642,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 2,
+          "end": 692,
+          "families": [
+            "pseudo_boundary",
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 5,
+          "start": 661,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 711,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 700,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 876,
+          "families": [
+            "pseudo_boundary",
+            "train_only"
+          ],
+          "hit_lines": 5,
+          "start": 855,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 11,
+          "end": 954,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 943,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 2,
+          "end": 980,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 3,
+          "start": 957,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 4,
+          "end": 1024,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 3,
+          "start": 1003,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 3,
+          "end": 1050,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 1033,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 3,
+          "end": 1136,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1126,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 2,
+          "end": 1235,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 1224,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1265,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 3,
+          "start": 1250,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1284,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1274,
+          "target_year_tokens": 1
+        }
+      ],
+      "tier": "boundary_values"
+    },
+    {
+      "blob_sha1": "7c5bd8e307849a0c0641180b7ca02a47396402b7",
+      "families": {
+        "pseudo_boundary": 1,
+        "selector": 23,
+        "train_only": 5
+      },
+      "kind": "text",
+      "lines": 361,
+      "path": "docs/design/m6_candidate3_lock_addendum.md",
+      "ranges": [
+        {
+          "decimal_tokens": 4,
+          "end": 37,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 7,
+          "start": 1,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 3,
+          "end": 82,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 7,
+          "start": 48,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 5,
+          "end": 117,
+          "families": [
+            "pseudo_boundary",
+            "selector"
+          ],
+          "hit_lines": 2,
+          "start": 106,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 10,
+          "end": 162,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 3,
+          "start": 141,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 236,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 218,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 4,
+          "end": 347,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 5,
+          "start": 316,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 361,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 3,
+          "start": 354,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "boundary_values"
+    },
+    {
+      "blob_sha1": "97daeb3e790ad9153dc505adc4c2b545f0c45f4f",
+      "families": {
+        "boundary_year": 4,
+        "f1_mechanism": 1,
+        "pseudo_boundary": 2,
+        "selector": 7,
+        "train_only": 8
+      },
+      "kind": "text",
+      "lines": 412,
+      "path": "docs/design/m6_candidate3_program.md",
+      "ranges": [
+        {
+          "decimal_tokens": 11,
+          "end": 132,
+          "families": [
+            "boundary_year"
+          ],
+          "hit_lines": 2,
+          "start": 118,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 4,
+          "end": 173,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 153,
+          "target_year_tokens": 2
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 191,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 179,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 8,
+          "end": 230,
+          "families": [
+            "boundary_year",
+            "pseudo_boundary",
+            "selector"
+          ],
+          "hit_lines": 5,
+          "start": 204,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 5,
+          "end": 255,
+          "families": [
+            "boundary_year",
+            "f1_mechanism",
+            "pseudo_boundary",
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 5,
+          "start": 232,
+          "target_year_tokens": 4
+        },
+        {
+          "decimal_tokens": 3,
+          "end": 280,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 265,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 5,
+          "end": 310,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 300,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 4,
+          "end": 386,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 376,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "boundary_values"
+    },
+    {
+      "blob_sha1": "72f9eb3b1a4875828a18316dc713f68896ae2654",
+      "families": {
+        "boundary_year": 5,
+        "pseudo_boundary": 9,
+        "selector": 39,
+        "train_only": 16
+      },
+      "kind": "text",
+      "lines": 4261,
+      "path": "docs/design/m6_projection_engine.md",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 28,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 18,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 2,
+          "end": 40,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 30,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 186,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 176,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 2,
+          "end": 223,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 213,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 4,
+          "end": 943,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 3,
+          "start": 929,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 978,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 968,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 5,
+          "end": 1090,
+          "families": [
+            "pseudo_boundary",
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 3,
+          "start": 1071,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1138,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 1128,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1164,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 1154,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 1185,
+          "families": [
+            "pseudo_boundary",
+            "selector"
+          ],
+          "hit_lines": 2,
+          "start": 1168,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 3,
+          "end": 1216,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 5,
+          "start": 1192,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1230,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 1220,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1257,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 1241,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 23,
+          "end": 1295,
+          "families": [
+            "boundary_year",
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 5,
+          "start": 1261,
+          "target_year_tokens": 5
+        },
+        {
+          "decimal_tokens": 9,
+          "end": 1327,
+          "families": [
+            "boundary_year",
+            "pseudo_boundary",
+            "selector"
+          ],
+          "hit_lines": 4,
+          "start": 1302,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 8,
+          "end": 1349,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 2,
+          "start": 1338,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 3,
+          "end": 1378,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 4,
+          "start": 1362,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 1406,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 1396,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 3,
+          "end": 1421,
+          "families": [
+            "pseudo_boundary",
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 1410,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 12,
+          "end": 1434,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 1424,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 7,
+          "end": 1476,
+          "families": [
+            "pseudo_boundary",
+            "selector"
+          ],
+          "hit_lines": 5,
+          "start": 1441,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 5,
+          "end": 1504,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 4,
+          "start": 1487,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 3,
+          "end": 1526,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 1507,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 4,
+          "end": 2743,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 2733,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 2,
+          "end": 3496,
+          "families": [
+            "pseudo_boundary",
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 3485,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 2,
+          "end": 3918,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 3908,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 10,
+          "end": 4100,
+          "families": [
+            "boundary_year",
+            "pseudo_boundary",
+            "selector"
+          ],
+          "hit_lines": 3,
+          "start": 4076,
+          "target_year_tokens": 3
+        },
+        {
+          "decimal_tokens": 21,
+          "end": 4118,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 4108,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 4135,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 4124,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "boundary_values"
+    },
+    {
+      "blob_sha1": "f99bd9898c1adcbb62b449634d9ebffadf8d3a3a",
+      "families": {
+        "pseudo_boundary": 1,
+        "train_only": 7
+      },
+      "kind": "text",
+      "lines": 969,
+      "path": "docs/design/m6_remarriage_learning_plan_round2.md",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 33,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 23,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 6,
+          "end": 74,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 62,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 668,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 658,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 797,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 787,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 896,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 886,
+          "target_year_tokens": 3
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 959,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 948,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "2edda448a5e26291ff49cff6047c67413c674dcf",
+      "families": {},
+      "json": {
+        "boundary_blocks": [
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "divorced_calibration",
+              "fit_max_year",
+              "fit_support_by_origin_ysd",
+              "incumbent_table_sha256",
+              "reference_spells",
+              "support_struck_named_laws",
+              "widowed_targets"
+            ],
+            "marital": true,
+            "n_blocks": 4,
+            "path": "/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010,
+              2014
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "absolute_log_exposure_error",
+              "mean_exposure",
+              "mean_exposure_ratio",
+              "truth_exposure"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/round1_ledger_evidence/working_age_widowed_projected_exposure_R0/by_boundary/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          }
+        ],
+        "pseudo_boundary_fields": [],
+        "strings": []
+      },
+      "kind": "json",
+      "lines": 701,
+      "path": "docs/design/m6_remarriage_learning_plan_round2_validation.json",
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "f8446549998024439e571a58adba2734b672b097",
+      "families": {
+        "boundary_year": 7
+      },
+      "kind": "text",
+      "lines": 248,
+      "path": "docs/design/m6_remarriage_round3_amendment.md",
+      "ranges": [
+        {
+          "decimal_tokens": 1,
+          "end": 70,
+          "families": [
+            "boundary_year"
+          ],
+          "hit_lines": 7,
+          "start": 34,
+          "target_year_tokens": 1
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "1b779a2334719e4341e4e9b0e90ab755c0834d45",
+      "families": {
+        "boundary_year": 1
+      },
+      "kind": "text",
+      "lines": 320,
+      "path": "docs/design/m6_remarriage_round4_amendment.md",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 215,
+          "families": [
+            "boundary_year"
+          ],
+          "hit_lines": 1,
+          "start": 205,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "d4cf0b444f2247dc46f6590dd5b6d49290954baf",
+      "families": {
+        "boundary_year": 2,
+        "train_only": 1
+      },
+      "kind": "text",
+      "lines": 489,
+      "path": "docs/design/m6_remarriage_round6_amendment.md",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 265,
+          "families": [
+            "boundary_year"
+          ],
+          "hit_lines": 1,
+          "start": 255,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 380,
+          "families": [
+            "boundary_year"
+          ],
+          "hit_lines": 1,
+          "start": 370,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 466,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 456,
+          "target_year_tokens": 2
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "003b423eadcab3bb51d25e93c972314eb386e627",
+      "families": {
+        "train_only": 5
+      },
+      "kind": "text",
+      "lines": 669,
+      "path": "docs/design/m6_remarriage_surface_question.md",
+      "ranges": [
+        {
+          "decimal_tokens": 1,
+          "end": 26,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 16,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 48,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 38,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 105,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 95,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 125,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 115,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 661,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 651,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "ab6616e9fa37df3f67b73caba8bdc0d1a9d98d2f",
+      "families": {
+        "train_only": 1
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/lanes/u2-m2-resume a1 (20260928-233117)/paths_named_in_commands/[]",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 1016,
+      "path": "docs/design/u2_m2_exposure.json",
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "66dc4ac6c812b2b6fe14b47c834ae3b2f24520de",
+      "families": {
+        "boundary_year": 1,
+        "selector": 5,
+        "train_only": 1
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "selector"
+            ],
+            "n": 2,
+            "path": "/entries/[]/claim",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "boundary_year"
+            ],
+            "n": 1,
+            "path": "/entries/[]/revision_reason",
+            "value_bearing": 1
+          },
+          {
+            "families": [
+              "selector"
+            ],
+            "n": 2,
+            "path": "/entries/[]/revision_reason",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "selector",
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/entries/[]/revision_reason",
+            "value_bearing": 1
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 402,
+      "path": "docs/forecasts/timeline_ledger.json",
+      "tier": "boundary_values"
+    },
+    {
+      "blob_sha1": "b0c39af1e13a705f90b85d3e6b9a91e1d3c5485c",
+      "families": {
+        "selector": 2
+      },
+      "kind": "text",
+      "lines": 5896,
+      "path": "gates.yaml",
+      "ranges": [
+        {
+          "decimal_tokens": 4,
+          "end": 5785,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 5775,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 4,
+          "end": 5896,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 5888,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "boundary_values"
+    },
+    {
+      "blob_sha1": "65c7a0412ff6047b633e6781bfbe66693e8d696d",
+      "families": {
+        "pseudo_boundary": 1,
+        "selector": 1,
+        "train_only": 2
+      },
+      "kind": "text",
+      "lines": 23,
+      "path": "paper/figures/m6_q_frontier.svg",
+      "ranges": [
+        {
+          "decimal_tokens": 14,
+          "end": 8,
+          "families": [
+            "pseudo_boundary",
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 1,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 68,
+          "end": 23,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 12,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "boundary_values"
+    },
+    {
+      "blob_sha1": "5ad220e5ded13923171dd35c14c643097c842573",
+      "families": {
+        "frontier_figure": 2,
+        "pseudo_boundary": 1,
+        "selector": 3,
+        "train_only": 3
+      },
+      "kind": "text",
+      "lines": 2609,
+      "path": "paper/paper.qmd",
+      "ranges": [
+        {
+          "decimal_tokens": 2,
+          "end": 2253,
+          "families": [
+            "frontier_figure",
+            "pseudo_boundary",
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 4,
+          "start": 2233,
+          "target_year_tokens": 2
+        }
+      ],
+      "tier": "boundary_values"
+    },
+    {
+      "blob_sha1": "82483a59372b7db61a9cc5c37f3fca30d942c39c",
+      "families": {
+        "selector": 2
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "selector"
+            ],
+            "n": 1,
+            "path": "/model/stage_1_person_effect/stage_1b_three_component_fit",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "selector"
+            ],
+            "n": 1,
+            "path": "/model/stage_1_person_effect/stage_1c_correlated_noise_shrinkage",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 1523,
+      "path": "runs/gate1_qrf_latent_perm_v2.json",
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "3b1e8bfa18581546138ec00d899de36ee0be1828",
+      "families": {
+        "selector": 1
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "selector"
+            ],
+            "n": 1,
+            "path": "/model/stage_1_person_effect_decomposition/note",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 1669,
+      "path": "runs/gate1_qrf_structural_v1.json",
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "9a8c78f85e391a5cfe590547402fded5cc0e5bb7",
+      "families": {
+        "train_only": 1
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/model/marginal/p0",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 3173,
+      "path": "runs/gate1_rank_kernel_v1.json",
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "8c3897fbe072e35fd4952ae2d892fbe6d882f05d",
+      "families": {
+        "train_only": 1
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/model/marginal/p0",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 2013,
+      "path": "runs/gate1_rank_knn_v1.json",
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "93c388078041320aeb5a925291e2e4f9c8da5e5b",
+      "families": {
+        "train_only": 1
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/model/calibration",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 5761,
+      "path": "runs/gate1_rank_knn_v2.json",
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "d4d5b5d11dbc704c1bdd0ff172a8e8ca1e6e964f",
+      "families": {
+        "train_only": 1
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/model/calibration",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 7955,
+      "path": "runs/gate1_rank_knn_v3.json",
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "2b069fc85ff7122e80f0e9e3674a149ab8daa4e1",
+      "families": {
+        "train_only": 1
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/model/calibration",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 6650,
+      "path": "runs/gate1_rank_knn_v4.json",
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "fc96fda4b66ef605444af38df5ef2bf7e9d7a89d",
+      "families": {
+        "train_only": 1
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/model/marginal/p0",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 1749,
+      "path": "runs/gate1_rank_v1.json",
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "28030a7bc0193d0bdfd0d907ad00929326059766",
+      "families": {
+        "train_only": 10
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/delta_vs_candidate6",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/model/delta_vs_candidate6",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/model/registered_ambiguity_resolutions/aggregate_preservation_scalar",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 5,
+            "path": "/per_seed/[]/component_meta/delta_vs_candidate6",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/pre_registered_forecast/delta_vs_candidate6",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/remarriage_rescale/note",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 6739,
+      "path": "runs/gate2_hazard_v8.json",
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "4f65a7af561071f48e3d41eae843905c9b7225d2",
+      "families": {
+        "train_only": 5
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 5,
+            "path": "/per_seed/[]/component_meta/delta_vs_candidate6",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 6822,
+      "path": "runs/gate2_hazard_v9.json",
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "e6d8fc7e4ad43253f361cf3017922c0842b42dc6",
+      "families": {
+        "selector": 1
+      },
+      "json": {
+        "boundary_blocks": [],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "selector"
+            ],
+            "n": 1,
+            "path": "/spec_resolution_notes/delta_2_episode_persistence",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 26220,
+      "path": "runs/gate2b_hazard_v7.json",
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "db26df690b20c1d4a9fb59503ce8e651c80af2fb",
+      "families": {
+        "boundary_year": 6,
+        "pseudo_boundary": 137,
+        "selector": 2,
+        "train_only": 2
+      },
+      "json": {
+        "boundary_blocks": [
+          {
+            "descendant_year_keys": [
+              "1900",
+              "1910",
+              "1920",
+              "1930",
+              "1940",
+              "1950",
+              "1960",
+              "1970",
+              "1980",
+              "1990",
+              "2007",
+              "2008",
+              "2009",
+              "2010",
+              "2011",
+              "2012",
+              "2013",
+              "2014"
+            ],
+            "earnings_cells": false,
+            "field_names": [
+              "calendar_rows",
+              "evaluation_frame",
+              "fit_frame",
+              "rungs"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/preflights/first_marriage_fit_and_transport/selection_ledger/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [],
+            "marital": true,
+            "n_blocks": 27,
+            "path": "/preflights/first_marriage_fit_and_transport/selection_ledger/selection/candidates/[]/boundary_deviances/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          }
+        ],
+        "pseudo_boundary_fields": [
+          {
+            "marital": true,
+            "n": 132,
+            "path": "/first_marriage_effect_decomposition/landed_conformance_relabel/relabel_ledger/aggregates_by_boundary_year_origin_sex_age/[]",
+            "values": [
+              2006,
+              2008,
+              2010
+            ]
+          }
+        ],
+        "strings": [
+          {
+            "families": [
+              "pseudo_boundary"
+            ],
+            "n": 1,
+            "path": "/first_marriage_effect_decomposition/attribution_limits/reason",
+            "value_bearing": 1
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/integrity/selection_evidence/qstar_q_grid/path",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "boundary_year"
+            ],
+            "n": 3,
+            "path": "/preflights/first_marriage_fit_and_transport/selection_ledger/boundaries/{year}/evaluation_frame/label",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "boundary_year"
+            ],
+            "n": 3,
+            "path": "/preflights/first_marriage_fit_and_transport/selection_ledger/boundaries/{year}/fit_frame/label",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 202534,
+      "path": "runs/gate_m6_candidate2_v1.json",
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "8dad5620d4ae6095c117f66760e7a8262802f692",
+      "families": {
+        "boundary_year": 6,
+        "pseudo_boundary": 137,
+        "selector": 4,
+        "train_only": 3
+      },
+      "json": {
+        "boundary_blocks": [
+          {
+            "descendant_year_keys": [
+              "1900",
+              "1910",
+              "1920",
+              "1930",
+              "1940",
+              "1950",
+              "1960",
+              "1970",
+              "1980",
+              "1990",
+              "2007",
+              "2008",
+              "2009",
+              "2010",
+              "2011",
+              "2012",
+              "2013",
+              "2014"
+            ],
+            "earnings_cells": false,
+            "field_names": [
+              "calendar_rows",
+              "evaluation_frame",
+              "fit_frame",
+              "rungs"
+            ],
+            "marital": true,
+            "n_blocks": 3,
+            "path": "/preflights/first_marriage_fit_and_transport/selection_ledger/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [],
+            "marital": true,
+            "n_blocks": 27,
+            "path": "/preflights/first_marriage_fit_and_transport/selection_ledger/selection/candidates/[]/boundary_deviances/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          }
+        ],
+        "pseudo_boundary_fields": [
+          {
+            "marital": true,
+            "n": 132,
+            "path": "/first_marriage_effect_decomposition/landed_conformance_relabel/relabel_ledger/aggregates_by_boundary_year_origin_sex_age/[]",
+            "values": [
+              2006,
+              2008,
+              2010
+            ]
+          }
+        ],
+        "strings": [
+          {
+            "families": [
+              "pseudo_boundary"
+            ],
+            "n": 1,
+            "path": "/first_marriage_effect_decomposition/attribution_limits/reason",
+            "value_bearing": 1
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/integrity/selection_evidence/qstar_q_grid/path",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/integrity/selection_evidence/rhostar_rho_grid/path",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "boundary_year"
+            ],
+            "n": 3,
+            "path": "/preflights/first_marriage_fit_and_transport/selection_ledger/boundaries/{year}/evaluation_frame/label",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "boundary_year"
+            ],
+            "n": 3,
+            "path": "/preflights/first_marriage_fit_and_transport/selection_ledger/boundaries/{year}/fit_frame/label",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 203181,
+      "path": "runs/gate_m6_candidate3_v1.json",
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "1a6c7d5e66a306fbc28a6192951f26ab1f5f9e0d",
+      "families": {},
+      "json": {
+        "boundary_blocks": [
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "by_basis",
+              "in_universe",
+              "in_window_by_rule_2",
+              "in_window_by_rule_3_age_rule",
+              "readings_disagree",
+              "records"
+            ],
+            "marital": false,
+            "n_blocks": 2,
+            "path": "/cohort_structure/boundary_year_unobserved/{year}",
+            "years": [
+              2004,
+              2007
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "by_basis",
+              "in_universe",
+              "in_window_by_rule_2",
+              "in_window_by_rule_3_age_rule",
+              "readings_disagree",
+              "records"
+            ],
+            "marital": false,
+            "n_blocks": 2,
+            "path": "/sensitivities/own_receipt_reading_d430/cohort_structure/boundary_year_unobserved/{year}",
+            "years": [
+              2004,
+              2007
+            ]
+          }
+        ],
+        "pseudo_boundary_fields": [],
+        "strings": []
+      },
+      "kind": "json",
+      "lines": 7882,
+      "path": "runs/replication_urban2006_minimum_benefit_v1.json",
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "f213b8eb57a05ded3530aa6411251ca02544231f",
+      "families": {
+        "pseudo_boundary": 5,
+        "train_only": 3
+      },
+      "kind": "code",
+      "lines": 1464,
+      "path": "scripts/analyze_m6_remarriage_train_delta.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 14,
+          "families": [
+            "pseudo_boundary",
+            "train_only"
+          ],
+          "hit_lines": 3,
+          "start": 1,
+          "target_year_tokens": 2
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 62,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 52,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1231,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 1221,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1447,
+          "families": [
+            "pseudo_boundary",
+            "train_only"
+          ],
+          "hit_lines": 3,
+          "start": 1424,
+          "target_year_tokens": 1
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "1cb11b1aaa905ac3c84f36addb465b525137f87e",
+      "families": {
+        "frontier_figure": 2,
+        "pseudo_boundary": 1,
+        "selector": 1,
+        "train_only": 4
+      },
+      "kind": "code",
+      "lines": 685,
+      "path": "scripts/build_paper_figures.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 579,
+          "families": [
+            "frontier_figure",
+            "train_only"
+          ],
+          "hit_lines": 3,
+          "start": 564,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 618,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 608,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 630,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 620,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 8,
+          "end": 648,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 638,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 667,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 657,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 681,
+          "families": [
+            "frontier_figure"
+          ],
+          "hit_lines": 1,
+          "start": 671,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "c45efe2ad696fa06b5ab1793c0c0719a45298c15",
+      "families": {
+        "boundary_year": 6,
+        "f1_mechanism": 4,
+        "pseudo_boundary": 4,
+        "selector": 8,
+        "train_only": 8
+      },
+      "kind": "code",
+      "lines": 880,
+      "path": "scripts/m6_c3_f1_mechanism_diagnostic.py",
+      "ranges": [
+        {
+          "decimal_tokens": 3,
+          "end": 17,
+          "families": [
+            "boundary_year",
+            "f1_mechanism",
+            "pseudo_boundary",
+            "train_only"
+          ],
+          "hit_lines": 3,
+          "start": 1,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 60,
+          "families": [
+            "boundary_year",
+            "f1_mechanism",
+            "train_only"
+          ],
+          "hit_lines": 4,
+          "start": 34,
+          "target_year_tokens": 2
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 81,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 71,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 259,
+          "families": [
+            "pseudo_boundary",
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 241,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 327,
+          "families": [
+            "f1_mechanism"
+          ],
+          "hit_lines": 1,
+          "start": 317,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 514,
+          "families": [
+            "f1_mechanism"
+          ],
+          "hit_lines": 1,
+          "start": 504,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 542,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 532,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 564,
+          "families": [
+            "boundary_year",
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 547,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 582,
+          "families": [
+            "boundary_year"
+          ],
+          "hit_lines": 1,
+          "start": 572,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 2,
+          "end": 736,
+          "families": [
+            "pseudo_boundary",
+            "train_only"
+          ],
+          "hit_lines": 3,
+          "start": 717,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 783,
+          "families": [
+            "boundary_year",
+            "selector"
+          ],
+          "hit_lines": 9,
+          "start": 763,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 871,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 861,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "f17463fa2c4d303f5df6ae9da6127dee1a86828d",
+      "families": {
+        "train_only": 2
+      },
+      "json": {
+        "boundary_blocks": [
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "anchor_waves",
+              "evaluation_years",
+              "fit_max_year",
+              "n_periods",
+              "truth_required_interview_year_max"
+            ],
+            "marital": false,
+            "n_blocks": 3,
+            "path": "/pseudo_holdouts/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "incumbent_table_sha256",
+              "roots"
+            ],
+            "marital": false,
+            "n_blocks": 4,
+            "path": "/validation_expectations/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010,
+              2014
+            ]
+          }
+        ],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/authority/round1_ledger/path",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/status",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 685,
+      "path": "scripts/m6_remarriage_round2_selector_config.json",
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "6b360e202273faa7ecb88e5a3b522714e170a444",
+      "families": {
+        "train_only": 2
+      },
+      "json": {
+        "boundary_blocks": [
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "anchor_waves",
+              "evaluation_years",
+              "fit_max_year",
+              "n_periods",
+              "truth_required_interview_year_max"
+            ],
+            "marital": false,
+            "n_blocks": 3,
+            "path": "/pseudo_holdouts/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010
+            ]
+          },
+          {
+            "descendant_year_keys": [],
+            "earnings_cells": false,
+            "field_names": [
+              "incumbent_table_sha256",
+              "roots"
+            ],
+            "marital": false,
+            "n_blocks": 4,
+            "path": "/validation_expectations/boundaries/{year}",
+            "years": [
+              2006,
+              2008,
+              2010,
+              2014
+            ]
+          }
+        ],
+        "pseudo_boundary_fields": [],
+        "strings": [
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/authority/round1_ledger/path",
+            "value_bearing": 0
+          },
+          {
+            "families": [
+              "train_only"
+            ],
+            "n": 1,
+            "path": "/status",
+            "value_bearing": 0
+          }
+        ]
+      },
+      "kind": "json",
+      "lines": 685,
+      "path": "scripts/m6_remarriage_round3_selector_config.json",
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "7c6da3c67fea5137ff0b25ee96593d4b7d96a775",
+      "families": {
+        "selector": 1,
+        "train_only": 3
+      },
+      "kind": "code",
+      "lines": 222,
+      "path": "scripts/reduce_m6_qstar_selection.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 13,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 2,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 33,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 22,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "37f594dc9375e4808254e0de737d0b73ecf2386f",
+      "families": {
+        "pseudo_boundary": 1,
+        "train_only": 5
+      },
+      "kind": "code",
+      "lines": 2791,
+      "path": "scripts/reduce_m6_remarriage_round2.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 235,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 225,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 306,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 296,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 582,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 572,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1307,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1297,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1324,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1314,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 2686,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 2676,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "fc636a8ac2686a9ed2bbcf1c56cce76b3fa44cc3",
+      "families": {
+        "pseudo_boundary": 1,
+        "train_only": 5
+      },
+      "kind": "code",
+      "lines": 2792,
+      "path": "scripts/reduce_m6_remarriage_round3.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 236,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 226,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 307,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 297,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 583,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 573,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1308,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1298,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1325,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1315,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 2687,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 2677,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "3907044e76a7b3d8022f0bef0ce403bbc00d1f8b",
+      "families": {
+        "pseudo_boundary": 1,
+        "train_only": 5
+      },
+      "kind": "code",
+      "lines": 2954,
+      "path": "scripts/reduce_m6_remarriage_round4.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 236,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 226,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 307,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 297,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 583,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 573,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1470,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1460,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1487,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1477,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 2849,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 2839,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "628e05be9c8d16759916d4047931a77714f26bf7",
+      "families": {
+        "pseudo_boundary": 1,
+        "train_only": 5
+      },
+      "kind": "code",
+      "lines": 3000,
+      "path": "scripts/reduce_m6_remarriage_round5.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 236,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 226,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 307,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 297,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 583,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 573,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1501,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1491,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1518,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1508,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 2895,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 2885,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "2a95d6b2bf67c6091ed6cabcdf6501a20f807784",
+      "families": {
+        "pseudo_boundary": 1,
+        "train_only": 5
+      },
+      "kind": "code",
+      "lines": 3092,
+      "path": "scripts/reduce_m6_remarriage_round6.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 310,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 300,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 381,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 371,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 657,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 647,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1575,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1565,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1592,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1582,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 2978,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 2968,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "09ee24b4abd80dd404b30333e1b2f0e23c4c1cc7",
+      "families": {
+        "pseudo_boundary": 1,
+        "train_only": 2
+      },
+      "kind": "code",
+      "lines": 269,
+      "path": "scripts/reduce_m6_rhostar_selection.py",
+      "ranges": [
+        {
+          "decimal_tokens": 2,
+          "end": 18,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 7,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 108,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 98,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "1db2c90ec376875d41db942a110c20cd0aaf4046",
+      "families": {
+        "train_only": 3
+      },
+      "kind": "code",
+      "lines": 298,
+      "path": "scripts/registered_m6_candidate2_inputs.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 87,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 77,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 223,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 213,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 285,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 275,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "1de8fbc984f318cc99bb12ca323a9c985b62252f",
+      "families": {
+        "train_only": 1
+      },
+      "kind": "code",
+      "lines": 25,
+      "path": "scripts/registered_m6_candidate3_inputs.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 9,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "4921cb5afbc587a677d73affcf57284579342c34",
+      "families": {
+        "train_only": 1
+      },
+      "kind": "code",
+      "lines": 1423,
+      "path": "scripts/run_gate1_candidate10.py",
+      "ranges": [
+        {
+          "decimal_tokens": 1,
+          "end": 1053,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1043,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "b399f053c97de7e91a34d84c8f87fd0ed807f0fe",
+      "families": {
+        "train_only": 2
+      },
+      "kind": "code",
+      "lines": 888,
+      "path": "scripts/run_gate1_candidate2.py",
+      "ranges": [
+        {
+          "decimal_tokens": 1,
+          "end": 139,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 129,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 527,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 517,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "9fbfc54afcb267bc2609c047312bfb515d1ebb34",
+      "families": {
+        "selector": 10
+      },
+      "kind": "code",
+      "lines": 857,
+      "path": "scripts/run_gate1_candidate3.py",
+      "ranges": [
+        {
+          "decimal_tokens": 3,
+          "end": 57,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 2,
+          "start": 38,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 3,
+          "end": 237,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 3,
+          "start": 220,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 292,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 282,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 2,
+          "end": 326,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 2,
+          "start": 314,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 2,
+          "end": 679,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 2,
+          "start": 660,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "05cf7f5ce452a5df1f809a4b1857844844cd0948",
+      "families": {
+        "selector": 1
+      },
+      "kind": "code",
+      "lines": 1174,
+      "path": "scripts/run_gate1_candidate4.py",
+      "ranges": [
+        {
+          "decimal_tokens": 2,
+          "end": 939,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 929,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "6e3f0c4f7e0c802d69b97883d6e8351f4e96c637",
+      "families": {
+        "train_only": 6
+      },
+      "kind": "code",
+      "lines": 1408,
+      "path": "scripts/run_gate1_candidate5b.py",
+      "ranges": [
+        {
+          "decimal_tokens": 1,
+          "end": 31,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 16,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 44,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 34,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 215,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 205,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 356,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 346,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 1203,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1193,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "c0d230f3e24b6c5ae59e9af4415eec414bea4313",
+      "families": {
+        "train_only": 1
+      },
+      "kind": "code",
+      "lines": 1080,
+      "path": "scripts/run_gate1_candidate6.py",
+      "ranges": [
+        {
+          "decimal_tokens": 1,
+          "end": 867,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 857,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "5f4758c99d305632b1971dada00e4346da67f4e5",
+      "families": {
+        "train_only": 1
+      },
+      "kind": "code",
+      "lines": 1271,
+      "path": "scripts/run_gate1_candidate7.py",
+      "ranges": [
+        {
+          "decimal_tokens": 1,
+          "end": 1031,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1021,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "baf596bd30965abd676bf73358db51b79b05201a",
+      "families": {
+        "train_only": 2
+      },
+      "kind": "code",
+      "lines": 1978,
+      "path": "scripts/run_gate1_candidate8.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 26,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 16,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1527,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1517,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "6f7025af62f57fcd6abc4493068fe4b7af078817",
+      "families": {
+        "train_only": 2
+      },
+      "kind": "code",
+      "lines": 2425,
+      "path": "scripts/run_gate1_candidate9.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 1054,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1044,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 2,
+          "end": 1877,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1867,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "94638ab96cf7f6ad0ec24ae6a42e9de13773db07",
+      "families": {
+        "train_only": 6
+      },
+      "kind": "code",
+      "lines": 1575,
+      "path": "scripts/run_gate2_candidate8.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 38,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 28,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 146,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 136,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 3,
+          "end": 277,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 263,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1159,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1149,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1291,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1281,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "cb452b32cb3433bb6ce8af9e962ff1f024bbeb4a",
+      "families": {
+        "train_only": 1
+      },
+      "kind": "code",
+      "lines": 993,
+      "path": "scripts/run_gate2b_candidate1.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 37,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 27,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "0d4695cb62aae1fef1b79837812be9233046e797",
+      "families": {
+        "selector": 1
+      },
+      "kind": "code",
+      "lines": 1620,
+      "path": "scripts/run_gate2b_candidate7.py",
+      "ranges": [
+        {
+          "decimal_tokens": 1,
+          "end": 217,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 207,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "7b649ac96c27c9a8242b3f82a76a799f70588599",
+      "families": {
+        "pseudo_boundary": 29,
+        "train_only": 4
+      },
+      "kind": "code",
+      "lines": 2361,
+      "path": "scripts/select_m6_first_marriage_c.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 10,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 1,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 50,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 40,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 2,
+          "end": 78,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 2,
+          "start": 64,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 119,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 109,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 3,
+          "end": 265,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 2,
+          "start": 254,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 526,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 2,
+          "start": 513,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 738,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 2,
+          "start": 721,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 957,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 2,
+          "start": 938,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1003,
+          "families": [
+            "pseudo_boundary",
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 988,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1028,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 1018,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1070,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 2,
+          "start": 1059,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1333,
+          "families": [
+            "pseudo_boundary",
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 1315,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1370,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 1360,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1610,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 4,
+          "start": 1591,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1709,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 1699,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1989,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 1979,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 2007,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1997,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 2244,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 2234,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 2302,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 3,
+          "start": 2283,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 2329,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 2319,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "58d0b4105aa22be85bcbb8f1e1971b927438eaa6",
+      "families": {
+        "pseudo_boundary": 10,
+        "selector": 3,
+        "train_only": 7
+      },
+      "kind": "code",
+      "lines": 2346,
+      "path": "scripts/select_m6_qstar_train_only.py",
+      "ranges": [
+        {
+          "decimal_tokens": 1,
+          "end": 7,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 32,
+          "families": [
+            "pseudo_boundary",
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 4,
+          "start": 17,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 119,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 109,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 156,
+          "families": [
+            "pseudo_boundary",
+            "train_only"
+          ],
+          "hit_lines": 3,
+          "start": 139,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 593,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 583,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 720,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 707,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1314,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 1304,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1841,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 1831,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 1863,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 1853,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 1949,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 1939,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 2151,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 2141,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 2163,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 2153,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 2219,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 2209,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 2343,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 2333,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "f6b548bd6b0e7ac3a3e4d8b5c1c00392f146772d",
+      "families": {
+        "train_only": 3
+      },
+      "kind": "code",
+      "lines": 3973,
+      "path": "scripts/select_m6_remarriage_round2.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 7,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 223,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 213,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 3733,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 3723,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "a2eb910f065e3e9b249e7cc287887797786ec5e6",
+      "families": {
+        "train_only": 3
+      },
+      "kind": "code",
+      "lines": 4059,
+      "path": "scripts/select_m6_remarriage_round3.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 7,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 224,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 214,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 3743,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 3733,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "46a53601e90470c3f40d5ccba17415be5bc87852",
+      "families": {
+        "pseudo_boundary": 11,
+        "selector": 12,
+        "train_only": 14
+      },
+      "kind": "code",
+      "lines": 2112,
+      "path": "scripts/select_m6_rhostar_train_only.py",
+      "ranges": [
+        {
+          "decimal_tokens": 2,
+          "end": 9,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 1,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 37,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 27,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 3,
+          "end": 70,
+          "families": [
+            "pseudo_boundary",
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 8,
+          "start": 42,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 155,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 3,
+          "start": 140,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 249,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 235,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1255,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 1245,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1386,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 1376,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1495,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 1485,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1515,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 1505,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 1548,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 1538,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 1638,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 1628,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 1831,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 1821,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1944,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1934,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 3,
+          "end": 1965,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 2,
+          "start": 1954,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1984,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 3,
+          "start": 1970,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 2009,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 1999,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 2054,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 6,
+          "start": 2034,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 2101,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 2091,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "efef0e401674a7feea0c20e5d60b9b1a8972e463",
+      "families": {
+        "train_only": 1
+      },
+      "kind": "code",
+      "lines": 663,
+      "path": "scripts/smoke_m6_remarriage_round4_reducer.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 454,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 444,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "5ca6f75b472bb7a48549317c0fce9374af272c11",
+      "families": {
+        "train_only": 1
+      },
+      "kind": "code",
+      "lines": 826,
+      "path": "scripts/smoke_m6_remarriage_round5_reducer.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 491,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 481,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "1d0c1a615cd9ea5233c594f4ba12fa2e98c1b764",
+      "families": {
+        "selector": 2
+      },
+      "kind": "code",
+      "lines": 2068,
+      "path": "src/populace_dynamics/engine/forward_earnings.py",
+      "ranges": [
+        {
+          "decimal_tokens": 3,
+          "end": 641,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 631,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 679,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 669,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "0d0e14b91463162fc7a2739a750c0f46b7c3accf",
+      "families": {
+        "pseudo_boundary": 5,
+        "selector": 6,
+        "train_only": 1
+      },
+      "kind": "code",
+      "lines": 2646,
+      "path": "src/populace_dynamics/harness/m6_candidate2_runner.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 151,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 140,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 177,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 167,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 607,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 2,
+          "start": 596,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 733,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 2,
+          "start": 713,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 748,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 738,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 771,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 761,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 881,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 871,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1010,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 2,
+          "start": 999,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "8063420603a0f43be4ab4059f9b06a8e0f935411",
+      "families": {
+        "pseudo_boundary": 5,
+        "selector": 20,
+        "train_only": 3
+      },
+      "kind": "code",
+      "lines": 3003,
+      "path": "src/populace_dynamics/harness/m6_candidate3_runner.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 200,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 4,
+          "start": 186,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 229,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 2,
+          "start": 216,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 857,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 9,
+          "start": 823,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 876,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 3,
+          "start": 864,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1005,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 2,
+          "start": 985,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1020,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 1010,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1043,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 1033,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1153,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 1143,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 1285,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 4,
+          "start": 1271,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "3a38ab68a1d3881c4e6cc41bcad2a48f3fb8b75c",
+      "families": {
+        "pseudo_boundary": 2,
+        "train_only": 1
+      },
+      "kind": "code",
+      "lines": 1350,
+      "path": "src/populace_dynamics/models/family_transitions/components/first_marriage_support_aware.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 16,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 6,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 48,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 38,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 4,
+          "end": 72,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 62,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "a0e2f534ccb7e8b4be545ac712da8b8db33f0b68",
+      "families": {
+        "pseudo_boundary": 2,
+        "train_only": 2
+      },
+      "kind": "code",
+      "lines": 725,
+      "path": "src/populace_dynamics/models/family_transitions/registry.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 50,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 40,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 202,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 192,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 380,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 370,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 488,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 478,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "b75e31baf776533ddadc9459ba11bd517e7066ac",
+      "families": {
+        "train_only": 1
+      },
+      "kind": "code",
+      "lines": 766,
+      "path": "src/populace_dynamics/models/household_composition_sim.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 36,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 26,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "code"
+    },
+    {
+      "blob_sha1": "ea7db6c275d86cd9e0f0804d9b637caffb000d0c",
+      "families": {
+        "train_only": 1
+      },
+      "kind": "text",
+      "lines": 144,
+      "path": "tests/conftest.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 54,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 44,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "e3734ff7856f2dde036c497120c2f43edcece95e",
+      "families": {
+        "boundary_year": 1
+      },
+      "kind": "text",
+      "lines": 669,
+      "path": "tests/test_gate1_qrf_candidate5a2.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 298,
+          "families": [
+            "boundary_year"
+          ],
+          "hit_lines": 1,
+          "start": 288,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "2a7b3e0b68492613d3a90b491c8feed207b3c974",
+      "families": {
+        "train_only": 3
+      },
+      "kind": "text",
+      "lines": 1026,
+      "path": "tests/test_gate2_candidate8.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 17,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 7,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 514,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 504,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 536,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 526,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "mentions"
+    },
+    {
+      "blob_sha1": "c17b865c5e6ee4718ec9e0ac7a2c4a9678bb1b0d",
+      "families": {
+        "f1_mechanism": 3,
+        "pseudo_boundary": 2,
+        "selector": 1,
+        "train_only": 1
+      },
+      "kind": "text",
+      "lines": 262,
+      "path": "tests/test_m6_c3_f1_mechanism_diagnostic.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 6,
+          "families": [
+            "f1_mechanism",
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 32,
+          "families": [
+            "f1_mechanism"
+          ],
+          "hit_lines": 2,
+          "start": 13,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 238,
+          "families": [
+            "pseudo_boundary",
+            "selector"
+          ],
+          "hit_lines": 3,
+          "start": 213,
+          "target_year_tokens": 3
+        }
+      ],
+      "tier": "boundary_values"
+    },
+    {
+      "blob_sha1": "6fd42bf97c07cca80e3e03ad6d454bbbd3ac052c",
+      "families": {
+        "pseudo_boundary": 3,
+        "selector": 7
+      },
+      "kind": "text",
+      "lines": 3495,
+      "path": "tests/test_m6_candidate2_runner.py",
+      "ranges": [
+        {
+          "decimal_tokens": 1,
+          "end": 170,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 160,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 193,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 183,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 261,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 251,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 586,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 576,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 690,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 2,
+          "start": 675,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 704,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 694,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 718,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 1,
+          "start": 708,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 2,
+          "end": 740,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 2,
+          "start": 722,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "boundary_values"
+    },
+    {
+      "blob_sha1": "2f6d57adbdd9646a409d2dac2b92f4034763f96c",
+      "families": {
+        "pseudo_boundary": 3,
+        "selector": 15,
+        "train_only": 1
+      },
+      "kind": "text",
+      "lines": 3671,
+      "path": "tests/test_m6_candidate3_runner.py",
+      "ranges": [
+        {
+          "decimal_tokens": 1,
+          "end": 154,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 144,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 177,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 167,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 245,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 235,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 574,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 2,
+          "start": 563,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 4,
+          "end": 699,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 7,
+          "start": 662,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 2,
+          "end": 772,
+          "families": [
+            "selector"
+          ],
+          "hit_lines": 7,
+          "start": 733,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "boundary_values"
+    },
+    {
+      "blob_sha1": "c092ed8cc2fb8559e5c78dc437beb311baac2bba",
+      "families": {
+        "pseudo_boundary": 9,
+        "train_only": 1
+      },
+      "kind": "text",
+      "lines": 514,
+      "path": "tests/test_m6_first_marriage_c_selector.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 6,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 356,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 2,
+          "start": 345,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 374,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 2,
+          "start": 362,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 446,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 3,
+          "start": 427,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 2,
+          "end": 466,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 2,
+          "start": 448,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "marital"
+    },
+    {
+      "blob_sha1": "5c9a80a9687c679886dbaa8f21876a002e828bb1",
+      "families": {
+        "pseudo_boundary": 4,
+        "train_only": 1
+      },
+      "kind": "text",
+      "lines": 980,
+      "path": "tests/test_m6_qstar_selection.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 24,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 14,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 120,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 110,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 2,
+          "end": 752,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 742,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 2,
+          "end": 832,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 822,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 2,
+          "end": 848,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 838,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "boundary_values"
+    },
+    {
+      "blob_sha1": "75eb44b8ca04d098cbe39761e493b9e5e92a61c2",
+      "families": {
+        "pseudo_boundary": 5,
+        "selector": 2,
+        "train_only": 4
+      },
+      "kind": "text",
+      "lines": 1144,
+      "path": "tests/test_m6_rhostar_selection.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 6,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 1,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 26,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 13,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 1,
+          "end": 138,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 2,
+          "start": 119,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 181,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 171,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 3,
+          "end": 215,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 205,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 249,
+          "families": [
+            "selector",
+            "train_only"
+          ],
+          "hit_lines": 3,
+          "start": 236,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 2,
+          "end": 449,
+          "families": [
+            "pseudo_boundary"
+          ],
+          "hit_lines": 1,
+          "start": 439,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "boundary_values"
+    },
+    {
+      "blob_sha1": "f7886a1e473dec2ebaf75f8b0c34379c8800fc77",
+      "families": {
+        "train_only": 5
+      },
+      "kind": "text",
+      "lines": 476,
+      "path": "tests/test_registered_m6_candidate2_inputs.py",
+      "ranges": [
+        {
+          "decimal_tokens": 0,
+          "end": 56,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 45,
+          "target_year_tokens": 1
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 82,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 2,
+          "start": 68,
+          "target_year_tokens": 0
+        },
+        {
+          "decimal_tokens": 0,
+          "end": 256,
+          "families": [
+            "train_only"
+          ],
+          "hit_lines": 1,
+          "start": 246,
+          "target_year_tokens": 0
+        }
+      ],
+      "tier": "mentions"
+    }
+  ],
+  "pattern_families": {
+    "boundary_year": "boundar(?:y|ies)[\\s=_:-]*20(?:06|08|10)|\\b20(?:06|08|10)[\\s_-]+boundar|\\bb\\s*=\\s*20(?:08|10)\\b",
+    "f1_mechanism": "f1[\\s_-]mechanism|m6_c3_f1",
+    "frontier_figure": "fig-m6-frontier|m6_q_frontier",
+    "pseudo_boundary": "pseudo[-_ ]?boundar",
+    "selector": "\\bq(?:star|\\\\?\\*)|(?:\\brho|\u03c1)(?:star|\\\\?\\*)|\\bJ\\((?:q|\u03c1|rho)\\)",
+    "train_only": "train[-_ ]only"
+  },
+  "pseudo_boundaries": [
+    2006,
+    2008,
+    2010
+  ],
+  "q6_exclusions": [
+    {
+      "lines": null,
+      "path": "docs/amendments/m6_amendment_4_qstar_lock_addendum.md",
+      "scope": "whole_file"
+    },
+    {
+      "lines": null,
+      "path": "docs/analysis/m6_c3_f1_mechanism_diagnostic_results.json",
+      "scope": "whole_file"
+    },
+    {
+      "lines": null,
+      "path": "docs/analysis/m6_candidate2_registered_abort_execution_v1.txt",
+      "scope": "whole_file"
+    },
+    {
+      "lines": null,
+      "path": "docs/analysis/m6_qstar_train_only_selection.md",
+      "scope": "whole_file"
+    },
+    {
+      "lines": null,
+      "path": "docs/analysis/m6_qstar_train_only_selection_results.json",
+      "scope": "whole_file"
+    },
+    {
+      "lines": null,
+      "path": "docs/analysis/m6_rhostar_train_only_selection.md",
+      "scope": "whole_file"
+    },
+    {
+      "lines": null,
+      "path": "docs/analysis/m6_rhostar_train_only_selection_results.json",
+      "scope": "whole_file"
+    },
+    {
+      "lines": [
+        [
+          431,
+          452
+        ],
+        [
+          607,
+          628
+        ],
+        [
+          661,
+          692
+        ],
+        [
+          700,
+          711
+        ],
+        [
+          855,
+          876
+        ],
+        [
+          943,
+          954
+        ],
+        [
+          957,
+          980
+        ],
+        [
+          1003,
+          1024
+        ]
+      ],
+      "path": "docs/design/m6_candidate2_program.md",
+      "scope": "line_ranges"
+    },
+    {
+      "lines": null,
+      "path": "docs/design/m6_candidate3_lock_addendum.md",
+      "scope": "whole_file"
+    },
+    {
+      "lines": null,
+      "path": "docs/design/m6_candidate3_program.md",
+      "scope": "whole_file"
+    },
+    {
+      "lines": [
+        [
+          929,
+          943
+        ],
+        [
+          1071,
+          1090
+        ],
+        [
+          1168,
+          1185
+        ],
+        [
+          1192,
+          1216
+        ],
+        [
+          1261,
+          1295
+        ],
+        [
+          1302,
+          1327
+        ],
+        [
+          1338,
+          1349
+        ],
+        [
+          1362,
+          1378
+        ],
+        [
+          1396,
+          1406
+        ],
+        [
+          1410,
+          1421
+        ],
+        [
+          1424,
+          1434
+        ],
+        [
+          1441,
+          1476
+        ],
+        [
+          1487,
+          1504
+        ],
+        [
+          1507,
+          1526
+        ],
+        [
+          3485,
+          3496
+        ],
+        [
+          4076,
+          4100
+        ],
+        [
+          4108,
+          4118
+        ]
+      ],
+      "path": "docs/design/m6_projection_engine.md",
+      "scope": "line_ranges"
+    },
+    {
+      "lines": null,
+      "path": "docs/forecasts/timeline_ledger.json",
+      "scope": "whole_file"
+    },
+    {
+      "lines": [
+        [
+          5775,
+          5785
+        ],
+        [
+          5888,
+          5896
+        ]
+      ],
+      "path": "gates.yaml",
+      "scope": "line_ranges"
+    },
+    {
+      "lines": null,
+      "path": "paper/figures/m6_q_frontier.svg",
+      "scope": "whole_file"
+    },
+    {
+      "lines": [
+        [
+          2233,
+          2253
+        ]
+      ],
+      "path": "paper/paper.qmd",
+      "scope": "line_ranges"
+    },
+    {
+      "lines": null,
+      "path": "tests/test_m6_c3_f1_mechanism_diagnostic.py",
+      "scope": "whole_file"
+    },
+    {
+      "lines": [
+        [
+          160,
+          170
+        ],
+        [
+          675,
+          690
+        ],
+        [
+          722,
+          740
+        ]
+      ],
+      "path": "tests/test_m6_candidate2_runner.py",
+      "scope": "line_ranges"
+    },
+    {
+      "lines": [
+        [
+          144,
+          154
+        ],
+        [
+          662,
+          699
+        ],
+        [
+          733,
+          772
+        ]
+      ],
+      "path": "tests/test_m6_candidate3_runner.py",
+      "scope": "line_ranges"
+    },
+    {
+      "lines": [
+        [
+          110,
+          120
+        ],
+        [
+          742,
+          752
+        ],
+        [
+          822,
+          832
+        ],
+        [
+          838,
+          848
+        ]
+      ],
+      "path": "tests/test_m6_qstar_selection.py",
+      "scope": "line_ranges"
+    },
+    {
+      "lines": [
+        [
+          119,
+          138
+        ],
+        [
+          205,
+          215
+        ],
+        [
+          439,
+          449
+        ]
+      ],
+      "path": "tests/test_m6_rhostar_selection.py",
+      "scope": "line_ranges"
+    }
+  ],
+  "repository_head": "de08c69f3383baa3159cba1dd6edd766a57f1c14",
+  "schema": "track_b_b0_1_exposure_inventory.v1",
+  "scored_offsets": [
+    0,
+    2,
+    4
+  ],
+  "script_sha256": "4cb7cd3499de122bf4a902900d965913d127d44e295bc404c1f8d1ab04a6af3f",
+  "tier_counts": {
+    "boundary_values": 20,
+    "code": 24,
+    "marital": 45,
+    "mentions": 31
+  },
+  "tracked_files_scanned": 1647,
+  "whole_file_max_lines": 500,
+  "worktree_clean": true
+}
