@@ -160,10 +160,22 @@ def test_refusals_name_the_adjudication(documents, monkeypatch):
             assert ADJUDICATION in entry["refusal"]
             assert "disposition F" in entry["refusal"]
             assert "question" not in entry
-            assert entry["open_question"].endswith("?")
+            assert "(Question for PSID staff" in entry["open_question"]
+            assert "never from observed records" in entry["open_question"]
             assert entry["part_b_finding"].startswith(("PARTIAL", "See "))
+            # A refusal that also depends on another refusal is reported
+            # through that dependency first; both are disposition F.
+            dependencies = entry.get("blocking_dependencies", [])
+            for dependency in dependencies:
+                registry_name, key = dependency.split(":")
+                assert key in F_ITEMS[registry_name], dependency
             with pytest.raises(
-                registry.SourceAdjudicationError, match="u2_adjudicate_F"
+                registry.SourceAdjudicationError,
+                match=(
+                    "blocked by " + re.escape(", ".join(dependencies))
+                    if dependencies
+                    else "u2_adjudicate_F"
+                ),
             ):
                 registry.require_resolved(name, entry["id"])
 
