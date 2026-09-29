@@ -85,6 +85,15 @@ that row records the value only.
 | `src/populace_dynamics/engine/steps.py` | `eedbf0d54b00e078c81c973a2b550c65648ea4941b755cfc85c4bc2421e5dfd0` |
 | `src/populace_dynamics/engine/rng.py` | `5695c8e1d82bbde4ff3c81011524c453d9626be0aa500c560b462c73d1d3c747` |
 
+In v2 mode the runner also byte-compares two further sources with
+`f10cca5` (`RECONSTRUCTED_SOURCES` in `track_b/reconstructed.py`), because
+the `ssa_revision` anchor and the provenance records depend on them:
+
+| v2 source | SHA-256 at `f10cca5` |
+|---|---|
+| `src/populace_dynamics/ss/params.py` | `9b49894b56eaab32daa62032a139ecb33a1d11f657b1523d3bebadebc2387efd` |
+| `src/populace_dynamics/contract.py` | `481ff781c51e0e056fa2dc630d291020524a91c62f07cf5e0c243ef6ec325ed4` |
+
 The locked `gates.yaml`, `engine/loop.py`, `engine/steps.py`, and existing
 `runs/*.json` remain unchanged. B1 has its own module, copied earnings loop,
 runner, and output directory.
@@ -246,16 +255,22 @@ reported pass booleans alone cannot authorize this claim. It must refuse
 `REPRODUCED` and every other admission without an authenticated historical
 reference. Only v1's distinct committed-hash path may yield `REPRODUCED`.
 
-The implementation is in `track_b/reconstructed.py:183` (cells), `:302`
-(lineage), `:843` (original/copy pair), `:887` (person-level differential),
-`:555` and `:635` (registered provenance), `:757` (conjunction), and `:1166`
-(guard), under `src/populace_dynamics/`. These are rules for a prospective
+The implementation is in `src/populace_dynamics/track_b/reconstructed.py`:
+`compare_cells` (cells), `compare_lineage` (lineage), `run_reconstructed`
+(the original/copy pair and the person-level differential through
+`compare_replay`), `registered_provenance` and `compare_provenance`
+(provenance), `admission` (conjunction), and `rederive_conditions` and
+`guard_claim` (guard). The guard recomputes each side's cells from that
+side's published scored frame, which must carry the five columns the cells
+read, and requires the file's reported cells to equal them bit for bit. These are rules for a prospective
 attempt; this draft reports no real-data pass or mismatch.
 
-The [v2 amendment](track_b_b1_v2_amendment.md) records the chosen reading of
-the design: v2 substitutes a weaker, explicitly labelled replay prerequisite
-for B2 under d571; it does not satisfy the design's literal bit-for-bit B1
-claim. A v2 mismatch still stops B2 and all work built on that replay.
+The [v2 amendment](track_b_b1_v2_amendment.md) proposes a reading of design
+§7 under which a v2 pass would clear the replay prerequisite for B2, and
+through B2 for H. d571 ruled the v2 baseline, not that reading: B2 does not
+register on a v2 pass until Max rules on it. v2 does not satisfy the
+design's literal bit-for-bit B1 claim. A v2 mismatch stops B2 and all work
+built on that replay.
 
 ## Inherited certification boundary: full disclosure
 
@@ -290,7 +305,11 @@ Before registration, construct the prospective environment as follows:
 1. Create a separate, workspace-local clone at
    `scratch/track_b/baseline-f10cca5`, checked out at the full commit
    `f10cca5457b16d12b9284d00628e7331871f23e7`. Keep tracked files and the
-   index clean. Set that clone's local `core.abbrev` to `7`.
+   index clean. Set that clone's local `core.abbrev` to `7`. Candidate 3's
+   environment did not record this setting: it is a v2 environment pin,
+   disclosed here, that fixes the seven-character form the artifact
+   records. The full HEAD is checked as well, so it cannot relabel a
+   different commit.
 2. Install the frozen candidate-3 runtime and policyengine-us `1.752.2`
    into a virtual environment physically inside that clone at `.venv`.
    Install the reviewed B1 checkout editable in that environment; leave the
@@ -313,8 +332,9 @@ Before registration, construct the prospective environment as follows:
    fact. Reprobe before accepting a result and require the recorded probe
    to remain identical.
 
-The v2 checks are `track_b/reconstructed.py:584–632`, `:698–739`,
-`:947–954`, and `:1127–1146`, under `src/populace_dynamics/`. The frozen
+The v2 checks are `anchor_problems`, `ssa_revision_anchor`,
+`preflight_mismatch` and the reprobe in `rederive_conditions`, in
+`src/populace_dynamics/track_b/reconstructed.py`. The frozen
 environment check still runs first. This resolves how `ssa_revision` must
 be reproduced; it makes no claim that a real replay has met this or any
 other condition.

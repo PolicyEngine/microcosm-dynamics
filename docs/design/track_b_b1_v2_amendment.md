@@ -1,6 +1,6 @@
 # Track B B1 v2: design amendment note
 
-**Status: build-only amendment note, 2026-09-29. No real-data computation.**
+**Status: build-only amendment note, 2026-09-28. No real-data computation.**
 
 The Track B design lives outside this repository, at
 `microcosm-launch-evidence/dynasim-parity-20260909/trackb-design-20260928.md`
@@ -42,51 +42,58 @@ Max's ruling d571 (2026-09-28) registers a separate, weaker B1 version, v2
 "reconstructed reproduction (weaker than bit-for-bit)"
 (`track_b/reconstructed.py:57–58`). It passes only when all four of the
 following hold exactly, with no tolerances (`CONDITIONS`,
-`track_b/reconstructed.py:60–65`; `admission`, line 790):
+`track_b/reconstructed.py:60–65`; `admission`):
 
 1. **Per-draw cells.** All 600 committed per-draw cells (5 seeds × 20 draws
    × 6 earnings cells) in `runs/gate_m6_candidate3_v1.json` equal both the
    copied loop's cells and the unchanged original loop's cells
-   (`compare_cells`, line 183).
-2. **Fit lineage.** The committed fit lineage is equal (`compare_lineage`,
-   line 302).
-3. **Person-level differential.** The unchanged original loop and the copy
-   agree person by person on the same inputs: scored earnings, support and
-   weights, plus fit and RNG signatures. Scored frames lacking earnings or
-   weight fail (`compare_evidence_differential`, line 507).
+   (`compare_cells`).
+2. **Fit lineage.** The committed fit lineage is equal (`compare_lineage`).
+3. **Person-level differential.** A fresh run of the unchanged original
+   loop and the copy agree person by person on the same inputs: scored
+   earnings, support and weights, plus fit and RNG signatures. Scored frames
+   lacking earnings or weight fail (`compare_evidence_differential`). This
+   compares the two loops with each other, not with candidate 3's
+   historical run, whose person-level output was never archived.
 4. **Provenance.** Every registered provenance record is equal, and the
    `ssa_revision` anchor reproduces `f10cca5` in the pinned environment
-   rather than being normalized (`compare_provenance`, line 668;
-   `anchor_problems`, line 617).
+   rather than being normalized (`compare_provenance`;
+   `anchor_problems`).
 
 Any failure records `BASELINE_REPLAY_MISMATCH` and names the failed and
 unevaluated conditions. The guard re-derives all four conditions from the
-published evidence before admitting a v2 claim (`guard_claim`, line 1199).
+published evidence before admitting a v2 claim (`guard_claim`, which recomputes each side's cells from its published
+scored frame).
 
-## Reading taken
+## Proposed reading, for Max's ruling
 
 **§3.1's B1 row and §3.2's bit-for-bit scope are satisfied only by the v1
 path.** A v2 pass does not satisfy them and must never be described as
 bit-for-bit reproduction, or as equality to candidate 3's historical
 person-level output.
 
-**For §7, a v2 pass clears the `BASELINE_REPLAY_MISMATCH` stop for B2.** The
-reasons:
+**Proposed: for §7, a v2 pass clears the `BASELINE_REPLAY_MISMATCH` stop for
+B2, and through B2 for H** (design line 118, whose "Unlocks" column
+lists B2 and H for B1). d571 ruled
+the v2 baseline; it did not rule this reading, and B2 does not register on a
+v2 pass until Max does. The case for it:
 
 - §7's trigger is changed draws, support, weights or signatures (line 451).
-  Condition 3 checks each of these person by person against the unchanged
-  original loop.
-- Conditions 1 and 2 bind that loop to candidate 3's committed cells and
-  fit lineage.
+  Condition 3 checks each of these person by person between a fresh run of
+  the unchanged original loop and the copy.
+- That is weaker than the design's check against candidate 3's own run.
+  Environment drift that moves both loops equally is invisible to
+  condition 3; it is caught only where it changes the 600 committed cells
+  (condition 1), the fit lineage (condition 2) or the pinned provenance and
+  environment (condition 4).
 - d571 was ruled because bit-for-bit is unreachable. Reading §7 as
-  requiring v1 would make B2 permanently unreachable, which the ruling did
-  not intend.
+  requiring v1 would leave B2 and H permanently blocked.
 
-This clearance is conditional: B2's registration must state that its
-baseline is B1 v2, a reconstructed reproduction weaker than §3.2's
-bit-for-bit, and carry that label into every downstream disclosure. A v2
+If Max adopts this reading, B2's registration must state that its baseline
+is B1 v2, a reconstructed reproduction weaker than §3.2's bit-for-bit, and
+carry that label into every downstream disclosure. A v2
 `BASELINE_REPLAY_MISMATCH` stops B2 exactly as §7 says.
 
-If the B2 registration review rejects this reading, B2 stays blocked until
-an authenticated historical reference is recovered and v1 passes. v2 does not
-change what v1 reports.
+If Max rejects it, B2 and H stay blocked until an authenticated historical
+reference is recovered and v1 passes. Either way, v2 does not change what v1
+reports.

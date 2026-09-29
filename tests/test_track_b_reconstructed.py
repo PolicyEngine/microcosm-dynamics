@@ -1181,6 +1181,43 @@ def _tamper_row(result, output):
     _rewrite(result, output, name, change)
 
 
+def _tamper_both_frames(result, output):
+    # The same change on both sides keeps the frames equal, so only a
+    # recomputation of the cells from the frames can see it.
+    name = result["files"][-1]["path"]
+
+    def change(payload):
+        for side in ("original_scored", "replay_scored"):
+            column = next(
+                column
+                for column in payload[side]["columns"]
+                if column["name"] == "earnings"
+            )
+            index = next(
+                index
+                for index, value in enumerate(column["values"])
+                if reconstructed._decode_cell(value)
+            )
+            value = reconstructed._decode_cell(column["values"][index])
+            column["values"][index] = runner._scalar(value * 1.5)
+
+    _rewrite(result, output, name, change)
+
+
+def _drop_cell_input_both_frames(result, output):
+    name = result["files"][0]["path"]
+
+    def change(payload):
+        for side in ("original_scored", "replay_scored"):
+            payload[side]["columns"] = [
+                column
+                for column in payload[side]["columns"]
+                if column["name"] != "cohort"
+            ]
+
+    _rewrite(result, output, name, change)
+
+
 def _stale_hash(result, output):
     name = result["files"][0]["path"]
     _rewrite(result, output, name, lambda payload: None, rehash=False)
@@ -1202,12 +1239,22 @@ def _moved_anchor(result, output):
     "mutate, failed",
     [
         (_tamper_cell, ["per_draw_cells"]),
+        (_tamper_both_frames, ["per_draw_cells"]),
+        (_drop_cell_input_both_frames, ["per_draw_cells"]),
         (_tamper_row, ["person_level_differential"]),
         (_stale_hash, ["per_draw_cells", "person_level_differential"]),
         (_missing_lineage, ["fit_lineage"]),
         (_moved_anchor, ["provenance"]),
     ],
-    ids=["cell", "row", "stale-hash", "lineage", "anchor"],
+    ids=[
+        "cell",
+        "both-frames",
+        "cell-input-column",
+        "row",
+        "stale-hash",
+        "lineage",
+        "anchor",
+    ],
 )
 def test_guard_rederives_each_condition_from_published_evidence(
     repository, passing_run, mutate, failed

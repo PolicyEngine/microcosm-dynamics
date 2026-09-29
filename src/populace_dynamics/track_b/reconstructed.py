@@ -280,6 +280,42 @@ def observed_cells(scored: pd.DataFrame) -> dict[str, Any]:
     }
 
 
+#: The scored-frame columns ``earnings_cells`` reads (m6_cells.py:491-522).
+CELL_INPUT_COLUMNS = ("person_id", "period", "cohort", "earnings", "weight")
+
+
+def frame_from_payload(encoded: Any) -> pd.DataFrame | None:
+    """Invert ``runner.frame_payload``, or None for a malformed payload.
+
+    Floats come back from their recorded bits and every column is rebuilt
+    at its recorded dtype, so the cells recomputed from a decoded frame are
+    the cells of the frame that was published.
+    """
+    columns = encoded.get("columns") if isinstance(encoded, Mapping) else None
+    if not isinstance(columns, list) or not columns:
+        return None
+    data: dict[str, pd.Series] = {}
+    for column in columns:
+        if not (
+            isinstance(column, Mapping)
+            and isinstance(column.get("name"), str)
+            and isinstance(column.get("values"), list)
+            and column["name"] not in data
+        ):
+            return None
+        values = [
+            pd.NA if decoded == {"missing": "pd.NA"} else decoded
+            for decoded in map(_decode_cell, column["values"])
+        ]
+        try:
+            data[column["name"]] = pd.Series(values, dtype=column.get("dtype"))
+        except (TypeError, ValueError):
+            return None
+    if len({len(series) for series in data.values()}) != 1:
+        return None
+    return pd.DataFrame(data)
+
+
 def _decode_cell(encoded: Any) -> Any:
     """Invert ``runner._scalar`` for a cell; anything else stays as found."""
     if (
@@ -1124,9 +1160,12 @@ def rederive_conditions(
     """Re-derive all four conditions without trusting the reported verdicts.
 
     Cells and person-level rows come from the hash-verified evidence files.
-    The lineage and provenance actuals come from the result and are compared
-    with the registered records that ``execute`` loaded itself. The anchor
-    is probed again now and must equal the one the run reported.
+    Each side's cells are recomputed from that side's published scored
+    frame, and the file's reported cells must equal them exactly, so an
+    edit applied identically to both frames cannot pass. The lineage and
+    provenance actuals come from the result and are compared with the
+    registered records that ``execute`` loaded itself. The anchor is probed
+    again now and must equal the one the run reported.
     """
     payloads, problems = evidence_payloads(
         result, destination, seeds=seeds, draws=draws
@@ -1137,19 +1176,42 @@ def rederive_conditions(
     cell_problems = list(problems)
     for (seed, draw), payload in sorted(payloads.items()):
         for side in SIDES:
-            encoded = payload.get(f"{side}_cells")
-            if not isinstance(encoded, Mapping):
+            where = {"side": side, "seed": seed, "draw": draw}
+            frame = frame_from_payload(payload.get(f"{side}_scored"))
+            if frame is None or not set(CELL_INPUT_COLUMNS) <= set(
+                frame.columns
+            ):
+                cell_problems.append(
+                    {"kind": "unscorable_evidence_frame", **where}
+                )
+                continue
+            try:
+                recomputed = observed_cells(frame)
+            except Exception as error:  # fail closed on any unscorable frame
                 cell_problems.append(
                     {
-                        "kind": "missing_evidence_cells",
-                        "side": side,
-                        "seed": seed,
-                        "draw": draw,
+                        "kind": "unscorable_evidence_frame",
+                        **where,
+                        "error": type(error).__name__,
                     }
                 )
                 continue
-            for cell, value in encoded.items():
-                cells[side][seed, draw, cell] = _decode_cell(value)
+            encoded = payload.get(f"{side}_cells")
+            if not isinstance(encoded, Mapping):
+                cell_problems.append(
+                    {"kind": "missing_evidence_cells", **where}
+                )
+            elif {
+                cell: _cell_token(_decode_cell(value))
+                for cell, value in encoded.items()
+            } != {
+                cell: _cell_token(value) for cell, value in recomputed.items()
+            }:
+                cell_problems.append(
+                    {"kind": "evidence_cells_inconsistent", **where}
+                )
+            for cell, value in recomputed.items():
+                cells[side][seed, draw, cell] = value
     registered, registered_problems = registered_cells(
         baseline, seeds=seeds, draws=draws
     )
