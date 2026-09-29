@@ -114,9 +114,9 @@ Each entry is a pytest test function's invariant docstring; parametrization expa
 - `tests/track_a_v2/test_runner.py:442` — An inner failure already attributed to another person keeps it.
 - `tests/track_a_v2/test_runner.py:475` — Person 2's interrupted draw-1 step 2 keeps draw 0, person 1 and 2.
 - `tests/track_a_v2/test_runner.py:544` — Person 2's interrupted L×F0 pairing keeps person 1's pair count and 2.
-- `tests/track_a_v2/test_runner.py:609` — A later stop never retains fewer counts: reform, then its pairing.
-- `tests/track_a_v2/test_runner.py:667` — Any failed read of a person's paired scenarios names that person.
-- `tests/track_a_v2/test_runner.py:746` — Rows, row and key order, and counter order equal one v1 union call.
+- `tests/track_a_v2/test_runner.py:632` — A later stop never keeps fewer counts: reform, pairing, then filter.
+- `tests/track_a_v2/test_runner.py:694` — Any failed read of a person's paired scenarios names that person.
+- `tests/track_a_v2/test_runner.py:773` — Rows, row and key order, and counter order equal one v1 union call.
 - `tests/track_a_v2/test_runner_contract.py:11` — F keeps v1's union input for floors; U preserves all-alive double zeros.
 - `tests/track_a_v2/test_runner_contract.py:40` — A step-3 refusal retains preceding and failing-row counters, no rows.
 - `tests/track_a_v2/test_runner_contract.py:62` — A step-5 refusal retains earlier classifications and all pair counters.
