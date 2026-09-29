@@ -98,54 +98,82 @@ RELEASED = {
     "roles:2017.relationship.90",
     "roles:2017.relationship.92",
 }
-# §16a's inline quotes of draft 3: (quote, draft-3 line, the citation that
-# must sit beside the quote in §16a).
+# §16a's inline quotes of draft 3: (quote, draft-3 line, the exact §16a
+# text that joins the quote to its line citation).
 DRAFT_3_INLINE_QUOTES = [
-    ("the 2015 male code-20 blocker", 154, "Line 154's"),
+    (
+        "the 2015 male code-20 blocker",
+        154,
+        "Line 154's count bar governs code 90's routing claim, and it ties "
+        "that claim to 'the 2015 male code-20 blocker'",
+    ),
     (
         "Resolve the explicit relationship-source inconsistencies, including "
         "2015 male-code-20 routing and code-90/code-92 OFUM versus "
         "spouse-slot routing",
         1382,
-        "line 1382",
+        "line 1382 for B1 and B2 ('Resolve the explicit",
     ),
     (
         "Verify identification support, observation plans, weight "
         "documentation and refreshed design domains",
         1383,
-        "line 1383",
+        "line 1383 for B3 ('Verify identification",
     ),
-    ("OFUM SSI totals form one individual unit", 436, "\N{SECTION SIGN}8's"),
+    (
+        "OFUM SSI totals form one individual unit",
+        436,
+        "\N{SECTION SIGN}8's OFUM unit ('OFUM SSI totals",
+    ),
     (
         "Counts cannot establish routing, justify assuming such records "
         "absent, or waive this blocker",
         160,
-        "Line 160",
+        "Line 160 forbids exactly that ('Counts cannot",
     ),
     (
         "Neither empty empirical categories nor observed outputs may "
         "substitute for documentary resolution",
         1391,
-        "line 1391",
+        "line 1391 ('Neither empty",
     ),
-    ("it may not be established from counts", 154, "line 154"),
+    (
+        "it may not be established from counts",
+        154,
+        "line 154 ('it may not be established",
+    ),
     (
         "Source documentation must resolve this before registration",
         160,
-        "line 160's",
+        "line 160's 'Source documentation",
     ),
     (
         "under the same standard as the 2015 male code-20 blocker",
         152,
-        "(line 152)",
+        "code-20 blocker' (line 152)",
     ),
-    ("like the 2015 male code-20 blocker", 154, "(line 154)"),
-    ("Legal Spouse", 160, "(draft-3 line 160)"),
+    (
+        "like the 2015 male code-20 blocker",
+        154,
+        "'like the 2015 male code-20 blocker' (line 154)",
+    ),
+    ("Legal Spouse", 160, "'Legal Spouse' (draft-3 line 160)"),
     (
         "The weight construction and immigrant-refreshment coverage must be "
         "documented before registration.",
         134,
-        "Line 134",
+        "Line 134 reads, verbatim: 'The weight construction",
+    ),
+    (
+        "block execution",
+        656,
+        "'block execution' and 'cannot trigger fallback or silent omission' "
+        "(draft-3 line 656)",
+    ),
+    (
+        "cannot trigger fallback or silent omission",
+        656,
+        "'cannot trigger fallback or silent omission' (draft-3 line 656)",
     ),
 ]
 # What §16a asks Max to rule on: every recommendation and every option's
@@ -167,7 +195,7 @@ OPTIONS = {
         "Documented rule plus a halting guard. Amends draft-3 lines 154, 160 "
         "and 1391.",
         "Documented rule plus exclusion. Amends draft-3 line 160.",
-        "Hold the 2015 wave for PSID's answer. Draft 3 as written; amends "
+        "Hold registration for PSID's answer. Draft 3 as written; amends "
         "nothing.",
     ],
     "**1e. ": [
@@ -492,7 +520,7 @@ def test_section_16a_quotes_are_sourced():
 
 
 def test_section_16a_cites_the_draft_3_lines_it_quotes():
-    """Each inline draft-3 quote is on the line §16a cites, next to it."""
+    """Each inline draft-3 quote is on the line §16a cites beside it."""
     record = json.loads(
         (registry.REGISTRY_DIRECTORY / "u1_identity.json").read_text()
     )["u2_specification"]
@@ -500,15 +528,14 @@ def test_section_16a_cites_the_draft_3_lines_it_quotes():
     spec = (ROOT / SPEC).read_text(encoding="utf-8")
     section = spec[spec.index("## 16a. ") : spec.index("## 17. ")]
     folded = fold(section)
-    for quote, line, anchor in DRAFT_3_INLINE_QUOTES:
+    for quote, line, context in DRAFT_3_INLINE_QUOTES:
         assert fold(quote) in fold(draft_3[line - 1]), (quote, line)
-        # The citation precedes the quote by at most 200 characters or
-        # follows it by at most 60; a wrong line number fails here.
-        assert any(
-            fold(anchor)
-            in folded[max(0, found.start() - 200) : found.end() + 60]
-            for found in re.finditer(re.escape(fold(quote)), folded)
-        ), (quote, anchor)
+        # The exact joining text: a swapped or wrong line number fails.
+        assert fold(context) in folded, context
+        assert fold(quote)[:12] in fold(context) or (
+            fold(quote)[-12:] in fold(context)
+        ), context
+        assert str(line) in context or "\N{SECTION SIGN}8's" in context
     # Line 436, cited by its section, lies in draft 3's section 8.
     section_8 = [
         number
@@ -532,6 +559,83 @@ def test_section_16a_cites_the_draft_3_lines_it_quotes():
         )
     ]
     assert not unregistered, unregistered
+
+
+NUMBER_WORDS = {
+    "one": 1,
+    "two": 2,
+    "three": 3,
+    "four": 4,
+    "five": 5,
+    "six": 6,
+    "seven": 7,
+    "eight": 8,
+    "ten": 10,
+    "fifteen": 15,
+}
+
+
+def plan_cells(lines):
+    """The §3 plan tables (spec lines 74-92): (row, birth, age, weight)."""
+    assert lines[73].startswith("| 1947 |") and lines[91].startswith(
+        "| 1954 |"
+    )
+    cells = []
+    for line in lines[73:78]:
+        birth, _, wave, multiplier = line.strip("| ").split(" | ")
+        cells.append(("U0", int(birth), 67, int(wave), float(multiplier)))
+    for line in lines[87:92]:
+        birth, age_66, age_68, multiplier = line.strip("| ").split(" | ")
+        for age, cell in ((66, age_66), (68, age_68)):
+            wave = int(cell.split(" / ")[1])
+            cells.append(("U1", int(birth), age, wave, float(multiplier)))
+    return cells
+
+
+def test_section_16a_coverage_costs_follow_the_plan_tables():
+    """Review finding 4: each hold's cells, recomputed from lines 74-92."""
+    lines = (ROOT / SPEC).read_text(encoding="utf-8").split("\n")
+    cells = plan_cells(lines)
+    u0 = [c for c in cells if c[0] == "U0"]
+    # U1 reuses U0's odd-birth observations and adds the even-birth halves.
+    u1 = u0 + [c for c in cells if c[0] == "U1"]
+    assert (len(u0), len(u1), sum(c[4] for c in u1)) == (5, 15, 10)
+    spec = "\n".join(lines)
+    section = spec[spec.index("## 16a. ") : spec.index("## 17. ")]
+    holds = {
+        "3. **Hold registration for PSID's answer.": {2015},
+        "3. **Wait for PSID documentation.": {2019, 2021, 2023},
+        "2. **Hold registration for PSID's construction document.": {2017},
+    }
+    for start, waves in holds.items():
+        text = section[section.index(start) :].split("\n", 1)[0]
+        assert "(lines 74\N{EN DASH}92)" in text and "line 656" in text
+        u0_held = sorted(c[1] for c in u0 if c[3] in waves)
+        u1_held = [c for c in u1 if c[3] in waves]
+        words = re.search(
+            r"U0's ([\d, and]+) cells?, (\w+) of its five, and (\w+) of "
+            r"U1's fifteen cells.*carry ([\d.]+|\w+) of U1's ten birth-year "
+            r"weights",
+            text,
+        )
+        assert words, start
+        years, u0_count, u1_count, weight = words.groups()
+        assert [int(y) for y in re.findall(r"\d{4}", years)] == u0_held
+        assert NUMBER_WORDS[u0_count] == len(u0_held)
+        assert NUMBER_WORDS[u1_count] == len(u1_held)
+        stated = NUMBER_WORDS.get(weight) or float(weight)
+        assert stated == sum(c[4] for c in u1_held), start
+        # Every held U1 half-observation is named.
+        halves = {(c[1], c[2]) for c in u1_held if c[0] == "U1"}
+        named = {
+            (int(b), int(a))
+            for b, a in re.findall(r"(\d{4})(?:'s)? age-(66|68)", text)
+        }
+        for pair in re.findall(
+            r"both half-observations of (\d{4}) and of (\d{4})", text
+        ):
+            named |= {(int(b), a) for b in pair for a in (66, 68)}
+        assert named == halves, start
 
 
 def test_section_16a_recommendations_and_options():
@@ -605,6 +709,33 @@ def test_part_b_verdicts_agree():
         e for e in roles["entries"] if e["id"] == "2015.relationship.20"
     )
     assert "FAQ question 70" in code_20["part_b_finding"]
+
+
+def test_part_b_pointers_follow_dependencies(documents):
+    """A finding that says 'See <registry>:<id>' points at its blocker."""
+    for document in documents.values():
+        for entry in document["entries"]:
+            finding = entry.get("part_b_finding", "")
+            if finding.startswith("See "):
+                target = finding.split()[1].rstrip(".")
+                assert target in entry["blocking_dependencies"], entry["id"]
+
+
+def test_registry_prose_pages_are_cited():
+    """Pages named in the 2017 weight's findings appear in its citations."""
+    entry = next(
+        e
+        for e in registry.load_registry("weights")["entries"]
+        if e["id"] == "2017.cross_section_weight"
+    )
+    cited = {c["page"] for c in entry["citations"] if "page" in c}
+    for field in ("construction", "part_b_finding"):
+        for found in re.finditer(
+            r"\bpp?\. (\d+)(?:-(\d+))?((?:(?:,| and) \d+)*)", entry[field]
+        ):
+            pages = {int(found.group(1)), int(found.group(2) or 0)}
+            pages |= {int(n) for n in re.findall(r"\d+", found.group(3))}
+            assert pages - {0} <= cited, (field, found.group(0))
 
 
 def test_released_dependencies(documents):
@@ -687,7 +818,7 @@ def test_psid_documentation_manifest():
                 "sha256"
             ]
     pinned_files = [pinned["file"] for pinned in manifest["pinned_elsewhere"]]
-    assert len(pinned_files) == len(set(pinned_files)) == 21
+    assert len(pinned_files) == len(set(pinned_files)) == 24
     assert not set(pinned_files) & {s["file"] for s in manifest["sources"]}
     for pinned in manifest["pinned_elsewhere"]:
         assert re.fullmatch(r"[0-9a-f]{64}", pinned["sha256"])
@@ -706,6 +837,8 @@ def test_psid_documentation_manifest():
             r"Pinned by the (\w+) registry", pinned["note"]
         ):
             assert claimed in registry_hashes[pinned["file"]], pinned["file"]
+        if "Not pinned by any registry" in pinned["note"]:
+            assert pinned["file"] not in registry_hashes, pinned["file"]
     assert "cross_sec_weights_23.pdf" in " ".join(pinned_files)
     # Every document the research record quotes is archived or pinned here.
     known = pinned_files + [s["file"] for s in manifest["sources"]]
@@ -778,3 +911,17 @@ def test_faq_line_citations_count_lf_lines():
         if c["file"].endswith("FAQ_20260813.html")
     ]
     assert faq_citations == [833] and owner[833] == 74
+    # The prose names the same saved-file lines as the citations.
+    for entry in roles.values():
+        stated = [
+            int(n)
+            for n in re.findall(r"saved-file line (\d+)", json.dumps(entry))
+        ]
+        cited = [
+            c["line"]
+            for c in entry["citations"]
+            if c["file"].endswith("FAQ_20260813.html")
+        ]
+        assert sorted(stated) == sorted(set(stated)) and set(stated) <= set(
+            cited
+        ), entry["id"]
