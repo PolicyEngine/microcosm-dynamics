@@ -57,6 +57,22 @@ YEARS = sorted(estimator.HEAD_IRA_INCOME_YEARS)
 #: 100.00000000000001.  U2 keeps U1's arithmetic byte for byte, so the
 #: bound is asserted to within this tolerance, not changed.
 BOUND_ULP = 1e-9
+#: R <= B holds exactly in real arithmetic (section 13).  The estimator
+#: evaluates ``R = ((B - cut) + offset) + new`` (``estimator.py``,
+#: ``u2_adjusted_incomes``): three roundings of values no larger in
+#: magnitude than ``|B| + S``, with ``cut``, ``offset`` and ``new``
+#: themselves computed from the Social Security amount ``S``.  So R may
+#: exceed B by a few units in the last place of ``max(|B|, |R|, S)``;
+#: measured on 71,670 invented observation-rows (1,500 drawn frames, every
+#: row): at most 1 ulp.  The bound allows 8, where the absolute 1e-6 it
+#: replaces (review round 1, info finding 4) allowed about 140,000 ulps
+#: at $60,000.
+MONOTONE_ULPS = 8
+MONOTONE_SETTINGS = settings(
+    max_examples=200,
+    deadline=None,
+    suppress_health_check=[HealthCheck.too_slow, HealthCheck.data_too_large],
+)
 _AMOUNT = st.integers(min_value=0, max_value=60_000)
 _CUT = st.floats(0, 1, allow_nan=False)
 
@@ -185,13 +201,28 @@ def _with_cut(row: rows.U2Row, cut: float) -> estimator.U2IncomeSpec:
     return estimator.U2IncomeSpec(**{**row.income, "cut_rate": cut})
 
 
-@SETTINGS
+def _monotone_slack(out: pd.DataFrame) -> np.ndarray:
+    """:data:`MONOTONE_ULPS` units in the last place of max(|B|, |R|, S)."""
+
+    scale = np.maximum.reduce(
+        [
+            np.abs(out["reform_income"].to_numpy(dtype=np.float64)),
+            np.abs(out["baseline_income"].to_numpy(dtype=np.float64)),
+            np.abs(out["social_security"].to_numpy(dtype=np.float64)),
+            np.ones(len(out)),
+        ]
+    )
+    return MONOTONE_ULPS * np.spacing(scale)
+
+
+@MONOTONE_SETTINGS
 @given(frame=frames(), cut=_CUT)
 def test_reform_never_exceeds_baseline_in_any_row(frame, cut, params):
     for row_id, row in rows.REGISTERED_ROWS.items():
         out = _estimate(frame, _with_cut(row, cut), params)
         assert (
-            out["reform_income"] <= out["baseline_income"] + 1e-6
+            out["reform_income"].to_numpy()
+            <= out["baseline_income"].to_numpy() + _monotone_slack(out)
         ).all(), row_id
         assert (out["poor_reform"] | ~out["poor_baseline"]).all(), row_id
         assert (out["ssi_offset"] >= 0).all() and (out["ssi_new"] >= 0).all()
@@ -914,10 +945,9 @@ def test_per_observation_monotone_in_every_half_of_every_split(
             joined["observation_id"]
         ]
         monotone = (
-            incomes["reform_income"] <= incomes["baseline_income"] + 1e-9
-        ).to_numpy() & (
-            joined["poor_reform"] | ~joined["poor_baseline"]
-        ).to_numpy()
+            incomes["reform_income"].to_numpy()
+            <= incomes["baseline_income"].to_numpy() + _monotone_slack(incomes)
+        ) & (joined["poor_reform"] | ~joined["poor_baseline"]).to_numpy()
         units = pd.DataFrame({"split_unit": ut.floor_split_units(joined)})
         for seed in ut.DEFAULT_FLOOR_SEEDS:
             side_a, side_b = split_panel_by_person(

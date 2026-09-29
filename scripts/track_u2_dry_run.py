@@ -38,6 +38,12 @@ invented data.  The checks record the refusals the real path gives:
   head);
 * U2 refuses U1's captures, seed rule, column, rows and rulings, and
   U1's guards refuse U2's settings;
+* the round-1 review's refusals: an undocumented individual-file sex or
+  relationship code refuses the loader's value check, an undocumented
+  relationship code has no OFUM rule, the registered preflight refuses
+  while no frozen pre-registration evidence record exists (and none can
+  be recorded from invented inputs), and the registered parameter check
+  refuses an INVENTED altered threshold under the pinned label;
 * per-observation monotonicity (R <= B, poverty never lost) in every row
   and both halves of every split.
 
@@ -109,6 +115,102 @@ def _refusal(call: Any) -> dict[str, Any]:
             "message": str(error)[:600],
         }
     return {"refused": False}
+
+
+def _invented_individual_raw(
+    inputs: cohort.U2Inputs, registries: sources.RegistrySet
+) -> pd.DataFrame:
+    """The invented population as the individual reader's raw columns
+    (one record per person at the registry variables; weights rounded to
+    the documented whole-number field, a missing birth year as 9999)."""
+
+    persons = inputs.persons.set_index("person_id")
+    ids = persons.index.to_numpy(dtype=np.int64)
+    design = inputs.design.set_index("person_id").loc[ids]
+    values: dict[str, Any] = {
+        "common.person_family_id": ids // 1000,
+        "common.person_number": ids % 1000,
+        "common.sex": persons["sex"].map({"male": 1, "female": 2, "na": 9}),
+        "common.stratum": design["stratum"],
+        "common.cluster": design["cluster"],
+    }
+    for wave, anchor in inputs.anchors.items():
+        frame = anchor.set_index("person_id").loc[ids]
+        for concept in loader.ANCHOR_CONCEPTS:
+            column = frame[concept]
+            if concept == "reported_birth_year":
+                column = column.fillna(9999)
+            elif concept == "weight":
+                column = column.round()
+            values[f"{wave}.{concept}"] = column
+    return pd.DataFrame(
+        {
+            registries.entry("individual", key)["variable"]: np.asarray(
+                value, dtype=np.int64
+            )
+            for key, value in values.items()
+        }
+    )
+
+
+def _round_1_refusals(
+    inputs: cohort.U2Inputs,
+    params: parameters.U2Parameters,
+    census: Any,
+    registries: sources.RegistrySet,
+    registry_roles: sources.RoleContext,
+) -> dict[str, Any]:
+    """The refusals the round-1 review of milestone 2 asked for, each on
+    INVENTED inputs or an INVENTED altered value."""
+
+    raw = _invented_individual_raw(inputs, registries)
+    sex = registries.entry("individual", "common.sex")["variable"]
+    relationship = registries.entry("individual", "2015.relationship")[
+        "variable"
+    ]
+    undocumented_sex = raw.copy()
+    undocumented_sex.loc[0, sex] = 5
+    undocumented_relationship = raw.copy()
+    undocumented_relationship.loc[0, relationship] = 99
+    pinned = dataclasses.replace(params, thresholds=census)
+    weighted = {
+        year: dict(cells) for year, cells in census.weighted_average.items()
+    }
+    weighted[2014]["one_65_plus"] = 1.0  # INVENTED altered value
+    altered = dataclasses.replace(
+        pinned,
+        thresholds=dataclasses.replace(census, weighted_average=weighted),
+    )
+    return {
+        "invented_individual_values_documented": len(
+            loader.check_individual_values(raw, registries)
+        ),
+        "undocumented_sex_code": _refusal(
+            lambda: loader.check_individual_values(
+                undocumented_sex, registries
+            )
+        ),
+        "undocumented_relationship_code": _refusal(
+            lambda: loader.check_individual_values(
+                undocumented_relationship, registries
+            )
+        ),
+        "undocumented_relationship_rule": _refusal(
+            lambda: registry_roles.rule(2015, 99)
+        ),
+        "registered_preflight_without_evidence": _refusal(
+            loader.read_preregistration_evidence
+        ),
+        "evidence_from_invented_inputs": _refusal(
+            lambda: loader.preregistration_evidence(inputs)
+        ),
+        "pinned_parameters_pass_the_content_check": not _refusal(
+            lambda: parameters.check_u2_parameters(pinned, ap.REGISTERED_REAL)
+        )["refused"],
+        "altered_threshold_under_the_pinned_label": _refusal(
+            lambda: parameters.check_u2_parameters(altered, ap.REGISTERED_REAL)
+        ),
+    }
 
 
 def _mapping_checks(inputs: cohort.U2Inputs) -> dict[str, Any]:
@@ -678,6 +780,9 @@ def checks(
         "registered_parameter_check_refuses_invented_thresholds": _refusal(
             lambda: parameters.check_u2_parameters(params, ap.REGISTERED_REAL)
         ),
+        "round_1_refusals": _round_1_refusals(
+            inputs, params, census, registries, registry_roles
+        ),
         "census_capture": {
             "sha256": census.provenance["sha256"],
             "overlap_2012": census.provenance["overlap_2012"],
@@ -838,6 +943,7 @@ def results_markdown(result: dict[str, Any]) -> str:
     thresholds_refused = check[
         "registered_parameter_check_refuses_invented_thresholds"
     ]["refused"]
+    round_1 = check["round_1_refusals"]
     u1_branch = check["row_branches"]["U1"]
     lines += [
         "",
@@ -909,6 +1015,16 @@ def results_markdown(result: dict[str, Any]) -> str:
         + ", ".join(
             f"{name} {entry['refused']}"
             for name, entry in check["cross_cohort_refusals"].items()
+        )
+        + ".",
+        "- Round-1 review refusals (invented; "
+        f"{round_1['invented_individual_values_documented']} individual "
+        "fields documented; the pinned parameters pass the content check: "
+        f"{round_1['pinned_parameters_pass_the_content_check']}): "
+        + ", ".join(
+            f"{name} {entry['refused']}"
+            for name, entry in round_1.items()
+            if isinstance(entry, dict)
         )
         + ".",
         "- Per-observation monotonicity and SSI bounds, every row: "

@@ -330,6 +330,34 @@ def test_every_keyed_frame_refuses_a_repeated_identifier(
     cohort.check_unique_identifiers(u2_inputs)
 
 
+def test_an_anchor_person_without_a_persons_record_refuses(
+    u2_inputs, declared
+):
+    """Review round 1, info finding 5 (section 14, "failed joins ...
+    refuse execution"): a person dropped from ``persons`` but present in
+    the anchors was read as sex unknown and silently excluded; it now
+    refuses the build (and the birth derivation) by count."""
+
+    cohort.check_person_joins(u2_inputs)
+    dropped = int(u2_inputs.anchors[2019]["person_id"].iloc[0])
+    inputs = cohort.replace_provenance(
+        dataclasses.replace(
+            u2_inputs,
+            persons=u2_inputs.persons[
+                u2_inputs.persons["person_id"] != dropped
+            ].reset_index(drop=True),
+        ),
+        kind=cohort.CALLER_FRAMES,
+    )
+    with pytest.raises(cohort.U2CohortError, match="no persons record"):
+        cohort.check_person_joins(inputs)
+    with pytest.raises(cohort.U2CohortError, match="no persons record"):
+        cohort.derive_u2_births(inputs)
+    with pytest.raises(cohort.U2CohortError) as refusal:
+        cohort.check_person_joins(inputs)
+    assert str(dropped) not in str(refusal.value)
+
+
 @pytest.mark.parametrize("row", ["U0", "U1"])
 def test_every_target_cell_is_observed_or_disposed_exactly_once(
     u2_inputs, declared, u2_births, row

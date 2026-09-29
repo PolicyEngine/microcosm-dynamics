@@ -181,6 +181,22 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
         "refused"
     ]
     assert all(v["refused"] for v in checks["cross_cohort_refusals"].values())
+    round_1 = checks["round_1_refusals"]
+    assert round_1["invented_individual_values_documented"] == 41
+    assert round_1["pinned_parameters_pass_the_content_check"] is True
+    expected_errors = {
+        "undocumented_sex_code": "U2UndocumentedValue",
+        "undocumented_relationship_code": "U2UndocumentedValue",
+        "undocumented_relationship_rule": "U2RoleRefusal",
+        "registered_preflight_without_evidence": "U2FrozenIdentityMismatch",
+        "evidence_from_invented_inputs": "U2LoaderRefusal",
+        "altered_threshold_under_the_pinned_label": "U2ParameterError",
+    }
+    assert {
+        name: entry["error"]
+        for name, entry in round_1.items()
+        if isinstance(entry, dict)
+    } == expected_errors
     for row_id, entry in checks["invariants"].items():
         for key, value in entry.items():
             if not key.startswith("n_"):
@@ -207,6 +223,7 @@ def test_dry_run_markdown_names_the_refusals(dry_run):
     assert "INVENTED" in text
     assert "not a comparison" in text.lower()
     assert "Loader preflight refuses" in text
+    assert "Round-1 review refusals (invented;" in text
     assert "routes from other data to the invented declared rules" in text
     assert "Named invented variants" in text
     for delta in rows.NAMED_DELTAS:

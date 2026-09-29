@@ -125,6 +125,7 @@ __all__ = [
     "U2Inputs",
     "build_u2_cohort",
     "check_cohort_inputs",
+    "check_person_joins",
     "check_unique_identifiers",
     "derive_u2_births",
     "design_frame",
@@ -683,6 +684,28 @@ def check_unique_identifiers(inputs: U2Inputs) -> None:
             )
 
 
+def check_person_joins(inputs: U2Inputs) -> None:
+    """Refuse an anchor person absent from ``persons`` (section 14).
+
+    "Failed joins ... refuse execution": every person in every support
+    wave's anchor must have a ``persons`` record, or the build would read
+    the person's sex as unknown (``sex.get(pid, "na")``) and silently
+    drop the observation as ``excluded_sex_unknown`` (review round 1,
+    info finding 5).  The loader builds both from the same individual
+    records, so this refuses only frames joined by hand.  The message
+    gives counts, never identifier values.
+    """
+
+    persons = set(inputs.persons["person_id"].astype("int64"))
+    for wave, frame in sorted(inputs.anchors.items()):
+        absent = int((~frame["person_id"].astype("int64").isin(persons)).sum())
+        if absent:
+            raise U2CohortError(
+                f"anchor {wave}: {absent} person(s) have no persons record: "
+                "failed joins refuse execution (section 14)"
+            )
+
+
 def derive_u2_births(inputs: U2Inputs) -> U2Births:
     """The birth-year law over the common support waves (section 3).
 
@@ -700,6 +723,7 @@ def derive_u2_births(inputs: U2Inputs) -> U2Births:
     if missing:
         raise U2CohortError(f"inputs lack support waves {sorted(missing)}")
     check_unique_identifiers(inputs)
+    check_person_joins(inputs)
     seeds = []
     for wave in SUPPORT_WAVES:
         anchor = inputs.anchors[wave]
@@ -895,6 +919,7 @@ def build_u2_cohort(
     provenance = _input_provenance(inputs)
     _check_role_context(role_context, provenance["kind"])
     check_unique_identifiers(inputs)
+    check_person_joins(inputs)
     if births is None:
         births = derive_u2_births(inputs)
     elif births.inputs_sha256 != provenance["input_frames_sha256"]:
