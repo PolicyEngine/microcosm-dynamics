@@ -14,7 +14,12 @@ import pandas as pd
 import pytest
 
 from populace_dynamics.cohorts import age67
-from populace_dynamics.uniform_cut_track_u2 import cohort, identity, invented
+from populace_dynamics.uniform_cut_track_u2 import (
+    cohort,
+    identity,
+    invented,
+    sources,
+)
 
 
 def test_u0_has_five_exact_age_pairs():
@@ -271,6 +276,101 @@ def test_malformed_inputs_refuse(u2_inputs, declared):
     )
     with pytest.raises(cohort.U2CohortError, match="failed joins"):
         cohort.build_u2_cohort(no_family, role_context=declared)
+
+
+@pytest.mark.parametrize(
+    "variant, message",
+    [
+        ("duplicate_family_record_2019", "family income 2019 repeats"),
+        ("duplicate_person_record_2019", "anchor 2019 repeats person_id"),
+    ],
+)
+def test_duplicate_identifiers_refuse(u2_inputs, declared, variant, message):
+    """Section 14: duplicate identifiers refuse execution.  Before the
+    identifier check, a repeated anchor row failed on an incidental
+    TypeError (``int()`` of a Series at the anchor lookup) rather than a
+    named refusal."""
+
+    inputs = invented.invented_variant(u2_inputs, variant)
+    for row in ("U0", "U1"):
+        with pytest.raises(cohort.U2CohortError, match=message):
+            cohort.build_u2_cohort(
+                inputs, cohort.U2CohortSpec(row=row), role_context=declared
+            )
+    with pytest.raises(cohort.U2CohortError, match="duplicate identifiers"):
+        cohort.derive_u2_births(inputs)
+
+
+@pytest.mark.parametrize(
+    "frame, column",
+    [
+        ("persons", "person_id"),
+        ("design", "person_id"),
+        ("family_wealth", "interview"),
+        ("employer_dc", "interview"),
+    ],
+)
+def test_every_keyed_frame_refuses_a_repeated_identifier(
+    u2_inputs, frame, column
+):
+    """The identifier check covers every keyed input frame, not only the
+    two the named variants exercise.  A repeated ``persons`` row would
+    otherwise have classified the person's sex as unknown."""
+
+    value = getattr(u2_inputs, frame)
+    if isinstance(value, pd.DataFrame):
+        changed = {frame: pd.concat([value, value.iloc[[0]]])}
+    else:
+        wave = sources.SUPPORT_WAVES[0]
+        repeated = pd.concat([value[wave], value[wave].iloc[[0]]])
+        changed = {frame: {**value, wave: repeated}}
+    inputs = dataclasses.replace(u2_inputs, **changed)
+    with pytest.raises(cohort.U2CohortError, match=f"repeats {column}"):
+        cohort.check_unique_identifiers(inputs)
+    cohort.check_unique_identifiers(u2_inputs)
+
+
+@pytest.mark.parametrize("row", ["U0", "U1"])
+def test_every_target_cell_is_observed_or_disposed_exactly_once(
+    u2_inputs, declared, u2_births, row
+):
+    """Section 14's "unregistered omissions refuse": an accounting
+    identity.  Every (target person, plan cell) pair -- each person of a
+    plan birth year against each of that year's planned waves -- has
+    exactly one disposition row, and the ``observation`` dispositions are
+    exactly the observations."""
+
+    built = cohort.build_u2_cohort(
+        u2_inputs,
+        cohort.U2CohortSpec(row=row),
+        role_context=declared,
+        births=u2_births,
+    )
+    expected = sorted(
+        (int(pid), int(wave))
+        for birth_year, wave, _, _, _ in cohort.plan_cells(
+            cohort.U2CohortSpec(row=row)
+        )
+        for pid in u2_births.universe
+        if u2_births.birth_year(pid) == birth_year
+    )
+
+    def pairs(frame):
+        return sorted(
+            zip(
+                frame["person_id"].astype(int),
+                frame["wave"].astype(int),
+                strict=True,
+            )
+        )
+
+    disp = built.dispositions
+    observed = pairs(disp)
+    assert observed == expected
+    assert len(set(observed)) == len(observed)
+    assert pairs(built.observations) == pairs(
+        disp[disp["disposition"].eq("observation")]
+    )
 
 
 @pytest.mark.parametrize(

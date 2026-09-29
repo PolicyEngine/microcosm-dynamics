@@ -137,12 +137,22 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
         "ambiguous_legal_spouse",
         "spouse_slot_disagreement_2019",
         "missing_head",
+        "duplicate_family_record_2019",
+        "duplicate_person_record_2019",
     ]
     assert all(entry["regenerated"] for entry in variants.values())
     build_refused = {
         "code_88_first_year_cohabitor": "U2RoleRefusal",
         "missing_family_record_2019": "U2CohortError",
+        "duplicate_family_record_2019": "U2CohortError",
+        "duplicate_person_record_2019": "U2CohortError",
     }
+    assert "repeats interview" in (
+        variants["duplicate_family_record_2019"]["build"]["message"]
+    )
+    assert "repeats person_id" in (
+        variants["duplicate_person_record_2019"]["build"]["message"]
+    )
     income_refused = {
         # Two code-20 persons: no unique spouse-slot occupant to match the
         # family file's slot flag, so the income rows refuse.

@@ -1370,6 +1370,28 @@ def _missing_head(base: cohort.U2Inputs) -> cohort.U2Inputs:
     return dataclasses.replace(base, anchors={**base.anchors, wave: frame})
 
 
+def _duplicate_family_record_2019(base: cohort.U2Inputs) -> cohort.U2Inputs:
+    income = base.family_income[2019]
+    return dataclasses.replace(
+        base,
+        family_income={
+            **base.family_income,
+            2019: pd.concat([income, income.iloc[[0]]], ignore_index=True),
+        },
+    )
+
+
+def _duplicate_person_record_2019(base: cohort.U2Inputs) -> cohort.U2Inputs:
+    obs = _declared_u0(base)
+    person = int(obs[obs["wave"].eq(2019)]["person_id"].iloc[0])
+    frame = base.anchors[2019]
+    repeated = pd.concat(
+        [frame, frame[frame["person_id"].eq(person)]], ignore_index=True
+    ).astype(frame.dtypes.to_dict())
+    return dataclasses.replace(base, anchors={**base.anchors, 2019: repeated})
+
+
+# Appended in order, so every earlier variant is unchanged.
 _VARIANT_BUILDERS = {
     "code_88_first_year_cohabitor": _code_88_first_year_cohabitor,
     "missing_family_record_2019": _missing_family_record_2019,
@@ -1377,6 +1399,8 @@ _VARIANT_BUILDERS = {
     "ambiguous_legal_spouse": _ambiguous_legal_spouse,
     "spouse_slot_disagreement_2019": _spouse_slot_disagreement_2019,
     "missing_head": _missing_head,
+    "duplicate_family_record_2019": _duplicate_family_record_2019,
+    "duplicate_person_record_2019": _duplicate_person_record_2019,
 }
 _VARIANT_NOTES: dict[str, str] = {
     "code_88_first_year_cohabitor": (
@@ -1409,6 +1433,16 @@ _VARIANT_NOTES: dict[str, str] = {
         "the head of U0's first code-50 observation's family is recoded "
         "30: no head, so the head's annuity life is missing (refusal "
         "case)"
+    ),
+    "duplicate_family_record_2019": (
+        "the first 2019 family-file income record appears twice: a "
+        "repeated interview number refuses (duplicate identifier, section "
+        "14)"
+    ),
+    "duplicate_person_record_2019": (
+        "the 2019 anchor record of U0's first 2019 observation appears "
+        "twice: a repeated person identifier refuses (duplicate "
+        "identifier, section 14)"
     ),
 }
 #: The generator's named variants (see :data:`_VARIANT_NOTES`).

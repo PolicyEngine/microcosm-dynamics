@@ -102,6 +102,17 @@ def test_missing_head_iras_refuses(members, u2_params):
         _u2(broken, estimator.U2IncomeSpec(), u2_params)
 
 
+def test_duplicate_observation_ids_refuse(members, u2_params):
+    """Section 14: duplicate identifiers refuse execution."""
+
+    repeated = pd.concat([members, members.iloc[[0]]], ignore_index=True)
+    repeated.attrs.update(members.attrs)
+    with pytest.raises(
+        estimator.U2EstimatorError, match="duplicate observation_id"
+    ):
+        _u2(repeated, estimator.U2IncomeSpec(), u2_params)
+
+
 @pytest.mark.parametrize(
     "overrides",
     [

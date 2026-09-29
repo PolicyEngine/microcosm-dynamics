@@ -124,6 +124,7 @@ __all__ = [
     "U2Inputs",
     "build_u2_cohort",
     "check_cohort_inputs",
+    "check_unique_identifiers",
     "derive_u2_births",
     "design_frame",
     "income_rows",
@@ -626,6 +627,47 @@ def _seed_frame(rows: list[pd.DataFrame]) -> pd.DataFrame:
     )
 
 
+def check_unique_identifiers(inputs: U2Inputs) -> None:
+    """Refuse a repeated identifier in any keyed input frame (section 14).
+
+    "Duplicate identifiers ... refuse execution": ``persons`` and
+    ``design`` hold one row per ``person_id``, each wave's anchor one row
+    per ``person_id``, and each wave's family-income, family-wealth and
+    employer-DC frame one row per ``interview``.  Without this check a
+    repeated anchor row made :func:`build_u2_cohort` fail on an
+    incidental ``TypeError``, and a repeated ``persons`` row would have
+    classified the person's sex as unknown.  The message gives counts,
+    never identifier values.
+    """
+
+    keyed: list[tuple[str, pd.DataFrame, str]] = [
+        ("persons", inputs.persons, "person_id"),
+        ("design", inputs.design, "person_id"),
+    ]
+    keyed += [
+        (f"anchor {wave}", frame, "person_id")
+        for wave, frame in sorted(inputs.anchors.items())
+    ]
+    for label, frames in (
+        ("family income", inputs.family_income),
+        ("family wealth", inputs.family_wealth),
+        ("employer DC", inputs.employer_dc),
+    ):
+        keyed += [
+            (f"{label} {wave}", frame, "interview")
+            for wave, frame in sorted(frames.items())
+        ]
+    for label, frame, column in keyed:
+        if column not in frame.columns:
+            raise U2CohortError(f"input frame {label} lacks {column}")
+        repeated = int(frame[column].duplicated().sum())
+        if repeated:
+            raise U2CohortError(
+                f"input frame {label} repeats {column} ({repeated} repeated "
+                "row(s)): duplicate identifiers refuse execution (section 14)"
+            )
+
+
 def derive_u2_births(inputs: U2Inputs) -> U2Births:
     """The birth-year law over the common support waves (section 3).
 
@@ -642,6 +684,7 @@ def derive_u2_births(inputs: U2Inputs) -> U2Births:
     missing = set(SUPPORT_WAVES) - set(inputs.anchors)
     if missing:
         raise U2CohortError(f"inputs lack support waves {sorted(missing)}")
+    check_unique_identifiers(inputs)
     seeds = []
     for wave in SUPPORT_WAVES:
         anchor = inputs.anchors[wave]
@@ -836,6 +879,7 @@ def build_u2_cohort(
     identity.check_target(inputs.target_id, "the inputs")
     provenance = _input_provenance(inputs)
     _check_role_context(role_context, provenance["kind"])
+    check_unique_identifiers(inputs)
     if births is None:
         births = derive_u2_births(inputs)
     elif births.inputs_sha256 != provenance["input_frames_sha256"]:

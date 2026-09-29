@@ -374,6 +374,31 @@ def test_a_moved_individual_column_refuses_the_load(
     assert _GUARD["opened"] == []
 
 
+@pytest.mark.parametrize(
+    "staged_file, message",
+    [
+        ("ind2023er/IND2023ER.txt", "duplicate person_id"),
+        ("family/2019/FAM2019ER.txt", "duplicate interview"),
+    ],
+)
+def test_a_repeated_record_refuses_the_load(
+    tmp_path, u2_inputs, committed_registries, staged_file, message
+):
+    """Section 14: duplicate identifiers refuse execution.  A staged file
+    that repeats its first record (the individual file's person, a
+    family file's interview) refuses the load."""
+
+    _stage(tmp_path, u2_inputs, committed_registries)
+    path = tmp_path / staged_file
+    lines = path.read_text(encoding="ascii").splitlines()
+    path.write_text("\n".join([*lines, lines[0]]) + "\n", encoding="ascii")
+    with pytest.raises(
+        (loader.U2LoaderRefusal, sources.U2SourceRefusal), match=message
+    ):
+        _load(tmp_path, u2_inputs)
+    assert _GUARD["opened"] == []
+
+
 def test_loader_inputs_cannot_join_an_invented_cohort(
     loaded, u2_inputs, u0_cohort
 ):
