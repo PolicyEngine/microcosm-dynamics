@@ -53,8 +53,17 @@ sex cell and leave the marital cells, counted.
 
 Provenance is recorded as in U1 (``invented``, ``psid_files`` or
 ``caller_frames``) together with ``target_id: U2``; the invented declared
-role context runs only on invented inputs.  This module computes no
-income concept, threshold, annuity, poverty status or statistic.
+role context runs only on invented inputs.  Unlike U1, the ``invented``
+kind needs more than a matching digest, because in U2 it unlocks the
+declared role rules the committed roles registry refuses: the inputs
+must carry the seal that only :mod:`.invented`'s generator sets (one of
+its fixed, named variants, regenerable from the seed), and the frames
+must still hash to the sealed digest.  :func:`replace_provenance` never
+relabels inputs as invented, and ``dataclasses.replace`` drops both
+seals, so relabelled frames -- a loader's included -- fall to
+``caller_frames``, which the declared context refuses.  This module
+computes no income concept, threshold, annuity, poverty status or
+statistic.
 """
 
 from __future__ import annotations
@@ -80,6 +89,7 @@ __all__ = [
     "EVEN_BIRTH_YEARS",
     "INVENTED",
     "MARITAL_STATUS_4",
+    "NO_HEAD_PAIRING",
     "PRIMARY_BIRTH_YEARS",
     "PRIMARY_WAVES",
     "PSID_FILES",
@@ -222,8 +232,16 @@ class U2CohortSpec:
 def plan_cells(
     spec: U2CohortSpec,
 ) -> tuple[tuple[int, int, int, int, float], ...]:
-    """``(birth_year, wave, income_year, age, multiplier)`` per cell."""
+    """``(birth_year, wave, income_year, age, multiplier)`` per cell.
 
+    Refuses a malformed plan: a wave outside the support set, an income
+    year other than ``wave - 1`` or ``birth + age``, a repeated
+    (birth, wave) cell, or multipliers that do not sum to one per birth
+    year (section 3).
+    """
+
+    if not isinstance(spec, U2CohortSpec):
+        raise U2CohortError("spec must be a U2CohortSpec")
     cells = [
         (b, b + TARGET_AGE + 1, b + TARGET_AGE, TARGET_AGE, 1.0)
         for b in PRIMARY_BIRTH_YEARS
@@ -234,13 +252,26 @@ def plan_cells(
                 cells.append(
                     (b, b + age + 1, b + age, age, U1_EVEN_BIRTH_YEAR_WEIGHT)
                 )
-    for birth, wave, income_year, age, _ in cells:
+    totals: dict[int, float] = {}
+    for birth, wave, income_year, age, multiplier in cells:
         if (
             wave not in SUPPORT_WAVES
             or income_year != wave - 1
             or income_year != birth + age
         ):
-            raise AssertionError("observation plan outside the U2 waves")
+            raise U2CohortError(
+                f"plan cell ({birth}, {wave}, {income_year}, {age}) lies "
+                f"outside the U2 support waves {SUPPORT_WAVES}"
+            )
+        totals[birth] = totals.get(birth, 0.0) + multiplier
+    if len({(b, w) for b, w, _, _, _ in cells}) != len(cells):
+        raise U2CohortError("the plan repeats a (birth year, wave) cell")
+    unbalanced = {b: m for b, m in totals.items() if m != 1.0}
+    if unbalanced:
+        raise U2CohortError(
+            "planned multipliers must sum to one per birth year (section "
+            f"3): {dict(sorted(unbalanced.items()))}"
+        )
     return tuple(sorted(cells))
 
 
@@ -366,6 +397,12 @@ class U2Inputs:
     loader_seal: Mapping[str, str] | None = field(
         default=None, init=False, repr=False, compare=False
     )
+    #: Set only by :mod:`.invented`'s generator (``object.__setattr__``,
+    #: as the loader sets ``loader_seal``); ``init=False``, so
+    #: ``dataclasses.replace`` resets it to None.
+    invented_seal: Mapping[str, Any] | None = field(
+        default=None, init=False, repr=False, compare=False
+    )
 
     def __post_init__(self) -> None:
         identity.check_target(self.target_id, "U2Inputs")
@@ -402,17 +439,35 @@ def _input_provenance(inputs: U2Inputs) -> dict[str, Any]:
     frames = input_frames_sha256(inputs)
     kind = recorded.get("kind")
     if kind == INVENTED:
-        if recorded.get("input_frames_sha256") != frames:
+        seal = inputs.invented_seal
+        if seal is None:
+            raise U2CohortError(
+                "inputs claim invented provenance but carry no seal from "
+                "the U2 invented generator: relabelled frames are not "
+                "invented (only the generator's named variants are)"
+            )
+        if (
+            recorded.get("input_frames_sha256") != frames
+            or dict(seal).get("input_frames_sha256") != frames
+        ):
             raise U2CohortError(
                 "inputs claim invented provenance but their frames differ "
-                "from the digest the invented generator recorded; invented "
+                "from the digest the invented generator sealed; invented "
                 "data cannot be mixed with other frames"
             )
+        for key in ("generator", "seed", "variant"):
+            if recorded.get(key) != dict(seal).get(key):
+                raise U2CohortError(
+                    f"the invented provenance's {key} "
+                    f"{recorded.get(key)!r} is not the sealed "
+                    f"{dict(seal).get(key)!r}"
+                )
         return {
             "kind": INVENTED,
             "target_id": identity.TARGET_ID,
             "generator": recorded.get("generator"),
             "seed": recorded.get("seed"),
+            "variant": recorded.get("variant"),
             "label": recorded.get("data"),
             "input_frames_sha256": frames,
         }
@@ -662,6 +717,12 @@ def _unique(pids: list[int]) -> tuple[int | None, str]:
     return None, ("absent" if not pids else "ambiguous")
 
 
+#: ``legal_spouse_pairing`` when the family has no unique head: a legal
+#: spouse is defined relative to the head, so none is paired (it is
+#: neither a unique pairing nor an absent spouse).
+NO_HEAD_PAIRING = "no_head"
+
+
 def build_u2_cohort(
     inputs: U2Inputs,
     spec: U2CohortSpec | None = None,
@@ -678,8 +739,9 @@ def build_u2_cohort(
     ``family_unit_id``, ``sequence``, ``relationship``, ``member_role``,
     ``stratum``, ``cluster``, the marital columns, the member's
     co-resident spouse, the head and the head's legal spouse) plus
-    ``income_role_rule`` (the role context's kind), ``head_pairing`` and
-    ``legal_spouse_pairing`` (``unique``/``absent``/``ambiguous``),
+    ``income_role_rule`` (the role context's kind), ``head_pairing``
+    (``unique``/``absent``/``ambiguous``) and ``legal_spouse_pairing``
+    (the same, or ``no_head`` when the head is not unique),
     ``spouse_slot_occupied_roster`` and ``spouse_slot_sex`` (the unique
     code-20/22 person, the designated spouse income slot).
     """
@@ -774,7 +836,7 @@ def build_u2_cohort(
             ]
             legal_spouse, spouse_pairing = _unique(spouse_ids)
             if head is None:
-                legal_spouse = None
+                legal_spouse, spouse_pairing = None, NO_HEAD_PAIRING
             slot, _ = _unique([p for p, r in rules.items() if r.spouse_slot])
             relationship = int(record["relationship"])
             rule = rules[pid]
@@ -1156,8 +1218,19 @@ def structural_summary(cohort: U2Cohort) -> dict[str, Any]:
 
 
 def replace_provenance(inputs: U2Inputs, **provenance: Any) -> U2Inputs:
-    """``inputs`` with ``provenance`` (the digest is recomputed)."""
+    """``inputs`` with ``provenance`` (the digest is recomputed).
 
+    For caller frames and refusal tests.  It never produces invented
+    inputs: only the invented generator seals those (the declared role
+    context they unlock would otherwise run on any frames).  The result
+    carries neither seal, so a ``psid_files`` label is refused too.
+    """
+
+    if provenance.get("kind") == INVENTED:
+        raise U2CohortError(
+            "replace_provenance cannot label inputs invented; only the U2 "
+            "invented generator's named variants are invented inputs"
+        )
     return dataclasses.replace(
         inputs,
         provenance={

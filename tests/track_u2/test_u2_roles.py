@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import dataclasses
 
-import pandas as pd
 import pytest
 
 from populace_dynamics.estimates import adjusted_poverty as ap
@@ -297,41 +296,26 @@ def test_cohabitor_22_occupies_the_slot_without_legal_status(u1_cohort):
     assert (~heads["fu_head_spouse_present"]).all()
 
 
-def _restamped(inputs, **frames):
-    changed = dataclasses.replace(inputs, **frames)
-    return cohort.replace_provenance(
-        changed,
-        kind="invented",
-        generator="test",
-        seed=0,
-        data="INVENTED DATA - NOT A COMPARISON",
-    )
-
-
-def _family_of(inputs, wave, kind_head_birth, relationship):
-    """(interview, person ids) of the first family holding ``relationship``
-    whose head has birth year ``kind_head_birth``."""
-
-    anchor = inputs.anchors[wave]
-    for interview, rows in anchor[anchor["sequence"].between(1, 20)].groupby(
-        "interview"
-    ):
-        codes = set(rows["relationship"])
-        if relationship in codes and 10 in codes:
-            return int(interview), rows
-    raise AssertionError("no such family")
-
-
 def test_zero_weight_legal_spouse_keeps_a_derived_age(u2_inputs, declared):
-    interview, rows = _family_of(u2_inputs, 2019, None, 20)
-    spouse = int(rows.loc[rows["relationship"].eq(20), "person_id"].iloc[0])
-    anchors = {
-        wave: frame.assign(
-            weight=frame["weight"].where(frame["person_id"] != spouse, 0.0)
-        )
-        for wave, frame in u2_inputs.anchors.items()
+    inputs = invented.invented_variant(
+        u2_inputs, "zero_weight_legal_spouse_2019"
+    )
+    anchor = u2_inputs.anchors[2019]
+    zeroed = {
+        int(pid)
+        for pid in inputs.anchors[2019]
+        .loc[
+            inputs.anchors[2019]["weight"].eq(0) & anchor["weight"].gt(0),
+            "person_id",
+        ]
+        .tolist()
     }
-    inputs = _restamped(u2_inputs, anchors=anchors)
+    assert len(zeroed) == 1
+    (spouse,) = zeroed
+    assert (
+        int(anchor.loc[anchor["person_id"].eq(spouse), "relationship"].iloc[0])
+        == 20
+    )
     births = cohort.derive_u2_births(inputs)
     assert spouse not in births.universe
     assert births.birth_year(spouse) is not None
@@ -345,7 +329,7 @@ def test_zero_weight_legal_spouse_keeps_a_derived_age(u2_inputs, declared):
 
 
 def test_ambiguous_pairing_stays_unresolved_and_counted(u2_inputs, declared):
-    # Add a second code-20 person to a family whose head's history cannot
+    # A second code-20 person joins a family whose head's history cannot
     # be dated: the pairing is ambiguous, so the head stays unresolved.
     obs = cohort.build_u2_cohort(u2_inputs, role_context=declared).observations
     target = obs[
@@ -354,39 +338,7 @@ def test_ambiguous_pairing_stays_unresolved_and_counted(u2_inputs, declared):
         )
         & obs["fu_head_spouse_relationship"].eq(20)
     ].iloc[0]
-    wave, interview = int(target["wave"]), int(target["interview"])
-    extra = 699_998
-    anchors = {}
-    for w, frame in u2_inputs.anchors.items():
-        row = {
-            "person_id": extra,
-            "interview": interview if w == wave else 0,
-            "sequence": 5 if w == wave else 0,
-            "relationship": 20 if w == wave else 0,
-            "age": 60 if w == wave else 0,
-            "reported_birth_year": pd.NA,
-            "weight": 100.0 if w == wave else 0.0,
-        }
-        anchors[w] = pd.concat(
-            [frame, pd.DataFrame([row])], ignore_index=True
-        ).astype(frame.dtypes.to_dict())
-    persons = pd.concat(
-        [
-            u2_inputs.persons,
-            pd.DataFrame([{"person_id": extra, "sex": "female"}]),
-        ],
-        ignore_index=True,
-    ).astype({"person_id": "int64", "sex": "string"})
-    design = pd.concat(
-        [
-            u2_inputs.design,
-            pd.DataFrame([{"person_id": extra, "stratum": 1, "cluster": 1}]),
-        ],
-        ignore_index=True,
-    ).astype("int64")
-    inputs = _restamped(
-        u2_inputs, anchors=anchors, persons=persons, design=design
-    )
+    inputs = invented.invented_variant(u2_inputs, "ambiguous_legal_spouse")
     rebuilt = cohort.build_u2_cohort(
         inputs, role_context=declared
     ).observations
@@ -397,18 +349,18 @@ def test_ambiguous_pairing_stays_unresolved_and_counted(u2_inputs, declared):
     assert row["marital_resolution"] == "unresolved_non_married"
     assert row["marital_status_4"] == "unclassified"
     assert not row["fu_head_spouse_present"]
+    # With two code-20 persons the spouse income slot has no unique
+    # occupant, so the family file's slot flag cannot be matched: the
+    # income rows refuse rather than pick one (conservative, section 3).
+    assert not row["spouse_slot_occupied_roster"]
+    built = cohort.build_u2_cohort(inputs, role_context=declared)
+    with pytest.raises(cohort.U2CohortError, match="spouse income slot"):
+        cohort.income_rows(built, inputs)
 
 
 def test_spouse_slot_disagreement_refuses(u2_inputs, declared):
-    wave = 2019
-    income = u2_inputs.family_income[wave].copy()
-    obs = cohort.build_u2_cohort(u2_inputs, role_context=declared).observations
-    single = obs[obs["wave"].eq(wave) & ~obs["spouse_slot_occupied_roster"]][
-        "interview"
-    ].iloc[0]
-    income.loc[income["interview"].eq(single), "wife_present"] = True
-    inputs = _restamped(
-        u2_inputs, family_income={**u2_inputs.family_income, wave: income}
+    inputs = invented.invented_variant(
+        u2_inputs, "spouse_slot_disagreement_2019"
     )
     built = cohort.build_u2_cohort(inputs, role_context=declared)
     with pytest.raises(cohort.U2CohortError, match="spouse income slot"):
@@ -418,18 +370,16 @@ def test_spouse_slot_disagreement_refuses(u2_inputs, declared):
 def test_missing_head_refuses_the_annuity(u2_inputs, declared, u2_params):
     obs = cohort.build_u2_cohort(u2_inputs, role_context=declared).observations
     target = obs[obs["relationship"].eq(50)].iloc[0]
-    wave, interview = int(target["wave"]), int(target["interview"])
-    anchors = dict(u2_inputs.anchors)
-    frame = anchors[wave].copy()
-    head = frame["interview"].eq(interview) & frame["relationship"].eq(10)
-    frame.loc[head, "relationship"] = 30
-    anchors[wave] = frame
-    inputs = _restamped(u2_inputs, anchors=anchors)
+    inputs = invented.invented_variant(u2_inputs, "missing_head")
     built = cohort.build_u2_cohort(inputs, role_context=declared)
     row = built.observations[
         built.observations["observation_id"].eq(target["observation_id"])
     ].iloc[0]
     assert row["head_pairing"] == "absent"
+    # No head, so no legal spouse is paired: the count says so rather
+    # than reporting a unique pairing (finding 8 of the u2m2 review).
+    assert row["legal_spouse_pairing"] == cohort.NO_HEAD_PAIRING
+    assert not row["fu_head_spouse_present"]
     members = cohort.income_rows(built, inputs)
     with pytest.raises(ap.AdjustedPovertyError, match="annuitant age"):
         estimator.u2_adjusted_incomes(
@@ -440,3 +390,74 @@ def test_missing_head_refuses_the_annuity(u2_inputs, declared, u2_params):
             thresholds=u2_params.thresholds,
             ssi=u2_params.ssi,
         )
+
+
+def test_every_pairing_state_is_named(u2_run):
+    """The runner's counts use only the builder's four pairing states."""
+
+    for entry in u2_run["rows"].values():
+        states = set(entry["population"]["legal_spouse_pairing"])
+        assert states <= {"unique", "absent", "ambiguous", "no_head"}
+
+
+# ---------------------------------------------------------------------------
+# The role context is bound to its kind (review finding 2)
+# ---------------------------------------------------------------------------
+def test_a_registry_context_cannot_carry_the_declared_rules():
+    with pytest.raises(sources.U2SourceRefusal, match="committed roles"):
+        sources.RoleContext(sources.REGISTRY, sources.declared_role_rules())
+    registry = sources.RoleContext.from_registry()
+    with pytest.raises(sources.U2SourceRefusal, match="declared table"):
+        sources.RoleContext(sources.INVENTED_DECLARED, registry.rules)
+    # Any one rule changed is refused, e.g. 2015 code 20 made applicable.
+    rules = dict(registry.rules)
+    rules[(2015, 20)] = sources.declared_role_rules()[(2015, 20)]
+    with pytest.raises(sources.U2SourceRefusal, match=r"\(2015, 20\)"):
+        sources.RoleContext(sources.REGISTRY, rules)
+
+
+def test_role_rules_are_read_only():
+    for context in (
+        sources.RoleContext.from_registry(),
+        sources.RoleContext.declared(),
+    ):
+        with pytest.raises(TypeError):
+            context.rules[(2015, 20)] = None  # type: ignore[index]
+        with pytest.raises(dataclasses.FrozenInstanceError):
+            context.kind = sources.INVENTED_DECLARED  # type: ignore[misc]
+
+
+def test_relabelled_inputs_cannot_reach_the_declared_rules(
+    u2_inputs, declared
+):
+    """Review finding 1: only the generator seals invented inputs.
+
+    ``replace_provenance`` refuses the invented kind; a hand-copied
+    invented provenance on replaced frames (as a relabelled loader
+    output would be) carries no seal; and frames changed in place after
+    sealing no longer match the seal.  Each refuses the declared rules.
+    """
+
+    with pytest.raises(cohort.U2CohortError, match="cannot label"):
+        cohort.replace_provenance(u2_inputs, kind="invented")
+    copied = dataclasses.replace(
+        u2_inputs,
+        anchors=dict(u2_inputs.anchors),
+        provenance=dict(u2_inputs.provenance),
+    )
+    assert copied.invented_seal is None
+    with pytest.raises(cohort.U2CohortError, match="no seal"):
+        cohort.build_u2_cohort(copied, role_context=declared)
+    # This variant copies every anchor frame (``DataFrame.assign``), so
+    # the in-place change below cannot reach the shared base fixture.
+    variant = invented.invented_variant(
+        u2_inputs, "zero_weight_legal_spouse_2019"
+    )
+    assert all(
+        variant.anchors[w] is not u2_inputs.anchors[w] for w in variant.anchors
+    )
+    variant.anchors[2019].loc[0, "weight"] += 1.0
+    with pytest.raises(cohort.U2CohortError, match="sealed"):
+        cohort.build_u2_cohort(variant, role_context=declared)
+    with pytest.raises(ValueError, match="changed after sealing"):
+        invented.check_invented_inputs(variant)

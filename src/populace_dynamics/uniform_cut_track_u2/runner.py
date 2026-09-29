@@ -17,13 +17,14 @@ The two-percent interest sensitivity is reported on U0, unscored.
 Guards, before anything is computed:
 
 * ``invented``: the inputs must re-generate from the invented U2
-  generator's seed; any role context may run (the registry context then
-  refuses on the refused and TO VERIFY codes, which the dry run
-  records).
+  generator's seed and named variant; any role context may run (the
+  registry context then refuses on the refused and TO VERIFY codes,
+  which the dry run records).
 * ``registered_real``: an issue #42 comment pointer; inputs sealed by the
   U2 loader (``psid_files``); the committed-registry role context; U2's
   pinned parameters (:func:`~populace_dynamics.uniform_cut_track_u2.
-  parameters.check_u2_parameters`).
+  parameters.check_u2_parameters`); and, when a source gate's audit is
+  recorded, the registry gate only.
 
 The output records the U2 identity, the ten rows, the literal named
 deltas, U2's rulings record and the fixed headline.
@@ -97,11 +98,19 @@ def check_inputs(
 
     if not isinstance(inputs, cohort.U2Inputs):
         raise U2RunError("a U2 run needs U2Inputs")
+    if not isinstance(role_context, sources.RoleContext):
+        raise U2RunError("a U2 run needs an explicit RoleContext")
     identity.check_target(inputs.target_id, "the inputs")
     if data_provenance == ap.INVENTED:
         if registration_pointer is not None:
             raise U2RunError("an invented run carries no registration pointer")
-        return {"invented_inputs": invented.check_invented_inputs(inputs)}
+        try:
+            return {"invented_inputs": invented.check_invented_inputs(inputs)}
+        except ValueError as error:
+            raise U2RunError(
+                f"an invented run needs the invented generator's inputs: "
+                f"{error}"
+            ) from error
     if data_provenance != ap.REGISTERED_REAL:
         raise U2RunError(
             f"data_provenance must be one of {ap.DATA_PROVENANCES}"
@@ -398,6 +407,18 @@ def run_track_u2(
     checks = check_inputs(
         inputs, data_provenance, registration_pointer, role_context
     )
+    if source_gate is not None:
+        if not isinstance(source_gate, sources.SourceGate):
+            raise U2RunError("source_gate must be a SourceGate")
+        if (
+            data_provenance == ap.REGISTERED_REAL
+            and source_gate.kind != sources.REGISTRY
+        ):
+            raise U2RunError(
+                "a registered U2 run records only the registry source "
+                f"gate, not {source_gate.kind!r}: the invented declared "
+                "gate applies to invented records alone"
+            )
     try:
         parameters.check_u2_parameters(params, data_provenance)
     except parameters.U2ParameterError as error:

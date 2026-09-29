@@ -23,6 +23,15 @@ invented data.  The checks record the refusals the real path gives:
   TO VERIFY relationship codes, code 88 refuses under every context, and
   the loader's preflight refuses before any PSID file is opened;
 * the registered runner refuses these invented inputs and parameters;
+* the invented gate cannot be reached from other data: relabelled or
+  hand-copied invented provenance, a registry role context carrying the
+  declared rules, registries labelled committed but changed, survey-
+  shaped records under the declared gate and the declared gate on a
+  registered run all refuse;
+* each of the generator's named variants reaches its branch or refusal
+  (a code-88 cohabitor, a missing family record, a zero-weight legal
+  spouse, an ambiguous pairing, a spouse-slot disagreement, a missing
+  head);
 * U2 refuses U1's captures, seed rule, column, rows and rulings, and
   U1's guards refuse U2's settings;
 * per-observation monotonicity (R <= B, poverty never lost) in every row
@@ -38,6 +47,8 @@ Writes ``result.json`` and ``RESULTS.md`` into ``--output-dir``.
 from __future__ import annotations
 
 import argparse
+import copy
+import dataclasses
 import datetime
 import json
 import math
@@ -357,6 +368,136 @@ def _row_branches(
     return out
 
 
+def _forged_committed(registries: sources.RegistrySet) -> None:
+    """Registries labelled committed whose 2015 code-20 role entry has
+    been edited to apply: refused (the label is bound to the pins)."""
+
+    documents = copy.deepcopy(dict(registries.documents))
+    for entry in documents["roles"]["entries"]:
+        if entry["id"] == "2015.relationship.20":
+            entry.pop("action", None)
+            entry["blocking_dependencies"] = []
+    sources.RegistrySet(documents, dict(registries.sha256), "committed")
+
+
+def _invented_gate_refusals(
+    inputs: cohort.U2Inputs,
+    params: parameters.U2Parameters,
+    registries: sources.RegistrySet,
+) -> dict[str, Any]:
+    """Every route from other data to the invented declared rules and
+    routes, each refused (review finding 1, 2 and 5 of the u2m2 review)."""
+
+    declared = sources.RoleContext.declared()
+    declared_gate = sources.SourceGate(sources.INVENTED_DECLARED, registries)
+    records = invented.invented_fixed_width_records(
+        inputs, 2019, declared_gate
+    )
+    survey_shaped = [
+        line.replace(sources.INVENTED_RECORD_FILLER, " ")
+        for line in records["lines"]
+    ]
+    labelled = cohort.replace_provenance(inputs, kind=cohort.PSID_FILES)
+    return {
+        "relabel_as_invented": _refusal(
+            lambda: cohort.replace_provenance(inputs, kind=cohort.INVENTED)
+        ),
+        "hand_copied_invented_provenance": _refusal(
+            lambda: cohort.build_u2_cohort(
+                dataclasses.replace(
+                    inputs, provenance=dict(inputs.provenance)
+                ),
+                role_context=declared,
+            )
+        ),
+        "unsealed_psid_files_label": _refusal(
+            lambda: cohort.build_u2_cohort(
+                labelled, role_context=sources.RoleContext.from_registry()
+            )
+        ),
+        "registry_context_with_declared_rules": _refusal(
+            lambda: sources.RoleContext(
+                sources.REGISTRY, sources.declared_role_rules()
+            )
+        ),
+        "changed_registries_labelled_committed": _refusal(
+            lambda: _forged_committed(registries)
+        ),
+        "declared_gate_on_survey_shaped_records": _refusal(
+            lambda: loader.read_family_records(
+                survey_shaped, 2019, declared_gate
+            )
+        ),
+        "declared_gate_on_a_registered_run": _refusal(
+            lambda: runner.run_track_u2(
+                labelled,
+                params,
+                data_provenance=ap.REGISTERED_REAL,
+                role_context=sources.RoleContext.from_registry(),
+                registration_pointer=_GUARD_POINTER,
+                source_gate=declared_gate,
+            )
+        ),
+    }
+
+
+def _variants(
+    inputs: cohort.U2Inputs, params: parameters.U2Parameters
+) -> dict[str, Any]:
+    """Each named invented variant's branch or refusal (section 13 role
+    and refusal cases), regenerated and checked like the base."""
+
+    declared = sources.RoleContext.declared()
+    out: dict[str, Any] = {}
+    for name in invented.INVENTED_VARIANTS:
+        variant = invented.invented_variant(inputs, name)
+        entry: dict[str, Any] = {
+            "regenerated": runner.check_inputs(
+                variant, ap.INVENTED, None, declared
+            )["invented_inputs"]["regenerated"],
+            "note": variant.provenance["variant_note"],
+        }
+        # Row U1's cells include U0's, so every variant's family is built.
+        spec = cohort.U2CohortSpec(row="U1")
+        try:
+            built = cohort.build_u2_cohort(
+                variant, spec, role_context=declared
+            )
+        except Exception as error:  # recorded, not swallowed
+            entry["build"] = {
+                "refused": True,
+                "error": type(error).__name__,
+                "message": str(error)[:600],
+            }
+            out[name] = entry
+            continue
+        obs = built.observations
+        entry["build"] = {"refused": False, "n_observations": len(obs)}
+        entry["legal_spouse_pairing"] = {
+            str(k): int(v)
+            for k, v in obs["legal_spouse_pairing"].value_counts().items()
+        }
+        entry["fu_head_spouse_age_source"] = {
+            str(k): int(v)
+            for k, v in obs["fu_head_spouse_age_source"].value_counts().items()
+        }
+
+        def income(built=built, variant=variant):
+            members = cohort.income_rows(built, variant)
+            return estimator.u2_adjusted_incomes(
+                members,
+                context=estimator.U2EstimatorContext(declared.kind),
+                data_provenance=ap.INVENTED,
+                life_table=params.life_tables["nchs_2000"],
+                thresholds=params.thresholds,
+                ssi=params.ssi,
+            )
+
+        entry["income"] = _refusal(income)
+        out[name] = entry
+    return out
+
+
 def checks(
     seed: int, inputs: cohort.U2Inputs, params: parameters.U2Parameters
 ) -> dict[str, Any]:
@@ -480,6 +621,10 @@ def checks(
                 if rule.refusal and rule.present
             },
         },
+        "invented_gate_refusals": _invented_gate_refusals(
+            inputs, params, registries
+        ),
+        "invented_variants": _variants(inputs, params),
         "loader_preflight": _refusal(loader.source_preflight),
         "registered_guard_refuses_invented_inputs": _refusal(
             lambda: runner.run_track_u2(
@@ -646,6 +791,14 @@ def results_markdown(result: dict[str, Any]) -> str:
             f"{_fmt(cell['delta'])} (not scored)."
         )
     mapping = check["mapping"]["by_wave"]
+    identical = check["identification"][
+        "identical_births_and_annuitant_attributes"
+    ]
+    role = check["role_refusals"]
+    thresholds_refused = check[
+        "registered_parameter_check_refuses_invented_thresholds"
+    ]["refused"]
+    u1_branch = check["row_branches"]["U1"]
     lines += [
         "",
         "## Checks",
@@ -665,8 +818,7 @@ def results_markdown(result: dict[str, Any]) -> str:
         f"{check['plans']['support_registry']['equal_to_support_registry']}; "
         f"wave 2013 cells {check['plans']['wave_2013_cells']}.",
         "- Shared U0/U1 observations have identical births and annuitant "
-        "attributes: "
-        f"{check['identification']['identical_births_and_annuitant_attributes']}.",
+        f"attributes: {identical}.",
         "- Mapping round trips (invented fixed-width records in each "
         "wave's registry layout): "
         + ", ".join(
@@ -688,17 +840,31 @@ def results_markdown(result: dict[str, Any]) -> str:
         )
         + ".",
         "- Role refusals: registry context on invented inputs "
-        f"{check['role_refusals']['registry_context_on_invented_inputs']['refused']};"
+        f"{role['registry_context_on_invented_inputs']['refused']};"
         " code 88 under the declared context "
-        f"{check['role_refusals']['code_88_under_declared_context']['refused']};"
+        f"{role['code_88_under_declared_context']['refused']};"
         " declared context on non-invented inputs "
-        f"{check['role_refusals']['declared_context_on_non_invented_inputs']['refused']}.",
+        f"{role['declared_context_on_non_invented_inputs']['refused']}.",
         "- Loader preflight refuses before any PSID file is opened: "
         f"{check['loader_preflight']['refused']}.",
+        "- Routes from other data to the invented declared rules and "
+        "routes, each refused: "
+        + ", ".join(
+            f"{name} {entry['refused']}"
+            for name, entry in check["invented_gate_refusals"].items()
+        )
+        + ".",
+        "- Named invented variants (build refused / income refused): "
+        + ", ".join(
+            f"{name} {entry['build']['refused']}/"
+            f"{entry.get('income', {}).get('refused', 'n/a')}"
+            for name, entry in check["invented_variants"].items()
+        )
+        + ".",
         "- The registered runner refuses these invented inputs: "
         f"{check['registered_guard_refuses_invented_inputs']['refused']}; "
         "the registered parameter check refuses invented thresholds: "
-        f"{check['registered_parameter_check_refuses_invented_thresholds']['refused']}.",
+        f"{thresholds_refused}.",
         "- Cross-cohort refusals: "
         + ", ".join(
             f"{name} {entry['refused']}"
@@ -734,7 +900,7 @@ def results_markdown(result: dict[str, Any]) -> str:
         + "; U1 "
         f"{check['row_branches']['U1']['n_observations_u1']} observations "
         f"over {check['row_branches']['U1']['n_birth_years_u1']} birth "
-        f"years against U0's {check['row_branches']['U1']['n_observations_u0']}.",
+        f"years against U0's {u1_branch['n_observations_u0']}.",
         "",
         "## Named deltas",
         "",

@@ -21,6 +21,7 @@ from populace_dynamics.uniform_cut_track_u2 import (
     DRY_RUN_HEADER,
     cohort,
     identity,
+    invented,
     rows,
     runner,
     sources,
@@ -189,23 +190,75 @@ def test_runner_refuses_a_partial_row_set(u2_inputs, u2_params, declared):
 def test_runner_refuses_tampered_invented_inputs(
     u2_inputs, u2_params, declared
 ):
-    tampered = cohort.replace_provenance(
-        dataclasses.replace(
-            u2_inputs,
-            design=u2_inputs.design.assign(cluster=1),
-        ),
-        **{
-            k: v
-            for k, v in u2_inputs.provenance.items()
-            if k != "input_frames_sha256"
+    changed = dataclasses.replace(
+        u2_inputs, design=u2_inputs.design.assign(cluster=1)
+    )
+    # The invented label cannot be put back on changed frames ...
+    with pytest.raises(cohort.U2CohortError, match="cannot label"):
+        cohort.replace_provenance(
+            changed,
+            **{
+                k: v
+                for k, v in u2_inputs.provenance.items()
+                if k != "input_frames_sha256"
+            },
+        )
+    # ... and a hand-copied invented provenance carries no seal.
+    copied = dataclasses.replace(
+        changed,
+        provenance={
+            **u2_inputs.provenance,
+            "input_frames_sha256": cohort.input_frames_sha256(changed),
         },
     )
-    with pytest.raises(ValueError, match="not the"):
+    with pytest.raises(runner.U2RunError, match="not sealed"):
         runner.run_track_u2(
-            tampered,
+            copied,
             u2_params,
             data_provenance=ap.INVENTED,
             role_context=declared,
+        )
+
+
+def test_every_invented_variant_passes_the_regeneration_check(u2_inputs):
+    for variant in invented.INVENTED_VARIANTS:
+        inputs = invented.invented_variant(u2_inputs, variant)
+        check = runner.check_inputs(
+            inputs, ap.INVENTED, None, sources.RoleContext.declared()
+        )
+        assert check["invented_inputs"]["variant"] == variant
+        assert check["invented_inputs"]["regenerated"] is True
+
+
+def test_registered_run_records_only_the_registry_source_gate(
+    u2_inputs, u2_params, committed_registries
+):
+    """Review finding 5: the invented declared source gate cannot be
+    recorded on a registered run.  (The inputs are labelled psid_files
+    without a loader seal only to pass the input guard; the gate check
+    refuses next, before anything is computed.)"""
+
+    labelled = cohort.replace_provenance(u2_inputs, kind="psid_files")
+    declared_gate = sources.SourceGate(
+        sources.INVENTED_DECLARED, committed_registries
+    )
+    with pytest.raises(runner.U2RunError, match="registry source gate"):
+        runner.run_track_u2(
+            labelled,
+            u2_params,
+            data_provenance=ap.REGISTERED_REAL,
+            role_context=sources.RoleContext.from_registry(),
+            registration_pointer=POINTER,
+            source_gate=declared_gate,
+        )
+    with pytest.raises(runner.U2RunError, match="SourceGate"):
+        runner.run_track_u2(
+            labelled,
+            u2_params,
+            data_provenance=ap.REGISTERED_REAL,
+            role_context=sources.RoleContext.from_registry(),
+            registration_pointer=POINTER,
+            source_gate="registry",
         )
 
 
@@ -233,7 +286,8 @@ def test_nobody_leaves_poverty_under_the_cut_invented(u2_run, row):
 
 @pytest.mark.parametrize("row", rows.ROW_IDS)
 def test_nobody_leaves_poverty_under_the_cut(row):
-    """Section 13: mirror of U1's artifact test for the eventual U2 artifact."""
+    """Section 13: mirror of U1's artifact test for the eventual U2
+    artifact."""
 
     if not ARTIFACT.exists():
         pytest.skip("the U2 registered artifact does not exist (not run)")

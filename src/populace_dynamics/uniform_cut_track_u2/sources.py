@@ -25,11 +25,21 @@ be applied:
   and the section 15 routes) to every documented layout, so an invented
   dry run can exercise each mapping and role branch.  It records, for
   every entry it applies, the blockers the ``registry`` gate would refuse
-  on, and :mod:`.cohort` and :mod:`.runner` refuse it for anything but
-  invented provenance.  It is not a fallback: a real-data run never sees
-  it.  Where the specification declares nothing (code 88's substantive
+  on.  It is not a fallback, and nothing on the real-data path accepts
+  it: :func:`.loader.load_u2_inputs` builds its own registry gate;
+  :func:`.loader.read_family_records` reads under this gate only records
+  the invented writer produced (every unmapped column holds
+  :data:`INVENTED_RECORD_FILLER`, :func:`check_invented_records`); and
+  :func:`.runner.run_track_u2` refuses to record it for a registered run.
+  Where the specification declares nothing (code 88's substantive
   routing, the historical combined spouse-retirement crosswalk) it
   refuses too.
+
+The role rules follow the same split in a :class:`RoleContext`, which is
+bound to its kind: a ``registry`` context holds exactly the committed
+roles registry's rules and an ``invented_declared`` context exactly the
+declared table (both read-only), and :mod:`.cohort` accepts the declared
+context only on inputs the invented generator sealed.
 
 **Role rules** (section 3 relationship-code amendment):
 
@@ -76,6 +86,7 @@ import json
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
+from types import MappingProxyType
 from typing import Any
 
 import numpy as np
@@ -90,6 +101,7 @@ __all__ = [
     "GATES",
     "INCOME_CONCEPTS",
     "INVENTED_DECLARED",
+    "INVENTED_RECORD_FILLER",
     "OFUM_RULE",
     "REGISTRY",
     "REGISTRY_SHA256",
@@ -108,6 +120,7 @@ __all__ = [
     "U2RoleRefusal",
     "U2SourceRefusal",
     "blockers",
+    "check_invented_records",
     "check_overlaps",
     "dc_route",
     "decode_income",
@@ -246,6 +259,11 @@ _SEX_CODES = {1: "male", 2: "female"}
 _INCOME_ACC_RANGE = (0, 9)
 _WEALTH_ACC_CODES = (0, 1)
 _INTERVIEW_MAX = 99_999
+#: The character every column an invented fixed-width record leaves
+#: unmapped holds (:func:`encode_fixed_width` with this filler).  PSID's
+#: fixed-width records hold digits and blanks only, so a declared-gate
+#: read (:func:`check_invented_records`) accepts invented records alone.
+INVENTED_RECORD_FILLER = "~"
 
 
 class U2SourceRefusal(registry.SourceAdjudicationError):
@@ -280,13 +298,29 @@ def _committed_document(name: str, digest: str) -> str:
     return raw.decode("utf-8")
 
 
+def _canonical_sha256(document: Mapping[str, Any]) -> str:
+    return _sha256(json.dumps(document, sort_keys=True).encode("utf-8"))
+
+
+@functools.cache
+def _committed_canonical_sha256(name: str) -> str:
+    """The canonical-JSON digest of the pinned committed document."""
+
+    return _canonical_sha256(
+        json.loads(_committed_document(name, REGISTRY_SHA256[name]))
+    )
+
+
 @dataclass(frozen=True)
 class RegistrySet:
     """The eight validated registry documents and their SHA-256.
 
     ``kind`` is ``committed`` (the pinned milestone-1 files) or
     ``invented`` (test documents in the same schema, never accepted by a
-    real-data run).
+    real-data run).  ``committed`` is a binding, not a label: such a set
+    must hold the pinned SHA-256s and documents equal to the pinned
+    files' contents, so hand-built documents cannot pass the registry
+    gate.
     """
 
     documents: Mapping[str, Mapping[str, Any]]
@@ -300,6 +334,20 @@ class RegistrySet:
             raise ValueError(
                 f"a registry set holds exactly {registry.REGISTRY_NAMES}"
             )
+        if self.kind == "committed":
+            changed = [
+                name
+                for name in registry.REGISTRY_NAMES
+                if self.sha256.get(name) != REGISTRY_SHA256[name]
+                or _canonical_sha256(self.documents[name])
+                != _committed_canonical_sha256(name)
+            ]
+            if changed:
+                raise U2SourceRefusal(
+                    f"registries {changed} are labelled committed but are "
+                    "not the pinned milestone-1 files (section 14: changed "
+                    "source bytes refuse execution)"
+                )
         object.__setattr__(
             self,
             "_index",
@@ -326,9 +374,7 @@ class RegistrySet:
         digests = {}
         for name, document in documents.items():
             registry.validate_registry(dict(document), expected_name=name)
-            digests[name] = _sha256(
-                json.dumps(document, sort_keys=True).encode("utf-8")
-            )
+            digests[name] = _canonical_sha256(document)
         return cls(dict(documents), digests, "invented")
 
     def entry(self, name: str, entry_id: str) -> Mapping[str, Any]:
@@ -366,7 +412,7 @@ def blockers(entry: Mapping[str, Any], name: str) -> list[str]:
     return out
 
 
-@dataclass
+@dataclass(frozen=True)
 class SourceGate:
     """Applies registry entries under ``kind`` and records every use.
 
@@ -374,7 +420,9 @@ class SourceGate:
     apply the declared interpretation and record what the registry gate
     would refuse (``would_refuse``).  What the specification declares
     nothing for refuses in the callers under both gates (code 88's
-    substantive role, documentary crosswalks as inputs).
+    substantive role, documentary crosswalks as inputs).  Frozen, so a
+    gate's kind cannot change after the registry check at construction
+    (the use records are appended in place).
     """
 
     kind: str
@@ -532,6 +580,13 @@ def _registry_role_rules(
     return out
 
 
+@functools.cache
+def _committed_role_rules() -> Mapping[tuple[int, int], RoleRule]:
+    """The committed roles registry's rules (pinned bytes; read once)."""
+
+    return MappingProxyType(_registry_role_rules(RegistrySet.committed()))
+
+
 @dataclass(frozen=True)
 class RoleContext:
     """The role rules a U2 build applies, and whether it may run on data.
@@ -542,6 +597,10 @@ class RoleContext:
     and 92, adjudication disposition F; code 92's absence in 2013 and
     2015).  ``invented_declared``: the section 3 declared rules (code 88
     still refuses); accepted only with invented inputs.
+
+    The kind is a binding, not a label: construction refuses rules other
+    than the kind's own (the committed registry's or the declared
+    table), and the rules are held read-only.
     """
 
     kind: str
@@ -552,6 +611,28 @@ class RoleContext:
             raise ValueError(
                 f"role context kind must be one of {ROLE_CONTEXT_KINDS}"
             )
+        expected = (
+            _committed_role_rules()
+            if self.kind == REGISTRY
+            else declared_role_rules()
+        )
+        rules = dict(self.rules)
+        if rules != dict(expected):
+            differ = sorted(
+                key
+                for key in set(rules) | set(expected)
+                if rules.get(key) != expected.get(key)
+            )
+            source = (
+                "the committed roles registry"
+                if self.kind == REGISTRY
+                else "the section 3 declared table"
+            )
+            raise U2SourceRefusal(
+                f"a {self.kind!r} role context holds rules other than "
+                f"{source}'s (first differing (wave, code): {differ[:3]})"
+            )
+        object.__setattr__(self, "rules", MappingProxyType(rules))
 
     @classmethod
     def declared(cls) -> RoleContext:
@@ -863,7 +944,8 @@ def encode_fixed_width(
     """Write ``frame`` as fixed-width lines in ``specs``'s layout.
 
     For invented records only.  Values are right-aligned; a value wider
-    than its field is refused.  Unmapped columns are ``filler``.
+    than its field is refused.  Unmapped columns are ``filler`` (the
+    invented writer passes :data:`INVENTED_RECORD_FILLER`).
     """
 
     width = max(spec.end for spec in specs)
@@ -880,6 +962,38 @@ def encode_fixed_width(
             chars[spec.start - 1 : spec.end] = list(text.rjust(spec.width))
         out.append("".join(chars))
     return out
+
+
+def check_invented_records(
+    records: Sequence[str], specs: Sequence[FieldSpec]
+) -> int:
+    """Refuse records the invented writer did not produce.
+
+    Every column ``specs`` leaves unmapped must hold
+    :data:`INVENTED_RECORD_FILLER` and every record must end at the last
+    mapped column.  The declared gate reads nothing else.
+    """
+
+    width = max(spec.end for spec in specs)
+    mapped = {i for spec in specs for i in range(spec.start - 1, spec.end)}
+    gaps = [i for i in range(width) if i not in mapped]
+    if not gaps:
+        raise U2SourceRefusal(
+            "the layout maps every column, so invented records cannot be "
+            "told from survey records"
+        )
+    expected = INVENTED_RECORD_FILLER * len(gaps)
+    for number, record in enumerate(records):
+        if len(record) != width or (
+            "".join(record[i] for i in gaps) != expected
+        ):
+            raise U2SourceRefusal(
+                f"record {number}: the invented declared gate reads only "
+                "records the U2 invented writer produced (every unmapped "
+                f"column {INVENTED_RECORD_FILLER!r}); survey records are "
+                "read under the registry gate alone"
+            )
+    return len(records)
 
 
 def decode_income(frame: pd.DataFrame) -> pd.DataFrame:
@@ -1025,10 +1139,11 @@ def dc_route(wave: int, gate: SourceGate) -> DcRoute:
     formula/unknown route; IRA rollovers; duplicate and off-route rule).
     Any route still TO VERIFY or blocked refuses -- today 2015's
     checkpoint and respondent slots and 2017-2023's inherited-route
-    amendment.  Invented declared gate: the section 15 route (current
-    account or combined plan; "both" items of a combined plan; account
-    items of an account, formula or DK plan), recording the registry
-    blockers.
+    amendment -- and so do disposition codes on which the IRA-rollover,
+    previous-combined and previous-DC-only entries disagree.  Invented
+    declared gate: the section 15 route (current account or combined
+    plan; "both" items of a combined plan; account items of an account,
+    formula or DK plan), recording the registry blockers.
     """
 
     wave = int(wave)
@@ -1059,22 +1174,41 @@ def dc_route(wave: int, gate: SourceGate) -> DcRoute:
             _EXCLUDED_IRA_DISPOSITION,
             "section_15_declared_route_invented_only",
         )
+    rollover = entries["ira_rollovers"]
+    combined = entries["previous_combined"]
+    dc_only = entries["previous_dc_only"]
+    counted = {
+        int(rollover["counted_disposition"]),
+        int(combined["counted_disposition"]),
+        int(dc_only["counted_disposition"]),
+    }
+    excluded = {
+        int(rollover["excluded_disposition"]),
+        int(combined["excluded_ira_disposition"]),
+        int(dc_only["excluded_ira_disposition"]),
+    }
+    if len(counted) != 1 or len(excluded) != 1:
+        raise U2SourceRefusal(
+            f"pension {wave}: the IRA-rollover, previous-combined and "
+            "previous-DC-only routes disagree on the disposition codes "
+            f"(counted {sorted(counted)}, IRA rollover {sorted(excluded)}); "
+            "no route is chosen over another"
+        )
     checkpoint = entries["formula_unknown_checkpoint"]
-    account = tuple(entries["previous_dc_only"]["accepted_plan_types"])
+    account = tuple(dc_only["accepted_plan_types"])
     conditional = tuple(
         checkpoint.get("accepted_conditional_types")
         or checkpoint.get("accepted_plan_types")
         or ()
     )
     items = tuple(dict.fromkeys(account + conditional))
-    rollover = entries["ira_rollovers"]
     return DcRoute(
         wave,
         tuple(entries["current_job"]["accepted_current_types"]),
-        tuple(entries["previous_combined"]["accepted_plan_types"]),
+        tuple(combined["accepted_plan_types"]),
         items,
-        int(rollover["counted_disposition"]),
-        int(rollover["excluded_disposition"]),
+        counted.pop(),
+        excluded.pop(),
         "pension_registry_routes",
     )
 

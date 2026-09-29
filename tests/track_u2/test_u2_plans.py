@@ -263,16 +263,33 @@ def test_malformed_inputs_refuse(u2_inputs, declared):
     missing = cohort.replace_provenance(missing, kind="caller_frames")
     with pytest.raises(cohort.U2CohortError, match="support waves"):
         cohort.derive_u2_births(missing)
-    no_family = dataclasses.replace(
-        u2_inputs,
-        family_income={
-            **u2_inputs.family_income,
-            2019: u2_inputs.family_income[2019].iloc[1:],
-        },
+    no_family = invented.invented_variant(
+        u2_inputs, "missing_family_record_2019"
     )
-    no_family = cohort.replace_provenance(no_family, kind="invented")
+    assert len(no_family.family_income[2019]) == (
+        len(u2_inputs.family_income[2019]) - 1
+    )
     with pytest.raises(cohort.U2CohortError, match="failed joins"):
         cohort.build_u2_cohort(no_family, role_context=declared)
+
+
+@pytest.mark.parametrize(
+    "patch, message",
+    [
+        ({"EVEN_BIRTH_YEARS": (1944,)}, "outside the U2 support waves"),
+        ({"PRIMARY_BIRTH_YEARS": (1947, 1947)}, "repeats"),
+        ({"U1_EVEN_BIRTH_YEAR_WEIGHT": 0.4}, "sum to one"),
+        ({"U1_EVEN_BIRTH_AGES": (66, 66)}, "repeats"),
+    ],
+)
+def test_malformed_plans_refuse(monkeypatch, patch, message):
+    """The plan's own guards (section 3): support waves, one cell per
+    (birth, wave) and multipliers summing to one per birth year."""
+
+    for name, value in patch.items():
+        monkeypatch.setattr(cohort, name, value)
+    with pytest.raises(cohort.U2CohortError, match=message):
+        cohort.plan_cells(cohort.U2CohortSpec(row="U1"))
 
 
 def test_invented_provenance_is_checked(u2_inputs, declared):

@@ -49,8 +49,15 @@ near-threshold singles are placed against them.  The fixed-width records
 (:func:`invented_fixed_width_records`) write the invented family frames
 in each wave's registry layout, for the adapters' round trip.
 
-Provenance: the inputs record ``kind="invented"``, the seed and their
-frame digest; :func:`check_invented_inputs` re-generates and compares.
+Provenance: the inputs record ``kind="invented"``, the generator, the
+seed, the variant and their frame digest, and carry the invented seal
+(:attr:`~populace_dynamics.uniform_cut_track_u2.cohort.U2Inputs.
+invented_seal`) that only this module sets.  Besides the base
+population, the generator makes a fixed set of named variants
+(:data:`INVENTED_VARIANTS`), each a deterministic change to a seed's base
+population that exercises one refusal or role branch; no function here
+seals frames a caller supplies.  :func:`check_invented_inputs`
+re-generates ``(seed, variant)`` and compares.
 """
 
 from __future__ import annotations
@@ -71,12 +78,14 @@ __all__ = [
     "FBR_INDIVIDUAL_MONTHLY",
     "INVENTED_INPUTS_LABEL",
     "INVENTED_THRESHOLDS_LABEL",
+    "INVENTED_VARIANTS",
     "WEALTH_ASSETS",
     "WEALTH_DEBTS",
     "check_invented_inputs",
     "invented_fixed_width_records",
     "invented_poverty_thresholds",
     "invented_u2_inputs",
+    "invented_variant",
     "raw_family_frame",
     "with_code_88_cohabitor",
 ]
@@ -1035,12 +1044,9 @@ def _dc_frame(families: list[dict], wave: int) -> pd.DataFrame:
     return sources.employer_dc_balances(raw, route, widths)
 
 
-def invented_u2_inputs(*, seed: int = DEFAULT_SEED) -> cohort.U2Inputs:
-    """INVENTED :class:`~populace_dynamics.uniform_cut_track_u2.cohort.
-    U2Inputs` for the six support waves."""
+def _base_frames(seed: int) -> cohort.U2Inputs:
+    """The unsealed base population of ``seed``."""
 
-    if not isinstance(seed, int) or isinstance(seed, bool):
-        raise ValueError("seed must be an integer")
     rng = np.random.default_rng(seed)
     families = _families(rng)
     persons = [p for family in families for p in family["persons"]]
@@ -1066,7 +1072,7 @@ def invented_u2_inputs(*, seed: int = DEFAULT_SEED) -> cohort.U2Inputs:
         }
     ).astype({"person_id": "int64", "sex": "string"})
     marriages = [row for family in families for row in _marriage_rows(family)]
-    inputs = cohort.U2Inputs(
+    return cohort.U2Inputs(
         anchors=_anchor_frames(families),
         design=design,
         persons=person_frame,
@@ -1076,21 +1082,100 @@ def invented_u2_inputs(*, seed: int = DEFAULT_SEED) -> cohort.U2Inputs:
         family_wealth={wave: _wealth_frame(families, wave) for wave in _WAVES},
         employer_dc={wave: _dc_frame(families, wave) for wave in _WAVES},
     )
-    return dataclasses.replace(
-        inputs,
-        provenance={
-            "kind": cohort.INVENTED,
-            "data": INVENTED_INPUTS_LABEL,
+
+
+def _sealed(
+    inputs: cohort.U2Inputs, *, seed: int, variant: str | None
+) -> cohort.U2Inputs:
+    """``inputs`` recorded and sealed as this generator's output."""
+
+    digest = cohort.input_frames_sha256(inputs)
+    provenance: dict[str, Any] = {
+        "kind": cohort.INVENTED,
+        "data": INVENTED_INPUTS_LABEL,
+        "generator": _GENERATOR,
+        "seed": int(seed),
+        "variant": variant,
+        "family_counts": dict(FAMILY_COUNTS),
+        "input_frames_sha256": digest,
+    }
+    if variant is not None:
+        provenance["variant_note"] = _VARIANT_NOTES[variant]
+    out = dataclasses.replace(inputs, provenance=provenance)
+    object.__setattr__(
+        out,
+        "invented_seal",
+        {
             "generator": _GENERATOR,
             "seed": int(seed),
-            "family_counts": dict(FAMILY_COUNTS),
-            "input_frames_sha256": cohort.input_frames_sha256(inputs),
+            "variant": variant,
+            "input_frames_sha256": digest,
         },
     )
+    return out
+
+
+def _check_seed(seed: Any) -> int:
+    if not isinstance(seed, int) or isinstance(seed, bool):
+        raise ValueError("seed must be an integer")
+    return seed
+
+
+def _check_sealed(inputs: cohort.U2Inputs) -> dict[str, Any]:
+    """The seal of ``inputs``; refuse unsealed or changed frames."""
+
+    provenance = dict(inputs.provenance or {})
+    seal = inputs.invented_seal
+    if provenance.get("kind") != cohort.INVENTED or seal is None:
+        raise ValueError(
+            "the inputs were not sealed by the U2 invented generator"
+        )
+    if dict(seal).get("input_frames_sha256") != (
+        cohort.input_frames_sha256(inputs)
+    ):
+        raise ValueError("the invented frames changed after sealing")
+    return dict(seal)
+
+
+def invented_u2_inputs(
+    *, seed: int = DEFAULT_SEED, variant: str | None = None
+) -> cohort.U2Inputs:
+    """INVENTED :class:`~populace_dynamics.uniform_cut_track_u2.cohort.
+    U2Inputs` for the six support waves: the base population of ``seed``,
+    or its named ``variant`` (:data:`INVENTED_VARIANTS`)."""
+
+    seed = _check_seed(seed)
+    if variant is not None and variant not in INVENTED_VARIANTS:
+        raise ValueError(
+            f"unknown invented variant {variant!r}; the generator makes "
+            f"{INVENTED_VARIANTS}"
+        )
+    base = _sealed(_base_frames(seed), seed=seed, variant=None)
+    return base if variant is None else invented_variant(base, variant)
+
+
+def invented_variant(base: cohort.U2Inputs, variant: str) -> cohort.U2Inputs:
+    """The named ``variant`` of a sealed base population.
+
+    Equal to ``invented_u2_inputs(seed=<base seed>, variant=variant)``;
+    it reuses ``base`` instead of regenerating it.
+    """
+
+    if variant not in INVENTED_VARIANTS:
+        raise ValueError(
+            f"unknown invented variant {variant!r}; the generator makes "
+            f"{INVENTED_VARIANTS}"
+        )
+    seal = _check_sealed(base)
+    if seal.get("variant") is not None:
+        raise ValueError("a variant is made from the base population only")
+    changed = _VARIANT_BUILDERS[variant](base)
+    return _sealed(changed, seed=seal["seed"], variant=variant)
 
 
 def check_invented_inputs(inputs: cohort.U2Inputs) -> dict[str, Any]:
-    """Refuse inputs that are not this generator's output for their seed."""
+    """Refuse inputs that are not this generator's output for their seed
+    and variant (the inputs are regenerated and their digests compared)."""
 
     provenance = dict(inputs.provenance or {})
     if provenance.get("kind") != cohort.INVENTED:
@@ -1102,74 +1187,226 @@ def check_invented_inputs(inputs: cohort.U2Inputs) -> dict[str, Any]:
     seed = provenance.get("seed")
     if not isinstance(seed, int) or isinstance(seed, bool):
         raise ValueError(f"an invented input records seed {seed!r}")
-    expected = cohort.input_frames_sha256(invented_u2_inputs(seed=seed))
+    variant = provenance.get("variant")
+    if variant is not None and variant not in INVENTED_VARIANTS:
+        raise ValueError(f"an invented input records variant {variant!r}")
+    _check_sealed(inputs)
+    expected = cohort.input_frames_sha256(
+        invented_u2_inputs(seed=seed, variant=variant)
+    )
     observed = cohort.input_frames_sha256(inputs)
     if observed != expected:
         raise ValueError(
             "the inputs are labelled invented but their frames are not the "
-            f"U2 generator's for seed {seed}"
+            f"U2 generator's for seed {seed} and variant {variant!r}"
         )
-    return {"seed": seed, "input_frames_sha256": observed, "regenerated": True}
+    return {
+        "seed": seed,
+        "variant": variant,
+        "input_frames_sha256": observed,
+        "regenerated": True,
+    }
 
 
 def with_code_88_cohabitor(inputs: cohort.U2Inputs) -> cohort.U2Inputs:
     """The invented inputs plus a code-88 first-year cohabitor (refusal).
 
-    A first-year cohabitor (code 88) joins the first near-threshold
-    single's family in 2019.  Section 3 declares no substantive rule for
-    code 88, so every role context refuses the build; the variant exists
-    to show that refusal.  It records ``kind="invented"`` with its own
-    digest and a ``variant`` note.
+    The ``code_88_first_year_cohabitor`` variant of ``inputs``' seed.
     """
 
-    anchors = {wave: frame.copy() for wave, frame in inputs.anchors.items()}
-    target = inputs.family_income[2019]["interview"].iloc[0]
-    for wave in _WAVES:
-        frame = anchors[wave]
-        present = wave == 2019
+    return invented_variant(inputs, "code_88_first_year_cohabitor")
+
+
+# ===========================================================================
+# Named variants (each a deterministic change to a sealed base)
+# ===========================================================================
+def _declared_u0(base: cohort.U2Inputs) -> pd.DataFrame:
+    """U0's observations of the base under the declared role rules."""
+
+    return cohort.build_u2_cohort(
+        base, role_context=sources.RoleContext.declared()
+    ).observations
+
+
+def _added_person(
+    base: cohort.U2Inputs,
+    person_id: int,
+    *,
+    wave: int,
+    interview: int,
+    sequence: int,
+    relationship: int,
+    age: int,
+    weight: float,
+    sex: str,
+) -> cohort.U2Inputs:
+    """``base`` with one person present in ``wave`` only."""
+
+    anchors = {}
+    for w, frame in base.anchors.items():
+        present = w == wave
         row = {
-            "person_id": _PERSON_BASE - 1,
-            "interview": int(target) if present else 0,
-            "sequence": 2 if present else 0,
-            "relationship": 88 if present else 0,
-            "age": 60 if present else 0,
+            "person_id": person_id,
+            "interview": interview if present else 0,
+            "sequence": sequence if present else 0,
+            "relationship": relationship if present else 0,
+            "age": age if present else 0,
             "reported_birth_year": pd.NA,
-            "weight": 500.0 if present else 0.0,
+            "weight": weight if present else 0.0,
         }
-        frame = pd.concat([frame, pd.DataFrame([row])], ignore_index=True)
-        for column in ("interview", "sequence", "relationship", "age"):
-            frame[column] = frame[column].astype("int64")
-        frame["reported_birth_year"] = frame["reported_birth_year"].astype(
-            "Int64"
-        )
-        anchors[wave] = frame
+        anchors[w] = pd.concat(
+            [frame, pd.DataFrame([row])], ignore_index=True
+        ).astype(frame.dtypes.to_dict())
     design = pd.concat(
         [
-            inputs.design,
+            base.design,
             pd.DataFrame(
-                [{"person_id": _PERSON_BASE - 1, "stratum": 1, "cluster": 1}]
+                [{"person_id": person_id, "stratum": 1, "cluster": 1}]
             ),
         ],
         ignore_index=True,
     ).astype("int64")
     persons = pd.concat(
-        [
-            inputs.persons,
-            pd.DataFrame([{"person_id": _PERSON_BASE - 1, "sex": "male"}]),
-        ],
+        [base.persons, pd.DataFrame([{"person_id": person_id, "sex": sex}])],
         ignore_index=True,
     ).astype({"person_id": "int64", "sex": "string"})
-    variant = dataclasses.replace(
-        inputs, anchors=anchors, design=design, persons=persons
-    )
     return dataclasses.replace(
-        variant,
-        provenance={
-            **dict(inputs.provenance),
-            "variant": "code_88_first_year_cohabitor (refusal case)",
-            "input_frames_sha256": cohort.input_frames_sha256(variant),
+        base, anchors=anchors, design=design, persons=persons
+    )
+
+
+def _code_88_first_year_cohabitor(base: cohort.U2Inputs) -> cohort.U2Inputs:
+    target = base.family_income[2019]["interview"].iloc[0]
+    return _added_person(
+        base,
+        _PERSON_BASE - 1,
+        wave=2019,
+        interview=int(target),
+        sequence=2,
+        relationship=88,
+        age=60,
+        weight=500.0,
+        sex="male",
+    )
+
+
+def _missing_family_record_2019(base: cohort.U2Inputs) -> cohort.U2Inputs:
+    return dataclasses.replace(
+        base,
+        family_income={
+            **base.family_income,
+            2019: base.family_income[2019].iloc[1:],
         },
     )
+
+
+def _zero_weight_legal_spouse_2019(base: cohort.U2Inputs) -> cohort.U2Inputs:
+    anchor = base.anchors[2019]
+    in_family = anchor[anchor["sequence"].between(1, 20)]
+    for _, rows in in_family.groupby("interview"):
+        codes = set(rows["relationship"])
+        if {10, 20} <= codes:
+            spouse = int(
+                rows.loc[rows["relationship"].eq(20), "person_id"].iloc[0]
+            )
+            break
+    else:  # pragma: no cover - the base population holds such a family
+        raise AssertionError("no 2019 family with a code-20 spouse")
+    anchors = {
+        wave: frame.assign(
+            weight=frame["weight"].where(frame["person_id"] != spouse, 0.0)
+        )
+        for wave, frame in base.anchors.items()
+    }
+    return dataclasses.replace(base, anchors=anchors)
+
+
+def _ambiguous_legal_spouse(base: cohort.U2Inputs) -> cohort.U2Inputs:
+    obs = _declared_u0(base)
+    target = obs[
+        obs["marital_resolution"].eq(
+            "relationship_code_head_with_legal_spouse"
+        )
+        & obs["fu_head_spouse_relationship"].eq(20)
+    ].iloc[0]
+    return _added_person(
+        base,
+        _PERSON_BASE - 2,
+        wave=int(target["wave"]),
+        interview=int(target["interview"]),
+        sequence=5,
+        relationship=20,
+        age=60,
+        weight=100.0,
+        sex="female",
+    )
+
+
+def _spouse_slot_disagreement_2019(base: cohort.U2Inputs) -> cohort.U2Inputs:
+    obs = _declared_u0(base)
+    single = obs[obs["wave"].eq(2019) & ~obs["spouse_slot_occupied_roster"]][
+        "interview"
+    ].iloc[0]
+    income = base.family_income[2019].copy()
+    income.loc[income["interview"].eq(single), "wife_present"] = True
+    return dataclasses.replace(
+        base, family_income={**base.family_income, 2019: income}
+    )
+
+
+def _missing_head(base: cohort.U2Inputs) -> cohort.U2Inputs:
+    obs = _declared_u0(base)
+    target = obs[obs["relationship"].eq(50)].iloc[0]
+    wave, interview = int(target["wave"]), int(target["interview"])
+    frame = base.anchors[wave].copy()
+    head = frame["interview"].eq(interview) & frame["relationship"].eq(10)
+    frame.loc[head, "relationship"] = 30
+    return dataclasses.replace(base, anchors={**base.anchors, wave: frame})
+
+
+_VARIANT_BUILDERS = {
+    "code_88_first_year_cohabitor": _code_88_first_year_cohabitor,
+    "missing_family_record_2019": _missing_family_record_2019,
+    "zero_weight_legal_spouse_2019": _zero_weight_legal_spouse_2019,
+    "ambiguous_legal_spouse": _ambiguous_legal_spouse,
+    "spouse_slot_disagreement_2019": _spouse_slot_disagreement_2019,
+    "missing_head": _missing_head,
+}
+_VARIANT_NOTES: dict[str, str] = {
+    "code_88_first_year_cohabitor": (
+        "a code-88 first-year cohabitor joins the first 2019 family; "
+        "section 3 declares no substantive rule for code 88, so every "
+        "role context refuses (refusal case)"
+    ),
+    "missing_family_record_2019": (
+        "the first 2019 family-file income record is dropped; an "
+        "observation without a family record refuses (failed join)"
+    ),
+    "zero_weight_legal_spouse_2019": (
+        "the code-20 spouse of the first 2019 family with a head and a "
+        "code-20 spouse has zero weight in every wave: outside the "
+        "universe, still an annuity life with a derived birth year"
+    ),
+    "ambiguous_legal_spouse": (
+        "a second code-20 person joins U0's first family whose head's "
+        "undated history the code-20 spouse resolves: the pairing is "
+        "ambiguous and the head stays unresolved (counted); the spouse "
+        "income slot then has no unique occupant, so that family's income "
+        "row refuses"
+    ),
+    "spouse_slot_disagreement_2019": (
+        "the family file of U0's first 2019 observation without a "
+        "spouse-slot occupant reports a spouse: the slot flag and the "
+        "roster disagree (refusal case)"
+    ),
+    "missing_head": (
+        "the head of U0's first code-50 observation's family is recoded "
+        "30: no head, so the head's annuity life is missing (refusal "
+        "case)"
+    ),
+}
+#: The generator's named variants (see :data:`_VARIANT_NOTES`).
+INVENTED_VARIANTS: tuple[str, ...] = tuple(_VARIANT_BUILDERS)
 
 
 def invented_fixed_width_records(
@@ -1178,20 +1415,24 @@ def invented_fixed_width_records(
     """The invented family frames of ``wave`` as fixed-width records.
 
     One record per family in the wave's family-file layout (income,
-    wealth and employer-DC fields; :func:`family_record_specs`).  ``gate``
-    supplies the specs: the declared gate for invented records, which
-    records what the registry gate would refuse.  INVENTED DATA - NOT A
-    COMPARISON.
+    wealth and employer-DC fields; :func:`family_record_specs`), every
+    unmapped column :data:`~populace_dynamics.uniform_cut_track_u2.
+    sources.INVENTED_RECORD_FILLER`.  ``gate`` supplies the specs: the
+    declared gate for invented records, which records what the registry
+    gate would refuse.  INVENTED DATA - NOT A COMPARISON.
     """
 
     if dict(inputs.provenance).get("kind") != cohort.INVENTED:
         raise ValueError("fixed-width records are written for invented data")
+    _check_sealed(inputs)
     specs = loader.family_record_specs(wave, gate)
     raw = raw_family_frame(inputs, wave)
     return {
         "specs": specs,
         "lines": sources.encode_fixed_width(
-            raw[[spec.concept for spec in specs]], specs
+            raw[[spec.concept for spec in specs]],
+            specs,
+            filler=sources.INVENTED_RECORD_FILLER,
         ),
         "raw": raw,
     }

@@ -261,3 +261,48 @@ def test_dc_code_domains_equal_the_registry_routes(committed_registries):
             rollovers["counted_disposition"],
             rollovers["excluded_disposition"],
         } <= sources.DC_CODE_DOMAINS["disposition"]
+
+
+@pytest.mark.parametrize(
+    "route, field",
+    [
+        ("previous_combined", "counted_disposition"),
+        ("previous_dc_only", "counted_disposition"),
+        ("previous_combined", "excluded_ira_disposition"),
+        ("previous_dc_only", "excluded_ira_disposition"),
+        ("ira_rollovers", "counted_disposition"),
+        ("ira_rollovers", "excluded_disposition"),
+    ],
+)
+def test_route_disposition_codes_must_agree(
+    route, field, committed_registries, monkeypatch
+):
+    """Review finding 9: the counted and IRA-rollover disposition codes
+    appear on three route entries; a disagreement refuses rather than
+    silently applying one entry's codes.  The committed 2013 entries
+    agree (3 counted, 2 rolled over); each case changes one field of one
+    entry, as a later registry edit could."""
+
+    gate = sources.SourceGate(sources.REGISTRY, committed_registries)
+    agreed = sources.dc_route(2013, gate)
+    assert (agreed.counted_disposition, agreed.excluded_ira_disposition) == (
+        3,
+        2,
+    )
+    for name in ("previous_combined", "previous_dc_only"):
+        entry = committed_registries.entry("pension", f"2013.route.{name}")
+        assert entry["counted_disposition"] == 3
+        assert entry["excluded_ira_disposition"] == 2
+    original = sources.SourceGate.require
+
+    def require(self, name, entry_id):
+        entry = original(self, name, entry_id)
+        if entry_id == f"2013.route.{route}":
+            entry = {**entry, field: 7}
+        return entry
+
+    monkeypatch.setattr(sources.SourceGate, "require", require)
+    with pytest.raises(sources.U2SourceRefusal, match="disagree"):
+        sources.dc_route(
+            2013, sources.SourceGate(sources.REGISTRY, committed_registries)
+        )

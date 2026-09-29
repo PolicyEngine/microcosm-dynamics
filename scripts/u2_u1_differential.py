@@ -23,11 +23,21 @@ dependencies and invented seed, and compares:
    invented frames, a fixed nonempty invented file manifest, refused
    supplements raising ``WealthSupplementNotStagedError("INVENTED
    supplement absent")`` for 2005 and 2007, and any file access under the
-   fake PSID directory refused; frame names, columns, dtypes, order and
-   hashes compared without normalization.
+   fake PSID directory refused (``open``, ``os.listdir``, ``os.scandir``,
+   ``glob`` and ``os.stat``/``os.lstat``, which ``Path.exists`` and
+   ``is_file`` call); frame names, columns, dtypes, order and hashes
+   compared without normalization.  Every access list must be empty.
 3. **Fixed refusal parity**: the ten section 13 cases, each compared by
-   exception module, class and complete message.
+   exception module, class and complete message, and each held to its
+   fixed expectation (:data:`EXPECTED_REFUSALS`): the seed case must
+   raise ``ValueError("seed_wave_rule must be earliest_presence_wave")``,
+   both existing-output cases the one-shot ``ValueError`` naming the
+   artifact, the two hash cases ``runner.TrackURunError``; no case may
+   pass or fail on the harness's own ``AssertionError`` stubs.
 
+The probe encodes with the section 13 canonical form (sorted keys,
+compact separators, ``allow_nan=False``) and no ``default``: a value the
+encoding cannot represent fails the probe instead of being stringified.
 Nothing here reads PSID data or a comparator.  Usage::
 
     python scripts/u2_u1_differential.py --base <checkout at 9cee2423> \\
@@ -49,10 +59,53 @@ from typing import Any
 BASE_COMMIT = "9cee2423f048"
 SEED = 20260924
 EXCLUDED_JSON_PATHS = ("/run/git_head", "/run/date")
+_ONE_SHOT = (
+    "/INVENTED/u1-refusal-parity/replication_boomers2004_uniform_cut_v1.json "
+    "already exists: the registered run is one-shot"
+)
+_U1_RUNNER = "populace_dynamics.uniform_cut_track_u.runner"
+#: Section 13's fixed outcomes.  A full dict is the exact expected
+#: exception; ``{"module", "class"}`` fixes the exception type only (the
+#: message is held by base/candidate parity).  Every case must refuse.
+EXPECTED_REFUSALS: dict[str, dict[str, str]] = {
+    "invalid_provenance": {"module": _U1_RUNNER, "class": "TrackURunError"},
+    "invented_with_pointer": {
+        "module": _U1_RUNNER,
+        "class": "TrackURunError",
+    },
+    "invalid_registration_url": {
+        "module": _U1_RUNNER,
+        "class": "TrackURunError",
+    },
+    "invented_labeled_registered": {
+        "module": _U1_RUNNER,
+        "class": "TrackURunError",
+    },
+    "wrong_registered_headline": {"module": "builtins", "class": "ValueError"},
+    "wrong_threshold_hash": {"module": _U1_RUNNER, "class": "TrackURunError"},
+    "wrong_ssi_hash": {"module": _U1_RUNNER, "class": "TrackURunError"},
+    "existing_artifact": {
+        "module": "builtins",
+        "class": "ValueError",
+        "message": _ONE_SHOT,
+    },
+    "existing_sidecar": {
+        "module": "builtins",
+        "class": "ValueError",
+        "message": _ONE_SHOT,
+    },
+    "u2_seed_under_u1": {
+        "module": "builtins",
+        "class": "ValueError",
+        "message": "seed_wave_rule must be earliest_presence_wave",
+    },
+}
 
-#: The probe run inside each checkout (U1 code only; stdout is JSON).
-PROBE = r"""
-import contextlib, dataclasses, hashlib, json, sys
+#: The probe's definitions (U1 code only): imports, the canonical
+#: encoding, the frame records, the patched actual-loader run and the
+#: refusal-parity cases.
+PROBE_DEFINITIONS = r"""
+import contextlib, dataclasses, hashlib, json, os, sys
 from dataclasses import replace
 from pathlib import Path
 
@@ -73,7 +126,7 @@ SEED = 20260924
 
 def canonical(value):
     return json.dumps(value, sort_keys=True, separators=(",", ":"),
-                      allow_nan=False, default=str)
+                      allow_nan=False)
 
 
 def frame_record(frame):
@@ -114,14 +167,35 @@ def loader_record(staged):
     fake_root = Path("/INVENTED/psid-data")
     manifest = {"INVENTED/ind2023er/IND2023ER.txt": "0" * 64}
     opened = []
+    guard = {"active": True}
+
+    def under_root(value):
+        if isinstance(value, int):
+            return False
+        try:
+            return os.fsdecode(value).startswith(str(fake_root))
+        except TypeError:
+            return False
 
     def hook(event, args):
-        if event == "open" and args and str(args[0]).startswith(
-                str(fake_root)):
-            opened.append(str(args[0]))
+        if not guard["active"] or event not in (
+                "open", "os.listdir", "os.scandir", "glob.glob",
+                "glob.glob/2", "pathlib.Path.glob", "pathlib.Path.rglob"):
+            return
+        if args and under_root(args[0]):
+            opened.append(f"{event}:{os.fsdecode(args[0])}")
             raise PermissionError(f"unpatched file access: {args[0]}")
 
     sys.addaudithook(hook)
+    real_stat, real_lstat = os.stat, os.lstat
+
+    def guarded(real, name):
+        def call(path, *args, **kwargs):
+            if guard["active"] and under_root(path):
+                opened.append(f"{name}:{os.fsdecode(path)}")
+                raise PermissionError(f"unpatched file access: {path}")
+            return real(path, *args, **kwargs)
+        return call
 
     @contextlib.contextmanager
     def record(root):
@@ -155,6 +229,8 @@ def loader_record(staged):
          lambda wave, data_dir=None: source.employer_dc[wave]),
         (family_income, "read_family_wealth", wealth),
     ]
+    patches += [(os, "stat", guarded(real_stat, "os.stat")),
+                (os, "lstat", guarded(real_lstat, "os.lstat"))]
     saved = [(module, name, getattr(module, name))
              for module, name, _ in patches]
     try:
@@ -164,6 +240,7 @@ def loader_record(staged):
     finally:
         for module, name, value in saved:
             setattr(module, name, value)
+        guard["active"] = False
     return {
         "opened_under_fake_root": opened,
         "provenance": {k: v for k, v in loaded.provenance.items()},
@@ -267,10 +344,13 @@ def refusal_parity(ratified_u1):
             seed_wave_rule="earliest_presence_in_common_support_waves"),
     }
     return {name: refusal(call) for name, call in cases.items()}
+"""
 
-
+#: The probe's main part: every contract check on stdout as JSON.
+PROBE_MAIN = r"""
 ratified_u1 = json.loads(sys.stdin.read())
-staged = invented.invented_age67_inputs(seed=SEED, supplement_waves_staged=True)
+staged = invented.invented_age67_inputs(
+    seed=SEED, supplement_waves_staged=True)
 refused_inputs = invented.invented_age67_inputs(seed=SEED)
 record = {
     "age67.WAVES": list(age67.WAVES),
@@ -301,6 +381,8 @@ record = {
 }
 sys.stdout.write(canonical(record))
 """
+#: The probe run inside each checkout (stdout is canonical JSON).
+PROBE = PROBE_DEFINITIONS + PROBE_MAIN
 
 #: Reads U1's full section 15 block once at the base commit.
 BLOCK_PROBE = r"""
@@ -388,6 +470,43 @@ def run_probe(checkout: Path, ratified_u1: str) -> bytes:
     ).stdout.encode("utf-8")
 
 
+def check_refusal_expectations(
+    parity: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
+    """Hold one side's refusal-parity record to :data:`EXPECTED_REFUSALS`.
+
+    Returns ``{"met": bool, "failures": {case: reason}}``: a case fails
+    when it is missing, did not refuse, refused with the harness's own
+    ``AssertionError`` (the fake ``git`` or ``Path.exists`` stubs), or
+    differs from a fixed module, class or message.
+    """
+
+    failures: dict[str, str] = {}
+    if set(parity) != set(EXPECTED_REFUSALS):
+        missing = sorted(set(EXPECTED_REFUSALS) ^ set(parity))
+        failures["cases"] = f"case sets differ: {missing}"
+    for case, expected in EXPECTED_REFUSALS.items():
+        observed = parity.get(case)
+        if observed is None:
+            continue
+        if "class" not in observed:
+            failures[case] = "did not refuse"
+            continue
+        if observed["class"] == "AssertionError":
+            failures[case] = (
+                "refused with the harness's own AssertionError: "
+                f"{observed.get('message')}"
+            )
+            continue
+        for key, value in expected.items():
+            if observed.get(key) != value:
+                failures[case] = (
+                    f"{key} {observed.get(key)!r} is not the fixed {value!r}"
+                )
+                break
+    return {"met": not failures, "failures": failures}
+
+
 def _first_difference(left: bytes, right: bytes) -> dict[str, Any] | None:
     if left == right:
         return None
@@ -470,6 +589,19 @@ def main(argv: list[str] | None = None) -> int:
     expected = run_probe(base, ratified_u1)
     observed = run_probe(candidate, ratified_u1)
     parsed = json.loads(expected)
+    candidate_parsed = json.loads(observed)
+    accesses = {
+        f"{side}:{key}": record["actual_loader"][key]["opened_under_fake_root"]
+        for side, record in (("base", parsed), ("candidate", candidate_parsed))
+        for key in record["actual_loader"]
+    }
+    report["refusal_expectations"] = {
+        "base": check_refusal_expectations(parsed["refusal_parity"]),
+        "candidate": check_refusal_expectations(
+            candidate_parsed["refusal_parity"]
+        ),
+    }
+    report["loader_file_accesses_empty"] = not any(accesses.values())
     report["contract_checks"] = {
         "equal": expected == observed,
         "sha256": {
@@ -479,10 +611,7 @@ def main(argv: list[str] | None = None) -> int:
         "first_difference": _first_difference(expected, observed),
         "checked": sorted(parsed),
         "refusal_parity": parsed["refusal_parity"],
-        "loader_opened_under_fake_root": {
-            key: parsed["actual_loader"][key]["opened_under_fake_root"]
-            for key in parsed["actual_loader"]
-        },
+        "loader_opened_under_fake_root": accesses,
     }
     report["all_equal"] = all(
         [
@@ -497,10 +626,23 @@ def main(argv: list[str] | None = None) -> int:
             ),
         ]
     )
+    report["all_checks_passed"] = (
+        report["all_equal"]
+        and report["refusal_expectations"]["base"]["met"]
+        and report["refusal_expectations"]["candidate"]["met"]
+        and report["loader_file_accesses_empty"]
+    )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2) + "\n")
-    print(json.dumps({"all_equal": report["all_equal"]}))
-    return 0 if report["all_equal"] else 1
+    print(
+        json.dumps(
+            {
+                "all_equal": report["all_equal"],
+                "all_checks_passed": report["all_checks_passed"],
+            }
+        )
+    )
+    return 0 if report["all_checks_passed"] else 1
 
 
 if __name__ == "__main__":

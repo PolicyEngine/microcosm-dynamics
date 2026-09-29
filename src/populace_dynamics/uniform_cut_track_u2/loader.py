@@ -19,9 +19,10 @@ a later stage when an earlier one refuses:
    2017-2023 P64/P65 record waits on the amendment 5 ruling.
 2. **Source identity**: each staged setup file and codebook the
    registries cite is rehashed against the registry's recorded SHA-256,
-   and every registry layout is cross-checked against the staged
-   ``.sps`` DATA LIST (setup formats checked independently, section 4
-   step 3).
+   and every registry layout -- the family files' and the individual
+   file's -- is cross-checked against the staged ``.sps`` DATA LIST
+   (setup formats checked independently, section 4 step 3); each wave's
+   individual weight variable must be the weights registry's.
 3. **Reading**: the family files are parsed with the registry layouts
    (:func:`read_family_records`), the individual file through the
    cross-checked setup, the marriage history and earnings through the
@@ -29,8 +30,11 @@ a later stage when an earlier one refuses:
    sealed, as U1's loader does.
 
 This module computes no income concept, threshold, annuity or poverty
-status.  Stages 2 and 3 are exercised on invented files by the tests; no
-real PSID record is read in development.
+status.  No real PSID record is read in development: the tests run
+stage 1 as committed (it refuses) and stages 2 and 3 on an invented
+staged directory, with the registry blockers, the cited-source rehash
+and the two inherited readers patched
+(``tests/track_u2/test_u2_loader.py``).
 """
 
 from __future__ import annotations
@@ -53,6 +57,7 @@ __all__ = [
     "check_layouts_against_setup",
     "check_source_hashes",
     "family_record_specs",
+    "individual_specs",
     "load_u2_inputs",
     "read_family_records",
     "required_entries",
@@ -159,9 +164,12 @@ def source_preflight(
 ) -> dict[str, Any]:
     """Refuse unless every entry a U2 run applies is resolved.
 
-    Opens no PSID file: only the committed registries.  An absent
-    relationship code's entry (code 92 in 2013 and 2015) passes when it
-    is RESOLVED; the builder refuses the code if it ever appears.
+    Opens no PSID file: only the committed registries.  Row U1's plan
+    must first equal the support registry cell by cell
+    (:func:`~populace_dynamics.uniform_cut_track_u2.cohort.
+    check_plan_against_support_registry`).  An absent relationship code's
+    entry (code 92 in 2013 and 2015) passes when it is RESOLVED; the
+    builder refuses the code if it ever appears.
     """
 
     registries = (
@@ -171,6 +179,7 @@ def source_preflight(
         raise U2LoaderRefusal(
             "the loader applies only the committed, pinned registries"
         )
+    plan = cohort.check_plan_against_support_registry(registries)
     refused: list[str] = []
     entries = required_entries(registries)
     for name, entry_id in entries:
@@ -188,6 +197,7 @@ def source_preflight(
         )
     return {
         "registries": registries.provenance(),
+        "plan": plan,
         "n_entries_required": len(entries),
         "all_resolved": True,
     }
@@ -283,10 +293,18 @@ def read_family_records(
     frames (the shapes :class:`~populace_dynamics.uniform_cut_track_u2.
     cohort.U2Inputs` holds).  Parsing refuses any field outside its
     documented domain; the DC balances use the wave's route under
-    ``gate``."""
+    ``gate``.  Under any gate but the registry gate, only records the
+    invented writer produced are read
+    (:func:`~populace_dynamics.uniform_cut_track_u2.sources.
+    check_invented_records`)."""
 
+    if not isinstance(gate, sources.SourceGate):
+        raise U2LoaderRefusal("family records are read through a SourceGate")
     specs = family_record_specs(wave, gate)
-    raw = sources.parse_fixed_width(lines, specs)
+    records = [line.rstrip("\n") for line in lines]
+    if gate.kind != sources.REGISTRY:
+        sources.check_invented_records(records, specs)
+    raw = sources.parse_fixed_width(records, specs)
     identity_terms = sources.wealth1_identity(wave, gate)
     income = sources.decode_income(raw[list(sources.INCOME_CONCEPTS)])
     wealth_columns = list(
@@ -397,11 +415,76 @@ def load_u2_inputs(*, data_dir: Path | None = None) -> cohort.U2Inputs:
     return inputs
 
 
+def individual_specs(
+    registries: sources.RegistrySet,
+) -> list[sources.FieldSpec]:
+    """The individual-file fields U2 reads, at their registry layouts.
+
+    Each wave's weight variable must be the weights registry's
+    cross-section weight for that wave, and the stratum and cluster the
+    design registry's, or the load refuses.
+    """
+
+    keys = [
+        f"{wave}.{concept}"
+        for wave in sources.SUPPORT_WAVES
+        for concept in ANCHOR_CONCEPTS
+    ] + list(_COMMON_INDIVIDUAL)
+    specs = []
+    for key in keys:
+        entry = registries.entry("individual", key)
+        layout = entry["layout"]
+        specs.append(
+            sources.FieldSpec(
+                concept=key,
+                variable=entry["variable"],
+                start=int(layout["start"]),
+                end=int(layout["end"]),
+                width=int(layout["width"]),
+                decimals=0,
+                negative_allowed=False,
+                kind="individual",
+                registry_id=f"individual:{key}",
+            )
+        )
+    for wave in sources.SUPPORT_WAVES:
+        weight = registries.entry("individual", f"{wave}.weight")["variable"]
+        registered = registries.entry(
+            "weights", f"{wave}.cross_section_weight"
+        )["variable"]
+        if weight != registered:
+            raise U2LoaderRefusal(
+                f"{wave}: the individual registry reads weight {weight}, "
+                f"the weights registry {registered}"
+            )
+    for concept in ("stratum", "cluster"):
+        individual = registries.entry("individual", f"common.{concept}")
+        design = registries.entry("design", f"common.{concept}")
+        if (individual["variable"], individual["layout"]) != (
+            design["variable"],
+            design["layout"],
+        ):
+            raise U2LoaderRefusal(
+                f"the individual and design registries disagree on the "
+                f"sampling-error {concept}"
+            )
+    sources.check_overlaps(specs)
+    return specs
+
+
 def _read_individual(
     registries: sources.RegistrySet, data_root: Path
 ) -> tuple[dict[int, pd.DataFrame], pd.DataFrame, pd.DataFrame]:
-    """The anchors, sex and design from the individual file (stage 3)."""
+    """The anchors, sex and design from the individual file (stage 3).
 
+    The staged setup's DATA LIST must agree with every registry layout
+    (:func:`check_layouts_against_setup`) before the file is read.
+    """
+
+    specs = individual_specs(registries)
+    check_layouts_against_setup(
+        specs, psid.product_sps_path("ind2023er", data_root)
+    )
     variables = {}
     for wave in sources.SUPPORT_WAVES:
         for concept in ANCHOR_CONCEPTS:

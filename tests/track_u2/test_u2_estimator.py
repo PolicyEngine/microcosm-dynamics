@@ -187,6 +187,12 @@ def test_income_units_follow_the_income_slots(members, u2_params):
     assert (head_wife["income_basis"].to_numpy()[ofum] == "family_unit").all()
     assert (head_wife["income_basis"].to_numpy()[~ofum] == "head_wife").all()
     # Codes 90 and 92 are OFUM members: they keep the family basis.
-    assert set(frame.loc[ofum, "relationship"]) >= {50, 92}
+    assert set(frame.loc[ofum, "relationship"]) >= {50, 90, 92}
+    for code in (90, 92):
+        coded = frame["relationship"].eq(code).to_numpy()
+        assert coded.any() and ofum[coded].all(), code
+        assert (
+            head_wife["income_basis"].to_numpy()[coded] == "family_unit"
+        ).all(), code
     size = head_wife["unit_size"].to_numpy()[~ofum]
     assert (size == 1 + frame["wife_present"].to_numpy()[~ofum]).all()

@@ -9,8 +9,12 @@
   concept or the tabulation (static transitive import graph, package
   initializers included).
 * ``scripts/run_track_u2_registered.py`` refuses every other state
-  before reading PSID, in the section 14 preflight order, with a fake
-  ``git`` and hand-built specification blocks.
+  before reading PSID, with a fake ``git`` and hand-built specification
+  blocks.  Its checks run in the script's own order (pointer, commit,
+  clean checkout, output identity, one-shot outputs, specification, rows,
+  rulings, named deltas, plan against the support registry, parameters,
+  binding, mapping review); section 14 lists what must be verified before
+  PSID is read, not an order, and every check here precedes the read.
 """
 
 from __future__ import annotations
@@ -110,6 +114,52 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
     for key, count in members.items():
         assert (count > 0) == (not key.endswith(".88")), key
     assert checks["loader_preflight"]["refused"]
+    gate_refusals = checks["invented_gate_refusals"]
+    assert set(gate_refusals) == {
+        "relabel_as_invented",
+        "hand_copied_invented_provenance",
+        "unsealed_psid_files_label",
+        "registry_context_with_declared_rules",
+        "changed_registries_labelled_committed",
+        "declared_gate_on_survey_shaped_records",
+        "declared_gate_on_a_registered_run",
+    }
+    for name, entry in gate_refusals.items():
+        assert entry["refused"], name
+    variants = checks["invented_variants"]
+    assert list(variants) == [
+        "code_88_first_year_cohabitor",
+        "missing_family_record_2019",
+        "zero_weight_legal_spouse_2019",
+        "ambiguous_legal_spouse",
+        "spouse_slot_disagreement_2019",
+        "missing_head",
+    ]
+    assert all(entry["regenerated"] for entry in variants.values())
+    build_refused = {
+        "code_88_first_year_cohabitor": "U2RoleRefusal",
+        "missing_family_record_2019": "U2CohortError",
+    }
+    income_refused = {
+        # Two code-20 persons: no unique spouse-slot occupant to match the
+        # family file's slot flag, so the income rows refuse.
+        "ambiguous_legal_spouse": "U2CohortError",
+        "spouse_slot_disagreement_2019": "U2CohortError",
+        "missing_head": "AdjustedPovertyError",
+    }
+    for name, entry in variants.items():
+        if name in build_refused:
+            assert entry["build"]["error"] == build_refused[name], name
+            continue
+        assert not entry["build"]["refused"], name
+        assert entry["income"]["refused"] == (name in income_refused), name
+        if name in income_refused:
+            assert entry["income"]["error"] == income_refused[name], name
+    assert (
+        variants["ambiguous_legal_spouse"]["legal_spouse_pairing"]["ambiguous"]
+        > 0
+    )
+    assert variants["missing_head"]["legal_spouse_pairing"]["no_head"] > 0
     assert checks["registered_guard_refuses_invented_inputs"]["refused"]
     assert checks["registered_parameter_check_refuses_invented_thresholds"][
         "refused"
@@ -141,6 +191,8 @@ def test_dry_run_markdown_names_the_refusals(dry_run):
     assert "INVENTED" in text
     assert "not a comparison" in text.lower()
     assert "Loader preflight refuses" in text
+    assert "Routes from other data to the invented declared rules" in text
+    assert "Named invented variants" in text
     for delta in rows.NAMED_DELTAS:
         assert f"- {delta}." in text
 
@@ -388,6 +440,40 @@ def test_preflight_refuses_a_wrong_binding_then_the_open_mapping(registered):
 
     with pytest.raises(loader.U2LoaderRefusal, match="registry blockers"):
         _preflight(registered, binding=binding)
+
+
+def test_preflight_refuses_a_plan_the_support_registry_does_not_hold(
+    registered, monkeypatch
+):
+    """Review finding 10: the registered preflight holds row U1's plan
+    (and so U0's) equal to the committed support registry before the
+    binding is even compared."""
+
+    from populace_dynamics.uniform_cut_track_u2 import cohort
+
+    monkeypatch.setattr(cohort, "EVEN_BIRTH_YEARS", (1946, 1948, 1950, 1952))
+    with pytest.raises(cohort.U2CohortError, match="support registry"):
+        _preflight(registered)
+
+
+def test_preflight_checks_the_plan_before_the_mapping_review(
+    registered, monkeypatch
+):
+    from populace_dynamics.uniform_cut_track_u2 import cohort, loader
+
+    calls = []
+    original = cohort.check_plan_against_support_registry
+
+    def spy(registries):
+        calls.append(registries.kind)
+        return original(registries)
+
+    monkeypatch.setattr(cohort, "check_plan_against_support_registry", spy)
+    binding = registered.binding_sha256("b" * 64)
+    with pytest.raises(loader.U2LoaderRefusal, match="registry blockers"):
+        _preflight(registered, binding=binding)
+    # Once in the preflight, once again in the loader's source preflight.
+    assert calls == ["committed", "committed"]
 
 
 def test_existing_artifact_or_sidecar_refuses(registered, monkeypatch):

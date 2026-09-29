@@ -370,10 +370,57 @@ def test_cited_source_hashes_refuse_changed_bytes(
     documents["income"]["sources"] = [
         {"file": "PSID/family/2019/x.sps", "sha256": digest}
     ]
-    registries = sources.RegistrySet(documents, {}, "committed")
+    # Changed documents cannot be labelled committed (the label is bound
+    # to the pinned bytes); the rehash itself reads any registry set.
+    with pytest.raises(sources.U2SourceRefusal, match="labelled committed"):
+        sources.RegistrySet(documents, {}, "committed")
+    registries = sources.RegistrySet(documents, {}, "invented")
     assert loader.check_source_hashes(registries, tmp_path) == {
         "PSID/family/2019/x.sps": digest
     }
     (staged / "x.sps").write_text("CHANGED")
     with pytest.raises(loader.U2LoaderRefusal, match="changed"):
         loader.check_source_hashes(registries, tmp_path)
+
+
+def test_the_declared_gate_reads_only_invented_records(
+    u2_inputs, declared_gate, registry_gate
+):
+    """Review finding 1: records not written by the invented writer (here
+    the same values with blank unmapped columns, as a survey file has)
+    are refused under the declared gate; the registry gate is not
+    affected by the filler."""
+
+    records = invented.invented_fixed_width_records(
+        u2_inputs, 2019, declared_gate
+    )
+    assert all(
+        sources.INVENTED_RECORD_FILLER in line for line in records["lines"]
+    )
+    blank = [
+        line.replace(sources.INVENTED_RECORD_FILLER, " ")
+        for line in records["lines"]
+    ]
+    with pytest.raises(sources.U2SourceRefusal, match="invented writer"):
+        loader.read_family_records(blank, 2019, declared_gate)
+    digits = [
+        line.replace(sources.INVENTED_RECORD_FILLER, "0")
+        for line in records["lines"]
+    ]
+    with pytest.raises(sources.U2SourceRefusal, match="invented writer"):
+        loader.read_family_records(digits, 2019, declared_gate)
+    truncated = [line[:-1] for line in records["lines"]]
+    with pytest.raises(sources.U2SourceRefusal, match="invented writer"):
+        loader.read_family_records(truncated, 2019, declared_gate)
+    frames = loader.read_family_records(records["lines"], 2019, declared_gate)
+    assert len(frames["income"]) == len(records["lines"])
+    with pytest.raises(loader.U2LoaderRefusal, match="SourceGate"):
+        loader.read_family_records(records["lines"], 2019, "registry")
+
+
+def test_a_registry_gate_is_bound_at_construction(committed_registries):
+    gate = sources.SourceGate(sources.REGISTRY, committed_registries)
+    import dataclasses
+
+    with pytest.raises(dataclasses.FrozenInstanceError):
+        gate.kind = sources.INVENTED_DECLARED  # type: ignore[misc]

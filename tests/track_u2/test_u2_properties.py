@@ -14,13 +14,18 @@ for a newly eligible unit:  0 <= SSI_new <= min(F - C', C - C');
 
 and the zero-cut identity, rates within [0, 100], invariance to a
 positive common weight scaling, and rejection of malformed plans and
-missing parameters.  These are calculation properties, not statements
-about any Report cell.  Rows are INVENTED by the strategies below.
+missing parameters.  Every bound is asserted on the estimator's own
+outputs (``ssi_offset``, ``ssi_new``, ``reform_income``) at a drawn cut
+rate in [0, 1]; the per-unit falls, rooms and countable incomes the
+bounds need are recomputed from the literal section 7-8 formulas below.
+These are calculation properties, not statements about any Report cell.
+Rows are INVENTED by the strategies below.
 """
 
 from __future__ import annotations
 
 import math
+from unittest import mock
 
 import numpy as np
 import pandas as pd
@@ -53,6 +58,7 @@ YEARS = sorted(estimator.HEAD_IRA_INCOME_YEARS)
 #: bound is asserted to within this tolerance, not changed.
 BOUND_ULP = 1e-9
 _AMOUNT = st.integers(min_value=0, max_value=60_000)
+_CUT = st.floats(0, 1, allow_nan=False)
 
 
 @pytest.fixture(scope="module")
@@ -175,11 +181,15 @@ def _estimate(frame, spec, params):
     )
 
 
+def _with_cut(row: rows.U2Row, cut: float) -> estimator.U2IncomeSpec:
+    return estimator.U2IncomeSpec(**{**row.income, "cut_rate": cut})
+
+
 @SETTINGS
-@given(frame=frames())
-def test_reform_never_exceeds_baseline_in_any_row(frame, params):
+@given(frame=frames(), cut=_CUT)
+def test_reform_never_exceeds_baseline_in_any_row(frame, cut, params):
     for row_id, row in rows.REGISTERED_ROWS.items():
-        out = _estimate(frame, row.income_spec(), params)
+        out = _estimate(frame, _with_cut(row, cut), params)
         assert (
             out["reform_income"] <= out["baseline_income"] + 1e-6
         ).all(), row_id
@@ -199,22 +209,20 @@ def test_zero_cut_identity(frame, params):
 
 
 @SETTINGS
-@given(
-    ss=st.floats(0, 100_000, allow_nan=False),
-    cut=st.floats(0, 1, allow_nan=False),
-    ssi=st.floats(0, 20_000, allow_nan=False),
-    year=st.sampled_from(YEARS),
-    couple=st.booleans(),
-)
-def test_offset_bounds(ss, cut, ssi, year, couple, params):
+@given(ss=st.floats(0, 100_000, allow_nan=False), cut=_CUT)
+def test_countable_fall_bounds(ss, cut, params):
+    """``0 <= fall <= c S`` and ``fall = 0`` when ``S <= G``, on U1's
+    fall function (the one the estimator calls), held equal to the
+    literal section 8 formula."""
+
     general = 12 * params.ssi.general_income_exclusion_monthly
     fall = ap._countable_ss_fall(ss, cut, general)
     assert -1e-9 <= fall <= cut * ss + 1e-9
     if ss <= general:
         assert fall == 0
-    room = max(0.0, params.ssi.fbr_annual(year, couple) - ssi)
-    offset = min(fall, room)
-    assert 0 <= offset <= fall + 1e-9 and offset <= room + 1e-9
+    assert math.isclose(
+        fall, _reference_fall(ss, cut, general), rel_tol=0, abs_tol=1e-9
+    )
 
 
 @SETTINGS
@@ -222,22 +230,211 @@ def test_offset_bounds(ss, cut, ssi, year, couple, params):
     unearned=st.floats(0, 30_000, allow_nan=False),
     earned=st.floats(0, 60_000, allow_nan=False),
     ss=st.floats(0, 60_000, allow_nan=False),
-    cut=st.floats(0, 1, allow_nan=False),
-    year=st.sampled_from(YEARS),
-    couple=st.booleans(),
+    cut=_CUT,
 )
-def test_new_enrollment_bounds(
-    unearned, earned, ss, cut, year, couple, params
+def test_countable_income_falls_by_at_most_the_cut(
+    unearned, earned, ss, cut, params
 ):
+    """U1's countable income (called by the estimator) never rises under
+    the cut and falls by at most ``c S``: so ``C - C' <= c S``."""
+
     ssi = params.ssi
-    fbr = ssi.fbr_annual(year, couple)
     before = ap.countable_income(unearned + ss, earned, ssi)
     after = ap.countable_income(unearned + (1 - cut) * ss, earned, ssi)
-    assert after <= before + 1e-9
+    assert 0 <= after <= before + 1e-9
     assert before - after <= cut * ss + 1e-9
-    if before >= fbr and after < fbr:
-        new = fbr - after
-        assert 0 <= new <= min(fbr - after, before - after) + 1e-9
+    assert math.isclose(
+        before,
+        _reference_countable(unearned + ss, earned, ssi),
+        rel_tol=0,
+        abs_tol=1e-6,
+    )
+
+
+def _unit_bounds(record: dict, spec, cut: float, ssi) -> dict:
+    """The section 13 bounds of one observation, from its inputs.
+
+    For each SSI unit the literal fall ``max(0, S - G) - max(0, (1 - c) S
+    - G)`` and FBR room ``F - SSI``; for a newly eligible unit
+    ``min(F - C', C - C')`` from the literal countable income.  The
+    unit fall bounds are asserted here; the estimator's outputs are
+    checked against the sums by the caller.
+    """
+
+    g = 12 * ssi.general_income_exclusion_monthly
+    year = int(record["income_year"])
+    family = (
+        spec.income_unit == "family_unit" or record["member_role"] == "ofum"
+    )
+    hw_ss = float(record["head_ss"] + record["wife_ss"])
+    hw_ssi = float(record["head_ssi"] + record["wife_ssi"])
+    units = []
+    if spec.ssi_rule != "none" and hw_ssi > 0:
+        couple = record["head_ssi"] > 0 and record["wife_ssi"] > 0
+        units.append((hw_ss, max(0.0, _fbr(ssi, year, couple) - hw_ssi)))
+    if spec.ssi_rule != "none" and family and record["ofum_ssi"] > 0:
+        units.append(
+            (
+                float(record["ofum_ss"]),
+                max(0.0, _fbr(ssi, year, False) - float(record["ofum_ssi"])),
+            )
+        )
+    falls = []
+    for s, _ in units:
+        fall = _reference_fall(s, cut, g)
+        assert -1e-9 <= fall <= cut * s + 1e-9
+        if s <= g:
+            assert fall == 0
+        falls.append(max(0.0, fall))
+    new_bound = 0.0
+    if spec.ssi_rule == "full_static_recomputation" and hw_ssi == 0:
+        f = _fbr(ssi, year, bool(record["wife_present"]))
+        unearned = max(
+            0.0,
+            record["hw_transfer"]
+            - record["head_tanf"]
+            - record["wife_tanf"]
+            - record["head_other_welfare"]
+            - record["wife_other_welfare"],
+        )
+        earned = sum(
+            max(0.0, float(record[concept]))
+            for concept in family_income.HW_EARNED_CONCEPTS
+        )
+        before = _reference_countable(unearned + hw_ss, earned, ssi)
+        after = _reference_countable(unearned + (1 - cut) * hw_ss, earned, ssi)
+        new_bound = max(0.0, min(f - after, before - after))
+    return {
+        "fall": sum(falls),
+        "room": sum(room for _, room in units),
+        "new": new_bound,
+        "cut": cut * (hw_ss + (float(record["ofum_ss"]) if family else 0.0)),
+    }
+
+
+@SETTINGS
+@given(frame=frames(), cut=_CUT)
+def test_ssi_response_bounds_hold_on_the_estimator(frame, cut, params):
+    """Section 13 on the estimator's outputs, any ``0 <= c <= 1``:
+    ``0 <= offset <= fall <= c S`` summed over the SSI units, the offset
+    within the FBR room, ``0 <= SSI_new <= min(F - C', C - C')`` and no
+    response at all under row U2's ``ssi_rule = none``."""
+
+    for row_id in ("U0", "U2", "U3", "U4"):
+        spec = _with_cut(rows.REGISTERED_ROWS[row_id], cut)
+        out = _estimate(frame, spec, params)
+        for record, (_, estimate) in zip(
+            frame.to_dict("records"), out.iterrows(), strict=True
+        ):
+            c = cut if estimate["cut_applies"] else 0.0
+            bound = _unit_bounds(record, spec, c, params.ssi)
+            offset, new = estimate["ssi_offset"], estimate["ssi_new"]
+            assert 0 <= offset <= bound["fall"] + 1e-6, (row_id, offset)
+            assert bound["fall"] <= bound["cut"] + 1e-6, row_id
+            assert offset <= bound["room"] + 1e-6, (row_id, offset)
+            assert 0 <= new <= bound["new"] + 1e-6, (row_id, new)
+            assert math.isclose(
+                estimate["cut"], bound["cut"], rel_tol=0, abs_tol=1e-6
+            )
+            if spec.ssi_rule == "none":
+                assert offset == 0 and new == 0
+
+
+@st.composite
+def new_enrollment_frames(draw) -> tuple[pd.DataFrame, float]:
+    """Frames of no-SSI single-slot units whose Social Security sits in
+    the band where the cut can make them newly income-eligible, with the
+    cut rate drawn jointly (so ``SSI_new`` is exercised, not vacuous).
+
+    With no other unearned or earned income, countable income is
+    ``max(0, S - G)``: the unit is newly eligible when
+    ``F + G <= S < (F + G) / (1 - c)``.  ``S`` is drawn around that band
+    (inside and outside it) and resources around the individual limit.
+    """
+
+    cut = draw(st.floats(0.01, 1, allow_nan=False))
+    n = draw(st.integers(1, 6))
+    data = []
+    for index in range(n):
+        row = draw(observation(index))
+        year = row["income_year"]
+        f = 12.0 * invented.FBR_INDIVIDUAL_MONTHLY[year]
+        low = f + 12 * 20.0
+        high = low / (1 - cut) if cut < 1 else 2 * low
+        row.update(
+            member_role=draw(st.sampled_from(["head", "wife"])),
+            wife_present=False,
+            fu_size=1,
+            n_children=0,
+            head_ss=int(draw(st.floats(0.9 * low, 1.1 * high))),
+            wife_ss=0,
+            ofum_ss=0,
+            wealth1=draw(st.sampled_from([0, 1_500, 2_000, 2_500])),
+            vehicles=0,
+        )
+        for concept in (
+            *family_income.SSI_CONCEPTS,
+            *family_income.HW_EARNED_CONCEPTS,
+            *family_income.ASSET_INCOME_CONCEPTS,
+        ):
+            row[concept] = 0
+        for concept in (
+            "head_tanf",
+            "wife_tanf",
+            "head_other_welfare",
+            "wife_other_welfare",
+            "head_annuities",
+            "head_iras",
+            "hw_taxable",
+            "hw_transfer",
+        ):
+            row[concept] = 0
+        row["total_family_income"] = row["head_ss"]
+        data.append(row)
+    frame = pd.DataFrame(data)
+    for column in ("spouse_age", "fu_head_spouse_age"):
+        frame[column] = frame[column].astype("Int64")
+    frame.attrs.update(
+        provenance_kind="invented",
+        target_id="U2",
+        role_context=sources.INVENTED_DECLARED,
+    )
+    return frame, cut
+
+
+@SETTINGS
+@given(case=new_enrollment_frames())
+def test_new_enrollment_bound_holds_and_binds(case, params):
+    """Row U3 on units built to straddle new eligibility: ``0 <= SSI_new
+    <= min(F - C', C - C')`` on the estimator's output, and whenever the
+    literal eligibility test holds (``C >= F > C'``, resources within the
+    limit) the response is exactly ``F - C' > 0``; otherwise it is 0."""
+
+    frame, cut = case
+    spec = _with_cut(rows.REGISTERED_ROWS["U3"], cut)
+    out = _estimate(frame, spec, params)
+    ssi = params.ssi
+    for record, (_, estimate) in zip(
+        frame.to_dict("records"), out.iterrows(), strict=True
+    ):
+        c = cut if estimate["cut_applies"] else 0.0
+        bound = _unit_bounds(record, spec, c, ssi)
+        new = estimate["ssi_new"]
+        assert 0 <= new <= bound["new"] + 1e-6
+        f = _fbr(ssi, int(record["income_year"]), False)
+        s = float(record["head_ss"])
+        before = _reference_countable(s, 0.0, ssi)
+        after = _reference_countable((1 - c) * s, 0.0, ssi)
+        eligible = (
+            before >= f
+            and after < f
+            and record["wealth1"] <= ssi.resource_limit_individual
+        )
+        if eligible:
+            assert new > 0
+            assert math.isclose(new, f - after, rel_tol=0, abs_tol=1e-6)
+        else:
+            assert new == 0
 
 
 @st.composite
@@ -345,6 +542,68 @@ def test_malformed_plans_are_rejected(row, rule):
         return
     with pytest.raises(ValueError):
         cohort.U2CohortSpec(row=row, seed_wave_rule=rule)
+
+
+_REGISTERED_PLAN = (
+    cohort.PRIMARY_BIRTH_YEARS,
+    cohort.EVEN_BIRTH_YEARS,
+    cohort.U1_EVEN_BIRTH_AGES,
+)
+
+
+@SETTINGS
+@given(
+    primary=st.lists(st.integers(1940, 1960), min_size=1, max_size=6),
+    even=st.lists(st.integers(1940, 1960), max_size=6),
+    ages=st.tuples(st.integers(60, 72), st.integers(60, 72)),
+    row=st.sampled_from(["U0", "U1"]),
+)
+def test_perturbed_plans_are_refused(
+    primary, even, ages, row, committed_registries
+):
+    """A plan built from any other birth years or ages either refuses in
+    :func:`cohort.plan_cells` (a wave outside the support set, a repeated
+    cell, multipliers not summing to one per birth year) or differs from
+    the support registry, which refuses it; only the registered plan
+    passes both."""
+
+    registered = (
+        (set(primary), set(even), set(ages))
+        == tuple(set(part) for part in _REGISTERED_PLAN)
+        and len(primary) == len(set(primary))
+        and len(even) == len(set(even))
+    )
+    with (
+        mock.patch.object(cohort, "PRIMARY_BIRTH_YEARS", tuple(primary)),
+        mock.patch.object(cohort, "EVEN_BIRTH_YEARS", tuple(even)),
+        mock.patch.object(cohort, "U1_EVEN_BIRTH_AGES", ages),
+    ):
+        try:
+            cells = cohort.plan_cells(cohort.U2CohortSpec(row=row))
+        except cohort.U2CohortError:
+            cells = None
+        if cells is not None:
+            totals: dict[int, float] = {}
+            for birth, wave, income_year, age, multiplier in cells:
+                assert wave in cohort.SUPPORT_WAVES
+                assert income_year == wave - 1 == birth + age
+                totals[birth] = totals.get(birth, 0.0) + multiplier
+            assert set(totals.values()) == {1.0}
+        if registered:
+            check = cohort.check_plan_against_support_registry(
+                committed_registries
+            )
+            assert check["equal_to_support_registry"]
+        else:
+            with pytest.raises(cohort.U2CohortError):
+                cohort.check_plan_against_support_registry(
+                    committed_registries
+                )
+
+
+def test_plan_cells_refuses_a_foreign_spec():
+    with pytest.raises(cohort.U2CohortError, match="U2CohortSpec"):
+        cohort.plan_cells(object())
 
 
 @SETTINGS
@@ -506,13 +765,16 @@ def _reference(row: dict, spec: estimator.U2IncomeSpec, ssi) -> dict:
 
 
 @SETTINGS
-@given(frame=frames())
-def test_cut_and_ssi_response_equal_the_section_8_reference(frame, params):
+@given(frame=frames(), cut=_CUT)
+def test_cut_and_ssi_response_equal_the_section_8_reference(
+    frame, cut, params
+):
     """Differential: the estimator's cut, offset and new enrollment equal
-    the literal section 7-8 formulas for every row and observation."""
+    the literal section 7-8 formulas for every row and observation, at
+    any cut rate in [0, 1]."""
 
     for row_id, row in rows.REGISTERED_ROWS.items():
-        spec = row.income_spec()
+        spec = _with_cut(row, cut)
         out = _estimate(frame, spec, params)
         for record, (_, estimate) in zip(
             frame.to_dict("records"), out.iterrows(), strict=True

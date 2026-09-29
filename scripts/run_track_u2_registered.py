@@ -23,14 +23,17 @@ opened.  :func:`preflight` verifies, in order:
    REGISTERED_ROWS` with the fixed U0 headline, its ``decisions`` equal
    U2's own rulings record (U1's are refused), and section 12's named
    deltas equal the code's literal strings;
-6. the parameter bundle is complete (every required income year,
+6. row U1's observation plan (and so U0's) equals milestone 1's
+   committed support registry, cell by cell;
+7. the parameter bundle is complete (every required income year,
    2012 included) and U2-pinned;
-7. the registration binding -- target, specification SHA-256, rows,
+8. the registration binding -- target, specification SHA-256, rows,
    plans, registry (map) SHA-256s, source identities and parameter pins
    -- hashes to the ``--binding-sha256`` the #42 registration quotes;
-8. the independent mapping review is complete: every registry entry a U2
+9. the independent mapping review is complete: every registry entry a U2
    run applies is RESOLVED with no blocker (the loader's source
-   preflight), which refuses at the adjudicated registries.
+   preflight, which rechecks the plan), which refuses at the adjudicated
+   registries.
 
 Only then are PSID files read (:func:`populace_dynamics.
 uniform_cut_track_u2.loader.load_u2_inputs`, which rechecks the frozen
@@ -246,6 +249,9 @@ def preflight(
     row_check = rows.check_rows_against_block(block)
     ruling_check = rows.check_u2_rulings_against_block(block)
     delta_check = rows.check_named_deltas_against_specification()
+    plan_check = cohort.check_plan_against_support_registry(
+        sources.RegistrySet.committed()
+    )
     params = parameters.committed_u2_parameters()
     parameters.check_u2_parameters(params, ap.REGISTERED_REAL)
     spec_sha = (
@@ -267,6 +273,7 @@ def preflight(
         "rows": row_check,
         "rulings": ruling_check,
         "named_deltas": delta_check,
+        "plan": plan_check,
         "mapping_review": review,
         "params": params,
     }
@@ -330,6 +337,7 @@ def main(argv: list[str] | None = None) -> int:
             "rows": state["rows"],
             "rulings": state["rulings"],
             "named_deltas": state["named_deltas"],
+            "plan": state["plan"],
             "mapping_review": state["mapping_review"],
             "binding_sha256": state["binding_sha256"],
         },
