@@ -349,9 +349,12 @@ def test_ambiguous_pairing_stays_unresolved_and_counted(u2_inputs, declared):
     assert row["marital_resolution"] == "unresolved_non_married"
     assert row["marital_status_4"] == "unclassified"
     assert not row["fu_head_spouse_present"]
-    # With two code-20 persons the spouse income slot has no unique
-    # occupant, so the family file's slot flag cannot be matched: the
-    # income rows refuse rather than pick one (conservative, section 3).
+    # With two code-20 persons the roster has no unique occupant of the
+    # family file's one spouse income slot.  Section 3 keeps an ambiguous
+    # *pairing* unresolved and counted (spec line 156) but is silent on
+    # two slot occupants; the conservative reading refuses the income
+    # rows (section 14: failed joins refuse execution) rather than
+    # attribute the slot to either person.
     assert not row["spouse_slot_occupied_roster"]
     built = cohort.build_u2_cohort(inputs, role_context=declared)
     with pytest.raises(cohort.U2CohortError, match="spouse income slot"):
@@ -461,3 +464,81 @@ def test_relabelled_inputs_cannot_reach_the_declared_rules(
         cohort.build_u2_cohort(variant, role_context=declared)
     with pytest.raises(ValueError, match="changed after sealing"):
         invented.check_invented_inputs(variant)
+
+
+def test_frames_sealed_outside_the_generator_do_not_regenerate(
+    u2_inputs, declared
+):
+    """Review 2, finding 2: a seal set by the private helper (or by
+    ``object.__setattr__``) on frames the generator did not make is
+    refused by the cohort, which regenerates (seed, variant)."""
+
+    doubled = dataclasses.replace(
+        u2_inputs,
+        anchors={
+            wave: frame.assign(weight=frame["weight"] * 2)
+            for wave, frame in u2_inputs.anchors.items()
+        },
+    )
+    forged = invented._sealed(
+        doubled, seed=u2_inputs.provenance["seed"], variant=None
+    )
+    assert forged.invented_seal is not None
+    with pytest.raises(cohort.U2CohortError, match="do not regenerate"):
+        cohort.build_u2_cohort(forged, role_context=declared)
+    by_hand = dataclasses.replace(
+        doubled,
+        provenance={
+            **u2_inputs.provenance,
+            "input_frames_sha256": cohort.input_frames_sha256(doubled),
+        },
+    )
+    object.__setattr__(by_hand, "invented_seal", dict(forged.invented_seal))
+    with pytest.raises(cohort.U2CohortError, match="do not regenerate"):
+        cohort.build_u2_cohort(by_hand, role_context=declared)
+
+
+def test_invented_inputs_need_the_generator_loaded(tmp_path):
+    """Sealed inputs cannot exist unless the generator is loaded; the
+    cohort looks it up in ``sys.modules`` (it never imports it), so in an
+    interpreter where it is absent an invented label refuses."""
+
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[2]
+    script = tmp_path / "no_generator.py"
+    script.write_text(
+        "import sys\n"
+        f"sys.path.insert(0, {str(root / 'src')!r})\n"
+        "import pandas as pd\n"
+        "from populace_dynamics.uniform_cut_track_u2 import cohort, sources\n"
+        "empty = pd.DataFrame({'person_id': pd.Series([], dtype='int64')})\n"
+        "inputs = cohort.U2Inputs(anchors={}, design=empty, persons=empty,\n"
+        "    marriage_history=empty, observed_earnings=empty,\n"
+        "    family_income={}, family_wealth={})\n"
+        "digest = cohort.input_frames_sha256(inputs)\n"
+        "label = {'generator': 'x', 'seed': 1, 'variant': None,\n"
+        "         'input_frames_sha256': digest}\n"
+        "inputs = cohort.replace_provenance(inputs, kind='caller_frames')\n"
+        "object.__setattr__(inputs, 'provenance', {'kind': 'invented',\n"
+        "    **label})\n"
+        "object.__setattr__(inputs, 'invented_seal', dict(label))\n"
+        "assert cohort._INVENTED_MODULE not in sys.modules\n"
+        "try:\n"
+        "    cohort.build_u2_cohort(inputs,\n"
+        "        role_context=sources.RoleContext.declared())\n"
+        "except cohort.U2CohortError as error:\n"
+        "    print('REFUSED', error)\n"
+        "assert cohort._INVENTED_MODULE not in sys.modules\n"
+    )
+    result = subprocess.run(
+        [sys.executable, str(script)],
+        capture_output=True,
+        text=True,
+        check=True,
+        cwd=root,
+    )
+    assert result.stdout.startswith("REFUSED"), result.stdout
+    assert "generator is not loaded" in result.stdout

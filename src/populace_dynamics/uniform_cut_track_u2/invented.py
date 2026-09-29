@@ -55,9 +55,12 @@ seed, the variant and their frame digest, and carry the invented seal
 invented_seal`) that only this module sets.  Besides the base
 population, the generator makes a fixed set of named variants
 (:data:`INVENTED_VARIANTS`), each a deterministic change to a seed's base
-population that exercises one refusal or role branch; no function here
-seals frames a caller supplies.  :func:`check_invented_inputs`
-re-generates ``(seed, variant)`` and compares.
+population that exercises one refusal or role branch; no public function
+here seals frames a caller supplies.  :func:`check_invented_inputs`
+re-generates ``(seed, variant)`` and compares, and both the cohort and
+the runner call it, so frames sealed any other way (the private
+``_sealed``, ``object.__setattr__``) are refused because they do not
+regenerate.
 """
 
 from __future__ import annotations
@@ -1391,8 +1394,8 @@ _VARIANT_NOTES: dict[str, str] = {
         "a second code-20 person joins U0's first family whose head's "
         "undated history the code-20 spouse resolves: the pairing is "
         "ambiguous and the head stays unresolved (counted); the spouse "
-        "income slot then has no unique occupant, so that family's income "
-        "row refuses"
+        "income slot then has no unique occupant to match the family "
+        "file's slot flag, so the cohort's income rows refuse"
     ),
     "spouse_slot_disagreement_2019": (
         "the family file of U0's first 2019 observation without a "

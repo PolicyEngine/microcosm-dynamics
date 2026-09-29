@@ -19,15 +19,19 @@ with four patches, each named where it is applied:
 * the inherited marriage-history and earnings readers return the
   invented frames.
 
-An audit hook refuses any open under the default PSID directory for the
-duration of the load.  Everything else -- path resolution, the setup
-cross-checks, the fixed-width reads, the file hashes and the seal -- is
-the code a registered run executes.
+An audit hook refuses any open under the PSID directory -- the default
+one and the one under the account's real home, which differ when HOME is
+overridden -- for the duration of each load.  Everything else -- path
+resolution, the setup cross-checks, the fixed-width reads, the file
+hashes and the seal -- is the code a registered run executes.
 """
 
 from __future__ import annotations
 
+import os
+import pwd
 import sys
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -51,13 +55,28 @@ _NA_BIRTH_YEAR = 9999
 _SEX_CODES = {"male": 1, "female": 2, "na": 9}
 
 _GUARD = {"active": False, "opened": []}
+#: The default PSID directory, and the same directory under the
+#: account's real home (``~`` expands to an overridden HOME).
+_PSID_ROOTS = (
+    str(psid._DEFAULT_DATA_DIR),
+    str(
+        Path(pwd.getpwuid(os.getuid()).pw_dir)
+        / psid._DEFAULT_DATA_DIR.relative_to(Path.home())
+    ),
+)
 
 
 def _psid_guard(event, args):
-    if not _GUARD["active"] or event != "open" or not args:
+    if not _GUARD["active"] or event not in (
+        "open",
+        "os.listdir",
+        "os.scandir",
+    ):
         return
-    path = str(args[0])
-    if path.startswith(str(psid._DEFAULT_DATA_DIR)):
+    if not args or isinstance(args[0], int):
+        return
+    path = os.fsdecode(args[0])
+    if path.startswith(_PSID_ROOTS):
         _GUARD["opened"].append(path)
         raise PermissionError(f"the test refuses a PSID read: {path}")
 
@@ -135,12 +154,12 @@ def _stage(root, inputs: cohort.U2Inputs, registries) -> set[str]:
     return staged
 
 
-@pytest.fixture(scope="module")
-def loaded(tmp_path_factory, u2_inputs, committed_registries):
-    """The invented staged directory read by the real loader."""
+def _load(root, inputs: cohort.U2Inputs) -> cohort.U2Inputs:
+    """Run the real loader on ``root`` with the four named patches."""
 
-    root = tmp_path_factory.mktemp("invented-psid")
-    staged = _stage(root, u2_inputs, committed_registries)
+    # The committed role rules are cached on first use; compute them
+    # before ``blockers`` is patched so the cache holds the real rules.
+    sources.RoleContext.from_registry()
     patch = pytest.MonkeyPatch()
     try:
         patch.setattr(sources, "blockers", lambda entry, name: [])
@@ -150,18 +169,27 @@ def loaded(tmp_path_factory, u2_inputs, committed_registries):
         patch.setattr(
             marriage,
             "marriage_history",
-            lambda *, data_dir=None, nrows=None: u2_inputs.marriage_history,
+            lambda *, data_dir=None, nrows=None: inputs.marriage_history,
         )
         patch.setattr(
             family,
             "family_earnings_panel",
-            lambda *, waves=None, data_dir=None: u2_inputs.observed_earnings,
+            lambda *, waves=None, data_dir=None: inputs.observed_earnings,
         )
         _GUARD["active"], _GUARD["opened"] = True, []
-        inputs = loader.load_u2_inputs(data_dir=root)
+        return loader.load_u2_inputs(data_dir=root)
     finally:
         _GUARD["active"] = False
         patch.undo()
+
+
+@pytest.fixture(scope="module")
+def loaded(tmp_path_factory, u2_inputs, committed_registries):
+    """The invented staged directory read by the real loader."""
+
+    root = tmp_path_factory.mktemp("invented-psid")
+    staged = _stage(root, u2_inputs, committed_registries)
+    inputs = _load(root, u2_inputs)
     return {"inputs": inputs, "root": root, "staged": staged}
 
 
@@ -319,3 +347,38 @@ def test_individual_and_weight_registries_must_agree(committed_registries):
     )
     with pytest.raises(loader.U2LoaderRefusal, match="weights registry"):
         loader.individual_specs(invented_set)
+
+
+def test_a_moved_individual_column_refuses_the_load(
+    tmp_path, u2_inputs, committed_registries
+):
+    """Review 2, finding 5: the individual file's staged setup must agree
+    with the registry layouts before it is read; a setup that moves one
+    column refuses the load."""
+
+    _stage(tmp_path, u2_inputs, committed_registries)
+    setup = tmp_path / "ind2023er" / "IND2023ER.sps"
+    specs = loader.individual_specs(committed_registries)
+    weight = next(spec for spec in specs if spec.concept == "2019.weight")
+    text = setup.read_text()
+    old = f"   {weight.variable} {weight.start} - {weight.end}\n"
+    assert text.count(old) == 1
+    setup.write_text(
+        text.replace(
+            old,
+            f"   {weight.variable} {weight.start + 1} - {weight.end + 1}\n",
+        )
+    )
+    with pytest.raises(loader.U2LoaderRefusal, match="differ"):
+        _load(tmp_path, u2_inputs)
+    assert _GUARD["opened"] == []
+
+
+def test_loader_inputs_cannot_join_an_invented_cohort(
+    loaded, u2_inputs, u0_cohort
+):
+    """Review 2, finding 1, on the loader's own output: an invented
+    cohort's income rows refuse the sealed psid_files inputs."""
+
+    with pytest.raises(cohort.U2CohortError, match="built from"):
+        cohort.income_rows(u0_cohort, loaded["inputs"])

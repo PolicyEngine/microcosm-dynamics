@@ -297,3 +297,37 @@ def test_nobody_leaves_poverty_under_the_cut(row):
     assert cells, f"{row} records no cell with a change"
     for path, cell in cells:
         assert cell["delta"] >= -1e-9, (row, path)
+
+
+def test_rows_join_only_the_inputs_the_cohort_was_built_from(
+    u2_inputs, u0_cohort
+):
+    """Review 2, finding 1: the income rows and component rows carry the
+    cohort's provenance and role context, so they refuse any other
+    inputs -- another invented variant, or caller frames."""
+
+    from populace_dynamics.uniform_cut_track_u2 import diagnostics
+
+    variant = invented.invented_variant(
+        u2_inputs, "spouse_slot_disagreement_2019"
+    )
+    scaled = cohort.replace_provenance(
+        dataclasses.replace(
+            u2_inputs,
+            family_income={
+                wave: frame.assign(
+                    total_family_income=frame["total_family_income"] * 10
+                )
+                for wave, frame in u2_inputs.family_income.items()
+            },
+        ),
+        kind="caller_frames",
+    )
+    for other in (variant, scaled):
+        with pytest.raises(cohort.U2CohortError, match="built from"):
+            cohort.income_rows(u0_cohort, other)
+        with pytest.raises(cohort.U2CohortError, match="built from"):
+            diagnostics.component_rows(u0_cohort, other)
+    assert len(cohort.income_rows(u0_cohort, u2_inputs)) == len(
+        u0_cohort.observations
+    )

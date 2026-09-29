@@ -87,9 +87,12 @@ def component_rows(
     The columns of U1's ``component_rows``; an own amount is the family
     file's head or spouse-slot item by the member's income role (an OFUM
     member's own amount -- codes 90 and 92 included -- is not
-    identified).
+    identified).  ``inputs`` must be the ones ``built`` was built from
+    (:func:`~populace_dynamics.uniform_cut_track_u2.cohort.
+    check_cohort_inputs`).
     """
 
+    cohort.check_cohort_inputs(built, inputs)
     frames = []
     for wave, rows in built.observations.groupby("wave", sort=True):
         income = inputs.family_income[int(wave)][

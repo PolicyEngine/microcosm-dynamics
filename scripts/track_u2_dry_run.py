@@ -23,11 +23,15 @@ invented data.  The checks record the refusals the real path gives:
   TO VERIFY relationship codes, code 88 refuses under every context, and
   the loader's preflight refuses before any PSID file is opened;
 * the registered runner refuses these invented inputs and parameters;
-* the invented gate cannot be reached from other data: relabelled or
-  hand-copied invented provenance, a registry role context carrying the
-  declared rules, registries labelled committed but changed, survey-
-  shaped records under the declared gate and the declared gate on a
-  registered run all refuse;
+* each tested route from other data to the invented declared rules and
+  routes refuses: relabelled or hand-copied invented provenance, frames
+  sealed outside the generator, other frames joined to an invented
+  cohort's rows, a registry role context carrying the declared rules,
+  registries labelled committed but changed, survey-shaped records under
+  declared specs, and the declared gate on a registered run (Python
+  cannot stop deliberate private-attribute tampering; the cohort and the
+  runner regenerate invented inputs, which such tampering does not
+  survive);
 * each of the generator's named variants reaches its branch or refusal
   (a code-88 cohabitor, a missing family record, a zero-weight legal
   spouse, an ambiguous pairing, a spouse-slot disagreement, a missing
@@ -198,7 +202,9 @@ def _parse_negative(inputs: cohort.U2Inputs, registries: Any) -> None:
     raw = records["raw"].copy()
     raw.loc[raw.index[0], "head_ss"] = -5
     lines = sources.encode_fixed_width(
-        raw[[s.concept for s in records["specs"]]], records["specs"]
+        raw[[s.concept for s in records["specs"]]],
+        records["specs"],
+        filler=sources.INVENTED_RECORD_FILLER,
     )
     sources.parse_fixed_width(lines, records["specs"])
 
@@ -385,8 +391,8 @@ def _invented_gate_refusals(
     params: parameters.U2Parameters,
     registries: sources.RegistrySet,
 ) -> dict[str, Any]:
-    """Every route from other data to the invented declared rules and
-    routes, each refused (review finding 1, 2 and 5 of the u2m2 review)."""
+    """Each tested route from other data to the invented declared rules
+    and routes, refused (the two u2m2 reviews' findings 1-5)."""
 
     declared = sources.RoleContext.declared()
     declared_gate = sources.SourceGate(sources.INVENTED_DECLARED, registries)
@@ -398,6 +404,26 @@ def _invented_gate_refusals(
         for line in records["lines"]
     ]
     labelled = cohort.replace_provenance(inputs, kind=cohort.PSID_FILES)
+    doubled = dataclasses.replace(
+        inputs,
+        anchors={
+            wave: frame.assign(weight=frame["weight"] * 2)
+            for wave, frame in inputs.anchors.items()
+        },
+    )
+    built = cohort.build_u2_cohort(inputs, role_context=declared)
+    scaled = cohort.replace_provenance(
+        dataclasses.replace(
+            inputs,
+            family_income={
+                wave: frame.assign(
+                    total_family_income=frame["total_family_income"] * 10
+                )
+                for wave, frame in inputs.family_income.items()
+            },
+        ),
+        kind=cohort.CALLER_FRAMES,
+    )
     return {
         "relabel_as_invented": _refusal(
             lambda: cohort.replace_provenance(inputs, kind=cohort.INVENTED)
@@ -409,6 +435,20 @@ def _invented_gate_refusals(
                 ),
                 role_context=declared,
             )
+        ),
+        "frames_sealed_outside_the_generator": _refusal(
+            lambda: cohort.build_u2_cohort(
+                invented._sealed(
+                    doubled, seed=inputs.provenance["seed"], variant=None
+                ),
+                role_context=declared,
+            )
+        ),
+        "other_frames_joined_to_an_invented_cohort": _refusal(
+            lambda: cohort.income_rows(built, scaled)
+        ),
+        "declared_specs_on_survey_shaped_records": _refusal(
+            lambda: sources.parse_fixed_width(survey_shaped, records["specs"])
         ),
         "unsealed_psid_files_label": _refusal(
             lambda: cohort.build_u2_cohort(
@@ -847,8 +887,8 @@ def results_markdown(result: dict[str, Any]) -> str:
         f"{role['declared_context_on_non_invented_inputs']['refused']}.",
         "- Loader preflight refuses before any PSID file is opened: "
         f"{check['loader_preflight']['refused']}.",
-        "- Routes from other data to the invented declared rules and "
-        "routes, each refused: "
+        "- Tested routes from other data to the invented declared rules "
+        "and routes, each refused: "
         + ", ".join(
             f"{name} {entry['refused']}"
             for name, entry in check["invented_gate_refusals"].items()

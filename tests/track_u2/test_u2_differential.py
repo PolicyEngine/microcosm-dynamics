@@ -220,3 +220,64 @@ def test_the_loader_guard_records_every_access_under_the_fake_root(
     ]
     # The guard is inert once the load returns.
     assert not Path("/INVENTED/psid-data/z").exists()
+
+
+def test_the_probe_encoding_has_no_default(differential):
+    """The probe's canonical encoder has no ``default``: a value JSON
+    cannot represent fails the probe instead of being stringified."""
+
+    namespace: dict = {"__name__": "_probe_definitions"}
+    exec(differential.PROBE_DEFINITIONS, namespace)  # noqa: S102
+    canonical = namespace["canonical"]
+    assert canonical({"b": [1, 2], "a": None}) == '{"a":null,"b":[1,2]}'
+    with pytest.raises(TypeError):
+        canonical({"x": {1, 2}})
+    with pytest.raises(TypeError):
+        canonical({"path": Path("/INVENTED")})
+    with pytest.raises(ValueError):
+        canonical({"x": float("nan")})
+
+
+def test_a_skipped_dry_run_is_not_a_pass(differential, tmp_path, monkeypatch):
+    """Review 2, finding 6: ``--skip-dry-run`` runs only the probes; the
+    report then records the skip and the harness exits nonzero, because
+    section 13's main comparison did not run."""
+
+    monkeypatch.setattr(differential, "_head", lambda path: "9cee2423f048ab")
+    monkeypatch.setattr(
+        differential,
+        "run_probe",
+        lambda checkout, block: differential.canonical(
+            {
+                "refusal_parity": _good_parity(differential),
+                "actual_loader": {
+                    "supplements_staged": {"opened_under_fake_root": []},
+                    "supplements_refused": {"opened_under_fake_root": []},
+                },
+            }
+        ),
+    )
+
+    class _Block:
+        stdout = "{}"
+
+    monkeypatch.setattr(
+        differential.subprocess, "run", lambda *a, **k: _Block()
+    )
+    output = tmp_path / "report.json"
+    code = differential.main(
+        [
+            "--base",
+            str(tmp_path),
+            "--candidate",
+            str(tmp_path),
+            "--output",
+            str(output),
+            "--skip-dry-run",
+        ]
+    )
+    report = json.loads(output.read_text())
+    assert report["dry_run_skipped"] is True
+    assert report["contract_checks"]["equal"] is True
+    assert report["all_checks_passed"] is False
+    assert code == 1

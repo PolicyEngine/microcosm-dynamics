@@ -293,18 +293,15 @@ def read_family_records(
     frames (the shapes :class:`~populace_dynamics.uniform_cut_track_u2.
     cohort.U2Inputs` holds).  Parsing refuses any field outside its
     documented domain; the DC balances use the wave's route under
-    ``gate``.  Under any gate but the registry gate, only records the
-    invented writer produced are read
+    ``gate``.  Under any gate but the registry gate the specs carry that
+    gate, so only records the invented writer produced are parsed
     (:func:`~populace_dynamics.uniform_cut_track_u2.sources.
-    check_invented_records`)."""
+    parse_fixed_width`)."""
 
     if not isinstance(gate, sources.SourceGate):
         raise U2LoaderRefusal("family records are read through a SourceGate")
     specs = family_record_specs(wave, gate)
-    records = [line.rstrip("\n") for line in lines]
-    if gate.kind != sources.REGISTRY:
-        sources.check_invented_records(records, specs)
-    raw = sources.parse_fixed_width(records, specs)
+    raw = sources.parse_fixed_width(lines, specs)
     identity_terms = sources.wealth1_identity(wave, gate)
     income = sources.decode_income(raw[list(sources.INCOME_CONCEPTS)])
     wealth_columns = list(

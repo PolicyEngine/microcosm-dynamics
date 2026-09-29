@@ -111,16 +111,22 @@ def test_losses_top_codes_and_sentinels_are_carried(u2_inputs, declared_gate):
     assert all(value > 0 for value in seen.values()), seen
 
 
-def _one_record(u2_inputs, declared_gate, wave=2019, **changes):
+def _one_record(u2_inputs, registry_gate, wave=2013, **changes):
+    """One invented record in 2013's layout under the registry gate (the
+    path a real run parses: 2013's routes are resolved), with
+    ``changes``; the parse refusals are the registry path's."""
+
     records = invented.invented_fixed_width_records(
-        u2_inputs, wave, declared_gate
+        u2_inputs, wave, registry_gate
     )
     raw = records["raw"].copy()
     for column, value in changes.items():
         raw.loc[raw.index[0], column] = value
     return (
         sources.encode_fixed_width(
-            raw[[spec.concept for spec in records["specs"]]], records["specs"]
+            raw[[spec.concept for spec in records["specs"]]],
+            records["specs"],
+            filler=sources.INVENTED_RECORD_FILLER,
         ),
         records["specs"],
     )
@@ -141,9 +147,9 @@ def _one_record(u2_inputs, declared_gate, wave=2019, **changes):
     ],
 )
 def test_parse_refuses_undocumented_values(
-    u2_inputs, declared_gate, changes, message
+    u2_inputs, registry_gate, changes, message
 ):
-    lines, specs = _one_record(u2_inputs, declared_gate, **changes)
+    lines, specs = _one_record(u2_inputs, registry_gate, **changes)
     if message is None:
         # Vehicles and WEALTH1 document negative balances: accepted.
         parsed = sources.parse_fixed_width(lines, specs)
@@ -154,9 +160,10 @@ def test_parse_refuses_undocumented_values(
 
 
 def test_parse_refuses_blank_truncated_and_duplicate_records(
-    u2_inputs, declared_gate
+    u2_inputs, registry_gate
 ):
-    lines, specs = _one_record(u2_inputs, declared_gate)
+    lines, specs = _one_record(u2_inputs, registry_gate)
+    assert {spec.gate for spec in specs} == {sources.REGISTRY}
     interview = next(spec for spec in specs if spec.concept == "interview")
     blank = (
         lines[0][: interview.start - 1]
@@ -424,3 +431,59 @@ def test_a_registry_gate_is_bound_at_construction(committed_registries):
 
     with pytest.raises(dataclasses.FrozenInstanceError):
         gate.kind = sources.INVENTED_DECLARED  # type: ignore[misc]
+
+
+def test_declared_specs_parse_only_invented_records(u2_inputs, declared_gate):
+    """Review 2, finding 4: the invented-records check sits in the parser,
+    so composing the public pieces (declared specs, parse, declared DC
+    route) cannot read survey-shaped records either."""
+
+    records = invented.invented_fixed_width_records(
+        u2_inputs, 2021, declared_gate
+    )
+    specs = loader.family_record_specs(2021, declared_gate)
+    assert {spec.gate for spec in specs} == {sources.INVENTED_DECLARED}
+    survey_shaped = [
+        line.replace(sources.INVENTED_RECORD_FILLER, " ")
+        for line in records["lines"]
+    ]
+    with pytest.raises(sources.U2SourceRefusal, match="invented writer"):
+        sources.parse_fixed_width(survey_shaped, specs)
+    parsed = sources.parse_fixed_width(records["lines"], specs)
+    assert len(parsed) == len(records["lines"])
+
+
+def test_registry_documents_are_read_only(committed_registries):
+    """Review 2, finding 3: a checked entry cannot be edited in place; a
+    deep copy is an ordinary dict, and a changed copy cannot be labelled
+    committed."""
+
+    import copy
+    import json
+
+    entry = committed_registries.entry(
+        "pension", "2021.route.inherited_route_amendment"
+    )
+    with pytest.raises(TypeError, match="read-only"):
+        entry["action"] = "apply"
+    with pytest.raises(TypeError, match="read-only"):
+        entry.pop("action")
+    with pytest.raises(TypeError, match="read-only"):
+        entry.update(status="RESOLVED")
+    with pytest.raises(TypeError, match="read-only"):
+        committed_registries.documents["pension"]["entries"] = ()
+    with pytest.raises(AttributeError):
+        committed_registries.documents["roles"]["entries"].append({})
+    edited = copy.deepcopy(dict(committed_registries.documents))
+    assert type(edited["pension"]) is dict
+    for item in edited["pension"]["entries"]:
+        if item["id"] == "2021.route.inherited_route_amendment":
+            item["action"] = "apply"
+    with pytest.raises(sources.U2SourceRefusal, match="labelled committed"):
+        sources.RegistrySet(
+            edited, dict(committed_registries.sha256), "committed"
+        )
+    # The frozen documents still serialize to the pinned canonical form.
+    assert json.loads(json.dumps(committed_registries.documents["design"]))
+    with pytest.raises(loader.U2LoaderRefusal, match="registry blockers"):
+        loader.source_preflight(committed_registries)

@@ -55,15 +55,28 @@ Provenance is recorded as in U1 (``invented``, ``psid_files`` or
 ``caller_frames``) together with ``target_id: U2``; the invented declared
 role context runs only on invented inputs.  Unlike U1, the ``invented``
 kind needs more than a matching digest, because in U2 it unlocks the
-declared role rules the committed roles registry refuses: the inputs
-must carry the seal that only :mod:`.invented`'s generator sets (one of
-its fixed, named variants, regenerable from the seed), and the frames
-must still hash to the sealed digest.  :func:`replace_provenance` never
-relabels inputs as invented, and ``dataclasses.replace`` drops both
-seals, so relabelled frames -- a loader's included -- fall to
-``caller_frames``, which the declared context refuses.  This module
-computes no income concept, threshold, annuity, poverty status or
-statistic.
+declared role rules the committed roles registry refuses:
+
+* the inputs must carry the seal :mod:`.invented`'s generator sets, and
+  the frames must still hash to the sealed digest;
+* the frames must regenerate: :func:`build_u2_cohort` calls the
+  generator's :func:`~populace_dynamics.uniform_cut_track_u2.invented.
+  check_invented_inputs`, which rebuilds the recorded seed and named
+  variant and compares digests (once per digest).  The generator is
+  looked up in ``sys.modules``, not imported, so the structure and
+  component entry points' import graph stays free of it; sealed inputs
+  cannot exist unless the generator was loaded.
+
+:func:`replace_provenance` never labels inputs invented and
+``dataclasses.replace`` drops both seals, so relabelled frames -- a
+loader's included -- are refused: a copied invented label has no seal, a
+``psid_files`` label has no loader seal, and any other label is
+``caller_frames``, which the declared context refuses.  (Python cannot
+stop a caller who sets a seal with ``object.__setattr__``; for invented
+inputs the regeneration still refuses such frames.)  The income rows
+and the component rows join only the inputs the cohort was built from.
+This module computes no income concept, threshold, annuity, poverty
+status or statistic.
 """
 
 from __future__ import annotations
@@ -71,6 +84,7 @@ from __future__ import annotations
 import dataclasses
 import hashlib
 import json
+import sys
 from collections.abc import Mapping
 from dataclasses import asdict, dataclass, field
 from typing import Any
@@ -104,6 +118,7 @@ __all__ = [
     "U2CohortSpec",
     "U2Inputs",
     "build_u2_cohort",
+    "check_cohort_inputs",
     "derive_u2_births",
     "design_frame",
     "income_rows",
@@ -434,6 +449,32 @@ def input_frames_sha256(inputs: U2Inputs) -> str:
     return digest.hexdigest()
 
 
+_INVENTED_MODULE = "populace_dynamics.uniform_cut_track_u2.invented"
+#: Frame digests the invented generator has regenerated in this process.
+_REGENERATED: set[str] = set()
+
+
+def _regenerate_invented(inputs: U2Inputs, frames: str) -> None:
+    """Refuse invented inputs the loaded generator does not regenerate."""
+
+    if frames in _REGENERATED:
+        return
+    generator = sys.modules.get(_INVENTED_MODULE)
+    if generator is None:
+        raise U2CohortError(
+            "inputs claim invented provenance, but the U2 invented "
+            "generator is not loaded, so they cannot be its output"
+        )
+    try:
+        generator.check_invented_inputs(inputs)
+    except ValueError as error:
+        raise U2CohortError(
+            f"inputs claim invented provenance but do not regenerate: "
+            f"{error}"
+        ) from error
+    _REGENERATED.add(frames)
+
+
 def _input_provenance(inputs: U2Inputs) -> dict[str, Any]:
     recorded = dict(inputs.provenance or {})
     frames = input_frames_sha256(inputs)
@@ -462,6 +503,7 @@ def _input_provenance(inputs: U2Inputs) -> dict[str, Any]:
                     f"{recorded.get(key)!r} is not the sealed "
                     f"{dict(seal).get(key)!r}"
                 )
+        _regenerate_invented(inputs, frames)
         return {
             "kind": INVENTED,
             "target_id": identity.TARGET_ID,
@@ -1055,13 +1097,18 @@ def _check_family_records(obs: pd.DataFrame, inputs: U2Inputs) -> None:
 def income_rows(cohort: U2Cohort, inputs: U2Inputs) -> pd.DataFrame:
     """Observations merged with their family's income, wealth and DC.
 
-    Every join must be complete (one family record per observation);
-    the family file's spouse-slot flag (``wife_present``) must agree with
-    the roster's designated income slot (a unique code-20 or code-22
-    person), or the build refuses.  ``attrs`` carries the provenance kind,
-    ``target_id`` and the role context to the income concept.
+    ``inputs`` must be the inputs the cohort was built from (their frame
+    digest equals the cohort's): the provenance and role context the
+    rows carry are the cohort's, so no other frames may be joined under
+    them.  Every join must be complete (one family record per
+    observation); the family file's spouse-slot flag (``wife_present``)
+    must agree with the roster's designated income slot (a unique
+    code-20 or code-22 person), or the build refuses.  ``attrs`` carries
+    the provenance kind, ``target_id`` and the role context to the
+    income concept.
     """
 
+    check_cohort_inputs(cohort, inputs)
     obs = cohort.observations
     frames = []
     for wave, rows in obs.groupby("wave", sort=True):
@@ -1112,6 +1159,26 @@ def income_rows(cohort: U2Cohort, inputs: U2Inputs) -> pd.DataFrame:
     out.attrs["target_id"] = identity.TARGET_ID
     out.attrs["role_context"] = cohort.provenance.get("role_context")
     return out
+
+
+def check_cohort_inputs(cohort: U2Cohort, inputs: U2Inputs) -> str:
+    """Refuse ``inputs`` unless they are the ones ``cohort`` was built from.
+
+    Compares frame digests, so frames joined to the cohort's
+    observations always carry the provenance the cohort recorded.
+    """
+
+    if not isinstance(cohort, U2Cohort) or not isinstance(inputs, U2Inputs):
+        raise U2CohortError("a U2Cohort and its U2Inputs are required")
+    recorded = cohort.provenance.get("input_frames_sha256")
+    observed = input_frames_sha256(inputs)
+    if recorded is None or observed != recorded:
+        raise U2CohortError(
+            "these inputs are not the ones the cohort was built from "
+            f"(frames {observed[:12]}..., cohort {str(recorded)[:12]}...): "
+            "no other frames may be joined under the cohort's provenance"
+        )
+    return observed
 
 
 def design_frame(inputs: U2Inputs, spec: U2CohortSpec) -> pd.DataFrame:

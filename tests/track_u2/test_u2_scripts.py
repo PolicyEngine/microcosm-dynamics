@@ -118,6 +118,9 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
     assert set(gate_refusals) == {
         "relabel_as_invented",
         "hand_copied_invented_provenance",
+        "frames_sealed_outside_the_generator",
+        "other_frames_joined_to_an_invented_cohort",
+        "declared_specs_on_survey_shaped_records",
         "unsealed_psid_files_label",
         "registry_context_with_declared_rules",
         "changed_registries_labelled_committed",
@@ -191,7 +194,7 @@ def test_dry_run_markdown_names_the_refusals(dry_run):
     assert "INVENTED" in text
     assert "not a comparison" in text.lower()
     assert "Loader preflight refuses" in text
-    assert "Routes from other data to the invented declared rules" in text
+    assert "routes from other data to the invented declared rules" in text
     assert "Named invented variants" in text
     for delta in rows.NAMED_DELTAS:
         assert f"- {delta}." in text

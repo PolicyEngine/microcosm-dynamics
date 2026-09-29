@@ -535,7 +535,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--skip-dry-run",
         action="store_true",
-        help="run only the contract and refusal-parity probes",
+        help=(
+            "run only the contract and refusal-parity probes (a partial "
+            "run: it never passes)"
+        ),
     )
     args = parser.parse_args(argv)
     base = args.base.resolve()
@@ -626,8 +629,12 @@ def main(argv: list[str] | None = None) -> int:
             ),
         ]
     )
+    report["dry_run_skipped"] = "dry_run" not in report
+    # A run without the dry-run comparison is partial, never a pass: the
+    # section 13 differential's main comparison did not run.
     report["all_checks_passed"] = (
         report["all_equal"]
+        and not report["dry_run_skipped"]
         and report["refusal_expectations"]["base"]["met"]
         and report["refusal_expectations"]["candidate"]["met"]
         and report["loader_file_accesses_empty"]

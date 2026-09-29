@@ -26,11 +26,15 @@ be applied:
   dry run can exercise each mapping and role branch.  It records, for
   every entry it applies, the blockers the ``registry`` gate would refuse
   on.  It is not a fallback, and nothing on the real-data path accepts
-  it: :func:`.loader.load_u2_inputs` builds its own registry gate;
-  :func:`.loader.read_family_records` reads under this gate only records
+  it: :func:`.loader.load_u2_inputs` builds its own registry gate; every
+  :class:`FieldSpec` carries the gate that made it, and
+  :func:`parse_fixed_width` parses declared-gate specs only on records
   the invented writer produced (every unmapped column holds
   :data:`INVENTED_RECORD_FILLER`, :func:`check_invented_records`); and
   :func:`.runner.run_track_u2` refuses to record it for a registered run.
+  :class:`FieldSpec` and :class:`DcRoute` are plain value objects, so a
+  caller who hand-assembles them with the declared types is not stopped;
+  no U2 entry point does so.
   Where the specification declares nothing (code 88's substantive
   routing, the historical combined spouse-retirement crosswalk) it
   refuses too.
@@ -260,9 +264,11 @@ _INCOME_ACC_RANGE = (0, 9)
 _WEALTH_ACC_CODES = (0, 1)
 _INTERVIEW_MAX = 99_999
 #: The character every column an invented fixed-width record leaves
-#: unmapped holds (:func:`encode_fixed_width` with this filler).  PSID's
-#: fixed-width records hold digits and blanks only, so a declared-gate
-#: read (:func:`check_invented_records`) accepts invented records alone.
+#: unmapped holds (:func:`encode_fixed_width` with this filler).  A
+#: declared-gate parse (:func:`check_invented_records`) accepts a record
+#: only when every unmapped column holds it, so records written any other
+#: way -- a survey file's included, whatever its unmapped columns hold --
+#: are refused unless they were deliberately rewritten in this form.
 INVENTED_RECORD_FILLER = "~"
 
 
@@ -302,13 +308,69 @@ def _canonical_sha256(document: Mapping[str, Any]) -> str:
     return _sha256(json.dumps(document, sort_keys=True).encode("utf-8"))
 
 
+class FrozenDocument(dict):
+    """A read-only JSON object (a ``dict`` for ``json`` and ``isinstance``).
+
+    Registry documents are frozen when a :class:`RegistrySet` is built
+    (objects become ``FrozenDocument``, arrays tuples), so an entry a
+    gate has checked cannot be edited in place afterwards.  A deep copy
+    is an ordinary, mutable ``dict`` -- and a changed copy can no longer
+    be labelled ``committed``.
+    """
+
+    def _refuse(self, *args: Any, **kwargs: Any) -> None:
+        raise TypeError(
+            "U2 registry documents are read-only once bound to a registry "
+            "set; deep-copy one to edit it (a changed copy cannot be "
+            "labelled committed)"
+        )
+
+    __setitem__ = __delitem__ = _refuse
+    clear = pop = popitem = setdefault = update = _refuse
+    __ior__ = _refuse
+
+    def __deepcopy__(self, memo: dict[int, Any]) -> dict[str, Any]:
+        return {key: _thaw(value, memo) for key, value in self.items()}
+
+    def __copy__(self) -> dict[str, Any]:
+        return dict(self)
+
+    def __reduce__(self) -> tuple[Any, ...]:
+        return (dict, (dict(self),))
+
+
+def _freeze(value: Any) -> Any:
+    if isinstance(value, Mapping):
+        return FrozenDocument(
+            {key: _freeze(item) for key, item in value.items()}
+        )
+    if isinstance(value, list | tuple):
+        return tuple(_freeze(item) for item in value)
+    return value
+
+
+def _thaw(value: Any, memo: dict[int, Any] | None = None) -> Any:
+    if isinstance(value, Mapping):
+        return {key: _thaw(item, memo) for key, item in value.items()}
+    if isinstance(value, list | tuple):
+        return [_thaw(item, memo) for item in value]
+    return value
+
+
+@functools.cache
+def _committed_frozen(name: str) -> FrozenDocument:
+    """The pinned committed document, validated and frozen (read once)."""
+
+    return _freeze(
+        json.loads(_committed_document(name, REGISTRY_SHA256[name]))
+    )
+
+
 @functools.cache
 def _committed_canonical_sha256(name: str) -> str:
     """The canonical-JSON digest of the pinned committed document."""
 
-    return _canonical_sha256(
-        json.loads(_committed_document(name, REGISTRY_SHA256[name]))
-    )
+    return _canonical_sha256(_committed_frozen(name))
 
 
 @dataclass(frozen=True)
@@ -319,8 +381,9 @@ class RegistrySet:
     ``invented`` (test documents in the same schema, never accepted by a
     real-data run).  ``committed`` is a binding, not a label: such a set
     must hold the pinned SHA-256s and documents equal to the pinned
-    files' contents, so hand-built documents cannot pass the registry
-    gate.
+    files' contents, and every set's documents are frozen
+    (:class:`FrozenDocument`) when it is built, so neither hand-built
+    documents nor later in-place edits can pass the registry gate.
     """
 
     documents: Mapping[str, Mapping[str, Any]]
@@ -339,8 +402,11 @@ class RegistrySet:
                 name
                 for name in registry.REGISTRY_NAMES
                 if self.sha256.get(name) != REGISTRY_SHA256[name]
-                or _canonical_sha256(self.documents[name])
-                != _committed_canonical_sha256(name)
+                or (
+                    self.documents[name] is not _committed_frozen(name)
+                    and _canonical_sha256(self.documents[name])
+                    != _committed_canonical_sha256(name)
+                )
             ]
             if changed:
                 raise U2SourceRefusal(
@@ -348,6 +414,21 @@ class RegistrySet:
                     "not the pinned milestone-1 files (section 14: changed "
                     "source bytes refuse execution)"
                 )
+        object.__setattr__(
+            self,
+            "documents",
+            FrozenDocument(
+                {
+                    name: (
+                        document
+                        if isinstance(document, FrozenDocument)
+                        else _freeze(document)
+                    )
+                    for name, document in self.documents.items()
+                }
+            ),
+        )
+        object.__setattr__(self, "sha256", FrozenDocument(dict(self.sha256)))
         object.__setattr__(
             self,
             "_index",
@@ -359,10 +440,7 @@ class RegistrySet:
 
     @classmethod
     def committed(cls) -> RegistrySet:
-        documents = {
-            name: json.loads(_committed_document(name, digest))
-            for name, digest in REGISTRY_SHA256.items()
-        }
+        documents = {name: _committed_frozen(name) for name in REGISTRY_SHA256}
         return cls(documents, dict(REGISTRY_SHA256), "committed")
 
     @classmethod
@@ -702,8 +780,13 @@ class FieldSpec:
     negative_allowed: bool
     kind: str
     registry_id: str
+    #: The gate that applied the registry entry: specs made under the
+    #: invented declared gate parse invented records only.
+    gate: str = REGISTRY
 
     def __post_init__(self) -> None:
+        if self.gate not in GATES:
+            raise ValueError(f"{self.registry_id}: unknown gate {self.gate}")
         if self.start < 1 or self.end < self.start:
             raise ValueError(f"{self.registry_id}: invalid positions")
         if self.width != self.end - self.start + 1:
@@ -763,6 +846,7 @@ def field_specs(
                 negative_allowed=bool(entry["negative_domain_documented"]),
                 kind=_kind(concept, name),
                 registry_id=f"{name}:{entry_id}",
+                gate=gate.kind,
             )
         )
     check_overlaps(specs)
@@ -797,6 +881,7 @@ def pension_field_specs(wave: int, gate: SourceGate) -> list[FieldSpec]:
                     negative_allowed=False,
                     kind=_dc_kind(concept),
                     registry_id=f"pension:{wave}.{concept}",
+                    gate=gate.kind,
                 )
             )
     check_overlaps(specs)
@@ -915,10 +1000,14 @@ def parse_fixed_width(
     each field's documented domain (a negative amount only where the
     codebook documents a loss; ages 14-120 or 999 NA, and 0 for an absent
     spouse; sex 1 or 2, and 0 for an absent spouse; accuracy codes).
-    Amounts and top codes are carried as recorded.
+    Amounts and top codes are carried as recorded.  Specs the invented
+    declared gate made parse only records the invented writer produced
+    (:func:`check_invented_records`).
     """
 
     records = [line.rstrip("\n") for line in lines]
+    if any(spec.gate != REGISTRY for spec in specs):
+        check_invented_records(records, specs)
     data = {
         spec.concept: np.asarray(
             [_field_value(line, spec, i) for i, line in enumerate(records)],

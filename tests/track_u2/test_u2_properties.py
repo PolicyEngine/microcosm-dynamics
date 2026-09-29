@@ -30,7 +30,7 @@ from unittest import mock
 import numpy as np
 import pandas as pd
 import pytest
-from hypothesis import HealthCheck, given, settings
+from hypothesis import HealthCheck, example, given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.data import family_income
@@ -552,6 +552,18 @@ _REGISTERED_PLAN = (
 
 
 @SETTINGS
+@example(
+    primary=list(cohort.PRIMARY_BIRTH_YEARS),
+    even=list(cohort.EVEN_BIRTH_YEARS),
+    ages=cohort.U1_EVEN_BIRTH_AGES,
+    row="U1",
+)
+@example(
+    primary=list(cohort.PRIMARY_BIRTH_YEARS),
+    even=list(cohort.EVEN_BIRTH_YEARS),
+    ages=cohort.U1_EVEN_BIRTH_AGES,
+    row="U0",
+)
 @given(
     primary=st.lists(st.integers(1940, 1960), min_size=1, max_size=6),
     even=st.lists(st.integers(1940, 1960), max_size=6),

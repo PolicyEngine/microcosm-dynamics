@@ -208,7 +208,7 @@ def test_registry_documents_dc_only_checkpoints_from_2017(
         entry = committed_registries.entry(
             "pension", f"{wave}.route.formula_unknown_checkpoint"
         )
-        assert entry["accepted_plan_types"] == [5]
+        assert list(entry["accepted_plan_types"]) == [5]
         amendment = committed_registries.entry(
             "pension", f"{wave}.route.inherited_route_amendment"
         )
