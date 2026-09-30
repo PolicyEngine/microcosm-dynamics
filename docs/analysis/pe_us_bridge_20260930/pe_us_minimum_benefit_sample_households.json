@@ -1,0 +1,3831 @@
+{
+  "schema_version": "pe_us_bridge.minimum_benefit_sample_households.v1",
+  "label": "Illustrative household, not survey data",
+  "provenance": {
+    "microcosm_dynamics": {
+      "repository": "PolicyEngine/microcosm-dynamics",
+      "commit": "212a9667b8472156a0a6140d1c6776cb9f0948fb",
+      "code_dirty": false,
+      "script": "scripts/pe_us_minimum_benefit_sample_households.py",
+      "bridge": "src/populace_dynamics/bridge/policyengine_us.py"
+    },
+    "policyengine_us": {
+      "checkout": "/Users/maxghenis/PolicyEngine/policyengine-us",
+      "revision": "e4363903f3a545e69e10b563a46a52d1f1ce609d",
+      "version": "1.822.5",
+      "policyengine_core_version": "3.30.2",
+      "package": "/Users/maxghenis/PolicyEngine/policyengine-us/policyengine_us/__init__.py",
+      "python": "/Users/maxghenis/PolicyEngine/policyengine-us/.venv/bin/python"
+    },
+    "payment_year": 2026
+  },
+  "worker": {
+    "label": "Illustrative household, not survey data",
+    "inputs": {
+      "birth_year": 1958,
+      "sex": "female",
+      "first_earnings_year": 1980,
+      "earnings_years": 22,
+      "share_of_average_wage_index": 0.25,
+      "entitlement_year": 2024
+    },
+    "earnings_history": {
+      "1980": 3128.36,
+      "1981": 3443.28,
+      "1982": 3632.84,
+      "1983": 3809.81,
+      "1984": 4033.77,
+      "1985": 4205.63,
+      "1986": 4330.45,
+      "1987": 4606.63,
+      "1988": 4833.51,
+      "1989": 5024.89,
+      "1990": 5256.99,
+      "1991": 5452.9,
+      "1992": 5733.85,
+      "1993": 5783.17,
+      "1994": 5938.38,
+      "1995": 6176.41,
+      "1996": 6478.48,
+      "1997": 6856.5,
+      "1998": 7215.36,
+      "1999": 7617.46,
+      "2000": 8038.7,
+      "2001": 8230.48
+    },
+    "earnings_rule": "25% of the national average wage index (ss.params.load_ssa_parameters().nawi) in each year, rounded to the cent",
+    "record_years": {
+      "basis": "old_age",
+      "birth_year": 1958,
+      "window_year": 2024,
+      "threshold_year": 2020,
+      "last_year": 2023,
+      "onset_year": null,
+      "death_year": null
+    },
+    "years_of_coverage": {
+      "years": 22,
+      "counted_years": [
+        1980,
+        1981,
+        1982,
+        1983,
+        1984,
+        1985,
+        1986,
+        1987,
+        1988,
+        1989,
+        1990,
+        1991,
+        1992,
+        1993,
+        1994,
+        1995,
+        1996,
+        1997,
+        1998,
+        1999,
+        2000,
+        2001
+      ],
+      "observed_years": [
+        1980,
+        1981,
+        1982,
+        1983,
+        1984,
+        1985,
+        1986,
+        1987,
+        1988,
+        1989,
+        1990,
+        1991,
+        1992,
+        1993,
+        1994,
+        1995,
+        1996,
+        1997,
+        1998,
+        1999,
+        2000,
+        2001
+      ],
+      "imputed_years": [],
+      "unobserved_years": [
+        2002,
+        2003,
+        2004,
+        2005,
+        2006,
+        2007,
+        2008,
+        2009,
+        2010,
+        2011,
+        2012,
+        2013,
+        2014,
+        2015,
+        2016,
+        2017,
+        2018,
+        2019,
+        2020,
+        2021,
+        2022,
+        2023
+      ],
+      "through_year": 2023,
+      "flagged": true
+    },
+    "pia_record": {
+      "pia": 613.8,
+      "aime": 682.0,
+      "basis": "old_age",
+      "method": "ss.statutory_aime.aime + ss.benefits.pia",
+      "eligibility_year": 2020,
+      "computation_end_year": 2023
+    },
+    "threshold": {
+      "year": 2020,
+      "annual": 12413.0,
+      "source": {
+        "kind": "census_capture",
+        "path": "data/external/census_poverty_thresholds_1982_2022.json",
+        "sha256": "288399c475ae3ff02e6d8367425ee0a568b50d239da5656f24d0d2dfafabfb53",
+        "row": "one_65_plus",
+        "years": [
+          1982,
+          2022
+        ],
+        "captured_years": [
+          1982,
+          1986,
+          1988,
+          1989,
+          1990,
+          1991,
+          1992,
+          1994,
+          1995,
+          1996,
+          1997,
+          1998,
+          1999,
+          2000,
+          2001,
+          2002,
+          2003,
+          2004,
+          2005,
+          2006,
+          2007,
+          2008,
+          2009,
+          2010,
+          2011,
+          2012,
+          2013,
+          2014,
+          2015,
+          2016,
+          2017,
+          2018,
+          2019,
+          2020,
+          2021,
+          2022
+        ]
+      }
+    },
+    "option": {
+      "number": 2,
+      "label": "Standard price-indexed minimum benefit",
+      "schedule": "standard",
+      "indexing": "price",
+      "uniform_cut": 0.1281
+    },
+    "schedule_share": 0.73,
+    "outcome": {
+      "option": 2,
+      "in_window": true,
+      "work_years_star": 22.0,
+      "minimum": 755.1241666666666,
+      "cut_pia": 535.1722199999999,
+      "option_pia": 755.1241666666666,
+      "on_minimum": true,
+      "reason": "on_minimum"
+    },
+    "outcome_rows_checked": [
+      "MS0",
+      "MS1",
+      "MS4"
+    ],
+    "option_1_outcome": {
+      "option": 1,
+      "in_window": true,
+      "work_years_star": 22.0,
+      "minimum": 0.0,
+      "cut_pia": 537.3819,
+      "option_pia": 537.3819,
+      "on_minimum": false,
+      "reason": "no_minimum_option"
+    },
+    "claim_factor": 0.95555552,
+    "months_from_full_retirement_age": -8,
+    "current_law": {
+      "pia_at_eligibility": 613.8,
+      "cola_steps": [
+        {
+          "determination_year": 2020,
+          "rate": 0.013000000000000001,
+          "pia_before": 613.8,
+          "pia_after": 621.7
+        },
+        {
+          "determination_year": 2021,
+          "rate": 0.059000000000000004,
+          "pia_before": 621.7,
+          "pia_after": 658.3
+        },
+        {
+          "determination_year": 2022,
+          "rate": 0.087,
+          "pia_before": 658.3,
+          "pia_after": 715.5
+        },
+        {
+          "determination_year": 2023,
+          "rate": 0.032,
+          "pia_before": 715.5,
+          "pia_after": 738.3
+        },
+        {
+          "determination_year": 2024,
+          "rate": 0.025,
+          "pia_before": 738.3,
+          "pia_after": 756.7
+        },
+        {
+          "determination_year": 2025,
+          "rate": 0.028,
+          "pia_before": 756.7,
+          "pia_after": 777.8
+        }
+      ],
+      "pia_payment_year": 777.8,
+      "monthly_benefit": 743,
+      "annual_benefit": 8916
+    },
+    "reform": {
+      "pia_at_eligibility": 755.1241666666666,
+      "cola_steps": [
+        {
+          "determination_year": 2020,
+          "rate": 0.013000000000000001,
+          "pia_before": 755.1241666666666,
+          "pia_after": 764.9
+        },
+        {
+          "determination_year": 2021,
+          "rate": 0.059000000000000004,
+          "pia_before": 764.9,
+          "pia_after": 810.0
+        },
+        {
+          "determination_year": 2022,
+          "rate": 0.087,
+          "pia_before": 810.0,
+          "pia_after": 880.4
+        },
+        {
+          "determination_year": 2023,
+          "rate": 0.032,
+          "pia_before": 880.4,
+          "pia_after": 908.5
+        },
+        {
+          "determination_year": 2024,
+          "rate": 0.025,
+          "pia_before": 908.5,
+          "pia_after": 931.2
+        },
+        {
+          "determination_year": 2025,
+          "rate": 0.028,
+          "pia_before": 931.2,
+          "pia_after": 957.2
+        }
+      ],
+      "pia_payment_year": 957.2,
+      "monthly_benefit": 914,
+      "annual_benefit": 10968
+    },
+    "reduced_current_law_memo": {
+      "pia_at_eligibility": 537.3819,
+      "cola_steps": [
+        {
+          "determination_year": 2020,
+          "rate": 0.013000000000000001,
+          "pia_before": 537.3819,
+          "pia_after": 544.3
+        },
+        {
+          "determination_year": 2021,
+          "rate": 0.059000000000000004,
+          "pia_before": 544.3,
+          "pia_after": 576.4
+        },
+        {
+          "determination_year": 2022,
+          "rate": 0.087,
+          "pia_before": 576.4,
+          "pia_after": 626.5
+        },
+        {
+          "determination_year": 2023,
+          "rate": 0.032,
+          "pia_before": 626.5,
+          "pia_after": 646.5
+        },
+        {
+          "determination_year": 2024,
+          "rate": 0.025,
+          "pia_before": 646.5,
+          "pia_after": 662.6
+        },
+        {
+          "determination_year": 2025,
+          "rate": 0.028,
+          "pia_before": 662.6,
+          "pia_after": 681.1
+        }
+      ],
+      "pia_payment_year": 681.1,
+      "monthly_benefit": 650,
+      "annual_benefit": 7800
+    },
+    "cola": {
+      "history": {
+        "path": "/Users/maxghenis/PolicyEngine/_worktrees/dynamics-trackb-b01-20260929/data/external/ssa_cola_history.json",
+        "sha256": "12da7f0e0d33fc53eaa31567d86c3cc035a49feefc2e4695bceea3379c2a38db",
+        "content_sha256": "8f1d75cab8bd1dba226c83bdff28a0ca1b21167e803eb65ff1d13d5cbe2255e0",
+        "schema_version": "ssa_cola_history.v1",
+        "source_unit": "percent",
+        "runtime_unit": "fraction",
+        "year_basis": "determination_year",
+        "runtime_first_determination_year": 1979,
+        "runtime_last_determination_year": 2022,
+        "runtime_n_years": 44
+      },
+      "history_years": [
+        1979,
+        2022
+      ],
+      "cpi_w_path": "/Users/maxghenis/PolicyEngine/policyengine-us/policyengine_us/parameters/gov/ssa/uprating.yaml",
+      "cpi_w_sha256": "fcf5049f6e69444296fde0deb8f0d014b14dc806c5424561d475e5b2dda7468c",
+      "cpi_w_third_quarter_averages": {
+        "2022": 268.421,
+        "2023": 291.901,
+        "2024": 301.236,
+        "2025": 308.729,
+        "2026": 317.265
+      },
+      "derived_rates": {
+        "2022": 0.087,
+        "2023": 0.032,
+        "2024": 0.025,
+        "2025": 0.028
+      },
+      "overlap_checked": [
+        2022
+      ],
+      "rule": "42 USC 415(i)(1)(D): the percentage by which the third-quarter CPI-W exceeds that of the last cost-of-living computation quarter, rounded to the nearest one-tenth of 1 percent"
+    },
+    "rounding": "PIA: ss.benefits.pia floors to a dime; each COLA step floors to a dime (42 USC 415(i)(2)(A)(ii)); the monthly benefit is the PIA times the claim factor rounded down to the dollar (the 415(g) reading recorded in min_benefit_track_m/policy.py's MINIMUM_ROUNDING_DIME note)",
+    "parameters": {
+      "ssa_pe_us_revision": "e4363903f3",
+      "quarter_of_coverage": {
+        "kind": "committed_capture",
+        "path": "data/external/ssa_quarter_of_coverage_amounts.json",
+        "sha256": "6f964e8fad41deb0985115b3cb18b4b92ea9b7ea10a11273e5e8ecc6834ae1f8",
+        "captured_from": "policyengine_us/parameters/gov/ssa/social_security/quarters_of_coverage_threshold.yaml",
+        "captured_from_sha256": "12354a0585756dbffcd9fae6aa6b49b2420619e9ec8e47c5ef953c41693f242b",
+        "pe_us_revision": "a03e82e503"
+      }
+    }
+  },
+  "households": [
+    {
+      "key": "A",
+      "label": "Household A",
+      "description": "The worker alone: no income besides Social Security, $1,500 in the bank (under the SSI resource limit), renting for $800 a month",
+      "taxable_private_pension_income": 0.0,
+      "purpose": "SSI-eligible at baseline and under the reform"
+    },
+    {
+      "key": "B",
+      "label": "Household B",
+      "description": "The same worker with a $4,800-a-year ($400-a-month) private pension, which puts her countable income above the federal SSI benefit rate",
+      "taxable_private_pension_income": 4800.0,
+      "purpose": "SSI-ineligible: the SNAP and state-supplement path"
+    },
+    {
+      "key": "C",
+      "label": "Household C",
+      "description": "The same worker with a $30,000-a-year private pension, enough for part of her Social Security to be taxable",
+      "taxable_private_pension_income": 30000.0,
+      "purpose": "The federal and state income-tax path"
+    }
+  ],
+  "states": {
+    "CA": {
+      "name": "California",
+      "mechanism": "A state SSI supplement that PolicyEngine-US models",
+      "evidence": [
+        "variables/gov/states/ca/cdss/state_supplement/ca_state_supplement.py:13-17: the supplement is the payment standard less federal SSI less SSI countable income, floored at zero, so it is reduced dollar for dollar by countable income above the federal benefit rate",
+        "parameters/gov/states/ca/cdss/state_supplement/payment_standard/aged_or_disabled/amount/single.yaml:13: the aged or disabled single payment standard is 1,206.94 a month from 2025-01-01, with no later entry, so 2026 uses it",
+        "parameters/gov/household/household_state_benefits.yaml:338: ca_state_supplement counts in household benefits from 2026"
+      ]
+    },
+    "MT": {
+      "name": "Montana",
+      "mechanism": "An income tax that reaches federally taxable Social Security, and an elderly renter credit that counts all Social Security",
+      "evidence": [
+        "variables/gov/states/mt/tax/income/base/mt_agi_indiv.py:13-29: Montana AGI starts from federal AGI, which includes taxable Social Security; the separate Montana Social Security adjustment applies only when gov.states.mt.tax.income.social_security.applies is true",
+        "parameters/gov/states/mt/tax/income/social_security/applies.yaml:16-18: true from 2021, false from 2024",
+        "variables/gov/states/mt/tax/income/credits/mt_elderly_homeowner_or_renter/mt_elderly_homeowner_or_renter_credit.py:31-42: a refundable credit of countable rent less net household income, capped and multiplied by a gross-income schedule",
+        "variables/gov/states/mt/tax/income/credits/mt_elderly_homeowner_or_renter/mt_elderly_homeowner_or_renter_credit_gross_household_income.py:17-23: gross household income adds the untaxed part of Social Security to federal AGI, so all of it counts"
+      ]
+    },
+    "FL": {
+      "name": "Florida",
+      "mechanism": "No state income tax, and no state supplement for a person in her own home",
+      "evidence": [
+        "parameters/gov/states/household/state_income_tax_before_refundable_credits.yaml: 46 entries, none for Florida",
+        "variables/gov/states/fl/dcf/oss/fl_oss_eligible.py:58-76: Florida's optional state supplement requires a facility living arrangement; fl_oss_living_arrangement.py:21-37 maps it from fl_oss_community_care_type, whose default is none (fl_oss_community_care_type.py:18)",
+        "parameters/gov/hhs/medicaid/eligibility/categories/senior_or_disabled/income/limit/individual.yaml:44-45: Florida's optional aged Medicaid pathway ends at 88 percent of the poverty guideline (reported as a memo; health coverage is outside default net income)"
+      ]
+    }
+  },
+  "common_inputs": {
+    "monthly_rent": 800.0,
+    "bank_account_assets": 1500.0,
+    "has_heating_cooling_expense": true,
+    "takes_up_housing_assistance_if_eligible": false,
+    "living_arrangements_allow_for_food_preparation": true,
+    "medicare_quarters_of_coverage": 88
+  },
+  "results": [
+    {
+      "household": "A",
+      "label": "Household A",
+      "state": "CA",
+      "baseline_social_security_annual": 8916.0,
+      "reform_social_security_annual": 10968.0,
+      "decomposition": {
+        "net_change": 0.0,
+        "baseline_net_income": 18980.85,
+        "reform_net_income": 18980.85,
+        "reported_baseline_net_income": 18980.849609375,
+        "reported_reform_net_income": 18980.849609375,
+        "reported_gap": 0.0,
+        "max_aggregate_gap": 0.000732421875,
+        "categories": {
+          "social_security": {
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          "ssi": {
+            "baseline": 3252.0,
+            "reform": 1200.0,
+            "change": -2052.0
+          },
+          "state_benefits": {
+            "baseline": 2555.28,
+            "reform": 2555.28,
+            "change": 0.0
+          },
+          "snap": {
+            "baseline": 3607.57,
+            "reform": 3607.57,
+            "change": 0.0
+          },
+          "other_benefits": {
+            "baseline": 651.0,
+            "reform": 651.0,
+            "change": 0.0
+          },
+          "health_net": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "market_income": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "federal_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "other_taxes": {
+            "baseline": -1.0,
+            "reform": -1.0,
+            "change": 0.0
+          }
+        },
+        "components": [
+          {
+            "variable": "social_security",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "social_security",
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          {
+            "variable": "ssi",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "ssi",
+            "baseline": 3252.0,
+            "reform": 1200.0,
+            "change": -2052.0
+          },
+          {
+            "variable": "snap",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "snap",
+            "baseline": 3607.57,
+            "reform": 3607.57,
+            "change": 0.0
+          },
+          {
+            "variable": "ca_state_supplement",
+            "path": [
+              "household_net_income",
+              "household_benefits",
+              "household_state_benefits"
+            ],
+            "sign": 1,
+            "category": "state_benefits",
+            "baseline": 2555.28,
+            "reform": 2555.28,
+            "change": 0.0
+          },
+          {
+            "variable": "commodity_supplemental_food_program",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "other_benefits",
+            "baseline": 651.0,
+            "reform": 651.0,
+            "change": 0.0
+          },
+          {
+            "variable": "state_use_tax",
+            "path": [
+              "household_net_income",
+              "household_tax_before_refundable_credits",
+              "household_state_tax_before_refundable_credits"
+            ],
+            "sign": -1,
+            "category": "other_taxes",
+            "baseline": -1.0,
+            "reform": -1.0,
+            "change": 0.0
+          }
+        ]
+      },
+      "with_health_benefits_in_net_income": {
+        "net_change": 0.0,
+        "categories": {
+          "social_security": {
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          "ssi": {
+            "baseline": 3252.0,
+            "reform": 1200.0,
+            "change": -2052.0
+          },
+          "state_benefits": {
+            "baseline": 2555.28,
+            "reform": 2555.28,
+            "change": 0.0
+          },
+          "snap": {
+            "baseline": 3607.57,
+            "reform": 3607.57,
+            "change": 0.0
+          },
+          "other_benefits": {
+            "baseline": 651.0,
+            "reform": 651.0,
+            "change": 0.0
+          },
+          "health_net": {
+            "baseline": 9236.48,
+            "reform": 9236.48,
+            "change": 0.0
+          },
+          "market_income": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "federal_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "other_taxes": {
+            "baseline": -1.0,
+            "reform": -1.0,
+            "change": 0.0
+          }
+        }
+      },
+      "memo": {
+        "baseline": {
+          "medicaid_cost": 9236.478515625,
+          "msp_cost": 0.0,
+          "is_medicaid_eligible": 1.0,
+          "taxable_social_security": 0.0
+        },
+        "reform": {
+          "medicaid_cost": 9236.478515625,
+          "msp_cost": 0.0,
+          "is_medicaid_eligible": 1.0,
+          "taxable_social_security": 0.0
+        }
+      },
+      "situations": {
+        "baseline": {
+          "people": {
+            "worker": {
+              "age": {
+                "2026": 68
+              },
+              "social_security_retirement": {
+                "2026": 8916.0
+              },
+              "social_security_disability": {
+                "2026": 0.0
+              },
+              "social_security_survivors": {
+                "2026": 0.0
+              },
+              "social_security_dependents": {
+                "2026": 0.0
+              },
+              "employment_income": {
+                "2026": 0.0
+              },
+              "taxable_private_pension_income": {
+                "2026": 0.0
+              },
+              "interest_income": {
+                "2026": 0.0
+              },
+              "bank_account_assets": {
+                "2026": 1500.0
+              },
+              "pre_subsidy_rent": {
+                "2026": 9600.0
+              },
+              "medicare_quarters_of_coverage": {
+                "2026": 88
+              }
+            }
+          },
+          "tax_units": {
+            "household_a_ca_tax_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "spm_units": {
+            "household_a_ca_spm_unit_1": {
+              "members": [
+                "worker"
+              ],
+              "has_heating_cooling_expense": {
+                "2026": true
+              },
+              "takes_up_housing_assistance_if_eligible": {
+                "2026": false
+              }
+            }
+          },
+          "marital_units": {
+            "household_a_ca_marital_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "families": {
+            "household_a_ca_family_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "households": {
+            "household_a_ca": {
+              "members": [
+                "worker"
+              ],
+              "state_fips": {
+                "2026": 6
+              },
+              "living_arrangements_allow_for_food_preparation": {
+                "2026": true
+              }
+            }
+          }
+        },
+        "reform": {
+          "people": {
+            "worker": {
+              "age": {
+                "2026": 68
+              },
+              "social_security_retirement": {
+                "2026": 10968.0
+              },
+              "social_security_disability": {
+                "2026": 0.0
+              },
+              "social_security_survivors": {
+                "2026": 0.0
+              },
+              "social_security_dependents": {
+                "2026": 0.0
+              },
+              "employment_income": {
+                "2026": 0.0
+              },
+              "taxable_private_pension_income": {
+                "2026": 0.0
+              },
+              "interest_income": {
+                "2026": 0.0
+              },
+              "bank_account_assets": {
+                "2026": 1500.0
+              },
+              "pre_subsidy_rent": {
+                "2026": 9600.0
+              },
+              "medicare_quarters_of_coverage": {
+                "2026": 88
+              }
+            }
+          },
+          "tax_units": {
+            "household_a_ca_tax_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "spm_units": {
+            "household_a_ca_spm_unit_1": {
+              "members": [
+                "worker"
+              ],
+              "has_heating_cooling_expense": {
+                "2026": true
+              },
+              "takes_up_housing_assistance_if_eligible": {
+                "2026": false
+              }
+            }
+          },
+          "marital_units": {
+            "household_a_ca_marital_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "families": {
+            "household_a_ca_family_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "households": {
+            "household_a_ca": {
+              "members": [
+                "worker"
+              ],
+              "state_fips": {
+                "2026": 6
+              },
+              "living_arrangements_allow_for_food_preparation": {
+                "2026": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "household": "A",
+      "label": "Household A",
+      "state": "MT",
+      "baseline_social_security_annual": 8916.0,
+      "reform_social_security_annual": 10968.0,
+      "decomposition": {
+        "net_change": 0.0,
+        "baseline_net_income": 17576.57,
+        "reform_net_income": 17576.57,
+        "reported_baseline_net_income": 17576.5703125,
+        "reported_reform_net_income": 17576.5703125,
+        "reported_gap": 0.0,
+        "max_aggregate_gap": 0.000732421875,
+        "categories": {
+          "social_security": {
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          "ssi": {
+            "baseline": 3252.0,
+            "reform": 1200.0,
+            "change": -2052.0
+          },
+          "state_benefits": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "snap": {
+            "baseline": 3607.57,
+            "reform": 3607.57,
+            "change": 0.0
+          },
+          "other_benefits": {
+            "baseline": 651.0,
+            "reform": 651.0,
+            "change": 0.0
+          },
+          "health_net": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "market_income": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "federal_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_income_tax": {
+            "baseline": 1150.0,
+            "reform": 1150.0,
+            "change": 0.0
+          },
+          "other_taxes": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          }
+        },
+        "components": [
+          {
+            "variable": "social_security",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "social_security",
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          {
+            "variable": "ssi",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "ssi",
+            "baseline": 3252.0,
+            "reform": 1200.0,
+            "change": -2052.0
+          },
+          {
+            "variable": "snap",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "snap",
+            "baseline": 3607.57,
+            "reform": 3607.57,
+            "change": 0.0
+          },
+          {
+            "variable": "commodity_supplemental_food_program",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "other_benefits",
+            "baseline": 651.0,
+            "reform": 651.0,
+            "change": 0.0
+          },
+          {
+            "variable": "mt_refundable_credits",
+            "path": [
+              "household_net_income",
+              "household_refundable_tax_credits",
+              "household_refundable_state_tax_credits"
+            ],
+            "sign": 1,
+            "category": "state_income_tax",
+            "baseline": 1150.0,
+            "reform": 1150.0,
+            "change": 0.0
+          }
+        ]
+      },
+      "with_health_benefits_in_net_income": {
+        "net_change": 0.0,
+        "categories": {
+          "social_security": {
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          "ssi": {
+            "baseline": 3252.0,
+            "reform": 1200.0,
+            "change": -2052.0
+          },
+          "state_benefits": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "snap": {
+            "baseline": 3607.57,
+            "reform": 3607.57,
+            "change": 0.0
+          },
+          "other_benefits": {
+            "baseline": 651.0,
+            "reform": 651.0,
+            "change": 0.0
+          },
+          "health_net": {
+            "baseline": 10799.23,
+            "reform": 10799.23,
+            "change": 0.0
+          },
+          "market_income": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "federal_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_income_tax": {
+            "baseline": 1150.0,
+            "reform": 1150.0,
+            "change": 0.0
+          },
+          "other_taxes": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          }
+        }
+      },
+      "memo": {
+        "baseline": {
+          "medicaid_cost": 10799.2294921875,
+          "msp_cost": 0.0,
+          "is_medicaid_eligible": 1.0,
+          "taxable_social_security": 0.0
+        },
+        "reform": {
+          "medicaid_cost": 10799.2294921875,
+          "msp_cost": 0.0,
+          "is_medicaid_eligible": 1.0,
+          "taxable_social_security": 0.0
+        }
+      },
+      "situations": {
+        "baseline": {
+          "people": {
+            "worker": {
+              "age": {
+                "2026": 68
+              },
+              "social_security_retirement": {
+                "2026": 8916.0
+              },
+              "social_security_disability": {
+                "2026": 0.0
+              },
+              "social_security_survivors": {
+                "2026": 0.0
+              },
+              "social_security_dependents": {
+                "2026": 0.0
+              },
+              "employment_income": {
+                "2026": 0.0
+              },
+              "taxable_private_pension_income": {
+                "2026": 0.0
+              },
+              "interest_income": {
+                "2026": 0.0
+              },
+              "bank_account_assets": {
+                "2026": 1500.0
+              },
+              "pre_subsidy_rent": {
+                "2026": 9600.0
+              },
+              "medicare_quarters_of_coverage": {
+                "2026": 88
+              }
+            }
+          },
+          "tax_units": {
+            "household_a_mt_tax_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "spm_units": {
+            "household_a_mt_spm_unit_1": {
+              "members": [
+                "worker"
+              ],
+              "has_heating_cooling_expense": {
+                "2026": true
+              },
+              "takes_up_housing_assistance_if_eligible": {
+                "2026": false
+              }
+            }
+          },
+          "marital_units": {
+            "household_a_mt_marital_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "families": {
+            "household_a_mt_family_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "households": {
+            "household_a_mt": {
+              "members": [
+                "worker"
+              ],
+              "state_fips": {
+                "2026": 30
+              },
+              "living_arrangements_allow_for_food_preparation": {
+                "2026": true
+              }
+            }
+          }
+        },
+        "reform": {
+          "people": {
+            "worker": {
+              "age": {
+                "2026": 68
+              },
+              "social_security_retirement": {
+                "2026": 10968.0
+              },
+              "social_security_disability": {
+                "2026": 0.0
+              },
+              "social_security_survivors": {
+                "2026": 0.0
+              },
+              "social_security_dependents": {
+                "2026": 0.0
+              },
+              "employment_income": {
+                "2026": 0.0
+              },
+              "taxable_private_pension_income": {
+                "2026": 0.0
+              },
+              "interest_income": {
+                "2026": 0.0
+              },
+              "bank_account_assets": {
+                "2026": 1500.0
+              },
+              "pre_subsidy_rent": {
+                "2026": 9600.0
+              },
+              "medicare_quarters_of_coverage": {
+                "2026": 88
+              }
+            }
+          },
+          "tax_units": {
+            "household_a_mt_tax_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "spm_units": {
+            "household_a_mt_spm_unit_1": {
+              "members": [
+                "worker"
+              ],
+              "has_heating_cooling_expense": {
+                "2026": true
+              },
+              "takes_up_housing_assistance_if_eligible": {
+                "2026": false
+              }
+            }
+          },
+          "marital_units": {
+            "household_a_mt_marital_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "families": {
+            "household_a_mt_family_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "households": {
+            "household_a_mt": {
+              "members": [
+                "worker"
+              ],
+              "state_fips": {
+                "2026": 30
+              },
+              "living_arrangements_allow_for_food_preparation": {
+                "2026": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "household": "A",
+      "label": "Household A",
+      "state": "FL",
+      "baseline_social_security_annual": 8916.0,
+      "reform_social_security_annual": 10968.0,
+      "decomposition": {
+        "net_change": 0.0,
+        "baseline_net_income": 16426.57,
+        "reform_net_income": 16426.57,
+        "reported_baseline_net_income": 16426.5703125,
+        "reported_reform_net_income": 16426.5703125,
+        "reported_gap": 0.0,
+        "max_aggregate_gap": 0.000732421875,
+        "categories": {
+          "social_security": {
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          "ssi": {
+            "baseline": 3252.0,
+            "reform": 1200.0,
+            "change": -2052.0
+          },
+          "state_benefits": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "snap": {
+            "baseline": 3607.57,
+            "reform": 3607.57,
+            "change": 0.0
+          },
+          "other_benefits": {
+            "baseline": 651.0,
+            "reform": 651.0,
+            "change": 0.0
+          },
+          "health_net": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "market_income": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "federal_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "other_taxes": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          }
+        },
+        "components": [
+          {
+            "variable": "social_security",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "social_security",
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          {
+            "variable": "ssi",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "ssi",
+            "baseline": 3252.0,
+            "reform": 1200.0,
+            "change": -2052.0
+          },
+          {
+            "variable": "snap",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "snap",
+            "baseline": 3607.57,
+            "reform": 3607.57,
+            "change": 0.0
+          },
+          {
+            "variable": "commodity_supplemental_food_program",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "other_benefits",
+            "baseline": 651.0,
+            "reform": 651.0,
+            "change": 0.0
+          }
+        ]
+      },
+      "with_health_benefits_in_net_income": {
+        "net_change": 0.0,
+        "categories": {
+          "social_security": {
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          "ssi": {
+            "baseline": 3252.0,
+            "reform": 1200.0,
+            "change": -2052.0
+          },
+          "state_benefits": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "snap": {
+            "baseline": 3607.57,
+            "reform": 3607.57,
+            "change": 0.0
+          },
+          "other_benefits": {
+            "baseline": 651.0,
+            "reform": 651.0,
+            "change": 0.0
+          },
+          "health_net": {
+            "baseline": 9200.24,
+            "reform": 9200.24,
+            "change": 0.0
+          },
+          "market_income": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "federal_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "other_taxes": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          }
+        }
+      },
+      "memo": {
+        "baseline": {
+          "medicaid_cost": 9200.23828125,
+          "msp_cost": 0.0,
+          "is_medicaid_eligible": 1.0,
+          "taxable_social_security": 0.0
+        },
+        "reform": {
+          "medicaid_cost": 9200.23828125,
+          "msp_cost": 0.0,
+          "is_medicaid_eligible": 1.0,
+          "taxable_social_security": 0.0
+        }
+      },
+      "situations": {
+        "baseline": {
+          "people": {
+            "worker": {
+              "age": {
+                "2026": 68
+              },
+              "social_security_retirement": {
+                "2026": 8916.0
+              },
+              "social_security_disability": {
+                "2026": 0.0
+              },
+              "social_security_survivors": {
+                "2026": 0.0
+              },
+              "social_security_dependents": {
+                "2026": 0.0
+              },
+              "employment_income": {
+                "2026": 0.0
+              },
+              "taxable_private_pension_income": {
+                "2026": 0.0
+              },
+              "interest_income": {
+                "2026": 0.0
+              },
+              "bank_account_assets": {
+                "2026": 1500.0
+              },
+              "pre_subsidy_rent": {
+                "2026": 9600.0
+              },
+              "medicare_quarters_of_coverage": {
+                "2026": 88
+              }
+            }
+          },
+          "tax_units": {
+            "household_a_fl_tax_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "spm_units": {
+            "household_a_fl_spm_unit_1": {
+              "members": [
+                "worker"
+              ],
+              "has_heating_cooling_expense": {
+                "2026": true
+              },
+              "takes_up_housing_assistance_if_eligible": {
+                "2026": false
+              }
+            }
+          },
+          "marital_units": {
+            "household_a_fl_marital_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "families": {
+            "household_a_fl_family_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "households": {
+            "household_a_fl": {
+              "members": [
+                "worker"
+              ],
+              "state_fips": {
+                "2026": 12
+              },
+              "living_arrangements_allow_for_food_preparation": {
+                "2026": true
+              }
+            }
+          }
+        },
+        "reform": {
+          "people": {
+            "worker": {
+              "age": {
+                "2026": 68
+              },
+              "social_security_retirement": {
+                "2026": 10968.0
+              },
+              "social_security_disability": {
+                "2026": 0.0
+              },
+              "social_security_survivors": {
+                "2026": 0.0
+              },
+              "social_security_dependents": {
+                "2026": 0.0
+              },
+              "employment_income": {
+                "2026": 0.0
+              },
+              "taxable_private_pension_income": {
+                "2026": 0.0
+              },
+              "interest_income": {
+                "2026": 0.0
+              },
+              "bank_account_assets": {
+                "2026": 1500.0
+              },
+              "pre_subsidy_rent": {
+                "2026": 9600.0
+              },
+              "medicare_quarters_of_coverage": {
+                "2026": 88
+              }
+            }
+          },
+          "tax_units": {
+            "household_a_fl_tax_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "spm_units": {
+            "household_a_fl_spm_unit_1": {
+              "members": [
+                "worker"
+              ],
+              "has_heating_cooling_expense": {
+                "2026": true
+              },
+              "takes_up_housing_assistance_if_eligible": {
+                "2026": false
+              }
+            }
+          },
+          "marital_units": {
+            "household_a_fl_marital_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "families": {
+            "household_a_fl_family_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "households": {
+            "household_a_fl": {
+              "members": [
+                "worker"
+              ],
+              "state_fips": {
+                "2026": 12
+              },
+              "living_arrangements_allow_for_food_preparation": {
+                "2026": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "household": "B",
+      "label": "Household B",
+      "state": "CA",
+      "baseline_social_security_annual": 8916.0,
+      "reform_social_security_annual": 10968.0,
+      "decomposition": {
+        "net_change": 348.72,
+        "baseline_net_income": 18980.85,
+        "reform_net_income": 19329.57,
+        "reported_baseline_net_income": 18980.8515625,
+        "reported_reform_net_income": 19329.5703125,
+        "reported_gap": 0.0,
+        "max_aggregate_gap": 0.0009765625,
+        "categories": {
+          "social_security": {
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          "ssi": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_benefits": {
+            "baseline": 1007.28,
+            "reform": 0.0,
+            "change": -1007.28
+          },
+          "snap": {
+            "baseline": 3607.57,
+            "reform": 2911.57,
+            "change": -696.0
+          },
+          "other_benefits": {
+            "baseline": 651.0,
+            "reform": 651.0,
+            "change": 0.0
+          },
+          "health_net": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "market_income": {
+            "baseline": 4800.0,
+            "reform": 4800.0,
+            "change": 0.0
+          },
+          "federal_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "other_taxes": {
+            "baseline": -1.0,
+            "reform": -1.0,
+            "change": 0.0
+          }
+        },
+        "components": [
+          {
+            "variable": "pension_income",
+            "path": [
+              "household_net_income",
+              "household_market_income"
+            ],
+            "sign": 1,
+            "category": "market_income",
+            "baseline": 4800.0,
+            "reform": 4800.0,
+            "change": 0.0
+          },
+          {
+            "variable": "social_security",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "social_security",
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          {
+            "variable": "snap",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "snap",
+            "baseline": 3607.57,
+            "reform": 2911.57,
+            "change": -696.0
+          },
+          {
+            "variable": "ca_state_supplement",
+            "path": [
+              "household_net_income",
+              "household_benefits",
+              "household_state_benefits"
+            ],
+            "sign": 1,
+            "category": "state_benefits",
+            "baseline": 1007.28,
+            "reform": 0.0,
+            "change": -1007.28
+          },
+          {
+            "variable": "commodity_supplemental_food_program",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "other_benefits",
+            "baseline": 651.0,
+            "reform": 651.0,
+            "change": 0.0
+          },
+          {
+            "variable": "state_use_tax",
+            "path": [
+              "household_net_income",
+              "household_tax_before_refundable_credits",
+              "household_state_tax_before_refundable_credits"
+            ],
+            "sign": -1,
+            "category": "other_taxes",
+            "baseline": -1.0,
+            "reform": -1.0,
+            "change": 0.0
+          }
+        ]
+      },
+      "with_health_benefits_in_net_income": {
+        "net_change": 348.72,
+        "categories": {
+          "social_security": {
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          "ssi": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_benefits": {
+            "baseline": 1007.28,
+            "reform": 0.0,
+            "change": -1007.28
+          },
+          "snap": {
+            "baseline": 3607.57,
+            "reform": 2911.57,
+            "change": -696.0
+          },
+          "other_benefits": {
+            "baseline": 651.0,
+            "reform": 651.0,
+            "change": 0.0
+          },
+          "health_net": {
+            "baseline": 9236.48,
+            "reform": 9236.48,
+            "change": 0.0
+          },
+          "market_income": {
+            "baseline": 4800.0,
+            "reform": 4800.0,
+            "change": 0.0
+          },
+          "federal_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "other_taxes": {
+            "baseline": -1.0,
+            "reform": -1.0,
+            "change": 0.0
+          }
+        }
+      },
+      "memo": {
+        "baseline": {
+          "medicaid_cost": 9236.478515625,
+          "msp_cost": 0.0,
+          "is_medicaid_eligible": 1.0,
+          "taxable_social_security": 0.0
+        },
+        "reform": {
+          "medicaid_cost": 9236.478515625,
+          "msp_cost": 0.0,
+          "is_medicaid_eligible": 1.0,
+          "taxable_social_security": 0.0
+        }
+      },
+      "situations": {
+        "baseline": {
+          "people": {
+            "worker": {
+              "age": {
+                "2026": 68
+              },
+              "social_security_retirement": {
+                "2026": 8916.0
+              },
+              "social_security_disability": {
+                "2026": 0.0
+              },
+              "social_security_survivors": {
+                "2026": 0.0
+              },
+              "social_security_dependents": {
+                "2026": 0.0
+              },
+              "employment_income": {
+                "2026": 0.0
+              },
+              "taxable_private_pension_income": {
+                "2026": 4800.0
+              },
+              "interest_income": {
+                "2026": 0.0
+              },
+              "bank_account_assets": {
+                "2026": 1500.0
+              },
+              "pre_subsidy_rent": {
+                "2026": 9600.0
+              },
+              "medicare_quarters_of_coverage": {
+                "2026": 88
+              }
+            }
+          },
+          "tax_units": {
+            "household_b_ca_tax_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "spm_units": {
+            "household_b_ca_spm_unit_1": {
+              "members": [
+                "worker"
+              ],
+              "has_heating_cooling_expense": {
+                "2026": true
+              },
+              "takes_up_housing_assistance_if_eligible": {
+                "2026": false
+              }
+            }
+          },
+          "marital_units": {
+            "household_b_ca_marital_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "families": {
+            "household_b_ca_family_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "households": {
+            "household_b_ca": {
+              "members": [
+                "worker"
+              ],
+              "state_fips": {
+                "2026": 6
+              },
+              "living_arrangements_allow_for_food_preparation": {
+                "2026": true
+              }
+            }
+          }
+        },
+        "reform": {
+          "people": {
+            "worker": {
+              "age": {
+                "2026": 68
+              },
+              "social_security_retirement": {
+                "2026": 10968.0
+              },
+              "social_security_disability": {
+                "2026": 0.0
+              },
+              "social_security_survivors": {
+                "2026": 0.0
+              },
+              "social_security_dependents": {
+                "2026": 0.0
+              },
+              "employment_income": {
+                "2026": 0.0
+              },
+              "taxable_private_pension_income": {
+                "2026": 4800.0
+              },
+              "interest_income": {
+                "2026": 0.0
+              },
+              "bank_account_assets": {
+                "2026": 1500.0
+              },
+              "pre_subsidy_rent": {
+                "2026": 9600.0
+              },
+              "medicare_quarters_of_coverage": {
+                "2026": 88
+              }
+            }
+          },
+          "tax_units": {
+            "household_b_ca_tax_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "spm_units": {
+            "household_b_ca_spm_unit_1": {
+              "members": [
+                "worker"
+              ],
+              "has_heating_cooling_expense": {
+                "2026": true
+              },
+              "takes_up_housing_assistance_if_eligible": {
+                "2026": false
+              }
+            }
+          },
+          "marital_units": {
+            "household_b_ca_marital_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "families": {
+            "household_b_ca_family_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "households": {
+            "household_b_ca": {
+              "members": [
+                "worker"
+              ],
+              "state_fips": {
+                "2026": 6
+              },
+              "living_arrangements_allow_for_food_preparation": {
+                "2026": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "household": "B",
+      "label": "Household B",
+      "state": "MT",
+      "baseline_social_security_annual": 8916.0,
+      "reform_social_security_annual": 10968.0,
+      "decomposition": {
+        "net_change": 1845.0,
+        "baseline_net_income": 19124.57,
+        "reform_net_income": 20969.57,
+        "reported_baseline_net_income": 19124.5703125,
+        "reported_reform_net_income": 20969.5703125,
+        "reported_gap": 0.0,
+        "max_aggregate_gap": 0.0009765625,
+        "categories": {
+          "social_security": {
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          "ssi": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_benefits": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "snap": {
+            "baseline": 3607.57,
+            "reform": 3400.57,
+            "change": -207.0
+          },
+          "other_benefits": {
+            "baseline": 651.0,
+            "reform": 651.0,
+            "change": 0.0
+          },
+          "health_net": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "market_income": {
+            "baseline": 4800.0,
+            "reform": 4800.0,
+            "change": 0.0
+          },
+          "federal_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_income_tax": {
+            "baseline": 1150.0,
+            "reform": 1150.0,
+            "change": 0.0
+          },
+          "other_taxes": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          }
+        },
+        "components": [
+          {
+            "variable": "pension_income",
+            "path": [
+              "household_net_income",
+              "household_market_income"
+            ],
+            "sign": 1,
+            "category": "market_income",
+            "baseline": 4800.0,
+            "reform": 4800.0,
+            "change": 0.0
+          },
+          {
+            "variable": "social_security",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "social_security",
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          {
+            "variable": "snap",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "snap",
+            "baseline": 3607.57,
+            "reform": 3400.57,
+            "change": -207.0
+          },
+          {
+            "variable": "commodity_supplemental_food_program",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "other_benefits",
+            "baseline": 651.0,
+            "reform": 651.0,
+            "change": 0.0
+          },
+          {
+            "variable": "mt_refundable_credits",
+            "path": [
+              "household_net_income",
+              "household_refundable_tax_credits",
+              "household_refundable_state_tax_credits"
+            ],
+            "sign": 1,
+            "category": "state_income_tax",
+            "baseline": 1150.0,
+            "reform": 1150.0,
+            "change": 0.0
+          }
+        ]
+      },
+      "with_health_benefits_in_net_income": {
+        "net_change": 1845.0,
+        "categories": {
+          "social_security": {
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          "ssi": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_benefits": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "snap": {
+            "baseline": 3607.57,
+            "reform": 3400.57,
+            "change": -207.0
+          },
+          "other_benefits": {
+            "baseline": 651.0,
+            "reform": 651.0,
+            "change": 0.0
+          },
+          "health_net": {
+            "baseline": 5334.8,
+            "reform": 5334.8,
+            "change": 0.0
+          },
+          "market_income": {
+            "baseline": 4800.0,
+            "reform": 4800.0,
+            "change": 0.0
+          },
+          "federal_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_income_tax": {
+            "baseline": 1150.0,
+            "reform": 1150.0,
+            "change": 0.0
+          },
+          "other_taxes": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          }
+        }
+      },
+      "memo": {
+        "baseline": {
+          "medicaid_cost": 0.0,
+          "msp_cost": 5334.80078125,
+          "is_medicaid_eligible": 0.0,
+          "taxable_social_security": 0.0
+        },
+        "reform": {
+          "medicaid_cost": 0.0,
+          "msp_cost": 5334.80078125,
+          "is_medicaid_eligible": 0.0,
+          "taxable_social_security": 0.0
+        }
+      },
+      "situations": {
+        "baseline": {
+          "people": {
+            "worker": {
+              "age": {
+                "2026": 68
+              },
+              "social_security_retirement": {
+                "2026": 8916.0
+              },
+              "social_security_disability": {
+                "2026": 0.0
+              },
+              "social_security_survivors": {
+                "2026": 0.0
+              },
+              "social_security_dependents": {
+                "2026": 0.0
+              },
+              "employment_income": {
+                "2026": 0.0
+              },
+              "taxable_private_pension_income": {
+                "2026": 4800.0
+              },
+              "interest_income": {
+                "2026": 0.0
+              },
+              "bank_account_assets": {
+                "2026": 1500.0
+              },
+              "pre_subsidy_rent": {
+                "2026": 9600.0
+              },
+              "medicare_quarters_of_coverage": {
+                "2026": 88
+              }
+            }
+          },
+          "tax_units": {
+            "household_b_mt_tax_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "spm_units": {
+            "household_b_mt_spm_unit_1": {
+              "members": [
+                "worker"
+              ],
+              "has_heating_cooling_expense": {
+                "2026": true
+              },
+              "takes_up_housing_assistance_if_eligible": {
+                "2026": false
+              }
+            }
+          },
+          "marital_units": {
+            "household_b_mt_marital_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "families": {
+            "household_b_mt_family_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "households": {
+            "household_b_mt": {
+              "members": [
+                "worker"
+              ],
+              "state_fips": {
+                "2026": 30
+              },
+              "living_arrangements_allow_for_food_preparation": {
+                "2026": true
+              }
+            }
+          }
+        },
+        "reform": {
+          "people": {
+            "worker": {
+              "age": {
+                "2026": 68
+              },
+              "social_security_retirement": {
+                "2026": 10968.0
+              },
+              "social_security_disability": {
+                "2026": 0.0
+              },
+              "social_security_survivors": {
+                "2026": 0.0
+              },
+              "social_security_dependents": {
+                "2026": 0.0
+              },
+              "employment_income": {
+                "2026": 0.0
+              },
+              "taxable_private_pension_income": {
+                "2026": 4800.0
+              },
+              "interest_income": {
+                "2026": 0.0
+              },
+              "bank_account_assets": {
+                "2026": 1500.0
+              },
+              "pre_subsidy_rent": {
+                "2026": 9600.0
+              },
+              "medicare_quarters_of_coverage": {
+                "2026": 88
+              }
+            }
+          },
+          "tax_units": {
+            "household_b_mt_tax_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "spm_units": {
+            "household_b_mt_spm_unit_1": {
+              "members": [
+                "worker"
+              ],
+              "has_heating_cooling_expense": {
+                "2026": true
+              },
+              "takes_up_housing_assistance_if_eligible": {
+                "2026": false
+              }
+            }
+          },
+          "marital_units": {
+            "household_b_mt_marital_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "families": {
+            "household_b_mt_family_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "households": {
+            "household_b_mt": {
+              "members": [
+                "worker"
+              ],
+              "state_fips": {
+                "2026": 30
+              },
+              "living_arrangements_allow_for_food_preparation": {
+                "2026": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "household": "B",
+      "label": "Household B",
+      "state": "FL",
+      "baseline_social_security_annual": 8916.0,
+      "reform_social_security_annual": 10968.0,
+      "decomposition": {
+        "net_change": 1128.0,
+        "baseline_net_income": 17362.57,
+        "reform_net_income": 18490.57,
+        "reported_baseline_net_income": 17362.5703125,
+        "reported_reform_net_income": 18490.5703125,
+        "reported_gap": 0.0,
+        "max_aggregate_gap": 0.0009765625,
+        "categories": {
+          "social_security": {
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          "ssi": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_benefits": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "snap": {
+            "baseline": 2995.57,
+            "reform": 2071.57,
+            "change": -924.0
+          },
+          "other_benefits": {
+            "baseline": 651.0,
+            "reform": 651.0,
+            "change": 0.0
+          },
+          "health_net": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "market_income": {
+            "baseline": 4800.0,
+            "reform": 4800.0,
+            "change": 0.0
+          },
+          "federal_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "other_taxes": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          }
+        },
+        "components": [
+          {
+            "variable": "pension_income",
+            "path": [
+              "household_net_income",
+              "household_market_income"
+            ],
+            "sign": 1,
+            "category": "market_income",
+            "baseline": 4800.0,
+            "reform": 4800.0,
+            "change": 0.0
+          },
+          {
+            "variable": "social_security",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "social_security",
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          {
+            "variable": "snap",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "snap",
+            "baseline": 2995.57,
+            "reform": 2071.57,
+            "change": -924.0
+          },
+          {
+            "variable": "commodity_supplemental_food_program",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "other_benefits",
+            "baseline": 651.0,
+            "reform": 651.0,
+            "change": 0.0
+          }
+        ]
+      },
+      "with_health_benefits_in_net_income": {
+        "net_change": -2737.44,
+        "categories": {
+          "social_security": {
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          "ssi": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_benefits": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "snap": {
+            "baseline": 2995.57,
+            "reform": 2071.57,
+            "change": -924.0
+          },
+          "other_benefits": {
+            "baseline": 651.0,
+            "reform": 651.0,
+            "change": 0.0
+          },
+          "health_net": {
+            "baseline": 9200.24,
+            "reform": 5334.8,
+            "change": -3865.44
+          },
+          "market_income": {
+            "baseline": 4800.0,
+            "reform": 4800.0,
+            "change": 0.0
+          },
+          "federal_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "other_taxes": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          }
+        }
+      },
+      "memo": {
+        "baseline": {
+          "medicaid_cost": 9200.23828125,
+          "msp_cost": 0.0,
+          "is_medicaid_eligible": 1.0,
+          "taxable_social_security": 0.0
+        },
+        "reform": {
+          "medicaid_cost": 0.0,
+          "msp_cost": 5334.80078125,
+          "is_medicaid_eligible": 0.0,
+          "taxable_social_security": 0.0
+        }
+      },
+      "situations": {
+        "baseline": {
+          "people": {
+            "worker": {
+              "age": {
+                "2026": 68
+              },
+              "social_security_retirement": {
+                "2026": 8916.0
+              },
+              "social_security_disability": {
+                "2026": 0.0
+              },
+              "social_security_survivors": {
+                "2026": 0.0
+              },
+              "social_security_dependents": {
+                "2026": 0.0
+              },
+              "employment_income": {
+                "2026": 0.0
+              },
+              "taxable_private_pension_income": {
+                "2026": 4800.0
+              },
+              "interest_income": {
+                "2026": 0.0
+              },
+              "bank_account_assets": {
+                "2026": 1500.0
+              },
+              "pre_subsidy_rent": {
+                "2026": 9600.0
+              },
+              "medicare_quarters_of_coverage": {
+                "2026": 88
+              }
+            }
+          },
+          "tax_units": {
+            "household_b_fl_tax_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "spm_units": {
+            "household_b_fl_spm_unit_1": {
+              "members": [
+                "worker"
+              ],
+              "has_heating_cooling_expense": {
+                "2026": true
+              },
+              "takes_up_housing_assistance_if_eligible": {
+                "2026": false
+              }
+            }
+          },
+          "marital_units": {
+            "household_b_fl_marital_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "families": {
+            "household_b_fl_family_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "households": {
+            "household_b_fl": {
+              "members": [
+                "worker"
+              ],
+              "state_fips": {
+                "2026": 12
+              },
+              "living_arrangements_allow_for_food_preparation": {
+                "2026": true
+              }
+            }
+          }
+        },
+        "reform": {
+          "people": {
+            "worker": {
+              "age": {
+                "2026": 68
+              },
+              "social_security_retirement": {
+                "2026": 10968.0
+              },
+              "social_security_disability": {
+                "2026": 0.0
+              },
+              "social_security_survivors": {
+                "2026": 0.0
+              },
+              "social_security_dependents": {
+                "2026": 0.0
+              },
+              "employment_income": {
+                "2026": 0.0
+              },
+              "taxable_private_pension_income": {
+                "2026": 4800.0
+              },
+              "interest_income": {
+                "2026": 0.0
+              },
+              "bank_account_assets": {
+                "2026": 1500.0
+              },
+              "pre_subsidy_rent": {
+                "2026": 9600.0
+              },
+              "medicare_quarters_of_coverage": {
+                "2026": 88
+              }
+            }
+          },
+          "tax_units": {
+            "household_b_fl_tax_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "spm_units": {
+            "household_b_fl_spm_unit_1": {
+              "members": [
+                "worker"
+              ],
+              "has_heating_cooling_expense": {
+                "2026": true
+              },
+              "takes_up_housing_assistance_if_eligible": {
+                "2026": false
+              }
+            }
+          },
+          "marital_units": {
+            "household_b_fl_marital_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "families": {
+            "household_b_fl_family_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "households": {
+            "household_b_fl": {
+              "members": [
+                "worker"
+              ],
+              "state_fips": {
+                "2026": 12
+              },
+              "living_arrangements_allow_for_food_preparation": {
+                "2026": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "household": "C",
+      "label": "Household C",
+      "state": "CA",
+      "baseline_social_security_annual": 8916.0,
+      "reform_social_security_annual": 10968.0,
+      "decomposition": {
+        "net_change": 1961.59,
+        "baseline_net_income": 37843.27,
+        "reform_net_income": 39804.86,
+        "reported_baseline_net_income": 37843.26953125,
+        "reported_reform_net_income": 39804.859375,
+        "reported_gap": 0.0,
+        "max_aggregate_gap": 0.000732421875,
+        "categories": {
+          "social_security": {
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          "ssi": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_benefits": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "snap": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "other_benefits": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "health_net": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "market_income": {
+            "baseline": 30000.0,
+            "reform": 30000.0,
+            "change": 0.0
+          },
+          "federal_income_tax": {
+            "baseline": -1069.73,
+            "reform": -1161.14,
+            "change": -91.41
+          },
+          "state_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "other_taxes": {
+            "baseline": -3.0,
+            "reform": -2.0,
+            "change": 1.0
+          }
+        },
+        "components": [
+          {
+            "variable": "pension_income",
+            "path": [
+              "household_net_income",
+              "household_market_income"
+            ],
+            "sign": 1,
+            "category": "market_income",
+            "baseline": 30000.0,
+            "reform": 30000.0,
+            "change": 0.0
+          },
+          {
+            "variable": "social_security",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "social_security",
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          {
+            "variable": "income_tax_before_refundable_credits",
+            "path": [
+              "household_net_income",
+              "household_tax_before_refundable_credits"
+            ],
+            "sign": -1,
+            "category": "federal_income_tax",
+            "baseline": -1069.73,
+            "reform": -1161.14,
+            "change": -91.41
+          },
+          {
+            "variable": "state_use_tax",
+            "path": [
+              "household_net_income",
+              "household_tax_before_refundable_credits",
+              "household_state_tax_before_refundable_credits"
+            ],
+            "sign": -1,
+            "category": "other_taxes",
+            "baseline": -3.0,
+            "reform": -2.0,
+            "change": 1.0
+          }
+        ]
+      },
+      "with_health_benefits_in_net_income": {
+        "net_change": 1961.59,
+        "categories": {
+          "social_security": {
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          "ssi": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_benefits": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "snap": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "other_benefits": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "health_net": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "market_income": {
+            "baseline": 30000.0,
+            "reform": 30000.0,
+            "change": 0.0
+          },
+          "federal_income_tax": {
+            "baseline": -1069.73,
+            "reform": -1161.14,
+            "change": -91.41
+          },
+          "state_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "other_taxes": {
+            "baseline": -3.0,
+            "reform": -2.0,
+            "change": 1.0
+          }
+        }
+      },
+      "memo": {
+        "baseline": {
+          "medicaid_cost": 0.0,
+          "msp_cost": 0.0,
+          "is_medicaid_eligible": 0.0,
+          "taxable_social_security": 4847.2998046875
+        },
+        "reform": {
+          "medicaid_cost": 0.0,
+          "msp_cost": 0.0,
+          "is_medicaid_eligible": 0.0,
+          "taxable_social_security": 5761.39990234375
+        }
+      },
+      "situations": {
+        "baseline": {
+          "people": {
+            "worker": {
+              "age": {
+                "2026": 68
+              },
+              "social_security_retirement": {
+                "2026": 8916.0
+              },
+              "social_security_disability": {
+                "2026": 0.0
+              },
+              "social_security_survivors": {
+                "2026": 0.0
+              },
+              "social_security_dependents": {
+                "2026": 0.0
+              },
+              "employment_income": {
+                "2026": 0.0
+              },
+              "taxable_private_pension_income": {
+                "2026": 30000.0
+              },
+              "interest_income": {
+                "2026": 0.0
+              },
+              "bank_account_assets": {
+                "2026": 1500.0
+              },
+              "pre_subsidy_rent": {
+                "2026": 9600.0
+              },
+              "medicare_quarters_of_coverage": {
+                "2026": 88
+              }
+            }
+          },
+          "tax_units": {
+            "household_c_ca_tax_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "spm_units": {
+            "household_c_ca_spm_unit_1": {
+              "members": [
+                "worker"
+              ],
+              "has_heating_cooling_expense": {
+                "2026": true
+              },
+              "takes_up_housing_assistance_if_eligible": {
+                "2026": false
+              }
+            }
+          },
+          "marital_units": {
+            "household_c_ca_marital_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "families": {
+            "household_c_ca_family_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "households": {
+            "household_c_ca": {
+              "members": [
+                "worker"
+              ],
+              "state_fips": {
+                "2026": 6
+              },
+              "living_arrangements_allow_for_food_preparation": {
+                "2026": true
+              }
+            }
+          }
+        },
+        "reform": {
+          "people": {
+            "worker": {
+              "age": {
+                "2026": 68
+              },
+              "social_security_retirement": {
+                "2026": 10968.0
+              },
+              "social_security_disability": {
+                "2026": 0.0
+              },
+              "social_security_survivors": {
+                "2026": 0.0
+              },
+              "social_security_dependents": {
+                "2026": 0.0
+              },
+              "employment_income": {
+                "2026": 0.0
+              },
+              "taxable_private_pension_income": {
+                "2026": 30000.0
+              },
+              "interest_income": {
+                "2026": 0.0
+              },
+              "bank_account_assets": {
+                "2026": 1500.0
+              },
+              "pre_subsidy_rent": {
+                "2026": 9600.0
+              },
+              "medicare_quarters_of_coverage": {
+                "2026": 88
+              }
+            }
+          },
+          "tax_units": {
+            "household_c_ca_tax_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "spm_units": {
+            "household_c_ca_spm_unit_1": {
+              "members": [
+                "worker"
+              ],
+              "has_heating_cooling_expense": {
+                "2026": true
+              },
+              "takes_up_housing_assistance_if_eligible": {
+                "2026": false
+              }
+            }
+          },
+          "marital_units": {
+            "household_c_ca_marital_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "families": {
+            "household_c_ca_family_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "households": {
+            "household_c_ca": {
+              "members": [
+                "worker"
+              ],
+              "state_fips": {
+                "2026": 6
+              },
+              "living_arrangements_allow_for_food_preparation": {
+                "2026": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "household": "C",
+      "label": "Household C",
+      "state": "MT",
+      "baseline_social_security_annual": 8916.0,
+      "reform_social_security_annual": 10968.0,
+      "decomposition": {
+        "net_change": 1884.68,
+        "baseline_net_income": 37646.78,
+        "reform_net_income": 39531.46,
+        "reported_baseline_net_income": 37646.77734375,
+        "reported_reform_net_income": 39531.46484375,
+        "reported_gap": 0.0,
+        "max_aggregate_gap": 0.00063323974609375,
+        "categories": {
+          "social_security": {
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          "ssi": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_benefits": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "snap": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "other_benefits": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "health_net": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "market_income": {
+            "baseline": 30000.0,
+            "reform": 30000.0,
+            "change": 0.0
+          },
+          "federal_income_tax": {
+            "baseline": -1069.73,
+            "reform": -1161.14,
+            "change": -91.41
+          },
+          "state_income_tax": {
+            "baseline": -199.49,
+            "reform": -275.4,
+            "change": -75.91
+          },
+          "other_taxes": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          }
+        },
+        "components": [
+          {
+            "variable": "pension_income",
+            "path": [
+              "household_net_income",
+              "household_market_income"
+            ],
+            "sign": 1,
+            "category": "market_income",
+            "baseline": 30000.0,
+            "reform": 30000.0,
+            "change": 0.0
+          },
+          {
+            "variable": "social_security",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "social_security",
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          {
+            "variable": "mt_refundable_credits",
+            "path": [
+              "household_net_income",
+              "household_refundable_tax_credits",
+              "household_refundable_state_tax_credits"
+            ],
+            "sign": 1,
+            "category": "state_income_tax",
+            "baseline": 37.26,
+            "reform": 4.32,
+            "change": -32.94
+          },
+          {
+            "variable": "income_tax_before_refundable_credits",
+            "path": [
+              "household_net_income",
+              "household_tax_before_refundable_credits"
+            ],
+            "sign": -1,
+            "category": "federal_income_tax",
+            "baseline": -1069.73,
+            "reform": -1161.14,
+            "change": -91.41
+          },
+          {
+            "variable": "state_income_tax_before_refundable_credits",
+            "path": [
+              "household_net_income",
+              "household_tax_before_refundable_credits",
+              "household_state_tax_before_refundable_credits"
+            ],
+            "sign": -1,
+            "category": "state_income_tax",
+            "baseline": -236.75,
+            "reform": -279.72,
+            "change": -42.97
+          }
+        ]
+      },
+      "with_health_benefits_in_net_income": {
+        "net_change": 1884.68,
+        "categories": {
+          "social_security": {
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          "ssi": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_benefits": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "snap": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "other_benefits": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "health_net": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "market_income": {
+            "baseline": 30000.0,
+            "reform": 30000.0,
+            "change": 0.0
+          },
+          "federal_income_tax": {
+            "baseline": -1069.73,
+            "reform": -1161.14,
+            "change": -91.41
+          },
+          "state_income_tax": {
+            "baseline": -199.49,
+            "reform": -275.4,
+            "change": -75.91
+          },
+          "other_taxes": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          }
+        }
+      },
+      "memo": {
+        "baseline": {
+          "medicaid_cost": 0.0,
+          "msp_cost": 0.0,
+          "is_medicaid_eligible": 0.0,
+          "taxable_social_security": 4847.2998046875
+        },
+        "reform": {
+          "medicaid_cost": 0.0,
+          "msp_cost": 0.0,
+          "is_medicaid_eligible": 0.0,
+          "taxable_social_security": 5761.39990234375
+        }
+      },
+      "situations": {
+        "baseline": {
+          "people": {
+            "worker": {
+              "age": {
+                "2026": 68
+              },
+              "social_security_retirement": {
+                "2026": 8916.0
+              },
+              "social_security_disability": {
+                "2026": 0.0
+              },
+              "social_security_survivors": {
+                "2026": 0.0
+              },
+              "social_security_dependents": {
+                "2026": 0.0
+              },
+              "employment_income": {
+                "2026": 0.0
+              },
+              "taxable_private_pension_income": {
+                "2026": 30000.0
+              },
+              "interest_income": {
+                "2026": 0.0
+              },
+              "bank_account_assets": {
+                "2026": 1500.0
+              },
+              "pre_subsidy_rent": {
+                "2026": 9600.0
+              },
+              "medicare_quarters_of_coverage": {
+                "2026": 88
+              }
+            }
+          },
+          "tax_units": {
+            "household_c_mt_tax_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "spm_units": {
+            "household_c_mt_spm_unit_1": {
+              "members": [
+                "worker"
+              ],
+              "has_heating_cooling_expense": {
+                "2026": true
+              },
+              "takes_up_housing_assistance_if_eligible": {
+                "2026": false
+              }
+            }
+          },
+          "marital_units": {
+            "household_c_mt_marital_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "families": {
+            "household_c_mt_family_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "households": {
+            "household_c_mt": {
+              "members": [
+                "worker"
+              ],
+              "state_fips": {
+                "2026": 30
+              },
+              "living_arrangements_allow_for_food_preparation": {
+                "2026": true
+              }
+            }
+          }
+        },
+        "reform": {
+          "people": {
+            "worker": {
+              "age": {
+                "2026": 68
+              },
+              "social_security_retirement": {
+                "2026": 10968.0
+              },
+              "social_security_disability": {
+                "2026": 0.0
+              },
+              "social_security_survivors": {
+                "2026": 0.0
+              },
+              "social_security_dependents": {
+                "2026": 0.0
+              },
+              "employment_income": {
+                "2026": 0.0
+              },
+              "taxable_private_pension_income": {
+                "2026": 30000.0
+              },
+              "interest_income": {
+                "2026": 0.0
+              },
+              "bank_account_assets": {
+                "2026": 1500.0
+              },
+              "pre_subsidy_rent": {
+                "2026": 9600.0
+              },
+              "medicare_quarters_of_coverage": {
+                "2026": 88
+              }
+            }
+          },
+          "tax_units": {
+            "household_c_mt_tax_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "spm_units": {
+            "household_c_mt_spm_unit_1": {
+              "members": [
+                "worker"
+              ],
+              "has_heating_cooling_expense": {
+                "2026": true
+              },
+              "takes_up_housing_assistance_if_eligible": {
+                "2026": false
+              }
+            }
+          },
+          "marital_units": {
+            "household_c_mt_marital_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "families": {
+            "household_c_mt_family_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "households": {
+            "household_c_mt": {
+              "members": [
+                "worker"
+              ],
+              "state_fips": {
+                "2026": 30
+              },
+              "living_arrangements_allow_for_food_preparation": {
+                "2026": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "household": "C",
+      "label": "Household C",
+      "state": "FL",
+      "baseline_social_security_annual": 8916.0,
+      "reform_social_security_annual": 10968.0,
+      "decomposition": {
+        "net_change": 1960.59,
+        "baseline_net_income": 37846.27,
+        "reform_net_income": 39806.86,
+        "reported_baseline_net_income": 37846.26953125,
+        "reported_reform_net_income": 39806.859375,
+        "reported_gap": 0.0,
+        "max_aggregate_gap": 0.000732421875,
+        "categories": {
+          "social_security": {
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          "ssi": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_benefits": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "snap": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "other_benefits": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "health_net": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "market_income": {
+            "baseline": 30000.0,
+            "reform": 30000.0,
+            "change": 0.0
+          },
+          "federal_income_tax": {
+            "baseline": -1069.73,
+            "reform": -1161.14,
+            "change": -91.41
+          },
+          "state_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "other_taxes": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          }
+        },
+        "components": [
+          {
+            "variable": "pension_income",
+            "path": [
+              "household_net_income",
+              "household_market_income"
+            ],
+            "sign": 1,
+            "category": "market_income",
+            "baseline": 30000.0,
+            "reform": 30000.0,
+            "change": 0.0
+          },
+          {
+            "variable": "social_security",
+            "path": [
+              "household_net_income",
+              "household_benefits"
+            ],
+            "sign": 1,
+            "category": "social_security",
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          {
+            "variable": "income_tax_before_refundable_credits",
+            "path": [
+              "household_net_income",
+              "household_tax_before_refundable_credits"
+            ],
+            "sign": -1,
+            "category": "federal_income_tax",
+            "baseline": -1069.73,
+            "reform": -1161.14,
+            "change": -91.41
+          }
+        ]
+      },
+      "with_health_benefits_in_net_income": {
+        "net_change": 1960.59,
+        "categories": {
+          "social_security": {
+            "baseline": 8916.0,
+            "reform": 10968.0,
+            "change": 2052.0
+          },
+          "ssi": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "state_benefits": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "snap": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "other_benefits": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "health_net": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "market_income": {
+            "baseline": 30000.0,
+            "reform": 30000.0,
+            "change": 0.0
+          },
+          "federal_income_tax": {
+            "baseline": -1069.73,
+            "reform": -1161.14,
+            "change": -91.41
+          },
+          "state_income_tax": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          },
+          "other_taxes": {
+            "baseline": 0.0,
+            "reform": 0.0,
+            "change": 0.0
+          }
+        }
+      },
+      "memo": {
+        "baseline": {
+          "medicaid_cost": 0.0,
+          "msp_cost": 0.0,
+          "is_medicaid_eligible": 0.0,
+          "taxable_social_security": 4847.2998046875
+        },
+        "reform": {
+          "medicaid_cost": 0.0,
+          "msp_cost": 0.0,
+          "is_medicaid_eligible": 0.0,
+          "taxable_social_security": 5761.39990234375
+        }
+      },
+      "situations": {
+        "baseline": {
+          "people": {
+            "worker": {
+              "age": {
+                "2026": 68
+              },
+              "social_security_retirement": {
+                "2026": 8916.0
+              },
+              "social_security_disability": {
+                "2026": 0.0
+              },
+              "social_security_survivors": {
+                "2026": 0.0
+              },
+              "social_security_dependents": {
+                "2026": 0.0
+              },
+              "employment_income": {
+                "2026": 0.0
+              },
+              "taxable_private_pension_income": {
+                "2026": 30000.0
+              },
+              "interest_income": {
+                "2026": 0.0
+              },
+              "bank_account_assets": {
+                "2026": 1500.0
+              },
+              "pre_subsidy_rent": {
+                "2026": 9600.0
+              },
+              "medicare_quarters_of_coverage": {
+                "2026": 88
+              }
+            }
+          },
+          "tax_units": {
+            "household_c_fl_tax_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "spm_units": {
+            "household_c_fl_spm_unit_1": {
+              "members": [
+                "worker"
+              ],
+              "has_heating_cooling_expense": {
+                "2026": true
+              },
+              "takes_up_housing_assistance_if_eligible": {
+                "2026": false
+              }
+            }
+          },
+          "marital_units": {
+            "household_c_fl_marital_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "families": {
+            "household_c_fl_family_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "households": {
+            "household_c_fl": {
+              "members": [
+                "worker"
+              ],
+              "state_fips": {
+                "2026": 12
+              },
+              "living_arrangements_allow_for_food_preparation": {
+                "2026": true
+              }
+            }
+          }
+        },
+        "reform": {
+          "people": {
+            "worker": {
+              "age": {
+                "2026": 68
+              },
+              "social_security_retirement": {
+                "2026": 10968.0
+              },
+              "social_security_disability": {
+                "2026": 0.0
+              },
+              "social_security_survivors": {
+                "2026": 0.0
+              },
+              "social_security_dependents": {
+                "2026": 0.0
+              },
+              "employment_income": {
+                "2026": 0.0
+              },
+              "taxable_private_pension_income": {
+                "2026": 30000.0
+              },
+              "interest_income": {
+                "2026": 0.0
+              },
+              "bank_account_assets": {
+                "2026": 1500.0
+              },
+              "pre_subsidy_rent": {
+                "2026": 9600.0
+              },
+              "medicare_quarters_of_coverage": {
+                "2026": 88
+              }
+            }
+          },
+          "tax_units": {
+            "household_c_fl_tax_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "spm_units": {
+            "household_c_fl_spm_unit_1": {
+              "members": [
+                "worker"
+              ],
+              "has_heating_cooling_expense": {
+                "2026": true
+              },
+              "takes_up_housing_assistance_if_eligible": {
+                "2026": false
+              }
+            }
+          },
+          "marital_units": {
+            "household_c_fl_marital_unit_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "families": {
+            "household_c_fl_family_1": {
+              "members": [
+                "worker"
+              ]
+            }
+          },
+          "households": {
+            "household_c_fl": {
+              "members": [
+                "worker"
+              ],
+              "state_fips": {
+                "2026": 12
+              },
+              "living_arrangements_allow_for_food_preparation": {
+                "2026": true
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "invariants_checked": [
+    "every household-state pair: the leaf changes sum exactly (in cents) to the net change, and the categories to the same total",
+    "the Social Security component equals the Microcosm benefit change",
+    "SSI, SNAP, state benefits and the federal income-tax contribution never rise when Social Security rises",
+    "PolicyEngine-US's own household_net_income change is within one cent of the definition's sum"
+  ],
+  "caveats": [
+    "Illustrative households, not survey data: one worker, chosen so the minimum binds, in three living situations.",
+    "The bridge passes Microcosm's Social Security amounts to PolicyEngine-US as inputs; it does not run over the projected population and applies no behavioral response.",
+    "The reform is option 2 of exercise 4 (the standard price-indexed minimum with its printed 12.81 percent uniform cut for new entitlees). The worker is on the minimum, so the cut does not reach her; a worker above the minimum would lose 12.81 percent.",
+    "The baseline is current-law scheduled benefits. Against option 1 (reduced current law, the Report's own benchmark) her gain would be larger; that PIA is in the JSON as a memo, not run through PolicyEngine-US.",
+    "Net income is PolicyEngine-US's household_net_income, which by default excludes health coverage (Medicaid at cost, Medicare Savings Programs); the with-health sensitivity and the memo lines report it.",
+    "SNAP amounts for October-December 2026 are PolicyEngine-US's CPI-U projection of fiscal-2027 values (gov/usda/snap/uprating.yaml; max_allotment.yaml carries uprating metadata), not USDA's published figures; every other 2026 parameter on these paths has a dated 2026 entry or holds an earlier one.",
+    "California's aged or disabled payment standard has no 2026 entry in this checkout, so 2026 uses the 2025 value (1,206.94 a month).",
+    "Take-up is PolicyEngine-US's default (full) for SSI, SNAP and Medicaid; housing assistance is switched off because vouchers are rationed, and the household can prepare food at home.",
+    "COLAs for 2023-2025 are derived from PolicyEngine-US's third-quarter CPI-W averages under 42 USC 415(i)(1)(D); the derived 2022 COLA equals the committed SSA history's."
+  ]
+}
