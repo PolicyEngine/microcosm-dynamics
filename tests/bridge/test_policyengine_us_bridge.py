@@ -895,14 +895,51 @@ def _checkout_installation(tmp_path, clone):
     )
 
 
+def _check(tmp_path, clone, **kwargs):
+    # The fixture's origin is a local bare repository, not GitHub, so the
+    # tests of reachability and cleanliness switch the host check off; its
+    # own test is below.
+    return bridge.check_published_source(
+        _checkout_installation(tmp_path, clone),
+        **{"public_origin": False, **kwargs},
+    )
+
+
 def test__given_pushed_clean_checkout__then_source_is_published(
     tmp_path, checkout
 ):
     installation = _checkout_installation(tmp_path, checkout)
     assert installation.source_kind == "path"
-    record = bridge.check_published_source(installation)
+    record = _check(tmp_path, checkout)
     assert record["published"]
-    assert record["checkout"]["origin_refs_containing"]
+    assert record["checkout"]["origin_heads_containing"] == ["refs/heads/main"]
+
+
+def test__given_origin_that_is_not_public__then_source_is_refused(
+    tmp_path, checkout
+):
+    """A pushed commit on a local or private origin is not published."""
+
+    with pytest.raises(bridge.UnpublishedSourceError, match="public GitHub"):
+        bridge.check_published_source(
+            _checkout_installation(tmp_path, checkout)
+        )
+
+
+@pytest.mark.parametrize(
+    ("url", "public"),
+    [
+        ("https://github.com/PolicyEngine/policyengine-us.git", True),
+        ("https://github.com/PolicyEngine/policyengine-us", True),
+        ("git@github.com:PolicyEngine/policyengine-us.git", True),
+        ("ssh://git@github.com/PolicyEngine/policyengine-us.git", True),
+        ("https://github.example.com/PolicyEngine/policyengine-us", False),
+        ("/Users/someone/policyengine-us.git", False),
+        ("file:///tmp/origin.git", False),
+    ],
+)
+def test__given_origin_url__then_only_github_counts_as_public(url, public):
+    assert bool(bridge._PUBLIC_ORIGIN.match(url)) is public
 
 
 def test__given_local_commit_not_on_origin__then_source_is_refused(
@@ -913,22 +950,60 @@ def test__given_local_commit_not_on_origin__then_source_is_refused(
     (checkout / "policyengine_us" / "extra.py").write_text("X = 1\n")
     _git(checkout, "add", ".")
     _git(checkout, "commit", "-q", "-m", "fixup! local only")
-    installation = _checkout_installation(tmp_path, checkout)
     with pytest.raises(bridge.UnpublishedSourceError, match="not reachable"):
-        bridge.check_published_source(installation)
+        _check(tmp_path, checkout)
 
 
-@pytest.mark.parametrize("change", ["tracked", "untracked"])
+def test__given_branch_deleted_on_origin__then_a_stale_ref_does_not_count(
+    tmp_path, checkout
+):
+    """A remote-tracking ref can outlive its branch; origin is asked now."""
+
+    _git(checkout, "checkout", "-q", "-b", "feature")
+    (checkout / "policyengine_us" / "feature.py").write_text("F = 1\n")
+    _git(checkout, "add", ".")
+    _git(checkout, "commit", "-q", "-m", "feature")
+    _git(checkout, "push", "-q", "origin", "feature")
+    assert _check(tmp_path, checkout)["published"]
+    # Delete the branch on origin only: refs/remotes/origin/feature stays.
+    _git(tmp_path / "origin.git", "branch", "-q", "-D", "feature")
+    _git(checkout, "rev-parse", "refs/remotes/origin/feature")
+    with pytest.raises(bridge.UnpublishedSourceError, match="not reachable"):
+        _check(tmp_path, checkout)
+
+
+def test__given_unreachable_origin__then_source_is_refused(tmp_path, checkout):
+    _git(checkout, "remote", "set-url", "origin", str(tmp_path / "gone.git"))
+    with pytest.raises(bridge.UnpublishedSourceError, match="could not be"):
+        _check(tmp_path, checkout)
+
+
+@pytest.mark.parametrize("change", ["tracked", "untracked", "ignored"])
 def test__given_modified_checkout__then_source_is_refused(
     tmp_path, checkout, change
 ):
+    package = checkout / "policyengine_us"
     if change == "tracked":
-        (checkout / "policyengine_us" / "__init__.py").write_text("Y = 2\n")
+        (package / "__init__.py").write_text("Y = 2\n")
+    elif change == "untracked":
+        (package / "new.py").write_text("Z = 3\n")
     else:
-        (checkout / "policyengine_us" / "new.py").write_text("Z = 3\n")
-    installation = _checkout_installation(tmp_path, checkout)
+        # A git-ignored parameter file still loads: policyengine-core reads
+        # every YAML under parameters/.
+        exclude = checkout / ".git" / "info" / "exclude"
+        exclude.write_text(exclude.read_text() + "hidden.yaml\n")
+        (package / "hidden.yaml").write_text("values: {2026-01-01: 1}\n")
     with pytest.raises(bridge.UnpublishedSourceError, match="uncommitted"):
-        bridge.check_published_source(installation)
+        _check(tmp_path, checkout)
+
+
+def test__given_only_bytecode_untracked__then_checkout_stays_clean(
+    tmp_path, checkout
+):
+    cache = checkout / "policyengine_us" / "__pycache__"
+    cache.mkdir()
+    (cache / "__init__.cpython-313.pyc").write_bytes(b"\x00")
+    assert _check(tmp_path, checkout)["published"]
 
 
 def test__given_package_outside_any_checkout__then_source_is_refused(
@@ -964,14 +1039,21 @@ def test__given_installed_files__then_record_verification_checks_each(
     record = site / "policyengine_us-2.18.0.dist-info" / "RECORD"
     record.write_text("\n".join(lines) + "\n")
     installation = _installation(tmp_path, record_path=str(record))
+    # Bytecode written at import time is neither in the RECORD nor extra.
+    cache = site / "policyengine_us" / "__pycache__"
+    cache.mkdir()
+    (cache / "__init__.cpython-313.pyc").write_bytes(b"\x00")
     clean = bridge.verify_record(installation)
     assert clean["files_checked"] == 2
     assert clean["mismatched"] == [] and clean["missing"] == []
+    assert clean["extra"] == []
     (site / "policyengine_us" / "p" / "x.yaml").write_text("values: {1: 2}\n")
     (site / "policyengine_us" / "__init__.py").unlink()
+    (site / "policyengine_us" / "p" / "override.yaml").write_text("x: 1\n")
     dirty = bridge.verify_record(installation)
     assert dirty["mismatched"] == ["policyengine_us/p/x.yaml"]
     assert dirty["missing"] == ["policyengine_us/__init__.py"]
+    assert dirty["extra"] == ["policyengine_us/p/override.yaml"]
     assert dirty["package_record_digest"] == clean["package_record_digest"]
 
 
@@ -985,14 +1067,26 @@ def test__given_installed_files__then_record_verification_checks_each(
         max_size=8,
         unique=True,
     ),
-    st.lists(st.from_regex(r"[a-z]{1,8},,", fullmatch=True), max_size=4),
+    st.lists(
+        st.one_of(
+            st.from_regex(r"[a-z]{1,8},,", fullmatch=True),
+            # pip compiles bytecode and lists it under the package.
+            st.from_regex(
+                r"policyengine_us/(?:[a-z]{1,8}/)?__pycache__/"
+                r"[a-z]{1,8}\.cpython-31[0-4]\.pyc,,",
+                fullmatch=True,
+            ),
+        ),
+        max_size=6,
+    ),
     st.randoms(use_true_random=False),
 )
 def test__given_installer_lines_and_order__then_package_digest_is_unchanged(
     package_lines, installer_lines, random
 ):
-    """The installed RECORD adds installer lines and may reorder; the digest
-    of the sorted package lines is the wheel's either way."""
+    """The installed RECORD adds installer lines (pip's bytecode among them)
+    and may reorder; the digest of the sorted package lines is the wheel's
+    either way."""
 
     wheel = "\n".join(package_lines) + "\n"
     installed = package_lines + installer_lines
@@ -1096,6 +1190,91 @@ def test__given_branch_taken_in_one_run_only__then_it_is_a_cause():
         "age@2026": _node([68.0], is_input=True),
     }
     assert bridge.uncaused_changes(baseline, reform, ["cost@2026"]) == []
+
+
+def test__given_branch_copy_of_a_main_value__then_it_reads_the_main_node():
+    """A branch clones its parent's calculated values (2.18.0's itemizing
+    branch copies adjusted gross income): the copy is caused when the main
+    value is, and reported when the main value changed without a cause."""
+
+    def run(ss, agi, main_agi_children):
+        return {
+            "tax@2026": _node([agi * 0.1], ["itemizing:agi@2026"]),
+            "itemizing:agi@2026": _node([agi]),
+            "agi@2026": _node([agi], main_agi_children),
+            "ss@2026": _node([ss], is_input=True),
+        }
+
+    caused_b = run(8916.0, 37067.30, ["ss@2026"])
+    caused_r = run(10968.0, 37981.40, ["ss@2026"])
+    assert bridge.uncaused_changes(caused_b, caused_r, ["tax@2026"]) == []
+    # The main value moves while nothing it read did: the main node is the
+    # origin, and the copy and the tax are caused by it.
+    noise_b = run(8916.0, 37067.30, ["pension@2026"])
+    noise_r = run(8916.0, 37981.40, ["pension@2026"])
+    for nodes in (noise_b, noise_r):
+        nodes["pension@2026"] = _node([31200.0], is_input=True)
+    found = bridge.uncaused_changes(noise_b, noise_r, ["tax@2026"])
+    assert [item["variable"] for item in found] == ["agi@2026"]
+
+
+def test__given_step_on_noise_above_131072__then_the_guard_still_sees_it():
+    """Above 2**17 one float32 step is $0.015625, more than a cent; the
+    review's counterexample at a $150,000 edge was missed with a fixed
+    one-cent tolerance."""
+
+    def run(ss, agi, ca_agi, tax):
+        return {
+            "tax@2026": _node([tax], ["ca_agi@2026"]),
+            "ca_agi@2026": _node([ca_agi], ["agi@2026", "sub@2026"]),
+            "agi@2026": _node([agi], ["ss@2026"]),
+            "sub@2026": _node([agi - ca_agi], ["ss@2026"]),
+            "ss@2026": _node([ss], is_input=True),
+        }
+
+    baseline = run(8916.0, 260099.70, 150000.0, 15.0)
+    reform = run(10968.0, 262151.70, 149999.984375, 14.0)
+    found = bridge.uncaused_changes(baseline, reform, ["tax@2026"])
+    assert [item["variable"] for item in found] == ["tax@2026"]
+    assert bridge.float32_step(150000.0) == 0.015625
+    assert bridge.float32_step(30000.0) == 2**-9
+
+
+@given(st.floats(1.0, 1e9, allow_nan=False, allow_infinity=False))
+def test__given_any_value__then_float32_step_is_its_spacing(value):
+    step = bridge.float32_step(value)
+    # value lies in [2**(e-1), 2**e) and float32 keeps 24 bits.
+    assert step * 2**23 <= value < step * 2**24
+
+
+@given(
+    st.lists(
+        st.floats(0.02, 1e5, allow_nan=False, allow_infinity=False),
+        min_size=1,
+        max_size=6,
+    ),
+    st.floats(0.02, 1e4, allow_nan=False, allow_infinity=False),
+)
+def test__given_chain_of_real_changes__then_the_guard_is_silent(
+    steps, input_change
+):
+    """A chain where every variable moves with the one it reads, down to a
+    changed input, is caused all the way."""
+
+    def run(shift):
+        nodes = {"x@2026": _node([100.0 + shift], is_input=True)}
+        below = "x@2026"
+        level = 100.0 + shift
+        for index, step in enumerate(steps):
+            key = f"v{index}@2026"
+            level += step if shift else 0.0
+            nodes[key] = _node([level], [below])
+            below = key
+        return nodes, below
+
+    baseline, root = run(0.0)
+    reform, _ = run(input_change)
+    assert bridge.uncaused_changes(baseline, reform, [root]) == []
 
 
 @given(

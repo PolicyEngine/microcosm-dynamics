@@ -184,6 +184,30 @@ def test__live_interpreter__then_its_source_is_published_and_intact(
         record = bridge.verify_record(installation)
         assert record["files_checked"] > 1_000
         assert record["mismatched"] == [] and record["missing"] == []
+        assert record["extra"] == []
+        # The runner verified the same files before running.
+        assert result.source["record_check"]["mismatched"] == 0
+        assert result.source["record_check"]["extra"] == 0
+
+
+def test__given_a_digest_other_than_the_release__then_the_run_is_refused(
+    interpreter,
+):
+    installation = bridge.inspect_installation(interpreter)
+    if installation.source_kind != "index":
+        pytest.skip(
+            "the interpreter's policyengine-us is not an index install"
+        )
+    situation = bridge.to_situation(
+        _household("A", "FL", BASELINE_SS, 0.0), YEAR
+    )
+    with pytest.raises(bridge.UnpublishedSourceError, match="expected"):
+        bridge.run_policyengine_us(
+            [bridge.RunCase("a", situation)],
+            year=YEAR,
+            python=interpreter,
+            expected_package_record_digest="0" * 64,
+        )
 
 
 @pytest.mark.parametrize("state", ["FL", "CA"])
@@ -325,11 +349,23 @@ def test__use_tax_at_a_bracket_edge__then_the_float32_guard_flags_it(
     assert traces["reform"][federal].value[0] > (
         traces["baseline"][federal].value[0]
     )
+    # 2.18.0 computes federal tax through itemizing and not_itemizing
+    # branch simulations (tax_liability_if_itemizing.py:13,
+    # tax_liability_if_not_itemizing.py:14); their nodes are keyed apart
+    # from the main calculation's.
+    branches = {
+        key.split(":", 1)[0] for key in traces["baseline"] if ":" in key
+    }
+    assert {"itemizing", "not_itemizing"} <= branches
 
 
-def test__batched_cases__then_values_equal_a_single_case_run(
+def test__case_run_with_others__then_values_equal_the_case_run_alone(
     interpreter, result
 ):
+    """Each case runs in its own simulation, and cases with the same
+    overrides share a tax-benefit system; neither the other cases nor the
+    order changes a case's values."""
+
     key = ("A", "FL", "baseline")
     alone = bridge.run_policyengine_us(
         [

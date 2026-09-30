@@ -66,6 +66,7 @@ import io
 import json
 import math
 import os
+import re
 import subprocess
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
@@ -95,6 +96,7 @@ __all__ = [
     "ROOT_VARIABLE",
     "RunCase",
     "RunResult",
+    "FLOAT32_NOISE_STEPS",
     "SMALL_CHANGE_CENTS",
     "STATE_FIPS",
     "TraceNode",
@@ -104,6 +106,7 @@ __all__ = [
     "check_published_source",
     "cola_rates_from_cpi_w",
     "decompose",
+    "float32_step",
     "floor_to_dime",
     "inspect_installation",
     "package_record_digest",
@@ -551,6 +554,54 @@ _INSPECT_SOURCE = (
     _INSTALLATION_SOURCE + "\njson.dump(installation(), sys.stdout)\n"
 )
 
+#: Shared by the runner and the tracer: one simulation per case.  Cases
+#: with the same parameter overrides share one tax-benefit system: the
+#: reform is built once (from a throwaway simulation of the first such
+#: case), and every case, the first included, passes that system as
+#: ``tax_benefit_system`` with no reform, which policyengine-us shares
+#: rather than rebuilds (``spm.py:830-834`` in 2.18.0).  So no case gets a
+#: ``baseline`` branch that another lacks, and no case shares a simulation
+#: with another: some 2.18.0 formulas aggregate over a whole simulation's
+#: population (Medicaid's state-average cost index,
+#: ``medicaid_slcsp_state_average_cost_index.py:14-29``), so households
+#: batched into one simulation would not be independent.
+_SIMULATION_SOURCE = r"""
+from policyengine_us import Simulation
+from policyengine_core.reforms import Reform
+
+job = json.load(sys.stdin)
+year = int(job["year"])
+period = str(year)
+_systems = {}
+
+
+def reform_for(overrides):
+    return Reform.from_dict(
+        {
+            path: {f"{year}-01-01.{year}-12-31": value}
+            for path, value in overrides.items()
+        },
+        country_id="us",
+    )
+
+
+def simulation_for(case, trace=False):
+    situation = case["situation"]
+    if len(situation.get("households", {})) != 1:
+        raise ValueError(f"{case['case_id']}: needs exactly one household")
+    overrides = case.get("parameter_overrides") or {}
+    if not overrides:
+        return Simulation(situation=situation, trace=trace)
+    key = json.dumps(overrides, sort_keys=True)
+    if key not in _systems:
+        _systems[key] = Simulation(
+            situation=situation, reform=reform_for(overrides)
+        ).tax_benefit_system
+    return Simulation(
+        situation=situation, tax_benefit_system=_systems[key], trace=trace
+    )
+"""
+
 #: Executed by the policyengine-us interpreter.  It reads a job on stdin and
 #: writes results on stdout.  For each case it builds the component tree of
 #: the root from the model: a variable's ``adds``/``subtracts`` (a list, or
@@ -567,24 +618,17 @@ _INSPECT_SOURCE = (
 #:
 #: A variable to expand with neither ``adds`` nor a mirrored list is an
 #: error.  :func:`decompose` checks every aggregate's value against its
-#: parts, so a wrong mirror fails loudly.
-#:
-#: Cases that share parameter overrides run as one simulation: their
-#: situations are merged with every person and group name prefixed by the
-#: case's index (households are independent in PolicyEngine-US's entity
-#: model), and each case reads its own household's row.  Each case must
-#: hold exactly one household.  A memo name may carry ``@period`` (for
-#: example ``is_qmb_eligible@2026-01``) to read a monthly variable.
-_RUNNER_SOURCE = _INSTALLATION_SOURCE + r"""
+#: parts, so a wrong mirror fails loudly.  Each case runs in its own
+#: simulation (see :data:`_SIMULATION_SOURCE`) and must hold exactly one
+#: household.  A memo name may carry ``@period`` (for example
+#: ``is_qmb_eligible@2026-01``) to read a monthly variable.
+_RUNNER_SOURCE = _INSTALLATION_SOURCE + _SIMULATION_SOURCE + r"""
 import policyengine_us
-from policyengine_us import Simulation
-from policyengine_core.reforms import Reform
 
-job = json.load(sys.stdin)
-year = int(job["year"])
-period = str(year)
 expand = set(job["expand"])
 root = job["root"]
+
+
 def parameter_list(params, path):
     node = params
     for part in path.split("."):
@@ -617,37 +661,6 @@ def children_of(system, params, name):
     return out
 
 
-GROUP_ENTITIES = (
-    "tax_units",
-    "spm_units",
-    "marital_units",
-    "families",
-    "households",
-)
-
-
-def merged_situation(cases):
-    merged = {"people": {}}
-    for plural in GROUP_ENTITIES:
-        merged[plural] = {}
-    household_names = []
-    for index, case in enumerate(cases):
-        prefix = f"c{index}__"
-        situation = case["situation"]
-        households = situation.get("households", {})
-        if len(households) != 1:
-            raise ValueError(f"{case['case_id']}: needs exactly one household")
-        for person, entry in situation["people"].items():
-            merged["people"][prefix + person] = entry
-        for plural in GROUP_ENTITIES:
-            for name, entry in situation.get(plural, {}).items():
-                renamed = dict(entry)
-                renamed["members"] = [prefix + m for m in entry["members"]]
-                merged[plural][prefix + name] = renamed
-        household_names.append(prefix + next(iter(households)))
-    return merged, household_names
-
-
 def build_tree(system, params):
     tree = {}
     pending = [root]
@@ -662,63 +675,41 @@ def build_tree(system, params):
     return tree
 
 
-def reform_for(overrides):
-    if not overrides:
-        return None
-    return Reform.from_dict(
-        {
-            path: {f"{year}-01-01.{year}-12-31": value}
-            for path, value in overrides.items()
-        },
-        country_id="us",
-    )
-
-
 def memo_period(name):
     return name.split("@", 1) if "@" in name else (name, period)
 
 
-groups = {}
-for case in job["cases"]:
-    key = json.dumps(case.get("parameter_overrides") or {}, sort_keys=True)
-    groups.setdefault(key, []).append(case)
+def household_value(sim, name, at):
+    values = sim.calculate(name, at, map_to="household")
+    if len(values) != 1:
+        raise ValueError(f"{name}: expected one household, got {len(values)}")
+    return float(values[0])
+
 
 results = []
-for key, cases in groups.items():
-    overrides = json.loads(key)
-    situation, household_names = merged_situation(cases)
-    sim = Simulation(situation=situation, reform=reform_for(overrides))
+for case in job["cases"]:
+    sim = simulation_for(case)
     system = sim.tax_benefit_system
     params = system.parameters(f"{year}-01-01")
     tree = build_tree(system, params)
     names = set(tree)
     for parts in tree.values():
         names.update(child for child, _ in parts)
-    ids = [str(i) for i in sim.populations["household"].ids]
-    rows = [ids.index(name) for name in household_names]
-    arrays = {
-        name: sim.calculate(name, period, map_to="household")
-        for name in sorted(names)
-    }
-    memo_names = sorted({m for case in cases for m in case.get("memo", [])})
-    memo_arrays = {}
-    for name in memo_names:
+    values = {name: household_value(sim, name, period) for name in sorted(names)}
+    memo = {}
+    for name in case.get("memo", []):
         variable, at = memo_period(name)
-        memo_arrays[name] = sim.calculate(variable, at, map_to="household")
+        memo[name] = household_value(sim, variable, at)
     states = sim.calculate("state_code", period).decode_to_str()
-    for case, row in zip(cases, rows):
-        results.append(
-            {
-                "case_id": case["case_id"],
-                "state_code": [str(states[row])],
-                "tree": tree,
-                "values": {n: float(a[row]) for n, a in arrays.items()},
-                "memo": {
-                    n: float(memo_arrays[n][row])
-                    for n in case.get("memo", [])
-                },
-            }
-        )
+    results.append(
+        {
+            "case_id": case["case_id"],
+            "state_code": [str(state) for state in states],
+            "tree": tree,
+            "values": values,
+            "memo": memo,
+        }
+    )
 json.dump(
     {
         "policyengine_us_version": metadata.version("policyengine-us"),
@@ -731,38 +722,21 @@ json.dump(
 )
 """
 
-#: :func:`trace_policyengine_us`'s child.  Each case runs alone with
-#: PolicyEngine-US's tracer on (``Simulation(..., trace=True)``); the child
-#: calculates the requested variables for the year and returns every traced
-#: node once, keyed ``name@period``: its value (as floats, over the
-#: variable's own entity), the nodes it read (``children``) and whether the
-#: variable is an input (no formula, ``adds`` or ``subtracts``).  A node
-#: calculated again later is traced again without children (its value is
-#: cached), so the entry with children is kept.  Cases with the same
-#: parameter overrides share one tax-benefit system: the first builds it
-#: from the reform, and the rest pass it as ``tax_benefit_system``, which
-#: policyengine-us shares rather than rebuilds (``spm.py:830-834`` in
-#: 2.18.0).
-_TRACE_SOURCE = _INSTALLATION_SOURCE + r"""
+#: :func:`trace_policyengine_us`'s child.  Each case runs in its own
+#: simulation (see :data:`_SIMULATION_SOURCE`) with PolicyEngine-US's
+#: tracer on (``Simulation(..., trace=True)``); the child calculates the
+#: requested variables for the year and returns every traced node once,
+#: keyed ``name@period``: its value (as floats, over the variable's own
+#: entity), the nodes it read (``children``) and whether the variable is
+#: an input (no formula, ``adds`` or ``subtracts``).  A node calculated in
+#: a branch simulation (policyengine-core's ``get_branch``; 2.18.0 computes
+#: federal income tax through ``itemizing`` and ``not_itemizing`` branches)
+#: is keyed ``branch:name@period``, so a branch's calculation never stands
+#: in for the main one.  A node calculated again later is traced again
+#: without children (its value is cached), so the entry with children is
+#: kept.
+_TRACE_SOURCE = _INSTALLATION_SOURCE + _SIMULATION_SOURCE + r"""
 import numpy as np
-from policyengine_us import Simulation
-from policyengine_core.reforms import Reform
-
-job = json.load(sys.stdin)
-year = int(job["year"])
-period = str(year)
-
-
-def reform_for(overrides):
-    if not overrides:
-        return None
-    return Reform.from_dict(
-        {
-            path: {f"{year}-01-01.{year}-12-31": value}
-            for path, value in overrides.items()
-        },
-        country_id="us",
-    )
 
 
 def as_floats(value):
@@ -781,31 +755,23 @@ def is_input(system, name):
     return not (variable.formulas or variable.adds or variable.subtracts)
 
 
+def node_key(node):
+    key = f"{node.name}@{node.period}"
+    branch = getattr(node, "branch_name", "default") or "default"
+    return key if branch == "default" else f"{branch}:{key}"
+
+
 out = []
-systems = {}
 for case in job["cases"]:
-    key = json.dumps(case.get("parameter_overrides") or {}, sort_keys=True)
-    if key in systems:
-        sim = Simulation(
-            situation=case["situation"],
-            tax_benefit_system=systems[key],
-            trace=True,
-        )
-    else:
-        sim = Simulation(
-            situation=case["situation"],
-            reform=reform_for(case.get("parameter_overrides")),
-            trace=True,
-        )
-        systems[key] = sim.tax_benefit_system
+    sim = simulation_for(case, trace=True)
     system = sim.tax_benefit_system
     for name in case["variables"]:
         sim.calculate(name, period)
     nodes = {}
 
     def walk(node):
-        key = f"{node.name}@{node.period}"
-        children = [f"{c.name}@{c.period}" for c in node.children]
+        key = node_key(node)
+        children = [node_key(c) for c in node.children]
         seen = nodes.get(key)
         if seen is None or (children and not seen["children"]):
             nodes[key] = {
@@ -859,9 +825,10 @@ class PolicyEngineUSInstallation:
     ``package_dir`` is the directory ``import policyengine_us`` would load;
     ``location`` is the installed distribution's root (``site-packages``),
     with its RECORD file and that file's SHA-256.  ``direct_url`` is the
-    distribution's ``direct_url.json`` (PEP 610): absent for an install
-    from a package index, present for a VCS, local-directory (editable
-    included) or archive install.
+    distribution's ``direct_url.json`` (PEP 610): absent when the package
+    was installed by name (from a package index, or a local wheel found
+    with ``--find-links``), present for a VCS, local-directory (editable
+    included) or direct-URL archive install.
     """
 
     python: str
@@ -906,8 +873,12 @@ class PolicyEngineUSInstallation:
     def source_kind(self) -> str:
         """``index``, ``vcs``, ``archive``, ``directory`` or ``path``.
 
-        ``path`` means the imported package is not the installed
-        distribution's files (a checkout on ``PYTHONPATH``, say).
+        ``index`` means installed by name, with no ``direct_url.json``: from
+        a package index, or from a local wheel found with ``--find-links``,
+        which metadata cannot tell apart.  A pinned
+        :func:`package_record_digest` ties such an install to a published
+        wheel.  ``path`` means the imported package is not the installed
+        distribution's files (an editable install or ``PYTHONPATH``).
         """
 
         if not self.imports_the_distribution:
@@ -999,70 +970,123 @@ def inspect_installation(
     return PolicyEngineUSInstallation.from_payload(interpreter, payload)
 
 
-def _git(directory: Path, *args: str) -> str:
+#: Git never prompts for credentials here: an unreachable or private
+#: origin fails fast instead of hanging.
+_GIT_ENV = {**os.environ, "GIT_TERMINAL_PROMPT": "0"}
+
+
+def _git(directory: Path, *args: str, timeout: float = 120.0) -> str:
     return subprocess.run(
         ["git", "-C", str(directory), *args],
         capture_output=True,
         text=True,
         check=True,
+        timeout=timeout,
+        env=_GIT_ENV,
     ).stdout.strip()
 
 
+#: Untracked files under the package that cannot change a calculation:
+#: bytecode caches and Finder metadata.  Any other untracked file,
+#: git-ignored or not, marks the checkout modified (policyengine-core loads
+#: every parameter YAML and variable module it finds on disk).
+_INERT_UNTRACKED = (".pyc", ".pyo", ".DS_Store")
+#: Hosts whose repositories are public, for ``public_origin``.
+_PUBLIC_ORIGIN = re.compile(
+    r"^(?:https://|ssh://git@|git@)github\.com[/:][^/]+/[^/]+?(?:\.git)?/?$"
+)
+
+
 def _checkout_state(package_dir: Path) -> dict[str, Any]:
-    """The git state of the checkout holding ``package_dir``."""
+    """The git state of the checkout holding ``package_dir``.
+
+    Reachability is checked against ``origin`` as it is now (``git
+    ls-remote``), not against local remote-tracking refs, which can outlive
+    a deleted branch.  A remote head counts only when its commit is also in
+    the local object store (``merge-base --is-ancestor`` needs it); fetch
+    first if the checkout is behind.
+    """
 
     try:
         top = Path(_git(package_dir, "rev-parse", "--show-toplevel"))
-    except (OSError, subprocess.CalledProcessError):
+    except (OSError, subprocess.SubprocessError):
         return {"git": False}
     revision = _git(top, "rev-parse", "HEAD")
     tracked_changes = _git(
         top, "status", "--porcelain", "--untracked-files=no"
     )
-    untracked_package_files = _git(
-        top,
-        "ls-files",
-        "--others",
-        "--exclude-standard",
-        "--",
-        str(package_dir),
-    )
-    containing = _git(
-        top,
-        "for-each-ref",
-        "--contains",
-        revision,
-        "--format=%(refname)",
-        "refs/remotes/origin",
-    ).split()
+    untracked = [
+        path
+        for path in _git(
+            top, "ls-files", "--others", "--", str(package_dir)
+        ).splitlines()
+        if path
+        and "__pycache__/" not in path
+        and not path.endswith(_INERT_UNTRACKED)
+    ]
     try:
         origin_url = _git(top, "remote", "get-url", "origin")
-    except subprocess.CalledProcessError:
+    except subprocess.SubprocessError:
         origin_url = None
+    heads: list[str] = []
+    origin_reachable = False
+    if origin_url is not None:
+        try:
+            listing = _git(top, "ls-remote", "--heads", "origin")
+            origin_reachable = True
+        except subprocess.SubprocessError:
+            listing = ""
+        for line in listing.splitlines():
+            sha, _, ref = line.partition("\t")
+            ancestor = subprocess.run(
+                ["git", "-C", str(top), "merge-base", "--is-ancestor"]
+                + [revision, sha],
+                capture_output=True,
+                timeout=120,
+                env=_GIT_ENV,
+            )
+            if ancestor.returncode == 0:
+                heads.append(ref)
     return {
         "git": True,
         "revision": revision,
-        "dirty": bool(tracked_changes or untracked_package_files),
+        "dirty": bool(tracked_changes or untracked),
+        "untracked_package_files": untracked[:20],
         "origin_url": origin_url,
-        "origin_refs_containing": containing,
+        "origin_reachable": origin_reachable,
+        "origin_heads_containing": heads,
     }
 
 
 def check_published_source(
-    installation: PolicyEngineUSInstallation, *, require: bool = True
+    installation: PolicyEngineUSInstallation,
+    *,
+    require: bool = True,
+    public_origin: bool = True,
 ) -> dict[str, Any]:
     """Describe where the imported ``policyengine-us`` came from.
 
-    Published sources: an install from a package index (no
-    ``direct_url.json``), or a git checkout imported in place (an editable
-    install or ``PYTHONPATH``) whose ``HEAD`` some
-    ``refs/remotes/origin/*`` branch contains and whose tracked files, and
-    untracked files under the package, are unchanged.  Anything else -- a
-    revision no ``origin`` branch contains, a modified checkout, a package
-    directory outside any git checkout, or a VCS, local-directory or archive
-    install (whose files cannot be tied to a public release here) -- raises
-    :class:`UnpublishedSourceError` when ``require`` is true, and is
-    returned with ``published`` false otherwise.
+    Two sources pass:
+
+    * ``index``: installed by name, with no ``direct_url.json``.  Metadata
+      cannot tell a package index from a local wheel found with
+      ``--find-links``, so a caller that must know the release pins
+      :func:`package_record_digest` (``run_policyengine_us``'s
+      ``expected_package_record_digest``) and checks the files with
+      :func:`verify_record`.
+    * ``path``: a git checkout imported in place (an editable install or
+      ``PYTHONPATH``) whose ``HEAD`` a head of ``origin`` contains, as
+      ``git ls-remote`` reports it now, and with no modified tracked file
+      or untracked package file (ignored ones included).  With
+      ``public_origin`` (the default), ``origin`` must be a GitHub
+      repository.
+
+    Anything else -- a revision no ``origin`` head contains, an
+    unreachable ``origin``, a modified checkout, a package directory
+    outside any git checkout, or a VCS, local-directory or direct-URL
+    archive install -- raises :class:`UnpublishedSourceError` when
+    ``require`` is true, and is returned with ``published`` false
+    otherwise.
     """
 
     kind = installation.source_kind
@@ -1087,10 +1111,26 @@ def check_published_source(
                     f"{installation.package_dir} is not in a git checkout"
                 )
             else:
-                if not state["origin_refs_containing"]:
+                if state["origin_url"] is None:
+                    reasons.append("the checkout has no origin remote")
+                elif public_origin and not _PUBLIC_ORIGIN.match(
+                    state["origin_url"]
+                ):
+                    reasons.append(
+                        f"origin ({state['origin_url']}) is not a public "
+                        "GitHub repository"
+                    )
+                if state["origin_url"] is not None and not (
+                    state["origin_reachable"]
+                ):
+                    reasons.append(
+                        "origin could not be reached to confirm the "
+                        "revision is published"
+                    )
+                elif not state["origin_heads_containing"]:
                     reasons.append(
                         f"revision {state['revision']} is not reachable "
-                        "from any origin branch (refs/remotes/origin/*)"
+                        "from any branch of origin"
                     )
                 if state["dirty"]:
                     reasons.append("the checkout has uncommitted changes")
@@ -1110,17 +1150,25 @@ def check_published_source(
     return record
 
 
+def _is_bytecode(path: str) -> bool:
+    return "/__pycache__/" in f"/{path}" or path.endswith((".pyc", ".pyo"))
+
+
 def package_record_digest(record_text: str, prefix: str) -> tuple[str, int]:
     """SHA-256 of a RECORD's sorted lines under ``prefix``, and their count.
 
     The installer appends its own lines (``INSTALLER``, ``REQUESTED``,
-    console scripts) and may reorder the file, so the whole-file hash of an
-    installed RECORD differs from the wheel's.  The sorted package lines
-    are the same in both, so this digest ties installed files to a wheel.
+    console scripts, and with pip the bytecode it compiles) and may reorder
+    the file, so the whole-file hash of an installed RECORD differs from
+    the wheel's.  The sorted package lines, bytecode excluded, are the same
+    in both, so this digest ties installed files to a wheel.
     """
 
     lines = sorted(
-        line for line in record_text.splitlines() if line.startswith(prefix)
+        line
+        for line in record_text.splitlines()
+        if line.startswith(prefix)
+        and not _is_bytecode(next(csv.reader([line]))[0])
     )
     digest = hashlib.sha256(("\n".join(lines) + "\n").encode()).hexdigest()
     return digest, len(lines)
@@ -1131,12 +1179,16 @@ def verify_record(
     *,
     prefix: str = "policyengine_us/",
 ) -> dict[str, Any]:
-    """Hash every installed file the RECORD lists under ``prefix``.
+    """Check the installed files under ``prefix`` against the RECORD.
 
-    Returns the files checked, those whose SHA-256 differs from the RECORD
-    (``mismatched``), those missing, and :func:`package_record_digest` of
-    the RECORD.  The RECORD hash is urlsafe base64 without padding
-    (the wheel format, PEP 376/427).
+    Hashes every file the RECORD lists with a hash (``mismatched`` when the
+    SHA-256 differs, ``missing`` when absent) and walks the installed
+    directory for files the RECORD does not list (``extra``;
+    policyengine-core loads every parameter YAML and variable module on
+    disk, so an added file changes the model).  Bytecode is neither hashed
+    nor counted as extra.  Also returns :func:`package_record_digest` of
+    the RECORD.  The RECORD hash is urlsafe base64 without padding (the
+    wheel format, PEP 376/427).
     """
 
     if not (installation.record_path and installation.location):
@@ -1144,12 +1196,14 @@ def verify_record(
     root = Path(installation.location)
     text = Path(installation.record_path).read_text()
     checked = 0
+    listed: set[str] = set()
     mismatched: list[str] = []
     missing: list[str] = []
     for row in csv.reader(io.StringIO(text)):
         if not row or not row[0].startswith(prefix):
             continue
         path, digest = row[0], row[1] if len(row) > 1 else ""
+        listed.add(path)
         if not digest:
             continue
         algorithm, _, expected = digest.partition("=")
@@ -1162,15 +1216,69 @@ def verify_record(
         checked += 1
         if encoded != expected:
             mismatched.append(path)
+    extra = sorted(
+        relative
+        for file in (root / prefix).rglob("*")
+        if file.is_file()
+        and not _is_bytecode(relative := file.relative_to(root).as_posix())
+        and relative not in listed
+    )
     digest, lines = package_record_digest(text, prefix)
     return {
         "prefix": prefix,
         "files_checked": checked,
         "mismatched": mismatched,
         "missing": missing,
+        "extra": extra,
         "package_record_digest": digest,
         "package_record_lines": lines,
     }
+
+
+def _checked_installation(
+    interpreter: Path,
+    *,
+    require_published: bool,
+    verify_files: bool,
+    expected_package_record_digest: str | None,
+) -> tuple[PolicyEngineUSInstallation, dict[str, Any]]:
+    """Inspect, check the source, and (for an index install) the files."""
+
+    installation = inspect_installation(interpreter)
+    source = check_published_source(installation, require=require_published)
+    problems = []
+    if installation.source_kind == "index" and (
+        verify_files or expected_package_record_digest
+    ):
+        record = verify_record(installation)
+        source = {
+            **source,
+            "record_check": {
+                key: len(value) if isinstance(value, list) else value
+                for key, value in record.items()
+            },
+        }
+        if record["mismatched"] or record["missing"] or record["extra"]:
+            problems.append(
+                f"{len(record['mismatched'])} installed files differ from "
+                f"the RECORD, {len(record['missing'])} are missing and "
+                f"{len(record['extra'])} are not in it"
+            )
+        if expected_package_record_digest and (
+            record["package_record_digest"] != expected_package_record_digest
+        ):
+            problems.append("the RECORD is not the expected release's")
+    elif expected_package_record_digest:
+        problems.append(
+            f"a {installation.source_kind} install has no RECORD to compare "
+            "with the expected release"
+        )
+    if problems:
+        raise UnpublishedSourceError(
+            f"policyengine-us at {installation.package_dir}: "
+            + "; ".join(problems)
+        )
+    return installation, source
 
 
 def run_policyengine_us(
@@ -1182,15 +1290,23 @@ def run_policyengine_us(
     root: str = ROOT_VARIABLE,
     timeout: float = 1800.0,
     require_published: bool = True,
+    verify_files: bool = True,
+    expected_package_record_digest: str | None = None,
 ) -> RunResult:
     """Run ``cases`` in the policyengine-us interpreter and parse the results.
 
+    Each case runs in its own simulation (cases with the same parameter
+    overrides share a tax-benefit system).  Before running, the imported
+    ``policyengine-us`` must be a published source
+    (:func:`check_published_source`, when ``require_published``), an index
+    install's files must match its RECORD (:func:`verify_record`, when
+    ``verify_files``), and its RECORD must have
+    ``expected_package_record_digest`` when one is given.
+
     Raises :class:`PolicyEngineUSUnavailable` when the interpreter is
-    missing or the child fails, :class:`UnpublishedSourceError` when
-    ``require_published`` and the imported ``policyengine-us`` is not a
-    published source (:func:`check_published_source`), and ``ValueError``
-    when a case resolves to a state other than its ``expected_state`` or a
-    case id repeats.
+    missing or the child fails, :class:`UnpublishedSourceError` when a
+    check above fails, and ``ValueError`` when a case resolves to a state
+    other than its ``expected_state`` or a case id repeats.
     """
 
     if isinstance(year, bool) or not isinstance(year, int):
@@ -1199,8 +1315,12 @@ def run_policyengine_us(
     if len(set(ids)) != len(ids):
         raise ValueError(f"case ids must be unique: {ids}")
     interpreter = _interpreter(python)
-    installation = inspect_installation(interpreter)
-    source = check_published_source(installation, require=require_published)
+    installation, source = _checked_installation(
+        interpreter,
+        require_published=require_published,
+        verify_files=verify_files,
+        expected_package_record_digest=expected_package_record_digest,
+    )
     job = {
         "year": year,
         "root": root,
@@ -1268,9 +1388,23 @@ def run_policyengine_us(
 # ---------------------------------------------------------------------------
 #: A change smaller than a cent is float noise, not a change.
 CENT_TOLERANCE = 0.01
+#: Float32 carries 24 significant bits, so a value near ``x`` moves in
+#: steps of 2 ** (exponent(x) - 24).  A read that changed by no more than
+#: this many steps is treated as noise even when the steps exceed a cent
+#: (above $131,072 one step is $0.015625).
+FLOAT32_NOISE_STEPS = 4
 #: Leaf changes below this many cents (and above zero) are small enough to
 #: be a float32 step at a bracket edge and are always traced.
 SMALL_CHANGE_CENTS = 200
+
+
+def float32_step(value: float) -> float:
+    """The spacing of float32 values at ``value`` (0 at 0 and non-finite)."""
+
+    if value == 0 or not math.isfinite(value):
+        return 0.0
+    _, exponent = math.frexp(value)
+    return math.ldexp(1.0, exponent - 24)
 
 
 @dataclass(frozen=True)
@@ -1296,13 +1430,16 @@ def trace_policyengine_us(
     parameter_overrides: Mapping[str, Mapping[str, Any]] | None = None,
     timeout: float = 1800.0,
     require_published: bool = True,
+    verify_files: bool = True,
+    expected_package_record_digest: str | None = None,
 ) -> dict[str, dict[str, TraceNode]]:
     """Trace ``(case_id, situation, variables)`` cases, one simulation each.
 
-    Returns ``{case_id: {"name@period": TraceNode}}``.
-    ``parameter_overrides`` maps a case id to its overrides (as
-    :class:`RunCase`).  The imported ``policyengine-us`` is checked as in
-    :func:`run_policyengine_us`.
+    Returns ``{case_id: {"name@period": TraceNode}}`` (branch simulations'
+    nodes are keyed ``branch:name@period``).  ``parameter_overrides`` maps
+    a case id to its overrides (as :class:`RunCase`).  The imported
+    ``policyengine-us`` is checked as in :func:`run_policyengine_us`, and
+    must not change between the check and the trace.
     """
 
     if isinstance(year, bool) or not isinstance(year, int):
@@ -1311,8 +1448,11 @@ def trace_policyengine_us(
     if len(set(ids)) != len(ids):
         raise ValueError(f"case ids must be unique: {ids}")
     interpreter = _interpreter(python)
-    check_published_source(
-        inspect_installation(interpreter), require=require_published
+    installation, _ = _checked_installation(
+        interpreter,
+        require_published=require_published,
+        verify_files=verify_files,
+        expected_package_record_digest=expected_package_record_digest,
     )
     overrides = parameter_overrides or {}
     job = {
@@ -1328,6 +1468,13 @@ def trace_policyengine_us(
         ],
     }
     payload = _run_child(interpreter, _TRACE_SOURCE, json.dumps(job), timeout)
+    traced = PolicyEngineUSInstallation.from_payload(
+        interpreter, payload["installation"]
+    )
+    if traced != installation:
+        raise PolicyEngineUSUnavailable(
+            "policyengine-us changed between the source check and the trace"
+        )
     out: dict[str, dict[str, TraceNode]] = {}
     for case in payload["cases"]:
         out[case["case_id"]] = {
@@ -1372,6 +1519,24 @@ def _node_change(
     return worst
 
 
+def _noise(
+    baseline: TraceNode | None, reform: TraceNode | None, tolerance: float
+) -> float:
+    """The largest change of a read that still counts as float noise."""
+
+    magnitude = max(
+        (
+            abs(v)
+            for node in (baseline, reform)
+            if node is not None and node.value is not None
+            for v in node.value
+            if math.isfinite(v)
+        ),
+        default=0.0,
+    )
+    return max(tolerance, FLOAT32_NOISE_STEPS * float32_step(magnitude))
+
+
 def _values(node: TraceNode | None) -> list[float] | None:
     return None if node is None or node.value is None else list(node.value)
 
@@ -1387,14 +1552,24 @@ def uncaused_changes(
 
     Walks the traced nodes reachable from ``roots`` (``name@period``
     keys) in both runs.  A node is reported when it was traced in both
-    runs, is not an input, its value changes by at least ``tolerance``, and
-    each node it read changes by less than ``tolerance`` (or it read none).
-    A node it read in one run only counts as changed: the calculation took
-    another branch, which a changed value upstream decided.  A node traced
-    in one run only is not compared for the same reason.  A genuine change
-    always has a changed input below it (here, the Social Security amount),
-    so a reported node is a step taken on noise: typically a bracket or
-    eligibility edge that float32 arithmetic crossed.  Returns one record
+    runs, is not an input, its value changes by at least ``tolerance``,
+    and no node it read changed by more than float noise: ``tolerance`` or
+    :data:`FLOAT32_NOISE_STEPS` float32 steps at the read's magnitude,
+    whichever is larger (so the guard still sees noise above $131,072,
+    where one float32 step exceeds a cent).  A node it read in one run only
+    counts as changed: the calculation took another branch, which a
+    changed value upstream decided.  A node traced in one run only is not
+    compared for the same reason.  A branch simulation's node traced
+    without reads (``branch:name@period``) holds a value copied from the
+    parent simulation and reads the main node ``name@period``.  A read with no numeric value never
+    counts as a cause, so a node whose only changed read is not numeric is
+    reported (a false alarm, not a miss).
+
+    A genuine change always has a changed input below it (here, the Social
+    Security amount), so a reported node is a step taken on noise:
+    typically a bracket or eligibility edge that float32 arithmetic
+    crossed.  The rule is local, so it cannot see a noise step in a
+    variable that also read a genuinely changed input.  Returns one record
     per reported node, sorted by key.
     """
 
@@ -1413,6 +1588,14 @@ def uncaused_changes(
                 + (after.children if after else ())
             )
         )
+        if not children and ":" in key:
+            # A branch starts as a clone of its parent's calculated values
+            # (policyengine-core ``get_branch``, ``simulation.py:1499``), so
+            # a branch node traced without reads was copied, not computed:
+            # it reads the main calculation's node of the same name.
+            main = key.split(":", 1)[1]
+            if main in baseline or main in reform:
+                children = (main,)
         pending.extend(children)
         if before is None or after is None or before.input:
             continue
@@ -1424,8 +1607,10 @@ def uncaused_changes(
             for child in children
         }
         caused = any(
-            value is not None and value >= tolerance
-            for value in child_changes.values()
+            value is not None
+            and value
+            > _noise(baseline.get(child), reform.get(child), tolerance)
+            for child, value in child_changes.items()
         )
         if not caused:
             found[key] = {

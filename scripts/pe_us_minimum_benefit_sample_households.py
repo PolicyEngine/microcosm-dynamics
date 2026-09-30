@@ -387,10 +387,11 @@ def pinned_release(
             f"version {installation.version}, not {PE_US_RELEASE['version']}"
         )
     record = bridge.verify_record(installation)
-    if record["mismatched"] or record["missing"]:
+    if record["mismatched"] or record["missing"] or record["extra"]:
         problems.append(
             f"{len(record['mismatched'])} installed files differ from the "
-            f"RECORD and {len(record['missing'])} are missing"
+            f"RECORD, {len(record['missing'])} are missing and "
+            f"{len(record['extra'])} are not in it"
         )
     if record["package_record_digest"] != (
         PE_US_RELEASE["package_record_digest"]
@@ -804,7 +805,10 @@ def run_households(
                     entry["cases"][(scenario, variant)] = case_id
             plan.append(entry)
     result = bridge.run_policyengine_us(
-        cases, year=PAYMENT_YEAR, python=python
+        cases,
+        year=PAYMENT_YEAR,
+        python=python,
+        expected_package_record_digest=PE_US_RELEASE["package_record_digest"],
     )
     rows = []
     for entry in plan:
@@ -886,6 +890,7 @@ def float32_guard(rows: list[dict[str, Any]], python: str | None) -> None:
         year=PAYMENT_YEAR,
         python=python,
         parameter_overrides=overrides,
+        expected_package_record_digest=PE_US_RELEASE["package_record_digest"],
     )
     for row, variant, decomposition, changed in plan:
         baseline = traces[
@@ -894,17 +899,18 @@ def float32_guard(rows: list[dict[str, Any]], python: str | None) -> None:
         reform = traces[
             _case_id(row["household"], row["state"], "reform", variant)
         ]
-        # A differential check: each traced leaf, run alone, equals its
-        # value in the batched run (one person, so every unit is one row).
+        # A differential check: each traced leaf, from its traced
+        # simulation, equals its value in the untraced run (one person, so
+        # every unit is one row).
         for scenario, nodes in zip(SCENARIOS, (baseline, reform), strict=True):
-            batched = row["run_values"][variant][scenario]
+            untraced = row["run_values"][variant][scenario]
             for name in changed:
                 traced = math.fsum(nodes[f"{name}@{PAYMENT_YEAR}"].value)
-                if abs(traced - batched[name]) >= bridge.CENT_TOLERANCE:
-                    raise AssertionError(
+                if abs(traced - untraced[name]) >= bridge.CENT_TOLERANCE:
+                    raise InvariantError(
                         f"{row['household']}-{row['state']} {scenario} "
-                        f"{variant}: {name} is {traced} traced alone and "
-                        f"{batched[name]} batched"
+                        f"{variant}: {name} is {traced} traced and "
+                        f"{untraced[name]} untraced"
                     )
         uncaused = bridge.uncaused_changes(
             baseline, reform, [f"{name}@{PAYMENT_YEAR}" for name in changed]
@@ -920,6 +926,17 @@ def float32_guard(rows: list[dict[str, Any]], python: str | None) -> None:
         }
 
 
+class InvariantError(AssertionError):
+    """A property of the run failed; nothing is written."""
+
+
+def _require(condition: bool, message: object) -> None:
+    # An explicit raise, not ``assert``: ``python -O`` strips asserts, and
+    # these checks gate what is written.
+    if not condition:
+        raise InvariantError(message)
+
+
 def check_invariants(rows: list[dict[str, Any]]) -> list[str]:
     """Properties of this run, checked before anything is written."""
 
@@ -932,16 +949,20 @@ def check_invariants(rows: list[dict[str, Any]]) -> list[str]:
                 if variant == "default"
                 else row["with_health"]
             )
+            where = f"{tag} ({variant})"
             total = sum(c.change_cents for c in d.components)
-            assert total == d.net_change_cents, tag
+            _require(total == d.net_change_cents, f"{where}: identity")
             categories = d.by_category()
-            assert sum(v["change"] for v in categories.values()) == total, tag
+            _require(
+                sum(v["change"] for v in categories.values()) == total,
+                f"{where}: categories",
+            )
             ss = categories["social_security"]["change"]
             expected = bridge.to_cents(
                 row["reform_social_security_annual"]
                 - row["baseline_social_security_annual"]
             )
-            assert ss == expected, (tag, ss, expected)
+            _require(ss == expected, (where, ss, expected))
             for name in (
                 "ssi",
                 "snap",
@@ -950,14 +971,20 @@ def check_invariants(rows: list[dict[str, Any]]) -> list[str]:
                 "federal_income_tax",
                 "state_income_tax",
             ):
-                assert categories[name]["change"] <= 0, (tag, variant, name)
-            assert abs(d.reported_gap_cents) <= 1, tag
-            guard = row["float32_guard"][variant]
-            if guard["uncaused_changes"]:
-                raise AssertionError(
-                    f"{tag} ({variant}): float32 guard: "
-                    f"{guard['uncaused_changes']}"
+                _require(
+                    categories[name]["change"] <= 0,
+                    f"{where}: {name} rose with Social Security",
                 )
+            _require(
+                abs(d.reported_gap_cents) <= 1,
+                f"{where}: household_net_income is off its definition by "
+                f"{d.reported_gap_cents} cents",
+            )
+            guard = row["float32_guard"][variant]
+            _require(
+                not guard["uncaused_changes"],
+                f"{where}: float32 guard: {guard['uncaused_changes']}",
+            )
     checks.append(
         "every household-state pair, with and without health coverage: the "
         "leaf changes sum exactly (in cents) to the net change, and the "
@@ -1079,17 +1106,20 @@ def medicaid_explanations(
             and after[income_key] > after[limit_key]
         )
         if not pattern:
-            raise AssertionError(
+            raise InvariantError(
                 f"{row['household']}-{row['state']}: net income with health "
                 "coverage changes for a reason the text does not describe"
             )
         share = limits[row["state"]]
+        msp_appears = before["msp_cost"] == 0 and after["msp_cost"] > 0
         qmb_text = (
             " She is QMB-eligible in every month of both runs, and "
             "PolicyEngine-US counts the Medicare Savings Program only once "
             "full Medicaid ends (msp_cost.py:28), so that benefit appears in "
             "the reform."
-            if _qmb_months(before) == 12 and _qmb_months(after) == 12
+            if _qmb_months(before) == 12
+            and _qmb_months(after) == 12
+            and msp_appears
             else ""
         )
         out[(row["household"], row["state"])] = (
