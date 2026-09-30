@@ -16,6 +16,7 @@ import math
 import subprocess
 from decimal import Decimal
 
+import numpy as np
 import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
@@ -929,19 +930,21 @@ def test__given_pushed_clean_checkout__then_source_is_published(
     assert record["checkout"]["origin_heads_containing"] == ["refs/heads/main"]
 
 
-def test__given_origin_that_is_not_public__then_source_is_refused(
+def test__given_origin_not_on_github__then_source_is_refused(
     tmp_path, checkout
 ):
-    """A pushed commit on a local or private origin is not published."""
+    """A pushed commit on a local origin is not published."""
 
-    with pytest.raises(bridge.UnpublishedSourceError, match="public GitHub"):
+    with pytest.raises(
+        bridge.UnpublishedSourceError, match="is not a GitHub repository"
+    ):
         bridge.check_published_source(
             _checkout_installation(tmp_path, checkout)
         )
 
 
 @pytest.mark.parametrize(
-    ("url", "public"),
+    ("url", "github"),
     [
         ("https://github.com/PolicyEngine/policyengine-us.git", True),
         ("https://github.com/PolicyEngine/policyengine-us", True),
@@ -952,8 +955,11 @@ def test__given_origin_that_is_not_public__then_source_is_refused(
         ("file:///tmp/origin.git", False),
     ],
 )
-def test__given_origin_url__then_only_github_counts_as_public(url, public):
-    assert bool(bridge._PUBLIC_ORIGIN.match(url)) is public
+def test__given_origin_url__then_only_github_urls_match(url, github):
+    """The check is the host only: a URL cannot say whether a GitHub
+    repository is public or private."""
+
+    assert bool(bridge._GITHUB_ORIGIN.match(url)) is github
 
 
 def test__given_local_commit_not_on_origin__then_source_is_refused(
@@ -1319,6 +1325,9 @@ def test__given_identical_runs__then_the_guard_is_silent(values):
 def test__given_any_jump_over_a_sub_cent_read__then_it_is_reported(
     level, jump, noise
 ):
+    """A jump of a cent or more is reported at every level, although
+    ``level + jump - level`` can measure a little under a cent."""
+
     baseline = {
         "out@2026": _node([level], ["in@2026"]),
         "in@2026": _node([0.0], ["x@2026"]),
@@ -1330,10 +1339,60 @@ def test__given_any_jump_over_a_sub_cent_read__then_it_is_reported(
         "x@2026": _node([1.0], is_input=True),
     }
     found = bridge.uncaused_changes(baseline, reform, ["out@2026"])
-    changed = abs((level + jump) - level) >= bridge.CENT_TOLERANCE
-    assert [item["variable"] for item in found] == (
-        ["out@2026"] if changed else []
+    assert [item["variable"] for item in found] == ["out@2026"]
+
+
+def _one_node(value):
+    """An output that reads only an unchanged input."""
+
+    return {
+        "out@2026": _node([value], ["x@2026"]),
+        "x@2026": _node([1.0], is_input=True),
+    }
+
+
+def test__given_exact_one_cent_float32_step__then_it_is_reported():
+    """Round 2's nit N3, its minimal counterexample: float32 3.00 to 3.01
+    measures 0.0099999905, under a cent, and was not reported."""
+
+    before, after = float(np.float32(3.00)), float(np.float32(3.01))
+    assert after - before < bridge.CENT_TOLERANCE
+    found = bridge.uncaused_changes(
+        _one_node(before), _one_node(after), ["out@2026"]
     )
+    assert [item["variable"] for item in found] == ["out@2026"]
+
+
+@given(st.integers(-(10**8), 10**8))
+def test__given_any_one_cent_float32_step__then_it_is_reported(cents):
+    """A one-cent step stored in float32 is reported at every magnitude
+    where float32 can tell the two amounts apart (above $131,072 a cent
+    can round away entirely, and then nothing changed)."""
+
+    before = float(np.float32(cents / 100))
+    after = float(np.float32((cents + 1) / 100))
+    found = bridge.uncaused_changes(
+        _one_node(before), _one_node(after), ["out@2026"]
+    )
+    reported = [item["variable"] for item in found]
+    assert reported == (["out@2026"] if after != before else [])
+
+
+@given(
+    st.floats(-2e5, 2e5, allow_nan=False, allow_infinity=False),
+    st.integers(1, 1_000),
+)
+def test__given_change_under_half_a_cent__then_it_is_not_reported(
+    level, microdollars
+):
+    """The float32 allowance never lowers the threshold below half a
+    cent, so float noise on a large value is not a change."""
+
+    change = min(microdollars * 1e-6, 0.0049)
+    found = bridge.uncaused_changes(
+        _one_node(level), _one_node(level + change), ["out@2026"]
+    )
+    assert found == []
 
 
 def test__given_small_leaf_changes__then_they_are_listed():

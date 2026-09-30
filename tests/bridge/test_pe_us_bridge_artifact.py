@@ -15,7 +15,12 @@ starting policyengine-us:
 * findings 6, 7 and 11 and the nits: the Commodity Supplemental Food
   Program and state refundable credits have their own rows, no local path
   is written, and the invented history carries no PSID fields;
-* the decomposition identity holds in every row, in integer cents.
+* the decomposition identity holds in every row, in integer cents;
+* round 2: Montana's credit keeps net household income and its reduction
+  apart (M1); the Medicaid valuation is described exactly, both ways
+  (L2); the script checks refundable credits (L4); half-dollars round up
+  (+1,886.50 shows as +1,887); the guard text states its noise band (N2);
+  and no public file points at a folder outside the repository (N4).
 """
 
 from __future__ import annotations
@@ -28,6 +33,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
 ANALYSIS = ROOT / "docs" / "analysis" / "pe_us_bridge_20260930"
+DESIGN_DOC = ROOT / "docs" / "design" / "pe_us_bridge.md"
 STEM = "pe_us_minimum_benefit_sample_households"
 sys.path.insert(0, str(ROOT / "scripts"))
 
@@ -217,3 +223,108 @@ def test__artifact__then_florida_medicaid_loss_is_explained(document, report):
     # from 2023 spending and October 2024 enrollment, all ages.
     assert script.MEDICAID_VALUATION in report
     assert "all ages" in script.MEDICAID_VALUATION
+
+
+def _by_case(document):
+    return {(r["household"], r["state"]): r for r in document["results"]}
+
+
+def test__artifact__then_half_dollars_round_up(document, report):
+    """Household C in Montana gains $1,886.50, shown as $1,887 (``format``
+    rounds half to even, to $1,886)."""
+
+    c_mt = _by_case(document)[("C", "MT")]
+    assert c_mt["decomposition"]["net_change"] == 1_886.50
+    assert c_mt["with_health_benefits_in_net_income"]["net_change"] == (
+        1_886.50
+    )
+    assert "| C | MT | +2,052 | +1,887 | 92% | +1,887 |" in report
+    assert "+1,886 " not in report and "+1,886." not in report
+    assert "half-dollar up" in report
+
+
+def test__artifact__then_montana_credit_is_described_exactly(document):
+    """Round 2's M1: the credit subtracts an income reduction, 5 percent of
+    net household income, not net household income itself."""
+
+    evidence = " ".join(document["states"]["MT"]["evidence"])
+    assert "less net household income" not in evidence
+    assert "less an income reduction" in evidence
+    assert "15-30-2337(8)" in evidence and "15-30-2340(4)" in evidence
+    doc = DESIGN_DOC.read_text()
+    assert "Net household income rises from $1,376" not in doc
+    assert "rises from $27,516 to $29,568" in doc
+    assert "from $1,376 to $1,478" in doc
+
+
+def test__artifact__then_the_medicaid_valuation_is_exact_both_ways(
+    document, report
+):
+    """Round 2's L2: 2023 spending over October 2024 Medicaid and CHIP
+    enrollment; Florida is $9,200 so, and $7,034 with 2023 enrollment."""
+
+    valuation = document["medicaid_valuation"]
+    florida = valuation["per_enrollee"]["FL"]
+    assert florida["release"] == pytest.approx(9_200.24, abs=0.005)
+    assert florida["same_year"] == pytest.approx(7_033.96, abs=0.005)
+    assert florida["spending_entry"] == "2023-01-01"
+    assert florida["enrollment_entry"] == "2024-10-01"
+    text = valuation["text"]
+    assert text in report
+    for phrase in (
+        "Medicaid and CHIP enrollment",
+        "overstate or understate",
+        "not a cash loss",
+        "$7,034 in Florida (not $9,200)",
+    ):
+        assert phrase in text, phrase
+    # Every memo where she is enrolled is the release's ratio.
+    for row in document["results"]:
+        expected = valuation["per_enrollee"][row["state"]]["release"]
+        for memo in row["memo"].values():
+            cost = memo["medicaid_cost"]
+            assert cost == 0 or cost == pytest.approx(expected, abs=0.5)
+    doc = DESIGN_DOC.read_text()
+    assert "may understate" not in doc and "upper-end" not in doc
+
+
+def test__artifact__then_the_script_checked_refundable_credits(document):
+    """Round 2's L4: the doc says credits are checked for wrong-way moves."""
+
+    checks = " ".join(document["invariants_checked"])
+    assert "refundable tax credits never rise" in checks
+    assert "income taxes never fall" in checks
+
+
+def test__artifact__then_the_guard_text_states_its_noise_band(
+    document, report
+):
+    """Round 2's N2: the rule is a cent or four float32 steps."""
+
+    summary = document["float32_guard"]["summary"]
+    assert "held within a cent" not in summary
+    assert "four float32 steps" in summary
+    assert "held within a cent" not in report
+
+
+def test__artifact__then_no_public_file_points_outside_the_repository(
+    document, report
+):
+    """Round 2's N4: the design doc, the JSON and the Markdown name
+    repository paths only."""
+
+    texts = [DESIGN_DOC.read_text(), report, *_strings(document)]
+    for text in texts:
+        assert "microcosm-launch-evidence" not in text
+        assert "/Users/" not in text
+        assert "evidence folder" not in text
+
+
+def test__artifact__then_the_medicaid_limit_is_cited_in_full(document):
+    """Round 2's N5: ``individual.yaml`` is ambiguous beside other files."""
+
+    text = document["medicaid_explanations"]["B-FL"]
+    assert (
+        "parameters/gov/hhs/medicaid/eligibility/categories/"
+        "senior_or_disabled/income/limit/individual.yaml:44-45"
+    ) in text

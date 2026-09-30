@@ -16,8 +16,7 @@ threshold for 22 years of work (Favreault, Mermin and Steuerle 2006, option
 Code: `src/populace_dynamics/bridge/policyengine_us.py` (pure Python; no
 `policyengine_us` import) and
 `scripts/pe_us_minimum_benefit_sample_households.py`. Outputs:
-`docs/analysis/pe_us_bridge_20260930/` and
-`~/microcosm-launch-evidence/dynasim-parity-20260909/pe-us-bridge-20260930/`.
+`docs/analysis/pe_us_bridge_20260930/`.
 
 ## What the bridge does and does not do
 
@@ -59,9 +58,12 @@ It does:
     `medicaid_slcsp_state_average_cost_index.py:14-29`), so households
     batched into one simulation would not be independent.
   - **Shared systems.** Cases with the same parameter overrides share one
-    reformed tax-benefit system, passed as `tax_benefit_system`
-    (`spm.py:830-834`). An oracle test checks that a case run with others
-    equals the case run alone.
+    reformed tax-benefit system, built from a throwaway simulation of the
+    first such case and passed as `tax_benefit_system` (`spm.py:830-834`).
+    Two oracle tests check that a case run with others equals the case run
+    alone: one for a case with no overrides, and one for household B in
+    California with the payment-standard override, whose shared system was
+    built from household A's simulation.
   - **Tree and state.** The child reads the component tree of
     `household_net_income` from the model and returns every node's
     household value. It also returns the state PolicyEngine-US derives from
@@ -81,13 +83,21 @@ It does:
   - **What it reports.** `uncaused_changes` walks each changed component's
     calculation. It reports any variable that changed by a cent or more
     although no variable it read changed by more than float noise.
+  - **A cent in float32.** Stored in float32, an exact one-cent step can
+    measure a little under a cent (3.00 to 3.01 measures 0.0099999905). So
+    a variable's own change counts from a cent less one float32 step at its
+    size, and never from less than half a cent (`_counts_as_change`,
+    `policyengine_us.py:1535-1551`).
   - **Noise.** Float noise is a cent or four float32 steps at the read's
     size, whichever is larger. Above $131,072 one float32 step is more than
     a cent.
-  - **Why a report means an artifact.** A genuine change always has a
-    changed input beneath it, here the Social Security amount. A reported
-    variable is therefore a step at a bracket or eligibility edge taken on
-    float32 noise.
+  - **What a report means.** A genuine change always has a changed input
+    beneath it, here the Social Security amount. A reported variable is
+    therefore a step at a bracket or eligibility edge taken on float32
+    noise, or a false alarm: a read with no numeric value never counts as
+    a cause, so a variable whose only changed read is not numeric is
+    reported (`uncaused_changes`, `policyengine_us.py:1595-1597`). Either
+    way the script refuses to write.
   - **What it cannot see.** The rule is local, so it cannot see a noise
     step in a variable that also read a genuinely changed input.
   - **Small changes.** `small_changes` lists the components that changed by
@@ -217,17 +227,19 @@ OMP_NUM_THREADS=1 PYTHONPATH=src .venv/bin/python \
     scripts/pe_us_minimum_benefit_sample_households.py
 ```
 
-The run takes about six minutes on a loaded machine, most of it building the
-reformed tax-benefit systems and tracing. It writes a JSON file of inputs and
-results, a Markdown table, and one chart per household (PNG and SVG) to both
-output folders. Microcosm's oracle reads its SSA parameters (the wage index,
+The run takes about six minutes on a lightly loaded machine, most of it
+building the reformed tax-benefit systems and tracing. Each policyengine-us
+child may take up to two hours before it is stopped (`--timeout`). It writes a JSON file of inputs and
+results, a Markdown table, and one chart per household (PNG and SVG) to
+`docs/analysis/pe_us_bridge_20260930/` (`--docs-dir`), and a second copy to
+`--out-dir`. Microcosm's oracle reads its SSA parameters (the wage index,
 bend-point factors, the full retirement age and the CPI-W) from the same
 installed release, so both sides use one version.
 
 Tests:
 
-- `tests/bridge/test_policyengine_us_bridge.py` (unit tier, Hypothesis). It
-  covers:
+- `tests/bridge/test_policyengine_us_bridge.py` (unit tier; Hypothesis
+  properties and example tests, listed under Invariants). It covers:
   - the situation builder;
   - the decomposition identity and its refusals;
   - the source check, on temporary git repositories and invented
@@ -242,7 +254,9 @@ Tests:
   - the release pin;
   - the invariants;
   - the traced-versus-untraced check;
-  - the Medicaid text;
+  - the Medicaid valuation and the Medicaid text;
+  - Montana's evidence wording;
+  - half-dollar rounding in tables and charts;
   - the refusal of local paths.
 - `tests/bridge/test_pe_us_bridge_artifact.py` (unit tier). It checks the
   committed JSON and Markdown:
@@ -250,8 +264,10 @@ Tests:
   - the California override;
   - a clean float32 guard;
   - the identity;
-  - no local path;
-  - the rows and the reform's name.
+  - no local path, and no pointer to a folder outside the repository;
+  - the rows and the reform's name;
+  - Montana's credit wording, the Medicaid valuation and the rounding of
+    household C in Montana.
 - `tests/bridge/test_policyengine_us_bridge_oracle.py` (oracle tier). It
   skips unless the interpreter exists and imports `policyengine_us`.
 
@@ -304,16 +320,28 @@ into four groups.
 - the SSI resource limit, $2,000
   (`parameters/gov/ssa/ssi/eligibility/resources/limit/individual.yaml:8`);
 - Florida's aged Medicaid limit, 88 percent of the guideline, from 2018
-  (`individual.yaml:44-45`);
+  (`parameters/gov/hhs/medicaid/eligibility/categories/senior_or_disabled/
+  income/limit/individual.yaml:44-45`);
 - the Commodity Supplemental Food Program's income limit, 150 percent of
   the guideline, from 2025 (`gov/usda/csfp/fpg_limit.yaml:4`).
 
-**Uprated by the release.** California's income-tax brackets and standard
-deduction end at 2025. The release extends them to 2026 by California's
-CPI (`parameters/gov/states/ca/tax/income/rates/single.yaml`,
-`deductions/standard/amount.yaml`, `uprating: gov.states.ca.cpi`). They set
-household C's $21 of California income tax, which the reform does not
-change.
+**Uprated by the release.** California's income-tax brackets, standard
+deduction and exemption credit end at 2025. The release extends them to
+2026 with `gov.states.ca.cpi` (`parameters/gov/states/ca/tax/income/rates/
+single.yaml:15`, `deductions/standard/amount.yaml:4`,
+`exemptions/amount.yaml:8,14`).
+
+- **Not California's CPI in 2026.** That series is California's June CPI
+  only through 2025 (`parameters/gov/states/ca/cpi.yaml:3-9`). It is itself
+  extended with the federal IRS uprating index (`cpi.yaml:15`, `uprating:
+  gov.irs.uprating`), so the 2026 step is the federal index's.
+- **Household C's $21.** These parameters set her $21 of California income
+  tax, which the reform does not change:
+  - $394 of tax on taxable income of $25,365, which is California AGI of
+    $31,200 less the $5,835 standard deduction;
+  - less two exemption credits of $156.47, personal and aged
+    (`variables/gov/states/ca/tax/income/exemptions/ca_exemptions.py:24-31`);
+  - less the $60 renter's credit (`credits/ca_renter_credit.py:16-25`).
 
 **Not updated for 2026:**
 
@@ -328,13 +356,25 @@ change.
   household, Medicaid at cost is the state's Medicaid spending over its
   enrollment (`medicaid_cost_if_enrolled.py:11-22`). The single-household
   denominator is `medicaid_slcsp_state_denominator.py:28-33`, so the
-  person's cost index cancels. The calibration totals end at 2023 spending
-  and October 2024 enrollment
-  (`parameters/calibration/gov/hhs/medicaid/totals/spending.yaml`,
-  `enrollment.yaml`) and are not uprated. The $9,200 (Florida), $9,236
-  (California) and $10,799 (Montana) figures are those ratios: averages
-  over enrollees of all ages, not 2026 amounts and not specific to an aged
-  enrollee.
+  person's cost index cancels.
+  - **The entries in force.** In 2026 they are 2023 Medicaid spending
+    (`parameters/calibration/gov/hhs/medicaid/totals/spending.yaml`) and
+    KFF's October 2024 "Total Monthly Medicaid/CHIP Enrollment"
+    (`enrollment.yaml:10-13`, entries dated `2024-10-01`), which counts
+    CHIP enrollees too. Neither is uprated.
+  - **The figures.** $9,200 (Florida), $9,236 (California) and $10,799
+    (Montana) are 2023 spending over October 2024 Medicaid and CHIP
+    enrollment. They are not same-year averages, not 2026 amounts, and not
+    specific to an aged enrollee.
+  - **The years matter.** Enrollment fell after the 2023 entries: Florida's
+    from 4,924,826 to 3,765,231. With the release's 2023 enrollment entry,
+    the spending's own year, the figures would be $7,034, $8,751 and
+    $7,223. Florida's $9,200 is 31 percent above its same-year figure.
+  - **Direction.** An average over all enrollees could overstate or
+    understate what covering an aged enrollee costs. The script computes
+    both ratios from the release, refuses other entry dates, and checks
+    that every Medicaid memo equals the release's ratio
+    (`medicaid_per_enrollee`, `check_medicaid_memo`).
 - **California's payment standard (overridden).** The aged or disabled
   single payment standard has no entry after 2025 (`parameters/gov/states/
   ca/cdss/state_supplement/payment_standard/aged_or_disabled/amount/
@@ -444,7 +484,7 @@ prepare food at home.
 her a round $30,000. That put California AGI, which excludes Social
 Security, exactly on the $30,000 edge of California's use-tax table
 (`variables/gov/states/ca/tax/income/ca_use_tax.py:13-20`;
-`parameters/gov/states/ca/tax/income/use_tax/main.yaml:19-28`).
+`parameters/gov/states/ca/tax/income/use_tax/main.yaml:14-23`).
 - **What went wrong.** Float32 subtraction put the reform run one float32
   step below the edge: `ca_agi` was 30,000.0 at baseline and
   29,999.998046875 in the reform (35,761.3984 − 5,761.3999). The use tax
@@ -454,9 +494,10 @@ Security, exactly on the $30,000 edge of California's use-tax table
 - **Where the pension sits now.** At $31,200 the checks show:
   - **California AGI** is $1,200 above the $30,000 edge.
   - **A finite-difference scan** of pensions from $31,000 to $31,400 (in
-    $50 steps, all three states, baseline and reform) finds every component
-    linear except one (`review/fix1-pension-edge-scan.json` and `.py` in the
-    evidence folder).
+    $50 steps, all three states, baseline and reform) found every component
+    linear except one. Two scans were run during review, one by the fixer
+    and one by an independent reviewer; they are not part of this
+    repository.
   - **The exception** is Montana's baseline elderly homeowner and renter
     credit. Its gross-income multiplier drops from 0.3 to 0.2 at $40,001
     (`parameters/gov/states/mt/tax/income/credits/elderly_homeowner_or_renter/
@@ -479,12 +520,25 @@ The states were chosen for mechanism, each verified in the code:
   (`mt_agi_indiv.py:13-16`). From 2024 the Montana Social Security
   adjustment is off (`mt_agi_indiv.py:20-29`;
   `social_security/applies.yaml:16-18`).
-  Montana's refundable elderly homeowner and renter credit is countable rent
-  (15 percent of rent) less net household income, capped and multiplied by a
-  schedule of gross household income
-  (`mt_elderly_homeowner_or_renter_credit.py:19-42`). Gross household income
-  counts all Social Security
-  (`mt_elderly_homeowner_or_renter_credit_gross_household_income.py:17-23`).
+  - **The elderly homeowner and renter credit.** Montana's refundable
+    credit is property tax plus countable rent (15 percent of rent) less an
+    income reduction. It is floored at zero, capped at $1,150 and
+    multiplied by a schedule of gross household income
+    (`mt_elderly_homeowner_or_renter_credit.py:26-42`;
+    `rent_equivalent_tax_rate.yaml:3`, `cap.yaml:4`,
+    `multiplier.yaml:34-37`; MCA 15-30-2337(11) and 15-30-2340(2), (5)
+    and (6)).
+  - **Net household income and the income reduction.** Net household
+    income is gross household income less a $12,600 standard exclusion
+    (`net_household_income/standard_exclusion.yaml:6`; MCA 15-30-2337(8),
+    which calls it "household income"). The income reduction is a share
+    of it, 5 percent at $12,000 and over (`net_household_income/
+    reduction_rate.yaml:67-70`; MCA 15-30-2340(4)). Despite its name,
+    `mt_elderly_homeowner_or_renter_credit_net_household_income` returns
+    the reduction, not the income
+    (`mt_elderly_homeowner_or_renter_credit_net_household_income.py:18-33`).
+  - **Gross household income** counts all Social Security
+    (`mt_elderly_homeowner_or_renter_credit_gross_household_income.py:17-23`).
 - **Florida (no income tax).** None of the 46 entries in the state
   income-tax list is Florida's
   (`parameters/gov/states/household/state_income_tax_before_refundable_credits.yaml`).
@@ -508,14 +562,19 @@ Annual 2026 dollars; change from current law to the reform.
 | B | MT | +2,052 | +1,845 | 90% | +1,845 |
 | B | FL | +2,052 | +1,128 | 55% | −2,737 |
 | C | CA | +2,052 | +1,942 | 95% | +1,942 |
-| C | MT | +2,052 | +1,886 | 92% | +1,886 |
+| C | MT | +2,052 | +1,887 | 92% | +1,887 |
 | C | FL | +2,052 | +1,942 | 95% | +1,942 |
 
-The last column values Medicaid at the state's Medicaid spending per
-enrollee: 2023 spending over October 2024 enrollment, an average over
-enrollees of all ages, not uprated to 2026 (see Payment year). It values
-coverage at average program cost, which may understate what covering an
-aged enrollee costs; it is not a cash loss.
+Each figure is rounded to the dollar on its own, a half-dollar up:
+household C's change in Montana is $1,886.50, shown as $1,887.
+
+The last column values Medicaid as the release does: the state's 2023
+Medicaid spending divided by its October 2024 Medicaid and CHIP enrollment,
+an average over enrollees of all ages, not uprated to 2026 (see Payment
+year). It could overstate or understate what covering an aged enrollee
+costs, and the mismatched years matter: with 2023 enrollment, Florida's
+$9,200 would be $7,034. It values coverage at average program cost; it is
+not a cash loss.
 
 What the components show (full tables in
 `docs/analysis/pe_us_bridge_20260930/pe_us_minimum_benefit_sample_households.md`):
@@ -573,8 +632,9 @@ $1,200, in every state.
     only for people not enrolled in full Medicaid (`msp_cost.py:28`), so its
     $5,335 appears once Medicaid ends.
   - **Net.** With health coverage counted, she loses $2,737. Medicaid is
-    valued at Florida's spending per enrollee of all ages: the coverage
-    she loses at average program cost, not a cash loss.
+    valued at $9,200, Florida's 2023 spending over its October 2024
+    Medicaid and CHIP enrollment, all ages ($7,034 with 2023 enrollment):
+    the coverage she loses at average program cost, not a cash loss.
 - **Montana.** SNAP falls by $207.
 
 **Household C.** Taxable Social Security rises from $5,867 to $6,781 under
@@ -584,34 +644,68 @@ IRC 86 (`tax_unit_taxable_social_security.py:13-85`).
   the $914 of newly taxable benefits.
 - **Montana.** Montana income tax rises $43, 4.7 percent of the same $914.
   Her refundable elderly homeowner and renter credit falls from $13 to zero
-  (`mt_refundable_credits.py:12-15`). Countable rent is $1,440, 15 percent
-  of $9,600. Net household income rises from $1,376 to $1,478, so the
-  credit, (countable rent − net household income) × 0.2, reaches zero.
+  (`mt_refundable_credits.py:12-15`):
+  - **Countable rent** is $1,440, 15 percent of $9,600.
+  - **Net household income**, gross household income less the $12,600
+    exclusion, rises from $27,516 to $29,568. Her gross household income
+    is $40,116 at baseline and $42,168 in the reform.
+  - **The income reduction**, 5 percent of net household income, rises
+    from $1,376 to $1,478 and passes the $1,440 of countable rent.
+  - **The credit**, max($1,440 − reduction, 0) × 0.2, falls from $12.84 to
+    zero. The multiplier is 0.2 in both runs, for gross household income
+    of $40,001 to $42,500.
 - **California.** California AGI excludes Social Security, so California's
   income tax ($21) and use tax ($3) do not move.
 - **Florida.** Only federal tax changes.
 
 ## Invariants
 
-The unit tests check these for every input, with Hypothesis:
+The unit tests check these. Where the input space allows, a Hypothesis
+property checks an invariant over generated inputs; elsewhere example tests
+check chosen cases, many of them parametrized.
+
+**Hypothesis properties:**
 
 - **Membership.** The situation builder places every person in exactly one
   tax unit, SPM unit, marital unit, family and household. Amounts, ages and
-  the state round-trip. Negative, non-finite and non-numeric amounts are
-  refused, and so is a bare string passed as a group. Output is
-  deterministic.
+  the state round-trip, output is deterministic JSON, and negative amounts
+  are refused.
 - **Decomposition identity.** Leaf changes sum exactly, in integer cents, to
-  the net change, and the categories sum to the same total. When the reform
-  equals the baseline, every change is zero. The result is deterministic and
-  does not depend on the order of parts. An aggregate inconsistent with its
-  parts is refused, and so is a drifted root definition. So is any
-  non-finite value, including the review's minimal counterexample (root →
-  mid → (x, y) with mid = NaN).
+  the net change, and the categories sum to the same total, for arbitrary
+  float values too. When the reform equals the baseline, every change is
+  zero. The result is deterministic and does not depend on the order of
+  parts. An aggregate inconsistent with its parts is refused, and so is any
+  non-finite value. Whole cents round-trip through `to_cents`.
 - **COLA carry-forward.** It yields whole dimes and is monotone in the PIA.
-  Truncation loses less than a dime a step, and carrying composes over split
-  year ranges. An empty range is refused. CPI-W-derived COLAs are
-  nonnegative tenths of a percent, and the base carries forward past a year
-  without an increase.
+  Truncation loses less than a dime a step, carrying composes over split
+  year ranges, and with no COLAs the PIA is only truncated to a dime. A
+  range whose first year follows its last is refused. CPI-W-derived COLAs
+  are nonnegative tenths of a percent.
+- **RECORD digest.** The package digest ignores installer lines (pip's
+  bytecode rows included) and line order.
+- **Float32 guard.** `float32_step` is the float32 spacing.
+  - Always reported: a jump of a cent or more over a sub-cent read, and a
+    one-cent step stored in float32, at any magnitude where float32 can
+    tell the two amounts apart.
+  - Never reported: a change through a chain of changed variables down to
+    an input, two identical runs, or a change under half a cent.
+- **Display.** Every amount the script shows is its whole-dollar value with
+  a half-dollar rounded up, compared against exact decimal arithmetic.
+
+**Example tests:**
+
+- **Membership.** Non-finite and non-numeric amounts, bad ages, bad
+  partitions, a three-person marital unit, unknown states, duplicate ids
+  and a bare string passed as a group are refused. Generators work as
+  groups.
+- **Decomposition.** A drifted root definition and a cyclic or badly
+  signed tree are refused, and so is the review's minimal counterexample
+  (root → mid → (x, y) with mid = NaN). Each leaf has its documented
+  category, and a refundable credit on a zero liability reads as a credit,
+  not a negative tax.
+- **COLAs.** A missing COLA is refused. Float noise in a rate does not reach
+  the dime. SSA's third-quarter CPI-W averages give the published COLAs,
+  and the base carries forward past a year without an increase.
 - **Source check.**
   - An install by name is published.
   - A clone whose commit a branch of `origin` contains now, and whose files
@@ -619,18 +713,18 @@ The unit tests check these for every input, with Hypothesis:
   - These are refused:
     - a local commit not on `origin`;
     - a branch deleted on `origin` whose remote-tracking ref remains;
-    - an unreachable `origin`, or one that is not on GitHub;
+    - an unreachable `origin`, or one that is not on GitHub (the check
+      reads the host; it cannot tell a public repository from a private
+      one);
     - a modified, untracked or git-ignored package file (bytecode aside);
     - a package outside any checkout;
     - a VCS, archive or local-directory install.
-- **RECORD.** Verification flags each changed, missing or added file. The
-  package digest ignores installer lines (pip's bytecode rows included) and
-  line order.
-- **Float32 guard.**
-  - Always reported: a step over a sub-cent read, including above $131,072,
-    where float32 steps exceed a cent.
-  - Never reported: a change through a chain of changed variables down to
-    an input, a branch taken in one run only, or two identical runs.
+- **RECORD.** Verification flags each changed, missing or added file.
+- **Float32 guard.** The review's use-tax case, as traced, is reported. A
+  step above $131,072, where one float32 step exceeds a cent, is still
+  seen. A branch taken in one run only is a cause, and a branch's copy of
+  a main value reads the main node. The exact 3.00 to 3.01 float32 step is
+  reported.
 - **The script's own checks.** On invented inputs, with the runner
   replaced by fakes:
   - parameter updates are applied, dropped when the release already
@@ -638,20 +732,29 @@ The unit tests check these for every input, with Hypothesis:
   - overrides go to the right states;
   - a local path is refused;
   - the release pin refuses any other version, file or RECORD;
-  - the invariants raise (never `assert`) on a wrong-way change or a guard
-    finding;
+  - the invariants raise (never `assert`) on a wrong-way change, including
+    a rising refundable credit, or a guard finding;
   - the traced-versus-untraced differential refuses a mismatch;
-  - the Medicaid text is refused when its pattern does not hold.
+  - the Medicaid valuation computes both ratios, refuses other entry
+    dates, states both directions, and refuses a memo off the ratio;
+  - the Medicaid text is refused when its pattern does not hold;
+  - Montana's evidence keeps net household income and its reduction apart;
+  - half-dollars round up in magnitude (+1,886.50 shows as +1,887).
+- **The committed outputs** (`test_pe_us_bridge_artifact.py`) are checked as
+  listed under How to run.
 
 The oracle tests check, against the live model:
 
 - SSI never rises when Social Security does, and falls dollar for dollar
-  while positive;
-- SNAP does not move for household A and falls for household B;
-- California's supplement is constant for A;
+  while positive (household A in California and Florida);
+- SNAP does not move for household A (California and Florida) and falls for
+  household B in Florida;
+- California's supplement is constant for household A;
 - the 2026 payment-standard override reaches the supplement: $110.94 a month
   for household B, against $83.94 under the release's held value;
-- taxes do not fall for household C;
+- federal and state income taxes do not fall for household C in Montana;
+- the identity holds on four live cases (A in California and Florida, B in
+  Florida, C in Montana);
 - the float32 guard flags `ca_use_tax` at a $30,000 pension and nothing at
   $31,200, and keys the `itemizing` and `not_itemizing` branches' nodes
   apart;
@@ -659,7 +762,10 @@ The oracle tests check, against the live model:
   RECORD, with none added, and a run pinned to another RECORD digest is
   refused;
 - the live tree is the definition the bridge was read against;
-- a case run with others equals the case run alone;
+- a case run with others equals the case run alone: household A in Florida
+  with no overrides, and household B in California with the
+  payment-standard override, whose shared system was built from household
+  A's simulation;
 - all 51 FIPS codes resolve to their state.
 
 The script checks every household-state pair, with and without health
@@ -667,10 +773,13 @@ coverage, before writing:
 
 - the identity holds;
 - the Social Security component equals the Microcosm benefit change;
-- no means-tested benefit, income tax or credit contribution listed in
-  `check_invariants` moves the wrong way;
+- no means-tested benefit or refundable tax credit rises, and no income tax
+  falls (`WRONG_WAY_CATEGORIES`);
 - PolicyEngine-US's own net-income change is within a cent of the definition's
   sum;
+- wherever she is enrolled, Medicaid at cost equals the release's spending
+  over enrollment, the ratio the valuation text describes (within 50
+  cents);
 - **the float32 guard.** Every changed component is traced: 44 leaves in 18
   comparisons, 65,907 traced variable-periods (branch simulations' nodes
   counted apart).
@@ -680,7 +789,8 @@ coverage, before writing:
     for every decomposition (all 18). Only Medicaid-at-cost memo values
     move, by one float32 step, for example $9,236.4785 to $9,236.4795. That
     is the cross-case aggregation per-case simulations remove.
-  - No variable changed without a changed input.
+  - No variable changed by a cent or more while every variable it read
+    held within float noise.
   - No component changed by a nonzero amount under $2.
 
 ## Caveats
@@ -696,7 +806,7 @@ coverage, before writing:
   percent of the poverty guideline, gets USDA's cost per caseload slot
   (`commodity_supplemental_food_program.py:10-11`;
   `commodity_supplemental_food_program_eligible.py:17-18,42`;
-  `gov/usda/csfp/amount.yaml:11`, `fpg_limit.yaml:4`). The program is
+  `gov/usda/csfp/min_age.yaml:3`, `amount.yaml:11`, `fpg_limit.yaml:4`). The program is
   caseload-limited and serves far fewer people than are eligible. It does
   not change here.
 - California's payment standard for 2026 and SNAP's utility allowances for

@@ -33,8 +33,9 @@ PSID, the projection or any DYNASIM3 value.  The script is the first use of
    that release, is set from the California Department of Social Services'
    published table.  Every changed component is traced back through
    PolicyEngine-US's own calculation (the float32 guard), and the script
-   refuses to write if any variable changed although every variable it read
-   held within a cent.
+   refuses to write if any variable changed by a cent or more although
+   every variable it read held within float noise (a cent, or four float32
+   steps at the read's size where that is more).
 
 Outputs (JSON with provenance, a Markdown table, and a chart per household
 as PNG and SVG) go to ``--out-dir`` and ``--docs-dir``.
@@ -247,9 +248,19 @@ STATES: dict[str, dict[str, Any]] = {
             ": false from 2024",
             "variables/gov/states/mt/tax/income/credits/"
             "mt_elderly_homeowner_or_renter/"
-            "mt_elderly_homeowner_or_renter_credit.py: a refundable credit "
-            "of countable rent less net household income, capped and "
-            "multiplied by a gross-income schedule",
+            "mt_elderly_homeowner_or_renter_credit.py:26-42: a refundable "
+            "credit of property tax plus countable rent (15 percent of "
+            "rent; MCA 15-30-2337(11)) less an income reduction, floored at "
+            "zero, capped at 1,150 and multiplied by a schedule of gross "
+            "household income (MCA 15-30-2340(2), (5) and (6))",
+            "variables/gov/states/mt/tax/income/credits/"
+            "mt_elderly_homeowner_or_renter/"
+            "mt_elderly_homeowner_or_renter_credit_net_household_income.py"
+            ":18-33: despite its name, this variable is the income "
+            "reduction, not net household income. Net household income is "
+            "gross household income less a 12,600 standard exclusion (MCA "
+            "15-30-2337(8) calls it household income); the reduction is a "
+            "share of it, 5 percent at 12,000 and over (MCA 15-30-2340(4))",
             "variables/gov/states/mt/tax/income/credits/"
             "mt_elderly_homeowner_or_renter/"
             "mt_elderly_homeowner_or_renter_credit_gross_household_income.py"
@@ -302,17 +313,34 @@ MEMO_VARIABLES = (
 #: computes it for one household: the state's Medicaid spending over its
 #: enrollment (``medicaid_cost_if_enrolled.py:11-22``; the single-household
 #: denominator is ``medicaid_slcsp_state_denominator.py:28-33``, so the
-#: person's cost index cancels), from the calibration totals whose latest
-#: entries are 2023 spending and October 2024 enrollment.
+#: person's cost index cancels), from the calibration totals.  In 2026 the
+#: entries in force are 2023 spending and KFF's October 2024 "Total Monthly
+#: Medicaid/CHIP Enrollment" (``enrollment.yaml:10-13``), so the ratio is
+#: not a same-year average.  :func:`medicaid_per_enrollee` refuses other
+#: entry dates, so this text cannot go stale.
 MEDICAID_VALUATION = (
-    "Medicaid is valued at the state's Medicaid spending per enrollee (2023 "
-    "spending over October 2024 enrollment in policyengine-us 2.18.0; an "
-    "average over enrollees of all ages, not uprated to 2026). It values "
-    "coverage at average program cost; it is not a cash loss."
+    "Medicaid is valued as policyengine-us 2.18.0 values it for one "
+    "household: the state's 2023 Medicaid spending divided by its October "
+    "2024 Medicaid and CHIP enrollment, an average over enrollees of all "
+    "ages, not uprated to 2026. It is not a same-year average and not "
+    "specific to aged enrollees, so it could overstate or understate what "
+    "covering an aged enrollee costs. It values coverage at average "
+    "program cost; it is not a cash loss."
 )
+MEDICAID_TOTALS = "calibration/gov/hhs/medicaid/totals/"
+#: The calibration entries :data:`MEDICAID_VALUATION` describes, and the
+#: enrollment entry of the spending's own year.
+MEDICAID_SPENDING_ENTRY = "2023-01-01"
+MEDICAID_ENROLLMENT_ENTRY = "2024-10-01"
+MEDICAID_SAME_YEAR_ENROLLMENT_ENTRY = "2023-01-01"
 HEALTH_OVERRIDE = {
     "gov.simulation.include_health_benefits_in_net_income": True
 }
+#: Seconds each policyengine-us child (the run, then the traced rerun) may
+#: take before it is stopped.  The bridge's own default is 1,800; on a
+#: heavily loaded machine the 36-case run takes longer, and a timeout only
+#: guards against a hung child, so the script allows more.
+RUN_TIMEOUT_SECONDS = 7_200.0
 VARIANTS = ("default", "with_health")
 SCENARIOS = ("baseline", "reform")
 
@@ -340,14 +368,21 @@ def _repo_relative(path: str | Path) -> str:
     return str(Path(path).resolve().relative_to(ROOT))
 
 
+def _in_force(values: dict[Any, Any], on: str) -> tuple[str, float]:
+    """The entry in force on ``on`` (ISO date) of a ``{date: value}`` map."""
+
+    dated = sorted((str(key), value) for key, value in values.items())
+    in_force = [(key, value) for key, value in dated if key <= on]
+    if not in_force:
+        raise ValueError(f"no value in force on {on}: {dated}")
+    key, value = in_force[-1]
+    return key, float(value)
+
+
 def _dated_value(values: dict[Any, Any], on: str) -> float:
     """The value in force on ``on`` (ISO date) of a ``{date: value}`` map."""
 
-    dated = sorted((str(key), value) for key, value in values.items())
-    in_force = [value for key, value in dated if key <= on]
-    if not in_force:
-        raise ValueError(f"no value in force on {on}: {dated}")
-    return float(in_force[-1])
+    return _in_force(values, on)[1]
 
 
 def _parameter(root: Path, relative: str, *keys: Any, on: str) -> float:
@@ -475,6 +510,103 @@ def _overrides_for(
     if variant == "with_health":
         overrides.update(HEALTH_OVERRIDE)
     return overrides
+
+
+def medicaid_per_enrollee(parameter_root: Path) -> dict[str, dict[str, Any]]:
+    """Each state's Medicaid spending per enrollee, two ways.
+
+    ``release`` is the ratio policyengine-us computes in the payment year
+    (the spending and enrollment entries in force); ``same_year`` divides
+    the same spending by the enrollment entry of the spending's own year.
+    Refuses entries other than the ones :data:`MEDICAID_VALUATION`
+    describes.
+    """
+
+    documents = {
+        name: yaml.safe_load(
+            (
+                parameter_root / PARAMETER_PREFIX / MEDICAID_TOTALS / name
+            ).read_text()
+        )
+        for name in ("spending.yaml", "enrollment.yaml")
+    }
+    on = f"{PAYMENT_YEAR}-01-01"
+    out = {}
+    for state in STATES:
+        spending_date, spending = _in_force(
+            documents["spending.yaml"][state], on
+        )
+        enrolled = documents["enrollment.yaml"][state]
+        enrollment_date, enrollment = _in_force(enrolled, on)
+        if (spending_date, enrollment_date) != (
+            MEDICAID_SPENDING_ENTRY,
+            MEDICAID_ENROLLMENT_ENTRY,
+        ):
+            raise ValueError(
+                f"{state}: Medicaid spending {spending_date} and enrollment "
+                f"{enrollment_date} are in force, not the entries "
+                "MEDICAID_VALUATION describes"
+            )
+        same_year = {str(key): float(value) for key, value in enrolled.items()}
+        out[state] = {
+            "spending": spending,
+            "spending_entry": spending_date,
+            "enrollment": enrollment,
+            "enrollment_entry": enrollment_date,
+            "release": spending / enrollment,
+            "same_year_enrollment": same_year[
+                MEDICAID_SAME_YEAR_ENROLLMENT_ENTRY
+            ],
+            "same_year": spending
+            / same_year[MEDICAID_SAME_YEAR_ENROLLMENT_ENTRY],
+        }
+    return out
+
+
+def _medicaid_state_order() -> list[str]:
+    # Florida first: it is the one case where the valuation moves a result.
+    return ["FL", *[state for state in STATES if state != "FL"]]
+
+
+def medicaid_valuation_text(per_enrollee: dict[str, dict[str, Any]]) -> str:
+    """:data:`MEDICAID_VALUATION`, then each state's same-year ratio."""
+
+    parts = [
+        f"${_money(bridge.to_cents(per_enrollee[state]['same_year']))} in "
+        f"{STATES[state]['name']} (not "
+        f"${_money(bridge.to_cents(per_enrollee[state]['release']))})"
+        for state in _medicaid_state_order()
+    ]
+    return (
+        MEDICAID_VALUATION
+        + " The years do not match: with the release's 2023 enrollment "
+        "entry, the spending's own year, it would be "
+        + ", ".join(parts[:-1])
+        + " and "
+        + parts[-1]
+        + "."
+    )
+
+
+def check_medicaid_memo(
+    rows: list[dict[str, Any]], per_enrollee: dict[str, dict[str, Any]]
+) -> None:
+    """Medicaid at cost in each run is the ratio the text describes.
+
+    A differential check: the memo value PolicyEngine-US computed (float32)
+    must equal the release's spending over enrollment, within 50 cents,
+    wherever she is enrolled.
+    """
+
+    for row in rows:
+        expected = per_enrollee[row["state"]]["release"]
+        for scenario in SCENARIOS:
+            cost = row["memo"][scenario]["medicaid_cost"]
+            _require(
+                cost == 0 or abs(cost - expected) < 0.5,
+                f"{row['household']}-{row['state']} {scenario}: Medicaid at "
+                f"cost is {cost}, not spending over enrollment ({expected})",
+            )
 
 
 def _no_absolute_paths(value: Any, where: str = "document") -> None:
@@ -767,6 +899,8 @@ def run_households(
     worker: dict[str, Any],
     python: str | None,
     updates: list[dict[str, Any]],
+    *,
+    timeout: float = RUN_TIMEOUT_SECONDS,
 ) -> tuple[list[dict[str, Any]], bridge.RunResult]:
     baseline_ss = float(worker["current_law"]["annual_benefit"])
     reform_ss = float(worker["reform"]["annual_benefit"])
@@ -809,6 +943,7 @@ def run_households(
         year=PAYMENT_YEAR,
         python=python,
         expected_package_record_digest=PE_US_RELEASE["package_record_digest"],
+        timeout=timeout,
     )
     rows = []
     for entry in plan:
@@ -851,7 +986,12 @@ def run_households(
     return rows, result
 
 
-def float32_guard(rows: list[dict[str, Any]], python: str | None) -> None:
+def float32_guard(
+    rows: list[dict[str, Any]],
+    python: str | None,
+    *,
+    timeout: float = RUN_TIMEOUT_SECONDS,
+) -> None:
     """Trace every changed leaf of every comparison; record what it finds.
 
     Each comparison (household, state, with and without health coverage)
@@ -859,8 +999,8 @@ def float32_guard(rows: list[dict[str, Any]], python: str | None) -> None:
     :func:`bridge.uncaused_changes` walks each changed leaf's calculation.
     Adds ``row["float32_guard"][variant]``: the traced leaves, the leaves
     that changed by less than $2 (:func:`bridge.small_changes`), and every
-    variable that changed although each variable it read held within a
-    cent.
+    variable that changed by a cent or more although each variable it read
+    held within float noise (:func:`bridge.uncaused_changes`).
     """
 
     cases = []
@@ -891,6 +1031,7 @@ def float32_guard(rows: list[dict[str, Any]], python: str | None) -> None:
         python=python,
         parameter_overrides=overrides,
         expected_package_record_digest=PE_US_RELEASE["package_record_digest"],
+        timeout=timeout,
     )
     for row, variant, decomposition, changed in plan:
         baseline = traces[
@@ -937,6 +1078,21 @@ def _require(condition: bool, message: object) -> None:
         raise InvariantError(message)
 
 
+#: Categories whose contribution to net income must not rise when Social
+#: Security rises: the means-tested benefits, the income taxes (a
+#: contribution rises when the tax falls) and the refundable credits.
+WRONG_WAY_CATEGORIES = (
+    "ssi",
+    "snap",
+    "csfp",
+    "state_benefits",
+    "federal_income_tax",
+    "state_income_tax",
+    "federal_refundable_credits",
+    "state_refundable_credits",
+)
+
+
 def check_invariants(rows: list[dict[str, Any]]) -> list[str]:
     """Properties of this run, checked before anything is written."""
 
@@ -963,14 +1119,9 @@ def check_invariants(rows: list[dict[str, Any]]) -> list[str]:
                 - row["baseline_social_security_annual"]
             )
             _require(ss == expected, (where, ss, expected))
-            for name in (
-                "ssi",
-                "snap",
-                "csfp",
-                "state_benefits",
-                "federal_income_tax",
-                "state_income_tax",
-            ):
+            # Each is a contribution to net income: a benefit or credit
+            # that rose, or a tax that fell, would raise it.
+            for name in WRONG_WAY_CATEGORIES:
                 _require(
                     categories[name]["change"] <= 0,
                     f"{where}: {name} rose with Social Security",
@@ -994,9 +1145,9 @@ def check_invariants(rows: list[dict[str, Any]]) -> list[str]:
         "the Social Security component equals the Microcosm benefit change"
     )
     checks.append(
-        "SSI, SNAP, the Commodity Supplemental Food Program, state benefits "
-        "and the federal and state income-tax contributions never rise when "
-        "Social Security rises"
+        "when Social Security rises, SSI, SNAP, the Commodity Supplemental "
+        "Food Program, state benefits and federal and state refundable tax "
+        "credits never rise, and federal and state income taxes never fall"
     )
     checks.append(
         "PolicyEngine-US's own household_net_income change is within one "
@@ -1004,8 +1155,8 @@ def check_invariants(rows: list[dict[str, Any]]) -> list[str]:
     )
     checks.append(
         "float32 guard: every changed leaf traced through PolicyEngine-US's "
-        "calculation; no variable changed while every variable it read held "
-        "within a cent"
+        "calculation; no variable changed by a cent or more while every "
+        "variable it read held within float noise"
     )
     return checks
 
@@ -1014,15 +1165,24 @@ def check_invariants(rows: list[dict[str, Any]]) -> list[str]:
 # Writing
 # ---------------------------------------------------------------------------
 def _money(cents: int, *, signed: bool = False) -> str:
-    value = cents / 100
-    text = f"{abs(value):,.0f}"
-    if signed:
-        if cents > 0:
-            return f"+{text}"
-        if cents < 0:
-            return f"−{text}"
+    """Whole dollars from integer cents; a half-dollar rounds up.
+
+    Rounding is on the magnitude, in integer arithmetic, so +1,886.50
+    shows as +1,887 and −1,886.50 as −1,887 (Python's ``format`` would
+    round half to even, to 1,886).  An amount that rounds to zero shows as
+    ``0``, unsigned.
+    """
+
+    if isinstance(cents, bool) or not float(cents).is_integer():
+        raise ValueError(f"cents must be a whole number, not {cents!r}")
+    cents = int(cents)
+    dollars = (abs(cents) + 50) // 100
+    text = f"{dollars:,}"
+    if dollars == 0:
         return "0"
-    return f"−{text}" if cents < 0 else text
+    if cents < 0:
+        return f"−{text}"
+    return f"+{text}" if signed else text
 
 
 def table_categories(rows: list[dict[str, Any]]) -> list[str]:
@@ -1131,7 +1291,8 @@ def medicaid_explanations(
             f"(${_money(bridge.to_cents(after[limit_key]))}), so Medicaid "
             "ends (PolicyEngine-US 2.18.0, "
             "is_optional_senior_or_disabled_income_eligible.py:23-32; "
-            "individual.yaml:44-45)." + qmb_text
+            f"{MEDICAID_LIMIT_FILE.removeprefix('policyengine_us/')}:44-45)."
+            + qmb_text
         )
     return out
 
@@ -1149,7 +1310,9 @@ def markdown(rows: list[dict[str, Any]], document: dict[str, Any]) -> str:
         f"{PAYMENT_YEAR}. Amounts are annual 2026 dollars. Taxes and costs "
         "enter as negative contributions, so each column sums to net income "
         "(PolicyEngine-US's `household_net_income`, which by default "
-        "excludes health coverage).",
+        "excludes health coverage). Each amount is rounded to the dollar on "
+        "its own, a half-dollar up, so a total can differ by a dollar from "
+        "the sum of its rounded parts.",
         "",
         f"- Microcosm Dynamics commit `{provenance['microcosm_dynamics']['commit']}`",
         f"- PolicyEngine-US {release['version']} from PyPI (wheel SHA-256 "
@@ -1195,7 +1358,7 @@ def markdown(rows: list[dict[str, Any]], document: dict[str, Any]) -> str:
             f"{_money(d.net_change_cents, signed=True)} | {share:.0%} | "
             f"{_money(row['with_health'].net_change_cents, signed=True)} |"
         )
-    lines += ["", MEDICAID_VALUATION, ""]
+    lines += ["", document["medicaid_valuation"]["text"], ""]
     names = table_categories(rows)
     for spec in HOUSEHOLDS:
         key = spec["key"]
@@ -1315,11 +1478,17 @@ def chart_footnotes(
 
     provenance = document["provenance"]
     pe = provenance["policyengine_us"]
+    florida = document["medicaid_valuation"]["per_enrollee"]["FL"]
     notes = [
         "Blue raises net income and red lowers it; the gray bars are net "
-        "changes. *Health coverage counted: Medicaid valued at the state's "
-        "Medicaid spending per enrollee (all ages; 2023 spending over 2024 "
-        "enrollment): coverage at average program cost, not a cash loss.",
+        "changes. Each amount is rounded to the dollar on its own. *Health "
+        "coverage counted: Medicaid valued at the state's 2023 Medicaid "
+        "spending over its October 2024 Medicaid and CHIP enrollment, all "
+        "ages. That could overstate or understate an aged enrollee's cost; "
+        "with 2023 enrollment, Florida's "
+        f"${_money(bridge.to_cents(florida['release']))} would be "
+        f"${_money(bridge.to_cents(florida['same_year']))}. It is coverage "
+        "at average program cost, not a cash loss.",
     ]
     for (key, _state), text in document["medicaid_explanations"].items():
         if key == spec["key"]:
@@ -1599,8 +1768,10 @@ def _guard_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
             "household-state pairs, with and without health coverage; "
             f"{leaves} leaves) was traced through PolicyEngine-US's own "
             f"calculation ({nodes:,} traced variable-periods). No variable "
-            "changed while every variable it read held within a cent, the "
-            "signature of a float32 step at a bracket edge. " + small_text
+            "changed by a cent or more while every variable it read held "
+            "within float noise (a cent, or four float32 steps at the read's "
+            "size where that is more), the signature of a float32 step at a "
+            "bracket edge. " + small_text
         ),
     }
 
@@ -1646,9 +1817,9 @@ def _release_caveats(root: Path) -> list[str]:
         "income/deductions/utility/standard/main.yaml:112, 179 and 387).",
         f"In policyengine-us {version} SNAP counts California's SSI "
         "supplement as unearned income "
-        "(gov/usda/snap/income/sources/unearned_spm_unit.yaml:13), so a "
-        "supplement lost to the benefit increase partly offsets SNAP's "
-        "reduction.",
+        "(gov/usda/snap/income/sources/unearned_spm_unit.yaml:13), so "
+        "losing the supplement lowers the income SNAP counts, and SNAP "
+        "falls by less.",
         "Take-up is PolicyEngine-US's default: full for SSI, SNAP and "
         "Medicaid (takes_up_ssi_if_eligible.py:9, "
         "takes_up_snap_if_eligible.py:9, takes_up_medicaid_if_eligible.py:9"
@@ -1665,16 +1836,25 @@ def _release_caveats(root: Path) -> list[str]:
 
 def build(
     python: str | None,
+    *,
+    timeout: float = RUN_TIMEOUT_SECONDS,
 ) -> tuple[dict[str, Any], list[dict[str, Any]], dict[tuple[str, str], str]]:
     installation, pe_provenance = pinned_release(python)
     parameter_root = Path(installation.location)
     updates = parameter_updates(parameter_root)
     worker = worker_benefits(PAYMENT_YEAR, parameter_root)
-    rows, result = run_households(worker, python, updates)
+    rows, result = run_households(worker, python, updates, timeout=timeout)
     if result.installation != installation:
         raise ValueError("policyengine-us changed during the run")
-    float32_guard(rows, python)
+    float32_guard(rows, python, timeout=timeout)
     checks = check_invariants(rows)
+    per_enrollee = medicaid_per_enrollee(parameter_root)
+    check_medicaid_memo(rows, per_enrollee)
+    checks.append(
+        "Medicaid at cost, wherever she is enrolled, equals the state's "
+        "spending over enrollment that the valuation text describes"
+    )
+    valuation = medicaid_valuation_text(per_enrollee)
     limits_document = yaml.safe_load(
         (parameter_root / MEDICAID_LIMIT_FILE).read_text()
     )
@@ -1716,7 +1896,7 @@ def build(
         "Net income is PolicyEngine-US's household_net_income, which by "
         "default excludes health coverage (Medicaid at cost, Medicare "
         "Savings Programs); the with-health sensitivity and the memo lines "
-        "report it. " + MEDICAID_VALUATION,
+        "report it. " + valuation,
         *_release_caveats(parameter_root),
         *[
             f"{STATES[update['states'][0]]['name']}'s {update['year']} aged "
@@ -1763,6 +1943,14 @@ def build(
         "table_rows": table_categories(rows),
         "chart_rows": chart_categories(rows),
         "results": [_serialize_row(row) for row in rows],
+        "medicaid_valuation": {
+            "text": valuation,
+            "per_enrollee": per_enrollee,
+            "files": [
+                PARAMETER_PREFIX + MEDICAID_TOTALS + name
+                for name in ("spending.yaml", "enrollment.yaml")
+            ],
+        },
         "medicaid_explanations": {
             f"{key}-{state}": text
             for (key, state), text in explanations.items()
@@ -1807,8 +1995,16 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help=f"interpreter with policyengine-us (else ${bridge.PE_US_PYTHON_ENV})",
     )
+    parser.add_argument(
+        "--timeout",
+        type=float,
+        default=RUN_TIMEOUT_SECONDS,
+        help="seconds each policyengine-us child may take",
+    )
     args = parser.parse_args(argv)
-    document, rows, explanations = build(args.pe_us_python)
+    document, rows, explanations = build(
+        args.pe_us_python, timeout=args.timeout
+    )
     for directory in (args.out_dir, args.docs_dir):
         for path in write(document, rows, explanations, directory):
             print(path)

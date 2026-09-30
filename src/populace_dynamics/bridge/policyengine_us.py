@@ -34,9 +34,10 @@ This module joins the two without importing ``policyengine_us``:
    after checking every aggregate against the sum of its parts.
 5. **Float32 guard.**  :func:`trace_policyengine_us` reruns cases with
    PolicyEngine-US's tracer on, and :func:`uncaused_changes` finds every
-   variable that changes between two runs although each variable it read
-   changed by less than a cent: a step at a bracket edge taken on float32
-   noise, not a mechanism.
+   variable that changes between two runs although no variable it read
+   changed by more than float noise (a cent, or four float32 steps at the
+   read's size where that is more): a step at a bracket edge taken on
+   float32 noise, not a mechanism.
 
 ``household_net_income`` in policyengine-us 2.18.0
 (``variables/household/income/household/household_net_income.py:10-18``)
@@ -993,8 +994,9 @@ def _git(directory: Path, *args: str, timeout: float = 120.0) -> str:
 #: git-ignored or not, marks the checkout modified (policyengine-core loads
 #: every parameter YAML and variable module it finds on disk).
 _INERT_UNTRACKED = (".pyc", ".pyo", ".DS_Store")
-#: Hosts whose repositories are public, for ``public_origin``.
-_PUBLIC_ORIGIN = re.compile(
+#: GitHub remote URLs, for ``public_origin``.  A URL cannot say whether
+#: the repository is public or private, so this checks the host only.
+_GITHUB_ORIGIN = re.compile(
     r"^(?:https://|ssh://git@|git@)github\.com[/:][^/]+/[^/]+?(?:\.git)?/?$"
 )
 
@@ -1115,12 +1117,12 @@ def check_published_source(
             else:
                 if state["origin_url"] is None:
                     reasons.append("the checkout has no origin remote")
-                elif public_origin and not _PUBLIC_ORIGIN.match(
+                elif public_origin and not _GITHUB_ORIGIN.match(
                     state["origin_url"]
                 ):
                     reasons.append(
-                        f"origin ({state['origin_url']}) is not a public "
-                        "GitHub repository"
+                        f"origin ({state['origin_url']}) is not a GitHub "
+                        "repository"
                     )
                 if state["origin_url"] is not None and not (
                     state["origin_reachable"]
@@ -1526,17 +1528,42 @@ def _noise(
 ) -> float:
     """The largest change of a read that still counts as float noise."""
 
-    magnitude = max(
+    magnitude = _magnitude(baseline, reform)
+    return max(tolerance, FLOAT32_NOISE_STEPS * float32_step(magnitude))
+
+
+def _counts_as_change(
+    baseline: TraceNode, reform: TraceNode, change: float, tolerance: float
+) -> bool:
+    """Whether a node's ``change`` is ``tolerance`` or more before rounding.
+
+    Values are stored in float32, so a change of exactly ``tolerance``
+    can measure up to one float32 step less (3.00 to 3.01 measures
+    0.0099999905): each end is off by at most half a step.  The threshold
+    is therefore ``tolerance`` less one float32 step at the node's
+    magnitude, and never less than half of ``tolerance``, so a zero change
+    or float64 noise on a large value never counts.
+    """
+
+    if change == 0:
+        return False
+    slack = float32_step(_magnitude(baseline, reform))
+    return change >= tolerance - min(slack, tolerance / 2)
+
+
+def _magnitude(*nodes: TraceNode | None) -> float:
+    """The largest finite absolute value among the nodes' values."""
+
+    return max(
         (
             abs(v)
-            for node in (baseline, reform)
+            for node in nodes
             if node is not None and node.value is not None
             for v in node.value
             if math.isfinite(v)
         ),
         default=0.0,
     )
-    return max(tolerance, FLOAT32_NOISE_STEPS * float32_step(magnitude))
 
 
 def _values(node: TraceNode | None) -> list[float] | None:
@@ -1554,8 +1581,10 @@ def uncaused_changes(
 
     Walks the traced nodes reachable from ``roots`` (``name@period``
     keys) in both runs.  A node is reported when it was traced in both
-    runs, is not an input, its value changes by at least ``tolerance``,
-    and no node it read changed by more than float noise: ``tolerance`` or
+    runs, is not an input, its value changes by at least ``tolerance``
+    before float32 rounding (:func:`_counts_as_change`, so an exact
+    one-cent step stored in float32 counts), and no node it read changed
+    by more than float noise: ``tolerance`` or
     :data:`FLOAT32_NOISE_STEPS` float32 steps at the read's magnitude,
     whichever is larger (so the guard still sees noise above $131,072,
     where one float32 step exceeds a cent).  A node it read in one run only
@@ -1563,9 +1592,9 @@ def uncaused_changes(
     changed value upstream decided.  A node traced in one run only is not
     compared for the same reason.  A branch simulation's node traced
     without reads (``branch:name@period``) holds a value copied from the
-    parent simulation and reads the main node ``name@period``.  A read with no numeric value never
-    counts as a cause, so a node whose only changed read is not numeric is
-    reported (a false alarm, not a miss).
+    parent simulation and reads the main node ``name@period``.  A read
+    with no numeric value never counts as a cause, so a node whose only
+    changed read is not numeric is reported (a false alarm, not a miss).
 
     A genuine change always has a changed input below it (here, the Social
     Security amount), so a reported node is a step taken on noise:
@@ -1602,7 +1631,9 @@ def uncaused_changes(
         if before is None or after is None or before.input:
             continue
         change = _node_change(before, after)
-        if change is None or change < tolerance:
+        if change is None or not _counts_as_change(
+            before, after, change, tolerance
+        ):
             continue
         child_changes = {
             child: _node_change(baseline.get(child), reform.get(child))

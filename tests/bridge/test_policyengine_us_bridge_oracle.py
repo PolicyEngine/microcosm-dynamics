@@ -383,6 +383,54 @@ def test__case_run_with_others__then_values_equal_the_case_run_alone(
     assert alone.values == batched.values
 
 
+def test__override_cases_run_with_others__then_each_equals_the_case_alone(
+    interpreter,
+):
+    """Round 2's L6: the shared reformed system, with an override.
+
+    Cases with the same overrides share one reformed tax-benefit system,
+    built from a throwaway simulation of the first such case.  In the
+    batch below household B in California runs on a system built from
+    household A's situation, beside a case with no overrides.  It must
+    equal the same case run alone, on a system built from its own
+    situation, down to the Medicaid memo that aggregates over a
+    simulation's population.
+    """
+
+    override = {CA_STANDARD: CA_2026}
+    specs = {
+        "a_ca": (("A", "CA", BASELINE_SS, 0.0), override),
+        "b_ca": (("B", "CA", BASELINE_SS, PENSION_B), override),
+        "a_fl": (("A", "FL", BASELINE_SS, 0.0), {}),
+    }
+
+    def case(name):
+        household, overrides = specs[name]
+        return bridge.RunCase(
+            name,
+            bridge.to_situation(_household(*household), YEAR),
+            expected_state=household[1],
+            memo=("medicaid_cost", "ca_state_supplement"),
+            parameter_overrides=overrides,
+        )
+
+    batched = bridge.run_policyengine_us(
+        [case(name) for name in specs], year=YEAR, python=interpreter
+    ).runs
+    alone = bridge.run_policyengine_us(
+        [case("b_ca")], year=YEAR, python=interpreter
+    ).runs["b_ca"]
+    assert alone.tree == batched["b_ca"].tree
+    assert alone.values == batched["b_ca"].values
+    assert alone.memo == batched["b_ca"].memo
+    # The override reached the shared system: household B's supplement is
+    # the published standard less her $1,123 of monthly countable income.
+    assert alone.memo["ca_state_supplement"] == pytest.approx(
+        12 * (CA_2026 - (743 + 400 - 20)), abs=TOLERANCE
+    )
+    assert batched["a_ca"].memo["medicaid_cost"] > 0
+
+
 def test__state_fips_table__then_every_code_resolves_to_its_state(
     interpreter,
 ):

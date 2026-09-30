@@ -10,9 +10,12 @@ pinned in ``test_pe_us_bridge_artifact.py``.
 from __future__ import annotations
 
 import sys
+from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 
 import pytest
+from hypothesis import given
+from hypothesis import strategies as st
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -241,6 +244,55 @@ def test__given_ssi_rising_with_social_security__then_writing_is_refused():
         script.check_invariants([_row(baseline_ssi=0.0, reform_ssi=100.0)])
 
 
+@pytest.mark.parametrize(
+    "name", ["federal_refundable_credits", "state_refundable_credits"]
+)
+def test__given_a_refundable_credit_rising__then_writing_is_refused(name):
+    """Round 2's L4: the check covers the refundable credits the design
+    doc lists, not only benefits and income taxes."""
+
+    row = _row()
+    decomposition = row["decomposition"]
+    categories = decomposition.by_category()
+    # Move a dollar from SSI (still falling) to the credit, so the
+    # identity and the Social Security check still hold.
+    categories["ssi"]["change"] -= 100
+    categories[name]["change"] += 100
+    row["decomposition"] = row["with_health"] = _Categories(
+        decomposition, categories
+    )
+    with pytest.raises(script.InvariantError, match=f"{name} rose"):
+        script.check_invariants([row])
+
+
+class _Categories:
+    """A decomposition whose categories are replaced (one moved up)."""
+
+    def __init__(self, decomposition, categories):
+        self._decomposition = decomposition
+        self._categories = categories
+        self.components = decomposition.components
+        self.net_change_cents = decomposition.net_change_cents
+        self.reported_gap_cents = decomposition.reported_gap_cents
+
+    def by_category(self):
+        return self._categories
+
+
+def test__wrong_way_categories__then_they_cover_benefits_taxes_and_credits():
+    assert set(script.WRONG_WAY_CATEGORIES) == {
+        "ssi",
+        "snap",
+        "csfp",
+        "state_benefits",
+        "federal_income_tax",
+        "state_income_tax",
+        "federal_refundable_credits",
+        "state_refundable_credits",
+    }
+    assert set(script.WRONG_WAY_CATEGORIES) <= set(bridge.CATEGORY_ORDER)
+
+
 def test__given_an_uncaused_change__then_writing_is_refused():
     row = _row(uncaused=[{"variable": "ca_use_tax@2026"}])
     with pytest.raises(script.InvariantError, match="float32 guard"):
@@ -355,3 +407,146 @@ def test__given_another_reason_for_the_difference__then_it_is_refused():
         script.medicaid_explanations(
             [_medicaid_row(eligible_after=1.0)], {"FL": 0.88}
         )
+
+
+# ---------------------------------------------------------------------------
+# Money display
+# ---------------------------------------------------------------------------
+@pytest.mark.parametrize(
+    ("cents", "signed", "text"),
+    [
+        (188_650, True, "+1,887"),
+        (-188_650, True, "−1,887"),
+        (188_649, True, "+1,886"),
+        (50, False, "1"),
+        (150, False, "2"),
+        (250, False, "3"),
+        (49, True, "0"),
+        (-49, True, "0"),
+        (0, True, "0"),
+        (-273_744, True, "−2,737"),
+        (1_234_567_850, False, "12,345,679"),
+    ],
+)
+def test__given_cents__then_half_dollars_round_up(cents, signed, text):
+    """Round 2's rounding nit: C-MT's +1,886.50 shows as +1,887, where
+    ``format`` rounds half to even (1,886)."""
+
+    assert script._money(cents, signed=signed) == text
+
+
+@given(st.integers(-(10**12), 10**12), st.booleans())
+def test__given_any_cents__then_money_is_the_half_up_dollar(cents, signed):
+    text = script._money(cents, signed=signed)
+    dollars = int(text.lstrip("+−").replace(",", ""))
+    # Half up in magnitude, from exact decimal arithmetic.
+    assert dollars == int(
+        (Decimal(abs(cents)) / 100).quantize(Decimal(1), ROUND_HALF_UP)
+    )
+    if dollars == 0:
+        assert text == "0"
+    elif cents < 0:
+        assert text.startswith("−")
+    else:
+        assert text.startswith("+") is signed
+
+
+@pytest.mark.parametrize("cents", [1.5, True, float("nan"), float("inf")])
+def test__given_non_whole_cents__then_money_is_refused(cents):
+    with pytest.raises(ValueError):
+        script._money(cents)
+
+
+# ---------------------------------------------------------------------------
+# The Medicaid valuation
+# ---------------------------------------------------------------------------
+def _medicaid_release(tmp_path, enrollment_entry="2024-10-01"):
+    totals = tmp_path / script.PARAMETER_PREFIX / script.MEDICAID_TOTALS
+    totals.mkdir(parents=True)
+    spending = {"CA": 124_063_730_563, "FL": 34_641_023_901, "MT": 1_000}
+    enrollment = {
+        "CA": (14_176_618, 13_431_928),
+        "FL": (4_924_826, 3_765_231),
+        "MT": (10, 8),
+    }
+    totals.joinpath("spending.yaml").write_text(
+        "".join(
+            f"{state}:\n  2022-01-01: 1\n  2023-01-01: {value}\n"
+            for state, value in spending.items()
+        )
+    )
+    totals.joinpath("enrollment.yaml").write_text(
+        "".join(
+            f"{state}:\n  2023-01-01: {same}\n  {enrollment_entry}: {later}\n"
+            for state, (same, later) in enrollment.items()
+        )
+    )
+    return tmp_path
+
+
+def test__given_the_release_totals__then_both_ratios_are_computed(tmp_path):
+    """Round 2's L2: Florida is $9,200 as the release computes it (2023
+    spending over October 2024 enrollment) and $7,034 with 2023
+    enrollment."""
+
+    out = script.medicaid_per_enrollee(_medicaid_release(tmp_path))
+    florida = out["FL"]
+    assert florida["release"] == pytest.approx(9_200.24, abs=0.005)
+    assert florida["same_year"] == pytest.approx(7_033.96, abs=0.005)
+    assert florida["spending_entry"] == "2023-01-01"
+    assert florida["enrollment_entry"] == "2024-10-01"
+    assert out["MT"]["release"] == 125 and out["MT"]["same_year"] == 100
+
+
+def test__given_other_enrollment_dates__then_the_valuation_is_refused(
+    tmp_path,
+):
+    """The text names 2023 spending and October 2024 enrollment; a release
+    with other entries cannot reuse it."""
+
+    with pytest.raises(ValueError, match="not the entries"):
+        script.medicaid_per_enrollee(
+            _medicaid_release(tmp_path, enrollment_entry="2025-10-01")
+        )
+
+
+def test__valuation_text__then_it_is_exact_and_two_sided(tmp_path):
+    per_enrollee = script.medicaid_per_enrollee(_medicaid_release(tmp_path))
+    text = script.medicaid_valuation_text(per_enrollee)
+    assert text.startswith(script.MEDICAID_VALUATION)
+    assert (
+        "2023 Medicaid spending divided by its October 2024 Medicaid and "
+        "CHIP enrollment"
+    ) in text
+    assert "overstate or understate" in text
+    assert "not a cash loss" in text
+    assert "upper-end" not in text and "may understate" not in text
+    # Florida first: the one case where the valuation moves a result.
+    assert "it would be $7,034 in Florida (not $9,200), $8,751 in " in text
+
+
+def test__given_memo_off_the_ratio__then_writing_is_refused(tmp_path):
+    per_enrollee = script.medicaid_per_enrollee(_medicaid_release(tmp_path))
+    row = _medicaid_row()
+    row["memo"]["baseline"]["medicaid_cost"] = 9_200.24
+    row["memo"]["reform"]["medicaid_cost"] = 0.0
+    script.check_medicaid_memo([row], per_enrollee)
+    row["memo"]["baseline"]["medicaid_cost"] = 7_033.96
+    with pytest.raises(script.InvariantError, match="spending over"):
+        script.check_medicaid_memo([row], per_enrollee)
+
+
+# ---------------------------------------------------------------------------
+# State evidence
+# ---------------------------------------------------------------------------
+def test__montana_evidence__then_income_and_its_reduction_are_separate():
+    """Round 2's M1: the credit subtracts an income reduction (5 percent
+    of net household income), not net household income itself."""
+
+    evidence = " ".join(script.STATES["MT"]["evidence"])
+    assert "less net household income" not in evidence
+    assert "less an income reduction" in evidence
+    assert "despite its name, this variable is the income reduction" in (
+        evidence
+    )
+    assert "15-30-2337(8)" in evidence and "15-30-2340(4)" in evidence
