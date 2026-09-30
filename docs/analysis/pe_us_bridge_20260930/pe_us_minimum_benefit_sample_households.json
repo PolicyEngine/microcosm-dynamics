@@ -5,7 +5,7 @@
   "provenance": {
     "microcosm_dynamics": {
       "repository": "PolicyEngine/microcosm-dynamics",
-      "commit": "472f29040693ac2864b06edae5ccceaabadb281c",
+      "commit": "2f0bf639f55897f7e1e55ba7923050cbdcc9ee1a",
       "code_dirty": false,
       "script": "scripts/pe_us_minimum_benefit_sample_households.py",
       "bridge": "src/populace_dynamics/bridge/policyengine_us.py"

@@ -2,7 +2,7 @@
 
 **Illustrative household, not survey data.** Three households built around one illustrative worker, run through PolicyEngine-US for payment year 2026. Amounts are annual 2026 dollars. Taxes and costs enter as negative contributions, so each column sums to net income (PolicyEngine-US's `household_net_income`, which by default excludes health coverage).
 
-- Microcosm Dynamics commit `472f29040693ac2864b06edae5ccceaabadb281c`
+- Microcosm Dynamics commit `2f0bf639f55897f7e1e55ba7923050cbdcc9ee1a`
 - PolicyEngine-US 2.18.0 from PyPI (wheel SHA-256 `28e32bc1339e8ffc1ed676ac1c9ecd468d191685608039643915f63e1357085f`), with policyengine-core 3.32.11. All 17,551 installed `policyengine_us/` files match the wheel's RECORD.
 - Reform: a minimum benefit set at 73% of the aged poverty threshold for 22 years of work (Favreault, Mermin and Steuerle 2006, option 2), compared with current-law scheduled benefits
 - Social Security: 8,916 a year under current law, 10,968 under the reform
