@@ -22,6 +22,18 @@ def nullable(value):
     return None if pd.isna(value) else int(value)
 
 
+def attach_attempt(error, counters, person_id):
+    """§10: an interrupted person keeps its counters and identity.
+
+    Any failure or interruption inside a per-person body carries the
+    collector's cumulative counters. An inner person attribution, such as
+    a linked spouse's refusal, is kept rather than replaced.
+    """
+    error.counters = dict(counters)
+    if not hasattr(error, "person_id"):
+        error.person_id = person_id
+
+
 class HistoryValidator:
     """Read every immutable slice through the person's last observed slice."""
 
@@ -235,46 +247,53 @@ class HistoryValidator:
             return record
 
         for pid in sorted(int(i) for i in self.lookups.final.index):
-            state = self.lookups.final.loc[pid]
-            opener = self.cohort.opening.get(pid)
-            if opener and not (
-                opener.status == "disabled_worker"
-                and nullable(state.di_recovery_year) is not None
-            ):
-                continue
-            own = request(pid, state)
-            own_exists = own is not None or (
-                bool(state.claimed)
-                and nullable(state.claim_year) is not None
-                and str(statics.at[pid, "opening_status"])
-                not in ("survivor", "spouse", "other", "unclassified")
-            )
-            if own is not None and own[0] < 1979:
-                continue
-            if (
-                own is None
-                and own_exists
-                and int(statics.at[pid, "birth_year"]) + 62 < 1979
-            ):
-                # Own retirement level unavailable: v1 returns before auxiliaries.
-                continue
-            if state.marital_status == "married" and own_exists:
-                linked = nullable(state.spouse_person_id)
-                if linked in self.cohort.roster_ids and self.lookups.alive(
-                    linked
+            # §10: a failure names this person, even while reading a linked
+            # spouse's record, unless the error already names someone.
+            try:
+                state = self.lookups.final.loc[pid]
+                opener = self.cohort.opening.get(pid)
+                if opener and not (
+                    opener.status == "disabled_worker"
+                    and nullable(state.di_recovery_year) is not None
                 ):
-                    request(linked, self.lookups.final.loc[linked])
-            elif state.marital_status == "widowed":
-                linked = nullable(state.late_spouse_person_id)
-                death = nullable(state.widowhood_year)
+                    continue
+                own = request(pid, state)
+                own_exists = own is not None or (
+                    bool(state.claimed)
+                    and nullable(state.claim_year) is not None
+                    and str(statics.at[pid, "opening_status"])
+                    not in ("survivor", "spouse", "other", "unclassified")
+                )
+                if own is not None and own[0] < 1979:
+                    continue
                 if (
-                    linked in self.cohort.roster_ids
-                    and death is not None
-                    and self.lookups.death_year(linked) == death
-                    and max(death, int(statics.at[pid, "birth_year"]) + 60)
-                    <= reference
+                    own is None
+                    and own_exists
+                    and int(statics.at[pid, "birth_year"]) + 62 < 1979
                 ):
-                    request(linked, self.lookups.last.loc[linked])
+                    # Own retirement level unavailable: v1 returns before auxiliaries.
+                    continue
+                if state.marital_status == "married" and own_exists:
+                    linked = nullable(state.spouse_person_id)
+                    if (
+                        linked in self.cohort.roster_ids
+                        and self.lookups.alive(linked)
+                    ):
+                        request(linked, self.lookups.final.loc[linked])
+                elif state.marital_status == "widowed":
+                    linked = nullable(state.late_spouse_person_id)
+                    death = nullable(state.widowhood_year)
+                    if (
+                        linked in self.cohort.roster_ids
+                        and death is not None
+                        and self.lookups.death_year(linked) == death
+                        and max(death, int(statics.at[pid, "birth_year"]) + 60)
+                        <= reference
+                    ):
+                        request(linked, self.lookups.last.loc[linked])
+            except (Exception, KeyboardInterrupt) as error:
+                attach_attempt(error, self.counters, pid)
+                raise
         return requested
 
     def requested_di_ids(self):
@@ -287,7 +306,7 @@ class HistoryValidator:
                 if pid in self.request_errors:
                     raise self.request_errors[pid]
                 self.validate(pid, levels[pid])
-            except HistoryRefusal as exc:
-                exc.counters = dict(self.counters)
+            except (Exception, KeyboardInterrupt) as error:
+                attach_attempt(error, self.counters, pid)
                 raise
         return self.counters.copy()
