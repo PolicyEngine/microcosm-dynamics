@@ -32,6 +32,7 @@ from populace_dynamics.fra68_track.benefits import union_benefit_rows
 from populace_dynamics.fra68_track.config import FRA68Config
 
 from . import INVENTED_HEADER, SPECIFICATION_VERSION
+from .histories import attach_attempt
 
 
 @dataclass(frozen=True)
@@ -91,47 +92,71 @@ def projection_hash(result) -> str:
     ).hexdigest()
 
 
+def _double_zero_row(pid, base, reform, *, draw, context, lookups):
+    state = lookups.final.loc[pid]
+    names = sorted(set(base.components) | set(reform.components))
+    return {
+        "draw": draw,
+        "person_id": pid,
+        "family_unit_id": int(
+            context.cohort.persons_by_id.loc[pid, "family_unit_id"]
+        ),
+        "weight": float(state["weight"]),
+        "birth_year": int(state["birth_year"]),
+        "beneficiary_base": False,
+        "beneficiary_reform": False,
+        "benefit_base": 0.0,
+        "benefit_reform": 0.0,
+        "benefit_components": {
+            name: {"base": 0.0, "reform": 0.0} for name in names
+        },
+        "basis": base.basis,
+        "own_kind_base": base.own_kind,
+        "own_kind_reform": reform.own_kind,
+    }
+
+
 def _paired_scenarios(base, reform, *, draw, context, lookups, params):
-    """Keep the inherited diagnostics and add all double-zero persons (§7)."""
+    """Keep the inherited diagnostics and add all double-zero persons (§7).
+
+    §11 leaves v1's union unedited, so it runs once per person in its own
+    sorted order: an interrupted person keeps its identity and the
+    completed persons' counters (§10). Rows, their order and the counters,
+    key order included, equal one inherited call.
+    """
     if set(base) != set(reform) or set(base) != set(lookups.final.index):
         raise ValueError("the two scenarios cover different persons")
-    rows, counters = union_benefit_rows(
-        base,
-        reform,
-        draw=draw,
-        context=context,
-        lookups=lookups,
-        baseline_params=context.params,
-        reform_params=params,
-    )
-    present = {item["person_id"] for item in rows}
-    for pid in sorted(set(base) - present):
-        state = lookups.final.loc[pid]
-        names = sorted(set(base[pid].components) | set(reform[pid].components))
-        rows.append(
-            {
-                "draw": draw,
-                "person_id": pid,
-                "family_unit_id": int(
-                    context.cohort.persons_by_id.loc[pid, "family_unit_id"]
-                ),
-                "weight": float(state["weight"]),
-                "birth_year": int(state["birth_year"]),
-                "beneficiary_base": False,
-                "beneficiary_reform": False,
-                "benefit_base": 0.0,
-                "benefit_reform": 0.0,
-                "benefit_components": {
-                    name: {"base": 0.0, "reform": 0.0} for name in names
-                },
-                "basis": base[pid].basis,
-                "own_kind_base": base[pid].own_kind,
-                "own_kind_reform": reform[pid].own_kind,
-            }
-        )
-    for item in rows:
-        item["age_reference"] = 2030 - item["birth_year"]
-    return sorted(rows, key=lambda item: item["person_id"]), counters
+    rows, counters = [], Counter()
+    for pid in sorted(base):
+        try:
+            found, count = union_benefit_rows(
+                {pid: base[pid]},
+                {pid: reform[pid]},
+                draw=draw,
+                context=context,
+                lookups=lookups,
+                baseline_params=context.params,
+                reform_params=params,
+            )
+            if not found:
+                found = [
+                    _double_zero_row(
+                        pid,
+                        base[pid],
+                        reform[pid],
+                        draw=draw,
+                        context=context,
+                        lookups=lookups,
+                    )
+                ]
+            for item in found:
+                item["age_reference"] = 2030 - item["birth_year"]
+            rows.extend(found)
+            counters.update(count)
+        except (Exception, KeyboardInterrupt) as error:
+            attach_attempt(error, counters, pid)
+            raise
+    return rows, counters
 
 
 def _before_projection(inputs, config, registration, pointer):
@@ -345,15 +370,33 @@ def run_joint(
                             **shared,
                         )
                     people, count = by_reform[source.reform_key]
-                    raw, pair_counts = _paired_scenarios(
-                        base_people,
-                        people,
-                        draw=draw,
-                        context=context,
-                        lookups=lookups,
-                        params=scenario.params,
-                    )
+                    try:
+                        raw, pair_counts = _paired_scenarios(
+                            base_people,
+                            people,
+                            draw=draw,
+                            context=context,
+                            lookups=lookups,
+                            params=scenario.params,
+                        )
+                    except (Exception, KeyboardInterrupt):
+                        # §10 keeps every counter computed before a stop.
+                        # The row's reform counts, merged below on success,
+                        # were computed before its pairing began.
+                        counters.update(count)
+                        raise
                     key = f"{mechanism}×{row.row_id}"
+                    # As for R rows, merge before the filter so that a later
+                    # stop never keeps fewer counts (§10).
+                    row_counters[key].update(pair_counts)
+                    counters.update(pair_counts)
+                    row_counters[key].update(
+                        {f"baseline_{k}": v for k, v in base_counts.items()}
+                    )
+                    row_counters[key].update(
+                        {f"reform_{k}": v for k, v in count.items()}
+                    )
+                    counters.update(count)
                     # §7 retains E1's recipient-union inputs for F, including
                     # its family-split universe. U additionally retains every
                     # alive double-zero person for population denominators.
@@ -364,15 +407,6 @@ def run_joint(
                         or item["benefit_base"] > 0
                         or item["benefit_reform"] > 0
                     )
-                    row_counters[key].update(pair_counts)
-                    counters.update(pair_counts)
-                    row_counters[key].update(
-                        {f"baseline_{k}": v for k, v in base_counts.items()}
-                    )
-                    row_counters[key].update(
-                        {f"reform_{k}": v for k, v in count.items()}
-                    )
-                    counters.update(count)
             # §3.2 requires each post-mechanism snapshot; §10 requires every
             # step-3 benefit refusal to precede the step-4 mutation refusal.
             # Remember the first mismatch even if a later mechanism restores
