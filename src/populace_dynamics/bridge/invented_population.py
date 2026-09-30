@@ -18,7 +18,7 @@ d727, under Max's d479: "Development checks use invented cases").
    (:func:`~populace_dynamics.min_benefit_track_m.evaluation.evaluate`)
    under the headline row MS0.  ``evaluate`` has no provenance guard of
    its own; the tabulation and the pipeline hold them
-   (``evaluation.py:26-28``; ``pipeline.py:205-224``).  So
+   (``evaluation.py:27-29``; ``pipeline.py:205-224``).  So
    :func:`require_invented` refuses, before ``evaluate`` runs, any records
    not marked ``invented``, any carrying PSID file hashes
    (``pipeline.PSID_FILES_SOURCE_KEY``) and any whose source lacks the
@@ -96,6 +96,7 @@ __all__ = [
     "HEADLINE_ROW",
     "INPUT_CONCEPTS",
     "INVENTED_DISTRIBUTIONS",
+    "INVENTED_INPUT_LABEL",
     "INVENTED_POPULATION_LABEL",
     "InventedCohort",
     "InventedPopulation",
@@ -128,6 +129,8 @@ OTHER_INPUTS_STREAM = 20260930
 _ROLES = ("reference_person", "spouse", "other_member")
 _MONTHS = 12
 
+#: The label every invented input carries, here and in the outputs.
+INVENTED_INPUT_LABEL = "INVENTED"
 #: The INVENTED distributions of the inputs the cohort lacks.  Each amount
 #: is lognormal with the given median and log-scale sigma, drawn with the
 #: given probability (zero otherwise), and rounded to the dollar.  Every
@@ -136,16 +139,23 @@ _MONTHS = 12
 #: value.
 INVENTED_DISTRIBUTIONS: dict[str, dict[str, Any]] = {
     "state": {
+        "label": INVENTED_INPUT_LABEL,
         "unit": "family unit",
         "rule": "uniform over the 50 states and DC (bridge.STATE_FIPS)",
     },
-    "renter": {"unit": "family unit", "probability": 0.4},
+    "renter": {
+        "label": INVENTED_INPUT_LABEL,
+        "unit": "family unit",
+        "probability": 0.4,
+    },
     "monthly_rent": {
+        "label": INVENTED_INPUT_LABEL,
         "unit": "family unit (renters)",
         "median": 900.0,
         "sigma": 0.35,
     },
     "wealth1": {
+        "label": INVENTED_INPUT_LABEL,
         "unit": "family unit",
         "low_probability": 0.3,
         "low_uniform_max": 3_000.0,
@@ -153,12 +163,14 @@ INVENTED_DISTRIBUTIONS: dict[str, dict[str, Any]] = {
         "sigma": 1.4,
     },
     "vehicles": {
+        "label": INVENTED_INPUT_LABEL,
         "unit": "family unit",
         "probability": 0.75,
         "median": 9_000.0,
         "sigma": 0.7,
     },
     "labor": {
+        "label": INVENTED_INPUT_LABEL,
         "unit": "person",
         "probability": {
             "reference_person": 0.10,
@@ -169,12 +181,14 @@ INVENTED_DISTRIBUTIONS: dict[str, dict[str, Any]] = {
         "sigma": 0.9,
     },
     "annuities": {
+        "label": INVENTED_INPUT_LABEL,
         "unit": "person",
         "probability": 0.35,
         "median": 9_000.0,
         "sigma": 0.9,
     },
     "interest": {
+        "label": INVENTED_INPUT_LABEL,
         "unit": "person",
         "probability": 0.45,
         "median": 300.0,
@@ -187,6 +201,7 @@ INVENTED_DISTRIBUTIONS: dict[str, dict[str, Any]] = {
 #: ``estimates.adjusted_poverty`` reads where the invented data has one.
 INPUT_CONCEPTS: tuple[dict[str, str], ...] = (
     {
+        "label": INVENTED_INPUT_LABEL,
         "item": "labor",
         "input": "employment_income",
         "convention": (
@@ -197,6 +212,7 @@ INPUT_CONCEPTS: tuple[dict[str, str], ...] = (
         ),
     },
     {
+        "label": INVENTED_INPUT_LABEL,
         "item": "interest",
         "input": "interest_income",
         "convention": (
@@ -205,6 +221,7 @@ INPUT_CONCEPTS: tuple[dict[str, str], ...] = (
         ),
     },
     {
+        "label": INVENTED_INPUT_LABEL,
         "item": "annuities",
         "input": "taxable_private_pension_income",
         "convention": (
@@ -215,6 +232,7 @@ INPUT_CONCEPTS: tuple[dict[str, str], ...] = (
         ),
     },
     {
+        "label": INVENTED_INPUT_LABEL,
         "item": "max(0, wealth1 - vehicles)",
         "input": "bank_account_assets",
         "convention": (
@@ -225,6 +243,7 @@ INPUT_CONCEPTS: tuple[dict[str, str], ...] = (
         ),
     },
     {
+        "label": INVENTED_INPUT_LABEL,
         "item": "12 x monthly_rent",
         "input": "pre_subsidy_rent",
         "convention": (

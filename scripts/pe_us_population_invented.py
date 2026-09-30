@@ -838,6 +838,70 @@ def _share(value: float | None, mixed: bool = False) -> str:
 LEVEL_ROWS = ("federal", "state", "local")
 
 
+def _distribution_text(spec: dict[str, Any]) -> str:
+    """One invented distribution in words (its keys, in order)."""
+
+    parts = []
+    probability = spec.get("probability")
+    if isinstance(probability, dict):
+        parts.append(
+            "drawn with probability "
+            + ", ".join(f"{p:g} ({role})" for role, p in probability.items())
+        )
+    elif probability is not None:
+        parts.append(f"drawn with probability {probability:g}")
+    if "low_probability" in spec:
+        parts.append(
+            f"with probability {spec['low_probability']:g} uniform on "
+            f"$0-${spec['low_uniform_max']:,.0f}"
+        )
+    if "median" in spec:
+        parts.append(
+            ("otherwise " if "low_probability" in spec else "")
+            + f"lognormal, median ${spec['median']:,.0f}, "
+            f"log sigma {spec['sigma']:g}"
+        )
+    if "rule" in spec:
+        parts.append(spec["rule"])
+    return "; ".join(parts) + f" (per {spec['unit']})"
+
+
+def invented_inputs_markdown(inputs: dict[str, Any]) -> list[str]:
+    """The invented inputs, each labelled, and how each enters the model."""
+
+    lines = [
+        "## Invented inputs",
+        "",
+        "The invented generator draws no state, income other than Social "
+        "Security, assets or rent. Each is drawn here from the distribution "
+        "below (seed stream "
+        f"{inputs['stream']}), rounded to the dollar. None is a survey, "
+        "Census or program value.",
+        "",
+        "| Item | Label | Distribution |",
+        "|---|---|---|",
+    ]
+    for item, spec in inputs["distributions"].items():
+        lines.append(
+            f"| `{item}` | {spec['label']} | {_distribution_text(spec)} |"
+        )
+    lines += [
+        "",
+        "| Invented item | PolicyEngine-US input | Label | Convention |",
+        "|---|---|---|---|",
+    ]
+    for concept in inputs["input_concepts"]:
+        lines.append(
+            f"| {concept['item']} | `{concept['input']}` | "
+            f"{concept['label']} | {concept['convention']} |"
+        )
+    flags = ", ".join(
+        f"`{name}` = {value}" for name, value in inputs["flags"].items()
+    )
+    lines += ["", f"Flags set for every household: {flags}.", ""]
+    return lines
+
+
 def markdown(document: dict[str, Any]) -> str:
     lines = [
         f"# {LABEL}",
@@ -1044,6 +1108,7 @@ def markdown(document: dict[str, Any]) -> str:
             f"{checks['households']['default']['small_leaf_changes']}.",
         ]
         lines.append("")
+    lines += invented_inputs_markdown(document["invented_inputs"])
     lines += ["## Notes", ""]
     lines += [f"- {note}" for note in document["caveats"]]
     lines.append("")

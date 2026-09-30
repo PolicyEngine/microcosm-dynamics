@@ -16,6 +16,19 @@ must equal the committed one in integer cents: every leaf, category and
 net figure, and policyengine-us's own float32 net income.  So must the
 Medicaid and Medicare Savings Program memo values.
 
+**Multi-person households.**  The committed households each hold one
+person, so a second differential takes INVENTED multi-person households
+from the invented population (couples filing jointly, other members filing
+alone, in states chosen for their mechanisms) and runs each through the
+bridge alone, one ``Simulation`` per household, and all of them through
+the population path, one ``Microsimulation`` per scenario.  Every
+household's decomposition and memo values must agree exactly.
+
+**Reproduction and scale.**  The committed outputs of
+``scripts/pe_us_population_invented.py`` are rebuilt live at 300 family
+units: every result must equal the committed one, and the run must stay
+within the script's stated bounds.
+
 **Population-level formulas.**  policyengine-us 2.18.0 values Medicaid at
 cost as the state's spending times the person's cost index over a
 denominator (``variables/gov/hhs/medicaid/costs/
@@ -44,12 +57,15 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+from populace_dynamics.bridge import invented_population as invented
 from populace_dynamics.bridge import policyengine_us as bridge
 from populace_dynamics.bridge import population as pop
+from populace_dynamics.min_benefit_track_m import invented as track_m_invented
 
 ROOT = Path(__file__).resolve().parents[2]
 ANALYSIS = ROOT / "docs" / "analysis" / "pe_us_bridge_20260930"
 STEM = "pe_us_minimum_benefit_sample_households"
+POPULATION = ROOT / "docs" / "analysis" / "pe_us_population_invented_20260930"
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import pe_us_minimum_benefit_sample_households as sample  # noqa: E402
@@ -274,3 +290,204 @@ def test__native_medicaid__then_state_spending_is_spread_over_enrollees(
         for h in rows:
             household = committed["results"][h]["memo"]["baseline"]
             assert abs(cost[h] - household["medicaid_cost"]) > 1_000.0
+
+
+# ---------------------------------------------------------------------------
+# Multi-person INVENTED households: the population path against the bridge
+# ---------------------------------------------------------------------------
+#: States for the chosen households, each for a mechanism: California's SSI
+#: supplement, Minnesota's supplemental aid, Alabama's deduction of federal
+#: income tax, Montana's income tax and elderly credit, New York, Florida.
+MECHANISM_STATES = ("CA", "MN", "AL", "MT", "NY", "FL")
+MULTI_MEMO = ("medicaid_cost", "msp_cost", "ssi", "snap")
+
+
+def _invented_households():
+    """Twelve INVENTED households: every one with an other member, then
+    couples and singles, in :data:`MECHANISM_STATES` by turn.  Two lose
+    every non-Social Security income and asset (toward SSI and SNAP)."""
+
+    parameters, cola = track_m_invented.invented_parameters()
+    rates = {**cola, **{year: 0.025 for year in range(2022, 2026)}}
+    cohort = invented.build_invented_cohort(
+        seed=7, n_family_units=300, params=parameters.params, cola_rates=cola
+    )
+    result = invented.evaluate_headline(cohort.inputs, parameters)
+    table = invented.person_benefits(
+        cohort.inputs,
+        result,
+        parameters,
+        rates,
+        persons=cohort.cohort.persons,
+    )
+    population = invented.build_population(cohort, table, seed=7)
+    frame = population.frames["current_law"]
+    sizes = np.bincount(frame.units["household"])
+    changed = [
+        h
+        for h in range(frame.n_households)
+        if not np.array_equal(
+            *(
+                population.frames[s].amounts["social_security_retirement"][
+                    frame.units["household"] == h
+                ]
+                for s in invented.SIMULATED_SCENARIOS
+            )
+        )
+    ]
+    threes = [h for h in range(len(sizes)) if sizes[h] == 3][:4]
+    twos = [h for h in changed if sizes[h] == 2][:4]
+    ones = [h for h in changed if sizes[h] == 1][:4]
+    chosen = threes + twos + ones
+    assert len(chosen) == 12, (len(threes), len(twos), len(ones))
+    out = {}
+    for scenario in invented.SIMULATED_SCENARIOS:
+        part = population.frames[scenario].subset(chosen)
+        fields = {
+            name: getattr(part, name)
+            for name in pop.PopulationFrame.__dataclass_fields__
+        }
+        fields["state"] = tuple(
+            MECHANISM_STATES[h % len(MECHANISM_STATES)]
+            for h in range(part.n_households)
+        )
+        poor = np.isin(part.units["household"], (2, 9))
+        amounts = dict(part.amounts)
+        for name in (
+            "employment_income",
+            "taxable_private_pension_income",
+            "interest_income",
+            "bank_account_assets",
+        ):
+            amounts[name] = np.where(poor, 0.0, amounts[name])
+        fields["amounts"] = amounts
+        out[scenario] = pop.PopulationFrame(**fields)
+    return out
+
+
+@pytest.fixture(scope="module")
+def invented_frames():
+    return _invented_households()
+
+
+@pytest.fixture(scope="module")
+def invented_runs(interpreter, invented_frames, overrides):
+    variants = {
+        "default": overrides,
+        "with_health": {**overrides, **sample.HEALTH_OVERRIDE},
+    }
+    together = pop.run_population(
+        invented_frames,
+        year=YEAR,
+        variants=variants,
+        household_memo=MULTI_MEMO,
+        python=interpreter,
+        expected_package_record_digest=sample.PE_US_RELEASE[
+            "package_record_digest"
+        ],
+    )
+    cases = []
+    for scenario, frame in invented_frames.items():
+        for h, household in enumerate(frame.to_households()):
+            for variant in variants:
+                state_overrides = dict(
+                    overrides if household.state == "CA" else {}
+                )
+                if variant == "with_health":
+                    state_overrides.update(sample.HEALTH_OVERRIDE)
+                cases.append(
+                    bridge.RunCase(
+                        case_id=f"{variant}/{scenario}/{h}",
+                        situation=bridge.to_situation(household, YEAR),
+                        expected_state=household.state,
+                        memo=MULTI_MEMO,
+                        parameter_overrides=state_overrides,
+                    )
+                )
+    alone = bridge.run_policyengine_us(
+        cases,
+        year=YEAR,
+        python=interpreter,
+        expected_package_record_digest=sample.PE_US_RELEASE[
+            "package_record_digest"
+        ],
+    )
+    return together, alone
+
+
+@pytest.mark.parametrize("variant", ("default", "with_health"))
+def test__invented_multi_person_households__then_each_matches_it_alone(
+    invented_runs, invented_frames, variant
+):
+    together, alone = invented_runs
+    base, reform = invented.SIMULATED_SCENARIOS
+    decomposition = pop.decompose_population(
+        together.trees[variant],
+        together.values[variant][base],
+        together.values[variant][reform],
+        reform_tree=together.trees[variant],
+    )
+    frame = invented_frames[base]
+    assert frame.n_people > frame.n_households  # couples and others
+    moved = 0
+    for h in range(frame.n_households):
+        one = alone.runs[f"{variant}/{base}/{h}"]
+        other = alone.runs[f"{variant}/{reform}/{h}"]
+        assert one.tree == together.trees[variant]
+        expected = bridge.decompose(one.tree, one.values, other.values)
+        got = decomposition.household(h).as_dict()
+        want = expected.as_dict()
+        got.pop("max_aggregate_gap")
+        want.pop("max_aggregate_gap")
+        assert got == want, (h, frame.state[h])
+        for scenario, run in ((base, one), (reform, other)):
+            memo = together.household_memo[variant][scenario]
+            for name in MULTI_MEMO:
+                assert float(memo[name][h]) == run.memo[name], (
+                    h,
+                    scenario,
+                    name,
+                )
+        moved += int(expected.net_change_cents != 0)
+    assert moved  # the reform moves some households
+
+
+# ---------------------------------------------------------------------------
+# Reproduction and scale: the committed outputs, rebuilt live at 300 units
+# ---------------------------------------------------------------------------
+REPRODUCED = (
+    "label",
+    "track_m",
+    "households",
+    "results",
+    "changed_leaves",
+    "health_split",
+    "checks",
+)
+
+
+@pytest.fixture(scope="module")
+def committed_population():
+    return json.loads(
+        (POPULATION / f"{population_script.OUTPUT_STEM}.json").read_text()
+    )
+
+
+def test__the_committed_300_unit_run__then_a_live_rebuild_reproduces_it(
+    interpreter, committed_population
+):
+    document, _ = population_script.build(
+        (300,),
+        seed=population_script.DEFAULT_SEED,
+        python=str(interpreter),
+    )
+    live = document["sizes"]["300"]
+    committed = committed_population["sizes"]["300"]
+    for key in REPRODUCED:
+        assert live[key] == committed[key], key
+    scale = live["scale"]
+    assert scale["within_bounds"] is True
+    bounds = population_script.SCALE_BOUNDS[300]
+    assert scale["pe_wall_seconds"] <= bounds["pe_wall_seconds"]
+    assert scale["peak_rss_bytes"] <= bounds["peak_rss_bytes"]
+    assert set(scale["pe_simulations"]) == set(population_script.VARIANTS)
