@@ -202,6 +202,8 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("scripts/track_u2_component_diagnostics.py"),
         Path("scripts/run_track_u2_registered.py"),
         Path("scripts/u2_u1_differential.py"),
+        Path("src/populace_dynamics/bridge/__init__.py"),
+        Path("src/populace_dynamics/bridge/policyengine_us.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -436,6 +438,15 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
     assert u2_milestone2.isdisjoint(reachable), (
         "U2 milestone-2 modules became reachable from the birth-evidence "
         f"reducer: {sorted(u2_milestone2 & reachable)}"
+    )
+    bridge_modules = {
+        "populace_dynamics.bridge",
+        "populace_dynamics.bridge.policyengine_us",
+    }
+    assert bridge_modules.issubset(module_paths)
+    assert bridge_modules.isdisjoint(reachable), (
+        "the opt-in PolicyEngine-US bridge became reachable from the "
+        f"birth-evidence reducer: {sorted(bridge_modules & reachable)}"
     )
     assert graph_exclusions.isdisjoint(reachable), (
         "opt-in graph modules became reachable from the birth-evidence "

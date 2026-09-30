@@ -331,6 +331,11 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("scripts/track_u2_component_diagnostics.py"),
     Path("scripts/run_track_u2_registered.py"),
     Path("scripts/u2_u1_differential.py"),
+    # The opt-in PolicyEngine-US bridge passes benefit amounts to an
+    # external tax-benefit model after the fact; nothing historical imports
+    # it.
+    Path("src/populace_dynamics/bridge/__init__.py"),
+    Path("src/populace_dynamics/bridge/policyengine_us.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
