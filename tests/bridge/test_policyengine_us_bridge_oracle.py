@@ -1,13 +1,15 @@
 """The PolicyEngine-US bridge against a live policyengine-us interpreter.
 
 Skipped unless the interpreter exists and imports ``policyengine_us``: the
-one named by ``POPULACE_DYNAMICS_PE_US_PYTHON``, else the checkout's
-virtual environment at ``~/PolicyEngine/policyengine-us/.venv/bin/python``.
-The path is resolved and checked, not just the variable read (another test
-module sets policyengine-us variables at import).
+one named by ``POPULACE_DYNAMICS_PE_US_PYTHON``, else
+:data:`bridge.DEFAULT_PE_US_PYTHON`, a virtual environment holding
+policyengine-us 2.18.0 from PyPI.  The path is resolved and checked, not
+just the variable read (another test module sets policyengine-us variables
+at import).  The bridge refuses an interpreter whose ``policyengine-us`` is
+not a published source, so these tests fail loudly on an unpushed checkout.
 
-Each directional fact below was read in policyengine-us at ``e4363903f3``
-before it was asserted (paths under ``policyengine_us/``):
+Each directional fact below was read in policyengine-us 2.18.0 before it
+was asserted (paths under ``policyengine_us/``):
 
 * SSI is the benefit rate less countable income (``variables/gov/ssa/ssi/
   uncapped_ssi.py:13-16``, floored at zero in ``ssi_if_takes_up.py:20-23``);
@@ -17,16 +19,22 @@ before it was asserted (paths under ``policyengine_us/``):
   28-30``).  So SSI cannot rise when Social Security rises, and while SSI
   stays positive it falls dollar for dollar.
 * SNAP counts ``ssi`` and ``social_security`` as unearned income
-  (``parameters/gov/usda/snap/income/sources/unearned.yaml:6,14``), so
+  (``parameters/gov/usda/snap/income/sources/unearned.yaml:6,63``), so
   their constant sum leaves SNAP unchanged, and SNAP is the maximum
   allotment less 30 percent of net income (``snap_normal_allotment.py:
   19-23``; ``snap_expected_contribution.py:17-32``), so more income never
   raises it.
 * California's supplement is the payment standard less SSI less countable
   income (``variables/gov/states/ca/cdss/state_supplement/
-  ca_state_supplement.py:13-17``), constant while SSI is positive.
+  ca_state_supplement.py:13-17``), constant while SSI is positive.  Its
+  single aged or disabled payment standard has no entry after 2025-01-01
+  (``parameters/gov/states/ca/cdss/state_supplement/payment_standard/
+  aged_or_disabled/amount/single.yaml:12-13``).
 * Taxable Social Security follows IRC 86 (``tax_unit_taxable_social_
-  security.py:13-80``), nondecreasing in benefits here.
+  security.py:13-85``), nondecreasing in benefits here.
+* California's use tax is a step schedule of California AGI in $10,000
+  brackets (``variables/gov/states/ca/tax/income/ca_use_tax.py:13-20``;
+  ``parameters/gov/states/ca/tax/income/use_tax/main.yaml:19-28``).
 
 The amounts are ILLUSTRATIVE (the annual benefits of the worker in
 ``scripts/pe_us_minimum_benefit_sample_households.py``).
@@ -42,14 +50,14 @@ import pytest
 
 from populace_dynamics.bridge import policyengine_us as bridge
 
-_DEFAULT_PE_US_PYTHON = Path(
-    "~/PolicyEngine/policyengine-us/.venv/bin/python"
-).expanduser()
-
 
 def _interpreter() -> Path:
     env = os.environ.get(bridge.PE_US_PYTHON_ENV)
-    return Path(env).expanduser() if env else _DEFAULT_PE_US_PYTHON
+    return (
+        Path(env).expanduser()
+        if env
+        else bridge.DEFAULT_PE_US_PYTHON.expanduser()
+    )
 
 
 pytestmark = pytest.mark.skipif(
@@ -60,7 +68,18 @@ pytestmark = pytest.mark.skipif(
 YEAR = 2026
 BASELINE_SS = 8_916.0
 REFORM_SS = 10_968.0
+PENSION_B = 4_800.0
+PENSION_C = 31_200.0
 TOLERANCE = 0.05
+#: California's 2026 payment standard, single aged person living
+#: independently: CDSS, "SSI Total Monthly Payment Amounts 2026" (Rev. 1/26,
+#: effective 2026-01-01), $1,233.94 a month.  policyengine-us 2.18.0 holds
+#: 2025's $1,206.94.
+CA_STANDARD = "gov.states.ca.cdss.state_supplement.payment_standard." + (
+    "aged_or_disabled.amount.single"
+)
+CA_2026 = 1_233.94
+CA_2025 = 1_206.94
 
 
 @pytest.fixture(scope="module")
@@ -102,10 +121,10 @@ CASES = {
     ("A", "FL", "reform"): ("A", "FL", REFORM_SS, 0.0),
     ("A", "CA", "baseline"): ("A", "CA", BASELINE_SS, 0.0),
     ("A", "CA", "reform"): ("A", "CA", REFORM_SS, 0.0),
-    ("B", "FL", "baseline"): ("B", "FL", BASELINE_SS, 4_800.0),
-    ("B", "FL", "reform"): ("B", "FL", REFORM_SS, 4_800.0),
-    ("C", "MT", "baseline"): ("C", "MT", BASELINE_SS, 30_000.0),
-    ("C", "MT", "reform"): ("C", "MT", REFORM_SS, 30_000.0),
+    ("B", "FL", "baseline"): ("B", "FL", BASELINE_SS, PENSION_B),
+    ("B", "FL", "reform"): ("B", "FL", REFORM_SS, PENSION_B),
+    ("C", "MT", "baseline"): ("C", "MT", BASELINE_SS, PENSION_C),
+    ("C", "MT", "reform"): ("C", "MT", REFORM_SS, PENSION_C),
 }
 
 
@@ -149,6 +168,22 @@ def test__live_tree__then_net_income_definition_is_the_one_read(result):
             bridge.NET_INCOME_DEFINITION
         )
     assert result.policyengine_us_version
+
+
+def test__live_interpreter__then_its_source_is_published_and_intact(
+    interpreter, result
+):
+    """Finding 3: the run records a published policyengine-us source."""
+
+    installation = bridge.inspect_installation(interpreter)
+    assert result.installation == installation
+    assert result.source["published"] is True
+    assert result.source["kind"] in ("index", "path")
+    assert result.policyengine_us_version == installation.version
+    if installation.source_kind == "index":
+        record = bridge.verify_record(installation)
+        assert record["files_checked"] > 1_000
+        assert record["mismatched"] == [] and record["missing"] == []
 
 
 @pytest.mark.parametrize("state", ["FL", "CA"])
@@ -213,6 +248,82 @@ def test__household_c__then_taxes_do_not_fall(result):
     assert categories["state_income_tax"]["change"] <= 0
     assert reform.values["income_tax_before_refundable_credits"] >= (
         baseline.values["income_tax_before_refundable_credits"]
+    )
+
+
+def test__california_payment_standard_override__then_it_sets_the_supplement(
+    interpreter,
+):
+    """Finding 1: the 2026 override reaches the supplement's formula.
+
+    Household B's SSI countable income is $743 + $400 - $20 = $1,123 a
+    month and her SSI is zero, so the supplement is the payment standard
+    less $1,123: $110.94 a month under CDSS's $1,233.94, $83.94 under the
+    release's held $1,206.94.
+    """
+
+    situation = bridge.to_situation(
+        _household("B", "CA", BASELINE_SS, PENSION_B), YEAR
+    )
+    out = bridge.run_policyengine_us(
+        [
+            bridge.RunCase("held", situation, expected_state="CA"),
+            bridge.RunCase(
+                "published",
+                situation,
+                expected_state="CA",
+                parameter_overrides={CA_STANDARD: CA_2026},
+            ),
+        ],
+        year=YEAR,
+        python=interpreter,
+    )
+    countable = 743 + 400 - 20
+    assert out.runs["held"].values["ca_state_supplement"] == pytest.approx(
+        12 * (CA_2025 - countable), abs=TOLERANCE
+    )
+    assert out.runs["published"].values[
+        "ca_state_supplement"
+    ] == pytest.approx(12 * (CA_2026 - countable), abs=TOLERANCE)
+
+
+@pytest.mark.parametrize(
+    ("pension", "flagged"),
+    [(30_000.0, ["ca_use_tax@2026"]), (PENSION_C, [])],
+)
+def test__use_tax_at_a_bracket_edge__then_the_float32_guard_flags_it(
+    interpreter, pension, flagged
+):
+    """Finding 2, live: at a $30,000 pension California AGI sits on the
+    $30,000 use-tax edge and float32 noise steps the tax by $1; at the
+    script's $31,200 nothing changes without a cause."""
+
+    variables = ["state_use_tax", "income_tax_before_refundable_credits"]
+    traces = bridge.trace_policyengine_us(
+        [
+            (
+                scenario,
+                bridge.to_situation(_household("C", "CA", ss, pension), YEAR),
+                variables,
+            )
+            for scenario, ss in (
+                ("baseline", BASELINE_SS),
+                ("reform", REFORM_SS),
+            )
+        ],
+        year=YEAR,
+        python=interpreter,
+    )
+    found = bridge.uncaused_changes(
+        traces["baseline"],
+        traces["reform"],
+        [f"{name}@{YEAR}" for name in variables],
+    )
+    assert [item["variable"] for item in found] == flagged
+    # Federal income tax rises with the benefit in both: a caused change.
+    federal = f"income_tax_before_refundable_credits@{YEAR}"
+    assert traces["reform"][federal].value[0] > (
+        traces["baseline"][federal].value[0]
     )
 
 

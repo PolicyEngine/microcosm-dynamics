@@ -8,9 +8,12 @@ households, trees and amounts.  The live runner is exercised in
 
 from __future__ import annotations
 
+import base64
+import hashlib
 import itertools
 import json
 import math
+import subprocess
 from decimal import Decimal
 
 import pytest
@@ -207,6 +210,20 @@ def test__given_three_person_marital_unit__then_household_is_refused():
         bridge.BridgeHousehold("h", "CA", trio, group, group, group)
 
 
+@pytest.mark.parametrize(
+    "units",
+    [
+        ("ab",),  # a bare string as a group: once read as ("a", "b")
+        "ab",  # a bare string as the groups
+    ],
+)
+def test__given_bare_string_group__then_household_is_refused(units):
+    people = (bridge.BridgePerson("a", 70), bridge.BridgePerson("b", 68))
+    good = (("a", "b"),)
+    with pytest.raises(TypeError, match="sequence of ids|groups of ids"):
+        bridge.BridgeHousehold("h", "CA", people, units, good, good)
+
+
 def test__given_unknown_state_or_duplicate_ids__then_household_is_refused():
     group = (("a", "b"),)
     with pytest.raises(ValueError, match="STATE_FIPS"):
@@ -348,6 +365,38 @@ def test__given_inconsistent_aggregate__then_decomposition_is_refused(
         _decompose(tree, baseline, broken)
 
 
+def test__given_nan_intermediate_aggregate__then_decomposition_is_refused():
+    """The review's minimal counterexample (finding 4).
+
+    root -> mid -> (x, y) with mid = nan, x = 1, y = 2 and root = 3 once
+    decomposed without error: ``max(0.0, nan)`` is ``0.0``.
+    """
+
+    tree = bridge.ComponentTree(
+        "root",
+        {"root": (("mid", 1),), "mid": (("x", 1), ("y", 1))},
+    )
+    values = {"root": 3.0, "mid": math.nan, "x": 1.0, "y": 2.0}
+    with pytest.raises(bridge.AggregateMismatchError, match="not finite"):
+        _decompose(tree, values, values)
+
+
+@given(
+    runs(),
+    st.sampled_from([math.nan, math.inf, -math.inf]),
+    st.data(),
+)
+def test__given_any_nonfinite_value__then_decomposition_is_refused(
+    run, bad, data
+):
+    tree, baseline, reform = run
+    name = data.draw(st.sampled_from(sorted(reform)))
+    broken = dict(reform)
+    broken[name] = bad
+    with pytest.raises(bridge.AggregateMismatchError, match="not finite"):
+        _decompose(tree, baseline, broken)
+
+
 @settings(max_examples=100)
 @given(
     runs(
@@ -450,9 +499,14 @@ def test__given_other_net_income_definition__then_drift_is_refused():
             "state_benefits",
         ),
         (
+            "income_tax_before_refundable_credits",
+            ("household_tax_before_refundable_credits",),
+            "federal_income_tax",
+        ),
+        (
             "income_tax_refundable_credits",
             ("household_refundable_tax_credits",),
-            "federal_income_tax",
+            "federal_refundable_credits",
         ),
         (
             "mt_refundable_credits",
@@ -460,7 +514,7 @@ def test__given_other_net_income_definition__then_drift_is_refused():
                 "household_refundable_tax_credits",
                 "household_refundable_state_tax_credits",
             ),
-            "state_income_tax",
+            "state_refundable_credits",
         ),
         (
             "state_income_tax_before_refundable_credits",
@@ -487,8 +541,9 @@ def test__given_other_net_income_definition__then_drift_is_refused():
         (
             "commodity_supplemental_food_program",
             ("household_benefits",),
-            "other_benefits",
+            "csfp",
         ),
+        ("wic", ("household_benefits",), "other_benefits"),
     ],
 )
 def test__given_leaf__then_category_is_the_documented_one(
@@ -498,6 +553,49 @@ def test__given_leaf__then_category_is_the_documented_one(
         category
     )
     assert category in bridge.CATEGORY_ORDER
+
+
+def test__category_table__then_every_category_has_one_label():
+    assert set(bridge.CATEGORY_LABELS) == set(bridge.CATEGORY_ORDER)
+    assert len(set(bridge.CATEGORY_ORDER)) == len(bridge.CATEGORY_ORDER)
+
+
+def test__given_refundable_credit_on_zero_tax__then_it_is_not_a_tax_row():
+    """A refundable credit on a zero liability is its own positive row.
+
+    Montana's elderly homeowner and renter credit on a zero liability once
+    read as "state income tax +1,150" (review finding 7).
+    """
+
+    tree = bridge.ComponentTree(
+        "household_net_income",
+        {
+            "household_net_income": bridge.NET_INCOME_DEFINITION,
+            "household_refundable_tax_credits": (
+                ("household_refundable_state_tax_credits", 1),
+            ),
+            "household_refundable_state_tax_credits": (
+                ("mt_refundable_credits", 1),
+            ),
+            "household_tax_before_refundable_credits": (
+                ("household_state_tax_before_refundable_credits", 1),
+            ),
+            "household_state_tax_before_refundable_credits": (
+                ("state_income_tax_before_refundable_credits", 1),
+            ),
+        },
+    )
+    leaves = {
+        "household_market_income": 0.0,
+        "household_benefits": 0.0,
+        "mt_refundable_credits": 1150.0,
+        "state_income_tax_before_refundable_credits": 0.0,
+        "household_health_costs": 0.0,
+    }
+    values = _values(tree, leaves)
+    categories = bridge.decompose(tree, values, values).by_category()
+    assert categories["state_refundable_credits"]["baseline"] == 115000
+    assert categories["state_income_tax"]["baseline"] == 0
 
 
 def test__given_cyclic_or_badly_signed_tree__then_it_is_refused():
@@ -546,13 +644,13 @@ def test__given_colas__then_carried_pia_is_a_whole_dime(pia, rates):
     assert tenths == tenths.to_integral_value()
 
 
-@given(PIA, PIA, RATES)
+@given(PIA, PIA, NONEMPTY_RATES)
 def test__given_larger_pia__then_carried_pia_is_not_smaller(a, b, rates):
     low, high = sorted((a, b))
     assert _carry(low, rates) <= _carry(high, rates)
 
 
-@given(PIA, RATES)
+@given(PIA, NONEMPTY_RATES)
 def test__given_colas__then_truncation_loses_less_than_a_dime_a_step(
     pia, rates
 ):
@@ -590,6 +688,19 @@ def test__given_missing_cola__then_carry_is_refused():
             {2020: 0.013},
             first_determination_year=2020,
             last_determination_year=2021,
+        )
+
+
+@given(PIA, st.integers(1, 30))
+def test__given_first_year_after_last__then_carry_is_refused(pia, gap):
+    """An empty range once returned the PIA untruncated (finding 5)."""
+
+    with pytest.raises(ValueError, match="after"):
+        bridge.carry_pia_forward(
+            pia,
+            {},
+            first_determination_year=2026,
+            last_determination_year=2026 - gap,
         )
 
 
@@ -691,3 +802,354 @@ def test__given_explicit_env_or_nothing__then_interpreter_resolves_in_order(
     assert bridge.resolve_pe_us_python() == (
         bridge.DEFAULT_PE_US_PYTHON.expanduser()
     )
+
+
+# ---------------------------------------------------------------------------
+# The source check (no interpreter is started)
+# ---------------------------------------------------------------------------
+def _installation(tmp_path, **overrides):
+    fields = {
+        "python": str(tmp_path / "python"),
+        "python_version": "3.13.9",
+        "package_dir": str(tmp_path / "site" / "policyengine_us"),
+        "version": "2.18.0",
+        "core_version": "3.32.11",
+        "location": str(tmp_path / "site"),
+        "record_path": str(tmp_path / "site" / "dist-info" / "RECORD"),
+        "record_sha256": "0" * 64,
+        "direct_url": None,
+        "installer": "uv",
+    }
+    fields.update(overrides)
+    return bridge.PolicyEngineUSInstallation(**fields)
+
+
+def test__given_index_install__then_source_is_published(tmp_path):
+    installation = _installation(tmp_path)
+    assert installation.source_kind == "index"
+    record = bridge.check_published_source(installation)
+    assert record["published"] and record["reasons"] == []
+
+
+@pytest.mark.parametrize(
+    ("direct_url", "kind"),
+    [
+        ({"url": "https://x", "vcs_info": {"commit_id": "a"}}, "vcs"),
+        ({"url": "file:///w.whl", "archive_info": {}}, "archive"),
+        ({"url": "file:///src", "dir_info": {}}, "directory"),
+    ],
+)
+def test__given_vcs_archive_or_directory_install__then_source_is_refused(
+    tmp_path, direct_url, kind
+):
+    installation = _installation(tmp_path, direct_url=direct_url)
+    assert installation.source_kind == kind
+    with pytest.raises(bridge.UnpublishedSourceError, match=kind):
+        bridge.check_published_source(installation)
+    record = bridge.check_published_source(installation, require=False)
+    assert record["published"] is False
+
+
+def _git(directory, *args):
+    subprocess.run(
+        ["git", "-C", str(directory), *args],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+
+@pytest.fixture
+def checkout(tmp_path):
+    """A clone of a local origin: pushed ``main`` plus a package dir."""
+
+    origin = tmp_path / "origin.git"
+    subprocess.run(
+        ["git", "init", "--bare", "-q", str(origin)],
+        check=True,
+        capture_output=True,
+    )
+    clone = tmp_path / "clone"
+    subprocess.run(
+        ["git", "clone", "-q", str(origin), str(clone)],
+        check=True,
+        capture_output=True,
+    )
+    _git(clone, "config", "user.email", "t@example.com")
+    _git(clone, "config", "user.name", "t")
+    _git(clone, "checkout", "-q", "-b", "main")
+    package = clone / "policyengine_us"
+    package.mkdir()
+    (package / "__init__.py").write_text("")
+    _git(clone, "add", ".")
+    _git(clone, "commit", "-q", "-m", "published")
+    _git(clone, "push", "-q", "origin", "main")
+    return clone
+
+
+def _checkout_installation(tmp_path, clone):
+    return _installation(
+        tmp_path,
+        package_dir=str(clone / "policyengine_us"),
+        direct_url={"url": f"file://{clone}", "dir_info": {"editable": True}},
+    )
+
+
+def test__given_pushed_clean_checkout__then_source_is_published(
+    tmp_path, checkout
+):
+    installation = _checkout_installation(tmp_path, checkout)
+    assert installation.source_kind == "path"
+    record = bridge.check_published_source(installation)
+    assert record["published"]
+    assert record["checkout"]["origin_refs_containing"]
+
+
+def test__given_local_commit_not_on_origin__then_source_is_refused(
+    tmp_path, checkout
+):
+    """The review's finding 3: a revision GitHub does not have."""
+
+    (checkout / "policyengine_us" / "extra.py").write_text("X = 1\n")
+    _git(checkout, "add", ".")
+    _git(checkout, "commit", "-q", "-m", "fixup! local only")
+    installation = _checkout_installation(tmp_path, checkout)
+    with pytest.raises(bridge.UnpublishedSourceError, match="not reachable"):
+        bridge.check_published_source(installation)
+
+
+@pytest.mark.parametrize("change", ["tracked", "untracked"])
+def test__given_modified_checkout__then_source_is_refused(
+    tmp_path, checkout, change
+):
+    if change == "tracked":
+        (checkout / "policyengine_us" / "__init__.py").write_text("Y = 2\n")
+    else:
+        (checkout / "policyengine_us" / "new.py").write_text("Z = 3\n")
+    installation = _checkout_installation(tmp_path, checkout)
+    with pytest.raises(bridge.UnpublishedSourceError, match="uncommitted"):
+        bridge.check_published_source(installation)
+
+
+def test__given_package_outside_any_checkout__then_source_is_refused(
+    tmp_path,
+):
+    outside = tmp_path / "loose" / "policyengine_us"
+    outside.mkdir(parents=True)
+    installation = _installation(tmp_path, package_dir=str(outside))
+    assert installation.source_kind == "path"
+    with pytest.raises(bridge.UnpublishedSourceError, match="git checkout"):
+        bridge.check_published_source(installation)
+
+
+def _record_line(root, relative, content):
+    path = root / relative
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(content)
+    digest = hashlib.sha256(content).digest()
+    encoded = base64.urlsafe_b64encode(digest).rstrip(b"=").decode()
+    return f"{relative},sha256={encoded},{len(content)}"
+
+
+def test__given_installed_files__then_record_verification_checks_each(
+    tmp_path,
+):
+    site = tmp_path / "site"
+    lines = [
+        _record_line(site, "policyengine_us/__init__.py", b"a = 1\n"),
+        _record_line(site, "policyengine_us/p/x.yaml", b"values: {}\n"),
+        _record_line(site, "policyengine_us-2.18.0.dist-info/METADATA", b"m"),
+        "policyengine_us-2.18.0.dist-info/RECORD,,",
+    ]
+    record = site / "policyengine_us-2.18.0.dist-info" / "RECORD"
+    record.write_text("\n".join(lines) + "\n")
+    installation = _installation(tmp_path, record_path=str(record))
+    clean = bridge.verify_record(installation)
+    assert clean["files_checked"] == 2
+    assert clean["mismatched"] == [] and clean["missing"] == []
+    (site / "policyengine_us" / "p" / "x.yaml").write_text("values: {1: 2}\n")
+    (site / "policyengine_us" / "__init__.py").unlink()
+    dirty = bridge.verify_record(installation)
+    assert dirty["mismatched"] == ["policyengine_us/p/x.yaml"]
+    assert dirty["missing"] == ["policyengine_us/__init__.py"]
+    assert dirty["package_record_digest"] == clean["package_record_digest"]
+
+
+@given(
+    st.lists(
+        st.from_regex(
+            r"policyengine_us/[a-z]{1,8}\.py,sha256=[a-z]{4},\d",
+            fullmatch=True,
+        ),
+        min_size=1,
+        max_size=8,
+        unique=True,
+    ),
+    st.lists(st.from_regex(r"[a-z]{1,8},,", fullmatch=True), max_size=4),
+    st.randoms(use_true_random=False),
+)
+def test__given_installer_lines_and_order__then_package_digest_is_unchanged(
+    package_lines, installer_lines, random
+):
+    """The installed RECORD adds installer lines and may reorder; the digest
+    of the sorted package lines is the wheel's either way."""
+
+    wheel = "\n".join(package_lines) + "\n"
+    installed = package_lines + installer_lines
+    random.shuffle(installed)
+    prefix = "policyengine_us/"
+    assert bridge.package_record_digest(wheel, prefix) == (
+        bridge.package_record_digest("\n".join(installed), prefix)
+    )
+
+
+# ---------------------------------------------------------------------------
+# The float32 guard (no interpreter is started)
+# ---------------------------------------------------------------------------
+def _node(value, children=(), is_input=False):
+    return bridge.TraceNode(
+        value=None if value is None else tuple(value),
+        children=tuple(children),
+        input=is_input,
+    )
+
+
+def _use_tax_traces(reform_agi):
+    """The review's finding 2, as PolicyEngine-US 2.18.0 traces it.
+
+    California excludes Social Security from its AGI, so ca_agi should not
+    move; float32 subtraction put the reform run at 29,999.998046875, one
+    float32 step under the $30,000 edge of the use-tax table.
+    """
+
+    def run(ss, agi, ca_agi, use_tax):
+        return {
+            "state_use_tax@2026": _node([use_tax], ["ca_use_tax@2026"]),
+            "ca_use_tax@2026": _node([use_tax], ["CA@2026", "ca_agi@2026"]),
+            "CA@2026": _node([1.0]),
+            "ca_agi@2026": _node(
+                [ca_agi],
+                ["adjusted_gross_income@2026", "ca_agi_subtractions@2026"],
+            ),
+            "adjusted_gross_income@2026": _node(
+                [agi], ["social_security_retirement@2026"]
+            ),
+            "ca_agi_subtractions@2026": _node(
+                [agi - ca_agi], ["social_security_retirement@2026"]
+            ),
+            "social_security_retirement@2026": _node([ss], is_input=True),
+        }
+
+    baseline = run(8916.0, 34847.30, 30000.0, 3.0)
+    reform = run(
+        10968.0, 35761.40, reform_agi, 2.0 if reform_agi < 3e4 else 3.0
+    )
+    return baseline, reform
+
+
+def test__given_step_on_float32_noise__then_the_guard_reports_its_origin():
+    baseline, reform = _use_tax_traces(29999.998046875)
+    found = bridge.uncaused_changes(baseline, reform, ["state_use_tax@2026"])
+    assert [item["variable"] for item in found] == ["ca_use_tax@2026"]
+    assert found[0]["change"] == pytest.approx(1.0)
+    assert found[0]["reads"]["ca_agi@2026"] < bridge.CENT_TOLERANCE
+
+
+def test__given_no_step__then_the_guard_is_silent():
+    baseline, reform = _use_tax_traces(30000.0)
+    assert (
+        bridge.uncaused_changes(baseline, reform, ["state_use_tax@2026"]) == []
+    )
+
+
+def test__given_change_through_a_changed_input__then_it_is_caused():
+    baseline = {
+        "tax@2026": _node([100.0], ["agi@2026"]),
+        "agi@2026": _node([1000.0], ["ss@2026"]),
+        "ss@2026": _node([500.0], is_input=True),
+    }
+    reform = {
+        "tax@2026": _node([100.5], ["agi@2026"]),
+        "agi@2026": _node([1005.0], ["ss@2026"]),
+        "ss@2026": _node([505.0], is_input=True),
+    }
+    assert bridge.uncaused_changes(baseline, reform, ["tax@2026"]) == []
+
+
+def test__given_branch_taken_in_one_run_only__then_it_is_a_cause():
+    """Medicaid ending sends the calculation down another branch: a node
+    read in one run only is a change, and a node traced in one run only is
+    not compared."""
+
+    baseline = {
+        "cost@2026": _node([9000.0], ["eligible@2026", "medicaid@2026"]),
+        "eligible@2026": _node([1.0], ["income@2026"]),
+        "income@2026": _node([100.0], is_input=True),
+        "medicaid@2026": _node([9000.0], ["age@2026"]),
+        "age@2026": _node([68.0], is_input=True),
+    }
+    reform = {
+        "cost@2026": _node([5000.0], ["eligible@2026", "msp@2026"]),
+        "eligible@2026": _node([0.0], ["income@2026"]),
+        "income@2026": _node([200.0], is_input=True),
+        "msp@2026": _node([5000.0], ["age@2026"]),
+        "age@2026": _node([68.0], is_input=True),
+    }
+    assert bridge.uncaused_changes(baseline, reform, ["cost@2026"]) == []
+
+
+@given(
+    st.lists(
+        st.tuples(
+            st.floats(-1e6, 1e6, allow_nan=False, allow_infinity=False),
+            st.floats(-1e6, 1e6, allow_nan=False, allow_infinity=False),
+        ),
+        min_size=1,
+        max_size=6,
+    )
+)
+def test__given_identical_runs__then_the_guard_is_silent(values):
+    nodes = {
+        f"v{i}@2026": _node(
+            [a, b], [f"v{i + 1}@2026"] if i + 1 < len(values) else []
+        )
+        for i, (a, b) in enumerate(values)
+    }
+    assert bridge.uncaused_changes(nodes, dict(nodes), ["v0@2026"]) == []
+
+
+@given(
+    st.floats(-1e6, 1e6, allow_nan=False, allow_infinity=False),
+    st.floats(0.01, 1e4, allow_nan=False, allow_infinity=False),
+    st.floats(0.0, 0.0099, allow_nan=False, allow_infinity=False),
+)
+def test__given_any_jump_over_a_sub_cent_read__then_it_is_reported(
+    level, jump, noise
+):
+    baseline = {
+        "out@2026": _node([level], ["in@2026"]),
+        "in@2026": _node([0.0], ["x@2026"]),
+        "x@2026": _node([1.0], is_input=True),
+    }
+    reform = {
+        "out@2026": _node([level + jump], ["in@2026"]),
+        "in@2026": _node([noise], ["x@2026"]),
+        "x@2026": _node([1.0], is_input=True),
+    }
+    found = bridge.uncaused_changes(baseline, reform, ["out@2026"])
+    changed = abs((level + jump) - level) >= bridge.CENT_TOLERANCE
+    assert [item["variable"] for item in found] == (
+        ["out@2026"] if changed else []
+    )
+
+
+def test__given_small_leaf_changes__then_they_are_listed():
+    tree = bridge.ComponentTree(
+        "root", {"root": (("a", 1), ("b", 1), ("c", -1))}
+    )
+    baseline = {"root": 10.0, "a": 5.0, "b": 3.0, "c": -2.0}
+    reform = {"root": 12.01, "a": 6.99, "b": 3.0, "c": -2.02}
+    result = _decompose(tree, baseline, reform)
+    small = bridge.small_changes(result)
+    assert [c.variable for c in small] == ["a", "c"]
+    assert bridge.small_changes(result, limit_cents=199) == [small[1]]

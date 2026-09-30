@@ -12,21 +12,33 @@ This module joins the two without importing ``policyengine_us``:
    :func:`to_situation` writes a PolicyEngine-US situation dictionary.
    ``social_security_retirement`` and the other three Social Security
    variables have no formula in PolicyEngine-US (``variables/gov/ssa/ss/
-   social_security_retirement.py:4-10`` at ``e4363903f3``), so the amounts
-   Microcosm computes enter as inputs and PolicyEngine-US adds them in
-   ``social_security`` (``social_security.py:11-14``).
+   social_security_retirement.py:4-10`` in policyengine-us 2.18.0), so the
+   amounts Microcosm computes enter as inputs and PolicyEngine-US adds them
+   in ``social_security`` (``social_security.py:11-14``).
 2. **Runner.**  :func:`run_policyengine_us` sends situations as JSON to a
    separate interpreter that has ``policyengine-us`` installed (located by
    ``POPULACE_DYNAMICS_PE_US_PYTHON``, the subprocess discipline of
    ``scripts/build_aux_benefit_examples.py``).  The child reads the
    component tree of ``household_net_income`` from the model itself and
    returns every node's household value.
-3. **Decomposition.**  :func:`decompose` turns a baseline and a reform run
+3. **Source check.**  Before running, :func:`inspect_installation` asks the
+   interpreter which ``policyengine-us`` it imports and where it came from,
+   and :func:`check_published_source` refuses a source that is not
+   published: a git checkout whose revision no ``origin`` branch contains,
+   or whose tracked files are modified, and any VCS or archive install.
+   :func:`verify_record` checks the installed files against the
+   distribution's RECORD.
+4. **Decomposition.**  :func:`decompose` turns a baseline and a reform run
    into leaf components whose changes sum exactly (in integer cents) to
    the change in ``household_net_income`` as its definition computes it,
    after checking every aggregate against the sum of its parts.
+5. **Float32 guard.**  :func:`trace_policyengine_us` reruns cases with
+   PolicyEngine-US's tracer on, and :func:`uncaused_changes` finds every
+   variable that changes between two runs although each variable it read
+   changed by less than a cent: a step at a bracket edge taken on float32
+   noise, not a mechanism.
 
-``household_net_income`` at ``e4363903f3``
+``household_net_income`` in policyengine-us 2.18.0
 (``variables/household/income/household/household_net_income.py:10-18``)
 adds ``household_market_income``, ``household_benefits`` and
 ``household_refundable_tax_credits`` and subtracts
@@ -47,6 +59,10 @@ pass them), run over a projected population, or edit PolicyEngine-US.
 
 from __future__ import annotations
 
+import base64
+import csv
+import hashlib
+import io
 import json
 import math
 import os
@@ -64,6 +80,7 @@ __all__ = [
     "BridgePerson",
     "CATEGORY_LABELS",
     "CATEGORY_ORDER",
+    "CENT_TOLERANCE",
     "Component",
     "ComponentTree",
     "DEFAULT_EXPAND",
@@ -73,34 +90,46 @@ __all__ = [
     "NET_INCOME_DEFINITION",
     "PE_US_PYTHON_ENV",
     "PolicyEngineRun",
+    "PolicyEngineUSInstallation",
     "PolicyEngineUSUnavailable",
     "ROOT_VARIABLE",
     "RunCase",
     "RunResult",
+    "SMALL_CHANGE_CENTS",
     "STATE_FIPS",
+    "TraceNode",
+    "UnpublishedSourceError",
     "carry_pia_forward",
     "category_for",
+    "check_published_source",
     "cola_rates_from_cpi_w",
     "decompose",
     "floor_to_dime",
+    "inspect_installation",
+    "package_record_digest",
     "person_inputs_from_situation",
     "resolve_pe_us_python",
     "run_policyengine_us",
+    "small_changes",
     "to_cents",
     "to_situation",
+    "trace_policyengine_us",
+    "uncaused_changes",
+    "verify_record",
 ]
 
 #: The environment variable naming the interpreter that has
 #: ``policyengine-us`` installed (as ``scripts/build_aux_benefit_examples.py``
 #: uses it).
 PE_US_PYTHON_ENV = "POPULACE_DYNAMICS_PE_US_PYTHON"
-#: The fallback when the environment variable is unset: the virtual
-#: environment of the default policyengine-us checkout.
-DEFAULT_PE_US_PYTHON = Path("~/PolicyEngine/policyengine-us/.venv/bin/python")
+#: The fallback when the environment variable is unset: a virtual
+#: environment holding the policyengine-us 2.18.0 release from PyPI
+#: (``uv venv`` then ``uv pip install policyengine-us==2.18.0``).
+DEFAULT_PE_US_PYTHON = Path("~/.venvs/policyengine-us-2.18.0/bin/python")
 
 #: The variable the decomposition explains.
 ROOT_VARIABLE = "household_net_income"
-#: ``household_net_income``'s definition at ``e4363903f3``
+#: ``household_net_income``'s definition in policyengine-us 2.18.0
 #: (``household_net_income.py:10-18``): the added and subtracted parts, in
 #: order.  :func:`decompose` refuses a run whose tree differs (a tripwire for
 #: a PolicyEngine-US change the bridge has not been checked against).
@@ -216,6 +245,10 @@ class DefinitionDriftError(ValueError):
     """``household_net_income``'s definition is not the one the bridge read."""
 
 
+class UnpublishedSourceError(RuntimeError):
+    """The interpreter imports a ``policyengine-us`` that is not published."""
+
+
 # ---------------------------------------------------------------------------
 # Households and situations
 # ---------------------------------------------------------------------------
@@ -275,6 +308,15 @@ class BridgePerson:
 
 
 def _groups(value: Iterable[Iterable[str]], label: str) -> tuple:
+    # A bare string is iterable, so ("ab",) would otherwise become the group
+    # ("a", "b"); a group of people must be a sequence of ids.
+    if isinstance(value, str):
+        raise TypeError(f"{label}: expected groups of ids, not {value!r}")
+    for group in value:
+        if isinstance(group, str):
+            raise TypeError(
+                f"{label}: a group must be a sequence of ids, not {group!r}"
+            )
     groups = tuple(tuple(group) for group in value)
     for group in groups:
         if not group:
@@ -298,7 +340,10 @@ class BridgeHousehold:
     decide a result:
 
     * ``has_heating_cooling_expense`` (SPM unit): SNAP's standard utility
-      allowance turns on it (``snap_utility_allowance_type.py:38-45``).
+      allowance turns on it (``snap_utility_allowance_type.py:30,40-52`` in
+      policyengine-us 2.18.0).  In 2.18.0 the variable has a formula
+      (``has_heating_cooling_expense.py:21-32``); the situation sets it as
+      an input, which takes the formula's place.
     * ``takes_up_housing_assistance`` (SPM unit,
       ``takes_up_housing_assistance_if_eligible``): its default is true
       (``takes_up_housing_assistance_if_eligible.py:9``), which would give
@@ -306,7 +351,7 @@ class BridgeHousehold:
     * ``food_preparation_allowed`` (household,
       ``living_arrangements_allow_for_food_preparation``): its default is
       false, and California's supplement adds a food allowance when it is
-      false (``ca_state_supplement_food_allowance_eligible.py:13-21``).
+      false (``ca_state_supplement_food_allowance_eligible.py:12-21``).
     """
 
     household_id: str
@@ -445,15 +490,76 @@ def person_inputs_from_situation(
 # ---------------------------------------------------------------------------
 # The runner (a separate interpreter with policyengine-us)
 # ---------------------------------------------------------------------------
+#: Shared by every child script: which ``policyengine-us`` the interpreter
+#: imports and where it came from, read with ``importlib.metadata`` and
+#: ``importlib.util.find_spec`` (neither imports the package).
+_INSTALLATION_SOURCE = r"""
+import hashlib
+import importlib.metadata as metadata
+import importlib.util
+import json
+import platform
+import sys
+from pathlib import Path
+
+
+def installation():
+    spec = importlib.util.find_spec("policyengine_us")
+    out = {
+        "python_version": platform.python_version(),
+        "package_dir": (
+            str(Path(spec.origin).resolve().parent)
+            if spec is not None and spec.origin
+            else None
+        ),
+        "version": None,
+        "core_version": None,
+        "location": None,
+        "record_path": None,
+        "record_sha256": None,
+        "direct_url": None,
+        "installer": None,
+    }
+    try:
+        out["core_version"] = metadata.version("policyengine-core")
+    except metadata.PackageNotFoundError:
+        pass
+    try:
+        dist = metadata.distribution("policyengine-us")
+    except metadata.PackageNotFoundError:
+        return out
+    out["version"] = dist.version
+    out["location"] = str(Path(dist.locate_file("")).resolve())
+    for entry in dist.files or ():
+        if entry.name == "RECORD" and entry.parent.name.endswith(".dist-info"):
+            record = Path(dist.locate_file(entry)).resolve()
+            out["record_path"] = str(record)
+            out["record_sha256"] = hashlib.sha256(
+                record.read_bytes()
+            ).hexdigest()
+    direct_url = dist.read_text("direct_url.json")
+    if direct_url:
+        out["direct_url"] = json.loads(direct_url)
+    installer = dist.read_text("INSTALLER")
+    if installer:
+        out["installer"] = installer.strip()
+    return out
+"""
+
+#: :func:`inspect_installation`'s child: the installation, nothing else.
+_INSPECT_SOURCE = (
+    _INSTALLATION_SOURCE + "\njson.dump(installation(), sys.stdout)\n"
+)
+
 #: Executed by the policyengine-us interpreter.  It reads a job on stdin and
 #: writes results on stdout.  For each case it builds the component tree of
 #: the root from the model: a variable's ``adds``/``subtracts`` (a list, or
 #: a parameter path to a list), except three formula variables whose lists
-#: it mirrors from their source at ``e4363903f3``:
+#: it mirrors from their source in policyengine-us 2.18.0:
 #:
-#: * ``household_benefits`` (``household_benefits.py:11-19``):
-#:   ``gov.household.household_benefits``, less
-#:   ``spm_unit_capped_housing_subsidy`` when ``gov.hud.abolition``;
+#: * ``household_benefits`` (``household_benefits.py:11-17``):
+#:   ``gov.household.household_benefits``, less ``housing_assistance`` when
+#:   ``gov.hud.abolition``;
 #: * ``household_health_benefits`` (``household_health_benefits.py:17-22``)
 #:   and ``household_health_costs`` (``household_health_costs.py:16-20``):
 #:   their ``gov.household`` lists when
@@ -467,12 +573,9 @@ def person_inputs_from_situation(
 #: situations are merged with every person and group name prefixed by the
 #: case's index (households are independent in PolicyEngine-US's entity
 #: model), and each case reads its own household's row.  Each case must
-#: hold exactly one household.
-_RUNNER_SOURCE = r"""
-import json
-import sys
-import importlib.metadata as metadata
-
+#: hold exactly one household.  A memo name may carry ``@period`` (for
+#: example ``is_qmb_eligible@2026-01``) to read a monthly variable.
+_RUNNER_SOURCE = _INSTALLATION_SOURCE + r"""
 import policyengine_us
 from policyengine_us import Simulation
 from policyengine_core.reforms import Reform
@@ -493,7 +596,7 @@ def children_of(system, params, name):
     if name == "household_benefits":
         items = parameter_list(params, "gov.household.household_benefits")
         if bool(params.gov.hud.abolition):
-            items = [i for i in items if i != "spm_unit_capped_housing_subsidy"]
+            items = [i for i in items if i != "housing_assistance"]
         return [[item, 1] for item in items]
     if name in ("household_health_benefits", "household_health_costs"):
         if not bool(params.gov.simulation.include_health_benefits_in_net_income):
@@ -559,6 +662,22 @@ def build_tree(system, params):
     return tree
 
 
+def reform_for(overrides):
+    if not overrides:
+        return None
+    return Reform.from_dict(
+        {
+            path: {f"{year}-01-01.{year}-12-31": value}
+            for path, value in overrides.items()
+        },
+        country_id="us",
+    )
+
+
+def memo_period(name):
+    return name.split("@", 1) if "@" in name else (name, period)
+
+
 groups = {}
 for case in job["cases"]:
     key = json.dumps(case.get("parameter_overrides") or {}, sort_keys=True)
@@ -567,17 +686,8 @@ for case in job["cases"]:
 results = []
 for key, cases in groups.items():
     overrides = json.loads(key)
-    reform = None
-    if overrides:
-        reform = Reform.from_dict(
-            {
-                path: {f"{year}-01-01.{year}-12-31": value}
-                for path, value in overrides.items()
-            },
-            country_id="us",
-        )
     situation, household_names = merged_situation(cases)
-    sim = Simulation(situation=situation, reform=reform)
+    sim = Simulation(situation=situation, reform=reform_for(overrides))
     system = sim.tax_benefit_system
     params = system.parameters(f"{year}-01-01")
     tree = build_tree(system, params)
@@ -591,10 +701,10 @@ for key, cases in groups.items():
         for name in sorted(names)
     }
     memo_names = sorted({m for case in cases for m in case.get("memo", [])})
-    memo_arrays = {
-        name: sim.calculate(name, period, map_to="household")
-        for name in memo_names
-    }
+    memo_arrays = {}
+    for name in memo_names:
+        variable, at = memo_period(name)
+        memo_arrays[name] = sim.calculate(variable, at, map_to="household")
     states = sim.calculate("state_code", period).decode_to_str()
     for case, row in zip(cases, rows):
         results.append(
@@ -614,10 +724,102 @@ json.dump(
         "policyengine_us_version": metadata.version("policyengine-us"),
         "policyengine_core_version": metadata.version("policyengine-core"),
         "policyengine_us_package": policyengine_us.__file__,
+        "installation": installation(),
         "cases": results,
     },
     sys.stdout,
 )
+"""
+
+#: :func:`trace_policyengine_us`'s child.  Each case runs alone with
+#: PolicyEngine-US's tracer on (``Simulation(..., trace=True)``); the child
+#: calculates the requested variables for the year and returns every traced
+#: node once, keyed ``name@period``: its value (as floats, over the
+#: variable's own entity), the nodes it read (``children``) and whether the
+#: variable is an input (no formula, ``adds`` or ``subtracts``).  A node
+#: calculated again later is traced again without children (its value is
+#: cached), so the entry with children is kept.  Cases with the same
+#: parameter overrides share one tax-benefit system: the first builds it
+#: from the reform, and the rest pass it as ``tax_benefit_system``, which
+#: policyengine-us shares rather than rebuilds (``spm.py:830-834`` in
+#: 2.18.0).
+_TRACE_SOURCE = _INSTALLATION_SOURCE + r"""
+import numpy as np
+from policyengine_us import Simulation
+from policyengine_core.reforms import Reform
+
+job = json.load(sys.stdin)
+year = int(job["year"])
+period = str(year)
+
+
+def reform_for(overrides):
+    if not overrides:
+        return None
+    return Reform.from_dict(
+        {
+            path: {f"{year}-01-01.{year}-12-31": value}
+            for path, value in overrides.items()
+        },
+        country_id="us",
+    )
+
+
+def as_floats(value):
+    if value is None:
+        return None
+    try:
+        return [float(v) for v in np.asarray(value, dtype=float).ravel()]
+    except (TypeError, ValueError):
+        return None
+
+
+def is_input(system, name):
+    variable = system.variables.get(name)
+    if variable is None:
+        return None
+    return not (variable.formulas or variable.adds or variable.subtracts)
+
+
+out = []
+systems = {}
+for case in job["cases"]:
+    key = json.dumps(case.get("parameter_overrides") or {}, sort_keys=True)
+    if key in systems:
+        sim = Simulation(
+            situation=case["situation"],
+            tax_benefit_system=systems[key],
+            trace=True,
+        )
+    else:
+        sim = Simulation(
+            situation=case["situation"],
+            reform=reform_for(case.get("parameter_overrides")),
+            trace=True,
+        )
+        systems[key] = sim.tax_benefit_system
+    system = sim.tax_benefit_system
+    for name in case["variables"]:
+        sim.calculate(name, period)
+    nodes = {}
+
+    def walk(node):
+        key = f"{node.name}@{node.period}"
+        children = [f"{c.name}@{c.period}" for c in node.children]
+        seen = nodes.get(key)
+        if seen is None or (children and not seen["children"]):
+            nodes[key] = {
+                "value": as_floats(node.value),
+                "children": children,
+                "input": is_input(system, node.name),
+            }
+        for child in node.children:
+            walk(child)
+
+    for tree in sim.tracer.trees:
+        walk(tree)
+    out.append({"case_id": case["case_id"], "nodes": nodes})
+json.dump({"installation": installation(), "cases": out}, sys.stdout)
 """
 
 
@@ -627,8 +829,8 @@ class RunCase:
 
     ``expected_state`` is the two-letter state the situation should resolve
     to; ``memo`` names further variables to report at the household level
-    (outside the decomposition); ``parameter_overrides`` sets parameters
-    for the whole year (for example
+    (outside the decomposition; ``name@period`` reads another period);
+    ``parameter_overrides`` sets parameters for the whole year (for example
     ``{"gov.simulation.include_health_benefits_in_net_income": True}``).
     """
 
@@ -651,6 +853,75 @@ class PolicyEngineRun:
 
 
 @dataclass(frozen=True)
+class PolicyEngineUSInstallation:
+    """Which ``policyengine-us`` an interpreter imports, and its source.
+
+    ``package_dir`` is the directory ``import policyengine_us`` would load;
+    ``location`` is the installed distribution's root (``site-packages``),
+    with its RECORD file and that file's SHA-256.  ``direct_url`` is the
+    distribution's ``direct_url.json`` (PEP 610): absent for an install
+    from a package index, present for a VCS, local-directory (editable
+    included) or archive install.
+    """
+
+    python: str
+    python_version: str
+    package_dir: str | None
+    version: str | None
+    core_version: str | None
+    location: str | None
+    record_path: str | None
+    record_sha256: str | None
+    direct_url: Mapping[str, Any] | None
+    installer: str | None
+
+    @classmethod
+    def from_payload(
+        cls, python: str | os.PathLike, payload: Mapping[str, Any]
+    ) -> PolicyEngineUSInstallation:
+        return cls(
+            python=str(python),
+            python_version=str(payload.get("python_version") or ""),
+            package_dir=payload.get("package_dir"),
+            version=payload.get("version"),
+            core_version=payload.get("core_version"),
+            location=payload.get("location"),
+            record_path=payload.get("record_path"),
+            record_sha256=payload.get("record_sha256"),
+            direct_url=payload.get("direct_url"),
+            installer=payload.get("installer"),
+        )
+
+    @property
+    def imports_the_distribution(self) -> bool:
+        """Whether ``import policyengine_us`` loads the installed files."""
+
+        if not (self.package_dir and self.location):
+            return False
+        return (
+            Path(self.package_dir) == Path(self.location) / "policyengine_us"
+        )
+
+    @property
+    def source_kind(self) -> str:
+        """``index``, ``vcs``, ``archive``, ``directory`` or ``path``.
+
+        ``path`` means the imported package is not the installed
+        distribution's files (a checkout on ``PYTHONPATH``, say).
+        """
+
+        if not self.imports_the_distribution:
+            return "path"
+        if self.direct_url is None:
+            return "index"
+        if "vcs_info" in self.direct_url:
+            return "vcs"
+        if "archive_info" in self.direct_url:
+            return "archive"
+        return "directory"
+
+
+@dataclass(frozen=True)
 class RunResult:
     """Every case of one runner call and the versions that computed them."""
 
@@ -659,6 +930,8 @@ class RunResult:
     policyengine_core_version: str
     policyengine_us_package: str
     python: str
+    installation: PolicyEngineUSInstallation | None = None
+    source: Mapping[str, Any] | None = None
 
 
 def resolve_pe_us_python(python: str | os.PathLike | None = None) -> Path:
@@ -675,53 +948,15 @@ def resolve_pe_us_python(python: str | os.PathLike | None = None) -> Path:
     return DEFAULT_PE_US_PYTHON.expanduser()
 
 
-def run_policyengine_us(
-    cases: Sequence[RunCase],
-    *,
-    year: int,
-    python: str | os.PathLike | None = None,
-    expand: Sequence[str] = DEFAULT_EXPAND,
-    root: str = ROOT_VARIABLE,
-    timeout: float = 1800.0,
-) -> RunResult:
-    """Run ``cases`` in the policyengine-us interpreter and parse the results.
-
-    Raises :class:`PolicyEngineUSUnavailable` when the interpreter is
-    missing or the child fails, and ``ValueError`` when a case resolves to
-    a state other than its ``expected_state`` or a case id repeats.
-    """
-
-    if isinstance(year, bool) or not isinstance(year, int):
-        raise TypeError(f"year must be an integer, not {year!r}")
-    ids = [case.case_id for case in cases]
-    if len(set(ids)) != len(ids):
-        raise ValueError(f"case ids must be unique: {ids}")
-    interpreter = resolve_pe_us_python(python)
-    if not interpreter.is_file():
-        raise PolicyEngineUSUnavailable(
-            f"no policyengine-us interpreter at {interpreter}; set "
-            f"{PE_US_PYTHON_ENV}"
-        )
-    job = {
-        "year": year,
-        "root": root,
-        "expand": list(expand),
-        "cases": [
-            {
-                "case_id": case.case_id,
-                "situation": case.situation,
-                "memo": list(case.memo),
-                "parameter_overrides": dict(case.parameter_overrides),
-            }
-            for case in cases
-        ],
-    }
+def _run_child(
+    interpreter: Path, source: str, stdin: str, timeout: float
+) -> dict[str, Any]:
     env = dict(os.environ)
     env.setdefault("OMP_NUM_THREADS", "1")
     try:
         proc = subprocess.run(
-            [str(interpreter), "-c", _RUNNER_SOURCE],
-            input=json.dumps(job),
+            [str(interpreter), "-c", source],
+            input=stdin,
             capture_output=True,
             text=True,
             timeout=timeout,
@@ -736,7 +971,258 @@ def run_policyengine_us(
             f"policyengine-us runner failed ({interpreter}):\n"
             f"{proc.stderr[-4000:]}"
         )
-    payload = json.loads(proc.stdout)
+    return json.loads(proc.stdout)
+
+
+def _interpreter(python: str | os.PathLike | None) -> Path:
+    interpreter = resolve_pe_us_python(python)
+    if not interpreter.is_file():
+        raise PolicyEngineUSUnavailable(
+            f"no policyengine-us interpreter at {interpreter}; set "
+            f"{PE_US_PYTHON_ENV}"
+        )
+    return interpreter
+
+
+def inspect_installation(
+    python: str | os.PathLike | None = None, *, timeout: float = 300.0
+) -> PolicyEngineUSInstallation:
+    """Ask the interpreter which ``policyengine-us`` it imports.
+
+    Reads package metadata only (no simulation, no ``policyengine_us``
+    import).  Raises :class:`PolicyEngineUSUnavailable` when the
+    interpreter is missing or fails.
+    """
+
+    interpreter = _interpreter(python)
+    payload = _run_child(interpreter, _INSPECT_SOURCE, "", timeout)
+    return PolicyEngineUSInstallation.from_payload(interpreter, payload)
+
+
+def _git(directory: Path, *args: str) -> str:
+    return subprocess.run(
+        ["git", "-C", str(directory), *args],
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.strip()
+
+
+def _checkout_state(package_dir: Path) -> dict[str, Any]:
+    """The git state of the checkout holding ``package_dir``."""
+
+    try:
+        top = Path(_git(package_dir, "rev-parse", "--show-toplevel"))
+    except (OSError, subprocess.CalledProcessError):
+        return {"git": False}
+    revision = _git(top, "rev-parse", "HEAD")
+    tracked_changes = _git(
+        top, "status", "--porcelain", "--untracked-files=no"
+    )
+    untracked_package_files = _git(
+        top,
+        "ls-files",
+        "--others",
+        "--exclude-standard",
+        "--",
+        str(package_dir),
+    )
+    containing = _git(
+        top,
+        "for-each-ref",
+        "--contains",
+        revision,
+        "--format=%(refname)",
+        "refs/remotes/origin",
+    ).split()
+    try:
+        origin_url = _git(top, "remote", "get-url", "origin")
+    except subprocess.CalledProcessError:
+        origin_url = None
+    return {
+        "git": True,
+        "revision": revision,
+        "dirty": bool(tracked_changes or untracked_package_files),
+        "origin_url": origin_url,
+        "origin_refs_containing": containing,
+    }
+
+
+def check_published_source(
+    installation: PolicyEngineUSInstallation, *, require: bool = True
+) -> dict[str, Any]:
+    """Describe where the imported ``policyengine-us`` came from.
+
+    Published sources: an install from a package index (no
+    ``direct_url.json``), or a git checkout imported in place (an editable
+    install or ``PYTHONPATH``) whose ``HEAD`` some
+    ``refs/remotes/origin/*`` branch contains and whose tracked files, and
+    untracked files under the package, are unchanged.  Anything else -- a
+    revision no ``origin`` branch contains, a modified checkout, a package
+    directory outside any git checkout, or a VCS, local-directory or archive
+    install (whose files cannot be tied to a public release here) -- raises
+    :class:`UnpublishedSourceError` when ``require`` is true, and is
+    returned with ``published`` false otherwise.
+    """
+
+    kind = installation.source_kind
+    record: dict[str, Any] = {
+        "kind": kind,
+        "version": installation.version,
+        "core_version": installation.core_version,
+        "record_sha256": installation.record_sha256,
+    }
+    reasons: list[str] = []
+    if kind == "index":
+        if not installation.record_path:
+            reasons.append("the distribution has no RECORD file")
+    elif kind == "path":
+        if not installation.package_dir:
+            reasons.append("policyengine_us is not importable")
+        else:
+            state = _checkout_state(Path(installation.package_dir))
+            record["checkout"] = state
+            if not state["git"]:
+                reasons.append(
+                    f"{installation.package_dir} is not in a git checkout"
+                )
+            else:
+                if not state["origin_refs_containing"]:
+                    reasons.append(
+                        f"revision {state['revision']} is not reachable "
+                        "from any origin branch (refs/remotes/origin/*)"
+                    )
+                if state["dirty"]:
+                    reasons.append("the checkout has uncommitted changes")
+    else:
+        record["direct_url"] = dict(installation.direct_url or {})
+        reasons.append(
+            f"a {kind} install cannot be checked against a published "
+            "release here; install a release from PyPI"
+        )
+    record["published"] = not reasons
+    record["reasons"] = reasons
+    if reasons and require:
+        raise UnpublishedSourceError(
+            f"policyengine-us at {installation.package_dir} is not a "
+            f"published source ({kind}): " + "; ".join(reasons)
+        )
+    return record
+
+
+def package_record_digest(record_text: str, prefix: str) -> tuple[str, int]:
+    """SHA-256 of a RECORD's sorted lines under ``prefix``, and their count.
+
+    The installer appends its own lines (``INSTALLER``, ``REQUESTED``,
+    console scripts) and may reorder the file, so the whole-file hash of an
+    installed RECORD differs from the wheel's.  The sorted package lines
+    are the same in both, so this digest ties installed files to a wheel.
+    """
+
+    lines = sorted(
+        line for line in record_text.splitlines() if line.startswith(prefix)
+    )
+    digest = hashlib.sha256(("\n".join(lines) + "\n").encode()).hexdigest()
+    return digest, len(lines)
+
+
+def verify_record(
+    installation: PolicyEngineUSInstallation,
+    *,
+    prefix: str = "policyengine_us/",
+) -> dict[str, Any]:
+    """Hash every installed file the RECORD lists under ``prefix``.
+
+    Returns the files checked, those whose SHA-256 differs from the RECORD
+    (``mismatched``), those missing, and :func:`package_record_digest` of
+    the RECORD.  The RECORD hash is urlsafe base64 without padding
+    (the wheel format, PEP 376/427).
+    """
+
+    if not (installation.record_path and installation.location):
+        raise ValueError("the installation has no RECORD to verify")
+    root = Path(installation.location)
+    text = Path(installation.record_path).read_text()
+    checked = 0
+    mismatched: list[str] = []
+    missing: list[str] = []
+    for row in csv.reader(io.StringIO(text)):
+        if not row or not row[0].startswith(prefix):
+            continue
+        path, digest = row[0], row[1] if len(row) > 1 else ""
+        if not digest:
+            continue
+        algorithm, _, expected = digest.partition("=")
+        target = root / path
+        if not target.is_file():
+            missing.append(path)
+            continue
+        actual = hashlib.new(algorithm, target.read_bytes()).digest()
+        encoded = base64.urlsafe_b64encode(actual).rstrip(b"=").decode()
+        checked += 1
+        if encoded != expected:
+            mismatched.append(path)
+    digest, lines = package_record_digest(text, prefix)
+    return {
+        "prefix": prefix,
+        "files_checked": checked,
+        "mismatched": mismatched,
+        "missing": missing,
+        "package_record_digest": digest,
+        "package_record_lines": lines,
+    }
+
+
+def run_policyengine_us(
+    cases: Sequence[RunCase],
+    *,
+    year: int,
+    python: str | os.PathLike | None = None,
+    expand: Sequence[str] = DEFAULT_EXPAND,
+    root: str = ROOT_VARIABLE,
+    timeout: float = 1800.0,
+    require_published: bool = True,
+) -> RunResult:
+    """Run ``cases`` in the policyengine-us interpreter and parse the results.
+
+    Raises :class:`PolicyEngineUSUnavailable` when the interpreter is
+    missing or the child fails, :class:`UnpublishedSourceError` when
+    ``require_published`` and the imported ``policyengine-us`` is not a
+    published source (:func:`check_published_source`), and ``ValueError``
+    when a case resolves to a state other than its ``expected_state`` or a
+    case id repeats.
+    """
+
+    if isinstance(year, bool) or not isinstance(year, int):
+        raise TypeError(f"year must be an integer, not {year!r}")
+    ids = [case.case_id for case in cases]
+    if len(set(ids)) != len(ids):
+        raise ValueError(f"case ids must be unique: {ids}")
+    interpreter = _interpreter(python)
+    installation = inspect_installation(interpreter)
+    source = check_published_source(installation, require=require_published)
+    job = {
+        "year": year,
+        "root": root,
+        "expand": list(expand),
+        "cases": [
+            {
+                "case_id": case.case_id,
+                "situation": case.situation,
+                "memo": list(case.memo),
+                "parameter_overrides": dict(case.parameter_overrides),
+            }
+            for case in cases
+        ],
+    }
+    payload = _run_child(interpreter, _RUNNER_SOURCE, json.dumps(job), timeout)
+    ran = PolicyEngineUSInstallation.from_payload(
+        interpreter, payload["installation"]
+    )
+    if ran != installation:
+        raise PolicyEngineUSUnavailable(
+            "policyengine-us changed between the source check and the run"
+        )
     runs: dict[str, PolicyEngineRun] = {}
     by_id = {case.case_id: case for case in cases}
     for raw in payload["cases"]:
@@ -772,7 +1258,196 @@ def run_policyengine_us(
         policyengine_core_version=str(payload["policyengine_core_version"]),
         policyengine_us_package=str(payload["policyengine_us_package"]),
         python=str(interpreter),
+        installation=installation,
+        source=source,
     )
+
+
+# ---------------------------------------------------------------------------
+# The float32 guard (traced runs)
+# ---------------------------------------------------------------------------
+#: A change smaller than a cent is float noise, not a change.
+CENT_TOLERANCE = 0.01
+#: Leaf changes below this many cents (and above zero) are small enough to
+#: be a float32 step at a bracket edge and are always traced.
+SMALL_CHANGE_CENTS = 200
+
+
+@dataclass(frozen=True)
+class TraceNode:
+    """One traced variable at one period in one case.
+
+    ``value`` is the variable's value over its own entity (``None`` when
+    it is not numeric); ``children`` are the ``name@period`` keys it read;
+    ``input`` is true for a variable with no formula, ``adds`` or
+    ``subtracts`` (``None`` for a name that is not a variable).
+    """
+
+    value: tuple[float, ...] | None
+    children: tuple[str, ...]
+    input: bool | None
+
+
+def trace_policyengine_us(
+    cases: Sequence[tuple[str, Mapping[str, Any], Sequence[str]]],
+    *,
+    year: int,
+    python: str | os.PathLike | None = None,
+    parameter_overrides: Mapping[str, Mapping[str, Any]] | None = None,
+    timeout: float = 1800.0,
+    require_published: bool = True,
+) -> dict[str, dict[str, TraceNode]]:
+    """Trace ``(case_id, situation, variables)`` cases, one simulation each.
+
+    Returns ``{case_id: {"name@period": TraceNode}}``.
+    ``parameter_overrides`` maps a case id to its overrides (as
+    :class:`RunCase`).  The imported ``policyengine-us`` is checked as in
+    :func:`run_policyengine_us`.
+    """
+
+    if isinstance(year, bool) or not isinstance(year, int):
+        raise TypeError(f"year must be an integer, not {year!r}")
+    ids = [case_id for case_id, _, _ in cases]
+    if len(set(ids)) != len(ids):
+        raise ValueError(f"case ids must be unique: {ids}")
+    interpreter = _interpreter(python)
+    check_published_source(
+        inspect_installation(interpreter), require=require_published
+    )
+    overrides = parameter_overrides or {}
+    job = {
+        "year": year,
+        "cases": [
+            {
+                "case_id": case_id,
+                "situation": situation,
+                "variables": list(variables),
+                "parameter_overrides": dict(overrides.get(case_id, {})),
+            }
+            for case_id, situation, variables in cases
+        ],
+    }
+    payload = _run_child(interpreter, _TRACE_SOURCE, json.dumps(job), timeout)
+    out: dict[str, dict[str, TraceNode]] = {}
+    for case in payload["cases"]:
+        out[case["case_id"]] = {
+            key: TraceNode(
+                value=(
+                    None
+                    if node["value"] is None
+                    else tuple(float(v) for v in node["value"])
+                ),
+                children=tuple(node["children"]),
+                input=node["input"],
+            )
+            for key, node in case["nodes"].items()
+        }
+    if set(out) != set(ids):
+        raise PolicyEngineUSUnavailable("the tracer returned other cases")
+    return out
+
+
+def _node_change(
+    baseline: TraceNode | None, reform: TraceNode | None
+) -> float | None:
+    """The largest absolute change of a node, or ``None`` if not comparable.
+
+    A node traced in one run only, or with values of different lengths, is
+    a change of infinite size (its structure changed).
+    """
+
+    if baseline is None or reform is None:
+        return math.inf
+    if baseline.value is None or reform.value is None:
+        return None
+    if len(baseline.value) != len(reform.value):
+        return math.inf
+    worst = 0.0
+    for a, b in zip(baseline.value, reform.value, strict=True):
+        if not (math.isfinite(a) and math.isfinite(b)):
+            if not (a == b or (math.isnan(a) and math.isnan(b))):
+                return math.inf
+            continue
+        worst = max(worst, abs(b - a))
+    return worst
+
+
+def _values(node: TraceNode | None) -> list[float] | None:
+    return None if node is None or node.value is None else list(node.value)
+
+
+def uncaused_changes(
+    baseline: Mapping[str, TraceNode],
+    reform: Mapping[str, TraceNode],
+    roots: Iterable[str],
+    *,
+    tolerance: float = CENT_TOLERANCE,
+) -> list[dict[str, Any]]:
+    """Variables that change although every variable they read did not.
+
+    Walks the traced nodes reachable from ``roots`` (``name@period``
+    keys) in both runs.  A node is reported when it was traced in both
+    runs, is not an input, its value changes by at least ``tolerance``, and
+    each node it read changes by less than ``tolerance`` (or it read none).
+    A node it read in one run only counts as changed: the calculation took
+    another branch, which a changed value upstream decided.  A node traced
+    in one run only is not compared for the same reason.  A genuine change
+    always has a changed input below it (here, the Social Security amount),
+    so a reported node is a step taken on noise: typically a bracket or
+    eligibility edge that float32 arithmetic crossed.  Returns one record
+    per reported node, sorted by key.
+    """
+
+    found: dict[str, dict[str, Any]] = {}
+    visited: set[str] = set()
+    pending = list(roots)
+    while pending:
+        key = pending.pop()
+        if key in visited:
+            continue
+        visited.add(key)
+        before, after = baseline.get(key), reform.get(key)
+        children = tuple(
+            dict.fromkeys(
+                (before.children if before else ())
+                + (after.children if after else ())
+            )
+        )
+        pending.extend(children)
+        if before is None or after is None or before.input:
+            continue
+        change = _node_change(before, after)
+        if change is None or change < tolerance:
+            continue
+        child_changes = {
+            child: _node_change(baseline.get(child), reform.get(child))
+            for child in children
+        }
+        caused = any(
+            value is not None and value >= tolerance
+            for value in child_changes.values()
+        )
+        if not caused:
+            found[key] = {
+                "variable": key,
+                "baseline": _values(before),
+                "reform": _values(after),
+                "change": change,
+                "reads": dict(sorted(child_changes.items())),
+            }
+    return [found[key] for key in sorted(found)]
+
+
+def small_changes(
+    decomposition: Decomposition, *, limit_cents: int = SMALL_CHANGE_CENTS
+) -> list[Component]:
+    """Leaves whose change is nonzero and under ``limit_cents``."""
+
+    return [
+        component
+        for component in decomposition.components
+        if 0 < abs(component.change_cents) < limit_cents
+    ]
 
 
 # ---------------------------------------------------------------------------
@@ -848,17 +1523,22 @@ def to_cents(value: float) -> int:
     return int(cents)
 
 
-#: Display categories, in table order, and their labels.
+#: Display categories, in table order, and their labels.  Taxes before
+#: refundable credits and refundable credits are separate rows, so a
+#: refundable credit on a zero liability never reads as a negative tax.
 CATEGORY_ORDER: tuple[str, ...] = (
     "social_security",
     "ssi",
     "state_benefits",
     "snap",
+    "csfp",
     "other_benefits",
     "health_net",
     "market_income",
     "federal_income_tax",
+    "federal_refundable_credits",
     "state_income_tax",
+    "state_refundable_credits",
     "other_taxes",
 )
 CATEGORY_LABELS: dict[str, str] = {
@@ -866,16 +1546,16 @@ CATEGORY_LABELS: dict[str, str] = {
     "ssi": "SSI (federal)",
     "state_benefits": "State benefits (incl. SSI supplements)",
     "snap": "SNAP",
+    "csfp": "Commodity Supplemental Food Program",
     "other_benefits": "Other benefits",
     "health_net": "Health benefits less health costs",
     "market_income": "Market income",
-    "federal_income_tax": "Federal income tax",
-    "state_income_tax": "State income tax",
+    "federal_income_tax": "Federal income tax before refundable credits",
+    "federal_refundable_credits": "Federal refundable tax credits",
+    "state_income_tax": "State income tax before refundable credits",
+    "state_refundable_credits": "State refundable tax credits",
     "other_taxes": "Other taxes (payroll, use, local)",
 }
-_FEDERAL_INCOME_TAX = frozenset(
-    {"income_tax_before_refundable_credits", "income_tax_refundable_credits"}
-)
 
 
 def category_for(variable: str, path: Sequence[str]) -> str:
@@ -888,19 +1568,22 @@ def category_for(variable: str, path: Sequence[str]) -> str:
         return "ssi"
     if variable == "snap":
         return "snap"
-    if variable in _FEDERAL_INCOME_TAX:
+    if variable == "commodity_supplemental_food_program":
+        return "csfp"
+    if variable == "income_tax_before_refundable_credits":
         return "federal_income_tax"
+    if variable == "income_tax_refundable_credits":
+        return "federal_refundable_credits"
     if "household_state_benefits" in ancestors:
         return "state_benefits"
     if ancestors & {"household_health_benefits", "household_health_costs"}:
         return "health_net"
     if "household_market_income" in ancestors:
         return "market_income"
-    if (
-        variable == "state_income_tax_before_refundable_credits"
-        or "household_refundable_state_tax_credits" in ancestors
-    ):
+    if variable == "state_income_tax_before_refundable_credits":
         return "state_income_tax"
+    if "household_refundable_state_tax_credits" in ancestors:
+        return "state_refundable_credits"
     if "household_tax_before_refundable_credits" in ancestors:
         return "other_taxes"
     return "other_benefits"
@@ -1006,11 +1689,23 @@ class Decomposition:
 
 
 def _aggregate_gap(tree: ComponentTree, values: Mapping[str, float]) -> float:
+    """The largest |aggregate - sum of parts|; infinite if any is not finite.
+
+    ``max(0.0, nan)`` is ``0.0``, so a non-finite gap must be caught before
+    it is compared, or a NaN aggregate would pass as consistent.
+    """
+
     worst = 0.0
     for name in tree.aggregates():
         parts = tree.children[name]
-        total = math.fsum(sign * float(values[part]) for part, sign in parts)
-        worst = max(worst, abs(float(values[name]) - total))
+        terms = [sign * float(values[part]) for part, sign in parts]
+        value = float(values[name])
+        if not all(math.isfinite(term) for term in (*terms, value)):
+            return math.inf
+        gap = abs(value - math.fsum(terms))
+        if not math.isfinite(gap):
+            return math.inf
+        worst = max(worst, gap)
     return worst
 
 
@@ -1029,7 +1724,8 @@ def decompose(
 
     Both runs must share ``tree`` (``reform_tree``, when given, must equal
     it).  Every aggregate in each run must equal the signed sum of its parts
-    within ``tolerance`` dollars, else :class:`AggregateMismatchError`; the
+    within ``tolerance`` dollars, and every value must be finite, else
+    :class:`AggregateMismatchError`; the
     root's parts must equal ``expected_definition`` (skip with ``None``),
     else :class:`DefinitionDriftError`.  Leaves are rounded to cents, so the
     components' changes sum exactly to the net change; PolicyEngine-US's own
@@ -1048,6 +1744,10 @@ def decompose(
     gaps = []
     for label, values in (("baseline", baseline), ("reform", reform)):
         gap = _aggregate_gap(tree, values)
+        if not math.isfinite(gap):
+            raise AggregateMismatchError(
+                f"{label}: an aggregate or one of its parts is not finite"
+            )
         if gap > tolerance:
             raise AggregateMismatchError(
                 f"{label}: an aggregate differs from its parts by {gap:.4f}"
@@ -1119,7 +1819,9 @@ def carry_pia_forward(
     every later one to a PIA first computed in that year.  ``rates`` maps a
     determination year to a fraction (``0.028`` for 2.8 percent).  Returns
     the carried PIA and one record per step.  Decimal arithmetic on the
-    rates (quantized to a millionth) keeps the truncation exact.
+    rates (quantized to a millionth) keeps the truncation exact.  An empty
+    range (``first_determination_year`` after the last) is refused: it
+    would return the PIA untruncated, not a whole dime.
     """
 
     value = _check_amount("pia", pia)
@@ -1129,6 +1831,11 @@ def carry_pia_forward(
     ):
         if isinstance(year, bool) or not isinstance(year, int):
             raise TypeError(f"{label} must be an integer year")
+    if first_determination_year > last_determination_year:
+        raise ValueError(
+            f"first_determination_year {first_determination_year} is after "
+            f"last_determination_year {last_determination_year}"
+        )
     current = Decimal(repr(value))
     steps: list[dict[str, Any]] = []
     for year in range(first_determination_year, last_determination_year + 1):

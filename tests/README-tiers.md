@@ -7,7 +7,8 @@ beyond pytest's normal collection. Classification uses this precedence:
 1. `reproduction_legacy`: `tests/test_gate2_candidate*.py`, the frozen
    historical reproduction ledger.
 2. `oracle_policyengine`: modules that reference
-   `POPULACE_DYNAMICS_PE_US_DIR` or the legacy default
+   `POPULACE_DYNAMICS_PE_US_DIR`, `POPULACE_DYNAMICS_PE_US_PYTHON` (the
+   interpreter with policyengine-us installed) or the legacy default
    `~/PolicyEngine/policyengine-us` checkout.
 3. `artifact`: the path-exact, design-sanctioned M6 truth-side byte-identity
    test (`test_m6_truth_identity.py`). It reads staged PSID when available,
@@ -38,9 +39,9 @@ pytest --collect-only -q -m oracle_policyengine | tail -1
 
 | Tier | Tests at HEAD |
 |---|---:|
-| `unit` | 5,505 |
+| `unit` | 5,544 |
 | `artifact` | 3,331 |
 | `integration_psid` | 1,341 |
 | `reproduction_legacy` | 520 |
-| `oracle_policyengine` | 201 |
-| **Total** | **10,898** |
+| `oracle_policyengine` | 205 |
+| **Total** | **10,941** |
