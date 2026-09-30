@@ -25,11 +25,19 @@ from tests.track_b_gross_benefit_support import (
     published_nawi,
 )
 
-PE_US = Path("~/PolicyEngine/policyengine-us").expanduser()
+# Resolve the checkout the loader will read and skip unless its parameter
+# tree exists. Checking only whether the variable is set is not enough:
+# another module in the same session can set it to an absent checkout
+# (test_gate2c_candidate1_reproduction.py does, at import).
+PE_US = Path(
+    os.environ.get(
+        "POPULACE_DYNAMICS_PE_US_DIR", "~/PolicyEngine/policyengine-us"
+    )
+).expanduser()
 pytestmark = pytest.mark.skipif(
-    not PE_US.is_dir() and "POPULACE_DYNAMICS_PE_US_DIR" not in os.environ,
-    reason="policyengine-us not checked out and "
-    "POPULACE_DYNAMICS_PE_US_DIR unset",
+    not (PE_US / "policyengine_us" / "parameters" / "gov" / "ssa").is_dir(),
+    reason="no policyengine-us parameter tree at "
+    "POPULACE_DYNAMICS_PE_US_DIR or ~/PolicyEngine/policyengine-us",
 )
 
 
