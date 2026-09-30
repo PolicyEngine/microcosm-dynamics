@@ -33,26 +33,39 @@ It does:
 - **Check the PolicyEngine-US source.** `inspect_installation` asks the
   interpreter which `policyengine-us` it imports and where it came from
   (package metadata only). `check_published_source` accepts two sources:
-  - an install from a package index;
-  - a git checkout imported in place whose `HEAD` some `origin` branch
-    contains and whose files are unmodified.
+  - **an install by name.** There is no `direct_url.json`. Metadata cannot
+    tell a package index from a local wheel found with `--find-links`, so
+    the runner hashes every installed `policyengine_us/` file against the
+    RECORD (`verify_record`). That catches changed, missing and added files;
+    policyengine-core loads every parameter YAML and variable module on
+    disk. The runner can also require a pinned `package_record_digest`,
+    which ties the install to one published wheel. The script pins 2.18.0's.
+  - **a git checkout imported in place.** Some branch of `origin` must
+    contain its `HEAD`, asked of `origin` now (`git ls-remote`), not of
+    local remote-tracking refs that can outlive a deleted branch. It must
+    have no modified tracked file and no untracked package file, ignored
+    ones included. `origin` must be a GitHub repository.
 
-  Everything else is refused, including a revision no `origin` branch
-  contains, a modified checkout, and a VCS, local-directory or archive
-  install. `run_policyengine_us` and `trace_policyengine_us` run the check
-  first. `verify_record` hashes every installed `policyengine_us/` file
-  against the distribution's RECORD.
+  Everything else is refused, including an unreachable `origin` and a VCS,
+  local-directory or direct-URL archive install. `run_policyengine_us` and
+  `trace_policyengine_us` run the checks first.
 - **Run PolicyEngine-US out of process.** `run_policyengine_us` sends the
   situations as JSON to the interpreter named by
   `POPULACE_DYNAMICS_PE_US_PYTHON` (default
   `~/.venvs/policyengine-us-2.18.0/bin/python`), the subprocess discipline of
-  `scripts/build_aux_benefit_examples.py`. Cases that share parameter
-  overrides run as one simulation, with names prefixed per case. An oracle
-  test checks that a batched case equals the same case run alone. The child
-  reads the component tree of `household_net_income` from the model and
-  returns every node's household value. It also returns the state
-  PolicyEngine-US derives from the FIPS code, and the bridge refuses a
-  mismatch.
+  `scripts/build_aux_benefit_examples.py`.
+  - **One simulation per case.** Some 2.18.0 formulas aggregate over a
+    whole simulation's population (Medicaid's state-average cost index,
+    `medicaid_slcsp_state_average_cost_index.py:14-29`), so households
+    batched into one simulation would not be independent.
+  - **Shared systems.** Cases with the same parameter overrides share one
+    reformed tax-benefit system, passed as `tax_benefit_system`
+    (`spm.py:830-834`). An oracle test checks that a case run with others
+    equals the case run alone.
+  - **Tree and state.** The child reads the component tree of
+    `household_net_income` from the model and returns every node's
+    household value. It also returns the state PolicyEngine-US derives from
+    the FIPS code, and the bridge refuses a mismatch.
 - **Decompose.** `decompose` checks every aggregate against the signed sum of
   its parts (within $0.50), and refuses any value that is not finite. It
   checks the root's parts against the definition the bridge was read
@@ -62,13 +75,23 @@ It does:
   agrees with the definition's sum within a cent.
 - **Guard against float32 steps.** `trace_policyengine_us` reruns cases with
   PolicyEngine-US's tracer on (`Simulation(..., trace=True)`) and returns
-  every variable the calculation read. `uncaused_changes` then walks each
-  changed component's calculation and reports any variable that changed by
-  a cent or more although every variable it read changed by less than a
-  cent. A genuine change always has a changed input beneath it, here the
-  Social Security amount. A reported variable is therefore a step at a
-  bracket or eligibility edge taken on float32 noise. `small_changes` lists
-  the components that changed by a nonzero amount under $2.
+  every variable the calculation read. Nodes of a branch simulation (2.18.0
+  computes federal tax in `itemizing` and `not_itemizing` branches) are
+  keyed apart from the main calculation.
+  - **What it reports.** `uncaused_changes` walks each changed component's
+    calculation. It reports any variable that changed by a cent or more
+    although no variable it read changed by more than float noise.
+  - **Noise.** Float noise is a cent or four float32 steps at the read's
+    size, whichever is larger. Above $131,072 one float32 step is more than
+    a cent.
+  - **Why a report means an artifact.** A genuine change always has a
+    changed input beneath it, here the Social Security amount. A reported
+    variable is therefore a step at a bracket or eligibility edge taken on
+    float32 noise.
+  - **What it cannot see.** The rule is local, so it cannot see a noise
+    step in a variable that also read a genuinely changed input.
+  - **Small changes.** `small_changes` lists the components that changed by
+    a nonzero amount under $2.
 
 It does not:
 
@@ -572,17 +595,35 @@ The unit tests check these for every input, with Hypothesis:
   nonnegative tenths of a percent, and the base carries forward past a year
   without an increase.
 - **Source check.**
-  - An index install is published.
-  - A clone whose commit is on `origin` and whose files are clean is
-    published.
-  - These are refused: a local commit not on `origin`, a modified or
-    untracked package file, a package outside any checkout, and a VCS,
-    archive or local-directory install.
-- **RECORD.** Verification flags each changed or missing file. The package
-  digest ignores installer lines and line order.
-- **Float32 guard.** A step over a sub-cent read is always reported. A
-  change through a changed input never is, and neither is a branch taken in
-  one run only or two identical runs.
+  - An install by name is published.
+  - A clone whose commit a branch of `origin` contains now, and whose files
+    are clean, is published.
+  - These are refused:
+    - a local commit not on `origin`;
+    - a branch deleted on `origin` whose remote-tracking ref remains;
+    - an unreachable `origin`, or one that is not on GitHub;
+    - a modified, untracked or git-ignored package file (bytecode aside);
+    - a package outside any checkout;
+    - a VCS, archive or local-directory install.
+- **RECORD.** Verification flags each changed, missing or added file. The
+  package digest ignores installer lines (pip's bytecode rows included) and
+  line order.
+- **Float32 guard.**
+  - Always reported: a step over a sub-cent read, including above $131,072,
+    where float32 steps exceed a cent.
+  - Never reported: a change through a chain of changed variables down to
+    an input, a branch taken in one run only, or two identical runs.
+- **The script's own checks.** On invented inputs, with the runner
+  replaced by fakes:
+  - parameter updates are applied, dropped when the release already
+    matches, or refused when it differs;
+  - overrides go to the right states;
+  - a local path is refused;
+  - the release pin refuses any other version, file or RECORD;
+  - the invariants raise (never `assert`) on a wrong-way change or a guard
+    finding;
+  - the traced-versus-untraced differential refuses a mismatch;
+  - the Medicaid text is refused when its pattern does not hold.
 
 The oracle tests check, against the live model:
 
@@ -594,12 +635,14 @@ The oracle tests check, against the live model:
   for household B, against $83.94 under the release's held value;
 - taxes do not fall for household C;
 - the float32 guard flags `ca_use_tax` at a $30,000 pension and nothing at
-  $31,200;
+  $31,200, and keys the `itemizing` and `not_itemizing` branches' nodes
+  apart;
 - the interpreter's source is published and its installed files match the
-  RECORD;
+  RECORD, with none added, and a run pinned to another RECORD digest is
+  refused;
 - the live tree is the definition the bridge was read against;
-- batched runs equal single runs, and all 51 FIPS codes resolve to their
-  state.
+- a case run with others equals the case run alone;
+- all 51 FIPS codes resolve to their state.
 
 The script checks every household-state pair, with and without health
 coverage, before writing:
@@ -611,9 +654,14 @@ coverage, before writing:
 - PolicyEngine-US's own net-income change is within a cent of the definition's
   sum;
 - **the float32 guard.** Every changed component is traced: 44 leaves in 18
-  comparisons, 56,781 traced variable-periods.
-  - Each traced component, run alone, equals its batched value within a
-    cent.
+  comparisons, 65,907 traced variable-periods (branch simulations' nodes
+  counted apart).
+  - Each traced component, from its traced simulation, equals its
+    untraced value within a cent.
+  - The per-case runner reproduces the first draft's batched runner exactly
+    for every decomposition (all 18). Only Medicaid-at-cost memo values
+    move, by one float32 step, for example $9,236.4785 to $9,236.4795. That
+    is the cross-case aggregation per-case simulations remove.
   - No variable changed without a changed input.
   - No component changed by a nonzero amount under $2.
 

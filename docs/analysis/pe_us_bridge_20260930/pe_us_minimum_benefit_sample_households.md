@@ -2,7 +2,7 @@
 
 **Illustrative household, not survey data.** Three households built around one illustrative worker, run through PolicyEngine-US for payment year 2026. Amounts are annual 2026 dollars. Taxes and costs enter as negative contributions, so each column sums to net income (PolicyEngine-US's `household_net_income`, which by default excludes health coverage).
 
-- Microcosm Dynamics commit `287a1180fad2d2ce90c01334794ed39e28d4d456`
+- Microcosm Dynamics commit `472f29040693ac2864b06edae5ccceaabadb281c`
 - PolicyEngine-US 2.18.0 from PyPI (wheel SHA-256 `28e32bc1339e8ffc1ed676ac1c9ecd468d191685608039643915f63e1357085f`), with policyengine-core 3.32.11. All 17,551 installed `policyengine_us/` files match the wheel's RECORD.
 - Reform: a minimum benefit set at 73% of the aged poverty threshold for 22 years of work (Favreault, Mermin and Steuerle 2006, option 2), compared with current-law scheduled benefits
 - Social Security: 8,916 a year under current law, 10,968 under the reform
@@ -204,7 +204,7 @@ Memo (outside default net income): Medicaid at cost 0 → 0; Medicare Savings Pr
 
 ## Float32 guard
 
-Every changed leaf of the 18 comparisons (nine household-state pairs, with and without health coverage; 44 leaves) was traced through PolicyEngine-US's own calculation (56,781 traced variable-periods). No variable changed while every variable it read held within a cent, the signature of a float32 step at a bracket edge. No leaf changed by a nonzero amount under $2.
+Every changed leaf of the 18 comparisons (nine household-state pairs, with and without health coverage; 44 leaves) was traced through PolicyEngine-US's own calculation (65,907 traced variable-periods). No variable changed while every variable it read held within a cent, the signature of a float32 step at a bracket edge. No leaf changed by a nonzero amount under $2.
 
 ## Notes
 

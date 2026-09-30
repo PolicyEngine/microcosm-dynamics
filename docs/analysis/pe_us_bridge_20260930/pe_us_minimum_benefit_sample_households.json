@@ -5,7 +5,7 @@
   "provenance": {
     "microcosm_dynamics": {
       "repository": "PolicyEngine/microcosm-dynamics",
-      "commit": "287a1180fad2d2ce90c01334794ed39e28d4d456",
+      "commit": "472f29040693ac2864b06edae5ccceaabadb281c",
       "code_dirty": false,
       "script": "scripts/pe_us_minimum_benefit_sample_households.py",
       "bridge": "src/populace_dynamics/bridge/policyengine_us.py"
@@ -40,6 +40,7 @@
         "files_checked": 17551,
         "mismatched": 0,
         "missing": 0,
+        "extra": 0,
         "package_record_digest": "9f9f090894638e3d0e0dd5ad8ab34f36cf8cb2134ef3627407d0653381906007",
         "package_record_lines": 17551
       },
@@ -1427,7 +1428,7 @@
       },
       "memo": {
         "baseline": {
-          "medicaid_cost": 9236.478515625,
+          "medicaid_cost": 9236.4794921875,
           "msp_cost": 0.0,
           "is_medicaid_eligible": 1.0,
           "medicaid_optional_senior_or_disabled_countable_income": 6156.0,
@@ -1448,7 +1449,7 @@
           "taxable_social_security": 0.0
         },
         "reform": {
-          "medicaid_cost": 9236.478515625,
+          "medicaid_cost": 9236.4794921875,
           "msp_cost": 0.0,
           "is_medicaid_eligible": 1.0,
           "medicaid_optional_senior_or_disabled_countable_income": 8208.0,
@@ -1889,7 +1890,7 @@
       },
       "memo": {
         "baseline": {
-          "medicaid_cost": 10799.2294921875,
+          "medicaid_cost": 10799.228515625,
           "msp_cost": 0.0,
           "is_medicaid_eligible": 1.0,
           "medicaid_optional_senior_or_disabled_countable_income": 8676.0,
@@ -1910,7 +1911,7 @@
           "taxable_social_security": 0.0
         },
         "reform": {
-          "medicaid_cost": 10799.2294921875,
+          "medicaid_cost": 10799.228515625,
           "msp_cost": 0.0,
           "is_medicaid_eligible": 1.0,
           "medicaid_optional_senior_or_disabled_countable_income": 10728.0,
@@ -2816,7 +2817,7 @@
       },
       "memo": {
         "baseline": {
-          "medicaid_cost": 9236.478515625,
+          "medicaid_cost": 9236.4794921875,
           "msp_cost": 0.0,
           "is_medicaid_eligible": 1.0,
           "medicaid_optional_senior_or_disabled_countable_income": 10956.0,
@@ -2837,7 +2838,7 @@
           "taxable_social_security": 0.0
         },
         "reform": {
-          "medicaid_cost": 9236.478515625,
+          "medicaid_cost": 9236.4794921875,
           "msp_cost": 0.0,
           "is_medicaid_eligible": 1.0,
           "medicaid_optional_senior_or_disabled_countable_income": 13008.0,
@@ -3788,7 +3789,7 @@
             "snap",
             "social_security"
           ],
-          "traced_nodes": 6006,
+          "traced_nodes": 7654,
           "small_changes": [],
           "uncaused_changes": []
         }
@@ -4245,7 +4246,7 @@
             "income_tax_before_refundable_credits",
             "social_security"
           ],
-          "traced_nodes": 3359,
+          "traced_nodes": 4938,
           "small_changes": [],
           "uncaused_changes": []
         },
@@ -4254,7 +4255,7 @@
             "income_tax_before_refundable_credits",
             "social_security"
           ],
-          "traced_nodes": 3359,
+          "traced_nodes": 4938,
           "small_changes": [],
           "uncaused_changes": []
         }
@@ -4710,7 +4711,7 @@
             "social_security",
             "state_income_tax_before_refundable_credits"
           ],
-          "traced_nodes": 3920,
+          "traced_nodes": 4493,
           "small_changes": [],
           "uncaused_changes": []
         },
@@ -4721,7 +4722,7 @@
             "social_security",
             "state_income_tax_before_refundable_credits"
           ],
-          "traced_nodes": 3920,
+          "traced_nodes": 4493,
           "small_changes": [],
           "uncaused_changes": []
         }
@@ -5149,7 +5150,7 @@
             "income_tax_before_refundable_credits",
             "social_security"
           ],
-          "traced_nodes": 3635,
+          "traced_nodes": 5222,
           "small_changes": [],
           "uncaused_changes": []
         },
@@ -5158,7 +5159,7 @@
             "income_tax_before_refundable_credits",
             "social_security"
           ],
-          "traced_nodes": 3635,
+          "traced_nodes": 5222,
           "small_changes": [],
           "uncaused_changes": []
         }
@@ -5345,10 +5346,10 @@
   "float32_guard": {
     "comparisons": 18,
     "changed_leaves_traced": 44,
-    "traced_nodes": 56781,
+    "traced_nodes": 65907,
     "small_changes": [],
     "uncaused_changes": 0,
-    "summary": "Every changed leaf of the 18 comparisons (nine household-state pairs, with and without health coverage; 44 leaves) was traced through PolicyEngine-US's own calculation (56,781 traced variable-periods). No variable changed while every variable it read held within a cent, the signature of a float32 step at a bracket edge. No leaf changed by a nonzero amount under $2."
+    "summary": "Every changed leaf of the 18 comparisons (nine household-state pairs, with and without health coverage; 44 leaves) was traced through PolicyEngine-US's own calculation (65,907 traced variable-periods). No variable changed while every variable it read held within a cent, the signature of a float32 step at a bracket edge. No leaf changed by a nonzero amount under $2."
   },
   "invariants_checked": [
     "every household-state pair, with and without health coverage: the leaf changes sum exactly (in cents) to the net change, and the categories to the same total",
