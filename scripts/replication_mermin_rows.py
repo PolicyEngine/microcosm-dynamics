@@ -19,8 +19,8 @@ registration disagree, the registration wins.
 =====================================================================
 THE ANCHOR (Urban 411260, Tables 1/2/4)
 =====================================================================
-Mermin, G. B. T. (2005), "The Effect of Benefit Reductions on the
-Distribution of Social Security Benefits" (Urban Institute report 411260,
+Mermin, G. B. T. (2005), "Distributional Effects of Reforming Social
+Security through Benefit Reductions" (Urban Institute report 411260,
 DYNASIM3 Runid 432; 2005 Trustees intermediate assumptions). Benefits as
 a percent of scheduled for retired workers, by policy scenario:
 
@@ -809,8 +809,8 @@ def anchor_provenance() -> dict[str, Any]:
     """
     return {
         "paper": (
-            "Mermin, G. B. T. (2005). The Effect of Benefit Reductions on "
-            "the Distribution of Social Security Benefits. Urban Institute "
+            "Mermin, G. B. T. (2005). Distributional Effects of Reforming "
+            "Social Security through Benefit Reductions. Urban Institute "
             "report 411260. DYNASIM3, Runid 432. 2005 Trustees intermediate "
             "assumptions; CBO (2005) solvency scoring."
         ),

@@ -4,8 +4,8 @@ REPORTED, NOT GATED. This artifact reads no gate and changes no gate. It
 is the first external-anchor replication of PolicyEngine/populace-dynamics
 (issue #74, phase A): can the certified earnings generator (candidate 11,
 run 13) reproduce the *incidence structure* of a DYNASIM-published reform
-analysis? The anchor is Mermin (2005), "The Effect of Benefit Reductions
-on the Distribution of Social Security Benefits" (Urban Institute 411260,
+analysis? The anchor is Mermin (2005), "Distributional Effects of
+Reforming Social Security through Benefit Reductions" (Urban Institute 411260,
 DYNASIM3 run 432): benefits as a percent of scheduled for retired workers
 aged 62-67 in 2050, by career-average-earnings quintile, under price
 indexing (PI) and progressive price indexing (PPI) with a 30th-percentile
@@ -749,8 +749,8 @@ def anchor_provenance() -> dict[str, Any]:
     """
     return {
         "paper": (
-            "Mermin, G. B. T. (2005). The Effect of Benefit Reductions on "
-            "the Distribution of Social Security Benefits. Urban Institute "
+            "Mermin, G. B. T. (2005). Distributional Effects of Reforming "
+            "Social Security through Benefit Reductions. Urban Institute "
             "report 411260. DYNASIM3, Runid 432. 2005 Trustees intermediate "
             "assumptions; CBO (2005) solvency scoring."
         ),

@@ -149,3 +149,15 @@ Row ids and output keys that `benchmarks/history.jsonl`, `gates.yaml` or other a
 - PR #491 replaced the working paper with its rewrite. The rewrite drops the cost-ordering paragraph this erratum describes, along with its DYNASIM3 2050 cross-check sentence. It carries the same correction in the "Comparisons beyond DYNASIM" paragraph: the T2 check compared the model against CBO's 2005 estimates as Mermin (2005) reports them, and this erratum corrects the committed label. `tests/test_anchor_provenance_erratum.py` pins the new sentence.
 - PR #491 also adds references to `docs/references.bib`. The `mermin2005benefitreductions` and `smith2020fivedem` notes this erratum relies on are unchanged.
 
+
+## Addendum, 30 September 2026
+
+- [PolicyEngine/microcosm-dynamics#497](https://github.com/PolicyEngine/microcosm-dynamics/issues/497) specifies the benchmark-registry relabel this erratum defers, for the row `dynasim.mermin.four_reform_cost_ordering`. It changes four of the row's fields:
+  - the three the table above lists;
+  - `/concept_mismatch/population`, whose text ("differs from DYNASIM's projected population") carries the same old attribution and which this erratum also governs.
+
+  The issue also covers the matching `spec_revisions` note and the compatibility override that keeps the merged #352 matrix reconstructing exactly. It covers the DYNASIM row counts that key on the label, and the pinned SHA-256 constants and wall. It also covers the checks that assume tranche 2 is the latest record set.
+
+  No evaluation append is due. Until the next one lands with that change, this erratum governs the registry row.
+- The registry has no row sourced from the *Five Democratic Approaches* report (Urban 103050), so the DYNASIM4 ID980 correction above needs no registry change.
+- The replication scripts and `benchmarks/SOURCES-NEEDED.md` also gave Mermin (2005) the wrong title. [`2026-09-30-mermin-report-title.md`](2026-09-30-mermin-report-title.md) corrects it.

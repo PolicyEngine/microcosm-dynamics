@@ -84,13 +84,16 @@ committed evidence.
 
 ### DYNASIM / Urban lifetime and reform tables
 
-8. **Mermin (2005), “The Effect of Benefit Reductions on the Distribution
-   of Social Security Benefits,” Urban report 411260**
-   - URL: https://www.urban.org/research/publication/effect-benefit-reductions-distribution-social-security-benefits
+8. **Mermin (2005), “Distributional Effects of Reforming Social Security
+   through Benefit Reductions,” Urban report 411260**
+   - URL: https://www.urban.org/research/publication/distributional-effects-reforming-social-security-through-benefit-reductions
    - Exact PDF URL: https://www.urban.org/sites/default/files/publication/51966/411260-Distributional-Effects-of-Reforming-Social-Security-through-Benefit-Reductions.PDF
    - Capture: landing HTML and the PDF at the exact attachment URL.
    - Establishes: DYNASIM3 Table 1 and Table 2 source pages for the already
      committed PPI, price-indexing, NRA-to-70, and COLA replication values.
+     Table 1's 75-year deficit/surplus row is Congressional Budget Office
+     (2005) estimates as Mermin reports them, not DYNASIM3 output
+     (`docs/errata/2026-09-29-anchor-provenance.md`).
 
 9. **Favreault and Steuerle (2007), “Social Security Spouse and Survivor
    Benefits for the Modern Family,” Urban report 311436**
