@@ -211,7 +211,8 @@ def test__artifact__then_florida_medicaid_loss_is_explained(document, report):
     text = explanations["B-FL"]
     assert "88%" in text and "individual.yaml:44-45" in text
     assert "QMB-eligible in every month of both runs" in text
-    assert "upper-end valuation" in report
+    assert "coverage at average program cost" in report
+    assert "upper-end" not in report
     # The valuation says what the Medicaid figure is: spending per enrollee
     # from 2023 spending and October 2024 enrollment, all ages.
     assert script.MEDICAID_VALUATION in report

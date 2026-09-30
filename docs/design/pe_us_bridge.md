@@ -513,8 +513,9 @@ Annual 2026 dollars; change from current law to the reform.
 
 The last column values Medicaid at the state's Medicaid spending per
 enrollee: 2023 spending over October 2024 enrollment, an average over
-enrollees of all ages, not uprated to 2026 (see Payment year). It is an
-upper-end valuation of coverage, not a cash loss.
+enrollees of all ages, not uprated to 2026 (see Payment year). It values
+coverage at average program cost, which may understate what covering an
+aged enrollee costs; it is not a cash loss.
 
 What the components show (full tables in
 `docs/analysis/pe_us_bridge_20260930/pe_us_minimum_benefit_sample_households.md`):
@@ -572,8 +573,8 @@ $1,200, in every state.
     only for people not enrolled in full Medicaid (`msp_cost.py:28`), so its
     $5,335 appears once Medicaid ends.
   - **Net.** With health coverage counted, she loses $2,737. Medicaid is
-    valued at Florida's spending per enrollee of all ages, so this is an
-    upper-end valuation of the coverage she loses, not a cash loss.
+    valued at Florida's spending per enrollee of all ages: the coverage
+    she loses at average program cost, not a cash loss.
 - **Montana.** SNAP falls by $207.
 
 **Household C.** Taxable Social Security rises from $5,867 to $6,781 under

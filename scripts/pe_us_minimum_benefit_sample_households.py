@@ -307,8 +307,8 @@ MEMO_VARIABLES = (
 MEDICAID_VALUATION = (
     "Medicaid is valued at the state's Medicaid spending per enrollee (2023 "
     "spending over October 2024 enrollment in policyengine-us 2.18.0; an "
-    "average over enrollees of all ages, not uprated to 2026): an upper-end "
-    "valuation of coverage, not a cash loss."
+    "average over enrollees of all ages, not uprated to 2026). It values "
+    "coverage at average program cost; it is not a cash loss."
 )
 HEALTH_OVERRIDE = {
     "gov.simulation.include_health_benefits_in_net_income": True
@@ -1319,7 +1319,7 @@ def chart_footnotes(
         "Blue raises net income and red lowers it; the gray bars are net "
         "changes. *Health coverage counted: Medicaid valued at the state's "
         "Medicaid spending per enrollee (all ages; 2023 spending over 2024 "
-        "enrollment), an upper-end valuation of coverage, not a cash loss.",
+        "enrollment): coverage at average program cost, not a cash loss.",
     ]
     for (key, _state), text in document["medicaid_explanations"].items():
         if key == spec["key"]:
