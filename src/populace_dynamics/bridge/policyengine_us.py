@@ -1539,10 +1539,17 @@ def _counts_as_change(
 
     Values are stored in float32, so a change of exactly ``tolerance``
     can measure up to one float32 step less (3.00 to 3.01 measures
-    0.0099999905): each end is off by at most half a step.  The threshold
-    is therefore ``tolerance`` less one float32 step at the node's
-    magnitude, and never less than half of ``tolerance``, so a zero change
-    or float64 noise on a large value never counts.
+    0.0099999905): each stored end is off by at most half a step.  The
+    threshold is therefore ``tolerance`` less one float32 step at the
+    node's magnitude, and never less than half of ``tolerance``, so a zero
+    change or float64 noise on a large value never counts.
+
+    Two limits.  From $32,768 to $131,072 a cent is one or two float32
+    steps, so one or two steps of noise count too: the guard errs toward a
+    false alarm.  And the bound covers a stored value, not one computed
+    from larger operands, which carries their larger rounding: x = a -
+    5,760 with ``a`` near $35,760 moves by $0.0078125 when ``a`` moves by a
+    cent, and that does not count.
     """
 
     if change == 0:

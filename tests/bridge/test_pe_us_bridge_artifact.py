@@ -240,7 +240,7 @@ def test__artifact__then_half_dollars_round_up(document, report):
     )
     assert "| C | MT | +2,052 | +1,887 | 92% | +1,887 |" in report
     assert "+1,886 " not in report and "+1,886." not in report
-    assert "half-dollar up" in report
+    assert "half-dollars rounded up in magnitude" in report
 
 
 def test__artifact__then_montana_credit_is_described_exactly(document):

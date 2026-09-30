@@ -87,7 +87,15 @@ It does:
     measure a little under a cent (3.00 to 3.01 measures 0.0099999905). So
     a variable's own change counts from a cent less one float32 step at its
     size, and never from less than half a cent (`_counts_as_change`,
-    `policyengine_us.py:1535-1551`).
+    `policyengine_us.py:1535-1558`).
+  - **The tradeoff.** From $32,768 to $131,072 a cent is one or two
+    float32 steps, so float32 cannot tell a one-cent step from one or two
+    steps of noise. The guard counts both, and errs toward a false alarm.
+    The guarantee covers a stored value: a value computed from larger
+    operands carries their rounding, so a one-cent step in it can still
+    measure less. For example, when a near $35,760 moves by a cent,
+    x = a − 5,760 moves by $0.0078125, two float32 steps of a, and is not
+    counted.
   - **Noise.** Float noise is a cent or four float32 steps at the read's
     size, whichever is larger. Above $131,072 one float32 step is more than
     a cent.
@@ -96,7 +104,7 @@ It does:
     therefore a step at a bracket or eligibility edge taken on float32
     noise, or a false alarm: a read with no numeric value never counts as
     a cause, so a variable whose only changed read is not numeric is
-    reported (`uncaused_changes`, `policyengine_us.py:1595-1597`). Either
+    reported (`uncaused_changes`, `policyengine_us.py:1602-1604`). Either
     way the script refuses to write.
   - **What it cannot see.** The rule is local, so it cannot see a noise
     step in a variable that also read a genuinely changed input.
@@ -229,8 +237,9 @@ OMP_NUM_THREADS=1 PYTHONPATH=src .venv/bin/python \
 
 The run takes about six minutes on a lightly loaded machine, most of it
 building the reformed tax-benefit systems and tracing. Each policyengine-us
-child may take up to two hours before it is stopped (`--timeout`). It writes a JSON file of inputs and
-results, a Markdown table, and one chart per household (PNG and SVG) to
+child may take up to two hours before it is stopped (`--timeout`). It
+writes a JSON file of inputs and results, a Markdown table, and one chart
+per household (PNG and SVG) to
 `docs/analysis/pe_us_bridge_20260930/` (`--docs-dir`), and a second copy to
 `--out-dir`. Microcosm's oracle reads its SSA parameters (the wage index,
 bend-point factors, the full retirement age and the CPI-W) from the same
@@ -245,7 +254,7 @@ Tests:
   - the source check, on temporary git repositories and invented
     distributions;
   - RECORD verification;
-  - the float32 guard, including the review's use-tax case as traced;
+  - the float32 guard, including the first draft's use-tax case as traced;
   - the COLA helpers.
 - `tests/bridge/test_pe_us_sample_households_script.py` (unit tier). It
   checks the script's own logic on invented inputs, with the runner replaced
@@ -537,6 +546,10 @@ The states were chosen for mechanism, each verified in the code:
     `mt_elderly_homeowner_or_renter_credit_net_household_income` returns
     the reduction, not the income
     (`mt_elderly_homeowner_or_renter_credit_net_household_income.py:18-33`).
+  - **The multiplier's income.** MCA 15-30-2340(5) opens with "household
+    income", but its table is headed "gross household income".
+    PolicyEngine-US applies the multiplier to gross household income, as
+    the table does (`mt_elderly_homeowner_or_renter_credit.py:19-23,41`).
   - **Gross household income** counts all Social Security
     (`mt_elderly_homeowner_or_renter_credit_gross_household_income.py:17-23`).
 - **Florida (no income tax).** None of the 46 entries in the state
@@ -565,8 +578,9 @@ Annual 2026 dollars; change from current law to the reform.
 | C | MT | +2,052 | +1,887 | 92% | +1,887 |
 | C | FL | +2,052 | +1,942 | 95% | +1,942 |
 
-Each figure is rounded to the dollar on its own, a half-dollar up:
-household C's change in Montana is $1,886.50, shown as $1,887.
+Each figure is rounded to the dollar on its own, with half-dollars rounded
+up in magnitude: household C's change in Montana is $1,886.50, shown as
+$1,887.
 
 The last column values Medicaid as the release does: the state's 2023
 Medicaid spending divided by its October 2024 Medicaid and CHIP enrollment,
@@ -606,10 +620,10 @@ $1,200, in every state.
     the income SNAP sees rises by only $2,052 − $1,331 = $721, and SNAP falls
     by 45 percent of that (see Florida).
   - **Net.** She keeps $397, 19 percent.
-  - **The review's +$25.** The review estimated that she keeps $25 (1
-    percent), from a run on 1.822.5 with the same override. That release
-    did not count the supplement as SNAP income, and there SNAP fell by
-    $696 rather than $324: $2,052 − $1,331 − $696 = $25.
+  - **The earlier +$25.** A run on the 1.822.5 checkout with the same
+    override left her $25 (1 percent). That release did not count the
+    supplement as SNAP income, and there SNAP fell by $696 rather than
+    $324: $2,052 − $1,331 − $696 = $25.
 - **Florida.** SNAP falls by $924, 45 percent of the increase.
   - **Why 45 percent.** SNAP's contribution is 30 percent of net income
     (`snap_expected_contribution.py:17-32`, with the rate at
@@ -699,7 +713,7 @@ check chosen cases, many of them parametrized.
   and a bare string passed as a group are refused. Generators work as
   groups.
 - **Decomposition.** A drifted root definition and a cyclic or badly
-  signed tree are refused, and so is the review's minimal counterexample
+  signed tree are refused, and so is a minimal NaN counterexample
   (root → mid → (x, y) with mid = NaN). Each leaf has its documented
   category, and a refundable credit on a zero liability reads as a credit,
   not a negative tax.
@@ -720,11 +734,13 @@ check chosen cases, many of them parametrized.
     - a package outside any checkout;
     - a VCS, archive or local-directory install.
 - **RECORD.** Verification flags each changed, missing or added file.
-- **Float32 guard.** The review's use-tax case, as traced, is reported. A
+- **Float32 guard.** The first draft's use-tax case, as traced, is
+  reported. A
   step above $131,072, where one float32 step exceeds a cent, is still
   seen. A branch taken in one run only is a cause, and a branch's copy of
   a main value reads the main node. The exact 3.00 to 3.01 float32 step is
-  reported.
+  reported, and so is one float32 step of noise at $70,000 (the tradeoff
+  above); a one-cent step computed from larger operands is not.
 - **The script's own checks.** On invented inputs, with the runner
   replaced by fakes:
   - parameter updates are applied, dropped when the release already
@@ -739,7 +755,8 @@ check chosen cases, many of them parametrized.
     dates, states both directions, and refuses a memo off the ratio;
   - the Medicaid text is refused when its pattern does not hold;
   - Montana's evidence keeps net household income and its reduction apart;
-  - half-dollars round up in magnitude (+1,886.50 shows as +1,887).
+  - half-dollars round up in magnitude (+1,886.50 shows as +1,887), and a
+    value that is not a number is refused.
 - **The committed outputs** (`test_pe_us_bridge_artifact.py`) are checked as
   listed under How to run.
 
@@ -779,7 +796,8 @@ coverage, before writing:
   sum;
 - wherever she is enrolled, Medicaid at cost equals the release's spending
   over enrollment, the ratio the valuation text describes (within 50
-  cents);
+  cents), both in the memo and in the with-health decomposition's
+  `medicaid_cost` leaf;
 - **the float32 guard.** Every changed component is traced: 44 leaves in 18
   comparisons, 65,907 traced variable-periods (branch simulations' nodes
   counted apart).

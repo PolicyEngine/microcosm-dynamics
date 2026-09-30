@@ -451,7 +451,9 @@ def test__given_any_cents__then_money_is_the_half_up_dollar(cents, signed):
         assert text.startswith("+") is signed
 
 
-@pytest.mark.parametrize("cents", [1.5, True, float("nan"), float("inf")])
+@pytest.mark.parametrize(
+    "cents", [1.5, True, float("nan"), float("inf"), "188650"]
+)
 def test__given_non_whole_cents__then_money_is_refused(cents):
     with pytest.raises(ValueError):
         script._money(cents)
@@ -533,6 +535,42 @@ def test__given_memo_off_the_ratio__then_writing_is_refused(tmp_path):
     script.check_medicaid_memo([row], per_enrollee)
     row["memo"]["baseline"]["medicaid_cost"] = 7_033.96
     with pytest.raises(script.InvariantError, match="spending over"):
+        script.check_medicaid_memo([row], per_enrollee)
+
+
+def test__given_with_health_medicaid_off_the_ratio__then_it_is_refused(
+    tmp_path,
+):
+    """The with-health column counts the ``medicaid_cost`` leaf; it is
+    checked against the ratio as the memo is."""
+
+    per_enrollee = script.medicaid_per_enrollee(_medicaid_release(tmp_path))
+    tree = bridge.ComponentTree(
+        "household_net_income",
+        {
+            "household_net_income": bridge.NET_INCOME_DEFINITION,
+            "household_benefits": (
+                ("social_security", 1),
+                ("ssi", 1),
+                ("medicaid_cost", 1),
+            ),
+        },
+    )
+
+    def values(medicaid):
+        leaves = {**ZERO, "social_security": 8_916.0, "ssi": 0.0}
+        leaves["medicaid_cost"] = medicaid
+        leaves["household_benefits"] = 8_916.0 + medicaid
+        leaves["household_net_income"] = 8_916.0 + medicaid
+        return leaves
+
+    row = _medicaid_row()
+    row["memo"]["baseline"]["medicaid_cost"] = 0.0
+    row["memo"]["reform"]["medicaid_cost"] = 0.0
+    row["with_health"] = bridge.decompose(tree, values(9_200.24), values(0))
+    script.check_medicaid_memo([row], per_enrollee)
+    row["with_health"] = bridge.decompose(tree, values(7_033.96), values(0))
+    with pytest.raises(script.InvariantError, match="with-health baseline"):
         script.check_medicaid_memo([row], per_enrollee)
 
 

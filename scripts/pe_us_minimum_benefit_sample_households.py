@@ -33,9 +33,10 @@ PSID, the projection or any DYNASIM3 value.  The script is the first use of
    that release, is set from the California Department of Social Services'
    published table.  Every changed component is traced back through
    PolicyEngine-US's own calculation (the float32 guard), and the script
-   refuses to write if any variable changed by a cent or more although
-   every variable it read held within float noise (a cent, or four float32
-   steps at the read's size where that is more).
+   refuses to write if any variable changed by a cent or more (allowing
+   one float32 step of rounding) although every variable it read held
+   within float noise (a cent, or four float32 steps at the read's size
+   where that is more).
 
 Outputs (JSON with provenance, a Markdown table, and a chart per household
 as PNG and SVG) go to ``--out-dir`` and ``--docs-dir``.
@@ -53,6 +54,7 @@ import argparse
 import hashlib
 import json
 import math
+import numbers
 import subprocess
 import sys
 import textwrap
@@ -593,19 +595,31 @@ def check_medicaid_memo(
 ) -> None:
     """Medicaid at cost in each run is the ratio the text describes.
 
-    A differential check: the memo value PolicyEngine-US computed (float32)
-    must equal the release's spending over enrollment, within 50 cents,
-    wherever she is enrolled.
+    A differential check: wherever she is enrolled, the value
+    PolicyEngine-US computed (float32) must equal the release's spending
+    over enrollment within 50 cents.  It checks the memo of the default
+    runs and the ``medicaid_cost`` leaf of the with-health decomposition,
+    the figure the with-health column counts.
     """
 
     for row in rows:
         expected = per_enrollee[row["state"]]["release"]
-        for scenario in SCENARIOS:
-            cost = row["memo"][scenario]["medicaid_cost"]
+        where = f"{row['household']}-{row['state']}"
+        costs = [
+            (f"{scenario} memo", row["memo"][scenario]["medicaid_cost"])
+            for scenario in SCENARIOS
+        ]
+        for component in row["with_health"].components:
+            if component.variable == "medicaid_cost":
+                costs += [
+                    ("with-health baseline", component.baseline_cents / 100),
+                    ("with-health reform", component.reform_cents / 100),
+                ]
+        for label, cost in costs:
             _require(
                 cost == 0 or abs(cost - expected) < 0.5,
-                f"{row['household']}-{row['state']} {scenario}: Medicaid at "
-                f"cost is {cost}, not spending over enrollment ({expected})",
+                f"{where} {label}: Medicaid at cost is {cost}, not spending "
+                f"over enrollment ({expected})",
             )
 
 
@@ -1155,8 +1169,9 @@ def check_invariants(rows: list[dict[str, Any]]) -> list[str]:
     )
     checks.append(
         "float32 guard: every changed leaf traced through PolicyEngine-US's "
-        "calculation; no variable changed by a cent or more while every "
-        "variable it read held within float noise"
+        "calculation; no variable changed by a cent or more (allowing one "
+        "float32 step of rounding) while every variable it read held within "
+        "float noise"
     )
     return checks
 
@@ -1173,7 +1188,11 @@ def _money(cents: int, *, signed: bool = False) -> str:
     ``0``, unsigned.
     """
 
-    if isinstance(cents, bool) or not float(cents).is_integer():
+    if (
+        isinstance(cents, bool)
+        or not isinstance(cents, numbers.Real)
+        or not float(cents).is_integer()
+    ):
         raise ValueError(f"cents must be a whole number, not {cents!r}")
     cents = int(cents)
     dollars = (abs(cents) + 50) // 100
@@ -1311,8 +1330,8 @@ def markdown(rows: list[dict[str, Any]], document: dict[str, Any]) -> str:
         "enter as negative contributions, so each column sums to net income "
         "(PolicyEngine-US's `household_net_income`, which by default "
         "excludes health coverage). Each amount is rounded to the dollar on "
-        "its own, a half-dollar up, so a total can differ by a dollar from "
-        "the sum of its rounded parts.",
+        "its own, with half-dollars rounded up in magnitude, so a total can "
+        "differ by a dollar from the sum of its rounded parts.",
         "",
         f"- Microcosm Dynamics commit `{provenance['microcosm_dynamics']['commit']}`",
         f"- PolicyEngine-US {release['version']} from PyPI (wheel SHA-256 "
@@ -1768,10 +1787,11 @@ def _guard_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
             "household-state pairs, with and without health coverage; "
             f"{leaves} leaves) was traced through PolicyEngine-US's own "
             f"calculation ({nodes:,} traced variable-periods). No variable "
-            "changed by a cent or more while every variable it read held "
-            "within float noise (a cent, or four float32 steps at the read's "
-            "size where that is more), the signature of a float32 step at a "
-            "bracket edge. " + small_text
+            "changed by a cent or more (from a cent less one float32 step at "
+            "its size, never under half a cent) while every variable it read "
+            "held within float noise (a cent, or four float32 steps at the "
+            "read's size where that is more), the signature of a float32 step "
+            "at a bracket edge. " + small_text
         ),
     }
 
@@ -1851,8 +1871,9 @@ def build(
     per_enrollee = medicaid_per_enrollee(parameter_root)
     check_medicaid_memo(rows, per_enrollee)
     checks.append(
-        "Medicaid at cost, wherever she is enrolled, equals the state's "
-        "spending over enrollment that the valuation text describes"
+        "Medicaid at cost, wherever she is enrolled (the memo and the "
+        "with-health medicaid_cost leaf), equals the state's spending over "
+        "enrollment that the valuation text describes"
     )
     valuation = medicaid_valuation_text(per_enrollee)
     limits_document = yaml.safe_load(

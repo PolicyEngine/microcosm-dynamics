@@ -1378,6 +1378,35 @@ def test__given_any_one_cent_float32_step__then_it_is_reported(cents):
     assert reported == (["out@2026"] if after != before else [])
 
 
+def test__given_one_float32_step_of_noise_at_70000__then_it_is_reported():
+    """The tradeoff, stated: from $65,536 to $131,072 one float32 step is
+    $0.0078125, which float32 cannot tell from a one-cent change, so a
+    step of pure noise is reported (a false alarm, not a miss)."""
+
+    step = bridge.float32_step(70_000.0)
+    assert step == 2**-7
+    found = bridge.uncaused_changes(
+        _one_node(70_000.0), _one_node(70_000.0 + step), ["out@2026"]
+    )
+    assert [item["variable"] for item in found] == ["out@2026"]
+
+
+def test__given_one_cent_step_computed_from_larger_operands__then_missed():
+    """The limit, stated: the bound covers a stored value.  x = a - 5,760
+    in float32, with ``a`` moving by a cent near $35,760, moves by
+    $0.0078125 (two float32 steps of ``a``), under the threshold at
+    $30,000."""
+
+    f32 = np.float32
+    before = float(f32(f32(35_760.01) - f32(5_760.0)))
+    after = float(f32(f32(35_760.02) - f32(5_760.0)))
+    assert after - before == 2**-7
+    found = bridge.uncaused_changes(
+        _one_node(before), _one_node(after), ["out@2026"]
+    )
+    assert found == []
+
+
 @given(
     st.floats(-2e5, 2e5, allow_nan=False, allow_infinity=False),
     st.integers(1, 1_000),
