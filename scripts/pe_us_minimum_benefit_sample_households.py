@@ -283,15 +283,32 @@ MEDICAID_LIMIT_FILE = (
     PARAMETER_PREFIX + "gov/hhs/medicaid/eligibility/categories/"
     "senior_or_disabled/income/limit/individual.yaml"
 )
+#: QMB eligibility is monthly (``is_qmb_eligible.py:8``), so every month
+#: is read.
+QMB_MONTHS = tuple(
+    f"is_qmb_eligible@{PAYMENT_YEAR}-{month:02d}" for month in range(1, 13)
+)
 MEMO_VARIABLES = (
     "medicaid_cost",
     "msp_cost",
     "is_medicaid_eligible",
     "medicaid_optional_senior_or_disabled_countable_income",
     "medicaid_optional_senior_or_disabled_income_limit",
-    f"is_qmb_eligible@{PAYMENT_YEAR}-01",
+    *QMB_MONTHS,
     "commodity_supplemental_food_program_eligible",
     "taxable_social_security",
+)
+#: How the with-health figures value Medicaid, as policyengine-us 2.18.0
+#: computes it for one household: the state's Medicaid spending over its
+#: enrollment (``medicaid_cost_if_enrolled.py:11-22``; the single-household
+#: denominator is ``medicaid_slcsp_state_denominator.py:28-33``, so the
+#: person's cost index cancels), from the calibration totals whose latest
+#: entries are 2023 spending and October 2024 enrollment.
+MEDICAID_VALUATION = (
+    "Medicaid is valued at the state's Medicaid spending per enrollee (2023 "
+    "spending over October 2024 enrollment in policyengine-us 2.18.0; an "
+    "average over enrollees of all ages, not uprated to 2026): an upper-end "
+    "valuation of coverage, not a cash loss."
 )
 HEALTH_OVERRIDE = {
     "gov.simulation.include_health_benefits_in_net_income": True
@@ -1030,6 +1047,12 @@ CHART_LABELS = {
 HEALTH_ROW_LABEL = "Net, with health coverage*"
 
 
+def _qmb_months(memo: dict[str, float]) -> int:
+    """Months of the payment year in which she is QMB-eligible."""
+
+    return round(sum(memo[name] for name in QMB_MONTHS))
+
+
 def medicaid_explanations(
     rows: list[dict[str, Any]], limits: dict[str, float]
 ) -> dict[tuple[str, str], str]:
@@ -1061,12 +1084,12 @@ def medicaid_explanations(
                 "coverage changes for a reason the text does not describe"
             )
         share = limits[row["state"]]
-        qmb = f"is_qmb_eligible@{PAYMENT_YEAR}-01"
         qmb_text = (
-            " She is QMB-eligible in both runs, and PolicyEngine-US counts "
-            "the Medicare Savings Program only once full Medicaid ends "
-            "(msp_cost.py:28), so that benefit appears in the reform."
-            if before[qmb] == 1 and after[qmb] == 1
+            " She is QMB-eligible in every month of both runs, and "
+            "PolicyEngine-US counts the Medicare Savings Program only once "
+            "full Medicaid ends (msp_cost.py:28), so that benefit appears in "
+            "the reform."
+            if _qmb_months(before) == 12 and _qmb_months(after) == 12
             else ""
         )
         out[(row["household"], row["state"])] = (
@@ -1142,15 +1165,8 @@ def markdown(rows: list[dict[str, Any]], document: dict[str, Any]) -> str:
             f"{_money(d.net_change_cents, signed=True)} | {share:.0%} | "
             f"{_money(row['with_health'].net_change_cents, signed=True)} |"
         )
-    lines += [
-        "",
-        "Net income with health coverage values Medicaid at its average "
-        "cost per enrollee: an upper-end valuation of coverage, not a cash "
-        "loss.",
-        "",
-    ]
+    lines += ["", MEDICAID_VALUATION, ""]
     names = table_categories(rows)
-    qmb = f"is_qmb_eligible@{PAYMENT_YEAR}-01"
     for spec in HOUSEHOLDS:
         key = spec["key"]
         lines += [f"## {spec['label']}", "", spec["description"] + ".", ""]
@@ -1181,12 +1197,14 @@ def markdown(rows: list[dict[str, Any]], document: dict[str, Any]) -> str:
             health = row["with_health"]
             memo_b = row["memo"]["baseline"]
             memo_r = row["memo"]["reform"]
+            months = (_qmb_months(memo_b), _qmb_months(memo_r))
             qmb_text = {
-                (1.0, 1.0): "QMB-eligible in both runs",
-                (0.0, 0.0): "not QMB-eligible in either run",
+                (12, 12): "QMB-eligible in every month of both runs",
+                (0, 0): "not QMB-eligible in any month of either run",
             }.get(
-                (memo_b[qmb], memo_r[qmb]),
-                f"QMB eligibility {memo_b[qmb]:.0f} → {memo_r[qmb]:.0f}",
+                months,
+                f"QMB-eligible {months[0]} months at baseline and "
+                f"{months[1]} in the reform",
             )
             lines += [
                 "",
@@ -1269,9 +1287,9 @@ def chart_footnotes(
     pe = provenance["policyengine_us"]
     notes = [
         "Blue raises net income and red lowers it; the gray bars are net "
-        "changes. *Health coverage counted: Medicaid valued at its average "
-        "cost per enrollee, an upper-end valuation of coverage, not a cash "
-        "loss.",
+        "changes. *Health coverage counted: Medicaid valued at the state's "
+        "Medicaid spending per enrollee (all ages; 2023 spending over 2024 "
+        "enrollment), an upper-end valuation of coverage, not a cash loss.",
     ]
     for (key, _state), text in document["medicaid_explanations"].items():
         if key == spec["key"]:
@@ -1668,8 +1686,7 @@ def build(
         "Net income is PolicyEngine-US's household_net_income, which by "
         "default excludes health coverage (Medicaid at cost, Medicare "
         "Savings Programs); the with-health sensitivity and the memo lines "
-        "report it. Medicaid is valued at its average cost per enrollee, an "
-        "upper-end valuation of coverage, not a cash loss.",
+        "report it. " + MEDICAID_VALUATION,
         *_release_caveats(parameter_root),
         *[
             f"{STATES[update['states'][0]]['name']}'s {update['year']} aged "
