@@ -2,7 +2,7 @@
 
 **Illustrative household, not survey data.** Three households built around one illustrative worker, run through PolicyEngine-US for payment year 2026. Amounts are annual 2026 dollars. Taxes and costs enter as negative contributions, so each column sums to net income (PolicyEngine-US's `household_net_income`, which by default excludes health coverage).
 
-- Microcosm Dynamics commit `2f0bf639f55897f7e1e55ba7923050cbdcc9ee1a`
+- Microcosm Dynamics commit `20ac0bba5f3e7e422f31fd0987f9437599780f7b`
 - PolicyEngine-US 2.18.0 from PyPI (wheel SHA-256 `28e32bc1339e8ffc1ed676ac1c9ecd468d191685608039643915f63e1357085f`), with policyengine-core 3.32.11. All 17,551 installed `policyengine_us/` files match the wheel's RECORD.
 - Reform: a minimum benefit set at 73% of the aged poverty threshold for 22 years of work (Favreault, Mermin and Steuerle 2006, option 2), compared with current-law scheduled benefits
 - Social Security: 8,916 a year under current law, 10,968 under the reform
@@ -22,7 +22,7 @@
 | C | MT | +2,052 | +1,886 | 92% | +1,886 |
 | C | FL | +2,052 | +1,942 | 95% | +1,942 |
 
-Medicaid is valued at the state's Medicaid spending per enrollee (2023 spending over October 2024 enrollment in policyengine-us 2.18.0; an average over enrollees of all ages, not uprated to 2026): an upper-end valuation of coverage, not a cash loss.
+Medicaid is valued at the state's Medicaid spending per enrollee (2023 spending over October 2024 enrollment in policyengine-us 2.18.0; an average over enrollees of all ages, not uprated to 2026). It values coverage at average program cost; it is not a cash loss.
 
 ## Household A
 
@@ -212,7 +212,7 @@ Every changed leaf of the 18 comparisons (nine household-state pairs, with and w
 - The bridge passes Microcosm's Social Security amounts to PolicyEngine-US as inputs; it does not run over the projected population and applies no behavioral response.
 - The reform is a minimum benefit set at 73% of the aged poverty threshold for 22 years of work (Favreault, Mermin and Steuerle 2006, option 2): exercise 4's headline option, the standard price-indexed minimum with its printed 12.81 percent uniform cut for new entitlees. The worker is on the minimum, so the cut does not reach her; a worker above the minimum would lose 12.81 percent.
 - The baseline is current-law scheduled benefits. Against option 1 (reduced current law, the Report's own benchmark) her gain would be larger; that PIA is in the JSON as a memo, not run through PolicyEngine-US.
-- Net income is PolicyEngine-US's household_net_income, which by default excludes health coverage (Medicaid at cost, Medicare Savings Programs); the with-health sensitivity and the memo lines report it. Medicaid is valued at the state's Medicaid spending per enrollee (2023 spending over October 2024 enrollment in policyengine-us 2.18.0; an average over enrollees of all ages, not uprated to 2026): an upper-end valuation of coverage, not a cash loss.
+- Net income is PolicyEngine-US's household_net_income, which by default excludes health coverage (Medicaid at cost, Medicare Savings Programs); the with-health sensitivity and the memo lines report it. Medicaid is valued at the state's Medicaid spending per enrollee (2023 spending over October 2024 enrollment in policyengine-us 2.18.0; an average over enrollees of all ages, not uprated to 2026). It values coverage at average program cost; it is not a cash loss.
 - SNAP for October-December 2026 uses USDA's fiscal-2027 maximum allotment ($306 a month for one person) and standard deduction ($217) as policyengine-us 2.18.0 encodes them (gov/usda/snap/max_allotment.yaml:33, income/deductions/standard.yaml:17). The state standard utility allowances have no fiscal-2027 entry there, so those months use the fiscal-2026 amounts (California $663, Florida $430 and Montana $799 a month; income/deductions/utility/standard/main.yaml:112, 179 and 387).
 - In policyengine-us 2.18.0 SNAP counts California's SSI supplement as unearned income (gov/usda/snap/income/sources/unearned_spm_unit.yaml:13), so a supplement lost to the benefit increase partly offsets SNAP's reduction.
 - Take-up is PolicyEngine-US's default: full for SSI, SNAP and Medicaid (takes_up_ssi_if_eligible.py:9, takes_up_snap_if_eligible.py:9, takes_up_medicaid_if_eligible.py:9). The Commodity Supplemental Food Program has no take-up input: every eligible person gets USDA's cost per caseload slot, $651 in 2026 (commodity_supplemental_food_program.py:10-11, gov/usda/csfp/amount.yaml:11), though the program is caseload-limited and serves far fewer people than are eligible. Housing assistance is switched off because vouchers are rationed, and the household can prepare food at home.
