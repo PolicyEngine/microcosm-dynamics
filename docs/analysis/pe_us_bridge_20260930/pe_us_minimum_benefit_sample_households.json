@@ -5,7 +5,7 @@
   "provenance": {
     "microcosm_dynamics": {
       "repository": "PolicyEngine/microcosm-dynamics",
-      "commit": "20ac0bba5f3e7e422f31fd0987f9437599780f7b",
+      "commit": "a915b96e293cc141331c8b02196bbbcbdc8da44d",
       "code_dirty": false,
       "script": "scripts/pe_us_minimum_benefit_sample_households.py",
       "bridge": "src/populace_dynamics/bridge/policyengine_us.py"
@@ -463,7 +463,8 @@
       "evidence": [
         "variables/gov/states/mt/tax/income/base/mt_agi_indiv.py: Montana AGI starts from federal AGI, which includes taxable Social Security; the separate Montana Social Security adjustment applies only when gov.states.mt.tax.income.social_security.applies is true",
         "parameters/gov/states/mt/tax/income/social_security/applies.yaml: false from 2024",
-        "variables/gov/states/mt/tax/income/credits/mt_elderly_homeowner_or_renter/mt_elderly_homeowner_or_renter_credit.py: a refundable credit of countable rent less net household income, capped and multiplied by a gross-income schedule",
+        "variables/gov/states/mt/tax/income/credits/mt_elderly_homeowner_or_renter/mt_elderly_homeowner_or_renter_credit.py:26-42: a refundable credit of property tax plus countable rent (15 percent of rent; MCA 15-30-2337(11)) less an income reduction, floored at zero, capped at 1,150 and multiplied by a schedule of gross household income (MCA 15-30-2340(2), (5) and (6))",
+        "variables/gov/states/mt/tax/income/credits/mt_elderly_homeowner_or_renter/mt_elderly_homeowner_or_renter_credit_net_household_income.py:18-33: despite its name, this variable is the income reduction, not net household income. Net household income is gross household income less a 12,600 standard exclusion (MCA 15-30-2337(8) calls it household income); the reduction is a share of it, 5 percent at 12,000 and over (MCA 15-30-2340(4))",
         "variables/gov/states/mt/tax/income/credits/mt_elderly_homeowner_or_renter/mt_elderly_homeowner_or_renter_credit_gross_household_income.py: gross household income adds the untaxed part of Social Security to federal AGI, so all of it counts"
       ]
     },
@@ -5340,8 +5341,44 @@
       }
     }
   ],
+  "medicaid_valuation": {
+    "text": "Medicaid is valued as policyengine-us 2.18.0 values it for one household: the state's 2023 Medicaid spending divided by its October 2024 Medicaid and CHIP enrollment, an average over enrollees of all ages, not uprated to 2026. It is not a same-year average and not specific to aged enrollees, so it could overstate or understate what covering an aged enrollee costs. It values coverage at average program cost; it is not a cash loss. The years do not match: with the release's 2023 enrollment entry, the spending's own year, it would be $7,034 in Florida (not $9,200), $8,751 in California (not $9,236) and $7,223 in Montana (not $10,799).",
+    "per_enrollee": {
+      "CA": {
+        "spending": 124063730563.0,
+        "spending_entry": "2023-01-01",
+        "enrollment": 13431928.0,
+        "enrollment_entry": "2024-10-01",
+        "release": 9236.479719292718,
+        "same_year_enrollment": 14176618.0,
+        "same_year": 8751.29248478022
+      },
+      "MT": {
+        "spending": 2363497647.0,
+        "spending_entry": "2023-01-01",
+        "enrollment": 218858.0,
+        "enrollment_entry": "2024-10-01",
+        "release": 10799.228938398413,
+        "same_year_enrollment": 327239.0,
+        "same_year": 7222.54268898267
+      },
+      "FL": {
+        "spending": 34641023901.0,
+        "spending_entry": "2023-01-01",
+        "enrollment": 3765231.0,
+        "enrollment_entry": "2024-10-01",
+        "release": 9200.238684160415,
+        "same_year_enrollment": 4924826.0,
+        "same_year": 7033.958946163783
+      }
+    },
+    "files": [
+      "policyengine_us/parameters/calibration/gov/hhs/medicaid/totals/spending.yaml",
+      "policyengine_us/parameters/calibration/gov/hhs/medicaid/totals/enrollment.yaml"
+    ]
+  },
   "medicaid_explanations": {
-    "B-FL": "In Florida, the increase raises her countable income for the optional aged Medicaid pathway from $13,476 to $15,528, past the limit of 88% of the poverty guideline ($14,045), so Medicaid ends (PolicyEngine-US 2.18.0, is_optional_senior_or_disabled_income_eligible.py:23-32; individual.yaml:44-45). She is QMB-eligible in every month of both runs, and PolicyEngine-US counts the Medicare Savings Program only once full Medicaid ends (msp_cost.py:28), so that benefit appears in the reform."
+    "B-FL": "In Florida, the increase raises her countable income for the optional aged Medicaid pathway from $13,476 to $15,528, past the limit of 88% of the poverty guideline ($14,045), so Medicaid ends (PolicyEngine-US 2.18.0, is_optional_senior_or_disabled_income_eligible.py:23-32; parameters/gov/hhs/medicaid/eligibility/categories/senior_or_disabled/income/limit/individual.yaml:44-45). She is QMB-eligible in every month of both runs, and PolicyEngine-US counts the Medicare Savings Program only once full Medicaid ends (msp_cost.py:28), so that benefit appears in the reform."
   },
   "float32_guard": {
     "comparisons": 18,
@@ -5349,23 +5386,24 @@
     "traced_nodes": 65907,
     "small_changes": [],
     "uncaused_changes": 0,
-    "summary": "Every changed leaf of the 18 comparisons (nine household-state pairs, with and without health coverage; 44 leaves) was traced through PolicyEngine-US's own calculation (65,907 traced variable-periods). No variable changed while every variable it read held within a cent, the signature of a float32 step at a bracket edge. No leaf changed by a nonzero amount under $2."
+    "summary": "Every changed leaf of the 18 comparisons (nine household-state pairs, with and without health coverage; 44 leaves) was traced through PolicyEngine-US's own calculation (65,907 traced variable-periods). No variable changed by a cent or more (from a cent less one float32 step at its size, never under half a cent) while every variable it read held within float noise (a cent, or four float32 steps at the read's size where that is more), the signature of a float32 step at a bracket edge. No leaf changed by a nonzero amount under $2."
   },
   "invariants_checked": [
     "every household-state pair, with and without health coverage: the leaf changes sum exactly (in cents) to the net change, and the categories to the same total",
     "the Social Security component equals the Microcosm benefit change",
-    "SSI, SNAP, the Commodity Supplemental Food Program, state benefits and the federal and state income-tax contributions never rise when Social Security rises",
+    "when Social Security rises, SSI, SNAP, the Commodity Supplemental Food Program, state benefits and federal and state refundable tax credits never rise, and federal and state income taxes never fall",
     "PolicyEngine-US's own household_net_income change is within one cent of the definition's sum",
-    "float32 guard: every changed leaf traced through PolicyEngine-US's calculation; no variable changed while every variable it read held within a cent"
+    "float32 guard: every changed leaf traced through PolicyEngine-US's calculation; no variable changed by a cent or more (allowing one float32 step of rounding) while every variable it read held within float noise",
+    "Medicaid at cost, wherever she is enrolled (the memo and the with-health medicaid_cost leaf), equals the state's spending over enrollment that the valuation text describes"
   ],
   "caveats": [
     "Illustrative households, not survey data: one worker, chosen so the minimum binds, in three living situations.",
     "The bridge passes Microcosm's Social Security amounts to PolicyEngine-US as inputs; it does not run over the projected population and applies no behavioral response.",
     "The reform is a minimum benefit set at 73% of the aged poverty threshold for 22 years of work (Favreault, Mermin and Steuerle 2006, option 2): exercise 4's headline option, the standard price-indexed minimum with its printed 12.81 percent uniform cut for new entitlees. The worker is on the minimum, so the cut does not reach her; a worker above the minimum would lose 12.81 percent.",
     "The baseline is current-law scheduled benefits. Against option 1 (reduced current law, the Report's own benchmark) her gain would be larger; that PIA is in the JSON as a memo, not run through PolicyEngine-US.",
-    "Net income is PolicyEngine-US's household_net_income, which by default excludes health coverage (Medicaid at cost, Medicare Savings Programs); the with-health sensitivity and the memo lines report it. Medicaid is valued at the state's Medicaid spending per enrollee (2023 spending over October 2024 enrollment in policyengine-us 2.18.0; an average over enrollees of all ages, not uprated to 2026). It values coverage at average program cost; it is not a cash loss.",
+    "Net income is PolicyEngine-US's household_net_income, which by default excludes health coverage (Medicaid at cost, Medicare Savings Programs); the with-health sensitivity and the memo lines report it. Medicaid is valued as policyengine-us 2.18.0 values it for one household: the state's 2023 Medicaid spending divided by its October 2024 Medicaid and CHIP enrollment, an average over enrollees of all ages, not uprated to 2026. It is not a same-year average and not specific to aged enrollees, so it could overstate or understate what covering an aged enrollee costs. It values coverage at average program cost; it is not a cash loss. The years do not match: with the release's 2023 enrollment entry, the spending's own year, it would be $7,034 in Florida (not $9,200), $8,751 in California (not $9,236) and $7,223 in Montana (not $10,799).",
     "SNAP for October-December 2026 uses USDA's fiscal-2027 maximum allotment ($306 a month for one person) and standard deduction ($217) as policyengine-us 2.18.0 encodes them (gov/usda/snap/max_allotment.yaml:33, income/deductions/standard.yaml:17). The state standard utility allowances have no fiscal-2027 entry there, so those months use the fiscal-2026 amounts (California $663, Florida $430 and Montana $799 a month; income/deductions/utility/standard/main.yaml:112, 179 and 387).",
-    "In policyengine-us 2.18.0 SNAP counts California's SSI supplement as unearned income (gov/usda/snap/income/sources/unearned_spm_unit.yaml:13), so a supplement lost to the benefit increase partly offsets SNAP's reduction.",
+    "In policyengine-us 2.18.0 SNAP counts California's SSI supplement as unearned income (gov/usda/snap/income/sources/unearned_spm_unit.yaml:13), so losing the supplement lowers the income SNAP counts, and SNAP falls by less.",
     "Take-up is PolicyEngine-US's default: full for SSI, SNAP and Medicaid (takes_up_ssi_if_eligible.py:9, takes_up_snap_if_eligible.py:9, takes_up_medicaid_if_eligible.py:9). The Commodity Supplemental Food Program has no take-up input: every eligible person gets USDA's cost per caseload slot, $651 in 2026 (commodity_supplemental_food_program.py:10-11, gov/usda/csfp/amount.yaml:11), though the program is caseload-limited and serves far fewer people than are eligible. Housing assistance is switched off because vouchers are rationed, and the household can prepare food at home.",
     "California's 2026 aged or disabled payment standard is set to the published $1,233.94 a month (California Department of Social Services, SSI Total Monthly Payment Amounts 2026, Rev. 1/26); policyengine-us 2.18.0 has no 2026 entry and would hold $1,206.94 from 2025-01-01.",
     "COLAs for 2023-2025 are derived from policyengine-us 2.18.0's third-quarter CPI-W averages under 42 USC 415(i)(1)(D); the derived 2022 COLA equals the committed SSA history's.",
