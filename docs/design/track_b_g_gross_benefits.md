@@ -1,7 +1,8 @@
 # Track B G: the gross-benefit layer
 
-**Status: build-only, 2026-09-29. No real-data computation.** Inputs are
-invented families and SSA's published worked examples.
+**Status: build-only, 2026-09-29; review fixes 2026-09-30. No real-data
+computation.** Inputs are invented families and SSA's published worked
+examples.
 
 The Track B design lives outside this repository, at
 `microcosm-launch-evidence/dynasim-parity-20260909/trackb-design-20260928.md`
@@ -17,7 +18,7 @@ now, with Axiom differentials as diagnostics once a pinned rule exists.
 - Code: `src/populace_dynamics/track_b/gross_benefits.py`.
 - Tests:
   - `tests/test_track_b_gross_benefits.py` covers the worked examples,
-    boundaries, households, the 403(a)(5) detector and refusals.
+    boundaries, households, the 403(a)(5) guard and refusals.
   - `tests/test_track_b_gross_benefits_properties.py` holds the Hypothesis
     invariants and the differentials against `ss/benefits.py` and the sealed
     ledger's rounding.
@@ -41,8 +42,7 @@ For one worker's record and one benefit month:
      June 1980 (RS 00615.740-.742). The maximum is min(max(85% AIME, PIA),
      150% PIA).
    - 403(a)(6) itself states no rounding. The disability maximum is floored to
-     the dime because the Social Security Bulletin says family amounts "would
-     actually be rounded down to the nearest dime" (75(3), Table 2 note).
+     the dime; the source is below, under "Disability-maximum rounding".
    - COLAs then raise the PIA and the maximum alike, dime-floored after each
      increase (215(i)(2)(A)(ii)).
 2. **Original benefits (OB).**
@@ -81,6 +81,9 @@ For one worker's record and one benefit month:
    - A spouse entitled first, with the RIB later, uses method B
      (RS 00615.240). The spouse benefit keeps its 402(q)(1) reduction and is
      paid in excess of the RIB.
+   - The caller must say which came first (`own_benefit_first`) for every
+     dually entitled spouse or divorced spouse. There is no default: in the
+     RS 00615.240 example the two methods pay $250.00 and $262.50.
    - Widow(er)s use method B: both benefits are reduced independently
      (402(q)(3)(E); RS 00615.020A.3).
    - A spouse with a child in care is never reduced for age (402(q)(5)(A)(ii))
@@ -98,14 +101,95 @@ For one worker's record and one benefit month:
 All arithmetic uses exact fractions: SSA's instruction is that decimal
 equivalents "often" give an answer 10 cents lower (RS 00615.005B). Statutory
 rates are cross-checked against the repository's policyengine-us bundle and
-then used as exact fractions. NAWI and the 402(w) credit schedule come from
-that bundle.
+then used as exact fractions. NAWI, full retirement ages and the 402(w)
+credit schedule come from that bundle.
 
-## Households
+## Why G reimplements the worker and auxiliary arithmetic
+
+Design §6 suggests reusing the existing worker and auxiliary primitives in
+`ss/benefits.py`. G does not: it recomputes the 402(q) reductions, the
+402(w) credits and the auxiliary shares in exact fractions. The reasons:
+
+- **POMS requires exact computation.** RS 00615.005B tells SSA staff to use
+  the fraction, not its decimal equivalent, because the decimal "often"
+  lands 10 cents lower. `ss/benefits.py` works in floats over
+  policyengine-us's stored decimals (`0.00555556` for 5/9 of 1 percent).
+- **The float path lands a dime low in 3.46 percent of cells.**
+  `test_float_ledger_dime_errors_counted_exhaustively` covers every PIA
+  from $0.10 to $557.20 by dime with 1-60 reduction months: 334,320 cells.
+  `floor_to_dime` over `early_reduction` lands a dime low in 11,572 of
+  them and never high. POMS's own $802.80 example is one of the low cells.
+- **The float delayed credit is short for births 1917-1942.**
+  `ss.benefits.delayed_credit` caps the window at 48 months (issue #494,
+  below).
+- **Its survivor path has one reduction period per parameter bundle.** The
+  default spreads the widow(er) reduction over 84 months, exact only for
+  survivors born 1962 or later (`ss/params.py`). G takes each widow(er)'s
+  period as an input, and `widow_reduction_period_months` implements the
+  RS 00615.301B.2 birth-date table.
+
+The differential tests keep the two aligned where they overlap. The
+reduction fractions, `spousal_benefit`, `widow_benefit` and
+`delayed_credit` must agree with G within their documented rounding, and a
+change to either side that breaks the agreement fails the suite. That is
+invariant 10 below. The one pinned divergence is `delayed_credit` past 48
+months for births 1917-1942, which is the oracle's bug (#494). This
+reimplementation needs Max's ratification, because §6 asked for reuse.
+
+## Delayed credits
+
+402(w)(2)(A) counts increment months from the month of attaining full
+retirement age to the month before attaining 70. So a cohort can earn at
+most `840 - FRA` months.
+
+- The window is 60 months for births 1917-1937 (FRA 65), and 58 down to 50
+  months for 1938-1942. It is 48 for 1943-1954, 46 down to 38 for
+  1955-1959, and 36 from 1960.
+- `test_delayed_credit_window_matches_the_poms_chart_for_every_cohort`
+  reads the RS 00615.692E chart from its capture. For every birth year from
+  1917 to 1960 it checks the FRA, the monthly rate, the window, and that G
+  accepts the whole window and rejects one month more.
+- More months than the window is `InvalidFamilyInput`, wherever the months
+  enter: `worker_age_adjusted`, an `OwnBenefit`, a `WorkerRecord` (checked by
+  `record_state`), or a `RecordState` given directly (checked by
+  `family_benefits`).
+- The bundle's `max_delayed_months` (policyengine-us `max_delayed_years: 4`,
+  so 48) is not used. It is short for births 1917-1942, and the FRA-to-70
+  window bounds every later cohort anyway. `ss.benefits.delayed_credit`
+  still applies it (issue #494).
+- Credits for births before 1917 are refused
+  (`delayed_credits_born_before_1917`). 402(w)(6)(A) gives 1/12 of 1 percent a month to a person first eligible
+  before 1979. The bundle, like policyengine-us, starts its schedule at 3
+  percent a year. RS 00615.692E also shows windows past 60 months for
+  births before 01/02/1914. Retired workers on in-scope records are
+  unaffected, because eligibility from 1983 implies a birth after 1917. A
+  spouse's own RIB can reach the refusal.
+- Birth years follow SSA's bands, which run from January 2 to January 1. A
+  person born on January 1 takes the previous year.
+
+## Disability-maximum rounding
+
+403(a)(6) states no rounding for the disability maximum. G floors it to the
+dime on two sources, both in the Social Security Bulletin 75(3) capture:
+
+- the rules paragraph: "The final amount is rounded to the next lowest ten
+  cents";
+- the Table 2 note: amounts "would actually be rounded down to the nearest
+  dime".
+
+After that, 215(i)(2)(A)(ii) floors every COLA increase of the maximum to the
+dime. The captured POMS sections on the disability maximum (RS 00615.740 and
+.742) say nothing about rounding. Both quotes are pinned by
+`test_worked_example_figures_are_quoted_from_the_captures`. The Bulletin is
+an SSA research publication, not a program instruction, so resting the
+rounding on it needs Max's acceptance.
+
+## Households and the entry point
 
 A family that draws on more than one record cannot be computed one record at
-a time. `household_benefits` takes every record in a household and runs
-`check_household_records` first. The check does three things:
+a time. `household_benefits` is the only integration entry point. It takes
+every record in a household and runs `check_household_records` first. The
+check does three things:
 
 - A child entitled on two or more records raises `combined_family_maximum`,
   because 403(a)(3)(A) may combine the maximums (RS 00615.770).
@@ -116,27 +200,108 @@ a time. `household_benefits` takes every record in a household and runs
   reduction months and credits. A mismatch, a worker with two records, or a
   deceased worker entered as a beneficiary raises `InvalidFamilyInput`.
 
+`family_benefits` computes a single record only when the caller passes
+`standalone=True`. That is the caller's statement that no beneficiary is
+entitled on another record, and that a worker who is an auxiliary elsewhere
+has declared that benefit. It is meant for SSA's single-record examples and
+tests. Without it the call is a `TypeError`, and `standalone=False` is a
+`ValueError` that names `household_benefits`. So "never default to
+single-worker cases" holds at the API: a one-record computation happens only
+by declaration.
+
+Input errors are raised before any coverage refusal, in the household and
+in every record's family. Input errors include:
+
+- delayed-credit months past 70;
+- a missing entitlement order;
+- a payment month before the record's eligibility year or first DIB
+  entitlement;
+- a duplicate beneficiary id;
+- a role the record cannot have.
+
+This ordering means `evaluate_family` can never count an invalid row as a
+coverage gap. `InvalidFamilyInput` propagates out of `evaluate_family` by
+design. The aggregate stops, with no outcome to drop or half-count, and a
+household with one bad record returns nothing at all.
+
 ## 403(a)(5)
 
-403(a)(5) holds a family's total up after a PIA increase while the maximum
-applies to two or more persons. It depends on the previous month, and G
-computes one month, so G does not apply it. `check_savings_clause(previous,
-current)` takes one record's results for two consecutive months. It raises
-`savings_clause_403a5` when four things hold:
+The statute (captured in `ssa_act_203`) applies when two or more persons are
+entitled for a month, the maximum applies to their benefits, and the PIA is
+increased for the following month. That month's total is then treated as
+increased by the smallest amount that keeps the total "for any such
+subsequent month" from falling below it. Both totals are after 403(a) and
+402(q). The guarantee is not limited to the next month. RS 00615.801B.2
+adds that a saving clause, once established, "will continue in effect
+until the table or formula maximum becomes larger", and may become payable
+again.
 
-- the PIA rose;
-- the maximum bound in both months;
-- two or more persons were subject to it in the earlier month;
-- the total after 403(a) and 402(q) fell.
+G computes one month and does not compute the raise. It refuses instead.
+`SavingsClauseGuard` carries the protection across one record's months:
 
-In that case raising the binding maximum would raise some benefit. The
-guarantee also carries forward, so the monthly calendar (I) must refuse the
-record's later months. A pair that passes is one in which the guarantee
-changes nothing. The worked refusal is a master-record PIA $0.10 higher with
-an unchanged maximum. With the statutory maximum, a COLA never trips the
-check for families that are not dually entitled: a property test asserts
-this. A COLA raises the maximum by at least as many dimes as the PIA, so the
-room left for auxiliaries never shrinks.
+- **It protects the total of a qualifying month.** A qualifying month has
+  two or more persons entitled, a binding maximum, and a higher PIA the next
+  month. The highest protected total is carried forward. RS 00630.400
+  states SSA's version of this condition as "Benefits for that month are
+  reduced for the MAX" (its 1972 Family Payment Saving Clause).
+- **It refuses any later month whose total falls below the protected total**
+  (`savings_clause_403a5`), whether or not the PIA rose into it. It also
+  refuses every later month after that one, because the clause stays in
+  effect.
+- **It refuses every later month once a protected total may exist that G
+  cannot see** (`savings_clause_history_unknown`). That covers:
+  - a path that does not start at the record's first month of entitlement;
+  - a month G refused for another reason while a protected total was in
+    force;
+  - a refused month followed by a PIA increase, or given without its PIA.
+- **It computes a month in which nobody is subject to the maximum.**
+  403(a)(4) decreases only benefits other than the worker's own, so there is
+  nothing to raise. Such a month's total still counts. If it is below the
+  protected total, the clause takes effect for later months.
+
+Each refused month is a `FamilyOutcome` with its reason, so it stays in every
+denominator. The review's counterexample is the unit test
+`test_savings_clause_protects_every_later_month_not_just_the_next`:
+
+1. November: $1,000 PIA and two children at $250, total $1,500.00.
+2. December: a 2.5 percent COLA. PIA $1,025.00, maximum $1,537.50, children
+   at $256.20, total $1,537.40.
+3. January: no PIA increase. An aged spouse reduced for 60 months joins.
+   Children at $170.80 and the spouse at $111.00, total $1,477.60.
+
+A check of consecutive months alone passes both pairs. The guard refuses
+January and every month after it. Two property tests restate the contract
+independently:
+
+- `test_savings_clause_guard_along_month_paths` runs random paths of COLAs,
+  arrivals and departures.
+- `test_a_reduced_joiner_after_a_cola_is_refused_iff_the_total_falls`
+  generalizes the counterexample.
+
+With the statutory maximum, a COLA alone never trips the guard for families
+that are not dually entitled; a property test asserts this. A COLA raises
+the maximum by at least as many dimes as the PIA, so the room left for
+auxiliaries never shrinks.
+
+**Known over-refusals.** Each is conservative and inflates the unsupported
+rate:
+
+- **A beneficiary who leaves, for example in the COLA month.** In
+  `test_known_over_refusal_a_beneficiary_leaves_in_a_cola_month`, two of
+  three children leave in December and the total falls from $1,750.00 to
+  $1,537.50. G refuses December. No captured source says whether a change of
+  membership triggers the clause.
+- **A month in which the maximum does not bind.** 403(a)(4) only decreases
+  benefits, so on the statute's text a larger maximum changes nothing there.
+  But SSA's procedure in RS 00630.400 divides the protected payment among
+  the auxiliaries without mentioning the OB cap.
+- **Every month after a refused month** while a protected total is in force.
+- **Every month of a path with unknown history.** A simulation that starts
+  with families already on the rolls must either reconstruct each record
+  from its first month of entitlement or accept these refusals.
+
+RS 00630.400's summary also requires "at least one beneficiary is reduced for
+age". G does not require it, which can only add refusals.
 
 ## Supported and refused configurations
 
@@ -170,7 +335,9 @@ It never falls back to a single-worker computation.
 | `parisi_before_october_1999` | A binding maximum with dual entitlement before 10/99 |
 | `independently_entitled_divorced_spouse` | A divorced spouse whose living ex-spouse is not entitled (402(b)(4)(A), (c)(4)(A)) |
 | `non_aime_formula_pia` | Old-start, special-minimum and frozen-minimum PIAs (RS 00615.740B.1) |
-| `savings_clause_403a5` | A month in which 403(a)(5) would raise the family's total |
+| `savings_clause_403a5` | A month whose total fell below a 403(a)(5) protected total, and every month after it |
+| `savings_clause_history_unknown` | A month for which a protected total G cannot see may exist (a path not started at entitlement, or a month G did not compute) |
+| `delayed_credits_born_before_1917` | Delayed credits for births before 1917 (402(w)(6)(A)'s 1/12 of 1 percent) |
 
 `evaluate_family` and `count_family_outcomes` keep unsupported rows, whether
 single records or households, in every denominator by reason and weight.
@@ -205,17 +372,31 @@ absorbed as unsupported rows.
    the own benefit and the age-adjusted auxiliary benefit.
 6. **Unsupported configurations always raise**, including when injected
    anywhere in a valid family or shared between two records of a household,
-   and the denominators always keep them.
+   and the denominators always keep them. **Invalid inputs are never
+   absorbed as refusals.** Delayed credits past 70, a record date after the
+   payment month, or a duplicate id always raise `InvalidFamilyInput`, even
+   with a refused beneficiary or record condition in the same family.
 7. **Households are their records.** A household of unrelated records gives
    each record's own result, and its total is their sum.
 8. **Results are deterministic and independent of beneficiary order.** Every
    amount is a dime multiple, and each whole-dollar payment is the floor of its
    amount.
-9. **Differentials.** The reduction fractions, `spousal_benefit`,
+9. **403(a)(5).** Along any month path that starts at entitlement:
+   - an admitted month with anyone under the maximum is never below an
+     earlier protected total, and never follows such a fall;
+   - a refused month has someone under the maximum and a fall behind it;
+   - a month with nobody under the maximum is always computed;
+   - a path whose PIA never rises is never refused.
+10. **Differentials.** The reduction fractions, `spousal_benefit`,
    `widow_benefit` and `delayed_credit` in `ss/benefits.py` agree with G
-   within their documented rounding. The sealed ledger's float path
+   within their documented rounding. `delayed_credit` is compared only
+   within its 48-month cap. Past it, for births 1917-1942, the divergence
+   is pinned as the oracle's bug (#494). The sealed ledger's float path
    (`estimates.ledgers.floor_to_dime` over `early_reduction`) is never above
    G's exact amount, and never more than a dime below it.
+11. **Delayed-credit windows.** For every cohort 1917-1960 on the RS
+    00615.692E chart, the window is `840 - FRA` and the rate is the chart's.
+    G accepts the whole window and rejects one month more.
 
 ## Worked examples reproduced exactly
 
@@ -228,7 +409,7 @@ absorbed as unsupported rows.
 | RS 00615.320 | RIB-LIM $350, with the $309.20 floor |
 | RS 00615.240 | Spouse then RIB (method B): $450.00 spouse, $200.00 RIB, $250.00 paid as a spouse |
 | RS 00615.694 | Spouse payment $290 after delayed credits on the own RIB |
-| RS 00615.005, .101, .201, .301, .692 | $780.50 (not $780.40); every chart fraction; $819.60; $1,175 |
+| RS 00615.005, .101, .201, .301, .692 | $780.50 (not $780.40); every chart fraction; $819.60; $1,175; every RS 00615.692E cohort's maximum delayed-credit months |
 | RS 00615.736 | Unrounded $659.02 / $647.89 / $625.23 / $759.238, and the pre-1982 round-up that is refused |
 | RS 00605.900, .910 | All bend points and chart constants, 1979-2026 |
 | OACT family maximum | 2026 bend points from NAWI(2024) |
@@ -258,14 +439,30 @@ absorbed as unsupported rows.
   .768) were re-fetched on 2026-09-29 and matched their manifest SHA-256
   byte for byte. Every Bulletin figure the tests quote was found on the live
   page the same day.
+- **Review round 1 (g-r1).** The review found two medium issues. First,
+  legal delayed-credit months were refused under a 48-month cap, and
+  impossible ones were accepted. Second, the 403(a)(5) detector compared
+  only consecutive months. It also found four low issues:
+  - the pre-1917 credit rate;
+  - a silent default for the spouse entitlement order;
+  - a public single-record entry point;
+  - no check of record dates against the payment month.
+
+  All six are fixed above, each pinned by a test written to fail first.
+  RS 00615.801 and RS 00630.400 were captured on 2026-09-30, and 402(w)(2)
+  and (w)(6) were added to the LII excerpts from a body that matched the
+  pinned SHA-256.
+- **Oracle bug filed.** `ss.benefits.delayed_credit` caps credits at 48
+  months: PolicyEngine/microcosm-dynamics#494.
 
 ## Not in scope
 
 - RET deductions and their ordering against the maximum (403(a)(4) first
   sentence) are R2's.
 - ARF and recomputation are R3's.
-- Monthly timing and event journals are I's, including refusing the months
-  after a `savings_clause_403a5` refusal.
+- Monthly timing and event journals are I's. For 403(a)(5), I must feed
+  every month of each record, from its first month of entitlement, to one
+  `SavingsClauseGuard`, and keep the guard's refusals in its denominators.
 - No population, behavioral or forecast claim is admitted.
 - `engine/loop.py`, `engine/steps.py`, `gates.yaml` and committed `runs/` are
   untouched.

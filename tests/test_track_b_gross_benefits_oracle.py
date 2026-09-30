@@ -4,7 +4,8 @@ Production callers pass the policyengine-us bundle
 (``ss.params.load_ssa_parameters``). These checks confirm that bundle
 reproduces SSA's published family-maximum bend points for every year
 1979-2026, passes the statutory-rate cross-check, and carries the 402(w)
-schedule the unit tier assumes. Skipped without a policyengine-us checkout.
+and full-retirement-age schedules the unit tier assumes. Skipped without a
+policyengine-us checkout.
 """
 
 from __future__ import annotations
@@ -19,6 +20,7 @@ from populace_dynamics.ss.params import load_ssa_parameters
 from populace_dynamics.track_b import gross_benefits as g
 from tests.track_b_gross_benefit_support import (
     DELAYED_CREDIT_SCHEDULE,
+    FULL_RETIREMENT_AGE_SCHEDULE,
     poms_bend_point_table,
     published_nawi,
 )
@@ -56,6 +58,23 @@ def test_policyengine_us_nawi_matches_ssa_through_2024(params):
 
 def test_policyengine_us_delayed_credit_schedule_is_the_statutes(params):
     assert params.delayed_credit_by_birth_year == DELAYED_CREDIT_SCHEDULE
+
+
+def test_policyengine_us_full_retirement_ages_match_the_unit_bundle(params):
+    assert params.fra_months_by_birth_year == FULL_RETIREMENT_AGE_SCHEDULE
+
+
+def test_live_bundle_credits_the_whole_window_past_its_48_month_cap(params):
+    """G ignores the bundle's ``max_delayed_months`` (48; issue #494).
+
+    A 1935 birth (FRA 65) earns 60 months at 1/2 of 1 percent; a 1960
+    birth (FRA 67) earns at most 36.
+    """
+    assert params.max_delayed_months == 48
+    assert g.worker_age_adjusted(F(1000), 0, 60, 1935, params)[1] == F(1300)
+    assert g.delayed_credit_window_months(1960, params) == 36
+    with pytest.raises(g.InvalidFamilyInput):
+        g.worker_age_adjusted(F(1000), 0, 37, 1960, params)
 
 
 def test_worked_examples_hold_on_the_live_bundle(params):

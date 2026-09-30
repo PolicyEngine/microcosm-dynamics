@@ -20,7 +20,7 @@ from __future__ import annotations
 import dataclasses
 from fractions import Fraction as F
 
-from hypothesis import assume, given, settings
+from hypothesis import assume, given, settings, target
 from hypothesis import strategies as st
 
 from populace_dynamics.estimates.ledgers import floor_to_dime
@@ -55,8 +55,13 @@ def records(draw, kind=None):
         if draw(st.booleans()):
             extra["worker_reduction_months"] = draw(st.integers(0, 60))
         else:
-            extra["worker_delayed_credit_months"] = draw(st.integers(0, 48))
-            extra["worker_birth_year"] = draw(st.integers(1925, 1990))
+            # Credits run from full retirement age to 70 (402(w)(2)(A)).
+            birth = draw(st.integers(1925, 1990))
+            window = g.delayed_credit_window_months(birth, PARAMS)
+            extra["worker_delayed_credit_months"] = draw(
+                st.integers(0, window)
+            )
+            extra["worker_birth_year"] = birth
     record = g.WorkerRecord(
         kind, year, pia, cola_percents=tuple(draw(cola_lists)), **extra
     )
@@ -80,11 +85,13 @@ def _own_benefits(draw, *, old_age_only):
     if draw(st.booleans()):
         return g.OwnBenefit(OLD_AGE, pia)
     if draw(st.booleans()):
+        birth = draw(st.integers(1929, 1990))
+        window = g.delayed_credit_window_months(birth, PARAMS)
         return g.OwnBenefit(
             OLD_AGE,
             pia,
-            delayed_credit_months=draw(st.integers(1, 48)),
-            birth_year=draw(st.integers(1929, 1990)),
+            delayed_credit_months=draw(st.integers(1, window)),
+            birth_year=birth,
         )
     return g.OwnBenefit(
         OLD_AGE, pia, reduction_months=draw(st.integers(1, 60))
@@ -144,9 +151,9 @@ def beneficiaries(draw, state, index, *, dual=True):
 
 
 @st.composite
-def families(draw, kind=None, *, dual=True, max_size=6):
+def families(draw, kind=None, *, dual=True, max_size=6, min_size=0):
     state = draw(records(kind))
-    size = draw(st.integers(0, max_size))
+    size = draw(st.integers(min_size, max_size))
     members = [
         draw(beneficiaries(state, index, dual=dual)) for index in range(size)
     ]
@@ -155,7 +162,7 @@ def families(draw, kind=None, *, dual=True, max_size=6):
 
 def _compute(state, members, month=MONTH):
     return g.family_benefits(
-        state, members, payment_month=month, params=PARAMS
+        state, members, payment_month=month, params=PARAMS, standalone=True
     )
 
 
@@ -307,7 +314,9 @@ def test_adding_a_dually_entitled_auxiliary_can_raise_another_intended():
         worker=g.OwnBenefit(OLD_AGE, F(600)),
     )
     own = g.OwnBenefit(OLD_AGE, F(100))
-    spouse = g.Beneficiary("spouse", g.Role.SPOUSE, own_benefit=own)
+    spouse = g.Beneficiary(
+        "spouse", g.Role.SPOUSE, own_benefit=own, own_benefit_first=True
+    )
     child = g.Beneficiary("child", g.Role.CHILD)
     second = g.Beneficiary("adult child", g.Role.CHILD, own_benefit=own)
     before = _compute(state, [spouse, child]).by_id()
@@ -503,6 +512,7 @@ def test_spouse_benefit_matches_the_oracle_within_one_dime(
         own_benefit=g.OwnBenefit(
             OLD_AGE, own_pia, reduction_months=own_months
         ),
+        own_benefit_first=True,
     )
     row = _compute(state, [spouse]).by_id()["s"]
     # The oracle takes one-half of the PIA unrounded; the statute's OB is
@@ -577,6 +587,21 @@ def test_delayed_credits_match_the_float_oracle_within_one_dime(
     unrounded = pia * (1 + F(repr(fraction)))
     assert unrounded - DIME - F(1, 10**6) < credited
     assert credited <= unrounded + F(1, 10**6)
+
+
+def test_float_oracle_caps_fra_65_credits_at_48_months_issue_494():
+    """A known oracle defect, pinned where the differential stops.
+
+    ``ss.benefits.delayed_credit`` bounds the window at
+    ``min(max_delayed_months, 840 - FRA)``, and the bundle's
+    ``max_delayed_months`` is 48, so a 1935 birth (FRA 65) gets 24 percent
+    for 60 months instead of 30 (PolicyEngine/microcosm-dynamics#494). G
+    credits the whole FRA-to-70 window, so the differential above compares
+    only months within the oracle's cap.
+    """
+    assert PARAMS.max_delayed_months == 48
+    assert g.worker_age_adjusted(F(1000), 0, 60, 1935, PARAMS)[1] == F(1300)
+    assert abs(oracle.delayed_credit(60, 1935, PARAMS) - 0.24) < 1e-12
 
 
 @given(dimes, st.integers(1, 60))
@@ -688,23 +713,27 @@ def test_a_household_of_unrelated_records_is_the_records(first, second):
 
 
 # ===========================================================================
-# 403(a)(5): the detector's contract on consecutive months with a COLA
+# 403(a)(5): the guard's contract across a COLA and along month paths
 # ===========================================================================
-@settings(max_examples=300, deadline=None)
-@given(families(dual=False), st.integers(0, 90))
-def test_savings_clause_contract_across_a_cola(family, tenths):
-    state, members = family
-    colas = [F(tenths, 10)]
+COLA_MONTHS = (g.YearMonth(2026, 11), g.YearMonth(2026, 12))
+SAVINGS_CLAUSE = g.UnsupportedReason.SAVINGS_CLAUSE
+
+
+def _with_colas(state, members, colas):
+    """The same record and family after COLAs (215(i)(2)(A)(ii)).
+
+    The PIA, the maximum, the RIB-LIM benefit and a widow(er)'s
+    credit-increased OB basis each rise and are dime-floored.
+    """
+    pia = g.increase_by_colas(state.pia, colas)
     raised = dataclasses.replace(
         state,
-        pia=g.increase_by_colas(state.pia, colas),
+        pia=pia,
         family_maximum=g.increase_by_colas(state.family_maximum, colas),
         worker=(
             None
             if state.worker is None
-            else dataclasses.replace(
-                state.worker, pia=g.increase_by_colas(state.pia, colas)
-            )
+            else dataclasses.replace(state.worker, pia=pia)
         ),
         rib_lim_benefit=(
             None
@@ -712,7 +741,6 @@ def test_savings_clause_contract_across_a_cola(family, tenths):
             else g.increase_by_colas(state.rib_lim_benefit, colas)
         ),
     )
-    # The deceased's credit-increased benefit rises with the COLA too.
     raised_members = [
         (
             m
@@ -726,29 +754,47 @@ def test_savings_clause_contract_across_a_cola(family, tenths):
         )
         for m in members
     ]
+    return raised, raised_members
+
+
+def _qualifies(result):
+    """403(a)(5)(A), restated: two or more entitled, the maximum binding."""
+    persons = sum(b.entitled for b in result.beneficiaries) + (
+        result.kind is not g.FamilyKind.SURVIVOR
+    )
+    return result.family_maximum_binding and persons >= 2
+
+
+def _governed(result):
+    return any(b.subject_to_family_maximum for b in result.beneficiaries)
+
+
+@settings(max_examples=300, deadline=None)
+@given(families(dual=False), st.integers(0, 90))
+def test_savings_clause_contract_across_a_cola(family, tenths):
+    state, members = family
+    raised, raised_members = _with_colas(state, members, [F(tenths, 10)])
     try:
-        before = _compute(state, members, g.YearMonth(2025, 11))
-        after = _compute(raised, raised_members, g.YearMonth(2025, 12))
+        before = _compute(state, members, COLA_MONTHS[0])
+        after = _compute(raised, raised_members, COLA_MONTHS[1])
     except g.FamilyConfigurationUnsupported:
         assume(False)
-    total = g._savings_clause_total
+    total = g.savings_clause_total
+    guard = g.SavingsClauseGuard(COLA_MONTHS[0], earlier_months_unknown=False)
+    assert guard.admit(before) is before
     try:
-        g.check_savings_clause(before, after)
+        guard.admit(after)
     except g.FamilyConfigurationUnsupported as error:
-        assert error.reason is g.UnsupportedReason.SAVINGS_CLAUSE
-        assert after.pia > before.pia
-        assert before.family_maximum_binding and after.family_maximum_binding
-        assert total(after) < total(before)
+        assert error.reason is SAVINGS_CLAUSE
+        refused = True
     else:
-        assert (
-            total(after) >= total(before)
-            or after.pia == before.pia
-            or not (before.family_maximum_binding)
-            or not (after.family_maximum_binding)
-            or sum(b.subject_to_family_maximum for b in before.beneficiaries)
-            + (state.kind is not g.FamilyKind.SURVIVOR)
-            < 2
-        )
+        refused = False
+    assert refused == (
+        after.pia > before.pia
+        and _qualifies(before)
+        and _governed(after)
+        and total(after) < total(before)
+    )
 
 
 @settings(max_examples=400, deadline=None)
@@ -763,13 +809,14 @@ def test_savings_clause_contract_across_a_cola(family, tenths):
 def test_formula_maximums_with_a_cola_never_trip_the_savings_clause(
     kind, year, pia, colas, tenths, data
 ):
-    """With the statutory maximum, a COLA never trips the 403(a)(5) check.
+    """With the statutory maximum, a COLA never trips 403(a)(5).
 
     A COLA of c raises the maximum by floor(10 x FMAX x c) dimes and the
     PIA by floor(10 x PIA x c) dimes, and FMAX >= PIA, so the room left
     for auxiliaries never shrinks. This property checks that the protected
     total never falls either, for families that are not dually entitled.
-    The detector is for PIA increases that do not carry the maximum.
+    The guard is for PIA increases that do not carry the maximum, and for
+    changes of membership.
     """
     extra = {}
     if kind is g.FamilyKind.DISABILITY:
@@ -789,22 +836,203 @@ def test_formula_maximums_with_a_cola_never_trip_the_savings_clause(
         data.draw(beneficiaries(before_state, index, dual=False))
         for index in range(size)
     ]
-    raised_members = [
-        (
-            m
-            if m.original_benefit_basis is None
-            else dataclasses.replace(
-                m,
-                original_benefit_basis=g.increase_by_colas(
-                    m.original_benefit_basis, [F(tenths, 10)]
-                ),
-            )
-        )
-        for m in members
-    ]
+    _, raised_members = _with_colas(before_state, members, [F(tenths, 10)])
     try:
-        before = _compute(before_state, members, g.YearMonth(2025, 11))
-        after = _compute(after_state, raised_members, g.YearMonth(2025, 12))
+        before = _compute(before_state, members, COLA_MONTHS[0])
+        after = _compute(after_state, raised_members, COLA_MONTHS[1])
     except g.FamilyConfigurationUnsupported:
         assume(False)
-    g.check_savings_clause(before, after)
+    guard = g.SavingsClauseGuard(COLA_MONTHS[0], earlier_months_unknown=False)
+    assert guard.admit(before) is before
+    assert guard.admit(after) is after
+
+
+@st.composite
+def month_paths(draw):
+    """One record's consecutive months from 2026-01: COLAs, arrivals and
+    departures, each month computed as G would (a refused month ends the
+    path, which then starts at the record's first month)."""
+    dual = draw(st.booleans())
+    state, members = draw(families(dual=dual, max_size=4, min_size=2))
+    path = []
+    joined = 100
+    for index in range(draw(st.integers(2, 8))):
+        month = g.YearMonth(2026, 1 + index)
+        try:
+            path.append(_compute(state, members, month))
+        except g.FamilyConfigurationUnsupported:
+            break
+        action = draw(
+            st.sampled_from(["cola", "cola", "join", "join", "leave", "same"])
+        )
+        if action == "cola":
+            cola = F(draw(st.integers(0, 90)), 10)
+            state, members = _with_colas(state, members, [cola])
+        elif action == "join":
+            members = [
+                *members,
+                draw(beneficiaries(state, joined, dual=dual)),
+            ]
+            joined += 1
+        elif action == "leave" and members:
+            members = list(members)
+            members.pop(draw(st.integers(0, len(members) - 1)))
+    assume(path)
+    return path
+
+
+@settings(max_examples=400, deadline=None)
+@given(month_paths())
+def test_savings_clause_guard_along_month_paths(path):
+    """The guard against 403(a)(5) restated as a definition over a path.
+
+    A month qualifies when two or more are entitled, the maximum binds and
+    the next month's PIA is higher; its total is protected for every later
+    month. Then, along every path that starts at the record's first month:
+
+    * soundness: an admitted month with anyone under the maximum is never
+      below an earlier protected total, and never follows such a fall;
+    * no refusal without cause: a refused month has someone under the
+      maximum, and its total is below a protected total or follows a fall;
+    * a month with nobody under the maximum is always computed;
+    * a path whose PIA never rises is never refused.
+    """
+    guard = g.SavingsClauseGuard(
+        path[0].payment_month, earlier_months_unknown=False
+    )
+    total = g.savings_clause_total
+    protected = []
+    fell = False
+    refused = 0
+    for index, result in enumerate(path):
+        previous = path[index - 1] if index else None
+        if (
+            previous is not None
+            and _qualifies(previous)
+            and result.pia > previous.pia
+        ):
+            protected.append(total(previous))
+        below = bool(protected) and total(result) < max(protected)
+        try:
+            guard.admit(result)
+        except g.FamilyConfigurationUnsupported as error:
+            assert error.reason is SAVINGS_CLAUSE
+            assert _governed(result) and (below or fell)
+            refused += 1
+        else:
+            assert not _governed(result) or not (below or fell)
+        fell = fell or below
+        assert guard.protected_total == (max(protected) if protected else None)
+    if all(result.pia == path[0].pia for result in path):
+        assert guard.refused_since is None
+    # Steer the search toward paths the guard refuses, so both branches
+    # are exercised.
+    target(float(refused), label="refused months")
+
+
+@settings(max_examples=300, deadline=None)
+@given(
+    families(dual=False, min_size=2, max_size=5),
+    st.integers(1, 90),
+    st.integers(1, 60),
+)
+def test_a_reduced_joiner_after_a_cola_is_refused_iff_the_total_falls(
+    family, tenths, months
+):
+    """g-r1 M2 generalized: a COLA, then an age-reduced spouse or widow(er)
+    joins in a month with no PIA increase. January is refused exactly when
+    November qualified and January's total fell below November's."""
+    state, members = family
+    raised, raised_members = _with_colas(state, members, [F(tenths, 10)])
+    if state.kind is g.FamilyKind.SURVIVOR:
+        joiner = g.Beneficiary(
+            "joiner",
+            g.Role.WIDOW,
+            reduction_months=months,
+            reduction_period_months=84,
+        )
+    else:
+        joiner = g.Beneficiary(
+            "joiner", g.Role.SPOUSE, reduction_months=months
+        )
+    try:
+        path = [
+            _compute(state, members, g.YearMonth(2026, 10)),
+            _compute(raised, raised_members, g.YearMonth(2026, 11)),
+            _compute(raised, [*raised_members, joiner], g.YearMonth(2026, 12)),
+        ]
+    except g.FamilyConfigurationUnsupported:
+        assume(False)
+    total = g.savings_clause_total
+    guard = g.SavingsClauseGuard(
+        g.YearMonth(2026, 10), earlier_months_unknown=False
+    )
+    guard.admit(path[0])
+    guard.admit(path[1])
+    try:
+        guard.admit(path[2])
+    except g.FamilyConfigurationUnsupported as error:
+        assert error.reason is SAVINGS_CLAUSE
+        refused = True
+    else:
+        refused = False
+    protected = path[1].pia > path[0].pia and _qualifies(path[0])
+    assert refused == (protected and total(path[2]) < total(path[0]))
+
+
+# ===========================================================================
+# Input errors are never absorbed as coverage refusals
+# ===========================================================================
+@settings(max_examples=300, deadline=None)
+@given(
+    families(),
+    st.sampled_from(UNSUPPORTED_MEMBERS),
+    st.sampled_from(["credits", "eligibility", "duplicate"]),
+    st.sampled_from(list(g.RecordCondition) + [None]),
+    st.data(),
+)
+def test_input_errors_are_never_absorbed_as_refusals(
+    family, refused, error, record_condition, data
+):
+    """An invalid input raises InvalidFamilyInput even when the same family
+    also has a refused beneficiary or record condition, so
+    ``evaluate_family`` can never count it as a coverage gap."""
+    state, members = family
+    survivor = state.kind is g.FamilyKind.SURVIVOR
+    if refused.role in (g.Role.PARENT, g.Role.DISABLED_WIDOW) and not survivor:
+        refused = UNSUPPORTED_MEMBERS[2]
+    members = list(members)
+    members.insert(data.draw(st.integers(0, len(members))), refused)
+    if error == "credits":
+        # 37 months of credits for a 1960 birth: FRA 67 allows 36.
+        own = g.OwnBenefit(
+            OLD_AGE, F(100), delayed_credit_months=37, birth_year=1960
+        )
+        bad = (
+            g.Beneficiary(
+                "bad", g.Role.WIDOW, own_benefit=own, birth_year=1960
+            )
+            if survivor
+            else g.Beneficiary(
+                "bad", g.Role.SPOUSE, own_benefit=own, own_benefit_first=True
+            )
+        )
+        members.insert(data.draw(st.integers(0, len(members))), bad)
+    elif error == "eligibility":
+        state = dataclasses.replace(state, eligibility_year=MONTH.year + 1)
+    else:
+        members.append(members[0])
+    if record_condition is not None:
+        state = dataclasses.replace(state, conditions={record_condition})
+    try:
+        _compute(state, members)
+    except g.InvalidFamilyInput:
+        pass
+    else:
+        raise AssertionError("an invalid family did not raise")
+    try:
+        g.evaluate_family("row", 1, lambda: _compute(state, members))
+    except g.InvalidFamilyInput:
+        pass
+    else:
+        raise AssertionError("evaluate_family absorbed an invalid family")

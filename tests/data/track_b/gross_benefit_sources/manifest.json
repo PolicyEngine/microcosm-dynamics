@@ -344,6 +344,30 @@
       "sha256": "be173b85838dba4680195b7636305a42870a761ae580a1380ee435972db276ce"
     },
     {
+      "id": "poms_rs_00615_801",
+      "citation": "POMS RS 00615.801 Saving Clauses (SC) Which Affect Benefit Amounts",
+      "poms_transmittal": "TN 24 (09-02)",
+      "page_date": "09/16/2002",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615801",
+      "retrieved_at_utc": "2026-09-30T00:25:16Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_801.html",
+      "bytes": 20532,
+      "sha256": "e85df2eebd68b97337e2d720dba6279191089d1fc20e9b9b7603465e73f89a41"
+    },
+    {
+      "id": "poms_rs_00630_400",
+      "citation": "POMS RS 00630.400 Summary of Saving Clauses",
+      "poms_transmittal": "TN 5 (12-23)",
+      "page_date": "06/28/2012",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300630400",
+      "retrieved_at_utc": "2026-09-30T00:25:16Z",
+      "capture": "http_body",
+      "file": "poms_rs_00630_400.html",
+      "bytes": 74809,
+      "sha256": "e6242ec12c64aafba782e5c37a8cfea09f65820ef05b30b8a3bf2a50ecc03d61"
+    },
+    {
       "id": "ssa_oact_familymax",
       "citation": "SSA Office of the Chief Actuary, Formula for Family Maximum Benefit",
       "url": "https://www.ssa.gov/oact/cola/familymax.html",
@@ -421,7 +445,7 @@
     },
     {
       "id": "lii_usc_402_415",
-      "citation": "42 U.S.C. 402(b)(4)(A), (c)(4)(A), (q)(5)(A) and 415(i)(2)(A)(ii)-(iii), Legal Information Institute (excerpts)",
+      "citation": "42 U.S.C. 402(b)(4)(A), (c)(4)(A), (q)(5)(A), (w)(2), (w)(6) and 415(i)(2)(A)(ii)-(iii), Legal Information Institute (excerpts)",
       "url": "https://www.law.cornell.edu/uscode/text/42/402",
       "additional_urls": [
         "https://www.law.cornell.edu/uscode/text/42/415"
@@ -429,8 +453,8 @@
       "retrieved_at_utc": "2026-09-29T20:58:57Z",
       "capture": "http_text_excerpt",
       "file": "lii_usc_402_415_excerpts.txt",
-      "bytes": 5443,
-      "sha256": "f9ef8c5529fccff27303e8f8a607497d6606ad304b9f91fa176dc20abe9218b9",
+      "bytes": 7358,
+      "sha256": "31daedaea817bf97d7d63685a897343ea5a47dcf98a91f9294406edfe89d0979",
       "served_bodies": [
         {
           "url": "https://www.law.cornell.edu/uscode/text/42/402",
@@ -442,7 +466,8 @@
           "bytes": 481427,
           "sha256": "c3262e82e8e674caf43709c522ce60760eafb0b133e1f99221ca7aa97d54ea3a"
         }
-      ]
+      ],
+      "note": "The 402(w)(2) and (w)(6) excerpts were added from a re-fetch at 2026-09-30T00:24:38Z whose body matched the pinned 402 SHA-256 byte for byte."
     },
     {
       "id": "ssa_act_203",

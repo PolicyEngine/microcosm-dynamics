@@ -89,23 +89,35 @@ not decimal equivalents, because decimals often yield an answer 10 cents
 lower (POMS RS 00615.005B). Statutory rates are cross-checked at use
 against the repository's parameter bundle (``ss.params.SSAParameters``,
 loaded from policyengine-us), and the exact statutory fraction is then
-used; NAWI and delayed-credit rates come from that bundle.
+used; NAWI, full retirement ages and delayed-credit rates come from that
+bundle. Delayed-credit months run from full retirement age to age 70
+(402(w)(2)(A)), at most ``840 - FRA`` months for each cohort (POMS RS
+00615.692E); the bundle's four-year ``max_delayed_months`` is not used,
+because it is short for births 1917-1942. Credits for births before 1917
+are refused: 402(w)(6)(A) gives them 1/12 of 1 percent a month, and the
+bundle does not.
 
 Unsupported configurations raise :class:`FamilyConfigurationUnsupported`
 (code ``FAMILY_CONFIG_UNSUPPORTED``, design §7) and never fall back to a
-single-worker computation. :func:`household_benefits` computes every
-record in a household together and refuses a person entitled as an
-auxiliary on more than one record (403(a)(3)(A) combined maximums, RS
-00615.768A), so a multi-worker family cannot be computed one record at a
-time by accident. :func:`evaluate_family`, :func:`count_family_outcomes`
-and the weighted aggregates keep unsupported rows in every denominator and
+single-worker computation. :func:`household_benefits` is the integration
+entry point: it computes every record in a household together and refuses
+a person entitled as an auxiliary on more than one record (403(a)(3)(A)
+combined maximums, RS 00615.768A), so a multi-worker family cannot be
+computed one record at a time by accident. :func:`family_benefits`
+computes one record only when the caller passes ``standalone=True``.
+Input errors (:class:`InvalidFamilyInput`) are reported before any
+coverage refusal, so :func:`evaluate_family` never counts an invalid row as
+a coverage gap. :func:`evaluate_family`, :func:`count_family_outcomes` and
+the weighted aggregates keep unsupported rows in every denominator and
 block totals that would need them.
 
-Not implemented, and refused rather than approximated: 403(a)(5), which
-holds a family's total up after a PIA increase while the maximum applies.
-It needs the previous month's total; :func:`check_savings_clause` compares
-two consecutive months and refuses a pair in which it would change a
-benefit.
+Not implemented, and refused rather than approximated: 403(a)(5). When two
+or more persons are entitled for a month in which the maximum reduces
+benefits, and the PIA rises for the next month, that month's total (after
+403(a) and 402(q)) is protected for every later month. G computes one
+month at a time. :class:`SavingsClauseGuard` carries the protected total
+across one record's months and refuses any later month whose total falls
+below it, and every month after that one.
 """
 
 from __future__ import annotations
@@ -128,6 +140,7 @@ __all__ = [
     "DI_MAXIMUM_FIRST_ENTITLEMENT",
     "FAMILY_MAXIMUM_BASE_BEND_POINTS",
     "FAMILY_MAXIMUM_PERCENTS",
+    "FIRST_SUPPORTED_DELAYED_CREDIT_BIRTH_YEAR",
     "FIRST_SUPPORTED_ELIGIBILITY_YEAR",
     "FIRST_SUPPORTED_PAYMENT_MONTH",
     "GROSS_BENEFITS_VERSION",
@@ -149,6 +162,7 @@ __all__ = [
     "RecordCondition",
     "RecordState",
     "Role",
+    "SavingsClauseGuard",
     "StatutoryRates",
     "UnsupportedReason",
     "WorkerRecord",
@@ -156,8 +170,8 @@ __all__ = [
     "applicable_cola_percents",
     "ceil_dime",
     "check_household_records",
-    "check_savings_clause",
     "count_family_outcomes",
+    "delayed_credit_window_months",
     "disability_family_maximum",
     "evaluate_family",
     "family_benefits",
@@ -170,6 +184,7 @@ __all__ = [
     "own_monthly_benefit",
     "record_state",
     "retirement_survivor_family_maximum",
+    "savings_clause_total",
     "spouse_age_reduced",
     "spouse_reduction_fraction",
     "statutory_rates",
@@ -219,8 +234,19 @@ FIRST_SUPPORTED_PAYMENT_MONTH = (1983, 1)
 #: not modeled; months before 10/99 that need the rule are refused).
 PARISI_FIRST_PAYMENT_MONTH = (1999, 10)
 
+#: 402(w)(6)(A): 1/12 of 1 percent a month for a person first eligible
+#: before 1979, that is, born before 01/02/1917 (POMS RS 00615.692D). The
+#: parameter bundle's schedule starts at 3 percent a year, so credits for
+#: earlier births are refused.
+FIRST_SUPPORTED_DELAYED_CREDIT_BIRTH_YEAR = 1917
+
 _DIME = Fraction(1, 10)
 _HALF = Fraction(1, 2)
+#: 402(w)(2)(A): increment months end before the month of attaining 70.
+_AGE_70_MONTHS = 70 * 12
+#: POMS RS 00615.692E: the longest window on the chart (births before
+#: 02/02/12), a bound on every cohort's delayed-credit months.
+_MAX_DELAYED_CREDIT_MONTHS = 84
 _MAX_WORKER_REDUCTION_MONTHS = 60
 _MAX_SPOUSE_REDUCTION_MONTHS = 60
 _SURVIVOR_PERIOD_RANGE = (60, 84)
@@ -259,6 +285,8 @@ class UnsupportedReason(Enum):
     NON_AIME_FORMULA_PIA = "non_aime_formula_pia"
     MULTIPLE_AUXILIARY_RECORDS = "multiple_auxiliary_records"
     SAVINGS_CLAUSE = "savings_clause_403a5"
+    SAVINGS_CLAUSE_HISTORY_UNKNOWN = "savings_clause_history_unknown"
+    DELAYED_CREDITS_BEFORE_1917 = "delayed_credits_born_before_1917"
 
 
 class FamilyConfigurationUnsupported(Exception):
@@ -361,6 +389,9 @@ class YearMonth:
 
     def as_tuple(self) -> tuple[int, int]:
         return (self.year, self.month)
+
+    def __str__(self) -> str:
+        return f"{self.year:04d}-{self.month:02d}"
 
 
 # ---------------------------------------------------------------------------
@@ -559,11 +590,19 @@ def applicable_cola_percents(
     effective with December of its year. ``december_cola_percent`` maps
     that December's year to the percentage (for example R1's
     ``ret_history.json`` ``december_cola_percent``). A missing year raises
-    rather than counting as zero.
+    rather than counting as zero, and an eligibility year after the
+    payment month's year is an input error, not an empty list.
     """
-    _require_supported_eligibility(eligibility_year)
     if not isinstance(payment_month, YearMonth):
         raise TypeError("payment_month must be a YearMonth")
+    if type(eligibility_year) is not int:
+        raise TypeError("eligibility_year must be an int")
+    if eligibility_year > payment_month.year:
+        raise InvalidFamilyInput(
+            f"eligibility year {eligibility_year} is after the payment "
+            f"month {payment_month}"
+        )
+    _require_supported_eligibility(eligibility_year)
     last = payment_month.year - (0 if payment_month.month == 12 else 1)
     percents = []
     for year in range(eligibility_year, last + 1):
@@ -642,6 +681,84 @@ def _drc_monthly_rate(birth_year: int, params: SSAParameters) -> Fraction:
     return annual / 12
 
 
+def _refuse_early_delayed_credits(birth_year: int) -> None:
+    if birth_year < FIRST_SUPPORTED_DELAYED_CREDIT_BIRTH_YEAR:
+        raise FamilyConfigurationUnsupported(
+            UnsupportedReason.DELAYED_CREDITS_BEFORE_1917,
+            f"birth year {birth_year}: 402(w)(6)(A) gives 1/12 of 1 "
+            "percent a month to a person first eligible before 1979 (born "
+            "before 01/02/1917, POMS RS 00615.692D), and the parameter "
+            "bundle's schedule does not",
+        )
+
+
+def delayed_credit_window_months(
+    birth_year: int, params: SSAParameters
+) -> int:
+    """The most delayed-credit months a cohort can earn: 840 - FRA.
+
+    402(w)(2)(A): increment months run from the month of attaining full
+    retirement age (416(l), from the bundle) to the month before attaining
+    70. POMS RS 00615.692E tabulates the result by date of birth; its
+    bands run from January 2, so pass the previous year for a January 1
+    birth. Births before 1917 are refused (402(w)(6)(A)).
+    """
+    if type(birth_year) is not int:
+        raise TypeError("birth_year must be an int")
+    _refuse_early_delayed_credits(birth_year)
+    return _AGE_70_MONTHS - params.fra_months(birth_year)
+
+
+def _delayed_credit_months(
+    months: int, birth_year: int | None, params: SSAParameters | None
+) -> int:
+    """Validate delayed-credit months; every failure is an input error.
+
+    Without ``params`` only the checks that need no bundle run: an int,
+    nonnegative, a birth year when positive, and at most 84 (the longest
+    window on the RS 00615.692E chart). With it, the cohort's window
+    ``840 - FRA`` bounds births from 1917; earlier births are refused
+    later, when a benefit is computed.
+    """
+    if type(months) is not int:
+        raise TypeError("delayed_credit_months must be an int")
+    if months < 0:
+        raise InvalidFamilyInput("delayed_credit_months must be nonnegative")
+    if months == 0:
+        return 0
+    if birth_year is None:
+        raise InvalidFamilyInput("Delayed credits need the birth year")
+    if type(birth_year) is not int:
+        raise TypeError("birth_year must be an int")
+    if months > _MAX_DELAYED_CREDIT_MONTHS:
+        raise InvalidFamilyInput(
+            f"delayed_credit_months {months} exceeds "
+            f"{_MAX_DELAYED_CREDIT_MONTHS}, the longest window on the POMS "
+            "RS 00615.692E chart"
+        )
+    if params is None or (
+        birth_year < FIRST_SUPPORTED_DELAYED_CREDIT_BIRTH_YEAR
+    ):
+        return months
+    fra = params.fra_months(birth_year)
+    window = _AGE_70_MONTHS - fra
+    if months > window:
+        raise InvalidFamilyInput(
+            f"delayed_credit_months must be between 0 and {window} for birth "
+            f"year {birth_year}: credits run from full retirement age "
+            f"({fra} months) to age 70 (402(w)(2)(A); POMS RS 00615.692E)"
+        )
+    return months
+
+
+def _check_own_benefit(own: OwnBenefit, params: SSAParameters) -> None:
+    """The own-benefit input checks that need the parameter bundle."""
+    _months(
+        own.reduction_months, "reduction_months", _MAX_WORKER_REDUCTION_MONTHS
+    )
+    _delayed_credit_months(own.delayed_credit_months, own.birth_year, params)
+
+
 def worker_age_adjusted(
     pia: object,
     reduction_months: int,
@@ -655,24 +772,25 @@ def worker_age_adjusted(
     RS 00615.101). Credits: base x months x monthly rate, dime-floored and
     added to the base, which is the PIA or, after a reduced RIB, the MBA
     (RS 00615.692A, C). Returns ``(without_credits, with_credits)``.
+
+    Credit months run from full retirement age to 70, at most
+    :func:`delayed_credit_window_months`; more is an input error. Credits
+    for births before 1917 are refused (402(w)(6)(A)).
     """
     rates = statutory_rates(params)
     amount = _dimes(pia, "PIA")
     reduction_months = _months(
         reduction_months, "reduction_months", _MAX_WORKER_REDUCTION_MONTHS
     )
-    delayed_credit_months = _months(
-        delayed_credit_months,
-        "delayed_credit_months",
-        params.max_delayed_months,
+    delayed_credit_months = _delayed_credit_months(
+        delayed_credit_months, birth_year, params
     )
     base = floor_dime(
         amount * (1 - _worker_reduction(reduction_months, rates))
     )
     if delayed_credit_months == 0:
         return base, base
-    if birth_year is None:
-        raise InvalidFamilyInput("Delayed credits need the birth year")
+    _refuse_early_delayed_credits(birth_year)
     credit = floor_dime(
         base * delayed_credit_months * _drc_monthly_rate(birth_year, params)
     )
@@ -908,9 +1026,12 @@ class OwnBenefit:
     """A person's own old-age (RIB) or disability (DIB) benefit.
 
     ``pia`` is that person's current PIA (after COLAs). Reduction months
-    are the 402(q) worker months after any ARF; delayed-credit months need
-    ``birth_year`` for the 402(w) rate. A DIB is unreduced and has no
-    credits here (402(q)(2) cases are refused).
+    are the 402(q) worker months after any ARF. Delayed-credit months need
+    ``birth_year`` for the 402(w) rate and window: at most ``840 - FRA``
+    (:func:`delayed_credit_window_months`, checked when the benefit is
+    computed), and refused for births before 1917. SSA's cohort bands run
+    from January 2, so a January 1 birth takes the previous year. A DIB is
+    unreduced and has no credits here (402(q)(2) cases are refused).
     """
 
     kind: OwnBenefitKind
@@ -923,14 +1044,23 @@ class OwnBenefit:
         if not isinstance(self.kind, OwnBenefitKind):
             raise TypeError("kind must be an OwnBenefitKind")
         object.__setattr__(self, "pia", _dimes(self.pia, "own PIA"))
+        if type(self.reduction_months) is not int:
+            raise TypeError("reduction_months must be an int")
+        if self.reduction_months < 0:
+            raise InvalidFamilyInput("reduction_months must be nonnegative")
+        if self.birth_year is not None and type(self.birth_year) is not int:
+            raise TypeError("birth_year must be an int")
+        _delayed_credit_months(
+            self.delayed_credit_months, self.birth_year, None
+        )
         if self.kind is OwnBenefitKind.DISABILITY:
+            if self.delayed_credit_months:
+                raise InvalidFamilyInput("A DIB earns no delayed credits")
             if self.reduction_months:
                 raise FamilyConfigurationUnsupported(
                     UnsupportedReason.DIB_AFTER_REDUCED_RIB,
                     "a DIB reduced for prior reduced RIB (402(q)(2))",
                 )
-            if self.delayed_credit_months:
-                raise InvalidFamilyInput("A DIB earns no delayed credits")
 
 
 def own_monthly_benefit(
@@ -960,9 +1090,11 @@ class Beneficiary:
       .302, .710); defaults to the PIA.
     * ``own_benefit`` / ``own_benefit_first``: dual entitlement, and whether
       the own benefit began in or before the auxiliary benefit's first month.
-      For an aged spouse this selects method C (True: A then B, or A with
-      B; RS 00615.250) or method B (False: B then A; RS 00615.240); a
-      spouse's DIB after the spouse benefit is refused (RS 00615.260).
+      For an aged spouse or divorced spouse this selects method C (True: A
+      then B, or A with B; RS 00615.250) or method B (False: B then A; RS
+      00615.240), and it is required: the two differ in money, and there
+      is no default. A spouse's DIB after the spouse benefit is refused (RS
+      00615.260). Other roles do not use the order; it may be left None.
     * ``birth_year``: needed for a widow(er) with an own old-age benefit.
     * ``conditions``: declared special conditions (all refused).
     """
@@ -973,7 +1105,7 @@ class Beneficiary:
     reduction_period_months: int | None = None
     original_benefit_basis: Fraction | None = None
     own_benefit: OwnBenefit | None = None
-    own_benefit_first: bool = True
+    own_benefit_first: bool | None = None
     birth_year: int | None = None
     conditions: frozenset[BeneficiaryCondition] = field(
         default_factory=frozenset
@@ -1002,6 +1134,23 @@ class Beneficiary:
             self.own_benefit, OwnBenefit
         ):
             raise TypeError("own_benefit must be an OwnBenefit")
+        if self.own_benefit_first is not None:
+            if type(self.own_benefit_first) is not bool:
+                raise TypeError("own_benefit_first must be a bool or None")
+            if self.own_benefit is None:
+                raise InvalidFamilyInput(
+                    "own_benefit_first describes an own benefit; there is "
+                    "none"
+                )
+        elif self.own_benefit is not None and self.role in (
+            Role.SPOUSE,
+            Role.DIVORCED_SPOUSE,
+        ):
+            raise InvalidFamilyInput(
+                f"A dually entitled {self.role.value} needs own_benefit_first"
+                ": method C (own benefit first, RS 00615.250) and method B "
+                "(spouse benefit first, RS 00615.240) pay different amounts"
+            )
         if type(self.reduction_months) is not int:
             raise TypeError("reduction_months must be an int")
         if self.reduction_months < 0:
@@ -1032,10 +1181,12 @@ class WorkerRecord:
     (the RS 00615.740B test for the 1980 disability maximum). A DIB that
     has converted to a RIB, or a worker who has died, takes a retirement or
     survivor record (RS 00615.742.2). ``worker_*`` fields
-    describe the living worker's own RIB (retirement records only).
-    ``rib_lim_benefit`` is, for a death, the reduced RIB or DIB the
-    deceased would receive if alive (402(e)(2)(D)); None when the deceased
-    never received a reduced benefit.
+    describe the living worker's own RIB (retirement records only); delayed
+    credits need ``worker_birth_year`` and run from full retirement age to
+    70 (:func:`delayed_credit_window_months`, checked by
+    :func:`record_state`). ``rib_lim_benefit`` is, for a death, the
+    reduced RIB or DIB the deceased would receive if alive (402(e)(2)(D));
+    None when the deceased never received a reduced benefit.
     """
 
     kind: FamilyKind
@@ -1078,6 +1229,15 @@ class WorkerRecord:
             raise InvalidFamilyInput(
                 "Own-RIB months describe a living retired worker only"
             )
+        if type(self.worker_reduction_months) is not int:
+            raise TypeError("worker_reduction_months must be an int")
+        if self.worker_birth_year is not None and (
+            type(self.worker_birth_year) is not int
+        ):
+            raise TypeError("worker_birth_year must be an int")
+        _delayed_credit_months(
+            self.worker_delayed_credit_months, self.worker_birth_year, None
+        )
         if self.first_dib_entitlement is not None and not isinstance(
             self.first_dib_entitlement, YearMonth
         ):
@@ -1091,6 +1251,9 @@ class RecordState:
     Built by :func:`record_state` from a :class:`WorkerRecord`, or directly
     when a published example (or SSA's master record) gives both amounts.
     For a retirement record ``worker`` is the worker's own RIB.
+    ``eligibility_year`` and ``first_dib_entitlement`` are the record's
+    dates when known (:func:`record_state` fills them in); a payment month
+    before either is an :class:`InvalidFamilyInput`.
     """
 
     kind: FamilyKind
@@ -1100,10 +1263,20 @@ class RecordState:
     rib_lim_benefit: Fraction | None = None
     conditions: frozenset[RecordCondition] = field(default_factory=frozenset)
     source: str = "given"
+    eligibility_year: int | None = None
+    first_dib_entitlement: YearMonth | None = None
 
     def __post_init__(self):
         if not isinstance(self.kind, FamilyKind):
             raise TypeError("kind must be a FamilyKind")
+        if self.eligibility_year is not None and (
+            type(self.eligibility_year) is not int
+        ):
+            raise TypeError("eligibility_year must be an int")
+        if self.first_dib_entitlement is not None and not isinstance(
+            self.first_dib_entitlement, YearMonth
+        ):
+            raise TypeError("first_dib_entitlement must be a YearMonth")
         pia = _dimes(self.pia, "PIA")
         maximum = _dimes(self.family_maximum, "family maximum")
         if maximum < pia:
@@ -1137,14 +1310,36 @@ def _raise_record_conditions(conditions: Iterable[RecordCondition]) -> None:
 
 
 def record_state(record: WorkerRecord, params: SSAParameters) -> RecordState:
-    """Compute the record's current PIA and family maximum."""
-    _raise_record_conditions(record.conditions)
-    _require_supported_eligibility(record.eligibility_year)
+    """Compute the record's current PIA and family maximum.
+
+    Input errors (a disability record without its AIME or entitlement
+    month, delayed-credit months past age 70, a negative COLA) are raised
+    before any coverage refusal.
+    """
+    if not isinstance(record, WorkerRecord):
+        raise TypeError("record must be a WorkerRecord")
+    disability_maximum = None
     if record.kind is FamilyKind.DISABILITY:
         if record.aime is None or record.first_dib_entitlement is None:
             raise InvalidFamilyInput(
                 "A disability record needs aime and first_dib_entitlement"
             )
+        # Computed here so that an invalid AIME is an input error first.
+        disability_maximum = disability_family_maximum(
+            record.eligibility_pia, record.aime
+        )
+    _months(
+        record.worker_reduction_months,
+        "worker_reduction_months",
+        _MAX_WORKER_REDUCTION_MONTHS,
+    )
+    _delayed_credit_months(
+        record.worker_delayed_credit_months, record.worker_birth_year, params
+    )
+    pia = increase_by_colas(record.eligibility_pia, record.cola_percents)
+    _raise_record_conditions(record.conditions)
+    _require_supported_eligibility(record.eligibility_year)
+    if record.kind is FamilyKind.DISABILITY:
         if record.first_dib_entitlement.as_tuple() < (
             DI_MAXIMUM_FIRST_ENTITLEMENT
         ):
@@ -1153,14 +1348,11 @@ def record_state(record: WorkerRecord, params: SSAParameters) -> RecordState:
                 "DIB first entitled before July 1980 keeps the pre-1980 "
                 "maximum (POMS RS 00615.740B.2)",
             )
-        base_maximum = disability_family_maximum(
-            record.eligibility_pia, record.aime
-        )
+        base_maximum = disability_maximum
     else:
         base_maximum = retirement_survivor_family_maximum(
             record.eligibility_pia, record.eligibility_year, params
         )
-    pia = increase_by_colas(record.eligibility_pia, record.cola_percents)
     maximum = increase_by_colas(base_maximum, record.cola_percents)
     worker = None
     if record.kind is FamilyKind.RETIREMENT:
@@ -1182,6 +1374,8 @@ def record_state(record: WorkerRecord, params: SSAParameters) -> RecordState:
             f"computed: eligibility {record.eligibility_year}, "
             f"{len(record.cola_percents)} COLA(s)"
         ),
+        eligibility_year=record.eligibility_year,
+        first_dib_entitlement=record.first_dib_entitlement,
     )
 
 
@@ -1291,13 +1485,58 @@ def original_benefit(
     return floor_dime(share * pia)
 
 
-def _validate_beneficiary(beneficiary: Beneficiary, kind: FamilyKind) -> None:
+def _check_beneficiary_inputs(
+    beneficiary: Beneficiary, state: RecordState, params: SSAParameters
+) -> None:
+    """Input errors for one beneficiary; raised before any refusal."""
+    kind = state.kind
     allowed = _SURVIVOR_ROLES if kind is FamilyKind.SURVIVOR else _LIFE_ROLES
     if beneficiary.role not in allowed:
         raise InvalidFamilyInput(
             f"A {beneficiary.role.value} cannot be entitled on a "
             f"{kind.value} record"
         )
+    own = beneficiary.own_benefit
+    if beneficiary.role in _WIDOW_ROLES:
+        if beneficiary.reduction_months and (
+            beneficiary.reduction_period_months is None
+        ):
+            raise InvalidFamilyInput(
+                "A reduced widow(er) needs reduction_period_months"
+            )
+        if (
+            beneficiary.reduction_period_months is not None
+            and beneficiary.reduction_months
+            > beneficiary.reduction_period_months
+        ):
+            raise InvalidFamilyInput("reduction_months exceed the period")
+        if (
+            own is not None
+            and own.kind is OwnBenefitKind.OLD_AGE
+            and beneficiary.birth_year is None
+        ):
+            raise InvalidFamilyInput(
+                "A dually entitled widow(er) needs birth_year"
+            )
+    if beneficiary.role in _AGE_REDUCED_ROLES and beneficiary.role not in (
+        _WIDOW_ROLES
+    ):
+        _months(
+            beneficiary.reduction_months,
+            "reduction_months",
+            _MAX_SPOUSE_REDUCTION_MONTHS,
+        )
+    basis = beneficiary.original_benefit_basis
+    if basis is not None and basis < state.pia:
+        raise InvalidFamilyInput(
+            "A widow(er) OB basis cannot be below the death PIA"
+        )
+    if own is not None:
+        _check_own_benefit(own, params)
+
+
+def _refuse_beneficiary(beneficiary: Beneficiary) -> None:
+    """Coverage refusals for one beneficiary whose inputs are valid."""
     bid = beneficiary.beneficiary_id
     if beneficiary.role is Role.PARENT:
         raise FamilyConfigurationUnsupported(
@@ -1317,38 +1556,21 @@ def _validate_beneficiary(beneficiary: Beneficiary, kind: FamilyKind) -> None:
             reason, detail, beneficiary_id=bid
         )
     own = beneficiary.own_benefit
-    if beneficiary.role in _WIDOW_ROLES:
-        if beneficiary.reduction_months and (
-            beneficiary.reduction_period_months is None
-        ):
-            raise InvalidFamilyInput(
-                "A reduced widow(er) needs reduction_period_months"
+    if beneficiary.role in _WIDOW_ROLES and own is not None:
+        if own.kind is OwnBenefitKind.DISABILITY:
+            raise FamilyConfigurationUnsupported(
+                UnsupportedReason.DUAL_ENTITLEMENT_SEQUENCE,
+                "a widow(er) also entitled to DIB (402(q)(3)(C); POMS "
+                "RS 00615.350) is not implemented",
+                beneficiary_id=bid,
             )
-        if (
-            beneficiary.reduction_period_months is not None
-            and beneficiary.reduction_months
-            > beneficiary.reduction_period_months
-        ):
-            raise InvalidFamilyInput("reduction_months exceed the period")
-        if own is not None:
-            if own.kind is OwnBenefitKind.DISABILITY:
-                raise FamilyConfigurationUnsupported(
-                    UnsupportedReason.DUAL_ENTITLEMENT_SEQUENCE,
-                    "a widow(er) also entitled to DIB (402(q)(3)(C); POMS "
-                    "RS 00615.350) is not implemented",
-                    beneficiary_id=bid,
-                )
-            if beneficiary.birth_year is None:
-                raise InvalidFamilyInput(
-                    "A dually entitled widow(er) needs birth_year"
-                )
-            if beneficiary.birth_year < _FIRST_METHOD_B_WIDOW_BIRTH_YEAR:
-                raise FamilyConfigurationUnsupported(
-                    UnsupportedReason.DUAL_ENTITLEMENT_SEQUENCE,
-                    "widow(er)s born before 1929 may carry a WIB reduction "
-                    "into RIB (POMS RS 00615.020B, method D)",
-                    beneficiary_id=bid,
-                )
+        if beneficiary.birth_year < _FIRST_METHOD_B_WIDOW_BIRTH_YEAR:
+            raise FamilyConfigurationUnsupported(
+                UnsupportedReason.DUAL_ENTITLEMENT_SEQUENCE,
+                "widow(er)s born before 1929 may carry a WIB reduction "
+                "into RIB (POMS RS 00615.020B, method D)",
+                beneficiary_id=bid,
+            )
     if (
         beneficiary.role in (Role.SPOUSE, Role.DIVORCED_SPOUSE)
         and own is not None
@@ -1520,18 +1742,82 @@ def family_benefits(
     *,
     payment_month: YearMonth,
     params: SSAParameters,
+    standalone: bool,
 ) -> FamilyBenefits:
     """Gross monthly benefits on one record for one payment month.
 
     Order (see the module docstring): OB, family-maximum reduction,
     RS 00615.768 redistribution, 402(q) age reduction and RIB-LIM,
     402(k)(3)(A) dual entitlement, 215(g) whole dollars.
+
+    :func:`household_benefits` is the integration entry point. This
+    single-record function runs only with ``standalone=True``, the
+    caller's statement that the record stands alone: no beneficiary is
+    entitled on another record (403(a)(3)(A); RS 00615.768A), and a worker
+    who is an auxiliary elsewhere has declared that benefit. Anything else
+    is a household, and computing it one record at a time is the silent
+    single-worker answer G exists to refuse.
+
+    Input errors (:class:`InvalidFamilyInput`) are raised before any
+    coverage refusal, so an invalid family is never counted as a gap.
     """
+    if standalone is not True:
+        raise ValueError(
+            "family_benefits computes one record in isolation; pass "
+            "standalone=True only when no beneficiary is entitled on "
+            "another record, and use household_benefits otherwise"
+        )
+    return _family_benefits(state, beneficiaries, payment_month, params)
+
+
+def _check_family_inputs(
+    state: RecordState,
+    beneficiaries: Sequence[Beneficiary],
+    payment_month: YearMonth,
+    params: SSAParameters,
+) -> None:
+    """Every input error in one record's family, before any refusal."""
     if not isinstance(state, RecordState):
         raise TypeError("state must be a RecordState")
     if not isinstance(payment_month, YearMonth):
         raise TypeError("payment_month must be a YearMonth")
+    for beneficiary in beneficiaries:
+        if not isinstance(beneficiary, Beneficiary):
+            raise TypeError("beneficiaries must be Beneficiary objects")
+    if (
+        state.eligibility_year is not None
+        and state.eligibility_year > payment_month.year
+    ):
+        raise InvalidFamilyInput(
+            f"eligibility year {state.eligibility_year} is after the "
+            f"payment month {payment_month}"
+        )
+    if (
+        state.first_dib_entitlement is not None
+        and state.first_dib_entitlement > payment_month
+    ):
+        raise InvalidFamilyInput(
+            f"first DIB entitlement {state.first_dib_entitlement} is after "
+            f"the payment month {payment_month}"
+        )
+    if state.worker is not None:
+        _check_own_benefit(state.worker, params)
+    ids = [b.beneficiary_id for b in beneficiaries]
+    if len(set(ids)) != len(ids):
+        raise InvalidFamilyInput("beneficiary_id values must be unique")
+    for beneficiary in beneficiaries:
+        _check_beneficiary_inputs(beneficiary, state, params)
+
+
+def _family_benefits(
+    state: RecordState,
+    beneficiaries: Sequence[Beneficiary],
+    payment_month: YearMonth,
+    params: SSAParameters,
+) -> FamilyBenefits:
+    beneficiaries = tuple(beneficiaries)
     rates = statutory_rates(params)
+    _check_family_inputs(state, beneficiaries, payment_month, params)
     _raise_record_conditions(state.conditions)
     if payment_month.as_tuple() < FIRST_SUPPORTED_PAYMENT_MONTH:
         raise FamilyConfigurationUnsupported(
@@ -1539,13 +1825,8 @@ def family_benefits(
             "months before 1983 are outside the post-May-1982 rounding "
             "rules this layer implements",
         )
-    ids = [b.beneficiary_id for b in beneficiaries]
-    if len(set(ids)) != len(ids):
-        raise InvalidFamilyInput("beneficiary_id values must be unique")
     for beneficiary in beneficiaries:
-        if not isinstance(beneficiary, Beneficiary):
-            raise TypeError("beneficiaries must be Beneficiary objects")
-        _validate_beneficiary(beneficiary, state.kind)
+        _refuse_beneficiary(beneficiary)
 
     life_case = state.kind is not FamilyKind.SURVIVOR
     worker_benefit = None
@@ -1770,7 +2051,18 @@ def check_household_records(records: Mapping[str, HouseholdRecord]) -> None:
       declare that record's RIB or DIB as ``own_benefit`` (402(k)(3)(A)).
       A mismatch, a worker with two records, or a deceased worker entered
       as someone's beneficiary raises :class:`InvalidFamilyInput`.
+
+    Input errors are raised before either refusal, so a coverage refusal
+    never masks one.
     """
+    held = _check_household_inputs(records)
+    _refuse_household(held)
+
+
+def _check_household_inputs(
+    records: Mapping[str, HouseholdRecord],
+) -> dict[str, list[tuple[str, Beneficiary]]]:
+    """The household's input errors; returns each person's entitlements."""
     if not isinstance(records, Mapping) or not records:
         raise InvalidFamilyInput("A household needs at least one record")
     workers: dict[str, str] = {}
@@ -1789,7 +2081,6 @@ def check_household_records(records: Mapping[str, HouseholdRecord]) -> None:
             held.setdefault(beneficiary.beneficiary_id, []).append(
                 (record_id, beneficiary)
             )
-    # Input errors first, so a coverage refusal never masks one.
     for person, entitlements in sorted(held.items()):
         own_record_id = workers.get(person)
         if own_record_id is None:
@@ -1807,6 +2098,13 @@ def check_household_records(records: Mapping[str, HouseholdRecord]) -> None:
                     f"record {record_id} their own_benefit must be that "
                     "record's benefit (402(k)(3)(A))"
                 )
+    return held
+
+
+def _refuse_household(
+    held: Mapping[str, list[tuple[str, Beneficiary]]],
+) -> None:
+    """Refuse anyone entitled as an auxiliary on two or more records."""
     for person, entitlements in sorted(held.items()):
         if len(entitlements) < 2:
             continue
@@ -1835,16 +2133,20 @@ def household_benefits(
 ) -> HouseholdBenefits:
     """Every record in a household for one month, checked together.
 
-    :func:`check_household_records` runs first, then
-    :func:`family_benefits` on each record.
+    This is G's integration entry point. Every input error, in the
+    household and in each record's family, is raised first; then the
+    household refusals of :func:`check_household_records`; then each
+    record is computed as :func:`family_benefits` would.
     """
-    check_household_records(records)
+    held = _check_household_inputs(records)
+    for record in records.values():
+        _check_family_inputs(
+            record.state, record.beneficiaries, payment_month, params
+        )
+    _refuse_household(held)
     results = {
-        record_id: family_benefits(
-            record.state,
-            record.beneficiaries,
-            payment_month=payment_month,
-            params=params,
+        record_id: _family_benefits(
+            record.state, record.beneficiaries, payment_month, params
         )
         for record_id, record in records.items()
     }
@@ -1852,15 +2154,17 @@ def household_benefits(
 
 
 # ---------------------------------------------------------------------------
-# 403(a)(5): detected between consecutive months, never approximated
+# 403(a)(5): carried across a record's months, refused, never approximated
 # ---------------------------------------------------------------------------
-def _savings_clause_total(result: FamilyBenefits) -> Fraction:
+def savings_clause_total(result: FamilyBenefits) -> Fraction:
     """The total 403(a)(5) protects: after 403(a) and 402(q).
 
     The worker's own benefit plus each beneficiary subject to the maximum
     after age reduction and before the 402(k)(3)(A) offset. Divorced
     beneficiaries are outside 403(a) (403(a)(3)(C)).
     """
+    if not isinstance(result, FamilyBenefits):
+        raise TypeError("savings_clause_total takes one record's result")
     return (result.worker_benefit or Fraction(0)) + sum(
         (
             row.age_adjusted_rate
@@ -1877,55 +2181,274 @@ def _next_month(month: YearMonth) -> YearMonth:
     return YearMonth(month.year, month.month + 1)
 
 
-def check_savings_clause(
-    previous: FamilyBenefits, current: FamilyBenefits
-) -> None:
-    """Refuse a month in which 403(a)(5) would raise a family's benefits.
+def _previous_month(month: YearMonth) -> YearMonth:
+    if month.month == 1:
+        return YearMonth(month.year - 1, 12)
+    return YearMonth(month.year, month.month - 1)
 
-    403(a)(5): when the maximum applies to two or more persons for a month
-    and the PIA is increased for the following month, that month's total
-    is treated as increased by the smallest amount needed to keep later
-    totals (after 403(a) and 402(q)) from falling below it. This layer
-    computes one month without history and does not apply the guarantee.
 
-    Given one record's results for two consecutive months, this raises
-    ``savings_clause_403a5`` when the PIA rose, the maximum bound in both
-    months, two or more persons were subject to it in the earlier month
-    and the protected total fell. Raising a binding maximum raises some
-    benefit, so the guarantee would change that month; it then carries to
-    later months, which the caller must also refuse. Every pair this
-    passes is one the guarantee leaves unchanged: the total did not fall,
-    the PIA did not rise, or no maximum binds.
+def _money_text(amount: Fraction) -> str:
+    value = Decimal(amount.numerator) / Decimal(amount.denominator)
+    return f"${value:,.2f}"
+
+
+def _qualifies(result: FamilyBenefits) -> bool:
+    """403(a)(5)(A) for one month: two or more persons are entitled on
+    the record and the maximum reduces their benefits ("the provisions of
+    this subsection are applicable"; RS 00630.400: "reduced for the
+    MAX"). Divorced beneficiaries count as entitled persons."""
+    persons = sum(row.entitled for row in result.beneficiaries) + (
+        result.worker_benefit is not None
+    )
+    return result.family_maximum_binding and persons >= 2
+
+
+def _governed(result: FamilyBenefits) -> bool:
+    """Whether any benefit that month is one the maximum can change.
+
+    403(a)(4) decreases only benefits "other than the old-age or
+    disability insurance benefit", and divorced beneficiaries are outside
+    the maximum (403(a)(3)(C)). With nobody subject to it, a larger
+    permitted total has nothing to raise.
     """
-    for result in (previous, current):
-        if not isinstance(result, FamilyBenefits):
-            raise TypeError("check_savings_clause compares FamilyBenefits")
-    if current.payment_month != _next_month(previous.payment_month):
-        raise InvalidFamilyInput("current must be the month after previous")
-    persons = sum(
-        row.subject_to_family_maximum for row in previous.beneficiaries
-    ) + (previous.kind is not FamilyKind.SURVIVOR)
-    if (
-        current.pia <= previous.pia
-        or not previous.family_maximum_binding
-        or not current.family_maximum_binding
-        or persons < 2
+    return any(row.subject_to_family_maximum for row in result.beneficiaries)
+
+
+@dataclass(frozen=True)
+class _PriorMonth:
+    month: YearMonth
+    result: FamilyBenefits | None  # None: G did not compute the month
+    pia: Fraction | None  # None: unknown
+
+
+class SavingsClauseGuard:
+    """403(a)(5) for one insured worker's record, carried month to month.
+
+    403(a)(5): when two or more persons are entitled for a month in which
+    the maximum applies, and the PIA is increased for the following month,
+    that month's total is treated as increased by the smallest amount that
+    keeps "the total ... for any such subsequent month" from falling below
+    it (both totals after 403(a) and 402(q)). The guarantee is not limited
+    to the next month, and a saving clause, once established, "will
+    continue in effect until the table or formula maximum becomes larger"
+    and may become payable again (POMS RS 00615.801B.2). G computes one
+    month at a time and does not compute the raise, so it refuses.
+
+    Create one guard per record at its first month and give it every
+    month in order, with :meth:`admit` (a result G computed),
+    :meth:`skip` (a month G refused for another reason) or
+    :meth:`evaluate` (which does either and returns a
+    :class:`FamilyOutcome` for the denominators). The guard:
+
+    * **protects** the total of a *qualifying* month: two or more persons
+      entitled, the maximum reducing benefits (binding), and a higher PIA
+      in the next month. The highest protected total is carried forward
+      (:attr:`protected_total`);
+    * **refuses** (``savings_clause_403a5``) any later month whose total
+      falls below the protected total, whether or not the PIA rose into
+      it and whether or not the maximum binds in it, and every month after
+      the first such month, because the clause then stays in effect;
+    * **refuses** (``savings_clause_history_unknown``) every later month
+      once a protected total may exist that G cannot see: a path that does
+      not start at the record's first month of entitlement
+      (``earlier_months_unknown=True``), a skipped month while a protected
+      total is in force (its total may have fallen below it), or a skipped
+      month followed by a PIA increase or with no PIA given (it may have
+      qualified);
+    * **computes** a month in which no beneficiary is subject to the
+      maximum, whatever came before, because 403(a)(4) reduces only
+      benefits other than the worker's own and there is nothing to raise.
+      Its total still counts: one below the protected total puts the
+      clause into effect for later months.
+
+    Known over-refusals, kept because they are conservative: a month in
+    which the maximum does not bind (403(a)(4) only decreases benefits,
+    so on the statute's text a larger maximum changes nothing there, but
+    SSA's procedure in RS 00630.400 divides the protected payment among
+    the auxiliaries without mentioning the OB cap); a total that falls
+    because a beneficiary left, for example in the COLA month (whether a
+    change of membership triggers the clause is not settled by any
+    captured source); and every month after a skipped one while a
+    protected total is in force. The guard follows the record across a
+    change of kind (a DIB converting to a RIB, or the worker's death),
+    because 403(a)(5) speaks of the total "on the basis of such wages".
+    """
+
+    def __init__(
+        self, first_month: YearMonth, *, earlier_months_unknown: bool
     ):
-        return
-    before = _savings_clause_total(previous)
-    after = _savings_clause_total(current)
-    if after < before:
-        raise FamilyConfigurationUnsupported(
-            UnsupportedReason.SAVINGS_CLAUSE,
-            f"the PIA rose from {previous.pia} to {current.pia} while the "
-            f"maximum bound, and the protected total fell from {before} "
-            f"to {after}; 403(a)(5) would raise it (not implemented)",
+        if not isinstance(first_month, YearMonth):
+            raise TypeError("first_month must be a YearMonth")
+        if type(earlier_months_unknown) is not bool:
+            raise TypeError("earlier_months_unknown must be a bool")
+        self._next = first_month
+        self._prior: _PriorMonth | None = (
+            _PriorMonth(_previous_month(first_month), None, None)
+            if earlier_months_unknown
+            else None
         )
+        self._floor: Fraction | None = None
+        self._floor_month: YearMonth | None = None
+        self._unknown_since: YearMonth | None = None
+        self._refused_since: YearMonth | None = None
+
+    @property
+    def next_month(self) -> YearMonth:
+        """The month the guard expects next."""
+        return self._next
+
+    @property
+    def protected_total(self) -> Fraction | None:
+        """The highest total protected so far (None: nothing protected)."""
+        return self._floor
+
+    @property
+    def protected_since(self) -> YearMonth | None:
+        """The qualifying month whose total is :attr:`protected_total`."""
+        return self._floor_month
+
+    @property
+    def refused_since(self) -> YearMonth | None:
+        """The first month whose total fell below the protected total."""
+        return self._refused_since
+
+    @property
+    def unknown_since(self) -> YearMonth | None:
+        """The month from which a protection G cannot see may exist."""
+        return self._unknown_since
+
+    def _expect(self, month: YearMonth) -> None:
+        if not isinstance(month, YearMonth):
+            raise TypeError("month must be a YearMonth")
+        if month != self._next:
+            raise InvalidFamilyInput(
+                f"the guard expects {self._next}, not {month}: give it "
+                "every month of the record, in order"
+            )
+
+    def _carry(self, pia: Fraction | None) -> None:
+        """What the previous month protects, now that this PIA is known."""
+        prior = self._prior
+        if prior is None:
+            return
+        rose = pia is None or prior.pia is None or pia > prior.pia
+        if not rose:
+            return
+        if prior.result is None:
+            # A month G did not compute may have qualified, with a total
+            # G never saw.
+            self._unknown_since = self._unknown_since or prior.month
+        elif _qualifies(prior.result):
+            total = savings_clause_total(prior.result)
+            if self._floor is None or total > self._floor:
+                self._floor, self._floor_month = total, prior.month
+
+    def admit(self, result: FamilyBenefits) -> FamilyBenefits:
+        """Carry the protection into ``result``'s month.
+
+        Returns ``result`` when 403(a)(5) cannot change it; otherwise
+        raises :class:`FamilyConfigurationUnsupported`. Either way the
+        guard moves to the next month.
+        """
+        if not isinstance(result, FamilyBenefits):
+            raise TypeError("admit takes one record's FamilyBenefits")
+        month = result.payment_month
+        self._expect(month)
+        self._carry(result.pia)
+        self._prior = _PriorMonth(month, result, result.pia)
+        self._next = _next_month(month)
+        total = savings_clause_total(result)
+        below = self._floor is not None and total < self._floor
+        first_fall = below and self._refused_since is None
+        if first_fall:
+            self._refused_since = month
+        if not _governed(result):
+            return result
+        if self._refused_since is not None and not first_fall:
+            raise FamilyConfigurationUnsupported(
+                UnsupportedReason.SAVINGS_CLAUSE,
+                f"403(a)(5) took effect in {self._refused_since} and stays "
+                "in effect (POMS RS 00615.801B.2); G does not compute the "
+                "raised total",
+            )
+        if self._unknown_since is not None:
+            raise FamilyConfigurationUnsupported(
+                UnsupportedReason.SAVINGS_CLAUSE_HISTORY_UNKNOWN,
+                f"a protected total may exist from {self._unknown_since} "
+                "that G did not see (a month it did not compute, or a path "
+                "that does not start at entitlement)",
+            )
+        if first_fall:
+            raise FamilyConfigurationUnsupported(
+                UnsupportedReason.SAVINGS_CLAUSE,
+                f"the total after 403(a) and 402(q) is {_money_text(total)}"
+                f", below the {_money_text(self._floor)} protected since "
+                f"{self._floor_month}; 403(a)(5) would raise it (not "
+                "implemented)",
+            )
+        return result
+
+    def skip(self, month: YearMonth, *, pia: object = None) -> None:
+        """Record a month of this record that G did not compute.
+
+        ``pia`` is the record's PIA for that month, when the caller knows
+        it; without it a PIA increase cannot be ruled out.
+        """
+        self._expect(month)
+        amount = None if pia is None else _dimes(pia, "PIA")
+        self._carry(amount)
+        if self._floor is not None:
+            # The skipped month's total may have fallen below the
+            # protected total, putting the clause into effect.
+            self._unknown_since = self._unknown_since or month
+        self._prior = _PriorMonth(month, None, amount)
+        self._next = _next_month(month)
+
+    def evaluate(
+        self,
+        key: str,
+        weight: object,
+        compute: Callable[[], FamilyBenefits],
+        *,
+        pia: object = None,
+    ) -> FamilyOutcome:
+        """:func:`evaluate_family` for the record's next month.
+
+        A configuration ``compute`` refuses is kept with its own reason and
+        skipped (``pia`` is that month's PIA, when known); a month 403(a)(5)
+        could change is kept with its savings-clause reason. Invalid inputs
+        still raise and leave the guard where it was.
+        """
+        _outcome_weight(weight)
+        month = self._next
+        try:
+            result = compute()
+        except FamilyConfigurationUnsupported as error:
+            self.skip(month, pia=pia)
+            return FamilyOutcome(key, weight, None, error)
+        if not isinstance(result, FamilyBenefits):
+            raise TypeError("compute must return one record's FamilyBenefits")
+        if pia is not None and _dimes(pia, "PIA") != result.pia:
+            raise InvalidFamilyInput(
+                f"pia {pia} disagrees with the computed PIA {result.pia}"
+            )
+        try:
+            self.admit(result)
+        except FamilyConfigurationUnsupported as error:
+            return FamilyOutcome(key, weight, None, error)
+        return FamilyOutcome(key, weight, result, None)
 
 
 # ---------------------------------------------------------------------------
 # Denominators: unsupported rows stay in, and block totals that need them
 # ---------------------------------------------------------------------------
+def _outcome_weight(weight: object) -> Fraction:
+    value = _exact(weight, "weight")
+    if value < 0:
+        raise ValueError("weight must be nonnegative")
+    return value
+
+
 @dataclass(frozen=True)
 class FamilyOutcome:
     """One record-month: its benefits, or why it is unsupported."""
@@ -1938,10 +2461,7 @@ class FamilyOutcome:
     def __post_init__(self):
         if (self.benefits is None) == (self.unsupported is None):
             raise ValueError("Exactly one of benefits/unsupported is set")
-        weight = _exact(self.weight, "weight")
-        if weight < 0:
-            raise ValueError("weight must be nonnegative")
-        object.__setattr__(self, "weight", weight)
+        object.__setattr__(self, "weight", _outcome_weight(self.weight))
 
     @property
     def supported(self) -> bool:

@@ -3,8 +3,13 @@
 The parameter bundle here uses SSA's *published* national average wage
 index (the R1 historical-source capture, ``ret_history.json``), not the
 policyengine-us series, so the unit tier needs no checkout. The statutory
-rates are the repository defaults; the 402(w) delayed-credit schedule is
-the statute's, which POMS RS 00615.692D tabulates.
+rates are the repository defaults. The full-retirement-age and 402(w)
+delayed-credit schedules are the ones POMS RS 00615.692D-E tabulates for
+births from 1917 (a test reads them from the capture), and both match
+policyengine-us (``test_track_b_gross_benefits_oracle.py``). For births
+before 1917 the bundle, like policyengine-us, gives 3 percent a year where
+402(w)(6)(A) gives 1/12 of 1 percent a month, which is why G refuses
+those credits.
 """
 
 from __future__ import annotations
@@ -20,7 +25,27 @@ from populace_dynamics.ss.params import SSAParameters
 TRACK_B_DATA = Path(__file__).with_name("data") / "track_b"
 SOURCES = TRACK_B_DATA / "gross_benefit_sources"
 
-#: 42 U.S.C. 402(w)(6): annual delayed-credit rate by birth year.
+#: Full retirement age in months by birth year (416(l); POMS RS
+#: 00615.692E). SSA's bands run from January 2, so a January 1 birth
+#: belongs to the previous year's row.
+FULL_RETIREMENT_AGE_SCHEDULE = [
+    (1900, 780),
+    (1938, 782),
+    (1939, 784),
+    (1940, 786),
+    (1941, 788),
+    (1942, 790),
+    (1943, 792),
+    (1955, 794),
+    (1956, 796),
+    (1957, 798),
+    (1958, 800),
+    (1959, 802),
+    (1960, 804),
+]
+
+#: 42 U.S.C. 402(w)(6): annual delayed-credit rate by birth year (from
+#: 1917; the 1900 bracket is policyengine-us's, wrong before 1917).
 DELAYED_CREDIT_SCHEDULE = [
     (1900, 0.03),
     (1925, 0.035),
@@ -53,7 +78,7 @@ def ssa_params(**overrides) -> SSAParameters:
         nawi=published_nawi(),
         wage_base={},
         pia_factors=(0.90, 0.32, 0.15),
-        fra_months_by_birth_year=[(1900, 780), (1943, 792), (1960, 804)],
+        fra_months_by_birth_year=list(FULL_RETIREMENT_AGE_SCHEDULE),
         early_monthly_rates=(0.00555556, 0.00416667),
         early_first_bracket_months=36,
         pe_us_revision="ssa-published-nawi-test-bundle",

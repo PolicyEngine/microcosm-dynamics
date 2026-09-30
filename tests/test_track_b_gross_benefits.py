@@ -41,7 +41,11 @@ def _money(text: str) -> F:
 
 def _family(state, beneficiaries, month=NOW, params=PARAMS):
     return g.family_benefits(
-        state, beneficiaries, payment_month=month, params=params
+        state,
+        beneficiaries,
+        payment_month=month,
+        params=params,
+        standalone=True,
     )
 
 
@@ -79,7 +83,8 @@ def test_manifest_pins_every_capture():
         assert hashlib.sha256(data).hexdigest() == source["sha256"]
         assert source["url"].startswith("https://")
         assert re.fullmatch(
-            r"2026-09-2\dT\d\d:\d\d:\d\dZ", source["retrieved_at_utc"]
+            r"2026-09-(2\d|30)T\d\d:\d\d:\d\dZ",
+            source["retrieved_at_utc"],
         )
         assert source["capture"] in document["capture_formats"]
         if source["capture"] == "http_body":
@@ -199,6 +204,53 @@ WORKED_EXAMPLE_QUOTES = {
         "Child 1 250",
         "Spouse 100",
         "rounded down to the nearest dime",
+        "The final amount is rounded to the next lowest ten cents.",
+    ],
+}
+
+#: Rule text the module and design note rely on, quoted from the captures.
+RULE_QUOTES = {
+    "ssa_act_203": [
+        "two or more persons are entitled to monthly benefits for a "
+        "particular month",
+        "such individual's primary insurance amount is increased for the "
+        "following month",
+        "for any such subsequent month will not be less (after the "
+        "application of the other provisions of this subsection and "
+        "section 202(q))",
+        "each such benefit other than the old-age or disability insurance "
+        "benefit shall be proportionately decreased",
+    ],
+    "poms_rs_00630_400": [
+        "1972 Family Payment Saving Clause",
+        "Benefits for that month are reduced for the MAX and at least one "
+        "beneficiary is reduced for age",
+        "PIA is increased the following month",
+        "Total family payment is less after the PIA increase than it was "
+        "before",
+        "Difference ÷ By the Number of Auxiliaries (rounded) = Auxiliary "
+        "Rate",
+        "The established FMAX will not change",
+    ],
+    "poms_rs_00615_801": [
+        "Once a saving clause is established, it will continue in effect "
+        "until the table or formula maximum becomes larger",
+        "it is possible that the savings clause maximum may again become "
+        "payable",
+    ],
+    "lii_usc_402_415": [
+        "prior to the month in which such individual attained age 70",
+        "1 ⁄ 12 of 1 percent in the case of an individual who first "
+        "becomes eligible for an old-age insurance benefit in any calendar "
+        "year before 1979",
+        "¼ of 1 percent in the case of an individual who first becomes "
+        "eligible for an old-age insurance benefit in any calendar year "
+        "after 1978 and before 1987",
+    ],
+    "poms_rs_00615_692": [
+        "E. Chart for Maximum Delayed Retirement Credits",
+        "Before 01/02/17 1/12% .0008333 1%",
+        "01/02/17 thru 01/01/25 1/4% .0025000 3%",
     ],
 }
 
@@ -212,6 +264,18 @@ WORKED_EXAMPLE_QUOTES = {
     ],
 )
 def test_worked_example_figures_are_quoted_from_the_captures(source_id, quote):
+    assert quote in source_text(source_id)
+
+
+@pytest.mark.parametrize(
+    ("source_id", "quote"),
+    [
+        (source_id, quote)
+        for source_id, quotes in RULE_QUOTES.items()
+        for quote in quotes
+    ],
+)
+def test_rule_text_is_quoted_from_the_captures(source_id, quote):
     assert quote in source_text(source_id)
 
 
@@ -518,6 +582,239 @@ def test_poms_692_delayed_credits():
 
 
 # ===========================================================================
+# Delayed credits run from full retirement age to 70 (g-r1 M1 and L1)
+# ===========================================================================
+def _poms_692_chart():
+    """RS 00615.692E rows whose bands start on January 2, by birth year.
+
+    Each value is (FRA in months, monthly credit, maximum months, maximum
+    credit in percent). SSA's bands run from January 2 to January 1, so a
+    January 1 birth belongs to the previous year's row.
+    """
+    text = source_text("poms_rs_00615_692")
+    chart = text[
+        text.index("E. Chart for Maximum Delayed") : text.index(
+            "To Link to this section"
+        )
+    ]
+    rows = re.findall(
+        r"(?:After 01/01/(60)|01/02/(\d\d) thru 01/01/(\d\d)) "
+        r"(\d\d)(?:&(\d+))? (\d+/\d+)% [\d.]+% (\d+) ([\d.]+)%",
+        chart,
+    )
+    cohorts = {}
+    for after, start, end, years, months, monthly, most, percent in rows:
+        first = 1900 + int(after or start)
+        last = 1960 if after else 1900 + int(end) - 1
+        for year in range(first, last + 1):
+            cohorts[year] = (
+                12 * int(years) + int(months or 0),
+                F(monthly) / 100,
+                int(most),
+                F(percent),
+            )
+    return cohorts
+
+
+def test_delayed_credit_window_matches_the_poms_chart_for_every_cohort():
+    """RS 00615.692E row by row: the window is 840 - FRA, from 1917 on.
+
+    Before 1917 the chart's rate is 1/12 of 1 percent (402(w)(6)(A)) while
+    the bundle, like policyengine-us, says 3 percent a year, so G refuses.
+    """
+    chart = _poms_692_chart()
+    assert (min(chart), max(chart)) == (1914, 1960)
+    for year, (fra, monthly, most, percent) in chart.items():
+        if year < g.FIRST_SUPPORTED_DELAYED_CREDIT_BIRTH_YEAR:
+            assert monthly == F(1, 1200)
+            bundle = F(repr(PARAMS.delayed_credit_annual_rate(year))) / 12
+            assert bundle != monthly
+            with pytest.raises(g.FamilyConfigurationUnsupported) as caught:
+                g.delayed_credit_window_months(year, PARAMS)
+            reason = g.UnsupportedReason.DELAYED_CREDITS_BEFORE_1917
+            assert caught.value.reason is reason
+            continue
+        assert PARAMS.fra_months(year) == fra
+        rate = F(repr(PARAMS.delayed_credit_annual_rate(year))) / 12
+        assert rate == monthly
+        assert g.delayed_credit_window_months(year, PARAMS) == most
+        assert most == 840 - fra
+        # The chart's maximum credit is the window times the rate.
+        assert abs(most * monthly * 100 - percent) < F(1, 200)
+        # The whole window is computed; one month more is invalid.
+        base, credited = g.worker_age_adjusted(F(1000), 0, most, year, PARAMS)
+        assert credited == F(1000) + g.floor_dime(1000 * most * monthly)
+        with pytest.raises(g.InvalidFamilyInput, match="age 70"):
+            g.worker_age_adjusted(F(1000), 0, most + 1, year, PARAMS)
+
+
+@pytest.mark.parametrize(
+    ("birth_year", "months", "expected"),
+    [
+        # FRA 65: 60 months at 1/2 of 1 percent (6 percent a year).
+        (1935, 60, "1300.00"),
+        # FRA 65 and 2 months: 54 x 13/24 of 1 percent = 29.25 percent.
+        (1938, 54, "1292.50"),
+        # The 1938 window is 58 months: 31.4166 percent, dime-floored.
+        (1938, 58, "1314.10"),
+        # FRA 67: 36 months at 2/3 of 1 percent.
+        (1960, 36, "1240.00"),
+    ],
+)
+def test_legal_delayed_credit_months_are_computed(
+    birth_year, months, expected
+):
+    # g-r1 M1: the first two raised InvalidFamilyInput under a 48 cap.
+    assert g.worker_age_adjusted(F(1000), 0, months, birth_year, PARAMS) == (
+        F(1000),
+        F(expected),
+    )
+
+
+@pytest.mark.parametrize(
+    ("birth_year", "months"),
+    [(1935, 61), (1938, 59), (1943, 49), (1960, 37), (1960, 48)],
+)
+def test_delayed_credit_months_past_age_70_are_invalid(birth_year, months):
+    # g-r1 M1: 1960 with 37 or 48 months was accepted under a 48 cap.
+    with pytest.raises(g.InvalidFamilyInput, match="age 70"):
+        g.worker_age_adjusted(F(1000), 0, months, birth_year, PARAMS)
+
+
+def test_delayed_credit_bound_holds_wherever_months_enter():
+    # The review's second reproduction: a retirement record, 1935 birth.
+    record = g.WorkerRecord(
+        g.FamilyKind.RETIREMENT,
+        1997,
+        F(1000),
+        worker_delayed_credit_months=60,
+        worker_birth_year=1935,
+    )
+    state = g.record_state(record, PARAMS)
+    result = _family(state, [], month=g.YearMonth(2006, 1))
+    assert result.worker_benefit == F(1300)
+    with pytest.raises(g.InvalidFamilyInput, match="age 70"):
+        g.record_state(
+            dataclasses.replace(record, worker_delayed_credit_months=61),
+            PARAMS,
+        )
+    # A RecordState built directly is checked when the family is computed.
+    with pytest.raises(g.InvalidFamilyInput, match="age 70"):
+        _family(
+            _retired(1000, 1500, delayed_credit_months=37, birth_year=1960), []
+        )
+    # An own benefit on a spouse's row: 400 + 60 x 1/2 of 1 percent.
+    own = g.OwnBenefit(
+        OLD_AGE, F(400), delayed_credit_months=60, birth_year=1935
+    )
+    spouse = g.Beneficiary(
+        "S", g.Role.SPOUSE, own_benefit=own, own_benefit_first=True
+    )
+    row = _family(_retired(1600, 2400), [spouse]).by_id()["S"]
+    assert (row.own_benefit, row.auxiliary_payable) == (F(520), F(280))
+    beyond = dataclasses.replace(
+        spouse, own_benefit=dataclasses.replace(own, delayed_credit_months=61)
+    )
+    with pytest.raises(g.InvalidFamilyInput, match="age 70"):
+        _family(_retired(1600, 2400), [beyond])
+    # Credits always need the birth year, checked when the benefit is built.
+    with pytest.raises(g.InvalidFamilyInput, match="birth year"):
+        g.OwnBenefit(OLD_AGE, F(400), delayed_credit_months=1)
+    with pytest.raises(g.InvalidFamilyInput, match="birth year"):
+        dataclasses.replace(record, worker_birth_year=None)
+
+
+def test_delayed_credits_before_1917_are_refused():
+    # 402(w)(6)(A): 1/12 of 1 percent a month for a person first eligible
+    # before 1979; the bundle's 3 percent a year would overstate it.
+    with pytest.raises(g.FamilyConfigurationUnsupported) as caught:
+        g.worker_age_adjusted(F(1000), 0, 12, 1916, PARAMS)
+    assert caught.value.reason is (
+        g.UnsupportedReason.DELAYED_CREDITS_BEFORE_1917
+    )
+    # 1917 is the first cohort at 1/4 of 1 percent (RS 00615.692D).
+    assert g.worker_age_adjusted(F(1000), 0, 12, 1917, PARAMS)[1] == F(1030)
+    # No credits, nothing to refuse.
+    assert g.worker_age_adjusted(F(1000), 0, 0, 1916, PARAMS) == (
+        F(1000),
+        F(1000),
+    )
+    # More months than any cohort ever had (84, RS 00615.692E) is invalid.
+    with pytest.raises(g.InvalidFamilyInput):
+        g.worker_age_adjusted(F(1000), 0, 85, 1911, PARAMS)
+    # A spouse born in 1915 with credits on her own RIB is a counted gap.
+    own = g.OwnBenefit(
+        OLD_AGE, F(300), delayed_credit_months=24, birth_year=1915
+    )
+    spouse = g.Beneficiary(
+        "S", g.Role.SPOUSE, own_benefit=own, own_benefit_first=True
+    )
+    outcome = g.evaluate_family(
+        "1915", 1, lambda: _family(_retired(1000, 1500), [spouse])
+    )
+    reason = g.UnsupportedReason.DELAYED_CREDITS_BEFORE_1917
+    assert g.count_family_outcomes([outcome]).unsupported_by_reason == {
+        reason: (1, F(1))
+    }
+
+
+def test_delayed_credit_rows_are_never_dropped_or_half_counted():
+    """An out-of-bound month count stops the aggregate, by contract.
+
+    ``evaluate_family`` catches only ``FamilyConfigurationUnsupported``;
+    ``InvalidFamilyInput`` propagates, so no outcome exists to drop, and
+    a household with one bad record returns nothing at all. Input errors
+    are raised before any refusal in the same family or household, so an
+    invalid row is never counted as a coverage gap.
+    """
+    legal = g.evaluate_family(
+        "legal",
+        1,
+        lambda: _family(
+            _retired(1000, 1500, delayed_credit_months=60, birth_year=1935),
+            [],
+        ),
+    )
+    assert legal.supported and legal.benefits.worker_benefit == F(1300)
+    bad_worker = _retired(
+        1000, 1500, delayed_credit_months=37, birth_year=1960
+    )
+    with pytest.raises(g.InvalidFamilyInput):
+        g.evaluate_family("bad", 1, lambda: _family(bad_worker, []))
+    # A refused beneficiary does not mask the invalid worker.
+    deemed = g.Beneficiary(
+        "S",
+        g.Role.SPOUSE,
+        conditions={g.BeneficiaryCondition.DEEMED_OR_PUTATIVE_SPOUSE},
+    )
+    with pytest.raises(g.InvalidFamilyInput):
+        g.evaluate_family("masked", 1, lambda: _family(bad_worker, [deemed]))
+    # Nor does a refused record condition or a pre-1983 month.
+    conditioned = dataclasses.replace(
+        bad_worker,
+        conditions={g.RecordCondition.WORKERS_COMPENSATION_OFFSET},
+    )
+    with pytest.raises(g.InvalidFamilyInput):
+        _family(conditioned, [])
+    with pytest.raises(g.InvalidFamilyInput):
+        _family(bad_worker, [], month=g.YearMonth(1982, 12))
+    # A household: the other record's refusal does not mask it either.
+    child = g.Beneficiary("Kid", g.Role.CHILD)
+    household = {
+        "a": g.HouseholdRecord("A", bad_worker, [child]),
+        "b": g.HouseholdRecord("B", _survivor_state(), [child]),
+    }
+    with pytest.raises(g.InvalidFamilyInput):
+        g.evaluate_family(
+            "household",
+            1,
+            lambda: g.household_benefits(
+                household, payment_month=NOW, params=PARAMS
+            ),
+        )
+
+
+# ===========================================================================
 # Families: SSA worked examples
 # ===========================================================================
 def test_poms_756_widow_and_seven_children():
@@ -577,7 +874,10 @@ def test_poms_682_surviving_divorced_spouse_paid_outside_the_maximum():
 def test_poms_768_dually_entitled_spouse_reduced_to_zero():
     state = _retired(400, 650)
     spouse = g.Beneficiary(
-        "B", g.Role.SPOUSE, own_benefit=g.OwnBenefit(OLD_AGE, F(100))
+        "B",
+        g.Role.SPOUSE,
+        own_benefit=g.OwnBenefit(OLD_AGE, F(100)),
+        own_benefit_first=True,
     )
     children = [g.Beneficiary(c, g.Role.CHILD) for c in ("C2", "C1")]
     result = _family(state, [spouse, *children])
@@ -605,7 +905,10 @@ def test_poms_768_dually_entitled_child_with_a_partial_payment():
 def test_poms_768_rule_starts_with_october_1999_payments():
     state = _retired(400, 650)
     spouse = g.Beneficiary(
-        "B", g.Role.SPOUSE, own_benefit=g.OwnBenefit(OLD_AGE, F(100))
+        "B",
+        g.Role.SPOUSE,
+        own_benefit=g.OwnBenefit(OLD_AGE, F(100)),
+        own_benefit_first=True,
     )
     family = [spouse, g.Beneficiary("C1", g.Role.CHILD)]
     with pytest.raises(g.FamilyConfigurationUnsupported) as caught:
@@ -622,7 +925,9 @@ def test_poms_768_all_dually_entitled_disregards_the_rule():
     state = _retired(400, 650)
     own = g.OwnBenefit(OLD_AGE, F(100))
     family = [
-        g.Beneficiary("B", g.Role.SPOUSE, own_benefit=own),
+        g.Beneficiary(
+            "B", g.Role.SPOUSE, own_benefit=own, own_benefit_first=True
+        ),
         g.Beneficiary("C1", g.Role.CHILD, own_benefit=own),
     ]
     result = _family(state, family, month=g.YearMonth(1995, 1))
@@ -657,6 +962,7 @@ def test_poms_694_spouse_with_delayed_credits_on_the_own_rib():
             delayed_credit_months=5,
             birth_year=1935,
         ),
+        own_benefit_first=True,
     )
     row = _family(state, [toni]).by_id()["Toni"]
     assert row.own_benefit == F(410)
@@ -697,6 +1003,7 @@ def _ssb_disability_family(spouse_own=None):
         own_benefit=(
             None if spouse_own is None else g.OwnBenefit(OLD_AGE, spouse_own)
         ),
+        own_benefit_first=None if spouse_own is None else True,
     )
     family = [spouse] + [
         g.Beneficiary(f"Child {i}", g.Role.CHILD) for i in (1, 2)
@@ -780,10 +1087,16 @@ def test_divorced_spouse_is_ignored_by_everyone_else():
 def test_spouse_not_entitled_when_own_pia_reaches_half():
     state = _retired(1000, 1500)
     exact_half = g.Beneficiary(
-        "S", g.Role.SPOUSE, own_benefit=g.OwnBenefit(OLD_AGE, F(500))
+        "S",
+        g.Role.SPOUSE,
+        own_benefit=g.OwnBenefit(OLD_AGE, F(500)),
+        own_benefit_first=True,
     )
     just_below = g.Beneficiary(
-        "S", g.Role.SPOUSE, own_benefit=g.OwnBenefit(OLD_AGE, F("499.90"))
+        "S",
+        g.Role.SPOUSE,
+        own_benefit=g.OwnBenefit(OLD_AGE, F("499.90")),
+        own_benefit_first=True,
     )
     assert not _family(state, [exact_half]).by_id()["S"].entitled
     row = _family(state, [just_below]).by_id()["S"]
@@ -838,6 +1151,7 @@ def test_spouse_with_reduced_own_rib_is_method_c():
         g.Role.SPOUSE,
         reduction_months=36,
         own_benefit=g.OwnBenefit(OLD_AGE, F(400), reduction_months=36),
+        own_benefit_first=True,
     )
     row = _family(state, [spouse]).by_id()["S"]
     assert row.own_benefit == F(320)  # 400 x 144/180
@@ -907,6 +1221,7 @@ def _ssb_a2_household(spouse_own=None):
         own_benefit=(
             g.OwnBenefit(OLD_AGE, F(100)) if spouse_own is None else spouse_own
         ),
+        own_benefit_first=True,
     )
     children = [g.Beneficiary(f"Child {i}", g.Role.CHILD) for i in (1, 2)]
     return {
@@ -943,7 +1258,9 @@ def test_household_worker_must_declare_their_own_record_benefit(declared):
     household = _ssb_a2_household(spouse_own=declared)
     if declared is None:
         worker = household["worker"]
-        spouse = dataclasses.replace(worker.beneficiaries[0], own_benefit=None)
+        spouse = dataclasses.replace(
+            worker.beneficiaries[0], own_benefit=None, own_benefit_first=None
+        )
         household["worker"] = dataclasses.replace(
             worker, beneficiaries=(spouse, *worker.beneficiaries[1:])
         )
@@ -1039,29 +1356,126 @@ def test_households_stay_in_denominators():
 
 
 # ===========================================================================
-# 403(a)(5): refused, never approximated
+# 403(a)(5): carried across a record's months, refused, never approximated
 # ===========================================================================
+NOV, DEC, JAN, FEB = (
+    g.YearMonth(2025, 11),
+    g.YearMonth(2025, 12),
+    g.YearMonth(2026, 1),
+    g.YearMonth(2026, 2),
+)
+
+
+def _guard(first=NOV, *, unknown=False):
+    return g.SavingsClauseGuard(first, earlier_months_unknown=unknown)
+
+
+def _refusal(guard, result):
+    with pytest.raises(g.FamilyConfigurationUnsupported) as caught:
+        guard.admit(result)
+    return caught.value
+
+
+def _review_m2_path():
+    """g-r1 M2: Nov 2025 → Dec 2025 COLA → Jan 2026 (worked by hand there).
+
+    November: PIA $1,000, maximum $1,500, two children at $250 each. A 2.5
+    percent COLA raises the PIA to $1,025 and the maximum to $1,537.50. In
+    January an aged spouse reduced for 60 months joins; in February the
+    spouse has left again.
+    """
+    kids = [g.Beneficiary(c, g.Role.CHILD) for c in ("C1", "C2")]
+    pia, maximum = (g.increase_by_colas(F(v), ["2.5"]) for v in (1000, 1500))
+    spouse = g.Beneficiary("S", g.Role.SPOUSE, reduction_months=60)
+    return [
+        _family(_retired(1000, 1500), kids, month=NOV),
+        _family(_retired(pia, maximum), kids, month=DEC),
+        _family(_retired(pia, maximum), [*kids, spouse], month=JAN),
+        _family(_retired(pia, maximum), kids, month=FEB),
+    ]
+
+
+def test_savings_clause_protects_every_later_month_not_just_the_next():
+    nov, dec, jan, feb = _review_m2_path()
+    total = g.savings_clause_total
+    assert [total(m) for m in (nov, dec, jan, feb)] == [
+        F(1500),
+        F("1537.40"),
+        F("1477.60"),
+        F("1537.40"),
+    ]
+    # January: shares of $170.80, the spouse's reduced to $111.00 (65
+    # percent), and no PIA increase into January. A check of consecutive
+    # months alone passes both pairs.
+    assert jan.pia == dec.pia and jan.family_maximum_binding
+    rows = jan.by_id()
+    assert rows["C1"].auxiliary_payable == F("170.80")
+    assert rows["S"].auxiliary_payable == F("111.00")
+    guard = _guard()
+    assert guard.admit(nov) is nov and guard.protected_total is None
+    assert guard.admit(dec) is dec
+    # November qualified: two or more entitled, the maximum reducing their
+    # benefits, and the PIA higher in December.
+    assert (guard.protected_total, guard.protected_since) == (F(1500), NOV)
+    refusal = _refusal(guard, jan)
+    assert refusal.reason is g.UnsupportedReason.SAVINGS_CLAUSE
+    assert "$1,477.60" in str(refusal) and "$1,500.00" in str(refusal)
+    assert guard.refused_since == JAN
+    # February's total is above $1,500 again, but a saving clause stays in
+    # effect once established (POMS RS 00615.801B.2), and G does not
+    # compute it, so every later month is refused.
+    refusal = _refusal(guard, feb)
+    assert refusal.reason is g.UnsupportedReason.SAVINGS_CLAUSE
+    assert guard.next_month == g.YearMonth(2026, 3)
+
+
+def test_savings_clause_refusals_stay_in_the_denominator():
+    guard = _guard()
+    outcomes = [
+        guard.evaluate(f"{m.payment_month}", 1, lambda m=m: m)
+        for m in _review_m2_path()
+    ]
+    denominator = g.count_family_outcomes(outcomes)
+    assert (denominator.rows, denominator.supported_rows) == (4, 2)
+    assert denominator.unsupported_by_reason == {
+        g.UnsupportedReason.SAVINGS_CLAUSE: (2, F(2))
+    }
+    with pytest.raises(g.FamilyTargetBlocked, match="savings_clause_403a5=2"):
+        g.weighted_record_total(outcomes)
+
+
+def _two_months(pia_after, maximum_after, children=2):
+    """November at PIA $1,000 / maximum $1,500, then December's record."""
+    kids = [g.Beneficiary(f"C{i}", g.Role.CHILD) for i in range(children)]
+    before = _family(_retired(1000, 1500), kids, month=NOV)
+    after = _family(_retired(pia_after, maximum_after), kids, month=DEC)
+    return before, after
+
+
 def test_savings_clause_refuses_a_falling_total_after_a_pia_increase():
     # A master-record PIA $0.10 higher with the maximum unchanged: $499.90
     # is left for two children, so each falls to $249.90 and the total
     # after 403(a) and 402(q) falls from $1,500.00 to $1,499.90.
-    before, after = _savings_clause_pair(F("1000.10"), F(1500))
-    assert after.subject_total < before.subject_total
-    with pytest.raises(g.FamilyConfigurationUnsupported) as caught:
-        g.check_savings_clause(before, after)
-    assert caught.value.reason is g.UnsupportedReason.SAVINGS_CLAUSE
+    before, after = _two_months(F("1000.10"), F(1500))
+    guard = _guard()
+    guard.admit(before)
+    refusal = _refusal(guard, after)
+    assert refusal.reason is g.UnsupportedReason.SAVINGS_CLAUSE
 
 
-def test_savings_clause_passes_when_the_guarantee_changes_nothing():
+def test_savings_clause_admits_months_the_guarantee_cannot_change():
     # A 2.8 percent COLA on both the PIA and the maximum.
-    colas = ["2.8"]
-    pia = g.increase_by_colas(F(1000), colas)
-    maximum = g.increase_by_colas(F(1500), colas)
-    g.check_savings_clause(*_savings_clause_pair(pia, maximum))
-    # No PIA increase: 403(a)(5) does not apply.
-    g.check_savings_clause(*_savings_clause_pair(F(1000), F("1499.90")))
-    # The maximum no longer binds after the increase.
-    g.check_savings_clause(*_savings_clause_pair(F("1000.10"), F(3000)))
+    pia, maximum = (g.increase_by_colas(F(v), ["2.8"]) for v in (1000, 1500))
+    for before, after in (
+        _two_months(pia, maximum),
+        # No PIA increase: no month qualifies, so nothing is protected.
+        _two_months(F(1000), F("1499.90")),
+        # The maximum no longer binds after the increase.
+        _two_months(F("1000.10"), F(3000)),
+    ):
+        guard = _guard()
+        assert guard.admit(before) is before
+        assert guard.admit(after) is after
     # 403(a)(5) needs two or more persons: a lone widow whose credit-
     # increased OB exceeds a (given) maximum is capped, and her total may
     # fall, but the guarantee does not reach her.
@@ -1069,23 +1483,167 @@ def test_savings_clause_passes_when_the_guarantee_changes_nothing():
     before = _family(
         g.RecordState(g.FamilyKind.SURVIVOR, F(1000), F(1200)),
         widow,
-        month=g.YearMonth(2025, 11),
+        month=NOV,
     )
     after = _family(
         g.RecordState(g.FamilyKind.SURVIVOR, F("1000.10"), F("1199.90")),
         widow,
-        month=g.YearMonth(2025, 12),
+        month=DEC,
     )
     assert before.family_maximum_binding and after.family_maximum_binding
-    assert after.subject_total < before.subject_total
-    g.check_savings_clause(before, after)
+    assert g.savings_clause_total(after) < g.savings_clause_total(before)
+    guard = _guard()
+    guard.admit(before)
+    assert guard.admit(after) is after and guard.protected_total is None
 
 
-def test_savings_clause_needs_consecutive_months():
-    before, after = _savings_clause_pair(F("1000.10"), F(1500))
-    later = dataclasses.replace(after, payment_month=g.YearMonth(2026, 1))
+def test_known_over_refusal_a_beneficiary_leaves_in_a_cola_month():
+    """Conservative, and recorded in the design note as over-refusal.
+
+    Three children share $750 in November. Two leave in December, the COLA
+    month, so the total falls from $1,750.00 to $1,537.50 although no
+    maximum reduces anyone in December. 403(a)(4) only decreases benefits,
+    so on the statute's text a larger maximum changes nothing here, but
+    SSA's saving-clause procedure (RS 00630.400) divides the protected
+    payment among the auxiliaries without mentioning the OB cap, and no
+    captured source says whether membership changes trigger it. G refuses.
+    """
+    kids = [g.Beneficiary(c, g.Role.CHILD) for c in ("C1", "C2", "C3")]
+    pia, maximum = (g.increase_by_colas(F(v), ["2.5"]) for v in (1000, 1750))
+    nov = _family(_retired(1000, 1750), kids, month=NOV)
+    dec = _family(_retired(pia, maximum), kids[:1], month=DEC)
+    assert g.savings_clause_total(nov) == F(1750)
+    assert not dec.family_maximum_binding
+    assert g.savings_clause_total(dec) == F("1537.50")
+    guard = _guard()
+    guard.admit(nov)
+    refusal = _refusal(guard, dec)
+    assert refusal.reason is g.UnsupportedReason.SAVINGS_CLAUSE
+
+
+def test_a_month_with_nobody_under_the_maximum_is_never_refused():
+    """403(a)(4) reduces only benefits other than the worker's own.
+
+    With no auxiliary subject to the maximum, a larger permitted total has
+    nothing to raise, so the month is computed even after a refusal or
+    with an unknown history. A later month with an auxiliary is refused.
+    """
+    nov, dec, jan, _ = _review_m2_path()
+    alone = _family(_retired(dec.pia, dec.family_maximum), [], month=FEB)
+    guard = _guard()
+    for month in (nov, dec):
+        guard.admit(month)
+    _refusal(guard, jan)
+    assert guard.admit(alone) is alone
+    kids = [g.Beneficiary(c, g.Role.CHILD) for c in ("C1", "C2")]
+    march = _family(
+        _retired(dec.pia, dec.family_maximum),
+        kids,
+        month=g.YearMonth(2026, 3),
+    )
+    assert _refusal(guard, march).reason is g.UnsupportedReason.SAVINGS_CLAUSE
+    # Below the protected total with nobody under the maximum: computed,
+    # but 403(a)(5) may now be in effect, so later months are refused.
+    guard = _guard()
+    for month in (nov, dec):
+        guard.admit(month)
+    alone_jan = _family(_retired(dec.pia, dec.family_maximum), [], month=JAN)
+    assert guard.admit(alone_jan) is alone_jan
+    assert guard.refused_since == JAN
+    feb = _family(_retired(dec.pia, dec.family_maximum), kids, month=FEB)
+    assert _refusal(guard, feb).reason is g.UnsupportedReason.SAVINGS_CLAUSE
+    # A lone worker with an unknown history is computed.
+    unknown = _guard(FEB, unknown=True)
+    assert unknown.admit(alone) is alone
+
+
+def test_an_unknown_history_refuses_months_with_auxiliaries():
+    """A path that does not start at entitlement may carry a protection.
+
+    G cannot rule one out, so every month in which an auxiliary is subject
+    to the maximum is refused with its own reason.
+    """
+    _, dec, jan, feb = _review_m2_path()
+    guard = _guard(DEC, unknown=True)
+    reason = g.UnsupportedReason.SAVINGS_CLAUSE_HISTORY_UNKNOWN
+    for month in (dec, jan, feb):
+        assert _refusal(guard, month).reason is reason
+    assert guard.unknown_since == NOV
+
+
+def test_a_month_g_cannot_compute_leaves_the_protection_unknown():
+    kids = [g.Beneficiary(c, g.Role.CHILD) for c in ("C1", "C2")]
+    deemed = g.Beneficiary(
+        "D",
+        g.Role.SPOUSE,
+        conditions={g.BeneficiaryCondition.DEEMED_OR_PUTATIVE_SPOUSE},
+    )
+
+    def month(when, members, pia=1000, maximum=1500):
+        return lambda: _family(_retired(pia, maximum), members, month=when)
+
+    # No protection in force, and the PIA did not rise after the month G
+    # refused: nothing can have been protected, so later months compute.
+    guard = _guard()
+    assert guard.evaluate("nov", 1, month(NOV, kids)).supported
+    skipped = guard.evaluate("dec", 1, month(DEC, [*kids, deemed]), pia=1000)
+    assert skipped.unsupported.reason is g.UnsupportedReason.DEEMED_SPOUSE
+    assert guard.evaluate("jan", 1, month(JAN, kids)).supported
+    # Without the skipped month's PIA a rise cannot be ruled out.
+    guard = _guard()
+    guard.evaluate("nov", 1, month(NOV, kids))
+    guard.evaluate("dec", 1, month(DEC, [*kids, deemed]))
+    later = guard.evaluate("jan", 1, month(JAN, kids))
+    assert later.unsupported.reason is (
+        g.UnsupportedReason.SAVINGS_CLAUSE_HISTORY_UNKNOWN
+    )
+    # A PIA that rose after the skipped month: it may have qualified.
+    guard = _guard()
+    guard.evaluate("nov", 1, month(NOV, kids))
+    guard.evaluate("dec", 1, month(DEC, [*kids, deemed]), pia=1000)
+    later = guard.evaluate("jan", 1, month(JAN, kids, 1025, 1537.5))
+    assert later.unsupported.reason is (
+        g.UnsupportedReason.SAVINGS_CLAUSE_HISTORY_UNKNOWN
+    )
+    # A protection in force when G skips a month: that month's total may
+    # have fallen below it, so later months are refused.
+    nov, dec, _, feb = _review_m2_path()
+    guard = _guard()
+    guard.admit(nov)
+    guard.admit(dec)
+    guard.skip(JAN, pia=dec.pia)
+    assert _refusal(guard, feb).reason is (
+        g.UnsupportedReason.SAVINGS_CLAUSE_HISTORY_UNKNOWN
+    )
+
+
+def test_savings_clause_guard_needs_every_month_in_order():
+    nov, dec, jan, _ = _review_m2_path()
+    guard = _guard()
+    with pytest.raises(g.InvalidFamilyInput, match="2025-12"):
+        guard.admit(dec)
+    guard.admit(nov)
     with pytest.raises(g.InvalidFamilyInput):
-        g.check_savings_clause(before, later)
+        guard.admit(jan)
+    with pytest.raises(g.InvalidFamilyInput):
+        guard.skip(JAN)
+    with pytest.raises(g.InvalidFamilyInput, match="PIA"):
+        guard.evaluate("dec", 1, lambda: dec, pia=F(1000))
+    with pytest.raises(TypeError):
+        guard.admit(g.HouseholdBenefits(DEC, {}))
+    with pytest.raises(TypeError):
+        g.SavingsClauseGuard(NOV, earlier_months_unknown=None)
+    with pytest.raises(TypeError):
+        g.SavingsClauseGuard(NOV)
+    # Invalid inputs in a month still propagate out of evaluate.
+    with pytest.raises(g.InvalidFamilyInput):
+        guard.evaluate(
+            "bad",
+            1,
+            lambda: _family(
+                _survivor_state(), [g.Beneficiary("S", g.Role.SPOUSE)], DEC
+            ),
+        )
 
 
 # ===========================================================================
@@ -1211,6 +1769,7 @@ def _unsupported_cases():
                         delayed_credit_months=12,
                         birth_year=1950,
                     ),
+                    own_benefit_first=True,
                 ),
                 g.Beneficiary("C1", g.Role.CHILD),
                 g.Beneficiary("C2", g.Role.CHILD),
@@ -1223,6 +1782,7 @@ def _unsupported_cases():
                     "B",
                     g.Role.SPOUSE,
                     own_benefit=g.OwnBenefit(OLD_AGE, F(100)),
+                    own_benefit_first=True,
                 ),
                 g.Beneficiary("C1", g.Role.CHILD),
             ],
@@ -1265,20 +1825,34 @@ def _unsupported_cases():
                 params=PARAMS,
             )
         ),
-        g.UnsupportedReason.SAVINGS_CLAUSE: lambda: g.check_savings_clause(
-            *_savings_clause_pair(F("1000.10"), F(1500))
+        g.UnsupportedReason.SAVINGS_CLAUSE: lambda: _savings_clause_case(),
+        g.UnsupportedReason.SAVINGS_CLAUSE_HISTORY_UNKNOWN: lambda: (
+            _guard(NOV, unknown=True).admit(_review_m2_path()[0])
+        ),
+        g.UnsupportedReason.DELAYED_CREDITS_BEFORE_1917: lambda: _family(
+            _retired(1000, 1500),
+            [
+                g.Beneficiary(
+                    "S",
+                    g.Role.SPOUSE,
+                    own_benefit=g.OwnBenefit(
+                        OLD_AGE,
+                        F(300),
+                        delayed_credit_months=12,
+                        birth_year=1916,
+                    ),
+                    own_benefit_first=True,
+                )
+            ],
         ),
     }
 
 
-def _savings_clause_pair(pia_after, maximum_after, children=2):
-    """November at PIA $1,000 / maximum $1,500, then December's record."""
-    kids = [g.Beneficiary(f"C{i}", g.Role.CHILD) for i in range(children)]
-    before = _family(_retired(1000, 1500), kids, month=g.YearMonth(2025, 11))
-    after = _family(
-        _retired(pia_after, maximum_after), kids, month=g.YearMonth(2025, 12)
-    )
-    return before, after
+def _savings_clause_case():
+    guard = _guard()
+    before, after = _two_months(F("1000.10"), F(1500))
+    guard.admit(before)
+    guard.admit(after)
 
 
 def test_every_unsupported_reason_has_a_refusal_case():
@@ -1400,6 +1974,89 @@ def test_other_refused_sequences():
 def test_invalid_inputs_raise_invalid_family_input(build):
     with pytest.raises(g.InvalidFamilyInput):
         build()
+
+
+def test_spouse_entitlement_order_must_be_declared():
+    """g-r1 L2: no silent method C for a dually entitled spouse.
+
+    The order changes real money: RS 00615.240's spouse is paid $250.00 by
+    method B and $262.50 by method C.
+    """
+    own = g.OwnBenefit(OLD_AGE, F(250), reduction_months=36)
+    for role in (g.Role.SPOUSE, g.Role.DIVORCED_SPOUSE):
+        with pytest.raises(g.InvalidFamilyInput, match="own_benefit_first"):
+            g.Beneficiary("S", role, reduction_months=36, own_benefit=own)
+    # An order without an own benefit means nothing.
+    with pytest.raises(g.InvalidFamilyInput, match="own_benefit_first"):
+        g.Beneficiary("S", g.Role.SPOUSE, own_benefit_first=True)
+    with pytest.raises(TypeError):
+        g.Beneficiary("S", g.Role.SPOUSE, own_benefit=own, own_benefit_first=1)
+    # Other roles do not use the order, so it stays optional for them.
+    assert g.Beneficiary("C", g.Role.CHILD, own_benefit=own)
+    assert (
+        g.Beneficiary(
+            "W", g.Role.WIDOW, own_benefit=own, birth_year=1960
+        ).own_benefit_first
+        is None
+    )
+
+
+def test_family_benefits_needs_an_explicit_standalone_acknowledgement():
+    """g-r1 L3: household_benefits is the integration entry point.
+
+    A single record is computed only when the caller says it stands alone:
+    no beneficiary is entitled on another record, and a worker who is an
+    auxiliary elsewhere has declared that benefit.
+    """
+    state = _retired(1000, 1500)
+    with pytest.raises(TypeError, match="standalone"):
+        g.family_benefits(state, [], payment_month=NOW, params=PARAMS)
+    with pytest.raises(ValueError, match="household_benefits"):
+        g.family_benefits(
+            state, [], payment_month=NOW, params=PARAMS, standalone=False
+        )
+    result = g.family_benefits(
+        state, [], payment_month=NOW, params=PARAMS, standalone=True
+    )
+    household = g.household_benefits(
+        {"w": g.HouseholdRecord("W", state)}, payment_month=NOW, params=PARAMS
+    )
+    assert household.records["w"] == result
+
+
+def test_record_dates_after_the_payment_month_are_invalid():
+    """g-r1 L4: a record cannot be computed for a month before its dates."""
+    with pytest.raises(g.InvalidFamilyInput, match="eligibility"):
+        g.applicable_cola_percents(2027, g.YearMonth(2026, 1), {})
+    assert g.applicable_cola_percents(2026, g.YearMonth(2026, 1), {}) == ()
+    survivor = g.record_state(
+        g.WorkerRecord(g.FamilyKind.SURVIVOR, 2026, F(1000)), PARAMS
+    )
+    assert _family(survivor, [], month=g.YearMonth(2026, 1))
+    with pytest.raises(g.InvalidFamilyInput, match="eligibility"):
+        _family(survivor, [], month=g.YearMonth(2025, 12))
+    disabled = g.record_state(
+        g.WorkerRecord(
+            g.FamilyKind.DISABILITY,
+            2020,
+            F(1000),
+            aime=1500,
+            first_dib_entitlement=g.YearMonth(2020, 6),
+        ),
+        PARAMS,
+    )
+    assert _family(disabled, [], month=g.YearMonth(2020, 6))
+    with pytest.raises(g.InvalidFamilyInput, match="entitlement"):
+        _family(disabled, [], month=g.YearMonth(2020, 5))
+    # An input error, so a refusal in the same family does not mask it.
+    with pytest.raises(g.InvalidFamilyInput):
+        _family(
+            dataclasses.replace(
+                survivor, conditions={g.RecordCondition.NON_AIME_FORMULA_PIA}
+            ),
+            [],
+            month=g.YearMonth(2025, 12),
+        )
 
 
 def test_parameter_bundle_that_disagrees_with_the_statute_is_refused():
