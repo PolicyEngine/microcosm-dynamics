@@ -30,9 +30,8 @@ from tests.track_b_gross_benefit_support import (
 # another module in the same session can set it to an absent checkout
 # (test_gate2c_candidate1_reproduction.py does, at import).
 PE_US = Path(
-    os.environ.get(
-        "POPULACE_DYNAMICS_PE_US_DIR", "~/PolicyEngine/policyengine-us"
-    )
+    os.environ.get("POPULACE_DYNAMICS_PE_US_DIR")
+    or "~/PolicyEngine/policyengine-us"
 ).expanduser()
 pytestmark = pytest.mark.skipif(
     not (PE_US / "policyengine_us" / "parameters" / "gov" / "ssa").is_dir(),
