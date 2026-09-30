@@ -235,6 +235,23 @@ Tests:
   - RECORD verification;
   - the float32 guard, including the review's use-tax case as traced;
   - the COLA helpers.
+- `tests/bridge/test_pe_us_sample_households_script.py` (unit tier). It
+  checks the script's own logic on invented inputs, with the runner replaced
+  by fakes:
+  - parameter updates and overrides;
+  - the release pin;
+  - the invariants;
+  - the traced-versus-untraced check;
+  - the Medicaid text;
+  - the refusal of local paths.
+- `tests/bridge/test_pe_us_bridge_artifact.py` (unit tier). It checks the
+  committed JSON and Markdown:
+  - the pinned release and a clean source check;
+  - the California override;
+  - a clean float32 guard;
+  - the identity;
+  - no local path;
+  - the rows and the reform's name.
 - `tests/bridge/test_policyengine_us_bridge_oracle.py` (oracle tier). It
   skips unless the interpreter exists and imports `policyengine_us`.
 
