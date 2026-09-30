@@ -301,3 +301,30 @@ Run at the final state:
 
 - SHA-256 and byte size: all 12 archived sources match the manifest, and all 24 pinned documents match their SHA-256 and byte size. Every `identical: true` local-capture claim holds.
 - U1: the branch's merge base with `origin/master` is `d978d966`, the pinned `base_commit`. None of the 50 U1-pinned files is among the 164 files that `git diff origin/master...HEAD` lists, all 50 hash to their pins, and `origin/master` has not changed any of them since. No engine, `gates.yaml` or `runs/` file changed.
+
+## Rulings recorded (2026-09-30, d637)
+
+A Claude Code session (Opus 5.5) recorded Max's ruling d637 on §16a as the specification's §16b, with structural edits only. It is not a U2 builder, referee or forecaster, and it computed nothing.
+
+### Read
+
+- `EV/RESTRICTED-FILES.md`, the list itself, in full, to know what not to open.
+- `EV/phase2-20260927/out/u2-m1b-verify-max-brief.md`, the verifier's brief (SHA-256 `958ad848…`), and the d637 entry in the chief-of-staff decision log.
+- In the repository: the specification (its headings, header, §§16, 16a, 17, 19 and 20), the research record (header and question labels), `data/external/track_u2/u1_identity.json`, the assertions that `tests/track_u2/test_adjudication_applied.py`, `test_psid_research_sources.py` and `test_u2_isolation.py` make on the specification, `src/populace_dynamics/uniform_cut_track_u2/identity.py`, and the description of PR #486.
+- The sent PSID message in Max's mailbox (headers, labels and text), to record that it was sent.
+- For the session's other two rulings (d649 on the PIA-source validation, d660 on the roadmap), none concerning U2: the PIA-source registration package, its appointments log, issue #113, and the issue #42 registration comments other than the result comments the restricted list names.
+
+### Not opened
+
+Nothing the restricted list names: no page of the Boomers 2004 report, no U2 or exercise-2 comparator, seal, values scan or result, and no PSID data file.
+
+### Incidental exposure
+
+- The restricted list's changelog entry of 2026-09-29 02:40 paraphrases the Boomers report's PDF metadata summary (qualitative; no table value, nothing about the 1946–55 column or the 13% cut). The session read it there, as any reader of the list does.
+- Public exercise-3 and exercise-4 figures appeared in passing in the phase-2 plan and the scorecards. None concerns U2.
+
+### Files written
+
+- `docs/design/boomers2004_1946_55_comparison.md` (lines 3 and 4, §16b, and §§17, 19 and 20), `docs/design/u2_m1b_psid_research.md` (the header sentence and the three question labels), `data/external/track_u2/u1_identity.json` (the specification pin and its note), and this section.
+
+No registry entry, §15 line, test, U1 file, engine file, `gates.yaml` or `runs/*.json` was edited.
