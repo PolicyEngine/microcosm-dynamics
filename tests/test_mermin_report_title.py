@@ -316,6 +316,10 @@ def test_erratum_links_the_registry_issue_and_governs_the_artifacts():
     assert LANDING_URL in text
     assert "returned HTTP 404 on 2026-09-30" in text
     assert "`tests/test_mermin_report_title.py`" in text
+    # The registration and merged pull requests that carry the old title.
+    assert "issues/42#issuecomment-4907444903" in text
+    assert "pull/77" in text
+    assert "pull/88" in text
 
 
 def test_provenance_erratum_addendum_points_to_the_follow_ups():

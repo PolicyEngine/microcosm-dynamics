@@ -82,6 +82,15 @@ These bytes are not edited. Read them through this erratum.
 
 In each of these fields, the text after the title is unchanged and correct: "Urban Institute report 411260. DYNASIM3, Runid 432. 2005 Trustees intermediate assumptions", which in the first two continues "; CBO (2005) solvency scoring." No other committed artifact contains the old title. `tests/test_mermin_report_title.py` checks this table against every tracked file under `runs/`, and checks every other tracked file for the old title and its URL.
 
+## Records outside the repository
+
+Three GitHub records also use the old title, all written before this correction:
+
+- the Phase-A registration on [PolicyEngine/microcosm-dynamics#42](https://github.com/PolicyEngine/microcosm-dynamics/issues/42), [comment 4907444903](https://github.com/PolicyEngine/microcosm-dynamics/issues/42#issuecomment-4907444903) (2026-07-07), which `scripts/replication_ppi_mermin.py` cites as its frozen spec;
+- the descriptions of the merged pull requests [PolicyEngine/microcosm-dynamics#77](https://github.com/PolicyEngine/microcosm-dynamics/pull/77) and [PolicyEngine/microcosm-dynamics#88](https://github.com/PolicyEngine/microcosm-dynamics/pull/88).
+
+This change does not edit them. For all three, this erratum governs the title.
+
 ## The registry follow-up
 
 The anchor-provenance erratum leaves one change to the benchmark registry. The row `dynasim.mermin.four_reform_cost_ordering` still labels Table 1's deficit row DYNASIM3, and the relabel has to ride on the next evaluation append.
