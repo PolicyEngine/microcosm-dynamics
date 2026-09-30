@@ -180,6 +180,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/track_a_v2/structural.py"),
         Path("src/populace_dynamics/track_a_v2/structural_inputs.py"),
         Path("src/populace_dynamics/track_b/reconstructed.py"),
+        Path("src/populace_dynamics/track_b/gross_benefits.py"),
         Path("src/populace_dynamics/data/u2_source_registry.py"),
         Path("scripts/capture_track_u2_income_wealth.py"),
         Path("scripts/capture_track_u2_ssi_parameters.py"),
@@ -337,6 +338,7 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "populace_dynamics.track_b.replay",
         "populace_dynamics.track_b.runner",
         "populace_dynamics.track_b.reconstructed",
+        "populace_dynamics.track_b.gross_benefits",
     }
     assert track_b_modules.issubset(module_paths)
     u2_registry = "populace_dynamics.data.u2_source_registry"

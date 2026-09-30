@@ -1,0 +1,97 @@
+"""Track B milestone G against the repository's live parameter source.
+
+Production callers pass the policyengine-us bundle
+(``ss.params.load_ssa_parameters``). These checks confirm that bundle
+reproduces SSA's published family-maximum bend points for every year
+1979-2026, passes the statutory-rate cross-check, and carries the 402(w)
+and full-retirement-age schedules the unit tier assumes. Skipped without a
+policyengine-us checkout.
+"""
+
+from __future__ import annotations
+
+import os
+from fractions import Fraction as F
+from pathlib import Path
+
+import pytest
+
+from populace_dynamics.ss.params import load_ssa_parameters
+from populace_dynamics.track_b import gross_benefits as g
+from tests.track_b_gross_benefit_support import (
+    DELAYED_CREDIT_SCHEDULE,
+    FULL_RETIREMENT_AGE_SCHEDULE,
+    poms_bend_point_table,
+    published_nawi,
+)
+
+# Resolve the checkout the loader will read and skip unless its parameter
+# tree exists. Checking only whether the variable is set is not enough:
+# another module in the same session can set it to an absent checkout
+# (test_gate2c_candidate1_reproduction.py does, at import).
+PE_US = Path(
+    os.environ.get("POPULACE_DYNAMICS_PE_US_DIR")
+    or "~/PolicyEngine/policyengine-us"
+).expanduser()
+pytestmark = pytest.mark.skipif(
+    not (PE_US / "policyengine_us" / "parameters" / "gov" / "ssa").is_dir(),
+    reason="no policyengine-us parameter tree at "
+    "POPULACE_DYNAMICS_PE_US_DIR or ~/PolicyEngine/policyengine-us",
+)
+
+
+@pytest.fixture(scope="module")
+def params():
+    return load_ssa_parameters()
+
+
+def test_policyengine_us_bundle_passes_the_statutory_rate_check(params):
+    rates = g.statutory_rates(params)
+    assert rates.worker_first == F(1, 180)
+    assert rates.spouse_first == F(1, 144)
+    assert rates.pe_us_revision == params.pe_us_revision != "unknown"
+
+
+def test_policyengine_us_nawi_reproduces_published_bend_points(params):
+    for year, (_, _, *family) in poms_bend_point_table().items():
+        assert g.family_maximum_bend_points(year, params) == tuple(family)
+
+
+def test_policyengine_us_nawi_matches_ssa_through_2024(params):
+    for year, value in published_nawi().items():
+        if 1977 <= year <= 2024:
+            assert params.nawi[year] == pytest.approx(value, abs=0.005)
+
+
+def test_policyengine_us_delayed_credit_schedule_is_the_statutes(params):
+    assert params.delayed_credit_by_birth_year == DELAYED_CREDIT_SCHEDULE
+
+
+def test_policyengine_us_full_retirement_ages_match_the_unit_bundle(params):
+    assert params.fra_months_by_birth_year == FULL_RETIREMENT_AGE_SCHEDULE
+
+
+def test_live_bundle_credits_the_whole_window_past_its_48_month_cap(params):
+    """G ignores the bundle's ``max_delayed_months`` (48; issue #494).
+
+    A 1935 birth (FRA 65) earns 60 months at 1/2 of 1 percent; a 1960
+    birth (FRA 67) earns at most 36.
+    """
+    assert params.max_delayed_months == 48
+    assert g.worker_age_adjusted(F(1000), 0, 60, 1935, params)[1] == F(1300)
+    assert g.delayed_credit_window_months(1960, params) == 36
+    with pytest.raises(g.InvalidFamilyInput):
+        g.worker_age_adjusted(F(1000), 0, 37, 1960, params)
+
+
+def test_worked_examples_hold_on_the_live_bundle(params):
+    record = g.WorkerRecord(g.FamilyKind.SURVIVOR, 2015, F(1200))
+    assert g.record_state(record, params).family_maximum == F("1975.60")
+    assert g.retirement_survivor_family_maximum(
+        F("2371.00"), 2026, params
+    ) == F("4444.60")
+    base, credited = g.worker_age_adjusted(F(1000), 0, 30, 1940, params)
+    assert credited == F(1175)
+    assert g.worker_age_adjusted(F("802.80"), 5, 0, None, params)[0] == F(
+        "780.50"
+    )
