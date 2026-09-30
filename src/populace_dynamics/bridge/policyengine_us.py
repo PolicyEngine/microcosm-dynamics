@@ -315,6 +315,8 @@ def _groups(value: Iterable[Iterable[str]], label: str) -> tuple:
     # ("a", "b"); a group of people must be a sequence of ids.
     if isinstance(value, str):
         raise TypeError(f"{label}: expected groups of ids, not {value!r}")
+    # Read the input once: a generator would be empty the second time.
+    value = tuple(value)
     for group in value:
         if isinstance(group, str):
             raise TypeError(

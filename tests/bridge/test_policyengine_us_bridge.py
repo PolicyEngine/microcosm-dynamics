@@ -224,6 +224,20 @@ def test__given_bare_string_group__then_household_is_refused(units):
         bridge.BridgeHousehold("h", "CA", people, units, good, good)
 
 
+def test__given_generators_as_groups__then_household_is_built():
+    people = (bridge.BridgePerson("a", 70), bridge.BridgePerson("b", 68))
+    household = bridge.BridgeHousehold(
+        "h",
+        "CA",
+        people,
+        (group for group in (("a", "b"),)),
+        (group for group in (("a",), ("b",))),
+        (group for group in (("a", "b"),)),
+    )
+    assert household.tax_units == (("a", "b"),)
+    assert household.spm_units == (("a",), ("b",))
+
+
 def test__given_unknown_state_or_duplicate_ids__then_household_is_refused():
     group = (("a", "b"),)
     with pytest.raises(ValueError, match="STATE_FIPS"):
