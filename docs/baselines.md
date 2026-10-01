@@ -391,7 +391,7 @@ would be a new run and would need its own registration on issue #42.
 | Other economic series | None beyond the COLA path. | Single-year Table V.B1 (historical 1960–2025, projected 2026–2100) supplies the CPI-W change after 2035. | CBO's February 2026 long-term economics: CPI-U growth and growth of real earnings per worker, 1996–2056. Later years need an extension rule. |
 | Claiming | The 2014 Supplement, rows through 2008. | The latest SSA awards distribution (Table 6.B5.1) the repository captures, with its last row reused for later years. | Same as `tr2026_intermediate`. |
 | Disability insurance | 2008 fit, held constant. | 2008 fit, held constant: a named gap. | 2008 fit, held constant: a named gap. |
-| Immigration | None (closed cohort). | None in a closed cohort. Table V.A2 publishes gross immigration. | None in a closed cohort. CBO publishes gross migration by age, sex, status and flow. |
+| Immigration | None (closed cohort). | None in a closed cohort. Single-year Table V.A2 publishes inflows, outflows and net change, for lawful permanent residents and for temporary or unlawfully present immigrants. | None in a closed cohort. CBO publishes gross migration by age, sex, status and flow. |
 
 : What each selectable baseline draws from its sources. "Published" marks a series printed in the source; "derived" marks one we compute from published values. {#tbl-selectable}
 
