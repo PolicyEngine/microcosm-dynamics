@@ -7,7 +7,7 @@
  "provenance": {
   "microcosm_dynamics": {
    "repository": "PolicyEngine/microcosm-dynamics",
-   "commit": "2718dda95e87561048ff929f05bfbcc5b5d221d3",
+   "commit": "4b6efb990e6315b6b4aec7197f1572320ca93bcf",
    "code_dirty": false,
    "script": "scripts/pe_us_population_invented.py",
    "modules": [
@@ -283,11 +283,11 @@
  },
  "method": {
   "source_references": {
-   "invented-only guard": "src/populace_dynamics/bridge/invented_population.py:296",
-   "cohort and careers": "src/populace_dynamics/bridge/invented_population.py:271",
-   "benefit carry and auxiliary mapping": "src/populace_dynamics/bridge/invented_population.py:384",
+   "invented-only guard": "src/populace_dynamics/bridge/invented_population.py:303; src/populace_dynamics/bridge/invented_population.py:360",
+   "cohort and careers": "src/populace_dynamics/bridge/invented_population.py:278",
+   "benefit carry and auxiliary mapping": "src/populace_dynamics/bridge/invented_population.py:439",
    "invented distributions and income conventions": "src/populace_dynamics/bridge/invented_population.py:140",
-   "family-to-household mapper": "src/populace_dynamics/bridge/invented_population.py:609",
+   "family-to-household mapper": "src/populace_dynamics/bridge/invented_population.py:728",
    "release pin and California override": "scripts/pe_us_minimum_benefit_sample_households.py:407",
    "dataset layout": "src/populace_dynamics/bridge/population.py:616; policyengine_core/simulations/simulation.py:405",
    "one simulation per scenario": "src/populace_dynamics/bridge/population.py:980",
@@ -4801,9 +4801,15 @@
     }
    },
    "checks": {
-    "social_security_equals_track_m": {
-     "households_checked": 300,
-     "equal": true
+    "social_security_equals_inputs": {
+     "default": {
+      "households_checked": 300,
+      "equal": true
+     },
+     "with_health": {
+      "households_checked": 300,
+      "equal": true
+     }
     },
     "households": {
      "default": {
@@ -4853,45 +4859,45 @@
     "households": 300,
     "people": 427,
     "track_m_and_population_seconds": {
-     "track_m_cohort_seconds": 0.25451670899929013,
-     "track_m_evaluate_seconds": 0.03158154200355057,
-     "benefits_seconds": 0.04860070800350513,
-     "population_seconds": 0.03818524999951478
+     "track_m_cohort_seconds": 2.22880641699885,
+     "track_m_evaluate_seconds": 0.1486651669983985,
+     "benefits_seconds": 0.2808369999984279,
+     "population_seconds": 0.3010944169946015
     },
-    "pe_wall_seconds": 47.511998916990706,
-    "pe_import_seconds": 7.6013727499957895,
+    "pe_wall_seconds": 784.9102020409919,
+    "pe_import_seconds": 151.93232541601174,
     "pe_simulations": {
      "default": {
       "current_law": {
-       "build_seconds": 0.05290962499566376,
-       "calculate_seconds": 6.445227332995273,
-       "total_seconds": 6.498136957990937,
-       "peak_rss_bytes_after": 2269478912
+       "build_seconds": 0.5342006659921026,
+       "calculate_seconds": 76.03287970900419,
+       "total_seconds": 76.5670803749963,
+       "peak_rss_bytes_after": 2079801344
       },
       "option_2": {
-       "build_seconds": 0.013758333996520378,
-       "calculate_seconds": 4.061475708003854,
-       "total_seconds": 4.075234042000375,
-       "peak_rss_bytes_after": 2512011264
+       "build_seconds": 0.17293179100670386,
+       "calculate_seconds": 56.92438370900345,
+       "total_seconds": 57.097315500010154,
+       "peak_rss_bytes_after": 2245279744
       }
      },
      "with_health": {
       "current_law": {
-       "build_seconds": 0.05046241699892562,
-       "calculate_seconds": 6.96314545799396,
-       "total_seconds": 7.013607874992886,
-       "peak_rss_bytes_after": 3369467904
+       "build_seconds": 0.712742083997,
+       "calculate_seconds": 118.90996579099738,
+       "total_seconds": 119.62270787499438,
+       "peak_rss_bytes_after": 3302801408
       },
       "option_2": {
-       "build_seconds": 0.014263124990975484,
-       "calculate_seconds": 4.064409875005367,
-       "total_seconds": 4.078672999996343,
-       "peak_rss_bytes_after": 3386130432
+       "build_seconds": 0.5241915420047008,
+       "calculate_seconds": 40.64857562498946,
+       "total_seconds": 41.17276716699416,
+       "peak_rss_bytes_after": 3321053184
       }
      }
     },
-    "peak_rss_bytes": 3420700672,
-    "peak_rss_gib": 3.1857757568359375,
+    "peak_rss_bytes": 3355885568,
+    "peak_rss_gib": 3.1254119873046875,
     "bounds": {
      "pe_wall_seconds": 1200.0,
      "peak_rss_bytes": 8589934592
@@ -10019,9 +10025,15 @@
     }
    },
    "checks": {
-    "social_security_equals_track_m": {
-     "households_checked": 3000,
-     "equal": true
+    "social_security_equals_inputs": {
+     "default": {
+      "households_checked": 3000,
+      "equal": true
+     },
+     "with_health": {
+      "households_checked": 3000,
+      "equal": true
+     }
     },
     "households": {
      "default": {
@@ -10261,45 +10273,45 @@
     "households": 3000,
     "people": 4305,
     "track_m_and_population_seconds": {
-     "track_m_cohort_seconds": 2.470852833997924,
-     "track_m_evaluate_seconds": 0.29534554200654384,
-     "benefits_seconds": 0.4273759159987094,
-     "population_seconds": 0.4290338749997318
+     "track_m_cohort_seconds": 21.008186957988073,
+     "track_m_evaluate_seconds": 2.6276980839902535,
+     "benefits_seconds": 3.1179543750040466,
+     "population_seconds": 4.401555707998341
     },
-    "pe_wall_seconds": 86.01548079200438,
-    "pe_import_seconds": 9.164651999992202,
+    "pe_wall_seconds": 492.7130971250008,
+    "pe_import_seconds": 51.040134500013664,
     "pe_simulations": {
      "default": {
       "current_law": {
-       "build_seconds": 0.055753332999302074,
-       "calculate_seconds": 8.888793999998597,
-       "total_seconds": 8.9445473329979,
-       "peak_rss_bytes_after": 4047650816
+       "build_seconds": 0.1733912500058068,
+       "calculate_seconds": 74.62036049999006,
+       "total_seconds": 74.79375174999586,
+       "peak_rss_bytes_after": 3860070400
       },
       "option_2": {
-       "build_seconds": 0.015913333001662977,
-       "calculate_seconds": 8.299386166996555,
-       "total_seconds": 8.315299499998218,
-       "peak_rss_bytes_after": 6061113344
+       "build_seconds": 0.02925283399235923,
+       "calculate_seconds": 27.23379450000357,
+       "total_seconds": 27.263047333995928,
+       "peak_rss_bytes_after": 5873319936
       }
      },
      "with_health": {
       "current_law": {
-       "build_seconds": 0.056172915996285155,
-       "calculate_seconds": 9.45183104199532,
-       "total_seconds": 9.508003957991605,
-       "peak_rss_bytes_after": 6923780096
+       "build_seconds": 1.0802143749897368,
+       "calculate_seconds": 88.13329916700604,
+       "total_seconds": 89.21351354199578,
+       "peak_rss_bytes_after": 6550142976
       },
       "option_2": {
-       "build_seconds": 0.015175791006186046,
-       "calculate_seconds": 6.285364374998608,
-       "total_seconds": 6.300540166004794,
-       "peak_rss_bytes_after": 7010861056
+       "build_seconds": 0.1797331250127172,
+       "calculate_seconds": 43.84415424999315,
+       "total_seconds": 44.02388737500587,
+       "peak_rss_bytes_after": 6920323072
       }
      }
     },
-    "peak_rss_bytes": 7042449408,
-    "peak_rss_gib": 6.5587921142578125,
+    "peak_rss_bytes": 6952648704,
+    "peak_rss_gib": 6.47515869140625,
     "bounds": {
      "pe_wall_seconds": 2400.0,
      "peak_rss_bytes": 12884901888
@@ -10315,7 +10327,7 @@
   "Two groups keep their invented 2022 amount, carried by the COLAs, in both scenarios, because Track M computes no benefit for them: unlinked auxiliaries, and people paid an own benefit whose records hold no observed covered earnings (the invented generator, like the PSID panel, has labor income for reference persons and spouses only). The reform cannot reach them here.",
   "The reform cuts every in-window PIA by the option's uniform cut unless the minimum is higher, so most in-window people lose against current-law benefits; the share taken back therefore mostly measures how much of a cut other programs and taxes cushion. The groupings split rises from falls.",
   "Each family unit is one household, SPM unit and family. The reference person and spouse form one marital unit and file one joint return; any other member is a single filer in a marital unit of their own, never a dependent. Medicare quarters of coverage are policyengine-us's default of 40 for everyone, since every person receives OASDI.",
-  "Default net income excludes health coverage. The with-health sensitivity counts Medicaid at the release's state spending over enrollment per enrollee (as for one household alone), not policyengine-us's dataset allocation of each state's calibrated spending across the simulated enrollees, which is meaningless for an invented population.",
+  "Default net income excludes health coverage. The with-health sensitivity counts Medicaid as policyengine-us values it for one household alone: the state's Medicaid spending over its enrollment (the release's calibration totals, calibration.gov.hhs.medicaid.totals), times the enrollee's SLCSP cost index over the average positive index of their household's members. The average falls back to one if no member has a positive index; an enrollee with a nonpositive index takes that average, making the index ratio one (medicaid_cost_if_enrolled.py:11-22, medicaid_slcsp_cost_index_filled.py:11-14, medicaid_slcsp_state_denominator.py:28-33). It is not policyengine-us's dataset allocation of each state's calibrated spending across the simulated enrollees, which is meaningless for an invented population.",
   "No behavioral, claiming or take-up response to the reform. No float32 trace guard runs over the population (the bridge traces one household at a time); leaf changes under $2 are counted instead.",
   "Where Social Security changes, a means-tested benefit, income tax or refundable credit that moves the same way is recorded, not refused: some are mechanisms (Alabama deducts federal income tax, so a lower federal tax raises Alabama's), and the JSON lists every case with its state.",
   "SNAP for October-December 2026 uses USDA's fiscal-2027 maximum allotment ($306 a month for one person in the contiguous states) and standard deduction ($217) as policyengine-us 2.18.0 encodes them (gov/usda/snap/max_allotment.yaml:33, income/deductions/standard.yaml:17). No state's standard utility allowance has a fiscal-2027 entry there (income/deductions/utility/standard/main.yaml has none dated 2026-10-01), so those months use each state's fiscal-2026 amount.",

@@ -12,11 +12,11 @@ Mechanism references below use repository-relative paths; `policyengine_us/` and
 
 | Mechanism | Source (file:line) |
 |---|---|
-| invented-only guard | `src/populace_dynamics/bridge/invented_population.py:296` |
-| cohort and careers | `src/populace_dynamics/bridge/invented_population.py:271` |
-| benefit carry and auxiliary mapping | `src/populace_dynamics/bridge/invented_population.py:384` |
+| invented-only guard | `src/populace_dynamics/bridge/invented_population.py:303; src/populace_dynamics/bridge/invented_population.py:360` |
+| cohort and careers | `src/populace_dynamics/bridge/invented_population.py:278` |
+| benefit carry and auxiliary mapping | `src/populace_dynamics/bridge/invented_population.py:439` |
 | invented distributions and income conventions | `src/populace_dynamics/bridge/invented_population.py:140` |
-| family-to-household mapper | `src/populace_dynamics/bridge/invented_population.py:609` |
+| family-to-household mapper | `src/populace_dynamics/bridge/invented_population.py:728` |
 | release pin and California override | `scripts/pe_us_minimum_benefit_sample_households.py:407` |
 | dataset layout | `src/populace_dynamics/bridge/population.py:616; policyengine_core/simulations/simulation.py:405` |
 | one simulation per scenario | `src/populace_dynamics/bridge/population.py:980` |
@@ -42,6 +42,8 @@ Track M (row MS0): 253 people have an own or linked worker record in the policy 
 | Net income, with health coverage | −4,175,757,172 |
 | Share of the Social Security change taken back | 1.7% † |
 
+† Social Security rises for some households and falls for others, so the share taken back is a ratio of net sums, not a share of either direction; the direction groups below split them.
+
 ### By level of government
 
 | Level | Baseline | Reform | Change | Share taken back |
@@ -49,9 +51,9 @@ Track M (row MS0): 253 people have an own or linked worker record in the policy 
 | Federal | 53,588,394,138 | 49,352,822,408 | −4,235,571,730 | 1.6% |
 | State | 26,764,882 | 28,888,908 | +2,124,026 | 0.0% |
 | Local | 0 | 0 | 0 | 0.0% |
-| Market income | 13,391,644,057 | 13,391,644,057 | 0 | 0.0% |
+| Market income (not a level of government) | 13,391,644,057 | 13,391,644,057 | 0 | 0.0% |
 
-Federal includes Social Security; its share taken back excludes it. Shares sum exactly to the total share.
+Federal includes Social Security; its share taken back excludes it. Shares sum exactly to the total share. Market income is not a level of government: it holds the leaves of `household_market_income` except the Alaska dividend, which the State of Alaska pays and which counts as state.
 
 ### By component
 
@@ -120,11 +122,11 @@ Federal, state and local are weighted total changes; the means are per weighted 
 | Social Security falls | 175 | −5,131 | −5,021 | −4,253,393,646 | +2,124,026 | 0 | 2.1% |
 | Social Security unchanged | 123 | 0 | 0 | 0 | 0 | 0 | n/a |
 
-Federal, state and local are weighted total changes; the means are per weighted household. † The group's Social Security rises for some households and falls for others, so its share taken back is a ratio of net sums, not a share of either direction.
+Federal, state and local are weighted total changes; the means are per weighted household.
 
 ### Medicaid, CHIP and Medicare Savings Programs: federal and state cost
 
-From policyengine-us 2.18.0's own cost-share variables, in the default simulations (Medicaid at the release's spending over enrollment per enrollee).
+From policyengine-us 2.18.0's own cost-share variables, in the default simulations. Medicaid is valued as for one household alone: the state's spending over its enrollment (the release's calibration totals), times the enrollee's cost index over their household's average (see the notes).
 
 | Program | Scenario | Total | Federal | State |
 |---|---|---:|---:|---:|
@@ -140,17 +142,17 @@ From policyengine-us 2.18.0's own cost-share variables, in the default simulatio
 
 ### Runtime and memory
 
-- Track M and the population: track m cohort 0.3 s, track m evaluate 0.0 s, benefits 0.0 s, population 0.0 s.
-- policyengine-us child: 48 s wall (import 8 s), peak resident memory 3.19 GiB; stated bounds: 1200 s and 8 GiB.
-- default, current_law: one simulation, built in 0.1 s, calculated in 6.4 s.
-- default, option_2: one simulation, built in 0.0 s, calculated in 4.1 s.
-- with_health, current_law: one simulation, built in 0.1 s, calculated in 7.0 s.
-- with_health, option_2: one simulation, built in 0.0 s, calculated in 4.1 s.
+- Track M and the population: track m cohort 2.2 s, track m evaluate 0.1 s, benefits 0.3 s, population 0.3 s.
+- policyengine-us child: 785 s wall (import 152 s), peak resident memory 3.13 GiB; stated bounds: 1200 s and 8 GiB.
+- default, current_law: one simulation, built in 0.5 s, calculated in 76.0 s.
+- default, option_2: one simulation, built in 0.2 s, calculated in 56.9 s.
+- with_health, current_law: one simulation, built in 0.7 s, calculated in 118.9 s.
+- with_health, option_2: one simulation, built in 0.5 s, calculated in 40.6 s.
 
 ### Checks
 
 - Every household's leaves sum exactly (in cents) to its net change; weighted, the leaves, categories and levels each sum exactly to the weighted net change, and each grouping's groups to the population's.
-- PolicyEngine-US's `social_security` equals the Track M benefits in every household and scenario.
+- PolicyEngine-US's `social_security` equals, in every household, scenario and variant, the household's sum of the Social Security entered: Track M's benefits, and the 2022 amounts carried forward for unlinked auxiliaries and own benefits with a zero computed current-law PIA.
 - Households whose Social Security does not change do not change at all (no result leaks between households).
 - Deciles equal policyengine-us's `household_income_decile` in all 300 households.
 - Means-tested benefits, income taxes or refundable credits moving the same way as Social Security: 1 household-category pairs (AL 1; recorded, not refused). Leaf changes under $2: 3.
@@ -168,6 +170,8 @@ Track M (row MS0): 2,523 people have an own or linked worker record in the polic
 | Net income, with health coverage | −41,449,530,119 |
 | Share of the Social Security change taken back | 2.8% † |
 
+† Social Security rises for some households and falls for others, so the share taken back is a ratio of net sums, not a share of either direction; the direction groups below split them.
+
 ### By level of government
 
 | Level | Baseline | Reform | Change | Share taken back |
@@ -175,9 +179,9 @@ Track M (row MS0): 2,523 people have an own or linked worker record in the polic
 | Federal | 536,597,152,880 | 494,263,183,121 | −42,333,969,759 | 2.6% |
 | State | 29,870,475 | 95,716,130 | +65,845,654 | 0.2% |
 | Local | 0 | 0 | 0 | 0.0% |
-| Market income | 157,901,637,314 | 157,901,637,314 | 0 | 0.0% |
+| Market income (not a level of government) | 157,901,637,314 | 157,901,637,314 | 0 | 0.0% |
 
-Federal includes Social Security; its share taken back excludes it. Shares sum exactly to the total share.
+Federal includes Social Security; its share taken back excludes it. Shares sum exactly to the total share. Market income is not a level of government: it holds the leaves of `household_market_income` except the Alaska dividend, which the State of Alaska pays and which counts as state.
 
 ### By component
 
@@ -259,11 +263,11 @@ Federal, state and local are weighted total changes; the means are per weighted 
 | Social Security falls | 1,698 | −5,050 | −4,906 | −42,372,459,119 | +65,847,036 | 0 | 2.8% |
 | Social Security unchanged | 1,292 | 0 | 0 | 0 | 0 | 0 | n/a |
 
-Federal, state and local are weighted total changes; the means are per weighted household. † The group's Social Security rises for some households and falls for others, so its share taken back is a ratio of net sums, not a share of either direction.
+Federal, state and local are weighted total changes; the means are per weighted household.
 
 ### Medicaid, CHIP and Medicare Savings Programs: federal and state cost
 
-From policyengine-us 2.18.0's own cost-share variables, in the default simulations (Medicaid at the release's spending over enrollment per enrollee).
+From policyengine-us 2.18.0's own cost-share variables, in the default simulations. Medicaid is valued as for one household alone: the state's spending over its enrollment (the release's calibration totals), times the enrollee's cost index over their household's average (see the notes).
 
 | Program | Scenario | Total | Federal | State |
 |---|---|---:|---:|---:|
@@ -279,17 +283,17 @@ From policyengine-us 2.18.0's own cost-share variables, in the default simulatio
 
 ### Runtime and memory
 
-- Track M and the population: track m cohort 2.5 s, track m evaluate 0.3 s, benefits 0.4 s, population 0.4 s.
-- policyengine-us child: 86 s wall (import 9 s), peak resident memory 6.56 GiB; stated bounds: 2400 s and 12 GiB.
-- default, current_law: one simulation, built in 0.1 s, calculated in 8.9 s.
-- default, option_2: one simulation, built in 0.0 s, calculated in 8.3 s.
-- with_health, current_law: one simulation, built in 0.1 s, calculated in 9.5 s.
-- with_health, option_2: one simulation, built in 0.0 s, calculated in 6.3 s.
+- Track M and the population: track m cohort 21.0 s, track m evaluate 2.6 s, benefits 3.1 s, population 4.4 s.
+- policyengine-us child: 493 s wall (import 51 s), peak resident memory 6.48 GiB; stated bounds: 2400 s and 12 GiB.
+- default, current_law: one simulation, built in 0.2 s, calculated in 74.6 s.
+- default, option_2: one simulation, built in 0.0 s, calculated in 27.2 s.
+- with_health, current_law: one simulation, built in 1.1 s, calculated in 88.1 s.
+- with_health, option_2: one simulation, built in 0.2 s, calculated in 43.8 s.
 
 ### Checks
 
 - Every household's leaves sum exactly (in cents) to its net change; weighted, the leaves, categories and levels each sum exactly to the weighted net change, and each grouping's groups to the population's.
-- PolicyEngine-US's `social_security` equals the Track M benefits in every household and scenario.
+- PolicyEngine-US's `social_security` equals, in every household, scenario and variant, the household's sum of the Social Security entered: Track M's benefits, and the 2022 amounts carried forward for unlinked auxiliaries and own benefits with a zero computed current-law PIA.
 - Households whose Social Security does not change do not change at all (no result leaks between households).
 - Deciles equal policyengine-us's `household_income_decile` in all 3,000 households.
 - Means-tested benefits, income taxes or refundable credits moving the same way as Social Security: 14 household-category pairs (AL 5, CO 4, MO 1, OK 1, OR 3; recorded, not refused). Leaf changes under $2: 30.
@@ -327,7 +331,7 @@ Flags set for every household: `has_heating_cooling_expense` = True, `takes_up_h
 - Two groups keep their invented 2022 amount, carried by the COLAs, in both scenarios, because Track M computes no benefit for them: unlinked auxiliaries, and people paid an own benefit whose records hold no observed covered earnings (the invented generator, like the PSID panel, has labor income for reference persons and spouses only). The reform cannot reach them here.
 - The reform cuts every in-window PIA by the option's uniform cut unless the minimum is higher, so most in-window people lose against current-law benefits; the share taken back therefore mostly measures how much of a cut other programs and taxes cushion. The groupings split rises from falls.
 - Each family unit is one household, SPM unit and family. The reference person and spouse form one marital unit and file one joint return; any other member is a single filer in a marital unit of their own, never a dependent. Medicare quarters of coverage are policyengine-us's default of 40 for everyone, since every person receives OASDI.
-- Default net income excludes health coverage. The with-health sensitivity counts Medicaid at the release's state spending over enrollment per enrollee (as for one household alone), not policyengine-us's dataset allocation of each state's calibrated spending across the simulated enrollees, which is meaningless for an invented population.
+- Default net income excludes health coverage. The with-health sensitivity counts Medicaid as policyengine-us values it for one household alone: the state's Medicaid spending over its enrollment (the release's calibration totals, calibration.gov.hhs.medicaid.totals), times the enrollee's SLCSP cost index over the average positive index of their household's members. The average falls back to one if no member has a positive index; an enrollee with a nonpositive index takes that average, making the index ratio one (medicaid_cost_if_enrolled.py:11-22, medicaid_slcsp_cost_index_filled.py:11-14, medicaid_slcsp_state_denominator.py:28-33). It is not policyengine-us's dataset allocation of each state's calibrated spending across the simulated enrollees, which is meaningless for an invented population.
 - No behavioral, claiming or take-up response to the reform. No float32 trace guard runs over the population (the bridge traces one household at a time); leaf changes under $2 are counted instead.
 - Where Social Security changes, a means-tested benefit, income tax or refundable credit that moves the same way is recorded, not refused: some are mechanisms (Alabama deducts federal income tax, so a lower federal tax raises Alabama's), and the JSON lists every case with its state.
 - SNAP for October-December 2026 uses USDA's fiscal-2027 maximum allotment ($306 a month for one person in the contiguous states) and standard deduction ($217) as policyengine-us 2.18.0 encodes them (gov/usda/snap/max_allotment.yaml:33, income/deductions/standard.yaml:17). No state's standard utility allowance has a fiscal-2027 entry there (income/deductions/utility/standard/main.yaml has none dated 2026-10-01), so those months use each state's fiscal-2026 amount.

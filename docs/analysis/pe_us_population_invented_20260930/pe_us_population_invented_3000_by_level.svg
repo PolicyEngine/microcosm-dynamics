@@ -6703,7 +6703,7 @@ z
     <use xlink:href="#DejaVuSans-51" transform="translate(8014.296875 0)"/>
     <use xlink:href="#DejaVuSans-11" transform="translate(8077.671875 0)"/>
    </g>
-   <!-- PolicyEngine-US 2.18.0 (PyPI), with California's published 2026 SSI payment standard; Microcosm Dynamics 2718dda95e. -->
+   <!-- PolicyEngine-US 2.18.0 (PyPI), with California's published 2026 SSI payment standard; Microcosm Dynamics 4b6efb990e. -->
    <g style="fill: #52514e" transform="translate(8.64 697.679531) scale(0.075 -0.075)">
     <use xlink:href="#DejaVuSans-33"/>
     <use xlink:href="#DejaVuSans-52" transform="translate(56.734375 0)"/>
@@ -6810,17 +6810,17 @@ z
     <use xlink:href="#DejaVuSans-46" transform="translate(5297.390625 0)"/>
     <use xlink:href="#DejaVuSans-56" transform="translate(5352.375 0)"/>
     <use xlink:href="#DejaVuSans-3" transform="translate(5404.46875 0)"/>
-    <use xlink:href="#DejaVuSans-15" transform="translate(5436.25 0)"/>
-    <use xlink:href="#DejaVuSans-1a" transform="translate(5499.875 0)"/>
-    <use xlink:href="#DejaVuSans-14" transform="translate(5563.5 0)"/>
-    <use xlink:href="#DejaVuSans-1b" transform="translate(5627.125 0)"/>
-    <use xlink:href="#DejaVuSans-47" transform="translate(5690.75 0)"/>
-    <use xlink:href="#DejaVuSans-47" transform="translate(5754.234375 0)"/>
-    <use xlink:href="#DejaVuSans-44" transform="translate(5817.71875 0)"/>
-    <use xlink:href="#DejaVuSans-1c" transform="translate(5879 0)"/>
-    <use xlink:href="#DejaVuSans-18" transform="translate(5942.625 0)"/>
-    <use xlink:href="#DejaVuSans-48" transform="translate(6006.25 0)"/>
-    <use xlink:href="#DejaVuSans-11" transform="translate(6067.78125 0)"/>
+    <use xlink:href="#DejaVuSans-17" transform="translate(5436.25 0)"/>
+    <use xlink:href="#DejaVuSans-45" transform="translate(5499.875 0)"/>
+    <use xlink:href="#DejaVuSans-19" transform="translate(5563.359375 0)"/>
+    <use xlink:href="#DejaVuSans-48" transform="translate(5626.984375 0)"/>
+    <use xlink:href="#DejaVuSans-49" transform="translate(5688.515625 0)"/>
+    <use xlink:href="#DejaVuSans-45" transform="translate(5723.71875 0)"/>
+    <use xlink:href="#DejaVuSans-1c" transform="translate(5787.203125 0)"/>
+    <use xlink:href="#DejaVuSans-1c" transform="translate(5850.828125 0)"/>
+    <use xlink:href="#DejaVuSans-13" transform="translate(5914.453125 0)"/>
+    <use xlink:href="#DejaVuSans-48" transform="translate(5978.078125 0)"/>
+    <use xlink:href="#DejaVuSans-11" transform="translate(6039.609375 0)"/>
    </g>
    <!-- Bars stack each series' mean change per weighted household (above zero, gains; below, losses). Tables: the Markdown file beside this chart. -->
    <g style="fill: #52514e" transform="translate(8.64 708.179531) scale(0.075 -0.075)">

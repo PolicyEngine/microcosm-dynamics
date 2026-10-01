@@ -41,9 +41,9 @@ POPULACE_DYNAMICS_PE_US_PYTHON="$HOME/.venvs/policyengine-us-2.18.0/bin/python" 
 ```
 
 The script records the code commit and whether `src/` or `scripts/` were
-dirty (`scripts/pe_us_population_invented.py:632-646`). Runtime and memory
+dirty (`scripts/pe_us_population_invented.py:634-648`). Runtime and memory
 are measurements; deterministic reproduction compares inputs and outcomes,
-not those measurements (`test_population_oracle.py:476-493`).
+not those measurements (`test_population_oracle.py:452-487`).
 
 ## Why invented data
 
@@ -67,8 +67,8 @@ before the cohort is used to compute or map benefits:
   `invented`, records whose source carries the PSID file-provenance key
   (`pipeline.PSID_FILES_SOURCE_KEY`), and records without the invented
   generator's label. Even an empty PSID file-provenance key is refused.
-  `evaluate_headline` calls it before `evaluate`
-  (`invented_population.py:303-325,413-419`).
+  `evaluate_headline` reaches this records check through the cohort guard
+  before `evaluate` (`invented_population.py:303-325,380,413-419`).
 - `invented_population.require_invented_cohort` applies the records'
   guard and also requires the cohort, the frames and their structural
   inputs (which hold the anchor) to carry the invented label and no PSID
@@ -145,8 +145,8 @@ a comparator value. The registered-run guards are untouched.
   unit; every other member is a marital unit and tax unit of their own
   (`invented_population.py:728-932`, `build_population`). Current family
   membership comes from the frames' anchor, which must contain exactly the
-  cohort's universe persons, each in the same family unit. An anchor member outside
-  that universe, or a missing or differently placed member, is refused
+  cohort's universe persons, each in the same family unit. An anchor member
+  outside that universe, or a missing or differently placed member, is refused
   because this path has no inputs for them. Medicare quarters of coverage
   stay at PolicyEngine-US's default
   of 40 (`variables/gov/hhs/medicare/eligibility/part_a/
@@ -214,7 +214,7 @@ California only (`ca_state_supplement.py:10`,
 `ca_wdp_ssi_ssp_income_eligible.py:23`), and
 `parameter_overrides` refuses any override outside its own states'
 `gov.states.<state>.` namespace
-(`scripts/pe_us_population_invented.py:141-165`). Reformed
+(`scripts/pe_us_population_invented.py:141-160`). Reformed
 `CountryTaxBenefitSystem` objects are constructed directly
 (`population.py:983-986`; the same constructor used by the installed
 `policyengine_us/spm.py:813-818`), without an extra simulation. The child
@@ -281,7 +281,7 @@ committed per-household results in integer cents. A second differential
 runs twelve invented multi-person households (couples filing jointly, other
 members filing alone, in six states chosen for their mechanisms) through the
 bridge one household at a time and through the population path together;
-they agree exactly (`tests/bridge/test_population_oracle.py:418-449`).
+they agree exactly (`tests/bridge/test_population_oracle.py:412-446`).
 The illustrative differential covers three household types in three states,
 nine households together (`test_population_oracle.py:181-232`). A third
 test runs the native Medicaid formulas and shows
@@ -291,7 +291,7 @@ whose Social Security does not change must not change any component
 (`household_checks`), which checks for leaks even when component changes
 cancel in net income
 (`scripts/pe_us_population_invented.py:263-297`,
-`tests/bridge/test_population.py:1452`).
+`tests/bridge/test_population.py:1456-1475`).
 
 ### 5. Decomposition and exact weights
 
@@ -384,14 +384,14 @@ Every output and chart carries "INVENTED DATA - NOT A COMPARISON, NOT THE
 US".
 
 Measured PolicyEngine-US child runtime includes imports, source checks and
-all four scenario/variant simulations (`population.py:1058-1084`;
-`scripts/pe_us_population_invented.py:469-507`). Bounds are set in
+all four scenario/variant simulations (`population.py:980-995,1196-1200,1258-1266`;
+`scripts/pe_us_population_invented.py:468-493`). Bounds are set in
 `scripts/pe_us_population_invented.py:124-127`.
 
 | INVENTED family units | People | Wall seconds | Peak RSS GiB | Bounds (seconds / GiB) |
 |---|---:|---:|---:|---|
-| 300 | 427 | 47.5 | 3.19 | 1200 / 8 |
-| 3,000 | 4,305 | 86.0 | 6.56 | 2400 / 12 |
+| 300 | 427 | 784.9 | 3.13 | 1200 / 8 |
+| 3,000 | 4,305 | 492.7 | 6.48 | 2400 / 12 |
 
 Both sizes satisfy their bounds. Regenerated outcomes are compared with
 the prior artifacts at both sizes; the live oracle repeats the 300-family
