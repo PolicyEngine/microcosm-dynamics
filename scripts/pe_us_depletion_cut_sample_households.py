@@ -1269,9 +1269,11 @@ def check_invariants(rows: list[dict[str, Any]]) -> list[str]:
                     categories[name]["change"] >= 0,
                     f"{where}: {name} fell with Social Security",
                 )
-            # An independent reading of the levels: the bridge's display
-            # categories (by position in the tree) must give each payer
-            # group the same change as the leaf-name mapping.
+            # A second reading of the levels: the bridge's display
+            # categories (by variable name for Social Security, SSI, SNAP
+            # and the income taxes; by position in the tree for state
+            # benefits, state refundable credits and health) must give each
+            # payer group the same change as LEAF_LEVELS.
             for group, names in GROUP_CATEGORIES.items():
                 _require(
                     levels[group]["change"]
@@ -1284,6 +1286,11 @@ def check_invariants(rows: list[dict[str, Any]]) -> list[str]:
                 sum(shares[group] for group in dc.OFFSET_GROUPS) == share,
                 f"{where}: the payer groups' shares do not sum to the "
                 "offset share",
+            )
+            _require(
+                variant != "default" or levels["joint"]["change"] == 0,
+                f"{where}: a joint program changes without health coverage "
+                "counted",
             )
             _require(
                 abs(d.reported_gap_cents) <= 1,
@@ -1314,8 +1321,10 @@ def check_invariants(rows: list[dict[str, Any]]) -> list[str]:
         "change, and the categories and the levels of government to the "
         "same total; each leaf is in exactly one level",
         "each payer group's change equals that of the bridge's display "
-        "categories holding its leaves (the leaf-name mapping checked "
-        "against the tree's positions)",
+        "categories holding its leaves (LEAF_LEVELS checked against "
+        "bridge.category_for, which places state benefits, state "
+        "refundable credits and health by their position in the tree)",
+        "without health coverage counted, no joint program changes",
         "where the Medicare Savings Program's value changes, its federal "
         "share is under 100 percent (QMB or SLMB, joint; not QI)",
         "the Social Security component equals minus the cut computed from "
@@ -1378,7 +1387,9 @@ def check_medicaid_memo(
 
 
 def health_explanations(
-    rows: list[dict[str, Any]], limits: dict[str, float]
+    rows: list[dict[str, Any]],
+    limits: dict[str, float],
+    ssi_medicaid: dict[str, bool],
 ) -> dict[str, str]:
     """Why net income with health coverage differs, per affected row.
 
@@ -1396,7 +1407,7 @@ def health_explanations(
         )
         if difference == 0:
             continue
-        out[_row_key(row)] = _health_pattern(row, limits)
+        out[_row_key(row)] = _health_pattern(row, limits, ssi_medicaid)
     return out
 
 
@@ -1412,7 +1423,11 @@ def _dollars(cents: int) -> str:
     return f"${_money(abs(cents))}"
 
 
-def _health_pattern(row: dict[str, Any], limits: dict[str, float]) -> str:
+def _health_pattern(
+    row: dict[str, Any],
+    limits: dict[str, float],
+    ssi_medicaid: dict[str, bool],
+) -> str:
     """The text for one row's health difference, or a refusal.
 
     Only the health leaves may differ between the two variants (every other
@@ -1421,8 +1436,11 @@ def _health_pattern(row: dict[str, Any], limits: dict[str, float]) -> str:
     Medicaid starting as countable income for the state's optional aged
     pathway falls to its limit (``is_optional_senior_or_disabled_income_
     eligible.py:22-32`` in policyengine-us 2.18.0: income at or under the
-    limit qualifies).  ``limits`` is each state's limit for one person as
-    a share of the poverty guideline.
+    limit qualifies), for a household of one (the memo values are
+    household sums, so a couple's would double the limit).  ``limits`` is
+    each state's limit for one person as a share of the poverty guideline;
+    ``ssi_medicaid`` says whether SSI receipt is itself a Medicaid pathway
+    in the state (:func:`ssi_medicaid_states`), named when SSI begins.
     """
 
     default = {
@@ -1457,20 +1475,22 @@ def _health_pattern(row: dict[str, Any], limits: dict[str, float]) -> str:
         and medicaid > 0
         and before[income] > before[limit]
         and after[income] <= after[limit]
+        and len(row["situations"]["baseline"]["people"]) == 1
     ):
-        people = len(row["situations"]["baseline"]["people"])
-        share = (
-            f" ({limits[row['state']]:.0%} of the poverty guideline)"
-            if people == 1
-            else ""
-        )
+        share = f" ({limits[row['state']]:.0%} of the poverty guideline)"
         margin = bridge.to_cents(after[limit]) - bridge.to_cents(after[income])
-        ssi_text = (
-            f" SSI goes from {_dollars(bridge.to_cents(before['ssi']))} to "
-            f"{_dollars(bridge.to_cents(after['ssi']))} a year."
-            if before["ssi"] != after["ssi"]
-            else ""
-        )
+        ssi_text = ""
+        if before["ssi"] != after["ssi"]:
+            ssi_text = (
+                f" SSI goes from {_dollars(bridge.to_cents(before['ssi']))} "
+                f"to {_dollars(bridge.to_cents(after['ssi']))} a year."
+            )
+            if before["ssi"] == 0 and ssi_medicaid[row["state"]]:
+                ssi_text += (
+                    f" In {name} SSI receipt is itself a Medicaid pathway "
+                    "in PolicyEngine-US (is_ssi_recipient_for_medicaid.py:"
+                    "20-34), so under this cut either route qualifies."
+                )
         msp_text = (
             " The Medicare Savings Program's value, counted only without "
             "full Medicaid (msp_cost.py:28), "
@@ -1496,6 +1516,40 @@ def _health_pattern(row: dict[str, Any], limits: dict[str, float]) -> str:
         f"{_row_key(row)}: net income with health coverage changes for a "
         "reason the text does not describe"
     )
+
+
+SSI_RECIPIENT_PARAMETERS = (
+    "gov/hhs/medicaid/eligibility/categories/ssi_recipient/"
+)
+
+
+def ssi_medicaid_states(parameter_root: Path) -> dict[str, bool]:
+    """Whether SSI receipt confers Medicaid in each state, per the release.
+
+    ``is_ssi_recipient_for_medicaid.py:20-34`` in policyengine-us 2.18.0:
+    an SSI recipient qualifies where ``ssi_recipient/is_covered`` is true
+    and the state is classified section 1634 or SSI criteria (the 209(b)
+    path is separate and not described here).
+    """
+
+    def value(name: str, state: str) -> bool:
+        return bool(
+            minimum._parameter(
+                parameter_root,
+                SSI_RECIPIENT_PARAMETERS + name,
+                state,
+                on=f"{PAYMENT_YEAR}-01-01",
+            )
+        )
+
+    return {
+        state: value("is_covered.yaml", state)
+        and (
+            value("classification/section_1634.yaml", state)
+            or value("classification/ssi_criteria.yaml", state)
+        )
+        for state in STATES
+    }
 
 
 def _row_key(row: dict[str, Any]) -> str:
@@ -1785,11 +1839,6 @@ def _summary_table(rows: list[dict[str, Any]], reform: str) -> list[str]:
             continue
         result = offsets(row["decomposition"])
         shares = result["offset_shares_by_level"]
-        _require(
-            shares["joint"] == 0,
-            f"{_row_key(row)}: a joint program changes without health "
-            "coverage counted",
-        )
         health = offsets(row["with_health"])
         lines.append(
             f"| {row['household']} | {row['state']} | "
@@ -2317,7 +2366,10 @@ def draw_summary_chart(
         handles=handles,
         loc="lower right",
         fontsize=8.5,
-        frameon=False,
+        frameon=True,
+        facecolor=SURFACE,
+        edgecolor=SURFACE,
+        framealpha=1.0,
     )
 
     def from_top(inches: float) -> float:
@@ -2418,6 +2470,27 @@ def _guard_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def release_caveats(parameter_root: Path) -> list[str]:
+    """#496's release caveats, with its SNAP sentence made directionless.
+
+    #496's second caveat describes losing California's supplement, its
+    reform's direction; here the supplement rises.  The fact it rests on
+    is kept: SNAP counts the supplement as unearned income.
+    """
+
+    release = minimum._release_caveats(parameter_root)
+    _require(
+        len(release) == 3 and "losing the supplement" in release[1],
+        "#496's release caveats are not the three this script adapts",
+    )
+    release[1] = (
+        f"In policyengine-us {minimum.PE_US_RELEASE['version']} SNAP counts "
+        "California's SSI supplement as unearned income "
+        "(gov/usda/snap/income/sources/unearned_spm_unit.yaml:13)."
+    )
+    return release
+
+
 def caveats(
     benefits: dict[str, Any],
     trustees: dict[str, Any],
@@ -2457,7 +2530,7 @@ def caveats(
         "default excludes health coverage (Medicaid at cost, Medicare "
         "Savings Programs); the with-health sensitivity and the memo lines "
         "report it, as in #496. " + valuation,
-        *minimum._release_caveats(parameter_root),
+        *release_caveats(parameter_root),
         *[
             f"{STATES[update['states'][0]]['name']}'s {update['year']} aged "
             "or disabled payment standard is set to the published "
@@ -2591,7 +2664,9 @@ def build(
         )
         for state in STATES
     }
-    explanations = health_explanations(rows, limits)
+    explanations = health_explanations(
+        rows, limits, ssi_medicaid_states(parameter_root)
+    )
     valuation = minimum.medicaid_valuation_text(per_enrollee)
     pe_provenance["parameter_updates"] = [dict(update) for update in updates]
     code_paths = ["src", "scripts", "tests"]

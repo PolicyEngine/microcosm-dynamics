@@ -50,6 +50,14 @@ from populace_dynamics.bridge import depletion_cut as dc  # noqa: E402
 VARIANTS = ("decomposition", "with_health_benefits_in_net_income")
 
 
+def _offsets(row, variant):
+    """Each variant's offsets: the default's sit beside its decomposition."""
+
+    if variant == "decomposition":
+        return row["offsets"]
+    return row[variant]["offsets"]
+
+
 @pytest.fixture(scope="module")
 def document():
     return json.loads((ANALYSIS / f"{STEM}.json").read_text())
@@ -242,7 +250,7 @@ def test__artifact__then_the_levels_partition_the_components(
 ):
     for row in document["results"]:
         d = row[variant]
-        offsets = d["offsets"]
+        offsets = _offsets(row, variant)
         recomputed = _levels_from(d["components"])
         recorded = {
             level: _cents(entry["change"])
@@ -262,7 +270,7 @@ def test__artifact__then_the_offset_share_is_one_less_net_over_cut(
     document, variant
 ):
     for row in document["results"]:
-        offsets = row[variant]["offsets"]
+        offsets = _offsets(row, variant)
         ss = _cents(offsets["social_security_change"])
         net = _cents(offsets["net_change"])
         assert ss < 0
@@ -458,7 +466,7 @@ def test__artifact__then_health_differences_are_each_explained(document):
 
 def test__artifact__then_the_summary_table_matches_the_json(document, report):
     for row in document["results"]:
-        offsets = row["decomposition"]["offsets"]
+        offsets = row["offsets"]
         share = Fraction(
             offsets["offset_share"]["numerator"],
             offsets["offset_share"]["denominator"],

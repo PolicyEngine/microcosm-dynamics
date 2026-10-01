@@ -614,7 +614,7 @@ LIMITS = {"FL": 0.88}
 
 
 def test__given_medicaid_starting__then_the_text_explains_it():
-    out = script.health_explanations([_health_row()], LIMITS)
+    out = script.health_explanations([_health_row()], LIMITS, {"FL": False})
     assert list(out) == ["A-FL-oasi"]
     text = out["A-FL-oasi"]
     assert "optional aged Medicaid pathway from $15,000 to $12,000" in text
@@ -636,11 +636,11 @@ def test__given_medicaid_starting__then_the_text_explains_it():
 )
 def test__given_another_health_difference__then_it_is_refused(row):
     with pytest.raises(script.InvariantError):
-        script.health_explanations([row()], LIMITS)
+        script.health_explanations([row()], LIMITS, {"FL": False})
 
 
 def test__given_no_health_difference__then_there_is_no_text():
-    assert script.health_explanations(_rows(), LIMITS) == {}
+    assert script.health_explanations(_rows(), LIMITS, {"FL": False}) == {}
 
 
 # ---------------------------------------------------------------------------
@@ -824,3 +824,90 @@ def test__given_invented_rows__then_every_artifact_is_written(tmp_path):
     for path in paths:
         data = path.read_bytes()
         assert script.ILLUSTRATIVE_LABEL.encode() in data, path
+
+
+# ---------------------------------------------------------------------------
+# Review round 2
+# ---------------------------------------------------------------------------
+def test__given_ssi_starting_where_it_confers_medicaid__then_both_routes():
+    out = script.health_explanations([_health_row()], LIMITS, {"FL": True})
+    text = out["A-FL-oasi"]
+    assert "SSI goes from $0 to $420 a year" in text
+    assert "SSI receipt is itself a Medicaid pathway" in text
+    assert "either route qualifies" in text
+
+
+def test__given_a_couple__then_the_health_text_is_refused():
+    """Memo values are household sums; a couple's limit would double."""
+
+    row = _health_row()
+    row["situations"]["baseline"]["people"] = {"worker": {}, "spouse": {}}
+    with pytest.raises(script.InvariantError, match="does not describe"):
+        script.health_explanations([row], LIMITS, {"FL": False})
+
+
+def test__given_docs_outside_the_repository__then_they_are_refused(
+    tmp_path,
+):
+    with pytest.raises(ValueError, match="outside the repository"):
+        script._docs_relative(tmp_path / "docs")
+    assert script._docs_relative(script.DEFAULT_DOCS_DIR) == (
+        "docs/analysis/pe_us_depletion_cut_20261001"
+    )
+
+
+def test__given_496s_release_caveats__then_the_snap_one_is_directionless(
+    monkeypatch,
+):
+    original = [
+        "SNAP fiscal 2027 amounts.",
+        "In policyengine-us 2.18.0 SNAP counts California's SSI supplement "
+        "as unearned income (...), so losing the supplement lowers the "
+        "income SNAP counts, and SNAP falls by less.",
+        "Take-up is the default.",
+    ]
+    monkeypatch.setattr(
+        script.minimum, "_release_caveats", lambda root: list(original)
+    )
+    out = script.release_caveats(Path("."))
+    assert out[0] == original[0] and out[2] == original[2]
+    assert "losing" not in out[1]
+    assert "unearned_spm_unit.yaml:13" in out[1]
+
+
+def test__given_other_release_caveats__then_adapting_them_is_refused(
+    monkeypatch,
+):
+    monkeypatch.setattr(
+        script.minimum, "_release_caveats", lambda root: ["a", "b", "c"]
+    )
+    with pytest.raises(script.InvariantError, match="release caveats"):
+        script.release_caveats(Path("."))
+
+
+def test__given_a_joint_change_without_health__then_it_is_refused():
+    rows = _rows()
+    for row in rows:
+        row["decomposition"] = row["with_health"] = _joint_decomposition()
+    with pytest.raises(script.InvariantError):
+        script.check_invariants(rows)
+
+
+def _joint_decomposition():
+    tree = bridge.ComponentTree(
+        "household_net_income",
+        {
+            **TREE.children,
+            "household_benefits": (
+                *TREE.children["household_benefits"],
+                ("medicaid_cost", 1),
+            ),
+        },
+    )
+    baseline = _values(8_916.0, 3_252.0)
+    reform = _values(6_948.0, 5_220.0)
+    for values, medicaid in ((baseline, 0.0), (reform, 100.0)):
+        values["medicaid_cost"] = medicaid
+        values["household_benefits"] += medicaid
+        values["household_net_income"] += medicaid
+    return bridge.decompose(tree, baseline, reform)

@@ -107,7 +107,7 @@ preparation allowed, housing-voucher take-up off.
   (`is_tax_unit_head.py:10-15`), here the spouse; the couple files jointly
   (`filing_status.py:26-39`). The couple's pension is $42,000 so that part
   of their benefits is taxable and they owe federal income tax before and
-  after the cut; at $31,200 they would owe none.
+  after the cut.
 
 ## Who pays the offset
 
@@ -141,7 +141,7 @@ groups:
   QMB and SLMB but at 100 percent for QI (`msp_federal_cost.py:35-47`). The
   script refuses a changed Medicare Savings Program value whose federal
   share is 100 percent, and the JSON's memo lines carry the federal
-  shares.
+  costs.
 
 The statute pages are the Legal Information Institute's, retrieved
 2026-10-01; the script checks each quoted phrase against the saved page and
@@ -149,10 +149,12 @@ its recorded SHA-256.
 
 The offset share is `1 - net change / Social Security change`; the payer
 groups' shares sum to it exactly (`fractions.Fraction`). The script also
-checks the leaf-name mapping against the bridge's own display categories,
-which follow each leaf's position in the tree: each group's change must
-equal its categories' (federal: SSI, SNAP, federal income tax and credits;
-state: state benefits, state income tax and credits; joint: health).
+checks `LEAF_LEVELS` against the bridge's own display categories
+(`category_for`, which names Social Security, SSI, SNAP and the income
+taxes and places state benefits, state refundable credits and health by
+their position in the tree): each group's change must equal its
+categories' (federal: SSI, SNAP, federal income tax and credits; state:
+state benefits, state income tax and credits; joint: health).
 
 ## Invariants
 
@@ -179,9 +181,13 @@ definition's sum, the float32 guard of #496, the payer groups against the
 display categories, no all-federal (QI) Medicare Savings Program value
 labelled joint, and Medicaid at cost a whole number of enrollees at the
 release's ratio. Every with-health difference must match the one described
-pattern: Medicaid starting as countable income for the state's optional
-aged pathway falls to its limit (`is_optional_senior_or_disabled_income_
-eligible.py:22-32`: income at or under the limit qualifies).
+pattern: Medicaid starting, for a household of one, as countable income
+for the state's optional aged pathway falls to its limit
+(`is_optional_senior_or_disabled_income_eligible.py:22-32`: income at or
+under the limit qualifies). Where SSI also begins in a state whose SSI
+recipients get Medicaid in PolicyEngine-US
+(`is_ssi_recipient_for_medicaid.py:20-34`; Montana is covered and
+classified section 1634), the text names that route too.
 
 Tests:
 
