@@ -2755,10 +2755,11 @@ def caveats(
         "also notes that the One Big Beautiful Bill Act 'adds a temporary "
         "additional standard deduction for taxpayers over age 65'; this "
         "analysis applies that deduction as 2026 law does.",
-        f"The cut is the share of scheduled benefits the Trustees project "
-        f"to be payable at depletion ({oasi['payable_percent']} percent "
-        f"for OASI in {oasi['depletion_year']}), applied to each OASI "
-        "benefit at once; every benefit in these households is a "
+        f"The cut reduces each OASI benefit to the share of scheduled "
+        f"benefits the Trustees project to be payable at depletion "
+        f"({oasi['payable_percent']} percent for OASI in "
+        f"{oasi['depletion_year']}), all at once; every benefit in these "
+        "households is a "
         "retired-worker or spouse's benefit. " + dc.ROUNDING_RULE,
         "Both cuts are first-year cuts: the Trustees project the payable "
         "share to decline 'gradually to 62 percent by 2100' for OASI and to "
