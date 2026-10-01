@@ -308,6 +308,15 @@ def test__given_bad_arrays__then_the_frame_is_refused():
         pop.PopulationFrame(**_fields(frame, person_ids=("a", "a", "c")))
     with pytest.raises(ValueError, match="unique"):
         pop.PopulationFrame(**_fields(frame, household_ids=("h", "h")))
+    with pytest.raises(ValueError, match="signed 64-bit"):
+        pop.PopulationFrame(
+            **_fields(
+                frame,
+                medicare_quarters_of_coverage=np.full(
+                    frame.n_people, np.iinfo(np.uint64).max, dtype=np.uint64
+                ),
+            )
+        )
 
 
 def test__given_bad_units__then_the_frame_is_refused():
@@ -399,6 +408,22 @@ def test__given_a_frame__then_its_arrays_are_read_only():
         frame.amounts["interest_income"][0] = 1.0
     with pytest.raises(ValueError):
         frame.units["household"][0] = 1
+    with pytest.raises(TypeError):
+        frame.amounts["interest_income"] = np.full(frame.n_people, -1.0)
+    with pytest.raises(TypeError):
+        frame.units["household"] = np.zeros(frame.n_people, dtype=np.int64)
+    for array in (
+        *frame.amounts.values(),
+        *frame.units.values(),
+        frame.age,
+        frame.medicare_quarters_of_coverage,
+        frame.weight,
+        frame.has_heating_cooling_expense,
+        frame.takes_up_housing_assistance,
+        frame.food_preparation_allowed,
+    ):
+        with pytest.raises(ValueError):
+            array.setflags(write=True)
 
 
 # ---------------------------------------------------------------------------
@@ -871,6 +896,19 @@ def test__records_not_marked_invented__then_they_are_never_evaluated(
             invented.evaluate_headline(records, parameters)
         with pytest.raises(ValueError):
             invented.require_invented(records)
+        with pytest.raises(ValueError):
+            invented.build_population(
+                dataclasses.replace(built[0], inputs=records),
+                built[2],
+                seed=11,
+            )
+
+
+def test__duplicate_benefit_person_ids__then_the_mapper_refuses_them(built):
+    cohort, _, table, _ = built
+    duplicate = pd.concat([table, table.iloc[:1]], ignore_index=True)
+    with pytest.raises(ValueError, match="person ids must be unique"):
+        invented.build_population(cohort, duplicate, seed=11)
 
 
 def test__invented_population__then_households_are_family_units(built):
@@ -1022,6 +1060,23 @@ def _single_leaf_run(ss_change, other_change):
 def test__household_checks__then_a_change_without_social_security_is_refused():
     with pytest.raises(AssertionError, match="although their Social"):
         script.household_checks(_single_leaf_run(0.0, 5.0), ("CA",))
+    baseline = _node_values(TREE, {name: 100.0 for name in LEAVES})
+    reform = _node_values(
+        TREE,
+        {
+            **{name: 100.0 for name in LEAVES},
+            "snap": 105.0,
+            "ssi": 95.0,
+        },
+    )
+    cancelling = pop.decompose_population(
+        TREE,
+        {key: np.array([value]) for key, value in baseline.items()},
+        {key: np.array([value]) for key, value in reform.items()},
+    )
+    assert cancelling.net_change_cents[0] == 0
+    with pytest.raises(AssertionError, match="although their Social"):
+        script.household_checks(cancelling, ("CA",))
     ok = script.household_checks(_single_leaf_run(-100.0, 30.0), ("CA",))
     assert ok["wrong_way_changes"] == 0
     wrong = script.household_checks(_single_leaf_run(-100.0, -30.0), ("AL",))

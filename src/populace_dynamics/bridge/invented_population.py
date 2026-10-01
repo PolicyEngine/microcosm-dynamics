@@ -631,6 +631,7 @@ def build_population(
     the bridge sets them.
     """
 
+    require_invented(invented.inputs)
     persons = invented.cohort.persons.copy()
     persons["person_id"] = persons["person_id"].astype(int)
     anchor_ids = set(invented.frames.anchor["person_id"].astype(int))
@@ -654,6 +655,8 @@ def build_population(
         }
     )
     by_person = benefit_table.set_index(benefit_table["person_id"].astype(int))
+    if by_person.index.has_duplicates:
+        raise ValueError("the benefit table person ids must be unique")
     if set(by_person.index) != set(members["person_id"]):
         raise ValueError("the benefit table is not the cohort's persons")
     families, incomes = invented_other_inputs(members, seed=seed)

@@ -97,6 +97,7 @@ import time
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from fractions import Fraction
+from types import MappingProxyType
 from typing import Any
 
 import numpy as np
@@ -155,8 +156,11 @@ class UnclassifiedChangeError(ValueError):
 # Validation helpers
 # ---------------------------------------------------------------------------
 def _frozen(array: np.ndarray) -> np.ndarray:
-    array.setflags(write=False)
-    return array
+    # An immutable buffer prevents setflags(write=True) from reopening an
+    # array after validation, unlike a read-only owning ndarray.
+    return np.frombuffer(array.tobytes(), dtype=array.dtype).reshape(
+        array.shape
+    )
 
 
 def _int_array(values: Any, label: str, length: int | None = None):
@@ -169,6 +173,12 @@ def _int_array(values: Any, label: str, length: int | None = None):
         raise TypeError(f"{label} must hold integers, not {array.dtype}")
     if length is not None and len(array) != length:
         raise ValueError(f"{label} has {len(array)} entries, not {length}")
+    if (
+        array.size
+        and array.dtype.kind == "u"
+        and array.max() > np.iinfo(np.int64).max
+    ):
+        raise ValueError(f"{label} must fit in signed 64-bit integers")
     return _frozen(array.astype(np.int64, copy=True))
 
 
@@ -258,10 +268,12 @@ class PopulationFrame:
         object.__setattr__(
             self,
             "amounts",
-            {
-                name: _amount_array(self.amounts[name], name, n)
-                for name in bridge.AMOUNT_FIELDS
-            },
+            MappingProxyType(
+                {
+                    name: _amount_array(self.amounts[name], name, n)
+                    for name in bridge.AMOUNT_FIELDS
+                }
+            ),
         )
         quarters = _int_array(
             self.medicare_quarters_of_coverage,
@@ -292,7 +304,7 @@ class PopulationFrame:
                     f"{np.flatnonzero(members == 0)[:10].tolist()} have none"
                 )
             counts[kind] = count
-        object.__setattr__(self, "units", units)
+        object.__setattr__(self, "units", MappingProxyType(units))
         if (np.bincount(units["marital_unit"]) > 2).any():
             raise ValueError("a marital unit has at most two people")
         for kind, containers in CONTAINING_ENTITIES.items():
@@ -801,9 +813,9 @@ _DTYPES: dict[str, str] = {
 #: parameter overrides) and scenario (a dataset), one ``Microsimulation``:
 #: the dataset is written in policyengine-core's ``TIME_PERIOD_ARRAYS``
 #: layout to a temporary file and passed as a ``Dataset`` instance.  Cases
-#: with the same overrides share one reformed tax-benefit system, built from
-#: a throwaway simulation and passed as ``tax_benefit_system`` with no
-#: ``reform``, as the bridge's runner does (``spm.py:830-834``), so no
+#: with the same overrides share one reformed ``CountryTaxBenefitSystem``
+#: (``system.py:104-159``), constructed directly and passed as
+#: ``tax_benefit_system`` with no ``reform`` (``spm.py:830-834``), so no
 #: simulation has a ``baseline`` branch.  With ``medicaid_valuation ==
 #: "household"`` the child pins ``medicaid_slcsp_state_average_cost_index``
 #: and ``medicaid_slcsp_state_denominator`` to each household's
@@ -833,7 +845,7 @@ import policyengine_us
 from policyengine_core.data import Dataset
 from policyengine_core.periods import period as make_period
 from policyengine_core.reforms import Reform
-from policyengine_us import Microsimulation
+from policyengine_us import CountryTaxBenefitSystem, Microsimulation
 from policyengine_us.system import system as default_system
 
 import_seconds = time.perf_counter() - _started
@@ -965,14 +977,13 @@ with tempfile.TemporaryDirectory() as directory:
         )
         for i, scenario in enumerate(job["scenarios"])
     }
-    first = datasets[job["scenarios"][0]["name"]]
     for variant in job["variants"]:
         overrides = variant["parameter_overrides"]
         key = json.dumps(overrides, sort_keys=True)
         if overrides and key not in systems:
-            systems[key] = Microsimulation(
-                dataset=first, reform=reform_for(overrides)
-            ).tax_benefit_system
+            systems[key] = CountryTaxBenefitSystem(
+                reform=reform_for(overrides)
+            )
         for scenario in job["scenarios"]:
             started = time.perf_counter()
             dataset = datasets[scenario["name"]]

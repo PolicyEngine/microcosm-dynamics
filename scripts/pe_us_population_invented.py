@@ -275,14 +275,15 @@ def household_checks(
 
     n = decomposition.n_households
     ss = np.zeros(n, dtype=np.int64)
+    any_change = np.zeros(n, dtype=bool)
     by_category: dict[str, np.ndarray] = {}
     for j, leaf in enumerate(decomposition.leaves):
         change = decomposition.change_cents(j)
+        any_change |= change != 0
         if leaf[0] == "social_security":
             ss += change
         by_category[leaf[3]] = by_category.get(leaf[3], 0) + change
-    net = decomposition.net_change_cents
-    leaked = np.flatnonzero((ss == 0) & (net != 0))
+    leaked = np.flatnonzero((ss == 0) & any_change)
     if len(leaked):
         raise AssertionError(
             f"households {leaked[:10].tolist()} change although their Social "
@@ -615,6 +616,8 @@ def build(
     document = {
         "schema_version": SCHEMA_VERSION,
         "label": LABEL,
+        "phase0": "permitted",
+        "phase0_reasoning": "option A: invented data only, per d479",
         "reform": (
             f"Exercise 4's headline option: option {option.number}, "
             f"{option.label.lower()} (Favreault, Mermin and Steuerle 2006), "
@@ -662,6 +665,52 @@ def build(
             },
         },
         "method": {
+            "source_references": {
+                "invented-only guard": (
+                    "src/populace_dynamics/bridge/invented_population.py:296"
+                ),
+                "cohort and careers": (
+                    "src/populace_dynamics/bridge/invented_population.py:271"
+                ),
+                "benefit carry and auxiliary mapping": (
+                    "src/populace_dynamics/bridge/invented_population.py:384"
+                ),
+                "invented distributions and income conventions": (
+                    "src/populace_dynamics/bridge/invented_population.py:140"
+                ),
+                "family-to-household mapper": (
+                    "src/populace_dynamics/bridge/invented_population.py:609"
+                ),
+                "release pin and California override": (
+                    "scripts/pe_us_minimum_benefit_sample_households.py:407"
+                ),
+                "dataset layout": (
+                    "src/populace_dynamics/bridge/population.py:616; "
+                    "policyengine_core/simulations/simulation.py:405"
+                ),
+                "one simulation per scenario": (
+                    "src/populace_dynamics/bridge/population.py:980"
+                ),
+                "household Medicaid valuation": (
+                    "src/populace_dynamics/bridge/population.py:919"
+                ),
+                "income deciles": (
+                    "policyengine_us/variables/household/income/household/"
+                    "household_income_decile.py:12"
+                ),
+                "exact weighted decomposition": (
+                    "src/populace_dynamics/bridge/population_summary.py:310"
+                ),
+                "take-back by government level": (
+                    "src/populace_dynamics/bridge/population_summary.py:122"
+                ),
+                "health federal/state cost split": (
+                    "src/populace_dynamics/bridge/population_summary.py:365"
+                ),
+                "uniform cut and minimum": (
+                    "src/populace_dynamics/min_benefit_track_m/rules.py:358"
+                ),
+            },
             "simulation": (
                 "One policyengine-us Microsimulation per scenario and "
                 "variant over the whole population, from a policyengine-core "
@@ -916,6 +965,25 @@ def markdown(document: dict[str, Any]) -> str:
         "Code: `scripts/pe_us_population_invented.py`, "
         "`src/populace_dynamics/bridge/population.py`. Design: "
         "`docs/design/pe_us_population_run.md`.",
+        "",
+        f"Phase 0: **{document['phase0']}** — "
+        f"{document['phase0_reasoning']}.",
+        "",
+        "Mechanism references below use repository-relative paths; "
+        "`policyengine_us/` and `policyengine_core/` paths refer to the "
+        "pinned interpreter's installed source.",
+        "",
+        "| Mechanism | Source (file:line) |",
+        "|---|---|",
+    ]
+    for mechanism, source in document["method"]["source_references"].items():
+        lines.append(f"| {mechanism} | `{source}` |")
+    lines += [
+        "",
+        "Dollar tables are rounded for display. JSON's `*_exact` fields "
+        "preserve rational dollar totals for the exact identities; "
+        "independently rounded entries can differ by cents when added "
+        "(`population_summary.py:61-73,264-302`).",
         "",
     ]
     for size, run in document["sizes"].items():
@@ -1398,9 +1466,18 @@ def draw_chart(
     )
     fig.subplots_adjust(left=0.08, right=0.99, top=0.8, bottom=0.12)
     paths = []
+    # The label also goes in each file's metadata, so a reader of the file
+    # (and the artifact test) finds it without rendering the chart.
+    described = {
+        "Title": LABEL,
+        "Description": f"{LABEL}: {size:,} invented family units",
+    }
     for suffix, kwargs in (
-        (".png", {"dpi": 200, "metadata": {"Software": None}}),
-        (".svg", {"metadata": {"Date": None, "Creator": None}}),
+        (".png", {"dpi": 200, "metadata": {"Software": None, **described}}),
+        (
+            ".svg",
+            {"metadata": {"Date": None, "Creator": None, **described}},
+        ),
     ):
         path = stem.with_suffix(suffix)
         fig.savefig(path, facecolor=SURFACE, **kwargs)

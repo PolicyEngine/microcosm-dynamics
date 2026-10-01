@@ -58,6 +58,19 @@ def dollars(value: Fraction) -> float:
     return round(float(value), 2)
 
 
+def _amount_fields(values: Mapping[str, Fraction]) -> dict[str, float | str]:
+    """Rounded display amounts and their exact rational dollar values."""
+
+    return {
+        field: exported
+        for name, value in values.items()
+        for field, exported in (
+            (name, dollars(value)),
+            (f"{name}_exact", str(value)),
+        )
+    }
+
+
 def _share(numerator: Fraction, denominator: Fraction) -> float | None:
     return None if denominator == 0 else float(numerator / denominator)
 
@@ -249,10 +262,13 @@ def _summary(
         "weighted_households": float(weighted_households),
         "weighted_people": float(person_weights.total_weight(mask)),
         "baseline_net_income": dollars(baseline),
+        "baseline_net_income_exact": str(baseline),
         "reform_net_income": dollars(reform),
+        "reform_net_income_exact": str(reform),
         "net_change": dollars(net),
         "net_change_exact": str(net),
         "social_security_change": dollars(ss),
+        "social_security_change_exact": str(ss),
         "mean_net_change_per_household": (
             dollars(net / weighted_households) if weighted_households else None
         ),
@@ -260,21 +276,22 @@ def _summary(
             dollars(ss / weighted_households) if weighted_households else None
         ),
         "by_level": {
-            level: {key: dollars(value) for key, value in entry.items()}
-            for level, entry in levels.items()
+            level: _amount_fields(entry) for level, entry in levels.items()
         },
         "by_category": {
-            name: {key: dollars(value) for key, value in entry.items()}
-            for name, entry in categories.items()
+            name: _amount_fields(entry) for name, entry in categories.items()
         },
         "by_leaf": [
             {
                 **{k: leaf[k] for k in ("variable", "path", "sign")},
                 "category": leaf["category"],
                 "level": leaf["level"],
-                "baseline": dollars(leaf["baseline"]),
-                "reform": dollars(leaf["reform"]),
-                "change": dollars(leaf["change"]),
+                **_amount_fields(
+                    {
+                        key: leaf[key]
+                        for key in ("baseline", "reform", "change")
+                    }
+                ),
             }
             for leaf in leaves
             if leaf["baseline"] or leaf["reform"]
