@@ -12,11 +12,11 @@ Mechanism references below use repository-relative paths; `policyengine_us/` and
 
 | Mechanism | Source (file:line) |
 |---|---|
-| invented-only guard | `src/populace_dynamics/bridge/invented_population.py:303; src/populace_dynamics/bridge/invented_population.py:360` |
-| cohort and careers | `src/populace_dynamics/bridge/invented_population.py:278` |
-| benefit carry and auxiliary mapping | `src/populace_dynamics/bridge/invented_population.py:439` |
-| invented distributions and income conventions | `src/populace_dynamics/bridge/invented_population.py:140` |
-| family-to-household mapper | `src/populace_dynamics/bridge/invented_population.py:728` |
+| invented-only guard | `src/populace_dynamics/bridge/invented_population.py:345; src/populace_dynamics/bridge/invented_population.py:491` |
+| cohort and careers | `src/populace_dynamics/bridge/invented_population.py:303` |
+| benefit carry and auxiliary mapping | `src/populace_dynamics/bridge/invented_population.py:602` |
+| invented distributions and income conventions | `src/populace_dynamics/bridge/invented_population.py:144` |
+| family-to-household mapper | `src/populace_dynamics/bridge/invented_population.py:888` |
 | release pin and California override | `scripts/pe_us_minimum_benefit_sample_households.py:407` |
 | dataset layout | `src/populace_dynamics/bridge/population.py:616; policyengine_core/simulations/simulation.py:405` |
 | one simulation per scenario | `src/populace_dynamics/bridge/population.py:980` |
@@ -142,12 +142,14 @@ From policyengine-us 2.18.0's own cost-share variables, in the default simulatio
 
 ### Runtime and memory
 
-- Track M and the population: track m cohort 2.2 s, track m evaluate 0.1 s, benefits 0.3 s, population 0.3 s.
-- policyengine-us child: 785 s wall (import 152 s), peak resident memory 3.13 GiB; stated bounds: 1200 s and 8 GiB.
-- default, current_law: one simulation, built in 0.5 s, calculated in 76.0 s.
-- default, option_2: one simulation, built in 0.2 s, calculated in 56.9 s.
-- with_health, current_law: one simulation, built in 0.7 s, calculated in 118.9 s.
-- with_health, option_2: one simulation, built in 0.5 s, calculated in 40.6 s.
+These are measurements of one run on one host, not outcomes: they move with the host's load. The live reproduction test compares the outcomes and checks above, not these figures (`tests/bridge/test_population_oracle.py`).
+
+- Track M and the population: track m cohort 1.3 s, track m evaluate 1.7 s, benefits 2.4 s, population 2.0 s.
+- policyengine-us child: 245 s wall (import 35 s), peak resident memory 2.92 GiB; stated bounds: 1200 s and 8 GiB.
+- default, current_law: one simulation, built in 0.5 s, calculated in 39.1 s.
+- default, option_2: one simulation, built in 0.1 s, calculated in 28.8 s.
+- with_health, current_law: one simulation, built in 0.3 s, calculated in 39.0 s.
+- with_health, option_2: one simulation, built in 0.1 s, calculated in 17.5 s.
 
 ### Checks
 
@@ -283,12 +285,14 @@ From policyengine-us 2.18.0's own cost-share variables, in the default simulatio
 
 ### Runtime and memory
 
-- Track M and the population: track m cohort 21.0 s, track m evaluate 2.6 s, benefits 3.1 s, population 4.4 s.
-- policyengine-us child: 493 s wall (import 51 s), peak resident memory 6.48 GiB; stated bounds: 2400 s and 12 GiB.
-- default, current_law: one simulation, built in 0.2 s, calculated in 74.6 s.
-- default, option_2: one simulation, built in 0.0 s, calculated in 27.2 s.
-- with_health, current_law: one simulation, built in 1.1 s, calculated in 88.1 s.
-- with_health, option_2: one simulation, built in 0.2 s, calculated in 43.8 s.
+These are measurements of one run on one host, not outcomes: they move with the host's load. The live reproduction test compares the outcomes and checks above, not these figures (`tests/bridge/test_population_oracle.py`).
+
+- Track M and the population: track m cohort 13.1 s, track m evaluate 15.6 s, benefits 17.9 s, population 16.1 s.
+- policyengine-us child: 325 s wall (import 29 s), peak resident memory 3.93 GiB; stated bounds: 2400 s and 12 GiB.
+- default, current_law: one simulation, built in 0.4 s, calculated in 48.1 s.
+- default, option_2: one simulation, built in 0.0 s, calculated in 36.1 s.
+- with_health, current_law: one simulation, built in 0.3 s, calculated in 68.5 s.
+- with_health, option_2: one simulation, built in 0.3 s, calculated in 47.2 s.
 
 ### Checks
 

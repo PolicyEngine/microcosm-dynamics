@@ -416,12 +416,15 @@ all four scenario/variant simulations (`population.py:980-995,1196-1200,1258-126
 
 | INVENTED family units | People | Wall seconds | Peak RSS GiB | Bounds (seconds / GiB) |
 |---|---:|---:|---:|---|
-| 300 | 427 | 784.9 | 3.13 | 1200 / 8 |
-| 3,000 | 4,305 | 492.7 | 6.48 | 2400 / 12 |
+| 300 | 427 | 244.8 | 2.92 | 1200 / 8 |
+| 3,000 | 4,305 | 325.3 | 3.93 | 2400 / 12 |
 
 Both sizes satisfy their bounds. Regenerated outcomes are compared with
 the prior artifacts at both sizes; the live oracle repeats the 300-family
-run's outcome and check fields. Timing and memory vary with host load.
+run's outcome and check fields. Timing and memory are measurements of
+one run on one host and vary widely between runs: the run committed
+with PR #498 measured 784.9 and 492.7 wall seconds for the same
+two populations and the same outcomes.
 
 ## Invariants
 
