@@ -10,6 +10,8 @@ import json
 import sys
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
@@ -59,6 +61,9 @@ def test_removal_and_codebook_check(tmp_path):
     ]
     assert not (root / review_root.CODEBOOK_DIR).exists()
     assert review_root.codebook_tables(root) == ["data/other_codebook.json"]
+    assert (
+        review_root.codebook_tables(root, ["data/other_codebook.json"]) == []
+    )
     (root / "data/other_codebook.json").unlink()
     assert review_root.codebook_tables(root) == []
     files = review_root.manifest(root)
@@ -147,3 +152,18 @@ def test_read_log_flags_paths_outside_the_root_or_denied(tmp_path):
         encoding="utf-8",
     )
     assert review_root.read_log(transcript, root, [])["review_counts"] is False
+
+
+def test_allow_list_is_limited_to_the_pull_request_s_files(
+    tmp_path, monkeypatch
+):
+    monkeypatch.setattr(
+        review_root, "changed_files", lambda base, head: {"scripts/mine.py"}
+    )
+    with pytest.raises(ValueError, match="needs --base"):
+        review_root.build("h", tmp_path / "r", [], {}, allowed=["x"])
+    with pytest.raises(ValueError, match="not changed by this pull request"):
+        review_root.build(
+            "h", tmp_path / "r", [], {}, allowed=["gates.yaml"], base="b"
+        )
+    assert not (tmp_path / "r").exists()

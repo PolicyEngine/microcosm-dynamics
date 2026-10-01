@@ -789,8 +789,11 @@ section 15.
   inventory flags when rerun at the PR head; and
   `data/external/psid_codebook_field_evidence/`, whose code maps carry
   frequency columns for B2's 2012 and 2014 labor-income variables. The
-  builder then refuses the root if any remaining file holds a code map
-  with frequencies for a 2013 or later interview wave.
+  builder also removes every other file that names both a code map and
+  frequencies, and refuses the root if one remains. A file this pull
+  request adds or changes may be kept by name when it only names the
+  tokens (the builder, its test and the reads record do); the root
+  record lists each one.
 - **Context copies.** Five named files are copied in, each hashed and
   scanned with the inventory's patterns: the Track B design, the d693
   `RECOMMENDATION.md`, PR #490's two review comments, and the d693 and

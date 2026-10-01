@@ -11,7 +11,11 @@ is not a git repository, and removes, whole:
   exposure inventory flags when rerun at that commit;
 - ``data/external/psid_codebook_field_evidence/``, whose code maps carry
   frequency columns for B2's 2012 and 2014 labor-income variables;
-- any other file that holds both a code map and frequencies.
+- any other file that holds both a code map and frequencies, unless it
+  is named with ``--allow``. An allowed file must be one this pull
+  request adds or changes (``git diff --name-only BASE HEAD``), and the
+  record lists it. The token test cannot tell a codebook table from code
+  or records that name the tokens, such as this script.
 
 It then copies in the named context files, refuses the root if a denied
 path or a code map with frequencies remains, and writes a manifest of
@@ -86,11 +90,13 @@ def remove_denied(root: Path, denied: Sequence[str]) -> list[str]:
     return sorted(removed)
 
 
-def codebook_tables(root: Path) -> list[str]:
+def codebook_tables(root: Path, allowed: Sequence[str] = ()) -> list[str]:
     """Files under ``root`` that hold a code map and frequencies."""
     hits: list[str] = []
     for path in sorted(root.rglob("*")):
         if not path.is_file() or CONTEXT_DIR in path.parts:
+            continue
+        if path.relative_to(root).as_posix() in allowed:
             continue
         try:
             text = path.read_text(encoding="utf-8")
@@ -109,12 +115,32 @@ def manifest(root: Path) -> dict[str, str]:
     }
 
 
+def changed_files(base: str, head: str) -> set[str]:
+    """Files the pull request adds or changes between ``base`` and ``head``."""
+    listed = subprocess.run(
+        ["git", "diff", "--name-only", base, head],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout
+    return {line for line in listed.splitlines() if line}
+
+
 def build(
     head: str,
     out: Path,
     inventories: Sequence[Path],
     context: Mapping[str, Path],
+    allowed: Sequence[str] = (),
+    base: str | None = None,
 ) -> dict[str, Any]:
+    if allowed:
+        if base is None:
+            raise ValueError("--allow needs --base")
+        outside = sorted(set(allowed) - changed_files(base, head))
+        if outside:
+            raise ValueError(f"not changed by this pull request: {outside}")
     out = out.resolve()
     if out.exists():
         raise FileExistsError(f"{out} exists")
@@ -134,7 +160,10 @@ def build(
         json.loads(path.read_text(encoding="utf-8")) for path in inventories
     )
     removed = remove_denied(out, denied)
-    tables = codebook_tables(out)
+    denied_set = set(denied)
+    if denied_set & set(allowed):
+        raise ValueError("an allowed file is on an exclusion list")
+    tables = codebook_tables(out, allowed)
     for relative in tables:
         (out / relative).unlink()
     context_dir = out / CONTEXT_DIR
@@ -145,7 +174,11 @@ def build(
         shutil.copyfile(source, target)
         copies[name] = {"source": str(source), "sha256": _sha256(target)}
     remaining = [p for p in denied if (out / p).exists()]
-    if remaining or (out / CODEBOOK_DIR).exists() or codebook_tables(out):
+    if (
+        remaining
+        or (out / CODEBOOK_DIR).exists()
+        or codebook_tables(out, allowed)
+    ):
         raise AssertionError("a denied path or codebook table remains")
     if (out / ".git").exists():
         raise AssertionError("the review root holds a git directory")
@@ -157,6 +190,8 @@ def build(
         "denied_paths": denied,
         "removed": removed,
         "removed_codebook_tables": tables,
+        "codebook_check_allowed": sorted(allowed),
+        "base": base,
         "context_copies": copies,
         "n_files": len(files),
         "manifest_sha256": hashlib.sha256(
@@ -252,6 +287,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     b.add_argument("--inventory", type=Path, action="append", required=True)
     b.add_argument("--context", action="append", default=[])
     b.add_argument("--record", type=Path, required=True)
+    b.add_argument("--allow", action="append", default=[])
+    b.add_argument("--base")
     r = commands.add_parser("readlog")
     r.add_argument("--transcript", type=Path, required=True)
     r.add_argument("--root", type=Path, required=True)
@@ -263,7 +300,14 @@ def main(argv: Sequence[str] | None = None) -> int:
         for item in args.context:
             name, _, source = item.partition("=")
             context[name] = Path(source)
-        record = build(args.head, args.out, args.inventory, context)
+        record = build(
+            args.head,
+            args.out,
+            args.inventory,
+            context,
+            allowed=args.allow,
+            base=args.base,
+        )
     else:
         denied = json.loads(args.root_record.read_text(encoding="utf-8"))[
             "denied_paths"
