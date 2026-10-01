@@ -130,6 +130,12 @@ FULL_REPORT_FILE = "tr2026.pdf"
 FULL_REPORT_TEXT_SHA256 = (
     "789faa11edff9427e625c092516cadd94ab4f03553da803ae9bd39f0ef6bc7c1"
 )
+#: Other Highlights phrases the caveats quote; each must be on the page.
+CONTEXT_QUOTES = (
+    "adds a temporary additional standard deduction for taxpayers over age "
+    "65",
+    "$58 billion from income taxation of Social Security benefits",
+)
 #: The primary reform's fund and the sensitivity's, by scenario name.
 REFORMS: dict[str, str] = {"oasi": "OASI", "oasdi": "OASDI"}
 PRIMARY = "oasi"
@@ -237,6 +243,8 @@ def trustees_citation(
             f"{fund}: Table II.A1 says {table[fund]}, the sentence "
             f"{quote.year} and {quote.percent} percent",
         )
+    for phrase in CONTEXT_QUOTES:
+        _require(phrase in text, f"{phrase!r} is not on the Highlights page")
     report = records[FULL_REPORT_FILE]
     full_report: dict[str, Any] = {
         "url": report["url"],
@@ -271,7 +279,10 @@ def trustees_citation(
         full_report["quotes_found_on_text_page"] = found
     return {
         "report": TRUSTEES_REPORT_TITLE,
-        "publisher": "Board of Trustees, Federal OASI and DI Trust Funds",
+        "publisher": (
+            "The Board of Trustees, Federal Old-Age and Survivors "
+            "Insurance and Federal Disability Insurance Trust Funds"
+        ),
         "assumptions": "intermediate",
         "section": "II.A Highlights",
         "highlights": {
@@ -289,6 +300,7 @@ def trustees_citation(
             for fund in quotes
         },
         "key_results_table": table,
+        "context_quotes": list(CONTEXT_QUOTES),
         "full_report": full_report,
         "primary": REFORMS[PRIMARY],
         "sensitivity": REFORMS["oasdi"],
@@ -2145,7 +2157,8 @@ def draw_summary_chart(
             f"{_cut_text(document, PRIMARY)} (OASI) cut, by who pays the "
             "offset. Households A-C are a low earner (A: no other income; "
             "B: a $4,800 pension; C: a $31,200 pension); D is a medium "
-            "earner with C's pension; E is that earner's one-earner couple.",
+            "earner with C's pension; E is that earner's one-earner couple, "
+            "with a $42,000 pension.",
             width=int(width * 13.4),
         ),
         ha="left",
@@ -2238,9 +2251,11 @@ def caveats(
         "rules are 2026's. By the depletion date some will have changed "
         "under current law: for example, the State cost share of SNAP "
         "allotments in 7 USC 2013(a)(2)(B) begins in fiscal year 2028 at "
-        "the earliest, after which states with higher payment error rates "
-        "pay part of SNAP. The Trustees Report also describes the senior "
-        "deduction of the One Big Beautiful Bill Act as temporary.",
+        "the earliest; from then a State whose payment error rate is 6 "
+        "percent or more pays 5 to 15 percent of the cost of SNAP "
+        "allotments. And the Trustees Report says the One Big Beautiful "
+        "Bill Act 'adds a temporary additional standard deduction for "
+        "taxpayers over age 65'.",
         f"The cut is the share of scheduled benefits the Trustees project "
         f"to be payable at depletion ({oasi['payable_percent']} percent "
         f"for OASI in {oasi['depletion_year']}), applied to every benefit "
