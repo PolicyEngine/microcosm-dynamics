@@ -5051,7 +5051,7 @@ z
     <use xlink:href="#DejaVuSans-57" transform="translate(7981.0625 0)"/>
     <use xlink:href="#DejaVuSans-56" transform="translate(8020.265625 0)"/>
    </g>
-   <!-- (https://www.ssa.gov/oact/TR/2026/II_A_highlights.html). PolicyEngine-US 2.18.0 (PyPI); Microcosm Dynamics bf7dec1c0f. -->
+   <!-- (https://www.ssa.gov/oact/TR/2026/II_A_highlights.html). PolicyEngine-US 2.18.0 (PyPI); Microcosm Dynamics d0c6933160. -->
    <g style="fill: #52514e" transform="translate(8.856 575.377734) scale(0.075 -0.075)">
     <defs>
      <path id="DejaVuSans-42" d="M 3263 -1063 
@@ -5169,17 +5169,17 @@ z
     <use xlink:href="#DejaVuSans-46" transform="translate(5354.40625 0)"/>
     <use xlink:href="#DejaVuSans-56" transform="translate(5409.390625 0)"/>
     <use xlink:href="#DejaVuSans-3" transform="translate(5461.484375 0)"/>
-    <use xlink:href="#DejaVuSans-45" transform="translate(5493.265625 0)"/>
-    <use xlink:href="#DejaVuSans-49" transform="translate(5556.75 0)"/>
-    <use xlink:href="#DejaVuSans-1a" transform="translate(5591.953125 0)"/>
-    <use xlink:href="#DejaVuSans-47" transform="translate(5655.578125 0)"/>
-    <use xlink:href="#DejaVuSans-48" transform="translate(5719.0625 0)"/>
-    <use xlink:href="#DejaVuSans-46" transform="translate(5780.59375 0)"/>
-    <use xlink:href="#DejaVuSans-14" transform="translate(5835.578125 0)"/>
-    <use xlink:href="#DejaVuSans-46" transform="translate(5899.203125 0)"/>
-    <use xlink:href="#DejaVuSans-13" transform="translate(5954.1875 0)"/>
-    <use xlink:href="#DejaVuSans-49" transform="translate(6017.8125 0)"/>
-    <use xlink:href="#DejaVuSans-11" transform="translate(6045.734375 0)"/>
+    <use xlink:href="#DejaVuSans-47" transform="translate(5493.265625 0)"/>
+    <use xlink:href="#DejaVuSans-13" transform="translate(5556.75 0)"/>
+    <use xlink:href="#DejaVuSans-46" transform="translate(5620.375 0)"/>
+    <use xlink:href="#DejaVuSans-19" transform="translate(5675.359375 0)"/>
+    <use xlink:href="#DejaVuSans-1c" transform="translate(5738.984375 0)"/>
+    <use xlink:href="#DejaVuSans-16" transform="translate(5802.609375 0)"/>
+    <use xlink:href="#DejaVuSans-16" transform="translate(5866.234375 0)"/>
+    <use xlink:href="#DejaVuSans-14" transform="translate(5929.859375 0)"/>
+    <use xlink:href="#DejaVuSans-19" transform="translate(5993.484375 0)"/>
+    <use xlink:href="#DejaVuSans-13" transform="translate(6057.109375 0)"/>
+    <use xlink:href="#DejaVuSans-11" transform="translate(6120.734375 0)"/>
    </g>
   </g>
  </g>

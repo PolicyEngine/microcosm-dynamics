@@ -69,7 +69,7 @@ The offset share is the share of the Social Security cut that other programs and
 | E | MT | −7,200 | −6,750 | 6% | 4% | 2% | −6,750 | 6% | 0% |
 | E | FL | −7,200 | −6,894 | 4% | 4% | 0% | −6,894 | 4% | 0% |
 
-‡ ENCODING ARTIFACT, NOT STATE POLICY: B-MT-oasdi. The with-health figure rests on PolicyEngine-US 2.18.0's encoding of a state Medicaid limit that the parameter's own cited source does not support; see Health coverage.
+‡ ENCODING ARTIFACT, NOT STATE POLICY: B-MT-oasdi. The with-health figure rests on PolicyEngine-US 2.18.0's encoding of a state Medicaid limit as a share of the poverty guideline, where the state's own rules set the SSI payment rate in dollars; see Health coverage.
 
 Medicaid is valued as policyengine-us 2.18.0 values it for one household: the state's 2023 Medicaid spending divided by its October 2024 Medicaid and CHIP enrollment, an average over enrollees of all ages, not uprated to 2026. It is not a same-year average and not specific to aged enrollees, so it could overstate or understate what covering an aged enrollee costs. It values coverage at average program cost; it is not a cash loss. The years do not match: with the release's 2023 enrollment entry, the spending's own year, it would be $7,034 in Florida (not $9,200), $8,751 in California (not $9,236) and $7,223 in Montana (not $10,799).
 
@@ -404,7 +404,7 @@ Every changed leaf of the 60 comparisons (five households in three states, two c
 
 ## Provenance
 
-- Microcosm Dynamics commit `bf7dec1c0f711e710a56f9c678f15a089d8ea5e1`
+- Microcosm Dynamics commit `d0c6933160625898126d04414b0b7713cf1da631`
 - PolicyEngine-US 2.18.0 from PyPI (wheel SHA-256 `28e32bc1339e8ffc1ed676ac1c9ecd468d191685608039643915f63e1357085f`), with policyengine-core 3.32.11. All 17,551 installed `policyengine_us/` files match the wheel's RECORD.
 - Parameter update (CA): `gov.states.ca.cdss.state_supplement.payment_standard.aged_or_disabled.amount.single` is set to 1,233.94 dollars a month for 2026, from California Department of Social Services, "SSI Total Monthly Payment Amounts 2026" (Rev. 1/26, effective 2026-01-01; https://cdss.ca.gov/Portals/13/SHD/ParaRegIndex/SSI%20Monthly%20Payment%20Amounts%202026.pdf, retrieved 2026-09-30), as in #496.
 

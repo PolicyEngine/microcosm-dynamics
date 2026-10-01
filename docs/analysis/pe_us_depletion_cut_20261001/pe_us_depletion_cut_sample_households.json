@@ -107,7 +107,7 @@
   "provenance": {
     "microcosm_dynamics": {
       "repository": "PolicyEngine/microcosm-dynamics",
-      "commit": "bf7dec1c0f711e710a56f9c678f15a089d8ea5e1",
+      "commit": "d0c6933160625898126d04414b0b7713cf1da631",
       "code_dirty": false,
       "script": "scripts/pe_us_depletion_cut_sample_households.py",
       "modules": [
