@@ -16,7 +16,7 @@
       "primary": false
     }
   },
-  "rounding_rule": "Each beneficiary's payable monthly benefit is the scheduled 2026 monthly benefit (a whole dollar) times the payable share, rounded down to a whole dollar, as 42 USC 415(g) rounds a monthly benefit computed under section 402 ('is not a multiple of $1 shall be rounded to the next lower multiple of $1'). The across-the-board cut is this analysis's assumption: the Trustees Report notes that at depletion 'scheduled benefits could not be paid in full on a timely basis' and that 'certain trust fund operations items are not well-defined under current law'. Applying the share to each whole-dollar monthly benefit and rounding the product down is also this analysis's choice: 415(g) itself rounds once, so a share applied to the unrounded amount could pay a dollar a month more. The monthly cut is the scheduled benefit less the payable benefit, so it is at least the cut share times the scheduled benefit and less than a dollar more; the annual amounts are twelve times the monthly ones.",
+  "rounding_rule": "Each beneficiary's payable monthly benefit is the scheduled 2026 monthly benefit (a whole dollar) times the payable share, rounded down to a whole dollar ('is not a multiple of $1 shall be rounded to the next lower multiple of $1', 42 USC 415(g)). 415(g) rounds a benefit computed under section 402 or 423 after the reductions of sections 403(a) and 424a, the deductions of 403(b) and the Medicare Part B premium deduction; this analysis floors the gross benefit, before any Part B deduction. The across-the-board cut is this analysis's assumption: the Trustees project the payable share, and note that once reserves are depleted 'scheduled benefits could not be paid in full on a timely basis, and actual amounts paid would be less than the scheduled benefits' (Table IV.A1 note, printed page 46), but the Highlights do not say how a shortfall would be spread across beneficiaries. Applying the share to each whole-dollar monthly benefit and rounding the product down is also this analysis's choice: 415(g) itself rounds once, so a share applied to the unrounded amount could pay a dollar a month more. The monthly cut is the scheduled benefit less the payable benefit, so it is at least the cut share times the scheduled benefit and less than a dollar more; the annual amounts are twelve times the monthly ones.",
   "trustees_report": {
     "report": "The 2026 Annual Report of the Board of Trustees of the Federal Old-Age and Survivors Insurance and Federal Disability Insurance Trust Funds",
     "publisher": "The Board of Trustees, Federal Old-Age and Survivors Insurance and Federal Disability Insurance Trust Funds",
@@ -64,7 +64,9 @@
     },
     "context_quotes": [
       "adds a temporary additional standard deduction for taxpayers over age 65",
-      "$58 billion from income taxation of Social Security benefits"
+      "$58 billion from income taxation of Social Security benefits",
+      "This percentage declines gradually to 62 percent by 2100.",
+      "This percentage declines gradually to 65 percent by 2100."
     ],
     "full_report": {
       "url": "https://www.ssa.gov/oact/TR/2026/tr2026.pdf",
@@ -79,20 +81,33 @@
         "OASDI": 12
       },
       "text_pages": 274,
-      "other_phrases_found": [
-        "scheduled benefits could not be paid in full on a timely basis",
-        "certain trust fund operations items are not well-defined under current law",
-        "Retired workers, their families, and survivors of deceased workers receive monthly benefits under the Old-Age and Survivors Insurance (OASI) program"
-      ]
+      "quotes_found_on_printed_page": {
+        "OASI": 5,
+        "OASDI": 5
+      },
+      "other_phrases_found": {
+        "scheduled benefits could not be paid in full on a timely basis, and actual amounts paid would be less than the scheduled benefits": {
+          "text_page": 53,
+          "printed_page": 46
+        },
+        "Retired workers, their families, and survivors of deceased workers receive monthly benefits under the Old-Age and Survivors Insurance (OASI) program": {
+          "text_page": 8,
+          "printed_page": 1
+        },
+        "implicitly assumes that the law will have been changed to permit the transfer of funds between OASI and DI as needed": {
+          "text_page": 35,
+          "printed_page": 28
+        }
+      }
     },
     "primary": "OASI",
     "sensitivity": "OASDI",
-    "fund_choice": "'Retired workers, their families, and survivors of deceased workers receive monthly benefits under the Old-Age and Survivors Insurance (OASI) program' (the report's introduction), so the primary reform pays each benefit at the OASI payable share. The share for the OASI and DI funds on a combined basis (OASDI) is the sensitivity."
+    "fund_choice": "'Retired workers, their families, and survivors of deceased workers receive monthly benefits under the Old-Age and Survivors Insurance (OASI) program' (the report's introduction, printed page 1; Table III.A5, printed page 40, lists retired workers and spouses under OASI benefit payments), so the primary reform pays each benefit at the OASI payable share. The share for the OASI and DI funds on a combined basis (OASDI) is the sensitivity; the report notes that full payment until 2034 'implicitly assumes that the law will have been changed to permit the transfer of funds between OASI and DI as needed' (printed page 28). Both shares are for the first year of depletion: the payable share 'declines gradually to 62 percent by 2100' for OASI and to 65 percent for OASDI."
   },
   "provenance": {
     "microcosm_dynamics": {
       "repository": "PolicyEngine/microcosm-dynamics",
-      "commit": "27c98675a0564b75b02ecbd97124ca2a4d50de28",
+      "commit": "bf7dec1c0f711e710a56f9c678f15a089d8ea5e1",
       "code_dirty": false,
       "script": "scripts/pe_us_depletion_cut_sample_households.py",
       "modules": [
@@ -264,7 +279,7 @@
     "pe_us_runs": {
       "cases": 90,
       "traced_cases": 90,
-      "run_job_sha256": "dc859b57991e627e175882aa26ac20583c7e9d0aff33723e644dbd0fb4c7ffe4",
+      "run_job_sha256": "2d6faa7d888a7cf3a286213030d54b0c412dda85b9f52d247438b3f1283c2425",
       "trace_job_sha256": "fca187dfc542093f0dea931ec6a1ecd64c764cb3fe258d2b7a9cc9612e79471a",
       "reused_raw_outputs": false
     }
@@ -666,7 +681,7 @@
     {
       "key": "E",
       "label": "Household E",
-      "description": "The same medium earner, married to a spouse a year older with no covered earnings who receives a spouse's benefit from 2020, after full retirement age; the couple has a $42,000-a-year ($3,500-a-month) private pension",
+      "description": "The same medium earner, married to a spouse a year older with no covered earnings who receives a spouse's benefit from 2020, after full retirement age; the worker has a $42,000-a-year ($3,500-a-month) private pension, entered on the worker",
       "taxable_private_pension_income": 42000.0,
       "purpose": "A married couple filing jointly: the worker's and the spouse's benefits are each cut, and part of them is taxable before and after the cut",
       "worker": "medium_earner",
@@ -734,7 +749,7 @@
     },
     "ca_state_supplement": {
       "level": "state",
-      "basis": "California's SSI state supplementary payment. 42 USC 1382e(a) describes a supplement as 'cash payments which are made by a State' 'in supplementation of such benefits', and where the Commissioner makes the payments on a State's behalf the State 'shall ... pay to the Commissioner of Social Security an amount equal to the expenditures made by the Commissioner of Social Security as such supplementary payments' (1382e(d)(1)). PolicyEngine-US lists it among 'benefits paid by state agencies' (parameters/gov/household/household_state_benefits.yaml:1,42)"
+      "basis": "California's SSI state supplementary payment. 42 USC 1382e(a) describes a supplement as 'cash payments which are made by a State' 'in supplementation of such benefits', and where the Commissioner makes the payments on a State's behalf the State 'shall ... pay to the Commissioner of Social Security an amount equal to the expenditures made by the Commissioner of Social Security as such supplementary payments' (1382e(d)(1)). PolicyEngine-US lists it among 'benefits paid by state agencies' (parameters/gov/household/household_state_benefits.yaml:1, and :339 in the 2026 list)"
     },
     "state_income_tax_before_refundable_credits": {
       "level": "state",
@@ -1946,7 +1961,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 4618.23974609375,
           "msp_federal_cost": 0.0,
-          "ssi": 3252.0
+          "ssi": 3252.0,
+          "ssi_countable_income": 8676.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         },
         "reform": {
           "medicaid_cost": 9236.4794921875,
@@ -1970,7 +1988,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 4618.23974609375,
           "msp_federal_cost": 0.0,
-          "ssi": 5220.0
+          "ssi": 5220.0,
+          "ssi_countable_income": 6708.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "memo_with_health": {
@@ -1996,7 +2017,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 4618.23974609375,
           "msp_federal_cost": 0.0,
-          "ssi": 3252.0
+          "ssi": 3252.0,
+          "ssi_countable_income": 8676.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         },
         "reform": {
           "medicaid_cost": 9236.4794921875,
@@ -2020,7 +2044,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 4618.23974609375,
           "msp_federal_cost": 0.0,
-          "ssi": 5220.0
+          "ssi": 5220.0,
+          "ssi_countable_income": 6708.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "float32_guard": {
@@ -2718,7 +2745,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 4618.23974609375,
           "msp_federal_cost": 0.0,
-          "ssi": 3252.0
+          "ssi": 3252.0,
+          "ssi_countable_income": 8676.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         },
         "reform": {
           "medicaid_cost": 9236.4794921875,
@@ -2742,7 +2772,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 4618.23974609375,
           "msp_federal_cost": 0.0,
-          "ssi": 4776.0
+          "ssi": 4776.0,
+          "ssi_countable_income": 7152.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "memo_with_health": {
@@ -2768,7 +2801,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 4618.23974609375,
           "msp_federal_cost": 0.0,
-          "ssi": 3252.0
+          "ssi": 3252.0,
+          "ssi_countable_income": 8676.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         },
         "reform": {
           "medicaid_cost": 9236.4794921875,
@@ -2792,7 +2828,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 4618.23974609375,
           "msp_federal_cost": 0.0,
-          "ssi": 4776.0
+          "ssi": 4776.0,
+          "ssi_countable_income": 7152.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "float32_guard": {
@@ -3461,7 +3500,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 6638.2861328125,
           "msp_federal_cost": 0.0,
-          "ssi": 3252.0
+          "ssi": 3252.0,
+          "ssi_countable_income": 8676.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         },
         "reform": {
           "medicaid_cost": 10799.228515625,
@@ -3485,7 +3527,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 6638.2861328125,
           "msp_federal_cost": 0.0,
-          "ssi": 5220.0
+          "ssi": 5220.0,
+          "ssi_countable_income": 6708.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "memo_with_health": {
@@ -3511,7 +3556,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 6638.2861328125,
           "msp_federal_cost": 0.0,
-          "ssi": 3252.0
+          "ssi": 3252.0,
+          "ssi_countable_income": 8676.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         },
         "reform": {
           "medicaid_cost": 10799.228515625,
@@ -3535,7 +3583,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 6638.2861328125,
           "msp_federal_cost": 0.0,
-          "ssi": 5220.0
+          "ssi": 5220.0,
+          "ssi_countable_income": 6708.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "float32_guard": {
@@ -4204,7 +4255,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 6638.2861328125,
           "msp_federal_cost": 0.0,
-          "ssi": 3252.0
+          "ssi": 3252.0,
+          "ssi_countable_income": 8676.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         },
         "reform": {
           "medicaid_cost": 10799.228515625,
@@ -4228,7 +4282,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 6638.2861328125,
           "msp_federal_cost": 0.0,
-          "ssi": 4776.0
+          "ssi": 4776.0,
+          "ssi_countable_income": 7152.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "memo_with_health": {
@@ -4254,7 +4311,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 6638.2861328125,
           "msp_federal_cost": 0.0,
-          "ssi": 3252.0
+          "ssi": 3252.0,
+          "ssi_countable_income": 8676.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         },
         "reform": {
           "medicaid_cost": 10799.228515625,
@@ -4278,7 +4338,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 6638.2861328125,
           "msp_federal_cost": 0.0,
-          "ssi": 4776.0
+          "ssi": 4776.0,
+          "ssi_countable_income": 7152.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "float32_guard": {
@@ -4921,7 +4984,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 5264.37646484375,
           "msp_federal_cost": 0.0,
-          "ssi": 3252.0
+          "ssi": 3252.0,
+          "ssi_countable_income": 8676.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         },
         "reform": {
           "medicaid_cost": 9200.23828125,
@@ -4945,7 +5011,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 5264.37646484375,
           "msp_federal_cost": 0.0,
-          "ssi": 5220.0
+          "ssi": 5220.0,
+          "ssi_countable_income": 6708.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "memo_with_health": {
@@ -4971,7 +5040,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 5264.37646484375,
           "msp_federal_cost": 0.0,
-          "ssi": 3252.0
+          "ssi": 3252.0,
+          "ssi_countable_income": 8676.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         },
         "reform": {
           "medicaid_cost": 9200.23828125,
@@ -4995,7 +5067,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 5264.37646484375,
           "msp_federal_cost": 0.0,
-          "ssi": 5220.0
+          "ssi": 5220.0,
+          "ssi_countable_income": 6708.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "float32_guard": {
@@ -5638,7 +5713,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 5264.37646484375,
           "msp_federal_cost": 0.0,
-          "ssi": 3252.0
+          "ssi": 3252.0,
+          "ssi_countable_income": 8676.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         },
         "reform": {
           "medicaid_cost": 9200.23828125,
@@ -5662,7 +5740,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 5264.37646484375,
           "msp_federal_cost": 0.0,
-          "ssi": 4776.0
+          "ssi": 4776.0,
+          "ssi_countable_income": 7152.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "memo_with_health": {
@@ -5688,7 +5769,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 5264.37646484375,
           "msp_federal_cost": 0.0,
-          "ssi": 3252.0
+          "ssi": 3252.0,
+          "ssi_countable_income": 8676.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         },
         "reform": {
           "medicaid_cost": 9200.23828125,
@@ -5712,7 +5796,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 5264.37646484375,
           "msp_federal_cost": 0.0,
-          "ssi": 4776.0
+          "ssi": 4776.0,
+          "ssi_countable_income": 7152.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "float32_guard": {
@@ -6434,7 +6521,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 4618.23974609375,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 13476.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         },
         "reform": {
           "medicaid_cost": 9236.4794921875,
@@ -6458,7 +6548,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 4618.23974609375,
           "msp_federal_cost": 0.0,
-          "ssi": 420.0
+          "ssi": 420.0,
+          "ssi_countable_income": 11508.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "memo_with_health": {
@@ -6484,7 +6577,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 4618.23974609375,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 13476.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         },
         "reform": {
           "medicaid_cost": 9236.4794921875,
@@ -6508,7 +6604,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 4618.23974609375,
           "msp_federal_cost": 0.0,
-          "ssi": 420.0
+          "ssi": 420.0,
+          "ssi_countable_income": 11508.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "float32_guard": {
@@ -7208,7 +7307,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 4618.23974609375,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 13476.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         },
         "reform": {
           "medicaid_cost": 9236.4794921875,
@@ -7232,7 +7334,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 4618.23974609375,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 11952.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "memo_with_health": {
@@ -7258,7 +7363,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 4618.23974609375,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 13476.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         },
         "reform": {
           "medicaid_cost": 9236.4794921875,
@@ -7282,7 +7390,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 4618.23974609375,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 11952.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "float32_guard": {
@@ -7988,7 +8099,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 3279.3017578125,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 13476.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 10799.228515625,
@@ -8012,7 +8126,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 6638.2861328125,
           "msp_federal_cost": 0.0,
-          "ssi": 420.0
+          "ssi": 420.0,
+          "ssi_countable_income": 11508.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "memo_with_health": {
@@ -8038,7 +8155,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 3279.3017578125,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 13476.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 10799.228515625,
@@ -8062,7 +8182,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 6638.2861328125,
           "msp_federal_cost": 0.0,
-          "ssi": 420.0
+          "ssi": 420.0,
+          "ssi_countable_income": 11508.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "float32_guard": {
@@ -8746,7 +8869,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 3279.3017578125,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 13476.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 10799.228515625,
@@ -8770,7 +8896,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 6638.2861328125,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 11952.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "memo_with_health": {
@@ -8796,7 +8925,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 3279.3017578125,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 13476.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 10799.228515625,
@@ -8820,7 +8952,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 6638.2861328125,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 11952.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "float32_guard": {
@@ -9487,7 +9622,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 5264.37646484375,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 13476.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         },
         "reform": {
           "medicaid_cost": 9200.23828125,
@@ -9511,7 +9649,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 5264.37646484375,
           "msp_federal_cost": 0.0,
-          "ssi": 420.0
+          "ssi": 420.0,
+          "ssi_countable_income": 11508.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "memo_with_health": {
@@ -9537,7 +9678,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 5264.37646484375,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 13476.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         },
         "reform": {
           "medicaid_cost": 9200.23828125,
@@ -9561,7 +9705,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 5264.37646484375,
           "msp_federal_cost": 0.0,
-          "ssi": 420.0
+          "ssi": 420.0,
+          "ssi_countable_income": 11508.0,
+          "is_ssi_recipient_for_medicaid": 1.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "float32_guard": {
@@ -10206,7 +10353,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 5264.37646484375,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 13476.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         },
         "reform": {
           "medicaid_cost": 9200.23828125,
@@ -10230,7 +10380,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 5264.37646484375,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 11952.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "memo_with_health": {
@@ -10256,7 +10409,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 5264.37646484375,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 13476.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         },
         "reform": {
           "medicaid_cost": 9200.23828125,
@@ -10280,7 +10436,10 @@
           "taxable_social_security": 0.0,
           "medicaid_federal_cost": 5264.37646484375,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 11952.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 1.0
         }
       },
       "float32_guard": {
@@ -10941,7 +11100,10 @@
           "taxable_social_security": 5867.2998046875,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 39876.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -10965,7 +11127,10 @@
           "taxable_social_security": 4046.89990234375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 37908.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "memo_with_health": {
@@ -10991,7 +11156,10 @@
           "taxable_social_security": 5867.2998046875,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 39876.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -11015,7 +11183,10 @@
           "taxable_social_security": 4046.89990234375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 37908.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "float32_guard": {
@@ -11676,7 +11847,10 @@
           "taxable_social_security": 5867.2998046875,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 39876.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -11700,7 +11874,10 @@
           "taxable_social_security": 4457.60009765625,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 38352.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "memo_with_health": {
@@ -11726,7 +11903,10 @@
           "taxable_social_security": 5867.2998046875,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 39876.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -11750,7 +11930,10 @@
           "taxable_social_security": 4457.60009765625,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 38352.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "float32_guard": {
@@ -12408,7 +12591,10 @@
           "taxable_social_security": 5867.2998046875,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 39876.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -12432,7 +12618,10 @@
           "taxable_social_security": 4046.89990234375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 37908.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "memo_with_health": {
@@ -12458,7 +12647,10 @@
           "taxable_social_security": 5867.2998046875,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 39876.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -12482,7 +12674,10 @@
           "taxable_social_security": 4046.89990234375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 37908.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "float32_guard": {
@@ -13144,7 +13339,10 @@
           "taxable_social_security": 5867.2998046875,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 39876.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -13168,7 +13366,10 @@
           "taxable_social_security": 4457.60009765625,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 38352.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "memo_with_health": {
@@ -13194,7 +13395,10 @@
           "taxable_social_security": 5867.2998046875,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 39876.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -13218,7 +13422,10 @@
           "taxable_social_security": 4457.60009765625,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 38352.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "float32_guard": {
@@ -13828,7 +14035,10 @@
           "taxable_social_security": 5867.2998046875,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 39876.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -13852,7 +14062,10 @@
           "taxable_social_security": 4046.89990234375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 37908.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "memo_with_health": {
@@ -13878,7 +14091,10 @@
           "taxable_social_security": 5867.2998046875,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 39876.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -13902,7 +14118,10 @@
           "taxable_social_security": 4046.89990234375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 37908.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "float32_guard": {
@@ -14508,7 +14727,10 @@
           "taxable_social_security": 5867.2998046875,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 39876.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -14532,7 +14754,10 @@
           "taxable_social_security": 4457.60009765625,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 38352.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "memo_with_health": {
@@ -14558,7 +14783,10 @@
           "taxable_social_security": 5867.2998046875,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 39876.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -14582,7 +14810,10 @@
           "taxable_social_security": 4457.60009765625,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 38352.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "float32_guard": {
@@ -15243,7 +15474,10 @@
           "taxable_social_security": 14110.099609375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 59172.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -15267,7 +15501,10 @@
           "taxable_social_security": 11468.2998046875,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 52956.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "memo_with_health": {
@@ -15293,7 +15530,10 @@
           "taxable_social_security": 14110.099609375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 59172.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -15317,7 +15557,10 @@
           "taxable_social_security": 11468.2998046875,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 52956.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "float32_guard": {
@@ -15978,7 +16221,10 @@
           "taxable_social_security": 14110.099609375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 59172.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -16002,7 +16248,10 @@
           "taxable_social_security": 12070.099609375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 54372.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "memo_with_health": {
@@ -16028,7 +16277,10 @@
           "taxable_social_security": 14110.099609375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 59172.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -16052,7 +16304,10 @@
           "taxable_social_security": 12070.099609375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 54372.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "float32_guard": {
@@ -16684,7 +16939,10 @@
           "taxable_social_security": 14110.099609375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 59172.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -16708,7 +16966,10 @@
           "taxable_social_security": 11468.2998046875,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 52956.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "memo_with_health": {
@@ -16734,7 +16995,10 @@
           "taxable_social_security": 14110.099609375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 59172.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -16758,7 +17022,10 @@
           "taxable_social_security": 11468.2998046875,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 52956.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "float32_guard": {
@@ -17392,7 +17659,10 @@
           "taxable_social_security": 14110.099609375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 59172.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -17416,7 +17686,10 @@
           "taxable_social_security": 12070.099609375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 54372.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "memo_with_health": {
@@ -17442,7 +17715,10 @@
           "taxable_social_security": 14110.099609375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 59172.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -17466,7 +17742,10 @@
           "taxable_social_security": 12070.099609375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 54372.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "float32_guard": {
@@ -18074,7 +18353,10 @@
           "taxable_social_security": 14110.099609375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 59172.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -18098,7 +18380,10 @@
           "taxable_social_security": 11468.2998046875,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 52956.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "memo_with_health": {
@@ -18124,7 +18409,10 @@
           "taxable_social_security": 14110.099609375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 59172.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -18148,7 +18436,10 @@
           "taxable_social_security": 11468.2998046875,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 52956.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "float32_guard": {
@@ -18754,7 +19045,10 @@
           "taxable_social_security": 14110.099609375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 59172.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -18778,7 +19072,10 @@
           "taxable_social_security": 12070.099609375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 54372.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "memo_with_health": {
@@ -18804,7 +19101,10 @@
           "taxable_social_security": 14110.099609375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 59172.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -18828,7 +19128,10 @@
           "taxable_social_security": 12070.099609375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 54372.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "float32_guard": {
@@ -19472,7 +19775,10 @@
           "taxable_social_security": 22282.59912109375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 84072.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -19496,7 +19802,10 @@
           "taxable_social_security": 18319.900390625,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 74748.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "memo_with_health": {
@@ -19522,7 +19831,10 @@
           "taxable_social_security": 22282.59912109375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 84072.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -19546,7 +19858,10 @@
           "taxable_social_security": 18319.900390625,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 74748.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "float32_guard": {
@@ -20264,7 +20579,10 @@
           "taxable_social_security": 22282.59912109375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 84072.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -20288,7 +20606,10 @@
           "taxable_social_security": 19222.59912109375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 76872.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "memo_with_health": {
@@ -20314,7 +20635,10 @@
           "taxable_social_security": 22282.59912109375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 84072.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -20338,7 +20662,10 @@
           "taxable_social_security": 19222.59912109375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 76872.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "float32_guard": {
@@ -21053,7 +21380,10 @@
           "taxable_social_security": 22282.59912109375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 84072.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -21077,7 +21407,10 @@
           "taxable_social_security": 18319.900390625,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 74748.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "memo_with_health": {
@@ -21103,7 +21436,10 @@
           "taxable_social_security": 22282.59912109375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 84072.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -21127,7 +21463,10 @@
           "taxable_social_security": 18319.900390625,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 74748.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "float32_guard": {
@@ -21844,7 +22183,10 @@
           "taxable_social_security": 22282.59912109375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 84072.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -21868,7 +22210,10 @@
           "taxable_social_security": 19222.59912109375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 76872.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "memo_with_health": {
@@ -21894,7 +22239,10 @@
           "taxable_social_security": 22282.59912109375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 84072.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -21918,7 +22266,10 @@
           "taxable_social_security": 19222.59912109375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 76872.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "float32_guard": {
@@ -22609,7 +22960,10 @@
           "taxable_social_security": 22282.59912109375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 84072.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -22633,7 +22987,10 @@
           "taxable_social_security": 18319.900390625,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 74748.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "memo_with_health": {
@@ -22659,7 +23016,10 @@
           "taxable_social_security": 22282.59912109375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 84072.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -22683,7 +23043,10 @@
           "taxable_social_security": 18319.900390625,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 74748.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "float32_guard": {
@@ -23372,7 +23735,10 @@
           "taxable_social_security": 22282.59912109375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 84072.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -23396,7 +23762,10 @@
           "taxable_social_security": 19222.59912109375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 76872.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "memo_with_health": {
@@ -23422,7 +23791,10 @@
           "taxable_social_security": 22282.59912109375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 84072.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         },
         "reform": {
           "medicaid_cost": 0.0,
@@ -23446,7 +23818,10 @@
           "taxable_social_security": 19222.59912109375,
           "medicaid_federal_cost": 0.0,
           "msp_federal_cost": 0.0,
-          "ssi": 0.0
+          "ssi": 0.0,
+          "ssi_countable_income": 76872.0,
+          "is_ssi_recipient_for_medicaid": 0.0,
+          "is_optional_senior_or_disabled_for_medicaid": 0.0
         }
       },
       "float32_guard": {
@@ -23756,8 +24131,46 @@
     ]
   },
   "health_explanations": {
-    "B-MT-oasi": "In Montana, the cut lowers countable income for the optional aged Medicaid pathway from $13,476 to $11,508, $462 under its limit of $11,970 (75% of the poverty guideline), and Medicaid eligibility begins (policyengine-us 2.18.0, is_optional_senior_or_disabled_income_eligible.py:22-32). Medicaid is valued at cost at $10,799 a year. SSI goes from $0 to $420 a year. In Montana SSI receipt is itself a Medicaid pathway in PolicyEngine-US (is_ssi_recipient_for_medicaid.py:20-34), so under this cut either route qualifies. The Medicare Savings Program's value, counted only without full Medicaid (msp_cost.py:28), falls by $5,335.",
-    "B-MT-oasdi": "In Montana, the cut lowers countable income for the optional aged Medicaid pathway from $13,476 to $11,952, $18 under its limit of $11,970 (75% of the poverty guideline), and Medicaid eligibility begins (policyengine-us 2.18.0, is_optional_senior_or_disabled_income_eligible.py:22-32). Medicaid is valued at cost at $10,799 a year. The Medicare Savings Program's value, counted only without full Medicaid (msp_cost.py:28), falls by $5,335."
+    "B-MT-oasi": {
+      "route": "ssi_receipt",
+      "text": "In Montana, the cut makes the household eligible for SSI, from $0 to $420 a year, and PolicyEngine-US 2.18.0 gives SSI recipients in Montana Medicaid (is_ssi_recipient_for_medicaid.py:20-34; the release marks Montana covered and section 1634), checking SSI receipt before any other category (medicaid_category.py:44-47), so Medicaid begins. Medicaid is valued at cost at $10,799 a year. The Medicare Savings Program's value, which PolicyEngine-US counts only without full Medicaid (msp_cost.py:28), falls by $5,335. For a QMB enrollee all year it is the Medicare premiums the program pays ($2,435 here; msp_benefit_value.py:33-37) plus QMB cost sharing, which PolicyEngine-US approximates as 20% of average Medicare spending per enrollee, $14,500 in an entry the parameter file marks 'Estimated' ($2,900; qmb_cost_sharing.py:24-35, calibration/gov/hhs/medicare/per_capita_cost.yaml:4)."
+    },
+    "B-MT-oasdi": {
+      "route": "encoding_artifact",
+      "text": "ENCODING ARTIFACT, NOT STATE POLICY. In Montana, SSI stays $0: the household's SSI countable income, $996 a month, is $2 above the 2026 federal benefit rate of $994. But its countable income for an optional aged Medicaid pathway falls from $13,476 to $11,952 a year, $18 under the limit policyengine-us 2.18.0 encodes for Montana, 75 percent of the poverty guideline (MT: 0.75 from 2018) ($11,970; parameters/gov/hhs/medicaid/eligibility/categories/senior_or_disabled/income/limit/individual.yaml:80-81), so the model starts Medicaid (is_optional_senior_or_disabled_income_eligible.py:22-32). Montana's own rules set a different limit. Montana covers aged, blind and disabled people who meet SSI's income standard without receiving SSI (State Plan Attachment 3.1-F, TN 24-0002, row 7, 42 CFR 435.210), at the SSI payment rate in dollars: $994 a month for one person in 2026 (DPHHS Medicaid manual ABD 008, effective 2026-01-01). The same plan page marks the poverty-level aged or disabled group (1902(m)) N/A. The parameter's 0.75 matches its cited source, KFF, which gives Montana's limit as the SSI benefit rate written as a share of the poverty guideline ($750 and 74% in 2018; $943 and 75%, '1634 State', in June 2024). Reported upstream as PolicyEngine/policyengine-us#9733 (fix proposed in #9735). Montana's limit is the SSI payment rate, which this household misses. This with-health figure is an artifact of that encoding. Medicaid is valued at cost at $10,799 a year. The Medicare Savings Program's value, which PolicyEngine-US counts only without full Medicaid (msp_cost.py:28), falls by $5,335. For a QMB enrollee all year it is the Medicare premiums the program pays ($2,435 here; msp_benefit_value.py:33-37) plus QMB cost sharing, which PolicyEngine-US approximates as 20% of average Medicare spending per enrollee, $14,500 in an entry the parameter file marks 'Estimated' ($2,900; qmb_cost_sharing.py:24-35, calibration/gov/hhs/medicare/per_capita_cost.yaml:4)."
+    }
+  },
+  "medicaid_encoding_notes": {
+    "notes": {
+      "MT": {
+        "parameter": "parameters/gov/hhs/medicaid/eligibility/categories/senior_or_disabled/income/limit/individual.yaml:80-81",
+        "encoded": "75 percent of the poverty guideline (MT: 0.75 from 2018)",
+        "evidence": "Montana's own rules set a different limit. Montana covers aged, blind and disabled people who meet SSI's income standard without receiving SSI (State Plan Attachment 3.1-F, TN 24-0002, row 7, 42 CFR 435.210), at the SSI payment rate in dollars: $994 a month for one person in 2026 (DPHHS Medicaid manual ABD 008, effective 2026-01-01). The same plan page marks the poverty-level aged or disabled group (1902(m)) N/A. The parameter's 0.75 matches its cited source, KFF, which gives Montana's limit as the SSI benefit rate written as a share of the poverty guideline ($750 and 74% in 2018; $943 and 75%, '1634 State', in June 2024). Reported upstream as PolicyEngine/policyengine-us#9733 (fix proposed in #9735). Montana's limit is the SSI payment rate"
+      }
+    },
+    "sources": [
+      {
+        "file": "kff_2024_unwinding_appendix.html",
+        "url": "https://www.kff.org/report-section/medicaid-eligibility-and-enrollment-policies-for-seniors-and-people-with-disabilities-non-magi-during-the-unwinding-appendix/",
+        "final_url": "https://www.kff.org/medicaid/medicaid-eligibility-and-enrollment-policies-for-seniors-and-people-with-disabilities-non-magi-during-the-unwinding/#094aa05d-5866-4e5b-a64d-33cf50012db3",
+        "retrieved_utc": "2026-10-01T12:51:29+00:00",
+        "status": 200,
+        "bytes": 286286,
+        "sha256": "aa1d1928dbcc46442e2c68ff266a4da9669e52c5fe56559c2743052ccefdf811",
+        "client": "curl_cffi 0.16.3 (impersonate='chrome')"
+      },
+      {
+        "file": "kff_2018_50_state_appendix.html",
+        "url": "https://www.kff.org/report-section/medicaid-financial-eligibility-for-seniors-and-people-with-disabilities-findings-from-a-50-state-survey-appendix-tables/",
+        "final_url": "https://www.kff.org/medicaid/medicaid-financial-eligibility-for-seniors-and-people-with-disabilities-findings-from-a-50-state-survey/#283bd3e2-fcae-48ab-8102-4ae4dd64b524",
+        "retrieved_utc": "2026-10-01T12:51:31+00:00",
+        "status": 200,
+        "bytes": 359854,
+        "sha256": "b16b3d2f27ee8adee7f66f3986a34ea1a53d5584aede84fa78828463e7ac8c28",
+        "client": "curl_cffi 0.16.3 (impersonate='chrome')"
+      }
+    ],
+    "pages_committed": false
   },
   "float32_guard": {
     "comparisons": 60,
@@ -23765,7 +24178,7 @@
     "traced_nodes": 213958,
     "small_changes": [],
     "uncaused_changes": 0,
-    "summary": "Every changed leaf of the 60 comparisons (five households in three states, two cuts, with and without health coverage; 142 leaves) was traced through PolicyEngine-US's own calculation (213,958 traced variable-periods). No variable changed by a cent or more (from a cent less one float32 step at its size, never under half a cent) while every variable it read held within float noise (a cent, or four float32 steps at the read's size where that is more), the signature of a float32 step at a bracket edge. No leaf changed by a nonzero amount under $2."
+    "summary": "Every changed leaf of the 60 comparisons (five households in three states, two cuts, with and without health coverage; 142 leaves) was traced through PolicyEngine-US's own calculation (213,958 traced variable-periods, summed over the comparisons, so each shared baseline counts once per cut). No variable changed by a cent or more (from a cent less one float32 step at its size, never under half a cent) while every variable it read held within float noise (a cent, or four float32 steps at the read's size where that is more), the signature of a float32 step at a bracket edge. No leaf changed by a nonzero amount under $2."
   },
   "invariants_checked": [
     "every household, state and reform, with and without health coverage: the leaf changes sum exactly (in cents) to the net change, and the categories and the levels of government to the same total; each leaf is in exactly one level",
@@ -23785,13 +24198,14 @@
     "Illustrative households, not survey data: two invented workers (the low earner of #496 and a medium earner) in five living situations, each in three states. They show mechanisms, not how many beneficiaries are in each situation.",
     "Applied to 2026 benefits under 2026 tax and benefit law and prices. The cut would not happen in 2026: the Trustees project the OASI Trust Fund's reserves to deplete in 2032. This shows how much of a cut of that size each household would absorb, and how much other programs and taxes would offset, under current law. It is not a projection.",
     "Not a projection. Benefits, prices, tax brackets and program rules are 2026's. Some rules already in law differ by the depletion date: the State cost share of SNAP in 7 USC 2013(a)(2)(B) begins in fiscal year 2028 at the earliest, and from then a State whose payment error rate is 6 percent or more pays 5 to 15 percent of the cost of SNAP benefits. The Trustees Report also notes that the One Big Beautiful Bill Act 'adds a temporary additional standard deduction for taxpayers over age 65'; this analysis applies that deduction as 2026 law does.",
-    "The cut is the share of scheduled benefits the Trustees project to be payable at depletion (78 percent for OASI in 2032), applied to every benefit at once. Each beneficiary's payable monthly benefit is the scheduled 2026 monthly benefit (a whole dollar) times the payable share, rounded down to a whole dollar, as 42 USC 415(g) rounds a monthly benefit computed under section 402 ('is not a multiple of $1 shall be rounded to the next lower multiple of $1'). The across-the-board cut is this analysis's assumption: the Trustees Report notes that at depletion 'scheduled benefits could not be paid in full on a timely basis' and that 'certain trust fund operations items are not well-defined under current law'. Applying the share to each whole-dollar monthly benefit and rounding the product down is also this analysis's choice: 415(g) itself rounds once, so a share applied to the unrounded amount could pay a dollar a month more. The monthly cut is the scheduled benefit less the payable benefit, so it is at least the cut share times the scheduled benefit and less than a dollar more; the annual amounts are twelve times the monthly ones.",
+    "The cut is the share of scheduled benefits the Trustees project to be payable at depletion (78 percent for OASI in 2032), applied to each OASI benefit at once; every benefit in these households is a retired-worker or spouse's benefit. Each beneficiary's payable monthly benefit is the scheduled 2026 monthly benefit (a whole dollar) times the payable share, rounded down to a whole dollar ('is not a multiple of $1 shall be rounded to the next lower multiple of $1', 42 USC 415(g)). 415(g) rounds a benefit computed under section 402 or 423 after the reductions of sections 403(a) and 424a, the deductions of 403(b) and the Medicare Part B premium deduction; this analysis floors the gross benefit, before any Part B deduction. The across-the-board cut is this analysis's assumption: the Trustees project the payable share, and note that once reserves are depleted 'scheduled benefits could not be paid in full on a timely basis, and actual amounts paid would be less than the scheduled benefits' (Table IV.A1 note, printed page 46), but the Highlights do not say how a shortfall would be spread across beneficiaries. Applying the share to each whole-dollar monthly benefit and rounding the product down is also this analysis's choice: 415(g) itself rounds once, so a share applied to the unrounded amount could pay a dollar a month more. The monthly cut is the scheduled benefit less the payable benefit, so it is at least the cut share times the scheduled benefit and less than a dollar more; the annual amounts are twelve times the monthly ones.",
+    "Both cuts are first-year cuts: the Trustees project the payable share to decline 'gradually to 62 percent by 2100' for OASI and to 65 percent for OASDI. The OASDI sensitivity assumes, as the Trustees note, 'that the law will have been changed to permit the transfer of funds between OASI and DI as needed' (printed page 28).",
     "No behavioral response: no change in work, claiming, saving, living arrangements or take-up.",
     "The offset is grouped by who pays it under 2026 law. Federal income tax is grouped as federal, although part of the income tax on Social Security benefits is credited to the trust funds (the Trustees Report counts '$58 billion from income taxation of Social Security benefits' as 2025 OASDI income); this analysis does not split that part out.",
     "Net income is PolicyEngine-US's household_net_income, which by default excludes health coverage (Medicaid at cost, Medicare Savings Programs); the with-health sensitivity and the memo lines report it, as in #496. Medicaid is valued as policyengine-us 2.18.0 values it for one household: the state's 2023 Medicaid spending divided by its October 2024 Medicaid and CHIP enrollment, an average over enrollees of all ages, not uprated to 2026. It is not a same-year average and not specific to aged enrollees, so it could overstate or understate what covering an aged enrollee costs. It values coverage at average program cost; it is not a cash loss. The years do not match: with the release's 2023 enrollment entry, the spending's own year, it would be $7,034 in Florida (not $9,200), $8,751 in California (not $9,236) and $7,223 in Montana (not $10,799).",
     "SNAP for October-December 2026 uses USDA's fiscal-2027 maximum allotment ($306 a month for one person) and standard deduction ($217) as policyengine-us 2.18.0 encodes them (gov/usda/snap/max_allotment.yaml:33, income/deductions/standard.yaml:17). The state standard utility allowances have no fiscal-2027 entry there, so those months use the fiscal-2026 amounts (California $663, Florida $430 and Montana $799 a month; income/deductions/utility/standard/main.yaml:112, 179 and 387).",
     "In policyengine-us 2.18.0 SNAP counts California's SSI supplement as unearned income (gov/usda/snap/income/sources/unearned_spm_unit.yaml:13).",
-    "Take-up is PolicyEngine-US's default: full for SSI, SNAP and Medicaid (takes_up_ssi_if_eligible.py:9, takes_up_snap_if_eligible.py:9, takes_up_medicaid_if_eligible.py:9). The Commodity Supplemental Food Program has no take-up input: every eligible person gets USDA's cost per caseload slot, $651 in 2026 (commodity_supplemental_food_program.py:10-11, gov/usda/csfp/amount.yaml:11), though the program is caseload-limited and serves far fewer people than are eligible. Housing assistance is switched off because vouchers are rationed, and the household can prepare food at home.",
+    "Take-up is PolicyEngine-US's default: full for SSI, SNAP and Medicaid (takes_up_ssi_if_eligible.py:9, takes_up_snap_if_eligible.py:9, takes_up_medicaid_if_eligible.py:9). The Commodity Supplemental Food Program has no take-up input: every eligible person gets USDA's cost per caseload slot, $651 in 2026 (commodity_supplemental_food_program.py:10-11, gov/usda/csfp/amount.yaml:11). Housing assistance is switched off, as in #496, and the household can prepare food at home.",
     "California's 2026 aged or disabled payment standard is set to the published $1,233.94 a month (California Department of Social Services, SSI Total Monthly Payment Amounts 2026, Rev. 1/26); policyengine-us 2.18.0 has no 2026 entry and would hold $1,206.94 from 2025-01-01.",
     "Medicare quarters of coverage: the workers carry four a year of covered work, as in #496 (88 for the low earner, 140 for the medium earner); the spouse in household E, who has no covered work, is left at PolicyEngine-US's default of 40 (medicare_quarters_of_coverage.py:16). Households C and D also differ in age (68 and 72) as well as in Social Security."
   ]
