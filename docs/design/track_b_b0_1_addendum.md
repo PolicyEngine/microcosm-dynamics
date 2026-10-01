@@ -1,6 +1,7 @@
 # Track B B0.1 addendum: the frozen record B2 registers on
 
-**Status: protocol frozen, 2026-10-01; no planning value computed yet.**
+**Status: protocol frozen and planning values computed, 2026-10-01. B2
+stops here until Max rules on d781 and d782 (sections 11 and 13).**
 This file is the post-ruling addendum that the B0.1 audit
 (`docs/design/track_b_b0_1_audit.md`, section 13) calls for. It does
 three things:
@@ -11,11 +12,14 @@ three things:
   in section 16 before any computation;
 - it recomputes the named power procedure on the basis Max ruled.
 
-At the commit that adds this file, sections 1-9 and 12-16 are complete.
-They hold every rule that decides B2's surface, its pass rule and this
-addendum's verdict. Sections 10, 11 and 15 are written after the
-planning-value run and the blinded review, and may not change any rule
-in the other sections. The protocol block in section 16 never changes.
+At the commit that froze protocol v2 (`0550d2f`), sections 1-9 and
+12-16 were complete. They hold every rule that decides B2's surface, its
+pass rule and this addendum's verdict. Sections 10 and 11 were written
+after the planning-value run, and section 15's record after the blinded
+review. Sections 1, 12, 13 and 14 gained the run's results, one
+correction it forced, the decisions it queues and the reads after the
+freeze. None of these changes a rule. The protocol block in section 16
+never changes.
 
 Verification class: **source audit** (design §3.2). It admits nothing
 scientific. "The design" means
@@ -38,10 +42,18 @@ repository; design line numbers refer to it.
   is room for one cell. For the whole gate it is 2.8% (section 12).
 - **Planning values.** Section 16's protocol derives them from a 2006
   pseudo-origin. One departure from d693's wording needs Max's
-  ratification: the refit arm resamples household half-samples without
-  replacement, not a bootstrap, because copied households defeat the
-  sign gate's early stopping (sections 10 and 13).
-- **Results.** Sections 10 and 11 are written after the run.
+  ratification (d765): the refit arm resamples household half-samples
+  without replacement, not a bootstrap, because copied households defeat
+  the sign gate's early stopping (sections 10 and 13).
+- **What the run found.** Every one of the 16 cells has planning values
+  (section 10). The law's estimation variance is large: 0.23 to 2.49
+  times the truth statistic's sampling variance, by cell. Nine cells fail
+  the survey-design check.
+- **Verdict.** On the ruled basis no surface that keeps every concept
+  family reaches 0.90 power. The best reaches 0.331, while four level
+  cells together reach 0.992 (section 11). B2 stops here. Before any
+  candidate run, Max decides how to rescope it (d781) and how its
+  standard error treats PSID's survey design (d782) (section 13).
 
 ## 2. Rulings this addendum implements
 
@@ -310,13 +322,211 @@ comparator's run is recorded as a ledger read.
 
 ## 10. Planning values
 
-*Written after the run.*
+**The run.** Protocol v2 ran once. The script started at 03:58:23 UTC on
+2026-10-01 from a clean worktree at `0550d2f`. Before it opened any PSID
+file it confirmed that `0550d2f` was this branch's pushed head. It
+finished at 07:23:27 UTC, after 12,304 seconds, with no interruption and
+no resume, and deleted its checkpoint unread. Its record,
+`docs/design/track_b_b0_1_planning_values.json`, carries:
+
+- the protocol block's SHA-256 (section 16) and the script's SHA-256;
+- the SHA-256 of each of the 74 PSID files it opened: the family files of
+  collection waves 1969-2011 and the cross-year individual file, each
+  byte-identical to the audit's pinned read set (`b2_read_set_sha256`);
+- NAWI read through its 2006 key, with prefix and mapping hashes equal to
+  the selectors' pins;
+- the runtime, seeds and thread settings.
+
+`tests/test_track_b_b0_1_addendum_record.py` checks each of these
+against the repository.
+
+**The protocol's checks all passed.**
+
+- Source reproduction: 321,500 fit-input rows, 23,134 full-anchor persons
+  and 13,542 domain persons at B2's 2010 boundary, equal to the frozen
+  record.
+- The forest-free refit reproduced both gates' classifier state and
+  probability surfaces, and the projections of draw seeds 6200 and 6201.
+- Arm F used 4,000 replicates and arm D 1,000. Arm R used 200, the most
+  the protocol allows, inside its budget. No replicate failed, so no arm
+  is void and e is not a lower bound. In every arm R replicate the truth
+  statistics on the refit side and the fixed-law side of the same kept
+  frame agreed within 1e-9, relative.
+- The record's outcome-blind flags are all false: no reference year
+  after 2010 read, no B2 cell or floor computed, and no level, gap or
+  raw-scale variance recorded.
+
+**At the pseudo-origin.** The fit used 294,603 rows. The full anchor held
+22,102 persons in 8,289 households and the domain 12,837 persons. The
+law's anchor forward pairs numbered 105,738, against 113,823 at B2's
+origin. Arm D resampled 11,176 truth-support persons in 63 strata, each
+with two clusters.
+
+**Values.** Units are each cell's se_up. Columns: the shared-anchor ratio
+r and the estimation variance e, each with its 5th-95th percentile
+range; e's 97.5th-percentile limit; the transport factor f; B2's
+registered e_B2; the point gap variance s²; the gating variance s²_gate;
+and the design ratio d with its 95th percentile.
+
+| Cell | r (5th-95th) | e (5th-95th) | e upper | f | e_B2 | s² | s²_gate | d (95th) |
+|---|---|---|---:|---:|---:|---:|---:|---|
+| `earn_autocorr_lag1` | 1.010 (0.998-1.022) | 1.059 (0.821-1.307) | 1.362 | 1.000 | 1.362 | 2.079 | 2.383 | 1.074 (1.119) |
+| `earn_autocorr_lag2` | 0.984 (0.976-0.991) | 0.332 (0.264-0.396) | 0.409 | 1.000 | 0.409 | 1.300 | 1.379 | 0.950 (0.989) |
+| `earn_dlog_mean.older` | 0.984 (0.975-0.994) | 0.728 (0.578-0.887) | 0.915 | 1.000 | 0.915 | 1.697 | 1.885 | 1.124 (1.166) |
+| `earn_dlog_mean.prime` | 0.971 (0.963-0.979) | 0.412 (0.328-0.492) | 0.508 | 1.000 | 0.508 | 1.355 | 1.454 | 1.076 (1.123) |
+| `earn_dlog_sd.older` | 1.008 (0.997-1.021) | 0.946 (0.716-1.187) | 1.239 | 1.000 | 1.239 | 1.963 | 2.256 | 1.049 (1.092) |
+| `earn_dlog_sd.prime` | 1.045 (1.032-1.058) | 2.488 (2.032-2.988) | 3.087 | 1.000 | 3.087 | 3.581 | 4.191 | 1.112 (1.158) |
+| `earn_mob_h1_diag` | 1.016 (1.004-1.029) | 0.691 (0.551-0.838) | 0.870 | 1.000 | 0.870 | 1.723 | 1.907 | 1.096 (1.139) |
+| `earn_mob_h2_diag` | 1.059 (1.048-1.071) | 0.529 (0.422-0.641) | 0.664 | 1.000 | 0.664 | 1.651 | 1.789 | 1.002 (1.043) |
+| `earn_p10.older` | 1.045 (1.023-1.067) | 1.041 (0.841-1.237) | 1.280 | 1.000 | 1.280 | 2.133 | 2.393 | 0.916 (0.956) |
+| `earn_p10.prime` | 1.208 (1.176-1.241) | 1.796 (1.430-2.151) | 2.218 | 1.000 | 2.218 | 3.255 | 3.714 | 1.159 (1.215) |
+| `earn_p50.older` | 0.737 (0.725-0.750) | 0.418 (0.342-0.490) | 0.505 | 1.000 | 0.505 | 0.961 | 1.054 | 1.214 (1.259) |
+| `earn_p50.prime` | 0.754 (0.743-0.764) | 0.260 (0.213-0.305) | 0.317 | 1.000 | 0.317 | 0.829 | 0.891 | 1.122 (1.167) |
+| `earn_p90.older` | 0.660 (0.648-0.674) | 0.328 (0.267-0.388) | 0.398 | 1.000 | 0.398 | 0.764 | 0.840 | 1.027 (1.069) |
+| `earn_p90.prime` | 0.686 (0.672-0.698) | 0.234 (0.183-0.284) | 0.297 | 1.000 | 0.297 | 0.704 | 0.771 | 1.027 (1.069) |
+| `earn_zero_rate.older` | 0.706 (0.691-0.720) | 0.235 (0.190-0.283) | 0.293 | 1.000 | 0.293 | 0.733 | 0.799 | 1.167 (1.210) |
+| `earn_zero_rate.prime` | 0.787 (0.772-0.803) | 0.305 (0.243-0.368) | 0.381 | 1.000 | 0.381 | 0.924 | 1.008 | 0.947 (0.986) |
+
+Diagnostics, which decide nothing:
+
+| Cell | Cross term (5th-95th) | Simulation share of Var(δ) | Floor σ / (2 × truth SD) | Monte Carlo error / se_up |
+|---|---|---:|---:|---:|
+| `earn_autocorr_lag1` | -0.009 (-0.233-0.228) | 0.17 | 0.93 | 0.221 |
+| `earn_autocorr_lag2` | -0.060 (-0.215-0.087) | 0.22 | 1.05 | 0.133 |
+| `earn_dlog_mean.older` | 0.050 (-0.149-0.247) | 0.15 | 0.97 | 0.168 |
+| `earn_dlog_mean.prime` | -0.059 (-0.232-0.109) | 0.22 | 1.00 | 0.186 |
+| `earn_dlog_sd.older` | 0.099 (-0.231-0.435) | 0.20 | 0.95 | 0.234 |
+| `earn_dlog_sd.prime` | 0.121 (-0.279-0.526) | 0.11 | 1.02 | 0.192 |
+| `earn_mob_h1_diag` | -0.336 (-0.562--0.115) | 0.17 | 1.05 | 0.163 |
+| `earn_mob_h2_diag` | -0.135 (-0.321-0.057) | 0.18 | 0.94 | 0.194 |
+| `earn_p10.older` | -0.149 (-0.400-0.101) | 0.12 | 0.94 | 0.160 |
+| `earn_p10.prime` | -0.188 (-0.536-0.175) | 0.13 | 0.76 | 0.214 |
+| `earn_p50.older` | -0.052 (-0.163-0.061) | 0.08 | 0.96 | 0.108 |
+| `earn_p50.prime` | -0.065 (-0.169-0.032) | 0.09 | 0.99 | 0.059 |
+| `earn_p90.older` | 0.072 (-0.017-0.159) | 0.10 | 1.07 | 0.085 |
+| `earn_p90.prime` | 0.024 (-0.063-0.115) | 0.14 | 1.03 | 0.102 |
+| `earn_zero_rate.older` | 0.015 (-0.067-0.098) | 0.21 | 0.94 | 0.109 |
+| `earn_zero_rate.prime` | 0.053 (-0.074-0.181) | 0.21 | 1.02 | 0.127 |
+
+**Reading the values.**
+
+- Every cell has planning values. Each floor is eligible at the
+  pseudo-origin, and every replicate of every arm is defined for every
+  cell.
+- r is below 0.80 for the p50, p90 and zero-rate cells, where the
+  projection and the truth move together under resampling. It is 0.97 to
+  1.21 for the others, and above 1 for seven of them. The audit's
+  full-support standard error is therefore not an upper bound for those
+  cells (section 12). No rule here depends on it being one: B2's
+  registered standard error uses the measured bootstrap gap standard
+  error (section 7).
+- e, the law's estimation variance, runs from 0.23 to 2.49 times the
+  truth statistic's sampling variance. It is largest for
+  `earn_dlog_sd.prime` (2.49) and `earn_p10.prime` (1.80).
+- f is 1 for every cell. B2's support per anchor forward pair is no
+  larger than the pseudo-origin's, so the rule's floor of 1 applies and
+  e_B2 equals e's upper limit.
+- No cross term's 5th percentile is above zero, so none enters s²_gate.
+  For `earn_mob_h1_diag` the whole range is below zero: there, estimation
+  and sampling errors offset, and leaving the term out overstates the
+  cell's gap variance.
+- Nine of the 16 cells have a design-ratio 95th percentile above 1.10,
+  up to 1.259 for `earn_p50.older`. Section 16's design rule therefore
+  does not hold. Household resampling understates these cells' sampling
+  variance under PSID's design, and the choice between inflating B2's
+  standard error and resampling design clusters goes to Max (d782,
+  section 13).
+- Diagnostics. The K draws' simulation noise is 8% to 22% of Var(δ). The floor's σ over twice the truth deviation's
+  SD is 0.76 to 1.07, near 1 except for `earn_p10.prime`. The full
+  sample's Monte Carlo error is 0.06 to 0.23 se_up.
+
+**What the values do not establish.**
+
+- They are measured from 2006 to 2008 and 2010. Those truth years fall
+  in a recession, and neither r's nor e's transport to 2012 and 2014 is
+  tested.
+- e comes from household half-samples (d765). For a smooth statistic a
+  half-sample's deviation from the full sample has the full sample's
+  variance. For this law, whose sign gates stop early, that is not
+  established in either direction.
+- The cross term is left out unless resolved positive.
+- Persons outside the full anchor are clustered by their household at
+  their last present wave up to 2007, an approximation to the panel's
+  household structure.
+- M6's published floor was not used, even as an illustration.
+- The values say nothing about any candidate outcome or about whether
+  candidate 3 transports.
 
 ## 11. Power on the ruled basis and the verdict
 
-*Written after the run.* The figures that need no planning value are
-already fixed. On the audit's upper-bound basis (r = 1, no estimation
-error), at uncapped k = 3 tolerances:
+`scripts/track_b_b0_1_addendum_power.py` computes
+`docs/design/track_b_b0_1_addendum_power.json` from the planning-value
+record alone, by the named procedure (section 16), at the uncapped k = 3
+tolerance τ = 5.0870 se_up. A cap only lowers a tolerance, so these
+figures bound every capped surface's power from above.
+`scripts/track_b_b0_1_addendum_tables.py` renders the tables below from
+the two records, and the record test requires them verbatim.
+
+| Evaluation | All cells with planning values | M6-retained six | Best four cells | Best surface with every family |
+|---|---:|---:|---:|---:|
+| Binding | 0.000 | 0.000 | 0.992 | 0.331 |
+| Point variance (sensitivity) | 0.000 | 0.004 | 0.995 | 0.369 |
+| r = 1, e = 0 (sensitivity) | 0.584 | 0.917 | 0.962 | 0.917 |
+
+On the binding evaluation, all 16 cells together and the six
+M6-retained cells have essentially no power. The best four-cell surface,
+`earn_p50.prime`, `earn_p90.older`, `earn_p90.prime` and
+`earn_zero_rate.older`, reaches 0.992. So d693's Q2 flip, which asks
+whether four cells have room, does not fire.
+
+Section 5's ladder can end only on a surface that keeps a cell of every
+concept family. The best and worst such surfaces of each size, on the
+binding evaluation:
+
+| Gated cells | Surfaces | Best p_gate | Worst p_gate |
+|---:|---:|---:|---:|
+| 6 | 192 | 0.331 | 0.000 |
+| 7 | 960 | 0.294 | 0.000 |
+| 8 | 2,320 | 0.262 | 0.000 |
+| 9 | 3,520 | 0.231 | 0.000 |
+| 10 | 3,652 | 0.202 | 0.000 |
+| 11 | 2,668 | 0.113 | 0.000 |
+| 12 | 1,375 | 0.059 | 0.000 |
+| 13 | 490 | 0.016 | 0.000 |
+| 14 | 115 | 0.004 | 0.000 |
+| 15 | 16 | 0.000 | 0.000 |
+| 16 | 1 | 0.000 | 0.000 |
+
+The best is six cells: `earn_autocorr_lag2`, `earn_dlog_mean.prime`,
+`earn_dlog_sd.older`, `earn_mob_h2_diag`, `earn_p90.prime` and
+`earn_zero_rate.older`, at 0.331. At six cells its dispersion cell alone
+passes the bound rule with probability 0.546, its mobility cell 0.756,
+its change-mean cell 0.886 and its autocorrelation cell 0.910. Every
+family-complete surface needs a dispersion and a mobility cell, and the
+smallest gating variances in those families are 2.256 and 1.789 se_up²,
+against 1 on the audit's basis. On point variances the best family
+surface reaches 0.369. On the audit's basis (r = 1, e = 0) it reaches
+0.917, the audit's six-cell figure. The difference is the law's
+estimation variance, which the audit could not measure.
+
+**Verdict: stopped by the family floor.** On the binding evaluation a four-cell surface reaches 0.90 but no surface holding every concept family does.
+
+Section 16's verdict rule sends this case to Max. d693's Q2 flip would
+let a four-cell surface stand. Q1's ladder never prunes a family's last
+cell, so at the expected uncapped tolerance it cannot end at 0.90, and
+under section 5 B2 is then `WEAK_POWER_OR_VACUITY` at its floor build.
+Either way B2 stops here. Decision d781 asks Max how to rescope it, and
+no rescoped registration is written before he rules (section 13).
+
+The design rule did not hold either (section 10). With each over-limit
+cell's sampling variance inflated by its design ratio's 95th percentile,
+squared, the verdict is the same: the best four-cell surface reaches
+0.975 and the best family surface 0.293 (the power record's
+`decision_illustrations`).
+
+**Figures that need no planning value**, fixed before the run. On the
+audit's basis (r = 1, no estimation error), at uncapped k = 3
+tolerances:
 
 | Gated cells | Bound rule alone | Bound rule and seeds | Room for estimation error | Bound rule × M6's own seed convention |
 |---:|---:|---:|---:|---:|
@@ -330,7 +540,8 @@ error), at uncapped k = 3 tolerances:
 survey-plus-simulation gap variance, at which the bound rule still
 passes a faithful candidate with probability 0.90. On this model the
 seed conjunction fails, given a bound-rule pass, with probability below
-0.001 at every size.
+0.001 at every size. Section 10 measured r above 1 for seven cells, so
+this basis is not an upper bound for them.
 
 ## 12. Corrections to the audit
 
@@ -367,16 +578,32 @@ The review of this addendum's own draft found two more points in the
 audit, both fixed there: §10 left out M6's requirement that all five
 seeds be valid, and §11.2's per-cell room figures were unlabelled.
 
+**After the run: the audit's standard-error "upper bounds" are not
+bounds.** Audit §11 says a faithful cell's full-support gap standard
+error is "at most" σ·√(1 + 1/K)/2, because the anchor-explained part of
+the sampling variation cancels in the gap. Over household resamples with
+the law and paths fixed, the gap's variance is Var(T) + Var(P̄) -
+2 Cov(T, P̄). It stays within the audit's figure only if the covariance
+offsets the projected statistic's own resampling variance, up to
+Var(T)/K, and nothing guarantees that. At the 2006 pseudo-origin r is
+above 1 for seven of the 16 cells, up to 1.21 for `earn_p10.prime`
+(section 10). Audit §11 now says so. Its figures on that basis, and the
+"r = 1, e = 0" rows here, are reference points, not bounds. No rule in
+this addendum relies on them: B2's registered standard error is
+measured (section 7), and the binding evaluation uses the measured r.
+
 ## 13. Preconditions, open decisions and handoffs
 
 **B2 may register only when all of these hold:**
 
 - this addendum is merged with its planning values, and its Q6 review
   counted (section 15);
-- section 11's verdict is "feasible", or Max has ruled on the decision
-  that a different verdict queues;
-- Max has ratified the refit arm's half-sample resampling, or ruled
-  otherwise (below);
+- Max has ruled on d781, because section 11's verdict is not
+  "feasible", and on d782, because section 16's design rule did not
+  hold; and any rescoped registration that follows his rulings is
+  written and reviewed before any candidate run;
+- Max has ratified the refit arm's half-sample resampling (d765), or
+  ruled otherwise (below);
 - a B1 run has passed: v1 `REPRODUCED`, or v2
   `RECONSTRUCTED_REPRODUCTION` (d622). A v2 pass carries its weaker
   label, "reconstructed reproduction (weaker than bit-for-bit)", into
@@ -384,12 +611,53 @@ seeds be valid, and §11.2's per-cell room figures were unlabelled.
   `BASELINE_REPLAY_MISMATCH` stops B2 (design line 451). No B1 run
   artifact is committed as of this addendum.
 
-**Decision queued for Max.** d693's Q5 rider says the two planning
-values come from "one pseudo-origin household bootstrap". Arm F is a
-household bootstrap. Arm R, which refits the law, resamples household
-half-samples without replacement, for the reason and evidence in section
-16, step 6. The alternative is a new protocol version with a
-with-replacement refit arm.
+**Decisions queued for Max.** None blocks this addendum's merge. Each
+blocks B2's registration.
+
+- **d765, queued before the run.** d693's Q5 rider says the two planning
+  values come from "one pseudo-origin household bootstrap". Arm F is a
+  household bootstrap. Arm R, which refits the law, resamples household
+  half-samples without replacement, for the reason and evidence in
+  section 16, step 6. The alternative is a new protocol version with a
+  with-replacement refit arm.
+- **d781: how to rescope B2.** Section 11's verdict stops B2. The
+  options:
+  - (a) gate only the six level cells, `earn_p50` and `earn_p90` by
+    cohort and `earn_zero_rate` by cohort, the largest surface that
+    reaches 0.90 (0.952). The other ten cells are scored and published
+    report-only, and B2's headline says its gate covers earnings levels
+    and zero rates, not changes, dispersion, mobility or persistence. H
+    and B3L may rely on B2 only for what it gates. This is the proposed
+    default;
+  - (b) gate a smaller surface that keeps one dynamic family, such as
+    `earn_autocorr_lag2`, `earn_p90.prime` and `earn_zero_rate.older`
+    (0.946). No surface with four or more families reaches 0.90;
+  - (c) keep B2 `WEAK_POWER_OR_VACUITY` and unadmitted. H and B3L then
+    stay blocked until another route is registered (design line 454).
+
+  Under (a) or (b), B2's floor builder still runs section 5's ladder
+  inside the rescoped surface on B2's own floor, and may prune further.
+- **d782: how B2's standard error treats PSID's design.** The options:
+  - (a) resample PSID's sampling-error clusters within strata (Rao-Wu,
+    as arm D did) for se_boot, while the floor and gate-seed splits stay
+    household (Q3). This measures B2's own design effect at its own
+    origin. This is the proposed default;
+  - (b) inflate the household se_boot by each cell's 2006 design ratio,
+    a third transported planning value;
+  - (c) keep household resampling, overriding section 16's rule.
+
+  At the 2006 ratios either (a) or (b) costs about one cell: the largest
+  surface that reaches 0.90 falls from six cells to five.
+
+If a family's last cell may be pruned, these surfaces reach 0.90 on the
+binding evaluation at the uncapped tolerance (the power record's
+`decision_illustrations`). They are post-run figures for these
+decisions and decide nothing:
+
+| Basis | Largest surface at 0.90 | Its families | Most families at 0.90 |
+|---|---|---|---|
+| Household resampling, as measured | 6 cells, 0.952 | log quantiles, zero rate | 3 (autocorrelation, log quantiles, zero rate), 0.946 |
+| Over-limit cells' sampling variance × d² (95th percentile) | 5 cells, 0.947 | log quantiles, zero rate | 3 (autocorrelation, log quantiles, zero rate), 0.940 |
 
 **To B2.**
 
@@ -405,7 +673,10 @@ with-replacement refit arm.
 - Import `copy_persons` and the multiplicity functions from
   `scripts/track_b_b0_1_planning_values.py` for the scoring bootstrap,
   and test that the scorer and arm F build identical frames for the
-  same multiplicities.
+  same multiplicities. Under d782 (a), import arm D's design
+  multiplicities the same way.
+- A rescoped registration under d781 names the gated families in its
+  headline and scores every other cell report-only.
 
 **To B0.2.**
 
@@ -420,8 +691,8 @@ with-replacement refit arm.
   figures as inputs.
 - H's spec names and counts its 2010 start roster, and B4's coverage
   declaration cites it.
-- If section 16's design rule does not hold, the same question arises
-  for every later gate's resampling.
+- Section 16's design rule did not hold at the 2006 pseudo-origin, so
+  the same question arises for every later gate's resampling.
 
 ## 14. Reads and exposure
 
@@ -471,6 +742,17 @@ Opus 5.5 agents, each with one lens: rulings, power, blindness,
 statistics) and their verifiers read the draft protocol and plan under
 the same exclusions. Their findings shaped sections 4-9 and 16. None of
 them can serve as the Q6 reviewer.
+
+**After the freeze.** The session launched the run and watched its
+progress log, which prints stage names and replicate counts only. It
+never opened the checkpoint, which the script deleted. When the run
+ended it read the planning-value record, ran the power script on it, and
+read the power record. It computed d781's and d782's figures from the
+planning record alone, and corrected audit §11's "upper bound" wording
+from section 10's r. Apart from the run itself, it opened no PSID file,
+selection ledger, §15.4 file or codebook table after the freeze. It did
+not read its own transcript folder again; the reads record below comes
+from the app's transcript export.
 
 **Method for the final record.** `docs/design/track_b_b0_1_addendum_reads.json`
 is extracted mechanically from this session's own transcript export:

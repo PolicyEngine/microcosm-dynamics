@@ -40,15 +40,21 @@ intersection of symmetric slabs, so the Gaussian correlation inequality
 applies) and, in every case tested, the whole gate's.
 
 The binding evaluation (protocol v2) uses each cell's arm-F point estimate
-of r, and e_true = e_reg = e_B2, the transported 95% upper limit of the
-estimation variance. Two other bases are reported as sensitivities and
-decide nothing: the 95th percentile of r with the same e, and M6's own
-seed convention (``m6_cells.oc_4of5``) in place of the conditional model.
+of r for the seeds, and ``s2_gate`` for both the gap variance and the
+registered variance: ``e_true = e_reg = s2_gate - r**2``. Three other
+evaluations are reported and decide nothing: the point gap variance
+``s2`` with the registered bound ``e_B2``; r = 1 with e = 0, the audit's
+basis; and the bound rule times M6's own seed convention
+(``m6_cells.oc_4of5``) in place of the conditional model.
+
+``decision_illustrations`` adds post-run figures for the decisions the
+verdict queues for Max. They decide nothing either.
 """
 
 from __future__ import annotations
 
 import argparse
+import functools
 import hashlib
 import itertools
 import json
@@ -59,6 +65,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 from scipy import integrate
 from scipy.stats import norm
 
@@ -148,10 +155,11 @@ def _seed_pass(x: float, tau: float, r: float) -> float:
     return float(norm.cdf((tau - x) / r) - norm.cdf((-tau - x) / r))
 
 
+@functools.cache
 def cell_terms(
     tau: float, r: float, e_true: float, e_reg: float, m: int
 ) -> CellTerms:
-    """Quadrature for one cell's joint pass probabilities."""
+    """Quadrature for one cell's joint pass probabilities (memoised)."""
     if tau <= 0 or r < 0 or e_true < 0 or e_reg < 0:
         raise ValueError("tau must be positive and variances non-negative")
     s = math.sqrt(r**2 + e_true)
@@ -469,6 +477,123 @@ def structural_record() -> dict[str, Any]:
 BASES = ("binding", "central", "audit_upper_bound")
 
 
+def surfaces_reaching(
+    cells: Mapping[str, PlanningCell], target: float = POWER_TARGET
+) -> dict[str, Any]:
+    """Every surface of any families, scanned for power at ``target``.
+
+    Returns the largest surface size whose best surface reaches
+    ``target``, with that surface, and for each number of concept
+    families the best surface spanning exactly that many families that
+    reaches ``target``. Every subset is evaluated, vectorised; each
+    reported power is recomputed by ``gate_probabilities``.
+    """
+    names = sorted(cells)
+    families = sorted({concept(name) for name in names})
+    bits = np.array([1 << families.index(concept(n)) for n in names])
+    largest: tuple[int, float, tuple[int, ...]] | None = None
+    by_families: dict[int, tuple[float, tuple[int, ...]]] = {}
+    for m in range(1, len(names) + 1):
+        terms = [
+            cell_terms(c.tau, c.r, c.e_true, c.e_reg, m)
+            for c in (cells[name] for name in names)
+        ]
+        a4 = np.array([term.a4 for term in terms])
+        a5 = np.array([term.a5 for term in terms])
+        combos = np.array(list(itertools.combinations(range(len(names)), m)))
+        powers = N_SEEDS * np.prod(a4[combos], axis=1) - (
+            N_SEEDS - 1
+        ) * np.prod(a5[combos], axis=1)
+        masks = np.bitwise_or.reduce(bits[combos], axis=1)
+        counts = np.array([bin(int(mask)).count("1") for mask in masks])
+        for index in np.flatnonzero(powers >= target):
+            power, subset = float(powers[index]), tuple(combos[index])
+            if largest is None or (m, power) > largest[:2]:
+                largest = (m, power, subset)
+            k = int(counts[index])
+            if k not in by_families or power > by_families[k][0]:
+                by_families[k] = (power, subset)
+
+    def described(subset: tuple[int, ...]) -> dict[str, Any]:
+        chosen = [names[i] for i in subset]
+        m = len(chosen)
+        return {
+            "cells": chosen,
+            "families": sorted({concept(n) for n in chosen}),
+            "p_gate": gate_probabilities(
+                [
+                    cell_terms(c.tau, c.r, c.e_true, c.e_reg, m)
+                    for c in (cells[n] for n in chosen)
+                ]
+            )["p_gate"],
+        }
+
+    return {
+        "largest_surface": None if largest is None else described(largest[2]),
+        "by_family_count": {
+            str(k): described(subset)
+            for k, (_, subset) in sorted(by_families.items())
+        },
+    }
+
+
+def design_inflated(
+    planning: Mapping[str, Any], cells: Mapping[str, PlanningCell]
+) -> dict[str, PlanningCell]:
+    """r times the design ratio's 95th percentile where it is over the limit.
+
+    The sampling part of each such cell's gap variance, and its seeds'
+    spread, grow by the ratio squared; the estimation part is unchanged.
+    """
+    limit = float(planning["design_rule"]["limit"])
+    out: dict[str, PlanningCell] = {}
+    for name, cell in cells.items():
+        upper = float(planning["cells"][name]["design_ratio"]["ci"][1])
+        out[name] = (
+            PlanningCell(
+                name,
+                cell.r * upper,
+                cell.e_true,
+                cell.e_reg,
+                cell.tau,
+                cell.tol_over_sigma,
+                cell.capped,
+            )
+            if upper > limit
+            else cell
+        )
+    return out
+
+
+def decision_illustrations(planning: Mapping[str, Any]) -> dict[str, Any]:
+    """Post-run figures for the decisions the verdict queues. Not rules.
+
+    On the binding evaluation at the uncapped tolerance, if the ladder
+    could prune a family's last cell: which surfaces still reach 0.90,
+    with household resampling as measured, and with each over-limit
+    cell's sampling variance inflated by its design ratio's 95th
+    percentile squared.
+    """
+    binding = planning_cells(planning, "binding")
+    return {
+        "basis": "binding",
+        "decides_nothing": True,
+        "families_may_be_pruned": {
+            "as_measured": surfaces_reaching(binding),
+            "design_inflated": surfaces_reaching(
+                design_inflated(planning, binding)
+            ),
+        },
+        "design_inflated_verdict": {
+            key: value
+            for key, value in feasibility_verdict(
+                design_inflated(planning, binding)
+            ).items()
+            if key != "envelope"
+        },
+    }
+
+
 def power_record(planning: Mapping[str, Any] | None) -> dict[str, Any]:
     record: dict[str, Any] = {
         "schema": SCHEMA,
@@ -535,6 +660,8 @@ def power_record(planning: Mapping[str, Any] | None) -> dict[str, Any]:
             ),
             "verdict": feasibility_verdict(chosen),
         }
+    if any(cell.get("defined") for cell in cells.values()):
+        record["decision_illustrations"] = decision_illustrations(planning)
     return record
 
 

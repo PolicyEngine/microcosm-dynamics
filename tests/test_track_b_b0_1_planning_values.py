@@ -1005,3 +1005,33 @@ def test_thread_settings_must_be_explicit(monkeypatch):
         **{name: "1" for name in pv.THREAD_ENV},
         "OMP_NUM_THREADS": "2",
     }
+
+
+def test_load_sources_requests_no_wave_after_2011(monkeypatch, tmp_path):
+    """Spy on the two readers: the loader asks for waves 1969-2011 only."""
+    person_wave, labor = _invented_fields(n_households=6)
+    requested: dict[str, list[int]] = {"individual": [], "family": []}
+
+    def fake_individual(concepts, *, data_dir, waves):
+        requested["individual"] = list(waves)
+        assert set(concepts) == {
+            "age",
+            "sequence",
+            "relationship",
+            "weight",
+            "interview",
+        }
+        return person_wave
+
+    def fake_family(wave, *, data_dir):
+        requested["family"].append(wave)
+        return labor.get(wave, labor[2011].iloc[:0])
+
+    monkeypatch.setattr(pv.panels, "ind_person_period", fake_individual)
+    monkeypatch.setattr(pv.selector, "_read_family_labor_levels", fake_family)
+    monkeypatch.setattr(pv.family, "_relationship_codes", _codes)
+    pv.load_sources(tmp_path)
+    assert requested["individual"] == list(pv.COLLECTION_WAVES)
+    assert requested["family"] == list(pv.COLLECTION_WAVES)
+    assert max(requested["individual"]) == 2011
+    assert min(requested["individual"]) == 1969

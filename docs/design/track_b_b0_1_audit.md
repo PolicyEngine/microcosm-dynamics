@@ -27,8 +27,10 @@ corrections that round 2 of the blinded review (N1-N7) and d693 asked
 for: the summary's side-A sentence (N1), the floor-equality claims (N2),
 Q2's cost and its headroom, which is per cell (N3, d693), one citation
 (N4), the inventory's scope (N5), the pinned-figure claim and two bands
-(N6) and the wage vintage's element (N7). Section 15.5 lists them. No
-count, protocol byte or recommendation changed.
+(N6) and the wage vintage's element (N7). Section 15.5 lists them.
+After the addendum's planning-value run, section 11 also says that its
+"upper bounds" are not bounds. No count, protocol byte or recommendation
+changed.
 
 Verification class: **source audit** (design §3.2, line 144). It admits
 nothing scientific. Before B2 registers, the design requires three more
@@ -800,6 +802,16 @@ gap. A design-based resampled gap standard error would measure how much
 cancels, but it needs outcome data (Q5). No convention includes
 estimation error.
 
+*Revision 2 correction.* These are not bounds. Over household resamples
+with the law and paths fixed, the gap's variance is Var(T) + Var(P̄) -
+2 Cov(T, P̄), and it stays within the figures above only if the
+covariance offsets the projected statistic's own resampling variance, up
+to Var(T)/K. Nothing guarantees that. The addendum's planning-value run
+measured the full-support ratio r, the gap standard error over
+σ·√(1 + 1/K)/2, at the 2006 pseudo-origin: it is above 1 for seven of
+the 16 cells, up to 1.21 for `earn_p10.prime` (addendum section 10).
+The figures on these bases are reference points.
+
 ### 11.1 M6 rule: structural limits
 
 For a half-normal score, the k = 3 floor tolerance is 2.6063 σ, so a
@@ -1367,6 +1379,7 @@ before the review, rerun the inventory to a new path.
 | N7 | Wage-vintage element unstated | Section 2 |
 | d693 | Q2's 41% is per cell | Q2 and section 11.2 carry the gate-level figures; the addendum recomputes power |
 | Addendum review | Section 10 left out M6's all-seeds-valid condition; sections 1-2 still called d622 and the rulings pending | Section 10 restores the condition; the header and section 2 point to the rulings and the addendum's table |
+| Addendum run | The planning-value run measured the full-support ratio r above 1 for seven cells | Section 11 says its "upper bounds" are not bounds |
 
 These changes come after the second blinded review and before the
 addendum's own blinded review (Q6), which covers them.

@@ -250,7 +250,7 @@ def _planning(r=0.8, e=0.01, e_ucl=0.02, factor=1.1, cross=False):
     s2 = r**2 + factor * max(0.0, e)
     s2_ucl = r**2 + e_b2
     return {
-        "design_rule": {"household_resampling_stands": True},
+        "design_rule": {"household_resampling_stands": True, "limit": 1.10},
         "cells": {
             name: {
                 "defined": True,
@@ -384,3 +384,79 @@ def test_independence_understates_the_bound_rule_pass(rho):
     assert correlated >= independent - 3 * math.sqrt(
         independent * (1 - independent) / n
     )
+
+
+# --------------------------------------------------------------------------
+# Post-run illustrations for Max's decisions (they decide nothing)
+# --------------------------------------------------------------------------
+def _named_cells(spec):
+    return {
+        name: power.PlanningCell(name, r, e, e)
+        for name, (r, e) in spec.items()
+    }
+
+
+SMALL = {
+    "earn_p90.prime": (0.69, 0.08),
+    "earn_zero_rate.older": (0.71, 0.10),
+    "earn_autocorr_lag2": (0.98, 0.42),
+    "earn_dlog_sd.older": (1.01, 1.24),
+    "earn_mob_h2_diag": (1.06, 0.67),
+}
+
+
+def test_surface_scan_agrees_with_the_named_procedure_on_every_size():
+    cells = _named_cells(SMALL)
+    scan = power.surfaces_reaching(cells, target=0.0)
+    best = {
+        m: power.best_surface_of_size(cells, m)
+        for m in range(1, len(cells) + 1)
+    }
+    assert scan["largest_surface"]["cells"] == best[len(cells)]["cells"]
+    assert scan["largest_surface"]["p_gate"] == pytest.approx(
+        best[len(cells)]["p_gate"], rel=1e-12
+    )
+    for slot in scan["by_family_count"].values():
+        m = len(slot["cells"])
+        subset = [cells[n] for n in slot["cells"]]
+        assert slot["p_gate"] == pytest.approx(
+            power.surface_power(subset)["p_gate"], rel=1e-12
+        )
+        assert slot["p_gate"] <= best[m]["p_gate"] + 1e-12
+
+
+def test_surface_scan_reports_only_surfaces_at_the_target():
+    cells = _named_cells(SMALL)
+    scan = power.surfaces_reaching(cells)
+    largest = scan["largest_surface"]
+    assert largest["p_gate"] >= 0.90
+    bigger = power.best_surface_of_size(cells, len(largest["cells"]) + 1)
+    assert bigger is None or bigger["p_gate"] < 0.90
+    for k, slot in scan["by_family_count"].items():
+        assert slot["p_gate"] >= 0.90
+        assert len(slot["families"]) == int(k)
+        assert slot["families"] == sorted(
+            {power.concept(n) for n in slot["cells"]}
+        )
+
+
+def test_design_inflation_scales_r_only_over_the_limit():
+    planning = _planning(r=0.7, e_ucl=0.05)
+    planning["cells"]["earn_p50.older"]["design_ratio"]["ci"] = [1.2, 1.26]
+    binding = power.planning_cells(planning, "binding")
+    inflated = power.design_inflated(planning, binding)
+    for name, cell in inflated.items():
+        factor = 1.26 if name == "earn_p50.older" else 1.0
+        assert cell.r == pytest.approx(binding[name].r * factor)
+        assert cell.e_true == binding[name].e_true
+        assert cell.e_reg == binding[name].e_reg
+
+
+def test_power_record_carries_the_illustrations_and_labels_them():
+    planning = _planning(r=0.7, e_ucl=0.05)
+    illus = power.power_record(planning)["decision_illustrations"]
+    assert illus["decides_nothing"] is True and illus["basis"] == "binding"
+    pruned = illus["families_may_be_pruned"]
+    # No cell is over the limit, so inflation changes nothing.
+    assert pruned["as_measured"] == pruned["design_inflated"]
+    assert pruned["as_measured"]["largest_surface"]["p_gate"] >= 0.90
