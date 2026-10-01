@@ -2205,6 +2205,18 @@ SUMMARY_CHART_TITLE = (
 )
 
 
+# Line heights in inches: a 13.5-point bold title at 1.2 spacing and a 9-point
+# subtitle at 1.4 spacing.
+TITLE_LINE_INCHES = 0.23
+SUBTITLE_LINE_INCHES = 0.175
+
+
+def _wrap_title(title: str, width: float) -> str:
+    """Wrap a 13.5-point bold title so it fits a figure ``width`` inches wide."""
+
+    return textwrap.fill(title, width=int(width * 7.8))
+
+
 def household_chart_title(
     spec: dict[str, Any], document: dict[str, Any]
 ) -> str:
@@ -2298,7 +2310,18 @@ def draw_household_chart(
     footer_lines = sum(note.count("\n") + 1 for note in footer)
     footer_height = 0.145 * footer_lines + 0.15
     plot_height = 0.5 * len(labels) + 0.6
-    top_height = 1.55
+    title = _wrap_title(household_chart_title(spec, document), width)
+    subtitle = textwrap.fill(
+        f"{ILLUSTRATIVE_LABEL}. {spec['description']}. The cut: "
+        f"{reform_name(document, PRIMARY)}; annual dollars.",
+        width=int(width * 13.4),
+    )
+    subtitle_top = 0.52 + TITLE_LINE_INCHES * title.count("\n")
+    # The two-line state headings above each panel need about 0.6 inches.
+    top_height = max(
+        1.55,
+        subtitle_top + SUBTITLE_LINE_INCHES * (subtitle.count("\n") + 1) + 0.6,
+    )
     height = top_height + plot_height + footer_height + 0.45
     fig, axes = plt.subplots(
         1, len(own), figsize=(width, height), sharey=True, facecolor=SURFACE
@@ -2389,21 +2412,16 @@ def draw_household_chart(
     fig.text(
         0.01,
         from_top(0.18),
-        household_chart_title(spec, document),
+        title,
         ha="left",
         va="top",
         fontsize=13.5,
         fontweight="bold",
         color=INK,
     )
-    subtitle = textwrap.fill(
-        f"{ILLUSTRATIVE_LABEL}. {spec['description']}. The cut: "
-        f"{reform_name(document, PRIMARY)}; annual dollars.",
-        width=int(width * 13.4),
-    )
     fig.text(
         0.01,
-        from_top(0.52),
+        from_top(subtitle_top),
         subtitle,
         ha="left",
         va="top",
@@ -2489,7 +2507,21 @@ def draw_summary_chart(
     footer_lines = sum(note.count("\n") + 1 for note in footer)
     footer_height = 0.145 * footer_lines + 0.15
     plot_height = 0.36 * len(labels) + 0.8
-    top_height = 1.35
+    title = _wrap_title(SUMMARY_CHART_TITLE, width)
+    subtitle = textwrap.fill(
+        f"{ILLUSTRATIVE_LABEL}. Bars: the "
+        f"{_cut_text(document, PRIMARY)} (OASI) cut, by who pays the "
+        "offset. Households A-C are a low earner (A: no other income; "
+        "B: a $4,800 pension; C: a $31,200 pension); D is a medium "
+        "earner with C's pension; E is that earner's one-earner couple, "
+        "with a $42,000 pension.",
+        width=int(width * 13.4),
+    )
+    subtitle_top = 0.55 + TITLE_LINE_INCHES * title.count("\n")
+    top_height = max(
+        1.35,
+        subtitle_top + SUBTITLE_LINE_INCHES * (subtitle.count("\n") + 1) + 0.3,
+    )
     height = top_height + plot_height + footer_height + 0.6
     fig, ax = plt.subplots(figsize=(width, height), facecolor=SURFACE)
     ax.set_facecolor(SURFACE)
@@ -2597,7 +2629,7 @@ def draw_summary_chart(
     fig.text(
         0.01,
         from_top(0.18),
-        SUMMARY_CHART_TITLE,
+        title,
         ha="left",
         va="top",
         fontsize=13.5,
@@ -2606,16 +2638,8 @@ def draw_summary_chart(
     )
     fig.text(
         0.01,
-        from_top(0.55),
-        textwrap.fill(
-            f"{ILLUSTRATIVE_LABEL}. Bars: the "
-            f"{_cut_text(document, PRIMARY)} (OASI) cut, by who pays the "
-            "offset. Households A-C are a low earner (A: no other income; "
-            "B: a $4,800 pension; C: a $31,200 pension); D is a medium "
-            "earner with C's pension; E is that earner's one-earner couple, "
-            "with a $42,000 pension.",
-            width=int(width * 13.4),
-        ),
+        from_top(subtitle_top),
+        subtitle,
         ha="left",
         va="top",
         fontsize=9,
