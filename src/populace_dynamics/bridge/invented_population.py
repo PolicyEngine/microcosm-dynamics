@@ -513,8 +513,8 @@ def require_invented_cohort(invented: InventedCohort) -> None:
       here);
     * the frames and the cohort must equal what the invented generator
       and M4 give for this seed and size
-      (:func:`_require_generators_output`; about 2.5 seconds at 3,000
-      family units, measured on one host).
+      (:func:`_require_generators_output`; 2.5 to 6 seconds at 3,000
+      family units in measurements on one host, moving with its load).
 
     The records' careers are not rebuilt: ``careers.build_track_m_inputs``
     needs the SSA parameters and COLA history, which this guard does not

@@ -83,8 +83,9 @@ before the cohort is used to compute or map benefits:
   the cohort's seed and family count (the generator and M4 are
   deterministic) and refuses any frame, mapping or value that differs, so
   the columns the path reads (the anchor; the cohort's roles, birth years
-  and 2022 amounts) are the invented generator's. That rebuild took about
-  2.5 seconds at 3,000 family units when measured on one host.
+  and 2022 amounts) are the invented generator's. That rebuild took 2.5 to
+  6 seconds at 3,000 family units in measurements on one host, moving with
+  its load; each of the three entry points pays it once.
   `evaluate_headline`, `person_benefits` and `build_population` call the
   guard before evaluation, benefit conversion or mapping. Evaluation and
   benefit conversion accept the whole `InventedCohort`; callers cannot
