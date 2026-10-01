@@ -122,7 +122,7 @@ def test__given_no_law_pages__then_the_statutes_are_recorded_unchecked():
     statutes = script.statute_sources(SOURCES, None)
     assert [s["citation"] for s in statutes] == [
         "42 USC 1381",
-        "42 USC 1382e(d)(1)",
+        "42 USC 1382e(a), (d)(1)",
         "42 USC 415(g)",
         "7 USC 2013(a)",
     ]
@@ -147,6 +147,7 @@ def _law_pages(tmp_path, *, drop_phrase=None):
         data = f"<html><body>{body}</body></html>".encode()
         (law / record["file"]).write_bytes(data)
         record["sha256"] = hashlib.sha256(data).hexdigest()
+        record["bytes"] = len(data)
     (sources / script.LAW_FETCH_RECORD_FILE).write_text(json.dumps(records))
     return sources, law
 
@@ -553,7 +554,9 @@ def test__given_a_memo_off_the_ratio__then_it_is_refused(costs, people):
         )
 
 
-def _health_row(*, eligible=(0.0, 1.0), extra_leaf=False):
+def _health_row(
+    *, eligible=(0.0, 1.0), extra_leaf=False, income_before=15_000.0
+):
     row = _row()
     tree = bridge.ComponentTree(
         "household_net_income",
@@ -588,19 +591,37 @@ def _health_row(*, eligible=(0.0, 1.0), extra_leaf=False):
             5.0 if extra_leaf else 0.0,
         ),
     )
+    income = "medicaid_optional_senior_or_disabled_countable_income"
+    limit = "medicaid_optional_senior_or_disabled_income_limit"
     row["memo_with_health"] = {
-        "baseline": {"is_medicaid_eligible": eligible[0], "ssi": 0.0},
-        "reform": {"is_medicaid_eligible": eligible[1], "ssi": 420.0},
+        "baseline": {
+            "is_medicaid_eligible": eligible[0],
+            "ssi": 0.0,
+            income: income_before,
+            limit: 14_044.8,
+        },
+        "reform": {
+            "is_medicaid_eligible": eligible[1],
+            "ssi": 420.0,
+            income: 12_000.0,
+            limit: 14_044.8,
+        },
     }
     return row
 
 
+LIMITS = {"FL": 0.88}
+
+
 def test__given_medicaid_starting__then_the_text_explains_it():
-    out = script.health_explanations([_health_row()])
+    out = script.health_explanations([_health_row()], LIMITS)
     assert list(out) == ["A-FL-oasi"]
-    assert "eligible for Medicaid" in out["A-FL-oasi"]
-    assert "+9,200" in out["A-FL-oasi"]
-    assert "$0 to $420" in out["A-FL-oasi"]
+    text = out["A-FL-oasi"]
+    assert "optional aged Medicaid pathway from $15,000 to $12,000" in text
+    assert "$2,045 under its limit of $14,045 (88% of the poverty" in text
+    assert "Medicaid eligibility begins" in text
+    assert "valued at cost at $9,200 a year" in text
+    assert "$0 to $420" in text
 
 
 @pytest.mark.parametrize(
@@ -608,15 +629,18 @@ def test__given_medicaid_starting__then_the_text_explains_it():
     [
         pytest.param(lambda: _health_row(eligible=(1.0, 1.0)), id="no-gain"),
         pytest.param(lambda: _health_row(extra_leaf=True), id="chip"),
+        pytest.param(
+            lambda: _health_row(income_before=14_000.0), id="not-the-limit"
+        ),
     ],
 )
 def test__given_another_health_difference__then_it_is_refused(row):
     with pytest.raises(script.InvariantError):
-        script.health_explanations([row()])
+        script.health_explanations([row()], LIMITS)
 
 
 def test__given_no_health_difference__then_there_is_no_text():
-    assert script.health_explanations(_rows()) == {}
+    assert script.health_explanations(_rows(), LIMITS) == {}
 
 
 # ---------------------------------------------------------------------------
@@ -662,3 +686,141 @@ def test__law_year_note__then_it_says_2026_law_and_not_a_projection():
     assert script.ILLUSTRATIVE_LABEL == (
         "ILLUSTRATIVE HOUSEHOLDS, NOT SURVEY DATA"
     )
+
+
+# ---------------------------------------------------------------------------
+# Review round 1: union tracing, groupings, QI, ticks, the write path
+# ---------------------------------------------------------------------------
+def test__given_cuts_changing_different_leaves__then_baselines_trace_both():
+    """The shared baseline is traced for every leaf any comparison moves."""
+
+    rows = _rows()
+    oasdi = _values(7_392.0, 3_252.0 + 8_916.0 - 7_392.0 - 10.0, wic=10.0)
+    rows[1] = _row("oasdi", reform_values=oasdi)
+    cases, _ = script.trace_cases(rows)
+    traced = {case_id: leaves for case_id, _, leaves in cases}
+    baseline = script._case_id("A", "FL", "baseline", "default")
+    assert traced[baseline] == ["social_security", "ssi", "wic"]
+    assert traced[script._case_id("A", "FL", "oasi", "default")] == [
+        "social_security",
+        "ssi",
+    ]
+
+
+def test__given_a_leaf_in_the_wrong_level__then_it_is_refused(monkeypatch):
+    """The leaf-name mapping is checked against the tree's categories."""
+
+    levels = dict(dc.LEAF_LEVELS)
+    levels["ssi"] = ("state", "deliberately wrong")
+    monkeypatch.setattr(dc, "LEAF_LEVELS", levels)
+    with pytest.raises(script.InvariantError, match="level is not"):
+        script.check_invariants(_rows())
+
+
+def _msp_row(federal):
+    row = _row()
+    tree = bridge.ComponentTree(
+        "household_net_income",
+        {
+            **TREE.children,
+            "household_benefits": (
+                *TREE.children["household_benefits"],
+                ("household_health_benefits", 1),
+            ),
+            "household_health_benefits": (("msp_cost", 1),),
+        },
+    )
+
+    def with_msp(values, msp):
+        values = dict(values)
+        values["msp_cost"] = msp
+        values["household_health_benefits"] = msp
+        values["household_benefits"] += msp
+        values["household_net_income"] += msp
+        return values
+
+    row["with_health"] = bridge.decompose(
+        tree,
+        with_msp(row["run_values"]["default"]["baseline"], 0.0),
+        with_msp(row["run_values"]["default"]["reform"], 2_000.0),
+    )
+    row["memo_with_health"] = {
+        "baseline": {"msp_cost": 0.0, "msp_federal_cost": 0.0},
+        "reform": {"msp_cost": 2_000.0, "msp_federal_cost": federal},
+    }
+    return row
+
+
+def test__given_a_joint_msp_value__then_it_passes():
+    script._check_msp_joint(_msp_row(1_229.0))
+
+
+def test__given_an_all_federal_msp_value__then_it_is_refused():
+    with pytest.raises(script.InvariantError, match="QI"):
+        script._check_msp_joint(_msp_row(2_000.0))
+
+
+@pytest.mark.parametrize(
+    ("value", "text"),
+    [
+        (0.0, "$0"),
+        (2_000.0, "$2k"),
+        (-12_000.0, "−$12k"),
+        (1_500.0, "$1.5k"),
+        (500.0, "$500"),
+        (-200.0, "−$200"),
+    ],
+)
+def test__given_a_tick__then_its_label_is_exact(value, text):
+    assert script.tick_text(value) == text
+
+
+def test__given_invented_rows__then_every_artifact_is_written(tmp_path):
+    """A smoke test of the write path on INVENTED rows (no PE-US)."""
+
+    rows = _rows()
+    for row in rows:
+        row["float32_guard"] = {
+            variant: {
+                "traced_leaves": ["social_security", "ssi"],
+                "traced_nodes": 3,
+                "small_changes": [],
+                "uncaused_changes": [],
+            }
+            for variant in script.VARIANTS
+        }
+        row["memo"] = {"baseline": {}, "reform": {}}
+        row["memo_with_health"] = {"baseline": {}, "reform": {}}
+        row["situations"] = {
+            "baseline": {"people": {"worker": {}}},
+            "reform": {"people": {"worker": {}}},
+        }
+    trustees = script.trustees_citation(SOURCES, None)
+    document = {
+        "label": script.ILLUSTRATIVE_LABEL,
+        "trustees_report": trustees,
+        "provenance": {
+            "microcosm_dynamics": {"commit": "0" * 40},
+            "policyengine_us": {
+                "release": script.minimum.PE_US_RELEASE,
+                "installed": {"policyengine_core_version": "3.32.11"},
+                "record_check": {"files_checked": 17_551},
+                "parameter_updates": [],
+            },
+        },
+        "medicaid_valuation": {"text": "Medicaid valuation (invented)."},
+        "health_explanations": {},
+        "float32_guard": script._guard_summary(rows),
+        "caveats": [script.LAW_YEAR_NOTE],
+    }
+    report = script.markdown(rows, document)
+    assert script.ILLUSTRATIVE_LABEL in report
+    assert "| A | FL | −1,968 | 0 | 100% | 100% | 0% |" in report
+    json.dumps([script._serialize_row(row) for row in rows])
+    paths = script.draw_household_chart(
+        rows, script.HOUSEHOLDS[0], document, tmp_path / "a"
+    )
+    paths += script.draw_summary_chart(rows, document, tmp_path / "s")
+    for path in paths:
+        data = path.read_bytes()
+        assert script.ILLUSTRATIVE_LABEL.encode() in data, path

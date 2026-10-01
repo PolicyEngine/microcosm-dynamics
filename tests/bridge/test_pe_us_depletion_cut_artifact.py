@@ -1,0 +1,472 @@
+"""The committed depletion-cut results satisfy the analysis's identities.
+
+Reads what ``scripts/pe_us_depletion_cut_sample_households.py`` wrote to
+``docs/analysis/pe_us_depletion_cut_20261001/`` (ILLUSTRATIVE HOUSEHOLDS,
+NOT SURVEY DATA; 2026 law and prices) and the committed Trustees Report
+Highlights page, without starting policyengine-us, and checks:
+
+* every artifact carries the label and the 2026-law note (the JSON, the
+  Markdown, and each chart's PNG and SVG metadata);
+* the citation: the page's URL, retrieval time and SHA-256 match its fetch
+  record and the committed bytes, the recorded quotes are the page's own
+  sentences, and the payable shares the run used are the ones parsed from
+  those quotes (and Table II.A1);
+* the identities, in every comparison with and without health coverage:
+  the components sum exactly to the net change; the levels of government
+  partition the components; the offset share is 1 - net change / Social
+  Security change and the levels' shares sum to it; the Social Security
+  change is minus the cut; each cut is the cut share times the benefit
+  within the stated rounding; a deeper cut never leaves more Social
+  Security;
+* the low earner's baseline benefit equals #496's committed current-law
+  benefit, and the couple's worker benefit equals the medium earner's;
+* the pinned release, a fresh run from clean code, a clean float32 guard,
+  and no local path.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import math
+import sys
+from decimal import Decimal
+from fractions import Fraction
+from pathlib import Path
+
+import pytest
+
+ROOT = Path(__file__).resolve().parents[2]
+ANALYSIS = ROOT / "docs" / "analysis" / "pe_us_depletion_cut_20261001"
+SOURCES = ANALYSIS / "sources"
+BRIDGE_496 = ROOT / "docs" / "analysis" / "pe_us_bridge_20260930"
+STEM = "pe_us_depletion_cut_sample_households"
+sys.path.insert(0, str(ROOT / "scripts"))
+
+import pe_us_depletion_cut_sample_households as script  # noqa: E402
+
+from populace_dynamics.bridge import depletion_cut as dc  # noqa: E402
+
+VARIANTS = ("decomposition", "with_health_benefits_in_net_income")
+
+
+@pytest.fixture(scope="module")
+def document():
+    return json.loads((ANALYSIS / f"{STEM}.json").read_text())
+
+
+@pytest.fixture(scope="module")
+def report():
+    return (ANALYSIS / f"{STEM}.md").read_text()
+
+
+@pytest.fixture(scope="module")
+def page_text():
+    return dc.highlights_text(
+        (SOURCES / script.HIGHLIGHTS_FILE).read_text(encoding="utf-8")
+    )
+
+
+def _cents(value):
+    cents = round(value * 100)
+    assert math.isclose(cents, value * 100, abs_tol=1e-6), value
+    return cents
+
+
+def _strings(value):
+    if isinstance(value, dict):
+        for key, item in value.items():
+            yield str(key)
+            yield from _strings(item)
+    elif isinstance(value, list):
+        for item in value:
+            yield from _strings(item)
+    elif isinstance(value, str):
+        yield value
+
+
+def _charts():
+    stems = [f"household_{key}_waterfall" for key in "abcde"]
+    return [*stems, "offset_share_summary"]
+
+
+# ---------------------------------------------------------------------------
+# Labels
+# ---------------------------------------------------------------------------
+def test__artifact__then_every_file_is_labelled(document, report):
+    label = "ILLUSTRATIVE HOUSEHOLDS, NOT SURVEY DATA"
+    assert document["label"] == label
+    assert document["law_year_note"] == script.LAW_YEAR_NOTE
+    assert label in report and script.LAW_YEAR_NOTE in report
+    assert script.LAW_YEAR_NOTE in document["caveats"]
+    for stem in _charts():
+        for suffix in (".png", ".svg"):
+            data = (ANALYSIS / f"{stem}{suffix}").read_bytes()
+            assert label.encode() in data, f"{stem}{suffix}"
+            assert b"would not happen in 2026" in data, f"{stem}{suffix}"
+
+
+def test__artifact__then_the_2026_law_note_is_plain(document):
+    note = document["law_year_note"]
+    assert "2026 tax and benefit law" in note
+    assert "would not happen in 2026" in note
+    oasi = document["trustees_report"]["quotes"]["OASI"]
+    assert f"deplete in {oasi['depletion_year']}" in note
+    assert "not a projection" in note
+
+
+# ---------------------------------------------------------------------------
+# The Trustees Report
+# ---------------------------------------------------------------------------
+def test__artifact__then_the_page_matches_its_fetch_record(document):
+    page = document["trustees_report"]["highlights"]
+    records = {
+        r["file"]: r
+        for r in json.loads((SOURCES / script.FETCH_RECORD_FILE).read_text())
+    }
+    record = records[script.HIGHLIGHTS_FILE]
+    data = (SOURCES / script.HIGHLIGHTS_FILE).read_bytes()
+    assert (
+        page["url"]
+        == record["url"]
+        == ("https://www.ssa.gov/oact/TR/2026/II_A_highlights.html")
+    )
+    assert page["retrieved_utc"] == record["retrieved_utc"]
+    assert page["retrieved_utc"].endswith("+00:00")
+    assert page["sha256"] == record["sha256"]
+    assert page["sha256"] == hashlib.sha256(data).hexdigest()
+    assert page["bytes"] == record["bytes"] == len(data)
+    full = document["trustees_report"]["full_report"]
+    assert full["url"] == records[script.FULL_REPORT_FILE]["url"]
+    assert full["sha256"] == records[script.FULL_REPORT_FILE]["sha256"]
+    assert full["committed"] is False
+    assert not (SOURCES / script.FULL_REPORT_FILE).exists()
+    assert set(full["quotes_found_on_text_page"]) == {"OASI", "OASDI"}
+    assert full["other_phrases_found"] == list(script.FULL_REPORT_QUOTES)
+    for phrase in script.FULL_REPORT_QUOTES[:2]:
+        assert phrase in dc.ROUNDING_RULE
+    assert full["text_extraction_sha256"] == script.FULL_REPORT_TEXT_SHA256
+
+
+def test__artifact__then_the_quotes_are_the_pages_own(document, page_text):
+    trustees = document["trustees_report"]
+    found = dc.depletion_quotes(page_text)
+    for fund in ("OASI", "OASDI"):
+        quote = trustees["quotes"][fund]
+        assert quote["text"] == found[fund]
+        parsed = dc.parse_depletion_sentence(quote["text"])
+        assert parsed.as_dict() == {
+            k: v for k, v in quote.items() if k != "text"
+        }
+        assert trustees["key_results_table"][fund] == {
+            "year": parsed.year,
+            "percent": parsed.percent,
+        }
+    assert trustees["key_results_table"] == dc.key_results_table(page_text)
+    for phrase in trustees["context_quotes"]:
+        assert phrase in page_text
+
+
+def test__artifact__then_the_shares_used_are_the_quoted_ones(
+    document, page_text
+):
+    found = dc.depletion_quotes(page_text)
+    for scenario, fund in script.REFORMS.items():
+        parsed = dc.parse_depletion_sentence(found[fund])
+        reform = document["reforms"][scenario]
+        assert reform["fund"] == fund
+        assert Decimal(reform["payable_share"]) == parsed.payable_share
+        assert Decimal(reform["cut_share"]) == parsed.cut_share
+        for row in document["results"]:
+            if row["reform"] != scenario:
+                continue
+            for cut in row["cuts"].values():
+                assert Decimal(cut["payable_share"]) == parsed.payable_share
+    assert document["reforms"]["oasi"]["primary"] is True
+    assert document["reforms"]["oasdi"]["primary"] is False
+    assert document["reforms"]["oasi"]["payable_share"] == "0.78"
+    assert document["reforms"]["oasdi"]["payable_share"] == "0.83"
+
+
+def test__artifact__then_the_statutes_were_checked(document):
+    statutes = document["provenance"]["statutes"]
+    assert [s["citation"] for s in statutes] == [
+        "42 USC 1381",
+        "42 USC 1382e(a), (d)(1)",
+        "42 USC 415(g)",
+        "7 USC 2013(a)",
+    ]
+    records = {
+        r["url"]: r
+        for r in json.loads(
+            (SOURCES / script.LAW_FETCH_RECORD_FILE).read_text()
+        )
+    }
+    for statute in statutes:
+        assert statute["phrases_found"] is True
+        assert statute["sha256"] == records[statute["url"]]["sha256"]
+        assert statute["committed"] is False
+
+
+# ---------------------------------------------------------------------------
+# The identities
+# ---------------------------------------------------------------------------
+def _levels_from(components):
+    out = {level: 0 for level in dc.LEVELS}
+    for c in components:
+        level = dc.level_for(c["variable"], c["category"])
+        out[level] += _cents(c["change"])
+    return out
+
+
+@pytest.mark.parametrize("variant", VARIANTS)
+def test__artifact__then_components_sum_exactly_to_the_net_change(
+    document, variant
+):
+    for row in document["results"]:
+        d = row[variant]
+        net = _cents(d["net_change"])
+        assert sum(_cents(c["change"]) for c in d["components"]) == net
+        assert (
+            sum(_cents(v["change"]) for v in d["categories"].values()) == net
+        )
+        assert (
+            _cents(d["reform_net_income"]) - _cents(d["baseline_net_income"])
+            == net
+        )
+
+
+@pytest.mark.parametrize("variant", VARIANTS)
+def test__artifact__then_the_levels_partition_the_components(
+    document, variant
+):
+    for row in document["results"]:
+        d = row[variant]
+        offsets = d["offsets"]
+        recomputed = _levels_from(d["components"])
+        recorded = {
+            level: _cents(entry["change"])
+            for level, entry in offsets["levels"].items()
+        }
+        assert recorded == recomputed
+        assert sum(recorded.values()) == _cents(d["net_change"])
+        assert recorded["market_income"] == recorded["unattributed"] == 0
+        for key in ("baseline", "reform"):
+            assert sum(
+                _cents(entry[key]) for entry in offsets["levels"].values()
+            ) == sum(_cents(c[key]) for c in d["components"])
+
+
+@pytest.mark.parametrize("variant", VARIANTS)
+def test__artifact__then_the_offset_share_is_one_less_net_over_cut(
+    document, variant
+):
+    for row in document["results"]:
+        offsets = row[variant]["offsets"]
+        ss = _cents(offsets["social_security_change"])
+        net = _cents(offsets["net_change"])
+        assert ss < 0
+        share = Fraction(
+            offsets["offset_share"]["numerator"],
+            offsets["offset_share"]["denominator"],
+        )
+        assert share == 1 - Fraction(net, ss)
+        assert share == dc.offset_share(net, ss)
+        by_level = {
+            level: Fraction(v["numerator"], v["denominator"])
+            for level, v in offsets["offset_shares_by_level"].items()
+        }
+        assert sum(by_level.values()) == share
+        assert sum(by_level[g] for g in dc.OFFSET_GROUPS) == share
+        levels = offsets["levels"]
+        for level, value in by_level.items():
+            assert value == Fraction(-_cents(levels[level]["change"]), ss)
+
+
+def test__artifact__then_social_security_falls_by_the_cut(document):
+    for row in document["results"]:
+        cut = sum(c["annual_cut"] for c in row["cuts"].values())
+        for variant in VARIANTS:
+            change = _cents(
+                row[variant]["categories"]["social_security"]["change"]
+            )
+            assert change == -100 * cut
+        assert (
+            row["baseline_social_security_annual"]
+            - (row["reform_social_security_annual"])
+            == cut
+        )
+
+
+def test__artifact__then_each_cut_is_the_share_within_the_rounding(document):
+    for row in document["results"]:
+        for cut in row["cuts"].values():
+            share = Decimal(cut["payable_share"])
+            scheduled = cut["monthly_scheduled"]
+            exact = (1 - share) * scheduled
+            assert 0 <= cut["monthly_cut"] - exact < 1
+            assert cut["monthly_payable"] == int(share * scheduled // 1)
+            assert cut["annual_cut"] == 12 * cut["monthly_cut"]
+            assert cut["annual_scheduled"] == 12 * scheduled
+            assert cut["annual_payable"] == 12 * cut["monthly_payable"]
+
+
+def test__artifact__then_a_deeper_cut_never_leaves_more(document):
+    rows = {
+        (r["household"], r["state"], r["reform"]): r
+        for r in document["results"]
+    }
+    assert len(rows) == 5 * 3 * 2
+    for (key, state, reform), row in rows.items():
+        if reform != "oasi":
+            continue
+        other = rows[(key, state, "oasdi")]
+        assert row["reform_social_security_annual"] <= (
+            other["reform_social_security_annual"]
+        )
+        for person, cut in row["cuts"].items():
+            assert cut["monthly_payable"] <= (
+                other["cuts"][person]["monthly_payable"]
+            )
+
+
+def test__artifact__then_only_payer_groups_change(document):
+    for row in document["results"]:
+        for variant in VARIANTS:
+            for c in row[variant]["components"]:
+                if c["change"]:
+                    assert dc.is_reviewed(c["variable"]), (
+                        row["household"],
+                        row["state"],
+                        c["variable"],
+                    )
+
+
+# ---------------------------------------------------------------------------
+# Benefits
+# ---------------------------------------------------------------------------
+def test__artifact__then_the_low_earner_is_496s_benefit(document):
+    """The cross-check: the baseline is #496's committed current law."""
+
+    committed = json.loads(
+        (
+            BRIDGE_496 / "pe_us_minimum_benefit_sample_households.json"
+        ).read_text()
+    )
+    current = committed["worker"]["current_law"]
+    low = document["benefits"]["low_earner"]
+    assert low["current_law"] == current
+    assert low["monthly_benefit"] == current["monthly_benefit"] == 743
+    assert low["pia_record"] == committed["worker"]["pia_record"]
+    for row in document["results"]:
+        if row["household"] in "ABC":
+            assert row["cuts"]["worker"]["monthly_scheduled"] == 743
+            assert row["baseline_social_security_annual"] == (
+                committed["results"][0]["baseline_social_security_annual"]
+            )
+
+
+def test__artifact__then_the_couple_is_the_medium_earner_and_spouse(
+    document,
+):
+    medium = document["benefits"]["medium_earner"]
+    couple = document["benefits"]["couple"]
+    assert medium["claim_factor"] == 1.0
+    assert medium["months_from_full_retirement_age"] == 0
+    assert medium["years_of_coverage"]["years"] == 35
+    assert couple["worker_monthly"] == medium["monthly_benefit"]
+    result = couple["result"]
+    assert result["family_maximum_binding"] is False
+    pia = Fraction(result["pia"])
+    assert pia == Fraction(repr(medium["current_law"]["pia_payment_year"]))
+    original = Fraction(result["spouse_original_benefit"])
+    assert original == Fraction(math.floor(pia / 2 * 10), 10)
+    assert couple["spouse_monthly"] == math.floor(original)
+    assert couple["spouse_months_before_full_retirement_age"] == 0
+    for row in document["results"]:
+        if row["household"] == "D":
+            assert set(row["cuts"]) == {"worker"}
+        if row["household"] == "E":
+            assert row["cuts"]["spouse"]["monthly_scheduled"] == (
+                couple["spouse_monthly"]
+            )
+        if row["household"] in "DE":
+            assert row["cuts"]["worker"]["monthly_scheduled"] == (
+                medium["monthly_benefit"]
+            )
+
+
+def test__artifact__then_the_medium_earner_benefit_is_taxable(document):
+    """Household D: part of the benefit is taxable before and after."""
+
+    for row in document["results"]:
+        if row["household"] != "D":
+            continue
+        memo = row["memo"]
+        assert memo["baseline"]["taxable_social_security"] > 0
+        assert memo["reform"]["taxable_social_security"] > 0
+        assert memo["reform"]["taxable_social_security"] < (
+            row["reform_social_security_annual"]
+        )
+
+
+# ---------------------------------------------------------------------------
+# Provenance and checks
+# ---------------------------------------------------------------------------
+def test__artifact__then_the_run_is_fresh_pinned_and_clean(document):
+    provenance = document["provenance"]
+    pe = provenance["policyengine_us"]
+    assert pe["release"] == script.minimum.PE_US_RELEASE
+    assert pe["installed"]["version"] == "2.18.0"
+    assert pe["source_check"]["kind"] == "index"
+    assert pe["source_check"]["published"] is True
+    record = pe["record_check"]
+    assert record["mismatched"] == record["missing"] == record["extra"] == 0
+    assert provenance["microcosm_dynamics"]["code_dirty"] is False
+    runs = provenance["pe_us_runs"]
+    assert runs["reused_raw_outputs"] is False
+    assert runs["cases"] == 5 * 3 * 3 * 2
+    assert len(runs["run_job_sha256"]) == len(runs["trace_job_sha256"]) == 64
+
+
+def test__artifact__then_the_float32_guard_is_clean(document):
+    guard = document["float32_guard"]
+    assert guard["uncaused_changes"] == 0
+    assert guard["comparisons"] == 5 * 3 * 2 * 2
+    for row in document["results"]:
+        for variant in ("default", "with_health"):
+            assert row["float32_guard"][variant]["uncaused_changes"] == []
+
+
+def test__artifact__then_no_local_path_is_written(document, report):
+    for text in [*_strings(document), report]:
+        assert "/Users/" not in text
+    for text in _strings(document):
+        assert not text.startswith(("/", "~")), text
+
+
+def test__artifact__then_health_differences_are_each_explained(document):
+    explained = set(document["health_explanations"])
+    differing = {
+        f"{r['household']}-{r['state']}-{r['reform']}"
+        for r in document["results"]
+        if r["with_health_benefits_in_net_income"]["net_change"]
+        != r["decomposition"]["net_change"]
+    }
+    assert explained == differing
+
+
+def test__artifact__then_the_summary_table_matches_the_json(document, report):
+    for row in document["results"]:
+        offsets = row["decomposition"]["offsets"]
+        share = Fraction(
+            offsets["offset_share"]["numerator"],
+            offsets["offset_share"]["denominator"],
+        )
+        line = (
+            f"| {row['household']} | {row['state']} | "
+            f"{script._money(_cents(offsets['social_security_change']), signed=True)} | "
+            f"{script._money(_cents(offsets['net_change']), signed=True)} | "
+            f"{script.percent_text(share)} |"
+        )
+        assert line in report, line

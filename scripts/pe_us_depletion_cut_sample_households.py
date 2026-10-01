@@ -10,8 +10,8 @@ The script is the second use of :mod:`populace_dynamics.bridge.policyengine_us`
    committed under ``docs/analysis/pe_us_depletion_cut_20261001/sources/``
    with its fetch record) state, under intermediate assumptions, the year
    the OASI Trust Fund's reserves deplete and the share of scheduled
-   benefits payable then, and the same for the hypothetical combined OASDI
-   funds.  :mod:`populace_dynamics.bridge.depletion_cut` reads both numbers
+   benefits payable then, and the same for the OASI and DI funds on a
+   combined basis (OASDI).  :mod:`populace_dynamics.bridge.depletion_cut` reads both numbers
    from the quoted sentences, and checks them against the page's Table
    II.A1.  The primary reform cuts each Social Security benefit in the
    household to the OASI payable share (retired-worker and spouse's
@@ -76,6 +76,7 @@ for _path in (ROOT / "src", ROOT / "scripts"):
         sys.path.insert(0, str(_path))
 
 import pe_us_minimum_benefit_sample_households as minimum  # noqa: E402
+import yaml  # noqa: E402
 
 from populace_dynamics.bridge import depletion_cut as dc  # noqa: E402
 from populace_dynamics.bridge import policyengine_us as bridge  # noqa: E402
@@ -136,6 +137,15 @@ CONTEXT_QUOTES = (
     "65",
     "$58 billion from income taxation of Social Security benefits",
 )
+#: Full-report phrases the artifacts quote; each must be in its text.
+FULL_REPORT_QUOTES = (
+    "scheduled benefits could not be paid in full on a timely basis",
+    "certain trust fund operations items are not well-defined under "
+    "current law",
+    "Retired workers, their families, and survivors of deceased workers "
+    "receive monthly benefits under the Old-Age and Survivors Insurance "
+    "(OASI) program",
+)
 #: The primary reform's fund and the sensitivity's, by scenario name.
 REFORMS: dict[str, str] = {"oasi": "OASI", "oasdi": "OASDI"}
 PRIMARY = "oasi"
@@ -164,8 +174,10 @@ STATUTE_QUOTES: dict[str, tuple[str, tuple[str, ...]]] = {
         ),
     ),
     "lii_42_usc_1382e.html": (
-        "42 USC 1382e(d)(1)",
+        "42 USC 1382e(a), (d)(1)",
         (
+            "cash payments which are made by a State",
+            "in supplementation of such benefits",
             "pay to the Commissioner of Social Security an amount equal to "
             "the expenditures made by the Commissioner of Social Security "
             "as such supplementary payments",
@@ -187,7 +199,15 @@ def _sha256_bytes(data: bytes) -> str:
 
 
 def _docs_relative(path: Path) -> str:
-    return str(path.resolve().relative_to(ROOT))
+    """``path`` relative to the repository; refused outside it."""
+
+    try:
+        return str(path.resolve().relative_to(ROOT))
+    except ValueError:
+        raise ValueError(
+            f"{path} is outside the repository; the committed sources and "
+            "--docs-dir must be inside it"
+        ) from None
 
 
 class InvariantError(minimum.InvariantError):
@@ -275,8 +295,17 @@ def trustees_citation(
                 f"{fund}'s quote is on text pages {hits} of the full report",
             )
             found[fund] = hits[0]
+        joined = " ".join(pages)
+        # pdftotext hyphenates at line ends ("work- ers"); join those.
+        unhyphenated = joined.replace("- ", "")
+        for phrase in FULL_REPORT_QUOTES:
+            _require(
+                phrase in joined or phrase in unhyphenated,
+                f"{phrase!r} is not in the full report's text",
+            )
         full_report["text_pages"] = len(pages)
         full_report["quotes_found_on_text_page"] = found
+        full_report["other_phrases_found"] = list(FULL_REPORT_QUOTES)
     return {
         "report": TRUSTEES_REPORT_TITLE,
         "publisher": (
@@ -305,10 +334,12 @@ def trustees_citation(
         "primary": REFORMS[PRIMARY],
         "sensitivity": REFORMS["oasdi"],
         "fund_choice": (
-            "Retired-worker and spouse's benefits are paid from the OASI "
-            "Trust Fund, so the primary reform pays each benefit at the "
-            "OASI payable share. The hypothetical combined OASDI funds' "
-            "share is the sensitivity."
+            "'Retired workers, their families, and survivors of deceased "
+            "workers receive monthly benefits under the Old-Age and "
+            "Survivors Insurance (OASI) program' (the report's "
+            "introduction), so the primary reform pays each benefit at the "
+            "OASI payable share. The share for the OASI and DI funds on a "
+            "combined basis (OASDI) is the sensitivity."
         ),
     }
 
@@ -336,7 +367,9 @@ def statute_sources(
         if law_dir is not None:
             data = (law_dir / record["file"]).read_bytes()
             _require(
-                _sha256_bytes(data) == record["sha256"],
+                _sha256_bytes(data) == record["sha256"]
+                and len(data) == record["bytes"]
+                and record["status"] == 200,
                 f"{record['file']} does not match its fetch record",
             )
             text = dc.highlights_text(data.decode("utf-8"))
@@ -549,8 +582,8 @@ def december_cola_percents(rates: dict[int, float]) -> dict[int, Fraction]:
 
     COLAs are rounded to the nearest one-tenth of 1 percent (42 USC
     415(i)(1)(D)); a stored fraction such as ``0.027999999999999997`` is
-    read as 2.8 percent.  Refuses a rate more than a millionth of a percent
-    from a tenth.
+    read as 2.8 percent.  Refuses a rate more than 1e-8 percent from a
+    tenth of a percent.
     """
 
     out = {}
@@ -578,8 +611,9 @@ def couple_benefits(
     payment year (:data:`BENEFIT_MONTHS`), through
     ``track_b.gross_benefits.household_benefits``.  Refuses months that
     differ, and refuses unless the layer's worker benefit and PIA equal the
-    ones :func:`medium_earner_benefit` derived (a differential check of two
-    implementations).
+    ones :func:`medium_earner_benefit` derived: a differential check of the
+    COLA carry-forward and the rounding to the dollar (both start from the
+    same PIA at eligibility).
     """
 
     params = load_ssa_parameters(parameter_root)
@@ -658,7 +692,9 @@ def couple_benefits(
         "spouse_monthly": first["spouse_monthly"],
         "differential_check": (
             "Track B's worker PIA and whole-dollar benefit equal "
-            "carry_pia_forward's PIA and the medium earner's benefit"
+            "carry_pia_forward's PIA and the medium earner's benefit (the "
+            "COLA carry-forward and the rounding; both start from the same "
+            "PIA at eligibility)"
         ),
         "rounding": (
             "The spouse's original benefit is one-half of the PIA, rounded "
@@ -760,10 +796,13 @@ def build_household(
     A-C are #496's (``household``, unchanged).  D and E use the same common
     facts (rent, bank balance, heating or cooling costs, food preparation,
     housing take-up off).  In E the spouse's benefit enters as
-    ``social_security_dependents``; in policyengine-us 2.18.0 the four
-    Social Security inputs differ only in child-care and TANF income lists
-    that do not reach a household without children, and
-    ``social_security`` adds all four (``social_security.py:11-14``).
+    ``social_security_dependents``.  In policyengine-us 2.18.0 it and
+    ``social_security_retirement`` are inputs that ``social_security``
+    adds (``social_security.py:11-14``); outside that sum they differ only
+    in child-care and CalWORKs income lists and Idaho's retirement-benefits
+    deduction (``id_retirement_benefits_deduction.py:26``), none of which
+    reaches a household without children in California, Montana or
+    Florida.
     """
 
     if spec["worker"] == "low_earner":
@@ -1140,6 +1179,49 @@ def offsets(decomposition: bridge.Decomposition) -> dict[str, Any]:
     }
 
 
+#: The bridge's display categories that hold each payer group's leaves.
+#: With no change outside the groups, each group's change must equal its
+#: categories' (a check of the leaf mapping against the tree's positions).
+GROUP_CATEGORIES: dict[str, tuple[str, ...]] = {
+    "social_security": ("social_security",),
+    "federal": (
+        "ssi",
+        "snap",
+        "federal_income_tax",
+        "federal_refundable_credits",
+    ),
+    "state": (
+        "state_benefits",
+        "state_income_tax",
+        "state_refundable_credits",
+    ),
+    "joint": ("health_net",),
+}
+
+
+def _check_msp_joint(row: dict[str, Any]) -> None:
+    """A changed Medicare Savings Program value must be joint, not QI.
+
+    PolicyEngine-US pays QI at a 100 percent federal share
+    (``msp_federal_cost.py:35-47``), so wherever the program has value in
+    a row whose ``msp_cost`` changes, its federal share must be under one.
+    """
+
+    if not any(
+        c.variable == "msp_cost" and c.change_cents
+        for c in row["with_health"].components
+    ):
+        return
+    for scenario in ("baseline", "reform"):
+        memo = row["memo_with_health"][scenario]
+        if memo["msp_cost"] > 0:
+            _require(
+                memo["msp_federal_cost"] < memo["msp_cost"],
+                f"{_row_key(row)} {scenario}: the Medicare Savings Program "
+                "is all federal (QI), not joint",
+            )
+
+
 def check_invariants(rows: list[dict[str, Any]]) -> list[str]:
     """Properties of this run, checked before anything is written."""
 
@@ -1187,12 +1269,21 @@ def check_invariants(rows: list[dict[str, Any]]) -> list[str]:
                     categories[name]["change"] >= 0,
                     f"{where}: {name} fell with Social Security",
                 )
+            # An independent reading of the levels: the bridge's display
+            # categories (by position in the tree) must give each payer
+            # group the same change as the leaf-name mapping.
+            for group, names in GROUP_CATEGORIES.items():
+                _require(
+                    levels[group]["change"]
+                    == sum(categories[name]["change"] for name in names),
+                    f"{where}: the {group} level is not its categories",
+                )
             share = dc.offset_share(d.net_change_cents, ss)
             shares = dc.offset_shares_by_level(levels)
             _require(
-                share == 1 - Fraction(d.net_change_cents, ss)
-                and sum(shares.values()) == share,
-                f"{where}: offset shares",
+                sum(shares[group] for group in dc.OFFSET_GROUPS) == share,
+                f"{where}: the payer groups' shares do not sum to the "
+                "offset share",
             )
             _require(
                 abs(d.reported_gap_cents) <= 1,
@@ -1204,6 +1295,7 @@ def check_invariants(rows: list[dict[str, Any]]) -> list[str]:
                 not guard["uncaused_changes"],
                 f"{where}: float32 guard: {guard['uncaused_changes']}",
             )
+        _check_msp_joint(row)
     by_key = {
         (row["household"], row["state"], row["reform"]): row for row in rows
     }
@@ -1221,6 +1313,11 @@ def check_invariants(rows: list[dict[str, Any]]) -> list[str]:
         "coverage: the leaf changes sum exactly (in cents) to the net "
         "change, and the categories and the levels of government to the "
         "same total; each leaf is in exactly one level",
+        "each payer group's change equals that of the bridge's display "
+        "categories holding its leaves (the leaf-name mapping checked "
+        "against the tree's positions)",
+        "where the Medicare Savings Program's value changes, its federal "
+        "share is under 100 percent (QMB or SLMB, joint; not QI)",
         "the Social Security component equals minus the cut computed from "
         "the benefits (each beneficiary's monthly cut times 12)",
         "no leaf outside the federal, state and joint groups changes "
@@ -1228,8 +1325,8 @@ def check_invariants(rows: list[dict[str, Any]]) -> list[str]:
         "when Social Security falls, SSI, SNAP, the Commodity Supplemental "
         "Food Program, state benefits and federal and state refundable tax "
         "credits never fall, and federal and state income taxes never rise",
-        "the offset share is 1 - net change / Social Security change, "
-        "exactly, and the levels' shares sum to it",
+        "the federal, state and joint shares sum exactly to the offset "
+        "share, 1 - net change / Social Security change",
         "the OASI cut (the deeper one) never leaves more Social Security "
         "than the OASDI cut",
         "PolicyEngine-US's own household_net_income change is within one "
@@ -1280,7 +1377,9 @@ def check_medicaid_memo(
             )
 
 
-def health_explanations(rows: list[dict[str, Any]]) -> dict[str, str]:
+def health_explanations(
+    rows: list[dict[str, Any]], limits: dict[str, float]
+) -> dict[str, str]:
     """Why net income with health coverage differs, per affected row.
 
     Every row whose with-health net change differs from its default one
@@ -1297,7 +1396,7 @@ def health_explanations(rows: list[dict[str, Any]]) -> dict[str, str]:
         )
         if difference == 0:
             continue
-        out[_row_key(row)] = _health_pattern(row)
+        out[_row_key(row)] = _health_pattern(row, limits)
     return out
 
 
@@ -1309,11 +1408,21 @@ def _health_change(row: dict[str, Any], variable: str) -> int:
     )
 
 
-def _health_pattern(row: dict[str, Any]) -> str:
+def _dollars(cents: int) -> str:
+    return f"${_money(abs(cents))}"
+
+
+def _health_pattern(row: dict[str, Any], limits: dict[str, float]) -> str:
     """The text for one row's health difference, or a refusal.
 
     Only the health leaves may differ between the two variants (every other
-    leaf must change by the same amount in both).
+    leaf must change by the same amount in both), only Medicaid and the
+    Medicare Savings Program may change, and the one pattern described is
+    Medicaid starting as countable income for the state's optional aged
+    pathway falls to its limit (``is_optional_senior_or_disabled_income_
+    eligible.py:22-32`` in policyengine-us 2.18.0: income at or under the
+    limit qualifies).  ``limits`` is each state's limit for one person as
+    a share of the poverty guideline.
     """
 
     default = {
@@ -1340,28 +1449,48 @@ def _health_pattern(row: dict[str, Any]) -> str:
         f"{_row_key(row)}: health leaves {sorted(health_only)} changed; "
         "only Medicaid and the Medicare Savings Program are described",
     )
+    income = "medicaid_optional_senior_or_disabled_countable_income"
+    limit = "medicaid_optional_senior_or_disabled_income_limit"
     if (
         before["is_medicaid_eligible"] == 0
         and after["is_medicaid_eligible"] >= 1
         and medicaid > 0
+        and before[income] > before[limit]
+        and after[income] <= after[limit]
     ):
+        people = len(row["situations"]["baseline"]["people"])
+        share = (
+            f" ({limits[row['state']]:.0%} of the poverty guideline)"
+            if people == 1
+            else ""
+        )
+        margin = bridge.to_cents(after[limit]) - bridge.to_cents(after[income])
         ssi_text = (
-            f" SSI goes from ${minimum._money(bridge.to_cents(before['ssi']))}"
-            f" to ${minimum._money(bridge.to_cents(after['ssi']))} a year."
+            f" SSI goes from {_dollars(bridge.to_cents(before['ssi']))} to "
+            f"{_dollars(bridge.to_cents(after['ssi']))} a year."
             if before["ssi"] != after["ssi"]
             else ""
         )
         msp_text = (
-            " The Medicare Savings Program value, counted only without full "
-            f"Medicaid (msp_cost.py:28), changes by "
-            f"{minimum._money(msp, signed=True)}."
+            " The Medicare Savings Program's value, counted only without "
+            "full Medicaid (msp_cost.py:28), "
+            + ("falls" if msp < 0 else "rises")
+            + f" by {_dollars(msp)}."
             if msp
             else ""
         )
         return (
-            f"In {name}, the cut makes the household eligible for Medicaid, "
-            f"valued at cost at {minimum._money(medicaid, signed=True)} a "
-            "year." + ssi_text + msp_text
+            f"In {name}, the cut lowers countable income for the optional "
+            "aged Medicaid pathway from "
+            f"{_dollars(bridge.to_cents(before[income]))} to "
+            f"{_dollars(bridge.to_cents(after[income]))}, "
+            f"{_dollars(margin)} under its limit of "
+            f"{_dollars(bridge.to_cents(after[limit]))}{share}, and Medicaid "
+            "eligibility begins (policyengine-us 2.18.0, "
+            "is_optional_senior_or_disabled_income_eligible.py:22-32). "
+            f"Medicaid is valued at cost at {_dollars(medicaid)} a year."
+            + ssi_text
+            + msp_text
         )
     raise InvariantError(
         f"{_row_key(row)}: net income with health coverage changes for a "
@@ -1576,10 +1705,13 @@ def markdown(rows: list[dict[str, Any]], document: dict[str, Any]) -> str:
         "",
         "The offset share is the share of the Social Security cut that other "
         "programs and taxes return: 1 − (net change ÷ Social Security "
-        "change). Federal, state and joint are the shares each level of "
-        "government pays; they sum to the offset share. Health coverage is "
-        "outside net income by default, as PolicyEngine-US computes it; the "
-        "last column counts it (a sensitivity).",
+        "change). Federal and state are the shares each level of "
+        "government pays; they sum to the offset share (each is rounded on "
+        "its own, so the rounded figures can miss by a point). Health "
+        "coverage is outside net income by default, as PolicyEngine-US "
+        "computes it; the last three columns count it (a sensitivity), and "
+        "joint federal-state programs (Medicaid, the Medicare Savings "
+        "Programs) appear only there.",
         "",
     ]
     lines += _summary_table(rows, PRIMARY)
@@ -1644,14 +1776,21 @@ def markdown(rows: list[dict[str, Any]], document: dict[str, Any]) -> str:
 def _summary_table(rows: list[dict[str, Any]], reform: str) -> list[str]:
     lines = [
         "| Household | State | Social Security | Net income | Offset share "
-        "| Federal | State | Joint | Net income with health coverage |",
-        "|---|---|---:|---:|---:|---:|---:|---:|---:|",
+        "| Federal | State | Net income with health coverage | Offset share "
+        "with health | Joint, with health |",
+        "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for row in rows:
         if row["reform"] != reform:
             continue
         result = offsets(row["decomposition"])
         shares = result["offset_shares_by_level"]
+        _require(
+            shares["joint"] == 0,
+            f"{_row_key(row)}: a joint program changes without health "
+            "coverage counted",
+        )
+        health = offsets(row["with_health"])
         lines.append(
             f"| {row['household']} | {row['state']} | "
             f"{_money(result['social_security_change_cents'], signed=True)} | "
@@ -1659,8 +1798,9 @@ def _summary_table(rows: list[dict[str, Any]], reform: str) -> list[str]:
             f"{percent_text(result['offset_share'])} | "
             f"{percent_text(shares['federal'])} | "
             f"{percent_text(shares['state'])} | "
-            f"{percent_text(shares['joint'])} | "
-            f"{_money(row['with_health'].net_change_cents, signed=True)} |"
+            f"{_money(health['net_change_cents'], signed=True)} | "
+            f"{percent_text(health['offset_share'])} | "
+            f"{percent_text(health['offset_shares_by_level']['joint'])} |"
         )
     return lines
 
@@ -1702,14 +1842,20 @@ def _component_table(row: dict[str, Any], names: list[str]) -> list[str]:
         f"{_money(health.net_change_cents, signed=True)} |"
     )
     levels = result["levels"]
+    health_result = offsets(health)
+    health_levels = health_result["levels"]
     lines += [
         "",
         f"Offset share {percent_text(result['offset_share'])}: federal "
-        f"{_money(levels['federal']['change'], signed=True)}, state "
-        f"{_money(levels['state']['change'], signed=True)}, joint "
-        f"{_money(levels['joint']['change'], signed=True)}, against a "
+        f"{_money(levels['federal']['change'], signed=True)} and state "
+        f"{_money(levels['state']['change'], signed=True)}, against a "
         f"Social Security change of "
-        f"{_money(levels['social_security']['change'], signed=True)}.",
+        f"{_money(levels['social_security']['change'], signed=True)}. With "
+        "health coverage counted: offset share "
+        f"{percent_text(health_result['offset_share'])} (federal "
+        f"{_money(health_levels['federal']['change'], signed=True)}, state "
+        f"{_money(health_levels['state']['change'], signed=True)}, joint "
+        f"{_money(health_levels['joint']['change'], signed=True)}).",
         "",
     ]
     return lines
@@ -1786,6 +1932,19 @@ def _save(fig: Any, stem: Path, title: str) -> list[Path]:
         fig.savefig(path, facecolor=SURFACE, **kwargs)
         paths.append(path)
     return paths
+
+
+def tick_text(value: float) -> str:
+    """A dollar tick label: thousands as "$12k" or "$1.5k", else dollars."""
+
+    size = abs(value)
+    if size == 0:
+        return "$0"
+    if size >= 1000:
+        text = f"{size / 1000:,.1f}".removesuffix(".0") + "k"
+    else:
+        text = f"{size:,.0f}"
+    return f"−${text}" if value < 0 else f"${text}"
 
 
 def chart_footnotes(document: dict[str, Any], key: str) -> list[str]:
@@ -1942,21 +2101,12 @@ def draw_household_chart(
         ax.grid(axis="x", color=GRID, linewidth=0.6, zorder=0)
         ax.tick_params(axis="x", labelsize=8, colors=MUTED)
         ax.tick_params(axis="y", length=0, labelsize=9.5, colors=INK)
-        step = 1000 if limit <= 6000 else 2000
         ax.xaxis.set_major_formatter(
-            matplotlib.ticker.FuncFormatter(
-                lambda v, _: (
-                    "$0"
-                    if v == 0
-                    else (
-                        f"−${abs(v) / 1000:,.0f}k"
-                        if v < 0
-                        else f"${v / 1000:,.0f}k"
-                    )
-                )
-            )
+            matplotlib.ticker.FuncFormatter(lambda v, _: tick_text(v))
         )
-        ax.xaxis.set_major_locator(matplotlib.ticker.MultipleLocator(step))
+        ax.xaxis.set_major_locator(
+            matplotlib.ticker.MaxNLocator(nbins=5, steps=[1, 2, 5, 10])
+        )
         for side in ("top", "right", "left"):
             ax.spines[side].set_visible(False)
         ax.spines["bottom"].set_color(GRID)
@@ -2055,10 +2205,12 @@ def draw_summary_chart(
         LAW_YEAR_NOTE,
         "Offset share: 1 − (net change ÷ Social Security change), from "
         "PolicyEngine-US's household_net_income, which excludes health "
-        "coverage by default. Federal: federal income tax, SSI and SNAP. "
-        "State: state income tax, refundable credits and SSI supplements. "
-        "Joint federal-state programs (Medicaid, Medicare Savings Programs) "
-        "enter only when health coverage is counted (see the tables).",
+        "coverage by default. Federal: federal income tax and refundable "
+        "credits, SSI and SNAP. State: state income tax and refundable "
+        "credits and California's SSI supplement. Joint federal-state "
+        "programs (Medicaid, the Medicare Savings Programs) count only when "
+        "health coverage is in net income; the Markdown tables report that "
+        "sensitivity.",
         f"Cut: {document['trustees_report']['report']}, "
         f"{document['trustees_report']['section']}. PolicyEngine-US "
         f"{document['provenance']['policyengine_us']['release']['version']} "
@@ -2138,11 +2290,16 @@ def draw_summary_chart(
     for side in ("top", "right", "left"):
         ax.spines[side].set_visible(False)
     ax.spines["bottom"].set_color(GRID)
+    shown = [
+        group
+        for group in dc.OFFSET_GROUPS
+        if any(stack[group] for stack in stacks)
+    ]
     handles = [
         matplotlib.patches.Patch(
             color=GROUP_COLORS[group], label=dc.LEVEL_LABELS[group]
         )
-        for group in dc.OFFSET_GROUPS
+        for group in shown
     ] + [
         matplotlib.lines.Line2D(
             [],
@@ -2276,25 +2433,20 @@ def caveats(
         "many beneficiaries are in each situation.",
         LAW_YEAR_NOTE,
         "Not a projection. Benefits, prices, tax brackets and program "
-        "rules are 2026's. By the depletion date some will have changed "
-        "under current law: for example, the State cost share of SNAP "
-        "allotments in 7 USC 2013(a)(2)(B) begins in fiscal year 2028 at "
-        "the earliest; from then a State whose payment error rate is 6 "
-        "percent or more pays 5 to 15 percent of the cost of SNAP "
-        "allotments. And the Trustees Report says the One Big Beautiful "
-        "Bill Act 'adds a temporary additional standard deduction for "
-        "taxpayers over age 65'.",
+        "rules are 2026's. Some rules already in law differ by the "
+        "depletion date: the State cost share of SNAP in 7 USC "
+        "2013(a)(2)(B) begins in fiscal year 2028 at the earliest, and from "
+        "then a State whose payment error rate is 6 percent or more pays 5 "
+        "to 15 percent of the cost of SNAP benefits. The Trustees Report "
+        "also notes that the One Big Beautiful Bill Act 'adds a temporary "
+        "additional standard deduction for taxpayers over age 65'; this "
+        "analysis applies that deduction as 2026 law does.",
         f"The cut is the share of scheduled benefits the Trustees project "
         f"to be payable at depletion ({oasi['payable_percent']} percent "
         f"for OASI in {oasi['depletion_year']}), applied to every benefit "
-        "at once. Current law does not say how benefits would be reduced at "
-        "depletion; an across-the-board cut is one possibility. "
-        + dc.ROUNDING_RULE,
+        "at once. " + dc.ROUNDING_RULE,
         "No behavioral response: no change in work, claiming, saving, "
         "living arrangements or take-up.",
-        "Take-up is PolicyEngine-US's default (as in #496): full take-up of "
-        "SSI, SNAP and Medicaid. Housing assistance is switched off because "
-        "vouchers are rationed.",
         "The offset is grouped by who pays it under 2026 law. Federal income "
         "tax is grouped as federal, although part of the income tax on "
         "Social Security benefits is credited to the trust funds (the "
@@ -2317,9 +2469,12 @@ def caveats(
             f"{update['installed_value_dated']}."
             for update in updates
         ],
-        "The spouse in household E is left at PolicyEngine-US's default "
-        "Medicare quarters of coverage; the workers carry four a year of "
-        "covered work, as in #496.",
+        "Medicare quarters of coverage: the workers carry four a year of "
+        "covered work, as in #496 (88 for the low earner, 140 for the "
+        "medium earner); the spouse in household E, who has no covered "
+        "work, is left at PolicyEngine-US's default of 40 "
+        "(medicare_quarters_of_coverage.py:16). Households C and D also "
+        "differ in age (68 and 72) as well as in Social Security.",
     ]
 
 
@@ -2344,7 +2499,13 @@ def build(
     """
 
     sources_dir = docs_dir / SOURCES_DIRNAME
+    _docs_relative(docs_dir)
     trustees = trustees_citation(sources_dir, full_report_text)
+    oasi_year = trustees["quotes"]["OASI"]["depletion_year"]
+    _require(
+        f"deplete in {oasi_year}" in LAW_YEAR_NOTE,
+        f"LAW_YEAR_NOTE does not name the OASI depletion year {oasi_year}",
+    )
     statutes = statute_sources(sources_dir, law_dir)
     shares = {"baseline": Decimal(1)}
     for scenario, fund in REFORMS.items():
@@ -2421,7 +2582,16 @@ def build(
         "the state's spending over enrollment that the valuation text "
         "describes"
     )
-    explanations = health_explanations(rows)
+    limits_document = yaml.safe_load(
+        (parameter_root / minimum.MEDICAID_LIMIT_FILE).read_text()
+    )
+    limits = {
+        state: minimum._dated_value(
+            limits_document[state], f"{PAYMENT_YEAR}-01-01"
+        )
+        for state in STATES
+    }
+    explanations = health_explanations(rows, limits)
     valuation = minimum.medicaid_valuation_text(per_enrollee)
     pe_provenance["parameter_updates"] = [dict(update) for update in updates]
     code_paths = ["src", "scripts", "tests"]
@@ -2445,7 +2615,7 @@ def build(
         "payment_year": PAYMENT_YEAR,
         "cola": cola_provenance,
         "statutes": statutes,
-        "runs": {
+        "pe_us_runs": {
             "cases": len(cases),
             "traced_cases": len(traced),
             "run_job_sha256": run_sha,

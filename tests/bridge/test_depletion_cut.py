@@ -557,3 +557,11 @@ def test__given_non_integer_cents__then_the_offset_share_is_refused(
 
 def test__given_no_social_security_change__then_there_is_no_share():
     assert dc.offset_share(500, 0) is None
+
+
+def test__given_a_share_beyond_decimal_precision__then_the_cut_is_exact():
+    """The product is a Fraction: no digit of the share is rounded away."""
+
+    share = Decimal("0." + "9" * 40)
+    assert dc.payable_monthly_benefit(743, share) == 742
+    assert dc.cut_benefit(743, share).monthly_cut == 1

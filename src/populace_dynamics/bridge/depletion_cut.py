@@ -30,18 +30,19 @@ ILLUSTRATIVE HOUSEHOLDS, NOT SURVEY DATA.  The pure-Python parts of
    level.
 
 What this module does not do: decide whether, when or how benefits would
-in fact be reduced at depletion (current law does not say), compute a
-scheduled benefit (callers pass whole-dollar monthly benefits), or run
-PolicyEngine-US.
+in fact be reduced at depletion (an across-the-board cut is an
+assumption), compute a scheduled benefit (callers pass whole-dollar
+monthly benefits), or run PolicyEngine-US.
 """
 
 from __future__ import annotations
 
 import html
+import math
 import re
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
-from decimal import ROUND_FLOOR, Decimal
+from decimal import Decimal
 from fractions import Fraction
 from typing import Any
 
@@ -108,15 +109,19 @@ _KEY_RESULTS = re.compile(
 ROUNDING_RULE = (
     "Each beneficiary's payable monthly benefit is the scheduled 2026 "
     "monthly benefit (a whole dollar) times the payable share, rounded down "
-    "to a whole dollar: the rounding 42 USC 415(g) prescribes for a monthly "
-    "benefit computed under section 402 ('is not a multiple of $1 shall be "
-    "rounded to the next lower multiple of $1'). Current law says nothing "
-    "about how benefits would be reduced at depletion; applying the share "
-    "to each monthly benefit and rounding the result this way is this "
-    "analysis's choice. The monthly cut is the scheduled benefit less the "
-    "payable benefit, so it is at least the cut share times the scheduled "
-    "benefit and less than a dollar more; the annual amounts are twelve "
-    "times the monthly ones."
+    "to a whole dollar, as 42 USC 415(g) rounds a monthly benefit computed "
+    "under section 402 ('is not a multiple of $1 shall be rounded to the "
+    "next lower multiple of $1'). The across-the-board cut is this "
+    "analysis's assumption: the Trustees Report notes that at depletion "
+    "'scheduled benefits could not be paid in full on a timely basis' and "
+    "that 'certain trust fund operations items are not well-defined under "
+    "current law'. Applying the share to each whole-dollar monthly benefit "
+    "and rounding the product down is also this analysis's choice: 415(g) "
+    "itself rounds once, so a share applied to the unrounded amount could "
+    "pay a dollar a month more. The monthly cut is the scheduled benefit "
+    "less the payable benefit, so it is at least the cut share times the "
+    "scheduled benefit and less than a dollar more; the annual amounts are "
+    "twelve times the monthly ones."
 )
 
 
@@ -285,12 +290,13 @@ def payable_monthly_benefit(monthly: int, payable_share: Decimal) -> int:
 
     The rounding of :data:`ROUNDING_RULE` (42 USC 415(g): an amount that
     "is not a multiple of $1 shall be rounded to the next lower multiple of
-    $1").  Exact: the product is taken in ``Decimal``.
+    $1").  Exact at any precision: the product is taken as a ``Fraction``
+    of the ``Decimal`` share, so no digit of the share is rounded away.
     """
 
     amount = _whole_dollars("monthly", monthly)
     share = _share(payable_share)
-    return int((Decimal(amount) * share).to_integral_value(ROUND_FLOOR))
+    return math.floor(amount * Fraction(share))
 
 
 @dataclass(frozen=True)
@@ -424,11 +430,15 @@ LEAF_LEVELS: dict[str, tuple[str, str]] = {
     ),
     "ca_state_supplement": (
         "state",
-        "California's SSI state supplementary payment. A State whose "
-        "supplement the Commissioner pays on its behalf 'shall ... pay to "
-        "the Commissioner of Social Security an amount equal to the "
-        "expenditures made by the Commissioner of Social Security as such "
-        "supplementary payments' (42 USC 1382e(d)(1))",
+        "California's SSI state supplementary payment. 42 USC 1382e(a) "
+        "describes a supplement as 'cash payments which are made by a "
+        "State' 'in supplementation of such benefits', and where the "
+        "Commissioner makes the payments on a State's behalf the State "
+        "'shall ... pay to the Commissioner of Social Security an amount "
+        "equal to the expenditures made by the Commissioner of Social "
+        "Security as such supplementary payments' (1382e(d)(1)). "
+        "PolicyEngine-US lists it among 'benefits paid by state agencies' "
+        "(parameters/gov/household/household_state_benefits.yaml:1,42)",
     ),
     "state_income_tax_before_refundable_credits": (
         "state",
@@ -449,8 +459,11 @@ LEAF_LEVELS: dict[str, tuple[str, str]] = {
         "joint",
         "Medicare Savings Programs valued at cost (health sensitivity only). "
         "PolicyEngine-US's federal share is the state's regular federal "
-        "medical assistance percentage for QMB and SLMB "
-        "(variables/gov/hhs/medicare/savings_programs/msp_federal_cost.py)",
+        "medical assistance percentage for QMB and SLMB and 100 percent for "
+        "QI (variables/gov/hhs/medicare/savings_programs/"
+        "msp_federal_cost.py:35-47); the script refuses a changed value "
+        "whose federal share is 100 percent, which would be federal, not "
+        "joint",
     ),
 }
 
