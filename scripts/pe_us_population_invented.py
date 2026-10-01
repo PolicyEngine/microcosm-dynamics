@@ -673,19 +673,20 @@ def build(
         "method": {
             "source_references": {
                 "invented-only guard": (
-                    "src/populace_dynamics/bridge/invented_population.py:296"
+                    "src/populace_dynamics/bridge/invented_population.py:303; "
+                    "src/populace_dynamics/bridge/invented_population.py:360"
                 ),
                 "cohort and careers": (
-                    "src/populace_dynamics/bridge/invented_population.py:271"
+                    "src/populace_dynamics/bridge/invented_population.py:278"
                 ),
                 "benefit carry and auxiliary mapping": (
-                    "src/populace_dynamics/bridge/invented_population.py:384"
+                    "src/populace_dynamics/bridge/invented_population.py:439"
                 ),
                 "invented distributions and income conventions": (
                     "src/populace_dynamics/bridge/invented_population.py:140"
                 ),
                 "family-to-household mapper": (
-                    "src/populace_dynamics/bridge/invented_population.py:609"
+                    "src/populace_dynamics/bridge/invented_population.py:728"
                 ),
                 "release pin and California override": (
                     "scripts/pe_us_minimum_benefit_sample_households.py:407"
