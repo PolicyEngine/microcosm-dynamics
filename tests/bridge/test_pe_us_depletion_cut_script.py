@@ -775,8 +775,8 @@ def test__given_a_tick__then_its_label_is_exact(value, text):
     assert script.tick_text(value) == text
 
 
-def test__given_invented_rows__then_every_artifact_is_written(tmp_path):
-    """A smoke test of the write path on INVENTED rows (no PE-US)."""
+def _written_rows_and_document():
+    """INVENTED rows and a minimal document for the write path (no PE-US)."""
 
     rows = _rows()
     for row in rows:
@@ -813,10 +813,24 @@ def test__given_invented_rows__then_every_artifact_is_written(tmp_path):
         "float32_guard": script._guard_summary(rows),
         "caveats": [script.LAW_YEAR_NOTE],
     }
+    return rows, document
+
+
+def test__given_invented_rows__then_the_tables_and_json_are_written():
+    """A smoke test of the Markdown and JSON on INVENTED rows."""
+
+    rows, document = _written_rows_and_document()
     report = script.markdown(rows, document)
     assert script.ILLUSTRATIVE_LABEL in report
     assert "| A | FL | −1,968 | 0 | 100% | 100% | 0% |" in report
     json.dumps([script._serialize_row(row) for row in rows])
+
+
+def test__given_invented_rows__then_every_chart_is_labelled(tmp_path):
+    """The charts on INVENTED rows; matplotlib is an optional extra."""
+
+    pytest.importorskip("matplotlib")
+    rows, document = _written_rows_and_document()
     paths = script.draw_household_chart(
         rows, script.HOUSEHOLDS[0], document, tmp_path / "a"
     )
