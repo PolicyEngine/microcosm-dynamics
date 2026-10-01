@@ -1403,7 +1403,7 @@ def draw_chart(
         handles,
         labels,
         loc="upper left",
-        bbox_to_anchor=(0.01, 0.885),
+        bbox_to_anchor=(0.01, 0.85),
         ncol=4,
         frameon=False,
         fontsize=8.5,
@@ -1423,17 +1423,20 @@ def draw_chart(
     )
     fig.text(
         0.01,
-        0.96,
-        "Change in 2026 net income from the minimum benefit, by component "
-        f"and level of government: {size:,} invented family units",
-        fontsize=13,
+        0.955,
+        textwrap.fill(
+            "Change in 2026 net income from the minimum benefit, by component "
+            f"and level of government: {size:,} invented family units",
+            width=110,
+        ),
+        fontsize=12,
         fontweight="bold",
         color=INK,
         va="top",
     )
     fig.text(
         0.01,
-        0.935,
+        0.90,
         textwrap.fill(
             f"{document['reform']}. One weighted PolicyEngine-US simulation "
             "per scenario; health coverage outside net income.",
@@ -1464,7 +1467,7 @@ def draw_chart(
         va="bottom",
         linespacing=1.4,
     )
-    fig.subplots_adjust(left=0.08, right=0.99, top=0.8, bottom=0.12)
+    fig.subplots_adjust(left=0.08, right=0.99, top=0.72, bottom=0.12)
     paths = []
     # The label also goes in each file's metadata, so a reader of the file
     # (and the artifact test) finds it without rendering the chart.
