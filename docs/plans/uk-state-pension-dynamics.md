@@ -31,7 +31,7 @@ PolicyEngine UK's basic plus new State Pension bill is 12.8% below DWP's in 2026
 | Basic plus new on OBR-based numbers, 2039-40 | £249.3-281.2bn | derived bounds; the OBR does not split by type. Upper bound: all State Pension. Lower bound: the basic plus new share stays at its 2030-31 DWP value of 88.65%; it has risen every year since 2024-25 |
 | Model against DWP, basic plus new | £114.3bn against £131.0bn in 2026-27 (−12.8%); £122.9bn against £160.2bn (−23.3%) in 2030-31 | model runs against [DWP Spring 2026](https://www.gov.uk/government/publications/benefit-expenditure-and-caseload-tables-2026) (DWP's rows include pensioners abroad) |
 
-uk-triple-lock [#13](https://github.com/PolicyEngine/uk-triple-lock/issues/13) splits the remaining gap between a smaller bill and an OBR-style premium. Its own heading calls those splits "estimates, not model runs", and the independent check on that issue says the bill and driver splits "need a reproducible projection or counterfactual runs". This plan produces those runs.
+uk-triple-lock [#13](https://github.com/PolicyEngine/uk-triple-lock/issues/13) estimates how much a smaller State Pension bill and the missing population move the costing. Its own heading calls those splits "estimates, not model runs", and the independent check on that issue says the bill and driver splits "need a reproducible projection or counterfactual runs". This plan produces those runs. The like-for-like comparison with DWP's single-path £15bn is R3.
 
 The statutory floor for the basic and full new State Pension rates is earnings growth ([Social Security Administration Act 1992 s.150A](https://www.legislation.gov.uk/ukpga/1992/5/section/150A)). The triple lock and its April 2030 adjustment are policy.
 
@@ -217,7 +217,7 @@ People who reached State Pension age before 6 April 2016 carry a basic State Pen
 | Stat-Xplore full-rate bands, cohorts 2016-17 to 2022-23 | estimation data |
 | The same, cohorts 2023-24 to 2025-26 | held out and scored |
 | DWP Spring 2026 caseloads and spending by type to 2030-31 | predictions, scored |
-| OBR July 2026 path; DWP £15bn and £50bn | registered comparisons |
+| OBR July 2026 path; DWP £15bn and £50bn (a single-path comparator, used only in R3) | registered comparisons |
 | FRS-reported State Pension | rank predictor in C4 only; never a target |
 | HBAI pensioner poverty | holdout only |
 
@@ -319,7 +319,7 @@ Each path job loads the abroad dataset under the triple lock and the plan, with 
 | G4 | Stat-Xplore abroad backcast, May 2022 to March 2026 | 1,124,449 to 1,093,218; frozen 469,069 to 419,386; new State Pension 148,688 to 314,992 | the abroad model started in May 2022 with earlier information only | total ±2%; frozen ±3%; new State Pension ±5% | gate; the window spans documented series breaks in late 2024 and 2025, disclosed in the registration |
 | R1 | [OBR July 2026](https://obr.uk/frs/fiscal-risks-and-sustainability-july-2026/), chart 3.11 baseline | 4.9754% of GDP (2030-31), 5.4379% (2039-40), 6.0852% (2049-50); £281.2bn and £459.2bn derived | an OBR-replication run: flat-rate uprating set directly to the OBR long-term "Triple Lock" row, the OBR long-term CPI and earnings path for everything else, State Pension age 68 over 2037-39, the add-on index set to the same row after 2030-31 | report; investigate beyond ±7.5% | registered comparison |
 | R2 | OBR chart 3.11, triple lock minus earnings uprating | £11.99bn (2039-40), £42.50bn (2049-50), derived | the same configuration, with the triple-lock and earnings rows each set directly | report | registered comparison |
-| R3 | [DWP's adjusted triple lock saving](https://www.gov.uk/government/publications/state-pension-uprating-analysis-2026/state-pension-uprating): **single-path comparator** | £15bn (2039-40) and £50bn (2049-50) nominal; £11bn and £30bn in 2025-26 prices; Pensim3; Great Britain; gross; rounded to £1bn; path unpublished | single-path runs with rates set directly: the triple lock at earnings plus 0.6 points from April 2030 and the plan at its earnings link, on the OBR long-term earnings path (consistent with DWP's figures, not identified from them), and the OBR's own ramped row; reported GB-resident and GB plus abroad, because DWP does not say whether its figure includes pensioners abroad. The expected value is shown beside it, labelled not comparable | none: report gaps | registered comparison |
+| R3 | [DWP's adjusted triple lock saving](https://www.gov.uk/government/publications/state-pension-uprating-analysis-2026/state-pension-uprating): **single-path comparator** | £15bn (2039-40) and £50bn (2049-50) nominal; £11bn and £30bn in 2025-26 prices; Pensim3; Great Britain; gross; rounded to £1bn; path unpublished | single-path runs with rates set directly: the triple lock at earnings plus 0.6 points from April 2030 and the plan at its earnings link, on the OBR long-term earnings path (consistent with DWP's figures, not identified from them), and the OBR's own ramped row; reported GB-resident and GB plus abroad, because DWP does not say whether its figure includes pensioners abroad. The expected value is not shown in this comparison | none: report gaps | registered comparison |
 | R4 | DWP protected-payment inflows (Autumn Budget 2025 forecast vintage) | 105.2k (2025-26) to 71.3k (2030-31) | C3's new awards with a protected payment | investigate beyond ±15% | registered comparison |
 | R5 | DWP Spring 2026, Pension Credit | £5,821.8m; 1,133k (2030-31) | engine, GB, central path | investigate beyond ±10% | registered comparison |
 | R6 | DWP's cost of unfreezing (July 2023) | £930m a year, 2025-26 to 2027-28 | an engine reform of the uprated-country parameter on the abroad dataset | report | registered comparison |
@@ -364,7 +364,7 @@ The £15bn and £50bn are compared with model output only in R3, against single-
 3. Future retirees' starting amounts respond to the rule through the full rate at State Pension age. Under the survey method they received £0.
 4. Existing frozen pensions are untouched by either rule; new freezes differ by rule.
 5. The frozen-survey result becomes a labelled comparator, and the five-layer decomposition, measured by runs, replaces #13's estimated split.
-6. 2049-50 becomes available for the £50bn and OBR comparisons.
+6. 2049-50 becomes available for the OBR comparisons and for R3's single-path comparison with DWP's £50bn.
 7. Non-pension incomes at pension ages are still same-age cross-sections uprated by the path, a limitation carried from the interim method until Phase 2.
 
 ## Phasing, work packages, cost and timeline
@@ -429,7 +429,7 @@ Without P2.5 it is 25-38 agent-days and 6-9 human days, about 4-6 weeks after Ph
 | The engine chain (as of 30 September 2026): #1899 has no reviews; #1922 and #1939 await rulings; #1941 is an issue; the horizon work has no owner or pull request | WP1-WP4 blocked | name owners (decision 4); the consumer keeps its add-on pin until E2 |
 | Thin samples at single ages: an effective sample size of 2,303 among people aged 66+ on #1069's head | noisy weights | pooled cells, a weight-ratio cap, effective sample size by age in every scorecard |
 | Abroad flows are unobserved; the Government Actuary calls migration over State Pension age "immaterial" to the overseas basic State Pension total | abroad bill off | the backcast gate (G4); R6; an age-by-country extract (WP5) |
-| DWP's £15bn: unknown path and unknown treatment of pensioners abroad | comparator ambiguous | report both scopes; never compare with the expected value; ask DWP (decision 8) |
+| DWP's £15bn, a single-path comparator: unknown path and unknown treatment of pensioners abroad | comparator ambiguous | report both scopes; never compare with the expected value; ask DWP (decision 8) |
 | Slots fix household composition at the base year's patterns: no widowhood trend, no care-home shift | net saving and couple mix drift | stated limitation; the Pension Credit comparison (R5); Phase 2 |
 | The assignment is an imputation | methodological objection | an explicit ruling (decision 2); labelled; invariant I10 |
 | The engine skips unknown dataset columns silently | the sidecar ignored on an old engine | E7 fails closed |
@@ -447,7 +447,7 @@ Without P2.5 it is 25-38 agent-days and 6-9 human days, about 4-6 weeks after Ph
 5. **Sources.** Every target that C2 or C4 fits, and every shipped bundle, comes from pinned Chronicle packages, as Microcosm's UK invariants require; sha256-pinned files serve only C3's inputs and unscored first-light runs that never ship. *Recommended: as stated.*
 6. **Baseline conventions.** The law's State Pension age, with the OBR's 2037-39 timetable as a scenario; additional pension by CPI, at the law's prices floor; a headline of UK residents plus pensioners abroad, gross, shown in parts. *Recommended: as stated.*
 7. **Data access.** A Stat-Xplore account for extracts its holder runs personally, with every extract pinned by sha256; UK Data Service access to Understanding Society and ELSA for Phase 2; and whether to seek Digital Economy Act accreditation for ELSA linked to National Insurance records. *Recommended: guest extracts now; the rest when Phase 2 starts.*
-8. **Ask DWP** whether the £15bn includes pensioners abroad, its uprating path, its State Pension age timetable, the starting-amount rule for people abroad at State Pension age, and whether it can publish starting-amount or protected-payment distributions by cohort. This is a send to an outside party. *Recommended: draft for Max to send.*
+8. **Ask DWP** whether its £15bn, a single-path comparator, includes pensioners abroad, its uprating path, its State Pension age timetable, the starting-amount rule for people abroad at State Pension age, and whether it can publish starting-amount or protected-payment distributions by cohort. This is a send to an outside party. *Recommended: draft for Max to send.*
 9. **Timing.** The gated expected-value build after the OBR's 28 October 2026 forecast.
 
 ## Alternatives considered
@@ -456,7 +456,7 @@ Without P2.5 it is 25-38 agent-days and 6-9 human days, about 4-6 weeks after Ph
 - **Person-level trajectories first.** About 58-92 agent-days for a first scored version, with an unscored bundle in about five weeks and a registered one in eight to ten. `person_period` keying is ruled but unbuilt, emigration has no graph node yet, and the net-saving gain from widowhood and labour dynamics needs household clones that multiply job time. It becomes Phase 2.
 - **Per-year files or a multi-year dataset.** Both fix one macro path into every path job; see the artifact table.
 - **An aggregate module for pensioners abroad** (caseload × rate outside the engine). That is a side model; every number here comes from a PolicyEngine UK run.
-- **Ageing survey records forward** ([policyengine-uk#1351](https://github.com/PolicyEngine/policyengine-uk/pull/1351), closed with the comment "closing, this is incorrect", which gives no reason). The pull request added a year to every age in a closed population, with monetary inputs still uprated: no deaths, migration or new awards. Ageing records also carries each person's base-year income forward, so a 61-year-old's earnings would sit on a 75-year-old in 2039.
+- **Ageing survey records forward** ([policyengine-uk#1351](https://github.com/PolicyEngine/policyengine-uk/pull/1351), closed with the comment "closing, this is incorrect"). The pull request added a year to every age in a closed population, with monetary inputs still uprated: no deaths, migration or new awards. Ageing records also carries each person's base-year income forward, so a 61-year-old's earnings would sit on a 75-year-old in 2039.
 
 ## Sources
 
