@@ -116,7 +116,10 @@ It does not:
 - compute any Social Security amount. The caller passes them; here they come
   from the Track M rule code and the Microcosm oracle.
 - run over the projected population. It runs one household at a time, and
-  applies no behavioral, take-up or claiming response to the reform.
+  applies no behavioral, take-up or claiming response to the reform. The
+  population path (`docs/design/pe_us_population_run.md`) runs a whole
+  population through one simulation per scenario, on invented data until
+  the registered real-data analysis.
 - add `policyengine-us` to this repository's dependencies, or edit
   PolicyEngine-US.
 
