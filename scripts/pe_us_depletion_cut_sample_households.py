@@ -1748,11 +1748,39 @@ def _matplotlib():
     return matplotlib, plt
 
 
-def _save(fig: Any, stem: Path) -> list[Path]:
+def _save(fig: Any, stem: Path, title: str) -> list[Path]:
+    """Write PNG and SVG, each carrying the label in its metadata too.
+
+    The label and the 2026-law note are drawn on every chart; they are also
+    the file's title and description, which a reader of the bytes (and the
+    artifact test) can find without rendering it.
+    """
+
+    description = f"{ILLUSTRATIVE_LABEL}. {LAW_YEAR_NOTE}"
     paths = []
     for suffix, kwargs in (
-        (".png", {"dpi": 200, "metadata": {"Software": None}}),
-        (".svg", {"metadata": {"Date": None, "Creator": None}}),
+        (
+            ".png",
+            {
+                "dpi": 200,
+                "metadata": {
+                    "Software": None,
+                    "Title": title,
+                    "Description": description,
+                },
+            },
+        ),
+        (
+            ".svg",
+            {
+                "metadata": {
+                    "Date": None,
+                    "Creator": None,
+                    "Title": title,
+                    "Description": description,
+                }
+            },
+        ),
     ):
         path = stem.with_suffix(suffix)
         fig.savefig(path, facecolor=SURFACE, **kwargs)
@@ -1982,7 +2010,7 @@ def draw_household_chart(
         bottom=(footer_height + 0.45) / height,
         wspace=0.12,
     )
-    paths = _save(fig, stem)
+    paths = _save(fig, stem, f"{spec['label']}: {ILLUSTRATIVE_LABEL}")
     plt.close(fig)
     return paths
 
@@ -2183,7 +2211,7 @@ def draw_summary_chart(
         top=from_top(top_height),
         bottom=(footer_height + 0.6) / height,
     )
-    paths = _save(fig, stem)
+    paths = _save(fig, stem, f"Offset share summary: {ILLUSTRATIVE_LABEL}")
     plt.close(fig)
     return paths
 
