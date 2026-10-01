@@ -1,0 +1,5 @@
+households 4000 fit rows 62380 pairs 37552 full fit 14.5s
+full n_iter 23
+copies n_iter mean 100.0 min 100 max 100 | mean abs shift from full 0.0168 | mean variance over grid 2.029e-03
+half n_iter mean 19.1 min 11 max 30 | mean abs shift from full 0.011 | mean variance over grid 5.186e-04
+variance ratio copies/half over grid: median 3.04 geometric mean 3.45

@@ -534,10 +534,113 @@ def test_audit_quotes_the_revision1_power_figures(
     side_a = summary["side_a"]
     assert side_a[0] < 0.90
     side_a_text = f"{side_a[0]:.3f}, {side_a[1]:.3f} and {side_a[2]:.3f}"
-    assert f"at least {side_a_text}, so it misses 0.90" in prose
+    assert (
+        f"at least {side_a_text}, so at the upper-bound standard error it "
+        "misses 0.90 even for one cell" in prose
+    )
     assert f"at least {side_a_text} on side A" in prose
     full_summary = ", ".join(f"{v:.3f}" for v in summary["full_support"][:2])
     assert (
         f"at least {full_summary} and {summary['full_support'][2]:.3f}"
         in prose
     )
+
+
+# --------------------------------------------------------------------------
+# Revision 2 (round-2 finding N6): the figures revision 1 quoted only in prose
+# --------------------------------------------------------------------------
+def test_revision2_pins_the_prose_only_figures(record, audit_text):
+    prose = _prose(audit_text)
+    m6 = [
+        round(review_power.bound_rule_pass("m6_convention", m), 2)
+        for m in (2, 3, 4, 5)
+    ]
+    assert m6 == [0.28, 0.17, 0.09, 0.02]
+    assert "0.28, 0.17, 0.09 and 0.02 at m = 2 to 5" in prose
+    assert round(review_power.k_needed("side_a", 6), 1) == 3.8
+    assert "a larger k, about 3.8 at m = 6" in prose
+
+    counts = record["counts"]
+    level = counts["level_cells"]
+
+    def band(cohort, basis, size, m):
+        share = review_power.SUPPORT_SHARE[basis]
+        upper = review_power.participation_min_p(
+            level[cohort][size] * share, m
+        )
+        return round(1.0 - upper, 2), round(upper, 2)
+
+    assert band("prime", "full_support", "cluster_worst_n_eff", 1) == (
+        0.19,
+        0.81,
+    )
+    assert band("older", "full_support", "cluster_worst_n_eff", 1) == (
+        0.17,
+        0.83,
+    )
+    upper = review_power.participation_min_p(
+        level["prime"]["cluster_worst_n_eff"] * 0.5, 16
+    )
+    assert (round(1 - upper, 3), round(upper, 3)) == (0.049, 0.951)
+    upper = review_power.participation_min_p(
+        level["older"]["cluster_worst_n_eff"] * 0.5, 16
+    )
+    assert (round(1 - upper, 3), round(upper, 3)) == (0.045, 0.955)
+    assert band("prime", "side_a", "kish_n_eff", 1) == (0.28, 0.72)
+    assert band("older", "side_a", "kish_n_eff", 1) == (0.27, 0.73)
+    for text in (
+        "about 0.19-0.81 (full support, m = 1) to about 0.049-0.951",
+        "from about 0.17-0.83 to about 0.045-0.955",
+        "about 0.28-0.72 (prime) and 0.27-0.73 (older) at m = 1",
+        "in a band of about 0.28-0.72 at m = 1",
+    ):
+        assert text in prose
+
+    effects = [
+        cell["kish_n_eff"] / cell["cluster_worst_n_eff"]
+        for group in ("level_cells", "change_pairs")
+        for cell in counts[group].values()
+        if isinstance(cell, dict) and "kish_n_eff" in cell
+    ]
+    assert round(min(effects), 1) == 1.5 and round(max(effects), 1) == 3.0
+    assert "by a factor of 1.5 to 3.0" in prose
+
+    assert script.max_uncapped_surface(2.35) == 6
+    assert script.max_uncapped_surface(2.64) == 14
+    assert "Those ratios allow 6 to 14 cells" in prose
+
+
+def test_revision2_q2_correction_is_gate_level(audit_text):
+    prose = _prose(audit_text)
+    import track_b_b0_1_addendum_power as addendum_power
+
+    record = addendum_power.structural_record()["by_family_size"]
+    room = {
+        m: record[m]["estimation_room_gate_bound_only"]
+        for m in ("4", "5", "6", "16")
+    }
+    assert round(room["6"], 3) == 0.028
+    assert round(room["4"], 3) == 0.160 and round(room["5"], 3) == 0.084
+    assert room["16"] < 0
+    assert round(record["6"]["p_bound_rule_only"], 3) == 0.917
+    assert round(record["16"]["p_bound_rule_only"], 3) == 0.584
+    assert "the room is 2.8% of the gap variance at m = 6 (16.0%" in prose
+    assert "at m = 4, 8.4% at m = 5, none at m = 16)" in prose
+    assert "the room is 99%, 2.8% and none" in prose
+    assert "with probability 0.917 at 6 cells and 0.584 at 16" in prose
+    tol_full = review_power.tol_over_gap_se("full_support")
+    tol_side = review_power.tol_over_gap_se("side_a")
+    assert round(tol_full, 1) == 5.1 and round(tol_side, 1) == 3.6
+    assert round(tol_full / tol_side, 1) == 1.4
+    assert "about 5.1 standard errors wide instead of about 3.6" in prose
+
+
+def test_revision2_restores_the_citation(audit_text):
+    source = (
+        (ROOT / "scripts" / "select_m6_qstar_train_only.py")
+        .read_text(encoding="utf-8")
+        .splitlines()
+    )
+    assert '"raw_source_is_retrospective_product": True' in source[644]
+    assert "(`select_m6_qstar_train_only.py:645`)" in audit_text
+    assert "(`select_m6_qstar_train_only.py:646`)" not in audit_text
