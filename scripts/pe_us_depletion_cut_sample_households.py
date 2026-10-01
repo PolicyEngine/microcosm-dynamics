@@ -1964,8 +1964,9 @@ def markdown(rows: list[dict[str, Any]], document: dict[str, Any]) -> str:
             f"‡ {ARTIFACT_LABEL}: "
             + ", ".join(sorted(artifacts))
             + ". The with-health figure rests on PolicyEngine-US 2.18.0's "
-            "encoding of a state Medicaid limit that the parameter's own "
-            "cited source does not support; see Health coverage.",
+            "encoding of a state Medicaid limit as a share of the poverty "
+            "guideline, where the state's own rules set the SSI payment "
+            "rate in dollars; see Health coverage.",
         ]
     lines += ["", document["medicaid_valuation"]["text"], ""]
     names = table_categories(rows)
