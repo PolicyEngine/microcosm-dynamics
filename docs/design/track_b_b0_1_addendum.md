@@ -723,8 +723,10 @@ context with them. Before the freeze it read:
   `tests/test_m6_engine_correlated_refresh.py`.
 
 It opened none of the 20 files on the audit's §15.4 list other than
-those two line ranges, no selection ledger, no codebook frequency table
-and no PSID data before the freeze. It did not read the ledgers' 2006
+those two line ranges and one grep of `m6_projection_engine.md` that
+printed line numbers and three headings (lines 3689, 3709 and 3766). It
+opened no selection ledger, no codebook frequency table and no PSID data
+before the freeze. It did not read the ledgers' 2006
 blocks, so the pseudo-origin, the transport rule and the binding
 evaluation were chosen without them. It ran the audit-record tests,
 which rescan listed files mechanically and print nothing from them.
@@ -737,11 +739,24 @@ subfolder there: its own oversized tool outputs, and the journal of its
 own pre-freeze review agents. It opened no other session's folder. It
 is not a builder for that registration.
 
-**Pre-freeze design review.** Four independent reviewers (in-session
-Opus 5.5 agents, each with one lens: rulings, power, blindness,
-statistics) and their verifiers read the draft protocol and plan under
-the same exclusions. Their findings shaped sections 4-9 and 16. None of
-them can serve as the Q6 reviewer.
+**Pre-freeze design review.** Two in-session workflows of Opus 5.5
+agents read the draft protocol and plan: 6 agents on 2026-09-30
+(22:42-22:54 UTC) and 49 reviewers and verifiers on 2026-10-01
+(02:07-02:44 UTC), each reviewer with one lens (rulings, power,
+blindness, statistics or feasibility). Their findings shaped sections
+4-9 and 16. None of them can serve as the Q6 reviewer. The reads record
+below shows what they opened beyond the author's reads:
+
+- `gates.yaml` lines 5324-5745 and `m6_projection_engine.md` lines
+  3600-3800, outside every range the inventories flag in those files;
+- the two codebook-evidence JSON files, through scripts that printed
+  column names, row counts and how many code-map rows have a populated
+  frequency, and no frequency, percent or label;
+- tool-output files and the workflow journal in this session's own
+  transcript subfolder.
+
+Their other mentions of excluded files are exclusion pathspecs, line
+counts and mechanical scans.
 
 **After the freeze.** The session launched the run and watched its
 progress log, which prints stage names and replicate counts only. It
@@ -754,10 +769,15 @@ selection ledger, §15.4 file or codebook table after the freeze. It did
 not read its own transcript folder again; the reads record below comes
 from the app's transcript export.
 
-**Method for the final record.** `docs/design/track_b_b0_1_addendum_reads.json`
-is extracted mechanically from this session's own transcript export:
-every file-reading tool call's path and range, and every shell command,
-with no tool output. Section 15 adds the Q6 lane's read log.
+**The reads record.** `docs/design/track_b_b0_1_addendum_reads.json`
+is written by `scripts/track_b_b0_1_addendum_reads.py` from this
+session's transcript export. It lists every tool call of the session and
+its agents up to the export, 1,694 calls: the paths, ranges and
+patterns each named, and each shell command's first line, SHA-256 and
+named paths. It holds no tool output. It flags the 77 calls that name a
+restricted or excluded path and classifies each one; none is left
+unresolved. Calls after the export, including the Q6 dispatch, are in
+section 15.
 
 ## 15. The blinded review (Q6)
 
