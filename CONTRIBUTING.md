@@ -8,7 +8,9 @@ This project is currently in the **planning and documentation phase**.
 The main product right now is a clearer, more honest project plan with
 explicit validation gates and decision points. A gate is a test that
 we register publicly before we run it, with its pass rule fixed in
-advance; a component enters the model only after it passes.
+advance. A component that faces a gate enters the model only after it
+passes; mortality, claiming, disability-insurance entitlement and
+immigrant entrants run without a gate so far.
 
 ## How to Contribute
 

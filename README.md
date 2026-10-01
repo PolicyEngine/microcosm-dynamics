@@ -42,8 +42,9 @@ earnings, family structure, disability, and claiming dynamics right.
   passing explicit validation gates, not by promising everything up
   front. A gate is a test on held-out or external data that we
   register publicly before we run it, with its pass rule fixed in
-  advance, and a component enters the model only after it passes. The
-  term comes from the quality gates that code must clear before it
+  advance. A component that faces a gate enters the model only after
+  it passes; mortality, claiming, disability-insurance entitlement and
+  immigrant entrants run without a gate so far. The term comes from the quality gates that code must clear before it
   ships and from the go/no-go decisions of clinical trials.
 - Platform first, application second: the core population work belongs
   in `populace`; this repository is the first domain application and
