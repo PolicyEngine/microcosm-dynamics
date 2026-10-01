@@ -215,24 +215,30 @@ household of one whose Medicaid eligibility begins:
 - **An encoding artifact.** SSI stays zero, and the model's optional aged
   pathway admits the household (`is_optional_senior_or_disabled_income_
   eligible.py:22-32`) in a state whose limit `ENCODING_NOTES` records as
-  unsupported by its cited source. This is household B in Montana under the
+  not matching the state's rules. This is household B in Montana under the
   17 percent cut, and every artifact labels it "ENCODING ARTIFACT, NOT
   STATE POLICY" (the tables mark it ‡).
   - PolicyEngine-US 2.18.0 encodes Montana's limit for an optional aged
     pathway as 75 percent of the poverty guideline ($11,970 in 2026;
     `parameters/gov/hhs/medicaid/eligibility/categories/senior_or_disabled/
     income/limit/individual.yaml:80-81`).
-  - The parameter cites KFF. KFF's 2018 50-state survey leaves Montana's
-    "Seniors and People with Disabilities up to 100% FPL" cell unchecked
-    (Appendix Table 1) and gives Montana's limit for SSI beneficiaries as
-    $750 a month, 74 percent (Appendix Table 2), the 2018 SSI benefit rate.
-    KFF's June 2024 table gives Montana $943, 75 percent, metric "1634
-    State", the 2024 SSI benefit rate. The pages were fetched on 2026-10-01
-    (`sources/fetch_record_kff.json`).
+  - Montana's own rules set a different limit. Montana covers aged, blind
+    and disabled people who meet SSI's income standard without receiving
+    SSI (State Plan Attachment 3.1-F, TN 24-0002, row 7, 42 CFR 435.210),
+    at the SSI payment rate in dollars: $994 a month for one person and
+    $1,491 for a couple in 2026 (DPHHS Medicaid manual ABD 008, effective
+    2026-01-01). The same plan page marks the poverty-level aged or
+    disabled group (1902(m)) N/A.
+  - The parameter's 0.75 matches its cited source, KFF, which gives
+    Montana's limit as the SSI benefit rate written as a share of the
+    poverty guideline ($750 and 74 percent in 2018; $943 and 75 percent,
+    "1634 State", in June 2024). The KFF pages were fetched on 2026-10-01
+    (`sources/fetch_record_kff.json`). Reported upstream as
+    PolicyEngine/policyengine-us#9733, with a fix proposed in #9735.
   - Under the 17 percent cut household B's SSI countable income is $996 a
     month, $2 above the 2026 benefit rate of $994, so SSI is zero; its
     Medicaid countable income, $11,952 a year, is $18 under the encoded
-    $11,970. The model starts Medicaid; on KFF's reading Montana would not.
+    $11,970. The model starts Medicaid; under Montana's standard it would not.
     The with-health figure (+3,940) is an artifact of the encoding.
   - The Medicare Savings Program value that ends with Medicaid is $5,334.80
     for a QMB enrollee all year: $2,434.80 of Medicare premiums

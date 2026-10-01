@@ -1438,7 +1438,7 @@ def check_medicaid_memo(
 
 
 #: States whose Medicaid encoding in policyengine-us 2.18.0 was checked
-#: against the parameter's own cited source and found not to match it.  A
+#: against the state's own rules and found not to match them.  A
 #: with-health result that rests on the encoding is labelled an artifact
 #: wherever it appears.  The KFF pages were fetched on 2026-10-01 (URLs,
 #: retrieval times and SHA-256 in ``sources/fetch_record_kff.json``).
@@ -1450,16 +1450,19 @@ ENCODING_NOTES: dict[str, dict[str, str]] = {
         ),
         "encoded": "75 percent of the poverty guideline (MT: 0.75 from 2018)",
         "evidence": (
-            "The parameter's cited source does not support a Montana "
-            "optional pathway. KFF's 2018 50-state survey leaves Montana's "
-            "'Seniors and People with Disabilities up to 100% FPL' cell "
-            "unchecked (Appendix Table 1) and gives Montana's limit for SSI "
-            "beneficiaries as $750 a month, 74% of the poverty guideline "
-            "(Appendix Table 2): the 2018 federal SSI benefit rate "
-            "(parameters/gov/ssa/ssi/amount/individual.yaml:47). KFF's June "
-            "2024 table gives Montana $943 a month, 75%, with the metric "
-            "'1634 State': the 2024 SSI benefit rate (individual.yaml:53). "
-            "Read that way, Montana's limit is the SSI benefit rate"
+            "Montana's own rules set a different limit. Montana covers "
+            "aged, blind and disabled people who meet SSI's income standard "
+            "without receiving SSI (State Plan Attachment 3.1-F, TN "
+            "24-0002, row 7, 42 CFR 435.210), at the SSI payment rate in "
+            "dollars: $994 a month for one person in 2026 (DPHHS Medicaid "
+            "manual ABD 008, effective 2026-01-01). The same plan page marks "
+            "the poverty-level aged or disabled group (1902(m)) N/A. The "
+            "parameter's 0.75 matches its cited source, KFF, which gives "
+            "Montana's limit as the SSI benefit rate written as a share of "
+            "the poverty guideline ($750 and 74% in 2018; $943 and 75%, "
+            "'1634 State', in June 2024). Reported upstream as "
+            "PolicyEngine/policyengine-us#9733 (fix proposed in #9735). "
+            "Montana's limit is the SSI payment rate"
         ),
     },
 }
@@ -1549,7 +1552,7 @@ def _health_pattern(
     * ``encoding_artifact``: SSI stays zero and the model's optional aged
       pathway admits the household (``is_optional_senior_or_disabled_
       income_eligible.py:22-32``) in a state whose encoding of that limit
-      :data:`ENCODING_NOTES` records as unsupported by its cited source.
+      :data:`ENCODING_NOTES` records as not matching the state's rules.
 
     ``context`` holds ``ssi_medicaid`` (:func:`ssi_medicaid_states`), the
     monthly ``ssi_rate``, and the QMB valuation parameters.

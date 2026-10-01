@@ -664,7 +664,11 @@ def test__given_montana_medicaid_without_ssi__then_it_is_an_artifact():
     assert "SSI stays $0" in text
     assert "$996 a month, is $2 above the 2026 federal benefit rate" in text
     assert "individual.yaml:80-81" in text
-    assert "Appendix Table 1" in text and "'1634 State'" in text
+    assert "TN 24-0002" in text and "42 CFR 435.210" in text
+    assert "ABD 008" in text and "$994 a month for one person" in text
+    assert "(1902(m)) N/A" in text and "'1634 State'" in text
+    assert "policyengine-us#9733" in text
+    assert "does not support a Montana optional pathway" not in text
     assert "artifact of that encoding" in text
 
 
