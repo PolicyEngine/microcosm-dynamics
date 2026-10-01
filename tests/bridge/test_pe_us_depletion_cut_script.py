@@ -555,7 +555,12 @@ def test__given_a_memo_off_the_ratio__then_it_is_refused(costs, people):
 
 
 def _health_row(
-    *, eligible=(0.0, 1.0), extra_leaf=False, income_before=15_000.0
+    *,
+    eligible=(0.0, 1.0),
+    extra_leaf=False,
+    income_before=15_000.0,
+    ssi_after=420.0,
+    state="FL",
 ):
     row = _row()
     tree = bridge.ComponentTree(
@@ -593,35 +598,94 @@ def _health_row(
     )
     income = "medicaid_optional_senior_or_disabled_countable_income"
     limit = "medicaid_optional_senior_or_disabled_income_limit"
+    qmb = {name: 1.0 for name in script.minimum.QMB_MONTHS}
     row["memo_with_health"] = {
         "baseline": {
             "is_medicaid_eligible": eligible[0],
             "ssi": 0.0,
+            "ssi_countable_income": 13_476.0,
+            "is_ssi_recipient_for_medicaid": 0.0,
+            "is_optional_senior_or_disabled_for_medicaid": 0.0,
             income: income_before,
             limit: 14_044.8,
+            **qmb,
         },
         "reform": {
             "is_medicaid_eligible": eligible[1],
-            "ssi": 420.0,
+            "ssi": ssi_after,
+            "ssi_countable_income": 11_952.0,
+            "is_ssi_recipient_for_medicaid": float(ssi_after > 0),
+            "is_optional_senior_or_disabled_for_medicaid": 1.0,
             income: 12_000.0,
             limit: 14_044.8,
+            **qmb,
         },
     }
     return row
 
 
-LIMITS = {"FL": 0.88}
+def _context(ssi_medicaid=True, state="FL"):
+    return {
+        "limits": {state: 0.75},
+        "ssi_medicaid": {state: ssi_medicaid},
+        "ssi_rate": 994.0,
+        "medicare_per_capita_cost": 14_500.0,
+        "qmb_cost_sharing_rate": 0.2,
+        "qmb_cost_sharing_annual": 2_900.0,
+    }
 
 
-def test__given_medicaid_starting__then_the_text_explains_it():
-    out = script.health_explanations([_health_row()], LIMITS, {"FL": False})
+def _in_state(row, state):
+    row["state"] = state
+    return row
+
+
+def test__given_ssi_starting_where_it_confers_medicaid__then_ssi_route():
+    out = script.health_explanations([_health_row()], _context())
     assert list(out) == ["A-FL-oasi"]
-    text = out["A-FL-oasi"]
-    assert "optional aged Medicaid pathway from $15,000 to $12,000" in text
-    assert "$2,045 under its limit of $14,045 (88% of the poverty" in text
-    assert "Medicaid eligibility begins" in text
+    entry = out["A-FL-oasi"]
+    assert entry["route"] == "ssi_receipt"
+    text = entry["text"]
+    assert "eligible for SSI, from $0 to $420 a year" in text
+    assert "medicaid_category.py:44-47" in text
     assert "valued at cost at $9,200 a year" in text
-    assert "$0 to $420" in text
+    assert "optional" not in text
+
+
+def test__given_montana_medicaid_without_ssi__then_it_is_an_artifact():
+    """The 17% cut's B-MT pattern: the model's encoded limit, no SSI."""
+
+    row = _in_state(_health_row(ssi_after=0.0), "MT")
+    out = script.health_explanations([row], _context(state="MT"))
+    entry = out["A-MT-oasi"]
+    assert entry["route"] == "encoding_artifact"
+    text = entry["text"]
+    assert text.startswith(script.ARTIFACT_LABEL)
+    assert "SSI stays $0" in text
+    assert "$996 a month, is $2 above the 2026 federal benefit rate" in text
+    assert "individual.yaml:80-81" in text
+    assert "Appendix Table 1" in text and "'1634 State'" in text
+    assert "artifact of that encoding" in text
+
+
+def test__given_an_unreviewed_state_pathway__then_it_is_refused():
+    """The optional-pathway route is described only where reviewed."""
+
+    row = _health_row(ssi_after=0.0)
+    with pytest.raises(script.InvariantError, match="does not describe"):
+        script.health_explanations([row], _context())
+
+
+def test__given_msp_ending_for_a_qmb_enrollee__then_its_value_is_split():
+    text = script._msp_text(
+        -533_480,
+        {name: 1.0 for name in script.minimum.QMB_MONTHS},
+        _context(),
+    )
+    assert "falls by $5,335" in text
+    assert "($2,435 here; msp_benefit_value.py" in text
+    assert "20% of average Medicare spending per enrollee, $14,500" in text
+    assert "'Estimated' ($2,900;" in text
 
 
 @pytest.mark.parametrize(
@@ -636,11 +700,11 @@ def test__given_medicaid_starting__then_the_text_explains_it():
 )
 def test__given_another_health_difference__then_it_is_refused(row):
     with pytest.raises(script.InvariantError):
-        script.health_explanations([row()], LIMITS, {"FL": False})
+        script.health_explanations([row()], _context(ssi_medicaid=False))
 
 
 def test__given_no_health_difference__then_there_is_no_text():
-    assert script.health_explanations(_rows(), LIMITS, {"FL": False}) == {}
+    assert script.health_explanations(_rows(), _context()) == {}
 
 
 # ---------------------------------------------------------------------------
@@ -843,21 +907,13 @@ def test__given_invented_rows__then_every_chart_is_labelled(tmp_path):
 # ---------------------------------------------------------------------------
 # Review round 2
 # ---------------------------------------------------------------------------
-def test__given_ssi_starting_where_it_confers_medicaid__then_both_routes():
-    out = script.health_explanations([_health_row()], LIMITS, {"FL": True})
-    text = out["A-FL-oasi"]
-    assert "SSI goes from $0 to $420 a year" in text
-    assert "SSI receipt is itself a Medicaid pathway" in text
-    assert "either route qualifies" in text
-
-
 def test__given_a_couple__then_the_health_text_is_refused():
     """Memo values are household sums; a couple's limit would double."""
 
     row = _health_row()
     row["situations"]["baseline"]["people"] = {"worker": {}, "spouse": {}}
     with pytest.raises(script.InvariantError, match="does not describe"):
-        script.health_explanations([row], LIMITS, {"FL": False})
+        script.health_explanations([row], _context())
 
 
 def test__given_docs_outside_the_repository__then_they_are_refused(
@@ -878,24 +934,34 @@ def test__given_496s_release_caveats__then_the_snap_one_is_directionless(
         "In policyengine-us 2.18.0 SNAP counts California's SSI supplement "
         "as unearned income (...), so losing the supplement lowers the "
         "income SNAP counts, and SNAP falls by less.",
-        "Take-up is the default.",
+        "Take-up is the default (amount.yaml:11), though the program is "
+        "caseload-limited and serves far fewer people than are eligible. "
+        "Housing assistance is switched off because vouchers are rationed, "
+        "and the household can prepare food at home.",
     ]
     monkeypatch.setattr(
         script.minimum, "_release_caveats", lambda root: list(original)
     )
     out = script.release_caveats(Path("."))
-    assert out[0] == original[0] and out[2] == original[2]
+    assert out[0] == original[0]
     assert "losing" not in out[1]
     assert "unearned_spm_unit.yaml:13" in out[1]
+    assert out[2] == (
+        "Take-up is the default (amount.yaml:11). Housing assistance is "
+        "switched off, as in #496, and the household can prepare food at "
+        "home."
+    )
 
 
 def test__given_other_release_caveats__then_adapting_them_is_refused(
     monkeypatch,
 ):
     monkeypatch.setattr(
-        script.minimum, "_release_caveats", lambda root: ["a", "b", "c"]
+        script.minimum,
+        "_release_caveats",
+        lambda root: ["a", "losing the supplement", "c"],
     )
-    with pytest.raises(script.InvariantError, match="release caveats"):
+    with pytest.raises(script.InvariantError, match="no longer reads"):
         script.release_caveats(Path("."))
 
 
@@ -903,25 +969,91 @@ def test__given_a_joint_change_without_health__then_it_is_refused():
     rows = _rows()
     for row in rows:
         row["decomposition"] = row["with_health"] = _joint_decomposition()
-    with pytest.raises(script.InvariantError):
+    with pytest.raises(
+        script.InvariantError, match="joint program changes without health"
+    ):
         script.check_invariants(rows)
 
 
 def _joint_decomposition():
+    """Medicaid under health benefits: the category check passes."""
+
     tree = bridge.ComponentTree(
         "household_net_income",
         {
             **TREE.children,
             "household_benefits": (
                 *TREE.children["household_benefits"],
-                ("medicaid_cost", 1),
+                ("household_health_benefits", 1),
             ),
+            "household_health_benefits": (("medicaid_cost", 1),),
         },
     )
     baseline = _values(8_916.0, 3_252.0)
     reform = _values(6_948.0, 5_220.0)
     for values, medicaid in ((baseline, 0.0), (reform, 100.0)):
         values["medicaid_cost"] = medicaid
+        values["household_health_benefits"] = medicaid
         values["household_benefits"] += medicaid
         values["household_net_income"] += medicaid
     return bridge.decompose(tree, baseline, reform)
+
+
+# ---------------------------------------------------------------------------
+# Review r1 of PR #506
+# ---------------------------------------------------------------------------
+def test__chart_titles__then_each_visible_title_is_labelled():
+    document = {"trustees_report": script.trustees_citation(SOURCES, None)}
+    for spec in script.HOUSEHOLDS:
+        title = script.household_chart_title(spec, document)
+        assert title.startswith("Illustrative households: ")
+        assert "22% OASI cut" in title
+    assert script.SUMMARY_CHART_TITLE.startswith("Illustrative households: ")
+
+
+def test__reform_name__then_it_cuts_oasi_benefits_in_the_first_year():
+    document = {"trustees_report": script.trustees_citation(SOURCES, None)}
+    text = script.reform_name(document, "oasi")
+    assert "each OASI benefit" in text
+    assert "retired-worker or spouse's benefit" in text
+    assert "first year of depletion, 2032" in text
+    assert "every Social Security benefit" not in text
+
+
+def test__given_pdftotext_pages__then_printed_numbers_are_read():
+    text = "\f".join(
+        ["Title page", "Intro text\nmore", "Overview\n2", "x\n3", "y"]
+    )
+    assert script.printed_page_numbers(text) == {2: 1, 3: 2, 4: 3}
+
+
+def test__trustees_citation__then_the_payable_share_decline_is_quoted():
+    citation = script.trustees_citation(SOURCES, None)
+    assert "This percentage declines gradually to 62 percent by 2100." in (
+        citation["context_quotes"]
+    )
+    assert "printed page 28" in citation["fund_choice"]
+    assert "Table III.A5, printed page 40" in citation["fund_choice"]
+
+
+def test__rounding_rule__then_it_quotes_the_full_sentence_and_scope():
+    rule = dc.ROUNDING_RULE
+    assert script.FULL_REPORT_QUOTES[0] in rule
+    assert "printed page 46" in rule
+    assert "not well-defined" not in rule
+    assert "Part B deduction" in rule and "403(a)" in rule
+
+
+def test__guard_summary__then_uncaused_changes_are_counted():
+    rows = _rows()
+    for row in rows:
+        row["float32_guard"] = {
+            variant: {
+                "traced_leaves": [],
+                "traced_nodes": 0,
+                "small_changes": [],
+                "uncaused_changes": [{"variable": "x"}],
+            }
+            for variant in script.VARIANTS
+        }
+    assert script._guard_summary(rows)["uncaused_changes"] == 4

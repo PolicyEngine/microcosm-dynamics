@@ -29,6 +29,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import subprocess
 import sys
 from decimal import Decimal
 from fractions import Fraction
@@ -112,6 +113,7 @@ def test__artifact__then_every_file_is_labelled(document, report):
             data = (ANALYSIS / f"{stem}{suffix}").read_bytes()
             assert label.encode() in data, f"{stem}{suffix}"
             assert b"would not happen in 2026" in data, f"{stem}{suffix}"
+            assert script.TITLE_PREFIX.encode() in data, f"{stem}{suffix}"
 
 
 def test__artifact__then_the_2026_law_note_is_plain(document):
@@ -150,9 +152,12 @@ def test__artifact__then_the_page_matches_its_fetch_record(document):
     assert full["committed"] is False
     assert not (SOURCES / script.FULL_REPORT_FILE).exists()
     assert set(full["quotes_found_on_text_page"]) == {"OASI", "OASDI"}
-    assert full["other_phrases_found"] == list(script.FULL_REPORT_QUOTES)
-    for phrase in script.FULL_REPORT_QUOTES[:2]:
-        assert phrase in dc.ROUNDING_RULE
+    assert set(full["other_phrases_found"]) == set(script.FULL_REPORT_QUOTES)
+    assert full["quotes_found_on_printed_page"] == {"OASI": 5, "OASDI": 5}
+    shortfall = script.FULL_REPORT_QUOTES[0]
+    assert shortfall in dc.ROUNDING_RULE
+    assert full["other_phrases_found"][shortfall]["printed_page"] == 46
+    assert "not well-defined" not in json.dumps(document)
     assert full["text_extraction_sha256"] == script.FULL_REPORT_TEXT_SHA256
 
 
@@ -464,17 +469,108 @@ def test__artifact__then_health_differences_are_each_explained(document):
     assert explained == differing
 
 
+def _share(value):
+    return Fraction(value["numerator"], value["denominator"])
+
+
 def test__artifact__then_the_summary_table_matches_the_json(document, report):
+    """All ten columns of each summary row, from the JSON."""
+
+    artifacts = {
+        key
+        for key, entry in document["health_explanations"].items()
+        if entry["route"] == "encoding_artifact"
+    }
     for row in document["results"]:
         offsets = row["offsets"]
-        share = Fraction(
-            offsets["offset_share"]["numerator"],
-            offsets["offset_share"]["denominator"],
+        health = row["with_health_benefits_in_net_income"]["offsets"]
+        shares = offsets["offset_shares_by_level"]
+        mark = (
+            "‡"
+            if f"{row['household']}-{row['state']}-{row['reform']}"
+            in artifacts
+            else ""
         )
+        money = script._money
         line = (
             f"| {row['household']} | {row['state']} | "
-            f"{script._money(_cents(offsets['social_security_change']), signed=True)} | "
-            f"{script._money(_cents(offsets['net_change']), signed=True)} | "
-            f"{script.percent_text(share)} |"
+            f"{money(_cents(offsets['social_security_change']), signed=True)}"
+            f" | {money(_cents(offsets['net_change']), signed=True)} | "
+            f"{script.percent_text(_share(offsets['offset_share']))} | "
+            f"{script.percent_text(_share(shares['federal']))} | "
+            f"{script.percent_text(_share(shares['state']))} | "
+            f"{money(_cents(health['net_change']), signed=True)}{mark} | "
+            f"{script.percent_text(_share(health['offset_share']))}{mark} | "
+            f"{script.percent_text(_share(health['offset_shares_by_level']['joint']))}"
+            f"{mark} |"
         )
         assert line in report, line
+
+
+def test__artifact__then_the_checks_before_writing_hold_again(document):
+    """The script's own pre-write checks, rechecked on the JSON."""
+
+    for row in document["results"]:
+        for variant in VARIANTS:
+            categories = {
+                name: _cents(entry["change"])
+                for name, entry in row[variant]["categories"].items()
+            }
+            levels = {
+                name: _cents(entry["change"])
+                for name, entry in _offsets(row, variant)["levels"].items()
+            }
+            for name in script.WRONG_WAY_CATEGORIES:
+                assert categories[name] >= 0, (row["household"], name)
+            for group, names in script.GROUP_CATEGORIES.items():
+                assert levels[group] == sum(categories[n] for n in names)
+            if variant == "decomposition":
+                assert levels["joint"] == 0
+
+
+def test__artifact__then_encoding_artifacts_are_labelled(document, report):
+    """B in Montana under the 17% cut: Medicaid without SSI, labelled."""
+
+    explanations = document["health_explanations"]
+    artifacts = {
+        key
+        for key, entry in explanations.items()
+        if entry["route"] == "encoding_artifact"
+    }
+    assert artifacts == {"B-MT-oasdi"}
+    assert explanations["B-MT-oasi"]["route"] == "ssi_receipt"
+    for key in artifacts:
+        text = explanations[key]["text"]
+        assert text.startswith(script.ARTIFACT_LABEL)
+        assert "individual.yaml:80-81" in text
+        assert f"- {key}: {text}" in report
+    assert f"‡ {script.ARTIFACT_LABEL}: B-MT-oasdi." in report
+    notes = document["medicaid_encoding_notes"]
+    assert set(notes["notes"]) == {"MT"}
+    assert notes["pages_committed"] is False
+    assert {source["status"] for source in notes["sources"]} == {200}
+
+
+def test__artifact__then_the_recorded_commit_is_this_code(document):
+    """The outputs' commit is an ancestor of HEAD with the same src/scripts."""
+
+    commit = document["provenance"]["microcosm_dynamics"]["commit"]
+    try:
+        ancestor = subprocess.run(
+            ["git", "merge-base", "--is-ancestor", commit, "HEAD"],
+            cwd=ROOT,
+            capture_output=True,
+        )
+    except OSError:
+        pytest.skip("git is not available")
+    if ancestor.returncode not in (0, 1):
+        pytest.skip(f"commit {commit} is not in this clone's history")
+    assert ancestor.returncode == 0, f"{commit} is not an ancestor of HEAD"
+    unchanged = subprocess.run(
+        ["git", "diff", "--quiet", commit, "HEAD", "--", "src", "scripts"],
+        cwd=ROOT,
+        capture_output=True,
+    )
+    assert (
+        unchanged.returncode == 0
+    ), f"src/ or scripts/ changed since the outputs were generated at {commit}"

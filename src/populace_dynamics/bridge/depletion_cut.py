@@ -109,19 +109,24 @@ _KEY_RESULTS = re.compile(
 ROUNDING_RULE = (
     "Each beneficiary's payable monthly benefit is the scheduled 2026 "
     "monthly benefit (a whole dollar) times the payable share, rounded down "
-    "to a whole dollar, as 42 USC 415(g) rounds a monthly benefit computed "
-    "under section 402 ('is not a multiple of $1 shall be rounded to the "
-    "next lower multiple of $1'). The across-the-board cut is this "
-    "analysis's assumption: the Trustees Report notes that at depletion "
-    "'scheduled benefits could not be paid in full on a timely basis' and "
-    "that 'certain trust fund operations items are not well-defined under "
-    "current law'. Applying the share to each whole-dollar monthly benefit "
-    "and rounding the product down is also this analysis's choice: 415(g) "
-    "itself rounds once, so a share applied to the unrounded amount could "
-    "pay a dollar a month more. The monthly cut is the scheduled benefit "
-    "less the payable benefit, so it is at least the cut share times the "
-    "scheduled benefit and less than a dollar more; the annual amounts are "
-    "twelve times the monthly ones."
+    "to a whole dollar ('is not a multiple of $1 shall be rounded to the "
+    "next lower multiple of $1', 42 USC 415(g)). 415(g) rounds a benefit "
+    "computed under section 402 or 423 after the reductions of sections "
+    "403(a) and 424a, the deductions of 403(b) and the Medicare Part B "
+    "premium deduction; this analysis floors the gross benefit, before any "
+    "Part B deduction. The across-the-board cut is this analysis's "
+    "assumption: the Trustees project the payable share, and note that "
+    "once reserves are depleted 'scheduled benefits could not be paid in "
+    "full on a timely basis, and actual amounts paid would be less than "
+    "the scheduled benefits' (Table IV.A1 note, printed page 46), but the "
+    "Highlights do not say how a shortfall would be spread across "
+    "beneficiaries. Applying the share to each whole-dollar monthly "
+    "benefit and rounding the product down is also this analysis's choice: "
+    "415(g) itself rounds once, so a share applied to the unrounded amount "
+    "could pay a dollar a month more. The monthly cut is the scheduled "
+    "benefit less the payable benefit, so it is at least the cut share "
+    "times the scheduled benefit and less than a dollar more; the annual "
+    "amounts are twelve times the monthly ones."
 )
 
 
@@ -438,7 +443,8 @@ LEAF_LEVELS: dict[str, tuple[str, str]] = {
         "equal to the expenditures made by the Commissioner of Social "
         "Security as such supplementary payments' (1382e(d)(1)). "
         "PolicyEngine-US lists it among 'benefits paid by state agencies' "
-        "(parameters/gov/household/household_state_benefits.yaml:1,42)",
+        "(parameters/gov/household/household_state_benefits.yaml:1, and :339 "
+        "in the 2026 list)",
     ),
     "state_income_tax_before_refundable_credits": (
         "state",

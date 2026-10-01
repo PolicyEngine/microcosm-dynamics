@@ -26,8 +26,8 @@ not committed, and the JSON records their URLs, retrieval times and SHA-256.
   finds the one sentence pair per fund on the page, and
   `parse_depletion_sentence` reads the depletion year and payable percent
   from it. The script requires Table II.A1 to state the same numbers, and
-  each quote to appear once in the full report's text (page 12 of the
-  extracted text). The quotes below straighten the page's curly
+  each quote to appear once in the full report's text (printed page 5;
+  page 12 of the extracted text). The quotes below straighten the page's curly
   apostrophes; the JSON keeps them as printed.
   - OASI: "The OASI Trust Fund is projected to become depleted in the fourth
     quarter of 2032, one quarter earlier than projected in last year's
@@ -39,19 +39,32 @@ not committed, and the JSON records their URLs, retrieval times and SHA-256.
     percent of scheduled benefits."
 - **Primary and sensitivity.** "Retired workers, their families, and
   survivors of deceased workers receive monthly benefits under the Old-Age
-  and Survivors Insurance (OASI) program" (the report's introduction), so
-  the primary reform pays every benefit at 78 percent (a 22 percent cut).
-  The sensitivity uses the 83 percent for the OASI and DI funds on a
-  combined basis (a 17 percent cut).
-- **The cut is an assumption.** The Trustees Report notes that at
-  depletion "scheduled benefits could not be paid in full on a timely
-  basis" and that "certain trust fund operations items are not well-defined
-  under current law" (full-report text, page 53). An across-the-board cut
-  at the payable share is this analysis's assumption.
+  and Survivors Insurance (OASI) program" (the report's introduction,
+  printed page 1), and Table III.A5 (printed page 40) lists retired workers
+  and spouses under OASI benefit payments. So the primary reform pays each
+  OASI benefit at 78 percent (a 22 percent cut); every benefit in these
+  households is a retired-worker or spouse's benefit. The sensitivity uses
+  the 83 percent for the OASI and DI funds on a combined basis (a 17
+  percent cut), which "implicitly assumes that the law will have been
+  changed to permit the transfer of funds between OASI and DI as needed"
+  (printed page 28).
+- **First-year cuts.** Both are the shares payable in the first year of
+  depletion; "this percentage declines gradually to 62 percent by 2100" for
+  OASI and to 65 percent for OASDI (the Highlights).
+- **The cut is an assumption.** The Trustees project the payable share, and
+  note that once reserves are depleted "scheduled benefits could not be
+  paid in full on a timely basis, and actual amounts paid would be less
+  than the scheduled benefits" (Table IV.A1 note, printed page 46). The
+  Highlights do not say how a shortfall would be spread across
+  beneficiaries; an across-the-board cut at the payable share is this
+  analysis's assumption.
 - **Rounding** (`depletion_cut.ROUNDING_RULE`). Each beneficiary's payable
   monthly benefit is the scheduled 2026 monthly benefit (a whole dollar)
-  times the payable share, rounded down to a whole dollar, as 42 USC 415(g)
-  rounds a monthly benefit computed under section 402. 415(g) itself rounds
+  times the payable share, rounded down to a whole dollar, the rounding of
+  42 USC 415(g). 415(g) rounds a benefit computed under section 402 or 423
+  after the reductions of 403(a) and 424a, the deductions of 403(b) and the
+  Medicare Part B premium deduction; this analysis floors the gross
+  benefit, before any Part B deduction. 415(g) itself rounds
   once, so a share applied to the unrounded amount could pay a dollar a
   month more (for D and E at 78 percent it would); applying it to the
   whole-dollar benefit is this analysis's choice. A couple's benefits are
@@ -72,7 +85,7 @@ preparation allowed, housing-voucher take-up off.
 |---|---|---|
 | A, B, C | #496's low earner: $743 | none; $4,800 pension; $31,200 pension |
 | D | a medium earner: $2,351 | $31,200 pension (C's) |
-| E | that medium earner, $2,351, and a spouse, $1,175 | $42,000 pension |
+| E | that medium earner, $2,351, and a spouse, $1,175 | the worker's $42,000 pension |
 
 - **A-C** are #496's households at #496's current-law benefit: the script
   calls #496's `worker_benefits` unchanged and keeps its current-law part.
@@ -97,17 +110,21 @@ preparation allowed, housing-voucher take-up off.
   eligibility), and every benefit month paid in 2026 to agree. The spouse's
   benefit enters PolicyEngine-US as `social_security_dependents`. In
   policyengine-us 2.18.0 it and `social_security_retirement` are inputs
-  that `social_security` adds (`social_security.py:11-14`); outside that
-  sum they differ only in child-care and CalWORKs income lists and Idaho's
-  retirement-benefits deduction (`id_retirement_benefits_deduction.py:26`),
-  none of which reaches a household without children in California,
-  Montana or Florida. The spouse's Medicare quarters are left at
+  that `social_security` adds (`social_security.py:11-14`). CalWORKs and New
+  Mexico's child-care income lists count both; outside the sum the two
+  differ only in Idaho's retirement-benefits deduction
+  (`id_retirement_benefits_deduction.py:26`) and in eight states'
+  child-care income lists that count retirement benefits but not
+  dependents' (Arkansas, Delaware, Florida's School Readiness program,
+  Georgia, Hawaii, Minnesota, New Jersey and Rhode Island). None reaches a
+  household without children in California, Montana or Florida; Florida's
+  School Readiness program needs an eligible child (`is_fl_sr_eligible.py:19`). The spouse's Medicare quarters are left at
   PolicyEngine-US's default of 40 (`medicare_quarters_of_coverage.py:16`).
   PolicyEngine-US makes the older adult the tax-unit head
   (`is_tax_unit_head.py:10-15`), here the spouse; the couple files jointly
-  (`filing_status.py:26-39`). The couple's pension is $42,000 so that part
-  of their benefits is taxable and they owe federal income tax before and
-  after the cut.
+  (`filing_status.py:26-39`). The pension, $42,000, is entered on the
+  worker; it makes part of the couple's benefits taxable, and they owe
+  federal income tax before and after the cut.
 
 ## Who pays the offset
 
@@ -133,7 +150,8 @@ groups:
   equal to the expenditures made by the Commissioner of Social Security as
   such supplementary payments" (1382e(d)(1)). PolicyEngine-US lists it
   among "benefits paid by state agencies"
-  (`parameters/gov/household/household_state_benefits.yaml:1,42`).
+  (`parameters/gov/household/household_state_benefits.yaml:1`; `:339` in
+  the 2026 list).
 - **Joint:** Medicaid and the Medicare Savings Programs, in the health
   sensitivity only. PolicyEngine-US splits Medicaid by the federal medical
   assistance percentage (`medicaid_federal_cost.py`,
@@ -174,20 +192,54 @@ Hypothesis properties (`tests/bridge/test_depletion_cut.py`):
 
 The script checks every comparison before writing (raising, never
 asserting): the identities above, Social Security falling by exactly the
-computed cut, no change outside the payer groups, no means-tested benefit or
-refundable credit falling and no income tax rising when Social Security
-falls, PolicyEngine-US's own net-income change within a cent of the
-definition's sum, the float32 guard of #496, the payer groups against the
-display categories, no all-federal (QI) Medicare Savings Program value
-labelled joint, and Medicaid at cost a whole number of enrollees at the
-release's ratio. Every with-health difference must match the one described
-pattern: Medicaid starting, for a household of one, as countable income
-for the state's optional aged pathway falls to its limit
-(`is_optional_senior_or_disabled_income_eligible.py:22-32`: income at or
-under the limit qualifies). Where SSI also begins in a state whose SSI
-recipients get Medicaid in PolicyEngine-US
-(`is_ssi_recipient_for_medicaid.py:20-34`; Montana is covered and
-classified section 1634), the text names that route too.
+computed cut, no change outside the payer groups, PolicyEngine-US's own
+net-income change within a cent of the definition's sum, the float32 guard
+of #496, the payer groups against the display categories, no joint program
+changing without health coverage counted, no all-federal (QI) Medicare
+Savings Program value labelled joint, and Medicaid at cost a whole number
+of enrollees at the release's ratio. When Social Security falls, the
+categories of #496's `WRONG_WAY_CATEGORIES` must not move the wrong way:
+SSI, SNAP, the Commodity Supplemental Food Program, state benefits and
+federal and state refundable credits never fall, and federal and state
+income taxes never rise. Health programs are not in that list, and one
+does fall: household B's Medicare Savings Program value in Montana.
+
+Every with-health difference must match one of two described routes, for a
+household of one whose Medicaid eligibility begins:
+
+- **SSI receipt.** SSI begins and PolicyEngine-US gives SSI recipients in
+  the state Medicaid (`is_ssi_recipient_for_medicaid.py:20-34`; Montana is
+  covered and classified section 1634), checking SSI receipt before any
+  other category (`medicaid_category.py:44-47`). This is household B in
+  Montana under the 22 percent cut.
+- **An encoding artifact.** SSI stays zero, and the model's optional aged
+  pathway admits the household (`is_optional_senior_or_disabled_income_
+  eligible.py:22-32`) in a state whose limit `ENCODING_NOTES` records as
+  unsupported by its cited source. This is household B in Montana under the
+  17 percent cut, and every artifact labels it "ENCODING ARTIFACT, NOT
+  STATE POLICY" (the tables mark it ‡).
+  - PolicyEngine-US 2.18.0 encodes Montana's limit for an optional aged
+    pathway as 75 percent of the poverty guideline ($11,970 in 2026;
+    `parameters/gov/hhs/medicaid/eligibility/categories/senior_or_disabled/
+    income/limit/individual.yaml:80-81`).
+  - The parameter cites KFF. KFF's 2018 50-state survey leaves Montana's
+    "Seniors and People with Disabilities up to 100% FPL" cell unchecked
+    (Appendix Table 1) and gives Montana's limit for SSI beneficiaries as
+    $750 a month, 74 percent (Appendix Table 2), the 2018 SSI benefit rate.
+    KFF's June 2024 table gives Montana $943, 75 percent, metric "1634
+    State", the 2024 SSI benefit rate. The pages were fetched on 2026-10-01
+    (`sources/fetch_record_kff.json`).
+  - Under the 17 percent cut household B's SSI countable income is $996 a
+    month, $2 above the 2026 benefit rate of $994, so SSI is zero; its
+    Medicaid countable income, $11,952 a year, is $18 under the encoded
+    $11,970. The model starts Medicaid; on KFF's reading Montana would not.
+    The with-health figure (+3,940) is an artifact of the encoding.
+  - The Medicare Savings Program value that ends with Medicaid is $5,334.80
+    for a QMB enrollee all year: $2,434.80 of Medicare premiums
+    (`msp_benefit_value.py:33-37`) and $2,900 of QMB cost sharing, which
+    PolicyEngine-US approximates as 20 percent of an average Medicare cost
+    per enrollee of $14,500, an entry its parameter file marks "Estimated"
+    (`qmb_cost_sharing.py:24-35`; `per_capita_cost.yaml:4`).
 
 Tests:
 
@@ -196,11 +248,20 @@ Tests:
   checks on invented inputs, with the tracer replaced by a fake, and the
   Trustees and statute checks on the committed and tampered sources.
 - `tests/bridge/test_pe_us_depletion_cut_artifact.py` (unit): the committed
-  JSON, Markdown and charts: labels, citation, identities, the cross-check
-  against #496's committed benefit, a fresh run from clean code.
+  JSON, Markdown and charts. It rechecks, on the JSON, the identities, the
+  Social Security change against the cut, no change outside the payer
+  groups, the wrong-way categories, the payer groups against the display
+  categories, no joint change without health coverage and the float32
+  guard; and it checks the labels (visible titles and file metadata), the
+  citation, the encoding-artifact labels, every column of the summary
+  tables, the cross-check against #496's committed benefit, a fresh run,
+  and that the recorded commit is an ancestor of HEAD with the same `src/`
+  and `scripts/`.
 - `tests/bridge/test_pe_us_depletion_cut_oracle.py` (oracle tier): the
-  benefit derivations live, a zero cut, SSI offsetting household A's cut
-  dollar for dollar, and taxes offsetting part of household D's.
+  benefit derivations live; a zero cut (household A in Florida built with
+  a payable share of 1 and run as its own case, against the baseline);
+  SSI offsetting household A's cut dollar for dollar; and taxes offsetting
+  part of household D's.
 
 ## How to run
 
@@ -231,4 +292,8 @@ the JSON records it, and the artifact test requires a fresh run.
 - Part of the federal income tax on benefits is credited to the trust funds;
   it is grouped as federal here.
 - Health coverage is outside default net income; the with-health figures
-  value Medicaid at average program cost, as #496 does.
+  value Medicaid at average program cost, as #496 does. Household B's
+  with-health figure in Montana under the 17 percent cut is an artifact of
+  PolicyEngine-US's Montana encoding (above).
+- Both cuts are first-year cuts; the payable share declines after
+  depletion.

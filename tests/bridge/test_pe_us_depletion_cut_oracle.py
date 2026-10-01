@@ -10,8 +10,9 @@ ILLUSTRATIVE HOUSEHOLDS, NOT SURVEY DATA; 2026 law and prices.
   earner's derivation and the Track B gross-benefit layer agree on the
   couple's worker benefit (a differential check), and the family maximum
   does not bind.
-* **A zero cut changes nothing.**  The same situation run twice (a payable
-  share of 1) decomposes to zero changes, with no offset share.
+* **A zero cut changes nothing.**  Household A in Florida built with a
+  payable share of 1 and run as its own case decomposes, against the
+  separately run baseline, to zero changes, with no offset share.
 * **Directions read in policyengine-us 2.18.0 before they were asserted**
   (paths under ``policyengine_us/``): SSI is the benefit rate less
   countable income (``variables/gov/ssa/ssi/uncapped_ssi.py:13-16``), and
@@ -109,7 +110,13 @@ def test__live__then_track_b_agrees_with_the_medium_earner(benefits):
 
 def _case(spec_key, state, scenario, benefits):
     spec = next(s for s in script.HOUSEHOLDS if s["key"] == spec_key)
-    cuts = script.household_cuts(spec, benefits, SHARES)[scenario]
+    if scenario == "zero":
+        # A payable share of 1, cut and rounded like the reforms.
+        cuts = dc.cut_household(
+            script.scheduled_benefits(spec, benefits), Decimal(1)
+        )
+    else:
+        cuts = script.household_cuts(spec, benefits, SHARES)[scenario]
     annual = {p: float(c.annual_payable) for p, c in cuts.items()}
     built = script.build_household(spec, state, annual, benefits)
     return bridge.RunCase(
@@ -123,6 +130,7 @@ def _case(spec_key, state, scenario, benefits):
 def runs(benefits):
     cases = [
         _case("A", "FL", "baseline", benefits),
+        _case("A", "FL", "zero", benefits),
         _case("A", "FL", "oasi", benefits),
         _case("D", "MT", "baseline", benefits),
         _case("D", "MT", "oasi", benefits),
@@ -146,7 +154,7 @@ def _decompose(runs, before, after):
 
 
 def test__live__then_a_zero_cut_changes_nothing(runs):
-    d = _decompose(runs, "A_FL_baseline", "A_FL_baseline")
+    d = _decompose(runs, "A_FL_baseline", "A_FL_zero")
     levels = dc.by_level(d.components)
     assert d.net_change_cents == 0
     assert all(level["change"] == 0 for level in levels.values())
