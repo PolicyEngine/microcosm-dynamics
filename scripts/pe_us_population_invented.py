@@ -361,7 +361,7 @@ def run_size(
     result = _timed(
         "track_m_evaluate_seconds",
         timings,
-        lambda: invented.evaluate_headline(cohort.inputs, parameters),
+        lambda: invented.evaluate_headline(cohort, parameters),
     )
     benefit_table = _timed(
         "benefits_seconds",

@@ -24,8 +24,8 @@ d727, under Max's d479: "Development checks use invented cases").
    (``pipeline.PSID_FILES_SOURCE_KEY``) and any whose source lacks the
    invented label.  The people, family units, weights, birth years and
    2022 amounts come from the cohort and the frames, not the records, so
-   :func:`require_invented_cohort` refuses, before anything is computed
-   or mapped, frames or a cohort without the invented label or with PSID
+   :func:`require_invented_cohort` refuses, before evaluation or mapping,
+   frames or a cohort without the invented label or with PSID
    file-provenance keys, and a cohort or records with different source
    provenance from those frames.
    :func:`person_benefits` turns each worker record's PIA
@@ -358,7 +358,7 @@ def _require_same_persons(inputs: TrackMInputs, persons: pd.DataFrame) -> None:
 
 
 def require_invented_cohort(invented: InventedCohort) -> None:
-    """Refuse a cohort the population path may not compute from or map.
+    """Refuse a cohort the population path may not evaluate or map.
 
     :func:`require_invented` checks the records alone, but the people,
     family units, weights, birth years and 2022 amounts come from the M4
@@ -411,12 +411,12 @@ def require_invented_cohort(invented: InventedCohort) -> None:
 
 
 def evaluate_headline(
-    inputs: TrackMInputs, parameters: TrackMParameters
+    invented: InventedCohort, parameters: TrackMParameters
 ) -> Evaluation:
-    """Track M's rules under row MS0, on invented records only."""
+    """Track M's rules under row MS0, on a checked invented cohort only."""
 
-    require_invented(inputs)
-    return evaluate(inputs, policy_for_row(HEADLINE_ROW), parameters)
+    require_invented_cohort(invented)
+    return evaluate(invented.inputs, policy_for_row(HEADLINE_ROW), parameters)
 
 
 # ---------------------------------------------------------------------------

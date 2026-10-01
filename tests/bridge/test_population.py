@@ -801,7 +801,7 @@ def _build(track_m, seed, n=24):
         params=parameters.params,
         cola_rates=cola,
     )
-    result = invented.evaluate_headline(cohort.inputs, parameters)
+    result = invented.evaluate_headline(cohort, parameters)
     table = invented.person_benefits(cohort, result, parameters, rates)
     population = invented.build_population(cohort, table, seed=seed)
     return cohort, result, table, population
@@ -896,7 +896,9 @@ def test__records_not_marked_invented__then_they_are_never_evaluated(
     )
     for records in refused:
         with pytest.raises(ValueError):
-            invented.evaluate_headline(records, parameters)
+            invented.evaluate_headline(
+                dataclasses.replace(built[0], inputs=records), parameters
+            )
         with pytest.raises(ValueError):
             invented.require_invented(records)
         with pytest.raises(ValueError):
@@ -940,6 +942,8 @@ def _refuses_before_computing(track_m, cohort, result, table, match):
     ):
         with pytest.raises(ValueError, match=match):
             invented.require_invented_cohort(cohort)
+        with pytest.raises(ValueError, match=match):
+            invented.evaluate_headline(cohort, parameters)
         with pytest.raises(ValueError, match=match):
             invented.person_benefits(cohort, result, parameters, rates)
         with pytest.raises(ValueError, match=match):
@@ -1125,7 +1129,7 @@ def test__an_evaluation_of_other_records__then_benefits_are_refused(
     other = invented.build_invented_cohort(
         seed=12, n_family_units=120, params=parameters.params, cola_rates=cola
     )
-    other_result = invented.evaluate_headline(other.inputs, parameters)
+    other_result = invented.evaluate_headline(other, parameters)
     paid = next(p for p in cohort.inputs.persons if p.paid_own_worker_benefit)
     missing = dataclasses.replace(
         result,
