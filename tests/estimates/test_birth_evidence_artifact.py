@@ -205,6 +205,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("scripts/u2_u1_differential.py"),
         Path("src/populace_dynamics/bridge/__init__.py"),
         Path("src/populace_dynamics/bridge/policyengine_us.py"),
+        Path("src/populace_dynamics/bridge/depletion_cut.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -444,6 +445,7 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
     bridge_modules = {
         "populace_dynamics.bridge",
         "populace_dynamics.bridge.policyengine_us",
+        "populace_dynamics.bridge.depletion_cut",
     }
     assert bridge_modules.issubset(module_paths)
     assert bridge_modules.isdisjoint(reachable), (
