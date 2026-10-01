@@ -53,7 +53,7 @@ The independent adjudication (`EV/phase2-20260927/out/u2-adjudicate.md`) confirm
 | A: open | 24 | Still TO VERIFY; each question now names its disposition, amendment and adjudication line |
 | Dependencies released | 248 entries | `roles:2015.relationship.90`, `roles:2017.relationship.90` and `roles:2017.relationship.92` no longer block dependents. 2015 slot maps stay blocked by the refused code-20 route and 2019–2023 slot maps by the refused 90/92 routes; the 2017 slot maps no longer carry a role blocker. `pension:2015.route.respondent_slots` now depends on `roles:2015.relationship.20` |
 
-Part B's documentary research is recorded in `docs/design/u2_m1b_psid_research.md`, its sources in `tests/data/track_u2/psid_docs/manifest.json`, and the proposed amendments 1–6 in the specification's §16a (`u2-draft-4`, pending Max's ruling). The complete reading record is `docs/design/u2_m1b_exposure.md`.
+Part B's documentary research is recorded in `docs/design/u2_m1b_psid_research.md`, its sources in `tests/data/track_u2/psid_docs/manifest.json`, and the proposed amendments 1–6 in the specification's §16a (`u2-draft-4`), on which Max ruled on 2026-09-30 (d637; recorded in §16b). The complete reading record is `docs/design/u2_m1b_exposure.md`.
 
 ## One row per source route or field
 
