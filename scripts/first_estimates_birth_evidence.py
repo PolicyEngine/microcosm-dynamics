@@ -340,6 +340,9 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/bridge/__init__.py"),
     Path("src/populace_dynamics/bridge/policyengine_us.py"),
     Path("src/populace_dynamics/bridge/depletion_cut.py"),
+    Path("src/populace_dynamics/bridge/invented_population.py"),
+    Path("src/populace_dynamics/bridge/population.py"),
+    Path("src/populace_dynamics/bridge/population_summary.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
