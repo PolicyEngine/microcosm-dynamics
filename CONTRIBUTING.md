@@ -6,7 +6,9 @@ Thank you for your interest in contributing to the open-source Social Security d
 
 This project is currently in the **planning and documentation phase**.
 The main product right now is a clearer, more honest project plan with
-explicit validation gates and decision points.
+explicit validation gates and decision points. A gate is a test that
+we register publicly before we run it, with its pass rule fixed in
+advance; a component enters the model only after it passes.
 
 ## How to Contribute
 

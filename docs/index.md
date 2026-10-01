@@ -5,6 +5,12 @@
 
 This repository describes a proposed project. It does not claim that a
 validated dynamic model already exists.
+
+A gate is a test on held-out or external data that we register
+publicly before we run it, with its pass rule fixed in advance; a
+component enters the model only after it passes. The term comes from
+the quality gates that code must clear before it ships and from the
+go/no-go decisions of clinical trials.
 :::
 
 ## Executive summary
