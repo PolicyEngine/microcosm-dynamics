@@ -304,27 +304,35 @@ Run at the final state:
 
 ## Rulings recorded (2026-09-30, d637)
 
-A Claude Code session (Opus 5.5) recorded Max's ruling d637 on §16a as the specification's §16b, with structural edits only. It is not a U2 builder, referee or forecaster, and it computed nothing.
+A Claude Code session (Opus 5.5) recorded Max's ruling d637 on §16a as the specification's §16b. It edited only record text; no rule in §§3–16a changed. It is not a U2 builder, referee or forecaster, and it computed nothing.
 
 ### Read
 
 - `EV/RESTRICTED-FILES.md`, the list itself, in full, to know what not to open.
 - `EV/phase2-20260927/out/u2-m1b-verify-max-brief.md`, the verifier's brief (SHA-256 `958ad848…`), and the d637 entry in the chief-of-staff decision log.
-- In the repository: the specification (its headings, header, §§16, 16a, 17, 19 and 20), the research record (header and question labels), `data/external/track_u2/u1_identity.json`, the assertions that `tests/track_u2/test_adjudication_applied.py`, `test_psid_research_sources.py` and `test_u2_isolation.py` make on the specification, `src/populace_dynamics/uniform_cut_track_u2/identity.py`, and the description of PR #486.
+- In the repository: the specification (its headings, header, §§16, 16a, 17, 19 and 20), the research record (header and question labels), the master record's pointer to §16a, `data/external/track_u2/u1_identity.json`, the assertions that `tests/track_u2/test_adjudication_applied.py`, `test_psid_research_sources.py` and `test_u2_isolation.py` make on the specification, `src/populace_dynamics/uniform_cut_track_u2/identity.py`, and the description of PR #486.
 - The sent PSID message in Max's mailbox (headers, labels and text), to record that it was sent.
-- For the session's other two rulings (d649 on the PIA-source validation, d660 on the roadmap), none concerning U2: the PIA-source registration package, its appointments log, issue #113, and the issue #42 registration comments other than the result comments the restricted list names.
+- For the session's other two rulings (d649 on the PIA-source validation, d660 on the roadmap), none concerning U2: the PIA-source registration package (`EV/pia-registration-package-rev11-20260929-r2.md`: header, §§0–2, §16 and parts of §18), its appointments log, issue #113, issue #74, and issue #42 comments as described under Incidental exposure.
 
 ### Not opened
 
-Nothing the restricted list names: no page of the Boomers 2004 report, no U2 or exercise-2 comparator, seal, values scan or result, and no PSID data file.
+No file the restricted list names was opened for reading: no page of the Boomers 2004 report, no U2 or exercise-2 comparator, seal, values scan or result, and no PSID data file. One recursive file-name search (`grep -rl` for PIA-source terms, 2026-09-30 about 22:23 UTC) ran over the whole evidence folder, restricted folders included; it printed only the names of matching files outside the restricted folders. An earlier attempt at the same search failed before running.
 
 ### Incidental exposure
 
-- The restricted list's changelog entry of 2026-09-29 02:40 paraphrases the Boomers report's PDF metadata summary (qualitative; no table value, nothing about the 1946–55 column or the 13% cut). The session read it there, as any reader of the list does.
-- Public exercise-3 and exercise-4 figures appeared in passing in the phase-2 plan and the scorecards. None concerns U2.
+- **Issue #42, a listing.** A listing of #42 comments posted since 2026-09-09 (2026-09-30, about 22:22 UTC) excluded result comments 5841142710, 5853001916 and 5856068881 but not 5804799227, the exercise-1 result comment (posted 2026-09-23). It printed that comment's id, date and the first 70 characters of its first line, which name it as Registration 13's result and contain no value. The restricted list describes the exercise-1 result as public. It is not a U2 source.
+- **Issue #42, a scan.** An earlier scan (about 22:22 UTC) tested every #42 comment body for PIA-related terms and printed only each match's id, date, author, body length and a match flag. One match was the exercise-4 result comment 5856068881; none of its text was printed. The session then printed only the matching lines of seven non-restricted registration comments (13 to 18 and the 2026-09-30 correction): one line of Registration 17's diagnostics list, and nothing from the others. It also printed the matching passage of one July comment (4967433717, a gate_m6 stop), about a claiming reference.
+- **The restricted list's changelog.** Its entry of 2026-09-29 02:40 paraphrases the Boomers report's PDF metadata summary (qualitative; no table value, nothing about the 1946–55 column or the 13% cut). The session read it there, as any reader of the list does.
+- **Public exercise-1, -3 and -4 figures.** These appeared in passing in:
+  - `EV/parity-phase2-plan-20260927.md` (lines 54, 62, 66 and 70);
+  - `EV/dynasim-scorecard.md` (lines matching "PIA");
+  - `EV/scorecard/scorecard-data.json` (two row labels, no figure);
+  - the microcosm.institute `dynamics/scorecard/copy.json` (the passages around "PIA");
+  - the PIA package's §2.2 (exercise-4 artifact counts).
+  No exercise-2 figure (Boomers 2004 Tables 19 and 21) appeared in any of them, and none concerns U2.
 
 ### Files written
 
-- `docs/design/boomers2004_1946_55_comparison.md` (lines 3 and 4, §16b, and §§17, 19 and 20), `docs/design/u2_m1b_psid_research.md` (the header sentence and the three question labels), `data/external/track_u2/u1_identity.json` (the specification pin and its note), and this section.
+- `docs/design/boomers2004_1946_55_comparison.md` (lines 3 and 4, §16b, and §§17, 19 and 20), `docs/design/u2_m1b_psid_research.md` (the header sentence and the three question labels), `docs/design/u2_m1_source_adjudication.md` (the pointer to §16a), `data/external/track_u2/u1_identity.json` (the specification pin and its note), and this section.
 
 No registry entry, §15 line, test, U1 file, engine file, `gates.yaml` or `runs/*.json` was edited.
