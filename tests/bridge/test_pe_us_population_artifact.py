@@ -39,6 +39,11 @@ def report():
     return (OUTPUTS / f"{script.OUTPUT_STEM}.md").read_text()
 
 
+@pytest.fixture(scope="module")
+def completion_report():
+    return (OUTPUTS / "completion-report.md").read_text()
+
+
 def _strings(value):
     if isinstance(value, str):
         yield value
@@ -68,9 +73,77 @@ def test__outputs__then_every_file_carries_the_label(document, report):
         stem = OUTPUTS / f"{script.OUTPUT_STEM}_{size}_by_level"
         svg = stem.with_suffix(".svg").read_text()
         assert f"<dc:title>{LABEL}</dc:title>" in svg
+        assert svg.endswith("\n")
+        assert all(line == line.rstrip() for line in svg.splitlines())
         png = stem.with_suffix(".png").read_bytes()
         assert png.startswith(b"\x89PNG")
         assert b"Title\x00" + LABEL.encode() in png
+
+
+def test__completion_report__then_it_carries_the_label(completion_report):
+    assert completion_report.startswith(f"# {LABEL}\n")
+    # Every table of results is of invented families.
+    for line in completion_report.splitlines():
+        if line.startswith("| ") and "families" in line:
+            assert line.startswith("| INVENTED families"), line
+    assert "**INVENTED**" in completion_report
+
+
+def _blocks(markdown):
+    """The report's blocks: runs of lines between blank lines."""
+
+    blocks, block = [], []
+    for line in markdown.splitlines():
+        if line.strip():
+            block.append(line)
+        elif block:
+            blocks.append(block)
+            block = []
+    if block:
+        blocks.append(block)
+    return blocks
+
+
+def test__report__then_the_dagger_note_follows_only_tables_with_a_dagger(
+    report, document
+):
+    """A table with a \u2020 row is followed by the note; no other is."""
+
+    blocks = _blocks(report)
+    tables = 0
+    for i, block in enumerate(blocks):
+        if not block[0].startswith("|"):
+            continue
+        tables += 1
+        marked = any(line.endswith("\u2020 |") for line in block)
+        following = blocks[i + 1] if i + 1 < len(blocks) else []
+        noted = any("\u2020 " in line for line in following)
+        assert marked == noted, block[0]
+    assert tables
+    notes = sum(
+        1 for block in blocks for line in block if line.startswith("\u2020 ")
+    )
+    assert notes == len(SIZES)  # the headline tables' mixed ratios
+
+    # A mixed group with a zero aggregate Social Security change has no
+    # defined share. Its displayed n/a must not acquire a dagger footnote.
+    undefined_shares = json.loads(json.dumps(document))
+    for run in undefined_shares["sizes"].values():
+        default = run["results"]["default"]
+        default["population"]["take_back"]["share"] = None
+        for grouping in default["groupings"].values():
+            for group in grouping["groups"].values():
+                group["take_back"]["share"] = None
+    assert "\u2020" not in script.markdown(undefined_shares)
+
+
+def test__report__then_market_income_is_not_a_level_of_government(report):
+    assert report.count(
+        "| Market income (not a level of government) |"
+    ) == len(SIZES)
+    assert report.count("Market income is not a level of government") == (
+        len(SIZES)
+    )
 
 
 def test__outputs__then_every_invented_input_is_labelled(document, report):
@@ -94,8 +167,10 @@ def test__outputs__then_every_invented_input_is_labelled(document, report):
         assert f"| `{item}` | INVENTED |" in report
 
 
-def test__outputs__then_no_private_path_leaks(document, report):
-    for text in [report, *_strings(document)]:
+def test__outputs__then_no_private_path_leaks(
+    document, report, completion_report
+):
+    for text in [report, completion_report, *_strings(document)]:
         assert "/Users/" not in text
         assert "microcosm-launch-evidence" not in text
         assert "psid-data" not in text
@@ -175,7 +250,13 @@ def test__outputs__then_the_identities_and_checks_hold(document, size):
             Fraction(0),
         ) == Fraction(population["net_change_exact"])
     checks = run["checks"]
-    assert checks["social_security_equals_track_m"]["equal"] is True
+    assert set(checks["social_security_equals_inputs"]) == set(script.VARIANTS)
+    for variant in script.VARIANTS:
+        social_security = checks["social_security_equals_inputs"][variant]
+        assert social_security["equal"] is True
+        assert social_security["households_checked"] == (
+            run["households"]["count"]
+        )
     for variant in ("default", "with_health"):
         households = checks["households"][variant]
         assert (

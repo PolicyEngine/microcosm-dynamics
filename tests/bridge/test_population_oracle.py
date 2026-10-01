@@ -313,13 +313,7 @@ def _invented_households():
         seed=7, n_family_units=300, params=parameters.params, cola_rates=cola
     )
     result = invented.evaluate_headline(cohort.inputs, parameters)
-    table = invented.person_benefits(
-        cohort.inputs,
-        result,
-        parameters,
-        rates,
-        persons=cohort.cohort.persons,
-    )
+    table = invented.person_benefits(cohort, result, parameters, rates)
     population = invented.build_population(cohort, table, seed=7)
     frame = population.frames["current_law"]
     sizes = np.bincount(frame.units["household"])

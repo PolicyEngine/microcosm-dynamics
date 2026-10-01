@@ -20,9 +20,15 @@ d727, under Max's d479: "Development checks use invented cases").
    its own; the tabulation and the pipeline hold them
    (``evaluation.py:27-29``; ``pipeline.py:205-224``).  So
    :func:`require_invented` refuses, before ``evaluate`` runs, any records
-   not marked ``invented``, any carrying PSID file hashes
+   not marked ``invented``, any carrying the PSID file-provenance key
    (``pipeline.PSID_FILES_SOURCE_KEY``) and any whose source lacks the
-   invented label.  :func:`person_benefits` turns each worker record's PIA
+   invented label.  The people, family units, weights, birth years and
+   2022 amounts come from the cohort and the frames, not the records, so
+   :func:`require_invented_cohort` refuses, before anything is computed
+   or mapped, frames or a cohort without the invented label or with PSID
+   file-provenance keys, and a cohort or records with different source
+   provenance from those frames.
+   :func:`person_benefits` turns each worker record's PIA
    at first calculation into each person's 2026 benefit, three ways:
    current law (the history PIA, *P*), option 1 (a memo) and option 2
    (``max((1 - c) P, M)``, ``rules.py:317-401``).  Both PIAs are carried to
@@ -109,6 +115,7 @@ __all__ = [
     "invented_other_inputs",
     "person_benefits",
     "require_invented",
+    "require_invented_cohort",
 ]
 
 #: Every output of the population path carries this label.
@@ -296,8 +303,9 @@ def build_invented_cohort(
 def require_invented(inputs: TrackMInputs) -> None:
     """Refuse records the population path may not evaluate.
 
-    Only records marked ``invented``, carrying no PSID file hashes and the
-    invented generator's label (:data:`DRY_RUN_HEADER`) pass.  Real-data
+    Only records marked ``invented``, carrying no PSID file-provenance key
+    (even an empty one) and the invented generator's label
+    (:data:`DRY_RUN_HEADER`) pass.  Real-data
     records belong to the registered post hoc analysis (d727).
     """
 
@@ -306,15 +314,100 @@ def require_invented(inputs: TrackMInputs) -> None:
             "the population path evaluates invented records only, not "
             f"{inputs.provenance_kind!r}"
         )
-    if inputs.source.get(PSID_FILES_SOURCE_KEY):
+    if PSID_FILES_SOURCE_KEY in inputs.source:
         raise ValueError(
-            "records carrying PSID file hashes are never evaluated here"
+            "records carrying a PSID file hashes key are never evaluated here"
         )
     if inputs.source.get("label") != DRY_RUN_HEADER:
         raise ValueError(
             "records need the invented generator's label "
             f"{DRY_RUN_HEADER!r}"
         )
+
+
+def _require_same_persons(inputs: TrackMInputs, persons: pd.DataFrame) -> None:
+    # The person frame is the records' persons: the same ids, each once,
+    # each in the same family unit with the same weight (careers copies
+    # both from the cohort's person frame).
+    ids = persons["person_id"].astype(int).astype(str)
+    if ids.duplicated().any():
+        raise ValueError("the cohort's person ids must be unique")
+    cohort_rows = dict(
+        zip(
+            ids,
+            zip(
+                persons["family_unit_id"].astype(int),
+                persons["weight"].astype(float),
+                strict=True,
+            ),
+            strict=True,
+        )
+    )
+    records = {
+        person.person_id: (int(person.family_unit_id), float(person.weight))
+        for person in inputs.persons
+    }
+    if set(records) != set(cohort_rows):
+        raise ValueError("the records' persons are not the cohort's persons")
+    differ = sorted(pid for pid in records if records[pid] != cohort_rows[pid])
+    if differ:
+        raise ValueError(
+            f"persons {differ[:10]}: the records and the cohort give "
+            "different family units or weights"
+        )
+
+
+def require_invented_cohort(invented: InventedCohort) -> None:
+    """Refuse a cohort the population path may not compute from or map.
+
+    :func:`require_invented` checks the records alone, but the people,
+    family units, weights, birth years and 2022 amounts come from the M4
+    cohort (``cohort.persons``) and the invented frames (``frames.anchor``).
+    So, besides the records' own guard:
+
+    * the frames, their structural inputs (which hold the anchor), and
+      the cohort must each carry the invented generator's label
+      (:data:`DRY_RUN_HEADER`) and no PSID file-provenance key
+      (``pipeline.PSID_FILES_SOURCE_KEY``), even an empty one;
+    * the cohort must carry those frames' provenance (``build_cohort``
+      copies it, ``cohort.py:1308``), and the records' source must include
+      that same provenance (:func:`build_invented_cohort` passes it to
+      ``careers``), for this seed and size;
+    * the records' persons must be the cohort's, each in the same family
+      unit with the same weight.
+    """
+
+    require_invented(invented.inputs)
+    frames = dict(invented.frames.provenance)
+    for name, provenance in (
+        ("frames", frames),
+        ("structural inputs", invented.frames.structure_inputs.provenance),
+        ("cohort", invented.cohort.provenance),
+    ):
+        if PSID_FILES_SOURCE_KEY in provenance:
+            raise ValueError(
+                f"the {name} carry a PSID file hashes key and are never "
+                "mapped here"
+            )
+        if provenance.get("label") != DRY_RUN_HEADER:
+            raise ValueError(
+                f"the {name} need the invented generator's label "
+                f"{DRY_RUN_HEADER!r}"
+            )
+    if dict(invented.cohort.provenance) != frames:
+        raise ValueError("the cohort was not built from these frames")
+    source = invented.inputs.source
+    if any(source.get(key) != value for key, value in frames.items()):
+        raise ValueError("the records were not built from these frames")
+    if (frames.get("seed"), frames.get("n_family_units")) != (
+        invented.seed,
+        invented.n_family_units,
+    ):
+        raise ValueError(
+            "the frames are not of this cohort's seed and number of family "
+            "units"
+        )
+    _require_same_persons(invented.inputs, invented.cohort.persons)
 
 
 def evaluate_headline(
@@ -344,25 +437,25 @@ def _floor_dollar(amount: float) -> int:
 
 
 def person_benefits(
-    inputs: TrackMInputs,
+    invented: InventedCohort,
     result: Evaluation,
     parameters: TrackMParameters,
     cola_rates: Mapping[int, float],
     *,
-    persons: pd.DataFrame,
     payment_year: int = PAYMENT_YEAR,
 ) -> pd.DataFrame:
     """Each person's monthly and annual benefits in ``payment_year``.
 
-    One row per person of ``inputs``, with, for each of
-    :data:`BENEFIT_SCENARIOS`: ``own_<s>`` (the own worker benefit),
-    ``auxiliary_<s>`` (the largest spouse's or widow(er)'s excess, or an
-    unlinked auxiliary's invented amount) and the annual
+    One row per person of the cohort's records (``invented.inputs``), with,
+    for each of :data:`BENEFIT_SCENARIOS`: ``own_<s>`` (the own worker
+    benefit), ``auxiliary_<s>`` (the largest spouse's or widow(er)'s excess,
+    or an unlinked auxiliary's invented amount) and the annual
     ``<s>__social_security_retirement`` (own), ``__dependents`` (spouse's
-    excess or unlinked dependent's) and ``__survivors``.  ``persons`` is the
-    M4 cohort's person frame, for two amounts carried from the 2022 amount
-    (``amount_2022``) by the COLAs determined 2022 through ``payment_year
-    - 1``, the same in every scenario:
+    excess or unlinked dependent's) and ``__survivors``.  ``result`` is
+    :func:`evaluate_headline` of those records.  The M4 cohort's person
+    frame (``invented.cohort.persons``) gives two amounts carried from the
+    2022 amount (``amount_2022``) by the COLAs determined 2022 through
+    ``payment_year - 1``, the same in every scenario:
 
     * an unlinked auxiliary's benefit (no linked worker record to compute
       it from);
@@ -377,11 +470,37 @@ def person_benefits(
       Social Security.  Their benefit does not change under the reform:
       Track M cannot compute their PIA, so it cannot apply the option.
 
+    Refuses, before computing anything, a cohort
+    :func:`require_invented_cohort` refuses, an evaluation with different
+    worker or person ids,
+    and a person paid an own worker benefit without an evaluated own record
+    (``PersonRecord`` refuses one with no own record when it is built,
+    ``evaluation.py:208-211``; this holds for records altered after).
     Raises if a person with no record in the window gets different
     benefits in two scenarios.
     """
 
-    require_invented(inputs)
+    require_invented_cohort(invented)
+    inputs = invented.inputs
+    persons = invented.cohort.persons
+    if set(result.workers) != set(inputs.workers) or set(
+        result.rows["person_id"].astype(str)
+    ) != {person.person_id for person in inputs.persons}:
+        raise ValueError("the evaluation is not of the cohort's records")
+    unpaid = sorted(
+        person.person_id
+        for person in inputs.persons
+        if person.paid_own_worker_benefit
+        and (
+            person.own_record_id is None
+            or person.own_record_id not in result.workers
+        )
+    )
+    if unpaid:
+        raise ValueError(
+            f"persons {unpaid[:10]} are paid an own worker benefit but have "
+            "no evaluated own record"
+        )
     params = parameters.params
     last = payment_year - 1
     carried: dict[str, dict[str, float]] = {s: {} for s in BENEFIT_SCENARIOS}
@@ -615,13 +734,19 @@ def build_population(
 ) -> InventedPopulation:
     """The PolicyEngine-US population of an invented cohort (docstring 4).
 
-    The people are the M4 cohort's universe (``cohort.persons``: their
-    role, birth year, weight and family unit).  Every anchor person of the
-    invented frames must be in it: the invented generator gives every
-    anchor person a 2022 benefit and a birth year of 1960 or earlier
+    Refuses, before anything is mapped, a cohort
+    :func:`require_invented_cohort` refuses.  The people are the M4
+    cohort's universe (``cohort.persons``: their role, birth year, weight
+    and family unit).  The invented frames' anchor must hold exactly those
+    persons, each in the family unit (the anchor's ``interview``) the
+    cohort gives them.  The anchor defines current family membership;
+    every current member must belong to the universe.  Historical receipt,
+    marriage and earnings rows can include deceased linked workers and do
+    not define current household membership.  The invented generator gives
+    every anchor person a 2022 benefit and a birth year of 1960 or earlier
     (``invented_psid.py:481,493,518,551,569,601,614``), and a family with a
-    member outside the universe (as real data would have) is refused,
-    since this path has no inputs for such a member.  Ages are
+    current member outside the universe is refused, since this path has
+    no inputs for such a member.  Ages are
     ``payment_year`` less the birth year.  Medicare quarters of coverage
     are left to policyengine-us's default of 40
     (``medicare_quarters_of_coverage.py:16``), the premium-free Part A
@@ -631,15 +756,35 @@ def build_population(
     the bridge sets them.
     """
 
-    require_invented(invented.inputs)
+    require_invented_cohort(invented)
     persons = invented.cohort.persons.copy()
     persons["person_id"] = persons["person_id"].astype(int)
-    anchor_ids = set(invented.frames.anchor["person_id"].astype(int))
-    outside = sorted(anchor_ids - set(persons["person_id"]))
+    anchor = invented.frames.anchor
+    anchor_ids = anchor["person_id"].astype(int)
+    if anchor_ids.duplicated().any():
+        raise ValueError("the anchor's person ids must be unique")
+    anchor_family = dict(
+        zip(anchor_ids, anchor["interview"].astype(int), strict=True)
+    )
+    outside = sorted(set(anchor_family) - set(persons["person_id"]))
     if outside:
         raise ValueError(
             f"persons {outside[:10]} are outside the Track M universe; the "
             "population path places only universe members in households"
+        )
+    moved = sorted(
+        pid
+        for pid, fid in zip(
+            persons["person_id"],
+            persons["family_unit_id"].astype(int),
+            strict=True,
+        )
+        if anchor_family.get(pid) != fid
+    )
+    if moved:
+        raise ValueError(
+            f"persons {moved[:10]} are not in the anchor's family unit the "
+            "cohort gives them"
         )
     unknown = set(persons["role"]) - set(_ROLES)
     if unknown:

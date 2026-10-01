@@ -60,13 +60,25 @@ The real-data analysis is queued as d727 and needs a new issue #42
 registration with a frozen specification and one shot before computing
 outcomes. This build provides no authorization for a real-data run.
 
-The code enforces the invented-only rule before Track M's rules run:
+The code enforces the invented-only rule before Track M's rules run and
+before the cohort is used to compute or map benefits:
 
 - `invented_population.require_invented` refuses records not marked
-  `invented`, records whose source carries PSID file hashes
+  `invented`, records whose source carries the PSID file-provenance key
   (`pipeline.PSID_FILES_SOURCE_KEY`), and records without the invented
-  generator's label (`invented_population.py:296-317`). `evaluate_headline`
-  calls it before `evaluate` (`invented_population.py:320-326`).
+  generator's label. Even an empty PSID file-provenance key is refused.
+  `evaluate_headline` calls it before `evaluate`
+  (`invented_population.py:303-325,413-419`).
+- `invented_population.require_invented_cohort` applies the records'
+  guard and also requires the cohort, the frames and their structural
+  inputs (which hold the anchor) to carry the invented label and no PSID
+  file-provenance key. It checks agreement of the cohort and frame
+  provenance, the records' source, the seed and family count, and the
+  records' person ids, family units and weights against the cohort's
+  person frame. Both `person_benefits` and `build_population` call it
+  before computing or mapping any benefits. `person_benefits` accepts the
+  whole `InventedCohort`; callers cannot supply an independent `persons`
+  frame (`invented_population.py:328-410,439-445,483,759`).
 - `evaluation.evaluate` has no provenance guard of its own; the tabulation
   and the pipeline hold them (`min_benefit_track_m/evaluation.py:27-29`,
   `pipeline.py:205-224`). Calling it on invented records is what those
@@ -88,7 +100,7 @@ a comparator value. The registered-run guards are untouched.
   `invented_psid.py:443-448`). `build_invented_cohort` runs them through
   Track M's M4 cohort (`cohort.build_cohort`) and M5 careers
   (`careers.build_track_m_inputs`) with provenance `invented`
-  (`invented_population.py:271-293`).
+  (`invented_population.py:278-300`).
 - **Benefits.** `evaluate_headline` applies Track M's rules under row MS0.
   `person_benefits` turns each worker record's PIA into each person's 2026
   benefit under current law (the history PIA), option 1 (a memo) and
@@ -96,13 +108,16 @@ a comparator value. The registered-run guards are untouched.
   carries them (`bridge.carry_pia_forward`), times the own claim factor and
   rounded down to the dollar, as the bridge's worker is
   (`scripts/pe_us_minimum_benefit_sample_households.py:789`,
-  `invented_population.py:386-397,451-461`). Spouse's and
+  `invented_population.py:432-436,510-519,577-580`). Spouse's and
   widow(er)'s excesses come from the oracle's `spousal_benefit` and
   `widow_benefit` (`ss/benefits.py:205-241`, `:266-329`).
+  A person marked as paid an own worker benefit without an evaluated own
+  record is explicitly refused before any benefit is computed
+  (`invented_population.py:490-503`).
 - **Two groups keep their 2022 amount**, carried by the COLAs, in every
   scenario, because Track M computes no benefit for them: unlinked
   auxiliaries, and people paid an own benefit whose record holds no observed
-  covered earnings (`invented_population.py:399-400,451-456,489-494`).
+  covered earnings (`invented_population.py:517-519,570-576,608-616`).
   The invented generator, like the PSID panel it mimics,
   draws labor income for reference persons and spouses only
   (`invented_psid.py:599-617` draws other members' receipt but no
@@ -112,7 +127,7 @@ a comparator value. The registered-run guards are untouched.
   other than Social Security, assets or rent.
   `invented_other_inputs` draws them from `INVENTED_DISTRIBUTIONS`, each
   entry labelled `INVENTED`, on a seed stream apart from the cohort's
-  (`invented_population.py:140-199,538-594`). Each maps to a
+  (`invented_population.py:140-199,657-713`). Each maps to a
   PolicyEngine-US input by
   `estimates.adjusted_poverty`'s conventions where one exists
   (`INPUT_CONCEPTS`, `invented_population.py:202-254`): labor to
@@ -127,9 +142,12 @@ a comparator value. The registered-run guards are untouched.
 - **Households.** Each family unit is one household, SPM unit and family.
   The reference person and spouse form one marital unit and one joint tax
   unit; every other member is a marital unit and tax unit of their own
-  (`invented_population.py:609-769`, `build_population`). A family with a
-  member outside the Track M universe is refused, since this path has no inputs
-  for one. Medicare quarters of coverage stay at PolicyEngine-US's default
+  (`invented_population.py:728-932`, `build_population`). Current family membership
+  comes from the frames' anchor, which must contain exactly the cohort's
+  universe persons, each in the same family unit. An anchor member outside
+  that universe, or a missing or differently placed member, is refused
+  because this path has no inputs for them. Medicare quarters of coverage
+  stay at PolicyEngine-US's default
   of 40 (`variables/gov/hhs/medicare/eligibility/part_a/
   medicare_quarters_of_coverage.py:16`), the premium-free Part A threshold
   (`is_premium_free_part_a.py:17-20`): every person receives OASDI.
@@ -218,14 +236,19 @@ whose value for one household depends on the others:
 | `medicaid_slcsp_state_denominator` | Over a dataset, the weighted index summed over the state's enrollees, so a state's Medicaid cost sums to its calibrated spending (`medicaid_slcsp_state_denominator.py:21-26`); for a single household, state enrollment times the state-average index (`:28-33`) | Pinned to the single-household branch |
 | `household_income_decile`, `spm_unit_income_decile` | Weighted decile ranks over the simulation (`household_income_decile.py:12-21`, `spm_unit_income_decile.py:14-15`) | Used only as a grouping, from the baseline simulation; recomputed and checked equal |
 
-Medicaid at cost is the state's spending times the person's index over the
-denominator (`medicaid_cost_if_enrolled.py:11-22`). So by default
+Medicaid at cost is the state's spending times the person's filled cost
+index over the denominator (`medicaid_cost_if_enrolled.py:11-22`). So by
+default
 (`medicaid_valuation="household"`) the child pins the two Medicaid inputs,
 before anything reads them, to the values policyengine-us computes for each
 household simulated alone: the average of the positive cost indices of the
 household's own members at weight 1, and the state's enrollment times that
-average (`population.py:919-958`). A household's results then do not depend
-on the rest of the population. `"native"` leaves the dataset formulas in
+average (`population.py:919-958`). The resulting value per enrollee is
+state spending divided by state enrollment, multiplied by the enrollee's
+filled cost index divided by their household's positive-index average
+(which falls back to 1 when there is no positive index). A household's
+results then do not depend on the rest of the population. `"native"` leaves
+the dataset formulas in
 place, which spread each state's whole calibrated spending over the
 simulated enrollees; for an invented population that is meaningless.
 
@@ -314,7 +337,8 @@ cancel in net income
   with-health variant; their federal and state split is reported
   separately.
 - **Market income:** the other leaves of `household_market_income`, which
-  no reform here changes.
+  no reform here changes. This accounting category is not a level of
+  government.
 
 A leaf with no level that changes for any household is refused
 (`UnclassifiedChangeError`, `population.py:1619-1631`).
@@ -369,8 +393,9 @@ all four scenario/variant simulations (`population.py:1058-1084`;
 | 300 | 427 | 47.5 | 3.19 | 1200 / 8 |
 | 3,000 | 4,305 | 86.0 | 6.56 | 2400 / 12 |
 
-Both sizes satisfy their bounds. A second full run at each size reproduces
-all outcome and check fields exactly; timing and memory vary with host load.
+Both sizes satisfy their bounds. Regenerated outcomes are compared with
+the prior artifacts at both sizes; the live oracle repeats the 300-family
+run's outcome and check fields. Timing and memory vary with host load.
 
 ## Invariants
 
@@ -403,17 +428,25 @@ valuation; they do not establish separability for arbitrary future inputs.
 8. **Population equals households.** The population path reproduces the
    bridge's one-household results exactly (the two differentials above).
 9. **Social Security in equals Social Security out.** PolicyEngine-US's
-   `social_security` leaf equals the Track M benefits in every household
-   and scenario.
+   `social_security` leaf equals each household's sum of the four frame
+   inputs (retirement, disability, survivors and dependents) in both
+   scenarios and both net-income variants. These include Track M's
+   computed benefits and the 2022 amounts carried by COLAs for unlinked
+   auxiliaries and people paid an own benefit with no observed covered
+   earnings (`scripts/pe_us_population_invented.py`,
+   `social_security_check`).
 10. **Deciles.** The recomputed deciles equal policyengine-us's
     `household_income_decile` in every household, and equal the weighted
     rank definition by brute force (Hypothesis).
 11. **Determinism.** The same seed gives the same population, benefits and
     results; the committed 300-unit outputs are rebuilt live and must
     match.
-12. **Invented only.** Records not marked invented, carrying PSID file
-    hashes or lacking the invented label are refused before `evaluate`
-    runs.
+12. **Invented only.** Records not marked invented, carrying the PSID
+    file-provenance key or lacking the invented label are refused before
+    `evaluate` runs. The cohort, frames and structural inputs must carry
+    the invented label and no PSID file-provenance key, and the cohort's
+    provenance and person ids, family units and weights must agree with
+    the records before benefit conversion or population mapping.
 
 ## What the real-data version must add
 
@@ -442,9 +475,9 @@ The registered post hoc analysis (d727) needs, at least:
   (`population.py:616-666`). The measured local change is zero in both
   invented runs.
 - **Real family structure.** PSID family units include members outside the
-  Track M universe (children, younger spouses, other relatives), which this
-  path refuses. The real version needs inputs for them, rules for
-  dependents and filing status, and SPM units that may not match family
+  Track M universe (children, younger spouses, other relatives). This path
+  refuses such current anchor members. The real version needs inputs for
+  them, rules for dependents and filing status, and SPM units that may not match family
   units.
 - **Weights and uncertainty.** The 2023 cross-sectional weights, and a
   variance method for the PSID design (strata and clusters), since the

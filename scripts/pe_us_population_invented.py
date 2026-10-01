@@ -218,10 +218,16 @@ def social_security_check(
     decomposition: pop.PopulationDecomposition,
     frames: dict[str, pop.PopulationFrame],
 ) -> dict[str, Any]:
-    """PolicyEngine-US's ``social_security`` leaf equals the Track M side.
+    """PolicyEngine-US's ``social_security`` leaf equals the frames' inputs.
 
     A differential check, per household and scenario: the leaf (cents) is
-    the household's sum of the three Social Security inputs.
+    the household's sum of the four Social Security inputs (retirement,
+    disability, survivors and dependents; policyengine-us's
+    ``social_security`` adds exactly these, ``social_security.py:11-14``).
+    The inputs include Track M's benefits and the 2022 amounts carried
+    forward for unlinked auxiliaries and own benefits with a zero computed
+    current-law PIA
+    (:func:`~populace_dynamics.bridge.invented_population.person_benefits`).
     """
 
     for scenario, cents in (
@@ -248,8 +254,8 @@ def social_security_check(
         if not np.array_equal(got, expected):
             bad = np.flatnonzero(got != expected)
             raise AssertionError(
-                f"{scenario}: social_security differs from the Track M "
-                f"inputs in households {bad[:10].tolist()}"
+                f"{scenario}: social_security differs from the Social "
+                f"Security inputs in households {bad[:10].tolist()}"
             )
     return {"households_checked": decomposition.n_households, "equal": True}
 
@@ -361,11 +367,10 @@ def run_size(
         "benefits_seconds",
         timings,
         lambda: invented.person_benefits(
-            cohort.inputs,
+            cohort,
             result,
             parameters,
             context["cola_rates"],
-            persons=cohort.cohort.persons,
         ),
     )
     population = _timed(
@@ -442,9 +447,10 @@ def run_size(
         for variant in VARIANTS
     }
     checks = {
-        "social_security_equals_track_m": social_security_check(
-            default, frames
-        ),
+        "social_security_equals_inputs": {
+            variant: social_security_check(decompositions[variant], frames)
+            for variant in VARIANTS
+        },
         "households": {
             variant: household_checks(decompositions[variant], frame.state)
             for variant in VARIANTS
@@ -841,8 +847,16 @@ def caveats(parameter_root: Path, updates: list[dict[str, Any]]) -> list[str]:
         "policyengine-us's default of 40 for everyone, since every person "
         "receives OASDI.",
         "Default net income excludes health coverage. The with-health "
-        "sensitivity counts Medicaid at the release's state spending over "
-        "enrollment per enrollee (as for one household alone), not "
+        "sensitivity counts Medicaid as policyengine-us values it for one "
+        "household alone: the state's Medicaid spending over its enrollment "
+        "(the release's calibration totals, "
+        "calibration.gov.hhs.medicaid.totals), times the enrollee's SLCSP "
+        "cost index over the average positive index of their household's "
+        "members. The average falls back to one if no member has a positive "
+        "index; an enrollee with a nonpositive index takes that average, "
+        "making the index ratio one (medicaid_cost_if_enrolled.py:11-22, "
+        "medicaid_slcsp_cost_index_filled.py:11-14, "
+        "medicaid_slcsp_state_denominator.py:28-33). It is not "
         "policyengine-us's dataset allocation of each state's calibrated "
         "spending across the simulated enrollees, which is meaningless for "
         "an invented population.",
@@ -885,6 +899,11 @@ def _share(value: float | None, mixed: bool = False) -> str:
 
 
 LEVEL_ROWS = ("federal", "state", "local")
+#: Row labels of the by-level table where ``pop.LEVEL_LABELS`` alone would
+#: read as a level of government.
+LEVEL_TABLE_LABELS = {
+    "market_income": "Market income (not a level of government)",
+}
 
 
 def _distribution_text(spec: dict[str, Any]) -> str:
@@ -1021,6 +1040,19 @@ def markdown(document: dict[str, Any]) -> str:
             "| Share of the Social Security change taken back | "
             f"{_share(result['take_back']['share'], result['take_back']['mixes_rises_and_falls'])} |",  # noqa: E501
             "",
+        ]
+        if (
+            result["take_back"]["share"] is not None
+            and result["take_back"]["mixes_rises_and_falls"]
+        ):
+            lines += [
+                "\u2020 Social Security rises for some households and falls "
+                "for others, so the share taken back is a ratio of net sums, "
+                "not a share of either direction; the direction groups below "
+                "split them.",
+                "",
+            ]
+        lines += [
             "### By level of government",
             "",
             "| Level | Baseline | Reform | Change | Share taken back |",
@@ -1030,14 +1062,18 @@ def markdown(document: dict[str, Any]) -> str:
             entry = result["by_level"][level]
             share = result["take_back"]["by_level"].get(level)
             lines.append(
-                f"| {pop.LEVEL_LABELS[level]} | {_money(entry['baseline'])} "
+                f"| {LEVEL_TABLE_LABELS.get(level, pop.LEVEL_LABELS[level])} "
+                f"| {_money(entry['baseline'])} "
                 f"| {_money(entry['reform'])} | "
                 f"{_money(entry['change'], signed=True)} | {_share(share)} |"
             )
         lines += [
             "",
             "Federal includes Social Security; its share taken back excludes "
-            "it. Shares sum exactly to the total share.",
+            "it. Shares sum exactly to the total share. Market income is not "
+            "a level of government: it holds the leaves of "
+            "`household_market_income` except the Alaska dividend, which the "
+            "State of Alaska pays and which counts as state.",
             "",
             "### By component",
             "",
@@ -1064,7 +1100,11 @@ def markdown(document: dict[str, Any]) -> str:
                 "Mean net change | Federal | State | Local | Taken back |",
                 "|---|---:|---:|---:|---:|---:|---:|---:|",
             ]
+            mixed = False
             for label, entry in groups.items():
+                mixed |= entry["take_back"]["share"] is not None and bool(
+                    entry["take_back"]["mixes_rises_and_falls"]
+                )
                 lines.append(
                     f"| {label} | {entry['households']:,} | "
                     f"{_money(entry['mean_social_security_change_per_household'], signed=True)} | "  # noqa: E501
@@ -1083,10 +1123,14 @@ def markdown(document: dict[str, Any]) -> str:
             lines.append("")
             lines.append(
                 "Federal, state and local are weighted total changes; the "
-                "means are per weighted household. \u2020 The group's Social "
-                "Security rises for some households and falls for others, so "
-                "its share taken back is a ratio of net sums, not a share of "
-                "either direction."
+                "means are per weighted household."
+                + (
+                    " \u2020 The group's Social Security rises for some "
+                    "households and falls for others, so its share taken back "
+                    "is a ratio of net sums, not a share of either direction."
+                    if mixed
+                    else ""
+                )
             )
         lines += [
             "",
@@ -1094,8 +1138,10 @@ def markdown(document: dict[str, Any]) -> str:
             "state cost",
             "",
             "From policyengine-us 2.18.0's own cost-share variables, in the "
-            "default simulations (Medicaid at the release's spending over "
-            "enrollment per enrollee).",
+            "default simulations. Medicaid is valued as for one household "
+            "alone: the state's spending over its enrollment (the release's "
+            "calibration totals), times the enrollee's cost index over their "
+            "household's average (see the notes).",
             "",
             "| Program | Scenario | Total | Federal | State |",
             "|---|---|---:|---:|---:|",
@@ -1152,8 +1198,11 @@ def markdown(document: dict[str, Any]) -> str:
             "change; weighted, the leaves, categories and levels each sum "
             "exactly to the weighted net change, and each grouping's groups "
             "to the population's.",
-            "- PolicyEngine-US's `social_security` equals the Track M "
-            "benefits in every household and scenario.",
+            "- PolicyEngine-US's `social_security` equals, in every "
+            "household, scenario and variant, the household's sum of the "
+            "Social Security entered: Track M's benefits, and the 2022 "
+            "amounts carried forward for unlinked auxiliaries and own "
+            "benefits with a zero computed current-law PIA.",
             "- Households whose Social Security does not change do not "
             "change at all (no result leaks between households).",
             f"- Deciles equal policyengine-us's `household_income_decile` in "
@@ -1484,6 +1533,13 @@ def draw_chart(
     ):
         path = stem.with_suffix(suffix)
         fig.savefig(path, facecolor=SURFACE, **kwargs)
+        if suffix == ".svg":
+            path.write_text(
+                "\n".join(
+                    line.rstrip() for line in path.read_text().splitlines()
+                )
+                + "\n"
+            )
         paths.append(path)
     plt.close(fig)
     return paths
