@@ -7,7 +7,7 @@
  "provenance": {
   "microcosm_dynamics": {
    "repository": "PolicyEngine/microcosm-dynamics",
-   "commit": "4b6efb990e6315b6b4aec7197f1572320ca93bcf",
+   "commit": "9718a7f7a820e169ec57e90926228e77c610a5e2",
    "code_dirty": false,
    "script": "scripts/pe_us_population_invented.py",
    "modules": [
@@ -283,11 +283,11 @@
  },
  "method": {
   "source_references": {
-   "invented-only guard": "src/populace_dynamics/bridge/invented_population.py:303; src/populace_dynamics/bridge/invented_population.py:360",
-   "cohort and careers": "src/populace_dynamics/bridge/invented_population.py:278",
-   "benefit carry and auxiliary mapping": "src/populace_dynamics/bridge/invented_population.py:439",
-   "invented distributions and income conventions": "src/populace_dynamics/bridge/invented_population.py:140",
-   "family-to-household mapper": "src/populace_dynamics/bridge/invented_population.py:728",
+   "invented-only guard": "src/populace_dynamics/bridge/invented_population.py:345; src/populace_dynamics/bridge/invented_population.py:491",
+   "cohort and careers": "src/populace_dynamics/bridge/invented_population.py:303",
+   "benefit carry and auxiliary mapping": "src/populace_dynamics/bridge/invented_population.py:602",
+   "invented distributions and income conventions": "src/populace_dynamics/bridge/invented_population.py:144",
+   "family-to-household mapper": "src/populace_dynamics/bridge/invented_population.py:888",
    "release pin and California override": "scripts/pe_us_minimum_benefit_sample_households.py:407",
    "dataset layout": "src/populace_dynamics/bridge/population.py:616; policyengine_core/simulations/simulation.py:405",
    "one simulation per scenario": "src/populace_dynamics/bridge/population.py:980",
@@ -4859,45 +4859,45 @@
     "households": 300,
     "people": 427,
     "track_m_and_population_seconds": {
-     "track_m_cohort_seconds": 2.22880641699885,
-     "track_m_evaluate_seconds": 0.1486651669983985,
-     "benefits_seconds": 0.2808369999984279,
-     "population_seconds": 0.3010944169946015
+     "track_m_cohort_seconds": 1.2663500829949044,
+     "track_m_evaluate_seconds": 1.6834775829920545,
+     "benefits_seconds": 2.4084831249929266,
+     "population_seconds": 2.0365777499973774
     },
-    "pe_wall_seconds": 784.9102020409919,
-    "pe_import_seconds": 151.93232541601174,
+    "pe_wall_seconds": 244.75157749999198,
+    "pe_import_seconds": 35.46810841599654,
     "pe_simulations": {
      "default": {
       "current_law": {
-       "build_seconds": 0.5342006659921026,
-       "calculate_seconds": 76.03287970900419,
-       "total_seconds": 76.5670803749963,
-       "peak_rss_bytes_after": 2079801344
+       "build_seconds": 0.4557355829892913,
+       "calculate_seconds": 39.053607917012414,
+       "total_seconds": 39.509343500001705,
+       "peak_rss_bytes_after": 1632043008
       },
       "option_2": {
-       "build_seconds": 0.17293179100670386,
-       "calculate_seconds": 56.92438370900345,
-       "total_seconds": 57.097315500010154,
-       "peak_rss_bytes_after": 2245279744
+       "build_seconds": 0.08746991599036846,
+       "calculate_seconds": 28.798205250001047,
+       "total_seconds": 28.885675165991415,
+       "peak_rss_bytes_after": 1632043008
       }
      },
      "with_health": {
       "current_law": {
-       "build_seconds": 0.712742083997,
-       "calculate_seconds": 118.90996579099738,
-       "total_seconds": 119.62270787499438,
-       "peak_rss_bytes_after": 3302801408
+       "build_seconds": 0.3266059169982327,
+       "calculate_seconds": 38.98613299999852,
+       "total_seconds": 39.31273891699675,
+       "peak_rss_bytes_after": 3115286528
       },
       "option_2": {
-       "build_seconds": 0.5241915420047008,
-       "calculate_seconds": 40.64857562498946,
-       "total_seconds": 41.17276716699416,
-       "peak_rss_bytes_after": 3321053184
+       "build_seconds": 0.0826109999907203,
+       "calculate_seconds": 17.459506625003996,
+       "total_seconds": 17.542117624994717,
+       "peak_rss_bytes_after": 3115286528
       }
      }
     },
-    "peak_rss_bytes": 3355885568,
-    "peak_rss_gib": 3.1254119873046875,
+    "peak_rss_bytes": 3134898176,
+    "peak_rss_gib": 2.9196014404296875,
     "bounds": {
      "pe_wall_seconds": 1200.0,
      "peak_rss_bytes": 8589934592
@@ -10273,45 +10273,45 @@
     "households": 3000,
     "people": 4305,
     "track_m_and_population_seconds": {
-     "track_m_cohort_seconds": 21.008186957988073,
-     "track_m_evaluate_seconds": 2.6276980839902535,
-     "benefits_seconds": 3.1179543750040466,
-     "population_seconds": 4.401555707998341
+     "track_m_cohort_seconds": 13.067100749991369,
+     "track_m_evaluate_seconds": 15.647841541998787,
+     "benefits_seconds": 17.937332166009583,
+     "population_seconds": 16.111243124993052
     },
-    "pe_wall_seconds": 492.7130971250008,
-    "pe_import_seconds": 51.040134500013664,
+    "pe_wall_seconds": 325.2922097499977,
+    "pe_import_seconds": 28.655275124998298,
     "pe_simulations": {
      "default": {
       "current_law": {
-       "build_seconds": 0.1733912500058068,
-       "calculate_seconds": 74.62036049999006,
-       "total_seconds": 74.79375174999586,
-       "peak_rss_bytes_after": 3860070400
+       "build_seconds": 0.35948574999929406,
+       "calculate_seconds": 48.12302537499636,
+       "total_seconds": 48.48251112499565,
+       "peak_rss_bytes_after": 2719580160
       },
       "option_2": {
-       "build_seconds": 0.02925283399235923,
-       "calculate_seconds": 27.23379450000357,
-       "total_seconds": 27.263047333995928,
-       "peak_rss_bytes_after": 5873319936
+       "build_seconds": 0.04604250000556931,
+       "calculate_seconds": 36.140387666993774,
+       "total_seconds": 36.186430166999344,
+       "peak_rss_bytes_after": 2719580160
       }
      },
      "with_health": {
       "current_law": {
-       "build_seconds": 1.0802143749897368,
-       "calculate_seconds": 88.13329916700604,
-       "total_seconds": 89.21351354199578,
-       "peak_rss_bytes_after": 6550142976
+       "build_seconds": 0.2666428329976043,
+       "calculate_seconds": 68.46072208300757,
+       "total_seconds": 68.72736491600517,
+       "peak_rss_bytes_after": 4224352256
       },
       "option_2": {
-       "build_seconds": 0.1797331250127172,
-       "calculate_seconds": 43.84415424999315,
-       "total_seconds": 44.02388737500587,
-       "peak_rss_bytes_after": 6920323072
+       "build_seconds": 0.3039252500020666,
+       "calculate_seconds": 47.244889374997,
+       "total_seconds": 47.54881462499907,
+       "peak_rss_bytes_after": 4224352256
       }
      }
     },
-    "peak_rss_bytes": 6952648704,
-    "peak_rss_gib": 6.47515869140625,
+    "peak_rss_bytes": 4224352256,
+    "peak_rss_gib": 3.934234619140625,
     "bounds": {
      "pe_wall_seconds": 2400.0,
      "peak_rss_bytes": 12884901888

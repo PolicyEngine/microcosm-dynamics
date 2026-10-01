@@ -312,8 +312,7 @@ def _invented_households():
     cohort = invented.build_invented_cohort(
         seed=7, n_family_units=300, params=parameters.params, cola_rates=cola
     )
-    result = invented.evaluate_headline(cohort, parameters)
-    table = invented.person_benefits(cohort, result, parameters, rates)
+    table = invented.person_benefits(cohort, parameters, rates)
     population = invented.build_population(cohort, table, seed=7)
     frame = population.frames["current_law"]
     sizes = np.bincount(frame.units["household"])

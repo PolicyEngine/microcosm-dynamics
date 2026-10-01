@@ -368,7 +368,6 @@ def run_size(
         timings,
         lambda: invented.person_benefits(
             cohort,
-            result,
             parameters,
             context["cola_rates"],
         ),
@@ -673,20 +672,20 @@ def build(
         "method": {
             "source_references": {
                 "invented-only guard": (
-                    "src/populace_dynamics/bridge/invented_population.py:303; "
-                    "src/populace_dynamics/bridge/invented_population.py:360"
+                    "src/populace_dynamics/bridge/invented_population.py:345; "
+                    "src/populace_dynamics/bridge/invented_population.py:491"
                 ),
                 "cohort and careers": (
-                    "src/populace_dynamics/bridge/invented_population.py:278"
+                    "src/populace_dynamics/bridge/invented_population.py:303"
                 ),
                 "benefit carry and auxiliary mapping": (
-                    "src/populace_dynamics/bridge/invented_population.py:439"
+                    "src/populace_dynamics/bridge/invented_population.py:602"
                 ),
                 "invented distributions and income conventions": (
-                    "src/populace_dynamics/bridge/invented_population.py:140"
+                    "src/populace_dynamics/bridge/invented_population.py:144"
                 ),
                 "family-to-household mapper": (
-                    "src/populace_dynamics/bridge/invented_population.py:728"
+                    "src/populace_dynamics/bridge/invented_population.py:888"
                 ),
                 "release pin and California override": (
                     "scripts/pe_us_minimum_benefit_sample_households.py:407"
@@ -1171,6 +1170,11 @@ def markdown(document: dict[str, Any]) -> str:
         lines += [
             "",
             "### Runtime and memory",
+            "",
+            "These are measurements of one run on one host, not outcomes: "
+            "they move with the host's load. The live reproduction test "
+            "compares the outcomes and checks above, not these figures "
+            "(`tests/bridge/test_population_oracle.py`).",
             "",
             "- Track M and the population: "
             + ", ".join(

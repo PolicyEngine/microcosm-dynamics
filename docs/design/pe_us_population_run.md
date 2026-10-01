@@ -41,9 +41,9 @@ POPULACE_DYNAMICS_PE_US_PYTHON="$HOME/.venvs/policyengine-us-2.18.0/bin/python" 
 ```
 
 The script records the code commit and whether `src/` or `scripts/` were
-dirty (`scripts/pe_us_population_invented.py:634-648`). Runtime and memory
+dirty (`scripts/pe_us_population_invented.py:633-647`). Runtime and memory
 are measurements; deterministic reproduction compares inputs and outcomes,
-not those measurements (`test_population_oracle.py:452-487`).
+not those measurements (`test_population_oracle.py:451-486`).
 
 ## Why invented data
 
@@ -64,22 +64,45 @@ The code enforces the invented-only rule before Track M's rules run and
 before the cohort is used to compute or map benefits:
 
 - `invented_population.require_invented` refuses records not marked
-  `invented`, records whose source carries the PSID file-provenance key
-  (`pipeline.PSID_FILES_SOURCE_KEY`), and records without the invented
-  generator's label. Even an empty PSID file-provenance key is refused.
-  `evaluate_headline` reaches this records check through the cohort guard
-  before `evaluate` (`invented_population.py:303-325,380,413-419`).
+  `invented`, records whose source carries a PSID file-provenance key
+  (`PSID_PROVENANCE_KEYS`: the file hashes key,
+  `pipeline.PSID_FILES_SOURCE_KEY`, and `psid_data_dir`) at any depth, and
+  records without the invented generator's label. Even an empty key is
+  refused. `evaluate_headline` reaches this records check through the
+  cohort guard before `evaluate`
+  (`invented_population.py:287-290,325-370,525,576-582`).
 - `invented_population.require_invented_cohort` applies the records'
   guard and also requires the cohort, the frames and their structural
   inputs (which hold the anchor) to carry the invented label and no PSID
-  file-provenance key. It checks agreement of the cohort and frame
-  provenance, the records' source, the seed and family count, and the
-  records' person ids, family units and weights against the cohort's
-  person frame. `evaluate_headline`, `person_benefits` and
-  `build_population` call it before evaluation, benefit conversion or
-  mapping. Evaluation and benefit conversion accept the whole
-  `InventedCohort`; callers cannot supply an independent `persons` frame
-  (`invented_population.py:328-410,413-419,439-445,483,759`).
+  file-provenance key at any depth. It checks agreement of the cohort and
+  frame provenance, the records' source, the seed and family count, the
+  structural inputs' seed, and the records' person ids, family units and
+  weights against the cohort's person frame. It requires the anchor to
+  hold exactly the cohort's persons, each once and in the family unit the
+  cohort gives them. Last, it rebuilds the frames and the M4 cohort from
+  the cohort's seed and family count (the generator and M4 are
+  deterministic) and refuses any frame, mapping or value that differs, so
+  the columns the path reads (the anchor; the cohort's roles, birth years
+  and 2022 amounts) are the invented generator's. That rebuild took 2.5 to
+  6 seconds at 3,000 family units in measurements on one host, moving with
+  its load; each of the three entry points pays it once.
+  `evaluate_headline`, `person_benefits` and `build_population` call the
+  guard before evaluation, benefit conversion or mapping. Evaluation and
+  benefit conversion accept the whole `InventedCohort`; callers cannot
+  supply an independent `persons` frame
+  (`invented_population.py:373-566,576-582,602-608,646,922`).
+- The guard does not rebuild the records' careers:
+  `careers.build_track_m_inputs` needs the SSA parameters and COLA
+  history, which the guard does not hold (`careers.py:226-235`). The
+  records are tied to the checked cohort only by their provenance and by
+  each person's id, family unit and weight.
+- `person_benefits` takes no evaluation. It evaluates the cohort's records
+  itself under row MS0, so an evaluation of other records, of another row
+  or marked `psid_files` cannot be supplied
+  (`invented_population.py:569-573,602-608,663`).
+- `build_population` draws the invented inputs with the cohort's seed. A
+  different `seed` argument is refused; the default is the cohort's
+  (`invented_population.py:923-929`).
 - `evaluation.evaluate` has no provenance guard of its own; the tabulation
   and the pipeline hold them (`min_benefit_track_m/evaluation.py:27-29`,
   `pipeline.py:205-224`). Calling it on invented records is what those
@@ -101,24 +124,25 @@ a comparator value. The registered-run guards are untouched.
   `invented_psid.py:443-448`). `build_invented_cohort` runs them through
   Track M's M4 cohort (`cohort.build_cohort`) and M5 careers
   (`careers.build_track_m_inputs`) with provenance `invented`
-  (`invented_population.py:278-300`).
+  (`invented_population.py:293-322`).
 - **Benefits.** `evaluate_headline` applies Track M's rules under row MS0.
-  `person_benefits` turns each worker record's PIA into each person's 2026
+  `person_benefits` evaluates the same records under the same row itself
+  and turns each worker record's PIA into each person's 2026
   benefit under current law (the history PIA), option 1 (a memo) and
   option 2. PIAs are carried to 2026 with statutory COLAs as the bridge
   carries them (`bridge.carry_pia_forward`), times the own claim factor and
   rounded down to the dollar, as the bridge's worker is
   (`scripts/pe_us_minimum_benefit_sample_households.py:789`,
-  `invented_population.py:432-436,510-519,577-580`). Spouse's and
+  `invented_population.py:595-599,670-679,737-740`). Spouse's and
   widow(er)'s excesses come from the oracle's `spousal_benefit` and
   `widow_benefit` (`ss/benefits.py:205-241`, `:266-329`).
-  A person marked as paid an own worker benefit without an evaluated own
-  record is explicitly refused before any benefit is computed
-  (`invented_population.py:490-503`).
+  A person marked as paid an own worker benefit without an own record
+  among the cohort's records is explicitly refused before the evaluation
+  and before any benefit is computed (`invented_population.py:649-662`).
 - **Two groups keep their 2022 amount**, carried by the COLAs, in every
   scenario, because Track M computes no benefit for them: unlinked
   auxiliaries, and people paid an own benefit whose record holds no observed
-  covered earnings (`invented_population.py:517-519,570-576,608-616`).
+  covered earnings (`invented_population.py:677-679,730-736,768-776`).
   The invented generator, like the PSID panel it mimics,
   draws labor income for reference persons and spouses only
   (`invented_psid.py:599-617` draws other members' receipt but no
@@ -128,10 +152,10 @@ a comparator value. The registered-run guards are untouched.
   other than Social Security, assets or rent.
   `invented_other_inputs` draws them from `INVENTED_DISTRIBUTIONS`, each
   entry labelled `INVENTED`, on a seed stream apart from the cohort's
-  (`invented_population.py:140-199,657-713`). Each maps to a
+  (`invented_population.py:151-208,817-873`). Each maps to a
   PolicyEngine-US input by
   `estimates.adjusted_poverty`'s conventions where one exists
-  (`INPUT_CONCEPTS`, `invented_population.py:202-254`): labor to
+  (`INPUT_CONCEPTS`, `invented_population.py:213-265`): labor to
   `employment_income` (the earned items,
   `data/family_income.py:1148-1154`, `adjusted_poverty.py:118`), interest
   to `interest_income` (`family_income.py:1131-1143`), annuities to
@@ -143,11 +167,13 @@ a comparator value. The registered-run guards are untouched.
 - **Households.** Each family unit is one household, SPM unit and family.
   The reference person and spouse form one marital unit and one joint tax
   unit; every other member is a marital unit and tax unit of their own
-  (`invented_population.py:728-932`, `build_population`). Current family
+  (`invented_population.py:888-1075`, `build_population`). Current family
   membership comes from the frames' anchor, which must contain exactly the
   cohort's universe persons, each in the same family unit. An anchor member
   outside that universe, or a missing or differently placed member, is refused
-  because this path has no inputs for them. Medicare quarters of coverage
+  because this path has no inputs for them. The cohort guard makes this
+  check, so evaluation and benefit conversion refuse such a cohort too
+  (`invented_population.py:405-442,563-565`). Medicare quarters of coverage
   stay at PolicyEngine-US's default
   of 40 (`variables/gov/hhs/medicare/eligibility/part_a/
   medicare_quarters_of_coverage.py:16`), the premium-free Part A threshold
@@ -281,7 +307,7 @@ committed per-household results in integer cents. A second differential
 runs twelve invented multi-person households (couples filing jointly, other
 members filing alone, in six states chosen for their mechanisms) through the
 bridge one household at a time and through the population path together;
-they agree exactly (`tests/bridge/test_population_oracle.py:412-446`).
+they agree exactly (`tests/bridge/test_population_oracle.py:411-445`).
 The illustrative differential covers three household types in three states,
 nine households together (`test_population_oracle.py:181-232`). A third
 test runs the native Medicaid formulas and shows
@@ -291,7 +317,7 @@ whose Social Security does not change must not change any component
 (`household_checks`), which checks for leaks even when component changes
 cancel in net income
 (`scripts/pe_us_population_invented.py:263-297`,
-`tests/bridge/test_population.py:1456-1475`).
+`tests/bridge/test_population.py:1856-1875`).
 
 ### 5. Decomposition and exact weights
 
@@ -385,17 +411,20 @@ US".
 
 Measured PolicyEngine-US child runtime includes imports, source checks and
 all four scenario/variant simulations (`population.py:980-995,1196-1200,1258-1266`;
-`scripts/pe_us_population_invented.py:468-493`). Bounds are set in
+`scripts/pe_us_population_invented.py:467-492`). Bounds are set in
 `scripts/pe_us_population_invented.py:124-127`.
 
 | INVENTED family units | People | Wall seconds | Peak RSS GiB | Bounds (seconds / GiB) |
 |---|---:|---:|---:|---|
-| 300 | 427 | 784.9 | 3.13 | 1200 / 8 |
-| 3,000 | 4,305 | 492.7 | 6.48 | 2400 / 12 |
+| 300 | 427 | 244.8 | 2.92 | 1200 / 8 |
+| 3,000 | 4,305 | 325.3 | 3.93 | 2400 / 12 |
 
 Both sizes satisfy their bounds. Regenerated outcomes are compared with
 the prior artifacts at both sizes; the live oracle repeats the 300-family
-run's outcome and check fields. Timing and memory vary with host load.
+run's outcome and check fields. Timing and memory are measurements of
+one run on one host and vary widely between runs: the run committed
+with PR #498 measured 784.9 and 492.7 wall seconds for the same
+two populations and the same outcomes.
 
 ## Invariants
 
@@ -441,12 +470,24 @@ valuation; they do not establish separability for arbitrary future inputs.
 11. **Determinism.** The same seed gives the same population, benefits and
     results; the committed 300-unit outputs are rebuilt live and must
     match.
-12. **Invented only.** Records not marked invented, carrying the PSID
-    file-provenance key or lacking the invented label are refused before
-    `evaluate` runs. The cohort, frames and structural inputs must carry
-    the invented label and no PSID file-provenance key, and the cohort's
-    provenance and person ids, family units and weights must agree with
-    the records before evaluation, benefit conversion or population mapping.
+12. **Invented only.** Records not marked invented, carrying a PSID
+    file-provenance key at any depth or lacking the invented label are
+    refused before `evaluate` runs. The cohort, frames and structural inputs
+    must carry the invented label and no PSID file-provenance key, and the
+    cohort's provenance and person ids, family units and weights must agree
+    with the records before evaluation, benefit conversion or population
+    mapping (Hypothesis: any combination of provenance faults is refused by
+    every entry point before anything is computed).
+13. **The generator's output.** A cohort passes the guard only if its
+    frames and M4 cohort equal what the invented generator and M4 give for
+    its seed and family count, and its anchor holds exactly its persons.
+    Every cohort `build_invented_cohort` builds passes; the same cohort
+    relabelled, consistently, as another seed or size does not; and
+    dropping or repeating a row or changing a number in any frame is
+    refused by every entry point before anything is computed (Hypothesis).
+14. **One evaluation, one seed.** The benefits come from one evaluation of
+    the cohort's own records under row MS0, and the invented inputs are
+    drawn with the cohort's seed.
 
 ## What the real-data version must add
 

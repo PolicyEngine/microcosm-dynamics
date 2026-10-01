@@ -12,7 +12,9 @@ from __future__ import annotations
 import copy
 import dataclasses
 import math
+import re
 import sys
+import types
 from fractions import Fraction
 from pathlib import Path
 from unittest import mock
@@ -33,6 +35,7 @@ from populace_dynamics.min_benefit_track_m.evaluation import PSID_FILES
 from populace_dynamics.min_benefit_track_m.pipeline import (
     PSID_FILES_SOURCE_KEY,
 )
+from populace_dynamics.min_benefit_track_m.policy import policy_for_row
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -802,7 +805,7 @@ def _build(track_m, seed, n=24):
         cola_rates=cola,
     )
     result = invented.evaluate_headline(cohort, parameters)
-    table = invented.person_benefits(cohort, result, parameters, rates)
+    table = invented.person_benefits(cohort, parameters, rates)
     population = invented.build_population(cohort, table, seed=seed)
     return cohort, result, table, population
 
@@ -929,7 +932,7 @@ def _forbidden(*args, **kwargs):
     raise AssertionError("ran on a cohort it must refuse")
 
 
-def _refuses_before_computing(track_m, cohort, result, table, match):
+def _refuses_before_computing(track_m, cohort, table, match):
     """Every entry point refuses ``cohort`` before evaluating, computing a
     benefit or mapping (each of those is replaced by :func:`_forbidden`)."""
 
@@ -945,9 +948,9 @@ def _refuses_before_computing(track_m, cohort, result, table, match):
         with pytest.raises(ValueError, match=match):
             invented.evaluate_headline(cohort, parameters)
         with pytest.raises(ValueError, match=match):
-            invented.person_benefits(cohort, result, parameters, rates)
+            invented.person_benefits(cohort, parameters, rates)
         with pytest.raises(ValueError, match=match):
-            invented.build_population(cohort, table, seed=11)
+            invented.build_population(cohort, table)
 
 
 def _with_persons(cohort, change):
@@ -965,7 +968,7 @@ def test__cohort_or_frames_not_invented__then_nothing_is_computed_or_mapped(
     and the frames, so each must be invented and the three must match."""
 
     parameters, cola, _ = track_m
-    cohort, result, table, _ = built
+    cohort, _, table, _ = built
     invented.require_invented_cohort(cohort)
     other = invented.build_invented_cohort(
         seed=12, n_family_units=120, params=parameters.params, cola_rates=cola
@@ -994,7 +997,7 @@ def test__cohort_or_frames_not_invented__then_nothing_is_computed_or_mapped(
                 frames=provenance(frames, PSID_PROVENANCE),
                 cohort=provenance(m4, PSID_PROVENANCE),
             ),
-            "PSID file hashes",
+            "PSID file-provenance key",
         ),
         "frames and cohort with PSID hashes": (
             dataclasses.replace(
@@ -1002,7 +1005,7 @@ def test__cohort_or_frames_not_invented__then_nothing_is_computed_or_mapped(
                 frames=provenance(frames, hashed),
                 cohort=provenance(m4, hashed),
             ),
-            "PSID file hashes",
+            "PSID file-provenance key",
         ),
         "frames and cohort without the label": (
             dataclasses.replace(
@@ -1014,31 +1017,31 @@ def test__cohort_or_frames_not_invented__then_nothing_is_computed_or_mapped(
         ),
         "frames with PSID hashes": (
             dataclasses.replace(cohort, frames=provenance(frames, hashed)),
-            "PSID file hashes",
+            "PSID file-provenance key",
         ),
         "cohort with PSID hashes": (
             dataclasses.replace(cohort, cohort=provenance(m4, hashed)),
-            "PSID file hashes",
+            "PSID file-provenance key",
         ),
         "frames with an empty PSID hashes key": (
             dataclasses.replace(
                 cohort, frames=provenance(frames, empty_hashes)
             ),
-            "PSID file hashes",
+            "PSID file-provenance key",
         ),
         "cohort with an empty PSID hashes key": (
             dataclasses.replace(cohort, cohort=provenance(m4, empty_hashes)),
-            "PSID file hashes",
+            "PSID file-provenance key",
         ),
         "frames with a null PSID hashes key": (
             dataclasses.replace(
                 cohort, frames=provenance(frames, null_hashes)
             ),
-            "PSID file hashes",
+            "PSID file-provenance key",
         ),
         "cohort with a null PSID hashes key": (
             dataclasses.replace(cohort, cohort=provenance(m4, null_hashes)),
-            "PSID file hashes",
+            "PSID file-provenance key",
         ),
         "structural inputs with PSID hashes": (
             dataclasses.replace(
@@ -1050,7 +1053,7 @@ def test__cohort_or_frames_not_invented__then_nothing_is_computed_or_mapped(
                     ),
                 ),
             ),
-            "PSID file hashes",
+            "PSID file-provenance key",
         ),
         "frames without the label": (
             dataclasses.replace(cohort, frames=provenance(frames, unlabelled)),
@@ -1116,45 +1119,46 @@ def test__cohort_or_frames_not_invented__then_nothing_is_computed_or_mapped(
     }
     for name, (swapped, match) in refused.items():
         try:
-            _refuses_before_computing(track_m, swapped, result, table, match)
+            _refuses_before_computing(track_m, swapped, table, match)
         except BaseException as error:
             raise AssertionError(name) from error
 
 
-def test__an_evaluation_of_other_records__then_benefits_are_refused(
+def test__benefits__then_they_take_no_evaluation_and_use_the_headline_row(
     track_m, built
 ):
-    parameters, cola, rates = track_m
-    cohort, result, _, _ = built
-    other = invented.build_invented_cohort(
-        seed=12, n_family_units=120, params=parameters.params, cola_rates=cola
-    )
-    other_result = invented.evaluate_headline(other, parameters)
-    paid = next(p for p in cohort.inputs.persons if p.paid_own_worker_benefit)
-    missing = dataclasses.replace(
-        result,
-        workers={
-            key: outcome
-            for key, outcome in result.workers.items()
-            if key != paid.own_record_id
-        },
-    )
-    for evaluation in (other_result, missing):
-        with mock.patch.object(invented, "_scenario_pia", _forbidden):
-            with pytest.raises(
-                ValueError, match="evaluation is not of the cohort's records"
-            ):
-                invented.person_benefits(cohort, evaluation, parameters, rates)
+    """No evaluation can be supplied (one marked ``psid_files``, one of
+    another row such as MS5, one of other records): the benefits come from
+    one evaluation of the cohort's own records under the headline row."""
+
+    parameters, _, rates = track_m
+    cohort, result, table, _ = built
+    with pytest.raises(TypeError):
+        invented.person_benefits(cohort, result, parameters, rates)
+    calls = []
+    evaluate = invented.evaluate
+
+    def recorded(inputs, policy, given):
+        calls.append((inputs, policy, given))
+        return evaluate(inputs, policy, given)
+
+    with mock.patch.object(invented, "evaluate", recorded):
+        again = invented.person_benefits(cohort, parameters, rates)
+    ((inputs, policy, given),) = calls
+    assert inputs is cohort.inputs and given is parameters
+    assert invented.HEADLINE_ROW == "MS0"
+    assert policy == policy_for_row("MS0") != policy_for_row("MS5")
+    pd.testing.assert_frame_equal(again, table)
 
 
 def test__an_own_benefit_without_an_own_record__then_it_is_refused(
     track_m, built
 ):
     """``PersonRecord`` refuses one when built; a record altered after is
-    refused explicitly, not read as ``KeyError(None)``."""
+    refused explicitly, before the evaluation, not read as a ``KeyError``."""
 
     parameters, _, rates = track_m
-    cohort, result, _, _ = built
+    cohort, _, _, _ = built
     index, paid = next(
         (i, p)
         for i, p in enumerate(cohort.inputs.persons)
@@ -1162,47 +1166,77 @@ def test__an_own_benefit_without_an_own_record__then_it_is_refused(
     )
     with pytest.raises(ValueError, match="needs an own record"):
         dataclasses.replace(paid, own_record_id=None)
-    altered = copy.copy(paid)
-    object.__setattr__(altered, "own_record_id", None)
-    persons = list(cohort.inputs.persons)
-    persons[index] = altered
-    inputs = copy.copy(cohort.inputs)
-    object.__setattr__(inputs, "persons", tuple(persons))
-    with mock.patch.object(invented, "_scenario_pia", _forbidden):
-        with pytest.raises(ValueError, match="no evaluated own record"):
-            invented.person_benefits(
-                dataclasses.replace(cohort, inputs=inputs),
-                result,
-                parameters,
-                rates,
-            )
+    for own_record_id in (None, "W0"):  # no record, or one not in the records
+        altered = copy.copy(paid)
+        object.__setattr__(altered, "own_record_id", own_record_id)
+        persons = list(cohort.inputs.persons)
+        persons[index] = altered
+        inputs = copy.copy(cohort.inputs)
+        object.__setattr__(inputs, "persons", tuple(persons))
+        with (
+            mock.patch.object(invented, "evaluate", _forbidden),
+            mock.patch.object(invented, "_scenario_pia", _forbidden),
+        ):
+            with pytest.raises(ValueError, match="no own record among"):
+                invented.person_benefits(
+                    dataclasses.replace(cohort, inputs=inputs),
+                    parameters,
+                    rates,
+                )
 
 
-def test__a_family_member_outside_the_universe__then_the_mapper_refuses_it(
-    built,
+def test__a_seed_other_than_the_cohorts__then_the_mapper_refuses_it(built):
+    """The invented inputs are drawn with the cohort's seed, the default."""
+
+    cohort, _, table, population = built
+    with (
+        mock.patch.object(invented, "invented_other_inputs", _forbidden),
+        mock.patch.object(invented, "PopulationFrame", _forbidden),
+    ):
+        with pytest.raises(ValueError, match="the cohort's seed 11, not 99"):
+            invented.build_population(cohort, table, seed=99)
+    default = invented.build_population(cohort, table)
+    for scenario in invented.SIMULATED_SCENARIOS:
+        assert default.frames[scenario].equals(population.frames[scenario])
+    pd.testing.assert_frame_equal(default.people, population.people)
+    pd.testing.assert_frame_equal(default.households, population.households)
+
+
+def _with_structure(cohort, structure):
+    return dataclasses.replace(
+        cohort,
+        frames=dataclasses.replace(cohort.frames, structure_inputs=structure),
+    )
+
+
+def _with_anchor(cohort, anchor):
+    return _with_structure(
+        cohort,
+        dataclasses.replace(cohort.frames.structure_inputs, anchor=anchor),
+    )
+
+
+def _with_cell(frame, row, column, value):
+    changed = frame.copy()
+    changed.loc[changed.index[row], column] = value
+    return changed
+
+
+def test__an_anchor_that_is_not_the_universe__then_nothing_is_computed(
+    track_m, built
 ):
-    """The anchor holds exactly the universe, each in its family unit."""
+    """The anchor holds exactly the universe, each in its family unit, and
+    every entry point checks it, not the mapper alone."""
 
     cohort, _, table, _ = built
     anchor = cohort.frames.anchor
     family = anchor["interview"].iloc[0]
     other_family = anchor.loc[anchor["interview"] != family, "interview"]
-
-    def with_anchor(frame):
-        structure = dataclasses.replace(
-            cohort.frames.structure_inputs, anchor=frame
-        )
-        return dataclasses.replace(
-            cohort,
-            frames=dataclasses.replace(
-                cohort.frames, structure_inputs=structure
-            ),
-        )
-
     # A member of the first family (a child, say) outside the universe.
     child = anchor.iloc[[0]].assign(
         person_id=int(anchor["person_id"].max()) + 1, sequence=3, age=10
     )
+    first = int(anchor["person_id"].iloc[0])
     refused = {
         "a member outside the universe": (
             pd.concat([anchor, child], ignore_index=True),
@@ -1214,11 +1248,11 @@ def test__a_family_member_outside_the_universe__then_the_mapper_refuses_it(
                     anchor.index != anchor.index[0], other_family.iloc[0]
                 )
             ),
-            "not in the anchor's family unit",
+            rf"persons \[{first}\] are not in the anchor's family unit",
         ),
         "a member missing from the anchor": (
             anchor.iloc[1:],
-            "not in the anchor's family unit",
+            rf"persons \[{first}\] of the cohort are missing from the anchor",
         ),
         "a person twice in the anchor": (
             pd.concat([anchor, anchor.iloc[:1]], ignore_index=True),
@@ -1226,26 +1260,268 @@ def test__a_family_member_outside_the_universe__then_the_mapper_refuses_it(
         ),
     }
     for name, (frame, match) in refused.items():
-        swapped = with_anchor(frame)
-        invented.require_invented_cohort(swapped)  # provenance is intact
-        with mock.patch.object(invented, "invented_other_inputs", _forbidden):
-            with pytest.raises(ValueError, match=match):
-                invented.build_population(swapped, table, seed=11)
-                raise AssertionError(f"{name}: not refused")
+        try:
+            _refuses_before_computing(
+                track_m, _with_anchor(cohort, frame), table, match
+            )
+        except BaseException as error:
+            raise AssertionError(name) from error
+
+
+def _relabelled(cohort, **changes):
+    """``cohort`` with ``changes`` (a seed, a size) written consistently
+    into every provenance, the records' source and the cohort's fields, so
+    that only the data can show it is not what they say."""
+
+    frames, structure = cohort.frames, cohort.frames.structure_inputs
+    seed = {k: v for k, v in changes.items() if k == "seed"}
+    return dataclasses.replace(
+        cohort,
+        frames=dataclasses.replace(
+            frames,
+            provenance={**frames.provenance, **changes},
+            structure_inputs=dataclasses.replace(
+                structure, provenance={**structure.provenance, **seed}
+            ),
+        ),
+        cohort=dataclasses.replace(
+            cohort.cohort, provenance={**cohort.cohort.provenance, **changes}
+        ),
+        inputs=dataclasses.replace(
+            cohort.inputs, source={**cohort.inputs.source, **changes}
+        ),
+        **changes,
+    )
+
+
+def test__frames_or_cohort_not_the_generators__then_nothing_is_computed(
+    track_m, built
+):
+    """Provenance that agrees is not enough: the anchor, the cohort's
+    persons and every other frame must be what the invented generator and
+    M4 give for the seed and size (the cases round 2's review found only
+    the mapper, or nothing, refused)."""
+
+    parameters, cola, _ = track_m
+    cohort, _, table, _ = built
+    other = invented.build_invented_cohort(
+        seed=12, n_family_units=120, params=parameters.params, cola_rates=cola
+    )
+    frames, structure = cohort.frames, cohort.frames.structure_inputs
+    persons = cohort.cohort.persons
+    role = "spouse" if persons["role"].iloc[0] != "spouse" else "other_member"
+    membership = "outside the Track M universe|missing from the anchor"
+    not_drawn = r"the frames' \['{}'\] are not what the invented generator"
+    not_built = r"the cohort's \['{}'\] are not what M4 builds"
+
+    def with_persons(column, value):
+        return dataclasses.replace(
+            cohort,
+            cohort=dataclasses.replace(
+                cohort.cohort, persons=_with_cell(persons, 0, column, value)
+            ),
+        )
+
+    refused = {
+        "another seed's structural inputs (the anchor)": (
+            _with_structure(cohort, other.frames.structure_inputs),
+            "structural inputs .* are not of the frames' seed",
+        ),
+        "another seed's structural inputs, relabelled": (
+            _with_structure(
+                cohort,
+                dataclasses.replace(
+                    other.frames.structure_inputs,
+                    provenance=dict(structure.provenance),
+                ),
+            ),
+            membership,
+        ),
+        "another seed's cohort and records, relabelled": (
+            dataclasses.replace(
+                cohort,
+                cohort=dataclasses.replace(
+                    other.cohort, provenance=dict(frames.provenance)
+                ),
+                inputs=dataclasses.replace(
+                    other.inputs,
+                    source={**other.inputs.source, **frames.provenance},
+                ),
+            ),
+            membership,
+        ),
+        "everything relabelled as another seed": (
+            _relabelled(cohort, seed=12),
+            "frames' .* are not what the invented generator draws for "
+            "seed 12 and 120 family units",
+        ),
+        "everything relabelled as another size": (
+            _relabelled(cohort, n_family_units=121),
+            "frames' .* are not what the invented generator draws for "
+            "seed 11 and 121 family units",
+        ),
+        "a 2022 amount edited in the cohort": (
+            with_persons(
+                "amount_2022", int(persons["amount_2022"].iloc[0]) + 1
+            ),
+            not_built.format("persons"),
+        ),
+        "a birth year edited in the cohort": (
+            with_persons("birth_year", int(persons["birth_year"].iloc[0]) - 1),
+            not_built.format("persons"),
+        ),
+        "a role edited in the cohort": (
+            with_persons("role", role),
+            not_built.format("persons"),
+        ),
+        "a 2022 amount edited in the anchor": (
+            _with_anchor(
+                cohort,
+                _with_cell(
+                    frames.anchor,
+                    0,
+                    "ss_amount",
+                    int(frames.anchor["ss_amount"].iloc[0]) + 1,
+                ),
+            ),
+            not_drawn.format("structure_inputs.anchor"),
+        ),
+        "a receipt row dropped": (
+            dataclasses.replace(
+                cohort,
+                frames=dataclasses.replace(
+                    frames, individual_receipt=frames.individual_receipt[1:]
+                ),
+            ),
+            not_drawn.format("individual_receipt"),
+        ),
+        "frames that are not the generator's type": (
+            dataclasses.replace(
+                cohort,
+                frames=types.SimpleNamespace(
+                    anchor=frames.anchor,
+                    **{
+                        field.name: getattr(frames, field.name)
+                        for field in dataclasses.fields(frames)
+                    },
+                ),
+            ),
+            not_drawn.format("type"),
+        ),
+        "another own-receipt reading recorded": (
+            dataclasses.replace(
+                cohort,
+                cohort=dataclasses.replace(
+                    cohort.cohort, own_receipt_reading="another reading"
+                ),
+            ),
+            not_built.format("own_receipt_reading"),
+        ),
+    }
+    for name, (swapped, match) in refused.items():
+        try:
+            _refuses_before_computing(track_m, swapped, table, match)
+        except BaseException as error:
+            raise AssertionError(name) from error
+
+
+def test__psid_keys_nested_or_of_the_data_directory__then_nothing_is_computed(
+    track_m, built
+):
+    """The guard reads every depth of a provenance mapping, and the data
+    directory key as well as the file hashes key."""
+
+    cohort, _, table, _ = built
+    assert invented.PSID_PROVENANCE_KEYS == (
+        PSID_FILES_SOURCE_KEY,
+        "psid_data_dir",
+    )
+    additions = {
+        "the data directory": (
+            {"psid_data_dir": "psid-data"},
+            "psid_data_dir",
+        ),
+        "nested hashes": (
+            {"read_from": {PSID_FILES_SOURCE_KEY: {"f": "x"}}},
+            PSID_FILES_SOURCE_KEY,
+        ),
+        "a nested, empty data directory": (
+            {"read_from": {"inputs": {"psid_data_dir": None}}},
+            "psid_data_dir",
+        ),
+        "both keys in a list of mappings": (
+            {"read_from": [{"label": "x"}, dict(PSID_PROVENANCE)]},
+            f"psid_data_dir, {PSID_FILES_SOURCE_KEY}",
+        ),
+        "hashes in a tuple in a mapping": (
+            {"a": {"b": ({PSID_FILES_SOURCE_KEY: {}},)}},
+            PSID_FILES_SOURCE_KEY,
+        ),
+    }
+    for part in ("frames", "structure_inputs", "cohort", "inputs"):
+        for name, (addition, keys) in additions.items():
+            swapped = _with_provenance(cohort, part, addition)
+            match = rf"PSID file-provenance key \({keys}\)"
+            try:
+                _refuses_before_computing(track_m, swapped, table, match)
+                if part == "inputs":
+                    with pytest.raises(ValueError, match=match):
+                        invented.require_invented(swapped.inputs)
+            except BaseException as error:
+                raise AssertionError(f"{part}: {name}") from error
 
 
 #: Each fault fails one part's provenance check on its own.
 PROVENANCE_FAULTS = tuple(
     (part, fault)
     for part in ("frames", "structure_inputs", "cohort", "inputs")
-    for fault in ("psid_hashes", "no_label", "other_label")
+    for fault in ("psid_hashes", "psid_key_nested", "no_label", "other_label")
 ) + (("inputs", "psid_files_kind"),)
 
 
-def _faulty(provenance, fault, label, hashes):
-    provenance = dict(provenance)
+def _with_provenance(cohort, part, change):
+    """``cohort`` with one part's provenance (the records' source) updated
+    by ``change``, a mapping or a function of the provenance."""
+
+    def changed(provenance):
+        if callable(change):
+            return change(dict(provenance))
+        return {**provenance, **change}
+
+    if part == "inputs":
+        inputs = cohort.inputs
+        return dataclasses.replace(
+            cohort,
+            inputs=dataclasses.replace(inputs, source=changed(inputs.source)),
+        )
+    if part == "structure_inputs":
+        structure = cohort.frames.structure_inputs
+        return _with_structure(
+            cohort,
+            dataclasses.replace(
+                structure, provenance=changed(structure.provenance)
+            ),
+        )
+    piece = getattr(cohort, part)
+    return dataclasses.replace(
+        cohort,
+        **{
+            part: dataclasses.replace(
+                piece, provenance=changed(piece.provenance)
+            )
+        },
+    )
+
+
+def _faulty(provenance, fault, label, hashes, nesting):
+    key, depth, in_list = nesting
     if fault == "psid_hashes":
         provenance[PSID_FILES_SOURCE_KEY] = hashes
+    elif fault == "psid_key_nested":
+        nested = {key: hashes}
+        for level in range(depth):
+            nested = {f"level_{level}": [nested] if in_list else nested}
+        provenance.update(nested)
     elif fault == "no_label":
         provenance.pop("label", None)
     else:
@@ -1253,33 +1529,20 @@ def _faulty(provenance, fault, label, hashes):
     return provenance
 
 
-def _with_fault(cohort, part, fault, label, hashes):
-    if part == "inputs":
-        inputs = cohort.inputs
-        if fault == "psid_files_kind":
-            inputs = dataclasses.replace(inputs, provenance_kind=PSID_FILES)
-        else:
-            inputs = dataclasses.replace(
-                inputs, source=_faulty(inputs.source, fault, label, hashes)
-            )
-        return dataclasses.replace(cohort, inputs=inputs)
-    piece = (
-        cohort.frames.structure_inputs
-        if part == "structure_inputs"
-        else getattr(cohort, part)
-    )
-    faulty = dataclasses.replace(
-        piece, provenance=_faulty(piece.provenance, fault, label, hashes)
-    )
-    if part == "structure_inputs":
+def _with_fault(cohort, part, fault, label, hashes, nesting):
+    if fault == "psid_files_kind":
         return dataclasses.replace(
             cohort,
-            frames=dataclasses.replace(cohort.frames, structure_inputs=faulty),
+            inputs=dataclasses.replace(
+                cohort.inputs, provenance_kind=PSID_FILES
+            ),
         )
-    return dataclasses.replace(cohort, **{part: faulty})
+    return _with_provenance(
+        cohort, part, lambda p: _faulty(p, fault, label, hashes, nesting)
+    )
 
 
-@settings(max_examples=40, deadline=None)
+@settings(max_examples=60, deadline=None)
 @given(
     faults=st.lists(
         st.sampled_from(PROVENANCE_FAULTS), min_size=1, max_size=4, unique=True
@@ -1294,17 +1557,154 @@ def _with_fault(cohort, part, fault, label, hashes):
             max_size=3,
         ),
     ),
+    nesting=st.tuples(
+        st.sampled_from(invented.PSID_PROVENANCE_KEYS),
+        st.integers(0, 3),
+        st.booleans(),
+    ),
 )
 def test__any_part_failing_its_provenance_check__then_the_cohort_is_refused(
-    track_m, built, faults, label, hashes
+    track_m, built, faults, label, hashes, nesting
 ):
     """Whatever the frames, cohort or records fail, and in whatever
     combination, nothing is evaluated, computed or mapped."""
 
-    cohort, result, table, _ = built
+    cohort, _, table, _ = built
     for part, fault in faults:
-        cohort = _with_fault(cohort, part, fault, label, hashes)
-    _refuses_before_computing(track_m, cohort, result, table, None)
+        cohort = _with_fault(cohort, part, fault, label, hashes, nesting)
+    _refuses_before_computing(track_m, cohort, table, None)
+
+
+@pytest.fixture(scope="module")
+def small(track_m):
+    return _build(track_m, seed=5)
+
+
+def _frames_of(cohort):
+    """Every non-empty frame the guard compares with the generator's and
+    M4's, by where it sits in the cohort."""
+
+    holders = {
+        ("frames",): cohort.frames,
+        ("frames", "structure_inputs"): cohort.frames.structure_inputs,
+        ("cohort",): cohort.cohort,
+    }
+    return sorted(
+        (*path, field.name)
+        for path, holder in holders.items()
+        for field in dataclasses.fields(holder)
+        if isinstance(getattr(holder, field.name), pd.DataFrame)
+        and len(getattr(holder, field.name))
+    )
+
+
+def _with_frame(cohort, path, change):
+    """``cohort`` with the frame at ``path`` replaced by ``change`` of it."""
+
+    def replaced(holder, names):
+        value = getattr(holder, names[0])
+        new = change(value) if len(names) == 1 else replaced(value, names[1:])
+        return dataclasses.replace(holder, **{names[0]: new})
+
+    return replaced(cohort, path)
+
+
+def _edited(frame, edit, row, column, delta):
+    """``frame`` with one row dropped or repeated, or one numeric cell
+    changed (to another value: ``delta`` is not zero)."""
+
+    row %= len(frame)
+    if edit == "drop":
+        return frame.drop(index=frame.index[row])
+    if edit == "repeat":
+        return pd.concat([frame, frame.iloc[[row]]], ignore_index=True)
+    numeric = [
+        name
+        for name in frame.columns
+        if pd.api.types.is_numeric_dtype(frame[name])
+        and not pd.api.types.is_bool_dtype(frame[name])
+    ]
+    name = numeric[column % len(numeric)]
+    value = frame[name].iloc[row]
+    return _with_cell(frame, row, name, 1 if pd.isna(value) else value + delta)
+
+
+@settings(max_examples=60, deadline=None)
+@given(
+    choice=st.integers(0, 10**6),
+    edit=st.sampled_from(("drop", "repeat", "cell")),
+    row=st.integers(0, 10**6),
+    column=st.integers(0, 10**6),
+    delta=st.integers(1, 1000),
+)
+def test__any_frame_not_the_generators__then_the_cohort_is_refused(
+    track_m, small, choice, edit, row, column, delta
+):
+    """Membership and the generator's output: whichever frame of the
+    frames or the cohort is edited (the anchor, the cohort's persons, a
+    history), by dropping or repeating a row or changing a number, with
+    every provenance intact, nothing is evaluated, computed or mapped."""
+
+    cohort, _, table, _ = small
+    paths = _frames_of(cohort)
+    path = paths[choice % len(paths)]
+    swapped = _with_frame(
+        cohort, path, lambda frame: _edited(frame, edit, row, column, delta)
+    )
+    _refuses_before_computing(track_m, swapped, table, None)
+
+
+@settings(max_examples=15, deadline=None)
+@given(
+    seed=st.integers(0, 2**31 - 2),
+    n=st.integers(8, 24),
+    shift=st.integers(1, 3),
+)
+def test__any_built_cohort__then_only_its_own_seed_and_size_pass_the_guard(
+    track_m, seed, n, shift
+):
+    """The generator and M4 are deterministic: what
+    :func:`build_invented_cohort` builds is what the guard rebuilds, so it
+    passes; relabelled, consistently, as another seed or size, it does not
+    (the label is not evidence; the data are)."""
+
+    parameters, cola, _ = track_m
+    cohort = invented.build_invented_cohort(
+        seed=seed, n_family_units=n, params=parameters.params, cola_rates=cola
+    )
+    again = invented.build_invented_cohort(
+        seed=seed, n_family_units=n, params=parameters.params, cola_rates=cola
+    )
+    assert invented._differing(cohort.frames, again.frames) == []
+    assert invented._differing(cohort.cohort, again.cohort) == []
+    invented.require_invented_cohort(cohort)
+    for changes in ({"seed": seed + shift}, {"n_family_units": n + shift}):
+        with mock.patch.object(invented, "evaluate", _forbidden):
+            with pytest.raises(ValueError, match="not what the invented"):
+                invented.evaluate_headline(
+                    _relabelled(cohort, **changes), parameters
+                )
+
+
+def test__script_source_references__then_each_sits_on_its_definition():
+    """The script cites the invented population module by line number
+    (``method.source_references``); each line must be the definition
+    cited, so the references cannot go stale unnoticed."""
+
+    source = Path(script.__file__).read_text()
+    lines = Path(invented.__file__).read_text().splitlines()
+    cited = {
+        re.split(r"[(: ]", lines[int(number) - 1].removeprefix("def "))[0]
+        for number in re.findall(r"invented_population\.py:(\d+)", source)
+    }
+    assert cited == {
+        "require_invented",
+        "require_invented_cohort",
+        "build_invented_cohort",
+        "person_benefits",
+        "INVENTED_INPUT_LABEL",
+        "build_population",
+    }
 
 
 def test__invented_population__then_households_are_family_units(built):
