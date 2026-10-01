@@ -1,0 +1,30 @@
+{
+  "schema_version": "tr2026_v_c1_capture.v1",
+  "table": "Table V.C1",
+  "caption": "Table V.C1.\u2014Cost-of-Living Benefit Increases, Average Wage Index, Contribution and Benefit Bases, and Retirement Earnings Test Exempt Amounts, 1975-2035",
+  "source_url": "https://www.ssa.gov/oact/TR/2026/V_C_prog.html",
+  "located_from": {
+    "list_of_tables_url": "https://www.ssa.gov/oact/TR/2026/X1_trLOT.html",
+    "href": "V_C_prog.html#1047210",
+    "how": "the 2026 Report's table of contents (https://www.ssa.gov/oact/TR/2026/trTOC.html) links no table; it links the List of Tables, whose one entry naming V.C1 links this anchor on the section V.C chapter page"
+  },
+  "retrieved_utc": "2026-10-01T15:01:44Z",
+  "fetch_mode": "browser-h2",
+  "fetch_method": "curl -sS -L; on a status other than 200, curl --http2 --compressed with Chrome 129 request headers (gzip, deflate); the decoded body is kept in memory only",
+  "http_status": 200,
+  "page": {
+    "stored": false,
+    "why_not_stored": "Table V.C1 has no page of its own; the chapter page holds 26 tables and the chapter prose, and an A-COLA builder may read no Trustees Report page or table that prints OASDI cost, cost rates, income rates or balances (EV/RESTRICTED-FILES.md, 2026-10-01 02:40)",
+    "sha256": "15cf3836ac11fcb0706075c3cdc8cfaf88a87c1dffa75cd277699a9d57c98f0b",
+    "bytes": 2749014,
+    "note": "the page's bytes vary between requests outside the tables, so a later fetch may not reproduce this digest"
+  },
+  "fragment": {
+    "file": "trustees2026_v_c1_table.html",
+    "sha256": "4d29f2b85d67b995eea25f0bdfb46b3755671c082d75a9855680836d4b80c46a",
+    "bytes": 438787,
+    "byte_offset_start": 15514,
+    "byte_offset_end": 454301,
+    "definition": "page[byte_offset_start:byte_offset_end], the outermost <table> element whose <caption> equals the caption above (whitespace and no-break spaces normalized for the match)"
+  }
+}

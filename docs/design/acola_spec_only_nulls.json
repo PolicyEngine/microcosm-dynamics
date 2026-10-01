@@ -1,0 +1,272 @@
+{
+  "schema_version": "populace_dynamics.acola_track.spec_nulls.v1",
+  "annual_reduction": "0.01",
+  "inputs": {
+    "TR2026": {
+      "table": "Table V.C1",
+      "column": "Cost-of-living benefit increasea (percent)",
+      "cells": {
+        "2027": {
+          "as_published": "2.4",
+          "percent": "2.4",
+          "rate": "0.024",
+          "row_header_path": [
+            "Intermediate:",
+            "2027"
+          ],
+          "column_header_path": [
+            "Cost-of-living benefit increasea (percent)"
+          ]
+        },
+        "2028": {
+          "as_published": "2.4",
+          "percent": "2.4",
+          "rate": "0.024",
+          "row_header_path": [
+            "Intermediate:",
+            "2028"
+          ],
+          "column_header_path": [
+            "Cost-of-living benefit increasea (percent)"
+          ]
+        },
+        "2029": {
+          "as_published": "2.4",
+          "percent": "2.4",
+          "rate": "0.024",
+          "row_header_path": [
+            "Intermediate:",
+            "2029"
+          ],
+          "column_header_path": [
+            "Cost-of-living benefit increasea (percent)"
+          ]
+        }
+      },
+      "source_url": "https://www.ssa.gov/oact/TR/2026/V_C_prog.html",
+      "file": "data/external/snapshots/tr2026_v_c1_vintage1/trustees2026_v_c1_table.html",
+      "sha256": "4d29f2b85d67b995eea25f0bdfb46b3755671c082d75a9855680836d4b80c46a",
+      "capture_manifest_sha256": "fd271e0067c70737ac36e3a442c96d0b7e4650aaa14398b8383ac6e24e853abb",
+      "retrieved_utc": "2026-10-01T15:01:44Z",
+      "located_from": {
+        "list_of_tables_url": "https://www.ssa.gov/oact/TR/2026/X1_trLOT.html",
+        "href": "V_C_prog.html#1047210",
+        "how": "the 2026 Report's table of contents (https://www.ssa.gov/oact/TR/2026/trTOC.html) links no table; it links the List of Tables, whose one entry naming V.C1 links this anchor on the section V.C chapter page"
+      },
+      "timing_footnote": {
+        "text": "a Effective with benefits payable for June in each year 1975-82, and for December in each year after 1982.",
+        "file": "data/external/snapshots/tr2026_v_c1_vintage1/cola_timing_note.txt",
+        "sha256": "f63274d3ef3b06c1647326490945ed05c01421466f9b0cca891bd1d0a511341b",
+        "retrieved_utc": "2026-10-01T15:49:46Z",
+        "anchor": "12"
+      },
+      "fallback_used": false,
+      "column_choice": "Printed COLA column, matching TR2008 V.C1; determination year k is the increase effective December k."
+    },
+    "model_TR2008": {
+      "file": "data/external/tr2008/tr2008_report.json",
+      "sha256": "c16161f1ee99d94d97648da078d686325fb05a0d44653b76bc609158e63f6d62",
+      "rates": {
+        "2010": "0.028",
+        "2011": "0.028",
+        "2012": "0.028",
+        "2013": "0.028",
+        "2014": "0.028",
+        "2015": "0.028",
+        "2016": "0.028",
+        "2017": "0.028",
+        "2018": "0.028",
+        "2019": "0.028",
+        "2020": "0.028",
+        "2021": "0.028",
+        "2022": "0.028",
+        "2023": "0.028",
+        "2024": "0.028",
+        "2025": "0.028",
+        "2026": "0.028",
+        "2027": "0.028",
+        "2028": "0.028",
+        "2029": "0.028"
+      },
+      "source_tags": {
+        "2010": "tr2008_v_c1_projected",
+        "2011": "tr2008_v_c1_projected",
+        "2012": "tr2008_v_c1_projected",
+        "2013": "tr2008_v_c1_projected",
+        "2014": "tr2008_v_c1_projected",
+        "2015": "tr2008_v_c1_projected",
+        "2016": "tr2008_v_c1_projected",
+        "2017": "tr2008_v_c1_projected",
+        "2018": "derived_ultimate_cpi",
+        "2019": "derived_ultimate_cpi",
+        "2020": "derived_ultimate_cpi",
+        "2021": "derived_ultimate_cpi",
+        "2022": "derived_ultimate_cpi",
+        "2023": "derived_ultimate_cpi",
+        "2024": "derived_ultimate_cpi",
+        "2025": "derived_ultimate_cpi",
+        "2026": "derived_ultimate_cpi",
+        "2027": "derived_ultimate_cpi",
+        "2028": "derived_ultimate_cpi",
+        "2029": "derived_ultimate_cpi"
+      },
+      "basis": "TR2008 V.C1 printed COLAs through 2017; Table II.C1 ultimate annual-average CPI from 2018, matching the runtime model path."
+    }
+  },
+  "december_null_registered": false,
+  "december_note": "C1 and M2 include December2030; the registered nulls stop at determination year2029. No December null is computed.",
+  "N": {
+    "value": -2.901170402765274,
+    "value_decimal": "-2.9011704027652740478515625",
+    "exact": {
+      "numerator": "-97347125",
+      "denominator": "33554432"
+    },
+    "years": [
+      2027,
+      2028,
+      2029
+    ],
+    "factor_count": 3,
+    "rates": {
+      "2027": "0.024",
+      "2028": "0.024",
+      "2029": "0.024"
+    },
+    "source": "TR2026"
+  },
+  "N_model": {
+    "value": -2.889991972119744,
+    "value_decimal": "-2.8899919721197439019598290221155817992219312710473",
+    "exact": {
+      "numerator": "-98112875",
+      "denominator": "33949186"
+    },
+    "years": [
+      2027,
+      2028,
+      2029
+    ],
+    "factor_count": 3,
+    "rates": {
+      "2027": "0.028",
+      "2028": "0.028",
+      "2029": "0.028"
+    },
+    "source": "model_TR2008"
+  },
+  "N_MINT": {
+    "value": -16.95019759725955,
+    "value_decimal": "-16.950197597259551155011310281830073286124621211173",
+    "exact": {
+      "numerator": "-13658846831907464659256660086044965534729868780939875",
+      "denominator": "805822277500515946132634136398784083302867716407296"
+    },
+    "years": [
+      2011,
+      2012,
+      2013,
+      2014,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025,
+      2026,
+      2027,
+      2028,
+      2029
+    ],
+    "factor_count": 19,
+    "rates": {
+      "2011": "0.028",
+      "2012": "0.028",
+      "2013": "0.028",
+      "2014": "0.028",
+      "2015": "0.028",
+      "2016": "0.028",
+      "2017": "0.028",
+      "2018": "0.028",
+      "2019": "0.028",
+      "2020": "0.028",
+      "2021": "0.028",
+      "2022": "0.028",
+      "2023": "0.028",
+      "2024": "0.028",
+      "2025": "0.028",
+      "2026": "0.028",
+      "2027": "0.028",
+      "2028": "0.028",
+      "2029": "0.028"
+    },
+    "source": "model_TR2008"
+  },
+  "N_M1": {
+    "value": -17.758075052539127,
+    "value_decimal": "-17.758075052539127505643495979477640666609790265539",
+    "exact": {
+      "numerator": "-7355264176191157484627957051996279498828937067702044375",
+      "denominator": "414192650635265196312173946108975018817674006233350144"
+    },
+    "years": [
+      2010,
+      2011,
+      2012,
+      2013,
+      2014,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025,
+      2026,
+      2027,
+      2028,
+      2029
+    ],
+    "factor_count": 20,
+    "rates": {
+      "2010": "0.028",
+      "2011": "0.028",
+      "2012": "0.028",
+      "2013": "0.028",
+      "2014": "0.028",
+      "2015": "0.028",
+      "2016": "0.028",
+      "2017": "0.028",
+      "2018": "0.028",
+      "2019": "0.028",
+      "2020": "0.028",
+      "2021": "0.028",
+      "2022": "0.028",
+      "2023": "0.028",
+      "2024": "0.028",
+      "2025": "0.028",
+      "2026": "0.028",
+      "2027": "0.028",
+      "2028": "0.028",
+      "2029": "0.028"
+    },
+    "source": "model_TR2008"
+  },
+  "N_minus_N_model": {
+    "value": -0.011178430645530146,
+    "value_decimal": "-0.011178430645530145891733477884418200778068728952735",
+    "exact": {
+      "numerator": "-6366930339125",
+      "denominator": "569572826546176"
+    }
+  }
+}
