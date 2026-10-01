@@ -316,7 +316,7 @@ A Claude Code session (Opus 5.5) recorded Max's ruling d637 on §16a as the spec
 
 ### Not opened
 
-No file the restricted list names was opened for reading: no page of the Boomers 2004 report, no U2 or exercise-2 comparator, seal, values scan or result, and no PSID data file. One recursive file-name search (`grep -rl` for PIA-source terms, 2026-09-30 about 22:23 UTC) ran over the whole evidence folder, restricted folders included; it printed only the names of matching files outside the restricted folders. An earlier attempt at the same search failed before running.
+No file the restricted list names was opened for reading: no page of the Boomers 2004 report, no U2 or exercise-2 comparator, seal, values scan or result, and no PSID data file. One recursive file-name search (`grep -rl` for PIA-source terms, 2026-09-30 about 22:23 UTC) ran over the whole evidence folder, restricted folders and files included, so it read their bytes to search them. Its output was filtered only for the scratchpad archives and the PIA package files and cut to the first 40 names; none of the names it printed is on the restricted list. An earlier attempt at the same search failed before running.
 
 ### Incidental exposure
 
@@ -324,8 +324,8 @@ No file the restricted list names was opened for reading: no page of the Boomers
 - **Issue #42, a scan.** An earlier scan (about 22:22 UTC) tested every #42 comment body for PIA-related terms and printed only each match's id, date, author, body length and a match flag. One match was the exercise-4 result comment 5856068881; none of its text was printed. The session then printed only the matching lines of seven non-restricted registration comments (13 to 18 and the 2026-09-30 correction): one line of Registration 17's diagnostics list, and nothing from the others. It also printed the matching passage of one July comment (4967433717, a gate_m6 stop), about a claiming reference.
 - **The restricted list's changelog.** Its entry of 2026-09-29 02:40 paraphrases the Boomers report's PDF metadata summary (qualitative; no table value, nothing about the 1946–55 column or the 13% cut). The session read it there, as any reader of the list does.
 - **Public exercise-1, -3 and -4 figures.** These appeared in passing in:
-  - `EV/parity-phase2-plan-20260927.md` (lines 54, 62, 66 and 70);
-  - `EV/dynasim-scorecard.md` (lines matching "PIA");
+  - `EV/parity-phase2-plan-20260927.md` (SHA-256 `95b0e5af6a31b335672f41e2b8db7d396b7c5fbc4df836ff243dc19e285797c3`; lines 54, 62, 66 and 70);
+  - `EV/dynasim-scorecard.md` (SHA-256 `1c2a6fffb68ce7c0a6c9d658498205ed346e59c213a2e5590515919b7274cba7`; lines matching "PIA");
   - `EV/scorecard/scorecard-data.json` (two row labels, no figure);
   - the microcosm.institute `dynamics/scorecard/copy.json` (the passages around "PIA");
   - the PIA package's §2.2 (exercise-4 artifact counts).
