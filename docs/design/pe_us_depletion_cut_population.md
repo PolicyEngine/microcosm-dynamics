@@ -1,6 +1,6 @@
 # SSI's asset test and a Social Security cut at depletion, on a population
 
-- **Status:** draft, not registered (`sa1-draft-4`). This specification is
+- **Status:** draft, not registered (`sa1-draft-5`). This specification is
   registered in two issue #42 comments, as Registration 18 is (§15).
   Before the first comment, this file changes only in its version
   (`sa1-ratified-1`), its status (`ratified_frozen`), the §18 block's
@@ -14,7 +14,7 @@
   stacks on PR #506, which is not merged. Any change to the ratified file
   ends the registration; a corrected version needs a new registration.
 - **Specification:** `pe_us_depletion_cut_population_ssi_asset_test`,
-  version `sa1-draft-4`.
+  version `sa1-draft-5`.
 - **Question.** At the NASI meeting on 2026-10-01, participants asked
   whether SSI would really replace the income a Social Security cut takes
   away, given that SSI's asset limit excludes many people. PR #506's
@@ -122,8 +122,8 @@ Computed from the file without simulation:
 - 57,240 households; 166,321 persons; 318 person columns. Household
   weights (`household_weight`) sum to 122,537,092; weighted persons
   340,077,323. A person's weight is their household's weight.
-- 26,818 person records carry a Social Security component above zero,
-  57.6 million weighted (2024 values).
+- Social Security beneficiaries are the person records with any of the
+  four components above zero; the run reports their count and weight.
 - **Assets.** `bank_account_assets`, `stock_assets` and `bond_assets` are
   populated and never negative. Every household has at most one person
   with nonzero assets, always its lowest-`A_LINENO` person, which is the
@@ -188,7 +188,9 @@ Computed from the file without simulation:
   series and the asset inputs by CPI-U, grows household weights with
   population, and carries forward inputs that have no uprating parameter
   (age included, so 2026 age equals frame age). The run records that
-  2026 age equals the frame's age.
+  2026 age equals the frame's age. Every simulation is built with an
+  explicit `dataset=` and `dataset_end_year=2026`, so PE-US extends the
+  frame through 2026 only (`PEUS/system.py:436, 473-475`).
 - **Universe for scenario *r*:** every person whose cut under *r* is
   positive (§3.2). Under the OASI cut that excludes beneficiaries whose
   only component is disability. All ages are included; under-18
@@ -409,8 +411,8 @@ W_cond    = sum of w_i over those records
 B_cond    = B / R_no          (not estimable when R_no = 0)
 ```
 
-- `_test` means the row's modeled resource test (R0: as PE-US encodes it;
-  R3, R4: the alternatives of §7). It does not claim a complete
+- `_test` means the row's modeled resource test (R0, R2 and R5: as PE-US
+  encodes it; R3, R4: the alternatives of §7). It does not claim a complete
   implementation of federal law.
 - Tables call `B` "completely blocked, among all cut beneficiaries" and
   `B_cond` "completely blocked, among beneficiaries SSI would otherwise
@@ -440,7 +442,8 @@ every row.
   in §4.2, the SSI a row's asset test allows is
   `ssi_if_takes_up(no asset test) × T_R`, where `T_R` is the row's pass
   indicator. The run computes `T_R` in Python from PE-US's 2026
-  `ssi_countable_resources`, marital-unit and household membership, and
+  `ssi_countable_resources`, `ssi_claim_is_joint` (for the encoded
+  test), marital-unit and household membership, and
   the limits PE-US reads (`gov.ssa.ssi.eligibility.resources.limit`). It
   also computes the encoded test the same way and compares it with
   PE-US's `meets_ssi_resource_test` (§10, row validity (b)).
@@ -462,6 +465,8 @@ every row.
   of household assets: both can overstate blocking when assets placed on
   a beneficiary belong to someone else in the household.
 - No composite rows. No row may be added or promoted after registration.
+  R1 is not used: the 17 percent OASDI cut, which an earlier outline
+  numbered R1, is a scenario applied to every row.
 
 ## 8. Cells
 
@@ -506,13 +511,15 @@ row and scenario.
 ## 9. Uncertainty and small cells
 
 - **Interval.** A household bootstrap with 500 replicates. Households
-  are sorted by household id (H of them). One generator,
-  `numpy.random.default_rng(20261001)`, is created once; replicate *b* =
-  0, …, 499 calls `rng.integers(0, H, size=H)` in order and counts each
-  household's multiplicity. The same multiplicity vector serves every
-  row, scenario and cell. Each replicate keeps the households' weights
-  and recomputes every share in §6 with each person's labels and
-  quintile held at their full-sample values. For each statistic, a
+  are all 57,240 households of the frame, sorted by `household_id`
+  ascending (H of them). One generator,
+  `numpy.random.default_rng(20261001)`, is created once; for replicate
+  *b* = 0, …, 499, in order,
+  `k_b = numpy.bincount(rng.integers(0, H, size=H), minlength=H)`. In
+  replicate *b*, person *i*'s weight is `w_i × k_b[h(i)]`, where *h(i)*
+  is the position of their household. The same `k_b` serves every row,
+  scenario and cell. Each replicate recomputes every share in §6 with
+  each person's labels and quintile held at their full-sample values. For each statistic, a
   replicate whose denominator is zero (`W`, or `R_no` for `B_cond`) is
   omitted and counted, never set to zero; the number of valid replicates
   is reported, and with none the interval is undefined with its reason.
@@ -542,21 +549,24 @@ refusal):
    over 17,551 lines (`PE_US_RELEASE` in
    `scripts/pe_us_minimum_benefit_sample_households.py`, PR #496, which
    PR #506 reuses).
-3. The baseline component arrays are identical in every child process.
+3. Every child process first repeats the probe of §3.2 (a simulation of
+   the frame with no reform and no inputs set), and its four 2026
+   components equal the first probe's *a<sub>ik</sub>* bit for bit.
 4. For every person and component, the component a scenario's simulation
    calculates for 2026 equals the float32 of the input set (§3.2)
    exactly; components the scenario does not cut equal the baseline
    exactly, so under the OASI cut the disability component is unchanged.
 5. Marital units have one or two members and lie within one household;
    every person belongs to exactly one household and one marital unit;
-   countable resources are never negative; 2026 age equals frame age.
+   countable resources and the four 2026 components are never negative;
+   2026 age equals frame age.
    The records whose four 2024 frame components are all positive number
    5,924, and for each of them the components, converted to float64 and
    divided by their sum, give `numpy.round(100 * share, 2)` equal to
    24.96, 37.93, 13.55 and 23.56 (retirement, survivors, dependents,
    disability).
-6. For every row and cell with `W > 0`, the three labels' shares sum to
-   one within 1e-12. Cells with `W = 0` keep undefined shares with their
+6. For every row and cell with `W > 0`, the three labels' shares, under
+   both the row's test and no asset test, sum to one within 1e-12. Cells with `W = 0` keep undefined shares with their
    reason. Each one-way breakdown partitions its row's universe.
 7. No output contains an absolute local path.
 
@@ -564,8 +574,11 @@ refusal):
 only. If either fails, R3 and R4 are reported as *invalid*, with the
 check and the count of failing persons, and every other row stands:
 
-- (a) The identity of §4.2 holds within $0.01 for every person in every
-  scenario.
+- (a) For every person and scenario, `ssi_if_takes_up` for 2026 in the
+  asset-test-as-encoded simulation equals `ssi_if_takes_up` in the same
+  scenario's no-asset-test simulation times `meets_ssi_resource_test`
+  (January 2026; resources are an annual stock, so the test is the same
+  in every month), within $0.01; the same holds for `ssi`.
 - (b) The Python version of the encoded resource test equals PE-US's
   `meets_ssi_resource_test` for every person whose pooled or own
   resources are not within $0.01 of the limit; persons within $0.01 are
@@ -689,8 +702,11 @@ Reported, not graded:
 - **One disclosed re-execution** is allowed, only for an external
   infrastructure failure (for example a failed container or exhausted
   memory) before the `phase-statistics` marker (§15). It follows an
-  issue #42 comment, and nobody reads the failed attempt's child outputs,
-  which are deleted unread.
+  issue #42 comment and uses the marker `started-reexecution-1` in place
+  of `started`; the container refuses if that marker exists. Nobody reads
+  the failed attempt's child outputs, which are deleted unread. A failure
+  after `phase-statistics`, or any failure of the re-execution, ends
+  Registration 19 and is reported as a refusal is.
 - **No tuning and no rerun otherwise.** A code or specification change is
   a new registered version and needs a new registration.
 - **No-drop.** Every row, scenario, cell and statistic is computed and
@@ -741,8 +757,8 @@ Reported, not graded:
   posts the registered commit's full SHA, the tag, the exact run command,
   a statement that this file is byte-identical to the SHA-256 the first
   comment recorded, the SHA-256 of the Modal runner script and both
-  requirement files, the volume name, and the invented dry run's timings
-  and peak memory. Immediately before the first comment, the drafter
+  requirement files, the volume name, the invented dry run's timings and
+  peak memory, and the registered-commit review (§20). Immediately before the first comment, the drafter
   re-reads the last issue #42 comment; if 19 has been taken, the number
   in the labels, the block and the exposures file is changed first.
 - **Entry point.** `scripts/run_pe_us_depletion_cut_population_registered.py`
@@ -770,8 +786,9 @@ Reported, not graded:
   run is launched with `modal run --detach`. The installed Modal client
   retries a lost input on its own (`modal/_functions.py:456-489`), so the
   guard is a committed marker: before the entry point starts, the
-  container refuses if `started` exists on the run's Modal volume, writes
-  `started` with the registered SHA and the UTC time, and calls
+  container refuses if its marker (`started`, or `started-reexecution-1`
+  for the disclosed re-execution) exists on the run's Modal volume,
+  writes it with the registered SHA and the UTC time, and calls
   `volume.commit()`, so any automatic retry refuses. After every PE-US
   child has finished and before the first §6 statistic, the runner writes
   and commits `phase-statistics`. Each simulation runs in its own PE-US
@@ -844,11 +861,16 @@ Reported, not graded:
   (SHA-256 recorded in the first comment) names every quantity, and
   `SHA256SUMS` fixes the lanes' reports and scripts. All are released
   with the results.
-- **Review lanes.** The round-1 referees of `sa1-draft-1` (§20) were
-  Claude Code workflow agents (Opus 5.5) and Subfleet lanes. Two of them
-  read the exposure record and the reader reports. They computed nothing
-  on the frame beyond structural counts; their live PE-US runs used
-  invented households only.
+- **Review lanes.** The referees recorded in §20 were Claude Code
+  workflow agents (Opus 5.5) and Subfleet lanes (GPT-6.1 Sol in round 1;
+  Opus 5.5 in round 2). Round 1 read `sa1-draft-1` (mechanisms,
+  registration, methodology) and `sa1-draft-3` (implementability);
+  round 2 read `sa1-draft-4` and the first comment's draft, and a
+  re-check read `sa1-draft-5`. Every referee could read the reader
+  reports, which contain the values above; the round-1 registration
+  referee and the round-2 referees also read the exposure record. They
+  computed nothing on the frame beyond structural counts; their live
+  PE-US runs used invented households only.
 - No statistic of §6 has been computed on the frame, for any row, before
   registration.
 - No forecast is registered. d806 does not call for one, there is no
@@ -877,7 +899,7 @@ Florida, 2026.
   the encoded test compares the holder's $2,500 with $2,000 and fails,
   while R3 compares $2,500 with $3,000 and passes.
 - A married ABD couple sharing a tax unit with an older parent, the
-  husband holding $5,000: the parent and the husband are the tax unit's
+  husband, older than the wife, holding $5,000: the parent and the husband are the tax unit's
   head and spouse, the couple is not a joint claim, and the encoded test
   fails the husband and passes the wife. With no asset test both spouses'
   SSI rises; with the encoded test only the wife's does. The couple's
@@ -892,7 +914,7 @@ the code's constants.
 ```json
 {
   "specification": "pe_us_depletion_cut_population_ssi_asset_test",
-  "version": "sa1-draft-4",
+  "version": "sa1-draft-5",
   "status": "draft",
   "decisions": {
     "authorization": {
@@ -934,7 +956,7 @@ the code's constants.
     "R0": {"field": null, "value": "encoded resource test; frame asset placement; ssi_if_takes_up; all beneficiaries"},
     "R2": {"field": "ssi_measure", "value": "ssi"},
     "R3": {"field": "resource_test", "value": "spousal_deeming_couple_limit"},
-    "R4": {"field": "resource_test", "value": "household_pooling_couple_limit"},
+    "R4": {"field": "resource_test", "value": "household_pooling_r3_limits"},
     "R5": {"field": "universe", "value": "exclude_four_component_records"}
   },
   "cells": {
@@ -990,11 +1012,21 @@ the code's constants.
   $0.05 tolerance that float32 rounding alone could exceed; the
   synthetic-split check given an exact rule; stale check references and
   the head and spouse rule corrected.
+- `sa1-draft-5` (2026-10-02): round-2 fixes (§20). The count of
+  beneficiary records, which the exposure record lists among its frame
+  tabulations, removed; the re-execution marker and the rule for a
+  failure after `phase-statistics` added; the bootstrap's household set
+  and replicate weights stated; refusal 3 restated for the probe;
+  `dataset_end_year=2026` registered; the review lanes described by
+  round; smaller clarifications (R1 unused, R4's block value, the
+  identity's period, negative components, the second comment's
+  contents).
 
 ## 20. Review and ratification record
 
-- **Round 1** on `sa1-draft-1` (2026-10-01), four referees with distinct
-  lenses; reports in `EV/pe-us-depletion-cut-population-20261001/spec-review/`:
+- **Round 1** (2026-10-01 to 2026-10-02), on `sa1-draft-1` and
+  `sa1-draft-3`, four referees with distinct lenses; reports in
+  `EV/pe-us-depletion-cut-population-20261001/spec-review/`:
   - mechanisms and citations (Claude Code workflow agent, Opus 5.5):
     2 blocking, 3 major, 12 minor; all resolved in `sa1-draft-2`.
   - registration and process (Claude Code workflow agent, Opus 5.5):
@@ -1011,6 +1043,13 @@ the code's constants.
     annual SSI sums, the household outputs and the identity did not finish
     on a loaded host; the code's oracle tests on invented data cover them
     and are recorded in the registered-commit review.
+- **Round 2** on `sa1-draft-4` and the first comment's draft (Subfleet
+  lane, Opus 5.5; `spec-review/review-round2.md`): verdict "ratify after
+  listed fixes". It found every round-1 finding resolved except two
+  partly resolved; 1 blocking, 5 major and 13 minor findings, all
+  resolved in `sa1-draft-5` and in the comment draft. Its values scan
+  found no simulated value in either text and one frame tabulation, now
+  removed.
 - **Ratification check:** to be recorded. The ratified file must differ
   from the last reviewed draft only in version, status, the block's
   version and status, the changelog and this section.
