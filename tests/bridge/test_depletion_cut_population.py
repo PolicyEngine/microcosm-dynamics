@@ -537,16 +537,18 @@ def test_diagnostics_distinct_households_units_and_outside_response():
     households = np.asarray([0, 0, 0, 1, 2])
     cut = np.asarray([120, 120, 0, 120, 0])
     baseline = {
+        "social_security": np.full(5, 1000.0),
         "ssi_if_takes_up": np.full(5, 100.0),
         "ssi": np.full(5, 100.0),
         "household_state_benefits": np.zeros(3),
         "household_net_income": np.zeros(3),
     }
     scenario = {
+        "social_security": np.asarray([879.99, 879.99, 1000, 879.98, 1000]),
         "ssi_if_takes_up": np.asarray([230, 230, 150, 90, 500]),
         "ssi": np.asarray([230, 230, 150, 90, 500]),
         "household_state_benefits": np.asarray([5, 7, 100]),
-        "household_net_income": np.asarray([30, -20, 1000]),
+        "household_net_income": np.asarray([30, -10, 1000]),
     }
     result = core.diagnostics(
         cut, baseline, scenario, units, households, np.asarray([2, 3, 4])
@@ -557,8 +559,13 @@ def test_diagnostics_distinct_households_units_and_outside_response():
     assert result["weighted_totals"]["ssi"] == 590
     assert result["ssi_outside_attributed_units"]["ssi"] == 100
     assert result["weighted_totals"]["household_state_benefits"] == 31
-    assert result["weighted_totals"]["household_net_income"] == 0
-    assert result["weighted_totals"]["offset_share"] == 1
+    assert result["weighted_totals"]["household_net_income"] == 30
+    assert result["weighted_totals"][
+        "social_security_change"
+    ] == pytest.approx(-840.1, abs=1e-10)
+    assert result["weighted_totals"]["offset_share"] == pytest.approx(
+        1 + 30 / 840.1, abs=1e-12, rel=0
+    )
     assert result["unit_responses"]["ssi"]["over_replacing"] == {
         "n": 1,
         "W": 2,

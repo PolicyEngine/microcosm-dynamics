@@ -873,7 +873,12 @@ def diagnostics(
             baseline[measure], dtype=np.float64
         )
         totals[measure] = float(np.dot(delta[households], weights[households]))
-    ss_change = -weighted_cut
+    ss_delta = np.asarray(
+        scenario["social_security"], dtype=np.float64
+    ) - np.asarray(baseline["social_security"], dtype=np.float64)
+    ss_change = float(
+        np.dot(unit_totals(ss_delta, h)[households], weights[households])
+    )
     totals["social_security_change"] = ss_change
     totals["offset_share"] = (
         1 - totals["household_net_income"] / ss_change if ss_change else None
