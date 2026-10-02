@@ -9,9 +9,16 @@ no tool output and reads none.
 
 Each call that names a path on `RESTRICTED-FILES.md` or on either exposure
 inventory's Q6 exclusion list (plus the codebook-evidence folder) is
-flagged and classified by the rules in ``classify``. Calls the rules
-cannot place are classified by hand in ``OVERRIDES``, keyed by the
-command's SHA-256, with a note saying what was checked.
+flagged and classified by the rules in ``classify``. So is a shell
+command whose recursive grep, ``git grep`` or glob covers an excluded
+path without naming it (``Checker.scope``). For those the extractor reads
+the call's output only to count the lines that begin with an excluded
+file's path, and records that count. Python code that walks the tree is
+not parsed; it is flagged only when it names an excluded path. A flagged
+call's full command text is kept, so each classification can be
+checked. Calls the rules cannot place are classified by hand in
+``OVERRIDES``, keyed by the command's SHA-256, with a note saying what
+was checked.
 
     python scripts/track_b_b0_1_addendum_reads.py EXPORT.zip \\
         --out docs/design/track_b_b0_1_addendum_reads.json
@@ -23,8 +30,10 @@ import argparse
 import hashlib
 import json
 import re
+import shlex
 import zipfile
 from collections.abc import Iterable, Mapping
+from fnmatch import fnmatch
 from pathlib import Path
 from typing import Any
 
@@ -58,9 +67,47 @@ GIT_METADATA_RX = re.compile(
     r"git diff --(?:numstat|stat|name-only)|git log|git ls-files"
     r"|git cat-file -[ts]|check-attr"
 )
+WORKTREE_MARK = "/_worktrees/dynamics-trackb-b01-addendum-20260930"
+SEGMENT_RX = re.compile(r"&&|\|\||[;|\n]")
+GLOB_CHARS = set("*?[")
+#: grep options that take the next token as their argument.
+GREP_ARG_OPTIONS = {"-e", "-f", "-m", "-A", "-B", "-C", "--regexp"}
+NAMES_OR_COUNTS = {"-l", "-L", "-c", "-q", "--count", "--files-with-matches"}
+#: Subfleet jobs this session dispatched. `RESTRICTED-FILES.md` lets a
+#: session read its own job folder under ~/.subfleet/.
+OWN_JOBS = ("20261001-115147-b01-addendum-q6",)
 #: Calls the rules cannot classify, checked by hand: the inputs, and for
-#: the second only the line numbers its output printed.
+#: the second only the line numbers its output printed. The code-string
+#: entries name a path only as a string in code or prose the session
+#: wrote, and open nothing on either list.
 OVERRIDES = {
+    "b205f71e2b0fc7046d5efbddfbaf0daba88f5f048d6cb4fecd41ad93b933b58e": (
+        "named_as_string_in_code",
+        "the first reads extractor: EV, REFS and the codebook folder are "
+        "constants; it opens RESTRICTED-FILES.md (the list) and the two "
+        "inventories",
+    ),
+    "141cd813645a06af7740db0eaf50d38d48241333a60ee67b75ec7a480d18e168": (
+        "named_as_string_in_code",
+        "the shared project folder's prefix is a string used to shorten "
+        "printed paths; the script opens only the draft reads record",
+    ),
+    "e6ce98666254dd587b964df9b8809402233d7ee0794d0f04ce0f74b55356b5e0": (
+        "named_as_string_in_code",
+        "gates.yaml is an endswith() filter over the reads record",
+    ),
+    "8daf69586fef91a36e5e47ca3963787932c0c6f1b75209eb09dca17567aa135d": (
+        "named_as_string_in_code",
+        "gates.yaml appears in addendum prose being written",
+    ),
+    "03259aa66fcf8d0dde25b695c74e624054b8cd8ac536ade37e0f94698f505425": (
+        "named_as_string_in_code",
+        "gates.yaml is a test fixture value for the allow-list check",
+    ),
+    "2b620b91b77bb2ca9720cd4f47f71c57be047ef4255e05e7e03f7b1ba3632c34": (
+        "named_as_string_in_code",
+        "gates.yaml appears in sample commands given to a tokenizer",
+    ),
     "2f8b1d624e5d680132e79b9a4d32cd3996f4d02ddef00cf8925513578357d09f": (
         "named_in_grep_pattern_or_filter",
         "gates.yaml is a grep pattern run on "
@@ -86,6 +133,63 @@ def flagged_ranges(inventories: Iterable[Mapping[str, Any]]) -> dict:
                     if (lo, hi) not in out[name]:
                         out[name].append((lo, hi))
     return out
+
+
+def _relative(token: str) -> str | None:
+    """A worktree path relative to the worktree, or None if elsewhere."""
+    token = token.strip().strip("'\"")
+    if WORKTREE_MARK + "/" in token:
+        token = token.split(WORKTREE_MARK + "/", 1)[1]
+    elif token.endswith(WORKTREE_MARK):
+        token = "."
+    elif token.startswith(("/", "~", "$")):
+        return None
+    if token.startswith("./"):
+        token = token[2:]
+    return token or "."
+
+
+def _covers(scope: str, path: str, recursive: bool) -> bool:
+    path = path.rstrip("/")
+    scope = scope.rstrip("/") or "."
+    if GLOB_CHARS & set(scope):
+        return fnmatch(path, scope)
+    if scope == ".":
+        return recursive
+    return path == scope or (recursive and path.startswith(scope + "/"))
+
+
+def _segments(command: str) -> list[list[str]]:
+    """The command's simple commands, split at ; | & and newlines.
+
+    Quoted text stays whole, so a ``|`` inside a grep pattern does not
+    split. If the quoting does not parse (a heredoc body, say), each line
+    is split at the operators instead.
+    """
+    try:
+        lex = shlex.shlex(command, posix=True, punctuation_chars="();<>|&\n")
+        lex.whitespace = " \t\r"
+        lex.whitespace_split = True
+        out: list[list[str]] = [[]]
+        for token in lex:
+            if token and set(token) <= set(";|&\n"):
+                out.append([])
+            else:
+                out[-1].append(token)
+    except ValueError:
+        out = [part.split() for part in SEGMENT_RX.split(command)]
+    return [tokens for tokens in out if tokens]
+
+
+def _names_or_counts(args: list[str]) -> bool:
+    return any(
+        a in NAMES_OR_COUNTS
+        or (
+            re.fullmatch(r"-[A-Za-z]+", a) is not None
+            and bool(set(a[1:]) & set("lLcq"))
+        )
+        for a in args
+    )
 
 
 def restricted_prefixes(text: str) -> set[str]:
@@ -119,6 +223,7 @@ class Checker:
         self.restricted = restricted
         self.denied = denied
         self.ranges = ranges
+        self.all_denied = sorted(denied | {CODEBOOK_DIR})
 
     def flags(self, path: str) -> list[str]:
         if path.startswith("~/"):
@@ -137,6 +242,154 @@ class Checker:
             hits.append("q6:" + CODEBOOK_DIR)
         return hits
 
+    def _grep(self, prog: str, args: list[str]) -> set[str]:
+        recursive = prog == "rg" or any(
+            a in ("-r", "-R", "--recursive")
+            or (
+                re.fullmatch(r"-[A-Za-z]+", a) is not None
+                and bool(set(a[1:]) & set("rR"))
+            )
+            for a in args
+        )
+        includes = [
+            a.split("=", 1)[1].strip("'\"")
+            for a in args
+            if a.startswith("--include=")
+        ]
+        positional: list[str] = []
+        explicit_pattern = False
+        skip = False
+        for a in args:
+            if skip:
+                skip = False
+                continue
+            if a in GREP_ARG_OPTIONS:
+                explicit_pattern |= a in ("-e", "-f", "--regexp")
+                skip = True
+                continue
+            if a.startswith("-"):
+                continue
+            positional.append(a)
+        targets = positional if explicit_pattern else positional[1:]
+        if not targets and recursive:
+            targets = ["."]
+        covered: set[str] = set()
+        for target in targets:
+            scope = _relative(target)
+            if scope is None:
+                continue
+            hit = {
+                d
+                for d in self.all_denied
+                if (GLOB_CHARS & set(scope) or recursive)
+                and _covers(scope, d, recursive)
+            }
+            if includes:
+                # The codebook folder holds JSON files only.
+                hit = {
+                    d
+                    for d in hit
+                    if any(
+                        fnmatch(
+                            (
+                                "x.json"
+                                if d.endswith("/")
+                                else d.rstrip("/").split("/")[-1]
+                            ),
+                            inc,
+                        )
+                        for inc in includes
+                    )
+                }
+            covered |= hit
+        return covered
+
+    def _git_grep(self, args: list[str]) -> set[str]:
+        specs = args[args.index("--") + 1 :] if "--" in args else []
+        positive = [s for s in specs if not s.startswith(":")]
+        excluded = [
+            s[2:] if s.startswith(":!") else s.split(")", 1)[-1]
+            for s in specs
+            if s.startswith((":!", ":(exclude)"))
+        ]
+        positive = positive or ["."]
+        return {
+            d
+            for d in self.all_denied
+            if any(_covers(p, d, True) for p in positive)
+            and not any(_covers(e, d, True) for e in excluded)
+        }
+
+    def scope(self, command: str) -> tuple[list[str], bool]:
+        """Excluded paths a command's recursive or glob scope covers.
+
+        Returns the covered paths and whether every covering command
+        prints only names or counts.
+        """
+        covered: set[str] = set()
+        names_only = True
+        # Relative paths are the worktree's until a cd leaves it. A cd to
+        # an unresolved variable is assumed to stay, which over-flags.
+        in_worktree = True
+        assigned: dict[str, str] = {}
+        for tokens in _segments(command):
+            while tokens and re.match(r"^\w+=", tokens[0]):
+                name, _, value = tokens.pop(0).partition("=")
+                assigned[name] = value
+            if not tokens:
+                continue
+            prog = tokens[0].split("/")[-1]
+            if prog == "cd":
+                target = tokens[1] if len(tokens) > 1 else "~"
+                for name, value in assigned.items():
+                    target = target.replace("${" + name + "}", value)
+                    target = target.replace("$" + name, value)
+                in_worktree = "$" in target or WORKTREE_MARK in target
+                continue
+            if not in_worktree:
+                if prog == "git":
+                    continue
+                tokens = [tokens[0]] + [
+                    t if t.startswith(("-", "/")) else "/elsewhere/" + t
+                    for t in tokens[1:]
+                ]
+            hit: set[str] = set()
+            if prog == "git" and tokens[1:2] == ["grep"]:
+                hit = self._git_grep(tokens[2:])
+            elif prog in ("grep", "egrep", "rg"):
+                hit = self._grep(prog, tokens[1:])
+            elif prog in ("cat", "head", "tail", "sed", "awk", "wc", "ls"):
+                for token in tokens[1:]:
+                    scope = _relative(token)
+                    if scope and GLOB_CHARS & set(scope):
+                        hit |= {
+                            d
+                            for d in self.all_denied
+                            if _covers(scope, d, False)
+                        }
+            elif prog == "find" and len(tokens) > 1:
+                scope = _relative(tokens[1])
+                if scope:
+                    hit = {
+                        d for d in self.all_denied if _covers(scope, d, True)
+                    }
+            if hit:
+                covered |= hit
+                names_only &= prog == "find" or _names_or_counts(tokens[1:])
+        return sorted(covered), names_only
+
+    def excluded_output_lines(self, text: str) -> int:
+        """Output lines that begin with an excluded file's path."""
+        n = 0
+        for line in text.splitlines():
+            head = _relative(line.split(":", 1)[0])
+            if head and any(
+                _covers(d.rstrip("/"), head, d.endswith("/"))
+                for d in self.all_denied
+            ):
+                n += 1
+        return n
+
     def outside(self, name: str, lo: int, hi: int) -> bool:
         return all(hi < a or lo > b for a, b in self.ranges.get(name, []))
 
@@ -145,17 +398,25 @@ class Checker:
     ) -> list[str]:
         q6 = [h[3:] for h in hits if h.startswith("q6:")]
         classes: list[str] = []
-        if any(h.startswith("restricted:") for h in hits):
-            named = [
-                p
-                for p in [rec.get("file_path") or ""]
-                + rec.get("paths_named", [])
-                if "/.claude/projects/" in p
-            ]
-            own = named and all(OWN_SUBFOLDER in p for p in named)
-            classes.append(
-                "own_transcript_subfolder" if own else "OTHER_restricted"
-            )
+        named_all = [rec.get("file_path") or ""] + rec.get("paths_named", [])
+        for hit in (h for h in hits if h.startswith("restricted:")):
+            if "/.claude/projects/" in hit:
+                named = [p for p in named_all if "/.claude/projects/" in p]
+                own = named and all(OWN_SUBFOLDER in p for p in named)
+                classes.append(
+                    "own_transcript_subfolder" if own else "OTHER_restricted"
+                )
+            elif hit.rstrip("/").endswith("/.subfleet"):
+                named = [p for p in named_all if "/.subfleet/" in p]
+                own = named and all(
+                    any(f"/.subfleet/jobs/{job}" in p for job in OWN_JOBS)
+                    for p in named
+                )
+                classes.append(
+                    "own_subfleet_job_folder" if own else "OTHER_restricted"
+                )
+            else:
+                classes.append("OTHER_restricted")
         if not q6:
             return classes
         if rec["tool"] == "Read":
@@ -233,6 +494,7 @@ def extract(archive: zipfile.ZipFile, checker: Checker) -> dict[str, Any]:
     flagged: list[int] = []
     for name in _transcripts(archive):
         agent = _agent(name, archive)
+        scoped: dict[str, dict[str, Any]] = {}
         for line in archive.read(name).decode("utf-8").splitlines():
             try:
                 event = json.loads(line)
@@ -245,9 +507,21 @@ def extract(archive: zipfile.ZipFile, checker: Checker) -> dict[str, Any]:
             if not isinstance(content, list):
                 continue
             for block in content:
-                if not (
-                    isinstance(block, dict) and block.get("type") == "tool_use"
-                ):
+                if not isinstance(block, dict):
+                    continue
+                if block.get("type") == "tool_result":
+                    rec = scoped.pop(str(block.get("tool_use_id")), None)
+                    if rec is not None:
+                        text = block.get("content")
+                        if not isinstance(text, str):
+                            text = "\n".join(
+                                str(x.get("text", ""))
+                                for x in text or []
+                                if isinstance(x, dict)
+                            )
+                        _finish_scope(rec, checker.excluded_output_lines(text))
+                    continue
+                if block.get("type") != "tool_use":
                     continue
                 given = block.get("input") or {}
                 rec: dict[str, Any] = {
@@ -276,16 +550,64 @@ def extract(archive: zipfile.ZipFile, checker: Checker) -> dict[str, Any]:
                     rec["paths_named"] = named
                     paths += named
                 hits = sorted({h for p in paths for h in checker.flags(p)})
-                if hits:
-                    rec["flags"] = hits
-                    rec["flag_class"] = checker.classify(rec, command, hits)
+                covered, names_only = checker.scope(command)
+                if hits or covered:
+                    rec["flags"] = hits + ["scope:" + d for d in covered]
+                    rec["flag_class"] = (
+                        checker.classify(rec, command, hits) if hits else []
+                    )
                     note = OVERRIDES.get(rec.get("command_sha256", ""))
-                    if note and rec["flag_class"] == ["OTHER"]:
-                        rec["flag_class"] = [note[0]]
+                    if note and any(
+                        c.startswith("OTHER") for c in rec["flag_class"]
+                    ):
+                        rec["flag_class"] = sorted(
+                            {
+                                c
+                                for c in rec["flag_class"]
+                                if not c.startswith("OTHER")
+                            }
+                            | {note[0]}
+                        )
                         rec["flag_note"] = note[1]
+                    rec["command"] = command
+                    if covered:
+                        rec["scope_names_or_counts_only"] = names_only
+                        scoped[str(block.get("id"))] = rec
+                        _finish_scope(rec, None)
                     flagged.append(len(calls))
                 calls.append(rec)
+        for rec in scoped.values():
+            # The call's result never reached the transcript: its agent
+            # was stopped, so nothing was printed to it.
+            rec["flag_class"] = sorted(
+                {
+                    c
+                    for c in rec["flag_class"]
+                    if not c.startswith("OTHER_scope")
+                }
+                | {"scope_no_result_in_transcript"}
+            )
     return {"calls": calls, "flagged_call_indices": flagged}
+
+
+def _finish_scope(rec: dict[str, Any], lines: int | None) -> None:
+    """Classify a scope-flagged call; ``lines`` is None until its output."""
+    rec["flag_class"] = [
+        c
+        for c in rec["flag_class"]
+        if not c.startswith(("scope_", "OTHER_scope"))
+    ]
+    if lines is None:
+        rec["flag_class"].append("OTHER_scope_output_not_seen")
+    else:
+        rec["scope_output_lines_from_excluded_files"] = lines
+        if lines == 0:
+            rec["flag_class"].append("scope_printed_nothing_from_excluded")
+        elif rec["scope_names_or_counts_only"]:
+            rec["flag_class"].append("scope_printed_names_or_counts_only")
+        else:
+            rec["flag_class"].append("OTHER_scope_printed_excluded_lines")
+    rec["flag_class"] = sorted(set(rec["flag_class"]))
 
 
 def write(record: Mapping[str, Any], out: Path) -> None:

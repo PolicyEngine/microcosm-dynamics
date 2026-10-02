@@ -1703,6 +1703,39 @@
      "p_gate": 0.9466304505439824
     }
    }
+  },
+  "m6_rule_alone_best_family_seed_power": 0.9926076035126652,
+  "tolerance_multiplier": {
+   "by_k": {
+    "3": {
+     "best_family_surface_p_gate": 0.33108246927691676,
+     "tau": 5.0870067501999,
+     "width_over_k3": 1.0
+    },
+    "4": {
+     "best_family_surface_p_gate": 0.8238352501923782,
+     "tau": 6.263571932871851,
+     "width_over_k3": 1.2312883077314014
+    },
+    "5": {
+     "best_family_surface_p_gate": 0.9753741516273009,
+     "tau": 7.440137115543801,
+     "width_over_k3": 1.4625766154628028
+    }
+   },
+   "k_for_0_90": 4.316367004909807
+  },
+  "tolerance_sensitivity": {
+   "1.05": {
+    "best_family_surface_p_gate": 0.461740664151602,
+    "best_four_cell_p_gate": 0.9967244147754162,
+    "tau": 5.341357087709896
+   },
+   "1.10": {
+    "best_family_surface_p_gate": 0.5851782702424249,
+    "best_four_cell_p_gate": 0.9988153248307303,
+    "tau": 5.59570742521989
+   }
   }
  },
  "planning_flags": {

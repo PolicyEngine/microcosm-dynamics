@@ -28,8 +28,9 @@ for: the summary's side-A sentence (N1), the floor-equality claims (N2),
 Q2's cost and its headroom, which is per cell (N3, d693), one citation
 (N4), the inventory's scope (N5), the pinned-figure claim and two bands
 (N6) and the wage vintage's element (N7). Section 15.5 lists them.
-After the addendum's planning-value run, section 11 also says that its
-"upper bounds" are not bounds. No count, protocol byte or recommendation
+After the addendum's planning-value run, sections 1, 11 and 12 also say
+that the "upper bound" standard errors are reference points, not
+bounds. No count, protocol byte or recommendation
 changed.
 
 Verification class: **source audit** (design §3.2, line 144). It admits
@@ -88,11 +89,14 @@ defaults in d515 on 2026-09-28. Design line numbers refer to that file.
   neither (Q2). Take a faithful cell at M6's k = 3 tolerance, before
   estimation error, for m = 1, 6 and 16 cells:
   - under M6's convention it passes with probability 0.48, 0 and 0;
-  - on side-A scoring, with probability at least 0.898, 0.662 and 0.479,
-    so at the upper-bound standard error it misses 0.90 even for one
-    cell;
-  - on full-support scoring, with probability at least 0.998, 0.986 and
-    0.967.
+  - on side-A scoring, with probability 0.898, 0.662 and 0.479 at the
+    reference standard error, so at that standard error it misses 0.90
+    even for one cell;
+  - on full-support scoring, with probability 0.998, 0.986 and 0.967 at
+    its reference standard error.
+
+  The reference standard errors are reference points, not bounds
+  (section 11).
 
   Estimation error lowers all three, and this audit does not bound it
   (section 11.2).
@@ -790,15 +794,15 @@ since revision 2, the prose-only figures N6 listed.
   column.
 - **Side A.** This is M6's scoring (section 10). A half's statistic has
   variance σ²/2, and the mean of K draws adds 1/K of that. So the gap's
-  survey-plus-simulation standard error is at most
+  survey-plus-simulation standard error was taken to be at most
   σ·√((1 + 1/K)/2) ≈ 0.725 σ.
-- **Full support.** The same on the whole domain: at most
+- **Full support.** The same on the whole domain:
   σ·√(1 + 1/K)/2 ≈ 0.512 σ.
 
-The two scoring bases give upper bounds. Side-A truth and side-A
-projections start from the same persons' 2010 anchors, so the part of a
-statistic's sampling variation that the anchors explain cancels in the
-gap. A design-based resampled gap standard error would measure how much
+These were offered as upper bounds, on the reasoning that side-A truth
+and side-A projections start from the same persons' 2010 anchors, so the
+part of a statistic's sampling variation that the anchors explain
+cancels in the gap. A design-based resampled gap standard error would measure how much
 cancels, but it needs outcome data (Q5). No convention includes
 estimation error.
 
@@ -844,11 +848,11 @@ A faithful cell passes when its gap plus z\* standard errors lies within
 the tolerance. At M6's k = 3 floor tolerance (2.606 σ), before
 estimation error, the pass probability is:
 
-| m | z\* (Bonferroni 95%) | Needed tol/se | M6 convention (se = σ) | Side A (se ≤ 0.725 σ) | Full support (se ≤ 0.512 σ) |
+| m | z\* (Bonferroni 95%) | Needed tol/se | M6 convention (se = σ) | Side A (se = 0.725 σ) | Full support (se = 0.512 σ) |
 |---:|---:|---:|---:|---:|---:|
-| 1 | 1.960 | 3.605 | 0.482 | ≥ 0.898 | ≥ 0.998 |
-| 6 | 2.638 | 4.283 | 0.000 | ≥ 0.662 | ≥ 0.986 |
-| 16 | 2.955 | 4.600 | 0.000 | ≥ 0.479 | ≥ 0.967 |
+| 1 | 1.960 | 3.605 | 0.482 | 0.898 | 0.998 |
+| 6 | 2.638 | 4.283 | 0.000 | 0.662 | 0.986 |
+| 16 | 2.955 | 4.600 | 0.000 | 0.479 | 0.967 |
 
 The k a floor tolerance round(mean + k SD) needs for 0.90 power, before
 estimation error:
@@ -864,7 +868,7 @@ estimation error:
   so the bound rule cannot pass at all. The first version reported only
   this column. It is one end of the range, not the answer.
 - **Side A.** The conflict at m ≥ 6 is real but not total. At the
-  upper-bound standard error there is no room for estimation error at
+  reference standard error there is no room for estimation error at
   any m. The largest estimation variance compatible with 0.90 power is
   negative: −0.4%, −29% and −39% of the gap variance at m = 1, 6 and
   16. The shared-anchor reduction could make room; its size needs
@@ -999,8 +1003,9 @@ candidate outcome.
   321,500 rows dated ≤ 2010: that is the selectors' `fit_input_rows`,
   a count read from the ledgers.
 - **Shared-anchor variance.** The side-A and full-support standard
-  errors are upper bounds. A design-based resampled gap standard error
-  needs outcome data.
+  errors are reference points, not bounds (the revision 2 correction
+  above). A design-based resampled gap standard error needs outcome
+  data.
 - **Planning values.** Participation rates, positive-earner shares,
   log-earnings dispersion, the lag-1 and lag-2 correlations with their
   fourth-moment factors, and the true household design effect (Q5).
@@ -1040,8 +1045,11 @@ The defaults are proposals; none is adopted here.
    - Facts: at the k = 3 tolerance, before estimation error, a faithful
      cell passes the bound rule as follows (m = 1, 6 and 16):
      - 0.48, 0 and 0 under M6's convention;
-     - at least 0.898, 0.662 and 0.479 on side A;
-     - at least 0.998, 0.986 and 0.967 on full support.
+     - 0.898, 0.662 and 0.479 on side A;
+     - 0.998, 0.986 and 0.967 on full support,
+
+     each at the reference standard error of section 11, which is not a
+     bound.
 
      The estimation term is unbounded (section 11.2).
    - Options:
@@ -1370,7 +1378,7 @@ before the review, rerun the inventory to a new path.
 
 | # | Round-2 finding | Change in this file |
 |---|---|---|
-| N1 | The summary treated a lower bound as a conclusion | Section 1 now says "at the upper-bound standard error"; the pinned string follows |
+| N1 | The summary treated a lower bound as a conclusion | Section 1 qualified the side-A figure by its standard error, now called the reference standard error (see the addendum-run row); the pinned strings follow |
 | N2 | Floor-equality claims hold only under a person split | Sections 5.4 and 9.2 are conditional on the split; the addendum keeps the person-split floor as a non-gating check |
 | N3 | Q2 omitted its main cost | Q2 states the 1.4 times wider tolerance |
 | N4 | The corrected citation was off by one the other way | `:645` restored in section 4.3 and in the table above |
@@ -1379,7 +1387,7 @@ before the review, rerun the inventory to a new path.
 | N7 | Wage-vintage element unstated | Section 2 |
 | d693 | Q2's 41% is per cell | Q2 and section 11.2 carry the gate-level figures; the addendum recomputes power |
 | Addendum review | Section 10 left out M6's all-seeds-valid condition; sections 1-2 still called d622 and the rulings pending | Section 10 restores the condition; the header and section 2 point to the rulings and the addendum's table |
-| Addendum run | The planning-value run measured the full-support ratio r above 1 for seven cells | Section 11 says its "upper bounds" are not bounds |
+| Addendum run | The planning-value run measured the full-support ratio r above 1 for seven cells | Sections 1, 11 (including 11.2 and 11.4) and Q2 call the standard errors reference points, not bounds |
 
 These changes come after the second blinded review and before the
 addendum's own blinded review (Q6), which covers them.

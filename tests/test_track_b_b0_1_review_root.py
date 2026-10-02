@@ -167,3 +167,43 @@ def test_allow_list_is_limited_to_the_pull_request_s_files(
             "h", tmp_path / "r", [], {}, allowed=["gates.yaml"], base="b"
         )
     assert not (tmp_path / "r").exists()
+
+
+def test_read_log_ignores_quoted_paths_and_records_harness_notices(tmp_path):
+    root = _invented_root(tmp_path)
+    saved = "/Users/x/.claude/projects/lane/s/tool-results/t1.txt"
+
+    def event(block):
+        return json.dumps({"message": {"content": [block]}})
+
+    def call(i, name, **given):
+        return event(
+            {"type": "tool_use", "id": i, "name": name, "input": given}
+        )
+
+    def result(i, text):
+        return event(
+            {"type": "tool_result", "tool_use_id": i, "content": text}
+        )
+
+    lines = [
+        call("r", "Read", file_path=str(root / "docs/keep.md")),
+        result("r", "1\tsee /Users/x/elsewhere/file.md and ~/y"),
+        call("g", "Grep", pattern="x", path=str(root)),
+        result("g", f"Output too large. Full output saved to: {saved}"),
+        call("h", "Glob", pattern="**/*.md", path=str(root)),
+        result("h", f"{root}/docs/keep.md"),
+    ]
+    transcript = tmp_path / "t.jsonl"
+    transcript.write_text("\n".join(lines), encoding="utf-8")
+    log = review_root.read_log(transcript, root, [])
+    assert log["review_counts"] is True
+    assert log["harness_persisted_outputs"] == [saved]
+    assert log["persisted_outputs_opened"] == []
+    assert set(log["paths"]) == {str(root / "docs/keep.md"), str(root)}
+
+    lines += [call("o", "Read", file_path=saved)]
+    transcript.write_text("\n".join(lines), encoding="utf-8")
+    log = review_root.read_log(transcript, root, [])
+    assert log["review_counts"] is False
+    assert log["persisted_outputs_opened"] == [saved]

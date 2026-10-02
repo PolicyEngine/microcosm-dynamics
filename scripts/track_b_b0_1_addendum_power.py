@@ -401,7 +401,9 @@ def feasibility_verdict(cells: Mapping[str, PlanningCell]) -> dict[str, Any]:
     - ``feasible``: some surface with every family reaches 0.90. B2's
       floor builder decides with B2's own floor.
 
-    Uncapped tolerances bound every capped surface's power from above.
+    The tolerance is the nominal uncapped one. B2's realized tolerance in
+    se_up units depends on its floor, so these figures are nominal, not
+    bounds; ``decision_illustrations`` adds 5% and 10% wider tolerances.
     """
     families = {concept(name) for name in cells}
     four = best_surface_of_size(cells, MIN_GATED_CELLS)
@@ -565,6 +567,55 @@ def design_inflated(
     return out
 
 
+def best_family_six(
+    cells: Mapping[str, PlanningCell], tau: float | None = None
+) -> dict[str, Any]:
+    """The best surface with exactly one cell per concept family.
+
+    Adding a cell multiplies the gate's probabilities by terms of at most
+    one and raises z*, so on these records the best family-complete
+    surface has one cell per family (section 11's envelope agrees).
+    ``tau`` replaces every cell's tolerance when given.
+    """
+    if tau is not None:
+        cells = {
+            n: PlanningCell(n, c.r, c.e_true, c.e_reg, tau, c.tol_over_sigma)
+            for n, c in cells.items()
+        }
+    families = sorted({concept(n) for n in cells})
+    options = [sorted(n for n in cells if concept(n) == f) for f in families]
+    best: dict[str, Any] | None = None
+    for subset in itertools.product(*options):
+        power = surface_power([cells[n] for n in subset])
+        if best is None or power["p_gate"] > best["p_gate"]:
+            best = {"cells": list(subset), **power}
+    assert best is not None
+    return best
+
+
+def tolerance_for_k(k: float) -> float:
+    """The uncapped k tolerance in se_up units (k = 3 gives 5.0870)."""
+    return frozen.half_normal_floor_ratio(k) / SE_UP_OVER_SIGMA
+
+
+def k_reaching(
+    cells: Mapping[str, PlanningCell],
+    target: float = POWER_TARGET,
+    lo: float = 3.0,
+    hi: float = 10.0,
+) -> float:
+    """Smallest k whose best family-complete surface reaches ``target``."""
+    if best_family_six(cells, tolerance_for_k(hi))["p_gate"] < target:
+        return math.inf
+    for _ in range(40):
+        mid = (lo + hi) / 2
+        if best_family_six(cells, tolerance_for_k(mid))["p_gate"] >= target:
+            hi = mid
+        else:
+            lo = mid
+    return hi
+
+
 def decision_illustrations(planning: Mapping[str, Any]) -> dict[str, Any]:
     """Post-run figures for the decisions the verdict queues. Not rules.
 
@@ -591,6 +642,48 @@ def decision_illustrations(planning: Mapping[str, Any]) -> dict[str, Any]:
             ).items()
             if key != "envelope"
         },
+        "tolerance_sensitivity": {
+            f"{scale:.2f}": {
+                "tau": TAU_UNCAPPED * scale,
+                "best_family_surface_p_gate": best_family_six(
+                    binding, TAU_UNCAPPED * scale
+                )["p_gate"],
+                "best_four_cell_p_gate": best_surface_of_size(
+                    {
+                        n: PlanningCell(
+                            n, c.r, c.e_true, c.e_reg, TAU_UNCAPPED * scale
+                        )
+                        for n, c in binding.items()
+                    },
+                    MIN_GATED_CELLS,
+                )["p_gate"],
+            }
+            for scale in (1.05, 1.10)
+        },
+        "tolerance_multiplier": {
+            "by_k": {
+                str(k): {
+                    "tau": tolerance_for_k(k),
+                    "width_over_k3": tolerance_for_k(k) / TAU_UNCAPPED,
+                    "best_family_surface_p_gate": best_family_six(
+                        binding, tolerance_for_k(k)
+                    )["p_gate"],
+                }
+                for k in (3, 4, 5)
+            },
+            "k_for_0_90": k_reaching(binding),
+        },
+        "m6_rule_alone_best_family_seed_power": max(
+            surface_power([binding[n] for n in subset])[
+                "p_seed_conjunction_only"
+            ]
+            for subset in itertools.product(
+                *[
+                    sorted(n for n in binding if concept(n) == family)
+                    for family in sorted({concept(n) for n in binding})
+                ]
+            )
+        ),
     }
 
 

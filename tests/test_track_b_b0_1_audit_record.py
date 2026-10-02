@@ -413,7 +413,7 @@ def test_audit_quotes_the_revision1_power_figures(
         row = (
             f"| {m} | {frozen_rule[m]['bonferroni_z']:.3f} | "
             f"{frozen_rule[m]['required_tol_over_se']:.3f} | {cells[0]} | "
-            f"≥ {cells[1]} | ≥ {cells[2]} |"
+            f"{cells[1]} | {cells[2]} |"
         )
         assert row in audit_text, row
         ks = " | ".join(
@@ -535,15 +535,21 @@ def test_audit_quotes_the_revision1_power_figures(
     assert side_a[0] < 0.90
     side_a_text = f"{side_a[0]:.3f}, {side_a[1]:.3f} and {side_a[2]:.3f}"
     assert (
-        f"at least {side_a_text}, so at the upper-bound standard error it "
-        "misses 0.90 even for one cell" in prose
+        f"probability {side_a_text} at the reference standard error, so at "
+        "that standard error it misses 0.90 even for one cell" in prose
     )
-    assert f"at least {side_a_text} on side A" in prose
+    assert f"{side_a_text} on side A" in prose
     full_summary = ", ".join(f"{v:.3f}" for v in summary["full_support"][:2])
     assert (
-        f"at least {full_summary} and {summary['full_support'][2]:.3f}"
-        in prose
+        f"probability {full_summary} and {summary['full_support'][2]:.3f} at "
+        "its reference standard error" in prose
     )
+    # Revision 2, after the addendum's run: these are not bounds.
+    assert (
+        "The reference standard errors are reference points, not bounds"
+        in (prose)
+    )
+    assert "at least 0.898" not in prose and "≥ 0.898" not in prose
 
 
 # --------------------------------------------------------------------------

@@ -22,8 +22,8 @@ path or a code map with frequencies remains, and writes a manifest of
 every file with its SHA-256.
 
 ``readlog`` reads a review lane's stream-json transcript and lists every
-path its tool calls named and every path its tool results returned. A
-review counts only if all of them lie inside the root.
+path its tool calls named and every path its Glob and Grep results
+returned. A review counts only if all of them lie inside the root.
 
 Neither command prints file content. Listed files are removed by path,
 unread. The codebook check reads each remaining file only to test for the
@@ -211,6 +211,26 @@ def _strings(node: Any) -> Iterable[str]:
             yield from _strings(value)
 
 
+#: The harness's notice when a tool result is too large to return inline.
+PERSISTED_RX = re.compile(r"(?:Full output saved to|saved to):?\s+(/\S+)")
+
+
+def _result_paths(name: str | None, text: str) -> list[str]:
+    """Paths a Glob or Grep result returned: each line's leading path.
+
+    A Read result is file content, so paths quoted in it are not reads.
+    A result whose call is unknown is treated like a Grep result.
+    """
+    if name not in (None, "Glob", "Grep"):
+        return []
+    out = []
+    for line in text.splitlines():
+        line = line.strip()
+        if line.startswith("/"):
+            out.append(re.split(r":\d", line, maxsplit=1)[0].rstrip(":"))
+    return out
+
+
 def read_log(
     transcript: Path, root: Path, denied: Sequence[str]
 ) -> dict[str, Any]:
@@ -218,12 +238,19 @@ def read_log(
 
     ``transcript`` is the lane's stream-json record: one JSON object per
     line. Tool calls are ``tool_use`` blocks; results are ``tool_result``
-    blocks. No content is copied into the log, only paths.
+    blocks. A call's path fields must lie inside the root and outside the
+    denied paths; so must every path a Glob or Grep result returns. Paths
+    quoted inside a file the lane read are content, not reads. When the
+    harness saves an oversized result outside the root, the log records
+    the notice; the review is void only if a later call opens that file.
+    No content is copied into the log, only paths.
     """
     root = root.resolve()
     calls: list[dict[str, Any]] = []
+    names: dict[str, str] = {}
     named: set[str] = set()
     returned: set[str] = set()
+    persisted: set[str] = set()
     for line in transcript.read_text(encoding="utf-8").splitlines():
         if not line.strip():
             continue
@@ -238,6 +265,7 @@ def read_log(
             if not isinstance(block, Mapping):
                 continue
             if block.get("type") == "tool_use":
+                names[str(block.get("id"))] = str(block.get("name"))
                 fields = {
                     key: str(value)
                     for key, value in (block.get("input") or {}).items()
@@ -248,8 +276,13 @@ def read_log(
                     if key in fields:
                         named.add(fields[key])
             elif block.get("type") == "tool_result":
+                name = names.get(str(block.get("tool_use_id")))
                 for text in _strings(block.get("content")):
-                    returned.update(ABSOLUTE_RX.findall(text))
+                    found = set(PERSISTED_RX.findall(text))
+                    persisted.update(found)
+                    returned.update(
+                        p for p in _result_paths(name, text) if p not in found
+                    )
 
     def classify(path: str) -> str:
         resolved = Path(path)
@@ -268,11 +301,13 @@ def read_log(
     paths = {path: classify(path) for path in sorted(named | returned)}
     bad = sorted(path for path, kind in paths.items() if kind != "inside_root")
     return {
-        "schema": "track_b_b0_1_review_read_log.v1",
+        "schema": "track_b_b0_1_review_read_log.v2",
         "root": str(root),
         "n_tool_calls": len(calls),
         "tool_calls": calls,
         "paths": paths,
+        "harness_persisted_outputs": sorted(persisted),
+        "persisted_outputs_opened": sorted(persisted & named),
         "paths_outside_root_or_denied": bad,
         "review_counts": not bad,
     }

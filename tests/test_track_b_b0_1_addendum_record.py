@@ -545,3 +545,47 @@ def test_verdict_and_decisions_follow_the_records(prose, power_record):
         "B2 stops here.",
     ):
         assert phrase in prose, phrase
+
+
+def test_review_round_1_figures_come_from_the_records(prose, power_record):
+    """The figures the Q6 round-1 fixes added (M1, M2, L2)."""
+    from scipy.stats import t as student_t
+
+    ill = power_record["decision_illustrations"]
+    assert ill["decides_nothing"] is True
+    sens = ill["tolerance_sensitivity"]
+    by_k = ill["tolerance_multiplier"]["by_k"]
+    kstar = ill["tolerance_multiplier"]["k_for_0_90"]
+    wstar = power.tolerance_for_k(kstar) / power.TAU_UNCAPPED
+    assert by_k["3"]["best_family_surface_p_gate"] == pytest.approx(
+        power_record["bases"]["binding"]["verdict"][
+            "best_family_surface_p_gate"
+        ]
+    )
+    assert 4 < kstar < 5
+    assert sens["1.10"]["best_family_surface_p_gate"] < 0.90
+    expected = [
+        "With τ 5% and 10% above nominal, the best family surface reaches "
+        f"{sens['1.05']['best_family_surface_p_gate']:.3f} and "
+        f"{sens['1.10']['best_family_surface_p_gate']:.3f}",
+        f"reaches {by_k['4']['best_family_surface_p_gate']:.3f} at k = 4 "
+        f"(a tolerance {by_k['4']['width_over_k3']:.2f} times as wide as "
+        f"k = 3's) and {by_k['5']['best_family_surface_p_gate']:.3f} at "
+        f"k = 5 ({by_k['5']['width_over_k3']:.2f} times)",
+        f"It reaches 0.90 at k = {kstar:.2f}, about {wstar:.2f} times as wide",
+        f"tolerance about {wstar:.2f} times as wide",
+        "gives the best family surface "
+        f"{ill['m6_rule_alone_best_family_seed_power']:.3f} on the same model",
+        f"63 degrees of freedom is {student_t.ppf(1 - 0.05 / 12, 63):.3f}, "
+        f"against z\\* = {power.z_star(6):.3f}",
+        "the threshold is about 2.34 se_up",
+    ]
+    mc = max(
+        cell["diagnostics"]["mc_error_over_se_up"]
+        for cell in json.loads(PLANNING.read_text(encoding="utf-8"))[
+            "cells"
+        ].values()
+    )
+    assert f"{10 * mc:.2f}" == "2.34"
+    for phrase in expected:
+        assert phrase in prose, phrase

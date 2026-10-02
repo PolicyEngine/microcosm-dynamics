@@ -224,7 +224,7 @@ For each gated cell c, on full support:
   person's projected paths fixed.
 - **The bootstrap.** Both use the same replicates: multinomial
   multiplicities over all 2011 full-anchor households (equal
-  probabilities, as many draws as households, a registered seed),
+  probabilities, as many draws as households, the seed below),
   households without a domain person included. Each person in a
   household with multiplicity c is copied c times under new identifiers,
   truth rows and every draw's projected rows alike, by this addendum's
@@ -250,6 +250,13 @@ For each gated cell c, on full support:
 - **Side A.** Each gate seed's side-A statistics come from the
   full-domain projection's K draws, restricted to side-A persons. B2
   does not re-project each half.
+- **Seeds.** B2 uses protocol v2's seeds and streams, with a new root.
+  - The scoring bootstrap's root seed is 20261002. Replicate b draws
+    household multiplicities from stream [root, b, 0], and design
+    clusters from [root, b, 4] if d782 rules for them (section 13).
+  - Candidate 3's law is fitted with seed 5200 and projected with draw
+    seeds 6200-6219 (K = 20), as in protocol v2 and the selectors.
+  - Floor seeds are 0-99 and gate seeds 0-4 (section 4).
 
 ## 8. Element 9: pass conjunction
 
@@ -352,9 +359,17 @@ against the repository.
   is void and e is not a lower bound. In every arm R replicate the truth
   statistics on the refit side and the fixed-law side of the same kept
   frame agreed within 1e-9, relative.
-- The record's outcome-blind flags are all false: no reference year
-  after 2010 read, no B2 cell or floor computed, and no level, gap or
-  raw-scale variance recorded.
+- The record's outcome-blind flags are constants the script writes, not
+  checks. The evidence that nothing after 2010 was read or recorded is
+  elsewhere:
+  - the read guard refuses any other PSID open before it happens;
+  - the opened files match the audit's pins and include no wave after
+    2011;
+  - the record-shape check refuses any key outside the frozen
+    allow-list.
+- One quirk, moot here. A guard refusal raised inside a worker is an
+  `OSError`, which the script treats as an interruption to resume, not
+  as a failure. Workers open no PSID file, so it could not arise.
 
 **At the pseudo-origin.** The fit used 294,603 rows. The full anchor held
 22,102 persons in 8,289 households and the domain 12,837 persons. The
@@ -436,9 +451,10 @@ Diagnostics, which decide nothing:
   variance under PSID's design, and the choice between inflating B2's
   standard error and resampling design clusters goes to Max (d782,
   section 13).
-- Diagnostics. The K draws' simulation noise is 8% to 22% of Var(δ). The floor's σ over twice the truth deviation's
-  SD is 0.76 to 1.07, near 1 except for `earn_p10.prime`. The full
-  sample's Monte Carlo error is 0.06 to 0.23 se_up.
+- Diagnostics. The K draws' simulation noise is 8% to 22% of Var(δ).
+  The floor's σ over twice the truth deviation's SD is 0.76 to 1.07,
+  near 1 except for `earn_p10.prime`. The full sample's Monte Carlo
+  error is 0.06 to 0.23 se_up.
 
 **What the values do not establish.**
 
@@ -450,6 +466,10 @@ Diagnostics, which decide nothing:
   variance. For this law, whose sign gates stop early, that is not
   established in either direction.
 - The cross term is left out unless resolved positive.
+- d's limits cover the bootstrap's Monte Carlo error only. A variance
+  built from 126 clusters in 63 strata has about 63 degrees of freedom,
+  so d itself is uncertain by roughly ±9%. Cells near the 1.10 limit
+  could fall on either side of it.
 - Persons outside the full anchor are clustered by their household at
   their last present wave up to 2007, an approximation to the panel's
   household structure.
@@ -461,9 +481,13 @@ Diagnostics, which decide nothing:
 
 `scripts/track_b_b0_1_addendum_power.py` computes
 `docs/design/track_b_b0_1_addendum_power.json` from the planning-value
-record alone, by the named procedure (section 16), at the uncapped k = 3
-tolerance τ = 5.0870 se_up. A cap only lowers a tolerance, so these
-figures bound every capped surface's power from above.
+record alone, by the named procedure (section 16), at the nominal
+uncapped k = 3 tolerance, τ = 5.0870 se_up. That is the k = 3 tolerance
+of a half-normal floor, in se_up units. B2's realized tolerance in
+those units depends on its floor: M6's floors gave tolerance over σ of
+2.35-2.64 against the nominal 2.61, and σ over twice the truth
+deviation's SD was 0.76-1.07 at 2006 (section 10). So the figures are
+nominal, not bounds. A cap only lowers a tolerance.
 `scripts/track_b_b0_1_addendum_tables.py` renders the tables below from
 the two records, and the record test requires them verbatim.
 
@@ -511,12 +535,20 @@ estimation variance, which the audit could not measure.
 
 **Verdict: stopped by the family floor.** On the binding evaluation a four-cell surface reaches 0.90 but no surface holding every concept family does.
 
-Section 16's verdict rule sends this case to Max. d693's Q2 flip would
-let a four-cell surface stand. Q1's ladder never prunes a family's last
-cell, so at the expected uncapped tolerance it cannot end at 0.90, and
-under section 5 B2 is then `WEAK_POWER_OR_VACUITY` at its floor build.
-Either way B2 stops here. Decision d781 asks Max how to rescope it, and
-no rescoped registration is written before he rules (section 13).
+d693's Q2 flip does not fire, because four cells have room. But Q1's
+ladder never prunes a family's last cell, so at the nominal tolerance it
+cannot end at 0.90. Under section 5, B2 is then `WEAK_POWER_OR_VACUITY`
+at its floor build, and section 16's verdict rule sends the case to Max.
+B2 stops here. Decision d781 asks Max how to rescope it, and no rescoped
+registration is written before he rules (section 13).
+
+The verdict does not turn on the nominal tolerance. With τ 5% and 10%
+above nominal, the best family surface reaches 0.462 and 0.585.
+
+The protocol says the Monte Carlo rule can bind only where τ_c < 2.2
+se_up. With the measured Monte Carlo errors, up to 0.234 se_up for
+`earn_dlog_sd.older`, the threshold is about 2.34 se_up. That changes
+nothing at the nominal tolerance.
 
 The design rule did not hold either (section 10). With each over-limit
 cell's sampling variance inflated by its design ratio's 95th percentile,
@@ -566,7 +598,7 @@ above replace them.
 
 | # | Disposition |
 |---|---|
-| N1 | Audit §1 now says "at the upper-bound standard error"; the pinned string follows |
+| N1 | Audit §1 qualified the side-A figure by its standard error. After the run it calls that standard error a reference point, not a bound (below); the pinned strings follow |
 | N2 | Audit §5.4 and §9.2 make the floor-equality claims conditional on a person split. Under the ruled household split the gating floor is new, and the person-split floor is a non-gating check run by the comparator (section 9) |
 | N3 | Audit Q2 states the cost: the tolerance is about 5.1 standard errors wide on full support against about 3.6 on side A, about 1.4 times wider |
 | N4 | `select_m6_qstar_train_only.py:645` restored in audit §4.3 and §15.1 |
@@ -587,7 +619,7 @@ the law and paths fixed, the gap's variance is Var(T) + Var(P̄) -
 offsets the projected statistic's own resampling variance, up to
 Var(T)/K, and nothing guarantees that. At the 2006 pseudo-origin r is
 above 1 for seven of the 16 cells, up to 1.21 for `earn_p10.prime`
-(section 10). Audit §11 now says so. Its figures on that basis, and the
+(section 10). Audit sections 1, 11 and Q2 now say so. Its figures on that basis, and the
 "r = 1, e = 0" rows here, are reference points, not bounds. No rule in
 this addendum relies on them: B2's registered standard error is
 measured (section 7), and the binding evaluation uses the measured r.
@@ -620,8 +652,19 @@ blocks B2's registration.
   half-samples without replacement, for the reason and evidence in
   section 16, step 6. The alternative is a new protocol version with a
   with-replacement refit arm.
-- **d781: how to rescope B2.** Section 11's verdict stops B2. The
-  options:
+
+  That evidence comes from one run of the check, on 2026-10-01 at
+  03:11:47 UTC, before the freeze. The command was
+  `gate_leak_check.py <worktree> 4000 24`, with two fit jobs, run from a
+  scratch copy on the runtime of section 16. Its output, with warnings
+  removed, is `docs/design/track_b_b0_1_gate_leak_check.txt` verbatim.
+  `scripts/track_b_b0_1_gate_leak_check.py` is that copy after black's
+  formatting and ruff's automatic fixes, committed in `0550d2f`. It was
+  not rerun after them. The refit-scheme rule was written down at
+  03:15:19 UTC, before the comparison was read.
+- **d781: how to rescope B2.** Section 11's verdict stops B2. Both
+  ruled texts lead there: the flip does not fire, and the ladder makes B2
+  `WEAK_POWER_OR_VACUITY`. The options, in no order:
   - (a) gate only the six level cells, `earn_p50` and `earn_p90` by
     cohort and `earn_zero_rate` by cohort, the largest surface that
     reaches 0.90 (0.952). The other ten cells are scored and published
@@ -633,10 +676,27 @@ blocks B2's registration.
     `earn_autocorr_lag2`, `earn_p90.prime` and `earn_zero_rate.older`
     (0.946). No surface with four or more families reaches 0.90;
   - (c) keep B2 `WEAK_POWER_OR_VACUITY` and unadmitted. H and B3L then
-    stay blocked until another route is registered (design line 454).
+    stay blocked until another route is registered (design line 454);
+  - (d) amend d693's Q2 settings, which design §5.3 and §7 allow before
+    any candidate result (design lines 308, 454). Two forms:
+    - **A wider tolerance on full support.** The best surface that keeps
+      every family reaches 0.824 at k = 4 (a tolerance 1.23 times as wide
+      as k = 3's) and 0.975 at k = 5 (1.46 times). It reaches 0.90 at
+      k = 4.32, about 1.30 times as wide. A wider tolerance costs
+      sensitivity to a misspecified candidate. The caps, ln 1.5 and
+      0.15, may bind at these widths, and only B2's floor can show
+      that.
+    - **Another scoring basis.** M6's seed rule alone, with the bound
+      rule reported but not gating, gives the best family surface
+      0.993 on the same model. It drops the bound rule, which design
+      §5.2 requires of every empirical gate, so it needs a design
+      amendment as well as a change to Q2.
 
-  Under (a) or (b), B2's floor builder still runs section 5's ladder
-  inside the rescoped surface on B2's own floor, and may prune further.
+  The proposed default is (a). It keeps the ruled k = 3 sensitivity on
+  the cells that can carry it. (d) keeps every family, at the cost of a
+  tolerance about 1.30 times as wide. Under (a), (b) or (d), B2's
+  floor builder still runs section 5's ladder on B2's own floor, inside
+  the rescoped surface, and may prune further.
 - **d782: how B2's standard error treats PSID's design.** The options:
   - (a) resample PSID's sampling-error clusters within strata (Rao-Wu,
     as arm D did) for se_boot, while the floor and gate-seed splits stay
@@ -647,7 +707,14 @@ blocks B2's registration.
   - (c) keep household resampling, overriding section 16's rule.
 
   At the 2006 ratios either (a) or (b) costs about one cell: the largest
-  surface that reaches 0.90 falls from six cells to five.
+  surface that reaches 0.90 falls from six cells to five. That figure
+  leaves out two things:
+  - d itself is uncertain by about ±9% (section 10), and (b) multiplies
+    by it;
+  - under (a), B2's design-based se_boot has about 63 degrees of
+    freedom, so the normal z\* under-covers. At m = 6 the t value with
+    63 degrees of freedom is 2.724, against z\* = 2.638. A registration
+    under (a) should use the t value.
 
 If a family's last cell may be pruned, these surfaces reach 0.90 on the
 binding evaluation at the uncapped tolerance (the power record's
@@ -722,11 +789,17 @@ context with them. Before the freeze it read:
 - the test doubles in `tests/test_m6_engine_forward_earnings.py` and
   `tests/test_m6_engine_correlated_refresh.py`.
 
-It opened none of the 20 files on the audit's §15.4 list other than
-those two line ranges and one grep of `m6_projection_engine.md` that
-printed line numbers and three headings (lines 3689, 3709 and 3766). It
-opened no selection ledger, no codebook frequency table and no PSID data
-before the freeze. It did not read the ledgers' 2006
+It printed nothing from the 20 files on the audit's §15.4 list other
+than:
+
+- those two line ranges;
+- one grep of `m6_projection_engine.md` that printed line numbers and
+  three headings (lines 3689, 3709 and 3766).
+
+Three of its searches before the freeze took in excluded files and
+printed nothing from them: two file-name searches over the worktree and
+one over `tests/*.py`. It opened no selection ledger, no codebook
+frequency table and no PSID data before the freeze. It did not read the ledgers' 2006
 blocks, so the pseudo-origin, the transport rule and the binding
 evaluation were chosen without them. It ran the audit-record tests,
 which rescan listed files mechanically and print nothing from them.
@@ -755,6 +828,12 @@ below shows what they opened beyond the author's reads:
 - tool-output files and the workflow journal in this session's own
   transcript subfolder.
 
+Eleven of their recursive or glob searches took in excluded files:
+
+- seven printed nothing from them;
+- three printed only file names and match counts;
+- one returned nothing before its workflow was stopped.
+
 Their other mentions of excluded files are exclusion pathspecs, line
 counts and mechanical scans.
 
@@ -771,17 +850,27 @@ from the app's transcript export.
 
 **The reads record.** `docs/design/track_b_b0_1_addendum_reads.json`
 is written by `scripts/track_b_b0_1_addendum_reads.py` from this
-session's transcript export. It lists every tool call of the session and
-its agents up to the export, 1,694 calls: the paths, ranges and
-patterns each named, and each shell command's first line, SHA-256 and
-named paths. It holds no tool output. It flags the 77 calls that name a
-restricted or excluded path and classifies each one; none is left
-unresolved. Calls after the export, including the Q6 dispatch, are in
+session's transcript export, taken after Q6 round 1. It lists every
+tool call of the session and its agents up to the export, 1,801 calls:
+the paths, ranges and patterns each named, and each shell command's
+first line, SHA-256 and named paths.
+
+It flags the 105 calls that name a restricted or excluded path, or
+whose recursive grep, `git grep` or glob covers one, and classifies
+each. None is left unresolved, and seven are classified by hand with a
+note. For each flagged call it keeps the full command. Where a call's
+scope covers an excluded file, it also counts the output lines that
+begin with an excluded path, and records only that count. It holds no
+other tool output. Python code that walks the tree is not parsed; such
+code is flagged only when it names an excluded path.
+
+Calls after the export, including the round-2 dispatch, are in
 section 15.
 
 ## 15. The blinded review (Q6)
 
-*The record is written after the review.* The plan, fixed now:
+The plan was fixed before the first review. Its read-log rule was
+sharpened after round 1 (below).
 
 - **Root.** `git archive` of the PR head into a new directory that is
   not a git repository and is outside every restricted folder. Removed
@@ -801,12 +890,60 @@ section 15.
   root.
 - **Lane.** `subfleet run --task review -m opus -I -s read-only -D
   <root>`: Read, Glob and Grep only.
-- **Read log.** Every path in every tool call and tool result of the
-  lane's transcript is extracted mechanically. A review that touches a
-  path outside the root, or a denied path, does not count, and a new
-  one is dispatched.
+- **Read log.** `scripts/track_b_b0_1_review_root.py readlog` extracts
+  from the lane's transcript every path a tool call names and every path
+  a Glob or Grep result returns. A review in which any of them lies
+  outside the root, or on a denied path, does not count, and a new one
+  is dispatched. Paths quoted inside a file the lane read are content,
+  not reads. When the harness saves an oversized result outside the
+  root, the log records the notice, and the review is void only if a
+  later call opens that file.
 - **Numbers.** Numerical reproduction is in the CI-pinned tests, not the
   reviewer's job.
+
+**Round 1: request changes.**
+
+- **Root.** `git archive` of `5813d8f`, 1,709 files, manifest SHA-256
+  `9dad8761a38c19c0…`. The builder removed 26 files: 20 excluded files
+  whole, the six files of the codebook folder, and three other files
+  that name both tokens. It kept the three files of this pull request
+  that only name them. It added the five context copies.
+  `docs/design/track_b_b0_1_addendum_q6_root_r1.json` is the root
+  record.
+- **Lane.** Subfleet job `20261001-115147-b01-addendum-q6`: Opus 5.5 in
+  isolated-review mode, with Read, Glob and Grep only, no MCP servers,
+  plan permission mode and the root as its only directory. It ran on
+  2026-10-01 from 16:50 to 17:05 UTC.
+- **Read log.** `docs/design/track_b_b0_1_addendum_q6_readlog_r1.json`:
+  69 tool calls (42 Read, 25 Grep, 2 Glob). All 27 paths they named or
+  returned lie inside the root, and none is denied. Two Grep results
+  were too large, and the harness saved them in the lane's own project
+  folder; the lane did not open them. The first version of the read log
+  also counted every absolute path quoted in a result, including paths
+  quoted in the files under review, and so flagged paths the lane never
+  touched. The rule above replaced it. The review counts.
+- **Verdict.** `REQUEST CHANGES`, with no high finding, three medium and
+  seven low. The review is
+  `docs/design/track_b_b0_1_addendum_q6_review_r1.md`. It met no B2
+  outcome and confirmed that the script matches the protocol, that
+  nothing the run read or recorded is dated after 2010, and that the
+  verdict follows from the records.
+
+| Finding | Disposition |
+|---|---|
+| M1: d781 framed toward (a) and left out amending Q2 | Section 11 restates the flip; d781 lists its options in no order and adds (d), with figures from the power record; d781's decision record carries a note |
+| M2: the design ratio's own sampling uncertainty, and the critical value under design clusters | Section 10's limits and d782 state both; a registration under d782 (a) uses the t value |
+| M3: section 14's claim, and the reads record's blindness to recursive and glob reads | The extractor flags recursive and glob scopes that cover an excluded path, counts output lines that begin with one, and keeps every flagged call's full command. Section 14 is restated from the regenerated record |
+| L1: the audit's "upper bounds" were corrected in one place only | Audit sections 1, 11, 11.2, 11.4 and Q2 now call them reference points |
+| L2: the uncapped tolerance is nominal, not a bound | Section 11 says so and gives the verdict at 5% and 10% wider tolerances |
+| L3: the outcome-blind flags are constants | Section 10 says so and names the evidence |
+| L4: B2's seeds were unnamed | Section 7 names them |
+| L5: the half-sample evidence had no provenance | Section 13 gives the check's command, time and script state |
+| L6: the Monte Carlo threshold | Section 11 gives the measured 2.34 |
+| L7: a guard refusal in a worker would resume | Section 10 notes it |
+
+**Round 2** reviews the changed head on a newly built root, in the same
+form. Its record follows.
 
 ## 16. Protocol record
 
