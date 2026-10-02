@@ -33,8 +33,8 @@ catch anything gate 1 does not already catch, and it could not meet its own
 check on its bite, so it does not lock.**
 
 - The generator's earnings overlap EPUF in four years, 1998-2004. On that
-  overlap only two cells had the power the rules demand: how persistent
-  earnings ranks are from 1998 to 2004, for men and for women.
+  overlap only two cells met the rules for gating: how persistent earnings
+  ranks are from 1998 to 2004, for men and for women.
 - Those two cells fail a generator whose persistence falls about 0.10 below
   the PSID's four times in five, and one about 0.11 below nine times in ten.
   The interval also ends 0.08 above EPUF, so one that overshoots EPUF by
@@ -424,8 +424,8 @@ Two more readings, both from the supplement:
 - Donors drawn from both sexes (`bd2`) raise men's persistence by 0.056, to
   about EPUF's level and 0.012 past it, where the interval accepts it. `bd2`
   is a perturbation of real data, not a generator. Its donors are matched on
-  2004 deciles, and the same-sex control (`bd2c`) moves the cells by 0.01 or
-  less, so the matching itself keeps the rank correlation. Within that limit,
+  2004 deciles, and the same-sex control (`bd2c`) moves the cells by about
+  0.01, so the matching itself keeps the rank correlation. Within that limit,
   the cells by sex showed no catch for pooling the sexes.
 - No perturbation was shown to pass gate 1's battery and fail these cells.
   Their catch beyond gate 1 is not demonstrated.
@@ -513,8 +513,9 @@ and its distance from EPUF is the bridge itself.
 A run that regenerates a gate-1 candidate reports each cell's 20-seed
 estimate, its distance from EPUF, and the split of that distance into the
 candidate's distance from the PSID and the PSID's distance from EPUF
-(`report_candidate`, which returns no pass or fail). Tranche R reports the
-career statistics beside the masked EPUF values. No run has been made.
+(`report_candidate`, which returns no pass or fail). Tranche R would report
+the career statistics beside the masked EPUF values; no code computes its
+PSID side yet. No run has been made.
 
 Nothing is certified. In particular:
 
@@ -541,8 +542,11 @@ Nothing is certified. In particular:
 3. `ce8d5000` added the rebuilt artifact, the draft block and section 7.
    Neither artifact records its build time. The supplement records its own
    (2026-10-02 20:55 UTC).
-4. The round-1 commit adds the referee report, the supplement, the frozen
-   first build, the ruling and these corrections.
+4. The round-1 commit (`d606ddea`) adds the referee report, the supplement,
+   the frozen first build, the ruling and the round-1 corrections.
+5. The round-2 commit (`93848324`) adds `report_candidate`, the round-2
+   report and its corrections. A last commit applies the five minor points of
+   the re-review that approved it.
 
 **Forks ledger.**
 
@@ -567,7 +571,7 @@ bind to cannot be edited without breaking that binding, so a few of their
 strings predate the ruling. `gate_partition.status` in the floor artifact
 reads `lockable_pending_referee_round`, and its tranche R note says "computed
 once, after lock". The docstring of `epuf_gate.tolerance` calls the formula
-"the house formula". The block and this document supersede them: nothing is
+"the house floor formula". The block and this document supersede them: nothing is
 pending a lock, and `k = 4` is not house precedent (section 4).
 
 ## 11. Considered and rejected
@@ -638,6 +642,7 @@ before its floor is built:
 - [x] Proposal: this document, the floor artifact, the draft block
 - [x] Adversarial referee round 1 (verdict AMEND)
 - [x] Fixes: the supplement, the frozen first build, separate rules and build
-  commits in the block, a pinned scoring path, corrected wording
+  commits in the block, a pinned reporting path, corrected wording
 - [x] Ruling: closed without lock; every cell report-only
 - [x] Verification round 2 (verdict: merge after listed fixes, applied)
+- [x] Re-review of the round-2 fixes (verdict: approve)

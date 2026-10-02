@@ -20,7 +20,11 @@ import yaml
 from scipy.stats import norm
 
 from populace_dynamics.harness import epuf_gate as gate
-from populace_dynamics.harness.epuf_cells import cell_ids, transform
+from populace_dynamics.harness.epuf_cells import (
+    COHORT_BANDS,
+    cell_ids,
+    transform,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACT = ROOT / "runs" / "epuf_gate_floors_v1.json"
@@ -154,6 +158,7 @@ def test_supplement_belongs_to_the_floor_run_and_matches_its_bites():
         if name in ("requirements", "pause"):
             continue
         assert bites[name]["fail_share_reproduced"] == row["fail_share"]
+        assert set(bites[name]["cells"]) == set(artifact["registered"])
         for cell_id, cell in bites[name]["cells"].items():
             estimates = cell["estimates_over_perturbation_seeds"]
             assert len(estimates) == 50
@@ -184,6 +189,7 @@ def test_supplement_belongs_to_the_floor_run_and_matches_its_bites():
             assert cell["power_under_gate_noise_model"] == pytest.approx(
                 expected
             )
+    assert set(bites["detection_points"]) == {"r6.men", "r6.women"}
     for cell_id, point in bites["detection_points"].items():
         floor = artifact["cells"][cell_id]
         sigma = floor["floor"]["realized_sigma"]
@@ -339,9 +345,10 @@ def test_supplement_birth_year_mix_is_a_distribution_within_each_band():
         for sex in ("men", "women")
         for band in ("c0", "c1", "c2")
     )
-    for row in mix.values():
+    for key, row in mix.items():
         years = row["birth_years"]
-        assert years == list(range(years[0], years[0] + 9))
+        low, high = COHORT_BANDS[key.split(".")[1]]
+        assert years == list(range(low, high + 1))
         for side in ("psid_support_weighted_share", "epuf_share"):
             assert len(row[side]) == 9
             assert sum(row[side]) == pytest.approx(1.0)
@@ -359,8 +366,89 @@ def test_supplement_birth_year_mix_is_a_distribution_within_each_band():
 
 def test_block_records_both_review_rounds():
     block = _block()
-    for key in ("referee_round_1", "verification_round_2"):
+    for key in ("referee_round_1", "verification_round_2", "rereview_round_3"):
         assert (ROOT / block[key]["report"]).is_file()
+    assert block["rereview_round_3"]["verdict"].startswith("APPROVE")
     assert (
         "MERGE AFTER LISTED FIXES" in block["verification_round_2"]["verdict"]
     )
+
+
+def _fixed_per_seed_values(cells):
+    """Invented per-seed cell values near each cell's PSID value."""
+    values = {}
+    for seed in gate.GATE_SEEDS:
+        tilt = 1.0 + 0.004 * (seed - 9.5)
+        values[seed] = {
+            cell_id: (
+                0.5 if cell["psid_value"] is None else cell["psid_value"]
+            )
+            * tilt
+            for cell_id, cell in cells.items()
+        }
+    return values
+
+
+def test_report_candidate_terms_against_the_committed_bridges(monkeypatch):
+    from populace_dynamics.harness import epuf_run
+
+    cells = _artifact()["cells"]
+    values = _fixed_per_seed_values(cells)
+    monkeypatch.setattr(
+        epuf_run,
+        "candidate_window_cells",
+        lambda panel, support: values[panel],
+    )
+    candidates = {seed: seed for seed in gate.GATE_SEEDS}
+    report = epuf_run.report_candidate(candidates, None, cells)
+    assert report["status"] == "report_only"
+    assert "pass" not in report
+    assert sorted(report["cells"]) == sorted(cell_ids())
+    nonzero_bridges = 0
+    for cell_id, row in report["cells"].items():
+        assert "pass" not in row
+        per_seed = [values[seed][cell_id] for seed in gate.GATE_SEEDS]
+        assert row["per_seed_values"] == per_seed
+        estimate = gate.pooled_estimate(cell_id, per_seed)
+        assert row["estimate"] == pytest.approx(estimate)
+        cell = cells[cell_id]
+        epuf_value = transform(cell_id, cell["epuf_value"])
+        assert row["gap_from_epuf"] == pytest.approx(estimate - epuf_value)
+        if cell["psid_value"] is None:
+            assert math.isnan(row["source_term_psid_minus_epuf"])
+            assert math.isnan(row["model_term_candidate_minus_psid"])
+            continue
+        bridge = cell["bridge_psid_minus_epuf"]
+        assert row["source_term_psid_minus_epuf"] == pytest.approx(bridge)
+        assert row["model_term_candidate_minus_psid"] == pytest.approx(
+            estimate - transform(cell_id, cell["psid_value"])
+        )
+        nonzero_bridges += abs(bridge) > 0.01
+    # The committed bridges are not zero, so the terms' signs are tested.
+    assert nonzero_bridges >= 25
+
+
+def test_report_candidate_propagates_undefined_values(monkeypatch):
+    from populace_dynamics.harness import epuf_run
+
+    cells = {
+        cell_id: dict(cell) for cell_id, cell in _artifact()["cells"].items()
+    }
+    cells["r6.women"]["psid_value"] = None
+    values = _fixed_per_seed_values(cells)
+    values[7]["r6.men"] = float("nan")
+    monkeypatch.setattr(
+        epuf_run,
+        "candidate_window_cells",
+        lambda panel, support: values[panel],
+    )
+    report = epuf_run.report_candidate(
+        {seed: seed for seed in gate.GATE_SEEDS}, None, cells
+    )["cells"]
+    # A seed with an undefined value makes the cell's estimate undefined.
+    assert math.isnan(report["r6.men"]["estimate"])
+    assert math.isnan(report["r6.men"]["gap_from_epuf"])
+    # A cell with no PSID value keeps its gap but has no split.
+    assert not math.isnan(report["r6.women"]["gap_from_epuf"])
+    assert math.isnan(report["r6.women"]["source_term_psid_minus_epuf"])
+    assert math.isnan(report["r6.women"]["model_term_candidate_minus_psid"])

@@ -48,7 +48,8 @@ ROUND_1 = {
         "Not locked. The registered persistence bite could not be met by "
         "design: the tolerance is about 3.2 realised sigmas (0.079) while "
         "giving 10 percent of persons a donor's early years shifts the "
-        "1998-2004 rank correlation by about 0.07, so the pause was an "
+        "1998-2004 rank correlation by 0.067 for men and 0.057 for women, "
+        "so the pause was an "
         "internal inconsistency of the registration, not a data surprise. "
         "The two cells the rules selected have no demonstrated catch beyond "
         "gate 1, and with the bridge signs public the registered "
@@ -74,6 +75,16 @@ ROUND_2 = {
         "said 'cannot fail'; section 7 figures are labelled as means over "
         "the three cohort bands and corrected in the third decimal."
     ),
+}
+
+#: Round 3 re-reviewed the round-2 fixes.
+ROUND_3 = {
+    "report": "reviews/gate_epuf_round3_rereview_20261002.md",
+    "reviewer": (
+        "independent Opus 5.5 lane (subfleet job "
+        "20261002-172832-epuf-gate-r3), reviewing head 93848324"
+    ),
+    "verdict": "APPROVE (five minor points, applied)",
 }
 
 HEADER = """\
@@ -243,6 +254,7 @@ def render_block(
                 "ceremony_pause": artifact["ceremony_pause"],
                 "referee_round_1": ROUND_1,
                 "verification_round_2": ROUND_2,
+                "rereview_round_3": ROUND_3,
                 "lock_ceremony": {
                     "exists": False,
                     "stage": "closed without lock (referee round 1)",
