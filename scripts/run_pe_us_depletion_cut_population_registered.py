@@ -187,6 +187,24 @@ def preflight(
     return {"head": head, "git_clean": True, "skipped": []}
 
 
+def release_decision(metadata: Mapping[str, Any], *, invented: bool) -> str:
+    """The cos decision that holds the release (specification section 14).
+
+    A registered run must name it before it starts, so that the artifact
+    records its id. An invented dry run has nothing to release.
+    """
+
+    value = metadata.get("release_held_for")
+    if invented:
+        return value if isinstance(value, str) and value else "not_applicable"
+    if not isinstance(value, str) or not re.fullmatch(r"d[0-9]+", value):
+        raise Refusal(
+            "preflight",
+            "run metadata must name the release decision (release_held_for)",
+        )
+    return value
+
+
 def _inside(path: Path, root: Path) -> bool:
     """Whether a resolved path lies in a directory, including symlinks."""
 
@@ -1258,6 +1276,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             raise Refusal(
                 7, "run metadata contains an absolute local path"
             ) from error
+        held_for = release_decision(metadata, invented=invented)
         try:
             python = bridge._interpreter(args.python)
         except bridge.PolicyEngineUSUnavailable as error:
@@ -1611,9 +1630,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             ),
             "publication": {
                 "computed_regardless": True,
-                "release_held_for": metadata.get(
-                    "release_held_for", "pending_run_complete_decision"
-                ),
+                "release_held_for": held_for,
                 "release_scope": "timing and wording only",
             },
             "specification": {

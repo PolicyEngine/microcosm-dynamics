@@ -719,3 +719,19 @@ def test_dangling_output_symlinks_refused_before_computation(tmp_path, name):
     with pytest.raises(runner.Refusal, match="already exists"):
         runner.output_destinations(tmp_path, output, docs, invented=True)
     assert path.is_symlink()
+
+
+@pytest.mark.parametrize(
+    "metadata", [{}, {"release_held_for": ""}, {"release_held_for": "soon"}]
+)
+def test_registered_run_refuses_without_a_release_decision(metadata):
+    with pytest.raises(runner.Refusal, match="release decision"):
+        runner.release_decision(metadata, invented=False)
+
+
+def test_release_decision_is_recorded_and_dry_runs_need_none():
+    assert (
+        runner.release_decision({"release_held_for": "d900"}, invented=False)
+        == "d900"
+    )
+    assert runner.release_decision({}, invented=True) == "not_applicable"
