@@ -1,0 +1,674 @@
+{
+  "schema_version": "group_category_schemes.v1",
+  "note": "Report category schemes for the person attributes built by populace_dynamics.cohorts.group_attributes. Each scheme maps a harmonized attribute to a report's row labels. A value a source does not place is left unassigned with a named reason, never guessed. Labels are verbatim from the cited source; every rule that is this file's reading rather than the source's own definition is listed under 'assumptions'.",
+  "sources": {
+    "mint8_user_guide": {
+      "title": "Table User Guide—Modeling Income in the Near Term (MINT) 8",
+      "url": "https://www.ssa.gov/policy/docs/projections/user-guide.html",
+      "date_certified": "2025-10-01",
+      "capture": "https://web.archive.org/web/20260419231110id_/https://www.ssa.gov/policy/docs/projections/user-guide.html",
+      "committed_file": "data/external/ssa_mint8_table_user_guide.source.html",
+      "sha256": "278d5d19c1b50f1d354db1ada515288af563c035a67eb16fb971d25700fb94e9",
+      "locator": "Definitions—Table Rows and Columns > Characteristic Subgroups—Table Rows"
+    },
+    "mint8_row_labels": {
+      "title": "MINT 8 policy-option tables, 'Increase payroll tax rate': row labels only",
+      "url": "https://www.ssa.gov/policy/docs/projections/policy-options/increase-payroll-tax-rate.html",
+      "capture": "http://web.archive.org/web/20260519190449id_/https://www.ssa.gov/policy/docs/projections/policy-options/increase-payroll-tax-rate.html",
+      "committed_file": "data/external/ssa_mint8_payroll_option_row_labels.json",
+      "sha256": "23fbfbc8dbc14b06144a83bf0583ea0a6c89505638f3f7dc5fd6b34a3a4ac650",
+      "locator": "Tables 1–3 (benefits), 7–9 (household income), 10–12 (official poverty), 13–16 (benefit/tax ratio), and 17–20 (initial replacement rate): captions and row labels only; no data cells."
+    },
+    "boomers2004_report_rows": {
+      "title": "Butrica and Uccello (2004), How Will Boomers Fare at Retirement?, Tables 19 and 21 row labels as recorded in this repository",
+      "repository_locator": "src/populace_dynamics/estimates/uniform_cut_tabulation.py NOT_COMPUTED_REPORT_ROWS['race_ethnicity'] and ['education']; docs/design/boomers2004_uniform_cut_comparison.md, 'Report rows not computed in v1 (named omissions)'",
+      "note": "The repository records the Report's row labels as printed (cleared extract) and, for education, that the Report does not say whether 'High school graduate' includes some college. It records no other definition of these rows. The Report itself was not opened for this file."
+    }
+  },
+  "schemes": {
+    "mint8": {
+      "title": "SSA MINT 8 characteristic subgroups",
+      "dimensions": {
+        "race_ethnicity": {
+          "column": "race_ethnicity_mint8",
+          "group_label": "Race and ethnicity",
+          "source": "mint8_user_guide",
+          "quote": "Race/Ethnicity: We list “Hispanic or Latino, any race” first; the rest of the groups (White, Black or African American, and All other races) are non-Hispanic.",
+          "labels_source": "mint8_row_labels",
+          "categories": {
+            "hispanic": "Hispanic or Latino, any race",
+            "white_non_hispanic": "White, non-Hispanic",
+            "black_non_hispanic": "Black or African American, non-Hispanic",
+            "other_non_hispanic": "All other races, non-Hispanic"
+          },
+          "multiple_races": "other_non_hispanic",
+          "assumptions": [
+            "SSA's guide does not say where a non-Hispanic person who reports two or more races goes. This scheme places such a person in 'All other races, non-Hispanic', reading 'White' and 'Black or African American' as single-race groups (the 'alone' tabulation of the OMB 1997 standard). This is an explicit builder convention pending registration; it is not an SSA definition."
+          ]
+        },
+        "education": {
+          "column": "education_mint8",
+          "group_label": "Highest education level",
+          "source": "mint8_user_guide",
+          "quote": "Highest Education Level: Reported number of years of education. Graduate means more than 16 years of education, Bachelor means 16 years of education, Associate means 14–15 years of education, High school means 12–13 years of education, and Less than high school means less than 12 years of education.",
+          "labels_source": "mint8_row_labels",
+          "bands": [
+            {
+              "label": "Graduate",
+              "min": 17,
+              "max": null
+            },
+            {
+              "label": "Bachelor",
+              "min": 16,
+              "max": 16
+            },
+            {
+              "label": "Associate",
+              "min": 14,
+              "max": 15
+            },
+            {
+              "label": "High school",
+              "min": 12,
+              "max": 13
+            },
+            {
+              "label": "Less than high school",
+              "min": 0,
+              "max": 11
+            }
+          ],
+          "unresolved_bands": [],
+          "assumptions": [
+            "The PSID's top code 17 is 'at least some post-graduate work', its only value above 16, so it is the guide's 'more than 16 years' (Graduate)."
+          ]
+        },
+        "country_of_birth": {
+          "column": "country_of_birth_mint8",
+          "group_label": "Country of birth",
+          "source": "mint8_user_guide",
+          "quote": "Country of Birth: We differentiate between the United States and other countries.",
+          "labels_source": "mint8_row_labels",
+          "categories": {
+            "united_states": "United States",
+            "foreign_country": "Other countries"
+          },
+          "unresolved": {
+            "us_territory": "SSA's guide does not say whether a person born in a U.S. territory counts as born in the United States or in other countries."
+          },
+          "assumptions": []
+        }
+      },
+      "table_profiles": {
+        "annual_benefits": {
+          "source": "mint8_row_labels",
+          "locator": "tables 1, 2, 3",
+          "row_groups": [
+            {
+              "group": "Total",
+              "labels": []
+            },
+            {
+              "group": "Sex",
+              "labels": [
+                "Female",
+                "Male"
+              ]
+            },
+            {
+              "group": "Race and ethnicity",
+              "labels": [
+                "Hispanic or Latino, any race",
+                "White, non-Hispanic",
+                "Black or African American, non-Hispanic",
+                "All other races, non-Hispanic"
+              ]
+            },
+            {
+              "group": "Country of birth",
+              "labels": [
+                "United States",
+                "Other countries"
+              ]
+            },
+            {
+              "group": "Age",
+              "labels": [
+                "60–69",
+                "70–79",
+                "80–89",
+                "90 or older"
+              ]
+            },
+            {
+              "group": "Marital status",
+              "labels": [
+                "Married",
+                "Divorced",
+                "Widowed",
+                "Never married"
+              ]
+            },
+            {
+              "group": "Highest education level",
+              "labels": [
+                "Graduate",
+                "Bachelor",
+                "Associate",
+                "High school",
+                "Less than high school"
+              ]
+            },
+            {
+              "group": "Current-law poverty status",
+              "labels": [
+                "Above poverty",
+                "In poverty"
+              ]
+            },
+            {
+              "group": "Current-law household income quintile",
+              "labels": [
+                "Highest",
+                "Second highest",
+                "Middle",
+                "Second lowest",
+                "Lowest"
+              ]
+            },
+            {
+              "group": "Current-law benefit type",
+              "labels": [
+                "Retired worker only",
+                "Widow(er) (includes dually entitled)",
+                "Spousal (includes dually entitled)",
+                "Disabled worker only"
+              ]
+            }
+          ],
+          "analysis_years": [
+            2030,
+            2050,
+            2070
+          ],
+          "population": "Current-law beneficiaries aged 60 or older"
+        },
+        "annual_household_income": {
+          "source": "mint8_row_labels",
+          "locator": "tables 7, 8, 9",
+          "row_groups": [
+            {
+              "group": "Total",
+              "labels": []
+            },
+            {
+              "group": "Sex",
+              "labels": [
+                "Female",
+                "Male"
+              ]
+            },
+            {
+              "group": "Race and ethnicity",
+              "labels": [
+                "Hispanic or Latino, any race",
+                "White, non-Hispanic",
+                "Black or African American, non-Hispanic",
+                "All other races, non-Hispanic"
+              ]
+            },
+            {
+              "group": "Country of birth",
+              "labels": [
+                "United States",
+                "Other countries"
+              ]
+            },
+            {
+              "group": "Age",
+              "labels": [
+                "60–69",
+                "70–79",
+                "80–89",
+                "90 or older"
+              ]
+            },
+            {
+              "group": "Marital status",
+              "labels": [
+                "Married",
+                "Divorced",
+                "Widowed",
+                "Never married"
+              ]
+            },
+            {
+              "group": "Highest education level",
+              "labels": [
+                "Graduate",
+                "Bachelor",
+                "Associate",
+                "High school",
+                "Less than high school"
+              ]
+            },
+            {
+              "group": "Current-law poverty status",
+              "labels": [
+                "Above poverty",
+                "In poverty"
+              ]
+            },
+            {
+              "group": "Current-law household income quintile",
+              "labels": [
+                "Highest",
+                "Second highest",
+                "Middle",
+                "Second lowest",
+                "Lowest"
+              ]
+            },
+            {
+              "group": "Current-law benefit type",
+              "labels": [
+                "Retired worker only",
+                "Widow(er) (includes dually entitled)",
+                "Spousal (includes dually entitled)",
+                "Disabled worker only"
+              ]
+            }
+          ],
+          "analysis_years": [
+            2030,
+            2050,
+            2070
+          ],
+          "population": "Current-law beneficiaries aged 60 or older"
+        },
+        "annual_official_poverty": {
+          "source": "mint8_row_labels",
+          "locator": "tables 10, 11, 12",
+          "row_groups": [
+            {
+              "group": "Total",
+              "labels": []
+            },
+            {
+              "group": "Sex",
+              "labels": [
+                "Female",
+                "Male"
+              ]
+            },
+            {
+              "group": "Race and ethnicity",
+              "labels": [
+                "Hispanic or Latino, any race",
+                "White, non-Hispanic",
+                "Black or African American, non-Hispanic",
+                "All other races, non-Hispanic"
+              ]
+            },
+            {
+              "group": "Country of birth",
+              "labels": [
+                "United States",
+                "Other countries"
+              ]
+            },
+            {
+              "group": "Age",
+              "labels": [
+                "60–69",
+                "70–79",
+                "80–89",
+                "90 or older"
+              ]
+            },
+            {
+              "group": "Marital status",
+              "labels": [
+                "Married",
+                "Divorced",
+                "Widowed",
+                "Never married"
+              ]
+            },
+            {
+              "group": "Highest education level",
+              "labels": [
+                "Graduate",
+                "Bachelor",
+                "Associate",
+                "High school",
+                "Less than high school"
+              ]
+            },
+            {
+              "group": "Current-law poverty status",
+              "labels": [
+                "Above poverty",
+                "In poverty"
+              ]
+            },
+            {
+              "group": "Current-law benefit type",
+              "labels": [
+                "Retired worker only",
+                "Widow(er) (includes dually entitled)",
+                "Spousal (includes dually entitled)",
+                "Disabled worker only"
+              ]
+            }
+          ],
+          "analysis_years": [
+            2030,
+            2050,
+            2070
+          ],
+          "population": "Current-law beneficiaries aged 60 or older"
+        },
+        "cohort_benefit_tax_ratio": {
+          "source": "mint8_row_labels",
+          "locator": "tables 13, 14, 15, 16",
+          "row_groups": [
+            {
+              "group": "Total",
+              "labels": []
+            },
+            {
+              "group": "Sex",
+              "labels": [
+                "Female",
+                "Male"
+              ]
+            },
+            {
+              "group": "Race and ethnicity",
+              "labels": [
+                "Hispanic or Latino, any race",
+                "White, non-Hispanic",
+                "Black or African American, non-Hispanic",
+                "All other races, non-Hispanic"
+              ]
+            },
+            {
+              "group": "Country of birth",
+              "labels": [
+                "United States",
+                "Other countries"
+              ]
+            },
+            {
+              "group": "Highest education level",
+              "labels": [
+                "Graduate",
+                "Bachelor",
+                "Associate",
+                "High school",
+                "Less than high school"
+              ]
+            },
+            {
+              "group": "Current-law initial AIME quintile",
+              "labels": [
+                "Highest",
+                "Second highest",
+                "Middle",
+                "Second lowest",
+                "Lowest"
+              ]
+            },
+            {
+              "group": "Lifetime payroll tax quintile",
+              "labels": [
+                "Highest",
+                "Second highest",
+                "Middle",
+                "Second lowest",
+                "Lowest"
+              ]
+            },
+            {
+              "group": "Lifetime payroll tax quintile (shared)",
+              "labels": [
+                "Highest",
+                "Second highest",
+                "Middle",
+                "Second lowest",
+                "Lowest"
+              ]
+            }
+          ],
+          "birth_cohorts": [
+            [
+              1960,
+              1969
+            ],
+            [
+              1980,
+              1989
+            ],
+            [
+              2000,
+              2009
+            ],
+            [
+              2020,
+              2029
+            ]
+          ],
+          "population": "Workers with a benefit/tax ratio"
+        },
+        "cohort_initial_replacement_rate": {
+          "source": "mint8_row_labels",
+          "locator": "tables 17, 18, 19, 20",
+          "row_groups": [
+            {
+              "group": "Total",
+              "labels": []
+            },
+            {
+              "group": "Sex",
+              "labels": [
+                "Female",
+                "Male"
+              ]
+            },
+            {
+              "group": "Race and ethnicity",
+              "labels": [
+                "Hispanic or Latino, any race",
+                "White, non-Hispanic",
+                "Black or African American, non-Hispanic",
+                "All other races, non-Hispanic"
+              ]
+            },
+            {
+              "group": "Country of birth",
+              "labels": [
+                "United States",
+                "Other countries"
+              ]
+            },
+            {
+              "group": "Highest education level",
+              "labels": [
+                "Graduate",
+                "Bachelor",
+                "Associate",
+                "High school",
+                "Less than high school"
+              ]
+            },
+            {
+              "group": "Current-law initial AIME quintile",
+              "labels": [
+                "Highest",
+                "Second highest",
+                "Middle",
+                "Second lowest",
+                "Lowest"
+              ]
+            },
+            {
+              "group": "Lifetime payroll tax quintile",
+              "labels": [
+                "Highest",
+                "Second highest",
+                "Middle",
+                "Second lowest",
+                "Lowest"
+              ]
+            },
+            {
+              "group": "Lifetime payroll tax quintile (shared)",
+              "labels": [
+                "Highest",
+                "Second highest",
+                "Middle",
+                "Second lowest",
+                "Lowest"
+              ]
+            }
+          ],
+          "birth_cohorts": [
+            [
+              1960,
+              1969
+            ],
+            [
+              1980,
+              1989
+            ],
+            [
+              2000,
+              2009
+            ],
+            [
+              2020,
+              2029
+            ]
+          ],
+          "population": "Current-law beneficiaries with an initial replacement rate"
+        }
+      },
+      "lifetime_earnings_dimensions": {
+        "initial_aime": {
+          "group_label": "Current-law initial AIME quintile",
+          "column": "initial_aime_quintile_mint8",
+          "source": "mint8_user_guide",
+          "locator": "Definitions—Table Rows and Columns > Characteristic Subgroups—Table Rows > Current-Law Initial AIME Quintile (#AIME)",
+          "definition": "Average indexed monthly earnings under current law at age 62, the earliest eligibility age for retired-worker benefits.",
+          "reference_age": 62,
+          "quintile_population": "each birth cohort",
+          "labels_source": "mint8_row_labels",
+          "labels_locator": "tables 13–20, group Current-law initial AIME quintile",
+          "labels": [
+            "Highest",
+            "Second highest",
+            "Middle",
+            "Second lowest",
+            "Lowest"
+          ],
+          "availability": "Supplied current-law measures only. These side-frame readers do not invent missing lifetime earnings, tax histories, trust-fund interest rates, or quintile thresholds."
+        },
+        "payroll_tax_own": {
+          "group_label": "Lifetime payroll tax quintile",
+          "column": "lifetime_payroll_tax_quintile_mint8",
+          "source": "mint8_user_guide",
+          "locator": "Definitions—Table Rows and Columns > Characteristic Subgroups—Table Rows > Lifetime Payroll Tax Quintile (#lifetime-tax); Explanation of Table Types > Benefit/Tax Ratios (present-value paragraph)",
+          "definition": "Present value at age 62 of the individual's current-law payroll taxes over a lifetime, adjusted using the Social Security Trust Fund interest rate.",
+          "reference_age": 62,
+          "discount_rate": "Social Security Trust Fund interest rate",
+          "quintile_population": "each birth cohort",
+          "labels_source": "mint8_row_labels",
+          "labels_locator": "tables 13–20, group Lifetime payroll tax quintile",
+          "labels": [
+            "Highest",
+            "Second highest",
+            "Middle",
+            "Second lowest",
+            "Lowest"
+          ],
+          "availability": "Supplied current-law measures only. These side-frame readers do not invent missing lifetime earnings, tax histories, trust-fund interest rates, or quintile thresholds."
+        },
+        "payroll_tax_shared": {
+          "group_label": "Lifetime payroll tax quintile (shared)",
+          "column": "lifetime_payroll_tax_shared_quintile_mint8",
+          "source": "mint8_user_guide",
+          "locator": "Definitions—Table Rows and Columns > Characteristic Subgroups—Table Rows > Lifetime Payroll Tax Quintile (Shared) (#lifetime-tax-shared); Explanation of Table Types > Benefit/Tax Ratios (present-value paragraph)",
+          "definition": "Present value at age 62 of current-law payroll taxes, adjusted using the Social Security Trust Fund interest rate. Taxes paid while married are shared equally between spouses; unmarried years use only the individual's taxes. Never-married individuals have the same own and shared values.",
+          "reference_age": 62,
+          "discount_rate": "Social Security Trust Fund interest rate",
+          "quintile_population": "each birth cohort",
+          "married_year_rule": "(own payroll taxes + spouse payroll taxes) / 2",
+          "unmarried_year_rule": "own payroll taxes",
+          "labels_source": "mint8_row_labels",
+          "labels_locator": "tables 13–20, group Lifetime payroll tax quintile (shared)",
+          "labels": [
+            "Highest",
+            "Second highest",
+            "Middle",
+            "Second lowest",
+            "Lowest"
+          ],
+          "availability": "Supplied current-law measures only. These side-frame readers do not invent missing lifetime earnings, tax histories, trust-fund interest rates, or quintile thresholds."
+        }
+      },
+      "unresolved_definitions": {
+        "separated_marital_status": "The guide lists Married, Divorced, Widowed and Never married but does not assign separated people.",
+        "country_of_birth_us_territories": "SSA's guide does not say whether a person born in a U.S. territory counts as born in the United States or in other countries.",
+        "multiracial_non_hispanic": "The guide does not specify a multiple-race rule; the attribute scheme states a builder convention pending registration.",
+        "lifetime_quintile_ties": "The guide does not specify how equal measure values at a weighted quintile boundary are assigned. No tie rule or dollar threshold is inferred."
+      }
+    },
+    "boomers2004": {
+      "title": "Butrica and Uccello (2004) Tables 19 and 21 rows (Track U's named omissions)",
+      "dimensions": {
+        "race_ethnicity": {
+          "column": "race_ethnicity_report4",
+          "group_label": "Race/Ethnicity",
+          "source": "boomers2004_report_rows",
+          "quote": null,
+          "labels_source": "boomers2004_report_rows",
+          "categories": {
+            "white_non_hispanic": "White, non-hispanic",
+            "black_non_hispanic": "Black, non-hispanic",
+            "hispanic": "Hispanic",
+            "other_non_hispanic": "Other"
+          },
+          "multiple_races": "other_non_hispanic",
+          "assumptions": [
+            "The repository records only the row labels. Because the White and Black rows are marked non-Hispanic, this scheme reads 'Hispanic' as Hispanic of any race and 'Other' as every other non-Hispanic person; both readings are provisional, not Report definitions.",
+            "Persons reporting two or more races are placed in 'Other', as in scheme mint8; the Report's rule is not recorded."
+          ]
+        },
+        "education": {
+          "column": "education_report3",
+          "group_label": "Education",
+          "source": "boomers2004_report_rows",
+          "quote": null,
+          "labels_source": "boomers2004_report_rows",
+          "bands": [],
+          "unresolved_bands": [
+            {
+              "min": 0,
+              "max": 17,
+              "status": "definition_not_recorded",
+              "reason": "The cleared repository records only these three row labels and the uncertainty about some college. It records no numeric years-of-schooling definitions for any row, so no cutoff is inferred."
+            }
+          ],
+          "assumptions": [],
+          "row_labels": [
+            "High school dropout",
+            "High school graduate",
+            "College graduate"
+          ]
+        }
+      }
+    }
+  }
+}
