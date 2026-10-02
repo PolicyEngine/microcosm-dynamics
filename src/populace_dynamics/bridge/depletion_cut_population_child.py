@@ -436,8 +436,8 @@ def invented_arrays(
     )
     if special:
         tables["household"]["state_fips"][:6] = 12
-    # state_fips is a frame column, not a PE-US variable. Supply the
-    # corresponding enum input as well so invented states affect formulas.
+    # Both are PE-US household inputs. Keep the enum consistent with the
+    # frame's FIPS input so every geography reader sees the same state.
     fips_to_code = {6: "CA", 12: "FL", 30: "MT", 36: "NY", 48: "TX"}
     tables["household"]["state_code"] = np.asarray(
         [fips_to_code[int(fips)] for fips in tables["household"]["state_fips"]]
