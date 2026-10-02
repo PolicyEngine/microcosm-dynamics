@@ -130,11 +130,31 @@ def oracle(tmp_path_factory):
             metadata[key] = meta
             with np.load(meta["array_path"], allow_pickle=False) as saved:
                 runs[key] = {name: saved[name].copy() for name in saved.files}
+    measurements = {
+        "header": ["INVENTED DRY RUN - NOT RESULTS", *population.LABELS],
+        "named_differences": population.NAMED_DIFFERENCES,
+        "probe": {
+            "timings": probe_meta["timings"],
+            "peak_rss_bytes": probe_meta["peak_rss_bytes"],
+        },
+        "scenarios": {
+            f"{scenario}/{variant}": {
+                "timings": meta["timings"],
+                "peak_rss_bytes": meta["peak_rss_bytes"],
+                "reform_construction": meta["reform_construction"],
+            }
+            for (scenario, variant), meta in metadata.items()
+        },
+    }
+    print(
+        "Oracle worker measurements: " + json.dumps(measurements), flush=True
+    )
     return {
         "directory": directory,
         "frame": frame,
         "common": common,
         "probe": probe,
+        "probe_metadata": probe_meta,
         "components": scenario_inputs,
         "person_cut": person_cut,
         "runs": runs,
