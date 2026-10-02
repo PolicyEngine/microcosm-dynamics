@@ -1,0 +1,11 @@
+{
+  "schema_version": "external_source_provenance.v1",
+  "committed_source_file": "data/external/ssa_mint8_payroll_option_row_labels.json",
+  "source_url": "https://www.ssa.gov/policy/docs/projections/policy-options/increase-payroll-tax-rate.html",
+  "document": "SSA MINT 8 policy-option tables, 'Increase payroll tax rate' — row and column labels only",
+  "fetch_method": "Built by the MINT-categories lane of orchestrating session 95606380 from the Internet Archive capture http://web.archive.org/web/20260519190449id_/https://www.ssa.gov/policy/docs/projections/policy-options/increase-payroll-tax-rate.html (raw page SHA-256 3cfb6eb636cad6d062eb22734c533fb349a0bc4761014eee8f2ccb0eb6e28d8c, recorded inside the file) with a parser that emitted table captions, header cells and row labels and never an ordinary data cell. Copied byte-identically from the lane's label file.",
+  "source_sha256": "23fbfbc8dbc14b06144a83bf0583ea0a6c89505638f3f7dc5fd6b34a3a4ac650",
+  "acquired_by": "MINT-categories lane (workflow wf_35b496b0-085), 2026-10-01; committed by the G1 group-attributes builder",
+  "consumed_by": "data/external/group_category_schemes_v1.json (scheme mint8 attribute and lifetime-quintile row labels; annual and cohort table row-group orders)",
+  "note": "LABELS ONLY. No MINT data cell is in this file. The restricted-files list allows one payroll-tax option table to be read for its row labels only; this is that table's label record."
+}

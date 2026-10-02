@@ -1,0 +1,71 @@
+{
+  "schema_version": "external_source_provenance_set.v1",
+  "source": "Social Security Administration",
+  "retrieval_date": "2026-10-01T22:31:33Z",
+  "fetch_method": "Direct HTTPS GET of the live ssa.gov page with curl -A 'Wget/1.21.4' on 2026-10-01 (HTTP 200, content-type text/html; charset=UTF-8; response Date header Thu, 01 Oct 2026 22:31:33-34 GMT). The body is committed byte for byte. A per-request Akamai mPulse script in <head> changes between fetches; an earlier fetch the same day parsed to the identical tables.",
+  "acquired_by": "Claude Code (Opus 5.5), NASI follow-up package G2 (branch nasi/g2-lifetime-measures)",
+  "sources": {
+    "trust_fund_interest_rates": {
+      "committed_source_file": "data/external/ssa_trust_fund_interest_rates_2026.source.html",
+      "source_url": "https://www.ssa.gov/oact/ProgData/annualinterestrates.html",
+      "document": "Average and Effective Interest Rates",
+      "source_sha256": "7c11df685faaf0602dd77c5e4e124d64709e8cffd58e463d938f35e7254a0d18",
+      "source_length_bytes": 41498,
+      "locator": "table caption: Average annual special-issue interest rates on new issues and effective annual interest rates (percent); Year row; Average and Effective columns; definition paragraphs above the table",
+      "acquisition": "Direct HTTPS GET of the live ssa.gov page with curl -A 'Wget/1.21.4' on 2026-10-01 (HTTP 200, content-type text/html; charset=UTF-8; response Date header Thu, 01 Oct 2026 22:31:33-34 GMT). The body is committed byte for byte. A per-request Akamai mPulse script in <head> changes between fetches; an earlier fetch the same day parsed to the identical tables."
+    },
+    "effective_rates_1980_on": {
+      "committed_source_file": "data/external/ssa_effective_interest_rates_1980_2025.source.html",
+      "source_url": "https://www.ssa.gov/oact/ProgData/effectiveRates.html",
+      "document": "Effective Interest Rates",
+      "source_sha256": "eaa8870898da2907bbc39da55d6a4c14f349e38c518aefb0ff87be2ddae09322",
+      "source_length_bytes": 39756,
+      "locator": "table caption: Effective Interest Rates Earned By the Invested Assets of the OASI and DI Trust Funds [Percent]; Calendar year row; OASI, DI and OASDI columns",
+      "acquisition": "Direct HTTPS GET of the live ssa.gov page with curl -A 'Wget/1.21.4' on 2026-10-01 (HTTP 200, content-type text/html; charset=UTF-8; response Date header Thu, 01 Oct 2026 22:31:33-34 GMT). The body is committed byte for byte. A per-request Akamai mPulse script in <head> changes between fetches; an earlier fetch the same day parsed to the identical tables."
+    },
+    "effective_rates_1940_1979": {
+      "committed_source_file": "data/external/ssa_effective_interest_rates_1940_1979.source.html",
+      "source_url": "https://www.ssa.gov/oact/ProgData/effectiveRts1940-79.html",
+      "document": "Effective Interest Rates, 1940-79 (historical document)",
+      "source_sha256": "fb16fdaff44b3427eec2216740734792aab3b94e2851acde57c26e4057094e3d",
+      "source_length_bytes": 19037,
+      "locator": "table caption: Estimated Effective Interest Rates Earned By the Assets of the OASI and DI Trust Funds, 1940-79[Percent]; Calendar year row in either panel; OASI, DI and OASDI columns",
+      "acquisition": "Direct HTTPS GET of the live ssa.gov page with curl -A 'Wget/1.21.4' on 2026-10-01 (HTTP 200, content-type text/html; charset=UTF-8; response Date header Thu, 01 Oct 2026 22:31:33-34 GMT). The body is committed byte for byte. A per-request Akamai mPulse script in <head> changes between fetches; an earlier fetch the same day parsed to the identical tables."
+    },
+    "oasdi_tax_rates": {
+      "committed_source_file": "data/external/ssa_oasdi_tax_rates_2026.source.html",
+      "source_url": "https://www.ssa.gov/oact/ProgData/oasdiRates.html",
+      "document": "Social Security Tax Rates",
+      "source_sha256": "7aad3e899ab2ee4e2dfd91c2dc9208c79e40bf4cb7f3315867a11ba7efd8a9a4",
+      "source_length_bytes": 41837,
+      "locator": "table summary: Tax rate table for Social Security trust funds; Calendar years period row; OASI, DI and Total columns under employee/employer-each and self-employed headers; footnote anchors fna-fnd",
+      "acquisition": "Direct HTTPS GET of the live ssa.gov page with curl -A 'Wget/1.21.4' on 2026-10-01 (HTTP 200, content-type text/html; charset=UTF-8; response Date header Thu, 01 Oct 2026 22:31:33-34 GMT). The body is committed byte for byte. A per-request Akamai mPulse script in <head> changes between fetches; an earlier fetch the same day parsed to the identical tables."
+    },
+    "mint8_user_guide": {
+      "committed_source_file": "data/external/ssa_mint8_user_guide_2026.source.html",
+      "source_url": "https://www.ssa.gov/policy/docs/projections/user-guide.html",
+      "document": "MINT8 Table User Guide",
+      "source_sha256": "8d5bc3f0de17831c2ed07383003257a63bb657df179d0c54868fda052f23f100",
+      "source_length_bytes": 73967,
+      "locator": "meta DCTERMS:dateCertified; paragraphs id=AIME, lifetime-tax, lifetime-tax-shared and taxes; other paragraphs identified by the exact sentences in MINT8_PARAGRAPHS",
+      "acquisition": "Direct HTTPS GET of the live ssa.gov page with curl -A 'Wget/1.21.4' on 2026-10-01 (HTTP 200, content-type text/html; charset=UTF-8; response Date header Thu, 01 Oct 2026 22:31:33-34 GMT). The body is committed byte for byte. A per-request Akamai mPulse script in <head> changes between fetches; an earlier fetch the same day parsed to the identical tables."
+    },
+    "mint8_table_row_labels": {
+      "committed_source_file": "data/external/mint8_row_categories_2026.source.json",
+      "source_url": "https://www.ssa.gov/policy/docs/projections/policy-options/increase-payroll-tax-rate.html",
+      "document": "MINT8 payroll-tax option table labels (labels only)",
+      "source_sha256": "23fbfbc8dbc14b06144a83bf0583ea0a6c89505638f3f7dc5fd6b34a3a4ac650",
+      "source_length_bytes": 37524,
+      "locator": "label-only JSON: dateCertified; tables.13 through tables.20; groups whose group is Current-law initial AIME quintile, Lifetime payroll tax quintile or Lifetime payroll tax quintile (shared); their labels arrays",
+      "acquisition": "Copied byte for byte from the cleared MINT-categories lane's followup/inputs/mint/mint8_row_categories.json; label-only extraction of the archived source named in MINT8_TABLE_LABEL_PROVENANCE, never a table body."
+    }
+  },
+  "consumed_by": {
+    "scripts/extract_lifetime_measure_sources.py": [
+      "data/external/ssa_trust_fund_interest_rates_2026.json",
+      "data/external/ssa_oasdi_tax_rates_2026.json",
+      "data/external/mint8_lifetime_quintile_definitions.json"
+    ]
+  },
+  "reproducible": "parsed deterministically from the committed, sha256-verified HTML bodies; no network or wall-clock timestamp is used"
+}
