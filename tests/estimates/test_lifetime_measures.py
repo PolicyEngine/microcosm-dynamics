@@ -156,7 +156,14 @@ def _reference_ranks(values: list[float], weights: list[float]) -> list[int]:
             if v == value
         )
         midpoint = below + tied / 2
-        ranks.append(min(4, math.floor(5 * midpoint / total)))
+        normalized = 5 * midpoint / total
+        boundary = round(normalized)
+        rank = (
+            boundary
+            if abs(normalized - boundary) <= 1e-12
+            else math.floor(normalized)
+        )
+        ranks.append(min(4, rank))
     return ranks
 
 

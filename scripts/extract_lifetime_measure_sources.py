@@ -14,7 +14,7 @@ tests) needs three external inputs that the repository did not hold:
 * the verbatim MINT8 definitions of the lifetime-earnings quintile rows
   (SSA, "MINT8 Table User Guide", ``user-guide.html``).
 
-Every source is the exact HTTP 200 response body fetched from ssa.gov on
+Every HTML source is the exact HTTP 200 response body fetched from ssa.gov on
 2026-10-01 with ``curl -A 'Wget/1.21.4'`` (ssa.gov refuses some default
 clients).  The pages carry a per-request Akamai mPulse script in
 ``<head>``, so a second fetch has different bytes; two fetches taken
@@ -27,18 +27,23 @@ by any code path bound to the M7 2014 information boundary
 (``engine.refit.validate_external_vintage`` rejects vintage 2026).
 
 The MINT8 table row-group labels ("Current-law initial AIME quintile",
-...) are not on the user guide page.  They are transcribed from the
-label-only extraction of SSA's payroll-tax option table made by the
-MINT-categories lane (no data cell was extracted); its provenance is
-recorded in :data:`MINT8_TABLE_LABEL_PROVENANCE`.
+...) are not on the user guide page. They are read from the committed,
+SHA-256-pinned label-only extraction of SSA's payroll-tax option table
+made by the MINT-categories lane (no data cell was extracted); its
+provenance is recorded in :data:`MINT8_TABLE_LABEL_PROVENANCE`. The source
+guide and label extraction are certified 2026-04-01, a later version
+than the 2025-10-01 guide identified in the G2 brief.
 
 Run from the repository root::
 
     .venv/bin/python scripts/extract_lifetime_measure_sources.py
+
+Add ``--check`` to verify all artifacts without rewriting them.
 """
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import re
@@ -110,6 +115,56 @@ SOURCES: dict[str, dict[str, Any]] = {
         ),
         "bytes": 73967,
     },
+    "mint8_table_row_labels": {
+        "file": "mint8_row_categories_2026.source.json",
+        "url": (
+            "https://www.ssa.gov/policy/docs/projections/policy-options/"
+            "increase-payroll-tax-rate.html"
+        ),
+        "title": "MINT8 payroll-tax option table labels (labels only)",
+        "sha256": (
+            "23fbfbc8dbc14b06144a83bf0583ea0a6c89505638f3f7dc5fd6b34a3a4ac650"
+        ),
+        "bytes": 37524,
+    },
+}
+
+#: Every rate is located by its named table, year/period row and column;
+#: definitions are located by paragraph id or an exact identifying sentence.
+SOURCE_LOCATORS = {
+    "trust_fund_interest_rates": (
+        "table caption: Average annual special-issue interest rates on "
+        "new issues and effective annual interest rates (percent); Year "
+        "row; Average and Effective columns; definition paragraphs above "
+        "the table"
+    ),
+    "effective_rates_1980_on": (
+        "table caption: Effective Interest Rates Earned By the Invested "
+        "Assets of the OASI and DI Trust Funds [Percent]; Calendar year "
+        "row; OASI, DI and OASDI columns"
+    ),
+    "effective_rates_1940_1979": (
+        "table caption: Estimated Effective Interest Rates Earned By the "
+        "Assets of the OASI and DI Trust Funds, 1940-79[Percent]; Calendar "
+        "year row in either panel; OASI, DI and OASDI columns"
+    ),
+    "oasdi_tax_rates": (
+        "table summary: Tax rate table for Social Security trust funds; "
+        "Calendar years period row; OASI, DI and Total columns under "
+        "employee/employer-each and self-employed headers; footnote "
+        "anchors fna-fnd"
+    ),
+    "mint8_user_guide": (
+        "meta DCTERMS:dateCertified; paragraphs id=AIME, lifetime-tax, "
+        "lifetime-tax-shared and taxes; other paragraphs identified by "
+        "the exact sentences in MINT8_PARAGRAPHS"
+    ),
+    "mint8_table_row_labels": (
+        "label-only JSON: dateCertified; tables.13 through tables.20; "
+        "groups whose group is Current-law initial AIME quintile, "
+        "Lifetime payroll tax quintile or Lifetime payroll tax quintile "
+        "(shared); their labels arrays"
+    ),
 }
 
 INTEREST_OUT = EXTERNAL / "ssa_trust_fund_interest_rates_2026.json"
@@ -257,6 +312,9 @@ MINT8_TABLE_LABEL_PROVENANCE = {
     "label_file_sha256": (
         "23fbfbc8dbc14b06144a83bf0583ea0a6c89505638f3f7dc5fd6b34a3a4ac650"
     ),
+    "committed_label_file": (
+        "data/external/mint8_row_categories_2026.source.json"
+    ),
     "tables": "13-20 (benefit/tax ratios and initial replacement rates)",
     "note": (
         "Labels only. The lane's parser emitted th, caption and heading "
@@ -325,6 +383,8 @@ class _PageParser(HTMLParser):
             match = re.fullmatch(r"fn([a-z])", attributes.get("name") or "")
             if match:
                 self._footnote = match.group(1)
+                if self._footnote in self.footnotes:
+                    raise ValueError(f"duplicate footnote {self._footnote}")
                 self.footnotes[self._footnote] = []
         elif tag == "br" and self._footnote is not None:
             self.footnotes[self._footnote].append(" ")
@@ -409,6 +469,8 @@ def parse_interest_rates() -> dict[int, dict[str, float | None]]:
             "average_new_issue": _percent(cells[1]),
             "effective_oasdi": _percent(cells[2]),
         }
+        if any(value is None for value in rates[year].values()):
+            raise ValueError(f"{year}: missing combined interest rate")
     expected = list(range(FIRST_INTEREST_YEAR, LATEST_INTEREST_YEAR + 1))
     if sorted(rates) != expected:
         raise ValueError(f"years {sorted(rates)} != {expected}")
@@ -421,7 +483,10 @@ def parse_interest_rates() -> dict[int, dict[str, float | None]]:
         raise ValueError("expected two per-fund header rows (1980 on)")
     for cells in recent.rows:
         if len(cells) == 4 and re.fullmatch(r"\d{4}", cells[0]):
-            per_fund[int(cells[0])] = [_percent(cell) for cell in cells[1:]]
+            year = int(cells[0])
+            if year in per_fund:
+                raise ValueError(f"duplicate per-fund year {year}")
+            per_fund[year] = [_percent(cell) for cell in cells[1:]]
     early = _parse("effective_rates_1940_1979")
     if EFFECTIVE_1940_CAPTION not in early.captions:
         raise ValueError(f"caption {EFFECTIVE_1940_CAPTION!r} not found")
@@ -444,6 +509,10 @@ def parse_interest_rates() -> dict[int, dict[str, float | None]]:
         raise ValueError("per-fund pages do not cover 1940-2025 exactly")
     for year in expected:
         oasi, di, oasdi = per_fund[year]
+        if oasi is None or oasdi is None:
+            raise ValueError(f"{year}: missing OASI/OASDI interest rate")
+        if (di is None) != (year < 1957):
+            raise ValueError(f"{year}: DI must be absent only before 1957")
         if oasdi != rates[year]["effective_oasdi"]:
             raise ValueError(
                 f"{year}: combined effective "
@@ -538,6 +607,8 @@ def _period(label: str) -> tuple[int, int | None, list[str]]:
     else:
         last = first
     notes = re.findall(r"[a-d]", match.group(4) or "")
+    if len(notes) != len(set(notes)):
+        raise ValueError(f"duplicate footnotes in period {label!r}")
     return first, last, notes
 
 
@@ -562,11 +633,23 @@ def parse_tax_rates() -> tuple[list[dict[str, Any]], dict[str, str]]:
         self_employed = dict(
             zip(("oasi", "di", "total"), values[3:], strict=True)
         )
-        if each["total"] is None:
+        if each["total"] is None or each["oasi"] is None:
             raise ValueError(f"{cells[0]}: no employee/employer total")
         parts = [part for part in (each["oasi"], each["di"]) if part]
         if abs(sum(parts) - each["total"]) > 1e-9:
             raise ValueError(f"{cells[0]}: OASI + DI != total")
+        if any(value is not None for value in self_employed.values()):
+            if self_employed["total"] is None or self_employed["oasi"] is None:
+                raise ValueError(f"{cells[0]}: incomplete self-employed rate")
+            parts = [
+                part
+                for part in (self_employed["oasi"], self_employed["di"])
+                if part is not None
+            ]
+            if abs(sum(parts) - self_employed["total"]) > 1e-9:
+                raise ValueError(
+                    f"{cells[0]}: self-employed OASI + DI != total"
+                )
         rows.append(
             {
                 "period": cells[0],
@@ -577,6 +660,8 @@ def parse_tax_rates() -> tuple[list[dict[str, Any]], dict[str, str]]:
                 "self_employed": self_employed,
             }
         )
+    if not rows:
+        raise ValueError("the tax table contains no rate rows")
     expected_first = FIRST_TAX_YEAR
     for index, row in enumerate(rows):
         if row["first_year"] != expected_first:
@@ -674,6 +759,46 @@ def build_tax() -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 # MINT8 definitions
 # ---------------------------------------------------------------------------
+def parse_mint8_labels() -> tuple[dict[str, str], tuple[str, ...]]:
+    """Read only the cleared label JSON and verify every cohort table.
+
+    The cleared extraction contains headings, captions and labels, never
+    outcome cells. All eight cohort tables must have the same lifetime
+    dimension labels and quintile ordering. The archived option-table
+    body is neither read nor needed to reproduce this artifact.
+    """
+    document = json.loads(read_source("mint8_table_row_labels"))
+    source_record = MINT8_TABLE_LABEL_PROVENANCE
+    for field, provenance_field in (
+        ("source_url", "source_url"),
+        ("retrieved_via", "retrieved_via"),
+        ("raw_sha256", "raw_sha256"),
+        ("dateCertified", "date_certified"),
+    ):
+        if document.get(field) != source_record[provenance_field]:
+            raise ValueError(f"label source {field} disagrees with provenance")
+    if not document.get("note", "").startswith("LABELS ONLY."):
+        raise ValueError("the label extraction must be marked LABELS ONLY")
+    names: dict[str, str] = {}
+    labels: tuple[str, ...] | None = None
+    for number in range(13, 21):
+        groups = document["tables"][str(number)]["groups"]
+        for key, section in MINT8_COHORT_ROW_GROUPS.items():
+            matches = [group for group in groups if group["group"] == section]
+            if len(matches) != 1:
+                raise ValueError(
+                    f"table {number}: {section!r} has {len(matches)} matches"
+                )
+            names[key] = matches[0]["group"]
+            actual = tuple(matches[0]["labels"])
+            if actual != MINT8_QUINTILE_LABELS:
+                raise ValueError(f"table {number}: quintile labels changed")
+            labels = actual
+    if labels is None:
+        raise ValueError("no cohort quintile labels were extracted")
+    return names, labels
+
+
 def build_mint8() -> dict[str, Any]:
     """Verbatim MINT8 definitions used by the lifetime-earnings rows."""
     page = _parse("mint8_user_guide")
@@ -683,6 +808,7 @@ def build_mint8() -> dict[str, Any]:
     )
     if not certified:
         raise ValueError("dateCertified meta tag not found")
+    row_groups, quintile_labels = parse_mint8_labels()
     definitions: dict[str, dict[str, str]] = {}
     for key, locator in MINT8_PARAGRAPHS.items():
         if "element_id" in locator:
@@ -705,12 +831,12 @@ def build_mint8() -> dict[str, Any]:
         "document": SOURCES["mint8_user_guide"]["title"],
         "date_certified": certified.group(1),
         "definitions": definitions,
-        "cohort_table_row_groups": MINT8_COHORT_ROW_GROUPS,
-        "quintile_labels_high_to_low": list(MINT8_QUINTILE_LABELS),
+        "cohort_table_row_groups": row_groups,
+        "quintile_labels_high_to_low": list(quintile_labels),
         "cohort_table_label_provenance": MINT8_TABLE_LABEL_PROVENANCE,
         "build": {
             "built_by": "scripts/extract_lifetime_measure_sources.py",
-            "sources": ["mint8_user_guide"],
+            "sources": ["mint8_user_guide", "mint8_table_row_labels"],
             "provenance_file": (
                 "data/external/lifetime_measure_sources.provenance.json"
             ),
@@ -719,7 +845,7 @@ def build_mint8() -> dict[str, Any]:
 
 
 def build_provenance() -> dict[str, Any]:
-    """One provenance record for the five committed source bodies."""
+    """Provenance for the five HTML captures and cleared label extraction."""
     for key in SOURCES:
         read_source(key)
     return {
@@ -735,6 +861,15 @@ def build_provenance() -> dict[str, Any]:
                 "document": spec["title"],
                 "source_sha256": spec["sha256"],
                 "source_length_bytes": spec["bytes"],
+                "locator": SOURCE_LOCATORS[key],
+                "acquisition": (
+                    "Copied byte for byte from the cleared MINT-categories "
+                    "lane's followup/inputs/mint/mint8_row_categories.json; "
+                    "label-only extraction of the archived source named "
+                    "in MINT8_TABLE_LABEL_PROVENANCE, never a table body."
+                    if key == "mint8_table_row_labels"
+                    else FETCH_METHOD
+                ),
             }
             for key, spec in SOURCES.items()
         },
@@ -768,10 +903,26 @@ def build_all() -> dict[Path, dict[str, Any]]:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="Verify byte identity without writing any artifact.",
+    )
+    args = parser.parse_args()
     for path, document in build_all().items():
-        path.write_text(render(document), encoding="utf-8")
+        rendered = render(document)
+        if args.check:
+            if (
+                not path.is_file()
+                or path.read_text(encoding="utf-8") != rendered
+            ):
+                parser.error(f"{path.relative_to(ROOT)} needs rebuilding")
+        else:
+            path.write_text(rendered, encoding="utf-8")
         digest = hashlib.sha256(path.read_bytes()).hexdigest()
-        print(f"wrote {path.relative_to(ROOT)} sha256 {digest}")
+        action = "verified" if args.check else "wrote"
+        print(f"{action} {path.relative_to(ROOT)} sha256 {digest}")
 
 
 if __name__ == "__main__":

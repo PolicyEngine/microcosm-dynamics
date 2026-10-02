@@ -61,7 +61,8 @@ test_lifetime_measures.py``):
 
 1. Quintiles: within a cell with no tied values every quintile holds
    20 percent of the weight to within the largest row's weight share;
-   labels are invariant to exact positive weight scaling and to row
+   labels are invariant to positive weight scaling within the documented
+   floating-point boundary tolerance and to row
    order; a higher value never gets a lower quintile in the same cell;
    missing values get :data:`NOT_COMPUTED` and nothing else does.
 2. Payroll tax present value: zero earnings give zero; doubling earnings
@@ -82,6 +83,7 @@ import hashlib
 import json
 import math
 from collections.abc import Callable, Collection, Mapping
+from copy import deepcopy
 from dataclasses import dataclass, field
 from enum import Enum
 from fractions import Fraction
@@ -163,7 +165,7 @@ TRUST_FUND_INTEREST_RATES_SHA256 = (
 #: Verbatim MINT8 Table User Guide definitions and the cohort-table labels.
 MINT8_DEFINITIONS_PATH = _EXTERNAL / "mint8_lifetime_quintile_definitions.json"
 MINT8_DEFINITIONS_SHA256 = (
-    "0df7298e0655eecdd4aca5b04b41ec9c520228baa7329080e7208950e7769608"
+    "857d82d78371483d69ffb1402df8f2229928629cf5e657dcb5ee497f853ffa74"
 )
 
 #: MINT8's quintile labels in its table order (always these five).
@@ -180,6 +182,10 @@ NOT_COMPUTED = "not computed"
 COMPUTED = "computed"
 
 _N_QUINTILES = 5
+# Snap a midpoint within this distance of an integer quintile boundary
+# to that boundary. This prevents float multiplication from moving an
+# exact boundary across quintiles when all weights are rescaled.
+_QUINTILE_BOUNDARY_TOLERANCE = 1e-12
 _RETIREMENT_AGE = 62
 #: The age at which the career frames' coverage starts at the earliest
 #: (estimates/career.py: max(1968, birth year + 22)); a later first row
@@ -420,6 +426,22 @@ REPORT_EARNINGS_BUILDER_DEFAULTS: dict[str, str] = {
         "counts as married (the repository's default)"
     ),
     "missing_spouse": "own earnings for that year, counted (OWN_ONLY)",
+    "missing_spouse_year": (
+        "a spouse with a career but no row in this year contributes zero; "
+        "the year is counted as married_years_spouse_year_absent"
+    ),
+    "missing_own_year": (
+        "COVERED_AGES uses only the person's own observed career years; "
+        "spouse-only years are outside this report average"
+    ),
+    "reciprocal_history_disagreement": (
+        "use each person's recorded spouse; disagreement with an available "
+        "spouse history is counted and couple conservation is not promised"
+    ),
+    "multiple_marriages_in_force": (
+        "use the latest-start marriage as marital_state_at does; count "
+        "years_multiple_marriages_in_force"
+    ),
     "quintile_order_and_population": (
         "not registered: whether '1st Quintile' is the lowest and over "
         "which population the quintiles are cut are unrecorded, so the "
@@ -468,6 +490,22 @@ PAYROLL_TAX_BUILDER_DEFAULTS: dict[str, str] = {
     ),
     "unknown_marital_state": (
         "a year whose marital state is 'unknown' counts own tax (counted)"
+    ),
+    "missing_spouse_year": (
+        "a spouse with a career but no row in this year contributes zero; "
+        "the year is counted as married_years_spouse_year_absent"
+    ),
+    "missing_own_year": (
+        "share over the union of both spouses' career years while married; "
+        "an absent own year contributes zero and is counted"
+    ),
+    "reciprocal_history_disagreement": (
+        "use each person's recorded spouse; disagreement with an available "
+        "spouse history is counted and couple conservation is not promised"
+    ),
+    "multiple_marriages_in_force": (
+        "use the latest-start marriage as marital_state_at does; count "
+        "years_multiple_marriages_in_force"
     ),
 }
 
@@ -716,15 +754,19 @@ def accumulation_factor(
     reference_year = _year(reference_year, "reference_year")
     if tax_year == reference_year:
         return 1.0
-    if tax_year < reference_year:
-        return math.prod(
-            1.0 + interest.rate_for(year)
-            for year in range(tax_year + 1, reference_year + 1)
-        )
-    return 1.0 / math.prod(
-        1.0 + interest.rate_for(year)
-        for year in range(reference_year + 1, tax_year + 1)
-    )
+    low, high = sorted((tax_year, reference_year))
+    growth = []
+    for year in range(low + 1, high + 1):
+        rate = float(interest.rate_for(year))
+        if not math.isfinite(rate) or rate <= -1.0:
+            raise ValueError(
+                f"Interest rate for {year} must be finite and above -1."
+            )
+        growth.append(1.0 + rate)
+    factor = math.prod(growth)
+    if not math.isfinite(factor) or factor <= 0:
+        raise ValueError("Interest accumulation is outside finite range.")
+    return factor if tax_year < reference_year else 1.0 / factor
 
 
 # ---------------------------------------------------------------------------
@@ -825,6 +867,7 @@ def _input_digests(
     careers: pd.DataFrame,
     persons: pd.DataFrame,
     episodes: pd.DataFrame | None = None,
+    marriage_history_person_ids: Collection[int] | None = None,
 ) -> dict[str, str]:
     digests = {
         "careers_sha256": _frame_sha256(
@@ -839,6 +882,12 @@ def _input_digests(
             episodes.sort_values(["person_id", "marriage_order"])
             .astype("string")
             .reset_index(drop=True)
+        )
+    if marriage_history_person_ids is not None:
+        digests["marriage_history_person_ids_sha256"] = _sha256(
+            json.dumps(sorted(set(marriage_history_person_ids))).encode(
+                "utf-8"
+            )
         )
     return digests
 
@@ -881,7 +930,11 @@ def _provenance(
         "reason_counts": _counts(frame["reason"]),
         "flag_totals": totals,
         "conventions": conventions,
-        "ssa_parameters": {"pe_us_revision": params.pe_us_revision},
+        "ssa_parameters": {
+            "pe_us_revision": params.pe_us_revision,
+            "nawi_sha256": _schedule_sha256(params.nawi),
+            "wage_base_sha256": _schedule_sha256(params.wage_base),
+        },
         "inputs": inputs,
         "output_sha256": _frame_sha256(frame),
         "pure_over_cohort_outputs": (
@@ -891,14 +944,44 @@ def _provenance(
     }
     if extra:
         record.update(extra)
-    return record
+    # A caller can edit its audit record without changing module defaults
+    # or another call's provenance.
+    return deepcopy(record)
+
+
+def _schedule_sha256(schedule: Mapping[int, float]) -> str:
+    """Pin supplied parameter values, including replaced projection paths."""
+    return _sha256(
+        json.dumps(
+            {
+                str(year): float(value)
+                for year, value in sorted(schedule.items())
+            },
+            sort_keys=True,
+            allow_nan=False,
+        ).encode("utf-8")
+    )
 
 
 def _nawi_missing(
     years: Collection[int], indexing_year: int, params: SSAParameters
 ) -> list[int]:
     needed = {indexing_year} | {year for year in years if year < indexing_year}
+    for year in needed & params.nawi.keys():
+        value = float(params.nawi[year])
+        if not math.isfinite(value) or value <= 0:
+            raise ValueError(f"NAWI for {year} must be finite and positive.")
     return sorted(year for year in needed if year not in params.nawi)
+
+
+def _wage_base(year: int, params: SSAParameters) -> float:
+    """Validate the supplied contribution and benefit base before use."""
+    base = float(params.wage_base_for(year))
+    if not math.isfinite(base) or base < 0:
+        raise ValueError(
+            f"Wage base for {year} must be finite and non-negative."
+        )
+    return base
 
 
 # ---------------------------------------------------------------------------
@@ -918,6 +1001,7 @@ _AIME_COLUMNS = (
     "history_starts_after_age_22",
     "history_ends_before_cutoff",
     "n_history_years",
+    "n_history_years_after_age_61",
     "n_imputed_history_years",
     "years_before_1951_dropped",
     "computation_years",
@@ -957,6 +1041,8 @@ def initial_aime_at_62(
     analysis_year = _year(analysis_year, "analysis_year")
     if not isinstance(convention, AimeConvention):
         raise TypeError("convention must be an AimeConvention.")
+    if convention.last_earnings_age is not None:
+        _year(convention.last_earnings_age, "last_earnings_age")
     convention_years = ComputationYears(convention.computation_years)
     careers_frame = _careers_frame(careers)
     persons_frame = _persons_frame(persons)
@@ -1012,6 +1098,9 @@ def initial_aime_at_62(
                 last_year is not None and last_year < cutoff
             ),
             "n_history_years": len(kept),
+            "n_history_years_after_age_61": sum(
+                year > birth + 61 for year in kept
+            ),
             "n_imputed_history_years": (
                 None
                 if imputed is None
@@ -1036,6 +1125,8 @@ def initial_aime_at_62(
         elif missing := _nawi_missing(kept, indexing, params):
             row["reason"] = f"nawi_unavailable:{missing[0]}"
         else:
+            for year in kept:
+                _wage_base(year, params)
             if convention_years is ComputationYears.STATUTORY:
                 row["computation_years"] = (
                     statutory_aime.benefit_computation_years(birth)
@@ -1070,6 +1161,12 @@ def initial_aime_at_62(
                 "source": convention.source,
             },
             "oracle": "ss.statutory_aime.oracle_aime (unchanged)",
+            "legacy_history_window": (
+                "last_earnings_age=None reproduces the blind-test oracle "
+                "on supplied careers through analysis_year; post-61 years "
+                "are counted explicitly, so this is a legacy career AIME "
+                "rather than an initial-at-62 observation where present"
+            ),
             "definition": "mint8:initial_aime_quintile",
         },
         {"basis_counts": _counts(frame["basis"])},
@@ -1095,8 +1192,13 @@ def annual_payroll_taxes(
 
     frame = _careers_frame(careers)
     years = sorted(int(year) for year in frame["year"].unique())
-    base = {year: float(params.wage_base_for(year)) for year in years}
+    base = {year: _wage_base(year, params) for year in years}
     rate = {year: float(rates.combined_for(year)) for year in years}
+    for year in years:
+        if not math.isfinite(rate[year]) or rate[year] < 0:
+            raise ValueError(
+                f"Tax rate for {year} must be finite and non-negative."
+            )
     taxable = np.minimum(
         frame["earnings"].to_numpy(), frame["year"].map(base).to_numpy()
     )
@@ -1116,6 +1218,19 @@ def _episodes_by_person(
         raise ValueError(f"marriage_episodes lacks {sorted(missing)}.")
     frame = episodes.copy()
     frame["person_id"] = _integral(frame["person_id"], "episode person_id")
+    for column in (
+        "marriage_order",
+        "start_year",
+        "episode_end_year",
+        "spouse_person_id",
+        "separation_year",
+    ):
+        if column in frame:
+            present = frame[column].notna()
+            _integral(frame.loc[present, column], f"episode {column}")
+    ordered = frame[frame["marriage_order"].notna()]
+    if ordered.duplicated(["person_id", "marriage_order"]).any():
+        raise ValueError("marriage_episodes has duplicate marriage orders.")
     return {
         int(pid): group.reset_index(drop=True)
         for pid, group in frame.groupby("person_id", sort=True)
@@ -1139,6 +1254,7 @@ class _MaritalYears:
         self._empty = episodes.iloc[0:0]
         self._separated_is_married = bool(separated_is_married)
         self._cache: dict[tuple[int, int], tuple[str, int | None]] = {}
+        self._multiple_in_force: dict[tuple[int, int], bool] = {}
 
     def has_history(self, pid: int) -> bool:
         return pid in self._by_person
@@ -1165,7 +1281,12 @@ class _MaritalYears:
                 str(state["status"]),
                 _spouse_id(state["spouse_person_id"]),
             )
+            self._multiple_in_force[key] = bool(state["multiple_in_force"])
         return self._cache[key]
+
+    def multiple_in_force(self, pid: int, year: int) -> bool:
+        self.state(pid, year)
+        return self._multiple_in_force[(pid, year)]
 
 
 @dataclass
@@ -1174,6 +1295,8 @@ class _ShareCounts:
     married_years_spouse_unavailable: int = 0
     married_years_spouse_year_absent: int = 0
     married_years_spouse_record_disagrees: int = 0
+    married_years_own_year_absent: int = 0
+    years_multiple_marriages_in_force: int = 0
     years_marital_unknown: int = 0
 
 
@@ -1194,6 +1317,9 @@ def _shared_amounts(
     out: dict[int, float] = {}
     for year in sorted(candidate_years):
         status, spouse = marital.state(pid, year)
+        counts.years_multiple_marriages_in_force += int(
+            marital.multiple_in_force(pid, year)
+        )
         own_value = own.get(year)
         if status == "married":
             spouse_years = (
@@ -1206,6 +1332,8 @@ def _shared_amounts(
                 continue
             if year not in spouse_years:
                 counts.married_years_spouse_year_absent += 1
+            if own_value is None:
+                counts.married_years_own_year_absent += 1
             if marital.has_history(spouse):
                 back_status, back_spouse = marital.state(spouse, year)
                 if back_status != "married" or back_spouse != pid:
@@ -1241,6 +1369,8 @@ _SHARE_COLUMNS = (
     "married_years_spouse_unavailable",
     "married_years_spouse_year_absent",
     "married_years_spouse_record_disagrees",
+    "married_years_own_year_absent",
+    "years_multiple_marriages_in_force",
     "years_marital_unknown",
     "marriage_history_absent",
 )
@@ -1284,7 +1414,8 @@ def lifetime_payroll_tax_pv_at_62(
     refuses); a missing spouse under ``missing_spouse=NOT_COMPUTED``.
     """
 
-    shared = bool(shared)
+    if not isinstance(shared, bool):
+        raise TypeError("shared must be a bool.")
     missing_spouse = MissingSpousePolicy(missing_spouse)
     missing_rate = MissingRatePolicy(missing_rate)
     if shared and marriage_episodes is None:
@@ -1313,6 +1444,7 @@ def lifetime_payroll_tax_pv_at_62(
 
     rows = []
     uncovered: dict[int, list[int]] = {}
+    required_interest_years: set[int] = set()
     for pid, birth in zip(
         persons_frame["person_id"], persons_frame["birth_year"], strict=True
     ):
@@ -1362,6 +1494,7 @@ def lifetime_payroll_tax_pv_at_62(
             for year in amounts:
                 low, high = sorted((year, reference))
                 needed.update(range(low + 1, high + 1))
+            required_interest_years.update(needed)
             gaps = sorted(
                 year for year in needed if not _covers(interest, year)
             )
@@ -1405,7 +1538,10 @@ def lifetime_payroll_tax_pv_at_62(
         frame,
         params,
         _input_digests(
-            careers_frame, persons_frame, marriage_episodes if shared else None
+            careers_frame,
+            persons_frame,
+            marriage_episodes if shared else None,
+            history_ids if shared else None,
         ),
         {
             "shared": shared,
@@ -1420,7 +1556,15 @@ def lifetime_payroll_tax_pv_at_62(
             ),
         },
         {
-            "tax_rates": dict(getattr(rates, "provenance", {}) or {}),
+            "tax_rates": {
+                **dict(getattr(rates, "provenance", {}) or {}),
+                "basis": getattr(rates, "basis", None),
+                "applied_rates_sha256": _schedule_sha256(
+                    dict(
+                        zip(taxes["year"], taxes["combined_rate"], strict=True)
+                    )
+                ),
+            },
             "interest_rates": {
                 **dict(getattr(interest, "provenance", {}) or {}),
                 "assumed_years": sorted(
@@ -1428,6 +1572,15 @@ def lifetime_payroll_tax_pv_at_62(
                 ),
                 "assumption_source": getattr(
                     interest, "assumption_source", None
+                ),
+                "series": getattr(interest, "series", None),
+                "required_years": sorted(required_interest_years),
+                "available_rates_sha256": _schedule_sha256(
+                    {
+                        year: interest.rate_for(year)
+                        for year in required_interest_years
+                        if _covers(interest, year)
+                    }
                 ),
             },
         },
@@ -1489,7 +1642,10 @@ def report_average_indexed_earnings_22_62(
     """
 
     conventions = conventions or ReportEarningsConventions()
-    shared = bool(shared)
+    if not isinstance(shared, bool):
+        raise TypeError("shared must be a bool.")
+    for name in ("first_age", "last_age", "index_age"):
+        _year(getattr(conventions, name), name)
     if shared and marriage_episodes is None:
         raise ValueError("shared=True needs marriage_episodes.")
     if conventions.last_age < conventions.first_age:
@@ -1517,7 +1673,7 @@ def report_average_indexed_earnings_22_62(
 
     def earnings_value(earnings: float, year: int) -> float:
         if conventions.cap_at_taxable_maximum:
-            return min(earnings, float(params.wage_base_for(year)))
+            return min(earnings, _wage_base(year, params))
         return earnings
 
     rows = []
@@ -1613,7 +1769,10 @@ def report_average_indexed_earnings_22_62(
         frame,
         params,
         _input_digests(
-            careers_frame, persons_frame, marriage_episodes if shared else None
+            careers_frame,
+            persons_frame,
+            marriage_episodes if shared else None,
+            history_ids if shared else None,
         ),
         {
             "shared": shared,
@@ -1642,9 +1801,11 @@ def _quintile_ranks(values: np.ndarray, weights: np.ndarray) -> np.ndarray:
     Rows sharing a value form one group and always share a rank.  Groups
     are ordered by value; a group whose cumulative weight span is
     [B, B + G] of the total W takes rank floor(5 * (B + G / 2) / W),
-    capped at 4: the quintile holding the midpoint of its span.  Weights
-    are summed as exact fractions, so the ranks do not depend on row
-    order or on rounding.
+    capped at 4: the quintile holding the midpoint of its span. Weights
+    are summed as exact fractions. A normalized midpoint within 1e-12
+    of an integer boundary (in rank units, 0-5) takes the upper quintile.
+    This tolerance absorbs float multiplication error during rescaling;
+    exact sums keep the result independent of row order.
     """
 
     unique, inverse = np.unique(values, return_inverse=True)
@@ -1656,10 +1817,13 @@ def _quintile_ranks(values: np.ndarray, weights: np.ndarray) -> np.ndarray:
     below = Fraction(0)
     for index, weight in enumerate(group_weights):
         twice_midpoint = 2 * below + weight
-        ranks[index] = min(
-            _N_QUINTILES - 1,
-            (_N_QUINTILES * twice_midpoint) // (2 * total),
-        )
+        midpoint_rank = Fraction(_N_QUINTILES * twice_midpoint, 2 * total)
+        nearest = round(midpoint_rank)
+        if abs(midpoint_rank - nearest) <= _QUINTILE_BOUNDARY_TOLERANCE:
+            rank = nearest
+        else:
+            rank = math.floor(midpoint_rank)
+        ranks[index] = min(_N_QUINTILES - 1, rank)
         below += weight
     return ranks[inverse]
 
@@ -1684,6 +1848,8 @@ def weighted_quintiles(
     percent of the cell's weight to within the largest single weight's
     share.  MINT8 publishes no tie rule ("The dollar ranges are available
     upon request"); this is the builder's registered rule.
+    A midpoint within 1e-12 rank units of a boundary takes the upper
+    quintile, so floating-point weight rescaling preserves boundary labels.
 
     Returns a categorical Series named ``quintile`` with categories
     ``labels`` then :data:`NOT_COMPUTED`; a row without a value gets
@@ -1691,7 +1857,11 @@ def weighted_quintiles(
     """
 
     labels = tuple(labels)
-    if len(labels) != _N_QUINTILES or len(set(labels)) != _N_QUINTILES:
+    if (
+        len(labels) != _N_QUINTILES
+        or len(set(labels)) != _N_QUINTILES
+        or not all(isinstance(label, str) for label in labels)
+    ):
         raise ValueError("labels must be five distinct strings.")
     if NOT_COMPUTED in labels:
         raise ValueError(f"{NOT_COMPUTED!r} cannot be a quintile label.")
@@ -1772,12 +1942,20 @@ def quintile_summary(
     The unweighted counts are what MINT8's disclosure rule reads ("suppress
     an entire characteristic subgroup if the sample size for any row in
     that subgroup is less than 100 individuals").
+    Categorical inputs retain empty label rows with zero cases, so an
+    empty quintile remains visible to that rule. Zero total valued weight
+    gives missing shares.
     """
 
     labels = pd.Series(labels)
     weights = pd.Series(weights)
     if not labels.index.equals(weights.index):
         raise ValueError("labels and weights must share one index.")
+    if by is not None and not pd.Series(by).index.equals(labels.index):
+        raise ValueError("by must share the index of labels.")
+    numeric_weights = pd.to_numeric(weights).astype("float64")
+    if not np.all(np.isfinite(numeric_weights)) or (numeric_weights < 0).any():
+        raise ValueError("summary weights must be finite and non-negative.")
     cell = (
         pd.Series("all", index=labels.index, dtype="string")
         if by is None
@@ -1787,18 +1965,28 @@ def quintile_summary(
         {
             "cell": cell.to_numpy(),
             "label": labels.astype("string").to_numpy(),
-            "weight": pd.to_numeric(weights).astype("float64").to_numpy(),
+            "weight": numeric_weights.to_numpy(),
         }
     )
-    summary = (
-        frame.groupby(["cell", "label"], sort=True)
-        .agg(n=("weight", "size"), weight=("weight", "sum"))
-        .reset_index()
+    summary = frame.groupby(["cell", "label"], sort=True).agg(
+        n=("weight", "size"), weight=("weight", "sum")
     )
+    if isinstance(labels.dtype, pd.CategoricalDtype):
+        cells = sorted(frame["cell"].dropna().unique())
+        label_order = [str(label) for label in labels.cat.categories]
+        complete = pd.MultiIndex.from_product(
+            [cells, label_order], names=["cell", "label"]
+        )
+        summary = summary.reindex(complete, fill_value=0)
+    summary = summary.reset_index()
     valued = summary[summary["label"] != NOT_COMPUTED]
     totals = valued.groupby("cell")["weight"].sum()
     summary["weight_share"] = [
-        (weight / totals[cell] if label != NOT_COMPUTED else math.nan)
+        (
+            weight / totals[cell]
+            if label != NOT_COMPUTED and totals.get(cell, 0) > 0
+            else math.nan
+        )
         for cell, label, weight in zip(
             summary["cell"], summary["label"], summary["weight"], strict=True
         )
