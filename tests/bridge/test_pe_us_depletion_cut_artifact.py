@@ -552,7 +552,7 @@ def test__artifact__then_encoding_artifacts_are_labelled(document, report):
 
 
 def test__artifact__then_the_recorded_commit_is_this_code(document):
-    """The outputs' commit is an ancestor of HEAD with the same src/scripts."""
+    """The outputs' commit is an ancestor with unchanged recorded sources."""
 
     commit = document["provenance"]["microcosm_dynamics"]["commit"]
     try:
@@ -566,11 +566,13 @@ def test__artifact__then_the_recorded_commit_is_this_code(document):
     if ancestor.returncode not in (0, 1):
         pytest.skip(f"commit {commit} is not in this clone's history")
     assert ancestor.returncode == 0, f"{commit} is not an ancestor of HEAD"
+    code = document["provenance"]["microcosm_dynamics"]
+    paths = [code["script"], *code["modules"]]
     unchanged = subprocess.run(
-        ["git", "diff", "--quiet", commit, "HEAD", "--", "src", "scripts"],
+        ["git", "diff", "--quiet", commit, "HEAD", "--", *paths],
         cwd=ROOT,
         capture_output=True,
     )
     assert (
         unchanged.returncode == 0
-    ), f"src/ or scripts/ changed since the outputs were generated at {commit}"
+    ), f"recorded sources changed since the outputs were generated at {commit}"
