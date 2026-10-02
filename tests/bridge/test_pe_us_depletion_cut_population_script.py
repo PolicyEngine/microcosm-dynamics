@@ -90,13 +90,20 @@ def test_preflight_refuses_wrong_specification_hash(tmp_path, frozen):
 
 
 @pytest.mark.parametrize("sidecar", [False, True])
-def test_preflight_refuses_existing_output(tmp_path, frozen, sidecar):
+@pytest.mark.parametrize("symlink", [False, True])
+def test_preflight_refuses_existing_output(tmp_path, frozen, sidecar, symlink):
     output = tmp_path / "population.json"
     existing = output.with_suffix(".env.json") if sidecar else output
-    existing.write_text("preserved")
+    if symlink:
+        existing.symlink_to(tmp_path / "missing")
+    else:
+        existing.write_text("preserved")
     with pytest.raises(runner.Refusal, match="already exists"):
         _preflight(tmp_path, frozen)
-    assert existing.read_text() == "preserved"
+    if symlink:
+        assert existing.is_symlink()
+    else:
+        assert existing.read_text() == "preserved"
 
 
 def test_preflight_accepts_exact_frozen_registration(tmp_path, frozen):
@@ -361,7 +368,7 @@ def test_row_identity_failure_invalidates_only_r3_r4(pipeline, monkeypatch):
     monkeypatch.setattr(
         runner,
         "write_chart",
-        lambda *_: {"status": "skipped", "reason": "unit test"},
+        lambda *_, **_kwargs: {"status": "skipped", "reason": "unit test"},
     )
     document = runner.run(args)
     for row in runner.pop.ROWS:
@@ -531,3 +538,184 @@ def test_nonfinite_child_amounts_cannot_pass_tolerances(
     assert caught.value.check == check
     assert not args.phase_marker.exists()
     assert not list(args.raw_dir.glob("*.npz"))
+
+
+@pytest.mark.parametrize(
+    "malformation",
+    ["record_list", "values_list", "values_none", "source_not_string"],
+)
+def test_malformed_context_is_recorded_as_a_refusal_before_children(
+    pipeline, malformation
+):
+    args, calls = pipeline
+    record = {
+        "sha256": runner.CONTEXT_SHA256,
+        "url": "https://example.com/source",
+        "table": "Table 1",
+        "values_thousands": {"social_security_only": 65522, "both": 2533},
+    }
+    if malformation == "record_list":
+        record = []
+    elif malformation == "values_list":
+        record["values_thousands"] = []
+    elif malformation == "values_none":
+        record["values_thousands"] = None
+    else:
+        record["table"] = None
+    args.context_snapshot = args.raw_dir / "context.json"
+    args.context_snapshot.write_text(json.dumps(record))
+    with pytest.raises(runner.Refusal) as caught:
+        runner.run(args)
+    assert caught.value.check == "context"
+    assert not calls
+    record = json.loads(
+        (args.raw_dir / "invented_population.refusal.json").read_text()
+    )
+    assert record["refusal"]["check"] == "context"
+
+
+def test_raced_canonical_array_is_preserved(pipeline, monkeypatch):
+    args, _ = pipeline
+    actual = runner._run_child
+    external = args.raw_dir / "probe.npz"
+
+    def raced(python, job, timeout):
+        if job["mode"] == "probe":
+            external.write_bytes(b"externally created after preflight")
+        return actual(python, job, timeout)
+
+    monkeypatch.setattr(runner, "_run_child", raced)
+    with pytest.raises(runner.Refusal):
+        runner.run(args)
+    assert external.read_bytes() == b"externally created after preflight"
+    assert not list(args.raw_dir.glob(".population-child-*"))
+    assert not args.phase_marker.exists()
+
+
+def test_private_child_partial_arrays_are_removed_after_timeout(
+    pipeline, monkeypatch
+):
+    args, _ = pipeline
+    actual = runner._run_child
+
+    def timed_out(python, job, timeout):
+        if job["mode"] == "scenario":
+            Path(job["output_path"]).write_bytes(
+                b"invented partial SSI transport"
+            )
+            raise runner.Refusal(
+                "child", "child process exceeded explicit timeout"
+            )
+        return actual(python, job, timeout)
+
+    monkeypatch.setattr(runner, "_run_child", timed_out)
+    with pytest.raises(runner.Refusal, match="timeout"):
+        runner.run(args)
+    assert not list(args.raw_dir.glob(".population-child-*"))
+    assert not list(args.raw_dir.glob("*.npz"))
+    assert not args.phase_marker.exists()
+
+
+def _invented_chart(document, directory, *, created_paths=None):
+    for name in ("replacement.png", "replacement.svg"):
+        runner._write_new(
+            directory / name,
+            "invented chart statistics",
+            created_paths=created_paths,
+        )
+    return {
+        "status": "written",
+        "files": ["replacement.png", "replacement.svg"],
+    }
+
+
+def test_raced_publication_sidecar_preserved_while_owned_statistics_removed(
+    pipeline, monkeypatch
+):
+    args, _ = pipeline
+    output = args.raw_dir / "invented_population.json"
+    external = output.with_suffix(".env.json")
+
+    def raced_chart(document, directory, *, created_paths=None):
+        result = _invented_chart(
+            document, directory, created_paths=created_paths
+        )
+        external.write_text("externally created sidecar")
+        return result
+
+    monkeypatch.setattr(runner, "write_chart", raced_chart)
+    with pytest.raises(runner.Refusal):
+        runner.run(args)
+    assert external.read_text() == "externally created sidecar"
+    assert not output.exists()
+    assert not list((args.raw_dir / "invented_report").glob("replacement.*"))
+    assert not list(args.raw_dir.glob("*.npz"))
+    assert not (args.raw_dir / "manifest.json").exists()
+
+
+def test_publication_report_failure_removes_all_owned_statistics(
+    pipeline, monkeypatch
+):
+    args, _ = pipeline
+    actual = runner._write_new
+
+    def failing_report(path, text, **kwargs):
+        actual(path, text, **kwargs)
+        if path.name == "report.md":
+            raise OSError("invented report failure")
+
+    monkeypatch.setattr(runner, "write_chart", _invented_chart)
+    monkeypatch.setattr(runner, "_write_new", failing_report)
+    with pytest.raises(runner.Refusal):
+        runner.run(args)
+    assert not (args.raw_dir / "invented_population.json").exists()
+    assert not (args.raw_dir / "invented_population.env.json").exists()
+    assert not list((args.raw_dir / "invented_report").iterdir())
+    assert not list(args.raw_dir.glob("*.npz"))
+    assert not (args.raw_dir / "manifest.json").exists()
+    refusal = json.loads(
+        (args.raw_dir / "invented_population.refusal.json").read_text()
+    )
+    assert refusal["refusal"]["ssi_outcomes_computed_and_discarded"]
+
+
+def test_sidecar_environment_validated_before_publication(
+    pipeline, monkeypatch
+):
+    args, _ = pipeline
+    monkeypatch.setattr(
+        runner, "_environment", lambda: {"python": "/private/local-path"}
+    )
+    monkeypatch.setattr(
+        runner,
+        "write_chart",
+        lambda *_args, **_kwargs: pytest.fail(
+            "chart published before environment validation"
+        ),
+    )
+    with pytest.raises(runner.Refusal) as caught:
+        runner.run(args)
+    assert caught.value.check == 7
+    assert not (args.raw_dir / "invented_population.json").exists()
+    assert not (args.raw_dir / "invented_report").exists()
+    assert not list(args.raw_dir.glob("*.npz"))
+
+
+@pytest.mark.parametrize(
+    "name", ["artifact", "sidecar", "report", "png", "svg"]
+)
+def test_dangling_output_symlinks_refused_before_computation(tmp_path, name):
+    output = tmp_path / "invented.json"
+    docs = tmp_path / "report"
+    docs.mkdir()
+    path = {
+        "artifact": output,
+        "sidecar": output.with_suffix(".env.json"),
+        "report": docs / "report.md",
+        "png": docs / "replacement.png",
+        "svg": docs / "replacement.svg",
+    }[name]
+    path.symlink_to(tmp_path / "missing")
+    with pytest.raises(runner.Refusal, match="already exists"):
+        runner.output_destinations(tmp_path, output, docs, invented=True)
+    assert path.is_symlink()

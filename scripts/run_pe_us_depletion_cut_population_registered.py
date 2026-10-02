@@ -18,8 +18,10 @@ import platform
 import re
 import resource
 import shlex
+import shutil
 import subprocess
 import sys
+import tempfile
 import textwrap
 import time
 from collections.abc import Callable, Mapping
@@ -170,7 +172,7 @@ def preflight(
         raise Refusal(
             "preflight", "specification SHA-256 differs from code pin"
         )
-    if output.exists() or output.with_suffix(".env.json").exists():
+    if _present(output) or _present(output.with_suffix(".env.json")):
         raise Refusal(
             "preflight", "artifact or environment sidecar already exists"
         )
@@ -181,6 +183,12 @@ def _inside(path: Path, root: Path) -> bool:
     """Whether a resolved path lies in a directory, including symlinks."""
 
     return path.resolve().is_relative_to(root.resolve())
+
+
+def _present(path: Path) -> bool:
+    """Treat dangling symlinks as existing destinations as well."""
+
+    return path.exists() or path.is_symlink()
 
 
 def output_destinations(
@@ -209,12 +217,12 @@ def output_destinations(
                 "preflight",
                 "invented dry run outputs must lie in raw-dir; runs/ and docs/ are refused",
             )
-    if output.exists() or output.with_suffix(".env.json").exists():
+    if _present(output) or _present(output.with_suffix(".env.json")):
         raise Refusal(
             "preflight", "artifact or environment sidecar already exists"
         )
     for name in ("report.md", "replacement.png", "replacement.svg"):
-        if (docs_dir / name).exists():
+        if _present(docs_dir / name):
             raise Refusal("preflight", "report or chart already exists")
     return output, docs_dir
 
@@ -257,7 +265,10 @@ def _run_child(
         # Logs are operational evidence outside the repository. They never
         # enter the refusal document, which contains no paths or values.
         output = Path(job.get("output_path", job["frame_path"]))
-        with output.with_suffix(".stderr.txt").open("x") as stream:
+        log = Path(
+            job.get("error_log_path", output.with_suffix(".stderr.txt"))
+        )
+        with log.open("x") as stream:
             stream.write(child.stderr)
         raise Refusal("child", "child process exited nonzero")
     try:
@@ -273,6 +284,41 @@ def _load_arrays(path: Path) -> dict[str, np.ndarray]:
 
     with np.load(path, allow_pickle=False) as arrays:
         return {name: arrays[name].copy() for name in arrays.files}
+
+
+def _run_array_child(
+    python: Path,
+    job: dict[str, Any],
+    timeout: float,
+    owned_paths: set[Path],
+) -> dict[str, Any]:
+    """Stage child arrays privately, then copy to an exclusive destination.
+
+    Timeout and child failures remove the private directory, including any
+    partial arrays. Canonical paths become owned only after exclusive open
+    succeeds, so a raced external file is preserved.
+    """
+
+    destination = Path(job["output_path"])
+    with tempfile.TemporaryDirectory(
+        prefix=".population-child-", dir=destination.parent
+    ) as private:
+        staged = Path(private) / destination.name
+        result = _run_child(
+            python,
+            {
+                **job,
+                "output_path": str(staged),
+                "error_log_path": str(destination.with_suffix(".stderr.txt")),
+            },
+            timeout,
+        )
+        with destination.open("xb") as target:
+            owned_paths.add(destination)
+            with staged.open("rb") as source:
+                shutil.copyfileobj(source, target)
+        result["array_path"] = str(destination)
+        return result
 
 
 def _record(
@@ -742,7 +788,18 @@ def _context_source(snapshot: Path | None) -> dict[str, Any]:
             raise Refusal(
                 "context", "SSA snapshot record could not be read"
             ) from error
-        values = record["values_thousands"]
+        if not isinstance(record, dict):
+            raise Refusal(
+                "context", "SSA snapshot record must be a JSON object"
+            )
+        values = record.get("values_thousands")
+        if not isinstance(values, dict) or not all(
+            isinstance(record.get(key), str)
+            for key in ("sha256", "url", "table")
+        ):
+            raise Refusal(
+                "context", "SSA snapshot fields have invalid shapes or types"
+            )
         if (
             record.get("sha256") != CONTEXT_SHA256
             or values.get("social_security_only") != 65522
@@ -781,11 +838,15 @@ def _environment() -> dict[str, Any]:
     }
 
 
-def _write_new(path: Path, text: str) -> None:
+def _write_new(
+    path: Path, text: str, *, created_paths: set[Path] | None = None
+) -> None:
     """Create an output exclusively, preserving any existing bytes."""
 
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("x", encoding="utf-8") as stream:
+        if created_paths is not None:
+            created_paths.add(path)
         stream.write(text)
 
 
@@ -877,7 +938,10 @@ def markdown_report(document: Mapping[str, Any]) -> str:
 
 
 def write_chart(
-    document: Mapping[str, Any], directory: Path
+    document: Mapping[str, Any],
+    directory: Path,
+    *,
+    created_paths: set[Path] | None = None,
 ) -> dict[str, Any]:
     """Write one headline replacement chart, retaining all output labels."""
 
@@ -955,6 +1019,8 @@ def write_chart(
         for suffix in ("png", "svg"):
             path = directory / f"replacement.{suffix}"
             with path.open("xb") as stream:
+                if created_paths is not None:
+                    created_paths.add(path)
                 values = (
                     {"Title": "\n".join(title_labels), "Description": metadata}
                     if suffix == "svg"
@@ -980,34 +1046,56 @@ def write_outputs(
     preparation_started = time.monotonic()
     minimum._no_absolute_paths(document)
     json.dumps(document, allow_nan=False)
-    # Chart generation is assessed before serializing so its status is in
-    # the immutable artifact. Files were checked before any simulation.
-    document["chart"] = write_chart(document, docs_dir)
-    report = markdown_report(document)
-    minimum._no_absolute_paths(report)
-    preparation_seconds = time.monotonic() - preparation_started
-    document["run"]["output_preparation_seconds"] = preparation_seconds
-    document["run"]["elapsed_seconds"] += preparation_seconds
-    document["run"]["finished"] = dt.datetime.now(dt.timezone.utc).isoformat()
-    document["run"]["main_peak_rss_bytes"] = _peak_rss()
-    _write_new(output, json.dumps(document, indent=2, allow_nan=False) + "\n")
+    # Validate all environment/provenance fields before any statistic is
+    # published. The digest is filled from the final serialized bytes.
     sidecar = {
         "header": document["header"],
         "named_differences": document["named_differences"],
         "artifact": output.name,
-        "artifact_sha256": _sha256(output),
+        "artifact_sha256": None,
         "environment": _environment(),
         "data_provenance": document["data_provenance"],
     }
     sidecar["environment"]["policyengine_us"] = document["provenance"][
         "policyengine_us"
     ]
-    minimum._no_absolute_paths(sidecar)
-    _write_new(
-        output.with_suffix(".env.json"),
-        json.dumps(sidecar, indent=2, allow_nan=False) + "\n",
-    )
-    _write_new(docs_dir / "report.md", report)
+    try:
+        minimum._no_absolute_paths(sidecar)
+    except ValueError as error:
+        raise Refusal(
+            7, "environment sidecar contains an absolute local path"
+        ) from error
+    json.dumps(sidecar, allow_nan=False)
+    created_paths: set[Path] = set()
+    try:
+        document["chart"] = write_chart(
+            document, docs_dir, created_paths=created_paths
+        )
+        report = markdown_report(document)
+        minimum._no_absolute_paths(report)
+        preparation_seconds = time.monotonic() - preparation_started
+        document["run"]["output_preparation_seconds"] = preparation_seconds
+        document["run"]["elapsed_seconds"] += preparation_seconds
+        document["run"]["finished"] = dt.datetime.now(
+            dt.timezone.utc
+        ).isoformat()
+        document["run"]["main_peak_rss_bytes"] = _peak_rss()
+        artifact_text = json.dumps(document, indent=2, allow_nan=False) + "\n"
+        sidecar["artifact_sha256"] = hashlib.sha256(
+            artifact_text.encode("utf-8")
+        ).hexdigest()
+        sidecar_text = json.dumps(sidecar, indent=2, allow_nan=False) + "\n"
+        _write_new(output, artifact_text, created_paths=created_paths)
+        _write_new(
+            output.with_suffix(".env.json"),
+            sidecar_text,
+            created_paths=created_paths,
+        )
+        _write_new(docs_dir / "report.md", report, created_paths=created_paths)
+    except BaseException:
+        for path in created_paths:
+            path.unlink(missing_ok=True)
+        raise
 
 
 def write_refusal(
@@ -1099,7 +1187,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         ]
         if invented:
             raw_names.append("invented_frame.h5")
-        if any((args.raw_dir / name).exists() for name in raw_names):
+        if any(_present(args.raw_dir / name) for name in raw_names):
             raise Refusal("preflight", "raw transport output already exists")
         if args.child_timeout <= 0:
             raise Refusal("preflight", "child timeout must be positive")
@@ -1128,7 +1216,8 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                 raise Refusal("preflight", "registered frame-path is required")
         for path in (args.phase_marker,):
             if path is not None and (
-                path.exists() or (invented and not _inside(path, args.raw_dir))
+                _present(path)
+                or (invented and not _inside(path, args.raw_dir))
             ):
                 raise Refusal(
                     "preflight",
@@ -1257,11 +1346,11 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         )
         phase = "probe"
         probe_path = args.raw_dir / "probe.npz"
-        owned_arrays.add(probe_path)
-        child_metadata["probe"] = _run_child(
+        child_metadata["probe"] = _run_array_child(
             python,
             {**job_common, "mode": "probe", "output_path": str(probe_path)},
             args.child_timeout,
+            owned_arrays,
         )
         probe = _load_arrays(probe_path)
         component_nonfinite = np.any(
@@ -1315,11 +1404,10 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                     flush=True,
                 )
                 path = args.raw_dir / f"{scenario}_{variant}.npz"
-                owned_arrays.add(path)
                 # Conservatively disclose outcomes once the first scenario
                 # starts: a failing child may already have computed SSI.
                 outcomes_computed = True
-                child_metadata[f"{scenario}/{variant}"] = _run_child(
+                child_metadata[f"{scenario}/{variant}"] = _run_array_child(
                     python,
                     {
                         **job_common,
@@ -1331,6 +1419,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                         "output_path": str(path),
                     },
                     args.child_timeout,
+                    owned_arrays,
                 )
                 simulations[scenario][variant] = _load_arrays(path)
         # Child JSON paths are only transport; the published run records
@@ -1573,6 +1662,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         _write_new(
             args.raw_dir / "manifest.json",
             json.dumps(raw_manifest, indent=2, allow_nan=False) + "\n",
+            created_paths=owned_arrays,
         )
         write_outputs(document, output, docs_dir)
         return document
