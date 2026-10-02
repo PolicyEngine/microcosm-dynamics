@@ -1,0 +1,190 @@
+# gate_epuf block draft (registration proposal; lock flip PENDING).
+#
+# The `gates.gate_epuf` block exactly as the lock flip will add it under the
+# top-level `gates:` key of gates.yaml, after gate_m6, with `locked: true`.
+# Until then it lives here with `locked: false` and edits no gates.yaml byte:
+# any change to gates.yaml moves runs/legacy_manifest_v1.json's pin and three
+# others, which only a ratified flip may move.
+#
+# Rendered by scripts/render_gate_epuf_block_draft.py from
+# runs/epuf_gate_floors_v1.json; tests/test_gate_epuf_block_draft.py requires
+# this file to equal a fresh render. Proposal and rationale:
+# docs/amendments/gate_epuf_registration_proposal.md.
+gates:
+  gate_epuf:
+    id: epuf_covered_earnings
+    status: paused_pending_referee_round
+    locked: false
+    kind: external_anchor
+    proposal: docs/amendments/gate_epuf_registration_proposal.md
+    floor_run: runs/epuf_gate_floors_v1.json
+    floor_run_sha256: 33e75b96199ce748f0b9aaab0d77d1925405eede93d5e883fa329fde4d87e686
+    external_anchor:
+      source: SSA 2006 Earnings Public-Use File (EPUF), https://www.ssa.gov/policy/docs/microdata/epuf/
+      provenance: data/external/epuf_2006/provenance.md
+      members_sha256:
+        EPUF2006_DEMOGRAPHIC.csv: 195db459ca7b7c810162cb6e432371e8787eba8331787d2ba1eace1a0da2ccb0
+        EPUF2006_ANNUAL.csv: a47315b56214df66fb9f9abcb2caa60779c8b3d091ded199323672c27e3ea105
+      disclosure_constants_sha256: ba1f39f238278243de19b8a9d194abedffeabd855f5b97779b685d852f62a881
+    covers: 'Tranche G: a candidate generator''s earnings on gate 1''s held-out persons
+      at the even reference years 1998, 2000, 2002 and 2004, in EPUF''s capped and
+      disclosed units, scored on the mean of the 20 registered seeds against EPUF
+      with an allowance for the PSID''s own measured distance from EPUF. Gated cells,
+      and nothing else: rank persistence of capped earnings from 1998 to 2004 (men;
+      r6.men); rank persistence of capped earnings from 1998 to 2004 (women; r6.women).
+      Every other cell is report-only.'
+    not_certified:
+    - careers, years without earnings by age 62, and the 35-year AIME (tranche R,
+      report-only)
+    - any year before 1998, and 2006
+    - ages outside the support's window range (about 25-57)
+    - the forward earnings law certified by gate_m6
+    - that the PSID agrees with EPUF (the bridge is published per cell)
+    - earnings levels by age, which the generator takes from PSID marginals
+    validation_only: No candidate may use EPUF in fitting, tuning or calibration;
+      a candidate that does is scored and labelled a calibration check.
+    candidate_protocol:
+      panel: 'gate 1''s candidate panel: for each gate seed s, populace_dynamics.harness.panel.split_panel_by_person(filtered_panel,
+        ''person_id'', fraction=0.2, seed=s) draws the holdout; the candidate emits
+        the holdout''s persons on their observed periods with generated earnings'
+      gate_seeds:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      - 8
+      - 9
+      - 10
+      - 11
+      - 12
+      - 13
+      - 14
+      - 15
+      - 16
+      - 17
+      - 18
+      - 19
+      support:
+        universe: 'gate 1''s filtered PSID family panel: age 25-59, reference years
+          1998-2022, positive weight'
+        rules:
+        - a row at each of 1998, 2000, 2002 and 2004
+        - last in-filter period 2006 or later
+        - sex coded male or female (ER32000)
+        - birth year floor(median(period - age) + 0.5) in 1947-1973
+        weight: the person's 2004-row weight
+        epuf: every EPUF person with sex 1 or 2 born 1947-1973, weight 1
+      scoring: populace_dynamics.harness.epuf_run.score_candidate
+      reproduction: a verdict attaches to a registered candidate only if the run
+        reproduces that candidate's committed gate-1 artifact exactly
+    scoring:
+      estimator: mean over the 20 gate seeds of the per-seed value, then log for
+        shares, identity for rank correlations
+      floor:
+        n_replicates: 100
+        half_split_seed: b
+        holdout_split_seed: 1000 + 20 * b + j
+        replicate: e_b = [m(A_b) - m(B_b)] / 2 + pooled(m(H_bj)) - pooled(m(T_bj)),
+          j = 0..19
+      k: 4.0
+      tolerance: round(mean|e_b| + k * sd|e_b| (ddof=1), 3)
+      interval: '[min(0, bridge) - t, max(0, bridge) + t]'
+      eligibility: abs(bridge) + t + 0.8416 * sigma <= cap
+      caps:
+        log_ratio: 0.405465
+        abs_gap: 0.15
+      min_events: 20
+      pass_rule: the gate passes iff every gated cell's 20-seed estimate lies inside
+        its interval
+    gated_cells:
+      r6.men:
+        metric: abs_gap
+        cap: 0.15
+        epuf_value: 0.710865
+        psid_value: 0.668048
+        bridge_psid_minus_epuf: -0.042817
+        tolerance: 0.079
+        realized_sigma: 0.024628
+        lower: -0.122
+        upper: 0.079
+        faithful_pass_probability: 0.999348
+      r6.women:
+        metric: abs_gap
+        cap: 0.15
+        epuf_value: 0.672103
+        psid_value: 0.639784
+        bridge_psid_minus_epuf: -0.032318
+        tolerance: 0.078
+        realized_sigma: 0.02477
+        lower: -0.111
+        upper: 0.078
+        faithful_pass_probability: 0.99925
+    report_only:
+      r6.men.c0: noise_exceeds_cap
+      r6.men.c1: bridge_exceeds_budget
+      r6.men.c2: noise_exceeds_cap
+      r6.women.c0: noise_exceeds_cap
+      r6.women.c1: cohort_rung_not_adopted
+      r6.women.c2: noise_exceeds_cap
+      zint.men: below_20_events
+      d_anyzero.men: bridge_exceeds_budget
+      zint.women: below_20_events
+      d_anyzero.women: bridge_exceeds_budget
+      q_atmax.men: bridge_exceeds_budget
+      q_atmax.women: noise_exceeds_cap
+      mpers.men: below_20_events
+      mpers.women: undefined_on_some_split
+      q_sexratio: noise_exceeds_cap
+      zint.men.c0: below_20_events
+      zint.men.c1: below_20_events
+      zint.men.c2: below_20_events
+      zint.women.c0: below_20_events
+      zint.women.c1: below_20_events
+      zint.women.c2: below_20_events
+      d_anyzero.men.c0: below_20_events
+      d_anyzero.men.c1: below_20_events
+      d_anyzero.men.c2: below_20_events
+      d_anyzero.women.c0: below_20_events
+      d_anyzero.women.c1: below_20_events
+      d_anyzero.women.c2: below_20_events
+      q_atmax.men.c0: bridge_exceeds_budget
+      q_atmax.men.c1: bridge_exceeds_budget
+      q_atmax.men.c2: below_20_events
+      q_atmax.women.c0: below_20_events
+      q_atmax.women.c1: below_20_events
+      q_atmax.women.c2: below_20_events
+      mpers.men.c0: below_20_events
+      mpers.men.c1: below_20_events
+      mpers.men.c2: below_20_events
+      mpers.women.c0: below_20_events
+      mpers.women.c1: below_20_events
+      mpers.women.c2: undefined_on_some_split
+    faithful_candidate_oc:
+      analytic_product: 0.998599
+      empirical_joint: 1.0
+      pause_below: 0.9
+    bite_requirements:
+      persistence:
+        bite: bd1_persistence_loss_0.10
+        required_fail_share: 0.9
+        fail_share: 0.44
+        met: false
+    ceremony_pause: true
+    lock_ceremony:
+      exists: true
+      stage: proposal
+      next:
+      - adversarial referee round
+      - fixes
+      - verification round
+      - ratify by merge of the flip PR
+      - 'registration of the first run on issue #42'
+    history:
+    - id: 2026-10-02-epuf-registration-proposal
+      proposed: '2026-10-02'
+      content: Registration proposed with the rules committed before the floor build
+        (commit 970a9db721bf); floors in runs/epuf_gate_floors_v1.json.

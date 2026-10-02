@@ -242,8 +242,146 @@ The real gate-seed holdouts are also scored as a training copy and must pass.
 
 ## 7. Results of the floor build
 
-*Filled by the floor build, which runs after the rules above are committed
-and pushed (section 10).*
+All numbers in this section come from `runs/epuf_gate_floors_v1.json`.
+`tests/test_gate_epuf_block_draft.py` recomputes every tolerance, interval,
+partition and pass probability from the floor replicates stored there.
+
+### 7.1 Support
+
+| | Persons |
+|---|---:|
+| gate 1's filtered panel | 22,300 |
+| with a row at each of 1998, 2000, 2002, 2004 | 6,323 |
+| and last in-filter period 2006 or later | 5,775 |
+| and coded sex | 5,775 |
+| and born 1947-1973 (the support) | 5,769 |
+
+By sex and cohort band: men 898 / 926 / 679 and women 1,059 / 1,269 / 938
+(c0 / c1 / c2). EPUF's side is 1,311,282 persons. The builder asserted that
+its split function draws gate 1's holdouts: each gate seed's holdout size
+equals `runs/gate1_rank_knn_v5.json`'s for seeds 0-4.
+
+### 7.2 The PSID against EPUF
+
+Sex-level cells. "Bridge" is the PSID's distance from EPUF on the cell's
+metric scale (log ratio for shares, difference for correlations).
+
+| Cell | EPUF | PSID | Bridge | Tolerance `t` | Outcome |
+|---|---:|---:|---:|---:|---|
+| `r6.men` | 0.711 | 0.668 | -0.043 | 0.079 | **gated** |
+| `r6.women` | 0.672 | 0.640 | -0.032 | 0.078 | **gated** |
+| `zint.men` | 0.051 | 0.049 | -0.040 | 0.381 | below 20 events |
+| `zint.women` | 0.066 | 0.070 | +0.062 | 0.381 | below 20 events |
+| `d_anyzero.men` | 0.128 | 0.097 | -0.278 | 0.283 | bridge exceeds budget |
+| `d_anyzero.women` | 0.180 | 0.151 | -0.176 | 0.212 | bridge exceeds budget |
+| `q_atmax.men` | 0.116 | 0.178 | +0.425 | 0.164 | bridge exceeds budget |
+| `q_atmax.women` | 0.036 | 0.039 | +0.087 | 0.358 | noise exceeds cap |
+| `mpers.men` | 0.594 | 0.613 | +0.031 | 0.196 | below 20 events |
+| `mpers.women` | 0.478 | 0.516 | +0.077 | — | undefined on some split |
+| `q_sexratio` | 3.25 | 4.56 | +0.338 | 0.379 | noise exceeds cap |
+
+What the table says, and what it does not:
+
+- **Rank persistence.** On the support, PSID earnings ranks persist less
+  from 1998 to 2004 than EPUF's do: 0.668 against 0.711 for men, 0.640
+  against 0.672 for women. The bridge measures the gap; it does not say how
+  much of it is reporting error, frame or noncovered work.
+- **The taxable maximum.** Among positive person-years, 17.8 percent of the
+  PSID support's men are at the wage base, against 11.6 percent of EPUF's
+  men born in the same years. The support is people who stayed in the survey
+  as heads or spouses through 2006, a more attached group than every EPUF
+  earner. A log gap of 0.42 exceeds the cap, so the cell is reported.
+- **Zero years.** Given covered earnings in 2004, fewer PSID men and women
+  had a zero year in 1998-2002 than EPUF's (9.7 against 12.8 percent for
+  men). EPUF counts noncovered spells and years before arrival as zeros; the
+  PSID counts noncovered earnings as earnings.
+- **Power.** Interior zero years and persistence at the maximum are too rare
+  at the PSID's size for the 20-event rule. No cohort-band cell is powered
+  within the caps.
+
+### 7.3 Gated surface and operating characteristic
+
+Two cells gate, by the ladder's fallback to sex-level persistence:
+
+| Cell | Interval for `G` | Realised sigma | Shared-noise share of floor variance | Faithful pass probability |
+|---|---|---:|---:|---:|
+| `r6.men` | [-0.122, 0.079] | 0.0246 | 0.78 | 0.9993 |
+| `r6.women` | [-0.111, 0.078] | 0.0248 | 0.73 | 0.9993 |
+
+The gate's faithful-candidate pass probability is 0.9986 by product, and in
+100 of 100 floor replicates every gated cell's `B + e_b` lies inside its
+interval. The real gate-seed holdouts, scored as a candidate, pass (`G` =
+-0.044 for men and -0.045 for women). About three-quarters of each cell's
+floor variance is the term the 20 seeds share, which a floor of 20%/80%
+splits alone would have left out.
+
+### 7.4 Bite demonstrations, and the pause
+
+| Bite | Fails the gate | `r6.men` | `r6.women` |
+|---|---:|---:|---:|
+| `bd1`, donor early years for 10% of persons | 0.44 | 0.16 | 0.30 |
+| `bd1`, for 5% of persons | 0.00 | 0.00 | 0.00 |
+| `bd2`, donors from both sexes | 0.00 | 0.00 | 0.00 |
+| `bd2c`, donors of the same sex (control) | 0.00 | 0.00 | 0.00 |
+| `bd3`, top-tail compression | 0.42 | 0.42 | 0.00 |
+| `bd4`, participation loss | 0.00 | 0.00 | 0.00 |
+
+The registered requirement for the gated persistence family is that `bd1`
+at 10 percent fails at least 90 percent of the time. It fails 44 percent of
+the time, so **the ceremony pauses** (section 5). Giving 10 percent of
+persons a donor's early years lowers the 1998-2004 correlation by about a
+tenth, roughly 0.07; the gate fails a shortfall from the PSID of about
+`t + 0.84 sigma`, 0.10, four times in five. Sex-blind donors move neither
+cell, so the cells by sex add no catch for a generator that ignores sex, at
+least on persistence.
+
+### 7.5 What the pause asks the referee round to decide
+
+The rules forbid choosing among these by looking at more results, so this
+proposal stops here and lists them, with what each costs:
+
+- **(a) Lock the two persistence cells as they stand** and restate the bite
+  requirement at what the gate demonstrably detects: a shortfall of 0.10 in
+  the 1998-2004 rank correlation, at 80 percent power. The certified claim
+  would be honest, and comparable in resolution to gate 1's battery
+  tolerances (0.06 to 0.07 on log autocorrelation). But the requirement
+  would be relaxed after the result was seen, which the forks ledger must
+  record.
+- **(b) Redesign the surface for power**, without the bridges: pool the
+  sexes, or score persistence on everyone present in 1998 and 2004 rather
+  than in all four years. Either is a fork. Neither is computed here,
+  because searching redesigns after seeing the bridges is what the ledger
+  exists to prevent.
+- **(c) Publish EPUF as a benchmark, not a gate.** Every gate-1 candidate
+  run would carry the per-cell table and its decomposition into the model's
+  distance from the PSID and the PSID's distance from EPUF, with no pass or
+  fail. A gate would follow when a generator covers more of EPUF's years.
+
+The drafting session recommends (a). It is the only pass-or-fail test of
+the generator against administrative records, its power matches gate 1's
+comparable bands, and the relaxation is disclosed. The decision belongs to
+the referee round and the maintainer.
+
+### 7.6 Tranche R on EPUF alone
+
+These numbers use no PSID. They compare EPUF careers as published with the
+same careers rewritten by the career assembler's two rules (section 8).
+
+| Cohort | Mean zero years, ages 22-61 | Median AIME | 25th percentile AIME |
+|---|---|---|---|
+| men 1930-1934 | 13.9 -> 23.7 | $1,551 -> $1,000 | $429 -> $135 |
+| men 1935-1939 | 13.0 -> 19.7 | $1,999 -> $1,548 | $611 -> $316 |
+| men 1940-1944 | 12.9 -> 15.7 | $2,491 -> $2,240 | $758 -> $560 |
+| women 1930-1934 | 23.2 -> 28.3 | $344 -> $182 | $57 -> $1 |
+| women 1935-1939 | 21.5 -> 24.9 | $528 -> $367 | $110 -> $26 |
+| women 1940-1944 | 19.2 -> 20.9 | $835 -> $698 | $202 -> $114 |
+
+The rules alone lower the median AIME of men born 1940-1944 by 10 percent,
+and of those born 1930-1934 by 36 percent, because they count earnings
+before 1968 as zero. A cohort born in 1946 or later loses no year to that
+rule, so the table shows the size of the effect where it applies, not across
+the repository's benefit cohorts. The PSID career product's
+own values are computed once, after lock, beside these.
 
 ## 8. Tranche R: career statistics, report-only
 
@@ -257,12 +395,14 @@ lies inside 1951-2006):
 - Spearman correlations 1980 to 1990 and 1994 to 2004, among those positive in
   both years;
 - share of positive person-years at the wage base, by age band;
-- AIME under the 35-year rule through age 61 (quartiles, 90th percentile,
-  share zero), matching `populace_dynamics.ss.statutory_aime.aime`.
+- AIME under the 35-year rule, ranking every year after 1950 through age 61
+  (quartiles, 90th percentile, share zero), matching
+  `populace_dynamics.ss.statutory_aime.aime`.
 
 The floor artifact holds their EPUF values twice: on EPUF as published, and
 on EPUF masked the way the career assembler builds a PSID career (nothing
-before 1968; each odd year from 1997 filled with the mean of its neighbours).
+before `max(1968, birth year + 22)`; each odd year from 1997 filled with the
+mean of its neighbours).
 The difference is exact and involves no PSID: it is what those two rules
 alone do to administrative careers. The post-lock run adds the PSID career
 product's values beside the masked EPUF values. Survival to the PSID's
@@ -292,12 +432,28 @@ Not certified, at the same prominence:
 
 ## 10. Blindness and forking paths
 
-**Order of commits.** The first commit of the pull request holds the reader,
-operator, cell statistics, gate algebra, floor builder, their tests and
-sections 1-6 and 8-13 of this document. It was pushed before any real-PSID
-value in EPUF units existed. The second commit adds the floor artifact, the
-draft block and section 7. The artifact records the first commit's sha and
-the sha256 of each derivation file; a test fails if one changes afterwards.
+**Order of commits.**
+
+1. `eec910d6` holds the reader, operator, cell statistics, gate algebra,
+   floor builder, their tests and sections 1-6 and 8-13 of this document. It
+   was pushed (2026-10-02 13:37 UTC) before any real-PSID value in EPUF units
+   existed.
+2. The floor builder then ran once. While reading its output the drafting
+   session found a bug in the report-only career AIME (fork 1 below), fixed it
+   in the next commit, and rebuilt. The first build's outputs are preserved in
+   the evidence folder with their hashes
+   (`epuf-20261001/first-floor-build/`, artifact SHA-256 `369bf5ec…7e378`).
+   The rebuild's window cells, floors, partition and bites are identical to the
+   first build's; only tranche R's EPUF values differ.
+3. The next commit adds the rebuilt artifact, the draft block and section 7.
+   The artifact records the commit it was built at and the SHA-256 of each
+   derivation file; a test fails if one changes afterwards.
+
+**Forks ledger.**
+
+| # | Change after the first floor build | Partition before | Partition after | Why it is not a self-rescue |
+|---|---|---|---|---|
+| 1 | Career AIME ranks every year after 1950 through age 61, not only ages 22-61; the career-assembler mask starts at `max(1968, birth year + 22)` | `r6.men`, `r6.women` | unchanged | tranche R is report-only and enters no gated rule; the statute fixes the definition |
 
 **Who has seen what, at the first commit.** The drafting session and the
 design panel saw: EPUF-only values of every cell; EPUF subsampled to PSID
@@ -368,7 +524,7 @@ publishes the result whatever it is.
 ## 13. Ceremony checklist
 
 - [x] **Proposal** (this document, the floor artifact, the draft block)
-- [ ] Adversarial referee round
+- [ ] Adversarial referee round, including the bite pause (section 7.5)
 - [ ] Fixes
 - [ ] Verification round
 - [ ] Ratify by merge of the flip PR
