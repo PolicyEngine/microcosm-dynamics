@@ -1,0 +1,22 @@
+{
+  "schema_version": "external_source_provenance.v1",
+  "committed_source_file": "data/external/mint8_table_user_guide.source.html",
+  "source_url": "https://www.ssa.gov/policy/docs/projections/user-guide.html",
+  "document": "Social Security Administration, Table User Guide - Modeling Income in the Near Term (MINT) 8",
+  "page_title": "Table User Guide - Modeling Income in the Near Term (MINT) 8",
+  "date_certified": "2025-10-01",
+  "date_certified_locator": "<meta name=\"DCTERMS:dateCertified\" content=\"2025-10-01\" /> in the committed source",
+  "sections_of_record": [
+    "Definitions—Table Rows and Columns > Characteristic Subgroups—Table Rows",
+    "Measures—Column Headings > Threshold for Categorization in the “Decrease” or “Increase” Groups",
+    "Measures—Column Headings > Percent Change Values",
+    "Additional Notes > Sample Size Restrictions"
+  ],
+  "retrieval_date": "2026-10-01",
+  "fetch_method": "Internet Archive raw capture http://web.archive.org/web/20260419231110id_/https://www.ssa.gov/policy/docs/projections/user-guide.html, fetched by the MINT-categories lane (workflow wf_35b496b0-085, orchestrating session 95606380, 2026-10-01) after a direct fetch of ssa.gov returned an Akamai 'Access Denied' page. The capture is identified by its Wayback CDX record: the SHA-1 (base32) of the committed bytes, N2TYAIU2LPKHETR3M5H4E6MUZLL4KFVO, equals the CDX digest of capture 20260419231110 (status 200), checked 2026-10-01 against http://web.archive.org/cdx/search/cdx?url=ssa.gov/policy/docs/projections/user-guide.html.",
+  "source_sha256": "278d5d19c1b50f1d354db1ada515288af563c035a67eb16fb971d25700fb94e9",
+  "source_sha1_base32": "N2TYAIU2LPKHETR3M5H4E6MUZLL4KFVO",
+  "source_length_bytes": 73926,
+  "consumed_by": "src/populace_dynamics/estimates/group_breakdown.py (MINT8 category definitions, the change threshold, the percent-change formula and the disclosure rule; verify_mint8_sources checks every quoted definition against this file's text)",
+  "note": "Methods page only: it defines MINT8's table rows and columns and prints no projection result. It is not a MINT policy-option table."
+}

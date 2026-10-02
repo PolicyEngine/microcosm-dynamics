@@ -1,0 +1,1851 @@
+{
+ "source_url": "https://www.ssa.gov/policy/docs/projections/policy-options/increase-payroll-tax-rate.html",
+ "retrieved_via": "http://web.archive.org/web/20260519190449id_/https://www.ssa.gov/policy/docs/projections/policy-options/increase-payroll-tax-rate.html",
+ "raw_sha256": "3cfb6eb636cad6d062eb22734c533fb349a0bc4761014eee8f2ccb0eb6e28d8c",
+ "dateCertified": "2026-04-01",
+ "note": "LABELS ONLY. No data cells were extracted. Table numbers are document order on the page.",
+ "tables": {
+  "1": {
+   "caption": "Projected Effects of Proposal on Social Security Benefits in 2030 POPULATION: Current-law beneficiaries aged 60 or older (characteristics)",
+   "columns": [
+    "Characteristic",
+    "Percent of population with a—",
+    "Percent change in Social Security benefits at the—",
+    "Benefit decrease",
+    "Benefit increase",
+    "10th %ile",
+    "Median",
+    "90th %ile"
+   ],
+   "groups": [
+    {
+     "group": "Total",
+     "labels": []
+    },
+    {
+     "group": "Sex",
+     "labels": [
+      "Female",
+      "Male"
+     ]
+    },
+    {
+     "group": "Race and ethnicity",
+     "labels": [
+      "Hispanic or Latino, any race",
+      "White, non-Hispanic",
+      "Black or African American, non-Hispanic",
+      "All other races, non-Hispanic"
+     ]
+    },
+    {
+     "group": "Country of birth",
+     "labels": [
+      "United States",
+      "Other countries"
+     ]
+    },
+    {
+     "group": "Age",
+     "labels": [
+      "60–69",
+      "70–79",
+      "80–89",
+      "90 or older"
+     ]
+    },
+    {
+     "group": "Marital status",
+     "labels": [
+      "Married",
+      "Divorced",
+      "Widowed",
+      "Never married"
+     ]
+    },
+    {
+     "group": "Highest education level",
+     "labels": [
+      "Graduate",
+      "Bachelor",
+      "Associate",
+      "High school",
+      "Less than high school"
+     ]
+    },
+    {
+     "group": "Current-law poverty status",
+     "labels": [
+      "Above poverty",
+      "In poverty"
+     ]
+    },
+    {
+     "group": "Current-law household income quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Current-law benefit type",
+     "labels": [
+      "Retired worker only",
+      "Widow(er) (includes dually entitled)",
+      "Spousal (includes dually entitled)",
+      "Disabled worker only"
+     ]
+    }
+   ]
+  },
+  "2": {
+   "caption": "Projected Effects of Proposal on Social Security Benefits in 2050 POPULATION: Current-law beneficiaries aged 60 or older (characteristics)",
+   "columns": [
+    "Characteristic",
+    "Percent of population with a—",
+    "Percent change in Social Security benefits at the—",
+    "Benefit decrease",
+    "Benefit increase",
+    "10th %ile",
+    "Median",
+    "90th %ile"
+   ],
+   "groups": [
+    {
+     "group": "Total",
+     "labels": []
+    },
+    {
+     "group": "Sex",
+     "labels": [
+      "Female",
+      "Male"
+     ]
+    },
+    {
+     "group": "Race and ethnicity",
+     "labels": [
+      "Hispanic or Latino, any race",
+      "White, non-Hispanic",
+      "Black or African American, non-Hispanic",
+      "All other races, non-Hispanic"
+     ]
+    },
+    {
+     "group": "Country of birth",
+     "labels": [
+      "United States",
+      "Other countries"
+     ]
+    },
+    {
+     "group": "Age",
+     "labels": [
+      "60–69",
+      "70–79",
+      "80–89",
+      "90 or older"
+     ]
+    },
+    {
+     "group": "Marital status",
+     "labels": [
+      "Married",
+      "Divorced",
+      "Widowed",
+      "Never married"
+     ]
+    },
+    {
+     "group": "Highest education level",
+     "labels": [
+      "Graduate",
+      "Bachelor",
+      "Associate",
+      "High school",
+      "Less than high school"
+     ]
+    },
+    {
+     "group": "Current-law poverty status",
+     "labels": [
+      "Above poverty",
+      "In poverty"
+     ]
+    },
+    {
+     "group": "Current-law household income quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Current-law benefit type",
+     "labels": [
+      "Retired worker only",
+      "Widow(er) (includes dually entitled)",
+      "Spousal (includes dually entitled)",
+      "Disabled worker only"
+     ]
+    }
+   ]
+  },
+  "3": {
+   "caption": "Projected Effects of Proposal on Social Security Benefits in 2070 POPULATION: Current-law beneficiaries aged 60 or older (characteristics)",
+   "columns": [
+    "Characteristic",
+    "Percent of population with a—",
+    "Percent change in Social Security benefits at the—",
+    "Benefit decrease",
+    "Benefit increase",
+    "10th %ile",
+    "Median",
+    "90th %ile"
+   ],
+   "groups": [
+    {
+     "group": "Total",
+     "labels": []
+    },
+    {
+     "group": "Sex",
+     "labels": [
+      "Female",
+      "Male"
+     ]
+    },
+    {
+     "group": "Race and ethnicity",
+     "labels": [
+      "Hispanic or Latino, any race",
+      "White, non-Hispanic",
+      "Black or African American, non-Hispanic",
+      "All other races, non-Hispanic"
+     ]
+    },
+    {
+     "group": "Country of birth",
+     "labels": [
+      "United States",
+      "Other countries"
+     ]
+    },
+    {
+     "group": "Age",
+     "labels": [
+      "60–69",
+      "70–79",
+      "80–89",
+      "90 or older"
+     ]
+    },
+    {
+     "group": "Marital status",
+     "labels": [
+      "Married",
+      "Divorced",
+      "Widowed",
+      "Never married"
+     ]
+    },
+    {
+     "group": "Highest education level",
+     "labels": [
+      "Graduate",
+      "Bachelor",
+      "Associate",
+      "High school",
+      "Less than high school"
+     ]
+    },
+    {
+     "group": "Current-law poverty status",
+     "labels": [
+      "Above poverty",
+      "In poverty"
+     ]
+    },
+    {
+     "group": "Current-law household income quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Current-law benefit type",
+     "labels": [
+      "Retired worker only",
+      "Widow(er) (includes dually entitled)",
+      "Spousal (includes dually entitled)",
+      "Disabled worker only"
+     ]
+    }
+   ]
+  },
+  "4": {
+   "caption": "Projected Effects of Proposal on Social Security Taxes Paid in 2030 POPULATION: Current-law payroll taxpayers aged 31 or older (characteristics)",
+   "columns": [
+    "Characteristic",
+    "Percent of population with a—",
+    "Percent change in Social Security taxes paid at the—",
+    "Change in taxes paid (in 2024$) at the—",
+    "Tax decrease",
+    "Tax increase",
+    "10th %ile",
+    "Median",
+    "90th %ile",
+    "10th %ile",
+    "Median",
+    "90th %ile"
+   ],
+   "groups": [
+    {
+     "group": "Total",
+     "labels": []
+    },
+    {
+     "group": "Sex",
+     "labels": [
+      "Female",
+      "Male"
+     ]
+    },
+    {
+     "group": "Race and ethnicity",
+     "labels": [
+      "Hispanic or Latino, any race",
+      "White, non-Hispanic",
+      "Black or African American, non-Hispanic",
+      "All other races, non-Hispanic"
+     ]
+    },
+    {
+     "group": "Country of birth",
+     "labels": [
+      "United States",
+      "Other countries"
+     ]
+    },
+    {
+     "group": "Age",
+     "labels": [
+      "31–39",
+      "40–49",
+      "50–59",
+      "60–69",
+      "70 or older"
+     ]
+    },
+    {
+     "group": "Marital status",
+     "labels": [
+      "Married",
+      "Divorced",
+      "Widowed",
+      "Never married"
+     ]
+    },
+    {
+     "group": "Highest education level",
+     "labels": [
+      "Graduate",
+      "Bachelor",
+      "Associate",
+      "High school",
+      "Less than high school"
+     ]
+    },
+    {
+     "group": "Current-law household income quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Current-law payroll taxes quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    }
+   ]
+  },
+  "5": {
+   "caption": "Projected Effects of Proposal on Social Security Taxes Paid in 2050 POPULATION: Current-law payroll taxpayers aged 31 or older (characteristics)",
+   "columns": [
+    "Characteristic",
+    "Percent of population with a—",
+    "Percent change in Social Security taxes paid at the—",
+    "Change in taxes paid (in 2024$) at the—",
+    "Tax decrease",
+    "Tax increase",
+    "10th %ile",
+    "Median",
+    "90th %ile",
+    "10th %ile",
+    "Median",
+    "90th %ile"
+   ],
+   "groups": [
+    {
+     "group": "Total",
+     "labels": []
+    },
+    {
+     "group": "Sex",
+     "labels": [
+      "Female",
+      "Male"
+     ]
+    },
+    {
+     "group": "Race and ethnicity",
+     "labels": [
+      "Hispanic or Latino, any race",
+      "White, non-Hispanic",
+      "Black or African American, non-Hispanic",
+      "All other races, non-Hispanic"
+     ]
+    },
+    {
+     "group": "Country of birth",
+     "labels": [
+      "United States",
+      "Other countries"
+     ]
+    },
+    {
+     "group": "Age",
+     "labels": [
+      "31–39",
+      "40–49",
+      "50–59",
+      "60–69",
+      "70 or older"
+     ]
+    },
+    {
+     "group": "Marital status",
+     "labels": [
+      "Married",
+      "Divorced",
+      "Widowed",
+      "Never married"
+     ]
+    },
+    {
+     "group": "Highest education level",
+     "labels": [
+      "Graduate",
+      "Bachelor",
+      "Associate",
+      "High school",
+      "Less than high school"
+     ]
+    },
+    {
+     "group": "Current-law household income quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Current-law payroll taxes quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    }
+   ]
+  },
+  "6": {
+   "caption": "Projected Effects of Proposal on Social Security Taxes Paid in 2070 POPULATION: Current-law payroll taxpayers aged 31 or older (characteristics)",
+   "columns": [
+    "Characteristic",
+    "Percent of population with a—",
+    "Percent change in Social Security taxes paid at the—",
+    "Change in taxes paid (in 2024$) at the—",
+    "Tax decrease",
+    "Tax increase",
+    "10th %ile",
+    "Median",
+    "90th %ile",
+    "10th %ile",
+    "Median",
+    "90th %ile"
+   ],
+   "groups": [
+    {
+     "group": "Total",
+     "labels": []
+    },
+    {
+     "group": "Sex",
+     "labels": [
+      "Female",
+      "Male"
+     ]
+    },
+    {
+     "group": "Race and ethnicity",
+     "labels": [
+      "Hispanic or Latino, any race",
+      "White, non-Hispanic",
+      "Black or African American, non-Hispanic",
+      "All other races, non-Hispanic"
+     ]
+    },
+    {
+     "group": "Country of birth",
+     "labels": [
+      "United States",
+      "Other countries"
+     ]
+    },
+    {
+     "group": "Age",
+     "labels": [
+      "31–39",
+      "40–49",
+      "50–59",
+      "60–69",
+      "70 or older"
+     ]
+    },
+    {
+     "group": "Marital status",
+     "labels": [
+      "Married",
+      "Divorced",
+      "Widowed",
+      "Never married"
+     ]
+    },
+    {
+     "group": "Highest education level",
+     "labels": [
+      "Graduate",
+      "Bachelor",
+      "Associate",
+      "High school",
+      "Less than high school"
+     ]
+    },
+    {
+     "group": "Current-law household income quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Current-law payroll taxes quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    }
+   ]
+  },
+  "7": {
+   "caption": "Projected Effects of Proposal on Household Income in 2030 POPULATION: Current-law beneficiaries aged 60 or older (characteristics)",
+   "columns": [
+    "Characteristic",
+    "Percent of population with an—",
+    "Percent change in household income at the—",
+    "Income decrease",
+    "Income increase",
+    "10th %ile",
+    "Median",
+    "90th %ile"
+   ],
+   "groups": [
+    {
+     "group": "Total",
+     "labels": []
+    },
+    {
+     "group": "Sex",
+     "labels": [
+      "Female",
+      "Male"
+     ]
+    },
+    {
+     "group": "Race and ethnicity",
+     "labels": [
+      "Hispanic or Latino, any race",
+      "White, non-Hispanic",
+      "Black or African American, non-Hispanic",
+      "All other races, non-Hispanic"
+     ]
+    },
+    {
+     "group": "Country of birth",
+     "labels": [
+      "United States",
+      "Other countries"
+     ]
+    },
+    {
+     "group": "Age",
+     "labels": [
+      "60–69",
+      "70–79",
+      "80–89",
+      "90 or older"
+     ]
+    },
+    {
+     "group": "Marital status",
+     "labels": [
+      "Married",
+      "Divorced",
+      "Widowed",
+      "Never married"
+     ]
+    },
+    {
+     "group": "Highest education level",
+     "labels": [
+      "Graduate",
+      "Bachelor",
+      "Associate",
+      "High school",
+      "Less than high school"
+     ]
+    },
+    {
+     "group": "Current-law poverty status",
+     "labels": [
+      "Above poverty",
+      "In poverty"
+     ]
+    },
+    {
+     "group": "Current-law household income quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Current-law benefit type",
+     "labels": [
+      "Retired worker only",
+      "Widow(er) (includes dually entitled)",
+      "Spousal (includes dually entitled)",
+      "Disabled worker only"
+     ]
+    }
+   ]
+  },
+  "8": {
+   "caption": "Projected Effects of Proposal on Household Income in 2050 POPULATION: Current-law beneficiaries aged 60 or older (characteristics)",
+   "columns": [
+    "Characteristic",
+    "Percent of population with an—",
+    "Percent change in household income at the—",
+    "Income decrease",
+    "Income increase",
+    "10th %ile",
+    "Median",
+    "90th %ile"
+   ],
+   "groups": [
+    {
+     "group": "Total",
+     "labels": []
+    },
+    {
+     "group": "Sex",
+     "labels": [
+      "Female",
+      "Male"
+     ]
+    },
+    {
+     "group": "Race and ethnicity",
+     "labels": [
+      "Hispanic or Latino, any race",
+      "White, non-Hispanic",
+      "Black or African American, non-Hispanic",
+      "All other races, non-Hispanic"
+     ]
+    },
+    {
+     "group": "Country of birth",
+     "labels": [
+      "United States",
+      "Other countries"
+     ]
+    },
+    {
+     "group": "Age",
+     "labels": [
+      "60–69",
+      "70–79",
+      "80–89",
+      "90 or older"
+     ]
+    },
+    {
+     "group": "Marital status",
+     "labels": [
+      "Married",
+      "Divorced",
+      "Widowed",
+      "Never married"
+     ]
+    },
+    {
+     "group": "Highest education level",
+     "labels": [
+      "Graduate",
+      "Bachelor",
+      "Associate",
+      "High school",
+      "Less than high school"
+     ]
+    },
+    {
+     "group": "Current-law poverty status",
+     "labels": [
+      "Above poverty",
+      "In poverty"
+     ]
+    },
+    {
+     "group": "Current-law household income quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Current-law benefit type",
+     "labels": [
+      "Retired worker only",
+      "Widow(er) (includes dually entitled)",
+      "Spousal (includes dually entitled)",
+      "Disabled worker only"
+     ]
+    }
+   ]
+  },
+  "9": {
+   "caption": "Projected Effects of Proposal on Household Income in 2070 POPULATION: Current-law beneficiaries aged 60 or older (characteristics)",
+   "columns": [
+    "Characteristic",
+    "Percent of population with an—",
+    "Percent change in household income at the—",
+    "Income decrease",
+    "Income increase",
+    "10th %ile",
+    "Median",
+    "90th %ile"
+   ],
+   "groups": [
+    {
+     "group": "Total",
+     "labels": []
+    },
+    {
+     "group": "Sex",
+     "labels": [
+      "Female",
+      "Male"
+     ]
+    },
+    {
+     "group": "Race and ethnicity",
+     "labels": [
+      "Hispanic or Latino, any race",
+      "White, non-Hispanic",
+      "Black or African American, non-Hispanic",
+      "All other races, non-Hispanic"
+     ]
+    },
+    {
+     "group": "Country of birth",
+     "labels": [
+      "United States",
+      "Other countries"
+     ]
+    },
+    {
+     "group": "Age",
+     "labels": [
+      "60–69",
+      "70–79",
+      "80–89",
+      "90 or older"
+     ]
+    },
+    {
+     "group": "Marital status",
+     "labels": [
+      "Married",
+      "Divorced",
+      "Widowed",
+      "Never married"
+     ]
+    },
+    {
+     "group": "Highest education level",
+     "labels": [
+      "Graduate",
+      "Bachelor",
+      "Associate",
+      "High school",
+      "Less than high school"
+     ]
+    },
+    {
+     "group": "Current-law poverty status",
+     "labels": [
+      "Above poverty",
+      "In poverty"
+     ]
+    },
+    {
+     "group": "Current-law household income quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Current-law benefit type",
+     "labels": [
+      "Retired worker only",
+      "Widow(er) (includes dually entitled)",
+      "Spousal (includes dually entitled)",
+      "Disabled worker only"
+     ]
+    }
+   ]
+  },
+  "10": {
+   "caption": "Projected Effects of Proposal on Official Poverty Measure in 2030 POPULATION: Current-law beneficiaries aged 60 or older (characteristics)",
+   "columns": [
+    "Characteristic",
+    "Official poverty rate",
+    "Number of population in poverty (in thousands)",
+    "Percent change in the number in poverty",
+    "Under current law",
+    "With proposal",
+    "Under current law",
+    "With proposal",
+    "Change"
+   ],
+   "groups": [
+    {
+     "group": "Total",
+     "labels": []
+    },
+    {
+     "group": "Sex",
+     "labels": [
+      "Female",
+      "Male"
+     ]
+    },
+    {
+     "group": "Race and ethnicity",
+     "labels": [
+      "Hispanic or Latino, any race",
+      "White, non-Hispanic",
+      "Black or African American, non-Hispanic",
+      "All other races, non-Hispanic"
+     ]
+    },
+    {
+     "group": "Country of birth",
+     "labels": [
+      "United States",
+      "Other countries"
+     ]
+    },
+    {
+     "group": "Age",
+     "labels": [
+      "60–69",
+      "70–79",
+      "80–89",
+      "90 or older"
+     ]
+    },
+    {
+     "group": "Marital status",
+     "labels": [
+      "Married",
+      "Divorced",
+      "Widowed",
+      "Never married"
+     ]
+    },
+    {
+     "group": "Highest education level",
+     "labels": [
+      "Graduate",
+      "Bachelor",
+      "Associate",
+      "High school",
+      "Less than high school"
+     ]
+    },
+    {
+     "group": "Current-law poverty status",
+     "labels": [
+      "Above poverty",
+      "In poverty"
+     ]
+    },
+    {
+     "group": "Current-law benefit type",
+     "labels": [
+      "Retired worker only",
+      "Widow(er) (includes dually entitled)",
+      "Spousal (includes dually entitled)",
+      "Disabled worker only"
+     ]
+    }
+   ]
+  },
+  "11": {
+   "caption": "Projected Effects of Proposal on Official Poverty Measure in 2050 POPULATION: Current-law beneficiaries aged 60 or older (characteristics)",
+   "columns": [
+    "Characteristic",
+    "Official poverty rate",
+    "Number of population in poverty (in thousands)",
+    "Percent change in the number in poverty",
+    "Under current law",
+    "With proposal",
+    "Under current law",
+    "With proposal",
+    "Change"
+   ],
+   "groups": [
+    {
+     "group": "Total",
+     "labels": []
+    },
+    {
+     "group": "Sex",
+     "labels": [
+      "Female",
+      "Male"
+     ]
+    },
+    {
+     "group": "Race and ethnicity",
+     "labels": [
+      "Hispanic or Latino, any race",
+      "White, non-Hispanic",
+      "Black or African American, non-Hispanic",
+      "All other races, non-Hispanic"
+     ]
+    },
+    {
+     "group": "Country of birth",
+     "labels": [
+      "United States",
+      "Other countries"
+     ]
+    },
+    {
+     "group": "Age",
+     "labels": [
+      "60–69",
+      "70–79",
+      "80–89",
+      "90 or older"
+     ]
+    },
+    {
+     "group": "Marital status",
+     "labels": [
+      "Married",
+      "Divorced",
+      "Widowed",
+      "Never married"
+     ]
+    },
+    {
+     "group": "Highest education level",
+     "labels": [
+      "Graduate",
+      "Bachelor",
+      "Associate",
+      "High school",
+      "Less than high school"
+     ]
+    },
+    {
+     "group": "Current-law poverty status",
+     "labels": [
+      "Above poverty",
+      "In poverty"
+     ]
+    },
+    {
+     "group": "Current-law benefit type",
+     "labels": [
+      "Retired worker only",
+      "Widow(er) (includes dually entitled)",
+      "Spousal (includes dually entitled)",
+      "Disabled worker only"
+     ]
+    }
+   ]
+  },
+  "12": {
+   "caption": "Projected Effects of Proposal on Official Poverty Measure in 2070 POPULATION: Current-law beneficiaries aged 60 or older (characteristics)",
+   "columns": [
+    "Characteristic",
+    "Official poverty rate",
+    "Number of population in poverty (in thousands)",
+    "Percent change in the number in poverty",
+    "Under current law",
+    "With proposal",
+    "Under current law",
+    "With proposal",
+    "Change"
+   ],
+   "groups": [
+    {
+     "group": "Total",
+     "labels": []
+    },
+    {
+     "group": "Sex",
+     "labels": [
+      "Female",
+      "Male"
+     ]
+    },
+    {
+     "group": "Race and ethnicity",
+     "labels": [
+      "Hispanic or Latino, any race",
+      "White, non-Hispanic",
+      "Black or African American, non-Hispanic",
+      "All other races, non-Hispanic"
+     ]
+    },
+    {
+     "group": "Country of birth",
+     "labels": [
+      "United States",
+      "Other countries"
+     ]
+    },
+    {
+     "group": "Age",
+     "labels": [
+      "60–69",
+      "70–79",
+      "80–89",
+      "90 or older"
+     ]
+    },
+    {
+     "group": "Marital status",
+     "labels": [
+      "Married",
+      "Divorced",
+      "Widowed",
+      "Never married"
+     ]
+    },
+    {
+     "group": "Highest education level",
+     "labels": [
+      "Graduate",
+      "Bachelor",
+      "Associate",
+      "High school",
+      "Less than high school"
+     ]
+    },
+    {
+     "group": "Current-law poverty status",
+     "labels": [
+      "Above poverty",
+      "In poverty"
+     ]
+    },
+    {
+     "group": "Current-law benefit type",
+     "labels": [
+      "Retired worker only",
+      "Widow(er) (includes dually entitled)",
+      "Spousal (includes dually entitled)",
+      "Disabled worker only"
+     ]
+    }
+   ]
+  },
+  "13": {
+   "caption": "Projected Effects of Proposal on Benefit/Tax Ratios POPULATION: Workers born 1960–1969 with a benefit/tax ratio (characteristics)",
+   "columns": [
+    "Characteristic",
+    "Percent of population with a—",
+    "Percent change in benefit/tax ratio at the—",
+    "Benefit/tax ratio under current law at the—",
+    "Benefit/tax ratio with proposal at the—",
+    "Ratio decrease",
+    "Ratio increase",
+    "10th %ile",
+    "Median",
+    "90th %ile",
+    "10th %ile",
+    "Median",
+    "90th %ile",
+    "10th %ile",
+    "Median",
+    "90th %ile"
+   ],
+   "groups": [
+    {
+     "group": "Total",
+     "labels": []
+    },
+    {
+     "group": "Sex",
+     "labels": [
+      "Female",
+      "Male"
+     ]
+    },
+    {
+     "group": "Race and ethnicity",
+     "labels": [
+      "Hispanic or Latino, any race",
+      "White, non-Hispanic",
+      "Black or African American, non-Hispanic",
+      "All other races, non-Hispanic"
+     ]
+    },
+    {
+     "group": "Country of birth",
+     "labels": [
+      "United States",
+      "Other countries"
+     ]
+    },
+    {
+     "group": "Highest education level",
+     "labels": [
+      "Graduate",
+      "Bachelor",
+      "Associate",
+      "High school",
+      "Less than high school"
+     ]
+    },
+    {
+     "group": "Current-law initial AIME quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Lifetime payroll tax quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Lifetime payroll tax quintile (shared)",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    }
+   ]
+  },
+  "14": {
+   "caption": "Projected Effects of Proposal on Benefit/Tax Ratios POPULATION: Workers born 1980–1989 with a benefit/tax ratio (characteristics)",
+   "columns": [
+    "Characteristic",
+    "Percent of population with a—",
+    "Percent change in benefit/tax ratio at the—",
+    "Benefit/tax ratio under current law at the—",
+    "Benefit/tax ratio with proposal at the—",
+    "Ratio decrease",
+    "Ratio increase",
+    "10th %ile",
+    "Median",
+    "90th %ile",
+    "10th %ile",
+    "Median",
+    "90th %ile",
+    "10th %ile",
+    "Median",
+    "90th %ile"
+   ],
+   "groups": [
+    {
+     "group": "Total",
+     "labels": []
+    },
+    {
+     "group": "Sex",
+     "labels": [
+      "Female",
+      "Male"
+     ]
+    },
+    {
+     "group": "Race and ethnicity",
+     "labels": [
+      "Hispanic or Latino, any race",
+      "White, non-Hispanic",
+      "Black or African American, non-Hispanic",
+      "All other races, non-Hispanic"
+     ]
+    },
+    {
+     "group": "Country of birth",
+     "labels": [
+      "United States",
+      "Other countries"
+     ]
+    },
+    {
+     "group": "Highest education level",
+     "labels": [
+      "Graduate",
+      "Bachelor",
+      "Associate",
+      "High school",
+      "Less than high school"
+     ]
+    },
+    {
+     "group": "Current-law initial AIME quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Lifetime payroll tax quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Lifetime payroll tax quintile (shared)",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    }
+   ]
+  },
+  "15": {
+   "caption": "Projected Effects of Proposal on Benefit/Tax Ratios POPULATION: Workers born 2000–2009 with a benefit/tax ratio (characteristics)",
+   "columns": [
+    "Characteristic",
+    "Percent of population with a—",
+    "Percent change in benefit/tax ratio at the—",
+    "Benefit/tax ratio under current law at the—",
+    "Benefit/tax ratio with proposal at the—",
+    "Ratio decrease",
+    "Ratio increase",
+    "10th %ile",
+    "Median",
+    "90th %ile",
+    "10th %ile",
+    "Median",
+    "90th %ile",
+    "10th %ile",
+    "Median",
+    "90th %ile"
+   ],
+   "groups": [
+    {
+     "group": "Total",
+     "labels": []
+    },
+    {
+     "group": "Sex",
+     "labels": [
+      "Female",
+      "Male"
+     ]
+    },
+    {
+     "group": "Race and ethnicity",
+     "labels": [
+      "Hispanic or Latino, any race",
+      "White, non-Hispanic",
+      "Black or African American, non-Hispanic",
+      "All other races, non-Hispanic"
+     ]
+    },
+    {
+     "group": "Country of birth",
+     "labels": [
+      "United States",
+      "Other countries"
+     ]
+    },
+    {
+     "group": "Highest education level",
+     "labels": [
+      "Graduate",
+      "Bachelor",
+      "Associate",
+      "High school",
+      "Less than high school"
+     ]
+    },
+    {
+     "group": "Current-law initial AIME quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Lifetime payroll tax quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Lifetime payroll tax quintile (shared)",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    }
+   ]
+  },
+  "16": {
+   "caption": "Projected Effects of Proposal on Benefit/Tax Ratios POPULATION: Workers born 2020–2029 with a benefit/tax ratio (characteristics)",
+   "columns": [
+    "Characteristic",
+    "Percent of population with a—",
+    "Percent change in benefit/tax ratio at the—",
+    "Benefit/tax ratio under current law at the—",
+    "Benefit/tax ratio with proposal at the—",
+    "Ratio decrease",
+    "Ratio increase",
+    "10th %ile",
+    "Median",
+    "90th %ile",
+    "10th %ile",
+    "Median",
+    "90th %ile",
+    "10th %ile",
+    "Median",
+    "90th %ile"
+   ],
+   "groups": [
+    {
+     "group": "Total",
+     "labels": []
+    },
+    {
+     "group": "Sex",
+     "labels": [
+      "Female",
+      "Male"
+     ]
+    },
+    {
+     "group": "Race and ethnicity",
+     "labels": [
+      "Hispanic or Latino, any race",
+      "White, non-Hispanic",
+      "Black or African American, non-Hispanic",
+      "All other races, non-Hispanic"
+     ]
+    },
+    {
+     "group": "Country of birth",
+     "labels": [
+      "United States",
+      "Other countries"
+     ]
+    },
+    {
+     "group": "Highest education level",
+     "labels": [
+      "Graduate",
+      "Bachelor",
+      "Associate",
+      "High school",
+      "Less than high school"
+     ]
+    },
+    {
+     "group": "Current-law initial AIME quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Lifetime payroll tax quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Lifetime payroll tax quintile (shared)",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    }
+   ]
+  },
+  "17": {
+   "caption": "Projected Effects of Proposal on Initial Replacement Rates POPULATION: Current-law beneficiaries born 1960–1969 with a replacement rate (characteristics)",
+   "columns": [
+    "Characteristic",
+    "Percent of population with a—",
+    "Percent change in initial replacement rate at the—",
+    "Initial replacement rate under current law at the—",
+    "Initial replacement rate with proposal at the—",
+    "Rate decrease",
+    "Rate increase",
+    "10th %ile",
+    "Median",
+    "90th %ile",
+    "10th %ile",
+    "Median",
+    "90th %ile",
+    "10th %ile",
+    "Median",
+    "90th %ile"
+   ],
+   "groups": [
+    {
+     "group": "Total",
+     "labels": []
+    },
+    {
+     "group": "Sex",
+     "labels": [
+      "Female",
+      "Male"
+     ]
+    },
+    {
+     "group": "Race and ethnicity",
+     "labels": [
+      "Hispanic or Latino, any race",
+      "White, non-Hispanic",
+      "Black or African American, non-Hispanic",
+      "All other races, non-Hispanic"
+     ]
+    },
+    {
+     "group": "Country of birth",
+     "labels": [
+      "United States",
+      "Other countries"
+     ]
+    },
+    {
+     "group": "Highest education level",
+     "labels": [
+      "Graduate",
+      "Bachelor",
+      "Associate",
+      "High school",
+      "Less than high school"
+     ]
+    },
+    {
+     "group": "Current-law initial AIME quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Lifetime payroll tax quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Lifetime payroll tax quintile (shared)",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    }
+   ]
+  },
+  "18": {
+   "caption": "Projected Effects of Proposal on Initial Replacement Rates POPULATION: Current-law beneficiaries born 1980–1989 with a replacement rate (characteristics)",
+   "columns": [
+    "Characteristic",
+    "Percent of population with a—",
+    "Percent change in initial replacement rate at the—",
+    "Initial replacement rate under current law at the—",
+    "Initial replacement rate with proposal at the—",
+    "Rate decrease",
+    "Rate increase",
+    "10th %ile",
+    "Median",
+    "90th %ile",
+    "10th %ile",
+    "Median",
+    "90th %ile",
+    "10th %ile",
+    "Median",
+    "90th %ile"
+   ],
+   "groups": [
+    {
+     "group": "Total",
+     "labels": []
+    },
+    {
+     "group": "Sex",
+     "labels": [
+      "Female",
+      "Male"
+     ]
+    },
+    {
+     "group": "Race and ethnicity",
+     "labels": [
+      "Hispanic or Latino, any race",
+      "White, non-Hispanic",
+      "Black or African American, non-Hispanic",
+      "All other races, non-Hispanic"
+     ]
+    },
+    {
+     "group": "Country of birth",
+     "labels": [
+      "United States",
+      "Other countries"
+     ]
+    },
+    {
+     "group": "Highest education level",
+     "labels": [
+      "Graduate",
+      "Bachelor",
+      "Associate",
+      "High school",
+      "Less than high school"
+     ]
+    },
+    {
+     "group": "Current-law initial AIME quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Lifetime payroll tax quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Lifetime payroll tax quintile (shared)",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    }
+   ]
+  },
+  "19": {
+   "caption": "Projected Effects of Proposal on Initial Replacement Rates POPULATION: Current-law beneficiaries born 2000–2009 with a replacement rate (characteristics)",
+   "columns": [
+    "Characteristic",
+    "Percent of population with a—",
+    "Percent change in initial replacement rate at the—",
+    "Initial replacement rate under current law at the—",
+    "Initial replacement rate with proposal at the—",
+    "Rate decrease",
+    "Rate increase",
+    "10th %ile",
+    "Median",
+    "90th %ile",
+    "10th %ile",
+    "Median",
+    "90th %ile",
+    "10th %ile",
+    "Median",
+    "90th %ile"
+   ],
+   "groups": [
+    {
+     "group": "Total",
+     "labels": []
+    },
+    {
+     "group": "Sex",
+     "labels": [
+      "Female",
+      "Male"
+     ]
+    },
+    {
+     "group": "Race and ethnicity",
+     "labels": [
+      "Hispanic or Latino, any race",
+      "White, non-Hispanic",
+      "Black or African American, non-Hispanic",
+      "All other races, non-Hispanic"
+     ]
+    },
+    {
+     "group": "Country of birth",
+     "labels": [
+      "United States",
+      "Other countries"
+     ]
+    },
+    {
+     "group": "Highest education level",
+     "labels": [
+      "Graduate",
+      "Bachelor",
+      "Associate",
+      "High school",
+      "Less than high school"
+     ]
+    },
+    {
+     "group": "Current-law initial AIME quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Lifetime payroll tax quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Lifetime payroll tax quintile (shared)",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    }
+   ]
+  },
+  "20": {
+   "caption": "Projected Effects of Proposal on Initial Replacement Rates POPULATION: Current-law beneficiaries born 2020–2029 with a replacement rate (characteristics)",
+   "columns": [
+    "Characteristic",
+    "Percent of population with a—",
+    "Percent change in initial replacement rate at the—",
+    "Initial replacement rate under current law at the—",
+    "Initial replacement rate with proposal at the—",
+    "Rate decrease",
+    "Rate increase",
+    "10th %ile",
+    "Median",
+    "90th %ile",
+    "10th %ile",
+    "Median",
+    "90th %ile",
+    "10th %ile",
+    "Median",
+    "90th %ile"
+   ],
+   "groups": [
+    {
+     "group": "Total",
+     "labels": []
+    },
+    {
+     "group": "Sex",
+     "labels": [
+      "Female",
+      "Male"
+     ]
+    },
+    {
+     "group": "Race and ethnicity",
+     "labels": [
+      "Hispanic or Latino, any race",
+      "White, non-Hispanic",
+      "Black or African American, non-Hispanic",
+      "All other races, non-Hispanic"
+     ]
+    },
+    {
+     "group": "Country of birth",
+     "labels": [
+      "United States",
+      "Other countries"
+     ]
+    },
+    {
+     "group": "Highest education level",
+     "labels": [
+      "Graduate",
+      "Bachelor",
+      "Associate",
+      "High school",
+      "Less than high school"
+     ]
+    },
+    {
+     "group": "Current-law initial AIME quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Lifetime payroll tax quintile",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    },
+    {
+     "group": "Lifetime payroll tax quintile (shared)",
+     "labels": [
+      "Highest",
+      "Second highest",
+      "Middle",
+      "Second lowest",
+      "Lowest"
+     ]
+    }
+   ]
+  }
+ }
+}
