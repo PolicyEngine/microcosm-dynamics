@@ -1,24 +1,37 @@
-# gate_epuf block draft (registration proposal; lock flip PENDING).
+# gate_epuf registration record (unlocked; not in gates.yaml).
 #
-# The `gates.gate_epuf` block exactly as the lock flip will add it under the
-# top-level `gates:` key of gates.yaml, after gate_m6, with `locked: true`.
-# Until then it lives here with `locked: false` and edits no gates.yaml byte:
-# any change to gates.yaml moves runs/legacy_manifest_v1.json's pin and three
-# others, which only a ratified flip may move.
+# Round 1 of the referee review ruled that the gate does not lock as
+# registered: as designed it cannot fail the generator for anything gate 1
+# does not already catch. The block records the registered rules, the
+# partition they produced, and the ruling. It gates nothing; every cell
+# publishes report-only with each gate-1 run. It edits no gates.yaml byte.
 #
 # Rendered by scripts/render_gate_epuf_block_draft.py from
 # runs/epuf_gate_floors_v1.json; tests/test_gate_epuf_block_draft.py requires
-# this file to equal a fresh render. Proposal and rationale:
+# this file to equal a fresh render. Proposal, results and ruling:
 # docs/amendments/gate_epuf_registration_proposal.md.
 gates:
   gate_epuf:
     id: epuf_covered_earnings
-    status: paused_pending_referee_round
+    status: unlocked_report_only
     locked: false
     kind: external_anchor
     proposal: docs/amendments/gate_epuf_registration_proposal.md
+    rules_commit: eec910d61a7e0afe21995957740e03d64acdffdc
+    floor_build_commit: 970a9db721bf471308b4fd2666bf0d6e925250ca
     floor_run: runs/epuf_gate_floors_v1.json
     floor_run_sha256: 33e75b96199ce748f0b9aaab0d77d1925405eede93d5e883fa329fde4d87e686
+    first_floor_build:
+      path: runs/epuf_gate_floors_v1_first_build.json
+      sha256: 369bf5ec4e62c0eaa2f70702a9173188c87e84a5544bb4470826781c1847e378
+      note: the build before the report-only career-AIME fix (proposal section 10);
+        its window cells, floors, partition and bites equal the floor run's
+    supplement:
+      path: runs/epuf_gate_supplement_v1.json
+      sha256: 1570f80e5b42c0890871a818e29f09bdf55fdafe26ba4a2aaa7cade4280ea676
+    scoring_path:
+      module: src/populace_dynamics/harness/epuf_run.py
+      sha256: f1a3055a36f225b59adf2240e1398b18724f06364706d692faf4445b380de995
     external_anchor:
       source: SSA 2006 Earnings Public-Use File (EPUF), https://www.ssa.gov/policy/docs/microdata/epuf/
       provenance: data/external/epuf_2006/provenance.md
@@ -26,21 +39,16 @@ gates:
         EPUF2006_DEMOGRAPHIC.csv: 195db459ca7b7c810162cb6e432371e8787eba8331787d2ba1eace1a0da2ccb0
         EPUF2006_ANNUAL.csv: a47315b56214df66fb9f9abcb2caa60779c8b3d091ded199323672c27e3ea105
       disclosure_constants_sha256: ba1f39f238278243de19b8a9d194abedffeabd855f5b97779b685d852f62a881
-    covers: 'Tranche G: a candidate generator''s earnings on gate 1''s held-out persons
-      at the even reference years 1998, 2000, 2002 and 2004, in EPUF''s capped and
-      disclosed units, scored on the mean of the 20 registered seeds against EPUF
-      with an allowance for the PSID''s own measured distance from EPUF. Gated cells,
-      and nothing else: rank persistence of capped earnings from 1998 to 2004 (men;
-      r6.men); rank persistence of capped earnings from 1998 to 2004 (women; r6.women).
-      Every other cell is report-only.'
+    covers: 'Nothing is gated. Every cell is published report-only with each gate-1
+      candidate run: the candidate''s 20-seed estimate, its distance from EPUF, and
+      that distance split into the candidate''s distance from the PSID and the PSID''s
+      distance from EPUF.'
     not_certified:
+    - 'anything: the gate is unlocked and gates no cell'
     - careers, years without earnings by age 62, and the 35-year AIME (tranche R,
       report-only)
     - any year before 1998, and 2006
-    - ages outside the support's window range (about 25-57)
-    - the forward earnings law certified by gate_m6
     - that the PSID agrees with EPUF (the bridge is published per cell)
-    - earnings levels by age, which the generator takes from PSID marginals
     validation_only: No candidate may use EPUF in fitting, tuning or calibration;
       a candidate that does is scored and labelled a calibration check.
     candidate_protocol:
@@ -79,9 +87,7 @@ gates:
         weight: the person's 2004-row weight
         epuf: every EPUF person with sex 1 or 2 born 1947-1973, weight 1
       scoring: populace_dynamics.harness.epuf_run.score_candidate
-      reproduction: a verdict attaches to a registered candidate only if the run
-        reproduces that candidate's committed gate-1 artifact exactly
-    scoring:
+    registered_scoring:
       estimator: mean over the 20 gate seeds of the per-seed value, then log for
         shares, identity for rank correlations
       floor:
@@ -98,9 +104,8 @@ gates:
         log_ratio: 0.405465
         abs_gap: 0.15
       min_events: 20
-      pass_rule: the gate passes iff every gated cell's 20-seed estimate lies inside
-        its interval
-    gated_cells:
+    gated_cells: {}
+    selected_by_registered_rules:
       r6.men:
         metric: abs_gap
         cap: 0.15
@@ -124,6 +129,8 @@ gates:
         upper: 0.078
         faithful_pass_probability: 0.99925
     report_only:
+      r6.men: not_locked_referee_round_1
+      r6.women: not_locked_referee_round_1
       r6.men.c0: noise_exceeds_cap
       r6.men.c1: bridge_exceeds_budget
       r6.men.c2: noise_exceeds_cap
@@ -163,10 +170,9 @@ gates:
       mpers.women.c0: below_20_events
       mpers.women.c1: below_20_events
       mpers.women.c2: undefined_on_some_split
-    faithful_candidate_oc:
+    faithful_candidate_oc_of_selected_cells:
       analytic_product: 0.998599
       empirical_joint: 1.0
-      pause_below: 0.9
     bite_requirements:
       persistence:
         bite: bd1_persistence_loss_0.10
@@ -174,17 +180,30 @@ gates:
         fail_share: 0.44
         met: false
     ceremony_pause: true
+    referee_round_1:
+      report: reviews/gate_epuf_round1_referee_20261002.md
+      reviewer: independent Opus 5.5 lane (subfleet job 20261002-095515-epuf-gate-r1b),
+        reviewing head ce8d5000
+      verdict: 'AMEND: do not lock as registered'
+      ruling: 'Not locked. The registered persistence bite could not be met by design:
+        the tolerance is about 3.2 realised sigmas (0.079) while giving 10 percent
+        of persons a donor''s early years shifts the 1998-2004 rank correlation by
+        about 0.07, so the pause was an internal inconsistency of the registration,
+        not a data surprise. The two cells the rules selected add no demonstrated
+        catch beyond gate 1, and with the bridge signs public the registered candidate''s
+        verdict is largely predictable. Relaxing the bite requirement after seeing
+        the result (option (a)) is rejected; the cells publish report-only with every
+        gate-1 run. A gate with bite needs a fresh registration (proposal section
+        12).'
     lock_ceremony:
-      exists: true
-      stage: proposal
-      next:
-      - adversarial referee round
-      - fixes
-      - verification round
-      - ratify by merge of the flip PR
-      - 'registration of the first run on issue #42'
+      exists: false
+      stage: closed without lock (referee round 1)
+      required_for_any_future_lock: a fresh registration with a new id, its rules
+        fixed before anything is recomputed (proposal section 12)
     history:
     - id: 2026-10-02-epuf-registration-proposal
       proposed: '2026-10-02'
-      content: Registration proposed with the rules committed before the floor build
-        (commit 970a9db721bf); floors in runs/epuf_gate_floors_v1.json.
+      content: Rules committed and pushed before the floor build (commit eec910d61a7e);
+        floors built at commit 970a9db721bf.
+    - id: 2026-10-02-epuf-referee-round-1
+      content: 'Referee round 1: AMEND. Ruling: not locked; report-only (referee_round_1).'
