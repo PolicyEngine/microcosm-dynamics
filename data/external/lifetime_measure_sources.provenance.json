@@ -1,0 +1,52 @@
+{
+  "schema_version": "external_source_provenance_set.v1",
+  "source": "Social Security Administration",
+  "retrieval_date": "2026-10-01T22:31:33Z",
+  "fetch_method": "Direct HTTPS GET of the live ssa.gov page with curl -A 'Wget/1.21.4' on 2026-10-01 (HTTP 200, content-type text/html; charset=UTF-8; response Date header Thu, 01 Oct 2026 22:31:33-34 GMT). The body is committed byte for byte. A per-request Akamai mPulse script in <head> changes between fetches; an earlier fetch the same day parsed to the identical tables.",
+  "acquired_by": "Claude Code (Opus 5.5), NASI follow-up package G2 (branch nasi/g2-lifetime-measures)",
+  "sources": {
+    "trust_fund_interest_rates": {
+      "committed_source_file": "data/external/ssa_trust_fund_interest_rates_2026.source.html",
+      "source_url": "https://www.ssa.gov/oact/ProgData/annualinterestrates.html",
+      "document": "Average and Effective Interest Rates",
+      "source_sha256": "7c11df685faaf0602dd77c5e4e124d64709e8cffd58e463d938f35e7254a0d18",
+      "source_length_bytes": 41498
+    },
+    "effective_rates_1980_on": {
+      "committed_source_file": "data/external/ssa_effective_interest_rates_1980_2025.source.html",
+      "source_url": "https://www.ssa.gov/oact/ProgData/effectiveRates.html",
+      "document": "Effective Interest Rates",
+      "source_sha256": "eaa8870898da2907bbc39da55d6a4c14f349e38c518aefb0ff87be2ddae09322",
+      "source_length_bytes": 39756
+    },
+    "effective_rates_1940_1979": {
+      "committed_source_file": "data/external/ssa_effective_interest_rates_1940_1979.source.html",
+      "source_url": "https://www.ssa.gov/oact/ProgData/effectiveRts1940-79.html",
+      "document": "Effective Interest Rates, 1940-79 (historical document)",
+      "source_sha256": "fb16fdaff44b3427eec2216740734792aab3b94e2851acde57c26e4057094e3d",
+      "source_length_bytes": 19037
+    },
+    "oasdi_tax_rates": {
+      "committed_source_file": "data/external/ssa_oasdi_tax_rates_2026.source.html",
+      "source_url": "https://www.ssa.gov/oact/ProgData/oasdiRates.html",
+      "document": "Social Security Tax Rates",
+      "source_sha256": "7aad3e899ab2ee4e2dfd91c2dc9208c79e40bf4cb7f3315867a11ba7efd8a9a4",
+      "source_length_bytes": 41837
+    },
+    "mint8_user_guide": {
+      "committed_source_file": "data/external/ssa_mint8_user_guide_2026.source.html",
+      "source_url": "https://www.ssa.gov/policy/docs/projections/user-guide.html",
+      "document": "MINT8 Table User Guide",
+      "source_sha256": "8d5bc3f0de17831c2ed07383003257a63bb657df179d0c54868fda052f23f100",
+      "source_length_bytes": 73967
+    }
+  },
+  "consumed_by": {
+    "scripts/extract_lifetime_measure_sources.py": [
+      "data/external/ssa_trust_fund_interest_rates_2026.json",
+      "data/external/ssa_oasdi_tax_rates_2026.json",
+      "data/external/mint8_lifetime_quintile_definitions.json"
+    ]
+  },
+  "reproducible": "parsed deterministically from the committed, sha256-verified HTML bodies; no network or wall-clock timestamp is used"
+}
