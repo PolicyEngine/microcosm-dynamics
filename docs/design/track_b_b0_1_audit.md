@@ -20,21 +20,37 @@ It changes no count and no byte of the protocol. It adds three things:
 
 Section 15 lists each review finding and what changed.
 
+**Revision 2 (2026-09-30, after Max's rulings d693 and d622).** The
+post-ruling addendum, `docs/design/track_b_b0_1_addendum.md`, freezes
+elements 5-9 and the planning values. This file takes only the
+corrections that round 2 of the blinded review (N1-N7) and d693 asked
+for: the summary's side-A sentence (N1), the floor-equality claims (N2),
+Q2's cost and its headroom, which is per cell (N3, d693), one citation
+(N4), the inventory's scope (N5), the pinned-figure claim and two bands
+(N6) and the wage vintage's element (N7). Section 15.5 lists them.
+After the addendum's planning-value run, sections 1, 11 and 12 also say
+that the "upper bound" standard errors are reference points, not
+bounds. No count, protocol byte or recommendation
+changed.
+
 Verification class: **source audit** (design §3.2, line 144). It admits
 nothing scientific. Before B2 registers, the design requires three more
 things:
 
 - a frozen record of all ten §5.2 elements plus the named power
   procedure (design line 288). This record freezes four elements and
-  records a fifth; the rest wait on Max's rulings (section 2);
+  records a fifth; the addendum freezes the rest after Max's rulings
+  (section 2);
 - a blinded review of prospective feasibility and power (design §3.1
   row B0, line 120);
-- a B1 replay that clears B2's dependency (line 121). Whether a B1 v2
-  "reconstructed reproduction" pass suffices is Max's pending decision
-  d622 (`docs/design/track_b_b1_v2_amendment.md:75-79`).
+- a B1 replay that clears B2's dependency (line 121). Max ruled in d622
+  (2026-09-30) that a B1 v2 "reconstructed reproduction" pass may
+  unlock B2, with the weaker label carried into B2's registration
+  (`docs/design/track_b_b1_v2_amendment.md:75-79`).
 
-This record leaves eight questions for Max (section 12). Each states the
-facts, the options and a recommended default. None is decided here.
+This record put eight questions to Max (section 12). Each states the
+facts, the options and a recommended default. None is decided here; Max
+ruled on all eight in d693, and the addendum records the rulings.
 
 "The design" means `microcosm-launch-evidence/dynasim-parity-20260909/trackb-design-20260928.md`
 (revision 3), which sits outside this repository. Max approved its §10
@@ -73,10 +89,14 @@ defaults in d515 on 2026-09-28. Design line numbers refer to that file.
   neither (Q2). Take a faithful cell at M6's k = 3 tolerance, before
   estimation error, for m = 1, 6 and 16 cells:
   - under M6's convention it passes with probability 0.48, 0 and 0;
-  - on side-A scoring, with probability at least 0.898, 0.662 and 0.479,
-    so it misses 0.90 even for one cell;
-  - on full-support scoring, with probability at least 0.998, 0.986 and
-    0.967.
+  - on side-A scoring, with probability 0.898, 0.662 and 0.479 at the
+    reference standard error, so at that standard error it misses 0.90
+    even for one cell;
+  - on full-support scoring, with probability 0.998, 0.986 and 0.967 at
+    its reference standard error.
+
+  The reference standard errors are reference points, not bounds
+  (section 11).
 
   Estimation error lowers all three, and this audit does not bound it
   (section 11.2).
@@ -115,6 +135,18 @@ power procedure.
 | 9. Pass conjunction | 10 | Open. Inherited M6 conjunction recorded; needs Q2 |
 | 10. Reference dates vs availability | 4.3 | Frozen |
 | Named power procedure | 11 | Named; planning values need Q5 |
+
+The statuses above are as of revision 1. Since d693, the addendum's
+table supersedes this one: it marks all ten elements and the power
+procedure frozen, with elements 5-9 in the addendum.
+
+**Wage vintage (N7).** Element 1, the source release, freezes B2's wage
+vintage: the policyengine-us 1.752.2 `nawi.yaml`, realized through 2010,
+with later years from the fitter's log-linear projection over 2001-2010
+(section 3). It is the series as later revised, not a 2011-era release.
+Element 10 records that availability gap. The choice follows the code
+B2 transports and the selectors, and design line 150 already scopes B2
+as "Not a 2010-vintage forecast", so it needed no ruling.
 
 "Frozen" means fixed by this record, subject to the blinded review. The
 record is therefore a partial freeze. Design line 288 says "A gate cannot
@@ -267,7 +299,7 @@ income-reference years 2012 and 2014, collected in 2013 and 2015
 
 All staged files are retrospective releases, made 9 to 13 years after
 their reference years. The selectors record the same fact
-(`select_m6_qstar_train_only.py:646`). This audit did not verify any
+(`select_m6_qstar_train_only.py:645`). This audit did not verify any
 wave's first public release date, or when SSA first published NAWI for
 2010. B2 is therefore not a real-time or 2010-vintage exercise; §3.2
 already says so (design line 150).
@@ -395,11 +427,14 @@ merged.
   B2's dependants are H and B3L (design line 121). Whether B2's
   retrospective-regression class answers the condition, or it blocks H
   and B3L until a narrower fallback registers, is Q8.
-- **The six cells' floor already exists.** Under the default
-  translation in section 9, B2's floor for the six M6-retained cells is
-  by construction the floor the selectors published. The constructions
+- **The six cells' person-split floor already exists.** Under a person
+  split (Q3 option (a)), B2's floor for the six M6-retained cells is by
+  construction the floor the selectors published. The constructions
   match: same anchor, domain, split order, seeds, reducer, years and
-  fixed weights (`select_m6_qstar_train_only.py:1416-1479`). The
+  fixed weights (`select_m6_qstar_train_only.py:1416-1479`). Under the
+  household split that d693 adopted (Q3 option (b)), B2's gating floor
+  is new and unpublished, and the person-split floor becomes a
+  non-gating reproduction check (N2). The
   selectors published candidate-3-law outcomes on the same cells in the
   same record, at boundary 2010 and, for realized 2012, at boundary
   2008.
@@ -443,6 +478,12 @@ years. Its rules are:
 - **Code.** Python source under `src/` and `scripts/` computes outcomes
   rather than recording them, so it is listed as code. Test modules are
   scanned as text.
+
+The inventory covers tracked files only (N5). It does not cover the
+threads of PRs #255, #271 and #273, the registration comments on issue
+#42, or the launch-evidence directory; the Q6 reviewer brief excludes
+those separately, and d693's ruling leaves every one of the 20 listed
+files out of the review root whole, not by line range.
 
 The result is 20 value-bearing files, 45 marital, 24 code and 31 that
 only mention a phrase. Section 15.4 lists the 20 value-bearing files and
@@ -676,10 +717,14 @@ it (section 13).
 8. The builder publishes the floor artifact and its hash. B2's candidate
    runs only after the floor is committed.
 
-Under this rule, the six-cell floor must equal the published selector
-floor, and the five-seed detail must equal the published seed detail. A
-B2 build can test that differentially. That equality is also why the
-six-cell floor is not new information (section 5.4).
+Under a person split, the six-cell floor must equal the published
+selector floor, and the five-seed detail must equal the published seed
+detail. A B2 build can test that differentially. That equality is also
+why a person-split six-cell floor is not new information (section 5.4).
+Under the household split d693 adopted, the gating floor is new; the
+person-split floor is kept as the non-gating differential check (N2).
+A separate comparator runs that check, not the floor builder, which
+reads no selection ledger (addendum, element 5).
 
 ## 10. Uncertainty treatment and pass conjunction (elements 8 and 9, open)
 
@@ -687,10 +732,12 @@ six-cell floor is not new information (section 5.4).
 
 - for each gate seed, score the mean of K = 20 draws on side A against
   side-A truth;
-- a seed passes when every gated cell is within tolerance and no draw is
-  undefined or unregenerated;
-- the gate passes on at least 4 of 5 seeds (`m6_scoring.py:35-38`,
-  `:624-752`).
+- a seed is valid when no gated cell has an undefined draw and every
+  gated cell's K draws are not all identical (regenerated); a valid seed
+  passes when every gated cell is within tolerance;
+- the gate passes when all five seeds are valid and at least 4 of them
+  pass (`m6_scoring.py:35-38`, `:713-751`). Revision 1 left out the
+  all-seeds-valid condition; revision 2 restores it.
 
 Uncertainty enters only through the half-split floor and the 4-of-5
 conjunction.
@@ -736,7 +783,8 @@ Everything below uses only sample sizes, weights and the rules' algebra.
 It uses no B2 outcome. Revision 1's figures come from
 `scripts/track_b_b0_1_review_power.py`, which reads only the frozen
 record's sample sizes and reuses the frozen script's functions;
-`tests/test_track_b_b0_1_audit_record.py` pins every one.
+`tests/test_track_b_b0_1_audit_record.py` pins every one, including,
+since revision 2, the prose-only figures N6 listed.
 
 **Gap conventions.** σ is a cell's half-split floor σ, and K = 20.
 
@@ -746,17 +794,27 @@ record's sample sizes and reuses the frozen script's functions;
   column.
 - **Side A.** This is M6's scoring (section 10). A half's statistic has
   variance σ²/2, and the mean of K draws adds 1/K of that. So the gap's
-  survey-plus-simulation standard error is at most
+  survey-plus-simulation standard error was taken to be at most
   σ·√((1 + 1/K)/2) ≈ 0.725 σ.
-- **Full support.** The same on the whole domain: at most
+- **Full support.** The same on the whole domain:
   σ·√(1 + 1/K)/2 ≈ 0.512 σ.
 
-The two scoring bases give upper bounds. Side-A truth and side-A
-projections start from the same persons' 2010 anchors, so the part of a
-statistic's sampling variation that the anchors explain cancels in the
-gap. A design-based resampled gap standard error would measure how much
+These were offered as upper bounds, on the reasoning that side-A truth
+and side-A projections start from the same persons' 2010 anchors, so the
+part of a statistic's sampling variation that the anchors explain
+cancels in the gap. A design-based resampled gap standard error would measure how much
 cancels, but it needs outcome data (Q5). No convention includes
 estimation error.
+
+*Revision 2 correction.* These are not bounds. Over household resamples
+with the law and paths fixed, the gap's variance is Var(T) + Var(P̄) -
+2 Cov(T, P̄), and it stays within the figures above only if the
+covariance offsets the projected statistic's own resampling variance, up
+to Var(T)/K. Nothing guarantees that. The addendum's planning-value run
+measured the full-support ratio r, the gap standard error over
+σ·√(1 + 1/K)/2, at the 2006 pseudo-origin: it is above 1 for seven of
+the 16 cells, up to 1.21 for `earn_p10.prime` (addendum section 10).
+The figures on these bases are reference points.
 
 ### 11.1 M6 rule: structural limits
 
@@ -790,11 +848,11 @@ A faithful cell passes when its gap plus z\* standard errors lies within
 the tolerance. At M6's k = 3 floor tolerance (2.606 σ), before
 estimation error, the pass probability is:
 
-| m | z\* (Bonferroni 95%) | Needed tol/se | M6 convention (se = σ) | Side A (se ≤ 0.725 σ) | Full support (se ≤ 0.512 σ) |
+| m | z\* (Bonferroni 95%) | Needed tol/se | M6 convention (se = σ) | Side A (se = 0.725 σ) | Full support (se = 0.512 σ) |
 |---:|---:|---:|---:|---:|---:|
-| 1 | 1.960 | 3.605 | 0.482 | ≥ 0.898 | ≥ 0.998 |
-| 6 | 2.638 | 4.283 | 0.000 | ≥ 0.662 | ≥ 0.986 |
-| 16 | 2.955 | 4.600 | 0.000 | ≥ 0.479 | ≥ 0.967 |
+| 1 | 1.960 | 3.605 | 0.482 | 0.898 | 0.998 |
+| 6 | 2.638 | 4.283 | 0.000 | 0.662 | 0.986 |
+| 16 | 2.955 | 4.600 | 0.000 | 0.479 | 0.967 |
 
 The k a floor tolerance round(mean + k SD) needs for 0.90 power, before
 estimation error:
@@ -810,14 +868,16 @@ estimation error:
   so the bound rule cannot pass at all. The first version reported only
   this column. It is one end of the range, not the answer.
 - **Side A.** The conflict at m ≥ 6 is real but not total. At the
-  upper-bound standard error there is no room for estimation error at
+  reference standard error there is no room for estimation error at
   any m. The largest estimation variance compatible with 0.90 power is
   negative: −0.4%, −29% and −39% of the gap variance at m = 1, 6 and
   16. The shared-anchor reduction could make room; its size needs
   outcome data.
-- **Full support.** The bound rule reaches 0.90 if estimation error adds
-  at most 99%, 41% and 22% of the survey-plus-simulation gap variance
-  se_full²·(1 + 1/K) at m = 1, 6 and 16. The first version gave these as
+- **Full support.** For one cell, the bound rule reaches 0.90 if
+  estimation error adds at most 99%, 41% and 22% of the
+  survey-plus-simulation gap variance se_full²·(1 + 1/K) at m = 1, 6 and
+  16. Those are per-cell figures (revision 2): for the whole gate, with
+  every cell required to pass, the room is 99%, 2.8% and none. The first version gave these as
   104%, 43% and 23% "of that variance" without naming the reference,
   which was se_full² alone.
 - **Estimation error.** Nothing here bounds it, and its size decides
@@ -857,9 +917,13 @@ every p.
 | Older, side A | 2,976 | 0.732 / 0.833 / 0.860 | 1,050 | 0.925 / 0.948 / 0.955 |
 
 So "fails under the household-worst bound" holds only for participation
-rates in a band around 1/2. The band runs from about 0.19-0.81 (full
-support, m = 1) to about 0.045-0.955 (side A, m = 16). Where B2's rates
-lie is a planning value (Q5).
+rates in a band around 1/2. For the prime cohort the band runs from
+about 0.19-0.81 (full support, m = 1) to about 0.049-0.951 (side A,
+m = 16); for the older cohort, from about 0.17-0.83 to about
+0.045-0.955. (Revision 1 paired the prime cohort's first endpoint with
+the older cohort's second; N6.) Side-A Kish sizes also fail in a band:
+about 0.28-0.72 (prime) and 0.27-0.73 (older) at m = 1. Where B2's
+rates lie is a planning value (Q5).
 
 **Positive-earnings quantiles, 10% (tolerance ln 1.1).** Under a
 log-normal planning model with every row positive, the largest
@@ -939,8 +1003,9 @@ candidate outcome.
   321,500 rows dated ≤ 2010: that is the selectors' `fit_input_rows`,
   a count read from the ledgers.
 - **Shared-anchor variance.** The side-A and full-support standard
-  errors are upper bounds. A design-based resampled gap standard error
-  needs outcome data.
+  errors are reference points, not bounds (the revision 2 correction
+  above). A design-based resampled gap standard error needs outcome
+  data.
 - **Planning values.** Participation rates, positive-earner shares,
   log-earnings dispersion, the lag-1 and lag-2 correlations with their
   fourth-moment factors, and the true household design effect (Q5).
@@ -980,8 +1045,11 @@ The defaults are proposals; none is adopted here.
    - Facts: at the k = 3 tolerance, before estimation error, a faithful
      cell passes the bound rule as follows (m = 1, 6 and 16):
      - 0.48, 0 and 0 under M6's convention;
-     - at least 0.898, 0.662 and 0.479 on side A;
-     - at least 0.998, 0.986 and 0.967 on full support.
+     - 0.898, 0.662 and 0.479 on side A;
+     - 0.998, 0.986 and 0.967 on full support,
+
+     each at the reference standard error of section 11, which is not a
+     bound.
 
      The estimation term is unbounded (section 11.2).
    - Options:
@@ -998,6 +1066,19 @@ The defaults are proposals; none is adopted here.
      every empirical gate. Full support is the only basis on which the
      k = 3 floor tolerance leaves room for estimation error: 41% of the
      gap variance at m = 6.
+     - **Revision 2 correction (d693).** The 41% is room for one cell.
+       The gate passes only when every gated cell passes, and at the
+       gate level the room is 2.8% of the gap variance at m = 6 (16.0%
+       at m = 4, 8.4% at m = 5, none at m = 16). Under M6's ladder a
+       surface of four or five cells is reachable only if whole concept
+       families have no eligible cell. Before estimation
+       error the whole bound rule passes with probability 0.917 at 6
+       cells and 0.584 at 16. The addendum recomputes power at the gate
+       level.
+     - **Cost (N3).** Scoring on full support keeps the half-split k = 3
+       tolerance, so the tolerance is about 5.1 standard errors wide
+       instead of about 3.6 on side A: about 1.4 times wider. That costs
+       sensitivity to a misspecified candidate.
      - The default holds only if the post-ruling addendum bounds the
        estimation term below that headroom, from ≤ 2010 data. If it
        cannot, the gate is `WEAK_POWER_OR_VACUITY` and is rescoped
@@ -1021,8 +1102,9 @@ The defaults are proposals; none is adopted here.
      - §5.4's B2 row specifies floor-derived tolerances.
      - If the limits did apply, sample sizes alone would not settle
        them. Participation fails under the household-worst bound only
-       for rates near 1/2. Persistence and quantile feasibility depend
-       on planning values (section 11.3).
+       for rates near 1/2, and on side A at Kish sizes in a band of
+       about 0.28-0.72 at m = 1 (N6). Persistence and quantile
+       feasibility depend on planning values (section 11.3).
    - Options: (a) no; (b) yes, as caps on B2's floor-derived
      tolerances.
    - **Recommended default: (a),** on the text of §5.3 and §5.4. Section
@@ -1235,7 +1317,7 @@ either.
 | 6 | low | No codebook concept check; frequency tables are an exposure risk | Section 4.2 and Q6 |
 | 7 | low | The count of persons in clusters was understated | Section 10, stated under the one-spouse-per-family condition the frozen record cannot verify |
 | 8 | low | The reference variance was unnamed, and post-run figures were unpinned | Section 11.2 names both references, and the audit-record test pins every revision-1 figure |
-| 9 | low | The deviation from protocol input 6 was undisclosed, and one citation was off by one | Section 15.2; the citation is now `select_m6_qstar_train_only.py:646` |
+| 9 | low | The deviation from protocol input 6 was undisclosed, and one citation was off by one | Section 15.2; the citation was changed to `:646`, which round 2 found wrong; revision 2 restores `select_m6_qstar_train_only.py:645` (N4) |
 
 ### 15.2 Protocol deviation, recorded 2026-09-29
 
@@ -1291,6 +1373,24 @@ the listed line ranges are.
 
 Line ranges refer to the files at `de08c69`. If a listed file changes
 before the review, rerun the inventory to a new path.
+
+### 15.5 Revision 2: round-2 low findings and the d693 correction
+
+| # | Round-2 finding | Change in this file |
+|---|---|---|
+| N1 | The summary treated a lower bound as a conclusion | Section 1 qualified the side-A figure by its standard error, now called the reference standard error (see the addendum-run row); the pinned strings follow |
+| N2 | Floor-equality claims hold only under a person split | Sections 5.4 and 9.2 are conditional on the split; the addendum keeps the person-split floor as a non-gating check |
+| N3 | Q2 omitted its main cost | Q2 states the 1.4 times wider tolerance |
+| N4 | The corrected citation was off by one the other way | `:645` restored in section 4.3 and in the table above |
+| N5 | Exclusion gaps; tracked-files-only scope | Section 5.5 states the scope; the addendum's review root leaves the 20 files out whole |
+| N6 | "Pins every one" overstated; mixed-cohort bands; Q4 understated | The audit-record test now pins the prose-only figures; section 11.3 and Q4 are corrected |
+| N7 | Wage-vintage element unstated | Section 2 |
+| d693 | Q2's 41% is per cell | Q2 and section 11.2 carry the gate-level figures; the addendum recomputes power |
+| Addendum review | Section 10 left out M6's all-seeds-valid condition; sections 1-2 still called d622 and the rulings pending | Section 10 restores the condition; the header and section 2 point to the rulings and the addendum's table |
+| Addendum run | The planning-value run measured the full-support ratio r above 1 for seven cells | Sections 1, 11 (including 11.2 and 11.4) and Q2 call the standard errors reference points, not bounds |
+
+These changes come after the second blinded review and before the
+addendum's own blinded review (Q6), which covers them.
 
 ## 16. Protocol record
 
