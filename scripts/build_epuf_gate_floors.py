@@ -278,7 +278,9 @@ def career_reference(
         row.loc[annual["person_id"].to_numpy()].to_numpy(),
         annual["year"].to_numpy() - years[0],
     ] = annual["earnings"].to_numpy()
-    masked = mask_as_career_assembler(matrix, years)
+    masked = mask_as_career_assembler(
+        matrix, years, persons["birth_year"].to_numpy()
+    )
     nawi = captured_ssa_parameters().nawi
     out: dict[str, object] = {}
     for sex_code, sex in EPUF_SEX_LABELS.items():

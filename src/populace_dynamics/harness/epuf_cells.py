@@ -349,20 +349,23 @@ class WindowArrays:
 
 
 def mask_as_career_assembler(
-    earnings: np.ndarray, years: Sequence[int]
+    earnings: np.ndarray, years: Sequence[int], birth_year: np.ndarray
 ) -> np.ndarray:
     """Rewrite annual histories the way the career assembler builds one.
 
-    ``earnings`` is persons by years. Years before 1968 become zero (the
-    assembler's careers start at ``max(1968, birth_year + 22)``) and each
-    odd year from 1997 becomes the mean of its two neighbours (the
-    assembler's structural-gap rule, which fills the years the biennial
-    PSID did not collect). A filled odd year whose neighbours are both
-    zero stays zero.
+    ``earnings`` is persons by years. Each person's years before
+    ``max(1968, birth_year + 22)`` become zero (the assembler's careers
+    start there and count earlier years as zero), and each odd year from
+    1997 becomes the mean of its two neighbours (the assembler's
+    structural-gap rule, which fills the years the biennial PSID did not
+    collect). A filled odd year whose neighbours are both zero stays
+    zero.
     """
     years = np.asarray(years)
+    birth_year = np.asarray(birth_year)
     out = np.asarray(earnings, dtype=np.float64).copy()
-    out[:, years < 1968] = 0.0
+    start = np.maximum(1968, birth_year + 22)
+    out[years[None, :] < start[:, None]] = 0.0
     position = {int(year): index for index, year in enumerate(years)}
     for year in years[(years >= 1997) & (years % 2 == 1)]:
         left = position.get(int(year) - 1)
@@ -390,7 +393,8 @@ def career_cells(
     ``earnings`` is persons by years of capped annual earnings, unweighted
     (EPUF is a simple random sample; a weighted source passes replicated
     or pre-weighted rows). Every person's ages 22-61 must lie inside
-    ``years``.
+    ``years``, which must start in 1951 or later; the AIME ranks every
+    supplied year through age 61.
     """
     years = np.asarray(years)
     earnings = np.asarray(earnings, dtype=np.float64)
@@ -449,15 +453,20 @@ def career_cells(
         }
     out["at_max_by_age"] = by_age
 
+    # The AIME ranks every year after 1950 through the cutoff (age 61),
+    # including years before age 22 (42 USC 415(b)(2)); the number of
+    # computation years is 35 for every cohort here (born 1929 or later).
+    cutoff = birth_year + last_age
+    through = years[None, :] <= cutoff[:, None]
     index_year = birth_year + 60
     index_value = np.vectorize(lambda y: float(nawi[int(y)]))(index_year)
-    year_value = np.vectorize(lambda y: float(nawi[int(y)]))(window_years)
+    year_value = np.array([float(nawi[int(y)]) for y in years])
     factor = np.where(
-        window_years < index_year[:, None],
-        index_value[:, None] / year_value,
+        years[None, :] < index_year[:, None],
+        index_value[:, None] / year_value[None, :],
         1.0,
     )
-    indexed = window * factor
+    indexed = np.where(through, earnings * factor, 0.0)
     top = np.sort(indexed, axis=1)[:, -_COMPUTATION_YEARS:]
     aime = np.floor(top.sum(axis=1) / (_COMPUTATION_YEARS * 12))
     out["aime_35yr_through_age_61"] = {

@@ -264,18 +264,21 @@ def test_transform_is_log_for_shares_and_identity_for_correlations():
 YEARS = np.arange(1951, 2007)
 
 
-def test_mask_zeroes_before_1968_and_fills_odd_years_from_1997():
-    history = np.arange(1.0, len(YEARS) + 1)[None, :] * 100
-    masked = ec.mask_as_career_assembler(history, YEARS)
-    assert (masked[0, YEARS < 1968] == 0).all()
-    untouched = (YEARS >= 1968) & ~((YEARS >= 1997) & (YEARS % 2 == 1))
-    assert (masked[0, untouched] == history[0, untouched]).all()
-    for year in (1997, 1999, 2001, 2003, 2005):
-        index = year - 1951
-        assert (
-            masked[0, index]
-            == (history[0, index - 1] + history[0, index + 1]) / 2
-        )
+def test_mask_zeroes_before_the_assembler_start_and_fills_odd_years():
+    history = np.tile(np.arange(1.0, len(YEARS) + 1) * 100, (2, 1))
+    births = np.array([1940, 1950])
+    masked = ec.mask_as_career_assembler(history, YEARS, births)
+    # born 1940: career starts 1968; born 1950: at age 22, 1972
+    for row, start in ((0, 1968), (1, 1972)):
+        assert (masked[row, YEARS < start] == 0).all()
+        untouched = (YEARS >= start) & ~((YEARS >= 1997) & (YEARS % 2 == 1))
+        assert (masked[row, untouched] == history[row, untouched]).all()
+        for year in (1997, 1999, 2001, 2003, 2005):
+            index = year - 1951
+            assert (
+                masked[row, index]
+                == (history[row, index - 1] + history[row, index + 1]) / 2
+            )
 
 
 def test_career_zero_years_and_at_max_shares():
@@ -322,10 +325,11 @@ def test_career_aime_matches_the_statutory_oracle(seed, birth):
         wage_bases=WAGE_BASES,
         nawi=params.nawi,
     )
+    # Every year after 1950 through age 61, including years before 22.
     through_61 = {
         int(year): float(value)
         for year, value in zip(YEARS, history, strict=True)
-        if birth + 22 <= year <= birth + 61
+        if year <= birth + 61
     }
     expected = statutory_aime.aime(through_61, birth, params)
     assert cells["aime_35yr_through_age_61"]["p50"] == expected
