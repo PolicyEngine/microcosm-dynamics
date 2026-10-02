@@ -189,6 +189,36 @@ def test_tolerance_label_boundaries_and_ssi_decrease():
     )
 
 
+@pytest.mark.parametrize("invalid", [np.nan, np.inf])
+@pytest.mark.parametrize("position", ["cut", "baseline", "scenario"])
+def test_replacement_labels_refuse_nonfinite_instead_of_assigning_none(
+    invalid, position
+):
+    values = {
+        "cut": np.asarray([120.0]),
+        "baseline": np.asarray([0.0]),
+        "scenario": np.asarray([120.0]),
+    }
+    values[position][0] = invalid
+    with pytest.raises(ValueError, match="finite"):
+        core.replacement_labels(
+            values["cut"],
+            values["baseline"],
+            values["scenario"],
+            np.asarray([0]),
+        )
+
+
+def test_replacement_labels_refuse_overflow_in_unit_ssi_change():
+    with pytest.raises(ValueError, match="unit totals must be finite"):
+        core.replacement_labels(
+            np.asarray([120, 120]),
+            np.zeros(2),
+            np.asarray([1e308, 1e308]),
+            np.asarray([0, 0]),
+        )
+
+
 @settings(deadline=None, suppress_health_check=[HealthCheck.too_slow])
 @given(
     st.lists(

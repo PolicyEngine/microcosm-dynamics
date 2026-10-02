@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import subprocess
 from collections.abc import Hashable, Mapping
 from decimal import Decimal
@@ -379,12 +380,26 @@ def replacement_labels(
     Units without any cut receive none because they are outside the universe.
     """
     index = np.asarray(unit_index, dtype=np.int64)
-    cut = unit_totals(person_cut, index)
-    change = unit_totals(
-        np.asarray(scenario_ssi, dtype=np.float64)
-        - np.asarray(baseline_ssi, dtype=np.float64),
-        index,
-    )
+    person_cut = np.asarray(person_cut, dtype=np.float64)
+    baseline = np.asarray(baseline_ssi, dtype=np.float64)
+    scenario = np.asarray(scenario_ssi, dtype=np.float64)
+    if (
+        not np.isfinite(tolerance)
+        or tolerance < 0
+        or not all(
+            np.isfinite(values).all()
+            for values in (person_cut, baseline, scenario)
+        )
+        or (person_cut < 0).any()
+    ):
+        raise ValueError(
+            "replacement inputs must be finite with nonnegative cuts and tolerance"
+        )
+    with np.errstate(over="ignore", invalid="ignore"):
+        cut = unit_totals(person_cut, index)
+        change = unit_totals(scenario - baseline, index)
+    if not np.isfinite(cut).all() or not np.isfinite(change).all():
+        raise ValueError("replacement unit totals must be finite")
     labels = np.full(len(cut), NONE, dtype=np.int8)
     labels[(cut > 0) & (change > tolerance)] = PART
     labels[(cut > 0) & (change >= cut - tolerance)] = FULL
@@ -904,6 +919,8 @@ def write_invented_frame(
         "households": households,
         "persons": persons,
         "seed": seed,
+        "labels": ["INVENTED DRY RUN - NOT RESULTS", *LABELS],
+        "named_differences": NAMED_DIFFERENCES,
     }
     completed = subprocess.run(
         [str(interpreter), str(child)],
@@ -912,5 +929,12 @@ def write_invented_frame(
         text=True,
         check=True,
         timeout=300,
+        env={
+            **os.environ,
+            "OMP_NUM_THREADS": "1",
+            "OPENBLAS_NUM_THREADS": "1",
+            "MKL_NUM_THREADS": "1",
+            "NUMEXPR_NUM_THREADS": "1",
+        },
     )
     return json.loads(completed.stdout)
