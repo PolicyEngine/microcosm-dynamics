@@ -1,6 +1,6 @@
 # SSI's asset test and a Social Security cut at depletion, on a population
 
-- **Status:** draft, not registered (`sa1-draft-3`). This specification is
+- **Status:** draft, not registered (`sa1-draft-4`). This specification is
   registered in two issue #42 comments, as Registration 18 is (§15).
   Before the first comment, this file changes only in its version
   (`sa1-ratified-1`), its status (`ratified_frozen`), the §18 block's
@@ -14,7 +14,7 @@
   stacks on PR #506, which is not merged. Any change to the ratified file
   ends the registration; a corrected version needs a new registration.
 - **Specification:** `pe_us_depletion_cut_population_ssi_asset_test`,
-  version `sa1-draft-3`.
+  version `sa1-draft-4`.
 - **Question.** At the NASI meeting on 2026-10-01, participants asked
   whether SSI would really replace the income a Social Security cut takes
   away, given that SSI's asset limit excludes many people. PR #506's
@@ -216,9 +216,10 @@ from constants, and records the citation.
 
 ### 3.2 Rounding and the per-component rule
 
-For each person *i* and each component *k* the scenario cuts, let
-*a<sub>ik</sub>* be the value `sim.calculate(component, 2026)` returns in
-the baseline (float32), converted to float64:
+For each person *i* and each component *k*, let *a<sub>ik</sub>* be the
+value `calculate(component, 2026)` returns (float32) in a separate probe
+simulation of the frame with no reform and no inputs set, converted to
+float64. For each component the scenario cuts:
 
 ```text
 m_ik = floor(a_ik / 12)                     whole-dollar monthly benefit
@@ -228,7 +229,9 @@ a'_ik = a_ik - c_ik                         the reform input
 c_i  = sum over cut components of c_ik      the person's annual cut
 ```
 
-- *s* is the payable share as a `Decimal` from `trustees_citation`;
+- *s* is the payable share,
+  `Decimal(citation["quotes"][fund]["payable_share"])` (the citation
+  holds it as a string);
   `m_ik` is passed as a Python `int` to
   `depletion_cut.payable_monthly_benefit`, which rounds down to the whole
   dollar under PR #506's `ROUNDING_RULE` (modelled on 42 USC 415(g)). A
@@ -242,10 +245,10 @@ c_i  = sum over cut components of c_ik      the person's annual cut
   registered choice, following PR #506, which cuts each of a couple's
   benefits on its own.
 - **Inputs set.** Every scenario's simulation, the baseline included,
-  receives all four components for 2026 through `set_input` before any
-  value is calculated: the baseline gets *a<sub>ik</sub>* unchanged, a
-  cut scenario gets *a′<sub>ik</sub>*. Nothing else in the frame
-  changes.
+  receives all four components for 2026 through `set_input` before
+  anything is calculated on that simulation: the baseline gets
+  *a<sub>ik</sub>* unchanged, a cut scenario gets *a′<sub>ik</sub>*.
+  PE-US stores them as float32. Nothing else in the frame changes.
 
 ## 4. SSI as PE-US 2.18.0 encodes it
 
@@ -265,9 +268,12 @@ c_i  = sum over cut components of c_ik      the person's annual cut
   equality (`<=`).
 - `ssi_claim_is_joint` (`PEUS/variables/gov/ssa/ssi/ssi_claim_is_joint.py:10-15`):
   more than one member of the marital unit is ABD and a head or spouse of
-  their tax unit. PE-US gives the head and spouse roles to the two oldest
-  adults of a tax unit, so a married couple living with an older adult in
-  the same tax unit may not be a joint claim.
+  their tax unit. PE-US gives the head role to the oldest adult of a tax
+  unit and, when no member of the unit is separated, the spouse role to
+  the oldest remaining adult
+  (`PEUS/variables/household/demographic/tax_unit/is_tax_unit_head.py`,
+  `is_tax_unit_spouse.py`), so a married couple living with an older
+  adult in the same tax unit may not be a joint claim.
 - Limits: $2,000 individual and $3,000 couple, unchanged since
   1989-01-01 and not indexed
   (`PEUS/parameters/gov/ssa/ssi/eligibility/resources/limit/individual.yaml`
@@ -303,7 +309,8 @@ c_i  = sum over cut components of c_ik      the person's annual cut
   month,
   `ssi_if_takes_up(asset test as encoded) = ssi_if_takes_up(no asset test) × meets_ssi_resource_test`,
   and the same holds for `ssi`. The run checks this identity for every
-  person in every scenario (§10, check 6); rows R3 and R4 rest on it.
+  person in every scenario (§10, row validity (a)); rows R3 and R4 rest
+  on it.
 
 ### 4.3 The no-asset-test counterfactual
 
@@ -436,7 +443,7 @@ every row.
   `ssi_countable_resources`, marital-unit and household membership, and
   the limits PE-US reads (`gov.ssa.ssi.eligibility.resources.limit`). It
   also computes the encoded test the same way and compares it with
-  PE-US's `meets_ssi_resource_test` (§10, check 7).
+  PE-US's `meets_ssi_resource_test` (§10, row validity (b)).
 - **Why R3 and R4.** The frame puts each household's assets on its
   lowest-`A_LINENO` person, and PE-US does not deem resources. A spouse
   who does not hold the assets, in a couple that is not a joint claim,
@@ -536,16 +543,21 @@ refusal):
    `scripts/pe_us_minimum_benefit_sample_households.py`, PR #496, which
    PR #506 reuses).
 3. The baseline component arrays are identical in every child process.
-4. For every person, baseline `social_security` minus scenario
-   `social_security` equals *c<sub>i</sub>* within $0.05 (float32
-   storage), and under the OASI cut the disability component is
-   unchanged.
+4. For every person and component, the component a scenario's simulation
+   calculates for 2026 equals the float32 of the input set (§3.2)
+   exactly; components the scenario does not cut equal the baseline
+   exactly, so under the OASI cut the disability component is unchanged.
 5. Marital units have one or two members and lie within one household;
    every person belongs to exactly one household and one marital unit;
-   countable resources are never negative; 2026 age equals frame age; the
-   synthetic-split records are the 5,924 of §2.2, in its proportions.
-6. In every cell, the three labels' shares sum to one within 1e-12, and
-   each one-way breakdown partitions the universe.
+   countable resources are never negative; 2026 age equals frame age.
+   The records whose four 2024 frame components are all positive number
+   5,924, and for each of them the components, converted to float64 and
+   divided by their sum, give `numpy.round(100 * share, 2)` equal to
+   24.96, 37.93, 13.55 and 23.56 (retirement, survivors, dependents,
+   disability).
+6. For every row and cell with `W > 0`, the three labels' shares sum to
+   one within 1e-12. Cells with `W = 0` keep undefined shares with their
+   reason. Each one-way breakdown partitions its row's universe.
 7. No output contains an absolute local path.
 
 **Row validity.** These checks validate the machinery of rows R3 and R4
@@ -683,8 +695,10 @@ Reported, not graded:
   a new registered version and needs a new registration.
 - **No-drop.** Every row, scenario, cell and statistic is computed and
   kept, including undefined or invalid values with their reason.
-- **Refusal.** A refusal by any check of §10 ends Registration 19; a
-  corrected version needs a new registration. The runner writes a refusal
+- **Refusal.** Failure of any check under §10's refusals ends
+  Registration 19; a corrected version needs a new registration. Failure
+  of a row-validity check invalidates only rows R3 and R4, as §10 says,
+  and is not a refusal. The runner writes a refusal
   record (check number and name, the number of failing persons, the phase
   reached) with no §6 statistic and no per-person value, and that record
   is reported on issue #42 at once. If the refusal comes after the
@@ -721,8 +735,9 @@ Reported, not graded:
 - **Comments.** The first issue #42 comment fixes this specification: it
   restates the rows, statistics, cells and rules, and records the
   ratified file's path, commit and SHA-256. Its URL is the run's
-  `--registration-pointer`. The code is then built against this file with
-  invented data only, and it pins this file's SHA-256. The second comment
+  `--registration-pointer`. The code is built against this specification
+  with invented data only, before or after the first comment, and never
+  runs on the frame before the second; it pins this file's SHA-256. The second comment
   posts the registered commit's full SHA, the tag, the exact run command,
   a statement that this file is byte-identical to the SHA-256 the first
   comment recorded, the SHA-256 of the Modal runner script and both
@@ -877,7 +892,7 @@ the code's constants.
 ```json
 {
   "specification": "pe_us_depletion_cut_population_ssi_asset_test",
-  "version": "sa1-draft-3",
+  "version": "sa1-draft-4",
   "status": "draft",
   "decisions": {
     "authorization": {
@@ -968,6 +983,13 @@ the code's constants.
   partition limited to the eligibility basis; diagnostic aggregation
   defined; R5 stated as a reporting restriction; a fifth label states the
   headline's basis; R3 and R4 stated not to bound actual ownership.
+- `sa1-draft-4` (2026-10-02): implementability-review fixes (§20). §14's
+  refusal rule limited to §10's refusals; the partition check exempts
+  cells with no weight; the baseline components come from a separate
+  probe simulation; the cut check is exact per component, replacing a
+  $0.05 tolerance that float32 rounding alone could exceed; the
+  synthetic-split check given an exact rule; stale check references and
+  the head and spouse rule corrected.
 
 ## 20. Review and ratification record
 
@@ -980,9 +1002,15 @@ the code's constants.
   - methodology (Subfleet lane, GPT-6.1 Sol; it read `sa1-draft-1`):
     5 blocking, 9 major, 2 minor. Six were already resolved in
     `sa1-draft-2`; the rest are resolved in `sa1-draft-3`.
-  - implementability (live checks on invented data): the first lanes
-    failed on an account limit or lacked a shell and were re-dispatched;
-    the verdict is recorded here before ratification.
+  - implementability (Subfleet lane, GPT-6.1 Sol; live checks on
+    invented data; it read `sa1-draft-3`): 2 blocking, 2 major, 3 minor,
+    all resolved in `sa1-draft-4`. Its live checks confirmed that an
+    invented frame-layout file loads, that `set_input` overrides the
+    extended 2026 components, that age carries forward, the exact
+    vectorized rounding and the release pin. The structural reform, the
+    annual SSI sums, the household outputs and the identity did not finish
+    on a loaded host; the code's oracle tests on invented data cover them
+    and are recorded in the registered-commit review.
 - **Ratification check:** to be recorded. The ratified file must differ
   from the last reviewed draft only in version, status, the block's
   version and status, the changelog and this section.
