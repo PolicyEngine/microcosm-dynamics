@@ -91,12 +91,19 @@ def test_block_names_the_rules_commit_and_the_build_commit_separately():
     assert first["revision_pins"]["head_sha"] == block["rules_commit"]
 
 
-def test_scoring_path_is_pinned():
+def test_reporting_path_is_pinned():
     block = _block()
-    module = block["scoring_path"]["module"]
+    module = block["reporting_path"]["module"]
     assert module == "src/populace_dynamics/harness/epuf_run.py"
     observed = hashlib.sha256((ROOT / module).read_bytes()).hexdigest()
-    assert observed == block["scoring_path"]["sha256"]
+    # A literal, so that re-rendering the block cannot silently re-pin it.
+    assert observed == (
+        "243be0f7a7d17fed689b924af513f9d2645daf436dca25b5234b552b5f9df023"
+    )
+    assert block["reporting_path"]["sha256"] == observed
+    assert block["candidate_protocol"]["reporting"].endswith(
+        "epuf_run.report_candidate"
+    )
 
 
 def test_first_build_is_frozen_lineage_with_equal_window_results():
@@ -136,9 +143,11 @@ def test_supplement_belongs_to_the_floor_run_and_matches_its_bites():
     assert supplement["floor_run_sha256"] == (
         hashlib.sha256(ARTIFACT.read_bytes()).hexdigest()
     )
-    assert _block()["supplement"]["sha256"] == (
-        hashlib.sha256(SUPPLEMENT.read_bytes()).hexdigest()
+    supplement_sha256 = hashlib.sha256(SUPPLEMENT.read_bytes()).hexdigest()
+    assert supplement_sha256 == (
+        "1570f80e5b42c0890871a818e29f09bdf55fdafe26ba4a2aaa7cade4280ea676"
     )
+    assert _block()["supplement"]["sha256"] == supplement_sha256
     assert supplement["candidate_blind"]["generated_candidates"] == 0
     bites = supplement["bites"]
     for name, row in artifact["bite_demonstrations"].items():
@@ -148,6 +157,20 @@ def test_supplement_belongs_to_the_floor_run_and_matches_its_bites():
         for cell_id, cell in bites[name]["cells"].items():
             estimates = cell["estimates_over_perturbation_seeds"]
             assert len(estimates) == 50
+            # The stored estimates reproduce the floor's per-cell fail share.
+            registered = artifact["registered"][cell_id]
+            epuf_value = transform(cell_id, registered["epuf_value"])
+            outside = [
+                not (
+                    registered["lower"]
+                    <= estimate - epuf_value
+                    <= registered["upper"]
+                )
+                for estimate in estimates
+            ]
+            assert sum(outside) / len(outside) == (
+                row["cell_fail_share"][cell_id]
+            )
             assert cell["mean_shift"] == pytest.approx(
                 sum(estimates) / len(estimates)
                 - cell["real_gate_holdout_estimate"]
@@ -165,6 +188,13 @@ def test_supplement_belongs_to_the_floor_run_and_matches_its_bites():
         floor = artifact["cells"][cell_id]
         sigma = floor["floor"]["realized_sigma"]
         distance = floor["bridge_psid_minus_epuf"] - floor["lower"]
+        assert point["distance_from_psid_to_lower_edge"] == pytest.approx(
+            distance
+        )
+        assert point["realized_sigma"] == pytest.approx(sigma)
+        assert point["shortfall_failing_80_percent"] == pytest.approx(
+            distance + 0.8416 * sigma
+        )
         assert point["shortfall_failing_90_percent"] == pytest.approx(
             distance + 1.2816 * sigma
         )
@@ -299,3 +329,38 @@ def test_gate_holdouts_are_gate_ones():
     assert sorted(holdouts, key=int) == [str(s) for s in gate.GATE_SEEDS]
     for row in gate1["per_seed"]:
         assert holdouts[str(row["seed"])]["n_persons"] == row["n_persons"]
+
+
+def test_supplement_birth_year_mix_is_a_distribution_within_each_band():
+    supplement = json.loads(SUPPLEMENT.read_text(encoding="utf-8"))
+    mix = supplement["birth_year_mix"]
+    assert sorted(mix) == sorted(
+        f"{sex}.{band}"
+        for sex in ("men", "women")
+        for band in ("c0", "c1", "c2")
+    )
+    for row in mix.values():
+        years = row["birth_years"]
+        assert years == list(range(years[0], years[0] + 9))
+        for side in ("psid_support_weighted_share", "epuf_share"):
+            assert len(row[side]) == 9
+            assert sum(row[side]) == pytest.approx(1.0)
+        for side, mean in (
+            ("psid_support_weighted_share", "psid_mean_birth_year"),
+            ("epuf_share", "epuf_mean_birth_year"),
+        ):
+            assert row[mean] == pytest.approx(
+                sum(y * w for y, w in zip(years, row[side], strict=True))
+            )
+        assert abs(
+            row["psid_mean_birth_year"] - row["epuf_mean_birth_year"]
+        ) < (0.25)
+
+
+def test_block_records_both_review_rounds():
+    block = _block()
+    for key in ("referee_round_1", "verification_round_2"):
+        assert (ROOT / block[key]["report"]).is_file()
+    assert (
+        "MERGE AFTER LISTED FIXES" in block["verification_round_2"]["verdict"]
+    )

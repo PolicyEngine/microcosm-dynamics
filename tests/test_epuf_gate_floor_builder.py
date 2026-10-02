@@ -331,7 +331,7 @@ def test_bite_demonstrations_report_every_perturbation(built):
     )
 
 
-# --- from candidate panels to a verdict ----------------------------------
+# --- from candidate panels to a report -----------------------------------
 
 
 def _holdout_panels(panel, universe):
@@ -349,32 +349,69 @@ def _holdout_panels(panel, universe):
     }
 
 
-def test_a_candidate_equal_to_the_real_panel_scores_as_the_training_copy(
+def test_a_candidate_equal_to_the_real_panel_reports_the_real_values(
     support, built
 ):
-    from populace_dynamics.harness.epuf_run import score_candidate
+    from populace_dynamics.harness.epuf_run import report_candidate
 
     panel, _, frame, universe, _ = support
     _, _, _, out = built
-    scored = score_candidate(
-        _holdout_panels(panel, universe), frame, out["registered"]
+    report = report_candidate(
+        _holdout_panels(panel, universe), frame, out["cells"]
     )
-    expected = out["training_copy"]
-    assert scored["pass"] == expected["pass"]
-    for cell_id, cell in expected["cells"].items():
-        assert scored["cells"][cell_id]["gap_from_epuf"] == pytest.approx(
+    # A report, not a verdict: every cell, and no pass or fail anywhere.
+    assert report["status"] == "report_only"
+    assert sorted(report["cells"]) == sorted(cell_ids())
+    assert "pass" not in report
+    assert all("pass" not in cell for cell in report["cells"].values())
+    for cell_id, cell in out["training_copy"]["cells"].items():
+        assert report["cells"][cell_id]["gap_from_epuf"] == pytest.approx(
             cell["gap_from_epuf"], abs=1e-12
         )
-    assert sorted(scored["per_seed_values"]) == sorted(
-        str(seed) for seed in gate.GATE_SEEDS
-    )
     for seed, values in out["real_gate_seed_values"].items():
         for cell_id, value in values.items():
-            got = scored["per_seed_values"][seed][cell_id]
+            got = report["cells"][cell_id]["per_seed_values"][int(seed)]
             if value is None:
                 assert np.isnan(got)
             else:
                 assert got == pytest.approx(value, abs=1e-12)
+
+
+def test_report_splits_each_gap_into_model_and_source_terms(support, built):
+    from populace_dynamics.harness.epuf_run import report_candidate
+
+    panel, _, frame, universe, _ = support
+    _, _, _, out = built
+    report = report_candidate(
+        _holdout_panels(panel, universe), frame, out["cells"]
+    )
+    checked = 0
+    for cell_id, cell in report["cells"].items():
+        floor = out["cells"][cell_id]
+        if floor["psid_value"] is None or np.isnan(cell["gap_from_epuf"]):
+            continue
+        assert cell["source_term_psid_minus_epuf"] == pytest.approx(
+            floor["bridge_psid_minus_epuf"], abs=1e-12
+        )
+        assert cell["gap_from_epuf"] == pytest.approx(
+            cell["source_term_psid_minus_epuf"]
+            + cell["model_term_candidate_minus_psid"],
+            abs=1e-12,
+        )
+        assert len(cell["per_seed_values"]) == len(gate.GATE_SEEDS)
+        checked += 1
+    assert checked >= 10
+
+
+def test_report_requires_exactly_the_gate_seeds(support, built):
+    from populace_dynamics.harness.epuf_run import report_candidate
+
+    panel, _, frame, universe, _ = support
+    _, _, _, out = built
+    panels = _holdout_panels(panel, universe)
+    del panels[19]
+    with pytest.raises(ValueError, match="seeds 0-19"):
+        report_candidate(panels, frame, out["cells"])
 
 
 def test_a_candidate_missing_a_window_row_is_refused(support):

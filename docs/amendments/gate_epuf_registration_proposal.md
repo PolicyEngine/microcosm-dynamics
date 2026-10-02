@@ -7,8 +7,9 @@
   Earnings Public-Use File (EPUF). Tranche R, the career statistics, is
   report-only.
 - **Ceremony stage**: CLOSED WITHOUT LOCK after referee round 1
-  (`reviews/gate_epuf_round1_referee_20261002.md`). **The gate gates nothing.**
-  Every cell publishes report-only with each gate-1 candidate run. This
+  (`reviews/gate_epuf_round1_referee_20261002.md`), verified in round 2
+  (`reviews/gate_epuf_round2_verification_20261002.md`). **The gate gates
+  nothing.** A run reports every cell without a pass or fail. This
   registration edits no `gates.yaml` cell and no committed `runs/*.json`; its
   record is `docs/design/gate_epuf_block_draft.yaml` (`locked: false`,
   `status: unlocked_report_only`).
@@ -27,33 +28,40 @@ A gate here is a pass-or-fail test whose rules and thresholds are fixed and
 published before the model is scored against it.
 
 This registration set out to make SSA's public earnings file such a test for
-the model's generated earnings. **As registered, it cannot fail the generator
-for anything gate 1 does not already catch, so it does not lock.**
+the model's generated earnings. **As registered, it has not been shown to
+catch anything gate 1 does not already catch, and it could not meet its own
+check on its bite, so it does not lock.**
 
 - The generator's earnings overlap EPUF in four years, 1998-2004. On that
   overlap only two cells had the power the rules demand: how persistent
   earnings ranks are from 1998 to 2004, for men and for women.
-- Those two cells fail a generator only when its persistence falls about
-  0.10 below the PSID's (four times in five), or about 0.11 below (nine times
-  in ten). The registered check on the gate's own bite asked for more: that
-  it catch a smaller shortfall, about 0.07, nine times in ten. The rules
-  could not deliver that, and the floor build showed it. That was a flaw in
-  the registration, foreseeable from numbers available before the build, not
-  a surprise in the data.
-- A generator that ignores sex moved men's persistence toward EPUF's, which
-  the cells accept. They add no demonstrated catch beyond gate 1.
+- Those two cells fail a generator whose persistence falls about 0.10 below
+  the PSID's four times in five, and one about 0.11 below nine times in ten.
+  The interval also ends 0.08 above EPUF, so one that overshoots EPUF by
+  more than that fails more often than not. The
+  registered check on the gate's own bite asked for more: that it catch a
+  smaller shortfall, 0.07 for men and 0.06 for women, nine times in ten. The
+  rules could not deliver that. That was a flaw in the registration, not a
+  surprise in the data: a check of the dose against the cells' detection
+  point before the build would have shown it.
+- A perturbation that draws each person's early years from donors of both
+  sexes raised men's persistence to about EPUF's level, which the cells
+  accept. No perturbation was shown to pass gate 1 and fail these cells.
 - With the PSID's distance from EPUF now public, the registered candidate's
   verdict on these cells could largely be predicted.
 
 The independent referee ruled against loosening the check to fit the result,
 and this registration takes that ruling (section 7.5). What EPUF does add is
-measurement. On the generator's support the PSID's earnings ranks persist
-less than SSA's records (0.668 against 0.711 for men). PSID men are at the
-taxable maximum more often (17.8 against 11.6 percent of positive
-person-years). Fewer PSID people have a zero year before covered work in 2004.
-Every gate-1 run will publish these comparisons, and where the candidate sits
-between the PSID and EPUF. Section 12 says what a gate with real bite would
-need.
+measurement. The figures below are means over the three birth-cohort bands,
+on the generator's support. The PSID's earnings ranks persist less than
+SSA's records (0.668 against 0.711 for men; in five of the six sex-by-cohort
+cells). PSID men are at the taxable maximum more often (17.8 against 11.6
+percent of positive person-years). Fewer PSID men have a zero year before
+covered work in 2004 (9.7 against 12.8 percent). A run that regenerates a
+gate-1 candidate reports these comparisons for every cell, and where the
+candidate sits between the PSID and EPUF
+(`populace_dynamics.harness.epuf_run.report_candidate`); no run script calls
+that path yet. Section 12 says what a gate with real bite would need.
 
 ## 1. Summary
 
@@ -98,7 +106,7 @@ power cap. Cells that could not meet that are published with the reason.
 The four career statistics the request named are years without earnings by
 age 62, rank persistence ten years apart, the share at the taxable maximum by
 age, and the AIME under the 35-year rule. None can be scored on generated
-histories, because nothing generates earnings for a career. They are registered
+histories, because nothing generates a career's earnings before 1998. They are registered
 as tranche R, report-only, with their EPUF reference values in the floor
 artifact.
 
@@ -136,9 +144,11 @@ to mirror, so each statistic carries its own conditioning (section 3).
 The PSID birth year is derived from age at interview, which is measured in
 the wave after the income year, so it can sit a year below EPUF's year of
 birth. The repository's career products take a marriage-history birth year
-first (`estimates/career.py:650-656`); this registration does not. Within
-each band the support's weighted mean birth year sits within 0.25 years of
-EPUF's (`runs/epuf_gate_supplement_v1.json`, `birth_year_mix`).
+first (`estimates/career.py:650-656`); this registration does not. The
+supplement stores each band's birth-year mix on both sides
+(`runs/epuf_gate_supplement_v1.json`, `birth_year_mix`). Their means agree
+within 0.25 years, but that compares the two sides' own labels after each
+was selected on its label, so it does not measure the shift.
 
 **Units.** PSID-side and candidate-side earnings pass through EPUF's
 measurement operator (`populace_dynamics.harness.epuf_operator.epuf_measure`):
@@ -209,8 +219,8 @@ generator's mean differs from the real value by the realised sample's own
 deviation from its conditional law, which is the same on every seed. The
 term bounds that noise, and the bound is exact for a generator that draws
 from the true law. A generator that copies donors from the same sample, as
-candidate 11 does, has less of it, so for such a generator the floor is
-conservative. The second term stands for the noise that averages down: who
+candidate 11 does, likely has less of it, in which case the floor is
+conservative for it. The second term stands for the noise that averages down: who
 falls in each holdout, each seed's draws and each seed's fit.
 
 **Tolerance.** `t = round(mean|e_b| + 4 * sd|e_b|, 3)`, with sd taken with
@@ -303,8 +313,9 @@ bite's mean shift and its power under the gate's own noise model.
 
 The numbers in this section come from `runs/epuf_gate_floors_v1.json` and
 `runs/epuf_gate_supplement_v1.json`. `tests/test_gate_epuf_block_draft.py`
-recomputes every tolerance, interval, partition, pass probability, bite shift
-and power figure from what those files store.
+recomputes every tolerance, interval, partition, pass probability, detection
+point, bite shift and power figure from what those files store. Each
+sex-level figure is the unweighted mean of its three birth-cohort bands.
 
 ### 7.1 Support
 
@@ -334,8 +345,8 @@ metric scale (log ratio for shares, difference for correlations).
 | `zint.women` | 0.066 | 0.070 | +0.062 | 0.381 | below 20 events |
 | `d_anyzero.men` | 0.128 | 0.097 | -0.278 | 0.283 | bridge exceeds budget |
 | `d_anyzero.women` | 0.180 | 0.151 | -0.176 | 0.212 | bridge exceeds budget |
-| `q_atmax.men` | 0.116 | 0.178 | +0.425 | 0.164 | bridge exceeds budget |
-| `q_atmax.women` | 0.036 | 0.039 | +0.087 | 0.358 | noise exceeds cap |
+| `q_atmax.men` | 0.116 | 0.178 | +0.424 | 0.164 | bridge exceeds budget |
+| `q_atmax.women` | 0.036 | 0.039 | +0.086 | 0.358 | noise exceeds cap |
 | `mpers.men` | 0.594 | 0.613 | +0.031 | 0.196 | below 20 events |
 | `mpers.women` | 0.478 | 0.516 | +0.077 | — | undefined on some split |
 | `q_sexratio` | 3.25 | 4.56 | +0.338 | 0.379 | noise exceeds cap |
@@ -344,7 +355,9 @@ What the table says, and what it does not:
 
 - **Rank persistence.** On the support, PSID earnings ranks persist less
   from 1998 to 2004 than EPUF's do: 0.668 against 0.711 for men, 0.640
-  against 0.672 for women. The bridge measures the gap. It does not say how
+  against 0.672 for women. That holds in five of the six sex-by-cohort
+  cells; for women born 1956-1964 the PSID's is 0.017 higher. The bridge
+  measures the gap. It does not say how
   much of it comes from reporting, from who the PSID samples, or from
   noncovered work.
 - **The taxable maximum.** Among positive person-years, 17.8 percent of the
@@ -359,8 +372,9 @@ What the table says, and what it does not:
   zero there and not in the PSID; how much of the gap that accounts for is
   not measured here.
 - **Power.** Interior zero years and persistence at the maximum are too rare
-  at the PSID's size for the 20-event rule. No cohort-band cell is powered
-  within the caps.
+  at the PSID's size for the 20-event rule. One cohort-band cell is eligible
+  (`r6.women.c1`); the ladder gates cohort cells only when all six are, so it
+  is reported.
 
 ### 7.3 The cells the rules selected, and their operating characteristic
 
@@ -397,19 +411,22 @@ The requirement could not have been met. Under the gate's own noise model the
 two cells fail a shortfall from the PSID of 0.100 (men) and 0.100 (women)
 four times in five, and of 0.111 and 0.110 nine times in ten
 (`detection_points` in the supplement). `bd1` at 10 percent shifts the
-correlation by about 0.07, inside both points, so a 90 percent requirement on
-it was out of reach whatever the data showed. The eligibility rule promised
-80 percent power at the first point; the bite asked for 90 percent at a smaller
-shortfall. EPUF subsampled to PSID scale, which the design panel had before
-the build, gave sigma near this size. So the pause comes from an internal
-inconsistency of the registration that could have been seen in advance, not
+correlation by 0.067 for men and 0.057 for women, inside both points. The
+eligibility rule promised 80 percent power at the first point; the bite asked
+for 90 percent at a smaller shortfall. The registration never checked the
+dose against the cells' detection point. Doing so on EPUF subsampled to PSID
+scale, before the build, would have shown the requirement was out of reach.
+So the pause comes from an internal inconsistency of the registration, not
 from something the data revealed.
 
 Two more readings, both from the supplement:
 
-- Sex-blind donors (`bd2`) raise men's persistence by 0.056, toward EPUF's
-  value, where the interval accepts it. The cells by sex catch no sex-blind
-  generator here.
+- Donors drawn from both sexes (`bd2`) raise men's persistence by 0.056, to
+  about EPUF's level and 0.012 past it, where the interval accepts it. `bd2`
+  is a perturbation of real data, not a generator. Its donors are matched on
+  2004 deciles, and the same-sex control (`bd2c`) moves the cells by 0.01 or
+  less, so the matching itself keeps the rank correlation. Within that limit,
+  the cells by sex showed no catch for pooling the sexes.
 - No perturbation was shown to pass gate 1's battery and fail these cells.
   Their catch beyond gate 1 is not demonstrated.
 
@@ -427,13 +444,18 @@ persists more than the PSID at two and four years in gate 1, which here moves
 it toward EPUF, inside the interval. The referee also ruled that (b) cannot be
 done blind, because every redesign it names is informed by the bridges.
 
-**Ruling: the gate does not lock.** Every cell publishes report-only with
-each gate-1 candidate run: the candidate's 20-seed estimate, its distance
-from EPUF, and that distance split into the candidate's distance from the
-PSID and the PSID's distance from EPUF
-(`populace_dynamics.harness.epuf_run.score_candidate`). The drafting
-session had recommended (a); it withdraws that recommendation. A gate with
-bite needs a fresh registration (section 12).
+**Ruling: the gate does not lock.** A run reports every cell without a pass
+or fail: the candidate's 20-seed estimate, its distance from EPUF, and that
+distance split into the candidate's distance from the PSID and the PSID's
+distance from EPUF (`populace_dynamics.harness.epuf_run.report_candidate`).
+No run script calls that path yet; a run that regenerates a gate-1
+candidate's 20 panels hands them to it. The drafting session had recommended
+(a); it withdraws that recommendation. A gate with bite needs a fresh
+registration (section 12).
+
+Round 2 (`reviews/gate_epuf_round2_verification_20261002.md`) verified this
+record and asked for the fixes now applied: a reporting path that covers
+every cell and returns no pass or fail, and corrected wording.
 
 ### 7.6 Tranche R on EPUF alone
 
@@ -474,8 +496,9 @@ The floor artifact holds their EPUF values twice: on EPUF as published, and
 on EPUF rewritten by two of the career assembler's rules. Under those rules
 nothing counts before `max(1968, birth year + 22)`, and each odd year from
 1997 is filled with the mean of its neighbours. The mask does not apply the
-assembler's exclusions of low-coverage and incomplete-domain persons
-(`estimates/career.py:1581-1598`). For the cohorts used, `max(1968, birth year
+assembler's exclusions (incomplete domain, eligibility before 1979, empty
+span, inconsistent chronology and low coverage;
+`estimates/career.py:1581-1598`). For the cohorts used, `max(1968, birth year
 + 22)` is 1968 for everyone. The difference is exact and involves no PSID. A
 run adds the PSID career product's values beside the masked EPUF values.
 Survival to the PSID's observation years has no EPUF counterpart and is named
@@ -487,10 +510,11 @@ and its distance from EPUF is the bridge itself.
 
 ## 9. What is published, and what is not certified
 
-Every gate-1 candidate run publishes each cell's 20-seed estimate, its
-distance from EPUF, and the split of that distance into the candidate's
-distance from the PSID and the PSID's distance from EPUF. Tranche R publishes
-the career statistics beside the masked EPUF values.
+A run that regenerates a gate-1 candidate reports each cell's 20-seed
+estimate, its distance from EPUF, and the split of that distance into the
+candidate's distance from the PSID and the PSID's distance from EPUF
+(`report_candidate`, which returns no pass or fail). Tranche R reports the
+career statistics beside the masked EPUF values. No run has been made.
 
 Nothing is certified. In particular:
 
@@ -538,6 +562,14 @@ under this gate's measurement.
 **Before any run.** No candidate has been generated. Tranche R's PSID side
 has not been computed.
 
+**Strings this record supersedes.** The floor artifacts and the files they
+bind to cannot be edited without breaking that binding, so a few of their
+strings predate the ruling. `gate_partition.status` in the floor artifact
+reads `lockable_pending_referee_round`, and its tranche R note says "computed
+once, after lock". The docstring of `epuf_gate.tolerance` calls the formula
+"the house formula". The block and this document supersede them: nothing is
+pending a lock, and `k = 4` is not house precedent (section 4).
+
 ## 11. Considered and rejected
 
 1. **EPUF-centred tolerance with no bridge.** A faithful candidate's pass
@@ -574,11 +606,11 @@ has not been computed.
 ## 12. What a gate with bite would need
 
 This surface cannot be rescued by retuning. The PSID's size sets the noise:
-on about 2,500 people per sex, the 1998-2004 rank correlation has a realised
-sigma of 0.025. Even with `k` chosen so a faithful generator passes 95 percent
-of the time, a tolerance near two sigmas would leave a 90 percent detection
-point near 0.08 below the PSID. And every redesign of these cells is now
-informed by their bridges.
+on 2,182 pairs of men and 2,376 of women with earnings in both years, the
+1998-2004 rank correlation has a realised sigma of 0.025. Even with `k` chosen
+so a faithful generator passes 95 percent of the time, a tolerance near two
+sigmas would leave a 90 percent detection point near 0.08 below the PSID. And
+every redesign of these cells is now informed by their bridges.
 
 A fresh EPUF gate, under a new registration id, would need all of these
 before its floor is built:
@@ -598,7 +630,8 @@ before its floor is built:
 5. **The smaller house details** found in round 1: events counted on the
    weakest band of a sex-level cell; panel digests for every scored seed;
    the repository's birth-year precedence; a build timestamp in the artifact;
-   floor half-split seeds that do not reuse gate seeds.
+   floor half-split seeds that do not reuse gate seeds; non-finite values
+   stripped from every block of the artifact, not only the floor and bites.
 
 ## 13. Ceremony checklist
 
@@ -607,4 +640,4 @@ before its floor is built:
 - [x] Fixes: the supplement, the frozen first build, separate rules and build
   commits in the block, a pinned scoring path, corrected wording
 - [x] Ruling: closed without lock; every cell report-only
-- [ ] Verification of this record by an independent reviewer (PR #509)
+- [x] Verification round 2 (verdict: merge after listed fixes, applied)

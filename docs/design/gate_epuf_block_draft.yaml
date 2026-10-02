@@ -1,10 +1,12 @@
 # gate_epuf registration record (unlocked; not in gates.yaml).
 #
 # Round 1 of the referee review ruled that the gate does not lock as
-# registered: as designed it cannot fail the generator for anything gate 1
-# does not already catch. The block records the registered rules, the
-# partition they produced, and the ruling. It gates nothing; every cell
-# publishes report-only with each gate-1 run. It edits no gates.yaml byte.
+# registered: it has not been shown to catch anything gate 1 does not
+# already catch, and its own bite requirement was out of reach. The block
+# records the registered rules, the partition they produced, and the ruling.
+# It gates nothing; a run reports every cell without a pass or fail
+# (populace_dynamics.harness.epuf_run.report_candidate). It edits no
+# gates.yaml byte.
 #
 # Rendered by scripts/render_gate_epuf_block_draft.py from
 # runs/epuf_gate_floors_v1.json; tests/test_gate_epuf_block_draft.py requires
@@ -29,9 +31,9 @@ gates:
     supplement:
       path: runs/epuf_gate_supplement_v1.json
       sha256: 1570f80e5b42c0890871a818e29f09bdf55fdafe26ba4a2aaa7cade4280ea676
-    scoring_path:
+    reporting_path:
       module: src/populace_dynamics/harness/epuf_run.py
-      sha256: f1a3055a36f225b59adf2240e1398b18724f06364706d692faf4445b380de995
+      sha256: 243be0f7a7d17fed689b924af513f9d2645daf436dca25b5234b552b5f9df023
     external_anchor:
       source: SSA 2006 Earnings Public-Use File (EPUF), https://www.ssa.gov/policy/docs/microdata/epuf/
       provenance: data/external/epuf_2006/provenance.md
@@ -39,10 +41,10 @@ gates:
         EPUF2006_DEMOGRAPHIC.csv: 195db459ca7b7c810162cb6e432371e8787eba8331787d2ba1eace1a0da2ccb0
         EPUF2006_ANNUAL.csv: a47315b56214df66fb9f9abcb2caa60779c8b3d091ded199323672c27e3ea105
       disclosure_constants_sha256: ba1f39f238278243de19b8a9d194abedffeabd855f5b97779b685d852f62a881
-    covers: 'Nothing is gated. Every cell is published report-only with each gate-1
-      candidate run: the candidate''s 20-seed estimate, its distance from EPUF, and
-      that distance split into the candidate''s distance from the PSID and the PSID''s
-      distance from EPUF.'
+    covers: 'Nothing is gated. A run reports every cell without a pass or fail: the
+      candidate''s 20-seed estimate, its distance from EPUF, and that distance split
+      into the candidate''s distance from the PSID and the PSID''s distance from
+      EPUF. No run script calls the reporting path yet.'
     not_certified:
     - 'anything: the gate is unlocked and gates no cell'
     - careers, years without earnings by age 62, and the 35-year AIME (tranche R,
@@ -86,7 +88,7 @@ gates:
         - birth year floor(median(period - age) + 0.5) in 1947-1973
         weight: the person's 2004-row weight
         epuf: every EPUF person with sex 1 or 2 born 1947-1973, weight 1
-      scoring: populace_dynamics.harness.epuf_run.score_candidate
+      reporting: populace_dynamics.harness.epuf_run.report_candidate
     registered_scoring:
       estimator: mean over the 20 gate seeds of the per-seed value, then log for
         shares, identity for rank correlations
@@ -189,12 +191,21 @@ gates:
         the tolerance is about 3.2 realised sigmas (0.079) while giving 10 percent
         of persons a donor''s early years shifts the 1998-2004 rank correlation by
         about 0.07, so the pause was an internal inconsistency of the registration,
-        not a data surprise. The two cells the rules selected add no demonstrated
+        not a data surprise. The two cells the rules selected have no demonstrated
         catch beyond gate 1, and with the bridge signs public the registered candidate''s
         verdict is largely predictable. Relaxing the bite requirement after seeing
-        the result (option (a)) is rejected; the cells publish report-only with every
-        gate-1 run. A gate with bite needs a fresh registration (proposal section
-        12).'
+        the result (option (a)) is rejected; every cell is reported without a pass
+        or fail. A gate with bite needs a fresh registration (proposal section 12).'
+    verification_round_2:
+      report: reviews/gate_epuf_round2_verification_20261002.md
+      reviewer: independent Opus 5.5 lane (subfleet job 20261002-170235-epuf-gate-r2),
+        reviewing head d606ddea
+      verdict: MERGE AFTER LISTED FIXES (no blockers)
+      fixes: A report-only path that covers every cell and returns no pass or fail
+        (report_candidate) replaced the two-cell scoring path; the proposal, block
+        and paper say 'not shown to catch' where they said 'cannot fail'; section
+        7 figures are labelled as means over the three cohort bands and corrected
+        in the third decimal.
     lock_ceremony:
       exists: false
       stage: closed without lock (referee round 1)
@@ -207,3 +218,5 @@ gates:
         floors built at commit 970a9db721bf.
     - id: 2026-10-02-epuf-referee-round-1
       content: 'Referee round 1: AMEND. Ruling: not locked; report-only (referee_round_1).'
+    - id: 2026-10-02-epuf-verification-round-2
+      content: 'Verification round 2: merge after listed fixes, applied (verification_round_2).'

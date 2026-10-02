@@ -30,7 +30,7 @@ FIRST_BUILD = ROOT / "runs" / "epuf_gate_floors_v1_first_build.json"
 SUPPLEMENT = ROOT / "runs" / "epuf_gate_supplement_v1.json"
 BLOCK = ROOT / "docs" / "design" / "gate_epuf_block_draft.yaml"
 PROPOSAL = "docs/amendments/gate_epuf_registration_proposal.md"
-SCORING_PATH = "src/populace_dynamics/harness/epuf_run.py"
+REPORTING_PATH = "src/populace_dynamics/harness/epuf_run.py"
 
 #: The commit holding the registered rules, pushed before any real-PSID
 #: value in EPUF units existed (2026-10-02 13:37 UTC, PR #509).
@@ -50,12 +50,29 @@ ROUND_1 = {
         "giving 10 percent of persons a donor's early years shifts the "
         "1998-2004 rank correlation by about 0.07, so the pause was an "
         "internal inconsistency of the registration, not a data surprise. "
-        "The two cells the rules selected add no demonstrated catch beyond "
+        "The two cells the rules selected have no demonstrated catch beyond "
         "gate 1, and with the bridge signs public the registered "
         "candidate's verdict is largely predictable. Relaxing the bite "
-        "requirement after seeing the result (option (a)) is rejected; the "
-        "cells publish report-only with every gate-1 run. A gate with bite "
+        "requirement after seeing the result (option (a)) is rejected; "
+        "every cell is reported without a pass or fail. A gate with bite "
         "needs a fresh registration (proposal section 12)."
+    ),
+}
+
+#: Round 2 verified the record after the round-1 fixes.
+ROUND_2 = {
+    "report": "reviews/gate_epuf_round2_verification_20261002.md",
+    "reviewer": (
+        "independent Opus 5.5 lane (subfleet job "
+        "20261002-170235-epuf-gate-r2), reviewing head d606ddea"
+    ),
+    "verdict": "MERGE AFTER LISTED FIXES (no blockers)",
+    "fixes": (
+        "A report-only path that covers every cell and returns no pass or "
+        "fail (report_candidate) replaced the two-cell scoring path; the "
+        "proposal, block and paper say 'not shown to catch' where they "
+        "said 'cannot fail'; section 7 figures are labelled as means over "
+        "the three cohort bands and corrected in the third decimal."
     ),
 }
 
@@ -63,10 +80,12 @@ HEADER = """\
 # gate_epuf registration record (unlocked; not in gates.yaml).
 #
 # Round 1 of the referee review ruled that the gate does not lock as
-# registered: as designed it cannot fail the generator for anything gate 1
-# does not already catch. The block records the registered rules, the
-# partition they produced, and the ruling. It gates nothing; every cell
-# publishes report-only with each gate-1 run. It edits no gates.yaml byte.
+# registered: it has not been shown to catch anything gate 1 does not
+# already catch, and its own bite requirement was out of reach. The block
+# records the registered rules, the partition they produced, and the ruling.
+# It gates nothing; a run reports every cell without a pass or fail
+# (populace_dynamics.harness.epuf_run.report_candidate). It edits no
+# gates.yaml byte.
 #
 # Rendered by scripts/render_gate_epuf_block_draft.py from
 # runs/epuf_gate_floors_v1.json; tests/test_gate_epuf_block_draft.py requires
@@ -136,9 +155,9 @@ def render_block(
                     "path": "runs/epuf_gate_supplement_v1.json",
                     "sha256": hashes["supplement"],
                 },
-                "scoring_path": {
-                    "module": SCORING_PATH,
-                    "sha256": hashes["scoring_path"],
+                "reporting_path": {
+                    "module": REPORTING_PATH,
+                    "sha256": hashes["reporting_path"],
                 },
                 "external_anchor": {
                     "source": (
@@ -152,11 +171,12 @@ def render_block(
                     ],
                 },
                 "covers": (
-                    "Nothing is gated. Every cell is published report-only "
-                    "with each gate-1 candidate run: the candidate's 20-seed "
-                    "estimate, its distance from EPUF, and that distance "
-                    "split into the candidate's distance from the PSID and "
-                    "the PSID's distance from EPUF."
+                    "Nothing is gated. A run reports every cell without a "
+                    "pass or fail: the candidate's 20-seed estimate, its "
+                    "distance from EPUF, and that distance split into the "
+                    "candidate's distance from the PSID and the PSID's "
+                    "distance from EPUF. No run script calls the reporting "
+                    "path yet."
                 ),
                 "not_certified": [
                     "anything: the gate is unlocked and gates no cell",
@@ -182,8 +202,8 @@ def render_block(
                     ),
                     "gate_seeds": design["gate_seeds"],
                     "support": design["support"],
-                    "scoring": (
-                        "populace_dynamics.harness.epuf_run.score_candidate"
+                    "reporting": (
+                        "populace_dynamics.harness.epuf_run.report_candidate"
                     ),
                 },
                 "registered_scoring": {
@@ -222,6 +242,7 @@ def render_block(
                 },
                 "ceremony_pause": artifact["ceremony_pause"],
                 "referee_round_1": ROUND_1,
+                "verification_round_2": ROUND_2,
                 "lock_ceremony": {
                     "exists": False,
                     "stage": "closed without lock (referee round 1)",
@@ -249,6 +270,13 @@ def render_block(
                             "report-only (referee_round_1)."
                         ),
                     },
+                    {
+                        "id": "2026-10-02-epuf-verification-round-2",
+                        "content": (
+                            "Verification round 2: merge after listed "
+                            "fixes, applied (verification_round_2)."
+                        ),
+                    },
                 ],
             }
         }
@@ -260,7 +288,7 @@ def render() -> str:
     hashes = {
         "first_build": _sha256(FIRST_BUILD),
         "supplement": _sha256(SUPPLEMENT),
-        "scoring_path": _sha256(ROOT / SCORING_PATH),
+        "reporting_path": _sha256(ROOT / REPORTING_PATH),
     }
     block = render_block(artifact, _sha256(ARTIFACT), hashes)
     return HEADER + yaml.safe_dump(
