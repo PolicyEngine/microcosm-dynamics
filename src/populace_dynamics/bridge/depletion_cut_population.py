@@ -883,6 +883,11 @@ def diagnostics(
     totals["offset_share"] = (
         1 - totals["household_net_income"] / ss_change if ss_change else None
     )
+    totals["offset_share_undefined_reason"] = (
+        None
+        if ss_change
+        else "no modeled Social Security change in beneficiary households"
+    )
     return out
 
 

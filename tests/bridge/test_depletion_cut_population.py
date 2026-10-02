@@ -566,6 +566,7 @@ def test_diagnostics_distinct_households_units_and_outside_response():
     assert result["weighted_totals"]["offset_share"] == pytest.approx(
         1 + 30 / 840.1, abs=1e-12, rel=0
     )
+    assert result["weighted_totals"]["offset_share_undefined_reason"] is None
     assert result["unit_responses"]["ssi"]["over_replacing"] == {
         "n": 1,
         "W": 2,
@@ -575,6 +576,18 @@ def test_diagnostics_distinct_households_units_and_outside_response():
         "W": 3,
         "weighted_ssi_loss": 30,
     }
+    undefined = core.diagnostics(
+        np.zeros(5),
+        baseline,
+        baseline,
+        units,
+        households,
+        np.asarray([2, 3, 4]),
+    )
+    assert undefined["weighted_totals"]["offset_share"] is None
+    assert undefined["weighted_totals"]["offset_share_undefined_reason"] == (
+        "no modeled Social Security change in beneficiary households"
+    )
 
 
 @pytest.mark.parametrize(
