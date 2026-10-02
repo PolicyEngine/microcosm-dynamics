@@ -1,6 +1,6 @@
 # SSI's asset test and a Social Security cut at depletion, on a population
 
-- **Status:** draft, not registered (`sa1-draft-2`). This specification is
+- **Status:** draft, not registered (`sa1-draft-3`). This specification is
   registered in two issue #42 comments, as Registration 18 is (§15).
   Before the first comment, this file changes only in its version
   (`sa1-ratified-1`), its status (`ratified_frozen`), the §18 block's
@@ -14,7 +14,7 @@
   stacks on PR #506, which is not merged. Any change to the ratified file
   ends the registration; a corrected version needs a new registration.
 - **Specification:** `pe_us_depletion_cut_population_ssi_asset_test`,
-  version `sa1-draft-2`.
+  version `sa1-draft-3`.
 - **Question.** At the NASI meeting on 2026-10-01, participants asked
   whether SSI would really replace the income a Social Security cut takes
   away, given that SSI's asset limit excludes many people. PR #506's
@@ -42,6 +42,10 @@
   - *Registered one-shot, not blind: registered after PR #506's
     illustrative results and after real-data diagnostics on this frame
     were seen (issue #42, Registration 19).*
+  - *Headline basis: potential federal SSI replacement, as if everyone
+    eligible takes SSI up, under the row's modeled resource test; shares
+    count cut beneficiaries by replacement of their marital unit's
+    combined cut.*
 
 Abbreviations: SS is Social Security; SSI is Supplemental Security
 Income; OASI, DI and OASDI are the Old-Age and Survivors Insurance,
@@ -59,15 +63,18 @@ installed `policyengine_us` package of PE-US 2.18.0, `CORE` its
 For each cut scenario *r* (§3) and registered row (§7), over the
 universe of beneficiaries whose benefit the cut reduces (§2.4):
 
-1. **Replaced, asset test as in the row:** the weighted shares of
-   beneficiaries whose lost benefit SSI replaces in full, in part, or not
-   at all (§5).
+1. **Replaced, under the row's resource test:** the weighted shares of
+   beneficiaries whose marital unit's combined cut federal SSI replaces
+   in full, in part, or not at all (§5). These are PE-US's modeled SSI
+   responses under the row's resource test, not a complete implementation
+   of federal law (§12).
 2. **Replaced, no asset test:** the same three shares when SSI's resource
    test is removed (§4.3).
 3. **Blocked by the asset test:** the weighted share whom SSI would
    replace, in part or in full, without the asset test but not at all
-   with it. A companion, **partly blocked**, is the share replaced in full
-   without the asset test and only in part with it (§5).
+   with it: complete prevention of any replacement. A companion, **partly
+   blocked**, is the share replaced in full without the asset test and
+   only in part with it (§5).
 4. **Blocked, conditional:** estimand 3 divided by the share replaced in
    part or in full without the asset test: of the beneficiaries SSI would
    otherwise compensate, the share the asset test stops.
@@ -228,11 +235,12 @@ c_i  = sum over cut components of c_ik      the person's annual cut
   vectorized version must equal it element by element. Taking
   `m_ik = floor(a_ik / 12)` is this analysis's choice; `floor` is exact
   (an integer `m` with `12m <= a_ik < 12(m + 1)`).
-- The sub-dollar monthly remainder, *a<sub>ik</sub>* − 12
-  *m<sub>ik</sub>*, is not cut. The baseline is the frame's own 2026
-  values, untouched.
-- Each component is cut and rounded on its own, as PR #506 cuts each of a
-  couple's benefits on its own.
+- The annualized monthly remainder, *a<sub>ik</sub>* − 12
+  *m<sub>ik</sub>*, which lies in [0, 12), is preserved. The baseline is
+  the frame's own 2026 values, untouched.
+- Each component is cut and rounded on its own. That is this analysis's
+  registered choice, following PR #506, which cuts each of a couple's
+  benefits on its own.
 - **Inputs set.** Every scenario's simulation, the baseline included,
   receives all four components for 2026 through `set_input` before any
   value is calculated: the baseline gets *a<sub>ik</sub>* unchanged, a
@@ -342,10 +350,16 @@ none  if dS_u <= tau
   spouse is.
 - *τ* absorbs PE-US's float32 storage. Every positive cut is at least $12
   a year (a one-dollar monthly cut), so the three labels never overlap.
-- SSI that rises by more than the cut (possible when the cut ends spousal
-  deeming) is labelled full; the run counts such units.
-- Federal SSI only. State supplements are reported as an unscored
-  diagnostic (§13).
+- SSI that rises by more than the cut is labelled full; the run counts
+  units with `dS_u > C_u + tau`.
+- The none label covers unchanged SSI and SSI that falls. PE-US's modeled
+  SSI can fall after a cut (§12, difference 12); the run counts units
+  with `dS_u < -tau` and their weighted SSI loss.
+- Labels describe the marital unit's combined cut. A beneficiary labelled
+  full is in a unit whose SSI rises by the unit's whole cut; the measure
+  does not attribute SSI to one spouse's cut separately.
+- Federal SSI only. State benefits are reported as an unscored diagnostic
+  (§13).
 
 **Blocked and partly blocked.** By §4.2, each person's SSI under any
 asset test equals the no-test SSI times that person's pass indicator.
@@ -359,12 +373,13 @@ blocked** when it is full with no asset test and part under the row's.
 The run records the full three-by-three transition table for every row
 and scenario.
 
-**Why SSI does not replace, without the asset test** (secondary). A
-person labelled none with no asset test is assigned the first reason that
+**Why SSI does not replace, without the asset test** (secondary; on the
+eligibility basis only, so for rows R0, R3, R4 and R5, not R2). A person
+labelled none with no asset test is assigned the first reason that
 applies to their marital unit: (a) no member of the unit is ABD for SSI
 (`is_ssi_aged_blind_disabled`); (b) no ABD member meets SSI's immigration
-condition (citizen, or `is_ssi_qualified_noncitizen`); (c) otherwise,
-income: the unit's SSI does not rise.
+condition (citizen, or `is_ssi_qualified_noncitizen`); (c) otherwise, no
+positive modeled SSI response (income too high, or SSI falls).
 
 ## 6. Statistics
 
@@ -374,21 +389,31 @@ universe and in *g*, with weights *w<sub>i</sub>*:
 ```text
 n         = number of person records (unweighted)
 W         = sum of w_i                                      (frame-relative)
-F_law     = sum of w_i [L_i(R) = full] / W
-P_law     = sum of w_i [L_i(R) = part] / W
-N_law     = sum of w_i [L_i(R) = none] / W
+F_test    = sum of w_i [L_i(R) = full] / W
+P_test    = sum of w_i [L_i(R) = part] / W
+N_test    = sum of w_i [L_i(R) = none] / W
 F_no, P_no, N_no                                            (no asset test)
-R_law     = F_law + P_law                                   (replaced in part or full)
+R_test    = F_test + P_test                                 (replaced in part or full)
 R_no      = F_no + P_no
 B         = sum of w_i [L_i(no) in {part, full} and L_i(R) = none] / W
 B_part    = sum of w_i [L_i(no) = full and L_i(R) = part] / W
+n_cond    = number of person records with L_i(no) in {part, full}
+W_cond    = sum of w_i over those records
 B_cond    = B / R_no          (not estimable when R_no = 0)
 ```
 
-The no-asset-test labels are the same for every row except R2 (which
-measures `ssi`) and R5 (which restricts the universe). The run reports
-every quantity for every row, scenario and cell, including undefined
-values with their reason.
+- `_test` means the row's modeled resource test (R0: as PE-US encodes it;
+  R3, R4: the alternatives of §7). It does not claim a complete
+  implementation of federal law.
+- Tables call `B` "completely blocked, among all cut beneficiaries" and
+  `B_cond` "completely blocked, among beneficiaries SSI would otherwise
+  compensate".
+- No-asset-test labels are identical across rows on common records,
+  except R2 (which measures `ssi`). R5 changes the reporting denominators
+  only: excluded persons' cuts and SSI changes remain in their marital
+  unit's calculation.
+- The run reports every quantity for every row, scenario and cell,
+  including undefined values with their reason.
 
 ## 7. Registered rows
 
@@ -420,10 +445,15 @@ every row.
   every coresident's assets are available to every claim unit in the
   household, which overstates them for coresidents who keep their own
   finances. R4 blocks at least as often as R3 (the same limit against at
-  least as much in resources). R0 can block more or less often than R3,
-  because the encoded test applies the individual limit to an asset
-  holder whose spouse is not ABD, where federal rules apply the couple
-  limit; R3 and R4 are two alternative resource tests, not bounds on R0.
+  least as much in resources, given nonnegative resources and marital
+  units nested in households, which the run checks). R0 can block more or
+  less often than R3, because the encoded test applies the individual
+  limit to an asset holder whose spouse is not ABD, where federal rules
+  apply the couple limit. R3 and R4 are two alternative resource tests
+  that show sensitivity to asset placement. Their range does not bound
+  R0, and it does not bound blocking under the unknown actual ownership
+  of household assets: both can overstate blocking when assets placed on
+  a beneficiary belong to someone else in the household.
 - No composite rows. No row may be added or promoted after registration.
 
 ## 8. Cells
@@ -441,7 +471,9 @@ One-way tables, each over the whole universe of the scenario:
 - **Race and Hispanic origin:** Hispanic (`is_hispanic`, any race);
   otherwise by `cps_race`: White (1), Black (2), Asian (4), all other
   codes (other or multiple races).
-- **Income quintile (primary).** Baseline income per person:
+- **Income quintile (primary).** Baseline pre-tax household income per
+  person, including modeled noncash benefits and excluding health
+  coverage:
   `(household_market_income + household_benefits − household_health_benefits) / household_count_people`,
   from the baseline simulation with the asset test as encoded. PE-US
   2.18.0 includes health coverage in `household_benefits` only when
@@ -460,19 +492,32 @@ One-way tables, each over the whole universe of the scenario:
   quintiles as ceil(decile / 2); decile −1 (negative household net
   income) is its own cell.
 
+Every cell assignment, and both quintile systems, come from the baseline
+simulation with the asset test as encoded and are the same for every
+row and scenario.
+
 ## 9. Uncertainty and small cells
 
-- **Interval.** A household bootstrap: 500 replicates from NumPy's
-  `default_rng(20261001)`; each replicate draws the frame's households
-  with replacement, keeping their weights, and recomputes every share in
-  §6 with each person's labels and quintile held at their full-sample
-  values. The report gives the 2.5th and 97.5th percentiles, labelled *a
-  frame-resampling interval: it excludes imputation, calibration and
-  model uncertainty*. For `B_cond`, replicates where it is undefined are
-  dropped and counted.
-- **Small cells.** A cell whose denominator has fewer than 50 person
-  records is flagged *small cell (n < 50)*. A denominator with no weight
-  is *not estimable*. Every cell is reported (no-drop).
+- **Interval.** A household bootstrap with 500 replicates. Households
+  are sorted by household id (H of them). One generator,
+  `numpy.random.default_rng(20261001)`, is created once; replicate *b* =
+  0, …, 499 calls `rng.integers(0, H, size=H)` in order and counts each
+  household's multiplicity. The same multiplicity vector serves every
+  row, scenario and cell. Each replicate keeps the households' weights
+  and recomputes every share in §6 with each person's labels and
+  quintile held at their full-sample values. For each statistic, a
+  replicate whose denominator is zero (`W`, or `R_no` for `B_cond`) is
+  omitted and counted, never set to zero; the number of valid replicates
+  is reported, and with none the interval is undefined with its reason.
+  Endpoints are
+  `numpy.quantile(valid_values, [0.025, 0.975], method="linear")`. The
+  NumPy version is pinned by the frozen requirements. The interval is
+  labelled *a frame-resampling interval: it excludes imputation,
+  calibration and model uncertainty*.
+- **Small cells.** The unconditional shares of a cell with `n < 50` are
+  flagged *small cell (n < 50)*; `B_cond` is flagged when `n_cond < 50`.
+  A denominator with no weight is *not estimable*. Every cell is reported
+  (no-drop).
 - No acceptance threshold, pass band or comparator exists. Nothing is
   graded.
 
@@ -495,9 +540,10 @@ refusal):
    `social_security` equals *c<sub>i</sub>* within $0.05 (float32
    storage), and under the OASI cut the disability component is
    unchanged.
-5. Marital units have one or two members; every person belongs to exactly
-   one household and one marital unit; 2026 age equals frame age; the
-   synthetic-split records are the 5,924 of §2.2.
+5. Marital units have one or two members and lie within one household;
+   every person belongs to exactly one household and one marital unit;
+   countable resources are never negative; 2026 age equals frame age; the
+   synthetic-split records are the 5,924 of §2.2, in its proportions.
 6. In every cell, the three labels' shares sum to one within 1e-12, and
    each one-way breakdown partitions the universe.
 7. No output contains an absolute local path.
@@ -515,14 +561,14 @@ check and the count of failing persons, and every other row stands:
 
 **Recorded, not refused:** the three-by-three transition tables (§5),
 including any transition in which a label rises when the asset test is
-added; the count of over-replacing units; and the SSI change outside the
-universe's marital units (§13).
+added; the counts of over-replacing units and of units whose SSI falls;
+and the SSI change outside the universe's marital units (§13).
 
 ## 11. Outputs
 
 - `runs/pe_us_depletion_cut_population_v1.json` and its `.env.json`
   sidecar, created exclusively. The artifact begins with `header` (the
-  four labels) and records `data_provenance: registered_real`, the
+  five labels) and records `data_provenance: registered_real`, the
   publication block (§14), the registration pointer, the registered
   commit, PR #506's head at registration, this file's path, version,
   status and SHA-256, the frame pin, the PE-US installation and RECORD
@@ -564,7 +610,9 @@ universe's marital units (§13).
    or older in 2022 to be married (Butrica, Cashin and Uccello, Social
    Security Bulletin 66(4), Table 1, row Married, column All, 2022).
    Widowed, divorced and never-married beneficiaries, and people living
-   alone, are underrepresented in the frame.
+   alone, are underrepresented in the frame. The all-beneficiary shares
+   reflect this skew, and one-way breakdowns do not remove it: composition
+   can also differ within age, sex, race and income cells.
 7. **Model versions.** The weights were solved under PE-US 1.764.6; the
    data release declares compatibility with policyengine-us 2.0.0 (core
    3.32.5); policyengine.py certifies it for 2.2.1; the run uses 2.18.0
@@ -575,23 +623,38 @@ universe's marital units (§13).
    R2 uses the frame's take-up flags.
 10. **Static.** No change in work, claiming, saving, asset spend-down or
     living arrangements.
-11. **Age.** Top-coded at 80-84 and 85+; beneficiaries under 15 appear
-    only as 25 synthetic PUF-support records.
+11. **Age.** Top-coded at 80-84 and 85+. CPS does not collect a child's
+    own Social Security income below age 15; beneficiaries under 15
+    appear only as 25 synthetic PUF-support records, so the frame omits
+    or misattributes child beneficiaries.
+12. **The spousal-deeming cap.** When an ineligible spouse's income is
+    deemed, 20 CFR 416.1163(e)(2) limits the benefit to the lesser of the
+    deeming computation and the individual FBR less the person's own
+    countable income. PE-US 2.18.0 caps it at the individual FBR only
+    (`PEUS/variables/gov/ssa/ssi/ssi_if_takes_up.py:25-38`). A cut that
+    ends deeming can therefore lower modeled SSI. Labels describe PE-US's
+    modeled response, including this discrepancy.
 
 ## 13. Unscored diagnostics and context
 
 Reported, not graded:
 
-- Weighted totals for each scenario and variant: the cut, the change in
-  federal SSI (`ssi_if_takes_up` and `ssi`), the change in state
-  supplements and other state benefits (`household_state_benefits`), and
-  the change in household net income (`household_net_income`), with PR
-  #506's offset share, 1 − (net income change ÷ Social Security change),
-  over beneficiaries' households.
+- Weighted totals for each scenario and each simulated variant (asset
+  test as encoded, and no asset test; frame take-up for everything but
+  `ssi_if_takes_up`): the cut, the change in federal SSI
+  (`ssi_if_takes_up` and `ssi`), the change in all modeled state benefits
+  (`household_state_benefits`), and the change in household net income
+  (`household_net_income`), with PR #506's offset share, 1 − (net income
+  change ÷ Social Security change). Totals run over beneficiary
+  households: the distinct households holding a person in the scenario's
+  universe, each weighted once. They do not cover rows R3 and R4, whose
+  SSI is computed after the simulations.
 - SSI that offsets a cut outside the beneficiary's marital unit: the
-  household SSI change not attributed to the universe's marital units.
-- Counts of over-replacing units (§5), the transition tables, and the
-  reason partition of §5.
+  beneficiary households' SSI change less the change in the distinct
+  marital units holding a person in the universe, each unit counted once.
+- Counts, unweighted and household-weighted, of distinct units with
+  `dS_u > C_u + tau` and with `dS_u < -tau` (and the weighted SSI loss of
+  the latter); the transition tables; the reason partition of §5.
 - Context, unscored, read from the evidence folder's pinned copy:
   SSA's Monthly Statistical Snapshot, December 2024, Table 1 (in
   thousands; dual entitlement counted once; SSI includes federally
@@ -730,7 +793,9 @@ Reported, not graded:
     SHA-256 `e488dce9bac3b1645813440acc73e7bd93e60e70a7e1ba4d902ed83f088b81d0`;
   - `sources/ssb_v66n4p1.html` (Wayback capture 20241214013530 of Social
     Security Bulletin 66(4)), SHA-256
-    `c8671a359b71212219a0f5c8480c5eddadb2d5da1c2609af239319e8d0b230e2`.
+    `c8671a359b71212219a0f5c8480c5eddadb2d5da1c2609af239319e8d0b230e2`;
+  - `sources/lii_416_1163.html`, SHA-256
+    `f3ba220819cd3b71d083b4f1e5c591c65cef4a9415da9164a362a2ef6ff16c2d`.
 
   `SHA256SUMS` in that folder fixes the reader reports, the reader
   scripts, the exposure record and the sources; the first comment records
@@ -812,7 +877,7 @@ the code's constants.
 ```json
 {
   "specification": "pe_us_depletion_cut_population_ssi_asset_test",
-  "version": "sa1-draft-2",
+  "version": "sa1-draft-3",
   "status": "draft",
   "decisions": {
     "authorization": {
@@ -849,7 +914,7 @@ the code's constants.
     "ssi_measure": "ssi_if_takes_up",
     "tolerance_dollars_per_year": 1.0
   },
-  "headline": {"row": "R0", "scenario": "oasi22", "cell": "all", "statistics": ["F_law", "P_law", "N_law", "F_no", "P_no", "N_no", "R_law", "R_no", "B", "B_part", "B_cond"]},
+  "headline": {"row": "R0", "scenario": "oasi22", "cell": "all", "statistics": ["F_test", "P_test", "N_test", "F_no", "P_no", "N_no", "R_test", "R_no", "B", "B_part", "B_cond"]},
   "rows": {
     "R0": {"field": null, "value": "encoded resource test; frame asset placement; ssi_if_takes_up; all beneficiaries"},
     "R2": {"field": "ssi_measure", "value": "ssi"},
@@ -866,8 +931,9 @@ the code's constants.
     "income_quintile": ["q1", "q2", "q3", "q4", "q5"],
     "income_quintile_pe_decile": ["negative", "q1", "q2", "q3", "q4", "q5"]
   },
-  "uncertainty": {"method": "household_bootstrap", "replicates": 500, "seed": 20261001, "interval": [0.025, 0.975]},
+  "uncertainty": {"method": "household_bootstrap", "replicates": 500, "seed": 20261001, "interval": [0.025, 0.975], "quantile_method": "linear"},
   "small_cell_n": 50,
+  "small_cell_n_cond": 50,
   "acceptance": null,
   "forecast": null,
   "publication": {"computed_regardless": true, "release_scope": "timing and wording only"},
@@ -875,7 +941,8 @@ the code's constants.
     "FRAME-RELATIVE: Microcosm populace-us-2024 frame; liquid assets are imputed and not calibrated, and beneficiary counts are not calibrated to national totals.",
     "Applied to 2026 law and prices: the cut would not happen in 2026, and this is not a projection.",
     "Static: no behavioral response.",
-    "Registered one-shot, not blind: registered after PR #506's illustrative results and after real-data diagnostics on this frame were seen (issue #42, Registration 19)."
+    "Registered one-shot, not blind: registered after PR #506's illustrative results and after real-data diagnostics on this frame were seen (issue #42, Registration 19).",
+    "Headline basis: potential federal SSI replacement, as if everyone eligible takes SSI up, under the row's modeled resource test; shares count cut beneficiaries by replacement of their marital unit's combined cut."
   ]
 }
 ```
@@ -893,6 +960,14 @@ the code's constants.
   guard, Modal guards, registered-commit tag and full authorization
   quote added; the real-frame pre-run check dropped; disclosure
   itemized; sources pinned; meeting participants not named.
+- `sa1-draft-3` (2026-10-02): methodology-review fixes (§20). `_law`
+  renamed `_test`; `n_cond`, `W_cond` and a small-cell rule for `B_cond`
+  added; the bootstrap fully specified, with undefined replicates omitted
+  and counted; the none label states that it includes SSI decreases, and
+  the spousal-deeming cap discrepancy is named difference 12; the reason
+  partition limited to the eligibility basis; diagnostic aggregation
+  defined; R5 stated as a reporting restriction; a fifth label states the
+  headline's basis; R3 and R4 stated not to bound actual ownership.
 
 ## 20. Review and ratification record
 
@@ -902,9 +977,12 @@ the code's constants.
     2 blocking, 3 major, 12 minor; all resolved in `sa1-draft-2`.
   - registration and process (Claude Code workflow agent, Opus 5.5):
     2 blocking, 8 major, 8 minor; all resolved in `sa1-draft-2`.
-  - methodology and implementability: the first lanes failed on an
-    account limit before reporting and were re-dispatched on Subfleet
-    lanes; their verdicts are recorded here before ratification.
+  - methodology (Subfleet lane, GPT-6.1 Sol; it read `sa1-draft-1`):
+    5 blocking, 9 major, 2 minor. Six were already resolved in
+    `sa1-draft-2`; the rest are resolved in `sa1-draft-3`.
+  - implementability (live checks on invented data): the first lanes
+    failed on an account limit or lacked a shell and were re-dispatched;
+    the verdict is recorded here before ratification.
 - **Ratification check:** to be recorded. The ratified file must differ
   from the last reviewed draft only in version, status, the block's
   version and status, the changelog and this section.
