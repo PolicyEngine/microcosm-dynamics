@@ -247,13 +247,14 @@ def _scenario(
         out[name] = _calculated(sim, name)
         if name in COMPONENTS and not np.isfinite(out[name]).all():
             raise ValueError(f"{name}: calculated components must be finite")
-    expected_ss = np.sum(np.stack(list(inputs.values())), axis=0)
-    failures = ~np.isfinite(out["social_security"]) | (
-        np.abs(out["social_security"] - expected_ss) > 0.05
-    )
+    # PE-US stores inputs as float32: each calculated component must equal
+    # the float32 of the input set, exactly (specification 10, refusal 4).
+    failures = ~np.isfinite(out["social_security"])
+    for name, values in inputs.items():
+        failures |= out[name] != values.astype(np.float32).astype(np.float64)
     if failures.any():
         raise ValueError(
-            "set_input social_security identity failed for "
+            "set_input did not take effect exactly for "
             f"{int(failures.sum())} persons"
         )
     out["meets_ssi_resource_test"] = _calculated(

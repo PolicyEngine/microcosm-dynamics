@@ -31,6 +31,7 @@ def _block():
         ("HEADLINE", "headline"),
         ("BOOTSTRAP", "uncertainty"),
         ("SMALL_CELL_N", "small_cell_n"),
+        ("SMALL_CELL_N_COND", "small_cell_n_cond"),
         ("LABELS", "labels"),
     ],
 )
@@ -46,19 +47,22 @@ def test_specification_path_labels_tolerances_and_synthetic_split():
         == _block()["replacement"]["tolerance_dollars_per_year"]
         == 1.0
     )
-    assert core.CUT_CHECK_TOLERANCE == 0.05
     assert core.IDENTITY_TOLERANCE == core.BOUNDARY_TOLERANCE == 0.01
     assert len(core.LABELS) == 5
     assert core.SYNTHETIC_SPLIT["count"] == 5924
-    assert list(core.SYNTHETIC_SPLIT["proportions"].values()) == [
-        0.2496,
-        0.3793,
-        0.1355,
-        0.2356,
+    assert list(core.SYNTHETIC_SPLIT["percent"]) == [
+        "social_security_retirement",
+        "social_security_survivors",
+        "social_security_dependents",
+        "social_security_disability",
     ]
-    assert sum(core.SYNTHETIC_SPLIT["proportions"].values()) == pytest.approx(
-        1
-    )
+    assert list(core.SYNTHETIC_SPLIT["percent"].values()) == [
+        24.96,
+        37.93,
+        13.55,
+        23.56,
+    ]
+    assert sum(core.SYNTHETIC_SPLIT["percent"].values()) == pytest.approx(100)
 
 
 def test_named_differences_verbatim_after_source_line_wraps():

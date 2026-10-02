@@ -682,3 +682,30 @@ def test_frame_hash_guard_never_needs_hdf(tmp_path, monkeypatch):
     monkeypatch.setattr(core, "FRAME_SHA256", "f" * 64)
     with pytest.raises(ValueError, match="pinned SHA"):
         core.check_frame(path, registered=True)
+
+
+def _split_frame(totals, percent):
+    """Frame components for records splitting ``totals`` by ``percent``."""
+    return {
+        name: np.asarray(totals, dtype=np.float64) * share / 100
+        for name, share in zip(core.COMPONENTS, percent, strict=True)
+    }
+
+
+def test_synthetic_split_accepts_the_registered_proportions():
+    # The frame's fixed shares, to the precision a structural read gave.
+    exact = [24.964697, 37.93265, 13.545444, 23.557209]
+    frame = _split_frame([33528.09, 1200.0, 91234.5], exact)
+    synthetic, wrong = core.synthetic_split(frame)
+    assert synthetic.all()
+    assert not wrong.any()
+
+
+def test_synthetic_split_flags_other_splits_and_ignores_single_components():
+    quarters = _split_frame([40000.0], [25.0, 25.0, 25.0, 25.0])
+    synthetic, wrong = core.synthetic_split(quarters)
+    assert synthetic.all() and wrong.all()
+    single = {name: np.zeros(2) for name in core.COMPONENTS}
+    single["social_security_retirement"] = np.array([18000.0, 0.0])
+    synthetic, wrong = core.synthetic_split(single)
+    assert not synthetic.any() and not wrong.any()

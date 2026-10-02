@@ -1,6 +1,6 @@
 # SSI's asset test and a Social Security cut at depletion, on a population
 
-- **Status:** draft, not registered (`sa1-draft-5`). This specification is
+- **Status:** draft, not registered (`sa1-draft-6`). This specification is
   registered in two issue #42 comments, as Registration 18 is (§15).
   Before the first comment, this file changes only in its version
   (`sa1-ratified-1`), its status (`ratified_frozen`), the §18 block's
@@ -14,7 +14,7 @@
   stacks on PR #506, which is not merged. Any change to the ratified file
   ends the registration; a corrected version needs a new registration.
 - **Specification:** `pe_us_depletion_cut_population_ssi_asset_test`,
-  version `sa1-draft-5`.
+  version `sa1-draft-6`.
 - **Question.** At the NASI meeting on 2026-10-01, participants asked
   whether SSI would really replace the income a Social Security cut takes
   away, given that SSI's asset limit excludes many people. PR #506's
@@ -728,7 +728,9 @@ Reported, not graded:
   public before anyone decides on release. Pushing that commit, opening
   or updating the pull request with it, posting the run-complete comment
   with numbers, and any outside use wait for Max's go on a cos decision
-  filed when the run completes, without `--closes-with`. That decision
+  filed before the run starts, without `--closes-with`, whose id the
+  artifact records; the run's times and hashes are noted on it when the
+  run completes. That decision
   governs timing, and the wording of the run-complete comment and outside
   communications, only. It never governs whether the numbers appear, and
   it cannot change the committed artifact, report or chart. Until the go,
@@ -865,8 +867,8 @@ Reported, not graded:
   workflow agents (Opus 5.5) and Subfleet lanes (GPT-6.1 Sol in round 1;
   Opus 5.5 in round 2). Round 1 read `sa1-draft-1` (mechanisms,
   registration, methodology) and `sa1-draft-3` (implementability);
-  round 2 read `sa1-draft-4` and the first comment's draft, and a
-  re-check read `sa1-draft-5`. Every referee could read the reader
+  round 2 read `sa1-draft-4` and the first comment's draft, and its
+  re-checks read `sa1-draft-5` and `sa1-draft-6`. Every referee could read the reader
   reports, which contain the values above; the round-1 registration
   referee and the round-2 referees also read the exposure record. They
   computed nothing on the frame beyond structural counts; their live
@@ -914,7 +916,7 @@ the code's constants.
 ```json
 {
   "specification": "pe_us_depletion_cut_population_ssi_asset_test",
-  "version": "sa1-draft-5",
+  "version": "sa1-draft-6",
   "status": "draft",
   "decisions": {
     "authorization": {
@@ -1021,6 +1023,9 @@ the code's constants.
   round; smaller clarifications (R1 unused, R4's block value, the
   identity's period, negative components, the second comment's
   contents).
+- `sa1-draft-6` (2026-10-02): one sentence of §14. The release decision
+  is filed before the run starts, so that the artifact can record its
+  id, where `sa1-draft-5` had it filed when the run completes.
 
 ## 20. Review and ratification record
 
@@ -1048,8 +1053,10 @@ the code's constants.
   listed fixes". It found every round-1 finding resolved except two
   partly resolved; 1 blocking, 5 major and 13 minor findings, all
   resolved in `sa1-draft-5` and in the comment draft. Its values scan
-  found no simulated value in either text and one frame tabulation, now
-  removed.
+  found one value from the exposure record in both texts: the beneficiary
+  count and weight, listed among the frame tabulations (the weight also
+  among the simulated values). Both are removed; no other such value was
+  found.
 - **Ratification check:** to be recorded. The ratified file must differ
   from the last reviewed draft only in version, status, the block's
   version and status, the changelog and this section.

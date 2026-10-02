@@ -104,6 +104,14 @@ class Refusal(ValueError):
         self.check = check
         self.name = name
         self.failing_persons = int(failing_persons)
+        # Only the numbered refusal checks of specification section 10 end
+        # a registration by rule. Preflight, child, pipeline, source and
+        # hook failures are operational: section 14 decides whether one is
+        # an external infrastructure failure eligible for re-execution.
+        self.registered_check = isinstance(check, int) or (
+            isinstance(check, str) and check.isdigit()
+        )
+        self.child_returncode: int | None = None
         super().__init__(
             f"check {check}: {name}; failing persons: {failing_persons}"
         )
@@ -270,7 +278,16 @@ def _run_child(
         )
         with log.open("x") as stream:
             stream.write(child.stderr)
-        raise Refusal("child", "child process exited nonzero")
+        refusal = Refusal(
+            "child",
+            (
+                "child process was killed by a signal"
+                if child.returncode < 0
+                else "child process exited nonzero"
+            ),
+        )
+        refusal.child_returncode = child.returncode
+        raise refusal
     try:
         return json.loads(child.stdout)
     except json.JSONDecodeError as error:
@@ -381,31 +398,24 @@ def _structural_check(
         or np.any(np.bincount(household, minlength=h) == 0)
     ):
         invalid[:] = True
+    for key in COMPONENTS:
+        invalid |= ~(probe[key] >= 0)
     frame = np.column_stack([probe[f"frame_{key}"] for key in COMPONENTS])
-    synthetic = np.all(frame > 0, axis=1)
-    # §2.2 gives percentages to two decimal places; compare fractions
-    # within half a unit in the last printed percentage digit.
-    proportions = np.array([0.2496, 0.3793, 0.1355, 0.2356])
-    wrong_split = np.zeros(n, dtype=bool)
-    if synthetic.any():
-        wrong_split[synthetic] = np.any(
-            np.abs(
-                frame[synthetic] / frame[synthetic].sum(axis=1, keepdims=True)
-                - proportions
-            )
-            > 0.00005,
-            axis=1,
-        )
+    synthetic, wrong_split = pop.synthetic_split(
+        {key: probe[f"frame_{key}"] for key in COMPONENTS}
+    )
     invalid |= wrong_split
+    # Recorded, not refused: the specification states that no other record
+    # carries more than one positive component, but does not refuse on it.
     nonsynthetic_multi = (~synthetic) & ((frame > 0).sum(axis=1) > 1)
-    invalid |= nonsynthetic_multi
-    if not invented and int(synthetic.sum()) != 5924:
+    if not invented and int(synthetic.sum()) != pop.SYNTHETIC_SPLIT["count"]:
         invalid[:] = True
     return {
         "failures": int(invalid.sum()),
         "failure_mask": invalid,
         "marital_unit_sizes": sizes,
         "synthetic": synthetic,
+        "other_multi_component_records": int(nonsynthetic_multi.sum()),
         "synthetic_count": int(synthetic.sum()),
         "synthetic_count_basis": (
             "invented population count; real count pin inapplicable"
@@ -418,7 +428,7 @@ def _structural_check(
 def runtime_checks(
     probe: Mapping[str, np.ndarray],
     simulations: Mapping[str, Mapping[str, Mapping[str, np.ndarray]]],
-    cuts: Mapping[str, np.ndarray],
+    inputs: Mapping[str, Mapping[str, np.ndarray]],
     checks: dict[str, Any],
     *,
     invented: bool,
@@ -459,21 +469,23 @@ def runtime_checks(
             ):
                 if not np.array_equal(arrays[name], probe[name]):
                     baseline_fail[:] = True
-            if scenario != "baseline":
-                base = simulations["baseline"][variant]
-                difference = (
-                    base["social_security"]
-                    - arrays["social_security"]
-                    - cuts[scenario]
+            # Refusal 4: each calculated component equals the float32 of
+            # the input set, exactly; uncut components therefore equal the
+            # baseline exactly, including disability under the OASI cut.
+            for name in COMPONENTS:
+                expected = (
+                    np.asarray(inputs[scenario][name], dtype=np.float64)
+                    .astype(np.float32)
+                    .astype(np.float64)
                 )
-                cut_fail |= ~np.isfinite(difference) | (
-                    np.abs(difference) > pop.CUT_CHECK_TOLERANCE
+                cut_fail |= arrays[name] != expected
+            if scenario == "oasi22":
+                cut_fail |= (
+                    arrays["social_security_disability"]
+                    != simulations["baseline"][variant][
+                        "social_security_disability"
+                    ]
                 )
-                if scenario == "oasi22":
-                    cut_fail |= (
-                        arrays["social_security_disability"]
-                        != base["social_security_disability"]
-                    )
             resources_fail |= (
                 arrays["ssi_countable_resources"]
                 != baseline["ssi_countable_resources"]
@@ -517,7 +529,7 @@ def runtime_checks(
         checks,
         "refusals",
         "4",
-        "Social Security change equals cut; OASI preserves disability",
+        "each calculated component equals the float32 of the input set; OASI preserves disability",
         int(cut_fail.sum()),
     )
     structure = _structural_check(probe, baseline, invented=invented)
@@ -525,9 +537,12 @@ def runtime_checks(
         checks,
         "refusals",
         "5",
-        "structural memberships, nesting, nonnegative invariant resources, age and synthetic splits",
+        "structural memberships, nesting, nonnegative resources and components, age and synthetic splits",
         int(np.sum(structure["failure_mask"] | resources_fail)),
         synthetic_count=structure["synthetic_count"],
+        other_multi_component_records=structure[
+            "other_multi_component_records"
+        ],
         synthetic_count_basis=structure["synthetic_count_basis"],
     )
     _record(
@@ -1116,6 +1131,8 @@ def write_refusal(
         "refusal": {
             "check": refusal.check,
             "name": refusal.name,
+            "registered_refusal_check": refusal.registered_check,
+            "child_returncode": refusal.child_returncode,
             "failing_persons": refusal.failing_persons,
             "phase_reached": phase,
             "ssi_outcomes_computed_and_discarded": outcomes_computed,
@@ -1435,7 +1452,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         }
         phase = "refusal_checks"
         structure, invalid_reasons = runtime_checks(
-            probe, simulations, cuts, checks, invented=invented
+            probe, simulations, inputs, checks, invented=invented
         )
         baseline = simulations["baseline"]["asset_test_as_encoded"]
         assignments, cutpoints = cell_assignments(probe, baseline)

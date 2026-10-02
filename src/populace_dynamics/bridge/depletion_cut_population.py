@@ -25,7 +25,7 @@ SPECIFICATION_PATH = (
 )
 SPECIFICATION_NAME = "pe_us_depletion_cut_population_ssi_asset_test"
 
-SPECIFICATION_VERSION = "sa1-draft-3"
+SPECIFICATION_VERSION = "sa1-draft-6"
 
 SPECIFICATION_STATUS = "draft"
 
@@ -107,7 +107,7 @@ ROWS = {
     "R3": {"field": "resource_test", "value": "spousal_deeming_couple_limit"},
     "R4": {
         "field": "resource_test",
-        "value": "household_pooling_couple_limit",
+        "value": "household_pooling_r3_limits",
     },
     "R5": {"field": "universe", "value": "exclude_four_component_records"},
 }
@@ -158,8 +158,6 @@ HEADLINE = {
 
 TOLERANCE_DOLLARS = 1.0
 
-CUT_CHECK_TOLERANCE = 0.05
-
 IDENTITY_TOLERANCE = 0.01
 
 BOUNDARY_TOLERANCE = 0.01
@@ -173,6 +171,8 @@ BOOTSTRAP = {
 }
 
 SMALL_CELL_N = 50
+
+SMALL_CELL_N_COND = 50
 
 LABELS = [
     "FRAME-RELATIVE: Microcosm populace-us-2024 frame; liquid assets are "
@@ -242,11 +242,11 @@ NAMED_DIFFERENCES = [
 ]
 SYNTHETIC_SPLIT = {
     "count": 5924,
-    "proportions": {
-        "social_security_retirement": 0.2496,
-        "social_security_survivors": 0.3793,
-        "social_security_dependents": 0.1355,
-        "social_security_disability": 0.2356,
+    "percent": {
+        "social_security_retirement": 24.96,
+        "social_security_survivors": 37.93,
+        "social_security_dependents": 13.55,
+        "social_security_disability": 23.56,
     },
 }
 
@@ -353,6 +353,33 @@ def cut_components(
         np.zeros(next(iter(arrays.values())).shape, dtype=np.int64),
     )
     return reform, cuts, person_cut
+
+
+def synthetic_split(
+    frame_components: Mapping[str, NDArray[Any]],
+) -> tuple[NDArray[np.bool_], NDArray[np.bool_]]:
+    """Find four-positive-component records and those off the registered split.
+
+    The specification's rule (section 10, refusal 5): convert the 2024 frame
+    components to float64, divide each by the person's four-component sum,
+    and require ``numpy.round(100 * share, 2)`` to equal the registered
+    percentages, in the order retirement, survivors, dependents, disability.
+    """
+    frame = np.column_stack(
+        [
+            np.asarray(frame_components[name], dtype=np.float64)
+            for name in COMPONENTS
+        ]
+    )
+    synthetic = np.all(frame > 0, axis=1)
+    expected = np.array(
+        [SYNTHETIC_SPLIT["percent"][name] for name in COMPONENTS]
+    )
+    wrong = np.zeros(len(frame), dtype=bool)
+    if synthetic.any():
+        share = frame[synthetic] / frame[synthetic].sum(axis=1, keepdims=True)
+        wrong[synthetic] = np.any(np.round(100 * share, 2) != expected, axis=1)
+    return synthetic, wrong
 
 
 def unit_totals(
@@ -655,7 +682,7 @@ def statistics(
         n_cond=n_cond,
         W_cond=float(weighted[:2].sum()),
         small_cell=int(mask.sum()) < SMALL_CELL_N,
-        small_cell_cond=n_cond < SMALL_CELL_N,
+        small_cell_cond=n_cond < SMALL_CELL_N_COND,
         transition_table={
             "labels": list(REPLACEMENT_NAMES),
             "orientation": "no_asset_test rows; row resource test columns",
