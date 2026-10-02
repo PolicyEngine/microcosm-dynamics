@@ -1,6 +1,6 @@
 # SSI's asset test and a Social Security cut at depletion, on a population
 
-- **Status:** draft, not registered (`sa1-draft-6`). This specification is
+- **Status:** ratified and frozen (`sa1-ratified-1`). This specification is
   registered in two issue #42 comments, as Registration 18 is (§15).
   Before the first comment, this file changes only in its version
   (`sa1-ratified-1`), its status (`ratified_frozen`), the §18 block's
@@ -14,7 +14,7 @@
   stacks on PR #506, which is not merged. Any change to the ratified file
   ends the registration; a corrected version needs a new registration.
 - **Specification:** `pe_us_depletion_cut_population_ssi_asset_test`,
-  version `sa1-draft-6`.
+  version `sa1-ratified-1`.
 - **Question.** At the NASI meeting on 2026-10-01, participants asked
   whether SSI would really replace the income a Social Security cut takes
   away, given that SSI's asset limit excludes many people. PR #506's
@@ -916,8 +916,8 @@ the code's constants.
 ```json
 {
   "specification": "pe_us_depletion_cut_population_ssi_asset_test",
-  "version": "sa1-draft-6",
-  "status": "draft",
+  "version": "sa1-ratified-1",
+  "status": "ratified_frozen",
   "decisions": {
     "authorization": {
       "decision": "d806",
@@ -1025,7 +1025,11 @@ the code's constants.
   contents).
 - `sa1-draft-6` (2026-10-02): one sentence of §14. The release decision
   is filed before the run starts, so that the artifact can record its
-  id, where `sa1-draft-5` had it filed when the run completes.
+  id, where `sa1-draft-5` had it filed when the run completes. The
+  review record in §16 and §20 was updated with it.
+- `sa1-ratified-1` (2026-10-02): `sa1-draft-6` with its version and
+  status set and the ratification check recorded (§20). No other text
+  differs.
 
 ## 20. Review and ratification record
 
@@ -1057,10 +1061,18 @@ the code's constants.
   count and weight, listed among the frame tabulations (the weight also
   among the simulated values). Both are removed; no other such value was
   found.
-- **Ratification check:** to be recorded. The ratified file must differ
-  from the last reviewed draft only in version, status, the block's
-  version and status, the changelog and this section.
-- **Registered-commit review:** to be recorded before the second comment.
+- **Ratification check:** round 2's re-checks (Subfleet lanes, Opus 5.5;
+  `spec-review/review-recheck.md` and `review-recheck2.md`) read
+  `sa1-draft-5` and then `sa1-draft-6`, the revised comment draft and the
+  exposure record, and computed nothing on the frame. They found every
+  round-2 finding resolved and no simulated value or frame tabulation in
+  either text, and recommended ratification. The ratified file differs
+  from `sa1-draft-6` only in version, status, the block's version and
+  status, the changelog and this section; the drafter confirmed that
+  with `git diff` before recording the hash.
+- **Registered-commit review:** independent reviews of the code at the
+  registered commit, completed before the second comment and recorded in
+  it (§15), since this file cannot change after ratification.
 - **Comment drafts:** each reviewed independently, with a values scan,
   before posting.
 - **After the run:** an independent check of the artifact against this

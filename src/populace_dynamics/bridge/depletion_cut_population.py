@@ -25,11 +25,13 @@ SPECIFICATION_PATH = (
 )
 SPECIFICATION_NAME = "pe_us_depletion_cut_population_ssi_asset_test"
 
-SPECIFICATION_VERSION = "sa1-draft-6"
+SPECIFICATION_VERSION = "sa1-ratified-1"
 
-SPECIFICATION_STATUS = "draft"
+SPECIFICATION_STATUS = "ratified_frozen"
 
-SPECIFICATION_SHA256 = None
+SPECIFICATION_SHA256 = (
+    "4672d084aaf18d492eff30ca6961d511926086c8f73fc60368849b3589e11e1f"
+)
 
 MAX_RULINGS = {
     "authorization": {

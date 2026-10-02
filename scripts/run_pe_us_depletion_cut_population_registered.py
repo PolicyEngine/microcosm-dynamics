@@ -497,6 +497,7 @@ def runtime_checks(
                     .astype(np.float64)
                 )
                 cut_fail |= arrays[name] != expected
+            cut_fail |= ~np.isfinite(arrays["social_security"])
             if scenario == "oasi22":
                 cut_fail |= (
                     arrays["social_security_disability"]
