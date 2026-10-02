@@ -32,3 +32,8 @@ data/external/psid_modern_job_context_raw_extraction_specs_v1.json text eol=lf
 # Anchor snapshots: pinned bytes, never normalized
 data/external/snapshots/** binary
 data/external/snapshots/covered_earnings_methodology_capture1/** binary
+
+# Baseline input captures: SHA-256-pinned source bytes, never normalized
+data/external/tr2026/sources/** binary
+data/external/cbo2026/sources/** binary
+data/external/*.source.html.gz binary
