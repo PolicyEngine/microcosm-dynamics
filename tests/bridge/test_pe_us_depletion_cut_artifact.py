@@ -419,14 +419,12 @@ def test__artifact__then_a_deeper_cut_never_leaves_more(document):
         if reform != "oasi":
             continue
         other = rows[(key, state, "oasdi")]
-        assert (
-            row["reform_social_security_annual"]
-            <= (other["reform_social_security_annual"])
+        assert row["reform_social_security_annual"] <= (
+            other["reform_social_security_annual"]
         )
         for person, cut in row["cuts"].items():
-            assert (
-                cut["monthly_payable"]
-                <= (other["cuts"][person]["monthly_payable"])
+            assert cut["monthly_payable"] <= (
+                other["cuts"][person]["monthly_payable"]
             )
 
 
@@ -461,9 +459,8 @@ def test__artifact__then_the_low_earner_is_496s_benefit(document):
     for row in document["results"]:
         if row["household"] in "ABC":
             assert row["cuts"]["worker"]["monthly_scheduled"] == 743
-            assert (
-                row["baseline_social_security_annual"]
-                == (committed["results"][0]["baseline_social_security_annual"])
+            assert row["baseline_social_security_annual"] == (
+                committed["results"][0]["baseline_social_security_annual"]
             )
 
 
@@ -488,14 +485,12 @@ def test__artifact__then_the_couple_is_the_medium_earner_and_spouse(
         if row["household"] == "D":
             assert set(row["cuts"]) == {"worker"}
         if row["household"] == "E":
-            assert (
-                row["cuts"]["spouse"]["monthly_scheduled"]
-                == (couple["spouse_monthly"])
+            assert row["cuts"]["spouse"]["monthly_scheduled"] == (
+                couple["spouse_monthly"]
             )
         if row["household"] in "DE":
-            assert (
-                row["cuts"]["worker"]["monthly_scheduled"]
-                == (medium["monthly_benefit"])
+            assert row["cuts"]["worker"]["monthly_scheduled"] == (
+                medium["monthly_benefit"]
             )
 
 
@@ -508,9 +503,8 @@ def test__artifact__then_the_medium_earner_benefit_is_taxable(document):
         memo = row["memo"]
         assert memo["baseline"]["taxable_social_security"] > 0
         assert memo["reform"]["taxable_social_security"] > 0
-        assert (
-            memo["reform"]["taxable_social_security"]
-            < (row["reform_social_security_annual"])
+        assert memo["reform"]["taxable_social_security"] < (
+            row["reform_social_security_annual"]
         )
 
 
