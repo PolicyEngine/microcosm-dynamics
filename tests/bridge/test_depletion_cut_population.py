@@ -586,8 +586,10 @@ def test_diagnostics_distinct_households_units_and_outside_response():
     )
     assert undefined["weighted_totals"]["offset_share"] is None
     assert undefined["weighted_totals"]["offset_share_undefined_reason"] == (
-        "no modeled Social Security change in beneficiary households"
+        "no finite, nonzero modeled Social Security change in "
+        "beneficiary households"
     )
+    assert undefined["weighted_totals"]["undefined_totals"] == []
 
 
 @pytest.mark.parametrize(

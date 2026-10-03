@@ -63,6 +63,45 @@ HOUSEHOLD_VARIABLES = (
 )
 
 
+# Set by run_job once a registered job's registration record has been
+# validated. Without it, no helper here will build a simulation on the
+# real frame.
+_REGISTRATION: dict[str, str] | None = None
+_HASHES: dict[tuple[str, int, int], str] = {}
+_POINTER = (
+    r"https://github\.com/PolicyEngine/microcosm-dynamics/issues/42"
+    r"#issuecomment-[0-9]+"
+)
+
+
+def _registration(job: dict[str, Any]) -> dict[str, str] | None:
+    """Validate the registration record a registered job must carry."""
+    import re
+
+    if not job.get("registered", False):
+        return None
+    record = job.get("registration")
+    if (
+        not isinstance(record, dict)
+        or not re.fullmatch(_POINTER, str(record.get("pointer", "")))
+        or not re.fullmatch(r"[0-9a-f]{40}", str(record.get("commit", "")))
+        or not re.fullmatch(
+            r"[0-9a-f]{64}", str(record.get("specification_sha256", ""))
+        )
+    ):
+        raise ValueError("registered job lacks a valid registration record")
+    return {key: str(record[key]) for key in sorted(record)}
+
+
+def _cached_sha256(path: Path) -> str:
+    """Hash a dataset once per (path, size, modification time)."""
+    stat = path.stat()
+    key = (str(path.resolve()), stat.st_size, stat.st_mtime_ns)
+    if key not in _HASHES:
+        _HASHES[key] = _sha256(path)
+    return _HASHES[key]
+
+
 def _sha256(path: Path) -> str:
     """Hash a file incrementally, without interpreting its contents."""
     digest = hashlib.sha256()
@@ -80,7 +119,7 @@ def _check_frame(path: Path, *, expected_sha256: str, registered: bool) -> str:
             "frame SHA-256 differs from the parent's expected hash"
         )
     if actual == FRAME_SHA256:
-        if not registered:
+        if not registered or _REGISTRATION is None:
             raise ValueError("real frame requires a registered entry point")
     else:
         with pd.HDFStore(path, mode="r") as store:
@@ -105,6 +144,8 @@ def _microsimulation(dataset: str | Path | None, reform: Any = None) -> Any:
         raise ValueError(
             "an explicit dataset is required; defaults are unsafe"
         )
+    if _cached_sha256(Path(dataset)) == FRAME_SHA256 and _REGISTRATION is None:
+        raise ValueError("real frame requires a registered entry point")
     from policyengine_us import Microsimulation
 
     options = {}
@@ -179,6 +220,16 @@ def _probe(path: Path) -> tuple[dict[str, np.ndarray], dict[str, float]]:
     out = _memberships(sim)
     with pd.HDFStore(path, mode="r") as store:
         frame = store["person"]
+        # Column names only, for the parent's guard against stored
+        # variables that would shadow the formulas the run calculates.
+        names = set(frame.columns)
+        for key in store.keys():
+            if key not in ("/person", "/invented"):
+                names |= {
+                    str(name)
+                    for name in store.select(key, start=0, stop=0).columns
+                }
+    out["frame_column_names"] = np.asarray(sorted(names), dtype=str)
     if not np.array_equal(frame["person_id"].to_numpy(), out["person_id"]):
         raise ValueError("HDFStore person order differs from simulation order")
     for name in COMPONENTS:
@@ -484,7 +535,9 @@ def _peak_rss_bytes() -> int:
 
 def run_job(job: dict[str, Any]) -> dict[str, Any]:
     """Execute one parent job, exchanging arrays solely through an NPZ file."""
+    global _REGISTRATION
     started = time.perf_counter()
+    _REGISTRATION = _registration(job)
     path = Path(job.get("frame_path", job.get("path", "")))
     if not str(path) or str(path) == ".":
         raise ValueError("a frame_path is required")

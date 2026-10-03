@@ -514,7 +514,8 @@ def test_existing_raw_transport_is_preserved_before_children(pipeline):
 
 
 @pytest.mark.parametrize(
-    "variable,check", [("social_security", "4"), ("ssi_if_takes_up", 6)]
+    "variable,check",
+    [("social_security_retirement", "4"), ("ssi_if_takes_up", 6)],
 )
 def test_nonfinite_child_amounts_cannot_pass_tolerances(
     pipeline, monkeypatch, variable, check
@@ -834,3 +835,130 @@ def test_registered_statistics_end_to_end_on_a_worked_population(
     assert r2["B"] == pytest.approx(6 / 14)
     assert r2["B_cond"] == pytest.approx(6 / 11)
     assert r2["B_part"] == pytest.approx(4 / 14)
+
+
+def _mismatched_test_scenario(probe, components, variant):
+    """PE-US's test fails person 0, whose resources pass the encoded rule."""
+    arrays = _fixture_scenario(probe, components, variant)
+    if variant == "asset_test_as_encoded":
+        passed = arrays["meets_ssi_resource_test"].copy()
+        passed[0] = False
+        eligible = (12168 - arrays["social_security"]) * passed
+        arrays.update(
+            meets_ssi_resource_test=passed,
+            ssi_if_takes_up=eligible,
+            ssi=eligible.copy(),
+        )
+    return arrays
+
+
+def test_resource_test_mismatch_invalidates_only_r3_r4(pipeline, monkeypatch):
+    """Row validity (b) is not a refusal: R3 and R4 fall, the rest stand."""
+    monkeypatch.setattr(
+        sys.modules[__name__], "_scenario", _mismatched_test_scenario
+    )
+    args, _ = pipeline
+    document = runner.run(args)
+    validity = document["checks"]["row_validity"]
+    assert validity["a"]["passed"]
+    assert not validity["b"]["passed"]
+    assert validity["b"]["failing_persons"] == 1
+    for row in ("R3", "R4"):
+        entry = document["results"][row]["oasi22"]["all"]["all"]
+        assert entry["status"] == "invalid"
+        assert entry["B"] is None
+    for row in ("R0", "R2", "R5"):
+        entry = document["results"][row]["oasi22"]["all"]["all"]
+        assert entry["status"] == "valid"
+        assert entry["B"] is not None
+
+
+def test_frame_storing_a_calculated_variable_is_refused(pipeline, monkeypatch):
+    load = runner._load_arrays
+
+    def with_stored_ssi(path):
+        arrays = load(path)
+        if path.name == "probe.npz":
+            arrays["frame_column_names"] = np.asarray(["age", "ssi"])
+        return arrays
+
+    monkeypatch.setattr(runner, "_load_arrays", with_stored_ssi)
+    args, calls = pipeline
+    with pytest.raises(runner.Refusal) as caught:
+        runner.run(args)
+    assert caught.value.check == "frame"
+    assert "ssi" in caught.value.name
+    assert "scenario" not in calls
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        {"note": "saved at /tmp/private"},
+        {"/private/path": "value"},
+        ["nested", {"where": "~/evidence/run.log"}],
+        "file:///Users/someone/frame.h5",
+        "/Users/someone/frame.h5",
+    ],
+)
+def test_no_local_paths_refuses_embedded_paths_and_keys(value):
+    with pytest.raises(ValueError, match="local path"):
+        runner.no_local_paths(value)
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        {"url": "https://www.ssa.gov/oact/TR/2026/II_A_highlights.html"},
+        "https://example.com/tmp/file",
+        "docs/analysis/pe_us_depletion_cut_20261001/sources/page.html",
+        "PEUS/variables/gov/ssa/ssi/ssi_if_takes_up.py:25-38",
+        {"labels": list(runner.pop.LABELS), "n": 3, "share": 0.5},
+        list(runner.pop.NAMED_DIFFERENCES),
+    ],
+)
+def test_no_local_paths_accepts_urls_and_relative_paths(value):
+    runner.no_local_paths(value)
+
+
+def test_child_helpers_refuse_the_real_frame_without_registration(
+    tmp_path, monkeypatch
+):
+    from populace_dynamics.bridge import (
+        depletion_cut_population_child as child,
+    )
+
+    frame = tmp_path / "frame.h5"
+    frame.write_bytes(b"not the frame")
+    monkeypatch.setattr(child, "_cached_sha256", lambda _: child.FRAME_SHA256)
+    monkeypatch.setattr(child, "_REGISTRATION", None)
+    with pytest.raises(ValueError, match="registered entry point"):
+        child._microsimulation(frame)
+    with pytest.raises(ValueError, match="registered entry point"):
+        child._probe(frame)
+    with pytest.raises(ValueError, match="explicit dataset"):
+        child._microsimulation(None)
+
+
+def test_child_registration_record_is_validated():
+    from populace_dynamics.bridge import (
+        depletion_cut_population_child as child,
+    )
+
+    assert child._registration({"registered": False}) is None
+    with pytest.raises(ValueError, match="registration record"):
+        child._registration({"registered": True})
+    with pytest.raises(ValueError, match="registration record"):
+        child._registration(
+            {"registered": True, "registration": {"pointer": "x"}}
+        )
+    record = {
+        "pointer": "https://github.com/PolicyEngine/microcosm-dynamics/"
+        "issues/42#issuecomment-1",
+        "commit": "a" * 40,
+        "specification_sha256": "b" * 64,
+    }
+    assert (
+        child._registration({"registered": True, "registration": record})
+        == record
+    )

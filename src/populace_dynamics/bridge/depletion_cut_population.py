@@ -917,14 +917,27 @@ def diagnostics(
         np.dot(unit_totals(ss_delta, h)[households], weights[households])
     )
     totals["social_security_change"] = ss_change
+    defined = bool(np.isfinite(ss_change) and ss_change) and bool(
+        np.isfinite(totals["household_net_income"])
+    )
     totals["offset_share"] = (
-        1 - totals["household_net_income"] / ss_change if ss_change else None
+        1 - totals["household_net_income"] / ss_change if defined else None
     )
     totals["offset_share_undefined_reason"] = (
         None
-        if ss_change
-        else "no modeled Social Security change in beneficiary households"
+        if defined
+        else "no finite, nonzero modeled Social Security change in "
+        "beneficiary households"
     )
+    # An unscored total that is not finite is reported as undefined.
+    undefined = sorted(
+        key
+        for key, value in totals.items()
+        if isinstance(value, float) and not np.isfinite(value)
+    )
+    for key in undefined:
+        totals[key] = None
+    totals["undefined_totals"] = undefined
     return out
 
 

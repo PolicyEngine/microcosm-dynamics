@@ -206,6 +206,65 @@ def release_decision(metadata: Mapping[str, Any], *, invented: bool) -> str:
     return value
 
 
+# Variables the run calculates. A frame that stored one of them as an
+# input would shadow its formula, so the cut would not reach SSI.
+CALCULATED_VARIABLES = frozenset(
+    {
+        "social_security",
+        "ssi",
+        "ssi_if_takes_up",
+        "uncapped_ssi",
+        "ssi_amount_if_eligible",
+        "ssi_countable_income",
+        "ssi_countable_resources",
+        "ssi_claim_is_joint",
+        "meets_ssi_resource_test",
+        "is_ssi_eligible",
+        "is_ssi_aged_blind_disabled",
+        "is_ssi_qualified_noncitizen",
+        "household_count_people",
+        "household_market_income",
+        "household_benefits",
+        "household_health_benefits",
+        "household_income_decile",
+        "household_state_benefits",
+        "household_net_income",
+    }
+)
+
+_LOCAL_PATH = re.compile(
+    r"(?:^|(?<![A-Za-z0-9:/._~-]))"
+    r"(?:~|/(?:Users|home|private|tmp|var|root|vol|opt|mnt|etc|usr|Volumes))/"
+    r"|file://|^[A-Za-z]:\\"
+)
+
+
+def no_local_paths(value: Any, where: str = "document") -> None:
+    """Refuse a local path anywhere in keys or values, embedded or not.
+
+    Stricter than the reused ``_no_absolute_paths``, which checks values
+    by prefix only. URLs and repository-relative paths pass.
+    """
+
+    if isinstance(value, Mapping):
+        for key, item in value.items():
+            if isinstance(key, str) and _LOCAL_PATH.search(key):
+                raise ValueError(f"{where}: a key holds a local path")
+            no_local_paths(item, f"{where}.{key}")
+    elif isinstance(value, (list, tuple)):
+        for index, item in enumerate(value):
+            no_local_paths(item, f"{where}[{index}]")
+    elif isinstance(value, str) and _LOCAL_PATH.search(value):
+        raise ValueError(f"{where}: a value holds a local path")
+
+
+def _check_paths(value: Any) -> None:
+    """Both path checks; either raises ValueError."""
+
+    minimum._no_absolute_paths(value)
+    no_local_paths(value)
+
+
 def _inside(path: Path, root: Path) -> bool:
     """Whether a resolved path lies in a directory, including symlinks."""
 
@@ -481,8 +540,13 @@ def runtime_checks(
     for scenario, variants in simulations.items():
         for variant, arrays in variants.items():
             for name in COMPONENTS:
-                baseline_fail |= arrays[f"baseline_{name}"] != probe[name]
-                baseline_fail |= ~np.isfinite(arrays[f"baseline_{name}"])
+                repeated = arrays[f"baseline_{name}"]
+                baseline_fail |= repeated != probe[name]
+                baseline_fail |= ~np.isfinite(repeated)
+                # Bit for bit: the float32 patterns, so -0.0 differs from 0.0.
+                baseline_fail |= np.asarray(repeated, dtype=np.float32).view(
+                    np.uint32
+                ) != np.asarray(probe[name], dtype=np.float32).view(np.uint32)
             for name in (
                 "person_id",
                 "household_id",
@@ -502,7 +566,6 @@ def runtime_checks(
                     .astype(np.float64)
                 )
                 cut_fail |= arrays[name] != expected
-            cut_fail |= ~np.isfinite(arrays["social_security"])
             if scenario == "oasi22":
                 cut_fail |= (
                     arrays["social_security_disability"]
@@ -1012,7 +1075,15 @@ def write_chart(
     height = max(8, len(cells) * 0.25)
     fig, axes = plt.subplots(1, 2, figsize=(13, height), sharey=True)
     positions = np.arange(len(cells))
-    names = [f"{dimension}: {cell}" for dimension, cell in cells]
+    names = [
+        f"{dimension}: {cell}"
+        + (
+            " (small cell, n < 50)"
+            if table[dimension][cell]["small_cell"]
+            else ""
+        )
+        for dimension, cell in cells
+    ]
     for axis, suffix, title in zip(
         axes,
         ("test", "no"),
@@ -1267,6 +1338,10 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             )
             if args.frame_path is None:
                 raise Refusal("preflight", "registered frame-path is required")
+            if args.context_snapshot is None:
+                raise Refusal(
+                    "preflight", "registered context snapshot is required"
+                )
             if importlib.util.find_spec("matplotlib") is None:
                 raise Refusal(
                     "preflight", "matplotlib is required for the chart"
@@ -1333,26 +1408,45 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             "oasi22": Decimal(citation["quotes"]["OASI"]["payable_share"]),
             "oasdi17": Decimal(citation["quotes"]["OASDI"]["payable_share"]),
         }
+        # Refusal 7 is settled here, before any child runs: everything the
+        # outputs carry besides statistics (numbers and registered labels).
+        environment = _environment()
         try:
-            minimum._no_absolute_paths(
+            _check_paths(
                 {
+                    "header": _labels(invented),
                     "installation": installation,
                     "trustees": citation,
                     "run_metadata": metadata,
                     "context": _context_source(args.context_snapshot),
+                    "environment": environment,
+                    "specification_path": str(
+                        Path(pop.SPECIFICATION_PATH).relative_to(ROOT)
+                    ),
+                    "frame_pin": pop.FRAME_PIN,
+                    "named_differences": pop.NAMED_DIFFERENCES,
                 }
             )
         except ValueError as error:
             if isinstance(error, Refusal):
                 raise
             raise Refusal(
-                7, "scalar provenance contains an absolute local path"
+                7, "output metadata contains an absolute local path"
             ) from error
         checks: dict[str, Any] = {
             "refusals": {},
             "row_validity": {},
             "recorded": {},
         }
+        _record(
+            checks,
+            "refusals",
+            "7",
+            "no output contains an absolute local path (checked on all "
+            "non-statistic content before any child; rechecked on the "
+            "whole document before writing)",
+            0,
+        )
         _record(
             checks,
             "refusals",
@@ -1364,6 +1458,15 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         child_metadata: dict[str, Any] = {}
         job_common = {
             "registered": not invented,
+            "registration": (
+                None
+                if invented
+                else {
+                    "pointer": args.registration_pointer,
+                    "commit": args.registered_commit,
+                    "specification_sha256": pop.SPECIFICATION_SHA256,
+                }
+            ),
             "labels": _labels(invented),
             "named_differences": pop.NAMED_DIFFERENCES,
         }
@@ -1411,6 +1514,17 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             owned_arrays,
         )
         probe = _load_arrays(probe_path)
+        stored = sorted(
+            CALCULATED_VARIABLES
+            & {str(name) for name in probe.get("frame_column_names", [])}
+        )
+        if stored:
+            # A guard outside section 10: no outcome has been computed yet.
+            raise Refusal(
+                "frame",
+                "the frame stores variables the run calculates: "
+                + ", ".join(stored),
+            )
         component_nonfinite = np.any(
             np.stack([~np.isfinite(probe[name]) for name in COMPONENTS]),
             axis=0,
@@ -1712,18 +1826,11 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         }
         phase = "output_checks"
         try:
-            minimum._no_absolute_paths(document)
+            _check_paths(document)
         except ValueError as error:
             raise Refusal(
                 7, "output contains an absolute local path"
             ) from error
-        _record(
-            checks,
-            "refusals",
-            "7",
-            "no output contains an absolute local path",
-            0,
-        )
         raw_manifest = {
             "header": _labels(invented),
             "named_differences": pop.NAMED_DIFFERENCES,
