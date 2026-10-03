@@ -25,7 +25,11 @@ Highlights page, without starting policyengine-us, and checks:
 * the generator's own code is unchanged since the commit the outputs
   record: the generator script, the scripts it imports, and the
   ``populace_dynamics`` modules either of them imports directly. Code the
-  generator never names can change without touching these outputs.
+  generator never names can change without touching these outputs. Not
+  pinned: modules those modules import in turn, and data files that
+  imported code reads (for example ``data/external/ssa_cola_history.json``,
+  read by ``estimates/parameters.py``). The previous check, over all of
+  ``src/`` and ``scripts/``, did not pin data files either.
 """
 
 from __future__ import annotations
@@ -692,6 +696,8 @@ def _git(root: Path, *args: str) -> str:
             "user.email=test@example.org",
             "-c",
             "commit.gpgsign=false",
+            "-c",
+            "core.hooksPath=/dev/null",
             *args,
         ],
         cwd=root,
@@ -704,7 +710,14 @@ def _git(root: Path, *args: str) -> str:
 
 @pytest.fixture
 def invented_repo(tmp_path):
-    """An INVENTED repository: a generator, one import, one unrelated file."""
+    """An INVENTED repository exercising each way the generator names code.
+
+    The generator imports a helper script, a module with ``from ... import``,
+    a name that is not a module, and (inside a function) a dotted
+    ``import populace_dynamics.deep.inner``. The helper imports a module the
+    generator never names, so pinning it proves the recursion. Two files are
+    never imported: ``unrelated.py`` and ``deep/__init__.py``.
+    """
 
     try:
         _git(tmp_path, "init", "--quiet")
@@ -719,16 +732,43 @@ def invented_repo(tmp_path):
     (tmp_path / "src" / "populace_dynamics" / "unrelated.py").write_text(
         "X = 1\n"
     )
+    (tmp_path / "src" / "populace_dynamics" / "extra.py").write_text("E = 1\n")
+    deep = tmp_path / "src" / "populace_dynamics" / "deep"
+    deep.mkdir()
+    (deep / "__init__.py").write_text("")
+    (deep / "inner.py").write_text("I = 1\n")
     (tmp_path / "scripts" / "helper.py").write_text(
-        "from populace_dynamics import bridge\n"
+        "from populace_dynamics import extra\n"
     )
     (tmp_path / "scripts" / f"{STEM}.py").write_text(
         "import helper\n"
         "from populace_dynamics.bridge import depletion_cut as dc\n"
+        "from populace_dynamics.bridge import not_a_module\n"
+        "\n"
+        "\n"
+        "def later():\n"
+        "    import populace_dynamics.deep.inner\n"
     )
     _git(tmp_path, "add", "-A")
     _git(tmp_path, "commit", "--quiet", "-m", "generated")
     return tmp_path, _git(tmp_path, "rev-parse", "HEAD")
+
+
+def test__given_the_invented_repo__then_exactly_the_named_code_is_pinned(
+    invented_repo,
+):
+    """Each import form resolves; a name that is not a module resolves to nothing."""
+
+    root, _ = invented_repo
+    assert generator_sources(root) == [
+        "scripts/helper.py",
+        f"scripts/{STEM}.py",
+        "src/populace_dynamics/__init__.py",
+        "src/populace_dynamics/bridge/__init__.py",
+        "src/populace_dynamics/bridge/depletion_cut.py",
+        "src/populace_dynamics/deep/inner.py",
+        "src/populace_dynamics/extra.py",
+    ]
 
 
 def test__given_no_change__then_the_generator_is_unchanged(invented_repo):
@@ -743,6 +783,9 @@ def test__given_unrelated_code_changes__then_the_generator_is_unchanged(
 
     root, commit = invented_repo
     (root / "src" / "populace_dynamics" / "unrelated.py").write_text("X = 2\n")
+    (root / "src" / "populace_dynamics" / "deep" / "__init__.py").write_text(
+        "D = 1\n"
+    )
     (root / "src" / "populace_dynamics" / "new_module.py").write_text(
         "Y = 1\n"
     )
@@ -759,12 +802,19 @@ def test__given_unrelated_code_changes__then_the_generator_is_unchanged(
         "scripts/helper.py",
         "src/populace_dynamics/bridge/depletion_cut.py",
         "src/populace_dynamics/bridge/__init__.py",
+        "src/populace_dynamics/extra.py",
+        "src/populace_dynamics/deep/inner.py",
     ],
 )
 def test__given_a_pinned_file_changes__then_the_generator_changed(
     invented_repo, relative
 ):
-    """The generator, a script it imports, or a direct import: each counts."""
+    """Each pinned file counts.
+
+    That covers the generator, a script it imports, a direct import and its
+    package ``__init__``, a module only the helper imports (the recursion),
+    and a dotted import made inside a function.
+    """
 
     root, commit = invented_repo
     assert relative in generator_sources(root)
