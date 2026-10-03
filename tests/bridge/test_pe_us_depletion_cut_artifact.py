@@ -26,10 +26,13 @@ Highlights page, without starting policyengine-us, and checks:
   record: the generator script, the scripts it imports, and the
   ``populace_dynamics`` modules either of them imports directly. Code the
   generator never names can change without touching these outputs. Not
-  pinned: modules those modules import in turn, and data files that
-  imported code reads (for example ``data/external/ssa_cola_history.json``,
-  read by ``estimates/parameters.py``). The previous check, over all of
-  ``src/`` and ``scripts/``, did not pin data files either.
+  pinned: modules those modules import in turn; package ``__init__``
+  files Python runs on the way to a dotted import (``ss/__init__.py`` for
+  ``populace_dynamics.ss.params``), which today only re-export names; and
+  data files that imported code reads (for example
+  ``data/external/ssa_cola_history.json``, read by
+  ``estimates/parameters.py``). The previous check, over all of ``src/``
+  and ``scripts/``, did not pin data files either.
 """
 
 from __future__ import annotations
