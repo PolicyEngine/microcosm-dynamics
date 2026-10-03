@@ -224,11 +224,12 @@ def _probe(path: Path) -> tuple[dict[str, np.ndarray], dict[str, float]]:
         # variables that would shadow the formulas the run calculates.
         names = set(frame.columns)
         for key in store.keys():
-            if key not in ("/person", "/invented"):
-                names |= {
-                    str(name)
-                    for name in store.select(key, start=0, stop=0).columns
-                }
+            if key in ("/person", "/invented"):
+                continue
+            # Some tables are a Series (the frame's time period) and have
+            # no columns; an empty read costs nothing either way.
+            table = store.select(key, start=0, stop=0)
+            names |= {str(name) for name in getattr(table, "columns", ())}
     out["frame_column_names"] = np.asarray(sorted(names), dtype=str)
     if not np.array_equal(frame["person_id"].to_numpy(), out["person_id"]):
         raise ValueError("HDFStore person order differs from simulation order")
