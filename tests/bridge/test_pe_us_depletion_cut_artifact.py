@@ -712,8 +712,9 @@ def invented_repo(tmp_path):
     The generator imports a helper script, a module with ``from ... import``,
     a name that is not a module, and (inside a function) a dotted
     ``import populace_dynamics.deep.inner``. The helper imports a module the
-    generator never names, so pinning it proves the recursion. Two files are
-    never imported: ``unrelated.py`` and ``deep/__init__.py``.
+    generator never names, and a second script; that script imports a
+    module no other file names, so pinning it proves the recursion. Two
+    files are never imported: ``unrelated.py`` and ``deep/__init__.py``.
     """
 
     try:
@@ -730,12 +731,18 @@ def invented_repo(tmp_path):
         "X = 1\n"
     )
     (tmp_path / "src" / "populace_dynamics" / "extra.py").write_text("E = 1\n")
+    (tmp_path / "src" / "populace_dynamics" / "extra_two.py").write_text(
+        "F = 1\n"
+    )
     deep = tmp_path / "src" / "populace_dynamics" / "deep"
     deep.mkdir()
     (deep / "__init__.py").write_text("")
     (deep / "inner.py").write_text("I = 1\n")
     (tmp_path / "scripts" / "helper.py").write_text(
-        "from populace_dynamics import extra\n"
+        "import helper_two\nfrom populace_dynamics import extra\n"
+    )
+    (tmp_path / "scripts" / "helper_two.py").write_text(
+        "from populace_dynamics import extra_two\n"
     )
     (tmp_path / "scripts" / f"{STEM}.py").write_text(
         "import helper\n"
@@ -759,12 +766,14 @@ def test__given_the_invented_repo__then_exactly_the_named_code_is_pinned(
     root, _ = invented_repo
     assert generator_sources(root) == [
         "scripts/helper.py",
+        "scripts/helper_two.py",
         f"scripts/{STEM}.py",
         "src/populace_dynamics/__init__.py",
         "src/populace_dynamics/bridge/__init__.py",
         "src/populace_dynamics/bridge/depletion_cut.py",
         "src/populace_dynamics/deep/inner.py",
         "src/populace_dynamics/extra.py",
+        "src/populace_dynamics/extra_two.py",
     ]
 
 
@@ -800,6 +809,8 @@ def test__given_unrelated_code_changes__then_the_generator_is_unchanged(
         "src/populace_dynamics/bridge/depletion_cut.py",
         "src/populace_dynamics/bridge/__init__.py",
         "src/populace_dynamics/extra.py",
+        "scripts/helper_two.py",
+        "src/populace_dynamics/extra_two.py",
         "src/populace_dynamics/deep/inner.py",
     ],
 )
@@ -809,8 +820,9 @@ def test__given_a_pinned_file_changes__then_the_generator_changed(
     """Each pinned file counts.
 
     That covers the generator, a script it imports, a direct import and its
-    package ``__init__``, a module only the helper imports (the recursion),
-    and a dotted import made inside a function.
+    package ``__init__``, a module only the helper imports, a script the
+    helper imports and that script's own import (the recursion), and a
+    dotted import made inside a function.
     """
 
     root, commit = invented_repo
