@@ -551,8 +551,55 @@ def test__artifact__then_encoding_artifacts_are_labelled(document, report):
     assert {source["status"] for source in notes["sources"]} == {200}
 
 
+def _import_closure(paths):
+    """The recorded sources and every repository module they import.
+
+    The artifact records its script and the modules it names. Following
+    their ``populace_dynamics`` imports (absolute and relative) adds the
+    modules those depend on, so a change to any calculation dependency is
+    caught, while unrelated new files under ``src/`` and ``scripts/`` are
+    not.
+    """
+
+    import ast
+
+    seen = set()
+    queue = list(paths)
+    while queue:
+        path = Path(queue.pop())
+        if str(path) in seen or not (ROOT / path).is_file():
+            continue
+        seen.add(str(path))
+        tree = ast.parse((ROOT / path).read_text(encoding="utf-8"))
+        package = list(path.parts[1:-1]) if path.parts[0] == "src" else []
+        for node in ast.walk(tree):
+            modules = []
+            if isinstance(node, ast.Import):
+                modules = [alias.name for alias in node.names]
+            elif isinstance(node, ast.ImportFrom):
+                if node.level:
+                    base = package[: len(package) - (node.level - 1)]
+                    stem = ".".join(
+                        [*base, *([node.module] if node.module else [])]
+                    )
+                else:
+                    stem = node.module or ""
+                modules = [stem] + [
+                    f"{stem}.{alias.name}" for alias in node.names
+                ]
+            for module in modules:
+                parts = module.split(".")
+                if parts[0] != "populace_dynamics":
+                    continue
+                for depth in range(1, len(parts) + 1):
+                    target = Path("src").joinpath(*parts[:depth])
+                    queue.append(str(target.with_suffix(".py")))
+                    queue.append(str(target / "__init__.py"))
+    return sorted(seen)
+
+
 def test__artifact__then_the_recorded_commit_is_this_code(document):
-    """The outputs' commit is an ancestor of HEAD with the same src/scripts."""
+    """The outputs' commit is an ancestor with unchanged source dependencies."""
 
     commit = document["provenance"]["microcosm_dynamics"]["commit"]
     try:
@@ -566,11 +613,15 @@ def test__artifact__then_the_recorded_commit_is_this_code(document):
     if ancestor.returncode not in (0, 1):
         pytest.skip(f"commit {commit} is not in this clone's history")
     assert ancestor.returncode == 0, f"{commit} is not an ancestor of HEAD"
+    code = document["provenance"]["microcosm_dynamics"]
+    paths = _import_closure([code["script"], *code["modules"]])
+    assert set(code["modules"]) <= set(paths)
+    assert "src/populace_dynamics/ss/params.py" in paths
     unchanged = subprocess.run(
-        ["git", "diff", "--quiet", commit, "HEAD", "--", "src", "scripts"],
+        ["git", "diff", "--quiet", commit, "HEAD", "--", *paths],
         cwd=ROOT,
         capture_output=True,
     )
     assert (
         unchanged.returncode == 0
-    ), f"src/ or scripts/ changed since the outputs were generated at {commit}"
+    ), f"source dependencies changed since the outputs were generated at {commit}"
