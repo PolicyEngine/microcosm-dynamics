@@ -21,11 +21,23 @@ Highlights page, without starting policyengine-us, and checks:
 * the low earner's baseline benefit equals #496's committed current-law
   benefit, and the couple's worker benefit equals the medium earner's;
 * the pinned release, a fresh run from clean code, a clean float32 guard,
-  and no local path.
+  and no local path;
+* the generator's own code is unchanged since the commit the outputs
+  record: the generator script, the scripts it imports, and the
+  ``populace_dynamics`` modules either of them imports directly. Code the
+  generator never names can change without touching these outputs. Not
+  pinned: modules those modules import in turn; package ``__init__``
+  files Python runs on the way to a dotted import (``ss/__init__.py`` for
+  ``populace_dynamics.ss.params``), which today only re-export names; and
+  data files that imported code reads (for example
+  ``data/external/ssa_cola_history.json``, read by
+  ``estimates/parameters.py``). The previous check, over all of ``src/``
+  and ``scripts/``, did not pin data files either.
 """
 
 from __future__ import annotations
 
+import ast
 import hashlib
 import json
 import math
@@ -49,6 +61,82 @@ import pe_us_depletion_cut_sample_households as script  # noqa: E402
 from populace_dynamics.bridge import depletion_cut as dc  # noqa: E402
 
 VARIANTS = ("decomposition", "with_health_benefits_in_net_income")
+GENERATOR = ROOT / "scripts" / f"{STEM}.py"
+
+
+def _direct_first_party_imports(path: Path, root: Path) -> set[Path]:
+    """Files under ``root`` that the module at ``path`` imports by name.
+
+    A ``populace_dynamics`` import resolves to its module file, or to the
+    package's ``__init__.py``; ``from package import submodule`` also
+    resolves the submodule. A bare ``import name`` resolves to
+    ``scripts/name.py`` when that file exists, since the scripts put their
+    own directory on ``sys.path``.
+    """
+
+    src = root / "src"
+    scripts = root / "scripts"
+
+    def module_file(dotted: str) -> Path | None:
+        base = src.joinpath(*dotted.split("."))
+        if base.with_suffix(".py").is_file():
+            return base.with_suffix(".py")
+        if (base / "__init__.py").is_file():
+            return base / "__init__.py"
+        return None
+
+    found: set[Path] = set()
+    for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
+        if isinstance(node, ast.Import):
+            targets = [(alias.name, []) for alias in node.names]
+        elif isinstance(node, ast.ImportFrom) and not node.level:
+            targets = [(node.module or "", [a.name for a in node.names])]
+        else:
+            continue
+        for dotted, names in targets:
+            top = dotted.split(".")[0]
+            if top == "populace_dynamics":
+                for candidate in [dotted, *(f"{dotted}.{n}" for n in names)]:
+                    resolved = module_file(candidate)
+                    if resolved is not None:
+                        found.add(resolved)
+            elif top and (scripts / f"{top}.py").is_file():
+                found.add(scripts / f"{top}.py")
+    return found
+
+
+def generator_sources(root: Path = ROOT) -> list[str]:
+    """The code the committed outputs are pinned to, as repo-relative paths.
+
+    The generator script, every script it imports, and the
+    ``populace_dynamics`` modules any of those scripts import directly.
+    """
+
+    generator = root / "scripts" / f"{STEM}.py"
+    script_files = {generator}
+    pending = [generator]
+    while pending:
+        for found in _direct_first_party_imports(pending.pop(), root):
+            if found.parent == root / "scripts" and found not in script_files:
+                script_files.add(found)
+                pending.append(found)
+    sources = set(script_files)
+    for script_file in script_files:
+        sources |= _direct_first_party_imports(script_file, root)
+    return sorted(str(path.relative_to(root)) for path in sources)
+
+
+def changed_since(commit: str, paths: list[str], root: Path) -> bool:
+    """Whether any of ``paths`` differs between ``commit`` and ``HEAD``."""
+
+    result = subprocess.run(
+        ["git", "diff", "--quiet", commit, "HEAD", "--", *paths],
+        cwd=root,
+        capture_output=True,
+    )
+    if result.returncode not in (0, 1):
+        raise RuntimeError(result.stderr.decode(errors="replace"))
+    return result.returncode == 1
 
 
 def _offsets(row, variant):
@@ -552,7 +640,12 @@ def test__artifact__then_encoding_artifacts_are_labelled(document, report):
 
 
 def test__artifact__then_the_recorded_commit_is_this_code(document):
-    """The outputs' commit is an ancestor of HEAD with the same src/scripts."""
+    """The outputs' commit is an ancestor of HEAD with the same generator.
+
+    Only the generator's own code is pinned (``generator_sources``). The
+    earlier form compared all of ``src/`` and ``scripts/``, which failed on
+    every later change to unrelated code.
+    """
 
     commit = document["provenance"]["microcosm_dynamics"]["commit"]
     try:
@@ -566,11 +659,176 @@ def test__artifact__then_the_recorded_commit_is_this_code(document):
     if ancestor.returncode not in (0, 1):
         pytest.skip(f"commit {commit} is not in this clone's history")
     assert ancestor.returncode == 0, f"{commit} is not an ancestor of HEAD"
-    unchanged = subprocess.run(
-        ["git", "diff", "--quiet", commit, "HEAD", "--", "src", "scripts"],
-        cwd=ROOT,
-        capture_output=True,
+    sources = generator_sources()
+    assert not changed_since(commit, sources, ROOT), (
+        f"the generator's code changed since the outputs were generated at "
+        f"{commit}; regenerate them. Pinned files: {sources}"
     )
-    assert (
-        unchanged.returncode == 0
-    ), f"src/ or scripts/ changed since the outputs were generated at {commit}"
+
+
+def test__generator_sources__then_they_name_the_generator_and_its_imports():
+    """The pinned set holds the scripts and the modules they import."""
+
+    sources = generator_sources()
+    assert sources == sorted(set(sources))
+    for expected in (
+        f"scripts/{STEM}.py",
+        "scripts/pe_us_minimum_benefit_sample_households.py",
+        "src/populace_dynamics/bridge/depletion_cut.py",
+        "src/populace_dynamics/bridge/policyengine_us.py",
+    ):
+        assert expected in sources
+    for source in sources:
+        assert (ROOT / source).is_file(), source
+        assert source.startswith(("scripts/", "src/populace_dynamics/"))
+
+
+def _git(root: Path, *args: str) -> str:
+    result = subprocess.run(
+        [
+            "git",
+            "-c",
+            "user.name=test",
+            "-c",
+            "user.email=test@example.org",
+            "-c",
+            "commit.gpgsign=false",
+            "-c",
+            "core.hooksPath=/dev/null",
+            *args,
+        ],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return result.stdout.strip()
+
+
+@pytest.fixture
+def invented_repo(tmp_path):
+    """An INVENTED repository exercising each way the generator names code.
+
+    The generator imports a helper script, a module with ``from ... import``,
+    a name that is not a module, and (inside a function) a dotted
+    ``import populace_dynamics.deep.inner``. The helper imports a module the
+    generator never names, and a second script; that script imports a
+    module no other file names, so pinning it proves the recursion. Two
+    files are never imported: ``unrelated.py`` and ``deep/__init__.py``.
+    """
+
+    try:
+        _git(tmp_path, "init", "--quiet")
+    except (OSError, subprocess.CalledProcessError):
+        pytest.skip("git is not available")
+    package = tmp_path / "src" / "populace_dynamics" / "bridge"
+    package.mkdir(parents=True)
+    (tmp_path / "scripts").mkdir()
+    (tmp_path / "src" / "populace_dynamics" / "__init__.py").write_text("")
+    (package / "__init__.py").write_text("")
+    (package / "depletion_cut.py").write_text("CUT = 1\n")
+    (tmp_path / "src" / "populace_dynamics" / "unrelated.py").write_text(
+        "X = 1\n"
+    )
+    (tmp_path / "src" / "populace_dynamics" / "extra.py").write_text("E = 1\n")
+    (tmp_path / "src" / "populace_dynamics" / "extra_two.py").write_text(
+        "F = 1\n"
+    )
+    deep = tmp_path / "src" / "populace_dynamics" / "deep"
+    deep.mkdir()
+    (deep / "__init__.py").write_text("")
+    (deep / "inner.py").write_text("I = 1\n")
+    (tmp_path / "scripts" / "helper.py").write_text(
+        "import helper_two\nfrom populace_dynamics import extra\n"
+    )
+    (tmp_path / "scripts" / "helper_two.py").write_text(
+        "from populace_dynamics import extra_two\n"
+    )
+    (tmp_path / "scripts" / f"{STEM}.py").write_text(
+        "import helper\n"
+        "from populace_dynamics.bridge import depletion_cut as dc\n"
+        "from populace_dynamics.bridge import not_a_module\n"
+        "\n"
+        "\n"
+        "def later():\n"
+        "    import populace_dynamics.deep.inner\n"
+    )
+    _git(tmp_path, "add", "-A")
+    _git(tmp_path, "commit", "--quiet", "-m", "generated")
+    return tmp_path, _git(tmp_path, "rev-parse", "HEAD")
+
+
+def test__given_the_invented_repo__then_exactly_the_named_code_is_pinned(
+    invented_repo,
+):
+    """Each import form resolves; a name that is not a module resolves to nothing."""
+
+    root, _ = invented_repo
+    assert generator_sources(root) == [
+        "scripts/helper.py",
+        "scripts/helper_two.py",
+        f"scripts/{STEM}.py",
+        "src/populace_dynamics/__init__.py",
+        "src/populace_dynamics/bridge/__init__.py",
+        "src/populace_dynamics/bridge/depletion_cut.py",
+        "src/populace_dynamics/deep/inner.py",
+        "src/populace_dynamics/extra.py",
+        "src/populace_dynamics/extra_two.py",
+    ]
+
+
+def test__given_no_change__then_the_generator_is_unchanged(invented_repo):
+    root, commit = invented_repo
+    assert not changed_since(commit, generator_sources(root), root)
+
+
+def test__given_unrelated_code_changes__then_the_generator_is_unchanged(
+    invented_repo,
+):
+    """New and edited code the generator never imports does not count."""
+
+    root, commit = invented_repo
+    (root / "src" / "populace_dynamics" / "unrelated.py").write_text("X = 2\n")
+    (root / "src" / "populace_dynamics" / "deep" / "__init__.py").write_text(
+        "D = 1\n"
+    )
+    (root / "src" / "populace_dynamics" / "new_module.py").write_text(
+        "Y = 1\n"
+    )
+    (root / "scripts" / "another_script.py").write_text("Z = 1\n")
+    _git(root, "add", "-A")
+    _git(root, "commit", "--quiet", "-m", "unrelated")
+    assert not changed_since(commit, generator_sources(root), root)
+
+
+@pytest.mark.parametrize(
+    "relative",
+    [
+        f"scripts/{STEM}.py",
+        "scripts/helper.py",
+        "src/populace_dynamics/bridge/depletion_cut.py",
+        "src/populace_dynamics/bridge/__init__.py",
+        "src/populace_dynamics/extra.py",
+        "scripts/helper_two.py",
+        "src/populace_dynamics/extra_two.py",
+        "src/populace_dynamics/deep/inner.py",
+    ],
+)
+def test__given_a_pinned_file_changes__then_the_generator_changed(
+    invented_repo, relative
+):
+    """Each pinned file counts.
+
+    That covers the generator, a script it imports, a direct import and its
+    package ``__init__``, a module only the helper imports, a script the
+    helper imports and that script's own import (the recursion), and a
+    dotted import made inside a function.
+    """
+
+    root, commit = invented_repo
+    assert relative in generator_sources(root)
+    with (root / relative).open("a") as handle:
+        handle.write("CHANGED = True\n")
+    _git(root, "add", "-A")
+    _git(root, "commit", "--quiet", "-m", "pinned change")
+    assert changed_since(commit, generator_sources(root), root)
