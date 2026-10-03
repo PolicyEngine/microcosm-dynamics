@@ -735,3 +735,102 @@ def test_release_decision_is_recorded_and_dry_runs_need_none():
         == "d900"
     )
     assert runner.release_decision({}, invented=True) == "not_applicable"
+
+
+_fixture_scenario = _scenario
+
+
+def _worked_scenario(probe, components, variant):
+    """The fixture's scenario with one joint claim and one non-taker.
+
+    Persons 3 and 4 claim jointly, so the encoded test pools their $5,000
+    against the couple limit; person 5 is eligible but does not take SSI
+    up, so ``ssi`` and ``ssi_if_takes_up`` differ for that unit.
+    """
+    arrays = _fixture_scenario(probe, components, variant)
+    joint = np.array([False, False, False, True, True, False])
+    resources = arrays["ssi_countable_resources"]
+    pooled = np.bincount(probe["marital_unit_index"], weights=resources)[
+        probe["marital_unit_index"]
+    ]
+    passed = (
+        np.where(joint, pooled <= 3000, resources <= 2000)
+        if variant == "asset_test_as_encoded"
+        else np.ones(6, dtype=bool)
+    )
+    takes_up = np.array([True, True, True, True, True, False])
+    eligible = (12168 - arrays["social_security"]) * passed
+    arrays.update(
+        ssi_claim_is_joint=joint,
+        meets_ssi_resource_test=passed,
+        ssi_if_takes_up=eligible,
+        ssi=eligible * takes_up,
+        takes_up_ssi_if_eligible=takes_up,
+        household_net_income=np.bincount(
+            probe["household_index"],
+            weights=arrays["social_security"] + eligible * takes_up,
+            minlength=3,
+        ),
+    )
+    return arrays
+
+
+def test_registered_statistics_end_to_end_on_a_worked_population(
+    pipeline, monkeypatch
+):
+    """Expected values for every row, worked by hand from the specification.
+
+    Six people each lose $1,968 a year (743 -> 579 a month). Person weights
+    are 1, 2, 2, 3, 3, 3 (W = 14). Marital units: {0}, {1, 2}, {3, 4}, {5}.
+    Resources: 1,500; 2,500 and 0; 5,000 and 0 (a joint claim); 0.
+    """
+    monkeypatch.setattr(sys.modules[__name__], "_scenario", _worked_scenario)
+    args, _ = pipeline
+    document = runner.run(args)
+    assert all(
+        record["passed"]
+        for record in document["checks"]["row_validity"].values()
+    )
+
+    def cell(row):
+        return document["results"][row]["oasi22"]["all"]["all"]
+
+    r0 = cell("R0")
+    assert (r0["n"], r0["n_cond"]) == (6, 6)
+    assert r0["W"] == pytest.approx(14)
+    # Encoded test: units {0} and {5} full; {1, 2} part (the holder fails
+    # alone, the spouse passes); {3, 4} none (joint: 5,000 > 3,000).
+    assert r0["F_test"] == pytest.approx(4 / 14)
+    assert r0["P_test"] == pytest.approx(4 / 14)
+    assert r0["N_test"] == pytest.approx(6 / 14)
+    assert r0["F_no"] == pytest.approx(1)
+    assert r0["B"] == pytest.approx(6 / 14)
+    assert r0["B_part"] == pytest.approx(4 / 14)
+    assert r0["B_cond"] == pytest.approx(6 / 14)
+
+    r3 = cell("R3")
+    # Spousal deeming: {1, 2} pooled 2,500 <= 3,000 passes; {3, 4} fails.
+    assert r3["F_test"] == pytest.approx(8 / 14)
+    assert r3["P_test"] == pytest.approx(0)
+    assert r3["B"] == pytest.approx(6 / 14)
+    assert r3["B_part"] == pytest.approx(0)
+
+    r4 = cell("R4")
+    # Household pooling: person 5 shares the 5,000 household and fails.
+    assert r4["F_test"] == pytest.approx(5 / 14)
+    assert r4["B"] == pytest.approx(9 / 14)
+    assert r4["B"] >= r3["B"]
+
+    r2 = cell("R2")
+    # Frame take-up: person 5 never takes SSI up, so that unit is none with
+    # and without the asset test and is not counted as blocked.
+    assert r2["F_no"] == pytest.approx(11 / 14)
+    assert r2["N_no"] == pytest.approx(3 / 14)
+    assert r2["n_cond"] == 5
+    assert r2["W_cond"] == pytest.approx(11)
+    assert r2["F_test"] == pytest.approx(1 / 14)
+    assert r2["P_test"] == pytest.approx(4 / 14)
+    assert r2["N_test"] == pytest.approx(9 / 14)
+    assert r2["B"] == pytest.approx(6 / 14)
+    assert r2["B_cond"] == pytest.approx(6 / 11)
+    assert r2["B_part"] == pytest.approx(4 / 14)

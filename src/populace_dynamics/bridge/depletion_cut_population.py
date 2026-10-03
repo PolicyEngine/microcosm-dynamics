@@ -614,11 +614,19 @@ def assign_quintile(
 
 
 def pe_decile_quintile(decile: NDArray[Any]) -> NDArray[np.str_]:
-    """Collapse PE deciles by ceil(decile/2), with -1 mapped to negative."""
+    """Collapse PE deciles by ceil(decile/2), with -1 mapped to negative.
+
+    PE-US's decile rank is ceil(10 x cumulative weight share), which is 0
+    only for a household with no weight at the bottom of the ranking. The
+    registered cells have no place for it, so decile 0 joins q1 (it carries
+    no weight); the entry point records how many households have it.
+    """
     values = np.asarray(decile)
-    if not np.isin(values, [-1, *range(1, 11)]).all():
-        raise ValueError("PE deciles must be -1 or integers 1 through 10")
-    index = np.where(values == -1, 0, (values.astype(np.int64) + 1) // 2)
+    if not np.isin(values, [-1, *range(0, 11)]).all():
+        raise ValueError("PE deciles must be -1 or integers 0 through 10")
+    index = np.where(
+        values == -1, 0, np.maximum((values.astype(np.int64) + 1) // 2, 1)
+    )
     return np.asarray(CELLS["income_quintile_pe_decile"])[index]
 
 

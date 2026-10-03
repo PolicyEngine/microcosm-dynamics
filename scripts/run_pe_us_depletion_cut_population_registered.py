@@ -53,6 +53,7 @@ COMPONENTS = (
     "social_security_dependents",
     "social_security_disability",
 )
+CONTEXT_PAGE = "ssa_stat_snapshot_2024-12.html"
 DRY_RUN_LABEL = "INVENTED DRY RUN - NOT RESULTS"
 INTERVAL_LABEL = (
     "a frame-resampling interval: it excludes imputation, calibration "
@@ -294,6 +295,10 @@ def _run_child(
         log = Path(
             job.get("error_log_path", output.with_suffix(".stderr.txt"))
         )
+        number = 1
+        while _present(log):
+            log = log.with_name(f"{log.stem}.{number}{log.suffix}")
+            number += 1
         with log.open("x") as stream:
             stream.write(child.stderr)
         refusal = Refusal(
@@ -797,7 +802,10 @@ def context_block(
 
     weights = baseline["household_weight"][probe["household_index"]]
     beneficiaries = sum(probe[name] for name in COMPONENTS) > 0
-    frame = {"beneficiaries": float(weights[beneficiaries].sum())}
+    frame = {
+        "beneficiary_records": int(beneficiaries.sum()),
+        "beneficiaries": float(weights[beneficiaries].sum()),
+    }
     for measure in ("ssi_if_takes_up", "ssi"):
         frame[f"beneficiaries_receiving_{measure}"] = float(
             weights[beneficiaries & (baseline[measure] > 0)].sum()
@@ -843,9 +851,18 @@ def _context_source(snapshot: Path | None) -> dict[str, Any]:
                 "context",
                 "SSA snapshot does not match specification source and values",
             )
+        page = snapshot.with_name(CONTEXT_PAGE)
+        page_verified = False
+        if _present(page):
+            if _sha256(page) != CONTEXT_SHA256:
+                raise Refusal(
+                    "context", "SSA snapshot page differs from its SHA-256"
+                )
+            page_verified = True
         result.update(
             {
                 "status": "provided",
+                "page_sha256_verified": page_verified,
                 "source": {
                     key: record[key] for key in ("sha256", "url", "table")
                 },
@@ -1250,6 +1267,10 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             )
             if args.frame_path is None:
                 raise Refusal("preflight", "registered frame-path is required")
+            if importlib.util.find_spec("matplotlib") is None:
+                raise Refusal(
+                    "preflight", "matplotlib is required for the chart"
+                )
         for path in (args.phase_marker,):
             if path is not None and (
                 _present(path)
@@ -1610,7 +1631,23 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                         probe["marital_unit_index"],
                         weights,
                     )
+        aggregate_gap = max(
+            float(
+                np.max(
+                    np.abs(
+                        arrays["social_security"]
+                        - sum(arrays[name] for name in COMPONENTS)
+                    )
+                )
+            )
+            for variants in simulations.values()
+            for arrays in variants.values()
+        )
         checks["recorded"] = {
+            "household_income_decile_zero_households": int(
+                np.sum(baseline["household_income_decile"] == 0)
+            ),
+            "social_security_minus_components_max_abs": aggregate_gap,
             "transition_tables": "retained for every row/scenario/cell, including label rises",
             "over_replacing_and_ssi_falls": diagnostics["marital_units"],
             "ssi_change_outside_attributed_marital_units": "retained for each simulated variant in diagnostics",
@@ -1701,13 +1738,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         )
         write_outputs(document, output, docs_dir)
         return document
-    except (
-        Refusal,
-        OSError,
-        ValueError,
-        KeyError,
-        subprocess.SubprocessError,
-    ) as error:
+    except Exception as error:  # every failure leaves a refusal record
         refusal = (
             error
             if isinstance(error, Refusal)

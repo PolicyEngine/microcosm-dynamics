@@ -224,9 +224,9 @@ def _scenario(
     )
     built = time.perf_counter()
     out = _memberships(sim)
-    for name in ("person_id", "household_id", "marital_unit_id"):
-        if not np.array_equal(out[name], baseline[name]):
-            raise ValueError(f"{name}: scenario order differs from its probe")
+    # Entity order and exact inputs are the parent's refusal checks 3 and 4
+    # (specification section 10); the child returns the arrays and lets the
+    # parent record a failure under its registered number.
     with np.load(components_path, allow_pickle=False) as components:
         inputs = {
             name: np.asarray(components[name], dtype=np.float64).copy()
@@ -245,18 +245,6 @@ def _scenario(
     gc.collect()
     for name in PERSON_VARIABLES:
         out[name] = _calculated(sim, name)
-        if name in COMPONENTS and not np.isfinite(out[name]).all():
-            raise ValueError(f"{name}: calculated components must be finite")
-    # PE-US stores inputs as float32: each calculated component must equal
-    # the float32 of the input set, exactly (specification 10, refusal 4).
-    failures = ~np.isfinite(out["social_security"])
-    for name, values in inputs.items():
-        failures |= out[name] != values.astype(np.float32).astype(np.float64)
-    if failures.any():
-        raise ValueError(
-            "set_input did not take effect exactly for "
-            f"{int(failures.sum())} persons"
-        )
     out["meets_ssi_resource_test"] = _calculated(
         sim, "meets_ssi_resource_test", "2026-01"
     )

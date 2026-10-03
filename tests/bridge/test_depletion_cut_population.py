@@ -709,3 +709,13 @@ def test_synthetic_split_flags_other_splits_and_ignores_single_components():
     single["social_security_retirement"] = np.array([18000.0, 0.0])
     synthetic, wrong = core.synthetic_split(single)
     assert not synthetic.any() and not wrong.any()
+
+
+def test_pe_decile_zero_joins_the_first_quintile():
+    # A weightless household at the bottom of PE-US's ranking has decile 0.
+    np.testing.assert_array_equal(
+        core.pe_decile_quintile(np.asarray([0, 1, -1])),
+        ["q1", "q1", "negative"],
+    )
+    with pytest.raises(ValueError):
+        core.pe_decile_quintile(np.asarray([11]))
