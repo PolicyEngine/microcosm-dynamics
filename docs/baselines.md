@@ -358,18 +358,9 @@ result.
 
 ## Choosing a baseline
 
-::: {.callout-note}
-**Status, 1 October 2026.** The baselines package
-(`src/populace_dynamics/baselines/`) is under construction on a separate
-branch and has not merged. This section describes the sources it is
-built on and which of its series are published or derived. Until it
-merges, every run uses the TR2008 constructors described above. Once it
-merges, the package's own code and provenance records are the authority
-for each derivation rule.
-:::
-
-The baselines package lets a projection name the baseline it runs on.
-Three are planned:
+The baselines package (`src/populace_dynamics/baselines/`) lets a
+projection name the baseline it runs on. `get_baseline(name)` returns
+one of three:
 
 - **`tr2008_intermediate`** reproduces today's inputs exactly. It is
   the default.
@@ -381,15 +372,27 @@ Three are planned:
 published number changes.** A registered run is a one-shot run whose
 inputs the registration fixes in advance. A rerun on another baseline
 would be a new run and would need its own registration on issue #42.
+The code enforces this: `build_track_a_inputs` refuses a real-data run
+under any baseline other than `tr2008_intermediate`
+(`baselines/track_a.py`), and `project_track_a` runs the new baselines
+only on invented or unregistered cohorts. Each baseline's own
+provenance records, not this page, are the authority for every
+derivation rule. `scripts/describe_baseline.py --baseline <name>
+--years 2026-2035` prints a baseline's input paths, which are inputs
+only and no model output.
+
+Both 2026 baselines splice realized values before any projected or
+derived one: COLAs through determination year 2025 and the AWI through
+2024.
 
 | Assumption | `tr2008_intermediate` (default) | `tr2026_intermediate` | `cbo2026_long_term` |
 |---|---|---|---|
-| COLA | As in @tbl-baselines. Published through 2017, derived after. | Published: Table V.C1 intermediate, 2025–2035; the 2025 value is an actual amount. Derived: from 2036, the annual change in the CPI-W from single-year Table V.B1. | Derived: CBO publishes no COLA and no CPI-W. The CPI-W is derived from CBO's CPI-U by a stated rule, and the COLA follows from it. |
-| AWI | As in @tbl-baselines. Published (V.C1 and single-year VI.F6). | Published: single-year Table VI.G1, historical 1970–2024 and intermediate 2025–2100. | Derived: covered earnings per covered worker, from CBO's September 2026 Social Security inputs (2026–2100), stand in for the AWI, which CBO does not publish. |
-| Mortality | The 2004 table scaled by two TR2008 ratios. Derived. | Published: OACT's projected probabilities of death by single year of age (0–119) and sex, historical through 2023 and intermediate for 2024–2100. | Published: CBO's mortality rates by single year of age (0–119) and sex, 2021–2099. CBO does not say whether these are probabilities of death or central death rates, so the baseline must state its reading. |
-| Fertility | None. TR2008 publishes a total rate only, and no accessor reads it. | Published: the total fertility rate in single-year Table V.A1 (historical 1940–2025, projected 2026–2100). Derived: rates by age (see the next section). | Published: rates by single year of age, 14–49, for 2021–2099. |
+| COLA | As in @tbl-baselines. Published through 2017, derived after. | Published: Table V.C1 intermediate, 2025–2035; the 2025 value is an actual amount. Derived: from 2036, the annual change in the CPI-W from single-year Table V.B1. | Derived: CBO publishes no COLA and no CPI-W. Builder default: the CPI-W and the COLA grow at CBO's annual CPI-U growth (ten-year levels through 2036, long-term growth after), not a statutory third-quarter calculation. |
+| AWI | As in @tbl-baselines. Published (V.C1 and single-year VI.F6). | Published: single-year Table VI.G1, historical 1970–2024 and intermediate 2025–2100. | Derived: from the actual 2024 AWI, 2025–2026 grow at CBO's real earnings per worker growth times CPI-U growth; from 2027, at the growth of covered earnings per covered worker from CBO's September 2026 Social Security inputs (to 2100). CBO publishes no AWI. |
+| Mortality | The 2004 table scaled by two TR2008 ratios. Derived. | Published: OACT's projected probabilities of death by single year of age (0–119) and sex, historical through 2023 and intermediate for 2024–2100. | Published: CBO's mortality rates by single year of age (0–119) and sex, 2021–2099. CBO labels them deaths per 1,000 people without saying which kind. Read as probabilities of death, they reproduce every life expectancy CBO publishes for 2026–2099 within 0.0011 years; read as central death rates, they do not. The baseline therefore treats them as probabilities. |
+| Fertility | None. TR2008 publishes a total rate only, and no accessor reads it. | Published: the total fertility rate in single-year Table V.A1 (historical 1940–2025, projected 2026–2100). Derived: rates by single year of age, scaling the NCHS 2024 age shape to each year's total (see the next section). | Published: rates by single year of age, 14–49, for 2021–2099. |
 | Other economic series | None beyond the COLA path. | Single-year Table V.B1 (historical 1960–2025, projected 2026–2100) supplies the CPI-W change after 2035. | CBO's February 2026 long-term economics: CPI-U growth and growth of real earnings per worker, 1996–2056. Later years need an extension rule. |
-| Claiming | The 2014 Supplement, rows through 2008. | The latest SSA awards distribution (Table 6.B5.1) the repository captures, with its last row reused for later years. | Same as `tr2026_intermediate`. |
+| Claiming | The 2014 Supplement, rows through 2008. | The 2026 Statistical Supplement's Table 6.B5.1 (entitlement years through 2025), with its last row reused for later years. | Same as `tr2026_intermediate`. |
 | Disability insurance | 2008 fit, held constant. | 2008 fit, held constant: a named gap. | 2008 fit, held constant: a named gap. |
 | Immigration | None (closed cohort). | None in a closed cohort. Single-year Table V.A2 publishes inflows, outflows and net change, for lawful permanent residents and for temporary or unlawfully present immigrants. | None in a closed cohort. CBO publishes gross migration by age, sex, status and flow. |
 
@@ -418,10 +421,9 @@ year of age, sex and year. Disabled workers' death rates are a multiple
 of the population probability, so they move with whichever mortality
 the baseline supplies (`engine/di_entitlement_rates.py:29-43`).
 
-**Claiming.** Under the new baselines, claiming uses the most recent
-edition of Table 6.B5.1 the repository captures. Today that is the 2023
-Supplement, which covers entitlement years 1998–2022
-(`data/external/ssa_claim_ages_2023supplement.json`; `claiming.py:81-87`).
+**Claiming.** Under the new baselines, claiming uses Table 6.B5.1 of
+SSA's 2026 *Annual Statistical Supplement*, which covers entitlement
+years through 2025 (`data/external/ssa_claim_ages_2026supplement.json`).
 Nearest-year selection reuses its last row for later years
 (`engine/steps.py:367-376`). Claiming still does not respond to a
 reform.
@@ -471,7 +473,10 @@ examined came from Internet Archive captures:
 
 No registered result draws a birth, so nothing in this section affects
 a published number. Fertility matters for the open-population
-projections that the new baselines make possible.
+projections that the new baselines make possible. The package's opt-in
+birth step (`baselines/fertility.py`) draws births to women aged 14–49
+at their single-age rates. It is not gated, it is report-only, and it
+does not touch the gated fertility law that gate m6's projections use.
 
 ### Why rates by age and not one total rate
 
@@ -525,8 +530,13 @@ plug into the same structure.
 ### A Trustees-consistent age schedule
 
 The `tr2026_intermediate` baseline derives rates by age. It scales a
-documented age shape to the V.A1 total fertility rate each year. With
-$s(a)$ the shape's share at single age $a$:
+documented age shape to the V.A1 total fertility rate each year. The
+default shape is NCHS's final 2024 rates in five-year bands
+(`data/external/nchs_asfr_2024.json`), spread to single ages by a
+mean-preserving interpolation that keeps each band's total
+(`baselines/interpolation.py`, `baselines/asfr.py`). CBO's 2026
+single-age pattern is the registered alternative shape. With $s(a)$ the
+shape's share at single age $a$:
 
 $$
 f_t(a) = \mathrm{TFR}_t \times s(a), \qquad \sum_{a=14}^{49} s(a) = 1,
@@ -539,8 +549,9 @@ compare.
 
 The schedule is derived, not published, in two respects:
 
-- **The shape is an assumption.** Its source must be documented with
-  the baseline.
+- **The shape is an assumption.** The default is the NCHS 2024 shape;
+  the choice is a builder default awaiting ratification, and every
+  derived rate carries its shape's tag.
 - **The shape does not change over time.** OACT's internal method moves
   each age toward its own ultimate rate on its own schedule. The derived
   schedule therefore matches the Trustees' totals but not their timing
