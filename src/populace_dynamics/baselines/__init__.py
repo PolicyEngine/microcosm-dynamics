@@ -20,7 +20,7 @@ registered:
 The 2026 baselines splice realized COLAs through determination year 2025
 and realized AWI through 2024 before any projected or derived value, and
 tag every derived value (:meth:`Baseline.value_sources`).  They are for
-invented-data and unregistered projections only:
+invented-data projections only:
 :func:`~populace_dynamics.baselines.track_a.build_track_a_inputs` refuses
 a real-data run under them (see :mod:`~populace_dynamics.baselines.
 track_a` for why), and :func:`~populace_dynamics.baselines.track_a.

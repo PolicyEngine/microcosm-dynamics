@@ -17,8 +17,7 @@ under ``provenance["baseline"]``.
 
 Scope of the 2026 baselines.  ``run_track_a`` (``cola_track_a/runner.
 py``, not edited) is hard-wired to TR2008 in three ways, so the 2026
-baselines are exposed for invented-data and unregistered projections
-only:
+baselines are exposed for invented-data projections only:
 
 1. A ``registered_real`` run compares the COLA path, AWI, mortality, DI
    rates and claim table with the TR2008 captures and refuses any

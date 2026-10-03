@@ -375,7 +375,8 @@ would be a new run and would need its own registration on issue #42.
 The code enforces this: `build_track_a_inputs` refuses a real-data run
 under any baseline other than `tr2008_intermediate`
 (`baselines/track_a.py`), and `project_track_a` runs the new baselines
-only on invented or unregistered cohorts. Each baseline's own
+only on invented cohorts: it refuses any cohort that is not labelled
+invented (`baselines/track_a.py`, `_check_invented`). Each baseline's own
 provenance records, not this page, are the authority for every
 derivation rule. `scripts/describe_baseline.py --baseline <name>
 --years 2026-2035` prints a baseline's input paths, which are inputs
@@ -387,11 +388,11 @@ derived one: COLAs through determination year 2025 and the AWI through
 
 | Assumption | `tr2008_intermediate` (default) | `tr2026_intermediate` | `cbo2026_long_term` |
 |---|---|---|---|
-| COLA | As in @tbl-baselines. Published through 2017, derived after. | Published: Table V.C1 intermediate, 2025–2035; the 2025 value is an actual amount. Derived: from 2036, the annual change in the CPI-W from single-year Table V.B1. | Derived: CBO publishes no COLA and no CPI-W. Builder default: the CPI-W and the COLA grow at CBO's annual CPI-U growth (ten-year levels through 2036, long-term growth after), not a statutory third-quarter calculation. |
+| COLA | As in @tbl-baselines. Published through 2017, derived after. | Published: Table V.C1 intermediate, 2025–2035; the 2025 value is an actual amount. Derived: from 2036, the annual change in the CPI-W from single-year Table V.B1. | Realized COLAs through 2025, as under `tr2026_intermediate`. Derived from 2026: CBO publishes no COLA and no CPI-W, so by builder default the COLA and the CPI-W grow at CBO's annual CPI-U growth (ten-year levels through 2036, long-term growth after, held at its 2056 rate to 2100). That is an annual average, not the statutory third-quarter calculation. Through 2025 the CPI-W itself comes from the 2026 Report's Table V.B1. |
 | AWI | As in @tbl-baselines. Published (V.C1 and single-year VI.F6). | Published: single-year Table VI.G1, historical 1970–2024 and intermediate 2025–2100. | Derived: from the actual 2024 AWI, 2025–2026 grow at CBO's real earnings per worker growth times CPI-U growth; from 2027, at the growth of covered earnings per covered worker from CBO's September 2026 Social Security inputs (to 2100). CBO publishes no AWI. |
-| Mortality | The 2004 table scaled by two TR2008 ratios. Derived. | Published: OACT's projected probabilities of death by single year of age (0–119) and sex, historical through 2023 and intermediate for 2024–2100. | Published: CBO's mortality rates by single year of age (0–119) and sex, 2021–2099. CBO labels them deaths per 1,000 people without saying which kind. Read as probabilities of death, they reproduce every life expectancy CBO publishes for 2026–2099 within 0.0011 years; read as central death rates, they do not. The baseline therefore treats them as probabilities. |
-| Fertility | None. TR2008 publishes a total rate only, and no accessor reads it. | Published: the total fertility rate in single-year Table V.A1 (historical 1940–2025, projected 2026–2100). Derived: rates by single year of age, scaling the NCHS 2024 age shape to each year's total (see the next section). | Published: rates by single year of age, 14–49, for 2021–2099. |
-| Other economic series | None beyond the COLA path. | Single-year Table V.B1 (historical 1960–2025, projected 2026–2100) supplies the CPI-W change after 2035. | CBO's February 2026 long-term economics: CPI-U growth and growth of real earnings per worker, 1996–2056. Later years need an extension rule. |
+| Mortality | The 2004 table scaled by two TR2008 ratios. Derived. | Published: OACT's projected probabilities of death by single year of age (0–119) and sex, historical through 2023 and intermediate for 2024–2100. | Published for 2021–2099: CBO's mortality rates by single year of age (0–119) and sex. Before 2021, where CBO publishes nothing, the baseline splices OACT's historical probabilities from the 2026 Report (a builder default); a projection that opens in 2010 therefore reads OACT's values for 2010–2020. After 2099 the baseline supplies nothing and refuses. CBO labels them deaths per 1,000 people without saying which kind. Read as probabilities of death, they reproduce every life expectancy CBO publishes for 2026–2099 within 0.0011 years; read as central death rates, they do not. The baseline therefore treats them as probabilities. |
+| Fertility | None. TR2008 publishes a total rate only, and no accessor reads it. | Published: the total fertility rate in single-year Table V.A1 (historical 1940–2024, a partial-year provisional 2025 value, projected 2026–2100). Derived: rates by single year of age, scaling the NCHS 2024 age shape to each year's total (see the next section). | Published: rates by single year of age, 14–49, for 2021–2099. CBO prints its total fertility rate from 2026; for 2021–2025 the baseline's total is the sum of the published rates by age. |
+| Other economic series | None beyond the COLA path. | Single-year Table V.B1 (historical 1960–2024, an estimated 2025 value, projected 2026–2100) supplies the CPI-W change after 2035. | CBO's February 2026 long-term economics: CPI-U growth and growth of real earnings per worker, 1996–2056. After 2056 the baseline holds each final growth rate. |
 | Claiming | The 2014 Supplement, rows through 2008. | The 2026 Statistical Supplement's Table 6.B5.1 (entitlement years through 2025), with its last row reused for later years. | Same as `tr2026_intermediate`. |
 | Disability insurance | 2008 fit, held constant. | 2008 fit, held constant: a named gap. | 2008 fit, held constant: a named gap. |
 | Immigration | None (closed cohort). | None in a closed cohort. Single-year Table V.A2 publishes inflows, outflows and net change, for lawful permanent residents and for temporary or unlawfully present immigrants. | None in a closed cohort. CBO publishes gross migration by age, sex, status and flow. |
@@ -408,12 +409,30 @@ uses. TR2008's derived ultimate rate carries the same caveat.
 
 **CBO's prices and wages.** CBO publishes neither the CPI-W nor the
 AWI. Its long-term economic projections stop in 2056, while its Social
-Security inputs run to 2100 and its demographic files to 2099. A CBO
-baseline therefore needs four stated rules: one that turns the CPI-U
-into a CPI-W, one that turns covered earnings per covered worker into
-an AWI stand-in, and extension rules for the years after 2056 and after
-2099. Covered earnings per covered worker is a different series from
-the AWI, not a version of it.
+Security inputs run to 2100 and its demographic files cover 2021–2099.
+The `cbo2026_long_term` baseline therefore applies these rules, each a
+builder default awaiting ratification and each named in the code
+(`data/cbo2026.py`, `baselines/cbo2026_long_term.py`):
+
+- **CPI-U splice.** Ten-year CPI-U levels for 2023–2036, then the
+  long-term workbook's annual growth compounded on the last ten-year
+  level, so the two workbooks join without a jump.
+- **CPI-W and COLA from 2026.** Both grow at the spliced CPI-U growth.
+  Realized COLAs run through 2025, and the CPI-W through 2025 comes
+  from the 2026 Trustees Report.
+- **AWI bridge, 2025–2026.** From the actual 2024 AWI, the two years
+  grow at real earnings per worker growth times CPI-U growth, because
+  CBO's covered earnings and workers start in 2026.
+- **AWI from 2027.** Growth of covered earnings per covered worker.
+  That series is a different one from the AWI, not a version of it.
+- **After 2056.** Each final long-term economic growth rate is held to
+  2100.
+- **Total fertility rate before 2026.** The sum of CBO's rates by age.
+- **Mortality before 2021.** OACT's historical probabilities from the
+  2026 Report.
+
+The baseline supplies no demographic value after 2099 and refuses those
+years.
 
 **Mortality.** Both new baselines replace TR2008's substitute, a 2004
 table scaled by two broad ratios, with probabilities that vary by single
@@ -516,8 +535,8 @@ plug into the same structure.
   Report hold life tables, death probabilities and population, but no
   fertility file.
   - OACT does project birth rates by single year of age 14 to 49
-    internally. Its 2026 model documentation (§1.1, Demography pages
-    2–4) describes the method. OACT projects each age's rate as a ratio
+    internally. Its 2026 model documentation (§1.1 "Fertility",
+    Demography pages 2–4, PDF pages 10–12) describes the method. OACT projects each age's rate as a ratio
     to the age-30 rate, carrying forward the average year-to-year
     change in those ratios, and moves each age to its ultimate rate on
     its own schedule (age 30 reaches its ultimate in 2037). The age-30
@@ -581,13 +600,13 @@ CBO's published schedule needs neither step.
    `data/external/ssa_claim_ages_2023supplement.json`).
 3. **"2008" disability rates.** The paper calls the disability rates
    "2008-vintage" and says they were "observed through 2008"
-   (`paper/paper.qmd:139`, `:192`). The fit uses 2008 data, published in
+   (`paper/paper.qmd`, the "Disability, mortality and claiming" paragraph and the first paragraph of "The projections"). The fit uses 2008 data, published in
    July 2009 (`engine/di_entitlement_rates.py:172-176`). Both phrases
    describe the data year correctly. This page states the publication
    date so that no one reads "2008-vintage" as "published by 2008".
 4. **The AWI's span.** The code loads TR2008's AWI through 2085
    (`cola_track_a/runner.py:197`), while the paper says the tests take
-   it "for 1975–2030" (`paper/paper.qmd:192`). The registered-run check
+   it "for 1975–2030" (`paper/paper.qmd`, first paragraph of "The projections"). The registered-run check
    covers exactly 1975–2030 (`cola_track_a/runner.py:342-344`), and the
    tests compute nothing after 2030. The paper's statement is right and
    stays as written.
@@ -608,10 +627,15 @@ CBO's published schedule needs neither step.
 
 - **Projected death probabilities.** The paper said that "The Trustees
   Report publishes no projected death probabilities by single year of
-  age and sex" (`paper/paper.qmd:141`). That holds for the 2008 Report
+  age and sex" (`paper/paper.qmd`, the "Disability, mortality and claiming" paragraph). That holds for the 2008 Report
   as printed, but not in general. OACT publishes projected death
-  probabilities by single year of age and sex with each Report, as
-  downloadable files. Those files start with the 2014 Report. For 2026
+  probabilities by single year of age and sex in downloadable files
+  alongside its Reports. We found those files for the 2014 Report
+  onward: on 3 October 2026 the 2014, 2015 and 2026 files answered at
+  `https://www.ssa.gov/OACT/Downloadables/<year>/DeathProbsE_M_Alt2_TR<year>.csv`
+  (`CY` in place of the year for 2026), and the same address returned
+  "not found" for 2010–2013. We did not search for earlier files under
+  other addresses. For 2026
   the men's intermediate file is
   <https://www.ssa.gov/OACT/Downloadables/CY/DeathProbsE_M_Alt2_TR2026.csv>.
   The sentence now limits the claim to the 2008 Report and says where

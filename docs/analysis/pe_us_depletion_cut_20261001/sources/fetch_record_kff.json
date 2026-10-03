@@ -1,0 +1,22 @@
+[
+  {
+    "file": "kff_2024_unwinding_appendix.html",
+    "url": "https://www.kff.org/report-section/medicaid-eligibility-and-enrollment-policies-for-seniors-and-people-with-disabilities-non-magi-during-the-unwinding-appendix/",
+    "final_url": "https://www.kff.org/medicaid/medicaid-eligibility-and-enrollment-policies-for-seniors-and-people-with-disabilities-non-magi-during-the-unwinding/#094aa05d-5866-4e5b-a64d-33cf50012db3",
+    "retrieved_utc": "2026-10-01T12:51:29+00:00",
+    "status": 200,
+    "bytes": 286286,
+    "sha256": "aa1d1928dbcc46442e2c68ff266a4da9669e52c5fe56559c2743052ccefdf811",
+    "client": "curl_cffi 0.16.3 (impersonate='chrome')"
+  },
+  {
+    "file": "kff_2018_50_state_appendix.html",
+    "url": "https://www.kff.org/report-section/medicaid-financial-eligibility-for-seniors-and-people-with-disabilities-findings-from-a-50-state-survey-appendix-tables/",
+    "final_url": "https://www.kff.org/medicaid/medicaid-financial-eligibility-for-seniors-and-people-with-disabilities-findings-from-a-50-state-survey/#283bd3e2-fcae-48ab-8102-4ae4dd64b524",
+    "retrieved_utc": "2026-10-01T12:51:31+00:00",
+    "status": 200,
+    "bytes": 359854,
+    "sha256": "b16b3d2f27ee8adee7f66f3986a34ea1a53d5584aede84fa78828463e7ac8c28",
+    "client": "curl_cffi 0.16.3 (impersonate='chrome')"
+  }
+]

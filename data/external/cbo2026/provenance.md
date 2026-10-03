@@ -47,6 +47,11 @@ Only these input rows are transcribed:
   Earnings`: numeric year rows, covered earnings column B in trillions
   of dollars; 2026-2100. Beneficiary, interest-rate and taxable-payroll
   columns are not transcribed; workbook footnotes are not displayed.
+  The workbook's sheets are `Contents`, `1. Covered Workers`,
+  `2. Covered and Taxable Earnings`, `3. OASDI Beneficiaries` and
+  `4. Average Interest Rates`; only sheets 1 and 2 are read. It holds
+  no outlay, revenue, cost-rate or balance table (CBO's main
+  62556 projections workbook, which does, was not captured).
 - The AWI anchor is CY2024 historical AWI, captured TR2026 single-year
   VI.G1 (`tr2026/lr6g1.html`), SHA-256
   `2e0214278e0b2271616093af02280277f6e363d112c47a90b49fe7168e795e75`.
