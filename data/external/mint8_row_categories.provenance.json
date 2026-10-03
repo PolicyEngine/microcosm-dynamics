@@ -1,0 +1,77 @@
+{
+  "schema_version": "external_source_provenance.v1",
+  "committed_source_file": "data/external/mint8_row_categories.json",
+  "source_url": "https://www.ssa.gov/policy/docs/projections/policy-options/increase-payroll-tax-rate.html",
+  "document": "Social Security Administration, MINT8 projected-effects tables for the policy-option page increase-payroll-tax-rate.html (labels only)",
+  "date_certified": "2026-04-01",
+  "retrieval_date": "2026-10-01",
+  "fetch_method": "The MINT-categories lane (workflow wf_35b496b0-085, orchestrating session 95606380, 2026-10-01) fetched the Internet Archive raw capture http://web.archive.org/web/20260519190449id_/https://www.ssa.gov/policy/docs/projections/policy-options/increase-payroll-tax-rate.html (raw SHA-256 3cfb6eb636cad6d062eb22734c533fb349a0bc4761014eee8f2ccb0eb6e28d8c) and extracted only captions, column headings and row labels with a parser that emits no ordinary data cell. The committed file is that extract, byte-identical; the raw page is not committed.",
+  "raw_page_sha256": "3cfb6eb636cad6d062eb22734c533fb349a0bc4761014eee8f2ccb0eb6e28d8c",
+  "source_sha256": "23fbfbc8dbc14b06144a83bf0583ea0a6c89505638f3f7dc5fd6b34a3a4ac650",
+  "source_length_bytes": 37524,
+  "recorded_in": "~/microcosm-launch-evidence/dynasim-parity-20260909/RESTRICTED-FILES.md changelog entry 2026-10-01 22:20 (the label file and its SHA-256 23fbfbc8...)",
+  "consumed_by": [
+    "data/external/group_category_schemes_v1.json (cohorts/group_attributes.py)",
+    "src/populace_dynamics/estimates/group_breakdown.py",
+    "scripts/extract_lifetime_measure_sources.py (estimates/lifetime_measures.py)"
+  ],
+  "note": "LABELS ONLY: no table value was extracted, read or committed. The payroll-tax-rate option is not one of the reforms the blind tests or the NASI follow-ups compare.",
+  "consolidation": {
+    "decision": "All three committed labels-only extractions were byte-identical, including every caption, column heading, row-group heading and ordered row label in all 20 tables. Keep the original MINT-categories lane filename and bytes as the canonical extraction.",
+    "snapshots": [
+      {
+        "original_file": "data/external/mint8_row_categories.json",
+        "source_sha256": "23fbfbc8dbc14b06144a83bf0583ea0a6c89505638f3f7dc5fd6b34a3a4ac650",
+        "source_length_bytes": 37524,
+        "date_certified": "2026-04-01",
+        "original_provenance": {
+          "schema_version": "external_source_provenance.v1",
+          "committed_source_file": "data/external/mint8_row_categories.json",
+          "source_url": "https://www.ssa.gov/policy/docs/projections/policy-options/increase-payroll-tax-rate.html",
+          "document": "Social Security Administration, MINT8 projected-effects tables for the policy-option page increase-payroll-tax-rate.html (labels only)",
+          "date_certified": "2026-04-01",
+          "retrieval_date": "2026-10-01",
+          "fetch_method": "The MINT-categories lane (workflow wf_35b496b0-085, orchestrating session 95606380, 2026-10-01) fetched the Internet Archive raw capture http://web.archive.org/web/20260519190449id_/https://www.ssa.gov/policy/docs/projections/policy-options/increase-payroll-tax-rate.html (raw SHA-256 3cfb6eb636cad6d062eb22734c533fb349a0bc4761014eee8f2ccb0eb6e28d8c) and extracted only captions, column headings and row labels with a parser that emits no ordinary data cell. The committed file is that extract, byte-identical; the raw page is not committed.",
+          "raw_page_sha256": "3cfb6eb636cad6d062eb22734c533fb349a0bc4761014eee8f2ccb0eb6e28d8c",
+          "source_sha256": "23fbfbc8dbc14b06144a83bf0583ea0a6c89505638f3f7dc5fd6b34a3a4ac650",
+          "source_length_bytes": 37524,
+          "recorded_in": "~/microcosm-launch-evidence/dynasim-parity-20260909/RESTRICTED-FILES.md changelog entry 2026-10-01 22:20 (the label file and its SHA-256 23fbfbc8...)",
+          "consumed_by": "src/populace_dynamics/estimates/group_breakdown.py (MINT8 row-group headings and row labels, verbatim and in document order; verify_mint8_sources checks the schemes against this file)",
+          "note": "LABELS ONLY: no table value was extracted, read or committed. The payroll-tax-rate option is not one of the reforms the blind tests or the NASI follow-ups compare."
+        }
+      },
+      {
+        "original_file": "data/external/ssa_mint8_payroll_option_row_labels.json",
+        "source_sha256": "23fbfbc8dbc14b06144a83bf0583ea0a6c89505638f3f7dc5fd6b34a3a4ac650",
+        "source_length_bytes": 37524,
+        "date_certified": "2026-04-01",
+        "original_provenance": {
+          "schema_version": "external_source_provenance.v1",
+          "committed_source_file": "data/external/ssa_mint8_payroll_option_row_labels.json",
+          "source_url": "https://www.ssa.gov/policy/docs/projections/policy-options/increase-payroll-tax-rate.html",
+          "document": "SSA MINT 8 policy-option tables, 'Increase payroll tax rate' — row and column labels only",
+          "fetch_method": "Built by the MINT-categories lane of orchestrating session 95606380 from the Internet Archive capture http://web.archive.org/web/20260519190449id_/https://www.ssa.gov/policy/docs/projections/policy-options/increase-payroll-tax-rate.html (raw page SHA-256 3cfb6eb636cad6d062eb22734c533fb349a0bc4761014eee8f2ccb0eb6e28d8c, recorded inside the file) with a parser that emitted table captions, header cells and row labels and never an ordinary data cell. Copied byte-identically from the lane's label file.",
+          "source_sha256": "23fbfbc8dbc14b06144a83bf0583ea0a6c89505638f3f7dc5fd6b34a3a4ac650",
+          "acquired_by": "MINT-categories lane (workflow wf_35b496b0-085), 2026-10-01; committed by the G1 group-attributes builder",
+          "consumed_by": "data/external/group_category_schemes_v1.json (scheme mint8 attribute and lifetime-quintile row labels; annual and cohort table row-group orders)",
+          "note": "LABELS ONLY. No MINT data cell is in this file. The restricted-files list allows one payroll-tax option table to be read for its row labels only; this is that table's label record."
+        }
+      },
+      {
+        "original_file": "data/external/mint8_row_categories_2026.source.json",
+        "source_sha256": "23fbfbc8dbc14b06144a83bf0583ea0a6c89505638f3f7dc5fd6b34a3a4ac650",
+        "source_length_bytes": 37524,
+        "date_certified": "2026-04-01",
+        "original_provenance": {
+          "committed_source_file": "data/external/mint8_row_categories_2026.source.json",
+          "source_url": "https://www.ssa.gov/policy/docs/projections/policy-options/increase-payroll-tax-rate.html",
+          "document": "MINT8 payroll-tax option table labels (labels only)",
+          "source_sha256": "23fbfbc8dbc14b06144a83bf0583ea0a6c89505638f3f7dc5fd6b34a3a4ac650",
+          "source_length_bytes": 37524,
+          "locator": "label-only JSON: dateCertified; tables.13 through tables.20; groups whose group is Current-law initial AIME quintile, Lifetime payroll tax quintile or Lifetime payroll tax quintile (shared); their labels arrays",
+          "acquisition": "Copied byte for byte from the cleared MINT-categories lane's followup/inputs/mint/mint8_row_categories.json; label-only extraction of the archived source named in MINT8_TABLE_LABEL_PROVENANCE, never a table body."
+        }
+      }
+    ]
+  }
+}
