@@ -1,0 +1,34 @@
+[
+  {
+    "file": "lii_42_usc_415.html",
+    "url": "https://www.law.cornell.edu/uscode/text/42/415",
+    "retrieved_utc": "2026-10-01T02:41:04+00:00",
+    "status": 200,
+    "bytes": 481427,
+    "sha256": "c3262e82e8e674caf43709c522ce60760eafb0b133e1f99221ca7aa97d54ea3a"
+  },
+  {
+    "file": "lii_7_usc_2013.html",
+    "url": "https://www.law.cornell.edu/uscode/text/7/2013",
+    "retrieved_utc": "2026-10-01T02:41:04+00:00",
+    "status": 200,
+    "bytes": 131467,
+    "sha256": "9bd7cef26ae036e6204bf16b347698214904e948ec2b3c2ae0ba0c64d5a5b284"
+  },
+  {
+    "file": "lii_42_usc_1382e.html",
+    "url": "https://www.law.cornell.edu/uscode/text/42/1382e",
+    "retrieved_utc": "2026-10-01T02:41:04+00:00",
+    "status": 200,
+    "bytes": 104938,
+    "sha256": "ee877995374a831f2fc2d558e9638f347a351d15cd78c990c153ce64703eaae1"
+  },
+  {
+    "file": "lii_42_usc_1381.html",
+    "url": "https://www.law.cornell.edu/uscode/text/42/1381",
+    "retrieved_utc": "2026-10-01T02:41:30+00:00",
+    "status": 200,
+    "bytes": 37951,
+    "sha256": "2a02185f3745e4feb7e8fdd4cd83eb0a9000b04c3be2d14ecdc3c19b4ae282b8"
+  }
+]
