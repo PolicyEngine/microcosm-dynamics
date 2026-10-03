@@ -1,0 +1,2364 @@
+{
+ "schema_version": "epuf_published_tables.v1",
+ "generator": "scripts/extract_epuf_published_tables.py",
+ "sources": {
+  "ssb": {
+   "citation": "Compson, Michael. 2011. 'The 2006 Earnings Public-Use Microdata File: An Introduction.' Social Security Bulletin 71(4).",
+   "url": "https://www.ssa.gov/policy/docs/ssb/v71n4/v71n4p33.html",
+   "text": "data/external/epuf_2006/ssb_v71n4p33.source.txt",
+   "text_sha256": "b40a828cc44c57f25d95a05d467f4ff881948f4ee136ccb67bc9aee4264bbe35"
+  },
+  "rsn": {
+   "citation": "Compson, Michael. 2012. 'Comparing Earnings Estimates from the 2006 Earnings Public-Use File and the Annual Statistical Supplement.' Research and Statistics Note No. 2012-01.",
+   "url": "https://www.ssa.gov/policy/docs/rsnotes/rsn2012-01.html",
+   "text": "data/external/epuf_2006/rsn2012-01.source.txt",
+   "text_sha256": "886366c321d2abcaf600ba6b64b47af600f3e3a6672a66e6a07c26e7c5067bf7"
+  }
+ },
+ "retrieved": "2026-10-01",
+ "tables": {
+  "ssb_table_a1_records": {
+   "source": "ssb",
+   "caption_line": 564,
+   "description": "Number of individuals with taxable earnings records in EPUF, by sex, 1951-2006 (persons with an annual row)",
+   "unit": "persons",
+   "rows": {
+    "1951": {
+     "all": 574666,
+     "men": 380673,
+     "women": 193655,
+     "unknown": 338
+    },
+    "1952": {
+     "all": 590383,
+     "men": 387176,
+     "women": 202841,
+     "unknown": 366
+    },
+    "1953": {
+     "all": 601308,
+     "men": 392710,
+     "women": 208254,
+     "unknown": 344
+    },
+    "1954": {
+     "all": 590541,
+     "men": 386904,
+     "women": 203317,
+     "unknown": 320
+    },
+    "1955": {
+     "all": 645873,
+     "men": 426862,
+     "women": 218624,
+     "unknown": 387
+    },
+    "1956": {
+     "all": 671229,
+     "men": 441870,
+     "women": 228933,
+     "unknown": 426
+    },
+    "1957": {
+     "all": 701607,
+     "men": 468328,
+     "women": 232861,
+     "unknown": 418
+    },
+    "1958": {
+     "all": 694826,
+     "men": 464175,
+     "women": 230290,
+     "unknown": 361
+    },
+    "1959": {
+     "all": 710553,
+     "men": 471169,
+     "women": 239044,
+     "unknown": 340
+    },
+    "1960": {
+     "all": 720003,
+     "men": 474604,
+     "women": 245085,
+     "unknown": 314
+    },
+    "1961": {
+     "all": 722824,
+     "men": 475513,
+     "women": 247008,
+     "unknown": 303
+    },
+    "1962": {
+     "all": 738066,
+     "men": 482590,
+     "women": 255187,
+     "unknown": 289
+    },
+    "1963": {
+     "all": 750314,
+     "men": 488952,
+     "women": 261077,
+     "unknown": 285
+    },
+    "1964": {
+     "all": 769290,
+     "men": 499171,
+     "women": 269834,
+     "unknown": 285
+    },
+    "1965": {
+     "all": 799836,
+     "men": 514368,
+     "women": 285184,
+     "unknown": 284
+    },
+    "1966": {
+     "all": 839992,
+     "men": 531966,
+     "women": 307743,
+     "unknown": 283
+    },
+    "1967": {
+     "all": 859300,
+     "men": 540003,
+     "women": 319006,
+     "unknown": 291
+    },
+    "1968": {
+     "all": 885946,
+     "men": 551920,
+     "women": 333731,
+     "unknown": 295
+    },
+    "1969": {
+     "all": 914616,
+     "men": 564231,
+     "women": 350067,
+     "unknown": 318
+    },
+    "1970": {
+     "all": 920526,
+     "men": 565453,
+     "women": 354749,
+     "unknown": 324
+    },
+    "1971": {
+     "all": 922906,
+     "men": 565675,
+     "women": 356911,
+     "unknown": 320
+    },
+    "1972": {
+     "all": 951405,
+     "men": 578237,
+     "women": 372840,
+     "unknown": 328
+    },
+    "1973": {
+     "all": 987692,
+     "men": 593494,
+     "women": 393844,
+     "unknown": 354
+    },
+    "1974": {
+     "all": 1003244,
+     "men": 597517,
+     "women": 405375,
+     "unknown": 352
+    },
+    "1975": {
+     "all": 993889,
+     "men": 589138,
+     "women": 404403,
+     "unknown": 348
+    },
+    "1976": {
+     "all": 1018394,
+     "men": 598171,
+     "women": 419885,
+     "unknown": 338
+    },
+    "1977": {
+     "all": 1050246,
+     "men": 611288,
+     "women": 438619,
+     "unknown": 339
+    },
+    "1978": {
+     "all": 1083967,
+     "men": 625380,
+     "women": 458246,
+     "unknown": 341
+    },
+    "1979": {
+     "all": 1110353,
+     "men": 635128,
+     "women": 474898,
+     "unknown": 327
+    },
+    "1980": {
+     "all": 1116739,
+     "men": 634313,
+     "women": 482099,
+     "unknown": 327
+    },
+    "1981": {
+     "all": 1118021,
+     "men": 632816,
+     "women": 484894,
+     "unknown": 311
+    },
+    "1982": {
+     "all": 1104079,
+     "men": 622799,
+     "women": 480974,
+     "unknown": 306
+    },
+    "1983": {
+     "all": 1115203,
+     "men": 625683,
+     "women": 489213,
+     "unknown": 307
+    },
+    "1984": {
+     "all": 1157926,
+     "men": 644631,
+     "women": 512978,
+     "unknown": 317
+    },
+    "1985": {
+     "all": 1192767,
+     "men": 659120,
+     "women": 533338,
+     "unknown": 309
+    },
+    "1986": {
+     "all": 1216539,
+     "men": 668310,
+     "women": 547925,
+     "unknown": 304
+    },
+    "1987": {
+     "all": 1246860,
+     "men": 681710,
+     "women": 564843,
+     "unknown": 307
+    },
+    "1988": {
+     "all": 1285984,
+     "men": 700961,
+     "women": 584711,
+     "unknown": 312
+    },
+    "1989": {
+     "all": 1310357,
+     "men": 711727,
+     "women": 598334,
+     "unknown": 296
+    },
+    "1990": {
+     "all": 1320380,
+     "men": 714671,
+     "women": 605422,
+     "unknown": 287
+    },
+    "1991": {
+     "all": 1315162,
+     "men": 709678,
+     "women": 605204,
+     "unknown": 280
+    },
+    "1992": {
+     "all": 1323691,
+     "men": 711615,
+     "women": 611804,
+     "unknown": 272
+    },
+    "1993": {
+     "all": 1344345,
+     "men": 722012,
+     "women": 622065,
+     "unknown": 268
+    },
+    "1994": {
+     "all": 1372474,
+     "men": 734324,
+     "women": 637884,
+     "unknown": 266
+    },
+    "1995": {
+     "all": 1394997,
+     "men": 745091,
+     "women": 649650,
+     "unknown": 256
+    },
+    "1996": {
+     "all": 1417938,
+     "men": 755129,
+     "women": 662564,
+     "unknown": 245
+    },
+    "1997": {
+     "all": 1444475,
+     "men": 766814,
+     "women": 677412,
+     "unknown": 249
+    },
+    "1998": {
+     "all": 1472473,
+     "men": 779589,
+     "women": 692640,
+     "unknown": 244
+    },
+    "1999": {
+     "all": 1496574,
+     "men": 791384,
+     "women": 704947,
+     "unknown": 243
+    },
+    "2000": {
+     "all": 1521937,
+     "men": 802776,
+     "women": 718923,
+     "unknown": 238
+    },
+    "2001": {
+     "all": 1524651,
+     "men": 803891,
+     "women": 720525,
+     "unknown": 235
+    },
+    "2002": {
+     "all": 1519561,
+     "men": 799527,
+     "women": 719799,
+     "unknown": 235
+    },
+    "2003": {
+     "all": 1520638,
+     "men": 798428,
+     "women": 721985,
+     "unknown": 225
+    },
+    "2004": {
+     "all": 1535509,
+     "men": 805264,
+     "women": 730008,
+     "unknown": 237
+    },
+    "2005": {
+     "all": 1550602,
+     "men": 812364,
+     "women": 738007,
+     "unknown": 231
+    },
+    "2006": {
+     "all": 1562797,
+     "men": 815763,
+     "women": 746806,
+     "unknown": 228
+    }
+   }
+  },
+  "ssb_table_4_mean_median": {
+   "source": "ssb",
+   "caption_line": 498,
+   "description": "Average and median taxable earnings in EPUF, by sex, 1951-2006 (dollars; means rounded to the dollar)",
+   "unit": "dollars",
+   "rows": {
+    "1951": {
+     "mean_all": 2047.0,
+     "median_all": 2100.0,
+     "mean_men": 2404.0,
+     "median_men": 2900.0,
+     "mean_women": 1344.0,
+     "median_women": 1200.0,
+     "mean_unknown": 1978.0,
+     "median_unknown": 1950.0
+    },
+    "1952": {
+     "mean_all": 2118.0,
+     "median_all": 2300.0,
+     "mean_men": 2482.0,
+     "median_men": 3100.0,
+     "mean_women": 1423.0,
+     "median_women": 1300.0,
+     "mean_unknown": 1904.0,
+     "median_unknown": 1950.0
+    },
+    "1953": {
+     "mean_all": 2187.0,
+     "median_all": 2400.0,
+     "mean_men": 2553.0,
+     "median_men": 3300.0,
+     "mean_women": 1499.0,
+     "median_women": 1300.0,
+     "mean_unknown": 2043.0,
+     "median_unknown": 2000.0
+    },
+    "1954": {
+     "mean_all": 2194.0,
+     "median_all": 2400.0,
+     "mean_men": 2544.0,
+     "median_men": 3300.0,
+     "mean_women": 1527.0,
+     "median_women": 1400.0,
+     "mean_unknown": 1886.0,
+     "median_unknown": 1700.0
+    },
+    "1955": {
+     "mean_all": 2374.0,
+     "median_all": 2400.0,
+     "mean_men": 2779.0,
+     "median_men": 3300.0,
+     "mean_women": 1583.0,
+     "median_women": 1300.0,
+     "mean_unknown": 1932.0,
+     "median_unknown": 1600.0
+    },
+    "1956": {
+     "mean_all": 2472.0,
+     "median_all": 2600.0,
+     "mean_men": 2884.0,
+     "median_men": 3500.0,
+     "mean_women": 1678.0,
+     "median_women": 1500.0,
+     "mean_unknown": 1897.0,
+     "median_unknown": 1400.0
+    },
+    "1957": {
+     "mean_all": 2518.0,
+     "median_all": 2700.0,
+     "mean_men": 2900.0,
+     "median_men": 3600.0,
+     "mean_women": 1752.0,
+     "median_women": 1500.0,
+     "mean_unknown": 1874.0,
+     "median_unknown": 1450.0
+    },
+    "1958": {
+     "mean_all": 2523.0,
+     "median_all": 2700.0,
+     "mean_men": 2881.0,
+     "median_men": 3500.0,
+     "mean_women": 1801.0,
+     "median_women": 1600.0,
+     "mean_unknown": 1914.0,
+     "median_unknown": 1500.0
+    },
+    "1959": {
+     "mean_all": 2766.0,
+     "median_all": 2800.0,
+     "mean_men": 3204.0,
+     "median_men": 3800.0,
+     "mean_women": 1903.0,
+     "median_women": 1600.0,
+     "mean_unknown": 2040.0,
+     "median_unknown": 1600.0
+    },
+    "1960": {
+     "mean_all": 2798.0,
+     "median_all": 2900.0,
+     "mean_men": 3239.0,
+     "median_men": 3900.0,
+     "mean_women": 1945.0,
+     "median_women": 1700.0,
+     "mean_unknown": 2161.0,
+     "median_unknown": 1800.0
+    },
+    "1961": {
+     "mean_all": 2819.0,
+     "median_all": 2900.0,
+     "mean_men": 3248.0,
+     "median_men": 3900.0,
+     "mean_women": 1994.0,
+     "median_women": 1700.0,
+     "mean_unknown": 2190.0,
+     "median_unknown": 1800.0
+    },
+    "1962": {
+     "mean_all": 2879.0,
+     "median_all": 3100.0,
+     "mean_men": 3313.0,
+     "median_men": 4100.0,
+     "mean_women": 2059.0,
+     "median_women": 1800.0,
+     "mean_unknown": 2439.0,
+     "median_unknown": 2100.0
+    },
+    "1963": {
+     "mean_all": 2913.0,
+     "median_all": 3100.0,
+     "mean_men": 3345.0,
+     "median_men": 4300.0,
+     "mean_women": 2104.0,
+     "median_women": 1800.0,
+     "mean_unknown": 2534.0,
+     "median_unknown": 2200.0
+    },
+    "1964": {
+     "mean_all": 2968.0,
+     "median_all": 3300.0,
+     "mean_men": 3402.0,
+     "median_men": 4500.0,
+     "mean_women": 2166.0,
+     "median_women": 1900.0,
+     "mean_unknown": 2717.0,
+     "median_unknown": 2700.0
+    },
+    "1965": {
+     "mean_all": 3012.0,
+     "median_all": 3400.0,
+     "mean_men": 3459.0,
+     "median_men": 4754.0,
+     "mean_women": 2206.0,
+     "median_women": 2000.0,
+     "mean_unknown": 2871.0,
+     "median_unknown": 2900.0
+    },
+    "1966": {
+     "mean_all": 3620.0,
+     "median_all": 3600.0,
+     "mean_men": 4312.0,
+     "median_men": 5000.0,
+     "mean_women": 2424.0,
+     "median_women": 2000.0,
+     "mean_unknown": 3548.0,
+     "median_unknown": 3300.0
+    },
+    "1967": {
+     "mean_all": 3710.0,
+     "median_all": 3700.0,
+     "mean_men": 4380.0,
+     "median_men": 5200.0,
+     "mean_women": 2576.0,
+     "median_women": 2200.0,
+     "mean_unknown": 3580.0,
+     "median_unknown": 3500.0
+    },
+    "1968": {
+     "mean_all": 4134.0,
+     "median_all": 4000.0,
+     "mean_men": 4944.0,
+     "median_men": 5600.0,
+     "mean_women": 2796.0,
+     "median_women": 2400.0,
+     "mean_unknown": 4099.0,
+     "median_unknown": 3800.0
+    },
+    "1969": {
+     "mean_all": 4275.0,
+     "median_all": 4200.0,
+     "mean_men": 5093.0,
+     "median_men": 6000.0,
+     "mean_women": 2956.0,
+     "median_women": 2600.0,
+     "mean_unknown": 4090.0,
+     "median_unknown": 3900.0
+    },
+    "1970": {
+     "mean_all": 4380.0,
+     "median_all": 4400.0,
+     "mean_men": 5175.0,
+     "median_men": 6200.0,
+     "mean_women": 3113.0,
+     "median_women": 2700.0,
+     "mean_unknown": 4214.0,
+     "median_unknown": 4200.0
+    },
+    "1971": {
+     "mean_all": 4485.0,
+     "median_all": 4600.0,
+     "mean_men": 5259.0,
+     "median_men": 6500.0,
+     "mean_women": 3257.0,
+     "median_women": 2900.0,
+     "mean_unknown": 4409.0,
+     "median_unknown": 4650.0
+    },
+    "1972": {
+     "mean_all": 4948.0,
+     "median_all": 4900.0,
+     "mean_men": 5893.0,
+     "median_men": 7000.0,
+     "mean_women": 3482.0,
+     "median_women": 3000.0,
+     "mean_unknown": 5067.0,
+     "median_unknown": 5100.0
+    },
+    "1973": {
+     "mean_all": 5548.0,
+     "median_all": 5200.0,
+     "mean_men": 6744.0,
+     "median_men": 7500.0,
+     "mean_women": 3745.0,
+     "median_women": 3100.0,
+     "mean_unknown": 5776.0,
+     "median_unknown": 5450.0
+    },
+    "1974": {
+     "mean_all": 6223.0,
+     "median_all": 5500.0,
+     "mean_men": 7653.0,
+     "median_men": 8000.0,
+     "mean_women": 4115.0,
+     "median_women": 3400.0,
+     "mean_unknown": 6572.0,
+     "median_unknown": 5950.0
+    },
+    "1975": {
+     "mean_all": 6578.0,
+     "median_all": 5800.0,
+     "mean_men": 8023.0,
+     "median_men": 8300.0,
+     "mean_women": 4473.0,
+     "median_women": 3700.0,
+     "mean_unknown": 6854.0,
+     "median_unknown": 6400.0
+    },
+    "1976": {
+     "mean_all": 7117.0,
+     "median_all": 6300.0,
+     "mean_men": 8693.0,
+     "median_men": 8900.0,
+     "mean_women": 4870.0,
+     "median_women": 4100.0,
+     "mean_unknown": 7806.0,
+     "median_unknown": 6950.0
+    },
+    "1977": {
+     "mean_all": 7625.0,
+     "median_all": 6700.0,
+     "mean_men": 9343.0,
+     "median_men": 9600.0,
+     "mean_women": 5229.0,
+     "median_women": 4300.0,
+     "mean_unknown": 8384.0,
+     "median_unknown": 7500.0
+    },
+    "1978": {
+     "mean_all": 8279.0,
+     "median_all": 7300.0,
+     "mean_men": 10132.0,
+     "median_men": 10400.0,
+     "mean_women": 5750.0,
+     "median_women": 4900.0,
+     "mean_unknown": 8816.0,
+     "median_unknown": 8200.0
+    },
+    "1979": {
+     "mean_all": 9488.0,
+     "median_all": 7900.0,
+     "mean_men": 11790.0,
+     "median_men": 11300.0,
+     "mean_women": 6410.0,
+     "median_women": 5400.0,
+     "mean_unknown": 10383.0,
+     "median_unknown": 9400.0
+    },
+    "1980": {
+     "mean_all": 10346.0,
+     "median_all": 8600.0,
+     "mean_men": 12804.0,
+     "median_men": 12000.0,
+     "mean_women": 7112.0,
+     "median_women": 6000.0,
+     "mean_unknown": 11052.0,
+     "median_unknown": 9600.0
+    },
+    "1981": {
+     "mean_all": 11426.0,
+     "median_all": 9400.0,
+     "mean_men": 14106.0,
+     "median_men": 13000.0,
+     "mean_women": 7927.0,
+     "median_women": 6700.0,
+     "mean_unknown": 12280.0,
+     "median_unknown": 10300.0
+    },
+    "1982": {
+     "mean_all": 12149.0,
+     "median_all": 9900.0,
+     "mean_men": 14844.0,
+     "median_men": 13300.0,
+     "mean_women": 8659.0,
+     "median_women": 7200.0,
+     "mean_unknown": 13362.0,
+     "median_unknown": 10950.0
+    },
+    "1983": {
+     "mean_all": 12810.0,
+     "median_all": 10300.0,
+     "mean_men": 15613.0,
+     "median_men": 13700.0,
+     "mean_women": 9224.0,
+     "median_women": 7600.0,
+     "mean_unknown": 13917.0,
+     "median_unknown": 11400.0
+    },
+    "1984": {
+     "mean_all": 13556.0,
+     "median_all": 10900.0,
+     "mean_men": 16572.0,
+     "median_men": 14500.0,
+     "mean_women": 9766.0,
+     "median_women": 7900.0,
+     "mean_unknown": 14365.0,
+     "median_unknown": 11300.0
+    },
+    "1985": {
+     "mean_all": 14183.0,
+     "median_all": 11400.0,
+     "mean_men": 17303.0,
+     "median_men": 15100.0,
+     "mean_women": 10325.0,
+     "median_women": 8300.0,
+     "mean_unknown": 15037.0,
+     "median_unknown": 12000.0
+    },
+    "1986": {
+     "mean_all": 14824.0,
+     "median_all": 11900.0,
+     "mean_men": 18002.0,
+     "median_men": 15600.0,
+     "mean_women": 10948.0,
+     "median_women": 8800.0,
+     "mean_unknown": 16204.0,
+     "median_unknown": 12950.0
+    },
+    "1987": {
+     "mean_all": 15430.0,
+     "median_all": 12300.0,
+     "mean_men": 18636.0,
+     "median_men": 16100.0,
+     "mean_women": 11560.0,
+     "median_women": 9300.0,
+     "mean_unknown": 16257.0,
+     "median_unknown": 12700.0
+    },
+    "1988": {
+     "mean_all": 16067.0,
+     "median_all": 12900.0,
+     "mean_men": 19304.0,
+     "median_men": 16600.0,
+     "mean_women": 12186.0,
+     "median_women": 9800.0,
+     "mean_unknown": 16943.0,
+     "median_unknown": 13250.0
+    },
+    "1989": {
+     "mean_all": 16847.0,
+     "median_all": 13400.0,
+     "mean_men": 20163.0,
+     "median_men": 17200.0,
+     "mean_women": 12902.0,
+     "median_women": 10300.0,
+     "mean_unknown": 18780.0,
+     "median_unknown": 15100.0
+    },
+    "1990": {
+     "mean_all": 17633.0,
+     "median_all": 14000.0,
+     "mean_men": 20990.0,
+     "median_men": 17800.0,
+     "mean_women": 13669.0,
+     "median_women": 10900.0,
+     "mean_unknown": 19937.0,
+     "median_unknown": 16500.0
+    },
+    "1991": {
+     "mean_all": 18182.0,
+     "median_all": 14400.0,
+     "mean_men": 21455.0,
+     "median_men": 17900.0,
+     "mean_women": 14342.0,
+     "median_women": 11400.0,
+     "mean_unknown": 21272.0,
+     "median_unknown": 18250.0
+    },
+    "1992": {
+     "mean_all": 18887.0,
+     "median_all": 14900.0,
+     "mean_men": 22199.0,
+     "median_men": 18400.0,
+     "mean_women": 15034.0,
+     "median_women": 11900.0,
+     "mean_unknown": 22037.0,
+     "median_unknown": 18800.0
+    },
+    "1993": {
+     "mean_all": 19327.0,
+     "median_all": 15100.0,
+     "mean_men": 22662.0,
+     "median_men": 18700.0,
+     "mean_women": 15455.0,
+     "median_women": 12100.0,
+     "mean_unknown": 22841.0,
+     "median_unknown": 20150.0
+    },
+    "1994": {
+     "mean_all": 20022.0,
+     "median_all": 15600.0,
+     "mean_men": 23576.0,
+     "median_men": 19400.0,
+     "mean_women": 15930.0,
+     "median_women": 12400.0,
+     "mean_unknown": 23137.0,
+     "median_unknown": 18700.0
+    },
+    "1995": {
+     "mean_all": 20629.0,
+     "median_all": 16200.0,
+     "mean_men": 24224.0,
+     "median_men": 20000.0,
+     "mean_women": 16504.0,
+     "median_women": 12900.0,
+     "mean_unknown": 23835.0,
+     "median_unknown": 19100.0
+    },
+    "1996": {
+     "mean_all": 21357.0,
+     "median_all": 16800.0,
+     "mean_men": 25066.0,
+     "median_men": 20800.0,
+     "mean_women": 17129.0,
+     "median_women": 13400.0,
+     "mean_unknown": 24950.0,
+     "median_unknown": 20200.0
+    },
+    "1997": {
+     "mean_all": 22386.0,
+     "median_all": 17600.0,
+     "mean_men": 26274.0,
+     "median_men": 21900.0,
+     "mean_women": 17985.0,
+     "median_women": 14100.0,
+     "mean_unknown": 24905.0,
+     "median_unknown": 20500.0
+    },
+    "1998": {
+     "mean_all": 23525.0,
+     "median_all": 18600.0,
+     "mean_men": 27582.0,
+     "median_men": 23100.0,
+     "mean_women": 18958.0,
+     "median_women": 14900.0,
+     "mean_unknown": 26290.0,
+     "median_unknown": 21800.0
+    },
+    "1999": {
+     "mean_all": 24580.0,
+     "median_all": 19400.0,
+     "mean_men": 28802.0,
+     "median_men": 24100.0,
+     "mean_women": 19840.0,
+     "median_women": 15600.0,
+     "mean_unknown": 28665.0,
+     "median_unknown": 23700.0
+    },
+    "2000": {
+     "mean_all": 25757.0,
+     "median_all": 20300.0,
+     "mean_men": 30149.0,
+     "median_men": 25200.0,
+     "mean_women": 20851.0,
+     "median_women": 16400.0,
+     "mean_unknown": 30797.0,
+     "median_unknown": 25450.0
+    },
+    "2001": {
+     "mean_all": 26739.0,
+     "median_all": 21000.0,
+     "mean_men": 31141.0,
+     "median_men": 25700.0,
+     "mean_women": 21826.0,
+     "median_women": 17100.0,
+     "mean_unknown": 32920.0,
+     "median_unknown": 26500.0
+    },
+    "2002": {
+     "mean_all": 27364.0,
+     "median_all": 21300.0,
+     "mean_men": 31743.0,
+     "median_men": 25900.0,
+     "mean_women": 22499.0,
+     "median_women": 17500.0,
+     "mean_unknown": 33686.0,
+     "median_unknown": 26800.0
+    },
+    "2003": {
+     "mean_all": 28009.0,
+     "median_all": 21700.0,
+     "mean_men": 32396.0,
+     "median_men": 26300.0,
+     "mean_women": 23154.0,
+     "median_women": 18000.0,
+     "mean_unknown": 34133.0,
+     "median_unknown": 29900.0
+    },
+    "2004": {
+     "mean_all": 28913.0,
+     "median_all": 22500.0,
+     "mean_men": 33396.0,
+     "median_men": 27200.0,
+     "mean_women": 23965.0,
+     "median_women": 18500.0,
+     "mean_unknown": 34542.0,
+     "median_unknown": 29100.0
+    },
+    "2005": {
+     "mean_all": 29745.0,
+     "median_all": 23100.0,
+     "mean_men": 34341.0,
+     "median_men": 28000.0,
+     "mean_women": 24685.0,
+     "median_women": 19000.0,
+     "mean_unknown": 36241.0,
+     "median_unknown": 30600.0
+    },
+    "2006": {
+     "mean_all": 30953.0,
+     "median_all": 24000.0,
+     "mean_men": 35764.0,
+     "median_men": 29100.0,
+     "mean_women": 25696.0,
+     "median_women": 19700.0,
+     "mean_unknown": 36799.0,
+     "median_unknown": 32500.0
+    }
+   }
+  },
+  "ssb_chart_3_birth_year": {
+   "source": "ssb",
+   "caption_line": 851,
+   "description": "Chart 3. Number of individuals in EPUF, by year of birth",
+   "unit": "thousands of persons, 2 decimals",
+   "rows": {
+    "1870": {
+     "thousands": 1.81
+    },
+    "1871": {
+     "thousands": 2.02
+    },
+    "1872": {
+     "thousands": 2.91
+    },
+    "1873": {
+     "thousands": 3.07
+    },
+    "1874": {
+     "thousands": 3.8
+    },
+    "1875": {
+     "thousands": 4.43
+    },
+    "1876": {
+     "thousands": 5.15
+    },
+    "1877": {
+     "thousands": 5.4
+    },
+    "1878": {
+     "thousands": 6.09
+    },
+    "1879": {
+     "thousands": 6.69
+    },
+    "1880": {
+     "thousands": 7.98
+    },
+    "1881": {
+     "thousands": 8.12
+    },
+    "1882": {
+     "thousands": 9.41
+    },
+    "1883": {
+     "thousands": 9.58
+    },
+    "1884": {
+     "thousands": 11.28
+    },
+    "1885": {
+     "thousands": 11.48
+    },
+    "1886": {
+     "thousands": 12.17
+    },
+    "1887": {
+     "thousands": 12.09
+    },
+    "1888": {
+     "thousands": 14.58
+    },
+    "1889": {
+     "thousands": 14.28
+    },
+    "1890": {
+     "thousands": 14.9
+    },
+    "1891": {
+     "thousands": 14.91
+    },
+    "1892": {
+     "thousands": 16.89
+    },
+    "1893": {
+     "thousands": 16.85
+    },
+    "1894": {
+     "thousands": 17.47
+    },
+    "1895": {
+     "thousands": 17.76
+    },
+    "1896": {
+     "thousands": 18.32
+    },
+    "1897": {
+     "thousands": 17.95
+    },
+    "1898": {
+     "thousands": 19.24
+    },
+    "1899": {
+     "thousands": 18.1
+    },
+    "1900": {
+     "thousands": 21.26
+    },
+    "1901": {
+     "thousands": 19.04
+    },
+    "1902": {
+     "thousands": 21.04
+    },
+    "1903": {
+     "thousands": 20.82
+    },
+    "1904": {
+     "thousands": 21.73
+    },
+    "1905": {
+     "thousands": 22.72
+    },
+    "1906": {
+     "thousands": 22.88
+    },
+    "1907": {
+     "thousands": 23.82
+    },
+    "1908": {
+     "thousands": 24.66
+    },
+    "1909": {
+     "thousands": 24.63
+    },
+    "1910": {
+     "thousands": 25.67
+    },
+    "1911": {
+     "thousands": 25.57
+    },
+    "1912": {
+     "thousands": 26.9
+    },
+    "1913": {
+     "thousands": 26.94
+    },
+    "1914": {
+     "thousands": 28.23
+    },
+    "1915": {
+     "thousands": 27.87
+    },
+    "1916": {
+     "thousands": 27.95
+    },
+    "1917": {
+     "thousands": 27.89
+    },
+    "1918": {
+     "thousands": 29.69
+    },
+    "1919": {
+     "thousands": 29.09
+    },
+    "1920": {
+     "thousands": 31.37
+    },
+    "1921": {
+     "thousands": 31.88
+    },
+    "1922": {
+     "thousands": 31.1
+    },
+    "1923": {
+     "thousands": 30.8
+    },
+    "1924": {
+     "thousands": 31.58
+    },
+    "1925": {
+     "thousands": 30.6
+    },
+    "1926": {
+     "thousands": 30.24
+    },
+    "1927": {
+     "thousands": 30.31
+    },
+    "1928": {
+     "thousands": 29.77
+    },
+    "1929": {
+     "thousands": 28.74
+    },
+    "1930": {
+     "thousands": 29.29
+    },
+    "1931": {
+     "thousands": 27.62
+    },
+    "1932": {
+     "thousands": 28.09
+    },
+    "1933": {
+     "thousands": 26.57
+    },
+    "1934": {
+     "thousands": 27.49
+    },
+    "1935": {
+     "thousands": 27.83
+    },
+    "1936": {
+     "thousands": 27.59
+    },
+    "1937": {
+     "thousands": 28.6
+    },
+    "1938": {
+     "thousands": 29.36
+    },
+    "1939": {
+     "thousands": 29.08
+    },
+    "1940": {
+     "thousands": 30.51
+    },
+    "1941": {
+     "thousands": 31.77
+    },
+    "1942": {
+     "thousands": 34.95
+    },
+    "1943": {
+     "thousands": 36.29
+    },
+    "1944": {
+     "thousands": 34.97
+    },
+    "1945": {
+     "thousands": 34.76
+    },
+    "1946": {
+     "thousands": 40.96
+    },
+    "1947": {
+     "thousands": 45.44
+    },
+    "1948": {
+     "thousands": 44.12
+    },
+    "1949": {
+     "thousands": 44.74
+    },
+    "1950": {
+     "thousands": 44.61
+    },
+    "1951": {
+     "thousands": 46.41
+    },
+    "1952": {
+     "thousands": 47.56
+    },
+    "1953": {
+     "thousands": 48.33
+    },
+    "1954": {
+     "thousands": 50.15
+    },
+    "1955": {
+     "thousands": 51.31
+    },
+    "1956": {
+     "thousands": 51.62
+    },
+    "1957": {
+     "thousands": 53.2
+    },
+    "1958": {
+     "thousands": 52.99
+    },
+    "1959": {
+     "thousands": 52.81
+    },
+    "1960": {
+     "thousands": 53.23
+    },
+    "1961": {
+     "thousands": 52.82
+    },
+    "1962": {
+     "thousands": 52.83
+    },
+    "1963": {
+     "thousands": 52.14
+    },
+    "1964": {
+     "thousands": 51.36
+    },
+    "1965": {
+     "thousands": 48.96
+    },
+    "1966": {
+     "thousands": 46.94
+    },
+    "1967": {
+     "thousands": 46.01
+    },
+    "1968": {
+     "thousands": 46.17
+    },
+    "1969": {
+     "thousands": 47.14
+    },
+    "1970": {
+     "thousands": 48.49
+    },
+    "1971": {
+     "thousands": 46.51
+    },
+    "1972": {
+     "thousands": 43.63
+    },
+    "1973": {
+     "thousands": 42.08
+    },
+    "1974": {
+     "thousands": 41.98
+    },
+    "1975": {
+     "thousands": 41.79
+    },
+    "1976": {
+     "thousands": 41.82
+    },
+    "1977": {
+     "thousands": 42.7
+    },
+    "1978": {
+     "thousands": 42.5
+    },
+    "1979": {
+     "thousands": 43.7
+    },
+    "1980": {
+     "thousands": 44.64
+    },
+    "1981": {
+     "thousands": 44.28
+    },
+    "1982": {
+     "thousands": 44.48
+    },
+    "1983": {
+     "thousands": 43.64
+    },
+    "1984": {
+     "thousands": 43.44
+    },
+    "1985": {
+     "thousands": 43.77
+    },
+    "1986": {
+     "thousands": 43.33
+    },
+    "1987": {
+     "thousands": 42.94
+    },
+    "1988": {
+     "thousands": 43.78
+    },
+    "1989": {
+     "thousands": 44.93
+    },
+    "1990": {
+     "thousands": 45.79
+    },
+    "1991": {
+     "thousands": 45.0
+    },
+    "1992": {
+     "thousands": 44.42
+    },
+    "1993": {
+     "thousands": 43.47
+    },
+    "1994": {
+     "thousands": 42.48
+    },
+    "1995": {
+     "thousands": 41.91
+    },
+    "1996": {
+     "thousands": 41.29
+    },
+    "1997": {
+     "thousands": 41.25
+    },
+    "1998": {
+     "thousands": 41.63
+    },
+    "1999": {
+     "thousands": 41.68
+    },
+    "2000": {
+     "thousands": 42.53
+    },
+    "2001": {
+     "thousands": 41.99
+    },
+    "2002": {
+     "thousands": 41.77
+    },
+    "2003": {
+     "thousands": 42.26
+    },
+    "2004": {
+     "thousands": 42.51
+    },
+    "2005": {
+     "thousands": 42.5
+    },
+    "2006": {
+     "thousands": 41.24
+    }
+   }
+  },
+  "ssb_chart_4_birth_year_sex": {
+   "source": "ssb",
+   "caption_line": 991,
+   "description": "Chart 4. Number of individuals in EPUF, by year of birth and sex",
+   "unit": "thousands of persons, 2 decimals",
+   "rows": {
+    "1870": {
+     "men_thousands": 1.48,
+     "women_thousands": 0.33
+    },
+    "1871": {
+     "men_thousands": 1.61,
+     "women_thousands": 0.4
+    },
+    "1872": {
+     "men_thousands": 2.29,
+     "women_thousands": 0.61
+    },
+    "1873": {
+     "men_thousands": 2.41,
+     "women_thousands": 0.65
+    },
+    "1874": {
+     "men_thousands": 2.89,
+     "women_thousands": 0.9
+    },
+    "1875": {
+     "men_thousands": 3.29,
+     "women_thousands": 1.14
+    },
+    "1876": {
+     "men_thousands": 3.79,
+     "women_thousands": 1.35
+    },
+    "1877": {
+     "men_thousands": 3.9,
+     "women_thousands": 1.49
+    },
+    "1878": {
+     "men_thousands": 4.29,
+     "women_thousands": 1.79
+    },
+    "1879": {
+     "men_thousands": 4.52,
+     "women_thousands": 2.15
+    },
+    "1880": {
+     "men_thousands": 5.35,
+     "women_thousands": 2.61
+    },
+    "1881": {
+     "men_thousands": 5.38,
+     "women_thousands": 2.71
+    },
+    "1882": {
+     "men_thousands": 6.2,
+     "women_thousands": 3.17
+    },
+    "1883": {
+     "men_thousands": 6.19,
+     "women_thousands": 3.35
+    },
+    "1884": {
+     "men_thousands": 7.15,
+     "women_thousands": 4.09
+    },
+    "1885": {
+     "men_thousands": 7.08,
+     "women_thousands": 4.37
+    },
+    "1886": {
+     "men_thousands": 7.56,
+     "women_thousands": 4.58
+    },
+    "1887": {
+     "men_thousands": 7.25,
+     "women_thousands": 4.8
+    },
+    "1888": {
+     "men_thousands": 8.7,
+     "women_thousands": 5.83
+    },
+    "1889": {
+     "men_thousands": 8.43,
+     "women_thousands": 5.81
+    },
+    "1890": {
+     "men_thousands": 8.66,
+     "women_thousands": 6.2
+    },
+    "1891": {
+     "men_thousands": 8.45,
+     "women_thousands": 6.4
+    },
+    "1892": {
+     "men_thousands": 9.63,
+     "women_thousands": 7.2
+    },
+    "1893": {
+     "men_thousands": 9.47,
+     "women_thousands": 7.34
+    },
+    "1894": {
+     "men_thousands": 9.62,
+     "women_thousands": 7.8
+    },
+    "1895": {
+     "men_thousands": 9.77,
+     "women_thousands": 7.95
+    },
+    "1896": {
+     "men_thousands": 9.99,
+     "women_thousands": 8.28
+    },
+    "1897": {
+     "men_thousands": 9.71,
+     "women_thousands": 8.2
+    },
+    "1898": {
+     "men_thousands": 10.17,
+     "women_thousands": 9.02
+    },
+    "1899": {
+     "men_thousands": 9.57,
+     "women_thousands": 8.5
+    },
+    "1900": {
+     "men_thousands": 11.24,
+     "women_thousands": 9.98
+    },
+    "1901": {
+     "men_thousands": 10.01,
+     "women_thousands": 9.0
+    },
+    "1902": {
+     "men_thousands": 11.12,
+     "women_thousands": 9.87
+    },
+    "1903": {
+     "men_thousands": 10.92,
+     "women_thousands": 9.86
+    },
+    "1904": {
+     "men_thousands": 11.19,
+     "women_thousands": 10.51
+    },
+    "1905": {
+     "men_thousands": 11.69,
+     "women_thousands": 10.98
+    },
+    "1906": {
+     "men_thousands": 11.72,
+     "women_thousands": 11.11
+    },
+    "1907": {
+     "men_thousands": 12.32,
+     "women_thousands": 11.46
+    },
+    "1908": {
+     "men_thousands": 12.62,
+     "women_thousands": 12.0
+    },
+    "1909": {
+     "men_thousands": 12.78,
+     "women_thousands": 11.81
+    },
+    "1910": {
+     "men_thousands": 13.22,
+     "women_thousands": 12.39
+    },
+    "1911": {
+     "men_thousands": 13.18,
+     "women_thousands": 12.33
+    },
+    "1912": {
+     "men_thousands": 13.88,
+     "women_thousands": 12.94
+    },
+    "1913": {
+     "men_thousands": 13.74,
+     "women_thousands": 13.14
+    },
+    "1914": {
+     "men_thousands": 14.41,
+     "women_thousands": 13.75
+    },
+    "1915": {
+     "men_thousands": 14.3,
+     "women_thousands": 13.51
+    },
+    "1916": {
+     "men_thousands": 14.41,
+     "women_thousands": 13.47
+    },
+    "1917": {
+     "men_thousands": 14.27,
+     "women_thousands": 13.58
+    },
+    "1918": {
+     "men_thousands": 15.16,
+     "women_thousands": 14.46
+    },
+    "1919": {
+     "men_thousands": 14.98,
+     "women_thousands": 14.05
+    },
+    "1920": {
+     "men_thousands": 15.92,
+     "women_thousands": 15.39
+    },
+    "1921": {
+     "men_thousands": 16.24,
+     "women_thousands": 15.57
+    },
+    "1922": {
+     "men_thousands": 15.62,
+     "women_thousands": 15.41
+    },
+    "1923": {
+     "men_thousands": 15.63,
+     "women_thousands": 15.13
+    },
+    "1924": {
+     "men_thousands": 15.82,
+     "women_thousands": 15.73
+    },
+    "1925": {
+     "men_thousands": 15.22,
+     "women_thousands": 15.34
+    },
+    "1926": {
+     "men_thousands": 15.36,
+     "women_thousands": 14.86
+    },
+    "1927": {
+     "men_thousands": 15.38,
+     "women_thousands": 14.91
+    },
+    "1928": {
+     "men_thousands": 15.08,
+     "women_thousands": 14.67
+    },
+    "1929": {
+     "men_thousands": 14.5,
+     "women_thousands": 14.23
+    },
+    "1930": {
+     "men_thousands": 14.91,
+     "women_thousands": 14.36
+    },
+    "1931": {
+     "men_thousands": 14.0,
+     "women_thousands": 13.6
+    },
+    "1932": {
+     "men_thousands": 14.33,
+     "women_thousands": 13.74
+    },
+    "1933": {
+     "men_thousands": 13.44,
+     "women_thousands": 13.11
+    },
+    "1934": {
+     "men_thousands": 13.98,
+     "women_thousands": 13.49
+    },
+    "1935": {
+     "men_thousands": 13.98,
+     "women_thousands": 13.82
+    },
+    "1936": {
+     "men_thousands": 13.96,
+     "women_thousands": 13.62
+    },
+    "1937": {
+     "men_thousands": 14.42,
+     "women_thousands": 14.17
+    },
+    "1938": {
+     "men_thousands": 14.75,
+     "women_thousands": 14.6
+    },
+    "1939": {
+     "men_thousands": 14.82,
+     "women_thousands": 14.24
+    },
+    "1940": {
+     "men_thousands": 15.54,
+     "women_thousands": 14.95
+    },
+    "1941": {
+     "men_thousands": 16.15,
+     "women_thousands": 15.6
+    },
+    "1942": {
+     "men_thousands": 17.89,
+     "women_thousands": 17.05
+    },
+    "1943": {
+     "men_thousands": 18.56,
+     "women_thousands": 17.71
+    },
+    "1944": {
+     "men_thousands": 17.8,
+     "women_thousands": 17.17
+    },
+    "1945": {
+     "men_thousands": 17.87,
+     "women_thousands": 16.87
+    },
+    "1946": {
+     "men_thousands": 21.03,
+     "women_thousands": 19.93
+    },
+    "1947": {
+     "men_thousands": 23.44,
+     "women_thousands": 21.98
+    },
+    "1948": {
+     "men_thousands": 22.71,
+     "women_thousands": 21.4
+    },
+    "1949": {
+     "men_thousands": 23.0,
+     "women_thousands": 21.73
+    },
+    "1950": {
+     "men_thousands": 22.97,
+     "women_thousands": 21.63
+    },
+    "1951": {
+     "men_thousands": 23.92,
+     "women_thousands": 22.46
+    },
+    "1952": {
+     "men_thousands": 24.48,
+     "women_thousands": 23.05
+    },
+    "1953": {
+     "men_thousands": 24.8,
+     "women_thousands": 23.51
+    },
+    "1954": {
+     "men_thousands": 25.81,
+     "women_thousands": 24.32
+    },
+    "1955": {
+     "men_thousands": 26.43,
+     "women_thousands": 24.87
+    },
+    "1956": {
+     "men_thousands": 26.8,
+     "women_thousands": 24.8
+    },
+    "1957": {
+     "men_thousands": 27.59,
+     "women_thousands": 25.59
+    },
+    "1958": {
+     "men_thousands": 27.43,
+     "women_thousands": 25.55
+    },
+    "1959": {
+     "men_thousands": 27.24,
+     "women_thousands": 25.57
+    },
+    "1960": {
+     "men_thousands": 27.5,
+     "women_thousands": 25.72
+    },
+    "1961": {
+     "men_thousands": 27.32,
+     "women_thousands": 25.5
+    },
+    "1962": {
+     "men_thousands": 27.24,
+     "women_thousands": 25.59
+    },
+    "1963": {
+     "men_thousands": 26.93,
+     "women_thousands": 25.19
+    },
+    "1964": {
+     "men_thousands": 26.59,
+     "women_thousands": 24.77
+    },
+    "1965": {
+     "men_thousands": 25.22,
+     "women_thousands": 23.72
+    },
+    "1966": {
+     "men_thousands": 24.18,
+     "women_thousands": 22.75
+    },
+    "1967": {
+     "men_thousands": 23.76,
+     "women_thousands": 22.25
+    },
+    "1968": {
+     "men_thousands": 23.93,
+     "women_thousands": 22.23
+    },
+    "1969": {
+     "men_thousands": 24.16,
+     "women_thousands": 22.98
+    },
+    "1970": {
+     "men_thousands": 24.98,
+     "women_thousands": 23.5
+    },
+    "1971": {
+     "men_thousands": 23.99,
+     "women_thousands": 22.52
+    },
+    "1972": {
+     "men_thousands": 22.6,
+     "women_thousands": 21.02
+    },
+    "1973": {
+     "men_thousands": 21.49,
+     "women_thousands": 20.59
+    },
+    "1974": {
+     "men_thousands": 21.39,
+     "women_thousands": 20.58
+    },
+    "1975": {
+     "men_thousands": 21.33,
+     "women_thousands": 20.45
+    },
+    "1976": {
+     "men_thousands": 21.43,
+     "women_thousands": 20.39
+    },
+    "1977": {
+     "men_thousands": 21.9,
+     "women_thousands": 20.8
+    },
+    "1978": {
+     "men_thousands": 21.8,
+     "women_thousands": 20.7
+    },
+    "1979": {
+     "men_thousands": 22.27,
+     "women_thousands": 21.42
+    },
+    "1980": {
+     "men_thousands": 22.6,
+     "women_thousands": 22.03
+    },
+    "1981": {
+     "men_thousands": 22.67,
+     "women_thousands": 21.6
+    },
+    "1982": {
+     "men_thousands": 22.64,
+     "women_thousands": 21.84
+    },
+    "1983": {
+     "men_thousands": 22.48,
+     "women_thousands": 21.16
+    },
+    "1984": {
+     "men_thousands": 22.03,
+     "women_thousands": 21.41
+    },
+    "1985": {
+     "men_thousands": 22.2,
+     "women_thousands": 21.56
+    },
+    "1986": {
+     "men_thousands": 22.08,
+     "women_thousands": 21.25
+    },
+    "1987": {
+     "men_thousands": 21.92,
+     "women_thousands": 21.02
+    },
+    "1988": {
+     "men_thousands": 22.31,
+     "women_thousands": 21.46
+    },
+    "1989": {
+     "men_thousands": 23.03,
+     "women_thousands": 21.9
+    },
+    "1990": {
+     "men_thousands": 23.41,
+     "women_thousands": 22.38
+    },
+    "1991": {
+     "men_thousands": 22.98,
+     "women_thousands": 22.03
+    },
+    "1992": {
+     "men_thousands": 22.91,
+     "women_thousands": 21.51
+    },
+    "1993": {
+     "men_thousands": 22.32,
+     "women_thousands": 21.16
+    },
+    "1994": {
+     "men_thousands": 21.76,
+     "women_thousands": 20.72
+    },
+    "1995": {
+     "men_thousands": 21.44,
+     "women_thousands": 20.47
+    },
+    "1996": {
+     "men_thousands": 21.23,
+     "women_thousands": 20.07
+    },
+    "1997": {
+     "men_thousands": 20.99,
+     "women_thousands": 20.26
+    },
+    "1998": {
+     "men_thousands": 21.27,
+     "women_thousands": 20.37
+    },
+    "1999": {
+     "men_thousands": 21.42,
+     "women_thousands": 20.26
+    },
+    "2000": {
+     "men_thousands": 21.6,
+     "women_thousands": 20.93
+    },
+    "2001": {
+     "men_thousands": 21.45,
+     "women_thousands": 20.55
+    },
+    "2002": {
+     "men_thousands": 21.32,
+     "women_thousands": 20.45
+    },
+    "2003": {
+     "men_thousands": 21.58,
+     "women_thousands": 20.68
+    },
+    "2004": {
+     "men_thousands": 21.68,
+     "women_thousands": 20.83
+    },
+    "2005": {
+     "men_thousands": 21.77,
+     "women_thousands": 20.73
+    },
+    "2006": {
+     "men_thousands": 21.07,
+     "women_thousands": 20.18
+    }
+   }
+  },
+  "rsn_table_8_pct_below_max": {
+   "source": "rsn",
+   "caption_line": 653,
+   "description": "Percentage of all, male and female workers with earnings below the taxable maximum, 1951-2006 (Supplement and EPUF columns; EPUF columns are the reproduction target)",
+   "unit": "percent, 1 decimal",
+   "rows": {
+    "1951": {
+     "supplement_all": 75.5,
+     "supplement_men": 64.6,
+     "supplement_women": 96.7,
+     "epuf_all": 75.4,
+     "epuf_men": 64.7,
+     "epuf_women": 96.6
+    },
+    "1952": {
+     "supplement_all": 72.1,
+     "supplement_men": 60.0,
+     "supplement_women": 95.4,
+     "epuf_all": 72.2,
+     "epuf_men": 60.1,
+     "epuf_women": 95.3
+    },
+    "1953": {
+     "supplement_all": 68.8,
+     "supplement_men": 55.5,
+     "supplement_women": 93.8,
+     "epuf_all": 68.8,
+     "epuf_men": 55.5,
+     "epuf_women": 93.8
+    },
+    "1954": {
+     "supplement_all": 68.4,
+     "supplement_men": 55.4,
+     "supplement_women": 93.0,
+     "epuf_all": 68.4,
+     "epuf_men": 55.4,
+     "epuf_women": 93.1
+    },
+    "1955": {
+     "supplement_all": 74.4,
+     "supplement_men": 63.4,
+     "supplement_women": 95.9,
+     "epuf_all": 74.7,
+     "epuf_men": 63.8,
+     "epuf_women": 95.8
+    },
+    "1956": {
+     "supplement_all": 71.6,
+     "supplement_men": 59.7,
+     "supplement_women": 94.5,
+     "epuf_all": 71.8,
+     "epuf_men": 59.9,
+     "epuf_women": 94.6
+    },
+    "1957": {
+     "supplement_all": 70.1,
+     "supplement_men": 58.7,
+     "supplement_women": 93.1,
+     "epuf_all": 70.2,
+     "epuf_men": 58.8,
+     "epuf_women": 93.0
+    },
+    "1958": {
+     "supplement_all": 69.4,
+     "supplement_men": 58.4,
+     "supplement_women": 91.8,
+     "epuf_all": 69.6,
+     "epuf_men": 58.6,
+     "epuf_women": 91.7
+    },
+    "1959": {
+     "supplement_all": 73.3,
+     "supplement_men": 62.7,
+     "supplement_women": 94.3,
+     "epuf_all": 73.3,
+     "epuf_men": 62.6,
+     "epuf_women": 94.2
+    },
+    "1960": {
+     "supplement_all": 72.0,
+     "supplement_men": 60.9,
+     "supplement_women": 93.5,
+     "epuf_all": 71.9,
+     "epuf_men": 60.7,
+     "epuf_women": 93.4
+    },
+    "1961": {
+     "supplement_all": 70.8,
+     "supplement_men": 59.6,
+     "supplement_women": 92.4,
+     "epuf_all": 70.8,
+     "epuf_men": 59.6,
+     "epuf_women": 92.4
+    },
+    "1962": {
+     "supplement_all": 68.8,
+     "supplement_men": 57.1,
+     "supplement_women": 91.1,
+     "epuf_all": 68.8,
+     "epuf_men": 57.0,
+     "epuf_women": 91.1
+    },
+    "1963": {
+     "supplement_all": 67.5,
+     "supplement_men": 55.5,
+     "supplement_women": 90.0,
+     "epuf_all": 67.4,
+     "epuf_men": 55.4,
+     "epuf_women": 90.0
+    },
+    "1964": {
+     "supplement_all": 65.5,
+     "supplement_men": 53.1,
+     "supplement_women": 88.5,
+     "epuf_all": 65.5,
+     "epuf_men": 53.0,
+     "epuf_women": 88.5
+    },
+    "1965": {
+     "supplement_all": 63.9,
+     "supplement_men": 51.0,
+     "supplement_women": 87.3,
+     "epuf_all": 63.9,
+     "epuf_men": 50.8,
+     "epuf_women": 87.4
+    },
+    "1966": {
+     "supplement_all": 75.8,
+     "supplement_men": 64.4,
+     "supplement_women": 95.6,
+     "epuf_all": 75.7,
+     "epuf_men": 64.2,
+     "epuf_women": 95.7
+    },
+    "1967": {
+     "supplement_all": 73.6,
+     "supplement_men": 61.5,
+     "supplement_women": 94.2,
+     "epuf_all": 74.0,
+     "epuf_men": 62.0,
+     "epuf_women": 94.5
+    },
+    "1968": {
+     "supplement_all": 78.6,
+     "supplement_men": 68.0,
+     "supplement_women": 96.3,
+     "epuf_all": 78.6,
+     "epuf_men": 67.9,
+     "epuf_women": 96.3
+    },
+    "1969": {
+     "supplement_all": 75.5,
+     "supplement_men": 62.8,
+     "supplement_women": 96.0,
+     "epuf_all": 75.8,
+     "epuf_men": 63.9,
+     "epuf_women": 95.0
+    },
+    "1970": {
+     "supplement_all": 74.0,
+     "supplement_men": 61.8,
+     "supplement_women": 93.5,
+     "epuf_all": 73.9,
+     "epuf_men": 61.6,
+     "epuf_women": 93.5
+    },
+    "1971": {
+     "supplement_all": 71.7,
+     "supplement_men": 59.1,
+     "supplement_women": 91.7,
+     "epuf_all": 71.6,
+     "epuf_men": 58.9,
+     "epuf_women": 91.8
+    },
+    "1972": {
+     "supplement_all": 75.0,
+     "supplement_men": 62.9,
+     "supplement_women": 93.9,
+     "epuf_all": 74.9,
+     "epuf_men": 62.7,
+     "epuf_women": 93.8
+    },
+    "1973": {
+     "supplement_all": 79.7,
+     "supplement_men": 68.9,
+     "supplement_women": 96.2,
+     "epuf_all": 79.6,
+     "epuf_men": 68.6,
+     "epuf_women": 96.2
+    },
+    "1974": {
+     "supplement_all": 84.9,
+     "supplement_men": 76.2,
+     "supplement_women": 97.8,
+     "epuf_all": 84.8,
+     "epuf_men": 76.0,
+     "epuf_women": 97.8
+    },
+    "1975": {
+     "supplement_all": 84.9,
+     "supplement_men": 76.4,
+     "supplement_women": 97.5,
+     "epuf_all": 85.0,
+     "epuf_men": 76.4,
+     "epuf_women": 97.5
+    },
+    "1976": {
+     "supplement_all": 85.1,
+     "supplement_men": 76.3,
+     "supplement_women": 97.5,
+     "epuf_all": 85.0,
+     "epuf_men": 76.2,
+     "epuf_women": 97.5
+    },
+    "1977": {
+     "supplement_all": 85.2,
+     "supplement_men": 76.3,
+     "supplement_women": 97.5,
+     "epuf_all": 85.2,
+     "epuf_men": 76.3,
+     "epuf_women": 97.5
+    },
+    "1978": {
+     "supplement_all": 84.6,
+     "supplement_men": 75.4,
+     "supplement_women": 97.1,
+     "epuf_all": 84.6,
+     "epuf_men": 75.4,
+     "epuf_women": 97.3
+    },
+    "1979": {
+     "supplement_all": 90.0,
+     "supplement_men": 83.6,
+     "supplement_women": 98.6,
+     "epuf_all": 90.1,
+     "epuf_men": 83.7,
+     "epuf_women": 98.8
+    },
+    "1980": {
+     "supplement_all": 91.2,
+     "supplement_men": 85.5,
+     "supplement_women": 98.8,
+     "epuf_all": 91.3,
+     "epuf_men": 85.5,
+     "epuf_women": 98.9
+    },
+    "1981": {
+     "supplement_all": 92.4,
+     "supplement_men": 87.4,
+     "supplement_women": 99.0,
+     "epuf_all": 92.4,
+     "epuf_men": 87.3,
+     "epuf_women": 99.0
+    },
+    "1982": {
+     "supplement_all": 92.9,
+     "supplement_men": 88.3,
+     "supplement_women": 98.9,
+     "epuf_all": 92.9,
+     "epuf_men": 88.2,
+     "epuf_women": 99.0
+    },
+    "1983": {
+     "supplement_all": 93.7,
+     "supplement_men": 89.6,
+     "supplement_women": 99.0,
+     "epuf_all": 93.7,
+     "epuf_men": 89.6,
+     "epuf_women": 99.0
+    },
+    "1984": {
+     "supplement_all": 93.6,
+     "supplement_men": 89.4,
+     "supplement_women": 98.9,
+     "epuf_all": 93.6,
+     "epuf_men": 89.4,
+     "epuf_women": 98.9
+    },
+    "1985": {
+     "supplement_all": 93.5,
+     "supplement_men": 89.3,
+     "supplement_women": 98.8,
+     "epuf_all": 93.5,
+     "epuf_men": 89.3,
+     "epuf_women": 98.8
+    },
+    "1986": {
+     "supplement_all": 93.8,
+     "supplement_men": 89.7,
+     "supplement_women": 98.7,
+     "epuf_all": 93.8,
+     "epuf_men": 89.8,
+     "epuf_women": 98.7
+    },
+    "1987": {
+     "supplement_all": 93.9,
+     "supplement_men": 89.9,
+     "supplement_women": 98.6,
+     "epuf_all": 93.8,
+     "epuf_men": 89.9,
+     "epuf_women": 98.6
+    },
+    "1988": {
+     "supplement_all": 93.5,
+     "supplement_men": 89.4,
+     "supplement_women": 98.3,
+     "epuf_all": 93.5,
+     "epuf_men": 89.4,
+     "epuf_women": 98.4
+    },
+    "1989": {
+     "supplement_all": 93.8,
+     "supplement_men": 90.1,
+     "supplement_women": 98.3,
+     "epuf_all": 93.8,
+     "epuf_men": 90.0,
+     "epuf_women": 98.3
+    },
+    "1990": {
+     "supplement_all": 94.3,
+     "supplement_men": 90.9,
+     "supplement_women": 98.4,
+     "epuf_all": 94.3,
+     "epuf_men": 90.9,
+     "epuf_women": 98.4
+    },
+    "1991": {
+     "supplement_all": 94.4,
+     "supplement_men": 91.1,
+     "supplement_women": 98.3,
+     "epuf_all": 94.4,
+     "epuf_men": 91.1,
+     "epuf_women": 98.3
+    },
+    "1992": {
+     "supplement_all": 94.3,
+     "supplement_men": 91.0,
+     "supplement_women": 98.1,
+     "epuf_all": 94.3,
+     "epuf_men": 91.0,
+     "epuf_women": 98.1
+    },
+    "1993": {
+     "supplement_all": 94.4,
+     "supplement_men": 91.3,
+     "supplement_women": 98.1,
+     "epuf_all": 94.4,
+     "epuf_men": 91.3,
+     "epuf_women": 98.1
+    },
+    "1994": {
+     "supplement_all": 94.6,
+     "supplement_men": 91.4,
+     "supplement_women": 98.1,
+     "epuf_all": 94.6,
+     "epuf_men": 91.5,
+     "epuf_women": 98.1
+    },
+    "1995": {
+     "supplement_all": 94.2,
+     "supplement_men": 91.0,
+     "supplement_women": 97.9,
+     "epuf_all": 94.2,
+     "epuf_men": 91.0,
+     "epuf_women": 97.9
+    },
+    "1996": {
+     "supplement_all": 93.9,
+     "supplement_men": 90.6,
+     "supplement_women": 97.7,
+     "epuf_all": 93.9,
+     "epuf_men": 90.6,
+     "epuf_women": 97.7
+    },
+    "1997": {
+     "supplement_all": 93.8,
+     "supplement_men": 90.5,
+     "supplement_women": 97.6,
+     "epuf_all": 93.8,
+     "epuf_men": 90.5,
+     "epuf_women": 97.6
+    },
+    "1998": {
+     "supplement_all": 93.7,
+     "supplement_men": 90.3,
+     "supplement_women": 97.5,
+     "epuf_all": 93.7,
+     "epuf_men": 90.3,
+     "epuf_women": 97.5
+    },
+    "1999": {
+     "supplement_all": 93.9,
+     "supplement_men": 90.7,
+     "supplement_women": 97.5,
+     "epuf_all": 93.9,
+     "epuf_men": 90.7,
+     "epuf_women": 97.5
+    },
+    "2000": {
+     "supplement_all": 93.8,
+     "supplement_men": 90.6,
+     "supplement_women": 97.4,
+     "epuf_all": 93.8,
+     "epuf_men": 90.6,
+     "epuf_women": 97.4
+    },
+    "2001": {
+     "supplement_all": 94.1,
+     "supplement_men": 91.0,
+     "supplement_women": 97.5,
+     "epuf_all": 94.0,
+     "epuf_men": 91.0,
+     "epuf_women": 97.4
+    },
+    "2002": {
+     "supplement_all": 94.6,
+     "supplement_men": 91.8,
+     "supplement_women": 97.7,
+     "epuf_all": 94.5,
+     "epuf_men": 91.7,
+     "epuf_women": 97.6
+    },
+    "2003": {
+     "supplement_all": 94.5,
+     "supplement_men": 91.8,
+     "supplement_women": 97.5,
+     "epuf_all": 94.5,
+     "epuf_men": 91.7,
+     "epuf_women": 97.5
+    },
+    "2004": {
+     "supplement_all": 94.1,
+     "supplement_men": 91.2,
+     "supplement_women": 97.3,
+     "epuf_all": 94.1,
+     "epuf_men": 91.2,
+     "epuf_women": 97.3
+    },
+    "2005": {
+     "supplement_all": 93.9,
+     "supplement_men": 91.0,
+     "supplement_women": 97.1,
+     "epuf_all": 93.9,
+     "epuf_men": 90.9,
+     "epuf_women": 97.1
+    },
+    "2006": {
+     "supplement_all": 94.0,
+     "supplement_men": 91.1,
+     "supplement_women": 97.1,
+     "epuf_all": 93.9,
+     "epuf_men": 91.0,
+     "epuf_women": 97.1
+    }
+   }
+  }
+ }
+}
