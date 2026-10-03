@@ -98,13 +98,57 @@ marriage_episodes=None, conventions=None, ...)` follows the recorded
 Butrica–Uccello measure: average wage-indexed earnings at ages 22–62,
 uncapped for the own measure, including uncovered labor earnings.
 
-Unrecorded conventions are named in `REPORT_EARNINGS_BUILDER_DEFAULTS`:
-inclusive ages, NAWI indexing to 60, nominal earnings thereafter, average
-over ages with own career rows, shared uncapped earnings, year-end
-marriage, and missing-spouse treatment. Unlike payroll union-year sharing,
-the default report average uses own covered-age support. The optional
-`ALL_AGES` divisor treats absent ages as zero over 41 years. Coverage and
-imputation flags accompany either choice.
+The hash-verified cleared extract is
+`exercise2-definitions-cleared-20260924.md`, SHA-256
+`a3978b683b4275424b6d12e9fe45f021fae277ccf9731a7883952564b6ed0384`.
+Own earnings are uncapped and include uncovered labor earnings (line 223).
+Shared earnings assign half the couple's annual earnings while married
+and own earnings otherwise (lines 66 and 223). Both average wage-indexed
+earnings at ages 22–62 (lines 65–66 and 223), with **41 years for every
+individual** (line 227). Default `REQUIRE_COMPLETE_AGES` preserves that
+41-year divisor and returns `not computed` for incomplete supplied
+histories; a missing year is never silently interpreted as zero. Default
+`NOT_COMPUTED` also refuses unavailable married-year spouse earnings
+or unknown marital states. Complete observed zero histories compute zero.
+
+`COVERED_AGES` retains the earlier sparse-history average as an explicit
+sensitivity, and `ALL_AGES` explicitly assigns zero to absent own ages.
+`OWN_ONLY` explicitly retains the earlier missing-spouse treatment, with
+missing spouse years counted. Each result records these departures from
+the complete Report definition in `report_definition_departures`.
+
+The extract leaves the wage-index base open. `report_nawi_index` and
+`report_index_age` propose SSA NAWI to age 60 with later earnings nominal.
+Other named builder conventions pending registration are
+`report_year_end_marriage` (including separated as married),
+`report_missing_earnings`, `report_missing_spouse`,
+`report_missing_spouse_year`, `report_unknown_marriage`,
+`report_history_roster` (provided roster gaps are unavailable; without a
+roster the episode universe is treated as complete),
+`report_spouse_history` (each person's own spouse links govern), and
+`report_overlap_marriage` (latest-start marriage governs). The source
+sharing formula and 41-year divisor are recorded definitions, not
+builder defaults. No coverage or missing-earnings assumption is supplied
+by the extract; incomplete records stay unavailable by default.
+
+Exact Report race rows are White, non-hispanic; Black, non-hispanic;
+Hispanic; Other (lines 58 and 86), with Other glossed as other minority
+groups including Asian and Native American people (line 229). Exact
+education rows are High school dropout; High school graduate; College
+graduate (lines 59 and 87). Exact labor-force rows are Less than 20 years;
+20 to 29 years; 30 to 34 years; 35 or more years (lines 60 and 88).
+**Lines 231 and 327 explicitly say education and labor-force definitions
+are not stated**. `report_education_mapping` and
+`report_labor_force_experience` remain unavailable until registration:
+no schooling boundary, some-college allocation, age window, earnings
+threshold, or count of positive-earnings career years is invented.
+
+Own/shared quintile labels are 1st Quintile through 5th Quintile (lines
+61–62 and 89–90). `report_quintile_population` is unavailable (lines 231
+and 327), and `report_quintile_order` and `report_quintile_ties` require
+registration because the extract does not state direction or tie rules.
+`report_marital_status_timing` is likewise unavailable (lines 231 and
+327); this is distinct from the proposed annual shared-earnings convention.
 
 `load_mint8_scheme()` reads the pinned category definitions for initial
 AIME, own lifetime payroll tax, and shared lifetime payroll tax.
@@ -141,7 +185,9 @@ weight totals zero, shares remain undefined.
 `scripts/extract_lifetime_measure_sources.py --check` reproduces pinned
 JSON from captured SSA OACT tax/interest pages and the MINT user guide,
 and checks effective interest against both per-fund historical pages.
-The cleared row-category capture contains labels only, never data cells.
+The canonical guide is `data/external/mint8_table_user_guide.source.html`;
+the canonical row-label capture is `data/external/mint8_row_categories.json`
+and contains labels only, never data cells.
 Source hashes and element/table locators accompany every extraction.
 The captured MINT source is certified 2026-04-01; the dispatch brief's
 2025-10-01 description is an older vintage.

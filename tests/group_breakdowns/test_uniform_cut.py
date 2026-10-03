@@ -243,3 +243,38 @@ def test_missing_side_person_refuses():
             pd.DataFrame({"person_id": [1], "attr": [0]}),
             "person_id",
         )
+
+
+def test_report_rows_use_the_cleared_labels_and_leave_open_definitions_unavailable(
+    u0_breakdown,
+):
+    report = groups.ga.load_schemes()["schemes"]["boomers2004"]
+    scheme = groups._scheme("U0")
+    keys = {
+        "Race/Ethnicity": "race_ethnicity_report4",
+        "Education": "education_report3",
+        "Labor Force Experience": "labor_force_experience_report",
+        "Lifetime Earnings (Own)": "lifetime_earnings_own",
+        "Lifetime Earnings (Shared)": "lifetime_earnings_shared",
+    }
+    for row in report["row_groups"]:
+        dimension = scheme.dimension(keys[row["group"]])
+        assert list(dimension.labels) == row["labels"]
+        assert (
+            "a3978b683b4275424b6d12e9fe45f021fae277ccf9731a7883952564b6ed0384"
+            in dimension.source
+        )
+        assert row["locator"] in dimension.source
+    assert (
+        u0_breakdown["report_builder_defaults"] == report["builder_defaults"]
+    )
+    result = u0_breakdown["groups"]["adjusted"]
+    n_rows = _dimension(result, "total")["cells"][0]["counts"]["n_rows"]
+    for key in (
+        "education_report3",
+        "labor_force_experience_report",
+        "lifetime_earnings_own",
+        "lifetime_earnings_shared",
+    ):
+        assert _dimension(result, key)["unclassified"]["n_rows"] == n_rows
+        assert key in u0_breakdown["not_computed"]

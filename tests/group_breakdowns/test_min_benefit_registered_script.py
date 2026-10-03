@@ -83,7 +83,7 @@ def _git(head: str = COMMIT, porcelain: str = ""):
     def fake(*args: str) -> str:
         if args == ("rev-parse", "HEAD"):
             return head
-        if args == ("status", "--porcelain"):
+        if args == ("status", "--porcelain", "--untracked-files=all"):
             return porcelain
         raise AssertionError(args)
 
@@ -160,7 +160,8 @@ def _preflight(tmp_path, document=None, **kwargs):
     arguments = dict(
         registration_pointer=POINTER,
         registered_commit=COMMIT,
-        output=tmp_path / "out" / "groups_posthoc_v1.json",
+        output=tmp_path / "runs" / "invented_groups_posthoc_v1.json",
+        root=tmp_path,
         git=_git(),
         parent_path=path,
         parent_sha256=digest,
@@ -176,7 +177,7 @@ def test_the_registered_state_passes_preflight(tmp_path):
     state = _preflight(tmp_path)
     assert state["head"] == COMMIT
     assert state["binding"]["registered_commit"] == mb.PARENT_REGISTERED_COMMIT
-    assert not (tmp_path / "out").exists()
+    assert not (tmp_path / "runs").exists()
 
 
 @pytest.mark.parametrize(
@@ -215,12 +216,12 @@ def test_the_registered_state_passes_preflight(tmp_path):
 def test_non_registered_states_are_refused(tmp_path, kwargs, match):
     with pytest.raises(ValueError, match=match):
         _preflight(tmp_path, **kwargs)
-    assert not (tmp_path / "out").exists()
+    assert not (tmp_path / "runs").exists()
 
 
 @pytest.mark.parametrize("suffix", [".json", ".env.json"])
 def test_an_existing_output_or_sidecar_is_refused(tmp_path, suffix):
-    output = tmp_path / "out" / "groups_posthoc_v1.json"
+    output = tmp_path / "runs" / "invented_groups_posthoc_v1.json"
     output.parent.mkdir()
     existing = output.with_suffix(suffix)
     existing.write_text("{}")
@@ -412,11 +413,12 @@ class _Spy:
 
 def _execute(tmp_path, stand_ins, document, **overrides):
     path, digest = _write_parent(tmp_path, document)
-    output = tmp_path / "out" / "groups_posthoc_v1.json"
+    output = tmp_path / "runs" / "invented_groups_posthoc_v1.json"
     arguments = dict(
         registration_pointer=POINTER,
         registered_commit=COMMIT,
         output=output,
+        root=tmp_path,
         argv=["--registration-pointer", POINTER],
         git=_git(),
         track_m_script=SimpleNamespace(
@@ -461,7 +463,7 @@ def test_a_moved_cell_refuses_before_any_group_attribute(tmp_path, stand_ins):
     assert len(reads.calls) == 1
     assert side_frames.calls == []
     assert f"tabulation.cells[{index}].share_percent" in str(error.value)
-    assert not (tmp_path / "out").exists()
+    assert not (tmp_path / "runs").exists()
 
 
 def test_another_environment_refuses_before_the_cohort_is_read(
@@ -479,7 +481,7 @@ def test_another_environment_refuses_before_the_cohort_is_read(
             load_cohort_inputs=reads,
         )
     assert reads.calls == []
-    assert not (tmp_path / "out").exists()
+    assert not (tmp_path / "runs").exists()
 
 
 def test_other_parameter_pins_refuse_before_the_cohort_is_read(

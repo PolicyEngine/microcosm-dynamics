@@ -41,11 +41,12 @@ Resolution rules (``RULES_VERSION``), decided 2026-10-01:
 
 Report categories come from the data-driven schemes in
 ``data/external/group_category_schemes_v1.json`` (SSA's MINT 8 Table
-User Guide; Butrica and Uccello 2004's rows as this repository records
-them): each scheme column has a ``<column>_status`` of ``assigned``,
+User Guide; Butrica and Uccello 2004's cleared definitions extract
+``exercise2-definitions-cleared-20260924.md``, lines 58–59, 86–87 and
+229–231): each scheme column has a ``<column>_status`` of ``assigned``,
 ``attribute_unknown`` or ``unresolved:<reason>`` for values the source
 does not place (a U.S.-territory birth for MINT 8; the Report's education
-rows, whose numerical definitions are absent from the cleared sources).
+rows, which the extract explicitly leaves undefined at lines 231 and 327).
 
 This module computes attributes only. It opens no outcome and computes
 no group share; tabulation code receives its frame.
@@ -93,7 +94,7 @@ SCHEMES_PATH = (
 )
 #: SHA-256 of the committed scheme file; a different file is refused.
 SCHEMES_SHA256 = (
-    "da15a940d85dc1b8ea49480ad5ae5d0c4179ff916571bc44c9d901e22c6772c0"
+    "243833aa0fa1cca8968df4b8e93753d92e77beeee8939f3782310812a3016797"
 )
 
 KNOWN = "known"
@@ -1076,6 +1077,19 @@ def build_group_attributes(
         "schemes_sha256": hashlib.sha256(
             json.dumps(schemes, sort_keys=True).encode()
         ).hexdigest(),
+        "category_scheme_sources": deepcopy(schemes.get("sources", {})),
+        "report_builder_defaults": deepcopy(
+            schemes["schemes"]
+            .get("boomers2004", {})
+            .get("builder_defaults", {})
+        ),
+        "report_dimension_conventions": {
+            dimension: deepcopy(spec.get("assumptions", []))
+            for dimension, spec in schemes["schemes"]
+            .get("boomers2004", {})
+            .get("dimensions", {})
+            .items()
+        },
         "content_sha256": content_sha256(frame),
     }
     return GroupAttributes(frame=frame, provenance=provenance)

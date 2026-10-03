@@ -4,8 +4,8 @@
   "source_url": "https://www.ssa.gov/policy/docs/projections/user-guide.html",
   "document": "Social Security Administration, Table User Guide - Modeling Income in the Near Term (MINT) 8",
   "page_title": "Table User Guide - Modeling Income in the Near Term (MINT) 8",
-  "date_certified": "2025-10-01",
-  "date_certified_locator": "<meta name=\"DCTERMS:dateCertified\" content=\"2025-10-01\" /> in the committed source",
+  "date_certified": "2026-04-01",
+  "date_certified_locator": "<meta name=\"DCTERMS:dateCertified\" content=\"2026-04-01\" /> in the committed source",
   "sections_of_record": [
     "Definitions—Table Rows and Columns > Characteristic Subgroups—Table Rows",
     "Measures—Column Headings > Threshold for Categorization in the “Decrease” or “Increase” Groups",
@@ -13,10 +13,89 @@
     "Additional Notes > Sample Size Restrictions"
   ],
   "retrieval_date": "2026-10-01",
-  "fetch_method": "Internet Archive raw capture http://web.archive.org/web/20260419231110id_/https://www.ssa.gov/policy/docs/projections/user-guide.html, fetched by the MINT-categories lane (workflow wf_35b496b0-085, orchestrating session 95606380, 2026-10-01) after a direct fetch of ssa.gov returned an Akamai 'Access Denied' page. The capture is identified by its Wayback CDX record: the SHA-1 (base32) of the committed bytes, N2TYAIU2LPKHETR3M5H4E6MUZLL4KFVO, equals the CDX digest of capture 20260419231110 (status 200), checked 2026-10-01 against http://web.archive.org/cdx/search/cdx?url=ssa.gov/policy/docs/projections/user-guide.html.",
-  "source_sha256": "278d5d19c1b50f1d354db1ada515288af563c035a67eb16fb971d25700fb94e9",
-  "source_sha1_base32": "N2TYAIU2LPKHETR3M5H4E6MUZLL4KFVO",
-  "source_length_bytes": 73926,
-  "consumed_by": "src/populace_dynamics/estimates/group_breakdown.py (MINT8 category definitions, the change threshold, the percent-change formula and the disclosure rule; verify_mint8_sources checks every quoted definition against this file's text)",
-  "note": "Methods page only: it defines MINT8's table rows and columns and prints no projection result. It is not a MINT policy-option table."
+  "fetch_method": "Direct HTTPS GET of the live ssa.gov page with curl -A 'Wget/1.21.4' on 2026-10-01 (HTTP 200, content-type text/html; charset=UTF-8; response Date header Thu, 01 Oct 2026 22:31:33-34 GMT). The body is committed byte for byte. A per-request Akamai mPulse script in <head> changes between fetches; an earlier fetch the same day parsed to the identical tables.",
+  "source_sha256": "8d5bc3f0de17831c2ed07383003257a63bb657df179d0c54868fda052f23f100",
+  "source_sha1_base32": "G25YXCY3CTXDYDNL2WPUODS3HDOHFEOE",
+  "source_length_bytes": 73967,
+  "consumed_by": [
+    "data/external/group_category_schemes_v1.json (cohorts/group_attributes.py)",
+    "src/populace_dynamics/estimates/group_breakdown.py",
+    "scripts/extract_lifetime_measure_sources.py (estimates/lifetime_measures.py)"
+  ],
+  "note": "Methods page only: it defines MINT8's table rows and columns and prints no projection result. It is not a MINT policy-option table.",
+  "acquired_by": "Claude Code (Opus 5.5), NASI follow-up package G2 (branch nasi/g2-lifetime-measures)",
+  "consolidation": {
+    "decision": "Keep the exact G2 live SSA response body certified 2026-04-01, the latest certification of the three captures. The G1 and G3 bodies certified 2025-10-01 were byte-identical. Only page metadata, scripts and site chrome changed: all main-content bytes are identical across all three captures.",
+    "content_start_locator": "<div id=\"content\" role=\"main\">",
+    "content_end_locator": "<!-- END COLUMN, ROW, GRID, CONTENT -->",
+    "content_sha256": "440f619d6306fea7e793c21b7bea8ef77f7ef6697d64d05cf384adfea4dc197a",
+    "snapshots": [
+      {
+        "original_file": "data/external/mint8_table_user_guide.source.html",
+        "source_sha256": "278d5d19c1b50f1d354db1ada515288af563c035a67eb16fb971d25700fb94e9",
+        "source_length_bytes": 73926,
+        "date_certified": "2025-10-01",
+        "content_sha256": "440f619d6306fea7e793c21b7bea8ef77f7ef6697d64d05cf384adfea4dc197a",
+        "original_provenance": {
+          "schema_version": "external_source_provenance.v1",
+          "committed_source_file": "data/external/mint8_table_user_guide.source.html",
+          "source_url": "https://www.ssa.gov/policy/docs/projections/user-guide.html",
+          "document": "Social Security Administration, Table User Guide - Modeling Income in the Near Term (MINT) 8",
+          "page_title": "Table User Guide - Modeling Income in the Near Term (MINT) 8",
+          "date_certified": "2025-10-01",
+          "date_certified_locator": "<meta name=\"DCTERMS:dateCertified\" content=\"2025-10-01\" /> in the committed source",
+          "sections_of_record": [
+            "Definitions—Table Rows and Columns > Characteristic Subgroups—Table Rows",
+            "Measures—Column Headings > Threshold for Categorization in the “Decrease” or “Increase” Groups",
+            "Measures—Column Headings > Percent Change Values",
+            "Additional Notes > Sample Size Restrictions"
+          ],
+          "retrieval_date": "2026-10-01",
+          "fetch_method": "Internet Archive raw capture http://web.archive.org/web/20260419231110id_/https://www.ssa.gov/policy/docs/projections/user-guide.html, fetched by the MINT-categories lane (workflow wf_35b496b0-085, orchestrating session 95606380, 2026-10-01) after a direct fetch of ssa.gov returned an Akamai 'Access Denied' page. The capture is identified by its Wayback CDX record: the SHA-1 (base32) of the committed bytes, N2TYAIU2LPKHETR3M5H4E6MUZLL4KFVO, equals the CDX digest of capture 20260419231110 (status 200), checked 2026-10-01 against http://web.archive.org/cdx/search/cdx?url=ssa.gov/policy/docs/projections/user-guide.html.",
+          "source_sha256": "278d5d19c1b50f1d354db1ada515288af563c035a67eb16fb971d25700fb94e9",
+          "source_sha1_base32": "N2TYAIU2LPKHETR3M5H4E6MUZLL4KFVO",
+          "source_length_bytes": 73926,
+          "consumed_by": "src/populace_dynamics/estimates/group_breakdown.py (MINT8 category definitions, the change threshold, the percent-change formula and the disclosure rule; verify_mint8_sources checks every quoted definition against this file's text)",
+          "note": "Methods page only: it defines MINT8's table rows and columns and prints no projection result. It is not a MINT policy-option table."
+        }
+      },
+      {
+        "original_file": "data/external/ssa_mint8_table_user_guide.source.html",
+        "source_sha256": "278d5d19c1b50f1d354db1ada515288af563c035a67eb16fb971d25700fb94e9",
+        "source_length_bytes": 73926,
+        "date_certified": "2025-10-01",
+        "content_sha256": "440f619d6306fea7e793c21b7bea8ef77f7ef6697d64d05cf384adfea4dc197a",
+        "original_provenance": {
+          "schema_version": "external_source_provenance.v1",
+          "committed_source_file": "data/external/ssa_mint8_table_user_guide.source.html",
+          "source_url": "https://www.ssa.gov/policy/docs/projections/user-guide.html",
+          "document": "SSA Office of Research, Evaluation, and Statistics — Table User Guide—Modeling Income in the Near Term (MINT) 8",
+          "date_certified": "2025-10-01 (the page's DCTERMS:dateCertified meta tag)",
+          "section_of_record": "Definitions—Table Rows and Columns > Characteristic Subgroups—Table Rows (race/ethnicity, country of birth, education and lifetime quintile dimensions); Explanation of Table Types > Benefit/Tax Ratios (present-value interest rate).",
+          "fetch_method": "Exact response body of the Internet Archive capture https://web.archive.org/web/20260419231110id_/https://www.ssa.gov/policy/docs/projections/user-guide.html (direct requests to ssa.gov returned an Akamai 'Access Denied' page). The body's SHA-1 in base32 is N2TYAIU2LPKHETR3M5H4E6MUZLL4KFVO, equal to the CDX digest of capture 20260419231110 (CDX query run 2026-10-01).",
+          "source_sha256": "278d5d19c1b50f1d354db1ada515288af563c035a67eb16fb971d25700fb94e9",
+          "source_length_bytes": 73926,
+          "acquired_by": "MINT-categories lane of orchestrating session 95606380 (Claude Code, Opus 5.5), 2026-10-01; locator verified and committed by the G1 group-attributes builder",
+          "consumed_by": "data/external/group_category_schemes_v1.json (scheme mint8 attribute mappings, full table profiles and cohort lifetime-earnings dimension definitions)",
+          "note": "A definitions page only: it holds no MINT result. The Table User Guide is cleared for builders under the NASI follow-ups entry of the evidence directory's restricted-files list ('A lane may read the MINT8 Table User Guide and methodology pages')."
+        }
+      },
+      {
+        "original_file": "data/external/ssa_mint8_user_guide_2026.source.html",
+        "source_sha256": "8d5bc3f0de17831c2ed07383003257a63bb657df179d0c54868fda052f23f100",
+        "source_length_bytes": 73967,
+        "date_certified": "2026-04-01",
+        "content_sha256": "440f619d6306fea7e793c21b7bea8ef77f7ef6697d64d05cf384adfea4dc197a",
+        "original_provenance": {
+          "committed_source_file": "data/external/ssa_mint8_user_guide_2026.source.html",
+          "source_url": "https://www.ssa.gov/policy/docs/projections/user-guide.html",
+          "document": "MINT8 Table User Guide",
+          "source_sha256": "8d5bc3f0de17831c2ed07383003257a63bb657df179d0c54868fda052f23f100",
+          "source_length_bytes": 73967,
+          "locator": "meta DCTERMS:dateCertified; paragraphs id=AIME, lifetime-tax, lifetime-tax-shared and taxes; other paragraphs identified by the exact sentences in MINT8_PARAGRAPHS",
+          "acquisition": "Direct HTTPS GET of the live ssa.gov page with curl -A 'Wget/1.21.4' on 2026-10-01 (HTTP 200, content-type text/html; charset=UTF-8; response Date header Thu, 01 Oct 2026 22:31:33-34 GMT). The body is committed byte for byte. A per-request Akamai mPulse script in <head> changes between fetches; an earlier fetch the same day parsed to the identical tables."
+        }
+      }
+    ]
+  }
 }

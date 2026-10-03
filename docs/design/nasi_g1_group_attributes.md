@@ -22,7 +22,7 @@ The pure builder enforces the same wave-specific education and family-item domai
 
 ## Schemes and lifetime dimensions
 
-`group_category_schemes_v1.json` records MINT four-way race/ethnicity and five education bands, report four-way race/ethnicity, and unresolved report education definitions. The existing repository records the three Report education labels but does not supply numerical definitions; G1 leaves all three assignments unavailable rather than imposing the suggested 12–15 boundary. The MINT convention placing non-Hispanic multiple-race reports in All other races is an explicit builder assumption pending registration. Alternate report schemes can replace this rule without changing the reader.
+`group_category_schemes_v1.json` records MINT four-way race/ethnicity and five education bands, report four-way race/ethnicity, and unresolved report education definitions. The cleared exercise-2 definitions extract (SHA-256 `a3978b683b4275424b6d12e9fe45f021fae277ccf9731a7883952564b6ed0384`) gives race rows at lines 58/86, education rows at 59/87, and labor-force rows at 60/88. Line 229 defines Other as other minority groups, including Asian and Native American people. Lines 231 and 327 explicitly leave education and labor-force definitions open: `report_education_mapping` and `report_labor_force_experience` remain unavailable pending registration, with no inferred schooling boundaries or positive-earnings-years substitute. Report multiracial, Hispanic precedence and residual Other assignments are named builder conventions. The canonical MINT guide is certified 2026-04-01. The MINT convention placing non-Hispanic multiple-race reports in All other races is an explicit builder assumption pending registration. Alternate report schemes can replace this rule without changing the reader.
 
 Lifetime measures (initial AIME at 62 and lifetime payroll-tax present values, own and shared) live in `estimates/lifetime_measures.py`, documented in `docs/design/lifetime_measures.md`. This package supplies only the person attributes and the category schemes those measures are tabulated under.
 
@@ -33,9 +33,9 @@ Lifetime measures (initial AIME at 62 and lifetime payroll-tax present values, o
 | Capture | SHA-256 | Locator |
 |---|---|---|
 | `data/external/psid_group_attribute_codebook_values_v1.json` | `09fce5627b0271a68eadb2e8748e33fe1ff3e6b0e025bfef9575bb2804ebef63` | Per-wave family variable, exact label, one-based PDF page and value table; documentation counts removed |
-| `data/external/group_category_schemes_v1.json` | `da15a940d85dc1b8ea49480ad5ae5d0c4179ff916571bc44c9d901e22c6772c0` | Per-scheme categories, education bands, explicit assumptions and unresolved definitions |
-| `data/external/ssa_mint8_table_user_guide.source.html` | `278d5d19c1b50f1d354db1ada515288af563c035a67eb16fb971d25700fb94e9` | Definitions—Table Rows and Columns > Characteristic Subgroups—Table Rows |
-| `data/external/ssa_mint8_payroll_option_row_labels.json` | `23fbfbc8dbc14b06144a83bf0583ea0a6c89505638f3f7dc5fd6b34a3a4ac650` | Tables 1–3 (benefits), 7–9 (household income), 10–12 (official poverty), 13–16 (benefit/tax ratio), and 17–20 (initial replacement rate): captions and row labels only; no data cells. |
+| `data/external/group_category_schemes_v1.json` | `243833aa0fa1cca8968df4b8e93753d92e77beeee8939f3782310812a3016797` | Per-scheme categories, education bands, explicit assumptions and unresolved definitions |
+| `data/external/mint8_table_user_guide.source.html` | `8d5bc3f0de17831c2ed07383003257a63bb657df179d0c54868fda052f23f100` | Definitions—Table Rows and Columns > Characteristic Subgroups—Table Rows |
+| `data/external/mint8_row_categories.json` | `23fbfbc8dbc14b06144a83bf0583ea0a6c89505638f3f7dc5fd6b34a3a4ac650` | Tables 1–3 (benefits), 7–9 (household income), 10–12 (official poverty), 13–16 (benefit/tax ratio), and 17–20 (initial replacement rate): captions and row labels only; no data cells. |
 
 The source paths below are relative to the staged PSID root. Each family inventory row gives the one-based PDF page locating that variable; the captured JSON preserves exact value/range texts. Family SAS formats, when captured, have an additional SHA-256 pin in that JSON. Individual domains and role descriptions are verified in `IND2023ER_formats.sas`, with its actual file SHA-256 included in the runtime file audit.
 

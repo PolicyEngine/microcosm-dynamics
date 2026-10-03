@@ -27,11 +27,14 @@ projection and benefit mechanisms:
 Paths to source modules above are relative to `src/populace_dynamics/`.
 The MINT8 labels and definitions come from the source captures already
 pinned by G3; this package does not capture another source or implement
-another lifetime measure. The three inherited User Guide captures
-`data/external/mint8_table_user_guide.source.html`,
-`data/external/ssa_mint8_table_user_guide.source.html`, and
-`data/external/ssa_mint8_user_guide_2026.source.html` remain intact for the
-integrator to consolidate.
+another lifetime measure. The canonical User Guide capture is
+`data/external/mint8_table_user_guide.source.html`, certified 2026-04-01;
+the canonical labels-only artifact is
+`data/external/mint8_row_categories.json`. Their provenance records
+preserve the hashes and acquisition records of all three original
+copies. The guide's main-content bytes are identical across the
+2025-10-01 and 2026-04-01 certifications, and all three original label
+files were byte-identical. G1, G2 and G3 use these same canonical pins.
 
 ## Frozen replay and the reproduction gate
 

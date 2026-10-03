@@ -21,8 +21,10 @@ from __future__ import annotations
 
 import importlib.metadata
 import importlib.util
+import json
 import os
 import platform
+import sys
 from pathlib import Path
 
 import pytest
@@ -64,6 +66,14 @@ def _track_m_script():
 
 
 def test_the_registered_computation_reproduces_exactly():
+    marker = Path(sys.prefix) / "nasi-reproduction-environment.json"
+    if not marker.is_file():
+        pytest.skip("the verified pinned reproduction venv is not active")
+    manifest = json.loads(marker.read_text())
+    if manifest.get("recorded_versions_verified") is not True or (
+        manifest.get("exercise") != "min-benefit"
+    ):
+        pytest.skip("the verified exercise-4 reproduction venv is not active")
     if not PSID_DIR.is_dir():
         pytest.skip("staged PSID files absent")
     parent = mb.load_parent_artifact()

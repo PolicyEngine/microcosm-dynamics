@@ -790,3 +790,23 @@ def test_supplied_domains_are_checked_even_after_education_cutoff():
     inputs = _inputs(education=[_education(1001, 2023, 98)])
     with pytest.raises(ValueError, match="not documented"):
         _build(inputs, (1001,), (2011,))
+
+
+def test_report_unresolved_definitions_and_race_conventions_are_recorded():
+    result = _build(_inputs([_report(1001, 2011)]), (1001,))
+    source = result.provenance["category_scheme_sources"]
+    assert source["boomers2004_report_rows"]["sha256"] == (
+        "a3978b683b4275424b6d12e9fe45f021fae277ccf9731a7883952564b6ed0384"
+    )
+    defaults = result.provenance["report_builder_defaults"]
+    assert "unavailable" in defaults["report_education_mapping"]
+    assert "unavailable" in defaults["report_labor_force_experience"]
+    assumptions = result.provenance["report_dimension_conventions"]
+    assert any(
+        "report_multiple_races_other" in value
+        for value in assumptions["race_ethnicity"]
+    )
+    assert any(
+        "report_hispanic_any_race" in value
+        for value in assumptions["race_ethnicity"]
+    )

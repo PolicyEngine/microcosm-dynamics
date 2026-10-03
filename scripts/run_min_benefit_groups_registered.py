@@ -63,8 +63,6 @@ from __future__ import annotations
 import argparse
 import datetime
 import importlib.util
-import json
-import re
 import subprocess
 import sys
 import sysconfig
@@ -175,6 +173,7 @@ def preflight(
     parent_path: Path = mb.PARENT_ARTIFACT_PATH,
     parent_sha256: str = mb.PARENT_ARTIFACT_SHA256,
     specification_path: Path = M1_SPECIFICATION_PATH,
+    root: Path = ROOT,
 ) -> dict[str, Any]:
     """Refuse to run unless this is the registered one-shot state."""
 
@@ -191,20 +190,13 @@ def preflight(
             "the breakdown's cells are new outcomes: they need their own "
             "issue #42 registration, not Registration 17's"
         )
-    if not re.fullmatch(r"[0-9a-f]{40}", registered_commit):
-        raise ValueError("--registered-commit must be a full 40-hex SHA")
-    head = git("rev-parse", "HEAD")
-    if head != registered_commit:
-        raise ValueError(
-            f"HEAD {head} is not the registered commit {registered_commit}"
-        )
-    if git("status", "--porcelain") != "":
-        raise ValueError("the working tree must be clean for a registered run")
-    output = Path(output)
-    if output.exists() or output.with_suffix(".env.json").exists():
-        raise ValueError(
-            f"{output} already exists: the registered run is one-shot"
-        )
+    state = common.preflight(
+        registration_pointer=registration_pointer,
+        registered_commit=registered_commit,
+        output=output,
+        root=root,
+        git=git,
+    )
     parent = mb.load_parent_artifact(
         parent_path, expected_sha256=parent_sha256
     )
@@ -213,7 +205,7 @@ def preflight(
         specification_sha256=common.file_sha256(specification_path),
     )
     check_specification_for_registered_run(m1_parameter_block())
-    return {"head": head, "parent": parent, "binding": binding}
+    return {"head": state.git_head, "parent": parent, "binding": binding}
 
 
 def _field(record: Mapping[str, Any], dotted: str) -> Any:
@@ -339,6 +331,7 @@ def execute(
     ] = _default_side_frame_loader,
     parent_path: Path = mb.PARENT_ARTIFACT_PATH,
     parent_sha256: str = mb.PARENT_ARTIFACT_SHA256,
+    root: Path = ROOT,
 ) -> dict[str, Any]:
     """Preflight, the pre-PSID checks, the run, then the exclusive writes.
 
@@ -356,6 +349,7 @@ def execute(
         git=git,
         parent_path=parent_path,
         parent_sha256=parent_sha256,
+        root=root,
     )
     parent: common.CommittedArtifact = state["parent"]
     track_m = track_m_script or _script_module("run_track_m_registered")
@@ -417,22 +411,8 @@ def execute(
     }
     output = Path(output)
     output.parent.mkdir(parents=True, exist_ok=True)
-    common.write_new(
-        output,
-        json.dumps(artifact, indent=2, sort_keys=False, allow_nan=False)
-        + "\n",
-    )
-    common.write_new(
-        output.with_suffix(".env.json"),
-        json.dumps(
-            {
-                "artifact": output.name,
-                "artifact_sha256": common.file_sha256(output),
-                "environment": env,
-            },
-            indent=2,
-        )
-        + "\n",
+    common.write_artifact_pair(
+        output=output, artifact=artifact, environment=env
     )
     return artifact
 

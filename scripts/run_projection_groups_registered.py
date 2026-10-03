@@ -24,7 +24,6 @@ import datetime
 import hashlib
 import importlib.util
 import json
-import re
 import subprocess
 import sys
 from pathlib import Path
@@ -34,10 +33,9 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
-REGISTRATION_POINTER = re.compile(
-    r"https://github\.com/PolicyEngine/microcosm-dynamics/issues/42"
-    r"#issuecomment-[0-9]+"
-)
+from populace_dynamics.group_breakdowns import common  # noqa: E402
+
+REGISTRATION_POINTER = common.REGISTRATION_POINTER
 PARENT_SHA256 = {
     "cola": (
         "270acf292682b8111133f9047f366c93173e713bc422cb7e108bd064ac33d53e"
@@ -56,7 +54,7 @@ PARENT_ENVIRONMENT_SHA256 = {
 }
 POSTHOC_LABEL = "registered, one-shot, post hoc, not blind"
 POSTHOC_SPECIFICATION_SHA256 = (
-    "690bcceb102e1ca928c8c9af0754739f433df00f29330294481051ab4ef7f4b9"
+    "0cfaab69a4e50e5e77754d164915c591e5168b97878eba7c505e7242fa3660cf"
 )
 
 
@@ -115,25 +113,20 @@ def preflight(
     git: Any = _git,
     specification: dict[str, Any] | None = None,
     config: Any = None,
+    root: Path = ROOT,
 ) -> dict[str, str]:
     """Require registration, clean exact HEAD and a new output pair first."""
     if exercise not in PARENT_SHA256:
         raise ValueError("exercise must be cola or fra68")
-    if not REGISTRATION_POINTER.fullmatch(registration_pointer):
-        raise ValueError(
-            "registration pointer must be an issue #42 comment URL"
-        )
-    if not re.fullmatch(r"[0-9a-f]{40}", registered_commit):
-        raise ValueError("--registered-commit must be a full 40-hex SHA")
-    head = git("rev-parse", "HEAD")
-    if head != registered_commit:
-        raise ValueError("HEAD is not the registered commit")
-    if git("status", "--porcelain"):
-        raise ValueError("working tree must be clean for a registered run")
-    if output.exists() or output.with_suffix(".env.json").exists():
-        raise ValueError("registered artifact or sidecar already exists")
+    state = common.preflight(
+        registration_pointer=registration_pointer,
+        registered_commit=registered_commit,
+        output=output,
+        root=root,
+        git=git,
+    )
     _check_specification(exercise, specification, config)
-    return {"head": head}
+    return {"head": state.git_head}
 
 
 def _parent(exercise: str) -> tuple[dict[str, Any], dict[str, Any], str]:
@@ -284,33 +277,9 @@ def write_new_pair(
     Existing artifact/sidecar bytes are never touched. The caller invokes this
     only after reproduction and all group computations have succeeded.
     """
-    artifact_text = json.dumps(artifact, indent=2, allow_nan=False) + "\n"
-    digest = hashlib.sha256(artifact_text.encode("utf-8")).hexdigest()
-    sidecar = output.with_suffix(".env.json")
-    sidecar_text = (
-        json.dumps(
-            {
-                "artifact": output.name,
-                "artifact_sha256": digest,
-                "environment": environment,
-            },
-            indent=2,
-            allow_nan=False,
-        )
-        + "\n"
+    common.write_artifact_pair(
+        output=output, artifact=artifact, environment=environment
     )
-    created = []
-    try:
-        with output.open("x", encoding="utf-8") as artifact_handle:
-            created.append(output)
-            with sidecar.open("x", encoding="utf-8") as environment_handle:
-                created.append(sidecar)
-                artifact_handle.write(artifact_text)
-                environment_handle.write(sidecar_text)
-    except BaseException:
-        for path in reversed(created):
-            path.unlink(missing_ok=True)
-        raise
 
 
 def main(argv: list[str] | None = None) -> int:

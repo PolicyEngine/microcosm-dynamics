@@ -43,6 +43,14 @@ class _Interest:
         return self.value
 
 
+def _sparse_report_conventions() -> lm.ReportEarningsConventions:
+    """Explicit INVENTED sparse-history sensitivity for these fixtures."""
+    return lm.ReportEarningsConventions(
+        divisor=lm.AverageDivisor.COVERED_AGES,
+        missing_spouse=lm.MissingSpousePolicy.OWN_ONLY,
+    )
+
+
 def _params() -> SSAParameters:
     """INVENTED flat wage index and contribution/benefit base."""
     return SSAParameters(
@@ -193,6 +201,7 @@ def test_measures_leave_input_frames_and_parameters_unchanged(measure):
             params,
             shared=True,
             marriage_episodes=episodes,
+            conventions=_sparse_report_conventions(),
         )
     for original, snapshot in zip(
         [careers, persons, episodes], snapshots, strict=True
@@ -232,6 +241,7 @@ def test_report_sharing_uses_own_covered_age_support_and_counts_gaps():
         _params(),
         shared=True,
         marriage_episodes=_episodes(),
+        conventions=_sparse_report_conventions(),
     )
     assert result.frame["average_indexed_earnings"].tolist() == [
         500.0,
@@ -268,7 +278,11 @@ def test_zero_earnings_are_computed_but_an_absent_history_is_not():
         ),
         (
             lm.report_average_indexed_earnings_22_62(
-                careers, persons, _params(), shared=False
+                careers,
+                persons,
+                _params(),
+                shared=False,
+                conventions=_sparse_report_conventions(),
             ),
             "average_indexed_earnings",
         ),
@@ -419,7 +433,11 @@ def test_parameter_provenance_pins_changed_paths_with_same_revision(
                 interest=_Interest(),
             )
         return lm.report_average_indexed_earnings_22_62(
-            careers, persons, params, shared=False
+            careers,
+            persons,
+            params,
+            shared=False,
+            conventions=_sparse_report_conventions(),
         )
 
     before, after = run(original), run(changed)
@@ -509,7 +527,11 @@ def test_indexing_refuses_nonpositive_or_nonfinite_nawi(measure, year, value):
             )
         else:
             lm.report_average_indexed_earnings_22_62(
-                careers, _persons(), params, shared=False
+                careers,
+                _persons(),
+                params,
+                shared=False,
+                conventions=_sparse_report_conventions(),
             )
 
 
@@ -540,7 +562,8 @@ def test_negative_wage_base_is_refused_by_every_capped_measure(measure):
                 params,
                 shared=False,
                 conventions=lm.ReportEarningsConventions(
-                    cap_at_taxable_maximum=True
+                    cap_at_taxable_maximum=True,
+                    divisor=lm.AverageDivisor.COVERED_AGES,
                 ),
             )
 
@@ -613,6 +636,7 @@ def test_returned_provenance_cannot_change_later_results():
             _persons(),
             _params(),
             shared=False,
+            conventions=_sparse_report_conventions(),
         )
 
     first = run()
@@ -659,7 +683,11 @@ def test_marriage_history_roster_is_pinned(measure):
                 **args,
             )
         return lm.report_average_indexed_earnings_22_62(
-            _careers([(1, 2000, 1_000.0)]), _persons(), _params(), **args
+            _careers([(1, 2000, 1_000.0)]),
+            _persons(),
+            _params(),
+            **args,
+            conventions=_sparse_report_conventions(),
         )
 
     before, reordered, changed = run([1, 2]), run([2, 1]), run([1])
@@ -685,5 +713,9 @@ def test_shared_switch_refuses_truthy_text(measure):
             )
         else:
             lm.report_average_indexed_earnings_22_62(
-                _careers([(1, 2000, 1_000.0)]), _persons(), _params(), **args
+                _careers([(1, 2000, 1_000.0)]),
+                _persons(),
+                _params(),
+                **args,
+                conventions=_sparse_report_conventions(),
             )

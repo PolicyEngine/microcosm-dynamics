@@ -36,10 +36,8 @@ _PROFILE_TABLES = {
     "cohort_initial_replacement_rate": (17, 18, 19, 20),
 }
 _SOURCE_PROVENANCE = {
-    "mint8_user_guide": "ssa_mint8_table_user_guide.source.provenance.json",
-    "mint8_row_labels": (
-        "ssa_mint8_payroll_option_row_labels.source.provenance.json"
-    ),
+    "mint8_user_guide": "mint8_table_user_guide.source.provenance.json",
+    "mint8_row_labels": ("mint8_row_categories.provenance.json"),
 }
 
 
@@ -89,7 +87,7 @@ def test_scheme_and_source_seals(schemes):
         assert source["locator"]
     guide = _ROOT / schemes["sources"]["mint8_user_guide"]["committed_file"]
     assert (
-        'name="DCTERMS:dateCertified" content="2025-10-01"'
+        'name="DCTERMS:dateCertified" content="2026-04-01"'
         in guide.read_text()
     )
 
@@ -294,3 +292,46 @@ def test_race_dimension_can_explicitly_leave_a_known_code_unresolved(schemes):
     assert statuses.iloc[1] == cohort.ASSIGNED
     assert pd.isna(labels.iloc[2])
     assert statuses.iloc[2] == cohort.ATTRIBUTE_UNKNOWN
+
+
+def test_report_rows_and_undefined_measure_locators(schemes):
+    """Definition-only labels, without inferring unavailable mappings."""
+    source = schemes["sources"]["boomers2004_report_rows"]
+    assert source["extract_file"] == (
+        "exercise2-definitions-cleared-20260924.md"
+    )
+    assert source["sha256"] == (
+        "a3978b683b4275424b6d12e9fe45f021fae277ccf9731a7883952564b6ed0384"
+    )
+    report = schemes["schemes"]["boomers2004"]
+    groups = {row["group"]: row for row in report["row_groups"]}
+    assert groups["Race/Ethnicity"]["labels"] == [
+        "White, non-hispanic",
+        "Black, non-hispanic",
+        "Hispanic",
+        "Other",
+    ]
+    assert groups["Labor Force Experience"]["labels"] == [
+        "Less than 20 years",
+        "20 to 29 years",
+        "30 to 34 years",
+        "35 or more years",
+    ]
+    for section in ("Lifetime Earnings (Own)", "Lifetime Earnings (Shared)"):
+        assert groups[section]["labels"] == [
+            "1st Quintile",
+            "2nd Quintile",
+            "3rd Quintile",
+            "4th Quintile",
+            "5th Quintile",
+        ]
+    assert "229" in report["dimensions"]["race_ethnicity"]["locator"]
+    defaults = report["builder_defaults"]
+    for key in (
+        "report_education_mapping",
+        "report_labor_force_experience",
+        "report_quintile_population",
+        "report_marital_status_timing",
+    ):
+        assert "231" in defaults[key] and "327" in defaults[key]
+    assert "positive-earnings" in defaults["report_labor_force_experience"]

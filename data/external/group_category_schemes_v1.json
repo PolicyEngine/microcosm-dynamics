@@ -5,24 +5,26 @@
     "mint8_user_guide": {
       "title": "Table User Guide—Modeling Income in the Near Term (MINT) 8",
       "url": "https://www.ssa.gov/policy/docs/projections/user-guide.html",
-      "date_certified": "2025-10-01",
-      "capture": "https://web.archive.org/web/20260419231110id_/https://www.ssa.gov/policy/docs/projections/user-guide.html",
-      "committed_file": "data/external/ssa_mint8_table_user_guide.source.html",
-      "sha256": "278d5d19c1b50f1d354db1ada515288af563c035a67eb16fb971d25700fb94e9",
+      "date_certified": "2026-04-01",
+      "capture": "Direct HTTPS GET, 2026-10-01T22:31:33Z; exact live SSA response body",
+      "committed_file": "data/external/mint8_table_user_guide.source.html",
+      "sha256": "8d5bc3f0de17831c2ed07383003257a63bb657df179d0c54868fda052f23f100",
       "locator": "Definitions—Table Rows and Columns > Characteristic Subgroups—Table Rows"
     },
     "mint8_row_labels": {
       "title": "MINT 8 policy-option tables, 'Increase payroll tax rate': row labels only",
       "url": "https://www.ssa.gov/policy/docs/projections/policy-options/increase-payroll-tax-rate.html",
       "capture": "http://web.archive.org/web/20260519190449id_/https://www.ssa.gov/policy/docs/projections/policy-options/increase-payroll-tax-rate.html",
-      "committed_file": "data/external/ssa_mint8_payroll_option_row_labels.json",
+      "committed_file": "data/external/mint8_row_categories.json",
       "sha256": "23fbfbc8dbc14b06144a83bf0583ea0a6c89505638f3f7dc5fd6b34a3a4ac650",
       "locator": "Tables 1–3 (benefits), 7–9 (household income), 10–12 (official poverty), 13–16 (benefit/tax ratio), and 17–20 (initial replacement rate): captions and row labels only; no data cells."
     },
     "boomers2004_report_rows": {
-      "title": "Butrica and Uccello (2004), How Will Boomers Fare at Retirement?, Tables 19 and 21 row labels as recorded in this repository",
-      "repository_locator": "src/populace_dynamics/estimates/uniform_cut_tabulation.py NOT_COMPUTED_REPORT_ROWS['race_ethnicity'] and ['education']; docs/design/boomers2004_uniform_cut_comparison.md, 'Report rows not computed in v1 (named omissions)'",
-      "note": "The repository records the Report's row labels as printed (cleared extract) and, for education, that the Report does not say whether 'High school graduate' includes some college. It records no other definition of these rows. The Report itself was not opened for this file."
+      "title": "Butrica and Uccello (2004), How Will Boomers Fare at Retirement?, cleared exercise-2 definitions",
+      "note": "Definition-only cleared extract, hash verified before reading. No Report PDF, restricted page or comparator was opened. Lines 231 and 327 explicitly leave Education, Labor Force Experience, quintile population and marital-status timing undefined.",
+      "extract_file": "exercise2-definitions-cleared-20260924.md",
+      "sha256": "a3978b683b4275424b6d12e9fe45f021fae277ccf9731a7883952564b6ed0384",
+      "locator": "cleared extract lines 58–66, 86–94, 223, 227, 229, 231 and 327"
     }
   },
   "schemes": {
@@ -626,7 +628,7 @@
       }
     },
     "boomers2004": {
-      "title": "Butrica and Uccello (2004) Tables 19 and 21 rows (Track U's named omissions)",
+      "title": "Butrica and Uccello (2004) Tables 19 and 21 rows (cleared definitions)",
       "dimensions": {
         "race_ethnicity": {
           "column": "race_ethnicity_report4",
@@ -642,9 +644,12 @@
           },
           "multiple_races": "other_non_hispanic",
           "assumptions": [
-            "The repository records only the row labels. Because the White and Black rows are marked non-Hispanic, this scheme reads 'Hispanic' as Hispanic of any race and 'Other' as every other non-Hispanic person; both readings are provisional, not Report definitions.",
-            "Persons reporting two or more races are placed in 'Other', as in scheme mint8; the Report's rule is not recorded."
-          ]
+            "report_hispanic_any_race: Hispanic takes precedence over race because the White and Black rows are non-Hispanic (lines 58 and 86); this precedence is a builder convention pending registration.",
+            "report_multiple_races_other: non-Hispanic persons reporting multiple races are placed in Other; the extract gives no multiple-race rule. Pending registration.",
+            "report_other_partition: after Hispanic, White non-Hispanic and Black non-Hispanic assignments, other known non-Hispanic race reports enter Other; its cited gloss includes Asian and Native American people (line 229). Pending registration for any remaining PSID categories."
+          ],
+          "locator": "cleared extract lines 58 and 86 (row labels), 229 (Other gloss)",
+          "definition": "Other comprises other minority groups, including Asian and Native American people (cleared definition-only paraphrase, line 229). White and Black rows are explicitly non-Hispanic."
         },
         "education": {
           "column": "education_report3",
@@ -658,7 +663,7 @@
               "min": 0,
               "max": 17,
               "status": "definition_not_recorded",
-              "reason": "The cleared repository records only these three row labels and the uncertainty about some college. It records no numeric years-of-schooling definitions for any row, so no cutoff is inferred."
+              "reason": "report_education_mapping: no education definition is stated, including whether High school graduate includes some college (cleared extract lines 231 and 327). Leave assignments unavailable until registration supplies the mapping; numeric schooling boundaries are not inferred."
             }
           ],
           "assumptions": [],
@@ -666,8 +671,73 @@
             "High school dropout",
             "High school graduate",
             "College graduate"
-          ]
+          ],
+          "locator": "cleared extract lines 59 and 87 (row labels), 231 and 327 (definitions not stated)",
+          "builder_defaults": {
+            "report_education_mapping": "unavailable pending registration; no years-of-schooling or degree mapping is defined in the cleared extract (lines 231 and 327)"
+          }
         }
+      },
+      "row_groups": [
+        {
+          "group": "Race/Ethnicity",
+          "labels": [
+            "White, non-hispanic",
+            "Black, non-hispanic",
+            "Hispanic",
+            "Other"
+          ],
+          "locator": "cleared extract lines 58 and 86"
+        },
+        {
+          "group": "Education",
+          "labels": [
+            "High school dropout",
+            "High school graduate",
+            "College graduate"
+          ],
+          "locator": "cleared extract lines 59 and 87"
+        },
+        {
+          "group": "Labor Force Experience",
+          "labels": [
+            "Less than 20 years",
+            "20 to 29 years",
+            "30 to 34 years",
+            "35 or more years"
+          ],
+          "locator": "cleared extract lines 60 and 88"
+        },
+        {
+          "group": "Lifetime Earnings (Own)",
+          "labels": [
+            "1st Quintile",
+            "2nd Quintile",
+            "3rd Quintile",
+            "4th Quintile",
+            "5th Quintile"
+          ],
+          "locator": "cleared extract lines 61 and 89"
+        },
+        {
+          "group": "Lifetime Earnings (Shared)",
+          "labels": [
+            "1st Quintile",
+            "2nd Quintile",
+            "3rd Quintile",
+            "4th Quintile",
+            "5th Quintile"
+          ],
+          "locator": "cleared extract lines 62 and 90"
+        }
+      ],
+      "builder_defaults": {
+        "report_education_mapping": "unavailable pending registration (lines 231 and 327)",
+        "report_labor_force_experience": "unavailable pending registration: years in the labor force is a label, not a career-based formula (lines 231 and 327); positive-earnings years are not substituted",
+        "report_quintile_population": "unavailable pending registration (lines 231 and 327)",
+        "report_quintile_order": "unavailable pending registration: rows name 1st through 5th Quintile but do not specify high-to-low order (lines 61–62 and 89–90)",
+        "report_marital_status_timing": "unavailable pending registration (lines 231 and 327)",
+        "report_quintile_ties": "unavailable pending registration; weighted ties are not defined in the cleared extract"
       }
     }
   }

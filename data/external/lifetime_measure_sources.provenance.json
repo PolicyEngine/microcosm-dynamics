@@ -42,7 +42,7 @@
       "acquisition": "Direct HTTPS GET of the live ssa.gov page with curl -A 'Wget/1.21.4' on 2026-10-01 (HTTP 200, content-type text/html; charset=UTF-8; response Date header Thu, 01 Oct 2026 22:31:33-34 GMT). The body is committed byte for byte. A per-request Akamai mPulse script in <head> changes between fetches; an earlier fetch the same day parsed to the identical tables."
     },
     "mint8_user_guide": {
-      "committed_source_file": "data/external/ssa_mint8_user_guide_2026.source.html",
+      "committed_source_file": "data/external/mint8_table_user_guide.source.html",
       "source_url": "https://www.ssa.gov/policy/docs/projections/user-guide.html",
       "document": "MINT8 Table User Guide",
       "source_sha256": "8d5bc3f0de17831c2ed07383003257a63bb657df179d0c54868fda052f23f100",
@@ -51,7 +51,7 @@
       "acquisition": "Direct HTTPS GET of the live ssa.gov page with curl -A 'Wget/1.21.4' on 2026-10-01 (HTTP 200, content-type text/html; charset=UTF-8; response Date header Thu, 01 Oct 2026 22:31:33-34 GMT). The body is committed byte for byte. A per-request Akamai mPulse script in <head> changes between fetches; an earlier fetch the same day parsed to the identical tables."
     },
     "mint8_table_row_labels": {
-      "committed_source_file": "data/external/mint8_row_categories_2026.source.json",
+      "committed_source_file": "data/external/mint8_row_categories.json",
       "source_url": "https://www.ssa.gov/policy/docs/projections/policy-options/increase-payroll-tax-rate.html",
       "document": "MINT8 payroll-tax option table labels (labels only)",
       "source_sha256": "23fbfbc8dbc14b06144a83bf0583ea0a6c89505638f3f7dc5fd6b34a3a4ac650",

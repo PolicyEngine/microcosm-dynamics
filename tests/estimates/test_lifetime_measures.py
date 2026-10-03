@@ -37,6 +37,14 @@ SETTINGS = settings(
 )
 
 
+def _sparse_report_conventions() -> lm.ReportEarningsConventions:
+    """Explicit INVENTED sparse-history sensitivity for these fixtures."""
+    return lm.ReportEarningsConventions(
+        divisor=lm.AverageDivisor.COVERED_AGES,
+        missing_spouse=lm.MissingSpousePolicy.OWN_ONLY,
+    )
+
+
 # ---------------------------------------------------------------------------
 # INVENTED parameters, schedules and frames
 # ---------------------------------------------------------------------------
@@ -731,7 +739,18 @@ def test_pv_is_homogeneous_below_the_cap(history, birth):
     zero = lm.lifetime_payroll_tax_pv_at_62(
         _careers({1: dict.fromkeys(history, 0.0)}), persons, params, **kwargs
     )
-    assert _pv(twice, 1) == 2.0 * _pv(once, 1)
+    # Subnormal tax amounts can round before interest accumulation, so exact
+    # doubling is not an IEEE-754 invariant. Bound both paths' rounding by
+    # eight steps per career year, amplifying subnormal ULPs by at most the
+    # largest factor in this INVENTED constant-3-percent history. This bound
+    # belongs to the mathematical property; reproduction checks remain exact.
+    max_factor = 1.03 ** max(0, birth + 62 - min(history))
+    doubled = pytest.approx(
+        2.0 * _pv(once, 1),
+        rel=8 * len(history) * math.ulp(1.0),
+        abs=8 * len(history) * max_factor * math.ulp(0.0),
+    )
+    assert _pv(twice, 1) == doubled
     assert _pv(zero, 1) == 0.0
     double_rate = lm.lifetime_payroll_tax_pv_at_62(
         _careers({1: history}),
@@ -741,7 +760,7 @@ def test_pv_is_homogeneous_below_the_cap(history, birth):
         rates=_rates(24.8),
         interest=_interest(3.0),
     )
-    assert _pv(double_rate, 1) == 2.0 * _pv(once, 1)
+    assert _pv(double_rate, 1) == doubled
 
 
 @SETTINGS
@@ -1042,7 +1061,11 @@ def test_report_average_matches_the_oracle_indexing(history, birth):
         y: e for y, e in history.items() if birth + 22 <= y <= birth + 62
     }
     frame = lm.report_average_indexed_earnings_22_62(
-        _careers({1: history}), _persons({1: birth}), params, shared=False
+        _careers({1: history}),
+        _persons({1: birth}),
+        params,
+        shared=False,
+        conventions=_sparse_report_conventions(),
     ).frame
     if not window:
         assert frame.at[0, "reason"] == "no_career_rows_at_ages_22_62"
@@ -1082,7 +1105,11 @@ def test_report_average_example_and_cap_option():
         {1: {1971: 1e9, 1980: 100_000.0, 1990: 20_000.0, 2013: 1e9}}
     )
     own = lm.report_average_indexed_earnings_22_62(
-        careers, _persons({1: 1950}), params, shared=False
+        careers,
+        _persons({1: 1950}),
+        params,
+        shared=False,
+        conventions=_sparse_report_conventions(),
     ).frame
     assert own.at[0, "average_indexed_earnings"] == 60_000.0
     capped = lm.report_average_indexed_earnings_22_62(
@@ -1090,7 +1117,9 @@ def test_report_average_example_and_cap_option():
         _persons({1: 1950}),
         params,
         shared=False,
-        conventions=lm.ReportEarningsConventions(cap_at_taxable_maximum=True),
+        conventions=lm.ReportEarningsConventions(
+            cap_at_taxable_maximum=True, divisor=lm.AverageDivisor.COVERED_AGES
+        ),
     ).frame
     assert capped.at[0, "average_indexed_earnings"] == 40_000.0
 
@@ -1107,7 +1136,11 @@ def test_report_shared_couple_conserves_the_sum_over_common_years(a, b, birth):
     careers = _careers({1: a, 2: b})
     persons = _persons({1: birth, 2: birth})
     own = lm.report_average_indexed_earnings_22_62(
-        careers, persons, params, shared=False
+        careers,
+        persons,
+        params,
+        shared=False,
+        conventions=_sparse_report_conventions(),
     ).frame
     shared = lm.report_average_indexed_earnings_22_62(
         careers,
@@ -1115,6 +1148,7 @@ def test_report_shared_couple_conserves_the_sum_over_common_years(a, b, birth):
         params,
         shared=True,
         marriage_episodes=_couple(1930),
+        conventions=_sparse_report_conventions(),
     ).frame
     assert shared["status"].tolist() == own["status"].tolist()
     if (own["status"] == lm.COMPUTED).all():
@@ -1129,11 +1163,13 @@ def test_report_conventions_are_recorded_or_registered():
         _persons({1: 1960}),
         _params(),
         shared=False,
+        conventions=_sparse_report_conventions(),
     ).provenance
     assert "ages 22-62" in provenance["conventions"]["recorded"]["measure"]
     defaults = provenance["conventions"]["builder_defaults"]
-    for key in ("wage_index", "divisor", "shared_rule", "index_age"):
+    for key in ("wage_index", "divisor", "index_age"):
         assert key in defaults
+    assert "shared_rule" in provenance["conventions"]["recorded"]
     assert provenance["conventions"]["conventions"]["divisor"] == (
         "covered_ages"
     )
@@ -1202,4 +1238,167 @@ def test_shared_measures_need_marriage_episodes():
             _persons({1: 1950}),
             _params(),
             shared=True,
+            conventions=_sparse_report_conventions(),
         )
+
+
+@SETTINGS
+@given(
+    st.lists(
+        st.floats(0, 300_000, allow_nan=False, allow_infinity=False),
+        min_size=41,
+        max_size=41,
+    ),
+    st.integers(1930, 1980),
+)
+def test_report_complete_definition_uses_41_years_and_matches_oracle(
+    values, birth
+):
+    """Differential: source line 227 fixes 41, uncapped oracle indexes."""
+    history = dict(zip(range(birth + 22, birth + 63), values, strict=True))
+    careers = _careers({1: history})
+    persons = _persons({1: birth})
+    params = _params()
+    report = lm.report_average_indexed_earnings_22_62(
+        careers, persons, params, shared=False
+    )
+    all_ages = lm.report_average_indexed_earnings_22_62(
+        careers,
+        persons,
+        params,
+        shared=False,
+        conventions=lm.ReportEarningsConventions(
+            divisor=lm.AverageDivisor.ALL_AGES
+        ),
+    )
+    expected = (
+        math.fsum(benefits.indexed_history(history, birth, params).values())
+        / 41
+    )
+    row = report.frame.iloc[0]
+    assert row.status == lm.COMPUTED
+    assert row.average_indexed_earnings == expected
+    pd.testing.assert_frame_equal(report.frame, all_ages.frame)
+    conventions = report.provenance["conventions"]
+    assert conventions["conventions"]["divisor"] == "require_complete_ages"
+    assert conventions["report_definition_departures"] == []
+    assert "line 227" in conventions["recorded"]["divisor"]
+
+
+@SETTINGS
+@given(st.sets(st.integers(1972, 2012), min_size=1, max_size=40))
+def test_report_incomplete_ages_never_invents_missing_earnings(years):
+    """Any missing age prevents the complete 41-year Report measure."""
+    result = lm.report_average_indexed_earnings_22_62(
+        _careers({1: dict.fromkeys(years, 0.0)}),
+        _persons({1: 1950}),
+        _params(),
+        shared=False,
+    )
+    row = result.frame.iloc[0]
+    assert row.status == lm.NOT_COMPUTED
+    assert row.reason == "incomplete_earnings_ages_22_62"
+    assert math.isnan(row.average_indexed_earnings)
+    assert row.n_ages_covered == len(years)
+
+
+@pytest.mark.parametrize("shared", [False, True])
+def test_report_complete_zero_is_computed_and_uncapped(shared):
+    years = range(1972, 2013)
+    result = lm.report_average_indexed_earnings_22_62(
+        _careers({1: dict.fromkeys(years, 0.0)}),
+        _persons({1: 1950}),
+        _params(cap=0),
+        shared=shared,
+        marriage_episodes=_episodes([]) if shared else None,
+    )
+    row = result.frame.iloc[0]
+    assert row.status == lm.COMPUTED
+    assert row.average_indexed_earnings == 0.0
+    assert row.n_ages_covered == 41
+
+
+@pytest.mark.parametrize("gap", ["career", "year"])
+def test_report_default_refuses_missing_married_year_spouse_earnings(gap):
+    years = range(1972, 2013)
+    histories = {1: dict.fromkeys(years, 100.0)}
+    if gap == "year":
+        histories[2] = dict.fromkeys(range(1973, 2013), 300.0)
+    result = lm.report_average_indexed_earnings_22_62(
+        _careers(histories),
+        _persons({1: 1950}),
+        _params(),
+        shared=True,
+        marriage_episodes=_couple(1970),
+    )
+    row = result.frame.iloc[0]
+    assert row.status == lm.NOT_COMPUTED
+    assert row.reason == (
+        "spouse_career_unavailable"
+        if gap == "career"
+        else "spouse_earnings_year_unavailable"
+    )
+    assert math.isnan(row.average_indexed_earnings)
+
+
+def test_report_complete_shared_definition_half_couple_and_nonmarried_own():
+    years = range(1972, 2013)
+    params = _params()
+    careers = _careers(
+        {1: dict.fromkeys(years, 100.0), 2: dict.fromkeys(years, 300.0)}
+    )
+    episodes = _episodes(
+        [(1, 1, 1980, 1990, "divorce", 2), (2, 1, 1980, 1990, "divorce", 1)]
+    )
+    result = lm.report_average_indexed_earnings_22_62(
+        careers,
+        _persons({1: 1950, 2: 1950}),
+        params,
+        shared=True,
+        marriage_episodes=episodes,
+    )
+    own = lm.report_average_indexed_earnings_22_62(
+        careers, _persons({1: 1950, 2: 1950}), params, shared=False
+    )
+    history = {year: 200.0 if 1980 <= year < 1990 else 100.0 for year in years}
+    expected = (
+        math.fsum(benefits.indexed_history(history, 1950, params).values())
+        / 41
+    )
+    assert result.frame.at[0, "average_indexed_earnings"] == expected
+    assert result.frame["married_years_shared"].tolist() == [10, 10]
+    assert result.frame.average_indexed_earnings.sum() == pytest.approx(
+        own.frame.average_indexed_earnings.sum(), rel=1e-12
+    )
+    recorded = result.provenance["conventions"]["recorded"]
+    assert "lines 66 and 223" in recorded["shared_rule"]
+
+
+def test_report_default_refuses_a_supplied_missing_marriage_history():
+    result = lm.report_average_indexed_earnings_22_62(
+        _careers({1: dict.fromkeys(range(1972, 2013), 100.0)}),
+        _persons({1: 1950}),
+        _params(),
+        shared=True,
+        marriage_episodes=_episodes([]),
+        marriage_history_person_ids=[],
+    )
+    row = result.frame.iloc[0]
+    assert row.status == lm.NOT_COMPUTED
+    assert row.reason == "marriage_history_unavailable"
+    assert math.isnan(row.average_indexed_earnings)
+
+
+def test_report_default_refuses_unknown_marital_years():
+    # INVENTED: an episode with unknown start has unknown year-end state.
+    result = lm.report_average_indexed_earnings_22_62(
+        _careers({1: dict.fromkeys(range(1972, 2013), 100.0)}),
+        _persons({1: 1950}),
+        _params(),
+        shared=True,
+        marriage_episodes=_episodes([(1, 1, None, None, "intact", None)]),
+    )
+    row = result.frame.iloc[0]
+    assert row.status == lm.NOT_COMPUTED
+    assert row.reason == "marital_state_unavailable"
+    assert row.years_marital_unknown == 41

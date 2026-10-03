@@ -44,17 +44,17 @@ separated people go.  Every such choice below is a **registered builder
 default**: an explicit, named parameter recorded in each result's
 provenance, never a silent fallback.
 
-The report scheme (Butrica and Uccello 2004, exercise 2).  The repository
-records only that both of that Report's lifetime-earnings measures
-"average wage-indexed earnings at ages 22-62, and the own measure includes
-uncovered earnings and earnings above the taxable maximum"
-(``docs/design/boomers2004_uniform_cut_comparison.md``, named omissions;
-``estimates/uniform_cut_tabulation.py`` ``NOT_COMPUTED_REPORT_ROWS``).
-:func:`report_average_indexed_earnings_22_62` implements exactly that and
-names every unrecorded convention in :data:`REPORT_EARNINGS_BUILDER_DEFAULTS`.
-That scheme stays unregistered (:func:`boomers2004_scheme`): the Report's
-quintile order ("1st Quintile" lowest or highest) and quintile population
-are not recorded, so it refuses to label.
+The report scheme (Butrica and Uccello 2004, exercise 2) follows the
+hash-verified cleared extract ``exercise2-definitions-cleared-20260924.md``
+(SHA-256 a3978b683b4275424b6d12e9fe45f021fae277ccf9731a7883952564b6ed0384).
+Own and shared definitions are at lines 65–66 and 223: uncapped,
+wage-indexed earnings at ages 22–62, half the couple's earnings in married
+years and own earnings otherwise. Line 227 fixes the divisor at 41 years.
+Incomplete histories are not computed by default; explicit covered-age
+and missing-as-zero sensitivities retain their named provenance.
+Education and labor-force experience lack definitions (lines 231 and 327),
+so no work-years formula is invented. Quintile population and direction
+remain unregistered (:func:`boomers2004_scheme`).
 
 Stated invariants (property-tested in ``tests/estimates/
 test_lifetime_measures.py``):
@@ -165,7 +165,7 @@ TRUST_FUND_INTEREST_RATES_SHA256 = (
 #: Verbatim MINT8 Table User Guide definitions and the cohort-table labels.
 MINT8_DEFINITIONS_PATH = _EXTERNAL / "mint8_lifetime_quintile_definitions.json"
 MINT8_DEFINITIONS_SHA256 = (
-    "857d82d78371483d69ffb1402df8f2229928629cf5e657dcb5ee497f853ffa74"
+    "660d9bddbd482831a5d29e530deb6e1e93d9642f917cc6c9eb763be010dcd322"
 )
 
 #: MINT8's quintile labels in its table order (always these five).
@@ -273,11 +273,14 @@ class AimeBasis(str, Enum):
 class AverageDivisor(str, Enum):
     """The divisor of the report's average indexed earnings.
 
-    ``COVERED_AGES`` (registered builder default): the ages 22-62 at which
-    the careers frame has a row.  ``ALL_AGES``: all 41 ages (a missing
-    age counts as zero earnings).
+    ``REQUIRE_COMPLETE_AGES`` (Report default): all 41 ages, refusing an
+    incomplete history (cleared extract line 227). ``COVERED_AGES`` is
+    an explicit sensitivity over supplied ages. ``ALL_AGES`` is an
+    explicit sensitivity assigning zero to absent ages; both record
+    their departure from the complete Report measure.
     """
 
+    REQUIRE_COMPLETE_AGES = "require_complete_ages"
     COVERED_AGES = "covered_ages"
     ALL_AGES = "all_ages"
 
@@ -362,90 +365,110 @@ AIME_CONVENTIONS: dict[str, AimeConvention] = {
 
 @dataclass(frozen=True)
 class ReportEarningsConventions:
-    """Conventions of :func:`report_average_indexed_earnings_22_62`.
+    """Report definition plus named conventions pending registration.
 
-    ``first_age``, ``last_age`` and, for the own measure,
-    ``cap_at_taxable_maximum=False`` are recorded
-    (:data:`REPORT_EARNINGS_RECORDED`); the rest are registered builder
-    defaults (:data:`REPORT_EARNINGS_BUILDER_DEFAULTS`).
+    Ages 22–62, uncapped earnings, the 41-year divisor and half-couple
+    sharing are defined at cleared extract lines 65–66, 223 and 227.
+    The default requires complete supplied earnings, including each
+    married year's spouse earnings. Explicit alternative divisors are
+    recorded sensitivities, not the Report's complete measure.
     """
 
     first_age: int = 22
     last_age: int = 62
     cap_at_taxable_maximum: bool = False
     index_age: int = 60
-    divisor: AverageDivisor = AverageDivisor.COVERED_AGES
+    divisor: AverageDivisor = AverageDivisor.REQUIRE_COMPLETE_AGES
     separated_is_married: bool = True
-    missing_spouse: MissingSpousePolicy = MissingSpousePolicy.OWN_ONLY
+    missing_spouse: MissingSpousePolicy = MissingSpousePolicy.NOT_COMPUTED
 
 
 _REPORT_RECORD = (
-    "docs/design/boomers2004_uniform_cut_comparison.md (named omissions); "
-    "estimates/uniform_cut_tabulation.py NOT_COMPUTED_REPORT_ROWS"
+    "exercise2-definitions-cleared-20260924.md "
+    "(sha256 "
+    "a3978b683b4275424b6d12e9fe45f021fae277ccf9731a7883952564b6ed0384)"
 )
-#: What the repository records about the Report's measure, with locators.
+#: Definitions explicitly stated in the hash-verified cleared extract.
 REPORT_EARNINGS_RECORDED: dict[str, str] = {
     "measure": (
-        "both measures 'average wage-indexed earnings at ages 22-62' "
-        f"({_REPORT_RECORD})"
+        "average wage-indexed earnings at ages 22-62 "
+        f"({_REPORT_RECORD}, lines 65–66 and 223)"
     ),
     "own_includes_above_taxable_maximum": (
-        "'the own measure includes uncovered earnings and earnings above "
-        f"the taxable maximum' ({_REPORT_RECORD}); so the own measure is "
-        "not capped. PSID labor earnings do not separate covered from "
-        "uncovered work, so 'includes uncovered earnings' holds trivially."
-    ),
-    "rows": (
-        "Lifetime Earnings (Own) and (Shared), five rows each, '1st "
-        "Quintile' to '5th Quintile' (uniform_cut_tabulation.py)"
-    ),
-}
-#: Every convention the record leaves open, with this builder's default.
-REPORT_EARNINGS_BUILDER_DEFAULTS: dict[str, str] = {
-    "age_in_year": "age = calendar year - birth year (the oracle's rule)",
-    "age_range_inclusive": "ages 22 through 62 inclusive (41 ages)",
-    "wage_index": (
-        "the SSA national average wage index (SSAParameters.nawi), each "
-        "year's earnings times NAWI(index year) / NAWI(year), years at or "
-        "after the index year nominal (ss.benefits.indexed_history's rule)"
-    ),
-    "index_age": "60, the AIME indexing age",
-    "divisor": (
-        "the ages 22-62 with a career row (COVERED_AGES); the PSID does "
-        "not observe every age, so missing ages are not read as zeros"
+        "Includes Social Security uncovered earnings and earnings above "
+        f"the taxable maximum ({_REPORT_RECORD}, line 223). Supplied labor "
+        "earnings are uncapped; covered work is not inferred."
     ),
     "shared_rule": (
-        "in a year the person is married at year end, the mean of the two "
-        "spouses' indexed earnings (both indexed to the person's index "
-        "year); otherwise own earnings (MINT8's sharing rule, since the "
-        "Report's is not recorded)"
+        "half the total earnings of the couple in married years; own "
+        f"earnings in nonmarried years ({_REPORT_RECORD}, lines 66 and 223)"
     ),
-    "shared_cap": "uncapped, as recorded for the own measure",
+    "divisor": f"41 years for every individual ({_REPORT_RECORD}, line 227)",
+    "rows": (
+        "Lifetime Earnings (Own) and (Shared), 1st through 5th Quintile "
+        f"({_REPORT_RECORD}, lines 61–62 and 89–90)"
+    ),
+}
+#: Choices absent from the extract, named for the downstream registration.
+REPORT_EARNINGS_BUILDER_DEFAULTS: dict[str, str] = {
+    "age_in_year": "calendar year minus birth year",
+    "wage_index": (
+        "report_nawi_index: SSAParameters.nawi, indexing to index_age "
+        "(default 60), nominal at and after that year; the extract says "
+        "wage-indexed but does not name an index base"
+    ),
+    "index_age": "report_index_age: 60, pending registration",
+    "divisor": (
+        "report_missing_earnings: REQUIRE_COMPLETE_AGES refuses incomplete "
+        "histories, preserving the source's 41-year divisor; COVERED_AGES "
+        "and ALL_AGES require explicit sensitivity selection"
+    ),
     "marital_state": (
-        "psid2010.marital_state_at at the end of each year; separated "
-        "counts as married (the repository's default)"
+        "report_year_end_marriage: cohort year-end marriage state; "
+        "separated counts as married, pending registration"
     ),
-    "missing_spouse": "own earnings for that year, counted (OWN_ONLY)",
+    "missing_spouse": (
+        "report_missing_spouse: NOT_COMPUTED for an unavailable spouse "
+        "career or married-year earnings; OWN_ONLY is an explicit "
+        "sensitivity using own earnings or zero for absent spouse years"
+    ),
     "missing_spouse_year": (
-        "a spouse with a career but no row in this year contributes zero; "
-        "the year is counted as married_years_spouse_year_absent"
+        "report_missing_spouse_year: NOT_COMPUTED by default; explicit "
+        "OWN_ONLY supplies zero for a spouse with a career but no year row, "
+        "with absent years counted"
     ),
     "missing_own_year": (
-        "COVERED_AGES uses only the person's own observed career years; "
-        "spouse-only years are outside this report average"
+        "report_missing_earnings: default NOT_COMPUTED; explicit "
+        "COVERED_AGES restricts support to own career years, explicit "
+        "ALL_AGES assigns zero to absent own years"
+    ),
+    "marriage_history_roster": (
+        "report_history_roster: caller-supplied roster identifies unavailable "
+        "history and default NOT_COMPUTED refuses absent members; without "
+        "a roster the supplied episode universe is treated as complete, "
+        "pending registration"
+    ),
+    "unknown_marital_state": (
+        "report_unknown_marriage: NOT_COMPUTED under the default; "
+        "OWN_ONLY explicitly retains flagged own-earnings treatment"
     ),
     "reciprocal_history_disagreement": (
-        "use each person's recorded spouse; disagreement with an available "
-        "spouse history is counted and couple conservation is not promised"
+        "report_spouse_history: each person's recorded spouse governs; "
+        "disagreements are counted, pending registration"
     ),
     "multiple_marriages_in_force": (
-        "use the latest-start marriage as marital_state_at does; count "
-        "years_multiple_marriages_in_force"
+        "report_overlap_marriage: latest-start marriage governs and "
+        "overlap years are counted, pending registration"
+    ),
+    "quintile_ties": (
+        "report_quintile_ties: retain equal values together using the "
+        "weighted cumulative midpoint rule if registration selects it; "
+        "the extract does not specify ties"
     ),
     "quintile_order_and_population": (
-        "not registered: whether '1st Quintile' is the lowest and over "
-        "which population the quintiles are cut are unrecorded, so the "
-        "scheme refuses to label (boomers2004_scheme)"
+        "report_quintile_population and report_quintile_order: unavailable "
+        "until registered; population is undefined at extract lines 231 "
+        "and 327 and printed 1st–5th labels do not state direction"
     ),
 }
 
@@ -1636,9 +1659,11 @@ def report_average_indexed_earnings_22_62(
     unrecorded convention is a registered builder default
     (:data:`REPORT_EARNINGS_BUILDER_DEFAULTS`), set in ``conventions``.
 
-    Not computed, with a reason: no career row at ages 22-62; a NAWI value
-    the indexing needs; a missing spouse under
-    ``missing_spouse=NOT_COMPUTED``.
+    Source: cleared extract lines 65–66 and 223 (annual definition),
+    227 (41-year divisor). Not computed: incomplete ages under the
+    default, unavailable NAWI, or missing married-year spouse earnings
+    under ``missing_spouse=NOT_COMPUTED``. Sparse-history sensitivities
+    must select ``COVERED_AGES`` or ``ALL_AGES`` explicitly.
     """
 
     conventions = conventions or ReportEarningsConventions()
@@ -1726,11 +1751,34 @@ def report_average_indexed_earnings_22_62(
         if not own:
             row["reason"] = "no_career_rows_at_ages_22_62"
         elif (
+            divisor is AverageDivisor.REQUIRE_COMPLETE_AGES
+            and len(own) != window_length
+        ):
+            row["reason"] = "incomplete_earnings_ages_22_62"
+        elif (
+            shared
+            and missing_spouse is MissingSpousePolicy.NOT_COMPUTED
+            and row["marriage_history_absent"] is True
+        ):
+            row["reason"] = "marriage_history_unavailable"
+        elif (
             shared
             and missing_spouse is MissingSpousePolicy.NOT_COMPUTED
             and row["married_years_spouse_unavailable"] > 0
         ):
             row["reason"] = "spouse_career_unavailable"
+        elif (
+            shared
+            and missing_spouse is MissingSpousePolicy.NOT_COMPUTED
+            and row["married_years_spouse_year_absent"] > 0
+        ):
+            row["reason"] = "spouse_earnings_year_unavailable"
+        elif (
+            shared
+            and missing_spouse is MissingSpousePolicy.NOT_COMPUTED
+            and row["years_marital_unknown"] > 0
+        ):
+            row["reason"] = "marital_state_unavailable"
         elif missing := _nawi_missing(amounts, index_year, params):
             row["reason"] = f"nawi_unavailable:{missing[0]}"
         else:
@@ -1785,6 +1833,27 @@ def report_average_indexed_earnings_22_62(
                 "separated_is_married": conventions.separated_is_married,
                 "missing_spouse": missing_spouse.value,
             },
+            "report_definition_departures": [
+                name
+                for name, departed in (
+                    (
+                        "age_window",
+                        (conventions.first_age, conventions.last_age)
+                        != (22, 62),
+                    ),
+                    ("earnings_cap", conventions.cap_at_taxable_maximum),
+                    (
+                        "incomplete_age_divisor",
+                        divisor is not AverageDivisor.REQUIRE_COMPLETE_AGES,
+                    ),
+                    (
+                        "missing_spouse_treatment",
+                        shared
+                        and missing_spouse is MissingSpousePolicy.OWN_ONLY,
+                    ),
+                )
+                if departed
+            ],
             "recorded": REPORT_EARNINGS_RECORDED,
             "builder_defaults": REPORT_EARNINGS_BUILDER_DEFAULTS,
         },
@@ -2113,23 +2182,17 @@ def load_mint8_scheme(
 def boomers2004_scheme() -> LifetimeEarningsScheme:
     """Butrica and Uccello (2004)'s lifetime-earnings rows (unregistered).
 
-    Section and row labels come from Track U's named omissions
-    (``uniform_cut_tabulation.NOT_COMPUTED_REPORT_ROWS``).  The order of
-    the quintile labels and the quintile population are not recorded, so
-    both dimensions refuse to label until a registration records them.
+    Cleared extract lines 61–62 and 89–90 name 1st–5th Quintile.
+    Population is explicitly undefined at lines 231 and 327; the labels
+    do not state direction. Both dimensions refuse until registration.
     """
-
-    from populace_dynamics.estimates.uniform_cut_tabulation import (
-        NOT_COMPUTED_REPORT_ROWS,
-    )
 
     dimensions = []
     for kind in ("own", "shared"):
-        record = NOT_COMPUTED_REPORT_ROWS[f"lifetime_earnings_{kind}"]
         dimensions.append(
             QuintileDimension(
                 key=f"lifetime_earnings_{kind}",
-                section=record["section"],
+                section=f"Lifetime Earnings ({kind.title()})",
                 measure="report_average_indexed_earnings_22_62",
                 shared=kind == "shared",
                 scope=None,

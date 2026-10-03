@@ -385,10 +385,22 @@ def _attribute_loader(person_ids, *, anchor_waves):
                 .label
                 for pid in person_ids
             ],
+            "race_ethnicity_mint8_status": ga.ASSIGNED,
+            "race_ethnicity_status": "INVENTED",
             "country_of_birth_mint8": [
                 "United States" if pid % 2 else None for pid in person_ids
             ],
+            "country_of_birth_mint8_status": [
+                ga.ASSIGNED if pid % 2 else ga.ATTRIBUTE_UNKNOWN
+                for pid in person_ids
+            ],
+            "country_of_birth_status": "INVENTED",
             "education_years": [12 if pid % 2 else None for pid in person_ids],
+            "education_mint8": [
+                "High school" if pid % 2 else None for pid in person_ids
+            ],
+            "race_ethnicity_report4": [None for _ in person_ids],
+            "education_report3": [None for _ in person_ids],
         }
     )
     return ga.GroupAttributes(
@@ -467,7 +479,15 @@ def test_adapter_totals_match_frozen_rates_design_se_and_floors(
 def test_scheme_preserves_mint_dimensions_and_states_u1_age_variant(row_id):
     scheme = adapter._scheme(row_id)
     assert scheme.composite
-    assert scheme.keys[-5:] == adapter.MEASURES
+    assert scheme.keys[-8:-5] == adapter.MEASURES[:3]
+    assert scheme.keys[-2:] == adapter.MEASURES[3:]
+    assert scheme.keys[-5:] == (
+        "race_ethnicity_report4",
+        "education_report3",
+        "labor_force_experience_report",
+        "lifetime_earnings_own",
+        "lifetime_earnings_shared",
+    )
     for dimension in gb.MINT8_SCHEME.dimensions:
         if row_id == "U1" and dimension.key == "age":
             ages = scheme.dimension("age")

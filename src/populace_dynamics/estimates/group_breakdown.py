@@ -882,7 +882,7 @@ MINT8_LABELS_FILE = "data/external/mint8_row_categories.json"
 #: ``.provenance.json``).
 MINT8_SOURCE_SHA256: dict[str, str] = {
     MINT8_GUIDE_FILE: (
-        "278d5d19c1b50f1d354db1ada515288af563c035a67eb16fb971d25700fb94e9"
+        "8d5bc3f0de17831c2ed07383003257a63bb657df179d0c54868fda052f23f100"
     ),
     MINT8_LABELS_FILE: (
         "23fbfbc8dbc14b06144a83bf0583ea0a6c89505638f3f7dc5fd6b34a3a4ac650"
@@ -897,9 +897,10 @@ MINT8_GUIDE_CITATION = (
     "Social Security Administration, 'Table User Guide—Modeling Income "
     f"in the Near Term (MINT) 8', {_GUIDE_URL}, section 'Definitions—"
     "Table Rows and Columns' > 'Characteristic Subgroups—Table Rows' "
-    "(DCTERMS:dateCertified 2025-10-01); committed capture "
+    "(DCTERMS:dateCertified 2026-04-01); committed capture "
     f"{MINT8_GUIDE_FILE} (SHA-256 {MINT8_SOURCE_SHA256[MINT8_GUIDE_FILE]}), "
-    "Internet Archive capture 20260419231110"
+    "live SSA response body acquired 2026-10-01; consolidated snapshot "
+    "hashes in its provenance"
 )
 
 

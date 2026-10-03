@@ -30,7 +30,7 @@ _CAPTURES = (
         "mint8_table_user_guide.source.html",
         "mint8_table_user_guide.source.provenance.json",
         "https://www.ssa.gov/policy/docs/projections/user-guide.html",
-        "2025-10-01",
+        "2026-04-01",
     ),
 )
 
@@ -77,7 +77,7 @@ def test_label_capture_metadata_matches_its_provenance():
             assert set(group) == {"group", "labels"}
 
 
-def test_guide_capture_matches_recorded_archive_digest_and_date_locator():
+def test_guide_capture_matches_recorded_digest_and_date_locator():
     raw = (_EXTERNAL / "mint8_table_user_guide.source.html").read_bytes()
     provenance = json.loads(
         (
@@ -88,6 +88,75 @@ def test_guide_capture_matches_recorded_archive_digest_and_date_locator():
     assert digest == provenance["source_sha1_base32"]
     assert provenance["date_certified_locator"].split(" in ")[0] in (
         raw.decode("utf-8")
+    )
+
+
+def test_guide_snapshots_have_identical_definition_content():
+    """Historical snapshots differ only outside the guide's content.
+
+    Before discarding duplicate bodies, the integrator hashed the main
+    content of each original capture. Their source hashes, certification
+    dates and original acquisition records remain in canonical provenance.
+    This comparison covers every definition quote consumed by G1-G3.
+    """
+    raw = (_EXTERNAL / "mint8_table_user_guide.source.html").read_bytes()
+    provenance = json.loads(
+        (
+            _EXTERNAL / "mint8_table_user_guide.source.provenance.json"
+        ).read_text(encoding="utf-8")
+    )
+    comparison = provenance["consolidation"]
+    content = (
+        raw.decode("utf-8")
+        .split(comparison["content_start_locator"], 1)[1]
+        .split(comparison["content_end_locator"], 1)[0]
+    )
+    digest = hashlib.sha256(content.encode("utf-8")).hexdigest()
+    assert digest == comparison["content_sha256"]
+    snapshots = comparison["snapshots"]
+    assert len(snapshots) == 3
+    assert {snapshot["content_sha256"] for snapshot in snapshots} == {digest}
+    assert [snapshot["date_certified"] for snapshot in snapshots] == [
+        "2025-10-01",
+        "2025-10-01",
+        "2026-04-01",
+    ]
+    assert snapshots[0]["source_sha256"] == snapshots[1]["source_sha256"]
+    assert snapshots[0]["source_sha256"] == (
+        "278d5d19c1b50f1d354db1ada515288af563c035a67eb16fb971d25700fb94e9"
+    )
+    latest = max(snapshots, key=lambda snapshot: snapshot["date_certified"])
+    assert latest["source_sha256"] == provenance["source_sha256"]
+    assert latest["date_certified"] == provenance["date_certified"]
+
+
+def test_code_used_labels_are_identical_across_all_original_captures():
+    """The three labels-only artifacts were byte-identical, all 20 tables."""
+    raw = (_EXTERNAL / "mint8_row_categories.json").read_bytes()
+    provenance = json.loads(
+        (_EXTERNAL / "mint8_row_categories.provenance.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    snapshots = provenance["consolidation"]["snapshots"]
+    assert {snapshot["original_file"] for snapshot in snapshots} == {
+        "data/external/mint8_row_categories.json",
+        "data/external/ssa_mint8_payroll_option_row_labels.json",
+        "data/external/mint8_row_categories_2026.source.json",
+    }
+    digest = hashlib.sha256(raw).hexdigest()
+    assert {snapshot["source_sha256"] for snapshot in snapshots} == {digest}
+    assert {snapshot["source_length_bytes"] for snapshot in snapshots} == {
+        len(raw)
+    }
+    assert {snapshot["date_certified"] for snapshot in snapshots} == {
+        "2026-04-01"
+    }
+    # The unchanged, sealed bytes include every code-used group and label;
+    # source verification binds every published G3 scheme to those bytes.
+    assert len(json.loads(raw)["tables"]) == 20
+    assert gb.verify_mint8_sources()["files_sha256"][gb.MINT8_LABELS_FILE] == (
+        digest
     )
 
 

@@ -17,6 +17,7 @@ import pandas as pd
 import pytest
 
 from populace_dynamics.engine.refit import validate_external_vintage
+from populace_dynamics.estimates import group_breakdown as gb
 from populace_dynamics.estimates import lifetime_measures as lm
 from populace_dynamics.ss.params import SSAParameters
 
@@ -338,6 +339,30 @@ def test_mint8_definitions_are_verbatim_and_certified():
     )
     assert "less than 100 individuals" in (
         definitions["sample_size_restriction"]["text"]
+    )
+
+
+def test_mint_source_consumers_share_canonical_captures():
+    """G1, G2 and G3 use one sealed guide and one labels-only artifact."""
+    from populace_dynamics.cohorts import group_attributes
+
+    scheme_sources = group_attributes.load_schemes()["sources"]
+    for cohort_key, extractor_key, relative in (
+        ("mint8_user_guide", "mint8_user_guide", gb.MINT8_GUIDE_FILE),
+        ("mint8_row_labels", "mint8_table_row_labels", gb.MINT8_LABELS_FILE),
+    ):
+        cohort_source = scheme_sources[cohort_key]
+        extracted_source = extractor.SOURCES[extractor_key]
+        assert cohort_source["committed_file"] == relative
+        assert f"data/external/{extracted_source['file']}" == relative
+        assert cohort_source["sha256"] == extracted_source["sha256"]
+        assert cohort_source["sha256"] == gb.MINT8_SOURCE_SHA256[relative]
+    label_provenance = lm.load_mint8_definitions()[
+        "cohort_table_label_provenance"
+    ]
+    assert label_provenance["committed_label_file"] == gb.MINT8_LABELS_FILE
+    assert label_provenance["label_file_sha256"] == (
+        gb.MINT8_SOURCE_SHA256[gb.MINT8_LABELS_FILE]
     )
 
 

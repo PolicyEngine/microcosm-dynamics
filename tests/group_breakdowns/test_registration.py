@@ -50,12 +50,13 @@ def specification_spy(monkeypatch):
 def test_valid_preflight_creates_nothing(
     tmp_path, specification_spy, exercise
 ):
-    output = tmp_path / "invented.json"
+    output = tmp_path / "runs" / "invented_groups_posthoc_v1.json"
     state = runner.preflight(
         exercise=exercise,
         registration_pointer=POINTER,
         registered_commit=COMMIT,
         output=output,
+        root=tmp_path,
         git=invented_git,
     )
     assert state == {"head": COMMIT}
@@ -85,7 +86,8 @@ def test_bad_pointer_refuses_before_git_or_loaders(tmp_path, pointer):
             exercise="cola",
             registration_pointer=pointer,
             registered_commit=COMMIT,
-            output=tmp_path / "invented.json",
+            output=tmp_path / "runs" / "invented_groups_posthoc_v1.json",
+            root=tmp_path,
             git=forbidden,
         )
     assert list(tmp_path.iterdir()) == []
@@ -124,7 +126,8 @@ def test_full_lowercase_sha_required(tmp_path, specification_spy, commit):
             exercise="cola",
             registration_pointer=POINTER,
             registered_commit=commit,
-            output=tmp_path / "invented.json",
+            output=tmp_path / "runs" / "invented_groups_posthoc_v1.json",
+            root=tmp_path,
             git=invented_git,
         )
     assert specification_spy == []
@@ -147,7 +150,8 @@ def test_head_and_clean_tree_are_required(
             exercise="cola",
             registration_pointer=POINTER,
             registered_commit=COMMIT,
-            output=tmp_path / "invented.json",
+            output=tmp_path / "runs" / "invented_groups_posthoc_v1.json",
+            root=tmp_path,
             git=git,
         )
     assert specification_spy == []
@@ -158,8 +162,9 @@ def test_head_and_clean_tree_are_required(
 def test_preflight_preserves_existing_pair(
     tmp_path, specification_spy, sidecar
 ):
-    output = tmp_path / "invented.json"
+    output = tmp_path / "runs" / "invented_groups_posthoc_v1.json"
     existing = output.with_suffix(".env.json") if sidecar else output
+    existing.parent.mkdir(parents=True, exist_ok=True)
     existing.write_text("INVENTED EXISTING BYTES", encoding="utf-8")
     with pytest.raises(ValueError, match="already exists"):
         runner.preflight(
@@ -167,6 +172,7 @@ def test_preflight_preserves_existing_pair(
             registration_pointer=POINTER,
             registered_commit=COMMIT,
             output=output,
+            root=tmp_path,
             git=invented_git,
         )
     assert existing.read_text() == "INVENTED EXISTING BYTES"
@@ -183,7 +189,8 @@ def test_specification_refusal_creates_nothing(tmp_path, monkeypatch):
             exercise="cola",
             registration_pointer=POINTER,
             registered_commit=COMMIT,
-            output=tmp_path / "invented.json",
+            output=tmp_path / "runs" / "invented_groups_posthoc_v1.json",
+            root=tmp_path,
             git=invented_git,
         )
     assert list(tmp_path.iterdir()) == []
@@ -209,6 +216,7 @@ def test_new_pair_has_binding_sha256(tmp_path):
 def test_exclusive_writer_preserves_racing_existing_file(tmp_path, sidecar):
     output = tmp_path / "invented.json"
     existing = output.with_suffix(".env.json") if sidecar else output
+    existing.parent.mkdir(parents=True, exist_ok=True)
     existing.write_text("INVENTED RACING BYTES", encoding="utf-8")
     with pytest.raises(FileExistsError):
         runner.write_new_pair(output, {"value": 1.0}, {})

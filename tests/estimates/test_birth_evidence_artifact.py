@@ -208,6 +208,16 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/bridge/invented_population.py"),
         Path("src/populace_dynamics/bridge/population.py"),
         Path("src/populace_dynamics/bridge/population_summary.py"),
+        Path("src/populace_dynamics/cohorts/group_attributes.py"),
+        Path("src/populace_dynamics/data/group_attributes_psid.py"),
+        Path("src/populace_dynamics/estimates/group_breakdown.py"),
+        Path("src/populace_dynamics/estimates/lifetime_measures.py"),
+        Path("src/populace_dynamics/group_breakdowns/__init__.py"),
+        Path("src/populace_dynamics/group_breakdowns/common.py"),
+        Path("src/populace_dynamics/group_breakdowns/cola.py"),
+        Path("src/populace_dynamics/group_breakdowns/fra68.py"),
+        Path("src/populace_dynamics/group_breakdowns/uniform_cut.py"),
+        Path("src/populace_dynamics/group_breakdowns/min_benefit.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(

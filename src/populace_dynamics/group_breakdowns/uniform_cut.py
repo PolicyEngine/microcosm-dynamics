@@ -35,6 +35,8 @@ from populace_dynamics.group_breakdowns.common import (
     GroupBreakdownRefusal,
     assert_exact_cells,
     assert_sha256,
+    education_agreement,
+    side_frame_codes,
 )
 from populace_dynamics.ss.params import SSAParameters
 from populace_dynamics.uniform_cut_track_u import diagnostics, runner
@@ -244,23 +246,21 @@ def _attribute_frame(
                 "race_ethnicity_mint8",
                 "country_of_birth_mint8",
                 "education_years",
+                "race_ethnicity_report4",
+                "education_report3",
             ]
         ].copy()
-        side["race_ethnicity"] = side.pop("race_ethnicity_mint8").replace(
-            {
-                c.label: c.key
-                for c in gb.MINT8_SCHEME.dimension("race_ethnicity").categories
-            }
-        )
-        side["country_of_birth_group"] = side.pop(
-            "country_of_birth_mint8"
-        ).replace(
-            {
-                c.label: c.key
-                for c in gb.MINT8_SCHEME.dimension(
-                    "country_of_birth"
-                ).categories
-            }
+        for dimension, column in (
+            ("race_ethnicity", "race_ethnicity"),
+            ("country_of_birth", "country_of_birth_group"),
+        ):
+            codes = side_frame_codes(
+                attributes.frame, gb.MINT8_SCHEME.dimension(dimension)
+            )
+            side.pop(f"{dimension}_mint8")
+            side[column] = codes.codes
+        education_agreement(
+            attributes.frame, gb.MINT8_SCHEME.dimension("education")
         )
         frames.append(
             _join(part[["observation_id", "person_id"]], side, "person_id")
@@ -399,25 +399,56 @@ def lifetime_frame(
 
 def _scheme(row_id: str) -> gb.CategoryScheme:
     append = list(gb.LIFETIME_DIMENSIONS)
-    for kind in ("own", "shared"):
-        record = ut.NOT_COMPUTED_REPORT_ROWS[f"lifetime_earnings_{kind}"]
+    report = ga.load_schemes()["schemes"]["boomers2004"]
+    source = (
+        "exercise2-definitions-cleared-20260924.md; "
+        "SHA-256 a3978b683b4275424b6d12e9fe45f021fae277ccf9731a7883952564b6ed0384"
+    )
+    for record in report["row_groups"]:
+        group = record["group"]
+        if group.startswith("Lifetime Earnings"):
+            kind = "own" if "(Own)" in group else "shared"
+            key, category_kind = f"lifetime_earnings_{kind}", gb.QUINTILE
+            categories = tuple(
+                gb.Category(f"quintile_{i}", label, rank=i)
+                for i, label in enumerate(record["labels"], 1)
+            )
+            notes = (
+                "Exact means: cleared extract lines 223 and 227; "
+                "shared half-couple rule lines 66 and 223.",
+                "Report quintile assignments unavailable until registration "
+                "fixes report_quintile_population, report_quintile_order "
+                "and report_quintile_ties (lines 231 and 327).",
+            )
+        else:
+            key = {
+                "Race/Ethnicity": "race_ethnicity_report4",
+                "Education": "education_report3",
+                "Labor Force Experience": "labor_force_experience_report",
+            }[group]
+            category_kind = gb.CATEGORICAL
+            categories = tuple(
+                gb.Category(f"{key}_{i}", label, codes=(label,))
+                for i, label in enumerate(record["labels"], 1)
+            )
+            notes = (
+                (
+                    "Report education and labor definitions remain unavailable "
+                    "pending report_education_mapping and "
+                    "report_labor_force_experience (lines 231 and 327)."
+                    if group != "Race/Ethnicity"
+                    else "Other includes Asian and Native American groups "
+                    "(line 229); G1 records race mapping builder defaults."
+                ),
+            )
         append.append(
             gb.Dimension(
-                key=f"lifetime_earnings_{kind}",
-                label=record["section"],
-                kind=gb.QUINTILE,
-                categories=tuple(
-                    gb.Category(f"quintile_{i}", label, rank=i)
-                    for i, label in enumerate(record["rows"], 1)
-                ),
-                source=(
-                    "estimates/uniform_cut_tabulation.py "
-                    "NOT_COMPUTED_REPORT_ROWS"
-                ),
-                notes=(
-                    "post hoc convention: 1st is lowest; cut over this "
-                    "row's observation sample",
-                ),
+                key=key,
+                label=group,
+                kind=category_kind,
+                categories=categories,
+                source=f"{source}; {record['locator']}",
+                notes=notes,
             )
         )
     replace = {}
@@ -499,6 +530,8 @@ def tabulate_row_groups(
         else None
     )
     scheme = _scheme(row_id)
+    # No career-based substitute for the Report's undefined work-years rule.
+    frame["labor_force_experience_report"] = None
     columns = {
         "sex": "sex",
         "race_ethnicity": "race_ethnicity",
@@ -510,11 +543,18 @@ def tabulate_row_groups(
         "household_income_quintile": "group_income",
         "benefit_type": "benefit_type_group",
         **{name: name for name in MEASURES},
+        "race_ethnicity_report4": "race_ethnicity_report4",
+        "education_report3": "education_report3",
+        "labor_force_experience_report": "labor_force_experience_report",
     }
     result = {}
     seeds = replayed.result["tabulation"]["config"]["floor_seeds"]
     for concept in ("adjusted", "reported_money_official_style"):
         rows = frame.copy()
+        # Exact own/shared means may be available; the extract does not
+        # identify a quintile population, order or tie rule (231 and 327).
+        rows["lifetime_earnings_own"] = np.nan
+        rows["lifetime_earnings_shared"] = np.nan
         if concept == "adjusted":
             rows["group_income"] = rows["baseline_income"]
         else:
@@ -548,7 +588,26 @@ def tabulate_row_groups(
             quintile_partitions={
                 name: ("birth_cohort",) for name in MEASURES[:3]
             },
-            unclassified_codes={"marital_status": ("unclassified",)},
+            unclassified_codes={
+                "marital_status": ("unclassified",),
+                **{
+                    name: tuple(
+                        sorted(
+                            set(rows[column].dropna())
+                            - {
+                                category.codes[0]
+                                for category in scheme.dimension(
+                                    name
+                                ).categories
+                            }
+                        )
+                    )
+                    for name, column in (
+                        ("race_ethnicity", "race_ethnicity"),
+                        ("country_of_birth", "country_of_birth_group"),
+                    )
+                },
+            },
         )
         result[concept] = gb.tabulate_poverty_breakdown(
             rows,
@@ -576,20 +635,34 @@ def tabulate_row_groups(
         "labels": [*ap.OUTPUT_LABELS, *POSTHOC_LABELS],
         "groups": result,
         "attributes_provenance": provenance,
+        "report_builder_defaults": dict(
+            ga.load_schemes()["schemes"]["boomers2004"]["builder_defaults"]
+        ),
         "lifetime_provenance": lifetime_provenance,
         "frozen_row": dict(replayed.result.get("row", {})),
         "age67_spec": dict(replayed.result.get("age67_spec", {})),
         "income_spec": dict(replayed.result.get("income_spec", {})),
-        "not_computed": (
-            {}
-            if "benefit_type" in members
-            else {
-                "benefit_type": (
-                    "Track U cohort outputs have no Social Security type "
-                    "flags; unavailable rows retained as unclassified"
-                )
-            }
-        ),
+        "not_computed": {
+            "education_report3": "report_education_mapping: undefined in "
+            "cleared extract lines 231 and 327; pending registration",
+            "labor_force_experience_report": "report_labor_force_experience: "
+            "undefined in cleared extract lines 231 and 327; "
+            "positive-earnings years are not substituted",
+            "lifetime_earnings_own": "report_quintile_population, "
+            "report_quintile_order and report_quintile_ties pending registration",
+            "lifetime_earnings_shared": "report_quintile_population, "
+            "report_quintile_order and report_quintile_ties pending registration",
+            **(
+                {}
+                if "benefit_type" in members
+                else {
+                    "benefit_type": (
+                        "Track U cohort outputs have no Social Security type "
+                        "flags; unavailable rows retained as unclassified"
+                    )
+                }
+            ),
+        },
         "age_note": (
             "U1 age dimension is 66/67/68; "
             "U0 and remaining rows are exact age 67"

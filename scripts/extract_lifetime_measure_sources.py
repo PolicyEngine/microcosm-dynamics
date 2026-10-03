@@ -107,7 +107,7 @@ SOURCES: dict[str, dict[str, Any]] = {
         "bytes": 41837,
     },
     "mint8_user_guide": {
-        "file": "ssa_mint8_user_guide_2026.source.html",
+        "file": "mint8_table_user_guide.source.html",
         "url": "https://www.ssa.gov/policy/docs/projections/user-guide.html",
         "title": "MINT8 Table User Guide",
         "sha256": (
@@ -116,7 +116,7 @@ SOURCES: dict[str, dict[str, Any]] = {
         "bytes": 73967,
     },
     "mint8_table_row_labels": {
-        "file": "mint8_row_categories_2026.source.json",
+        "file": "mint8_row_categories.json",
         "url": (
             "https://www.ssa.gov/policy/docs/projections/policy-options/"
             "increase-payroll-tax-rate.html"
@@ -312,9 +312,7 @@ MINT8_TABLE_LABEL_PROVENANCE = {
     "label_file_sha256": (
         "23fbfbc8dbc14b06144a83bf0583ea0a6c89505638f3f7dc5fd6b34a3a4ac650"
     ),
-    "committed_label_file": (
-        "data/external/mint8_row_categories_2026.source.json"
-    ),
+    "committed_label_file": "data/external/mint8_row_categories.json",
     "tables": "13-20 (benefit/tax ratios and initial replacement rates)",
     "note": (
         "Labels only. The lane's parser emitted th, caption and heading "

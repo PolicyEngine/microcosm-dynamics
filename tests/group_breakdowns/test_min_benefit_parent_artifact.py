@@ -19,6 +19,8 @@ from __future__ import annotations
 import importlib.util
 import json
 import re
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -144,32 +146,48 @@ def test_the_environment_fields_are_recorded(parent):
         assert isinstance(value, str) and value, field
 
 
-def _pins() -> dict[str, str]:
-    text = VENV_SCRIPT.read_text(encoding="utf-8")
-    found = dict(
-        re.findall(r'^([A-Z_]+_(?:VERSION|REVISION))="([^"]+)"', text, re.M)
+def _pins(exercise="min-benefit") -> dict:
+    completed = subprocess.run(
+        [
+            "bash",
+            str(VENV_SCRIPT),
+            "--check-only",
+            "--source-python",
+            sys.executable,
+            "--exercise",
+            exercise,
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
     )
-    return found
+    return json.loads(completed.stdout)
 
 
 def test_the_repro_venv_script_pins_the_parents_environment(parent):
     environment = parent.sidecar["environment"]
-    assert _pins() == {
-        "PYTHON_VERSION": environment["python"],
-        "NUMPY_VERSION": environment["packages"]["numpy"],
-        "PANDAS_VERSION": environment["packages"]["pandas"],
-        "SCIPY_VERSION": environment["packages"]["scipy"],
-        "PE_US_REVISION": environment["policyengine_us_parameters"][
-            "revision"
+    manifest = _pins()
+    assert manifest["versions"] == {
+        "python": environment["python"],
+        "numpy": environment["packages"]["numpy"],
+        "pandas": environment["packages"]["pandas"],
+        "scipy": environment["packages"]["scipy"],
+        "policyengine-social-security-model": environment["packages"][
+            "policyengine-social-security-model"
         ],
     }
+    assert (
+        manifest["parameter_revision"]
+        == environment["policyengine_us_parameters"]["revision"]
+    )
+    assert manifest["scipy_pin_provenance"] == "recorded sidecar"
 
 
 def test_the_repro_venv_script_asks_for_the_gil_build():
     text = VENV_SCRIPT.read_text(encoding="utf-8")
     assert '--python "${PYTHON_VERSION}+gil"' in text
     assert "Py_GIL_DISABLED" in text
-    assert "runs/replication_urban2006_minimum_benefit_v1.env.json" in text
+    assert "replication_urban2006_minimum_benefit_v1" in text
 
 
 def test_the_parent_names_the_files_both_readers_record(parent):
@@ -179,3 +197,28 @@ def test_the_parent_names_the_files_both_readers_record(parent):
     files = parent.document["inputs"]["source"]["psid_files_sha256"]
     assert all(not name.startswith("/") for name in files)
     json.dumps(files)
+
+
+@pytest.mark.parametrize(
+    "exercise", ("cola", "fra68", "uniform-cut", "min-benefit")
+)
+def test_one_environment_builder_selects_each_exact_sidecar(exercise):
+    manifest = _pins(exercise)
+    selected = manifest["source_sidecars"][exercise]
+    path = Path(selected["sidecar"])
+    assert common.file_sha256(path) == selected["sha256"]
+    environment = json.loads(path.read_text())["environment"]
+    assert manifest["versions"]["python"] == environment["python"]
+    for package in ("numpy", "pandas", "scipy"):
+        if package in environment["packages"]:
+            assert (
+                manifest["versions"][package]
+                == environment["packages"][package]
+            )
+        else:
+            assert package not in manifest["versions"]
+    assert (
+        "original version unrecorded" in manifest["scipy_pin_provenance"]
+        if exercise == "uniform-cut"
+        else manifest["scipy_pin_provenance"] == "recorded sidecar"
+    )
