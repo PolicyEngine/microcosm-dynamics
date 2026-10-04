@@ -41,8 +41,40 @@ REGISTERED_PATHS = (
 )
 
 
+def _module_package(path: Path) -> list[str]:
+    """The dotted package of ``path`` under ``src``, as parts.
+
+    ``src/populace_dynamics/engine/loop.py`` gives
+    ``["populace_dynamics", "engine"]``; a package ``__init__.py`` gives
+    its own package.  Files outside ``src`` (scripts, test scratch files)
+    have no package, so a relative import there cannot name ours.
+    """
+
+    try:
+        parts = list(path.resolve().relative_to(REPO_ROOT / "src").parts)
+    except ValueError:
+        return []
+    return parts[:-1]
+
+
+def _resolve_from(node: ast.ImportFrom, path: Path) -> str | None:
+    """The absolute module an ``ImportFrom`` names, or None if unknown."""
+
+    if node.level == 0:
+        return node.module or ""
+    package = _module_package(path)
+    if not package or node.level - 1 > len(package):
+        return None
+    base = package[: len(package) - (node.level - 1)]
+    return ".".join(base + ([node.module] if node.module else []))
+
+
 def _imports_baselines(path: Path) -> bool:
-    """Whether ``path`` imports the baselines package, by its syntax tree."""
+    """Whether ``path`` imports the baselines package, by its syntax tree.
+
+    Absolute and relative imports both count: a relative import is
+    resolved against the file's package under ``src``.
+    """
 
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     for node in ast.walk(tree):
@@ -52,8 +84,10 @@ def _imports_baselines(path: Path) -> bool:
                 for alias in node.names
             ):
                 return True
-        elif isinstance(node, ast.ImportFrom) and node.level == 0:
-            module = node.module or ""
+        elif isinstance(node, ast.ImportFrom):
+            module = _resolve_from(node, path)
+            if module is None:
+                continue
             if module == PACKAGE or module.startswith(PACKAGE + "."):
                 return True
             if module == "populace_dynamics" and any(
@@ -121,3 +155,26 @@ def test_the_scan_detects_each_import_form(tmp_path):
         encoding="utf-8",
     )
     assert not _imports_baselines(clean)
+
+
+def test_the_scan_resolves_relative_imports(tmp_path, monkeypatch):
+    """Relative imports inside ``src`` are caught after resolution."""
+
+    fake_root = tmp_path
+    engine = fake_root / "src" / "populace_dynamics" / "engine"
+    engine.mkdir(parents=True)
+    top = fake_root / "src" / "populace_dynamics"
+    monkeypatch.setattr(
+        __import__(__name__, fromlist=["REPO_ROOT"]), "REPO_ROOT", fake_root
+    )
+    cases = {
+        engine / "a.py": ("from ..baselines import get_baseline\n", True),
+        engine / "b.py": ("from ..baselines.legacy import X\n", True),
+        top / "c.py": ("from . import baselines\n", True),
+        top / "d.py": ("from .baselines import track_a\n", True),
+        engine / "e.py": ("from . import steps\n", False),
+        engine / "f.py": ("from ..data import tr2008\n", False),
+    }
+    for file, (source, expected) in cases.items():
+        file.write_text(source, encoding="utf-8")
+        assert _imports_baselines(file) is expected, file.name
