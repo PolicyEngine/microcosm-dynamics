@@ -305,7 +305,22 @@ def render_block(
                         "id": "2026-10-02-epuf-verification-round-2",
                         "content": (
                             "Verification round 2: merge after listed "
-                            "fixes, applied (verification_round_2)."
+                            "fixes (verification_round_2); fixes applied "
+                            "in 93848324."
+                        ),
+                    },
+                    {
+                        "id": "2026-10-02-epuf-rereview-round-3",
+                        "content": (
+                            "Re-review round 3: approve, five minor points "
+                            "(rereview_round_3); fixes applied in 95291e75."
+                        ),
+                    },
+                    {
+                        "id": "2026-10-02-epuf-confirmation-round-4",
+                        "content": (
+                            "Confirmation round 4: approve, three optional "
+                            "points (confirmation_round_4)."
                         ),
                     },
                 ],

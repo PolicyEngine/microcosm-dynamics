@@ -378,6 +378,9 @@ def test_block_records_every_review_round():
     for key in ("rereview_round_3", "confirmation_round_4"):
         assert block[key]["verdict"].startswith("APPROVE")
         assert "applied" not in block[key]["verdict"]
+    history = " ".join(entry["content"] for entry in block["history"])
+    for key in rounds:
+        assert f"({key})" in history
     assert (
         "MERGE AFTER LISTED FIXES" in block["verification_round_2"]["verdict"]
     )
