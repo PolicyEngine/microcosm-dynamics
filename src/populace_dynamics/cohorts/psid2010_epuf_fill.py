@@ -18,9 +18,10 @@ Earnings Public-Use File and registered by ``gate_epuf_fill``
   - a gap year with no visible neighbour keeps the assembler's value, which
     used a neighbour the fill does not see (an observed pre-career year, or
     the 2014 boundary year);
-- every year from 1951 before the career start becomes the pre-career
-  fill's draw, with provenance
-  :attr:`EPUFFillProvenance.PRE_CAREER_EPUF_DONOR`.
+- every year from 1951 before the career start that has no career row
+  becomes the pre-career fill's draw, with provenance
+  :attr:`EPUFFillProvenance.PRE_CAREER_EPUF_DONOR` (the assembler's careers
+  start at the career start, so in practice every such year).
 
 The fills see what the gate's scoring path gives them:
 - capped shares of the wage base for the career years the PSID recorded;

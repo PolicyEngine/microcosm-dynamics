@@ -165,6 +165,21 @@ application, which EPUF scoring does not use; the cache's key; the draws
 for persons of uncoded sex, who are never scored; and the bank summaries'
 years, which on EPUF end in 2006 anyway.
 
+**The confirmation review** of both PRs
+(`reviews/gate_epuf_fill_pr515_pr516_confirmation_review_20261004.md`)
+returned APPROVE WITH NITS. Its fixes in unpinned files are applied:
+- The score script checks the staged files against the manifest before it
+  leaves any marker.
+- Tests tie the score script's pin to the manifest and check its refusals.
+- A run with any injected input is marked as not the registered scoring.
+
+Two nits in the pinned `epuf_fill.py` are left as they are, because fixing
+them would need a refit. Neither changes a registered draw:
+- `_BANK_DIGESTS` keeps each digested donor fill alive for the process's
+  life.
+- The zero-year forest has no empty-leaf check. An empty leaf would give a
+  zero probability.
+
 ## Procedure on TEST (after lock)
 
 1. Confirm that `gates.yaml` locks `gate_epuf_fill` and that the staged files

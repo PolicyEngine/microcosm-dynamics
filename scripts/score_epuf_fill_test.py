@@ -40,6 +40,8 @@ REGISTERED_MANIFEST_SHA256 = (
 CODE_FILES = (
     "src/populace_dynamics/harness/epuf_fill_gate.py",
     "src/populace_dynamics/harness/epuf_fill_scoring.py",
+    "src/populace_dynamics/harness/epuf_cells.py",
+    "src/populace_dynamics/harness/epuf_operator.py",
     "src/populace_dynamics/estimates/epuf_fill.py",
     "scripts/score_epuf_fill_test.py",
 )
@@ -57,7 +59,7 @@ def candidates_from(manifest: dict, fills_dir: Path) -> dict:
     return spec
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
@@ -68,7 +70,7 @@ def main() -> None:
             os.environ.get("POPULACE_DYNAMICS_EPUF_FILLS_DIR", DEFAULT_DIR)
         ),
     )
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if args.output.exists():
         raise FileExistsError(f"{args.output} exists; TEST is scored once")
     manifest_bytes = args.manifest.read_bytes()
@@ -94,6 +96,15 @@ def main() -> None:
         raise g.TestPartLocked(
             "gate_epuf_fill is not locked; TEST stays unread"
         )
+    # The staged candidates must be the registered bytes before any marker.
+    manifest = json.loads(manifest_bytes)
+    spec = candidates_from(manifest, args.fills_dir)
+    for family, roles in spec.items():
+        for role, (path, sha256) in roles.items():
+            if hashlib.sha256(path.read_bytes()).hexdigest() != sha256:
+                raise ValueError(
+                    f"{family} {role}: {path.name} is not the registered bytes"
+                )
     # A started marker, so a run that fails after reading TEST leaves a
     # trace of the read.
     marker = Path(f"{args.output}.started.json")
@@ -107,10 +118,7 @@ def main() -> None:
             },
             handle,
         )
-    manifest = json.loads(manifest_bytes)
-    record = scoring.score_registered(
-        candidates_from(manifest, args.fills_dir)
-    )
+    record = scoring.score_registered(spec)
     # Published paths are the registered file names, not local folders.
     for family in record["candidates"].values():
         for role in family.values():
