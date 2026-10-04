@@ -216,7 +216,12 @@ def score_registered(
         }
     # A run with an injected matrix or injected fills is a test or a dry
     # run, never the registered TEST scoring, and says so.
-    injected = {"matrix": matrix is not None, "fills": fills is not None}
+    injected = {
+        "matrix": matrix is not None,
+        "fills": fills is not None,
+        "gates_path": gates_path is not None,
+        "data_dir": data_dir is not None,
+    }
     if matrix is None:
         matrix = g.test_part(gates_path=gates_path, data_dir=data_dir)
     record: dict[str, object] = {

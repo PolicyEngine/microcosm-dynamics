@@ -191,17 +191,22 @@ def test_an_injected_run_is_never_the_registered_scoring(tmp_path):
         },
     )
     assert record["registered_test_scoring"] is False
-    assert record["injected"] == {"matrix": True, "fills": True}
+    assert record["injected"] == {
+        "matrix": True,
+        "fills": True,
+        "gates_path": False,
+        "data_dir": False,
+    }
 
 
 def test_the_smaller_current_reading_sets_the_improves_allowance(tmp_path):
-    """Where the two readings differ, the smaller gap decides "improves".
+    """On real readings, the combined reference takes the smaller gap.
 
     Born 1975-1977, the 1997-1999 units sit at age 22, whose year before is
     pre-career: the fallback reading copies t+1 while the two-sided reading
-    averages the true year before in. A candidate equal to the two-sided
-    reading is within one tolerance of it everywhere, so the combined
-    reference admits it as "improves" where the fallback alone would not.
+    averages the true year before in, so their gaps differ. The combined
+    reference keeps the smaller gap in each cell and the smaller failing
+    count, which can only tighten the "improves" tier (the next test).
     """
 
     rng = np.random.default_rng(5)
@@ -278,6 +283,11 @@ def test_the_smaller_current_reading_sets_the_improves_allowance(tmp_path):
         ],
         tolerance,
         gating,
+    )
+    # The two readings differ in some gating cell.
+    assert any(
+        fallback["cells"][c]["gap"] != reading["cells"][c]["gap"]
+        for c in gating
     )
     combined = scoring.combined_current(fallback, reading)
     for cell in gating:
