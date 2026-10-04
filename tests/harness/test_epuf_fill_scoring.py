@@ -62,6 +62,13 @@ def test_registered_floors_are_hash_checked(tmp_path):
         scoring.load_registered_floors(path, "0" * 64)
 
 
+def _spec():
+    return {
+        "primary": ("primary.npz", "0" * 64),
+        "alternative": ("alt.npz", "1" * 64),
+    }
+
+
 def test_score_registered_scores_the_current_rule_and_both_candidates(
     tmp_path,
 ):
@@ -84,23 +91,72 @@ def test_score_registered_scores_the_current_rule_and_both_candidates(
     ]
     path, sha = _floors(tmp_path, gating)
     record = scoring.score_registered(
-        {"odd": (g.CurrentOddFill(), g.CurrentOddFill())},
-        wage_bases=WAGE_BASES,
-        nawi=NAWI,
+        {"odd": _spec()},
         floors_path=path,
         floors_sha256=sha,
         matrix=matrix,
         seeds=(7100, 7101),
+        fills={
+            "odd": {
+                "primary": g.CurrentOddFill(),
+                "alternative": g.CurrentOddFill(),
+            }
+        },
     )
     family = record["families"]["odd"]
-    # A candidate identical to the current rule scores exactly as it does
-    # and, with every cell within the wide synthetic tolerance, certifies.
-    assert (
-        family["primary"]["n_failing"] == family["current_rule"]["n_failing"]
-    )
+    # A candidate identical to the current rule scores exactly as its
+    # fallback reading does and, within the wide synthetic tolerance,
+    # certifies; both readings of the current rule are reported.
+    fallback = family["current_rule"]["fallback"]
+    assert family["primary"]["n_failing"] == fallback["n_failing"]
+    assert set(family["current_rule"]) == {"fallback", "two_sided"}
     assert family["primary"]["tier"] == "certified"
     assert family["adopted"] == "primary"
     assert record["floors_sha256"] == sha
+    assert record["constants_sha256"] == scoring.constants()[2]
+    assert record["candidates"]["odd"]["primary"]["sha256"] == "0" * 64
+
+
+def test_undefined_test_truth_is_dropped_and_reported():
+    truth = {
+        "odd.men.a30_44.r1": g.CellValue(0.9, 10, 10),
+        "odd.men.a30_44.zint": g.CellValue(0.0, 0, 10),
+        "odd.men.a30_44.level": g.CellValue(float("nan"), 0, 0),
+    }
+    kept, dropped = scoring.defined_gating(truth, sorted(truth))
+    assert kept == ["odd.men.a30_44.r1"]
+    assert dropped == ["odd.men.a30_44.level", "odd.men.a30_44.zint"]
+
+
+def test_combined_current_takes_the_smaller_gap_per_cell():
+    def score(gaps, failing):
+        return {
+            "cells": {f"c{i}": {"gap": x} for i, x in enumerate(gaps)},
+            "n_failing": failing,
+            "passes": False,
+        }
+
+    combined = scoring.combined_current(
+        score([0.5, -np.inf, -0.2], 3), score([0.1, 0.4, -np.inf], 2)
+    )
+    assert [combined["cells"][f"c{i}"]["gap"] for i in range(3)] == [
+        0.1,
+        0.4,
+        -0.2,
+    ]
+    assert combined["n_failing"] == 2
+
+
+def test_registered_candidates_are_hash_checked(tmp_path):
+    path, sha = _floors(tmp_path, ["odd.men.a30_44.r1"])
+    pytest.importorskip("populace_dynamics.estimates.epuf_fill")
+    with pytest.raises((ValueError, FileNotFoundError)):
+        scoring.score_registered(
+            {"odd": {"primary": (tmp_path / "missing.npz", "0" * 64)}},
+            floors_path=path,
+            floors_sha256=sha,
+            matrix=_matrix(n=50),
+        )
 
 
 def test_score_registered_reads_test_only_through_the_lock(tmp_path):
@@ -109,10 +165,14 @@ def test_score_registered_reads_test_only_through_the_lock(tmp_path):
     gates.write_text("gates: {}\n")
     with pytest.raises(g.TestPartLocked):
         scoring.score_registered(
-            {"odd": (g.CurrentOddFill(), g.CurrentOddFill())},
-            wage_bases=WAGE_BASES,
-            nawi=NAWI,
+            {"odd": _spec()},
             floors_path=path,
             floors_sha256=sha,
             gates_path=gates,
+            fills={
+                "odd": {
+                    "primary": g.CurrentOddFill(),
+                    "alternative": g.CurrentOddFill(),
+                }
+            },
         )

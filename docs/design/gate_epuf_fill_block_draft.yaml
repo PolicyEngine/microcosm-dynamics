@@ -1,0 +1,63 @@
+# Draft gates.yaml block for gate_epuf_fill (NOT in gates.yaml yet).
+#
+# A gate here is a pass-or-fail test whose rules and thresholds are fixed and
+# published before anything is scored against it. This block is copied into
+# gates.yaml, with locked: true, only after Max ratifies the materiality
+# reading of the tolerance (decision d927) and the ratifying merge lands.
+# Until then epuf_fill_gate.test_part() refuses to read TEST.
+gate_epuf_fill:
+  id: epuf_career_fill
+  registration_id: 2026-10-03-epuf-career-fill
+  status: registered_awaiting_ratification
+  locked: false
+  covers: >-
+    The career assembler's two fill rules (odd income years 1997-2011 and
+    the 2013 seam as neighbour means; nothing before max(1968, birth year +
+    22)) and their learned replacements, scored on held-out persons of SSA's
+    2006 Earnings Public-Use File: one-year and multi-year rank persistence,
+    zero-year rates by age, positive-share quantiles, and the AIME (and a
+    partial AIME through 2006) under the statutory 35-year rule.
+  holdout_basis: [EPUF2006_TEST_by_salted_person_hash]
+  proposal: docs/amendments/gate_epuf_fill_registration_proposal.md
+  rules: src/populace_dynamics/harness/epuf_fill_gate.py
+  rules_commit: 7061200d  # amendment 1; round-2 fixes at cb76ad15
+  floor_run: runs/epuf_fill_gate_floors_v3.json
+  floor_run_sha256: d403a824416f00524fadceefb897f5bdcaa197c12ebee0b1f1fd52304d98e25e
+  floor_build_commit: cb76ad15
+  psid_scale: runs/epuf_fill_gate_psid_scale_v2.json
+  psid_scale_sha256: b35e12fae91aa4c219f719ce64b139962ea3bdba3cd322ff55a8a7b30abcdff1
+  test_scoring: src/populace_dynamics/harness/epuf_fill_scoring.py
+  test_scoring_sha256: e21750be4e1d37d19275966546ec938a6a6979d863bee132cdfdcc18cae18ebb
+  thresholds:
+    locked: false
+    k_tolerance: 1.0
+    tolerance: >-
+      Each gating cell's tolerance is K times its sampling standard error
+      at the PSID-2010 cohort's size (the root mean square of [m(A) -
+      m(B)] / sqrt(2) over 200 pairs of disjoint real DEV samples), read
+      from the floor run and never rewritten. A materiality threshold: a
+      fill within it is never the larger source of error in that cell.
+    gating_cells: 319
+    report_only_cells: 7
+    bite: >-
+      B1 (current odd-year rule) fails 96 of 183 gating odd cells and B2
+      (current pre-career rule) 112 of 136 gating pre cells by more than two
+      tolerances on DEV.
+    adoption: >-
+      certified (passes every gating cell) > improves (fails, but every
+      gating cell within max(tau, min(|current gap|, 3 tau)), the current
+      gap being the smaller of the odd rule's two readings, and strictly
+      fewer failing cells) > not adopted; the primary wins ties; families
+      adopt separately.
+  ceremony_record:
+    round_1_referee: reviews/gate_epuf_fill_round1_referee_20261004.md (AMEND BEFORE LOCK)
+    amendment_1: docs/amendments/gate_epuf_fill_registration_proposal.md section 12
+    round_2_verification: reviews/gate_epuf_fill_round2_verification_20261004.md (LOCK AFTER LISTED FIXES)
+    round_2_fixes: section 12a
+    round_3_confirmation: reviews/gate_epuf_fill_round3_confirmation_20261004.md (LOCK AFTER LISTED FIXES, no rebuild)
+    round_3_fixes: section 12b
+    ratification: pending decision d927 (Max)
+    dev_disclosures:
+      - docs/amendments/gate_epuf_fill_dev_scores_before_amendment_1.json
+      - docs/amendments/gate_epuf_fill_dev_scores_after_amendment_1.json
+      - docs/amendments/gate_epuf_fill_dev_scores_after_round_2.jsonl

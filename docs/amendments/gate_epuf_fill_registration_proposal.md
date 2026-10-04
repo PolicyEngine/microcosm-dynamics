@@ -7,7 +7,11 @@
   (`populace_dynamics.estimates.career.build_career`) uses to fill years the
   PSID did not record, and their learned replacements, scored on held-out
   persons of SSA's 2006 Earnings Public-Use File (EPUF).
-- **Ceremony stage**: ROUND-2 FIXES. Referee round 1
+- **Ceremony stage**: ROUND-3 FIXES, then lock on Max's ratification
+  (decision d927). Referee round 3
+  (`reviews/gate_epuf_fill_round3_confirmation_20261004.md`) returned LOCK
+  AFTER LISTED FIXES with no rebuild; its fixes are in section 12b.
+  Earlier stage: ROUND-2 FIXES. Referee round 1
   (`reviews/gate_epuf_fill_round1_referee_20261004.md`) returned AMEND
   BEFORE LOCK, and amendment 1 answered it (section 12). Referee round 2
   (`reviews/gate_epuf_fill_round2_verification_20261004.md`) returned LOCK
@@ -20,8 +24,13 @@
     `docs/amendments/gate_epuf_fill_dev_scores_before_amendment_1.json`,
     those after it in
     `docs/amendments/gate_epuf_fill_dev_scores_after_amendment_1.json`,
-    and those after round 2's fixes in
-    `docs/amendments/gate_epuf_fill_dev_scores_after_round_2.jsonl`.
+    and those after round 2's fixes, through 2026-10-04 07:45 UTC, in
+    `docs/amendments/gate_epuf_fill_dev_scores_after_round_2.jsonl`. The
+    log stays open, and is closed with a timestamp in the lock record.
+  - The bytes of the candidate code behind each disclosed score are kept
+    in `docs/amendments/gate_epuf_fill_candidate_code/` from 07:45 UTC on.
+    Earlier versions were not kept. Their SHA-256 values are in the
+    disclosures, and their differences are described there.
   - No TEST person has been read. TEST can be read only through
     `epuf_fill_gate.test_part()`, which refuses until `gates.yaml` locks
     this gate.
@@ -134,10 +143,24 @@ Two families of years, as the PSID would leave a career:
    when a family is scored, but unknown to its fill.
 6. The current rules are scored the same way, as fills (`current_rule`).
    - `CurrentOddFill` takes the mean of the neighbouring years' earnings in
-     dollars, as a share of its own year's wage base, capped at 1. With one
-     neighbour unknown it uses that neighbour, as `career._impute_gap`
-     does; with both unknown, zero.
+     dollars, as a share of its own year's wage base, capped at 1.
+   - With one neighbour unknown it uses that neighbour; with both unknown,
+     zero.
    - `CurrentPreFill` gives zero.
+
+   **The age-22 case.** The scoring path hides pre-career years, so at age
+   22, whose year before is pre-career, `CurrentOddFill` always takes the
+   one known neighbour. The assembler does that only when the PSID did not
+   record the year before. `build_career` takes any observed PSID year from
+   1968 on as a neighbour, whatever the age.
+   - In the PSID-2010 cohort, 274 of the 513 age-22 neighbour-mean fills
+     (53 percent) have the age-21 year recorded. That is 0.8 percent of
+     its 65,588 filled years.
+   - So the current rule has two readings there: always falling back, and
+     always averaging the true year before (`current_odd_fill` on the
+     truth).
+   - For the "improves" tier, each cell's current gap is the smaller of the
+     two readings' gaps (section 7.3).
 
 ## 4. Cells
 
@@ -390,8 +413,17 @@ nearest TRAIN person-years in the shares at `t-1` and `t+1`, sex and age.
 
 ### 7.3 Adoption rule
 
-This rule is coded in `adoption_tier` and `adopt`. Each candidate and the
-current rule are scored on the same TEST persons. A candidate's tier is:
+This rule is coded in `adoption_tier` and `adopt`, applied by
+`epuf_fill_scoring.score_registered`. Each candidate and the current rule
+are scored on the same TEST persons.
+
+**The current gap.** For the odd family the current gap is the smaller,
+cell by cell, of its two readings' gaps (section 3, item 6), and its
+failing count is the smaller of the two. Both readings' scores are
+reported. A gating cell whose TEST truth is undefined (not finite, or not
+positive for a log ratio) is reported and dropped from every score.
+
+A candidate's tier is:
 - **certified** if it passes the gate;
 - **improves** if it fails the gate but meets both of these:
   - in every gating cell its gap is finite and at most
@@ -663,6 +695,31 @@ these:
 | 7 | Tests and provenance | Added: pool equals the cells' count for every cohort group; `epuf_cells.py` and `epuf_operator.py` bound to the build; the scored matrix keeps every non-owned cell true; writes into the other family's cells are refused; no unit at age 21; the annual year range is asserted; the build records whether the bound files were clean |
 | 8 | Notes | Recorded in section 13 |
 
+### 12b. Referee round 3 and the fixes
+
+Round 3 (`reviews/gate_epuf_fill_round3_confirmation_20261004.md`)
+confirmed round 2's eight findings fixed or disclosed, and confirmed that
+v3's floors equal v2's. It returned LOCK AFTER LISTED FIXES, with no
+rebuild:
+
+| # | Finding | Fix |
+|---|---|---|
+| 1 | Making the current odd rule a fill moved its young-band gaps, and so the improves allowances | Disclosed below. The neutral rule of sections 3 and 7.3 is registered: each cell's current gap is the smaller of the two readings' |
+| 2 | The DEV log was not closed | `pre_chain3`'s check is logged. The log runs through 07:45 UTC and is closed at lock. Candidate code bytes are kept from 07:45 UTC |
+| 3 | Gaps in the TEST entry point | `score_registered` now does all of these: builds the wage bases and NAWI itself and records their hash; drops and reports a gating cell whose TEST truth is undefined; loads each candidate through `load_fill` with its registered SHA-256; and scores both readings of the current rule. The lock record pins `epuf_fill_scoring.py`'s SHA-256 |
+| 4 | Note for d927: "improves" allows up to three tolerances | Recorded in section 13 and in decision d927 |
+
+**What finding 1 disclosed.** Between v2 and v3 the current odd rule's
+gaps moved in the 22-29 band. The two cells that loosened were
+`odd.women.a22_29.level` (0.11 to 1.23 tolerances) and `odd.men.a22_29.level`
+(0.31 to 1.09). Four cells tightened: men's 22-29 `q10`, `q50`, `q90` and
+`r3`.
+- The change was made at 07:16 UTC. By then, DEV event 8 (07:05 UTC) had
+  shown `odd_qrf_sex2` failing `odd.women.a22_29.level` by 1.10 tolerances,
+  where v2's allowance blocked "improves" and v3's would not.
+- The neutral rule restores v2's allowance on those cells, because v2's
+  reading had the smaller gap there. It keeps the four tightenings.
+
 ## 13. Considered and rejected
 
 1. **Floors from two halves of all DEV persons, and the house tolerance
@@ -704,6 +761,15 @@ these:
   re-rolls every floor. Amendment 1 moved tolerances by up to about 7
   percent this way, and no disclosed result flipped. Future amendments
   should key seeds by group name.
+- "Improves" allows a candidate to miss a cell by up to three tolerances.
+  At that boundary a fill adds up to the square root of 10 (about 3.2
+  times) the PSID's own sampling error to a PSID-sized estimate's root mean
+  square error, against the square root of 2 for a certified fill.
+  - On DEV, the leading pre-career candidate (`pre_donor`, 07:22 UTC) was
+    in that tier, missing the pooled `pre.women.b1930_1945.aime_p10` by
+    +0.33 log (2.0 tolerances).
+  - Its later version (`pre_donor2`) fixed that cell.
+  - Section 7.3 says an "improves" adoption is uncertified.
 - Pooled floors sample EPUF's cohort mix, not the PSID's. For men born
   1930-1945 that is 28/29/43 percent across the three cohorts, against the
   PSID's 18/26/55. This is harmless.
@@ -722,7 +788,8 @@ these:
 - [x] Round 2's fixes; DEV candidate scores after amendment 1 disclosed
 - [x] Floor build v3 on DEV at `cb76ad15` (round 2's fixes; floors equal
   to v2's); the TEST scoring module pins its SHA-256
-- [ ] Referee round 3 (confirmation of the fixes)
+- [x] Referee round 3 (confirmation): LOCK AFTER LISTED FIXES, no rebuild
+- [x] Round 3's fixes (section 12b)
 - [ ] Max ratifies the materiality reading of the tolerance (queued
   decision)
 - [ ] Ratifying merge; lock flip in `gates.yaml`
