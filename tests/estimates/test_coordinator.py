@@ -1538,12 +1538,19 @@ def test__estimator_surface__pins_complete_module_tuple():
         for path in observed
         if path.name in ("adjusted_poverty.py", "uniform_cut_tabulation.py")
     )
+    # The EPUF-learned career fills (gate_epuf_fill) are opt-in and outside
+    # the registered first-estimates surface: the gate's scoring and its fit
+    # script load them, and nothing on the first-estimates path imports them.
+    epuf_fill_surface = tuple(
+        path for path in observed if path.name == "epuf_fill.py"
+    )
     first_estimates_surface = tuple(
         path
         for path in observed
         if path not in context_surface
         and path not in tabulation_surface
         and path not in track_u_surface
+        and path not in epuf_fill_surface
     )
 
     assert coordinator._ESTIMATOR_SURFACE_SOURCES == expected
@@ -1554,6 +1561,9 @@ def test__estimator_surface__pins_complete_module_tuple():
     assert track_u_surface == (
         Path("src/populace_dynamics/estimates/adjusted_poverty.py"),
         Path("src/populace_dynamics/estimates/uniform_cut_tabulation.py"),
+    )
+    assert epuf_fill_surface == (
+        Path("src/populace_dynamics/estimates/epuf_fill.py"),
     )
     assert context_surface == (
         Path("src/populace_dynamics/estimates/anchor_context_coordinator.py"),
