@@ -1,9 +1,12 @@
 """gate_epuf_fill's committed floors recompute from what they store.
 
-Pins ``runs/epuf_fill_gate_floors_v1.json`` (the DEV floor build) and
-``runs/epuf_fill_gate_psid_scale_v1.json`` (the PSID-2010 counts) to the
-registration's rules: sample sizes, seeds, sigmas, tolerances, the
-partition, the checks on bite and the lock condition.
+``runs/epuf_fill_gate_floors_v2.json`` is the registered DEV floor build
+(amendment 1); its rules and builders are bound to the commit it ran at,
+and its sample sizes, seeds, sigmas, tolerances, partition and checks on
+bite recompute from the stored replicates and the PSID-2010 counts
+(``runs/epuf_fill_gate_psid_scale_v2.json``).
+``runs/epuf_fill_gate_floors_v1.json`` is the first build, superseded by
+amendment 1 and frozen; it must stay internally consistent.
 """
 
 from __future__ import annotations
@@ -21,10 +24,19 @@ from populace_dynamics.harness import epuf_fill_gate as g
 from populace_dynamics.harness.epuf_cells import CellValue
 
 ROOT = Path(__file__).resolve().parents[1]
-FLOORS = ROOT / "runs" / "epuf_fill_gate_floors_v1.json"
-SCALE = ROOT / "runs" / "epuf_fill_gate_psid_scale_v1.json"
-#: Files whose bytes at the floor build's commit must equal the checkout's:
-#: the rules and the builders that ran.
+RUNS = ROOT / "runs"
+BUILDS = {
+    "v1": (
+        RUNS / "epuf_fill_gate_floors_v1.json",
+        RUNS / "epuf_fill_gate_psid_scale_v1.json",
+    ),
+    "v2": (
+        RUNS / "epuf_fill_gate_floors_v2.json",
+        RUNS / "epuf_fill_gate_psid_scale_v2.json",
+    ),
+}
+#: Files whose bytes at the registered build's commit must equal the
+#: checkout's: the rules and the builders that ran.
 BOUND_FILES = (
     "src/populace_dynamics/harness/epuf_fill_gate.py",
     "scripts/build_epuf_fill_gate_floors.py",
@@ -32,19 +44,20 @@ BOUND_FILES = (
 )
 
 
-def _number(value):
-    """Floats stored as JSON numbers or, when not finite, as strings."""
-    return float(value)
+def _load(version):
+    floors, scale = BUILDS[version]
+    return json.loads(floors.read_text()), json.loads(scale.read_text())
+
+
+@pytest.fixture(scope="module", params=sorted(BUILDS))
+def build(request):
+    floors, scale = _load(request.param)
+    return request.param, floors, scale
 
 
 @pytest.fixture(scope="module")
-def floors():
-    return json.loads(FLOORS.read_text())
-
-
-@pytest.fixture(scope="module")
-def scale():
-    return json.loads(SCALE.read_text())
+def registered():
+    return _load("v2")
 
 
 def _builder():
@@ -57,8 +70,11 @@ def _builder():
     return module
 
 
-def test_the_build_is_the_registered_dev_build(floors):
-    assert floors["schema"] == "populace_dynamics.epuf_fill_gate_floors.v1"
+def test_both_builds_are_dev_builds_with_the_registered_constants(build):
+    version, floors, _ = build
+    assert floors["schema"] == (
+        f"populace_dynamics.epuf_fill_gate_floors.{version}"
+    )
     assert floors["registration_id"] == g.REGISTRATION_ID
     assert floors["part"] == "dev"
     assert floors["registered_build"] is True
@@ -71,49 +87,38 @@ def test_the_build_is_the_registered_dev_build(floors):
         "floor_seed_base": g.FLOOR_SEED_BASE,
     }
     assert floors["oracles"]["seeds"] == list(g.ORACLE_SEEDS)
-    # The builder can read TRAIN or DEV, never TEST.
-    assert set(_builder().PARTS.values()) == {g.TRAIN, g.DEV}
 
 
-def test_inputs_hash_to_the_committed_scale_and_pinned_epuf(floors, scale):
+def test_inputs_hash_to_the_committed_scale_and_pinned_epuf(build):
     from populace_dynamics.data import epuf
 
+    version, floors, scale = build
     assert floors["inputs"]["epuf_sha256"] == epuf.EPUF_SHA256
     assert (
         floors["inputs"]["psid_scale_sha256"]
-        == hashlib.sha256(SCALE.read_bytes()).hexdigest()
+        == hashlib.sha256(BUILDS[version][1].read_bytes()).hexdigest()
     )
     assert scale["registration_id"] == g.REGISTRATION_ID
     assert scale["n_members"] == 11_405
 
 
-def test_bound_files_are_unchanged_since_the_build(floors):
-    commit = floors["code_commit"]
-    probe = subprocess.run(
-        ["git", "-C", str(ROOT), "cat-file", "-e", f"{commit}^{{commit}}"],
-        capture_output=True,
+def _sigma(values):
+    values = np.array([float(x) for x in values])
+    return (
+        float(np.sqrt(np.mean(values**2)))
+        if np.isfinite(values).all()
+        else float("nan")
     )
-    if probe.returncode != 0:
-        pytest.skip("the floor build's commit is not in this clone")
-    for path in BOUND_FILES:
-        built = subprocess.run(
-            ["git", "-C", str(ROOT), "show", f"{commit}:{path}"],
-            capture_output=True,
-            check=True,
-        ).stdout
-        assert built == (ROOT / path).read_bytes(), path
 
 
-def test_groups_cover_every_cell_with_registered_sizes_and_seeds(
-    floors, scale
-):
-    groups = sorted({g.group_of(cell) for cell in floors["truth"]})
-    assert sorted(floors["groups"]) == groups
-    assert len(groups) == 24
+def test_sizes_seeds_and_sigmas_recompute(build):
+    _, floors, scale = build
+    groups = sorted(floors["groups"])
+    assert groups == sorted({g.group_of(cell) for cell in floors["truth"]})
     for index, group in enumerate(groups):
         record = floors["groups"][group]
-        assert record["group_index"] == index
         n = record["sample_size"]
+        assert record["group_index"] == index
         assert record["seed"] == [
             g.FLOOR_SEED_BASE,
             index,
@@ -136,18 +141,14 @@ def test_groups_cover_every_cell_with_registered_sizes_and_seeds(
         assert record["noise_ratio"] == pytest.approx(
             np.sqrt(n / record["pool_size"])
         )
-
-
-def test_sigmas_recompute_from_the_stored_replicates(floors):
-    for record in floors["groups"].values():
         for cell, replicates in record["replicates"].items():
-            values = np.array([_number(x) for x in replicates])
-            assert len(values) == g.N_FLOOR_REPLICATES
-            stored = _number(record["sigma"][cell])
-            if np.isfinite(values).all():
-                assert stored == pytest.approx(np.sqrt(np.mean(values**2)))
-            else:
+            assert len(replicates) == g.N_FLOOR_REPLICATES
+            stored = float(record["sigma"][cell])
+            expected = _sigma(replicates)
+            if np.isnan(expected):
                 assert np.isnan(stored)
+            else:
+                assert stored == pytest.approx(expected)
 
 
 def _floor_groups(floors):
@@ -158,45 +159,47 @@ def _floor_groups(floors):
             pool_size=record["pool_size"],
             seed=tuple(record["seed"]),
             replicates={},
-            sigma={k: _number(v) for k, v in record["sigma"].items()},
-            min_events={k: tuple(v) for k, v in record["min_events"].items()},
+            sigma={k: float(v) for k, v in record["sigma"].items()},
+            min_events={
+                k: tuple(v) for k, v in record["min_events"].items()
+            },
         )
         for group, record in floors["groups"].items()
     }
 
 
-def test_partition_and_tolerances_recompute(floors):
+def test_partition_and_tolerances_recompute(build):
+    _, floors, _ = build
     truth = {
-        cell: CellValue(_number(row["value"]), row["events"], row["n"])
+        cell: CellValue(float(row["value"]), row["events"], row["n"])
         for cell, row in floors["truth"].items()
     }
-    groups = _floor_groups(floors)
-    assert g.partition(truth, groups) == floors["partition"]
+    floor_groups = _floor_groups(floors)
+    assert g.partition(truth, floor_groups) == floors["partition"]
     gating = {c for c, r in floors["partition"].items() if r == "gates"}
     assert set(floors["tolerance"]) == gating
     for cell in gating:
-        sigma = groups[g.group_of(cell)].sigma[cell]
+        sigma = floor_groups[g.group_of(cell)].sigma[cell]
         assert floors["tolerance"][cell] == pytest.approx(
             g.K_TOLERANCE * sigma
         )
-    assert len(gating) == 130
 
 
 @pytest.mark.parametrize(
     ("bite", "family"),
     [("B1_current_odd_rule", "odd"), ("B2_current_pre_career_rule", "pre")],
 )
-def test_checks_on_bite_hold_and_recompute(floors, bite, family):
+def test_checks_on_bite_hold_and_recompute(build, bite, family):
+    _, floors, _ = build
     record = floors["bites"][bite]
-    cells = record["score"]["cells"]
     multiples = []
-    for cell, row in cells.items():
+    for cell, row in record["score"]["cells"].items():
         assert cell.startswith(f"{family}.")
         if "tolerance" not in row:
             continue
-        gap = _number(row["gap"])
+        gap = float(row["gap"])
         expected = abs(gap) / row["tolerance"] if np.isfinite(gap) else np.inf
-        assert _number(row["gap_in_tolerances"]) == pytest.approx(expected)
+        assert float(row["gap_in_tolerances"]) == pytest.approx(expected)
         assert row["passes"] == bool(
             np.isfinite(gap) and abs(gap) <= row["tolerance"]
         )
@@ -205,22 +208,75 @@ def test_checks_on_bite_hold_and_recompute(floors, bite, family):
     assert record["n_cells_beyond_bite_multiple"] == beyond
     assert record["holds"] is True and beyond >= 1
     assert record["score"]["passes"] is False
-
-
-def test_the_gate_is_lockable(floors):
     assert floors["lockable"] is True
 
 
-def test_oracles_are_reported_without_changing_the_partition(floors):
+def test_oracles_score_every_gating_cell_of_their_family(build):
+    _, floors, _ = build
     for name, family in (
         ("O1_odd_conditional_permutation", "odd"),
         ("O2_pre_career_block_permutation", "pre"),
     ):
-        result = floors["oracles"][name]
         gating_in_family = {
             c
             for c, r in floors["partition"].items()
             if r == "gates" and c.startswith(f"{family}.")
         }
-        scored = {c for c, row in result["cells"].items() if "passes" in row}
+        scored = {
+            c
+            for c, row in floors["oracles"][name]["cells"].items()
+            if "passes" in row
+        }
         assert scored == gating_in_family
+
+
+# -- the registered build only ----------------------------------------------
+def test_registered_build_covers_the_amended_groups(registered):
+    floors, scale = registered
+    assert sorted(floors["groups"]) == g.groups()
+    assert sorted(scale["groups"]) == g.groups()
+    # The builder can read TRAIN or DEV, never TEST.
+    assert set(_builder().PARTS.values()) == {g.TRAIN, g.DEV}
+
+
+def test_registered_build_is_bound_to_its_rules(registered):
+    floors, scale = registered
+    for document in (floors, scale):
+        commit = document["code_commit"]
+        probe = subprocess.run(
+            ["git", "-C", str(ROOT), "cat-file", "-e", f"{commit}^{{commit}}"],
+            capture_output=True,
+        )
+        if probe.returncode != 0:
+            pytest.skip("the build's commit is not in this clone")
+        for path in BOUND_FILES:
+            built = subprocess.run(
+                ["git", "-C", str(ROOT), "show", f"{commit}:{path}"],
+                capture_output=True,
+                check=True,
+            ).stdout
+            assert built == (ROOT / path).read_bytes(), (commit, path)
+
+
+def test_registered_build_reports_the_dosed_perturbations(registered):
+    floors, _ = registered
+    doses = floors["dosed_perturbations"]
+    for name in (
+        "D1_copy_next_year",
+        "D2_marginal_within_sex_age",
+        "D3_shrink_to_median_lambda_0.75",
+        "D3_shrink_to_median_lambda_0.5",
+        "D4_scale_pre_blocks_0.95",
+        "D4_scale_pre_blocks_0.9",
+        "D5_blocks_within_sex_birth_year",
+        "D6_years_independent_within_sex_birth_year",
+    ):
+        record = doses[name]
+        assert record["score"]["passes"] is False, name
+        assert record["n_failing"] >= 1, name
+    for name in (
+        "D3_shrink_to_median_lambda_dose_at_tolerances",
+        "D4_scale_pre_blocks_dose_at_tolerances",
+    ):
+        one, two = (float(doses[name][key]) for key in ("1", "2"))
+        assert 0 < one < two

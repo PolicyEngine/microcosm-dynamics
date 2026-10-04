@@ -9,29 +9,41 @@ income year from 1997 is the mean of its two neighbours, and nothing
 counts before ``max(1968, birth_year + 22)``. This gate scores a
 replacement for each rule on SSA's 2006 Earnings Public-Use File (EPUF;
 :mod:`populace_dynamics.data.epuf`), which records every year's capped
-taxable earnings from 1951 to 2006:
+taxable earnings from 1951 to 2006
+(``docs/amendments/gate_epuf_fill_registration_proposal.md``):
 
 1. **Split.** EPUF persons are split once, by a salted SHA-256 of the
    person id, into TRAIN (60 percent; fills learn from it), DEV (20
    percent; floors and the checks on bite are built on it before lock)
-   and TEST (20 percent; scored once per registered candidate, after
-   lock). The split is person-disjoint and depends on nothing else.
-2. **Mask.** Two families, masked separately, as the PSID would leave
-   them: the odd years 1997-2005 (family ``odd``), and every year before
-   ``max(1968, birth_year + 22)`` (family ``pre``).
-3. **Impute and score.** A fill rewrites the masked years from the
-   unmasked ones. Each cell is computed once on the true matrix and once
-   on the filled matrix of the same persons; the gap is their difference
-   on the cell's scale (:func:`gap`).
+   and TEST (20 percent; read only through :func:`test_part`, after lock).
+2. **Mask.** Two families of years, as the PSID would leave a career: the
+   odd years 1997-2005 (family ``odd``), and every year before
+   ``max(1968, birth_year + 22)`` (family ``pre``). A fill receives both
+   families' years as unknown and fills its own family's
+   (:func:`score_candidate`).
+3. **Score.** Each cell is computed once on the true matrix and once on
+   the matrix whose own-family masked cells the fill replaced; the gap is
+   their difference on the cell's scale (:func:`gap`).
 4. **Floor.** A cell's tolerance is ``K_TOLERANCE`` times the sampling
    standard error the cell carries at the PSID's size: the root mean
    square of ``[m(A) - m(B)] / sqrt(2)`` over replicate pairs of disjoint
-   real DEV samples, each the size of the PSID's cell
-   (:func:`floor_sigma`).
+   real DEV samples of the cell's floor group, each the size of the
+   PSID's (:func:`floor_group`).
 
-The masks, universes and statistics are defined here once and used for
+Every cell belongs to one floor group, and :func:`group_rows` defines the
+persons a group counts; the cells and the floors both draw their persons
+from it, so a floor is always priced on the population its cells score.
+The masks, populations and statistics are defined here once and used for
 the truth, every fill, the floors and the checks on bite, so a gap can
 never be a difference of definition.
+
+Amendment 1 (referee round 1, ``reviews/gate_epuf_fill_round1_referee_20261004.md``)
+moved the youngest odd band to ages 22-29, gave each group exactly the
+population its cells count, added pooled groups, the AIME's 10th and
+90th percentiles, a partial AIME through 2006 for later cohorts, the
+``r3`` and positive-share quantile statistics, the union-mask scoring
+path with its validity checks, the audited TEST read and a cap on the
+"improves" tier.
 """
 
 from __future__ import annotations
@@ -48,53 +60,63 @@ from populace_dynamics.harness.epuf_cells import CellValue, weighted_spearman
 __all__ = [
     "ADOPTION_TIERS",
     "AIME_QUANTILES",
+    "BITE_MULTIPLE",
     "DEV",
+    "DRAW_SEEDS",
+    "EPUFMatrix",
+    "EVENTS_SHARE",
     "FIRST_YEAR",
+    "FLOOR_SEED_BASE",
+    "FloorGroup",
+    "IMPROVES_CAP",
     "K_TOLERANCE",
     "LAST_YEAR",
     "MASKED_ODD_YEARS",
+    "MIN_EVENTS",
+    "N_FLOOR_REPLICATES",
     "ODD_AGE_BANDS",
     "ODD_AIME_COHORTS",
     "ODD_OBSERVED_YEARS",
+    "ORACLE_SEEDS",
+    "PARTIAL_AIME_COHORTS",
     "PRE_CAREER_COHORTS",
     "REGISTRATION_ID",
+    "SEXES",
     "SPLIT_SALT",
     "TEST",
     "TRAIN",
+    "TestPartLocked",
     "YEARS",
     "YOUTH_COHORTS",
     "adopt",
     "adoption_tier",
     "aime_35",
     "cell_metric",
-    "epuf_matrix",
     "current_odd_fill",
     "current_pre_career_fill",
-    "BITE_MULTIPLE",
-    "DRAW_SEEDS",
-    "EPUFMatrix",
-    "EVENTS_SHARE",
-    "FLOOR_SEED_BASE",
-    "FloorGroup",
-    "MIN_EVENTS",
-    "N_FLOOR_REPLICATES",
-    "ORACLE_SEEDS",
+    "earnings_from_shares",
+    "epuf_matrix",
     "family_cells",
-    "family_universe",
+    "family_mask",
     "floor_group",
     "gap",
-    "group_eligible",
     "group_of",
-    "odd_oracle_fill",
-    "partition",
-    "pre_career_oracle_fill",
-    "score",
-    "share_bin_edges",
+    "group_rows",
+    "groups",
     "odd_cells",
     "odd_mask",
+    "odd_oracle_fill",
+    "partial_aime",
+    "partition",
     "pre_career_cells",
     "pre_career_mask",
+    "pre_career_oracle_fill",
+    "score",
+    "score_candidate",
+    "share_bin_edges",
     "split_part",
+    "test_part",
+    "union_mask",
 ]
 
 REGISTRATION_ID = "2026-10-03-epuf-career-fill"
@@ -115,39 +137,48 @@ _DEV_BELOW = 0.8
 MASKED_ODD_YEARS: tuple[int, ...] = (1997, 1999, 2001, 2003, 2005)
 #: The even years around them, which the PSID records.
 ODD_OBSERVED_YEARS: tuple[int, ...] = (1996, 1998, 2000, 2002, 2004, 2006)
-#: Age at the masked year.
+#: Age at the masked year. The assembler fills odd years only inside the
+#: career, from age 22; ``a22_74`` pools the four bands.
 ODD_AGE_BANDS: dict[str, tuple[int, int]] = {
-    "a18_29": (18, 29),
+    "a22_29": (22, 29),
     "a30_44": (30, 44),
     "a45_59": (45, 59),
     "a60_74": (60, 74),
+    "a22_74": (22, 74),
 }
 #: Cohorts whose AIME (35 years through age 61) includes masked odd years
-#: and lies wholly inside 1951-2006.
+#: and lies wholly inside 1951-2006; ``b1936_1945`` pools them.
 ODD_AIME_COHORTS: dict[str, tuple[int, int]] = {
     "b1936_1940": (1936, 1940),
     "b1941_1945": (1941, 1945),
+    "b1936_1945": (1936, 1945),
 }
-#: Cohorts whose masked pre-career years are 1951-1967 and whose AIME
-#: lies wholly inside 1951-2006.
+#: Cohorts whose masked pre-career years are 1951-1967 and whose AIME lies
+#: wholly inside 1951-2006; ``b1930_1945`` pools them.
 PRE_CAREER_COHORTS: dict[str, tuple[int, int]] = {
     "b1930_1934": (1930, 1934),
     "b1935_1939": (1935, 1939),
     "b1940_1945": (1940, 1945),
+    "b1930_1945": (1930, 1945),
 }
-#: Cohorts for whom the rule removes only the years before age 22. The
-#: PSID-2010 cohort's youngest members were born in 1980.
+#: Cohorts for whom the pre-career rule removes only the years before age
+#: 22 (the PSID-2010 cohort's youngest were born in 1980); ``b1946_1980``
+#: pools them.
 YOUTH_COHORTS: dict[str, tuple[int, int]] = {
     "b1946_1955": (1946, 1955),
     "b1956_1965": (1956, 1965),
     "b1966_1980": (1966, 1980),
+    "b1946_1980": (1946, 1980),
 }
-AIME_QUANTILES: tuple[float, ...] = (0.25, 0.5, 0.75)
+#: Cohorts scored on the partial AIME through 2006 in family ``odd``.
+PARTIAL_AIME_COHORTS: dict[str, tuple[int, int]] = dict(YOUTH_COHORTS)
+AIME_QUANTILES: tuple[float, ...] = (0.10, 0.25, 0.50, 0.75, 0.90)
+SHARE_QUANTILES: tuple[float, ...] = (0.10, 0.50, 0.90)
 SEXES: dict[str, int] = {"men": 1, "women": 2}
 
 #: The tolerance is K_TOLERANCE times the cell's PSID-scale sampling
-#: standard error: a fill may move a cell by no more than the PSID sample's
-#: own sampling error already does.
+#: standard error: a materiality threshold under which a fill moves a cell
+#: by no more than the PSID sample's own sampling error already does.
 K_TOLERANCE = 1.0
 #: A cell gates only if its events (``CellValue.events``) number at least
 #: MIN_EVENTS in the smaller sample of a floor pair, in at least
@@ -157,6 +188,10 @@ EVENTS_SHARE = 0.95
 #: Each check on bite must fail a gating cell of its family by more than
 #: BITE_MULTIPLE tolerances.
 BITE_MULTIPLE = 2.0
+#: An "improves" candidate may miss a gating cell by at most the larger of
+#: one tolerance and the smaller of the current rule's gap and IMPROVES_CAP
+#: tolerances.
+IMPROVES_CAP = 3.0
 N_FLOOR_REPLICATES = 200
 FLOOR_SEED_BASE = 5000
 #: A candidate's filled value in a cell is the mean over these draw seeds.
@@ -181,7 +216,23 @@ _PRE_PAIR_CROSS = (1965, 1970)
 _YOUTH_PAIR_AGES = (21, 24)
 
 #: Cells measured as an absolute gap; every other cell is a log ratio.
-_CORRELATIONS = frozenset({"r1", "r2", "r4", "pr_in", "pr_cross", "yr_cross"})
+_CORRELATIONS = frozenset(
+    {"r1", "r2", "r3", "r4", "pr_in", "pr_cross", "yr_cross"}
+)
+_ODD_BAND_STATISTICS = (
+    "r1",
+    "r2",
+    "r3",
+    "r4",
+    "zint",
+    "zexit",
+    "wint",
+    "atcap",
+    "level",
+    "q10",
+    "q50",
+    "q90",
+)
 
 
 def _column(year: int) -> int:
@@ -214,6 +265,9 @@ def _check_matrix(earnings: np.ndarray, birth_year: np.ndarray) -> None:
         raise ValueError("birth_year must have one entry per person")
 
 
+# --------------------------------------------------------------------------
+# Masks and the current rules
+# --------------------------------------------------------------------------
 def odd_mask(n_persons: int) -> np.ndarray:
     """Persons by years: True on the masked odd years 1997-2005."""
 
@@ -228,6 +282,22 @@ def pre_career_mask(birth_year: np.ndarray) -> np.ndarray:
     birth_year = np.asarray(birth_year, dtype=np.int64)
     start = np.maximum(_CAREER_FIRST_YEAR, birth_year + _CAREER_START_AGE)
     return np.asarray(YEARS)[None, :] < start[:, None]
+
+
+def family_mask(family: str, birth_year: np.ndarray) -> np.ndarray:
+    """The cells a family's fill replaces."""
+
+    if family == "odd":
+        return odd_mask(len(birth_year))
+    if family == "pre":
+        return pre_career_mask(birth_year)
+    raise ValueError(f"unknown family {family!r}")
+
+
+def union_mask(birth_year: np.ndarray) -> np.ndarray:
+    """Every cell the PSID would not record: both families' masks."""
+
+    return odd_mask(len(birth_year)) | pre_career_mask(birth_year)
 
 
 def current_odd_fill(earnings: np.ndarray) -> np.ndarray:
@@ -255,6 +325,9 @@ def current_pre_career_fill(
     return out
 
 
+# --------------------------------------------------------------------------
+# AIME
+# --------------------------------------------------------------------------
 def aime_35(
     earnings: np.ndarray,
     birth_year: np.ndarray,
@@ -293,6 +366,124 @@ def aime_35(
     return np.floor(top.sum(axis=1) / (_COMPUTATION_YEARS * 12))
 
 
+def partial_aime(
+    earnings: np.ndarray, nawi: Mapping[int, float]
+) -> np.ndarray:
+    """The AIME formula applied to every year through 2006.
+
+    For cohorts whose age-61 year is after 2006: each year 1951-2005 is
+    indexed by NAWI in 2006 over NAWI in the year, the top 35 years are
+    summed and the sum is floored over 420 months. It is not a statutory
+    AIME; it measures how a fill moves the AIME's ingredients for cohorts
+    EPUF cannot follow to 61.
+    """
+
+    earnings = np.asarray(earnings, dtype=np.float64)
+    years = np.asarray(YEARS)
+    year_value = np.array([float(nawi[int(year)]) for year in years])
+    factor = float(nawi[LAST_YEAR]) / year_value
+    top = np.sort(earnings * factor[None, :], axis=1)[:, -_COMPUTATION_YEARS:]
+    return np.floor(top.sum(axis=1) / (_COMPUTATION_YEARS * 12))
+
+
+# --------------------------------------------------------------------------
+# Populations
+# --------------------------------------------------------------------------
+def _coded(sex: np.ndarray) -> np.ndarray:
+    return np.isin(np.asarray(sex), list(SEXES.values()))
+
+
+def _career_start(birth_year: np.ndarray) -> np.ndarray:
+    return np.maximum(
+        _CAREER_FIRST_YEAR,
+        np.asarray(birth_year, dtype=np.int64) + _CAREER_START_AGE,
+    )
+
+
+def family_universe(
+    family: str, earnings: np.ndarray, birth_year: np.ndarray, sex: np.ndarray
+) -> np.ndarray:
+    """Persons of coded sex with a positive recorded career year.
+
+    ``odd`` (age-band groups): positive in a recorded even year 1996-2006.
+    ``odd_career`` (the odd family's cohort groups): positive in a year
+    from ``max(1968, birth_year + 22)`` through 2006 that is not a masked
+    odd year. ``pre``: positive in a year from ``max(1968, birth_year +
+    22)`` through 2006. None reads a cell its own family masks.
+    """
+
+    earnings = np.asarray(earnings)
+    birth_year = np.asarray(birth_year, dtype=np.int64)
+    coded = _coded(sex)
+    if family == "odd":
+        observed = earnings[:, [_column(year) for year in ODD_OBSERVED_YEARS]]
+        return coded & (observed > 0).any(axis=1)
+    recorded = ~pre_career_mask(birth_year)
+    if family == "odd_career":
+        recorded = recorded & ~odd_mask(len(birth_year))
+        return coded & ((earnings > 0) & recorded).any(axis=1)
+    if family == "pre":
+        return coded & ((earnings > 0) & recorded).any(axis=1)
+    raise ValueError(f"unknown family {family!r}")
+
+
+def groups() -> list[str]:
+    """Every floor group id, sorted: ``<family>.<sex>.<stratum>``."""
+
+    out = []
+    for sex_label in SEXES:
+        for band in ODD_AGE_BANDS:
+            out.append(f"odd.{sex_label}.{band}")
+        for cohort in {**ODD_AIME_COHORTS, **PARTIAL_AIME_COHORTS}:
+            out.append(f"odd.{sex_label}.{cohort}")
+        for cohort in {**PRE_CAREER_COHORTS, **YOUTH_COHORTS}:
+            out.append(f"pre.{sex_label}.{cohort}")
+    return sorted(out)
+
+
+def group_of(cell_id: str) -> str:
+    """A cell's floor group: its id without the statistic."""
+
+    return cell_id.rsplit(".", 1)[0]
+
+
+def group_rows(
+    group: str, earnings: np.ndarray, birth_year: np.ndarray, sex: np.ndarray
+) -> np.ndarray:
+    """Persons by flag: exactly the persons a group's cells count.
+
+    Age-band groups (family ``odd``): ``odd`` universe members of the sex
+    with a masked odd year at an age in the band. The odd family's cohort
+    groups: ``odd_career`` universe members of the sex born in the cohort.
+    The pre family's cohort groups: ``pre`` universe members of the sex
+    born in the cohort. The cells and the floors both take their persons
+    from here.
+    """
+
+    family, sex_label, stratum = group.split(".")
+    birth_year = np.asarray(birth_year, dtype=np.int64)
+    of_sex = np.asarray(sex) == SEXES[sex_label]
+    if family == "odd" and stratum in ODD_AGE_BANDS:
+        low, high = ODD_AGE_BANDS[stratum]
+        ages = np.asarray(MASKED_ODD_YEARS)[None, :] - birth_year[:, None]
+        in_band = ((ages >= low) & (ages <= high)).any(axis=1)
+        member = family_universe("odd", earnings, birth_year, sex)
+        return member & of_sex & in_band
+    if family == "odd":
+        cohorts = {**ODD_AIME_COHORTS, **PARTIAL_AIME_COHORTS}
+        member = family_universe("odd_career", earnings, birth_year, sex)
+    elif family == "pre":
+        cohorts = {**PRE_CAREER_COHORTS, **YOUTH_COHORTS}
+        member = family_universe("pre", earnings, birth_year, sex)
+    else:
+        raise ValueError(f"unknown family {family!r}")
+    low, high = cohorts[stratum]
+    return member & of_sex & (birth_year >= low) & (birth_year <= high)
+
+
+# --------------------------------------------------------------------------
+# Cell statistics
+# --------------------------------------------------------------------------
 def _share(numerator: np.ndarray, denominator: np.ndarray) -> CellValue:
     total = int(denominator.sum())
     hits = int((numerator & denominator).sum())
@@ -314,8 +505,103 @@ def _spearman_mean(
             )
         )
     finite = [value for value in values if np.isfinite(value)]
-    value = float(np.mean(finite)) if len(finite) == len(values) else np.nan
+    value = (
+        float(np.mean(finite))
+        if values and len(finite) == len(values)
+        else np.nan
+    )
     return CellValue(float(value), min(counts) if counts else 0, sum(counts))
+
+
+def _quantile_cells(
+    prefix: str, values: np.ndarray, name: str, quantiles
+) -> dict[str, CellValue]:
+    out = {}
+    for quantile in quantiles:
+        value = float(np.quantile(values, quantile)) if len(values) else np.nan
+        out[f"{prefix}.{name}_p{int(round(quantile * 100))}"] = CellValue(
+            value, int((values > 0).sum()), len(values)
+        )
+    return out
+
+
+def _odd_band_cells(
+    prefix: str,
+    earnings: np.ndarray,
+    birth_year: np.ndarray,
+    rows: np.ndarray,
+    band: tuple[int, int],
+    caps: Mapping[int, float],
+) -> dict[str, CellValue]:
+    """The band statistics over units (person in ``rows``, masked year t)."""
+
+    low, high = band
+    units = {
+        year: rows & (year - birth_year >= low) & (year - birth_year <= high)
+        for year in MASKED_ODD_YEARS
+    }
+
+    def column(year: int, take: np.ndarray) -> np.ndarray:
+        return earnings[take, _column(year)]
+
+    out: dict[str, CellValue] = {}
+    out[f"{prefix}.r1"] = _spearman_mean(
+        [
+            (column(year, units[year]), column(year + side, units[year]))
+            for year in MASKED_ODD_YEARS
+            for side in (-1, 1)
+        ]
+    )
+    out[f"{prefix}.r3"] = _spearman_mean(
+        [
+            (column(year, units[year]), column(year + side, units[year]))
+            for year in MASKED_ODD_YEARS
+            for side in (-3, 3)
+            if FIRST_YEAR <= year + side <= LAST_YEAR
+        ]
+    )
+    for lag in (2, 4):
+        out[f"{prefix}.r{lag}"] = _spearman_mean(
+            [
+                (column(year, units[year]), column(year + lag, units[year]))
+                for year in MASKED_ODD_YEARS
+                if year + lag in MASKED_ODD_YEARS
+            ]
+        )
+    left = np.concatenate(
+        [column(year - 1, units[year]) for year in MASKED_ODD_YEARS]
+    )
+    centre = np.concatenate(
+        [column(year, units[year]) for year in MASKED_ODD_YEARS]
+    )
+    right = np.concatenate(
+        [column(year + 1, units[year]) for year in MASKED_ODD_YEARS]
+    )
+    centre_cap = np.concatenate(
+        [
+            np.full(int(units[year].sum()), float(caps[year]))
+            for year in MASKED_ODD_YEARS
+        ]
+    )
+    share = centre / np.where(centre_cap > 0, centre_cap, 1.0)
+    out[f"{prefix}.zint"] = _share(centre == 0, (left > 0) & (right > 0))
+    out[f"{prefix}.zexit"] = _share(centre == 0, (left > 0) ^ (right > 0))
+    out[f"{prefix}.wint"] = _share(centre > 0, (left == 0) & (right == 0))
+    out[f"{prefix}.atcap"] = _share(centre >= centre_cap, centre > 0)
+    out[f"{prefix}.level"] = CellValue(
+        float(share.mean()) if len(share) else np.nan,
+        int((centre > 0).sum()),
+        len(share),
+    )
+    positive = share[centre > 0]
+    for quantile in SHARE_QUANTILES:
+        value = (
+            float(np.quantile(positive, quantile)) if len(positive) else np.nan
+        )
+        out[f"{prefix}.q{int(round(quantile * 100))}"] = CellValue(
+            value, len(positive), len(share)
+        )
+    return out
 
 
 def odd_cells(
@@ -327,149 +613,51 @@ def odd_cells(
 ) -> dict[str, CellValue]:
     """Every cell of family ``odd`` for one matrix (true or filled).
 
-    The universe is persons of known sex with positive earnings in at
-    least one recorded even year 1996-2006; it reads no masked year, so
-    the true and the filled matrix of the same persons share it. Per sex
-    and band of age at the masked year ``t`` (units are person-years):
+    Per sex and age band at the masked year ``t`` (units are person-years
+    of the group's persons, :func:`group_rows`, at an age in the band):
 
-    - ``r1``: Spearman of ``t`` against ``t-1`` and against ``t+1``, among
-      units positive in both years; the mean of the ten.
-    - ``r2`` / ``r4``: Spearman of ``t`` against ``t+2`` (four pairs) or
-      ``t+4`` (three pairs), both masked, positive in both; the mean.
-    - ``zint``: zero at ``t`` among units positive at ``t-1`` and ``t+1``.
-    - ``zexit``: zero at ``t`` among units positive at exactly one of
-      ``t-1`` and ``t+1`` (a career starting or stopping).
-    - ``wint``: positive at ``t`` among units zero at ``t-1`` and ``t+1``.
+    - ``r1``: Spearman of ``t`` against ``t-1`` and against ``t+1``; ``r3``
+      against ``t-3`` and ``t+3`` (recorded); ``r2`` / ``r4`` against
+      ``t+2`` / ``t+4`` (masked). Among units positive in both years; the
+      mean over the year pairs.
+    - ``zint``: zero at ``t`` among units positive at ``t-1`` and ``t+1``;
+      ``zexit``: zero at ``t`` among units positive at exactly one of them;
+      ``wint``: positive at ``t`` among units zero at both.
     - ``atcap``: at the year's wage base among units positive at ``t``.
     - ``level``: mean earnings over the wage base at ``t``, zeros included.
+    - ``q10`` / ``q50`` / ``q90``: quantiles of the positive shares of the
+      wage base at ``t``.
 
-    Per sex and the cohorts of :data:`ODD_AIME_COHORTS` (universe: positive
-    in at least one unmasked year 1968-2006): ``aime_p25``, ``aime_p50``
-    and ``aime_p75`` (:func:`aime_35`).
+    Per sex and cohort: ``aime_p10`` ... ``aime_p90`` (:func:`aime_35`) for
+    the cohorts born 1936-1945, and ``paime_p10`` ... ``paime_p90``
+    (:func:`partial_aime`) for those born 1946-1980.
     """
 
     earnings = np.asarray(earnings, dtype=np.float64)
     birth_year = np.asarray(birth_year, dtype=np.int64)
     sex = np.asarray(sex)
     _check_matrix(earnings, birth_year)
-    observed = earnings[:, [_column(year) for year in ODD_OBSERVED_YEARS]]
-    universe = np.isin(sex, list(SEXES.values())) & (observed > 0).any(axis=1)
-    cap = {year: float(wage_bases[year]) for year in YEARS}
+    caps = {year: float(wage_bases[year]) for year in YEARS}
     out: dict[str, CellValue] = {}
-    for sex_label, sex_code in SEXES.items():
-        member = universe & (sex == sex_code)
-        for band, (low, high) in ODD_AGE_BANDS.items():
-            prefix = f"odd.{sex_label}.{band}"
-            units = {
-                year: member
-                & (year - birth_year >= low)
-                & (year - birth_year <= high)
-                for year in MASKED_ODD_YEARS
-            }
-
-            def column(year: int, rows: np.ndarray) -> np.ndarray:
-                return earnings[rows, _column(year)]
-
-            out[f"{prefix}.r1"] = _spearman_mean(
-                [
-                    (
-                        column(year, units[year]),
-                        column(year + side, units[year]),
-                    )
-                    for year in MASKED_ODD_YEARS
-                    for side in (-1, 1)
-                ]
-            )
-            for lag in (2, 4):
-                out[f"{prefix}.r{lag}"] = _spearman_mean(
-                    [
-                        (
-                            column(year, units[year]),
-                            column(year + lag, units[year]),
-                        )
-                        for year in MASKED_ODD_YEARS
-                        if year + lag in MASKED_ODD_YEARS
-                    ]
+    for sex_label in SEXES:
+        for band, bounds in ODD_AGE_BANDS.items():
+            group = f"odd.{sex_label}.{band}"
+            rows = group_rows(group, earnings, birth_year, sex)
+            out.update(
+                _odd_band_cells(
+                    group, earnings, birth_year, rows, bounds, caps
                 )
-            left = np.concatenate(
-                [column(year - 1, units[year]) for year in MASKED_ODD_YEARS]
             )
-            centre = np.concatenate(
-                [column(year, units[year]) for year in MASKED_ODD_YEARS]
-            )
-            right = np.concatenate(
-                [column(year + 1, units[year]) for year in MASKED_ODD_YEARS]
-            )
-            centre_cap = np.concatenate(
-                [
-                    np.full(int(units[year].sum()), cap[year])
-                    for year in MASKED_ODD_YEARS
-                ]
-            )
-            out[f"{prefix}.zint"] = _share(
-                centre == 0, (left > 0) & (right > 0)
-            )
-            out[f"{prefix}.zexit"] = _share(
-                centre == 0, (left > 0) ^ (right > 0)
-            )
-            out[f"{prefix}.wint"] = _share(
-                centre > 0, (left == 0) & (right == 0)
-            )
-            out[f"{prefix}.atcap"] = _share(centre >= centre_cap, centre > 0)
-            positive = int((centre > 0).sum())
-            out[f"{prefix}.level"] = CellValue(
-                float((centre / centre_cap).mean()) if len(centre) else np.nan,
-                positive,
-                len(centre),
-            )
-    unmasked_career = [
-        _column(year)
-        for year in range(_CAREER_FIRST_YEAR, LAST_YEAR + 1)
-        if year not in MASKED_ODD_YEARS
-    ]
-    career_universe = np.isin(sex, list(SEXES.values())) & (
-        earnings[:, unmasked_career] > 0
-    ).any(axis=1)
-    out.update(
-        _aime_cells(
-            "odd",
-            earnings,
-            birth_year,
-            sex,
-            career_universe,
-            ODD_AIME_COHORTS,
-            nawi,
-        )
-    )
-    return out
-
-
-def _aime_cells(
-    family: str,
-    earnings: np.ndarray,
-    birth_year: np.ndarray,
-    sex: np.ndarray,
-    universe: np.ndarray,
-    cohorts: Mapping[str, tuple[int, int]],
-    nawi: Mapping[int, float],
-) -> dict[str, CellValue]:
-    out: dict[str, CellValue] = {}
-    for sex_label, sex_code in SEXES.items():
-        for cohort, (low, high) in cohorts.items():
-            rows = (
-                universe
-                & (sex == sex_code)
-                & (birth_year >= low)
-                & (birth_year <= high)
-            )
+        for cohort in ODD_AIME_COHORTS:
+            group = f"odd.{sex_label}.{cohort}"
+            rows = group_rows(group, earnings, birth_year, sex)
             aime = aime_35(earnings[rows], birth_year[rows], nawi)
-            for quantile in AIME_QUANTILES:
-                value = (
-                    float(np.quantile(aime, quantile)) if len(aime) else np.nan
-                )
-                out[
-                    f"{family}.{sex_label}.{cohort}.aime_p{int(quantile * 100)}"
-                ] = CellValue(value, int((aime > 0).sum()), len(aime))
+            out.update(_quantile_cells(group, aime, "aime", AIME_QUANTILES))
+        for cohort in PARTIAL_AIME_COHORTS:
+            group = f"odd.{sex_label}.{cohort}"
+            rows = group_rows(group, earnings, birth_year, sex)
+            value = partial_aime(earnings[rows], nawi)
+            out.update(_quantile_cells(group, value, "paime", AIME_QUANTILES))
     return out
 
 
@@ -482,20 +670,18 @@ def pre_career_cells(
 ) -> dict[str, CellValue]:
     """Every cell of family ``pre`` for one matrix (true or filled).
 
-    The universe is persons of known sex with positive earnings in at
-    least one year from their career start, ``max(1968, birth_year + 22)``,
-    through 2006 (the years the PSID can record); it reads no masked year.
+    Per sex and the cohorts born 1930-1945 (masked years 1951-1967):
+    ``aime_p10`` ... ``aime_p90``; ``pzero``, the share of masked
+    person-years at ages 18 and over with no earnings; ``plevel``, their
+    mean earnings over the wage base; ``pr_in``, the Spearman of 1962
+    against 1967 (both masked); ``pr_cross``, of 1965 against 1970 (masked
+    against recorded).
 
-    Per sex and the cohorts of :data:`PRE_CAREER_COHORTS` (masked years
-    1951-1967): ``aime_p25``, ``aime_p50``, ``aime_p75``; ``pzero``, the
-    share of masked person-years at ages 18 and over with no earnings;
-    ``plevel``, their mean earnings over the wage base; ``pr_in``, the
-    Spearman of 1962 against 1967 (both masked); and ``pr_cross``, of 1965
-    against 1970 (masked against recorded), positive in both years.
+    Per sex and the cohorts born 1946-1980 (masked years: ages to 21):
+    ``yzero`` and ``ylevel`` over ages 15-21; ``yr_cross``, the Spearman of
+    earnings at age 21 against age 24; ``paime_p10`` ... ``paime_p90``.
 
-    Per sex and the cohorts of :data:`YOUTH_COHORTS` (masked years: ages
-    up to 21): ``yzero`` and ``ylevel`` over ages 15-21, and ``yr_cross``,
-    the Spearman of earnings at age 21 against age 24, positive in both.
+    Correlations are among persons positive in both years.
     """
 
     earnings = np.asarray(earnings, dtype=np.float64)
@@ -504,31 +690,22 @@ def pre_career_cells(
     _check_matrix(earnings, birth_year)
     years = np.asarray(YEARS)
     masked = pre_career_mask(birth_year)
-    recorded = ~masked & (years[None, :] <= LAST_YEAR)
-    universe = np.isin(sex, list(SEXES.values())) & (
-        (earnings > 0) & recorded
-    ).any(axis=1)
     caps = np.array([float(wage_bases[year]) for year in YEARS])
     share_of_cap = earnings / caps[None, :]
     age = years[None, :] - birth_year[:, None]
-    out = _aime_cells(
-        "pre", earnings, birth_year, sex, universe, PRE_CAREER_COHORTS, nawi
-    )
-    for sex_label, sex_code in SEXES.items():
-        for cohort, (low, high) in PRE_CAREER_COHORTS.items():
-            rows = (
-                universe
-                & (sex == sex_code)
-                & (birth_year >= low)
-                & (birth_year <= high)
-            )
-            prefix = f"pre.{sex_label}.{cohort}"
+    out: dict[str, CellValue] = {}
+    for sex_label in SEXES:
+        for cohort in PRE_CAREER_COHORTS:
+            group = f"pre.{sex_label}.{cohort}"
+            rows = group_rows(group, earnings, birth_year, sex)
+            aime = aime_35(earnings[rows], birth_year[rows], nawi)
+            out.update(_quantile_cells(group, aime, "aime", AIME_QUANTILES))
             adult = masked[rows] & (age[rows] >= _PRE_ADULT_AGE)
             values = earnings[rows][adult]
-            out[f"{prefix}.pzero"] = _share(
+            out[f"{group}.pzero"] = _share(
                 values == 0, np.ones(len(values), dtype=bool)
             )
-            out[f"{prefix}.plevel"] = CellValue(
+            out[f"{group}.plevel"] = CellValue(
                 (
                     float(share_of_cap[rows][adult].mean())
                     if len(values)
@@ -541,7 +718,7 @@ def pre_career_cells(
                 ("pr_in", _PRE_PAIR_IN),
                 ("pr_cross", _PRE_PAIR_CROSS),
             ):
-                out[f"{prefix}.{name}"] = _spearman_mean(
+                out[f"{group}.{name}"] = _spearman_mean(
                     [
                         (
                             earnings[rows, _column(first)],
@@ -549,24 +726,19 @@ def pre_career_cells(
                         )
                     ]
                 )
-        for cohort, (low, high) in YOUTH_COHORTS.items():
-            rows = (
-                universe
-                & (sex == sex_code)
-                & (birth_year >= low)
-                & (birth_year <= high)
-            )
-            prefix = f"pre.{sex_label}.{cohort}"
+        for cohort in YOUTH_COHORTS:
+            group = f"pre.{sex_label}.{cohort}"
+            rows = group_rows(group, earnings, birth_year, sex)
             young = (
                 masked[rows]
                 & (age[rows] >= _YOUTH_AGES[0])
                 & (age[rows] <= _YOUTH_AGES[1])
             )
             values = earnings[rows][young]
-            out[f"{prefix}.yzero"] = _share(
+            out[f"{group}.yzero"] = _share(
                 values == 0, np.ones(len(values), dtype=bool)
             )
-            out[f"{prefix}.ylevel"] = CellValue(
+            out[f"{group}.ylevel"] = CellValue(
                 (
                     float(share_of_cap[rows][young].mean())
                     if len(values)
@@ -577,7 +749,7 @@ def pre_career_cells(
             )
             first_age, second_age = _YOUTH_PAIR_AGES
             person_rows = np.flatnonzero(rows)
-            out[f"{prefix}.yr_cross"] = _spearman_mean(
+            out[f"{group}.yr_cross"] = _spearman_mean(
                 [
                     (
                         earnings[
@@ -591,31 +763,9 @@ def pre_career_cells(
                     )
                 ]
             )
+            value = partial_aime(earnings[rows], nawi)
+            out.update(_quantile_cells(group, value, "paime", AIME_QUANTILES))
     return out
-
-
-def cell_metric(cell_id: str) -> str:
-    """``abs_gap`` for a rank correlation, ``log_ratio`` for every other cell."""
-
-    return (
-        "abs_gap"
-        if cell_id.rsplit(".", 1)[-1] in _CORRELATIONS
-        else ("log_ratio")
-    )
-
-
-def gap(cell_id: str, filled: float, truth: float) -> float:
-    """The filled value's distance from the truth on the cell's scale.
-
-    A correlation's gap is the difference; any other cell's is the log
-    ratio, which is minus or plus infinity when exactly one side is zero
-    and NaN when both are.
-    """
-
-    if cell_metric(cell_id) == "abs_gap":
-        return float(filled - truth)
-    with np.errstate(divide="ignore", invalid="ignore"):
-        return float(np.log(filled) - np.log(truth))
 
 
 def family_cells(
@@ -635,64 +785,30 @@ def family_cells(
     raise ValueError(f"unknown family {family!r}")
 
 
-def family_universe(
-    family: str, earnings: np.ndarray, birth_year: np.ndarray, sex: np.ndarray
-) -> np.ndarray:
-    """The persons a family's cells may count (no masked year is read).
+def cell_metric(cell_id: str) -> str:
+    """``abs_gap`` for a rank correlation, ``log_ratio`` for every other cell."""
 
-    ``odd``: positive in a recorded even year 1996-2006. ``pre``: positive in
-    a year from ``max(1968, birth_year + 22)`` through 2006. Both require a
-    coded sex. The career cells of family ``odd`` further require a
-    positive unmasked year from 1968, which a universe member born before
-    1946 has whenever it is positive in a recorded even year.
+    statistic = cell_id.rsplit(".", 1)[-1]
+    return "abs_gap" if statistic in _CORRELATIONS else "log_ratio"
+
+
+def gap(cell_id: str, filled: float, truth: float) -> float:
+    """The filled value's distance from the truth on the cell's scale.
+
+    A correlation's gap is the difference; any other cell's is the log
+    ratio, which is minus or plus infinity when exactly one side is zero
+    and NaN when both are.
     """
 
-    earnings = np.asarray(earnings)
-    coded = np.isin(np.asarray(sex), list(SEXES.values()))
-    if family == "odd":
-        observed = earnings[:, [_column(year) for year in ODD_OBSERVED_YEARS]]
-        return coded & (observed > 0).any(axis=1)
-    if family == "pre":
-        recorded = ~pre_career_mask(birth_year)
-        return coded & ((earnings > 0) & recorded).any(axis=1)
-    raise ValueError(f"unknown family {family!r}")
+    if cell_metric(cell_id) == "abs_gap":
+        return float(filled - truth)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        return float(np.log(filled) - np.log(truth))
 
 
-def group_of(cell_id: str) -> str:
-    """A cell's floor group: its id without the statistic.
-
-    ``odd.<sex>.<age band>`` (seven cells), ``odd.<sex>.<cohort>`` (three
-    AIME quartiles), ``pre.<sex>.<cohort>`` (six or three cells). The cells
-    of a group share one sample size and one pool.
-    """
-
-    return cell_id.rsplit(".", 1)[0]
-
-
-def group_eligible(
-    group: str, earnings: np.ndarray, birth_year: np.ndarray, sex: np.ndarray
-) -> np.ndarray:
-    """Persons by flag: who a sample for ``group``'s floor is drawn from.
-
-    For an age-band group of family ``odd``: universe members of the sex
-    with at least one masked odd year at an age in the band. For a cohort
-    group: universe members of the sex born in the cohort.
-    """
-
-    family, sex_label, stratum = group.split(".")
-    birth_year = np.asarray(birth_year, dtype=np.int64)
-    member = family_universe(family, earnings, birth_year, sex) & (
-        np.asarray(sex) == SEXES[sex_label]
-    )
-    if stratum in ODD_AGE_BANDS:
-        low, high = ODD_AGE_BANDS[stratum]
-        ages = np.asarray(MASKED_ODD_YEARS)[None, :] - birth_year[:, None]
-        return member & ((ages >= low) & (ages <= high)).any(axis=1)
-    cohorts = {**ODD_AIME_COHORTS, **PRE_CAREER_COHORTS, **YOUTH_COHORTS}
-    low, high = cohorts[stratum]
-    return member & (birth_year >= low) & (birth_year <= high)
-
-
+# --------------------------------------------------------------------------
+# Floors and partition
+# --------------------------------------------------------------------------
 @dataclass(frozen=True)
 class FloorGroup:
     """One floor group: per-cell replicate errors, sigma and events.
@@ -724,13 +840,13 @@ def floor_group(
     """The group's cells' sampling standard errors at ``sample_size`` persons.
 
     Each replicate draws two disjoint samples of ``sample_size`` persons
-    from ``pool`` (row indices of real DEV persons eligible for the group)
-    with the stream ``default_rng([FLOOR_SEED_BASE, group_index,
-    n_replicates, sample_size])``, computes the group's cells on each
-    (``cells`` maps row indices to cell values and may return other cells,
-    which are ignored), and records ``[m(A) - m(B)] / sqrt(2)``. For two
-    independent samples the root mean square estimates one sample's
-    standard error.
+    from ``pool`` (row indices of the group's persons on DEV,
+    :func:`group_rows`) with the stream ``default_rng([FLOOR_SEED_BASE,
+    group_index, n_replicates, sample_size])``, computes the group's cells
+    on each (``cells`` maps row indices to cell values and may return other
+    cells, which are ignored), and records ``[m(A) - m(B)] / sqrt(2)``.
+    For two independent samples the root mean square estimates one
+    sample's standard error.
     """
 
     pool = np.asarray(pool)
@@ -813,6 +929,9 @@ def partition(
     return out
 
 
+# --------------------------------------------------------------------------
+# Scoring and adoption
+# --------------------------------------------------------------------------
 def score(
     truth: Mapping[str, CellValue],
     filled: Sequence[Mapping[str, CellValue]],
@@ -861,10 +980,11 @@ def adoption_tier(
 
     ``"certified"``: the candidate passes the gate (every gating cell within
     tolerance). ``"improves"``: it fails, but in every gating cell its gap
-    is finite and no larger than the larger of the current rule's gap and
-    the tolerance, and it fails strictly fewer gating cells than the
-    current rule. ``"not_adopted"`` otherwise. Both scores are
-    :func:`score` results on the same persons and family.
+    is finite and at most ``max(tau, min(|current gap|, IMPROVES_CAP *
+    tau))`` (a non-finite current gap counts as infinite), and it fails
+    strictly fewer gating cells than the current rule. ``"not_adopted"``
+    otherwise. Both scores are :func:`score` results on the same persons
+    and family.
     """
 
     if candidate["passes"]:
@@ -875,11 +995,10 @@ def adoption_tier(
         if "passes" not in row:
             continue
         own = float(row["gap"])
+        tau = float(row["tolerance"])
         baseline = float(current["cells"][cell_id]["gap"])
-        allowed = max(
-            abs(baseline) if np.isfinite(baseline) else np.inf,
-            float(row["tolerance"]),
-        )
+        baseline = abs(baseline) if np.isfinite(baseline) else np.inf
+        allowed = max(tau, min(baseline, IMPROVES_CAP * tau))
         if not np.isfinite(own) or abs(own) > allowed:
             return "not_adopted"
     return "improves"
@@ -904,12 +1023,112 @@ def adopt(primary_tier: str, alternative_tier: str) -> str | None:
     return "primary"
 
 
+def earnings_from_shares(shares: np.ndarray) -> np.ndarray:
+    """Capped earnings from shares of the wage base, exact at the cap."""
+
+    caps = np.array([float(_wage_base(year)) for year in YEARS])
+    shares = np.asarray(shares, dtype=np.float64)
+    return np.where(shares >= 1.0, caps[None, :], shares * caps[None, :])
+
+
+def _wage_base(year: int) -> float:
+    from populace_dynamics.harness.epuf_operator import wage_base
+
+    return float(wage_base(year))
+
+
+class FillOutputInvalid(ValueError):
+    """A candidate's output broke a fill-validity invariant."""
+
+
+def score_candidate(
+    fill,
+    family: str,
+    matrix: EPUFMatrix,
+    truth: Mapping[str, CellValue],
+    tolerance: Mapping[str, float],
+    gating: Iterable[str],
+    *,
+    seeds: Sequence[int] = DRAW_SEEDS,
+    wage_bases: Mapping[int, float],
+    nawi: Mapping[int, float],
+) -> dict[str, object]:
+    """Score one candidate fill on one part, under the registered protocol.
+
+    ``fill.fill(shares, years, birth_year, sex, person_key, fill_mask,
+    seed)`` receives shares of the wage base with NaN in every cell of the
+    union mask (both families' masked years) and fills the cells of its
+    own family's mask. Each draw must leave every other cell exactly as
+    given and return finite shares in [0, 1] on the masked cells
+    (:class:`FillOutputInvalid` otherwise). The filled cells replace the
+    truth's own-family masked cells; every other cell stays true. The
+    score is :func:`score` over ``seeds``, with the truth's cells passed in.
+    """
+
+    years = np.asarray(YEARS)
+    caps = np.array([float(wage_bases[year]) for year in YEARS])
+    shares = matrix.earnings / caps[None, :]
+    hidden = union_mask(matrix.birth_year)
+    own = family_mask(family, matrix.birth_year)
+    given = np.where(hidden, np.nan, shares)
+    draws = []
+    for seed in seeds:
+        out = fill.fill(
+            given.copy(),
+            years,
+            matrix.birth_year,
+            matrix.sex,
+            matrix.person_id,
+            own.copy(),
+            int(seed),
+        )
+        out = np.asarray(out, dtype=np.float64)
+        if out.shape != given.shape:
+            raise FillOutputInvalid("the fill changed the matrix's shape")
+        filled = out[own]
+        if not np.isfinite(filled).all():
+            raise FillOutputInvalid("a masked cell came back not finite")
+        if (filled < 0).any() or (filled > 1).any():
+            raise FillOutputInvalid("a masked cell came back outside [0, 1]")
+        others = ~own
+        same = (out[others] == given[others]) | (
+            np.isnan(out[others]) & np.isnan(given[others])
+        )
+        if not same.all():
+            raise FillOutputInvalid("the fill changed a cell it does not own")
+        earnings = np.where(
+            own,
+            np.where(out >= 1.0, caps[None, :], out * caps[None, :]),
+            matrix.earnings,
+        )
+        draws.append(
+            family_cells(
+                family,
+                earnings,
+                matrix.birth_year,
+                matrix.sex,
+                wage_bases,
+                nawi,
+            )
+        )
+    family_truth = {
+        cell_id: value
+        for cell_id, value in truth.items()
+        if cell_id.startswith(f"{family}.")
+    }
+    return score(family_truth, draws, tolerance, gating)
+
+
+# --------------------------------------------------------------------------
+# Oracles (report-only)
+# --------------------------------------------------------------------------
 def _share_bins(shares: np.ndarray, edges: np.ndarray) -> np.ndarray:
-    """0 for zero, 1..N_SHARE_BINS for positive below the cap, N+1 at it."""
+    """0 zero, 1..N positive below the cap, N+1 at it, N+2 unknown."""
 
     bins = np.searchsorted(edges, shares, side="right") + 1
     bins = np.where(shares <= 0, 0, bins)
-    return np.where(shares >= 1.0, N_SHARE_BINS + 1, bins)
+    bins = np.where(shares >= 1.0, N_SHARE_BINS + 1, bins)
+    return np.where(np.isnan(shares), N_SHARE_BINS + 2, bins)
 
 
 def share_bin_edges(shares: np.ndarray) -> np.ndarray:
@@ -940,20 +1159,24 @@ def odd_oracle_fill(
     """Oracle O1: each masked odd year's true value, permuted within strata.
 
     For each masked year ``t`` the persons are grouped by sex, membership
-    of the family's universe (:func:`family_universe`), five-year age band
-    at ``t``, and the bins (:func:`share_bin_edges`, from the
-    supplied persons' recorded even years 1996-2006) of their shares of
-    the wage base at ``t-1`` and ``t+1``; within a group the true values at
-    ``t`` are permuted. It is a fill with no model error given that
-    conditioning set; it is reported, never gated.
+    of the ``odd`` universe, five-year age band at ``t``, and the bins
+    (:func:`share_bin_edges`, from the supplied persons' recorded even
+    years 1996-2006; a neighbour inside the pre-career mask is unknown) of
+    their shares of the wage base at ``t-1`` and ``t+1``; within a group
+    the true values at ``t`` are permuted. It is a fill with no model error
+    given that conditioning set; it is reported, never gated.
     """
 
     earnings = np.asarray(earnings, dtype=np.float64)
     birth_year = np.asarray(birth_year, dtype=np.int64)
     caps = np.array([float(wage_bases[year]) for year in YEARS])
-    share = earnings / caps[None, :]
+    share = np.where(
+        pre_career_mask(birth_year), np.nan, earnings / caps[None, :]
+    )
     edges = share_bin_edges(
-        share[:, [_column(year) for year in ODD_OBSERVED_YEARS]]
+        np.nan_to_num(
+            share[:, [_column(year) for year in ODD_OBSERVED_YEARS]], nan=0.0
+        )
     )
     rng = np.random.default_rng([seed, 1])
     member = family_universe("odd", earnings, birth_year, sex).astype(np.int64)
@@ -978,11 +1201,11 @@ def pre_career_oracle_fill(
 ) -> np.ndarray:
     """Oracle O2: whole masked pre-career blocks permuted within strata.
 
-    Persons are grouped by sex, birth year, membership of the family's
-    universe (:func:`family_universe`), the number of positive years
-    among their first five recorded years (from ``max(1968, birth_year +
-    22)``), and the quintile, within sex and birth year, of their mean
-    share of the wage base over those positive years (0 when none is
+    Persons are grouped by sex, birth year, membership of the ``pre``
+    universe, the number of positive years among their first five years
+    from ``max(1968, birth_year + 22)`` that the PSID records (a masked odd
+    year is unknown), and the quintile, within sex and birth year, of their
+    mean share of the wage base over those positive years (0 when none is
     positive). Within a group the masked blocks, which cover the same
     calendar years, are permuted whole. Reported, never gated.
     """
@@ -991,8 +1214,10 @@ def pre_career_oracle_fill(
     birth_year = np.asarray(birth_year, dtype=np.int64)
     sex = np.asarray(sex, dtype=np.int64)
     caps = np.array([float(wage_bases[year]) for year in YEARS])
-    share = earnings / caps[None, :]
-    start = np.maximum(_CAREER_FIRST_YEAR, birth_year + _CAREER_START_AGE)
+    share = np.where(
+        odd_mask(len(birth_year)), np.nan, earnings / caps[None, :]
+    )
+    start = _career_start(birth_year)
     columns = (start - FIRST_YEAR)[:, None] + np.arange(5)[None, :]
     inside = columns <= _column(LAST_YEAR)
     first_five = np.where(
@@ -1001,13 +1226,13 @@ def pre_career_oracle_fill(
             np.arange(len(share))[:, None],
             np.minimum(columns, _column(LAST_YEAR)),
         ],
-        0.0,
+        np.nan,
     )
-    positive = (first_five > 0).sum(axis=1)
+    known = np.nan_to_num(first_five, nan=0.0)
+    positive = (known > 0).sum(axis=1)
     mean_share = np.where(
         positive > 0,
-        np.where(first_five > 0, first_five, 0.0).sum(axis=1)
-        / np.maximum(positive, 1),
+        np.where(known > 0, known, 0.0).sum(axis=1) / np.maximum(positive, 1),
         0.0,
     )
     quintile = np.zeros(len(share), dtype=np.int64)
@@ -1029,6 +1254,9 @@ def pre_career_oracle_fill(
     return out
 
 
+# --------------------------------------------------------------------------
+# EPUF as a matrix, and the audited TEST read
+# --------------------------------------------------------------------------
 @dataclass(frozen=True)
 class EPUFMatrix:
     """EPUF as persons by years 1951-2006 of capped earnings (float64)."""
@@ -1039,16 +1267,34 @@ class EPUFMatrix:
     earnings: np.ndarray
 
 
+class TestPartLocked(PermissionError):
+    """TEST may be read only through :func:`test_part`, after lock."""
+
+
+_TEST_TOKEN = object()
+
+
 def epuf_matrix(
-    part: int | None = None, *, data_dir: Path | None = None
+    part: int | None = None,
+    *,
+    data_dir: Path | None = None,
+    _token: object = None,
 ) -> EPUFMatrix:
-    """Read the pinned EPUF and return one split part (or all) as a matrix.
+    """Read the pinned EPUF and return TRAIN or DEV as a matrix.
 
     A person-year with no row in the annual file is zero. Rows follow the
     demographic file's order of person ids. Reading verifies the pinned
-    SHA-256 of both members (:mod:`populace_dynamics.data.epuf`).
+    SHA-256 of both members (:mod:`populace_dynamics.data.epuf`) and that
+    every annual row joins one demographic person, once per year. TEST (and
+    the whole file, ``part=None``) are refused here; read TEST through
+    :func:`test_part`.
     """
 
+    if (part is None or int(part) == TEST) and _token is not _TEST_TOKEN:
+        raise TestPartLocked(
+            "TEST is read only through epuf_fill_gate.test_part(), after the "
+            "gate locks"
+        )
     from populace_dynamics.data import epuf
 
     demographic = epuf.read_demographic(data_dir=data_dir)
@@ -1056,6 +1302,18 @@ def epuf_matrix(
     ids = demographic["person_id"].to_numpy()
     order = np.argsort(ids, kind="stable")
     ids = ids[order]
+    if (np.diff(ids) <= 0).any():
+        raise ValueError("EPUF demographic person ids are not unique")
+    annual_ids = annual["person_id"].to_numpy()
+    position = np.searchsorted(ids, annual_ids)
+    if (position >= len(ids)).any() or (
+        ids[np.minimum(position, len(ids) - 1)] != annual_ids
+    ).any():
+        raise ValueError("an EPUF annual row has no demographic person")
+    annual_years = annual["year"].to_numpy().astype(np.int64)
+    pair = position.astype(np.int64) * 100 + (annual_years - FIRST_YEAR)
+    if len(np.unique(pair)) != len(pair):
+        raise ValueError("EPUF has two annual rows for one person-year")
     keep = (
         np.ones(len(ids), dtype=bool)
         if part is None
@@ -1063,13 +1321,12 @@ def epuf_matrix(
     )
     row_of = np.full(len(ids), -1, dtype=np.int64)
     row_of[np.flatnonzero(keep)] = np.arange(int(keep.sum()))
-    position = np.searchsorted(ids, annual["person_id"].to_numpy())
     rows = row_of[position]
     inside = rows >= 0
     earnings = np.zeros((int(keep.sum()), len(YEARS)), dtype=np.float64)
-    earnings[rows[inside], annual["year"].to_numpy()[inside] - FIRST_YEAR] = (
-        annual["earnings"].to_numpy()[inside]
-    )
+    earnings[rows[inside], annual_years[inside] - FIRST_YEAR] = annual[
+        "earnings"
+    ].to_numpy()[inside]
     return EPUFMatrix(
         person_id=ids[keep],
         birth_year=demographic["birth_year"]
@@ -1078,3 +1335,40 @@ def epuf_matrix(
         sex=demographic["sex"].to_numpy()[order][keep].astype(np.int64),
         earnings=earnings,
     )
+
+
+def _gate_lock_status(gates_path: Path) -> dict[str, object]:
+    import yaml
+
+    document = yaml.safe_load(gates_path.read_text())
+    block = (document.get("gates") or {}).get("gate_epuf_fill") or {}
+    thresholds = block.get("thresholds") or {}
+    return {
+        "locked": bool(block.get("locked")) and bool(thresholds.get("locked")),
+        "registration_id": block.get("registration_id"),
+    }
+
+
+def test_part(
+    *, gates_path: Path | None = None, data_dir: Path | None = None
+) -> EPUFMatrix:
+    """The audited TEST read: refused unless ``gates.yaml`` locks this gate.
+
+    ``gates.gate_epuf_fill`` must carry ``locked: true`` with locked
+    thresholds and this module's registration id.
+    """
+
+    gates_path = (
+        Path(__file__).resolve().parents[3] / "gates.yaml"
+        if gates_path is None
+        else Path(gates_path)
+    )
+    status = _gate_lock_status(gates_path)
+    if not status["locked"] or status["registration_id"] != REGISTRATION_ID:
+        raise TestPartLocked(
+            f"gate_epuf_fill is not locked in {gates_path}; TEST stays unread"
+        )
+    return epuf_matrix(TEST, data_dir=data_dir, _token=_TEST_TOKEN)
+
+
+test_part.__test__ = False  # not a pytest test despite its name

@@ -6,17 +6,19 @@ This script builds the default-spec PSID-2010 cohort
 (:func:`populace_dynamics.cohorts.psid2010.build_psid2010_cohort`) from the
 staged PSID and records, unweighted:
 
-- per sex and age band of family ``odd``: the career years the assembler
-  filled with the neighbour mean (provenance ``gap_imputed``) at an age in
-  the band, among members positive in a recorded even year 1996-2010, and
-  the number of distinct members behind them;
-- per sex and cohort of the career and pre-career cells: members positive
-  in a recorded year from ``max(1968, birth_year + 22)`` through 2010.
+- per sex and age band of family ``odd`` (``a22_74`` pools the bands): the
+  career years the assembler filled with the neighbour mean (provenance
+  ``gap_imputed``) at an age in the band, among members positive in a
+  recorded even year 1996-2010, and the number of distinct members behind
+  them;
+- per sex and cohort of every cohort group (pooled cohorts included):
+  members positive in a recorded year from ``max(1968, birth_year + 22)``
+  through 2010.
 
 It reads no EPUF value. Usage::
 
     python scripts/build_epuf_fill_psid_scale.py \
-        --output runs/epuf_fill_gate_psid_scale_v1.json
+        --output runs/epuf_fill_gate_psid_scale_v2.json
 """
 
 from __future__ import annotations
@@ -33,7 +35,7 @@ from populace_dynamics.cohorts import psid2010
 from populace_dynamics.harness import epuf_fill_gate as g
 
 ROOT = Path(__file__).resolve().parents[1]
-SCHEMA = "populace_dynamics.epuf_fill_gate_psid_scale.v1"
+SCHEMA = "populace_dynamics.epuf_fill_gate_psid_scale.v2"
 _SEX = {"men": "male", "women": "female"}
 _RECORDED_EVEN = tuple(range(1996, 2011, 2))
 
@@ -48,7 +50,7 @@ def _git_head() -> str:
 
 
 def scale(persons, careers) -> dict[str, dict[str, int]]:
-    """The unit counts per group, from a cohort's persons and careers."""
+    """The unit counts for every floor group (``epuf_fill_gate.groups``)."""
 
     rows = careers.merge(
         persons[["person_id", "sex", "birth_year"]], on="person_id"
@@ -66,31 +68,35 @@ def scale(persons, careers) -> dict[str, dict[str, int]]:
         (rows["provenance"] == "gap_imputed")
         & rows["person_id"].isin(odd_universe)
     ]
+    cohorts = {
+        **g.ODD_AIME_COHORTS,
+        **g.PARTIAL_AIME_COHORTS,
+        **g.PRE_CAREER_COHORTS,
+        **g.YOUTH_COHORTS,
+    }
     out: dict[str, dict[str, int]] = {}
-    for sex_label, sex_value in _SEX.items():
-        for band, (low, high) in g.ODD_AGE_BANDS.items():
+    for group in g.groups():
+        family, sex_label, stratum = group.split(".")
+        sex_value = _SEX[sex_label]
+        if family == "odd" and stratum in g.ODD_AGE_BANDS:
+            low, high = g.ODD_AGE_BANDS[stratum]
             units = filled[
                 (filled["sex"] == sex_value)
                 & (filled["age"] >= low)
                 & (filled["age"] <= high)
             ]
-            out[f"odd.{sex_label}.{band}"] = {
+            out[group] = {
                 "filled_person_years": int(len(units)),
                 "persons": int(units["person_id"].nunique()),
             }
+            continue
+        low, high = cohorts[stratum]
         members = persons[
             (persons["sex"] == sex_value)
             & persons["person_id"].isin(career_universe)
+            & persons["birth_year"].between(low, high)
         ]
-        for family, cohorts in (
-            ("odd", g.ODD_AIME_COHORTS),
-            ("pre", {**g.PRE_CAREER_COHORTS, **g.YOUTH_COHORTS}),
-        ):
-            for cohort, (low, high) in cohorts.items():
-                born = members["birth_year"].between(low, high)
-                out[f"{family}.{sex_label}.{cohort}"] = {
-                    "persons": int(born.sum())
-                }
+        out[group] = {"persons": int(len(members))}
     return out
 
 

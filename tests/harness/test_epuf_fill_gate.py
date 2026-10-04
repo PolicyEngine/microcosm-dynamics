@@ -129,25 +129,73 @@ def test_cells_ignore_row_order(family):
         )
 
 
-def test_universes_read_no_masked_year():
+@pytest.mark.parametrize("family", ["odd", "pre"])
+def test_populations_read_no_cell_their_family_masks(family):
     earnings, birth, sex = _careers(5)
-    scrambled = earnings.copy()
     rng = np.random.default_rng(1)
-    odd = g.odd_mask(len(birth))
-    scrambled[odd] = rng.permutation(scrambled[odd])
-    first = g.odd_cells(earnings, birth, sex, WAGE_BASES, NAWI)
-    second = g.odd_cells(scrambled, birth, sex, WAGE_BASES, NAWI)
-    for cell_id in first:
-        if cell_id.endswith(("zint", "zexit", "wint", "level")):
-            assert first[cell_id].n == second[cell_id].n
-    pre = g.pre_career_mask(birth)
+    mask = g.family_mask(family, birth)
     scrambled = earnings.copy()
-    scrambled[pre] = 0.0
-    first = g.pre_career_cells(earnings, birth, sex, WAGE_BASES, NAWI)
-    second = g.pre_career_cells(scrambled, birth, sex, WAGE_BASES, NAWI)
+    scrambled[mask] = rng.permutation(scrambled[mask])
+    scrambled[mask & (rng.random(mask.shape) < 0.3)] = 0.0
+    for group in g.groups():
+        if not group.startswith(f"{family}."):
+            continue
+        assert np.array_equal(
+            g.group_rows(group, earnings, birth, sex),
+            g.group_rows(group, scrambled, birth, sex),
+        ), group
+    first = g.family_cells(family, earnings, birth, sex, WAGE_BASES, NAWI)
+    second = g.family_cells(family, scrambled, birth, sex, WAGE_BASES, NAWI)
     for cell_id in first:
-        if cell_id.endswith(("pzero", "plevel", "yzero", "ylevel")):
-            assert first[cell_id].n == second[cell_id].n
+        statistic = cell_id.rsplit(".", 1)[1]
+        if statistic.startswith(("aime", "paime", "pzero", "plevel")) or (
+            statistic in ("yzero", "ylevel", "zint", "zexit", "wint", "level")
+        ):
+            assert first[cell_id].n == second[cell_id].n, cell_id
+
+
+@pytest.mark.parametrize("family", ["odd", "pre"])
+def test_each_group_counts_exactly_its_group_rows(family):
+    earnings, birth, sex = _careers(11)
+    cells = g.family_cells(family, earnings, birth, sex, WAGE_BASES, NAWI)
+    for group in g.groups():
+        if not group.startswith(f"{family}."):
+            continue
+        rows = g.group_rows(group, earnings, birth, sex)
+        stratum = group.split(".")[2]
+        if stratum in g.ODD_AGE_BANDS:
+            low, high = g.ODD_AGE_BANDS[stratum]
+            ages = np.asarray(g.MASKED_ODD_YEARS)[None, :] - birth[:, None]
+            units = int(
+                (((ages >= low) & (ages <= high)) & rows[:, None]).sum()
+            )
+            assert cells[f"{group}.level"].n == units, group
+        else:
+            name = "aime" if f"{group}.aime_p50" in cells else "paime"
+            assert cells[f"{group}.{name}_p50"].n == int(rows.sum()), group
+
+
+def test_odd_units_start_at_age_22_and_bands_pool():
+    earnings, birth, sex = _careers(12)
+    rows = g.group_rows("odd.men.a22_29", earnings, birth, sex)
+    ages = np.asarray(g.MASKED_ODD_YEARS)[None, :] - birth[rows][:, None]
+    assert (((ages >= 22) & (ages <= 29)).any(axis=1)).all()
+    assert min(low for low, _ in g.ODD_AGE_BANDS.values()) == 22
+    cells = g.odd_cells(earnings, birth, sex, WAGE_BASES, NAWI)
+    for sex_label in g.SEXES:
+        bands = [
+            cells[f"odd.{sex_label}.{band}.level"].n
+            for band in ("a22_29", "a30_44", "a45_59", "a60_74")
+        ]
+        assert cells[f"odd.{sex_label}.a22_74.level"].n == sum(bands)
+
+
+def test_partial_aime_indexes_to_2006():
+    history = np.zeros((1, len(g.YEARS)))
+    history[0, 2006 - g.FIRST_YEAR] = 42_000.0
+    history[0, 2000 - g.FIRST_YEAR] = 30_000.0
+    expected = np.floor((42_000.0 + 30_000.0 * NAWI[2006] / NAWI[2000]) / 420)
+    assert g.partial_aime(history, NAWI)[0] == expected
 
 
 def test_current_odd_rule_removes_interior_and_exit_zeros():
@@ -249,22 +297,22 @@ def test_floor_refuses_a_pool_too_small_for_two_samples():
         )
 
 
-def test_group_of_and_eligibility():
-    assert g.group_of("odd.men.a18_29.r1") == "odd.men.a18_29"
+def test_groups_and_group_of():
+    assert g.group_of("odd.men.a22_29.r1") == "odd.men.a22_29"
     assert (
         g.group_of("pre.women.b1930_1934.aime_p50") == "pre.women.b1930_1934"
     )
     earnings, birth, sex = _careers(7)
-    for group in (
-        "odd.men.a30_44",
-        "odd.women.b1936_1940",
-        "pre.men.b1946_1955",
-    ):
-        eligible = g.group_eligible(group, earnings, birth, sex)
-        family, sex_label, _ = group.split(".")
-        universe = g.family_universe(family, earnings, birth, sex)
-        assert (eligible <= universe).all()
-        assert (sex[eligible] == g.SEXES[sex_label]).all()
+    cells = {
+        **g.odd_cells(earnings, birth, sex, WAGE_BASES, NAWI),
+        **g.pre_career_cells(earnings, birth, sex, WAGE_BASES, NAWI),
+    }
+    assert sorted({g.group_of(cell) for cell in cells}) == g.groups()
+    assert len(g.groups()) == 40
+    for group in g.groups():
+        rows = g.group_rows(group, earnings, birth, sex)
+        sex_label = group.split(".")[1]
+        assert (sex[rows] == g.SEXES[sex_label]).all()
 
 
 def test_partition_reasons_in_order():
@@ -382,8 +430,17 @@ def test_adoption_tiers():
     assert g.adoption_tier(_scored([0.005, 0.0, -0.009]), current) == (
         "certified"
     )
-    # Fails one cell, but no worse than the current rule there.
-    assert g.adoption_tier(_scored([0.04, 0.0, 0.0]), current) == "improves"
+    # Fails one cell, but within min(current gap, 3 tolerances) there.
+    assert g.adoption_tier(_scored([0.025, 0.0, 0.0]), current) == ("improves")
+    # The allowance is capped at three tolerances even where the current
+    # rule is far worse, or infinitely worse.
+    assert g.adoption_tier(_scored([0.04, 0.0, 0.0]), current) == (
+        "not_adopted"
+    )
+    assert g.adoption_tier(_scored([0.0, 0.029, 0.0]), current) == ("improves")
+    assert g.adoption_tier(_scored([0.0, 0.031, 0.0]), current) == (
+        "not_adopted"
+    )
     # Worse than both the current rule and the tolerance in a cell.
     assert g.adoption_tier(_scored([0.06, 0.0, 0.0]), current) == (
         "not_adopted"
@@ -399,7 +456,7 @@ def test_adoption_tiers():
     assert g.adoption_tier(_scored([0.04, 0.03]), _scored([0.05, 0.05])) == (
         "not_adopted"
     )
-    assert g.adoption_tier(_scored([0.04, 0.0]), _scored([0.05, 0.05])) == (
+    assert g.adoption_tier(_scored([0.025, 0.0]), _scored([0.05, 0.05])) == (
         "improves"
     )
 
@@ -419,3 +476,162 @@ def test_adopt_prefers_the_better_tier_then_the_primary(
     primary, alternative, expected
 ):
     assert g.adopt(primary, alternative) == expected
+
+
+class _RecordingFill:
+    """A neighbour-mean fill that records what it was given."""
+
+    def __init__(self, tamper=None):
+        self.tamper = tamper
+        self.seen = []
+
+    def fill(self, shares, years, birth_year, sex, person_key, mask, seed):
+        self.seen.append((shares.copy(), mask.copy(), seed))
+        out = shares.copy()
+        for column in np.flatnonzero(mask.any(axis=0)):
+            left = np.nan_to_num(shares[:, column - 1]) if column else 0.0
+            right = (
+                np.nan_to_num(shares[:, column + 1])
+                if column + 1 < shares.shape[1]
+                else 0.0
+            )
+            rows = mask[:, column]
+            out[rows, column] = ((left + right) / 2.0)[rows]
+        if self.tamper == "unmasked":
+            free = np.argwhere(~mask & np.isfinite(shares))[0]
+            out[tuple(free)] = 0.123
+        elif self.tamper == "nan":
+            out[np.argwhere(mask)[0][0], np.argwhere(mask)[0][1]] = np.nan
+        elif self.tamper == "above_cap":
+            out[np.argwhere(mask)[0][0], np.argwhere(mask)[0][1]] = 1.5
+        return out
+
+
+def _matrix(seed=13):
+    earnings, birth, sex = _careers(seed, n=1_500)
+    return g.EPUFMatrix(
+        person_id=np.arange(len(birth)) + 1,
+        birth_year=birth,
+        sex=sex,
+        earnings=earnings,
+    )
+
+
+@pytest.mark.parametrize("family", ["odd", "pre"])
+def test_score_candidate_hides_the_union_mask_and_scores_own_family(family):
+    matrix = _matrix()
+    truth = g.family_cells(
+        family,
+        matrix.earnings,
+        matrix.birth_year,
+        matrix.sex,
+        WAGE_BASES,
+        NAWI,
+    )
+    fill = _RecordingFill()
+    result = g.score_candidate(
+        fill,
+        family,
+        matrix,
+        truth,
+        {},
+        [],
+        seeds=(7100, 7101),
+        wage_bases=WAGE_BASES,
+        nawi=NAWI,
+    )
+    union = g.union_mask(matrix.birth_year)
+    for shares, mask, _ in fill.seen:
+        assert np.isnan(shares[union]).all()
+        assert np.isfinite(shares[~union]).all()
+        assert np.array_equal(mask, g.family_mask(family, matrix.birth_year))
+    assert [seed for _, _, seed in fill.seen] == [7100, 7101]
+    assert set(result["cells"]) == set(truth)
+
+
+@pytest.mark.parametrize("tamper", ["unmasked", "nan", "above_cap"])
+def test_score_candidate_refuses_invalid_output(tamper):
+    matrix = _matrix()
+    with pytest.raises(g.FillOutputInvalid):
+        g.score_candidate(
+            _RecordingFill(tamper),
+            "odd",
+            matrix,
+            {},
+            {},
+            [],
+            seeds=(7100,),
+            wage_bases=WAGE_BASES,
+            nawi=NAWI,
+        )
+
+
+def test_earnings_from_shares_is_exact_at_the_cap():
+    shares = np.ones((1, len(g.YEARS)))
+    assert np.array_equal(g.earnings_from_shares(shares)[0], CAPS)
+
+
+def test_test_part_is_refused_until_the_gate_locks(tmp_path):
+    with pytest.raises(g.TestPartLocked):
+        g.epuf_matrix(g.TEST)
+    with pytest.raises(g.TestPartLocked):
+        g.epuf_matrix(None)
+    unlocked = tmp_path / "gates.yaml"
+    unlocked.write_text("gates:\n  gate_epuf_fill:\n    locked: false\n")
+    with pytest.raises(g.TestPartLocked):
+        g.test_part(gates_path=unlocked)
+    wrong = tmp_path / "wrong.yaml"
+    wrong.write_text(
+        "gates:\n  gate_epuf_fill:\n    locked: true\n"
+        "    registration_id: other\n    thresholds:\n      locked: true\n"
+    )
+    with pytest.raises(g.TestPartLocked):
+        g.test_part(gates_path=wrong)
+
+
+def _fake_epuf(monkeypatch, annual_rows):
+    import pandas as pd
+
+    from populace_dynamics.data import epuf
+
+    demographic = pd.DataFrame(
+        {
+            "person_id": np.arange(1, 41, dtype=np.int32),
+            "birth_year": np.full(40, 1950, dtype=np.int16),
+            "sex": np.ones(40, dtype=np.int8),
+        }
+    )
+    annual = pd.DataFrame(
+        annual_rows, columns=["person_id", "year", "earnings"]
+    )
+    monkeypatch.setattr(epuf, "read_demographic", lambda **_: demographic)
+    monkeypatch.setattr(epuf, "read_annual", lambda **_: annual)
+
+
+def test_epuf_matrix_places_rows_and_refuses_bad_joins(monkeypatch):
+    _fake_epuf(monkeypatch, [(3, 1970, 1000), (3, 1971, 2000), (40, 2006, 5)])
+    parts = g.split_part(np.arange(1, 41))
+    for part in (g.TRAIN, g.DEV):
+        matrix = g.epuf_matrix(part)
+        assert matrix.person_id.tolist() == [
+            i + 1 for i in range(40) if parts[i] == part
+        ]
+        for person, year, value in ((3, 1970, 1000), (40, 2006, 5)):
+            if parts[person - 1] == part:
+                row = matrix.person_id.tolist().index(person)
+                assert matrix.earnings[row, year - g.FIRST_YEAR] == value
+        assert matrix.earnings.sum() == sum(
+            value
+            for person, _, value in (
+                (3, 1970, 1000),
+                (3, 1971, 2000),
+                (40, 2006, 5),
+            )
+            if parts[person - 1] == part
+        )
+    _fake_epuf(monkeypatch, [(41, 1970, 1000)])
+    with pytest.raises(ValueError, match="no demographic person"):
+        g.epuf_matrix(g.DEV)
+    _fake_epuf(monkeypatch, [(3, 1970, 1000), (3, 1970, 5)])
+    with pytest.raises(ValueError, match="two annual rows"):
+        g.epuf_matrix(g.DEV)
