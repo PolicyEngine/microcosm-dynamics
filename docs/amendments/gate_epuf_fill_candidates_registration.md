@@ -119,6 +119,18 @@ above, not of a QRF. Its five worst DEV cells are youth earnings levels and
 zero shares over ages 15-21 (`ylevel`, `yzero`) and one pre-career level
 (`plevel`); the log records only the five worst cells.
 
+**A sweep of K, shown to the ratifier.** Before Max ruled on d927 (ratify
+`K = 1`), the dry run below was re-scored at every `K` from 0.25 to 4 with
+the repository's own scoring and adoption functions. `K = 1` reproduces the
+record exactly. The same primaries are adopted for every `K` from about 0.9
+to 4. The odd primary is certified from `K = 2.69` and not adopted below
+about 0.9. The pre primary is certified from `K = 0.77`. `K = 1` was
+registered at `14045be4`, before any DEV score; the sweep is disclosed so
+the ratification is read with it in view. Script, input and output:
+`gate_epuf_fill_dev_k_sweep.py`, `gate_epuf_fill_dev_registered_dryrun.json`
+(the dry run with every cell) and `gate_epuf_fill_dev_k_sweep.txt`, logged
+as the last line of the DEV log.
+
 **The registered procedure, dry-run on DEV.** On 2026-10-04,
 `epuf_fill_scoring.score_registered` ran with the DEV matrix in place of
 TEST, the registered artifacts loaded by SHA-256, and all 20 draw seeds. It
