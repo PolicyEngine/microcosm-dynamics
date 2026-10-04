@@ -235,6 +235,17 @@ The registration fixes each test's question, held-out data, split, cells, statis
 3. Referee rounds, independent of the drafter, then Max's ratification, then the block enters `gates.yaml` locked.
 4. Each candidate gets its own registration comment, frozen before its one scored run, as gate 1's candidates did on issue #42.
 
+### 3.4 Properties the code must hold
+
+The tests above score results. The code that produces them also has properties that hold for every input, and each becomes a property-based test (Hypothesis) beside the example tests, run on invented data:
+
+- **Histories.** Every returned share of the wage base is finite and in [0, 1]. The anchor year comes back unchanged, and no year outside the person's career window is written. The same inputs and seeds give the same history. No history has earnings before the person's year of US entry.
+- **Ranks.** Converting a rank to dollars and back returns the rank, within the clamps the rank machinery uses (0.001 and 0.999; `engine/forward_earnings.py:70-71`).
+- **Inferred PIAs.** Applying the claim-age adjustment and the COLAs since entitlement to an inferred PIA reproduces the frame's benefit to the dime, for every beneficiary. No inferred PIA is negative.
+- **Weights.** In a projection without entrants, the total weight in a year equals the previous year's total less the weight of the people who died. Nothing else changes a weight.
+- **Aging rule.** Each item's rank within sex and age band carries over from year to year. Growing a whole band by a factor multiplies its quantiles by that factor.
+- **Two implementations.** On the same covered-earnings history, the oracle's AIME and PolicyEngine-US's `ss_aime` agree where both define it (T12). A disagreement is run, reduced to the smallest case, and reported before anyone calls it a bug in either.
+
 ## 4. Order of work
 
 ### 4.1 What has to land first
