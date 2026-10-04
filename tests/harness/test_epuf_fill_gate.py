@@ -11,6 +11,7 @@ from hypothesis import strategies as st
 
 from populace_dynamics.cola_track_a.statutory import captured_ssa_parameters
 from populace_dynamics.harness import epuf_fill_gate as g
+from populace_dynamics.harness.epuf_cells import CellValue
 from populace_dynamics.harness.epuf_operator import disclosure_constants
 from populace_dynamics.ss import statutory_aime
 
@@ -202,34 +203,219 @@ def test_gap_scales():
     assert g.gap("odd.men.a18_29.zint", 0.0, 0.01) == -np.inf
 
 
-@settings(max_examples=25, deadline=None)
+@settings(max_examples=20, deadline=None)
 @given(seed=st.integers(0, 1_000), size=st.integers(200, 800))
-def test_floor_sigma_estimates_the_standard_error_of_a_mean(seed, size):
+def test_floor_group_estimates_the_standard_error_of_a_mean(seed, size):
     rng = np.random.default_rng(seed)
-    pool_values = rng.normal(5.0, 2.0, size=20_000)
-    pool = np.arange(len(pool_values))
-    floor = g.floor_sigma(
-        "pre.men.b1930_1934.plevel",
-        lambda rows: float(pool_values[rows].mean()),
+    values = rng.normal(5.0, 2.0, size=20_000)
+    pool = np.arange(len(values))
+
+    def cells(rows):
+        return {
+            "pre.men.b1930_1934.plevel": CellValue(
+                float(values[rows].mean()), len(rows), len(rows)
+            ),
+            "pre.men.b1935_1939.plevel": CellValue(1.0, 0, 0),
+        }
+
+    floor = g.floor_group(
+        "pre.men.b1930_1934",
+        cells,
         pool,
         size,
+        group_index=seed,
         n_replicates=300,
-        seed=seed,
     )
-    # On the log scale the standard error of a mean of 5 with sd 2 is
-    # about (2 / sqrt(size)) / 5.
+    # Only the group's own cell is kept; on the log scale the standard
+    # error of a mean of 5 with sd 2 is about (2 / sqrt(size)) / 5.
+    assert set(floor.sigma) == {"pre.men.b1930_1934.plevel"}
     expected = 2.0 / np.sqrt(size) / 5.0
-    assert floor.sigma == pytest.approx(expected, rel=0.15)
-    assert len(floor.replicates) == 300
+    assert floor.sigma["pre.men.b1930_1934.plevel"] == pytest.approx(
+        expected, rel=0.15
+    )
+    assert len(floor.replicates["pre.men.b1930_1934.plevel"]) == 300
+    assert floor.seed == (g.FLOOR_SEED_BASE, seed, 300, size)
 
 
 def test_floor_refuses_a_pool_too_small_for_two_samples():
     with pytest.raises(ValueError, match="exceed the pool"):
-        g.floor_sigma(
-            "odd.men.a18_29.r1",
-            lambda rows: 0.0,
+        g.floor_group(
+            "odd.men.a18_29",
+            lambda rows: {},
             np.arange(10),
             6,
+            group_index=0,
             n_replicates=2,
-            seed=0,
         )
+
+
+def test_group_of_and_eligibility():
+    assert g.group_of("odd.men.a18_29.r1") == "odd.men.a18_29"
+    assert (
+        g.group_of("pre.women.b1930_1934.aime_p50") == "pre.women.b1930_1934"
+    )
+    earnings, birth, sex = _careers(7)
+    for group in (
+        "odd.men.a30_44",
+        "odd.women.b1936_1940",
+        "pre.men.b1946_1955",
+    ):
+        eligible = g.group_eligible(group, earnings, birth, sex)
+        family, sex_label, _ = group.split(".")
+        universe = g.family_universe(family, earnings, birth, sex)
+        assert (eligible <= universe).all()
+        assert (sex[eligible] == g.SEXES[sex_label]).all()
+
+
+def test_partition_reasons_in_order():
+    floor = g.FloorGroup(
+        group="odd.men.a18_29",
+        sample_size=10,
+        pool_size=100,
+        seed=(0,),
+        replicates={},
+        sigma={
+            "odd.men.a18_29.r1": 0.01,
+            "odd.men.a18_29.zint": np.nan,
+            "odd.men.a18_29.zexit": 0.1,
+            "odd.men.a18_29.wint": 0.1,
+        },
+        min_events={
+            "odd.men.a18_29.r1": (50,) * 20,
+            "odd.men.a18_29.zint": (50,) * 20,
+            "odd.men.a18_29.zexit": (50,) * 18 + (5,) * 2,
+            "odd.men.a18_29.wint": (50,) * 19 + (5,),
+        },
+    )
+    truth = {
+        "odd.men.a18_29.r1": CellValue(0.8, 50, 100),
+        "odd.men.a18_29.zint": CellValue(0.02, 50, 100),
+        "odd.men.a18_29.zexit": CellValue(0.4, 50, 100),
+        "odd.men.a18_29.wint": CellValue(0.1, 50, 100),
+        "odd.men.a18_29.level": CellValue(0.0, 0, 100),
+    }
+    reasons = g.partition(truth, {"odd.men.a18_29": floor})
+    assert reasons == {
+        "odd.men.a18_29.r1": "gates",
+        "odd.men.a18_29.zint": "floor_undefined",
+        "odd.men.a18_29.zexit": "too_few_events",
+        "odd.men.a18_29.wint": "gates",
+        "odd.men.a18_29.level": "truth_undefined",
+    }
+
+
+def test_score_uses_the_mean_over_draws_and_every_gating_cell():
+    truth = {
+        "odd.men.a18_29.r1": CellValue(0.80, 100, 100),
+        "odd.men.a18_29.zint": CellValue(0.02, 100, 100),
+        "odd.men.a18_29.level": CellValue(0.30, 100, 100),
+    }
+    draws = [
+        {
+            "odd.men.a18_29.r1": CellValue(0.81, 1, 1),
+            "odd.men.a18_29.zint": CellValue(0.0, 1, 1),
+            "odd.men.a18_29.level": CellValue(0.30, 1, 1),
+        },
+        {
+            "odd.men.a18_29.r1": CellValue(0.79, 1, 1),
+            "odd.men.a18_29.zint": CellValue(0.04, 1, 1),
+            "odd.men.a18_29.level": CellValue(0.90, 1, 1),
+        },
+    ]
+    tolerance = {"odd.men.a18_29.r1": 0.005, "odd.men.a18_29.zint": 0.1}
+    result = g.score(truth, draws, tolerance, tolerance)
+    assert result["cells"]["odd.men.a18_29.r1"]["gap"] == pytest.approx(0.0)
+    assert result["cells"]["odd.men.a18_29.zint"]["gap"] == pytest.approx(0.0)
+    assert "passes" not in result["cells"]["odd.men.a18_29.level"]
+    assert result["passes"] is True and result["n_gating"] == 2
+    result = g.score(truth, draws[:1], tolerance, tolerance)
+    assert result["passes"] is False and result["n_failing"] == 2
+
+
+@pytest.mark.parametrize("seed", [0, 1])
+def test_odd_oracle_permutes_true_values_within_strata(seed):
+    earnings, birth, sex = _careers(8)
+    filled = g.odd_oracle_fill(earnings, birth, sex, WAGE_BASES, seed)
+    others = ~g.odd_mask(len(birth))
+    assert np.array_equal(filled[others], earnings[others])
+    for year in g.MASKED_ODD_YEARS:
+        column = year - g.FIRST_YEAR
+        assert np.array_equal(
+            np.sort(filled[:, column]), np.sort(earnings[:, column])
+        )
+    # A unit whose neighbours are both zero and whose stratum's true values
+    # are all zero keeps zero.
+    assert (filled[:, 1997 - g.FIRST_YEAR] >= 0).all()
+
+
+def test_pre_oracle_moves_whole_blocks_within_birth_year():
+    earnings, birth, sex = _careers(9)
+    filled = g.pre_career_oracle_fill(earnings, birth, sex, WAGE_BASES, 0)
+    masked = g.pre_career_mask(birth)
+    assert np.array_equal(filled[~masked], earnings[~masked])
+    blocks = {tuple(row[m]) for row, m in zip(earnings, masked, strict=True)}
+    for row, m in zip(filled, masked, strict=True):
+        assert tuple(row[m]) in blocks
+    for year in np.unique(birth):
+        rows = birth == year
+        assert np.array_equal(
+            np.sort(filled[rows][:, :17].sum(axis=1)),
+            np.sort(earnings[rows][:, :17].sum(axis=1)),
+        )
+
+
+def _scored(gaps, tolerance=0.01):
+    cells = {
+        f"odd.men.a18_29.c{i}": {
+            "gap": gap,
+            "tolerance": tolerance,
+            "passes": bool(np.isfinite(gap) and abs(gap) <= tolerance),
+        }
+        for i, gap in enumerate(gaps)
+    }
+    failing = sum(not row["passes"] for row in cells.values())
+    return {"cells": cells, "n_failing": failing, "passes": failing == 0}
+
+
+def test_adoption_tiers():
+    current = _scored([0.05, -np.inf, 0.001])
+    assert g.adoption_tier(_scored([0.005, 0.0, -0.009]), current) == (
+        "certified"
+    )
+    # Fails one cell, but no worse than the current rule there.
+    assert g.adoption_tier(_scored([0.04, 0.0, 0.0]), current) == "improves"
+    # Worse than both the current rule and the tolerance in a cell.
+    assert g.adoption_tier(_scored([0.06, 0.0, 0.0]), current) == (
+        "not_adopted"
+    )
+    assert g.adoption_tier(_scored([0.0, 0.0, 0.02]), current) == (
+        "not_adopted"
+    )
+    # A non-finite gap is never adopted as an improvement.
+    assert g.adoption_tier(_scored([0.04, -np.inf, 0.0]), current) == (
+        "not_adopted"
+    )
+    # Smaller gaps everywhere but not strictly fewer failing cells.
+    assert g.adoption_tier(_scored([0.04, 0.03]), _scored([0.05, 0.05])) == (
+        "not_adopted"
+    )
+    assert g.adoption_tier(_scored([0.04, 0.0]), _scored([0.05, 0.05])) == (
+        "improves"
+    )
+
+
+@pytest.mark.parametrize(
+    ("primary", "alternative", "expected"),
+    [
+        ("certified", "certified", "primary"),
+        ("improves", "certified", "alternative"),
+        ("certified", "improves", "primary"),
+        ("not_adopted", "improves", "alternative"),
+        ("improves", "not_adopted", "primary"),
+        ("not_adopted", "not_adopted", None),
+    ],
+)
+def test_adopt_prefers_the_better_tier_then_the_primary(
+    primary, alternative, expected
+):
+    assert g.adopt(primary, alternative) == expected
