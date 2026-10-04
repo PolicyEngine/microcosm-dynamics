@@ -26,13 +26,16 @@ import time
 from pathlib import Path
 
 from populace_dynamics.artifacts import write_new
+from populace_dynamics.harness import epuf_fill_gate as g
 from populace_dynamics.harness import epuf_fill_scoring as scoring
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DIR = Path("~/PolicyEngine/epuf-data/fills").expanduser()
 #: The registered manifest; any other manifest is refused.
 REGISTERED_MANIFEST = "runs/epuf_fill_candidates_v1.json"
-REGISTERED_MANIFEST_SHA256 = "PENDING_REFIT"
+REGISTERED_MANIFEST_SHA256 = (
+    "a304311343f3c78f7702ec6918b991b6bea30dad2a23529df6f0f975ce7f62d0"
+)
 #: Files whose state the record reports.
 CODE_FILES = (
     "src/populace_dynamics/harness/epuf_fill_gate.py",
@@ -84,6 +87,13 @@ def main() -> None:
         ).returncode
         == 0
     )
+    # Refuse before any marker unless the gate is locked (test_part checks
+    # again before it reads TEST).
+    status = g._gate_lock_status(ROOT / "gates.yaml")
+    if not status["locked"] or status["registration_id"] != g.REGISTRATION_ID:
+        raise g.TestPartLocked(
+            "gate_epuf_fill is not locked; TEST stays unread"
+        )
     # A started marker, so a run that fails after reading TEST leaves a
     # trace of the read.
     marker = Path(f"{args.output}.started.json")

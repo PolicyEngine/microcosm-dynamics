@@ -20,10 +20,15 @@
 
 ## The registered artifacts
 
-- **Manifest**: `runs/epuf_fill_candidates_v1.json`, SHA-256 `8d421536351d884184af441889333db2361fb0f50326e3a4481e6fa4f07aeecf`.
-- **Fitted at**: `9f069477` on TRAIN, with the code files clean.
-- **Libraries**: numpy 2.5.1, scipy 1.18.0, scikit-learn 1.9.0.
-- **Reproducibility**: a second fit at the same commit reproduced all four files byte for byte.
+- **Manifest**: `runs/epuf_fill_candidates_v1.json`, SHA-256 `a304311343f3c78f7702ec6918b991b6bea30dad2a23529df6f0f975ce7f62d0`.
+- **Fitted at**: `598e4436` on TRAIN, with the code files clean.
+- **Environment**: numpy 2.5.1, scipy 1.18.0, scikit-learn 1.9.0, Python 3.14.4, zlib 1.2.12, on macOS-26.6.2-arm64-arm-64bit-Mach-O.
+- **Reproducibility**:
+  - A second fit at the same commit reproduced all four files byte for
+    byte.
+  - The refit after code review (below) did too.
+  - Reproducing the bytes needs the same library, zlib and platform
+    versions. The deflate output can depend on the zlib build.
 
 | Name | Role | File | SHA-256 | Bytes |
 |---|---|---|---|---:|
@@ -49,7 +54,7 @@
   mean, geometric mean and count positive; the mean positive share and the
   share of positive years at offsets 5-9; sex; age; and the year.
 - **Training units**: TRAIN units inside the career, with contexts that see
-  the career only.
+  the career only. `n_units`, 3,000,000, applies to each sex's forest.
 - **Copula**: a person-level Gaussian copula with correlation by sex and
   age band. It is calibrated on one TRAIN person in ten, held out of the
   forests, to match two- and four-year persistence between masked years.
@@ -125,6 +130,40 @@ fifths of EPUF of nearly equal size, so their scores should agree closely.
 - Most of the odd primary's residual misses are at ages 22-29, where the year
   before the career is hidden from every fill. The oracle O1 misses there
   too.
+
+## Code review and refit
+
+An independent code review of PR #516 returned REQUEST CHANGES
+(`reviews/gate_epuf_fill_pr516_code_review_20261004.md`). The fixes:
+
+**`fill_careers` (PSID-2010).**
+- It fills only the gap years the gate scored (1997-2005) unless the
+  caller opts into every gap year, which is an uncertified extrapolation.
+- A gap year with no neighbour the fill can see keeps the assembler's
+  value.
+
+**`epuf_fill.py`.**
+- The donor cache is keyed by the bank's content.
+- Persons of uncoded sex take the routed part's copula.
+- A forest leaf can never be empty: none is, and the smallest holds 16
+  values.
+- The career summaries in the donor match stop at 2006.
+
+**The scripts.**
+- The fit script refuses an existing manifest before fitting and never
+  replaces a staged file with other bytes.
+- The score script pins this manifest's SHA-256, records whether its code
+  was clean, and publishes no local paths.
+
+**The manifest.** The first manifest (SHA-256 `8d42153...`) was withdrawn
+and refitted at the reviewed code (`598e4436`). The four artifacts'
+SHA-256 values are unchanged.
+
+**The DEV dry run still stands.** It scored the same artifacts, and none of
+the fixes changes a draw for a person the gate scores. They touch the PSID
+application, which EPUF scoring does not use; the cache's key; the draws
+for persons of uncoded sex, who are never scored; and the bank summaries'
+years, which on EPUF end in 2006 anyway.
 
 ## Procedure on TEST (after lock)
 
