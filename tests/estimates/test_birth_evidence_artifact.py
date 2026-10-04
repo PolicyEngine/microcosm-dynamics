@@ -214,6 +214,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/harness/epuf_cells.py"),
         Path("src/populace_dynamics/harness/epuf_gate.py"),
         Path("src/populace_dynamics/harness/epuf_run.py"),
+        Path("src/populace_dynamics/harness/epuf_fill_gate.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -469,6 +470,7 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "populace_dynamics.harness.epuf_cells",
         "populace_dynamics.harness.epuf_gate",
         "populace_dynamics.harness.epuf_run",
+        "populace_dynamics.harness.epuf_fill_gate",
     }
     assert epuf_modules.issubset(module_paths)
     assert epuf_modules.isdisjoint(reachable), (
