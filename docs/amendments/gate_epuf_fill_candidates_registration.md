@@ -73,6 +73,20 @@ nearest TRAIN donors of the same sex and birth year.
 **`pre_chain`** (pre alternative) draws year `y` from the next known later
 year's share, sex and age, backward from the career start. Ages 15-24 are
 single years.
+- **What it is**: a one-step binned conditional-quantile chain, not a
+  quantile regression forest. Each year conditions on one earnings value
+  only: the nearest later share that is known or already drawn (`y+1` in
+  the TRAIN fit; `y+2` when `y+1` is the career start and a masked odd
+  year; zero when none is known). That share picks one of 22 bins (zero, 20 TRAIN quantile bins,
+  and the cap) and scales the draw. A sex-age-bin cell with fewer than 200
+  TRAIN person-years falls back to sex and bin, then to bin alone. Each
+  cell stores `P(zero)` and 65 quantiles of the log ratio to the next share
+  (of the log share when that is zero). Each person-year's draw uses its
+  own uniform, is capped at the wage base, and is zero below age 15.
+- **What its result can show**: how a fill conditioned on one later year
+  scores on the gate's cells. It says nothing about a QRF that conditions
+  on many of a person's real years. Describe its DEV and TEST results in
+  these terms.
 
 Each candidate's exact fit parameters are in the manifest and in
 `scripts/fit_epuf_fills.py` (`REGISTERED`).
@@ -99,6 +113,11 @@ draw seeds; see the dry run below.
 | `odd_knn` | 46 of 183 (worst: `wint`, up to 10 tolerances) | not adopted |
 | `pre_donor` | 0 of 136 (worst: 0.77 tolerances) | certified |
 | `pre_chain` | 50 of 136 (worst: youth `ylevel`, 20 tolerances) | not adopted |
+
+`pre_chain`'s 50 failures are those of the one-step binned chain described
+above, not of a QRF. Its five worst DEV cells are youth earnings levels and
+zero shares over ages 15-21 (`ylevel`, `yzero`) and one pre-career level
+(`plevel`); the log records only the five worst cells.
 
 **The registered procedure, dry-run on DEV.** On 2026-10-04,
 `epuf_fill_scoring.score_registered` ran with the DEV matrix in place of
@@ -193,3 +212,16 @@ them would need a refit. Neither changes a registered draw:
    and adoption under the registered rule.
 4. Record the adoption in this document. A family whose primary and
    alternative both fail to be adopted keeps the current rule.
+5. Describe `pre_chain`'s result as that of a one-step binned
+   conditional-quantile chain (see "The four candidates"), never as a QRF
+   result.
+
+## Exploratory follow-up (after TEST, not a candidate)
+
+A full-career QRF fill, using microcosm-fit's QRF, in which each
+pre-career year conditions on all of the person's recorded years. It would
+show whether a QRF given many real predictors scores better on the cells
+the one-step chain fails. If it is run, it is run only after the
+registered TEST scoring and is reported beside the registered results,
+labelled exploratory. It is not a candidate: it cannot change either
+family's tier or adoption, and adopting it would need a new registration.
