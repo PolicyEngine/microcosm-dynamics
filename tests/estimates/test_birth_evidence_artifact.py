@@ -209,6 +209,11 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/bridge/invented_population.py"),
         Path("src/populace_dynamics/bridge/population.py"),
         Path("src/populace_dynamics/bridge/population_summary.py"),
+        Path("src/populace_dynamics/data/epuf.py"),
+        Path("src/populace_dynamics/harness/epuf_operator.py"),
+        Path("src/populace_dynamics/harness/epuf_cells.py"),
+        Path("src/populace_dynamics/harness/epuf_gate.py"),
+        Path("src/populace_dynamics/harness/epuf_run.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -457,6 +462,18 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
     assert bridge_modules.isdisjoint(reachable), (
         "the opt-in PolicyEngine-US bridge became reachable from the "
         f"birth-evidence reducer: {sorted(bridge_modules & reachable)}"
+    )
+    epuf_modules = {
+        "populace_dynamics.data.epuf",
+        "populace_dynamics.harness.epuf_operator",
+        "populace_dynamics.harness.epuf_cells",
+        "populace_dynamics.harness.epuf_gate",
+        "populace_dynamics.harness.epuf_run",
+    }
+    assert epuf_modules.issubset(module_paths)
+    assert epuf_modules.isdisjoint(reachable), (
+        "the opt-in EPUF modules became reachable from the birth-evidence "
+        f"reducer: {sorted(epuf_modules & reachable)}"
     )
     assert graph_exclusions.isdisjoint(reachable), (
         "opt-in graph modules became reachable from the birth-evidence "
