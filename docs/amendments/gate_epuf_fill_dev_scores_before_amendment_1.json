@@ -1,0 +1,1089 @@
+{
+ "schema": "populace_dynamics.epuf_fill_dev_scores_before_amendment.v1",
+ "registration_id": "2026-10-03-epuf-career-fill",
+ "purpose": "Every DEV score of a candidate fill produced before amendment 1, disclosed so the next referee can check that the amendments do not favour them (round-1 finding 7). DEV only; no TEST person was read. Scored against the v1 floors (runs/epuf_fill_gate_floors_v1.json) by the unregistered development scorer .diag/epuf-fill/dev_score.py, which replaces masked cells only and passes the full true matrix to the fill (the fill reads only unmasked cells).",
+ "fitting": "Every fill was fitted on a 30 percent hash sample of TRAIN persons (unit years 1991-2005 for odd fills, 1951-1990 for the chained fill).",
+ "events": [
+  {
+   "order": 1,
+   "utc": "2026-10-04T05:25Z",
+   "candidate": "odd_quantile v0",
+   "description": "cells keyed on 10 level bins x 5 slope bins of the neighbours, context t-3/t+3 and offsets 5-9, residual relative to the neighbours' geometric mean; AR(1) copula (fitted rho about 0.004)",
+   "seeds": [
+    7100,
+    7101,
+    7102,
+    7103
+   ],
+   "n_failing": 29,
+   "n_gating": 70,
+   "worst_cells_transcribed_from_console": {
+    "odd.men.a30_44.r2": [
+     -0.0517,
+     0.0063
+    ],
+    "odd.men.a30_44.r4": [
+     -0.065,
+     0.0087
+    ],
+    "odd.men.a45_59.r2": [
+     -0.0611,
+     0.0083
+    ],
+    "odd.women.a30_44.r2": [
+     -0.0485,
+     0.0067
+    ],
+    "odd.women.a45_59.r2": [
+     -0.0459,
+     0.007
+    ],
+    "odd.women.a30_44.r4": [
+     -0.0587,
+     0.0098
+    ],
+    "odd.women.a30_44.r1": [
+     -0.0198,
+     0.0035
+    ],
+    "odd.men.a30_44.r1": [
+     -0.0191,
+     0.0035
+    ],
+    "odd.men.a45_59.r1": [
+     -0.0216,
+     0.0041
+    ],
+    "odd.men.a45_59.r4": [
+     -0.0688,
+     0.0136
+    ],
+    "odd.women.a45_59.r4": [
+     -0.0519,
+     0.0111
+    ],
+    "odd.women.a45_59.r1": [
+     -0.0166,
+     0.0037
+    ]
+   },
+   "note": "[gap, tolerance] pairs; the full JSON of this run was not written (the run stopped at the next candidate)."
+  },
+  {
+   "order": 2,
+   "utc": "2026-10-04T05:26Z",
+   "candidate": "odd_knn v0",
+   "description": "registered alternative: k=10 nearest TRAIN units in (t-1, t+1) by sex and five-year age band",
+   "seeds": [
+    7100,
+    7101,
+    7102,
+    7103
+   ],
+   "n_failing": 24,
+   "n_gating": 70,
+   "worst_cells_transcribed_from_console": {
+    "odd.men.a45_59.wint": [
+     -1.1022,
+     0.1541
+    ],
+    "odd.women.a45_59.wint": [
+     -0.9388,
+     0.1333
+    ],
+    "odd.men.a30_44.wint": [
+     -0.7213,
+     0.1142
+    ],
+    "odd.women.a30_44.wint": [
+     -0.6308,
+     0.1005
+    ],
+    "odd.men.a30_44.r4": [
+     -0.0413,
+     0.0087
+    ],
+    "odd.women.a18_29.wint": [
+     -0.6682,
+     0.1488
+    ],
+    "odd.men.a18_29.wint": [
+     -0.6732,
+     0.1638
+    ],
+    "odd.men.a30_44.r2": [
+     -0.0258,
+     0.0063
+    ],
+    "odd.women.a30_44.r4": [
+     -0.0317,
+     0.0098
+    ],
+    "odd.men.a45_59.r2": [
+     -0.0252,
+     0.0083
+    ],
+    "odd.women.a30_44.r2": [
+     -0.0168,
+     0.0067
+    ],
+    "odd.men.a45_59.r4": [
+     -0.0339,
+     0.0136
+    ]
+   }
+  },
+  {
+   "order": 3,
+   "utc": "2026-10-04T05:27Z",
+   "candidate": "pre_donor v0",
+   "description": "rank-kNN donors, k=10, bank of 2,000 per sex and birth year",
+   "outcome": "stopped: masked cells of persons outside the bank (uncoded sex, births outside 1905-1985) were left NaN; no cell was scored"
+  },
+  {
+   "order": 4,
+   "utc": "2026-10-04T05:35Z",
+   "candidate": "odd_quantile v1",
+   "description": "cells keyed on joint bins of t-1 and t+1 (zero, 20 quantile bins, cap), context, offsets 5-9; residual relative to the neighbours' geometric mean; AR(1) copula (fitted rho about 0.0005)",
+   "seeds": [
+    7100,
+    7101
+   ],
+   "n_gating": 70,
+   "n_failing": 26,
+   "passes": false,
+   "gating_cells": {
+    "odd.men.a18_29.level": {
+     "truth": 0.1856554260931258,
+     "filled": 0.18608404131499992,
+     "gap": 0.0023059989556522,
+     "tolerance": 0.02530824766097302,
+     "passes": true
+    },
+    "odd.men.a18_29.r1": {
+     "truth": 0.8210934709127689,
+     "filled": 0.8128344044821749,
+     "gap": -0.008259066430593931,
+     "tolerance": 0.007487817283896471,
+     "passes": false
+    },
+    "odd.men.a18_29.r2": {
+     "truth": 0.7156445156848613,
+     "filled": 0.6902242874262012,
+     "gap": -0.025420228258660083,
+     "tolerance": 0.012557715120508784,
+     "passes": false
+    },
+    "odd.men.a18_29.r4": {
+     "truth": 0.5850452217259834,
+     "filled": 0.5531870927837401,
+     "gap": -0.03185812894224327,
+     "tolerance": 0.021292587125646432,
+     "passes": false
+    },
+    "odd.men.a18_29.wint": {
+     "truth": 0.10126339049815054,
+     "filled": 0.08697218619397606,
+     "gap": -0.15213658045555745,
+     "tolerance": 0.16382575433989846,
+     "passes": true
+    },
+    "odd.men.a18_29.zexit": {
+     "truth": 0.38930612041218593,
+     "filled": 0.403203672746326,
+     "gap": 0.0350758496339042,
+     "tolerance": 0.04962920531417247,
+     "passes": true
+    },
+    "odd.men.a18_29.zint": {
+     "truth": 0.034823846728263656,
+     "filled": 0.03288175830054724,
+     "gap": -0.057384357863278446,
+     "tolerance": 0.09960815163206226,
+     "passes": true
+    },
+    "odd.men.a30_44.atcap": {
+     "truth": 0.10574805846620577,
+     "filled": 0.09244180372779878,
+     "gap": -0.13448016046771327,
+     "tolerance": 0.04857889866017903,
+     "passes": false
+    },
+    "odd.men.a30_44.level": {
+     "truth": 0.3982899917120792,
+     "filled": 0.39746936911881725,
+     "gap": -0.0020624900555529235,
+     "tolerance": 0.0139684504916683,
+     "passes": true
+    },
+    "odd.men.a30_44.r1": {
+     "truth": 0.9000861304840623,
+     "filled": 0.8902038867802486,
+     "gap": -0.009882243703813631,
+     "tolerance": 0.0035183123602736976,
+     "passes": false
+    },
+    "odd.men.a30_44.r2": {
+     "truth": 0.8479233224100629,
+     "filled": 0.8116338879418894,
+     "gap": -0.036289434468173454,
+     "tolerance": 0.006340195296747853,
+     "passes": false
+    },
+    "odd.men.a30_44.r4": {
+     "truth": 0.7869108820616492,
+     "filled": 0.7337785101761347,
+     "gap": -0.05313237188551445,
+     "tolerance": 0.008697176421644505,
+     "passes": false
+    },
+    "odd.men.a30_44.wint": {
+     "truth": 0.07239145006330527,
+     "filled": 0.07242868846354361,
+     "gap": 0.0005142710321623944,
+     "tolerance": 0.11420427683518232,
+     "passes": true
+    },
+    "odd.men.a30_44.zexit": {
+     "truth": 0.4342024282437196,
+     "filled": 0.4336848878196162,
+     "gap": -0.0011926444271513903,
+     "tolerance": 0.032636532740128565,
+     "passes": true
+    },
+    "odd.men.a30_44.zint": {
+     "truth": 0.017933882760031997,
+     "filled": 0.017939463843878484,
+     "gap": 0.00031115490579303184,
+     "tolerance": 0.08051204375260113,
+     "passes": true
+    },
+    "odd.men.a45_59.atcap": {
+     "truth": 0.15826463477931516,
+     "filled": 0.14392299374265594,
+     "gap": -0.09499014474477208,
+     "tolerance": 0.04356937974768127,
+     "passes": false
+    },
+    "odd.men.a45_59.level": {
+     "truth": 0.4279852808128974,
+     "filled": 0.42585689377654856,
+     "gap": -0.004985444636138814,
+     "tolerance": 0.014453976889178868,
+     "passes": true
+    },
+    "odd.men.a45_59.r1": {
+     "truth": 0.9077661818197654,
+     "filled": 0.8978818265396777,
+     "gap": -0.009884355280087687,
+     "tolerance": 0.004111314219586486,
+     "passes": false
+    },
+    "odd.men.a45_59.r2": {
+     "truth": 0.850421444941529,
+     "filled": 0.8131646648078616,
+     "gap": -0.0372567801336674,
+     "tolerance": 0.008347506877010717,
+     "passes": false
+    },
+    "odd.men.a45_59.r4": {
+     "truth": 0.7598303885400162,
+     "filled": 0.7125722429702188,
+     "gap": -0.04725814556979735,
+     "tolerance": 0.01362625190129057,
+     "passes": false
+    },
+    "odd.men.a45_59.wint": {
+     "truth": 0.05825168693530555,
+     "filled": 0.053124166063055166,
+     "gap": -0.09214112280446285,
+     "tolerance": 0.15412394675503588,
+     "passes": true
+    },
+    "odd.men.a45_59.zexit": {
+     "truth": 0.45185706741770815,
+     "filled": 0.46197852490758673,
+     "gap": 0.022152499821214144,
+     "tolerance": 0.03920259283391604,
+     "passes": true
+    },
+    "odd.men.a45_59.zint": {
+     "truth": 0.015835938476928848,
+     "filled": 0.016121045392022006,
+     "gap": 0.01784364137448069,
+     "tolerance": 0.10545535031261653,
+     "passes": true
+    },
+    "odd.men.a60_74.atcap": {
+     "truth": 0.10024796315975912,
+     "filled": 0.08694022313543161,
+     "gap": -0.1424259562694261,
+     "tolerance": 0.11678068710169077,
+     "passes": false
+    },
+    "odd.men.a60_74.level": {
+     "truth": 0.20453937198442498,
+     "filled": 0.20314848602180408,
+     "gap": -0.0068233151008298965,
+     "tolerance": 0.04536572508883381,
+     "passes": true
+    },
+    "odd.men.a60_74.r1": {
+     "truth": 0.8712782553777247,
+     "filled": 0.8686099496263309,
+     "gap": -0.0026683057513938735,
+     "tolerance": 0.0093675927151269,
+     "passes": true
+    },
+    "odd.men.a60_74.r2": {
+     "truth": 0.7888015745113253,
+     "filled": 0.76258825079463,
+     "gap": -0.02621332371669527,
+     "tolerance": 0.021939428752443885,
+     "passes": false
+    },
+    "odd.men.a60_74.r4": {
+     "truth": 0.6781549627202678,
+     "filled": 0.6409690758565164,
+     "gap": -0.03718588686375135,
+     "tolerance": 0.0419843149619278,
+     "passes": true
+    },
+    "odd.men.a60_74.zexit": {
+     "truth": 0.5047452182800409,
+     "filled": 0.5226310410278873,
+     "gap": 0.03482196491461498,
+     "tolerance": 0.041847126964410425,
+     "passes": true
+    },
+    "odd.men.a60_74.zint": {
+     "truth": 0.027132152458672565,
+     "filled": 0.025664003660838562,
+     "gap": -0.055630087885179424,
+     "tolerance": 0.16089541808023508,
+     "passes": true
+    },
+    "odd.men.b1936_1940.aime_p25": {
+     "truth": 1131.0,
+     "filled": 1131.0,
+     "gap": 0.0,
+     "tolerance": 0.10413587699123662,
+     "passes": true
+    },
+    "odd.men.b1936_1940.aime_p50": {
+     "truth": 2430.0,
+     "filled": 2429.0,
+     "gap": -0.00041160733242140424,
+     "tolerance": 0.05101259969798402,
+     "passes": true
+    },
+    "odd.men.b1936_1940.aime_p75": {
+     "truth": 3582.0,
+     "filled": 3578.0,
+     "gap": -0.0011173185519925966,
+     "tolerance": 0.03379657214494975,
+     "passes": true
+    },
+    "odd.men.b1941_1945.aime_p25": {
+     "truth": 1174.25,
+     "filled": 1178.625,
+     "gap": 0.003718858878736242,
+     "tolerance": 0.08798542518866409,
+     "passes": true
+    },
+    "odd.men.b1941_1945.aime_p50": {
+     "truth": 2821.5,
+     "filled": 2820.75,
+     "gap": -0.00026585139063950436,
+     "tolerance": 0.05081989806426865,
+     "passes": true
+    },
+    "odd.men.b1941_1945.aime_p75": {
+     "truth": 4421.0,
+     "filled": 4419.375,
+     "gap": -0.00036763146773743927,
+     "tolerance": 0.03296414548783888,
+     "passes": true
+    },
+    "odd.women.a18_29.level": {
+     "truth": 0.14595361593292944,
+     "filled": 0.14628307231176474,
+     "gap": 0.0022547238704886396,
+     "tolerance": 0.022701219029856848,
+     "passes": true
+    },
+    "odd.women.a18_29.r1": {
+     "truth": 0.799002707000061,
+     "filled": 0.787612803921771,
+     "gap": -0.01138990307829002,
+     "tolerance": 0.007030001813072651,
+     "passes": false
+    },
+    "odd.women.a18_29.r2": {
+     "truth": 0.6744743883343822,
+     "filled": 0.6492833848878561,
+     "gap": -0.02519100344652614,
+     "tolerance": 0.01247155021048016,
+     "passes": false
+    },
+    "odd.women.a18_29.r4": {
+     "truth": 0.5116284868083779,
+     "filled": 0.4879751923831376,
+     "gap": -0.023653294425240334,
+     "tolerance": 0.01877841052722656,
+     "passes": false
+    },
+    "odd.women.a18_29.wint": {
+     "truth": 0.10130434782608695,
+     "filled": 0.09183574879227054,
+     "gap": -0.09812768841349095,
+     "tolerance": 0.14880165994710184,
+     "passes": true
+    },
+    "odd.women.a18_29.zexit": {
+     "truth": 0.3953034223502417,
+     "filled": 0.40632475711565685,
+     "gap": 0.02749910636266828,
+     "tolerance": 0.041086747761904435,
+     "passes": true
+    },
+    "odd.women.a18_29.zint": {
+     "truth": 0.03753038230821729,
+     "filled": 0.03750344233048768,
+     "gap": -0.0007180755883609002,
+     "tolerance": 0.08105378527211228,
+     "passes": true
+    },
+    "odd.women.a30_44.atcap": {
+     "truth": 0.034619662054697874,
+     "filled": 0.029689704606192323,
+     "gap": -0.1536214486808758,
+     "tolerance": 0.08282095025205272,
+     "passes": false
+    },
+    "odd.women.a30_44.level": {
+     "truth": 0.2579924798566703,
+     "filled": 0.2581554675647999,
+     "gap": 0.0006315542447132838,
+     "tolerance": 0.01525041958748848,
+     "passes": true
+    },
+    "odd.women.a30_44.r1": {
+     "truth": 0.888241419643356,
+     "filled": 0.8794515719183367,
+     "gap": -0.00878984772501934,
+     "tolerance": 0.0034720126766651514,
+     "passes": false
+    },
+    "odd.women.a30_44.r2": {
+     "truth": 0.8242277470219269,
+     "filled": 0.795112182563535,
+     "gap": -0.029115564458391918,
+     "tolerance": 0.006661015175432743,
+     "passes": false
+    },
+    "odd.women.a30_44.r4": {
+     "truth": 0.7490435327097834,
+     "filled": 0.7061801506397472,
+     "gap": -0.04286338207003626,
+     "tolerance": 0.009827512018128022,
+     "passes": false
+    },
+    "odd.women.a30_44.wint": {
+     "truth": 0.06073485056210584,
+     "filled": 0.060172744721689056,
+     "gap": -0.009298173350947181,
+     "tolerance": 0.10054744200738645,
+     "passes": true
+    },
+    "odd.women.a30_44.zexit": {
+     "truth": 0.45066799061202384,
+     "filled": 0.44885132695432384,
+     "gap": -0.004039193138246855,
+     "tolerance": 0.021292914338298448,
+     "passes": true
+    },
+    "odd.women.a30_44.zint": {
+     "truth": 0.022222222222222223,
+     "filled": 0.020975545965738196,
+     "gap": -0.05773550784149162,
+     "tolerance": 0.07213256092968776,
+     "passes": true
+    },
+    "odd.women.a45_59.atcap": {
+     "truth": 0.04053483605515179,
+     "filled": 0.035861452387741806,
+     "gap": -0.12249878493879729,
+     "tolerance": 0.08515639674437901,
+     "passes": false
+    },
+    "odd.women.a45_59.level": {
+     "truth": 0.28104586423928846,
+     "filled": 0.28084758788434216,
+     "gap": -0.0007057436331625588,
+     "tolerance": 0.017215883497257563,
+     "passes": true
+    },
+    "odd.women.a45_59.r1": {
+     "truth": 0.9101006329634369,
+     "filled": 0.9034002609287783,
+     "gap": -0.006700372034658564,
+     "tolerance": 0.0037474833362833664,
+     "passes": false
+    },
+    "odd.women.a45_59.r2": {
+     "truth": 0.8498173267452248,
+     "filled": 0.8235239714806456,
+     "gap": -0.02629335526457921,
+     "tolerance": 0.006982462259567813,
+     "passes": false
+    },
+    "odd.women.a45_59.r4": {
+     "truth": 0.7620167777938601,
+     "filled": 0.7252333728874433,
+     "gap": -0.03678340490641685,
+     "tolerance": 0.011136170330069556,
+     "passes": false
+    },
+    "odd.women.a45_59.wint": {
+     "truth": 0.050115932427956277,
+     "filled": 0.04433587280556475,
+     "gap": -0.12254485082794853,
+     "tolerance": 0.13330824317006054,
+     "passes": true
+    },
+    "odd.women.a45_59.zexit": {
+     "truth": 0.4693136110029843,
+     "filled": 0.47349811859348645,
+     "gap": 0.008876714058589474,
+     "tolerance": 0.028997424168220973,
+     "passes": true
+    },
+    "odd.women.a45_59.zint": {
+     "truth": 0.01632776600720909,
+     "filled": 0.015444514762127506,
+     "gap": -0.055613185908567786,
+     "tolerance": 0.09280080971364012,
+     "passes": true
+    },
+    "odd.women.a60_74.level": {
+     "truth": 0.12926943691615103,
+     "filled": 0.12853293522547724,
+     "gap": -0.005713707660912171,
+     "tolerance": 0.04440816434299283,
+     "passes": true
+    },
+    "odd.women.a60_74.r1": {
+     "truth": 0.8610627385333514,
+     "filled": 0.8573540519984275,
+     "gap": -0.003708686534923844,
+     "tolerance": 0.009859716852600387,
+     "passes": true
+    },
+    "odd.women.a60_74.r2": {
+     "truth": 0.7722738686836694,
+     "filled": 0.7448713764954531,
+     "gap": -0.027402492188216332,
+     "tolerance": 0.02069132660379932,
+     "passes": false
+    },
+    "odd.women.a60_74.r4": {
+     "truth": 0.6501204938024134,
+     "filled": 0.6094375641494021,
+     "gap": -0.040682929653011346,
+     "tolerance": 0.03628392371863108,
+     "passes": false
+    },
+    "odd.women.a60_74.zexit": {
+     "truth": 0.5155483759303063,
+     "filled": 0.5172791784457393,
+     "gap": 0.0033515839663482705,
+     "tolerance": 0.038573729006110224,
+     "passes": true
+    },
+    "odd.women.b1936_1940.aime_p25": {
+     "truth": 287.75,
+     "filled": 287.0,
+     "gap": -0.0026098318423706246,
+     "tolerance": 0.13713107003771732,
+     "passes": true
+    },
+    "odd.women.b1936_1940.aime_p50": {
+     "truth": 786.0,
+     "filled": 786.0,
+     "gap": 0.0,
+     "tolerance": 0.08788489934963226,
+     "passes": true
+    },
+    "odd.women.b1936_1940.aime_p75": {
+     "truth": 1566.0,
+     "filled": 1567.25,
+     "gap": 0.0007978936033294914,
+     "tolerance": 0.06811366168257448,
+     "passes": true
+    },
+    "odd.women.b1941_1945.aime_p25": {
+     "truth": 399.0,
+     "filled": 398.5,
+     "gap": -0.0012539186595939,
+     "tolerance": 0.10802967033363925,
+     "passes": true
+    },
+    "odd.women.b1941_1945.aime_p50": {
+     "truth": 1077.0,
+     "filled": 1075.0,
+     "gap": -0.001858736594625654,
+     "tolerance": 0.07006551745181369,
+     "passes": true
+    },
+    "odd.women.b1941_1945.aime_p75": {
+     "truth": 2116.0,
+     "filled": 2119.0,
+     "gap": 0.0014167652901093675,
+     "tolerance": 0.05896213826035607,
+     "passes": true
+    }
+   }
+  },
+  {
+   "order": 5,
+   "utc": "2026-10-04T05:38Z",
+   "candidate": "pre_donor v1",
+   "description": "as v0, with masked cells of persons outside the bank set to zero",
+   "seeds": [
+    7100,
+    7101
+   ],
+   "n_gating": 60,
+   "n_failing": 1,
+   "passes": false,
+   "gating_cells": {
+    "pre.men.b1930_1934.aime_p25": {
+     "truth": 961.0,
+     "filled": 973.5,
+     "gap": 0.01292341584196155,
+     "tolerance": 0.16573412297046017,
+     "passes": true
+    },
+    "pre.men.b1930_1934.aime_p50": {
+     "truth": 1871.0,
+     "filled": 1853.5,
+     "gap": -0.009397303683302383,
+     "tolerance": 0.08422855628807996,
+     "passes": true
+    },
+    "pre.men.b1930_1934.aime_p75": {
+     "truth": 2604.0,
+     "filled": 2591.5,
+     "gap": -0.004811865698698625,
+     "tolerance": 0.056066692635054774,
+     "passes": true
+    },
+    "pre.men.b1930_1934.plevel": {
+     "truth": 0.5292246059138269,
+     "filled": 0.524078256506457,
+     "gap": -0.009771909947440593,
+     "tolerance": 0.05371982702322317,
+     "passes": true
+    },
+    "pre.men.b1930_1934.pr_cross": {
+     "truth": 0.6005766012618865,
+     "filled": 0.6018662640540315,
+     "gap": 0.001289662792145041,
+     "tolerance": 0.1038645931448928,
+     "passes": true
+    },
+    "pre.men.b1930_1934.pr_in": {
+     "truth": 0.6408121492387024,
+     "filled": 0.5924012929730078,
+     "gap": -0.048410856265694635,
+     "tolerance": 0.08763102065690465,
+     "passes": true
+    },
+    "pre.men.b1930_1934.pzero": {
+     "truth": 0.23849477516714046,
+     "filled": 0.227113951116651,
+     "gap": -0.048895524206467256,
+     "tolerance": 0.1240674733098974,
+     "passes": true
+    },
+    "pre.men.b1935_1939.aime_p25": {
+     "truth": 1099.5,
+     "filled": 1099.5,
+     "gap": 0.0,
+     "tolerance": 0.18180060035524045,
+     "passes": true
+    },
+    "pre.men.b1935_1939.aime_p50": {
+     "truth": 2295.0,
+     "filled": 2289.0,
+     "gap": -0.002617802542078884,
+     "tolerance": 0.08710844064665221,
+     "passes": true
+    },
+    "pre.men.b1935_1939.aime_p75": {
+     "truth": 3360.0,
+     "filled": 3340.75,
+     "gap": -0.005745641296078574,
+     "tolerance": 0.05420999979205089,
+     "passes": true
+    },
+    "pre.men.b1935_1939.plevel": {
+     "truth": 0.47885857925887765,
+     "filled": 0.4689466025280649,
+     "gap": -0.020916404108078157,
+     "tolerance": 0.05092078761084689,
+     "passes": true
+    },
+    "pre.men.b1935_1939.pr_cross": {
+     "truth": 0.5480805317128244,
+     "filled": 0.5304552392698022,
+     "gap": -0.017625292443022245,
+     "tolerance": 0.08418455817243553,
+     "passes": true
+    },
+    "pre.men.b1935_1939.pr_in": {
+     "truth": 0.5082293220171369,
+     "filled": 0.4786688255277492,
+     "gap": -0.02956049648938769,
+     "tolerance": 0.0802550261947586,
+     "passes": true
+    },
+    "pre.men.b1935_1939.pzero": {
+     "truth": 0.21315539421109053,
+     "filled": 0.22099454244225708,
+     "gap": 0.036116556377628006,
+     "tolerance": 0.12714526639770404,
+     "passes": true
+    },
+    "pre.men.b1940_1945.aime_p25": {
+     "truth": 1178.0,
+     "filled": 1183.5,
+     "gap": 0.004658064742506518,
+     "tolerance": 0.12860148242782113,
+     "passes": true
+    },
+    "pre.men.b1940_1945.aime_p50": {
+     "truth": 2795.0,
+     "filled": 2788.0,
+     "gap": -0.0025076137087847172,
+     "tolerance": 0.06640528987407995,
+     "passes": true
+    },
+    "pre.men.b1940_1945.aime_p75": {
+     "truth": 4361.5,
+     "filled": 4355.25,
+     "gap": -0.001434020953004378,
+     "tolerance": 0.03759842149421006,
+     "passes": true
+    },
+    "pre.men.b1940_1945.plevel": {
+     "truth": 0.3760217560197671,
+     "filled": 0.3808042784646001,
+     "gap": 0.012638534847186023,
+     "tolerance": 0.04070319570318265,
+     "passes": true
+    },
+    "pre.men.b1940_1945.pr_cross": {
+     "truth": 0.376062044153939,
+     "filled": 0.40160036283466166,
+     "gap": 0.02553831868072265,
+     "tolerance": 0.061643783252697155,
+     "passes": true
+    },
+    "pre.men.b1940_1945.pr_in": {
+     "truth": 0.36011521796896784,
+     "filled": 0.4197226882430919,
+     "gap": 0.05960747027412405,
+     "tolerance": 0.06659553115593378,
+     "passes": true
+    },
+    "pre.men.b1940_1945.pzero": {
+     "truth": 0.21918652571223796,
+     "filled": 0.21480021501523025,
+     "gap": -0.020214719257387825,
+     "tolerance": 0.09675892268985861,
+     "passes": true
+    },
+    "pre.men.b1946_1955.ylevel": {
+     "truth": 0.1479729717947154,
+     "filled": 0.14626786769864775,
+     "gap": -0.011589983129838721,
+     "tolerance": 0.025169112844575684,
+     "passes": true
+    },
+    "pre.men.b1946_1955.yr_cross": {
+     "truth": 0.4294012571477206,
+     "filled": 0.45275418562739156,
+     "gap": 0.023352928479670965,
+     "tolerance": 0.03138849366607008,
+     "passes": true
+    },
+    "pre.men.b1946_1955.yzero": {
+     "truth": 0.41447106660067734,
+     "filled": 0.41350548778712626,
+     "gap": -0.0023323830757379094,
+     "tolerance": 0.02207662859954437,
+     "passes": true
+    },
+    "pre.men.b1956_1965.ylevel": {
+     "truth": 0.09639046670103465,
+     "filled": 0.09391389692509604,
+     "gap": -0.026028931247350506,
+     "tolerance": 0.02924452650871014,
+     "passes": true
+    },
+    "pre.men.b1956_1965.yr_cross": {
+     "truth": 0.40595517510382484,
+     "filled": 0.4235749781242754,
+     "gap": 0.017619803020450575,
+     "tolerance": 0.032753653850861354,
+     "passes": true
+    },
+    "pre.men.b1956_1965.yzero": {
+     "truth": 0.4166095146652036,
+     "filled": 0.420961639576618,
+     "gap": 0.01039234471895889,
+     "tolerance": 0.0238928171053413,
+     "passes": true
+    },
+    "pre.men.b1966_1980.ylevel": {
+     "truth": 0.055118361796504756,
+     "filled": 0.05439748860982647,
+     "gap": -0.013164918055038832,
+     "tolerance": 0.02003852127655176,
+     "passes": true
+    },
+    "pre.men.b1966_1980.yr_cross": {
+     "truth": 0.4093896749871457,
+     "filled": 0.42927884599997357,
+     "gap": 0.01988917101282789,
+     "tolerance": 0.025237052352190405,
+     "passes": true
+    },
+    "pre.men.b1966_1980.yzero": {
+     "truth": 0.41574858870643483,
+     "filled": 0.4170007742872307,
+     "gap": 0.0030073551063288795,
+     "tolerance": 0.01612744451279897,
+     "passes": true
+    },
+    "pre.women.b1930_1934.aime_p25": {
+     "truth": 192.0,
+     "filled": 210.5,
+     "gap": 0.09199028109465424,
+     "tolerance": 0.16540132553588516,
+     "passes": true
+    },
+    "pre.women.b1930_1934.aime_p50": {
+     "truth": 526.0,
+     "filled": 522.0,
+     "gap": -0.0076336248550710195,
+     "tolerance": 0.11219306491273605,
+     "passes": true
+    },
+    "pre.women.b1930_1934.aime_p75": {
+     "truth": 1055.0,
+     "filled": 1037.75,
+     "gap": -0.016485858977018708,
+     "tolerance": 0.09277530966675321,
+     "passes": true
+    },
+    "pre.women.b1930_1934.plevel": {
+     "truth": 0.17987838861322633,
+     "filled": 0.17713733383955912,
+     "gap": -0.015355674621867044,
+     "tolerance": 0.09009967952937194,
+     "passes": true
+    },
+    "pre.women.b1930_1934.pr_cross": {
+     "truth": 0.5714979296198577,
+     "filled": 0.581362041200494,
+     "gap": 0.00986411158063627,
+     "tolerance": 0.11564361594419356,
+     "passes": true
+    },
+    "pre.women.b1930_1934.pr_in": {
+     "truth": 0.5486860492872828,
+     "filled": 0.5187328325728836,
+     "gap": -0.02995321671439921,
+     "tolerance": 0.13190265796761472,
+     "passes": true
+    },
+    "pre.women.b1930_1934.pzero": {
+     "truth": 0.5514059876498446,
+     "filled": 0.5461903619700004,
+     "gap": -0.009503794247826214,
+     "tolerance": 0.04460593142917569,
+     "passes": true
+    },
+    "pre.women.b1935_1939.aime_p25": {
+     "truth": 267.0,
+     "filled": 296.5,
+     "gap": 0.10479856003753074,
+     "tolerance": 0.19235462769111364,
+     "passes": true
+    },
+    "pre.women.b1935_1939.aime_p50": {
+     "truth": 726.0,
+     "filled": 720.75,
+     "gap": -0.007257678306284099,
+     "tolerance": 0.12530279413386425,
+     "passes": true
+    },
+    "pre.women.b1935_1939.aime_p75": {
+     "truth": 1448.0,
+     "filled": 1426.875,
+     "gap": -0.014696555661600996,
+     "tolerance": 0.09904500913528351,
+     "passes": true
+    },
+    "pre.women.b1935_1939.plevel": {
+     "truth": 0.18459645468504016,
+     "filled": 0.1819401276084356,
+     "gap": -0.014494452724367557,
+     "tolerance": 0.08785419867161383,
+     "passes": true
+    },
+    "pre.women.b1935_1939.pr_cross": {
+     "truth": 0.5177687037806673,
+     "filled": 0.5398891769889543,
+     "gap": 0.022120473208287028,
+     "tolerance": 0.12812634996138048,
+     "passes": true
+    },
+    "pre.women.b1935_1939.pr_in": {
+     "truth": 0.48588537175161917,
+     "filled": 0.5137841122259348,
+     "gap": 0.02789874047431562,
+     "tolerance": 0.14213673818819197,
+     "passes": true
+    },
+    "pre.women.b1935_1939.pzero": {
+     "truth": 0.5152445437812253,
+     "filled": 0.5120496976071522,
+     "gap": -0.006219944287538581,
+     "tolerance": 0.05005640550118318,
+     "passes": true
+    },
+    "pre.women.b1940_1945.aime_p25": {
+     "truth": 386.0,
+     "filled": 412.0,
+     "gap": 0.06518597988469566,
+     "tolerance": 0.14632730902529825,
+     "passes": true
+    },
+    "pre.women.b1940_1945.aime_p50": {
+     "truth": 1041.0,
+     "filled": 1037.5,
+     "gap": -0.003367816510116306,
+     "tolerance": 0.09638615659276974,
+     "passes": true
+    },
+    "pre.women.b1940_1945.aime_p75": {
+     "truth": 2058.0,
+     "filled": 2035.5,
+     "gap": -0.010993148450961776,
+     "tolerance": 0.07111523531116512,
+     "passes": true
+    },
+    "pre.women.b1940_1945.plevel": {
+     "truth": 0.19012308454067162,
+     "filled": 0.1945813540101376,
+     "gap": 0.023178672360682828,
+     "tolerance": 0.06751533282014863,
+     "passes": true
+    },
+    "pre.women.b1940_1945.pr_cross": {
+     "truth": 0.3145537439002571,
+     "filled": 0.34602394584525564,
+     "gap": 0.031470201944998555,
+     "tolerance": 0.10423586286866415,
+     "passes": true
+    },
+    "pre.women.b1940_1945.pr_in": {
+     "truth": 0.19634726483554435,
+     "filled": 0.19350804350369938,
+     "gap": -0.002839221331844971,
+     "tolerance": 0.10786950445828188,
+     "passes": true
+    },
+    "pre.women.b1940_1945.pzero": {
+     "truth": 0.45477910425062734,
+     "filled": 0.42867842749600793,
+     "gap": -0.05910476431003997,
+     "tolerance": 0.05146845462920649,
+     "passes": false
+    },
+    "pre.women.b1946_1955.ylevel": {
+     "truth": 0.09059452101103667,
+     "filled": 0.09094511842211886,
+     "gap": 0.0038624935915136938,
+     "tolerance": 0.02894095947229668,
+     "passes": true
+    },
+    "pre.women.b1946_1955.yr_cross": {
+     "truth": 0.34158903474392094,
+     "filled": 0.36404211137367803,
+     "gap": 0.022453076629757096,
+     "tolerance": 0.03797384039389136,
+     "passes": true
+    },
+    "pre.women.b1946_1955.yzero": {
+     "truth": 0.5347643649882455,
+     "filled": 0.5349335055491772,
+     "gap": 0.00031623987856743696,
+     "tolerance": 0.014748010374272846,
+     "passes": true
+    },
+    "pre.women.b1956_1965.ylevel": {
+     "truth": 0.06347343380872424,
+     "filled": 0.0631225842636031,
+     "gap": -0.005542835370753618,
+     "tolerance": 0.02985282517131118,
+     "passes": true
+    },
+    "pre.women.b1956_1965.yr_cross": {
+     "truth": 0.3538451043271927,
+     "filled": 0.38134198162535016,
+     "gap": 0.027496877298157474,
+     "tolerance": 0.030904887590406976,
+     "passes": true
+    },
+    "pre.women.b1956_1965.yzero": {
+     "truth": 0.47511142887567126,
+     "filled": 0.47705249707166436,
+     "gap": 0.004077177956489653,
+     "tolerance": 0.01743364522031428,
+     "passes": true
+    },
+    "pre.women.b1966_1980.ylevel": {
+     "truth": 0.04398552907354234,
+     "filled": 0.044065206484431366,
+     "gap": 0.0018098073146592952,
+     "tolerance": 0.01981382685946912,
+     "passes": true
+    },
+    "pre.women.b1966_1980.yr_cross": {
+     "truth": 0.318767197977468,
+     "filled": 0.339060948106113,
+     "gap": 0.020293750128644983,
+     "tolerance": 0.02460765229653575,
+     "passes": true
+    },
+    "pre.women.b1966_1980.yzero": {
+     "truth": 0.42453709903219916,
+     "filled": 0.42469779049242196,
+     "gap": 0.0003784382015451504,
+     "tolerance": 0.01544025098036175,
+     "passes": true
+    }
+   }
+  }
+ ],
+ "candidate_code": {
+  "path": "src/populace_dynamics/estimates/epuf_fill.py (untracked when scored; v1 is the state hashed here)",
+  "sha256_v1": "ae0f005f465048b62b5147d79632446b3e7792dc01a2187ea089c03db30f8c8e"
+ },
+ "pre_chain": "fitted, never scored"
+}
