@@ -7,10 +7,10 @@
   (`populace_dynamics.estimates.career.build_career`) uses to fill years the
   PSID did not record, and their learned replacements, scored on held-out
   persons of SSA's 2006 Earnings Public-Use File (EPUF).
-- **Ceremony stage**: AMENDMENT 1 RULES. Referee round 1
-  (`reviews/gate_epuf_fill_round1_referee_20261004.md`) returned AMEND
-  BEFORE LOCK. This document carries amendment 1 (section 12). The
-  amended floors are rebuilt on DEV at the amendment's rules commit.
+- **Ceremony stage**: AMENDMENT 1 FLOORS BUILT, awaiting referee round 2.
+  Referee round 1 (`reviews/gate_epuf_fill_round1_referee_20261004.md`)
+  returned AMEND BEFORE LOCK. This document carries amendment 1 (section
+  12), whose floors were rebuilt on DEV at its rules commit (section 10a).
 - **What has been seen**:
   - Candidate fills exist and have been scored on DEV against the first
     (v1) floors. Every such score is disclosed in
@@ -450,7 +450,73 @@ wrong population, among other findings (section 12).
 - O2 failed 4 `yr_cross` cells, each by under 1.2 tolerances.
 - `tests/test_epuf_fill_gate_floors.py` keeps v1 internally consistent.
 
-The amended (v2) build's results are reported in section 10a once it runs.
+### 10a. Results of the amended (v2) build
+
+The registered v2 build ran once on DEV at `23bee82c`: the amendment-1
+rules commit `7061200d` plus the v2 PSID counts. It is
+`runs/epuf_fill_gate_floors_v2.json`.
+
+**Partition**: 319 of 326 cells gate. Seven are report-only:
+- too few events: `wint` for men 22-29, men 60-74 and women 60-74;
+  `atcap` for women 22-29 and 60-74; `zint` for women 60-74;
+- undefined floor: `odd.men.a45_59.q90`. Men's 90th-percentile positive
+  share is the cap in every sample, so its sampling error is zero.
+
+**Tolerances** (`K * sigma`) range by statistic:
+
+| Statistic | Tolerance | Statistic | Tolerance |
+|---|---|---|---|
+| `r1` | 0.0025-0.0098 | `aime_p50` | 0.042-0.125 (log) |
+| `r2` | 0.0046-0.0222 | `paime_p50` | 0.021-0.043 (log) |
+| `r3` | 0.0047-0.0206 | `pzero` | 0.029-0.129 (log) |
+| `r4` | 0.0070-0.0382 | `plevel` | 0.029-0.094 (log) |
+| `zint` | 0.045-0.178 (log) | `pr_in` | 0.041-0.133 |
+| `zexit` | 0.016-0.052 (log) | `pr_cross` | 0.044-0.122 |
+| `wint` | 0.071-0.150 (log) | `yzero` | 0.009-0.023 (log) |
+| `level` | 0.011-0.052 (log) | `ylevel` | 0.015-0.030 (log) |
+| `q50` | 0.012-0.075 (log) | `yr_cross` | 0.015-0.037 |
+
+The noise ratio `sqrt(n / N)` runs from 0.087 to 0.212.
+
+**Bite: both checks hold, so the gate can lock.**
+- **B1**, the current odd-year rule, fails 97 of 183 gating `odd` cells by
+  more than two tolerances.
+- **B2**, the current pre-career rule, fails 112 of 136 gating `pre` cells
+  by more than two tolerances.
+- On the pooled 1930-1945 cohorts, B2 lowers the median AIME by 20 percent
+  for men (5.3 tolerances) and 22 percent for women (4.0 tolerances).
+- On the single cohorts the falls are:
+
+| Cohort | Men | Women |
+|---|---:|---:|
+| 1930-1934 | 32% | 34% |
+| 1935-1939 | 20% | 25% |
+| 1940-1945 | 8% | 13% |
+
+**Dosed perturbations** (report-only; number of gating cells failed, and
+failed by more than two tolerances):
+
+| Perturbation | Failed | Beyond 2 tol. |
+|---|---:|---:|
+| D1 copy `t+1` | 92 / 183 | 63 |
+| D2 marginal draws | 127 / 183 | 115 |
+| D3 shrink, lambda 0.75 | 56 / 183 | 37 |
+| D3 shrink, lambda 0.5 | 81 / 183 | 63 |
+| D4 scale pre blocks by 0.95 | 12 / 136 | 5 |
+| D4 scale pre blocks by 0.90 | 16 / 136 | 12 |
+| D5 blocks permuted within sex and birth year | 75 / 136 | 54 |
+| D6 pre years permuted independently | 83 / 136 | 61 |
+
+- A pre-career level bias of 1.4 percent moves the most sensitive cell one
+  tolerance, and 2.9 percent moves it two.
+- A dispersion shrink of `lambda` = 0.996 moves one cell one tolerance. That
+  cell is `atcap`: any shrink takes values off the cap.
+
+**Oracles** (report-only):
+- **O1** fails 32 of 183 gating `odd` cells: 8 `r2`, 10 `r4`, 9 `r3`, 3
+  `r1`, 1 `wint` and 1 `zint`. Conditioning on `t-1` and `t+1` alone misses
+  multi-year persistence.
+- **O2** fails 6 of 136 gating `pre` cells: 5 `yr_cross` and 1 `aime_p10`.
 
 ## 11. What changes downstream
 
@@ -538,7 +604,8 @@ those scores failed.
 - [x] DEV candidate scores disclosed before amending
 - [x] Amendment 1 rules (this document, the code and tests) pushed before
   the v2 floor build
-- [ ] PSID scale counts v2 and floor build v2 on DEV
+- [x] PSID scale counts v2 and floor build v2 on DEV (`23bee82c`);
+  lockable
 - [ ] Referee round 2 (verification)
 - [ ] Max ratifies the materiality reading of the tolerance (queued
   decision)
