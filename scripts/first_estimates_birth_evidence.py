@@ -343,6 +343,14 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/bridge/invented_population.py"),
     Path("src/populace_dynamics/bridge/population.py"),
     Path("src/populace_dynamics/bridge/population_summary.py"),
+    # The opt-in EPUF reader, measurement operator, cell statistics, gate
+    # algebra and scoring path (the proposed EPUF gate) read SSA's public
+    # earnings file after the fact; nothing historical imports them.
+    Path("src/populace_dynamics/data/epuf.py"),
+    Path("src/populace_dynamics/harness/epuf_operator.py"),
+    Path("src/populace_dynamics/harness/epuf_cells.py"),
+    Path("src/populace_dynamics/harness/epuf_gate.py"),
+    Path("src/populace_dynamics/harness/epuf_run.py"),
     # The selectable projection baselines (NASI follow-up, 2026-10-01) are
     # opt-in inputs for unregistered projections; every registered result
     # keeps the TR2008 path, and nothing historical imports them.
