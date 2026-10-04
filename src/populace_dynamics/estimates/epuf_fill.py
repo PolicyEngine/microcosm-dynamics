@@ -534,6 +534,11 @@ class OddForestFill:
             local = index[nodes] - leaf_count
             order = np.lexsort((stored, local))
             counts = np.bincount(local, minlength=n_leaves)
+            if (counts == 0).any():
+                raise ValueError(
+                    "a forest leaf holds no TRAIN unit under the stored "
+                    "traversal"
+                )
             leaf_offsets.extend(
                 (leaf_offsets[-1] + np.cumsum(counts)).tolist()
             )
@@ -1058,8 +1063,10 @@ def _first_recorded(
     )
 
 
-#: Nearest-donor lists by input content, reused across draw seeds.
+#: Nearest-donor lists by input and bank content, reused across draw seeds.
 _NEAREST_CACHE: dict = {}
+#: Bank digests by fill (the fill is held so its id cannot be reused).
+_BANK_DIGESTS: dict = {}
 #: The match vector: the first MATCH_YEARS shares from the career start,
 #: then the mean share and the share of positive years over every known
 #: career year.
@@ -1067,6 +1074,8 @@ MATCH_DIMS = MATCH_YEARS + 2
 #: Odd years the PSID never records (1997 on); hidden when a bank's match
 #: vectors are built, so they are built as a recipient's are.
 _UNRECORDED_ODD_FROM = 1997
+#: EPUF's last year, the last year a donor bank records.
+_BANK_LAST_YEAR = 2006
 
 
 def match_vector(
@@ -1077,7 +1086,11 @@ def match_vector(
     shares = np.asarray(shares, dtype=np.float64)
     years = np.asarray(years, dtype=np.int64)
     first = _first_recorded(shares, years, birth_year)
-    career = years[None, :] >= career_start(birth_year)[:, None]
+    # The career summaries cover the bank's years (through 2006) only, so a
+    # PSID recipient's later years do not enter them.
+    career = (years[None, :] >= career_start(birth_year)[:, None]) & (
+        years[None, :] <= _BANK_LAST_YEAR
+    )
     known = career & np.isfinite(shares)
     count = known.sum(axis=1)
     values = np.where(known, shares, 0.0)
@@ -1121,18 +1134,23 @@ BLOCK_WIDTH = CAREER_FIRST_YEAR - 1951
 class PreDonorFill:
     """Whole pre-career blocks copied from rank-matched TRAIN donors.
 
-    Per sex and birth year, a bank of up to 2,000 TRAIN donors (those with
-    a positive share from their career start through 2006, chosen by the
-    lowest hash of their person id) holds each donor's shares in the years
-    from :func:`block_first_year` to the year before the career start (at
-    most the 17 years 1951-1967; stored as shares times 65,535, rounded),
-    and their shares in the first five years from the career start. A
-    recipient's match vector is its percentile mid-rank, within the bank,
-    in each of those five years it has recorded; distance is Euclidean over
-    the recorded years, scaled by five over their number. One of the ``k``
-    nearest donors is chosen by the seeded uniform and its block copied;
-    masked years before :func:`block_first_year` are zero. A recipient with
-    no recorded match year takes a donor chosen at random from the bank.
+    Per sex and birth year, a bank of up to ``bank_size`` TRAIN donors
+    (those with a positive share from their career start through 2006,
+    chosen by the lowest hash of their person id; the registered fill keeps
+    them all) holds each donor's shares in the years from
+    :func:`block_first_year` to the year before the career start (at most
+    the 17 years 1951-1967, stored as shares times 65,535, rounded) and the
+    donor's match vector (:func:`match_vector`). The match vector has seven
+    features: the shares in the first five years from the career start,
+    and the mean share and share of positive years over the known career
+    years through 2006.
+
+    A recipient's features are its percentile mid-ranks within the bank in
+    each feature it has. Distance is Euclidean over the features both have,
+    scaled by seven over their number. One of the ``k`` nearest donors is
+    chosen by the seeded uniform and its block copied; masked years before
+    :func:`block_first_year` are zero. A recipient with no feature takes a
+    donor chosen at random from its group.
     """
 
     bank_sex: np.ndarray
@@ -1197,10 +1215,29 @@ class PreDonorFill:
                 years,
                 birth_year[chosen],
             ).astype(np.float32),
-            bank_block=np.round(values * _SHARE_SCALE).astype(np.uint16),
+            bank_block=np.round(
+                np.clip(values, 0.0, 1.0) * _SHARE_SCALE
+            ).astype(np.uint16),
             k=k,
         )
         return fill, {"bank": int(len(chosen))}
+
+    @property
+    def bank_digest(self) -> str:
+        """SHA-256 of the bank and k, the cache's key for this fill."""
+
+        cached = _BANK_DIGESTS.get(id(self))
+        if cached is not None and cached[0] is self:
+            return cached[1]
+        digest = hashlib.sha256(
+            np.ascontiguousarray(self.bank_sex).tobytes()
+            + np.ascontiguousarray(self.bank_birth_year).tobytes()
+            + np.ascontiguousarray(self.bank_match).tobytes()
+            + np.ascontiguousarray(self.bank_block).tobytes()
+            + str(self.k).encode()
+        ).hexdigest()
+        _BANK_DIGESTS[id(self)] = (self, digest)
+        return digest
 
     def _nearest(self, match, birth_year, sex, targets):
         """Each target's ``k`` nearest bank rows, and its group's bank rows.
@@ -1214,7 +1251,7 @@ class PreDonorFill:
             + np.ascontiguousarray(birth_year[targets]).tobytes()
             + np.ascontiguousarray(sex[targets]).tobytes()
             + np.ascontiguousarray(targets).tobytes()
-            + str((id(self), self.k)).encode()
+            + self.bank_digest.encode()
         ).hexdigest()
         if digest in _NEAREST_CACHE:
             return _NEAREST_CACHE[digest]
@@ -1494,7 +1531,6 @@ class PreChainFill:
             # With no known later year (a career starting after the file's
             # last year), the chain starts from a zero year.
             following = np.nan_to_num(following, nan=0.0)
-            ok = np.ones(len(rows), dtype=bool)
             age = year - birth_year[rows]
             keys = self._keys(
                 sex[rows], age, np.nan_to_num(following), self.level_edges
@@ -1509,7 +1545,7 @@ class PreChainFill:
                 row[take] = found[take]
             drawn = np.full(len(rows), np.nan)
             for index in np.unique(level[level >= 0]):
-                take = (level == index) & ok
+                take = level == index
                 p0 = self.level_p0[index][row[take]]
                 positive = u[take] >= p0
                 v = np.where(
@@ -1608,7 +1644,9 @@ class BySexFill:
                 shares[rows],
                 years,
                 np.asarray(birth_year)[rows],
-                sex[rows],
+                # Rows of uncoded sex take this part's sex, so its copula
+                # (calibrated for that sex) applies to them.
+                np.full(len(rows), value),
                 np.asarray(person_key)[rows],
                 fill_mask[rows],
                 seed,

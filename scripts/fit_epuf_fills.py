@@ -26,8 +26,10 @@ import argparse
 import datetime as dt
 import hashlib
 import os
+import platform
 import subprocess
 import time
+import zlib
 from pathlib import Path
 
 import numpy as np
@@ -42,6 +44,8 @@ SCHEMA = "populace_dynamics.epuf_fill_candidates.v1"
 DEFAULT_DIR = Path("~/PolicyEngine/epuf-data/fills").expanduser()
 CODE_FILES = (
     "src/populace_dynamics/estimates/epuf_fill.py",
+    "src/populace_dynamics/harness/epuf_fill_gate.py",
+    "src/populace_dynamics/harness/epuf_operator.py",
     "scripts/fit_epuf_fills.py",
 )
 ODD_UNIT_YEARS = tuple(range(1991, 2006))
@@ -162,6 +166,11 @@ def main() -> None:
     )
     parser.add_argument("--only", nargs="*", default=sorted(REGISTERED))
     args = parser.parse_args()
+    if args.manifest.exists():
+        raise FileExistsError(
+            f"{args.manifest} exists; a registered manifest is never refitted "
+            "in place"
+        )
     started = time.time()
     built_at = dt.datetime.now(dt.UTC).isoformat(timespec="seconds")
     matrix = g.epuf_matrix(g.TRAIN)
@@ -176,7 +185,15 @@ def main() -> None:
         )
         blob = fill.to_bytes()
         path = args.out_dir / f"{name}_v1.npz"
-        path.write_bytes(blob)
+        if path.exists():
+            # A staged file is never replaced: a refit must reproduce it.
+            if path.read_bytes() != blob:
+                raise FileExistsError(
+                    f"{path} exists with other bytes; refusing to replace it"
+                )
+        else:
+            with path.open("xb") as handle:
+                handle.write(blob)
         fills[name] = {
             **REGISTERED[name],
             "file": path.name,
@@ -198,9 +215,13 @@ def main() -> None:
             "numpy": np.__version__,
             "scipy": scipy.__version__,
             "scikit_learn": sklearn.__version__,
+            "python": platform.python_version(),
+            "zlib_runtime": zlib.ZLIB_RUNTIME_VERSION,
+            "platform": platform.platform(),
         },
-        "staging": "files live outside the repository, like EPUF; refit "
-        "with this script at code_commit to reproduce their bytes",
+        "staging": "files live outside the repository, like EPUF; a refit "
+        "with this script at code_commit, on the same library, zlib and "
+        "platform versions, reproduces their bytes",
         "fills": fills,
         "elapsed_seconds": round(time.time() - started, 1),
     }

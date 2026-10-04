@@ -77,6 +77,7 @@ def test_current_rule_fills_reproduce_the_assembler():
         odd_fill=_MeanFill(),
         pre_fill=g.CurrentPreFill(),
         seed=7100,
+        odd_years=None,
     )
     careers = result.careers
     before = cohort.careers.set_index(["person_id", "year"])
@@ -127,7 +128,9 @@ def test_fills_see_no_pre_career_or_gap_year():
             out[mask] = 0.25
             return out
 
-    result = fill_module.fill_careers(cohort, odd_fill=Spy(), seed=1)
+    result = fill_module.fill_careers(
+        cohort, odd_fill=Spy(), seed=1, odd_years=None
+    )
     years = np.arange(1951, 2011)
     birth = np.array([b for b, _ in BIRTHS.values()])
     pre = years[None, :] < np.maximum(1968, birth + 22)[:, None]
@@ -156,3 +159,66 @@ def test_no_fill_keeps_the_careers():
     result = fill_module.fill_careers(cohort, seed=1)
     assert len(result.careers) == len(cohort.careers)
     assert result.fills == {}
+
+
+def test_by_default_only_the_scored_gap_years_are_filled():
+    cohort = _cohort()
+
+    class Constant:
+        name = "constant"
+
+        def fill(self, shares, years, birth, sex, key, mask, seed):
+            out = shares.copy()
+            out[mask] = 0.25
+            return out
+
+    result = fill_module.fill_careers(cohort, odd_fill=Constant(), seed=1)
+    after = result.careers.set_index(["person_id", "year"])
+    before = cohort.careers.set_index(["person_id", "year"])
+    gaps = before.index[before["provenance"] == "gap_imputed"]
+    for key in gaps:
+        if key[1] in fill_module.SCORED_ODD_YEARS:
+            assert after.loc[key, "provenance"] == "gap_epuf_drawn"
+        else:
+            # 2007 and 2009 keep the assembler's value and provenance.
+            assert after.loc[key, "provenance"] == "gap_imputed"
+            assert after.loc[key, "earnings"] == before.loc[key, "earnings"]
+
+
+def test_a_gap_with_no_visible_neighbour_keeps_the_assemblers_value():
+    cohort = _cohort()
+    careers = cohort.careers
+    # Person 3 (born 1975) starts in 1997; drop 1998 so 1997's only
+    # neighbours are pre-career (1996) or missing.
+    careers = careers[~((careers.person_id == 3) & (careers.year == 1998))]
+    # Person 1 gets a 2013 seam filled from a 2014 boundary year, with no
+    # 2012 row: neither neighbour is visible to a fill.
+    extra = pd.DataFrame(
+        [
+            (1, 2013, 30_000.0, "gap_imputed"),
+            (1, 2014, 30_000.0, "boundary_2014"),
+        ],
+        columns=careers.columns,
+    )
+    cohort = SimpleNamespace(
+        persons=cohort.persons,
+        careers=pd.concat([careers, extra], ignore_index=True),
+    )
+
+    class Constant:
+        name = "constant"
+
+        def fill(self, shares, years, birth, sex, key, mask, seed):
+            out = shares.copy()
+            out[mask] = 0.25
+            return out
+
+    result = fill_module.fill_careers(
+        cohort, odd_fill=Constant(), seed=1, odd_years=None
+    )
+    after = result.careers.set_index(["person_id", "year"])
+    assert after.loc[(3, 1997), "provenance"] == "gap_imputed"
+    assert after.loc[(1, 2013), "provenance"] == "gap_imputed"
+    assert after.loc[(1, 2013), "earnings"] == 30_000.0
+    assert after.loc[(1, 2014), "provenance"] == "boundary_2014"
+    assert after.loc[(1, 1999), "provenance"] == "gap_epuf_drawn"

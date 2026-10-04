@@ -30,6 +30,16 @@ from populace_dynamics.harness import epuf_fill_scoring as scoring
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DIR = Path("~/PolicyEngine/epuf-data/fills").expanduser()
+#: The registered manifest; any other manifest is refused.
+REGISTERED_MANIFEST = "runs/epuf_fill_candidates_v1.json"
+REGISTERED_MANIFEST_SHA256 = "PENDING_REFIT"
+#: Files whose state the record reports.
+CODE_FILES = (
+    "src/populace_dynamics/harness/epuf_fill_gate.py",
+    "src/populace_dynamics/harness/epuf_fill_scoring.py",
+    "src/populace_dynamics/estimates/epuf_fill.py",
+    "scripts/score_epuf_fill_test.py",
+)
 
 
 def candidates_from(manifest: dict, fills_dir: Path) -> dict:
@@ -58,12 +68,43 @@ def main() -> None:
     args = parser.parse_args()
     if args.output.exists():
         raise FileExistsError(f"{args.output} exists; TEST is scored once")
-    started = time.time()
     manifest_bytes = args.manifest.read_bytes()
+    manifest_sha256 = hashlib.sha256(manifest_bytes).hexdigest()
+    if manifest_sha256 != REGISTERED_MANIFEST_SHA256:
+        raise ValueError(
+            f"{args.manifest} has SHA-256 {manifest_sha256}, not the "
+            f"registered {REGISTERED_MANIFEST_SHA256}"
+        )
+    started = time.time()
+    clean = (
+        subprocess.run(
+            ["git", "-C", str(ROOT), "diff", "--quiet", "HEAD", "--"]
+            + list(CODE_FILES),
+            check=False,
+        ).returncode
+        == 0
+    )
+    # A started marker, so a run that fails after reading TEST leaves a
+    # trace of the read.
+    marker = Path(f"{args.output}.started.json")
+    with marker.open("x") as handle:
+        json.dump(
+            {
+                "started_at_utc": dt.datetime.now(dt.UTC).isoformat(
+                    timespec="seconds"
+                ),
+                "manifest_sha256": manifest_sha256,
+            },
+            handle,
+        )
     manifest = json.loads(manifest_bytes)
     record = scoring.score_registered(
         candidates_from(manifest, args.fills_dir)
     )
+    # Published paths are the registered file names, not local folders.
+    for family in record["candidates"].values():
+        for role in family.values():
+            role["path"] = Path(role["path"]).name
     document = {
         "schema": "populace_dynamics.epuf_fill_gate_test.v1",
         "code_commit": subprocess.run(
@@ -73,8 +114,9 @@ def main() -> None:
             text=True,
         ).stdout.strip(),
         "scored_at_utc": dt.datetime.now(dt.UTC).isoformat(timespec="seconds"),
-        "manifest": str(args.manifest),
-        "manifest_sha256": hashlib.sha256(manifest_bytes).hexdigest(),
+        "code_files_clean": clean,
+        "manifest": REGISTERED_MANIFEST,
+        "manifest_sha256": manifest_sha256,
         **record,
         "elapsed_seconds": round(time.time() - started, 1),
     }

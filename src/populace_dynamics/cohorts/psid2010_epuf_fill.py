@@ -8,8 +8,16 @@ odd income year from 1997 with its neighbours' mean (provenance
 Earnings Public-Use File and registered by ``gate_epuf_fill``
 (``docs/amendments/gate_epuf_fill_registration_proposal.md``):
 
-- every ``gap_imputed`` year becomes the odd fill's draw, with provenance
+- every ``gap_imputed`` year in ``odd_years`` with a neighbour the fill
+  can see becomes the odd fill's draw, with provenance
   :attr:`EPUFFillProvenance.GAP_EPUF_DRAWN`;
+  - by default ``odd_years`` is the years the gate scored (1997-2005);
+  - the PSID's later gap years (2007-2011 and the 2013 seam) keep the
+    assembler's value unless the caller passes ``odd_years=None``, which
+    fills every gap year and is an extrapolation the gate does not certify;
+  - a gap year with no visible neighbour keeps the assembler's value, which
+    used a neighbour the fill does not see (an observed pre-career year, or
+    the 2014 boundary year);
 - every year from 1951 before the career start becomes the pre-career
   fill's draw, with provenance
   :attr:`EPUFFillProvenance.PRE_CAREER_EPUF_DONOR`.
@@ -78,25 +86,32 @@ def _content_sha256(careers: pd.DataFrame) -> str:
     ).hexdigest()
 
 
+#: The gap years the gate scored (``epuf_fill_gate.MASKED_ODD_YEARS``).
+SCORED_ODD_YEARS: tuple[int, ...] = (1997, 1999, 2001, 2003, 2005)
+
+
 def fill_careers(
     cohort: Any,
     *,
     odd_fill: Any | None = None,
     pre_fill: Any | None = None,
     seed: int,
-    start_year: int | None = None,
+    last_year: int | None = None,
+    odd_years: tuple[int, ...] | None = SCORED_ODD_YEARS,
 ) -> FilledCareers:
     """Replace the assembler's fill rules with learned fills.
 
     ``cohort`` needs ``persons`` (``person_id``, ``birth_year``, ``sex`` as
     ``"male"`` / ``"female"``) and ``careers`` (``person_id``, ``year``,
     ``earnings``, ``provenance``). Either fill may be None, which keeps that
-    rule. ``start_year`` defaults to the latest career year.
+    rule. ``last_year`` is the last career year read (default: the latest
+    in ``careers``). ``odd_years`` limits the odd fill to those gap years;
+    None fills every gap year.
     """
 
     persons = cohort.persons[["person_id", "birth_year", "sex"]].copy()
     careers = cohort.careers.copy()
-    last = int(careers["year"].max()) if start_year is None else start_year
+    last = int(careers["year"].max()) if last_year is None else last_year
     years = np.arange(FIRST_YEAR, last + 1)
     caps = _wage_bases(years)
     person_ids = persons["person_id"].to_numpy(dtype=np.int64)
@@ -122,10 +137,24 @@ def fill_careers(
         np.maximum(earnings[observed], 0.0) / caps[columns[observed]], 1.0
     )
     gap = provenance == "gap_imputed"
-    odd_mask[rows[gap], columns[gap]] = True
+    if odd_years is not None:
+        gap &= np.isin(years[columns], np.asarray(odd_years))
     start = np.maximum(1968, birth + 22)
     pre_mask = years[None, :] < start[:, None]
-    given = np.where(odd_mask | pre_mask, np.nan, shares)
+    # Every gap year is unknown to the fills, filled or not.
+    all_gaps = np.zeros_like(odd_mask)
+    is_gap = provenance == "gap_imputed"
+    all_gaps[rows[is_gap], columns[is_gap]] = True
+    given = np.where(all_gaps | pre_mask, np.nan, shares)
+    # A gap year is filled only if a neighbour is visible to the fill.
+    left = np.full(len(rows), np.nan)
+    right = np.full(len(rows), np.nan)
+    inner = columns > 0
+    left[inner] = given[rows[inner], columns[inner] - 1]
+    outer = columns + 1 < len(years)
+    right[outer] = given[rows[outer], columns[outer] + 1]
+    gap &= np.isfinite(left) | np.isfinite(right)
+    odd_mask[rows[gap], columns[gap]] = True
 
     def drawn(fill, mask):
         out = np.asarray(

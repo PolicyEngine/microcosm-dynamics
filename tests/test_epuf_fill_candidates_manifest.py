@@ -96,3 +96,10 @@ def test_staged_fills_hash_to_the_manifest(manifest, name):
     if not path.is_file():
         pytest.skip(f"{path} is not staged")
     assert hashlib.sha256(path.read_bytes()).hexdigest() == record["sha256"]
+
+
+def test_the_registered_copula_binds_for_each_coded_sex(manifest):
+    diagnostics = manifest["fills"]["odd_forest"]["diagnostics"]
+    for sex in ("1", "2"):
+        rho = diagnostics[sex]["rho"]
+        assert any(value > 0 for value in rho[int(sex)])

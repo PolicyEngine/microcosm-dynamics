@@ -157,3 +157,44 @@ def test_the_forest_copula_is_calibrated_by_band(fitted):
         rho = part.rho
         assert rho.shape == (4, 6)
         assert ((rho >= 0) & (rho <= 0.9)).all()
+
+
+def test_the_donor_cache_is_keyed_by_the_bank_not_the_object():
+    shares, birth, sex, key = _shares(4, n=2_000)
+    first = F.PreDonorFill.fit(
+        shares, YEARS, birth, sex, key, k=3, bank_size=5
+    )[0]
+    second = F.PreDonorFill.fit(
+        shares, YEARS, birth, sex, key + 1, k=3, bank_size=5
+    )[0]
+    assert first.bank_digest != second.bank_digest
+    given, b, s, k = _given(5)
+    mask = g.family_mask("pre", b)
+    a = first.donors(given, YEARS, b, s, k, mask, 7100)
+    c = second.donors(given, YEARS, b, s, k, mask, 7100)
+    # Each fill's donors index its own bank and match its recipients' group.
+    for fill, chosen in ((first, a), (second, c)):
+        rows = np.flatnonzero(chosen >= 0)
+        assert (chosen[rows] < len(fill.bank_sex)).all()
+        assert (fill.bank_birth_year[chosen[rows]] == b[rows]).all()
+
+
+def test_uncoded_sex_takes_the_routed_parts_sex(fitted):
+    fill = fitted["odd_forest"]
+    given, birth, sex, key = _given(6, n=400)
+    mask = g.family_mask("odd", birth)
+    uncoded = sex.copy()
+    uncoded[::3] = 3
+    as_men = sex.copy()
+    as_men[::3] = 1
+    out = fill.fill(given.copy(), YEARS, birth, uncoded, key, mask, 7100)
+    expected = fill.fill(given.copy(), YEARS, birth, as_men, key, mask, 7100)
+    rows = np.arange(len(sex))[::3]
+    np.testing.assert_array_equal(
+        np.nan_to_num(out[rows]), np.nan_to_num(expected[rows])
+    )
+
+
+def test_fitted_forests_have_no_empty_leaf(fitted):
+    for part in fitted["odd_forest"].parts.values():
+        assert (np.diff(part.leaf_offsets) > 0).all()
