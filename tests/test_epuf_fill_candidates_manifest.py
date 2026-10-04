@@ -123,20 +123,52 @@ def test_the_score_script_pins_this_manifest():
     )
 
 
-def test_the_score_script_refuses_before_reading_test(tmp_path):
+def test_the_score_script_refuses_before_reading_test(tmp_path, monkeypatch):
+    """No path here can reach TEST, even after the gate locks.
+
+    The lock status is patched, and the fills folder is an empty or a
+    deliberately wrong one, so ``test_part`` is never called.
+    """
+
     script = _score_script()
     output = tmp_path / "result.json"
+    empty = tmp_path / "fills"
+    empty.mkdir()
     other = tmp_path / "other.json"
     other.write_text("{}")
+    base = ["--output", str(output), "--fills-dir", str(empty)]
     with pytest.raises(ValueError, match="not the registered"):
-        script.main(["--manifest", str(other), "--output", str(output)])
-    # The registered manifest, but the gate is not locked in gates.yaml.
-    from populace_dynamics.harness import epuf_fill_gate as g
+        script.main(["--manifest", str(other), *base])
 
-    with pytest.raises(g.TestPartLocked):
-        script.main(["--manifest", str(MANIFEST), "--output", str(output)])
+    def reached_test(**_):
+        raise AssertionError("the score script reached test_part")
+
+    monkeypatch.setattr(script.scoring.g, "test_part", reached_test)
+    monkeypatch.setattr(
+        script.g,
+        "_gate_lock_status",
+        lambda _: {"locked": False, "registration_id": None},
+    )
+    with pytest.raises(script.g.TestPartLocked):
+        script.main(["--manifest", str(MANIFEST), *base])
     assert not output.exists()
+    assert not tmp_path.joinpath("result.json.started.json").exists()
+    # Locked, but a staged file is not the registered bytes: refused before
+    # any marker or read.
+    monkeypatch.setattr(
+        script.g,
+        "_gate_lock_status",
+        lambda _: {
+            "locked": True,
+            "registration_id": script.g.REGISTRATION_ID,
+        },
+    )
+    manifest = json.loads(MANIFEST.read_text())
+    for record in manifest["fills"].values():
+        (empty / record["file"]).write_bytes(b"not the registered bytes")
+    with pytest.raises(ValueError, match="not the registered bytes"):
+        script.main(["--manifest", str(MANIFEST), *base])
     assert not tmp_path.joinpath("result.json.started.json").exists()
     output.write_text("{}")
     with pytest.raises(FileExistsError, match="scored once"):
-        script.main(["--manifest", str(MANIFEST), "--output", str(output)])
+        script.main(["--manifest", str(MANIFEST), *base])
