@@ -20,8 +20,8 @@
 
 ## The registered artifacts
 
-- **Manifest**: `runs/epuf_fill_candidates_v1.json`, SHA-256 `a304311343f3c78f7702ec6918b991b6bea30dad2a23529df6f0f975ce7f62d0`.
-- **Fitted at**: `598e4436` on TRAIN, with the code files clean.
+- **Manifest**: `runs/epuf_fill_candidates_v1.json`, SHA-256 `83d17a14f960033c7c0ed0d602ae395ea4b8d66ff5facab85115f493f3b96e2c`.
+- **Fitted at**: `b722382e` on TRAIN, with the code files clean.
 - **Environment**: numpy 2.5.1, scipy 1.18.0, scikit-learn 1.9.0, Python 3.14.4, zlib 1.2.12, on macOS-26.6.2-arm64-arm-64bit-Mach-O.
 - **Reproducibility**:
   - A second fit at the same commit reproduced all four files byte for
@@ -156,8 +156,10 @@ An independent code review of PR #516 returned REQUEST CHANGES
   was clean, and publishes no local paths.
 
 **The manifest.** The first manifest (SHA-256 `8d42153...`) was withdrawn
-and refitted at the reviewed code (`598e4436`). The four artifacts'
-SHA-256 values are unchanged.
+and refitted at the reviewed code (`598e4436`, SHA-256 `a3043113...`).
+Rebasing onto #515's fixes then left that commit off the branch, so the
+manifest was refitted once more at `b722382e`. The four
+artifacts' SHA-256 values are the same in all three manifests.
 
 **The DEV dry run still stands.** It scored the same artifacts, and none of
 the fixes changes a draw for a person the gate scores. They touch the PSID

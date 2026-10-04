@@ -34,7 +34,7 @@ DEFAULT_DIR = Path("~/PolicyEngine/epuf-data/fills").expanduser()
 #: The registered manifest; any other manifest is refused.
 REGISTERED_MANIFEST = "runs/epuf_fill_candidates_v1.json"
 REGISTERED_MANIFEST_SHA256 = (
-    "a304311343f3c78f7702ec6918b991b6bea30dad2a23529df6f0f975ce7f62d0"
+    "83d17a14f960033c7c0ed0d602ae395ea4b8d66ff5facab85115f493f3b96e2c"
 )
 #: Files whose state the record reports.
 CODE_FILES = (
