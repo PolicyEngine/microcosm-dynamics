@@ -714,7 +714,8 @@ def invented_repo(tmp_path):
     ``import populace_dynamics.deep.inner``. The helper imports a module the
     generator never names, and a second script; that script imports a
     module no other file names, so pinning it proves the recursion. Two
-    files are never imported: ``unrelated.py`` and ``deep/__init__.py``.
+    files are never pinned: ``unrelated.py``, which nothing imports, and
+    ``deep/__init__.py``, which Python runs on the dotted import.
     """
 
     try:
@@ -761,7 +762,7 @@ def invented_repo(tmp_path):
 def test__given_the_invented_repo__then_exactly_the_named_code_is_pinned(
     invented_repo,
 ):
-    """Each import form resolves; a name that is not a module resolves to nothing."""
+    """Each import form resolves; a name that isn't a module doesn't."""
 
     root, _ = invented_repo
     assert generator_sources(root) == [
