@@ -386,14 +386,39 @@ def test_odd_oracle_permutes_true_values_within_strata(seed):
     filled = g.odd_oracle_fill(earnings, birth, sex, WAGE_BASES, seed)
     others = ~g.odd_mask(len(birth))
     assert np.array_equal(filled[others], earnings[others])
+    shares = np.where(
+        g.pre_career_mask(birth), np.nan, earnings / CAPS[None, :]
+    )
+    edges = g.share_bin_edges(
+        np.nan_to_num(
+            shares[:, [y - g.FIRST_YEAR for y in g.ODD_OBSERVED_YEARS]],
+            nan=0.0,
+        )
+    )
+    member = g.family_universe("odd", earnings, birth, sex)
     for year in g.MASKED_ODD_YEARS:
         column = year - g.FIRST_YEAR
         assert np.array_equal(
             np.sort(filled[:, column]), np.sort(earnings[:, column])
         )
-    # A unit whose neighbours are both zero and whose stratum's true values
-    # are all zero keeps zero.
-    assert (filled[:, 1997 - g.FIRST_YEAR] >= 0).all()
+        # Each filled value is a true value of the same stratum: the
+        # multiset of values within every stratum is unchanged.
+        key = np.stack(
+            [
+                sex,
+                member,
+                np.digitize(year - birth, tuple(range(20, 85, 5))),
+                g._share_bins(shares[:, column - 1], edges),
+                g._share_bins(shares[:, column + 1], edges),
+            ],
+            axis=1,
+        )
+        _, stratum = np.unique(key, axis=0, return_inverse=True)
+        for value in np.unique(stratum):
+            rows = stratum.ravel() == value
+            assert np.array_equal(
+                np.sort(filled[rows, column]), np.sort(earnings[rows, column])
+            )
 
 
 def test_pre_oracle_moves_whole_blocks_within_birth_year():

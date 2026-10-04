@@ -8,7 +8,8 @@
   PSID did not record, and their learned replacements, scored on held-out
   persons of SSA's 2006 Earnings Public-Use File (EPUF).
 - **Ceremony stage**: ROUND-3 FIXES, then lock on Max's ratification
-  (decision d927). Referee round 3
+  (decision d927). The TEST scoring needs the candidates' module, which PR
+  #516 adds, so #516 merges before TEST is read. Referee round 3
   (`reviews/gate_epuf_fill_round3_confirmation_20261004.md`) returned LOCK
   AFTER LISTED FIXES with no rebuild; its fixes are in section 12b.
   Earlier stage: ROUND-2 FIXES. Referee round 1
@@ -538,15 +539,15 @@ wrong population, among other findings (section 12).
 
 | Statistic | Tolerance | Statistic | Tolerance |
 |---|---|---|---|
-| `r1` | 0.0025-0.0098 | `aime_p50` | 0.042-0.125 (log) |
+| `r1` | 0.0025-0.0098 (0.00248 at the lower bound) | `aime_p50` | 0.042-0.125 (log) |
 | `r2` | 0.0046-0.0222 | `paime_p50` | 0.021-0.043 (log) |
-| `r3` | 0.0047-0.0206 | `pzero` | 0.029-0.129 (log) |
+| `r3` | 0.0047-0.0206 | `pzero` | 0.029-0.128 (log) |
 | `r4` | 0.0070-0.0382 | `plevel` | 0.029-0.094 (log) |
 | `zint` | 0.045-0.178 (log) | `pr_in` | 0.041-0.133 |
 | `zexit` | 0.016-0.052 (log) | `pr_cross` | 0.044-0.122 |
 | `wint` | 0.071-0.150 (log) | `yzero` | 0.009-0.023 (log) |
 | `level` | 0.011-0.052 (log) | `ylevel` | 0.015-0.030 (log) |
-| `q50` | 0.012-0.075 (log) | `yr_cross` | 0.015-0.037 |
+| `q50` | 0.012-0.074 (log) | `yr_cross` | 0.015-0.037 |
 
 The noise ratio `sqrt(n / N)` runs from 0.087 to 0.212.
 
@@ -746,6 +747,14 @@ gaps moved in the 22-29 band. The two cells that loosened were
 6. **A sign rule over cells** (the mean standardized gap over a
    statistic's cells within `1/sqrt(k)`). Pooled groups do the same job
    with ordinary cells and floors.
+
+**Known nits in bound files, left as they are.** Editing these files would
+unbind the registered build, so both are recorded here instead (code review
+of PR #515):
+- `test_part` raises `AttributeError` rather than `TestPartLocked` on a
+  malformed `gates.yaml`. TEST stays unread either way.
+- The builder counts the dosed perturbations' "beyond two" cells with a
+  literal 2, equal to `BITE_MULTIPLE`.
 
 **Notes from round 2, for Max's ratification and for future registrations.**
 - At the boundary, a fill adds up to 41 percent (the square root of 2) to

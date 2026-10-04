@@ -147,16 +147,147 @@ def test_combined_current_takes_the_smaller_gap_per_cell():
     assert combined["n_failing"] == 2
 
 
-def test_registered_candidates_are_hash_checked(tmp_path):
+def test_registered_candidates_need_a_sha256(tmp_path):
     path, sha = _floors(tmp_path, ["odd.men.a30_44.r1"])
-    pytest.importorskip("populace_dynamics.estimates.epuf_fill")
-    with pytest.raises((ValueError, FileNotFoundError)):
+    for bad in (None, "abc", "Z" * 64):
+        with pytest.raises(ValueError, match="registered SHA-256"):
+            scoring.score_registered(
+                {"odd": {"primary": (tmp_path / "x.npz", bad)}},
+                floors_path=path,
+                floors_sha256=sha,
+                matrix=_matrix(n=50),
+            )
+
+
+def test_registered_candidates_are_hash_checked(tmp_path):
+    epuf_fill = pytest.importorskip("populace_dynamics.estimates.epuf_fill")
+    path, sha = _floors(tmp_path, ["odd.men.a30_44.r1"])
+    artifact = tmp_path / "fill.npz"
+    artifact.write_bytes(b"not the registered bytes")
+    del epuf_fill
+    with pytest.raises(ValueError, match="SHA-256"):
         scoring.score_registered(
-            {"odd": {"primary": (tmp_path / "missing.npz", "0" * 64)}},
+            {"odd": {"primary": (artifact, "0" * 64)}},
             floors_path=path,
             floors_sha256=sha,
             matrix=_matrix(n=50),
         )
+
+
+def test_an_injected_run_is_never_the_registered_scoring(tmp_path):
+    matrix = _matrix(n=300)
+    path, sha = _floors(tmp_path, [])
+    record = scoring.score_registered(
+        {"odd": _spec()},
+        floors_path=path,
+        floors_sha256=sha,
+        matrix=matrix,
+        seeds=(7100,),
+        fills={
+            "odd": {
+                "primary": g.CurrentOddFill(),
+                "alternative": g.CurrentOddFill(),
+            }
+        },
+    )
+    assert record["registered_test_scoring"] is False
+    assert record["injected"] == {"matrix": True, "fills": True}
+
+
+def test_the_smaller_current_reading_sets_the_improves_allowance(tmp_path):
+    """Where the two readings differ, the smaller gap decides "improves".
+
+    Born 1975-1977, the 1997-1999 units sit at age 22, whose year before is
+    pre-career: the fallback reading copies t+1 while the two-sided reading
+    averages the true year before in. A candidate equal to the two-sided
+    reading is within one tolerance of it everywhere, so the combined
+    reference admits it as "improves" where the fallback alone would not.
+    """
+
+    rng = np.random.default_rng(5)
+    n = 4_000
+    birth = rng.integers(1975, 1978, size=n)
+    sex = rng.choice([1, 2], size=n)
+    caps = np.array([WAGE_BASES[year] for year in g.YEARS])
+    shares = np.zeros((n, len(g.YEARS)))
+    for column, year in enumerate(g.YEARS):
+        age = year - birth
+        shares[:, column] = np.where(
+            age >= 18, rng.uniform(0.05, 0.6, size=n), 0.0
+        )
+    matrix = g.EPUFMatrix(
+        person_id=np.arange(n) + 1,
+        birth_year=birth,
+        sex=sex,
+        earnings=np.round(shares * caps[None, :]),
+    )
+    truth = g.family_cells(
+        "odd",
+        matrix.earnings,
+        matrix.birth_year,
+        matrix.sex,
+        WAGE_BASES,
+        NAWI,
+    )
+    two_sided = scoring._two_sided_current(
+        matrix, truth, {}, [], WAGE_BASES, NAWI
+    )
+    gating = [
+        c
+        for c, row in two_sided["cells"].items()
+        if c.startswith("odd.")
+        and c.endswith(".level")
+        and np.isfinite(row["gap"])
+        and np.isfinite(truth[c].value)
+        and truth[c].value > 0
+    ]
+    assert gating
+    tolerance = {
+        c: max(abs(two_sided["cells"][c]["gap"]), 1e-6) * 1.0001
+        for c in gating
+    }
+    fallback = g.score_candidate(
+        g.CurrentOddFill(),
+        "odd",
+        matrix,
+        truth,
+        tolerance,
+        gating,
+        seeds=(7100,),
+        wage_bases=WAGE_BASES,
+        nawi=NAWI,
+    )
+    reading = g.score(
+        {c: truth[c] for c in truth if c.startswith("odd.")},
+        [
+            g.family_cells(
+                "odd",
+                np.where(
+                    g.family_mask("odd", birth),
+                    np.minimum(
+                        g.current_odd_fill(matrix.earnings, birth),
+                        caps[None, :],
+                    ),
+                    matrix.earnings,
+                ),
+                birth,
+                sex,
+                WAGE_BASES,
+                NAWI,
+            )
+        ],
+        tolerance,
+        gating,
+    )
+    combined = scoring.combined_current(fallback, reading)
+    for cell in gating:
+        assert abs(combined["cells"][cell]["gap"]) == min(
+            abs(fallback["cells"][cell]["gap"]),
+            abs(reading["cells"][cell]["gap"]),
+        )
+    assert combined["n_failing"] == min(
+        fallback["n_failing"], reading["n_failing"]
+    )
 
 
 def test_score_registered_reads_test_only_through_the_lock(tmp_path):
@@ -176,3 +307,28 @@ def test_score_registered_reads_test_only_through_the_lock(tmp_path):
                 }
             },
         )
+
+
+def test_the_neutral_reading_can_only_tighten_the_improves_tier():
+    """A candidate "improves" against the fallback reading alone, but not
+    against the combined reference when the two-sided reading's gap in a
+    cell is small: the smaller gap caps the allowance at one tolerance."""
+
+    def score(gaps, tau=0.01):
+        cells = {
+            f"odd.men.a22_29.c{i}": {
+                "gap": gap,
+                "tolerance": tau,
+                "passes": bool(np.isfinite(gap) and abs(gap) <= tau),
+            }
+            for i, gap in enumerate(gaps)
+        }
+        failing = sum(not row["passes"] for row in cells.values())
+        return {"cells": cells, "n_failing": failing, "passes": failing == 0}
+
+    fallback = score([0.025, 0.05, 0.05])
+    two_sided = score([0.001, 0.05, 0.05])
+    candidate = score([0.02, 0.0, 0.0])
+    assert g.adoption_tier(candidate, fallback) == "improves"
+    combined = scoring.combined_current(fallback, two_sided)
+    assert g.adoption_tier(candidate, combined) == "not_adopted"

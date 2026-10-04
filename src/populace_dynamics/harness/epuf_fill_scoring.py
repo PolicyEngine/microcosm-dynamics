@@ -193,6 +193,16 @@ def score_registered(
 
     floors = load_registered_floors(floors_path, floors_sha256)
     wage_bases, nawi, constants_sha256 = constants()
+    for family, spec in candidates.items():
+        for role, (_, sha256) in spec.items():
+            if not (
+                isinstance(sha256, str)
+                and len(sha256) == 64
+                and all(c in "0123456789abcdef" for c in sha256)
+            ):
+                raise ValueError(
+                    f"{family} {role}: a registered SHA-256 is required"
+                )
     loaded: dict[str, dict[str, object]] = {}
     for family, spec in candidates.items():
         if fills is not None:
@@ -204,9 +214,14 @@ def score_registered(
             role: epuf_fill.load_fill(Path(path), sha256=sha256)
             for role, (path, sha256) in spec.items()
         }
+    # A run with an injected matrix or injected fills is a test or a dry
+    # run, never the registered TEST scoring, and says so.
+    injected = {"matrix": matrix is not None, "fills": fills is not None}
     if matrix is None:
         matrix = g.test_part(gates_path=gates_path, data_dir=data_dir)
     record: dict[str, object] = {
+        "registered_test_scoring": not any(injected.values()),
+        "injected": injected,
         "registration_id": g.REGISTRATION_ID,
         "floors_sha256": floors["sha256"],
         "constants_sha256": constants_sha256,
