@@ -32,6 +32,7 @@ book:
     - benchmark-model-component-matrix.md
     - data-sources.md
     - methodology.md
+    - baselines.md
     - operationalizing-longitudinal-construction.md
     - technical-specifications.md
     - calibration-targets.md
