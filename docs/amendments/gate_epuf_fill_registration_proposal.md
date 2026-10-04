@@ -18,8 +18,10 @@
   - Candidate fills exist and have been scored on DEV. Every such score is
     disclosed: those before amendment 1 in
     `docs/amendments/gate_epuf_fill_dev_scores_before_amendment_1.json`,
-    and those after it, before round 2's fixes, in
-    `docs/amendments/gate_epuf_fill_dev_scores_after_amendment_1.json`.
+    those after it in
+    `docs/amendments/gate_epuf_fill_dev_scores_after_amendment_1.json`,
+    and those after round 2's fixes in
+    `docs/amendments/gate_epuf_fill_dev_scores_after_round_2.jsonl`.
   - No TEST person has been read. TEST can be read only through
     `epuf_fill_gate.test_part()`, which refuses until `gates.yaml` locks
     this gate.
@@ -471,17 +473,34 @@ wrong population, among other findings (section 12).
 - O2 failed 4 `yr_cross` cells, each by under 1.2 tolerances.
 - `tests/test_epuf_fill_gate_floors.py` keeps v1 internally consistent.
 
-### 10a. Results of the amended (v2) build
+### 10a. Results of the registered (v3) build
 
-The registered v2 build ran once on DEV at `23bee82c`: the amendment-1
-rules commit `7061200d` plus the v2 PSID counts. It is
-`runs/epuf_fill_gate_floors_v2.json`.
+**Builds.**
+- The amended build ran once on DEV at `23bee82c` (v2).
+- After referee round 2's fixes, the registered build ran once at
+  `cb76ad15` (v3, `runs/epuf_fill_gate_floors_v3.json`, SHA-256
+  `d403a824...`), with its bound files clean.
+- The v3 build's truth, floors, tolerances and partition equal v2's
+  exactly. Round 2's fixes changed how fills are scored, not the floors.
+  `tests/test_epuf_fill_gate_floors.py` checks that equality.
+- The numbers below are v3's.
 
 **Partition**: 319 of 326 cells gate. Seven are report-only:
 - too few events: `wint` for men 22-29, men 60-74 and women 60-74;
   `atcap` for women 22-29 and 60-74; `zint` for women 60-74;
 - undefined floor: `odd.men.a45_59.q90`. Men's 90th-percentile positive
-  share is the cap in every sample, so its sampling error is zero.
+  share is the cap in every sample.
+
+**Men's `q90` sits at the cap in three more bands** (22-29 excluded): 22-74,
+30-44 and 60-74.
+- There `q90` is exactly 1 while more than 10 percent of positive shares
+  are at the cap.
+- Its floor counts how often a sample's at-cap share crosses 10 percent.
+- So in those bands `q90` gates only as a lower bound on the at-cap share
+  near 10 percent, much as `atcap` does. No cell measures men's upper-tail
+  dispersion.
+- Future registrations should compute `q90` among positive shares below
+  the cap.
 
 **Tolerances** (`K * sigma`) range by statistic:
 
@@ -499,8 +518,9 @@ rules commit `7061200d` plus the v2 PSID counts. It is
 
 The noise ratio `sqrt(n / N)` runs from 0.087 to 0.212.
 
-**Bite: both checks hold, so the gate can lock.**
-- **B1**, the current odd-year rule, fails 97 of 183 gating `odd` cells by
+**Bite: both checks hold, so the gate can lock.** Both are scored as fills
+through the scoring path.
+- **B1**, the current odd-year rule, fails 96 of 183 gating `odd` cells by
   more than two tolerances.
 - **B2**, the current pre-career rule, fails 112 of 136 gating `pre` cells
   by more than two tolerances.
@@ -514,24 +534,35 @@ The noise ratio `sqrt(n / N)` runs from 0.087 to 0.212.
 | 1935-1939 | 20% | 25% |
 | 1940-1945 | 8% | 13% |
 
-**Dosed perturbations** (report-only; number of gating cells failed, and
-failed by more than two tolerances):
+**Dosed perturbations** (report-only; gating cells failed, and failed by
+more than two tolerances):
 
 | Perturbation | Failed | Beyond 2 tol. |
 |---|---:|---:|
-| D1 copy `t+1` | 92 / 183 | 63 |
-| D2 marginal draws | 127 / 183 | 115 |
-| D3 shrink, lambda 0.75 | 56 / 183 | 37 |
-| D3 shrink, lambda 0.5 | 81 / 183 | 63 |
+| D1 copy the share at `t+1` | 63 / 183 | 47 |
+| D2 marginal draws | 127 / 183 | 116 |
+| D3 shrink, lambda 0.75 | 55 / 183 | 37 |
+| D3 shrink, lambda 0.5 | 81 / 183 | 62 |
 | D4 scale pre blocks by 0.95 | 12 / 136 | 5 |
 | D4 scale pre blocks by 0.90 | 16 / 136 | 12 |
 | D5 blocks permuted within sex and birth year | 75 / 136 | 54 |
 | D6 pre years permuted independently | 83 / 136 | 61 |
 
-- A pre-career level bias of 1.4 percent moves the most sensitive cell one
-  tolerance, and 2.9 percent moves it two.
-- A dispersion shrink of `lambda` = 0.996 moves one cell one tolerance. That
-  cell is `atcap`: any shrink takes values off the cap.
+- **D3's dose.** One tolerance is reached at `lambda` = 0.996, and the cell
+  is `odd.men.a22_74.q90`, the cap-bound cell above. The most sensitive
+  AIME cell, `odd.men.b1966_1980.paime_p90`, needs a shrink of 12.5
+  percent.
+- **D4's dose and the AIME.**
+  - A pre-career level bias of 1.4 percent moves `pre.men.b1946_1980.ylevel`
+    one tolerance. That is the scale factor seen directly.
+  - The AIME cells cannot see such a bias. Scaling every pre-career block
+    by 0.90 moves the pooled 1930-1945 median AIME for men by 2.2 percent
+    (0.53 tolerances), and no 1930-1945 AIME cell moves more than 0.61
+    tolerances.
+  - The most sensitive AIME cell, `pre.women.b1966_1980.paime_p25`, needs a
+    13.5 percent bias.
+  - `plevel` and `ylevel` see a pre-career level bias; the AIME cells see
+    only large ones.
 
 **Oracles** (report-only):
 - **O1** fails 32 of 183 gating `odd` cells: 8 `r2`, 10 `r4`, 9 `r3`, 3
@@ -689,7 +720,8 @@ these:
   lockable
 - [x] Referee round 2 (verification): LOCK AFTER LISTED FIXES
 - [x] Round 2's fixes; DEV candidate scores after amendment 1 disclosed
-- [ ] Floor build v3 on DEV (round 2's fixes; floors equal to v2's)
+- [x] Floor build v3 on DEV at `cb76ad15` (round 2's fixes; floors equal
+  to v2's); the TEST scoring module pins its SHA-256
 - [ ] Referee round 3 (confirmation of the fixes)
 - [ ] Max ratifies the materiality reading of the tolerance (queued
   decision)

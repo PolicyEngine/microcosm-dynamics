@@ -256,23 +256,31 @@ def test_registered_build_covers_the_amended_groups(registered):
     assert set(_builder().PARTS.values()) == {g.TRAIN, g.DEV}
 
 
+def _assert_bound(commit: str, paths) -> None:
+    probe = subprocess.run(
+        ["git", "-C", str(ROOT), "cat-file", "-e", f"{commit}^{{commit}}"],
+        capture_output=True,
+    )
+    if probe.returncode != 0:
+        pytest.skip("the build's commit is not in this clone")
+    for path in paths:
+        built = subprocess.run(
+            ["git", "-C", str(ROOT), "show", f"{commit}:{path}"],
+            capture_output=True,
+            check=True,
+        ).stdout
+        assert built == (ROOT / path).read_bytes(), (commit, path)
+
+
 def test_registered_build_is_bound_to_its_rules(registered):
     floors, scale = registered
-    for document in (floors, scale):
-        commit = document["code_commit"]
-        probe = subprocess.run(
-            ["git", "-C", str(ROOT), "cat-file", "-e", f"{commit}^{{commit}}"],
-            capture_output=True,
-        )
-        if probe.returncode != 0:
-            pytest.skip("the build's commit is not in this clone")
-        for path in BOUND_FILES:
-            built = subprocess.run(
-                ["git", "-C", str(ROOT), "show", f"{commit}:{path}"],
-                capture_output=True,
-                check=True,
-            ).stdout
-            assert built == (ROOT / path).read_bytes(), (commit, path)
+    _assert_bound(floors["code_commit"], BOUND_FILES)
+    assert floors["bound_files_clean"] is True
+    # The PSID counts depend only on their script and the group definitions
+    # (checked against groups() above).
+    _assert_bound(
+        scale["code_commit"], ["scripts/build_epuf_fill_psid_scale.py"]
+    )
 
 
 def test_registered_build_reports_the_dosed_perturbations(registered):

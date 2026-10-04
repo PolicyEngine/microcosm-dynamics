@@ -39,7 +39,9 @@ __all__ = [
 _ROOT = Path(__file__).resolve().parents[3]
 REGISTERED_FLOORS = _ROOT / "runs" / "epuf_fill_gate_floors_v3.json"
 #: SHA-256 of the registered build; set when the build is committed.
-REGISTERED_FLOORS_SHA256 = "PENDING_V3_BUILD"
+REGISTERED_FLOORS_SHA256 = (
+    "d403a824416f00524fadceefb897f5bdcaa197c12ebee0b1f1fd52304d98e25e"
+)
 
 
 def load_registered_floors(
