@@ -176,8 +176,28 @@ def _preflight(tmp_path, document=None, **kwargs):
 def test_the_registered_state_passes_preflight(tmp_path):
     state = _preflight(tmp_path)
     assert state["head"] == COMMIT
+    assert (
+        state["output_path"]
+        == (tmp_path / "runs" / "invented_groups_posthoc_v1.json").resolve()
+    )
     assert state["binding"]["registered_commit"] == mb.PARENT_REGISTERED_COMMIT
     assert not (tmp_path / "runs").exists()
+
+
+def test_relative_output_resolves_under_root(tmp_path, monkeypatch):
+    """Review of cd402456: the run writes the path preflight checked.
+
+    A relative --output given from another directory resolves against
+    the repository root, so the one-shot guard sees the written file.
+    """
+
+    elsewhere = tmp_path / "elsewhere"
+    elsewhere.mkdir()
+    monkeypatch.chdir(elsewhere)
+    relative = Path("runs") / "invented_groups_posthoc_v1.json"
+    state = _preflight(tmp_path, output=relative)
+    assert state["output_path"] == (tmp_path / relative).resolve()
+    assert state["output_path"].is_absolute()
 
 
 @pytest.mark.parametrize(

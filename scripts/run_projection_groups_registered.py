@@ -126,7 +126,7 @@ def preflight(
         git=git,
     )
     _check_specification(exercise, specification, config)
-    return {"head": state.git_head}
+    return {"head": state.git_head, "output_path": state.output_path}
 
 
 def _parent(exercise: str) -> tuple[dict[str, Any], dict[str, Any], str]:
@@ -400,7 +400,9 @@ def main(argv: list[str] | None = None) -> int:
         },
     }
     output.parent.mkdir(parents=True, exist_ok=True)
-    write_new_pair(output, artifact, environment)
+    # Write exactly the path preflight checked (absolute, under runs/),
+    # never the caller's possibly relative spelling.
+    write_new_pair(state["output_path"], artifact, environment)
     print(output)
     return 0
 

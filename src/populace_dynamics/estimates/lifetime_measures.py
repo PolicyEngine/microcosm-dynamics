@@ -1741,8 +1741,17 @@ def report_average_indexed_earnings_22_62(
                         for year, value in histories[spouse].items()
                         if first_year <= year <= last_year
                     }
+            # Under ALL_AGES every age in the window enters the average
+            # (absent own years count as zero), so married years absent
+            # from the own career still take the spouse's half.  The other
+            # divisors average over own covered ages only.
+            share_years = (
+                set(range(first_year, last_year + 1))
+                if divisor is AverageDivisor.ALL_AGES
+                else set(own)
+            )
             amounts, counts = _shared_amounts(
-                pid, own, spouse_amounts, marital, set(own)
+                pid, own, spouse_amounts, marital, share_years
             )
             row.update(vars(counts))
             row["marriage_history_absent"] = (

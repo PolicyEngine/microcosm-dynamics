@@ -59,7 +59,7 @@ def test_valid_preflight_creates_nothing(
         root=tmp_path,
         git=invented_git,
     )
-    assert state == {"head": COMMIT}
+    assert state == {"head": COMMIT, "output_path": output.resolve()}
     assert len(specification_spy) == 1
     assert list(tmp_path.iterdir()) == []
 
@@ -427,3 +427,46 @@ def test_mismatched_committed_cell_main_loads_no_attributes_or_writes(
     assert not output.exists()
     assert not output.with_suffix(".env.json").exists()
     assert list(tmp_path.iterdir()) == []
+
+
+@pytest.mark.parametrize("exercise", ["cola", "fra68"])
+def test_relative_output_resolves_under_root_and_stays_one_shot(
+    tmp_path, specification_spy, exercise, monkeypatch
+):
+    """Review of cd402456: a relative --output from another directory.
+
+    Preflight resolves it against the repository root; the run writes
+    exactly that path; a second preflight with the same relative spelling
+    then refuses.  Before the fix the run wrote the caller's relative
+    spelling, so the checked path stayed absent and a second run passed.
+    """
+
+    root = tmp_path / "repo"
+    (root / "runs").mkdir(parents=True)
+    elsewhere = tmp_path / "elsewhere"
+    elsewhere.mkdir()
+    monkeypatch.chdir(elsewhere)
+    relative = Path("runs") / "invented_groups_posthoc_v1.json"
+    state = runner.preflight(
+        exercise=exercise,
+        registration_pointer=POINTER,
+        registered_commit=COMMIT,
+        output=relative,
+        root=root,
+        git=invented_git,
+    )
+    assert state["output_path"] == (root / relative).resolve()
+    runner.write_new_pair(
+        state["output_path"], {"invented": True}, {"invented": True}
+    )
+    assert (root / relative).exists()
+    assert not (elsewhere / relative).exists()
+    with pytest.raises(Exception, match="one-shot"):
+        runner.preflight(
+            exercise=exercise,
+            registration_pointer=POINTER,
+            registered_commit=COMMIT,
+            output=relative,
+            root=root,
+            git=invented_git,
+        )

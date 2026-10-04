@@ -1402,3 +1402,49 @@ def test_report_default_refuses_unknown_marital_years():
     assert row.status == lm.NOT_COMPUTED
     assert row.reason == "marital_state_unavailable"
     assert row.years_marital_unknown == 41
+
+
+def test_report_all_ages_shares_spouse_earnings_in_absent_own_years():
+    """Review of cd402456: ALL_AGES must not drop a married absent year.
+
+    INVENTED: person 1 (born 1950) has zero earnings at 40 of the 41
+    ages 22-62 and no row at age 40; spouse 2 earns 1,000 at every age;
+    they are married throughout and the wage index is flat.  Every
+    married year shares to (own + spouse) / 2 = 500, the absent own year
+    included, so the 41-year average is 500.
+    """
+
+    birth = 1950
+    window = range(birth + 22, birth + 63)
+    absent = birth + 40
+    flat = SSAParameters(
+        nawi={y: 1_000.0 for y in range(1951, 2071)},
+        wage_base={1937: 1_000_000.0},
+        pia_factors=(0.9, 0.32, 0.15),
+        fra_months_by_birth_year=[(1900, 792), (1955, 804)],
+        early_monthly_rates=(5 / 900, 5 / 1200),
+        early_first_bracket_months=36,
+        pe_us_revision="INVENTED",
+        delayed_credit_by_birth_year=[(1900, 0.08)],
+    )
+    careers = _careers(
+        {
+            1: {year: 0.0 for year in window if year != absent},
+            2: dict.fromkeys(window, 1_000.0),
+        }
+    )
+    result = lm.report_average_indexed_earnings_22_62(
+        careers,
+        _persons({1: birth, 2: birth}),
+        flat,
+        shared=True,
+        marriage_episodes=_couple(birth),
+        conventions=lm.ReportEarningsConventions(
+            divisor=lm.AverageDivisor.ALL_AGES,
+            missing_spouse=lm.MissingSpousePolicy.OWN_ONLY,
+        ),
+    )
+    row = result.frame.set_index("person_id").loc[1]
+    assert row.status == lm.COMPUTED
+    assert row.average_indexed_earnings == pytest.approx(500.0, abs=1e-9)
+    assert row.married_years_own_year_absent == 1

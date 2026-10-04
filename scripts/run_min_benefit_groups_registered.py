@@ -205,7 +205,12 @@ def preflight(
         specification_sha256=common.file_sha256(specification_path),
     )
     check_specification_for_registered_run(m1_parameter_block())
-    return {"head": state.git_head, "parent": parent, "binding": binding}
+    return {
+        "head": state.git_head,
+        "output_path": state.output_path,
+        "parent": parent,
+        "binding": binding,
+    }
 
 
 def _field(record: Mapping[str, Any], dotted: str) -> Any:
@@ -409,7 +414,9 @@ def execute(
             ),
         },
     }
-    output = Path(output)
+    # Write exactly the path preflight checked (absolute, under runs/),
+    # never the caller's possibly relative spelling.
+    output = state["output_path"]
     output.parent.mkdir(parents=True, exist_ok=True)
     common.write_artifact_pair(
         output=output, artifact=artifact, environment=env
