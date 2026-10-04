@@ -84,7 +84,25 @@ ROUND_3 = {
         "independent Opus 5.5 lane (subfleet job "
         "20261002-172832-epuf-gate-r3), reviewing head 93848324"
     ),
-    "verdict": "APPROVE (five minor points, applied)",
+    "verdict": "APPROVE (five minor points)",
+    "fixes": "applied in 95291e75",
+}
+
+#: Round 4 confirmed the final head.
+ROUND_4 = {
+    "report": "reviews/gate_epuf_round4_confirmation_20261002.md",
+    "reviewer": (
+        "independent Opus 5.5 lane (subfleet job "
+        "20261002-173551-epuf-gate-r4), reviewing head 95291e75"
+    ),
+    "verdict": "APPROVE (three optional points)",
+    "fixes": (
+        "The committed-bridges test checks each estimate against the mean "
+        "of its seeds, computed without pooled_estimate, on seed values "
+        "skewed so that a median or a mean of logs fails; rounds 3 and 4 "
+        "record the verdict and the fixes apart; one proposal line is "
+        "rewrapped."
+    ),
 }
 
 HEADER = """\
@@ -255,6 +273,7 @@ def render_block(
                 "referee_round_1": ROUND_1,
                 "verification_round_2": ROUND_2,
                 "rereview_round_3": ROUND_3,
+                "confirmation_round_4": ROUND_4,
                 "lock_ceremony": {
                     "exists": False,
                     "stage": "closed without lock (referee round 1)",

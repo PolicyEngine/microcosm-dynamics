@@ -13,6 +13,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import statistics
 from pathlib import Path
 
 import pytest
@@ -364,11 +365,19 @@ def test_supplement_birth_year_mix_is_a_distribution_within_each_band():
         ) < (0.25)
 
 
-def test_block_records_both_review_rounds():
+def test_block_records_every_review_round():
     block = _block()
-    for key in ("referee_round_1", "verification_round_2", "rereview_round_3"):
+    rounds = (
+        "referee_round_1",
+        "verification_round_2",
+        "rereview_round_3",
+        "confirmation_round_4",
+    )
+    for key in rounds:
         assert (ROOT / block[key]["report"]).is_file()
-    assert block["rereview_round_3"]["verdict"].startswith("APPROVE")
+    for key in ("rereview_round_3", "confirmation_round_4"):
+        assert block[key]["verdict"].startswith("APPROVE")
+        assert "applied" not in block[key]["verdict"]
     assert (
         "MERGE AFTER LISTED FIXES" in block["verification_round_2"]["verdict"]
     )
@@ -378,7 +387,8 @@ def _fixed_per_seed_values(cells):
     """Invented per-seed cell values near each cell's PSID value."""
     values = {}
     for seed in gate.GATE_SEEDS:
-        tilt = 1.0 + 0.004 * (seed - 9.5)
+        # Skewed, so the seeds' mean differs from their median.
+        tilt = 1.0 + 0.004 * (seed - 9.5) + 0.0002 * (seed - 9.5) ** 2
         values[seed] = {
             cell_id: (
                 0.5 if cell["psid_value"] is None else cell["psid_value"]
@@ -411,6 +421,10 @@ def test_report_candidate_terms_against_the_committed_bridges(monkeypatch):
         assert row["per_seed_values"] == per_seed
         estimate = gate.pooled_estimate(cell_id, per_seed)
         assert row["estimate"] == pytest.approx(estimate)
+        # Computed without pooled_estimate: average the seeds, then transform.
+        assert estimate == pytest.approx(
+            transform(cell_id, statistics.fmean(per_seed))
+        )
         cell = cells[cell_id]
         epuf_value = transform(cell_id, cell["epuf_value"])
         assert row["gap_from_epuf"] == pytest.approx(estimate - epuf_value)
