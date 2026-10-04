@@ -2,13 +2,16 @@
 
 - **Registration id**: `2026-10-03-epuf-career-fill`
 - **Gate**: `gate_epuf_fill` (registered, `locked: false`; not in
-  `gates.yaml` until the lock ceremony in section 12 completes)
+  `gates.yaml` until the lock ceremony in section 13 completes)
 - **Surface**: the two rules the career assembler
   (`populace_dynamics.estimates.career.build_career`) uses to fill years the
   PSID did not record, and their learned replacements, scored on held-out
   persons of SSA's 2006 Earnings Public-Use File (EPUF).
-- **Ceremony stage**: RULES. No DEV floor has been built, no candidate has
-  been fitted, and no TEST person has been read.
+- **Ceremony stage**: FLOORS BUILT, awaiting the referee round. No candidate
+  has been fitted, and no TEST person has been read.
+- **Evidence**: `runs/epuf_fill_gate_psid_scale_v1.json` (PSID-2010 counts,
+  built at `14045be4`) and `runs/epuf_fill_gate_floors_v1.json` (the DEV
+  floor build, at `d21aa659`); pinned by `tests/test_epuf_fill_gate_floors.py`.
 - **Code**: `src/populace_dynamics/harness/epuf_fill_gate.py` (split, masks,
   current rules, cells, floors, partition, scoring, adoption, oracles),
   `tests/harness/test_epuf_fill_gate.py`,
@@ -350,7 +353,7 @@ improvement, and no text may call it certified.
   the rule that produced it.
 - `cohorts/psid2010.py`, which is outside the seal, gains a spec field for
   the fill. Its default stays the current rule until a new registration of
-  the DYNASIM projections adopts the learned fills (section 10).
+  the DYNASIM projections adopts the learned fills (section 11).
 
 ## 9. Evidence before the floor build
 
@@ -404,7 +407,72 @@ family `pre` covers every year before `max(1968, birth_year + 22)`, not only
      rule would stay even when a candidate beats it in every cell.
 - Neither change moves a floor, a tolerance or the partition.
 
-## 10. What changes downstream
+## 10. Results of the DEV floor build
+
+The registered build ran once on DEV, at `d21aa659`: the rules commit
+`14045be4` plus the PSID counts. It took 331 seconds.
+
+**Partition**: 130 of 136 cells gate. Six are report-only because they have
+too few events:
+- `atcap` for men 18-29 and for women 18-29 and 60-74;
+- `wint` for men and women 60-74;
+- `zint` for women 60-74.
+
+**Tolerances** (`K * sigma`) range by statistic:
+
+| Statistic | Tolerance | Statistic | Tolerance |
+|---|---|---|---|
+| `r1` | 0.0035-0.0099 | `aime_p50` | 0.051-0.125 (log) |
+| `r2` | 0.0063-0.0219 | `pzero` | 0.045-0.127 (log) |
+| `r4` | 0.0087-0.0420 | `plevel` | 0.041-0.090 (log) |
+| `zint` | 0.072-0.161 (log) | `pr_in` | 0.067-0.142 |
+| `zexit` | 0.021-0.050 (log) | `pr_cross` | 0.062-0.128 |
+| `wint` | 0.101-0.164 (log) | `yzero` | 0.015-0.024 (log) |
+| `level` | 0.014-0.045 (log) | `ylevel` | 0.020-0.030 (log) |
+| `atcap` | 0.044-0.117 (log) | `yr_cross` | 0.025-0.038 |
+
+The noise ratio `sqrt(n / N)` runs from 0.087 to 0.212 across the groups.
+
+**Bite: both checks hold, so the gate can lock.**
+- **B1**, the current odd-year rule, fails 48 of 70 gating `odd` cells by
+  more than two tolerances:
+  - every `r1` cell (7 to 17 tolerances too persistent);
+  - every `r2` cell (4 to 13);
+  - six of eight `r4` cells;
+  - every `atcap` cell (8 to 17);
+  - every `zint`, `zexit` and `wint` cell (the filled share is zero, so the
+    gap is infinite).
+  - Its AIME quartiles and `level` sit within a tolerance: the rule distorts
+    persistence and zero years, not levels.
+- **B2**, the current pre-career rule, fails 54 of 60 gating `pre` cells by
+  more than two tolerances:
+  - every `pzero` cell (12 to 16 tolerances);
+  - every `yzero` cell (37 to 56);
+  - every `plevel`, `pr_in`, `pr_cross`, `ylevel` and `yr_cross` cell
+    (infinite);
+  - twelve of the eighteen AIME quartiles (1.3 to 5.1 tolerances at the
+    median).
+
+**Oracles** (report-only):
+- **O1** fails 16 of 70 gating `odd` cells:
+  - seven of the eight `r2` cells and six `r4` cells, by 0.015-0.043 (too little
+    persistence across masked years, as section 9 predicted for a fill
+    conditioning on `t-1` and `t+1` alone);
+  - `wint` for both sexes at 18-29;
+  - `zexit` for women 18-29, narrowly.
+- **O2** fails 4 of 60 gating `pre` cells: `yr_cross` for men born
+  1946-1955 and for women born 1946-1955, 1956-1965 and 1966-1980, each by
+  under 1.2 tolerances.
+- Their gaps' spread over the 20 seeds is far below every tolerance:
+  `r2`'s seed standard deviation is 0.0005-0.0023 against tolerances of
+  0.006-0.022.
+
+What a candidate must do follows from the oracles. Matching only the two
+neighbours does not reproduce multi-year persistence, so the primary's copula
+and its conditioning on `t-3` and `t+3` carry real weight. Young workers'
+re-entry (`wint`) needs more than the neighbours too.
+
+## 11. What changes downstream
 
 - The DYNASIM projection comparisons (registered one-shot benchmarks) build
   their cohort with `cohorts.psid2010`, so their AIMEs inherit the fill.
@@ -413,7 +481,7 @@ family `pre` covers every year before `max(1968, birth_year + 22)`, not only
 - The first-estimates path (`build_career_inclusion`) is sealed historical
   evidence and keeps the current rule.
 
-## 11. Considered and rejected
+## 12. Considered and rejected
 
 1. **Floors from two halves of all DEV persons.** Each half would have
    about 440,000 persons, and its sampling error would be a twentieth or
@@ -431,12 +499,13 @@ family `pre` covers every year before `max(1968, birth_year + 22)`, not only
 5. **Weighting the PSID counts.** Effective sample sizes would loosen the
    floors. The unweighted count is the stricter choice.
 
-## 12. Ceremony checklist
+## 13. Ceremony checklist
 
-- [ ] Rules (this document, the code and tests) pushed before any DEV floor
-- [ ] PSID scale counts, `runs/epuf_fill_gate_psid_scale_v1.json`
-- [ ] Floor build on DEV, `runs/epuf_fill_gate_floors_v1.json`: floors,
-  partition, bite (B1, B2) and oracles (O1, O2)
+- [x] Rules (this document, the code and tests) pushed before any DEV floor
+  (`14045be4`)
+- [x] PSID scale counts, `runs/epuf_fill_gate_psid_scale_v1.json`
+- [x] Floor build on DEV, `runs/epuf_fill_gate_floors_v1.json`: floors,
+  partition, bite (B1, B2) and oracles (O1, O2); lockable
 - [ ] Adversarial referee round (independent Opus 5.5 lane)
 - [ ] Fixes; verification round
 - [ ] Ratifying merge; lock flip in `gates.yaml`
