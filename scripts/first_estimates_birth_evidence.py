@@ -355,6 +355,10 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # EPUF careers after the fact; nothing historical imports them.
     Path("src/populace_dynamics/harness/epuf_fill_gate.py"),
     Path("src/populace_dynamics/harness/epuf_fill_scoring.py"),
+    # The opt-in learned EPUF career fills and their application to a
+    # built PSID-2010 cohort; nothing historical imports them.
+    Path("src/populace_dynamics/estimates/epuf_fill.py"),
+    Path("src/populace_dynamics/cohorts/psid2010_epuf_fill.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(
