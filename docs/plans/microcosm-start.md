@@ -240,7 +240,7 @@ The registration fixes each test's question, held-out data, split, cells, statis
 The tests above score results. The code that produces them also has properties that hold for every input, and each becomes a property-based test (Hypothesis) beside the example tests, run on invented data:
 
 - **Histories.** Every returned share of the wage base is finite and in [0, 1]. The anchor year comes back unchanged, and no year outside the person's career window is written. The same inputs and seeds give the same history. No history has earnings before the person's year of US entry.
-- **Ranks.** Converting a rank to dollars and back returns the rank, within the clamps the rank machinery uses (0.001 and 0.999; `engine/forward_earnings.py:70-71`).
+- **Ranks.** For positive earnings, converting a rank to dollars and back returns the rank, within the clamps the rank machinery uses (0.001 and 0.999; `engine/forward_earnings.py:70-71`).
 - **Inferred PIAs.** Applying the claim-age adjustment and the COLAs since entitlement to an inferred PIA reproduces the frame's benefit to the dime, for every beneficiary. No inferred PIA is negative.
 - **Weights.** In a projection without entrants, the total weight in a year equals the previous year's total less the weight of the people who died. Nothing else changes a weight.
 - **Aging rule.** Each item's rank within sex and age band carries over from year to year. Growing a whole band by a factor multiplies its quantiles by that factor.
