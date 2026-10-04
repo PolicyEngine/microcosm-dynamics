@@ -343,6 +343,32 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/bridge/invented_population.py"),
     Path("src/populace_dynamics/bridge/population.py"),
     Path("src/populace_dynamics/bridge/population_summary.py"),
+    # The opt-in EPUF reader, measurement operator, cell statistics, gate
+    # algebra and scoring path (the proposed EPUF gate) read SSA's public
+    # earnings file after the fact; nothing historical imports them.
+    Path("src/populace_dynamics/data/epuf.py"),
+    Path("src/populace_dynamics/harness/epuf_operator.py"),
+    Path("src/populace_dynamics/harness/epuf_cells.py"),
+    Path("src/populace_dynamics/harness/epuf_gate.py"),
+    Path("src/populace_dynamics/harness/epuf_run.py"),
+    # The selectable projection baselines (NASI follow-up, 2026-10-01) are
+    # opt-in inputs for unregistered projections; every registered result
+    # keeps the TR2008 path, and nothing historical imports them.
+    Path("src/populace_dynamics/data/tr2026.py"),
+    Path("src/populace_dynamics/data/cbo2026.py"),
+    Path("src/populace_dynamics/data/life_table.py"),
+    Path("src/populace_dynamics/baselines/__init__.py"),
+    Path("src/populace_dynamics/baselines/asfr.py"),
+    Path("src/populace_dynamics/baselines/base.py"),
+    Path("src/populace_dynamics/baselines/cbo2026_long_term.py"),
+    Path("src/populace_dynamics/baselines/claim_tables.py"),
+    Path("src/populace_dynamics/baselines/common2026.py"),
+    Path("src/populace_dynamics/baselines/fertility.py"),
+    Path("src/populace_dynamics/baselines/interpolation.py"),
+    Path("src/populace_dynamics/baselines/legacy.py"),
+    Path("src/populace_dynamics/baselines/realized.py"),
+    Path("src/populace_dynamics/baselines/tr2026_intermediate.py"),
+    Path("src/populace_dynamics/baselines/track_a.py"),
     # NASI group attributes, lifetime measures, tabulation and post hoc
     # replay adapters are opt-in and unreachable from the reviewed
     # birth-evidence projection. Preserve its historical identity seal.
