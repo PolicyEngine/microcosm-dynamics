@@ -354,6 +354,7 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # The opt-in rules of the EPUF career-fill gate score fills on held-out
     # EPUF careers after the fact; nothing historical imports them.
     Path("src/populace_dynamics/harness/epuf_fill_gate.py"),
+    Path("src/populace_dynamics/harness/epuf_fill_scoring.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(

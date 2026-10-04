@@ -1,12 +1,15 @@
 """gate_epuf_fill's committed floors recompute from what they store.
 
-``runs/epuf_fill_gate_floors_v2.json`` is the registered DEV floor build
-(amendment 1); its rules and builders are bound to the commit it ran at,
-and its sample sizes, seeds, sigmas, tolerances, partition and checks on
-bite recompute from the stored replicates and the PSID-2010 counts
-(``runs/epuf_fill_gate_psid_scale_v2.json``).
-``runs/epuf_fill_gate_floors_v1.json`` is the first build, superseded by
-amendment 1 and frozen; it must stay internally consistent.
+``runs/epuf_fill_gate_floors_v3.json`` is the registered DEV floor build
+(amendment 1 with referee round 2's fixes); its rules, cell helpers and
+builders are bound to the commit it ran at, and its sample sizes, seeds,
+sigmas, tolerances, partition and checks on bite recompute from the stored
+replicates and the PSID-2010 counts
+(``runs/epuf_fill_gate_psid_scale_v2.json``). Its floors, tolerances and
+partition equal the v2 build's exactly: round 2's fixes changed the
+scoring of fills, not the floors. ``runs/epuf_fill_gate_floors_v1.json``
+(the first build) and ``..._v2.json`` are superseded and frozen; they must
+stay internally consistent.
 """
 
 from __future__ import annotations
@@ -34,11 +37,18 @@ BUILDS = {
         RUNS / "epuf_fill_gate_floors_v2.json",
         RUNS / "epuf_fill_gate_psid_scale_v2.json",
     ),
+    "v3": (
+        RUNS / "epuf_fill_gate_floors_v3.json",
+        RUNS / "epuf_fill_gate_psid_scale_v2.json",
+    ),
 }
+REGISTERED = "v3"
 #: Files whose bytes at the registered build's commit must equal the
-#: checkout's: the rules and the builders that ran.
+#: checkout's: the rules, the cell helpers, the wage bases and the builders.
 BOUND_FILES = (
     "src/populace_dynamics/harness/epuf_fill_gate.py",
+    "src/populace_dynamics/harness/epuf_cells.py",
+    "src/populace_dynamics/harness/epuf_operator.py",
     "scripts/build_epuf_fill_gate_floors.py",
     "scripts/build_epuf_fill_psid_scale.py",
 )
@@ -57,7 +67,7 @@ def build(request):
 
 @pytest.fixture(scope="module")
 def registered():
-    return _load("v2")
+    return _load(REGISTERED)
 
 
 def _builder():
@@ -70,7 +80,7 @@ def _builder():
     return module
 
 
-def test_both_builds_are_dev_builds_with_the_registered_constants(build):
+def test_every_build_is_a_dev_build_with_the_registered_constants(build):
     version, floors, _ = build
     assert floors["schema"] == (
         f"populace_dynamics.epuf_fill_gate_floors.{version}"
@@ -112,7 +122,7 @@ def _sigma(values):
 
 
 def test_sizes_seeds_and_sigmas_recompute(build):
-    _, floors, scale = build
+    version, floors, scale = build
     groups = sorted(floors["groups"])
     assert groups == sorted({g.group_of(cell) for cell in floors["truth"]})
     for index, group in enumerate(groups):
@@ -138,6 +148,15 @@ def test_sizes_seeds_and_sigmas_recompute(build):
                 / basis["dev_units_per_eligible_person"]
             )
         assert 2 * n <= record["pool_size"]
+        # A cohort group's pool is exactly the population its cells count.
+        if "psid_persons" in basis and version != "v1":
+            cells = [
+                c
+                for c in floors["truth"]
+                if c.startswith(f"{group}.") and "aime_p50" in c
+            ]
+            assert cells, group
+            assert record["pool_size"] == floors["truth"][cells[0]]["n"]
         assert record["noise_ratio"] == pytest.approx(
             np.sqrt(n / record["pool_size"])
         )
@@ -160,9 +179,7 @@ def _floor_groups(floors):
             seed=tuple(record["seed"]),
             replicates={},
             sigma={k: float(v) for k, v in record["sigma"].items()},
-            min_events={
-                k: tuple(v) for k, v in record["min_events"].items()
-            },
+            min_events={k: tuple(v) for k, v in record["min_events"].items()},
         )
         for group, record in floors["groups"].items()
     }
@@ -262,7 +279,7 @@ def test_registered_build_reports_the_dosed_perturbations(registered):
     floors, _ = registered
     doses = floors["dosed_perturbations"]
     for name in (
-        "D1_copy_next_year",
+        "D1_copy_next_year_share",
         "D2_marginal_within_sex_age",
         "D3_shrink_to_median_lambda_0.75",
         "D3_shrink_to_median_lambda_0.5",
@@ -280,3 +297,51 @@ def test_registered_build_reports_the_dosed_perturbations(registered):
     ):
         one, two = (float(doses[name][key]) for key in ("1", "2"))
         assert 0 < one < two
+
+
+def test_registered_floors_equal_the_v2_floors_exactly(registered):
+    floors, _ = registered
+    v2, _ = _load("v2")
+    assert floors["truth"] == v2["truth"]
+    assert floors["partition"] == v2["partition"]
+    assert floors["tolerance"] == v2["tolerance"]
+    for group, record in floors["groups"].items():
+        old = v2["groups"][group]
+        for key in (
+            "sample_size",
+            "pool_size",
+            "seed",
+            "sigma",
+            "replicates",
+            "min_events",
+        ):
+            assert record[key] == old[key], (group, key)
+
+
+def test_registered_build_was_clean_and_names_its_dose_cells(registered):
+    floors, _ = registered
+    assert floors["bound_files_clean"] is True
+    doses = floors["dosed_perturbations"]
+    for name in (
+        "D3_shrink_to_median_lambda_dose_at_tolerances",
+        "D4_scale_pre_blocks_dose_at_tolerances",
+    ):
+        assert doses[name]["1_cell"] in floors["tolerance"]
+        assert doses[name]["1_aime_cell"] in floors["tolerance"]
+    # The odd family's checks never move a pre-career odd year.
+    assert "D1_copy_next_year_share" in doses
+
+
+def test_the_scoring_module_pins_the_registered_build(registered):
+    from populace_dynamics.harness import epuf_fill_scoring as scoring
+
+    path = BUILDS[REGISTERED][0]
+    assert scoring.REGISTERED_FLOORS == path
+    assert (
+        scoring.REGISTERED_FLOORS_SHA256
+        == hashlib.sha256(path.read_bytes()).hexdigest()
+    )
+    loaded = scoring.load_registered_floors()
+    assert loaded["gating"] == sorted(
+        c for c, r in registered[0]["partition"].items() if r == "gates"
+    )

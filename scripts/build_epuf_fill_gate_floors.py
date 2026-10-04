@@ -16,13 +16,20 @@ and writes, per the registration as amended after referee round 1
 5. the oracles O1 and O2 over ``ORACLE_SEEDS``, reported without a verdict;
 6. dosed perturbations of the truth (D1-D6), reported without a verdict:
    each one's gap in tolerances, and for the dosed ones the dose at which
-   the most sensitive cell reaches one and two tolerances.
+   the most sensitive cell (and the most sensitive AIME cell) reaches one
+   and two tolerances, with the cell named.
+
+Round 2's fixes (``reviews/gate_epuf_fill_round2_verification_20261004.md``):
+the current rules are scored as fills through ``score_candidate``; every
+perturbation and oracle moves only its family's own cells (the odd
+family's no longer include odd years before the career start); D1 copies
+shares; the record says whether the bound files were clean.
 
 No TEST person is read. Usage::
 
     python scripts/build_epuf_fill_gate_floors.py \
         --psid-scale runs/epuf_fill_gate_psid_scale_v2.json \
-        --output runs/epuf_fill_gate_floors_v2.json
+        --output runs/epuf_fill_gate_floors_v3.json
 
 ``--part train --replicates 20`` makes a dry run on TRAIN for debugging;
 its output is never a registered floor.
@@ -48,7 +55,7 @@ from populace_dynamics.harness import epuf_fill_gate as g
 from populace_dynamics.harness.epuf_operator import wage_base
 
 ROOT = Path(__file__).resolve().parents[1]
-SCHEMA = "populace_dynamics.epuf_fill_gate_floors.v2"
+SCHEMA = "populace_dynamics.epuf_fill_gate_floors.v3"
 PARTS = {"train": g.TRAIN, "dev": g.DEV}
 
 
@@ -59,6 +66,29 @@ def _git_head() -> str:
         capture_output=True,
         text=True,
     ).stdout.strip()
+
+
+#: The files whose bytes define a build (the rules, the cell helpers, the
+#: wage bases and the builders).
+BOUND_FILES = (
+    "src/populace_dynamics/harness/epuf_fill_gate.py",
+    "src/populace_dynamics/harness/epuf_cells.py",
+    "src/populace_dynamics/harness/epuf_operator.py",
+    "scripts/build_epuf_fill_gate_floors.py",
+    "scripts/build_epuf_fill_psid_scale.py",
+)
+
+
+def _bound_files_clean() -> bool:
+    """Whether the bound files equal HEAD's at build time."""
+    return (
+        subprocess.run(
+            ["git", "-C", str(ROOT), "diff", "--quiet", "HEAD", "--"]
+            + list(BOUND_FILES),
+            check=False,
+        ).returncode
+        == 0
+    )
 
 
 def _sha256(path: Path) -> str:
@@ -114,7 +144,12 @@ def judged(truth, filled_draws, tolerance, gating) -> dict[str, object]:
 
     family = g.group_of(next(iter(filled_draws[0]))).split(".")[0]
     truth = {k: v for k, v in truth.items() if k.startswith(f"{family}.")}
-    result = g.score(truth, filled_draws, tolerance, gating)
+    return with_multiples(g.score(truth, filled_draws, tolerance, gating))
+
+
+def with_multiples(result: dict[str, object]) -> dict[str, object]:
+    """Add each gating cell's |gap| in tolerances; strings for non-finite."""
+
     for row in result["cells"].values():
         if "tolerance" in row:
             row["gap_in_tolerances"] = (
@@ -155,7 +190,8 @@ def dosed_perturbations(
 ) -> dict[str, object]:
     """D1-D6: perturbations of the truth, scored without a verdict.
 
-    D1 copies ``t+1`` into each masked odd year ``t``. D2 permutes each
+    D1 copies the share of the wage base at ``t+1`` into each masked odd
+    year ``t``. D2 permutes each
     masked odd year within sex by five-year age band (the marginal law).
     D3 shrinks each positive masked odd year's log share toward the median
     of its sex-by-age stratum by a factor lambda (0.75 and 0.5). D4 scales
@@ -170,6 +206,10 @@ def dosed_perturbations(
     out: dict[str, object] = {}
 
     def record(name, family, matrix):
+        # A perturbation moves only its family's own cells (an odd year
+        # before the career start belongs to the pre-career rule).
+        own = g.family_mask(family, birth)
+        matrix = np.where(own, matrix, earnings)
         result = judged(
             truth,
             [family_cells(family, matrix_override=matrix)],
@@ -192,8 +232,11 @@ def dosed_perturbations(
 
     copy = earnings.copy()
     for column in odd_columns:
-        copy[:, column] = earnings[:, column + 1]
-    record("D1_copy_next_year", "odd", copy)
+        # Copy the share of the wage base, so a copied value stays capped.
+        copy[:, column] = (
+            earnings[:, column + 1] / caps[column + 1] * caps[column]
+        )
+    record("D1_copy_next_year_share", "odd", copy)
 
     marginal = earnings.copy()
     for year, column in zip(g.MASKED_ODD_YEARS, odd_columns, strict=True):
@@ -259,18 +302,29 @@ def dosed_perturbations(
         reach = {1: [], 2: []}
         for dose in doses:
             distance = 1.0 - dose
-            for row in out[f"{prefix}{dose}"]["score"]["cells"].values():
+            for cell, row in out[f"{prefix}{dose}"]["score"]["cells"].items():
                 if "gap_in_tolerances" not in row:
                     continue
                 multiple = float(row["gap_in_tolerances"])
                 if not np.isfinite(multiple) or multiple <= 0:
                     continue
                 for level in (1, 2):
-                    reach[level].append(level * distance / multiple)
-        out[f"{prefix}dose_at_tolerances"] = {
-            f"{level}": _finite(min(values, default=np.nan))
-            for level, values in reach.items()
-        }
+                    reach[level].append((level * distance / multiple, cell))
+        record_doses = {}
+        for level, values in reach.items():
+            dose, cell = min(values, default=(np.nan, None))
+            record_doses[f"{level}"] = _finite(dose)
+            record_doses[f"{level}_cell"] = cell
+        # The most sensitive AIME cell, reported on its own.
+        aime = [
+            (value, cell)
+            for value, cell in reach[1]
+            if ".aime_" in cell or ".paime_" in cell
+        ]
+        value, cell = min(aime, default=(np.nan, None))
+        record_doses["1_aime"] = _finite(value)
+        record_doses["1_aime_cell"] = cell
+        out[f"{prefix}dose_at_tolerances"] = record_doses
     return out
 
 
@@ -350,22 +404,28 @@ def main() -> None:
         for cell_id in gating
     }
 
-    b1 = judged(
-        truth,
-        [family_cells("odd", matrix_override=g.current_odd_fill(earnings))],
-        tolerance,
-        gating,
+    # The current rules are scored as fills through the registered path.
+    matrix_dev = g.EPUFMatrix(
+        person_id=matrix.person_id,
+        birth_year=birth,
+        sex=sex,
+        earnings=earnings,
     )
-    b2 = judged(
-        truth,
-        [
-            family_cells(
-                "pre",
-                matrix_override=g.current_pre_career_fill(earnings, birth),
+    b1, b2 = (
+        with_multiples(
+            g.score_candidate(
+                g.current_rule(family),
+                family,
+                matrix_dev,
+                truth,
+                tolerance,
+                gating,
+                seeds=g.DRAW_SEEDS[:1],
+                wage_bases=wage_bases,
+                nawi=nawi,
             )
-        ],
-        tolerance,
-        gating,
+        )
+        for family in ("odd", "pre")
     )
     bites = {
         "B1_current_odd_rule": {**bite_holds(b1, "odd"), "score": b1},
@@ -382,11 +442,14 @@ def main() -> None:
     print(f"doses: {time.time() - started:.0f}s", flush=True)
 
     seeds = g.ORACLE_SEEDS[: args.oracle_seeds]
+    odd_own = g.family_mask("odd", birth)
     o1 = [
         family_cells(
             "odd",
-            matrix_override=g.odd_oracle_fill(
-                earnings, birth, sex, wage_bases, seed
+            matrix_override=np.where(
+                odd_own,
+                g.odd_oracle_fill(earnings, birth, sex, wage_bases, seed),
+                earnings,
             ),
         )
         for seed in seeds
@@ -419,6 +482,7 @@ def main() -> None:
             and args.oracle_seeds is None
         ),
         "code_commit": _git_head(),
+        "bound_files_clean": _bound_files_clean(),
         "built_at_utc": built_at,
         "inputs": {
             "epuf_sha256": dict(epuf.EPUF_SHA256),

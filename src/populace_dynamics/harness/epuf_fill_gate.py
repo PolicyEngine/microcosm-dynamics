@@ -43,7 +43,9 @@ population its cells count, added pooled groups, the AIME's 10th and
 90th percentiles, a partial AIME through 2006 for later cohorts, the
 ``r3`` and positive-share quantile statistics, the union-mask scoring
 path with its validity checks, the audited TEST read and a cap on the
-"improves" tier.
+"improves" tier. Referee round 2 (``reviews/gate_epuf_fill_round2_verification_20261004.md``)
+moved pre-career odd years out of the odd family's mask and made the
+current rules fills on the scoring path; neither changes a floor.
 """
 
 from __future__ import annotations
@@ -61,12 +63,15 @@ __all__ = [
     "ADOPTION_TIERS",
     "AIME_QUANTILES",
     "BITE_MULTIPLE",
+    "CurrentOddFill",
+    "CurrentPreFill",
     "DEV",
     "DRAW_SEEDS",
     "EPUFMatrix",
     "EVENTS_SHARE",
     "FIRST_YEAR",
     "FLOOR_SEED_BASE",
+    "FillOutputInvalid",
     "FloorGroup",
     "IMPROVES_CAP",
     "K_TOLERANCE",
@@ -94,6 +99,7 @@ __all__ = [
     "cell_metric",
     "current_odd_fill",
     "current_pre_career_fill",
+    "current_rule",
     "earnings_from_shares",
     "epuf_matrix",
     "family_cells",
@@ -285,10 +291,16 @@ def pre_career_mask(birth_year: np.ndarray) -> np.ndarray:
 
 
 def family_mask(family: str, birth_year: np.ndarray) -> np.ndarray:
-    """The cells a family's fill replaces."""
+    """The cells a family's fill replaces.
+
+    ``odd``: the masked odd years inside the career (from ``max(1968,
+    birth_year + 22)``); an odd year before the career start belongs to the
+    pre-career rule, which fills it in use (round 2, finding 2). ``pre``:
+    every year before the career start.
+    """
 
     if family == "odd":
-        return odd_mask(len(birth_year))
+        return odd_mask(len(birth_year)) & ~pre_career_mask(birth_year)
     if family == "pre":
         return pre_career_mask(birth_year)
     raise ValueError(f"unknown family {family!r}")
@@ -300,18 +312,28 @@ def union_mask(birth_year: np.ndarray) -> np.ndarray:
     return odd_mask(len(birth_year)) | pre_career_mask(birth_year)
 
 
-def current_odd_fill(earnings: np.ndarray) -> np.ndarray:
-    """The assembler's rule: each masked odd year is its neighbours' mean.
+def current_odd_fill(
+    earnings: np.ndarray, birth_year: np.ndarray | None = None
+) -> np.ndarray:
+    """The assembler's rule on a complete matrix: odd years are neighbour means.
 
-    On EPUF both neighbours are always recorded, so the single-neighbour
-    fallback of ``career._impute_gap`` never applies.
+    Each masked odd year inside the career (all of them when
+    ``birth_year`` is not given) becomes the mean of the true years around
+    it. On the gate's scoring path the rule is :class:`CurrentOddFill`,
+    which sees pre-career years as unknown and so falls back to the single
+    known neighbour for a unit at age 22, as ``career._impute_gap`` does.
     """
 
     out = np.asarray(earnings, dtype=np.float64).copy()
+    own = (
+        odd_mask(len(out))
+        if birth_year is None
+        else family_mask("odd", birth_year)
+    )
     for year in MASKED_ODD_YEARS:
-        out[:, _column(year)] = (
-            out[:, _column(year - 1)] + out[:, _column(year + 1)]
-        ) / 2.0
+        column = _column(year)
+        mean = (out[:, column - 1] + out[:, column + 1]) / 2.0
+        out[:, column] = np.where(own[:, column], mean, out[:, column])
     return out
 
 
@@ -323,6 +345,64 @@ def current_pre_career_fill(
     out = np.asarray(earnings, dtype=np.float64).copy()
     out[pre_career_mask(birth_year)] = 0.0
     return out
+
+
+class CurrentOddFill:
+    """The assembler's odd-year rule as a fill on the scoring path.
+
+    Each owned cell becomes the mean of its two neighbouring years'
+    earnings, in dollars (shares times each year's wage base), as a share
+    of its own year's wage base, capped at 1; with one neighbour unknown,
+    that neighbour's earnings; with both unknown, zero
+    (``career._impute_gap`` leaves such a year unfilled, and an unfilled
+    career year counts as zero).
+    """
+
+    name = "current_odd_rule"
+
+    def fill(self, shares, years, birth_year, sex, person_key, mask, seed):
+        years = np.asarray(years)
+        caps = np.array([_wage_base(int(year)) for year in years])
+        given = np.asarray(shares, dtype=np.float64)
+        dollars = given * caps[None, :]
+        out = given.copy()
+        for column in np.flatnonzero(mask.any(axis=0)):
+            left = dollars[:, column - 1] if column > 0 else np.nan
+            right = (
+                dollars[:, column + 1] if column + 1 < len(years) else np.nan
+            )
+            mean = np.where(
+                np.isnan(left),
+                right,
+                np.where(np.isnan(right), left, (left + right) / 2.0),
+            )
+            share = np.minimum(
+                np.nan_to_num(mean, nan=0.0) / caps[column], 1.0
+            )
+            rows = mask[:, column]
+            out[rows, column] = share[rows]
+        return out
+
+
+class CurrentPreFill:
+    """The assembler's pre-career rule as a fill: every owned cell is zero."""
+
+    name = "current_pre_career_rule"
+
+    def fill(self, shares, years, birth_year, sex, person_key, mask, seed):
+        out = np.asarray(shares, dtype=np.float64).copy()
+        out[mask] = 0.0
+        return out
+
+
+def current_rule(family: str):
+    """The current rule of a family, as a fill for :func:`score_candidate`."""
+
+    if family == "odd":
+        return CurrentOddFill()
+    if family == "pre":
+        return CurrentPreFill()
+    raise ValueError(f"unknown family {family!r}")
 
 
 # --------------------------------------------------------------------------
@@ -1311,6 +1391,10 @@ def epuf_matrix(
     ).any():
         raise ValueError("an EPUF annual row has no demographic person")
     annual_years = annual["year"].to_numpy().astype(np.int64)
+    if (annual_years < FIRST_YEAR).any() or (annual_years > LAST_YEAR).any():
+        raise ValueError(
+            f"an EPUF annual row lies outside {FIRST_YEAR}-{LAST_YEAR}"
+        )
     pair = position.astype(np.int64) * 100 + (annual_years - FIRST_YEAR)
     if len(np.unique(pair)) != len(pair):
         raise ValueError("EPUF has two annual rows for one person-year")

@@ -7,14 +7,19 @@
   (`populace_dynamics.estimates.career.build_career`) uses to fill years the
   PSID did not record, and their learned replacements, scored on held-out
   persons of SSA's 2006 Earnings Public-Use File (EPUF).
-- **Ceremony stage**: AMENDMENT 1 FLOORS BUILT, awaiting referee round 2.
-  Referee round 1 (`reviews/gate_epuf_fill_round1_referee_20261004.md`)
-  returned AMEND BEFORE LOCK. This document carries amendment 1 (section
-  12), whose floors were rebuilt on DEV at its rules commit (section 10a).
+- **Ceremony stage**: ROUND-2 FIXES. Referee round 1
+  (`reviews/gate_epuf_fill_round1_referee_20261004.md`) returned AMEND
+  BEFORE LOCK, and amendment 1 answered it (section 12). Referee round 2
+  (`reviews/gate_epuf_fill_round2_verification_20261004.md`) returned LOCK
+  AFTER LISTED FIXES; this document carries those fixes (section 12a). The
+  registered floor build is v3; its floors, tolerances and partition
+  equal v2's exactly.
 - **What has been seen**:
-  - Candidate fills exist and have been scored on DEV against the first
-    (v1) floors. Every such score is disclosed in
-    `docs/amendments/gate_epuf_fill_dev_scores_before_amendment_1.json`.
+  - Candidate fills exist and have been scored on DEV. Every such score is
+    disclosed: those before amendment 1 in
+    `docs/amendments/gate_epuf_fill_dev_scores_before_amendment_1.json`,
+    and those after it, before round 2's fixes, in
+    `docs/amendments/gate_epuf_fill_dev_scores_after_amendment_1.json`.
   - No TEST person has been read. TEST can be read only through
     `epuf_fill_gate.test_part()`, which refuses until `gates.yaml` locks
     this gate.
@@ -24,6 +29,8 @@
   - `scripts/build_epuf_fill_psid_scale.py` (the PSID counts);
   - `scripts/build_epuf_fill_gate_floors.py` (floors, bite, doses,
     oracles);
+  - `src/populace_dynamics/harness/epuf_fill_scoring.py` (the one
+    registered TEST scoring, pinned to the v3 build's SHA-256);
   - `tests/test_epuf_fill_gate_floors.py` (pins the builds).
 
 ## What this gate is, in plain words
@@ -112,7 +119,10 @@ Two families of years, as the PSID would leave a career:
 **The scoring path** (`epuf_fill_gate.score_candidate`):
 1. Every fill is given shares of the wage base with **both families' cells
    unknown** (NaN), together with each person's sex, year of birth and id.
-2. It fills its own family's cells.
+2. It fills its own family's cells (`family_mask`). The odd family owns the
+   masked odd years inside the career. An odd year before the career
+   start belongs to the pre-career rule, which fills it in use (round 2,
+   finding 2).
 3. Each draw must return finite shares in [0, 1] on those cells and leave
    every other cell exactly as given; otherwise `FillOutputInvalid` is
    raised.
@@ -120,6 +130,12 @@ Two families of years, as the PSID would leave a career:
 5. The filled cells replace the truth's cells of the fill's own family, and
    every other cell stays true. The other family's cells are therefore true
    when a family is scored, but unknown to its fill.
+6. The current rules are scored the same way, as fills (`current_rule`).
+   - `CurrentOddFill` takes the mean of the neighbouring years' earnings in
+     dollars, as a share of its own year's wage base, capped at 1. With one
+     neighbour unknown it uses that neighbour, as `career._impute_gap`
+     does; with both unknown, zero.
+   - `CurrentPreFill` gives zero.
 
 ## 4. Cells
 
@@ -243,8 +259,11 @@ There are 326 cells in all.
   - its persons are clustered in families;
   - its filled-year count includes 2007-2011 and the 2013 seam.
 
-  Matching units rather than persons works slightly the other way in some
-  bands.
+  Matching units rather than persons also makes it stricter. In every
+  band, DEV has fewer masked units per person than the PSID-2010 cohort:
+  2.45 against 2.70 for men 22-29, and 4.51 against 5.89 for men 22-74.
+  So a sample carries more persons than the PSID's, and its floor is
+  narrower.
 
 **Tolerance**: `tau = K * sigma` with `K = 1`. A gating cell passes if its
 gap is finite and `|gap| <= tau`.
@@ -286,7 +305,7 @@ A cell gates (`partition`) if, on DEV, all of these hold:
 Every other cell is reported without a verdict. The partition is fixed at
 the floor build and recorded in the artifact.
 
-**Bite.** Before lock, on DEV:
+**Bite.** Before lock, on DEV, through the scoring path:
 - **B1**: the current odd-year rule must fail at least one gating `odd`
   cell by more than `2 * tau`.
 - **B2**: the current pre-career rule must fail at least one gating `pre`
@@ -295,13 +314,14 @@ the floor build and recorded in the artifact.
 If either check fails, the gate does not lock.
 
 **Dosed perturbations** (report-only). These are perturbations of the true
-DEV matrix. Each is scored, its gaps are reported in tolerances, and the
-dosed ones report the dose at which the most sensitive cell reaches one and
-two tolerances.
+DEV matrix, and each moves only its own family's cells. Each is scored and
+its gaps are reported in tolerances. The dosed ones also report the dose at
+which the most sensitive cell reaches one and two tolerances, and the same
+for the most sensitive AIME cell, each with the cell named.
 
 | Id | Family | Perturbation | What it tests |
 |---|---|---|---|
-| D1 | `odd` | Copy `t+1` into `t` | Copying a neighbour |
+| D1 | `odd` | Copy the share of the wage base at `t+1` into `t` | Copying a neighbour |
 | D2 | `odd` | Permute `t` within sex and five-year age band | The marginal law |
 | D3 | `odd` | Shrink positive log shares toward their stratum median by `lambda` = 0.75 and 0.5 | Dispersion |
 | D4 | `pre` | Scale the true blocks by 0.95 and 0.90 | Level bias in the AIME and `plevel` |
@@ -312,9 +332,9 @@ two tolerances.
 persons, over `ORACLE_SEEDS = 7200..7219`. Each conditions only on what a
 fill is given:
 - **O1** (`odd_oracle_fill`) permutes the true value of each masked odd year
-  among persons who share all of: sex; `odd` universe membership; five-year
-  age band at `t`; and the bins of `t-1` and `t+1`. A neighbour inside the
-  pre-career mask counts as unknown.
+  inside the career among persons who share all of: sex; `odd` universe
+  membership; five-year age band at `t`; and the bins of `t-1` and `t+1`. A
+  neighbour inside the pre-career mask counts as unknown.
 - **O2** (`pre_career_oracle_fill`) permutes whole masked blocks among
   persons who share all of: sex; birth year; `pre` universe membership; the
   number of positive years among the first five recorded years (a masked
@@ -393,8 +413,9 @@ stays.
   birth-evidence reducer seals every file under `src/` against its reviewed
   commit (`scripts/first_estimates_birth_evidence.py`,
   `_assert_input_identity`), and `career.py` is reachable from it.
-- The gate's rules module, `harness/epuf_fill_gate.py`, is listed in the
-  reducer's `POST_REVIEW_SOURCE_EXCLUSIONS`, and a test proves it is
+- The gate's rules module (`harness/epuf_fill_gate.py`) and its TEST
+  scoring module (`harness/epuf_fill_scoring.py`) are listed in the
+  reducer's `POST_REVIEW_SOURCE_EXCLUSIONS`, and a test proves both are
   unreachable from the reducer.
 - The candidate fills will live in a new opt-in module under the same
   exclusion. Its provenance values are `gap_epuf_drawn` and
@@ -540,8 +561,16 @@ Five scoring events:
 - the donor primary at 1 of 60, after a first run that stopped on unfilled
   cells.
 
-Every amendment below is justified on the truth side. None loosens a cell
-those scores failed.
+Every amendment below is justified on the truth side. Two changes did
+loosen cells, both forced by round 1's findings and the pre-set events
+rule, and neither rescues a candidate:
+- Men's young-band `wint` gated in v1 (as 18-29), where `odd_knn v0`
+  failed it by 4.1 tolerances. With units from age 22 it has too few
+  events and is report-only. The pooled `a22_74` `wint` still gates.
+- The odd family's AIME tolerances widened once their floors were priced
+  on the right population (finding 1). For men born 1936-1940 the median's
+  tolerance went from 0.051 to 0.082. The disclosed candidates' odd AIME
+  gaps were at most 0.004.
 
 | # | Finding | Response |
 |---|---|---|
@@ -568,6 +597,40 @@ those scores failed.
 | Oracle strata gain universe membership | TRAIN dry run | Oracles are report-only |
 | "Improves" tier added | TRAIN dry run (an oracle failing `r2`/`r4`) | Adoption only; no certification changes |
 | Amendment 1 (all of the above) | v1 DEV floors; candidate DEV scores (disclosed) | Every change comes from referee round 1 and is truth-side. It adds cells and pooled groups, tightens adoption, and removes units the PSID does not fill |
+| Amendment 1's rules, dry-run on TRAIN | A TRAIN dry run (`runs/epuf_fill_gate_floors_train_dryrun_v2pre.json`) | See the next paragraph |
+| Round 2's fixes (section 12a) | v2 DEV floors; candidate DEV scores after amendment 1 (disclosed) | Every fix comes from referee round 2. None changes a floor, tolerance or partition; the v3 build reproduces v2's exactly |
+
+**The amendment-1 dry run.**
+- The run started at 05:48:03 UTC (5 replicates, one oracle seed) from the
+  uncommitted working tree, when HEAD was `f91d43a1`. That was 16 minutes
+  before the rules commit `7061200d` at 06:04:18.
+- Its cell ids, groups, constants (bar the replicate count) and output
+  schema are identical to the v2 build's. Between it and `7061200d`, the
+  tests and this document changed; no change to the rules module or the
+  builders is recorded.
+- It showed the gate lockable, and `odd.men.a45_59.q90` with an undefined
+  floor.
+- No candidate DEV score existed under amendment 1's rules until after
+  `7061200d`. The first was at about 06:19 UTC
+  (`docs/amendments/gate_epuf_fill_dev_scores_after_amendment_1.json`).
+
+### 12a. Referee round 2 and the fixes
+
+Round 2 (`reviews/gate_epuf_fill_round2_verification_20261004.md`)
+verified that amendment 1 fixes round 1's findings 1-4, 6, 9-12 and 13. It
+found 5, 7, 8, 14 and 15 partly fixed or needing more, and it raised
+these:
+
+| # | Finding | Fix |
+|---|---|---|
+| 1 | Men's `q90` sits at the wage base in three bands | Disclosed in section 10a: there `q90` gates only as a lower bound on the at-cap share near 10 percent, and no cell measures men's upper-tail dispersion. Future registrations should compute `q90` below the cap |
+| 2 | The odd fill was scored on pre-career odd years it never fills | The odd family owns only odd years inside the career (`family_mask`); the current rules, oracle and perturbations follow. Floors unchanged |
+| 3 | Undisclosed TRAIN dry run; unlogged DEV scoring | The dry run is committed and in the forks ledger. Every DEV score after `7061200d` is disclosed |
+| 4 | No pinned TEST entry point | `epuf_fill_scoring.score_registered`, pinned to the v3 build's SHA-256, reads TEST only through `test_part`, scores the current rule and both candidates, and returns the tiers |
+| 5 | Claims the artifact contradicts | D3's and D4's dose cells are now named in the artifact, with the AIME doses (section 10a). The sample-size sentence is corrected (section 5), as are the "none loosens" sentence (section 12) and `current_odd_fill`'s docstring |
+| 6 | D1 copied capped dollars across years | D1 copies the share of the wage base |
+| 7 | Tests and provenance | Added: pool equals the cells' count for every cohort group; `epuf_cells.py` and `epuf_operator.py` bound to the build; the scored matrix keeps every non-owned cell true; writes into the other family's cells are refused; no unit at age 21; the annual year range is asserted; the build records whether the bound files were clean |
+| 8 | Notes | Recorded in section 13 |
 
 ## 13. Considered and rejected
 
@@ -596,6 +659,24 @@ those scores failed.
    statistic's cells within `1/sqrt(k)`). Pooled groups do the same job
    with ordinary cells and floors.
 
+**Notes from round 2, for Max's ratification and for future registrations.**
+- At the boundary, a fill adds up to 41 percent (the square root of 2) to
+  the root mean square error of a PSID-sized estimate.
+- Single-cohort AIME tail tolerances are wide. For example,
+  `pre.women.b1930_1934.aime_p10` is 0.391 log, so a 48 percent
+  overstatement passes it. The pooled groups carry the AIME's materiality:
+  their p10 tolerances are about 0.17.
+- Estimates pooled across both sexes are not gated directly. A bias of 0.9
+  sigma in the same direction in both sexes' pooled cells is about 1.3
+  sigma on a both-sex estimate.
+- Floor seeds depend on a group's position in `groups()`, so adding groups
+  re-rolls every floor. Amendment 1 moved tolerances by up to about 7
+  percent this way, and no disclosed result flipped. Future amendments
+  should key seeds by group name.
+- Pooled floors sample EPUF's cohort mix, not the PSID's. For men born
+  1930-1945 that is 28/29/43 percent across the three cohorts, against the
+  PSID's 18/26/55. This is harmless.
+
 ## 14. Ceremony checklist
 
 - [x] Rules pushed before any DEV floor (`14045be4`)
@@ -606,7 +687,10 @@ those scores failed.
   the v2 floor build
 - [x] PSID scale counts v2 and floor build v2 on DEV (`23bee82c`);
   lockable
-- [ ] Referee round 2 (verification)
+- [x] Referee round 2 (verification): LOCK AFTER LISTED FIXES
+- [x] Round 2's fixes; DEV candidate scores after amendment 1 disclosed
+- [ ] Floor build v3 on DEV (round 2's fixes; floors equal to v2's)
+- [ ] Referee round 3 (confirmation of the fixes)
 - [ ] Max ratifies the materiality reading of the tolerance (queued
   decision)
 - [ ] Ratifying merge; lock flip in `gates.yaml`

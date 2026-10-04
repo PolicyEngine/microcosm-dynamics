@@ -272,7 +272,7 @@ def test_floor_group_estimates_the_standard_error_of_a_mean(seed, size):
         pool,
         size,
         group_index=seed,
-        n_replicates=300,
+        n_replicates=1_000,
     )
     # Only the group's own cell is kept; on the log scale the standard
     # error of a mean of 5 with sd 2 is about (2 / sqrt(size)) / 5.
@@ -281,8 +281,8 @@ def test_floor_group_estimates_the_standard_error_of_a_mean(seed, size):
     assert floor.sigma["pre.men.b1930_1934.plevel"] == pytest.approx(
         expected, rel=0.15
     )
-    assert len(floor.replicates["pre.men.b1930_1934.plevel"]) == 300
-    assert floor.seed == (g.FLOOR_SEED_BASE, seed, 300, size)
+    assert len(floor.replicates["pre.men.b1930_1934.plevel"]) == 1_000
+    assert floor.seed == (g.FLOOR_SEED_BASE, seed, 1_000, size)
 
 
 def test_floor_refuses_a_pool_too_small_for_two_samples():
@@ -634,4 +634,132 @@ def test_epuf_matrix_places_rows_and_refuses_bad_joins(monkeypatch):
         g.epuf_matrix(g.DEV)
     _fake_epuf(monkeypatch, [(3, 1970, 1000), (3, 1970, 5)])
     with pytest.raises(ValueError, match="two annual rows"):
+        g.epuf_matrix(g.DEV)
+
+
+def test_odd_family_owns_only_career_odd_years():
+    birth = np.array([1950, 1976, 1979, 1980])
+    own = g.family_mask("odd", birth)
+    pre = g.pre_career_mask(birth)
+    odd = g.odd_mask(len(birth))
+    assert np.array_equal(own, odd & ~pre)
+    # Born 1979: 1997 and 1999 are before age 22 and belong to the
+    # pre-career rule; 2001-2005 are the odd family's.
+    owned = [g.YEARS[c] for c in np.flatnonzero(own[2])]
+    assert owned == [2001, 2003, 2005]
+    assert (g.union_mask(birth) == (odd | pre)).all()
+
+
+def test_current_fills_match_the_assembler_rules():
+    earnings, birth, sex = _careers(21, n=400)
+    shares = earnings / CAPS[None, :]
+    own = g.family_mask("odd", birth)
+    given = np.where(g.union_mask(birth), np.nan, shares)
+    out = g.CurrentOddFill().fill(
+        given, np.asarray(g.YEARS), birth, sex, None, own, 0
+    )
+    expected = np.minimum(
+        g.current_odd_fill(earnings, birth) / CAPS[None, :], 1.0
+    )
+    # Where both neighbours are known the rule is the mean of the truth.
+    both = own.copy()
+    for column in np.flatnonzero(own.any(axis=0)):
+        both[:, column] &= np.isfinite(given[:, column - 1]) & np.isfinite(
+            given[:, column + 1]
+        )
+    np.testing.assert_allclose(out[both], expected[both])
+    # A unit at age 22 has its pre-career neighbour unknown: the rule takes
+    # the known one.
+    one = own & ~both
+    for row, column in np.argwhere(one)[:20]:
+        known = given[row, column + 1] * CAPS[column + 1] / CAPS[column]
+        assert out[row, column] == pytest.approx(
+            min(np.nan_to_num(known), 1.0)
+        )
+    pre = g.family_mask("pre", birth)
+    zeroed = g.CurrentPreFill().fill(given, None, birth, sex, None, pre, 0)
+    assert (zeroed[pre] == 0).all()
+    assert g.current_rule("odd").name == "current_odd_rule"
+    with pytest.raises(ValueError):
+        g.current_rule("other")
+
+
+def test_score_candidate_scores_own_cells_and_keeps_the_rest_true(
+    monkeypatch,
+):
+    matrix = _matrix(22)
+    seen = []
+    original = g.family_cells
+
+    def spy(family, earnings, *args):
+        seen.append(earnings.copy())
+        return original(family, earnings, *args)
+
+    monkeypatch.setattr(g, "family_cells", spy)
+
+    class Constant:
+        def fill(self, shares, years, birth_year, sex, key, mask, seed):
+            out = shares.copy()
+            out[mask] = 0.5
+            return out
+
+    g.score_candidate(
+        Constant(),
+        "odd",
+        matrix,
+        {},
+        {},
+        [],
+        seeds=(7100,),
+        wage_bases=WAGE_BASES,
+        nawi=NAWI,
+    )
+    (scored,) = seen
+    own = g.family_mask("odd", matrix.birth_year)
+    rows, columns = own.nonzero()
+    np.testing.assert_allclose(scored[rows, columns], 0.5 * CAPS[columns])
+    assert np.array_equal(scored[~own], matrix.earnings[~own])
+
+
+def test_score_candidate_refuses_writes_into_the_other_familys_cells():
+    matrix = _matrix(23)
+
+    class Trespass:
+        def fill(self, shares, years, birth_year, sex, key, mask, seed):
+            out = shares.copy()
+            out[mask] = 0.1
+            other = g.pre_career_mask(birth_year) & ~mask
+            out[other] = 0.2
+            return out
+
+    with pytest.raises(g.FillOutputInvalid):
+        g.score_candidate(
+            Trespass(),
+            "odd",
+            matrix,
+            {},
+            {},
+            [],
+            seeds=(7100,),
+            wage_bases=WAGE_BASES,
+            nawi=NAWI,
+        )
+
+
+def test_a_masked_year_at_age_21_is_no_odd_unit():
+    earnings = np.zeros((2, len(g.YEARS)))
+    birth = np.array([1976, 1976])
+    sex = np.array([1, 1])
+    for year in (1998, 2000, 2002, 2004, 2006):
+        earnings[:, year - g.FIRST_YEAR] = 20_000.0
+    cells = g.odd_cells(earnings, birth, sex, WAGE_BASES, NAWI)
+    # Born 1976: 1997 is age 21 (outside every band); 1999-2005 are ages
+    # 23-29, four units each.
+    assert cells["odd.men.a22_29.level"].n == 2 * 4
+    assert cells["odd.men.a22_74.level"].n == 2 * 4
+
+
+def test_epuf_matrix_refuses_years_outside_the_file(monkeypatch):
+    _fake_epuf(monkeypatch, [(3, 2007, 1000)])
+    with pytest.raises(ValueError, match="outside 1951-2006"):
         g.epuf_matrix(g.DEV)
