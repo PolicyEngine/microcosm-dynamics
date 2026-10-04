@@ -545,8 +545,10 @@ Nothing is certified. In particular:
 4. The round-1 commit (`d606ddea`) adds the referee report, the supplement,
    the frozen first build, the ruling and the round-1 corrections.
 5. The round-2 commit (`93848324`) adds `report_candidate`, the round-2
-   report and its corrections. A last commit applies the five minor points of
+   report and its corrections. `95291e75` applies the five minor points of
    the re-review that approved it.
+6. A confirmation review of `95291e75` approved it with three optional
+   points. The commit that records that review applies them.
 
 **Forks ledger.**
 
@@ -571,8 +573,8 @@ bind to cannot be edited without breaking that binding, so a few of their
 strings predate the ruling. `gate_partition.status` in the floor artifact
 reads `lockable_pending_referee_round`, and its tranche R note says "computed
 once, after lock". The docstring of `epuf_gate.tolerance` calls the formula
-"the house floor formula". The block and this document supersede them: nothing is
-pending a lock, and `k = 4` is not house precedent (section 4).
+"the house floor formula". The block and this document supersede them:
+nothing is pending a lock, and `k = 4` is not house precedent (section 4).
 
 ## 11. Considered and rejected
 
