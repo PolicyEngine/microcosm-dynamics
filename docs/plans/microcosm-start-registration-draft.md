@@ -19,7 +19,7 @@ This is the first of several comments. It fixes:
 
 The two gates then lock separately:
 
-- **H1:** floors and bite checks from real data, referee rounds, and Max's ratification of its multipliers lock it in `gates.yaml`. A second comment posts the registered commit and forecasts, and H1's candidates run once, together.
+- **H1:** floors and bite checks from real data, referee rounds, and Max's ratification of its multipliers lock it in `gates.yaml`. After gate_epuf_fill's verdict, a second comment posts the registered commit, the fill procedure that verdict selects, and forecasts, and H1's candidates run once, together.
 - **Gate 3:** it locks later, after the engine that would run it exists and passes its bite check, through its own lock comment (see "Gate 3", below).
 
 Abbreviations:
@@ -187,7 +187,7 @@ That mirrors the frame, which ranks people within itself.
 
 #### Candidates, frozen here, run together
 
-Every constant below is fixed by this comment. The fill procedure is not a free choice: it follows from gate_epuf_fill's verdict, as stated in arm E. The second comment adds only the code commit, the component codes, the SHA-256 of any fitted artifact, and the name of that fill procedure. All three candidates and the strawman are scored in one registered run, after lock, and their results are published together. No candidate's result is seen before another's is fixed.
+Every constant below is fixed by this comment. The fill procedure is not a free choice: it follows from gate_epuf_fill's verdict, as stated in arm E. The second comment adds only the code commit, the component codes, the SHA-256 of any fitted artifact, the name of that fill procedure, and a forecast for each candidate. All three candidates and the strawman are scored in one registered run, after lock, and their results are published together. No candidate's result is seen before another's is fixed.
 
 1. **H-A, rank-kNN.** Gate 1's candidate 11, unchanged in its draw and distances (`runs/gate1_rank_knn_v5.json`, `model`): k = 25, distance weights 1, 0.5 and 0.25, the fixed blend of 0.1 for the permanent rank, and the zero-anchor regime.
    - Earnings distributions are sex-specific.

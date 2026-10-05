@@ -346,7 +346,7 @@ Each test is drafted in full in the [draft registration](microcosm-start-registr
   - **The PSID arm.** It does the same on PSID families held out by new splits, from 2022 earnings, age, sex, marital status, disability, hours and self-employment.
     - **Cells:** the same features, plus cells by marital status and disability and the couple cells of section 1.7. Reported only: cells by education, which show what leaving education out costs, and the agreement of the forward law's `u_w` between real and generated histories.
     - **Tolerance:** from pairs of real held-out-size samples, the way gate 1 prices its geometry thresholds.
-    - **Disclosure:** gate 1 selected rank-kNN on these same people, and the registration says so.
+    - **Disclosure:** gate 1 selected rank-kNN on these same people, and gate_epuf_fill selected its fill procedure on EPUF people who overlap the SSA arm's test set. The registration says both.
   - **Candidates.** All three are frozen in the registration, scored in one run, and adopted by the rule in section 1.4.
 - **Gate 3, the first projected year (gate).** Project the frame one year forward. Score the projection's growth in retired- and disabled-worker counts and average benefits, measured as the frame measures them, against the growth in SSA's December figures. Comparing growth cancels the stable part of the gap between the frame's concept and SSA's. It does not cancel errors in the frame's makeup that change deaths, widowhood or claims, which gate 3 scores along with the engine. The cells are fixed now, and the partition comes from the start-year frame alone. Gate 3 locks separately from H1, after the engine exists and engines with no mortality or no new awards fail on an invented frame.
 - **W2, the starting population against SSA's records (report-only).** Do the frame's beneficiaries, with their inferred PIAs, match SSA's December counts and averages for the start year by type, age and sex? These are Annual Statistical Supplement tables 5.B1, 5.D1 and 5.G1; the evidence folder holds a capture of the 2023 edition (`~/microcosm-launch-evidence/dynasim-parity-20260909/ssa-supplement-2023/`). Microcosm calibrates Social Security dollars by type but not beneficiary counts (Registration 19), so counts and average PIAs are held out.
@@ -359,7 +359,7 @@ The registration fixes each test's question, held-out data, split, cells, statis
 1. **Floors.** They come from real data only, and no candidate is scored.
 2. **Partition and bite.** The partition is fixed before any candidate runs. Then a method known to be wrong must fail by a clear margin (gate 1's failed QRF baseline for H1, on data no scored seed holds out; engines with no mortality or no new awards for gate 3, on an invented frame). A test with no bite does not lock. Gate 3 goes through this step later than H1, once its engine exists.
 3. **Review and lock.** Referee rounds independent of the drafter, then Max's ratification, then the block enters `gates.yaml` locked.
-4. **The run.** A second comment posts the registered commit and a forecast for each candidate, and H1's candidates run once, together.
+4. **The run.** After gate_epuf_fill's verdict, a second comment posts the registered commit, the fill procedure that verdict selects, and a forecast for each candidate, and H1's candidates run once, together.
 5. **No early projection.** The first projection of the real frame is gate 3's registered run. The engine adapter is built on invented data until then.
 
 ### 3.4 Properties the code must hold
@@ -394,7 +394,7 @@ Comparing them is therefore a reported differential (task T13), not a property. 
 
 - **gate_epuf_fill.** Max's ruling on its tolerance (d927), then its lock, then pull request #516's candidates and the one reading of its test data. Frame histories use the fills it certifies (section 1.5). H1's registered run waits for that verdict, because H1's deployed configuration uses the certified fill procedure (or the current rules, if none is certified), refit on H1's own training part. The frame itself uses gate_epuf_fill's own fit.
 - **Track B.** Max's rulings on d765, d781 and d782, then B2's registration, then forward earnings in the projections (months 2 to 5), then a refit of the law at a 2024 boundary with its own gate (section 1.8). The history work (tasks T1 to T7 below) does not wait for Track B; any real-data projection from the frame does.
-- **Pull request #512**, which makes the 2026 Trustees Report and CBO's 2026 projections selectable as the projection's baseline. A 2024 start needs one of them. The 2008 Trustees path that the DYNASIM3 tests use stops at 2030 and predates every year the frame describes (Registration 18).
+- **Pull request #512**, which makes the 2026 Trustees Report and CBO's 2026 projections selectable as the projection's baseline, merged on 4 October 2026 (`ff3fe306`). A 2024 start needs one of them. The 2008 Trustees path that the DYNASIM3 tests use stops at 2030 and predates every year the frame describes (Registration 18).
 - **Four requests to Microcosm** (sections 5.1 and 5.4):
   - restore educational attainment to the US release;
   - keep the previous year's wages, which its CPS panel link already recovers for matched records;
@@ -416,7 +416,7 @@ Effort is in agent-days of build work and days of human review. Every figure is 
 | T5 | H1's three candidates and strawman, built on invented data | T4's interfaces | 8–12 | 2–3 |
 | T6 | H1's lock and its one run, after the second comment | T4, T5, d947, gate_epuf_fill's verdict | 2–4 | 2 |
 | T7 | The starting stock: benefits as state, inferred PIAs for retired and disabled workers and their named limits, spouse and survivor links; gate 3's partition from the start-year frame (standard deviations only); then W2's first run | T1 | 6–9 | 2 |
-| T8 | Run the existing engine on frame people, on invented data: starting states, fixed trajectory weights, the selected baseline | T1, T6, T7, #512 | 10–15 | 3–4 |
+| T8 | Run the existing engine on frame people, on invented data: starting states, fixed trajectory weights, the selected baseline | T1, T6, T7, #512 (merged) | 10–15 | 3–4 |
 | T9 | Connect Track B's refitted forward law from the frame's start state | T8, Track B | 4–6 | 1–2 |
 | T10 | Income and wealth: the table of section 2.2, the aging rule, A1 | T1, T3, T8 | 6–10 | 2–3 |
 | T11 | Gate 3's bite check on an invented frame with the T8 engine, Max's ratification and gate 3's lock comment, SSA captures for December of the start year and the next, and the registered run | T8, T9 | 5–8 | 2 |
