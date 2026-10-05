@@ -102,7 +102,8 @@ That mirrors the frame, which ranks people within itself.
 - **Two configurations, both scored on H1-TEST.**
   - **Deployed (gated).**
     - The donors are PSID heads and spouses. The 2006 anchor rank is applied in the PSID's 2006 cell, the same transfer the frame makes into the PSID's 2022 cell.
-    - Years the PSID lacks are filled by the procedure gate_epuf_fill certifies (or the current rules), refit on H1-TRAIN so that no model has seen an H1-TEST person.
+    - Years the PSID lacks are filled by the procedure gate_epuf_fill certifies (or the current rules, if it certifies none), refit on H1-TRAIN so that no fitted parameter has seen an H1-TEST person. Which procedure that is follows from gate_epuf_fill's verdict, so H1's registered run waits for it, and the second comment names the procedure by gate_epuf_fill's run artifact. The frame itself uses gate_epuf_fill's own fit, not this refit.
+    - **Overlap with gate_epuf_fill's selection.** That procedure was designed and selected on gate_epuf_fill's TRAIN and DEV. Under its different salt, those hold about 80 percent of H1-TEST's people, and about a fifth of H1-TEST is in gate_epuf_fill's published TEST. As in arm P, the scored people are not independent of the procedure's selection, though no fitted parameter has seen them.
     - Output is converted to shares of each year's wage base, capped at 1.
   - **Method only (report-only).** The same candidate with H1-TRAIN donors. The gap between the two configurations shows how much of any miss comes from the PSID itself rather than the method.
 - **What may be learned from.** The PSID, and H1-TRAIN. No model fitted on EPUF persons outside H1-TRAIN may be used. That excludes gate_epuf_fill's own fitted fills; its procedure is refit instead.
@@ -164,7 +165,7 @@ That mirrors the frame, which ranks people within itself.
   - a couple block, for married couples both in the arm: the median of the lower spouse's `M` over the higher spouse's, and the share of couples where that ratio is below one half. "Lower" is decided within each set of careers, real or returned.
 - **Report-only blocks:**
   - **Education.** Sex by education group (less than 12 years, 12, 13–15, 16 or more), plus the ratio of median `M` for 16 or more years to 12 years by sex. No candidate sees education, so the block measures what leaving it out costs. It needs a PSID education reader, which is built before lock.
-  - **The forward law's starting state.** The forward law reads two things from the past: realized start-year earnings, and a permanent-rank estimate `u_w` fitted over the person's whole positive history (`engine/forward_earnings.py:697-739`, mixed in at 0.1 at line 1533; the earnings two years back are set to missing, lines 1444-1453). This block applies the law's own estimator to real and to returned careers of the same people, and reports the Spearman correlation and the mean absolute difference of the two estimates by sex and age band.
+  - **The forward law's starting state.** The forward law reads two things from the past: realized start-year earnings, and a permanent-rank estimate `u_w` fitted over the person's whole positive history (`engine/forward_earnings.py:697-739`, mixed in at 0.1 at line 1533; the earnings two years back are kept if observed and left missing otherwise, and the first draws do not condition on them, lines 1444-1463). This block holds the certified law's fitted parameters and age marginals fixed and recomputes each person's `u_w` from that person's positive years, real or returned, through 2020 plus the 2022 anchor. It reports the Spearman correlation and the mean absolute difference of the two estimates by sex and age band.
 - **Score.** For each seed, the cell statistic on returned careers, averaged over the 20 draw seeds, minus the statistic on the real careers of the same held-out people.
 - **Floor and tolerance.** As gate 1 prices its geometry thresholds (`gates.yaml:140-143, 323-333`, each derivation checked by `tests/test_gates_derivations.py`).
   - The floor draws pairs of disjoint real samples, each the size of one seed's held-out cell, from the panel, and records `|m(A) - m(B)|` on the cell's scale.
@@ -181,12 +182,12 @@ That mirrors the frame, which ranks people within itself.
 - **Bite.** Before lock, the strawman runs in each arm, in the deployed configuration. The strawman is gate 1's failed baseline: the backward QRF on next-period earnings and age (`scripts/run_gate1_baseline.py`).
   - **Arm E:** it is scored on DEV.
   - **Arm P:** it is fitted on the 80 percent of the bite part whose hash of `populace_dynamics.history_attachment.psid_bite_inner.v1|` and the unit id is 0.2 or above, and scored on the other 20 percent. No scored seed's held-out unit is read.
-  - **Margin:** in each arm the strawman must fail at least one gating cell by more than 2 tau, gate_epuf_fill's margin (`BITE_MULTIPLE = 2.0`). If it does not, H1 does not lock without an amendment.
+  - **Margin:** in each arm the strawman must fail at least one gating cell by more than 2 tau, gate_epuf_fill's margin (`BITE_MULTIPLE = 2.0`). In arm P the bite is scored on a sample about a quarter the size of a seed's held-out set, so its `tau` comes from a floor built at the bite sample's own size, by the same rule. If the strawman does not fail, H1 does not lock without an amendment.
 - **Gate pass.** H1 passes if arm E's deployed configuration and arm P both pass.
 
 #### Candidates, frozen here, run together
 
-Every constant below is fixed by this comment. The second comment adds only the code commit, the component codes and the SHA-256 of any fitted artifact. All three candidates and the strawman are scored in one registered run, after lock, and their results are published together. No candidate's result is seen before another's is fixed.
+Every constant below is fixed by this comment. The fill procedure is not a free choice: it follows from gate_epuf_fill's verdict, as stated in arm E. The second comment adds only the code commit, the component codes, the SHA-256 of any fitted artifact, and the name of that fill procedure. All three candidates and the strawman are scored in one registered run, after lock, and their results are published together. No candidate's result is seen before another's is fixed.
 
 1. **H-A, rank-kNN.** Gate 1's candidate 11, unchanged in its draw and distances (`runs/gate1_rank_knn_v5.json`, `model`): k = 25, distance weights 1, 0.5 and 0.25, the fixed blend of 0.1 for the permanent rank, and the zero-anchor regime.
    - Earnings distributions are sex-specific.
@@ -312,7 +313,7 @@ Every constant below is fixed by this comment. The second comment adds only the 
 ### Rules
 
 - **Before lock.** No candidate reads held-out data before lock. Floors read real data only and score no candidate.
-- **One run.** H1's three candidates and its strawman run once, together.
+- **One run.** H1's three candidates and its strawman run once, together, after gate_epuf_fill's verdict.
   - One disclosed re-execution is allowed, only for an infrastructure failure before scoring begins, and only after a comment here.
   - Nobody reads the failed attempt's outputs.
   - A failure after scoring begins, or a failed re-execution, ends this registration for H1.
@@ -412,7 +413,7 @@ Independent of the drafter. Reports are in `~/reviews/microcosm-start-plan-20261
 
 - **Round 1** (Subfleet lane, Opus 5.5; `review-r1.md`): CHANGES REQUIRED, with 3 blocking, 16 major and 19 minor findings. Each was answered (`response-r1.md`).
 - **Round 2** (Subfleet lane, Opus 5.5; `review-r2.md`): CHANGES REQUIRED, with 6 major findings (N1–N6) and 14 minor ones. Each was answered (`response-r2.md`).
-- **Round 3:** `<verdict and path, filled when posted>`.
+- **Round 3** (Subfleet lane, Opus 5.5; `review-r3.md`): APPROVE AFTER LISTED FIXES. Five findings were edited in (`response-r3.md`). A delta check of the changed lines follows: `<verdict and path, filled when posted>`.
 
 ### What comes next
 
@@ -421,7 +422,7 @@ Independent of the drafter. Reports are in `~/reviews/microcosm-start-plan-20261
    - Build H1's floors and partition from real data only, and run H1's bite checks.
    - Two referee rounds independent of the drafter.
    - Max's ratification of K and k, then H1's lock in `gates.yaml`.
-3. **H1 run.** The second comment: the registered commit, component codes, artifact hashes and forecasts. Then H1's one run.
+3. **H1 run.** After gate_epuf_fill's verdict, the second comment posts the registered commit, component codes, artifact hashes, the fill procedure that verdict selects, and the forecasts. Then H1's one run.
 4. **Gate 3 lock.** Once the engine adapter exists:
    - fix gate 3's partition from the start-year bootstrap;
    - run its bite check on the invented frame;
