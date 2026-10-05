@@ -1,6 +1,6 @@
 # Starting the projections from Microcosm's US population
 
-**Status:** proposal, revised 5 October 2026 after an independent review. Nothing in it has run. The tests it proposes are drafted as an issue #42 registration in [`microcosm-start-registration-draft.md`](microcosm-start-registration-draft.md). That draft is not posted; posting it waits for Max's go (decision d947). [Decisions needed](#decisions-needed) lists the calls.
+**Status:** proposal, 4 October 2026, revised after two rounds of independent review. Nothing in it has run. The tests it proposes are drafted as an issue #42 registration in [`microcosm-start-registration-draft.md`](microcosm-start-registration-draft.md). That draft is not posted; posting it waits for Max's go (decision d947). [Decisions needed](#decisions-needed) lists the calls.
 
 **In one line:** the projections should start from the people in Microcosm's US population, the one PolicyEngine's model already runs on, with each person's past earnings matched from PSID donors and their income and wealth taken from Microcosm. Two new gates and two report-only checks, registered before any code exists, would decide whether each piece is fit to use.
 
@@ -15,7 +15,7 @@ Microcosm Dynamics aims to follow a representative population of Americans throu
 - **How each person gets a history.** We match each person to people in the PSID who looked like them in the start year (same age, sex and earnings rank) and build the history backward one step at a time from those donors. This is the method that passed gate 1, the earnings-history gate (`runs/gate1_rank_knn_v5.json`).
   - A QRF (quantile regression forest) chain that predicts each year from the next failed gate 1 because it forgets a person's history. Its correlation of log earnings ten years apart came out at 0.31 to 0.37, against 0.54 in the held-out PSID records and a pass band of ±0.07 (`runs/gate1_qrf_baseline_v1.json`).
   - QRF versions given a fixed effect for each person went the other way, at 0.62 to 0.67, and failed too.
-  - A second candidate adds marital status to the match. A QRF using every predictor the frame and the PSID share runs once as a registered comparison.
+  - A second candidate adds marital status to the match. A QRF using the predictors H1 can align across the frame and the PSID runs once as a registered comparison.
   - Years the PSID cannot supply, such as before 1968 and the odd years after 1996, come from fills learned on SSA's earnings file once that gate locks.
 - **Income and wealth.** They come from Microcosm, not the PSID. In the first version each item grows with the projection's assumptions, and each person or household keeps its rank within its age group as it ages. A report-only check against the PSID's wealth panels measures how well that works. The two projection tests that exist today use no non-wage income or wealth at all. Only the static 13 percent cut test does, and the illustrative households set theirs by hand.
 - **New tests.**
@@ -98,7 +98,7 @@ The first can be ready for months 5 to 9; the second need not be.
 | Not yet entitled, ages 22–61 | Covered earnings for every year from age 22 (earlier where they count), to compute insured status and AIME at entitlement | A generated history (section 1.4) |
 | Not yet entitled, 62 and older | The same, plus the earnings the retirement earnings test would count | A generated history; forward earnings from Track B |
 | Already receiving a retired-worker or disabled-worker benefit | The benefit in payment, and the PIA behind it for conversions, recomputation, and spouse and survivor benefits | The frame's benefit, with the PIA inferred from it (section 1.6); a history only for grouping by lifetime earnings |
-| Receiving a spouse's, widow(er)'s or child's benefit | The linked worker's PIA | The frame's benefit and spouse link; for widow(er)s, an inferred PIA with the limits section 1.6 names |
+| Receiving a spouse's, widow(er)'s or child's benefit | The linked worker's PIA | The frame's benefit, kept as state. The linked worker's PIA is not inferred in the first version (section 1.6); rules that need it are counted as unsupported for these people |
 | Whose benefits depend on someone not in the frame: divorced spouses, and widow(er)s not yet entitled | The ex-spouse's or deceased spouse's record | None today. A named limit: these benefits are left out and the people are counted. A later candidate could generate a "virtual spouse" history matched on the survivor's characteristics |
 | Children and people not yet working | Nothing from the past | Forward earnings (Track B) and, later, births and immigrants |
 
@@ -166,22 +166,22 @@ Two QRF designs with a person effect overshot, and the structural one, which als
 
 ### 1.4 The recommended design
 
-Use rank-kNN as the primary method, and let H1 decide among it, a version matched on marital status, and a QRF with every shared predictor. The three are frozen together in the registration, run once together, and adopted by a rule fixed in advance (H-A if it passes, else H-B, else H-C).
+Use rank-kNN as the primary method, and let H1 decide among it, a version matched on marital status, and a QRF with the predictors H1 can align across the two data sets. The three are frozen together in the registration, run once together, and adopted by a rule fixed in advance (H-A if it passes, else H-B, else H-C).
 
 Why rank-kNN first:
 
-1. **It is the method that passed.** It is the only earnings-history candidate with a gate-1 pass on the record, though only under an amendment (section 1.3).
+1. **It is the method that passed.** It is the only earnings-history candidate with a gate-1 pass on the record, under the gate's two amendments (section 1.3).
 2. **It keeps a person's place.** AIME averages a worker's 35 best indexed years, so what matters is whether high earners stay high. Microcosm's own design says so: "Earnings histories must preserve rank persistence (AIME is a 35-year order statistic): rank/copula methods across years over single-year marginals" (Microcosm `DESIGN.md:209-210`).
 3. **It moves between data sets in ranks.** The anchor is a rank in the frame's own earnings distribution, and earlier years take dollars from the donor data at the same rank. That keeps most level differences between the frame and the PSID out of the history. It does not remove differences in the share with no earnings, and those still carry through.
 4. **It anchors on exactly what the frame has.** Gate 1 already scores it as a backcast from one observed year (`scripts/run_gate1_baseline.py:22-36`), which is the frame's situation.
 
-Its weakness is short-lag over-persistence (section 1.3). H1 adds two- and four-year cells next to the anchor, the state the forward law starts from.
+Its weakness is short-lag over-persistence (section 1.3), which H1 checks with two- and four-year cells.
 
 What has to be added, each as a registered change:
 
-- **Anchor convention.** Records come from income years 2022, 2023 and 2024 on the CPS channel, and from the 2015 IRS file uprated on the PUF channel, which holds 58 percent of the weight in Registration 19's frame (`frame_structure.txt`). Every record is ranked within the frame's distribution for its sex and five-year age band as it stands in 2024, whatever its channel. The rank is then applied in the PSID's 2022 cell.
+- **Anchor convention.** Records come from income years 2022, 2023 and 2024 on the CPS channel, and from the 2015 IRS file uprated on the PUF channel, which holds 58 percent of the weight in Registration 19's frame (`frame_structure.txt`). This plan has not established whether Microcosm carries the 2022 and 2023 amounts to 2024 dollars; `us_runtime/asec_pool.py` pools weights and population and shows no uprating step. So every record is ranked within its source year, sex and five-year age band, whatever its channel, which makes the rank independent of the dollar year. The rank is then applied in the PSID's 2022 cell.
   - A PUF clone and its CPS source record are separate weighted records. Each gets its own independent history draw.
-  - W2 reports the frame's earnings distributions beside the PSID's by channel, so the transfer is visible. H1 cannot score it, because its PSID arm anchors on PSID earnings.
+  - H1's SSA arm scores the same kind of transfer, from an administrative cross-section into the PSID's 2006 cell. It cannot score the CPS and PUF transfer itself, so W2 reports the frame's earnings distributions beside the PSID's by source year and channel.
 - **Sex-specific earnings distributions.** Gate 1 fits one distribution per age band and year for both sexes. Gate w1's third candidate split the interior bands by sex and found no collateral damage (`models/transport_deployment_v3.py:34-43`). Histories for the frame do the same.
 - **Ages and years outside gate 1's range.** Gate 1 scores ages 25 to 59 and income years 1998 to 2022 (`gates.yaml:50-58`). A frame person who is 70 in the start year has a career that began around 1976. Years 1968–1996 are annual in the PSID, and the generator steps one year at a time there. H1 scores whole careers, so it covers this extension.
 - **Covered, capped earnings.** PSID labor income is converted to a share of each year's wage base and capped at 1, the step gate_epuf_fill defines (`docs/amendments/gate_epuf_fill_registration_proposal.md`, section 3, on branch `epuf-career-fill-20261003`).
@@ -191,7 +191,7 @@ What has to be added, each as a registered change:
 **The two other candidates:**
 
 - **Rank-kNN with marital strata (H-B).** It restricts donors to the person's sex and marital group, and adds no other constant. Education would join by amendment once the frame carries it (section 5.4).
-- **QRF with every predictor both data sets carry (H-C).** It uses age, sex, anchor-year earnings, marital status, disability, hours and self-employment.
+- **QRF with the predictors H1 can align across the PSID and the frame (H-C).** It uses age, sex, anchor-year earnings, marital status, disability, hours and self-employment.
   - It runs once as a registered comparison, so the answer to "why not a QRF?" rests on a scored run on the same held-out data.
   - Occupation and class of worker are left out because their codes differ across the PSID's years and the frame.
   - Year of entry is left out because the PSID holds too few immigrants to learn from.
@@ -213,7 +213,7 @@ For a retired worker in the frame, the benefit in payment equals the PIA, reduce
 The inference has limits. W2 names each and counts the records it touches:
 
 - **Dual entitlement.** A CPS retirement amount can include a spouse's excess.
-- **Survivors and spouses.** Their benefit depends on their own claim-age reduction, the limit tied to the deceased worker's claim age, and the offset against their own benefit. A widow(er)'s benefit therefore does not invert the same way.
+- **Survivors and spouses.** Their benefit depends on their own claim-age reduction, the limit tied to the deceased worker's claim age, and the offset against their own benefit. A widow(er)'s benefit therefore does not invert the same way. The first version therefore does not infer a spouse's or survivor's linked worker PIA: their benefit is kept as state, and any rule that needs the linked PIA is counted as unsupported for them.
 - **Medicare premiums.** Amounts may be reported net of the Medicare Part B premium, as exercise 2's named differences note (`uniform_cut_track_u/runner.py:121-124`).
 - **Partial years.** Receipt can begin partway through the year.
 - **WEP and GPO.** Benefits for income years 2022–2024 can reflect the windfall elimination provision and government pension offset. The Social Security Fairness Act repealed both for benefits after December 2023.
@@ -236,7 +236,7 @@ Track B owns forward earnings, and this plan does not duplicate it. The forward 
 A Microcosm start asks four things of Track B, which its design should take as requirements:
 
 1. **A start state from a frame person.** The law builds each person's starting state at its boundary year, 2014.
-   - **What it needs.** Realized 2014 earnings and a permanent-rank estimate. It refuses anyone without them. A missing 2012 value becomes missing, not a refusal (`engine/forward_earnings.py:1411-1453`).
+   - **What it needs.** Realized 2014 earnings and a permanent-rank estimate, `u_w`, fitted over the person's whole positive history (`_fit_u_w`, `engine/forward_earnings.py:697-739`, mixed in at 0.1 at line 1533). It refuses anyone without them, and it sets the earnings two years back to missing because its first draws never condition on them (`engine/forward_earnings.py:1411-1453`).
    - **Outside that support.** The engine gives fixed zero earnings to people who lack the state (`engine/earnings_domain.py:1-7`).
    - **For a frame person.** The same pieces can be computed at the frame's start year from the start-year earnings and a generated history.
 2. **The same rank space, or a mapping.** The two models share the k-nearest-neighbor constants (25 neighbors; weights 1, 0.5 and 0.25; the 0.1 blend; `engine/forward_earnings.py:64-77`) but not the rank space.
@@ -244,7 +244,7 @@ A Microcosm start asks four things of Track B, which its design should take as r
    - The backward generator ranks within age band and year (`scripts/run_gate1_candidate7.py:29-35`).
    - A permanent-rank estimate taken from a generated history is also not what the law was fitted on.
 
-   The hand-off needs a stated mapping, scored by H1's two-year cells.
+   The hand-off needs a stated mapping. H1's PSID arm reports how well `u_w` estimated from a generated history matches `u_w` from the same person's real one (report-only).
 3. **A new boundary year is a refit.** Starting the law from 2024 instead of 2014 means fitting it again. Gate m6's certification does not carry over, and the refit needs its own gate, which belongs to Track B.
 4. **The projection's own wage index and ages 62 to 69.** From a 2024 start, ranks should convert to dollars with the selected baseline's average wage index, from the 2026 Trustees Report or CBO's 2026 projections (pull request #512), not a 2005–2014 trend. The earnings test needs earnings at ages 62 to 69, beyond the law's fitted range. The paper already plans a law fitted on ages 25 to 69 (`paper/paper.qmd:382`).
 
@@ -339,15 +339,16 @@ The **effective sample size** (Kish) is the number of equally weighted people a 
 Each test is drafted in full in the [draft registration](microcosm-start-registration-draft.md). In short:
 
 - **H1, earnings histories for a cross-section (gate).** Can a method, given only what the frame observes in one year, produce careers that look like real ones?
-  - **The SSA arm.** It hides every year of EPUF careers except 2006, asks each method to rebuild them from 2006 earnings, sex and birth year, and scores the rebuilt careers on people none of the methods learned from. The split is new, salted differently from gate_epuf_fill's, so it does not reuse a test set that gate will have published.
+  - **The SSA arm.** It hides every year of EPUF careers except 2006 and rebuilds them from 2006 earnings, sex and birth year, the way the plan deploys: PSID donors matched by rank, years the PSID lacks filled by gate_epuf_fill's certified procedure refit on H1's own training part, and conversion to capped shares of the wage base. It scores the rebuilt careers on people nothing learned from. The split is new, salted differently from gate_epuf_fill's, so it does not reuse a test set that gate will have published. A report-only configuration with EPUF donors shows how much of any miss comes from the PSID itself.
     - **Cells:** what the benefit formula reads, by sex and age: the distribution of top-35-year indexed earnings, the share of years with no earnings, the share at the taxable maximum, insured status, and the correlations of the anchor year with the career and with years two, four and ten earlier.
+    - **What a pass certifies:** the deployed procedure on SSA's records and on the PSID, but not the transfer of ranks from CPS or PUF records, which W2 reports.
     - **Tolerance:** the sampling error the frame itself carries in each cell. A method passes only if its error is no larger than what the frame's own sample would introduce.
   - **The PSID arm.** It does the same on PSID families held out by new splits, from 2022 earnings, age, sex, marital status, disability, hours and self-employment.
-    - **Cells:** the same features, plus cells by marital status and disability and the couple cells of section 1.7. Cells by education are reported and show what leaving education out costs.
+    - **Cells:** the same features, plus cells by marital status and disability and the couple cells of section 1.7. Reported only: cells by education, which show what leaving education out costs, and the agreement of the forward law's `u_w` between real and generated histories.
     - **Tolerance:** from pairs of real held-out-size samples, the way gate 1 prices its geometry thresholds.
     - **Disclosure:** gate 1 selected rank-kNN on these same people, and the registration says so.
   - **Candidates.** All three are frozen in the registration, scored in one run, and adopted by the rule in section 1.4.
-- **Gate 3, the first projected year (gate).** Project the frame one year forward. Score the projection's growth in retired- and disabled-worker counts and average benefits against the growth in SSA's December figures. Growth rather than levels cancels what the frame brings, so the cells score what the engine adds. The cells, constants and partition are fixed from the start-year frame before any projection runs, and engines with no mortality or no new awards must fail.
+- **Gate 3, the first projected year (gate).** Project the frame one year forward. Score the projection's growth in retired- and disabled-worker counts and average benefits, measured as the frame measures them, against the growth in SSA's December figures. Comparing growth cancels the stable part of the gap between the frame's concept and SSA's. It does not cancel errors in the frame's makeup that change deaths, widowhood or claims, which gate 3 scores along with the engine. The cells are fixed now, and the partition comes from the start-year frame alone. Gate 3 locks separately from H1, after the engine exists and engines with no mortality or no new awards fail on an invented frame.
 - **W2, the starting population against SSA's records (report-only).** Do the frame's beneficiaries, with their inferred PIAs, match SSA's December counts and averages for the start year by type, age and sex? These are Annual Statistical Supplement tables 5.B1, 5.D1 and 5.G1; the evidence folder holds a capture of the 2023 edition (`~/microcosm-launch-evidence/dynasim-parity-20260909/ssa-supplement-2023/`). Microcosm calibrates Social Security dollars by type but not beneficiary counts (Registration 19), so counts and average PIAs are held out.
 - **A1, income and wealth aging (report-only).** Apply section 2.3's rule to PSID families' wealth and income at one wave, and compare with what the PSID recorded four years later, by age band.
 
@@ -356,7 +357,7 @@ Each test is drafted in full in the [draft registration](microcosm-start-registr
 The registration fixes each test's question, held-out data, split, cells, statistics, tolerance rule, pass rule and H1's candidates. The tolerance multipliers it proposes are drafts until Max ratifies them at lock, as he is ruling on gate_epuf_fill's (d927). After posting:
 
 1. **Floors.** They come from real data only, and no candidate is scored.
-2. **Partition and bite.** The partition is fixed before any candidate runs. Then a method known to be wrong must fail by a clear margin (gate 1's failed QRF baseline for H1; engines with no mortality or no new awards for gate 3). A test with no bite does not lock.
+2. **Partition and bite.** The partition is fixed before any candidate runs. Then a method known to be wrong must fail by a clear margin (gate 1's failed QRF baseline for H1, on data no scored seed holds out; engines with no mortality or no new awards for gate 3, on an invented frame). A test with no bite does not lock. Gate 3 goes through this step later than H1, once its engine exists.
 3. **Review and lock.** Referee rounds independent of the drafter, then Max's ratification, then the block enters `gates.yaml` locked.
 4. **The run.** A second comment posts the registered commit and a forecast for each candidate, and H1's candidates run once, together.
 5. **No early projection.** The first projection of the real frame is gate 3's registered run. The engine adapter is built on invented data until then.
@@ -370,7 +371,7 @@ The tests above score results. The code that produces them also has properties t
   - The anchor year comes back unchanged, and no year outside the person's career window is written.
   - The same inputs and seeds give the same history.
   - No history has earnings before the person's year of US entry.
-- **Ranks.** For positive earnings within the range of a fitted distribution, converting dollars to a rank and back returns the same dollars.
+- **Ranks.** For positive earnings between the 0.001 and 0.999 quantiles of a fitted distribution (the clamps the rank machinery uses), converting dollars to a rank and back returns the same dollars.
 - **Inferred PIAs.**
   - The unrounded inverse is exact: applying the unrounded claim-age adjustment and COLA factors to an inferred PIA returns the frame's monthly amount to floating-point precision.
   - With the statute's rounding, the result is within that rounding.
@@ -414,11 +415,11 @@ Effort is in agent-days of build work and days of human review. Every figure is 
 | T4 | H1's floors, partition, bite checks and block draft; two referee rounds | the posted registration, T3 | 8–12 | 3–4 |
 | T5 | H1's three candidates and strawman, built on invented data | T4's interfaces | 8–12 | 2–3 |
 | T6 | H1's lock and its one run, after the second comment | T4, T5, d947 | 2–4 | 2 |
-| T7 | The starting stock: benefits as state, inferred PIAs and their named limits, spouse and survivor links; gate 3's partition and constants fixed; then W2's first run | T1 | 6–9 | 2 |
+| T7 | The starting stock: benefits as state, inferred PIAs for retired and disabled workers and their named limits, spouse and survivor links; gate 3's partition from the start-year frame (standard deviations only); then W2's first run | T1 | 6–9 | 2 |
 | T8 | Run the existing engine on frame people, on invented data: starting states, fixed trajectory weights, the selected baseline | T1, T6, T7, #512 | 10–15 | 3–4 |
 | T9 | Connect Track B's refitted forward law from the frame's start state | T8, Track B | 4–6 | 1–2 |
 | T10 | Income and wealth: the table of section 2.2, the aging rule, A1 | T1, T3, T8 | 6–10 | 2–3 |
-| T11 | Gate 3's bite checks, SSA captures for December of the start year and the next, and the registered run | T8, T9 | 5–8 | 2 |
+| T11 | Gate 3's bite check on an invented frame with the T8 engine, Max's ratification and gate 3's lock comment, SSA captures for December of the start year and the next, and the registered run | T8, T9 | 5–8 | 2 |
 | T12 | Each projected year through PolicyEngine-US, split by level of government, each analysis registered | T11, T10; Registration 19's machinery | 8–12 | 2–3 |
 | T13 | Differential checks, reported: the oracle's AIME against PolicyEngine-US's `ss_aime` on the same histories; a PSID start against a Microcosm start in a common year; dynamic against static aging aggregates | T6, T11 | 5–8 | 1–2 |
 | | **Total** | | **70–109** | **22–29.5** |
@@ -445,7 +446,7 @@ The registered real-PSID population run (d727, months 2 to 4) is unchanged. It i
   - A dense Microcosm build from 8 July 2026, before pruning, has 865,046 people and an effective size of about 180,000 (`populace-us-2024-buildh-dense-warmstart-b449eb7`).
 
   These figures come from household weights alone (`docs/plans/microcosm-start-evidence/frame_structure.txt`, from the script beside it). The same computation reproduces gate w1's 14,327.8 exactly.
-- **No release has both.** No release checked has both the dense build's precision and the columns this plan needs. The dense build lacks the liquid assets, `net_worth`, several income items, disability, self-employment, hours and weeks, the marital detail and the prior-year flag (sections 1.2 and 2.2), and so cannot run section 1.2's matching or section 2.2's income and wealth. Registration 19's frame has the columns at a sixth of the dense build's effective size. A projection that follows people into small groups (widowed men at 62 to 64, long disability spells) needs both. Decision 2 asks which to use until Microcosm publishes a dense release with the columns.
+- **No release has both.** No release checked has both the dense build's precision and the columns this plan needs. The dense build lacks the liquid assets, `net_worth`, several income items, disability, self-employment, hours and weeks, the marital detail and the prior-year flag (sections 1.2 and 2.2), and so cannot run section 2.2's income and wealth. It does carry the raw CPS columns behind most of section 1.2 (`A_MARITL`, `PEDIS*`, `WKSWORK`, `HRSWK`, `SEMP_VAL`, `PEIO1COW`, `PEINUSYR`), so histories could be matched on it with registered constructions. Registration 19's frame has the columns at about a seventh of the dense build's effective size. A projection that follows people into small groups (widowed men at 62 to 64, long disability spells) needs both. Decision 2 asks which to use until Microcosm publishes a dense release with the columns.
 - **Tolerances follow the frame.** H1's SSA arm prices each cell at the frame's effective size, so moving to a denser frame tightens every tolerance. The registration re-derives them before any further run.
 - **Clones.** In Registration 19's frame, 58 percent of the weight sits on records from the PUF-support channel (`frame_structure.txt`). In the dense build, every CPS record has a PUF clone. 16.9 percent of beneficiaries by weight carry a synthetic fixed-proportion split across all four Social Security components (Registration 19, named difference 5). For them the benefit type is not observed, and section 1.6's PIA inference is weak. W2 reports its cells with and without them.
 - **Marital makeup.** The frame's beneficiaries aged 62 and over are 85.6 percent married, against about 60 percent in a MINT tabulation for 2022 (Registration 19, named difference 6). Spouse and survivor benefits rest on this. No spouse or survivor result from a Microcosm start should be published until Microcosm explains or fixes it; the request in T2 asks.
@@ -488,10 +489,10 @@ No variable outside `variables/gov/ssa/social_security/` reads `ss_pia`, `ss_ear
 - **No education in the frame.** None of the Microcosm US releases checked carries educational attainment: not the W1 pin, not Registration 19's frame, not the dense build. Both source surveys record it (the CPS's `A_HGA`, the ACS's `SCHL`), and Microcosm already restores reviewed CPS person columns from the pinned Census files (Microcosm `docs/us-asec-census-person-columns.md`). Until it adds this one, no candidate uses education and H1's education cells are report-only.
 - **Three income years, two sources.** CPS records carry earnings for 2022, 2023 or 2024, carried to 2024. PUF records carry the 2015 IRS file's earnings, uprated. Section 1.4's anchor convention ranks all of them as they stand. W2 reports by channel.
 - **Ages top-coded at 80 and 85.** The frame stores ages 80–84 as 80, and 85 and over as 85. Mortality, widowhood and survivor timing need single years, so the starting age within each band is drawn from SSA's population by single year, under a registered rule.
-- **Immigrants.** The frame carries year of entry (`PEINUSYR`). A history starts no earlier than the year of entry, so recent immigrants have short US careers, as SSA records them.
+- **Immigrants.** The frame carries year of entry (`PEINUSYR`), as a grouped code. A history starts no earlier than a year drawn uniformly within the person's entry-year group, keyed by person id, under the CPS's code definitions captured with the frame pin. Recent immigrants therefore have short US careers, as SSA records them.
 - **Uncovered work.** Some state and local government workers are outside Social Security. The frame carries class of worker (`PEIO1COW`), but the PSID does not separate covered from uncovered work in most years. The repository's covered-earnings correction is a draft design, not code (`docs/design/covered_earnings_correction.md`). Until it lands, a current government worker's whole history counts as covered, which overstates benefits for workers outside the system.
 - **People in institutions.** The CPS leaves out people in nursing homes and other institutions, many of them old beneficiaries. W2's counts by age show the gap.
-- **Restricted data and compute.** The frame carries values imputed from the IRS Public Use File. Registration 19 runs it on Modal under a ruling specific to that analysis (d806), and the general question for PUF-derived files is parked (d093). The draft registration runs W2 and gate 3 locally unless Max rules otherwise.
+- **Restricted data and compute.** The frame carries values imputed from the IRS Public Use File. Registration 19 runs it on Modal under a ruling specific to that analysis (d806). The parked d093 asks only whether restricted PUF inputs may go to Modal, so no ruling covers this plan's runs. The draft registration runs W2 and gate 3 locally unless Max rules otherwise.
 - **Blinding.** None of these tests needs a sealed comparator. Any later blind test that needs a projected population waits until the projection gates pass (`paper/paper.qmd:396`), and its builders are briefed on `RESTRICTED-FILES.md`.
 
 ## Decisions needed
