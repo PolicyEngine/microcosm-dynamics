@@ -1,9 +1,9 @@
 """Structure-only inspection of cached Microcosm US frame files.
 
 No outcome variable is summarized. For each file the script prints entity
-row counts, the person column list, education-like column names,
-``source_year`` and ``person_support_channel`` record counts, the weight
-share by support channel, the age codes at 80 and over, and the Kish
+row counts, the person and household column lists, education-like column
+names, ``source_year`` and ``person_support_channel`` record counts, the
+weight share by support channel, the age codes at 80 and over, and the Kish
 effective sample size of persons from household weights. Written for the
 microcosm-start plan, 2026-10-04.
 
@@ -42,6 +42,14 @@ def inspect(tag: str, path: str) -> None:
     for entity in ENTITIES:
         print(f"  {entity} rows: {f[entity]['table'].shape[0]}")
     print(f"  person columns ({len(names)}): {', '.join(names)}")
+    hh_names = sorted(
+        (
+            set(f["household"]["table"].dtype.names or [])
+            | set(f["household"]["_i_table"].keys())
+        )
+        - {"index"}
+    )
+    print(f"  household columns ({len(hh_names)}): {', '.join(hh_names)}")
     edu = [
         n
         for n in names
