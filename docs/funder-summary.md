@@ -1,9 +1,9 @@
-# Concept note: Populace dynamics
+# Concept note: Microcosm Dynamics
 
 ## What this is
 
 This concept note describes the design of an open, longitudinal
-Dynamics layer for `populace`, PolicyEngine's country-agnostic
+Dynamics layer for Microcosm, PolicyEngine's country-agnostic
 microdata stack — validated first on the U.S. Social Security
 system, and built so that every claim it makes can be scored against
 reality. Social Security is the proving ground because it is the
@@ -15,7 +15,7 @@ benefit systems as PolicyEngine's country coverage grows.
 The premise is George Box's, taken literally: all models are wrong,
 and a model is useful only if it improves predictions. So this
 project's product is not a brand-name simulator. The machinery lives
-in `populace`, PolicyEngine's open microdata stack; the deliverable
+in Microcosm, PolicyEngine's open microdata stack; the deliverable
 is a versioned population artifact with a manifest and a public
 scorecard; and this repository holds the Social Security application
 and the validation program that grades it. Models made their names
@@ -156,7 +156,7 @@ combination:
   backtests, and held-out moments — in place of fidelity-only
   validation
 - domains of validity as shipped metadata on every output
-- a contribution rule inherited from `populace`: changes merge if
+- a contribution rule inherited from Microcosm: changes merge if
   and only if they improve the score on held-out facts, from any
   contributor
 - AI-callable interfaces from day one
@@ -167,8 +167,8 @@ No equivalent bundle exists for U.S. Social Security analysis.
 
 The natural implementation is the PolicyEngine open-source stack.
 
-**Populace** is PolicyEngine's rebuilt, open-source microdata stack
-([github.com/PolicyEngine/populace](https://github.com/PolicyEngine/populace),
+**Microcosm** is PolicyEngine's rebuilt, open-source microdata stack
+([github.com/PolicyEngine/microcosm](https://github.com/PolicyEngine/microcosm),
 MIT). It builds a calibrated synthetic population entirely from
 primary-source government data (CPS/ASEC, IRS Public Use File,
 Survey of Consumer Finances, SIPP, CPS outgoing-rotation groups,
@@ -179,7 +179,7 @@ PolicyEngine's enhanced CPS as the certified default U.S. microdata
 in policyengine.py, after a matched, symmetric-refit comparison on
 41,314 households with a 739-target holdout:
 
-| Metric (lower is better) | Populace | enhanced CPS |
+| Metric (lower is better) | Microcosm | enhanced CPS |
 |---|---|---|
 | Holdout loss (739 held-out targets) | 0.038 | 0.317 |
 | Training loss | 0.190 | 1.089 |
@@ -188,13 +188,13 @@ in policyengine.py, after a matched, symmetric-refit comparison on
 
 The asymmetry in the last row is published deliberately: the
 enhanced CPS wins more individual targets narrowly, while its
-largest misses are far larger — Populace's aggregate loss is an
+largest misses are far larger — Microcosm's aggregate loss is an
 order of magnitude lower on held-out targets. Publishing the number
 that cuts against the headline is the discipline this whole project
-runs on. (Source: the release manifest in the Populace repository.)
+runs on. (Source: the release manifest in the Microcosm repository.)
 
 **The longitudinal extension is designed, not improvised.**
-Populace's charter names this project's direction explicitly and
+Microcosm's charter names this project's direction explicitly and
 specifies the kernel rules: one weight per trajectory, with
 multi-period targets stacked as (target, period) constraint rows
 over the same weight vector; entry and exit markers (birth, death,
@@ -212,12 +212,12 @@ forward are the same operator run in either direction.
 
 **PolicyEngine-US** supplies the rules engine — OASDI benefit
 calculation, benefit taxation, and means-tested interactions —
-through Populace's rules-engine adapter, with Axiom's rules layer as
+through Microcosm's rules-engine adapter, with Axiom's rules layer as
 the next adapter: statute encoded declaratively and compiled to
 Rust, a performance boundary that matters when benefit formulas run
 over person-periods across hundreds of thousands of trajectories.
 In that architecture PolicyEngine is a composition — Axiom rules,
-Populace population, and a labeled behavioral scenario layer.
+Microcosm population, and a labeled behavioral scenario layer.
 **PolicyEngine-API** and the MCP server are the delivery surface.
 
 The deliverable is a versioned artifact — `populace_us_panel_*` —
@@ -337,7 +337,7 @@ These are not phase-one commitments. They are reasons to design the
 core architecture well.
 
 The longitudinal machinery itself is generic and lives upstream in
-`populace`, whose kernel is country-agnostic. The same extension can
+Microcosm, whose kernel is country-agnostic. The same extension can
 eventually serve other countries' pension and benefit systems;
 Social Security is the first application, not the boundary.
 
@@ -377,7 +377,7 @@ makes the scorecard, and the case for trusting it, longer.
   be co-owned through bilateral institutional agreements.
 - Not a 75-year oracle — the long horizon ships as a sensitivity
   surface, never a point forecast.
-- Not a brand-name simulator — the machinery is Populace's, the
+- Not a brand-name simulator — the machinery is Microcosm's, the
   artifact is versioned, and the scorecard is the product.
 
 ## Open invitation
