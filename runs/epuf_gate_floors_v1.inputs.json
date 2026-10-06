@@ -1,0 +1,25 @@
+{
+  "artifact": "epuf_gate_floors_v1.json",
+  "status": "SOURCE_INPUT_DIGESTS",
+  "official_source": {
+    "url": "https://www.ssa.gov/policy/docs/microdata/epuf/epuf2006_csv_files.zip",
+    "archive_sha256": "0bb97275cc35a1bb42d34d26acbc9df720d4f875854ba1d02c50323d2357003b",
+    "archive_bytes": 291602034,
+    "archive_members": [
+      "EPUF2006_DEMOGRAPHIC.csv",
+      "EPUF2006_ANNUAL.csv"
+    ],
+    "retrieved": "2026-10-01",
+    "provenance": "data/external/epuf_2006/provenance.md"
+  },
+  "staged_inputs": [
+    {
+      "path": "EPUF2006_DEMOGRAPHIC.csv",
+      "sha256": "195db459ca7b7c810162cb6e432371e8787eba8331787d2ba1eace1a0da2ccb0"
+    },
+    {
+      "path": "EPUF2006_ANNUAL.csv",
+      "sha256": "a47315b56214df66fb9f9abcb2caa60779c8b3d091ded199323672c27e3ea105"
+    }
+  ]
+}

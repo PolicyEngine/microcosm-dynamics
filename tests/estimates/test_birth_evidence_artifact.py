@@ -211,6 +211,26 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/bridge/invented_population.py"),
         Path("src/populace_dynamics/bridge/population.py"),
         Path("src/populace_dynamics/bridge/population_summary.py"),
+        Path("src/populace_dynamics/data/epuf.py"),
+        Path("src/populace_dynamics/harness/epuf_operator.py"),
+        Path("src/populace_dynamics/harness/epuf_cells.py"),
+        Path("src/populace_dynamics/harness/epuf_gate.py"),
+        Path("src/populace_dynamics/harness/epuf_run.py"),
+        Path("src/populace_dynamics/data/tr2026.py"),
+        Path("src/populace_dynamics/data/cbo2026.py"),
+        Path("src/populace_dynamics/data/life_table.py"),
+        Path("src/populace_dynamics/baselines/__init__.py"),
+        Path("src/populace_dynamics/baselines/asfr.py"),
+        Path("src/populace_dynamics/baselines/base.py"),
+        Path("src/populace_dynamics/baselines/cbo2026_long_term.py"),
+        Path("src/populace_dynamics/baselines/claim_tables.py"),
+        Path("src/populace_dynamics/baselines/common2026.py"),
+        Path("src/populace_dynamics/baselines/fertility.py"),
+        Path("src/populace_dynamics/baselines/interpolation.py"),
+        Path("src/populace_dynamics/baselines/legacy.py"),
+        Path("src/populace_dynamics/baselines/realized.py"),
+        Path("src/populace_dynamics/baselines/tr2026_intermediate.py"),
+        Path("src/populace_dynamics/baselines/track_a.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(
@@ -461,6 +481,18 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
     assert bridge_modules.isdisjoint(reachable), (
         "the opt-in PolicyEngine-US bridge became reachable from the "
         f"birth-evidence reducer: {sorted(bridge_modules & reachable)}"
+    )
+    epuf_modules = {
+        "populace_dynamics.data.epuf",
+        "populace_dynamics.harness.epuf_operator",
+        "populace_dynamics.harness.epuf_cells",
+        "populace_dynamics.harness.epuf_gate",
+        "populace_dynamics.harness.epuf_run",
+    }
+    assert epuf_modules.issubset(module_paths)
+    assert epuf_modules.isdisjoint(reachable), (
+        "the opt-in EPUF modules became reachable from the birth-evidence "
+        f"reducer: {sorted(epuf_modules & reachable)}"
     )
     assert graph_exclusions.isdisjoint(reachable), (
         "opt-in graph modules became reachable from the birth-evidence "

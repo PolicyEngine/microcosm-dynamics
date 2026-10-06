@@ -14,9 +14,9 @@ negotiations before it can produce a credible first model.
 This chapter inventories the main public or low-friction sources we can
 use to validate the model. It is not an exhaustive bibliography. It is
 the minimum practical source stack for judging whether longitudinal
-`populace` is becoming decision-useful.
+Microcosm is becoming decision-useful.
 
-Many of these sources are already assembled inside `populace`,
+Many of these sources are already assembled inside Microcosm,
 PolicyEngine's microdata stack — the primary-source microdata and the
 calibration targets (from CBO, IRS, SSA, Census, and others) that it
 draws on. Naming the sources
