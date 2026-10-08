@@ -6,9 +6,21 @@ on:
       - master
   pull_request:
 
+# A new push to a pull request cancels that pull request's older unfinished
+# run (each run holds up to 7 org-shared runners for ~100 runner-minutes).
+# Every master push gets its own group (run_id), so merges are never
+# cancelled and each one is validated independently.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   pytest-shard:
     runs-on: ubuntu-latest
+    # The slowest shard took 49-73 min on 2026-10-06..08 (shard 2/4; the
+    # committed .test_durations predates half the suite). The cap frees a
+    # hung shard's runner after 2 h instead of GitHub's 6 h default.
+    timeout-minutes: 120
     strategy:
       fail-fast: false
       matrix:
@@ -37,6 +49,7 @@ jobs:
 
   graph-integration:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
@@ -61,6 +74,7 @@ jobs:
     needs: [pytest-shard, graph-integration]
     if: always()
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     strategy:
       matrix:
         python-version: ['3.14']
