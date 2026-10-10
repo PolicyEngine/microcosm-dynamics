@@ -355,6 +355,10 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # EPUF careers after the fact; nothing historical imports them.
     Path("src/populace_dynamics/harness/epuf_fill_gate.py"),
     Path("src/populace_dynamics/harness/epuf_fill_scoring.py"),
+    # The opt-in learned EPUF career fills and their application to a
+    # built PSID-2010 cohort; nothing historical imports them.
+    Path("src/populace_dynamics/estimates/epuf_fill.py"),
+    Path("src/populace_dynamics/cohorts/psid2010_epuf_fill.py"),
     # The selectable projection baselines (NASI follow-up, 2026-10-01) are
     # opt-in inputs for unregistered projections; every registered result
     # keeps the TR2008 path, and nothing historical imports them.
