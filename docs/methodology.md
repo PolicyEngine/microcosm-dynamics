@@ -2,9 +2,9 @@
 
 ## Overview
 
-This chapter describes the technical approach to making `populace`
+This chapter describes the technical approach to making Microcosm
 longitudinal and then using that longitudinal population for Social
-Security microsimulation. `populace` is PolicyEngine's rebuilt
+Security microsimulation. Microcosm is PolicyEngine's rebuilt
 open-source microdata stack: it synthesizes populations from
 primary-source U.S. government survey and administrative data
 (CPS/ASEC, IRS Public Use File, SCF, SIPP, CPS-ORG, MEPS, ACS) using
@@ -28,26 +28,26 @@ MINT, and the public CBO record.
 ## Methodology flow
 
 The following diagram illustrates the high-level data flow through the
-synthetic panel construction process. `populace` draws on
+synthetic panel construction process. Microcosm draws on
 primary-source microdata and administrative calibration targets
 (including SSA aggregates):
 
 ```mermaid
 flowchart TD
     subgraph inputs["Input Data Sources"]
-        MPX["Populace<br/>(Cross-sectional population)"]
+        MPX["Microcosm<br/>(Cross-sectional population)"]
         PSID["PSID<br/>(Longitudinal)"]
         SSA["Calibration targets<br/>(SSA, CBO, IRS, Census)"]
     end
 
     subgraph processing["Longitudinal Extension"]
-        HIST["Add lifetime histories<br/>to Populace"]
+        HIST["Add lifetime histories<br/>to Microcosm"]
         TRANS["Add demographic and<br/>family transitions"]
         CAL["Longitudinal validation<br/>& calibration"]
     end
 
     subgraph outputs["Application Layer"]
-        PANEL["Longitudinal<br/>Populace"]
+        PANEL["Longitudinal<br/>Microcosm"]
         PE["PolicyEngine-US<br/>Benefit Calculations"]
         WEB["Web Interface<br/>& API"]
     end
@@ -66,7 +66,7 @@ flowchart TD
 
 The methodology now has two explicit layers:
 
-1. **Population layer**: make `populace` into a credible longitudinal
+1. **Population layer**: make Microcosm into a credible longitudinal
    synthetic population.
 2. **Application layer**: use that longitudinal population for Social
    Security benefit calculation, validation, and reform analysis.
@@ -75,13 +75,13 @@ That split is not just organizational. It determines where methods and
 code should live.
 
 - Generic synthesis, calibration, trajectory construction, and
-  longitudinal state machinery belong in `populace` or its companion
+  longitudinal state machinery belong in Microcosm or its companion
   packages.
 - Social Security-specific logic, policy validation, and reform
   workflows belong in this repository and in PolicyEngine-US.
 
 Within the population layer, the project should remain baseline-first.
-That means the first implementation inside longitudinal `populace`
+That means the first implementation inside longitudinal Microcosm
 should use methods that are simple enough to audit and validate
 directly. More ambitious joint generative models can be added later if
 they improve the metrics that matter.
@@ -96,7 +96,7 @@ Machine learning is useful inside that system, but it is not the
 system.
 
 This produces a longitudinal public population with:
-- representative synthetic records from the `populace` base population
+- representative synthetic records from the Microcosm base population
 - lifetime dynamics learned from panel data and external targets
 - explicit calibration and validation artifacts
 - reuse across Social Security and adjacent policy domains
@@ -104,7 +104,7 @@ This produces a longitudinal public population with:
 ### How this differs from existing models
 
 **vs. DynaSim**: the comparison object is not this repository alone. It
-is longitudinal `populace` plus PolicyEngine-US plus this Social
+is longitudinal Microcosm plus PolicyEngine-US plus this Social
 Security application layer. The differentiator is openness,
 inspectability, and modularity rather than institutional continuity.
 
@@ -122,10 +122,10 @@ comparison to DynaSim, MINT, CBOLT, and other models.
 
 ## Phase 1: Base-year cross-section
 
-### Starting point: Populace's current cross-sectional layer
+### Starting point: Microcosm's current cross-sectional layer
 
-The project starts from `populace`, PolicyEngine's rebuilt microdata
-stack. Populace builds a calibrated cross-sectional population
+The project starts from Microcosm, PolicyEngine's rebuilt microdata
+stack. Microcosm builds a calibrated cross-sectional population
 entirely from primary sources and, in June 2026, replaced
 PolicyEngine's enhanced CPS as the certified default U.S. microdata
 in policyengine.py — after beating it on a held-out, symmetric-refit
@@ -134,23 +134,23 @@ shipped and won; the longitudinal extension is the open work.
 
 Advantages of this starting point:
 
-1. **Proven methodology**: Populace has already solved the
+1. **Proven methodology**: Microcosm has already solved the
    cross-sectional income underreporting problem using the same
    tools the longitudinal extension will apply
 2. **Integration**: seamless connection to PolicyEngine-US's
    existing tax-benefit calculations
 3. **Asset value**: improvements made for this project strengthen
-   `populace` rather than remaining trapped in a narrow application
+   Microcosm rather than remaining trapped in a narrow application
    repository
 4. **Credibility**: builds on a demonstrated production stack rather
    than restarting from scratch
 5. **Sample size**: a large synthetic public population provides
    statistical power for national and subnational analysis
 
-Populace improves upon raw CPS through:
+Microcosm improves upon raw CPS through:
 
 **Income imputation**: filling missing income components with
-weight-aware conditional models (the `populace-fit` shard, succeeding
+weight-aware conditional models (the `microcosm-fit` shard, succeeding
 `microimpute` — quantile regression forests and related methods)
 
 **Benefit underreporting correction**: aligning survey-reported
@@ -160,10 +160,10 @@ transfer income with administrative aggregates
 structure
 
 **Multi-source calibration**: base-population reweighting (the
-`populace-calibrate` shard) against administrative aggregates from
+`microcosm-calibrate` shard) against administrative aggregates from
 CBO, IRS, SSA, Census, and other sources
 
-The proof-of-concept phase should validate that `populace` can be
+The proof-of-concept phase should validate that Microcosm can be
 extended longitudinally, rather than reopening the question of
 whether the project should start from some entirely different base
 population. If computational constraints arise with the full
@@ -188,13 +188,13 @@ For dynamic modeling, we need variables not in CPS:
 
 These "latent" variables will drive longitudinal transitions even when not directly observed.
 
-## Phase 2: Longitudinal extension of Populace
+## Phase 2: Longitudinal extension of Microcosm
 
 ### The core challenge
 
 Social Security benefits depend on 35 highest years of earnings, but the
 current public population layer only observes a cross-section. We need
-to extend `populace` so that it carries:
+to extend Microcosm so that it carries:
 
 - Past earnings for current workers (ages 18-70)
 - Future earnings for younger workers (for projections)
@@ -206,27 +206,27 @@ to extend `populace` so that it carries:
 - Realistic variance
 
 This is the step where the project becomes more than a static synthetic
-dataset. It turns `populace` into a longitudinal population asset.
+dataset. It turns Microcosm into a longitudinal population asset.
 
-### Earnings-history approach inside longitudinal Populace
+### Earnings-history approach inside longitudinal Microcosm
 
 The project should begin with a benchmark set rather than prematurely
 declaring one model family to be the production architecture. The
-current `populace` direction points away from plain sequential QRF as
+current Microcosm direction points away from plain sequential QRF as
 the main design and toward zero-inflated, pathwise generation inside
-`populace`.
+Microcosm.
 
 That means the proposal should distinguish:
 
 - **diagnostic comparators** such as QRF and ZI-QRF
 - **serious production candidates** such as ZI-QDNN and zero-inflated
-  pathwise `populace` models
+  pathwise Microcosm models
 - **the architectural question underneath them**: sequential age-point
   imputation versus all-at-once trajectory generation
 
 The methodological objective is therefore not "use QRF because it is
 familiar." It is "use the simplest architecture that survives the
-Social-Security-specific validation gates." The refreshed `populace`
+Social-Security-specific validation gates." The refreshed Microcosm
 imputation evaluations should help decide whether the leading candidate
 is ZI-QDNN, a flow-based pathwise model, or another zero-inflated
 trajectory approach. The proposal should be written to accommodate that
@@ -255,7 +255,7 @@ decision rather than forcing it in advance.
 
 **Phase-1 comparison approach**:
 
-For each base-year CPS or `populace` individual, the project should
+For each base-year CPS or Microcosm individual, the project should
 compare at least two families:
 
 1. **Age-point benchmark models**:
@@ -267,7 +267,7 @@ compare at least two families:
 
 The first family is useful because it is interpretable and easy to
 debug. The second is the more likely production direction because it is
-better aligned with the actual `populace` longitudinal architecture and
+better aligned with the actual Microcosm longitudinal architecture and
 preserves cross-age dependence natively.
 
 ### Interval-specific training strategy for benchmark models
@@ -288,14 +288,14 @@ This approach:
 - Allows different predictors to matter at different ages
 - Prevents impossible trajectories (e.g., starting at $200k at age 22)
 - Provides an interpretable benchmark arm for the more ambitious
-  `populace` trajectory models
+  Microcosm trajectory models
 
 But it should no longer be described as the expected production
 architecture.
 
 ### Expected production direction: joint trajectory synthesis
 
-The stronger architectural bet is that `populace` should learn full
+The stronger architectural bet is that Microcosm should learn full
 earnings trajectories all at once, with zero-inflation built directly
 into the model. In practice, that means:
 
@@ -307,13 +307,13 @@ into the model. In practice, that means:
   careers
 - preserving cross-age correlations without post-hoc smoothing
 
-This is the design most consistent with making `populace`
+This is the design most consistent with making Microcosm
 longitudinal. It also better matches the actual Social Security
 decision problem, where the full path matters more than any single
 age's earnings.
 
 The winning model family should still be chosen empirically. The
-refreshed `populace` evaluation work should tell us whether ZI-QDNN, a
+refreshed Microcosm evaluation work should tell us whether ZI-QDNN, a
 flow-based pathwise model, or another zero-inflated sequence model is
 the strongest production candidate.
 
@@ -334,7 +334,7 @@ cohort in the conditioning set for all candidate models
 birth where sample size permits
 
 **Trend adjustment**: Adjust PSID training data to reflect the CPS or
-`populace` cohort's economic environment
+Microcosm cohort's economic environment
 
 ### Validation of imputed histories
 
@@ -354,7 +354,7 @@ We validate imputed earnings histories against multiple benchmarks:
 
 This validation step is doing double duty. It decides whether the
 earnings-history machinery is good enough for Social Security, and it
-also decides whether longitudinal `populace` is becoming a credible
+also decides whether longitudinal Microcosm is becoming a credible
 population asset in its own right.
 
 ## Phase 3: Demographic transitions
@@ -518,9 +518,9 @@ structure this project needs.
 ### Base-year calibration
 
 Weights still matter before longitudinalization. The cross-sectional
-`populace` base should be calibrated to demographic, income, tax, and
-program targets using `populace`'s existing calibration shard
-(`populace-calibrate`) against administrative aggregates.
+Microcosm base should be calibrated to demographic, income, tax, and
+program targets using Microcosm's existing calibration shard
+(`microcosm-calibrate`) against administrative aggregates.
 
 Once that base population is converted into a longitudinal population,
 the representation should be treated as a population scaffold with
