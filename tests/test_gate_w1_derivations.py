@@ -1220,10 +1220,17 @@ def test_gate_w1_flip_leaves_locked_siblings_byte_identical():
     # The M6 lock flip (2026-07-13) adds gate_m6 as its own sole new key; the
     # same added-locked-gate tolerance covers it (empty once merged, {gate_m6}
     # while its flip PR is open), preserved alongside gate_w1 and never dropped.
-    assert added in (set(), {"gate_w1"}, {"gate_m6"}), added
+    # The gate_epuf_fill lock flip (2026-10-10, decision d927) adds
+    # gate_epuf_fill as its own sole new key, with the same tolerance.
+    assert added in (
+        set(),
+        {"gate_w1"},
+        {"gate_m6"},
+        {"gate_epuf_fill"},
+    ), added
     assert removed == set(), removed
     for key in master:
-        if key in ("gate_w1", "gate_m6"):
+        if key in ("gate_w1", "gate_m6", "gate_epuf_fill"):
             continue
         assert current[key] == master[key], f"{key} changed vs master!"
     # gate_2's locked tranche-2a thresholds + gate_2b + gate_2c untouched.

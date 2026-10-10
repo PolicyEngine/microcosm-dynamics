@@ -799,9 +799,11 @@ of PR #515):
   to v2's); the TEST scoring module pins its SHA-256
 - [x] Referee round 3 (confirmation): LOCK AFTER LISTED FIXES, no rebuild
 - [x] Round 3's fixes (section 12b)
-- [ ] Max ratifies the materiality reading of the tolerance (queued
-  decision)
-- [ ] Ratifying merge; lock flip in `gates.yaml`
+- [x] Max ratifies the materiality reading of the tolerance (decision
+  d927, ruled 2026-10-10: ratify `K = 1`; lock as registered)
+- [x] Lock flip in `gates.yaml` (this PR; the block is the draft with the
+  lock-time deltas in its history, bound by
+  `tests/test_gate_epuf_fill_lock.py`); ratifying merge of this PR
 - [ ] Candidates registered (code commit, fitted-artifact SHA-256)
 - [ ] TEST read through `test_part()` and scored once; result published
   whether it passes or fails

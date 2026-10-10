@@ -1,4 +1,6 @@
-# Draft gates.yaml block for gate_epuf_fill (NOT in gates.yaml yet).
+# Draft gates.yaml block for gate_epuf_fill. Ratified by Max (decision d927,
+# 2026-10-10) and locked into gates.yaml with the lock-time deltas listed in
+# that block's history; this file stays as the ratified draft.
 #
 # A gate here is a pass-or-fail test whose rules and thresholds are fixed and
 # published before anything is scored against it. This block is copied into
