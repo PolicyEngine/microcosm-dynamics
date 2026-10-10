@@ -365,9 +365,19 @@ def test_u1_and_protected_sources_remain_byte_identical():
         "docs/design/boomers2004_uniform_cut_comparison.md" in pins["sha256"]
     )
     for path, expected in pins["sha256"].items():
-        assert (
-            hashlib.sha256((ROOT / path).read_bytes()).hexdigest() == expected
-        ), path
+        observed = hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
+        if path == "gates.yaml" and observed != expected:
+            # A ratified flip outside U2 (first: the gate_epuf_fill lock,
+            # decision d927) may move the contract; it must then be the
+            # ratified one, recorded in runs/legacy_manifest_v1.json by
+            # scripts/build_legacy_manifest.py --transition.
+            entries = json.loads(
+                (ROOT / "runs" / "legacy_manifest_v1.json").read_text()
+            )["entries"]
+            (entry,) = [e for e in entries if e["path"] == "gates.yaml"]
+            assert observed == entry["sha256"], path
+            continue
+        assert observed == expected, path
 
 
 @pytest.mark.parametrize("year", [17, 23])
