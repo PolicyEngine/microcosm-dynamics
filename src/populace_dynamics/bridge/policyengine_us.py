@@ -605,11 +605,10 @@ def simulation_for(case, trace=False):
     )
 """
 
-#: Executed by the policyengine-us interpreter.  It reads a job on stdin and
-#: writes results on stdout.  For each case it builds the component tree of
-#: the root from the model: a variable's ``adds``/``subtracts`` (a list, or
-#: a parameter path to a list), except three formula variables whose lists
-#: it mirrors from their source in policyengine-us 2.18.0:
+#: The component tree of the root, read from the model: a variable's
+#: ``adds``/``subtracts`` (a list, or a parameter path to a list), except
+#: three formula variables whose lists it mirrors from their source in
+#: policyengine-us 2.18.0:
 #:
 #: * ``household_benefits`` (``household_benefits.py:11-17``):
 #:   ``gov.household.household_benefits``, less ``housing_assistance`` when
@@ -621,17 +620,11 @@ def simulation_for(case, trace=False):
 #:
 #: A variable to expand with neither ``adds`` nor a mirrored list is an
 #: error.  :func:`decompose` checks every aggregate's value against its
-#: parts, so a wrong mirror fails loudly.  Each case runs in its own
-#: simulation (see :data:`_SIMULATION_SOURCE`) and must hold exactly one
-#: household.  A memo name may carry ``@period`` (for example
-#: ``is_qmb_eligible@2026-01``) to read a monthly variable.
-_RUNNER_SOURCE = _INSTALLATION_SOURCE + _SIMULATION_SOURCE + r"""
-import policyengine_us
-
-expand = set(job["expand"])
-root = job["root"]
-
-
+#: parts, so a wrong mirror fails loudly.  The functions read the globals
+#: ``root`` and ``expand``, which each child that includes this source sets
+#: from its job.  Shared by :data:`_RUNNER_SOURCE` and the population
+#: runner (:mod:`populace_dynamics.bridge.population`).
+_TREE_SOURCE = r"""
 def parameter_list(params, path):
     node = params
     for part in path.split("."):
@@ -680,6 +673,20 @@ def build_tree(system, params):
 
 def memo_period(name):
     return name.split("@", 1) if "@" in name else (name, period)
+"""
+
+#: Executed by the policyengine-us interpreter.  It reads a job on stdin and
+#: writes results on stdout.  For each case it builds the component tree of
+#: the root from the model (:data:`_TREE_SOURCE`).  Each case runs in its
+#: own simulation (see :data:`_SIMULATION_SOURCE`) and must hold exactly one
+#: household.  A memo name may carry ``@period`` (for example
+#: ``is_qmb_eligible@2026-01``) to read a monthly variable.
+_RUNNER_SOURCE = (
+    _INSTALLATION_SOURCE + _SIMULATION_SOURCE + _TREE_SOURCE + r"""
+import policyengine_us
+
+expand = set(job["expand"])
+root = job["root"]
 
 
 def household_value(sim, name, at):
@@ -724,6 +731,7 @@ json.dump(
     sys.stdout,
 )
 """
+)
 
 #: :func:`trace_policyengine_us`'s child.  Each case runs in its own
 #: simulation (see :data:`_SIMULATION_SOURCE`) with PolicyEngine-US's
