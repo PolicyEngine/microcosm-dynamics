@@ -178,15 +178,17 @@ def test_administrative_birth_support_is_administrative_only():
         assert not rules[(wave, 92)].administrative_birth_support
 
 
-#: The role entries the adjudicated registries refuse (commit 883ea48):
-#: code 88 everywhere (TO VERIFY); 2015 code 20 (disposition F, the
-#: loader refuses the whole entry); code 92's absence in 2013 and 2015;
-#: codes 90 and 92 in 2019-2023 (disposition F).  2013 and 2015-2017
-#: code 90 and 2017 code 92 are documented rules (disposition D).
+#: The role entries the committed registries refuse: code 88 everywhere
+#: (TO VERIFY) and code 92's absence in 2013 and 2015.  2013 and
+#: 2015-2017 code 90 and 2017 code 92 are documented rules (disposition
+#: D).  2015 code 20 and 2019-2023 codes 90 and 92, which the
+#: adjudication refused (disposition F), carry section 16c's ratified
+#: exclusions since the d1090 registry commit (:data:`D1090_RULED`).
 REFUSED_ROLES = frozenset(
-    {(wave, 88) for wave in sources.SUPPORT_WAVES}
-    | {(2015, 20), (2013, 92), (2015, 92)}
-    | {(wave, code) for wave in (2019, 2021, 2023) for code in (90, 92)}
+    {(wave, 88) for wave in sources.SUPPORT_WAVES} | {(2013, 92), (2015, 92)}
+)
+D1090_RULED = frozenset(
+    {(2015, 20)} | {(wave, code) for wave in B2_WAVES for code in (90, 92)}
 )
 
 
@@ -202,6 +204,13 @@ def test_registry_rules_equal_declared_rules_where_resolved(
     refused = {k for k, r in registry.rules.items() if r.refusal}
     assert refused == REFUSED_ROLES
     assert {(2013, 90), (2015, 90), (2017, 90), (2017, 92)} <= set(resolved)
+    # The d1090 registry entries resolve to exactly the declared rules,
+    # each carrying its section 16c exclusion.
+    assert D1090_RULED <= set(resolved)
+    excluding = {
+        k for k, r in registry.rules.items() if r.family_unit_exclusion
+    }
+    assert excluding == D1090_RULED
 
 
 @pytest.mark.parametrize("wave", sources.SUPPORT_WAVES)
@@ -231,25 +240,56 @@ def test_role_refusals_agree_with_the_loader_api(wave, code):
             context.rule(wave, code)
 
 
-def test_registry_context_refuses_refused_codes(u2_inputs, u2_births):
+@pytest.mark.parametrize("row", ["U0", "U1"])
+def test_registry_context_builds_as_the_declared_context(
+    row, u2_inputs, u2_births, declared
+):
+    """Differential: since the d1090 registry commit the committed roles
+    registry resolves every code the invented population holds, so the
+    registry context builds it exactly as the declared context does,
+    the section 16c exclusions included (only the context label
+    differs)."""
+
     registry = sources.RoleContext.from_registry()
-    with pytest.raises(sources.U2RoleRefusal, match="roles:"):
-        cohort.build_u2_cohort(
-            u2_inputs, role_context=registry, births=u2_births
-        )
+    spec = cohort.U2CohortSpec(row=row)
+    by_registry = cohort.build_u2_cohort(
+        u2_inputs, spec, role_context=registry, births=u2_births
+    )
+    by_declared = cohort.build_u2_cohort(
+        u2_inputs, spec, role_context=declared, births=u2_births
+    )
+    assert set(by_registry.observations["income_role_rule"]) == {
+        sources.REGISTRY
+    }
+    pd.testing.assert_frame_equal(
+        by_registry.observations.drop(columns="income_role_rule"),
+        by_declared.observations.drop(columns="income_role_rule"),
+    )
+    pd.testing.assert_frame_equal(
+        by_registry.dispositions, by_declared.dispositions
+    )
+    ruled = by_registry.dispositions["disposition"].isin(
+        sources.FAMILY_UNIT_EXCLUSIONS
+    )
+    assert set(by_registry.dispositions.loc[ruled, "disposition"]) == set(
+        sources.FAMILY_UNIT_EXCLUSIONS
+    )
+
+
+def test_registry_context_refuses_refused_codes():
+    registry = sources.RoleContext.from_registry()
     with pytest.raises(sources.U2RoleRefusal, match="code 92 absent in 2015"):
         registry.rule(2015, 92)
-    with pytest.raises(
-        sources.U2RoleRefusal, match="refuse_male_code20_per_u2_adjudicate_F"
-    ):
-        registry.rule(2015, 20)
-    for wave in (2019, 2021, 2023):
-        for code in (90, 92):
-            with pytest.raises(
-                sources.U2RoleRefusal,
-                match="refuse_ofum_assignment_per_u2_adjudicate_F",
-            ):
-                registry.rule(wave, code)
+    for wave in sources.SUPPORT_WAVES:
+        with pytest.raises(sources.U2RoleRefusal, match="TO VERIFY"):
+            registry.rule(wave, 88)
+    # The ruled codes resolve, each with its exclusion (section 16c).
+    for wave, code in sorted(D1090_RULED):
+        rule = registry.rule(wave, code)
+        assert rule.family_unit_exclusion is not None, (wave, code)
+        assert rule.family_unit_exclusion.disposition == expected_exclusion(
+            wave, code, "male"
+        )
 
 
 def test_code_88_refuses_under_every_context(u2_inputs):
@@ -670,11 +710,26 @@ def test_a_registry_context_cannot_carry_the_declared_rules():
     registry = sources.RoleContext.from_registry()
     with pytest.raises(sources.U2SourceRefusal, match="declared table"):
         sources.RoleContext(sources.INVENTED_DECLARED, registry.rules)
-    # Any one rule changed is refused, e.g. 2015 code 20 made applicable.
-    rules = dict(registry.rules)
-    rules[(2015, 20)] = sources.declared_role_rules()[(2015, 20)]
-    with pytest.raises(sources.U2SourceRefusal, match=r"\(2015, 20\)"):
-        sources.RoleContext(sources.REGISTRY, rules)
+    # Any one rule changed is refused, e.g. 2015 code 20 without its
+    # section 16c exclusion, or code 88 made applicable.
+    for key, changed in (
+        (
+            (2015, 20),
+            dataclasses.replace(
+                registry.rules[(2015, 20)], family_unit_exclusion=None
+            ),
+        ),
+        (
+            (2019, 88),
+            dataclasses.replace(registry.rules[(2019, 88)], refusal=None),
+        ),
+    ):
+        rules = dict(registry.rules)
+        rules[key] = changed
+        with pytest.raises(
+            sources.U2SourceRefusal, match=rf"\({key[0]}, {key[1]}\)"
+        ):
+            sources.RoleContext(sources.REGISTRY, rules)
 
 
 def test_role_rules_are_read_only():

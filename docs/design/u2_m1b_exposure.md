@@ -361,3 +361,13 @@ The U2 tests ran with the PSID root staged. They read staged PSID documentation 
 
 - The decision listing printed one-line summaries of unrelated decisions (travel, other repositories); none concerns a comparator or U2's outcome.
 - The d1090 decision record paraphrases PSID's answer. Besides the whole-file count of two that the research record already discloses, it gives one record-level detail about one of the two people, which the research record withholds. It is not reproduced in the specification, the registries or here.
+
+### Files written
+
+- `docs/design/boomers2004_1946_55_comparison.md` (lines 3 and 4, §16c, §§17, 19 and 20), `docs/design/u2_m1b_psid_research.md` (the header and the answers to §§1 and 2), `docs/design/u2_m1_source_adjudication.md` (the summary counts and table, the blocker rows, a section on the d1090 registry commit, the pointer to §16b and the rows of the eight ruled entries), `data/external/track_u2/u1_identity.json` (the specification pin and its note), and this section.
+- `data/external/track_u2/roles.json`, `income.json` and `pension.json` (the eight ruled entries, the released dependencies and a `rulings_applied` record).
+- `src/populace_dynamics/data/u2_source_registry.py`; `src/populace_dynamics/uniform_cut_track_u2/sources.py`, `cohort.py`, `invented.py` and `loader.py` (docstring); `scripts/track_u2_dry_run.py`.
+- `tests/track_u2/test_adjudication_applied.py`, `test_source_registries.py`, `test_u2_roles.py`, `test_u2_properties.py`, `test_u2_mappings.py`, `test_u2_loader.py` and `test_u2_scripts.py`, and `tests/data/test_track_u2_income_wealth.py`.
+- Outside the repository: an edit script and the review records under `~/reviews/u2-d1090-20261010/`.
+
+No U1 file, engine file, `gates.yaml` or `runs/*.json` was edited.

@@ -11,12 +11,14 @@ a later stage when an earlier one refuses:
    each support wave, the anchors, weights, design and sex variables,
    the support plan and the role of every amended relationship code --
    must be RESOLVED with no blocking dependency, under the committed,
-   pinned registries.  It refuses at the adjudicated registries
-   (commit 883ea48): the 2015 income and pension entries depend on the
-   refused 2015 code-20 route, the 2019-2023 ones on the refused
-   code-90/92 routes, the 2017 spouse age/sex slot metadata and the
-   revised 2017 cross-section weight are TO VERIFY, and every
-   2017-2023 P64/P65 record waits on the amendment 5 ruling.
+   pinned registries.  It refuses at the committed registries: code 88
+   (every wave), the later waves' spouse age/sex slot metadata, the
+   2015 P62A checkpoint and the revised 2017 cross-section weight are
+   TO VERIFY, and every 2017-2023 P64/P65 record waits on the registry
+   commit for amendment 5.  The d1090 registry commit (section 16c)
+   replaced the refused 2015 code-20 and 2019-2023 code-90/92 routes
+   with the ratified family-unit exclusions, which released the income
+   and pension entries that depended on them.
 2. **Source identity**: each staged setup file and codebook the
    registries cite is rehashed against the registry's recorded SHA-256,
    and every registry layout -- the family files' and the individual

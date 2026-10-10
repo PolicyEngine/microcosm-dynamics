@@ -120,21 +120,28 @@ def test_documentary_accuracy_conflicts_are_preserved():
 
 
 def test_later_income_slot_maps_cannot_waive_role_blockers():
+    """A later slot map is released only where the role registry decides
+    the routing of every code it concerns: 2017 codes 90 and 92 from
+    documents (adjudication D), and 2015 code 20 and 2019-2023 codes 90
+    and 92 by the exclusions of Max's d1090 ruling (specification section
+    16c).  No slot map depends on a refused role."""
     roles = {entry["id"]: entry for entry in registry("roles")["entries"]}
+    b2 = [(90, "exclude_family_unit_per_d1090")] + [
+        (92, "exclude_family_unit_per_d1090")
+    ]
+    decided = {
+        2015: [(20, "documented_rule_with_family_unit_exclusion")],
+        2017: [(90, "documented_rule"), (92, "documented_rule")],
+        2019: b2,
+        2021: b2,
+        2023: b2,
+    }
     for entry in registry("income")["entries"]:
         if entry["wave"] > 2013 and entry["route"].startswith(
             ("head_", "wife_", "hw_", "ofum_")
         ):
-            if entry["wave"] == 2017:
-                # Both 2017 blockers (codes 90 and 92) were resolved from
-                # documents by the independent adjudication (D).
-                assert "blocking_dependencies" not in entry
-                for code in (90, 92):
-                    role = roles[f"2017.relationship.{code}"]
-                    assert role["status"] == "RESOLVED"
-                    assert role["action"] == "documented_rule"
-                continue
-            assert entry["blocking_dependencies"]
-            for dependency in entry["blocking_dependencies"]:
-                role = roles[dependency.removeprefix("roles:")]
-                assert role["action"].startswith("refuse")
+            assert "blocking_dependencies" not in entry, entry["id"]
+            for code, action in decided[entry["wave"]]:
+                role = roles[f"{entry['wave']}.relationship.{code}"]
+                assert role["status"] == "RESOLVED"
+                assert role["action"] == action, role["id"]

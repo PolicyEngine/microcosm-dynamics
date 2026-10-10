@@ -313,16 +313,26 @@ def test_relationship_labels_and_routing_blockers_are_wave_specific():
                 assert entry["income_role"] == "ofum"
                 assert not entry["spouse_slot"]
             else:
-                # Independent adjudication F: OFUM assignment refused.
+                # Independent adjudication F (OFUM assignment refused),
+                # replaced by Max's d1090 ruling (section 16c): the family
+                # unit is excluded and no income role is assigned.
                 assert entry["adjudication"]["disposition"] == "F"
-                assert entry["action"] == (
-                    "refuse_ofum_assignment_per_u2_adjudicate_F"
-                )
-                assert entry["refused_income_role"] == "ofum"
+                assert entry["action"] == "exclude_family_unit_per_d1090"
+                assert entry["income_role"] == "excluded"
+                assert entry["family_unit_exclusion"] == {
+                    "disposition": (
+                        "uncooperative spouse or partner in family unit"
+                    )
+                }
+                assert entry["ruling"]["decision"] == "d1090"
     code20 = by_key[2015, 20]
-    assert code20["action"] == "refuse_male_code20_per_u2_adjudicate_F"
-    assert code20["refusal_condition"] == {"sex": 1}
+    assert code20["action"] == "documented_rule_with_family_unit_exclusion"
+    assert code20["family_unit_exclusion"] == {
+        "disposition": "male code 20 in 2015 family unit",
+        "condition": {"sex": 1},
+    }
     assert code20["adjudication"]["disposition"] == "F"
+    assert code20["ruling"]["decision"] == "d1090"
 
 
 def test_documentary_calendar_support():

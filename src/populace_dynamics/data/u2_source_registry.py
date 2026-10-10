@@ -26,6 +26,14 @@ REGISTRY_NAMES = (
 REGISTRY_DIRECTORY = (
     Path(__file__).resolve().parents[3] / "data" / "external" / "track_u2"
 )
+#: The named dispositions of the two family-unit exclusions Max ratified on
+#: 2026-10-10 (d1090; specification section 16c): blocker B1 (a 2015
+#: code-20 person recorded male) and blocker B2 (codes 90 and 92 in
+#: 2019-2023).  A role entry carries one as ``family_unit_exclusion``.
+FAMILY_UNIT_DISPOSITIONS = (
+    "male code 20 in 2015 family unit",
+    "uncooperative spouse or partner in family unit",
+)
 
 
 class SourceAdjudicationError(ValueError):
@@ -72,6 +80,52 @@ def _layout(entry: dict[str, Any], field: str | None = None) -> None:
     if layout["width"] != layout[end] - layout[start] + 1:
         raise SourceAdjudicationError(
             f"Inconsistent layout width for {entry['id']}"
+        )
+
+
+def _ruling(entry: dict[str, Any]) -> None:
+    """A recorded ruling names its decision, date and specification part."""
+    _fields(entry, {"ruling": dict})
+    ruling = {**entry["ruling"], "id": entry["id"]}
+    _fields(
+        ruling, {"decision": str, "date": str, "specification_section": str}
+    )
+
+
+def _family_unit_exclusion(entry: dict[str, Any]) -> None:
+    """A ratified exclusion: its disposition, an optional recorded-sex
+    condition, an applicable action and the ruling that made it."""
+    _fields(entry, {"family_unit_exclusion": dict})
+    exclusion = {**entry["family_unit_exclusion"], "id": entry["id"]}
+    _fields(exclusion, {"disposition": str})
+    if exclusion["disposition"] not in FAMILY_UNIT_DISPOSITIONS:
+        raise SourceAdjudicationError(
+            f"Unratified family-unit exclusion for {entry['id']}"
+        )
+    if set(exclusion) - {"disposition", "condition", "id"}:
+        raise SourceAdjudicationError(
+            f"Unknown exclusion field for {entry['id']}"
+        )
+    condition = exclusion.get("condition")
+    if condition is not None and (
+        type(condition) is not dict
+        or set(condition) != {"sex"}
+        or condition["sex"] not in (1, 2)
+        or type(condition["sex"]) is not int
+    ):
+        raise SourceAdjudicationError(
+            f"Invalid exclusion condition for {entry['id']}"
+        )
+    # An exclusion that holds for every member leaves no income role; one
+    # with a condition keeps the documented role for everyone else.
+    if (entry.get("income_role") == "excluded") != (condition is None):
+        raise SourceAdjudicationError(
+            f"Exclusion and income role disagree for {entry['id']}"
+        )
+    if entry.get("action", "").startswith("refuse") or "ruling" not in entry:
+        raise SourceAdjudicationError(
+            f"A family-unit exclusion needs a ruling, not a refusal, for "
+            f"{entry['id']}"
         )
 
 
@@ -285,6 +339,12 @@ def _entry_payload(entry: dict[str, Any], name: str) -> None:
             )
         if entry["status"] == "RESOLVED" and entry["present"]:
             _fields(entry, {"income_role": str})
+        if "family_unit_exclusion" in entry:
+            _family_unit_exclusion(entry)
+        elif entry.get("income_role") == "excluded":
+            raise SourceAdjudicationError(
+                f"Excluded income role without an exclusion for {entry['id']}"
+            )
     elif name == "support":
         if entry["id"] == "common.birth_derivation":
             _fields(entry, {"rule": str})
@@ -399,6 +459,8 @@ def validate_registry(document: dict[str, Any], *, expected_name: str) -> None:
                 _fields(entry, {field: str})
         if "requires_role_registry" in entry:
             _fields(entry, {"requires_role_registry": bool})
+        if "ruling" in entry:
+            _ruling(entry)
         _entry_payload(entry, expected_name)
 
 

@@ -89,6 +89,59 @@ _ADJUDICATED_GATE_PROJECTION_SHA256 = {
 }
 
 
+#: Max's d1090 ruling (2026-10-10, section 16c) moved the gate fields of
+#: three registries in its own reviewed commit; the other five keep the
+#: adjudicated projection.  The registries before that commit are read
+#: from Git (CI fetches full history) at master's last pre-d1090 commit.
+D1090_MOVED = ("income", "pension", "roles")
+PRE_D1090_COMMIT = "1fadf50a70d1f66151597e27a81daa191ee37e4a"
+_D1090_GATE_PROJECTION_SHA256 = {
+    "income": (
+        "15c439a3282857caddbc911f8e1a133f1cb09ac00a90142699bf67e87d8a865e"
+    ),
+    "pension": (
+        "8fd81ec9fb5b36dbfa6af3cba224d378727cf4fccdb4dd4f7d731fa1847c9923"
+    ),
+    "roles": (
+        "7d15c273b95396e7684ab38106c2c19f0f476b6f839812644aed03f3ceff66d3"
+    ),
+}
+#: The d1090 registry commit's ruled entries and the role dependencies it
+#: released (section 16c).
+D1090_ROLES = frozenset(
+    {"2015.relationship.20"}
+    | {
+        f"{wave}.relationship.{code}"
+        for wave in (2019, 2021, 2023)
+        for code in (90, 92)
+    }
+)
+D1090_DEPENDENCIES = frozenset(f"roles:{key}" for key in D1090_ROLES)
+
+
+def _pre_d1090(name):
+    import subprocess
+
+    blob = f"{PRE_D1090_COMMIT}:data/external/track_u2/{name}.json"
+    found = subprocess.run(
+        ["git", "-C", str(registry.REGISTRY_DIRECTORY), "show", blob],
+        capture_output=True,
+    )
+    assert found.returncode == 0, found.stderr.decode()
+    return found.stdout
+
+
+def _projection_sha256(raw):
+    projection = json.dumps(
+        _gate_projection(json.loads(raw)),
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        allow_nan=False,
+    ).encode("utf-8")
+    return hashlib.sha256(projection).hexdigest()
+
+
 def _gate_projection(value):
     if isinstance(value, dict):
         return {
@@ -105,8 +158,10 @@ def test_milestone_1b_moved_only_citations_and_prose():
     """The milestone-1b pin test ``sources.REGISTRY_SHA256`` cites.
 
     Every status, disposition, dependency, action, role and layout field
-    is where the adjudicated registries put it, so every route that
-    refused at 883ea48 still refuses at the current pins.
+    is where the adjudicated registries put it: in the five registries
+    d1090 left alone today, and in the three it moved as they stood before
+    its commit.  So every route that refused at 883ea48 refused until
+    d1090, and its moves are exactly those the next test pins.
     """
     assert set(_ADJUDICATED_GATE_PROJECTION_SHA256) == set(
         sources.REGISTRY_SHA256
@@ -114,14 +169,100 @@ def test_milestone_1b_moved_only_citations_and_prose():
     for name, expected in _ADJUDICATED_GATE_PROJECTION_SHA256.items():
         raw = (registry.REGISTRY_DIRECTORY / f"{name}.json").read_bytes()
         assert hashlib.sha256(raw).hexdigest() == sources.REGISTRY_SHA256[name]
-        projection = json.dumps(
-            _gate_projection(json.loads(raw)),
-            sort_keys=True,
-            separators=(",", ":"),
-            ensure_ascii=False,
-            allow_nan=False,
-        ).encode("utf-8")
-        assert hashlib.sha256(projection).hexdigest() == expected, name
+        if name in D1090_MOVED:
+            assert _projection_sha256(_pre_d1090(name)) == expected, name
+            current = _D1090_GATE_PROJECTION_SHA256[name]
+            assert _projection_sha256(raw) == current, name
+        else:
+            assert _projection_sha256(raw) == expected, name
+
+
+def _changed_keys(before, after):
+    keys = set(before) | set(after)
+    return {k for k in keys if before.get(k, None) != after.get(k, None)}
+
+
+def test_d1090_moved_only_the_ruled_gate_fields():
+    """The d1090 registry commit (section 16c), field by field: the eight
+    ruled entries change only their action, refusal, role, exclusion,
+    resolution and ruling fields; every other entry changes only by losing
+    a dependency on a ruled role entry; no entry is added, dropped or
+    reordered, and nothing else moves."""
+    ruled = {
+        ("roles", "2015.relationship.20"): {
+            "action",
+            "refusal",
+            "refusal_condition",
+            "family_unit_exclusion",
+            "resolution",
+            "ruling",
+            "superseded_refusal",
+        },
+        ("pension", "2015.route.respondent_slots"): {
+            "action",
+            "refusal",
+            "blocking_dependencies",
+            "resolution",
+            "ruling",
+            "superseded_refusal",
+        },
+    } | {
+        ("roles", key): {
+            "action",
+            "refusal",
+            "refused_income_role",
+            "income_role",
+            "family_unit_exclusion",
+            "resolution",
+            "ruling",
+            "superseded_refusal",
+        }
+        for key in D1090_ROLES - {"2015.relationship.20"}
+    }
+    released = {}
+    for name in D1090_MOVED:
+        before = _gate_projection(json.loads(_pre_d1090(name)))
+        after = _gate_projection(
+            json.loads(
+                (registry.REGISTRY_DIRECTORY / f"{name}.json").read_bytes()
+            )
+        )
+        top = _changed_keys(before, after) - {"entries"}
+        assert top == (
+            {"rulings_applied", "status_scope"}
+            if name == "income"
+            else {"rulings_applied"}
+        ), name
+        assert after["rulings_applied"][0]["decision"] == "d1090"
+        assert [e["id"] for e in before["entries"]] == [
+            e["id"] for e in after["entries"]
+        ], name
+        for old, new in zip(before["entries"], after["entries"], strict=True):
+            changed = _changed_keys(old, new)
+            if not changed:
+                continue
+            key = (name, old["id"])
+            if key in ruled:
+                assert changed == ruled[key], key
+                continue
+            assert changed == {"blocking_dependencies"}, key
+            dropped = set(old["blocking_dependencies"]) - set(
+                new.get("blocking_dependencies", [])
+            )
+            assert dropped and dropped <= D1090_DEPENDENCIES, key
+            assert set(new.get("blocking_dependencies", [])) <= set(
+                old["blocking_dependencies"]
+            ), key
+            released[key] = not new.get("blocking_dependencies")
+        for entry in after["entries"]:
+            assert not set(entry.get("blocking_dependencies", [])) & (
+                D1090_DEPENDENCIES
+            ), (name, entry["id"])
+    # The master record's counts: 492 income and 61 more pension entries
+    # (with the ruled 2015 spouse slot, 62); 537 more released in full.
+    assert sum(1 for key in released if key[0] == "income") == 492
+    assert sum(1 for key in released if key[0] == "pension") == 61
+    assert sum(released.values()) == 492 + 45
 
 
 def test_the_gate_projection_sees_a_moved_gate_field():
@@ -337,16 +478,14 @@ def test_crosswalks_are_never_executable_inputs(declared_gate):
 
 #: The first registry blocker each later wave's family-record specs meet
 #: (income concepts are read first, in :data:`sources.INCOME_CONCEPTS`
-#: order): 2015's income entries depend on the refused 2015 code-20
-#: route; 2017's income entries are resolved (codes 90 and 92 are
-#: documented OFUM roles) except the spouse age/sex slot metadata, still
-#: TO VERIFY; 2019-2023's depend on the refused code-90/92 routes.
+#: order): every later wave's spouse age slot metadata, still TO VERIFY
+#: (amendment 2).  Until the d1090 registry commit (section 16c), 2015's
+#: income entries depended on the refused 2015 code-20 route and
+#: 2019-2023's on the refused code-90/92 routes; those dependencies are
+#: released.
 FIRST_BLOCKER = {
-    2015: "blocked by roles:2015.relationship.20",
-    2017: "income:income.2017.wife_age: TO VERIFY",
-    2019: "blocked by roles:2019.relationship.90",
-    2021: "blocked by roles:2021.relationship.90",
-    2023: "blocked by roles:2023.relationship.90",
+    wave: f"income:income.{wave}.wife_age: TO VERIFY"
+    for wave in (2015, 2017, 2019, 2021, 2023)
 }
 
 
@@ -408,8 +547,15 @@ def test_declared_gate_records_what_the_registry_gate_refuses(
     assert audit["gate"] == sources.INVENTED_DECLARED
     refused = audit["would_refuse_under_registry_gate"]
     assert "income:income.2019.wife_age" in refused
+    # Since d1090 no reason is a ruled role entry (section 16c).
+    assert not any(
+        dependency in reason
+        for reasons in refused.values()
+        for reason in reasons
+        for dependency in D1090_DEPENDENCIES
+    )
     assert any(
-        "roles:2019.relationship.92" in reason
+        "pension:2019.route.inherited_route_amendment" in reason
         for reasons in refused.values()
         for reason in reasons
     )

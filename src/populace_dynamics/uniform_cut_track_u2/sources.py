@@ -81,9 +81,10 @@ supplied is counted under the named disposition
 rule's :class:`FamilyUnitExclusion`, applied by
 :func:`family_unit_exclusion`), so 2019-2023 codes 90 and 92 have no
 income role.  The committed roles registry resolves the same rule for
-2013-2017 code 90 and 2017 code 92 (adjudication disposition D) and,
-until its d1090 commit, refuses 2015 code 20 and 2019-2023 codes 90 and
-92 (disposition F); the registry gate follows the registry.
+2013-2017 code 90 and 2017 code 92 (adjudication disposition D) and, by
+its d1090 commit, the same exclusions for 2015 code 20 and 2019-2023
+codes 90 and 92, which the adjudication had refused (disposition F); the
+registry gate follows the registry.
 
 Any other in-family code keeps the inherited OFUM income role with no
 spouse status.  Legacy identifiers ``wife``, ``wife_present`` and
@@ -173,9 +174,10 @@ RELATIONSHIP_CODES: tuple[int, ...] = (10, 20, 22, 88, 90, 92)
 #: The named dispositions of the two family-unit exclusions Max ratified
 #: on 2026-10-10 (d1090; specification section 16c): blocker B1, section
 #: 16a option 1d-2, and blocker B2, option 1e-1.
-MALE_CODE_20_2015 = "male code 20 in 2015 family unit"
-UNCOOPERATIVE_SPOUSE_OR_PARTNER = (
-    "uncooperative spouse or partner in family unit"
+#: The registry module holds the names, so a registry entry and the
+#: builder name each disposition the same way.
+MALE_CODE_20_2015, UNCOOPERATIVE_SPOUSE_OR_PARTNER = (
+    registry.FAMILY_UNIT_DISPOSITIONS
 )
 FAMILY_UNIT_EXCLUSIONS: tuple[str, ...] = (
     MALE_CODE_20_2015,
@@ -208,10 +210,15 @@ DECLARED = INVENTED_DECLARED
 #: ``test_milestone_1b_moved_only_citations_and_prose``, pins each
 #: registry's gate projection at 883ea48.  A registry change after a
 #: ruling is its own reviewed commit and moves these pins in the same
-#: commit (section 16a, "Registry effect").
+#: commit (section 16a, "Registry effect").  Max's d1090 ruling
+#: (2026-10-10, section 16c) moved the roles, income and pension bytes:
+#: the eight B1 and B2 refusals became the ratified family-unit
+#: exclusions and the role dependencies they carried were released
+#: (``test_d1090_moved_only_the_ruled_gate_fields`` pins exactly which
+#: gate fields moved).
 REGISTRY_SHA256: dict[str, str] = {
     "income": (
-        "6e3034f35b5d8f614a2f05addae90441052141a85483bb8ee128c0b6ae6ac910"
+        "3d4e8742356ba06986dc7dd3c664ffb1d679498e133fde8801456a76d9ff7431"
     ),
     "wealth": (
         "3a22247849ea2eccbef6e522c0d74c901beb90195f92fd2e7b23b123fab6b816"
@@ -220,10 +227,10 @@ REGISTRY_SHA256: dict[str, str] = {
         "4eab8e0abc69668c287310931baa049b8546d3f3e265a106f1b945b948c7649e"
     ),
     "pension": (
-        "49b4bdad682b8defa4fc628257b366bab46087baacea82e60b57657c99392978"
+        "0e329d0a871b70800a93908f2927415a728ac020175a079b38664b532b551d9a"
     ),
     "roles": (
-        "5dbd2c13c169e312e7db7fa033af738388a7997887e89a54d53c2c67e24a2228"
+        "df2b7afe76cda4f92380f88b478d9e6866e0f532b0d85f081d8226ee2e33dc87"
     ),
     "support": (
         "5102825d8555e1e8648dfafbd4e6c72eef78d09e453a6d25279ec3b9298d5109"
@@ -804,6 +811,20 @@ def declared_role_rules() -> dict[tuple[int, int], RoleRule]:
     return out
 
 
+def _registry_exclusion(
+    entry: Mapping[str, Any],
+) -> FamilyUnitExclusion | None:
+    """A role entry's ratified exclusion (section 16c), or ``None``."""
+
+    record = entry.get("family_unit_exclusion")
+    if record is None:
+        return None
+    sex = (record.get("condition") or {}).get("sex")
+    return FamilyUnitExclusion(
+        record["disposition"], None if sex is None else _SEX_CODES[int(sex)]
+    )
+
+
 def _registry_role_rules(
     registries: RegistrySet,
 ) -> dict[tuple[int, int], RoleRule]:
@@ -820,7 +841,8 @@ def _registry_role_rules(
             )
             continue
         role = entry.get("income_role")
-        income_role = {"spouse": "wife"}.get(role, role)
+        # "excluded": the ratified exclusion leaves the code no income role.
+        income_role = {"spouse": "wife", "excluded": None}.get(role, role)
         out[(wave, code)] = RoleRule(
             wave,
             code,
@@ -831,6 +853,7 @@ def _registry_role_rules(
             bool(entry["marital_resolution"]),
             bool(entry["administrative_birth_support"]),
             "; ".join(refused) if refused else None,
+            _registry_exclusion(entry),
         )
     return out
 
@@ -898,10 +921,10 @@ class RoleContext:
     """The role rules a U2 build applies, and whether it may run on data.
 
     ``registry``: the committed roles registry; any code the loader's
-    ``require_resolved`` refuses, refuses here (at commit 883ea48: code
-    88 in every wave, TO VERIFY; 2015 code 20 and 2019-2023 codes 90
-    and 92, adjudication disposition F; code 92's absence in 2013 and
-    2015).  ``invented_declared``: the declared rules, section 3's table
+    ``require_resolved`` refuses, refuses here (code 88 in every wave,
+    TO VERIFY, and code 92's absence in 2013 and 2015; until the d1090
+    commit also 2015 code 20 and 2019-2023 codes 90 and 92, which now
+    carry section 16c's exclusions).  ``invented_declared``: the declared rules, section 3's table
     with section 16c's two family-unit exclusions (code 88 still
     refuses); accepted only with invented inputs.
 

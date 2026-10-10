@@ -54,13 +54,15 @@ def quoted_spans(markdown):
     return spans
 
 
-# Registry: (RESOLVED mappings, REFUSED by disposition F, TO VERIFY).
+# Registry: (RESOLVED mappings, REFUSED by disposition F and not replaced
+# by a ruling, TO VERIFY).  Max's d1090 ruling (2026-10-10; spec section
+# 16c) replaced all eight F refusals (roles 7, pension 1).
 EXPECTED_COUNTS = {
     "income": (748, 0, 16),
     "wealth": (234, 0, 0),
     "individual": (59, 0, 0),
-    "pension": (646, 1, 1),
-    "roles": (23, 7, 6),
+    "pension": (647, 0, 1),
+    "roles": (30, 0, 6),
     "support": (16, 0, 0),
     "weights": (6, 0, 1),
     "design": (2, 0, 0),
@@ -93,11 +95,21 @@ F_ITEMS = {
     },
     "pension": {"2015.route.respondent_slots"},
 }
+#: The F refusals Max's d1090 ruling replaced (section 16c): every one.
+D1090_RULED = {
+    "roles": {"2015.relationship.20"}
+    | {
+        f"{wave}.relationship.{code}"
+        for wave in (2019, 2021, 2023)
+        for code in (90, 92)
+    },
+    "pension": {"2015.route.respondent_slots"},
+}
 RELEASED = {
     "roles:2015.relationship.90",
     "roles:2017.relationship.90",
     "roles:2017.relationship.92",
-}
+} | {f"roles:{key}" for key in D1090_RULED["roles"]}
 # §16a's inline quotes of draft 3: (quote, draft-3 line, the exact §16a
 # text that joins the quote to its line citation).
 DRAFT_3_INLINE_QUOTES = [
@@ -227,7 +239,9 @@ def disposition(entry):
 
 
 def master_status(entry):
-    return "REFUSED" if disposition(entry) == "F" else entry["status"]
+    """REFUSED: an adjudication F refusal that no ruling has replaced."""
+    refused = disposition(entry) == "F" and "ruling" not in entry
+    return "REFUSED" if refused else entry["status"]
 
 
 def test_status_counts_after_independent_adjudication(documents):
@@ -244,7 +258,7 @@ def test_status_counts_after_independent_adjudication(documents):
         for key in totals:
             totals[key] += counts[key]
     totals["RESOLVED"] += SSI_AND_CENSUS_RESOLVED
-    assert totals == {"RESOLVED": 1760, "REFUSED": 8, "TO VERIFY": 24}
+    assert totals == {"RESOLVED": 1768, "REFUSED": 0, "TO VERIFY": 24}
     # Milestone 1: 1744 RESOLVED and 48 TO VERIFY over the same records.
     assert sum(totals.values()) == 1744 + 48
 
@@ -294,7 +308,19 @@ def test_every_adjudicated_entry_cites_its_adjudication_line(documents):
 
 
 def test_refusals_name_the_adjudication(documents, monkeypatch):
-    for name, keys in F_ITEMS.items():
+    """An F refusal no ruling has replaced refuses and names the
+    adjudication.  Since d1090 there is none; the check stays for any
+    future F item."""
+    unruled = {
+        name: {
+            e["id"]
+            for e in documents[name]["entries"]
+            if e["id"] in keys and "ruling" not in e
+        }
+        for name, keys in F_ITEMS.items()
+    }
+    assert not any(unruled.values()), unruled
+    for name, keys in unruled.items():
         document = documents[name]
         monkeypatch.setattr(
             registry, "load_registry", lambda _n, d=document: d
@@ -326,6 +352,69 @@ def test_refusals_name_the_adjudication(documents, monkeypatch):
                 ),
             ):
                 registry.require_resolved(name, entry["id"])
+
+
+def test_d1090_replaced_every_refusal_with_its_exclusion(
+    documents, monkeypatch
+):
+    """Max's d1090 ruling (section 16c) on every F item: the ratified
+    option and amended draft-3 lines, the exclusion, no refusal, the
+    adjudication record kept and the superseded refusal preserved."""
+    assert D1090_RULED == F_ITEMS
+    b1 = "male code 20 in 2015 family unit"
+    b2 = "uncooperative spouse or partner in family unit"
+    for name, keys in D1090_RULED.items():
+        document = documents[name]
+        monkeypatch.setattr(
+            registry, "load_registry", lambda _n, d=document: d
+        )
+        by_id = {e["id"]: e for e in document["entries"]}
+        for key in keys:
+            entry = by_id[key]
+            ruling = entry["ruling"]
+            assert (
+                ruling["decision"],
+                ruling["date"],
+                ruling["specification_section"],
+            ) == ("d1090", "2026-10-10", "16c")
+            assert disposition(entry) == "F"
+            assert "refusal" not in entry and "blocking_dependencies" not in (
+                entry
+            )
+            assert ADJUDICATION in entry["superseded_refusal"]
+            assert "disposition F" in entry["superseded_refusal"]
+            assert entry["resolution"].startswith("Max's ruling d1090 ")
+            assert "(Question for PSID staff" in entry["open_question"]
+            assert "not sent" not in entry["open_question"]
+            assert entry["part_b_finding"].startswith(("PARTIAL", "Follows "))
+            assert registry.require_resolved(name, key) == entry
+            b1_entry = key.startswith("2015.")
+            assert ruling["option"] == ("1d-2" if b1_entry else "1e-1")
+            if name == "pension":
+                assert ruling["amendment"] == "5c"
+                assert "action" not in entry
+                continue
+            if b1_entry:
+                assert ruling["amends_draft_3_lines"] == [160]
+                assert entry["action"] == (
+                    "documented_rule_with_family_unit_exclusion"
+                )
+                assert entry["family_unit_exclusion"] == {
+                    "disposition": b1,
+                    "condition": {"sex": 1},
+                }
+                assert entry["income_role"] == "spouse"
+                assert entry["spouse_slot"]
+            else:
+                assert ruling["amends_draft_3_lines"] == [152, 154, 158]
+                assert ruling["amended_waves"] == [2019, 2021, 2023]
+                assert entry["action"] == "exclude_family_unit_per_d1090"
+                assert entry["family_unit_exclusion"] == {"disposition": b2}
+                assert entry["income_role"] == "excluded"
+                assert not entry["spouse_slot"]
+    for name in ("roles", "income", "pension"):
+        (applied,) = documents[name]["rulings_applied"]
+        assert applied["decision"] == "d1090", name
 
 
 def test_documentary_resolutions_carry_evidence(documents):
@@ -835,12 +924,10 @@ def test_released_dependencies(documents):
         for entry in document["entries"]:
             assert not RELEASED & set(entry.get("blocking_dependencies", []))
     pension = {e["id"]: e for e in documents["pension"]["entries"]}
-    assert pension["2015.route.respondent_slots"]["blocking_dependencies"] == [
-        "roles:2015.relationship.20"
-    ]
-    assert (
-        "blocking_dependencies" not in pension["2017.route.respondent_slots"]
-    )
+    # d1090 released the 2015 spouse slot with B1 (amendment 5c).
+    for wave in registry.U2_SOURCE_WAVES:
+        entry = pension[f"{wave}.route.respondent_slots"]
+        assert "blocking_dependencies" not in entry, wave
     for wave in (2017, 2019, 2021, 2023):
         for person in ("head", "wife"):
             for plan in (1, 2):
@@ -862,7 +949,7 @@ def test_master_record_matches_registries(documents):
         for entry in document["entries"]
     }
     assert rows == expected
-    assert "**1760 RESOLVED; 8 REFUSED; 24 TO VERIFY**" in text
+    assert "**1768 RESOLVED; 0 REFUSED; 24 TO VERIFY**" in text
     for name, (resolved, refused, open_) in EXPECTED_COUNTS.items():
         assert f"| {name} | {resolved} | {refused} | {open_} |" in text
 
