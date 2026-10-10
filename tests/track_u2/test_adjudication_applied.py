@@ -667,6 +667,98 @@ def test_section_16a_recommendations_and_options():
     )
 
 
+#: SHA-256 of the text of §16a (to "## 16b. ") and of §16b (to the next
+#: section) as merged with Max's d637 ruling (PR #500; master 1fadf50a).
+#: §16c records d1090 and leaves both unchanged, as the record of what was
+#: proposed and first ruled.
+SECTION_SHA256 = {
+    "## 16a. ": (
+        "e18c27687b6ece12bc4a8db091c01d732ea17067fb0a7f55b47191b0a0fb8cb8"
+    ),
+    "## 16b. ": (
+        "312ac7673e2b3c16cd67b1fe8bb3c68cf1fc5e2e40c6055e9cf616e2043bcdab"
+    ),
+}
+#: Max's d1090 ruling (2026-10-10): the §16a option each blocker takes,
+#: the option's amendment statement as §16a words it, and its named
+#: disposition.
+D1090_OPTIONS = {
+    "B1": (
+        "**1d. ",
+        "2. **Documented rule plus exclusion. Amends draft-3 line 160.**",
+        "male code 20 in 2015 family unit",
+    ),
+    "B2": (
+        "**1e. ",
+        "1. **Exclude and disclose. Amends draft-3 lines 152, 154 and 158 "
+        "for 2019\N{EN DASH}2023.**",
+        "uncooperative spouse or partner in family unit",
+    ),
+}
+D1090_ROWS = {
+    "B1": "| 1d: blocker B1 (2015 male code 20) | Option 2, documented rule "
+    "plus exclusion, ratified as an explicit amendment | Line 160 |",
+    "B2": "| 1e: blocker B2 (codes 90 and 92 in 2019\N{EN DASH}2023) | "
+    "Option 1, exclude and disclose, ratified as an explicit amendment | "
+    "Lines 152, 154 and 158, for 2019\N{EN DASH}2023 only |",
+}
+
+
+def test_section_16c_records_the_d1090_ruling():
+    """§16c ratifies exactly the options and lines §16a states, and the
+    header, §17 and §20 point to it; §16a and §16b are unchanged."""
+    spec = (ROOT / SPEC).read_text(encoding="utf-8")
+    starts = [
+        spec.index(heading)
+        for heading in ("## 16a. ", "## 16b. ", "## 16c. ", "## 17. ")
+    ]
+    assert starts == sorted(starts)
+    for (heading, digest), end in zip(
+        SECTION_SHA256.items(), starts[1:3], strict=True
+    ):
+        text = spec[spec.index(heading) : end]
+        assert hashlib.sha256(text.encode()).hexdigest() == digest, heading
+    proposals = spec[starts[0] : starts[1]]
+    record = spec[starts[2] : starts[3]]
+    assert record.startswith(
+        "## 16c. Max's ruling on blockers B1 and B2 (2026-10-10, d1090)\n"
+    )
+    for blocker, (start, option, disposition) in D1090_OPTIONS.items():
+        block = proposals[proposals.index(start) :]
+        block = block[: block.index("**Recommendation for B")]
+        line = next(x for x in block.split("\n") if x.startswith(option))
+        assert f"`{disposition}`" in line, blocker
+        # The lines the record names are the lines the option amends.
+        amended = re.search(r"Amends draft-3 lines? ([^.]+)\.", option)
+        numbers = re.findall(r"\b\d{3,4}\b", amended.group(1))
+        row = D1090_ROWS[blocker]
+        assert row in record, blocker
+        cell = row.split(" | ")[2]
+        assert re.findall(r"\b\d{3,4}\b", cell) == numbers, blocker
+        effect = record[record.index(row) :].split("\n", 1)[0]
+        assert f"`{disposition}`" in effect, blocker
+    assert "B1 option 2" in record and "B2 option 1" in record
+    disclosed = "Each count is disclosed after the authorized structural pass"
+    assert disclosed in record
+    lines = spec.split("\n")
+    assert "with blockers B1 and B2 ruled on 2026-10-10 (d1090)" in lines[2]
+    assert "No blocker hold remains." in lines[3]
+    assert "The B1 and B2 holds stop registration" not in lines[3]
+    outstanding = spec[starts[3] : spec.index("## 18. ")]
+    ruled = "**Ruled 2026-10-10 (d1090; \N{SECTION SIGN}16c), after PSID "
+    assert ruled in outstanding
+    assert "This item stays open only for 1a\N{EN DASH}1c" in outstanding
+    assert (
+        "under the 2026-10-10 ruling, the observations excluded under each "
+        "of the two named dispositions" in outstanding
+    )
+    assert "B1 and B2 wait for the answers" not in outstanding
+    execution = spec[spec.index("## 20. ") :]
+    ruled = "**Max ruled on them on 2026-10-10 (d1090; \N{SECTION SIGN}16c)**"
+    assert ruled in execution
+    assert "B1 and B2 stay on hold" not in execution
+
+
 def test_part_b_verdicts_agree():
     """B1, B2 and B3 carry one verdict everywhere: PARTIAL."""
     research = RESEARCH.read_text(encoding="utf-8")
