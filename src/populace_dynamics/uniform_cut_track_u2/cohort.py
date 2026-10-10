@@ -944,6 +944,10 @@ def build_u2_cohort(
     with_history = set(int(p) for p in inputs.marriage_history["person_id"])
     dispositions: list[dict[str, Any]] = []
     observations: list[dict[str, Any]] = []
+    # Section 16c's disclosed counts, by disposition and wave: the family
+    # units excluded and the members who brought each exclusion.
+    excluded_units: dict[tuple[str, int], set[int]] = {}
+    excluded_persons: dict[tuple[str, int], set[int]] = {}
     for birth_year, wave, income_year, age, multiplier in cells:
         anchor_frame = inputs.anchors[wave]
         anchor = anchor_frame.set_index("person_id")
@@ -1000,13 +1004,21 @@ def build_u2_cohort(
                 )
                 for row in family_rows.itertuples(index=False)
             }
-            excluded = sources.family_unit_exclusion(
-                rules, {p: str(sex.get(p, "na")) for p in rules}
-            )
+            sexes = {p: str(sex.get(p, "na")) for p in rules}
+            excluded = sources.family_unit_exclusion(rules, sexes)
             if excluded is not None:
                 # Section 16c: the family unit supplies no observation to
                 # any row; the would-be observation is counted.
                 dispositions.append({**base, "disposition": excluded})
+                excluded_units.setdefault((excluded, wave), set()).add(
+                    wave * _FAMILY_UNIT_SCALE + interview
+                )
+                excluded_persons.setdefault((excluded, wave), set()).update(
+                    p
+                    for p, r in rules.items()
+                    if r.family_unit_exclusion is not None
+                    and r.family_unit_exclusion.applies(sexes[p])
+                )
                 continue
             dispositions.append({**base, "disposition": "observation"})
             head, head_pairing = _unique(
@@ -1195,6 +1207,21 @@ def build_u2_cohort(
         "plan_birth_years": plan_years,
         "role_context": role_context.kind,
         "births_inputs_sha256": births.inputs_sha256,
+        # Section 16c: for each exclusion and wave, the members who brought
+        # it (for B1 the count option 1d-1 names and 1d-2 inherits) and
+        # the family units excluded, among the units that would have
+        # supplied this row an observation.  Disclosed; decides nothing.
+        "n_family_unit_exclusions": {
+            name: {
+                str(wave): {
+                    "persons": len(excluded_persons[(name, wave)]),
+                    "family_units": len(excluded_units[(name, wave)]),
+                }
+                for (named, wave) in sorted(excluded_units)
+                if named == name
+            }
+            for name in sources.FAMILY_UNIT_EXCLUSIONS
+        },
     }
     cohort = U2Cohort(obs, disp, spec, diagnostics)
     object.__setattr__(

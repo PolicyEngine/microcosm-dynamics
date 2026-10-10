@@ -563,6 +563,58 @@ def test_b2_excludes_whoever_the_target_is(u1_cohort, u2_inputs):
     assert set(b2["wave"]) <= set(B2_WAVES)
 
 
+@pytest.mark.parametrize("row", ["U0", "U1"])
+def test_exclusion_counts_are_the_ones_section_16c_names(
+    row, u2_inputs, declared, u2_births
+):
+    """Section 16c's disclosed counts, against an oracle from the raw
+    frames: per exclusion and wave, the members who brought it (for B1
+    the 2015 code-20 persons recorded male, the count option 1d-1 names
+    and 1d-2 inherits) and the family units excluded, among the units that
+    would supply this row an observation."""
+
+    built = cohort.build_u2_cohort(
+        u2_inputs,
+        cohort.U2CohortSpec(row=row),
+        role_context=declared,
+        births=u2_births,
+    )
+    sex = u2_inputs.persons.set_index("person_id")["sex"]
+    disp = built.dispositions
+    expected: dict[str, dict[str, dict[str, int]]] = {
+        name: {} for name in sources.FAMILY_UNIT_EXCLUSIONS
+    }
+    for (name, wave), rows in disp[
+        disp["disposition"].isin(sources.FAMILY_UNIT_EXCLUSIONS)
+    ].groupby(["disposition", "wave"]):
+        anchor = u2_inputs.anchors[wave]
+        interviews = set(
+            anchor.set_index("person_id").loc[rows["person_id"], "interview"]
+        )
+        members = anchor[
+            anchor["interview"].isin(interviews)
+            & anchor["sequence"].between(1, 20)
+        ]
+        persons = {
+            int(m.person_id)
+            for m in members.itertuples(index=False)
+            if expected_exclusion(
+                wave, int(m.relationship), str(sex.get(m.person_id))
+            )
+            == name
+        }
+        expected[name][str(wave)] = {
+            "persons": len(persons),
+            "family_units": len(interviews),
+        }
+    stated = built.diagnostics["n_family_unit_exclusions"]
+    assert stated == expected
+    assert all(stated.values())
+    assert cohort.structural_summary(built)["n_family_unit_exclusions"] == (
+        stated
+    )
+
+
 def test_structure_and_runner_disclose_each_exclusion(u1_cohort, u2_run):
     """Each count is disclosed (section 16c): by birth year in the
     structural summary, and per row in the runner's dispositions."""
@@ -578,6 +630,9 @@ def test_structure_and_runner_disclose_each_exclusion(u1_cohort, u2_run):
     for row_id, entry in u2_run["rows"].items():
         counts = entry["population"]["dispositions"]
         assert set(sources.FAMILY_UNIT_EXCLUSIONS) <= set(counts), row_id
+        assert set(entry["population"]["n_family_unit_exclusions"]) == set(
+            sources.FAMILY_UNIT_EXCLUSIONS
+        ), row_id
 
 
 def test_cohabitor_22_occupies_the_slot_without_legal_status(u1_cohort):

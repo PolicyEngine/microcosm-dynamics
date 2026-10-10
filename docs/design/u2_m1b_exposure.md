@@ -368,6 +368,6 @@ The U2 tests ran with the PSID root staged. They read staged PSID documentation 
 - `data/external/track_u2/roles.json`, `income.json` and `pension.json` (the eight ruled entries, the released dependencies and a `rulings_applied` record).
 - `src/populace_dynamics/data/u2_source_registry.py`; `src/populace_dynamics/uniform_cut_track_u2/sources.py`, `cohort.py`, `invented.py` and `loader.py` (docstring); `scripts/track_u2_dry_run.py`.
 - `tests/track_u2/test_adjudication_applied.py`, `test_source_registries.py`, `test_u2_roles.py`, `test_u2_properties.py`, `test_u2_mappings.py`, `test_u2_loader.py` and `test_u2_scripts.py`, and `tests/data/test_track_u2_income_wealth.py`.
-- Outside the repository: an edit script and the review records under `~/reviews/u2-d1090-20261010/`.
+- Outside the repository: the registry edit script and the review records, copied to `EV/rulings-records-20261010/`.
 
 No U1 file, engine file, `gates.yaml` or `runs/*.json` was edited.

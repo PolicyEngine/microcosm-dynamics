@@ -786,11 +786,124 @@ D1090_OPTIONS = {
 }
 D1090_ROWS = {
     "B1": "| 1d: blocker B1 (2015 male code 20) | Option 2, documented rule "
-    "plus exclusion, ratified as an explicit amendment | Line 160 |",
+    "plus exclusion, ratified as an explicit amendment | Line 160 | 2015 "
+    "code 20 occupies the spouse slot as documented. Every 2015 family-unit "
+    "observation that contains a person recorded male (ER32000 = 1) with "
+    "2015 relationship code 20 is excluded from every row under the named "
+    "disposition `male code 20 in 2015 family unit`. Options 1 and 3 are "
+    "not ratified: no guard lets a count decide anything, and option 3's "
+    "hold no longer applies |",
     "B2": "| 1e: blocker B2 (codes 90 and 92 in 2019\N{EN DASH}2023) | "
     "Option 1, exclude and disclose, ratified as an explicit amendment | "
-    "Lines 152, 154 and 158, for 2019\N{EN DASH}2023 only |",
+    "Lines 152, 154 and 158, for 2019\N{EN DASH}2023 only | Every 2019, "
+    "2021 or 2023 family-unit observation that contains a code-90 or "
+    "code-92 person is excluded from every row under the named disposition "
+    "`uncooperative spouse or partner in family unit`, whether the target "
+    "person is the reference person, the uncooperative spouse or partner, "
+    "or another member. Options 2, 3 and 4 are not ratified: no income, "
+    "Social Security or SSI is assigned to these persons, no OFUM routing "
+    "is asserted for them, no guard lets a count decide anything, and "
+    "option 3's hold no longer applies |",
+    "5c": "| 5c: U7's 2015 spouse slot (amendment 5, ratified by d637) | "
+    "Follows the B1 ruling, as 5c provides | None beyond amendment 5 | "
+    "U7's 2015 spouse slot is the documented female spouse or partner "
+    "slot, and B1's exclusion applies to U7 as to every other row |",
 }
+#: The operative clauses of the d1090 record, by where they stand: each
+#: must appear there exactly once (review of e4dd350, finding 2).
+D1090_CLAUSES = {
+    "header_version": [
+        "ruled by Max on 2026-09-30 (d637) as recorded in \N{SECTION SIGN}16b, "
+        "with blockers B1 and B2 ruled on 2026-10-10 (d1090) as recorded in "
+        "\N{SECTION SIGN}16c.",
+    ],
+    "header_status": [
+        "on 2026-10-10 he ruled on B1 and B2 (d1090; \N{SECTION SIGN}16c): "
+        "B1 takes option 2 and B2 option 1, each an exclusion under a named "
+        "disposition, ratified as amendments to draft-3 line 160 (B1) and to "
+        "draft-3 lines 152, 154 and 158 for 2019\N{EN DASH}2023 (B2). No "
+        "blocker hold remains.",
+    ],
+    "record": [
+        *D1090_ROWS.values(),
+        "> \"yes: Max 2026-10-10 in chat ('1090 yes'): B1 option 2 (exclude "
+        "2015 family units with a male code-20 person, rule fixed before any "
+        "count) and B2 option 1 (exclude 2019-2023 family units with a "
+        'code-90/92 person, disclose the count)"',
+        "Both rules are fixed by this ruling, before any count, and each is "
+        "vacuous if no such unit supplies an observation. Each count is "
+        "disclosed after the authorized structural pass (\N{SECTION SIGN}4) "
+        "and decides nothing.",
+        "B1's count is the one option 1 names, which option 2 inherits "
+        '("As option 1"): the 2015 code-20 persons recorded male in family '
+        "units that would supply any U2 observation.",
+        "the code-90 and code-92 persons in 2019, 2021 and 2023 family units "
+        "that would supply any U2 observation.",
+        "- **To draft-3 line 160 (B1).** Line 160's requirement that "
+        '"Source documentation must resolve this before registration" is '
+        "replaced, for a male code-20 person in 2015, by the population rule "
+        "above.",
+        "Lines 154 and 1391 are not amended for B1, because no ratified B1 "
+        "option lets a count decide anything.",
+        "- **To draft-3 lines 152, 154 and 158 (B2), for 2019, 2021 and "
+        "2023.** The documentary confirmation of code-90 and code-92 income "
+        "routing that these lines require before registration is replaced, "
+        "in these three waves, by the population rule above. For 2013, 2015 "
+        "and 2017 the lines are not amended",
+        "Line 1391 is not amended.",
+        "its members are the in-family persons, sequence 1\N{EN DASH}20, of "
+        "that interview in that wave (line 126)",
+    ],
+    "outstanding": [
+        "**Ruled 2026-10-10 (d1090; \N{SECTION SIGN}16c), after PSID "
+        "answered:** B1 takes option 2, with its amendment to draft-3 line "
+        "160 ratified, and B2 takes option 1, with its amendment to draft-3 "
+        "lines 152, 154 and 158 ratified for 2019\N{EN DASH}2023. This item "
+        "stays open only for 1a\N{EN DASH}1c, until Max confirms.",
+        "(under the 2026-10-10 ruling, the counts \N{SECTION SIGN}16c names "
+        "for options 1d-2 and 1e-1, each disclosed and deciding nothing)",
+        "The d1090 commit (2026-10-10) replaced the eight B1 and B2 refusals "
+        "with \N{SECTION SIGN}16c's exclusions and released their "
+        "dependents.",
+    ],
+    "execution": [
+        "**Max ruled on them on 2026-10-10 (d1090; \N{SECTION SIGN}16c)**: "
+        "B1 by option 2 and B2 by option 1, each an exclusion under a named "
+        "disposition. This step stays open only because amendment 1's parts "
+        "1a\N{EN DASH}1c await Max's confirmation",
+    ],
+}
+
+
+def d1090_locations(spec):
+    """The text of each place the d1090 record stands in ``spec``."""
+    lines = spec.split("\n")
+    return {
+        "header_version": lines[2],
+        "header_status": lines[3],
+        "record": spec[spec.index("## 16c. ") : spec.index("## 17. ")],
+        "outstanding": spec[spec.index("## 17. ") : spec.index("## 18. ")],
+        "execution": spec[spec.index("## 20. ") :],
+    }
+
+
+def check_d1090_record(spec):
+    """The semantic checks of the d1090 record, independent of any pin."""
+    places = d1090_locations(spec)
+    for place, clauses in D1090_CLAUSES.items():
+        for clause in clauses:
+            assert places[place].count(clause) == 1, (place, clause[:60])
+    record = places["record"]
+    assert record.startswith(
+        "## 16c. Max's ruling on blockers B1 and B2 (2026-10-10, d1090)\n"
+    )
+    for text in places.values():
+        assert "decides whether" not in text
+    assert (
+        "The B1 and B2 holds stop registration" not in places["header_status"]
+    )
+    assert "B1 and B2 wait for the answers" not in places["outstanding"]
+    assert "B1 and B2 stay on hold" not in places["execution"]
 
 
 def test_section_16c_records_the_d1090_ruling():
@@ -809,9 +922,6 @@ def test_section_16c_records_the_d1090_ruling():
         assert hashlib.sha256(text.encode()).hexdigest() == digest, heading
     proposals = spec[starts[0] : starts[1]]
     record = spec[starts[2] : starts[3]]
-    assert record.startswith(
-        "## 16c. Max's ruling on blockers B1 and B2 (2026-10-10, d1090)\n"
-    )
     for blocker, (start, option, disposition) in D1090_OPTIONS.items():
         block = proposals[proposals.index(start) :]
         block = block[: block.index("**Recommendation for B")]
@@ -824,28 +934,52 @@ def test_section_16c_records_the_d1090_ruling():
         assert row in record, blocker
         cell = row.split(" | ")[2]
         assert re.findall(r"\b\d{3,4}\b", cell) == numbers, blocker
-        effect = record[record.index(row) :].split("\n", 1)[0]
-        assert f"`{disposition}`" in effect, blocker
-    assert "B1 option 2" in record and "B2 option 1" in record
-    disclosed = "Each count is disclosed after the authorized structural pass"
-    assert disclosed in record
-    lines = spec.split("\n")
-    assert "with blockers B1 and B2 ruled on 2026-10-10 (d1090)" in lines[2]
-    assert "No blocker hold remains." in lines[3]
-    assert "The B1 and B2 holds stop registration" not in lines[3]
-    outstanding = spec[starts[3] : spec.index("## 18. ")]
-    ruled = "**Ruled 2026-10-10 (d1090; \N{SECTION SIGN}16c), after PSID "
-    assert ruled in outstanding
-    assert "This item stays open only for 1a\N{EN DASH}1c" in outstanding
-    assert (
-        "under the 2026-10-10 ruling, the observations excluded under each "
-        "of the two named dispositions" in outstanding
-    )
-    assert "B1 and B2 wait for the answers" not in outstanding
-    execution = spec[spec.index("## 20. ") :]
-    ruled = "**Max ruled on them on 2026-10-10 (d1090; \N{SECTION SIGN}16c)**"
-    assert ruled in execution
-    assert "B1 and B2 stay on hold" not in execution
+        assert f"`{disposition}`" in row, blocker
+    check_d1090_record(spec)
+
+
+#: Mutations of the d1090 record that change what it says, each by
+#: place: every one must fail ``check_d1090_record`` (review of e4dd350,
+#: finding 2, and the counts of finding 1).
+D1090_MUTATIONS = [
+    ("record", "(ER32000 = 1)", "(ER32000 = 2)"),
+    ("record", "code 20 is excluded from every row", "code 20 is kept in"),
+    ("record", "Every 2019, 2021 or 2023 family", "Every 2023 family"),
+    ("record", "a code-90 or code-92 person is", "a code-90 person is"),
+    ("record", "and decides nothing.", "and decides whether to proceed."),
+    ("record", "| Line 160 |", "| Line 154 |"),
+    ("record", "for 2019\N{EN DASH}2023 only |", "for 2019 only |"),
+    ("record", "which option 2 inherits", "which option 2 drops"),
+    ("record", "sequence 1\N{EN DASH}20", "sequence 1\N{EN DASH}59"),
+    ("record", "Lines 154 and 1391 are not", "Line 1391 is not"),
+    ("record", "B1 option 2 (exclude", "B1 option 1 (exclude"),
+    (
+        "header_version",
+        "(d1090) as recorded in \N{SECTION SIGN}16c",
+        "(d1090)",
+    ),
+    ("header_status", "B2 option 1, each", "B2 option 2, each"),
+    ("outstanding", "and B2 takes option 1,", "and B2 takes option 2,"),
+    ("outstanding", "each disclosed and deciding nothing", "each disclosed"),
+    (
+        "execution",
+        "B1 by option 2 and B2 by option 1",
+        "B1 by option 1 and B2 by option 2",
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "place,old,new", D1090_MUTATIONS, ids=[m[1][:30] for m in D1090_MUTATIONS]
+)
+def test_the_d1090_checks_catch_each_mutation(place, old, new):
+    spec = (ROOT / SPEC).read_text(encoding="utf-8")
+    text = d1090_locations(spec)[place]
+    assert old in text, (place, old)
+    mutated = spec.replace(text, text.replace(old, new, 1), 1)
+    assert mutated != spec
+    with pytest.raises(AssertionError):
+        check_d1090_record(mutated)
 
 
 def test_part_b_verdicts_agree():
