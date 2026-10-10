@@ -308,8 +308,9 @@ def test_loaded_inputs_take_the_registered_path_only(
     """Sealed psid_files inputs: the registered guard accepts them only
     once the loader rechecked them against the frozen pre-registration
     evidence (review round 1, finding 2); the declared role context
-    refuses them, and the committed roles registry refuses the build on
-    the refused codes (2015 code 20 among them)."""
+    refuses them.  The committed roles registry, which since Max's d1090
+    ruling resolves every code these invented records hold, builds them
+    and applies the section 16c exclusions."""
 
     inputs = loaded["inputs"]
     registry = sources.RoleContext.from_registry()
@@ -327,8 +328,11 @@ def test_loaded_inputs_take_the_registered_path_only(
         runner.check_inputs(inputs, ap.INVENTED, None, registry)
     with pytest.raises(cohort.U2CohortError, match="invented inputs"):
         cohort.build_u2_cohort(inputs, role_context=declared)
-    with pytest.raises(sources.U2RoleRefusal):
-        cohort.build_u2_cohort(inputs, role_context=registry)
+    built = cohort.build_u2_cohort(inputs, role_context=registry)
+    assert built.provenance["role_context"] == sources.REGISTRY
+    assert set(sources.FAMILY_UNIT_EXCLUSIONS) <= set(
+        built.dispositions["disposition"]
+    )
 
 
 def test_a_changed_frame_breaks_the_seal(loaded):

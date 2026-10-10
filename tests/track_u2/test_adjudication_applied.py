@@ -54,13 +54,15 @@ def quoted_spans(markdown):
     return spans
 
 
-# Registry: (RESOLVED mappings, REFUSED by disposition F, TO VERIFY).
+# Registry: (RESOLVED mappings, REFUSED by disposition F and not replaced
+# by a ruling, TO VERIFY).  Max's d1090 ruling (2026-10-10; spec section
+# 16c) replaced all eight F refusals (roles 7, pension 1).
 EXPECTED_COUNTS = {
     "income": (748, 0, 16),
     "wealth": (234, 0, 0),
     "individual": (59, 0, 0),
-    "pension": (646, 1, 1),
-    "roles": (23, 7, 6),
+    "pension": (647, 0, 1),
+    "roles": (30, 0, 6),
     "support": (16, 0, 0),
     "weights": (6, 0, 1),
     "design": (2, 0, 0),
@@ -93,11 +95,21 @@ F_ITEMS = {
     },
     "pension": {"2015.route.respondent_slots"},
 }
+#: The F refusals Max's d1090 ruling replaced (section 16c): every one.
+D1090_RULED = {
+    "roles": {"2015.relationship.20"}
+    | {
+        f"{wave}.relationship.{code}"
+        for wave in (2019, 2021, 2023)
+        for code in (90, 92)
+    },
+    "pension": {"2015.route.respondent_slots"},
+}
 RELEASED = {
     "roles:2015.relationship.90",
     "roles:2017.relationship.90",
     "roles:2017.relationship.92",
-}
+} | {f"roles:{key}" for key in D1090_RULED["roles"]}
 # §16a's inline quotes of draft 3: (quote, draft-3 line, the exact §16a
 # text that joins the quote to its line citation).
 DRAFT_3_INLINE_QUOTES = [
@@ -227,7 +239,9 @@ def disposition(entry):
 
 
 def master_status(entry):
-    return "REFUSED" if disposition(entry) == "F" else entry["status"]
+    """REFUSED: an adjudication F refusal that no ruling has replaced."""
+    refused = disposition(entry) == "F" and "ruling" not in entry
+    return "REFUSED" if refused else entry["status"]
 
 
 def test_status_counts_after_independent_adjudication(documents):
@@ -244,7 +258,7 @@ def test_status_counts_after_independent_adjudication(documents):
         for key in totals:
             totals[key] += counts[key]
     totals["RESOLVED"] += SSI_AND_CENSUS_RESOLVED
-    assert totals == {"RESOLVED": 1760, "REFUSED": 8, "TO VERIFY": 24}
+    assert totals == {"RESOLVED": 1768, "REFUSED": 0, "TO VERIFY": 24}
     # Milestone 1: 1744 RESOLVED and 48 TO VERIFY over the same records.
     assert sum(totals.values()) == 1744 + 48
 
@@ -294,7 +308,19 @@ def test_every_adjudicated_entry_cites_its_adjudication_line(documents):
 
 
 def test_refusals_name_the_adjudication(documents, monkeypatch):
-    for name, keys in F_ITEMS.items():
+    """An F refusal no ruling has replaced refuses and names the
+    adjudication.  Since d1090 there is none; the check stays for any
+    future F item."""
+    unruled = {
+        name: {
+            e["id"]
+            for e in documents[name]["entries"]
+            if e["id"] in keys and "ruling" not in e
+        }
+        for name, keys in F_ITEMS.items()
+    }
+    assert not any(unruled.values()), unruled
+    for name, keys in unruled.items():
         document = documents[name]
         monkeypatch.setattr(
             registry, "load_registry", lambda _n, d=document: d
@@ -326,6 +352,69 @@ def test_refusals_name_the_adjudication(documents, monkeypatch):
                 ),
             ):
                 registry.require_resolved(name, entry["id"])
+
+
+def test_d1090_replaced_every_refusal_with_its_exclusion(
+    documents, monkeypatch
+):
+    """Max's d1090 ruling (section 16c) on every F item: the ratified
+    option and amended draft-3 lines, the exclusion, no refusal, the
+    adjudication record kept and the superseded refusal preserved."""
+    assert D1090_RULED == F_ITEMS
+    b1 = "male code 20 in 2015 family unit"
+    b2 = "uncooperative spouse or partner in family unit"
+    for name, keys in D1090_RULED.items():
+        document = documents[name]
+        monkeypatch.setattr(
+            registry, "load_registry", lambda _n, d=document: d
+        )
+        by_id = {e["id"]: e for e in document["entries"]}
+        for key in keys:
+            entry = by_id[key]
+            ruling = entry["ruling"]
+            assert (
+                ruling["decision"],
+                ruling["date"],
+                ruling["specification_section"],
+            ) == ("d1090", "2026-10-10", "16c")
+            assert disposition(entry) == "F"
+            assert "refusal" not in entry and "blocking_dependencies" not in (
+                entry
+            )
+            assert ADJUDICATION in entry["superseded_refusal"]
+            assert "disposition F" in entry["superseded_refusal"]
+            assert entry["resolution"].startswith("Max's ruling d1090 ")
+            assert "(Question for PSID staff" in entry["open_question"]
+            assert "not sent" not in entry["open_question"]
+            assert entry["part_b_finding"].startswith(("PARTIAL", "Follows "))
+            assert registry.require_resolved(name, key) == entry
+            b1_entry = key.startswith("2015.")
+            assert ruling["option"] == ("1d-2" if b1_entry else "1e-1")
+            if name == "pension":
+                assert ruling["amendment"] == "5c"
+                assert "action" not in entry
+                continue
+            if b1_entry:
+                assert ruling["amends_draft_3_lines"] == [160]
+                assert entry["action"] == (
+                    "documented_rule_with_family_unit_exclusion"
+                )
+                assert entry["family_unit_exclusion"] == {
+                    "disposition": b1,
+                    "condition": {"sex": 1},
+                }
+                assert entry["income_role"] == "spouse"
+                assert entry["spouse_slot"]
+            else:
+                assert ruling["amends_draft_3_lines"] == [152, 154, 158]
+                assert ruling["amended_waves"] == [2019, 2021, 2023]
+                assert entry["action"] == "exclude_family_unit_per_d1090"
+                assert entry["family_unit_exclusion"] == {"disposition": b2}
+                assert entry["income_role"] == "excluded"
+                assert not entry["spouse_slot"]
+    for name in ("roles", "income", "pension"):
+        (applied,) = documents[name]["rulings_applied"]
+        assert applied["decision"] == "d1090", name
 
 
 def test_documentary_resolutions_carry_evidence(documents):
@@ -667,6 +756,356 @@ def test_section_16a_recommendations_and_options():
     )
 
 
+#: SHA-256 of the text of §16a (to "## 16b. ") and of §16b (to the next
+#: section) as merged with Max's d637 ruling (PR #500; master 1fadf50a).
+#: §16c records d1090 and leaves both unchanged, as the record of what was
+#: proposed and first ruled.
+SECTION_SHA256 = {
+    "## 16a. ": (
+        "e18c27687b6ece12bc4a8db091c01d732ea17067fb0a7f55b47191b0a0fb8cb8"
+    ),
+    "## 16b. ": (
+        "312ac7673e2b3c16cd67b1fe8bb3c68cf1fc5e2e40c6055e9cf616e2043bcdab"
+    ),
+}
+#: Max's d1090 ruling (2026-10-10): the §16a option each blocker takes,
+#: the option's amendment statement as §16a words it, and its named
+#: disposition.
+D1090_OPTIONS = {
+    "B1": (
+        "**1d. ",
+        "2. **Documented rule plus exclusion. Amends draft-3 line 160.**",
+        "male code 20 in 2015 family unit",
+    ),
+    "B2": (
+        "**1e. ",
+        "1. **Exclude and disclose. Amends draft-3 lines 152, 154 and 158 "
+        "for 2019\N{EN DASH}2023.**",
+        "uncooperative spouse or partner in family unit",
+    ),
+}
+D1090_ROWS = {
+    "B1": "| 1d: blocker B1 (2015 male code 20) | Option 2, documented rule "
+    "plus exclusion, ratified as an explicit amendment | Line 160 | 2015 "
+    "code 20 occupies the spouse slot as documented. Every 2015 family-unit "
+    "observation that contains a person recorded male (ER32000 = 1) with "
+    "2015 relationship code 20 is excluded from every row under the named "
+    "disposition `male code 20 in 2015 family unit`. Options 1 and 3 are "
+    "not ratified: no guard lets a count decide anything, and option 3's "
+    "hold no longer applies |",
+    "B2": "| 1e: blocker B2 (codes 90 and 92 in 2019\N{EN DASH}2023) | "
+    "Option 1, exclude and disclose, ratified as an explicit amendment | "
+    "Lines 152, 154 and 158, for 2019\N{EN DASH}2023 only | Every 2019, "
+    "2021 or 2023 family-unit observation that contains a code-90 or "
+    "code-92 person is excluded from every row under the named disposition "
+    "`uncooperative spouse or partner in family unit`, whether the target "
+    "person is the reference person, the uncooperative spouse or partner, "
+    "or another member. Options 2, 3 and 4 are not ratified: no income, "
+    "Social Security or SSI is assigned to these persons, no OFUM routing "
+    "is asserted for them, no guard lets a count decide anything, and "
+    "option 3's hold no longer applies |",
+    "5c": "| 5c: U7's 2015 spouse slot (amendment 5, ratified by d637) | "
+    "Follows the B1 ruling, as 5c provides | None beyond amendment 5 | "
+    "U7's 2015 spouse slot is the documented female spouse or partner "
+    "slot, and B1's exclusion applies to U7 as to every other row |",
+}
+#: The operative lines of the d1090 record, complete, by where they
+#: stand: each must be a whole line there, exactly once (reviews of
+#: e4dd350 and 8103881, finding 2).
+D1090_CLAUSES = {
+    "header_version": [
+        "- **Version:** `u2-draft-4` (milestone 1b, 2026-09-28; revised "
+        "2026-09-29 after the independent review; Max's rulings recorded "
+        "2026-09-30 and 2026-10-10): proposed amendments 1\N{EN DASH}6 in "
+        "\N{SECTION SIGN}16a, ruled by Max on 2026-09-30 (d637) as recorded "
+        "in \N{SECTION SIGN}16b, with blockers B1 and B2 ruled on "
+        "2026-10-10 (d1090) as recorded in \N{SECTION SIGN}16c. Previous "
+        "version: `u2-draft-3` (round 2).",
+    ],
+    "header_status": [
+        "- **Status:** decisions ruled for `u2-draft-3`. On 2026-09-28 Max "
+        "approved the \N{SECTION SIGN}16 defaults and ratification of that "
+        "draft (d514, in chat). Per \N{SECTION SIGN}20, the version becomes "
+        "`u2-ratified-1` by the merge that completes \N{SECTION SIGN}20 "
+        "steps 2\N{EN DASH}5 and materializes the final parameter block; "
+        "that merge needs no further ruling unless it changes this "
+        "document's substance. `u2-draft-4` adds \N{SECTION SIGN}16a, whose "
+        "proposed amendments change substance, so each needed Max's ruling "
+        "first. He ruled on 2026-09-30 (d637; \N{SECTION SIGN}16b): B3 is "
+        "resolved by option 1, amendments 2\N{EN DASH}5 are ratified as "
+        "written, and blockers B1 and B2 were held until PSID answered. "
+        "PSID answered on 2026-10-07, and on 2026-10-10 he ruled on B1 and "
+        "B2 (d1090; \N{SECTION SIGN}16c): B1 takes option 2 and B2 option "
+        "1, each an exclusion under a named disposition, ratified as "
+        "amendments to draft-3 line 160 (B1) and to draft-3 lines 152, 154 "
+        "and 158 for 2019\N{EN DASH}2023 (B2). No blocker hold remains. "
+        "Amendment 1's parts 1a\N{EN DASH}1c, which the d637 ruling's list "
+        "does not name, are read as ratified pending Max's confirmation "
+        "(d745; \N{SECTION SIGN}16b). Not registered or authorized for "
+        "execution.",
+    ],
+    "record": [
+        *D1090_ROWS.values(),
+        "> \"yes: Max 2026-10-10 in chat ('1090 yes'): B1 option 2 (exclude "
+        "2015 family units with a male code-20 person, rule fixed before "
+        "any count) and B2 option 1 (exclude 2019-2023 family units with a "
+        'code-90/92 person, disclose the count)"',
+        "Both rules are fixed by this ruling, before any count, and each is "
+        "vacuous if no such unit supplies an observation. Each count is "
+        "disclosed after the authorized structural pass (\N{SECTION SIGN}4) "
+        "and decides nothing. B1's disclosed count is the count option 1d-1 "
+        "specifies and option 1d-2 inherits: 2015 code-20 persons recorded "
+        "male (ER32000 = 1) in family units that would otherwise supply any "
+        "U2 observation. Option 1e-1 requires B2's count to be disclosed "
+        "and to decide nothing, but does not specify its counting unit. "
+        "Proposed clarification, pending Max's confirmation (d1242) before "
+        "that count is computed: count code-90 and code-92 persons in 2019, "
+        "2021 and 2023 family units that would otherwise supply any U2 "
+        "observation. This record ratifies no additional B1 or B2 counting "
+        "requirements; the structural pass's ordinary disposition counts "
+        "(\N{SECTION SIGN}4) list the observations excluded under each "
+        "named disposition. The trade-offs \N{SECTION SIGN}16a states for "
+        "each option (a population loss of unknown size, confined to units "
+        "with a spouse or partner present, and population rules that differ "
+        "by wave) apply as stated there.",
+        "- **To draft-3 line 160 (B1).** Line 160's requirement that "
+        '"Source documentation must resolve this before registration" is '
+        "replaced, for a male code-20 person in 2015, by the population "
+        "rule above. The line's other sentences stand: no count establishes "
+        "the routing, justifies assuming such records absent or waives the "
+        "blocker, and the declared interpretation changes only through this "
+        "ratified amendment. Lines 154 and 1391 are not amended for B1, "
+        "because no ratified B1 option lets a count decide anything.",
+        "- **To draft-3 lines 152, 154 and 158 (B2), for 2019, 2021 and "
+        "2023.** The documentary confirmation of code-90 and code-92 income "
+        "routing that these lines require before registration is replaced, "
+        "in these three waves, by the population rule above. For 2013, 2015 "
+        "and 2017 the lines are not amended: codes 90 and 92 there keep the "
+        "status \N{SECTION SIGN}16b records (1a and 1b, pending d745). Line "
+        "1391 is not amended.",
+        "**How the rules apply.** A family unit is identified as `wave "
+        "\N{MULTIPLICATION SIGN} 100000 + interview` (line 130), and its "
+        "members are the in-family persons, sequence 1\N{EN DASH}20, of "
+        "that interview in that wave (line 126); persons in institutions, "
+        "movers-out and decedents keep their own counted dispositions (line "
+        "127). The rules test those members, the persons whose relationship "
+        "codes the builder classifies by \N{SECTION SIGN}3's role rules. An "
+        "observation already disposed of before its family is classified "
+        "(not in the file, not present, zero weight or sex unknown) keeps "
+        "that disposition; each rule applies to the observations its family "
+        "unit would otherwise supply. This is how the rules are applied, "
+        "not a further amendment.",
+        "- U2 stays unregistered and unauthorized. With B3's hold lifted by "
+        "d637 and the B1 and B2 holds lifted here, no blocker hold remains, "
+        "but registration still waits for the rest of "
+        "\N{SECTION SIGN}\N{SECTION SIGN}17 and 20: the 24 TO VERIFY "
+        "records, the registry commits for the ratified amendments, "
+        "implementation, independent review, the structural pass and a "
+        "fresh forecast.",
+    ],
+    "outstanding": [
+        "1. Max rules on amendments 1\N{EN DASH}6 in \N{SECTION SIGN}16a, "
+        "choosing one option each for blocker B1 (2015 male code 20; Part B "
+        "PARTIAL), B2 (codes 90 and 92 in 2019\N{EN DASH}2023; Part B "
+        "PARTIAL) and B3 (construction of the revised 2017 weight; Part B "
+        "PARTIAL). An option that lets registration proceed before "
+        "documents resolve B1 or B2 takes effect only if Max also ratifies "
+        "the amendment to draft-3 lines 152\N{EN DASH}160 or 1391 that the "
+        "option names; otherwise that blocker's hold governs. B3's option 1 "
+        "likewise takes effect only if Max ratifies its amendment to "
+        "draft-3 line 134. **Ruled 2026-09-30 (d637; "
+        "\N{SECTION SIGN}16b):** B1 and B2 take option 3, the hold, with no "
+        "amendment ratified; B3 takes option 1, with its amendment to "
+        "draft-3 line 134 ratified; amendments 2\N{EN DASH}5 are ratified "
+        "as written, and amendment 1's parts 1a\N{EN DASH}1c are read as "
+        "ratified pending Max's confirmation (d745). **Ruled 2026-10-10 "
+        "(d1090; \N{SECTION SIGN}16c), after PSID answered:** B1 takes "
+        "option 2, with its amendment to draft-3 line 160 ratified, and B2 "
+        "takes option 1, with its amendment to draft-3 lines 152, 154 and "
+        "158 ratified for 2019\N{EN DASH}2023. This item stays open only "
+        "for 1a\N{EN DASH}1c, until Max confirms.",
+        "2. Each ruling is applied to the registries in its own reviewed "
+        "commit. The d1090 commit (2026-10-10) replaced the eight B1 and B2 "
+        "refusals with \N{SECTION SIGN}16c's exclusions and released their "
+        "dependents. Until the registry commits for d637 (and, for code 88, "
+        "d745) land, the 24 TO VERIFY records stay open and the "
+        "2017\N{EN DASH}2023 P64/P65 records stay blocked.",
+        "8. Complete the pre-registration structural, reconciliation and "
+        "F17 component pass, including only the counts that the ratified B1 "
+        "and B2 options name (under the 2026-10-10 ruling, the counts "
+        "specified by \N{SECTION SIGN}16a options 1d-2 and 1e-1, each "
+        "disclosed and deciding nothing; \N{SECTION SIGN}16c).",
+    ],
+    "execution": [
+        "1. Resolve the proposed decisions and source-verification "
+        "blockers. **Decisions: done (Max, d514, 2026-09-28, adopting every "
+        "\N{SECTION SIGN}16 default).** Source-verification blockers remain "
+        "for steps 2\N{EN DASH}5. **`u2-draft-4` amendments 1\N{EN DASH}6 "
+        "(\N{SECTION SIGN}16a): ruled by Max on 2026-09-30 (d637; "
+        "\N{SECTION SIGN}16b).** B3 is resolved by option 1. B1 and B2 were "
+        "held until PSID answered; **Max ruled on them on 2026-10-10 "
+        "(d1090; \N{SECTION SIGN}16c)**: B1 by option 2 and B2 by option 1, "
+        "each an exclusion under a named disposition. This step stays open "
+        "only because amendment 1's parts 1a\N{EN DASH}1c await Max's "
+        "confirmation of the reading in \N{SECTION SIGN}16b (d745).",
+    ],
+}
+
+
+def d1090_locations(spec):
+    """The text of each place the d1090 record stands in ``spec``."""
+    lines = spec.split("\n")
+    return {
+        "header_version": lines[2],
+        "header_status": lines[3],
+        "record": spec[spec.index("## 16c. ") : spec.index("## 17. ")],
+        "outstanding": spec[spec.index("## 17. ") : spec.index("## 18. ")],
+        "execution": spec[spec.index("## 20. ") :],
+    }
+
+
+def check_d1090_record(spec):
+    """The semantic checks of the d1090 record, independent of any pin."""
+    places = d1090_locations(spec)
+    for place, clauses in D1090_CLAUSES.items():
+        lines = places[place].split("\n")
+        for clause in clauses:
+            assert lines.count(clause) == 1, (place, clause[:60])
+    record = places["record"]
+    assert record.startswith(
+        "## 16c. Max's ruling on blockers B1 and B2 (2026-10-10, d1090)\n"
+    )
+    for text in places.values():
+        assert "decides whether" not in text
+    assert (
+        "The B1 and B2 holds stop registration" not in places["header_status"]
+    )
+    assert "B1 and B2 wait for the answers" not in places["outstanding"]
+    assert "B1 and B2 stay on hold" not in places["execution"]
+
+
+def test_section_16c_records_the_d1090_ruling():
+    """§16c ratifies exactly the options and lines §16a states, and the
+    header, §17 and §20 point to it; §16a and §16b are unchanged."""
+    spec = (ROOT / SPEC).read_text(encoding="utf-8")
+    starts = [
+        spec.index(heading)
+        for heading in ("## 16a. ", "## 16b. ", "## 16c. ", "## 17. ")
+    ]
+    assert starts == sorted(starts)
+    for (heading, digest), end in zip(
+        SECTION_SHA256.items(), starts[1:3], strict=True
+    ):
+        text = spec[spec.index(heading) : end]
+        assert hashlib.sha256(text.encode()).hexdigest() == digest, heading
+    proposals = spec[starts[0] : starts[1]]
+    record = spec[starts[2] : starts[3]]
+    for blocker, (start, option, disposition) in D1090_OPTIONS.items():
+        block = proposals[proposals.index(start) :]
+        block = block[: block.index("**Recommendation for B")]
+        line = next(x for x in block.split("\n") if x.startswith(option))
+        assert f"`{disposition}`" in line, blocker
+        # The lines the record names are the lines the option amends.
+        amended = re.search(r"Amends draft-3 lines? ([^.]+)\.", option)
+        numbers = re.findall(r"\b\d{3,4}\b", amended.group(1))
+        row = D1090_ROWS[blocker]
+        assert row in record, blocker
+        cell = row.split(" | ")[2]
+        assert re.findall(r"\b\d{3,4}\b", cell) == numbers, blocker
+        assert f"`{disposition}`" in row, blocker
+    check_d1090_record(spec)
+
+
+#: Mutations of the d1090 record that change what it says, each by
+#: place: every one must fail ``check_d1090_record`` (review of e4dd350,
+#: finding 2, and the counts of finding 1).
+D1090_MUTATIONS = [
+    ("record", "(ER32000 = 1)", "(ER32000 = 2)"),
+    ("record", "code 20 is excluded from every row", "code 20 is kept in"),
+    ("record", "Every 2019, 2021 or 2023 family", "Every 2023 family"),
+    ("record", "a code-90 or code-92 person is", "a code-90 person is"),
+    ("record", "and decides nothing.", "and decides whether to proceed."),
+    ("record", "| Line 160 |", "| Line 154 |"),
+    ("record", "for 2019\N{EN DASH}2023 only |", "for 2019 only |"),
+    ("record", "and option 1d-2 inherits", "and option 1d-2 drops"),
+    ("record", "sequence 1\N{EN DASH}20", "sequence 1\N{EN DASH}59"),
+    ("record", "Lines 154 and 1391 are not", "Line 1391 is not"),
+    ("record", "B1 option 2 (exclude", "B1 option 1 (exclude"),
+    # The second review's accepted replacements (review of 8103881).
+    (
+        "record",
+        "Option 1e-1 requires B2's count to be disclosed",
+        "Option 1e-1 requires no count for B2 to be disclosed",
+    ),
+    (
+        "record",
+        "This record ratifies no additional B1 or B2 counting requirements; ",
+        "",
+    ),
+    (
+        "record",
+        "pending Max's confirmation (d1242) before",
+        "without waiting for Max (d1242) before",
+    ),
+    (
+        "record",
+        "The rules test those members",
+        "The rules test only the target",
+    ),
+    (
+        "record",
+        "keeps that disposition",
+        "instead takes the family-unit exclusion",
+    ),
+    (
+        "outstanding",
+        "including only the counts that the ratified B1 and B2 options name",
+        "including any exploratory counts the builder requests",
+    ),
+    (
+        "header_status",
+        "Not registered or authorized for execution.",
+        "Registered and authorized for execution.",
+    ),
+    (
+        "execution",
+        "of the reading in \N{SECTION SIGN}16b (d745).",
+        "only if the structural pass finds nonzero exclusions.",
+    ),
+    (
+        "header_version",
+        "(d1090) as recorded in \N{SECTION SIGN}16c",
+        "(d1090)",
+    ),
+    ("header_status", "B2 option 1, each", "B2 option 2, each"),
+    ("outstanding", "and B2 takes option 1,", "and B2 takes option 2,"),
+    ("outstanding", "each disclosed and deciding nothing", "each disclosed"),
+    (
+        "outstanding",
+        "replaced the eight B1 and B2 refusals",
+        "replaced the seven B1 and B2 refusals",
+    ),
+    (
+        "execution",
+        "B1 by option 2 and B2 by option 1",
+        "B1 by option 1 and B2 by option 2",
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "place,old,new", D1090_MUTATIONS, ids=[m[1][:30] for m in D1090_MUTATIONS]
+)
+def test_the_d1090_checks_catch_each_mutation(place, old, new):
+    spec = (ROOT / SPEC).read_text(encoding="utf-8")
+    text = d1090_locations(spec)[place]
+    assert old in text, (place, old)
+    mutated = spec.replace(text, text.replace(old, new, 1), 1)
+    assert mutated != spec
+    with pytest.raises(AssertionError):
+        check_d1090_record(mutated)
+
+
 def test_part_b_verdicts_agree():
     """B1, B2 and B3 carry one verdict everywhere: PARTIAL."""
     research = RESEARCH.read_text(encoding="utf-8")
@@ -743,12 +1182,10 @@ def test_released_dependencies(documents):
         for entry in document["entries"]:
             assert not RELEASED & set(entry.get("blocking_dependencies", []))
     pension = {e["id"]: e for e in documents["pension"]["entries"]}
-    assert pension["2015.route.respondent_slots"]["blocking_dependencies"] == [
-        "roles:2015.relationship.20"
-    ]
-    assert (
-        "blocking_dependencies" not in pension["2017.route.respondent_slots"]
-    )
+    # d1090 released the 2015 spouse slot with B1 (amendment 5c).
+    for wave in registry.U2_SOURCE_WAVES:
+        entry = pension[f"{wave}.route.respondent_slots"]
+        assert "blocking_dependencies" not in entry, wave
     for wave in (2017, 2019, 2021, 2023):
         for person in ("head", "wife"):
             for plan in (1, 2):
@@ -770,7 +1207,29 @@ def test_master_record_matches_registries(documents):
         for entry in document["entries"]
     }
     assert rows == expected
-    assert "**1760 RESOLVED; 8 REFUSED; 24 TO VERIFY**" in text
+    assert "**1768 RESOLVED; 0 REFUSED; 24 TO VERIFY**" in text
+    # Each per-route row states exactly its entry's remaining blocking
+    # dependencies (review of 8103881, finding 3: d1090 released 554).
+    sentences = dict(
+        re.findall(
+            r"^\| `([a-z]+:[^`]+)` \| [^\n]*?(?: Application also refuses "
+            r"pending ([^|]*?)\.)? \| `[^\n]*$",
+            text,
+            re.M,
+        )
+    )
+    assert set(sentences) == set(expected)
+    for name, document in documents.items():
+        for entry in document["entries"]:
+            stated = sentences[f"{name}:{entry['id']}"]
+            assert stated == ", ".join(
+                entry.get("blocking_dependencies", [])
+            ), (name, entry["id"])
+    assert text.count("Application also refuses pending") == sum(
+        bool(e.get("blocking_dependencies"))
+        for d in documents.values()
+        for e in d["entries"]
+    )
     for name, (resolved, refused, open_) in EXPECTED_COUNTS.items():
         assert f"| {name} | {resolved} | {refused} | {open_} |" in text
 

@@ -336,3 +336,38 @@ No file the restricted list names was opened for reading: no page of the Boomers
 - `docs/design/boomers2004_1946_55_comparison.md` (lines 3 and 4, §16b, and §§17, 19 and 20), `docs/design/u2_m1b_psid_research.md` (the header sentence and the three question labels), `docs/design/u2_m1_source_adjudication.md` (the pointer to §16a), `data/external/track_u2/u1_identity.json` (the specification pin and its note), and this section.
 
 No registry entry, §15 line, test, U1 file, engine file, `gates.yaml` or `runs/*.json` was edited.
+
+## Ruling recorded and applied (2026-10-10, d1090)
+
+A Claude Code session (Opus 5.5) recorded Max's ruling d1090 on blockers B1 and B2 as the specification's §16c and applied it to the U2 source registries and the cohort builder. It is not a U2 forecaster or referee, and it computed nothing from real data.
+
+### Read
+
+- `EV/RESTRICTED-FILES.md` (SHA-256 `2e1b5c2a…`), in full and first, to know what not to open.
+- The chief-of-staff decision log's entries for d637, d745 and d1090, and a listing of decisions filtered for those ids.
+- `EV/rulings-records-20260930/README.md` (`29f9b525…`) and `registry-followup-brief.md` (`aefefe0c…`), the d637 registry brief, and that folder's file listing.
+- In the repository: the specification (its header, the §3 lines on family units and sequences, and §§15–20), the research record in full, the master record (summary tables, blocker rows and the rows of the entries this work changes), this file's 2026-09-30 section, the eight registries, `u1_identity.json`, `src/populace_dynamics/data/u2_source_registry.py`, the U2 package's `sources.py`, `cohort.py`, `loader.py` and `invented.py`, `scripts/track_u2_dry_run.py`, and the tests under `tests/track_u2/`.
+- `git worktree list` and the titles of the repository's open pull requests.
+
+### Not opened
+
+No file on the restricted list was opened: no page of the Boomers 2004 report, no comparator, seal, values scan or result, and no PSID data file. PSID's reply and its screenshots (`EV/phase2-20260927/psid-help-reply-20261007/`) were not opened; the research record's account of them was used. No issue #42 comment was listed or read, and no Subfleet job folder other than this session's own review runs was opened.
+
+### Tests
+
+The U2 tests ran with the PSID root staged. They read staged PSID documentation (setup files, codebooks and questionnaires, through text extraction) and invented records; the loader tests' audit hook refuses any open under the PSID data roots. No raw PSID record was read and no statistic was computed on real data.
+
+### Incidental exposure
+
+- The decision listing printed one-line summaries of unrelated decisions (travel, other repositories); none concerns a comparator or U2's outcome.
+- The d1090 decision record paraphrases PSID's answer. Besides the whole-file count of two that the research record already discloses, it gives one record-level detail about one of the two people, which the research record withholds. It is not reproduced in the specification, the registries or here.
+
+### Files written
+
+- `docs/design/boomers2004_1946_55_comparison.md` (lines 3 and 4, §16c, §§17, 19 and 20), `docs/design/u2_m1b_psid_research.md` (the header and the answers to §§1 and 2), `docs/design/u2_m1_source_adjudication.md` (the summary counts and table, the blocker rows, a section on the d1090 registry commit, the pointer to §16b and the rows of the eight ruled entries), `data/external/track_u2/u1_identity.json` (the specification pin and its note), and this section.
+- `data/external/track_u2/roles.json`, `income.json` and `pension.json` (the eight ruled entries, the released dependencies and a `rulings_applied` record).
+- `src/populace_dynamics/data/u2_source_registry.py`; `src/populace_dynamics/uniform_cut_track_u2/sources.py`, `cohort.py`, `invented.py` and `loader.py` (docstring); `scripts/track_u2_dry_run.py`.
+- `tests/track_u2/test_adjudication_applied.py`, `test_source_registries.py`, `test_u2_roles.py`, `test_u2_properties.py`, `test_u2_mappings.py`, `test_u2_loader.py` and `test_u2_scripts.py`, and `tests/data/test_track_u2_income_wealth.py`.
+- Outside the repository: the registry edit script and the review records, copied to `EV/rulings-records-20261010/`.
+
+No U1 file, engine file, `gates.yaml` or `runs/*.json` was edited.

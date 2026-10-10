@@ -35,13 +35,20 @@ and no design unit to a row.
 :class:`~populace_dynamics.uniform_cut_track_u2.sources.RoleContext`.
 Every in-family person of an observation's family is classified; a code
 whose rule is TO VERIFY or undeclared refuses the build (no fallback).
+Then the two family-unit exclusions Max ratified on 2026-10-10 (d1090;
+section 16c) apply: an observation whose 2015 family holds a code-20
+person recorded male, or whose 2019-2023 family holds a code-90 or
+code-92 person, is not built and is counted under the named disposition
+(:func:`~populace_dynamics.uniform_cut_track_u2.sources.
+family_unit_exclusion`).  An observation already disposed of (not in the
+file, not present, zero weight, sex unknown) keeps that disposition.
 The income role follows the income slot: 10 head, 20 and 22 the spouse
-slot (``wife``, irrespective of sex), 90 and 92 and every other code
-OFUM.  The primary annuity lives are the unique code-10 person and the
-unique co-resident legal spouse (code 20 or 90), each with recorded sex
-and derived income-year age; a uniquely paired head and legal spouse
-resolve an otherwise unresolved marital history as married, each naming
-the other.  Code 22 and 92 never resolve; a missing or ambiguous pairing
+slot (``wife``, irrespective of sex), 90 and 92 (2013-2017) and every
+other code OFUM.  The primary annuity lives are the unique code-10 person
+and the unique co-resident legal spouse (code 20 or 90), each with
+recorded sex and derived income-year age; a uniquely paired head and
+legal spouse resolve an otherwise unresolved marital history as married,
+each naming the other.  Code 22 and 92 never resolve; a missing or ambiguous pairing
 stays unresolved and is counted.
 
 **Weights, design and units.**  Observation weight = the reporting wave's
@@ -937,6 +944,9 @@ def build_u2_cohort(
     with_history = set(int(p) for p in inputs.marriage_history["person_id"])
     dispositions: list[dict[str, Any]] = []
     observations: list[dict[str, Any]] = []
+    # Section 16c's disclosed counts, by disposition and wave: the members
+    # who brought each exclusion.
+    excluded_persons: dict[tuple[str, int], set[int]] = {}
     for birth_year, wave, income_year, age, multiplier in cells:
         anchor_frame = inputs.anchors[wave]
         anchor = anchor_frame.set_index("person_id")
@@ -993,6 +1003,19 @@ def build_u2_cohort(
                 )
                 for row in family_rows.itertuples(index=False)
             }
+            sexes = {p: str(sex.get(p, "na")) for p in rules}
+            excluded = sources.family_unit_exclusion(rules, sexes)
+            if excluded is not None:
+                # Section 16c: the family unit supplies no observation to
+                # any row; the would-be observation is counted.
+                dispositions.append({**base, "disposition": excluded})
+                excluded_persons.setdefault((excluded, wave), set()).update(
+                    p
+                    for p, r in rules.items()
+                    if r.family_unit_exclusion is not None
+                    and r.family_unit_exclusion.applies(sexes[p])
+                )
+                continue
             dispositions.append({**base, "disposition": "observation"})
             head, head_pairing = _unique(
                 [p for p, r in rules.items() if r.income_role == "head"]
@@ -1180,6 +1203,19 @@ def build_u2_cohort(
         "plan_birth_years": plan_years,
         "role_context": role_context.kind,
         "births_inputs_sha256": births.inputs_sha256,
+        # Section 16c: per wave, the members who brought each counted
+        # exclusion (sources.PERSON_COUNTED_EXCLUSIONS: B1's count, which
+        # option 1d-1 names and 1d-2 inherits) in family units that would
+        # otherwise have supplied this row an observation.  Disclosed;
+        # decides nothing.
+        "n_family_unit_exclusion_persons": {
+            name: {
+                str(wave): len(persons)
+                for (named, wave), persons in sorted(excluded_persons.items())
+                if named == name
+            }
+            for name in sources.PERSON_COUNTED_EXCLUSIONS
+        },
     }
     cohort = U2Cohort(obs, disp, spec, diagnostics)
     object.__setattr__(

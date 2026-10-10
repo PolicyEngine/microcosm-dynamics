@@ -13,8 +13,9 @@ for valid nonnegative Social Security and 0 <= c <= 1:
 for a newly eligible unit:  0 <= SSI_new <= min(F - C', C - C');
 
 and the zero-cut identity, rates within [0, 100], invariance to a
-positive common weight scaling, and rejection of malformed plans and
-missing parameters.  Every bound is asserted on the estimator's own
+positive common weight scaling, rejection of malformed plans and
+missing parameters, and section 16c's family-unit exclusions (a unit is
+excluded exactly when one of its members brings an exclusion).  Every bound is asserted on the estimator's own
 outputs (``ssi_offset``, ``ssi_new``, ``reform_income``) at a drawn cut
 rate in [0, 1]; the per-unit falls, rooms and countable incomes the
 bounds need are recomputed from the literal section 7-8 formulas below.
@@ -956,3 +957,61 @@ def test_per_observation_monotone_in_every_half_of_every_split(
             assert len(side_a) and len(side_b), (row_id, seed)
             for side in (side_a, side_b):
                 assert monotone[side.index.to_numpy()].all(), (row_id, seed)
+
+
+# ---------------------------------------------------------------------------
+# Section 16c: the family-unit exclusions Max ratified (d1090, 2026-10-10)
+# ---------------------------------------------------------------------------
+_MEMBER = st.tuples(
+    st.sampled_from((*sources.RELATIONSHIP_CODES, 30, 40, 50, 98)),
+    st.sampled_from(("male", "female", "na")),
+)
+EXCLUSION_SETTINGS = settings(max_examples=300, deadline=None)
+
+
+def _trigger(wave: int, code: int, sex: str) -> str | None:
+    """Section 16c restated: B1 is a 2015 code-20 member recorded male, B2
+    a 2019-2023 member with code 90 or 92."""
+
+    if wave == 2015 and code == 20 and sex == "male":
+        return sources.MALE_CODE_20_2015
+    if wave in (2019, 2021, 2023) and code in (90, 92):
+        return sources.UNCOOPERATIVE_SPOUSE_OR_PARTNER
+    return None
+
+
+def _unit(wave: int, members: list[tuple[int, str]]):
+    declared = sources.declared_role_rules()
+    rules = {
+        pid: declared.get(
+            (wave, code), sources.RoleRule(wave, code, **sources.OFUM_RULE)
+        )
+        for pid, (code, _) in enumerate(members)
+    }
+    sexes = {pid: sex for pid, (_, sex) in enumerate(members)}
+    return rules, sexes
+
+
+@EXCLUSION_SETTINGS
+@given(
+    wave=st.sampled_from(sources.SUPPORT_WAVES),
+    members=st.lists(_MEMBER, min_size=1, max_size=8),
+    data=st.data(),
+)
+def test_a_unit_is_excluded_exactly_when_a_member_brings_it(
+    wave, members, data
+):
+    """For every unit: excluded iff some member is a section 16c trigger,
+    under that trigger's disposition; independent of member order; a
+    member who is no trigger never changes the outcome, and a trigger
+    always decides it."""
+
+    found = sources.family_unit_exclusion(*_unit(wave, members))
+    expected = {_trigger(wave, code, sex) for code, sex in members} - {None}
+    assert len(expected) <= 1
+    assert found == next(iter(expected), None)
+    order = data.draw(st.permutations(members))
+    assert sources.family_unit_exclusion(*_unit(wave, order)) == found
+    extra = data.draw(_MEMBER)
+    grown = sources.family_unit_exclusion(*_unit(wave, [*members, extra]))
+    assert grown == (_trigger(wave, *extra) or found)
