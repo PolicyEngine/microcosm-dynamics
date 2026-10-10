@@ -6,7 +6,10 @@
   U1's specification, parameter captures, registered artifact and
   environment sidecar, and U1's code and tests -- keep the bytes the
   milestone-1 manifest (``data/external/track_u2/u1_identity.json``)
-  records, and no U2 commit or merge resolution (attributed by path; see
+  records. The one exception is ``gates.yaml``, which may instead carry
+  the ratified contract a ratified flip outside U2 recorded in
+  ``runs/legacy_manifest_v1.json`` (first: the gate_epuf_fill lock,
+  decision d927). No U2 commit or merge resolution (attributed by path; see
   ``test_no_committed_run_engine_gate_or_u1_file_changed``) changed a
   committed ``runs/*.json`` or any other protected path.
 * Every U2 milestone-2 module is an exact file exclusion in
