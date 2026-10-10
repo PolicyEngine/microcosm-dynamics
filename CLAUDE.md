@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Current phase**: Implementation, under a locked pre-registered evaluation gate.
 
-This repository is Populace dynamics: an open longitudinal microsimulation layer (paper at populace.dev/papers/dynamics) plus a working implementation in `src/populace_dynamics/`:
+This repository is Microcosm Dynamics: an open longitudinal microsimulation layer (paper at microcosm.institute/dynamics/paper) plus a working implementation in `src/populace_dynamics/`:
 
 - `harness/` — the population-view scoring harness (geometry blocks, PanelView trajectory windows, the moment battery in `moments.py`)
 - `data/` — label-verified PSID readers (`family.py` builds the 1968-2022 head/spouse earnings panel with assignment flags; PSID files staged at `~/PolicyEngine/psid-data`)

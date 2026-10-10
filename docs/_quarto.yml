@@ -3,7 +3,7 @@ project:
   output-dir: _book
 
 book:
-  title: "Populace dynamics"
+  title: "Microcosm Dynamics"
   subtitle: "An open, scored longitudinal layer for policy microsimulation — validated first on U.S. Social Security"
   author:
     - name: Max Ghenis
@@ -32,6 +32,7 @@ book:
     - benchmark-model-component-matrix.md
     - data-sources.md
     - methodology.md
+    - baselines.md
     - operationalizing-longitudinal-construction.md
     - technical-specifications.md
     - calibration-targets.md

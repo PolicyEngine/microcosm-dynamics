@@ -33,5 +33,10 @@ data/external/psid_modern_job_context_raw_extraction_specs_v1.json text eol=lf
 data/external/snapshots/** binary
 data/external/snapshots/covered_earnings_methodology_capture1/** binary
 
+# Baseline input captures: SHA-256-pinned source bytes, never normalized
+data/external/tr2026/sources/** binary
+data/external/cbo2026/sources/** binary
+data/external/*.source.html.gz binary
+
 # The depletion-cut sources are byte-pinned to their fetch records (SHA-256).
 docs/analysis/pe_us_depletion_cut_20261001/sources/** binary
