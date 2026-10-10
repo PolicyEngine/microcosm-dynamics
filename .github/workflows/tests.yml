@@ -17,10 +17,14 @@ concurrency:
 jobs:
   pytest-shard:
     runs-on: ubuntu-latest
-    # The slowest shard took 49-73 min on 2026-10-06..08 (shard 2/4; the
-    # committed .test_durations predates half the suite). The cap frees a
-    # hung shard's runner after 2 h instead of GitHub's 6 h default.
-    timeout-minutes: 120
+    # With a fresh .test_durations the four shards' test sessions took 21 to
+    # 33 minutes (run 38006981101, 2026-10-10). A shard far above that
+    # suggests the file has gone stale: refresh it as
+    # described below. The cap leaves 15 minutes over the 75 the slowest
+    # shard took before that refresh, and frees a hung shard's runner after
+    # 1.5 h instead of GitHub's 6 h default. A shard that times out uploads
+    # no durations, so if one ever does, raise the cap for the refresh run.
+    timeout-minutes: 90
     strategy:
       fail-fast: false
       matrix:
