@@ -12,6 +12,8 @@ import json
 import numpy as np
 import pandas as pd
 import pytest
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 from populace_dynamics.estimates import uniform_cut_tabulation as tu
 from populace_dynamics.min_benefit_track_m import (
@@ -24,6 +26,12 @@ from populace_dynamics.min_benefit_track_m import tabulation as tab
 POINTER = (
     "https://github.com/PolicyEngine/microcosm-dynamics/issues/42"
     "#issuecomment-1"
+)
+#: The blockers ``m1-ratified-1``'s block listed when it was ratified; the
+#: registered-commit edit (2026-09-27) dropped both.
+BLOCKERS_AT_RATIFICATION = (
+    "registration_package_m10_needs_the_comparator_seal_hash",
+    "issue_42_registration_absent",
 )
 
 
@@ -205,8 +213,6 @@ def test_each_seed_splits_whole_family_units():
             "registration pointer",
         ),
         ("invented", "registered_real", POINTER, "contradicts"),
-        # the committed block (m1-ratified-1, still blocked) authorizes none
-        ("psid_files", "registered_real", POINTER, "does not authorize"),
         (None, "invented", None, "must say so"),
         ("invented", "published", None, "data_provenance"),
     ],
@@ -225,13 +231,86 @@ def test_the_provenance_guard_refuses(kind, provenance, pointer, match):
         )
 
 
+def test_the_committed_block_passes_psid_rows_only_with_the_42_pointer():
+    """Since the registered-commit edit (2026-09-27) the committed block
+    lists no blocker, so the guard's specification gate passes it.  Rows
+    built from PSID files still need ``registered_real`` and an issue #42
+    comment pointer; nothing is tabulated here (the guard alone runs, on
+    INVENTED rows marked as built from files)."""
+
+    assert specification.m1_parameter_block()["blocked_by"] == []
+    tab.check_provenance(
+        rows("psid_files"),
+        data_provenance="registered_real",
+        registration_pointer=POINTER,
+    )
+    for pointer in (
+        None,
+        "https://github.com/PolicyEngine/microcosm-dynamics/issues/42",
+        POINTER.replace("/42#", "/420#"),
+        POINTER + "#",
+        "https://example.org/x",
+    ):
+        with pytest.raises(
+            tab.TrackMTabulationError, match="registration pointer"
+        ):
+            tab.check_provenance(
+                rows("psid_files"),
+                data_provenance="registered_real",
+                registration_pointer=pointer,
+            )
+    with pytest.raises(
+        tab.TrackMTabulationError, match="cannot be tabulated as invented"
+    ):
+        tab.check_provenance(
+            rows("psid_files"),
+            data_provenance="invented",
+            registration_pointer=POINTER,
+        )
+
+
+@settings(max_examples=200, deadline=None)
+@given(
+    st.one_of(
+        st.none(),
+        st.text(max_size=120),
+        # near misses: a comment URL with anything after it, or before it
+        st.builds((POINTER + "{}").format, st.text(min_size=1, max_size=20)),
+        st.builds(("{}" + POINTER).format, st.text(min_size=1, max_size=20)),
+        st.builds(
+            "https://github.com/PolicyEngine/microcosm-dynamics/issues/{}"
+            "#issuecomment-{}".format,
+            st.integers(min_value=0).filter(lambda issue: issue != 42),
+            st.integers(min_value=0),
+        ),
+    ).filter(
+        lambda pointer: pointer is None
+        or tab.REGISTRATION_POINTER.fullmatch(pointer) is None
+    )
+)
+def test_property_psid_rows_need_an_issue_42_comment_pointer(pointer):
+    """Invariant: under the committed block, which the gate passes, PSID-
+    built rows are refused for every pointer that is not an issue #42
+    comment URL (``registered_real`` needs the pointer), near misses
+    included."""
+
+    with pytest.raises(tab.TrackMTabulationError, match="registration"):
+        tab.check_provenance(
+            rows("psid_files"),
+            data_provenance="registered_real",
+            registration_pointer=pointer,
+        )
+
+
 def test_the_guard_needs_a_ratified_unblocked_block_and_every_label():
     ratified = json.loads(json.dumps(specification.m1_parameter_block()))
     ratified["status"], ratified["version"] = (
         "ratified_frozen",
         "m1-ratified-1",
     )
-    # A ratified copy that still lists the unbuilt readers is refused ...
+    # A ratified copy that still lists blockers (the block as ratified,
+    # before the registered-commit edit) is refused ...
+    ratified["blocked_by"] = list(BLOCKERS_AT_RATIFICATION)
     with pytest.raises(tab.TrackMTabulationError, match="blocked by"):
         tab.check_provenance(
             rows("psid_files"),
@@ -240,8 +319,10 @@ def test_the_guard_needs_a_ratified_unblocked_block_and_every_label():
             specification=ratified,
         )
     ratified["blocked_by"] = []
-    # ... and with a ratified, unblocked copy the guard lets PSID-kind rows
-    # through (checked on the guard alone: these rows are invented).
+    assert ratified == specification.m1_parameter_block()
+    # ... and unblocked, as the committed block now is, the guard lets
+    # PSID-kind rows through (checked on the guard alone: these rows are
+    # invented).
     tab.check_provenance(
         rows("psid_files"),
         data_provenance="registered_real",

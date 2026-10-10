@@ -85,11 +85,22 @@ def test_every_row_and_cell_is_reported(document):
 def test_the_checks_record_every_guard(document):
     checks = document[0]["checks"]
     assert checks["specification_block_equals_code"]["consistent"]
-    assert checks["committed_draft_authorizes_no_real_run"]["refused"]
+    # The committed block lists no blocker since the registered-commit
+    # edit (2026-09-27), so the gate passes it; a copy that still lists the
+    # blockers it was ratified with is refused.
+    assert not checks["the_committed_block_passes_the_specification_gate"][
+        "refused"
+    ]
+    assert checks["the_committed_block_equals_a_ratified_unblocked_copy"][
+        "passed"
+    ]
     blocked = checks["a_ratified_copy_still_listing_blockers_is_refused"]
-    assert blocked["refused"] and "blocked by" in blocked["message"]
-    unblocked = "a_ratified_unblocked_copy_would_pass_the_specification_gate"
-    assert not checks[unblocked]["refused"]
+    assert blocked["refused"] and "still blocked by" in blocked["message"]
+    for name in (
+        "registration_package_m10_needs_the_comparator_seal_hash",
+        "issue_42_registration_absent",
+    ):
+        assert name in blocked["message"], name
     assert not checks["threshold_years_all_captured"]["refused"]
     years = checks["threshold_years_needed_by_the_invented_cohort"]
     assert min(int(year) for year in years) >= 2003
@@ -113,13 +124,13 @@ def test_the_checks_record_every_guard(document):
         "registered_path_refuses_invented_records",
         "psid_kind_records_refused_as_invented",
         "psid_kind_records_refused_without_the_42_pointer",
-        "psid_kind_records_refused_with_a_pointer_under_the_draft",
+        "psid_kind_records_refused_with_a_pointer_under_a_blocked_block",
         "a_registered_subset_of_rows_is_refused",
         "registered_floor_seeds_cannot_be_changed",
-        "entry_point_preflight_refuses_the_committed_draft",
         "psid_hashed_records_refused_outside_the_registered_run",
         "psid_hashed_records_refused_with_a_supplied_block",
-        "psid_hashed_records_refused_under_the_committed_draft",
+        "psid_hashed_records_refused_without_the_42_pointer",
+        "psid_hashed_records_refused_with_a_pointer_to_another_issue",
         "a_psid_hashed_cohort_cannot_be_marked_invented",
         "an_unconstrained_m4_cohort_needing_years_not_captured_is_refused",
     ):
@@ -127,15 +138,40 @@ def test_the_checks_record_every_guard(document):
     assert "every registered row" in (
         checks["a_registered_subset_of_rows_is_refused"]["message"]
     )
-    # Every component exists; the specification gate is what refuses.
-    assert checks["entry_point_missing_components"] == []
-    # The committed block is ratified (m1-ratified-1) but still blocked.
     assert "still blocked by" in (
-        checks["entry_point_preflight_refuses_the_committed_draft"]["message"]
+        checks[
+            "psid_kind_records_refused_with_a_pointer_under_a_blocked_block"
+        ]["message"]
     )
-    assert "supplied block" in (
-        checks["psid_hashed_records_refused_with_a_supplied_block"]["message"]
-    )
+    # PSID-built records still need the issue #42 comment pointer.
+    for name in (
+        "psid_kind_records_refused_without_the_42_pointer",
+        "psid_hashed_records_refused_without_the_42_pointer",
+        "psid_hashed_records_refused_with_a_pointer_to_another_issue",
+    ):
+        assert "registration pointer" in checks[name]["message"], name
+    # A supplied block is refused for records carrying PSID file hashes
+    # although the gate would pass it: it is not the committed block.
+    supplied = checks["psid_hashed_records_refused_with_a_supplied_block"]
+    assert "supplied block" in supplied["message"]
+    assert supplied["supplied_block_passes_the_gate"]
+    # Every component exists, and the entry point's preflight passes the
+    # committed block at the registered commit on a clean tree (a stand-in
+    # git; nothing is written) and refuses each departure from that state.
+    assert checks["entry_point_missing_components"] == []
+    assert not checks["entry_point_preflight_passes_the_registered_state"][
+        "refused"
+    ]
+    for name, fragment in (
+        ("a_pointer_to_another_issue", "issue #42"),
+        ("another_head", "is not the registered commit"),
+        ("a_dirty_tree", "clean"),
+        ("an_existing_output", "one-shot"),
+        ("a_blocked_block", "still blocked by"),
+    ):
+        refusal = checks[f"entry_point_preflight_refuses_{name}"]
+        assert refusal["refused"], name
+        assert fragment in refusal["message"], name
     unconstrained = checks[
         "an_unconstrained_m4_cohort_needing_years_not_captured_is_refused"
     ]
@@ -189,6 +225,12 @@ def test_the_provenance_pins_the_specification_and_parameters(document):
     assert qc["sha256"].startswith("6f964e8f")
     assert qc["captured_from_sha256"].startswith("12354a05")
     assert "not opened" in provenance["comparator_seal"]
+    assert "section 18 item 3" in provenance["comparator_seal"]
+    # the dry run records the committed block's version and status
+    assert (spec["version"], spec["status"]) == (
+        "m1-ratified-1",
+        "ratified_frozen",
+    )
     assert spec["sha256"] in markdown
 
 

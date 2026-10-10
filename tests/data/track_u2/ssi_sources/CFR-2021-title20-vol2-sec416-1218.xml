@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="cfr.xsl"?>
+<CFRGRANULE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="CFRMergedXML.xsd">
+    <FDSYS>
+        <CFRTITLE>20</CFRTITLE>
+        <CFRTITLETEXT>Employees' Benefits</CFRTITLETEXT>
+        <VOL>2</VOL>
+        <DATE>2021-04-01</DATE>
+        <ORIGINALDATE>2021-04-01</ORIGINALDATE>
+        <COVERONLY>false</COVERONLY>
+        <TITLE>Exclusion of the automobile.</TITLE>
+        <GRANULENUM>Â§ 416.1218</GRANULENUM>
+        <HEADING>Section Â§ 416.1218</HEADING>
+        <ANCESTORS>
+            <PARENT HEADING="Title 20" SEQ="3">Employees' Benefits</PARENT>
+            <PARENT HEADING="CHAPTER III" SEQ="2">SOCIAL SECURITY ADMINISTRATION</PARENT>
+            <PARENT HEADING="PART 416" SEQ="1">SUPPLEMENTAL SECURITY INCOME FOR THE AGED, BLIND, AND DISABLED</PARENT>
+            <PARENT HEADING="Subpart L" SEQ="0">Resources and Exclusions</PARENT>
+        </ANCESTORS>
+    </FDSYS>
+    <SECTION>
+        <SECTNO>§ 416.1218</SECTNO>
+        <SUBJECT>Exclusion of the automobile.</SUBJECT>
+        <P>
+            (a) 
+            <E T="03">Automobile; defined.</E>
+             As used in this section, the term 
+            <E T="03">automobile</E>
+             includes, in addition to passenger cars, other vehicles used to provide necessary transportation.
+        </P>
+        <P>
+            (b) 
+            <E T="03">Limitation on automobiles.</E>
+             In determining the resources of an individual (and spouse, if any), automobiles are excluded or counted as follows:
+        </P>
+        <P>
+            (1) 
+            <E T="03">Total exclusion.</E>
+             One automobile is totally excluded regardless of value if it is used for transportation for the individual or a member of the individual's household.
+        </P>
+        <P>
+            (2) 
+            <E T="03">Other automobiles.</E>
+             Any other automobiles are considered to be nonliquid resources. Your equity in the other automobiles is counted as a resource. (See § 416.1201(c).)
+        </P>
+        <CITA>[40 FR 48915, Oct. 20, 1975, as amended at 44 FR 43266, July 24, 1979; 50 FR 42687, Oct. 22, 1985; 70 FR 6345, Feb. 7, 2005]</CITA>
+    </SECTION>
+</CFRGRANULE>

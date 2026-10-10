@@ -1,0 +1,591 @@
+{
+ "schema_version": "epuf_disclosure_constants.v1",
+ "generator": "scripts/extract_epuf_disclosure_constants.py",
+ "source": {
+  "annual_sha256": "a47315b56214df66fb9f9abcb2caa60779c8b3d091ded199323672c27e3ea105",
+  "wage_base": "data/external/track_a_statutory_parameters.json wage_base_change_points"
+ },
+ "rule": {
+  "bottom_code_below": 100,
+  "rounding_bases": [
+   {
+    "from": 100,
+    "below": 1000,
+    "base": 25
+   },
+   {
+    "from": 1000,
+    "below": 50000,
+    "base": 100
+   },
+   {
+    "from": 50000,
+    "below": null,
+    "base": 1000
+   }
+  ],
+  "band": "values strictly between the wage base less one rounding base (the base at the wage base) and the wage base are replaced by band_mean"
+ },
+ "years": {
+  "1951": {
+   "wage_base": 3600,
+   "band_base": 100,
+   "bottom_code": 46,
+   "band_mean": 3553,
+   "n_bottom_coded": 32453,
+   "n_band_mean": 9190,
+   "n_at_wage_base": 141173,
+   "n_positive": 574666
+  },
+  "1952": {
+   "wage_base": 3600,
+   "band_base": 100,
+   "bottom_code": 45,
+   "band_mean": 3553,
+   "n_bottom_coded": 31996,
+   "n_band_mean": 9516,
+   "n_at_wage_base": 164031,
+   "n_positive": 590383
+  },
+  "1953": {
+   "wage_base": 3600,
+   "band_base": 100,
+   "bottom_code": 45,
+   "band_mean": 3553,
+   "n_bottom_coded": 31082,
+   "n_band_mean": 9414,
+   "n_at_wage_base": 187633,
+   "n_positive": 601308
+  },
+  "1954": {
+   "wage_base": 3600,
+   "band_base": 100,
+   "bottom_code": 45,
+   "band_mean": 3553,
+   "n_bottom_coded": 30967,
+   "n_band_mean": 9032,
+   "n_at_wage_base": 186693,
+   "n_positive": 590541
+  },
+  "1955": {
+   "wage_base": 4200,
+   "band_base": 100,
+   "bottom_code": 46,
+   "band_mean": 4153,
+   "n_bottom_coded": 29469,
+   "n_band_mean": 8478,
+   "n_at_wage_base": 163539,
+   "n_positive": 645873
+  },
+  "1956": {
+   "wage_base": 4200,
+   "band_base": 100,
+   "bottom_code": 46,
+   "band_mean": 4153,
+   "n_bottom_coded": 28305,
+   "n_band_mean": 9009,
+   "n_at_wage_base": 189596,
+   "n_positive": 671229
+  },
+  "1957": {
+   "wage_base": 4200,
+   "band_base": 100,
+   "bottom_code": 47,
+   "band_mean": 4154,
+   "n_bottom_coded": 27403,
+   "n_band_mean": 9268,
+   "n_at_wage_base": 209167,
+   "n_positive": 701607
+  },
+  "1958": {
+   "wage_base": 4200,
+   "band_base": 100,
+   "bottom_code": 46,
+   "band_mean": 4154,
+   "n_bottom_coded": 27960,
+   "n_band_mean": 8915,
+   "n_at_wage_base": 211497,
+   "n_positive": 694826
+  },
+  "1959": {
+   "wage_base": 4800,
+   "band_base": 100,
+   "bottom_code": 47,
+   "band_mean": 4753,
+   "n_bottom_coded": 27264,
+   "n_band_mean": 7854,
+   "n_at_wage_base": 190029,
+   "n_positive": 710553
+  },
+  "1960": {
+   "wage_base": 4800,
+   "band_base": 100,
+   "bottom_code": 47,
+   "band_mean": 4755,
+   "n_bottom_coded": 27162,
+   "n_band_mean": 8091,
+   "n_at_wage_base": 202581,
+   "n_positive": 720003
+  },
+  "1961": {
+   "wage_base": 4800,
+   "band_base": 100,
+   "bottom_code": 47,
+   "band_mean": 4755,
+   "n_bottom_coded": 27222,
+   "n_band_mean": 7812,
+   "n_at_wage_base": 211163,
+   "n_positive": 722824
+  },
+  "1962": {
+   "wage_base": 4800,
+   "band_base": 100,
+   "bottom_code": 47,
+   "band_mean": 4754,
+   "n_bottom_coded": 26457,
+   "n_band_mean": 7455,
+   "n_at_wage_base": 230181,
+   "n_positive": 738066
+  },
+  "1963": {
+   "wage_base": 4800,
+   "band_base": 100,
+   "bottom_code": 47,
+   "band_mean": 4754,
+   "n_bottom_coded": 27075,
+   "n_band_mean": 7594,
+   "n_at_wage_base": 244426,
+   "n_positive": 750314
+  },
+  "1964": {
+   "wage_base": 4800,
+   "band_base": 100,
+   "bottom_code": 47,
+   "band_mean": 4755,
+   "n_bottom_coded": 27048,
+   "n_band_mean": 7532,
+   "n_at_wage_base": 265592,
+   "n_positive": 769290
+  },
+  "1965": {
+   "wage_base": 4800,
+   "band_base": 100,
+   "bottom_code": 47,
+   "band_mean": 4754,
+   "n_bottom_coded": 27280,
+   "n_band_mean": 8078,
+   "n_at_wage_base": 288855,
+   "n_positive": 799836
+  },
+  "1966": {
+   "wage_base": 6600,
+   "band_base": 100,
+   "bottom_code": 47,
+   "band_mean": 6554,
+   "n_bottom_coded": 26666,
+   "n_band_mean": 6285,
+   "n_at_wage_base": 203974,
+   "n_positive": 839992
+  },
+  "1967": {
+   "wage_base": 6600,
+   "band_base": 100,
+   "bottom_code": 47,
+   "band_mean": 6556,
+   "n_bottom_coded": 25742,
+   "n_band_mean": 6688,
+   "n_at_wage_base": 223042,
+   "n_positive": 859300
+  },
+  "1968": {
+   "wage_base": 7800,
+   "band_base": 100,
+   "bottom_code": 47,
+   "band_mean": 7755,
+   "n_bottom_coded": 25002,
+   "n_band_mean": 5736,
+   "n_at_wage_base": 189405,
+   "n_positive": 885946
+  },
+  "1969": {
+   "wage_base": 7800,
+   "band_base": 100,
+   "bottom_code": 48,
+   "band_mean": 7758,
+   "n_bottom_coded": 24846,
+   "n_band_mean": 5908,
+   "n_at_wage_base": 221424,
+   "n_positive": 914616
+  },
+  "1970": {
+   "wage_base": 7800,
+   "band_base": 100,
+   "bottom_code": 47,
+   "band_mean": 7757,
+   "n_bottom_coded": 24854,
+   "n_band_mean": 6135,
+   "n_at_wage_base": 240436,
+   "n_positive": 920526
+  },
+  "1971": {
+   "wage_base": 7800,
+   "band_base": 100,
+   "bottom_code": 47,
+   "band_mean": 7759,
+   "n_bottom_coded": 24816,
+   "n_band_mean": 6537,
+   "n_at_wage_base": 262035,
+   "n_positive": 922906
+  },
+  "1972": {
+   "wage_base": 9000,
+   "band_base": 100,
+   "bottom_code": 47,
+   "band_mean": 8959,
+   "n_bottom_coded": 25081,
+   "n_band_mean": 5555,
+   "n_at_wage_base": 238717,
+   "n_positive": 951405
+  },
+  "1973": {
+   "wage_base": 10800,
+   "band_base": 100,
+   "bottom_code": 48,
+   "band_mean": 10763,
+   "n_bottom_coded": 23735,
+   "n_band_mean": 4912,
+   "n_at_wage_base": 201180,
+   "n_positive": 987692
+  },
+  "1974": {
+   "wage_base": 13200,
+   "band_base": 100,
+   "bottom_code": 48,
+   "band_mean": 13164,
+   "n_bottom_coded": 23018,
+   "n_band_mean": 3972,
+   "n_at_wage_base": 152324,
+   "n_positive": 1003244
+  },
+  "1975": {
+   "wage_base": 14100,
+   "band_base": 100,
+   "bottom_code": 48,
+   "band_mean": 14063,
+   "n_bottom_coded": 22557,
+   "n_band_mean": 3709,
+   "n_at_wage_base": 149165,
+   "n_positive": 993889
+  },
+  "1976": {
+   "wage_base": 15300,
+   "band_base": 100,
+   "bottom_code": 48,
+   "band_mean": 15266,
+   "n_bottom_coded": 20581,
+   "n_band_mean": 3599,
+   "n_at_wage_base": 152513,
+   "n_positive": 1018394
+  },
+  "1977": {
+   "wage_base": 16500,
+   "band_base": 100,
+   "bottom_code": 49,
+   "band_mean": 16466,
+   "n_bottom_coded": 19964,
+   "n_band_mean": 3495,
+   "n_at_wage_base": 155942,
+   "n_positive": 1050246
+  },
+  "1978": {
+   "wage_base": 17700,
+   "band_base": 100,
+   "bottom_code": 49,
+   "band_mean": 17662,
+   "n_bottom_coded": 18234,
+   "n_band_mean": 2913,
+   "n_at_wage_base": 166561,
+   "n_positive": 1083967
+  },
+  "1979": {
+   "wage_base": 22900,
+   "band_base": 100,
+   "bottom_code": 50,
+   "band_mean": 22867,
+   "n_bottom_coded": 16948,
+   "n_band_mean": 2075,
+   "n_at_wage_base": 109471,
+   "n_positive": 1110353
+  },
+  "1980": {
+   "wage_base": 25900,
+   "band_base": 100,
+   "bottom_code": 50,
+   "band_mean": 25866,
+   "n_bottom_coded": 16452,
+   "n_band_mean": 1759,
+   "n_at_wage_base": 97609,
+   "n_positive": 1116739
+  },
+  "1981": {
+   "wage_base": 29700,
+   "band_base": 100,
+   "bottom_code": 50,
+   "band_mean": 29670,
+   "n_bottom_coded": 15288,
+   "n_band_mean": 1389,
+   "n_at_wage_base": 85259,
+   "n_positive": 1118021
+  },
+  "1982": {
+   "wage_base": 32400,
+   "band_base": 100,
+   "bottom_code": 50,
+   "band_mean": 32371,
+   "n_bottom_coded": 14989,
+   "n_band_mean": 1169,
+   "n_at_wage_base": 78458,
+   "n_positive": 1104079
+  },
+  "1983": {
+   "wage_base": 35700,
+   "band_base": 100,
+   "bottom_code": 50,
+   "band_mean": 35673,
+   "n_bottom_coded": 14574,
+   "n_band_mean": 1044,
+   "n_at_wage_base": 70073,
+   "n_positive": 1115203
+  },
+  "1984": {
+   "wage_base": 37800,
+   "band_base": 100,
+   "bottom_code": 50,
+   "band_mean": 37775,
+   "n_bottom_coded": 14452,
+   "n_band_mean": 1120,
+   "n_at_wage_base": 73909,
+   "n_positive": 1157926
+  },
+  "1985": {
+   "wage_base": 39600,
+   "band_base": 100,
+   "bottom_code": 50,
+   "band_mean": 39576,
+   "n_bottom_coded": 14896,
+   "n_band_mean": 1175,
+   "n_at_wage_base": 77263,
+   "n_positive": 1192767
+  },
+  "1986": {
+   "wage_base": 42000,
+   "band_base": 100,
+   "bottom_code": 50,
+   "band_mean": 41978,
+   "n_bottom_coded": 14809,
+   "n_band_mean": 1264,
+   "n_at_wage_base": 75421,
+   "n_positive": 1216539
+  },
+  "1987": {
+   "wage_base": 43800,
+   "band_base": 100,
+   "bottom_code": 51,
+   "band_mean": 43780,
+   "n_bottom_coded": 14459,
+   "n_band_mean": 1261,
+   "n_at_wage_base": 76753,
+   "n_positive": 1246860
+  },
+  "1988": {
+   "wage_base": 45000,
+   "band_base": 100,
+   "bottom_code": 51,
+   "band_mean": 44982,
+   "n_bottom_coded": 14345,
+   "n_band_mean": 1394,
+   "n_at_wage_base": 83979,
+   "n_positive": 1285984
+  },
+  "1989": {
+   "wage_base": 48000,
+   "band_base": 100,
+   "bottom_code": 52,
+   "band_mean": 47982,
+   "n_bottom_coded": 13783,
+   "n_band_mean": 1282,
+   "n_at_wage_base": 80975,
+   "n_positive": 1310357
+  },
+  "1990": {
+   "wage_base": 51300,
+   "band_base": 1000,
+   "bottom_code": 52,
+   "band_mean": 50819,
+   "n_bottom_coded": 13407,
+   "n_band_mean": 5523,
+   "n_at_wage_base": 74915,
+   "n_positive": 1320380
+  },
+  "1991": {
+   "wage_base": 53400,
+   "band_base": 1000,
+   "bottom_code": 52,
+   "band_mean": 52975,
+   "n_bottom_coded": 13346,
+   "n_band_mean": 4598,
+   "n_at_wage_base": 73700,
+   "n_positive": 1315162
+  },
+  "1992": {
+   "wage_base": 55500,
+   "band_base": 1000,
+   "bottom_code": 52,
+   "band_mean": 55076,
+   "n_bottom_coded": 13248,
+   "n_band_mean": 4499,
+   "n_at_wage_base": 75601,
+   "n_positive": 1323691
+  },
+  "1993": {
+   "wage_base": 57600,
+   "band_base": 1000,
+   "bottom_code": 53,
+   "band_mean": 57188,
+   "n_bottom_coded": 13413,
+   "n_band_mean": 4185,
+   "n_at_wage_base": 75041,
+   "n_positive": 1344345
+  },
+  "1994": {
+   "wage_base": 60600,
+   "band_base": 1000,
+   "bottom_code": 56,
+   "band_mean": 60191,
+   "n_bottom_coded": 15999,
+   "n_band_mean": 4041,
+   "n_at_wage_base": 74331,
+   "n_positive": 1372474
+  },
+  "1995": {
+   "wage_base": 61200,
+   "band_base": 1000,
+   "bottom_code": 56,
+   "band_mean": 60777,
+   "n_bottom_coded": 15086,
+   "n_band_mean": 4157,
+   "n_at_wage_base": 81094,
+   "n_positive": 1394997
+  },
+  "1996": {
+   "wage_base": 62700,
+   "band_base": 1000,
+   "bottom_code": 56,
+   "band_mean": 62290,
+   "n_bottom_coded": 15004,
+   "n_band_mean": 4288,
+   "n_at_wage_base": 85970,
+   "n_positive": 1417938
+  },
+  "1997": {
+   "wage_base": 65400,
+   "band_base": 1000,
+   "bottom_code": 56,
+   "band_mean": 64992,
+   "n_bottom_coded": 14089,
+   "n_band_mean": 4288,
+   "n_at_wage_base": 89375,
+   "n_positive": 1444475
+  },
+  "1998": {
+   "wage_base": 68400,
+   "band_base": 1000,
+   "bottom_code": 57,
+   "band_mean": 68001,
+   "n_bottom_coded": 13367,
+   "n_band_mean": 3953,
+   "n_at_wage_base": 92907,
+   "n_positive": 1472473
+  },
+  "1999": {
+   "wage_base": 72600,
+   "band_base": 1000,
+   "bottom_code": 58,
+   "band_mean": 72204,
+   "n_bottom_coded": 13091,
+   "n_band_mean": 3790,
+   "n_at_wage_base": 91429,
+   "n_positive": 1496574
+  },
+  "2000": {
+   "wage_base": 76200,
+   "band_base": 1000,
+   "bottom_code": 56,
+   "band_mean": 75820,
+   "n_bottom_coded": 13280,
+   "n_band_mean": 3696,
+   "n_at_wage_base": 94444,
+   "n_positive": 1521937
+  },
+  "2001": {
+   "wage_base": 80400,
+   "band_base": 1000,
+   "bottom_code": 58,
+   "band_mean": 80011,
+   "n_bottom_coded": 13484,
+   "n_band_mean": 3525,
+   "n_at_wage_base": 90952,
+   "n_positive": 1524651
+  },
+  "2002": {
+   "wage_base": 84900,
+   "band_base": 1000,
+   "bottom_code": 55,
+   "band_mean": 84510,
+   "n_bottom_coded": 13748,
+   "n_band_mean": 3134,
+   "n_at_wage_base": 83213,
+   "n_positive": 1519561
+  },
+  "2003": {
+   "wage_base": 87000,
+   "band_base": 1000,
+   "bottom_code": 55,
+   "band_mean": 86635,
+   "n_bottom_coded": 13802,
+   "n_band_mean": 3006,
+   "n_at_wage_base": 84257,
+   "n_positive": 1520638
+  },
+  "2004": {
+   "wage_base": 87900,
+   "band_base": 1000,
+   "bottom_code": 59,
+   "band_mean": 87505,
+   "n_bottom_coded": 13547,
+   "n_band_mean": 3287,
+   "n_at_wage_base": 91287,
+   "n_positive": 1535509
+  },
+  "2005": {
+   "wage_base": 90000,
+   "band_base": 1000,
+   "bottom_code": 59,
+   "band_mean": 89642,
+   "n_bottom_coded": 13138,
+   "n_band_mean": 3369,
+   "n_at_wage_base": 94873,
+   "n_positive": 1550602
+  },
+  "2006": {
+   "wage_base": 94200,
+   "band_base": 1000,
+   "bottom_code": 58,
+   "band_mean": 93843,
+   "n_bottom_coded": 12743,
+   "n_band_mean": 3215,
+   "n_at_wage_base": 95462,
+   "n_positive": 1562797
+  }
+ }
+}

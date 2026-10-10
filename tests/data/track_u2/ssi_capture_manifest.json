@@ -1,0 +1,25 @@
+{
+  "schema_version": "populace_dynamics.track_u2_ssi_capture_manifest.v1",
+  "files": [
+    {
+      "path": "data/external/track_u2_ssi_parameters_2012_2022.json",
+      "bytes": 62404,
+      "sha256": "a58d55c160b48cd3e21f730d45265374bd3c8a9eb7eae947469a5a5dc0b23762"
+    },
+    {
+      "path": "tests/data/track_u2/ssi_sources/manifest.json",
+      "bytes": 64806,
+      "sha256": "a7d09d735fa595e3c7060fb7972d088f0ee062a4c8bb31f739ef3ee578e82e53"
+    },
+    {
+      "path": "scripts/capture_track_u2_ssi_parameters.py",
+      "bytes": 16663,
+      "sha256": "6a734c86191a048ffc0edcaf56ce68db0f48d645df0b4008788b623b2e0d0574"
+    },
+    {
+      "path": "scripts/capture_track_u2_ssi_sources.py",
+      "bytes": 5733,
+      "sha256": "84fdec0af0db19a42fbee8ca7dda27bc2b854a4b3395b018b844a0f8f19e3b18"
+    }
+  ]
+}

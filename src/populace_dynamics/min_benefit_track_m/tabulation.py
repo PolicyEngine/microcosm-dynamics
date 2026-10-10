@@ -46,9 +46,13 @@ label, the registered floor seeds, and an M1 specification block the
 registered-run gate authorizes
 (``specification.check_specification_for_registered_run``: ratified,
 nothing awaiting Max, every ruling recorded, nothing blocking it, block
-equal to code).  The committed ``m1-ratified-1`` authorizes none (its
-``blocked_by`` names the open blockers), so nothing computes the share on
-real data.
+equal to code).  The committed ``m1-ratified-1`` passes that gate since
+its registered-commit edit (2026-09-27; its ``blocked_by`` is empty).
+PSID-built rows still need the pointer.  This guard checks its form only;
+that the comment it names is the registration, posted before the run, is
+the registration's procedure.  The entry point's preflight also refuses a
+``HEAD`` other than the commit it is given as registered, and a dirty
+tree.
 
 Every result carries the Track M labels and the covered-earnings
 disclosure Max's d280 ruling requires.

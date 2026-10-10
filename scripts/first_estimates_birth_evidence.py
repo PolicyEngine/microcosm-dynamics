@@ -276,6 +276,99 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/min_benefit_track_m/cohort.py"),
     Path("src/populace_dynamics/min_benefit_track_m/careers.py"),
     Path("src/populace_dynamics/min_benefit_track_m/invented_psid.py"),
+    # Track B R1 is an opt-in, source-pinned parameter module; nothing in the
+    # historical projection imports it.
+    Path("src/populace_dynamics/track_b/README.md"),
+    Path("src/populace_dynamics/track_b/__init__.py"),
+    Path("src/populace_dynamics/track_b/parameters/__init__.py"),
+    Path("src/populace_dynamics/track_b/parameters/ret_v1.yaml"),
+    Path("src/populace_dynamics/track_b/ret_params.py"),
+    # Track B B1 is an opt-in replay harness and equality checker; nothing in the
+    # historical projection imports it.
+    Path("src/populace_dynamics/track_b/equality.py"),
+    Path("src/populace_dynamics/track_b/replay.py"),
+    Path("src/populace_dynamics/track_b/runner.py"),
+    # Track A v2 is opt-in; exact exclusions preserve the historical seal.
+    Path("src/populace_dynamics/track_a_v2/__init__.py"),
+    Path("src/populace_dynamics/track_a_v2/benefits.py"),
+    Path("src/populace_dynamics/track_a_v2/estimands.py"),
+    Path("src/populace_dynamics/track_a_v2/filing.py"),
+    Path("src/populace_dynamics/track_a_v2/histories.py"),
+    Path("src/populace_dynamics/track_a_v2/invented.py"),
+    Path("src/populace_dynamics/track_a_v2/manifest.py"),
+    Path("src/populace_dynamics/track_a_v2/matrix.py"),
+    Path("src/populace_dynamics/track_a_v2/membership.py"),
+    Path("src/populace_dynamics/track_a_v2/protocol.py"),
+    Path("src/populace_dynamics/track_a_v2/runner.py"),
+    Path("src/populace_dynamics/track_a_v2/structural.py"),
+    Path("src/populace_dynamics/track_a_v2/structural_inputs.py"),
+    # Track B B1 v2 (the reconstructed-reproduction baseline, decision d571)
+    # is opt-in through the B1 runner; nothing in the historical projection
+    # imports it.
+    Path("src/populace_dynamics/track_b/reconstructed.py"),
+    # Track B G (the gross-benefit layer) is an opt-in statutory reference;
+    # nothing in the historical projection imports it.
+    Path("src/populace_dynamics/track_b/gross_benefits.py"),
+    # U2 documentary metadata stays outside the historical projection.
+    Path("src/populace_dynamics/data/u2_source_registry.py"),
+    Path("scripts/capture_track_u2_income_wealth.py"),
+    Path("scripts/capture_track_u2_ssi_parameters.py"),
+    Path("scripts/capture_track_u2_ssi_sources.py"),
+    # U2 milestone 2 (cohort, adapters, estimator, tabulation, runner and
+    # entry points) is opt-in and unreachable from the historical reducer.
+    Path("src/populace_dynamics/uniform_cut_track_u2/__init__.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/cohort.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/diagnostics.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/estimator.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/identity.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/invented.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/loader.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/memo.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/parameters.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/rows.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/runner.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/sources.py"),
+    Path("src/populace_dynamics/uniform_cut_track_u2/tabulation.py"),
+    Path("scripts/track_u2_dry_run.py"),
+    Path("scripts/track_u2_structure.py"),
+    Path("scripts/track_u2_component_diagnostics.py"),
+    Path("scripts/run_track_u2_registered.py"),
+    Path("scripts/u2_u1_differential.py"),
+    # The opt-in PolicyEngine-US bridge passes benefit amounts to an
+    # external tax-benefit model after the fact; nothing historical imports
+    # it.
+    Path("src/populace_dynamics/bridge/__init__.py"),
+    Path("src/populace_dynamics/bridge/policyengine_us.py"),
+    Path("src/populace_dynamics/bridge/depletion_cut.py"),
+    Path("src/populace_dynamics/bridge/invented_population.py"),
+    Path("src/populace_dynamics/bridge/population.py"),
+    Path("src/populace_dynamics/bridge/population_summary.py"),
+    # The opt-in EPUF reader, measurement operator, cell statistics, gate
+    # algebra and scoring path (the proposed EPUF gate) read SSA's public
+    # earnings file after the fact; nothing historical imports them.
+    Path("src/populace_dynamics/data/epuf.py"),
+    Path("src/populace_dynamics/harness/epuf_operator.py"),
+    Path("src/populace_dynamics/harness/epuf_cells.py"),
+    Path("src/populace_dynamics/harness/epuf_gate.py"),
+    Path("src/populace_dynamics/harness/epuf_run.py"),
+    # The selectable projection baselines (NASI follow-up, 2026-10-01) are
+    # opt-in inputs for unregistered projections; every registered result
+    # keeps the TR2008 path, and nothing historical imports them.
+    Path("src/populace_dynamics/data/tr2026.py"),
+    Path("src/populace_dynamics/data/cbo2026.py"),
+    Path("src/populace_dynamics/data/life_table.py"),
+    Path("src/populace_dynamics/baselines/__init__.py"),
+    Path("src/populace_dynamics/baselines/asfr.py"),
+    Path("src/populace_dynamics/baselines/base.py"),
+    Path("src/populace_dynamics/baselines/cbo2026_long_term.py"),
+    Path("src/populace_dynamics/baselines/claim_tables.py"),
+    Path("src/populace_dynamics/baselines/common2026.py"),
+    Path("src/populace_dynamics/baselines/fertility.py"),
+    Path("src/populace_dynamics/baselines/interpolation.py"),
+    Path("src/populace_dynamics/baselines/legacy.py"),
+    Path("src/populace_dynamics/baselines/realized.py"),
+    Path("src/populace_dynamics/baselines/tr2026_intermediate.py"),
+    Path("src/populace_dynamics/baselines/track_a.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(

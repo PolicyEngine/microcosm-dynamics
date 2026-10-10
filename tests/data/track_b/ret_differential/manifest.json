@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "repository": "https://github.com/PolicyEngine/policyengine-us",
+  "commit": "a03e82e503f8e0285125ee0c5380410a964c8e8a",
+  "capture_method": "git show of committed local checkout bytes; no working-tree modifications",
+  "files": [
+    {
+      "file": "exempt_amount_under_fra.yaml",
+      "url": "https://github.com/PolicyEngine/policyengine-us/blob/a03e82e503f8e0285125ee0c5380410a964c8e8a/policyengine_us/parameters/gov/ssa/social_security/earnings_test/exempt_amount_under_fra.yaml",
+      "retrieved_at_utc": "2026-09-28T16:02:36+00:00",
+      "bytes": 1667,
+      "sha256": "fa5af0ddf0d43c69fcc01667cddd3e90f70609225bcdda0822ce7a1b84c8e88a"
+    },
+    {
+      "file": "exempt_amount_year_of_fra.yaml",
+      "url": "https://github.com/PolicyEngine/policyengine-us/blob/a03e82e503f8e0285125ee0c5380410a964c8e8a/policyengine_us/parameters/gov/ssa/social_security/earnings_test/exempt_amount_year_of_fra.yaml",
+      "retrieved_at_utc": "2026-09-28T16:02:36+00:00",
+      "bytes": 1726,
+      "sha256": "bb0df7578fec0a959f2d7f34fc851aade8c82335076c4c150b761d31dd912865"
+    },
+    {
+      "file": "reduction_rate_under_fra.yaml",
+      "url": "https://github.com/PolicyEngine/policyengine-us/blob/a03e82e503f8e0285125ee0c5380410a964c8e8a/policyengine_us/parameters/gov/ssa/social_security/earnings_test/reduction_rate_under_fra.yaml",
+      "retrieved_at_utc": "2026-09-28T16:02:36+00:00",
+      "bytes": 555,
+      "sha256": "72b3f78d9b077bac39e6df00cb2cfca386e93152c2ed5b8a8ec8929b40b09d42"
+    },
+    {
+      "file": "reduction_rate_year_of_fra.yaml",
+      "url": "https://github.com/PolicyEngine/policyengine-us/blob/a03e82e503f8e0285125ee0c5380410a964c8e8a/policyengine_us/parameters/gov/ssa/social_security/earnings_test/reduction_rate_year_of_fra.yaml",
+      "retrieved_at_utc": "2026-09-28T16:02:36+00:00",
+      "bytes": 590,
+      "sha256": "98b21959c05daab71936c6864f4b467bbf6eaa37939b03056094c98a5a75cf02"
+    }
+  ]
+}

@@ -4,11 +4,13 @@
 through its machine-readable JSON block (section 19).  These tests hold
 that block to the code (the options, the policy defaults, the registered
 rows, the cells, the labels and the structural-count universe), check that
-the committed block cannot authorize a registered run while it names a
-blocker, and recompute the specification's INVENTED worked cases.  They
-use only the document and the code: no PSID
+the committed block, whose ``blocked_by`` the registered-commit edit of
+2026-09-27 emptied, passes the registered-run gate while any block that
+names a blocker is refused, and recompute the specification's INVENTED
+worked cases.  They use only the document and the code: no PSID
 value, no model output and no comparator value.  One test also hashes the
-statute capture the block pins, when its evidence folder is present.
+statute capture the block pins, when its evidence folder is present; no
+test opens or hashes the comparator seal, whose hash the text records.
 """
 
 from __future__ import annotations
@@ -19,6 +21,8 @@ import re
 from pathlib import Path
 
 import pytest
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 from populace_dynamics.min_benefit_track_m import (
     OUTPUT_LABELS,
@@ -38,6 +42,44 @@ SPEC_PATH = (
 #: ``EVID`` of the specification: the evidence folder outside this checkout.
 EVIDENCE = (
     Path.home() / "microcosm-launch-evidence" / "dynasim-parity-20260909"
+)
+#: Every blocker the section 19 block named in the file's history, in the
+#: order each first appeared (read from every commit of this file,
+#: 2026-09-27); each left ``blocked_by`` when it was resolved (section 23).
+FORMER_BLOCKERS = (
+    "max_ruling_d219_open",
+    "census_aged_thresholds_not_captured_m2",
+    "statute_413_415_not_captured_m2",
+    "person_level_social_security_readers_m3",
+    "beneficiary_cohort_m4",
+    "realized_careers_m5",
+    "tabulation_m8",
+    "issue_42_registration_absent",
+    "independent_check_of_m1_draft_2_then_ratification_by_merge",
+    "census_thresholds_before_2003_if_m4_needs_them",
+    "statute_413_415_402_423_not_captured_m2",
+    "tabulation_m8_and_dry_run_m10",
+    "registration_package_m10_needs_m3_to_m5",
+    "independent_check_of_m1_draft_2_and_the_m3_to_m5_readings_then_"
+    "ratification_by_merge",
+    "census_thresholds_1982_to_2002_needed_by_m4_not_captured",
+    "registration_package_m10_needs_the_comparator_seal_hash",
+    "independent_review_of_the_d430_sensitivity_build_m1_draft_3_then_"
+    "ratification_by_merge",
+    "census_threshold_1990_needed_by_the_d430_sensitivity_not_captured",
+)
+#: The two ``m1-ratified-1`` was ratified with; the registered-commit edit
+#: (2026-09-27) dropped both.
+BLOCKERS_AT_RATIFICATION = (
+    "registration_package_m10_needs_the_comparator_seal_hash",
+    "issue_42_registration_absent",
+)
+#: The comparator seal and the SHA-256 of its bytes, computed by the
+#: orchestrating session on 2026-09-27 (section 18 item 3).  No test opens
+#: or hashes the seal: builder lanes do not open it.
+COMPARATOR_SEAL = "EVID/exercise4-comparator-seal-20260924.json"
+COMPARATOR_SEAL_SHA256 = (
+    "112dcf427671da5af54d436d10719f195c65596df42fcdb8ad0e9fe54f75e63c"
 )
 
 
@@ -71,42 +113,16 @@ def test_block_identity_and_status(block):
     assert block["target"]["comparator_values"] == (
         "sealed_comparator_side_not_opened_by_builder"
     )
-    assert "max_ruling_d219_open" not in block["blocked_by"]
-    # The independent checks of m1-draft-2 and the M3-M5 readings are done
-    # (d430 was ruled on them, 2026-09-26), and so is the review of d430's
-    # sensitivity build (2026-09-26), whose entry ratification drops.
-    assert (
-        "independent_check_of_m1_draft_2_and_the_m3_to_m5_readings_then_"
-        "ratification_by_merge" not in block["blocked_by"]
-    )
-    # M8, the M10 dry run and the M3-M5 readers are built
-    for built in (
-        "tabulation_m8_and_dry_run_m10",
-        "person_level_social_security_readers_m3",
-        "beneficiary_cohort_m4",
-        "realized_careers_m5",
-        "registration_package_m10_needs_m3_to_m5",
-    ):
-        assert built not in block["blocked_by"], built
-    # The Census years before 2003 that M4's count shows are needed and
-    # the statute text are captured (section 18, blockers 1 and 2,
-    # 2026-09-25); the registration package and the registration remain.
-    # The 1990 threshold d430's sensitivity needs (found by its structural
-    # count, section 18 blocker 5) is captured too (2026-09-26).
-    for cleared in (
-        "census_thresholds_1982_to_2002_needed_by_m4_not_captured",
-        "statute_413_415_402_423_not_captured_m2",
-        "census_threshold_1990_needed_by_the_d430_sensitivity_not_captured",
-    ):
-        assert cleared not in block["blocked_by"], cleared
-    assert (
-        "independent_review_of_the_d430_sensitivity_build_m1_draft_3_then_"
-        "ratification_by_merge" not in block["blocked_by"]
-    )
-    assert block["blocked_by"] == [
-        "registration_package_m10_needs_the_comparator_seal_hash",
-        "issue_42_registration_absent",
-    ]
+    # Every blocker the block ever named is resolved: d219 was ruled, M3-M5,
+    # M8 and the M10 dry run are built, the independent checks are done,
+    # the Census thresholds (2003-2022, then the years before 2003 and
+    # 1990), and the statute are captured, and the registration package
+    # has the comparator seal's hash.  The registration names this commit
+    # (section 18 item 3), so its block lists none (section 19).
+    assert set(BLOCKERS_AT_RATIFICATION) <= set(FORMER_BLOCKERS)
+    for resolved in FORMER_BLOCKERS:
+        assert resolved not in block["blocked_by"], resolved
+    assert block["blocked_by"] == []
     # the cleared blocker's year is in the recorded capture (another test
     # holds the recorded capture to the loader's)
     census = block["sources"]["census_thresholds"]
@@ -294,13 +310,27 @@ def test_every_ruling_is_recorded_as_the_code_records_it(block):
     )
 
 
-def test_the_committed_block_cannot_authorize_a_registered_run(block):
-    """Ratified, but blocked: the gate refuses while any blocker is
-    listed (section 18 item 4)."""
+def test_the_committed_block_authorizes_the_registered_run(block):
+    """The registered commit's block (section 18 item 3, section 19): ratified,
+    nothing awaiting Max, ``blocked_by`` empty, every ruling equal to the
+    code's, the block equal to the code.  The gate accepts it under the
+    default configuration, given or not, and still refuses a
+    configuration that departs from a ruling."""
 
     assert spec.unratified_fields(block) == []
-    with pytest.raises(ValueError, match="still blocked by"):
-        spec.check_specification_for_registered_run(block)
+    assert spec.specification_code_check(block) == {
+        "consistent": True,
+        "mismatches": [],
+    }
+    assert spec.check_specification_for_registered_run(block) is None
+    assert (
+        spec.check_specification_for_registered_run(block, pol.TrackMPolicy())
+        is None
+    )
+    with pytest.raises(ValueError, match="departs"):
+        spec.check_specification_for_registered_run(
+            block, pol.policy_for_row("MS1")
+        )
 
 
 def _ratified(block: dict) -> dict:
@@ -312,23 +342,61 @@ def _ratified(block: dict) -> dict:
     return ratified
 
 
-def test_a_ratified_block_still_listing_blockers_authorizes_nothing(block):
-    """Ratification alone does not authorize the run: the block's
-    ``blocked_by`` still names the open blockers (the registration package
-    and the registration; the Census years before 2003 and the statute
-    were cleared on 2026-09-25), and the gate refuses a block that names
-    any blocker (or has no list)."""
+def _blocked(block: dict, blockers=BLOCKERS_AT_RATIFICATION) -> dict:
+    """The committed block with ``blocked_by`` naming ``blockers``: by
+    default the block as ratified, before the registered-commit edit."""
 
-    ratified = _ratified(block)
-    assert ratified["blocked_by"]
-    with pytest.raises(ValueError, match="still blocked by"):
-        spec.check_specification_for_registered_run(ratified)
-    unlisted = {k: v for k, v in ratified.items() if k != "blocked_by"}
+    return {**_ratified(block), "blocked_by": list(blockers)}
+
+
+def test_a_block_still_listing_blockers_authorizes_nothing(block):
+    """The gate still refuses a block that names any blocker, or has no
+    list: the block as ratified (the registration package and the
+    registration), each of its two blockers alone, every blocker the
+    block ever named, and a list that is not a list."""
+
+    assert _ratified(block) == block
+    for blockers in (
+        BLOCKERS_AT_RATIFICATION,
+        *((name,) for name in FORMER_BLOCKERS),
+    ):
+        with pytest.raises(ValueError, match="still blocked by"):
+            spec.check_specification_for_registered_run(
+                _blocked(block, blockers)
+            )
+    unlisted = {k: v for k, v in block.items() if k != "blocked_by"}
     with pytest.raises(ValueError, match="no blocked_by"):
         spec.check_specification_for_registered_run(unlisted)
     with pytest.raises(ValueError, match="still blocked by"):
         spec.check_specification_for_registered_run(
-            {**ratified, "blocked_by": "none"}
+            {**block, "blocked_by": "none"}
+        )
+
+
+@settings(max_examples=150, deadline=None)
+@given(
+    st.one_of(
+        st.lists(st.text(max_size=60), min_size=1, max_size=4),
+        st.none(),
+        st.booleans(),
+        st.integers(),
+        st.text(),
+        st.dictionaries(st.text(max_size=8), st.text(max_size=8)),
+        st.tuples(st.text(max_size=8)),
+        st.just(()),
+    )
+)
+def test_property_the_gate_passes_only_an_empty_blocked_by_list(blocked_by):
+    """Invariant: holding every other field at the committed block, the
+    gate accepts ``blocked_by`` exactly when it is the empty list.  Any
+    non-empty list, and anything that is not a list (``None``, a string, a
+    mapping, a tuple, even an empty one), is refused."""
+
+    committed = spec.m1_parameter_block(SPEC_PATH)
+    spec.check_specification_for_registered_run(committed)
+    with pytest.raises(ValueError, match="still blocked by"):
+        spec.check_specification_for_registered_run(
+            {**committed, "blocked_by": blocked_by}
         )
 
 
@@ -498,3 +566,64 @@ def test_the_text_records_d430s_sensitivity(text):
     assert "m1-ratified-1" in flat.split("- **Specification:**")[1][:200]
     assert "**Ratification record.**" in flat
     assert "This version is not that text" not in flat
+
+
+def test_the_registered_commit_edit_is_recorded(text, block):
+    """The registered-commit edit (2026-09-27; sections 18-20 and 23).
+
+    The version and status stand.  Section 18 item 3 records the
+    comparator seal's hash for the registration package, and every
+    SHA-256 the text gives beside the seal's name, and every short form
+    of it, is that hash.  The header, section 18 item 3 and section 19
+    say the gate now accepts the block and that Registration 17 names the
+    commit that carries the edit; section 23 lists the change.  Nothing
+    here opens or hashes the seal.
+    """
+
+    flat = " ".join(text.split())
+
+    def section(start: str, end: str) -> str:
+        return " ".join(text.split(start)[1].split(end)[0].split())
+
+    assert (block["version"], block["status"]) == (
+        "m1-ratified-1",
+        "ratified_frozen",
+    )
+    assert re.fullmatch(r"[0-9a-f]{64}", COMPARATOR_SEAL_SHA256)
+    item_3 = section("3. **M10's registration package", "4. **Ratification")
+    assert "complete (2026-09-27)" in item_3
+    assert f"`{COMPARATOR_SEAL}`" in item_3
+    assert f"`{COMPARATOR_SEAL_SHA256}`" in item_3
+    assert "did not open the seal" in item_3
+    assert "neither opened nor hashed the seal" in item_3
+    assert "Registration 17" in item_3
+    for name in BLOCKERS_AT_RATIFICATION:
+        assert f"`{name}` leaves `blocked_by`" in item_3, name
+    # every hash beside the seal's name, and every short form, is the one
+    seal_name = COMPARATOR_SEAL.split("/")[-1]
+    for after in flat.split(seal_name)[1:]:
+        for digest in re.findall(r"\b[0-9a-f]{64}\b", after[:400]):
+            assert digest == COMPARATOR_SEAL_SHA256
+    for short in re.findall(r"\b112dcf4[0-9a-f]*", flat):
+        assert COMPARATOR_SEAL_SHA256.startswith(short), short
+    assert flat.count(COMPARATOR_SEAL_SHA256) == 1
+    # the gate's verdict and the registration, where the text states them
+    status = " ".join(text.split("- **Specification:**")[0].split())
+    prose_19 = section("## 19. Machine-readable parameter block", "```json")
+    for where, body in (("header", status), ("section 19", prose_19)):
+        assert "registered-commit edit of 2026-09-27" in body, where
+        assert "Registration 17" in body, where
+    assert "the gate accepts this block" in prose_19
+    assert "still names" not in prose_19
+    assert "this block still lists" not in status
+    entry = section(
+        "- `m1-ratified-1`, registered-commit edit (2026-09-27)", "\n## 24"
+    )
+    for fragment in (
+        "`blocked_by` is empty",
+        "registration_package_m10_needs_the_comparator_seal_hash",
+        "issue_42_registration_absent",
+        "Registration 17",
+        "112dcf42",
+    ):
+        assert fragment in entry, fragment

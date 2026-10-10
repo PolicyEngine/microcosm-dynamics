@@ -1,0 +1,33 @@
+Formula for Family Maximum Benefit
+https://www.ssa.gov/oact/cola/familymax.html
+
+The maximum family benefit is the maximum monthly amount that can be paid on a worker's earnings record. There is a special formula for computing the maximum benefits payable to the family of a disabled worker. The following, however, is devoted to the more common family maximum for retirement and survivor benefits.
+
+Computation of the Retirement and Survivor Family Maximum
+The formula used to compute the family maximum is similar to that used to compute the Primary Insurance Amount (PIA). The formula sums four separate percentages of portions of the worker's PIA. For 2026 these portions are the first $1,643, the amount between $1,643 and $2,371, the amount between $2,371 and $3,093, and the amount over $3,093. These dollar amounts are the "bend points" of the family-maximum formula. Thus, the family-maximum bend points for 2026 are $1,643, $2,371, and $3,093. See table showing bend points for years beginning with 1979 (table also shows PIA formula bend points).
+
+For the family of a worker who becomes age 62 or dies in 2026 before attaining age 62, the total amount of benefits payable will be computed so that it does not exceed:
+(a) 150 percent of the first $1,643 of the worker's PIA, plus
+(b) 272 percent of the worker's PIA over $1,643 through $2,371, plus
+(c) 134 percent of the worker's PIA over $2,371 through $3,093, plus
+(d) 175 percent of the worker's PIA over $3,093.
+We then round this total amount to the next lower multiple of $.10 if it is not already a multiple of $.10.
+
+Determination of family-maximum bend points for 2026
+
+Amounts in formula
+Average wage indices
+For 1977:	9,779.44
+For 2024:	69,846.57
+
+Bend points for 1979
+First:	$230
+Second:	$332
+Third:	$433
+
+Computation of bend points for 2026	First bend point
+$230 times 69,846.57 divided by $9,779.44 equals $1,642.70, which rounds to $1,643
+Second bend point
+$332 times 69,846.57 divided by $9,779.44 equals $2,371.21, which rounds to $2,371
+Third bend point
+$433 times 69,846.57 divided by $9,779.44 equals $3,092.57, which rounds to $3,093
