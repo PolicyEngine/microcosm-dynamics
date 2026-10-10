@@ -218,6 +218,21 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/harness/epuf_fill_scoring.py"),
         Path("src/populace_dynamics/estimates/epuf_fill.py"),
         Path("src/populace_dynamics/cohorts/psid2010_epuf_fill.py"),
+        Path("src/populace_dynamics/data/tr2026.py"),
+        Path("src/populace_dynamics/data/cbo2026.py"),
+        Path("src/populace_dynamics/data/life_table.py"),
+        Path("src/populace_dynamics/baselines/__init__.py"),
+        Path("src/populace_dynamics/baselines/asfr.py"),
+        Path("src/populace_dynamics/baselines/base.py"),
+        Path("src/populace_dynamics/baselines/cbo2026_long_term.py"),
+        Path("src/populace_dynamics/baselines/claim_tables.py"),
+        Path("src/populace_dynamics/baselines/common2026.py"),
+        Path("src/populace_dynamics/baselines/fertility.py"),
+        Path("src/populace_dynamics/baselines/interpolation.py"),
+        Path("src/populace_dynamics/baselines/legacy.py"),
+        Path("src/populace_dynamics/baselines/realized.py"),
+        Path("src/populace_dynamics/baselines/tr2026_intermediate.py"),
+        Path("src/populace_dynamics/baselines/track_a.py"),
     )
     assert reducer.POST_REVIEW_SHARED_SOURCE_BLOBS == {
         Path(

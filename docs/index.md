@@ -1,4 +1,4 @@
-# Populace dynamics
+# Microcosm Dynamics
 
 ::: {.callout-note}
 **Stage-gated planning document**
@@ -17,7 +17,7 @@ go/no-go decisions of clinical trials.
 
 ## Executive summary
 
-This project extends `populace` — PolicyEngine's certified,
+This project extends Microcosm — PolicyEngine's certified,
 country-agnostic microdata stack — with an open longitudinal
 **Dynamics** layer, and validates it first on U.S. Social Security.
 The layer is built so that every claim it makes can be scored against
@@ -47,7 +47,7 @@ through its resolution record
 
 One naming note, because it is a design decision: this project does
 not introduce a named simulator to stand beside DYNASIM or MINT. The
-machinery lives in `populace`, PolicyEngine's open microdata stack;
+machinery lives in Microcosm, PolicyEngine's open microdata stack;
 the deliverable is a versioned population artifact with a manifest
 and a scorecard. Models were branded when the model was the moat.
 Here the artifact and its track record are the product.
@@ -80,7 +80,7 @@ them.
 At the same time, static tax-benefit modeling has already shown that
 publicly reproducible microdata can be useful when the pipeline is
 carefully engineered and aggressively validated. PolicyEngine's
-Populace stack demonstrates this at production scale today — built
+Microcosm stack demonstrates this at production scale today — built
 entirely from primary sources, it became the certified default U.S.
 microdata in policyengine.py in 2026 after beating the prior enhanced
 CPS on held-out accuracy. The next question is whether that stack can
@@ -93,7 +93,7 @@ This project is:
 
 - a research and infrastructure effort to build a validated public
   synthetic longitudinal population
-- a global capability: Populace's kernel is country-agnostic, so the
+- a global capability: Microcosm's kernel is country-agnostic, so the
   same Dynamics layer can serve every country PolicyEngine models —
   pension and benefit systems abroad follow as country coverage
   expands
@@ -112,19 +112,19 @@ This project is not:
 
 ## Decisions already made
 
-### 1. Build on PolicyEngine's Populace microdata stack
+### 1. Build on PolicyEngine's Microcosm microdata stack
 
-The project extends `populace`, PolicyEngine's ML-first microdata
+The project extends Microcosm, PolicyEngine's ML-first microdata
 layer, rather than building an isolated Social Security-only
-dataset. Populace already integrates and calibrates dozens of
+dataset. Microcosm already integrates and calibrates dozens of
 surveys and administrative sources and supports the methodological
 machinery (synthesis, calibration, sparsification, and
 authenticity/privacy evaluation) the Social Security extension
 needs. That choice matters because:
 
-- generic population synthesis belongs in Populace, not in this
+- generic population synthesis belongs in Microcosm, not in this
   repository
-- Populace's cross-sectional layer is already validated against
+- Microcosm's cross-sectional layer is already validated against
   large numbers of administrative targets
 - this repository can focus on Social Security domain validation and
   policy application rather than rebuilding generic synthesis tools
@@ -134,7 +134,7 @@ needs. That choice matters because:
 ### 2. Social Security first, with adjacent interactions preserved
 
 The initial objective is still a Social Security model. That means the
-first longitudinal extension of `populace` should include the family
+first longitudinal extension of Microcosm should include the family
 structure, disability, and claiming dynamics needed for serious benefit
 analysis. It also preserves interactions with taxes, SSI, and other
 means-tested programs through PolicyEngine-US where possible.
@@ -169,7 +169,7 @@ committed leadership alone.
 
 This project now has two validation obligations:
 
-- validate longitudinal `populace` as a population asset
+- validate longitudinal Microcosm as a population asset
 - validate Social Security outputs generated from that asset
 
 Those are related, but not identical. A population platform can look
@@ -191,7 +191,7 @@ domain-of-validity tier as metadata
 
 By the end of the full plan, the project should produce:
 
-- a documented longitudinal `populace` suitable for Social Security
+- a documented longitudinal Microcosm suitable for Social Security
   analysis and adjacent reuse
 - a validated benefit-calculation pipeline integrated with
   PolicyEngine-US
@@ -226,7 +226,7 @@ longitudinal ingredients, especially:
   family structure matter over time
 
 That does not mean those domains belong in phase 1. It means the
-project should not lock `populace` into a Social-Security-only design
+project should not lock Microcosm into a Social-Security-only design
 that cannot be extended later.
 
 ## Guide to the rest of the book

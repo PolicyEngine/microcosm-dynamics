@@ -1,0 +1,39 @@
+{
+  "source": "SSA Annual Statistical Supplement 2026, Table 6.B5.1",
+  "source_url": "https://www.ssa.gov/policy/docs/statcomps/supplement/2026/6b.html",
+  "source_sha256": "1f9eceb2cfa45e181aa38ca7ce33b5babc77e8cb6d77fd1343650224a0a7d06a",
+  "committed_source": "data/external/ssa_supplement_2026_6b.source.html.gz",
+  "retrieved_utc": "2026-10-02T12:08:05Z",
+  "locator": "div#table6.b5.1; thead/tbody/tfoot",
+  "bytes": 177407,
+  "compression": "gzip mtime=0; SHA-256 is of decompressed captured bytes",
+  "fetch_method": "Supplied local captures; no network fetch by this builder. SSA baseline captures used User-Agent Wget/1.21.4; the supplement capture client is not recorded in the supplied retrieval marker.",
+  "captures": {
+    "2025": {
+      "source_url": "https://www.ssa.gov/policy/docs/statcomps/supplement/2025/6b.html",
+      "source_sha256": "1ba2e4f895da924286401189ab1144406640b58e56ce1b2e74f00f9caba405a2",
+      "committed_source": "data/external/ssa_supplement_2025_6b.source.html.gz",
+      "retrieved_utc": "2026-10-02T12:08:05Z",
+      "locator": "div#table6.b5.1; thead/tbody/tfoot",
+      "bytes": 192026,
+      "compression": "gzip mtime=0; SHA-256 is of decompressed captured bytes"
+    },
+    "2026": {
+      "source_url": "https://www.ssa.gov/policy/docs/statcomps/supplement/2026/6b.html",
+      "source_sha256": "1f9eceb2cfa45e181aa38ca7ce33b5babc77e8cb6d77fd1343650224a0a7d06a",
+      "committed_source": "data/external/ssa_supplement_2026_6b.source.html.gz",
+      "retrieved_utc": "2026-10-02T12:08:05Z",
+      "locator": "div#table6.b5.1; thead/tbody/tfoot",
+      "bytes": 177407,
+      "compression": "gzip mtime=0; SHA-256 is of decompressed captured bytes"
+    }
+  },
+  "selection": "2026 edition selected: twelve-column layout matches the 2023 schema; rows through 2025. 2025 edition also re-parsed and its hash recorded.",
+  "data_basis": "Social Security Administration, Master Beneficiary Record, 100 percent data.",
+  "table_notes": "NOTES: The statistics in this table differ from those in Table 6.B5 because awards are summarized here by the year in which entitlement began rather than by the year the award action was posted on the Master Beneficiary Record. The year of entitlement often precedes the year of action because of retroactive entitlements, delayed award actions, and other reasons. Because entitlements can be awarded retroactively, statistics for current and prior years are subject to revision with each annual update of this table. Because of differences in data sources and calculation methods, statistics reported in this table may differ from those reported by Actuarial Services. Totals do not necessarily equal the sum of rounded components. FRA = full retirement age; . . . = not applicable.",
+  "footnote_a_fra_schedule": "FRA is 65 for workers attaining age 65 before 2003. It increases in 2-month increments for workers attaining age 65 in each of the years 2003 through 2008. It is 66 for workers attaining age 65 in the years 2008 through 2019. It again increases in 2-month increments for workers attaining age 65 in the years 2020 through 2025. It is 67 for workers attaining age 65 in 2025 or later.",
+  "footnote_b_disability_conversion": "Disabled-worker benefit automatically converts to a retired-worker benefit in the month the worker attains FRA.",
+  "not_applicable_marker": ". . .",
+  "contact": "statistics@ssa.gov",
+  "consumer_note": "claiming.load_claim_age_reference(path) loads this schema and reference.row accesses all years. Legacy claiming.claim_age_distribution and claim_age_pmf retain their global 2022 cap; a new baseline must resolve against reference.years rather than those legacy convenience functions."
+}
