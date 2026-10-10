@@ -6,7 +6,10 @@
   U1's specification, parameter captures, registered artifact and
   environment sidecar, and U1's code and tests -- keep the bytes the
   milestone-1 manifest (``data/external/track_u2/u1_identity.json``)
-  records, and no U2 commit or merge resolution (attributed by path; see
+  records. The one exception is ``gates.yaml``, which may instead carry
+  the ratified contract a ratified flip outside U2 recorded in
+  ``runs/legacy_manifest_v1.json`` (first: the gate_epuf_fill lock,
+  decision d927). No U2 commit or merge resolution (attributed by path; see
   ``test_no_committed_run_engine_gate_or_u1_file_changed``) changed a
   committed ``runs/*.json`` or any other protected path.
 * Every U2 milestone-2 module is an exact file exclusion in
@@ -102,12 +105,30 @@ PROTECTED_PATHSPECS = (
 )
 
 
+#: The ratified contract: ``gates.yaml`` moves only at a ratified flip,
+#: which records the new bytes here through
+#: ``scripts/build_legacy_manifest.py --transition``.
+LEGACY_MANIFEST = ROOT / "runs" / "legacy_manifest_v1.json"
+
+
+def _ratified_gates_sha256() -> str:
+    entries = json.loads(LEGACY_MANIFEST.read_text())["entries"]
+    (entry,) = [e for e in entries if e["path"] == "gates.yaml"]
+    return entry["sha256"]
+
+
 def test_protected_bytes_match_the_milestone_1_manifest():
     manifest = json.loads(MANIFEST.read_text())["sha256"]
     for path in PROTECTED:
         assert path in manifest, path
     for path, digest in manifest.items():
         observed = hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
+        if path == "gates.yaml" and observed != digest:
+            # A ratified flip outside U2 (first: gate_epuf_fill, decision
+            # d927) may move the contract; it must then be the ratified
+            # one. No U2 commit may move it (the path-attribution test).
+            assert observed == _ratified_gates_sha256(), path
+            continue
         assert observed == digest, path
 
 
