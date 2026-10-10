@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "capture_format": "Decoded HTTP response bodies (curl --compressed; Accept-Encoding gzip, deflate).",
+  "sources": [
+    {
+      "id": "ssa_ret_history",
+      "url": "https://www.ssa.gov/OACT/COLA/rtea.html",
+      "retrieved_at_utc": "2026-09-28T16:02:50Z",
+      "file": "ssa_ret_history.html",
+      "bytes": 37056,
+      "sha256": "b03f940a2cfe7b12f7c0c5edaf1b5c46dc79786ffd22a023a154e4fec76b2b5d"
+    },
+    {
+      "id": "ssa_ret_determination",
+      "url": "https://www.ssa.gov/OACT/COLA/rtdet.html",
+      "retrieved_at_utc": "2026-09-28T16:02:51Z",
+      "file": "ssa_ret_determination.html",
+      "bytes": 35643,
+      "sha256": "bede06d5ab0aff9b620b143afb2e45cb1e0ab39de1aaeb5abdff08499c40c226"
+    },
+    {
+      "id": "ssa_nawi_history",
+      "url": "https://www.ssa.gov/OACT/COLA/AWI.html",
+      "retrieved_at_utc": "2026-09-28T16:02:51Z",
+      "file": "ssa_nawi_history.html",
+      "bytes": 42308,
+      "sha256": "ec58015bb689fbd8a1342eeda54f03b50656c60da1f9ddc8a660e5290fd23c18"
+    },
+    {
+      "id": "ssa_cola_history",
+      "url": "https://www.ssa.gov/OACT/COLA/colaseries.html",
+      "retrieved_at_utc": "2026-09-28T16:02:51Z",
+      "file": "ssa_cola_history.html",
+      "bytes": 38197,
+      "sha256": "41bb09736bb40be233625d2c1c724dee643f16666ab59a01d5e68a1d6d70d14f"
+    },
+    {
+      "id": "ssa_act_203",
+      "url": "https://www.ssa.gov/OP_Home/ssact/title02/0203.htm",
+      "retrieved_at_utc": "2026-09-28T16:02:51Z",
+      "file": "ssa_act_203.html",
+      "bytes": 99348,
+      "sha256": "ea000092e140d2ff8ce058138a9f919fac4eeac0004bb71364d6e2bade53cf54"
+    }
+  ]
+}

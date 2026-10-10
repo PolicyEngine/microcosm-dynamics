@@ -1,9 +1,9 @@
 """Track M's choices: Max's rulings and the frozen choices, all explicit.
 
 No data: only the policy module's constants.  Max ruled cos decision d219
-on 2026-09-24 (all nine defaults accepted) and d279 and d280 on
-2026-09-25; every ruled field defaults to its ruling, and every other
-choice is frozen in ``m1-draft-2`` and listed with its basis.
+on 2026-09-24 (all nine defaults accepted), d279 and d280 on 2026-09-25
+and d430 on 2026-09-26; every ruled field defaults to its ruling, and
+every other choice is frozen in ``m1-draft-2`` and listed with its basis.
 """
 
 from __future__ import annotations
@@ -186,3 +186,78 @@ def test_every_policy_choice_is_ruled_or_frozen():
         for item in register
         if item.card_item is not None
     )
+
+
+def test_d430_is_recorded_as_filed_and_ruled():
+    """Cos d430 (ruled 2026-09-26T07:42): section 4c item 1's reading kept
+    for the scored row with a registered, unscored sensitivity; card item
+    (j) and statute finding F1 kept knowingly.  Each entry quotes the
+    clause of the filed text that names its field, and the ruling as the
+    cos record holds it."""
+
+    d430 = {
+        name: entry
+        for name, entry in pol.MAX_RULINGS.items()
+        if entry["decision_record"] == "d430"
+    }
+    assert list(d430) == [
+        "own_receipt_reading",
+        "odd_year_source",
+        "onset_year_rule",
+    ]
+    for entry in d430.values():
+        assert entry["ruled_on"] == "2026-09-26"
+        assert entry["item"] is None
+        assert entry["as_filed"] in pol.D430_AS_FILED
+        assert entry["ruling_text"] == pol.D430_RULING
+    assert [entry["card_item"] for entry in d430.values()] == [
+        "(a)",
+        "(j)",
+        "F1",
+    ]
+    own = d430["own_receipt_reading"]
+    assert own["ruling"] == pol.OWN_RECEIPT_UNKNOWN_OR_OTHER_IS_OWN
+    assert pol.fixed_decision_value("own_receipt_reading") == own["ruling"]
+    assert own["sensitivity_registered_as"] == pol.OWN_RECEIPT_SENSITIVITY_ID
+    assert d430["odd_year_source"]["ruling"] == pol.ODD_YEARS_NEXT_WAVE
+    assert d430["onset_year_rule"]["ruling"] == pol.ONSET_ENTITLEMENT_MINUS_1
+    assert pol.D430_RULING.startswith("Ratify + bound (a)")
+    for phrase in ("F2, F3a, F3b and O1", "keep (j) and F1 knowingly"):
+        assert phrase in pol.D430_RULING
+    # d430 names them, so they are no longer frozen choices
+    frozen = {item.field for item in pol.frozen_choices()}
+    assert not {"odd_year_source", "onset_year_rule"} & frozen
+    # every registered row follows every d430 ruling
+    for row in pol.REGISTERED_ROWS:
+        departed = pol.rulings_departures(pol.policy_for_row(row))
+        assert not set(departed) & set(d430), row
+    register = {item.field: item for item in pol.decision_register()}
+    assert register["own_receipt_reading"].decided_by == (
+        "Max, cos decision d430 (ruled 2026-09-26)"
+    )
+
+
+def test_d430s_sensitivity_is_registered_unscored_and_not_a_row():
+    """The sensitivity changes the cohort's reading, not a policy field, so
+    it is a section 11 diagnostic of MS0 and not a registered row: the
+    rows stay MS0-MS6, each a one-field change of the policy."""
+
+    assert list(pol.SENSITIVITIES) == [pol.OWN_RECEIPT_SENSITIVITY_ID]
+    entry = pol.SENSITIVITIES[pol.OWN_RECEIPT_SENSITIVITY_ID]
+    assert entry["scored"] is False
+    assert entry["decision_record"] == "d430"
+    assert entry["row"] == "MS0"
+    assert entry["required_in_registered_run"] is True
+    assert entry["scored_reading"] == pol.OWN_RECEIPT_UNKNOWN_OR_OTHER_IS_OWN
+    assert entry["sensitivity_reading"] == (
+        pol.OWN_RECEIPT_PRE62_UNKNOWN_OR_OTHER_UNOBSERVED
+    )
+    assert pol.OWN_RECEIPT_READINGS == (
+        entry["scored_reading"],
+        entry["sensitivity_reading"],
+    )
+    assert entry["reading_field"] == "own_receipt_reading"
+    assert "own_receipt_reading" not in {
+        field.name for field in dataclasses.fields(pol.TrackMPolicy)
+    }
+    assert list(pol.REGISTERED_ROWS) == [f"MS{i}" for i in range(7)]

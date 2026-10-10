@@ -182,3 +182,7 @@ def test_the_specification_records_the_committed_capture():
     ]
     census = rules.load_aged_thresholds().source
     assert block["census_thresholds"]["sha256"] == census["sha256"]
+    assert block["census_thresholds"]["file"] == census["path"]
+    assert block["census_thresholds"]["captured_years"] == (
+        census["captured_years"]
+    )

@@ -10,10 +10,16 @@ plan ``critical-path-minimum-benefit-20260924.md`` (revision 2) measures
 that share on a static PSID snapshot for income year 2022: Track M.  Max
 accepted all nine defaults of the plan's card on 2026-09-24 (cos decision
 d219), ruled PSID labor income covered earnings on 2026-09-25 (d280) and
-had the 2013-2022 Census thresholds downloaded (d279).  The M1
-specification (``docs/design/minimum_benefits_comparison.md``,
-``m1-draft-2``) is not ratified yet: an independent check of the referee's
-changes comes first, then the merge.
+had the 2013-2022 Census thresholds downloaded (d279).  On 2026-09-26 he
+ruled d430: ratify by merge, keeping section 4c item 1's own-receipt
+reading for the scored rows with a pre-registered, unscored sensitivity
+(:data:`.policy.SENSITIVITIES`), built and reviewed before the
+registration.  The M1 specification
+(``docs/design/minimum_benefits_comparison.md``, ``m1-ratified-1``) is
+ratified by merge (d219 item 9, d430) after the independent review of that
+build.  Its registered-commit edit (2026-09-27) emptied the block's
+``blocked_by``, so the block passes the registered-run gate; the one-shot
+is to run once, at the commit the issue #42 registration names.
 
 What this package holds:
 
@@ -22,8 +28,8 @@ What this package holds:
   Max's rulings (:data:`.policy.MAX_RULINGS`) and the frozen choices.
 * :mod:`.coverage`: years of coverage from the one history per worker
   (field G6; referee R6 and R7).
-* :mod:`.thresholds`: the pinned Census one-person 65+ thresholds,
-  2003-2022 (plan item M2).
+* :mod:`.thresholds`: the pinned Census one-person 65+ thresholds of
+  1982, 1986, 1988-1992 and 1994-2022 (plan item M2).
 * :mod:`.rules`: the minimum-benefit arithmetic (fields G5, G7-G13, G22 and
   G23) and the years that define each record (section 4a).  It computes
   the PIA and the auxiliary benefits by calling the existing oracle
@@ -36,7 +42,10 @@ What this package holds:
   issue #42 registration pointer and an M1 specification the registered-
   run gate authorizes (ratified, nothing awaiting Max, nothing blocking).
 * :mod:`.pipeline`: every registered row MS0-MS6 end to end, after the
-  provenance guard and the threshold-year check (plan item M10).
+  provenance guard and the threshold-year check (plan item M10), and cos
+  d430's unscored sensitivity: MS0 under the other own-receipt reading and
+  the share of the universe resting on a record the readings classify
+  differently.
 * :mod:`.invented`: an INVENTED PSID-shaped cohort for the dry run.
 * :mod:`.cohort`: the beneficiary cohort (plan item M4): section 4b's
   rules applied to the label-verified receipt histories of plan item M3
@@ -54,10 +63,13 @@ What this package holds:
   share receiving a minimum.
 
 The PSID readers of plan items M3-M5 exist, but the share is computed on
-real data only by the registered entry point, whose gate refuses the
-committed draft specification: the tabulation and the pipeline refuse
-records read from PSID files without the issue #42 registration pointer
-and an authorizing specification.
+real data only by the registered entry point, whose preflight refuses to
+run unless ``HEAD`` is the commit it is given as registered, on a clean
+tree, with a pointer in the form of an issue #42 comment (the code checks
+the form; the registration's procedure supplies the comment): the
+tabulation and the pipeline refuse
+records read from PSID files without that pointer and an authorizing
+specification.
 
 Submodules are imported explicitly; this initializer imports none of them,
 so the structural-count script can prove it never loaded the rules.

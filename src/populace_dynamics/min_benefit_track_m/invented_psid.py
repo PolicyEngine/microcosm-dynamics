@@ -22,6 +22,13 @@ PSID's, so that :func:`.cohort.build_cohort` (M4) and
 * labor income observed every year 1968-1996 and even years 1998-2022
   for the reference person and spouse, and next-wave odd years 2001-2021.
 
+Every type item is known by default.  ``unknown_or_other_before_62``
+(off by default; cos d430's sensitivity) adds, from a second seeded
+stream that leaves the default draw untouched, receipt years before the
+year of attaining 62 of an unknown or "other" type
+(:func:`_add_unknown_or_other_before_62`), so that the two own-receipt
+readings of :func:`.cohort.build_cohort` differ on invented data.
+
 Deterministic for a given seed.
 """
 
@@ -271,21 +278,192 @@ def _frame(rows: list[dict[str, Any]], columns: list[str]) -> pd.DataFrame:
     return pd.DataFrame(rows, columns=columns)
 
 
+_WORKER_COLUMNS = ("type_retirement", "type_disability")
+#: The year-before-last whether-only waves' income years (2009-2015 files).
+_WHETHER_ONLY_YEARS = (2007, 2009, 2011, 2013)
+
+
+def _is_true(value: Any) -> bool:
+    return value is True or (value is not pd.NA and bool(value) is True)
+
+
+def _combination(row: dict[str, Any]) -> None:
+    for name in ssr.SS_TYPES:
+        row[f"type_{name}"] = pd.NA
+    row["type_combination"] = True
+
+
+def _other_only(row: dict[str, Any]) -> None:
+    for name in ssr.SS_TYPES:
+        row[f"type_{name}"] = name == "other"
+    row["type_combination"] = False
+
+
+def _add_unknown_or_other_before_62(
+    draw: _Draw, share: float, seed: int
+) -> dict[str, int]:
+    """INVENTED receipt of an unknown or "other" type before 62 (d430).
+
+    Each person is picked with probability ``share`` from a generator
+    seeded ``(seed, 430)``, apart from the main draw, for one of:
+
+    * a widow(er)'s survivor years before 62, before any own receipt,
+      turned into a combination code or an "other" mention (the case the
+      independent review of 2026-09-25 named: a survivor's benefit at 60
+      or 61 read as a worker's own disability-origin receipt);
+    * for a reference person first receiving at 62 or later, a year before
+      62 (and before that receipt) turned into receipt: a one-member
+      family's whether-only "yes" in an odd year 2007-2013, or an "other"
+      mention with every type item known in a person-level year;
+    * for a late spouse who died before 62 with no receipt observed, a
+      person-level year without receipt and a later combination code
+      before death, so that the record is disability origin under the
+      scored reading and a death-basis record under the sensitivity's;
+    * for a disability-origin reference person, an "other" mention in a
+      later year before 62, which neither reading classifies differently
+      (the first own receipt names a disability benefit).
+
+    Returns how many persons each case changed.
+    """
+
+    rng = np.random.default_rng([seed, 430])
+    births = {
+        int(row["person_id"]): int(row["birth_year"])
+        for row in draw.marriages
+        if row["birth_year"] is not pd.NA and row["birth_year"] is not None
+    }
+    rows_by_person: dict[int, list[dict[str, Any]]] = {}
+    for row in draw.receipt:
+        rows_by_person.setdefault(int(row["person_id"]), []).append(row)
+    deaths = {
+        int(row["person_id"]): int(row["death_year"])
+        for row in draw.deaths
+        if row["death_status"] == "exact"
+    }
+    anchor = {int(row["person_id"]): row for row in draw.anchor}
+    changed = {
+        "survivor_years_before_62": 0,
+        "receipt_year_before_62": 0,
+        "late_spouse_combination_before_death": 0,
+        "other_after_a_disability_first_receipt": 0,
+    }
+    for pid in sorted(births):
+        if rng.random() >= share:
+            continue
+        birth = births[pid]
+        attains_62 = birth + 62
+        rows = sorted(
+            rows_by_person.get(pid, []), key=lambda row: row["income_year"]
+        )
+        own = [
+            row
+            for row in rows
+            if row["amount"] > 0
+            and any(_is_true(row[column]) for column in _WORKER_COLUMNS)
+        ]
+        first_own = own[0]["income_year"] if own else None
+        survivor = [
+            row
+            for row in rows
+            if row["amount"] > 0
+            and _is_true(row["type_survivor"])
+            and row["income_year"] < attains_62
+            and (first_own is None or row["income_year"] < first_own)
+        ]
+        if survivor:
+            for row in survivor:
+                (_combination if rng.random() < 0.5 else _other_only)(row)
+            changed["survivor_years_before_62"] += 1
+            continue
+        if pid in deaths and not rows:
+            death = deaths[pid]
+            late = [
+                year
+                for year in range(2004, min(death, attains_62))
+                if year % 2 == 0
+            ]
+            if len(late) >= 2:
+                for year, combination in ((late[-2], False), (late[-1], True)):
+                    row = {
+                        "person_id": pid,
+                        "wave": year + 1,
+                        "income_year": year,
+                        "relationship": 10,
+                        "interview": 0,
+                        "amount": 7_000 if combination else 0,
+                        "acc": 0,
+                        **{f"type_{name}": pd.NA for name in ssr.SS_TYPES},
+                        "type_combination": False,
+                    }
+                    if combination:
+                        _combination(row)
+                    draw.receipt.append(row)
+                changed["late_spouse_combination_before_death"] += 1
+            continue
+        if pid not in anchor or first_own is None:
+            continue
+        if first_own >= attains_62:
+            candidates = [
+                year
+                for year in _WHETHER_ONLY_YEARS
+                if birth + 55 <= year < min(attains_62, first_own)
+            ]
+            zero = [
+                row
+                for row in rows
+                if row["amount"] == 0
+                and birth + 55 <= row["income_year"] < attains_62
+            ]
+            if candidates and (not zero or rng.random() < 0.5):
+                draw.family_level.append(
+                    {
+                        "person_id": pid,
+                        "income_year": int(rng.choice(candidates)),
+                        "source": "year_before_last",
+                        "receipt": True,
+                        "fu_size": 1,
+                        **{f"type_{name}": pd.NA for name in ssr.SS_TYPES},
+                    }
+                )
+                changed["receipt_year_before_62"] += 1
+            elif zero:
+                row = zero[int(rng.integers(len(zero)))]
+                row["amount"] = 6_000
+                _other_only(row)
+                changed["receipt_year_before_62"] += 1
+            continue
+        if _is_true(own[0]["type_disability"]):
+            later = [row for row in own[1:] if row["income_year"] < attains_62]
+            if later:
+                _other_only(later[-1])
+                changed["other_after_a_disability_first_receipt"] += 1
+    return changed
+
+
 def invented_cohort_inputs(
     *,
     seed: int = 0,
     n_family_units: int = 300,
     threshold_years_from: int | None = 2003,
+    unknown_or_other_before_62: float = 0.0,
 ) -> TrackMCohortInputs:
     """INVENTED cohort inputs in the PSID's shapes (module docstring).
 
-    ``threshold_years_from`` (2003, the first captured Census year) keeps
-    every record in a policy window to threshold years the capture holds:
-    a worker whose year of attaining 62 precedes it claims before the
-    window opens, and a late spouse who died before any own entitlement
-    died in or after it.  ``None`` draws without that constraint, as the
-    PSID is (its in-window records need earlier years), so that the dry
-    run can show the pipeline refusing such a cohort before computing.
+    ``unknown_or_other_before_62`` (0 by default: every type item known,
+    and the draw is the same as without it) is the share of persons given
+    receipt of an unknown or "other" type before 62
+    (:func:`_add_unknown_or_other_before_62`), for cos d430's sensitivity.
+
+    ``threshold_years_from`` (2003, the first year of the invented
+    thresholds, ``invented.INVENTED_THRESHOLD_YEARS``) keeps every record
+    in a policy window to threshold years from that year on: a worker
+    whose year of attaining 62 precedes it claims before the window
+    opens, and a late spouse who died before any own entitlement died in
+    or after it.  ``None`` draws without that constraint, as the PSID is
+    (its in-window records need years before 2003), so that the dry run
+    can show the pipeline refusing, before computing, a cohort that needs
+    a threshold year the real capture lacks (one of 1983-1985, 1987 and
+    1993, or a year before 1982).
     """
 
     draw = _Draw(seed, threshold_years_from)
@@ -523,6 +701,13 @@ def invented_cohort_inputs(
         for row in draw.anchor:
             if row["person_id"] == pid:
                 row["type_survivor"] = 1
+    if not 0.0 <= unknown_or_other_before_62 <= 1.0:
+        raise ValueError("unknown_or_other_before_62 must be in [0, 1]")
+    added = (
+        _add_unknown_or_other_before_62(draw, unknown_or_other_before_62, seed)
+        if unknown_or_other_before_62 > 0
+        else None
+    )
     anchor = pd.DataFrame(draw.anchor)
     anchor["reported_birth_year"] = anchor["reported_birth_year"].astype(
         "Int64"
@@ -582,16 +767,22 @@ def invented_cohort_inputs(
         codes={},
         provenance={"label": INVENTED_LABEL, "seed": seed},
     )
+    provenance: dict[str, Any] = {
+        "label": INVENTED_LABEL,
+        "generator": "min_benefit_track_m.invented_psid",
+        "seed": seed,
+        "n_family_units": n_family_units,
+    }
+    if added is not None:
+        provenance["unknown_or_other_before_62"] = {
+            "share": unknown_or_other_before_62,
+            "persons_changed": added,
+        }
     return TrackMCohortInputs(
         structure_inputs=structure_inputs,
         individual_receipt=receipt,
         family_1993_receipt=receipt.iloc[0:0].copy(),
         family_level_receipt=family_level,
         prior_year_labor=pd.DataFrame(draw.prior),
-        provenance={
-            "label": INVENTED_LABEL,
-            "generator": "min_benefit_track_m.invented_psid",
-            "seed": seed,
-            "n_family_units": n_family_units,
-        },
+        provenance=provenance,
     )

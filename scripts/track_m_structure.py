@@ -16,6 +16,17 @@ window need.  It counts no in-window record and no exposed person: the
 M1 specification's section 11 reserves those diagnostics for the
 registered run.
 
+For cos d430 (2026-09-26) it adds, over all records and never by window,
+the records whose first own receipt precedes the year of attaining 62
+and names no worker's benefit, by what it mentions ("other" only, with
+every type item known or not, and the combined unknown-or-other count;
+``cohort.first_own_receipt_type_before_62``), and, from the cohort built
+under d430's sensitivity reading, only the threshold *years* its window
+(MS0's) needs, as for the registered rows
+(``cohort.sensitivity_threshold_years_before_registration``): the
+registered run refuses a year the Census capture lacks before computing
+anything, for the sensitivity as for the rows.
+
 It computes **no** years of coverage, PIA, threshold, minimum, worker flag
 or share receiving a minimum: plan ``critical-path-minimum-benefit-
 20260924.md`` section 8 limits real-file work before the issue #42
@@ -50,6 +61,7 @@ from populace_dynamics.min_benefit_track_m import (  # noqa: E402
     structure,
 )
 from populace_dynamics.min_benefit_track_m.policy import (  # noqa: E402
+    OWN_RECEIPT_PRE62_UNKNOWN_OR_OTHER_UNOBSERVED,
     decision_register,
 )
 
@@ -88,6 +100,13 @@ def build(data_dir: Path | None = None) -> dict:
             f"the M4 cohort holds {m4['persons']} persons, the funnel "
             f"{universe}: the two universes differ"
         )
+    first_receipt = cohort.first_own_receipt_type_before_62(built)
+    sensitivity = cohort.sensitivity_threshold_years_before_registration(
+        cohort.build_cohort(
+            cohort_inputs,
+            own_receipt_reading=OWN_RECEIPT_PRE62_UNKNOWN_OR_OTHER_UNOBSERVED,
+        )
+    )
     sources = cohort.history_source_counts(
         built, cohort_inputs.earnings, cohort_inputs.prior_year_labor
     )
@@ -121,6 +140,8 @@ def build(data_dir: Path | None = None) -> dict:
         "provenance": dict(cohort_inputs.provenance),
         "counts": counts,
         "m4_cohort": m4,
+        "m4_first_own_receipt_type_before_62_d430": first_receipt,
+        "m4_own_receipt_sensitivity_d430_threshold_years": sensitivity,
         "m5_history_sources": sources,
         "decisions": [item.as_dict() for item in decision_register()],
     }

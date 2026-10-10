@@ -32,9 +32,9 @@ marital cells read ``marital_status_4``
 (:func:`populace_dynamics.cohorts.age67.marital_status_4`); a member with
 no four-way status (``unclassified``) enters ``all``, ``women`` and
 ``men`` and no marital cell, and each marital cell reports how many were
-left out (``unclassified_marital_cells="excluded_counted"``, pending the
-freeze).  An empty cell, or one with zero total weight, is undefined and
-reported with its reason, never imputed.
+left out (``unclassified_marital_cells="excluded_counted"``, frozen by
+u1-ratified-1).  An empty cell, or one with zero total weight, is
+undefined and reported with its reason, never imputed.
 
 Uncertainty (plan field F15; the run is deterministic, K = 1):
 
@@ -710,11 +710,11 @@ def _floors(
 def pending_decisions() -> tuple[PendingDecision, ...]:
     """The open choices of :class:`TabulationConfig`, with their defaults.
 
-    None is ratified; each awaits the specification freeze.
+    Each is fixed by the ratification of u1-ratified-1 (cos decision d411).
     """
 
     config = TabulationConfig()
-    freeze = "U1 specification freeze (Max's ratification by merge)"
+    freeze = "fixed by the ratification of u1-ratified-1 (cos decision d411)"
     return (
         PendingDecision(
             "design_se_domain",

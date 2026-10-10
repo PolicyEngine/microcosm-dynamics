@@ -22,6 +22,10 @@ comment exists, at exactly the commit that comment registers:
 * the rows are :data:`populace_dynamics.uniform_cut_track_u.rows.
   REGISTERED_ROWS`, which must equal the block's rows; no flag changes
   them;
+* the block's ``decisions`` must equal Max's rulings as the code records
+  them (:data:`populace_dynamics.uniform_cut_track_u.rows.MAX_RULINGS`;
+  :func:`~populace_dynamics.uniform_cut_track_u.rows.
+  check_rulings_against_block`);
 * the Census thresholds must be the committed, hash-pinned capture
   (:func:`populace_dynamics.estimates.adjusted_poverty.
   load_poverty_thresholds` refuses until it exists), checked before any
@@ -47,23 +51,9 @@ comment exists, at exactly the commit that comment registers:
 The artifact publishes regardless of outcome.  It never reads the sealed
 comparator; the seal is opened only after this artifact is committed.
 
-As of this script's writing (``u1-draft-7``, 2026-09-25) the
-specification is a draft and refuses a run.  Max ruled on exercise 2 on
-2026-09-24 (cos decision d189): yes to Track U as exercise 2's first
-score (the claim class: PSID-realized outcomes at 67, not a projection),
-with the SSI rule "offset only for existing SSI recipients"; and he
-downloaded the 2005 and 2007 PSID wealth supplements, which are staged
-and adjudicated (``populace_dynamics.data.family_income``), so on the
-staged PSID the fallback rule gives U0 as the headline.  Since
-``u1-draft-7`` row U7 is built (``populace_dynamics.data.employer_dc``)
-and plan decisions 2, 4, 6, 8 and 9 and the fallback rule are recorded
-with their basis (the section 15 ``plan_decisions``); the only
-``awaiting`` left is plan decision 7 (Max ratifies by merge and
-authorizes the #42 registration and the one-shot), and ``blocked_by``
-names the #42 registration.  The Census thresholds are captured and
-pinned (cos decision d194;
-``data/external/census_poverty_thresholds_2004_2012.json``), and the
-specification's threshold block records ``capture_status: captured``.
+The specification is ``u1-ratified-1``, ratified under cos decision d411
+(2026-09-26), and its section 15 ``decisions`` must equal
+:data:`populace_dynamics.uniform_cut_track_u.rows.MAX_RULINGS`.
 
 Usage::
 
@@ -321,6 +311,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     block = rows.specification_block()
     row_check = rows.check_rows_against_block(block)
+    ruling_check = rows.check_rulings_against_block(block)
     # Refused before any PSID file is read: no pinned Census capture, no
     # run.
     thresholds = ap.load_poverty_thresholds()
@@ -349,7 +340,10 @@ def main(argv: list[str] | None = None) -> int:
             "version": block.get("version"),
             "status": block.get("status"),
         },
-        "checks": {"specification_rows": row_check},
+        "checks": {
+            "specification_rows": row_check,
+            "max_rulings": ruling_check,
+        },
         "run": {
             "started": started,
             "finished": datetime.datetime.now(

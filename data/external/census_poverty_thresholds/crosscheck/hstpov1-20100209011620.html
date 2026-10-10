@@ -1,0 +1,425 @@
+ 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"                  
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">                      
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">             
+<head>                                                                          
+<script>                                                                        
+if (document.layers)                                                            
+WM_scaleFont(initialFontSize, fontUnits);                                       
+</script>                                                                       
+<title>Historical Poverty Tables</title>                                        
+<link rel="stylesheet" href="/main/.in/style.css" type="text/css" />            
+<link rel="stylesheet" type="text/css" href="/hhes/www/stylesheets/hhes_redesign.css" />
+<body>                                                                          
+                                                                               
+<script language="JavaScript">
+<!--
+
+function WM_scaleFont(targetSize, initialFontSize, fontUnit) {
+
+  // This checks for the existence of the document objects and 
+  // properties where we store the passed variables.
+  if (typeof document.WM == 'undefined'){
+    document.WM = new Object;
+  }
+  if (typeof document.WM.WM_scaleFont == 'undefined') {
+    document.WM.WM_scaleFont = new Object;
+    document.WM.WM_scaleFont.screenTarget = targetSize;
+    document.WM.WM_scaleFont.targetBodyFontSize = initialFontSize;
+    document.WM.WM_scaleFont.fontUnit = fontUnit;
+  }
+  // The actual screen width is gotten here.
+  if (document.all) {
+    var screenWidth = document.body.offsetWidth;
+  } else if (document.layers) {
+    var screenWidth = window.innerWidth;
+  }
+  // This one line is the core of the routine. It takes the 
+  // targeted font size and divides it by the actual width 
+  // times the targeted width.
+  var scaledFont = parseInt(document.WM.WM_scaleFont.targetBodyFontSize) * (screenWidth / document.WM.WM_scaleFont.screenTarget);
+  // Now this new font size is applied to the body. 
+  // For IE, it changes the body's style declaration and 
+  // sets things up such that on resize this function is 
+  //called again. For Netscape, it writes out a style tag 
+  // in the head, and then depends on WM_netscapeCssFix() 
+  // to reload the page if it's been resized. 
+  if (document.all) {
+    document.body.style.fontSize = scaledFont + document.WM.WM_scaleFont.fontUnit;
+    window.onresize = WM_scaleFont;
+  } else if(document.layers) {
+    var netscapeScaleReturn = '<style type="text/css">\nBODY {font-size: ' + scaledFont + document.WM.WM_scaleFont.fontUnit + '}\n</style>';
+    document.writeln(netscapeScaleReturn);
+  }
+}
+
+
+// -->
+
+</script>
+<!-- top banner and navigation bar -->
+<table width="100%"  border="0" cellspacing="0" cellpadding="0">
+<tr align="left" valign="top">
+<td colspan="2"><a href="/"><img src="/main/www/img/cb_head.gif" alt="U.S. Census Bureau" width="639" height="25" border="0"></a></td>
+</tr>
+<tr align="left" valign="top">
+<td align="left" valign="middle" class="masthead" height="20">
+<strong><font size="+2">&nbsp;Poverty</font></strong>
+</td>
+<td align="right" class="masthead" valign="middle">
+<br />
+
+	<form name="gs" method="GET" action="http://search.census.gov/search">
+	<input type="text" name="q" size="32" maxlength="256" value="">
+	<input type="submit" name="btnG" value="Search This Site">
+	<br /><br />
+	<input type="hidden" name="filter" value="0" />
+	<input type="hidden" name="entqr" value="0">
+	<input type="hidden" name="output" value="xml_no_dtd">
+	<input type="hidden" name="ud" value="1">
+	<input type="hidden" name="ie" value="UTF-8">
+	<input type="hidden" name="client" value="subsite">
+	<input type="hidden" name="proxystylesheet" value="subsite">
+	<input type="hidden" name="hq" value="inurl:www.census.gov/hhes/www/poverty">
+	<input type="hidden" name="subtitle" value="hhes-poverty">
+	</form>
+
+
+</td>
+</tr>
+<tr align="left" valign="top">
+<td colspan="2" valign="middle">
+<div id="topnav"> <ul>
+<font size="2%">
+<li><a href="/hhes/www/poverty/poverty.html">Poverty Main</a>
+</li>
+<li><a href="/hhes/www/poverty/overview.html">Overview</a>
+</li>
+<li><a href="/hhes/www/poverty/publications.html">Publications</a>
+</li>
+<li><a href="/hhes/www/poverty/definitions.html">Definitions</a>
+</li>
+<li><a href="/hhes/www/poverty/threshld.html">Thresholds</a>
+</li>
+<li><a href="/hhes/www/poverty/microdata.html">Microdata Access</a>
+</li>
+<li><a href="/hhes/www/poverty/relatedsites.html">Related Sites</a>
+</li>
+<li><a href="http://ask.census.gov/cgi-bin/askcensus.cfg/php/enduser/std_alp.php?p_lva=&p_li=&p_page=1&p_new_search=1&p_search_text=poverty&Submit=Ask">FAQ</a>
+</li></font>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+<br />
+
+<!-- end top banner and navigation bar -->
+         
+                                                                               
+<!-- Begin body of sub-level page -->                                           
+<br />                                                                          
+<h1>Historical Poverty Tables                                                   
+</h1>                                                                           
+<br />                                                                          
+<pre>                                                                           
+                                                                               
+
+
+
+Table 1. Weighted Average Poverty Thresholds for Families of Specified Sized:
+1959 to 2006
+
+  ________________________________________________________________________
+                                                       2 people
+                   Unrelated individuals     _____________________________
+                                                          House-    House-
+               _____________________________              holder    holder
+  Calendar                   Under  Aged 65                under   aged 65
+  year          All ages    age 65  or older  All ages    age 65  or older
+  ________________________________________________________________________
+  1959........    $1,467    $1,503    $1,397    $1,894    $1,952    $1,761
+  1960........     1,490     1,526     1,418     1,924     1,982     1,788
+  1961........     1,506     1,545     1,433     1,942     2,005     1,808
+  1962........     1,519     1,562     1,451     1,962     2,027     1,828
+  1963........     1,539     1,581     1,470     1,988     2,052     1,850
+  1964........     1,558     1,601     1,488     2,015     2,079     1,875
+  1965........     1,582     1,626     1,512     2,048     2,114     1,906
+  1966........     1,628     1,674     1,556     2,107     2,175     1,961
+  1967........     1,675     1,722     1,600     2,168     2,238     2,017
+  1968........     1,748     1,797     1,667     2,262     2,333     2,102
+  1969........     1,840     1,893     1,757     2,383     2,458     2,215
+  1970........     1,954     2,010     1,861     2,525     2,604     2,348
+  1971........     2,040     2,098     1,940     2,633     2,716     2,448
+  1972........     2,109     2,168     2,005     2,724     2,808     2,530
+  1973........     2,247     2,307     2,130     2,895     2,984     2,688
+  1974........     2,495     2,562     2,364     3,211     3,312     2,982
+  1975........     2,724     2,797     2,581     3,506     3,617     3,257
+  1976........     2,884     2,959     2,730     3,711     3,826     3,445
+  1977........     3,075     3,152     2,906     3,951     4,072     3,666
+  1978........     3,311     3,392     3,127     4,249     4,383     3,944
+  1979........     3,689     3,778     3,479     4,725     4,878     4,390
+  1980........     4,190     4,290     3,949     5,363     5,537     4,983
+  1981........     4,620     4,729     4,359     5,917     6,111     5,498
+  1982........     4,901     5,019     4,626     6,281     6,487     5,836
+  1983........     5,061     5,180     4,775     6,483     6,697     6,023
+  1984........     5,278     5,400     4,979     6,762     6,983     6,282
+  1985........     5,469     5,593     5,156     6,998     7,231     6,503
+  1986........     5,572     5,701     5,255     7,138     7,372     6,630
+  1987........     5,778     5,909     5,447     7,397     7,641     6,872
+  1988........     6,022     6,155     5,674     7,704     7,958     7,157
+  1989........     6,310     6,451     5,947     8,076     8,343     7,501
+  1990........     6,652     6,800     6,268     8,509     8,794     7,905
+  1991........     6,932     7,086     6,532     8,865     9,165     8,241
+  1992........     7,143     7,299     6,729     9,137     9,443     8,487
+  1993........     7,363     7,518     6,930     9,414     9,728     8,740
+  1994........     7,547     7,710     7,108     9,661     9,976     8,967
+  1995........     7,763     7,929     7,309     9,933    10,259     9,219
+  1996........     7,995     8,163     7,525    10,233    10,564     9,491
+  1997........     8,183     8,350     7,698    10,473    10,805     9,712
+  1998........     8,316     8,480     7,818    10,634    10,972     9,862
+  1999 11/....     8,499     8,667     7,990    10,864    11,213    10,075
+  2000 12/....     8,791     8,959     8,259    11,235    11,589    10,418
+  2001........     9,039     9,214     8,494    11,569    11,920    10,715
+  2002........     9,183     9,359     8,628    11,756    12,110    10,885
+  2003........     9,393     9,573     8,825    12,015    12,384    11,133
+  2004 14/....     9,646     9,827     9,060    12,335    12,714    11,430
+  2005........     9,973    10,160     9,367    12,755    13,145    11,815
+  2006........    10,294    10,488     9,669    13,167    13,569    12,201
+
+
+
+Table 1. Weighted Average Poverty Thresholds for Families of Specified Sized:
+1959 to 2006
+
+  ___________________________________________________________
+
+
+                      Families of 3 people or more
+            _________________________________________________
+   Calendar                                          7 people
+    year     3 people  4 people  5 people  6 people   or more
+  ___________________________________________________________
+  1959.....    $2,324    $2,973    $3,506    $3,944    $4,849
+  1960.....     2,359     3,022     3,560     4,002     4,921
+  1961.....     2,383     3,054     3,597     4,041     4,967
+  1962.....     2,412     3,089     3,639     4,088     5,032
+  1963.....     2,442     3,128     3,685     4,135     5,092
+  1964.....     2,473     3,169     3,732     4,193     5,156
+  1965.....     2,514     3,223     3,797     4,264     5,248
+  1966.....     2,588     3,317     3,908     4,388     5,395
+  1967.....     2,661     3,410     4,019     4,516     5,550
+  1968.....     2,774     3,553     4,188     4,706     5,789
+  1969.....     2,924     3,743     4,415     4,958     6,101
+  1970.....     3,099     3,968     4,680     5,260     6,468
+  1971.....     3,229     4,137     4,880     5,489     6,751
+  1972.....     3,339     4,275     5,044     5,673     6,983
+  1973.....     3,548     4,540     5,358     6,028     7,435
+  1974.....     3,936     5,038     5,950     6,699     8,253
+  1975.....     4,293     5,500     6,499     7,316     9,022
+  1976.....     4,540     5,815     6,876     7,760     9,588
+  1977.....     4,833     6,191     7,320     8,261    10,216
+  1978.....     5,201     6,662     7,880     8,891    11,002
+  1979.....     5,784     7,412     8,775     9,914    12,280
+  1980.....     6,565     8,414     9,966    11,269    13,955
+  1981.....     7,250     9,287    11,007    12,449      ***
+  1982.....     7,693     9,862    11,684    13,207      ***
+  1983.....     7,938    10,178    12,049    13,630      ***
+  1984.....     8,277    10,609    12,566    14,207      ***
+  1985.....     8,573    10,989    13,007    14,696      ***
+  1986.....     8,737    11,203    13,259    14,986      ***
+  1987.....     9,056    11,611    13,737    15,509      ***
+  1988.....     9,435    12,092    14,304    16,146      ***
+  1989.....     9,885    12,674    14,990    16,921      ***
+  1990.....    10,419    13,359    15,792    17,839      ***
+  1991.....    10,860    13,924    16,456    18,587      ***
+  1992.....    11,186    14,335    16,952    19,137      ***
+  1993.....    11,522    14,763    17,449    19,718      ***
+  1994.....    11,821    15,141    17,900    20,235      ***
+  1995.....    12,158    15,569    18,408    20,804      ***
+  1996.....    12,516    16,036    18,952    21,389      ***
+  1997.....    12,802    16,400    19,380    21,886      ***
+  1998.....    13,003    16,660    19,680    22,228      ***
+  1999 11/.    13,289    17,030    20,128    22,730      ***
+  2000 12/.    13,740    17,604    20,815    23,533      ***
+  2001.....    14,128    18,104    21,405    24,195      ***
+  2002.....    14,348    18,392    21,744    24,576      ***
+  2003.....    14,680    18,810    22,245    25,122      ***
+  2004 14/.    15,066    19,307    22,830    25,787      ***
+  2005.....    15,577    19,971    23,613    26,683      ***
+  2006.....    16,079    20,614    24,382    27,560      ***
+
+
+
+Table 1. Weighted Average Poverty Thresholds for Families of Specified Sized:
+1959 to 2006
+
+  _________________________________________________
+                                             Annual
+                                            average
+            Families of 3 people or more   CPI, all
+            _____________________________     items
+   Calendar                      9 people  (1982-84
+    year     7 people  8 people   or more  =100) B/
+  _________________________________________________
+  1959.....      ***       ***       ***       29.2
+  1960.....      ***       ***       ***       29.6
+  1961.....      ***       ***       ***       29.9
+  1962.....      ***       ***       ***       30.3
+  1963.....      ***       ***       ***       30.6
+  1964.....      ***       ***       ***       31.0
+  1965.....      ***       ***       ***       31.5
+  1966.....      ***       ***       ***       32.5
+  1967.....      ***       ***       ***       33.4
+  1968.....      ***       ***       ***       34.8
+  1969.....      ***       ***       ***       36.7
+  1970.....      ***       ***       ***       38.8
+  1971.....      ***       ***       ***       40.5
+  1972.....      ***       ***       ***       41.8
+  1973.....      ***       ***       ***       44.4
+  1974.....      ***       ***       ***       49.3
+  1975.....      ***       ***       ***       53.8
+  1976.....      ***       ***       ***       56.9
+  1977.....      ***       ***       ***       60.6
+  1978.....      ***       ***       ***       65.2
+  1979.....      ***       ***       ***       72.6
+  1980.....   $12,761   $14,199   $16,896      82.4
+  1981.....    14,110    15,655    18,572      90.9
+  1982.....    15,036    16,719    19,698      96.5
+  1983.....    15,500    17,170    20,310      99.6
+  1984.....    16,096    17,961    21,247     103.9
+  1985.....    16,656    18,512    22,083     107.6
+  1986.....    17,049    18,791    22,497     109.6
+  1987.....    17,649    19,515    23,105     113.6
+  1988.....    18,232    20,253    24,129     118.3
+  1989.....    19,162    21,328    25,480     124.0
+  1990.....    20,241    22,582    26,848     130.7
+  1991.....    21,058    23,582    27,942     136.2
+  1992.....    21,594    24,053    28,745     140.3
+  1993.....    22,383    24,838    29,529     144.5
+  1994.....    22,923    25,427    30,300     148.2
+  1995.....    23,552    26,237    31,280     152.4
+  1996.....    24,268    27,091    31,971     156.9
+  1997.....    24,802    27,593    32,566     160.5
+  1998.....    25,257    28,166    33,339     163.0
+  1999 11/.    25,918    28,970    34,436     166.6
+  2000 12/.    26,750    29,701    35,150     172.2
+  2001.....    27,517    30,627    36,286     177.1
+  2002.....    28,001    30,907    37,062     179.9
+  2003.....    28,544    31,589    37,656     184.0
+  2004 14/.    29,233    32,641    39,062     188.9
+  2005.....    30,249    33,610    40,288     195.3
+  2006.....    31,205    34,774    41,499     201.6
+ 
+                                                                                                                                                                                                        
+ 
+ 
+
+<A HREF="http://www.census.gov/hhes/www/poverty/histpov/footnotes.html">Footnotes</a>                    
+                                                                                                     
+                                                                                                     
+Source: U.S. Bureau of the Census, Current Population Survey, Annual Social and Economic Supplements.
+Poverty and Health Statistics Branch/HHES Division                                                   
+U. S. Bureau of the Census                                                                           
+U. S. Department of Commerce                                                                         
+Washington, DC  20233-8500                                                                           
+(301) 763-3242                                                                                       
+ 
+                                                                                                                                                                                                        
+ 
+ 
+
+</pre>                                                                                   
+<hr>Go to <a href="../../income/histinc/histpovtb.html">Historical Poverty Tables</a>    
+<br />                                                                                   
+<!-- End body of sub-level page -->                                                      
+                                                                                         
+<!-- bottom contact and source info -->
+<hr />
+Contact the Demographic Call Center Staff at 301-763-2422 or 1-866-758-1060 (toll free) or visit
+<a href="https://ask.census.gov/cgi-bin/askcensus.cfg/php/enduser/std_alp.php">ask.census.gov</a> for further information on Poverty Statistics.
+<hr /><br />
+<div align="center">
+<em>Source: U.S. Census Bureau, Housing and Household Economic Statistics Division</em>
+<br /></div>
+<!-- end bottom contact and source info -->
+      
+                                                      
+                                                                                         
+<!-- bottom footer and bottom navigation bar -->
+
+<div align="center">
+<table>
+<tr align="left" valign="top">
+<td colspan="2" valign="middle">
+<div id="bottomnav"> 
+<ul>
+<font size="2%"><li><a href="/hhes/www/poverty/poverty.html">Poverty Main</a>
+</li>
+<li><a href="/hhes/www/poverty/overview.html">Overview</a>
+</li>
+<li><a href="/hhes/www/poverty/publications.html">Publications</a>
+</li>
+<li><a href="/hhes/www/poverty/definitions.html">Definitions</a>
+</li>
+<li><a href="/hhes/www/poverty/threshld.html">Thresholds</a>
+</li>
+<li><a href="/hhes/www/poverty/microdata.html">Microdata Access</a>
+</li>
+<li><a href="/hhes/www/poverty/relatedsites.html">Related Sites</a>
+</li>
+<li><a href="http://ask.census.gov/cgi-bin/askcensus.cfg/php/enduser/std_alp.php?p_lva=&p_li=&p_page=1&p_new_search=1&p_search_text=poverty&Submit=Ask">FAQ</a>
+</li></font>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<!-- end footer and bottom navigation bar -->
+               
+<div id="cb_footer">
+
+<span style="height: 0; width: 0;  overflow: hidden;  position: absolute; font-size: 0;"><a href="#SKIP" title="Skip Navigation">Skip this navigation</a></span> <br />
+
+<div style="font: bold 11px Arial, Helvetica, sans-serif; color: #000; text-decoration: none; text-align: center; border-top: 1px solid #0055BB; padding: 6px 0 10px 0;">
+
+Census Bureau Links: &nbsp; <a href="http://www.census.gov/index.html" style="font-weight: normal; text-decoration: underline; color: #05b;" target="_top">Home</a>
+
+&#183; <a href="/main/www/srchtool.html" target="_top" style="font-weight: normal; color: #05B; text-decoration: underline; display: inline;">Search</a>
+
+&#183; <a href="/main/www/a2z/" target="_top" style="font-weight: normal; color: #05B; text-decoration: underline; display: inline;">Subjects A-Z</a>
+
+&#183; <a href="https://ask.census.gov/" style="font-weight: normal; color: #05B; text-decoration: underline; display: inline;">FAQs</a>
+
+&#183; <a href="/main/www/access.html" target="_top" style="font-weight: normal; color: #05B; text-decoration: underline; display: inline;">Data Tools</a>
+
+&#183; <a href="/mp/www/cat/" target="_top" style="font-weight: normal; color: #05B; text-decoration: underline; display: inline;">Catalog</a>
+
+&#183; <a href="/2010census/" style="font-weight: normal; color: #05B; text-decoration: underline; display: inline;">Census 2010</a>
+
+&#183; <a href="/quality/" style="font-weight: normal; color: #05B; text-decoration: underline; display: inline;">Quality</a>
+
+&#183; <a href="/privacy/" target="_top" style="font-weight: normal; color: #05B; text-decoration: underline; display: inline;">Privacy Policy</a>
+
+&#183; <a href="/aboutus/contacts.html" target="_top" style="font-weight: normal; color: #05B; text-decoration: underline; display: inline;">Contact Us</a>
+<br />
+<br />
+<img src="/main/www/img/wordmarktl.gif"  width="217" height="35" alt="U.S. Census Bureau: Helping You Make Informed Decisions" style=" margin-top: -6px;" />
+<a name="SKIP"> </a>
+</div>
+
+<div style="font: normal 11px Arial, Helvetica, sans-serif; color: #000; text-decoration: none; text-align: center;">
+     Page Last Modified: September 29, 2009
+</div>
+
+</div>
+
+<!-- Foresee Survey -->
+<script type="text/javascript" src="/fsrscripts/foresee-trigger.js"></script>
+
+<!-- End Foresee Survey -->
+                                           
+</body>                                                                                  
+</html>                                                                                  

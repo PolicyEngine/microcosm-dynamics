@@ -507,13 +507,14 @@ D189_RULING = (
     "Max's ruling, cos decision d189 (2026-09-24): 'Yes to Track U with "
     "the SSI offset rule for existing recipients'"
 )
-_FREEZE = "U1 specification freeze (Max's ratification by merge)"
+_FREEZE = "fixed by the ratification of u1-ratified-1 (cos decision d411)"
 
 
 def pending_decisions() -> tuple[PendingDecision, ...]:
     """Every open choice of :class:`AdjustedPovertySpec`, with its default.
 
-    None of these is ratified.  ``awaiting`` names who decides.
+    Each is fixed by the ratification of u1-ratified-1 (cos decision
+    d411); ``awaiting`` records it.
     """
 
     spec = AdjustedPovertySpec()

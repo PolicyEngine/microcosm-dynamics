@@ -237,7 +237,8 @@ def build_track_m_inputs(
 
     ``provenance_kind`` is ``"psid_files"`` for a cohort read from the
     staged PSID and ``"invented"`` for an invented one; the tabulation's
-    guard reads it.
+    guard reads it.  The records carry the cohort's own-receipt reading
+    (cos d430), which the pipeline checks.
     """
 
     if provenance_kind not in PROVENANCE_KINDS:
@@ -369,6 +370,7 @@ def build_track_m_inputs(
         persons=tuple(person_records),
         provenance_kind=provenance_kind,
         design=cohort.design,
+        own_receipt_reading=cohort.own_receipt_reading,
         source={
             "cohort": "min_benefit_track_m.cohort",
             "careers": "min_benefit_track_m.careers",

@@ -19,11 +19,14 @@ THE ANCHOR (Urban 103050, Table 15)
 =====================================================================
 Smith, K. E., Johnson, R. W. and Favreault, M. M. (2020), "Five
 Democratic Approaches to Social Security Reform: Estimated Impact of
-Plans by 2020 Presidential Candidates" (Urban Institute report 103050,
-DYNASIM3 ID980). The caregiver credit is the most progressive provision
-scored: Table 15 (printed p. 66) reports the percentage of each
-provision's benefit increase going to the bottom fifth of the lifetime
-earnings distribution in 2065. The "Create caregiver credit" row:
+Plans from the 2020 Presidential Campaign" (Urban Institute report
+103050, DYNASIM4 ID980; Table 15's own source line reads "Source:
+DYNASIM ID980.", and the report says its analysis "is based on
+DYNASIM4" -- see docs/errata/2026-09-29-anchor-provenance.md). The
+caregiver credit is the most progressive provision scored: Table 15
+(printed p. 66) reports the percentage of each provision's benefit
+increase going to the bottom fifth of the lifetime earnings distribution
+in 2065. The "Create caregiver credit" row:
 
     Biden 54   Buttigieg 52   Klobuchar 62   Warren 55
 
@@ -267,8 +270,8 @@ def anchor_provenance() -> dict[str, Any]:
         "paper": (
             "Smith, K. E., Johnson, R. W. and Favreault, M. M. (2020). Five "
             "Democratic Approaches to Social Security Reform: Estimated "
-            "Impact of Plans by 2020 Presidential Candidates. The Urban "
-            "Institute (report 103050). DYNASIM3, ID980. 2020 Trustees "
+            "Impact of Plans from the 2020 Presidential Campaign. The Urban "
+            "Institute (report 103050). DYNASIM4, ID980. 2019 Trustees "
             "intermediate assumptions."
         ),
         "source_files": [
@@ -321,7 +324,9 @@ def anchor_provenance() -> dict[str, Any]:
                 "Table 15 (Percentage of Benefit Increases Going to the "
                 "Bottom Fifth of Lifetime Earners, 2065), printed p. 66, "
                 "'Create caregiver credit' row, scheduled scenario; "
-                "DYNASIM3 ID980"
+                "DYNASIM4 ID980 (the table's own source line reads "
+                "'Source: DYNASIM ID980.'; the report's analysis is based "
+                "on DYNASIM4)"
             ),
             "quintile_variable_paper": (
                 "bottom fifth of the lifetime earnings distribution in 2065; "

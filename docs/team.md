@@ -41,7 +41,7 @@ during implementation:
 
 ### Technical lead or research engineer
 
-Implementation leadership is needed to own the longitudinal `populace`
+Implementation leadership is needed to own the longitudinal Microcosm
 pipeline, modeling infrastructure, and reproducibility workflow. This
 capacity should not be treated as optional.
 
@@ -56,7 +56,7 @@ just whether the code runs.
 
 The project requires substantial work on harmonization, ingestion,
 versioning, and reproducibility across the surveys and administrative
-sources that `populace` integrates and calibrates against. This is a
+sources that Microcosm integrates and calibrates against. This is a
 real workload, not a background task.
 
 ### Research assistance

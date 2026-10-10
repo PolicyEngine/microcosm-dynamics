@@ -392,6 +392,8 @@ LEGACY_AIME_REEXPORTS = {"src/populace_dynamics/ss/__init__.py"}
 #: Every module that names ``ComputationYears.LEGACY_FIXED_35``.
 LEGACY_CONVENTION_USERS = {
     "src/populace_dynamics/cola_track_a/benefits.py",
+    # a2-ratified-1 §4.3: D is DI-only; retirement stays legacy.
+    "src/populace_dynamics/track_a_v2/benefits.py",
     "src/populace_dynamics/ss/statutory_aime.py",
     # Track C step 1 compares the Axiom engine with the oracle AIME under
     # --oracle-computation-years (statutory by default; legacy_fixed_35 is

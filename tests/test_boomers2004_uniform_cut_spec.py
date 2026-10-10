@@ -1,12 +1,14 @@
-"""Consistency checks for the exercise 2 (Track U) specification draft.
+"""Consistency checks for the exercise 2 (Track U) specification.
 
 ``docs/design/boomers2004_uniform_cut_comparison.md`` is read by
 downstream lanes through its machine-readable JSON block (§15).  These
 tests hold that block to the code's defaults and constants (the income
 concept, the cohort builder, the reader tables, the tabulation, the
-registered rows and the runner's named deltas), so a draft change and a
-code change cannot drift apart silently.  They use only the document and
-the code: no PSID value, no model output and no comparator value.
+registered rows, Max's rulings and the runner's named deltas), so a text
+change and a code change cannot drift apart silently.  Since
+``u1-ratified-1`` (cos decision d411, 2026-09-26) the specification is
+ratified and frozen.  They use only the document and the code: no PSID
+value, no model output and no comparator value.
 """
 
 from __future__ import annotations
@@ -18,6 +20,7 @@ import re
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 import pytest
 
 from populace_dynamics.cohorts import age67
@@ -50,10 +53,31 @@ def _section(text: str, number: str, following: str) -> str:
     return text.split(f"## {number}. ")[1].split(f"## {following}. ")[0]
 
 
+#: Max's ruling on the u1-draft-7 card, as the cos record of d411 holds it.
+D411_RULING = (
+    "yes, as on the card: (a)-(g) as corrected 2026-09-25, including the "
+    "memo's n<30 small-cell flag and 'uncertainty not estimable' for a "
+    "no-switcher cell; registration states it is a static simulation on "
+    "PSID-observed incomes (Max in chat, 2026-09-26)"
+)
+D411_RULED_AT = "2026-09-26T07:41"
+#: The awaiting text of every pending decision since u1-ratified-1.
+FIXED = "fixed by the ratification of u1-ratified-1 (cos decision d411)"
+#: The ruling fields d189 decided; every other field is d411's.
+D189_FIELDS = frozenset({"claim_class", "ssi_rule", "wealth_supplements"})
+
+
+def _flat(value: str) -> str:
+    return " ".join(value.split())
+
+
 def test_block_identity_and_status(block):
     assert block["specification"] == "boomers2004_uniform_cut_exercise2"
-    assert block["version"] == "u1-draft-7"
-    assert block["status"] == "draft_for_referee"
+    # u1-ratified-1 (cos decision d411): ratified and frozen, nothing
+    # blocks the registered run
+    assert block["version"] == "u1-ratified-1"
+    assert block["status"] == "ratified_frozen"
+    assert block["blocked_by"] == []
     # Max ruled on exercise 2 (cos decision d189, 2026-09-24): the claim
     # class is decided and no longer awaited
     assert block["claim_class"]["decided"] == "d189"
@@ -63,17 +87,48 @@ def test_block_identity_and_status(block):
     )
     assert block["acceptance_rule"] is None
     assert block["labels"] == list(ap.OUTPUT_LABELS)
-    # u1-draft-7: row U7 is built, so only the #42 registration blocks
-    assert block["blocked_by"] == ["issue_42_registration_absent"]
+    module = _registered_script()
+    assert module._awaiting(block) == []
+    module.check_specification_ratified(block)
 
 
-def test_status_line_does_not_claim_ratification(text):
-    status = text.split("- **Specification:**")[0]
-    assert "draft for the referee" in status
-    assert "Nothing here is ratified" in status
-    assert "`u1-draft-7`" in text.split("- **Plan item:**")[0]
-    assert "cos decision d189, decided" in " ".join(status.split())
-    assert "Two" in status and "referee passes are recorded" in status
+def test_status_line_records_the_ratification(text):
+    """The header records d411's ruling verbatim and the ratification by
+    merge; the claim class keeps d189's name and says, as the ruling
+    directs, that the exercise is a static simulation on PSID-observed
+    incomes."""
+
+    status = _flat(text.split("- **Specification:**")[0])
+    assert status.startswith("# ")
+    assert "- **Status:** ratified and frozen." in status
+    assert "draft for the referee" not in status
+    assert "Nothing here is ratified" not in status
+    assert f'Max ruled cos decision d411 on 2026-09-26: "{D411_RULING}"' in (
+        status
+    )
+    assert "item (g) adds a small-cell rule for the comparison memo" in (
+        status
+    )
+    assert "Two referee passes are recorded (§17)" in status
+    header = _flat(text.split("- **Plan item:**")[0])
+    assert "version `u1-ratified-1`" in header
+    claim = _flat(
+        text.split("- **Claim class (decided, cos decision d189")[1].split(
+            "- **Labels every output carries:**"
+        )[0]
+    )
+    assert "realized-outcome measurement on PSID persons at age 67" in claim
+    assert "Python, not Axiom (plan decision 4; §16 ruling 11)" in claim
+    assert "static simulation on PSID-observed incomes" in claim
+    assert "the incomes and wealth are PSID-observed" in claim
+    assert "the annuitized income are counterfactual" in claim
+    boundary = _flat(
+        text.split("- **Builder boundary:**")[1].split("## 1. Target")[0]
+    )
+    assert (
+        "The lane that wrote `u1-ratified-1` read `RESTRICTED-FILES.md`"
+        in (boundary)
+    )
 
 
 def test_builder_boundary_records_the_extract_values_scan(text):
@@ -166,11 +221,11 @@ def test_headline_rule_matches_the_code(block):
     headline = block["population"]["headline"]
     assert headline["rule"] == track_u_rows.HEADLINE_RULE
     assert headline["fallback_row"] == track_u_rows.FALLBACK_ROW
-    # u1-draft-7: with the supplements staged and adjudicated the rule gives
-    # U0, and the rule is resolved on that source (no awaiting note)
+    # with the supplements staged and adjudicated the rule gives U0, which
+    # Max ruled the headline (d411 item (a)); no awaiting note
     assert headline["staged_psid_headline"] == track_u_rows.PRIMARY_ROW
     assert "awaiting" not in headline
-    assert headline["resolved"].startswith("u1-draft-7")
+    assert headline["ruled"].startswith("d411 item (a): U0 is the headline")
     assert block["population"]["primary_row"] == track_u_rows.PRIMARY_ROW
     fallback = age67.observation_plan(age67.Age67Spec(row="U0-F"))
     assert sorted({b for b, _, _, _ in fallback}) == list(
@@ -319,6 +374,7 @@ def test_cut_and_threshold_years_match_the_code(block):
     # 2004" (cleared extract), so the cut no longer awaits Max
     assert "awaiting" not in cut
     assert "beginning in 2004" in cut["start_year_basis"]
+    assert cut["ruled"] == "d411 item (d)"
     assert "decision 8" in decision.default_basis
     assert not decision.awaiting.startswith("Max")
     assert cut["start_year_rule"] == ap.CUT_START_YEAR_RULE
@@ -343,17 +399,67 @@ def test_statistic_and_comparison_match_the_tabulation(block):
     assert statistic["unit"] == "percentage_points"
     comparison = block["comparison"]
     assert comparison["gap"] == "model_minus_report"
-    assert comparison["acceptance"]["rule"] is None
-    # u1-draft-7: plan decision 6 is a default consistent with Max's
-    # rulings for exercises 1, 3 and 4, and is not recorded as his ruling
-    # for exercise 2
-    basis = comparison["acceptance"]["basis"]
-    for record in ("d074 item 3", "d188 item (a)", "d219 item 8"):
-        assert record in basis, record
-    assert "not a ruling by Max for exercise 2" in basis
-    assert "awaiting" not in comparison["acceptance"]
+    # Max ruled no acceptance threshold (d411 item (c))
+    assert comparison["acceptance"] == {
+        "rule": None,
+        "ruled": "d411 item (c)",
+    }
+    rulings = track_u_rows.MAX_RULINGS
+    assert rulings["acceptance_rule"]["ruling"] is None
+    assert rulings["acceptance_rule"]["item"] == "(c)"
+    # d411 item (g): the memo's small-cell rule, a reporting rule for the
+    # comparison memo that the block and the code's rulings record alike
+    memo = dict(comparison["memo_small_cells"])
+    assert memo.pop("ruled") == "d411 item (g)"
+    assert memo == rulings["memo_small_cells"]["ruling"]
+    assert memo == {
+        "flag_unweighted_n_below": 30,
+        "unweighted_n": "n_observations",
+        "no_switcher_cell": "uncertainty_not_estimable",
+    }
     module = _registered_script()
-    assert module._awaiting(block) == ["plan_decisions.7.awaiting"]
+    assert module._awaiting(block) == []
+
+
+def test_memo_small_cell_rule_uses_what_the_artifact_carries():
+    """d411 item (g) flags cells by their unweighted n, which the
+    tabulation reports per cell as ``n_observations``; and in a cell where
+    nobody's poverty status changes, Delta and its design SE are both 0,
+    which is why the memo reports that cell's uncertainty as not
+    estimable rather than as SE 0.  INVENTED rows only."""
+
+    rows = pd.DataFrame(
+        {
+            "observation_id": ["o1", "o2", "o3", "o4"],
+            "person_id": [1, 2, 3, 4],
+            "family_unit_id": [10, 20, 30, 40],
+            "weight": [1.0, 2.0, 1.0, 3.0],
+            "sex": ["female", "female", "male", "male"],
+            "marital_status_4": [
+                "never_married",
+                "never_married",
+                "married",
+                "married",
+            ],
+            "birth_year": [1937, 1939, 1941, 1943],
+            "stratum": [1, 1, 2, 2],
+            "cluster": [1, 2, 1, 2],
+            # nobody in never_married switches; one married member enters
+            "poor_baseline": [True, False, False, False],
+            "poor_reform": [True, False, True, False],
+        }
+    )
+    result = ut.tabulate_uniform_cut(
+        rows,
+        data_provenance="invented",
+        design=rows[["stratum", "cluster"]],
+    )
+    entry = {cell["cell"]: cell for cell in result["cells"]}
+    assert entry["never_married"]["n_observations"] == 2
+    assert entry["never_married"]["delta"] == 0.0
+    assert entry["never_married"]["design_se"]["delta"]["se"] == 0.0
+    assert entry["married"]["delta"] > 0.0
+    assert entry["married"]["design_se"]["delta"]["se"] > 0.0
 
 
 def _registered_script():
@@ -365,99 +471,228 @@ def _registered_script():
     return module
 
 
-def test_every_choice_awaiting_max_is_awaited_in_the_block(block):
-    """Every choice that awaits Max carries an ``awaiting`` key in the
-    section 15 block, so the registered run's ratification scan refuses
-    the block until Max rules.
-
-    Since u1-draft-7 no code parameter awaits Max (plan decision 8, the
-    cut's start year, is settled by the Report's "beginning in 2004"), and
-    the block's only ``awaiting`` is plan decision 7, ratification by merge
-    and the #42 registration.  Regression history (independent review of
-    u1-draft-5): withdrawing row U6 once removed the block's only
-    ``awaiting`` for decision 8 while the code still listed it as awaiting
-    Max; this test holds the two together.
+def test_nothing_awaits_max_in_the_block_or_the_code(block):
+    """Since u1-ratified-1 (cos decision d411) nothing awaits Max: no code
+    parameter's ``awaiting`` names him, every pending decision records the
+    ratification that fixed it, and the block holds no ``awaiting`` key,
+    so the registered run's ratification scan passes.  Regression history
+    (independent review of u1-draft-5): withdrawing row U6 once removed
+    the block's only ``awaiting`` for decision 8 while the code still
+    listed it as awaiting Max; this test holds the two together.
     """
 
-    awaiting_max = {
-        item.field
+    pending = [
+        item
         for decisions in (
             age67.pending_decisions(),
             ap.pending_decisions(),
             ut.pending_decisions(),
         )
         for item in decisions
-        if item.awaiting.startswith("Max")
-    }
-    assert awaiting_max == set()
-    found = _registered_script()._awaiting(block)
-    assert found == ["plan_decisions.7.awaiting"]
-    assert "decision 7" in block["plan_decisions"]["7"]["awaiting"]
-    # d189 decided the SSI rule and the claim class (2026-09-24): neither
-    # is awaited any more
-    assert "ssi.awaiting" not in found
-    assert "claim_class.awaiting" not in found
+    ]
+    assert pending
+    assert {item.awaiting for item in pending} == {FIXED}
+    assert _registered_script()._awaiting(block) == []
+    assert "plan_decisions" not in block
+    # d189 decided the SSI rule and the claim class (2026-09-24)
     assert block["ssi"]["decided"] == "d189"
     assert block["ssi"]["rule"] == ap.AdjustedPovertySpec().ssi_rule
 
 
-def test_plan_decisions_record_status_and_basis(block):
-    """u1-draft-7: each plan section 10 decision is recorded with its
-    status and basis; decisions 6 and 9 are defaults consistent with Max's
-    precedent, not rulings for exercise 2, and only decision 7 awaits
-    him."""
+def test_decisions_record_max_rulings_equal_to_the_code(block):
+    """u1-ratified-1: the section 15 ``decisions`` block records Max's
+    rulings (d189 and d411) in the E1 section 21 form, equal to the code's
+    ``MAX_RULINGS``, and each ruling equals the code default or constant it
+    fixes."""
 
-    decisions = block["plan_decisions"]
-    assert set(decisions) == {str(n) for n in range(1, 10)} | {"fallback_rule"}
-    status = {key: entry["status"] for key, entry in decisions.items()}
-    assert status == {
-        "1": "decided",
-        "2": "settled_by_source",
-        "3": "decided",
-        "4": "settled_by_source",
-        "5": "decided",
-        "6": "default_consistent_with_precedent",
-        "7": "awaiting_max",
-        "8": "settled_by_source",
-        "9": "default_consistent_with_precedent",
-        "fallback_rule": "settled_by_source",
+    decisions = block["decisions"]
+    assert decisions["ruled_by"] == "Max"
+    assert decisions["ruled_on"] == D411_RULED_AT[:10] == "2026-09-26"
+    rulings = track_u_rows.MAX_RULINGS
+    assert set(decisions) == set(rulings) | {"ruled_by", "ruled_on"}
+    check = track_u_rows.check_rulings_against_block(block)
+    assert check == {"rulings_checked": sorted(rulings), "rulings_equal": True}
+    for name, entry in rulings.items():
+        assert "ruling" in entry, name
+        expected = "d189" if name in D189_FIELDS else "d411"
+        assert entry["decision_record"] == expected, name
+        if expected == "d411":
+            assert re.fullmatch(r"\([a-g]\)", entry.get("item", "(a)")), name
+    # each ruling is the code's default or constant
+    spec = ap.AdjustedPovertySpec()
+    assert rulings["claim_class"]["ruling"] == block["claim_class"]["class"]
+    assert rulings["ssi_rule"]["ruling"] == spec.ssi_rule
+    assert rulings["ssi_rule"]["registered_as"] == ["U2", "U3"]
+    assert rulings["headline_row"]["ruling"] == track_u_rows.PRIMARY_ROW
+    assert rulings["headline_row"]["rule"] == track_u_rows.HEADLINE_RULE
+    assert rulings["headline_row"]["registration_states"] == [
+        "u1_matches_the_report_birth_year_mix",
+        "u0_omits_the_uncut_1936_birth_year",
+    ]
+    assert rulings["rows"]["ruling"] == list(track_u_rows.REGISTERED_ROWS)
+    assert rulings["rows"]["ruling"] == list(block["rows"])
+    assert rulings["financial_assets"]["ruling"] == spec.financial_assets
+    assert rulings["financial_assets"]["registered_as"] == ["U7", "U7-F"]
+    assert rulings["acceptance_rule"]["ruling"] is block["acceptance_rule"]
+    assert rulings["cut_start_year"]["ruling"] == spec.cut_start_year
+    assert rulings["definitions_extract"]["sha256"] == (
+        block["target"]["definitions_extract"]["sha256"]
+    )
+    assert rulings["rules_implementation"]["ruling"] == (
+        "python_income_concept_not_axiom"
+    )
+    assert "Python income concept (not Axiom)" in ap.OUTPUT_LABELS
+    registration = rulings["ratification_and_registration"]
+    assert registration["publishes_regardless"] is True
+    assert registration["registration_describes"] == (
+        "static_simulation_on_psid_observed_incomes"
+    )
+    # d411 item (g): the freeze defaults, except the memo's small cells
+    assert rulings["freeze_defaults"]["except"] == ["memo_small_cells"]
+    assert rulings["memo_small_cells"]["declined"] == ["no_small_cell_flag"]
+    assert rulings["memo_small_cells"]["item"] == "(g)"
+
+
+def test_no_ratified_text_registers_a_withdrawn_or_absent_row(block, text):
+    """d411 item (a) registers U0, U1-U5, U7-U10, U0-F, U2-F-U5-F and
+    U7-F-U10-F.  U6 (withdrawn in u1-draft-5) and U1-F (never defined) are
+    registered nowhere: not in the block's rows, the code's rulings or
+    rows, the section 11 table, section 16's rulings, or the ratification
+    record."""
+
+    registered = {
+        "U0",
+        "U1",
+        "U2",
+        "U3",
+        "U4",
+        "U5",
+        "U7",
+        "U8",
+        "U9",
+        "U10",
+        "U0-F",
+        "U2-F",
+        "U3-F",
+        "U4-F",
+        "U5-F",
+        "U7-F",
+        "U8-F",
+        "U9-F",
+        "U10-F",
     }
-    for key in ("1", "3", "5"):
-        assert decisions[key]["decision_record"] == "d189"
-    for key, entry in decisions.items():
-        if entry["status"] != "decided":
-            assert "decision_record" not in entry, key
-        if entry["status"] != "awaiting_max":
-            assert entry["basis"], key
-            assert "awaiting" not in entry, key
-    assert "not a ruling by Max for exercise 2" in decisions["6"]["basis"]
-    assert "not a ruling by Max for exercise 2" in decisions["9"]["basis"]
-    assert "d196 item (5)" in decisions["9"]["basis"]
-    assert "Python income concept, not Axiom" in decisions["4"]["basis"]
-    assert "beginning in 2004" in decisions["8"]["basis"]
-    assert "cleared" in decisions["2"]["basis"]
-    assert decisions["7"]["card"] == "specification section 20"
+    assert set(block["rows"]) == registered
+    assert set(track_u_rows.MAX_RULINGS["rows"]["ruling"]) == registered
+    assert set(track_u_rows.REGISTERED_ROWS) == registered
+    assert "U1-F" not in text
+    table = _section(text, "11", "12").split("| Row | Field |")[1]
+    table_rows = [
+        line.split("|")[1].strip().strip("*")
+        for line in table.splitlines()
+        if line.startswith("| ") and not line.startswith("|---")
+    ]
+    assert "U6" not in table_rows
+    # no range in section 11 (which registers the rows) spans U6
+    rows_section = _flat(_section(text, "11", "12"))
+    assert "U2-F–U5-F and U7-F–U10-F (U2-F, U3-F, U4-F, U5-F, U7-F" in (
+        rows_section
+    )
+    assert "as U2–U5 and U7–U10" in rows_section
+    for spanning in ("U2 … U10", "U2-F … U10-F", "U1–U10", "U2–U10"):
+        assert spanning not in rows_section, spanning
+    for number, following in (("16", "17"), ("20", None)):
+        section = (
+            _section(text, number, following)
+            if following
+            else text.split(f"## {number}. ")[1]
+        )
+        assert not re.search(r"\bU6\b", section), number
+    ruling = _flat(_section(text, "16", "17"))
+    assert (
+        "U0; U1, U2, U3, U4, U5, U7, U8, U9 and U10; U0-F; and U2-F, U3-F, "
+        "U4-F, U5-F, U7-F, U8-F, U9-F and U10-F on U0-F's population"
+    ) in ruling
 
 
-def test_the_card_for_max_closes_the_specification(text):
-    """u1-draft-7: what still needs Max is one consolidated card, the
-    last section, and it asks for decision 7 with the recorded defaults
-    (none of them presented as a ruling already made)."""
+def test_section_7_discloses_the_birth_year_mix(text):
+    """d411 item (a): the registration says U1 matches the Report's
+    birth-year mix and U0 omits the 1936 birth year, which this
+    specification reads as uncut in the Report; section 7 states both, on
+    the specification's own reading of the cut's start."""
+
+    section = _flat(_section(text, "7", "8"))
+    assert (
+        "so its 1936 birth year, 67 in 2003, is uncut at its age-67 year"
+        in (section)
+    )
+    disclosure = section.split(
+        "**Birth-year mix (disclosed; d411 item (a)).**"
+    )[1]
+    assert "U0 omits the 1936 birth year" in disclosure
+    assert "reads as uncut in the Report" in disclosure
+    assert "U1 is the registered row whose birth-year mix matches" in (
+        disclosure
+    )
+    assert "one cross-section's worth of weight (§3)" in disclosure
+    # the code agrees: U0 and U0-F hold no 1936 observation, U1 does, and
+    # the primary's 2004 start leaves 1936 uncut
+    for row, has_1936 in (("U0", False), ("U0-F", False), ("U1", True)):
+        plan = age67.observation_plan(age67.Age67Spec(row=row))
+        assert (1936 in {b for b, _, _, _ in plan}) is has_1936, row
+    assert ap.AdjustedPovertySpec().cut_start_year == 2004 > 1936 + 67
+
+
+def test_section_10a_states_the_memo_small_cell_rule(text):
+    """d411 item (g): the memo flags each cell under an unweighted n of 30
+    and reports a no-switcher cell as 'uncertainty not estimable'; the
+    section says it is a memo rule, not a code change."""
+
+    section = _flat(_section(text, "10a", "11"))
+    assert (
+        "**Acceptance:** none (ruled by Max, d411 item (c); §16 ruling 8)"
+        in (section)
+    )
+    small = section.split("**Small cells (ruled by Max, d411 item (g)")[1]
+    assert "`n_observations`" in small and "under 30" in small
+    assert '"uncertainty not estimable", not as a design SE of 0' in small
+    # the floor is undefined, never zero, with fewer than two usable seeds
+    # (section 10), so the no-switcher floor is 0 only where it is defined
+    assert "so the floor, where it is defined, is 0 too" in small
+    assert ut.MIN_FLOOR_SEEDS == 2
+    assert "no computation of the code or the run artifact changes" in small
+    assert "(`MAX_RULINGS`, §15)" in small
+
+
+def test_the_ratification_record_closes_the_specification(text):
+    """u1-ratified-1: the last section records d411's ruling verbatim and
+    what the #42 registration states."""
 
     headings = re.findall(r"^## (\d+)\. ", text, re.MULTILINE)
     assert headings[-1] == "20"
-    card = " ".join(
-        text.split("## 20. Card for Max (consolidated)")[1].split()
+    assert "## 20. Ratification record\n" in text
+    assert "## 20. Card for Max" not in text
+    record = _flat(text.split("## 20. Ratification record")[1])
+    assert f'"{D411_RULING}"' in record
+    assert f"`ruled_at` {D411_RULED_AT}" in record
+    assert "The issue #42 registration comment follows the merge" in record
+    # the card's cos record was corrected before the ruling (its notes
+    # keep the previous text); the record says what changed without
+    # naming the withdrawn row
+    assert (
+        "The card's cos record was corrected on 2026-09-25, before the "
+        "ruling, after an independent skeptic's check"
+    ) in record
+    assert "listed U7 twice" in record
+    assert "withdrawn in `u1-draft-5`" in record
+    assert "headline row (U0)" in record
+    assert "static simulation on PSID-observed incomes" in record
+    assert "U1 matches the Report's birth-year mix" in record
+    assert "U0 omits the 1936 birth year" in record
+    assert "`scripts/run_track_u_registered.py --headline-row U0`" in record
+    changelog = _flat(_section(text, "19", "20").split("\n- `")[1])
+    assert changelog.startswith(
+        "u1-ratified-1` (2026-09-26; cos decision d411)"
     )
-    assert "ratify the U1 specification by merge as `u1-ratified-1`" in card
-    assert "post the issue #42 registration and run the one-shot" in card
-    for item in ("(a)", "(b)", "(c)", "(d)", "(e)", "(f)", "(g)"):
-        assert f"- {item} " in card, item
-    for record in ("d074 item 3", "d188 item (a)", "d219 item 8"):
-        assert record in card
-    assert "d196 item (5)" in card
-    assert "this draft files nothing" in card
-    assert "EVID/u1-ratification-changes-20260925.md" in card
 
 
 def test_rows_name_real_alternatives(block):
@@ -549,62 +784,56 @@ def test_named_deltas_equal_the_runner(text):
     assert cleaned == list(runner.NAMED_DELTAS)
 
 
-def test_pending_decisions_are_listed_in_the_text(text):
-    section = _section(text, "16", "17")
-    assert "d189" in section
-    assert "Decision 8" in section and "cut_start_year = 2004" in section
-    assert "the institution income rule (used by no registered row" in (
-        " ".join(section.split())
+def test_section_16_records_every_ruling_and_the_frozen_list(text):
+    """u1-ratified-1: section 16 is "Decisions (ruled by Max, ...)", quotes
+    d189's and d411's rulings verbatim, names every ruling field of
+    ``MAX_RULINGS`` and lists the freeze defaults, with d411 item (g)'s
+    small-cell rule in place of the filed default (no small-cell flag)."""
+
+    assert "## 16. Decisions (ruled by Max, 2026-09-24 and 2026-09-26)\n" in (
+        text
     )
-    assert "d194" in section
-    assert "fallback rule" in section
+    section = _section(text, "16", "17")
+    flat = _flat(section)
+    assert (
+        "d189's ruling reads \"Yes to Track U with the SSI offset rule for "
+        "existing recipients (Max in chat 2026-09-24); Max will download the "
+        'PSID 2005/2007 wealth supplements with his simba login"'
+    ) in flat
+    assert f'd411\'s reads "{D411_RULING}"' in flat
+    for name in track_u_rows.MAX_RULINGS:
+        assert f"(`{name}`;" in flat, name
+    for number in range(1, 15):
+        assert f"{number}. **" in section, number
     ssi = next(
         item for item in ap.pending_decisions() if item.field == "ssi_rule"
     )
     assert ap.D189_RULING in ssi.default_basis
-    flat = " ".join(section.split())
-    assert "Decided by Max (cos decision d189, 2026-09-24)" in flat
-    assert "offset for existing recipients (Max's ruling" in flat
-    # u1-draft-7: the source-settled decisions, the precedent defaults
-    # (not rulings for exercise 2) and the one item awaiting Max
-    settled = flat.split("Settled by sources (`u1-draft-7`).")[1].split(
-        "Defaults consistent with Max's precedent"
-    )[0]
-    for item in (
-        "Decision 2 (",
-        "Decision 4 (",
-        "Decision 8 (",
-        "The fallback rule (§11)",
-    ):
-        assert item in settled, item
-    assert "None is a ruling by Max" in settled
-    defaults = flat.split("Defaults consistent with Max's precedent")[1].split(
-        "Awaiting Max: one card (§20)."
-    )[0]
-    assert "These are not rulings by Max for exercise 2." in defaults
-    for item in ("Decision 6 (acceptance rule)", "Decision 9 (optional"):
-        assert item in defaults, item
-    for record in ("d074 item 3", "d188 item (a)", "d219 item 8"):
-        assert record in defaults, record
-    awaiting = flat.split("Awaiting Max: one card (§20).")[1].split(
+    assert "d194" in flat
+    assert "fallback rule" in flat
+    assert "**Ruling:** 2004, keyed on each member's age-67 year" in flat
+    frozen = flat.split("**Frozen by this version (d411 item (g);")[1].split(
         "The Census threshold files"
     )[0]
-    assert "Plan decision 7" in awaiting
-    assert "plan_decisions.7.awaiting" in awaiting
     for phrase in (
+        "cut rate (0.13)",
         "retirement-account income (remove the head's)",
         "farm asset share (0.5",
         "annuity lives (FU head rule)",
         "annuitant ages (derived birth year)",
         "unresolved marital status (relationship code)",
         "design SE (full-design domain)",
-        "real rate (3 percent; 2 percent sensitivity)",
-        "cut start year (2004)",
-        "U2-F … U10-F, including U7-F",
-        "financial assets (WEALTH1; WEALTH1 plus the observed employer DC",
-        "No card or ruling by Max on it was found",
+        "real rate (3 percent; 2 percent an unscored sensitivity)",
+        "U1 1936 weight (1)",
+        "the memo's small-cell rule (ruling 14",
+        "the institution income rule (`excluded`; used by no registered row)",
     ):
-        assert phrase in flat, phrase
+        assert phrase in frozen, phrase
+    assert "no small-cell flag in the memo" not in flat
+    small = flat.split("14. **Memo small cells** (`memo_small_cells`;")[1]
+    assert "under 30" in small
+    assert '"uncertainty not estimable", not as SE 0' in small
+    assert "no small-cell flag, which was declined" in small
     # every pending field of the code is listed by the code
     assert {item.field for item in age67.pending_decisions()} == set(
         age67.Age67Spec().as_dict()

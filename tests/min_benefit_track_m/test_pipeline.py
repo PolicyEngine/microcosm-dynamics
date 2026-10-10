@@ -31,6 +31,23 @@ POINTER = (
     "https://github.com/PolicyEngine/microcosm-dynamics/issues/42"
     "#issuecomment-1"
 )
+#: The blockers ``m1-ratified-1``'s block listed when it was ratified; the
+#: registered-commit edit (2026-09-27) dropped both.
+BLOCKERS_AT_RATIFICATION = (
+    "registration_package_m10_needs_the_comparator_seal_hash",
+    "issue_42_registration_absent",
+)
+
+
+def _committed() -> dict:
+    return json.loads(json.dumps(specification.m1_parameter_block()))
+
+
+def _blocked() -> dict:
+    """The committed block as ratified, before the registered-commit
+    edit: its ``blocked_by`` named the two blockers."""
+
+    return {**_committed(), "blocked_by": list(BLOCKERS_AT_RATIFICATION)}
 
 
 @pytest.fixture(scope="module")
@@ -156,11 +173,19 @@ def test_the_registered_path_refuses_before_any_computation(
     psid_kind = dataclasses.replace(
         cohort, provenance_kind=evaluation.PSID_FILES
     )
-    for inputs, provenance, pointer, match in (
-        (cohort, "registered_real", POINTER, "contradicts"),
-        (psid_kind, "invented", None, "invented data"),
-        (psid_kind, "registered_real", None, "registration pointer"),
-        (psid_kind, "registered_real", POINTER, "does not authorize"),
+    for inputs, provenance, pointer, block, match in (
+        (cohort, "registered_real", POINTER, None, "contradicts"),
+        (psid_kind, "invented", None, None, "invented data"),
+        (psid_kind, "registered_real", None, None, "registration pointer"),
+        (
+            psid_kind,
+            "registered_real",
+            POINTER.replace("/42#", "/420#"),
+            None,
+            "registration pointer",
+        ),
+        # a block that still lists blockers (the block as ratified)
+        (psid_kind, "registered_real", POINTER, _blocked(), "still blocked"),
     ):
         with pytest.raises(tabulation.TrackMTabulationError, match=match):
             pipeline.run_track_m(
@@ -168,7 +193,19 @@ def test_the_registered_path_refuses_before_any_computation(
                 PARAMETERS,
                 data_provenance=provenance,
                 registration_pointer=pointer,
+                specification=block,
             )
+    # Under the committed block, which lists no blocker since the
+    # registered-commit edit, PSID-kind records with the issue #42 pointer
+    # pass the provenance guard; the next refusal, still before anything
+    # is evaluated, is the registered run's need for d430's sensitivity.
+    with pytest.raises(ValueError, match="d430 sensitivity"):
+        pipeline.run_track_m(
+            psid_kind,
+            PARAMETERS,
+            data_provenance="registered_real",
+            registration_pointer=POINTER,
+        )
     with pytest.raises(ValueError, match="MS0"):
         pipeline.run_track_m(
             cohort, PARAMETERS, data_provenance="invented", rows=("MS1",)
@@ -185,9 +222,9 @@ def test_the_registered_path_refuses_before_any_computation(
 def test_a_registered_run_reports_every_row_with_the_registered_seeds(
     cohort, monkeypatch
 ):
-    """Even under a ratified, unblocked specification (an in-memory copy),
-    the registered path refuses a subset of rows or other floor seeds
-    before evaluating anything."""
+    """Even under the ratified, unblocked specification (an in-memory copy
+    of the committed block), the registered path refuses a subset of rows
+    or other floor seeds before evaluating anything."""
 
     def never(*args, **kwargs):
         raise AssertionError("evaluated before the registered-run checks")
@@ -197,6 +234,7 @@ def test_a_registered_run_reports_every_row_with_the_registered_seeds(
     block.update(
         status="ratified_frozen", version="m1-ratified-1", blocked_by=[]
     )
+    assert block == specification.m1_parameter_block()
     psid_kind = dataclasses.replace(
         cohort, provenance_kind=evaluation.PSID_FILES
     )
@@ -220,6 +258,61 @@ def test_a_registered_run_reports_every_row_with_the_registered_seeds(
         pipeline.run_track_m(
             psid_kind, PARAMETERS, floor_seeds=(0, 1, 2, 3, 4), **common
         )
+
+
+def test_psid_hashed_records_are_evaluated_only_under_the_committed_block(
+    cohort, monkeypatch
+):
+    """Records carrying PSID file hashes reach no evaluation outside the
+    registered run, without the issue #42 pointer, or under a supplied
+    block other than the committed one, even a block the gate would pass
+    (here the committed block with another snapshot, a field the gate does
+    not hold to the code).  A supplied copy equal to the committed block
+    is the committed block: it passes this guard, and the next refusal is
+    d430's sensitivity.  Nothing is evaluated (the records are INVENTED)."""
+
+    def never(*args, **kwargs):
+        raise AssertionError("evaluated before the guards")
+
+    monkeypatch.setattr(pipeline, "evaluate", never)
+    hashed = dataclasses.replace(
+        cohort,
+        provenance_kind=evaluation.PSID_FILES,
+        source={
+            **dict(cohort.source),
+            pipeline.PSID_FILES_SOURCE_KEY: {"INVENTED.txt": "0" * 64},
+        },
+    )
+    supplied = {
+        **_committed(),
+        "snapshot": {"wave": 2021, "income_year": 2020},
+    }
+    specification.check_specification_for_registered_run(supplied)
+    registered = {
+        "data_provenance": "registered_real",
+        "registration_pointer": POINTER,
+    }
+    with pytest.raises(ValueError, match="only by the registered run"):
+        pipeline.run_track_m(hashed, PARAMETERS, data_provenance="invented")
+    with pytest.raises(ValueError, match="supplied block must equal it"):
+        pipeline.run_track_m(
+            hashed, PARAMETERS, specification=supplied, **registered
+        )
+    with pytest.raises(ValueError, match="supplied block must equal it"):
+        pipeline.run_track_m(
+            hashed, PARAMETERS, specification=_blocked(), **registered
+        )
+    with pytest.raises(
+        tabulation.TrackMTabulationError, match="registration pointer"
+    ):
+        pipeline.run_track_m(
+            hashed, PARAMETERS, data_provenance="registered_real"
+        )
+    for block in (None, _committed()):
+        with pytest.raises(ValueError, match="d430 sensitivity"):
+            pipeline.run_track_m(
+                hashed, PARAMETERS, specification=block, **registered
+            )
 
 
 def test_the_invented_cohort_has_every_shape_the_rules_need(cohort):

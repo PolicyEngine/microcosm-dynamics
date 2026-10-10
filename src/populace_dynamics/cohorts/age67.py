@@ -39,8 +39,8 @@ in institutional group quarters; on the staged PSID admitting them adds
 one U0 observation, born 1937, and none to U0-F).  The unregistered code
 option
 ``presence="in_family_or_institution"`` still admits them, and
-``institution_income_rule`` (pending the freeze; no registered row reads
-it) then decides their income.  The PSID collects no income for an
+``institution_income_rule`` (frozen by u1-ratified-1; no registered row
+reads it) then decides their income.  The PSID collects no income for an
 institutionalized person (the individual-file Social Security items are
 "Inap.: ... in an institution", codebook ER34137-ER34143 for 2011):
 
@@ -97,8 +97,8 @@ the inputs hold them for the wave.
 wave's interview number) or, when the inputs carry the reader's refusal
 for the wave, ``blocked_wealth_supplement_not_staged``.
 
-Unresolved marital states (``unresolved_marital_status``, pending the
-specification freeze): a member whose marriage history cannot date the
+Unresolved marital states (``unresolved_marital_status``, frozen by
+u1-ratified-1): a member whose marriage history cannot date the
 state (``unknown``) or who has no record (``no_marriage_history``) is,
 under ``relationship_code`` (default, the referee's Q7 answer), married
 and co-resident with that spouse when the member is the head with a
@@ -118,7 +118,7 @@ state the relationship code does not resolve, and ``separated``, which
 arises only under ``separated_is_married=False``).  A cohabiting member
 counts under his or her legal status.
 
-Annuitant ages (``annuitant_age_source``, pending the freeze): under
+Annuitant ages (``annuitant_age_source``, frozen by u1-ratified-1): under
 ``derived_birth_year`` (default, the referee's Q8 answer) every
 annuitant's age is the income year minus the birth year the birth-year
 law derives, the law extended beyond the universe to in-family heads,
@@ -405,7 +405,7 @@ def pending_decisions() -> tuple[psid2010.PendingDecision, ...]:
     """Every open choice of :class:`Age67Spec`, with its default."""
 
     spec = Age67Spec()
-    freeze = "U1 specification freeze (Max's ratification by merge)"
+    freeze = "fixed by the ratification of u1-ratified-1 (cos decision d411)"
     return (
         psid2010.PendingDecision(
             "row",

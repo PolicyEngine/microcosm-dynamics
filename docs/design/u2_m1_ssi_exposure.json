@@ -1,0 +1,1046 @@
+{
+  "agent": "ssi_capture",
+  "boundary": "Restrictions read first. No report PDF, comparator/seal, restricted evidence, PSID raw record, estimator or outcome read/run.",
+  "files": [
+    {
+      "path": "/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/RESTRICTED-FILES.md",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "35a4a2007d9e8ff01fff79c285eda3b4a33c53c1efdd04f01f9471f78d702840"
+    },
+    {
+      "path": "/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/phase2-20260927/prompts/common.md",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "b265c501f74752575558875d085465636a53593fafee25c93a1d17518461159e"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/CLAUDE.md",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "6e494a3bb48449ca082a4c7c708518b3d2c7184605b2cab1dee4d6b15b20cc8d"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/docs/design/boomers2004_1946_55_comparison.md",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "7badf89e896ece28abcea1cb2db9bd55d468346b405ed06eb357aaf5c7b51df2"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/docs/design/boomers2004_uniform_cut_comparison.md",
+      "mode": "SSI section and search matches only; no external report PDF opened",
+      "sha256": "830b0ab4c18273563add529fecf21f843eb418996da741d087d785c4f882781f"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/scripts/capture_track_u_parameters.py",
+      "mode": "lines 1\u2013270, documentary parameter code only; not executed/imported",
+      "sha256": "67776507baeb05b18636bac8cf75e8089b04eae8fa0c151a0dda7bcae863abb2"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/data/external/track_u_ssi_parameters.json",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "79e641a10d95afba81c8d831852fb52ef0a801e7175e06df17e6cc7cc3e3c523"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/data/external/census_poverty_thresholds_1982_2022.json",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "288399c475ae3ff02e6d8367425ee0a568b50d239da5656f24d0d2dfafabfb53"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/data/external/census_poverty_thresholds_2004_2012.json",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "dc21a78736f5085872cf56c9cf291258034c1293572b77455cba689a1ed0eec5"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/conftest.py",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "2356501f63d421374b79ec49f6271fd5fcd4db4d5af5921056bf5bf581f82438"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/pyproject.toml",
+      "mode": "read by Black, Ruff and pytest configuration discovery",
+      "sha256": "000c28b0702e6dc3704da9b6ea9df7fe2ce11858052f10e69b4060a327e33956"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/scripts/capture_track_u2_ssi_parameters.py",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "6a734c86191a048ffc0edcaf56ce68db0f48d645df0b4008788b623b2e0d0574"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/scripts/capture_track_u2_ssi_sources.py",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "84fdec0af0db19a42fbee8ca7dda27bc2b854a4b3395b018b844a0f8f19e3b18"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/track_u2/test_ssi_capture.py",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "860d48c0415fc920fcd3a28a65c5966380ac2ec66e617228fb2f8be986490d26"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/manifest.json",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "a7d09d735fa595e3c7060fb7972d088f0ee062a4c8bb31f739ef3ee578e82e53"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_capture_manifest.json",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "e2bf2acb87719d67f8971072f7fd4049a97665b2ee73ab3e8b4a7a5aeab77e5f"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/data/external/track_u2_ssi_parameters_2012_2022.json",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "a58d55c160b48cd3e21f730d45265374bd3c8a9eb7eae947469a5a5dc0b23762"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/docs/design/u2_m1_ssi_adjudication.md",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "cda455da3d5db214b0a587df71e75543c85d28370f761213e51f589460faf213"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1112.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "6562439cf114938ac43677490ec7c58013386404553faca351037e32b9fc31f5"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1121.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "5982d0f31630ac9180b0ddf3dfa3a7df90fec56720362e1819c980e9b1fa86e3"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1124.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "465b3c892e3b1367707b1d9608ebb4fef92aa7df0842e5f328e8e6c075153117"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1161.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "2f8f67dedde9925ed250aadb533804402e7f6446316547917ae213ec8071fc59"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1163.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "0ba9d9148b489929473a6e6a583f902151c11274525c6cb56b34cd9e03fd25fd"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1205.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "efe8165474b95cf94299534aca34c316c4622a3ebdb3db84b5ed49e8fcf25d23"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1218.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "a3ef5e7959fb53ca7cf3b23e9273eed0bfa3a2cdba05355d6824d2cfbba9c94f"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2012-title20-vol2-sec416-1806.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "fb22a2a8b3efc84ee259bba462271ab4aa6fc0f1abe475ecd7a50fdbd91cf4d8"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1112.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "83109d1f8a96490acf44a1b598577ebbf6eff161fdad4704d01337e45903b92d"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1121.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "83d897ff232ed77c2efe517e4cdb560d1aa8a7ad0a69d34185d295f32d06ba74"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1124.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "776b6028f50e10375af9d2d19fc91f8d630f3b4e9d410edba8b4407e64d04a52"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1161.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "bcfbaefdddcd21167ddeedf5e78c87f46653a81ecff2e6fe211bd44594ad58ba"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1163.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "e1185128a03d3b2fff5ce21582bb1f5b7b1ba8531f0063238d32a653dab2ddda"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1205.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "fecf128d1446504bbcbe8c0d082cfef4d334392bfe9a39c2ce200b3c054c19cf"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1218.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "82fd4b22573a38674d711cdc733a81cbfc779a2f6d3ec092b62852d057c0c64b"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2013-title20-vol2-sec416-1806.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "df8ba4c056cef5f76ddd27d0da6c612588db2cb3d6872b20d1c2616aecacc741"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1112.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "d69e58c628bdc3ddd4c68aa07e0363cff2c22156b31d524dbff17984c2b9211b"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1121.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "af2ed69d091f15bb2472f060c93e0292bba55a20176daf9e331a3cebb9ab1303"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1124.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "912dd10dff11c3878d0d83b1366bbd0afa7b1a57cbe1528f2613d5a94f86eb36"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1161.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "0ed8f149312d5c31f052a6f3af65a27aca082033dd2ed4c9930885cfdf7524ad"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1163.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "3e68c1a21abba53760139bc098d8ca6f6cf91d8d51798a2d981333a185962eb5"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1205.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "e896f64556a464e95f3b78653eac47ee6b8a894289730f5c4ff459a7ad640e99"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1218.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "605d753c32e611fab88c444cf2b8e4a1be48e630bbce0c9af01c624557db114e"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2014-title20-vol2-sec416-1806.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "d6f56d2e5ecf79eca5b64211b20a6f3e77ac2a1b369fcfb81d4a12f922a139b3"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1112.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "4e678f01d0e18707f2426a8ae679d846505db1a130e888a6369ef44e02e2b2e0"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1121.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "8795081fa5d6ae450526331e40302ede5e099e1cc2a1486a62757a04bacd6156"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1124.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "e412bc52433431159526f6f4dfcf1b0b99cd1a3a3db9e5ea4931ff3dd66dc4c5"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1161.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "7eb59293caee66140fe8555b82f1a7166976506a607db924c23fe3a82b502b4e"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1163.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "c836e029839a7c54df144993912c09d7b41be7d315680757252216c36bda57ea"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1205.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "60d7cd5fef22f510cbe0266e38abc2d130224f3d96f1599b47266e12a69c2e8c"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1218.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "4b1abcb19e66a9e37810f35f5db4dde3fddb7073e8069b08bd833fe5fa6e6690"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2015-title20-vol2-sec416-1806.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "52e7f82c7e91ed27d1315ad29067097a698490732fc7240072e5d238e60fc089"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1112.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "60561cd846f3e2ca62896b41c2c8ae971e047056f0e5834ce9538bd99400b434"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1121.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "4e670af438b9716ad169a8d2c5daab945a80a26904a232b53eb16a6d7e35d75d"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1124.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "cda86d4341093fb2663db6308dc8adc2229c109063a78f1a66c71e16f339f67b"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1161.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "14b0a68fb1ea2e293548eee0af596b71c0ba8ba37ccddbfd540ed11fc66441f5"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1163.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "4bcbd24f7a600e70f840f797658fdee7033564bb9cd9d5c920cc16759e32d424"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1205.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "22d4fc527fa9ef36f4f61cd54c18b40b075cda23ca25aedc8d9b853ba619629e"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1218.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "16bd4168413e0d933f43309204fe080361ad4102217c40f17f7f1a143070c184"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2016-title20-vol2-sec416-1806.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "74f1321ebdfb323f7b9f048bbd249845d0256b80a7a1866f58bd151612e506d7"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1112.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "5b3c9ee04093c62fb97f786b0eecef42bc7828722d14b6786071179fba71a041"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1121.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "af2bb483801c13f97cf68812856f44f39301a87cb3eb80e912aaaabb138f86d0"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1124.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "e653a7aa33a6bcf7f65549c0926913beadf321ec4500ac29819ce56c3b01bc6b"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1161.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "b00148b45228d93b7ffe94661c72b4bab60cb03ee90eca48f68ea6f0cfdae097"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1163.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "4bbacfede623db2527ebcb0b5cb2d9fc90b2199d0ab42b6fca4649229b1ad78a"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1205.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "17c00e89b1aa1e13898bc341e57ac9cc19131a61e6442b38e15ac2a152392280"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1218.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "ed1cb6742d196dfe6c7a4134a3ffa7c08f18088cb64476e2769772d10cbfdba3"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2017-title20-vol2-sec416-1806.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "b564034faabf8f704f4ea39943373d8584afb7ab0543e92402d60e32893942d7"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1112.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "07a625600691642e58cfd4fa22a5c858c15fef577bad4b2c7a2e1ed9463941ae"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1121.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "7b20d15e2eff95ba9509c66fa9cd96873ff8fb3b674e7860d9eb645dc4c251c5"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1124.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "cf23a4fe7f2d1eac3aeed343bcd8f5834c45541e5285606430ed5081b6fb73a0"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1161.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "f83125c90b742c600b51d768767c7b839329968bc52e3cfd08a9d1139b563786"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1163.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "ec3e0e8ec8551abd8f9bcb243ce41d414ae6def3d99736873c064dd5b493dce6"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1205.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "98516c9974fecf5a490aee1cc849193c916014f79d31a1c7e55870a11d213f68"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1218.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "80b6ffad30f912fa068ab1e48ffbfb87f930684dd6c44cd4e64078bad43cb9c6"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2018-title20-vol2-sec416-1806.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "41dae20e7e54283f516375dbe137eea418c481390916d302918d04215cc319d6"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1112.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "464b8f1425faea2d100cdb8e222a0939e058b430d67c9a7159a1cdd4d16d048d"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1121.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "a41ac724b7c9b73a3286aecc23a34af9c512ac707efa13cd8fb333b85a9b4a54"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1124.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "30d164cd500dcad4f86606403ed95d664a7a8fb4dd2bf69578e8af11e399802d"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1161.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "625bfb572e127ec90f8ad40b9f2a3e7fdb205ca7c2a754765596a24155da182a"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1163.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "f072032a1f0255ea74cb44405aec65e4732a178b3332362668ea27e313c080f3"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1205.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "c1c1893cddbc3c3687a1dbc87937b1fde801c59ff5cd26c418983289b4aedb08"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1218.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "17c63ccfa8b317addae6dec80990e649c400da6a0ab8ad74aa11229dadeb340c"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2019-title20-vol2-sec416-1806.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "a220efbf1191500ca90ec7fae6758bcc7ed249726d2edb86a02db40df845b0e7"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1112.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "4fd606f164727948dd13b7364c66aacde200c400f0eb9c7cb7f7d68bf237798f"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1121.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "1d05e92edd247c25b3eea8e078304b0fcfa69bfdacf3e6c041e4ff2edbe32b03"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1124.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "a575fc081f9a86779ec7ed760c142de86df68206225e8943d696498cdb23035c"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1161.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "35d154bb6ec3e2a5cf07b47bd1aee62a43d9efacc06b008fc16a2e8ffc55b0c1"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1163.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "ddcd31b6fcd673715fc04a149a52d302bb0e01e27c14d725c2bf487a546b74bd"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1205.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "387d5b7f778e998775053a26d06591bd1aab79a9611b6ccf6663eadb16a814d5"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1218.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "a9ac71dedb29a68a4d24216aec7773c4a8f85dd2be74a86216dc09c103b2ac4f"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2020-title20-vol2-sec416-1806.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "11fa5a8a1596528e62a074c0b37c10b48be31abaf563d36bf66d01bff6268a20"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1112.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "e89c8b3d1551d04fed7fc32cf298e05fa6343172a197826c2c48be969730b134"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1121.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "95e4ae35e61cd8557c1ad8423cb26eb40610525ce9585ca9fa3e0d285b34e4e6"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1124.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "86c3630410dbfadbdf2da729b6836fb4494603d590597da1f02725675a123b58"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1161.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "b6fa1e91f64eca1cf80da3854798f25ccada86799eaec212d1fdae957c62ac23"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1163.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "531441b6cfde848fd6cbdbf3fd448504eca29de54eb8c7a8ff47455fa1f18045"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1205.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "90d94e81a3be992aea6716b07d892b1f5bc6806b5b059c352ba59c5f5ba69d26"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1218.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "cdc23a513012003cd64aa9f7da19d5c6ee60698977131fcd53215e25fae00f95"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2021-title20-vol2-sec416-1806.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "1a5a866bdf1d63e97b4cf34a4f051979af252d71d19294213ebc6eb4aaa8e288"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1112.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "0fd5a56af4d5a258d980a03dbd5ae6a672c964c3f7980121c65a5869fc86edad"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1121.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "e30eba523f2cf39d7a0408489346266275edf919421398a4d66fc611b1f947e8"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1124.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "6a1287d0bc11dbf205b73ee0275804868499d93a4acdd5869ad39895d9514c36"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1161.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "64dfd528ea78e87e2f9b444e14c93d69655e0477eb8991a30b4634ced13bab3b"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1163.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "e60b70d2fc652ada9db1ede2e85b7721ce72ac6f03bbf24e6bd97c8d4c2273d6"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1205.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "02df752dce8f1ee8cb96668ba9ffc63fc2bf2b90a41d73832bacf211dc6effd1"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1218.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "afb518cb455136e1b068f052be28364481f52bd0406571fa03996e13a862c026"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/CFR-2022-title20-vol2-sec416-1806.xml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "4503ac339756fb29a51382a68080979b60c0b5878210dd0712a9d652ff7e1848"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/fr_ssi_2012.html",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "13c161631f42b85d5c08bae0fcfd078792fc29081dcec06155b1d7466be3c55b"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/fr_ssi_2013.html",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "53dd828de99163cec069f3b398cfe9871c249863a1ecc1489528298060ce252a"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/fr_ssi_2014.html",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "a97ca41984de59d4ab7e1ebac91128d3de3d19141ec18072a1c8a4495b6deb29"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/fr_ssi_2015.html",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "98816a22e1e2380df24e6e1461ca4d7d376c44bc90c41874f22ccabd08ac0d32"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/fr_ssi_2016.html",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "668fabcce462eade1d1d8030295fee130e63ef908fdfd57f0ec481bc9a47bb65"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/fr_ssi_2017.html",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "efaba020476f8df6713f1c56c5963e53d24d6db76327c874439a2d58136f5bb8"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/fr_ssi_2018.html",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "bbff750f2bc36e279e12a5f89ce23dd582fc8cc52e322822af902f4336bc2f2e"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/fr_ssi_2019.html",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "058d1f78b6f7c19d567dac418a9a21ca853140e59438e724b05b4bc77e93e8e2"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/fr_ssi_2020.html",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "58ff9e9cf4ec28adb85801ec5f968a330237f33e212089e05e34853b4dbbebe0"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/fr_ssi_2021.html",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "b9a7c7e04ecf210153283a7ff1748ef4c9c336737c2e3f15435d4abbea211101"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/fr_ssi_2022.html",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "246c83ecda7d914833f385f4acbd8127a2b1426e0e6b35681d6d8650a030ac6b"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/policyengine_us/amount/couple.yaml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "fa8d7cee418f6b4c02df757f2cc591936eb835efcdde17534dffd9d9d90e459e"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/policyengine_us/amount/individual.yaml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "9dc3d2ed15f1f86e073e7ef06e06bd79c43d8d8b48419dcee87de25a5cdd0eaf"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/policyengine_us/eligibility/resources/limit/couple.yaml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "341b821e70c50a269741152f2e616cc4dc0663bfeab5fcfe0ded1b32a316dfc9"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/policyengine_us/eligibility/resources/limit/individual.yaml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "155d6728a2ae00ea5da441ada685ad638f21d1faaa8cadd0e991ef6a40b94cc7"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/policyengine_us/income/exclusions/earned.yaml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "50bc791fec4bf24b444a394e23f5ad19b86f758e71739bfd17665b3c11a96f4b"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/policyengine_us/income/exclusions/earned_share.yaml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "f9efb4c19445cbc5fc38dcbeabcde0920396365fb3ba5de4e29a93e469257ec6"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/ssi_sources/policyengine_us/income/exclusions/general.yaml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "dc77f88b148bd06771a267ab0775e80898043ec7581adea5b9431eff8267f9b1"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/policyengine-us/policyengine_us/parameters/gov/ssa/ssi/amount/couple.yaml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "fa8d7cee418f6b4c02df757f2cc591936eb835efcdde17534dffd9d9d90e459e"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/policyengine-us/policyengine_us/parameters/gov/ssa/ssi/amount/individual.yaml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "9dc3d2ed15f1f86e073e7ef06e06bd79c43d8d8b48419dcee87de25a5cdd0eaf"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/policyengine-us/policyengine_us/parameters/gov/ssa/ssi/eligibility/resources/limit/couple.yaml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "341b821e70c50a269741152f2e616cc4dc0663bfeab5fcfe0ded1b32a316dfc9"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/policyengine-us/policyengine_us/parameters/gov/ssa/ssi/eligibility/resources/limit/individual.yaml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "155d6728a2ae00ea5da441ada685ad638f21d1faaa8cadd0e991ef6a40b94cc7"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/policyengine-us/policyengine_us/parameters/gov/ssa/ssi/income/exclusions/earned.yaml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "50bc791fec4bf24b444a394e23f5ad19b86f758e71739bfd17665b3c11a96f4b"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/policyengine-us/policyengine_us/parameters/gov/ssa/ssi/income/exclusions/earned_share.yaml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "f9efb4c19445cbc5fc38dcbeabcde0920396365fb3ba5de4e29a93e469257ec6"
+    },
+    {
+      "path": "/Users/maxghenis/PolicyEngine/policyengine-us/policyengine_us/parameters/gov/ssa/ssi/income/exclusions/general.yaml",
+      "mode": "document/source read, parsed or hashed",
+      "sha256": "dc77f88b148bd06771a267ab0775e80898043ec7581adea5b9431eff8267f9b1"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/src/populace_dynamics/data/u2_source_registry.py",
+      "mode": "Independent review of root loader/schema tests and generated documentary registries; JSON parsing and synthetic in-memory schema mutations only; subsequently edited to address review findings and checked with focused pytest, Black and Ruff",
+      "sha256": "fa4fecdc6d6a58586d4202117d47b26942d5d790f8b8fe95966c0e9a5c9ae6c6",
+      "subsequent_sha256": "6051e51dd88f261f897a4eca599bac2d13ac18e79782a6a02e40e4d1663505ac"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/track_u2/test_source_registries.py",
+      "mode": "Independent review of root loader/schema tests and generated documentary registries; JSON parsing and synthetic in-memory schema mutations only; subsequently edited to address review findings and checked with focused pytest, Black and Ruff",
+      "sha256": "ab4435ef215b21ee04f7d32102b7267a82f141daccd353159b145a5a8ff1b961",
+      "subsequent_sha256": "5eee12238abf0881fd9a9dedeb4f0d9b986f338782a8a93dc23b316fe6f854c3"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/data/external/track_u2/income.json",
+      "mode": "Independent review of root loader/schema tests and generated documentary registries; JSON parsing and synthetic in-memory schema mutations only",
+      "sha256": "1a2a8da0063ccb7a0baf4c593012c4644f39d9233a1eb6e3b3ecf684f8a70eb2"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/data/external/track_u2/wealth.json",
+      "mode": "Independent review of root loader/schema tests and generated documentary registries; JSON parsing and synthetic in-memory schema mutations only",
+      "sha256": "39e3808f148f57633527486d600b6c599b8b74eb0371254cde833842ef90eb25"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/data/external/track_u2/individual.json",
+      "mode": "Independent review of root loader/schema tests and generated documentary registries; JSON parsing and synthetic in-memory schema mutations only",
+      "sha256": "4eab8e0abc69668c287310931baa049b8546d3f3e265a106f1b945b948c7649e"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/data/external/track_u2/pension.json",
+      "mode": "Independent review of root loader/schema tests and generated documentary registries; JSON parsing and synthetic in-memory schema mutations only",
+      "sha256": "c7228384743ae2c9f83737dbe03259d07c84cdedb7eef6980bb077256b58443e"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/data/external/track_u2/roles.json",
+      "mode": "Independent review of root loader/schema tests and generated documentary registries; JSON parsing and synthetic in-memory schema mutations only",
+      "sha256": "ba699c6a23cac94581b672dca67738c62d9ccbbe4100b7ec41cafd334a5f9e38"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/data/external/track_u2/support.json",
+      "mode": "Independent review of root loader/schema tests and generated documentary registries; JSON parsing and synthetic in-memory schema mutations only",
+      "sha256": "da7d7a184eaa2694308e1f2546fc7d3bb8460b84d1100f1a69b4a4472392236c"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/data/external/track_u2/weights.json",
+      "mode": "Independent review of root loader/schema tests and generated documentary registries; JSON parsing and synthetic in-memory schema mutations only",
+      "sha256": "d3a0040c8f193c9775c5d5da0a853d8efca399833dd6b7c1f022a86a1e1837ea"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/data/external/track_u2/design.json",
+      "mode": "Independent review of root loader/schema tests and generated documentary registries; JSON parsing and synthetic in-memory schema mutations only",
+      "sha256": "56181372d412811af6d06f5c0d8d1e071049f7fb73c34bd394aaff8f5e0c2fd6"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/src/populace_dynamics/__init__.py",
+      "mode": "Focused registry-test import or documentary weight-capture manifest/hash verification; PDF bytes hashed without rendering",
+      "sha256": "87ad051ce4d9812cafe636e1524c288a5d24bdb0710fdaee30f178a44ba210be"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/src/populace_dynamics/data/__init__.py",
+      "mode": "Focused registry-test import or documentary weight-capture manifest/hash verification; PDF bytes hashed without rendering",
+      "sha256": "0e8998bc22416fe40779c3a001ff9f01bb12e02310b718750ff3c607ef11dc8d"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/psid_sources/weights17_manifest.json",
+      "mode": "Focused registry-test import or documentary weight-capture manifest/hash verification; PDF bytes hashed without rendering",
+      "sha256": "82a47694ad1637c6980f69a8f0091b697d7372fbb0266495d23d6c9f8134438b"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/psid_sources/cross_sec_weights_17.pdf",
+      "mode": "Focused registry-test import or documentary weight-capture manifest/hash verification; PDF bytes hashed without rendering",
+      "sha256": "b35b5d9c99e74983c84d519383ba2b586c5db33f6b666d16370c54dbdb7a5438"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/psid_sources/weights23_manifest.json",
+      "mode": "Focused registry-test import or documentary weight-capture manifest/hash verification; PDF bytes hashed without rendering",
+      "sha256": "5c000b715707d26cf97d6cd3235b1867f328fdd16d8d703b77ba04c7744c7475"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "mode": "Focused registry-test import or documentary weight-capture manifest/hash verification; PDF bytes hashed without rendering",
+      "sha256": "58411f56001e6089226ce5fc9ebcd132e85f9e917571d3fe54dcdc5139e63983"
+    }
+  ],
+  "transient_files": [
+    {
+      "path": "/tmp/u2_ssi_download.py",
+      "mode": "new documentary-download helper executed; moved into workspace and replaced by the committed source-capture script; no remaining file outside the workspace"
+    },
+    {
+      "path": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/scripts/_u2_ssi_download_work.py",
+      "mode": "intermediate name of the same newly created helper before rename to capture_track_u2_ssi_sources.py"
+    }
+  ],
+  "self": "/Users/maxghenis/.subfleet/worktrees/20260928-131741-u2-m1/docs/design/u2_m1_ssi_exposure.json",
+  "web_queries": [
+    "site.govinfo.gov 2011 66111 cost living increase other determinations 698 1048",
+    "site.govinfo.gov 2016 74854 cost living increase other determinations",
+    "site.govinfo.gov 2018 53702 cost living increase other determinations"
+  ],
+  "remote_reads": "Staged primary-source URLs are individually recorded in tests/data/track_u2/ssi_sources/manifest.json. Additional citation redirects/in-memory PDF reads are enumerated in additional_remote_urls; all search-result snippets are enumerated in web_exposures. No listed search-result page was separately opened with the web tool.",
+  "git_metadata_reads": "policyengine-us HEAD, status for seven YAML paths, and exact-revision git show for those same paths; all read-only.",
+  "tests": "31 passed: tests/track_u2/test_ssi_capture.py; root conftest/config and standard dependency imports are tooling, not research exposure.",
+  "independent_review_note": "Generated registry codebook_text excerpts incidentally displayed published whole-sample counts and weight ranges. No PSID raw data were read; those metadata numbers were not used to adjudicate routes or support. CFR check directly parsed all 88 distinct annual section files and refused a synthetic single-edition substantive text change in memory.",
+  "registry_schema_followup": "Per-registry payload and kind schemas, layout and identity invariants, typed explicit refusals/dependencies, citation-only/malformed payload mutations, both PSID weight-capture manifests. First run: 72 passed, 2 U1-only tests deselected; six subsequently added support-plan mutations verified separately. No registry data edited.",
+  "additional_remote_urls": [
+    {
+      "url": "https://www.govinfo.gov/link/fr/76/66111",
+      "mode": "Citation-resolution HTTP request; followed redirect and read PDF response bytes into memory",
+      "income_year": 2012,
+      "local_path": null
+    },
+    {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2011-10-25/pdf/2011-27496.pdf",
+      "mode": "Redirect PDF response read in memory only to derive the official HTML notice URL; no local PDF created or rendered",
+      "income_year": 2012,
+      "local_path": null,
+      "fragment_note": "The 2012 response reported #page=1; fragments were removed before deriving HTML paths and were not retained for other years."
+    },
+    {
+      "url": "https://www.govinfo.gov/link/fr/77/65754",
+      "mode": "Citation-resolution HTTP request; followed redirect and read PDF response bytes into memory",
+      "income_year": 2013,
+      "local_path": null
+    },
+    {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2012-10-30/pdf/2012-26663.pdf",
+      "mode": "Redirect PDF response read in memory only to derive the official HTML notice URL; no local PDF created or rendered",
+      "income_year": 2013,
+      "local_path": null,
+      "fragment_note": "The 2012 response reported #page=1; fragments were removed before deriving HTML paths and were not retained for other years."
+    },
+    {
+      "url": "https://www.govinfo.gov/link/fr/78/66413",
+      "mode": "Citation-resolution HTTP request; followed redirect and read PDF response bytes into memory",
+      "income_year": 2014,
+      "local_path": null
+    },
+    {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2013-11-05/pdf/2013-26569.pdf",
+      "mode": "Redirect PDF response read in memory only to derive the official HTML notice URL; no local PDF created or rendered",
+      "income_year": 2014,
+      "local_path": null,
+      "fragment_note": "The 2012 response reported #page=1; fragments were removed before deriving HTML paths and were not retained for other years."
+    },
+    {
+      "url": "https://www.govinfo.gov/link/fr/79/64455",
+      "mode": "Citation-resolution HTTP request; followed redirect and read PDF response bytes into memory",
+      "income_year": 2015,
+      "local_path": null
+    },
+    {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2014-10-29/pdf/2014-25802.pdf",
+      "mode": "Redirect PDF response read in memory only to derive the official HTML notice URL; no local PDF created or rendered",
+      "income_year": 2015,
+      "local_path": null,
+      "fragment_note": "The 2012 response reported #page=1; fragments were removed before deriving HTML paths and were not retained for other years."
+    },
+    {
+      "url": "https://www.govinfo.gov/link/fr/80/66963",
+      "mode": "Citation-resolution HTTP request; followed redirect and read PDF response bytes into memory",
+      "income_year": 2016,
+      "local_path": null
+    },
+    {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2015-10-30/pdf/2015-27828.pdf",
+      "mode": "Redirect PDF response read in memory only to derive the official HTML notice URL; no local PDF created or rendered",
+      "income_year": 2016,
+      "local_path": null,
+      "fragment_note": "The 2012 response reported #page=1; fragments were removed before deriving HTML paths and were not retained for other years."
+    },
+    {
+      "url": "https://www.govinfo.gov/link/fr/81/74854",
+      "mode": "Citation-resolution HTTP request; followed redirect and read PDF response bytes into memory",
+      "income_year": 2017,
+      "local_path": null
+    },
+    {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2016-10-27/pdf/2016-26026.pdf",
+      "mode": "Redirect PDF response read in memory only to derive the official HTML notice URL; no local PDF created or rendered",
+      "income_year": 2017,
+      "local_path": null,
+      "fragment_note": "The 2012 response reported #page=1; fragments were removed before deriving HTML paths and were not retained for other years."
+    },
+    {
+      "url": "https://www.govinfo.gov/link/fr/82/59937",
+      "mode": "Citation-resolution HTTP request; followed redirect and read PDF response bytes into memory",
+      "income_year": 2018,
+      "local_path": null
+    },
+    {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2017-12-15/pdf/2017-27105.pdf",
+      "mode": "Redirect PDF response read in memory only to derive the official HTML notice URL; no local PDF created or rendered",
+      "income_year": 2018,
+      "local_path": null,
+      "fragment_note": "The 2012 response reported #page=1; fragments were removed before deriving HTML paths and were not retained for other years."
+    },
+    {
+      "url": "https://www.govinfo.gov/link/fr/83/53702",
+      "mode": "Citation-resolution HTTP request; followed redirect and read PDF response bytes into memory",
+      "income_year": 2019,
+      "local_path": null
+    },
+    {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2018-10-24/pdf/2018-23193.pdf",
+      "mode": "Redirect PDF response read in memory only to derive the official HTML notice URL; no local PDF created or rendered",
+      "income_year": 2019,
+      "local_path": null,
+      "fragment_note": "The 2012 response reported #page=1; fragments were removed before deriving HTML paths and were not retained for other years."
+    },
+    {
+      "url": "https://www.govinfo.gov/link/fr/84/56515",
+      "mode": "Citation-resolution HTTP request; followed redirect and read PDF response bytes into memory",
+      "income_year": 2020,
+      "local_path": null
+    },
+    {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2019-10-22/pdf/2019-22921.pdf",
+      "mode": "Redirect PDF response read in memory only to derive the official HTML notice URL; no local PDF created or rendered",
+      "income_year": 2020,
+      "local_path": null,
+      "fragment_note": "The 2012 response reported #page=1; fragments were removed before deriving HTML paths and were not retained for other years."
+    },
+    {
+      "url": "https://www.govinfo.gov/link/fr/85/67413",
+      "mode": "Citation-resolution HTTP request; followed redirect and read PDF response bytes into memory",
+      "income_year": 2021,
+      "local_path": null
+    },
+    {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2020-10-22/pdf/2020-23442.pdf",
+      "mode": "Redirect PDF response read in memory only to derive the official HTML notice URL; no local PDF created or rendered",
+      "income_year": 2021,
+      "local_path": null,
+      "fragment_note": "The 2012 response reported #page=1; fragments were removed before deriving HTML paths and were not retained for other years."
+    },
+    {
+      "url": "https://www.govinfo.gov/link/fr/86/58715",
+      "mode": "Citation-resolution HTTP request; followed redirect and read PDF response bytes into memory",
+      "income_year": 2022,
+      "local_path": null
+    },
+    {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2021-10-22/pdf/2021-23031.pdf",
+      "mode": "Redirect PDF response read in memory only to derive the official HTML notice URL; no local PDF created or rendered",
+      "income_year": 2022,
+      "local_path": null,
+      "fragment_note": "The 2012 response reported #page=1; fragments were removed before deriving HTML paths and were not retained for other years."
+    }
+  ],
+  "additional_remote_reads_note": "The initial network probe repeated the 2012 citation/PDF request and read the 2012 section 416.1112 XML URL, which is already listed in the committed source manifest. All 11 citation requests and corresponding PDF resources are enumerated here. No redirect PDF had a local path.",
+  "web_exposures": [
+    {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2016-10-27/pdf/2016-26026.pdf",
+      "title": "Federal Register 81 FR 74854; October 27, 2016",
+      "mode": "Search result snippet returned by web tool; result page not separately opened through web tool",
+      "snippet_scope": "Notice metadata and COLA information",
+      "local_path": null
+    },
+    {
+      "url": "https://regulations.justia.com/regulations/fedreg/2016/10/27/2016-26026.html",
+      "title": "Cost-of-Living Increase and Other Determinations for 2017",
+      "mode": "Search result snippet returned by web tool; result page not separately opened through web tool",
+      "snippet_scope": "Notice citation, date, page span, SSA agency and source-site description",
+      "local_path": null
+    },
+    {
+      "url": "https://www.govinfo.gov/content/pkg/BILLS-114s3471pcs/pdf/BILLS-114s3471pcs.pdf",
+      "title": "114th Congress S.3471",
+      "mode": "Search result snippet returned by web tool; result page not separately opened through web tool",
+      "snippet_scope": "Legislative cost-of-living adjustment language",
+      "local_path": null
+    },
+    {
+      "url": "https://www.govinfo.gov/content/pkg/CRPT-118hrpt129/pdf/CRPT-118hrpt129.pdf",
+      "title": "House report 118-129",
+      "mode": "Search result snippet returned by web tool; result page not separately opened through web tool",
+      "snippet_scope": "Proposed chained-CPI adjustment language",
+      "local_path": null
+    },
+    {
+      "url": "https://www.govinfo.gov/content/pkg/BILLS-110s1326is/pdf/BILLS-110s1326is.pdf",
+      "title": "110th Congress S.1326",
+      "mode": "Search result snippet returned by web tool; result page not separately opened through web tool",
+      "snippet_scope": "Legislative COLA language",
+      "local_path": null
+    },
+    {
+      "url": "https://thefederalregister.org/citation/83-FR-53702",
+      "title": "83 FR 53702 citation",
+      "mode": "Search result snippet returned by web tool; result page not separately opened through web tool",
+      "snippet_scope": "2019 COLA notice citation and publication date",
+      "local_path": null
+    },
+    {
+      "url": "https://www.ssa.gov/policy/docs/statcomps/supplement/2011/2a8-2a19.html",
+      "title": "Annual Statistical Supplement, 2011: History of OASDI Benefit Computation and Automatic Adjustments",
+      "mode": "Search result snippet returned by web tool; result page not separately opened through web tool",
+      "snippet_scope": "Historical SSA adjustment table excerpt and links to regulations",
+      "local_path": null
+    },
+    {
+      "url": "https://www.govinfo.gov/content/pkg/BUDGET-2018-APP/pdf/BUDGET-2018-APP-1-16.pdf",
+      "title": "Budget 2018 appendix",
+      "mode": "Search result snippet returned by web tool; result page not separately opened through web tool",
+      "snippet_scope": "Department of Labor budget and cost-of-living adjustment discussion",
+      "local_path": null
+    },
+    {
+      "url": "https://public-inspection.federalregister.gov/2018-00735.pdf?1516283125=",
+      "title": "Public inspection document 2018-00735",
+      "mode": "Search result snippet returned by web tool; result page not separately opened through web tool",
+      "snippet_scope": "Annual adjustment language concerning royalties",
+      "local_path": null
+    },
+    {
+      "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title5/html/USCODE-2024-title5-partIII-subpartD-chap53.htm",
+      "title": "2024 United States Code, Title 5, Chapter 53",
+      "mode": "Search result snippet returned by web tool; result page not separately opened through web tool",
+      "snippet_scope": "Federal pay-adjustment statutory language",
+      "local_path": null
+    },
+    {
+      "url": "https://www.govinfo.gov/content/pkg/USCODE-2010-title42/html/USCODE-2010-title42-chap7-subchapXVIII-partB-sec1395w-4.htm",
+      "title": "2010 United States Code, Title 42, section 1395w-4",
+      "mode": "Search result snippet returned by web tool; result page not separately opened through web tool",
+      "snippet_scope": "Physician-payment statutory language",
+      "local_path": null
+    },
+    {
+      "url": "https://www.ssa.gov/news/en/press/releases/2010-10-15.html",
+      "title": "Under the Law No Social Security COLA for 2011",
+      "mode": "Search result snippet returned by web tool; result page not separately opened through web tool",
+      "snippet_scope": "SSA explanation of unchanged CPI and absence of 2011 COLA",
+      "local_path": null
+    },
+    {
+      "url": "https://www.govinfo.gov/content/pkg/PLAW-115publ91/html/PLAW-115publ91.htm",
+      "title": "Public Law 115-91",
+      "mode": "Search result snippet returned by web tool; result page not separately opened through web tool",
+      "snippet_scope": "Unrelated legislative text mentioning monthly benefits",
+      "local_path": null
+    },
+    {
+      "url": "https://www.dol.gov/agencies/owcp/FECA/directives-archive/2011Circulars",
+      "title": "2011 FECA Circulars Archive",
+      "mode": "Search result snippet returned by web tool; result page not separately opened through web tool",
+      "snippet_scope": "Historical FECA/SSA cost-of-living discussion",
+      "local_path": null
+    },
+    {
+      "url": "https://thefederalregister.org/documents/2025-19763/cost-of-living-increase-and-other-determinations-for-2026",
+      "title": "Cost-of-Living Increase and Other Determinations for 2026",
+      "mode": "Search result snippet returned by web tool; result page not separately opened through web tool",
+      "snippet_scope": "2026 SSA COLA and wage-indexed adjustment discussion",
+      "local_path": null
+    },
+    {
+      "url": "https://www.govinfo.gov/app/details/CDOC-111hdoc156",
+      "title": "Alternative Plan for 2011 Locality-Based Comparability Payments",
+      "mode": "Search result snippet returned by web tool; result page not separately opened through web tool",
+      "snippet_scope": "Government publication metadata",
+      "local_path": null
+    },
+    {
+      "url": "https://www.ssa.gov/oact/cola/positivecola.html",
+      "title": "Automatic Determinations",
+      "mode": "Search result snippet returned by web tool; result page not separately opened through web tool",
+      "snippet_scope": "SSA CPI computation-quarter and COLA determination description",
+      "local_path": null
+    },
+    {
+      "url": "https://regulations.justia.com/regulations/fedreg/2025/11/03/2025-19763.html",
+      "title": "Cost-of-Living Increase and Other Determinations for 2026",
+      "mode": "Search result snippet returned by web tool; result page not separately opened through web tool",
+      "snippet_scope": "2026 SSA notice citation and agency metadata",
+      "local_path": null
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Consolidated_Appropriations_Act%2C_2018",
+      "title": "Consolidated Appropriations Act, 2018",
+      "mode": "Search result snippet returned by web tool; result page not separately opened through web tool",
+      "snippet_scope": "Appropriations summary and government-source link",
+      "local_path": null
+    }
+  ],
+  "web_exposures_note": "All 19 result URLs returned across the three previously recorded search queries are enumerated. Their snippets were visible. Only primary govinfo documents were used for parameter verification; incidental nonprimary snippets were not relied on. The 2017 govinfo notice PDF also appears in additional_remote_urls because the separate capture script fetched its bytes in memory."
+}
