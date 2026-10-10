@@ -550,6 +550,49 @@ def test_main_publishes_the_sensitivity_in_the_artifact(tmp_path, monkeypatch):
     assert output.with_suffix(".env.json").exists()
 
 
+def test_main_writes_the_registered_header_over_the_pipelines(
+    tmp_path, monkeypatch
+):
+    """Regression (independent review of Registration 17, 2026-09-27): the
+    pipeline's result carries ``header`` (None for a registered run), and
+    spreading it into the artifact replaced the registered header, so the
+    written artifact's header was null.  The preflight, the parameters and
+    the computation are stand-ins; the result is INVENTED."""
+
+    script = _script()
+    monkeypatch.setattr(script, "preflight", lambda **_: {"head": COMMIT})
+    monkeypatch.setattr(script, "missing_components", lambda: [])
+    monkeypatch.setattr(
+        script,
+        "committed_parameters",
+        lambda block: (_Parameters(), {"pinned": "INVENTED"}),
+    )
+    monkeypatch.setattr(script, "_environment", lambda **_: {})
+    result = {"header": None, "rows": {"MS0": {"INVENTED": True}}}
+    monkeypatch.setattr(
+        script,
+        "run_pipeline",
+        lambda parameters, **_: json.loads(json.dumps(result)),
+    )
+    output = tmp_path / "run.json"
+    script.main(
+        [
+            "--registration-pointer",
+            POINTER,
+            "--registered-commit",
+            COMMIT,
+            "--output",
+            str(output),
+        ]
+    )
+    artifact = json.loads(output.read_text())
+    assert artifact["header"] == script.REGISTERED_HEADER
+    assert next(iter(artifact)) == "header"
+    assert artifact["publishes_regardless"] is True
+    assert artifact["comparator_seal_opened_before_commit"] is False
+    assert artifact["rows"] == result["rows"]
+
+
 def test_the_parameters_must_be_the_files_the_block_records():
     script = _script()
     block = spec.m1_parameter_block()

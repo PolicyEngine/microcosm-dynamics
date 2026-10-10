@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="cfr.xsl"?>
+<CFRGRANULE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="CFRMergedXML.xsd">
+  <FDSYS>
+    <CFRTITLE>20</CFRTITLE>
+    <CFRTITLETEXT>Employees' Benefits</CFRTITLETEXT>
+    <VOL>2</VOL>
+    <DATE>2014-04-01</DATE>
+    <ORIGINALDATE>2014-04-01</ORIGINALDATE>
+    <COVERONLY>false</COVERONLY>
+    <TITLE>Whether you are married and who is your spouse.</TITLE>
+    <GRANULENUM>Â§ 416.1806</GRANULENUM>
+    <HEADING>Section Â§ 416.1806</HEADING>
+    <ANCESTORS>
+      <PARENT HEADING="Title 20" SEQ="4">Employees' Benefits</PARENT>
+      <PARENT HEADING="CHAPTER III" SEQ="3">SOCIAL SECURITY ADMINISTRATION</PARENT>
+      <PARENT HEADING="PART 416" SEQ="2">SUPPLEMENTAL SECURITY INCOME FOR THE AGED, BLIND, AND DISABLED</PARENT>
+      <PARENT HEADING="Subpart R" SEQ="1">Relationship</PARENT>
+      <PARENT HEADING="" SEQ="0">Who Is Considered Your Spouse</PARENT>
+    </ANCESTORS>
+  </FDSYS>
+  <SECTION>
+    <SECTNO>§ 416.1806</SECTNO>
+    <SUBJECT>Whether you are married and who is your spouse.</SUBJECT>
+    <P>(a) We will consider someone to be your spouse (and therefore consider you to be married) for SSI purposes if—</P>
+    <P>(1) You are legally married under the laws of the State where your and his or her permanent home is (or was when you lived together);</P>
+    <P>(2) We have decided that either of you is entitled to husband's or wife's Social Security insurance benefits as the spouse of the other (this decision will not affect your SSI benefits for any month before it is made); or</P>
+    <P>(3) You and an unrelated person of the opposite sex are living together in the same household at or after the time you apply for SSI benefits, and you both lead people to believe that you are husband and wife.</P>
+    <P>(b) if more than one person would qualify as your husband or wife under paragraph (a) of this section, we will consider the person you are presently living with to be your spouse for SSI purposes.</P>
+    <CITA>[60 FR 16376, Mar. 30, 1995]</CITA>
+  </SECTION>
+</CFRGRANULE>

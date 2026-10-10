@@ -439,6 +439,10 @@ def main(argv: list[str] | None = None) -> int:
             ),
         },
     }
+    # The pipeline's result carries its own ``header`` (the dry-run header,
+    # or None for a registered run), which ``**result`` spread over the
+    # registered header above.  Restore it; the key keeps its first place.
+    artifact["header"] = REGISTERED_HEADER
     args.output.parent.mkdir(parents=True, exist_ok=True)
     _write_new(
         args.output,

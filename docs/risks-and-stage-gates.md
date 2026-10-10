@@ -27,7 +27,7 @@ tension is one of the core research problems of the project.
 
 ### 3. Platform work expands faster than policy validation
 
-Now that the project is best understood as making `populace`
+Now that the project is best understood as making Microcosm
 longitudinal, there is a new risk: the population platform can become
 technically interesting without yet being decision-useful for Social
 Security. That would be real research progress, but it would not by
@@ -49,10 +49,10 @@ forward if drift is not controlled explicitly.
 A public interface is attractive and visible, but it can also amplify
 weaknesses if the validation record is not ready.
 
-## Stage gate 1: longitudinal Populace quality
+## Stage gate 1: longitudinal Microcosm quality
 
 The project should advance past stage 1 only if it can show that
-longitudinal `populace` is credible on multiple dimensions:
+longitudinal Microcosm is credible on multiple dimensions:
 
 - age-earnings levels
 - dispersion and percentiles

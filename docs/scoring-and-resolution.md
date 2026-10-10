@@ -48,7 +48,7 @@ useful even to those who treat it as authoritative.
 Long-horizon dynamics cannot wait decades for a grade, but the past
 already resolved. The protocol: build the panel from data vintages
 available at time T, project forward, and score against realized
-outcomes at T+k. The `populace` data registry pins source vintages,
+outcomes at T+k. The Microcosm data registry pins source vintages,
 which is what makes "what could the model have known on date X" an
 enforceable constraint rather than an honor-system claim. Retrodictive
 scores are necessary but not sufficient — calibration under the
@@ -68,7 +68,7 @@ are actually uncertain.
 
 ### 5. Held-out panel moments
 
-The population layer itself is scored the way `populace` already
+The population layer itself is scored the way Microcosm already
 scores cross-sections: held-out evaluation against moments the model
 was not fit to — earnings-mobility matrices, autocorrelation
 structure and higher-order moments of earnings changes
@@ -88,7 +88,7 @@ yet, it says so.
 
 ## The contribution rule
 
-Scoring is also the governance mechanism, inherited from `populace`:
+Scoring is also the governance mechanism, inherited from Microcosm:
 **a contribution merges if and only if it improves the population's
 score on held-out facts.** A better mortality module, a sharper
 claiming model, a new earnings architecture — from this team or

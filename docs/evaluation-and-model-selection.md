@@ -13,7 +13,7 @@ enough to justify the next stage of the build. This chapter therefore
 defines the evaluation framework for deciding:
 
 - which earnings architecture becomes the production path for
-  longitudinal `populace`
+  longitudinal Microcosm
 - whether the resulting panel is good enough for benefit calculation
 - whether the full project has earned the right to advance from stage 1
   to stage 2
@@ -141,7 +141,7 @@ person-years.
 
 ### Cross-sectional anchor tests
 
-Because the final use case starts from a cross-sectional `populace`
+Because the final use case starts from a cross-sectional Microcosm
 record, the project should also simulate that workflow directly:
 
 1. collapse a held-out panel person to a pseudo-cross-section at a
@@ -274,7 +274,7 @@ These may include:
 - zero-fraction error
 - correlation preservation
 
-They are useful as diagnostics, especially for comparing `populace`
+They are useful as diagnostics, especially for comparing Microcosm
 candidate families, but they are not the final decision rule.
 
 ### Operational metrics
@@ -317,7 +317,7 @@ For candidates that clear Gate 1, score them on:
 - policy-output fit
 - stability
 - runtime and reproducibility
-- architectural alignment with longitudinal `populace`
+- architectural alignment with longitudinal Microcosm
 
 The scorecard should be reported as a table, not just prose.
 
@@ -330,7 +330,7 @@ The winning architecture should be the one that:
 3. is simple enough to explain and maintain publicly
 
 That rule leaves open whether the winner is ZI-QDNN, ZI-MAF, a broader
-`populace` sequence model, or a more transparent annual-state process.
+Microcosm sequence model, or a more transparent annual-state process.
 
 ## Suggested numeric thresholds for stage 1
 
@@ -381,14 +381,14 @@ decision:
 - which architecture deserves continued investment
 - what the residual limitations are even if the answer is "yes"
 
-## Relationship to the refreshed Populace evaluations
+## Relationship to the refreshed Microcosm evaluations
 
-The `populace` imputation evaluations should feed directly into this
+The Microcosm imputation evaluations should feed directly into this
 chapter, but they should not be the only evidence.
 
 The right interpretation is:
 
-- refreshed `populace` evals help narrow the candidate set
+- refreshed Microcosm evals help narrow the candidate set
 - Social-Security-specific benchmarks decide the production winner
 - the proposal should remain architecture-agnostic until both pieces are
   in hand

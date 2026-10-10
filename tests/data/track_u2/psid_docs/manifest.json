@@ -1,0 +1,3352 @@
+{
+  "purpose": "U2 milestone 1b Part B: official PSID documentation consulted for three documentary blockers. Documentation only; no survey records.",
+  "created_utc": "2026-09-28T23:11:56Z",
+  "research_record": "docs/design/u2_m1b_psid_research.md",
+  "psid_root": {
+    "symbol": "PSID",
+    "environment_variable": "POPULACE_DYNAMICS_PSID_DIR",
+    "default": "~/PolicyEngine/psid-data",
+    "note": "Paths beginning 'PSID/' resolve against this root with the precedence of populace_dynamics.data.psid: the environment variable, else the default. The research record's PSID is /Users/maxghenis/PolicyEngine/psid-data. Tests that need a file under the root skip with an explicit reason when it is not staged."
+  },
+  "live_site_status": "Every live request to psidonline.isr.umich.edu on 2026-09-28 (curl, urllib and WebFetch) returned HTTP 403 with a Cloudflare security challenge, so sources come from Internet Archive raw snapshots of the official URLs or from the local browser capture of the official documentation page. Snapshot bytes were compared with the local capture where both exist.",
+  "sources": [
+    {
+      "file": "tests/data/track_u2/psid_docs/UserGuide2015.pdf",
+      "url": "https://psidonline.isr.umich.edu/data/Documentation/UserGuide2015.pdf",
+      "bytes": 1231661,
+      "sha256": "a928cd4f7ff329c4c1db0fe00d5277e3f418dc09cb6e3dcf851304b3741676c7",
+      "retrieved_at_utc": "2026-09-28T21:37:00Z",
+      "retrieval": "Internet Archive raw snapshot (id_) of the official URL; live site returned a Cloudflare challenge",
+      "archive_url": "https://web.archive.org/web/20240927062358id_/https://psidonline.isr.umich.edu/data/Documentation/UserGuide2015.pdf",
+      "archive_timestamp": "20240927062358",
+      "local_capture": {
+        "path": "PSID/documentation/capture1/UserGuide2015.pdf",
+        "identical": true
+      },
+      "cited": "PDF p. 14 (section 2.5, new terminology in 2015); PDF p. 33 (section 6.1: ER34304 same-sex partner of Head, an OFUM indicator)",
+      "blockers": [
+        "male_code20_2015"
+      ],
+      "live_fetch": {
+        "attempted_at_utc": "2026-09-28T23:10:55Z",
+        "result": "HTTP 403 cloudflare security challenge"
+      }
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/UserGuide2017.pdf",
+      "url": "https://psidonline.isr.umich.edu/data/Documentation/UserGuide2017.pdf",
+      "bytes": 1957833,
+      "sha256": "206d5225ee3efa4b746f80d2567229466e4236ebace4e91b1c5481ed505474d5",
+      "retrieved_at_utc": "2026-09-28T21:37:09Z",
+      "retrieval": "Internet Archive raw snapshot (id_) of the official URL; live site returned a Cloudflare challenge",
+      "archive_url": "https://web.archive.org/web/20260302094310id_/https://psidonline.isr.umich.edu/data/Documentation/UserGuide2017.pdf",
+      "archive_timestamp": "20260302094310",
+      "local_capture": {
+        "path": "PSID/documentation/capture1/UserGuide2017.pdf",
+        "identical": true
+      },
+      "cited": "PDF p. 13 (section 2.5: husband designated Head from 1968 to 2015); PDF p. 35 (same-sex partners designated Spouse/Partner as of 2017 rather than as an OFUM); PDF p. 62 (ER34651 and ER71571 updated to include NIS-2017 'with Release 2 of PSID-2017 data', the 2017 family file's own release series, whose Release 2 added ER71571 (FAM2017ER codebook p. 2); the May 2019 notes date the individual file's update to its Release 3)",
+      "blockers": [
+        "male_code20_2015",
+        "revised_2017_weights"
+      ],
+      "live_fetch": {
+        "attempted_at_utc": "2026-09-28T23:10:56Z",
+        "result": "HTTP 403 cloudflare security challenge"
+      }
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/UserGuide2023.pdf",
+      "url": "https://psidonline.isr.umich.edu/data/Documentation/UserGuide2023.pdf",
+      "bytes": 1055566,
+      "sha256": "ebccdb30845693123a5ae01d29cff351344b9f5c35038dbd7df3982573942853",
+      "retrieved_at_utc": "2026-09-28T21:37:13Z",
+      "retrieval": "Internet Archive raw snapshot (id_) of the official URL; live site returned a Cloudflare challenge",
+      "archive_url": "https://web.archive.org/web/20250715011806id_/https://psidonline.isr.umich.edu/data/Documentation/UserGuide2023.pdf",
+      "archive_timestamp": "20250715011806",
+      "local_capture": {
+        "path": "PSID/documentation/capture1/UserGuide2023.pdf",
+        "identical": true
+      },
+      "cited": "Searched in full; no statement on uncooperative spouse or partner income processing or on revised 2017 weight construction",
+      "blockers": [
+        "uncooperative_90_92_2019_2023",
+        "revised_2017_weights"
+      ],
+      "live_fetch": {
+        "attempted_at_utc": "2026-09-28T23:10:58Z",
+        "result": "HTTP 403 cloudflare security challenge"
+      }
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "url": "https://psidonline.isr.umich.edu/data/weights/cross_sec_weights_19.pdf",
+      "bytes": 1095404,
+      "sha256": "6ef4795c5af79828aacb6f549bef58c9deffbf67f87651050bc03db4e991fc84",
+      "retrieved_at_utc": "2026-09-28T21:37:15Z",
+      "retrieval": "Internet Archive raw snapshot (id_) of the official URL; live site returned a Cloudflare challenge",
+      "archive_url": "https://web.archive.org/web/20220617123829id_/https://psidonline.isr.umich.edu/data/weights/cross_sec_weights_19.pdf",
+      "archive_timestamp": "20220617123829",
+      "local_capture": {
+        "path": "PSID/documentation/capture1/cross_sec_weights_19.pdf",
+        "identical": true
+      },
+      "cited": "PDF p. 2: a cross-sectional family weight was created in 2017 to include the 2017 New Immigrant Sample. For the 2017 individual weight: p. 4 (Chang et al. (2021) for the 2017 Immigrant sample's recruitment); p. 6 ('a version of' the fair-shares methodology for every wave since 1997); p. 7 (a different calibration approach since 2017; initial weight equal to the longitudinal family weight, for 2019); pp. 12-13 (gender, race and region named as calibration controls; age calibrated in 10-year splits); p. 17 Table A2a (2017 row beside the ACS one-year PUMS total, CPS 'Not Used', donut-hole and group-quarters exclusions from the 2017 ACS estimate) and Table A2b; p. 18 Table A3 (ER34651); pp. 19-22 Tables A4-A7 (2017 ACS comparisons). It does not say which starting weights the revised 2017 weight used for the 2017 Immigrant sample, and gives no complete 2017 raking specification. pp. 9, 10 and 14: cites a 2019 version of 'PSID Cross-Sectional Individual Weights, 1997-2017' (Chang, Nishimura, Heeringa, Johnson and Sastry) for 2019 family-unit types, ACS family-unit definitions and the ACS reference-person switch.",
+      "blockers": [
+        "revised_2017_weights"
+      ],
+      "live_fetch": {
+        "attempted_at_utc": "2026-09-28T23:10:59Z",
+        "result": "HTTP 403 cloudflare security challenge"
+      }
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/long_weight_19.pdf",
+      "url": "https://psidonline.isr.umich.edu/data/weights/long_weight_19.pdf",
+      "bytes": 1313318,
+      "sha256": "37e35413fc38319cc452145a345dff9f489da433ee9a52bc0d87a021ccc4ae57",
+      "retrieved_at_utc": "2026-09-28T21:37:21Z",
+      "retrieval": "Internet Archive raw snapshot (id_) of the official URL; live site returned a Cloudflare challenge",
+      "archive_url": "https://web.archive.org/web/20220617123840id_/https://psidonline.isr.umich.edu/data/weights/long_weight_19.pdf",
+      "archive_timestamp": "20220617123840",
+      "local_capture": {
+        "path": "PSID/documentation/capture1/long_weight_19.pdf",
+        "identical": true
+      },
+      "cited": "PDF p. 2: documents the 2017 Immigrant sample design for the 2019 longitudinal weights. PDF p. 8: the sample's longitudinal weight is derived from a preliminary weight calibrated to 2019 ACS one-year PUMS totals. PDF p. 13: the NIS-2017 nonresponse-adjusted base weight and its use as a starting weight; pp. 13-15: integration of joint families with the core sample through joint inclusion probabilities. It does not say whether the revised 2017 cross-sectional weight started from these weights. pp. 10 and 23: cites the same 2019 version of the 1997-2017 report.",
+      "blockers": [
+        "revised_2017_weights"
+      ],
+      "live_fetch": {
+        "attempted_at_utc": "2026-09-28T23:10:59Z",
+        "result": "HTTP 403 cloudflare security challenge"
+      }
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/UserGuide2019.pdf",
+      "url": "https://psidonline.isr.umich.edu/data/Documentation/UserGuide2019.pdf",
+      "bytes": 1823069,
+      "sha256": "894f81e412b4d9524ad47c6b2ef2a19a376c883958df81d2cc6badd016986f23",
+      "retrieved_at_utc": "2026-07-31T01:02:48Z",
+      "retrieval": "Copied from the local browser capture of the official documentation page (PSID/documentation/capture1, completed 2026-07-31T01:02:48Z; per-file time not recorded). SHA-256 and bytes match that capture's browser_digests.txt. The newest Internet Archive snapshot is an older revision, and the live site returned a Cloudflare challenge.",
+      "local_capture": {
+        "path": "PSID/documentation/capture1/UserGuide2019.pdf",
+        "identical": true,
+        "browser_digest_listed": true
+      },
+      "cited": "Searched in full; no statement on uncooperative spouse or partner income processing; PDF p. 38 notes revised 1997-2003 weights only",
+      "blockers": [
+        "uncooperative_90_92_2019_2023",
+        "revised_2017_weights"
+      ],
+      "live_fetch": {
+        "attempted_at_utc": "2026-09-28T23:10:57Z",
+        "result": "HTTP 403 cloudflare security challenge"
+      }
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/UserGuide2021.pdf",
+      "url": "https://psidonline.isr.umich.edu/data/Documentation/UserGuide2021.pdf",
+      "bytes": 1383400,
+      "sha256": "1b457258542ff15d07265f314e2ba02c090ca14b3cd1c68dee5a09ad2262fd99",
+      "retrieved_at_utc": "2026-07-31T01:02:48Z",
+      "retrieval": "Copied from the local browser capture of the official documentation page (PSID/documentation/capture1, completed 2026-07-31T01:02:48Z; per-file time not recorded). SHA-256 and bytes match that capture's browser_digests.txt. The newest Internet Archive snapshot is an older revision, and the live site returned a Cloudflare challenge.",
+      "local_capture": {
+        "path": "PSID/documentation/capture1/UserGuide2021.pdf",
+        "identical": true,
+        "browser_digest_listed": true
+      },
+      "cited": "Searched in full; no statement on uncooperative spouse or partner income processing or on revised 2017 weight construction",
+      "blockers": [
+        "uncooperative_90_92_2019_2023",
+        "revised_2017_weights"
+      ],
+      "live_fetch": {
+        "attempted_at_utc": "2026-09-28T23:10:57Z",
+        "result": "HTTP 403 cloudflare security challenge"
+      }
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/DataRelease-May2019.pdf",
+      "url": "https://psidonline.isr.umich.edu/help/DataRelease-May2019.pdf",
+      "bytes": 602228,
+      "sha256": "f4ec6f402d12c3e0d9937b598051e1c425f52ec917dff4d406b165fda4b2eeac",
+      "retrieved_at_utc": "2026-09-28T21:05:55Z",
+      "retrieval": "Internet Archive raw snapshot (id_) of the official URL",
+      "archive_url": "https://web.archive.org/web/20190615165826id_/https://psidonline.isr.umich.edu/help/DataRelease-May2019.pdf",
+      "archive_timestamp": "20190615165826",
+      "cited": "p. 1, cross-wave individual file 1968-2017, Release 2 notes: 'Users should note the weights for the 2017 Immigrant individuals remain zero and will be updated in Release 3.' UserGuide2017 p. 62's 'Release 2' is the 2017 family file's own release series (FAM2017ER codebook p. 2); no individual-file document dates ER34651's update to a Release 2.",
+      "blockers": [
+        "revised_2017_weights"
+      ],
+      "live_fetch": {
+        "attempted_at_utc": "2026-09-28T23:11:00Z",
+        "result": "HTTP 403 cloudflare security challenge"
+      }
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "url": "https://psidonline.isr.umich.edu/Guide/FAQ.aspx",
+      "bytes": 195429,
+      "sha256": "14d47269d592c9e81bc66624cd5339b6ef2342402dacc199571d17aeb63beca6",
+      "retrieved_at_utc": "2026-09-28T21:29:42Z",
+      "retrieval": "Internet Archive raw snapshot (id_) of the official URL; gzip transfer encoding decoded before saving; live site returned a Cloudflare challenge",
+      "archive_url": "https://web.archive.org/web/20260813185816id_/https://psidonline.isr.umich.edu/Guide/FAQ.aspx",
+      "archive_timestamp": "20260813185816",
+      "cited": "Questions 69, 70, 73, 74, 75 and 79 (lines 792, 796, 829, 833, 835, 839, 841, 843, 845 and 873 of the saved HTML, counted as grep -n counts LF-terminated lines; recounted 2026-09-29. The first count split on a bare carriage return at line 625 and ran one line high.)",
+      "blockers": [
+        "male_code20_2015",
+        "uncooperative_90_92_2019_2023"
+      ],
+      "live_fetch": {
+        "attempted_at_utc": "2026-09-28T23:11:00Z",
+        "result": "HTTP 403 cloudflare security challenge"
+      }
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/documents_20260813.html",
+      "url": "https://psidonline.isr.umich.edu/Guide/documents.aspx",
+      "bytes": 662457,
+      "sha256": "1c55f28dc13afff877895cb05ae4e40d11ce7e17087f8328b08f1af949650e2b",
+      "retrieved_at_utc": "2026-09-28T21:21:03Z",
+      "retrieval": "Internet Archive raw snapshot (id_) of the official URL; gzip transfer encoding decoded before saving; live site returned a Cloudflare challenge",
+      "archive_url": "https://web.archive.org/web/20260813185816id_/https://psidonline.isr.umich.edu/Guide/documents.aspx",
+      "archive_timestamp": "20260813185816",
+      "cited": "Official documentation page: the weights section lists cross-sectional reports 2009-2021 and no 2017 immigrant-sample weighting document. It also lists no 2023 weight report, although milestone 1 retrieved the June 2026 report (cross_sec_weights_23.pdf) from its official URL on 2026-09-28, so the page's silence cannot show that a document is absent online.",
+      "blockers": [
+        "revised_2017_weights"
+      ],
+      "live_fetch": {
+        "attempted_at_utc": "2026-09-28T23:11:00Z",
+        "result": "HTTP 403 cloudflare security challenge"
+      }
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/Papers_20250917.html",
+      "url": "https://psidonline.isr.umich.edu/publications/Papers/",
+      "bytes": 33984,
+      "sha256": "d65c1d9ab9fddc1a3c31363363c7c1b6a45f529b34660ceb372141fe49cd986a",
+      "retrieved_at_utc": "2026-09-28T21:26:13Z",
+      "retrieval": "Internet Archive raw snapshot (id_) of the official URL; gzip transfer encoding decoded before saving; live site returned a Cloudflare challenge",
+      "archive_url": "https://web.archive.org/web/20250917085636id_/https://psidonline.isr.umich.edu/publications/Papers/",
+      "archive_timestamp": "20250917085636",
+      "cited": "Technical-paper list: no paper on 2017 immigrant-sample weights or on uncooperative-spouse income",
+      "blockers": [
+        "revised_2017_weights",
+        "uncooperative_90_92_2019_2023"
+      ],
+      "live_fetch": {
+        "attempted_at_utc": "2026-09-28T23:11:00Z",
+        "result": "HTTP 403 cloudflare security challenge"
+      }
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/fam2015_QxQs.pdf",
+      "url": "https://psidonline.isr.umich.edu/data/Documentation/Fam/2015/QxQs.pdf",
+      "bytes": 706353,
+      "sha256": "124dd1643783ffe8f6a14cba0c66a24d16e00efd66d80d25fccfaaed0caa43b7",
+      "retrieved_at_utc": "2026-07-31T01:02:48Z",
+      "retrieval": "Copied from the local browser capture of the official documentation page (PSID/documentation/capture1/fam2015_QxQs.pdf, completed 2026-07-31T01:02:48Z; per-file time not recorded). SHA-256 and bytes match that capture's browser_digests.txt.",
+      "local_capture": {
+        "path": "PSID/documentation/capture1/fam2015_QxQs.pdf",
+        "identical": true,
+        "browser_digest_listed": true
+      },
+      "cited": "PDF p. 3 ('Husband of Head: Do not make someone Husband of Head without permission') and PDF p. 144 (IO10: making 'a male spouse into Husband of Head instead of Head' needs study-staff permission)",
+      "blockers": [
+        "male_code20_2015"
+      ]
+    }
+  ],
+  "pinned_elsewhere": [
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_17.pdf",
+      "bytes": 471205,
+      "url": "https://psidonline.isr.umich.edu/data/weights/cross_sec_weights_17.pdf",
+      "sha256": "b35b5d9c99e74983c84d519383ba2b586c5db33f6b666d16370c54dbdb7a5438",
+      "note": "Captured by milestone 1 (weights17_manifest.json). Its Internet Archive digest (20190615183854) equals the current bytes, so the construction report has not changed since at least June 2019. PDF p. 3 and p. 9: the 2017 New Immigrant sample is not covered and its weighting methodology 'will be available from the PSID website'. PDF p. 1: authors Chang, Nishimura, Heeringa, McGonagle and Johnson; the text layer never mentions IPUMS or Core-S families. The April 2021 and September 2023 reports cite a 2019 version of this title with Sastry in McGonagle's place for content this report lacks (research record section 3, item 12).",
+      "blockers": [
+        "revised_2017_weights"
+      ]
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "bytes": 276444,
+      "url": "https://psidonline.isr.umich.edu/data/weights/cross_sec_weights_23.pdf",
+      "sha256": "58411f56001e6089226ce5fc9ebcd132e85f9e917571d3fe54dcdc5139e63983",
+      "note": "Retrieved by milestone 1 from the official URL at 2026-09-28T17:41:53Z (weights23_manifest.json); report dated June 2026. What it documents about 2017: PDF p. 2 notes 2-3 (calibration to ACS estimates since 2015; the 2017 new immigrant sample has zero longitudinal family weight in 2017); p. 3 (the 2017 Immigrant sample; Chang et al. (2021), the 2019 longitudinal report, for its recruitment); p. 6 (a different approach to selecting calibration variables since 2017); p. 13 Table A2 (the 2017 sum of individual weights beside the ACS one-year PUMS population total, CPS 'Not Used'; donut-hole families and group-quarters post-1997 immigrants 'were excluded from the ACS estimate in 2017'); p. 14 Table A3 (2017 individual weight ER34651). It does not document which starting weights the revised 2017 weight used for the 2017 Immigrant sample, or the complete 2017 raking specification.",
+      "blockers": [
+        "revised_2017_weights"
+      ]
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "bytes": 3937820,
+      "sha256": "4878100887dce1a7b7831af272a9f19b01ec33dcea091a5c7352625ecd464308",
+      "note": "Staged codebook already pinned by the registries; not copied. Printed p. 978: ER34303 codes 90 and 98 ('Other nonrelatives (includes same-sex partners ...)') and ER34304 ('Whether this person is the same-sex partner of Head'). Printed p. 523: ER33219 (1995), whose note states the gender digit of the three-digit relationship values; no 201 in its list.",
+      "blockers": [
+        "male_code20_2015"
+      ]
+    },
+    {
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "bytes": 2031595,
+      "sha256": "f3a4613bc8c1017f7cb40b30db4034d5f9a9234aad8022679ecd5c399f42e4e8",
+      "note": "Pinned by the pension registry. PDF pp. 5 (CYAQRTH '101 – 982; RTH Lookup List'), 89, 104, 131 (G105RTHLAB 'RTH Lookup'), 166, 190 (J1CKPT: a new male head is CYAQRTH 101, a new female head, wife or \"wife\" 102-222) and 217 (OS66CKPT). The token 201 occurs in q2015 only as the page number of p. 201, and q2015 never names 901.",
+      "blockers": [
+        "male_code20_2015"
+      ]
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "bytes": 3283370,
+      "sha256": "e848a2a8ea5bb7cfb14f87f98410a33b4ca7de85c51916acb7c8a49503c92835",
+      "note": "Pinned by the pension registry. PDF pp. 102, 103, 125 and 130-131 (the CYAQRTH value list starts on p. 130; codes 901/902 and 921/922 are on p. 131).",
+      "blockers": [
+        "uncooperative_90_92_2019_2023"
+      ]
+    },
+    {
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "bytes": 3923957,
+      "sha256": "6c639ec32bfdd2176b5823d31815e31ac0db732a46ed05f22aa6a892cc1c31fb",
+      "note": "Pinned by the pension registry. PDF pp. 204, 205, 243 and 251-252 (the CYAQRTH value list; codes 901/902 and 921/922 are on p. 251).",
+      "blockers": [
+        "uncooperative_90_92_2019_2023"
+      ]
+    },
+    {
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "bytes": 9128941,
+      "sha256": "adc9975e1d7e901eb7192e6c6498f53be0eda62e0393ef1b06de0c85c511cad8",
+      "note": "Pinned by the pension registry. PDF pp. 202, 203, 241 and 249-250 (the CYAQRTH value list; codes 901/902 and 921/922 are on p. 249).",
+      "blockers": [
+        "uncooperative_90_92_2019_2023"
+      ]
+    },
+    {
+      "file": "PSID/family/2019/fam2019er_codebook.pdf",
+      "bytes": 5096192,
+      "sha256": "ce637e37e0f5e306dd7f10455e85069b56c9b13d5c138d3eb4b9c8d6a8452406",
+      "note": "Pinned by the income registry. p. 2015 (total family income definition); pp. 2006-2013 (ER77416, the 'sum of all 2018 OFUM labor income data after individual imputations were made', to ER77441; each OFUM income amount says 'All missing data were assigned'); 'uncooperative' appears only on pp. 591-596, 2058-2059, 2064, 2070-2075.",
+      "blockers": [
+        "uncooperative_90_92_2019_2023"
+      ]
+    },
+    {
+      "file": "PSID/family/2021/FAM2021ER_codebook.pdf",
+      "bytes": 3628755,
+      "sha256": "e3b88ef394952fa05b9b98eb7f05bf9a99896840515942562aa37399e1bcd462",
+      "note": "Pinned by the income registry. 'Uncooperative' appears only on pp. 637-642, 1422-1423, 1428, 1434-1439.",
+      "blockers": [
+        "uncooperative_90_92_2019_2023"
+      ]
+    },
+    {
+      "file": "PSID/family/2023/FAM2023ER_codebook.pdf",
+      "bytes": 3439538,
+      "sha256": "85a4078ebb79146d023df3d9d4e2d2ef6017eced849656ca39f4b740cb5a5688",
+      "note": "Pinned by the income registry. 'Uncooperative' appears only on pp. 624-628, 1340-1341, 1346, 1352-1357.",
+      "blockers": [
+        "uncooperative_90_92_2019_2023"
+      ]
+    },
+    {
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "bytes": 2114531,
+      "sha256": "733a9be8591080e09179857e672808d8cbf9b9ff351b2adf2c9e8200d893d9dc",
+      "note": "Pinned by the pension registry. PDF pp. 5 (the first instrument that prints the CYAQRTH value list, 101 to 982), 89 (a question-text fill conditioned on 'MALE CYAQRTH=101, 201, 221'), 95 and 184 (J1CKPT: 'Male (CYAQRTH=101, 201, 221)'). It names the value 201 in routing conditions or question-text fills on 20 pages.",
+      "blockers": [
+        "uncooperative_90_92_2019_2023"
+      ]
+    },
+    {
+      "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+      "bytes": 4945025,
+      "sha256": "7dcb71f823e309a286b904531410243d58cde48b8f50079401856de9ac762238",
+      "note": "Pinned by the income registry. p. 6: ER60020, the 2015 spouse-sex variable, lists only '2 Female'. pp. 1968-1975: ER65317, OFUM labor income, the 'sum of all 2014 OFUM labor income data after individual imputations were made'; its accuracy variable ER65318 (p. 1969) has a code for 'Imputed by PSID staff during data cleaning and editing'; every OFUM income amount from ER65317 to ER65342 says 'All missing data were assigned'.",
+      "blockers": [
+        "male_code20_2015",
+        "uncooperative_90_92_2019_2023"
+      ]
+    },
+    {
+      "file": "PSID/documentation/capture1/q2013.pdf",
+      "bytes": 4471936,
+      "sha256": "5f966b9268ed428acd9454263296b31006220c69b33b6b36b8f6364436332c0d",
+      "note": "Pinned by the pension registry. PDF pp. 5 and 115: refer to the 'RTH Lookup List' without printing it (the 2015 lookup-list search).",
+      "blockers": [
+        "male_code20_2015"
+      ]
+    },
+    {
+      "file": "PSID/documentation/capture1/q2011.pdf",
+      "bytes": 3617314,
+      "sha256": "f3e0e374cd53c4164b37ae37a6e6eb0ab04dde0fa37fb339f8bb959fea70853f",
+      "note": "Not pinned by any registry; pinned here. PDF p. 105: refers to an 'RTH Lookup' without printing it (the 2015 lookup-list search).",
+      "blockers": [
+        "male_code20_2015"
+      ]
+    },
+    {
+      "file": "PSID/documentation/capture1/q2009.pdf",
+      "bytes": 2948164,
+      "sha256": "d1108cc07bfd1562fe494d6076ef4fb540f26faa9f496d1f325e68baee78516e",
+      "note": "Not pinned by any registry; pinned here. PDF p. 109: refers to an 'RTH Lookup' without printing it (the 2015 lookup-list search).",
+      "blockers": [
+        "male_code20_2015"
+      ]
+    },
+    {
+      "file": "PSID/documentation/capture1/cross_sec_weights_21.pdf",
+      "bytes": 827293,
+      "sha256": "b7b128e71233f60998fa265e3cc08e6c1f4990c26d977f5d5ca9c59c3a012d4c",
+      "note": "Pinned by the weights registry. September 2023. PDF p. 2: the post-1997 immigrant families 'did not have a longitudinal weight in 2017 due to the anticipation of adding more post-1997 immigrant families in 2019'; p. 6 (fair shares for every wave since 1997); p. 7 (calibration approach since 2017). PDF p. 11: the reference entry for the 2019 version of 'PSID Cross-Sectional Individual Weights, 1997-2017' with Sastry among its authors.",
+      "blockers": [
+        "revised_2017_weights"
+      ]
+    },
+    {
+      "file": "PSID/family/2017/FAM2017ER_codebook.pdf",
+      "bytes": 5095504,
+      "sha256": "19bfba9f7a3fecc82a18711466e2b2a5f00b49c9d3db0f9f8587795fad2bf8c1",
+      "url": null,
+      "blockers": [
+        "uncooperative_90_92_2019_2023",
+        "revised_2017_weights"
+      ],
+      "note": "Pinned by the income registry. pp. 2021-2028: ER71394, OFUM labor income, the 'sum of all 2016 OFUM labor income data after individual imputations were made'; its accuracy variable ER71395 has a code for 'Imputed by PSID staff during data cleaning and editing'; every OFUM income amount from ER71394 to ER71419 says 'All missing data were assigned'. Cited for the completeness of 2017 code-90 and code-92 OFUM income (research record section 1, item 3). PDF p. 2 (ER66001): 'For Release 2 we have added a new variable 2017 CROSS-SECTIONAL FAMILY WEIGHT (ER71571)'."
+    },
+    {
+      "file": "PSID/documentation/capture1/long_weight_21.pdf",
+      "bytes": 977556,
+      "sha256": "10e2eae090f40b0c041d92d81860dd3b4d17eeea74fd5c18ea7d6be371b241df",
+      "url": "https://psidonline.isr.umich.edu/data/weights/long_weight_21.pdf",
+      "blockers": [
+        "revised_2017_weights"
+      ],
+      "note": "Not pinned by any registry; pinned here. September 2023 report on the 2021 longitudinal weights. PDF p. 4: the '2019 preliminary reference weight' for 2017 Immigrant sample members, created 'when preparing 2019 cross-sectional weights', and its construction steps. The local capture's browser digest lists these bytes."
+    },
+    {
+      "file": "PSID/documentation/capture1/dust09_hh_codebook.pdf",
+      "bytes": 32713,
+      "sha256": "d88af94a1cbff1f9c1b0db9f43361792e5b70af0cef8a3f90a3422def83d9274",
+      "url": "https://psidonline.isr.umich.edu/DUST/dust09_hh_codebook.pdf",
+      "blockers": [
+        "male_code20_2015"
+      ],
+      "note": "Not pinned by any registry; pinned here. DUST 2009 household codebook. PDF pp. 3-6: the three-digit relationship values of DH1RTH and DH1RTW; no 201 (the 2015 lookup-list search). The local capture's browser digest lists these bytes."
+    },
+    {
+      "file": "PSID/documentation/capture1/dust13_hh_codebook.pdf",
+      "bytes": 39338,
+      "sha256": "f69124389fc8bbb734ab325fb418995768b1141b64fe3ed7ac57a88bc0822657",
+      "url": "https://psidonline.isr.umich.edu/DUST/dust13_hh_codebook.pdf",
+      "blockers": [
+        "male_code20_2015"
+      ],
+      "note": "Not pinned by any registry; pinned here. DUST 2013 household codebook. PDF pp. 4-7: the three-digit relationship values of DH2RTH ('RELATIONSHIP TO HEAD', pp. 4-6) and DH2RTW ('RELATIONSHIP TO WIFE', pp. 6-7), including 101 'Male Head', 202 'Wife' and 901 'Husband of Head'; no 201 (the 2015 lookup-list search). The local capture's browser digest lists these bytes."
+    },
+    {
+      "file": "PSID/documentation/capture1/dust13_UserGuide.pdf",
+      "bytes": 1333930,
+      "sha256": "9f71d7a481e155f9e6bda9cd51a114f8e136cd6ec2b14e0202be8b4c7a8e145b",
+      "url": "https://psidonline.isr.umich.edu/DUST/dust13_UserGuide.pdf",
+      "blockers": [
+        "male_code20_2015"
+      ],
+      "note": "Not pinned by any registry; pinned here. PDF p. 1 names DUST 2013 the Second Supplement on Disability and Use of Time. The local capture's browser digest lists these bytes."
+    },
+    {
+      "file": "PSID/documentation/capture1/q2003.pdf",
+      "bytes": 1004156,
+      "sha256": "7981d65d3eccffcbc6b5a2cc0bb8a472062ad7335b59bff3fbfda8962460599e",
+      "url": "https://psidonline.isr.umich.edu/documents/psid/questionnaires/q2003.pdf",
+      "blockers": [
+        "male_code20_2015"
+      ],
+      "note": "Not pinned by any registry; pinned here. PDF p. 1: a checkpoint condition 'CYAQRTH= 101 MaleHead OR 102 FemHead OR 202 Wife OR 222 Qwife' (the 2015 lookup-list search). The local capture's browser digest lists these bytes."
+    },
+    {
+      "file": "PSID/documentation/capture1/long_weight_17.pdf",
+      "bytes": 156322,
+      "sha256": "19570628b9ad1a125374d7fdf9001b8e39dfde9373ed0ab34c63ed9a8f45594c",
+      "url": "https://psidonline.isr.umich.edu/data/weights/long_weight_17.pdf",
+      "blockers": [
+        "revised_2017_weights"
+      ],
+      "note": "Not pinned by any registry; pinned here. February 2019 report on the 2017 longitudinal weights. PDF p. 9: its reference entry for 'PSID Cross-Sectional Individual Weights, 1997-2017' has the February 2019 report's author list, with McGonagle. The local capture's browser digest lists these bytes."
+    },
+    {
+      "file": "PSID/family/2017/Fam2017er_readme.pdf",
+      "bytes": 65924,
+      "sha256": "9eb2d59872c6afbb3e5b851df6d87193b7e239c13065b1aa698ed4a910255c8b",
+      "url": null,
+      "blockers": [
+        "revised_2017_weights"
+      ],
+      "note": "Not pinned by any registry; pinned here. The staged 2017 family-file readme (Release 3). PDF p. 1: the Release 2 note that added ER71571."
+    }
+  ],
+  "research_quotes": [
+    {
+      "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+      "page": 6,
+      "text": "2 Female",
+      "cited_as": "FAM2015ER p. 6"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "page": 89,
+      "text": "CYAQRTH=202, 222",
+      "cited_as": "q2015 p. 89"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "page": 166,
+      "text": "CYAQRTH=202, 222",
+      "cited_as": "p. 166 P70CKPT"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/UserGuide2017.pdf",
+      "page": 13,
+      "text": "From 1968-2015, PSID conformed to the Census Bureau conventions' in place at the time the study began by designating the husband in households with heterosexual married adults, the 'Head'.",
+      "cited_as": "UserGuide2017, PDF p. 13"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 792,
+      "question": 69,
+      "text": "From 1968-2015, PSID conformed to the Census Bureau conventions' in place at the time the study began by designating the husband in households with heterosexual married adults, the 'Head'.",
+      "cited_as": "question 69 (line 792)"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 829,
+      "question": 73,
+      "text": "If this person is female and she has a (male) spouse or partner in the FU, then he is designated as Reference Person. ... However, if the husband or boyfriend is incapacitated and unable to fulfill the functions of Reference Person, then the FU will have a female Reference Person.",
+      "cited_as": "FAQ question 73 (line 829)"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 833,
+      "question": 74,
+      "text": "From 1968 to 2015, a married male Head ... might become incapacitated in some way. ... In these cases, the female half of the couple was made Head and the husband became Husband of Head. A Husband of Head was asked the same questions as an Ofum. A male Head could also have been made Husband of Head if the female half of the couple insisted on being the Head, the female half of the couple was adamant about not giving out information about her husband, or the husband was adamant about not wanting to be included in the study. A Husband of Head had the Relationship to Head code 9 or 90.",
+      "cited_as": "FAQ question 74 (line 833)"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/fam2015_QxQs.pdf",
+      "page": 144,
+      "text": "Here we are double-checking that you got permission from study staff to make a male spouse into Husband of Head instead of Head. ... It means that a lot of data that should have been collected about the person didn't get collected.",
+      "cited_as": "QxQs, p. 144"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 839,
+      "question": 75,
+      "text": "If the person who moves in is married to the Head, they are of course, male Head and Wife (code 20), regardless of time living in the FU.",
+      "cited_as": "FAQ question 75 (line 839)"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 843,
+      "question": 75,
+      "text": "Starting in 2017, the Girlfriend or Boyfriend can be the same sex as the Reference Person",
+      "cited_as": "Line 843"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 845,
+      "question": 75,
+      "text": "PSID did not distinctively label same sex cohabitors prior to 2017.",
+      "cited_as": "Line 845"
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "page": 978,
+      "text": "90 Uncooperative legal spouse of Head (this individual is unable or unwilling to be designated as Head)",
+      "cited_as": "printed p. 978"
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "page": 978,
+      "text": "98 Other nonrelatives (includes same-sex partners, friends of children of the FU, etc.)",
+      "cited_as": "printed p. 978"
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "page": 978,
+      "text": "WTR SAME SEX PARTNER OF HD 15",
+      "cited_as": "printed p. 978"
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "page": 978,
+      "text": "Whether this person is the same-sex partner of Head. This variable was new for the 2015 Wave.",
+      "cited_as": "printed p. 978"
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "page": 978,
+      "text": "This person was identified by the interviewer as the same sex-partner of Head",
+      "cited_as": "printed p. 978"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/UserGuide2015.pdf",
+      "page": 33,
+      "text": "The other new variable added to the Individual File in 2015 is an indicator whether an OFUM reported living in the Family Unit is the same-sex partner of Head (ER34304).",
+      "cited_as": "UserGuide2015, PDF p. 33"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/UserGuide2017.pdf",
+      "page": 35,
+      "text": "As of 2017, same-sex partners of the Reference Person are now designated as Spouse/Partner in the Relation to Reference Person variable (ER34503) rather than as an OFUM. Therefore the 2015 indicator ... (ER34304) is redundant and has been dropped for 2017.",
+      "cited_as": "UserGuide2017, PDF p. 35"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "page": 104,
+      "text": "FUP1YEAR[I].AQRTH.ORD>222",
+      "cited_as": "q2015 p. 104"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 873,
+      "question": 79,
+      "text": "Considerably less detail is collected for other family unit members (OFUMs).",
+      "cited_as": "FAQ question 79 (line 873)"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "page": 217,
+      "text": "R=Head and there is a FU(MI) Wife/”Wife” or Girlfriend; or R=Female Head and there is a FU(MI) Husband of Head or Boyfriend",
+      "cited_as": "q2015 p. 217"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 796,
+      "question": 70,
+      "text": "Starting with the 2015 wave, the term Spouse/Partner has replaced Wife/“Wife”. Spouse indicates a legal marriage, while Partner is a cohabiting, non-legally married partner, where the couple can consist of heterosexual or same sex couples.",
+      "cited_as": "FAQ question 70 (line 796)"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "page": 5,
+      "text": "101 – 982; RTH Lookup List",
+      "cited_as": "q2015 p. 5"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "page": 131,
+      "text": "RTH Lookup",
+      "cited_as": "q2015 p. 131"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2013.pdf",
+      "page": 5,
+      "text": "101 – 982; RTH Lookup List",
+      "cited_as": "q2013 (pp. 5 and 115)"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2013.pdf",
+      "page": 115,
+      "text": "RTH Lookup",
+      "cited_as": "q2013 (pp. 5 and 115)"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2011.pdf",
+      "page": 105,
+      "text": "RTH Lookup",
+      "cited_as": "q2011 (p. 105)"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2009.pdf",
+      "page": 109,
+      "text": "RTH Lookup",
+      "cited_as": "q2009 (p. 109)"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "page": 5,
+      "text": "101. Male Head 102. Female Head 201. Male Spouse 202. Female Spouse 221. Male Partner",
+      "cited_as": "q2017 p. 5"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "page": 131,
+      "text": "901. Uncooperative Male Spouse",
+      "cited_as": "q2019 p. 131"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "page": 131,
+      "text": "902. Uncooperative Female Spouse",
+      "cited_as": "q2019 p. 131"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "page": 131,
+      "text": "921. Uncooperative Male Partner",
+      "cited_as": "q2019 p. 131"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "page": 131,
+      "text": "922. Uncooperative Female Partner",
+      "cited_as": "q2019 p. 131"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "page": 251,
+      "text": "901. Uncooperative Male Spouse",
+      "cited_as": "q2021 p. 251"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "page": 251,
+      "text": "902. Uncooperative Female Spouse",
+      "cited_as": "q2021 p. 251"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "page": 251,
+      "text": "921. Uncooperative Male Partner",
+      "cited_as": "q2021 p. 251"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "page": 251,
+      "text": "922. Uncooperative Female Partner",
+      "cited_as": "q2021 p. 251"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "page": 249,
+      "text": "901. Uncooperative Male Spouse",
+      "cited_as": "q2023 p. 249"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "page": 249,
+      "text": "902. Uncooperative Female Spouse",
+      "cited_as": "q2023 p. 249"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "page": 249,
+      "text": "921. Uncooperative Male Partner",
+      "cited_as": "q2023 p. 249"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "page": 249,
+      "text": "922. Uncooperative Female Partner",
+      "cited_as": "q2023 p. 249"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "page": 102,
+      "text": "Spouse/Partner (CYAQRTH=201-222, CYFUHU=FU, FUMI)",
+      "cited_as": "q2019 p. 102"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "page": 102,
+      "text": "G49 Rule",
+      "cited_as": "q2019 p. 102"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "page": 204,
+      "text": "G49 RULE: Whether Spouse-Partner in FU (CYAQRTH=201-222, CYFUHU=FU, FUMI)",
+      "cited_as": "q2021 p. 204"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "page": 202,
+      "text": "G49 RULE: Whether Spouse-Partner in FU (CYAQRTH=201-222, CYFUHU=FU, FUMI)",
+      "cited_as": "q2023 p. 202"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "page": 103,
+      "text": "CYAQRTH=301-882 or 951-982",
+      "cited_as": "q2019 p. 103"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "page": 125,
+      "text": "CYAQRTH=301-882 or 951-982",
+      "cited_as": "q2019 p. 125"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "page": 205,
+      "text": "CYAQRTH=301-882 or 951-982",
+      "cited_as": "q2021 p. 205"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "page": 243,
+      "text": "CYAQRTH=301-882 or 951-982",
+      "cited_as": "q2021 p. 243"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "page": 203,
+      "text": "CYAQRTH=301-882 or 951-982",
+      "cited_as": "q2023 p. 203"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "page": 241,
+      "text": "CYAQRTH=301-882 or 951-982",
+      "cited_as": "q2023 p. 241"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "page": 95,
+      "text": "AQRTH>222",
+      "cited_as": "q2017 p. 95"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 835,
+      "question": 74,
+      "text": "Once the study started coding same sex relationships in 2017, the Husband of Head Relationship was dropped. In its place, the study uses Uncooperative Spouse (... code 90), or Uncooperative Partner (... code 92). These designations are used when one half of the couple is adamant about not giving information about the other half, or when one half adamantly refuses to have their information included. In rare cases, these Relationships to Reference Person will be used when the sample half of a couple has moved out of the FU (family unit) and into an institution and is still in an institution the next wave.",
+      "cited_as": "FAQ question 74 (line 835)"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/UserGuide2017.pdf",
+      "page": 62,
+      "text": "Weight variables CORE/IMM INDIVIDUAL CROSS-SECTION WT (ER34651) on the individual file and the 2017 CROSS-SECTIONAL FAMILY WEIGHT (ER71571) on the family file have been updated to include the NIS-2017 sample with Release 2 of PSID-2017 data.",
+      "cited_as": "UserGuide2017, PDF p. 62"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/DataRelease-May2019.pdf",
+      "page": 1,
+      "text": "CROSS WAVE INDIVIDUAL FILE 1968-2017",
+      "cited_as": "May 2019 release notes, p. 1"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/DataRelease-May2019.pdf",
+      "page": 1,
+      "text": "Release 2 notes: ... Users should note the weights for the 2017 Immigrant individuals remain zero and will be updated in Release 3.",
+      "cited_as": "May 2019 release notes, p. 1"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_17.pdf",
+      "page": 3,
+      "text": "This 2017 New Immigrant sample is not covered by this document but detailed information about the post-1997 immigrant sample will be available from the PSID website.",
+      "cited_as": "PDF p. 3"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_17.pdf",
+      "page": 9,
+      "text": "The 2017 cross-sectional weights were post-stratified to the population totals that excluded the foreign-born individuals who entered the U.S. after 1997 ... detailed information about 2017 New Immigrant sample and its weighting methodology will be available from the PSID website.",
+      "cited_as": "PDF p. 9"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 1,
+      "text": "2019 PSID Cross-Sectional Individual and Family Unit Weights",
+      "cited_as": "PDF p. 1, April 2021"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 2,
+      "text": "A cross-sectional family weight was created in 2017 to represent U.S. families - including those with post-1997 immigrants added as part of the 2017 New Immigrant Sample.",
+      "cited_as": "first cited only PDF p. 2"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 7,
+      "text": "we started to use a different approach to do the calibration since 2017 that accounts for the correlation between the survey response and calibration dimensions.",
+      "cited_as": "PDF p. 7:"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 17,
+      "text": "Distribution of PSID Cross-Sectional Individual Weights: 1997-2019",
+      "cited_as": "PDF p. 17, Table A2a"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 17,
+      "text": "Not Used",
+      "cited_as": "PDF p. 17, Table A2a"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 17,
+      "text": "group quarters were excluded from the ACS estimate in 2017",
+      "cited_as": "PDF p. 17, Table A2a"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 17,
+      "text": "Donut hole family units were excluded from the ACS estimate in 2017",
+      "cited_as": "PDF p. 17, Table A2a"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 12,
+      "text": "when considering characteristics that are used as calibration controls (e.g. gender, race, region) the weighted distributions across categories exactly (or closely) match the corresponding population",
+      "cited_as": "PDF p. 12 says"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 13,
+      "text": "The actual calibration of the PSID cross-sectional individual weight uses age categorized in 10-year splits.",
+      "cited_as": "Note 4 (PDF p. 13)"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 6,
+      "text": "Using a version of the “fair shares” methodology described above, cross-sectional weights for all PSID individuals have been constructed for every wave since 1997.",
+      "cited_as": "PDF p. 6:"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 7,
+      "text": "equivalent to the PSID longitudinal family weight at wave t",
+      "cited_as": "(PDF p. 7)"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/long_weight_19.pdf",
+      "page": 1,
+      "text": "Construction and Evaluation of the 2019 Longitudinal Individual and Family Weights",
+      "cited_as": "PDF p. 1, April 2021"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/long_weight_19.pdf",
+      "page": 2,
+      "text": "This technical report documents the sample design of the 2017 Immigrant sample and the methodological approach to creating the longitudinal weights constructed for the family units and individuals from the 2019 Panel Study of Income Dynamics (PSID-2019).",
+      "cited_as": "PDF p. 2:"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 1,
+      "text": "June 2026",
+      "cited_as": "'June 2026', PDF p. 1"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 14,
+      "text": "Variable Names for PSID Cross-Sectional Weights",
+      "cited_as": "PDF p. 14, Table A3"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 13,
+      "text": "Distribution of PSID Cross-Sectional Individual Weights: 1997-2023",
+      "cited_as": "PDF p. 13, Table A2"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 13,
+      "text": "Not Used",
+      "cited_as": "PDF p. 13, Table A2"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 13,
+      "text": "recent immigrants born between 1960 and 1971 (as well as post-1997 immigrants who co-reside with individuals born in these years) were not part of the PSID NIS-2017 sample",
+      "cited_as": "PDF p. 13, Table A2"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 13,
+      "text": "the ‘donut hole’ group",
+      "cited_as": "PDF p. 13, Table A2"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 13,
+      "text": "Individuals living in the donut hole families and individuals who are recent (post-1997) immigrants but live in group quarters were excluded from the ACS estimate in 2017",
+      "cited_as": "PDF p. 13, Table A2"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 2,
+      "text": "The population characteristics used for calibration were based on CPS estimates from 1997 to 2013 and have been based on ACS estimates since 2015.",
+      "cited_as": "PDF p. 2, note 2"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 2,
+      "text": "The 2017 new immigrant sample have zero longitudinal family weight in 2017 so they would be excluded from the estimates in 2017.",
+      "cited_as": "PDF p. 2, note 2"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 6,
+      "text": "we started to use a different approach to select the calibration variables since 2017 that ensures that calibration variables are ones that are correlated with both survey response and survey outcome variables.",
+      "cited_as": "PDF p. 6:"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 3,
+      "text": "In 2017, a baseline sample of post-1997 immigrant families and individuals was added to PSID.",
+      "cited_as": "PDF p. 3:"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 3,
+      "text": "See Chang et al. (2021) for the details of the sample recruitment of the 2017 Immigrant sample.",
+      "cited_as": "PDF p. 3:"
+    },
+    {
+      "file": "PSID/documentation/capture1/cross_sec_weights_21.pdf",
+      "page": 1,
+      "text": "2021 PSID Cross-Sectional Individual Weights",
+      "cited_as": "PDF p. 1, September 2023"
+    },
+    {
+      "file": "PSID/documentation/capture1/cross_sec_weights_21.pdf",
+      "page": 2,
+      "text": "The post-1997 immigrant families did not have a longitudinal weight in 2017 due to the anticipation of adding more post-1997 immigrant families in 2019.",
+      "cited_as": "PDF p. 2, gives"
+    },
+    {
+      "file": "PSID/documentation/capture1/cross_sec_weights_21.pdf",
+      "page": 7,
+      "text": "since 2017",
+      "cited_as": "(PDF p. 7)"
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "page": 1224,
+      "text": "This variable has been updated for all individuals in 2017 including the Immigrant 2017 sample.",
+      "cited_as": "IND2023ER_codebook.pdf` p. 1224"
+    },
+    {
+      "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+      "page": 1968,
+      "text": "sum of all 2014 OFUM labor income data after individual imputations were made",
+      "cited_as": "FAM2015ER p. 1968"
+    },
+    {
+      "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+      "page": 1968,
+      "text": "All missing data were assigned",
+      "cited_as": "FAM2015ER p. 1968"
+    },
+    {
+      "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+      "page": 1969,
+      "text": "Imputed by PSID staff during data cleaning and editing",
+      "cited_as": "FAM2015ER p. 1969"
+    },
+    {
+      "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+      "page": 1975,
+      "text": "All missing data were assigned",
+      "cited_as": "FAM2015ER pp. 1969–1975"
+    },
+    {
+      "file": "PSID/family/2017/FAM2017ER_codebook.pdf",
+      "page": 2021,
+      "text": "All missing data were assigned",
+      "cited_as": "FAM2017ER pp. 2021–2028"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "page": 190,
+      "text": "PYAQRTH=101-222 & CYAQRTH=101-222",
+      "cited_as": "(p. 190)"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "page": 190,
+      "text": "Male Head",
+      "cited_as": "(p. 190)"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "page": 190,
+      "text": "Female Head/W/“W”",
+      "cited_as": "(p. 190)"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "page": 5,
+      "text": "Male Spouse",
+      "cited_as": "(p. 5)"
+    },
+    {
+      "file": "PSID/documentation/capture1/dust13_hh_codebook.pdf",
+      "page": 4,
+      "text": "RELATIONSHIP TO HEAD",
+      "cited_as": "dust13_hh_codebook.pdf` pp. 4–6"
+    },
+    {
+      "file": "PSID/documentation/capture1/dust13_hh_codebook.pdf",
+      "page": 6,
+      "text": "RELATIONSHIP TO WIFE",
+      "cited_as": "(pp. 6–7)"
+    },
+    {
+      "file": "PSID/documentation/capture1/dust13_hh_codebook.pdf",
+      "page": 4,
+      "text": "Male Head",
+      "cited_as": "(p. 4)"
+    },
+    {
+      "file": "PSID/documentation/capture1/dust13_hh_codebook.pdf",
+      "page": 4,
+      "text": "Wife",
+      "cited_as": "(p. 4)"
+    },
+    {
+      "file": "PSID/documentation/capture1/dust13_hh_codebook.pdf",
+      "page": 6,
+      "text": "Husband of Head",
+      "cited_as": "(p. 6)"
+    },
+    {
+      "file": "PSID/family/2019/fam2019er_codebook.pdf",
+      "page": 2006,
+      "text": "sum of all 2018 OFUM labor income data after individual imputations were made",
+      "cited_as": "fam2019er_codebook.pdf` p. 2006"
+    },
+    {
+      "file": "PSID/family/2019/fam2019er_codebook.pdf",
+      "page": 2006,
+      "text": "All missing data were assigned",
+      "cited_as": "fam2019er_codebook.pdf` p. 2006"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/long_weight_19.pdf",
+      "page": 13,
+      "text": "The nonresponse-adjusted base weight for the NIS-2017 was calculated as the product of the base probability of selection weight and the final combined nonresponse adjustment factor.",
+      "cited_as": "PDF p. 13:"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/long_weight_19.pdf",
+      "page": 13,
+      "text": "For the New Immigrant sample cases that do not have joint probabilities (D-S) under the Core samples, the nonresponse-adjusted base weight is rescaled and serves as the starting weight for the calibration for preliminary cross-sectional individual weight.",
+      "cited_as": "PDF p. 13:"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/long_weight_19.pdf",
+      "page": 8,
+      "text": "is derived from a preliminary weight that we calibrate to 2019 ACS 1-year PUMS population totals",
+      "cited_as": "PDF p. 8 places"
+    },
+    {
+      "file": "PSID/documentation/capture1/long_weight_21.pdf",
+      "page": 4,
+      "text": "Starting with the inverse of the probability of selection, the weighting process included: 1) adjustment for screening nonresponse and 2017 interview nonresponse, 2) integration of weights to account for joint inclusion probabilities ... and 3) calibration to the new immigrant population total.",
+      "cited_as": "long_weight_21.pdf`, PDF p. 4"
+    },
+    {
+      "file": "PSID/documentation/capture1/long_weight_21.pdf",
+      "page": 4,
+      "text": "2019 preliminary reference weight",
+      "cited_as": "long_weight_21.pdf`, PDF p. 4"
+    },
+    {
+      "file": "PSID/documentation/capture1/long_weight_21.pdf",
+      "page": 4,
+      "text": "when preparing 2019 cross-sectional weights",
+      "cited_as": "long_weight_21.pdf`, PDF p. 4"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "page": 184,
+      "text": "Male (CYAQRTH=101, 201, 221)",
+      "cited_as": "(q2017 p. 184)"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "page": 184,
+      "text": "Female (CYAQRTH=102, 202, 222)",
+      "cited_as": "(q2017 p. 184)"
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "page": 523,
+      "text": "The first two digits of code values here in the range 101-982 are based on the PSID's Relationship to Head code, and the third digit represents gender (1 for male, 2 for female)",
+      "cited_as": "IND2023ER codebook p. 523"
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "page": 523,
+      "text": "Husband of respondent",
+      "cited_as": "IND2023ER codebook p. 523"
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "page": 523,
+      "text": "Wife of respondent",
+      "cited_as": "IND2023ER codebook p. 523"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2003.pdf",
+      "page": 1,
+      "text": "CYAQRTH= 101 MaleHead OR 102 FemHead OR 202 Wife OR 222 Qwife",
+      "cited_as": "q2003.pdf` p. 1"
+    },
+    {
+      "file": "PSID/family/2017/FAM2017ER_codebook.pdf",
+      "page": 2,
+      "text": "For Release 2 we have added a new variable 2017 CROSS-SECTIONAL FAMILY WEIGHT (ER71571)",
+      "cited_as": "FAM2017ER codebook PDF p. 2"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 14,
+      "text": "Chang, W., Nishimura, R., Heeringa, S., Johnson, D., and Sastry N. (2019). “PSID Cross-Sectional Individual Weights, 1997-2017”",
+      "cited_as": "cross_sec_weights_19 PDF p. 14"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/long_weight_19.pdf",
+      "page": 23,
+      "text": "Chang, W., Nishimura, R., Heeringa, S., Johnson, D., and Sastry N. (2019). “PSID Cross-Sectional Individual Weights, 1997-2017”",
+      "cited_as": "long_weight_19 PDF p. 23"
+    },
+    {
+      "file": "PSID/documentation/capture1/cross_sec_weights_21.pdf",
+      "page": 11,
+      "text": "Chang, W., Nishimura, R., Heeringa, S., Johnson, D., and Sastry N. (2019). “PSID Cross-Sectional Individual Weights, 1997-2017”",
+      "cited_as": "cross_sec_weights_21 PDF p. 11"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 9,
+      "text": "different family unit types included in the PSID 2019 sample and how we define PSID equivalent family units for ACS data",
+      "cited_as": "cross_sec_weights_19 PDF p. 9"
+    }
+  ],
+  "spec_quotes": [
+    {
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "page": 89,
+      "text": "CYAQRTH=202, 222",
+      "cited_as": "q2015 pp. 89, 166"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "page": 166,
+      "text": "CYAQRTH=202, 222",
+      "cited_as": "q2015 pp. 89, 166"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "page": 104,
+      "text": "FUP1YEAR[I].AQRTH.ORD>222",
+      "cited_as": "q2015 p. 104"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 833,
+      "question": 74,
+      "text": "was asked the same questions as an Ofum",
+      "cited_as": "question 74"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 833,
+      "question": 74,
+      "text": "the female half of the couple was adamant about not giving out information about her husband, or the husband was adamant about not wanting to be included in the study",
+      "cited_as": "question 74"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "page": 95,
+      "text": "CYAQRTH=201-222",
+      "cited_as": "p. 95 sends"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "page": 95,
+      "text": "AQRTH>222",
+      "cited_as": "p. 95 sends"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 835,
+      "question": 74,
+      "text": "when one half of the couple is adamant about not giving information about the other half",
+      "cited_as": "FAQ question 74"
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "page": 916,
+      "text": "Legal husband of Head",
+      "cited_as": "IND2023ER codebook p. 916"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 841,
+      "question": 75,
+      "text": "Boyfriends and Girlfriends are treated like other family members who are not Reference Person ('Head' prior to 2017), Spouse or Partner.",
+      "cited_as": "FAQ question 75"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/UserGuide2017.pdf",
+      "page": 13,
+      "text": "From 1968-2015, PSID conformed to the Census Bureau conventions' ... by designating the husband in households with heterosexual married adults, the 'Head'",
+      "cited_as": "UserGuide2017 PDF p. 13"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 833,
+      "question": 74,
+      "text": "Husband of Head",
+      "cited_as": "FAQ question 74"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/fam2015_QxQs.pdf",
+      "page": 144,
+      "text": "a male spouse into Husband of Head instead of Head",
+      "cited_as": "QxQs p. 144"
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "page": 978,
+      "text": "Other nonrelatives (includes same-sex partners ...)",
+      "cited_as": "IND2023ER codebook p. 978"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/UserGuide2017.pdf",
+      "page": 35,
+      "text": "As of 2017",
+      "cited_as": "UserGuide2017 PDF p. 35"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/UserGuide2017.pdf",
+      "page": 35,
+      "text": "designated as Spouse/Partner ... rather than as an OFUM",
+      "cited_as": "UserGuide2017 PDF p. 35"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 796,
+      "question": 70,
+      "text": "Spouse indicates a legal marriage, while Partner is a cohabiting, non-legally married partner, where the couple can consist of heterosexual or same sex couples",
+      "cited_as": "FAQ question 70"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "page": 102,
+      "text": "CYAQRTH=201-222",
+      "cited_as": "q2019 p. 102"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "page": 204,
+      "text": "CYAQRTH=201-222",
+      "cited_as": "q2021 p. 204"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "page": 202,
+      "text": "CYAQRTH=201-222",
+      "cited_as": "q2023 p. 202"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "page": 103,
+      "text": "CYAQRTH=301-882 or 951-982",
+      "cited_as": "q2019 pp. 103, 125"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "page": 125,
+      "text": "CYAQRTH=301-882 or 951-982",
+      "cited_as": "q2019 pp. 103, 125"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "page": 205,
+      "text": "CYAQRTH=301-882 or 951-982",
+      "cited_as": "q2021 pp. 205, 243"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "page": 243,
+      "text": "CYAQRTH=301-882 or 951-982",
+      "cited_as": "q2021 pp. 205, 243"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "page": 203,
+      "text": "CYAQRTH=301-882 or 951-982",
+      "cited_as": "q2023 pp. 203, 241"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "page": 241,
+      "text": "CYAQRTH=301-882 or 951-982",
+      "cited_as": "q2023 pp. 203, 241"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "line": 835,
+      "question": 74,
+      "text": "are used when one half of the couple is adamant about not giving information about the other half, or when one half adamantly refuses to have their information included",
+      "cited_as": "FAQ question 74 says codes 90 and 92"
+    },
+    {
+      "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+      "page": 6,
+      "text": "Head is female or single male",
+      "cited_as": "FAM2015ER p. 6"
+    },
+    {
+      "file": "PSID/family/2017/FAM2017ER_codebook.pdf",
+      "page": 6,
+      "text": "Reference Person is female or single male",
+      "cited_as": "FAM2017ER p. 6"
+    },
+    {
+      "file": "PSID/family/2019/fam2019er_codebook.pdf",
+      "page": 6,
+      "text": "Reference Person is female or single male",
+      "cited_as": "fam2019er p. 6"
+    },
+    {
+      "file": "PSID/family/2021/FAM2021ER_codebook.pdf",
+      "page": 7,
+      "text": "Reference Person is female or single male",
+      "cited_as": "FAM2021ER p. 7"
+    },
+    {
+      "file": "PSID/family/2023/FAM2023ER_codebook.pdf",
+      "page": 6,
+      "text": "Reference Person is female or single male",
+      "cited_as": "FAM2023ER p. 6"
+    },
+    {
+      "file": "src/populace_dynamics/data/family_income.py",
+      "line": 45,
+      "text": "WIFE RETIREMENT/ANNUITIES",
+      "cited_as": "family_income.py:45"
+    },
+    {
+      "file": "PSID/family/2013/FAM2013ER_codebook.pdf",
+      "page": 1852,
+      "text": "Accuracy of"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "page": 152,
+      "text": "1. DB Only (P46=1)",
+      "cited_as": "q2017 p. 152"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "page": 152,
+      "text": "3. DC Only (P46=5)",
+      "cited_as": "q2017 p. 152"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "page": 152,
+      "text": "5. All Others",
+      "cited_as": "q2017 p. 152"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "page": 163,
+      "text": "1. DB Only (P46=1)",
+      "cited_as": "q2019 p. 163"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "page": 163,
+      "text": "3. DC Only (P46=5)",
+      "cited_as": "q2019 p. 163"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "page": 163,
+      "text": "5. All Others",
+      "cited_as": "q2019 p. 163"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "page": 304,
+      "text": "1. DB Only (P46=1)",
+      "cited_as": "q2021 p. 304"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "page": 304,
+      "text": "3. DC Only (P46=5)",
+      "cited_as": "q2021 p. 304"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "page": 304,
+      "text": "5. All Others",
+      "cited_as": "q2021 p. 304"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "page": 302,
+      "text": "1. DB Only (P46=1)",
+      "cited_as": "q2023 p. 302"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "page": 302,
+      "text": "3. DC Only (P46=5)",
+      "cited_as": "q2023 p. 302"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "page": 302,
+      "text": "5. All Others",
+      "cited_as": "q2023 p. 302"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "page": 164,
+      "text": "P46=1 AND P52=1 AND P62AMT= DK/RF",
+      "cited_as": "q2015 p. 164"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "page": 164,
+      "text": "1. P62AMT =DK/RF",
+      "cited_as": "q2015 p. 164"
+    },
+    {
+      "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+      "page": 692,
+      "text": "defined benefit retirement plan or combination plan (ER61990=1 or 7)",
+      "cited_as": "FAM2015ER p. 692"
+    },
+    {
+      "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+      "page": 692,
+      "text": "NA or RF type of retirement plan (ER61990=9)",
+      "cited_as": "FAM2015ER p. 692"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "page": 166,
+      "text": "CYAQRTH=202, 222",
+      "cited_as": "q2015 p. 166"
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "page": 1224,
+      "text": "CORE/IMM INDIVIDUAL CROSS-SECTION WT 17",
+      "cited_as": "IND2023ER codebook p. 1224"
+    },
+    {
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "page": 1224,
+      "text": "This variable has been updated for all individuals in 2017 including the Immigrant 2017 sample",
+      "cited_as": "IND2023ER codebook p. 1224"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/DataRelease-May2019.pdf",
+      "page": 1,
+      "text": "the weights for the 2017 Immigrant individuals remain zero and will be updated in Release 3",
+      "cited_as": "DataRelease-May2019 p. 1"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/UserGuide2017.pdf",
+      "page": 62,
+      "text": "Release 2 of PSID-2017 data",
+      "cited_as": "UserGuide2017 PDF p. 62"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 13,
+      "text": "Not Used",
+      "cited_as": "Table A2 (PDF p. 13)"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 13,
+      "text": "were excluded from the ACS estimate in 2017",
+      "cited_as": "Table A2 (PDF p. 13)"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 6,
+      "text": "started to use a different approach to select the calibration variables since 2017",
+      "cited_as": "PDF p. 6 says"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_17.pdf",
+      "page": 9,
+      "text": "population totals that excluded the foreign-born individuals who entered the U.S. after 1997",
+      "cited_as": "cross_sec_weights_17 PDF pp. 3, 9"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_17.pdf",
+      "page": 9,
+      "text": "weighting methodology will be available from the PSID website",
+      "cited_as": "cross_sec_weights_17 PDF pp. 3, 9"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 17,
+      "text": "Not Used",
+      "cited_as": "Table A2a (PDF p. 17)"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 7,
+      "text": "since 2017",
+      "cited_as": "PDF p. 7 dates"
+    },
+    {
+      "file": "PSID/documentation/capture1/cross_sec_weights_21.pdf",
+      "page": 2,
+      "text": "did not have a longitudinal weight in 2017 due to the anticipation of adding more post-1997 immigrant families in 2019",
+      "cited_as": "cross_sec_weights_21 PDF p. 2"
+    },
+    {
+      "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+      "page": 1968,
+      "text": "sum of all 2014 OFUM labor income data after individual imputations were made",
+      "cited_as": "FAM2015ER pp. 1968–1969"
+    },
+    {
+      "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+      "page": 1968,
+      "text": "All missing data were assigned",
+      "cited_as": "FAM2015ER pp. 1968–1969"
+    },
+    {
+      "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+      "page": 1969,
+      "text": "Imputed by PSID staff during data cleaning and editing",
+      "cited_as": "FAM2015ER pp. 1968–1969"
+    },
+    {
+      "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+      "page": 1975,
+      "text": "All missing data were assigned",
+      "cited_as": "FAM2015ER pp. 1969–1975"
+    },
+    {
+      "file": "PSID/family/2017/FAM2017ER_codebook.pdf",
+      "page": 2021,
+      "text": "All missing data were assigned",
+      "cited_as": "FAM2017ER pp. 2021–2028"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 6,
+      "text": "Using a version of",
+      "cited_as": "cross_sec_weights_19 PDF p. 6"
+    },
+    {
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "page": 14,
+      "text": "PSID Cross-Sectional Individual Weights, 1997-2017",
+      "cited_as": "cross_sec_weights_19 PDF pp. 9 and 14"
+    },
+    {
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "page": 13,
+      "text": "post-1997 immigrants who co-reside with individuals born in these years",
+      "cited_as": "cross_sec_weights_23 PDF p. 13"
+    },
+    {
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "page": 184,
+      "text": "Male (CYAQRTH=101, 201, 221)",
+      "cited_as": "(q2017 p. 184)"
+    }
+  ],
+  "documentation_searches": [
+    {
+      "question": "Where is the 2015 'RTH Lookup List' that q2015 p. 5 names for CYAQRTH?",
+      "searched_utc": "2026-09-29",
+      "scope": "PSID/documentation (its only subdirectory is capture1): the text layers of all 494 PDFs (Poppler pdftotext -layout 26.09.0) and the HTML, JSON and text metadata files, searched line by line and again per page with whitespace collapsed across line breaks. Documentation only; no data file was searched.",
+      "patterns": [
+        "RTH Lookup (any case)",
+        "lookup list / look-up list (any case)",
+        "printed three-digit relationship values 101, 201, 202 or 901 followed by a relationship word"
+      ],
+      "result": "Absent. 'RTH Lookup' occurs only as references: q2009 p. 109, q2011 p. 105, q2013 pp. 5 and 115, q2015 pp. 5 and 131 (the line-by-line pass missed q2009, where the two words fall on two lines). Every other lookup hit is a state, country, city, address, school, car-model or telephone lookup, a family-member name lookup (MEMBERLOOKUP, q2021-q2025), a Child Development Supplement list or scoring table, or a passing use of 'look up'. The first instrument that prints the CYAQRTH values is q2017 p. 5; q2019 pp. 130-131, q2021 pp. 251-252 and q2023 pp. 249-250 follow. No staged document prints 201 as a relationship value before q2017. The printed-value pattern also matched the DUST 2009 and 2013 household codebooks (dust09_hh_codebook pp. 3 and 5; dust13_hh_codebook pp. 4 and 6), which list their files' relationship values without 201, and numeric cells of calibration tables in the 2011 to 2017 cross-sectional weight reports, which are not relationship values. In q2015 the token 201 occurs only as the page number of p. 201, and q2015 never names 901, while q2017 names 201 in routing conditions or question-text fills on 20 pages.",
+      "blockers": [
+        "male_code20_2015"
+      ],
+      "rerun_utc": "2026-09-29",
+      "rerun": "Rerun from a fresh text extraction of the same 494 PDFs (Poppler pdftotext -layout 26.09.0), page level with whitespace collapsed: the same six 'RTH Lookup' references, and the printed-value hits listed in the result.",
+      "printed_value_hits": {
+        "value lists (101 to 982)": [
+          "q2017 p. 5",
+          "q2019 pp. 130-131",
+          "q2021 pp. 251-252",
+          "q2023 pp. 249-250"
+        ],
+        "checkpoint conditions naming 101, 102, 202 and 222, never 201": [
+          "q1999 p. 147",
+          "q2001 p. 143",
+          "q2003 pp. 1 and 102"
+        ],
+        "relationship lists without 201": [
+          "dust09_hh_codebook pp. 3 and 5",
+          "dust13_hh_codebook pp. 4 and 6",
+          "IND2023ER_codebook p. 523 (ER33219, 1995)"
+        ],
+        "numbers that are not relationship values": [
+          "cross_sec_weights_11 p. 13",
+          "cross_sec_weights_13 p. 12",
+          "cross_sec_weights_15 p. 14",
+          "cross_sec_weights_17 pp. 13-14 (calibration-table cells)",
+          "fam1977_77FAM p. 98 and psid77w10 p. 188 (a variable number before 'Head's Education')",
+          "psid87w20v1 p. 109 (a variable number)",
+          "fam2011_QxQs and qxq2011_QxQs p. 101 (the page number)"
+        ]
+      }
+    }
+  ],
+  "page_anchors": [
+    {
+      "record": "research",
+      "cited_as": "page number of p. 201",
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "checks": [
+        [
+          201,
+          "OTHPARENTBMO"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "Its integration section (PDF pp. 13–15)",
+      "file": "tests/data/track_u2/psid_docs/long_weight_19.pdf",
+      "checks": [
+        [
+          13,
+          "Integration to account for Joint Inclusion Probabilities"
+        ],
+        [
+          14,
+          "integration scaling factor"
+        ],
+        [
+          15,
+          "integrated Core/NIS weight"
+        ],
+        [
+          14,
+          "The estimated conditional probability to include the Joint families"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "J1CKPT (p. 190)",
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "checks": [
+        [
+          190,
+          "J1CKPT"
+        ],
+        [
+          190,
+          "NEW OR PY INST FEMALE"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "q2009 p. 109",
+      "file": "PSID/documentation/capture1/q2009.pdf",
+      "checks": [
+        [
+          109,
+          "RTH Lookup"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "q2019 pp. 130–131",
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "checks": [
+        [
+          130,
+          "201. Male Spouse"
+        ],
+        [
+          131,
+          "982."
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "q2021 pp. 251–252",
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "checks": [
+        [
+          251,
+          "201. Male Spouse"
+        ],
+        [
+          252,
+          "982."
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "q2023 pp. 249–250",
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "checks": [
+        [
+          249,
+          "201. Male Spouse"
+        ],
+        [
+          250,
+          "982."
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "dust13_UserGuide.pdf` p. 1",
+      "file": "PSID/documentation/capture1/dust13_UserGuide.pdf",
+      "checks": [
+        [
+          1,
+          "Second Supplement on Disability and Use of Time"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "dust09_hh_codebook.pdf` pp. 3–6",
+      "file": "PSID/documentation/capture1/dust09_hh_codebook.pdf",
+      "checks": [
+        [
+          3,
+          "RELATIONSHIP TO HEAD"
+        ],
+        [
+          5,
+          "RELATIONSHIP TO WIFE"
+        ],
+        [
+          6,
+          "Grandfather of Wife"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "CYAQRTH (q2015 p. 5)",
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "checks": [
+        [
+          5,
+          "RTH Lookup List"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "(q2019 p. 103; q2021 p. 205; q2023 p. 203)",
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "checks": [
+        [
+          103,
+          "G73CKPT"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "(q2019 p. 103; q2021 p. 205; q2023 p. 203)",
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "checks": [
+        [
+          205,
+          "G73CKPT"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "(q2019 p. 103; q2021 p. 205; q2023 p. 203)",
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "checks": [
+        [
+          203,
+          "G73CKPT"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "with the codes listed on p. 5",
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "checks": [
+        [
+          5,
+          "901. Uncooperative Male Spouse"
+        ],
+        [
+          5,
+          "921. Uncooperative Male Partner"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "(2019 pp. 591–596; 2021 pp. 637–642; 2023 pp. 624–628)",
+      "file": "PSID/family/2019/fam2019er_codebook.pdf",
+      "checks": [
+        [
+          591,
+          "Uncooperative"
+        ],
+        [
+          596,
+          "Uncooperative"
+        ],
+        [
+          591,
+          "ER73785"
+        ],
+        [
+          596,
+          "ER73789"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "(2019 pp. 591–596; 2021 pp. 637–642; 2023 pp. 624–628)",
+      "file": "PSID/family/2021/FAM2021ER_codebook.pdf",
+      "checks": [
+        [
+          637,
+          "Uncooperative"
+        ],
+        [
+          642,
+          "Uncooperative"
+        ],
+        [
+          637,
+          "ER79906"
+        ],
+        [
+          642,
+          "ER79910"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "(2019 pp. 591–596; 2021 pp. 637–642; 2023 pp. 624–628)",
+      "file": "PSID/family/2023/FAM2023ER_codebook.pdf",
+      "checks": [
+        [
+          624,
+          "Uncooperative"
+        ],
+        [
+          628,
+          "Uncooperative"
+        ],
+        [
+          624,
+          "ER83875"
+        ],
+        [
+          628,
+          "ER83878"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "(2019 pp. 2058–2059; 2021 pp. 1422–1423; 2023 pp. 1340–1341)",
+      "file": "PSID/family/2019/fam2019er_codebook.pdf",
+      "checks": [
+        [
+          2058,
+          "Uncooperative"
+        ],
+        [
+          2059,
+          "Uncooperative"
+        ],
+        [
+          2058,
+          "ER77601"
+        ],
+        [
+          2059,
+          "ER77603"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "(2019 pp. 2058–2059; 2021 pp. 1422–1423; 2023 pp. 1340–1341)",
+      "file": "PSID/family/2021/FAM2021ER_codebook.pdf",
+      "checks": [
+        [
+          1422,
+          "Uncooperative"
+        ],
+        [
+          1423,
+          "Uncooperative"
+        ],
+        [
+          1422,
+          "ER81928"
+        ],
+        [
+          1423,
+          "ER81930"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "(2019 pp. 2058–2059; 2021 pp. 1422–1423; 2023 pp. 1340–1341)",
+      "file": "PSID/family/2023/FAM2023ER_codebook.pdf",
+      "checks": [
+        [
+          1340,
+          "Uncooperative"
+        ],
+        [
+          1341,
+          "Uncooperative"
+        ],
+        [
+          1340,
+          "ER85782"
+        ],
+        [
+          1341,
+          "ER85784"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "(2019 p. 2064; 2021 p. 1428; 2023 p. 1346)",
+      "file": "PSID/family/2019/fam2019er_codebook.pdf",
+      "checks": [
+        [
+          2064,
+          "uncooperative"
+        ],
+        [
+          2064,
+          "ER77606"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "(2019 p. 2064; 2021 p. 1428; 2023 p. 1346)",
+      "file": "PSID/family/2021/FAM2021ER_codebook.pdf",
+      "checks": [
+        [
+          1428,
+          "uncooperative"
+        ],
+        [
+          1428,
+          "ER81933"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "(2019 p. 2064; 2021 p. 1428; 2023 p. 1346)",
+      "file": "PSID/family/2023/FAM2023ER_codebook.pdf",
+      "checks": [
+        [
+          1346,
+          "uncooperative"
+        ],
+        [
+          1346,
+          "ER85787"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "(2019 pp. 2070–2075; 2021 pp. 1434–1439; 2023 pp. 1352–1357)",
+      "file": "PSID/family/2019/fam2019er_codebook.pdf",
+      "checks": [
+        [
+          2070,
+          "Uncooperative"
+        ],
+        [
+          2075,
+          "Uncooperative"
+        ],
+        [
+          2070,
+          "Page 2070 of"
+        ],
+        [
+          2075,
+          "ER77629"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "(2019 pp. 2070–2075; 2021 pp. 1434–1439; 2023 pp. 1352–1357)",
+      "file": "PSID/family/2021/FAM2021ER_codebook.pdf",
+      "checks": [
+        [
+          1434,
+          "Uncooperative"
+        ],
+        [
+          1439,
+          "Uncooperative"
+        ],
+        [
+          1434,
+          "Page 1434 of"
+        ],
+        [
+          1439,
+          "ER81956"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "(2019 pp. 2070–2075; 2021 pp. 1434–1439; 2023 pp. 1352–1357)",
+      "file": "PSID/family/2023/FAM2023ER_codebook.pdf",
+      "checks": [
+        [
+          1352,
+          "Uncooperative"
+        ],
+        [
+          1357,
+          "Uncooperative"
+        ],
+        [
+          1352,
+          "Page 1352 of"
+        ],
+        [
+          1357,
+          "ER85810"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "fam2019er_codebook.pdf` p. 2015",
+      "file": "PSID/family/2019/fam2019er_codebook.pdf",
+      "checks": [
+        [
+          2015,
+          "ER77448"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "(ER77416–ER77441, pp. 2006–2013)",
+      "file": "PSID/family/2019/fam2019er_codebook.pdf",
+      "checks": [
+        [
+          2006,
+          "ER77416"
+        ],
+        [
+          2013,
+          "ER77441"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "starting from UserGuide2017 p. 62",
+      "file": "tests/data/track_u2/psid_docs/UserGuide2017.pdf",
+      "checks": [
+        [
+          62,
+          "ER34651"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "UserGuide2017 p. 62 dates",
+      "file": "tests/data/track_u2/psid_docs/UserGuide2017.pdf",
+      "checks": [
+        [
+          62,
+          "Release 2 of PSID-2017 data"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "PDF p. 18, Table A3",
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "checks": [
+        [
+          18,
+          "Table A3"
+        ],
+        [
+          18,
+          "ER34651"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "PDF pp. 19–22, Tables A4 to A7",
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "checks": [
+        [
+          19,
+          "Table A4"
+        ],
+        [
+          22,
+          "Table A7"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "PDF p. 4: the pointer",
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "checks": [
+        [
+          4,
+          "Chang et al. (2021)"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "Its construction section (PDF pp. 6–10)",
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "checks": [
+        [
+          6,
+          "fair shares"
+        ],
+        [
+          10,
+          "trimming"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "The reference list (PDF p. 10)",
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "checks": [
+        [
+          10,
+          "Chang, W., Nishimura, R."
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "PDF pp. 6–8 then give",
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "checks": [
+        [
+          6,
+          "since 2017"
+        ],
+        [
+          7,
+          "interaction"
+        ],
+        [
+          8,
+          "raking"
+        ],
+        [
+          8,
+          "trimming"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "dated 2026 in its text on PDF p. 2",
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "checks": [
+        [
+          2,
+          "Chang et al. (2026)"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "2025 in its reference list on PDF p. 10",
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "checks": [
+        [
+          10,
+          "Construction and Evaluation of the 2023 Longitudinal"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "fair-shares statement (PDF p. 6)",
+      "file": "PSID/documentation/capture1/cross_sec_weights_21.pdf",
+      "checks": [
+        [
+          6,
+          "fair shares"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "UserGuide2019 PDF p. 38",
+      "file": "tests/data/track_u2/psid_docs/UserGuide2019.pdf",
+      "checks": [
+        [
+          38,
+          "error was discovered with the CORE/IMM INDIVIDUAL CROSS-SECTION WT"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "(item 5, cross_sec_weights_19 p. 7; item 7, cross_sec_weights_23 p. 6)",
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "checks": [
+        [
+          7,
+          "since 2017"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "(item 5, cross_sec_weights_19 p. 7; item 7, cross_sec_weights_23 p. 6)",
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "checks": [
+        [
+          6,
+          "since 2017"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "(item 5, cross_sec_weights_19 pp. 12–13)",
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "checks": [
+        [
+          12,
+          "calibration controls"
+        ],
+        [
+          13,
+          "10-year"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "IND2023ER codebook p. 978",
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "checks": [
+        [
+          978,
+          "ER34304"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "(PDF p. 13, as text",
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "checks": [
+        [
+          13,
+          "Table A2"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "q2017 p. 5 lists 901/902 and 921/922",
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "checks": [
+        [
+          5,
+          "901. Uncooperative Male Spouse"
+        ],
+        [
+          5,
+          "922. Uncooperative Female Partner"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "(q2013 p. 97; q2015 p. 104; q2017 p. 95; q2019 p. 103; q2021 p. 205; q2023 p. 203)",
+      "file": "PSID/documentation/capture1/q2013.pdf",
+      "checks": [
+        [
+          97,
+          "AQRTH.ORD>222"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "(q2013 p. 97; q2015 p. 104; q2017 p. 95; q2019 p. 103; q2021 p. 205; q2023 p. 203)",
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "checks": [
+        [
+          104,
+          "AQRTH.ORD>222"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "(q2013 p. 97; q2015 p. 104; q2017 p. 95; q2019 p. 103; q2021 p. 205; q2023 p. 203)",
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "checks": [
+        [
+          95,
+          "AQRTH>222"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "(q2013 p. 97; q2015 p. 104; q2017 p. 95; q2019 p. 103; q2021 p. 205; q2023 p. 203)",
+      "file": "PSID/documentation/capture1/q2019.pdf",
+      "checks": [
+        [
+          103,
+          "301-882"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "(q2013 p. 97; q2015 p. 104; q2017 p. 95; q2019 p. 103; q2021 p. 205; q2023 p. 203)",
+      "file": "PSID/documentation/capture1/q2021.pdf",
+      "checks": [
+        [
+          205,
+          "301-882"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "(q2013 p. 97; q2015 p. 104; q2017 p. 95; q2019 p. 103; q2021 p. 205; q2023 p. 203)",
+      "file": "PSID/documentation/capture1/q2023.pdf",
+      "checks": [
+        [
+          203,
+          "301-882"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "ER34304=1 (IND2023ER codebook p. 978)",
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "checks": [
+        [
+          978,
+          "ER34304"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "UserGuide2015 PDF p. 33",
+      "file": "tests/data/track_u2/psid_docs/UserGuide2015.pdf",
+      "checks": [
+        [
+          33,
+          "ER34304"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "(q2015 p. 190)",
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "checks": [
+        [
+          190,
+          "J1CKPT"
+        ],
+        [
+          190,
+          "NEW OR PY INST FEMALE"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "FAM2017ER pp. 2015–2016",
+      "file": "PSID/family/2017/FAM2017ER_codebook.pdf",
+      "checks": [
+        [
+          2015,
+          "ER71369"
+        ],
+        [
+          2015,
+          "ER71371"
+        ],
+        [
+          2016,
+          "ER71373"
+        ],
+        [
+          2016,
+          "ER71375"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "all but PDF p. 2 of the 2019 cross-sectional report",
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "checks": [
+        [
+          2,
+          "2017 New Immigrant Sample"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "cited only its PDF p. 2",
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "checks": [
+        [
+          2,
+          "2017 New Immigrant Sample"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "Table A3 (PDF p. 14)",
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "checks": [
+        [
+          14,
+          "ER34651"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "PDF p. 3 points to Chang et al. (2021)",
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "checks": [
+        [
+          3,
+          "Chang et al. (2021)"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "cross_sec_weights_17 PDF pp. 3, 9",
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_17.pdf",
+      "checks": [
+        [
+          3,
+          "not covered by this document"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "Its Table A3 (PDF p. 18)",
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "checks": [
+        [
+          18,
+          "ER34651"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "cross_sec_weights_19 PDF pp. 12–13",
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "checks": [
+        [
+          12,
+          "calibration controls"
+        ],
+        [
+          13,
+          "10-year"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "long_weight_19 PDF pp. 8 and 13–15",
+      "file": "tests/data/track_u2/psid_docs/long_weight_19.pdf",
+      "checks": [
+        [
+          8,
+          "2019 ACS 1-year PUMS"
+        ],
+        [
+          13,
+          "Integration to account for Joint Inclusion Probabilities"
+        ],
+        [
+          14,
+          "integration scaling factor"
+        ],
+        [
+          15,
+          "integrated Core/NIS weight"
+        ],
+        [
+          14,
+          "The estimated conditional probability to include the Joint families"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "long_weight_21 PDF p. 4",
+      "file": "PSID/documentation/capture1/long_weight_21.pdf",
+      "checks": [
+        [
+          4,
+          "2019 preliminary reference weight"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "long_weight_19 PDF p. 10 is similar",
+      "file": "tests/data/track_u2/psid_docs/long_weight_19.pdf",
+      "checks": [
+        [
+          10,
+          "PSID equivalent family units"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "cross_sec_weights_19 PDF p. 10, note 3",
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "checks": [
+        [
+          10,
+          "Chang et al.(2019)"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "cross_sec_weights_17 PDF p. 1",
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_17.pdf",
+      "checks": [
+        [
+          1,
+          "McGonagle"
+        ],
+        [
+          1,
+          "PSID Cross-Sectional Individual Weights, 1997-2017"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "long_weight_17.pdf` PDF p. 9",
+      "file": "PSID/documentation/capture1/long_weight_17.pdf",
+      "checks": [
+        [
+          9,
+          "McGonagle, K."
+        ],
+        [
+          9,
+          "Weights, 1997-2017"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "(PDF pp. 3, 9)",
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_17.pdf",
+      "checks": [
+        [
+          3,
+          "not covered by this document"
+        ],
+        [
+          9,
+          "will be available from the PSID website"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "Fam2017er_readme.pdf` p. 1",
+      "file": "PSID/family/2017/Fam2017er_readme.pdf",
+      "checks": [
+        [
+          1,
+          "For Release 2 we have added a new variable 2017 CROSS-SECTIONAL FAMILY WEIGHT"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "cross_sec_weights_19 PDF pp. 9 and 14",
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "checks": [
+        [
+          9,
+          "PSID equivalent family units"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "(FAM2017ER codebook PDF p. 2)",
+      "file": "PSID/family/2017/FAM2017ER_codebook.pdf",
+      "checks": [
+        [
+          2,
+          "ER71571"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "FAM2015ER p. 1969",
+      "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+      "checks": [
+        [
+          1969,
+          "ER65318"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "FAM2015ER pp. 1969–1975",
+      "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+      "checks": [
+        [
+          1969,
+          "ER65319"
+        ],
+        [
+          1975,
+          "ER65339"
+        ],
+        [
+          1975,
+          "ER65342"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "FAM2017ER pp. 2021–2028",
+      "file": "PSID/family/2017/FAM2017ER_codebook.pdf",
+      "checks": [
+        [
+          2021,
+          "ER71394"
+        ],
+        [
+          2028,
+          "ER71419"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "FAM2015ER pp. 1968–1969",
+      "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+      "checks": [
+        [
+          1968,
+          "ER65317"
+        ],
+        [
+          1969,
+          "ER65318"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "FAM2015ER pp. 1969–1975",
+      "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+      "checks": [
+        [
+          1969,
+          "ER65319"
+        ],
+        [
+          1975,
+          "ER65339"
+        ],
+        [
+          1975,
+          "ER65342"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "FAM2017ER pp. 2021–2028",
+      "file": "PSID/family/2017/FAM2017ER_codebook.pdf",
+      "checks": [
+        [
+          2021,
+          "ER71394"
+        ],
+        [
+          2028,
+          "ER71419"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "FAM2015ER p. 692",
+      "file": "PSID/family/2015/FAM2015ER_codebook.pdf",
+      "checks": [
+        [
+          692,
+          "ER62057"
+        ]
+      ]
+    },
+    {
+      "record": "spec",
+      "cited_as": "FAQ question 73 says the same",
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "checks": [
+        [
+          829,
+          "he is designated as Reference Person"
+        ]
+      ],
+      "unit": "line",
+      "question": 73
+    },
+    {
+      "record": "research",
+      "cited_as": "dust13_hh_codebook.pdf` pp. 4–6",
+      "file": "PSID/documentation/capture1/dust13_hh_codebook.pdf",
+      "checks": [
+        [
+          4,
+          "RELATIONSHIP TO HEAD"
+        ],
+        [
+          6,
+          "Husband of Head"
+        ]
+      ]
+    },
+    {
+      "record": "research",
+      "cited_as": "(pp. 6–7)",
+      "file": "PSID/documentation/capture1/dust13_hh_codebook.pdf",
+      "checks": [
+        [
+          6,
+          "RELATIONSHIP TO WIFE"
+        ],
+        [
+          7,
+          "Father-in-law"
+        ]
+      ]
+    }
+  ],
+  "page_anchors_note": "Page citations that paraphrase rather than quote. Each entry names the record ('research' is the research record, 'spec' is section 16a of the specification), the citation text that must appear in one of its paragraphs or list items, the cited file, and [page, phrase] checks: each phrase must appear on that page's text layer. Together with the quote registers, every page citation in both records is checked (tests/track_u2/test_psid_research_sources.py).",
+  "registry_quotes": [
+    {
+      "registry": "roles",
+      "id": "2015.relationship.20",
+      "field": "part_b_finding",
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "text": "Husband of Head",
+      "line": 833,
+      "question": 74
+    },
+    {
+      "registry": "roles",
+      "id": "2015.relationship.20",
+      "field": "part_b_finding",
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "text": "was asked the same questions as an Ofum",
+      "line": 833,
+      "question": 74
+    },
+    {
+      "registry": "roles",
+      "id": "2015.relationship.20",
+      "field": "part_b_finding",
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "text": "Other nonrelatives (includes same-sex partners ...)",
+      "page": 978
+    },
+    {
+      "registry": "roles",
+      "id": "2015.relationship.20",
+      "field": "part_b_finding",
+      "file": "tests/data/track_u2/psid_docs/FAQ_20260813.html",
+      "text": "can consist of heterosexual or same sex couples",
+      "line": 796,
+      "question": 70
+    },
+    {
+      "registry": "roles",
+      "id": "2015.relationship.20",
+      "field": "part_b_finding",
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "text": "RTH Lookup List",
+      "page": 5
+    },
+    {
+      "registry": "roles",
+      "id": "2015.relationship.90",
+      "field": "resolution",
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "text": "Uncooperative legal spouse of Head",
+      "page": 978
+    },
+    {
+      "registry": "roles",
+      "id": "2015.relationship.90",
+      "field": "resolution",
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "text": "CYFUHU=1, 4 & CYAQRTH=202, 222",
+      "page": 89
+    },
+    {
+      "registry": "roles",
+      "id": "2015.relationship.90",
+      "field": "resolution",
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "text": "CYFUHU=1, 4 & CYAQRTH=202, 222",
+      "page": 166
+    },
+    {
+      "registry": "roles",
+      "id": "2015.relationship.90",
+      "field": "resolution",
+      "file": "PSID/documentation/capture1/q2015.pdf",
+      "text": "FUP1YEAR[I].AQRTH.ORD>222",
+      "page": 104
+    },
+    {
+      "registry": "roles",
+      "id": "2017.relationship.90",
+      "field": "resolution",
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "text": "901. Uncooperative Male Spouse",
+      "page": 5
+    },
+    {
+      "registry": "roles",
+      "id": "2017.relationship.90",
+      "field": "resolution",
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "text": "902. Uncooperative Female Spouse",
+      "page": 5
+    },
+    {
+      "registry": "roles",
+      "id": "2017.relationship.90",
+      "field": "resolution",
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "text": "Spouse/Partner (CYAQRTH=201-222, CYFUHU=FU, FUMI)",
+      "page": 95
+    },
+    {
+      "registry": "roles",
+      "id": "2017.relationship.90",
+      "field": "resolution",
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "text": "AQRTH>222",
+      "page": 95
+    },
+    {
+      "registry": "roles",
+      "id": "2017.relationship.92",
+      "field": "resolution",
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "text": "921. Uncooperative Male Partner",
+      "page": 5
+    },
+    {
+      "registry": "roles",
+      "id": "2017.relationship.92",
+      "field": "resolution",
+      "file": "PSID/documentation/capture1/q2017.pdf",
+      "text": "922. Uncooperative Female Partner",
+      "page": 5
+    },
+    {
+      "registry": "roles",
+      "id": "2017.relationship.92",
+      "field": "resolution",
+      "file": "PSID/ind2023er/IND2023ER_codebook.pdf",
+      "text": "Uncooperative partner of Reference Person",
+      "page": 1097
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "part_b_finding",
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "text": "Not Used",
+      "page": 13,
+      "cited_as": "(Table A2, PDF p. 13)"
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "part_b_finding",
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "text": "were excluded from the ACS estimate in 2017",
+      "page": 13
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "part_b_finding",
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "text": "started to use a different approach to select the calibration variables since 2017",
+      "page": 6,
+      "cited_as": "variables since 2017' (PDF p. 6)"
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "part_b_finding",
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "text": "since 2017",
+      "page": 7,
+      "cited_as": "'since 2017', PDF p. 7"
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "part_b_finding",
+      "file": "tests/data/track_u2/psid_docs/DataRelease-May2019.pdf",
+      "text": "remain zero and will be updated in Release 3",
+      "page": 1
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "part_b_finding",
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "text": "Using a version of",
+      "page": 6,
+      "cited_as": "(PDF p. 6 of each)"
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "part_b_finding",
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "text": "Using a version of",
+      "page": 6,
+      "cited_as": "(PDF p. 6 of each)"
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "part_b_finding",
+      "file": "PSID/documentation/capture1/cross_sec_weights_21.pdf",
+      "text": "did not have a longitudinal weight in 2017 due to the anticipation of adding more post-1997 immigrant families in 2019",
+      "page": 2,
+      "cited_as": "in 2019' (PDF p. 2)"
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "part_b_finding",
+      "file": "tests/data/track_u2/psid_docs/long_weight_19.pdf",
+      "text": "the product of the base probability of selection weight and the final combined nonresponse adjustment factor",
+      "page": 13,
+      "cited_as": "adjustment factor' (PDF p. 13)"
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "part_b_finding",
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "text": "PSID Cross-Sectional Individual Weights, 1997-2017",
+      "page": 14,
+      "cited_as": "cross_sec_weights_19 PDF pp. 9, 10 and 14"
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "construction",
+      "file": "tests/data/track_u2/psid_docs/UserGuide2017.pdf",
+      "text": "with Release 2 of PSID-2017 data",
+      "page": 62,
+      "cited_as": "UserGuide2017 p. 62"
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "construction",
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "text": "PSID Cross-Sectional Individual Weights, 1997-2017",
+      "page": 14
+    }
+  ],
+  "registry_quotes_note": "Quotes in the source registries' milestone-1b text: the part_b_finding of every entry that has one, the weights construction, and the resolutions of the three entries the adjudication resolved from documents. Each is checked against its field and its cited page or saved-FAQ line (tests/track_u2/test_psid_research_sources.py).",
+  "registry_anchors": [
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "part_b_finding",
+      "cited_as": "(Table A3, PDF p. 14)",
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_23.pdf",
+      "checks": [
+        [
+          14,
+          "ER34651"
+        ]
+      ]
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "part_b_finding",
+      "cited_as": "(Table A2a, PDF p. 17",
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "checks": [
+        [
+          17,
+          "Table A2a"
+        ]
+      ]
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "part_b_finding",
+      "cited_as": "Table A3, PDF p. 18",
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "checks": [
+        [
+          18,
+          "ER34651"
+        ]
+      ]
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "part_b_finding",
+      "cited_as": "UserGuide2017 PDF p. 62",
+      "file": "tests/data/track_u2/psid_docs/UserGuide2017.pdf",
+      "checks": [
+        [
+          62,
+          "Release 2 of PSID-2017 data"
+        ]
+      ]
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "part_b_finding",
+      "cited_as": "(FAM2017ER codebook PDF p. 2)",
+      "file": "PSID/family/2017/FAM2017ER_codebook.pdf",
+      "checks": [
+        [
+          2,
+          "ER71571"
+        ]
+      ]
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "construction",
+      "cited_as": "(FAM2017ER codebook PDF p. 2)",
+      "file": "PSID/family/2017/FAM2017ER_codebook.pdf",
+      "checks": [
+        [
+          2,
+          "ER71571"
+        ]
+      ]
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "part_b_finding",
+      "cited_as": "(PDF pp. 12-13)",
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "checks": [
+        [
+          12,
+          "calibration controls"
+        ],
+        [
+          13,
+          "10-year"
+        ]
+      ]
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "part_b_finding",
+      "cited_as": "(PDF pp. 13-15)",
+      "file": "tests/data/track_u2/psid_docs/long_weight_19.pdf",
+      "checks": [
+        [
+          13,
+          "Integration to account for Joint Inclusion Probabilities"
+        ],
+        [
+          14,
+          "The estimated conditional probability to include the Joint families"
+        ],
+        [
+          15,
+          "integrated Core/NIS weight"
+        ]
+      ]
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "part_b_finding",
+      "cited_as": "2019 weights (PDF p. 8)",
+      "file": "tests/data/track_u2/psid_docs/long_weight_19.pdf",
+      "checks": [
+        [
+          8,
+          "2019 ACS 1-year PUMS"
+        ]
+      ]
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "part_b_finding",
+      "cited_as": "long_weight_21.pdf, PDF p. 4",
+      "file": "PSID/documentation/capture1/long_weight_21.pdf",
+      "checks": [
+        [
+          4,
+          "2019 preliminary reference weight"
+        ]
+      ]
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "part_b_finding",
+      "cited_as": "cross_sec_weights_19 PDF pp. 9, 10 and 14",
+      "file": "tests/data/track_u2/psid_docs/cross_sec_weights_19.pdf",
+      "checks": [
+        [
+          9,
+          "PSID equivalent family units"
+        ],
+        [
+          10,
+          "Chang et al.(2019)"
+        ],
+        [
+          14,
+          "Sastry N. (2019)"
+        ]
+      ]
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "part_b_finding",
+      "cited_as": "long_weight_19 PDF pp. 10 and 23",
+      "file": "tests/data/track_u2/psid_docs/long_weight_19.pdf",
+      "checks": [
+        [
+          10,
+          "PSID equivalent family units"
+        ],
+        [
+          23,
+          "Sastry N. (2019)"
+        ]
+      ]
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "part_b_finding",
+      "cited_as": "cross_sec_weights_21 PDF p. 11",
+      "file": "PSID/documentation/capture1/cross_sec_weights_21.pdf",
+      "checks": [
+        [
+          11,
+          "Sastry N. (2019)"
+        ]
+      ]
+    },
+    {
+      "registry": "weights",
+      "id": "2017.cross_section_weight",
+      "field": "part_b_finding",
+      "cited_as": "cross_sec_weights_17 PDF p. 1",
+      "file": "tests/data/track_u2/psid_sources/cross_sec_weights_17.pdf",
+      "checks": [
+        [
+          1,
+          "McGonagle"
+        ]
+      ]
+    }
+  ]
+}
