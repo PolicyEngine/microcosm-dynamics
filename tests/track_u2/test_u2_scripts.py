@@ -158,10 +158,15 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
         "missing_head",
         "duplicate_family_record_2019",
         "duplicate_person_record_2019",
+        "code_88_in_excluded_unit_2019",
+        "zero_weight_target_in_excluded_unit_2015",
+        "sex_unknown_target_in_excluded_unit_2019",
     ]
     assert all(entry["regenerated"] for entry in variants.values())
     build_refused = {
         "code_88_first_year_cohabitor": "U2RoleRefusal",
+        # Section 16c: a code-88 refusal is never hidden by an exclusion.
+        "code_88_in_excluded_unit_2019": "U2RoleRefusal",
         "missing_family_record_2019": "U2CohortError",
         "duplicate_family_record_2019": "U2CohortError",
         "duplicate_person_record_2019": "U2CohortError",

@@ -567,11 +567,11 @@ def test_b2_excludes_whoever_the_target_is(u1_cohort, u2_inputs):
 def test_exclusion_counts_are_the_ones_section_16c_names(
     row, u2_inputs, declared, u2_births
 ):
-    """Section 16c's disclosed counts, against an oracle from the raw
-    frames: per exclusion and wave, the members who brought it (for B1
-    the 2015 code-20 persons recorded male, the count option 1d-1 names
-    and 1d-2 inherits) and the family units excluded, among the units that
-    would supply this row an observation."""
+    """Section 16c's disclosed person count, against an oracle from the
+    raw frames: per wave, the 2015 code-20 persons recorded male in family
+    units that would otherwise supply this row an observation (B1's count,
+    which option 1d-1 names and 1d-2 inherits).  B2's person count is a
+    proposal pending Max (d1242) and is not computed."""
 
     built = cohort.build_u2_cohort(
         u2_inputs,
@@ -579,15 +579,25 @@ def test_exclusion_counts_are_the_ones_section_16c_names(
         role_context=declared,
         births=u2_births,
     )
-    sex = u2_inputs.persons.set_index("person_id")["sex"]
+    stated = built.diagnostics["n_family_unit_exclusion_persons"]
+    assert sources.PERSON_COUNTED_EXCLUSIONS == (sources.MALE_CODE_20_2015,)
+    assert set(stated) == {sources.MALE_CODE_20_2015}
+    assert stated == _oracle_exclusion_persons(u2_inputs, built)
+    assert all(stated.values())
+    summary = cohort.structural_summary(built)
+    assert summary["n_family_unit_exclusion_persons"] == stated
+
+
+def _oracle_exclusion_persons(inputs, built):
+    sex = inputs.persons.set_index("person_id")["sex"]
     disp = built.dispositions
-    expected: dict[str, dict[str, dict[str, int]]] = {
-        name: {} for name in sources.FAMILY_UNIT_EXCLUSIONS
+    expected: dict[str, dict[str, int]] = {
+        name: {} for name in sources.PERSON_COUNTED_EXCLUSIONS
     }
     for (name, wave), rows in disp[
-        disp["disposition"].isin(sources.FAMILY_UNIT_EXCLUSIONS)
+        disp["disposition"].isin(sources.PERSON_COUNTED_EXCLUSIONS)
     ].groupby(["disposition", "wave"]):
-        anchor = u2_inputs.anchors[wave]
+        anchor = inputs.anchors[wave]
         interviews = set(
             anchor.set_index("person_id").loc[rows["person_id"], "interview"]
         )
@@ -595,24 +605,85 @@ def test_exclusion_counts_are_the_ones_section_16c_names(
             anchor["interview"].isin(interviews)
             & anchor["sequence"].between(1, 20)
         ]
-        persons = {
-            int(m.person_id)
-            for m in members.itertuples(index=False)
-            if expected_exclusion(
-                wave, int(m.relationship), str(sex.get(m.person_id))
+        expected[name][str(wave)] = len(
+            {
+                int(m.person_id)
+                for m in members.itertuples(index=False)
+                if expected_exclusion(
+                    wave, int(m.relationship), str(sex.get(m.person_id))
+                )
+                == name
+            }
+        )
+    return expected
+
+
+@pytest.mark.parametrize(
+    "variant,kept,rule,wave",
+    [
+        (
+            "zero_weight_target_in_excluded_unit_2015",
+            "zero_weight",
+            sources.MALE_CODE_20_2015,
+            2015,
+        ),
+        (
+            "sex_unknown_target_in_excluded_unit_2019",
+            "excluded_sex_unknown",
+            sources.UNCOOPERATIVE_SPOUSE_OR_PARTNER,
+            2019,
+        ),
+    ],
+)
+def test_earlier_dispositions_keep_precedence(
+    variant, kept, rule, wave, u2_inputs
+):
+    """Section 16c: an observation already disposed of keeps that
+    disposition, and a unit that supplies no other observation adds
+    nothing to B1's person count; under both role contexts (review of
+    07916bb, finding 2)."""
+
+    changed = invented.invented_variant(u2_inputs, variant)
+    for context in (
+        sources.RoleContext.declared(),
+        sources.RoleContext.from_registry(),
+    ):
+        base = cohort.build_u2_cohort(u2_inputs, role_context=context)
+        built = cohort.build_u2_cohort(changed, role_context=context)
+        before, after = base.dispositions, built.dispositions
+        moved = before["disposition"].ne(after["disposition"])
+        assert int(moved.sum()) == 1, context.kind
+        row = after[moved].iloc[0]
+        assert row["disposition"] == kept and row["wave"] == wave
+        assert (before.loc[moved, "disposition"] == rule).all()
+        persons_before = base.diagnostics["n_family_unit_exclusion_persons"]
+        persons_after = built.diagnostics["n_family_unit_exclusion_persons"]
+        assert persons_after == _oracle_exclusion_persons(changed, built)
+        if rule == sources.MALE_CODE_20_2015:
+            # The unit's male code-20 member no longer counts.
+            assert (
+                persons_after[rule][str(wave)]
+                == persons_before[rule][str(wave)] - 1
             )
-            == name
-        }
-        expected[name][str(wave)] = {
-            "persons": len(persons),
-            "family_units": len(interviews),
-        }
-    stated = built.diagnostics["n_family_unit_exclusions"]
-    assert stated == expected
-    assert all(stated.values())
-    assert cohort.structural_summary(built)["n_family_unit_exclusions"] == (
-        stated
+        else:
+            assert persons_after == persons_before
+        pd.testing.assert_frame_equal(built.observations, base.observations)
+
+
+def test_code_88_in_an_excluded_unit_still_refuses(u2_inputs):
+    """A refusal is never hidden by an exclusion: a code-88 member in a
+    unit that B2 excludes refuses the build under both role contexts
+    (review of 07916bb, finding 3)."""
+
+    changed = invented.invented_variant(
+        u2_inputs, "code_88_in_excluded_unit_2019"
     )
+    for context in (
+        sources.RoleContext.declared(),
+        sources.RoleContext.from_registry(),
+    ):
+        with pytest.raises(sources.U2RoleRefusal, match="88"):
+            cohort.build_u2_cohort(changed, role_context=context)
 
 
 def test_structure_and_runner_disclose_each_exclusion(u1_cohort, u2_run):
@@ -630,9 +701,9 @@ def test_structure_and_runner_disclose_each_exclusion(u1_cohort, u2_run):
     for row_id, entry in u2_run["rows"].items():
         counts = entry["population"]["dispositions"]
         assert set(sources.FAMILY_UNIT_EXCLUSIONS) <= set(counts), row_id
-        assert set(entry["population"]["n_family_unit_exclusions"]) == set(
-            sources.FAMILY_UNIT_EXCLUSIONS
-        ), row_id
+        assert set(
+            entry["population"]["n_family_unit_exclusion_persons"]
+        ) == set(sources.PERSON_COUNTED_EXCLUSIONS), row_id
 
 
 def test_cohabitor_22_occupies_the_slot_without_legal_status(u1_cohort):

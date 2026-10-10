@@ -409,3 +409,103 @@ def test_u1_waves_and_registries_remain_pinned():
     assert tuple(age67.ANCHOR_LAYOUTS) == waves
     assert family_income.WEALTH_WAVES == (2009, 2011, 2013)
     assert family_income.WEALTH_SUPPLEMENT_WAVES == (2005, 2007)
+
+
+# ---------------------------------------------------------------------------
+# Max's d1090 ruling (section 16c): each ratified exclusion, held to its
+# exact scope (review of 07916bb, finding 1)
+# ---------------------------------------------------------------------------
+def _entry(document, key):
+    return next(e for e in document["entries"] if e["id"] == key)
+
+
+def _move(document, source, target):
+    """Move the exclusion fields of ``source`` onto ``target``."""
+    moved = _entry(document, source)
+    entry = _entry(document, target)
+    for field in ("family_unit_exclusion", "income_role", "action", "ruling"):
+        entry[field] = copy.deepcopy(moved[field])
+    entry.pop("adjudication", None)
+
+
+D1090_SCOPE_MUTATIONS = {
+    "b1_on_female_spouses": lambda d: _entry(d, "2015.relationship.20")[
+        "family_unit_exclusion"
+    ].update(condition={"sex": 2}),
+    "b1_unconditional": lambda d: _entry(d, "2015.relationship.20")[
+        "family_unit_exclusion"
+    ].pop("condition"),
+    "b1_condition_as_bool": lambda d: _entry(d, "2015.relationship.20")[
+        "family_unit_exclusion"
+    ].update(condition={"sex": True}),
+    "b1_on_code_22": lambda d: _move(
+        d, "2015.relationship.20", "2015.relationship.22"
+    ),
+    "b1_on_2017_code_20": lambda d: _move(
+        d, "2015.relationship.20", "2017.relationship.20"
+    ),
+    "b2_on_2017_code_92": lambda d: _move(
+        d, "2019.relationship.92", "2017.relationship.92"
+    ),
+    "b2_on_2019_code_10": lambda d: _move(
+        d, "2019.relationship.90", "2019.relationship.10"
+    ),
+    "b2_conditional_with_ofum_income": lambda d: (
+        _entry(d, "2019.relationship.90")["family_unit_exclusion"].update(
+            condition={"sex": 1}
+        ),
+        _entry(d, "2019.relationship.90").update(income_role="ofum"),
+    ),
+    "b2_assigns_ofum_income": lambda d: _entry(
+        d, "2021.relationship.92"
+    ).update(income_role="ofum"),
+    "b1_option_changed": lambda d: _entry(d, "2015.relationship.20")[
+        "ruling"
+    ].update(option="1d-1"),
+    "b1_decision_fabricated": lambda d: _entry(d, "2015.relationship.20")[
+        "ruling"
+    ].update(decision="d999"),
+    "b2_amended_lines_changed": lambda d: _entry(d, "2023.relationship.90")[
+        "ruling"
+    ].update(amends_draft_3_lines=[152]),
+    "b2_waves_narrowed": lambda d: _entry(d, "2023.relationship.92")[
+        "ruling"
+    ].update(amended_waves=[2023]),
+    "disposition_renamed": lambda d: _entry(d, "2019.relationship.92")[
+        "family_unit_exclusion"
+    ].update(disposition="uncooperative member in family unit"),
+    "b1_exclusion_dropped": lambda d: _entry(d, "2015.relationship.20").pop(
+        "family_unit_exclusion"
+    ),
+    "b2_exclusion_dropped": lambda d: (
+        _entry(d, "2021.relationship.90").pop("family_unit_exclusion"),
+        _entry(d, "2021.relationship.90").update(income_role="ofum"),
+    ),
+    "b2_action_documented_rule": lambda d: _entry(
+        d, "2019.relationship.92"
+    ).update(action="documented_rule"),
+}
+
+
+@pytest.mark.parametrize("mutation", sorted(D1090_SCOPE_MUTATIONS))
+def test_d1090_exclusions_are_held_to_their_ratified_scope(mutation):
+    document = registry.load_registry("roles")
+    registry.validate_registry(document, expected_name="roles")
+    changed = copy.deepcopy(document)
+    D1090_SCOPE_MUTATIONS[mutation](changed)
+    # Serialized, so a bool standing in for 1 still counts as a change.
+    assert json.dumps(changed) != json.dumps(document)
+    with pytest.raises(registry.SourceAdjudicationError):
+        registry.validate_registry(changed, expected_name="roles")
+
+
+def test_d1090_scope_matches_the_committed_entries():
+    """Every ratified exclusion sits on exactly its scope's entries."""
+    entries = registry.load_registry("roles")["entries"]
+    for name, scope in registry.RATIFIED_EXCLUSIONS.items():
+        carrying = {
+            e["id"]
+            for e in entries
+            if e.get("family_unit_exclusion", {}).get("disposition") == name
+        }
+        assert carrying == set(scope["entries"]), name

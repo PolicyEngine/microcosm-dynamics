@@ -1446,6 +1446,66 @@ def _duplicate_person_record_2019(base: cohort.U2Inputs) -> cohort.U2Inputs:
     return dataclasses.replace(base, anchors={**base.anchors, 2019: repeated})
 
 
+def _first_excluded(
+    base: cohort.U2Inputs, disposition: str, wave: int
+) -> tuple[int, int]:
+    """U0's first would-be observation in ``wave`` that a section 16c
+    exclusion removes under the declared rules: its target and interview."""
+
+    disp = cohort.build_u2_cohort(
+        base, role_context=sources.RoleContext.declared()
+    ).dispositions
+    row = disp[
+        disp["disposition"].eq(disposition) & disp["wave"].eq(wave)
+    ].iloc[0]
+    person = int(row["person_id"])
+    anchor = base.anchors[wave]
+    interview = anchor.loc[anchor["person_id"].eq(person), "interview"]
+    return person, int(interview.iloc[0])
+
+
+def _first_excluded_2019(base: cohort.U2Inputs) -> tuple[int, int]:
+    return _first_excluded(base, sources.UNCOOPERATIVE_SPOUSE_OR_PARTNER, 2019)
+
+
+def _code_88_in_excluded_unit_2019(base: cohort.U2Inputs) -> cohort.U2Inputs:
+    _, interview = _first_excluded_2019(base)
+    return _added_person(
+        base,
+        _PERSON_BASE - 3,
+        wave=2019,
+        interview=interview,
+        sequence=4,
+        relationship=88,
+        age=58,
+        weight=500.0,
+        sex="female",
+    )
+
+
+def _zero_weight_target_in_excluded_unit_2015(
+    base: cohort.U2Inputs,
+) -> cohort.U2Inputs:
+    person, _ = _first_excluded(base, sources.MALE_CODE_20_2015, 2015)
+    frame = base.anchors[2015]
+    changed = frame.assign(
+        weight=frame["weight"].where(frame["person_id"] != person, 0.0)
+    )
+    return dataclasses.replace(base, anchors={**base.anchors, 2015: changed})
+
+
+def _sex_unknown_target_in_excluded_unit_2019(
+    base: cohort.U2Inputs,
+) -> cohort.U2Inputs:
+    person, _ = _first_excluded_2019(base)
+    persons = base.persons.assign(
+        sex=base.persons["sex"].where(
+            base.persons["person_id"] != person, "na"
+        )
+    )
+    return dataclasses.replace(base, persons=persons)
+
+
 # Appended in order, so every earlier variant is unchanged.
 _VARIANT_BUILDERS = {
     "code_88_first_year_cohabitor": _code_88_first_year_cohabitor,
@@ -1456,6 +1516,13 @@ _VARIANT_BUILDERS = {
     "missing_head": _missing_head,
     "duplicate_family_record_2019": _duplicate_family_record_2019,
     "duplicate_person_record_2019": _duplicate_person_record_2019,
+    "code_88_in_excluded_unit_2019": _code_88_in_excluded_unit_2019,
+    "zero_weight_target_in_excluded_unit_2015": (
+        _zero_weight_target_in_excluded_unit_2015
+    ),
+    "sex_unknown_target_in_excluded_unit_2019": (
+        _sex_unknown_target_in_excluded_unit_2019
+    ),
 }
 _VARIANT_NOTES: dict[str, str] = {
     "code_88_first_year_cohabitor": (
@@ -1498,6 +1565,23 @@ _VARIANT_NOTES: dict[str, str] = {
         "the 2019 anchor record of U0's first 2019 observation appears "
         "twice: a repeated person identifier refuses (duplicate "
         "identifier, section 14)"
+    ),
+    "code_88_in_excluded_unit_2019": (
+        "a code-88 first-year cohabitor joins the 2019 family of U0's "
+        "first observation that the section 16c B2 exclusion removes: the "
+        "code-88 refusal still refuses, never hidden by the exclusion "
+        "(refusal case)"
+    ),
+    "zero_weight_target_in_excluded_unit_2015": (
+        "the target of U0's first 2015 observation that the B1 exclusion "
+        "removes has zero 2015 weight: it keeps its zero-weight "
+        "disposition, and a unit that supplies no other observation adds "
+        "nothing to B1's person count (section 16c precedence)"
+    ),
+    "sex_unknown_target_in_excluded_unit_2019": (
+        "the target of U0's first 2019 observation that the B2 exclusion "
+        "removes has unknown sex: it keeps its sex-unknown disposition "
+        "(section 16c precedence)"
     ),
 }
 #: The generator's named variants (see :data:`_VARIANT_NOTES`).

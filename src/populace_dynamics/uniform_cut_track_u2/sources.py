@@ -130,6 +130,7 @@ __all__ = [
     "INVENTED_RECORD_FILLER",
     "MALE_CODE_20_2015",
     "OFUM_RULE",
+    "PERSON_COUNTED_EXCLUSIONS",
     "REGISTRY",
     "REGISTRY_SHA256",
     "RELATIONSHIP_CODES",
@@ -183,6 +184,13 @@ FAMILY_UNIT_EXCLUSIONS: tuple[str, ...] = (
     MALE_CODE_20_2015,
     UNCOOPERATIVE_SPOUSE_OR_PARTNER,
 )
+#: The exclusions whose person count the structural pass discloses
+#: (section 16c): B1's, the count option 1d-1 names and 1d-2 inherits.
+#: Option 1e-1 leaves B2's counting unit open; its person count is a
+#: proposal pending Max's confirmation (decision d1242) and is not
+#: computed until he confirms.  B2's excluded observations appear in the
+#: ordinary disposition counts either way.
+PERSON_COUNTED_EXCLUSIONS: tuple[str, ...] = (MALE_CODE_20_2015,)
 #: The waves of each ratified exclusion (section 16c).
 _B1_WAVES: tuple[int, ...] = (2015,)
 _B2_WAVES: tuple[int, ...] = (2019, 2021, 2023)
