@@ -102,12 +102,30 @@ PROTECTED_PATHSPECS = (
 )
 
 
+#: The ratified contract: ``gates.yaml`` moves only at a ratified flip,
+#: which records the new bytes here through
+#: ``scripts/build_legacy_manifest.py --transition``.
+LEGACY_MANIFEST = ROOT / "runs" / "legacy_manifest_v1.json"
+
+
+def _ratified_gates_sha256() -> str:
+    entries = json.loads(LEGACY_MANIFEST.read_text())["entries"]
+    (entry,) = [e for e in entries if e["path"] == "gates.yaml"]
+    return entry["sha256"]
+
+
 def test_protected_bytes_match_the_milestone_1_manifest():
     manifest = json.loads(MANIFEST.read_text())["sha256"]
     for path in PROTECTED:
         assert path in manifest, path
     for path, digest in manifest.items():
         observed = hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
+        if path == "gates.yaml" and observed != digest:
+            # A ratified flip outside U2 (first: gate_epuf_fill, decision
+            # d927) may move the contract; it must then be the ratified
+            # one. No U2 commit may move it (the path-attribution test).
+            assert observed == _ratified_gates_sha256(), path
+            continue
         assert observed == digest, path
 
 
