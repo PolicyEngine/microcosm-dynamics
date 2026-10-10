@@ -4,8 +4,9 @@ Groups: labels (codes 10/20/22/88/90 in every support wave; code 92
 absent in 2013/2015 and present 2017-2023; reported-birth-year anchors)
 and roles (code 20 of either sex, code 90, code 92, code 88's
 administrative-support distinction, cohabitor income slots, zero-weight
-legal spouses, unresolved and ambiguous pairings).  INVENTED DATA - NOT A
-COMPARISON.
+legal spouses, unresolved and ambiguous pairings), with the two
+family-unit exclusions Max ratified on 2026-10-10 (d1090; section 16c).
+INVENTED DATA - NOT A COMPARISON.
 """
 
 from __future__ import annotations
@@ -100,13 +101,37 @@ def test_reported_birth_year_anchor_labels(wave, committed_registries):
     )
 
 
+#: Section 16c (d1090): the waves of each ratified family-unit exclusion.
+B1_WAVES = (2015,)
+B2_WAVES = (2019, 2021, 2023)
+
+
+def expected_exclusion(wave: int, code: int, sex: str) -> str | None:
+    """Section 16c's two rules, restated: the disposition a member of
+    ``code`` and recorded ``sex`` brings on its ``wave`` family unit."""
+
+    if wave in B1_WAVES and code == 20 and sex == "male":
+        return "male code 20 in 2015 family unit"
+    if wave in B2_WAVES and code in (90, 92):
+        return "uncooperative spouse or partner in family unit"
+    return None
+
+
 def test_declared_rules_follow_the_section_3_table():
+    """Section 3's table, with section 16c's exclusions where it differs."""
+
     rules = sources.declared_role_rules()
     for wave in sources.SUPPORT_WAVES:
         assert rules[(wave, 10)].income_role == "head"
         twenty = rules[(wave, 20)]
         assert (twenty.income_role, twenty.spouse_slot) == ("wife", True)
         assert twenty.legal_spouse_annuity and twenty.marital_resolution
+        if wave in B1_WAVES:
+            assert twenty.family_unit_exclusion == sources.FamilyUnitExclusion(
+                sources.MALE_CODE_20_2015, "male"
+            )
+        else:
+            assert twenty.family_unit_exclusion is None
         cohabitor = rules[(wave, 22)]
         assert (cohabitor.income_role, cohabitor.spouse_slot) == (
             "wife",
@@ -115,17 +140,30 @@ def test_declared_rules_follow_the_section_3_table():
         assert not cohabitor.legal_spouse_annuity
         assert not cohabitor.marital_resolution
         ninety = rules[(wave, 90)]
-        assert (ninety.income_role, ninety.spouse_slot) == ("ofum", False)
+        b2 = sources.FamilyUnitExclusion(
+            sources.UNCOOPERATIVE_SPOUSE_OR_PARTNER
+        )
+        # 2019-2023: B2's exclusion and no income role (no OFUM routing
+        # is asserted); 2013-2017: the documented OFUM role.
+        role = None if wave in B2_WAVES else "ofum"
+        exclusion = b2 if wave in B2_WAVES else None
+        assert (ninety.income_role, ninety.spouse_slot) == (role, False)
+        assert ninety.family_unit_exclusion == exclusion
         assert ninety.legal_spouse_annuity and ninety.marital_resolution
         assert rules[(wave, 88)].refusal is not None
+        assert rules[(wave, 88)].family_unit_exclusion is None
+        assert rules[(wave, 22)].family_unit_exclusion is None
+        assert rules[(wave, 10)].family_unit_exclusion is None
         ninety_two = rules[(wave, 92)]
         if wave < 2017:
             assert not ninety_two.present and ninety_two.refusal
+            assert ninety_two.family_unit_exclusion is None
         else:
             assert (ninety_two.income_role, ninety_two.spouse_slot) == (
-                "ofum",
+                role,
                 False,
             )
+            assert ninety_two.family_unit_exclusion == exclusion
             assert not ninety_two.legal_spouse_annuity
             assert not ninety_two.marital_resolution
             assert not ninety_two.administrative_birth_support
@@ -239,18 +277,34 @@ def test_declared_context_refuses_non_invented_inputs(u2_inputs, declared):
 
 
 def test_code_20_of_either_sex_occupies_the_spouse_slot(u1_cohort):
+    """From 2017 code 20 of either sex holds the spouse slot; in 2015 a
+    unit with a male code-20 person supplies no observation (section 16c,
+    B1) and a female code-20 spouse keeps the slot."""
+
     obs = u1_cohort.observations
     males = obs[obs["relationship"].eq(20) & obs["sex"].eq("male")]
     assert not males.empty
     assert (males["member_role"] == "wife").all()
     assert (males["marital_status_4"] == "married").all()
-    assert set(males["wave"]) >= {2015}
+    assert set(males["wave"]) >= {2017} and 2015 not in set(males["wave"])
+    assert obs[obs["wave"].eq(2015) & obs["spouse_slot_sex"].eq("male")].empty
+    females = obs[
+        obs["relationship"].eq(20)
+        & obs["sex"].eq("female")
+        & obs["wave"].eq(2015)
+    ]
+    assert not females.empty and (females["member_role"] == "wife").all()
+    disp = u1_cohort.dispositions
+    b1 = disp[disp["disposition"].eq(sources.MALE_CODE_20_2015)]
+    assert not b1.empty and set(b1["wave"]) == {2015}
 
 
 def test_code_90_is_ofum_income_and_a_legal_spouse_life(u1_cohort):
     obs = u1_cohort.observations
     ninety = obs[obs["relationship"].eq(90)]
     assert not ninety.empty
+    # 2019-2023 units holding a code-90 person supply no observation.
+    assert set(ninety["wave"]) <= {2013, 2015, 2017}
     assert (ninety["member_role"] == "ofum").all()
     assert (
         ninety["marital_resolution"] == "relationship_code_legal_spouse_90"
@@ -273,7 +327,8 @@ def test_code_92_is_ofum_never_a_legal_spouse_and_never_resolves(u1_cohort):
     assert (partners["member_role"] == "ofum").all()
     assert (partners["marital_resolution"] == "unresolved_non_married").all()
     assert (partners["marital_status_4"] == "unclassified").all()
-    assert set(partners["wave"]) <= {2017, 2019, 2021, 2023}
+    # Code 92 exists from 2017, and its 2019-2023 units are excluded.
+    assert set(partners["wave"]) == {2017}
     heads = obs[
         obs["relationship"].eq(10)
         & obs["interview"].isin(partners["interview"])
@@ -281,6 +336,208 @@ def test_code_92_is_ofum_never_a_legal_spouse_and_never_resolves(u1_cohort):
     ]
     assert not heads.empty
     assert (~heads["fu_head_spouse_present"]).all()
+
+
+# ---------------------------------------------------------------------------
+# Section 16c: the family-unit exclusions Max ratified (d1090, 2026-10-10)
+# ---------------------------------------------------------------------------
+SEXES = ("male", "female", "na")
+
+
+@pytest.mark.parametrize("wave", sources.SUPPORT_WAVES)
+def test_exclusion_rules_are_exactly_section_16c(wave):
+    """Exhaustive over the relationship codes, an outside code and every
+    recorded sex: a lone member brings exactly section 16c's
+    disposition."""
+
+    rules = sources.declared_role_rules()
+    assert sources.FAMILY_UNIT_EXCLUSIONS == (
+        expected_exclusion(2015, 20, "male"),
+        expected_exclusion(2019, 90, "male"),
+    )
+    for code in (*sources.RELATIONSHIP_CODES, 40):
+        rule = rules.get(
+            (wave, code), sources.RoleRule(wave, code, **sources.OFUM_RULE)
+        )
+        for sex in SEXES:
+            found = sources.family_unit_exclusion({1: rule}, {1: sex})
+            assert found == expected_exclusion(wave, code, sex), (
+                wave,
+                code,
+                sex,
+            )
+
+
+def test_exclusion_dispositions_are_the_ratified_names():
+    """The builder's dispositions are the names section 16c ratifies."""
+
+    from pathlib import Path
+
+    spec = (
+        Path(__file__).resolve().parents[2]
+        / "docs/design/boomers2004_1946_55_comparison.md"
+    ).read_text(encoding="utf-8")
+    record = spec[spec.index("## 16c. ") : spec.index("## 17. ")]
+    for name in sources.FAMILY_UNIT_EXCLUSIONS:
+        assert f"named disposition `{name}`" in record, name
+    with pytest.raises(ValueError, match="ratified"):
+        sources.FamilyUnitExclusion("male code 20 in 2017 family unit")
+    with pytest.raises(ValueError, match="sex"):
+        sources.FamilyUnitExclusion(sources.MALE_CODE_20_2015, "unknown")
+
+
+def _units_with_a_trigger(inputs) -> dict[tuple[int, int], str]:
+    """An independent oracle from the raw frames: each (wave, interview)
+    whose in-family members (sequence 1-20) include a section 16c
+    trigger, with the disposition it brings."""
+
+    sex = inputs.persons.set_index("person_id")["sex"]
+    out = {}
+    for wave, frame in inputs.anchors.items():
+        members = frame[frame["sequence"].between(1, 20)]
+        for row in members.itertuples(index=False):
+            found = expected_exclusion(
+                wave, int(row.relationship), str(sex.get(row.person_id))
+            )
+            if found:
+                out[(wave, int(row.interview))] = found
+    return out
+
+
+@pytest.mark.parametrize("row", ["U0", "U1"])
+def test_exclusions_remove_exactly_the_units_that_hold_a_trigger(
+    row, u2_inputs, declared, u2_births
+):
+    built = cohort.build_u2_cohort(
+        u2_inputs,
+        cohort.U2CohortSpec(row=row),
+        role_context=declared,
+        births=u2_births,
+    )
+    triggers = _units_with_a_trigger(u2_inputs)
+    assert set(triggers.values()) == set(sources.FAMILY_UNIT_EXCLUSIONS)
+    obs = built.observations
+    for unit in zip(obs["wave"], obs["interview"], strict=True):
+        assert unit not in triggers, unit
+    disp = built.dispositions
+    excluded = disp[disp["disposition"].isin(sources.FAMILY_UNIT_EXCLUSIONS)]
+    assert not excluded.empty
+    for item in excluded.itertuples(index=False):
+        anchor = u2_inputs.anchors[item.wave].set_index("person_id")
+        unit = (item.wave, int(anchor.loc[item.person_id, "interview"]))
+        assert triggers.get(unit) == item.disposition, unit
+    # One disposition per planned (person, cell): exclusions never sit
+    # beside an observation of the same person and wave.
+    keys = list(zip(disp["person_id"], disp["wave"], strict=True))
+    assert len(keys) == len(set(keys))
+    assert set(zip(obs["person_id"], obs["wave"], strict=True)).isdisjoint(
+        zip(excluded["person_id"], excluded["wave"], strict=True)
+    )
+
+
+@pytest.mark.parametrize("row", ["U0", "U1"])
+def test_exclusions_change_nothing_else(
+    row, u2_inputs, declared, u2_births, monkeypatch
+):
+    """Differential: the build with the exclusions equals the build with
+    them switched off, less exactly the excluded observations, which the
+    switched-off build would have made."""
+
+    spec = cohort.U2CohortSpec(row=row)
+    built = cohort.build_u2_cohort(
+        u2_inputs, spec, role_context=declared, births=u2_births
+    )
+    monkeypatch.setattr(sources, "family_unit_exclusion", lambda *_: None)
+    unexcluded = cohort.build_u2_cohort(
+        u2_inputs, spec, role_context=declared, births=u2_births
+    )
+    disp = built.dispositions
+    ruled = disp["disposition"].isin(sources.FAMILY_UNIT_EXCLUSIONS)
+    excluded = set(
+        disp.loc[ruled, "person_id"].astype(str)
+        + ":"
+        + disp.loc[ruled, "wave"].astype(str)
+    )
+    would_be = set(unexcluded.observations["observation_id"])
+    assert excluded and excluded <= would_be
+    kept = unexcluded.observations[
+        ~unexcluded.observations["observation_id"].isin(excluded)
+    ].reset_index(drop=True)
+    pd.testing.assert_frame_equal(
+        built.observations.reset_index(drop=True), kept
+    )
+    # The same planned cells in the same order; only the excluded ones
+    # change disposition, each from an observation.
+    before = unexcluded.dispositions
+    pd.testing.assert_frame_equal(
+        disp.drop(columns="disposition"), before.drop(columns="disposition")
+    )
+    assert (before.loc[ruled, "disposition"] == "observation").all()
+    assert disp.loc[~ruled, "disposition"].equals(
+        before.loc[~ruled, "disposition"]
+    )
+
+
+def test_a_trigger_outside_the_family_unit_does_not_exclude(
+    u1_cohort, u2_inputs
+):
+    """Section 16c applies the exclusions to the family unit's in-family
+    members (sequence 1-20).  A code-90 husband in an institution in 2021
+    (sequence 51, the FAQ's rare case) is outside the unit, so the head's
+    2021 observation stands; his own 2019 unit, where he is in the family,
+    is excluded."""
+
+    anchor = u2_inputs.anchors[2021]
+    away = anchor[anchor["relationship"].eq(90) & anchor["sequence"].eq(51)]
+    assert len(away) == 1
+    interview = int(away["interview"].iloc[0])
+    obs = u1_cohort.observations
+    heads = obs[
+        obs["wave"].eq(2021)
+        & obs["interview"].eq(interview)
+        & obs["relationship"].eq(10)
+    ]
+    assert len(heads) == 1
+    assert not heads["fu_head_spouse_present"].iloc[0]
+    husband = int(away["person_id"].iloc[0])
+    disp = u1_cohort.dispositions
+    mine = disp[disp["person_id"].eq(husband)].set_index("wave")
+    assert mine.loc[2019, "disposition"] == (
+        sources.UNCOOPERATIVE_SPOUSE_OR_PARTNER
+    )
+    assert mine.loc[2017, "disposition"] == "observation"
+
+
+def test_b2_excludes_whoever_the_target_is(u1_cohort, u2_inputs):
+    """Reference person, uncooperative spouse or partner, or another
+    member: every target in a 2019-2023 unit with code 90 or 92 is
+    excluded (section 16c)."""
+
+    disp = u1_cohort.dispositions
+    b2 = disp[disp["disposition"].eq(sources.UNCOOPERATIVE_SPOUSE_OR_PARTNER)]
+    codes = set()
+    for item in b2.itertuples(index=False):
+        anchor = u2_inputs.anchors[item.wave].set_index("person_id")
+        codes.add(int(anchor.loc[item.person_id, "relationship"]))
+    assert {10, 90, 92, 40} <= codes
+    assert set(b2["wave"]) <= set(B2_WAVES)
+
+
+def test_structure_and_runner_disclose_each_exclusion(u1_cohort, u2_run):
+    """Each count is disclosed (section 16c): by birth year in the
+    structural summary, and per row in the runner's dispositions."""
+
+    summary = cohort.structural_summary(u1_cohort)
+    disp = u1_cohort.dispositions
+    for name in sources.FAMILY_UNIT_EXCLUSIONS:
+        stated = sum(
+            counts.get(name, 0)
+            for counts in summary["dispositions_by_birth_year"].values()
+        )
+        assert stated == int(disp["disposition"].eq(name).sum()) > 0
+    for row_id, entry in u2_run["rows"].items():
+        counts = entry["population"]["dispositions"]
+        assert set(sources.FAMILY_UNIT_EXCLUSIONS) <= set(counts), row_id
 
 
 def test_cohabitor_22_occupies_the_slot_without_legal_status(u1_cohort):

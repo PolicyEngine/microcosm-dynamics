@@ -13,14 +13,22 @@ The family mix is chosen to exercise every U2 path, not to resemble any
 population:
 
 * **roles** (section 3): married heads with a code-20 legal spouse
-  (including a **male** code-20 spouse in 2015); a code-22 cohabiting
-  partner whose birth year is inferred from invented earnings; a female
-  head with a code-90 uncooperative legal spouse (OFUM income role,
+  (including a **male** code-20 spouse in 2015, whose 2015 family unit
+  the section 16c B1 exclusion removes, and a 2015 couple with a female
+  code-20 spouse, which it keeps); a code-22 cohabiting partner whose
+  birth year is inferred from invented earnings; a female head with a
+  code-90 uncooperative legal spouse in 2015-2017 (OFUM income role,
   legal-spouse annuity life, resolves the head's unresolved history); a
   head with a code-92 uncooperative partner from 2017 (OFUM, never a
   legal spouse, never resolves); a head whose marriage history cannot be
   dated with a code-20 spouse without a record; a parent living as an
   OFUM (code 50) in an adult child's family with a grandchild;
+* **section 16c exclusions** (d1090): code-90 and code-92 members in
+  2019-2023 family units, which the B2 exclusion removes whether the
+  target is the reference person, the uncooperative spouse or partner,
+  or another member (an OFUM sibling), and a code-90 husband who is in an
+  institution in 2021 (sequence 51), outside the family unit, so that
+  unit stays;
 * **plans** (section 3): every U0 birth year at 67; every even birth
   year 1946-1954 at 66 and 68 (every one of row U1's fifteen cells holds
   an observation), 1946 at 66 in the 2013 wave; an even-birth member who
@@ -138,6 +146,17 @@ FAMILY_COUNTS: dict[str, int] = {
     "refresher_stratum": 3,
     "separated": 2,
     "even_birth_1954": 2,
+    # Section 16c (d1090), appended so every earlier family keeps its id,
+    # interview numbers and random draws: a 2015 couple with a female
+    # code-20 spouse (B1 keeps it), a 2017 code-92 partner (OFUM in 2017,
+    # B2 excludes the 2019 unit), a 2019-2023 code-90 husband with an
+    # OFUM sibling (B2 excludes every unit, whoever the target), and a
+    # code-90 husband in an institution in 2021 (outside the family unit,
+    # so B2 does not exclude it that year).
+    "couple_2015": 1,
+    "code92_partner_2017": 1,
+    "code90_spouse_2019": 1,
+    "code90_institution_2021": 1,
 }
 #: WEALTH1's documented components by concept (section 4; held equal to
 #: the wealth registry identities by the tests).
@@ -539,6 +558,42 @@ def _family_spec(kind: str, index: int, rng: np.random.Generator) -> dict:
         roster = _roster({1: (1, 10)})
         spec["income"] = {"head_ss": 16_500}
         spec["wealth"] = 45_000
+    elif kind == "couple_2015":
+        persons = [
+            _person(1, "male", 1947, "married", spouse_slot=2),
+            _person(2, "female", 1948, "married", spouse_slot=1),
+        ]
+        roster = _roster({1: (1, 10), 2: (2, 20)})
+        spec["income"] = {"head_ss": 18_000, "wife_ss": 11_000}
+        spec["wealth"] = 70_000
+    elif kind == "code92_partner_2017":
+        persons = [
+            _person(1, "male", 1949, "never"),
+            _person(2, "female", 1950, "none", earnings=True),
+        ]
+        roster = _roster(
+            {1: (1, 10), 2: (2, 92)},
+            {2013: {2: (0, 0)}, 2015: {2: (0, 0)}},
+        )
+        spec["income"] = {"head_ss": 12_500, "ofum_ss": 8_000}
+        spec["wealth"] = 3_000
+    elif kind == "code90_spouse_2019":
+        persons = [
+            _person(1, "female", 1953, "none"),
+            _person(2, "male", 1952, "none"),
+            _person(3, "female", 1955, "never"),
+        ]
+        roster = _roster({1: (1, 10), 2: (2, 90), 3: (3, 40)})
+        spec["income"] = {"head_ss": 10_500, "ofum_ss": 14_000}
+        spec["wealth"] = 8_000
+    elif kind == "code90_institution_2021":
+        persons = [
+            _person(1, "female", 1953, "none"),
+            _person(2, "male", 1950, "none"),
+        ]
+        roster = _roster({1: (1, 10), 2: (2, 90)}, {2021: {2: (51, 90)}})
+        spec["income"] = {"head_ss": 9_800}
+        spec["wealth"] = 4_000
     else:  # pragma: no cover - every kind is listed in FAMILY_COUNTS
         raise ValueError(kind)
     for person in persons:
