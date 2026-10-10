@@ -430,6 +430,79 @@ def test_mismatched_committed_cell_main_loads_no_attributes_or_writes(
 
 
 @pytest.mark.parametrize("exercise", ["cola", "fra68"])
+def test_main_relative_output_ignores_caller_runs_file(
+    tmp_path, specification_spy, exercise, monkeypatch, capsys
+):
+    """Run the actual writer with invented computation and real preflight."""
+    from populace_dynamics.group_breakdowns import cola, common, fra68
+
+    root = tmp_path / "repo"
+    (root / "runs").mkdir(parents=True)
+    caller = tmp_path / "caller"
+    caller.mkdir()
+    (caller / "runs").write_text("INVENTED caller file")
+    monkeypatch.chdir(caller)
+    monkeypatch.setattr(runner, "ROOT", root)
+    real_preflight = runner.preflight
+    monkeypatch.setattr(
+        runner,
+        "preflight",
+        lambda **kwargs: real_preflight(**kwargs, root=root, git=invented_git),
+    )
+    monkeypatch.setattr(
+        runner, "_sha256", lambda path: runner.POSTHOC_SPECIFICATION_SHA256
+    )
+    parent = {"registration_pointer": POINTER + "0", "labels": ["INVENTED"]}
+    monkeypatch.setattr(
+        runner, "_parent", lambda exercise: (parent, {}, "INVENTED")
+    )
+    calls = []
+
+    def invented_inputs(*args, **kwargs):
+        calls.append("inputs")
+        return object(), {"invented": True}, {}, None
+
+    def invented_replay(*args, **kwargs):
+        calls.append("reproduce")
+        return object()
+
+    def invented_groups(*args, **kwargs):
+        calls.append("groups")
+        return {"invented": True}
+
+    monkeypatch.setattr(runner, "build_registered_inputs", invented_inputs)
+    monkeypatch.setattr(cola, "reproduce_cola", invented_replay)
+    monkeypatch.setattr(fra68, "reproduce_fra68", invented_replay)
+    monkeypatch.setattr(common, "run_group_breakdown", invented_groups)
+    relative = Path("runs/invented_groups_posthoc_v1.json")
+    argv = [
+        "--exercise",
+        exercise,
+        "--registration-pointer",
+        POINTER,
+        "--registered-commit",
+        COMMIT,
+        "--output",
+        str(relative),
+    ]
+    assert runner.main(argv) == 0
+    output = root / relative
+    sidecar = output.with_suffix(".env.json")
+    assert json.loads(output.read_text())["invented"] is True
+    assert json.loads(sidecar.read_text())["artifact_sha256"] == (
+        hashlib.sha256(output.read_bytes()).hexdigest()
+    )
+    assert capsys.readouterr().out.strip() == str(output)
+    assert list(caller.iterdir()) == [caller / "runs"]
+    assert (caller / "runs").read_text() == "INVENTED caller file"
+    before = (output.read_bytes(), sidecar.read_bytes())
+    with pytest.raises(common.GroupBreakdownRefusal, match="one-shot"):
+        runner.main(argv)
+    assert calls == ["inputs", "reproduce", "groups"]
+    assert (output.read_bytes(), sidecar.read_bytes()) == before
+
+
+@pytest.mark.parametrize("exercise", ["cola", "fra68"])
 def test_relative_output_resolves_under_root_and_stays_one_shot(
     tmp_path, specification_spy, exercise, monkeypatch
 ):

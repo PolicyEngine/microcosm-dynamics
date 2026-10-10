@@ -587,3 +587,57 @@ def test_the_registered_state_writes_the_artifact_and_sidecar(
     with pytest.raises(ValueError, match="one-shot"):
         _execute(tmp_path, stand_ins, stand_ins.document)
     assert output.read_bytes() == before
+
+
+def test_execute_writes_relative_output_under_root_from_another_cwd(
+    tmp_path, monkeypatch, stand_ins
+):
+    """Exercise the writer after preflight with only INVENTED computation.
+
+    A regular caller-relative ``runs`` file must not prevent publishing
+    the canonical pair, and the next invocation must see that pair.
+    """
+
+    root = tmp_path / "repo"
+    root.mkdir()
+    caller = tmp_path / "caller"
+    caller.mkdir()
+    sentinel = caller / "runs"
+    sentinel.write_text("INVENTED caller file\n")
+    monkeypatch.chdir(caller)
+    relative = Path("runs") / "invented_groups_posthoc_v1.json"
+    output = root / relative
+    compute_calls = []
+
+    def compute(**kwargs):
+        compute_calls.append(kwargs)
+        return {
+            "header": common.INVENTED_DATA_HEADER,
+            "data_provenance": "INVENTED",
+        }
+
+    monkeypatch.setattr(mb, "run_group_breakdowns", compute)
+    monkeypatch.setattr(
+        SCRIPT, "source_sha256", lambda: {"INVENTED": "0" * 64}
+    )
+
+    _, artifact = _execute(
+        root, stand_ins, stand_ins.document, output=relative
+    )
+    assert len(compute_calls) == 1
+    assert json.loads(output.read_text()) == common.json_normalized(artifact)
+    sidecar_path = output.with_suffix(".env.json")
+    sidecar = json.loads(sidecar_path.read_text())
+    assert sidecar["artifact"] == output.name
+    assert sidecar["artifact_sha256"] == common.file_sha256(output)
+    assert sidecar["environment"] == ENVIRONMENT
+    assert set(caller.iterdir()) == {sentinel}
+    assert sentinel.read_text() == "INVENTED caller file\n"
+
+    before = output.read_bytes(), sidecar_path.read_bytes()
+    with pytest.raises(common.GroupBreakdownRefusal, match="one-shot"):
+        _execute(root, stand_ins, stand_ins.document, output=relative)
+    assert len(compute_calls) == 1
+    assert (output.read_bytes(), sidecar_path.read_bytes()) == before
+    assert set(caller.iterdir()) == {sentinel}
+    assert sentinel.read_text() == "INVENTED caller file\n"

@@ -399,10 +399,11 @@ def main(argv: list[str] | None = None) -> int:
             ),
         },
     }
-    output.parent.mkdir(parents=True, exist_ok=True)
     # Write exactly the path preflight checked (absolute, under runs/),
     # never the caller's possibly relative spelling.
-    write_new_pair(state["output_path"], artifact, environment)
+    output = state["output_path"]
+    output.parent.mkdir(parents=True, exist_ok=True)
+    write_new_pair(output, artifact, environment)
     print(output)
     return 0
 
