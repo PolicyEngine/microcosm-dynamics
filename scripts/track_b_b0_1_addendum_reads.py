@@ -5,7 +5,7 @@ Reads a Claude Code session export (the zip the desktop app's Export
 writes) and records every tool call of the session and of its subagents:
 the tool, the time, the path, range or pattern it named, and for a shell
 command its first line, its SHA-256 and the paths it names. It records
-no tool output and reads none.
+no tool output.
 
 Each call that names a path on `RESTRICTED-FILES.md` or on either exposure
 inventory's Q6 exclusion list (plus the codebook-evidence folder) is
@@ -649,7 +649,8 @@ def main(argv: list[str] | None = None) -> int:
         },
         "method": (
             "tool-call inputs from the session's transcript export; no tool "
-            "output is read or recorded"
+            "output is recorded, and a flagged call's output is read only to "
+            "count the lines that begin with an excluded path"
         ),
         "restricted_entries_checked": len(restricted),
         "q6_paths_checked": sorted(denied | {CODEBOOK_DIR}),

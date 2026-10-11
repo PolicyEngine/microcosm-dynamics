@@ -304,7 +304,7 @@
    ]
   ]
  },
- "method": "tool-call inputs from the session's transcript export; no tool output is read or recorded",
+ "method": "tool-call inputs from the session's transcript export; no tool output is recorded, and a flagged call's output is read only to count the lines that begin with an excluded path",
  "n_calls": 1801,
  "q6_paths_checked": [
   "data/external/psid_codebook_field_evidence/",
@@ -329,7 +329,7 @@
   "tests/test_m6_qstar_selection.py",
   "tests/test_m6_rhostar_selection.py"
  ],
- "restricted_entries_checked": 110,
+ "restricted_entries_checked": 114,
  "schema": "track_b_b0_1_addendum_reads.v1",
  "source": {
   "export": "session-export-1790949534896.zip",

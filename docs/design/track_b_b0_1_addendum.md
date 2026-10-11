@@ -1,7 +1,9 @@
 # Track B B0.1 addendum: the frozen record B2 registers on
 
-**Status: protocol frozen and planning values computed, 2026-10-01. B2
-stops here until Max rules on d781 and d782 (sections 11 and 13).**
+**Status: protocol frozen and planning values computed, 2026-10-01.
+Max ruled d765, d781 and d782 on 2026-10-11 (section 2). On the
+configuration they set, B2 falls short of 0.90 power and stops again
+until Max rules on dNEW (sections 11 and 13).**
 This file is the post-ruling addendum that the B0.1 audit
 (`docs/design/track_b_b0_1_audit.md`, section 13) calls for. It does
 three things:
@@ -54,6 +56,18 @@ repository; design line numbers refer to it.
   cells together reach 0.992 (section 11). B2 stops here. Before any
   candidate run, Max decides how to rescope it (d781) and how its
   standard error treats PSID's survey design (d782) (section 13).
+- **The rulings of 2026-10-11** (section 2):
+  - d781 (a) gates the six level cells;
+  - d782 resamples design clusters for the standard error;
+  - d765 ratifies the half-samples.
+
+  Round-1 finding M2's rider adds a t critical value with the design's
+  63 degrees of freedom (section 7).
+- **Power on that configuration.** The six level cells reach 0.813 on the
+  binding evaluation, against the 0.952 d781 cites on household
+  resampling. Every evaluation is below 0.90, and the most lenient gives
+  0.886 (section 11). B2 stops again before registration, and dNEW asks
+  Max to choose a remedy (section 13).
 
 ## 2. Rulings this addendum implements
 
@@ -86,6 +100,33 @@ registration." Section 13 carries it.
 **The Q2 correction** and the round-2 review's low findings N1-N7 are in
 section 12.
 
+**The rulings of 2026-10-11.** Max ruled the three decisions this
+addendum queued (section 13). The decision log records them as:
+
+- **d765:** "ratify: household half-samples (without replacement) for B2's
+  refit arm; the fixed-law arm stays a household bootstrap (Max in chat
+  2026-10-11, guided walkthrough)".
+- **d781:** "(a) rescope B2 to the six level cells (p50, p90 and zero rate
+  by cohort; power 0.952); the other ten cells are scored and published
+  report-only; B2's headline covers earnings levels and zero rates only;
+  H and B3L rely on B2 for levels only (Max in chat 2026-10-11)".
+- **d782:** "resample PSID sampling-error clusters within strata (Rao-Wu)
+  for B2's registered standard error; the floor split and gate seeds'
+  split stay household per d693 Q3 (Max in chat 2026-10-11)".
+
+| Ruling | What it freezes | Where |
+|---|---|---|
+| d765 | Arm R's household half-samples stand, so the planning record's e and e_B2 are B2's registered estimation-variance values | Sections 7, 10 |
+| d781 (a) | Element 6: B2's gate family is the six level cells; the other ten are report-only; the headline and what H and B3L may rely on | Sections 5, 13 |
+| d782 | Element 8: se_boot resamples design clusters within strata (Rao-Wu); the floor and gate-seed splits stay household. With round-1 finding M2's rider, the critical value is Student t with the design's degrees of freedom | Sections 7, 8 |
+
+The 0.952 that d781 cites is household resampling's figure. On the
+configuration the three rulings and the M2 rider set together, the six
+level cells reach 0.813 on the binding evaluation, below 0.90 (section
+11, "Power on the configuration Max ruled"). So B2 stops again before
+registration, and decision dNEW asks Max to choose among the remedies
+(section 13).
+
 ## 3. The frozen record
 
 Design line 288: "Each record lists all ten elements above, plus the
@@ -100,9 +141,9 @@ table.
 | 3. Population | Frozen | Audit §7: the 13,542-person 2010 domain, handed to H by B2's bridge; no one is scored outside ages 25-64 at the scored waves (Q7) |
 | 4. Exposure history | Frozen | Audit §5 and its inventory; the exposure labels (section 5) and the Q8(b) fallback (section 4) settle its consequences |
 | 5. Holdout partition | Frozen | Section 4 |
-| 6. Critical cells | Rule frozen | Section 5 |
+| 6. Critical cells | Rule frozen | Section 5; d781 (a): the six level cells, with dNEW open |
 | 7. Numerical tolerances | Rule frozen | Section 6 |
-| 8. Uncertainty treatment | Frozen | Section 7 |
+| 8. Uncertainty treatment | Frozen | Section 7; d782: Rao-Wu se_boot, with Student t at the design's degrees of freedom |
 | 9. Pass conjunction | Frozen | Section 8 |
 | 10. Reference dates vs availability | Frozen | Audit §4.3 |
 | Named power procedure | Frozen | Section 16 (protocol v2), evaluated in sections 9 and 11 |
@@ -137,6 +178,30 @@ and before any candidate run, as M6's did (design line 332).
   it. It gates nothing.
 
 ## 5. Element 6: critical cells
+
+**The ruled surface (d781 (a), 2026-10-11).** B2's gate family is the six
+level cells: `earn_p50.older`, `earn_p50.prime`, `earn_p90.older`,
+`earn_p90.prime`, `earn_zero_rate.older` and `earn_zero_rate.prime`.
+
+- The other ten gateable cells are scored and published report-only, as
+  pruned cells are below.
+- B2's headline says its gate covers earnings levels and zero rates only,
+  not changes, dispersion, mobility or persistence.
+- H and B3L rely on B2 for levels only.
+- Eligibility, the ladder and the guards below run on B2's own floor
+  inside the six. The six span two concept families, log quantiles and
+  zero rate, so the ladder can prune at most two cells before the
+  four-cell guard binds.
+- Of the six, `earn_zero_rate.older` carries the label "published
+  candidate-3-law outcomes at boundaries 2008 and 2010" and the other five
+  "published five-seed floor detail, no published candidate outcome".
+
+On the ruled configuration the six reach 0.813 on the binding evaluation,
+below 0.90 (section 11). So decision dNEW (section 13) may change this
+surface, or the tolerance, before B2 registers.
+
+The rest of this section is the rule as d693 froze it. Under d781 its
+candidate family is the six.
 
 **Candidate family.** The 16 gateable cells of audit §9.1.
 
@@ -219,41 +284,66 @@ For each gated cell c, on full support:
   deviation over 4,000 household-bootstrap replicates × √(1 + 1/K). It
   is truth-only, and the floor builder computes it before any candidate
   outcome.
-- **Bootstrap standard error.** se_boot,c = SD of the signed gap over
-  4,000 household-bootstrap replicates, with the law fixed and each
-  person's projected paths fixed.
-- **The bootstrap.** Both use the same replicates: multinomial
-  multiplicities over all 2011 full-anchor households (equal
+- **Bootstrap standard error (d782).** se_boot,c = SD of the signed gap
+  over 4,000 design replicates, with the law fixed and each person's
+  projected paths fixed. A design replicate resamples PSID's
+  sampling-error clusters (`ER31997`) within strata (`ER31996`) among
+  the truth-support persons, by Rao-Wu, as arm D did. It uses arm D's
+  `design_multiplicities`, imported from
+  `scripts/track_b_b0_1_planning_values.py`:
+  - in a stratum with two clusters, one is drawn and copied twice;
+  - a stratum with one cluster keeps it once;
+  - a stratum with three or more clusters draws that many with
+    replacement. That is not Rao-Wu, and it understates the stratum's
+    variance by (n_h - 1)/n_h. At the 2006 pseudo-origin every one of the
+    63 strata had exactly two clusters.
+
+  The floor and gate-seed splits stay household (d693 Q3, d782).
+- **The household bootstrap.** se_up,c uses its own 4,000 replicates:
+  multinomial multiplicities over all 2011 full-anchor households (equal
   probabilities, as many draws as households, the seed below),
-  households without a domain person included. Each person in a
-  household with multiplicity c is copied c times under new identifiers,
-  truth rows and every draw's projected rows alike, by this addendum's
+  households without a domain person included. se_up stays household
+  because a_c below is measured in household se_up units (section 10).
+- **Copying.** In both bootstraps each person whose household or cluster
+  has multiplicity c is copied c times under new identifiers, truth rows
+  and every draw's projected rows alike, by this addendum's
   `copy_persons`. Weights are never multiplied instead, because the
   mobility cells bin by midpoint weighted ranks.
+- **Design degrees of freedom.** ν = Σ_h (n_h - 1) over the strata among
+  B2's truth-support persons, n_h being stratum h's cluster count, so a
+  stratum with one cluster adds nothing. The floor builder counts ν from
+  the design variables before any candidate outcome and publishes the
+  strata counted by cluster count, as `design_summary` does. At the 2006
+  pseudo-origin ν was 63.
 - **Registered standard error.** se_c = √(se_boot,c² + a_c × se_up,c²),
   where a_c is the cell's registered estimation-variance ratio from
   section 10: e_B2,c, plus the transported cross term where section 16's
   rule adds it. a_c is never negative, so se_c is at least se_boot,c.
-- **Bound.** |g_c| + z\*_m × se_c, with z\*_m the two-sided simultaneous
-  95% value over the m gated cells, Φ⁻¹(1 - 0.05/(2m)).
+  d765 ratified the half-samples behind e_B2.
+- **Bound (round-1 M2).** |g_c| + t\*_m,ν × se_c, with t\*_m,ν the
+  two-sided simultaneous 95% value over the m gated cells from Student's
+  t with ν degrees of freedom, t_ν⁻¹(1 - 0.05/(2m)). It replaces d693's
+  normal z\*_m because the design-based se_boot is estimated from about ν
+  degrees of freedom. At m = 6 and ν = 63 it is 2.724, against
+  z\*_6 = 2.638. Giving the whole of se_c ν degrees of freedom is
+  conservative, since a_c × se_up² is a registered constant.
 - **Monte Carlo error.** The SD over the K = 20 draws of the per-draw
   signed gap (ln(P_k/T) for `log_ratio` cells, P_k - T otherwise),
   divided by √K, must be below tol_c/10 (design line 302). A cell that
   fails cannot pass. Side-A seeds carry no Monte Carlo rule, as in M6.
 - **Undefined replicates.** A gated cell with more than 1% of its
-  bootstrap replicates undefined cannot pass.
-- **Survey design.** The household bootstrap is the resampling d693
-  ruled (Q2, Q3). It does not resample PSID's sampling-error strata and
-  clusters. Section 16 measures what that leaves out at the
-  pseudo-origin (the design ratio) and fixes the rule that follows from
-  it.
+  design or household replicates undefined cannot pass.
+- **Survey design.** d693 ruled household resampling. Section 16's design
+  rule did not hold at the pseudo-origin (section 10), and d782 resolved
+  the choice it sent to Max: the registered standard error resamples
+  design clusters, as above.
 - **Side A.** Each gate seed's side-A statistics come from the
   full-domain projection's K draws, restricted to side-A persons. B2
   does not re-project each half.
 - **Seeds.** B2 uses protocol v2's seeds and streams, with a new root.
-  - The scoring bootstrap's root seed is 20261002. Replicate b draws
-    household multiplicities from stream [root, b, 0], and design
-    clusters from [root, b, 4] if d782 rules for them (section 13).
+  - The scoring bootstrap's root seed is 20261002. Household replicate b
+    draws its multiplicities from stream [root, b, 0], and design
+    replicate b its clusters from [root, b, 4] (d782).
   - Candidate 3's law is fitted with seed 5200 and projected with draw
     seeds 6200-6219 (K = 20), as in protocol v2 and the selectors.
   - Floor seeds are 0-99 and gate seeds 0-4 (section 4).
@@ -275,7 +365,8 @@ The outcome is the first of these that applies:
    - some gated cell's full-support gap is outside tolerance,
      |g_c| > tol_c.
 3. **PASS** if, for every gated cell, all hold:
-   - the bound lies within tolerance, |g_c| + z\*_m × se_c <= tol_c;
+   - the bound lies within tolerance, |g_c| + t\*_m,ν × se_c <= tol_c
+     (section 7);
    - se_c and the Monte Carlo error are defined, the Monte Carlo rule
      holds, and at most 1% of its bootstrap replicates are undefined.
 4. **INCONCLUSIVE** otherwise: the point gaps are within tolerance but
@@ -310,9 +401,16 @@ This replaces the audit's draft rule (§9.2) on the ruled basis.
 3. It computes the household-split floor (section 4's split, seeds
    0-99) and, without gating on it, the person-split floor.
 4. It computes each cell's tolerance (section 6) and se_up,c (section 7).
-5. It applies eligibility, the ladder and the guards (section 5), with
-   power from the named procedure on its binding evaluation: r_c and
-   s²_gate,c from section 10, and τ_c = tol_c / se_up,c.
+   It counts the design strata by cluster count and ν (section 7).
+5. It applies eligibility, the ladder and the guards (section 5) inside
+   the ruled surface (d781). Power comes from the ruled binding
+   evaluation (`scripts/track_b_b0_1_ruled_power.py`, section 11):
+   - r_c, the 95th percentile of d_c and s²_gate,c from section 10;
+   - ν, and τ_c = tol_c / se_up,c, from B2's own floor;
+   - t\*_m,ν as the critical value.
+
+   The design ratio needs projections, so the builder cannot measure it
+   at B2's origin; it uses the 2006 value.
 6. It publishes the floor artifact and its hash: the gated cells with
    exposure labels and plain-unit tolerances, the pruned cells, the
    power, and the canonical SHA-256 of its person-split floor block and
@@ -575,6 +673,114 @@ seed conjunction fails, given a bound-rule pass, with probability below
 0.001 at every size. Section 10 measured r above 1 for seven cells, so
 this basis is not an upper bound for them.
 
+### Power on the configuration Max ruled
+
+After the rulings of 2026-10-11 (section 2),
+`scripts/track_b_b0_1_ruled_power.py` recomputes the named procedure on
+the configuration they set. It writes
+`docs/design/track_b_b0_1_ruled_power.json` from the planning-value record
+alone. The configuration is:
+
+- the six level cells (d781 (a));
+- the Rao-Wu standard error (d782);
+- Student t with the design's ν = 63 degrees of freedom (round-1 M2);
+- the half-sample estimation variances (d765).
+
+Units are each cell's household se_up, as above. The model changes protocol
+v2's binding evaluation in three places:
+
+- **The gap's sampling variance.** Under Rao-Wu it is (r_c × d_c)², with
+  d_c the cell's design ratio (section 10). The full-support gap is
+  x ~ N(0, (r_c d_c)² + e_c), with e_c = s²_gate,c - r_c² as before.
+- **The registered variance.** It is (r_c d_c)² × W + e_c, with
+  W ~ χ²_ν/ν independent of x: B2 estimates the Rao-Wu part with ν degrees
+  of freedom, and a_c is a registered constant.
+- **The critical value.** The bound rule passes when
+  |x| + t\*_m,ν √(registered variance) <= τ_c.
+
+Each side-A seed's gap, given x, stays N(x, r_c²). The seed split is a
+household split of the realized sample, so its spread is the household
+resampling variance whatever the design.
+
+The binding evaluation takes d_c at its 95th percentile, the design
+rule's own statistic. With ν infinite, d = 1 and z\*, the model is
+protocol v2's binding evaluation term for term. The six cells then
+return 0.952, the figure d781 cites.
+
+| Evaluation | P(gate passes) | P(bound rule passes) |
+|---|---:|---:|
+| Binding: d at its 95th percentile, t with ν df, se_boot estimated | 0.813 | 0.813 |
+| se_boot treated as known | 0.821 | 0.821 |
+| d at its point estimate | 0.854 | 0.854 |
+| Normal z\* in place of t, se_boot known | 0.852 | 0.852 |
+| Side-A seeds spread by r × d | 0.813 | 0.813 |
+| Most lenient: d point, z\*, se_boot known | 0.886 | 0.886 |
+| Household resampling (d = 1, z\*): d781's basis | 0.952 | 0.952 |
+
+**Verdict: below 0.90 on every evaluation.** On the binding evaluation the
+six level cells reach 0.813. The most lenient evaluation reaches 0.886.
+
+- `earn_p50.older` is the weak cell. It has the largest design ratio
+  (95th percentile 1.259) and the largest gating variance, and on its own
+  it passes the bound rule with probability 0.892 at six cells.
+- Given a bound-rule pass, the seed conjunction fails with probability
+  below 10⁻⁶ on every evaluation, so more gate seeds would change
+  nothing.
+- The six gaps' arm-F correlations are at most 0.18, so a
+  correlation-aware simultaneous critical value would gain almost nothing.
+
+Every surface of four or more of the six that keeps both families, on the
+binding and most lenient evaluations, at the nominal uncapped tolerance:
+
+| Gated cells | Dropped | Binding | Most lenient |
+|---:|---|---:|---:|
+| 6 | none | 0.813 | 0.886 |
+| 5 | `earn_p50.older` | 0.926 | 0.961 |
+| 5 | `earn_p50.prime` | 0.864 | 0.916 |
+| 5 | `earn_zero_rate.older` | 0.856 | 0.911 |
+| 5 | `earn_zero_rate.prime` | 0.852 | 0.909 |
+| 5 | `earn_p90.older` | 0.845 | 0.905 |
+| 5 | `earn_p90.prime` | 0.842 | 0.903 |
+| 4 | `earn_p50.older`, `earn_p50.prime` | 0.964 | 0.981 |
+| 4 | `earn_p50.older`, `earn_zero_rate.older` | 0.956 | 0.977 |
+| 4 | `earn_p50.older`, `earn_zero_rate.prime` | 0.952 | 0.975 |
+| 4 | `earn_p50.older`, `earn_p90.older` | 0.946 | 0.972 |
+| 4 | `earn_p50.older`, `earn_p90.prime` | 0.944 | 0.970 |
+| 4 | `earn_p50.prime`, `earn_zero_rate.older` | 0.903 | 0.938 |
+| 4 | `earn_p50.prime`, `earn_zero_rate.prime` | 0.899 | 0.936 |
+| 4 | `earn_p50.prime`, `earn_p90.older` | 0.893 | 0.933 |
+| 4 | `earn_p50.prime`, `earn_p90.prime` | 0.891 | 0.932 |
+| 4 | `earn_p90.older`, `earn_zero_rate.older` | 0.886 | 0.929 |
+| 4 | `earn_p90.prime`, `earn_zero_rate.older` | 0.884 | 0.928 |
+| 4 | `earn_p90.older`, `earn_zero_rate.prime` | 0.883 | 0.927 |
+| 4 | `earn_p90.prime`, `earn_zero_rate.prime` | 0.880 | 0.926 |
+| 4 | `earn_p90.older`, `earn_p90.prime` | 0.875 | 0.923 |
+
+The figures for decision dNEW:
+
+- **The ladder inside the six.** It prunes in descending tolerance/σ
+  order, which only B2's floor fixes.
+  - Over all 720 orders it clears 0.90 in 306 on the binding evaluation
+    and in all 720 on the most lenient.
+  - In the other 414 orders it ends below 0.90, or below the four-cell
+    guard, and B2 is `WEAK_POWER_OR_VACUITY` at floor build.
+- **Five fixed cells.** Only one five-cell surface reaches 0.90: without
+  `earn_p50.older`, at 0.926.
+- **Four fixed cells.** Six of the fourteen four-cell surfaces reach 0.90.
+  The best drops both medians, at 0.964.
+- **A wider tolerance.** The six reach 0.90 at k = 3.257, a tolerance
+  1.059 times as wide as k = 3's. At k = 3.26 they reach 0.901, and 0.944
+  on the most lenient evaluation.
+
+These figures are nominal, like those above. B2's floor fixes its real
+tolerance. For these six cells, M6's realized tolerance/σ (2.35-2.64,
+against 2.61) and the 2006 floor-to-bootstrap ratios (0.94-1.07) put it
+roughly 15% below to 8% above nominal.
+
+B2 stops here again. Under section 5 the case is `WEAK_POWER_OR_VACUITY`
+before registration. Decision dNEW asks Max to choose among the remedies,
+and no rescoped registration is written before he rules (section 13).
+
 ## 12. Corrections to the audit
 
 **Q2's headroom is per cell.** The audit's Q2 facts said the
@@ -633,9 +839,14 @@ measured (section 7), and the binding evaluation uses the measured r.
 - Max has ruled on d781, because section 11's verdict is not
   "feasible", and on d782, because section 16's design rule did not
   hold; and any rescoped registration that follows his rulings is
-  written and reviewed before any candidate run;
+  written and reviewed before any candidate run. **Ruled 2026-10-11:**
+  d781 (a) and d782 Rao-Wu (section 2);
 - Max has ratified the refit arm's half-sample resampling (d765), or
-  ruled otherwise (below);
+  ruled otherwise (below). **Ratified 2026-10-11** (section 2);
+- Max has ruled on dNEW, because on the ruled configuration the six level
+  cells fall below 0.90 (section 11, "Power on the configuration Max
+  ruled"), and any registration that follows is written and reviewed
+  before any candidate run;
 - a B1 run has passed: v1 `REPRODUCED`, or v2
   `RECONSTRUCTED_REPRODUCTION` (d622). A v2 pass carries its weaker
   label, "reconstructed reproduction (weaker than bit-for-bit)", into
@@ -644,7 +855,8 @@ measured (section 7), and the binding evaluation uses the measured r.
   artifact is committed as of this addendum.
 
 **Decisions queued for Max.** None blocks this addendum's merge. Each
-blocks B2's registration.
+blocked B2's registration. d765, d781 and d782 were ruled on 2026-10-11
+(section 2); dNEW, queued after those rulings, is open.
 
 - **d765, queued before the run.** d693's Q5 rider says the two planning
   values come from "one pseudo-origin household bootstrap". Arm F is a
@@ -716,6 +928,31 @@ blocks B2's registration.
     63 degrees of freedom is 2.724, against z\* = 2.638. A registration
     under (a) should use the t value.
 
+- **dNEW: how B2 reaches 0.90 on the ruled configuration.** Queued
+  2026-10-11, after the three rulings. On the binding evaluation the six
+  level cells reach 0.813, and the most lenient evaluation reaches 0.886
+  (section 11). The options, in no order, with binding and most lenient
+  power:
+  - (A) leave d781 (a) as it stands. Section 5's ladder then prunes
+    inside the six on B2's own floor, in an order only that floor fixes.
+    It clears 0.90 in 306 of the 720 possible orders (720 of 720 on the
+    most lenient evaluation). Otherwise B2 is `WEAK_POWER_OR_VACUITY` at
+    floor build and returns to Max;
+  - (B) gate five cells, dropping `earn_p50.older`: 0.926 / 0.961. B2
+    then does not certify the older cohort's median earnings level;
+  - (C) gate four cells, for example both cohorts' p90 and zero rates,
+    dropping both medians (0.964 / 0.981), or dropping `earn_p50.older`
+    and `earn_zero_rate.older` (0.956 / 0.977);
+  - (D) keep the six and widen their tolerance to k = 3.26, 1.06 times
+    k = 3's: 0.901 / 0.944. The ladder stays as a backstop;
+  - (E) keep B2 unadmitted. H and B3L stay blocked.
+
+  More gate seeds, pooled cohorts and a correlation-aware critical value
+  were considered and set aside (section 11). The decision aid,
+  `trackb-ruled-power-20261011/OPTIONS.md` in the launch-evidence
+  directory, says for each option what B2 stops certifying and what H
+  and B3L then cannot rely on. It proposes (D) as the default.
+
 If a family's last cell may be pruned, these surfaces reach 0.90 on the
 binding evaluation at the uncapped tolerance (the power record's
 `decision_illustrations`). They are post-run figures for these
@@ -740,8 +977,15 @@ decisions and decide nothing:
 - Import `copy_persons` and the multiplicity functions from
   `scripts/track_b_b0_1_planning_values.py` for the scoring bootstrap,
   and test that the scorer and arm F build identical frames for the
-  same multiplicities. Under d782 (a), import arm D's design
-  multiplicities the same way.
+  same multiplicities. Under d782, import arm D's
+  `design_multiplicities` the same way. Those functions read protocol
+  v2's root seed (20260930) from a module constant. B2's scorer passes
+  its own root (20261002) and tests that, with protocol v2's root, it
+  reproduces arms D's and F's multiplicities.
+- Use t\*_m,ν with ν counted by the floor builder (section 7), and
+  publish the strata counted by cluster count before any candidate run.
+- Name the gated surface in the headline (d781): earnings levels and
+  zero rates only, with H and B3L relying on B2 for levels only.
 - A rescoped registration under d781 names the gated families in its
   headline and scores every other cell report-only.
 
@@ -867,6 +1111,41 @@ code is flagged only when it names an excluded path.
 Calls after the export, including the round-2 dispatch, are in
 section 15.
 
+**The 2026-10-11 revision.** A second Claude Code session (Opus 5.5), the
+Track B forward-earnings session, wrote the changes after Max's rulings.
+It shares no context with the author above.
+
+Before opening any other file it read:
+
+- `RESTRICTED-FILES.md`;
+- the audit's §15.4 exclusion list.
+
+It then read:
+
+- this addendum, the round-1 review and the planning, power and reads
+  records;
+- the power, tables, reads and planning-value scripts (the last only
+  around arm D's `design_multiplicities`), the record tests and
+  `tests/conftest.py`;
+- the decision log's d765, d781 and d782 entries;
+- for B1: `track_b/` and the candidate-3 runner's environment guard;
+- the candidate-3 artifact's top-level keys, `provenance`,
+  `runtime_identity` and `dependency_snapshot`, and its sidecar;
+- the Track B design, through one grep that printed the lines naming
+  months, births and H.
+
+It opened no file on the §15.4 list, no selection ledger, no codebook
+table and no PSID file. Its only computation on data was the ruled power,
+from the planning record.
+
+Calls that took in excluded files, each mechanically:
+
+- five `pytest --collect-only -q -m <tier>` runs over the suite, which
+  import every test module and print one count each;
+- `git diff --stat` and `--name-status` listings;
+- one rerun of the reads extractor on the round-1 export. The session did
+  not open the export (section 15).
+
 ## 15. The blinded review (Q6)
 
 The plan was fixed before the first review. Its read-log rule was
@@ -941,6 +1220,36 @@ sharpened after round 1 (below).
 | L5: the half-sample evidence had no provenance | Section 13 gives the check's command, time and script state |
 | L6: the Monte Carlo threshold | Section 11 gives the measured 2.34 |
 | L7: a guard refusal in a worker would resume | Section 10 notes it |
+
+**Round-1 findings, rechecked 2026-10-11.** Each disposition above is in
+place at this head:
+
+- **M1.** Section 13 lists d781's options in no order, with (d) and its
+  figures. d781 has since been ruled (section 2).
+- **M2.** Section 10 states d's own sampling uncertainty. After d782,
+  section 7 registers the rider: Student t with the design's ν degrees of
+  freedom, 2.724 at m = 6 and ν = 63. Section 11's ruled power uses it.
+- **M3.**
+  - The extractor flags recursive and glob scopes that cover an excluded
+    path (`Checker.scope`). It counts the output lines that begin with
+    one, and keeps each flagged call's full command. Thirteen calls carry
+    a scope flag. Section 14 is restated from that record.
+  - This revision corrected one leftover. The extractor's docstring and
+    the record's `method` still said it reads no tool output, though it
+    reads a flagged call's output to count lines. Both now say what it
+    does.
+  - The record was regenerated from the same export, whose SHA-256 is in
+    its `source`. Only `method` changed, and `restricted_entries_checked`
+    went from 110 to 114, the entries `RESTRICTED-FILES.md` gained since.
+    No call, flag or class changed.
+- **L1-L7.** Audit sections 1, 11, 11.2, 11.4 and Q2 call the standard
+  errors reference points (L1). The rest are in place:
+  - L2: section 11 calls the tolerance nominal;
+  - L3: section 10 says the outcome-blind flags are constants;
+  - L4: section 7 names the seeds;
+  - L5: section 13 gives the leak check's command and time;
+  - L6: section 11 gives the 2.34 threshold;
+  - L7: section 10 notes the worker quirk.
 
 **Round 2** reviews the changed head on a newly built root, in the same
 form. Its record follows.

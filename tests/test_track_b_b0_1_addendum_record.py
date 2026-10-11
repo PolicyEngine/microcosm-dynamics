@@ -589,3 +589,113 @@ def test_review_round_1_figures_come_from_the_records(prose, power_record):
     assert f"{10 * mc:.2f}" == "2.34"
     for phrase in expected:
         assert phrase in prose, phrase
+
+
+# The rulings of 2026-10-11 and the power on the configuration they set.
+
+RULED = ROOT / "docs" / "design" / "track_b_b0_1_ruled_power.json"
+
+
+@pytest.fixture(scope="module")
+def ruled_record():
+    return json.loads(RULED.read_text(encoding="utf-8"))
+
+
+@pytest.mark.parametrize(
+    "sentence",
+    [
+        # d765, d781 and d782 as the decision log records them
+        "ratify: household half-samples (without replacement) for B2's "
+        "refit arm; the fixed-law arm stays a household bootstrap (Max in "
+        "chat 2026-10-11, guided walkthrough)",
+        "(a) rescope B2 to the six level cells (p50, p90 and zero rate by "
+        "cohort; power 0.952); the other ten cells are scored and published "
+        "report-only; B2's headline covers earnings levels and zero rates "
+        "only; H and B3L rely on B2 for levels only (Max in chat 2026-10-11)",
+        "resample PSID sampling-error clusters within strata (Rao-Wu) for "
+        "B2's registered standard error; the floor split and gate seeds' "
+        "split stay household per d693 Q3 (Max in chat 2026-10-11)",
+        # what they freeze
+        "B2's gate family is the six level cells",
+        "H and B3L rely on B2 for levels only",
+        "se_boot,c = SD of the signed gap over 4,000 design replicates",
+        "The floor and gate-seed splits stay household (d693 Q3, d782)",
+        "|g_c| + t\\*_m,ν × se_c <= tol_c",
+        "ν = Σ_h (n_h - 1) over the strata among B2's truth-support persons",
+        "design replicate b its clusters from [root, b, 4] (d782)",
+    ],
+)
+def test_addendum_carries_the_2026_10_11_rulings(prose, sentence):
+    assert sentence in prose
+
+
+def test_ruled_power_figures_come_from_the_record(prose, ruled_record):
+    from scipy.stats import t as student_t
+
+    six = ruled_record["six_level_cells"]
+    per_cell = ruled_record["per_cell"]
+    constants = ruled_record["constants"]
+    surfaces = ruled_record["fixed_surfaces"]
+    ladder = ruled_record["ladder_inside_the_six"]
+    lenient_ladder = ruled_record["ladder_inside_the_six_most_lenient"]
+    option = ruled_record["tolerance_option"]
+    k = ruled_record["tolerance_for_target"]["binding"]
+    weak = min(per_cell, key=lambda n: per_cell[n]["bound_pass_at_m"])
+    assert weak == "earn_p50.older"
+    assert weak == max(per_cell, key=lambda n: per_cell[n]["d_95th"])
+    assert weak == max(per_cell, key=lambda n: per_cell[n]["gap_variance"])
+    five = surfaces["5"]["surfaces"]
+    four = surfaces["4"]["surfaces"]
+    assert surfaces["5"]["n_reaching_target"] == 1
+    assert surfaces["4"]["n_surfaces"] == 14
+    assert surfaces["4"]["n_reaching_target"] == 6
+    assert five[0]["dropped"] == ["earn_p50.older"]
+    assert four[0]["dropped"] == ["earn_p50.older", "earn_p50.prime"]
+    assert four[1]["dropped"] == ["earn_p50.older", "earn_zero_rate.older"]
+    assert constants["t_star"] == pytest.approx(
+        student_t.ppf(1 - 0.05 / 12, 63), rel=1e-12
+    )
+    expected = [
+        f"the six level cells reach {six['binding']['p_gate']:.3f} on the "
+        "binding evaluation",
+        f"The most lenient evaluation reaches "
+        f"{six['most_lenient']['p_gate']:.3f}",
+        f"(95th percentile {per_cell[weak]['d_95th']:.3f})",
+        f"bound rule with probability {per_cell[weak]['bound_pass_at_m']:.3f}"
+        " at six cells",
+        "correlations are at most "
+        f"{ruled_record['level_cell_gap_correlation_max']:.2f}",
+        f"clears 0.90 in {ladder['orders_clearing']} on the binding "
+        f"evaluation and in all {lenient_ladder['orders_clearing']} on the "
+        "most lenient",
+        f"In the other {ladder['orders'] - ladder['orders_clearing']} orders",
+        f"without `earn_p50.older`, at {five[0]['p_gate']:.3f}",
+        "Six of the fourteen four-cell surfaces reach 0.90",
+        f"The best drops both medians, at {four[0]['p_gate']:.3f}",
+        f"The six reach 0.90 at k = {k['k']:.3f}, a tolerance "
+        f"{k['width_over_k3']:.3f} times as wide",
+        f"At k = {option['k']:.2f} they reach {option['p_gate']:.3f}, and "
+        f"{option['p_gate_most_lenient']:.3f} on the most lenient",
+        f"dropping `earn_p50.older`: {five[0]['p_gate']:.3f} / "
+        f"{five[0]['p_gate_most_lenient']:.3f}",
+        f"dropping both medians ({four[0]['p_gate']:.3f} / "
+        f"{four[0]['p_gate_most_lenient']:.3f})",
+        f"`earn_zero_rate.older` ({four[1]['p_gate']:.3f} / "
+        f"{four[1]['p_gate_most_lenient']:.3f})",
+        f"k = {option['k']:.2f}, {option['width_over_k3']:.2f} times k = 3's: "
+        f"{option['p_gate']:.3f} / {option['p_gate_most_lenient']:.3f}",
+        f"It clears 0.90 in {ladder['orders_clearing']} of the "
+        f"{ladder['orders']} possible orders",
+        f"{six['household_as_measured']['p_gate']:.3f}, the figure d781 cites",
+        f"At m = 6 and ν = {constants['design_degrees_of_freedom']} it is "
+        f"{constants['t_star']:.3f}, against z\\*_6 = "
+        f"{constants['z_star']:.3f}",
+    ]
+    for phrase in expected:
+        assert phrase in prose, phrase
+    assert ruled_record["verdict"]["b2_stops"]
+    for phrase in (
+        "**Verdict: below 0.90 on every evaluation.**",
+        "B2 stops here again.",
+    ):
+        assert phrase in prose, phrase

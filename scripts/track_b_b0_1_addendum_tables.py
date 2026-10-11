@@ -2,7 +2,7 @@
 """Track B B0.1 addendum: render the planning-value and power tables.
 
 The addendum's sections 10 and 11 quote these tables. They are rendered
-from the two committed records, and
+from the three committed records, and
 ``tests/test_track_b_b0_1_addendum_record.py`` requires the addendum to
 hold them verbatim, so no figure is transcribed by hand.
 """
@@ -17,6 +17,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 PLANNING = ROOT / "docs" / "design" / "track_b_b0_1_planning_values.json"
 POWER = ROOT / "docs" / "design" / "track_b_b0_1_addendum_power.json"
+RULED = ROOT / "docs" / "design" / "track_b_b0_1_ruled_power.json"
 
 REASONS = {
     "pseudo_origin_floor_ineligible": "floor ineligible at the pseudo-origin",
@@ -176,9 +177,59 @@ def illustration_table(power: Mapping[str, Any]) -> str:
     return "\n".join(lines)
 
 
+RULED_LABELS = {
+    "binding": "Binding: d at its 95th percentile, t with ν df, "
+    "se_boot estimated",
+    "registered_se_known": "se_boot treated as known",
+    "design_ratio_point": "d at its point estimate",
+    "normal_critical_value": "Normal z\\* in place of t, se_boot known",
+    "seeds_take_the_design_ratio": "Side-A seeds spread by r × d",
+    "most_lenient": "Most lenient: d point, z\\*, se_boot known",
+    "household_as_measured": "Household resampling (d = 1, z\\*): "
+    "d781's basis",
+}
+
+
+def ruled_evaluation_table(ruled: Mapping[str, Any]) -> str:
+    """Section 11: the six level cells on each evaluation of the ruled
+    model."""
+    six = ruled["six_level_cells"]
+    lines = [
+        "| Evaluation | P(gate passes) | P(bound rule passes) |",
+        "|---|---:|---:|",
+    ]
+    for key, label in RULED_LABELS.items():
+        lines.append(
+            f"| {label} | {_f(six[key]['p_gate'])} | "
+            f"{_f(six[key]['p_bound_rule_only'])} |"
+        )
+    return "\n".join(lines)
+
+
+def _cells(names: list[str]) -> str:
+    return ", ".join(f"`{name}`" for name in names) if names else "none"
+
+
+def ruled_surface_table(ruled: Mapping[str, Any]) -> str:
+    """Section 11: every surface of four or more of the six, both
+    families kept."""
+    lines = [
+        "| Gated cells | Dropped | Binding | Most lenient |",
+        "|---:|---|---:|---:|",
+    ]
+    for size in sorted(ruled["fixed_surfaces"], key=int, reverse=True):
+        for row in ruled["fixed_surfaces"][size]["surfaces"]:
+            lines.append(
+                f"| {size} | {_cells(row['dropped'])} | "
+                f"{_f(row['p_gate'])} | {_f(row['p_gate_most_lenient'])} |"
+            )
+    return "\n".join(lines)
+
+
 def render() -> dict[str, str]:
     planning = json.loads(PLANNING.read_text(encoding="utf-8"))
     power = json.loads(POWER.read_text(encoding="utf-8"))
+    ruled = json.loads(RULED.read_text(encoding="utf-8"))
     return {
         "planning": planning_table(planning),
         "diagnostics": diagnostics_table(planning),
@@ -186,6 +237,8 @@ def render() -> dict[str, str]:
         "envelope": envelope_table(power),
         "verdict": verdict_sentence(power),
         "illustrations": illustration_table(power),
+        "ruled_evaluations": ruled_evaluation_table(ruled),
+        "ruled_surfaces": ruled_surface_table(ruled),
     }
 
 
