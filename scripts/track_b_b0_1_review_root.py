@@ -329,6 +329,40 @@ _PROGRAM_RX = re.compile(
 )
 
 
+#: A shell expansion: $NAME, ${...}, $(...) or a backquote.
+_EXPANSION_RX = re.compile(r"\$(?:[A-Za-z_][A-Za-z0-9_]*|\{|\()|`")
+
+
+def _expansions(script: str) -> list[str]:
+    """Shell expansions in ``script`` that are not inside single quotes.
+
+    Inside single quotes the shell expands nothing (``sed -n '1,$p'``);
+    bare or inside double quotes it does. A backslash escapes the next
+    character outside single quotes.
+    """
+    found: list[str] = []
+    state = None  # None, "'" or '"'
+    index = 0
+    while index < len(script):
+        char = script[index]
+        if state == "'":
+            if char == "'":
+                state = None
+        elif char == "\\":
+            index += 2
+            continue
+        elif char == "'" and state is None:
+            state = "'"
+        elif char == '"':
+            state = None if state == '"' else '"'
+        else:
+            match = _EXPANSION_RX.match(script, index)
+            if match:
+                found.append(match.group(0))
+        index += 1
+    return found
+
+
 def _shell_words(command: str) -> list[str]:
     """Split a shell command into words, keeping quoted text together.
 
@@ -372,7 +406,9 @@ def read_log_codex(
     any word outside the root or denied voids the review. Executables in
     the system's bin directories and ``/dev/null`` are programs, not reads.
     A relative word resolves inside the root, where no denied file exists,
-    so naming a denied file there reads nothing. Command output is not
+    so naming a denied file there reads nothing. A shell expansion outside
+    single quotes (``$NAME``, ``${...}``, ``$(...)``, a backquote) cannot
+    be resolved from the transcript, so it voids the review too. Command output is not
     read: listing commands run inside the root can only return paths
     inside it. No content is copied into the log, only commands.
     """
@@ -419,6 +455,12 @@ def read_log_codex(
 
     flagged: dict[str, str] = {}
     for command in commands:
+        # Codex runs each command as argv; a word is a shell script when
+        # it holds spaces (``/bin/zsh -lc "<script>"``). Its unquoted
+        # expansions cannot be resolved here, so each one voids the review.
+        for word in _shell_words(command):
+            for expansion in _expansions(word):
+                flagged[expansion] = "shell_expansion"
         for word in _path_words(command):
             kind = classify(word)
             if kind not in (None, "inside_root"):

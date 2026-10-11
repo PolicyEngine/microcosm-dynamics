@@ -305,6 +305,18 @@ For each gated cell c, on full support:
     variance by (n_h - 1)/n_h. At the 2006 pseudo-origin every one of the
     63 strata had exactly two clusters.
 
+  **Only two-cluster strata are admitted (Q6 round 2).** Arm D's rule is
+  Rao-Wu only where a stratum has two clusters:
+  - a stratum with three or more is resampled by the ordinary bootstrap,
+    which narrows the bound;
+  - a stratum with one cluster adds no variance, which needs a
+    certainty-unit justification.
+
+  So B2's floor builder counts the strata among B2's truth-support persons
+  by cluster count before any candidate run. If any stratum has one
+  cluster, or three or more, B2 stops there, and a dated amendment
+  registers how those strata are handled before any candidate run.
+
   The floor and gate-seed splits stay household (d693 Q3, d782).
 - **The household bootstrap.** se_up,c uses its own 4,000 replicates:
   multinomial multiplicities over all 2011 full-anchor households (equal
@@ -408,7 +420,9 @@ This replaces the audit's draft rule (§9.2) on the ruled basis.
 3. It computes the household-split floor (section 4's split, seeds
    0-99) and, without gating on it, the person-split floor.
 4. It computes each cell's tolerance (section 6) and se_up,c (section 7).
-   It counts the design strata by cluster count and ν (section 7).
+   It counts the design strata by cluster count and ν (section 7). If
+   any stratum has one cluster, or three or more, it stops before any
+   candidate run (section 7).
 5. It applies eligibility, the ladder and the guards (section 5) inside
    the ruled surface (d781). Power comes from the ruled binding
    evaluation (`scripts/track_b_b0_1_ruled_power.py`, section 11):
@@ -1014,14 +1028,22 @@ decisions and decide nothing:
 - State that the planning values come from a window whose truth years,
   2008 and 2010, fall in a recession, and that neither their transport
   to 2012 and 2014 nor r's is tested.
-- Import `copy_persons` and the multiplicity functions from
-  `scripts/track_b_b0_1_planning_values.py` for the scoring bootstrap,
-  and test that the scorer and arm F build identical frames for the
-  same multiplicities. Under d782, import arm D's
-  `design_multiplicities` the same way. Those functions read protocol
-  v2's root seed (20260930) from a module constant. B2's scorer passes
-  its own root (20261002) and tests that, with protocol v2's root, it
-  reproduces arms D's and F's multiplicities.
+- Import `copy_persons` from `scripts/track_b_b0_1_planning_values.py`
+  for the scoring bootstrap, and test that the scorer and arm F build
+  identical frames for the same multiplicities.
+- **The root seed (Q6 round 2).** Arm F's `anchor_multiplicities` and arm
+  D's `design_multiplicities` take no root argument. They read protocol
+  v2's root, 20260930, from the module constant `BOOTSTRAP_ROOT_SEED`, and
+  the planning script stays pinned. So B2's scorer does not call them.
+  - It carries its own copies, whose only change is a `root` parameter
+    passed explicitly on every call, worker processes included. B2 calls
+    them with root 20261002 and streams [root, b, 0] and [root, b, 4].
+  - A differential test checks that, with root 20260930, each copy returns
+    the planning functions' multiplicities for replicates 0-99.
+  - A second test checks that the scorer never reads
+    `BOOTSTRAP_ROOT_SEED`.
+- Refuse, before any candidate run, any stratum with one cluster or with
+  three or more (section 7), and test the refusal on invented inputs.
 - Use t\*_m,ν with ν counted by the floor builder (section 7), and
   publish the strata counted by cluster count before any candidate run.
 - Name the gated surface in the headline (d781): earnings levels and
@@ -1114,9 +1136,16 @@ below shows what they opened beyond the author's reads:
 
 Eleven of their recursive or glob searches took in excluded files:
 
-- seven printed nothing from them;
-- three printed only file names and match counts;
+- five printed nothing from them;
+- five printed only file names and match counts;
 - one returned nothing before its workflow was stopped.
+
+Two of the five that printed names or counts were `git grep` calls on
+`HEAD`. Their output lines start with the revision, so the first version
+of the extractor's line counter missed them and counted zero. Q6 round 2
+found this, and the counter now tests the field after a revision too.
+They printed only the names, and the counts, of files holding the
+codebook tokens.
 
 Their other mentions of excluded files are exclusion pathspecs, line
 counts and mechanical scans.
@@ -1272,16 +1301,23 @@ place at this head:
 - **M3.**
   - The extractor flags recursive and glob scopes that cover an excluded
     path (`Checker.scope`). It counts the output lines that begin with
-    one, and keeps each flagged call's full command. Thirteen calls carry
-    a scope flag. Section 14 is restated from that record.
+    one, and keeps each flagged call's full command. Fourteen calls carry
+    a scope flag: three of the author's and eleven of its agents'. Section 14 is restated from that record.
   - This revision corrected one leftover. The extractor's docstring and
     the record's `method` still said it reads no tool output, though it
     reads a flagged call's output to count lines. Both now say what it
     does.
   - The record was regenerated from the same export, whose SHA-256 is in
-    its `source`. Only `method` changed, and `restricted_entries_checked`
-    went from 110 to 114, the entries `RESTRICTED-FILES.md` gained since.
-    No call, flag or class changed.
+    its `source`. The first regeneration changed only `method`, and
+    `restricted_entries_checked`, which went from 110 to 114 for the
+    entries `RESTRICTED-FILES.md` had gained.
+  - Q6 round 2 then found that the line counter missed `git grep`
+    output prefixed with a revision (`HEAD:path`). The counter now tests
+    the field after the first colon as well, and a test pins it. The
+    second regeneration moved two agent calls (`git grep -c` and
+    `git grep -l` on `HEAD`) from "printed nothing" to "printed names or
+    counts only". Section 14 is restated to match. No other call, flag or
+    class changed.
 - **L1-L7.** Audit sections 1, 11, 11.2, 11.4 and Q2 call the standard
   errors reference points (L1). The rest are in place:
   - L2: section 11 calls the tolerance nominal;
@@ -1291,7 +1327,63 @@ place at this head:
   - L6: section 11 gives the 2.34 threshold;
   - L7: section 10 notes the worker quirk.
 
-**Round 2** reviews the changed head on a newly built root, in the same
+**Round 2: request changes.**
+
+- **What changed in the form.** Three changes from round 1, each made
+  before the round-2 dispatch:
+  - **The lane.** Round 2 ran on GPT-6.1 Sol, Max's default reviewer since
+    2026-10-09, through `subfleet run --task review --tier hard -I -s
+    read-only -D <root>`. The Opus lanes were mostly closed that day.
+  - **The read log.** A Codex lane's tools are shell commands, so its
+    read log comes from `review_root.py readlog --format codex`. Every
+    command word that leaves the root voids the review: an absolute path
+    outside it, a home path, a `..` segment, or (after this round) an
+    unquoted shell expansion.
+  - **The context copies.** There are nine.
+    - The design and the d693 `RECOMMENDATION.md` are byte-identical to
+      round 1's copies.
+    - PR #490's two comments and the d693 and d622 ruling texts were
+      rebuilt from GitHub and the decision log, because round 1's copies
+      sat in another session's scratchpad.
+    - New: the d765, d781 and d782 ruling texts and d1342's decision aid.
+- **Root.** `git archive` of `0cae9a7`, 1,858 files, manifest
+  SHA-256 `7595bb54d52e6487…`.
+  - The builder removed 27 files whole: the union of the
+    three exposure inventories' exclusions (21 files,
+    including `tests/harness/test_epuf_gate.py`, new from the master
+    merge) and the six files of the codebook folder.
+  - It removed 4 other files that name both
+    tokens, and kept the three files of this pull request that only name
+    them.
+  - The root record is `docs/design/track_b_b0_1_addendum_q6_root_r2.json`.
+- **Lane.** Subfleet job `20261011-085345-b01-addendum-q6-r2`, read-only
+  and isolated, with the root as its working directory. It ran on
+  2026-10-11 from 12:53 to 13:16 UTC. Subfleet records GPT-6.1 Sol as
+  requested. It could not attest the served model, because an isolated
+  ephemeral Codex run persists none.
+- **Read log.** `docs/design/track_b_b0_1_addendum_q6_readlog_r2.json`
+  covers 39 commands. None names a path outside the root, a denied path or
+  an unquoted shell expansion, so the review counts. The review's prose
+  mentions delegated work, but the lane's event stream shows no sub-agent
+  events. The log covers the commands the stream records.
+- **Verdict.** `REQUEST CHANGES`, with no high finding, three medium and
+  three low. The review is
+  `docs/design/track_b_b0_1_addendum_q6_review_r2.md`. It met no B2
+  outcome and no 2008/2010 selector outcome. It confirmed:
+  - the ruling quotations and the M2 rider;
+  - section 11's verdict and figures;
+  - the section-16 protocol block's pinned hash.
+
+| Finding | Disposition |
+|---|---|
+| M: a stratum with three or more clusters would be resampled by the ordinary bootstrap, not Rao-Wu | Section 7 admits only two-cluster strata. B2's floor builder stops before any candidate run if any stratum has one cluster or three or more (sections 7, 9, 13) |
+| M: the reads extractor missed `git grep` output prefixed with a revision | The counter tests the field after a revision too, and a test pins it. The record was regenerated: two agent calls moved to "names or counts only". Section 14 and this section are restated |
+| M: the Codex read log approved a path built from `$PWD` | The read log voids any unquoted shell expansion. Tests cover `$NAME`, `$Ellipsis`, `$(...)` and backquotes, and allow single-quoted dollars. Under the fixed rule this round's log still counts |
+| L: "thirteen" scope-flagged calls; the record has fourteen | Corrected and pinned |
+| L: section 15 described round 1's lane and context only | This record states round 2's form |
+| L: the root-seed handoff had no executable interface | "To B2" specifies root-parameterised copies, with a differential test against the pinned functions |
+
+**Round 3** reviews the changed head on a newly built root, in round 2's
 form. Its record follows.
 
 ## 16. Protocol record

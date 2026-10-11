@@ -281,3 +281,34 @@ def test_codex_read_log_flags_an_absolute_denied_path(tmp_path):
     )
     assert log["review_counts"] is False
     assert list(log["flagged_kinds"].values()) == ["denied"]
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        "/bin/zsh -lc 'cat $PWD/../elsewhere.md'",
+        '/bin/zsh -lc "cat \\"$OLDPWD/x\\""',
+        "/bin/zsh -lc 'cat ${HOME}/x'",
+        "/bin/zsh -lc 'cat $(pwd)/x'",
+        "/bin/zsh -lc 'cat `pwd`/x'",
+    ],
+)
+def test_codex_read_log_voids_unresolved_shell_expansions(tmp_path, command):
+    root = _invented_root(tmp_path)
+    log = review_root.read_log_codex(
+        _codex_transcript(tmp_path, [command]), root, ["docs/denied.md"]
+    )
+    assert log["review_counts"] is False
+
+
+def test_codex_read_log_ignores_single_quoted_dollars(tmp_path):
+    root = _invented_root(tmp_path)
+    commands = [
+        "/bin/zsh -lc \"sed -n '1,$p' docs/keep.md\"",
+        "/bin/zsh -lc \"rg -n 'bound$' docs\"",
+        "/bin/zsh -lc \"awk '{print $1}' docs/keep.md\"",
+    ]
+    log = review_root.read_log_codex(
+        _codex_transcript(tmp_path, commands), root, ["docs/denied.md"]
+    )
+    assert log["review_counts"] is True

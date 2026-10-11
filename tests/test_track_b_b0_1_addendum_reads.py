@@ -187,7 +187,7 @@ def test_addendum_states_the_record_s_counts():
         in prose
     )
     flagged = [record["calls"][i] for i in record["flagged_call_indices"]]
-    words = {3: "three", 7: "seven", 11: "Eleven"}
+    words = {3: "three", 5: "five", 7: "seven", 11: "Eleven"}
     by_hand = sum(1 for call in flagged if "flag_note" in call)
     assert f"{words[by_hand]} are classified by hand" in prose
     freeze = "2026-10-01T03:58:18"
@@ -217,10 +217,26 @@ def test_addendum_states_the_record_s_counts():
         )
     }
     assert counts == {
-        "scope_printed_nothing_from_excluded": 7,
-        "scope_printed_names_or_counts_only": 3,
+        "scope_printed_nothing_from_excluded": 5,
+        "scope_printed_names_or_counts_only": 5,
         "scope_no_result_in_transcript": 1,
     }
+    for key, n in counts.items():
+        if key != "scope_no_result_in_transcript":
+            phrase = (
+                "printed nothing from them"
+                if key == "scope_printed_nothing_from_excluded"
+                else "printed only file names and match counts"
+            )
+            assert f"{words[n]} {phrase}" in prose
+    all_scoped = [
+        call
+        for call in record["calls"]
+        if "scope_output_lines_from_excluded_files" in call
+        or any(f.startswith("scope:") for f in call.get("flags", []))
+    ]
+    assert len(all_scoped) == 14
+    assert "Fourteen calls carry a scope flag" in prose
 
 
 def _paired_export(tmp_path, pairs):
@@ -295,3 +311,27 @@ def test_recursive_and_glob_scopes_are_flagged_with_output_counts(
     for index in found["flagged_call_indices"]:
         assert calls[index]["command"] == pairs[index][0]
     assert "12:x" not in json.dumps(found)
+
+
+def test_revision_prefixed_git_output_is_counted(tmp_path, checker):
+    """Q6 round 2: ``git grep ... HEAD`` prefixes lines with the revision."""
+    wt = "/Users/maxghenis/PolicyEngine" + reads.WORKTREE_MARK
+    pairs = [
+        (
+            f"cd {wt} && git grep -l bound HEAD -- .",
+            "HEAD:gates.yaml\nHEAD:src/a.py",
+        ),
+        (
+            f"cd {wt} && git grep -n bound 0550d2f -- .",
+            "0550d2f:docs/design/m6_projection_engine.md:7:z\n"
+            "0550d2f:src/a.py:3:y",
+        ),
+        (f"cd {wt} && git grep -l bound HEAD -- .", "HEAD:src/a.py"),
+    ]
+    with zipfile.ZipFile(_paired_export(tmp_path, pairs)) as archive:
+        calls = reads.extract(archive, checker)["calls"]
+    assert calls[0]["scope_output_lines_from_excluded_files"] == 1
+    assert calls[0]["flag_class"] == ["scope_printed_names_or_counts_only"]
+    assert calls[1]["scope_output_lines_from_excluded_files"] == 1
+    assert calls[1]["flag_class"] == ["OTHER_scope_printed_excluded_lines"]
+    assert calls[2]["scope_output_lines_from_excluded_files"] == 0

@@ -379,13 +379,23 @@ class Checker:
         return sorted(covered), names_only
 
     def excluded_output_lines(self, text: str) -> int:
-        """Output lines that begin with an excluded file's path."""
+        """Output lines that begin with an excluded file's path.
+
+        ``git grep`` given a revision prefixes each line with it
+        (``HEAD:path:...``), so the field after the first colon is tested
+        as well as the field before it.
+        """
         n = 0
         for line in text.splitlines():
-            head = _relative(line.split(":", 1)[0])
-            if head and any(
-                _covers(d.rstrip("/"), head, d.endswith("/"))
-                for d in self.all_denied
+            fields = line.split(":", 2)
+            heads = [_relative(field) for field in fields[:2]]
+            if any(
+                head
+                and any(
+                    _covers(d.rstrip("/"), head, d.endswith("/"))
+                    for d in self.all_denied
+                )
+                for head in heads
             ):
                 n += 1
         return n
