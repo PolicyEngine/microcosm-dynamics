@@ -88,9 +88,11 @@ Before the model releases any long-horizon output, that output must
 take the form of a *surface over assumptions*, not a point: how the
 balance, cohort replacement rates, or distributional outcomes move as
 fertility, mortality improvement, and immigration vary across
-documented ranges. The model has published no long-horizon output
-yet; its projections end in 2030
-(see the [parity ledger](parity-ledger.md)). The incumbent
+documented ranges. The model has published no national long-horizon
+estimate. Its engine projections end in 2030, and its one long-horizon
+artifact is a report-only analogue on a closed PSID frame that reports
+points, not surfaces (see the [parity ledger](parity-ledger.md)). The
+incumbent
 practice is to bury assumption-dependence behind a point estimate
 and an appendix. An open model can invert that: make the sensitivity
 the product. That is a more honest object than a forecast, and it is
