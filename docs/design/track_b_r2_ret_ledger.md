@@ -367,7 +367,7 @@ example and Hypothesis property in the invariant table execute this
 case; it is not labelled a defect or silently forced to zero.
 
 A minimized grace-state counterexample exposed a defect in an early
-implementation. A previously entitled RIB recipient with LMETY 2000
+implementation. A previously entitled CHILD recipient with LMETY 2000
 entered spouse entitlement in January 2026, had no entitlement in
 February, and returned to the same spouse type for a March NSM. The
 second gap incorrectly erased the pending different-type grace. The
@@ -772,6 +772,21 @@ same-household increases can be paid sooner (RS 02501.160; GN
 and final monthly states separately. Facility of payment itself ended
 after December 1995 and is outside the supported payment years (GN
 02603.075); it must not be restored from historical GN 02603.100 examples.
+
+## Build verification
+
+The five R2 test files passed all 540 cases. Three existing Hypothesis
+tests were then strengthened to check auxiliary excess accounting,
+invalid-input propagation and NH charging during a child's asserted
+own-work exemption; all three passed. Birth-evidence exclusion tests
+passed all 13 cases. Every mathematical ledger and grace-state invariant
+above has an executed Hypothesis test.
+
+All 33 deliberate one-line implementation mutations caused a selected
+test to fail. Each was reverted before another check, and both modules'
+restored SHA-256 values are recorded with the exact commands, changes and
+failing nodes in `track_b_r2_ret_ledger_mutations.json`. Mutated
+implementations are not committed. The source captures stayed unchanged.
 
 ## Not in scope
 
