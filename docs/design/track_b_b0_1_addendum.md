@@ -1490,7 +1490,10 @@ root, with no shell and no web".
 **Round 5** is the Q6 review of record, in round 1's form: Opus 5.5 in
 isolated-review mode, with Read, Glob and Grep only, no MCP servers, plan
 permission mode, the root as its only directory, and the Claude read log.
-Its record follows.
+A first dispatch, job `20261011-163220-b01-addendum-q6-r5`, was cancelled
+about a minute after launch so that master could be merged first. Its
+transcript holds only the session's start event and no tool call. Round 5
+reviews the head after that merge. Its record follows.
 
 ## 16. Protocol record
 
