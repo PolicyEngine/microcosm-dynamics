@@ -1,0 +1,572 @@
+{
+  "schema_version": "ssa_oasdi_tax_rates.v1",
+  "table": "Tax rate table for Social Security trust funds",
+  "unit": "percent of taxable earnings",
+  "vintage_year": 2026,
+  "rates_reflect": "The rates shown reflect the amounts received by the trust funds.",
+  "rows": [
+    {
+      "period": "1937-49",
+      "first_year": 1937,
+      "last_year": 1949,
+      "footnotes": [],
+      "employee_employer_each": {
+        "oasi": 1.0,
+        "di": null,
+        "total": 1.0
+      },
+      "self_employed": {
+        "oasi": null,
+        "di": null,
+        "total": null
+      }
+    },
+    {
+      "period": "1950",
+      "first_year": 1950,
+      "last_year": 1950,
+      "footnotes": [],
+      "employee_employer_each": {
+        "oasi": 1.5,
+        "di": null,
+        "total": 1.5
+      },
+      "self_employed": {
+        "oasi": null,
+        "di": null,
+        "total": null
+      }
+    },
+    {
+      "period": "1951-53",
+      "first_year": 1951,
+      "last_year": 1953,
+      "footnotes": [],
+      "employee_employer_each": {
+        "oasi": 1.5,
+        "di": null,
+        "total": 1.5
+      },
+      "self_employed": {
+        "oasi": 2.25,
+        "di": null,
+        "total": 2.25
+      }
+    },
+    {
+      "period": "1954-56",
+      "first_year": 1954,
+      "last_year": 1956,
+      "footnotes": [],
+      "employee_employer_each": {
+        "oasi": 2.0,
+        "di": null,
+        "total": 2.0
+      },
+      "self_employed": {
+        "oasi": 3.0,
+        "di": null,
+        "total": 3.0
+      }
+    },
+    {
+      "period": "1957-58",
+      "first_year": 1957,
+      "last_year": 1958,
+      "footnotes": [],
+      "employee_employer_each": {
+        "oasi": 2.0,
+        "di": 0.25,
+        "total": 2.25
+      },
+      "self_employed": {
+        "oasi": 3.0,
+        "di": 0.375,
+        "total": 3.375
+      }
+    },
+    {
+      "period": "1959",
+      "first_year": 1959,
+      "last_year": 1959,
+      "footnotes": [],
+      "employee_employer_each": {
+        "oasi": 2.25,
+        "di": 0.25,
+        "total": 2.5
+      },
+      "self_employed": {
+        "oasi": 3.375,
+        "di": 0.375,
+        "total": 3.75
+      }
+    },
+    {
+      "period": "1960-61",
+      "first_year": 1960,
+      "last_year": 1961,
+      "footnotes": [],
+      "employee_employer_each": {
+        "oasi": 2.75,
+        "di": 0.25,
+        "total": 3.0
+      },
+      "self_employed": {
+        "oasi": 4.125,
+        "di": 0.375,
+        "total": 4.5
+      }
+    },
+    {
+      "period": "1962",
+      "first_year": 1962,
+      "last_year": 1962,
+      "footnotes": [],
+      "employee_employer_each": {
+        "oasi": 2.875,
+        "di": 0.25,
+        "total": 3.125
+      },
+      "self_employed": {
+        "oasi": 4.325,
+        "di": 0.375,
+        "total": 4.7
+      }
+    },
+    {
+      "period": "1963-65",
+      "first_year": 1963,
+      "last_year": 1965,
+      "footnotes": [],
+      "employee_employer_each": {
+        "oasi": 3.375,
+        "di": 0.25,
+        "total": 3.625
+      },
+      "self_employed": {
+        "oasi": 5.025,
+        "di": 0.375,
+        "total": 5.4
+      }
+    },
+    {
+      "period": "1966",
+      "first_year": 1966,
+      "last_year": 1966,
+      "footnotes": [],
+      "employee_employer_each": {
+        "oasi": 3.5,
+        "di": 0.35,
+        "total": 3.85
+      },
+      "self_employed": {
+        "oasi": 5.275,
+        "di": 0.525,
+        "total": 5.8
+      }
+    },
+    {
+      "period": "1967",
+      "first_year": 1967,
+      "last_year": 1967,
+      "footnotes": [],
+      "employee_employer_each": {
+        "oasi": 3.55,
+        "di": 0.35,
+        "total": 3.9
+      },
+      "self_employed": {
+        "oasi": 5.375,
+        "di": 0.525,
+        "total": 5.9
+      }
+    },
+    {
+      "period": "1968",
+      "first_year": 1968,
+      "last_year": 1968,
+      "footnotes": [],
+      "employee_employer_each": {
+        "oasi": 3.325,
+        "di": 0.475,
+        "total": 3.8
+      },
+      "self_employed": {
+        "oasi": 5.0875,
+        "di": 0.7125,
+        "total": 5.8
+      }
+    },
+    {
+      "period": "1969",
+      "first_year": 1969,
+      "last_year": 1969,
+      "footnotes": [],
+      "employee_employer_each": {
+        "oasi": 3.725,
+        "di": 0.475,
+        "total": 4.2
+      },
+      "self_employed": {
+        "oasi": 5.5875,
+        "di": 0.7125,
+        "total": 6.3
+      }
+    },
+    {
+      "period": "1970",
+      "first_year": 1970,
+      "last_year": 1970,
+      "footnotes": [],
+      "employee_employer_each": {
+        "oasi": 3.65,
+        "di": 0.55,
+        "total": 4.2
+      },
+      "self_employed": {
+        "oasi": 5.475,
+        "di": 0.825,
+        "total": 6.3
+      }
+    },
+    {
+      "period": "1971-72",
+      "first_year": 1971,
+      "last_year": 1972,
+      "footnotes": [],
+      "employee_employer_each": {
+        "oasi": 4.05,
+        "di": 0.55,
+        "total": 4.6
+      },
+      "self_employed": {
+        "oasi": 6.075,
+        "di": 0.825,
+        "total": 6.9
+      }
+    },
+    {
+      "period": "1973",
+      "first_year": 1973,
+      "last_year": 1973,
+      "footnotes": [],
+      "employee_employer_each": {
+        "oasi": 4.3,
+        "di": 0.55,
+        "total": 4.85
+      },
+      "self_employed": {
+        "oasi": 6.205,
+        "di": 0.795,
+        "total": 7.0
+      }
+    },
+    {
+      "period": "1974-77",
+      "first_year": 1974,
+      "last_year": 1977,
+      "footnotes": [],
+      "employee_employer_each": {
+        "oasi": 4.375,
+        "di": 0.575,
+        "total": 4.95
+      },
+      "self_employed": {
+        "oasi": 6.185,
+        "di": 0.815,
+        "total": 7.0
+      }
+    },
+    {
+      "period": "1978",
+      "first_year": 1978,
+      "last_year": 1978,
+      "footnotes": [],
+      "employee_employer_each": {
+        "oasi": 4.275,
+        "di": 0.775,
+        "total": 5.05
+      },
+      "self_employed": {
+        "oasi": 6.01,
+        "di": 1.09,
+        "total": 7.1
+      }
+    },
+    {
+      "period": "1979",
+      "first_year": 1979,
+      "last_year": 1979,
+      "footnotes": [],
+      "employee_employer_each": {
+        "oasi": 4.33,
+        "di": 0.75,
+        "total": 5.08
+      },
+      "self_employed": {
+        "oasi": 6.01,
+        "di": 1.04,
+        "total": 7.05
+      }
+    },
+    {
+      "period": "1980",
+      "first_year": 1980,
+      "last_year": 1980,
+      "footnotes": [],
+      "employee_employer_each": {
+        "oasi": 4.52,
+        "di": 0.56,
+        "total": 5.08
+      },
+      "self_employed": {
+        "oasi": 6.2725,
+        "di": 0.7775,
+        "total": 7.05
+      }
+    },
+    {
+      "period": "1981",
+      "first_year": 1981,
+      "last_year": 1981,
+      "footnotes": [],
+      "employee_employer_each": {
+        "oasi": 4.7,
+        "di": 0.65,
+        "total": 5.35
+      },
+      "self_employed": {
+        "oasi": 7.025,
+        "di": 0.975,
+        "total": 8.0
+      }
+    },
+    {
+      "period": "1982",
+      "first_year": 1982,
+      "last_year": 1982,
+      "footnotes": [],
+      "employee_employer_each": {
+        "oasi": 4.575,
+        "di": 0.825,
+        "total": 5.4
+      },
+      "self_employed": {
+        "oasi": 6.8125,
+        "di": 1.2375,
+        "total": 8.05
+      }
+    },
+    {
+      "period": "1983",
+      "first_year": 1983,
+      "last_year": 1983,
+      "footnotes": [],
+      "employee_employer_each": {
+        "oasi": 4.775,
+        "di": 0.625,
+        "total": 5.4
+      },
+      "self_employed": {
+        "oasi": 7.1125,
+        "di": 0.9375,
+        "total": 8.05
+      }
+    },
+    {
+      "period": "1984-87 a",
+      "first_year": 1984,
+      "last_year": 1987,
+      "footnotes": [
+        "a"
+      ],
+      "employee_employer_each": {
+        "oasi": 5.2,
+        "di": 0.5,
+        "total": 5.7
+      },
+      "self_employed": {
+        "oasi": 10.4,
+        "di": 1.0,
+        "total": 11.4
+      }
+    },
+    {
+      "period": "1988-89 a",
+      "first_year": 1988,
+      "last_year": 1989,
+      "footnotes": [
+        "a"
+      ],
+      "employee_employer_each": {
+        "oasi": 5.53,
+        "di": 0.53,
+        "total": 6.06
+      },
+      "self_employed": {
+        "oasi": 11.06,
+        "di": 1.06,
+        "total": 12.12
+      }
+    },
+    {
+      "period": "1990-93 b",
+      "first_year": 1990,
+      "last_year": 1993,
+      "footnotes": [
+        "b"
+      ],
+      "employee_employer_each": {
+        "oasi": 5.6,
+        "di": 0.6,
+        "total": 6.2
+      },
+      "self_employed": {
+        "oasi": 11.2,
+        "di": 1.2,
+        "total": 12.4
+      }
+    },
+    {
+      "period": "1994-96 b",
+      "first_year": 1994,
+      "last_year": 1996,
+      "footnotes": [
+        "b"
+      ],
+      "employee_employer_each": {
+        "oasi": 5.26,
+        "di": 0.94,
+        "total": 6.2
+      },
+      "self_employed": {
+        "oasi": 10.52,
+        "di": 1.88,
+        "total": 12.4
+      }
+    },
+    {
+      "period": "1997-99 b",
+      "first_year": 1997,
+      "last_year": 1999,
+      "footnotes": [
+        "b"
+      ],
+      "employee_employer_each": {
+        "oasi": 5.35,
+        "di": 0.85,
+        "total": 6.2
+      },
+      "self_employed": {
+        "oasi": 10.7,
+        "di": 1.7,
+        "total": 12.4
+      }
+    },
+    {
+      "period": "2000-15 b, c",
+      "first_year": 2000,
+      "last_year": 2015,
+      "footnotes": [
+        "b",
+        "c"
+      ],
+      "employee_employer_each": {
+        "oasi": 5.3,
+        "di": 0.9,
+        "total": 6.2
+      },
+      "self_employed": {
+        "oasi": 10.6,
+        "di": 1.8,
+        "total": 12.4
+      }
+    },
+    {
+      "period": "2016-18 b, d",
+      "first_year": 2016,
+      "last_year": 2018,
+      "footnotes": [
+        "b",
+        "d"
+      ],
+      "employee_employer_each": {
+        "oasi": 5.015,
+        "di": 1.185,
+        "total": 6.2
+      },
+      "self_employed": {
+        "oasi": 10.03,
+        "di": 2.37,
+        "total": 12.4
+      }
+    },
+    {
+      "period": "2019 and later b",
+      "first_year": 2019,
+      "last_year": null,
+      "footnotes": [
+        "b"
+      ],
+      "employee_employer_each": {
+        "oasi": 5.3,
+        "di": 0.9,
+        "total": 6.2
+      },
+      "self_employed": {
+        "oasi": 10.6,
+        "di": 1.8,
+        "total": 12.4
+      }
+    }
+  ],
+  "footnotes": {
+    "a": "In 1984 only, an immediate credit of 0.3 percent of taxable wages was allowed against the OASDI taxes paid by employees, resulting in an effective employee tax rate of 5.4 percent. The OASI and DI trust funds, however, received general revenue equivalent to 0.3 percent of taxable wages for 1984. Similar credits of 2.7 percent, 2.3 percent, and 2.0 percent were allowed against the combined OASDI and HI taxes on net earnings from self-employment in 1984, 1985, and 1986-89, respectively.",
+    "b": "Beginning in 1990, self-employed workers are allowed a deduction, for purposes of computing their net earnings, equal to half of the combined OASDI and HI contributions that would be payable without regard to the contribution and benefit base. The OASDI contribution rate is then applied to net earnings after this deduction, but subject to the OASDI base.",
+    "c": "For 2010, most employers were exempt from paying the employer share of OASDI tax on wages paid to certain qualified individuals hired after February 3. For 2011 and 2012, the OASDI tax rate is reduced by 2 percentage points for employees and for self-employed workers, resulting in a 4.2 percent effective tax rate for employees and a 10.4 percent effective tax rate for self-employed workers. These reductions in tax revenue due to lower tax rates are being made up by transfers from the general fund of the Treasury to the OASI and DI trust funds.",
+    "d": "Public Law 114-74, the Bipartisan Budget Act of 2015, temporarily re-allocated a portion of the OASI tax rate to DI for calendar years 2016 through 2018. Beginning in 2019, the tax rates for each fund revert to the rates in effect from 2000 through 2015."
+  },
+  "paid_rate_adjustments": [
+    {
+      "year": 1984,
+      "footnote": "a",
+      "quote": "resulting in an effective employee tax rate of 5.4 percent",
+      "employee_effective_rate": 5.4,
+      "employer_rate": 5.7
+    },
+    {
+      "year": 2011,
+      "footnote": "c",
+      "quote": "resulting in a 4.2 percent effective tax rate for employees",
+      "employee_effective_rate": 4.2,
+      "employer_rate": 6.2
+    },
+    {
+      "year": 2012,
+      "footnote": "c",
+      "quote": "resulting in a 4.2 percent effective tax rate for employees",
+      "employee_effective_rate": 4.2,
+      "employer_rate": 6.2
+    }
+  ],
+  "not_encoded": {
+    "a": "the 1984-89 credits against the combined OASDI and HI taxes on net earnings from self-employment (self-employment income is not separated in the careers frames)",
+    "b": "the self-employment deduction from 1990 (self-employment income is not separated in the careers frames)",
+    "c": "the 2010 employer exemption, which applied only to wages paid to certain qualified individuals hired after February 3",
+    "d": "the 2016-18 reallocation between OASI and DI, which leaves the OASDI total unchanged"
+  },
+  "validation": {
+    "first_year": 1937,
+    "open_ended_from": 2019,
+    "n_rows": 31,
+    "contiguous_periods": true,
+    "oasi_plus_di_equals_total": true
+  },
+  "build": {
+    "built_by": "scripts/extract_lifetime_measure_sources.py",
+    "sources": [
+      "oasdi_tax_rates"
+    ],
+    "provenance_file": "data/external/lifetime_measure_sources.provenance.json"
+  }
+}

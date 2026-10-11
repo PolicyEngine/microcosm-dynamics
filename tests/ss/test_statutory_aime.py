@@ -405,6 +405,10 @@ LEGACY_CONVENTION_USERS = {
     # stays identical to exercise 1's (E1 e1-ratified-1; Max's rulings d188
     # item (a) and, by name, d281 on 2026-09-25).
     "src/populace_dynamics/fra68_track/config.py",
+    # NASI group breakdowns: the exercise_1_cola and exercise_3_fra68 AIME
+    # conventions reproduce Track A's fixed 35 so the projection tests'
+    # lifetime-earnings quintiles use the AIME their benefits use.
+    "src/populace_dynamics/estimates/lifetime_measures.py",
 }
 
 
