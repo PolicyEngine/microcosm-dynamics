@@ -238,3 +238,61 @@ No protected file and no milestone-1b-owned file was edited.
 - a count of tests;
 - a hash;
 - one of three public parameter values its probe printed from the committed captures: a Census weighted-average threshold, an SSI couple FBR and two NCHS 2000 survival values.
+
+## Round-3 fix lane
+
+This lane was a blind builder: the main session (Claude Opus 5.5), 2026-09-29 to 2026-10-11. A usage-limit cut-off paused it from 2026-09-29 to 2026-10-11. It fixed the round-3 review's three informational items and what its own verification found, in the commits from `5e8524c` to `c2f15bc` (see the report's "Round 3 informational fixes"). It worked in `/Users/maxghenis/PolicyEngine/_worktrees/dynamics-u2-m2-info-fixes-20260929`, first from `cd51fcb` and then rebased onto master (`dacbaa3`) after #487 merged. It merged master again (`db9725fe`) on 2026-10-11. The machine-readable list is `round_3_fix_lane` in [`u2_m2_exposure.json`](u2_m2_exposure.json).
+
+**Evidence directory (all builder-allowed):**
+
+- `EV/RESTRICTED-FILES.md`, read in full and first, including the 2026-09-29 02:40 entry. See the disclosure above; nothing here depends on it.
+- `EV/phase2-20260927/out/u2-m2-review-r2.json`, read only through `jq`: the info-severity findings, the top-level key names and the verdict. The summary, evidence, files-opened list and other findings were not printed.
+- Two name-only listings, from a `find` for `RESTRICTED*` under `EV` and a `grep -l` for `RESTRICTED-FILES` under `EV/phase2-20260927`. They printed file names only and opened nothing.
+
+It did not open:
+
+- the cleared U2 availability statement or any memo;
+- any Boomers 2004 or Urban report page;
+- any comparator lane or seal;
+- any availability or values-scan file;
+- any scratchpad archive;
+- anything under REFS.
+
+**Specification:** not opened.
+
+**Repository:** the U2 package modules it changed or guarded, read in full or in the ranges needed: `runner.py`, `cohort.py`, `loader.py`, `sources.py`, `parameters.py`, `rows.py` and `estimator.py`. It also read:
+
+- the definitions in `adjusted_poverty.py`, `identity.py`, and the return paths of `data/marriage.py` and `data/family.py`;
+- the two U2 scripts it changed, and the U1 differential harness's docstring and runner;
+- the U2 test files it changed, `conftest.py` and `test_u2_isolation.py`;
+- this record, the report, the tier files, `CLAUDE.md` and PR #487's body.
+
+No protected file and no milestone-1b-owned file was edited.
+
+**Probes (invented data only):**
+
+- A structure probe on the invented inputs and the loader-read invented staged files. It printed container, key, label, dtype, index and object-cell **types**, never values.
+- A pandas probe of whether a `str` subclass survives in object and string dtypes, on the invented strings `male` and `female`.
+
+**Executed, all on invented data:**
+
+- Every `tests/track_u2` file, one per command, with `-p no:xdist`, after each pass.
+- The fail-first runs of each pass's new tests. In the first and fourth passes it ran them against the earlier `src` in the worktree; in the third, in a `git clone --shared` scratch clone. It removed the clone afterwards.
+- `tests/estimates/test_birth_evidence_artifact.py` and the §13 U1 suite. These ran with HOME and `POPULACE_DYNAMICS_PSID_DIR` pointed at an empty directory. An audit hook refused any open, listing or scan under the real `~/PolicyEngine/psid-data` and logged any under the evidence directory and REFS. It refused and logged nothing.
+- The U1 differential (`scripts/u2_u1_differential.py`) against `9cee2423`, with the same hook active.
+- `black`, `ruff`, and the tier recount (`pytest --collect-only -q -m <tier>`).
+
+**Measured test exposure:** under the PSID directory, only `tests/track_u2/test_psid_research_sources.py` opens anything. As in rounds 1 and 2, those are documentation files (codebook and user-guide PDFs), never a data file. The lane saw only pass counts.
+
+**Verification lanes:**
+
+- Three rounds of in-session workflow subagents (Claude Opus 5.5, blind): `wf_0c8f41e8-01c` (four lanes), `wf_f7675756-346` (three lanes) and `wf_c037a7eb-127` (two lanes). The third round's mutation lane was cut off by the usage limit before it reported.
+- A Subfleet mutation run (GPT-6.1 Sol, `20261011-113833-u2r3-mutation`).
+
+Each lane read `EV/RESTRICTED-FILES.md`, worked in its own clone or an existing checkout on invented data, and opened nothing else under the evidence directory, REFS or PSID data. One second-round lane ran `test_psid_research_sources.py`, which opens the PSID documentation PDFs as above; it saw only counts and disclosed it. The lanes printed:
+
+- invented offsets and invented-run counts, such as an invented U0 `n_poor_baseline` of 8 against 0;
+- invented cells of the invented population;
+- hashes and timings.
+
+**Values:** the lane stated and inferred no 1946–55 value or direction. Every number it added or printed is invented, a count, a hash, a timing or a public parameter from the committed captures.

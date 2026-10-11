@@ -1012,5 +1012,53 @@
    "EV/phase2-20260927/out/u2-m2-build-and-review.json (the review came as task text)",
    "any raw PSID record file"
   ]
+ },
+ "round_3_fix_lane": {
+  "lane": "u2-m2 round-3 informational fixes (main session, Claude Opus 5.5, blind builder, 2026-09-29 to 2026-10-11)",
+  "commits": [
+   "5e8524c",
+   "77a17ce",
+   "380f52b",
+   "75c16d5",
+   "c27e46f",
+   "c2f15bc"
+  ],
+  "evidence_directory_opened": [
+   "EV/RESTRICTED-FILES.md (full, first; includes the 2026-09-29 02:40 changelog entry)",
+   "EV/phase2-20260927/out/u2-m2-review-r2.json (jq only: .findings[] with severity info, the top-level key names and .verdict; nothing else printed)"
+  ],
+  "evidence_directory_listed_names_only": [
+   "find EV -maxdepth 4 -iname 'RESTRICT*' (names of EV/RESTRICTED-FILES.md and EV/revisions/RESTRICTED-FILES-*.md)",
+   "grep -rl RESTRICTED-FILES EV/phase2-20260927 (names of out/*.md files)"
+  ],
+  "specification": "not opened",
+  "repository_opened": [
+   "CLAUDE.md; /Users/maxghenis/PolicyEngine/CLAUDE.md (lines 1-80)",
+   "src/populace_dynamics/uniform_cut_track_u2/runner.py (full), cohort.py (lines 140-760, 905-935, 1290-1315), loader.py (lines 30-765), sources.py (lines 216-228, 298-338, 558-860), parameters.py (lines 104-109, 341-361, 395-691), rows.py (lines 55-240, 395-440), estimator.py (lines 83-130), identity.py (lines 130-157), __init__.py",
+   "src/populace_dynamics/estimates/adjusted_poverty.py (lines 220, 733-760, 919-950)",
+   "src/populace_dynamics/data/marriage.py (lines 124-221, greps), data/family.py (lines 594-620, 703-720, 785-862)",
+   "scripts/run_track_u2_registered.py (full), scripts/track_u2_dry_run.py (lines 1-123, 200-330, 850-880, 1020-1135), scripts/u2_u1_differential.py (lines 1-60, 107-115, 350-394, 425-560)",
+   "tests/track_u2: conftest.py, test_u2_isolation.py (full), test_u2_loader.py, test_u2_parameters.py, test_u2_pipeline.py, test_u2_scripts.py (the ranges changed)",
+   "docs/design/u2_m2_report.md, u2_m2_exposure.md, u2_m2_exposure.json; tests/README-tiers.md, tests/tier_counts.json; PR #487 body"
+  ],
+  "probes": [
+   "structure probe on invented inputs and loader-read invented staged files: container, key, label, dtype, index and object-cell types only",
+   "pandas probe of str-subclass survival in object/string/str dtypes on the invented strings 'male' and 'female'"
+  ],
+  "executed": [
+   "every tests/track_u2 file, one per command, -p no:xdist, after each pass",
+   "fail-first runs of each pass's new tests against the earlier src (in place, or a git clone --shared scratch clone for the third pass)",
+   "tests/estimates/test_birth_evidence_artifact.py and the section 13 U1 suite with HOME and POPULACE_DYNAMICS_PSID_DIR pointed at an empty directory and an audit hook refusing any open/listing/scan under ~/PolicyEngine/psid-data and logging any under the evidence directory and REFS (nothing refused or logged)",
+   "scripts/u2_u1_differential.py against 9cee2423 with the same hook",
+   "black, ruff, and the tier recount (pytest --collect-only -q -m <tier>)"
+  ],
+  "verification_lanes": [
+   "wf_0c8f41e8-01c: four in-session workflow subagents (Claude Opus 5.5, blind), own clones; opened EV/RESTRICTED-FILES.md only",
+   "wf_f7675756-346: three in-session workflow subagents (Claude Opus 5.5, blind), own clones; opened EV/RESTRICTED-FILES.md only; one ran tests/track_u2/test_psid_research_sources.py, which opens PSID documentation PDFs (counts only seen; disclosed)",
+   "wf_c037a7eb-127: two in-session workflow subagents (Claude Opus 5.5, blind) in existing checkouts; the mutation lane was cut off by the usage limit before reporting",
+   "20261011-113833-u2r3-mutation: Subfleet mutation run (GPT-6.1 Sol), standalone clone, blind brief"
+  ],
+  "psid_documentation_opened_by_tests": "tests/track_u2/test_psid_research_sources.py only (documentation PDFs, as in rounds 1 and 2); no survey record file",
+  "values_printed": "invented offsets and invented-run counts, invented cells of the invented population, hashes and timings; no 1946-55 value or direction"
  }
 }

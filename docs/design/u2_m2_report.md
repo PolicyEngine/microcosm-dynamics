@@ -13,6 +13,7 @@ The exposure record is [`u2_m2_exposure.md`](u2_m2_exposure.md).
 - **Branch:** `dynamics-u2-m2-20260928`, rebased onto `b948d6b` (milestone 1b's fixed head, which includes milestone 1 and the applied source adjudication at `883ea48`).
 - **Code-final commit:** `12e1db0`. Later commits change only `tests/tier_counts.json`, `tests/README-tiers.md` and `docs/design/` (this report, the exposure record and the differential's report).
 - **Round 1 review fixes:** `0d742fd`, `8ec6953`, `9368931` and `b211ee7` answer the independent review of `f946334` ("Round 1 review fixes", the last section).
+- **Round 3 informational fixes:** `5e8524c`, `77a17ce`, `380f52b`, `75c16d5`, `c27e46f` and `c2f15bc` answer the three informational items the approving round-3 review of `34e3f65` left, and what three rounds of adversarial verification found ("Round 3 informational fixes", the last section).
 - **Blindness:** no lane opened any file `RESTRICTED-FILES.md` restricts, and nothing here states or implies a 1946–55 value or direction. Every number in the code, tests and dry run is invented, a policy parameter or a committed public parameter capture.
 
 ## §13 and §14 completeness audit
@@ -545,3 +546,156 @@ Other runs:
 
 - **The evidence record itself**, as in round 1. It is written by the §20 step-4 structure pass on real data, which is separately authorized.
 - **Independent review of `f78df52`, `b1d95c8` and `f16f1b9`.**
+
+## Round 3 informational fixes (2026-09-29 to 2026-10-11)
+
+The round-3 independent review of `34e3f65` returned **U2-M2: APPROVE**. It left three informational items, none reachable through `scripts/run_track_u2_registered.py`'s `main`:
+
+1. a seal forged in-process passed the evidence-binding check;
+2. a registered run checked only the row ids of `row_set`;
+3. invariant 13's restatement left out a precondition.
+
+This lane fixed all three. It was the main session (Claude Opus 5.5), working as a blind builder from `cd51fcb`, then rebased onto master after #487 merged.
+
+The lane then attacked its own fix in three adversarial rounds. Each round used blind in-session workflow subagents (Claude Opus 5.5) on invented data, and each found a bypass the fix did not close. A fourth-pass mutation run went to a Subfleet lane (GPT-6.1 Sol). The fixes therefore came in four passes; the third changes how a registered run treats its inputs. The run checks its inputs and then uses only what it checked:
+
+- it computes only on frames parsed from the exact text whose SHA-256 the bound record froze;
+- it records provenance from that record.
+
+For every fix, the tests were written first and failed on the code before the fix. The exposure record is in [`u2_m2_exposure.md`](u2_m2_exposure.md#round-3-fix-lane).
+
+**INVENTED DATA - NOT A COMPARISON:** every altered value is invented. That means offsets of +5 (+1 to +1000 in the properties), a swapped sex label, an invented zero and invented computed floats. Every input is the invented population or its invented staged files. No real PSID record was read.
+
+| Item | Fix | Commit | Tests |
+|---|---|---|---|
+| Info 1: a seal written with `object.__setattr__` over altered frames passed, because the runner held only the evidence hash | `check_inputs` and `run_track_u2` take the evidence record as well as its bound hash. A registered run refuses unless the record is valid and hashes to the bound value (`_bound_evidence`, `runner.py:355`). The inputs' frame digest, PSID file hashes and cited-source hashes must equal the record's (`runner.py:305-343`). `main` passes the record its preflight read (`run_track_u2_registered.py:371`) | `5e8524c` | `test_u2_loader.py`: the review's probe B2, the record-backed refusal, relabelled file and cited hashes, three wrong records, an invented run naming a record, refusal before any computation, and a Hypothesis property over every numeric cell of every input frame (100 examples); `test_u2_scripts.py`: `main` wiring |
+| Info 2: a registered run checked only the row ids | A registered run refuses any `row_set` (`runner.py:657`), even `REGISTERED_ROWS` itself, and computes exactly the rows `main`'s preflight binds | `5e8524c` | `test_u2_loader.py`: the review's probe B3, the default computes the registered rows, and a Hypothesis property refusing every row set before any check (60 examples); `test_u2_pipeline.py`: an invented run still accepts the ten rows given explicitly |
+| Info 3: invariant 13 omitted its precondition | The report states the precondition (the labels name U2's pinned sources). The verification added life-table names to the content clause. The property tests' docstrings and `parameters_content_sha256`'s docstring match | `77a17ce`, `75c16d5` | `test_u2_parameters.py::test_every_precondition_label_is_necessary` (90 examples), `::test_life_table_names_are_content` |
+| Found while fixing: a provenance label with rigged comparisons skipped the row-set guard while the registered checks ran | The label must be exactly one of the two strings (`_check_provenance_label`, `runner.py:123`) | `5e8524c` | `::test_a_registered_run_takes_only_an_exact_provenance_label` |
+| Found while fixing: frames edited while the parameter check read the caller's provenance, with the seal forged again, reached the rows | The births must carry the frozen digest (`runner.py:721`). Since the third pass the rows compute on the snapshot, so such an edit reaches no row | `5e8524c`, `c27e46f` | `::test_frames_changed_after_the_check_reach_no_row` |
+| Round 1: a `str` subclass in the record, bound hash or seal compared equal to anything | The record must be plain JSON data by exact type (`loader._plain_json`, `loader.py:575`). Both hashes must be exactly `str` (`runner.py:278`, `:290`) | `380f52b` | three malformed-record cases; rigged digest, bound and seal cases; a test that kills the record-hash guard by its own attack |
+| Round 1: a `dict` subclass container served the digest one frame and the rows another; a `str`-subclass cell or label kept its text but compared as another value | The digest reads only plain dicts keyed by exact `int` (`_wave_frames`, `cohort.py:583`), exact-`str` labels and exact-`str` string cells (`_check_frame_types`, `cohort.py:488`) | `380f52b`, `c27e46f` | a Hypothesis property over 4 containers × 6 lying methods (40 examples); the verification's minimized `how_ended` case and a property over every string cell (40 examples); label, Index-subclass, dtype, dtype-subclass, wave-key and object-column cases |
+| Round 1: `RoleContext.rules` rewritten after construction kept the `registry` kind | `check_inputs` compares the caller's rules with the committed ones as canonical text (`sources.role_rules_text`, `sources.py:664`; `runner.py:261`). The rows get a fresh committed context (`runner.py:712`). `RoleRule` is final | `380f52b`, `c27e46f` | rewritten-rules, fresh-context and final-and-bound-by-text tests |
+| Round 2: an object in a frame's `attrs` runs code whenever pandas copies the frame; an ExtensionArray subclass keeps the exact dtype and CSV text while the rows read other values | **Check, then use.** `cohort._registered_snapshot` (`cohort.py:720`) writes each frame's text once as the digest writes it and hashes it. It then parses a private frame from that text, which must write the same text again (`_rebuild_frame`, `cohort.py:660`). A registered run compares that digest with the record and computes only on the snapshot (`runner.py:310`, `:694`). The digest also refuses `attrs` (checked first), empty string cells, and any dtype outside the seven the loader and U1's readers build (`_FRAME_DTYPES`, `cohort.py:457`). The step-4 evidence writer refuses frames that do not rebuild (`loader.py:715`), so such a refusal comes before registration | `c27e46f` | attrs, rigged-array and snapshot-provenance tests; the loader's and generator's frames rebuild value for value; the step-4 refusal |
+| Round 2: the recorded provenance came from the caller's mutable inputs | The snapshot's provenance consists of the bound record's PSID file, bundle and cited-source hashes plus the committed registry pins. It has no data directory and is marked `registered_snapshot` (`SNAPSHOT_KEY`, `cohort.py:170`). The inputs' recorded hash maps must be plain dicts of exact `str` (`_plain_hashes`, `runner.py:184`) | `c27e46f`, `c2f15bc` | snapshot-provenance and rigged-recorded-hash tests |
+| Round 2: a caller-edited source-gate audit and a `str`-subclass pointer were recorded | A registered run takes no source gate, since it applies none. The pointer must be exactly a `str` (`runner.py:688`, `:238`) | `c27e46f` | source-gate and pointer tests |
+| Round 3: `RoleContext` stored the cached committed `RoleRule` objects, so every context shared them, the run's fresh one included, and a progress callback could edit them in place. The third pass introduced this regression | Each context holds private copies (`sources.py:853`). A role-registry refusal in the runner is a `U2RunError` (`_committed_roles`, `runner.py:346`) | `c2f15bc` | private-rule-object and callback-edit tests; the role-refusal wrapping |
+| Round 3: pandas' default float parser misreads some 16–17-digit reprs, so a frame holding computed floats would have been falsely refused at step 4 | The rebuild parses floats with the round-trip converter (`cohort.py:682`) | `c2f15bc` | the verification's computed weight `0.013 × 8,950,792`; a strict Hypothesis property: every frame over the allowed dtypes, with full-precision floats, rebuilds exactly, and no refusal passes (300 examples) |
+| Round 3: the public snapshot builder could mint loader-style seals | It is private, marks its provenance, and the step-4 evidence writer refuses a snapshot (`loader.py:706`). An object column's missing cells must be NaN, because `None` or `pd.NA` would rebuild as NaN. Invalid Unicode and parse errors refuse as `U2CohortError` | `c2f15bc` | snapshot-minting, object-column and Unicode tests |
+
+The dry run records the round-3 refusals (`track_u2_dry_run.py:298`), and `test_u2_scripts.py` asserts each one's error class and message.
+
+**Why every `row_set` is refused, not only unequal ones.** `U2Row` is not final, and it compares its override mappings with `==`. A row equal by value can still compute otherwise, because a subclass can override `income_spec`. A registered run therefore has one source of rows: `rows.REGISTERED_ROWS`, whose `as_dict()` the preflight binding hashes.
+
+**Why the snapshot, not more type rules.** Each round of type rules on pandas objects closed the cases it was shown and left another open: after round 1 came `attrs` hooks, array subclasses, and Index and dtype subclasses. The snapshot closes the class rather than the cases:
+
+- **The rule.** The run reads only frames parsed from the hashed text. If that text hashes to the frozen digest, it is the text of the frames step 4 froze, and the parse recovers their values.
+- **The differential.** In the third round, a verifier ran the full registered pipeline on the same loader-sealed invented inputs twice: at `00caf93`, which computes on the snapshot, and at `c8ca02d`, which computes on the loader's frames. Both runs used the committed parameters, the same pointer and evidence, and a test-only role patch so that invented data completes. The two 667 KB outputs differ in one value only: `cohort_provenance.psid_data_dir`, which is intentionally no longer recorded. Rows, sensitivities, diagnostics, counts and tabulation are identical. The fourth pass adds `cohort_provenance.registered_snapshot: true`.
+- **Legitimate loads are not refused.** The type rules and the rebuild check run at every digest, including the loader's seal and the step-4 evidence writer. A real-data frame that broke them would therefore refuse at step 4, before any registration. A test runs U1's marriage and earnings transforms on invented raw columns and digests what they build (`::test_the_inherited_readers_transforms_meet_the_type_rules`). The second round also ran the loader end to end with the unpatched inherited readers on invented staged files, including edge cases. Nothing was refused.
+- **Cost.** On invented frames scaled to 100,000 rows per wave frame and 1,000,000 rows of earnings (72.6 million cells), building the snapshot took 25.5 seconds against 9.5 seconds for one digest. A registered run computes the digest 23 times, so the snapshot adds about a tenth.
+
+### Before and after
+
+Each case was run on invented data against the code before its fix and against the fix.
+
+| Case (invented) | Before | Fixed |
+|---|---|---|
+| Forged seal over +5 in one 2019 income cell, bound hash only (probe B2) | accepted at `cd51fcb` | refused: the record is required |
+| The same forgery, with the bound record | n/a | refused: frame digest |
+| U0 with the 2 percent interest override in `row_set` (probe B3) | computed at `cd51fcb` | refused before any check |
+| Provenance label equal to nothing and unequal to nothing, with an altered row set | reached the rows on the first draft of the fix | refused: label |
+| Record whose frame digest is a `str` subclass equal to everything | accepted at `0e84127` | refused: not plain JSON |
+| `family_wealth` as a `dict` subclass whose `get` serves other frames | accepted at `0e84127`; a full invented run changed 138 cells | refused: plain dict |
+| One `how_ended` cell that prints its own text but compares as `separated`, edited in place with no seal forgery | accepted at `0e84127` | refused: exact `str` |
+| `RoleContext.rules` rewritten with `object.__setattr__` | accepted at `0e84127` | refused; the rows get a fresh context |
+| `attrs` hooks that restore the frames before each digest and alter them after | accepted at `c8ca02d`; a full invented run computed every row on invented zero incomes | refused: attrs |
+| `StringArray` subclass swapping `male` and `female`; `IntegerArray` subclass adding 5 on iteration | accepted at `c8ca02d`; the U0 sex cells swapped | rows read the snapshot's base arrays |
+| Caller-edited `registries` and `psid_data_dir` in the inputs' provenance | recorded at `c8ca02d` | the record's and committed pins'; no data directory |
+| Progress callback editing the passed context's `RoleRule` objects in place | reached every row at `00caf93` (a regression) | rows read private copies |
+| A weight computed as `0.013 × 8,950,792` | refused at step 4 at `00caf93` (false refusal) | rebuilds exactly |
+
+### Invariants stated and tested (round 3)
+
+17. **Bound evidence record.** A registered check accepts inputs only if all of the following hold. Otherwise it refuses.
+    - The record is plain JSON data, valid, and hashes to the bound value.
+    - The bound hash and the sealed hash are exactly `str` and equal.
+    - The digest of the inputs' text equals the record's frozen digest.
+    - Their recorded PSID file, bundle and cited-source hashes equal the record's.
+
+    For every numeric cell of every input frame and every nonzero invented offset, a seal forged over the changed frames passes the provenance check yet refuses (`test_u2_loader.py::test_no_seal_forged_over_any_changed_cell_passes_the_registered_check`, 100 examples).
+18. **Registered rows only.** Every `row_set` given to a registered run refuses before any input, parameter or row is touched (`::test_a_registered_run_refuses_every_row_set_before_any_check`, 60 examples).
+19. **Check, then use.** A registered run computes only on the snapshot, the fresh read of the pinned parameter files, and a context holding private copies of the committed role rules. Nothing the caller holds reaches a row. That covers frames, arrays, `attrs`, rule objects and the progress callback; the attrs, rigged-array, callback and rule-object tests check each one.
+20. **Faithful rebuild.** Every frame over the allowed dtypes rebuilds from its digested text to the same values and dtypes, with no refusal (`::test_every_frame_over_the_allowed_dtypes_rebuilds_exactly`, 300 examples). The loader's and generator's frames rebuild exactly (`::test_the_snapshot_rebuilds_the_loader_and_generator_frames_exactly`).
+21. **The digest pins what it reads.** The digest refuses any container, key, label, dtype or string cell outside the exact types the loader builds: a mapping subclass under any of six lying methods (40 examples), and a `str`-subclass cell in any string column (40 examples).
+13. **Parameter content**: the precondition, and life-table names in the content clause (`::test_every_precondition_label_is_necessary`, 90 examples; `::test_life_table_names_are_content`).
+
+### Conservative readings (round 3)
+
+17. **Every `row_set` refuses in a registered run**, the registered mapping itself included (§14).
+18. **No source gate in a registered run.** The run applies none, so a gate's audit would be the caller's claim. `main` passes none.
+19. **The snapshot records no data directory.** The loader's `psid_data_dir` is the caller's claim and was never checked.
+20. **The digest refuses empty string cells, `None` or `pd.NA` in object columns, and dtypes outside the seven the loader builds.** The CSV text writes these exactly as it writes a missing value or another dtype, so a rebuild could not tell them apart. The loader and U1's readers build none of them, so any refusal comes at step 4.
+21. **The snapshot's frames have a default RangeIndex.** The digest omits the index. Relabelling every input frame's index in 24 ways (shifted, reversed, duplicated) left the full registered output unchanged in the second round.
+
+**Limits.** These guards defend the `run_track_u2` and `check_inputs` API against caller-supplied objects. They do not defend against code that monkeypatches the runner, rebinds or mutates module state (`rows.REGISTERED_ROWS`, the cached committed role rules), or reaches private objects through `gc` or frame inspection. The verification showed that mutating `rows.REGISTERED_ROWS` in-process changes a registered run; the artifact records each row's overrides. `main` runs no caller code between its preflight and the run.
+
+### Test results (round 3, code-final `db9725f`)
+
+**Every `tests/track_u2` file, one per command, with `-p no:xdist`: 1,084 passed, 10 skipped, 0 failed.** The 10 skips are the registered artifact's absence.
+
+| File | Result |
+|---|---|
+| `test_adjudication_applied.py` | 20 passed |
+| `test_pension_registry.py` | 12 passed |
+| `test_psid_research_sources.py` | 391 passed |
+| `test_source_registries.py` | 80 passed |
+| `test_ssi_capture.py` | 31 passed |
+| `test_u2_design_floor.py` | 14 passed |
+| `test_u2_differential.py` | 8 passed |
+| `test_u2_employer_dc.py` | 32 passed |
+| `test_u2_estimator.py` | 25 passed |
+| `test_u2_identity.py` | 22 passed |
+| `test_u2_isolation.py` | 4 passed |
+| `test_u2_loader.py` | 126 passed (was 64) |
+| `test_u2_mappings.py` | 55 passed |
+| `test_u2_memo.py` | 14 passed |
+| `test_u2_parameters.py` | 51 passed (was 48) |
+| `test_u2_pipeline.py` | 27 passed, 10 skipped (was 26) |
+| `test_u2_plans.py` | 39 passed |
+| `test_u2_properties.py` | 17 passed |
+| `test_u2_roles.py` | 71 passed |
+| `test_u2_scripts.py` | 31 passed |
+| `test_u2_worked_cases.py` | 14 passed |
+
+Other runs:
+
+- **`tests/estimates/test_birth_evidence_artifact.py`:** 13 passed.
+- **The §13 U1 suite, unmodified:** 390 passed, 39 skipped, 0 failed, the same files and counts as rounds 1 and 2.
+  - It ran with HOME and `POPULACE_DYNAMICS_PSID_DIR` pointed at an empty directory.
+  - An audit hook refused any open, listing or scan under the real `~/PolicyEngine/psid-data` and logged any under the evidence directory and REFS. It refused and logged nothing. Its self-test refused a nonexistent probe path before any open.
+- **U1 differential, rerun at `db9725f` against `9cee2423`** (fresh `git clone --shared` clones, both clean, with the hook active):
+  - `all_equal` and `all_checks_passed` are true, and the dry run was not skipped;
+  - the dry-run `result.json` and `RESULTS.md` are byte-equal;
+  - refusal expectations are met at both commits;
+  - no loader file was accessed.
+
+  The report is committed as [`u2_m2_u1_differential_db9725f.json`](u2_m2_u1_differential_db9725f.json) (SHA-256 `6ed35e6b9e577195987e0980622ca480ccd45c0cfc8f426adb4b70011a1ffdca`).
+- **Black (`-l 79`) and ruff** are clean on the 11 changed Python files.
+- **Tiers** (`pytest --collect-only -q -m <tier>`, `-p no:xdist`, the hook active and never triggered):
+  - unit 6,091 (+62);
+  - artifact 3,540 (+4);
+  - integration_psid 1,341;
+  - reproduction_legacy 520;
+  - oracle_policyengine 220;
+  - total 11,712, equal to the full collection.
+- **Isolation:**
+  - No protected file changed, and `test_u2_isolation.py` passes on master's per-commit and merge rules.
+  - No new source module was added, so `POST_REVIEW_SOURCE_EXCLUSIONS` is unchanged.
+  - No milestone-1b-owned file was touched.
+
+### Not done (round 3)
+
+- **The evidence record itself**, as in rounds 1 and 2. It is written by the §20 step-4 structure pass on real data, which is separately authorized.
+- **The pandas environment.** The frame digest hashes pandas' dtype names. A different pandas version or string-inference setting at the one-shot than at step 4 would therefore refuse a legitimate load. This predates round 3, and it must be pinned or recorded before step 4. It is a separate follow-up.
+- **PR #524 (d1090)** changes the same U2 files. Whichever of the two lands second needs a conflict pass.
+- **Independent review of this round's commits.**
