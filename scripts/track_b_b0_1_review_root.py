@@ -45,6 +45,7 @@ import subprocess
 import sys
 import tarfile
 from collections.abc import Iterable, Mapping, Sequence
+from fnmatch import fnmatchcase
 from itertools import pairwise
 from pathlib import Path
 from typing import Any
@@ -254,7 +255,8 @@ def brace_expansions(pattern: str, limit: int = BRACE_LIMIT) -> list[str]:
     """Every alternative a glob pattern's brace groups stand for.
 
     ``a{b,c}d`` stands for ``abd`` and ``acd``; groups nest. A group with
-    no comma at its own depth, and an unbalanced brace, are literal text.
+    no comma at its own depth, and an unbalanced brace, are literal text,
+    and the scan goes on after them, so a later group still expands.
     Raises ``OverflowError`` past ``limit`` alternatives.
     """
     start = pattern.find("{")
@@ -273,9 +275,7 @@ def brace_expansions(pattern: str, limit: int = BRACE_LIMIT) -> list[str]:
                     break
             elif char == "," and depth == 1:
                 commas.append(index)
-        if end == -1:
-            return [pattern]
-        if commas:
+        if end != -1 and commas:
             cuts = [start, *commas, end]
             out: list[str] = []
             for left, right in pairwise(cuts):
@@ -298,13 +298,21 @@ def pattern_kind(pattern: str, denied: Sequence[str]) -> str:
     """How a Glob pattern or a Grep file filter is classed.
 
     Brace groups are expanded first, so a name split across a group is
-    read whole. An alternative leaves the root if it is absolute or holds
-    a ``..`` segment. It names a denied path if that path's text appears
-    in it, or if one of its segments is a denied basename, a denied stem
-    followed by a dot, or the codebook directory's last segment, even to
-    confirm the path's absence. A wildcard fragment of a name
-    (``*name_part*``) is not classified. A pattern with more than
-    ``BRACE_LIMIT`` alternatives is ``unclassified``.
+    read whole. The pattern as written and each alternative are then cut
+    into segments at ``/`` and at any brace or comma left as literal text.
+
+    - A text leaves the root if it is absolute or holds a ``..`` segment.
+    - It names a denied path, even to confirm the path's absence, if that
+      path's text appears in it, or if one of its segments is a denied
+      basename, a denied stem followed by a dot, or the codebook
+      directory's last segment.
+    - So does a segment that holds a denied name's whole stem and, read
+      as a wildcard, matches that name (``stem*``, ``stem?md``,
+      ``stem[.]md``).
+
+    A wildcard that holds only part of a stem (``*name_part*``) is not
+    classified. A pattern with more than ``BRACE_LIMIT`` alternatives is
+    ``unclassified``.
     """
     denied_names = {Path(d).name for d in denied} | {Path(CODEBOOK_DIR).name}
     denied_stems = {Path(d).stem for d in denied if Path(d).suffix}
@@ -313,10 +321,8 @@ def pattern_kind(pattern: str, denied: Sequence[str]) -> str:
     except OverflowError:
         return "unclassified"
     kinds = set()
-    # The pattern as written is also cut at its braces and commas, so a
-    # name inside an unbalanced group is still read.
-    for text, cut in [(pattern, r"[/{},]"), *((a, "/") for a in alternatives)]:
-        segments = re.split(cut, text)
+    for text in {pattern, *alternatives}:
+        segments = re.split(r"[/{},]", text)
         if text.startswith(("/", "~")) or ".." in segments:
             kinds.add("outside_root")
         if any(d in text for d in denied) or CODEBOOK_DIR in text:
@@ -324,6 +330,11 @@ def pattern_kind(pattern: str, denied: Sequence[str]) -> str:
         for segment in segments:
             if segment in denied_names or any(
                 segment.startswith(f"{stem}.") for stem in denied_stems
+            ):
+                kinds.add("denied")
+            if any(
+                Path(name).stem in segment and fnmatchcase(name, segment)
+                for name in denied_names
             ):
                 kinds.add("denied")
     for kind in ("outside_root", "denied"):
@@ -419,7 +430,7 @@ def read_log(
     )
     bad = sorted(path for path, kind in paths.items() if kind != "inside_root")
     return {
-        "schema": "track_b_b0_1_review_read_log.v5",
+        "schema": "track_b_b0_1_review_read_log.v6",
         "root": str(root),
         "n_tool_calls": len(calls),
         "tool_calls": calls,

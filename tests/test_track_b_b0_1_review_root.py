@@ -563,6 +563,54 @@ def _claude_transcript(tmp_path, blocks):
             ],
             False,
         ),
+        # Q6 round 9 L1: an unbalanced brace before a group is literal
+        # text, and the group after it still expands
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g17",
+                    "name": "Glob",
+                    "input": {"pattern": "{,deep_{denied,y}.md"},
+                }
+            ],
+            False,
+        ),
+        # Q6 round 9 L2: a whole denied stem with a wildcard in place of
+        # the dot or the extension
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g18",
+                    "name": "Glob",
+                    "input": {"pattern": "**/deep_denied?md"},
+                }
+            ],
+            False,
+        ),
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g19",
+                    "name": "Grep",
+                    "input": {"pattern": "x", "glob": "deep_denied[.]md"},
+                }
+            ],
+            False,
+        ),
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g20",
+                    "name": "Glob",
+                    "input": {"pattern": "docs/**/deep_denied*"},
+                }
+            ],
+            False,
+        ),
         # broad patterns and wildcard fragments name nothing, and count
         (
             [
@@ -637,6 +685,9 @@ def test_brace_expansions_follow_glob_semantics():
     assert expand("{a}") == ["{a}"]
     assert expand("{a{b,c}}") == ["{ab}", "{ac}"]
     assert expand("{a,b") == ["{a,b"]
+    # Q6 round 9 L1: the scan goes on after an unbalanced brace
+    assert expand("{,a{b,c}d") == ["{,abd", "{,acd"]
+    assert expand("a}{b,c}{d") == ["a}b{d", "a}c{d"]
     assert expand("plain/*.md") == ["plain/*.md"]
     with pytest.raises(OverflowError):
         expand("{a,b}" * 13)
@@ -709,3 +760,42 @@ def test_the_classifier_is_no_weaker_than_the_round_7_rule(pattern):
         assert kind == "outside_root", pattern
     elif old_denied:
         assert kind == "denied", pattern
+
+
+@settings(max_examples=300, deadline=None)
+@given(data=st.data())
+def test_a_whole_stem_with_a_wildcard_tail_is_flagged(data):
+    """Invariant (Q6 round 9 L2): a segment holding a denied file's whole
+    stem, with any of its extension's characters replaced by ``?`` or a
+    one-character class, or the extension by ``*``, is classed as denied."""
+    name = data.draw(st.sampled_from([Path(d).name for d in DENIED]))
+    stem, extension = Path(name).stem, Path(name).suffix
+    tail = data.draw(
+        st.just("*")
+        | st.tuples(
+            *(st.sampled_from([char, "?", f"[{char}]"]) for char in extension)
+        ).map("".join)
+    )
+    # A head that demands a character, such as ``?``, would not match the
+    # name itself, so only an empty head or ``*`` belongs here.
+    head = data.draw(st.sampled_from(["", "*"]))
+    prefix = data.draw(st.sampled_from(["", "**/", "docs/", "*/x/"]))
+    pattern = prefix + head + stem + tail
+    assert review_root.pattern_kind(pattern, DENIED) == "denied", pattern
+
+
+@settings(max_examples=200, deadline=None)
+@given(
+    junk=st.text(alphabet="{,", min_size=1, max_size=3),
+    data=st.data(),
+)
+def test_literal_braces_do_not_hide_a_split_denied_name(junk, data):
+    """Invariant (Q6 round 9 L1): unbalanced opening braces and commas
+    before a group that splits a denied name do not stop it being read."""
+    name = data.draw(st.sampled_from([Path(d).name for d in DENIED]))
+    start = data.draw(st.integers(0, len(name)))
+    stop = data.draw(st.integers(start, len(name)))
+    pattern = (
+        junk + name[:start] + "{" + name[start:stop] + ",y}" + name[stop:]
+    )
+    assert review_root.pattern_kind(pattern, DENIED) == "denied", pattern

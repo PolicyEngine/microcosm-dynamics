@@ -40,7 +40,7 @@
  "persisted_outputs_opened": [],
  "review_counts": true,
  "root": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r8-20261011/root",
- "schema": "track_b_b0_1_review_read_log.v5",
+ "schema": "track_b_b0_1_review_read_log.v6",
  "tool_calls": [
   {
    "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r8-20261011/root/docs/design/track_b_b0_1_addendum_q6_review_r7.md",

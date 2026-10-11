@@ -262,8 +262,10 @@ after two prunes (above).
 7's merges.** B2 is
 `WEAK_POWER_OR_VACUITY` (design line 454). The floor artifact records
 it, B2 stops, and a decision is queued for Max with the rescoping
-options. No rescoped registration is written before he rules. This
-covers every case d693's Q2 flip names.
+options. Rescoping the surface or a tolerance cannot cure ν = 0, so
+there the decision queued is how the critical value is set. No rescoped
+registration is written before he rules. This covers every case d693's
+Q2 flip names.
 
 **Pruned cells.** Every pruned or ineligible cell is scored and
 published, report-only, with its own unadjusted 95% interval, outside
@@ -1383,9 +1385,16 @@ sharpened after round 1 (below).
     a name split across a group, such as `{stem,x}.md`, is read whole.
     A pattern with more than 4,096 alternatives is not classified, and
     voids the review.
+  - Since Q6 round 9, a segment that holds a denied name's whole stem
+    and, read as a wildcard, matches that name also names it: `stem*`,
+    `stem?md`, `stem[.]md`. An unbalanced brace is literal text, and the
+    scan goes on after it. Only a wildcard that holds part of a stem
+    stays unclassified.
+  - Each log's schema version records the rule it was made under. The
+    rule as it now stands is `track_b_b0_1_review_read_log.v6`.
   - It also checks returned paths given relative to the root, as the
     harness returns them.
-  - Rounds 5-8's logs were regenerated under the rule as it now stands.
+  - Rounds 5-9's logs were regenerated under the rule as it now stands.
     Round 1's log came from another session's transcript, under the rule
     as it stood then, and is not regenerated.
 - **Numbers.** Numerical reproduction is in the CI-pinned tests, not the
@@ -1758,8 +1767,48 @@ Its observation, that the log lists Grep's context-line prefixes as
 paths inside the root, is left as it is: it adds entries and hides none.
 
 Round 8 approved `1e4d226`, and these fixes changed the head after it.
-**Round 9** confirms them on a newly built root, in round 8's form. Its
-record follows.
+Round 9 confirms them.
+
+**Round 9: approve.**
+
+- **Root.** `git archive` of `266dd96`, 1,950 files, manifest SHA-256
+  `103a6f11174bef67…`.
+  - The inventory rerun is
+    `docs/design/track_b_b0_1_addendum_q6_inventory_r9.json`. It flagged
+    nothing new.
+  - The same 27 files were removed whole, and four code-map tables. The
+    ten context copies went in.
+  - The root record is `docs/design/track_b_b0_1_addendum_q6_root_r9.json`.
+- **Lane.** Subfleet job `20261011-185659-b01-addendum-q6-r9`, in round 8's
+  form. Its transcript records Opus 5.5 and the tools Glob, Grep and
+  Read. It ran on 2026-10-11 from 22:59 to 23:04 UTC and exited 0.
+  - As in rounds 5 and 6, Subfleet then marked the job lost because a
+    lane process lingered, so the review is the result event of the
+    lane's transcript, copied verbatim.
+  - Its prompt named the files changed since round 8, asked round 8's
+    four questions of them, and asked of each finding whether it bears on
+    the frozen record or only on the review tooling.
+- **Read log.** `docs/design/track_b_b0_1_addendum_q6_readlog_r9.json`
+  covers 20 tool calls. Every path named or returned lies inside the
+  root, and no pattern is absolute, leaves the root or names a denied
+  path, under the rule as tightened after this round. Round 9 counts.
+- **Verdict.** `APPROVE`, with no high or medium finding and two low.
+  The review is `docs/design/track_b_b0_1_addendum_q6_review_r9.md`.
+  - It met no B2 outcome and no 2008/2010 selector outcome.
+  - It found the B2 record sound and both of round 8's findings fixed in
+    substance. It marks both of its own findings as bearing on the review
+    tooling only.
+
+| Finding | Disposition |
+|---|---|
+| L1 (tooling): an unbalanced `{` before a brace group stopped that group from being expanded | `brace_expansions` keeps an unbalanced brace as literal text and scans on, and every alternative is cut at any brace or comma left in it. A property test puts unbalanced braces and commas before a group that splits a denied name |
+| L2 (tooling): a whole denied stem followed by a wildcard instead of a dot still passed | A segment that holds a denied name's whole stem and matches the name as a wildcard is now denied. A property test replaces the extension, or any of its characters, with wildcards. Four mutants fail the two fixes' tests. The plan's rule names the forms caught and the one left out |
+| Observation: the log's schema stayed v5 across round 8's fix | The schema is v6 for the rule as it stands, and the plan says a log's version records its rule. Rounds 5-9's logs were regenerated as v6: round 5 stays void, rounds 6-9 count |
+| Observation: rescoping cannot cure ν = 0 | Section 5 says the decision queued there is how the critical value is set |
+
+Round 9 approved `266dd96`, and these fixes changed the head after it.
+**Round 10** confirms them on a newly built root, in round 9's form. Its
+record follows, in a commit that adds only that record.
 
 ## 16. Protocol record
 

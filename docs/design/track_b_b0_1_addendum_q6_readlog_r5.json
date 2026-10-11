@@ -194,7 +194,7 @@
  "persisted_outputs_opened": [],
  "review_counts": false,
  "root": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root",
- "schema": "track_b_b0_1_review_read_log.v5",
+ "schema": "track_b_b0_1_review_read_log.v6",
  "tool_calls": [
   {
    "pattern": "**/*",

@@ -801,6 +801,38 @@ def test_addendum_carries_the_round_8_fixes(prose, sentence):
 
 
 @pytest.mark.parametrize(
+    "sentence",
+    [
+        # Q6 round 9: the read-log rule as it stands, and its version
+        "Since Q6 round 9, a segment that holds a denied name's whole stem "
+        "and, read as a wildcard, matches that name also names it",
+        "The rule as it now stands is `track_b_b0_1_review_read_log.v6`.",
+        # Q6 round 9: what is queued when nu is 0
+        "Rescoping the surface or a tolerance cannot cure ν = 0, so there "
+        "the decision queued is how the critical value is set.",
+        "**Round 9: approve.**",
+    ],
+)
+def test_addendum_carries_the_round_9_fixes(prose, sentence):
+    assert sentence in prose
+
+
+@pytest.mark.parametrize("round_number", [5, 6, 7, 8, 9])
+def test_committed_read_logs_follow_the_rule_as_it_stands(round_number):
+    """Rounds 5-9's logs are regenerated under the current rule: round 5
+    is void, and every later round counts."""
+    path = (
+        ROOT
+        / "docs"
+        / "design"
+        / f"track_b_b0_1_addendum_q6_readlog_r{round_number}.json"
+    )
+    log = json.loads(path.read_text(encoding="utf-8"))
+    assert log["schema"] == "track_b_b0_1_review_read_log.v6"
+    assert log["review_counts"] is (round_number != 5)
+
+
+@pytest.mark.parametrize(
     "stale",
     [
         "Only two-cluster strata are admitted",
