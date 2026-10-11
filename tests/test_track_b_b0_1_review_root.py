@@ -11,6 +11,8 @@ import sys
 from pathlib import Path
 
 import pytest
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -498,6 +500,69 @@ def _claude_transcript(tmp_path, blocks):
             ],
             False,
         ),
+        # Q6 round 8 L1: a denied name split across a brace group, a
+        # brace alternative that leaves the root, and a group too large
+        # to expand
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g12",
+                    "name": "Glob",
+                    "input": {"pattern": "**/{deep_denied,x}.md"},
+                }
+            ],
+            False,
+        ),
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g13",
+                    "name": "Grep",
+                    "input": {
+                        "pattern": "x",
+                        "glob": "deep_{x,den{ied,y}}.md",
+                    },
+                }
+            ],
+            False,
+        ),
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g14",
+                    "name": "Glob",
+                    "input": {"pattern": "{/etc,docs}/*.md"},
+                }
+            ],
+            False,
+        ),
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g15",
+                    "name": "Glob",
+                    "input": {"pattern": "{a,b}" * 13},
+                }
+            ],
+            False,
+        ),
+        # an unbalanced group is literal to the tool; its pieces are
+        # still read
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g16",
+                    "name": "Glob",
+                    "input": {"pattern": "{deep_denied.md,x"},
+                }
+            ],
+            False,
+        ),
         # broad patterns and wildcard fragments name nothing, and count
         (
             [
@@ -554,3 +619,93 @@ def test_claude_read_log_checks_patterns_and_relative_results(
         ["docs/denied.md", "gates.yaml", "docs/sub/deep_denied.md"],
     )
     assert log["review_counts"] is counts, log["paths_outside_root_or_denied"]
+
+
+# Brace expansion and the pattern classifier (Q6 round 8 L1).
+
+DENIED = ["docs/denied.md", "gates.yaml", "docs/sub/deep_denied.md"]
+_plain = st.text(alphabet="xyz*?", max_size=4)
+
+
+def test_brace_expansions_follow_glob_semantics():
+    expand = review_root.brace_expansions
+    assert expand("a{b,c}d") == ["abd", "acd"]
+    assert expand("a{b,{c,d}}e") == ["abe", "ace", "ade"]
+    assert expand("x{,y}") == ["x", "xy"]
+    assert expand("{a,b}{c,d}") == ["ac", "ad", "bc", "bd"]
+    # no comma at the group's own depth, or no closing brace: literal
+    assert expand("{a}") == ["{a}"]
+    assert expand("{a{b,c}}") == ["{ab}", "{ac}"]
+    assert expand("{a,b") == ["{a,b"]
+    assert expand("plain/*.md") == ["plain/*.md"]
+    with pytest.raises(OverflowError):
+        expand("{a,b}" * 13)
+    assert len(expand("{a,b}" * 12)) == review_root.BRACE_LIMIT
+    assert review_root.pattern_kind("{a,b}" * 13, DENIED) == "unclassified"
+
+
+@settings(max_examples=200, deadline=None)
+@given(
+    prefix=_plain,
+    suffix=_plain,
+    alternatives=st.lists(_plain, min_size=2, max_size=5),
+)
+def test_one_brace_group_expands_to_its_alternatives(
+    prefix, suffix, alternatives
+):
+    pattern = prefix + "{" + ",".join(alternatives) + "}" + suffix
+    assert review_root.brace_expansions(pattern) == [
+        prefix + alternative + suffix for alternative in alternatives
+    ]
+
+
+@settings(max_examples=300, deadline=None)
+@given(data=st.data())
+def test_a_denied_name_split_across_a_brace_group_is_flagged(data):
+    """Invariant: however a denied basename is cut into a brace group,
+    under any directory prefix, the pattern is classed as denied."""
+    name = data.draw(
+        st.sampled_from([Path(d).name for d in DENIED])
+        | st.just(Path(review_root.CODEBOOK_DIR).name)
+    )
+    start = data.draw(st.integers(0, len(name)))
+    stop = data.draw(st.integers(start, len(name)))
+    others = data.draw(st.lists(_plain, min_size=1, max_size=3))
+    place = data.draw(st.integers(0, len(others)))
+    group = [*others[:place], name[start:stop], *others[place:]]
+    prefix = data.draw(st.sampled_from(["", "**/", "docs/", "*/x/"]))
+    pattern = prefix + name[:start] + "{" + ",".join(group) + "}" + name[stop:]
+    assert review_root.pattern_kind(pattern, DENIED) == "denied", pattern
+
+
+@settings(max_examples=300, deadline=None)
+@given(pattern=st.text(alphabet="xyz*?/{},", max_size=18))
+def test_a_pattern_naming_nothing_denied_stays_inside_the_root(pattern):
+    """Invariant: a relative pattern with no dot and none of the denied
+    names' letters is never flagged."""
+    kind = review_root.pattern_kind(pattern, DENIED)
+    absolute = any(
+        text.startswith("/") for text in review_root.brace_expansions(pattern)
+    )
+    assert kind == ("outside_root" if absolute else "inside_root"), pattern
+
+
+@settings(max_examples=200, deadline=None)
+@given(pattern=st.text(alphabet="ab./{},*", max_size=14))
+def test_the_classifier_is_no_weaker_than_the_round_7_rule(pattern):
+    """Differential: whatever the round-7 segment rule flagged on the
+    pattern as written, the expanding classifier flags too."""
+    denied = ["a/b.a", "ab"]
+    names = {"b.a", "ab", Path(review_root.CODEBOOK_DIR).name}
+    stems = {"b"}
+    pieces = pattern.replace("{", "/").replace("}", "/").replace(",", "/")
+    old_denied = any(d in pattern for d in denied) or any(
+        piece in names or any(piece.startswith(f"{s}.") for s in stems)
+        for piece in pieces.split("/")
+    )
+    old_outside = pattern.startswith(("/", "~")) or ".." in pieces.split("/")
+    kind = review_root.pattern_kind(pattern, denied)
+    if old_outside:
+        assert kind == "outside_root", pattern
+    elif old_denied:
+        assert kind == "denied", pattern

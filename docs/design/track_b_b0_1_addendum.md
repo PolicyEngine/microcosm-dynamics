@@ -258,7 +258,8 @@ four-cell guard binds only if three or more families have no eligible
 cell. Inside d781's six there are two families, so the guard can bind
 after two prunes (above).
 
-**If the ladder ends below 0.90 or a guard fails.** B2 is
+**If the ladder ends below 0.90, a guard fails, or ν is 0 after section
+7's merges.** B2 is
 `WEAK_POWER_OR_VACUITY` (design line 454). The floor artifact records
 it, B2 stops, and a decision is queued for Max with the rescoping
 options. No rescoped registration is written before he rules. This
@@ -469,7 +470,8 @@ This replaces the audit's draft rule (§9.2) on the ruled basis.
 4. It computes each cell's tolerance (section 6) and se_up,c (section 7).
    It counts the design strata by cluster count, applies section 7's
    stratum rule, and publishes the counts, the merges, L and ν before any
-   candidate run.
+   candidate run. If ν is 0, B2 stops here as `WEAK_POWER_OR_VACUITY`
+   (sections 5 and 7).
 5. It applies eligibility, the ladder and the guards (section 5) inside
    the ruled surface (d781). Power comes from the ruled binding
    evaluation (`scripts/track_b_b0_1_ruled_power.py`, section 11):
@@ -1108,8 +1110,10 @@ decisions and decide nothing:
   exact Rao-Wu by integer copies at scale L. Test it on invented inputs,
   including a differential test that at L = 1 it equals arm D's
   multiplicities.
-- Use t\*_m,ν with ν counted by the floor builder (section 7), and
-  publish the strata counted by cluster count before any candidate run.
+- Use t\*_m,ν with ν counted by the floor builder after the merges
+  (section 7), and publish the strata counted by cluster count before any
+  candidate run. If ν is 0, stop at floor build as
+  `WEAK_POWER_OR_VACUITY`.
 - Name the gated surface in the headline (d781): earnings levels and
   zero rates only, with H and B3L relying on B2 for levels only.
 - Carry d1342 (option A). The floor builder runs section 5's ladder inside
@@ -1375,9 +1379,13 @@ sharpened after round 1 (below).
     names the codebook directory when a segment is its last one. A
     wildcard fragment of a name, such as `*name_part*`, is not
     classified; the review prompt forbids it.
+  - Since Q6 round 8, the log expands a pattern's brace groups first, so
+    a name split across a group, such as `{stem,x}.md`, is read whole.
+    A pattern with more than 4,096 alternatives is not classified, and
+    voids the review.
   - It also checks returned paths given relative to the root, as the
     harness returns them.
-  - Rounds 5-7's logs were regenerated under the rule as it now stands.
+  - Rounds 5-8's logs were regenerated under the rule as it now stands.
     Round 1's log came from another session's transcript, under the rule
     as it stood then, and is not regenerated.
 - **Numbers.** Numerical reproduction is in the CI-pinned tests, not the
@@ -1712,7 +1720,45 @@ round 6): request changes.**
 | L3: the context-copy sentence read as if round 2 held the d1342 ruling | Round 2 held nine copies; the d1342 ruling went in from round 4, making ten |
 
 Round 7 approved `05dbd5b`, and these fixes changed the head after it.
-**Round 8** confirms them on a newly built root, in round 7's form. Its
+Round 8 confirms them.
+
+**Round 8: approve.**
+
+- **Root.** `git archive` of `1e4d226`, 1,946 files, manifest SHA-256
+  `73c0d9c2f409eaaa…`.
+  - The inventory rerun is
+    `docs/design/track_b_b0_1_addendum_q6_inventory_r8.json`. It flagged
+    nothing new.
+  - The same 27 files were removed whole, and four code-map tables. The
+    ten context copies went in.
+  - The root record is `docs/design/track_b_b0_1_addendum_q6_root_r8.json`.
+- **Lane.** Subfleet job `20261011-175818-b01-addendum-q6-r8`, in round 7's
+  form, served by Opus 5.5. It ran on 2026-10-11 from 22:11 to 22:14 UTC
+  and exited 0. Its prompt named the files changed since round 7 and asked
+  four questions: whether each round-7 finding is resolved in substance,
+  whether the changes bring a new problem, whether they touch the protocol
+  block or blindness, and whether section 15's round-7 record matches its
+  records.
+- **Read log.** `docs/design/track_b_b0_1_addendum_q6_readlog_r8.json`
+  covers 22 tool calls. Every path named or returned lies inside the
+  root, and no pattern is absolute, leaves the root or names a denied
+  path, under the rule as tightened after this round. Round 8 counts.
+- **Verdict.** `APPROVE`, with no high or medium finding and two low.
+  The review is `docs/design/track_b_b0_1_addendum_q6_review_r8.md`.
+  - It met no B2 outcome and no 2008/2010 selector outcome.
+  - It found each of round 7's three findings fixed in substance, the
+    ν = 0 rule correct and no figure on the 2006 record moved.
+
+| Finding | Disposition |
+|---|---|
+| L1: the read log missed a denied file named by its stem inside braces, with the extension outside them | `pattern_kind` expands brace groups before it classifies, nested groups included, and still cuts the pattern as written at its braces. Property tests check that a denied name cut into a brace group at any two points is flagged, that a pattern naming nothing denied is not, and that the classifier flags whatever round 7's rule flagged. Six mutants fail them. Rounds 5-8's logs were regenerated: round 5 stays void, rounds 6-8 count |
+| L2: section 5 did not list the ν = 0 trigger for `WEAK_POWER_OR_VACUITY` | Section 5's rule, section 9's step 4 and the "To B2" list now name it |
+
+Its observation, that the log lists Grep's context-line prefixes as
+paths inside the root, is left as it is: it adds entries and hides none.
+
+Round 8 approved `1e4d226`, and these fixes changed the head after it.
+**Round 9** confirms them on a newly built root, in round 8's form. Its
 record follows.
 
 ## 16. Protocol record

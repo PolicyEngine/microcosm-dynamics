@@ -783,6 +783,24 @@ def test_addendum_carries_the_round_7_fixes(prose, sentence):
 
 
 @pytest.mark.parametrize(
+    "sentence",
+    [
+        # Q6 round 8 L1: brace groups are expanded before classifying
+        "Since Q6 round 8, the log expands a pattern's brace groups first",
+        # Q6 round 8 L2: every place that lists the floor-build stops
+        "**If the ladder ends below 0.90, a guard fails, or ν is 0 after "
+        "section 7's merges.** B2 is `WEAK_POWER_OR_VACUITY`",
+        "If ν is 0, B2 stops here as `WEAK_POWER_OR_VACUITY` (sections 5 "
+        "and 7).",
+        "If ν is 0, stop at floor build as `WEAK_POWER_OR_VACUITY`.",
+        "**Round 8: approve.**",
+    ],
+)
+def test_addendum_carries_the_round_8_fixes(prose, sentence):
+    assert sentence in prose
+
+
+@pytest.mark.parametrize(
     "stale",
     [
         "Only two-cluster strata are admitted",
