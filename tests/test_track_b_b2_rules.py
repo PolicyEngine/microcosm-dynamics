@@ -42,6 +42,8 @@ import select_m6_qstar_train_only as selector  # noqa: E402
 import track_b_b0_1_addendum_power as addendum_power  # noqa: E402
 import track_b_b0_1_planning_values as pv  # noqa: E402
 import track_b_b0_1_ruled_power as ruled  # noqa: E402
+import track_b_b2_floor as floor_builder  # noqa: E402
+import track_b_b2_score as scorer  # noqa: E402
 
 from populace_dynamics.harness import m6_cells  # noqa: E402
 from populace_dynamics.track_b import b2  # noqa: E402
@@ -1183,3 +1185,21 @@ def test_replicate_driver_orders_results_and_counts_failures():
         True,
     ]
     assert failed[1]["exception_class"] == "ValueError"
+
+
+def test_registered_settings_are_enforced(monkeypatch):
+    with pytest.raises(AssertionError, match="4,000"):
+        floor_builder.assert_registered(floor_builder.FloorConfig(8, 1))
+    with pytest.raises(AssertionError, match="4,000"):
+        scorer.assert_registered(scorer.ScoreConfig(4, 1))
+    monkeypatch.setattr(m6_cells, "FLOOR_SEEDS", tuple(range(5)))
+    with pytest.raises(AssertionError, match="0-99"):
+        floor_builder.assert_registered(floor_builder.FloorConfig())
+    monkeypatch.setattr(pv, "DRAW_SEEDS", (6200, 6201, 6202))
+    with pytest.raises(AssertionError, match="6200-6219"):
+        scorer.assert_registered(scorer.ScoreConfig())
+
+
+def test_registered_settings_hold_unpatched():
+    floor_builder.assert_registered(floor_builder.FloorConfig())
+    scorer.assert_registered(scorer.ScoreConfig())

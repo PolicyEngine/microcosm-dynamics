@@ -120,3 +120,32 @@ configurations only. Unsupported configurations raise
 `FAMILY_CONFIG_UNSUPPORTED` and stay in denominators. The design note is
 `docs/design/track_b_g_gross_benefits.md`; the worked-example sources are
 under `tests/data/track_b/gross_benefit_sources/`.
+
+## B2: the 2010→2014 transport gate's floor builder, comparator and scorer
+
+`b2.py` holds B2's rules, exactly as `docs/design/track_b_b0_1_addendum.md`
+freezes them: the six level cells (d781 (a)), tolerances on B2's own
+household-split floor, the Rao-Wu standard error with Student t at the
+design's degrees of freedom (d782), section 8's INVALID, FAIL, PASS,
+INCONCLUSIVE order, and section 5's ladder inside the six (d1342). Three
+scripts apply them, in this order, each once:
+
+1. `scripts/track_b_b2_floor.py` builds the truth-only floor after B2's
+   registration on #42 pins its commit. It reads only the 80 files of
+   `b2_read_set_sha256`, under a guard that refuses any other open, and
+   writes `runs/track_b_b2_floor.json` exclusively. If a design stratum
+   has one cluster, or three or more, the artifact says
+   `STOPPED_STRATUM_GUARD`. If the ladder cannot reach 0.90 power with
+   four cells it says `WEAK_POWER_OR_VACUITY`. Either way no candidate
+   may run.
+2. `scripts/track_b_b2_compare_floor.py` runs after that artifact is
+   committed. It reads two boundary-2010 fields of each selection ledger
+   and prints whether their hashes equal the builder's; it gates nothing.
+3. `scripts/track_b_b2_score.py` runs once, only on a committed floor
+   artifact that cleared, with the registration id and the expected
+   commit. It writes `runs/track_b_b2_score.json` exclusively.
+
+Both the builder and the scorer require at most four BLAS and OpenMP
+threads and `OMP_WAIT_POLICY=PASSIVE`, and the selectors' pinned fitting
+stack. Their tests (`tests/test_track_b_b2_*.py`) use invented panels
+only.

@@ -582,7 +582,9 @@ def test_floor_stops_when_an_eligible_se_up_is_undefined(invented, measured):
 def test_floor_refuses_a_truth_person_without_design_variables(
     invented, measured
 ):
-    design = invented["design"].iloc[1:]
+    person = int(measured["truth"]["person_id"].iloc[0])
+    design = invented["design"]
+    design = design[design["person_id"] != person]
     with pytest.raises(AssertionError, match="design variables"):
         floor_builder.decide(measured, design, invented["planning"])
 
@@ -713,6 +715,39 @@ def test_side_a_is_the_household_split_of_the_full_2011_anchor(
         assert scored["side_a_persons"][str(seed)] == len(set(side) & domain)
 
 
+def test_side_a_scores_restrict_the_full_projection(invented, fit_2010):
+    """Side A is a household split of the full 2011 anchor, intersected
+    with the domain, scored on the full projection's draws."""
+    context, draws = fit_2010["context"], fit_2010["draws"]
+    full = b2.full_anchor_frame(invented["anchor_demo"])
+    sides = scorer.side_a_scores(
+        full, context.domain_ids, context.truth_support, draws
+    )
+    assert [side["seed"] for side in sides] == list(b2.GATE_SEEDS)
+    households = full.set_index("person_id")["household_id"]
+    for side in sides[:2]:
+        chosen = m6_scoring.side_a_person_ids(
+            full, split_unit="household", seed=side["seed"]
+        )
+        persons = set(chosen) & set(context.domain_ids)
+        assert side["persons"] == len(persons)
+        # Every household lies wholly on one side.
+        kept = set(households.loc[sorted(chosen)])
+        assert set(households[households.isin(kept)].index) == set(chosen)
+        truth = context.truth_support
+        values, draw_values = scorer.frame_set_values(
+            truth[truth["person_id"].isin(persons)],
+            [frame[frame["person_id"].isin(persons)] for frame in draws],
+        )
+        assert side["gap"] == scorer.set_gaps(values, draw_values)
+        assert side["valid"] == {
+            name: b2.frame_valid(
+                values[name], [draw[name] for draw in draw_values]
+            )
+            for name in b2.CELLS
+        }
+
+
 def test_scorer_context_is_the_selectors_at_2010(fit_2010, selector_2010):
     context = fit_2010["context"]
     assert context.boundary == 2010
@@ -782,24 +817,6 @@ def test_scorer_refuses_a_floor_that_is_not_the_datas(invented, cleared_floor):
 # --------------------------------------------------------------------------
 # Preconditions and registered settings
 # --------------------------------------------------------------------------
-def test_registered_settings_are_enforced(monkeypatch):
-    with pytest.raises(AssertionError, match="4,000"):
-        floor_builder.assert_registered(floor_builder.FloorConfig(8, 1))
-    with pytest.raises(AssertionError, match="4,000"):
-        scorer.assert_registered(scorer.ScoreConfig(4, 1))
-    monkeypatch.setattr(m6_cells, "FLOOR_SEEDS", FEW_FLOOR_SEEDS)
-    with pytest.raises(AssertionError, match="0-99"):
-        floor_builder.assert_registered(floor_builder.FloorConfig())
-    monkeypatch.setattr(pv, "DRAW_SEEDS", FEW_DRAW_SEEDS)
-    with pytest.raises(AssertionError, match="6200-6219"):
-        scorer.assert_registered(scorer.ScoreConfig())
-
-
-def test_registered_settings_hold_unpatched():
-    floor_builder.assert_registered(floor_builder.FloorConfig())
-    scorer.assert_registered(scorer.ScoreConfig())
-
-
 @pytest.mark.parametrize("script", [floor_builder, scorer])
 def test_scripts_refuse_without_registration_or_commit(script):
     with pytest.raises(RuntimeError, match="registration"):
