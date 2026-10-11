@@ -2,12 +2,12 @@
 
 Microcosm Dynamics aims to answer the Social Security questions that
 the Urban Institute's DYNASIM answers, with code, data and tests that
-anyone can rerun. It follows a representative population year by
-year, applies the program's rules to each life, and reports what a
-reform does to benefits, poverty and the program's finances, by
-cohort and group, decades ahead. This page lists what full parity
-with DYNASIM for Social Security analysis requires, one capability at
-a time, and where each piece stands.
+anyone can rerun. The goal is a model that follows a representative
+population year by year, applies the program's rules to each life,
+and reports what a reform does to benefits, poverty and the program's
+finances, by cohort and group, decades ahead. This page lists what
+full parity with DYNASIM for Social Security analysis requires, one
+capability at a time, and where each piece stands.
 
 *Statuses verified against the repository at commit `216acab1` and
 against the open pull requests and issues on 11 October 2026.*
@@ -25,9 +25,10 @@ involves DYNASIM4, Urban's current version.
 What separates the model from DYNASIM today falls into three groups.
 The two projections compared with DYNASIM3 draw no earnings,
 marriages, divorces or births after 2010, check no one's insured
-status and apply no retirement earnings test. The projected
-population is closed: no newborns, immigrants or emigrants enter or
-leave it. And the model produces no national cost estimate,
+status and apply no retirement earnings test. The population is
+effectively closed: no immigrant or emigrant enters or leaves any
+projection run on real data, and newborns appear only in runs of gate
+m6's engine, which score none of them. And the model produces no national cost estimate,
 trust-fund balance or depletion date, and projects no SSI, wealth or
 pension income.
 
@@ -152,9 +153,9 @@ kept outside this repository; `docs/design/track_b_b0_1_audit.md`,
    (d782). The B0.1 addendum in [#505][pr505] records them and finds
    that on this design the six cells reach 0.813 power, short of the
    0.952 the ruling assumed, so B2 is held until ruling d1342 settles
-   its cells or tolerance. #505 is still a draft. The career-fill test `gate_epuf_fill` has to lock and
-   score its held-out persons once ([#515][pr515], [#516][pr516],
-   d927). Microcosm's frame needs the fix for the defect Registration
+   its cells or tolerance. #505 is still a draft. The career-fill test
+   `gate_epuf_fill` has to lock and score its held-out persons once
+   ([#515][pr515], [#516][pr516], d927). Microcosm's frame needs the fix for the defect Registration
    19 disclosed ([microcosm#1178][mc1178]) before any projection starts
    there. B0.2, the source, exposure and power audit for every later
    empirical Track B gate, must freeze each gate's record before that
@@ -167,8 +168,8 @@ kept outside this repository; `docs/design/track_b_b0_1_audit.md`,
    recorder, follows B2 and keeps labor, covered and earnings-test
    earnings apart for 2010 to 2030.
 3. **Build the payment rules in parallel.** R1 and G, both built, feed
-   R2, the earnings-test ledger. R3, the
-   adjustment at full retirement age and recomputation, follows R2.
+   R2, the earnings-test ledger. R3, the adjustment at full retirement
+   age and recomputation, follows R2.
    The fix for #494 belongs on this branch. H, R2 and R3 feed I, the
    monthly calendar that assembles payments. Any claim that depends on
    the timing of events also needs I's observational timing gate.
@@ -205,9 +206,8 @@ kept outside this repository; `docs/design/track_b_b0_1_audit.md`,
    tables.
 8. **Estimate national financing, then the 75-year balance.**
    Registration 18's 2030 cost test comes first, once its build code
-   merges. National cost estimates
-   need a representative population, covered payroll and complete
-   payments. The actuarial balance also needs the open population and
+   merges. National cost estimates need a representative population,
+   covered payroll and complete payments. The actuarial balance also needs the open population and
    an admitted long horizon. Then come annual OASI and DI accounts and
    75-year summaries on named assumption paths, compared with OACT and
    PWBM first (d660; [#113][i113], M7).
@@ -244,8 +244,10 @@ Issue drafts for each are with the maintainers.
 - **Admitting a joint projection past 2030.** No gate scores any year
   after 2019, and gate 3 has no cells.
 - **Starting states and later processes for newborns and immigrants,
-  and emigration.** The entrant module has never run on real data, and
-  the earlier design ([#218][pr218]) closed unmerged.
+  and emigration.** Newborns get only a link to the mother, the
+  immigrant-entry module has never run on real data, the earlier
+  immigration design ([#218][pr218]) closed unmerged, and nothing
+  models emigration.
 - **Moving the engine into Microcosm as an operator.** A mortality and
   ageing prototype runs on synthetic data (`docs/population-graph.md`);
   [#412][i412] lists interface changes but is not a build plan.
