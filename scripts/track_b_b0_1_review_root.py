@@ -329,8 +329,9 @@ _PROGRAM_RX = re.compile(
 )
 
 
-#: A shell expansion: $NAME, ${...}, $(...) or a backquote.
-_EXPANSION_RX = re.compile(r"\$(?:[A-Za-z_][A-Za-z0-9_]*|\{|\()|`")
+#: A shell expansion: $NAME, ${...}, $(...), ANSI-C $'...', locale
+#: $"..." or a backquote.
+_EXPANSION_RX = re.compile(r"\$(?:[A-Za-z_][A-Za-z0-9_]*|\{|\(|'|\")|`")
 
 
 def _expansions(script: str) -> list[str]:
@@ -377,13 +378,50 @@ def _shell_words(command: str) -> list[str]:
         return command.split()
 
 
+#: Programs that run their ``-c`` argument as a shell script.
+_SHELLS = frozenset({"sh", "bash", "zsh", "dash", "ksh", "fish"})
+
+
+def _scripts(command: str) -> list[str]:
+    """The shell scripts inside ``command``, at every depth.
+
+    A script is the argument after a ``-c`` style option (``-c``,
+    ``-lc``) of a shell program, or the words after ``eval``. Each is
+    split again for nested shells. Code given to other interpreters
+    (``python3 -c``) is not a shell script, so its dollars are not
+    expansions; its paths are still scanned by ``_path_words``.
+    """
+    found: list[str] = []
+    words = _shell_words(command)
+    for index, word in enumerate(words):
+        name = word.rsplit("/", 1)[-1]
+        if name == "eval" and index + 1 < len(words):
+            script = " ".join(words[index + 1 :])
+            found.append(script)
+            found.extend(_scripts(script))
+            break
+        if name not in _SHELLS:
+            continue
+        for option_index in range(index + 1, len(words)):
+            option = words[option_index]
+            if not option.startswith("-"):
+                break
+            if "c" in option[1:] and option_index + 1 < len(words):
+                script = words[option_index + 1]
+                found.append(script)
+                found.extend(_scripts(script))
+                break
+    return found
+
+
 def _path_words(command: str) -> list[str]:
     """Words of a shell command, and of any ``-c`` script inside it, that
-    could name a path: every word, split again at ``=``, ``:`` and shell
-    separators so ``--out=/x``, ``a:/x`` and ``cd /x;ls`` are seen."""
+    could name a path: every word, split again at ``=``, ``:``, brace
+    expansion's ``{``, ``,`` and ``}`` and shell separators, so
+    ``--out=/x``, ``a:/x``, ``{a,/x}`` and ``cd /x;ls`` are seen."""
     words: list[str] = []
     for word in _shell_words(command):
-        for piece in re.split(r"[=:;&|()<>`]", word):
+        for piece in re.split(r"[=:;&|()<>`{},]", word):
             piece = piece.strip().strip("'\"")
             if piece:
                 words.append(piece)
@@ -407,8 +445,16 @@ def read_log_codex(
     the system's bin directories and ``/dev/null`` are programs, not reads.
     A relative word resolves inside the root, where no denied file exists,
     so naming a denied file there reads nothing. A shell expansion outside
-    single quotes (``$NAME``, ``${...}``, ``$(...)``, a backquote) cannot
-    be resolved from the transcript, so it voids the review too. Command output is not
+    single quotes (``$NAME``, ``${...}``, ``$(...)``, ``$'...'``, a
+    backquote) cannot be resolved from the transcript, so it voids the
+    review too. The shell scripts inside a command (``zsh -lc``'s, and a
+    nested ``sh -c '...'`` or ``eval``) are rescanned at every depth;
+    code for other interpreters is scanned for paths only. Brace expansion
+    is split into its parts.
+
+    The log is a detector, not a sandbox: a command that builds a path in
+    code (``open('/' + 'etc')``) is not caught, and the review brief
+    forbids reading outside the root. Command output is not
     read: listing commands run inside the root can only return paths
     inside it. No content is copied into the log, only commands.
     """
@@ -458,8 +504,8 @@ def read_log_codex(
         # Codex runs each command as argv; a word is a shell script when
         # it holds spaces (``/bin/zsh -lc "<script>"``). Its unquoted
         # expansions cannot be resolved here, so each one voids the review.
-        for word in _shell_words(command):
-            for expansion in _expansions(word):
+        for script in _scripts(command):
+            for expansion in _expansions(script):
                 flagged[expansion] = "shell_expansion"
         for word in _path_words(command):
             kind = classify(word)

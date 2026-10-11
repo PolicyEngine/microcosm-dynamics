@@ -3,8 +3,8 @@
 **Status: protocol frozen and planning values computed, 2026-10-01.
 Max ruled d765, d781 and d782 on 2026-10-11 (section 2). On the
 configuration they set, the six level cells reach 0.813 power, not the
-0.952 d781 cites. B2 is held until Max rules on d1342 (sections 11
-and 13).**
+0.952 d781 cites. Max confirmed the ruled surface the same day (d1342,
+option A): B2's floor-build ladder decides (sections 11 and 13).**
 This file is the post-ruling addendum that the B0.1 audit
 (`docs/design/track_b_b0_1_audit.md`, section 13) calls for. It does
 three things:
@@ -71,8 +71,8 @@ repository; design line numbers refer to it.
   only the most lenient reaches it, at 0.907 (section 11).
   - Section 16's rule does not stop B2: four of the six reach 0.964, so
     B2's floor and ladder would decide.
-  - But the ruling rested on 0.952, so B2 is held before registration,
-    and d1342 asks Max to confirm the surface or change it (section 13).
+  - The ruling rested on 0.952, so B2 was held for Max, who confirmed
+    the surface in d1342 (option A, section 2).
 
 ## 2. Rulings this addendum implements
 
@@ -129,9 +129,16 @@ The 0.952 that d781 cites is household resampling's figure. On the
 configuration the three rulings and the M2 rider set together, the six
 level cells reach 0.813 on the binding evaluation, below 0.90 (section
 11, "Power on the configuration Max ruled"). Section 16's rule would let
-B2's floor and ladder decide. But the ruling rested on 0.952, so B2 is
-held before registration, and decision d1342 asks Max to confirm the ruled
-surface or change it (section 13).
+B2's floor and ladder decide. The ruling rested on 0.952, so B2 was held
+for Max. He confirmed the ruled surface the same day:
+
+- **d1342:** "A: proceed as ruled (d781 six level cells); B2's floor-build ladder prunes inside the six until power >= 0.90 with at least four cells; if it cannot, B2 stops at floor build before any candidate outcome and the choice among B-D returns to Max on B2's real tolerances (Max in chat 2026-10-11, guided walkthrough)".
+
+So d781 (a) stands, and its ladder is section 5's, run on B2's own floor
+inside the six. If no surface of four or more of the six reaches 0.90 on
+that floor, B2 is `WEAK_POWER_OR_VACUITY` at floor build, before any
+candidate outcome. Options B-D of d1342 (section 13) then return to Max,
+priced on B2's real tolerances.
 
 ## 3. The frozen record
 
@@ -147,7 +154,7 @@ table.
 | 3. Population | Frozen | Audit §7: the 13,542-person 2010 domain, handed to H by B2's bridge; no one is scored outside ages 25-64 at the scored waves (Q7) |
 | 4. Exposure history | Frozen | Audit §5 and its inventory; the exposure labels (section 5) and the Q8(b) fallback (section 4) settle its consequences |
 | 5. Holdout partition | Frozen | Section 4 |
-| 6. Critical cells | Rule frozen | Section 5; d781 (a): the six level cells, with d1342 open |
+| 6. Critical cells | Rule frozen | Section 5; d781 (a): the six level cells, confirmed by d1342 (A) |
 | 7. Numerical tolerances | Rule frozen | Section 6 |
 | 8. Uncertainty treatment | Frozen | Section 7; d782: Rao-Wu se_boot, with Student t at the design's degrees of freedom |
 | 9. Pass conjunction | Frozen | Section 8 |
@@ -203,9 +210,10 @@ level cells: `earn_p50.older`, `earn_p50.prime`, `earn_p90.older`,
   "published five-seed floor detail, no published candidate outcome".
 
 On the ruled configuration the six reach 0.813 on the binding evaluation,
-not the 0.952 d781 cites (section 11). Decision d1342 (section 13) asks
-Max to confirm this surface or change it, or its tolerance, before B2
-registers.
+not the 0.952 d781 cites (section 11). Max confirmed the surface in
+d1342 (option A, section 2). The ladder below runs inside the six on B2's
+floor. If it ends below 0.90 or below four cells, B2 stops at floor build
+and the choice returns to Max.
 
 The rest of this section is the rule as d693 froze it. Under d781 its
 candidate family is the six.
@@ -295,9 +303,10 @@ For each gated cell c, on full support:
   over 4,000 design replicates, with the law fixed and each person's
   projected paths fixed. A design replicate resamples PSID's
   sampling-error clusters (`ER31997`) within strata (`ER31996`) among
-  the truth-support persons, by Rao-Wu, as arm D did. It uses arm D's
-  `design_multiplicities`, imported from
-  `scripts/track_b_b0_1_planning_values.py`:
+  the truth-support persons, by Rao-Wu, as arm D did. Its multiplicities
+  follow arm D's `design_multiplicities` rule, through the
+  root-parameterised copy section 13 specifies ("To B2"), never the
+  pinned function, which reads protocol v2's root:
   - in a stratum with two clusters, one is drawn and copied twice;
   - a stratum with one cluster keeps it once;
   - a stratum with three or more clusters draws that many with
@@ -820,11 +829,11 @@ decision d1342 names, at tolerances scaled by those amounts:
 | C2: without `earn_p50.older` and `earn_zero_rate.older` | 0.743 | 0.879 | 0.956 | 0.986 |
 | D: the six at k = 3.26 | 0.557 | 0.763 | 0.901 | 0.963 |
 
-The six cells Max ruled on reach 0.813, not the 0.952 that d781 cites. So
-B2 is held before registration, and decision d1342 asks Max to confirm the
-ruled surface or change it (section 13). The protocol would not stop B2
-here, but the ruling rested on that figure. No other registration is
-written before he rules.
+The six cells Max ruled on reach 0.813, not the 0.952 that d781 cites.
+The protocol would not stop B2 here, but the ruling rested on that
+figure. So B2 was held, and decision d1342 asked Max to confirm the ruled
+surface or change it (section 13). He confirmed it the same day: option
+A, proceed as ruled (section 2).
 
 ## 12. Corrections to the audit
 
@@ -891,7 +900,8 @@ measured (section 7), and the binding evaluation uses the measured r.
 - Max has ruled on d1342. On the ruled configuration the six level cells
   reach 0.813, not the 0.952 d781 rests on (section 11, "Power on the
   configuration Max ruled"). Any registration that follows is written and
-  reviewed before any candidate run;
+  reviewed before any candidate run. **Ruled 2026-10-11:** option A,
+  proceed as ruled (section 2);
 - a B1 run has passed: v1 `REPRODUCED`, or v2
   `RECONSTRUCTED_REPRODUCTION` (d622). A v2 pass carries its weaker
   label, "reconstructed reproduction (weaker than bit-for-bit)", into
@@ -901,7 +911,8 @@ measured (section 7), and the binding evaluation uses the measured r.
 
 **Decisions queued for Max.** None blocks this addendum's merge. Each
 blocked B2's registration. d765, d781 and d782 were ruled on 2026-10-11
-(section 2); d1342, queued after those rulings, is open.
+(section 2). d1342, queued after those rulings, was ruled the same day
+(option A, section 2). No decision is open.
 
 - **d765, queued before the run.** d693's Q5 rider says the two planning
   values come from "one pseudo-origin household bootstrap". Arm F is a
@@ -973,7 +984,8 @@ blocked B2's registration. d765, d781 and d782 were ruled on 2026-10-11
     63 degrees of freedom is 2.724, against z\* = 2.638. A registration
     under (a) should use the t value.
 
-- **d1342: confirm or change B2's surface after the ruled power.** Queued
+- **d1342: confirm or change B2's surface after the ruled power.**
+  **Ruled 2026-10-11: option A, proceed as ruled** (section 2). Queued
   2026-10-11, after the three rulings. The six level cells reach
   0.813 on the binding evaluation and
   0.907 on the most lenient (section 11).
@@ -1048,6 +1060,11 @@ decisions and decide nothing:
   publish the strata counted by cluster count before any candidate run.
 - Name the gated surface in the headline (d781): earnings levels and
   zero rates only, with H and B3L relying on B2 for levels only.
+- Carry d1342 (option A). The floor builder runs section 5's ladder inside
+  the six on B2's own floor until power reaches 0.90 with at least four
+  cells. If it cannot, B2 stops at floor build, before any candidate
+  outcome, and options B-D return to Max priced on B2's real
+  tolerances.
 - A rescoped registration under d781 names the gated families in its
   headline and scores every other cell report-only.
 
@@ -1383,7 +1400,41 @@ place at this head:
 | L: section 15 described round 1's lane and context only | This record states round 2's form |
 | L: the root-seed handoff had no executable interface | "To B2" specifies root-parameterised copies, with a differential test against the pinned functions |
 
-**Round 3** reviews the changed head on a newly built root, in round 2's
+**Round 3: request changes.**
+
+- **Root.** `git archive` of `2436954`, 1,861 files, manifest SHA-256
+  `b7d56a057e35c5e1…`, built in round 2's form.
+  - The exposure inventory was rerun at that head, to a file outside the
+    worktree. It flagged no file beyond round 2's 20. It is committed as
+    `docs/design/track_b_b0_1_addendum_q6_inventory_r3.json`.
+  - The builder removed the same 27 files whole and the same four
+    code-map tables.
+  - The root record is `docs/design/track_b_b0_1_addendum_q6_root_r3.json`.
+- **Lane.** Subfleet job `20261011-092342-b01-addendum-q6-r3`, GPT-6.1 Sol
+  as requested (unattested, as in round 2), read-only and isolated. It ran
+  on 2026-10-11 from 13:26 to 13:48 UTC.
+- **Read log.** `docs/design/track_b_b0_1_addendum_q6_readlog_r3.json`
+  covers 30 commands, none leaving the root, so the review counts.
+  - It was extracted with the read log as fixed after this round (below).
+  - Round 2's log, rechecked under the same rule, is unchanged.
+  - One command of round 3's ran Python code that held invented `$X`
+    strings to test the read log. Under the fixed rule, code for a
+    non-shell interpreter is not a shell script, so they are not
+    expansions.
+- **Verdict.** `REQUEST CHANGES`, with no high finding, one medium and one
+  low. The review is `docs/design/track_b_b0_1_addendum_q6_review_r3.md`.
+  It found every round-2 finding resolved except the expansion gap. It
+  met no B2 outcome and no 2008/2010 selector outcome.
+
+| Finding | Disposition |
+|---|---|
+| M: a nested `sh -c '...'`, brace expansion or ANSI-C quoting could escape the Codex read log | The read log rescans every shell script at every depth: a shell's `-c` argument and `eval`'s words. It treats `$'...'` and `$"..."` as expansions, and splits brace expansion into its parts. Code for other interpreters is scanned for paths only. Tests cover each case, and five mutants each fail them. The log's docstring says it is a detector, not a sandbox |
+| L: element 8 said to import `design_multiplicities`, which reads protocol v2's root | Element 8 points to section 13's root-parameterised copies |
+
+**After round 3: d1342.** Max ruled d1342 on 2026-10-11 (option A, proceed
+as ruled), and sections 1, 2, 5, 11 and 13 record it.
+
+**Round 4** reviews the changed head on a newly built root, in round 2's
 form. Its record follows.
 
 ## 16. Protocol record

@@ -701,8 +701,14 @@ def test_ruled_power_figures_come_from_the_record(prose, ruled_record):
         f"{constants['z_star']:.3f}",
         "**Verdict under section 16's rule: feasible, subject to B2's "
         "floor.**",
-        "decision d1342 asks Max to confirm the ruled surface or change it",
+        "decision d1342 asked Max to confirm the ruled surface or change it",
         "**d1342: confirm or change B2's surface after the ruled power.**",
+        "**Ruled 2026-10-11: option A, proceed as ruled** (section 2)",
+        "A: proceed as ruled (d781 six level cells); B2's floor-build "
+        "ladder prunes inside the six until power >= 0.90 with at least "
+        "four cells; if it cannot, B2 stops at floor build before any "
+        "candidate outcome and the choice among B-D returns to Max on "
+        "B2's real tolerances (Max in chat 2026-10-11, guided walkthrough)",
         "The protocol would not stop B2 here, but the ruling rested on that "
         "figure.",
     ]

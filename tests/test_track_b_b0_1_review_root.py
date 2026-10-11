@@ -312,3 +312,38 @@ def test_codex_read_log_ignores_single_quoted_dollars(tmp_path):
         _codex_transcript(tmp_path, commands), root, ["docs/denied.md"]
     )
     assert log["review_counts"] is True
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        # Q6 round 3: a nested shell expands its own script
+        "/bin/zsh -lc \"sh -c 'cat $FILE'\"",
+        "/bin/zsh -lc \"bash -c 'cat ${HOME}/x'\"",
+        "/bin/zsh -lc \"eval 'cat $X'\"",
+        # brace expansion and ANSI-C quoting
+        "/bin/zsh -lc 'cat docs/{keep.md,../../elsewhere.md}'",
+        "/bin/zsh -lc 'cat {/etc/hosts,docs/keep.md}'",
+        "/bin/zsh -lc \"cat $'\\\\x2fetc/hosts'\"",
+    ],
+)
+def test_codex_read_log_voids_nested_and_brace_escapes(tmp_path, command):
+    root = _invented_root(tmp_path)
+    log = review_root.read_log_codex(
+        _codex_transcript(tmp_path, [command]), root, ["docs/denied.md"]
+    )
+    assert log["review_counts"] is False
+
+
+def test_codex_read_log_does_not_treat_python_code_as_shell(tmp_path):
+    """Round 3's own transcript: Python code quoted for the shell holds
+    "$X" strings that no shell expands."""
+    root = _invented_root(tmp_path)
+    command = (
+        '/bin/zsh -lc "python3 -c \'print(\\"cat $UNRESOLVED/x\\"); '
+        'print(\\"sed -n 1,$p\\")\'"'
+    )
+    log = review_root.read_log_codex(
+        _codex_transcript(tmp_path, [command]), root, ["docs/denied.md"]
+    )
+    assert log["review_counts"] is True
