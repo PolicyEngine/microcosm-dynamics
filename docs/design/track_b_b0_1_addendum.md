@@ -67,8 +67,10 @@ repository; design line numbers refer to it.
   63 degrees of freedom (section 7).
 - **Power on that configuration.** The six level cells reach 0.813 on the
   binding evaluation, against the 0.952 d781 cites on household
-  resampling. Every evaluation that keeps the t value is below 0.90, and
-  only the most lenient reaches it, at 0.907 (section 11).
+  resampling. Every evaluation that keeps the t value is below 0.90.
+  Of the evaluations on the ruled configuration (household resampling,
+  d781's basis, excepted), only the most lenient reaches it, at 0.907
+  (section 11).
   - Section 16's rule does not stop B2: four of the six reach 0.964, so
     B2's floor and ladder would decide.
   - The ruling rested on 0.952, so B2 was held for Max, who confirmed
@@ -124,6 +126,11 @@ addendum queued (section 13). The decision log records them as:
 | d765 | Arm R's household half-samples stand, so the planning record's e and e_B2 are B2's registered estimation-variance values | Sections 7, 10 |
 | d781 (a) | Element 6: B2's gate family is the six level cells; the other ten are report-only; the headline and what H and B3L may rely on | Sections 5, 13 |
 | d782 | Element 8: se_boot resamples design clusters within strata (Rao-Wu); the floor and gate-seed splits stay household. With round-1 finding M2's rider, the critical value is Student t with the design's degrees of freedom | Sections 7, 8 |
+
+d782's ruling text does not name the critical value. The t value came
+from round-1 finding M2's rider, and Max saw it: d1342's question
+described the ruled configuration as "d781 six level cells, d782 Rao-Wu
+SE, t at 63 df", and he ruled option A on that configuration.
 
 The 0.952 that d781 cites is household resampling's figure. On the
 configuration the three rulings and the M2 rider set together, the six
@@ -245,9 +252,11 @@ autocorrelation.
 
 **Guards.** At least four gated cells, and not every gated tolerance at
 its cap (`m6_cells.py:64-67`). In M6 the four-cell guard counted flow
-cells; here it counts B2's earnings cells. With six eligible families
-the ladder cannot go below six cells, so the four-cell guard binds only
-if three or more families have no eligible cell.
+cells; here it counts B2's earnings cells. On d693's 16-cell surface,
+with six eligible families, the ladder cannot go below six cells, so the
+four-cell guard binds only if three or more families have no eligible
+cell. Inside d781's six there are two families, so the guard can bind
+after two prunes (above).
 
 **If the ladder ends below 0.90 or a guard fails.** B2 is
 `WEAK_POWER_OR_VACUITY` (design line 454). The floor artifact records
@@ -322,9 +331,29 @@ For each gated cell c, on full support:
     certainty-unit justification.
 
   So B2's floor builder counts the strata among B2's truth-support persons
-  by cluster count before any candidate run. If any stratum has one
-  cluster, or three or more, B2 stops there, and a dated amendment
-  registers how those strata are handled before any candidate run.
+  by cluster count before any candidate run, and handles the other cases
+  by this rule, fixed here (Q6 round 5):
+  - **One cluster.** Such a stratum is merged into the stratum with the
+    nearest stratum code, the lower one on a tie. The merge is done
+    before anything else, so the merged stratum is then counted with its
+    combined clusters.
+  - **Three or more clusters.** Exact Rao-Wu, by integer copies. Each
+    replicate draws n_h - 1 clusters with replacement in such a stratum,
+    and each draw counts n_h/(n_h - 1). To keep counts whole, every
+    stratum's multiplicities, including those of the two-cluster
+    strata, are multiplied by L, the least common multiple of n_h - 1
+    over the strata. A two-cluster stratum's drawn cluster is then
+    copied 2L times, and a draw in a stratum of n_h clusters
+    L·n_h/(n_h - 1) times.
+  - **Scale.** Scaling every person's copies by the same L leaves
+    weighted quantiles and weighted rates unchanged, so the gated level
+    cells are unaffected. The report-only mobility cells, which bin by
+    midpoint weighted rank, are not exactly invariant to it.
+  - **When every stratum has two clusters**, as at the 2006 pseudo-origin,
+    L is 1 and the rule is arm D's.
+
+  ν is Σ_h (n_h - 1) after the merges. The floor builder publishes the
+  counts, the merges and L before any candidate run.
 
   The floor and gate-seed splits stay household (d693 Q3, d782).
 - **The household bootstrap.** se_up,c uses its own 4,000 replicates:
@@ -429,9 +458,9 @@ This replaces the audit's draft rule (§9.2) on the ruled basis.
 3. It computes the household-split floor (section 4's split, seeds
    0-99) and, without gating on it, the person-split floor.
 4. It computes each cell's tolerance (section 6) and se_up,c (section 7).
-   It counts the design strata by cluster count and ν (section 7). If
-   any stratum has one cluster, or three or more, it stops before any
-   candidate run (section 7).
+   It counts the design strata by cluster count, applies section 7's
+   stratum rule, and publishes the counts, the merges, L and ν before any
+   candidate run.
 5. It applies eligibility, the ladder and the guards (section 5) inside
    the ruled surface (d781). Power comes from the ruled binding
    evaluation (`scripts/track_b_b0_1_ruled_power.py`, section 11):
@@ -489,7 +518,11 @@ against the repository.
   frame agreed within 1e-9, relative.
 - The record's outcome-blind flags are constants the script writes, not
   checks. The evidence that nothing after 2010 was read or recorded is
-  elsewhere:
+  elsewhere, with one exception. `transport.support_2010` copies B2's
+  scored-support counts for reference years 2012 and 2014 from the frozen
+  record `docs/design/track_b_b0_1_counts.json` (protocol input 7). They
+  are presence counts, not split by earnings sign, and the record holds
+  nothing else about those years. The evidence:
   - the read guard refuses any other PSID open before it happens;
   - the opened files match the audit's pins and include no wave after
     2011;
@@ -759,8 +792,10 @@ the figure d781 cites.
 
 **The six together fall short of 0.90.** On the binding evaluation they
 reach 0.813, and every evaluation that keeps the t value is below 0.90.
-Only the most lenient combination reaches the bar, at 0.907, and it drops
-the t value, the upper design ratios and the gating variances together.
+Of the evaluations on the ruled configuration (household resampling,
+d781's basis, excepted), only the most lenient combination reaches the
+bar, at 0.907. It drops the t value, the upper design ratios and the
+gating variances together.
 
 - `earn_p50.older` is the weak cell. It has the largest design ratio
   (95th percentile 1.259) and the largest gap variance. On its own it
@@ -1060,8 +1095,10 @@ decisions and decide nothing:
     the planning functions' multiplicities for replicates 0-99.
   - A second test checks that the scorer never reads
     `BOOTSTRAP_ROOT_SEED`.
-- Refuse, before any candidate run, any stratum with one cluster or with
-  three or more (section 7), and test the refusal on invented inputs.
+- Implement section 7's stratum rule: merge one-cluster strata, and use
+  exact Rao-Wu by integer copies at scale L. Test it on invented inputs,
+  including a differential test that at L = 1 it equals arm D's
+  multiplicities.
 - Use t\*_m,ν with ν counted by the floor builder (section 7), and
   publish the strata counted by cluster count before any candidate run.
 - Name the gated surface in the headline (d781): earnings levels and
@@ -1247,6 +1284,39 @@ Calls that took in excluded files, each mechanically:
 - one rerun of the reads extractor on the round-1 export. The session did
   not open the export (section 15).
 
+Further reads and actions of this session, recorded here in prose. No
+transcript-derived record exists for this session; only the first
+author's reads have one.
+
+- **B1 v2.** This session froze, registered and launched the B1 v2 run,
+  and published its result.
+  - It wrote both issue #42 comments: the registration, 6110674288, and
+    the result, 6113379406. It read no other #42 comment.
+  - It built B1's pinned environment and probed it without data.
+  - It never opened B1's raw output, its evidence files or its sealed
+    logs. It listed the output directory's file names and counted them,
+    listed the sealed directory's file sizes, and read each file's
+    modification time.
+  - Every B1 figure in this addendum comes from the frozen summarizer's
+    value-free summary, which reports statuses, counts and hashes only.
+  - The candidate-3 artifact fields it read are those listed above. Its
+    `provenance` holds row counts for M6's boundary-2014 run: the source
+    rows, the anchor's person count and the 2015-2019 truth rows. It
+    holds no earnings level, gap or floor.
+- **d1342.** This session drafted d1342's decision aid
+  (`trackb-ruled-power-20261011/OPTIONS.md` in the launch-evidence
+  directory).
+  - It had two GPT-6.1 Sol reviews of the ruled power and the aid, each on
+    a narrow root: the planning and power records, the power scripts and
+    tests, this addendum, the rulings and the aid.
+  - B1's freeze had five Sol reviews, on roots holding B1's code, its
+    registration and the candidate-3 artifact and sidecar.
+  - No root held a file on the §15.4 list.
+- **The B2 build.** This session briefed an Opus build lane to write B2's
+  floor builder, comparator and scorer in a standalone clone. Its tests
+  use invented data only. The brief forbids running any of it on PSID and
+  reading any §15.4 file or selection ledger.
+
 ## 15. The blinded review (Q6)
 
 The plan was fixed before the first review. Its read-log rule was
@@ -1267,7 +1337,10 @@ sharpened after round 1 (below).
   scanned with the inventory's patterns: the Track B design, the d693
   `RECOMMENDATION.md`, PR #490's two review comments, and the d693 and
   d622 ruling texts. They are the only launch-evidence material in the
-  root.
+  root. They are a deliberate exception to the Q6 rider's exclusion of
+  the launch-evidence directory. From round 2 the root also holds the
+  d765, d781, d782 and d1342 ruling texts and d1342's decision aid,
+  ten copies in all (round 2 had nine).
 - **Lane.** `subfleet run --task review -m opus -I -s read-only -D
   <root>`: Read, Glob and Grep only.
 - **Read log.** `scripts/track_b_b0_1_review_root.py readlog` extracts
@@ -1493,7 +1566,48 @@ permission mode, the root as its only directory, and the Claude read log.
 A first dispatch, job `20261011-163220-b01-addendum-q6-r5`, was cancelled
 about a minute after launch so that master could be merged first. Its
 transcript holds only the session's start event and no tool call. Round 5
-reviews the head after that merge. Its record follows.
+reviews the head after that merge.
+
+**Round 5 (the Q6 review of record): request changes.**
+
+- **Root.** `git archive` of `046480a`, 1,934 files, manifest
+  SHA-256 `5098b02ca4cfb2fa…`.
+  - The inventory rerun is
+    `docs/design/track_b_b0_1_addendum_q6_inventory_r5.json`. It flagged
+    nothing new.
+  - The same 27 files were removed whole, and four
+    code-map tables. The ten context copies went in.
+  - The root record is `docs/design/track_b_b0_1_addendum_q6_root_r5.json`.
+- **Lane.** Subfleet job `20261011-164355-b01-addendum-q6-r5b`, on Opus 5.5
+  in isolated-review mode with Read, Glob and Grep only, plan permission
+  mode and the root as its only directory. It ran on 2026-10-11 from
+  20:47 to 20:56 UTC and exited 0.
+  - Subfleet then marked the job lost, because a process of the lane
+    lingered after the exit receipt, and it exported no deliverable.
+  - The review below is the result event of the lane's own stream-json
+    transcript, copied verbatim.
+- **Read log.** `docs/design/track_b_b0_1_addendum_q6_readlog_r5.json`,
+  from that transcript, covers 45 tool calls. Every path named or
+  returned lies inside the root, none is denied, and no oversized result
+  was saved outside it, so the review counts.
+- **Verdict.** `REQUEST CHANGES`, with no high finding, one medium and five
+  low. The review is `docs/design/track_b_b0_1_addendum_q6_review_r5.md`.
+  - It met no B2 outcome and no 2008/2010 selector outcome.
+  - It checked every figure in section 11's ruled subsection by hand.
+  - It found the rulings carried exactly, and the protocol block pinned
+    and last in the file.
+
+| Finding | Disposition |
+|---|---|
+| M1: section 14 omitted this session's #42 comments, its part in B1's run, whether it opened B1's output, d1342's aid and its reviews, and that its reads have no extractor record | Section 14 adds each, and states that no B1 output, evidence file or sealed log was opened |
+| L1: "only the most lenient" sat beside household resampling's 0.952 | Both sentences now say "of the evaluations on the ruled configuration (household resampling, d781's basis, excepted)" |
+| L2: the t value's authority was cited only to the round-1 rider | Section 2 adds that d1342's question named "t at 63 df" and Max ruled A on that configuration |
+| L3: the stratum fallback was left to an amendment after the floor | Section 7 fixes it now: one-cluster strata merge into the nearest stratum code; strata with three or more clusters get exact Rao-Wu by integer copies at scale L; ν is counted after the merges. Sections 9 and 13 follow |
+| L4: stale wording on the ladder's floor and on the context copies | Both are corrected |
+| L5: "nothing after 2010 was recorded" | Section 10 names the 2012/2014 support counts the record copies from the frozen audit record |
+
+**Round 6** reviews the changed head on a newly built root, in round 5's
+form. Its record follows.
 
 ## 16. Protocol record
 

@@ -1,0 +1,233 @@
+{
+ "harness_persisted_outputs": [],
+ "n_tool_calls": 45,
+ "paths": {
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/_review_context/OPTIONS.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/_review_context/d1342-ruling.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/_review_context/d622-ruling.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/_review_context/d693-RECOMMENDATION.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/_review_context/d693-ruling.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/_review_context/d765-ruling.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/_review_context/d781-ruling.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/_review_context/d782-ruling.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/_review_context/pr490-comments.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/_review_context/trackb-design-20260928.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design/track_b_b0_1_addendum.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design/track_b_b0_1_addendum_q6_review_r1.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design/track_b_b0_1_addendum_q6_root_r4.json": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design/track_b_b0_1_addendum_reads.json": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design/track_b_b0_1_counts.json": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design/track_b_b0_1_planning_values.json": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design/track_b_b0_1_ruled_power.json": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/scripts/build_m6_holdout_floors_v2.py": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/scripts/track_b_b0_1_addendum_tables.py": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/scripts/track_b_b0_1_ruled_power.py": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/tests/test_track_b_b0_1_addendum_reads.py": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/tests/test_track_b_b0_1_addendum_record.py": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/tests/test_track_b_b0_1_ruled_power.py": "inside_root"
+ },
+ "paths_outside_root_or_denied": [],
+ "persisted_outputs_opened": [],
+ "review_counts": true,
+ "root": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root",
+ "schema": "track_b_b0_1_review_read_log.v2",
+ "tool_calls": [
+  {
+   "pattern": "**/*",
+   "tool": "Glob"
+  },
+  {
+   "pattern": "**/*b0_1*",
+   "tool": "Glob"
+  },
+  {
+   "pattern": "_review_context/**",
+   "tool": "Glob"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design/track_b_b0_1_addendum.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design/track_b_b0_1_addendum.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design/track_b_b0_1_addendum.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/_review_context/d1342-ruling.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/_review_context/d781-ruling.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/_review_context/d782-ruling.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/_review_context/d765-ruling.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/_review_context/d693-ruling.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/_review_context/d622-ruling.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/scripts/track_b_b0_1_ruled_power.py",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design/track_b_b0_1_ruled_power.json",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/_review_context/d693-RECOMMENDATION.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/_review_context/OPTIONS.md",
+   "tool": "Read"
+  },
+  {
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/scripts/build_m6_holdout_floors_v2.py",
+   "pattern": "def |tolerance_over_sigma|sort|prune",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/scripts/build_m6_holdout_floors_v2.py",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/scripts/build_m6_holdout_floors_v2.py",
+   "tool": "Read"
+  },
+  {
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/tests/test_track_b_b0_1_addendum_record.py",
+   "pattern": "PROTOCOL_V2_SHA256|protocol-v2|def test_",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/tests/test_track_b_b0_1_addendum_record.py",
+   "tool": "Read"
+  },
+  {
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/scripts/track_b_b0_1_addendum_tables.py",
+   "pattern": "ruled|def render|def _",
+   "tool": "Grep"
+  },
+  {
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/tests/test_track_b_b0_1_ruled_power.py",
+   "pattern": "def test_|OUTPUT|ruled_record\\(|json.loads",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/scripts/track_b_b0_1_addendum_tables.py",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/_review_context/trackb-design-20260928.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/_review_context/trackb-design-20260928.md",
+   "tool": "Read"
+  },
+  {
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design/track_b_b0_1_planning_values.json",
+   "pattern": "201[2-9]",
+   "tool": "Grep"
+  },
+  {
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design/track_b_b0_1_planning_values.json",
+   "pattern": "^ {1,2}\"[a-z_0-9]+\":",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design/track_b_b0_1_planning_values.json",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design/track_b_b0_1_planning_values.json",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design/track_b_b0_1_planning_values.json",
+   "tool": "Read"
+  },
+  {
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design/track_b_b0_1_counts.json",
+   "pattern": "support|level_cells|pooled_two_step",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design/track_b_b0_1_counts.json",
+   "tool": "Read"
+  },
+  {
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design/track_b_b0_1_addendum_q6_review_r1.md",
+   "pattern": "M2|degrees of freedom|t value|Student",
+   "tool": "Grep"
+  },
+  {
+   "glob": "docs/design/track_b_b0_1_*",
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root",
+   "pattern": "6113379406|6110674288|issue #42|#42 ",
+   "tool": "Grep"
+  },
+  {
+   "glob": "track_b_b0_1_addendum_q6_root_r*.json",
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design",
+   "pattern": "\"(head|commit|archive_files|files|manifest_sha256|removed_count|context)[a-z_]*\":",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design/track_b_b0_1_addendum_q6_root_r4.json",
+   "tool": "Read"
+  },
+  {
+   "pattern": "{gates.yaml,paper/paper.qmd,docs/design/m6_projection_engine.md,docs/analysis/m6_qstar_train_only_selection*,docs/analysis/m6_rhostar*,docs/forecasts/timeline_ledger.json,data/external/psid_codebook_field_evidence/*,docs/design/m6_candidate3_*,tests/test_m6_qstar_selection.py}",
+   "tool": "Glob"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/tests/test_track_b_b0_1_ruled_power.py",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/tests/test_track_b_b0_1_ruled_power.py",
+   "tool": "Read"
+  },
+  {
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/_review_context/pr490-comments.md",
+   "pattern": "2012|2014|2008|2010",
+   "tool": "Grep"
+  },
+  {
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design/track_b_b0_1_addendum_reads.json",
+   "pattern": "\"(n_calls|calls|flagged|n_flagged|by_hand|hand_classified|scope_flagged|restricted_entries_checked|summary|unresolved)[a-z_]*\":",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/docs/design/track_b_b0_1_addendum_reads.json",
+   "tool": "Read"
+  },
+  {
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/tests/test_track_b_b0_1_addendum_reads.py",
+   "pattern": "105|1,801|fourteen|Fourteen|seven|eleven",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r5-20261011/root/tests/test_track_b_b0_1_addendum_reads.py",
+   "tool": "Read"
+  }
+ ]
+}

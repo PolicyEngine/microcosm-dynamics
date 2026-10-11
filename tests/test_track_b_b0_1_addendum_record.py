@@ -714,3 +714,23 @@ def test_ruled_power_figures_come_from_the_record(prose, ruled_record):
     ]
     for phrase in expected:
         assert phrase in prose, phrase
+
+
+@pytest.mark.parametrize(
+    "sentence",
+    [
+        # Q6 round 5: the stratum rule is fixed before the floor
+        "Such a stratum is merged into the stratum with the nearest "
+        "stratum code, the lower one on a tie",
+        "Exact Rao-Wu, by integer copies",
+        "ν is Σ_h (n_h - 1) after the merges",
+        # Q6 round 5: the revision session's B1 exposure
+        "It never opened B1's raw output, its evidence files or its sealed "
+        "logs",
+        "No transcript-derived record exists for this session",
+        # Q6 round 5: the t value's authority
+        '"d781 six level cells, d782 Rao-Wu SE, t at 63 df"',
+    ],
+)
+def test_addendum_carries_the_round_5_fixes(prose, sentence):
+    assert sentence in prose
