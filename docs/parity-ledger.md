@@ -26,9 +26,9 @@ What separates the model from DYNASIM today falls into three groups.
 The two projections compared with DYNASIM3 draw no earnings,
 marriages, divorces or births after 2010, check no one's insured
 status and apply no retirement earnings test. The population is
-effectively closed: no immigrant or emigrant enters or leaves any
-projection run on real data, and newborns appear only in runs of gate
-m6's engine, which score none of them. And the model produces no national cost estimate,
+effectively closed: no model of immigration or emigration runs on real
+data, and the two comparison projections add no one after they start.
+And the model produces no national cost estimate,
 trust-fund balance or depletion date, and projects no SSI, wealth or
 pension income.
 
@@ -219,16 +219,17 @@ The draft 24-month plan shown at the NASI meeting on 1 October 2026,
 which `docs/plans/microcosm-start.md` summarizes, puts forward
 earnings in the projections in months 2 to 5 and the earnings test and
 family maximum, as one item, in months 2 to 4. It leaves moving the
-engine into Microcosm outside its 24 months. This path is longer in
-two of those places: B1 v2, the B0.1 addendum and B2 come before
-forward earnings enters a projection, and R2, R3, H and I come between
-the payment rules and the projections.
+engine into Microcosm outside its 24 months. The plan predates the
+11 October rulings and the hold on B2 under d1342. Applying the
+earnings test in a projection needs R2, R3, H and I first (step 3
+above), which the plan does not list as separate items.
 
 ## Known gaps without a tracking issue
 
 No open issue or pull request in this repository plans a build or a
 gate for these as of 11 October 2026. The roadmap issues [#74][i74]
-and [#113][i113], and [#412][i412], name some of them without a plan.
+and [#113][i113], and [#412][i412], name some of them as future work;
+none has a registered gate or a build under way.
 Issue drafts for each are with the maintainers.
 
 - **Mortality differences by income, education and race.** Every
@@ -241,8 +242,8 @@ Issue drafts for each are with the maintainers.
   [#513][pr513] adds MINT's group categories as code; nothing yet
   registers or scores the full set of published group cells,
   lifetime-earnings groups or beneficiary types.
-- **Admitting a joint projection past 2030.** No gate scores any year
-  after 2019, and gate 3 has no cells.
+- **Admitting a joint projection past 2030.** No gate scores a
+  projected year after 2019, and gate 3 has no cells.
 - **Starting states and later processes for newborns and immigrants,
   and emigration.** Newborns get only a link to the mother, the
   immigrant-entry module has never run on real data, the earlier
@@ -262,19 +263,19 @@ Issue drafts for each are with the maintainers.
 |---------|----------|-----------------------------------------|--------------------|
 | d479 | 27 September 2026 | Allows post hoc reruns, labeled as such; Track A v2 reruns exercises 1 and 3 with the statutory DI computation, and treats DI and spouse dual entitlement as a separate mechanism | `docs/design/urban2010_track_a_v2.md` |
 | d513 | 28 September 2026 | Ratifies the Track A v2 specification | `docs/design/urban2010_track_a_v2.md` |
-| d515 | 28 September 2026 | Approves the Track B design (forward earnings, the earnings test, claiming) with its recommended defaults, among them no claiming-response build until data identify one | `docs/design/track_b_b0_1_audit.md` |
+| d515 | 28 September 2026 | Approves revision 3 of the Track B design (forward earnings, the earnings test, claiming) with its recommended defaults; the design is kept outside the repository | `docs/design/track_b_b0_1_audit.md` |
 | d622 | 30 September 2026 | Lets a B1 v2 reconstructed-reproduction pass unlock B2, with the weaker label carried | [#505][pr505] |
 | d658 | 30 September 2026 | Registers trust-fund test A-COLA as Registration 18, report-only | [Registration 18][reg18] |
 | d660 | 30 September 2026 | Makes OACT and PWBM the primary comparators for the roadmap's trust-fund tests, CBO second and DYNASIM one of several | [#113][i113] |
 | d693 | 30 September 2026 | Accepts the B0.1 audit's eight defaults for B2's registration | [#505][pr505] |
 | d765, d781, d782 | 11 October 2026 | Set B2's design: household half-sample refits, six gated level cells and ten report-only, and design-cluster standard errors | [#505][pr505] |
-| d1342 | Open | Whether B2 proceeds at 0.813 power or changes its cells or tolerance | [#505][pr505] |
 | d905 | 10 October 2026 | Releases Registration 19's results to #42 with the frame defect disclosed | [#511][pr511] |
 | d927 | 10 October 2026 | Ratifies `gate_epuf_fill`'s tolerance and lets it lock as registered | [#515][pr515] |
-| d929 | Pending | Whether exercises 1, 3 and 4 rerun with learned career fills once `gate_epuf_fill` scores | Not yet public |
+| d929 | Open | Whether exercises 1, 3 and 4 rerun with learned career fills once `gate_epuf_fill` scores | [#516][pr516] |
 | d947 | Open | Whether to post the registration for starting projections from Microcosm | `docs/plans/microcosm-start-registration-draft.md` |
 | d1090 | 10 October 2026 | Settles two of the 1946–55 test's (U2) blockers | [#524][pr524] |
 | d1242 | Open | How U2 counts and discloses one blocker's exclusions | [#524][pr524] |
+| d1342 | Open | Whether B2 proceeds at 0.813 power or changes its cells or tolerance | [#505][pr505] |
 
 ## Sources on DYNASIM
 
