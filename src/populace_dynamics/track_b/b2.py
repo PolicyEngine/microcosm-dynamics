@@ -345,6 +345,114 @@ def cell_values(
 
 
 # --------------------------------------------------------------------------
+# The 2011 anchor, the domain and the truth support (audit section 7)
+# --------------------------------------------------------------------------
+def cohort(age: object) -> str | None:
+    """The M6 earnings cohort of a collection-wave age, or None."""
+    if pd.isna(age):
+        return None
+    value = int(age)
+    for name, lower, upper in m6_cells.EARN_COHORTS:
+        if lower <= value <= upper:
+            return name
+    return None
+
+
+def full_anchor_frame(
+    anchor_demo: pd.DataFrame, anchor_wave: int = ANCHOR_WAVE
+) -> pd.DataFrame:
+    """The full anchor: the positive-weight roster at the anchor wave.
+
+    ``anchor_demo`` is the selectors' anchor roster (present persons,
+    positive weight). The household is the anchor wave's interview number
+    and the fixed weight that wave's weight, as in the selectors'
+    ``_boundary_context`` (``select_m6_qstar_train_only.py:1416-1428``).
+    """
+    full = anchor_demo.loc[
+        anchor_demo["period"] == anchor_wave,
+        ["person_id", "interview", "weight"],
+    ].copy()
+    full = full.rename(columns={"interview": "household_id"})
+    full = full.sort_values("person_id", kind="stable").reset_index(drop=True)
+    if full.empty or full["person_id"].duplicated().any():
+        raise ValueError(f"the {anchor_wave} full anchor is empty or repeated")
+    if (pd.to_numeric(full["weight"], errors="coerce") <= 0).any():
+        raise ValueError(f"the {anchor_wave} full anchor has a weight <= 0")
+    return full
+
+
+def domain_person_ids(
+    earnings: pd.DataFrame,
+    full_anchor: pd.DataFrame,
+    origin: int = ORIGIN,
+) -> frozenset[int]:
+    """The domain from data alone: full-anchor persons with a valid origin
+    row (section 9, step 2)."""
+    with_row = set(
+        earnings.loc[earnings["period"] == origin, "person_id"].astype(int)
+    )
+    return frozenset(
+        int(person)
+        for person in set(full_anchor["person_id"].astype(int)) & with_row
+    )
+
+
+def truth_support(
+    earnings: pd.DataFrame,
+    full_anchor: pd.DataFrame,
+    domain_ids: frozenset[int],
+    periods: tuple[int, ...] = SCORED_PERIODS,
+) -> pd.DataFrame:
+    """The domain's earnings rows at the scored periods with a cohort.
+
+    Each row carries the person's fixed anchor weight (its own weight kept
+    as ``raw_row_weight``) and the cohort of its collection-wave age, as in
+    the selectors' ``_boundary_context`` and the planning script's
+    ``build_context``.
+    """
+    fixed_weight = full_anchor.set_index("person_id")["weight"]
+    truth = earnings.loc[
+        earnings["period"].isin(periods)
+        & earnings["person_id"].isin(domain_ids)
+    ].copy()
+    truth["raw_row_weight"] = truth["weight"].astype("float64")
+    truth["weight"] = truth["person_id"].map(fixed_weight).astype("float64")
+    truth["cohort"] = truth["age"].map(cohort)
+    truth = truth[truth["cohort"].notna()].copy()
+    truth = truth.sort_values(["person_id", "period"], kind="stable")
+    truth = truth.reset_index(drop=True)
+    if truth.duplicated(["person_id", "period"]).any():
+        raise ValueError("truth support has duplicate person-period rows")
+    return truth
+
+
+def split_floor(
+    full_anchor: pd.DataFrame,
+    truth: pd.DataFrame,
+    split_column: str,
+    *,
+    level_years: tuple[int, ...] = LEVEL_YEARS,
+    change_years: tuple[int, ...] = CHANGE_YEARS,
+) -> tuple[dict[str, dict[str, float]], list[dict[str, Any]]]:
+    """``run_floor`` on the full anchor split by ``split_column``, truth only.
+
+    Each seed splits the full anchor first and then intersects each half
+    with the truth support (section 4). Returns every cell's floor and the
+    gate seeds' (0-4) detail.
+    """
+
+    def compute(person_ids: set[object]) -> dict[str, Any]:
+        selected = set(int(value) for value in person_ids)
+        return earnings_cells(
+            truth[truth["person_id"].isin(selected)],
+            level_years=level_years,
+            change_years=change_years,
+        )
+
+    return m6_cells.run_floor(full_anchor, compute, split_column)
+
+
+# --------------------------------------------------------------------------
 # Root-parameterised multiplicities (section 13, "To B2")
 # --------------------------------------------------------------------------
 def stream(root: int, *words: int) -> np.random.Generator:
