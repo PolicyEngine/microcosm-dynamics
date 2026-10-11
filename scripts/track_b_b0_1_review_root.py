@@ -222,6 +222,9 @@ PERSISTED_RX = re.compile(r"(?:Full output saved to|saved to):?\s+(/\S+)")
 def _result_paths(name: str | None, text: str) -> list[str]:
     """Paths a Glob or Grep result returned: each line's leading path.
 
+    Absolute lines are taken as they are. A line that looks like a path
+    relative to the root (word characters, dots, slashes) is taken too,
+    because the harness returns Glob and Grep paths relative to the root.
     A Read result is file content, so paths quoted in it are not reads.
     A result whose call is unknown is treated like a Grep result.
     """
@@ -230,8 +233,14 @@ def _result_paths(name: str | None, text: str) -> list[str]:
     out = []
     for line in text.splitlines():
         line = line.strip()
+        if not line:
+            continue
+        head = re.split(r":\d", line, maxsplit=1)[0].rstrip(":")
         if line.startswith("/"):
-            out.append(re.split(r":\d", line, maxsplit=1)[0].rstrip(":"))
+            out.append(head)
+        elif re.fullmatch(r"[\w.@+-][\w./@+-]*", head):
+            # A path relative to the root, as the harness returns them.
+            out.append(head)
     return out
 
 
@@ -243,7 +252,10 @@ def read_log(
     ``transcript`` is the lane's stream-json record: one JSON object per
     line. Tool calls are ``tool_use`` blocks; results are ``tool_result``
     blocks. A call's path fields must lie inside the root and outside the
-    denied paths; so must every path a Glob or Grep result returns. Paths
+    denied paths; so must every path a Glob or Grep result returns,
+    absolute or relative to the root. A Glob's pattern and a Grep's file
+    filter must not be absolute, hold a ``..`` segment or name a denied
+    path, even to confirm its absence. Paths
     quoted inside a file the lane read are content, not reads. When the
     harness saves an oversized result outside the root, the log records
     the notice; the review is void only if a later call opens that file.
@@ -253,6 +265,7 @@ def read_log(
     calls: list[dict[str, Any]] = []
     names: dict[str, str] = {}
     named: set[str] = set()
+    patterns: set[str] = set()
     returned: set[str] = set()
     persisted: set[str] = set()
     for line in transcript.read_text(encoding="utf-8").splitlines():
@@ -279,6 +292,12 @@ def read_log(
                 for key in ("file_path", "path"):
                     if key in fields:
                         named.add(fields[key])
+                # A Glob's pattern and a Grep's file filter name paths too.
+                # A Grep's regex is searched text, not a path.
+                if block.get("name") == "Glob" and "pattern" in fields:
+                    patterns.add(fields["pattern"])
+                if "glob" in fields:
+                    patterns.add(fields["glob"])
             elif block.get("type") == "tool_result":
                 name = names.get(str(block.get("tool_use_id")))
                 for text in _strings(block.get("content")):
@@ -302,10 +321,28 @@ def read_log(
             return "denied"
         return "inside_root"
 
+    def classify_pattern(pattern: str) -> str:
+        """A pattern leaves the root if it is absolute or holds a ``..``
+        segment; it names a denied path if that path's text appears in it,
+        even to confirm the path's absence."""
+        if pattern.startswith(("/", "~")) or re.search(
+            r"(?:^|[/{,])\.\.(?:[/},]|$)", pattern
+        ):
+            return "outside_root"
+        if any(d in pattern for d in denied) or CODEBOOK_DIR in pattern:
+            return "denied"
+        return "inside_root"
+
     paths = {path: classify(path) for path in sorted(named | returned)}
+    paths.update(
+        {
+            f"pattern:{pattern}": classify_pattern(pattern)
+            for pattern in sorted(patterns)
+        }
+    )
     bad = sorted(path for path, kind in paths.items() if kind != "inside_root")
     return {
-        "schema": "track_b_b0_1_review_read_log.v2",
+        "schema": "track_b_b0_1_review_read_log.v3",
         "root": str(root),
         "n_tool_calls": len(calls),
         "tool_calls": calls,

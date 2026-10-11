@@ -312,16 +312,19 @@ For each gated cell c, on full support:
   over 4,000 design replicates, with the law fixed and each person's
   projected paths fixed. A design replicate resamples PSID's
   sampling-error clusters (`ER31997`) within strata (`ER31996`) among
-  the truth-support persons, by Rao-Wu, as arm D did. Its multiplicities
-  follow arm D's `design_multiplicities` rule, through the
-  root-parameterised copy section 13 specifies ("To B2"), never the
-  pinned function, which reads protocol v2's root:
-  - in a stratum with two clusters, one is drawn and copied twice;
-  - a stratum with one cluster keeps it once;
-  - a stratum with three or more clusters draws that many with
-    replacement. That is not Rao-Wu, and it understates the stratum's
-    variance by (n_h - 1)/n_h. At the 2006 pseudo-origin every one of the
-    63 strata had exactly two clusters.
+  the truth-support persons, by Rao-Wu.
+  - **Two-cluster strata** follow arm D's `design_multiplicities` rule:
+    one cluster is drawn and copied twice. That rule is applied through
+    the root-parameterised copy section 13 specifies ("To B2"), never the
+    pinned function, which reads protocol v2's root.
+  - **Other strata** follow the stratum rule below, not arm D.
+    - Arm D keeps a one-cluster stratum once.
+    - It draws a stratum of three or more clusters with replacement.
+      That is not Rao-Wu, and it understates the stratum's variance by
+      (n_h - 1)/n_h.
+
+  At the 2006 pseudo-origin every one of the 63 strata had exactly two
+  clusters.
 
   **Only two-cluster strata are admitted (Q6 round 2).** Arm D's rule is
   Rao-Wu only where a stratum has two clusters:
@@ -333,9 +336,11 @@ For each gated cell c, on full support:
   So B2's floor builder counts the strata among B2's truth-support persons
   by cluster count before any candidate run, and handles the other cases
   by this rule, fixed here (Q6 round 5):
-  - **One cluster.** Such a stratum is merged into the stratum with the
-    nearest stratum code, the lower one on a tie. The merge is done
-    before anything else, so the merged stratum is then counted with its
+  - **One cluster.** Such a stratum is merged into the nearest stratum
+    by code among the strata with two or more clusters, the lower code on
+    a tie. If no stratum has two or more clusters, all the one-cluster
+    strata merge into one. All merges are applied together, before
+    anything else, and the merged strata are then counted with their
     combined clusters.
   - **Three or more clusters.** Exact Rao-Wu, by integer copies. Each
     replicate draws n_h - 1 clusters with replacement in such a stratum,
@@ -1282,7 +1287,13 @@ Calls that took in excluded files, each mechanically:
   import every test module and print one count each;
 - `git diff --stat` and `--name-status` listings;
 - one rerun of the reads extractor on the round-1 export. The session did
-  not open the export (section 15).
+  not open the export (section 15);
+- the exposure inventory, rerun at each review head from round 2 on, which
+  reads every tracked file's bytes and records only line ranges, pattern
+  families and counts;
+- the review-root builder, run for each round from 2 on, which extracts
+  the head, removes the denied files unread and scans the rest only for
+  the two codebook tokens.
 
 Further reads and actions of this session, recorded here in prose. No
 transcript-derived record exists for this session; only the first
@@ -1351,6 +1362,15 @@ sharpened after round 1 (below).
   not reads. When the harness saves an oversized result outside the
   root, the log records the notice, and the review is void only if a
   later call opens that file.
+  - Since Q6 round 6, the log also checks each Glob pattern and each
+    Grep file filter. One that is absolute, holds a `..` segment, or
+    names a denied path voids the review, even if it only confirms the
+    path's absence.
+  - It also checks returned paths given relative to the root, as the
+    harness returns them.
+  - Rounds 5 and 6's logs were regenerated under this rule. Round 1's
+    log came from another session's transcript, under the rule as it
+    stood then, and is not regenerated.
 - **Numbers.** Numerical reproduction is in the CI-pinned tests, not the
   reviewer's job.
 
@@ -1481,7 +1501,7 @@ place at this head:
 
 | Finding | Disposition |
 |---|---|
-| M: a stratum with three or more clusters would be resampled by the ordinary bootstrap, not Rao-Wu | Section 7 admits only two-cluster strata. B2's floor builder stops before any candidate run if any stratum has one cluster or three or more (sections 7, 9, 13) |
+| M: a stratum with three or more clusters would be resampled by the ordinary bootstrap, not Rao-Wu | Section 7 admits only two-cluster strata. B2's floor builder stops before any candidate run if any stratum has one cluster or three or more (sections 7, 9, 13). (Superseded by round 5's L3: the stratum rule is now fixed in section 7.) |
 | M: the reads extractor missed `git grep` output prefixed with a revision | The counter tests the field after a revision too, and a test pins it. The record was regenerated: two agent calls moved to "names or counts only". Section 14 and this section are restated |
 | M: the Codex read log approved a path built from `$PWD` | The read log voids any unquoted shell expansion. Tests cover `$NAME`, `$Ellipsis`, `$(...)` and backquotes, and allow single-quoted dollars. Under the fixed rule this round's log still counts |
 | L: "thirteen" scope-flagged calls; the record has fourteen | Corrected and pinned |
@@ -1560,15 +1580,17 @@ root, with no shell and no web".
 - So rounds 2-4 count as additional independent reviews, which shaped
   the fixes above, not as the Q6 review of record.
 
-**Round 5** is the Q6 review of record, in round 1's form: Opus 5.5 in
-isolated-review mode, with Read, Glob and Grep only, no MCP servers, plan
-permission mode, the root as its only directory, and the Claude read log.
+**Round 5** was dispatched as the Q6 review of record, in round 1's
+form: Opus 5.5 in isolated-review mode, with Read, Glob and Grep only, no
+MCP servers, plan permission mode, the root as its only directory, and
+the Claude read log.
 A first dispatch, job `20261011-163220-b01-addendum-q6-r5`, was cancelled
 about a minute after launch so that master could be merged first. Its
 transcript holds only the session's start event and no tool call. Round 5
 reviews the head after that merge.
 
-**Round 5 (the Q6 review of record): request changes.**
+**Round 5 (void as the Q6 review of record under the rule fixed after
+round 6): request changes.**
 
 - **Root.** `git archive` of `046480a`, 1,934 files, manifest
   SHA-256 `5098b02ca4cfb2fa…`.
@@ -1588,8 +1610,14 @@ reviews the head after that merge.
     transcript, copied verbatim.
 - **Read log.** `docs/design/track_b_b0_1_addendum_q6_readlog_r5.json`,
   from that transcript, covers 45 tool calls. Every path named or
-  returned lies inside the root, none is denied, and no oversized result
-  was saved outside it, so the review counts.
+  returned lies inside the root, and no oversized result was saved
+  outside it.
+  - One Glob's pattern names denied paths: an absence check that
+    returned nothing. The first log missed it, because it did not
+    classify patterns; Q6 round 6 found the gap.
+  - Under the rule as fixed after round 6, which voids a review whose
+    calls name a denied path, round 5 does not count as the Q6 review of
+    record. Its findings were answered all the same.
 - **Verdict.** `REQUEST CHANGES`, with no high finding, one medium and five
   low. The review is `docs/design/track_b_b0_1_addendum_q6_review_r5.md`.
   - It met no B2 outcome and no 2008/2010 selector outcome.
@@ -1606,8 +1634,45 @@ reviews the head after that merge.
 | L4: stale wording on the ladder's floor and on the context copies | Both are corrected |
 | L5: "nothing after 2010 was recorded" | Section 10 names the 2012/2014 support counts the record copies from the frozen audit record |
 
-**Round 6** reviews the changed head on a newly built root, in round 5's
-form. Its record follows.
+**Round 6: request changes.**
+
+- **Root.** `git archive` of `0487adc`, 1,938 files, manifest SHA-256
+  `13c185da7f233ab4…`.
+  - The inventory rerun is
+    `docs/design/track_b_b0_1_addendum_q6_inventory_r6.json`. It flagged
+    nothing new.
+  - The same 27 files were removed whole, and four code-map tables. The
+    ten context copies went in.
+  - The root record is `docs/design/track_b_b0_1_addendum_q6_root_r6.json`.
+- **Lane.** Subfleet job `20261011-170343-b01-addendum-q6-r6`, in round 5's
+  form (Opus 5.5, isolated review, Read, Glob and Grep only). It ran on
+  2026-10-11 from 21:13 to 21:22 UTC and exited 0.
+  - As in round 5, Subfleet then marked the job lost because a lane
+    process lingered, so the review is the result event of the lane's
+    transcript, copied verbatim.
+- **Read log.** `docs/design/track_b_b0_1_addendum_q6_readlog_r6.json`,
+  under the fixed rule, covers 37 tool calls.
+  - Every path named or returned, the relative result paths included, lies
+    inside the root.
+  - No pattern is absolute, leaves the root or names a denied path.
+  - So round 6 counts. It is the first Q6 review of record under the rule
+    as fixed.
+- **Verdict.** `REQUEST CHANGES`, with no high finding, one medium and
+  three low. The review is
+  `docs/design/track_b_b0_1_addendum_q6_review_r6.md`.
+  - It met no B2 outcome and no 2008/2010 selector outcome.
+  - It checked each of round 5's dispositions in substance, and section
+    11's figures.
+
+| Finding | Disposition |
+|---|---|
+| M1: the Claude read log classified neither Glob patterns nor results given relative to the root, so round 5's Glob naming denied paths went unflagged | The read log classifies Glob patterns and Grep file filters: absolute, `..` or denied-name patterns void the review. It takes relative result lines as paths. Tests cover each case, and four mutants fail them. Rounds 5 and 6's logs were regenerated, round 5 no longer counts, and this section and the plan's read-log rule say so |
+| L1: element 8 gave arm D's rule and the stratum rule side by side | Element 8 applies arm D's rule to two-cluster strata only; other strata follow the stratum rule. Round 2's row is marked superseded |
+| L2: the one-cluster merge was ambiguous when such strata are adjacent | They merge into the nearest stratum with two or more clusters, the lower code on a tie. If there is none, all merge into one. Merges apply together, then the strata are counted |
+| L3: section 14 omitted the inventory reruns and root builds | Section 14 lists both |
+
+**Round 7** reviews the changed head on a newly built root, in round 6's
+form, under the fixed read-log rule. Its record follows.
 
 ## 16. Protocol record
 

@@ -719,9 +719,11 @@ def test_ruled_power_figures_come_from_the_record(prose, ruled_record):
 @pytest.mark.parametrize(
     "sentence",
     [
-        # Q6 round 5: the stratum rule is fixed before the floor
-        "Such a stratum is merged into the stratum with the nearest "
-        "stratum code, the lower one on a tie",
+        # Q6 round 5: the stratum rule is fixed before the floor; round
+        # 6 (L2) made the merge target unambiguous
+        "Such a stratum is merged into the nearest stratum by code among "
+        "the strata with two or more clusters, the lower code on a tie",
+        "All merges are applied together, before anything else",
         "Exact Rao-Wu, by integer copies",
         "ν is Σ_h (n_h - 1) after the merges",
         # Q6 round 5: the revision session's B1 exposure
@@ -733,4 +735,24 @@ def test_ruled_power_figures_come_from_the_record(prose, ruled_record):
     ],
 )
 def test_addendum_carries_the_round_5_fixes(prose, sentence):
+    assert sentence in prose
+
+
+@pytest.mark.parametrize(
+    "sentence",
+    [
+        # Q6 round 6 L1: arm D's rule binds only two-cluster strata
+        "**Two-cluster strata** follow arm D's `design_multiplicities` "
+        "rule",
+        "**Other strata** follow the stratum rule below, not arm D.",
+        # Q6 round 6 M1: the read log classifies patterns
+        "Since Q6 round 6, the log also checks each Glob pattern and each "
+        "Grep file filter",
+        "round 5 does not count as the Q6 review of record",
+        # Q6 round 6 L3: section 14 lists the inventory and root builds
+        "the exposure inventory, rerun at each review head from round 2 on",
+        "the review-root builder, run for each round from 2 on",
+    ],
+)
+def test_addendum_carries_the_round_6_fixes(prose, sentence):
     assert sentence in prose

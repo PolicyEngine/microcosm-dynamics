@@ -200,7 +200,12 @@ def test_read_log_ignores_quoted_paths_and_records_harness_notices(tmp_path):
     assert log["review_counts"] is True
     assert log["harness_persisted_outputs"] == [saved]
     assert log["persisted_outputs_opened"] == []
-    assert set(log["paths"]) == {str(root / "docs/keep.md"), str(root)}
+    assert set(log["paths"]) == {
+        str(root / "docs/keep.md"),
+        str(root),
+        "pattern:**/*.md",
+    }
+    assert log["paths"]["pattern:**/*.md"] == "inside_root"
 
     lines += [call("o", "Read", file_path=saved)]
     transcript.write_text("\n".join(lines), encoding="utf-8")
@@ -384,3 +389,109 @@ def test_codex_read_log_exempts_programs_only_in_program_position(tmp_path):
         _codex_transcript(tmp_path, commands), root, ["docs/denied.md"]
     )
     assert log["review_counts"] is True, log["flagged_kinds"]
+
+
+def _claude_transcript(tmp_path, blocks):
+    lines = [json.dumps({"message": {"content": [block]}}) for block in blocks]
+    path = tmp_path / "claude.jsonl"
+    path.write_text("\n".join(lines), encoding="utf-8")
+    return path
+
+
+@pytest.mark.parametrize(
+    ("blocks", "counts"),
+    [
+        # Q6 round 6: a Glob pattern naming a denied path, even one that
+        # only confirms absence, voids the review
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g1",
+                    "name": "Glob",
+                    "input": {"pattern": "{gates.yaml,docs/denied.md}"},
+                },
+                {"type": "tool_result", "tool_use_id": "g1", "content": ""},
+            ],
+            False,
+        ),
+        # an absolute or escaping pattern voids it
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g2",
+                    "name": "Glob",
+                    "input": {"pattern": "../**/*.md"},
+                }
+            ],
+            False,
+        ),
+        # a relative result path to a denied file voids it
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g3",
+                    "name": "Grep",
+                    "input": {"pattern": "bound", "glob": "*.md"},
+                },
+                {
+                    "type": "tool_result",
+                    "tool_use_id": "g3",
+                    "content": [
+                        {"type": "text", "text": "docs/denied.md:3:bound"}
+                    ],
+                },
+            ],
+            False,
+        ),
+        # a relative result path that escapes voids it
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g4",
+                    "name": "Glob",
+                    "input": {"pattern": "*.md"},
+                },
+                {
+                    "type": "tool_result",
+                    "tool_use_id": "g4",
+                    "content": [{"type": "text", "text": "../elsewhere.md"}],
+                },
+            ],
+            False,
+        ),
+        # ordinary relative results inside the root, and a Grep regex that
+        # mentions a denied file's name as text, count
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g5",
+                    "name": "Grep",
+                    "input": {"pattern": "gates.yaml", "path": "docs"},
+                },
+                {
+                    "type": "tool_result",
+                    "tool_use_id": "g5",
+                    "content": [
+                        {"type": "text", "text": "docs/keep.md:1:gates.yaml"}
+                    ],
+                },
+            ],
+            True,
+        ),
+    ],
+)
+def test_claude_read_log_checks_patterns_and_relative_results(
+    tmp_path, blocks, counts
+):
+    root = _invented_root(tmp_path)
+    log = review_root.read_log(
+        _claude_transcript(tmp_path, blocks),
+        root,
+        ["docs/denied.md", "gates.yaml"],
+    )
+    assert log["review_counts"] is counts, log["paths_outside_root_or_denied"]
