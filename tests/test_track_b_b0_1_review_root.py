@@ -258,7 +258,7 @@ def test_codex_read_log_counts_commands_inside_the_root(tmp_path):
         ("/bin/zsh -lc 'ls ~/PolicyEngine'", "outside_root"),
         ("/bin/zsh -lc 'cat $HOME/x'", "outside_root"),
         ("/bin/zsh -lc 'cd /tmp && ls'", "outside_root"),
-        ("/bin/zsh -lc \"rg --files=/var/x\"", "outside_root"),
+        ('/bin/zsh -lc "rg --files=/var/x"', "outside_root"),
         ("/bin/zsh -lc 'nl -ba docs/../../elsewhere.md'", "outside_root"),
     ],
 )
