@@ -306,6 +306,9 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # is opt-in through the B1 runner; nothing in the historical projection
     # imports it.
     Path("src/populace_dynamics/track_b/reconstructed.py"),
+    # Track B G (the gross-benefit layer) is an opt-in statutory reference;
+    # nothing in the historical projection imports it.
+    Path("src/populace_dynamics/track_b/gross_benefits.py"),
     # U2 documentary metadata stays outside the historical projection.
     Path("src/populace_dynamics/data/u2_source_registry.py"),
     Path("scripts/capture_track_u2_income_wealth.py"),
@@ -331,6 +334,41 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("scripts/track_u2_component_diagnostics.py"),
     Path("scripts/run_track_u2_registered.py"),
     Path("scripts/u2_u1_differential.py"),
+    # The opt-in PolicyEngine-US bridge passes benefit amounts to an
+    # external tax-benefit model after the fact; nothing historical imports
+    # it.
+    Path("src/populace_dynamics/bridge/__init__.py"),
+    Path("src/populace_dynamics/bridge/policyengine_us.py"),
+    Path("src/populace_dynamics/bridge/depletion_cut.py"),
+    Path("src/populace_dynamics/bridge/invented_population.py"),
+    Path("src/populace_dynamics/bridge/population.py"),
+    Path("src/populace_dynamics/bridge/population_summary.py"),
+    # The opt-in EPUF reader, measurement operator, cell statistics, gate
+    # algebra and scoring path (the proposed EPUF gate) read SSA's public
+    # earnings file after the fact; nothing historical imports them.
+    Path("src/populace_dynamics/data/epuf.py"),
+    Path("src/populace_dynamics/harness/epuf_operator.py"),
+    Path("src/populace_dynamics/harness/epuf_cells.py"),
+    Path("src/populace_dynamics/harness/epuf_gate.py"),
+    Path("src/populace_dynamics/harness/epuf_run.py"),
+    # The selectable projection baselines (NASI follow-up, 2026-10-01) are
+    # opt-in inputs for unregistered projections; every registered result
+    # keeps the TR2008 path, and nothing historical imports them.
+    Path("src/populace_dynamics/data/tr2026.py"),
+    Path("src/populace_dynamics/data/cbo2026.py"),
+    Path("src/populace_dynamics/data/life_table.py"),
+    Path("src/populace_dynamics/baselines/__init__.py"),
+    Path("src/populace_dynamics/baselines/asfr.py"),
+    Path("src/populace_dynamics/baselines/base.py"),
+    Path("src/populace_dynamics/baselines/cbo2026_long_term.py"),
+    Path("src/populace_dynamics/baselines/claim_tables.py"),
+    Path("src/populace_dynamics/baselines/common2026.py"),
+    Path("src/populace_dynamics/baselines/fertility.py"),
+    Path("src/populace_dynamics/baselines/interpolation.py"),
+    Path("src/populace_dynamics/baselines/legacy.py"),
+    Path("src/populace_dynamics/baselines/realized.py"),
+    Path("src/populace_dynamics/baselines/tr2026_intermediate.py"),
+    Path("src/populace_dynamics/baselines/track_a.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(

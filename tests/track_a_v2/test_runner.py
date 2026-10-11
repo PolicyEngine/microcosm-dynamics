@@ -1,7 +1,8 @@
 """INVENTED DATA - NOT A COMPARISON: joint ordering and conservation."""
 
+import traceback
 from collections import Counter
-from dataclasses import replace
+from dataclasses import fields, replace
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -14,7 +15,10 @@ from populace_dynamics.cola_track_a import benefits as legacy_benefits
 from populace_dynamics.cola_track_a.config import REGISTERED_ROWS
 from populace_dynamics.engine.loop import ProjectionResult
 from populace_dynamics.estimates.parameters import COLASeries
-from populace_dynamics.fra68_track.benefits import PersonScenario
+from populace_dynamics.fra68_track.benefits import (
+    PersonScenario,
+    union_benefit_rows,
+)
 from populace_dynamics.track_a_v2 import benefits, estimands, histories, runner
 from populace_dynamics.track_a_v2.invented import invented_parameters
 from populace_dynamics.track_a_v2.matrix import MATRIX
@@ -287,9 +291,10 @@ def _retirees(size=2, *, married=False):
     )
 
 
-def _joint_inputs(monkeypatch, *, married=False):
+def _joint_inputs(monkeypatch, *, married=False, population=None):
     """Run the real collectors over an invented one-draw projection."""
-    cohort, projection = _retirees(married=married)
+    cohort, projection = population or _retirees(married=married)
+    draws = projection if isinstance(projection, dict) else {0: projection}
     monkeypatch.setattr(runner, "_before_projection", lambda *args: None)
     monkeypatch.setattr(
         runner, "claiming_schedule", lambda *args, **kwargs: None
@@ -297,7 +302,7 @@ def _joint_inputs(monkeypatch, *, married=False):
     monkeypatch.setattr(
         runner.legacy,
         "_project_population",
-        lambda *args, **kwargs: ({0: projection}, {}),
+        lambda *args, **kwargs: (draws, {}),
     )
     return SimpleNamespace(
         cohort=cohort,
@@ -457,3 +462,402 @@ def test_interrupted_collector_keeps_existing_person_attribution(failure):
         assert caught.value.counters == dict(
             _collect(exercise, *_retirees(1, married=True))
         )
+
+
+def _awardees():
+    """Two invented single-spell DI awardees, requested at their award."""
+    return build([dict(id=1, awards=(2015,)), dict(id=2, awards=(2016,))])
+
+
+@pytest.mark.parametrize("phase", ("discovery", "validation"))
+@pytest.mark.parametrize(
+    "failure", (ValueError, RuntimeError, KeyboardInterrupt)
+)
+def test_interruption_inside_history_person_keeps_counts_and_identity(
+    monkeypatch, failure, phase
+):
+    """Draw-1 person 2 stops step 2: keeps draw 0, 2, and 1 once validated."""
+    cohort, first = _awardees()
+    _, second = _awardees()
+    inputs = _joint_inputs(
+        monkeypatch, population=(cohort, {0: first, 1: second})
+    )
+    name = "baseline_di_record" if phase == "discovery" else "validate"
+    original = getattr(histories.HistoryValidator, name)
+    injected = []
+
+    def interrupt(self, pid, *args):
+        if self.result is second and pid == 2 and not injected:
+            injected.append(pid)
+            raise failure("intended interruption inside a history person")
+        return original(self, pid, *args)
+
+    with patch.object(histories.HistoryValidator, name, interrupt):
+        result = runner.run_joint(inputs, draw_indices=(0, 1))
+    attempt = result["attempt"]
+    assert injected == [2]
+    assert attempt["status"] == "refused"
+    assert attempt["step"] == 2
+    assert attempt["refusal"]["type"] == failure.__name__
+    assert attempt["first_failing_person_draw"] == {
+        "person_id": 2,
+        "draw": 1,
+    }
+    # Discovery precedes every validation; validation keeps person 1's proxy.
+    prefix = {} if phase == "discovery" else {"d_proxy_award_year": 1}
+    assert result["failure_counters"] == prefix
+    assert attempt["counters"] == dict(
+        Counter({"d_proxy_award_year": 2}) + Counter(prefix)
+    )
+    assert attempt["uncomputed_rows"] == [row.key for row in MATRIX]
+    assert not result["rows"]
+
+
+_SCENARIO_READS = frozenset(
+    [field.name for field in fields(PersonScenario)] + ["total"]
+)
+
+
+def _tripwire(scenario, failure=None, reads=None):
+    """An invented scenario copy whose `reads`-th field read fails.
+
+    Returns the copy and its read log; with no `reads` it only logs.
+    """
+    seen = []
+
+    class Tripwire(PersonScenario):
+        def __getattribute__(self, name):
+            if name in _SCENARIO_READS:
+                seen.append(name)
+                if len(seen) == reads:
+                    raise failure("intended interruption in a paired person")
+            return super().__getattribute__(name)
+
+    values = {
+        field.name: getattr(scenario, field.name) for field in fields(scenario)
+    }
+    return Tripwire(**values), seen
+
+
+@pytest.mark.parametrize(
+    "failure", (ValueError, RuntimeError, KeyboardInterrupt)
+)
+def test_interruption_inside_paired_person_keeps_counts_and_identity(
+    monkeypatch, failure
+):
+    """Person 2's interrupted L×F0 pairing keeps person 1's pair count and 2."""
+    inputs = _joint_inputs(monkeypatch, married=True)
+    original = benefits.scenario_benefits
+    logs = []
+
+    def scenario(*args, **kwargs):
+        people, counts = original(*args, **kwargs)
+        if kwargs["scenario"].name == "baseline" and not logs:
+            people[2], seen = _tripwire(people[2], failure, reads=1)
+            logs.append(seen)
+        return people, counts
+
+    monkeypatch.setattr(benefits, "scenario_benefits", scenario)
+    result = runner.run_joint(inputs, draw_indices=(0,))
+    attempt = result["attempt"]
+    # The first read of person 2's baseline is inside v1's union loop.
+    assert logs == [["total"]]
+    assert attempt["status"] == "refused"
+    assert attempt["step"] == 3
+    assert attempt["refusal"]["type"] == failure.__name__
+    assert attempt["first_failing_person_draw"] == {
+        "person_id": 2,
+        "draw": 0,
+    }
+    assert result["failure_counters"] == {"beneficiaries_projected": 1}
+    # Six L×R collectors for both people, then person 1's pair count.
+    assert attempt["counters"]["beneficiaries_projected"] == 6 * 2 + 1
+    # Six L×R collectors, then the L C0 baseline and the L×F0 reform
+    # scenario, each computed for both people before the stop.
+    assert attempt["counters"]["spouse_unlinked"] == 6 * 2 + 2 + 2
+    assert attempt["uncomputed_rows"] == [row.key for row in MATRIX]
+    assert not result["rows"]
+
+
+class _Unreadable(dict):
+    """An invented paired row whose read of one field fails."""
+
+    def __init__(self, row, failure, field="benefit_base"):
+        super().__init__(row)
+        self.failure, self.field = failure, field
+
+    def __getitem__(self, name):
+        if name == self.field:
+            raise self.failure(f"intended interruption reading {name}")
+        return super().__getitem__(name)
+
+
+def _stopped_counters(failure, stop):
+    """Attempt and L×F0 row counters when its reform, pairing or filter stops."""
+    with pytest.MonkeyPatch.context() as patched:
+        inputs = _joint_inputs(patched, married=True)
+        original = benefits.scenario_benefits
+        paired = runner._paired_scenarios
+        injection, injected = _interrupt_first_level(
+            failure, 2, benefits.ScenarioCalculator
+        )
+        calls = []
+
+        def scenario(*args, **kwargs):
+            calls.append(kwargs["scenario"].name)
+            if stop == "reform" and len(calls) == 2:
+                with injection:
+                    return original(*args, **kwargs)
+            people, counts = original(*args, **kwargs)
+            if stop == "pairing" and len(calls) == 1:
+                people[1], _ = _tripwire(people[1], failure, reads=1)
+            return people, counts
+
+        def pair(*args, **kwargs):
+            rows, counts = paired(*args, **kwargs)
+            if stop == "filter":
+                rows[1] = _Unreadable(rows[1], failure)
+            return rows, counts
+
+        patched.setattr(benefits, "scenario_benefits", scenario)
+        patched.setattr(runner, "_paired_scenarios", pair)
+        result = runner.run_joint(inputs, draw_indices=(0,))
+    assert calls[0] == "baseline" and calls[1] != "baseline"
+    assert injected == ([2] if stop == "reform" else [])
+    assert result["attempt"]["step"] == 3
+    assert result["attempt"]["refusal"]["type"] == failure.__name__
+    return (
+        Counter(result["attempt"]["counters"]),
+        dict(result["benefit_counters"]["L×F0"]),
+    )
+
+
+@pytest.mark.parametrize("failure", (RuntimeError, KeyboardInterrupt))
+def test_later_pairing_stop_keeps_every_earlier_scenario_count(failure):
+    """A later stop never keeps fewer counts: reform, pairing, then filter."""
+    reform, reform_row = _stopped_counters(failure, "reform")
+    pairing, pairing_row = _stopped_counters(failure, "pairing")
+    filtered, filtered_row = _stopped_counters(failure, "filter")
+    # Person 1 finished the reform scenario before person 2 stopped it.
+    assert reform["spouse_unlinked"] == 6 * 2 + 2 + 1
+    # A pairing stop keeps both completed scenarios' counts (§10).
+    assert pairing["spouse_unlinked"] == 6 * 2 + 2 + 2
+    assert pairing["beneficiaries_projected"] == 6 * 2
+    # A filter stop after pairing also keeps both people's pair counts.
+    assert filtered["spouse_unlinked"] == 6 * 2 + 2 + 2
+    assert filtered["beneficiaries_projected"] == 6 * 2 + 2
+    for earlier, later in ((reform, pairing), (pairing, filtered)):
+        assert all(later[key] >= value for key, value in earlier.items())
+    # L×F0's own counters exist once its pairing completes, as for R rows.
+    assert reform_row == pairing_row == {}
+    assert filtered_row == {
+        "beneficiaries_projected": 2,
+        "baseline_spouse_unlinked": 2,
+        "reform_spouse_unlinked": 2,
+    }
+
+
+_KINDS = (None, "retired", "converted", "disabled")
+
+
+def _paired_inputs(people):
+    """Invented base/reform scenario pairs over invented alive retirees."""
+    cohort, result = _retirees(len(people))
+    calc = calculator(cohort, result, exercise=3)
+    base, reform = {}, {}
+    for pid, (amounts, kinds) in enumerate(people, 1):
+        for side, amount, kind in zip(
+            (base, reform), amounts, kinds, strict=True
+        ):
+            side[pid] = PersonScenario(
+                {"retired_worker": amount}, "projected", kind, 2027, 67
+            )
+    return base, reform, calc
+
+
+def _pair(base, reform, calc):
+    return runner._paired_scenarios(
+        base,
+        reform,
+        draw=0,
+        context=calc.ctx,
+        lookups=calc.lookups,
+        params=calc.ctx.params,
+    )
+
+
+_PEOPLE = st.lists(
+    st.tuples(
+        st.tuples(*[st.sampled_from((0.0, 40.0, 120.0))] * 2),
+        st.tuples(*[st.sampled_from(_KINDS)] * 2),
+    ),
+    min_size=2,
+    max_size=4,
+)
+
+
+@settings(max_examples=60, deadline=None)
+@given(
+    people=_PEOPLE,
+    data=st.data(),
+    failure=st.sampled_from((ValueError, RuntimeError, KeyboardInterrupt)),
+)
+def test_interrupted_pairing_names_the_processed_person(people, data, failure):
+    """Any failed read of a person's paired scenarios names that person."""
+    base, reform, calc = _paired_inputs(people)
+    person = data.draw(st.integers(1, len(people)))
+    side = data.draw(st.sampled_from((base, reform)))
+    probe, reads = _tripwire(side[person])
+    _pair(
+        *(({**s, person: probe} if s is side else s) for s in (base, reform)),
+        calc,
+    )
+    # Every read of the person's own scenario, in the union or double-zero branch.
+    at = data.draw(st.integers(1, len(reads)))
+    wired, _ = _tripwire(side[person], failure, reads=at)
+    scenarios = [
+        {**s, person: wired} if s is side else s for s in (base, reform)
+    ]
+    with pytest.raises(failure) as caught:
+        _pair(*scenarios, calc)
+    assert caught.value.person_id == person
+    # Differential: one inherited union call over only the completed prefix.
+    prefix = [pid for pid in base if pid < person]
+    assert caught.value.counters == dict(
+        union_benefit_rows(
+            {pid: base[pid] for pid in prefix},
+            {pid: reform[pid] for pid in prefix},
+            draw=0,
+            context=calc.ctx,
+            lookups=calc.lookups,
+            baseline_params=calc.ctx.params,
+            reform_params=calc.ctx.params,
+        )[1]
+    )
+    assert all(type(value) is int for value in caught.value.counters.values())
+
+
+def _prefix_union(base, reform, calc, persons):
+    """Counters of one inherited union call over only `persons`."""
+    return dict(
+        union_benefit_rows(
+            {pid: base[pid] for pid in persons},
+            {pid: reform[pid] for pid in persons},
+            draw=0,
+            context=calc.ctx,
+            lookups=calc.lookups,
+            baseline_params=calc.ctx.params,
+            reform_params=calc.ctx.params,
+        )[1]
+    )
+
+
+@pytest.mark.parametrize("failure", (ValueError, KeyboardInterrupt))
+@pytest.mark.parametrize("side", ("base", "reform"))
+def test_interrupted_double_zero_person_names_itself(failure, side):
+    """A stop in person 2's double-zero row names 2 and keeps only 1's counts."""
+    base, reform, calc = _paired_inputs(
+        [
+            ((40.0, 40.0), ("retired", "retired")),
+            ((0.0, 0.0), (None, None)),
+            ((120.0, 120.0), ("retired", "retired")),
+        ]
+    )
+    scenarios = {"base": base, "reform": reform}
+    # v1's union reads each side's total (total, then components) and
+    # skips person 2; the third read is v2's double-zero row.
+    wired, _ = _tripwire(scenarios[side][2], failure, reads=3)
+    scenarios[side] = {**scenarios[side], 2: wired}
+    with pytest.raises(failure) as caught:
+        _pair(scenarios["base"], scenarios["reform"], calc)
+    frames = traceback.extract_tb(caught.value.__traceback__)
+    assert "_double_zero_row" in [frame.name for frame in frames]
+    assert caught.value.person_id == 2
+    assert caught.value.counters == _prefix_union(base, reform, calc, [1])
+
+
+@pytest.mark.parametrize("failure", (ValueError, KeyboardInterrupt))
+def test_stop_after_inherited_union_returns_keeps_only_prior_counts(
+    monkeypatch, failure
+):
+    """A stop after v1's union returns person 3 keeps only 1 and 2's counts."""
+    base, reform, calc = _paired_inputs(
+        [
+            ((40.0, 40.0), ("retired", "retired")),
+            ((120.0, 0.0), ("retired", None)),
+            ((120.0, 120.0), ("retired", "converted")),
+        ]
+    )
+    union = runner.union_benefit_rows
+
+    def unreadable_last(baseline, *args, **kwargs):
+        rows, counts = union(baseline, *args, **kwargs)
+        if 3 in baseline:
+            assert counts
+            rows = [_Unreadable(row, failure, "birth_year") for row in rows]
+        return rows, counts
+
+    monkeypatch.setattr(runner, "union_benefit_rows", unreadable_last)
+    with pytest.raises(failure) as caught:
+        _pair(base, reform, calc)
+    assert caught.value.person_id == 3
+    assert caught.value.counters == _prefix_union(base, reform, calc, [1, 2])
+
+
+def _single_union_pairing(base, reform, calc):
+    """Pre-attribution reference: one v1 union call, then double zeros."""
+    lookups, context = calc.lookups, calc.ctx
+    rows, counters = union_benefit_rows(
+        base,
+        reform,
+        draw=0,
+        context=context,
+        lookups=lookups,
+        baseline_params=context.params,
+        reform_params=context.params,
+    )
+    present = {item["person_id"] for item in rows}
+    for pid in sorted(set(base) - present):
+        state = lookups.final.loc[pid]
+        names = sorted(set(base[pid].components) | set(reform[pid].components))
+        rows.append(
+            {
+                "draw": 0,
+                "person_id": pid,
+                "family_unit_id": int(
+                    context.cohort.persons_by_id.loc[pid, "family_unit_id"]
+                ),
+                "weight": float(state["weight"]),
+                "birth_year": int(state["birth_year"]),
+                "beneficiary_base": False,
+                "beneficiary_reform": False,
+                "benefit_base": 0.0,
+                "benefit_reform": 0.0,
+                "benefit_components": {
+                    name: {"base": 0.0, "reform": 0.0} for name in names
+                },
+                "basis": base[pid].basis,
+                "own_kind_base": base[pid].own_kind,
+                "own_kind_reform": reform[pid].own_kind,
+            }
+        )
+    for item in rows:
+        item["age_reference"] = 2030 - item["birth_year"]
+    return sorted(rows, key=lambda item: item["person_id"]), counters
+
+
+@settings(max_examples=100, deadline=None)
+@given(people=_PEOPLE)
+def test_per_person_pairing_replays_one_inherited_union_call(people):
+    """Rows, row and key order, and counter order equal one v1 union call."""
+    base, reform, calc = _paired_inputs(people)
+    rows, counters = _pair(base, reform, calc)
+    expected_rows, expected_counters = _single_union_pairing(
+        base, reform, calc
+    )
+    assert rows == expected_rows
+    assert [list(item) for item in rows] == [
+        list(item) for item in expected_rows
+    ]
+    assert list(counters.items()) == list(expected_counters.items())
+    assert type(counters) is Counter

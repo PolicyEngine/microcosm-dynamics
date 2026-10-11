@@ -1,5 +1,8 @@
 """INVENTED histories: §4.6 event predicates and refusal, without benefits."""
 
+from contextlib import ExitStack, contextmanager
+from unittest.mock import patch
+
 import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
@@ -190,3 +193,115 @@ def test_intended_opening_branch_metadata_disagreement_refuses(person):
     validator = HistoryValidator(result, cohort)
     with pytest.raises(HistoryRefusal, match="O1|S1"):
         validator.validate_requested()
+
+
+_SHAPES = {
+    "award": lambda pid: dict(awards=(2014 + pid,)),
+    "clamp": lambda pid: dict(birth=1940, awards=(2014 + pid,)),
+    "fallback": lambda pid: dict(
+        birth=1940, opening_di=True, opening_status="disabled_worker"
+    ),
+}
+# Every per-person §4.6 call takes the person first; single invented people
+# have no linked requests, so each call belongs to the person in progress.
+_CALLS = ("baseline_di_record", "event_counts", "validate")
+
+
+def _supported(kinds):
+    """Invented supported single-spell histories, one kind per person."""
+    return build(
+        [
+            dict(id=pid, **_SHAPES[kind](pid))
+            for pid, kind in enumerate(kinds, 1)
+        ]
+    )
+
+
+@contextmanager
+def _traced(failure=None, at=None):
+    """Log each per-person call; the `at`-th (0-based) raises `failure`."""
+    trace = []
+    originals = {name: getattr(HistoryValidator, name) for name in _CALLS}
+
+    def wrap(name):
+        def call(self, pid, *args):
+            trace.append((name, pid))
+            if len(trace) - 1 == at:
+                raise failure("intended interruption inside a history person")
+            return originals[name](self, pid, *args)
+
+        return call
+
+    with ExitStack() as stack:
+        for name in _CALLS:
+            stack.enter_context(
+                patch.object(HistoryValidator, name, wrap(name))
+            )
+        yield trace
+
+
+@settings(max_examples=60, deadline=None)
+@given(
+    kinds=st.lists(st.sampled_from(sorted(_SHAPES)), min_size=2, max_size=4),
+    data=st.data(),
+    failure=st.sampled_from((ValueError, RuntimeError, KeyboardInterrupt)),
+)
+def test_interrupted_history_person_names_itself_and_prior_counts(
+    kinds, data, failure
+):
+    """Any failed §4.6 discovery or validation call names its own person."""
+    cohort, result = _supported(kinds)
+    with _traced() as trace:
+        clean = HistoryValidator(result, cohort).validate_requested()
+    assert sum(clean.values()) == len(kinds)
+    at = data.draw(st.integers(0, len(trace) - 1))
+    _, person = trace[at]
+    with _traced(failure, at), pytest.raises(failure) as caught:
+        HistoryValidator(result, cohort).validate_requested()
+    assert caught.value.person_id == person
+    # Discovery ends before validation; validation keeps completed people.
+    validating = ("validate", person) in trace[: at + 1]
+    prefix = {}
+    if validating and person > 1:
+        earlier_cohort, earlier = _supported(kinds[: person - 1])
+        prefix = HistoryValidator(earlier, earlier_cohort).validate_requested()
+    assert caught.value.counters == dict(prefix)
+    assert all(type(value) is int for value in caught.value.counters.values())
+
+
+@pytest.mark.parametrize("failure", (RuntimeError, KeyboardInterrupt))
+def test_interrupted_linked_request_names_the_requesting_person(failure):
+    """Reading a linked spouse's record belongs to the person in progress."""
+    cohort, result = build(
+        [
+            dict(id=1, awards=(2015,), marital="married", spouse=2),
+            dict(id=2, awards=(2016,), marital="married", spouse=1),
+        ]
+    )
+    with _traced() as trace:
+        HistoryValidator(result, cohort).validate_requested()
+    # Person 1's own record, then its linked spouse's, then person 2's.
+    assert trace[:4] == [
+        ("baseline_di_record", 1),
+        ("baseline_di_record", 2),
+        ("baseline_di_record", 2),
+        ("baseline_di_record", 1),
+    ]
+    with _traced(failure, 1), pytest.raises(failure) as caught:
+        HistoryValidator(result, cohort).validate_requested()
+    assert caught.value.person_id == 1
+    assert caught.value.counters == {}
+
+
+@pytest.mark.parametrize("failure", (RuntimeError, KeyboardInterrupt))
+def test_interrupted_history_keeps_an_existing_person_attribution(failure):
+    """An inner failure already naming another person keeps that identity."""
+    cohort, result = _supported(("award", "award"))
+    attributed = type("Attributed", (failure,), {"person_id": 1})
+    with _traced() as trace:
+        HistoryValidator(result, cohort).validate_requested()
+    at = trace.index(("validate", 2))
+    with _traced(attributed, at), pytest.raises(failure) as caught:
+        HistoryValidator(result, cohort).validate_requested()
+    assert caught.value.person_id == 1
+    assert caught.value.counters == {"d_proxy_award_year": 1}

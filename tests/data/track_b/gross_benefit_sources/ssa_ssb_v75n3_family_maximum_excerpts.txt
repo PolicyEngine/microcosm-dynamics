@@ -1,0 +1,120 @@
+Research: Understanding the Social Security Family Maximum
+Social Security Bulletin, Vol. 75, No. 3, 2015
+https://www.ssa.gov/policy/docs/ssb/v75n3/v75n3p1.html
+Excerpts (document text as rendered; tables are tab-separated as rendered).
+
+[Rules for disability benefits]
+The family maximum for a disabled worker is 85 percent of the worker's average indexed monthly earnings (AIME), a measure of lifetime earnings.4 However, the family maximum for a disabled worker's family cannot be more than 150 percent or less than 100 percent of his or her PIA. The final amount is rounded to the next lowest ten cents.
+
+[Rules common to both OASI and DI]
+The family maximum rules are applied in the same way for both OASI and DI benefits. First, the family maximum amount is established based on the worker's PIA or AIME. Then, the worker's benefit is subtracted from the total benefit amount payable to the family. Next, the auxiliaries' benefits are reduced proportionately. The worker's own benefit is never reduced; only the benefits of his or her auxiliaries are reduced. The benefits for divorced spouses (including surviving divorced spouses) are never reduced.
+
+Table 1.
+Illustration of the family maximum rules for a surviving family, 2015
+Assumptions:
+Worker's AIME = $2,253
+Worker's PIA = $1,200
+Family maximum:
+OASI family maximum (on the worker's PIA):
+150% × $1,056 + 272% × $144 = $1,976
+Characteristic	Monthly benefit amount ($)	Rule applied
+Before family maximum
+Survivor benefits
+Spouse	900	75% of the worker's PIA
+Child 1	900	75% of the worker's PIA
+Child 2	900	75% of the worker's PIA
+Total family benefit	2,700	Sum of the survivor benefits
+After family maximum
+Survivor benefits
+Spouse	659	⅓ of the family maximum amount
+Child 1	659	⅓ of the family maximum amount
+Child 2	659	⅓ of the family maximum amount
+Total family benefit	1,976	Sum of the survivor benefits, capped by the family maximum amount
+SOURCE: Authors' calculations.
+NOTE: Dollar values are rounded to the nearest dollar for presentation purposes, but would actually be rounded down to the nearest dime.
+
+Table 2.
+Illustration of the family maximum rules for a family of a disabled worker, 2015
+Assumptions:
+Worker's AIME = $2,253
+Worker's PIA = $1,200
+Family maximum:
+DI family maximum (applied to the worker's AIME):
+85% × $2,253 = $1,915, which is more than 150%
+of the worker's PIA, so the family maximum =
+150% × $1,200 = $1,800
+Characteristic	Monthly benefit amount ($)	Rule applied
+Before family maximum
+Worker's benefit	1,200	100% of the worker's PIA
+Auxiliary benefits
+Spouse	600	50% of the worker's PIA
+Child 1	600	50% of the worker's PIA
+Child 2	600	50% of the worker's PIA
+Total family benefit	3,000	Sum of the worker's and auxiliaries' benefits
+After family maximum
+Worker's benefit	1,200	100% of the worker's PIA
+Auxiliary benefits
+Spouse	200	⅓ of the family maximum amount minus the worker's PIA ($600)
+Child 1	200	⅓ of the family maximum amount minus the worker's PIA ($600)
+Child 2	200	⅓ of the family maximum amount minus the worker's PIA ($600)
+Total family benefit	1,800	Sum of the worker's and auxiliaries' benefits, capped by the family maximum amount
+SOURCE: Authors' calculations.
+NOTES: Dollar values are rounded to the nearest dollar for presentation purposes, but would actually be rounded down to the nearest dime. In this case, 85 percent of the worker's AIME is $1,915, which is 160 percent of his or her PIA, greater than the cap of 150 percent of the PIA that applies to disability beneficiaries. As a result, the family maximum for this family is $1,800, or 150 percent of the worker's PIA.
+
+Table A-1.
+Illustration of the family maximum for a family of a disabled worker under Parisi rules, 2015
+Assumptions:
+Worker's AIME = $2,253
+Worker's PIA = $1,200
+Spouse's PIA = $1,000
+Family maximum:
+DI family maximum (applied to the worker's AIME):
+85% × $2,253 = $1,915, which is more than 150%
+of the worker's PIA, so the family maximum =
+150% × $1,200 = $1,800
+Characteristic	Monthly benefit amount ($)	Rule applied
+Before family maximum
+Worker's benefit	1,200	100% of the worker's PIA
+Spouse's worker benefit	1,000	100% of the spouse's PIA; dual entitlement rule—spouse receives his or her own PIA because the auxiliary benefit is less
+Auxiliary benefits
+Spouse	600	50% of the worker's PIA (potentially), but not actually paid
+Child 1	600	50% of the worker's PIA
+Child 2	600	50% of the worker's PIA
+Total family benefit	3,400	Sum of the worker's, spouse's, and auxiliaries' benefits
+After family maximum
+Worker's benefit	1,200	100% of the worker's PIA
+Spouse's worker benefit	1,000	100% of the spouse's PIA; dual entitlement rule—spouse receives his or her own PIA because the auxiliary benefit is less
+Auxiliary benefits
+Spouse	600	Parisi rules: The spouse does not receive an auxiliary benefit, so potential auxiliary benefits do not count toward the total family maximum auxiliary benefits.
+Child 1	300	½ of the family maximum amount minus the worker's PIA ($600)
+Child 2	300	½ of the family maximum amount minus the worker's PIA ($600)
+Total family benefit	2,800	Sum of the worker's and auxiliaries' benefits, capped by the family maximum amount, plus the spouse's worker benefit
+
+Table A-2.
+Illustration of the family maximum rules for a family of a disabled worker with a dually entitled auxiliary, under Parisi rules, 2015
+Assumptions:
+Worker's AIME = $2,253
+Worker's PIA = $1,200
+Spouse's PIA = $100
+Family maximum:
+DI family maximum (applied to the worker's AIME):
+85% × $2,253 = $1,915, which is more than 150%
+of the worker's PIA, so the family maximum =
+150% × $1,200 = $1,800
+Characteristic	Monthly benefit amount ($)	Rule applied
+Before family maximum
+Worker's benefit	1,200	100% of the worker's PIA
+Spouse's worker benefit	100	100% of the spouse's PIA
+Auxiliary benefits
+Spouse	500	Dual entitlement rule—50% of the worker's PIA ($600) minus the spouse's PIA ($100)
+Child 1	600	50% of the worker's PIA
+Child 2	600	50% of the worker's PIA
+Total family benefit	3,000	Sum of the worker's, spouse's, and auxiliaries' benefits
+After family maximum
+Worker's benefit	1,200	100% of the worker's PIA
+Spouse's worker benefit	100	100% of the spouse's PIA
+Auxiliary benefits
+Spouse	100	⅓ of the family maximum amount minus the worker's PIA ($600) minus the spouse's worker PIA
+Child 1	250	⅓ of the family maximum amount minus the worker's PIA ($600) plus ½ of the $100 withheld from the spouse's auxiliary benefit
+Child 2	250	⅓ of the family maximum amount minus the worker's PIA ($600) plus ½ of the $100 withheld from the spouse's auxiliary benefit
+Total family benefit	1,900	Sum of the worker's and auxiliaries' benefits, capped by the family maximum amount, plus the spouse's worker benefit

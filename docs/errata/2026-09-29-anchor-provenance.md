@@ -143,3 +143,9 @@ Row ids and output keys that `benchmarks/history.jsonl`, `gates.yaml` or other a
 - Cost-ordering results, as committed in `runs/replication_cost_ordering_v1.json`: T1 sign agreement 100% (forecast 100%, met); T2 Kendall tau 0.667 against the CBO column (forecast 1.0, not met); T3 Kendall tau 0.913 against the DYNASIM4 Table 3 row (forecast at least 0.8, met). The committed T2 cross-check against Mermin's DYNASIM3 2050 percent-of-scheduled row (`kendall_tau_pct_scheduled_xcheck`) is also 0.667, so T2's tau is the same against CBO's deficit row and against DYNASIM3's own benefit row.
 - The caregiver replication, the Mermin-rows replication and their committed results are unchanged; only citation text changes.
 - `docs/references.bib` is unchanged. The `mermin2005benefitreductions` note ("DYNASIM3, Runid 432") correctly names the report's own microsimulation run, and `smith2020fivedem` already reads "DYNASIM4, ID980".
+
+## Addendum, 29 September 2026 (PR #491)
+
+- PR #491 replaced the working paper with its rewrite. The rewrite drops the cost-ordering paragraph this erratum describes, along with its DYNASIM3 2050 cross-check sentence. It carries the same correction in the "Comparisons beyond DYNASIM" paragraph: the T2 check compared the model against CBO's 2005 estimates as Mermin (2005) reports them, and this erratum corrects the committed label. `tests/test_anchor_provenance_erratum.py` pins the new sentence.
+- PR #491 also adds references to `docs/references.bib`. The `mermin2005benefitreductions` and `smith2020fivedem` notes this erratum relies on are unchanged.
+

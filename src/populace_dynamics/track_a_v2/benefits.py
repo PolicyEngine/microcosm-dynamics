@@ -22,7 +22,11 @@ from populace_dynamics.track_a_v2.filing import (
     classify_ordering,
     spouse_timing,
 )
-from populace_dynamics.track_a_v2.histories import HistoryValidator, nullable
+from populace_dynamics.track_a_v2.histories import (
+    HistoryValidator,
+    attach_attempt,
+    nullable,
+)
 
 # §4.3 pins retirement to the unchanged inherited Track A convention.
 TRACK_A_COMPUTATION_YEARS = statutory_aime.ComputationYears.LEGACY_FIXED_35
@@ -52,18 +56,6 @@ def statutory_di_pia(history, *, birth_year, eligibility_year, params):
         eligibility_year,
         params,
     )
-
-
-def attach_attempt(error, counters, person_id):
-    """§10: an interrupted person keeps its counters and identity.
-
-    Any failure or interruption inside a per-person body carries the
-    collector's cumulative counters. An inner person attribution, such as
-    a linked spouse's refusal, is kept rather than replaced.
-    """
-    error.counters = dict(counters)
-    if not hasattr(error, "person_id"):
-        error.person_id = person_id
 
 
 def pia_parameter_fingerprint(params, eligibility_year):

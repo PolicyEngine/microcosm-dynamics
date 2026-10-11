@@ -20,6 +20,7 @@ _PSID_DATA_INDICATORS = (
 )
 _POLICYENGINE_ORACLE_INDICATORS = (
     "POPULACE_DYNAMICS_PE_US_DIR",
+    "POPULACE_DYNAMICS_PE_US_PYTHON",
     "~/PolicyEngine/policyengine-us",
 )
 # Section 2.8.4 explicitly assigns this one truth-side-only, byte-identity
