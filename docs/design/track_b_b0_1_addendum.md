@@ -906,8 +906,14 @@ measured (section 7), and the binding evaluation uses the measured r.
   `RECONSTRUCTED_REPRODUCTION` (d622). A v2 pass carries its weaker
   label, "reconstructed reproduction (weaker than bit-for-bit)", into
   B2's registration and every downstream disclosure. A
-  `BASELINE_REPLAY_MISMATCH` stops B2 (design line 451). No B1 run
-  artifact is committed as of this addendum.
+  `BASELINE_REPLAY_MISMATCH` stops B2 (design line 451). **Passed
+  2026-10-11:** B1 v2 returned `RECONSTRUCTED_REPRODUCTION`. All four
+  conditions are exact, with zero differences. The registration is issue
+  #42 comment 6110674288 and the result comment 6113379406. The result
+  discloses one launcher deviation: its shell ended with the operator's
+  session while the run went on to complete, so the exit code was not
+  captured. B1's raw output stays sealed until B2 registers, and no B1
+  run artifact is committed to this repository.
 
 **Decisions queued for Max.** None blocks this addendum's merge. Each
 blocked B2's registration. d765, d781 and d782 were ruled on 2026-10-11
@@ -1065,6 +1071,15 @@ decisions and decide nothing:
   cells. If it cannot, B2 stops at floor build, before any candidate
   outcome, and options B-D return to Max priced on B2's real
   tolerances.
+- Cite B1 v2's pass (issue #42 comments 6110674288 and 6113379406) with
+  its label, "reconstructed reproduction (weaker than bit-for-bit)"
+  (d622).
+- Launch the floor builder and any run not pinned to another environment
+  with at most four BLAS and OpenMP threads and
+  `OMP_WAIT_POLICY=PASSIVE`, as Max ruled on 2026-10-11 for the shared
+  host. Candidate 3's projection loop is pinned to eight threads and
+  `ACTIVE` by its frozen environment guard. If B2 needs it, the
+  registration states that pin and why.
 - A rescoped registration under d781 names the gated families in its
   headline and scores every other cell report-only.
 
@@ -1434,8 +1449,48 @@ place at this head:
 **After round 3: d1342.** Max ruled d1342 on 2026-10-11 (option A, proceed
 as ruled), and sections 1, 2, 5, 11 and 13 record it.
 
-**Round 4** reviews the changed head on a newly built root, in round 2's
-form. Its record follows.
+**Round 4: request changes.**
+
+- **Root.** `git archive` of `71961b9`, 1,866 files, manifest SHA-256
+  `73a1a9d86ebeacd3…`.
+  - The inventory rerun is
+    `docs/design/track_b_b0_1_addendum_q6_inventory_r4.json`. It flagged
+    nothing new.
+  - The same 27 files and four tables were removed. Ten context copies
+    went in: round 2's nine and the d1342 ruling.
+  - The root record is `docs/design/track_b_b0_1_addendum_q6_root_r4.json`.
+- **Lane.** Subfleet job `20261011-113615-b01-addendum-q6-r4`, GPT-6.1 Sol
+  as requested (unattested), read-only and isolated. It ran on 2026-10-11
+  from 16:12 to 16:23 UTC.
+- **Read log.** `docs/design/track_b_b0_1_addendum_q6_readlog_r4.json`
+  covers 13 commands, none leaving the root.
+- **Verdict.** `REQUEST CHANGES`, with no high finding, one medium and no
+  low. The review is `docs/design/track_b_b0_1_addendum_q6_review_r4.md`.
+  It confirmed:
+  - d1342 is carried exactly;
+  - element 8 is resolved;
+  - the record is complete at the rule level.
+
+| Finding | Disposition |
+|---|---|
+| M: five more ways a logged command could leave the root while the review counted: a tab-separated word, `bash -o errexit -c`, `~user` and zsh's `=program`, `cd`, and an executable path used as an operand | Each is closed. Words are re-split at any whitespace. Every word after a shell program is a script. A `~` shell word and `=program` void the review, and so do `cd`, `pushd` and `popd`. Executables are exempt only in program position. The log's docstring now calls it a conservative detector that cannot certify a shell lane. Tests cover each case, and six mutants each fail them. The read logs of rounds 2-4 were regenerated with the fixed tool, and each still counts |
+
+**The Q6 form, corrected after round 4.** d693's Q6 rider asks for "an
+independent Opus lane in Subfleet's isolated-review mode on a cleaned
+root, with no shell and no web".
+
+- Round 1 had that form. Rounds 2-4 ran on GPT-6.1 Sol, the default
+  reviewer since 2026-10-09, and that lane has a shell.
+- Their read logs show no command leaving the root. But a shell lane's
+  log cannot certify it blind, because a program can build a path at run
+  time.
+- So rounds 2-4 count as additional independent reviews, which shaped
+  the fixes above, not as the Q6 review of record.
+
+**Round 5** is the Q6 review of record, in round 1's form: Opus 5.5 in
+isolated-review mode, with Read, Glob and Grep only, no MCP servers, plan
+permission mode, the root as its only directory, and the Claude read log.
+Its record follows.
 
 ## 16. Protocol record
 

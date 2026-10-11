@@ -320,13 +320,13 @@ def read_log(
 #: A shell word that names a path outside the working directory: an
 #: absolute path, a home-relative one, or any ``..`` segment.
 _ESCAPE_RX = re.compile(r"(?:^|/)\.\.(?:/|$)")
-_HOME_RX = re.compile(r"^(?:~|\$HOME|\$\{HOME\})(?:/|$)")
-#: Absolute words that name a program or a device, not data the lane
-#: reads: executables in the system's bin directories, and /dev/null.
+#: Executables in the system's bin directories. In program position they
+#: are programs, not data the lane reads.
 _PROGRAM_RX = re.compile(
-    r"^(?:/(?:usr/(?:local/)?)?s?bin/[^/]+|/opt/homebrew/bin/[^/]+"
-    r"|/dev/null)$"
+    r"^(?:/(?:usr/(?:local/)?)?s?bin/[^/]+|/opt/homebrew/bin/[^/]+)$"
 )
+#: Devices a command may write to or read nothing from.
+_DEVICES = frozenset({"/dev/null", "/dev/stdout", "/dev/stderr"})
 
 
 #: A shell expansion: $NAME, ${...}, $(...), ANSI-C $'...', locale
@@ -385,9 +385,10 @@ _SHELLS = frozenset({"sh", "bash", "zsh", "dash", "ksh", "fish"})
 def _scripts(command: str) -> list[str]:
     """The shell scripts inside ``command``, at every depth.
 
-    A script is the argument after a ``-c`` style option (``-c``,
-    ``-lc``) of a shell program, or the words after ``eval``. Each is
-    split again for nested shells. Code given to other interpreters
+    After a shell program (``sh``, ``bash``, ``zsh`` and the like), every
+    later word is treated as a script, whatever options come between
+    (``bash -o errexit -c '...'``). So are the words after ``eval``. Each
+    is split again for nested shells. Code given to other interpreters
     (``python3 -c``) is not a shell script, so its dollars are not
     expansions; its paths are still scanned by ``_path_words``.
     """
@@ -400,18 +401,51 @@ def _scripts(command: str) -> list[str]:
             found.append(script)
             found.extend(_scripts(script))
             break
-        if name not in _SHELLS:
-            continue
-        for option_index in range(index + 1, len(words)):
-            option = words[option_index]
-            if not option.startswith("-"):
-                break
-            if "c" in option[1:] and option_index + 1 < len(words):
-                script = words[option_index + 1]
+        if name in _SHELLS:
+            for script in words[index + 1 :]:
                 found.append(script)
-                found.extend(_scripts(script))
-                break
+                if re.search(r"\s", script):
+                    found.extend(_scripts(script))
+            break
     return found
+
+
+#: Tokens that end a simple command, so the next word is a program.
+_SEPARATORS = frozenset({";", "&&", "||", "|", "&", "(", ")", "\n"})
+#: Commands that change the working directory.
+_DIRECTORY_CHANGES = frozenset({"cd", "pushd", "popd", "chdir"})
+
+
+def _program_words(script: str) -> set[str]:
+    """The words of ``script`` in program position.
+
+    That is each simple command's first word, after any ``NAME=value``
+    assignments and an ``env`` or ``command`` prefix, split at shell
+    separators.
+    """
+    import shlex
+
+    lexer = shlex.shlex(script, posix=True, punctuation_chars=True)
+    lexer.whitespace_split = True
+    try:
+        tokens = list(lexer)
+    except ValueError:
+        tokens = script.split()
+    programs: set[str] = set()
+    expect = True
+    for token in tokens:
+        if token in _SEPARATORS or set(token) <= set(";&|()"):
+            expect = True
+            continue
+        if expect:
+            if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=.*", token):
+                continue
+            if token in ("env", "command", "exec", "nice"):
+                programs.add(token)
+                continue
+            programs.add(token)
+            expect = False
+    return programs
 
 
 def _path_words(command: str) -> list[str]:
@@ -421,12 +455,14 @@ def _path_words(command: str) -> list[str]:
     ``--out=/x``, ``a:/x``, ``{a,/x}`` and ``cd /x;ls`` are seen."""
     words: list[str] = []
     for word in _shell_words(command):
+        if re.search(r"\s", word):
+            # A script or code: its own words are the candidates.
+            words.extend(_path_words(word))
+            continue
         for piece in re.split(r"[=:;&|()<>`{},]", word):
             piece = piece.strip().strip("'\"")
             if piece:
                 words.append(piece)
-        if " " in word:
-            words.extend(_path_words(word))
     return words
 
 
@@ -437,26 +473,28 @@ def read_log_codex(
 
     ``transcript`` is ``codex exec --json``'s event stream: one JSON object
     per line, each command an ``item`` of type ``command_execution``. The
-    lane runs with the root as its working directory, so a command stays
-    inside the root unless a word in it is an absolute path, a home path
-    or a ``..`` segment that leaves the root, or names a denied path. Each
-    such word is classified the way ``read_log`` classifies a named path;
-    any word outside the root or denied voids the review. Executables in
-    the system's bin directories and ``/dev/null`` are programs, not reads.
-    A relative word resolves inside the root, where no denied file exists,
-    so naming a denied file there reads nothing. A shell expansion outside
-    single quotes (``$NAME``, ``${...}``, ``$(...)``, ``$'...'``, a
-    backquote) cannot be resolved from the transcript, so it voids the
-    review too. The shell scripts inside a command (``zsh -lc``'s, and a
-    nested ``sh -c '...'`` or ``eval``) are rescanned at every depth;
-    code for other interpreters is scanned for paths only. Brace expansion
-    is split into its parts.
+    lane runs with the root as its working directory. Each command, and
+    each shell script inside it at every depth, is scanned, and any of
+    these voids the review:
 
-    The log is a detector, not a sandbox: a command that builds a path in
-    code (``open('/' + 'etc')``) is not caught, and the review brief
-    forbids reading outside the root. Command output is not
-    read: listing commands run inside the root can only return paths
-    inside it. No content is copied into the log, only commands.
+    - a word that leaves the root or names a denied path: an absolute
+      path (an executable in a system bin directory is exempt only in
+      program position), a ``..`` segment, or any word starting with
+      ``~``;
+    - an unquoted shell expansion: ``$NAME``, ``${...}``, ``$(...)``,
+      ``$'...'``, ``$"..."``, a backquote, or zsh's ``=program``;
+    - a directory change (``cd``, ``pushd``, ``popd``).
+
+    A relative word resolves inside the root, where no denied file exists,
+    so naming a denied file there reads nothing. Brace expansion is split
+    into its parts, and words are re-split at any whitespace.
+
+    This is a conservative detector for shell lanes, not a sandbox. It
+    cannot see a path a program builds at run time
+    (``open('/' + 'etc')`` in Python code), so it cannot certify a shell
+    lane as blind. The Q6 review of record runs on a lane with no shell
+    (d693); this log supplements reviews on other lanes. Command output is
+    not read. No content is copied into the log, only commands.
     """
     root = root.resolve()
     denied_set = set(denied)
@@ -481,11 +519,11 @@ def read_log_codex(
         seen.add((identifier, command))
         commands.append(command)
 
-    def classify(word: str) -> str | None:
-        if _HOME_RX.match(word):
-            return "outside_root"
+    def classify(word: str, programs: set[str]) -> str | None:
         absolute = word.startswith("/")
-        if absolute and _PROGRAM_RX.match(word):
+        if word in _DEVICES:
+            return None
+        if absolute and _PROGRAM_RX.match(word) and word in programs:
             return None
         if not absolute and not _ESCAPE_RX.search(word):
             # Resolves inside the root, where no denied file exists.
@@ -501,18 +539,33 @@ def read_log_codex(
 
     flagged: dict[str, str] = {}
     for command in commands:
-        # Codex runs each command as argv; a word is a shell script when
-        # it holds spaces (``/bin/zsh -lc "<script>"``). Its unquoted
-        # expansions cannot be resolved here, so each one voids the review.
-        for script in _scripts(command):
+        scripts = _scripts(command)
+        programs: set[str] = set()
+        for script in [command, *scripts]:
+            programs |= _program_words(script)
+        # Unquoted expansions in a shell script cannot be resolved here.
+        for script in scripts:
             for expansion in _expansions(script):
                 flagged[expansion] = "shell_expansion"
+        # A directory change moves the working directory off the root.
+        for program in programs:
+            if program.rsplit("/", 1)[-1] in _DIRECTORY_CHANGES:
+                flagged[program] = "directory_change"
+        for script in [command, *scripts]:
+            for word in _shell_words(script):
+                for piece in re.split(r"[;&|()<>{},]", word):
+                    if piece.startswith("~"):
+                        # Tilde expansion: a home directory, any user's.
+                        flagged[piece] = "outside_root"
+                if re.fullmatch(r"=[A-Za-z0-9_.+-]+", word):
+                    # zsh's =program expands to the program's path.
+                    flagged[word] = "shell_expansion"
         for word in _path_words(command):
-            kind = classify(word)
+            kind = classify(word, programs)
             if kind not in (None, "inside_root"):
                 flagged[word] = kind
     return {
-        "schema": "track_b_b0_1_review_read_log_codex.v1",
+        "schema": "track_b_b0_1_review_read_log_codex.v2",
         "root": str(root),
         "n_commands": len(commands),
         "commands": commands,

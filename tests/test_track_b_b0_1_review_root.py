@@ -256,7 +256,7 @@ def test_codex_read_log_counts_commands_inside_the_root(tmp_path):
         ("/bin/zsh -lc 'cat /etc/hosts'", "outside_root"),
         ("/bin/zsh -lc 'cat ../elsewhere.md'", "outside_root"),
         ("/bin/zsh -lc 'ls ~/PolicyEngine'", "outside_root"),
-        ("/bin/zsh -lc 'cat $HOME/x'", "outside_root"),
+        ("/bin/zsh -lc 'cat $HOME/x'", "shell_expansion"),
         ("/bin/zsh -lc 'cd /tmp && ls'", "outside_root"),
         ('/bin/zsh -lc "rg --files=/var/x"', "outside_root"),
         ("/bin/zsh -lc 'nl -ba docs/../../elsewhere.md'", "outside_root"),
@@ -347,3 +347,40 @@ def test_codex_read_log_does_not_treat_python_code_as_shell(tmp_path):
         _codex_transcript(tmp_path, [command]), root, ["docs/denied.md"]
     )
     assert log["review_counts"] is True
+
+
+@pytest.mark.parametrize(
+    ("command", "kind"),
+    [
+        # Q6 round 4's five escapes
+        ("/bin/zsh -lc 'cat\t/invented-private/note.txt'", "outside_root"),
+        (
+            "/bin/zsh -lc \"bash -o errexit -c 'cat $FILE'\"",
+            "shell_expansion",
+        ),
+        ("/bin/zsh -lc 'cat ~reviewer/invented.txt'", "outside_root"),
+        ("/bin/zsh -lc 'cat =awk'", "shell_expansion"),
+        ("/bin/zsh -lc 'cd; cat invented.txt'", "directory_change"),
+        ("/bin/zsh -lc 'cat /usr/bin/invented-tool'", "outside_root"),
+    ],
+)
+def test_codex_read_log_closes_round_4_escapes(tmp_path, command, kind):
+    root = _invented_root(tmp_path)
+    log = review_root.read_log_codex(
+        _codex_transcript(tmp_path, [command]), root, ["docs/denied.md"]
+    )
+    assert log["review_counts"] is False
+    assert kind in log["flagged_kinds"].values()
+
+
+def test_codex_read_log_exempts_programs_only_in_program_position(tmp_path):
+    root = _invented_root(tmp_path)
+    commands = [
+        "/bin/zsh -lc '/usr/bin/sed -n 1p docs/keep.md'",
+        "/bin/zsh -lc 'X=1 /usr/bin/env python3 -c \"print(1)\" 2>/dev/null'",
+        "/bin/zsh -lc 'nl -ba docs/keep.md | /usr/bin/head -n 3'",
+    ]
+    log = review_root.read_log_codex(
+        _codex_transcript(tmp_path, commands), root, ["docs/denied.md"]
+    )
+    assert log["review_counts"] is True, log["flagged_kinds"]

@@ -45,5 +45,5 @@
  "paths_outside_root_or_denied": [],
  "review_counts": true,
  "root": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r2-20261011/root",
- "schema": "track_b_b0_1_review_read_log_codex.v1"
+ "schema": "track_b_b0_1_review_read_log_codex.v2"
 }
