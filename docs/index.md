@@ -232,6 +232,9 @@ that cannot be extended later.
 ## Guide to the rest of the book
 
 - [funder-summary.md](funder-summary.md) is a standalone concept note
+- [parity-ledger.md](parity-ledger.md) lists what full parity with
+  DYNASIM for Social Security analysis requires and where each piece
+  stands today.
   describing the project's methodological premise and contribution.
 - [domains-of-validity.md](domains-of-validity.md) states which
   questions the model will and will not claim to answer, and why.
