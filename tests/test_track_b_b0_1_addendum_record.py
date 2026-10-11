@@ -701,6 +701,8 @@ def test_ruled_power_figures_come_from_the_record(prose, ruled_record):
         f"{constants['z_star']:.3f}",
         "**Verdict under section 16's rule: feasible, subject to B2's "
         "floor.**",
+        "decision d1342 asks Max to confirm the ruled surface or change it",
+        "**d1342: confirm or change B2's surface after the ruled power.**",
         "The protocol would not stop B2 here, but the ruling rested on that "
         "figure.",
     ]

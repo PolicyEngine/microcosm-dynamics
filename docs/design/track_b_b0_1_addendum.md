@@ -3,7 +3,7 @@
 **Status: protocol frozen and planning values computed, 2026-10-01.
 Max ruled d765, d781 and d782 on 2026-10-11 (section 2). On the
 configuration they set, the six level cells reach 0.813 power, not the
-0.952 d781 cites. B2 is held until Max rules on dNEW (sections 11
+0.952 d781 cites. B2 is held until Max rules on d1342 (sections 11
 and 13).**
 This file is the post-ruling addendum that the B0.1 audit
 (`docs/design/track_b_b0_1_audit.md`, section 13) calls for. It does
@@ -52,7 +52,8 @@ repository; design line numbers refer to it.
   (section 10). The law's estimation variance is large: 0.23 to 2.49
   times the truth statistic's sampling variance, by cell. Nine cells fail
   the survey-design check.
-- **Verdict.** On the ruled basis no surface that keeps every concept
+- **Verdict on the original d693 surface, before the 2026-10-11
+  rulings.** On the ruled basis no surface that keeps every concept
   family reaches 0.90 power. The best reaches 0.331, while four level
   cells together reach 0.992 (section 11). B2 stops here. Before any
   candidate run, Max decides how to rescope it (d781) and how its
@@ -71,7 +72,7 @@ repository; design line numbers refer to it.
   - Section 16's rule does not stop B2: four of the six reach 0.964, so
     B2's floor and ladder would decide.
   - But the ruling rested on 0.952, so B2 is held before registration,
-    and dNEW asks Max to confirm the surface or change it (section 13).
+    and d1342 asks Max to confirm the surface or change it (section 13).
 
 ## 2. Rulings this addendum implements
 
@@ -129,7 +130,7 @@ configuration the three rulings and the M2 rider set together, the six
 level cells reach 0.813 on the binding evaluation, below 0.90 (section
 11, "Power on the configuration Max ruled"). Section 16's rule would let
 B2's floor and ladder decide. But the ruling rested on 0.952, so B2 is
-held before registration, and decision dNEW asks Max to confirm the ruled
+held before registration, and decision d1342 asks Max to confirm the ruled
 surface or change it (section 13).
 
 ## 3. The frozen record
@@ -146,7 +147,7 @@ table.
 | 3. Population | Frozen | Audit §7: the 13,542-person 2010 domain, handed to H by B2's bridge; no one is scored outside ages 25-64 at the scored waves (Q7) |
 | 4. Exposure history | Frozen | Audit §5 and its inventory; the exposure labels (section 5) and the Q8(b) fallback (section 4) settle its consequences |
 | 5. Holdout partition | Frozen | Section 4 |
-| 6. Critical cells | Rule frozen | Section 5; d781 (a): the six level cells, with dNEW open |
+| 6. Critical cells | Rule frozen | Section 5; d781 (a): the six level cells, with d1342 open |
 | 7. Numerical tolerances | Rule frozen | Section 6 |
 | 8. Uncertainty treatment | Frozen | Section 7; d782: Rao-Wu se_boot, with Student t at the design's degrees of freedom |
 | 9. Pass conjunction | Frozen | Section 8 |
@@ -202,7 +203,7 @@ level cells: `earn_p50.older`, `earn_p50.prime`, `earn_p90.older`,
   "published five-seed floor detail, no published candidate outcome".
 
 On the ruled configuration the six reach 0.813 on the binding evaluation,
-not the 0.952 d781 cites (section 11). Decision dNEW (section 13) asks
+not the 0.952 d781 cites (section 11). Decision d1342 (section 13) asks
 Max to confirm this surface or change it, or its tolerance, before B2
 registers.
 
@@ -583,6 +584,11 @@ Diagnostics, which decide nothing:
 
 ## 11. Power on the ruled basis and the verdict
 
+The first part of this section, through d781's figures, is the verdict
+on the original d693 surface: all 16 cells, every concept family. It
+was reached before the 2026-10-11 rulings. "Power on the configuration
+Max ruled", at the end of this section, is the current case.
+
 `scripts/track_b_b0_1_addendum_power.py` computes
 `docs/design/track_b_b0_1_addendum_power.json` from the planning-value
 record alone, by the named procedure (section 16), at the nominal
@@ -790,7 +796,7 @@ These figures are nominal, like those above. B2's floor fixes its real
 tolerance. For these six cells, M6's realized tolerance/σ (2.35-2.64,
 against 2.61) and the 2006 floor-to-bootstrap ratios (0.94-1.07) put it
 roughly 15% below to 8% above nominal. Binding gate power of the surfaces
-decision dNEW names, at tolerances scaled by those amounts:
+decision d1342 names, at tolerances scaled by those amounts:
 
 | Surface | τ × 0.85 | τ × 0.92 | τ × 1.00 | τ × 1.08 |
 |---|---:|---:|---:|---:|
@@ -801,7 +807,7 @@ decision dNEW names, at tolerances scaled by those amounts:
 | D: the six at k = 3.26 | 0.557 | 0.763 | 0.901 | 0.963 |
 
 The six cells Max ruled on reach 0.813, not the 0.952 that d781 cites. So
-B2 is held before registration, and decision dNEW asks Max to confirm the
+B2 is held before registration, and decision d1342 asks Max to confirm the
 ruled surface or change it (section 13). The protocol would not stop B2
 here, but the ruling rested on that figure. No other registration is
 written before he rules.
@@ -868,7 +874,7 @@ measured (section 7), and the binding evaluation uses the measured r.
   d781 (a) and d782 Rao-Wu (section 2);
 - Max has ratified the refit arm's half-sample resampling (d765), or
   ruled otherwise (below). **Ratified 2026-10-11** (section 2);
-- Max has ruled on dNEW. On the ruled configuration the six level cells
+- Max has ruled on d1342. On the ruled configuration the six level cells
   reach 0.813, not the 0.952 d781 rests on (section 11, "Power on the
   configuration Max ruled"). Any registration that follows is written and
   reviewed before any candidate run;
@@ -881,7 +887,7 @@ measured (section 7), and the binding evaluation uses the measured r.
 
 **Decisions queued for Max.** None blocks this addendum's merge. Each
 blocked B2's registration. d765, d781 and d782 were ruled on 2026-10-11
-(section 2); dNEW, queued after those rulings, is open.
+(section 2); d1342, queued after those rulings, is open.
 
 - **d765, queued before the run.** d693's Q5 rider says the two planning
   values come from "one pseudo-origin household bootstrap". Arm F is a
@@ -953,7 +959,7 @@ blocked B2's registration. d765, d781 and d782 were ruled on 2026-10-11
     63 degrees of freedom is 2.724, against z\* = 2.638. A registration
     under (a) should use the t value.
 
-- **dNEW: confirm or change B2's surface after the ruled power.** Queued
+- **d1342: confirm or change B2's surface after the ruled power.** Queued
   2026-10-11, after the three rulings. The six level cells reach
   0.813 on the binding evaluation and
   0.907 on the most lenient (section 11).

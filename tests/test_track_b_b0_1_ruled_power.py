@@ -505,3 +505,28 @@ def test_point_variances_use_the_registered_e_b2(planning):
         assert cell.e_true == pytest.approx(
             max(0.0, record["gap_variance"]["s2"] - r**2)
         )
+
+
+def test_singular_density_panel_is_accurate():
+    """Round-2 review's case: at nu = 1 W's density is singular at zero.
+
+    E[sqrt(W)] for W ~ chi2(1) is E|Z| = sqrt(2 / pi). The bound-rule
+    probability is checked against adaptive quadrature in sqrt(W), where
+    the integrand is smooth.
+    """
+    nodes, weights = ruled._w_nodes(1)
+    assert weights @ np.sqrt(nodes) == pytest.approx(
+        math.sqrt(2.0 / math.pi), abs=1e-10
+    )
+    tau, crit = 1.5, ruled.t_star(1, 1)
+    terms = ruled.ruled_cell_terms(tau, 1.0, 1.0, 0.0, 0.0, 1, 1)
+    dist = chi2(1)
+
+    def integrand(t):
+        c = tau - crit * t
+        return (2.0 * norm.cdf(c) - 1.0) * dist.pdf(t * t) * 2.0 * t
+
+    reference, _ = integrate.quad(
+        integrand, 0.0, tau / crit, epsabs=1e-14, epsrel=1e-12, limit=400
+    )
+    assert terms.bound == pytest.approx(reference, abs=1e-10)

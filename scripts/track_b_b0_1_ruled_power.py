@@ -179,9 +179,11 @@ def _w_nodes(
 
     W's range below ``upper``, less ``TAIL`` of mass at each end, is cut
     into ``W_PANELS`` panels of equal probability. Each panel takes
-    ``W_PANEL_NODES`` Gauss-Legendre nodes weighted by W's density, scaled
-    to the panel's exact probability, so the weights sum to the truncated
-    mass and never above one. The bound rule fails for every W at or above
+    ``W_PANEL_NODES`` Gauss-Legendre nodes in sqrt(W), weighted by W's
+    density, and scaled to the panel's exact probability, so the weights
+    sum to the truncated mass and never above one. Integrating in sqrt(W)
+    keeps the first panel accurate when the density is singular at zero
+    (nu < 2). The bound rule fails for every W at or above
     ``upper``, so stopping there keeps the integrand's kink at a panel
     edge. With ``nu`` None (a known standard error) W is 1.
     """
@@ -201,8 +203,13 @@ def _w_nodes(
     u, w = roots_legendre(W_PANEL_NODES)
     nodes, weights = [], []
     for lo, hi, mass in zip(edges[:-1], edges[1:], masses, strict=True):
-        x = lo + (hi - lo) * (u + 1.0) / 2.0
-        raw = (hi - lo) / 2.0 * w * dist.pdf(x)
+        # In t = sqrt(W) the density times dW/dt is t**(nu - 1) e**(...),
+        # smooth at 0 for every nu >= 1, while W's own density is singular
+        # there when nu < 2. So each panel is integrated in sqrt(W).
+        a, b = math.sqrt(lo), math.sqrt(hi)
+        t = a + (b - a) * (u + 1.0) / 2.0
+        x = t**2
+        raw = (b - a) / 2.0 * w * dist.pdf(x) * 2.0 * t
         nodes.append(x)
         weights.append(raw * (mass / raw.sum()))
     return np.concatenate(nodes), np.concatenate(weights)
