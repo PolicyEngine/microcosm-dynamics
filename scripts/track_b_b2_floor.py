@@ -257,16 +257,16 @@ def ladder_power(
 # --------------------------------------------------------------------------
 # The floor build (steps 2-6), truth only
 # --------------------------------------------------------------------------
-def build_floor(
+def measure(
     earnings: pd.DataFrame,
     anchor_demo: pd.DataFrame,
-    design: pd.DataFrame,
-    planning_record: Mapping[str, Any],
     *,
     config: FloorConfig,
     expected_counts: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Section 9's steps 2-5 and the computed part of step 6."""
+    """Steps 2-4's truth-side measurements: the domain from data, both
+    split floors and the household bootstrap. Nothing here is a candidate
+    output."""
     full_anchor = b2.full_anchor_frame(anchor_demo)
     domain_ids = b2.domain_person_ids(earnings, full_anchor)
     truth = b2.truth_support(earnings, full_anchor, domain_ids)
@@ -285,30 +285,64 @@ def build_floor(
     )
 
     b2.progress(f"household bootstrap, {config.b_household} replicates")
-    reference = b2.cell_values(truth)
     replicates = b2.run_replicates(
         household_replicate,
         config.b_household,
         {
             "clusters": b2.household_clusters(full_anchor),
             "truth": truth,
-            "reference": reference,
+            "reference": b2.cell_values(truth),
         },
         config.workers,
     )
-    se_up = se_up_records(replicates)
+    return {
+        "truth": truth,
+        "floor_household": floor_household,
+        "se_up": se_up_records(replicates),
+        "record": {
+            "counts": counts,
+            "domain": {
+                "full_anchor_ids_sha256": b2.id_sha256(
+                    full_anchor["person_id"]
+                ),
+                "domain_ids_sha256": b2.id_sha256(domain_ids),
+                "truth_support_keys_sha256": selector._key_checksum(truth),
+                "truth_support_rows": int(len(truth)),
+            },
+            "person_split": {
+                "gating": False,
+                "floor_block_six_cells_sha256": b2.canonical_sha256(
+                    b2.six_cell_floor_block(floor_person)
+                ),
+                "seed_detail_six_cells_sha256": b2.canonical_sha256(
+                    b2.six_cell_seed_detail(detail_person)
+                ),
+                "seed_detail_all_cells_sha256": b2.canonical_sha256(
+                    detail_person
+                ),
+                "cells": list(b2.M6_RETAINED),
+                "seeds": [int(entry["seed"]) for entry in detail_person],
+            },
+            "config": {
+                "b_household": config.b_household,
+                "floor_seeds": len(m6_cells.FLOOR_SEEDS),
+                "root_seed": b2.ROOT_SEED,
+                "household_stream": (
+                    f"[{b2.ROOT_SEED}, b, {b2.HOUSEHOLD_WORD}]"
+                ),
+            },
+        },
+    }
 
-    truth_persons = set(int(value) for value in truth["person_id"].unique())
-    design = design[design["person_id"].isin(truth_persons)].reset_index(
-        drop=True
-    )
-    if set(design["person_id"].astype(int)) != truth_persons:
-        raise AssertionError("a truth-support person has no design variables")
-    census = b2.stratum_census(design)
-    nu = int(census["design_degrees_of_freedom"])
-    guard = b2.design_guard(census)
 
-    n_seeds = len(m6_cells.FLOOR_SEEDS)
+def cell_records(
+    floor_household: Mapping[str, Mapping[str, Any]],
+    se_up: Mapping[str, Mapping[str, Any]],
+    planning_record: Mapping[str, Any],
+    n_seeds: int,
+) -> dict[str, dict[str, Any]]:
+    """Each gateable cell's floor, eligibility, tolerance (section 6) and
+    se_up (section 7)."""
     cells: dict[str, dict[str, Any]] = {}
     for name, metric in b2.CELL_METRICS.items():
         floor = floor_household[name]
@@ -335,7 +369,7 @@ def build_floor(
             "planning_values_defined": planning_defined,
             "eligible": bool(eligible_floor and planning_defined),
             **tolerance,
-            "se_up": se_up[name],
+            "se_up": dict(se_up[name]),
             "tau_se_up_units": (
                 None if value is None else tolerance["tolerance"] / value
             ),
@@ -345,45 +379,46 @@ def build_floor(
                 else None
             ),
         }
+    return cells
 
-    eligible = [name for name in b2.LEVEL_CELLS if cells[name]["eligible"]]
+
+def decide(
+    measured: Mapping[str, Any],
+    design: pd.DataFrame,
+    planning_record: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Step 4's stratum census and stop, and step 5's eligibility, ladder
+    and guards inside the six level cells."""
+    truth = measured["truth"]
+    truth_persons = set(int(value) for value in truth["person_id"].unique())
+    design = design[design["person_id"].isin(truth_persons)].reset_index(
+        drop=True
+    )
+    if set(design["person_id"].astype(int)) != truth_persons:
+        raise AssertionError("a truth-support person has no design variables")
+    census = b2.stratum_census(design)
+    nu = int(census["design_degrees_of_freedom"])
+    guard = b2.design_guard(census)
+    cells = cell_records(
+        measured["floor_household"],
+        measured["se_up"],
+        planning_record,
+        len(m6_cells.FLOOR_SEEDS),
+    )
     record: dict[str, Any] = {
-        "counts": counts,
-        "domain": {
-            "full_anchor_ids_sha256": b2.id_sha256(full_anchor["person_id"]),
-            "domain_ids_sha256": b2.id_sha256(domain_ids),
-            "truth_support_keys_sha256": selector._key_checksum(truth),
-            "truth_support_rows": int(len(truth)),
-        },
+        **measured["record"],
         "design": {
             "census": census,
             "design_degrees_of_freedom": nu,
             "only_two_cluster_strata": guard,
         },
         "cells": cells,
-        "person_split": {
-            "gating": False,
-            "floor_block_six_cells_sha256": b2.canonical_sha256(
-                b2.six_cell_floor_block(floor_person)
-            ),
-            "seed_detail_six_cells_sha256": b2.canonical_sha256(
-                b2.six_cell_seed_detail(detail_person)
-            ),
-            "seed_detail_all_cells_sha256": b2.canonical_sha256(detail_person),
-            "cells": list(b2.M6_RETAINED),
-            "seeds": [int(entry["seed"]) for entry in detail_person],
-        },
-        "config": {
-            "b_household": config.b_household,
-            "floor_seeds": n_seeds,
-            "root_seed": b2.ROOT_SEED,
-            "household_stream": f"[{b2.ROOT_SEED}, b, {b2.HOUSEHOLD_WORD}]",
-        },
     }
     if not guard:
         record["outcome"] = b2.STOPPED_STRATUM_GUARD
         record["ladder"] = None
         return finish(record, cells)
+    eligible = [name for name in b2.LEVEL_CELLS if cells[name]["eligible"]]
     missing = [
         name for name in eligible if cells[name]["se_up"]["se_up"] is None
     ]
@@ -416,6 +451,25 @@ def build_floor(
     record["ladder"] = result
     record["outcome"] = result["outcome"]
     return finish(record, cells)
+
+
+def build_floor(
+    earnings: pd.DataFrame,
+    anchor_demo: pd.DataFrame,
+    design: pd.DataFrame,
+    planning_record: Mapping[str, Any],
+    *,
+    config: FloorConfig,
+    expected_counts: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Section 9's steps 2-5 and the computed part of step 6."""
+    measured = measure(
+        earnings,
+        anchor_demo,
+        config=config,
+        expected_counts=expected_counts,
+    )
+    return decide(measured, design, planning_record)
 
 
 def finish(

@@ -472,8 +472,6 @@ def household_clusters(
     Households without a domain person are included (section 7).
     """
     household = full_anchor["household_id"].astype("int64")
-    if (household < 0).any() or (household >= CLUSTER_SCALE).any():
-        raise ValueError("a household identifier is outside the cluster scale")
     clusters = pd.DataFrame(
         {
             "person_id": full_anchor["person_id"].astype("int64"),
@@ -704,7 +702,8 @@ def registered_se(
         return None
     if not (math.isfinite(se_boot) and math.isfinite(se_up)):
         return None
-    return math.sqrt(se_boot**2 + a_c * se_up**2)
+    # hypot neither underflows nor overflows, so se_c >= se_boot exactly.
+    return math.hypot(se_boot, math.sqrt(a_c) * se_up)
 
 
 def bound_value(
