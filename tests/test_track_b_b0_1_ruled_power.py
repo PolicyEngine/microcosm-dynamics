@@ -86,12 +86,26 @@ def test_degrees_of_freedom_come_from_the_record_s_strata(planning):
         )
     with pytest.raises(ValueError):
         ruled.design_degrees_of_freedom({**design, "strata": 64})
+    # Q6 round 7 L2: a one-cluster stratum is merged into a two-cluster
+    # one, where its cluster adds a degree of freedom
     one = {
         **design,
         "strata": 64,
         "strata_with_one_cluster": 1,
     }
-    assert ruled.design_degrees_of_freedom(one) == 63
+    assert ruled.design_degrees_of_freedom(one) == 64
+    # with no stratum of two clusters, the one-cluster strata merge into one
+    only_ones = {
+        **design,
+        "strata": 3,
+        "strata_with_one_cluster": 3,
+        "strata_with_two_clusters": 0,
+    }
+    assert ruled.design_degrees_of_freedom(only_ones) == 2
+    with pytest.raises(ValueError):
+        ruled.design_degrees_of_freedom(
+            {**only_ones, "strata": 1, "strata_with_one_cluster": 1}
+        )
 
 
 # Differential checks.

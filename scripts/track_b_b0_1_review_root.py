@@ -255,8 +255,9 @@ def read_log(
     denied paths; so must every path a Glob or Grep result returns,
     absolute or relative to the root. A Glob's pattern and a Grep's file
     filter must not be absolute, hold a ``..`` segment or name a denied
-    path, even to confirm its absence. Paths
-    quoted inside a file the lane read are content, not reads. When the
+    path, by its path, its basename or its stem before a dot, even to
+    confirm its absence. Paths quoted inside a file the lane read are
+    content, not reads. When the
     harness saves an oversized result outside the root, the log records
     the notice; the review is void only if a later call opens that file.
     No content is copied into the log, only paths.
@@ -321,16 +322,29 @@ def read_log(
             return "denied"
         return "inside_root"
 
+    # A denied file is also named by its basename alone, or by its stem
+    # before a dot (``**/name.md``, ``name.*``), and the codebook
+    # directory by its last segment.
+    denied_names = {Path(d).name for d in denied} | {Path(CODEBOOK_DIR).name}
+    denied_stems = {Path(d).stem for d in denied if Path(d).suffix}
+
     def classify_pattern(pattern: str) -> str:
         """A pattern leaves the root if it is absolute or holds a ``..``
-        segment; it names a denied path if that path's text appears in it,
-        even to confirm the path's absence."""
+        segment. It names a denied path if that path's text appears in it,
+        or if one of its segments is a denied basename or a denied stem
+        followed by a dot, even to confirm the path's absence. A wildcard
+        fragment of a name (``*name_part*``) is not classified."""
         if pattern.startswith(("/", "~")) or re.search(
             r"(?:^|[/{,])\.\.(?:[/},]|$)", pattern
         ):
             return "outside_root"
         if any(d in pattern for d in denied) or CODEBOOK_DIR in pattern:
             return "denied"
+        for segment in re.split(r"[/{},]", pattern):
+            if segment in denied_names or any(
+                segment.startswith(f"{stem}.") for stem in denied_stems
+            ):
+                return "denied"
         return "inside_root"
 
     paths = {path: classify(path) for path in sorted(named | returned)}
@@ -342,7 +356,7 @@ def read_log(
     )
     bad = sorted(path for path, kind in paths.items() if kind != "inside_root")
     return {
-        "schema": "track_b_b0_1_review_read_log.v3",
+        "schema": "track_b_b0_1_review_read_log.v4",
         "root": str(root),
         "n_tool_calls": len(calls),
         "tool_calls": calls,

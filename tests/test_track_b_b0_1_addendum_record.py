@@ -756,3 +756,39 @@ def test_addendum_carries_the_round_5_fixes(prose, sentence):
 )
 def test_addendum_carries_the_round_6_fixes(prose, sentence):
     assert sentence in prose
+
+
+@pytest.mark.parametrize(
+    "sentence",
+    [
+        # Q6 round 7 L1: patterns naming a denied file by basename or stem
+        "Since Q6 round 7, a pattern also names a denied path when one of "
+        "its segments is the path's basename, or its stem followed by a dot",
+        # Q6 round 7 L2: one reading of nu, after the merges
+        "**Arm D's rule is Rao-Wu only for two-cluster strata (Q6 round 2).**",
+        "B2's truth-support persons after the stratum rule's merges",
+        "A one-cluster stratum merged into another adds its cluster there, "
+        "and so one degree of freedom.",
+        "If ν is 0 after the merges, which needs every truth-support person "
+        "in one cluster, t\\*_m,ν is undefined and B2 stops at floor build",
+        # Q6 round 7 L3: the context copies by round
+        "d765, d781 and d782 ruling texts and d1342's decision aid, nine "
+        "copies in all; from round 4 it also holds the d1342 ruling text, "
+        "ten in all.",
+        "**Round 7: approve.**",
+    ],
+)
+def test_addendum_carries_the_round_7_fixes(prose, sentence):
+    assert sentence in prose
+
+
+@pytest.mark.parametrize(
+    "stale",
+    [
+        "Only two-cluster strata are admitted",
+        "so a stratum with one cluster adds nothing",
+        "d765, d781, d782 and d1342 ruling texts and d1342's decision aid",
+    ],
+)
+def test_addendum_drops_round_7_stale_wording(prose, stale):
+    assert stale not in prose

@@ -463,6 +463,65 @@ def _claude_transcript(tmp_path, blocks):
             ],
             False,
         ),
+        # Q6 round 7 L1: a nested denied file named by its basename, by its
+        # stem before a dot, or the codebook directory by its last segment
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g6",
+                    "name": "Glob",
+                    "input": {"pattern": "**/deep_denied.md"},
+                }
+            ],
+            False,
+        ),
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g7",
+                    "name": "Grep",
+                    "input": {"pattern": "x", "glob": "{a.md,deep_denied.*}"},
+                }
+            ],
+            False,
+        ),
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g8",
+                    "name": "Glob",
+                    "input": {"pattern": "**/psid_codebook_field_evidence/*"},
+                }
+            ],
+            False,
+        ),
+        # broad patterns and wildcard fragments name nothing, and count
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g9",
+                    "name": "Glob",
+                    "input": {"pattern": "**/*"},
+                },
+                {
+                    "type": "tool_use",
+                    "id": "g10",
+                    "name": "Glob",
+                    "input": {"pattern": "**/*deep*"},
+                },
+                {
+                    "type": "tool_use",
+                    "id": "g11",
+                    "name": "Grep",
+                    "input": {"pattern": "x", "glob": "deep_denied_notes.md"},
+                },
+            ],
+            True,
+        ),
         # ordinary relative results inside the root, and a Grep regex that
         # mentions a denied file's name as text, count
         (
@@ -492,6 +551,6 @@ def test_claude_read_log_checks_patterns_and_relative_results(
     log = review_root.read_log(
         _claude_transcript(tmp_path, blocks),
         root,
-        ["docs/denied.md", "gates.yaml"],
+        ["docs/denied.md", "gates.yaml", "docs/sub/deep_denied.md"],
     )
     assert log["review_counts"] is counts, log["paths_outside_root_or_denied"]

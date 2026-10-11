@@ -154,22 +154,25 @@ def t_star(m: int, nu: float | None) -> float:
 
 
 def design_degrees_of_freedom(design: Mapping[str, Any]) -> int:
-    """sum over strata of (clusters - 1), from the record's design counts.
+    """sum over strata of (clusters - 1), after the addendum's merges.
 
-    A stratum with one cluster adds nothing. The record counts strata with
-    three or more clusters but not their clusters, so their presence makes
-    the count unknown here and raises.
+    Section 7's stratum rule merges each one-cluster stratum into a
+    stratum with two or more clusters, where its cluster adds one degree
+    of freedom; if there is none, all of them merge into one stratum. The
+    record counts strata with three or more clusters but not their
+    clusters, so their presence makes the count unknown here and raises,
+    and so does a design left with no degree of freedom.
     """
     if int(design["strata_with_three_or_more_clusters"]) != 0:
         raise ValueError("clusters per stratum above two are not recorded")
-    total = (
-        int(design["strata_with_one_cluster"])
-        + int(design["strata_with_two_clusters"])
-        + int(design["strata_with_three_or_more_clusters"])
-    )
-    if total != int(design["strata"]):
+    ones = int(design["strata_with_one_cluster"])
+    twos = int(design["strata_with_two_clusters"])
+    if ones + twos != int(design["strata"]):
         raise ValueError("stratum counts do not add up")
-    return int(design["strata_with_two_clusters"])
+    nu = twos + ones if twos else ones - 1
+    if nu <= 0:
+        raise ValueError("the design has no degree of freedom")
+    return nu
 
 
 def _w_nodes(

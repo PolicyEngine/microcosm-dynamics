@@ -326,8 +326,8 @@ For each gated cell c, on full support:
   At the 2006 pseudo-origin every one of the 63 strata had exactly two
   clusters.
 
-  **Only two-cluster strata are admitted (Q6 round 2).** Arm D's rule is
-  Rao-Wu only where a stratum has two clusters:
+  **Arm D's rule is Rao-Wu only for two-cluster strata (Q6 round 2).**
+  Applied to other strata it would go wrong:
   - a stratum with three or more is resampled by the ordinary bootstrap,
     which narrows the bound;
   - a stratum with one cluster adds no variance, which needs a
@@ -372,8 +372,12 @@ For each gated cell c, on full support:
   `copy_persons`. Weights are never multiplied instead, because the
   mobility cells bin by midpoint weighted ranks.
 - **Design degrees of freedom.** ν = Σ_h (n_h - 1) over the strata among
-  B2's truth-support persons, n_h being stratum h's cluster count, so a
-  stratum with one cluster adds nothing. The floor builder counts ν from
+  B2's truth-support persons after the stratum rule's merges, n_h being
+  stratum h's cluster count after them. A one-cluster stratum merged
+  into another adds its cluster there, and so one degree of freedom. If
+  ν is 0 after the merges, which needs every truth-support person in one
+  cluster, t\*_m,ν is undefined and B2 stops at floor build as
+  `WEAK_POWER_OR_VACUITY`. The floor builder counts ν from
   the design variables before any candidate outcome and publishes the
   strata counted by cluster count, as `design_summary` does. At the 2006
   pseudo-origin ν was 63.
@@ -1350,8 +1354,8 @@ sharpened after round 1 (below).
   d622 ruling texts. They are the only launch-evidence material in the
   root. They are a deliberate exception to the Q6 rider's exclusion of
   the launch-evidence directory. From round 2 the root also holds the
-  d765, d781, d782 and d1342 ruling texts and d1342's decision aid,
-  ten copies in all (round 2 had nine).
+  d765, d781 and d782 ruling texts and d1342's decision aid, nine copies
+  in all; from round 4 it also holds the d1342 ruling text, ten in all.
 - **Lane.** `subfleet run --task review -m opus -I -s read-only -D
   <root>`: Read, Glob and Grep only.
 - **Read log.** `scripts/track_b_b0_1_review_root.py readlog` extracts
@@ -1366,11 +1370,16 @@ sharpened after round 1 (below).
     Grep file filter. One that is absolute, holds a `..` segment, or
     names a denied path voids the review, even if it only confirms the
     path's absence.
+  - Since Q6 round 7, a pattern also names a denied path when one of its
+    segments is the path's basename, or its stem followed by a dot, and
+    names the codebook directory when a segment is its last one. A
+    wildcard fragment of a name, such as `*name_part*`, is not
+    classified; the review prompt forbids it.
   - It also checks returned paths given relative to the root, as the
     harness returns them.
-  - Rounds 5 and 6's logs were regenerated under this rule. Round 1's
-    log came from another session's transcript, under the rule as it
-    stood then, and is not regenerated.
+  - Rounds 5-7's logs were regenerated under the rule as it now stands.
+    Round 1's log came from another session's transcript, under the rule
+    as it stood then, and is not regenerated.
 - **Numbers.** Numerical reproduction is in the CI-pinned tests, not the
   reviewer's job.
 
@@ -1671,8 +1680,40 @@ round 6): request changes.**
 | L2: the one-cluster merge was ambiguous when such strata are adjacent | They merge into the nearest stratum with two or more clusters, the lower code on a tie. If there is none, all merge into one. Merges apply together, then the strata are counted |
 | L3: section 14 omitted the inventory reruns and root builds | Section 14 lists both |
 
-**Round 7** reviews the changed head on a newly built root, in round 6's
-form, under the fixed read-log rule. Its record follows.
+**Round 7: approve.**
+
+- **Root.** `git archive` of `05dbd5b`, 1,942 files, manifest SHA-256
+  `a999c4d27cf77146…`.
+  - The inventory rerun is
+    `docs/design/track_b_b0_1_addendum_q6_inventory_r7.json`. It flagged
+    nothing new.
+  - The same 27 files were removed whole, and four code-map tables. The
+    ten context copies went in.
+  - The root record is `docs/design/track_b_b0_1_addendum_q6_root_r7.json`.
+- **Lane.** Subfleet job `20261011-173633-b01-addendum-q6-r7`, in round 6's
+  form, served by Opus 5.5. It ran on 2026-10-11 from 21:40 to 21:48 UTC
+  and exited 0. Its prompt added that no pattern or file filter may name
+  a file expected to be absent, even to confirm that it is.
+- **Read log.** `docs/design/track_b_b0_1_addendum_q6_readlog_r7.json`
+  covers 32 tool calls. Every path named or returned lies inside the
+  root, and no pattern is absolute, leaves the root or names a denied
+  path, under the rule as tightened after this round. Round 7 counts.
+- **Verdict.** `APPROVE`, with no high or medium finding and three low.
+  The review is `docs/design/track_b_b0_1_addendum_q6_review_r7.md`.
+  - It met no B2 outcome and no 2008/2010 selector outcome.
+  - It checked each of round 6's dispositions in substance, section 11's
+    figures against the record, and the rulings' quotations against the
+    ruling texts.
+
+| Finding | Disposition |
+|---|---|
+| L1: the read log flagged a denied file only when a pattern held its full path, not its basename | A segment equal to a denied basename, or to its stem followed by a dot, or to the codebook directory's last segment, now voids the review. Tests cover a nested denied file by basename and by stem, and the codebook directory; four mutants fail them. Wildcard fragments stay unclassified, and the plan's rule says so. Rounds 5-7's logs were regenerated: round 5 stays void, rounds 6 and 7 count |
+| L2: element 8 kept "only two-cluster strata are admitted" and "a stratum with one cluster adds nothing", against its own stratum rule | The heading now says arm D's rule is Rao-Wu only for two-cluster strata. ν is counted after the merges, where a merged one-cluster stratum adds one. `design_degrees_of_freedom` follows the same reading and raises when ν would be 0; two mutants fail its test. The 2006 record had no one-cluster stratum, so ν there stays 63 and no figure moves. The review's edge case, ν = 0 after the merges, now stops B2 at floor build |
+| L3: the context-copy sentence read as if round 2 held the d1342 ruling | Round 2 held nine copies; the d1342 ruling went in from round 4, making ten |
+
+Round 7 approved `05dbd5b`, and these fixes changed the head after it.
+**Round 8** confirms them on a newly built root, in round 7's form. Its
+record follows.
 
 ## 16. Protocol record
 
