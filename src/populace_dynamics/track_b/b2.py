@@ -219,6 +219,12 @@ B1_EVIDENCE = (
     "B1 v2 returned RECONSTRUCTED_REPRODUCTION: issue #42 comments "
     "6110674288 (registration) and 6113379406 (result) (d622)"
 )
+CANDIDATE_3_DISCLOSURE = (
+    "B2 transports candidate 3's law (q = 0.55, rho = -0.6), whose "
+    "structure is in-sample for selection, and inherits design section 2's "
+    "disclosure of candidate 3 in full (design lines 29-41, outside this "
+    "repository; audit section 3). The registration carries that text."
+)
 CODEBOOK_CONCEPT_CHECK = (
     "audit section 4.2: definitions only; all six labor-income variables "
     "exclude farm and unincorporated business income, and market "

@@ -80,7 +80,7 @@ class _StochasticFactory:
         return Model()
 
 
-def _invented_fields(n_households: int = 240, seed: int = 11):
+def _invented_fields(n_households: int = 180, seed: int = 11):
     """Invented individual rows and family labor fields, waves 1993-2015.
 
     Interview numbers are household numbers, unique within each wave.
@@ -98,7 +98,7 @@ def _invented_fields(n_households: int = 240, seed: int = 11):
             if rng.random() < 0.15
             else 2015
         )
-        births = [int(rng.integers(1950, 1984)) for _ in range(size)]
+        births = [int(rng.integers(1940, 1985)) for _ in range(size)]
         levels = [float(rng.normal(10.2, 0.6)) for _ in range(size)]
         for wave in waves:
             if wave > last_wave:
@@ -425,7 +425,10 @@ def test_the_scorer_and_arm_f_build_identical_frames(at_2006, replicate):
 # --------------------------------------------------------------------------
 # The floor builder
 # --------------------------------------------------------------------------
-def test_measure_records_truth_side_values_only(measured):
+def test_measure_records_truth_side_values_only(invented, measured):
+    full = b2.full_anchor_frame(invented["anchor_demo"])
+    floor, _ = b2.split_floor(full, measured["truth"], "household_id")
+    assert measured["floor_household"] == floor
     record = measured["record"]
     assert set(record) == {"counts", "domain", "person_split", "config"}
     assert record["config"]["b_household"] == 8
@@ -648,6 +651,7 @@ def test_score_end_to_end(scored, cleared_floor):
         assert len(cell["side_a"]) == 5
         floor_cell = cleared_floor["cells"][name]
         assert cell["tolerance"] == floor_cell["tolerance"]
+        assert cell["a_c"] == floor_cell["registered_estimation_ratio"] > 0
         if cell["se"] is not None:
             assert cell["se"] == pytest.approx(
                 math.sqrt(
@@ -881,3 +885,21 @@ def test_scorer_refuses_shared_code_changed_since_the_floor():
         changed["code_sha256"][path] = "0" * 64
         with pytest.raises(RuntimeError, match="changed since"):
             scorer.check_floor_record(changed, "r1", head)
+
+
+def test_statements_carry_section_13s_items():
+    statements = floor_builder.statements()
+    assert statements["headline_scope"] == b2.HEADLINE_SCOPE
+    assert "levels and zero rates only" in statements["headline_scope"]
+    assert "Not a 2010-vintage forecast" in statements["fallback_scope"]
+    assert "25-61" in statements["section_5_3"]
+    assert "recession" in statements["planning_caveat"]
+    assert "collection wave" in statements["age_convention"]
+    assert statements["wage_vintage_label"] != "ols_log_nawi_2005_2014"
+    assert "6110674288" in statements["b1"]
+    assert "6113379406" in statements["b1"]
+    assert b2.B1_LABEL in statements["b1"]
+    assert "no candidate output, projection or selection ledger" in (
+        statements["reads"]
+    )
+    assert "29-41" in statements["candidate_3_disclosure"]

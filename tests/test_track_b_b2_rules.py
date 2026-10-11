@@ -825,6 +825,27 @@ def test_plain_units_are_section_6s():
         b2.plain_units("report_only_shape", 0.1)
 
 
+@pytest.mark.parametrize(
+    "n_defined, events, sigma, eligible",
+    [
+        (100, 20, 0.1, True),
+        (100, 19, 0.1, False),
+        (99, 40, 0.1, False),
+        (100, 40, 0.0, False),
+    ],
+)
+def test_floor_eligibility_truth_table(n_defined, events, sigma, eligible):
+    record = {
+        "n_defined_seeds": n_defined,
+        "min_events_weaker_half": events,
+        "realized_sigma": sigma,
+    }
+    assert b2.floor_eligible(record) is eligible
+    assert b2.floor_eligible(record, n_seeds=99) is (
+        n_defined == 99 and events >= 20 and sigma > 0
+    )
+
+
 @settings(max_examples=300, deadline=None)
 @given(
     st.integers(min_value=90, max_value=100),
@@ -864,6 +885,17 @@ def _table_power(table, default=0.0):
 
 
 SIX = b2.LEVEL_CELLS
+
+
+def test_ladder_stops_at_exactly_the_target():
+    """Section 5, step 3: stop when the power is at least 0.90."""
+    power, calls = _table_power({tuple(sorted(SIX)): 0.90})
+    result = b2.ladder(_ladder_cells(dict.fromkeys(SIX, 2.5)), power)
+    assert result["outcome"] == b2.LADDER_CLEARED
+    assert result["log"] == [] and calls == [tuple(sorted(SIX))]
+    power, _ = _table_power({tuple(sorted(SIX)): 0.8999999})
+    below = b2.ladder(_ladder_cells(dict.fromkeys(SIX, 2.5)), power)
+    assert below["log"] and below["outcome"] == b2.WEAK_POWER_OR_VACUITY
 
 
 def test_ladder_stops_at_once_when_the_six_clear():

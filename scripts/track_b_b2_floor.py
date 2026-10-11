@@ -558,6 +558,7 @@ def statements() -> dict[str, str]:
         "wage_vintage": b2.WAGE_VINTAGE,
         "wage_vintage_label": b2.WAGE_VINTAGE_LABEL,
         "codebook_concept_check": b2.CODEBOOK_CONCEPT_CHECK,
+        "candidate_3_disclosure": b2.CANDIDATE_3_DISCLOSURE,
         "b1": f"{b2.B1_EVIDENCE}; label: {b2.B1_LABEL}",
         "reads": READS_STATEMENT,
     }
