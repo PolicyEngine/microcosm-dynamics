@@ -11,13 +11,19 @@ permissions:
   pages: write
   id-token: write
 
+# A new push to a pull request cancels that pull request's older run. Master
+# pushes share one group with cancel-in-progress off, so a Pages deployment
+# that has started always finishes. If several master pushes queue behind it,
+# only the newest one waits (GitHub replaces an older pending run in the same
+# group), and it deploys a site that includes every queued change.
 concurrency:
-  group: "pages-${{ github.ref }}"
-  cancel-in-progress: true
+  group: ${{ github.event_name == 'pull_request' && format('pages-pr-{0}', github.event.pull_request.number) || 'pages-master' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -39,6 +45,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -60,6 +67,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: build
     steps:
       - name: Deploy to GitHub Pages

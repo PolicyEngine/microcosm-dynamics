@@ -5,7 +5,7 @@
 Building a dynamic Social Security microsimulation model requires
 infrastructure for data processing, synthesis, calibration, and policy
 simulation. The most important architectural point is now clear:
-`populace` should be treated as the population platform and dataset,
+Microcosm should be treated as the population platform and dataset,
 while this repository provides the Social Security-specific application
 layer on top of it. This chapter describes the tools that make that
 split possible.
@@ -21,11 +21,11 @@ flowchart LR
         SRC["CPS/ASEC, IRS PUF,<br/>SCF, SIPP, CPS-ORG,<br/>MEPS, ACS + admin targets"]
     end
 
-    subgraph population["Populace (microdata stack)"]
-        FRAME["populace-frame<br/>(Frame kernel)"]
-        FIT["populace-fit<br/>(conditional models)"]
-        CAL["populace-calibrate<br/>(targets to weights)"]
-        LMPX["Longitudinal Populace<br/>(project target)"]
+    subgraph population["Microcosm (microdata stack)"]
+        FRAME["microcosm-frame<br/>(Frame kernel)"]
+        FIT["microcosm-fit<br/>(conditional models)"]
+        CAL["microcosm-calibrate<br/>(targets to weights)"]
+        LMPX["Longitudinal Microcosm<br/>(project target)"]
     end
 
     subgraph application["Policy Application Layer"]
@@ -55,22 +55,22 @@ flowchart LR
 
 The high-level logic is:
 
-- `populace` builds and calibrates the public cross-sectional
+- Microcosm builds and calibrates the public cross-sectional
   population from primary-source data (shipped; now the certified
   default U.S. microdata in policyengine.py)
-- extend `populace` longitudinally — the project's central work
+- extend Microcosm longitudinally — the project's central work
 - use PolicyEngine-US and this repository to turn that asset into a
   Social Security policy model
 
 This means the project should avoid rebuilding generic synthesis
 machinery in the Social Security repository when that work properly
-belongs in `populace`.
+belongs in Microcosm.
 
 ## Population layer versus application layer
 
 The tooling should be divided intentionally.
 
-### What belongs in Populace
+### What belongs in Microcosm
 
 - synthetic public population construction
 - cross-sectional and longitudinal calibration machinery
@@ -94,39 +94,39 @@ public population platform plus an open policy application layer.
 
 ## Key tools and libraries
 
-### Populace: the microdata stack
+### Microcosm: the microdata stack
 
 **Purpose**: build and calibrate the public population from
 primary-source government data, and expose it to a rules engine.
 
 **Status**: PolicyEngine's rebuilt open-source microdata stack
-([github.com/PolicyEngine/populace](https://github.com/PolicyEngine/populace),
+([github.com/PolicyEngine/microcosm](https://github.com/PolicyEngine/microcosm),
 MIT). Built entirely from primary sources (CPS/ASEC, IRS PUF, SCF,
 SIPP, CPS-ORG, MEPS, ACS), it replaced PolicyEngine's enhanced CPS as
 the certified default U.S. microdata in policyengine.py in June 2026,
 after beating it on a held-out, symmetric-refit comparison. Its
-synthesis method (the `populace-fit` shard) is a regime-gated,
+synthesis method (the `microcosm-fit` shard) is a regime-gated,
 sequentially-chained, weight-aware quantile-regression-forest
 imputer, with a gradient-boosted classifier handling zero inflation.
 
 **Architecture**: one kernel datatype — the `Frame`, a weighted
 sampling frame of entity tables — with operators as separate shards
-that share the `populace.*` namespace:
+that share the `microcosm.*` namespace:
 
-- `populace-frame`: the kernel (typed weights with conservation
+- `microcosm-frame`: the kernel (typed weights with conservation
   invariants, strata for provenance, links, unit structure, and the
   rules-engine adapter protocol — policyengine-us today, Axiom's
   rules layer next). Succeeds microdf and microunit.
-- `populace-fit`: weight-aware conditional models for synthesis and
+- `microcosm-fit`: weight-aware conditional models for synthesis and
   imputation. Succeeds microimpute.
-- `populace-calibrate`: targets-to-weights calibration (accelerated
+- `microcosm-calibrate`: targets-to-weights calibration (accelerated
   projected gradient and L0 sparse selection). Succeeds
   microcalibrate.
-- `populace-data` / `populace-build`: dataset registry and the
+- `microcosm-data` / `microcosm-build`: dataset registry and the
   gated, no-fallback build pipeline.
 
 **Longitudinal status**: the kernel is longitudinal-ready by
-design — one weight per trajectory — and Populace's charter names the
+design — one weight per trajectory — and Microcosm's charter names the
 longitudinal extension (person-period keying, cohort entry and exit,
 household recomposition over time) explicitly as "the
 social-security-model direction." Those kernel hooks are deliberate
@@ -142,12 +142,12 @@ project.
 
 ### Predecessor tooling: microimpute, microcalibrate, L0
 
-Before Populace, PolicyEngine's enhancement pipeline used three
+Before Microcosm, PolicyEngine's enhancement pipeline used three
 standalone packages: `microimpute` (quantile-regression-forest and
 related imputation), `microcalibrate` (gradient-descent base-population
 calibration), and `L0` (L0-regularized sparse record selection).
-Populace reimplements their capabilities as the `populace-fit` and
-`populace-calibrate` shards on the shared `Frame` kernel; the legacy
+Microcosm reimplements their capabilities as the `microcosm-fit` and
+`microcosm-calibrate` shards on the shared `Frame` kernel; the legacy
 packages remain available but are no longer the path this project
 builds on.
 
@@ -156,7 +156,7 @@ builds on.
 PolicyEngine's earlier Enhanced CPS used QRF imputation and gradient
 descent calibration against administrative targets [@ghenis2024].
 That work is best understood as an important precursor to
-`populace`, not as the architecture of this project. Populace
+Microcosm, not as the architecture of this project. Microcosm
 generalizes the conceptual approach into a broader ML-first
 microdata stack.
 
@@ -538,19 +538,19 @@ Like this document:
 We leverage a rich ecosystem of open-source tools:
 
 **Core tools** (PolicyEngine-developed):
-- `populace`: the microdata stack (`populace-frame` kernel,
-  `populace-fit` synthesis, `populace-calibrate` calibration)
+- Microcosm: the microdata stack (`microcosm-frame` kernel,
+  `microcosm-fit` synthesis, `microcosm-calibrate` calibration)
 - `policyengine-core`: microsimulation engine
 
 **Foundation** (existing):
-- `populace` as starting point — shipped, and the certified default
+- Microcosm as starting point — shipped, and the certified default
   U.S. microdata in policyengine.py
 - proven data construction and calibration pipeline
 - Social Security rules already implemented in PolicyEngine-US
 - infrastructure for web/API deployment
 
 **Additional methodological approaches** (to evaluate during proof of concept):
-- **Baseline (incumbent)**: Populace's production synthesis method is a regime-gated, weight-aware quantile-regression-forest imputer. It is the proven cross-sectional method and the natural baseline for the longitudinal extension to beat.
+- **Baseline (incumbent)**: Microcosm's production synthesis method is a regime-gated, weight-aware quantile-regression-forest imputer. It is the proven cross-sectional method and the natural baseline for the longitudinal extension to beat.
 - **Zero-inflated neural distribution models (e.g. ZI-QDNN)**: candidate for richer earnings-trajectory imputation, with a dedicated zero-inflation head and conditional quantile output — to evaluate against the QRF baseline, not assumed superior.
 - **Normalizing flows**: candidate for joint multi-year imputation where cross-year correlation structure matters; to evaluate, not committed.
 - **Multi-survey fusion**: Harmonize CPS, PSID, and PUF into unified datasets using common variable schemas and masked imputation for cross-survey variables

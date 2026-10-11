@@ -1,0 +1,59 @@
+[
+  {
+    "file": "II_A_highlights.html",
+    "url": "https://www.ssa.gov/oact/TR/2026/II_A_highlights.html",
+    "retrieved_utc": "2026-10-01T02:35:26+00:00",
+    "status": 200,
+    "bytes": 63820,
+    "sha256": "8447f9cae65e561cb84239350e6a037f9b2572d18bf457212130d682c0003551",
+    "headers": {
+      "x-frame-options": "SAMEORIGIN",
+      "x-xss-protection": "1; mode=block",
+      "x-content-type-options": "nosniff",
+      "content-type": "text/html; charset=UTF-8",
+      "x-akamai-transformed": "9 7216 0 pmb=mRUM,2",
+      "vary": "Accept-Encoding",
+      "content-encoding": "br",
+      "expires": "Thu, 01 Oct 2026 02:35:26 GMT",
+      "cache-control": "max-age=0, no-cache, no-store",
+      "pragma": "no-cache",
+      "date": "Thu, 01 Oct 2026 02:35:26 GMT",
+      "content-length": "9271",
+      "set-cookie": "YSNP014128f0=01cfd667a50a6725e36e8c705aa4408467d989f6015d6f0831a14dc0082b6d87d1458beae33450d869e256f5a1897c62cc537e7f1e; Path=/; Domain=.ssa.gov; Secure; HttpOnly, AKA_A2=A; expires=Thu, 01-Oct-2026 03:35:26 GMT; path=/; domain=ssa.gov; secure; HttpOnly",
+      "server-timing": "cdn-cache; desc=REVALIDATE, edge; dur=43, origin; dur=33, ak_p; desc=\"1790822126325_398664876_638512020_7559_10147_15_57_255\";dur=1",
+      "alt-svc": "h3=\":443\"; ma=93600",
+      "link": "<https://www.ssa.gov/themes/custom/ssa_core/package/dist/fonts/public-sans/PublicSans-Bold.woff2>;rel=\"preload\";as=\"font\";type=\"font/woff2\";crossorigin,<https://www.ssa.gov/themes/custom/ssa_core/package/dist/fonts/public-sans/PublicSans-Regular.woff2>;rel=\"preload\";as=\"font\";type=\"font/woff2\";crossorigin, <https://www.googletagmanager.com>;rel=\"preconnect\"",
+      "strict-transport-security": "max-age=31536000 ; includeSubDomains ; preload"
+    },
+    "client": "curl_cffi 0.16.3 (impersonate='chrome')"
+  },
+  {
+    "file": "tr2026.pdf",
+    "url": "https://www.ssa.gov/oact/TR/2026/tr2026.pdf",
+    "retrieved_utc": "2026-10-01T02:35:26+00:00",
+    "status": 200,
+    "bytes": 2545282,
+    "sha256": "fb4e1556a00d925efa03e6355f64f911656a2626eaaceeb16062687008feb683",
+    "headers": {
+      "x-frame-options": "SAMEORIGIN",
+      "x-xss-protection": "1; mode=block",
+      "last-modified": "Tue, 09 Jun 2026 20:37:44 GMT",
+      "etag": "\"26d682-653d8195f9600-gzip\"",
+      "accept-ranges": "bytes",
+      "content-encoding": "gzip",
+      "x-content-type-options": "nosniff",
+      "content-type": "application/pdf",
+      "content-length": "1848323",
+      "expires": "Thu, 01 Oct 2026 02:35:26 GMT",
+      "cache-control": "max-age=0, no-cache, no-store",
+      "pragma": "no-cache",
+      "date": "Thu, 01 Oct 2026 02:35:26 GMT",
+      "vary": "Accept-Encoding",
+      "set-cookie": "YSNP01260cc5=017e2f91c307b13c6eed62dc4ad15e4c024026897344f0bce513fc861498ff76642d681fdf52fefa1be71af950e5d6569e0b4835ef; Path=/; Domain=.ssa.gov; Secure; HttpOnly, AKA_A2=A; expires=Thu, 01-Oct-2026 03:35:26 GMT; path=/; domain=ssa.gov; secure; HttpOnly",
+      "server-timing": "cdn-cache; desc=REVALIDATE, edge; dur=80, origin; dur=20, ak_p; desc=\"1790822126526_398664876_638512497_9980_9615_14_30_255\";dur=1",
+      "alt-svc": "h3=\":443\"; ma=93600",
+      "strict-transport-security": "max-age=31536000 ; includeSubDomains ; preload"
+    },
+    "client": "curl_cffi 0.16.3 (impersonate='chrome')"
+  }
+]

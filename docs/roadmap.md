@@ -15,7 +15,7 @@ decision points, not chronological phases.
 
 The project has four core workstreams:
 
-1. **Longitudinal Populace construction**
+1. **Longitudinal Microcosm construction**
 2. **Social Security integration and validation**
 3. **Policy analysis products**
 4. **Public API and interface**
@@ -31,11 +31,11 @@ implementation.
 
 ### Deliverables
 
-- Finalized base population platform: `populace`, PolicyEngine's
+- Finalized base population platform: Microcosm, PolicyEngine's
   microdata stack
-- Clear boundary between `populace` platform work and
+- Clear boundary between Microcosm platform work and
   Social Security-specific application work
-- Benchmark datasets and target tables assembled from `populace`'s
+- Benchmark datasets and target tables assembled from Microcosm's
   primary-source data and its versioned target registry
 - Initial validation harness for baseline distributions
 - Implementation team and external review capacity identified
@@ -51,16 +51,16 @@ implementation.
 
 ## Stage 1: historical earnings reconstruction
 
-**Purpose**: determine whether `populace` can be extended into a
+**Purpose**: determine whether Microcosm can be extended into a
 credible longitudinal population asset for Social Security analysis.
 
 ### Core tasks
 
 - Harmonize PSID and related longitudinal sources
 - Build at least one conservative production path for earnings-history
-  reconstruction inside `populace`
+  reconstruction inside Microcosm
 - Add the first longitudinal state variables and transition machinery to
-  `populace`
+  Microcosm
 - Compare alternative model families where justified
 - Validate age-earnings profiles, percentiles, mobility, AIME, and
   correlation structure
@@ -68,14 +68,14 @@ credible longitudinal population asset for Social Security analysis.
 
 ### Deliverables
 
-- Longitudinal `populace` alpha with earnings histories and core
+- Longitudinal Microcosm alpha with earnings histories and core
   longitudinal states
 - Validation report on held-out data and external benchmarks
 - Recommendation on the production longitudinal architecture
 
 ### Exit criteria
 
-- Longitudinal `populace` is accurate enough to justify downstream
+- Longitudinal Microcosm is accurate enough to justify downstream
   benefit modeling
 - Validation results are publishable and not merely anecdotal
 
@@ -84,12 +84,12 @@ proceeding mechanically.
 
 ## Stage 2: family, disability, claiming, and benefits
 
-**Purpose**: turn longitudinal `populace` into a credible Social
+**Purpose**: turn longitudinal Microcosm into a credible Social
 Security analysis dataset.
 
 ### Core tasks
 
-- Freeze the minimal production version of longitudinal `populace`
+- Freeze the minimal production version of longitudinal Microcosm
   chosen at the end of stage 1
 - Implement family structure and marital histories needed for auxiliary
   benefits
@@ -113,7 +113,7 @@ Security analysis dataset.
 
 ## Stage 3: forward projection and reform analysis
 
-**Purpose**: move from longitudinal `populace` plus a validated Social
+**Purpose**: move from longitudinal Microcosm plus a validated Social
 Security layer to a projected dynamic model that can analyze reform
 packages.
 
@@ -176,7 +176,7 @@ Throughout the project:
 - preserve reproducible data-processing pipelines where licensing
   permits
 - document model decisions and reversals
-- preserve the separation between reusable `populace` infrastructure
+- preserve the separation between reusable Microcosm infrastructure
   and Social Security-specific application code
 - collect external review from domain experts
 
