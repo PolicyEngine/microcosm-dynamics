@@ -207,3 +207,77 @@ def test_read_log_ignores_quoted_paths_and_records_harness_notices(tmp_path):
     log = review_root.read_log(transcript, root, [])
     assert log["review_counts"] is False
     assert log["persisted_outputs_opened"] == [saved]
+
+
+def _codex_transcript(tmp_path: Path, commands: list[str]) -> Path:
+    lines = [json.dumps({"type": "thread.started"}), "not json"]
+    for index, command in enumerate(commands):
+        item = {
+            "id": f"item_{index}",
+            "type": "command_execution",
+            "command": command,
+        }
+        lines.append(json.dumps({"type": "item.started", "item": item}))
+        lines.append(
+            json.dumps(
+                {
+                    "type": "item.completed",
+                    "item": {**item, "aggregated_output": "/etc/passwd"},
+                }
+            )
+        )
+    path = tmp_path / "codex.jsonl"
+    path.write_text("\n".join(lines), encoding="utf-8")
+    return path
+
+
+def test_codex_read_log_counts_commands_inside_the_root(tmp_path):
+    root = _invented_root(tmp_path)
+    commands = [
+        "/bin/zsh -lc \"nl -ba docs/keep.md | sed -n '1,20p'\"",
+        "/bin/zsh -lc \"rg -n 'gates.yaml|bound' docs\"",
+        "/bin/zsh -lc 'python3 -c \"import json; print(1)\" 2>/dev/null'",
+        f"/bin/zsh -lc 'cat {root}/docs/keep.md'",
+    ]
+    log = review_root.read_log_codex(
+        _codex_transcript(tmp_path, commands), root, ["docs/denied.md"]
+    )
+    # started and completed events of one item count once
+    assert log["n_commands"] == 4
+    assert log["review_counts"] is True
+    assert log["paths_outside_root_or_denied"] == []
+    # output is never read: the invented output names /etc/passwd
+    assert "/etc/passwd" not in json.dumps(log)
+
+
+@pytest.mark.parametrize(
+    ("command", "kind"),
+    [
+        ("/bin/zsh -lc 'cat /etc/hosts'", "outside_root"),
+        ("/bin/zsh -lc 'cat ../elsewhere.md'", "outside_root"),
+        ("/bin/zsh -lc 'ls ~/PolicyEngine'", "outside_root"),
+        ("/bin/zsh -lc 'cat $HOME/x'", "outside_root"),
+        ("/bin/zsh -lc 'cd /tmp && ls'", "outside_root"),
+        ("/bin/zsh -lc \"rg --files=/var/x\"", "outside_root"),
+        ("/bin/zsh -lc 'nl -ba docs/../../elsewhere.md'", "outside_root"),
+    ],
+)
+def test_codex_read_log_flags_paths_that_leave_the_root(
+    tmp_path, command, kind
+):
+    root = _invented_root(tmp_path)
+    log = review_root.read_log_codex(
+        _codex_transcript(tmp_path, [command]), root, ["docs/denied.md"]
+    )
+    assert log["review_counts"] is False
+    assert kind in log["flagged_kinds"].values()
+
+
+def test_codex_read_log_flags_an_absolute_denied_path(tmp_path):
+    root = _invented_root(tmp_path)
+    command = f"/bin/zsh -lc 'cat {root}/docs/denied.md'"
+    log = review_root.read_log_codex(
+        _codex_transcript(tmp_path, [command]), root, ["docs/denied.md"]
+    )
+    assert log["review_counts"] is False
+    assert list(log["flagged_kinds"].values()) == ["denied"]

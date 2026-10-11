@@ -638,64 +638,71 @@ def test_ruled_power_figures_come_from_the_record(prose, ruled_record):
     surfaces = ruled_record["fixed_surfaces"]
     ladder = ruled_record["ladder_inside_the_six"]
     lenient_ladder = ruled_record["ladder_inside_the_six_most_lenient"]
-    option = ruled_record["tolerance_option"]
-    k = ruled_record["tolerance_for_target"]["binding"]
+    options = ruled_record["options"]
+    protocol = ruled_record["verdict"]["protocol"]
     weak = min(per_cell, key=lambda n: per_cell[n]["bound_pass_at_m"])
     assert weak == "earn_p50.older"
     assert weak == max(per_cell, key=lambda n: per_cell[n]["d_95th"])
     assert weak == max(per_cell, key=lambda n: per_cell[n]["gap_variance"])
-    five = surfaces["5"]["surfaces"]
-    four = surfaces["4"]["surfaces"]
     assert surfaces["5"]["n_reaching_target"] == 1
-    assert surfaces["4"]["n_surfaces"] == 14
-    assert surfaces["4"]["n_reaching_target"] == 6
-    assert five[0]["dropped"] == ["earn_p50.older"]
-    assert four[0]["dropped"] == ["earn_p50.older", "earn_p50.prime"]
-    assert four[1]["dropped"] == ["earn_p50.older", "earn_zero_rate.older"]
+    assert options["B"]["dropped"] == ["earn_p50.older"]
+    assert protocol["verdict"] == "feasible_subject_to_floor"
+    with_t = [
+        v["p_gate"]
+        for k, v in six.items()
+        if ruled_record["evaluations"][k]["critical"] == "t"
+    ]
+    assert max(with_t) < 0.90
+    assert ruled_record["verdict"][
+        "evaluations_of_the_six_reaching_target"
+    ] == [
+        "household_as_measured",
+        "most_lenient",
+    ]
     assert constants["t_star"] == pytest.approx(
         student_t.ppf(1 - 0.05 / 12, 63), rel=1e-12
     )
+
+    def pair(key):
+        return (
+            f"{options[key]['p_gate']:.3f} / "
+            f"{options[key]['p_gate_most_lenient']:.3f}"
+        )
+
     expected = [
-        f"the six level cells reach {six['binding']['p_gate']:.3f} on the "
-        "binding evaluation",
-        f"The most lenient evaluation reaches "
+        f"the six level cells reach {six['binding']['p_gate']:.3f} power",
+        f"only the most lenient reaches it, at "
         f"{six['most_lenient']['p_gate']:.3f}",
+        f"On the binding evaluation they reach {six['binding']['p_gate']:.3f}",
         f"(95th percentile {per_cell[weak]['d_95th']:.3f})",
         f"bound rule with probability {per_cell[weak]['bound_pass_at_m']:.3f}"
         " at six cells",
         "correlations are at most "
         f"{ruled_record['level_cell_gap_correlation_max']:.2f}",
-        f"clears 0.90 in {ladder['orders_clearing']} on the binding "
-        f"evaluation and in all {lenient_ladder['orders_clearing']} on the "
+        f"Four of the six cells keep both families and reach "
+        f"{protocol['best_family_surface']['p_gate']:.3f}",
+        f"it clears 0.90 in {ladder['orders_clearing']} on the binding "
+        f"evaluation, and in all {lenient_ladder['orders_clearing']} on the "
         "most lenient",
-        f"In the other {ladder['orders'] - ladder['orders_clearing']} orders",
-        f"without `earn_p50.older`, at {five[0]['p_gate']:.3f}",
-        "Six of the fourteen four-cell surfaces reach 0.90",
-        f"The best drops both medians, at {four[0]['p_gate']:.3f}",
-        f"The six reach 0.90 at k = {k['k']:.3f}, a tolerance "
-        f"{k['width_over_k3']:.3f} times as wide",
-        f"At k = {option['k']:.2f} they reach {option['p_gate']:.3f}, and "
-        f"{option['p_gate_most_lenient']:.3f} on the most lenient",
-        f"dropping `earn_p50.older`: {five[0]['p_gate']:.3f} / "
-        f"{five[0]['p_gate_most_lenient']:.3f}",
-        f"dropping both medians ({four[0]['p_gate']:.3f} / "
-        f"{four[0]['p_gate_most_lenient']:.3f})",
-        f"`earn_zero_rate.older` ({four[1]['p_gate']:.3f} / "
-        f"{four[1]['p_gate_most_lenient']:.3f})",
-        f"k = {option['k']:.2f}, {option['width_over_k3']:.2f} times k = 3's: "
-        f"{option['p_gate']:.3f} / {option['p_gate_most_lenient']:.3f}",
+        f"in the other {ladder['orders'] - ladder['orders_clearing']} it "
+        "prunes to three cells",
+        f"so {ladder['orders_clearing']} of {ladder['orders']} is a count, "
+        "not a probability",
         f"It clears 0.90 in {ladder['orders_clearing']} of the "
         f"{ladder['orders']} possible orders",
+        f"dropping `earn_p50.older`: {pair('B')}",
+        f"Dropping both medians gives {pair('C1')}",
+        f"`earn_zero_rate.older` gives {pair('C2')}",
+        f"k = {options['D']['k']:.2f}, {options['D']['width_over_k3']:.2f} "
+        f"times k = 3's: {pair('D')}",
         f"{six['household_as_measured']['p_gate']:.3f}, the figure d781 cites",
         f"At m = 6 and ν = {constants['design_degrees_of_freedom']} it is "
         f"{constants['t_star']:.3f}, against z\\*_6 = "
         f"{constants['z_star']:.3f}",
+        "**Verdict under section 16's rule: feasible, subject to B2's "
+        "floor.**",
+        "The protocol would not stop B2 here, but the ruling rested on that "
+        "figure.",
     ]
     for phrase in expected:
-        assert phrase in prose, phrase
-    assert ruled_record["verdict"]["b2_stops"]
-    for phrase in (
-        "**Verdict: below 0.90 on every evaluation.**",
-        "B2 stops here again.",
-    ):
         assert phrase in prose, phrase

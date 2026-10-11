@@ -2,8 +2,9 @@
 
 **Status: protocol frozen and planning values computed, 2026-10-01.
 Max ruled d765, d781 and d782 on 2026-10-11 (section 2). On the
-configuration they set, B2 falls short of 0.90 power and stops again
-until Max rules on dNEW (sections 11 and 13).**
+configuration they set, the six level cells reach 0.813 power, not the
+0.952 d781 cites. B2 is held until Max rules on dNEW (sections 11
+and 13).**
 This file is the post-ruling addendum that the B0.1 audit
 (`docs/design/track_b_b0_1_audit.md`, section 13) calls for. It does
 three things:
@@ -65,9 +66,12 @@ repository; design line numbers refer to it.
   63 degrees of freedom (section 7).
 - **Power on that configuration.** The six level cells reach 0.813 on the
   binding evaluation, against the 0.952 d781 cites on household
-  resampling. Every evaluation is below 0.90, and the most lenient gives
-  0.886 (section 11). B2 stops again before registration, and dNEW asks
-  Max to choose a remedy (section 13).
+  resampling. Every evaluation that keeps the t value is below 0.90, and
+  only the most lenient reaches it, at 0.907 (section 11).
+  - Section 16's rule does not stop B2: four of the six reach 0.964, so
+    B2's floor and ladder would decide.
+  - But the ruling rested on 0.952, so B2 is held before registration,
+    and dNEW asks Max to confirm the surface or change it (section 13).
 
 ## 2. Rulings this addendum implements
 
@@ -123,9 +127,10 @@ addendum queued (section 13). The decision log records them as:
 The 0.952 that d781 cites is household resampling's figure. On the
 configuration the three rulings and the M2 rider set together, the six
 level cells reach 0.813 on the binding evaluation, below 0.90 (section
-11, "Power on the configuration Max ruled"). So B2 stops again before
-registration, and decision dNEW asks Max to choose among the remedies
-(section 13).
+11, "Power on the configuration Max ruled"). Section 16's rule would let
+B2's floor and ladder decide. But the ruling rested on 0.952, so B2 is
+held before registration, and decision dNEW asks Max to confirm the ruled
+surface or change it (section 13).
 
 ## 3. The frozen record
 
@@ -197,8 +202,9 @@ level cells: `earn_p50.older`, `earn_p50.prime`, `earn_p90.older`,
   "published five-seed floor detail, no published candidate outcome".
 
 On the ruled configuration the six reach 0.813 on the binding evaluation,
-below 0.90 (section 11). So decision dNEW (section 13) may change this
-surface, or the tolerance, before B2 registers.
+not the 0.952 d781 cites (section 11). Decision dNEW (section 13) asks
+Max to confirm this surface or change it, or its tolerance, before B2
+registers.
 
 The rest of this section is the rule as d693 froze it. Under d781 its
 candidate family is the six.
@@ -687,14 +693,18 @@ alone. The configuration is:
 - the half-sample estimation variances (d765).
 
 Units are each cell's household se_up, as above. The model changes protocol
-v2's binding evaluation in three places:
+v2's evaluation in three places:
 
 - **The gap's sampling variance.** Under Rao-Wu it is (r_c × d_c)², with
   d_c the cell's design ratio (section 10). The full-support gap is
-  x ~ N(0, (r_c d_c)² + e_c), with e_c = s²_gate,c - r_c² as before.
-- **The registered variance.** It is (r_c d_c)² × W + e_c, with
+  x ~ N(0, (r_c d_c)² + e_c), with e_c the estimation part of protocol
+  v2's variance: s²_gate,c - r_c² on the binding evaluation, and
+  s²_c - r_c² on the point-variance sensitivity.
+- **The registered variance.** It is (r_c d_c)² × W + a_c, with
   W ~ χ²_ν/ν independent of x: B2 estimates the Rao-Wu part with ν degrees
-  of freedom, and a_c is a registered constant.
+  of freedom, and a_c is a registered constant. a_c is s²_gate,c - r_c² on
+  the binding evaluation, as in protocol v2, and e_B2,c on the
+  point-variance sensitivity.
 - **The critical value.** The bound rule passes when
   |x| + t\*_m,ν √(registered variance) <= τ_c.
 
@@ -704,82 +714,97 @@ resampling variance whatever the design.
 
 The binding evaluation takes d_c at its 95th percentile, the design
 rule's own statistic. With ν infinite, d = 1 and z\*, the model is
-protocol v2's binding evaluation term for term. The six cells then
-return 0.952, the figure d781 cites.
+protocol v2's evaluation term for term, and the six cells return 0.952,
+the figure d781 cites.
 
 | Evaluation | P(gate passes) | P(bound rule passes) |
 |---|---:|---:|
-| Binding: d at its 95th percentile, t with ν df, se_boot estimated | 0.813 | 0.813 |
+| Binding: d at its 95th percentile, gating variances, t with ν df, se_boot estimated | 0.813 | 0.813 |
 | se_boot treated as known | 0.821 | 0.821 |
 | d at its point estimate | 0.854 | 0.854 |
+| Point variances, e_B2 registered | 0.841 | 0.841 |
 | Normal z\* in place of t, se_boot known | 0.852 | 0.852 |
 | Side-A seeds spread by r × d | 0.813 | 0.813 |
-| Most lenient: d point, z\*, se_boot known | 0.886 | 0.886 |
+| Most lenient: d point, point variances, z\*, se_boot known | 0.907 | 0.907 |
 | Household resampling (d = 1, z\*): d781's basis | 0.952 | 0.952 |
 
-**Verdict: below 0.90 on every evaluation.** On the binding evaluation the
-six level cells reach 0.813. The most lenient evaluation reaches 0.886.
+**The six together fall short of 0.90.** On the binding evaluation they
+reach 0.813, and every evaluation that keeps the t value is below 0.90.
+Only the most lenient combination reaches the bar, at 0.907, and it drops
+the t value, the upper design ratios and the gating variances together.
 
 - `earn_p50.older` is the weak cell. It has the largest design ratio
-  (95th percentile 1.259) and the largest gating variance, and on its own
-  it passes the bound rule with probability 0.892 at six cells.
+  (95th percentile 1.259) and the largest gap variance. On its own it
+  passes the bound rule with probability 0.892 at six cells.
 - Given a bound-rule pass, the seed conjunction fails with probability
   below 10⁻⁶ on every evaluation, so more gate seeds would change
   nothing.
 - The six gaps' arm-F correlations are at most 0.18, so a
-  correlation-aware simultaneous critical value would gain almost nothing.
+  correlation-aware simultaneous critical value should gain little. That
+  gain was not computed.
 
-Every surface of four or more of the six that keeps both families, on the
-binding and most lenient evaluations, at the nominal uncapped tolerance:
+**Verdict under section 16's rule: feasible, subject to B2's floor.** The
+rule applied to the ruled surface does not stop B2. Its families are log
+quantiles and zero rate, and section 5's four-cell guard applies. Four of
+the six cells keep both families and reach 0.964.
+
+So under d781 (a), B2's floor builder runs section 5's ladder inside the
+six, on B2's own floor:
+
+- over all 720 pruning orders it clears 0.90 in 306 on the binding
+  evaluation, and in all 720 on the most lenient;
+- in the other 414 it prunes to three cells and fails the four-cell guard,
+  and B2 is `WEAK_POWER_OR_VACUITY` at floor build, before any candidate
+  run;
+- B2's floor fixes the order. Nothing makes the orders equally likely, so
+  306 of 720 is a count, not a probability.
+
+Every surface of four or more of the six that keeps both families, at the
+nominal uncapped tolerance:
 
 | Gated cells | Dropped | Binding | Most lenient |
 |---:|---|---:|---:|
-| 6 | none | 0.813 | 0.886 |
-| 5 | `earn_p50.older` | 0.926 | 0.961 |
-| 5 | `earn_p50.prime` | 0.864 | 0.916 |
-| 5 | `earn_zero_rate.older` | 0.856 | 0.911 |
-| 5 | `earn_zero_rate.prime` | 0.852 | 0.909 |
-| 5 | `earn_p90.older` | 0.845 | 0.905 |
-| 5 | `earn_p90.prime` | 0.842 | 0.903 |
-| 4 | `earn_p50.older`, `earn_p50.prime` | 0.964 | 0.981 |
-| 4 | `earn_p50.older`, `earn_zero_rate.older` | 0.956 | 0.977 |
-| 4 | `earn_p50.older`, `earn_zero_rate.prime` | 0.952 | 0.975 |
-| 4 | `earn_p50.older`, `earn_p90.older` | 0.946 | 0.972 |
-| 4 | `earn_p50.older`, `earn_p90.prime` | 0.944 | 0.970 |
-| 4 | `earn_p50.prime`, `earn_zero_rate.older` | 0.903 | 0.938 |
-| 4 | `earn_p50.prime`, `earn_zero_rate.prime` | 0.899 | 0.936 |
-| 4 | `earn_p50.prime`, `earn_p90.older` | 0.893 | 0.933 |
-| 4 | `earn_p50.prime`, `earn_p90.prime` | 0.891 | 0.932 |
-| 4 | `earn_p90.older`, `earn_zero_rate.older` | 0.886 | 0.929 |
-| 4 | `earn_p90.prime`, `earn_zero_rate.older` | 0.884 | 0.928 |
-| 4 | `earn_p90.older`, `earn_zero_rate.prime` | 0.883 | 0.927 |
-| 4 | `earn_p90.prime`, `earn_zero_rate.prime` | 0.880 | 0.926 |
-| 4 | `earn_p90.older`, `earn_p90.prime` | 0.875 | 0.923 |
-
-The figures for decision dNEW:
-
-- **The ladder inside the six.** It prunes in descending tolerance/σ
-  order, which only B2's floor fixes.
-  - Over all 720 orders it clears 0.90 in 306 on the binding evaluation
-    and in all 720 on the most lenient.
-  - In the other 414 orders it ends below 0.90, or below the four-cell
-    guard, and B2 is `WEAK_POWER_OR_VACUITY` at floor build.
-- **Five fixed cells.** Only one five-cell surface reaches 0.90: without
-  `earn_p50.older`, at 0.926.
-- **Four fixed cells.** Six of the fourteen four-cell surfaces reach 0.90.
-  The best drops both medians, at 0.964.
-- **A wider tolerance.** The six reach 0.90 at k = 3.257, a tolerance
-  1.059 times as wide as k = 3's. At k = 3.26 they reach 0.901, and 0.944
-  on the most lenient evaluation.
+| 6 | none | 0.813 | 0.907 |
+| 5 | `earn_p50.older` | 0.926 | 0.972 |
+| 5 | `earn_p50.prime` | 0.864 | 0.933 |
+| 5 | `earn_zero_rate.older` | 0.856 | 0.928 |
+| 5 | `earn_zero_rate.prime` | 0.852 | 0.926 |
+| 5 | `earn_p90.older` | 0.845 | 0.923 |
+| 5 | `earn_p90.prime` | 0.842 | 0.922 |
+| 4 | `earn_p50.older`, `earn_p50.prime` | 0.964 | 0.988 |
+| 4 | `earn_p50.older`, `earn_zero_rate.older` | 0.956 | 0.984 |
+| 4 | `earn_p50.older`, `earn_zero_rate.prime` | 0.952 | 0.982 |
+| 4 | `earn_p50.older`, `earn_p90.older` | 0.946 | 0.979 |
+| 4 | `earn_p50.older`, `earn_p90.prime` | 0.944 | 0.978 |
+| 4 | `earn_p50.prime`, `earn_zero_rate.older` | 0.903 | 0.951 |
+| 4 | `earn_p50.prime`, `earn_zero_rate.prime` | 0.899 | 0.949 |
+| 4 | `earn_p50.prime`, `earn_p90.older` | 0.893 | 0.947 |
+| 4 | `earn_p50.prime`, `earn_p90.prime` | 0.891 | 0.946 |
+| 4 | `earn_p90.older`, `earn_zero_rate.older` | 0.886 | 0.943 |
+| 4 | `earn_p90.prime`, `earn_zero_rate.older` | 0.884 | 0.942 |
+| 4 | `earn_p90.older`, `earn_zero_rate.prime` | 0.883 | 0.941 |
+| 4 | `earn_p90.prime`, `earn_zero_rate.prime` | 0.880 | 0.940 |
+| 4 | `earn_p90.older`, `earn_p90.prime` | 0.875 | 0.938 |
 
 These figures are nominal, like those above. B2's floor fixes its real
 tolerance. For these six cells, M6's realized tolerance/σ (2.35-2.64,
 against 2.61) and the 2006 floor-to-bootstrap ratios (0.94-1.07) put it
-roughly 15% below to 8% above nominal.
+roughly 15% below to 8% above nominal. Binding gate power of the surfaces
+decision dNEW names, at tolerances scaled by those amounts:
 
-B2 stops here again. Under section 5 the case is `WEAK_POWER_OR_VACUITY`
-before registration. Decision dNEW asks Max to choose among the remedies,
-and no rescoped registration is written before he rules (section 13).
+| Surface | τ × 0.85 | τ × 0.92 | τ × 1.00 | τ × 1.08 |
+|---|---:|---:|---:|---:|
+| The six, before any pruning | 0.382 | 0.617 | 0.813 | 0.921 |
+| B: without `earn_p50.older` | 0.620 | 0.808 | 0.926 | 0.976 |
+| C1: without both medians | 0.767 | 0.895 | 0.964 | 0.989 |
+| C2: without `earn_p50.older` and `earn_zero_rate.older` | 0.743 | 0.879 | 0.956 | 0.986 |
+| D: the six at k = 3.26 | 0.557 | 0.763 | 0.901 | 0.963 |
+
+The six cells Max ruled on reach 0.813, not the 0.952 that d781 cites. So
+B2 is held before registration, and decision dNEW asks Max to confirm the
+ruled surface or change it (section 13). The protocol would not stop B2
+here, but the ruling rested on that figure. No other registration is
+written before he rules.
 
 ## 12. Corrections to the audit
 
@@ -843,10 +868,10 @@ measured (section 7), and the binding evaluation uses the measured r.
   d781 (a) and d782 Rao-Wu (section 2);
 - Max has ratified the refit arm's half-sample resampling (d765), or
   ruled otherwise (below). **Ratified 2026-10-11** (section 2);
-- Max has ruled on dNEW, because on the ruled configuration the six level
-  cells fall below 0.90 (section 11, "Power on the configuration Max
-  ruled"), and any registration that follows is written and reviewed
-  before any candidate run;
+- Max has ruled on dNEW. On the ruled configuration the six level cells
+  reach 0.813, not the 0.952 d781 rests on (section 11, "Power on the
+  configuration Max ruled"). Any registration that follows is written and
+  reviewed before any candidate run;
 - a B1 run has passed: v1 `REPRODUCED`, or v2
   `RECONSTRUCTED_REPRODUCTION` (d622). A v2 pass carries its weaker
   label, "reconstructed reproduction (weaker than bit-for-bit)", into
@@ -928,30 +953,39 @@ blocked B2's registration. d765, d781 and d782 were ruled on 2026-10-11
     63 degrees of freedom is 2.724, against z\* = 2.638. A registration
     under (a) should use the t value.
 
-- **dNEW: how B2 reaches 0.90 on the ruled configuration.** Queued
-  2026-10-11, after the three rulings. On the binding evaluation the six
-  level cells reach 0.813, and the most lenient evaluation reaches 0.886
-  (section 11). The options, in no order, with binding and most lenient
-  power:
-  - (A) leave d781 (a) as it stands. Section 5's ladder then prunes
-    inside the six on B2's own floor, in an order only that floor fixes.
-    It clears 0.90 in 306 of the 720 possible orders (720 of 720 on the
-    most lenient evaluation). Otherwise B2 is `WEAK_POWER_OR_VACUITY` at
-    floor build and returns to Max;
-  - (B) gate five cells, dropping `earn_p50.older`: 0.926 / 0.961. B2
-    then does not certify the older cohort's median earnings level;
-  - (C) gate four cells, for example both cohorts' p90 and zero rates,
-    dropping both medians (0.964 / 0.981), or dropping `earn_p50.older`
-    and `earn_zero_rate.older` (0.956 / 0.977);
-  - (D) keep the six and widen their tolerance to k = 3.26, 1.06 times
-    k = 3's: 0.901 / 0.944. The ladder stays as a backstop;
+- **dNEW: confirm or change B2's surface after the ruled power.** Queued
+  2026-10-11, after the three rulings. The six level cells reach
+  0.813 on the binding evaluation and
+  0.907 on the most lenient (section 11).
+  Section 16's rule would let B2's floor and ladder decide, but d781 rests
+  on 0.952. The options, in no order, with binding and most lenient power
+  at the nominal tolerance:
+  - (A) proceed as ruled. Section 5's ladder prunes inside the six on B2's
+    own floor, in an order only that floor fixes.
+    - It clears 0.90 in 306 of the 720
+      possible orders (720 of 720 on the
+      most lenient evaluation).
+    - Otherwise B2 is `WEAK_POWER_OR_VACUITY` at floor build, before any
+      candidate run, and returns to Max;
+  - (B) gate five cells, dropping `earn_p50.older`: 0.926 / 0.972. B2 then does
+    not certify the older cohort's median earnings level;
+  - (C) gate four cells. Dropping both medians gives 0.964 / 0.988; dropping
+    `earn_p50.older` and `earn_zero_rate.older` gives 0.956 / 0.984;
+  - (D) keep the six and widen their tolerance to k = 3.26,
+    1.06 times k = 3's: 0.901 / 0.956. The ladder
+    stays as a backstop;
   - (E) keep B2 unadmitted. H and B3L stay blocked.
 
   More gate seeds, pooled cohorts and a correlation-aware critical value
-  were considered and set aside (section 11). The decision aid,
-  `trackb-ruled-power-20261011/OPTIONS.md` in the launch-evidence
-  directory, says for each option what B2 stops certifying and what H
-  and B3L then cannot rely on. It proposes (D) as the default.
+  were considered and set aside (section 11).
+
+  The decision aid is `trackb-ruled-power-20261011/OPTIONS.md` in the
+  launch-evidence directory. It says, for each option, what B2 stops
+  certifying and what H and B3L then cannot rely on, and gives each
+  option's power at tolerances 15% below to 8% above nominal. It
+  proposes (A) as the default: it is the ruling as made, and a ladder
+  failure stops B2 at floor build, before any candidate outcome, so the
+  choice among (B)-(D) can then use B2's real tolerances.
 
 If a family's last cell may be pruned, these surfaces reach 0.90 on the
 binding evaluation at the uncapped tolerance (the power record's

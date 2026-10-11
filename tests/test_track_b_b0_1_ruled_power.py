@@ -23,6 +23,7 @@ import hashlib
 import json
 import math
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
@@ -108,7 +109,7 @@ _cell = st.tuples(
 @example((2.0, 0.109375, 0.5), 1)
 def test_known_se_normal_critical_d1_equals_protocol_v2(cell, m):
     tau, r, e = cell
-    mine = ruled.ruled_cell_terms(tau, r, r**2, e, m, None, "z", False)
+    mine = ruled.ruled_cell_terms(tau, r, r**2, e, e, m, None, "z", False)
     theirs = power.cell_terms(tau, r, e, e, m)
     for field in ("bound", "a4", "a5", "b4", "b5"):
         assert getattr(mine, field) == pytest.approx(
@@ -159,7 +160,7 @@ def _nested_reference(tau, r_seed, samp, e, m, nu):
 def test_expectation_over_the_estimated_se_matches_adaptive_quadrature(
     tau, r, d, e, m, nu
 ):
-    terms = ruled.ruled_cell_terms(tau, r, (r * d) ** 2, e, m, nu)
+    terms = ruled.ruled_cell_terms(tau, r, (r * d) ** 2, e, e, m, nu)
     a4, a5 = _nested_reference(tau, r, (r * d) ** 2, e, m, nu)
     assert terms.a4 == pytest.approx(a4, abs=2e-8)
     assert terms.a5 == pytest.approx(a5, abs=2e-8)
@@ -210,7 +211,7 @@ def test_gate_matches_brute_force_simulation(cells, nu):
     m = len(cells)
     exact = power.gate_probabilities(
         [
-            ruled.ruled_cell_terms(t, r, (r * d) ** 2, e, m, nu)
+            ruled.ruled_cell_terms(t, r, (r * d) ** 2, e, e, m, nu)
             for t, r, d, e in cells
         ]
     )
@@ -235,7 +236,7 @@ def test_probabilities_are_bounded_and_respect_frechet(cells, nu):
     m = len(cells)
     gate = power.gate_probabilities(
         [
-            ruled.ruled_cell_terms(t, r, (r * d) ** 2, e, m, nu)
+            ruled.ruled_cell_terms(t, r, (r * d) ** 2, e, e, m, nu)
             for t, r, d, e in cells
         ]
     )
@@ -252,8 +253,8 @@ def test_probabilities_are_bounded_and_respect_frechet(cells, nu):
 @given(_ruled, st.floats(min_value=0.01, max_value=0.5), st.integers(2, 200))
 def test_power_falls_with_the_design_ratio(cell, extra, nu):
     tau, r, d, e = cell
-    base = ruled.ruled_cell_terms(tau, r, (r * d) ** 2, e, 6, nu)
-    more = ruled.ruled_cell_terms(tau, r, (r * (d + extra)) ** 2, e, 6, nu)
+    base = ruled.ruled_cell_terms(tau, r, (r * d) ** 2, e, e, 6, nu)
+    more = ruled.ruled_cell_terms(tau, r, (r * (d + extra)) ** 2, e, e, 6, nu)
     assert more.bound <= base.bound + 1e-12
     assert more.a4 <= base.a4 + 1e-9
     assert more.a5 <= base.a5 + 1e-9
@@ -264,9 +265,11 @@ def test_power_falls_with_the_design_ratio(cell, extra, nu):
 def test_known_se_power_rises_with_df_and_t_never_beats_z(cell, nu, extra):
     tau, r, d, e = cell
     samp = (r * d) ** 2
-    fewer = ruled.ruled_cell_terms(tau, r, samp, e, 6, nu, "t", False)
-    more = ruled.ruled_cell_terms(tau, r, samp, e, 6, nu + extra, "t", False)
-    normal = ruled.ruled_cell_terms(tau, r, samp, e, 6, nu, "z", False)
+    fewer = ruled.ruled_cell_terms(tau, r, samp, e, e, 6, nu, "t", False)
+    more = ruled.ruled_cell_terms(
+        tau, r, samp, e, e, 6, nu + extra, "t", False
+    )
+    normal = ruled.ruled_cell_terms(tau, r, samp, e, e, 6, nu, "z", False)
     assert fewer.a4 <= more.a4 + 1e-9 <= normal.a4 + 2e-9
     assert fewer.bound <= more.bound + 1e-12 <= normal.bound + 2e-12
 
@@ -275,8 +278,8 @@ def test_known_se_power_rises_with_df_and_t_never_beats_z(cell, nu, extra):
 @given(_ruled, st.floats(min_value=0.01, max_value=2.0), st.integers(2, 200))
 def test_power_rises_with_the_tolerance(cell, extra, nu):
     tau, r, d, e = cell
-    base = ruled.ruled_cell_terms(tau, r, (r * d) ** 2, e, 6, nu)
-    wider = ruled.ruled_cell_terms(tau + extra, r, (r * d) ** 2, e, 6, nu)
+    base = ruled.ruled_cell_terms(tau, r, (r * d) ** 2, e, e, 6, nu)
+    wider = ruled.ruled_cell_terms(tau + extra, r, (r * d) ** 2, e, e, 6, nu)
     assert wider.bound >= base.bound - 1e-12
     assert wider.a5 >= base.a5 - 1e-9
     assert wider.b5 >= base.b5 - 1e-9
@@ -331,6 +334,7 @@ def test_binding_evaluation_is_the_ruled_one(record):
     assert [k for k, v in evaluations.items() if v["binding"]] == ["binding"]
     assert evaluations["binding"] == {
         "design": "d95",
+        "variance": "gate",
         "critical": "t",
         "random_se": True,
         "seeds": "household",
@@ -346,20 +350,68 @@ def test_verdict_follows_the_binding_evaluation(record):
     six = record["six_level_cells"]
     verdict = record["verdict"]
     target = record["constants"]["power_target"]
-    assert verdict["ruled_six_reach_target"] is (
-        six["binding"]["p_gate"] >= target
+    assert verdict["six_reach_target"] is (six["binding"]["p_gate"] >= target)
+    assert verdict["evaluations_of_the_six_reaching_target"] == sorted(
+        k for k, v in six.items() if v["p_gate"] >= target
     )
-    assert verdict["b2_stops"] is not verdict["ruled_six_reach_target"]
-    assert verdict["every_evaluation_of_the_six_below_target"] is all(
-        v["p_gate"] < target
-        for k, v in six.items()
-        if k != "household_as_measured"
+    protocol = verdict["protocol"]
+    four = protocol["best_four_cell_surface"]
+    family = protocol["best_family_surface"]
+    assert len(four["cells"]) == 4
+    assert {power.concept(n) for n in family["cells"]} == set(
+        protocol["families"]
     )
-    # The finding the decision rests on.
-    assert verdict["b2_stops"]
-    assert verdict["every_evaluation_of_the_six_below_target"]
+    expected = (
+        "weak_power_or_vacuity"
+        if four["p_gate"] < target
+        else (
+            "family_floor_blocks"
+            if family["p_gate"] < target
+            else "feasible_subject_to_floor"
+        )
+    )
+    assert protocol["verdict"] == expected
+    # The findings the decision rests on.
+    assert not verdict["six_reach_target"]
+    assert protocol["verdict"] == "feasible_subject_to_floor"
+    assert verdict["evaluations_of_the_six_reaching_target"] == [
+        "household_as_measured",
+        "most_lenient",
+    ]
     assert round(six["binding"]["p_gate"], 3) == 0.813
-    assert round(six["most_lenient"]["p_gate"], 3) == 0.886
+    assert round(six["most_lenient"]["p_gate"], 3) == 0.907
+
+
+def test_protocol_verdict_branches():
+    """Each branch of the section-16 rule, on invented cells."""
+    good = ruled.RuledCell("earn_p90.prime", 0.5, 1.0, 0.0, 0.0)
+    cells = {
+        "earn_p90.prime": good,
+        "earn_p90.older": replace(good, name="earn_p90.older"),
+        "earn_p50.prime": replace(good, name="earn_p50.prime"),
+        "earn_zero_rate.prime": replace(good, name="earn_zero_rate.prime"),
+    }
+    how = ruled.BINDING
+    assert (
+        ruled.protocol_verdict(cells, 63, how)["verdict"]
+        == "feasible_subject_to_floor"
+    )
+    weak = {n: replace(c, r=3.0) for n, c in cells.items()}
+    assert (
+        ruled.protocol_verdict(weak, 63, how)["verdict"]
+        == "weak_power_or_vacuity"
+    )
+    blocked = {
+        **{n: c for n, c in cells.items() if "zero" not in n},
+        "earn_p50.older": replace(good, name="earn_p50.older"),
+        "earn_zero_rate.prime": replace(
+            good, name="earn_zero_rate.prime", r=3.0
+        ),
+    }
+    assert (
+        ruled.protocol_verdict(blocked, 63, how)["verdict"]
+        == "family_floor_blocks"
+    )
 
 
 def test_more_gate_seeds_cannot_help(record):
@@ -388,8 +440,68 @@ def test_options_are_consistent(record):
         row["orders"] for row in ladder["end_surfaces"] if row["clears"]
     )
     assert sum(row["orders"] for row in ladder["end_surfaces"]) == 720
-    option = record["tolerance_option"]
-    assert option["k"] >= record["tolerance_for_target"]["binding"]["k"]
-    assert option["p_gate"] >= target
-    assert option["p_gate_most_lenient"] >= option["p_gate"]
+    options = record["options"]
+    assert set(options) == {"six", "B", "C1", "C2", "D"}
+    k = record["tolerance_for_target"]["binding"]["k"]
+    assert options["D"]["k"] == math.ceil(k * 100) / 100 >= k
+    assert options["D"]["p_gate"] >= target
+    assert options["six"]["p_gate"] == pytest.approx(
+        record["six_level_cells"]["binding"]["p_gate"], rel=1e-12
+    )
+    for label in ("B", "C1", "C2"):
+        cells = options[label]["cells"]
+        assert set(cells) | set(options[label]["dropped"]) == set(
+            ruled.LEVEL_CELLS
+        )
+        row = next(
+            r
+            for slot in surfaces.values()
+            for r in slot["surfaces"]
+            if sorted(r["cells"]) == sorted(cells)
+        )
+        assert options[label]["p_gate"] == pytest.approx(row["p_gate"])
+    for option in options.values():
+        assert option["p_gate_most_lenient"] >= option["p_gate"]
+        scales = option["p_gate_by_tolerance_scale"]
+        values = [scales[f"{s:.2f}"] for s in ruled.TOLERANCE_SCALES]
+        assert values == sorted(values)
+        assert scales["1.00"] == pytest.approx(option["p_gate"], rel=1e-12)
     assert record["level_cell_gap_correlation_max"] < 0.2
+
+
+def test_low_df_probabilities_stay_within_one():
+    """Round-1 review's case: few df and a tiny sampling variance.
+
+    Density-weighted nodes without a mass correction gave a bound-rule
+    probability of 1.0000029 here.
+    """
+    terms = ruled.ruled_cell_terms(8.0, 0.1, 0.0064, 0.0, 0.0, 1, 3)
+    for field in ("bound", "a4", "a5"):
+        assert getattr(terms, field) <= 1.0 + 1e-12, field
+    nodes, weights = ruled._w_nodes(3)
+    assert weights.sum() == pytest.approx(1.0 - 2 * ruled.TAIL, abs=1e-15)
+    assert weights.sum() <= 1.0
+
+
+@settings(max_examples=40, deadline=None)
+@given(
+    st.floats(min_value=1.0, max_value=400.0),
+    st.floats(min_value=0.01, max_value=50.0),
+)
+def test_w_weights_are_the_truncated_mass(nu, upper):
+    nodes, weights = ruled._w_nodes(nu, upper)
+    mass = min(1.0 - ruled.TAIL, float(chi2(nu, scale=1 / nu).cdf(upper)))
+    expected = max(0.0, mass - ruled.TAIL)
+    assert weights.sum() == pytest.approx(expected, abs=1e-12)
+    assert (nodes <= upper * (1 + 1e-12)).all()
+
+
+def test_point_variances_use_the_registered_e_b2(planning):
+    cells = ruled.ruled_cells(planning, ruled.EVALUATIONS["point_variances"])
+    for name, cell in cells.items():
+        record = planning["cells"][name]
+        r = record["shared_anchor_ratio"]["r"]
+        assert cell.e_reg == record["estimation_variance"]["e_b2"]
+        assert cell.e_true == pytest.approx(
+            max(0.0, record["gap_variance"]["s2"] - r**2)
+        )

@@ -178,13 +178,15 @@ def illustration_table(power: Mapping[str, Any]) -> str:
 
 
 RULED_LABELS = {
-    "binding": "Binding: d at its 95th percentile, t with ν df, "
-    "se_boot estimated",
+    "binding": "Binding: d at its 95th percentile, gating variances, t "
+    "with ν df, se_boot estimated",
     "registered_se_known": "se_boot treated as known",
     "design_ratio_point": "d at its point estimate",
+    "point_variances": "Point variances, e_B2 registered",
     "normal_critical_value": "Normal z\\* in place of t, se_boot known",
     "seeds_take_the_design_ratio": "Side-A seeds spread by r × d",
-    "most_lenient": "Most lenient: d point, z\\*, se_boot known",
+    "most_lenient": "Most lenient: d point, point variances, z\\*, "
+    "se_boot known",
     "household_as_measured": "Household resampling (d = 1, z\\*): "
     "d781's basis",
 }
@@ -208,6 +210,34 @@ def ruled_evaluation_table(ruled: Mapping[str, Any]) -> str:
 
 def _cells(names: list[str]) -> str:
     return ", ".join(f"`{name}`" for name in names) if names else "none"
+
+
+def ruled_options_table(ruled: Mapping[str, Any]) -> str:
+    """Section 11: each named surface's binding power under tolerance
+    multipliers."""
+    labels = {
+        "six": "The six, before any pruning",
+        "B": "B: without `earn_p50.older`",
+        "C1": "C1: without both medians",
+        "C2": "C2: without `earn_p50.older` and `earn_zero_rate.older`",
+        "D": "D: the six at k = {k:.2f}",
+    }
+    scales = ruled["constants"]["tolerance_scales"]
+    lines = [
+        "| Surface | "
+        + " | ".join(f"τ × {scale:.2f}" for scale in scales)
+        + " |",
+        "|---|" + "---:|" * len(scales),
+    ]
+    for key, label in labels.items():
+        option = ruled["options"][key]
+        by_scale = option["p_gate_by_tolerance_scale"]
+        lines.append(
+            f"| {label.format(k=option.get('k', 0.0))} | "
+            + " | ".join(_f(by_scale[f"{scale:.2f}"]) for scale in scales)
+            + " |"
+        )
+    return "\n".join(lines)
 
 
 def ruled_surface_table(ruled: Mapping[str, Any]) -> str:
@@ -239,6 +269,7 @@ def render() -> dict[str, str]:
         "illustrations": illustration_table(power),
         "ruled_evaluations": ruled_evaluation_table(ruled),
         "ruled_surfaces": ruled_surface_table(ruled),
+        "ruled_options": ruled_options_table(ruled),
     }
 
 

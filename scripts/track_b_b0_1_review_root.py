@@ -23,7 +23,11 @@ every file with its SHA-256.
 
 ``readlog`` reads a review lane's stream-json transcript and lists every
 path its tool calls named and every path its Glob and Grep results
-returned. A review counts only if all of them lie inside the root.
+returned. A review counts only if all of them lie inside the root. With
+``--format codex`` it reads a Codex lane's ``exec --json`` events instead,
+whose tools are shell commands run from the root, and flags every command
+word that leaves the root: an absolute path outside it, a home path or a
+``..`` segment.
 
 Neither command prints file content. Listed files are removed by path,
 unread. The codebook check reads each remaining file only to test for the
@@ -313,6 +317,123 @@ def read_log(
     }
 
 
+#: A shell word that names a path outside the working directory: an
+#: absolute path, a home-relative one, or any ``..`` segment.
+_ESCAPE_RX = re.compile(r"(?:^|/)\.\.(?:/|$)")
+_HOME_RX = re.compile(r"^(?:~|\$HOME|\$\{HOME\})(?:/|$)")
+#: Absolute words that name a program or a device, not data the lane
+#: reads: executables in the system's bin directories, and /dev/null.
+_PROGRAM_RX = re.compile(
+    r"^(?:/(?:usr/(?:local/)?)?s?bin/[^/]+|/opt/homebrew/bin/[^/]+"
+    r"|/dev/null)$"
+)
+
+
+def _shell_words(command: str) -> list[str]:
+    """Split a shell command into words, keeping quoted text together.
+
+    ``shlex`` fails on unbalanced quotes; the fallback is a plain split, so
+    a malformed command is still scanned word by word.
+    """
+    import shlex
+
+    try:
+        return shlex.split(command, posix=True)
+    except ValueError:
+        return command.split()
+
+
+def _path_words(command: str) -> list[str]:
+    """Words of a shell command, and of any ``-c`` script inside it, that
+    could name a path: every word, split again at ``=``, ``:`` and shell
+    separators so ``--out=/x``, ``a:/x`` and ``cd /x;ls`` are seen."""
+    words: list[str] = []
+    for word in _shell_words(command):
+        for piece in re.split(r"[=:;&|()<>`]", word):
+            piece = piece.strip().strip("'\"")
+            if piece:
+                words.append(piece)
+        if " " in word:
+            words.extend(_path_words(word))
+    return words
+
+
+def read_log_codex(
+    transcript: Path, root: Path, denied: Sequence[str]
+) -> dict[str, Any]:
+    """The read log for a Codex review lane, whose tools are shell commands.
+
+    ``transcript`` is ``codex exec --json``'s event stream: one JSON object
+    per line, each command an ``item`` of type ``command_execution``. The
+    lane runs with the root as its working directory, so a command stays
+    inside the root unless a word in it is an absolute path, a home path
+    or a ``..`` segment that leaves the root, or names a denied path. Each
+    such word is classified the way ``read_log`` classifies a named path;
+    any word outside the root or denied voids the review. Executables in
+    the system's bin directories and ``/dev/null`` are programs, not reads.
+    A relative word resolves inside the root, where no denied file exists,
+    so naming a denied file there reads nothing. Command output is not
+    read: listing commands run inside the root can only return paths
+    inside it. No content is copied into the log, only commands.
+    """
+    root = root.resolve()
+    denied_set = set(denied)
+    commands: list[str] = []
+    seen: set[tuple[str, str]] = set()
+    for line in transcript.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        item = event.get("item") if isinstance(event, Mapping) else None
+        if not isinstance(item, Mapping):
+            continue
+        if item.get("type") != "command_execution":
+            continue
+        identifier = str(item.get("id", len(commands)))
+        command = str(item.get("command", ""))
+        if (identifier, command) in seen:
+            continue
+        seen.add((identifier, command))
+        commands.append(command)
+
+    def classify(word: str) -> str | None:
+        if _HOME_RX.match(word):
+            return "outside_root"
+        absolute = word.startswith("/")
+        if absolute and _PROGRAM_RX.match(word):
+            return None
+        if not absolute and not _ESCAPE_RX.search(word):
+            # Resolves inside the root, where no denied file exists.
+            return None
+        target = Path(word) if absolute else root / word
+        try:
+            relative = target.resolve().relative_to(root).as_posix()
+        except ValueError:
+            return "outside_root"
+        if relative in denied_set or relative.startswith(CODEBOOK_DIR):
+            return "denied"
+        return "inside_root"
+
+    flagged: dict[str, str] = {}
+    for command in commands:
+        for word in _path_words(command):
+            kind = classify(word)
+            if kind not in (None, "inside_root"):
+                flagged[word] = kind
+    return {
+        "schema": "track_b_b0_1_review_read_log_codex.v1",
+        "root": str(root),
+        "n_commands": len(commands),
+        "commands": commands,
+        "paths_outside_root_or_denied": sorted(flagged),
+        "flagged_kinds": dict(sorted(flagged.items())),
+        "review_counts": not flagged,
+    }
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     commands = parser.add_subparsers(dest="command", required=True)
@@ -329,6 +450,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     r.add_argument("--root", type=Path, required=True)
     r.add_argument("--root-record", type=Path, required=True)
     r.add_argument("--record", type=Path, required=True)
+    r.add_argument(
+        "--format",
+        choices=("claude", "codex"),
+        default="claude",
+        help="the lane's transcript format (default: claude stream-json)",
+    )
     args = parser.parse_args(argv)
     if args.command == "build":
         context = {}
@@ -347,7 +474,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         denied = json.loads(args.root_record.read_text(encoding="utf-8"))[
             "denied_paths"
         ]
-        record = read_log(args.transcript, args.root, denied)
+        reader = read_log_codex if args.format == "codex" else read_log
+        record = reader(args.transcript, args.root, denied)
     with args.record.open("x", encoding="utf-8") as stream:
         json.dump(record, stream, indent=1, sort_keys=True)
         stream.write("\n")
