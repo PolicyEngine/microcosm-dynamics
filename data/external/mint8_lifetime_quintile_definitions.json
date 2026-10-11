@@ -1,0 +1,70 @@
+{
+  "schema_version": "mint8_lifetime_quintile_definitions.v1",
+  "document": "MINT8 Table User Guide",
+  "date_certified": "2026-04-01",
+  "definitions": {
+    "initial_aime_quintile": {
+      "element_id": "AIME",
+      "text": "Current-Law Initial AIME Quintile: Represents an individual's average indexed monthly earnings (AIME) under current law at age 62, the earliest eligibility age for retired-worker benefits. We calculate the AIME quintiles for each birth cohort. The dollar ranges are available upon request."
+    },
+    "lifetime_payroll_tax_quintile": {
+      "element_id": "lifetime-tax",
+      "text": "Lifetime Payroll Tax Quintile: Represents the present value of an individual's current-law payroll taxes at age 62. We calculate the payroll tax quintiles for each birth cohort. The dollar ranges are available upon request."
+    },
+    "lifetime_payroll_tax_quintile_shared": {
+      "element_id": "lifetime-tax-shared",
+      "text": "Lifetime Payroll Tax Quintile (Shared): Represents the present value of an individual's current-law payroll taxes at age 62. For married couples, the payroll taxes paid while married are shared equally between them. For never-married individuals, this is the same as the lifetime payroll tax. In any year where an individual is not married, we count only their individual payroll taxes. We calculate the quintiles for each birth cohort. The dollar ranges are available upon request."
+    },
+    "current_law_payroll_taxes_quintile": {
+      "element_id": "taxes",
+      "text": "Current-Law Payroll Taxes Quintile: Represents an individual's annual Social Security payroll taxes under current law. We calculate the payroll tax quintiles for each analysis year's population of payroll taxpayers aged 31 or older."
+    },
+    "present_value_convention": {
+      "contains": "We use the Social Security Trust Fund interest rate to adjust benefits and taxes to their present values at age 62.",
+      "text": "The present value of benefits includes all Social Security benefits the individual received, regardless of earnings record or type of benefit. The present value of payroll taxes includes all the payroll taxes that the individual paid over a lifetime. We use the Social Security Trust Fund interest rate to adjust benefits and taxes to their present values at age 62."
+    },
+    "ten_year_birth_cohorts": {
+      "contains": "We use 10-year birth cohorts to increase the sample size",
+      "text": "We use 10-year birth cohorts to increase the sample size to a point where the characteristic subgroups could be examined."
+    },
+    "household_income_quintile_assignment": {
+      "contains": "determine the dollar thresholds for each income quintile",
+      "text": "We calculate the income quintiles for each year (e.g., 2030, 2050, or 2070) for the population analyzed, determine the dollar thresholds for each income quintile, and assign each beneficiary to the appropriate quintile. The dollar ranges are available upon request."
+    },
+    "sample_size_restriction": {
+      "contains": "suppress an entire characteristic subgroup",
+      "text": "To maintain the privacy of survey respondents, our tables have built-in disclosure avoidance protections that suppress an entire characteristic subgroup if the sample size for any row in that subgroup is less than 100 individuals. This minimum sample size protects privacy so that we can show the 10th and 90th percentiles based on a sample size of at least 10."
+    }
+  },
+  "cohort_table_row_groups": {
+    "initial_aime_quintile": "Current-law initial AIME quintile",
+    "lifetime_payroll_tax_quintile": "Lifetime payroll tax quintile",
+    "lifetime_payroll_tax_quintile_shared": "Lifetime payroll tax quintile (shared)"
+  },
+  "quintile_labels_high_to_low": [
+    "Highest",
+    "Second highest",
+    "Middle",
+    "Second lowest",
+    "Lowest"
+  ],
+  "cohort_table_label_provenance": {
+    "source_url": "https://www.ssa.gov/policy/docs/projections/policy-options/increase-payroll-tax-rate.html",
+    "retrieved_via": "http://web.archive.org/web/20260519190449id_/https://www.ssa.gov/policy/docs/projections/policy-options/increase-payroll-tax-rate.html",
+    "raw_sha256": "3cfb6eb636cad6d062eb22734c533fb349a0bc4761014eee8f2ccb0eb6e28d8c",
+    "date_certified": "2026-04-01",
+    "label_file": "mint8_row_categories.json (MINT-categories lane)",
+    "label_file_sha256": "23fbfbc8dbc14b06144a83bf0583ea0a6c89505638f3f7dc5fd6b34a3a4ac650",
+    "committed_label_file": "data/external/mint8_row_categories.json",
+    "tables": "13-20 (benefit/tax ratios and initial replacement rates)",
+    "note": "Labels only. The lane's parser emitted th, caption and heading text and no data cell; the option table itself is not committed and supplies no input to this package."
+  },
+  "build": {
+    "built_by": "scripts/extract_lifetime_measure_sources.py",
+    "sources": [
+      "mint8_user_guide",
+      "mint8_table_row_labels"
+    ],
+    "provenance_file": "data/external/lifetime_measure_sources.provenance.json"
+  }
+}
