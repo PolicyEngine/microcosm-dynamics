@@ -38,7 +38,9 @@ Modules (imported explicitly, never re-exported here, so importing
 * :mod:`.memo` -- the comparison-memo classification rules of section
   10a (no comparator value is held anywhere in the repository);
 * :mod:`.loader` -- the registered real-data loader, which refuses before
-  opening any PSID record while a required route is unresolved.
+  opening any PSID record while a required route is unresolved, and
+  refuses an unfrozen load (the section 20 step-4 pass) without Max's
+  recorded authorization.
 
 Every output is a *PSID-realized outcome (not a projection)* computed
 with a *Python income concept (not Axiom)* under *mechanical incidence*.

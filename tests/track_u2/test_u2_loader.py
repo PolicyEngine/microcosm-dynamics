@@ -1,18 +1,21 @@
 """The registered U2 loader's stages 2 and 3 on an invented staged
 directory (section 14; review finding 6 of the u2m2 review).
 
-INVENTED DATA - NOT A COMPARISON.  At the adjudicated registries the
-loader refuses in stage 1, before any PSID file is opened
-(``test_u2_mappings.py``).  To execute the rest of it before any real
-record is read, this module stages the invented population as PSID-shaped
-fixed-width files -- one family file and setup per support wave, written
-at the registry layouts, and an individual file and setup -- in a
-temporary directory and runs :func:`loader.load_u2_inputs` against it
-with four patches, each named where it is applied:
+INVENTED DATA - NOT A COMPARISON.  An unfrozen load without Max's
+recorded authorization refuses before any PSID path is resolved, and
+since amendment 1c's registry commit stage 1 passes at the committed
+registries, opening no PSID file (``test_u2_mappings.py``).  To execute
+the rest of the loader before any real record is read, this module
+stages the invented population as PSID-shaped fixed-width files -- one
+family file and setup per support wave, written at the registry layouts,
+and an individual file and setup -- in a temporary directory and runs
+:func:`loader.load_u2_inputs` against it, an unfrozen load with an
+invented authorization record (:data:`TEST_AUTHORIZATION`, naming no
+real decision), with four patches, each named where it is applied:
 
 * ``sources.blockers`` returns no blocker, so stage 1 and the registry
-  gate pass (the registry's own routes, not the declared ones, are
-  applied);
+  gate pass whatever the committed registries hold (the registry's own
+  routes, not the declared ones, are applied);
 * ``loader.check_source_hashes`` returns nothing, because the registries
   cite the real PSID setup files and codebooks, which are not staged
   here (the rehash itself is tested in ``test_u2_mappings.py``);
@@ -159,6 +162,17 @@ def _stage(root, inputs: cohort.U2Inputs, registries) -> set[str]:
     return staged
 
 
+#: An invented authorization record for the unfrozen loads here, on the
+#: invented staged directory only: the section 20 step-4 pass needs Max's
+#: recorded authorization (a chief-of-staff decision), and this
+#: placeholder id is not one.
+TEST_AUTHORIZATION = {
+    "decision": "d999999999",
+    "git_head": "0" * 40,
+    "recorded_at_utc": "2026-10-12T00:00:00Z",
+}
+
+
 def _load(
     root,
     inputs: cohort.U2Inputs,
@@ -193,7 +207,9 @@ def _load(
         )
         _GUARD["active"], _GUARD["opened"] = True, []
         if evidence is None:
-            return loader.load_u2_inputs(data_dir=root)
+            return loader.load_u2_inputs(
+                data_dir=root, authorization=TEST_AUTHORIZATION
+            )
         return loader.load_u2_inputs(data_dir=root, evidence=evidence)
     finally:
         _GUARD["active"] = False

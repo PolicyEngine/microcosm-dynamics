@@ -18,13 +18,13 @@ invented data.  The checks record the refusals the real path gives:
 * every family-record mapping round-trips through the registry layouts
   (invented fixed-width records: losses, sentinels, top codes, the
   seven/eight-asset WEALTH1 identities, every employer-DC route);
-* under the committed registries, the source gate refuses each wave the
-  milestone-1 record leaves open, the registry role context refuses the
-  TO VERIFY relationship codes (code 88 until amendment 1c's registry
-  commit), the declared context builds a code-88 first-year cohabitor's
-  family under amendment 1c's OFUM convention with every observation
-  unchanged, and the loader's preflight refuses before any PSID file is
-  opened;
+* under the committed registries, the source gate applies every wave's
+  family records, the registry role context refuses only code 92 where
+  it is absent (2013 and 2015), both role contexts build a code-88
+  first-year cohabitor's family under amendment 1c's OFUM convention
+  with every observation unchanged, the loader's source preflight passes
+  (no blocker remains), and an unfrozen load without Max's recorded
+  authorization refuses before any PSID path is resolved;
 * the registered runner refuses these invented inputs and parameters;
 * each tested route from other data to the invented declared rules and
   routes refuses: relabelled or hand-copied invented provenance, frames
@@ -99,6 +99,8 @@ from populace_dynamics.uniform_cut_track_u2 import (  # noqa: E402
     tabulation,
 )
 
+#: A data directory that does not exist, for the unauthorized-load check.
+_SENTINEL_PSID_DIR = Path("/nonexistent/track-u2-dry-run-psid")
 #: A syntactically valid pointer used only to show that the registered
 #: path refuses invented inputs (no such comment is implied).
 _GUARD_POINTER = (
@@ -883,8 +885,8 @@ def checks(
             ),
             # Amendment 1c (d637, confirmed by d745): a code-88
             # first-year cohabitor has the OFUM role outside the spouse
-            # slot, so adding one changes no observation or disposition;
-            # a context that leaves code 88 open refuses.
+            # slot, so adding one changes no observation or disposition
+            # under either context.
             "code_88_under_registry_context": _code_88_check(
                 inputs, code88, registry_roles
             ),
@@ -930,6 +932,12 @@ def checks(
         ),
         "invented_variants": _variants(inputs, params),
         "loader_preflight": _refusal(loader.source_preflight),
+        # Section 20 step 4 needs Max's recorded authorization: without
+        # it an unfrozen load refuses before any PSID path is resolved
+        # (the sentinel directory does not exist).
+        "unauthorized_unfrozen_load": _refusal(
+            lambda: loader.load_u2_inputs(data_dir=_SENTINEL_PSID_DIR)
+        ),
         "registered_guard_refuses_invented_inputs": _refusal(
             lambda: runner.run_track_u2(
                 inputs,
@@ -1178,8 +1186,11 @@ def results_markdown(result: dict[str, Any]) -> str:
         f"{role['code_88_under_declared_context'].get('observations_equal')}"
         "). Refusals: declared context on non-invented inputs "
         f"{role['declared_context_on_non_invented_inputs']['refused']}.",
-        "- Loader preflight refuses before any PSID file is opened: "
-        f"{check['loader_preflight']['refused']}.",
+        "- Loader source preflight passes at the committed registries "
+        f"(no blocker): {not check['loader_preflight']['refused']}; an "
+        "unfrozen load without Max's recorded authorization refuses before "
+        "any PSID path is resolved: "
+        f"{check['unauthorized_unfrozen_load']['refused']}.",
         "- Tested routes from other data to the invented declared rules "
         "and routes, each refused: "
         + ", ".join(

@@ -3,7 +3,9 @@
 Specification sections 4 and 14 ("Registered-run preflight: before
 reading raw PSID records, verify ... completed independent mapping
 review").  :func:`load_u2_inputs` runs in three stages and never reaches
-a later stage when an earlier one refuses:
+a later stage when an earlier one refuses.  Before them, an unfrozen load
+(the section 20 step-4 pass) refuses without Max's recorded authorization
+(**Authorization** below).
 
 1. **Source preflight** (:func:`source_preflight`), before any file
    under the PSID directory is opened: every registry entry a U2 run
@@ -11,17 +13,17 @@ a later stage when an earlier one refuses:
    each support wave, the anchors, weights, design and sex variables,
    the support plan and the role of every amended relationship code --
    must be RESOLVED with no blocking dependency, under the committed,
-   pinned registries.  It refuses at the committed registries: code 88
-   is TO VERIFY in every wave (amendment 1c, pending Max's confirmation,
-   d745).  The d1090
-   registry commit (section 16c) replaced the refused 2015 code-20 and
-   2019-2023 code-90/92 routes with the ratified family-unit exclusions,
-   which released the income and pension entries that depended on them;
-   the d637 registry commits (section 16b) resolve the ratified
-   amendments one by one: amendment 2's spouse age/sex slot metadata,
-   amendment 3's crosswalks, amendment 4's wealth flags, 5b's 2015 P62A
-   checkpoint, 5a's 2017-2023 P64/P65 route and amendment 6's 2017
-   weight.
+   pinned registries.  Since amendment 1c's registry commit it passes at
+   the committed registries: no blocker remains.  The d1090 registry
+   commit (section 16c) replaced the refused 2015 code-20 and 2019-2023
+   code-90/92 routes with the ratified family-unit exclusions, which
+   released the income and pension entries that depended on them; the
+   d637 registry commits (section 16b) resolved the ratified amendments
+   one by one: amendment 1's parts 1a-1c (as Max confirmed on
+   2026-10-12, d745; 1c resolves code 88 in every wave), amendment 2's
+   spouse age/sex slot metadata, amendment 3's crosswalks, amendment 4's
+   wealth flags, 5b's 2015 P62A checkpoint, 5a's 2017-2023 P64/P65 route
+   and amendment 6's 2017 weight.
 2. **Source identity**: each staged setup file and codebook the
    registries cite is rehashed against the registry's recorded SHA-256,
    and every registry layout -- the family files' and the individual
@@ -40,6 +42,17 @@ a later stage when an earlier one refuses:
    (:class:`U2UndocumentedValue`), as the family-file parse refuses
    out-of-domain values (``sources._check_domain``).
 
+**Authorization.**  The section 20 step-4 pass reads real PSID records,
+so it needs Max's authorization, recorded as a chief-of-staff decision.
+:func:`structural_pass_authorization` records the decision id the pass
+names (``--authorized-by`` in ``scripts/track_u2_structure.py`` and
+``scripts/track_u2_component_diagnostics.py``), the git head and the UTC
+time; an unfrozen :func:`load_u2_inputs` refuses without that record,
+before the source preflight and before any PSID path is resolved
+(:class:`U2AuthorizationRefusal`).  The record only records the
+authorization; it does not grant one.  The registered run's load is
+frozen instead: its evidence binds every file and frame digest.
+
 **Frozen identities** (section 14: "changed source bytes, changed frame
 digests ... refuse execution.  Pre-registration mapping checks resolve
 these before the one-shot; execution rechecks their frozen
@@ -56,16 +69,19 @@ read file set or frame digest other than the frozen ones
 hash, which a registered run requires.
 
 This module computes no income concept, threshold, annuity or poverty
-status.  No real PSID record is read in development: the tests run
-stage 1 as committed (it refuses) and stages 2 and 3 on an invented
-staged directory, with the registry blockers, the cited-source rehash
-and the two inherited readers patched
+status.  No real PSID record is read in development: the tests run the
+authorization check and stage 1 as committed (an unauthorized unfrozen
+load refuses before any PSID path is resolved; stage 1 passes and opens
+no PSID file) and stages 2 and 3 on an invented staged directory, with
+the registry blockers, the cited-source rehash and the two inherited
+readers patched
 (``tests/track_u2/test_u2_loader.py``).
 """
 
 from __future__ import annotations
 
 import dataclasses
+import datetime
 import hashlib
 import json
 import re
@@ -84,6 +100,7 @@ __all__ = [
     "ANCHOR_CONCEPTS",
     "PREREGISTRATION_EVIDENCE_PATH",
     "PREREGISTRATION_SCHEMA",
+    "U2AuthorizationRefusal",
     "U2FrozenIdentityMismatch",
     "U2LoaderRefusal",
     "U2UndocumentedValue",
@@ -92,6 +109,7 @@ __all__ = [
     "check_layouts_against_setup",
     "check_preregistration_evidence",
     "check_source_hashes",
+    "check_structural_pass_authorization",
     "family_record_specs",
     "files_bundle_sha256",
     "individual_specs",
@@ -102,6 +120,7 @@ __all__ = [
     "read_preregistration_evidence",
     "required_entries",
     "source_preflight",
+    "structural_pass_authorization",
 ]
 
 #: The individual-file anchors of each support wave (section 3 table).
@@ -172,6 +191,22 @@ _EVIDENCE_KEYS: tuple[str, ...] = (
     "input_frames_sha256",
 )
 _HEX64 = re.compile(r"[0-9a-f]{64}")
+#: A chief-of-staff decision id: ``d`` and its number (e.g. ``d745``).
+_DECISION_ID = re.compile(r"d[1-9][0-9]*")
+_HEX40 = re.compile(r"[0-9a-f]{40}")
+_UTC_SECONDS = "%Y-%m-%dT%H:%M:%SZ"
+#: The fields of a structural-pass authorization record.
+_AUTHORIZATION_KEYS: tuple[str, ...] = (
+    "decision",
+    "git_head",
+    "recorded_at_utc",
+)
+_UNAUTHORIZED = (
+    "the section 20 step-4 structural pass reads real PSID records, so it "
+    "needs Max's authorization, recorded as a chief-of-staff decision; "
+    "name that decision with --authorized-by <decision id> (e.g. d1234). "
+    "The flag only records the authorization; it does not grant one"
+)
 
 
 class U2LoaderRefusal(sources.U2SourceRefusal):
@@ -187,6 +222,65 @@ class U2UndocumentedValue(U2LoaderRefusal):
 class U2FrozenIdentityMismatch(U2LoaderRefusal):
     """A PSID file, the read file set or the frame digest differs from the
     frozen pre-registration evidence (section 14)."""
+
+
+class U2AuthorizationRefusal(U2LoaderRefusal):
+    """An unfrozen load (the section 20 step-4 pass) without Max's
+    recorded authorization: it refuses before any PSID path is
+    resolved."""
+
+
+def structural_pass_authorization(
+    decision: str | None, *, git_head: str
+) -> dict[str, str]:
+    """The authorization record of a section 20 step-4 pass, or refuse.
+
+    The pass reads real PSID records, so it needs Max's authorization,
+    recorded as a chief-of-staff decision.  ``decision`` names that
+    decision (the structural scripts' ``--authorized-by``); the record
+    holds it, the git head the pass runs at and the UTC time it was
+    recorded.  Naming a decision records the authorization; it does not
+    grant one, and nothing here reads the decision log.  Without a
+    decision id this refuses (:class:`U2AuthorizationRefusal`).
+    """
+
+    return check_structural_pass_authorization(
+        {
+            "decision": decision,
+            "git_head": git_head,
+            "recorded_at_utc": datetime.datetime.now(
+                datetime.timezone.utc
+            ).strftime(_UTC_SECONDS),
+        }
+    )
+
+
+def check_structural_pass_authorization(record: Any) -> dict[str, str]:
+    """Return ``record`` checked, or refuse: exactly a decision id, the
+    full git head and a UTC timestamp (``None`` refuses)."""
+
+    if not isinstance(record, Mapping) or set(record) != set(
+        _AUTHORIZATION_KEYS
+    ):
+        raise U2AuthorizationRefusal(_UNAUTHORIZED)
+    decision = record["decision"]
+    if not isinstance(decision, str) or not _DECISION_ID.fullmatch(decision):
+        raise U2AuthorizationRefusal(f"{_UNAUTHORIZED} (got {decision!r})")
+    head = record["git_head"]
+    if not isinstance(head, str) or not _HEX40.fullmatch(head):
+        raise U2AuthorizationRefusal(
+            "an authorization record names the full git head the pass "
+            f"runs at (got {head!r})"
+        )
+    stamp = record["recorded_at_utc"]
+    try:
+        datetime.datetime.strptime(stamp, _UTC_SECONDS)
+    except (TypeError, ValueError):
+        raise U2AuthorizationRefusal(
+            "an authorization record holds the UTC time it was recorded "
+            f"as YYYY-MM-DDTHH:MM:SSZ (got {stamp!r})"
+        ) from None
+    return {key: record[key] for key in _AUTHORIZATION_KEYS}
 
 
 def required_entries(
@@ -443,11 +537,19 @@ def load_u2_inputs(
     *,
     data_dir: Path | None = None,
     evidence: Mapping[str, Any] | None = None,
+    authorization: Mapping[str, Any] | None = None,
 ) -> cohort.U2Inputs:
     """Read every U2 input from the staged PSID, or refuse first.
 
-    Stage 1 (:func:`source_preflight`) refuses at the adjudicated
-    registries, before any PSID file is opened.
+    An unfrozen load (no ``evidence``: the section 20 step-4 pass) reads
+    real PSID records with nothing frozen to check them against, so it
+    needs ``authorization``, the record of Max's authorization
+    (:func:`structural_pass_authorization`); without it the load refuses
+    before the source preflight and before any PSID path is resolved
+    (:class:`U2AuthorizationRefusal`).  Stage 1 (:func:`source_preflight`)
+    then refuses on any registry blocker, before any PSID file is opened;
+    since amendment 1c's registry commit it passes at the committed
+    registries.
 
     ``evidence`` is the frozen pre-registration record
     (:func:`check_preregistration_evidence`).  The registered run passes
@@ -458,6 +560,8 @@ def load_u2_inputs(
     (:class:`U2FrozenIdentityMismatch`).
     """
 
+    if evidence is None:
+        check_structural_pass_authorization(authorization)
     frozen = (
         None if evidence is None else check_preregistration_evidence(evidence)
     )

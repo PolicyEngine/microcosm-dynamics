@@ -1551,8 +1551,7 @@ _VARIANT_NOTES: dict[str, str] = {
         "under amendment 1c's convention (d637, confirmed by d745) it "
         "has the OFUM income role outside the spouse slot, is no annuity "
         "life and resolves no marital history, so every observation and "
-        "disposition is unchanged; a role context that leaves code 88 "
-        "open refuses"
+        "disposition is unchanged under either role context"
     ),
     "missing_family_record_2019": (
         "the first 2019 family-file income record is dropped; an "
@@ -1594,8 +1593,8 @@ _VARIANT_NOTES: dict[str, str] = {
         "a code-88 first-year cohabitor joins the 2019 family of U0's "
         "first observation that the section 16c B2 exclusion removes: "
         "under amendment 1c it has the OFUM role, and the unit stays "
-        "excluded, counted under its disposition; a role context that "
-        "leaves code 88 open refuses, never hidden by the exclusion"
+        "excluded, counted under its disposition, under either role "
+        "context"
     ),
     "zero_weight_target_in_excluded_unit_2015": (
         "the target of U0's first 2015 observation that the B1 exclusion "

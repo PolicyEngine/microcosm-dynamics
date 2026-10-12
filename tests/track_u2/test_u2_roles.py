@@ -182,15 +182,14 @@ def test_administrative_birth_support_is_administrative_only():
         assert not rules[(wave, 92)].administrative_birth_support
 
 
-#: The role entries the committed registries refuse: code 88 everywhere
-#: (TO VERIFY) and code 92's absence in 2013 and 2015.  2013 and
-#: 2015-2017 code 90 and 2017 code 92 are documented rules (disposition
-#: D).  2015 code 20 and 2019-2023 codes 90 and 92, which the
-#: adjudication refused (disposition F), carry section 16c's ratified
-#: exclusions since the d1090 registry commit (:data:`D1090_RULED`).
-REFUSED_ROLES = frozenset(
-    {(wave, 88) for wave in sources.SUPPORT_WAVES} | {(2013, 92), (2015, 92)}
-)
+#: The role entries the committed registries refuse: code 92's absence
+#: in 2013 and 2015.  2013 and 2015-2017 code 90 and 2017 code 92 are
+#: documented rules (disposition D).  2015 code 20 and 2019-2023 codes 90
+#: and 92, which the adjudication refused (disposition F), carry section
+#: 16c's ratified exclusions since the d1090 registry commit
+#: (:data:`D1090_RULED`).  Code 88, TO VERIFY until then, takes amendment
+#: 1c's convention in every wave since its d637 registry commit.
+REFUSED_ROLES = frozenset({(2013, 92), (2015, 92)})
 D1090_RULED = frozenset(
     {(2015, 20)} | {(wave, code) for wave in B2_WAVES for code in (90, 92)}
 )
@@ -284,9 +283,11 @@ def test_registry_context_refuses_refused_codes():
     registry = sources.RoleContext.from_registry()
     with pytest.raises(sources.U2RoleRefusal, match="code 92 absent in 2015"):
         registry.rule(2015, 92)
+    # Amendment 1c (d637, confirmed by d745): code 88 resolves to the
+    # declared convention in every wave.
+    declared = sources.RoleContext.declared()
     for wave in sources.SUPPORT_WAVES:
-        with pytest.raises(sources.U2RoleRefusal, match="TO VERIFY"):
-            registry.rule(wave, 88)
+        assert registry.rule(wave, 88) == declared.rule(wave, 88)
     # The ruled codes resolve, each with its exclusion (section 16c).
     for wave, code in sorted(D1090_RULED):
         rule = registry.rule(wave, code)
@@ -296,13 +297,12 @@ def test_registry_context_refuses_refused_codes():
         )
 
 
-def test_code_88_takes_the_amendment_1c_convention(u2_inputs):
+def test_code_88_takes_the_amendment_1c_convention(u2_inputs, monkeypatch):
     """Amendment 1c (d637, confirmed by d745): a code-88 first-year
     cohabitor has the OFUM role outside the spouse slot, is no annuity
     life and resolves no marital history, so adding one to a family that
-    supplies observations changes no observation or disposition.  The
-    registry context refuses code 88 until the roles registry records
-    1c."""
+    supplies observations changes no observation or disposition, under
+    the declared and the registry role context alike."""
 
     variant = invented.with_code_88_cohabitor(u2_inputs)
     spec = cohort.U2CohortSpec(row="U1")
@@ -315,14 +315,33 @@ def test_code_88_takes_the_amendment_1c_convention(u2_inputs):
     assert (obs["wave"].eq(2019) & obs["interview"].eq(family)).any()
     pd.testing.assert_frame_equal(built.observations, base.observations)
     pd.testing.assert_frame_equal(built.dispositions, base.dispositions)
-    # The same family refuses where code 88 is still open, so the
-    # cohabitor's rule is read, not skipped.
     registry = sources.RoleContext.from_registry()
-    for wave in sources.SUPPORT_WAVES:
-        with pytest.raises(sources.U2RoleRefusal, match="relationship.88"):
-            registry.rule(wave, 88)
-    with pytest.raises(sources.U2RoleRefusal):
-        cohort.build_u2_cohort(variant, spec, role_context=registry)
+    by_registry = cohort.build_u2_cohort(variant, spec, role_context=registry)
+    base_registry = cohort.build_u2_cohort(
+        u2_inputs, spec, role_context=registry
+    )
+    pd.testing.assert_frame_equal(
+        by_registry.observations, base_registry.observations
+    )
+    pd.testing.assert_frame_equal(
+        by_registry.dispositions, base_registry.dispositions
+    )
+    # The cohabitor's rule is read, not skipped: were code 88 to refuse,
+    # as its declared rule did before amendment 1c, this family would.
+    original = sources.declared_role_rules
+
+    def refusing():
+        rules = original()
+        rules[(2019, 88)] = dataclasses.replace(
+            rules[(2019, 88)], income_role=None, refusal="refused (test)"
+        )
+        return rules
+
+    monkeypatch.setattr(sources, "declared_role_rules", refusing)
+    with pytest.raises(sources.U2RoleRefusal, match="code 88: refused"):
+        cohort.build_u2_cohort(
+            variant, spec, role_context=sources.RoleContext.declared()
+        )
 
 
 def test_declared_context_refuses_non_invented_inputs(u2_inputs, declared):
@@ -733,26 +752,24 @@ def test_earlier_dispositions_keep_precedence(
 def test_code_88_in_an_excluded_unit_keeps_the_exclusion(u2_inputs):
     """A code-88 member never hides or changes an exclusion: under
     amendment 1c's convention a unit that B2 excludes stays excluded,
-    counted under its disposition, and nothing else moves; a role context
-    that leaves code 88 open refuses the build, never hidden by the
-    exclusion (review of 07916bb, finding 3)."""
+    counted under its disposition, and nothing else moves, under either
+    role context (review of 07916bb, finding 3)."""
 
     changed = invented.invented_variant(
         u2_inputs, "code_88_in_excluded_unit_2019"
     )
-    declared = sources.RoleContext.declared()
-    built = cohort.build_u2_cohort(changed, role_context=declared)
-    base = cohort.build_u2_cohort(u2_inputs, role_context=declared)
-    pd.testing.assert_frame_equal(built.observations, base.observations)
-    pd.testing.assert_frame_equal(built.dispositions, base.dispositions)
-    assert (
-        built.dispositions["disposition"]
-        .eq(sources.UNCOOPERATIVE_SPOUSE_OR_PARTNER)
-        .any()
-    )
-    with pytest.raises(sources.U2RoleRefusal, match="88"):
-        cohort.build_u2_cohort(
-            changed, role_context=sources.RoleContext.from_registry()
+    for context in (
+        sources.RoleContext.declared(),
+        sources.RoleContext.from_registry(),
+    ):
+        built = cohort.build_u2_cohort(changed, role_context=context)
+        base = cohort.build_u2_cohort(u2_inputs, role_context=context)
+        pd.testing.assert_frame_equal(built.observations, base.observations)
+        pd.testing.assert_frame_equal(built.dispositions, base.dispositions)
+        assert (
+            built.dispositions["disposition"]
+            .eq(sources.UNCOOPERATIVE_SPOUSE_OR_PARTNER)
+            .any()
         )
 
 
@@ -941,7 +958,7 @@ def test_a_registry_context_cannot_carry_the_declared_rules():
     with pytest.raises(sources.U2SourceRefusal, match="declared table"):
         sources.RoleContext(sources.INVENTED_DECLARED, registry.rules)
     # Any one rule changed is refused, e.g. 2015 code 20 without its
-    # section 16c exclusion, or code 88 made applicable.
+    # section 16c exclusion, or code 88 given the spouse slot.
     for key, changed in (
         (
             (2015, 20),
@@ -951,7 +968,7 @@ def test_a_registry_context_cannot_carry_the_declared_rules():
         ),
         (
             (2019, 88),
-            dataclasses.replace(registry.rules[(2019, 88)], refusal=None),
+            dataclasses.replace(registry.rules[(2019, 88)], spouse_slot=True),
         ),
     ):
         rules = dict(registry.rules)

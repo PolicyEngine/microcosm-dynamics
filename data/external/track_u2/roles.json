@@ -174,7 +174,6 @@
       "variable": "ER34203",
       "present": true,
       "label": "First-year cohabitor of Head",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/ind2023er/IND2023ER_formats.sps",
@@ -197,13 +196,6 @@
           "line": 102
         }
       ],
-      "administrative_birth_support": true,
-      "action": "refuse_substantive_routing",
-      "income_role": null,
-      "spouse_slot": false,
-      "legal_spouse_annuity": false,
-      "marital_resolution": false,
-      "question": "Only administrative birth support is inherited. Which family income/SSI slot and substantive annuity or marital rule, if any, is authorized for first-year cohabitors? No legal-spouse status follows from the label. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 1, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 102).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 102,
@@ -218,7 +210,24 @@
           "line": 198
         },
         "reason": "docs/design/boomers2004_1946_55_comparison.md:198 is the 2013 row of the staged-materials table; line 190 states code 88's inherited administrative birth support and its open substantive routing. The adjudication checked only RESOLVED entries, so it did not review this TO VERIFY citation."
-      }
+      },
+      "status": "RESOLVED",
+      "action": "convention_per_d637_1c",
+      "income_role": "ofum",
+      "spouse_slot": false,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false,
+      "administrative_birth_support": true,
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified amendment 1's parts 1a-1c as written, as Max confirmed on 2026-10-12 (d745; section 16b). Under 1c a first-year cohabitor (2013 code 88) has an OFUM income role on the family basis, and its SSI falls in section 8's OFUM unit; does not occupy the spouse slot; is not a legal-spouse annuity life; never resolves the head's or reference person's marital history as married by relationship code alone; keeps its recorded legal marital history; and keeps the inherited administrative birth support. The OFUM income gates include codes 881/882 in every wave, and FAQ question 75 says boyfriends and girlfriends are treated like other family members who are not Reference Person, Spouse or Partner (section 16a amendment 1c). The adjudication's question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "1c",
+        "confirmed_by": "d745",
+        "confirmed_on": "2026-10-12"
+      },
+      "superseded_question": "Only administrative birth support is inherited. Which family income/SSI slot and substantive annuity or marital rule, if any, is authorized for first-year cohabitors? No legal-spouse status follows from the label. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 1, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 102)."
     },
     {
       "id": "2013.relationship.90",
@@ -480,7 +489,6 @@
       "variable": "ER34303",
       "present": true,
       "label": "First-year cohabitor of Head",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/ind2023er/IND2023ER_formats.sps",
@@ -503,13 +511,6 @@
           "line": 104
         }
       ],
-      "administrative_birth_support": true,
-      "action": "refuse_substantive_routing",
-      "income_role": null,
-      "spouse_slot": false,
-      "legal_spouse_annuity": false,
-      "marital_resolution": false,
-      "question": "Only administrative birth support is inherited. Which family income/SSI slot and substantive annuity or marital rule, if any, is authorized for first-year cohabitors? No legal-spouse status follows from the label. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 1, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 104).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 104,
@@ -524,7 +525,24 @@
           "line": 198
         },
         "reason": "docs/design/boomers2004_1946_55_comparison.md:198 is the 2013 row of the staged-materials table; line 190 states code 88's inherited administrative birth support and its open substantive routing. The adjudication checked only RESOLVED entries, so it did not review this TO VERIFY citation."
-      }
+      },
+      "status": "RESOLVED",
+      "action": "convention_per_d637_1c",
+      "income_role": "ofum",
+      "spouse_slot": false,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false,
+      "administrative_birth_support": true,
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified amendment 1's parts 1a-1c as written, as Max confirmed on 2026-10-12 (d745; section 16b). Under 1c a first-year cohabitor (2015 code 88) has an OFUM income role on the family basis, and its SSI falls in section 8's OFUM unit; does not occupy the spouse slot; is not a legal-spouse annuity life; never resolves the head's or reference person's marital history as married by relationship code alone; keeps its recorded legal marital history; and keeps the inherited administrative birth support. The OFUM income gates include codes 881/882 in every wave, and FAQ question 75 says boyfriends and girlfriends are treated like other family members who are not Reference Person, Spouse or Partner (section 16a amendment 1c). The adjudication's question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "1c",
+        "confirmed_by": "d745",
+        "confirmed_on": "2026-10-12"
+      },
+      "superseded_question": "Only administrative birth support is inherited. Which family income/SSI slot and substantive annuity or marital rule, if any, is authorized for first-year cohabitors? No legal-spouse status follows from the label. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 1, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 104)."
     },
     {
       "id": "2015.relationship.90",
@@ -756,7 +774,6 @@
       "variable": "ER34503",
       "present": true,
       "label": "First-year cohabitor of Reference Person",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/ind2023er/IND2023ER_formats.sps",
@@ -783,13 +800,6 @@
           "line": 106
         }
       ],
-      "administrative_birth_support": true,
-      "action": "refuse_substantive_routing",
-      "income_role": null,
-      "spouse_slot": false,
-      "legal_spouse_annuity": false,
-      "marital_resolution": false,
-      "question": "Only administrative birth support is inherited. Which family income/SSI slot and substantive annuity or marital rule, if any, is authorized for first-year cohabitors? No legal-spouse status follows from the label. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 1, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 106).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 106,
@@ -804,7 +814,24 @@
           "line": 198
         },
         "reason": "docs/design/boomers2004_1946_55_comparison.md:198 is the 2013 row of the staged-materials table; line 190 states code 88's inherited administrative birth support and its open substantive routing. The adjudication checked only RESOLVED entries, so it did not review this TO VERIFY citation."
-      }
+      },
+      "status": "RESOLVED",
+      "action": "convention_per_d637_1c",
+      "income_role": "ofum",
+      "spouse_slot": false,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false,
+      "administrative_birth_support": true,
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified amendment 1's parts 1a-1c as written, as Max confirmed on 2026-10-12 (d745; section 16b). Under 1c a first-year cohabitor (2017 code 88) has an OFUM income role on the family basis, and its SSI falls in section 8's OFUM unit; does not occupy the spouse slot; is not a legal-spouse annuity life; never resolves the head's or reference person's marital history as married by relationship code alone; keeps its recorded legal marital history; and keeps the inherited administrative birth support. The OFUM income gates include codes 881/882 in every wave, and FAQ question 75 says boyfriends and girlfriends are treated like other family members who are not Reference Person, Spouse or Partner (section 16a amendment 1c). The adjudication's question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "1c",
+        "confirmed_by": "d745",
+        "confirmed_on": "2026-10-12"
+      },
+      "superseded_question": "Only administrative birth support is inherited. Which family income/SSI slot and substantive annuity or marital rule, if any, is authorized for first-year cohabitors? No legal-spouse status follows from the label. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 1, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 106)."
     },
     {
       "id": "2017.relationship.90",
@@ -1067,7 +1094,6 @@
       "variable": "ER34703",
       "present": true,
       "label": "First-year cohabitor of Reference Person",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/ind2023er/IND2023ER_formats.sps",
@@ -1094,13 +1120,6 @@
           "line": 109
         }
       ],
-      "administrative_birth_support": true,
-      "action": "refuse_substantive_routing",
-      "income_role": null,
-      "spouse_slot": false,
-      "legal_spouse_annuity": false,
-      "marital_resolution": false,
-      "question": "Only administrative birth support is inherited. Which family income/SSI slot and substantive annuity or marital rule, if any, is authorized for first-year cohabitors? No legal-spouse status follows from the label. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 1, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 109).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 109,
@@ -1115,7 +1134,24 @@
           "line": 198
         },
         "reason": "docs/design/boomers2004_1946_55_comparison.md:198 is the 2013 row of the staged-materials table; line 190 states code 88's inherited administrative birth support and its open substantive routing. The adjudication checked only RESOLVED entries, so it did not review this TO VERIFY citation."
-      }
+      },
+      "status": "RESOLVED",
+      "action": "convention_per_d637_1c",
+      "income_role": "ofum",
+      "spouse_slot": false,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false,
+      "administrative_birth_support": true,
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified amendment 1's parts 1a-1c as written, as Max confirmed on 2026-10-12 (d745; section 16b). Under 1c a first-year cohabitor (2019 code 88) has an OFUM income role on the family basis, and its SSI falls in section 8's OFUM unit; does not occupy the spouse slot; is not a legal-spouse annuity life; never resolves the head's or reference person's marital history as married by relationship code alone; keeps its recorded legal marital history; and keeps the inherited administrative birth support. The OFUM income gates include codes 881/882 in every wave, and FAQ question 75 says boyfriends and girlfriends are treated like other family members who are not Reference Person, Spouse or Partner (section 16a amendment 1c). The adjudication's question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "1c",
+        "confirmed_by": "d745",
+        "confirmed_on": "2026-10-12"
+      },
+      "superseded_question": "Only administrative birth support is inherited. Which family income/SSI slot and substantive annuity or marital rule, if any, is authorized for first-year cohabitors? No legal-spouse status follows from the label. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 1, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 109)."
     },
     {
       "id": "2019.relationship.90",
@@ -1392,7 +1428,6 @@
       "variable": "ER34903",
       "present": true,
       "label": "First-year cohabitor of Reference Person",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/ind2023er/IND2023ER_formats.sps",
@@ -1419,13 +1454,6 @@
           "line": 112
         }
       ],
-      "administrative_birth_support": true,
-      "action": "refuse_substantive_routing",
-      "income_role": null,
-      "spouse_slot": false,
-      "legal_spouse_annuity": false,
-      "marital_resolution": false,
-      "question": "Only administrative birth support is inherited. Which family income/SSI slot and substantive annuity or marital rule, if any, is authorized for first-year cohabitors? No legal-spouse status follows from the label. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 1, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 112).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 112,
@@ -1440,7 +1468,24 @@
           "line": 198
         },
         "reason": "docs/design/boomers2004_1946_55_comparison.md:198 is the 2013 row of the staged-materials table; line 190 states code 88's inherited administrative birth support and its open substantive routing. The adjudication checked only RESOLVED entries, so it did not review this TO VERIFY citation."
-      }
+      },
+      "status": "RESOLVED",
+      "action": "convention_per_d637_1c",
+      "income_role": "ofum",
+      "spouse_slot": false,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false,
+      "administrative_birth_support": true,
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified amendment 1's parts 1a-1c as written, as Max confirmed on 2026-10-12 (d745; section 16b). Under 1c a first-year cohabitor (2021 code 88) has an OFUM income role on the family basis, and its SSI falls in section 8's OFUM unit; does not occupy the spouse slot; is not a legal-spouse annuity life; never resolves the head's or reference person's marital history as married by relationship code alone; keeps its recorded legal marital history; and keeps the inherited administrative birth support. The OFUM income gates include codes 881/882 in every wave, and FAQ question 75 says boyfriends and girlfriends are treated like other family members who are not Reference Person, Spouse or Partner (section 16a amendment 1c). The adjudication's question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "1c",
+        "confirmed_by": "d745",
+        "confirmed_on": "2026-10-12"
+      },
+      "superseded_question": "Only administrative birth support is inherited. Which family income/SSI slot and substantive annuity or marital rule, if any, is authorized for first-year cohabitors? No legal-spouse status follows from the label. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 1, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 112)."
     },
     {
       "id": "2021.relationship.90",
@@ -1717,7 +1762,6 @@
       "variable": "ER35103",
       "present": true,
       "label": "First-year cohabitor of Reference Person",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/ind2023er/IND2023ER_formats.sps",
@@ -1744,13 +1788,6 @@
           "line": 115
         }
       ],
-      "administrative_birth_support": true,
-      "action": "refuse_substantive_routing",
-      "income_role": null,
-      "spouse_slot": false,
-      "legal_spouse_annuity": false,
-      "marital_resolution": false,
-      "question": "Only administrative birth support is inherited. Which family income/SSI slot and substantive annuity or marital rule, if any, is authorized for first-year cohabitors? No legal-spouse status follows from the label. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 1, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 115).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 115,
@@ -1765,7 +1802,24 @@
           "line": 198
         },
         "reason": "docs/design/boomers2004_1946_55_comparison.md:198 is the 2013 row of the staged-materials table; line 190 states code 88's inherited administrative birth support and its open substantive routing. The adjudication checked only RESOLVED entries, so it did not review this TO VERIFY citation."
-      }
+      },
+      "status": "RESOLVED",
+      "action": "convention_per_d637_1c",
+      "income_role": "ofum",
+      "spouse_slot": false,
+      "legal_spouse_annuity": false,
+      "marital_resolution": false,
+      "administrative_birth_support": true,
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified amendment 1's parts 1a-1c as written, as Max confirmed on 2026-10-12 (d745; section 16b). Under 1c a first-year cohabitor (2023 code 88) has an OFUM income role on the family basis, and its SSI falls in section 8's OFUM unit; does not occupy the spouse slot; is not a legal-spouse annuity life; never resolves the head's or reference person's marital history as married by relationship code alone; keeps its recorded legal marital history; and keeps the inherited administrative birth support. The OFUM income gates include codes 881/882 in every wave, and FAQ question 75 says boyfriends and girlfriends are treated like other family members who are not Reference Person, Spouse or Partner (section 16a amendment 1c). The adjudication's question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "1c",
+        "confirmed_by": "d745",
+        "confirmed_on": "2026-10-12"
+      },
+      "superseded_question": "Only administrative birth support is inherited. Which family income/SSI slot and substantive annuity or marital rule, if any, is authorized for first-year cohabitors? No legal-spouse status follows from the label. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 1, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 115)."
     },
     {
       "id": "2023.relationship.90",
@@ -1936,9 +1990,10 @@
       "specification_section": "16b",
       "amendments": [
         "1a",
-        "1b"
+        "1b",
+        "1c"
       ],
-      "note": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendments 2-5 as written and amendment 6's option 1; on 2026-10-12 Max confirmed that it ratified amendment 1's parts 1a-1c as written too (d745; section 16b). Applied here, each in its own reviewed commit: 1a records the ruling on the documented 2015 code-90 and 2017 code-90 and code-92 OFUM routes, with the completeness disclosure registration states; 1b records the ruling on 2013's inherited code-90 meaning. Each ruled entry keeps its adjudication record, if any, and gains a ruling; an open question or refusal the ruling answers is kept as superseded_question or superseded_refusal."
+      "note": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendments 2-5 as written and amendment 6's option 1; on 2026-10-12 Max confirmed that it ratified amendment 1's parts 1a-1c as written too (d745; section 16b). Applied here, each in its own reviewed commit: 1a records the ruling on the documented 2015 code-90 and 2017 code-90 and code-92 OFUM routes, with the completeness disclosure registration states; 1b records the ruling on 2013's inherited code-90 meaning; 1c resolves the six code-88 records under the first-year cohabitor convention. Each ruled entry keeps its adjudication record, if any, and gains a ruling; an open question or refusal the ruling answers is kept as superseded_question or superseded_refusal."
     }
   ]
 }

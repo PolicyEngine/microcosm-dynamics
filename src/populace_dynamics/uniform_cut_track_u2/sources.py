@@ -91,9 +91,9 @@ income role.  The committed roles registry resolves the same rule for
 2013-2017 code 90 and 2017 code 92 (adjudication disposition D) and, by
 its d1090 commit, the same exclusions for 2015 code 20 and 2019-2023
 codes 90 and 92, which the adjudication had refused (disposition F); the
-registry gate follows the registry.  The registry leaves code 88 TO
-VERIFY until amendment 1c's registry commit, so until then the
-registry context refuses it.
+registry gate follows the registry.  The roles registry records the
+same convention for code 88 in every wave (amendment 1c's registry
+commit), so the registry context applies it too.
 
 Any other in-family code keeps the inherited OFUM income role with no
 spouse status.  Legacy identifiers ``wife``, ``wife_present`` and
@@ -260,10 +260,13 @@ DECLARED = INVENTED_DECLARED
 #: individual registry records amendment 6's release.  Max's d745
 #: confirmation (2026-10-12) of amendment 1a-1c moved the roles bytes:
 #: 1a records the ruling on the documented code-90/92 routes, 1b on 2013's
-#: inherited code-90 meaning.
+#: inherited code-90 meaning, and 1c resolves the six code-88 records
+#: under the first-year cohabitor convention (no blocker remains); the 1c
+#: commit also moved the income bytes, where amendment 2's ten records say
+#: a code-88 cohabitor does not occupy the spouse slot.
 REGISTRY_SHA256: dict[str, str] = {
     "income": (
-        "ddf49639c5678c35d525438b595393d7c55cba00956c23e42f68515ac56446d5"
+        "9598798b6a5924e71f15f0c3cff6ca445e096540d46f33e87c6d07ff016916e5"
     ),
     "wealth": (
         "4fa58c6621738f071fbbc3e0e4ec3b2f6f0db9bcb6a942b43684137aa829a716"
@@ -275,7 +278,7 @@ REGISTRY_SHA256: dict[str, str] = {
         "bd22e07a8576ea9239818ca40377839c5c3151fffb403f3e5f1ef1549da546cf"
     ),
     "roles": (
-        "3a2924122555a612d976f9dbd3e4d764f133fede0467a65b2c9eb67932e60c51"
+        "014b4402f65d5cda2ecbc2c038c6b6dc408d2e994ebcc5001de926537d103674"
     ),
     "support": (
         "533c39187214fef6626e565362b2d97ff393b8d1f0034ffe365a7c87dadada6d"
@@ -1011,11 +1014,10 @@ class RoleContext:
     """The role rules a U2 build applies, and whether it may run on data.
 
     ``registry``: the committed roles registry; any code the loader's
-    ``require_resolved`` refuses, refuses here (code 88 in every wave,
-    TO VERIFY until amendment 1c's registry commit, and code 92's
-    absence in 2013 and 2015; until the d1090 commit also 2015 code 20
-    and 2019-2023 codes 90 and 92, which now carry section 16c's
-    exclusions).  ``invented_declared``: the declared rules, section 3's
+    ``require_resolved`` refuses, refuses here (code 92's absence in 2013
+    and 2015; until amendment 1c's registry commit also code 88 in every
+    wave, and until the d1090 commit 2015 code 20 and 2019-2023 codes 90
+    and 92, which now carry section 16c's exclusions).  ``invented_declared``: the declared rules, section 3's
     table with section 16c's two family-unit exclusions and amendment
     1c's code-88 convention; accepted only with invented inputs.
 

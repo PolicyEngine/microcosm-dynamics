@@ -1052,6 +1052,80 @@ D637_SCOPE_MUTATIONS = {
             d, "2013.relationship.90", "2013.relationship.20"
         ),
     ),
+    "a1c_reopened": (
+        "roles",
+        lambda d: _entry(d, "2019.relationship.88").update(status="TO VERIFY"),
+    ),
+    "a1c_into_the_slot": (
+        "roles",
+        lambda d: _entry(d, "2021.relationship.88").update(spouse_slot=True),
+    ),
+    "a1c_legal_spouse_annuity": (
+        "roles",
+        lambda d: _entry(d, "2013.relationship.88").update(
+            legal_spouse_annuity=True
+        ),
+    ),
+    "a1c_marital_resolution": (
+        "roles",
+        lambda d: _entry(d, "2017.relationship.88").update(
+            marital_resolution=True
+        ),
+    ),
+    "a1c_no_income_role": (
+        "roles",
+        lambda d: _entry(d, "2015.relationship.88").update(income_role="head"),
+    ),
+    "a1c_birth_support_dropped": (
+        "roles",
+        lambda d: _entry(d, "2023.relationship.88").update(
+            administrative_birth_support=False
+        ),
+    ),
+    "a1c_refusal_restored": (
+        "roles",
+        lambda d: _entry(d, "2019.relationship.88").update(
+            action="refuse_substantive_routing"
+        ),
+    ),
+    "a1c_question_kept_open": (
+        "roles",
+        lambda d: _entry(d, "2019.relationship.88").update(
+            question=_entry(d, "2019.relationship.88")["superseded_question"]
+        ),
+    ),
+    "a1c_question_dropped": (
+        "roles",
+        lambda d: _entry(d, "2013.relationship.88").pop("superseded_question"),
+    ),
+    "a1c_ruling_dropped": (
+        "roles",
+        lambda d: _entry(d, "2015.relationship.88").pop("ruling"),
+    ),
+    "a1c_ruling_on_code_22": (
+        "roles",
+        lambda d: _copy_ruling(
+            d, "2019.relationship.88", "2019.relationship.22"
+        ),
+    ),
+    "a1c_convention_on_code_22": (
+        "roles",
+        lambda d: _entry(d, "2019.relationship.22").update(
+            action="convention_per_d637_1c"
+        ),
+    ),
+    "a1c_confirmation_dropped": (
+        "roles",
+        lambda d: _entry(d, "2021.relationship.88")["ruling"].pop(
+            "confirmed_by"
+        ),
+    ),
+    "a1c_adjudication_changed": (
+        "roles",
+        lambda d: _entry(d, "2023.relationship.88")["adjudication"].update(
+            disposition="D"
+        ),
+    ),
     "a2_blocked_again": (
         "income",
         lambda d: _entry(d, "income.2019.wife_sex").update(

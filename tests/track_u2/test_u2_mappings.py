@@ -10,6 +10,7 @@ INVENTED DATA - NOT A COMPARISON.
 
 from __future__ import annotations
 
+import datetime
 import functools
 import hashlib
 import json
@@ -283,6 +284,15 @@ D637_RULED_FIELDS = {
     # Amendment 1a's three D items keep their documentary resolution.
     "1a": {"ruling_effect", "completeness_disclosure", "ruling"},
     "1b": {"ruling_effect", "ruling"},
+    # Code 88's six A items resolve under the convention.
+    "1c": {
+        "status",
+        "action",
+        "income_role",
+        "resolution",
+        "ruling",
+        "superseded_question",
+    },
     "2": {
         "status",
         "usage",
@@ -383,7 +393,7 @@ D637_RECORDED = {
     "pension": ["5b", "5a"],
     "weights": ["6"],
     "individual": ["6"],
-    "roles": ["1a", "1b"],
+    "roles": ["1a", "1b", "1c"],
 }
 
 
@@ -907,29 +917,87 @@ def test_declared_gate_records_what_the_registry_gate_refuses(
     }
 
 
-def test_source_preflight_refuses_before_opening_any_psid_file(
+def test_an_unauthorized_load_refuses_before_any_psid_path(
     tmp_path, monkeypatch
 ):
-    opened = []
+    """Section 20 step 4 needs Max's recorded authorization: an unfrozen
+    load without it refuses before the source preflight and before any
+    PSID path is resolved, and a malformed record refuses the same way.
+    With a record, the load passes the source preflight (no blocker) and
+    refuses at the cited-source rehash, the staged directory being
+    empty; nothing under it is opened."""
+
+    import sys
+
+    from populace_dynamics.data import psid
+
+    opened, resolved = [], []
 
     def spy(event, args):
         if event == "open" and args and str(args[0]).startswith(str(tmp_path)):
             opened.append(args[0])
 
-    import sys
-
     sys.addaudithook(spy)
-    with pytest.raises(loader.U2LoaderRefusal, match="registry blockers"):
-        loader.load_u2_inputs(data_dir=tmp_path)
+    original = psid._resolve_data_dir
+    monkeypatch.setattr(
+        psid,
+        "_resolve_data_dir",
+        lambda data_dir: resolved.append(data_dir) or original(data_dir),
+    )
+    head = "0" * 40
+    for authorization in (
+        None,
+        {},
+        {"decision": "d745"},
+        {"decision": "yes", "git_head": head, "recorded_at_utc": "x"},
+        {
+            "decision": "d745",
+            "git_head": "HEAD",
+            "recorded_at_utc": "2026-10-12T00:00:00Z",
+        },
+        {
+            "decision": "d745",
+            "git_head": head,
+            "recorded_at_utc": "2026-10-12 00:00",
+        },
+    ):
+        with pytest.raises(loader.U2AuthorizationRefusal):
+            loader.load_u2_inputs(
+                data_dir=tmp_path, authorization=authorization
+            )
+    assert resolved == [] and opened == []
+    record = loader.structural_pass_authorization("d1", git_head=head)
+    with pytest.raises(loader.U2LoaderRefusal, match="is not staged"):
+        loader.load_u2_inputs(data_dir=tmp_path, authorization=record)
+    assert resolved == [tmp_path]
     assert opened == []
 
 
-def test_source_preflight_lists_the_open_entries(committed_registries):
-    with pytest.raises(loader.U2LoaderRefusal) as error:
-        loader.source_preflight(committed_registries)
-    # Since the d637 registry commits the only blockers are code 88's
-    # (amendment 1c, pending d745): TO VERIFY and its refusal, each wave.
-    assert str(error.value).startswith("12 registry blockers refuse")
+def test_structural_pass_authorization_records_and_refuses():
+    head = "a" * 40
+    record = loader.structural_pass_authorization("d1234", git_head=head)
+    assert set(record) == {"decision", "git_head", "recorded_at_utc"}
+    assert (record["decision"], record["git_head"]) == ("d1234", head)
+    stamp = datetime.datetime.strptime(
+        record["recorded_at_utc"], "%Y-%m-%dT%H:%M:%SZ"
+    ).replace(tzinfo=datetime.timezone.utc)
+    now = datetime.datetime.now(datetime.timezone.utc)
+    assert abs((now - stamp).total_seconds()) < 120
+    assert loader.check_structural_pass_authorization(record) == record
+    for decision in (None, "", "d", "d0", "D745", "d745 ", "745", "yes"):
+        with pytest.raises(loader.U2AuthorizationRefusal):
+            loader.structural_pass_authorization(decision, git_head=head)
+    with pytest.raises(loader.U2AuthorizationRefusal):
+        loader.check_structural_pass_authorization({**record, "granted": True})
+
+
+def test_source_preflight_passes_at_the_committed_registries(
+    committed_registries,
+):
+    # Since amendment 1c's registry commit (d637, confirmed by d745) no
+    # blocker remains: the preflight passes, opening no PSID file.
+    review = loader.source_preflight(committed_registries)
+    assert review["all_resolved"] is True
     # The preflight's own rule: an absent code (code 92 in 2013 and 2015)
     # passes when it is RESOLVED; every other entry counts its blockers.
     refused = []
@@ -939,14 +1007,12 @@ def test_source_preflight_lists_the_open_entries(committed_registries):
             assert entry["status"] == "RESOLVED", entry_id
             continue
         refused += sources.blockers(entry, name)
-    assert len(refused) == 12
-    assert sorted({reason.split(": ")[0] for reason in refused}) == sorted(
-        f"roles:{wave}.relationship.88" for wave in sources.SUPPORT_WAVES
-    )
+    assert refused == []
     for wave in sources.SUPPORT_WAVES:
-        key = f"roles:{wave}.relationship.88"
-        assert f"{key}: refuse_substantive_routing" in refused
-        assert any(r.startswith(f"{key}: TO VERIFY: ") for r in refused)
+        assert (
+            "roles",
+            f"{wave}.relationship.88",
+        ) in loader.required_entries(committed_registries)
     entries = loader.required_entries(committed_registries)
     assert ("weights", "2017.cross_section_weight") in entries
     assert ("roles", "2019.relationship.92") in entries
@@ -1105,8 +1171,7 @@ def test_registry_documents_are_read_only(committed_registries):
         )
     # The frozen documents still serialize to the pinned canonical form.
     assert json.loads(json.dumps(committed_registries.documents["design"]))
-    with pytest.raises(loader.U2LoaderRefusal, match="registry blockers"):
-        loader.source_preflight(committed_registries)
+    assert loader.source_preflight(committed_registries)["all_resolved"]
 
 
 # ---------------------------------------------------------------------------
@@ -1139,8 +1204,7 @@ def test_registry_set_copies_and_pickles_keep_their_binding(
         restored.entry("pension", "2021.route.previous_dc_only")[
             "status"
         ] = "RESOLVED"
-    with pytest.raises(loader.U2LoaderRefusal, match="registry blockers"):
-        loader.source_preflight(restored)
+    assert loader.source_preflight(restored)["all_resolved"]
 
 
 def test_a_committed_set_built_from_plain_documents_is_frozen():

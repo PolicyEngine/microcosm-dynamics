@@ -147,6 +147,34 @@ RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
         "required": ("ruling_effect",),
         "markers": (),
     },
+    # Code 88's six records (adjudication A), TO VERIFY until the ruling,
+    # resolve under the first-year cohabitor convention.
+    "1c": {
+        "registry": "roles",
+        "entries": tuple(
+            f"{wave}.relationship.88" for wave in (2013, *_LATER_WAVES)
+        ),
+        "ruling": {**_D637, "amendment": "1c", **_D745},
+        "disposition": "A",
+        "fields": {
+            "status": "RESOLVED",
+            "present": True,
+            "action": "convention_per_d637_1c",
+            "income_role": "ofum",
+            "spouse_slot": False,
+            "legal_spouse_annuity": False,
+            "marital_resolution": False,
+            "administrative_birth_support": True,
+        },
+        "absent": (
+            "refusal",
+            "question",
+            "blocking_dependencies",
+            "family_unit_exclusion",
+        ),
+        "required": ("resolution", "superseded_question"),
+        "markers": ("action",),
+    },
     "2": {
         "registry": "income",
         "entries": tuple(

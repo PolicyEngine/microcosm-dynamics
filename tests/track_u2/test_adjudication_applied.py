@@ -59,14 +59,13 @@ def quoted_spans(markdown):
 # by a ruling, TO VERIFY).  Max's d1090 ruling (2026-10-10; spec section
 # 16c) replaced all eight F refusals (roles 7, pension 1).  The d637
 # registry commits (2026-09-30 ruling; spec section 16b) resolve the A
-# items of amendments 2, 3, 5 and 6: so far amendment 2's ten income
-# records and amendment 3's six.
+# items of amendments 1c, 2, 3, 5 and 6, every one now.
 EXPECTED_COUNTS = {
     "income": (764, 0, 0),
     "wealth": (234, 0, 0),
     "individual": (59, 0, 0),
     "pension": (648, 0, 0),
-    "roles": (30, 0, 6),
+    "roles": (36, 0, 0),
     "support": (16, 0, 0),
     "weights": (7, 0, 0),
     "design": (2, 0, 0),
@@ -74,14 +73,15 @@ EXPECTED_COUNTS = {
 SSI_AND_CENSUS_RESOLVED = 26
 #: TO VERIFY records left: the adjudication's 24 A items less those the
 #: d637 commits resolved (amendment 2: 10; amendment 3: 6; 5b: 1; 5a's
-#: four entries were D items, RESOLVED already; amendment 6: 1).  The six
-#: left are code 88's (amendment 1c), pending Max's confirmation (d745).
-OPEN_ITEMS = 6
+#: four entries were D items, RESOLVED already; amendment 6: 1; and, as
+#: Max confirmed on 2026-10-12 (d745), amendment 1c: code 88's 6).
+OPEN_ITEMS = 0
 #: Each d637 amendment a registry commit has applied (section 16b), with
 #: the adjudication disposition its entries carry.
 D637_APPLIED = {
     "1a": "D",
     "1b": None,
+    "1c": "A",
     "2": "A",
     "3": "A",
     "4": "D",
@@ -557,9 +557,9 @@ def test_d637_amendment_2_spouse_metadata_never_decides_the_slot(documents):
     """Amendment 2 (section 16a; ratified by d637): the later family-file
     spouse age and sex are slot metadata only.  Each record quotes its own
     inapplicability wording as wording that decides no slot, defers slot
-    occupancy to the roles registry (code 88's left open, pending d745),
-    and names the recorded sex and derived age as what age- and
-    sex-dependent rules use."""
+    occupancy to the roles registry (under amendment 1c a code-88
+    cohabitor does not occupy the slot), and names the recorded sex and
+    derived age as what age- and sex-dependent rules use."""
     entries = {e["id"]: e for e in documents["income"]["entries"]}
     for key in registry.RATIFIED_AMENDMENTS["2"]["entries"]:
         entry = entries[key]
@@ -572,13 +572,17 @@ def test_d637_amendment_2_spouse_metadata_never_decides_the_slot(documents):
             f"('{wording.group(1)}') never decide whether a person occupies "
             "the spouse slot" in rule
         ), key
-        # Occupancy is the role rules', not a closed list of codes, so the
-        # rule decides nothing about code 88 (amendment 1c, pending d745).
+        # Occupancy is the role rules', not a closed list of codes; code 88
+        # is outside the slot by amendment 1c (d637, confirmed by d745).
         assert (
             "slot occupancy comes from the relationship rules, as the roles "
             "registry's spouse_slot field records them" in rule
         )
-        assert "code 88's slot status stays TO VERIFY" in rule
+        assert (
+            "a code-88 first-year cohabitor does not occupy the slot "
+            "(amendment 1c)" in rule
+        )
+        assert "TO VERIFY" not in rule and "await" not in rule
         assert "code-20 or code-22 person" not in rule
         assert "recorded sex (ER32000) and derived income-year age" in rule
     # 2013 is U1's wave: its spouse age and sex keep U1's mapping.
@@ -641,7 +645,8 @@ D637_TEXT_FIELDS = (
 D637_TEXT_SHA256 = {
     "1a": ("2f4bca660f85b99cac371c970bb02fe3ae3978e5e52c12d661dd3fdd5690b88d"),
     "1b": ("ca251770719feb29812705e2ef7d3868ec6f95a925806e40792f1fda63c69be8"),
-    "2": ("64a67aae69d9d0bd6c6743328e8169304708003845395830ad628a6ee708887d"),
+    "1c": ("23767199b72112d6e686ad7fd99bcbcf77a7225f511ef5257817d509edef87cb"),
+    "2": ("6f6df518e66bd3588b6bed230c0c21bd6acc07db7586c4b38fa65c91719a9099"),
     "3": ("8d93d501819d981c6605b02fde3ff89d05488738146757bd179a84c02e131598"),
     "4": ("0b79677a5d1b41a76b17709152bec0d3789d118c75859b9716ea505c3413cd9c"),
     "5b": ("ca59c757b3b2b3f9402643c51ae910c16f9dd5927848d03fed327172cb38b513"),
@@ -679,14 +684,49 @@ D637_CLAUSES = {
         ("ruling_effect", "the co-resident legal-spouse annuity life"),
         ("ruling_effect", "relationship-based marital resolution"),
     ],
+    "1c": [
+        (
+            "resolution",
+            "ratified amendment 1's parts 1a-1c as written, as Max confirmed "
+            "on 2026-10-12 (d745; section 16b)",
+        ),
+        (
+            "resolution",
+            "Under 1c a first-year cohabitor ({wave} code 88) has an OFUM "
+            "income role on the family basis",
+        ),
+        ("resolution", "its SSI falls in section 8's OFUM unit"),
+        ("resolution", "does not occupy the spouse slot"),
+        ("resolution", "is not a legal-spouse annuity life"),
+        (
+            "resolution",
+            "never resolves the head's or reference person's marital "
+            "history as married by relationship code alone",
+        ),
+        ("resolution", "keeps its recorded legal marital history"),
+        ("resolution", "keeps the inherited administrative birth support"),
+        (
+            "superseded_question",
+            "Which family income/SSI slot and substantive annuity or "
+            "marital rule, if any, is authorized for first-year cohabitors?",
+        ),
+    ],
     "2": [
         ("use_restriction", "Slot metadata only (u2-draft-4 amendment 2)."),
         (
             "use_restriction",
             "never decide whether a person occupies the spouse slot",
         ),
-        ("use_restriction", "code 88's slot status stays TO VERIFY"),
-        ("use_restriction", "whose parts 1a-1c await Max's confirmation"),
+        (
+            "use_restriction",
+            "a code-88 first-year cohabitor does not occupy the slot "
+            "(amendment 1c)",
+        ),
+        (
+            "use_restriction",
+            "whose parts 1a-1c d637 ratified, as Max confirmed on "
+            "2026-10-12, d745",
+        ),
         ("use_restriction", "never this variable."),
         ("resolution", "ratified u2-draft-4 amendment 2"),
     ],
@@ -790,10 +830,17 @@ def test_d637_texts_are_pinned(documents):
 #: says and must fail ``check_d637_texts``.
 D637_TEXT_MUTATIONS = [
     (
+        "roles",
+        "2019.relationship.88",
+        "resolution",
+        "; does not occupy the spouse slot",
+        "",
+    ),
+    (
         "income",
         "income.2019.wife_age",
         "use_restriction",
-        ", and code 88's slot status stays TO VERIFY",
+        ", and a code-88 first-year cohabitor does not occupy the slot",
         "",
     ),
     (
@@ -1456,10 +1503,14 @@ D1090_CLAUSES = {
         "records under 5a and resolved the 2017 weight ER34651 under "
         "amendment 6's option 1; the \N{SECTION SIGN}15 fragment itself is "
         "materialized under item 9. Max confirmed 1a\N{EN DASH}1c on "
-        "2026-10-12 (d745), and the 1a and 1b commits recorded the ruling on "
+        "2026-10-12 (d745), and the 1a, 1b and 1c commits recorded the "
+        "ruling on "
         "the documented 2015 code-90 and 2017 code-90 and code-92 routes and "
-        "on 2013's inherited code-90 meaning. The 6 TO VERIFY records left "
-        "are code 88's, open until amendment 1c's registry commit lands.",
+        "on 2013's inherited code-90 meaning, and resolved the six code-88 "
+        "records under the first-year cohabitor convention. No TO VERIFY "
+        "record remains, and the loader's source preflight passes; the "
+        "structural pass still needs Max's authorization (item 8; "
+        "\N{SECTION SIGN}20 step 4).",
         "8. Complete the pre-registration structural, reconciliation and "
         "F17 component pass, including only the counts that the ratified B1 "
         "and B2 options name (under the 2026-10-10 ruling, the counts "
