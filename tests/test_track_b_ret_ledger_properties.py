@@ -5,6 +5,8 @@ undistributed sub-dollar residual required by CFR .440's reapportionment
 stop; 215(g)'s subsequent whole-dollar check floor is asserted separately.
 Every fractional allocation uses that statutory stop. These tests admit no
 population, behavioral, or forecast claim.
+The cap-boundary fixtures cover both simultaneous first-apportionment caps
+and a child cap reached only after the spouse's overflow is reapportioned.
 """
 
 from __future__ import annotations
@@ -13,7 +15,7 @@ import dataclasses
 from fractions import Fraction as F
 
 import pytest
-from hypothesis import given, settings
+from hypothesis import example, given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.track_b import ret_ledger as r
@@ -37,6 +39,7 @@ from tests.test_track_b_ret_ledger import (
     record,
     worker,
 )
+from tests.track_b_ret_ledger_support import source_text
 
 DIME_RATES = st.integers(1, 30_000).map(lambda value: F(value, 10))
 EXCESSES = st.integers(0, 50_000)
@@ -648,9 +651,13 @@ def test_subdollar_stop_keeps_exact_last_uncapped_shares_and_capped_rate(
 
 @settings(max_examples=100, deadline=None)
 @given(st.integers(1, 100), st.integers(1, 99))
+@example(scale=1, overflow_cents=66)
+@example(scale=1, overflow_cents=67)
+@example(scale=1, overflow_cents=68)
 def test_stop_threshold_and_later_iteration_keep_original_participant_count(
     scale, overflow_cents
 ):
+    """RS 02501.110B.2 permits one or more caps in the first apportionment."""
     pool = F(8 * scale)
     weights = {"nh": 2, "spouse": 1, "child": 1}
     # The first overflow is at least $1, so it must be reapportioned.
@@ -663,15 +670,62 @@ def test_stop_threshold_and_later_iteration_keep_original_participant_count(
         "child": F(7 * scale, 3),
     }
     assert threshold.undistributed_subdollar_residual == 0
-    # The spouse releases $2*scale before the child's sub-$1 overflow.
+    # A child cap at least pool/4 binds only after the spouse releases
+    # $2*scale. Below that initial share, both cap in the first iteration
+    # and their combined overflow is reapportioned to the NH.
     overflow = F(overflow_cents, 100)
     child_cap = pool / 3 - overflow
     stopped = r.partial_payments(
         pool, {"nh": pool, "spouse": 0, "child": child_cap}, weights
     )
-    assert stopped == {"nh": 2 * pool / 3, "spouse": F(0), "child": child_cap}
-    assert stopped.undistributed_subdollar_residual == overflow
-    assert sum(stopped.values()) + overflow == pool
+    if child_cap >= pool / 4:
+        expected_nh = 2 * pool / 3
+        expected_residual = overflow
+    else:
+        expected_nh = pool - child_cap
+        expected_residual = F(0)
+    assert stopped == {"nh": expected_nh, "spouse": F(0), "child": child_cap}
+    assert stopped.undistributed_subdollar_residual == expected_residual
+    assert sum(stopped.values()) + expected_residual == pool
+
+
+def test_simultaneous_initial_caps_reapportion_combined_overflow():
+    """Invented RS 02501.110B.2 regression from the minimized review case."""
+    assert (
+        "the first apportionment yields an amount for one or more of them"
+        in source_text("poms_rs_02501_110")
+    )
+    pool = F(8)
+    caps = {"nh": pool, "spouse": F(0), "child": F(599, 300)}
+    weights = {"nh": F(2), "spouse": F(1), "child": F(1)}
+    initial = {key: pool * weight / 4 for key, weight in weights.items()}
+    assert initial == {"nh": F(4), "spouse": F(2), "child": F(2)}
+    assert initial["spouse"] - caps["spouse"] == 2
+    assert initial["child"] - caps["child"] == F(1, 300)
+    combined_overflow = sum(
+        (initial[key] - caps[key] for key in ("spouse", "child")), F(0)
+    )
+    assert combined_overflow == F(601, 300) >= 1
+
+    result = r.partial_payments(pool, caps, weights)
+    assert dict(result) == {
+        "nh": F(1801, 300),
+        "spouse": F(0),
+        "child": F(599, 300),
+    }
+    assert result.undistributed_subdollar_residual == 0
+    assert sum(result.values()) + result.undistributed_subdollar_residual == (
+        pool
+    )
+    assert all(0 <= result[key] <= caps[key] for key in caps)
+    assert {
+        key: amount.numerator // amount.denominator
+        for key, amount in result.items()
+    } == {
+        "nh": 6,
+        "spouse": 0,
+        "child": 1,
+    }
 
 
 @settings(max_examples=150, deadline=None)

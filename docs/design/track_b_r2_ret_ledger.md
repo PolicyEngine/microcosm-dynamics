@@ -4,7 +4,7 @@
 earnings test rule mechanics on invented record-years and published
 statutory worked examples. No population, behavioral or forecast claim.**
 
-**Status: build-only, revised 2026-10-12 after PR #528 review round 1.
+**Status: build-only, revised 2026-10-12 after PR #528 review rounds 1–2.
 No real-data computation.** This is the
 single-record ledger core. Deduction before reduction, which can change
 the other beneficiaries' gross rates, remains part (b).
@@ -278,6 +278,28 @@ The source-prescribed two-beneficiary rule is separate: a $6 pool with
 caps $10/$1.90 and shares 2:1 pays exact $4.10/$1.90 without stopping
 on the sub-dollar balance (20 CFR 404.440; RS 02501.110B.1).
 
+RS 02501.110B.2 also covers a first apportionment exceeding the rates
+for several beneficiaries simultaneously. All shares above their caps
+contribute to that iteration's overflow before testing the $1 stop. The
+invented $8 pool has caps NH $8, spouse $0 and child `599/300` dollars,
+with original shares 2:1:1. Its initial shares are $4/$2/$2. The spouse
+releases $2 and the child
+releases `1/300` dollars, so the combined `601/300` dollars must be
+reapportioned to the NH. Exact net shares are NH `1801/300` dollars,
+spouse $0 and child `599/300` dollars, total $8, with no residual; the
+checks are $6/$0/$1.
+The deterministic regression is
+`test_simultaneous_initial_caps_reapportion_combined_overflow`.
+
+The stop-boundary property keeps both initial-cap and later-cap cases.
+For a pool of `8 * scale`, spouse cap zero and child cap
+`pool / 3 - overflow_cents / 100`, the child caps later only when its cap
+is at least the initial `pool / 4` share. At `scale=1`, 66 cents preserves
+that condition, while 67 and 68 cents cap both auxiliaries initially.
+The property's exact monetary, residual and conservation assertions
+follow the applicable iteration rather than assuming that only the
+spouse caps first (RS 02501.110B.2).
+
 RS 02501.110 Example 3 still reproduces exact $38.50/$16/$19.25/$19.25
 and checks $38/$16/$19/$19: the spouse cap releases $2.60, so the next
 reapportionment is required. The 20 CFR 404.440 worked example still
@@ -410,7 +432,7 @@ In the table, unqualified property test names are in
 | Results are deterministic and beneficiary-order independent | `test_determinism_and_beneficiary_order_independence` |
 | Partial net shares plus the residual conserve the pool, obey each cap and preserve original-share proportions among uncapped beneficiaries; each stopped allocation has a residual in [0, $1) | `test_partial_payments_preserve_total_with_residual_and_caps_and_proportions`; `test_subdollar_stop_keeps_exact_last_uncapped_shares_and_capped_rate`; source `test_cfr_404_440_and_poms_02501_110_stop_at_subdollar_last_calculation` |
 | Partial reapportionment is deterministic and input-order independent | `test_partial_reapportionment_is_deterministic_and_order_independent` |
-| An overflow of exactly $1 must be reapportioned; later iterations retain every already-capped beneficiary and use the original entitled-participant count for the three-person stopping rule | `test_stop_threshold_and_later_iteration_keep_original_participant_count`; unit `test_exactly_one_dollar_overflow_is_reapportioned`; unit `test_later_subdollar_stop_retains_previously_capped_beneficiary` |
+| An overflow of exactly $1 must be reapportioned; simultaneous caps contribute their combined overflow; later iterations retain every already-capped beneficiary and use the original entitled-participant count for the three-person stopping rule | `test_stop_threshold_and_later_iteration_keep_original_participant_count`; `test_simultaneous_initial_caps_reapportion_combined_overflow`; unit `test_exactly_one_dollar_overflow_is_reapportioned`; unit `test_later_subdollar_stop_retains_previously_capped_beneficiary` |
 | R1 annual amounts and exact rates match every supported bundled year, with zero tolerance | `test_r1_differential_matches_every_supported_year_exactly`; `test_r1_differential_statutory_default_is_exactly_one_twelfth` |
 | The default statutory monthly limit is exactly annual/12, with zero tolerance; wages above it cannot protect a grace month | `test_r1_differential_statutory_default_is_exactly_one_twelfth`; readings `test_property_default_monthly_limit_is_exact_twelfth_and_controls_grace_wages`; unit `test_act_203_f_8_d_vi_exact_limit_is_not_chart_ceiling`; source `test_act_203_f_8_d_v_vi_monthly_amounts_are_quoted_and_equal_annual_twelfths` |
 | Missing R1 years raise rather than substitute | `test_r1_differential_missing_year_raises_without_substitution`; unit `test_missing_parameter_year_is_not_carried_forward` |
@@ -611,6 +633,13 @@ a child turning 16 terminates the parent's entitlement. Tests
 the distinction.
 
 ## Needs Max's judgment
+
+**Ruling d1418 (Max, 2026-10-12): keep the current defaults for these
+readings, and reopen any one when a population target needs it.** The
+computed defaults below (NESE losses floored; no non-service months during
+simultaneous RIB and DIB entitlement, per 20 CFR 404.435(b)(3); own-work
+protections limited to the CFR's disability-based wording) stand, and the
+broader POMS deemed-entitlement reading stays refused.
 
 The review resolved the historical monthly fractions and sub-dollar
 reapportionment stop directly from the captured Act and CFR text. Those
@@ -870,6 +899,28 @@ excluded. The five independent tier collections found 6,955 unit,
 PolicyEngine-oracle tests, for a total of 12,950. The tier-policy test
 passed with 12,949 other tests deselected. Both microdata directory
 overrides pointed to nonexistent paths during whole-suite collection.
+
+Review fix round 2 reproduced the false later-cap fixture with explicit
+`scale=1, overflow_cents=67` before correcting its expectations. The
+property now covers both cap orders and pins the 66/67/68-cent boundary;
+the separate simultaneous-cap regression checks every exact share,
+the zero residual, the $8 pool and checks $6/$0/$1. All seven RET test
+files passed 739 tests. The complete 9,900-case fixture grid also passed
+at zero tolerance. Production implementation bytes stayed unchanged.
+
+Three isolated one-line mutations each failed both the corrected
+property and the new deterministic regression: ignoring child caps,
+retaining capped beneficiaries' weights in the denominator and changing
+the $1 stop threshold to $3. Both tests passed after each scratch copy
+was restored. Black and Ruff passed for all ten PR Python files;
+birth-evidence checks passed all 13 cases with the artifact rebuild
+excluded. These checks use only invented cases and captured sources.
+
+The round-2 tier recount found 6,968 unit, 3,925 artifact, 1,346
+integration-PSID, 520 legacy-reproduction and 220 PolicyEngine-oracle
+tests, totaling 12,979. The tier-policy test passed with 12,978 tests
+deselected. Both microdata directory overrides pointed to nonexistent
+paths during every whole-suite collection and the tier-policy run.
 
 ## Not in scope
 
