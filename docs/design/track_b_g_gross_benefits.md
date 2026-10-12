@@ -728,5 +728,5 @@ invalid conservation, reason and era conservation, deterministic/order
 independent classification, invalid-before-refusal order, separate
 denominators and canonical byte equality on regeneration. Each is executed
 by example and Hypothesis checks in the conformance-report tests. All ten
-deliberate mutations failed and were restored; commands, failing tests and
-the delivery limitation are in `track_b_g_conformance_20261011.md`.
+deliberate mutations failed and were restored; the commands and failing
+tests are listed in the pull request (#530).
