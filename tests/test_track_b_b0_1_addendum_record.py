@@ -839,8 +839,7 @@ def test_addendum_carries_the_round_10_record(prose, sentence):
         "read as ripgrep, Node and Bun read it (a bracket class is one "
         "character whatever it holds, as in `stem[.,]md`;",
         "a segment that matches a denied name and reads no other character "
-        "at any position of its stem names it, an extglob that excludes a "
-        "name names it too,",
+        "at any position of its stem names it, `!(...)` reads as `*`,",
         "the denied names are every file the root record removed, the "
         "codebook files and code-map tables included.",
         "The rule as it now stands is `track_b_b0_1_review_read_log.v7`.",
@@ -871,6 +870,8 @@ def test_addendum_carries_the_round_10_follow_up(prose, sentence):
         "Until it lands, the rule's disclosure is as above",
         "the codebook files and the removed code-map tables are checked "
         "only through the codebook directory",
+        # Q6 #534 round 2: the exclusion wording overstated the code
+        "an extglob that excludes a name names it too",
     ],
 )
 def test_addendum_drops_the_round_10_stale_wording(prose, stale):

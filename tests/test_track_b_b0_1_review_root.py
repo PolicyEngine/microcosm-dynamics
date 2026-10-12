@@ -887,6 +887,11 @@ def test_denied_from_record_takes_every_removed_file():
         # escapes \] and holds the comma) spells the other
         ("Glob", "**/deep_{denied[.\\]m,zz]}{d}", False),
         ("Glob", "**/deep_d{enied[.\\],]md}", False),
+        # #534 round 2: Bun reads [\\d] as d, which pins the stem
+        ("Glob", "**/[\\d]eep_denied.md", False),
+        ("Grep", "deep_d[\\e]nied.md", False),
+        # a file name holds no /, so ripgrep's [d/] pins the stem
+        ("Glob", "**/[d/]eep_denied.md", False),
         # a filter that excludes a denied name names it (conservative)
         ("Glob", "**/deep_denied!(.md)", False),
         # nested too deep to read: unclassified, so void
@@ -923,6 +928,21 @@ def test_read_log_v7_cases(tmp_path, tool, value, counts):
     assert log["schema"] == "track_b_b0_1_review_read_log.v7"
     assert log["n_denied"] == 5
     assert log["review_counts"] is counts, log["paths"]
+
+
+@pytest.mark.parametrize(
+    "pattern",
+    [
+        # #534 round 1: nested too deep to read
+        "@(x)" * 1100,
+        # #534 round 2: a sequence number too long to read, and a chain of
+        # empty extglobs whose automaton passes CLOSURE_LIMIT
+        "{" + "1" * 4500 + "..1}",
+        "+()" * 900 + "deep_denied.md",
+    ],
+)
+def test_patterns_too_large_to_read_are_unclassified(pattern):
+    assert review_root.pattern_kind(pattern, DENIED) == "unclassified"
 
 
 def test_readlog_cli_denies_every_file_the_root_record_removed(tmp_path):
@@ -1004,18 +1024,16 @@ def test_glob_readings_follow_the_engines():
     assert expand("a{1..3}b", sequences=True) == ["a1b", "a2b", "a3b"]
     assert expand("{c..a}", sequences=True) == ["c", "b", "a"]
     assert expand("{1..5..2}", sequences=True) == ["1", "3", "5"]
-    assert expand("{08..10}", sequences=True) == [
-        "8",
-        "9",
-        "10",
-        "08",
-        "09",
-        "10",
-    ]
+    # a zero-padded end pads every item to the longer end's width
+    assert expand("{08..10}", sequences=True) == ["08", "09", "10"]
+    assert expand("{-05..5..5}", sequences=True) == ["-05", "000", "005"]
     assert expand("{a..1}", sequences=True) == ["{a..1}"]
     with pytest.raises(OverflowError):
         expand("{1..99999}", sequences=True)
-    # Bun: a backslash inside a class escapes the next character
+    # Bun: a backslash inside a class escapes the next character, so
+    # [\\d] is d alone; ripgrep reads it as a backslash or d
+    assert tokens("[\\d]") == (("set", frozenset("\\d")),)
+    assert tokens("[\\d]", escapes=True) == (("lit", "d"),)
     assert review_root.class_end("[.\\]]", 0) == 3
     assert review_root.class_end("[.\\]]", 0, escapes=True) == 4
     assert expand("{a[.\\],]b,c}", glob=True, escapes=True) == [
@@ -1161,6 +1179,7 @@ _GROUP_PIECES = {
     "*(b)": "(?:b)*",
     "?(a)": "(?:a)?",
     "+([ab])": "(?:[ab])+",
+    "[a/]": "[a/]",
     "@(a|+(b))": "(?:a|(?:b)+)",
     "!(a)": "[^/]*",
 }
@@ -1400,7 +1419,8 @@ def _spellings(seed, count):
     Each pattern applies one to three changes to the name: escape a
     character, flip its case, put it in a one-character class or a
     two-case class, put an extension character in a class with other
-    characters (or a POSIX, negated or escaped-bracket class), wrap a run
+    characters (or a POSIX, negated or escaped-bracket class), put any
+    character in Bun's escaped class or ripgrep's ``[c/]``, wrap a run
     in a brace group or an extglob, spell a doubled letter by repetition
     (``+(e)``) or a letter by a one-item sequence (``{e..e}``), or read
     two extension characters by a repeated class. The path may be
@@ -1419,7 +1439,7 @@ def _spellings(seed, count):
         for _ in range(rng.randint(1, 3)):
             change = rng.choice(
                 ["escape", "case", "one", "cases", "class", "class", "wrap"]
-                + ["repeat", "sequence", "escaped-class"]
+                + ["repeat", "sequence", "escaped-class", "escaped-one"]
             )
             index = rng.randrange(len(units))
             char = units[index]
@@ -1436,11 +1456,20 @@ def _spellings(seed, count):
                 else:
                     low, high = chr(ord(char) - 1), chr(ord(char) + 1)
                     units[index] = f"{{{low}..{high}}}"
+            elif change == "escaped-one" and len(char) == 1:
+                # Bun reads [\\c] as c alone; in a file name ripgrep's
+                # [c/] can only be c
+                units[index] = rng.choice([f"[\\{char}]", f"[{char}/]"])
             elif change == "escaped-class" and index >= cut:
                 units[index] = rng.choice(
                     [f"[{char}\\]]", "[[:ascii:]]", f"[\\]{char}]"]
                 )
-            elif change in ("repeat", "sequence", "escaped-class"):
+            elif change in (
+                "repeat",
+                "sequence",
+                "escaped-class",
+                "escaped-one",
+            ):
                 continue
             elif change == "wrap" or len(char) != 1:
                 stop = rng.randint(index + 1, len(units))

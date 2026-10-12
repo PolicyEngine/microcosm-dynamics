@@ -321,8 +321,9 @@ _SEQUENCE_RX = re.compile(
 
 def _sequence(body: str, limit: int) -> list[str] | None:
     """The items of the brace sequence ``{body}`` as bash and Node read it,
-    or ``None`` if ``body`` is not a sequence. A zero-padded end pads
-    every item; both padded and plain items are returned then."""
+    or ``None`` if ``body`` is not a sequence. If either end is
+    zero-padded, every item is padded to the longer end's width. A number
+    too long to read raises ``OverflowError``."""
     match = _SEQUENCE_RX.fullmatch(body)
     if match is None:
         return None
@@ -330,11 +331,14 @@ def _sequence(body: str, limit: int) -> list[str] | None:
     numeric = [end.lstrip("+-").isdigit() for end in (low, high)]
     if numeric[0] != numeric[1]:
         return None
-    if numeric[0]:
-        first, last = int(low), int(high)
-    else:
-        first, last = ord(low), ord(high)
-    stride = abs(int(step or 1)) or 1
+    try:
+        if numeric[0]:
+            first, last = int(low), int(high)
+        else:
+            first, last = ord(low), ord(high)
+        stride = abs(int(step or 1)) or 1
+    except ValueError as error:
+        raise OverflowError("a sequence number too long to read") from error
     values = range(
         first,
         last + (1 if last >= first else -1),
@@ -348,11 +352,8 @@ def _sequence(body: str, limit: int) -> list[str] | None:
         len(end.lstrip("+-")) > 1 and end.lstrip("+-").startswith("0")
         for end in (low, high)
     )
-    width = max(len(low), len(high))
-    items = [str(value) for value in values]
-    if padded:
-        items += [str(value).zfill(width) for value in values]
-    return items
+    width = max(len(low), len(high)) if padded else 0
+    return [str(value).zfill(width) for value in values]
 
 
 def brace_expansions(
@@ -513,6 +514,10 @@ _POSIX_CLASSES = {
     "xdigit": string.hexdigits,
 }
 
+#: An automaton whose split closures hold more entries than this in all
+#: is not built, and its pattern is ``unclassified``.
+CLOSURE_LIMIT = 100_000
+
 #: A token of a pattern as a glob engine reads it: ``("lit", c)`` one
 #: character; ``("cut", c)`` a brace or comma left as literal text;
 #: ``("any", "")`` ``?``; ``("star", "")`` ``*``; ``("set", chars)`` and
@@ -522,13 +527,15 @@ _POSIX_CLASSES = {
 Token = tuple[str, Any]
 
 
-def _class_token(body: str, fold: bool) -> Token:
+def _class_token(body: str, fold: bool, escapes: bool = False) -> Token:
     """The token for a bracket class whose text inside ``[...]`` is
     ``body``.
 
-    A leading ``!`` or ``^`` negates it. ``a-z`` is a range, ``[:name:]``
-    a POSIX class, and ``\\x`` stands for ``x`` and, read literally, for
-    a backslash too. A class of one character is that character.
+    A leading ``!`` or ``^`` negates it. ``a-z`` is a range and
+    ``[:name:]`` a POSIX class. ``\\x`` stands for ``x`` and, read
+    literally as ripgrep reads it, for a backslash too; with ``escapes``,
+    as Bun reads it, for ``x`` alone, so ``[\\d]`` is ``d``. A class of
+    one character is that character.
     """
     negated = body[:1] in ("!", "^")
     if negated:
@@ -545,7 +552,8 @@ def _class_token(body: str, fold: bool) -> Token:
                 index = close + 2
                 continue
         if body[index] == "\\" and index + 1 < len(body):
-            items.append(("set", frozenset("\\")))
+            if not escapes:
+                items.append(("set", frozenset("\\")))
             items.append(("char", body[index + 1], True))
             index += 2
             continue
@@ -600,7 +608,9 @@ def glob_tokens(
         if char == "[":
             close = class_end(text, index, escapes)
             if close != -1:
-                tokens.append(_class_token(text[index + 1 : close], fold))
+                tokens.append(
+                    _class_token(text[index + 1 : close], fold, escapes)
+                )
                 index = close + 1
                 continue
         group = _extglob_group(text, index, escapes)
@@ -686,6 +696,7 @@ def _automaton(tokens: tuple[Token, ...]) -> tuple[Any, ...]:
 
     start = build(tokens, 0)
     closures = []
+    total = 0
     for state in range(len(states)):
         seen, stack = set(), [state]
         while stack:
@@ -695,6 +706,9 @@ def _automaton(tokens: tuple[Token, ...]) -> tuple[Any, ...]:
             seen.add(current)
             if states[current][0] == "split":
                 stack.extend(states[current][1])
+        total += len(seen)
+        if total > CLOSURE_LIMIT:
+            raise OverflowError("automaton too large")
         closures.append(frozenset(seen))
     holders: list[set[int]] = [set() for _ in states]
     for state, closure in enumerate(closures):
@@ -742,7 +756,9 @@ def pins_stem(name: str, tokens: Sequence[Token]) -> bool:
     That is the test of a segment that names ``name``: the stem is spelled
     whatever syntax spells it (``[d]eep``, ``d+(e)p``, ``{d}eep``), while
     a wildcard, a negated class or a class of two characters that differ
-    other than in case stands for part of it.
+    other than in case stands for part of it. A file name holds no ``/``,
+    so a class's ``/`` is no other character here (``[d/]eep`` pins, as
+    ripgrep reads it).
     """
     tokens = tuple(tokens)
     states, _, accept, closures, holders = _automaton(tokens)
@@ -767,7 +783,9 @@ def pins_stem(name: str, tokens: Sequence[Token]) -> bool:
             if state[0] != "char" or state[3] not in finishing[i + 1]:
                 continue
             if state[2] or any(
-                char.casefold() != name[i].casefold() for char in state[1]
+                char.casefold() != name[i].casefold()
+                for char in state[1]
+                if char != "/"
             ):
                 return False
     return True
@@ -927,11 +945,13 @@ def pattern_kind(pattern: str, denied: Sequence[str]) -> str:
       name and reads no other character at any position of its stem
       (``pins_stem``: ``[d]eep``, ``d+(e)p``).
 
-    ``!(...)`` reads as ``*``, so a filter that excludes a denied name
-    names it too. A wildcard, a negated class or a class of two or more
-    characters that stands at a position of the stem (``*name_part*``,
-    ``[xy]tem.md``) is not classified. A pattern with more than
-    ``BRACE_LIMIT`` readings, or nested too deep to read, is
+    ``!(...)`` reads as ``*``, so a filter that excludes a name beside a
+    whole denied stem (``stem!(.md)``) is classed as naming it. A
+    wildcard, a negated class or a class of two or more characters that
+    stands at a position of the stem (``*name_part*``, ``[xy]tem.md``)
+    is not classified. A pattern with more than ``BRACE_LIMIT``
+    readings, nested too deep to read, whose automaton passes
+    ``CLOSURE_LIMIT`` or with a sequence number too long to read is
     ``unclassified``.
     """
     names = {Path(d).name for d in denied} | {Path(CODEBOOK_DIR).name}
