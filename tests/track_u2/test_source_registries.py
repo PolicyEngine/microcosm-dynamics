@@ -827,6 +827,109 @@ D637_SCOPE_MUTATIONS = {
             status="TO VERIFY", question="reopened"
         ),
     ),
+    # First-round reviews (of 02e3f3e2, 06fa7d98 and 6b047381).
+    "a2_amendment_record_mismatch": (
+        "income",
+        lambda d: _entry(d, "income.2019.wife_age")["adjudication"].update(
+            amendment=3
+        ),
+    ),
+    "a2_restriction_dropped": (
+        "income",
+        lambda d: _entry(d, "income.2017.wife_sex").pop("use_restriction"),
+    ),
+    "a2_question_record_dropped": (
+        "income",
+        lambda d: _entry(d, "income.2023.wife_age").pop("superseded_question"),
+    ),
+    "a2_usage_on_2013": (
+        "income",
+        lambda d: _entry(d, "income.2013.wife_age").update(
+            usage="slot_metadata_only"
+        ),
+    ),
+    "a3_variable_added": (
+        "income",
+        lambda d: _entry(d, "income.2013.wife_retirement_annuities").update(
+            variable="ER58101"
+        ),
+    ),
+    "a3_crosswalk_blocked": (
+        "income",
+        lambda d: _entry(d, "income.2013.wife_retirement_annuities").update(
+            blocking_dependencies=["roles:2013.relationship.20"]
+        ),
+    ),
+    "a3_restriction_permits_input": (
+        "income",
+        lambda d: _entry(d, "income.2021.wife_retirement_annuities").update(
+            use_restriction="U2 reads this crosswalk as the spouse input."
+        ),
+    ),
+    "a4_target_reverted": (
+        "wealth",
+        lambda d: _entry(d, "wealth.2013.wealth2_acc").update(
+            accuracy_for_variable="ER58209"
+        ),
+    ),
+    "a4_conflict_target_reverted": (
+        "wealth",
+        lambda d: _entry(d, "wealth.2015.wealth2_acc")[
+            "source_wording_conflict"
+        ].update(resolved_accuracy_for_variable="ER65406"),
+    ),
+    "a4_disposition_changed": (
+        "wealth",
+        lambda d: _entry(d, "wealth.2017.checking_saving_acc")[
+            "adjudication"
+        ].update(disposition="A"),
+    ),
+    "a4_restriction_on_an_unruled_flag": (
+        "wealth",
+        lambda d: _entry(d, "wealth.2019.checking_saving_acc").update(
+            use_restriction=_entry(d, "wealth.2019.wealth2_acc")[
+                "use_restriction"
+            ]
+        ),
+    ),
+    "a4_decision_misspelled": (
+        "wealth",
+        lambda d: _entry(d, "wealth.2019.checking_saving_acc").update(
+            ruling={
+                "decision": "d637 ",
+                "date": "2026-09-30",
+                "specification_section": "16b",
+            }
+        ),
+    ),
+    "a5b_branch_on_2017_checkpoint": (
+        "pension",
+        lambda d: _entry(d, "2017.route.formula_unknown_checkpoint").update(
+            refused_branch="P62ACKPT: P46=1 AND P52=1 AND P62AMT=DK/RF"
+        ),
+    ),
+    "a5a_ruling_effect_dropped": (
+        "pension",
+        lambda d: _entry(d, "2019.route.inherited_route_amendment").pop(
+            "ruling_effect"
+        ),
+    ),
+    "a6_disclosure_on_2019_weight": (
+        "weights",
+        lambda d: _entry(d, "2019.cross_section_weight").update(
+            registration_disclosure=copy.deepcopy(
+                _entry(d, "2017.cross_section_weight")[
+                    "registration_disclosure"
+                ]
+            )
+        ),
+    ),
+    "a6_disclosure_dropped": (
+        "weights",
+        lambda d: _entry(d, "2017.cross_section_weight").pop(
+            "registration_disclosure"
+        ),
+    ),
     "a2_blocked_again": (
         "income",
         lambda d: _entry(d, "income.2019.wife_sex").update(

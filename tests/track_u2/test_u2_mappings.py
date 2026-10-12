@@ -385,8 +385,26 @@ def test_d637_moved_only_the_ruled_gate_fields():
     releasable = set().union(*D637_RELEASED.values())
     moved, released = set(), {}
     for name in registry.REGISTRY_NAMES:
-        before = _gate_projection(json.loads(_at(D1090_COMMIT, name)))
-        after = _gate_projection(json.loads(_current(name)))
+        raw_before = json.loads(_at(D1090_COMMIT, name))
+        raw_after = json.loads(_current(name))
+        before = _gate_projection(raw_before)
+        after = _gate_projection(raw_after)
+        # A question or refusal a ruling answers is kept verbatim: compared
+        # in full, since ``question`` is prose the projection drops.
+        old_raw = {e["id"]: e for e in raw_before["entries"]}
+        for entry in raw_after["entries"]:
+            if (name, entry["id"]) not in ruled:
+                continue
+            for kept, field in (
+                ("superseded_question", "question"),
+                ("superseded_refusal", "refusal"),
+            ):
+                if kept in entry:
+                    assert entry[kept] == old_raw[entry["id"]][field], (
+                        name,
+                        entry["id"],
+                    )
+                    assert field not in entry, (name, entry["id"])
         top = _changed_keys(before, after) - {"entries"}
         assert top == D637_TOP.get(name, set()), name
         if name in D637_RECORDED:
@@ -641,6 +659,44 @@ def test_wealth1_identity_counts_a_broken_identity(u2_inputs, declared_gate):
         sources.wealth1_identity_counts(frame, identity)["n_exact"]
         == len(frame) - 1
     )
+
+
+@pytest.mark.parametrize(
+    "gate_kind", [sources.REGISTRY, sources.INVENTED_DECLARED]
+)
+def test_slot_metadata_is_read_only_as_the_slot_flag(
+    gate_kind, committed_registries
+):
+    """Amendment 2 (ratified by d637): the later family-file spouse age and
+    sex are slot metadata only.  The adapter reads the spouse age, for the
+    slot flag the income rows hold equal to the roster, and refuses the
+    spouse sex under either gate."""
+    for wave in (2015, 2017, 2019, 2021, 2023):
+        gate = sources.SourceGate(gate_kind, committed_registries)
+        (spec,) = sources.field_specs("income", wave, ["wife_age"], gate)
+        assert spec.kind == "age"
+        with pytest.raises(sources.U2SourceRefusal, match="slot metadata"):
+            sources.field_specs("income", wave, ["wife_sex"], gate)
+    assert "wife_sex" not in sources.INCOME_CONCEPTS
+
+
+def test_spouse_age_and_sex_are_read_nowhere_else():
+    """Static guard for amendment 2: no U2 module but the adapters and the
+    invented generator names the family-file spouse age or sex, and U1's
+    income concept, which U2's rows feed, names neither."""
+    from pathlib import Path
+
+    from populace_dynamics.estimates import adjusted_poverty
+
+    package = Path(sources.__file__).parent
+    allowed = {"sources.py", "invented.py"}
+    for path in sorted(package.glob("*.py")):
+        if path.name in allowed:
+            continue
+        text = path.read_text(encoding="utf-8")
+        assert "wife_age" not in text and "wife_sex" not in text, path.name
+    text = Path(adjusted_poverty.__file__).read_text(encoding="utf-8")
+    assert "wife_age" not in text and "wife_sex" not in text
 
 
 def test_crosswalks_are_never_executable_inputs(declared_gate, registry_gate):

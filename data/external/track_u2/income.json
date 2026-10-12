@@ -4426,7 +4426,7 @@
       },
       "status": "RESOLVED",
       "use_restriction": "Non-executable metadata (u2-draft-4 amendment 3): no U2 input or row reads this crosswalk, and no scalar historical equivalence is inferred from it.",
-      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time. No row changes. The adjudication's question is kept as superseded_question.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time; U2 reads none of the four as an input of its own. No row changes. The adjudication's question is kept as superseded_question.",
       "ruling": {
         "decision": "d637",
         "date": "2026-09-30",
@@ -4615,7 +4615,7 @@
       },
       "status": "RESOLVED",
       "usage": "slot_metadata_only",
-      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse age and its inapplicability wording ('Head is female or single male') never decide whether a person occupies the spouse slot: the occupant is the in-family code-20 or code-22 person under the relationship rules (section 3; section 16a amendment 1), as the roles registry records them. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse age and its inapplicability wording ('Head is female or single male') never decide whether a person occupies the spouse slot: slot occupancy comes from the relationship rules, as the roles registry's spouse_slot field records them (section 3; section 16a amendment 1, whose parts 1a-1c await Max's confirmation, d745), and code 88's slot status stays TO VERIFY. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
       "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
       "ruling": {
         "decision": "d637",
@@ -7546,7 +7546,7 @@
       },
       "status": "RESOLVED",
       "usage": "slot_metadata_only",
-      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse sex and its inapplicability wording ('Head is female or single male') never decide whether a person occupies the spouse slot: the occupant is the in-family code-20 or code-22 person under the relationship rules (section 3; section 16a amendment 1), as the roles registry records them. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse sex and its inapplicability wording ('Head is female or single male') never decide whether a person occupies the spouse slot: slot occupancy comes from the relationship rules, as the roles registry's spouse_slot field records them (section 3; section 16a amendment 1, whose parts 1a-1c await Max's confirmation, d745), and code 88's slot status stays TO VERIFY. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
       "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
       "ruling": {
         "decision": "d637",
@@ -9022,7 +9022,7 @@
       },
       "status": "RESOLVED",
       "use_restriction": "Non-executable metadata (u2-draft-4 amendment 3): no U2 input or row reads this crosswalk, and no scalar historical equivalence is inferred from it.",
-      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time. No row changes. The adjudication's question is kept as superseded_question.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time; U2 reads none of the four as an input of its own. No row changes. The adjudication's question is kept as superseded_question.",
       "ruling": {
         "decision": "d637",
         "date": "2026-09-30",
@@ -9211,7 +9211,7 @@
       },
       "status": "RESOLVED",
       "usage": "slot_metadata_only",
-      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse age and its inapplicability wording ('Reference Person is female or single male') never decide whether a person occupies the spouse slot: the occupant is the in-family code-20 or code-22 person under the relationship rules (section 3; section 16a amendment 1), as the roles registry records them. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse age and its inapplicability wording ('Reference Person is female or single male') never decide whether a person occupies the spouse slot: slot occupancy comes from the relationship rules, as the roles registry's spouse_slot field records them (section 3; section 16a amendment 1, whose parts 1a-1c await Max's confirmation, d745), and code 88's slot status stays TO VERIFY. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
       "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
       "ruling": {
         "decision": "d637",
@@ -12158,7 +12158,7 @@
       },
       "status": "RESOLVED",
       "usage": "slot_metadata_only",
-      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse sex and its inapplicability wording ('Reference Person is single male or female') never decide whether a person occupies the spouse slot: the occupant is the in-family code-20 or code-22 person under the relationship rules (section 3; section 16a amendment 1), as the roles registry records them. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse sex and its inapplicability wording ('Reference Person is single male or female') never decide whether a person occupies the spouse slot: slot occupancy comes from the relationship rules, as the roles registry's spouse_slot field records them (section 3; section 16a amendment 1, whose parts 1a-1c await Max's confirmation, d745), and code 88's slot status stays TO VERIFY. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
       "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
       "ruling": {
         "decision": "d637",
@@ -13626,7 +13626,7 @@
       },
       "status": "RESOLVED",
       "use_restriction": "Non-executable metadata (u2-draft-4 amendment 3): no U2 input or row reads this crosswalk, and no scalar historical equivalence is inferred from it.",
-      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time. No row changes. The adjudication's question is kept as superseded_question.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time; U2 reads none of the four as an input of its own. No row changes. The adjudication's question is kept as superseded_question.",
       "ruling": {
         "decision": "d637",
         "date": "2026-09-30",
@@ -13815,7 +13815,7 @@
       },
       "status": "RESOLVED",
       "usage": "slot_metadata_only",
-      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse age and its inapplicability wording ('Reference Person is female or single male') never decide whether a person occupies the spouse slot: the occupant is the in-family code-20 or code-22 person under the relationship rules (section 3; section 16a amendment 1), as the roles registry records them. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse age and its inapplicability wording ('Reference Person is female or single male') never decide whether a person occupies the spouse slot: slot occupancy comes from the relationship rules, as the roles registry's spouse_slot field records them (section 3; section 16a amendment 1, whose parts 1a-1c await Max's confirmation, d745), and code 88's slot status stays TO VERIFY. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
       "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
       "ruling": {
         "decision": "d637",
@@ -16754,7 +16754,7 @@
       },
       "status": "RESOLVED",
       "usage": "slot_metadata_only",
-      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse sex and its inapplicability wording ('Reference Person is single male or female') never decide whether a person occupies the spouse slot: the occupant is the in-family code-20 or code-22 person under the relationship rules (section 3; section 16a amendment 1), as the roles registry records them. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse sex and its inapplicability wording ('Reference Person is single male or female') never decide whether a person occupies the spouse slot: slot occupancy comes from the relationship rules, as the roles registry's spouse_slot field records them (section 3; section 16a amendment 1, whose parts 1a-1c await Max's confirmation, d745), and code 88's slot status stays TO VERIFY. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
       "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
       "ruling": {
         "decision": "d637",
@@ -18222,7 +18222,7 @@
       },
       "status": "RESOLVED",
       "use_restriction": "Non-executable metadata (u2-draft-4 amendment 3): no U2 input or row reads this crosswalk, and no scalar historical equivalence is inferred from it.",
-      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time. No row changes. The adjudication's question is kept as superseded_question.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time; U2 reads none of the four as an input of its own. No row changes. The adjudication's question is kept as superseded_question.",
       "ruling": {
         "decision": "d637",
         "date": "2026-09-30",
@@ -18421,7 +18421,7 @@
       },
       "status": "RESOLVED",
       "usage": "slot_metadata_only",
-      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse age and its inapplicability wording ('Reference Person is female or single male') never decide whether a person occupies the spouse slot: the occupant is the in-family code-20 or code-22 person under the relationship rules (section 3; section 16a amendment 1), as the roles registry records them. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse age and its inapplicability wording ('Reference Person is female or single male') never decide whether a person occupies the spouse slot: slot occupancy comes from the relationship rules, as the roles registry's spouse_slot field records them (section 3; section 16a amendment 1, whose parts 1a-1c await Max's confirmation, d745), and code 88's slot status stays TO VERIFY. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
       "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
       "ruling": {
         "decision": "d637",
@@ -21435,7 +21435,7 @@
       },
       "status": "RESOLVED",
       "usage": "slot_metadata_only",
-      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse sex and its inapplicability wording ('Reference Person is single male or female') never decide whether a person occupies the spouse slot: the occupant is the in-family code-20 or code-22 person under the relationship rules (section 3; section 16a amendment 1), as the roles registry records them. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse sex and its inapplicability wording ('Reference Person is single male or female') never decide whether a person occupies the spouse slot: slot occupancy comes from the relationship rules, as the roles registry's spouse_slot field records them (section 3; section 16a amendment 1, whose parts 1a-1c await Max's confirmation, d745), and code 88's slot status stays TO VERIFY. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
       "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
       "ruling": {
         "decision": "d637",
@@ -23043,7 +23043,7 @@
       },
       "status": "RESOLVED",
       "use_restriction": "Non-executable metadata (u2-draft-4 amendment 3): no U2 input or row reads this crosswalk, and no scalar historical equivalence is inferred from it.",
-      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time. No row changes. The adjudication's question is kept as superseded_question.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time; U2 reads none of the four as an input of its own. No row changes. The adjudication's question is kept as superseded_question.",
       "ruling": {
         "decision": "d637",
         "date": "2026-09-30",
@@ -23242,7 +23242,7 @@
       },
       "status": "RESOLVED",
       "usage": "slot_metadata_only",
-      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse age and its inapplicability wording ('Reference Person is female or single male') never decide whether a person occupies the spouse slot: the occupant is the in-family code-20 or code-22 person under the relationship rules (section 3; section 16a amendment 1), as the roles registry records them. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse age and its inapplicability wording ('Reference Person is female or single male') never decide whether a person occupies the spouse slot: slot occupancy comes from the relationship rules, as the roles registry's spouse_slot field records them (section 3; section 16a amendment 1, whose parts 1a-1c await Max's confirmation, d745), and code 88's slot status stays TO VERIFY. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
       "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
       "ruling": {
         "decision": "d637",
@@ -26256,7 +26256,7 @@
       },
       "status": "RESOLVED",
       "usage": "slot_metadata_only",
-      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse sex and its inapplicability wording ('Reference Person is single male or female') never decide whether a person occupies the spouse slot: the occupant is the in-family code-20 or code-22 person under the relationship rules (section 3; section 16a amendment 1), as the roles registry records them. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse sex and its inapplicability wording ('Reference Person is single male or female') never decide whether a person occupies the spouse slot: slot occupancy comes from the relationship rules, as the roles registry's spouse_slot field records them (section 3; section 16a amendment 1, whose parts 1a-1c await Max's confirmation, d745), and code 88's slot status stays TO VERIFY. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
       "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
       "ruling": {
         "decision": "d637",
@@ -27864,7 +27864,7 @@
       },
       "status": "RESOLVED",
       "use_restriction": "Non-executable metadata (u2-draft-4 amendment 3): no U2 input or row reads this crosswalk, and no scalar historical equivalence is inferred from it.",
-      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time. No row changes. The adjudication's question is kept as superseded_question.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time; U2 reads none of the four as an input of its own. No row changes. The adjudication's question is kept as superseded_question.",
       "ruling": {
         "decision": "d637",
         "date": "2026-09-30",

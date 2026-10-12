@@ -244,10 +244,11 @@ DECLARED = INVENTED_DECLARED
 #: wording commit moved six registries' bytes once more: each
 #: ``independent_adjudication`` note now records the rulings, and the
 #: wealth registry's ``status_scope`` no longer says role assignment is
-#: refused.
+#: refused.  The first-round review fixes moved the income bytes again
+#: (amendment 2's rule text and amendment 3's resolution).
 REGISTRY_SHA256: dict[str, str] = {
     "income": (
-        "034d3f2e3b1d121e544584c650fc317454112500fd900043dc4e7ec0be611562"
+        "aea295524e689e3464147669c72b64c474208ceefe1efe0d33bcb0381e22dca3"
     ),
     "wealth": (
         "cebf9bfad6a07d2a0e7ec8c627f30ed10641512c479bc482b91998b9e21294e8"
@@ -363,6 +364,9 @@ DECLARED_PREVIOUS_ACCOUNT_ITEMS: dict[int, tuple[str, ...]] = {
     2021: ("account",),
     2023: ("account",),
 }
+#: The one slot-metadata concept U2 reads: the family file's spouse age,
+#: for its slot flag only (amendment 2; :func:`field_specs`).
+_SLOT_FLAG_CONCEPTS = frozenset({"wife_age"})
 _COUNTED_DISPOSITION = 3
 _EXCLUDED_IRA_DISPOSITION = 2
 _DC_PERSONS = ("head", "wife")
@@ -1169,7 +1173,12 @@ def field_specs(
     gate: SourceGate,
 ) -> list[FieldSpec]:
     """Fixed-width specs of ``concepts`` from registry ``name`` (income or
-    wealth), each entry passed through ``gate``."""
+    wealth), each entry passed through ``gate``.
+
+    A slot-metadata entry (amendment 2, ratified by d637: the later
+    family-file spouse age and sex) is read only as ``wife_age``, for the
+    family file's slot flag that :func:`.cohort.income_rows` holds equal
+    to the roster; any other such concept refuses under either gate."""
 
     if name not in ("income", "wealth"):
         raise ValueError("field_specs reads the income or wealth registry")
@@ -1181,6 +1190,14 @@ def field_specs(
             raise U2SourceRefusal(
                 f"{name}:{entry_id} is a {entry.get('kind')}: documentary "
                 "only, not an executable input (section 4)"
+            )
+        if (
+            entry.get("usage") == "slot_metadata_only"
+            and concept not in _SLOT_FLAG_CONCEPTS
+        ):
+            raise U2SourceRefusal(
+                f"{name}:{entry_id} is slot metadata only (amendment 2, "
+                "ratified by d637): no U2 input reads it"
             )
         specs.append(
             FieldSpec(

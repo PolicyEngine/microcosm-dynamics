@@ -372,7 +372,7 @@ The U2 tests ran with the PSID root staged. They read staged PSID documentation 
 
 No U1 file, engine file, `gates.yaml` or `runs/*.json` was edited.
 
-## Rulings applied to the registries (from 2026-10-12, d637)
+## Rulings applied to the registries (from 2026-10-11, d637)
 
 A Claude Code session (Opus 5.5, session `943a9dba-…`) applied Max's ruling d637 (2026-09-30; specification §16b) to the U2 source registries, one reviewed commit per ratified amendment. It is not a U2 forecaster or referee, and it computed nothing from real data.
 
@@ -402,6 +402,7 @@ The U2 tests ran with the PSID root staged. They read staged PSID documentation 
 - Amendment 5a: `pension.json` (the four inherited-route amendments, their 40 dependents and the d637 record) and `u1_identity.json`; the specification's §17 item 2 and §19; the master record (the P64/P65 blocker row, the d637 section and 44 rows); `u2_source_registry.py` (5a's scope), `sources.py` (the pension byte pin and a docstring) and `loader.py` (docstring); `tests/track_u2/test_adjudication_applied.py`, `test_source_registries.py`, `test_u2_mappings.py`, `test_pension_registry.py`, `test_u2_employer_dc.py` and `test_u2_scripts.py`; and this section.
 - Amendment 6: `weights.json` (the 2017 weight and a d637 record), `individual.json` (the released 2017 weight) and `u1_identity.json`; the specification's §17 item 2 and §19; the master record (summary, table, the weight blocker row, the d637 section and two rows); `u2_source_registry.py` (amendment 6's scope), `sources.py` (two byte pins) and `loader.py` (docstring); `tests/track_u2/test_adjudication_applied.py`, `test_source_registries.py` and `test_u2_mappings.py`; and this section.
 - Wording: `income.json`, `wealth.json`, `pension.json`, `roles.json`, `support.json` and `weights.json` (each `independent_adjudication` note; the wealth `status_scope`) and `u1_identity.json`; the specification's §19; the master record (the milestone-1b D row); `sources.py` (six byte pins); `tests/track_u2/test_u2_mappings.py`; and this section.
-- Outside the repository: the registry and master-record edit scripts and the review records, copied to `EV/rulings-records-20261012/`.
+- First-round review fixes: `income.json` (amendment 2's ten rules and amendment 3's six resolutions) and `u1_identity.json`; the specification's §19; the master record (the spouse age/sex blocker row, the d637 section and 16 rows); `u2_source_registry.py` (the scope checks) and `sources.py` (the slot-metadata guard and the income byte pin); `tests/track_u2/test_adjudication_applied.py`, `test_source_registries.py` and `test_u2_mappings.py`; and this section. The reviews' own reading is in their records.
+- Outside the repository: the registry and master-record edit scripts and the review records, copied to `EV/rulings-records-20261011/`.
 
 No U1 file, engine file, `gates.yaml` or `runs/*.json` was edited.

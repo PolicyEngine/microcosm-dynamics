@@ -3,6 +3,7 @@
 Documentary checks only: no survey records, counts or outcome calculations.
 """
 
+import copy
 import hashlib
 import html
 import json
@@ -565,7 +566,14 @@ def test_d637_amendment_2_spouse_metadata_never_decides_the_slot(documents):
             f"('{wording.group(1)}') never decide whether a person occupies "
             "the spouse slot" in rule
         ), key
-        assert "the in-family code-20 or code-22 person" in rule
+        # Occupancy is the role rules', not a closed list of codes, so the
+        # rule decides nothing about code 88 (amendment 1c, pending d745).
+        assert (
+            "slot occupancy comes from the relationship rules, as the roles "
+            "registry's spouse_slot field records them" in rule
+        )
+        assert "code 88's slot status stays TO VERIFY" in rule
+        assert "code-20 or code-22 person" not in rule
         assert "recorded sex (ER32000) and derived income-year age" in rule
     # 2013 is U1's wave: its spouse age and sex keep U1's mapping.
     for route in ("wife_age", "wife_sex"):
@@ -608,6 +616,194 @@ def test_d637_amendment_6_uses_er34651_as_released(documents):
     )
     assert weight["variable"] == "ER34651"
     assert "blocking_dependencies" not in weight
+
+
+#: The text fields a d637 ruling writes or keeps.
+D637_TEXT_FIELDS = (
+    "condition",
+    "resolution",
+    "use_restriction",
+    "ruling_effect",
+    "registration_disclosure",
+    "superseded_question",
+    "superseded_refusal",
+)
+#: SHA-256 of each applied amendment's ruled text (its entries' text
+#: fields, as canonical JSON): no wording moves without this pin moving
+#: (reviews of 02e3f3e2 and 06fa7d98).
+D637_TEXT_SHA256 = {
+    "2": ("64a67aae69d9d0bd6c6743328e8169304708003845395830ad628a6ee708887d"),
+    "3": ("8d93d501819d981c6605b02fde3ff89d05488738146757bd179a84c02e131598"),
+    "4": ("0b79677a5d1b41a76b17709152bec0d3789d118c75859b9716ea505c3413cd9c"),
+    "5b": ("7b16f9fdaa76d42d0d9c64dff3b7607a22e476378d35f3a9b1360d94f3c18552"),
+    "5a": ("1ce1d48c5661374960454e2c2d82a19fbc6a33abb432a50a0df40c773d8b8e76"),
+    "6": ("ad76188063ca16ddcdcc2d8e2165348293a4c88e9437e8e173765df91ffc0d2f"),
+}
+#: The operative clauses each amendment's entries must state, by field
+#: (``{wave}`` is the entry's wave).
+D637_CLAUSES = {
+    "2": [
+        ("use_restriction", "Slot metadata only (u2-draft-4 amendment 2)."),
+        (
+            "use_restriction",
+            "never decide whether a person occupies the spouse slot",
+        ),
+        ("use_restriction", "code 88's slot status stays TO VERIFY"),
+        ("use_restriction", "whose parts 1a-1c await Max's confirmation"),
+        ("use_restriction", "never this variable."),
+        ("resolution", "ratified u2-draft-4 amendment 2"),
+    ],
+    "3": [
+        ("resolution", "this crosswalk stays non-executable"),
+        ("resolution", "No scalar equivalence is asserted"),
+        (
+            "resolution",
+            "spouse IRA income included, stay inside total family money "
+            "income under section 4 and are never added a second time",
+        ),
+        ("resolution", "U2 reads none of the four as an input of its own"),
+        ("resolution", "No row changes."),
+    ],
+    "4": [
+        ("use_restriction", "Imputation diagnostics only"),
+        ("use_restriction", "never changes amounts or sample inclusion"),
+    ],
+    "5b": [
+        ("resolution", "P46=5 (DC only) reaches P64/P65"),
+        ("resolution", "P46=7 (combined) reaches P48/P49"),
+        ("resolution", "is refused pending PSID clarification"),
+        ("resolution", "off-route under the named disposition off_route"),
+        ("resolution", "never zero-filled"),
+        ("condition", "DC-only plan (P46=5)"),
+    ],
+    "5a": [
+        ("ruling_effect", "Under 5a the {wave} previous-employer account"),
+        ("ruling_effect", "only P46=5 (DC only) reaches P64/P65"),
+        ("ruling_effect", "under the named disposition off_route"),
+        ("ruling_effect", "combined-plan P48/P49 is counted once"),
+        ("ruling_effect", "IRA-rollover disposition 2 is excluded"),
+    ],
+    "6": [
+        ("resolution", "took amendment 6's option 1 for blocker B3"),
+        ("resolution", "ER34651 is used as released"),
+        ("resolution", "no immigrant exclusion"),
+        ("resolution", "no recalibration"),
+    ],
+}
+
+
+def d637_texts(documents, amendment):
+    """Each ruled entry's text fields, in scope order."""
+    scope = registry.RATIFIED_AMENDMENTS[amendment]
+    by_id = {e["id"]: e for e in documents[scope["registry"]]["entries"]}
+    return [
+        {
+            "id": key,
+            **{f: by_id[key][f] for f in D637_TEXT_FIELDS if f in by_id[key]},
+        }
+        for key in scope["entries"]
+    ]
+
+
+def check_d637_texts(documents):
+    """The d637 entries' wording: each amendment's pinned hash and its
+    operative clauses."""
+    assert set(D637_TEXT_SHA256) == set(registry.RATIFIED_AMENDMENTS)
+    for amendment, digest in D637_TEXT_SHA256.items():
+        texts = d637_texts(documents, amendment)
+        raw = json.dumps(texts, sort_keys=True, ensure_ascii=False)
+        assert hashlib.sha256(raw.encode()).hexdigest() == digest, amendment
+        for item in texts:
+            wave = item["id"].split(".")[1 if item["id"][0].isalpha() else 0]
+            for field, clause in D637_CLAUSES[amendment]:
+                assert clause.format(wave=wave) in item[field], (
+                    item["id"],
+                    clause,
+                )
+
+
+def test_d637_texts_are_pinned(documents):
+    check_d637_texts(documents)
+
+
+#: (registry, entry, field, old, new): each changes what a d637 entry
+#: says and must fail ``check_d637_texts``.
+D637_TEXT_MUTATIONS = [
+    (
+        "income",
+        "income.2019.wife_age",
+        "use_restriction",
+        ", and code 88's slot status stays TO VERIFY",
+        "",
+    ),
+    (
+        "income",
+        "income.2015.wife_sex",
+        "superseded_question",
+        "In 2015, how do",
+        "In 2015, why do",
+    ),
+    (
+        "income",
+        "income.2017.wife_retirement_annuities",
+        "resolution",
+        " and are never added a second time",
+        "",
+    ),
+    (
+        "income",
+        "income.2013.wife_retirement_annuities",
+        "resolution",
+        "No scalar equivalence is asserted",
+        "A scalar equivalence is asserted",
+    ),
+    (
+        "pension",
+        "2015.route.formula_unknown_checkpoint",
+        "resolution",
+        "never zero-filled",
+        "zero-filled",
+    ),
+    (
+        "pension",
+        "2021.route.inherited_route_amendment",
+        "ruling_effect",
+        "only P46=5 (DC only)",
+        "P46=1 and P46=5",
+    ),
+    (
+        "weights",
+        "2017.cross_section_weight",
+        "resolution",
+        "no immigrant exclusion",
+        "an immigrant exclusion",
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "name,key,field,old,new",
+    D637_TEXT_MUTATIONS,
+    ids=[f"{m[1]}:{m[2]}" for m in D637_TEXT_MUTATIONS],
+)
+def test_the_d637_text_checks_catch_each_mutation(
+    documents, name, key, field, old, new
+):
+    changed = {n: copy.deepcopy(d) for n, d in documents.items()}
+    entry = next(e for e in changed[name]["entries"] if e["id"] == key)
+    assert old in entry[field], (key, field)
+    entry[field] = entry[field].replace(old, new, 1)
+    with pytest.raises(AssertionError):
+        check_d637_texts(changed)
+    # A disclosure item dropped from the 2017 weight fails too.
+    weights = next(
+        e
+        for e in changed["weights"]["entries"]
+        if e["id"] == "2017.cross_section_weight"
+    )
+    weights["registration_disclosure"]["not_published"].pop()
+    with pytest.raises(AssertionError):
+        check_d637_texts(changed)
 
 
 def test_corrected_specification_citations(documents):

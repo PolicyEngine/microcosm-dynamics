@@ -84,12 +84,14 @@ _LATER_WAVES = (2015, 2017, 2019, 2021, 2023)
 #: The u2-draft-4 amendments Max ratified on 2026-09-30 (d637;
 #: specification section 16b) that a registry commit has applied, each
 #: with its exact scope: the registry and entries it rules, the ruling
-#: they record, the gate fields it fixes (``fields``, exact values) and
-#: the fields it removes (``absent``).  An entry that records a d637
-#: ruling must be in its amendment's scope and hold those values, and
-#: every entry in a scope must record the ruling.  Each registry commit
-#: adds its amendment here (section 16a, "Registry effect of the
-#: rulings").
+#: they record, the adjudication disposition they keep, the gate fields
+#: it fixes (``fields``, exact values), the fields it removes
+#: (``absent``), the fields that must hold its text (``required``,
+#: nonempty) and the fixed values that only its entries may carry
+#: (``markers``).  An entry that records a d637 ruling must be in its
+#: amendment's scope and hold those values, and every entry in a scope
+#: must record the ruling.  Each registry commit adds its amendment here
+#: (section 16a, "Registry effect of the rulings").
 RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
     "2": {
         "registry": "income",
@@ -99,8 +101,11 @@ RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
             for route in ("wife_age", "wife_sex")
         ),
         "ruling": {**_D637, "amendment": "2"},
+        "disposition": "A",
         "fields": {"status": "RESOLVED", "usage": "slot_metadata_only"},
         "absent": ("action", "blocking_dependencies", "question"),
+        "required": ("use_restriction", "resolution", "superseded_question"),
+        "markers": ("usage",),
     },
     "3": {
         "registry": "income",
@@ -109,14 +114,22 @@ RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
             for wave in (2013, *_LATER_WAVES)
         ),
         "ruling": {**_D637, "amendment": "3"},
+        "disposition": "A",
         "fields": {
             "status": "RESOLVED",
             "kind": "historical_route_crosswalk",
             "usage": (
                 "Documentary crosswalk only; not an executable derived input"
             ),
+            "use_restriction": (
+                "Non-executable metadata (u2-draft-4 amendment 3): no U2 "
+                "input or row reads this crosswalk, and no scalar historical "
+                "equivalence is inferred from it."
+            ),
         },
-        "absent": ("action", "question"),
+        "absent": ("action", "question", "variable"),
+        "required": ("resolution", "superseded_question", "variables"),
+        "markers": ("use_restriction",),
     },
     "4": {
         "registry": "wealth",
@@ -127,6 +140,7 @@ RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
             if route == "wealth2_acc" or wave < 2019
         ),
         "ruling": {**_D637, "amendment": "4"},
+        "disposition": "D",
         "fields": {
             "status": "RESOLVED",
             "use_restriction": (
@@ -137,6 +151,20 @@ RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
             ),
         },
         "absent": ("action", "blocking_dependencies", "question"),
+        "required": ("resolution", "source_wording_conflict"),
+        "markers": ("use_restriction",),
+        # The corrected targets of section 16a's table (amendment 4).
+        "targets": {
+            "wealth.2013.wealth2_acc": "ER58211",
+            "wealth.2013.checking_saving_acc": "ER58161",
+            "wealth.2015.wealth2_acc": "ER65408",
+            "wealth.2015.checking_saving_acc": "ER65358",
+            "wealth.2017.wealth2_acc": "ER71485",
+            "wealth.2017.checking_saving_acc": "ER71435",
+            "wealth.2019.wealth2_acc": "ER77511",
+            "wealth.2021.wealth2_acc": "ER81838",
+            "wealth.2023.wealth2_acc": "ER85692",
+        },
     },
     "5b": {
         "registry": "pension",
@@ -146,6 +174,7 @@ RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
             "amendment": "5b",
             "replaces_draft_3_lines": [1173, 1174, 1175, 1176],
         },
+        "disposition": "A",
         "fields": {
             "status": "RESOLVED",
             "accepted_plan_types": [5],
@@ -160,6 +189,13 @@ RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
             "blocking_dependencies",
             "accepted_conditional_types",
         ),
+        "required": (
+            "condition",
+            "resolution",
+            "superseded_question",
+            "superseded_refusal",
+        ),
+        "markers": ("refused_branch", "off_route_disposition"),
     },
     "5a": {
         "registry": "pension",
@@ -172,8 +208,16 @@ RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
             "amendment": "5a",
             "replaces_draft_3_lines": [1173, 1174, 1175, 1176],
         },
+        "disposition": "D",
         "fields": {"status": "RESOLVED"},
         "absent": ("action", "refusal", "question", "blocking_dependencies"),
+        "required": (
+            "required_amendment",
+            "resolution",
+            "ruling_effect",
+            "superseded_refusal",
+        ),
+        "markers": (),
     },
     "6": {
         "registry": "weights",
@@ -184,10 +228,19 @@ RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
             "option": "1",
             "amends_draft_3_lines": [134],
         },
+        "disposition": "A",
         "fields": {"status": "RESOLVED", "variable": "ER34651"},
         "absent": ("action", "refusal", "question", "blocking_dependencies"),
+        "required": (
+            "resolution",
+            "registration_disclosure",
+            "superseded_question",
+        ),
+        "markers": ("registration_disclosure",),
     },
 }
+#: The rulings a registry entry may record.
+_RULED_DECISIONS = ("d637", "d1090")
 #: The d637 amendment each ruled entry belongs to, by (registry, id).
 _AMENDMENT_OF_ENTRY = {
     (scope["registry"], entry): name
@@ -250,6 +303,10 @@ def _ruling(entry: dict[str, Any]) -> None:
     _fields(
         ruling, {"decision": str, "date": str, "specification_section": str}
     )
+    if ruling["decision"] not in _RULED_DECISIONS:
+        raise SourceAdjudicationError(
+            f"Unknown ruling {ruling['decision']!r} for {entry['id']}"
+        )
 
 
 def _same(first: Any, second: Any) -> bool:
@@ -288,6 +345,36 @@ def _ratified_amendment(entry: dict[str, Any], name: str) -> None:
             raise SourceAdjudicationError(
                 f"{field} remains after the d637 ruling for {entry['id']}"
             )
+    for field in scope["required"]:
+        if not entry.get(field):
+            raise SourceAdjudicationError(
+                f"d637 amendment {amendment} needs {field} for {entry['id']}"
+            )
+    if entry.get("blocking_dependencies"):
+        raise SourceAdjudicationError(
+            f"A d637 ruling applies only unblocked, for {entry['id']}"
+        )
+    record = entry.get("adjudication")
+    if (
+        not isinstance(record, dict)
+        or record.get("disposition") != scope["disposition"]
+        or not _same(record.get("amendment"), int(amendment[0]))
+    ):
+        raise SourceAdjudicationError(
+            f"Adjudication record is not amendment {amendment}'s "
+            f"{scope['disposition']} for {entry['id']}"
+        )
+    target = scope.get("targets", {}).get(entry["id"])
+    if "targets" in scope and not (
+        entry.get("accuracy_for_variable") == target
+        and entry["source_wording_conflict"].get(
+            "resolved_accuracy_for_variable"
+        )
+        == target
+    ):
+        raise SourceAdjudicationError(
+            f"Corrected target is not the ratified one for {entry['id']}"
+        )
 
 
 def _family_unit_exclusion(entry: dict[str, Any]) -> None:
@@ -469,6 +556,10 @@ def _entry_payload(entry: dict[str, Any], name: str) -> None:
         if entry.get("kind") == "historical_route_crosswalk":
             _list(entry, "variables", str)
             _fields(entry, {"usage": str})
+            if "variable" in entry:
+                raise SourceAdjudicationError(
+                    f"A crosswalk declares no scalar variable: {entry['id']}"
+                )
         elif "kind" not in entry or entry["kind"] == "variable":
             _fields(
                 entry,
@@ -696,6 +787,22 @@ def validate_registry(document: dict[str, Any], *, expected_name: str) -> None:
             raise SourceAdjudicationError(
                 f"{name}:{key} lacks its d637 amendment {amendment} ruling"
             )
+    # A value only an amendment's entries may carry stays inside its scope.
+    for amendment, scope in RATIFIED_AMENDMENTS.items():
+        if scope["registry"] != expected_name:
+            continue
+        for entry in entries:
+            if entry["id"] in scope["entries"]:
+                continue
+            for field in scope["markers"]:
+                if field in entry and (
+                    field not in scope["fields"]
+                    or _same(entry[field], scope["fields"][field])
+                ):
+                    raise SourceAdjudicationError(
+                        f"{field} of d637 amendment {amendment} outside its "
+                        f"scope: {expected_name}:{entry['id']}"
+                    )
 
 
 def load_registry(name: str) -> dict[str, Any]:
