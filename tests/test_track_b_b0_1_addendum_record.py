@@ -817,10 +817,24 @@ def test_addendum_carries_the_round_9_fixes(prose, sentence):
     assert sentence in prose
 
 
-@pytest.mark.parametrize("round_number", [5, 6, 7, 8, 9])
+@pytest.mark.parametrize(
+    "sentence",
+    [
+        # Q6 round 10: the stop at floor build forbids any changed
+        # registration before Max rules
+        "No rescoped or amended registration is written before he rules.",
+        "**Round 10: approve.**",
+        "Rounds 7, 8, 9 and 10 each approved, and each counts.",
+    ],
+)
+def test_addendum_carries_the_round_10_record(prose, sentence):
+    assert sentence in prose
+
+
+@pytest.mark.parametrize("round_number", [5, 6, 7, 8, 9, 10])
 def test_committed_read_logs_follow_the_rule_as_it_stands(round_number):
-    """Rounds 5-9's logs are regenerated under the current rule: round 5
-    is void, and every later round counts."""
+    """Rounds 5-10's logs are made under the current rule: round 5 is
+    void, and every later round counts."""
     path = (
         ROOT
         / "docs"

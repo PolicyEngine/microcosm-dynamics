@@ -264,8 +264,8 @@ after two prunes (above).
 it, B2 stops, and a decision is queued for Max with the rescoping
 options. Rescoping the surface or a tolerance cannot cure ν = 0, so
 there the decision queued is how the critical value is set. No rescoped
-registration is written before he rules. This covers every case d693's
-Q2 flip names.
+or amended registration is written before he rules. This covers every
+case d693's Q2 flip names.
 
 **Pruned cells.** Every pruned or ineligible cell is scored and
 published, report-only, with its own unadjusted 95% interval, outside
@@ -1807,8 +1807,45 @@ Round 9 confirms them.
 | Observation: rescoping cannot cure ν = 0 | Section 5 says the decision queued there is how the critical value is set |
 
 Round 9 approved `266dd96`, and these fixes changed the head after it.
-**Round 10** confirms them on a newly built root, in round 9's form. Its
-record follows, in a commit that adds only that record.
+Round 10 confirms them.
+
+**Round 10: approve.**
+
+- **Root.** `git archive` of `1aa179e`, 1,954 files, manifest SHA-256
+  `f18f52572c4a5ae4…`.
+  - The inventory rerun is
+    `docs/design/track_b_b0_1_addendum_q6_inventory_r10.json`. It flagged
+    nothing new.
+  - The same 27 files were removed whole, and four code-map tables. The
+    ten context copies went in.
+  - The root record is
+    `docs/design/track_b_b0_1_addendum_q6_root_r10.json`.
+- **Lane.** Subfleet job `20261011-191406-b01-addendum-q6-r10`, in round
+  9's form. Its transcript records Opus 5.5 and the tools Glob, Grep and
+  Read. It ran on 2026-10-12 from 02:03 to 02:06 UTC and exited 0.
+- **Read log.** `docs/design/track_b_b0_1_addendum_q6_readlog_r10.json`
+  (schema v6) covers 21 tool calls. Every path named or returned lies
+  inside the root, and no pattern is absolute, leaves the root or names a
+  denied path. Round 10 counts.
+- **Verdict.** `APPROVE`, with no high or medium finding and one low,
+  which bears on the review tooling only and which the review says should
+  not hold the merge. The review is
+  `docs/design/track_b_b0_1_addendum_q6_review_r10.md`.
+  - It met no B2 outcome and no 2008/2010 selector outcome.
+  - It found round 9's findings and observations resolved, and the B2
+    record unchanged in everything it registers on.
+
+| Finding | Disposition |
+|---|---|
+| L1 (tooling): a character class holding a comma or a brace, such as `stem[.,]md`, hides a whole denied stem from the wildcard rule | Left for a follow-up change to the read-log tool, outside this addendum. No recorded round's pattern has a class of that shape. Until it lands, the rule's disclosure is as above: a wildcard holding the whole stem is caught when its classes hold no comma or brace |
+| Observation (tooling): the codebook files and the removed code-map tables are checked only through the codebook directory, not by their own basenames | The same follow-up passes every removed file to the read log |
+| Observation (record): section 5 forbade only a rescoped registration before Max rules, which a registration changing how the critical value is set when ν is 0 might not be | Section 5 now says no rescoped or amended registration is written before he rules |
+
+Rounds 7, 8, 9 and 10 each approved, and each counts. Round 10's head,
+`1aa179e`, is the last one a Q6 review read. After it this addendum
+gained only round 10's record, the one-word change to section 5 above,
+and the merge of `master`. An independent review of that change precedes
+the merge.
 
 ## 16. Protocol record
 
