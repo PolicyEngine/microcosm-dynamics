@@ -461,6 +461,8 @@ def _ratified_amendment(entry: dict[str, Any], name: str) -> None:
             f"{scope['disposition']} for {entry['id']}"
         )
     target = scope.get("targets", {}).get(entry["id"])
+    if "targets" in scope:
+        _fields(entry, {"source_wording_conflict": dict})
     if "targets" in scope and not (
         entry.get("accuracy_for_variable") == target
         and entry["source_wording_conflict"].get(

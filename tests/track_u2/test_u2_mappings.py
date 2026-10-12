@@ -348,6 +348,7 @@ D637_TOP = {
     "income": {"rulings_applied", "independent_adjudication"},
     "wealth": {"rulings_applied", "independent_adjudication", "status_scope"},
     "pension": {"rulings_applied", "independent_adjudication"},
+    "individual": {"rulings_applied"},
     "roles": {"independent_adjudication"},
     "support": {"independent_adjudication"},
     "weights": {"rulings_applied", "independent_adjudication"},
@@ -356,8 +357,9 @@ D637_TOP = {
 D637_ADJUDICATION_NOTE_END = (
     "A items stayed TO VERIFY pending u2-draft-4 amendments 1-6 and Max's "
     "ruling. Max ruled on 2026-09-30 (d637) and, for blockers B1 and B2, on "
-    "2026-10-10 (d1090); rulings_applied records what each ruling changed "
-    "here. The six code-88 role records (amendment 1c) stay TO VERIFY "
+    "2026-10-10 (d1090); a registry's rulings_applied, where present, "
+    "records what each ruling changed "
+    "in it. The six code-88 role records (amendment 1c) stay TO VERIFY "
     "pending Max's confirmation of the 1a-1c reading (d745)."
 )
 #: The amendments each registry's ``rulings_applied`` d637 record lists.
@@ -366,6 +368,7 @@ D637_RECORDED = {
     "wealth": ["4"],
     "pension": ["5b", "5a"],
     "weights": ["6"],
+    "individual": ["6"],
 }
 
 
@@ -423,9 +426,10 @@ def test_d637_moved_only_the_ruled_gate_fields():
             old_meta = before["independent_adjudication"]
             new_meta = after["independent_adjudication"]
             assert _changed_keys(old_meta, new_meta) == {"note"}, name
-            assert new_meta["note"].endswith(D637_ADJUDICATION_NOTE_END)
-            assert new_meta["note"].startswith(
+            # Exactly the adjudication's own sentences, then the new end.
+            assert new_meta["note"] == (
                 old_meta["note"].split("A items stay TO VERIFY")[0]
+                + D637_ADJUDICATION_NOTE_END
             ), name
         if "status_scope" in top:
             assert after["status_scope"] == before["status_scope"].replace(
@@ -682,8 +686,11 @@ def test_slot_metadata_is_read_only_as_the_slot_flag(
 
 def test_spouse_age_and_sex_are_read_nowhere_else():
     """Static guard for amendment 2: no U2 module but the adapters and the
-    invented generator names the family-file spouse age or sex, and U1's
-    income concept, which U2's rows feed, names neither."""
+    invented generator names the family-file spouse age or sex, no U2
+    script does but for the dry run's count of invented DK ages, and U1's
+    income concept, which U2's rows feed, names neither.  The capture
+    scripts are left out: the income one names both because it builds the
+    documentary registries from the codebooks, and runs nothing."""
     from pathlib import Path
 
     from populace_dynamics.estimates import adjusted_poverty
@@ -697,6 +704,25 @@ def test_spouse_age_and_sex_are_read_nowhere_else():
         assert "wife_age" not in text and "wife_sex" not in text, path.name
     text = Path(adjusted_poverty.__file__).read_text(encoding="utf-8")
     assert "wife_age" not in text and "wife_sex" not in text
+    root = Path(registry.REGISTRY_DIRECTORY).parents[2]
+    scripts = [
+        path
+        for path in sorted((root / "scripts").glob("*track_u2*.py"))
+        if not path.name.startswith("capture_")
+    ]
+    assert len(scripts) >= 4
+    uses = [
+        (path.name, line.strip())
+        for path in scripts
+        for line in path.read_text(encoding="utf-8").split("\n")
+        if "wife_age" in line or "wife_sex" in line
+    ]
+    assert uses == [
+        (
+            "track_u2_dry_run.py",
+            '"spouse_age_dk_na": int((raw["wife_age"] == 999).sum()),',
+        )
+    ]
 
 
 def test_crosswalks_are_never_executable_inputs(declared_gate, registry_gate):
@@ -762,7 +788,13 @@ def test_registry_gate_refuses_a_reblocked_family_record(
     memory only (review of the amendment-5 commits, finding 3)."""
     original = sources.RegistrySet.entry
     key = f"{wave}.head_prev1_dc_disposition"
-    blocker = f"pension:{wave}.route.inherited_route_amendment"
+    # The blocker each wave's P64 items had before the d637 commits.
+    route = (
+        "formula_unknown_checkpoint"
+        if wave == 2015
+        else "inherited_route_amendment"
+    )
+    blocker = f"pension:{wave}.route.{route}"
 
     def entry(self, name, entry_id):
         found = original(self, name, entry_id)

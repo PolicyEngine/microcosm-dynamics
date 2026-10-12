@@ -552,8 +552,10 @@ def test_d637_rulings_are_recorded_on_their_entries(documents, monkeypatch):
 def test_d637_amendment_2_spouse_metadata_never_decides_the_slot(documents):
     """Amendment 2 (section 16a; ratified by d637): the later family-file
     spouse age and sex are slot metadata only.  Each record quotes its own
-    inapplicability wording as wording that decides no slot, and names the
-    relationship code, recorded sex and derived age as what decides."""
+    inapplicability wording as wording that decides no slot, defers slot
+    occupancy to the roles registry (code 88's left open, pending d745),
+    and names the recorded sex and derived age as what age- and
+    sex-dependent rules use."""
     entries = {e["id"]: e for e in documents["income"]["entries"]}
     for key in registry.RATIFIED_AMENDMENTS["2"]["entries"]:
         entry = entries[key]
@@ -761,13 +763,6 @@ D637_TEXT_MUTATIONS = [
     ),
     (
         "income",
-        "income.2015.wife_sex",
-        "superseded_question",
-        "In 2015, how do",
-        "In 2015, why do",
-    ),
-    (
-        "income",
         "income.2017.wife_retirement_annuities",
         "resolution",
         " and are never added a second time",
@@ -817,21 +812,37 @@ D637_TEXT_MUTATIONS = [
     ids=[f"{m[1]}:{m[2]}" for m in D637_TEXT_MUTATIONS],
 )
 def test_the_d637_text_checks_catch_each_mutation(
-    documents, name, key, field, old, new
+    documents, name, key, field, old, new, monkeypatch
 ):
+    """Each mutation fails the hash pin and, with the hash re-pinned to the
+    mutated text as an editor would, still fails an operative clause
+    (review of the answers, finding 3).  A rewritten superseded question
+    is caught by the registry differential, which compares it in full."""
     changed = {n: copy.deepcopy(d) for n, d in documents.items()}
     entry = next(e for e in changed[name]["entries"] if e["id"] == key)
     assert old in entry[field], (key, field)
     entry[field] = entry[field].replace(old, new, 1)
     with pytest.raises(AssertionError):
         check_d637_texts(changed)
-    # A disclosure item dropped from the 2017 weight fails too.
-    weights = next(
+    amendment = entry["ruling"]["amendment"]
+    raw = json.dumps(
+        d637_texts(changed, amendment), sort_keys=True, ensure_ascii=False
+    )
+    monkeypatch.setitem(
+        D637_TEXT_SHA256, amendment, hashlib.sha256(raw.encode()).hexdigest()
+    )
+    with pytest.raises(AssertionError, match=r"\("):
+        check_d637_texts(changed)
+
+
+def test_a_dropped_disclosure_item_fails_the_text_check(documents):
+    changed = {n: copy.deepcopy(d) for n, d in documents.items()}
+    weight = next(
         e
         for e in changed["weights"]["entries"]
         if e["id"] == "2017.cross_section_weight"
     )
-    weights["registration_disclosure"]["not_published"].pop()
+    weight["registration_disclosure"]["not_published"].pop()
     with pytest.raises(AssertionError):
         check_d637_texts(changed)
 

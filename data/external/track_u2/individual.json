@@ -4941,5 +4941,16 @@
         }
       ]
     }
+  ],
+  "rulings_applied": [
+    {
+      "decision": "d637",
+      "date": "2026-09-30",
+      "specification_section": "16b",
+      "amendments": [
+        "6"
+      ],
+      "note": "Max's ruling d637 (2026-09-30; specification section 16b) took amendment 6's option 1 for the 2017 cross-sectional weight (weights:2017.cross_section_weight, ER34651). Its registry commit released this registry's 2017.weight from its dependency on that record; no entry here records a ruling."
+    }
   ]
 }

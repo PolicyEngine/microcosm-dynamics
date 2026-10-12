@@ -966,6 +966,6 @@
     "sha256": "a891762bf9be39e05509e59c5b7cd3fdab0eb34feb9ad5b9bb4a8ec3afc39662",
     "bytes": 26564,
     "applied_by": "u2-m1b",
-    "note": "Independent adjudication of milestone 1 (VERDICT: ERRORS FOUND). Amendment 7 citation corrections, D resolutions and F refusals are applied here; A items stayed TO VERIFY pending u2-draft-4 amendments 1-6 and Max's ruling. Max ruled on 2026-09-30 (d637) and, for blockers B1 and B2, on 2026-10-10 (d1090); rulings_applied records what each ruling changed here. The six code-88 role records (amendment 1c) stay TO VERIFY pending Max's confirmation of the 1a-1c reading (d745)."
+    "note": "Independent adjudication of milestone 1 (VERDICT: ERRORS FOUND). Amendment 7 citation corrections, D resolutions and F refusals are applied here; A items stayed TO VERIFY pending u2-draft-4 amendments 1-6 and Max's ruling. Max ruled on 2026-09-30 (d637) and, for blockers B1 and B2, on 2026-10-10 (d1090); a registry's rulings_applied, where present, records what each ruling changed in it. The six code-88 role records (amendment 1c) stay TO VERIFY pending Max's confirmation of the 1a-1c reading (d745)."
   }
 }

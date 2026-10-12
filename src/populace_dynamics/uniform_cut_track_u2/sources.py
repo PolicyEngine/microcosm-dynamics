@@ -248,28 +248,31 @@ DECLARED = INVENTED_DECLARED
 #: (amendment 2's rule text and amendment 3's resolution), and the
 #: second-round fixes the weights bytes (one word of the 2017 weight's
 #: construction note) and the pension bytes (amendment 5's texts name the
-#: duplicate guard for a combined plan's re-asked items).
+#: duplicate guard for a combined plan's re-asked items).  The third
+#: round moved seven registries' bytes: the six adjudication notes say
+#: ``rulings_applied`` records a ruling "where present", and the
+#: individual registry records amendment 6's release.
 REGISTRY_SHA256: dict[str, str] = {
     "income": (
-        "aea295524e689e3464147669c72b64c474208ceefe1efe0d33bcb0381e22dca3"
+        "ddf49639c5678c35d525438b595393d7c55cba00956c23e42f68515ac56446d5"
     ),
     "wealth": (
-        "cebf9bfad6a07d2a0e7ec8c627f30ed10641512c479bc482b91998b9e21294e8"
+        "4fa58c6621738f071fbbc3e0e4ec3b2f6f0db9bcb6a942b43684137aa829a716"
     ),
     "individual": (
-        "1cb368486d689e20e116b775ee2198504b0492fb3c7efa4d6fe7e985a2b1307c"
+        "283c65c46ccfbc6b3a5b700ec7d0d1783e61c931352455b842828cc0186cedda"
     ),
     "pension": (
-        "6b9ae82b0dec99c56860654d6981fce8f71c4c074c95c85ff9448a612fce8351"
+        "bd22e07a8576ea9239818ca40377839c5c3151fffb403f3e5f1ef1549da546cf"
     ),
     "roles": (
-        "79feadac7b4847c545e37cee33784873bb0324b9999cfc2693292af6aaacf43d"
+        "b7521b6b9919e4ca7369c110894377c02ee8ef9e5f51e4637332248eed35290b"
     ),
     "support": (
-        "419341b90e0adae2c8a8ee1c2324d405bbd5e0a49faa54a00c19025fc6fd57c9"
+        "533c39187214fef6626e565362b2d97ff393b8d1f0034ffe365a7c87dadada6d"
     ),
     "weights": (
-        "456666033dc02e79c9603a7cbe3dfd7b879eaea92e8398c508923aaf73c68221"
+        "afefd67942e57076775d262849a3edbd292b1158a1a741c0b3811153d87ae738"
     ),
     "design": (
         "56181372d412811af6d06f5c0d8d1e071049f7fb73c34bd394aaff8f5e0c2fd6"
@@ -280,8 +283,8 @@ REGISTRY_SHA256: dict[str, str] = {
 #: over the ten rows; section 4).  ``wife_age`` gives the family file's
 #: spouse-slot flag (not 0: "no Spouse/Partner in FU"), which rows U3 (the
 #: couple convention for new enrollment) and U4 (the unit size) read once
-#: :func:`.cohort.income_rows` has held it equal to the roster's code-20
-#: or code-22 occupant.  The spouse age and sex are slot metadata only
+#: :func:`.cohort.income_rows` has held it equal to the roster's unique
+#: spouse-slot occupant (the person whose role rule has ``spouse_slot``).  The spouse age and sex are slot metadata only
 #: (amendment 2, ratified by d637; section 16b): they never decide slot
 #: occupancy, and a disagreement refuses.
 INCOME_CONCEPTS: tuple[str, ...] = (
@@ -1459,7 +1462,8 @@ def decode_income(frame: pd.DataFrame) -> pd.DataFrame:
     the family file reports the designated spouse *income slot* occupied
     (section 3); an age of 999 (DK; NA) still marks it occupied.  This is
     slot metadata only (amendment 2, ratified by d637): occupancy comes
-    from the roster's code-20 or code-22 person, and
+    from the roster's unique person whose role rule has ``spouse_slot``,
+    and
     :func:`.cohort.income_rows` refuses any observation whose flag
     disagrees with it.
     """
