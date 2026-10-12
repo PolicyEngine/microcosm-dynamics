@@ -408,6 +408,51 @@ def test_exclusion_rules_are_exactly_section_16c(wave):
             )
 
 
+def test_role_rules_round_trip_through_as_dict():
+    """``RoleRule(**rule.as_dict())`` gives every rule back, exclusion
+    included, in both role contexts; an exclusion that is neither a
+    FamilyUnitExclusion nor its mapping is refused."""
+
+    for context in (
+        sources.RoleContext.declared(),
+        sources.RoleContext.from_registry(),
+    ):
+        carrying = 0
+        for rule in context.rules.values():
+            rebuilt = sources.RoleRule(**rule.as_dict())
+            assert rebuilt == rule
+            exclusion = rebuilt.family_unit_exclusion
+            assert exclusion is None or (
+                type(exclusion) is sources.FamilyUnitExclusion
+            )
+            carrying += exclusion is not None
+        assert carrying == 7, context.kind
+    with pytest.raises(TypeError, match="FamilyUnitExclusion"):
+        sources.RoleRule(
+            2015,
+            20,
+            True,
+            "wife",
+            True,
+            True,
+            True,
+            True,
+            family_unit_exclusion=sources.MALE_CODE_20_2015,
+        )
+    with pytest.raises(ValueError, match="ratified"):
+        sources.RoleRule(
+            2015,
+            20,
+            True,
+            "wife",
+            True,
+            True,
+            True,
+            True,
+            family_unit_exclusion={"disposition": "anything", "sex": None},
+        )
+
+
 def test_exclusion_dispositions_are_the_ratified_names():
     """The builder's dispositions are the names section 16c ratifies."""
 

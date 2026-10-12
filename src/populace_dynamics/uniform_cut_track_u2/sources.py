@@ -704,6 +704,24 @@ class RoleRule:
     refusal: str | None = None
     family_unit_exclusion: FamilyUnitExclusion | None = None
 
+    def __post_init__(self) -> None:
+        # ``RoleRule(**rule.as_dict())`` must give the rule back: as_dict
+        # writes the exclusion as plain data, so a mapping is read back
+        # into a FamilyUnitExclusion, and anything else is refused (an
+        # exclusion held as a dict would not apply).
+        exclusion = self.family_unit_exclusion
+        if isinstance(exclusion, Mapping):
+            object.__setattr__(
+                self, "family_unit_exclusion", FamilyUnitExclusion(**exclusion)
+            )
+        elif exclusion is not None and (
+            type(exclusion) is not FamilyUnitExclusion
+        ):
+            raise TypeError(
+                "family_unit_exclusion must be a FamilyUnitExclusion, its "
+                "as_dict() mapping or None"
+            )
+
     def as_dict(self) -> dict[str, Any]:
         return {
             "wave": self.wave,
