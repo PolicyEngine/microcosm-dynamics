@@ -391,29 +391,105 @@ def test_partial_apportionment_keeps_fractional_entitlements_until_check_floor()
     }
 
 
-def test_subdollar_reapportionment_refused_by_default_and_alternative_is_explicit():
+@pytest.mark.parametrize(
+    "pool, nh_share, child_share, residual",
+    [
+        (F(8), F(4), F(2), F("0.10")),
+        (F("9.90"), F("4.95"), F("2.475"), F("0.575")),
+    ],
+)
+def test_review_subdollar_stop_preserves_last_shares_and_residual(
+    pool, nh_share, child_share, residual
+):
     rates = {"nh": F(10), "spouse": F("1.90"), "child": F(10)}
     originals = {"nh": F(2), "spouse": F(1), "child": F(1)}
-    with pytest.raises(r.RETConfigurationUnsupported) as error:
-        r.partial_payments(F(8), rates, originals)
-    assert error.value.reason == r.UnsupportedReason.SUBDOLLAR_REAPPORTIONMENT
-    complete = r.partial_payments(
-        F(8),
-        rates,
-        originals,
-        subdollar_policy=r.SubdollarPolicy.COMPLETE_REAPPORTIONMENT,
-    )
-    assert complete == {
-        "nh": F(61, 15),
+    stopped = r.partial_payments(pool, rates, originals)
+    assert stopped == {
+        "nh": nh_share,
         "spouse": F(19, 10),
-        "child": F(61, 30),
+        "child": child_share,
     }
-    assert sum(complete.values()) == 8
-    assert {key: int(value) for key, value in complete.items()} == {
+    assert stopped.undistributed_subdollar_residual == residual
+    assert sum(stopped.values()) + residual == pool
+    assert {key: int(value) for key, value in stopped.items()} == {
         "nh": 4,
         "spouse": 1,
         "child": 2,
     }
+
+
+def test_review_source_stop_with_rates_generated_by_g():
+    params = ssa_params()
+    state = g.RecordState(
+        g.FamilyKind.RETIREMENT,
+        F(5),
+        F("7.50"),
+        worker=g.OwnBenefit(
+            g.OwnBenefitKind.OLD_AGE, F(5), reduction_months=60
+        ),
+        eligibility_year=YEAR,
+    )
+    family = g.family_benefits(
+        state,
+        [
+            g.Beneficiary(
+                "spouse",
+                g.Role.SPOUSE,
+                own_benefit=g.OwnBenefit(g.OwnBenefitKind.OLD_AGE, F("1.10")),
+                own_benefit_first=True,
+            ),
+            g.Beneficiary(
+                "child",
+                g.Role.CHILD,
+                own_benefit=g.OwnBenefit(
+                    g.OwnBenefitKind.DISABILITY, F("0.20")
+                ),
+            ),
+        ],
+        payment_month=g.YearMonth(YEAR, 1),
+        params=params,
+        standalone=True,
+    )
+    rows = family.by_id()
+    assert family.worker_benefit == F("3.50")
+    assert rows["spouse"].auxiliary_payable == F("0.10")
+    assert rows["child"].auxiliary_payable == F(1)
+    result = ledger(
+        beneficiary(
+            rate=family.worker_benefit,
+            original_rate=5,
+            work=earnings(24_486),
+        ),
+        beneficiary(
+            "spouse",
+            rate=rows["spouse"].auxiliary_payable,
+            original_rate=rows["spouse"].original_benefit,
+            benefit_type=BenefitType.SPOUSE,
+            fra_month=0,
+            two_record_entitlement=True,
+        ),
+        beneficiary(
+            "child",
+            rate=rows["child"].auxiliary_payable,
+            original_rate=rows["child"].original_benefit,
+            benefit_type=BenefitType.CDB,
+            two_record_entitlement=True,
+        ),
+        family_maximum_binding_months=MONTHS,
+    )
+    january = {
+        key: by_month(result, key)[1] for key in ("nh", "spouse", "child")
+    }
+    assert [january[k].net_due for k in january] == [
+        F("0.80"),
+        F("0.10"),
+        F("0.40"),
+    ]
+    assert [january[k].payment for k in january] == [0, 0, 0]
+    assert worker(result).excess == worker(result).charged == 3
+    assert worker(result).uncharged == 0
+    assert worker(result).undistributed_subdollar_residual == F("0.30")
+    assert sum(row.deduction for row in result.months) == F("3.30")
 
 
 def test_two_beneficiary_capped_payment_pays_exact_balance_without_subdollar_stop():
@@ -422,6 +498,30 @@ def test_two_beneficiary_capped_payment_pays_exact_balance_without_subdollar_sto
     result = r.partial_payments(F(6), rates, originals)
     assert result == {"nh": F("4.10"), "spouse": F("1.90")}
     assert sum(result.values()) == 6
+    assert result.undistributed_subdollar_residual == 0
+
+
+def test_exactly_one_dollar_overflow_is_reapportioned():
+    result = r.partial_payments(
+        8,
+        {"nh": 10, "spouse": 1, "child": 10},
+        {"nh": 2, "spouse": 1, "child": 1},
+    )
+    assert result == {"nh": F(14, 3), "spouse": F(1), "child": F(7, 3)}
+    assert result.undistributed_subdollar_residual == 0
+
+
+def test_later_subdollar_stop_retains_previously_capped_beneficiary():
+    # First cap releases $2; the next cap releases 17/30, requiring a stop
+    # even though only two of the original three beneficiaries remain.
+    result = r.partial_payments(
+        8,
+        {"nh": 10, "spouse": 0, "child": "2.10"},
+        {"nh": 2, "spouse": 1, "child": 1},
+    )
+    assert result == {"nh": F(16, 3), "spouse": F(0), "child": F(21, 10)}
+    assert result.undistributed_subdollar_residual == F(17, 30)
+    assert sum(result.values()) + result.undistributed_subdollar_residual == 8
 
 
 def test_entitled_zero_rate_auxiliary_keeps_its_original_partial_share():
@@ -493,18 +593,17 @@ def test_entitled_zero_rate_auxiliary_keeps_its_original_partial_share():
     )
     # The $1 partial pool's original shares are .50/.25/.25. Capping
     # the technically entitled spouse at zero leaves a sub-$1 overflow.
-    with pytest.raises(r.RETConfigurationUnsupported) as error:
-        r.apply_ret_year(case, PARAMS)
-    assert error.value.reason is r.UnsupportedReason.SUBDOLLAR_REAPPORTIONMENT
-    complete = r.apply_ret_year(
-        case,
-        PARAMS,
-        subdollar_policy=r.SubdollarPolicy.COMPLETE_REAPPORTIONMENT,
+    stopped = r.apply_ret_year(case, PARAMS)
+    assert by_month(stopped)[1].net_due == F(1, 2)
+    assert by_month(stopped, "child")[1].net_due == F(1, 4)
+    assert by_month(stopped, "spouse")[1].net_due == 0
+    assert sum(row.net_due for row in stopped.months if row.month == 1) == F(
+        3, 4
     )
-    assert by_month(complete)[1].net_due == F(2, 3)
-    assert by_month(complete, "child")[1].net_due == F(1, 3)
-    assert by_month(complete, "spouse")[1].net_due == 0
-    assert sum(row.net_due for row in complete.months if row.month == 1) == 1
+    assert worker(stopped).undistributed_subdollar_residual == F(1, 4)
+    assert worker(stopped).charged == 849
+    assert sum(row.deduction for row in stopped.months) == F("849.25")
+    assert stopped.crediting_months["spouse"] == frozenset()
 
 
 def test_binding_survivor_maximum_with_zero_rate_cdb_is_deferred_to_part_b():
@@ -752,17 +851,17 @@ def test_negative_nese_reading_changes_final_deduction_by_one_dollar():
     wages = (higher + 13,) + (0,) * 11
     work = r.WorkEarnings(wages=wages, nese=-13, self_employment_months=MONTHS)
     case = record(beneficiary(fra_month=6, work=work))
-    conservative = r.apply_ret_year(case, PARAMS)
+    literal_round_down = r.apply_ret_year(case, PARAMS)
     alternative = r.apply_ret_year(
         case,
         PARAMS,
         nese_proration_policy=r.NESEProrationPolicy.DROP_CENTS,
     )
-    assert worker(conservative).countable_earnings == higher + 3
+    assert worker(literal_round_down).countable_earnings == higher + 3
     assert worker(alternative).countable_earnings == higher + 8
-    assert worker(conservative).excess == 1
+    assert worker(literal_round_down).excess == 1
     assert worker(alternative).excess == 2
-    assert by_month(conservative)[1].payment == 599
+    assert by_month(literal_round_down)[1].payment == 599
     assert by_month(alternative)[1].payment == 598
 
 
@@ -817,11 +916,11 @@ def test_chart_ceiling_and_exact_monthly_limit_readings_change_grace_payment():
         ),
         year=year,
     )
-    chart = r.apply_ret_year(case, PARAMS)
-    exact = r.apply_ret_year(
+    exact = r.apply_ret_year(case, PARAMS)
+    chart = r.apply_ret_year(
         case,
         PARAMS,
-        monthly_limit_policy=r.MonthlyLimitPolicy.EXACT_TWELFTH,
+        monthly_limit_policy=r.MonthlyLimitPolicy.NONSTATUTORY_CHART_CEILING,
     )
     assert worker(chart).monthly_exempt == chart_monthly
     assert worker(exact).monthly_exempt == exact_monthly

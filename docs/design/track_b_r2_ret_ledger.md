@@ -4,7 +4,8 @@
 earnings test rule mechanics on invented record-years and published
 statutory worked examples. No population, behavioral or forecast claim.**
 
-**Status: build-only, 2026-10-11. No real-data computation.** This is the
+**Status: build-only, revised 2026-10-12 after PR #528 review round 1.
+No real-data computation.** This is the
 single-record ledger core. Deduction before reduction, which can change
 the other beneficiaries' gross rates, remains part (b).
 
@@ -104,15 +105,18 @@ prior year's amount or relabelled as a statutory coverage refusal.
    404.430, .434(c); RS 02501.021B.1, B.4, B.6 and .080). The full annual
    amount applies in the year of death, including death before FRA in
    the attainment year (20 CFR 404.428(c); RS 02501.025B.3). Monthly
-   limits use the chart ceiling by default; exact annual/12 is a named
-   alternative. This matters only for the supported historical higher
-   limits in 2000 and 2001; the reading is recorded below.
+   limits are exact annual/12, including the fractional higher amounts
+   expressly set by Act 203(f)(8)(D)(v)-(vi) for 2000 and 2001. The
+   rounded charts are an explicitly nonstatutory operational sensitivity;
+   they never supply the default statutory result.
 2. **Countable earnings.** All months' wages and annual NESE count under
    FRA, including pre-entitlement earnings. In an FRA year, wages in or
    after the attainment month are excluded. NESE is divided across the
    self-employment months, floored to whole monthly dollars, then
-   multiplied by the number of those months before FRA. An explicit
-   `DROP_CENTS` alternative truncates signed monthly NESE toward zero;
+   multiplied by the number of those months before FRA. `FLOOR` follows
+   the literal “round down” instruction, including for losses; it is not
+   labelled conservative because floor can pay more when NESE is negative.
+   An explicit `DROP_CENTS` alternative truncates signed monthly NESE toward zero;
    it differs from mathematical floor only for losses (RS
    02501.080B.2.b-e; 20 CFR 404.428-.430).
 3. **Excess.** `calculated_excess` returns
@@ -163,23 +167,124 @@ prior year's amount or relabelled as a statutory coverage refusal.
    original share and counts among the beneficiaries in that computation;
    post-reduction zero is not loss of entitlement.
    Two beneficiaries receive the capped rate and remaining balance as
-   prescribed. With three or more beneficiaries, an overflow below
-   $1 triggers the documented default refusal; complete
-   reapportionment is an explicit alternative (20 CFR 404.439-.441;
-   RS 02501.110A-B). `partial_payments` returns exact net amounts.
+   prescribed. With three or more beneficiaries, an overflow below $1
+   ends reapportionment: retain that iteration's uncapped shares, cap
+   the beneficiaries whose shares exceeded their rates, and record the
+   unpaid overflow as `undistributed_subdollar_residual` (20 CFR
+   404.439-.441; RS 02501.110A-B). `partial_payments` returns a
+   mapping-compatible `PartialPaymentAllocation` of exact net amounts
+   with an `undistributed_subdollar_residual` attribute.
+   Completing redistribution after this mandatory stop is unavailable.
 9. **Checks, reconciliation and crediting.** For every beneficiary-month,
    `gross = net_due + deduction`, and the 215(g) check is `floor(net_due)`.
    Check-rounding loss is not another work deduction. Reconciliation
    is the sum of final checks less provisional checks; it can be
    negative when the estimate was too low. Crediting months identify
-   every full or partial actual work deduction, rather than estimated
-   or prorated suspensions (RS 02501.021C; RS 02501.120B.3). This is an
-   R3 input; R2 does not calculate an ARF or a benefit increase.
+   actual full or partial work deductions (RS 02501.021C; RS
+   02501.120B.3). The residual field never creates a standalone crediting
+   event; crediting follows each beneficiary-month's positive actual
+   deduction. This is an R3 input; R2 does not calculate an ARF or a
+   benefit increase.
+
+For each worker, final deductions attributable to that worker equal
+`charged + undistributed_subdollar_residual`. Charged excess is capped by
+chargeable benefits; `charged + uncharged = excess`. The residual remains
+separate from both charged and uncharged excess and is attributed to the
+worker whose partial family allocation produced it. Each stopped partial
+allocation has a residual strictly below $1. This does not change the
+beneficiary-month identity or the final check floor.
 
 Uncharged excess is disclosed in the worker result and expires at the
 year boundary. It is not an input to another record-year. Requested
 prorated or deferred work suspensions are a different administrative
 path and are refused here (RS 02501.100B.1, B.4-5, .120-.125).
+
+## Monthly limits prescribed by the Act
+
+Act 203(f)(8)(D) opens: “Notwithstanding any other provision of this
+subsection, the exempt amount which is applicable to an individual who
+has attained retirement age (as defined in section 216(l)) before the
+close of the taxable year involved shall be”. Its two historical clauses
+expressly set:
+
+- Clause (v): “for each month of any taxable year ending after 1999 and
+  before 2001, $1,416.66 2/3”.
+- Clause (vi): “for each month of any taxable year ending after 2000 and
+  before 2002, $2,083.33 1/3”.
+
+These are exact $17,000/12 and $25,000/12, respectively. RS
+02501.025B.2 agrees: “The monthly exempt amount is equal to 1/12 of the
+applicable annual exempt amount.” 20 CFR 404.430(a)(1) likewise says:
+“The monthly exempt amount, (which is 1/12 of the annual exempt amount),
+applies only in a beneficiary's grace year or years.” The statute
+controls; `MonthlyLimitPolicy.EXACT_TWELFTH` is the default for every
+supported year, with exact Fraction arithmetic and no monthly rounding.
+
+The CFR 404.430(a)(2)(iii) and RS 02501.025D charts display the higher
+annual/monthly pairs `$17,000 $1,417` and `25,000 2,084`. Their rounded
+amounts are retained only as
+`MonthlyLimitPolicy.NONSTATUTORY_CHART_CEILING`, an explicitly selected
+operational sensitivity. A result obtained with it does not establish
+statutory conformance at the conflicting 2000/2001 boundary. Later
+bundled annual limits are exact multiples of twelve, so the two settings
+coincide there.
+
+The reviewer's minimized invented 2001 case has FRA in March, entitlement
+only in February, a $1 February rate, $22,919 January wages and $2,084
+February wages. Countable earnings $25,003 produce
+`floor(($25,003 − $25,000)/3) = $1` excess. February wages exceed the
+Act's exact monthly limit, so February payment is $0, deduction is $1
+and uncharged excess is $0. The chart sensitivity protects February and
+pays $1, leaving the $1 excess uncharged. The earlier invented June FRA
+case at a $600 rate and $28,000 January/$2,084 February wages similarly
+differs by a $600 February check. Both computations are explicitly
+labelled; only the exact limit is the statutory default. Source tests
+pin both fractional Act amounts verbatim against the reused Act capture.
+
+## Mandatory sub-dollar reapportionment stop
+
+20 CFR 404.440 says: “If the excess amount involved at any point totals
+less than $1, it is not reapportioned; instead, each beneficiary is paid
+on the basis of the last calculation.” RS 02501.110B.2 says: “Do not
+reapportion the excess amount if at any point it totals less than $1; the
+monthly benefit amount includes this last calculation.” Its instruction
+“Do not round any share until the final apportionment or reapportionment
+is completed” keeps all shares exact up to that stop.
+
+The stop is the only statutory computation. A capped beneficiary keeps
+its pre-deduction rate, and each uncapped beneficiary keeps its share
+from the last calculation. Their exact nets plus the undistributed
+residual equal the available partial pool. The residual is unpaid before
+the distinct Act 215(g) check floor. It is disclosed in the allocation
+and worker ledger, with attribution to the charging worker. It is not
+additional excess earnings charged. Crediting follows actual full or
+partial work deductions; the residual field never creates a standalone
+crediting event. The former `subdollar_partial_reapportionment` refusal is retired:
+the rule now computes the source-prescribed stopped allocation. There is
+no complete-reapportionment policy in the statutory interface.
+
+| Invented partial pool; caps $10/$1.90/$10; original shares 2:1:1 | Exact stopped shares | Undistributed residual | Checks |
+| --- | --- | --- | --- |
+| $8 | $4/$1.90/$2 | $0.10 | $4/$1/$2 |
+| $9.90 | $4.95/$1.90/$2.475 | $0.575 | $4/$1/$2 |
+
+The $9.90 case catches the settled-dollar error from continuing to
+redistribute: doing so would incorrectly raise the first check to $5.
+The reviewer's G-generated case likewise has rates $3.50/$0.10/$1,
+originals $5/$2.50/$2.50, $3 NH excess and a $1.60 January partial pool.
+It stops at $0.80/$0.10/$0.40, records $0.30 residual and pays checks
+$0/$0/$0. Continued redistribution would incorrectly pay the NH $1.
+The source-prescribed two-beneficiary rule is separate: a $6 pool with
+caps $10/$1.90 and shares 2:1 pays exact $4.10/$1.90 without stopping
+on the sub-dollar balance (20 CFR 404.440; RS 02501.110B.1).
+
+RS 02501.110 Example 3 still reproduces exact $38.50/$16/$19.25/$19.25
+and checks $38/$16/$19/$19: the spouse cap releases $2.60, so the next
+reapportionment is required. The 20 CFR 404.440 worked example still
+gives checks $75/$16/$16/$16, with the displayed-rate and printed-pool
+discrepancy pinned side by side below. These examples exercise
+reapportionment without a sub-dollar stop; the invented pools and
+G-generated case execute the threshold itself.
 
 ## The pure grace-year state
 
@@ -238,6 +343,7 @@ year is explicit.
 | Disability NH, or DIB/DWB/CDB elected payment months | Supported own-work exemption; RIB elections remain tested | RS 02501.021B.5.a |
 | Deceased record and widow(er), mother/father or child own work | Supported without binding-maximum readjustment | RS 02501.095B.3 |
 | Variable monthly rates and entitlement | Supported; twelve months retained | RS 02501.100B.1 |
+| Three-or-more-beneficiary partial pools with a sub-$1 capped overflow | Supported with the mandatory stop and an explicit undistributed residual | 20 CFR 404.440; RS 02501.110B.2 |
 | Qualifying divorced spouse | Excluded from NH charging; own earnings still tested | Act 203(b)(2); RS 02501.021B.5.b |
 | Legally married deemed-entitled CDB or mother/father recipient | Supported against NH excess when the legal facts are asserted | Act 203(b)(1); 20 CFR 404.420 |
 | Two-record entitlement with no actual or estimated excess | Supported; no coordinated charging is needed | RS 02501.145-.150 |
@@ -252,7 +358,6 @@ year is explicit.
 | Noncovered foreign work | `FOREIGN_WORK` / `noncovered_foreign_work` | Act 203(c); 20 CFR 404.417-.418 |
 | Refusal of vocational rehabilitation | `VOCATIONAL_REHABILITATION` / `vocational_rehabilitation_refusal` | RS 02501.130 |
 | Another deduction event on the record | `OTHER_DEDUCTION` / `other_deduction_event` | Act 203(c)/(d); RS 02501.130; GN 02603.040 |
-| Sub-$1 capped overflow with three or more partial-payment beneficiaries | `SUBDOLLAR_REAPPORTIONMENT` / `subdollar_partial_reapportionment` by default | RS 02501.110B.2; 20 CFR 404.440; named alternative below |
 | Unmarried purported deemed entitlement | `DEEMED_ENTITLEMENT_BASIS` / `deemed_entitlement_marriage_basis` | RS 02501.140's wording is broader than Act 203(b)(1)/20 CFR 404.420 |
 | Ordinary deemed adult CHILD with asserted marriage and age facts | `DEEMED_ENTITLEMENT_BASIS` / `deemed_entitlement_marriage_basis` | Act 203(b)(1)'s adult-child wording is broader than CFR .420's disabled-child basis |
 
@@ -275,12 +380,12 @@ the apparent coverage denominator by disappearing.
 
 ## Executed invariants and differentials
 
-The following are invariants of the admitted computation. Partial-pool
-properties explicitly select `COMPLETE_REAPPORTIONMENT`; the default
-sub-dollar refusal and source-prescribed two-person behavior are pinned
-separately. This avoids claiming conservation for the source's unresolved
-sub-dollar stopping convention. Exact entitlements and whole-dollar
-checks are distinct quantities.
+The following are invariants of the admitted computation. Partial pools
+conserve exact net shares plus the undistributed residual, rather than
+requiring a redistribution forbidden by the sub-dollar rule. The
+source-prescribed two-person balance rule is pinned separately. Exact
+entitlements, undistributed residuals and whole-dollar checks are distinct
+quantities.
 
 In the table, unqualified property test names are in
 `tests/test_track_b_ret_ledger_properties.py`.
@@ -288,7 +393,7 @@ In the table, unqualified property test names are in
 | Invariant | Executing tests |
 | --- | --- |
 | Per beneficiary-month, `gross = net_due + deduction`; both actual and provisional deductions lie between zero and gross; the check floors net | `test_every_month_conserves_exact_money_and_checks_are_floored`; `test_auxiliary_own_excess_uses_earliest_entitled_unprotected_months` |
-| A worker's final charge is excess capped by chargeable benefits; charged plus uncharged equals excess; no charge exceeds excess | `test_exact_final_charges_are_excess_capped_by_chargeable_benefits`; `test_number_holders_excess_is_charged_before_auxiliarys_own`; `test_auxiliary_own_deductions_are_monotone_with_protected_months_fixed` |
+| A worker's charged excess is capped by chargeable benefits; charged plus uncharged equals excess; final deductions attributable to that worker equal charged plus the undistributed residual; no charge exceeds excess | `test_exact_final_charges_are_excess_capped_by_chargeable_benefits`; `test_number_holders_excess_is_charged_before_auxiliarys_own`; `test_auxiliary_own_deductions_are_monotone_with_protected_months_fixed` |
 | Earlier chargeable months are exhausted before later months | `test_earlier_chargeable_months_are_exhausted_before_later_months`; `test_auxiliary_own_excess_uses_earliest_entitled_unprotected_months` |
 | Excess cannot carry between years | `test_excess_is_year_local_and_cannot_change_a_clean_later_year`; unit `test_uncharged_excess_does_not_carry_into_the_next_year` |
 | NH excess is applied before another beneficiary's own excess | `test_number_holders_excess_is_charged_before_auxiliarys_own`; source `test_poms_02501_095_number_holder_then_auxiliary_example`; source `test_cfr_404_441_number_holder_then_spouse_with_grace_month` |
@@ -301,19 +406,20 @@ In the table, unqualified property test names are in
 | DIB payment months are exempt from the NH's own work, and elected RIB months are tested | `test_disability_months_are_exempt_but_elected_rib_months_are_tested` |
 | DWB/CDB payment months are exempt from that recipient's own work | `test_disabled_auxiliarys_own_excess_never_reduces_disabled_benefit`; unit `test_disability_benefits_are_exempt_from_their_own_work_test` |
 | With identical actual and estimated earnings, grace status and protected-month facts, provisional suspensions are full months, cover final deductions in aggregate, and have nonnegative reconciliation | `test_equal_estimate_provisional_suspensions_are_full_and_cover_final`; source `test_publication_05_10069_current_year_suspension_and_next_year_repayment` |
-| Crediting months reflect actual full or partial deductions; reconciliation equals final less provisional checks | `test_crediting_months_come_from_actual_full_or_partial_deductions`; unit `test_actual_and_estimated_earnings_are_separate_inputs` |
+| Crediting months reflect actual full or partial work deductions; the residual field never creates a standalone crediting event; reconciliation equals final less provisional checks | `test_crediting_months_come_from_actual_full_or_partial_deductions`; unit `test_actual_and_estimated_earnings_are_separate_inputs`; unit `test_entitled_zero_rate_auxiliary_keeps_its_original_partial_share` |
 | Results are deterministic and beneficiary-order independent | `test_determinism_and_beneficiary_order_independence` |
-| Partial net shares conserve the pool, obey each cap and preserve original-share proportions among uncapped beneficiaries | `test_partial_payments_preserve_total_and_caps_and_uncapped_proportions` |
+| Partial net shares plus the residual conserve the pool, obey each cap and preserve original-share proportions among uncapped beneficiaries; each stopped allocation has a residual in [0, $1) | `test_partial_payments_preserve_total_with_residual_and_caps_and_proportions`; `test_subdollar_stop_keeps_exact_last_uncapped_shares_and_capped_rate`; source `test_cfr_404_440_and_poms_02501_110_stop_at_subdollar_last_calculation` |
 | Partial reapportionment is deterministic and input-order independent | `test_partial_reapportionment_is_deterministic_and_order_independent` |
-| R1 annual amounts and exact rates match every supported bundled year, with zero tolerance | `test_r1_differential_matches_every_supported_year_exactly`; `test_r1_differential_exact_monthly_policy_is_exactly_one_twelfth` |
-| The alternate monthly policy is exactly annual/12, with zero tolerance | `test_r1_differential_exact_monthly_policy_is_exactly_one_twelfth` |
+| An overflow of exactly $1 must be reapportioned; later iterations retain every already-capped beneficiary and use the original entitled-participant count for the three-person stopping rule | `test_stop_threshold_and_later_iteration_keep_original_participant_count`; unit `test_exactly_one_dollar_overflow_is_reapportioned`; unit `test_later_subdollar_stop_retains_previously_capped_beneficiary` |
+| R1 annual amounts and exact rates match every supported bundled year, with zero tolerance | `test_r1_differential_matches_every_supported_year_exactly`; `test_r1_differential_statutory_default_is_exactly_one_twelfth` |
+| The default statutory monthly limit is exactly annual/12, with zero tolerance; wages above it cannot protect a grace month | `test_r1_differential_statutory_default_is_exactly_one_twelfth`; readings `test_property_default_monthly_limit_is_exact_twelfth_and_controls_grace_wages`; unit `test_act_203_f_8_d_vi_exact_limit_is_not_chart_ceiling`; source `test_act_203_f_8_d_v_vi_monthly_amounts_are_quoted_and_equal_annual_twelfths` |
 | Missing R1 years raise rather than substitute | `test_r1_differential_missing_year_raises_without_substitution`; unit `test_missing_parameter_year_is_not_carried_forward` |
 | Every outcome row and weight stays in the coverage denominator; any refusal blocks an aggregate | `test_coverage_denominators_keep_every_supported_or_refused_row`; unit `test_coverage_denominator_keeps_refusals_and_blocks_aggregate` |
 | Exact 1/2 and 1/3 excess rates use an integer floor: excess is nonnegative and differs from the unrounded amount by less than $1 | readings `test_property_excess_uses_exact_statutory_rate_and_dollar_floor`; unit `test_lower_threshold_and_whole_dollar_floor`; unit `test_fra_threshold_uses_one_third_and_floors`; R1 differential above |
 | Invalid input is never counted as a statutory coverage gap | `test_coverage_denominators_keep_every_supported_or_refused_row`; unit `test_invalid_wage_inputs_raise_before_coverage_refusal`; `test_invalid_rates_raise_before_coverage_refusal`; `test_duplicate_identity_is_invalid_even_in_an_unsupported_record`; `test_invalid_inputs_are_not_counted_as_coverage_gaps` |
 | Under the explicit POMS election reading, only eligible elected RIB NSMs receive grace protection; the conservative CFR reading supplies none during concurrent disability entitlement | readings `test_property_explicit_poms_election_protects_only_eligible_rib_months`; `test_simultaneous_dib_rib_source_readings_change_4200_dollars` |
 | Actual and estimated grace statuses are distinct; changed service facts can require recovery even when annual earnings coincide | readings `test_estimated_initial_grace_and_actual_grace_are_separate`; `test_property_changed_grace_estimate_can_require_recovery` |
-| Zero payable caps retain their original shares and count toward the default three-beneficiary sub-dollar refusal; complete redistribution still conserves the pool | `test_zero_cap_participants_preserve_total_and_trigger_source_stop`; unit `test_entitled_zero_rate_auxiliary_keeps_its_original_partial_share` |
+| Zero payable caps retain their original shares and count toward the three-beneficiary sub-dollar stop; exact net shares plus the residual conserve the pool | `test_zero_cap_participants_preserve_total_and_trigger_source_stop`; unit `test_entitled_zero_rate_auxiliary_keeps_its_original_partial_share` |
 | Explicit Act 203(f)(1)(C)-(D) protections exempt only the recipient's own work in asserted CHILD/WIDOW months | readings `test_property_other_statutory_own_exemptions_protect_only_that_workers_excess`; `test_own_work_exempt_flag_requires_a_statutory_benefit_type` |
 
 The `ss/benefits.py` float oracle has no earnings-test ledger implementation,
@@ -383,9 +489,14 @@ an entitled dual spouse has original $500 but payable $0 after one
 delayed credit, and a dual child receives $150 with original $500. NH
 excess $849 leaves a $1 January pool. Dropping the zero-rate spouse
 incorrectly bypassed the three-beneficiary sub-dollar rule; retaining
-all original shares makes the default refuse the $0.25 overflow. The
-explicit complete interpretation pays exact $2/3 to the NH, $1/3 to
-the child and zero to the spouse. In a second G-generated survivor
+all original shares now gives the mandatory stop at exact $0.50 to the
+NH, $0.25 to the child and zero to the spouse, with a $0.25 undistributed
+residual. The spouse has no actual deduction and no crediting month:
+the residual field never creates a standalone crediting event.
+`test_entitled_zero_rate_auxiliary_keeps_its_original_partial_share`
+executes that zero-cap result. This example keeps the zero cap in the
+allocation; the former complete-redistribution result is unavailable.
+In a second G-generated survivor
 record, PIA $1,000/max $1,500 gives a widow $796.40 and an entitled CDB
 recipient $0 after a $650 own disability benefit, with originals $1,000
 and $750. Widow excess $100 must refuse for part (b): the CDB recipient
@@ -501,68 +612,10 @@ the distinction.
 
 ## Needs Max's judgment
 
-### Historical monthly ceiling versus exact twelfth
-
-RS 02501.025B.2 says: “The monthly exempt amount is equal to 1/12 of
-the applicable annual exempt amount.” 20 CFR 404.430(a)(1) says:
-“The monthly exempt amount, (which is 1/12 of the annual exempt amount),
-applies only in a beneficiary's grace year or years.”
-
-Their charts instead print 2000's higher annual/monthly pair
-`$17,000 $1,417` and 2001's `25,000 2,084` (20 CFR
-404.430(a)(2)(iii); RS 02501.025D). These are ceilings, respectively
-$1,416 2/3 and $2,083 1/3 rounded upward. Current post-2002 limits are
-exact multiples of twelve, so this discrepancy is historical.
-
-`MonthlyLimitPolicy.CHART_CEILING` is the default because both sources
-give those explicit operational amounts. `EXACT_TWELFTH` preserves the
-prose reading. In the invented 2001 case, FRA is June, the rate is $600,
-January wages are $28,000 and February wages are $2,084. February is
-protected and pays $600 under the chart; it is chargeable and pays $0
-under the exact ratio. Annual final deductions differ by $600. This is
-pinned by `test_chart_ceiling_and_exact_monthly_limit_readings_change_grace_payment`;
-both R1 differential policies are executed exactly.
-
-### Sub-dollar partial reapportionment
-
-RS 02501.110B.2 says: “Reapportion the excess to all other beneficiaries
-in proportion to their original entitlement rates.” It also says:
-“Do not reapportion the excess amount if at any point it totals less
-than $1; the monthly benefit amount includes this last calculation.”
-20 CFR 404.440 says: “If the excess amount involved at any point totals
-less than $1, it is not reapportioned; instead, each beneficiary is paid
-on the basis of the last calculation.” RS .110B.2 also requires:
-“Do not round any share until the final apportionment or reapportionment
-is completed.”
-
-Completing redistribution conserves the exact pool and respects caps,
-but departs from the explicit stopping clause. Stopping raises the
-question of how the withheld sub-dollar amount is accounted for before
-the 215(g) check floor. The default `SubdollarPolicy.REFUSE` declines
-three-or-more-beneficiary cases needing that convention.
-`COMPLETE_REAPPORTIONMENT` is a named alternate interpretation; it
-is never selected implicitly.
-
-The invented $8 partial pool has caps NH $10, spouse $1.90, child $10
-and original shares 2:1:1. The initial allocation $4/$2/$2 leaves
-$0.10 overflow after the spouse cap. The default refuses. Completion
-gives exact $61/15, $19/10, $61/30, conserving $8; checks are $4/$1/$2.
-Stopping at the capped first allocation would leave exact
-$4/$1.90/$2, total $7.90, while the same $7 in checks is paid. The
-choice changes exact money by $0.10 even in this case with unchanged
-checks. `test_subdollar_reapportionment_refused_by_default_and_alternative_is_explicit`
-pins the refusal and completion.
-
-The same caps and shares with a $9.90 partial pool also change a check.
-Literal source-stop shares are $4.95/$1.90/$2.475 and checks $4/$1/$2,
-total $7. Completion gives exact $16/3, $1.90 and $8/3, with checks
-$5/$1/$2, total $8. The default again refuses rather than choosing
-the convention. Test
-`test_subdollar_stop_and_complete_reading_can_change_a_check_by_one_dollar`
-pins this one-dollar check difference. Two-beneficiary reapportionment
-is prescribed by RS .110B.1 and is not subject to this refusal; test
-`test_two_beneficiary_capped_payment_pays_exact_balance_without_subdollar_stop`
-pins $6 apportioned to capped rates $10/$1.90 as $4.10/$1.90.
+The review resolved the historical monthly fractions and sub-dollar
+reapportionment stop directly from the captured Act and CFR text. Those
+rules are implemented above and are no longer judgment items. The
+remaining money-changing readings are explicit below.
 
 ### Signed NESE: floor versus dropping cents
 
@@ -575,14 +628,15 @@ the cents” supports truncation toward zero, while “round down” supports
 mathematical floor. The two readings agree on the published positive
 NESE examples.
 
-`NESEProrationPolicy.FLOOR` follows the literal round-down instruction;
+`NESEProrationPolicy.FLOOR` follows the literal “round down” instruction;
 `DROP_CENTS` is an explicit alternative. In an invented June FRA year,
 annual NESE loss −$13 over twelve months becomes monthly −$2 and
 five-month −$10 under floor, versus monthly −$1 and five-month −$5
 under dropping cents. With pre-FRA wages equal to R1's higher exempt
 amount plus $13, countable earnings are higher + $3 versus higher + $8;
 excess is $1 versus $2. A $600 January rate produces checks $599 versus
-$598. Tests `test_negative_nese_floor_and_drop_cents_readings_are_explicit`
+$598. Floor pays $1 more in this loss case, so it is not described as
+conservative. Tests `test_negative_nese_floor_and_drop_cents_readings_are_explicit`
 and `test_negative_nese_reading_changes_final_deduction_by_one_dollar`
 pin the one-dollar difference.
 
@@ -775,18 +829,47 @@ after December 1995 and is outside the supported payment years (GN
 
 ## Build verification
 
-The five R2 test files passed all 540 cases. Three existing Hypothesis
-tests were then strengthened to check auxiliary excess accounting,
+The original build's five R2 test files passed all 540 cases. Three
+existing Hypothesis tests were then strengthened to check auxiliary excess accounting,
 invalid-input propagation and NH charging during a child's asserted
 own-work exemption; all three passed. Birth-evidence exclusion tests
 passed all 13 cases. Every mathematical ledger and grace-state invariant
 above has an executed Hypothesis test.
 
-All 33 deliberate one-line implementation mutations caused a selected
-test to fail. Each was reverted before another check, and both modules'
+All 33 original-build deliberate one-line implementation mutations caused
+a selected test to fail. Each was reverted before another check, and both modules'
 restored SHA-256 values are recorded with the exact commands, changes and
 failing nodes in `track_b_r2_ret_ledger_mutations.json`. Mutated
 implementations are not committed. The source captures stayed unchanged.
+
+Review fix round 1 ran all seven `test_track_b_ret_*.py` files: 738
+tests passed. The four minimized historical-limit and sub-dollar
+regressions failed first against the unchanged reviewed implementation,
+then all four passed after the fixes. The full source file passed 290
+tests, including the verbatim Act amounts and the CFR/POMS stop rules.
+The exact-$1 and later-iteration stop boundaries also have named example
+tests and an executed Hypothesis property. Black and Ruff passed for all
+ten Python files touched by the PR. Verification admits statutory
+mechanics only; no real data or population computation was used.
+
+All seven fix-round mutations were killed, and the same targeted nodes
+passed after byte restoration. They cover the monthly default, strict $1
+threshold, mandatory stop, original participant count, separation of
+residual from charged excess, residual reporting and signed NESE floor.
+They were applied only to isolated scratch package copies whose import
+paths were checked; tracked implementation bytes stayed unchanged. The
+exact changes, commands, failing nodes, restored results and source hash
+are in `track_b_r2_ret_ledger_fix_round_1_mutations.json`. A separate
+incremental-overflow allocation implementation matched 10,000 invented
+pools at zero tolerance (seed 528), including zero caps, and independently
+reproduced the exactly-$1 and later-iteration hand fixtures.
+
+Birth-evidence checks passed all 13 cases with the artifact rebuild
+excluded. The five independent tier collections found 6,955 unit,
+3,909 artifact, 1,346 integration-PSID, 520 legacy-reproduction and 220
+PolicyEngine-oracle tests, for a total of 12,950. The tier-policy test
+passed with 12,949 other tests deselected. Both microdata directory
+overrides pointed to nonexistent paths during whole-suite collection.
 
 ## Not in scope
 

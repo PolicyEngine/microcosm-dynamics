@@ -1,8 +1,9 @@
-"""R2 source and SSA worked-example conformance; no population data.
+"""Verification class: statutory conformance; R2 sources and worked examples.
 
 Every rule and figure below is read from pinned source bytes. Published
 pre-2000 examples exercise pure rule helpers; the ledger still refuses
-pre-2000 payment years. No population or behavioral claim is admitted.
+pre-2000 payment years. Admitted scope: RET rule mechanics on invented
+cases and published examples; no population, behavioral or forecast claim.
 """
 
 from __future__ import annotations
@@ -212,6 +213,9 @@ RULE_QUOTES = {
         "we must deduct $1 from your benefits for each $2 you earn above $24,480"
     ],
     "ssa_act_203": [
+        "Notwithstanding any other provision of this subsection",
+        "for each month of any taxable year ending after 1999 and before 2001, $1,416.66 2/3",
+        "for each month of any taxable year ending after 2000 and before 2002, $2,083.33 1/3",
         "If a child who has attained the age of 18 and is entitled to child's insurance benefits",
         "in which such individual, if a child entitled to child's insurance benefits, has attained the age of 18",
         "for which such individual is entitled to widow's or widower's insurance benefits if such individual became so entitled prior to attaining age 60",
@@ -442,6 +446,22 @@ def test_rule_text_is_quoted_from_the_captures(source_id, quote):
 )
 def test_worked_example_figures_are_quoted_from_the_captures(source_id, quote):
     assert quote in source_text(source_id)
+
+
+def test_act_203_f_8_d_v_vi_monthly_amounts_are_quoted_and_equal_annual_twelfths():
+    text = source_text("ssa_act_203")
+    assert "Notwithstanding any other provision of this subsection" in text
+    statutory = {
+        2000: ("$1,416.66 2/3", F(1416) + F(66, 100) + F(2, 300)),
+        2001: ("$2,083.33 1/3", F(2083) + F(33, 100) + F(1, 300)),
+    }
+    for year, (quoted_amount, exact_amount) in statutory.items():
+        assert quoted_amount in text
+        assert (
+            load_ret_parameters().for_year(year).higher_exempt_amount.value
+            / 12
+            == exact_amount
+        )
 
 
 def test_pdf_excerpt_matches_the_captured_pdf_text():
@@ -700,6 +720,45 @@ def test_poms_02501_110_partial_benefit_example_3_capped_reapportionment():
         key: value.numerator // value.denominator
         for key, value in exact.items()
     } == {"nh": 38, "spouse": 16, "c1": 19, "c2": 19}
+    assert exact.undistributed_subdollar_residual == 0
+
+
+@pytest.mark.parametrize(
+    ("pool", "shares", "residual"),
+    [
+        (F(8), (F(4), F("1.90"), F(2)), F("0.10")),
+        (F("9.90"), (F("4.95"), F("1.90"), F("2.475")), F("0.575")),
+    ],
+)
+def test_cfr_404_440_and_poms_02501_110_stop_at_subdollar_last_calculation(
+    pool, shares, residual
+):
+    # These pools are invented executions of the verbatim stopping rule,
+    # rather than additional monetary figures attributed to the sources.
+    assert (
+        "If the excess amount involved at any point totals less than $1, "
+        "it is not reapportioned; instead, each beneficiary is paid on the "
+        "basis of the last calculation."
+        in source_text("ecfr_20cfr404_subpart_e")
+    )
+    assert (
+        "Do not reapportion the excess amount if at any point it totals "
+        "less than $1; the monthly benefit amount includes this last "
+        "calculation." in source_text("poms_rs_02501_110")
+    )
+    exact = r.partial_payments(
+        pool,
+        {"nh": F(10), "spouse": F("1.90"), "child": F(10)},
+        {"nh": F(2), "spouse": F(1), "child": F(1)},
+    )
+    assert tuple(exact[key] for key in ("nh", "spouse", "child")) == shares
+    assert exact.undistributed_subdollar_residual == residual
+    assert sum(exact.values()) + residual == pool
+    assert tuple(int(exact[key]) for key in ("nh", "spouse", "child")) == (
+        4,
+        1,
+        2,
+    )
 
 
 @pytest.mark.parametrize(
@@ -850,6 +909,7 @@ def test_cfr_404_440_dime_sum_and_printed_pool_are_pinned_side_by_side():
     assert source_result["nh"] == F("75.20")
     assert ledger_result["nh"] == F(75)
     for result in (source_result, ledger_result):
+        assert result.undistributed_subdollar_residual == 0
         assert [int(result[key]) for key in ("nh", "spouse", "c1", "c2")] == [
             75,
             16,

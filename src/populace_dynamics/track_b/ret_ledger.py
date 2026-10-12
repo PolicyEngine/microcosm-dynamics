@@ -20,11 +20,14 @@ Auxiliary work that would free binding family-maximum room is refused for
 part (b), as are other deduction events. No unsupported row is dropped
 from an outcome denominator or silently computed as a single worker.
 
-The chart's monthly ceiling is the default; exact annual/12 is an explicit
-alternative for 2000/2001. Sub-$1 overflow in partial reapportionment is
-refused by default: CFR .440 and POMS .110 stop redistribution but do not
-specify exact sub-dollar accounting. Complete reapportionment is a named
-alternative requiring caller judgment, never an implicit fallback.
+Monthly limits are exact annual/12, including the fractional amounts in
+Act 203(f)(8)(D)(v)-(vi) for 2000/2001. The chart ceiling is an explicitly
+nonstatutory operational sensitivity, never the default. CFR .440 and POMS
+.110 require stopping reapportionment when capped overflow is below $1:
+retain the last shares, cap beneficiaries at their rates, and disclose the
+unpaid residual separately. Final deductions equal excess charged plus
+that residual; the residual is neither excess charged nor a crediting
+event by itself. Complete redistribution is unavailable.
 """
 
 from __future__ import annotations
@@ -67,7 +70,6 @@ class UnsupportedReason(Enum):
     FOREIGN_WORK = "noncovered_foreign_work"
     VOCATIONAL_REHABILITATION = "vocational_rehabilitation_refusal"
     OTHER_DEDUCTION = "other_deduction_event"
-    SUBDOLLAR_REAPPORTIONMENT = "subdollar_partial_reapportionment"
     DEEMED_ENTITLEMENT_BASIS = "deemed_entitlement_marriage_basis"
 
 
@@ -89,13 +91,10 @@ class SuspensionMethod(Enum):
 
 
 class MonthlyLimitPolicy(Enum):
-    CHART_CEILING = "chart_ceiling"
+    """Statutory twelfth or explicitly nonstatutory chart sensitivity."""
+
     EXACT_TWELFTH = "exact_twelfth"
-
-
-class SubdollarPolicy(Enum):
-    REFUSE = "refuse"
-    COMPLETE_REAPPORTIONMENT = "complete_reapportionment"
+    NONSTATUTORY_CHART_CEILING = "nonstatutory_chart_ceiling"
 
 
 class NESEProrationPolicy(Enum):
@@ -477,17 +476,44 @@ def countable_earnings(
     return sum(earnings.wages[:before], nese)
 
 
+@dataclass(frozen=True, eq=False)
+class PartialPaymentAllocation(Mapping[str, Fraction]):
+    """Exact net shares and the unpaid CFR .440 sub-dollar residual.
+
+    Mapping operations refer to shares only. Shares plus the residual
+    conserve the partial pool; 215(g)'s check floor is applied afterward.
+    Each allocation's residual is in [0, $1), independently of check loss.
+    """
+
+    shares: Mapping[str, Fraction]
+    undistributed_subdollar_residual: Fraction = Fraction(0)
+
+    def __post_init__(self):
+        object.__setattr__(
+            self, "shares", MappingProxyType(dict(sorted(self.shares.items())))
+        )
+
+    def __getitem__(self, key: str) -> Fraction:
+        return self.shares[key]
+
+    def __iter__(self):
+        return iter(self.shares)
+
+    def __len__(self) -> int:
+        return len(self.shares)
+
+
 def partial_payments(
     total: object,
     rates: Mapping[str, object],
     original_rates: Mapping[str, object],
-    *,
-    subdollar_policy: SubdollarPolicy = SubdollarPolicy.REFUSE,
-) -> Mapping[str, Fraction]:
+) -> PartialPaymentAllocation:
     """RS .110; CFR .439-.440: capped original-rate apportionment.
 
     Returns exact net amounts before 215(g), with no intermediate rounding.
-    Refuse sub-dollar capped overflow under the default source-stop policy.
+    For three or more beneficiaries, stop when capped overflow is below $1
+    and retain the last uncapped shares. Record that unpaid overflow apart
+    from excess charged. The two-beneficiary rule pays the exact balance.
     """
     if not isinstance(rates, Mapping) or not isinstance(
         original_rates, Mapping
@@ -498,8 +524,6 @@ def partial_payments(
     weights = {
         k: _exact(v, "Original rate") for k, v in original_rates.items()
     }
-    if not isinstance(subdollar_policy, SubdollarPolicy):
-        raise InvalidFamilyInput("Supply explicit sub-dollar policy")
     if (
         set(caps) != set(weights)
         or any(v < 0 for v in caps.values())
@@ -523,20 +547,16 @@ def partial_payments(
             result.update(shares)
             break
         overflow = sum((shares[k] - caps[k] for k in capped), Fraction(0))
-        if (
-            len(caps) >= 3
-            and overflow < 1
-            and subdollar_policy is SubdollarPolicy.REFUSE
-        ):
-            raise RETConfigurationUnsupported(
-                UnsupportedReason.SUBDOLLAR_REAPPORTIONMENT,
-                "RS .110B.2 / CFR .440 stop sub-$1 overflow; exact accounting needs judgment",
+        if len(caps) >= 3 and overflow < 1:
+            result.update({k: min(shares[k], caps[k]) for k in active})
+            return PartialPaymentAllocation(
+                result, undistributed_subdollar_residual=overflow
             )
         for k in capped:
             result[k] = caps[k]
             remaining -= caps[k]
         active -= capped
-    return MappingProxyType(dict(sorted(result.items())))
+    return PartialPaymentAllocation(result)
 
 
 @dataclass(frozen=True)
@@ -556,6 +576,13 @@ class BeneficiaryMonth:
 
 @dataclass(frozen=True)
 class WorkerLedger:
+    """Excess charged and the separate unpaid allocation residual.
+
+    Final deductions attributable to this worker are ``charged`` plus
+    ``undistributed_subdollar_residual``; ``charged + uncharged = excess``.
+    Provisional withholding uses full months and has no allocation residual.
+    """
+
     beneficiary_id: str
     annual_exempt: Fraction
     monthly_exempt: Fraction
@@ -566,6 +593,7 @@ class WorkerLedger:
     uncharged: Fraction
     estimated_excess: int
     provisional_withheld: Fraction
+    undistributed_subdollar_residual: Fraction
 
 
 @dataclass(frozen=True)
@@ -622,8 +650,7 @@ def apply_ret_year(
     record: RecordYear,
     parameters: RETParameters | None = None,
     *,
-    monthly_limit_policy: MonthlyLimitPolicy = MonthlyLimitPolicy.CHART_CEILING,
-    subdollar_policy: SubdollarPolicy = SubdollarPolicy.REFUSE,
+    monthly_limit_policy: MonthlyLimitPolicy = MonthlyLimitPolicy.EXACT_TWELFTH,
     nese_proration_policy: NESEProrationPolicy = NESEProrationPolicy.FLOOR,
 ) -> RETLedger:
     """Apply NH excess first, then each person's own, without year carry.
@@ -634,10 +661,8 @@ def apply_ret_year(
     """
     if not isinstance(record, RecordYear):
         raise InvalidFamilyInput("Supply explicit RecordYear")
-    if not isinstance(
-        monthly_limit_policy, MonthlyLimitPolicy
-    ) or not isinstance(subdollar_policy, SubdollarPolicy):
-        raise InvalidFamilyInput("Use explicit rounding policies")
+    if not isinstance(monthly_limit_policy, MonthlyLimitPolicy):
+        raise InvalidFamilyInput("Use an explicit monthly limit policy")
     if not isinstance(nese_proration_policy, NESEProrationPolicy):
         raise InvalidFamilyInput("Use an explicit NESE proration policy")
     if parameters is not None and not isinstance(parameters, RETParameters):
@@ -712,7 +737,10 @@ def apply_ret_year(
             else year.lower_withholding_rate
         ).value
         monthly = exempt / 12
-        if monthly_limit_policy is MonthlyLimitPolicy.CHART_CEILING:
+        if (
+            monthly_limit_policy
+            is MonthlyLimitPolicy.NONSTATUTORY_CHART_CEILING
+        ):
             monthly = Fraction(ceil(monthly))
         actual = countable_earnings(
             b.earnings,
@@ -755,6 +783,7 @@ def apply_ret_year(
         nh_deductions = {km: Fraction(0) for km in net}
         own_deductions = dict(nh_deductions)
         charged = {k: Fraction(0) for k in people}
+        residuals = dict(charged)
         # Statutory priority is independent of caller order or identity sort.
         order = ([record.nh_id] if record.nh_id in people else []) + [
             k for k in people if k != record.nh_id
@@ -809,20 +838,23 @@ def apply_ret_year(
                         total - taken,
                         caps,
                         {k: people[k].original_rates[m - 1] for k in caps},
-                        subdollar_policy=subdollar_policy,
                     )
+                    residuals[key] += payments.undistributed_subdollar_residual
                 for k, cap in caps.items():
                     deducted = cap - payments[k]
                     net[k, m] = payments[k]
                     (nh_deductions if is_nh else own_deductions)[
                         k, m
                     ] += deducted
-                    charged[key] += deducted
+                    if provisional:
+                        charged[key] += deducted
+                if not provisional:
+                    charged[key] += taken
                 remaining -= taken
-        return net, nh_deductions, own_deductions, charged
+        return net, nh_deductions, own_deductions, charged, residuals
 
-    final, nh, own, charged = charge(False)
-    provisional, _, _, suspended = charge(True)
+    final, nh, own, charged, residuals = charge(False)
+    provisional, _, _, suspended, _ = charge(True)
     rows = tuple(
         BeneficiaryMonth(
             k,
@@ -848,6 +880,7 @@ def apply_ret_year(
             Fraction(facts[k][4]) - charged[k],
             facts[k][5],
             suspended[k],
+            residuals[k],
         )
         for k in people
     )

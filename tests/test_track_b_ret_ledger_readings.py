@@ -171,23 +171,112 @@ def test_property_excess_uses_exact_statutory_rate_and_dollar_floor(
     assert excess >= 0
 
 
-def test_subdollar_stop_and_complete_reading_can_change_a_check_by_one_dollar():
+def _historical_monthly_boundary(year, february_wages, excess=1):
+    """An initial grace year with only February entitled before March FRA.
+
+    The caller's chart-derived NSM flag cannot override the ledger's exact
+    statutory wage threshold. January wages produce the supplied excess.
+    """
+    annual = PARAMS.for_year(year).higher_exempt_amount.value
+    wages = (annual + 3 * excess - february_wages, february_wages) + (0,) * 10
+    months = tuple(
+        (
+            GraceMonth({BenefitType.RIB}, {BenefitType.RIB}, nonservice=True)
+            if month == 2
+            else GraceMonth()
+        )
+        for month in range(1, 13)
+    )
+    grace = grace_year(year, GraceYearState(), months, fra_month=3)
+    return record(
+        beneficiary(
+            rate=1,
+            entitled={2},
+            fra_month=3,
+            work=r.WorkEarnings(wages=wages),
+            grace=grace,
+        ),
+        year=year,
+    )
+
+
+def test_act_203_f_8_d_vi_exact_limit_is_not_chart_ceiling():
+    # Reviewer's minimized case: January22919 + February2084 =25003.
+    case = _historical_monthly_boundary(2001, F(2084))
+    assert case.beneficiaries[0].earnings.wages[:2] == (22919, 2084)
+    result = r.apply_ret_year(case, PARAMS)
+    february = result.for_beneficiary("nh")[1]
+    worker = result.workers[0]
+    assert worker.monthly_exempt == F(25000, 12)
+    assert worker.countable_earnings == 25003
+    assert worker.excess == worker.charged == 1
+    assert worker.uncharged == 0
+    assert february.payment == 0
+    assert february.deduction == 1
+
+
+def test_nonstatutory_chart_ceiling_is_explicit_operational_sensitivity():
+    case = _historical_monthly_boundary(2001, F(2084))
+    statutory = r.apply_ret_year(case, PARAMS)
+    chart = r.apply_ret_year(
+        case,
+        PARAMS,
+        monthly_limit_policy=(r.MonthlyLimitPolicy.NONSTATUTORY_CHART_CEILING),
+    )
+    assert statutory.workers[0].monthly_exempt == F(25000, 12)
+    assert chart.workers[0].monthly_exempt == 2084
+    assert statutory.for_beneficiary("nh")[1].payment == 0
+    assert chart.for_beneficiary("nh")[1].payment == 1
+    assert statutory.workers[0].charged == 1
+    assert chart.workers[0].charged == 0
+    assert chart.workers[0].uncharged == 1
+
+
+@settings(max_examples=100, deadline=None)
+@given(
+    st.integers(2000, 2026),
+    st.sampled_from([F(-1, 100), F(0), F(1, 100)]),
+    st.integers(1, 20),
+)
+def test_property_default_monthly_limit_is_exact_twelfth_and_controls_grace_wages(
+    year, offset, excess
+):
+    # Differential against R1's pinned annual amount, with zero tolerance.
+    monthly = PARAMS.for_year(year).higher_exempt_amount.value / 12
+    case = _historical_monthly_boundary(year, monthly + offset, excess)
+    result = r.apply_ret_year(case, PARAMS)
+    explicit = r.apply_ret_year(
+        case,
+        PARAMS,
+        monthly_limit_policy=r.MonthlyLimitPolicy.EXACT_TWELFTH,
+    )
+    assert result == explicit
+    assert result.workers[0].monthly_exempt == monthly
+    assert result.workers[0].excess == excess
+    february = result.for_beneficiary("nh")[1]
+    assert february.deduction == int(offset > 0)
+    assert february.payment == int(offset <= 0)
+    assert result.workers[0].charged == february.deduction
+    assert result.workers[0].uncharged == excess - february.deduction
+
+
+def test_subdollar_stop_prevents_former_redistribution_dollar_error():
     rates = {"nh": F(10), "spouse": F("1.90"), "child": F(10)}
     weights = {"nh": F(2), "spouse": F(1), "child": F(1)}
-    with pytest.raises(r.RETConfigurationUnsupported) as error:
-        r.partial_payments(F("9.90"), rates, weights)
-    assert error.value.reason is r.UnsupportedReason.SUBDOLLAR_REAPPORTIONMENT
-    complete = r.partial_payments(
-        F("9.90"),
-        rates,
-        weights,
-        subdollar_policy=r.SubdollarPolicy.COMPLETE_REAPPORTIONMENT,
-    )
-    assert complete == {"nh": F(16, 3), "spouse": F("1.90"), "child": F(8, 3)}
+    stopped = r.partial_payments(F("9.90"), rates, weights)
     # Literal source stop: cap spouse and retain others' initial shares.
     source_stop = {"nh": F("4.95"), "spouse": F("1.90"), "child": F("2.475")}
+    assert stopped == source_stop
+    assert stopped.undistributed_subdollar_residual == F("0.575")
     assert sum(int(v) for v in source_stop.values()) == 7
-    assert sum(int(v) for v in complete.values()) == 8
+    # The former completed redistribution is an arithmetic diagnostic only;
+    # the statutory interface cannot select that prohibited computation.
+    former = {"nh": F(16, 3), "spouse": F("1.90"), "child": F(8, 3)}
+    assert sum(int(v) for v in former.values()) == 8
+    assert not hasattr(r, "SubdollarPolicy")
+    assert "subdollar_partial_reapportionment" not in {
+        reason.value for reason in r.UnsupportedReason
+    }
 
 
 def test_work_after_known_death_is_invalid_before_coverage_refusal():

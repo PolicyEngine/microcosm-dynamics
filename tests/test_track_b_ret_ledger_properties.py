@@ -1,10 +1,10 @@
 """R2 Hypothesis invariants over invented record-years only.
 
-Verification class: statutory conformance. Conservation refers to exact net
-entitlements; 215(g)'s subsequent whole-dollar check floor is asserted
-separately. Fractional capped allocations explicitly use the complete
-reapportionment interpretation, while examples pin the default refusal of
-the POMS sub-$1 ambiguity. These tests admit no population or forecast claim.
+Verification class: statutory conformance. Conservation includes the explicit
+undistributed sub-dollar residual required by CFR .440's reapportionment
+stop; 215(g)'s subsequent whole-dollar check floor is asserted separately.
+Every fractional allocation uses that statutory stop. These tests admit no
+population, behavioral, or forecast claim.
 """
 
 from __future__ import annotations
@@ -45,11 +45,7 @@ SUPPORTED_YEARS = tuple(year for year in PARAMS.years if year >= 2000)
 
 
 def _apply(record_year, parameters=PARAMS):
-    return r.apply_ret_year(
-        record_year,
-        parameters,
-        subdollar_policy=r.SubdollarPolicy.COMPLETE_REAPPORTIONMENT,
-    )
+    return r.apply_ret_year(record_year, parameters)
 
 
 def _annual_deduction(result, beneficiary_id):
@@ -126,9 +122,11 @@ def test_exact_final_charges_are_excess_capped_by_chargeable_benefits(case):
     assert (
         sum(row.nh_deduction for row in result.months)
         == worker(result).charged
+        + worker(result).undistributed_subdollar_residual
     )
     assert worker(result).charged + worker(result).uncharged == excess
     assert 0 <= worker(result).charged <= excess
+    assert 0 <= worker(result).undistributed_subdollar_residual < 1
 
 
 @settings(max_examples=150, deadline=None)
@@ -512,18 +510,17 @@ def test_r1_differential_matches_every_supported_year_exactly(year, fra):
         rate = expected.higher_withholding_rate.value
     assert observed.annual_exempt == amount
     assert observed.withholding_rate == rate
-    assert observed.monthly_exempt == -(-amount // 12)
+    assert observed.monthly_exempt == amount / 12
 
 
 @settings(deadline=None)
 @given(st.sampled_from(SUPPORTED_YEARS), st.booleans())
-def test_r1_differential_exact_monthly_policy_is_exactly_one_twelfth(
+def test_r1_differential_statutory_default_is_exactly_one_twelfth(
     year, higher
 ):
     result = r.apply_ret_year(
         record(beneficiary(fra_month=6 if higher else None), year=year),
         PARAMS,
-        monthly_limit_policy=r.MonthlyLimitPolicy.EXACT_TWELFTH,
     )
     amount = PARAMS.for_year(year)
     expected = (
@@ -564,17 +561,15 @@ def partial_families(draw):
 
 @settings(max_examples=200, deadline=None)
 @given(partial_families())
-def test_partial_payments_preserve_total_and_caps_and_uncapped_proportions(
+def test_partial_payments_preserve_total_with_residual_and_caps_and_proportions(
     case,
 ):
     payable, rates, originals = case
-    result = r.partial_payments(
-        payable,
-        rates,
-        originals,
-        subdollar_policy=r.SubdollarPolicy.COMPLETE_REAPPORTIONMENT,
+    result = r.partial_payments(payable, rates, originals)
+    assert sum(result.values()) + result.undistributed_subdollar_residual == (
+        payable
     )
-    assert sum(result.values()) == payable
+    assert 0 <= result.undistributed_subdollar_residual < 1
     assert set(result) == set(rates)
     uncapped_ratios = set()
     for key, amount in result.items():
@@ -597,37 +592,86 @@ def test_partial_reapportionment_is_deterministic_and_order_independent(
     payable, rates, originals = case
     keys = list(rates)
     rng.shuffle(keys)
-    kwargs = {"subdollar_policy": r.SubdollarPolicy.COMPLETE_REAPPORTIONMENT}
-    first = r.partial_payments(payable, rates, originals, **kwargs)
+    first = r.partial_payments(payable, rates, originals)
     shuffled = r.partial_payments(
         payable,
         {key: rates[key] for key in keys},
         {key: originals[key] for key in keys},
-        **kwargs,
     )
     assert shuffled == first
-    assert r.partial_payments(payable, rates, originals, **kwargs) == first
+    assert shuffled.undistributed_subdollar_residual == (
+        first.undistributed_subdollar_residual
+    )
+    repeated = r.partial_payments(payable, rates, originals)
+    assert repeated == first
+    assert repeated.undistributed_subdollar_residual == (
+        first.undistributed_subdollar_residual
+    )
 
 
 @settings(max_examples=150, deadline=None)
-@given(partial_families())
-def test_default_partial_apportionment_equals_complete_or_explicitly_refuses(
-    case,
+@given(
+    st.integers(1, 100),
+    st.integers(1, 99),
+    st.integers(1, 99),
+)
+def test_subdollar_stop_keeps_exact_last_uncapped_shares_and_capped_rate(
+    pool_dollars, overflow_cents, quarter_weight
 ):
-    payable, rates, originals = case
-    complete = r.partial_payments(
-        payable,
-        rates,
-        originals,
-        subdollar_policy=r.SubdollarPolicy.COMPLETE_REAPPORTIONMENT,
+    # Any positive overflow below $1 must stop immediately, even if another
+    # redistribution would cross a whole-dollar payment boundary.
+    payable = F(pool_dollars + 4)
+    weights = {
+        "nh": F(100 - quarter_weight),
+        "capped": F(100),
+        "child": F(quarter_weight),
+    }
+    first = {
+        key: payable * weight / sum(weights.values())
+        for key, weight in weights.items()
+    }
+    overflow = F(overflow_cents, 100)
+    rates = {
+        "nh": payable,
+        "capped": first["capped"] - overflow,
+        "child": payable,
+    }
+    result = r.partial_payments(payable, rates, weights)
+    assert dict(result) == {
+        "nh": first["nh"],
+        "capped": rates["capped"],
+        "child": first["child"],
+    }
+    assert result.undistributed_subdollar_residual == overflow
+    assert sum(result.values()) + overflow == payable
+
+
+@settings(max_examples=100, deadline=None)
+@given(st.integers(1, 100), st.integers(1, 99))
+def test_stop_threshold_and_later_iteration_keep_original_participant_count(
+    scale, overflow_cents
+):
+    pool = F(8 * scale)
+    weights = {"nh": 2, "spouse": 1, "child": 1}
+    # The first overflow is at least $1, so it must be reapportioned.
+    threshold = r.partial_payments(
+        pool, {"nh": pool, "spouse": scale, "child": pool}, weights
     )
-    try:
-        conservative = r.partial_payments(payable, rates, originals)
-    except r.RETConfigurationUnsupported as error:
-        assert error.reason is r.UnsupportedReason.SUBDOLLAR_REAPPORTIONMENT
-        assert len(rates) >= 3
-    else:
-        assert conservative == complete
+    assert threshold == {
+        "nh": F(14 * scale, 3),
+        "spouse": F(scale),
+        "child": F(7 * scale, 3),
+    }
+    assert threshold.undistributed_subdollar_residual == 0
+    # The spouse releases $2*scale before the child's sub-$1 overflow.
+    overflow = F(overflow_cents, 100)
+    child_cap = pool / 3 - overflow
+    stopped = r.partial_payments(
+        pool, {"nh": pool, "spouse": 0, "child": child_cap}, weights
+    )
+    assert stopped == {"nh": 2 * pool / 3, "spouse": F(0), "child": child_cap}
+    assert stopped.undistributed_subdollar_residual == overflow
+    assert sum(stopped.values()) + overflow == pool
 
 
 @settings(max_examples=150, deadline=None)
@@ -644,22 +688,17 @@ def test_zero_cap_participants_preserve_total_and_trigger_source_stop(
     rates = {"nh": F(nh_dimes, 10), "child": F(child_dimes, 10), "zero": F(0)}
     originals = {"nh": F(2), "child": F(1), "zero": F(1)}
     payable = F(1, denominator)
-    complete = r.partial_payments(
-        payable,
-        rates,
-        originals,
-        subdollar_policy=r.SubdollarPolicy.COMPLETE_REAPPORTIONMENT,
-    )
-    assert complete == {
-        "nh": payable * F(2, 3),
-        "child": payable / 3,
+    result = r.partial_payments(payable, rates, originals)
+    assert dict(result) == {
+        "nh": payable / 2,
+        "child": payable / 4,
         "zero": F(0),
     }
-    assert sum(complete.values()) == payable
-    assert set(complete) == set(rates)
-    with pytest.raises(r.RETConfigurationUnsupported) as error:
-        r.partial_payments(payable, rates, originals)
-    assert error.value.reason is r.UnsupportedReason.SUBDOLLAR_REAPPORTIONMENT
+    assert result.undistributed_subdollar_residual == payable / 4
+    assert sum(result.values()) + result.undistributed_subdollar_residual == (
+        payable
+    )
+    assert set(result) == set(rates)
 
 
 @settings(max_examples=100, deadline=None)
