@@ -98,10 +98,10 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
         assert entry["income_equal_to_invented_frame"], wave
         assert entry["dc_equal_to_invented_frame"], wave
         assert entry["wealth1_identity"]["n_exact"] == entry["n_records"]
-        # 2015 resolved with the d637 commits for amendments 2 and 5b.
-        resolved = wave in ("2013", "2015")
-        assert entry["registry_gate"]["refused"] == (not resolved)
-        assert entry["registry_gate_dc_route"]["refused"] == (not resolved)
+        # 2015-2023 resolved with the d637 commits for amendments 2, 5b
+        # and 5a: the registry gate applies every wave's family records.
+        assert not entry["registry_gate"]["refused"], wave
+        assert not entry["registry_gate_dc_route"]["refused"], wave
     assert checks["mapping"]["negative_where_undocumented_refused"]["refused"]
     assert checks["mapping"]["crosswalk_as_input_refused"]["refused"]
     from populace_dynamics.uniform_cut_track_u2 import sources

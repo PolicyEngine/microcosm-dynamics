@@ -161,6 +161,20 @@ RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
             "accepted_conditional_types",
         ),
     },
+    "5a": {
+        "registry": "pension",
+        "entries": tuple(
+            f"{wave}.route.inherited_route_amendment"
+            for wave in _LATER_WAVES[1:]
+        ),
+        "ruling": {
+            **_D637,
+            "amendment": "5a",
+            "replaces_draft_3_lines": [1173, 1174, 1175, 1176],
+        },
+        "fields": {"status": "RESOLVED"},
+        "absent": ("action", "refusal", "question", "blocking_dependencies"),
+    },
 }
 #: The d637 amendment each ruled entry belongs to, by (registry, id).
 _AMENDMENT_OF_ENTRY = {

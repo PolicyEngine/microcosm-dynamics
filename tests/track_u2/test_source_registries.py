@@ -765,6 +765,38 @@ D637_SCOPE_MUTATIONS = {
             "ruling"
         ].update(replaces_draft_3_lines=[1175]),
     ),
+    "a5a_refusal_restored": (
+        "pension",
+        lambda d: _entry(d, "2019.route.inherited_route_amendment").update(
+            action="refuse_pending_amendment_5_ruling"
+        ),
+    ),
+    "a5a_on_a_dependent_route": (
+        "pension",
+        lambda d: _copy_ruling(
+            d,
+            "2017.route.inherited_route_amendment",
+            "2017.route.previous_dc_only",
+        ),
+    ),
+    "a5a_ruling_dropped": (
+        "pension",
+        lambda d: _entry(d, "2023.route.inherited_route_amendment").pop(
+            "ruling"
+        ),
+    ),
+    "a5a_as_5b": (
+        "pension",
+        lambda d: _entry(d, "2021.route.inherited_route_amendment")[
+            "ruling"
+        ].update(amendment="5b"),
+    ),
+    "a5a_blocked_again": (
+        "pension",
+        lambda d: _entry(d, "2021.route.inherited_route_amendment").update(
+            blocking_dependencies=["weights:2017.cross_section_weight"]
+        ),
+    ),
     "a2_blocked_again": (
         "income",
         lambda d: _entry(d, "income.2019.wife_sex").update(

@@ -10190,10 +10190,7 @@
       "codebook_documentation": "P64. When (you/he/she) left that employer, did (you/he/she) transfer (your/his/her)\naccount to a new employer, roll it over into an I.R.A., leave it to accumulate in\n(your/his/her) old plan, convert it to an annuity or what?--FIRST PENSION FROM FORMER\nEMPLOYER\n1 Transferred to new employer\n2 Rolled over into IRA\n3 Left to accumulate\n4 Converted to annuity\n7 Other\n8 DK\n9 NA; refused\n0 Inap.: has never worked for money (ER67986=2); no\npensions through a former employer (ER68042=5); DK, NA,\nor RF whether had any pensions through a former employer\n(ER68042=8 or 9); defined benefit retirement plan or\ncombination plan (ER68044=1 or 7); NA or RF type of\nretirement plan (ER68044=9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2017.route.inherited_route_amendment"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2017.head_prev1_dc_amount",
@@ -10247,10 +10244,7 @@
         "dk": "zero_counted_unreported",
         "na_refused": "zero_counted_unreported",
         "brackets": "not_used"
-      },
-      "blocking_dependencies": [
-        "pension:2017.route.inherited_route_amendment"
-      ]
+      }
     },
     {
       "id": "2017.head_er68112",
@@ -10890,10 +10884,7 @@
       "codebook_documentation": "P64. When (you/he/she) left that employer, did (you/he/she) transfer (your/his/her)\naccount to a new employer, roll it over into an I.R.A., leave it to accumulate in\n(your/his/her) old plan, convert it to an annuity or what?--SECOND PENSION FROM PREVIOUS\nEMPLOYER\n1 Transferred to new employer\n2 Rolled over into IRA\n3 Left to accumulate\n4 Converted to annuity\n7 Other\n8 DK\n9 NA; refused\n0 Inap.: has never worked for money (ER67986=2); no\npensions through a former employer (ER68042=5); DK, NA,\nor RF whether had any pensions through a former employer\n(ER68042=8 or 9); no second pension through a former\nemployer (ER68123=5); defined benefit retirement plan or\ncombination plan (ER68124=1 or 7); NA or RF type of\nretirement plan (ER68124=9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2017.route.inherited_route_amendment"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2017.head_prev2_dc_amount",
@@ -10947,10 +10938,7 @@
         "dk": "zero_counted_unreported",
         "na_refused": "zero_counted_unreported",
         "brackets": "not_used"
-      },
-      "blocking_dependencies": [
-        "pension:2017.route.inherited_route_amendment"
-      ]
+      }
     },
     {
       "id": "2017.head_er68192",
@@ -12051,10 +12039,7 @@
       "codebook_documentation": "P64. When (you/he/she) left that employer, did (you/he/she) transfer (your/his/her)\naccount to a new employer, roll it over into an I.R.A., leave it to accumulate in\n(your/his/her) old plan, convert it to an annuity or what?--FIRST PENSION FROM PREVIOUS\nEMPLOYER\n1 Transferred to new employer\n2 Rolled over into IRA\n3 Left to accumulate\n4 Converted to annuity\n7 Other\n8 DK\n9 NA; refused\n0 Inap.: no Spouse/Partner in FU (ER67399=5); has never\nworked for money (ER66688=5); no pensions through a\nformer employer (ER68259=5); DK, NA, or RF whether have\npensions through a former employer (ER68259=8 or 9);\ndefined benefit or combination plan (ER68261=1 or 7); NA\nor RF type of pension or retirement plan (ER68261=9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2017.route.inherited_route_amendment"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2017.wife_prev1_dc_amount",
@@ -12108,10 +12093,7 @@
         "dk": "zero_counted_unreported",
         "na_refused": "zero_counted_unreported",
         "brackets": "not_used"
-      },
-      "blocking_dependencies": [
-        "pension:2017.route.inherited_route_amendment"
-      ]
+      }
     },
     {
       "id": "2017.wife_er68329",
@@ -12751,10 +12733,7 @@
       "codebook_documentation": "P64. When (you/he/she) left that employer, did (you/he/she) transfer (your/his/her)\naccount to a new employer, roll it over into an I.R.A., leave it to accumulate in\n(your/his/her) old plan, convert it to an annuity or what?--SECOND PENSION FROM PREVIOUS\nEMPLOYER\n1 Transferred to new employer\n2 Rolled over into IRA\n3 Left to accumulate\n4 Converted to annuity\n7 Other\n8 DK\n9 NA; refused\n0 Inap.: actual amount reported; future benefits estimated\nas percent of pay; no Spouse/Partner in FU (ER67399=5);\nhas never worked for money (ER66688=5); no pensions\nthrough a former employer (ER68259=5); DK, NA, or RF\nwhether have pensions through a former employer\n(ER68259=8 or 9); no second pension through a former\nemployer (ER68340=5); retirement plan defined benefit or\ncombination plan (ER68341=1 or 7); NA, RF type of\nretirement plan (ER68341=9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2017.route.inherited_route_amendment"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2017.wife_prev2_dc_amount",
@@ -12808,10 +12787,7 @@
         "dk": "zero_counted_unreported",
         "na_refused": "zero_counted_unreported",
         "brackets": "not_used"
-      },
-      "blocking_dependencies": [
-        "pension:2017.route.inherited_route_amendment"
-      ]
+      }
     },
     {
       "id": "2017.wife_er68409",
@@ -13074,10 +13050,7 @@
         5
       ],
       "counted_disposition": 3,
-      "excluded_ira_disposition": 2,
-      "blocking_dependencies": [
-        "pension:2017.route.inherited_route_amendment"
-      ]
+      "excluded_ira_disposition": 2
     },
     {
       "id": "2017.route.checkpoint_documentation",
@@ -13153,15 +13126,27 @@
       ],
       "finding": "The draft parameter contract lists account/formula/dk previous account routes for U2, while this wave questionnaire permits only account P46=5.",
       "required_amendment": "2017: previous account-item accepted_plan_types=[5]; formula/unknown/combined excluded.",
-      "refusal": "The documentary route is resolved, but the ratified section 15 contract still lists the generic account/formula/dk previous route. Application stays refused, and dependent P64/P65 entries stay blocked, until Max rules on u2-draft-4 amendment 5 (independent adjudication D; EV/phase2-20260927/out/u2-adjudicate.md line 125).",
       "resolution": "Independent adjudication D (amendment 5): q2017 p. 152 P62ACKPT gives '1. DB Only (P46=1)', '3. DC Only (P46=5)', '5. All Others (P46=7 or DK/RF)'; DB-only and all others go to P69. Only P46=5 (DC only) reaches P63-P65; formula, combined, DK, refused and NA plans are off-route for P64/P65. Combined-plan P48/P49 is counted once, disposition 3 is retained and IRA-rollover disposition 2 is excluded.",
-      "action": "refuse_pending_amendment_5_ruling",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 125,
         "disposition": "D",
         "amendment": 5
-      }
+      },
+      "ruling_effect": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 5 as written. Under 5a the 2017 previous-employer account route is the wave-specific route above, replacing section 15's generic account/formula/dk previous route: only P46=5 (DC only) reaches P64/P65 (pension:2017.route.formula_unknown_checkpoint, accepted plan type 5); formula, combined, DK, refused and NA plans are off-route for P64/P65 under the named disposition off_route; combined-plan P48/P49 is counted once, disposition 3 is counted and IRA-rollover disposition 2 is excluded. The application refusal is released with the P64/P65 entries that depended on it, and kept as superseded_refusal.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "5a",
+        "replaces_draft_3_lines": [
+          1173,
+          1174,
+          1175,
+          1176
+        ]
+      },
+      "superseded_refusal": "The documentary route is resolved, but the ratified section 15 contract still lists the generic account/formula/dk previous route. Application stays refused, and dependent P64/P65 entries stay blocked, until Max rules on u2-draft-4 amendment 5 (independent adjudication D; EV/phase2-20260927/out/u2-adjudicate.md line 125)."
     },
     {
       "id": "2017.route.ira_rollovers",
@@ -13215,10 +13200,7 @@
       ],
       "finding": "Use combined-plan P49 at most once; never add combined-plan P65 alongside it. Amounts outside the adjudicated current/previous route remain explicit off-route dispositions. The inherited duplicate guard is preserved even where the later instrument no longer re-asks combined accounts.",
       "duplicate_exclusion": "P65 when P46=7",
-      "requires_resolved_route": "2017.route.formula_unknown_checkpoint",
-      "blocking_dependencies": [
-        "pension:2017.route.inherited_route_amendment"
-      ]
+      "requires_resolved_route": "2017.route.formula_unknown_checkpoint"
     },
     {
       "id": "2017.route.amounts_brackets_top_codes",
@@ -14323,10 +14305,7 @@
       "codebook_documentation": "P64. When (you/he/she) left that employer, did (you/he/she) transfer (your/his/her)\naccount to a new employer, roll it over into an I.R.A., leave it to accumulate in\n(your/his/her) old plan, convert it to an annuity or what?--FIRST PENSION FROM FORMER\nEMPLOYER\n1 Transferred to new employer\n2 Rolled over into IRA\n3 Left to accumulate\n4 Converted to annuity\n7 Other\n8 DK\n9 NA; refused\n0 Inap.: has never worked for money (ER74014=2); no\npensions through a former employer (ER74064=5); DK, NA,\nor RF whether had any pensions through a former employer\n(ER74064=8 or 9); defined benefit retirement plan or\ncombination plan (ER74066=1 or 7); NA or RF type of\nretirement plan (ER74066=9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2019.route.inherited_route_amendment"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2019.head_prev1_dc_amount",
@@ -14380,10 +14359,7 @@
         "dk": "zero_counted_unreported",
         "na_refused": "zero_counted_unreported",
         "brackets": "not_used"
-      },
-      "blocking_dependencies": [
-        "pension:2019.route.inherited_route_amendment"
-      ]
+      }
     },
     {
       "id": "2019.head_er74132",
@@ -15023,10 +14999,7 @@
       "codebook_documentation": "P64. When (you/he/she) left that employer, did (you/he/she) transfer (your/his/her)\naccount to a new employer, roll it over into an I.R.A., leave it to accumulate in\n(your/his/her) old plan, convert it to an annuity or what?--SECOND PENSION FROM PREVIOUS\nEMPLOYER\n1 Transferred to new employer\n2 Rolled over into IRA\n3 Left to accumulate\n4 Converted to annuity\n7 Other\n8 DK\n9 NA; refused\n0 Inap.: has never worked for money (ER74014=2); no\npensions through a former employer (ER74064=5); DK, NA,\nor RF whether had any pensions through a former employer\n(ER74064=8 or 9); no second pension through a former\nemployer (ER74143=5); defined benefit retirement plan or\ncombination plan (ER74144=1 or 7); NA or RF type of\nretirement plan (ER74144=9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2019.route.inherited_route_amendment"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2019.head_prev2_dc_amount",
@@ -15080,10 +15053,7 @@
         "dk": "zero_counted_unreported",
         "na_refused": "zero_counted_unreported",
         "brackets": "not_used"
-      },
-      "blocking_dependencies": [
-        "pension:2019.route.inherited_route_amendment"
-      ]
+      }
     },
     {
       "id": "2019.head_er74210",
@@ -16176,10 +16146,7 @@
       "codebook_documentation": "P64. When (you/he/she) left that employer, did (you/he/she) transfer (your/his/her)\naccount to a new employer, roll it over into an I.R.A., leave it to accumulate in\n(your/his/her) old plan, convert it to an annuity or what?--FIRST PENSION FROM PREVIOUS\nEMPLOYER\n1 Transferred to new employer\n2 Rolled over into IRA\n3 Left to accumulate\n4 Converted to annuity\n7 Other\n8 DK\n9 NA; refused\n0 Inap.: no Spouse/Partner in FU (ER73422=5); has never\nworked for money (ER74221=2); no pensions through a\nformer employer (ER74271=5); DK, NA, or RF whether have\npensions through a former employer (ER74271=8 or 9);\ndefined benefit or combination plan (ER74273=1 or 7); NA\nor RF type of pension or retirement plan (ER74273=9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2019.route.inherited_route_amendment"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2019.wife_prev1_dc_amount",
@@ -16233,10 +16200,7 @@
         "dk": "zero_counted_unreported",
         "na_refused": "zero_counted_unreported",
         "brackets": "not_used"
-      },
-      "blocking_dependencies": [
-        "pension:2019.route.inherited_route_amendment"
-      ]
+      }
     },
     {
       "id": "2019.wife_er74339",
@@ -16868,10 +16832,7 @@
       "codebook_documentation": "P64. When (you/he/she) left that employer, did (you/he/she) transfer (your/his/her)\naccount to a new employer, roll it over into an I.R.A., leave it to accumulate in\n(your/his/her) old plan, convert it to an annuity or what?--SECOND PENSION FROM PREVIOUS\nEMPLOYER\n1 Transferred to new employer\n2 Rolled over into IRA\n3 Left to accumulate\n4 Converted to annuity\n7 Other\n8 DK\n9 NA; refused\n0 Inap.: actual amount reported; future benefits estimated\nas percent of pay; no Spouse/Partner in FU (ER73422=5);\nhas never worked for money (ER74221=2); no pensions\nthrough a former employer (ER74271=5); DK, NA, or RF\nwhether have pensions through a former employer\n(ER74271=8 or 9); no second pension through a former\nemployer (ER74350=5); retirement plan defined benefit or\ncombination plan (ER74351=1 or 7); NA, RF type of\nretirement plan (ER74351=9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2019.route.inherited_route_amendment"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2019.wife_prev2_dc_amount",
@@ -16925,10 +16886,7 @@
         "dk": "zero_counted_unreported",
         "na_refused": "zero_counted_unreported",
         "brackets": "not_used"
-      },
-      "blocking_dependencies": [
-        "pension:2019.route.inherited_route_amendment"
-      ]
+      }
     },
     {
       "id": "2019.wife_er74417",
@@ -17191,10 +17149,7 @@
         5
       ],
       "counted_disposition": 3,
-      "excluded_ira_disposition": 2,
-      "blocking_dependencies": [
-        "pension:2019.route.inherited_route_amendment"
-      ]
+      "excluded_ira_disposition": 2
     },
     {
       "id": "2019.route.checkpoint_documentation",
@@ -17270,15 +17225,27 @@
       ],
       "finding": "The draft parameter contract lists account/formula/dk previous account routes for U2, while this wave questionnaire permits only account P46=5.",
       "required_amendment": "2019: previous account-item accepted_plan_types=[5]; formula/unknown/combined excluded.",
-      "refusal": "The documentary route is resolved, but the ratified section 15 contract still lists the generic account/formula/dk previous route. Application stays refused, and dependent P64/P65 entries stay blocked, until Max rules on u2-draft-4 amendment 5 (independent adjudication D; EV/phase2-20260927/out/u2-adjudicate.md line 126).",
       "resolution": "Independent adjudication D (amendment 5): q2019 p. 163 P62ACKPT gives the same three P62ACKPT branches, followed by 'Plan with Former Employer - Defined Contribution (P46=DC Only)'. Only P46=5 (DC only) reaches P63-P65; formula, combined, DK, refused and NA plans are off-route for P64/P65. Combined-plan P48/P49 is counted once, disposition 3 is retained and IRA-rollover disposition 2 is excluded.",
-      "action": "refuse_pending_amendment_5_ruling",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 126,
         "disposition": "D",
         "amendment": 5
-      }
+      },
+      "ruling_effect": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 5 as written. Under 5a the 2019 previous-employer account route is the wave-specific route above, replacing section 15's generic account/formula/dk previous route: only P46=5 (DC only) reaches P64/P65 (pension:2019.route.formula_unknown_checkpoint, accepted plan type 5); formula, combined, DK, refused and NA plans are off-route for P64/P65 under the named disposition off_route; combined-plan P48/P49 is counted once, disposition 3 is counted and IRA-rollover disposition 2 is excluded. The application refusal is released with the P64/P65 entries that depended on it, and kept as superseded_refusal.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "5a",
+        "replaces_draft_3_lines": [
+          1173,
+          1174,
+          1175,
+          1176
+        ]
+      },
+      "superseded_refusal": "The documentary route is resolved, but the ratified section 15 contract still lists the generic account/formula/dk previous route. Application stays refused, and dependent P64/P65 entries stay blocked, until Max rules on u2-draft-4 amendment 5 (independent adjudication D; EV/phase2-20260927/out/u2-adjudicate.md line 126)."
     },
     {
       "id": "2019.route.ira_rollovers",
@@ -17332,10 +17299,7 @@
       ],
       "finding": "Use combined-plan P49 at most once; never add combined-plan P65 alongside it. Amounts outside the adjudicated current/previous route remain explicit off-route dispositions. The inherited duplicate guard is preserved even where the later instrument no longer re-asks combined accounts.",
       "duplicate_exclusion": "P65 when P46=7",
-      "requires_resolved_route": "2019.route.formula_unknown_checkpoint",
-      "blocking_dependencies": [
-        "pension:2019.route.inherited_route_amendment"
-      ]
+      "requires_resolved_route": "2019.route.formula_unknown_checkpoint"
     },
     {
       "id": "2019.route.amounts_brackets_top_codes",
@@ -18540,10 +18504,7 @@
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
       "format_documentation": "1  'Transferred to new employer'\n    2  'Rolled over into IRA'\n    3  'Left to accumulate'\n    4  'Converted to annuity'\n    7  'Other'\n    8  'DK'\n    9  'NA; refused'\n    0  'Inap.:  has never worked for money (ER80137=2); no pensions through a former employer (ER80186=5); DK, NA, or RF...'",
-      "format_verification": "Matched variable block; format labels ending ... are truncated and do not replace full codebook universes.",
-      "blocking_dependencies": [
-        "pension:2021.route.inherited_route_amendment"
-      ]
+      "format_verification": "Matched variable block; format labels ending ... are truncated and do not replace full codebook universes."
     },
     {
       "id": "2021.head_prev1_dc_amount",
@@ -18597,10 +18558,7 @@
         "dk": "zero_counted_unreported",
         "na_refused": "zero_counted_unreported",
         "brackets": "not_used"
-      },
-      "blocking_dependencies": [
-        "pension:2021.route.inherited_route_amendment"
-      ]
+      }
     },
     {
       "id": "2021.head_er80254",
@@ -19305,10 +19263,7 @@
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
       "format_documentation": "1  'Transferred to new employer'\n    2  'Rolled over into IRA'\n    3  'Left to accumulate'\n    4  'Converted to annuity'\n    7  'Other'\n    8  'DK'\n    9  'NA; refused'\n    0  'Inap.:  has never worked for money (ER80137=2); no pensions through a former employer (ER80186=5); DK, NA, or RF...'",
-      "format_verification": "Matched variable block; format labels ending ... are truncated and do not replace full codebook universes.",
-      "blocking_dependencies": [
-        "pension:2021.route.inherited_route_amendment"
-      ]
+      "format_verification": "Matched variable block; format labels ending ... are truncated and do not replace full codebook universes."
     },
     {
       "id": "2021.head_prev2_dc_amount",
@@ -19362,10 +19317,7 @@
         "dk": "zero_counted_unreported",
         "na_refused": "zero_counted_unreported",
         "brackets": "not_used"
-      },
-      "blocking_dependencies": [
-        "pension:2021.route.inherited_route_amendment"
-      ]
+      }
     },
     {
       "id": "2021.head_er80332",
@@ -20586,10 +20538,7 @@
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
       "format_documentation": "1  'Transferred to new employer'\n    2  'Rolled over into IRA'\n    3  'Left to accumulate'\n    4  'Converted to annuity'\n    7  'Other'\n    8  'DK'\n    9  'NA; refused'\n    0  'Inap.:  no Spouse/Partner in FU (ER79524=5); has never worked for money (ER80343=2); no pensions through a former...'",
-      "format_verification": "Matched variable block; format labels ending ... are truncated and do not replace full codebook universes.",
-      "blocking_dependencies": [
-        "pension:2021.route.inherited_route_amendment"
-      ]
+      "format_verification": "Matched variable block; format labels ending ... are truncated and do not replace full codebook universes."
     },
     {
       "id": "2021.wife_prev1_dc_amount",
@@ -20643,10 +20592,7 @@
         "dk": "zero_counted_unreported",
         "na_refused": "zero_counted_unreported",
         "brackets": "not_used"
-      },
-      "blocking_dependencies": [
-        "pension:2021.route.inherited_route_amendment"
-      ]
+      }
     },
     {
       "id": "2021.wife_er80460",
@@ -21343,10 +21289,7 @@
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
       "format_documentation": "1  'Transferred to new employer'\n    2  'Rolled over into IRA'\n    3  'Left to accumulate'\n    4  'Converted to annuity'\n    7  'Other'\n    8  'DK'\n    9  'NA; refused'\n    0  'Inap.:  actual amount reported; future benefits estimated as percent of pay; no Spouse/Partner in FU (ER79524=5);...'",
-      "format_verification": "Matched variable block; format labels ending ... are truncated and do not replace full codebook universes.",
-      "blocking_dependencies": [
-        "pension:2021.route.inherited_route_amendment"
-      ]
+      "format_verification": "Matched variable block; format labels ending ... are truncated and do not replace full codebook universes."
     },
     {
       "id": "2021.wife_prev2_dc_amount",
@@ -21400,10 +21343,7 @@
         "dk": "zero_counted_unreported",
         "na_refused": "zero_counted_unreported",
         "brackets": "not_used"
-      },
-      "blocking_dependencies": [
-        "pension:2021.route.inherited_route_amendment"
-      ]
+      }
     },
     {
       "id": "2021.wife_er80538",
@@ -21686,10 +21626,7 @@
         5
       ],
       "counted_disposition": 3,
-      "excluded_ira_disposition": 2,
-      "blocking_dependencies": [
-        "pension:2021.route.inherited_route_amendment"
-      ]
+      "excluded_ira_disposition": 2
     },
     {
       "id": "2021.route.checkpoint_documentation",
@@ -21765,15 +21702,27 @@
       ],
       "finding": "The draft parameter contract lists account/formula/dk previous account routes for U2, while this wave questionnaire permits only account P46=5.",
       "required_amendment": "2021: previous account-item accepted_plan_types=[5]; formula/unknown/combined excluded.",
-      "refusal": "The documentary route is resolved, but the ratified section 15 contract still lists the generic account/formula/dk previous route. Application stays refused, and dependent P64/P65 entries stay blocked, until Max rules on u2-draft-4 amendment 5 (independent adjudication D; EV/phase2-20260927/out/u2-adjudicate.md line 127).",
       "resolution": "Independent adjudication D (amendment 5): q2021 p. 304 P62ACKPT gives '3. DC Only (P46=5)' versus '5. All Others (P46=7, DK, RF, NA)'; all others go to P69. Only P46=5 (DC only) reaches P63-P65; formula, combined, DK, refused and NA plans are off-route for P64/P65. Combined-plan P48/P49 is counted once, disposition 3 is retained and IRA-rollover disposition 2 is excluded.",
-      "action": "refuse_pending_amendment_5_ruling",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 127,
         "disposition": "D",
         "amendment": 5
-      }
+      },
+      "ruling_effect": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 5 as written. Under 5a the 2021 previous-employer account route is the wave-specific route above, replacing section 15's generic account/formula/dk previous route: only P46=5 (DC only) reaches P64/P65 (pension:2021.route.formula_unknown_checkpoint, accepted plan type 5); formula, combined, DK, refused and NA plans are off-route for P64/P65 under the named disposition off_route; combined-plan P48/P49 is counted once, disposition 3 is counted and IRA-rollover disposition 2 is excluded. The application refusal is released with the P64/P65 entries that depended on it, and kept as superseded_refusal.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "5a",
+        "replaces_draft_3_lines": [
+          1173,
+          1174,
+          1175,
+          1176
+        ]
+      },
+      "superseded_refusal": "The documentary route is resolved, but the ratified section 15 contract still lists the generic account/formula/dk previous route. Application stays refused, and dependent P64/P65 entries stay blocked, until Max rules on u2-draft-4 amendment 5 (independent adjudication D; EV/phase2-20260927/out/u2-adjudicate.md line 127)."
     },
     {
       "id": "2021.route.ira_rollovers",
@@ -21827,10 +21776,7 @@
       ],
       "finding": "Use combined-plan P49 at most once; never add combined-plan P65 alongside it. Amounts outside the adjudicated current/previous route remain explicit off-route dispositions. The inherited duplicate guard is preserved even where the later instrument no longer re-asks combined accounts.",
       "duplicate_exclusion": "P65 when P46=7",
-      "requires_resolved_route": "2021.route.formula_unknown_checkpoint",
-      "blocking_dependencies": [
-        "pension:2021.route.inherited_route_amendment"
-      ]
+      "requires_resolved_route": "2021.route.formula_unknown_checkpoint"
     },
     {
       "id": "2021.route.amounts_brackets_top_codes",
@@ -23090,10 +23036,7 @@
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
       "format_documentation": "1  'Transferred to new employer'\n    2  'Rolled over into IRA'\n    3  'Left to accumulate'\n    4  'Converted to annuity'\n    7  'Other'\n    8  'DK'\n    9  'NA; refused'\n    0  'Inap.:  has never worked for money (ER84107=2); no pensions through a former employer (ER84156=5); DK, NA, or RF...'",
-      "format_verification": "Matched variable block; format labels ending ... are truncated and do not replace full codebook universes.",
-      "blocking_dependencies": [
-        "pension:2023.route.inherited_route_amendment"
-      ]
+      "format_verification": "Matched variable block; format labels ending ... are truncated and do not replace full codebook universes."
     },
     {
       "id": "2023.head_prev1_dc_amount",
@@ -23147,10 +23090,7 @@
         "dk": "zero_counted_unreported",
         "na_refused": "zero_counted_unreported",
         "brackets": "not_used"
-      },
-      "blocking_dependencies": [
-        "pension:2023.route.inherited_route_amendment"
-      ]
+      }
     },
     {
       "id": "2023.head_er84224",
@@ -23855,10 +23795,7 @@
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
       "format_documentation": "1  'Transferred to new employer'\n    2  'Rolled over into IRA'\n    3  'Left to accumulate'\n    4  'Converted to annuity'\n    7  'Other'\n    8  'DK'\n    9  'NA; refused'\n    0  'Inap.:  has never worked for money (ER84107=2); no pensions through a former employer (ER84156=5); DK, NA, or RF...'",
-      "format_verification": "Matched variable block; format labels ending ... are truncated and do not replace full codebook universes.",
-      "blocking_dependencies": [
-        "pension:2023.route.inherited_route_amendment"
-      ]
+      "format_verification": "Matched variable block; format labels ending ... are truncated and do not replace full codebook universes."
     },
     {
       "id": "2023.head_prev2_dc_amount",
@@ -23912,10 +23849,7 @@
         "dk": "zero_counted_unreported",
         "na_refused": "zero_counted_unreported",
         "brackets": "not_used"
-      },
-      "blocking_dependencies": [
-        "pension:2023.route.inherited_route_amendment"
-      ]
+      }
     },
     {
       "id": "2023.head_er84302",
@@ -25136,10 +25070,7 @@
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
       "format_documentation": "1  'Transferred to new employer'\n    2  'Rolled over into IRA'\n    3  'Left to accumulate'\n    4  'Converted to annuity'\n    7  'Other'\n    8  'DK'\n    9  'NA; refused'\n    0  'Inap.:  no Spouse/Partner in FU (ER83493=5); has never worked for money (ER84313=2); no pensions through a former...'",
-      "format_verification": "Matched variable block; format labels ending ... are truncated and do not replace full codebook universes.",
-      "blocking_dependencies": [
-        "pension:2023.route.inherited_route_amendment"
-      ]
+      "format_verification": "Matched variable block; format labels ending ... are truncated and do not replace full codebook universes."
     },
     {
       "id": "2023.wife_prev1_dc_amount",
@@ -25193,10 +25124,7 @@
         "dk": "zero_counted_unreported",
         "na_refused": "zero_counted_unreported",
         "brackets": "not_used"
-      },
-      "blocking_dependencies": [
-        "pension:2023.route.inherited_route_amendment"
-      ]
+      }
     },
     {
       "id": "2023.wife_er84430",
@@ -25893,10 +25821,7 @@
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
       "format_documentation": "1  'Transferred to new employer'\n    2  'Rolled over into IRA'\n    3  'Left to accumulate'\n    4  'Converted to annuity'\n    7  'Other'\n    8  'DK'\n    9  'NA; refused'\n    0  'Inap.:  actual amount reported; future benefits estimated as percent of pay; no Spouse/Partner in FU (ER83493=5);...'",
-      "format_verification": "Matched variable block; format labels ending ... are truncated and do not replace full codebook universes.",
-      "blocking_dependencies": [
-        "pension:2023.route.inherited_route_amendment"
-      ]
+      "format_verification": "Matched variable block; format labels ending ... are truncated and do not replace full codebook universes."
     },
     {
       "id": "2023.wife_prev2_dc_amount",
@@ -25950,10 +25875,7 @@
         "dk": "zero_counted_unreported",
         "na_refused": "zero_counted_unreported",
         "brackets": "not_used"
-      },
-      "blocking_dependencies": [
-        "pension:2023.route.inherited_route_amendment"
-      ]
+      }
     },
     {
       "id": "2023.wife_er84508",
@@ -26236,10 +26158,7 @@
         5
       ],
       "counted_disposition": 3,
-      "excluded_ira_disposition": 2,
-      "blocking_dependencies": [
-        "pension:2023.route.inherited_route_amendment"
-      ]
+      "excluded_ira_disposition": 2
     },
     {
       "id": "2023.route.checkpoint_documentation",
@@ -26315,15 +26234,27 @@
       ],
       "finding": "The draft parameter contract lists account/formula/dk previous account routes for U2, while this wave questionnaire permits only account P46=5.",
       "required_amendment": "2023: previous account-item accepted_plan_types=[5]; formula/unknown/combined excluded.",
-      "refusal": "The documentary route is resolved, but the ratified section 15 contract still lists the generic account/formula/dk previous route. Application stays refused, and dependent P64/P65 entries stay blocked, until Max rules on u2-draft-4 amendment 5 (independent adjudication D; EV/phase2-20260927/out/u2-adjudicate.md line 128).",
       "resolution": "Independent adjudication D (amendment 5): q2023 p. 302 P62ACKPT gives '3. DC Only (P46=5)' versus '5. All Others (P46=7, DK, RF, NA)'; all others go to P69. Only P46=5 (DC only) reaches P63-P65; formula, combined, DK, refused and NA plans are off-route for P64/P65. Combined-plan P48/P49 is counted once, disposition 3 is retained and IRA-rollover disposition 2 is excluded.",
-      "action": "refuse_pending_amendment_5_ruling",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 128,
         "disposition": "D",
         "amendment": 5
-      }
+      },
+      "ruling_effect": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 5 as written. Under 5a the 2023 previous-employer account route is the wave-specific route above, replacing section 15's generic account/formula/dk previous route: only P46=5 (DC only) reaches P64/P65 (pension:2023.route.formula_unknown_checkpoint, accepted plan type 5); formula, combined, DK, refused and NA plans are off-route for P64/P65 under the named disposition off_route; combined-plan P48/P49 is counted once, disposition 3 is counted and IRA-rollover disposition 2 is excluded. The application refusal is released with the P64/P65 entries that depended on it, and kept as superseded_refusal.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "5a",
+        "replaces_draft_3_lines": [
+          1173,
+          1174,
+          1175,
+          1176
+        ]
+      },
+      "superseded_refusal": "The documentary route is resolved, but the ratified section 15 contract still lists the generic account/formula/dk previous route. Application stays refused, and dependent P64/P65 entries stay blocked, until Max rules on u2-draft-4 amendment 5 (independent adjudication D; EV/phase2-20260927/out/u2-adjudicate.md line 128)."
     },
     {
       "id": "2023.route.ira_rollovers",
@@ -26377,10 +26308,7 @@
       ],
       "finding": "Use combined-plan P49 at most once; never add combined-plan P65 alongside it. Amounts outside the adjudicated current/previous route remain explicit off-route dispositions. The inherited duplicate guard is preserved even where the later instrument no longer re-asks combined accounts.",
       "duplicate_exclusion": "P65 when P46=7",
-      "requires_resolved_route": "2023.route.formula_unknown_checkpoint",
-      "blocking_dependencies": [
-        "pension:2023.route.inherited_route_amendment"
-      ]
+      "requires_resolved_route": "2023.route.formula_unknown_checkpoint"
     },
     {
       "id": "2023.route.amounts_brackets_top_codes",
@@ -26622,9 +26550,10 @@
       "date": "2026-09-30",
       "specification_section": "16b",
       "amendments": [
-        "5b"
+        "5b",
+        "5a"
       ],
-      "note": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendments 2-5 as written and amendment 6's option 1, an explicit amendment to draft-3 line 134. Applied here, each in its own reviewed commit: amendment 5b resolves the 2015 P62ACKPT checkpoint as the documentary intersection, refuses the disputed branch and releases its dependents. Each ruled entry keeps its adjudication record and gains a ruling; an open question or refusal the ruling answers is kept as superseded_question or superseded_refusal."
+      "note": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendments 2-5 as written and amendment 6's option 1, an explicit amendment to draft-3 line 134. Applied here, each in its own reviewed commit: amendment 5b resolves the 2015 P62ACKPT checkpoint as the documentary intersection, refuses the disputed branch and releases its dependents; amendment 5a releases the 2017-2023 inherited-route amendments and the P64/P65 entries that depended on them. Each ruled entry keeps its adjudication record and gains a ruling; an open question or refusal the ruling answers is kept as superseded_question or superseded_refusal."
     }
   ]
 }

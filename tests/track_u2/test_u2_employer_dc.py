@@ -242,21 +242,30 @@ def test_2013_registry_route_equals_the_declared_route_and_u1_rule(
 
 
 #: The waves whose employer-DC route the registry gate applies: 2013
-#: (U1's route) and, since the d637 5b commit, 2015.
-REGISTRY_DC_WAVES = (2013, 2015)
+#: (U1's route) and, since the d637 5b and 5a commits, every later wave.
+REGISTRY_DC_WAVES = sources.SUPPORT_WAVES
 
 
-@pytest.mark.parametrize(
-    "wave", [w for w in sources.SUPPORT_WAVES if w not in REGISTRY_DC_WAVES]
-)
-def test_later_wave_routes_refuse_under_the_registry_gate(
-    wave, committed_registries
+@pytest.mark.parametrize("wave", [2015, 2017, 2019, 2021, 2023])
+def test_a_blocked_later_route_refuses_under_the_registry_gate(
+    wave, committed_registries, monkeypatch
 ):
+    """The registry gate still refuses a route entry that is blocked, as
+    each later wave's was before the d637 5b and 5a commits; the entry is
+    re-blocked in memory only."""
+    original = sources.RegistrySet.entry
+    key = f"{wave}.route.previous_dc_only"
+
+    def entry(self, name, entry_id):
+        found = original(self, name, entry_id)
+        if (name, entry_id) == ("pension", key):
+            return {**found, "blocking_dependencies": ["pension:example"]}
+        return found
+
+    monkeypatch.setattr(sources.RegistrySet, "entry", entry)
     gate = sources.SourceGate(sources.REGISTRY, committed_registries)
-    with pytest.raises(sources.U2SourceRefusal):
+    with pytest.raises(sources.U2SourceRefusal, match="blocked by"):
         sources.dc_route(wave, gate)
-    with pytest.raises(sources.U2SourceRefusal):
-        sources.pension_field_specs(wave, gate)
 
 
 @pytest.mark.parametrize("wave", REGISTRY_DC_WAVES)
@@ -276,45 +285,36 @@ def test_registry_route_equals_the_declared_route(wave, committed_registries):
 def test_registry_documents_dc_only_checkpoints_from_2017(
     committed_registries,
 ):
-    # The documentary finding the pending amendment 5 would adopt: the
-    # 2017-2023 checkpoint routes DC-only plans (P46 = 5).  The
-    # adjudication resolved it (disposition D) but its application waits
-    # on Max's ruling, so the loader refuses the amendment entry and every
-    # P64/P65 record that depends on it.  U2 records the finding and
-    # refuses; it does not silently narrow or widen the route.
+    # The documentary finding amendment 5 adopts: the 2017-2023 checkpoint
+    # routes DC-only plans (P46 = 5).  The adjudication resolved it
+    # (disposition D); Max's d637 ruling ratified amendment 5 as written
+    # (section 16b), so under 5a the amendment entry and every P64/P65
+    # record that depended on it apply, and the registry gate's route is
+    # the DC-only route, neither narrowed nor widened.
     from populace_dynamics.data import u2_source_registry as loader_api
 
+    registry_gate = sources.SourceGate(sources.REGISTRY, committed_registries)
     for wave in (2017, 2019, 2021, 2023):
         entry = committed_registries.entry(
             "pension", f"{wave}.route.formula_unknown_checkpoint"
         )
         assert list(entry["accepted_plan_types"]) == [5]
-        amendment = committed_registries.entry(
+        amendment = loader_api.require_resolved(
             "pension", f"{wave}.route.inherited_route_amendment"
         )
-        assert amendment["status"] == "RESOLVED"
-        assert amendment["action"] == "refuse_pending_amendment_5_ruling"
-        with pytest.raises(
-            loader_api.SourceAdjudicationError,
-            match="refuse_pending_amendment_5_ruling",
-        ):
-            loader_api.require_resolved(
-                "pension", f"{wave}.route.inherited_route_amendment"
-            )
-        with pytest.raises(
-            loader_api.SourceAdjudicationError, match="blocked"
-        ):
-            loader_api.require_resolved(
-                "pension", f"{wave}.route.previous_dc_only"
-            )
+        assert amendment["ruling"]["amendment"] == "5a"
+        assert "action" not in amendment
+        loader_api.require_resolved(
+            "pension", f"{wave}.route.previous_dc_only"
+        )
+        route = sources.dc_route(wave, registry_gate)
+        assert route.previous_account_items == (5,)
     declared = sources.SourceGate(
         sources.INVENTED_DECLARED, committed_registries
     )
     route = sources.dc_route(2019, declared)
     assert route.source == "section_15_declared_route_invented_only"
-    assert "pension:2019.route.inherited_route_amendment" in (
-        declared.would_refuse
-    )
+    assert declared.would_refuse == {}
 
 
 def test_invented_dc_frames_exercise_every_path(u2_inputs):

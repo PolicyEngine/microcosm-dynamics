@@ -72,11 +72,12 @@ EXPECTED_COUNTS = {
 }
 SSI_AND_CENSUS_RESOLVED = 26
 #: TO VERIFY records left: the adjudication's 24 A items less those the
-#: d637 commits resolved (amendment 2: 10; amendment 3: 6; 5b: 1).
+#: d637 commits resolved (amendment 2: 10; amendment 3: 6; 5b: 1; 5a's
+#: four entries were D items, RESOLVED already).
 OPEN_ITEMS = 7
 #: Each d637 amendment a registry commit has applied (section 16b), with
 #: the adjudication disposition its entries carry.
-D637_APPLIED = {"2": "A", "3": "A", "4": "D", "5b": "A"}
+D637_APPLIED = {"2": "A", "3": "A", "4": "D", "5b": "A", "5a": "D"}
 
 D_ITEMS = {
     "wealth": {
@@ -447,8 +448,14 @@ def test_documentary_resolutions_carry_evidence(documents):
                 assert entry["income_role"] == "ofum"
                 assert not entry["spouse_slot"]
             if name == "pension":
-                assert entry["action"] == "refuse_pending_amendment_5_ruling"
-                assert "amendment 5" in entry["refusal"]
+                # Applied by Max's d637 ruling under 5a (section 16b).
+                assert "action" not in entry and "refusal" not in entry
+                assert "amendment 5" in entry["superseded_refusal"]
+                assert entry["ruling"]["amendment"] == "5a"
+                assert entry["ruling_effect"].startswith(
+                    "Max's ruling d637 (2026-09-30; specification section "
+                    "16b) ratified u2-draft-4 amendment 5 as written."
+                )
 
 
 def test_open_items_name_their_amendment(documents, monkeypatch):
@@ -1098,11 +1105,10 @@ D1090_CLAUSES = {
         "far resolved amendment 2's ten later spouse age and sex records as "
         "slot metadata and amendment 3's six spouse-retirement crosswalks "
         "as non-executable metadata, recorded amendment 4's ruling on the "
-        "nine corrected wealth accuracy flags, and resolved the 2015 "
-        "P62ACKPT checkpoint under 5b, releasing its dependents. Until the "
-        "rest of them (and, for code 88, d745) land, the 7 TO VERIFY "
-        "records stay open and the 2017\N{EN DASH}2023 P64/P65 records "
-        "stay blocked.",
+        "nine corrected wealth accuracy flags, resolved the 2015 P62ACKPT "
+        "checkpoint under 5b and released the 2017\N{EN DASH}2023 P64/P65 "
+        "records under 5a. Until the rest of them (and, for code 88, d745) "
+        "land, the 7 TO VERIFY records stay open.",
         "8. Complete the pre-registration structural, reconciliation and "
         "F17 component pass, including only the counts that the ratified B1 "
         "and B2 options name (under the 2026-10-10 ruling, the counts "
@@ -1444,19 +1450,21 @@ def test_released_dependencies(documents):
     for wave in registry.U2_SOURCE_WAVES:
         entry = pension[f"{wave}.route.respondent_slots"]
         assert "blocking_dependencies" not in entry, wave
-    # d637's 5b commit released every dependent of the 2015 checkpoint.
-    checkpoint = "pension:2015.route.formula_unknown_checkpoint"
+    # d637's 5b and 5a commits released every dependent of the 2015
+    # checkpoint and of the 2017-2023 inherited-route amendments.
+    routes = {"pension:2015.route.formula_unknown_checkpoint"} | {
+        f"pension:{wave}.route.inherited_route_amendment"
+        for wave in (2017, 2019, 2021, 2023)
+    }
     for document in documents.values():
         for entry in document["entries"]:
-            assert checkpoint not in entry.get("blocking_dependencies", [])
-    for wave in (2017, 2019, 2021, 2023):
+            assert not routes & set(entry.get("blocking_dependencies", []))
+    for wave in registry.U2_SOURCE_WAVES:
         for person in ("head", "wife"):
             for plan in (1, 2):
-                entry = pension[f"{wave}.{person}_prev{plan}_dc_amount"]
-                assert (
-                    f"pension:{wave}.route.inherited_route_amendment"
-                    in entry["blocking_dependencies"]
-                )
+                for item in ("dc_disposition", "dc_amount"):
+                    entry = pension[f"{wave}.{person}_prev{plan}_{item}"]
+                    assert "blocking_dependencies" not in entry
 
 
 def test_master_record_matches_registries(documents):

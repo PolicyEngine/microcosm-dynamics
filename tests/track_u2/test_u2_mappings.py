@@ -312,14 +312,27 @@ D637_RULED_FIELDS = {
         "refusal",
         "superseded_refusal",
     },
+    # The 2017-2023 D items keep their documentary resolution; the
+    # refusal pending the ruling moves out.
+    "5a": {
+        "action",
+        "refusal",
+        "ruling_effect",
+        "ruling",
+        "superseded_refusal",
+    },
 }
 #: The dependencies each amendment released.
 D637_RELEASED: dict[str, frozenset[str]] = {
     "5b": frozenset({"pension:2015.route.formula_unknown_checkpoint"}),
+    "5a": frozenset(
+        f"pension:{wave}.route.inherited_route_amendment"
+        for wave in (2017, 2019, 2021, 2023)
+    ),
 }
 #: How many entries, by registry, lost a released dependency (each then
 #: has none left).
-D637_RELEASED_COUNTS = {"pension": 34}
+D637_RELEASED_COUNTS = {"pension": 34 + 40}
 #: The top-level fields each registry's d637 commits changed.
 D637_TOP = {
     "income": {"rulings_applied"},
@@ -330,7 +343,7 @@ D637_TOP = {
 D637_RECORDED = {
     "income": ["2", "3"],
     "wealth": ["4"],
-    "pension": ["5b"],
+    "pension": ["5b", "5a"],
 }
 
 
@@ -624,31 +637,22 @@ def test_crosswalks_are_never_executable_inputs(declared_gate, registry_gate):
         )
 
 
-#: The first registry blocker each later wave's family-record specs meet
-#: (income concepts are read first, in :data:`sources.INCOME_CONCEPTS`
-#: order, then wealth, then the employer-DC items): the first P64
-#: disposition, which waits on 2017-2023's inherited-route amendment
-#: (5a).  Until the d1090 registry commit (section 16c), 2015's income
-#: entries depended on the refused 2015 code-20 route and 2019-2023's on
-#: the refused code-90/92 routes; until the d637 amendment-2 commit
-#: (section 16b), every later wave first met its spouse age slot
-#: metadata, TO VERIFY; until the 5b commit, 2015's P64 items waited on
-#: its P62ACKPT checkpoint.  No income or wealth entry blocks a later wave
-#: now, and 2015 meets no blocker.
-OPEN_WAVES_RESOLVED = (2013, 2015)
-FIRST_BLOCKER = {
-    wave: (
-        f"pension:{wave}.head_prev1_dc_disposition: blocked by "
-        f"pension:{wave}.route.inherited_route_amendment"
-    )
-    for wave in (2017, 2019, 2021, 2023)
-}
+#: The waves whose family-record specs (income, wealth and employer-DC
+#: items) the registry gate applies: every support wave.  Until the d1090
+#: registry commit (section 16c), 2015's income entries depended on the
+#: refused 2015 code-20 route and 2019-2023's on the refused code-90/92
+#: routes; until the d637 amendment-2 commit (section 16b), every later
+#: wave first met its spouse age slot metadata, TO VERIFY; until the 5b
+#: and 5a commits, the P64/P65 items waited on 2015's P62ACKPT checkpoint
+#: and on 2017-2023's inherited-route amendments.
+OPEN_WAVES_RESOLVED = sources.SUPPORT_WAVES
+FIRST_BLOCKER: dict[int, str] = {}
 
 
 def test_registry_gate_refuses_every_open_wave(registry_gate):
     # 2013: every mapping U2 reads is resolved (the 2013 meanings are
-    # U1's); 2015 since the d637 commits for amendments 2 and 5b; each
-    # other wave meets a blocked entry.
+    # U1's); 2015-2023 since the d637 commits for amendments 2, 5b and
+    # 5a.  A wave still open would meet its first blocked entry.
     for wave in OPEN_WAVES_RESOLVED:
         specs = loader.family_record_specs(wave, registry_gate)
         concepts = {spec.concept for spec in specs}
@@ -704,23 +708,29 @@ def test_declared_gate_records_what_the_registry_gate_refuses(
     loader.family_record_specs(2019, gate)
     audit = gate.audit()
     assert audit["gate"] == sources.INVENTED_DECLARED
-    refused = audit["would_refuse_under_registry_gate"]
-    # Since the d637 amendment-2 commit (section 16b) no income or wealth
-    # entry is refused: the spouse age and sex are resolved slot metadata.
-    assert refused
-    assert not any(key.startswith(("income:", "wealth:")) for key in refused)
-    # Since d1090 no reason is a ruled role entry (section 16c).
-    assert not any(
-        dependency in reason
-        for reasons in refused.values()
-        for reason in reasons
-        for dependency in D1090_DEPENDENCIES
+    # Since the d637 commits for amendments 2 and 5a (section 16b) the
+    # registry gate refuses nothing in 2019's family records.
+    assert audit["would_refuse_under_registry_gate"] == {}
+    assert audit["n_entries_applied"] > 0
+    # The record is kept when an entry is blocked: the same specs on an
+    # invented copy of the registries with one P64 item re-blocked, as
+    # before 5a.
+    documents = json.loads(json.dumps(dict(committed_registries.documents)))
+    blocked = "pension:2019.route.inherited_route_amendment"
+    for entry in documents["pension"]["entries"]:
+        if entry["id"] == "2019.head_prev1_dc_amount":
+            entry["blocking_dependencies"] = [blocked]
+    copied = sources.RegistrySet(
+        documents, dict(committed_registries.sha256), "invented"
     )
-    assert any(
-        "pension:2019.route.inherited_route_amendment" in reason
-        for reasons in refused.values()
-        for reason in reasons
-    )
+    gate = sources.SourceGate(sources.INVENTED_DECLARED, copied)
+    loader.family_record_specs(2019, gate)
+    refused = gate.audit()["would_refuse_under_registry_gate"]
+    assert refused == {
+        "pension:2019.head_prev1_dc_amount": [
+            f"pension:2019.head_prev1_dc_amount: blocked by {blocked}"
+        ]
+    }
 
 
 def test_source_preflight_refuses_before_opening_any_psid_file(
