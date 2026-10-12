@@ -1391,10 +1391,13 @@ sharpened after round 1 (below).
     scan goes on after it. Only a wildcard that holds part of a stem
     stays unclassified.
   - Since the follow-up to Q6 round 10 (PR #534), a pattern is also read
-    as ripgrep, Node and Bun read it, so a bracket class is one
-    character whatever it holds (`stem[.,]md`), a brace group without a
-    comma stands for its content, escapes, extglobs and POSIX classes are
-    resolved and case is ignored, and the denied names are every file
+    as ripgrep, Node and Bun read it (a bracket class is one character
+    whatever it holds, as in `stem[.,]md`; a brace group without a comma
+    stands for its content; brace sequences, escapes, Node's backslash
+    separators, extglobs and POSIX classes are resolved; case is
+    ignored), a segment that matches a denied name and reads no other
+    character at any position of its stem names it, an extglob that
+    excludes a name names it too, and the denied names are every file
     the root record removed, the codebook files and code-map tables
     included.
   - Each log's schema version records the rule it was made under. The

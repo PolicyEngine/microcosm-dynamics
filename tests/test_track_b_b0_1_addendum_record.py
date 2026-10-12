@@ -836,8 +836,11 @@ def test_addendum_carries_the_round_10_record(prose, sentence):
     [
         # The follow-up to Q6 round 10 (PR #534): the v7 read-log rule
         "Since the follow-up to Q6 round 10 (PR #534), a pattern is also "
-        "read as ripgrep, Node and Bun read it, so a bracket class is one "
-        "character whatever it holds (`stem[.,]md`)",
+        "read as ripgrep, Node and Bun read it (a bracket class is one "
+        "character whatever it holds, as in `stem[.,]md`;",
+        "a segment that matches a denied name and reads no other character "
+        "at any position of its stem names it, an extglob that excludes a "
+        "name names it too,",
         "the denied names are every file the root record removed, the "
         "codebook files and code-map tables included.",
         "The rule as it now stands is `track_b_b0_1_review_read_log.v7`.",

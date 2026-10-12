@@ -871,6 +871,21 @@ def test_denied_from_record_takes_every_removed_file():
         # case: the root's file system ignores it
         ("Glob", "docs/sub/DEEP_DENIED.MD", False),
         ("Read", "GATES.YAML", False),
+        ("Glob", "[gG]ates.yaml", False),
+        # the #534 review's five: extglob repetition, Node's brace
+        # sequences, Bun's escaped ] in a class, POSIX ascii and Node's
+        # backslash separators; and a stem spelled by repetition
+        ("Glob", "**/deep_denied+([.m])d", False),
+        ("Glob", "**/deep_denied*([.m])d", False),
+        ("Glob", "**/deep_denied[.,]{m..m}d", False),
+        ("Glob", "**/deep_denied[.\\]]md", False),
+        ("Glob", "**/deep_denied[[:ascii:]]md", False),
+        ("Glob", "docs\\sub\\deep_denied.md", False),
+        ("Glob", "**/d+(e)p_denied.md", False),
+        # a filter that excludes a denied name names it (conservative)
+        ("Glob", "**/deep_denied!(.md)", False),
+        # nested too deep to read: unclassified, so void
+        ("Glob", "@(x)" * 1100, False),
         # broad patterns and wildcard fragments name nothing, and count
         ("Glob", "**/*", True),
         ("Glob", "**/*deep*", True),
@@ -883,6 +898,8 @@ def test_denied_from_record_takes_every_removed_file():
         # the disclosed limit: a wildcard standing for part of a stem
         ("Glob", "?ates.yaml", True),
         ("Glob", "[gx]ates.yaml", True),
+        # an extglob alternative, like a brace alternative, spells it
+        ("Glob", "g*(a|x)tes.yaml", False),
     ],
 )
 def test_read_log_v7_cases(tmp_path, tool, value, counts):
@@ -953,18 +970,18 @@ def test_glob_readings_follow_the_engines():
     assert extglob("a[@(]b|c)") == ["a[@(]b|c)"]
     assert extglob("\\@(a)") == ["\\@(a)"]
     tokens = review_root.glob_tokens
-    assert tokens("a[.,]b") == [
+    assert tokens("a[.,]b") == (
         ("lit", "a"),
         ("set", frozenset(".,")),
         ("lit", "b"),
-    ]
-    assert tokens("[!x][^x]") == [("notset", frozenset("x"))] * 2
-    assert tokens("[]a][a-c][[:digit:]]") == [
+    )
+    assert tokens("[!x][^x]") == (("notset", frozenset("x")),) * 2
+    assert tokens("[]a][a-c][[:digit:]]") == (
         ("set", frozenset("]a")),
         ("set", frozenset("abc")),
         ("set", frozenset("0123456789")),
-    ]
-    assert tokens("[g]\\.{,}*?") == [
+    )
+    assert tokens("[g]\\.{,}*?") == (
         ("lit", "g"),
         ("lit", "."),
         ("cut", "{"),
@@ -972,11 +989,44 @@ def test_glob_readings_follow_the_engines():
         ("cut", "}"),
         ("star", ""),
         ("any", ""),
-    ]
-    assert tokens("[Gg]X", fold=True) == [("lit", "g"), ("lit", "x")]
-    assert tokens("[a") == [("lit", "["), ("lit", "a")]
+    )
+    assert tokens("[Gg]X", fold=True) == (("lit", "g"), ("lit", "x"))
+    assert tokens("[a") == (("lit", "["), ("lit", "a"))
     with pytest.raises(OverflowError):
         extglob("@(a|b)" * 13)
+    # bash and Node's sequences, only when asked for
+    assert expand("a{1..3}b") == ["a{1..3}b"]
+    assert expand("a{1..3}b", sequences=True) == ["a1b", "a2b", "a3b"]
+    assert expand("{c..a}", sequences=True) == ["c", "b", "a"]
+    assert expand("{1..5..2}", sequences=True) == ["1", "3", "5"]
+    assert expand("{08..10}", sequences=True) == [
+        "8",
+        "9",
+        "10",
+        "08",
+        "09",
+        "10",
+    ]
+    assert expand("{a..1}", sequences=True) == ["{a..1}"]
+    with pytest.raises(OverflowError):
+        expand("{1..99999}", sequences=True)
+    # Bun: a backslash inside a class escapes the next character
+    assert review_root.class_end("[.\\]]", 0) == 3
+    assert review_root.class_end("[.\\]]", 0, escapes=True) == 4
+    assert expand("{a[.\\],]b,c}", glob=True, escapes=True) == [
+        "a[.\\],]b",
+        "c",
+    ]
+    # an extglob is one token, read exactly
+    assert tokens("a+(b|[cd])") == (
+        ("lit", "a"),
+        ("group", ("+", ((("lit", "b"),), (("set", frozenset("cd")),)))),
+    )
+    assert tokens("[[:ascii:]][[:nonesuch:]]")[0] == (
+        "set",
+        frozenset(map(chr, range(128))),
+    )
+    assert len(tokens("[[:nonesuch:]]")[0][1]) == 95
     assert review_root.pattern_kind("@(a|b)" * 13, DENIED) == "unclassified"
 
 
@@ -1083,9 +1133,69 @@ def test_engine_spellings_of_a_denied_name_are_flagged(data):
     )
     prefix = data.draw(st.sampled_from(["", "**/", "docs/sub/"]))
     pattern = prefix + spelled
+    # Node reads a backslash as a slash, so an escape at the start of a
+    # segment can also read as leaving the root; either voids the review.
     assert review_root.pattern_kind(
         pattern, review_root.denied_from_record(RECORD)
-    ) == ("denied"), pattern
+    ) in ("denied", "outside_root"), pattern
+
+
+#: Extglob-bearing pieces and the regular expression each stands for.
+_GROUP_PIECES = {
+    "a": "a",
+    "b": "b",
+    "A": "A",
+    ".": r"\.",
+    "*": "[^/]*",
+    "?": "[^/]",
+    "[ab]": "[ab]",
+    "[aA]": "[aA]",
+    "[!a]": "[^/a]",
+    "@(a|b)": "(?:a|b)",
+    "+(a)": "(?:a)+",
+    "*(b)": "(?:b)*",
+    "?(a)": "(?:a)?",
+    "+([ab])": "(?:[ab])+",
+    "@(a|+(b))": "(?:a|(?:b)+)",
+    "!(a)": "[^/]*",
+}
+
+
+@settings(max_examples=500, deadline=None)
+@given(
+    pieces=st.lists(st.sampled_from(sorted(_GROUP_PIECES)), max_size=5),
+    name=st.text(alphabet="abAB.", max_size=6),
+)
+def test_the_automaton_matches_as_a_regular_expression(pieces, name):
+    """Differential: the automaton reads extglob repetition exactly, as a
+    regular expression does (``!(...)`` read as ``*`` in both)."""
+    pattern = "".join(pieces)
+    expected = "".join(_GROUP_PIECES[piece] for piece in pieces)
+    assert review_root.glob_match(
+        name, review_root.glob_tokens(pattern)
+    ) is bool(re.fullmatch(expected, name)), (pattern, name)
+
+
+@settings(max_examples=500, deadline=None)
+@given(
+    pieces=st.lists(st.sampled_from(sorted(_GROUP_PIECES)), max_size=5),
+    name=st.text(alphabet="abAB.", min_size=1, max_size=6),
+)
+def test_pins_stem_is_the_brute_force_rule(pieces, name):
+    """Differential: ``pins_stem`` holds exactly when the segment matches
+    the name and no name differing at one stem position, other than in
+    case, also matches. ``\\x01`` stands for every character no piece
+    names."""
+    tokens = review_root.glob_tokens("".join(pieces))
+    match = review_root.glob_match
+    stem = len(Path(name).stem)
+    brute = match(name, tokens) and not any(
+        match(name[:i] + other + name[i + 1 :], tokens)
+        for i in range(stem)
+        for other in "abAB.\x01"
+        if other.casefold() != name[i].casefold()
+    )
+    assert review_root.pins_stem(name, tokens) is brute, (pieces, name)
 
 
 # The v6 classifier, frozen as it stood at round 10, for the differential
@@ -1285,9 +1395,12 @@ def _spellings(seed, count):
     Each pattern applies one to three changes to the name: escape a
     character, flip its case, put it in a one-character class or a
     two-case class, put an extension character in a class with other
-    characters (or a POSIX or negated class), or wrap a run in a brace
-    group or an extglob. None puts a wildcard in place of a stem
-    character, so every engine match spells the name.
+    characters (or a POSIX, negated or escaped-bracket class), wrap a run
+    in a brace group or an extglob, spell a doubled letter by repetition
+    (``+(e)``) or a letter by a one-item sequence (``{e..e}``), or read
+    two extension characters by a repeated class. The path may be
+    written with Node's backslashes. None puts a wildcard in place of a
+    stem character, so every engine match spells the name.
     """
     rng = random.Random(seed)
     extras = [",", "{", "}", "/", "x", "-", "!", "^", "]", "["]
@@ -1301,10 +1414,30 @@ def _spellings(seed, count):
         for _ in range(rng.randint(1, 3)):
             change = rng.choice(
                 ["escape", "case", "one", "cases", "class", "class", "wrap"]
+                + ["repeat", "sequence", "escaped-class"]
             )
             index = rng.randrange(len(units))
             char = units[index]
-            if change == "wrap" or len(char) != 1:
+            following = units[index + 1] if index + 1 < len(units) else ""
+            if change == "repeat" and len(char) == 1 and char == following:
+                # a doubled letter spelled by repetition: ee as +(e)
+                units[index : index + 2] = [f"+({char})"]
+            elif change == "repeat" and index >= cut and len(following) == 1:
+                # two extension characters read by a repeated class
+                units[index : index + 2] = [f"+([{char}{following}])"]
+            elif change == "sequence" and char.isalpha() and len(char) == 1:
+                if index < cut:
+                    units[index] = f"{{{char}..{char}}}"
+                else:
+                    low, high = chr(ord(char) - 1), chr(ord(char) + 1)
+                    units[index] = f"{{{low}..{high}}}"
+            elif change == "escaped-class" and index >= cut:
+                units[index] = rng.choice(
+                    [f"[{char}\\]]", "[[:ascii:]]", f"[\\]{char}]"]
+                )
+            elif change in ("repeat", "sequence", "escaped-class"):
+                continue
+            elif change == "wrap" or len(char) != 1:
                 stop = rng.randint(index + 1, len(units))
                 inner = "".join(units[index:stop])
                 units[index:stop] = [rng.choice(wraps) % inner]
@@ -1327,7 +1460,9 @@ def _spellings(seed, count):
                         "[^/,]",
                     ]
                 )
-        prefix = rng.choice(["", "**/", "docs/sub/", "docs/**/"])
+        prefix = rng.choice(
+            ["", "**/", "docs/sub/", "docs/**/", "docs\\sub\\"]
+        )
         out.append(prefix + "".join(units))
     return sorted(set(out))
 
@@ -1346,7 +1481,7 @@ def test_every_engine_match_of_a_spelled_denied_name_is_flagged(
     (root / "docs/sub").mkdir(parents=True)
     (root / "docs/sub/deep_denied.md").write_text("x", encoding="utf-8")
     (root / "docs/sub/deep_x.md").write_text("x", encoding="utf-8")
-    patterns = _spellings(seed=20261012, count=600)
+    patterns = _spellings(seed=20261012, count=1000)
     matches = _engine_matches(engine, root, patterns, tmp_path / "probe")
     denied = {d.casefold() for d in DENIED}
     hits = [
