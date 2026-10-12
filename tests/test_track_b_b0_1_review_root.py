@@ -1205,6 +1205,8 @@ def test_the_automaton_matches_as_a_regular_expression(pieces, name):
     pieces=st.lists(st.sampled_from(sorted(_GROUP_PIECES)), max_size=5),
     name=st.text(alphabet="abAB.", min_size=1, max_size=6),
 )
+# a class of one letter's two cases pins it, case aside
+@example(pieces=["[aA]", "b"], name="ab")
 def test_pins_stem_is_the_brute_force_rule(pieces, name):
     """Differential: ``pins_stem`` holds exactly when the segment matches
     the name and no name differing at one stem position, other than in
