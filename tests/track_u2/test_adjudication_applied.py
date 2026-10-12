@@ -59,9 +59,9 @@ def quoted_spans(markdown):
 # 16c) replaced all eight F refusals (roles 7, pension 1).  The d637
 # registry commits (2026-09-30 ruling; spec section 16b) resolve the A
 # items of amendments 2, 3, 5 and 6: so far amendment 2's ten income
-# records.
+# records and amendment 3's six.
 EXPECTED_COUNTS = {
-    "income": (758, 0, 6),
+    "income": (764, 0, 0),
     "wealth": (234, 0, 0),
     "individual": (59, 0, 0),
     "pension": (647, 0, 1),
@@ -72,11 +72,11 @@ EXPECTED_COUNTS = {
 }
 SSI_AND_CENSUS_RESOLVED = 26
 #: TO VERIFY records left: the adjudication's 24 A items less those the
-#: d637 commits resolved (amendment 2: 10).
-OPEN_ITEMS = 14
+#: d637 commits resolved (amendment 2: 10; amendment 3: 6).
+OPEN_ITEMS = 8
 #: Each d637 amendment a registry commit has applied (section 16b), with
 #: the adjudication disposition its entries carry.
-D637_APPLIED = {"2": "A"}
+D637_APPLIED = {"2": "A", "3": "A"}
 
 D_ITEMS = {
     "wealth": {
@@ -1096,8 +1096,9 @@ D1090_CLAUSES = {
         "refusals with \N{SECTION SIGN}16c's exclusions and released their "
         "dependents. The d637 commits, one per ratified amendment, have so "
         "far resolved amendment 2's ten later spouse age and sex records as "
-        "slot metadata. Until the rest of them (and, for code 88, d745) "
-        "land, the 14 TO VERIFY records stay open and the "
+        "slot metadata and amendment 3's six spouse-retirement crosswalks "
+        "as non-executable metadata. Until the rest of them (and, for code "
+        "88, d745) land, the 8 TO VERIFY records stay open and the "
         "2017\N{EN DASH}2023 P64/P65 records stay blocked.",
         "8. Complete the pre-registration structural, reconciliation and "
         "F17 component pass, including only the counts that the ratified B1 "

@@ -661,6 +661,38 @@ D637_SCOPE_MUTATIONS = {
             action="refuse_slot_inference"
         ),
     ),
+    "a3_ruling_on_a_component": (
+        "income",
+        lambda d: _copy_ruling(
+            d,
+            "income.2017.wife_retirement_annuities",
+            "income.2017.wife_annuities",
+        ),
+    ),
+    "a3_made_executable": (
+        "income",
+        lambda d: _entry(d, "income.2019.wife_retirement_annuities").update(
+            kind="variable"
+        ),
+    ),
+    "a3_usage_rewritten": (
+        "income",
+        lambda d: _entry(d, "income.2013.wife_retirement_annuities").update(
+            usage="Executable scalar crosswalk"
+        ),
+    ),
+    "a3_ruling_dropped": (
+        "income",
+        lambda d: _entry(d, "income.2023.wife_retirement_annuities").pop(
+            "ruling"
+        ),
+    ),
+    "a3_ruling_as_amendment_2": (
+        "income",
+        lambda d: _entry(d, "income.2015.wife_retirement_annuities")[
+            "ruling"
+        ].update(amendment="2"),
+    ),
     "a2_blocked_again": (
         "income",
         lambda d: _entry(d, "income.2019.wife_sex").update(

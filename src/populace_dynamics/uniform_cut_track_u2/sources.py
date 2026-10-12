@@ -226,12 +226,13 @@ DECLARED = INVENTED_DECLARED
 #: gate fields moved).  Max's d637 ruling (2026-09-30, section 16b) moves
 #: them again, one reviewed commit per ratified amendment
 #: (``test_d637_moved_only_the_ruled_gate_fields`` pins every gate field
-#: those commits moved against the registries d1090 left): amendment 2
-#: moved the income bytes (the later spouse age and sex records became
-#: slot metadata).
+#: those commits moved against the registries d1090 left): amendments 2
+#: and 3 moved the income bytes (the later spouse age and sex records
+#: became slot metadata; the spouse-retirement crosswalks became
+#: non-executable metadata).
 REGISTRY_SHA256: dict[str, str] = {
     "income": (
-        "8cd237e291ef746c98cfa0454ebaca865420fc4e729f55da6d148c74f15107ae"
+        "ac8310a166a66fa71a39d19cb79dec0dda5c41ff5a7033e535d70ebffe87204c"
     ),
     "wealth": (
         "3a22247849ea2eccbef6e522c0d74c901beb90195f92fd2e7b23b123fab6b816"

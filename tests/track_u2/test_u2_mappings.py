@@ -288,13 +288,20 @@ D637_RULED_FIELDS = {
         "ruling",
         "superseded_question",
     },
+    "3": {
+        "status",
+        "use_restriction",
+        "resolution",
+        "ruling",
+        "superseded_question",
+    },
 }
 #: The dependencies each amendment released.
 D637_RELEASED: dict[str, frozenset[str]] = {}
 #: The top-level fields each registry's d637 commits changed.
 D637_TOP = {"income": {"rulings_applied"}}
 #: The amendments each registry's ``rulings_applied`` d637 record lists.
-D637_RECORDED = {"income": ["2"]}
+D637_RECORDED = {"income": ["2", "3"]}
 
 
 def test_d637_moved_only_the_ruled_gate_fields():
@@ -554,11 +561,24 @@ def test_wealth1_identity_counts_a_broken_identity(u2_inputs, declared_gate):
     )
 
 
-def test_crosswalks_are_never_executable_inputs(declared_gate):
+def test_crosswalks_are_never_executable_inputs(declared_gate, registry_gate):
     with pytest.raises(sources.U2SourceRefusal, match="documentary"):
         sources.field_specs(
             "income", 2019, ["wife_retirement_annuities"], declared_gate
         )
+    # Amendment 3 (ratified by d637, section 16b) resolved every
+    # spouse-retirement crosswalk as non-executable metadata: the registry
+    # gate now passes the entry, and the adapter still refuses it as an
+    # input in every wave.
+    for wave in sources.SUPPORT_WAVES:
+        key = f"income.{wave}.wife_retirement_annuities"
+        assert registry.require_resolved("income", key)["kind"] == (
+            "historical_route_crosswalk"
+        )
+        with pytest.raises(sources.U2SourceRefusal, match="documentary"):
+            sources.field_specs(
+                "income", wave, ["wife_retirement_annuities"], registry_gate
+            )
     with pytest.raises(sources.U2SourceRefusal, match="documentary"):
         sources.field_specs(
             "wealth",

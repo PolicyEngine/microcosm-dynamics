@@ -4351,7 +4351,6 @@
         "ER58101",
         "ER58103"
       ],
-      "status": "TO VERIFY",
       "label": "Earlier U1 route represented by later split variables",
       "citations": [
         {
@@ -4418,14 +4417,23 @@
       "codebook_text": "ER58097: Wife/\"Wife's\" income from retirement pay or pensions.\nThe values for this variable represent the income from retirement pay or pensions in whole\ndollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: no Wife/\"Wife\" in FU (ER54305=5); did not receive\nincome from retirement pay or pensions in 2012\n\nER58099: Wife/\"Wife's\" income from annuities.\nThe values for this variable represent the income from annuities in whole dollars.   All\nmissing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: no Wife/\"Wife\" in FU (ER54305=5); did not receive\nincome from annuities in 2012\n\nER58101: Wife/\"Wife\" income from IRAs in 2012.\nThe values for this variable represent the income from IRAs in whole dollars.   All missing\ndata were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: no Wife/\"Wife\" in FU (ER54305=5); did not receive\nincome from IRAs in 2012\n\nER58103: Wife/\"Wife's\" income from other (retirement).\nThe values for this variable represent the income from other (retirement) in whole\ndollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: no Wife/\"Wife\" in FU (ER54305=5); did not receive\nincome from other (retirement) in 2012",
       "documented_domain": "Separate component domains apply; no scalar source variable is declared.",
       "usage": "Documentary crosswalk only; not an executable derived input",
-      "question": "The earlier U1 wife retirement/annuities item has no single 2013 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 67).",
       "blocking_dependencies": [],
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 67,
         "disposition": "A",
         "amendment": 3
-      }
+      },
+      "status": "RESOLVED",
+      "use_restriction": "Non-executable metadata (u2-draft-4 amendment 3): no U2 input or row reads this crosswalk, and no scalar historical equivalence is inferred from it.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time. No row changes. The adjudication's question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "3"
+      },
+      "superseded_question": "The earlier U1 wife retirement/annuities item has no single 2013 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 67)."
     },
     {
       "id": "income.2015.interview",
@@ -8940,7 +8948,6 @@
         "ER65296",
         "ER65298"
       ],
-      "status": "TO VERIFY",
       "label": "Earlier U1 route represented by later split variables",
       "citations": [
         {
@@ -9007,13 +9014,22 @@
       "codebook_text": "ER65292: Spouse's/Partner's Income from Retirement Pay or Pensions in 2014\nThe values for this variable represent Spouse's/Partner's income from retirement pay or\npensions, in 2014, in whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from retirement pay or\npensions in 2014; no Spouse/Partner in FU (ER61347=5)\n\nER65294: Spouse's/Partner's Income from Annuities in 2014\nThe values for this variable represent Spouse's/Partner's income from annuities, in 2014,\nin whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from annuities in 2014; no\nSpouse/Partner in FU (ER61347=5)\n\nER65296: Spouse's/Partner's income from IRAs in 2014.\nThe values for this variable represent Spouse's/Partner's income from IRAs, in 2014, in\nwhole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from IRAs in 2014; no\nSpouse/Partner in FU (ER61347=5)\n\nER65298: Spouse's/Partner's Income from Other Retirement in 2014\nThe values for this variable represent Spouse's/Partner's income from other retirement, in\n2014, in whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from other retirement in\n2014; no Spouse/Partner in FU (ER61347=5)",
       "documented_domain": "Separate component domains apply; no scalar source variable is declared.",
       "usage": "Documentary crosswalk only; not an executable derived input",
-      "question": "The earlier U1 wife retirement/annuities item has no single 2015 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 70).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 70,
         "disposition": "A",
         "amendment": 3
-      }
+      },
+      "status": "RESOLVED",
+      "use_restriction": "Non-executable metadata (u2-draft-4 amendment 3): no U2 input or row reads this crosswalk, and no scalar historical equivalence is inferred from it.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time. No row changes. The adjudication's question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "3"
+      },
+      "superseded_question": "The earlier U1 wife retirement/annuities item has no single 2015 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 70)."
     },
     {
       "id": "income.2017.interview",
@@ -13536,7 +13552,6 @@
         "ER71373",
         "ER71375"
       ],
-      "status": "TO VERIFY",
       "label": "Earlier U1 route represented by later split variables",
       "citations": [
         {
@@ -13603,13 +13618,22 @@
       "codebook_text": "ER71369: Spouse's/Partner's Income from Retirement Pay or Pensions in 2016\nThe values for this variable represent Spouse's/Partner's income from retirement pay or\npensions, in 2016, in whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from retirement pay or\npensions in 2016; no Spouse/Partner in FU (ER67399=5)\n\nER71371: Spouse's/Partner's Income from Annuities in 2016\nThe values for this variable represent Spouse's/Partner's income from annuities, in 2016,\nin whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from annuities in 2016; no\nSpouse/Partner in FU (ER67399=5)\n\nER71373: Spouse's/Partner's income from I.R.A.s in 2016.\nThe values for this variable represent Spouse's/Partner's income from IRAs, in 2016, in\nwhole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from IRAs in 2016; no\nSpouse/Partner in FU (ER67399=5)\n\nER71375: Spouse's/Partner's Income from Other Retirement in 2016\nThe values for this variable represent Spouse's/Partner's income from other retirement, in\n2016, in whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from other retirement in\n2016; no Spouse/Partner in FU (ER67399=5)",
       "documented_domain": "Separate component domains apply; no scalar source variable is declared.",
       "usage": "Documentary crosswalk only; not an executable derived input",
-      "question": "The earlier U1 wife retirement/annuities item has no single 2017 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 73).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 73,
         "disposition": "A",
         "amendment": 3
-      }
+      },
+      "status": "RESOLVED",
+      "use_restriction": "Non-executable metadata (u2-draft-4 amendment 3): no U2 input or row reads this crosswalk, and no scalar historical equivalence is inferred from it.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time. No row changes. The adjudication's question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "3"
+      },
+      "superseded_question": "The earlier U1 wife retirement/annuities item has no single 2017 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 73)."
     },
     {
       "id": "income.2019.interview",
@@ -18124,7 +18148,6 @@
         "ER77395",
         "ER77397"
       ],
-      "status": "TO VERIFY",
       "label": "Earlier U1 route represented by later split variables",
       "citations": [
         {
@@ -18191,13 +18214,22 @@
       "codebook_text": "ER77391: Spouse's/Partner's Income from Retirement Pay or Pensions in 2018\nThe values for this variable represent Spouse's/Partner's income from retirement pay or\npensions, in 2018, in whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from retirement pay or\npensions in 2018; no Spouse/Partner in FU (ER73422=5)\n\nER77393: Spouse's/Partner's Income from Annuities in 2018\nThe values for this variable represent Spouse's/Partner's income from annuities, in 2018,\nin whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from annuities in 2018; no\nSpouse/Partner in FU (ER73422=5)\n\nER77395: Spouse's/Partner's income from I.R.A.s in 2018.\nThe values for this variable represent Spouse's/Partner's income from IRAs, in 2018, in\nwhole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from IRAs in 2018; no\nSpouse/Partner in FU (ER73422=5)\n\nER77397: Spouse's/Partner's Income from Other Retirement in 2018\nThe values for this variable represent Spouse's/Partner's income from other retirement, in\n2018, in whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from other retirement in\n2018; no Spouse/Partner in FU (ER73422=5)",
       "documented_domain": "Separate component domains apply; no scalar source variable is declared.",
       "usage": "Documentary crosswalk only; not an executable derived input",
-      "question": "The earlier U1 wife retirement/annuities item has no single 2019 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 76).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 76,
         "disposition": "A",
         "amendment": 3
-      }
+      },
+      "status": "RESOLVED",
+      "use_restriction": "Non-executable metadata (u2-draft-4 amendment 3): no U2 input or row reads this crosswalk, and no scalar historical equivalence is inferred from it.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time. No row changes. The adjudication's question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "3"
+      },
+      "superseded_question": "The earlier U1 wife retirement/annuities item has no single 2019 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 76)."
     },
     {
       "id": "income.2021.interview",
@@ -22937,7 +22969,6 @@
         "ER81722",
         "ER81724"
       ],
-      "status": "TO VERIFY",
       "label": "Earlier U1 route represented by later split variables",
       "citations": [
         {
@@ -23004,13 +23035,22 @@
       "codebook_text": "ER81718: Spouse's/Partner's Income from Retirement Pay or Pensions in 2020\nThe values for this variable represent Spouse's/Partner's income from retirement pay or\npensions, in 2020, in whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from retirement pay or\npensions in 2020; no Spouse/Partner in FU (ER79524=5)\n\nER81720: Spouse's/Partner's Income from Annuities in 2020\nThe values for this variable represent Spouse's/Partner's income from annuities, in 2020,\nin whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from annuities in 2020; no\nSpouse/Partner in FU (ER79524=5)\n\nER81722: Spouse's/Partner's income from I.R.A.s in 2020.\nThe values for this variable represent Spouse's/Partner's income from IRAs, in 2020, in\nwhole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from IRAs in 2020; no\nSpouse/Partner in FU (ER79524=5)\n\nER81724: Spouse's/Partner's Income from Other Retirement in 2020\nThe values for this variable represent Spouse's/Partner's income from other retirement, in\n2020, in whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from other retirement in\n2020; no Spouse/Partner in FU (ER79524=5)",
       "documented_domain": "Separate component domains apply; no scalar source variable is declared.",
       "usage": "Documentary crosswalk only; not an executable derived input",
-      "question": "The earlier U1 wife retirement/annuities item has no single 2021 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 79).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 79,
         "disposition": "A",
         "amendment": 3
-      }
+      },
+      "status": "RESOLVED",
+      "use_restriction": "Non-executable metadata (u2-draft-4 amendment 3): no U2 input or row reads this crosswalk, and no scalar historical equivalence is inferred from it.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time. No row changes. The adjudication's question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "3"
+      },
+      "superseded_question": "The earlier U1 wife retirement/annuities item has no single 2021 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 79)."
     },
     {
       "id": "income.2023.interview",
@@ -27750,7 +27790,6 @@
         "ER85576",
         "ER85578"
       ],
-      "status": "TO VERIFY",
       "label": "Earlier U1 route represented by later split variables",
       "citations": [
         {
@@ -27817,13 +27856,22 @@
       "codebook_text": "ER85572: Spouse's/Partner's Income from Retirement Pay or Pensions in 2022\nThe values for this variable represent Spouse's/Partner's income from retirement pay or\npensions, in 2022, in whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from retirement pay or\npensions in 2022; no Spouse/Partner in FU (ER83493=5)\n\nER85574: Spouse's/Partner's Income from Annuities in 2022\nThe values for this variable represent Spouse's/Partner's income from annuities, in 2022,\nin whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from annuities in 2022; no\nSpouse/Partner in FU (ER83493=5)\n\nER85576: Spouse's/Partner's income from I.R.A.s in 2022.\nThe values for this variable represent Spouse's/Partner's income from IRAs, in 2022, in\nwhole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from IRAs in 2022; no\nSpouse/Partner in FU (ER83493=5)\n\nER85578: Spouse's/Partner's Income from Other Retirement in 2022\nThe values for this variable represent Spouse's/Partner's income from other retirement, in\n2022, in whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from other retirement in\n2022; no Spouse/Partner in FU (ER83493=5)",
       "documented_domain": "Separate component domains apply; no scalar source variable is declared.",
       "usage": "Documentary crosswalk only; not an executable derived input",
-      "question": "The earlier U1 wife retirement/annuities item has no single 2023 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 82).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 82,
         "disposition": "A",
         "amendment": 3
-      }
+      },
+      "status": "RESOLVED",
+      "use_restriction": "Non-executable metadata (u2-draft-4 amendment 3): no U2 input or row reads this crosswalk, and no scalar historical equivalence is inferred from it.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time. No row changes. The adjudication's question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "3"
+      },
+      "superseded_question": "The earlier U1 wife retirement/annuities item has no single 2023 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 82)."
     }
   ],
   "sources": [
@@ -27981,9 +28029,10 @@
       "date": "2026-09-30",
       "specification_section": "16b",
       "amendments": [
-        "2"
+        "2",
+        "3"
       ],
-      "note": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendments 2-5 as written and amendment 6's option 1, an explicit amendment to draft-3 line 134. Applied here, each in its own reviewed commit: amendment 2 resolves the ten 2015-2023 family-file spouse age and sex records as slot metadata only, with a no-slot-inference rule. Each ruled entry keeps its adjudication record and gains a ruling; an open question or refusal the ruling answers is kept as superseded_question or superseded_refusal."
+      "note": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendments 2-5 as written and amendment 6's option 1, an explicit amendment to draft-3 line 134. Applied here, each in its own reviewed commit: amendment 2 resolves the ten 2015-2023 family-file spouse age and sex records as slot metadata only, with a no-slot-inference rule; amendment 3 resolves the six wife_retirement_annuities crosswalk records as non-executable metadata. Each ruled entry keeps its adjudication record and gains a ruling; an open question or refusal the ruling answers is kept as superseded_question or superseded_refusal."
     }
   ]
 }

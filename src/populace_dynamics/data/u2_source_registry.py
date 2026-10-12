@@ -102,6 +102,22 @@ RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
         "fields": {"status": "RESOLVED", "usage": "slot_metadata_only"},
         "absent": ("action", "blocking_dependencies", "question"),
     },
+    "3": {
+        "registry": "income",
+        "entries": tuple(
+            f"income.{wave}.wife_retirement_annuities"
+            for wave in (2013, *_LATER_WAVES)
+        ),
+        "ruling": {**_D637, "amendment": "3"},
+        "fields": {
+            "status": "RESOLVED",
+            "kind": "historical_route_crosswalk",
+            "usage": (
+                "Documentary crosswalk only; not an executable derived input"
+            ),
+        },
+        "absent": ("action", "question"),
+    },
 }
 #: The d637 amendment each ruled entry belongs to, by (registry, id).
 _AMENDMENT_OF_ENTRY = {
