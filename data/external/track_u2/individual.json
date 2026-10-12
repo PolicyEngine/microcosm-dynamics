@@ -1681,10 +1681,7 @@
           "page": 1224
         }
       ],
-      "selection": "positive recorded cross-sectional weight; do not infer a domain from empirical ranges printed in codebook",
-      "blocking_dependencies": [
-        "weights:2017.cross_section_weight"
-      ]
+      "selection": "positive recorded cross-sectional weight; do not infer a domain from empirical ranges printed in codebook"
     },
     {
       "id": "2019.interview",

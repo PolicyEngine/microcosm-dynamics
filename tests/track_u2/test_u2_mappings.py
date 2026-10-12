@@ -321,6 +321,13 @@ D637_RULED_FIELDS = {
         "ruling",
         "superseded_refusal",
     },
+    "6": {
+        "status",
+        "resolution",
+        "registration_disclosure",
+        "ruling",
+        "superseded_question",
+    },
 }
 #: The dependencies each amendment released.
 D637_RELEASED: dict[str, frozenset[str]] = {
@@ -329,21 +336,24 @@ D637_RELEASED: dict[str, frozenset[str]] = {
         f"pension:{wave}.route.inherited_route_amendment"
         for wave in (2017, 2019, 2021, 2023)
     ),
+    "6": frozenset({"weights:2017.cross_section_weight"}),
 }
 #: How many entries, by registry, lost a released dependency (each then
 #: has none left).
-D637_RELEASED_COUNTS = {"pension": 34 + 40}
+D637_RELEASED_COUNTS = {"pension": 34 + 40, "individual": 1}
 #: The top-level fields each registry's d637 commits changed.
 D637_TOP = {
     "income": {"rulings_applied"},
     "wealth": {"rulings_applied"},
     "pension": {"rulings_applied"},
+    "weights": {"rulings_applied"},
 }
 #: The amendments each registry's ``rulings_applied`` d637 record lists.
 D637_RECORDED = {
     "income": ["2", "3"],
     "wealth": ["4"],
     "pension": ["5b", "5a"],
+    "weights": ["6"],
 }
 
 
@@ -414,9 +424,10 @@ def test_d637_moved_only_the_ruled_gate_fields():
 
 
 def test_the_gate_projection_sees_a_moved_gate_field():
-    """A changed status is not prose: the projection hash moves."""
-    raw = (registry.REGISTRY_DIRECTORY / "weights.json").read_bytes()
-    document = json.loads(raw)
+    """A changed status is not prose: the projection hash moves.  Read at
+    the d1090 commit, whose weights registry still held the 2017 weight
+    TO VERIFY (the d637 amendment-6 commit resolved it)."""
+    document = json.loads(_at(D1090_COMMIT, "weights"))
     target = next(
         entry
         for entry in document["entries"]

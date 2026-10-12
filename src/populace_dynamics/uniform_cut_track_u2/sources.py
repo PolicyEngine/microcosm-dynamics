@@ -238,7 +238,9 @@ DECLARED = INVENTED_DECLARED
 #: non-executable metadata), amendment 4 the wealth bytes (the nine
 #: corrected accuracy flags record the ruling) and amendments 5b and 5a
 #: the pension bytes (the 2015 P62ACKPT checkpoint, the 2017-2023
-#: inherited-route amendments and the P64/P65 entries they released).
+#: inherited-route amendments and the P64/P65 entries they released), and
+#: amendment 6 the weights and individual bytes (the 2017 weight ER34651
+#: under option 1, and the individual weight it released).
 REGISTRY_SHA256: dict[str, str] = {
     "income": (
         "ac8310a166a66fa71a39d19cb79dec0dda5c41ff5a7033e535d70ebffe87204c"
@@ -247,7 +249,7 @@ REGISTRY_SHA256: dict[str, str] = {
         "e2d24c2665db23c24f9313dd44876c35a22b7e67b4d0acfad1c65b48c64e6602"
     ),
     "individual": (
-        "4eab8e0abc69668c287310931baa049b8546d3f3e265a106f1b945b948c7649e"
+        "1cb368486d689e20e116b775ee2198504b0492fb3c7efa4d6fe7e985a2b1307c"
     ),
     "pension": (
         "1801b1414503e441de65196a834dae4286a6fecc958e7f5e4a3ad2f8c5489a8b"
@@ -259,7 +261,7 @@ REGISTRY_SHA256: dict[str, str] = {
         "5102825d8555e1e8648dfafbd4e6c72eef78d09e453a6d25279ec3b9298d5109"
     ),
     "weights": (
-        "356fcbd8dd19f4baf3e34406d75b4a6ae608dc25330d975ecdb9c2d9bb5cf84f"
+        "519901c7647a0e9300ed9e3d4e9f83d47a3224e63888e1919960ca56ff3f239e"
     ),
     "design": (
         "56181372d412811af6d06f5c0d8d1e071049f7fb73c34bd394aaff8f5e0c2fd6"

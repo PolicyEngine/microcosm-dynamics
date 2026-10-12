@@ -797,6 +797,36 @@ D637_SCOPE_MUTATIONS = {
             blocking_dependencies=["weights:2017.cross_section_weight"]
         ),
     ),
+    "a6_option_changed": (
+        "weights",
+        lambda d: _entry(d, "2017.cross_section_weight")["ruling"].update(
+            option="3"
+        ),
+    ),
+    "a6_line_dropped": (
+        "weights",
+        lambda d: _entry(d, "2017.cross_section_weight")["ruling"].update(
+            amends_draft_3_lines=[]
+        ),
+    ),
+    "a6_longitudinal_weight": (
+        "weights",
+        lambda d: _entry(d, "2017.cross_section_weight").update(
+            variable="ER34650"
+        ),
+    ),
+    "a6_on_2019_weight": (
+        "weights",
+        lambda d: _copy_ruling(
+            d, "2017.cross_section_weight", "2019.cross_section_weight"
+        ),
+    ),
+    "a6_reopened": (
+        "weights",
+        lambda d: _entry(d, "2017.cross_section_weight").update(
+            status="TO VERIFY", question="reopened"
+        ),
+    ),
     "a2_blocked_again": (
         "income",
         lambda d: _entry(d, "income.2019.wife_sex").update(

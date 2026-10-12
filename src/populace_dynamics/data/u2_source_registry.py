@@ -175,6 +175,18 @@ RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
         "fields": {"status": "RESOLVED"},
         "absent": ("action", "refusal", "question", "blocking_dependencies"),
     },
+    "6": {
+        "registry": "weights",
+        "entries": ("2017.cross_section_weight",),
+        "ruling": {
+            **_D637,
+            "amendment": "6",
+            "option": "1",
+            "amends_draft_3_lines": [134],
+        },
+        "fields": {"status": "RESOLVED", "variable": "ER34651"},
+        "absent": ("action", "refusal", "question", "blocking_dependencies"),
+    },
 }
 #: The d637 amendment each ruled entry belongs to, by (registry, id).
 _AMENDMENT_OF_ENTRY = {

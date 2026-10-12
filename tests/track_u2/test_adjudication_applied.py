@@ -67,17 +67,25 @@ EXPECTED_COUNTS = {
     "pension": (648, 0, 0),
     "roles": (30, 0, 6),
     "support": (16, 0, 0),
-    "weights": (6, 0, 1),
+    "weights": (7, 0, 0),
     "design": (2, 0, 0),
 }
 SSI_AND_CENSUS_RESOLVED = 26
 #: TO VERIFY records left: the adjudication's 24 A items less those the
 #: d637 commits resolved (amendment 2: 10; amendment 3: 6; 5b: 1; 5a's
-#: four entries were D items, RESOLVED already).
-OPEN_ITEMS = 7
+#: four entries were D items, RESOLVED already; amendment 6: 1).  The six
+#: left are code 88's (amendment 1c), pending Max's confirmation (d745).
+OPEN_ITEMS = 6
 #: Each d637 amendment a registry commit has applied (section 16b), with
 #: the adjudication disposition its entries carry.
-D637_APPLIED = {"2": "A", "3": "A", "4": "D", "5b": "A", "5a": "D"}
+D637_APPLIED = {
+    "2": "A",
+    "3": "A",
+    "4": "D",
+    "5b": "A",
+    "5a": "D",
+    "6": "A",
+}
 
 D_ITEMS = {
     "wealth": {
@@ -563,6 +571,43 @@ def test_d637_amendment_2_spouse_metadata_never_decides_the_slot(documents):
     for route in ("wife_age", "wife_sex"):
         entry = entries.get(f"income.2013.{route}")
         assert entry is None or "usage" not in entry
+
+
+def test_d637_amendment_6_uses_er34651_as_released(documents):
+    """Amendment 6, option 1 (ratified by d637 as an explicit amendment to
+    draft-3 line 134): ER34651 as released, selected by positive weight,
+    with the disclosure option 1 specifies; the 2017 individual weight is
+    released with it."""
+    record = json.loads(
+        (registry.REGISTRY_DIRECTORY / "u1_identity.json").read_text()
+    )["u2_specification"]
+    line_134 = draft_3_bytes(record).decode("utf-8").split("\n")[133]
+    entry = next(
+        e
+        for e in documents["weights"]["entries"]
+        if e["id"] == "2017.cross_section_weight"
+    )
+    assert entry["ruling"]["amends_draft_3_lines"] == [134]
+    assert entry["ruling"]["option"] == "1"
+    assert f"'{line_134}'" in entry["resolution"]
+    assert "no immigrant exclusion" in entry["resolution"]
+    assert entry["selection"].startswith("positive recorded cross-sectional")
+    assert "No cohort reweighting or immigrant exclusion" in entry["purpose"]
+    disclosure = entry["registration_disclosure"]
+    assert set(disclosure) == {"documented", "not_published", "coverage_bound"}
+    assert len(disclosure["documented"]) == 5
+    assert len(disclosure["not_published"]) == 3
+    for phrase in ("starting weights", "joint families", "raking"):
+        assert any(phrase in item for item in disclosure["not_published"])
+    for phrase in ("ER34651", "ACS one-year PUMS", "donut-hole"):
+        assert any(phrase in item for item in disclosure["documented"])
+    weight = next(
+        e
+        for e in documents["individual"]["entries"]
+        if e["id"] == "2017.weight"
+    )
+    assert weight["variable"] == "ER34651"
+    assert "blocking_dependencies" not in weight
 
 
 def test_corrected_specification_citations(documents):
@@ -1106,9 +1151,10 @@ D1090_CLAUSES = {
         "slot metadata and amendment 3's six spouse-retirement crosswalks "
         "as non-executable metadata, recorded amendment 4's ruling on the "
         "nine corrected wealth accuracy flags, resolved the 2015 P62ACKPT "
-        "checkpoint under 5b and released the 2017\N{EN DASH}2023 P64/P65 "
-        "records under 5a. Until the rest of them (and, for code 88, d745) "
-        "land, the 7 TO VERIFY records stay open.",
+        "checkpoint under 5b, released the 2017\N{EN DASH}2023 P64/P65 "
+        "records under 5a and resolved the 2017 weight ER34651 under "
+        "amendment 6's option 1. The 6 TO VERIFY records left are code "
+        "88's, open until Max confirms the 1a\N{EN DASH}1c reading (d745).",
         "8. Complete the pre-registration structural, reconciliation and "
         "F17 component pass, including only the counts that the ratified B1 "
         "and B2 options name (under the 2026-10-10 ruling, the counts "
@@ -1393,8 +1439,9 @@ def test_part_b_verdicts_agree():
     assert finding.startswith("PARTIAL")
     master = MASTER.read_text(encoding="utf-8")
     assert (
-        "| Revised 2017 individual-weight construction | TO VERIFY "
-        "(adjudication A); Part B PARTIAL |" in master
+        "| Revised 2017 individual-weight construction | RESOLVED by Max's "
+        "ruling d637 (amendment 6, option 1; adjudication A); Part B "
+        "PARTIAL |" in master
     )
     assert "NOT DOCUMENTED ONLINE" not in master
     for blocker in (

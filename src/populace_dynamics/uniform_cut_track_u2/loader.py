@@ -12,15 +12,16 @@ a later stage when an earlier one refuses:
    the support plan and the role of every amended relationship code --
    must be RESOLVED with no blocking dependency, under the committed,
    pinned registries.  It refuses at the committed registries: code 88
-   (every wave) and the revised 2017 cross-section weight are TO
-   VERIFY.  The d1090
+   is TO VERIFY in every wave (amendment 1c, pending Max's confirmation,
+   d745).  The d1090
    registry commit (section 16c) replaced the refused 2015 code-20 and
    2019-2023 code-90/92 routes with the ratified family-unit exclusions,
    which released the income and pension entries that depended on them;
    the d637 registry commits (section 16b) resolve the ratified
    amendments one by one: amendment 2's spouse age/sex slot metadata,
    amendment 3's crosswalks, amendment 4's wealth flags, 5b's 2015 P62A
-   checkpoint and 5a's 2017-2023 P64/P65 route so far.
+   checkpoint, 5a's 2017-2023 P64/P65 route and amendment 6's 2017
+   weight.
 2. **Source identity**: each staged setup file and codebook the
    registries cite is rehashed against the registry's recorded SHA-256,
    and every registry layout -- the family files' and the individual
