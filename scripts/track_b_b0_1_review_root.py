@@ -251,8 +251,14 @@ def _result_paths(name: str | None, text: str) -> list[str]:
 #: A pattern whose brace groups expand to more alternatives than this is
 #: not classified, and voids the review.
 BRACE_LIMIT = 4096
+#: A pattern longer than this, or whose readings' squared lengths sum past
+#: ``WORK_LIMIT``, is not classified, and voids the review: no Glob
+#: pattern a review needs is that long, and the scans are quadratic.
+PATTERN_LIMIT = 1024
+WORK_LIMIT = 1 << 24
 
 
+@functools.lru_cache(maxsize=1 << 16)
 def class_end(text: str, start: int, escapes: bool = False) -> int:
     """Where the bracket class opening at ``text[start]`` closes.
 
@@ -431,9 +437,10 @@ def brace_expansions(
 _EXTGLOB = "@+?*!"
 
 
+@functools.lru_cache(maxsize=1 << 16)
 def _extglob_group(
     text: str, index: int, escapes: bool = False
-) -> tuple[int, list[int]] | None:
+) -> tuple[int, tuple[int, ...]] | None:
     """If an extglob group opens at ``text[index]``, its closing index and
     the ``|`` at its own depth. Parentheses inside a bracket class or after
     a backslash are not syntax, and a group that never closes is literal
@@ -450,7 +457,7 @@ def _extglob_group(
         elif char == ")":
             depth -= 1
             if depth == 0:
-                return scan, bars
+                return scan, tuple(bars)
         elif char == "|" and depth == 1:
             bars.append(scan)
         scan = _next_token(text, scan, True, escapes)
@@ -820,7 +827,8 @@ def glob_segments(tokens: Sequence[Token]) -> list[tuple[Token, ...]]:
 
     A ``/``, and a brace or comma left as literal text, always cut. A
     class that may stand for ``/`` both cuts and does not, so every
-    segment between such classes is returned too.
+    segment between such classes is returned too. Raises
+    ``OverflowError`` past ``BRACE_LIMIT`` segments.
     """
 
     def may_be_slash(token: Token) -> bool:
@@ -840,6 +848,8 @@ def glob_segments(tokens: Sequence[Token]) -> list[tuple[Token, ...]]:
         maybe = [i for i, token in enumerate(run) if may_be_slash(token)]
         starts = [0, *(i + 1 for i in maybe)]
         ends = [*maybe, len(run)]
+        if len(out) + len(starts) * len(ends) > BRACE_LIMIT:
+            raise OverflowError("too many segments")
         out.extend(tuple(run[a:b]) for a in starts for b in ends if a <= b)
     return out
 
@@ -949,10 +959,11 @@ def pattern_kind(pattern: str, denied: Sequence[str]) -> str:
     whole denied stem (``stem!(.md)``) is classed as naming it. A
     wildcard, a negated class or a class of two or more characters that
     stands at a position of the stem (``*name_part*``, ``[xy]tem.md``)
-    is not classified. A pattern with more than ``BRACE_LIMIT``
-    readings, nested too deep to read, whose automaton passes
-    ``CLOSURE_LIMIT`` or with a sequence number too long to read is
-    ``unclassified``.
+    is not classified. A pattern is ``unclassified`` if it is longer than
+    ``PATTERN_LIMIT``, has more than ``BRACE_LIMIT`` readings or segments
+    in one reading, has readings past ``WORK_LIMIT``, is nested too deep
+    to read, has an automaton past ``CLOSURE_LIMIT`` or has a sequence
+    number too long to read.
     """
     names = {Path(d).name for d in denied} | {Path(CODEBOOK_DIR).name}
     stems = {Path(d).stem for d in denied if Path(d).suffix}
@@ -963,6 +974,8 @@ def pattern_kind(pattern: str, denied: Sequence[str]) -> str:
         {stem.casefold() for stem in stems},
     )
     kinds = set()
+    if len(pattern) > PATTERN_LIMIT:
+        return "unclassified"
     try:
         alternatives = {
             *brace_expansions(pattern),
@@ -976,7 +989,10 @@ def pattern_kind(pattern: str, denied: Sequence[str]) -> str:
             readings.update(extglob_expansions(alternative))
             if len(readings) > BRACE_LIMIT:
                 raise OverflowError("too many readings")
-        for text in {pattern, *alternatives, *readings}:
+        texts = {pattern, *alternatives, *readings}
+        if sum(len(text) ** 2 for text in texts) > WORK_LIMIT:
+            raise OverflowError("too much text to read")
+        for text in texts:
             kinds |= _written_kinds(text, denied, names, stems)
             for escapes in (False, True):
                 kinds |= _engine_kinds(

@@ -939,10 +939,26 @@ def test_read_log_v7_cases(tmp_path, tool, value, counts):
         # empty extglobs whose automaton passes CLOSURE_LIMIT
         "{" + "1" * 4500 + "..1}",
         "+()" * 900 + "deep_denied.md",
+        # longer than PATTERN_LIMIT, and too many segments to read
+        "x" * (review_root.PATTERN_LIMIT + 1),
+        "[a/]" * 70 + "deep_denied.md",
     ],
 )
 def test_patterns_too_large_to_read_are_unclassified(pattern):
     assert review_root.pattern_kind(pattern, DENIED) == "unclassified"
+
+
+def test_unbalanced_openers_up_to_the_limit_are_still_read():
+    """Unclosed braces, extglobs and classes at the length limit are read
+    to the end (each class end is found once), and a denied name after
+    them is still seen."""
+    filler = "{@(["
+    pattern = filler * ((review_root.PATTERN_LIMIT - 20) // len(filler))
+    assert review_root.pattern_kind(pattern, DENIED) == "inside_root"
+    assert (
+        review_root.pattern_kind(pattern + "/deep_denied.md", DENIED)
+        == "denied"
+    )
 
 
 def test_readlog_cli_denies_every_file_the_root_record_removed(tmp_path):
