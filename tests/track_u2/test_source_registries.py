@@ -693,6 +693,34 @@ D637_SCOPE_MUTATIONS = {
             "ruling"
         ].update(amendment="2"),
     ),
+    "a4_ruling_on_wealth1_acc": (
+        "wealth",
+        lambda d: _copy_ruling(
+            d, "wealth.2013.wealth2_acc", "wealth.2013.wealth1_acc"
+        ),
+    ),
+    "a4_restriction_reverted": (
+        "wealth",
+        lambda d: _entry(d, "wealth.2015.checking_saving_acc").update(
+            use_restriction=_entry(d, "wealth.2015.checking_saving_acc")[
+                "use_restriction"
+            ].replace(
+                "ratified by Max on 2026-09-30: d637, specification section "
+                "16b",
+                "pending Max's ruling",
+            )
+        ),
+    ),
+    "a4_restriction_widened": (
+        "wealth",
+        lambda d: _entry(d, "wealth.2023.wealth2_acc").update(
+            use_restriction="Imputation and sample selection"
+        ),
+    ),
+    "a4_ruling_dropped": (
+        "wealth",
+        lambda d: _entry(d, "wealth.2019.wealth2_acc").pop("ruling"),
+    ),
     "a2_blocked_again": (
         "income",
         lambda d: _entry(d, "income.2019.wife_sex").update(

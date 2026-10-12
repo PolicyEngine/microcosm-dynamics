@@ -743,12 +743,18 @@
         "codebook_states_accuracy_of": "ER58209",
         "resolved_accuracy_for_variable": "ER58211"
       },
-      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, pending Max's ruling).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 88,
         "disposition": "D",
         "amendment": 4
+      },
+      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, ratified by Max on 2026-09-30: d637, specification section 16b).",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "4"
       }
     },
     {
@@ -864,12 +870,18 @@
         "codebook_states_accuracy_of": "ER581614",
         "resolved_accuracy_for_variable": "ER58161"
       },
-      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, pending Max's ruling).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 89,
         "disposition": "D",
         "amendment": 4
+      },
+      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, ratified by Max on 2026-09-30: d637, specification section 16b).",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "4"
       }
     },
     {
@@ -2158,12 +2170,18 @@
         "codebook_states_accuracy_of": "ER65406",
         "resolved_accuracy_for_variable": "ER65408"
       },
-      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, pending Max's ruling).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 90,
         "disposition": "D",
         "amendment": 4
+      },
+      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, ratified by Max on 2026-09-30: d637, specification section 16b).",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "4"
       }
     },
     {
@@ -2279,12 +2297,18 @@
         "codebook_states_accuracy_of": "ER653584",
         "resolved_accuracy_for_variable": "ER65358"
       },
-      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, pending Max's ruling).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 91,
         "disposition": "D",
         "amendment": 4
+      },
+      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, ratified by Max on 2026-09-30: d637, specification section 16b).",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "4"
       }
     },
     {
@@ -3577,12 +3601,18 @@
         "codebook_states_accuracy_of": "ER71483",
         "resolved_accuracy_for_variable": "ER71485"
       },
-      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, pending Max's ruling).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 92,
         "disposition": "D",
         "amendment": 4
+      },
+      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, ratified by Max on 2026-09-30: d637, specification section 16b).",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "4"
       }
     },
     {
@@ -3702,12 +3732,18 @@
         "codebook_states_accuracy_of": "ER714354",
         "resolved_accuracy_for_variable": "ER71435"
       },
-      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, pending Max's ruling).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 93,
         "disposition": "D",
         "amendment": 4
+      },
+      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, ratified by Max on 2026-09-30: d637, specification section 16b).",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "4"
       }
     },
     {
@@ -5032,12 +5068,18 @@
         "codebook_states_accuracy_of": "ER77509",
         "resolved_accuracy_for_variable": "ER77511"
       },
-      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, pending Max's ruling).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 94,
         "disposition": "D",
         "amendment": 4
+      },
+      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, ratified by Max on 2026-09-30: d637, specification section 16b).",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "4"
       }
     },
     {
@@ -6516,12 +6558,18 @@
         "codebook_states_accuracy_of": "ER81836",
         "resolved_accuracy_for_variable": "ER81838"
       },
-      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, pending Max's ruling).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 95,
         "disposition": "D",
         "amendment": 4
+      },
+      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, ratified by Max on 2026-09-30: d637, specification section 16b).",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "4"
       }
     },
     {
@@ -8080,12 +8128,18 @@
         "codebook_states_accuracy_of": "ER85690",
         "resolved_accuracy_for_variable": "ER85692"
       },
-      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, pending Max's ruling).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 96,
         "disposition": "D",
         "amendment": 4
+      },
+      "use_restriction": "Imputation diagnostics only; the correction never changes amounts or sample inclusion (u2-draft-4 amendment 4, ratified by Max on 2026-09-30: d637, specification section 16b).",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "4"
       }
     },
     {
@@ -9010,5 +9064,16 @@
     "bytes": 26564,
     "applied_by": "u2-m1b",
     "note": "Independent adjudication of milestone 1 (VERDICT: ERRORS FOUND). Amendment 7 citation corrections, D resolutions and F refusals are applied here; A items stay TO VERIFY pending u2-draft-4 amendments 1-6 and Max's ruling."
-  }
+  },
+  "rulings_applied": [
+    {
+      "decision": "d637",
+      "date": "2026-09-30",
+      "specification_section": "16b",
+      "amendments": [
+        "4"
+      ],
+      "note": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendments 2-5 as written and amendment 6's option 1, an explicit amendment to draft-3 line 134. Applied here, each in its own reviewed commit: amendment 4 records the ruling on the nine corrected wealth accuracy-flag targets, whose use is limited to imputation diagnostics. Each ruled entry keeps its adjudication record and gains a ruling; an open question or refusal the ruling answers is kept as superseded_question or superseded_refusal."
+    }
+  ]
 }

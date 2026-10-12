@@ -295,13 +295,19 @@ D637_RULED_FIELDS = {
         "ruling",
         "superseded_question",
     },
+    # Amendment 4's nine D items already held their resolution: the
+    # ruling and the ratified restriction wording move.
+    "4": {"use_restriction", "ruling"},
 }
 #: The dependencies each amendment released.
 D637_RELEASED: dict[str, frozenset[str]] = {}
 #: The top-level fields each registry's d637 commits changed.
-D637_TOP = {"income": {"rulings_applied"}}
+D637_TOP = {
+    "income": {"rulings_applied"},
+    "wealth": {"rulings_applied"},
+}
 #: The amendments each registry's ``rulings_applied`` d637 record lists.
-D637_RECORDED = {"income": ["2", "3"]}
+D637_RECORDED = {"income": ["2", "3"], "wealth": ["4"]}
 
 
 def test_d637_moved_only_the_ruled_gate_fields():

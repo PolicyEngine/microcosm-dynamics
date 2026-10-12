@@ -76,7 +76,7 @@ SSI_AND_CENSUS_RESOLVED = 26
 OPEN_ITEMS = 8
 #: Each d637 amendment a registry commit has applied (section 16b), with
 #: the adjudication disposition its entries carry.
-D637_APPLIED = {"2": "A", "3": "A"}
+D637_APPLIED = {"2": "A", "3": "A", "4": "D"}
 
 D_ITEMS = {
     "wealth": {
@@ -1097,9 +1097,10 @@ D1090_CLAUSES = {
         "dependents. The d637 commits, one per ratified amendment, have so "
         "far resolved amendment 2's ten later spouse age and sex records as "
         "slot metadata and amendment 3's six spouse-retirement crosswalks "
-        "as non-executable metadata. Until the rest of them (and, for code "
-        "88, d745) land, the 8 TO VERIFY records stay open and the "
-        "2017\N{EN DASH}2023 P64/P65 records stay blocked.",
+        "as non-executable metadata, and recorded amendment 4's ruling on "
+        "the nine corrected wealth accuracy flags. Until the rest of them "
+        "(and, for code 88, d745) land, the 8 TO VERIFY records stay open "
+        "and the 2017\N{EN DASH}2023 P64/P65 records stay blocked.",
         "8. Complete the pre-registration structural, reconciliation and "
         "F17 component pass, including only the counts that the ratified B1 "
         "and B2 options name (under the 2026-10-10 ruling, the counts "

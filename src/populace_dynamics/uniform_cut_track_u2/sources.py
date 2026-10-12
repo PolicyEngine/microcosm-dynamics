@@ -229,13 +229,14 @@ DECLARED = INVENTED_DECLARED
 #: those commits moved against the registries d1090 left): amendments 2
 #: and 3 moved the income bytes (the later spouse age and sex records
 #: became slot metadata; the spouse-retirement crosswalks became
-#: non-executable metadata).
+#: non-executable metadata) and amendment 4 the wealth bytes (the nine
+#: corrected accuracy flags record the ruling).
 REGISTRY_SHA256: dict[str, str] = {
     "income": (
         "ac8310a166a66fa71a39d19cb79dec0dda5c41ff5a7033e535d70ebffe87204c"
     ),
     "wealth": (
-        "3a22247849ea2eccbef6e522c0d74c901beb90195f92fd2e7b23b123fab6b816"
+        "e2d24c2665db23c24f9313dd44876c35a22b7e67b4d0acfad1c65b48c64e6602"
     ),
     "individual": (
         "4eab8e0abc69668c287310931baa049b8546d3f3e265a106f1b945b948c7649e"

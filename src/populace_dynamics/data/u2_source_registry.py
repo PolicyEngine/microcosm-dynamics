@@ -118,6 +118,26 @@ RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
         },
         "absent": ("action", "question"),
     },
+    "4": {
+        "registry": "wealth",
+        "entries": tuple(
+            f"wealth.{wave}.{route}"
+            for wave in (2013, *_LATER_WAVES)
+            for route in ("wealth2_acc", "checking_saving_acc")
+            if route == "wealth2_acc" or wave < 2019
+        ),
+        "ruling": {**_D637, "amendment": "4"},
+        "fields": {
+            "status": "RESOLVED",
+            "use_restriction": (
+                "Imputation diagnostics only; the correction never changes "
+                "amounts or sample inclusion (u2-draft-4 amendment 4, "
+                "ratified by Max on 2026-09-30: d637, specification section "
+                "16b)."
+            ),
+        },
+        "absent": ("action", "blocking_dependencies", "question"),
+    },
 }
 #: The d637 amendment each ruled entry belongs to, by (registry, id).
 _AMENDMENT_OF_ENTRY = {
