@@ -842,7 +842,10 @@ def test_committed_read_logs_follow_the_rule_as_it_stands(round_number):
         / f"track_b_b0_1_addendum_q6_readlog_r{round_number}.json"
     )
     log = json.loads(path.read_text(encoding="utf-8"))
-    assert log["schema"] == "track_b_b0_1_review_read_log.v6"
+    assert log["schema"] == "track_b_b0_1_review_read_log.v7"
+    # v7 checks every file the root record removed: 27 files and four
+    # code-map tables.
+    assert log["n_denied"] == 31
     assert log["review_counts"] is (round_number != 5)
 
 

@@ -41,6 +41,7 @@ import hashlib
 import json
 import re
 import shutil
+import string
 import subprocess
 import sys
 import tarfile
@@ -251,20 +252,82 @@ def _result_paths(name: str | None, text: str) -> list[str]:
 BRACE_LIMIT = 4096
 
 
-def brace_expansions(pattern: str, limit: int = BRACE_LIMIT) -> list[str]:
+def class_end(text: str, start: int) -> int:
+    """Where the bracket class opening at ``text[start]`` closes.
+
+    Returns the index of its ``]``, or -1 if it never closes, when the
+    ``[`` is literal text. A ``]`` right after ``[``, ``[!`` or ``[^`` is
+    a member, and a POSIX class such as ``[:punct:]`` is one member, as
+    ripgrep, Bun and Node read them.
+    """
+    index = start + 1
+    if index < len(text) and text[index] in "!^":
+        index += 1
+    if index < len(text) and text[index] == "]":
+        index += 1
+    while index < len(text):
+        if text[index] == "]":
+            return index
+        if text.startswith("[:", index):
+            close = text.find(":]", index + 2)
+            if close != -1:
+                index = close + 2
+                continue
+        index += 1
+    return -1
+
+
+def _next_token(text: str, index: int, glob: bool) -> int:
+    """The index after the token at ``text[index]``.
+
+    In a glob engine's reading a backslash escape and a closed bracket
+    class are each one token, so the braces, commas and parentheses
+    inside them are not syntax. Otherwise every character is one token.
+    """
+    if glob and text[index] == "\\":
+        return index + 2
+    if glob and text[index] == "[":
+        close = class_end(text, index)
+        if close != -1:
+            return close + 1
+    return index + 1
+
+
+def _find_open(text: str, index: int, glob: bool) -> int:
+    """The first ``{`` at or after ``index`` that is brace syntax."""
+    if not glob:
+        return text.find("{", index)
+    while index < len(text):
+        if text[index] == "{":
+            return index
+        index = _next_token(text, index, glob)
+    return -1
+
+
+def brace_expansions(
+    pattern: str, limit: int = BRACE_LIMIT, *, glob: bool = False
+) -> list[str]:
     """Every alternative a glob pattern's brace groups stand for.
 
-    ``a{b,c}d`` stands for ``abd`` and ``acd``; groups nest. A group with
-    no comma at its own depth, and an unbalanced brace, are literal text,
-    and the scan goes on after them, so a later group still expands.
-    Raises ``OverflowError`` past ``limit`` alternatives.
+    ``a{b,c}d`` stands for ``abd`` and ``acd``; groups nest. An unbalanced
+    brace is literal text, and the scan goes on after it, so a later
+    group still expands.
+
+    By default braces are read as bash and Node's brace expansion read
+    them: a group with no comma at its own depth is literal text, and so
+    are backslashes and bracket classes. With ``glob`` they are read as
+    ripgrep and Bun read them: a group with no comma stands for its
+    content (``{x}`` for ``x``), and a brace or comma inside a bracket
+    class or after a backslash is not syntax (``{a[.,]b,c}`` has two
+    alternatives). Raises ``OverflowError`` past ``limit`` alternatives.
     """
-    start = pattern.find("{")
+    start = _find_open(pattern, 0, glob)
     while start != -1:
         depth = 0
         commas: list[int] = []
         end = -1
-        for index in range(start, len(pattern)):
+        index = start
+        while index < len(pattern):
             char = pattern[index]
             if char == "{":
                 depth += 1
@@ -275,7 +338,8 @@ def brace_expansions(pattern: str, limit: int = BRACE_LIMIT) -> list[str]:
                     break
             elif char == "," and depth == 1:
                 commas.append(index)
-        if end != -1 and commas:
+            index = _next_token(pattern, index, glob)
+        if end != -1 and (commas or glob):
             cuts = [start, *commas, end]
             out: list[str] = []
             for left, right in pairwise(cuts):
@@ -285,21 +349,322 @@ def brace_expansions(pattern: str, limit: int = BRACE_LIMIT) -> list[str]:
                         + pattern[left + 1 : right]
                         + pattern[end + 1 :],
                         limit,
+                        glob=glob,
                     )
                 )
                 if len(out) > limit:
                     raise OverflowError("too many brace alternatives")
             return out
-        start = pattern.find("{", start + 1)
+        start = _find_open(pattern, start + 1, glob)
     return [pattern]
+
+
+def extglob_expansions(text: str, limit: int = BRACE_LIMIT) -> list[str]:
+    """Every reading of ``text`` with its extglob groups resolved.
+
+    Node's minimatch reads ``@(a|b)`` as ``a`` or ``b``, ``+(...)`` as one
+    or more of them, ``?(...)`` and ``*(...)`` as none or some, and
+    ``!(...)`` as anything else. One occurrence is enough to spell a name,
+    so ``@`` and ``+`` stand for each alternative, ``?`` and ``*`` for
+    each or nothing, and ``!`` for ``*``. Parentheses inside a bracket
+    class or after a backslash are not syntax, and a group that never
+    closes is literal text. Raises ``OverflowError`` past ``limit``.
+    """
+    index = 0
+    while index < len(text):
+        if text[index] in "@+?*!" and text.startswith("(", index + 1):
+            depth = 0
+            bars: list[int] = []
+            end = -1
+            scan = index + 1
+            while scan < len(text):
+                char = text[scan]
+                if char == "(":
+                    depth += 1
+                elif char == ")":
+                    depth -= 1
+                    if depth == 0:
+                        end = scan
+                        break
+                elif char == "|" and depth == 1:
+                    bars.append(scan)
+                scan = _next_token(text, scan, True)
+            if end != -1:
+                alternatives = [
+                    text[left + 1 : right]
+                    for left, right in pairwise([index + 1, *bars, end])
+                ]
+                if text[index] == "!":
+                    alternatives = ["*"]
+                elif text[index] in "?*":
+                    alternatives = ["", *alternatives]
+                out: list[str] = []
+                for alternative in alternatives:
+                    out.extend(
+                        extglob_expansions(
+                            text[:index] + alternative + text[end + 1 :],
+                            limit,
+                        )
+                    )
+                    if len(out) > limit:
+                        raise OverflowError("too many extglob readings")
+                return out
+        index = _next_token(text, index, True)
+    return [text]
+
+
+#: POSIX classes inside a bracket class, as Node's minimatch reads them.
+_POSIX_CLASSES = {
+    "alnum": string.ascii_letters + string.digits,
+    "alpha": string.ascii_letters,
+    "blank": " \t",
+    "cntrl": "".join(map(chr, range(32))) + "\x7f",
+    "digit": string.digits,
+    "graph": "".join(map(chr, range(33, 127))),
+    "lower": string.ascii_lowercase,
+    "print": "".join(map(chr, range(32, 127))),
+    "punct": string.punctuation,
+    "space": " \t\n\r\f\v",
+    "upper": string.ascii_uppercase,
+    "word": string.ascii_letters + string.digits + "_",
+    "xdigit": string.hexdigits,
+}
+
+#: A token of a pattern as a glob engine reads it: ``("lit", c)`` one
+#: character; ``("cut", c)`` a brace or comma left as literal text;
+#: ``("any", "")`` ``?``; ``("star", "")`` ``*``; ``("set", chars)`` and
+#: ``("notset", chars)`` a bracket class and a negated one.
+Token = tuple[str, Any]
+
+
+def _class_token(body: str, fold: bool) -> Token:
+    """The token for a bracket class whose text inside ``[...]`` is
+    ``body``.
+
+    A leading ``!`` or ``^`` negates it. ``a-z`` is a range, ``[:name:]``
+    a POSIX class, and ``\\x`` stands for ``x`` and, read literally, for
+    a backslash too. A class of one character is that character.
+    """
+    negated = body[:1] in ("!", "^")
+    if negated:
+        body = body[1:]
+    items: list[tuple[Any, ...]] = []
+    index = 0
+    while index < len(body):
+        if body.startswith("[:", index):
+            close = body.find(":]", index + 2)
+            if close != -1:
+                name = body[index + 2 : close]
+                members = _POSIX_CLASSES.get(name, body[index : close + 2])
+                items.append(("set", frozenset(members)))
+                index = close + 2
+                continue
+        if body[index] == "\\" and index + 1 < len(body):
+            items.append(("set", frozenset("\\")))
+            items.append(("char", body[index + 1], True))
+            index += 2
+            continue
+        items.append(("char", body[index], False))
+        index += 1
+    chars: set[str] = set()
+    index = 0
+    while index < len(items):
+        item = items[index]
+        if (
+            item[0] == "char"
+            and index + 2 < len(items)
+            and items[index + 1] == ("char", "-", False)
+            and items[index + 2][0] == "char"
+        ):
+            low, high = ord(item[1]), ord(items[index + 2][1])
+            chars.update(map(chr, range(low, high + 1)))
+            index += 3
+            continue
+        chars.update(item[1] if item[0] == "set" else {item[1]})
+        index += 1
+    if fold:
+        chars = {char.casefold() for char in chars}
+    if negated:
+        return ("notset", frozenset(chars))
+    if len(chars) == 1:
+        return ("lit", next(iter(chars)))
+    return ("set", frozenset(chars))
+
+
+def glob_tokens(text: str, fold: bool = False) -> list[Token]:
+    """``text`` as a glob engine reads it, one token per character matched.
+
+    A backslash escapes the next character, and a closed bracket class is
+    one token. A brace or comma left in the text after expansion is
+    literal; it is marked so that segments are cut at it, as the plain
+    reading cuts them. With ``fold`` every character is case-folded.
+    """
+    tokens: list[Token] = []
+    index = 0
+    while index < len(text):
+        char = text[index]
+        if char == "\\" and index + 1 < len(text):
+            escaped = text[index + 1]
+            tokens.append(("lit", escaped.casefold() if fold else escaped))
+            index += 2
+            continue
+        if char == "[":
+            close = class_end(text, index)
+            if close != -1:
+                tokens.append(_class_token(text[index + 1 : close], fold))
+                index = close + 1
+                continue
+        if char == "*":
+            tokens.append(("star", ""))
+        elif char == "?":
+            tokens.append(("any", ""))
+        elif char in "{},":
+            tokens.append(("cut", char))
+        else:
+            tokens.append(("lit", char.casefold() if fold else char))
+        index += 1
+    return tokens
+
+
+def glob_match(name: str, tokens: Sequence[Token]) -> bool:
+    """Whether ``tokens``, read as one path segment, match ``name``."""
+    states = {0}
+    for kind, value in tokens:
+        if kind == "star":
+            states = set(range(min(states), len(name) + 1))
+            continue
+        states = {
+            state + 1
+            for state in states
+            if state < len(name)
+            and (
+                kind == "any"
+                or (kind in ("lit", "cut") and name[state] == value)
+                or (kind == "set" and name[state] in value)
+                or (kind == "notset" and name[state] not in value)
+            )
+        }
+        if not states:
+            return False
+    return len(name) in states
+
+
+def _view(tokens: Sequence[Token]) -> str:
+    """The literal characters of ``tokens``; a wildcard or a class of more
+    than one character shows as a NUL, which no path holds."""
+    return "".join(
+        value if kind in ("lit", "cut") else "\0" for kind, value in tokens
+    )
+
+
+def glob_segments(tokens: Sequence[Token]) -> list[list[Token]]:
+    """Every segment of ``tokens``.
+
+    A ``/``, and a brace or comma left as literal text, always cut. A
+    class that may stand for ``/`` both cuts and does not, so every
+    segment between such classes is returned too.
+    """
+
+    def may_be_slash(token: Token) -> bool:
+        kind, value = token
+        return (kind == "set" and "/" in value) or (
+            kind == "notset" and "/" not in value
+        )
+
+    runs: list[list[Token]] = [[]]
+    for token in tokens:
+        if token[0] == "cut" or token == ("lit", "/"):
+            runs.append([])
+        else:
+            runs[-1].append(token)
+    out: list[list[Token]] = []
+    for run in runs:
+        maybe = [i for i, token in enumerate(run) if may_be_slash(token)]
+        starts = [0, *(i + 1 for i in maybe)]
+        ends = [*maybe, len(run)]
+        out.extend(run[a:b] for a in starts for b in ends if a <= b)
+    return out
+
+
+def _written_kinds(
+    text: str,
+    denied: Sequence[str],
+    names: set[str],
+    stems: set[str],
+) -> set[str]:
+    """The v6 rule: ``text`` cut at every ``/``, brace and comma, and
+    each segment read with ``fnmatchcase``. Round 10's smallest fix adds
+    the whole-stem test on ``text``'s ``/``-segments, uncut at braces or
+    commas, so a class holding one (``stem[.,]md``) is read whole."""
+    kinds = set()
+    segments = re.split(r"[/{},]", text)
+    if text.startswith(("/", "~")) or ".." in segments:
+        kinds.add("outside_root")
+    if any(d in text for d in denied) or CODEBOOK_DIR in text:
+        kinds.add("denied")
+    for segment in segments:
+        if segment in names or any(
+            segment.startswith(f"{stem}.") for stem in stems
+        ):
+            kinds.add("denied")
+    if any(
+        Path(name).stem in segment and fnmatchcase(name, segment)
+        for segment in {*segments, *text.split("/")}
+        for name in names
+    ):
+        kinds.add("denied")
+    return kinds
+
+
+def _engine_kinds(
+    tokens: Sequence[Token],
+    denied: Sequence[str],
+    names: set[str],
+    stems: set[str],
+) -> set[str]:
+    """The same tests on a reading's tokens: a segment's literal view must
+    equal a denied name, start with a stem and a dot, or hold a whole stem
+    and match the name."""
+    kinds = set()
+    segments = glob_segments(tokens)
+    if (tokens and tokens[0] in (("lit", "/"), ("lit", "~"))) or any(
+        _view(segment) == ".." for segment in segments
+    ):
+        kinds.add("outside_root")
+    view = _view(tokens)
+    if any(d in view for d in denied):
+        kinds.add("denied")
+    for segment in segments:
+        literal = _view(segment)
+        if literal in names or any(
+            literal.startswith(f"{stem}.") for stem in stems
+        ):
+            kinds.add("denied")
+        if any(
+            Path(name).stem in literal and glob_match(name, segment)
+            for name in names
+        ):
+            kinds.add("denied")
+    return kinds
 
 
 def pattern_kind(pattern: str, denied: Sequence[str]) -> str:
     """How a Glob pattern or a Grep file filter is classed.
 
-    Brace groups are expanded first, so a name split across a group is
-    read whole. The pattern as written and each alternative are then cut
-    into segments at ``/`` and at any brace or comma left as literal text.
+    The pattern is read the way any of three glob engines might read it,
+    and it is flagged if any reading is:
+
+    1. As written and as bash expands its braces, cut into segments at
+       ``/`` and at every brace or comma (the v6 rule).
+    2. As ripgrep, Bun and Node read it: braces expanded both ways
+       (``brace_expansions``), extglobs resolved (``extglob_expansions``),
+       each backslash escape and bracket class one character
+       (``glob_tokens``), and segments cut at ``/`` and at any brace or
+       comma left as literal text, never inside a class. A class of one
+       character is that character. Each such reading is also tested with
+       its case folded, since the review root's file system ignores case.
+
+    In any reading:
 
     - A text leaves the root if it is absolute or holds a ``..`` segment.
     - It names a denied path, even to confirm the path's absence, if that
@@ -308,39 +673,59 @@ def pattern_kind(pattern: str, denied: Sequence[str]) -> str:
       directory's last segment.
     - So does a segment that holds a denied name's whole stem and, read
       as a wildcard, matches that name (``stem*``, ``stem?md``,
-      ``stem[.]md``).
+      ``stem[.,]md``, ``stem[[:punct:]]md``).
 
-    A wildcard that holds only part of a stem (``*name_part*``) is not
-    classified. A pattern with more than ``BRACE_LIMIT`` alternatives is
+    A wildcard (``*``, ``?`` or a class of two or more characters) that
+    stands for part of a stem (``*name_part*``, ``[xy]tem.md``) is not
+    classified. A pattern with more than ``BRACE_LIMIT`` readings is
     ``unclassified``.
     """
-    denied_names = {Path(d).name for d in denied} | {Path(CODEBOOK_DIR).name}
-    denied_stems = {Path(d).stem for d in denied if Path(d).suffix}
+    names = {Path(d).name for d in denied} | {Path(CODEBOOK_DIR).name}
+    stems = {Path(d).stem for d in denied if Path(d).suffix}
+    folded = (
+        [d.casefold() for d in [*denied, CODEBOOK_DIR]],
+        {name.casefold() for name in names},
+        {stem.casefold() for stem in stems},
+    )
     try:
-        alternatives = brace_expansions(pattern)
+        alternatives = {
+            *brace_expansions(pattern),
+            *brace_expansions(pattern, glob=True),
+        }
+        readings: set[str] = set()
+        for alternative in sorted(alternatives):
+            readings.update(extglob_expansions(alternative))
+            if len(readings) > BRACE_LIMIT:
+                raise OverflowError("too many readings")
     except OverflowError:
         return "unclassified"
     kinds = set()
-    for text in {pattern, *alternatives}:
-        segments = re.split(r"[/{},]", text)
-        if text.startswith(("/", "~")) or ".." in segments:
-            kinds.add("outside_root")
-        if any(d in text for d in denied) or CODEBOOK_DIR in text:
-            kinds.add("denied")
-        for segment in segments:
-            if segment in denied_names or any(
-                segment.startswith(f"{stem}.") for stem in denied_stems
-            ):
-                kinds.add("denied")
-            if any(
-                Path(name).stem in segment and fnmatchcase(name, segment)
-                for name in denied_names
-            ):
-                kinds.add("denied")
+    for text in {pattern, *alternatives, *readings}:
+        kinds |= _written_kinds(text, denied, names, stems)
+        kinds |= _engine_kinds(
+            glob_tokens(text), [*denied, CODEBOOK_DIR], names, stems
+        )
+        kinds |= _engine_kinds(glob_tokens(text, fold=True), *folded)
     for kind in ("outside_root", "denied"):
         if kind in kinds:
             return kind
     return "inside_root"
+
+
+def denied_from_record(record: Mapping[str, Any]) -> list[str]:
+    """Every path a root record keeps out of the review root.
+
+    That is the exclusion lists' ``denied_paths``, every file the builder
+    removed (``removed``, the codebook files among them) and every other
+    code-map table it removed (``removed_codebook_tables``).
+    """
+    return sorted(
+        {
+            *record["denied_paths"],
+            *record["removed"],
+            *record["removed_codebook_tables"],
+        }
+    )
 
 
 def read_log(
@@ -355,7 +740,10 @@ def read_log(
     absolute or relative to the root. A Glob's pattern and a Grep's file
     filter must not be absolute, hold a ``..`` segment or name a denied
     path, by its path, its basename or its stem before a dot, even to
-    confirm its absence; ``pattern_kind`` expands brace groups first.
+    confirm its absence; ``pattern_kind`` reads each pattern as the glob
+    engines might. ``denied`` is every path the root record keeps out
+    (``denied_from_record``), and paths are compared without case, as the
+    root's file system compares them.
     Paths quoted inside a file the lane read are content, not reads. When the
     harness saves an oversized result outside the root, the log records
     the notice; the review is void only if a later call opens that file.
@@ -407,6 +795,8 @@ def read_log(
                         p for p in _result_paths(name, text) if p not in found
                     )
 
+    denied_folded = {d.casefold() for d in denied}
+
     def classify(path: str) -> str:
         resolved = Path(path)
         if not resolved.is_absolute():
@@ -415,9 +805,10 @@ def read_log(
             relative = resolved.resolve().relative_to(root)
         except ValueError:
             return "outside_root"
-        if relative.as_posix() in set(
-            denied
-        ) or relative.as_posix().startswith(CODEBOOK_DIR):
+        folded = relative.as_posix().casefold()
+        if folded in denied_folded or folded.startswith(
+            CODEBOOK_DIR.casefold()
+        ):
             return "denied"
         return "inside_root"
 
@@ -430,8 +821,9 @@ def read_log(
     )
     bad = sorted(path for path, kind in paths.items() if kind != "inside_root")
     return {
-        "schema": "track_b_b0_1_review_read_log.v6",
+        "schema": "track_b_b0_1_review_read_log.v7",
         "root": str(root),
+        "n_denied": len(denied_folded),
         "n_tool_calls": len(calls),
         "tool_calls": calls,
         "paths": paths,
@@ -737,9 +1129,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             base=args.base,
         )
     else:
-        denied = json.loads(args.root_record.read_text(encoding="utf-8"))[
-            "denied_paths"
-        ]
+        denied = denied_from_record(
+            json.loads(args.root_record.read_text(encoding="utf-8"))
+        )
         reader = read_log_codex if args.format == "codex" else read_log
         record = reader(args.transcript, args.root, denied)
     with args.record.open("x", encoding="utf-8") as stream:

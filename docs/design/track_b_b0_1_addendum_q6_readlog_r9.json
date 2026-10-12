@@ -1,5 +1,6 @@
 {
  "harness_persisted_outputs": [],
+ "n_denied": 31,
  "n_tool_calls": 20,
  "paths": {
   "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r9-20261011/root/docs/design/track_b_b0_1_addendum.md": "inside_root",
@@ -57,7 +58,7 @@
  "persisted_outputs_opened": [],
  "review_counts": true,
  "root": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r9-20261011/root",
- "schema": "track_b_b0_1_review_read_log.v6",
+ "schema": "track_b_b0_1_review_read_log.v7",
  "tool_calls": [
   {
    "path": "scripts/track_b_b0_1_review_root.py",
