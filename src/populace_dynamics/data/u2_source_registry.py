@@ -153,6 +153,14 @@ def _family_unit_exclusion(entry: dict[str, Any]) -> None:
         raise SourceAdjudicationError(
             f"{exclusion['disposition']!r} is not ratified for {entry['id']}"
         )
+    # The builder keys a rule on the entry's wave and code and drops an
+    # absent code's rule, so the exclusion must sit on a present entry
+    # whose own wave and code are its id's (checked for every role entry
+    # in ``_entry_payload``).
+    if entry["present"] is not True:
+        raise SourceAdjudicationError(
+            f"A family-unit exclusion needs a present code for {entry['id']}"
+        )
     condition = exclusion.get("condition")
     if condition != scope["condition"] or (
         condition is not None and type(condition["sex"]) is not int
@@ -369,6 +377,12 @@ def _entry_payload(entry: dict[str, Any], name: str) -> None:
                 "marital_resolution": bool,
             },
         )
+        # The role rules are keyed on (wave, code); the id must name the
+        # same pair, or a rule could be moved under an unchanged id.
+        if entry["id"] != f"{entry['wave']}.relationship.{entry['code']}":
+            raise SourceAdjudicationError(
+                f"Role id does not name its wave and code: {entry['id']}"
+            )
         if entry["present"]:
             _fields(entry, {"label": str, "spouse_slot": bool})
         elif "label" not in entry or entry["label"] is not None:

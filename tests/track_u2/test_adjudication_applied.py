@@ -809,9 +809,11 @@ D1090_ROWS = {
     "U7's 2015 spouse slot is the documented female spouse or partner "
     "slot, and B1's exclusion applies to U7 as to every other row |",
 }
-#: The operative lines of the d1090 record, complete, by where they
-#: stand: each must be a whole line there, exactly once (reviews of
-#: e4dd350 and 8103881, finding 2).
+#: The d1090 record, complete, by where it stands: every line of section
+#: 16c, the header lines, section 17 items 1, 2 and 8 and section 20's
+#: status and step 1.  Each must be a whole line there, exactly once, and
+#: section 16c must hold no other line (reviews of e4dd350, 8103881 and
+#: db735e5).
 D1090_CLAUSES = {
     "header_version": [
         "- **Version:** `u2-draft-4` (milestone 1b, 2026-09-28; revised "
@@ -846,10 +848,37 @@ D1090_CLAUSES = {
     ],
     "record": [
         *D1090_ROWS.values(),
+        "## 16c. Max's ruling on blockers B1 and B2 (2026-10-10, d1090)",
+        "> **RULED on 2026-10-10.** Max ruled on blockers B1 and B2 on "
+        "2026-10-10 (decision d1090), after PSID answered the documentary "
+        "questions sent on 2026-09-30 (research record "
+        "\N{SECTION SIGN}\N{SECTION SIGN}1\N{EN DASH}2). This section "
+        "records the ruling, the two amendments to draft 3 that it ratifies "
+        "and their effect. Where \N{SECTION SIGN}16a proposes, or "
+        "\N{SECTION SIGN}16b holds, an option for B1 or B2, this section "
+        "governs; \N{SECTION SIGN}16a and \N{SECTION SIGN}16b stay "
+        "unchanged as the record of what was proposed and first ruled.",
+        "The ruling, as recorded in the chief-of-staff decision log:",
         "> \"yes: Max 2026-10-10 in chat ('1090 yes'): B1 option 2 (exclude "
         "2015 family units with a male code-20 person, rule fixed before "
         "any count) and B2 option 1 (exclude 2019-2023 family units with a "
         'code-90/92 person, disclose the count)"',
+        "**What the ruling answered.** The decision put to Max on "
+        "2026-10-08 first recommended option 2 for B1 and option 2 for B2. "
+        "On 2026-10-09, before he ruled, a correction note on the decision "
+        "revised the B2 recommendation to option 1: PSID's answer confirmed "
+        "that codes 90 and 92 are skipped out of the Section G income "
+        "questions, but did not say in words whether their income is edited "
+        "or imputed into the family-file aggregates (research record "
+        "\N{SECTION SIGN}2), so B2's option 2 would have rested on an "
+        "inference. The ruling as recorded, and the brief that asked for "
+        "this record, both name option 2 for B1 and option 1 for B2. These "
+        "are the two exclusions that 1f judges alike: each removes units "
+        "under a named disposition by a rule fixed before any count, and "
+        "uses the count only for disclosure.",
+        "| Part of \N{SECTION SIGN}16a | Ruling | Draft-3 lines amended | "
+        "Effect |",
+        "|---|---|---|---|",
         "Both rules are fixed by this ruling, before any count, and each is "
         "vacuous if no such unit supplies an observation. Each count is "
         "disclosed after the authorized structural pass (\N{SECTION SIGN}4) "
@@ -868,6 +897,7 @@ D1090_CLAUSES = {
         "each option (a population loss of unknown size, confined to units "
         "with a spouse or partner present, and population rules that differ "
         "by wave) apply as stated there.",
+        "**The amendments.**",
         "- **To draft-3 line 160 (B1).** Line 160's requirement that "
         '"Source documentation must resolve this before registration" is '
         "replaced, for a male code-20 person in 2015, by the population "
@@ -883,6 +913,21 @@ D1090_CLAUSES = {
         "and 2017 the lines are not amended: codes 90 and 92 there keep the "
         "status \N{SECTION SIGN}16b records (1a and 1b, pending d745). Line "
         "1391 is not amended.",
+        "**PSID's answer and the choice of option.** \N{SECTION SIGN}16a "
+        "recommended option 1 for B1, named option 2 as B1's counterpart of "
+        "B2's recommended exclusion, and left the choice between them to "
+        "Max's judgment (1d). PSID's 2026-10-07 answer says that no male "
+        "should have relationship code 20 in 2015. It also reports that the "
+        "2023 individual file holds two people recorded male with 2015 code "
+        "20, neither of whom, in PSID's judgment, was a man in the spouse "
+        "role in 2015 (research record \N{SECTION SIGN}1). That count "
+        "covers the whole file; whether either person belongs to a family "
+        "unit that supplies a U2 observation was not checked and is not "
+        "known. Under option 1, such a person in such a unit would have "
+        "stopped registration; under option 2 the unit is excluded. Max "
+        "ruled with PSID's answer, that count included, known. No U2 count, "
+        "statistic or outcome existed when he ruled, and none was computed "
+        "for this record.",
         "**How the rules apply.** A family unit is identified as `wave "
         "\N{MULTIPLICATION SIGN} 100000 + interview` (line 130), and its "
         "members are the in-family persons, sequence 1\N{EN DASH}20, of "
@@ -895,6 +940,7 @@ D1090_CLAUSES = {
         "that disposition; each rule applies to the observations its family "
         "unit would otherwise supply. This is how the rules are applied, "
         "not a further amendment.",
+        "**What the ruling does not change.**",
         "- U2 stays unregistered and unauthorized. With B3's hold lifted by "
         "d637 and the B1 and B2 holds lifted here, no blocker hold remains, "
         "but registration still waits for the rest of "
@@ -902,6 +948,21 @@ D1090_CLAUSES = {
         "records, the registry commits for the ratified amendments, "
         "implementation, independent review, the structural pass and a "
         "fresh forecast.",
+        "- Amendment 1's parts 1a\N{EN DASH}1c keep the provisional reading "
+        "\N{SECTION SIGN}16b records, pending d745. B3's option 1 is "
+        "unchanged (research record \N{SECTION SIGN}3).",
+        "- Each registry effect is its own reviewed commit "
+        '(\N{SECTION SIGN}16a, "Registry effect of the rulings"). For B1 '
+        "and B2 the effect replaces eight refusals, the seven role refusals "
+        "and `pension:2015.route.respondent_slots`, with the rules above "
+        "and releases their dependents. "
+        "\N{SECTION SIGN}\N{SECTION SIGN}3\N{EN DASH}15 keep their draft-3 "
+        "line numbers, and their draft-3 text except \N{SECTION SIGN}15's "
+        "version key (line 1047), because the registries cite them.",
+        "- No count, statistic or outcome was computed to record this "
+        "ruling, and no file on the restricted list was opened for reading. "
+        "Reading and exposure are recorded in "
+        "`docs/design/u2_m1b_exposure.md` (2026-10-10 section).",
     ],
     "outstanding": [
         "1. Max rules on amendments 1\N{EN DASH}6 in \N{SECTION SIGN}16a, "
@@ -937,6 +998,7 @@ D1090_CLAUSES = {
         "disclosed and deciding nothing; \N{SECTION SIGN}16c).",
     ],
     "execution": [
+        "**Pending.**",
         "1. Resolve the proposed decisions and source-verification "
         "blockers. **Decisions: done (Max, d514, 2026-09-28, adopting every "
         "\N{SECTION SIGN}16 default).** Source-verification blockers remain "
@@ -964,6 +1026,12 @@ def d1090_locations(spec):
     }
 
 
+def _record_lines(record):
+    """The pinned lines of section 16c in the order they stand."""
+    pinned = set(D1090_CLAUSES["record"])
+    return [x for x in record.split("\n") if x in pinned]
+
+
 def check_d1090_record(spec):
     """The semantic checks of the d1090 record, independent of any pin."""
     places = d1090_locations(spec)
@@ -974,6 +1042,10 @@ def check_d1090_record(spec):
     record = places["record"]
     assert record.startswith(
         "## 16c. Max's ruling on blockers B1 and B2 (2026-10-10, d1090)\n"
+    )
+    # Section 16c holds exactly the pinned lines, in order.
+    assert [x for x in record.split("\n") if x.strip()] == _record_lines(
+        record
     )
     for text in places.values():
         assert "decides whether" not in text
@@ -1078,6 +1150,26 @@ D1090_MUTATIONS = [
         "(d1090)",
     ),
     ("header_status", "B2 option 1, each", "B2 option 2, each"),
+    # The third review's accepted replacements (review of db735e5).
+    (
+        "record",
+        "uses the count only for disclosure",
+        "uses the count to determine whether registration proceeds",
+    ),
+    (
+        "record",
+        "under option 2 the unit is excluded",
+        "under option 2 the unit is retained",
+    ),
+    (
+        "execution",
+        "**Pending.**",
+        "**Registered and authorized for execution.**",
+    ),
+    ("record", "is not known", "is known to be none"),
+    ("record", "pending d745", "confirmed by d745"),
+    ("record", "U2 stays unregistered and unauthorized", "U2 is registered"),
+    ("record", "This is how the rules are applied, not", "This is"),
     ("outstanding", "and B2 takes option 1,", "and B2 takes option 2,"),
     ("outstanding", "each disclosed and deciding nothing", "each disclosed"),
     (

@@ -428,7 +428,37 @@ def _move(document, source, target):
     entry.pop("adjudication", None)
 
 
+def _swap(document, field, first, second):
+    """Swap one numeric field of two entries, leaving their ids alone."""
+    a, b = _entry(document, first), _entry(document, second)
+    a[field], b[field] = b[field], a[field]
+
+
+def _absent(document, key):
+    _entry(document, key).update(present=False, label=None)
+
+
 D1090_SCOPE_MUTATIONS = {
+    # Review of db735e5, finding 2: the rules are keyed on an entry's wave
+    # and code, so swapping those under unchanged ids, or marking the code
+    # absent, must not move or remove an exclusion.
+    "b1_code_swapped_with_22": lambda d: _swap(
+        d, "code", "2015.relationship.20", "2015.relationship.22"
+    ),
+    "b1_wave_swapped_with_2017": lambda d: _swap(
+        d, "wave", "2015.relationship.20", "2017.relationship.20"
+    ),
+    "b2_code_swapped_with_10": lambda d: _swap(
+        d, "code", "2019.relationship.90", "2019.relationship.10"
+    ),
+    "b2_wave_swapped_with_2017": lambda d: _swap(
+        d, "wave", "2019.relationship.92", "2017.relationship.92"
+    ),
+    "b1_marked_absent": lambda d: _absent(d, "2015.relationship.20"),
+    "b2_marked_absent": lambda d: _absent(d, "2021.relationship.90"),
+    "unruled_codes_swapped": lambda d: _swap(
+        d, "code", "2013.relationship.10", "2013.relationship.22"
+    ),
     "b1_on_female_spouses": lambda d: _entry(d, "2015.relationship.20")[
         "family_unit_exclusion"
     ].update(condition={"sex": 2}),
@@ -500,12 +530,48 @@ def test_d1090_exclusions_are_held_to_their_ratified_scope(mutation):
 
 
 def test_d1090_scope_matches_the_committed_entries():
-    """Every ratified exclusion sits on exactly its scope's entries."""
+    """Every ratified exclusion sits on exactly its scope's entries, each
+    present and named by its own wave and code."""
     entries = registry.load_registry("roles")["entries"]
+    for entry in entries:
+        assert entry["id"] == (
+            f"{entry['wave']}.relationship.{entry['code']}"
+        ), entry["id"]
     for name, scope in registry.RATIFIED_EXCLUSIONS.items():
         carrying = {
-            e["id"]
+            e["id"]: e
             for e in entries
             if e.get("family_unit_exclusion", {}).get("disposition") == name
         }
-        assert carrying == set(scope["entries"]), name
+        assert set(carrying) == set(scope["entries"]), name
+        assert all(e["present"] is True for e in carrying.values()), name
+
+
+def test_d1090_scope_mutations_would_move_the_operative_rule():
+    """Why the numeric fields matter: the builder's rules follow an
+    entry's wave and code, so each swap above, if the validator let it
+    through, would move or drop an exclusion in the role rules."""
+    from populace_dynamics.uniform_cut_track_u2 import sources
+
+    document = registry.load_registry("roles")
+    expected = {
+        key
+        for key, rule in sources.RoleContext.from_registry().rules.items()
+        if rule.family_unit_exclusion
+    }
+    for name in (
+        "b1_code_swapped_with_22",
+        "b1_wave_swapped_with_2017",
+        "b2_code_swapped_with_10",
+        "b2_wave_swapped_with_2017",
+        "b1_marked_absent",
+        "b2_marked_absent",
+    ):
+        changed = copy.deepcopy(document)
+        D1090_SCOPE_MUTATIONS[name](changed)
+        moved = {
+            (int(e["wave"]), int(e["code"]))
+            for e in changed["entries"]
+            if e["present"] and "family_unit_exclusion" in e
+        }
+        assert moved != expected, name
