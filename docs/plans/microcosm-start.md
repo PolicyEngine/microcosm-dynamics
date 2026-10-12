@@ -198,7 +198,7 @@ What has to be added, each as a registered change:
 
 ### 1.5 Years the PSID cannot supply
 
-The career assembler fills two kinds of gap with fixed rules: each odd year after 1996 is the mean of its neighbors, and nothing counts before 1968 or before age 22, whichever is later (`docs/amendments/gate_epuf_fill_registration_proposal.md`, "What this gate is, in plain words"). Max approved the direction of learning replacements on EPUF on 3 October: "at a minimum seems like we could use it to improve the odd-year filling, we're overstating that form of persistence with our current method" (same document). Gate_epuf_fill scores those fills on EPUF people no fill has seen. Its tolerance awaits Max's ruling (d927), and pull request #516 adds the candidates.
+The career assembler fills two kinds of gap with fixed rules: each odd year after 1996 is the mean of its neighbors, and nothing counts before 1968 or before age 22, whichever is later (`docs/amendments/gate_epuf_fill_registration_proposal.md`, "What this gate is, in plain words"). Max approved the direction of learning replacements on EPUF on 3 October: "at a minimum seems like we could use it to improve the odd-year filling, we're overstating that form of persistence with our current method" (same document). Gate_epuf_fill scores those fills on EPUF people no fill has seen. Max ratified its tolerance on 10 October (d927); its lock is in pull request #515, and #516 adds the candidates.
 
 Frame histories use whichever fills gate_epuf_fill certifies. If none is certified, they use the current rules and carry that label. For people born before 1946, whose careers began before 1968, the pre-1968 fill carries much of the career, and H1 reports its cells by birth cohort so that shows.
 

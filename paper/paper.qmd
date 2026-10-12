@@ -34,9 +34,9 @@ abstract: |
   specification, all four minimum-benefit versions we test reach more
   women and fewer men than DYNASIM3 projects, a split that three of six
   alternatives break. The Axiom rules engine, which encodes the statute
-  as machine-readable rules, so far reproduces one piece of the model's
-  Python rules, average indexed monthly earnings over statutory
-  computation years. We plan to add forward earnings, the earnings test
+  as machine-readable rules, so far reproduces the model's Python rules
+  for average indexed monthly earnings across the PSID cohort, and for
+  the primary insurance amount on synthetic workers. We plan to add forward earnings, the earnings test
   and behavioral claiming to the projections and to run the full benefit
   rules in Axiom.
 format:
@@ -91,7 +91,7 @@ The model can apply a reform to the incomes the PSID recorded and count whom it 
 
 None of the four blind tests uses a piece that passes a pre-registered test. In the two 2030 projections, nobody earns, marries or divorces after 2010, and the benefit formula counts every year after 2010 as a year without earnings. A piece that projects earnings forward passes its own test, but neither projection uses it yet. The projections pay a retirement benefit to every claimant with earnings on record through 2010, without checking whether that person worked long enough to qualify. They do not yet apply the retirement earnings test, and nobody in them changes when they claim in response to a reform.
 
-The parts that decide how long people live, when they claim and who receives disability insurance run without a pre-registered test. The model has a step that would add immigrants, but no run we have published uses it. The disability piece that passes its test models who reports a work-limiting disability, a different measure from who receives disability insurance. Three of the four blind tests compute benefits with our own Python code, and the fourth cuts reported benefits directly. The Axiom rules engine, which encodes the Social Security statute as machine-readable rules, so far reproduces one step of that calculation: a worker's average monthly earnings over the highest-earning years, adjusted for wage growth.
+The parts that decide how long people live, when they claim and who receives disability insurance run without a pre-registered test. The model has a step that would add immigrants, but no run we have published uses it. The disability piece that passes its test models who reports a work-limiting disability, a different measure from who receives disability insurance. Three of the four blind tests compute benefits with our own Python code, and the fourth cuts reported benefits directly. The Axiom rules engine, which encodes the Social Security statute as machine-readable rules, so far reproduces one step of that calculation for the people in our tests: a worker's average monthly earnings over the highest-earning years, adjusted for wage growth. On synthetic workers it also reproduces the next step, the basic benefit.
 
 We plan to add earnings, marriage and divorce after 2010 to the projections, apply the retirement earnings test and the family maximum (the cap on what one worker's family can collect), let claim ages respond to reforms where the data support it, run the full benefit rules in Axiom, and compare the model with public tables from SSA's actuaries, MINT, the Penn Wharton Budget Model and CBO (@sec-remaining). We have compared the PSID's earnings for 1998 to 2004 with a public file of Social Security earnings records, and we plan to compare the model's earnings and whole careers with that file (@sec-psid).
 
