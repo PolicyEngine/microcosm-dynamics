@@ -56,9 +56,12 @@ def quoted_spans(markdown):
 
 # Registry: (RESOLVED mappings, REFUSED by disposition F and not replaced
 # by a ruling, TO VERIFY).  Max's d1090 ruling (2026-10-10; spec section
-# 16c) replaced all eight F refusals (roles 7, pension 1).
+# 16c) replaced all eight F refusals (roles 7, pension 1).  The d637
+# registry commits (2026-09-30 ruling; spec section 16b) resolve the A
+# items of amendments 2, 3, 5 and 6: so far amendment 2's ten income
+# records.
 EXPECTED_COUNTS = {
-    "income": (748, 0, 16),
+    "income": (758, 0, 6),
     "wealth": (234, 0, 0),
     "individual": (59, 0, 0),
     "pension": (647, 0, 1),
@@ -68,6 +71,12 @@ EXPECTED_COUNTS = {
     "design": (2, 0, 0),
 }
 SSI_AND_CENSUS_RESOLVED = 26
+#: TO VERIFY records left: the adjudication's 24 A items less those the
+#: d637 commits resolved (amendment 2: 10).
+OPEN_ITEMS = 14
+#: Each d637 amendment a registry commit has applied (section 16b), with
+#: the adjudication disposition its entries carry.
+D637_APPLIED = {"2": "A"}
 
 D_ITEMS = {
     "wealth": {
@@ -258,7 +267,11 @@ def test_status_counts_after_independent_adjudication(documents):
         for key in totals:
             totals[key] += counts[key]
     totals["RESOLVED"] += SSI_AND_CENSUS_RESOLVED
-    assert totals == {"RESOLVED": 1768, "REFUSED": 0, "TO VERIFY": 24}
+    assert totals == {
+        "RESOLVED": 1792 - OPEN_ITEMS,
+        "REFUSED": 0,
+        "TO VERIFY": OPEN_ITEMS,
+    }
     # Milestone 1: 1744 RESOLVED and 48 TO VERIFY over the same records.
     assert sum(totals.values()) == 1744 + 48
 
@@ -413,8 +426,10 @@ def test_d1090_replaced_every_refusal_with_its_exclusion(
                 assert entry["income_role"] == "excluded"
                 assert not entry["spouse_slot"]
     for name in ("roles", "income", "pension"):
-        (applied,) = documents[name]["rulings_applied"]
-        assert applied["decision"] == "d1090", name
+        # d1090's record comes first; the d637 commits append their own.
+        applied = documents[name]["rulings_applied"]
+        assert applied[0]["decision"] == "d1090", name
+        assert [r["decision"] for r in applied[1:]] in ([], ["d637"]), name
 
 
 def test_documentary_resolutions_carry_evidence(documents):
@@ -451,7 +466,96 @@ def test_open_items_name_their_amendment(documents, monkeypatch):
             assert f"amendment {record['amendment']}" in entry["question"]
             with pytest.raises(registry.SourceAdjudicationError):
                 registry.require_resolved(name, entry["id"])
-    assert open_items == 24
+    assert open_items == OPEN_ITEMS
+
+
+def test_d637_rulings_are_recorded_on_their_entries(documents, monkeypatch):
+    """Each d637 amendment a registry commit applied (section 16b), on
+    exactly its scope: the ratified ruling, text naming d637, the
+    adjudication record kept, the answered question kept verbatim, and
+    the entry applies."""
+    assert set(registry.RATIFIED_AMENDMENTS) == set(D637_APPLIED)
+    recorded = set()
+    for name, document in documents.items():
+        for entry in document["entries"]:
+            if entry.get("ruling", {}).get("decision") == "d637":
+                recorded.add((name, entry["id"]))
+    scoped = {
+        (scope["registry"], key)
+        for scope in registry.RATIFIED_AMENDMENTS.values()
+        for key in scope["entries"]
+    }
+    assert recorded == scoped
+    for amendment, scope in registry.RATIFIED_AMENDMENTS.items():
+        name = scope["registry"]
+        document = documents[name]
+        monkeypatch.setattr(
+            registry, "load_registry", lambda _n, d=document: d
+        )
+        by_id = {e["id"]: e for e in document["entries"]}
+        number = int(amendment[0])
+        for key in scope["entries"]:
+            entry = by_id[key]
+            ruling = entry["ruling"]
+            assert (
+                ruling["decision"],
+                ruling["date"],
+                ruling["specification_section"],
+                ruling["amendment"],
+            ) == ("d637", "2026-09-30", "16b", amendment)
+            record = entry["adjudication"]
+            assert record["disposition"] == D637_APPLIED[amendment], key
+            assert record["amendment"] == number, key
+            assert entry["status"] == "RESOLVED", key
+            assert any(
+                "d637" in entry.get(field, "")
+                for field in ("resolution", "ruling_effect", "use_restriction")
+            ), key
+            if record["disposition"] == "A":
+                assert "question" not in entry, key
+                assert entry["superseded_question"].endswith(
+                    f"needs u2-draft-4 amendment {number}, pending Max's "
+                    f"ruling ({ADJUDICATION} line {record['line']})."
+                ), key
+            assert registry.require_resolved(name, key) == entry
+    for name in {
+        scope["registry"] for scope in registry.RATIFIED_AMENDMENTS.values()
+    }:
+        (applied,) = [
+            r
+            for r in documents[name]["rulings_applied"]
+            if r["decision"] == "d637"
+        ]
+        assert applied["amendments"] == [
+            a
+            for a, scope in registry.RATIFIED_AMENDMENTS.items()
+            if scope["registry"] == name
+        ], name
+
+
+def test_d637_amendment_2_spouse_metadata_never_decides_the_slot(documents):
+    """Amendment 2 (section 16a; ratified by d637): the later family-file
+    spouse age and sex are slot metadata only.  Each record quotes its own
+    inapplicability wording as wording that decides no slot, and names the
+    relationship code, recorded sex and derived age as what decides."""
+    entries = {e["id"]: e for e in documents["income"]["entries"]}
+    for key in registry.RATIFIED_AMENDMENTS["2"]["entries"]:
+        entry = entries[key]
+        assert entry["usage"] == "slot_metadata_only"
+        domain = " ".join(entry["documented_domain"].split())
+        wording = re.search(r"0 Inap\.: (.*?); no Spouse/Partner", domain)
+        assert wording, key
+        rule = entry["use_restriction"]
+        assert (
+            f"('{wording.group(1)}') never decide whether a person occupies "
+            "the spouse slot" in rule
+        ), key
+        assert "the in-family code-20 or code-22 person" in rule
+        assert "recorded sex (ER32000) and derived income-year age" in rule
+    # 2013 is U1's wave: its spouse age and sex keep U1's mapping.
+    for route in ("wife_age", "wife_sex"):
+        entry = entries.get(f"income.2013.{route}")
+        assert entry is None or "usage" not in entry
 
 
 def test_corrected_specification_citations(documents):
@@ -990,8 +1094,10 @@ D1090_CLAUSES = {
         "2. Each ruling is applied to the registries in its own reviewed "
         "commit. The d1090 commit (2026-10-10) replaced the eight B1 and B2 "
         "refusals with \N{SECTION SIGN}16c's exclusions and released their "
-        "dependents. Until the registry commits for d637 (and, for code 88, "
-        "d745) land, the 24 TO VERIFY records stay open and the "
+        "dependents. The d637 commits, one per ratified amendment, have so "
+        "far resolved amendment 2's ten later spouse age and sex records as "
+        "slot metadata. Until the rest of them (and, for code 88, d745) "
+        "land, the 14 TO VERIFY records stay open and the "
         "2017\N{EN DASH}2023 P64/P65 records stay blocked.",
         "8. Complete the pre-registration structural, reconciliation and "
         "F17 component pass, including only the counts that the ratified B1 "
@@ -1355,7 +1461,10 @@ def test_master_record_matches_registries(documents):
         for entry in document["entries"]
     }
     assert rows == expected
-    assert "**1768 RESOLVED; 0 REFUSED; 24 TO VERIFY**" in text
+    assert (
+        f"**{1792 - OPEN_ITEMS} RESOLVED; 0 REFUSED; {OPEN_ITEMS} TO VERIFY**"
+        in text
+    )
     # Each per-route row states exactly its entry's remaining blocking
     # dependencies (review of 8103881, finding 3: d1090 released 554).
     sentences = dict(

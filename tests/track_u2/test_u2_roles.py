@@ -839,6 +839,40 @@ def test_spouse_slot_disagreement_refuses(u2_inputs, declared):
         cohort.income_rows(built, inputs)
 
 
+@pytest.mark.parametrize("context", ["declared", "registry"])
+def test_family_file_no_spouse_code_never_removes_the_occupant(
+    u2_inputs, declared, context
+):
+    """Amendment 2 (ratified by d637, section 16b): the family file's
+    spouse age is slot metadata only.  Its 0 code, 'no Spouse/Partner in
+    FU', never removes the roster's code-20 or code-22 occupant: the
+    roster keeps the occupant, the two disagree, and the income rows
+    refuse rather than let either source decide."""
+    inputs = invented.invented_variant(
+        u2_inputs, "spouse_slot_occupant_without_family_spouse_2019"
+    )
+    roles = (
+        declared
+        if context == "declared"
+        else sources.RoleContext.from_registry()
+    )
+    base = cohort.build_u2_cohort(u2_inputs, role_context=declared)
+    obs = base.observations
+    family = obs[obs["wave"].eq(2019) & obs["spouse_slot_occupied_roster"]][
+        "interview"
+    ].iloc[0]
+    built = cohort.build_u2_cohort(inputs, role_context=roles)
+    rows = built.observations[
+        built.observations["wave"].eq(2019)
+        & built.observations["interview"].eq(family)
+    ]
+    assert len(rows) and rows["spouse_slot_occupied_roster"].all()
+    income = inputs.family_income[2019]
+    assert not income.loc[income["interview"].eq(family), "wife_present"].any()
+    with pytest.raises(cohort.U2CohortError, match="spouse income slot"):
+        cohort.income_rows(built, inputs)
+
+
 def test_missing_head_refuses_the_annuity(u2_inputs, declared, u2_params):
     obs = cohort.build_u2_cohort(u2_inputs, role_context=declared).observations
     target = obs[obs["relationship"].eq(50)].iloc[0]

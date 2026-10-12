@@ -1415,6 +1415,23 @@ def _spouse_slot_disagreement_2019(base: cohort.U2Inputs) -> cohort.U2Inputs:
     )
 
 
+def _spouse_slot_occupant_without_family_spouse_2019(
+    base: cohort.U2Inputs,
+) -> cohort.U2Inputs:
+    obs = _declared_u0(base)
+    occupied = obs[obs["wave"].eq(2019) & obs["spouse_slot_occupied_roster"]][
+        "interview"
+    ].iloc[0]
+    income = base.family_income[2019].copy()
+    family = income["interview"].eq(occupied)
+    # The family file's "no Spouse/Partner in FU" code: age 0, slot empty.
+    income.loc[family, "wife_present"] = False
+    income["wife_age"] = income["wife_age"].mask(family)
+    return dataclasses.replace(
+        base, family_income={**base.family_income, 2019: income}
+    )
+
+
 def _missing_head(base: cohort.U2Inputs) -> cohort.U2Inputs:
     obs = _declared_u0(base)
     target = obs[obs["relationship"].eq(50)].iloc[0]
@@ -1523,6 +1540,9 @@ _VARIANT_BUILDERS = {
     "sex_unknown_target_in_excluded_unit_2019": (
         _sex_unknown_target_in_excluded_unit_2019
     ),
+    "spouse_slot_occupant_without_family_spouse_2019": (
+        _spouse_slot_occupant_without_family_spouse_2019
+    ),
 }
 _VARIANT_NOTES: dict[str, str] = {
     "code_88_first_year_cohabitor": (
@@ -1582,6 +1602,13 @@ _VARIANT_NOTES: dict[str, str] = {
         "the target of U0's first 2019 observation that the B2 exclusion "
         "removes has unknown sex: it keeps its sex-unknown disposition "
         "(section 16c precedence)"
+    ),
+    "spouse_slot_occupant_without_family_spouse_2019": (
+        "the family file of U0's first 2019 observation with a code-20 or "
+        "code-22 occupant codes the spouse age 0, 'no Spouse/Partner in "
+        "FU': the family file's spouse age never decides slot occupancy "
+        "(amendment 2, ratified by d637), so the slot flag and the roster "
+        "disagree and the income rows refuse (refusal case)"
     ),
 }
 #: The generator's named variants (see :data:`_VARIANT_NOTES`).

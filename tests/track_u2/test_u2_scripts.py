@@ -161,6 +161,7 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
         "code_88_in_excluded_unit_2019",
         "zero_weight_target_in_excluded_unit_2015",
         "sex_unknown_target_in_excluded_unit_2019",
+        "spouse_slot_occupant_without_family_spouse_2019",
     ]
     assert all(entry["regenerated"] for entry in variants.values())
     build_refused = {
@@ -182,6 +183,9 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
         # family file's slot flag, so the income rows refuse.
         "ambiguous_legal_spouse": "U2CohortError",
         "spouse_slot_disagreement_2019": "U2CohortError",
+        # Amendment 2 (d637): the family file's "no spouse" code never
+        # removes the roster's occupant; the disagreement refuses.
+        "spouse_slot_occupant_without_family_spouse_2019": "U2CohortError",
         "missing_head": "AdjustedPovertyError",
     }
     for name, entry in variants.items():

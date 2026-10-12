@@ -371,3 +371,30 @@ The U2 tests ran with the PSID root staged. They read staged PSID documentation 
 - Outside the repository: the registry edit script and the review records, copied to `EV/rulings-records-20261010/`.
 
 No U1 file, engine file, `gates.yaml` or `runs/*.json` was edited.
+
+## Rulings applied to the registries (from 2026-10-12, d637)
+
+A Claude Code session (Opus 5.5, session `943a9dba-…`) applied Max's ruling d637 (2026-09-30; specification §16b) to the U2 source registries, one reviewed commit per ratified amendment. It is not a U2 forecaster or referee, and it computed nothing from real data.
+
+### Read
+
+- `EV/RESTRICTED-FILES.md` (SHA-256 `2e1b5c2a…`), first, to know what not to open: lines 1–120 and 200–235 (the exercise sections, most of the trust-fund test section, the NASI follow-ups, the mixed working files and the cleared list) and search hits elsewhere.
+- `EV/rulings-records-20260930/registry-followup-brief.md` (`7d64f32a…`, with its 2026-10-12 update) and that folder's listing; `EV/rulings-records-20261010/README.md` (`d656e27e…`), `apply_d1090_registry.py` (`4b95db62…`) and that folder's listing.
+- The chief-of-staff decision log, filtered for d637, d745 and d1090; the filter also matched d1242, whose one-line summary concerns B2's count unit.
+- In the repository, at #524's head and then on this branch: the specification (header, §3's relationship amendment, §15's parameter block and §§16–20), the research record's §3, the master record (summary, blocker rows, the d1090 section and the rows of the entries changed), this file's 2026-10-10 section, the eight registries and `u1_identity.json`, `src/populace_dynamics/data/u2_source_registry.py`, the U2 package's `sources.py`, `loader.py`, `cohort.py`, `invented.py`, `rows.py` and `estimator.py` (in part), `scripts/track_u2_dry_run.py` (in part), the tests under `tests/track_u2/` that the brief names, and `tests/README-tiers.md` with `tests/tier_counts.json`.
+- `git worktree list`, the state, checks and file lists of #524 and #525, and #525's diff to `sources.py` and `loader.py`.
+
+### Not opened
+
+No file on the restricted list was opened: no page of the Boomers 2004 report, no comparator, seal, values scan or result, and no PSID data file. PSID's 2026-10-07 reply and its screenshots were not opened; the research record's account of them was used. No issue #42 comment was listed or read, and no Subfleet job folder other than this session's own review runs was opened. This session's own tool-output files and scratchpad sit under the Claude Code project and temporary folders that the restricted list names for other sessions' transcripts; only this session's own files there were opened.
+
+### Tests
+
+The U2 tests ran with the PSID root staged. They read staged PSID documentation and invented records; the loader tests' audit hook refuses any open under the PSID data roots. The blocker counts reported for each commit come from `loader.source_preflight`'s own rule applied to the committed registries; it opens no PSID file. No raw PSID record was read and no statistic was computed on real data.
+
+### Files written
+
+- Amendment 2: `data/external/track_u2/income.json` (the ten later spouse age and sex records and a d637 `rulings_applied` record) and `u1_identity.json` (the specification pin); `docs/design/boomers2004_1946_55_comparison.md` (§17 item 2 and §19); `docs/design/u2_m1_source_adjudication.md` (summary counts and table, the spouse age/sex blocker row, the d1090 section's closing sentence, a d637 section and the ten rows); `src/populace_dynamics/data/u2_source_registry.py` (`RATIFIED_AMENDMENTS` and its validation); `src/populace_dynamics/uniform_cut_track_u2/sources.py` (the income byte pin and two docstrings) and `invented.py` (one new named variant); `tests/track_u2/test_adjudication_applied.py`, `test_source_registries.py`, `test_u2_mappings.py`, `test_u2_roles.py` and `test_u2_scripts.py`; `tests/tier_counts.json` and `tests/README-tiers.md`; and this section.
+- Outside the repository: the registry and master-record edit scripts and the review records, copied to `EV/rulings-records-20261012/`.
+
+No U1 file, engine file, `gates.yaml` or `runs/*.json` was edited.

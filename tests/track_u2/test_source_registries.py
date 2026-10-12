@@ -585,3 +585,118 @@ def test_d1090_scope_mutations_would_move_the_operative_rule():
             if e["present"] and "family_unit_exclusion" in e
         }
         assert moved != expected, name
+
+
+# ---------------------------------------------------------------------------
+# Max's d637 ruling (section 16b): each applied amendment, held to its exact
+# scope (``u2_source_registry.RATIFIED_AMENDMENTS``)
+# ---------------------------------------------------------------------------
+def _copy_ruling(document, source, target):
+    """Put ``source``'s d637 ruling on ``target`` as well."""
+    _entry(document, target)["ruling"] = copy.deepcopy(
+        _entry(document, source)["ruling"]
+    )
+
+
+#: (registry, mutation): each moves, drops, widens or rewrites an applied
+#: d637 amendment, and each must fail validation.
+D637_SCOPE_MUTATIONS = {
+    "a2_ruling_on_2013_spouse_age": (
+        "income",
+        lambda d: _copy_ruling(
+            d, "income.2015.wife_age", "income.2013.wife_age"
+        ),
+    ),
+    "a2_ruling_on_a_slot_income_item": (
+        "income",
+        lambda d: _copy_ruling(
+            d, "income.2019.wife_sex", "income.2019.wife_labor"
+        ),
+    ),
+    "a2_ruling_dropped": (
+        "income",
+        lambda d: _entry(d, "income.2021.wife_age").pop("ruling"),
+    ),
+    "a2_decision_fabricated": (
+        "income",
+        lambda d: _entry(d, "income.2023.wife_sex")["ruling"].update(
+            decision="d999"
+        ),
+    ),
+    "a2_amendment_renumbered": (
+        "income",
+        lambda d: _entry(d, "income.2017.wife_age")["ruling"].update(
+            amendment="3"
+        ),
+    ),
+    "a2_ruling_dated_otherwise": (
+        "income",
+        lambda d: _entry(d, "income.2017.wife_sex")["ruling"].update(
+            date="2026-10-10"
+        ),
+    ),
+    "a2_usage_widened": (
+        "income",
+        lambda d: _entry(d, "income.2019.wife_age").update(
+            usage="slot_occupancy"
+        ),
+    ),
+    "a2_usage_dropped": (
+        "income",
+        lambda d: _entry(d, "income.2015.wife_sex").pop("usage"),
+    ),
+    "a2_reopened": (
+        "income",
+        lambda d: _entry(d, "income.2023.wife_age").update(
+            status="TO VERIFY", question="reopened"
+        ),
+    ),
+    "a2_question_kept": (
+        "income",
+        lambda d: _entry(d, "income.2021.wife_sex").update(question="kept"),
+    ),
+    "a2_refusing_action": (
+        "income",
+        lambda d: _entry(d, "income.2015.wife_age").update(
+            action="refuse_slot_inference"
+        ),
+    ),
+    "a2_blocked_again": (
+        "income",
+        lambda d: _entry(d, "income.2019.wife_sex").update(
+            blocking_dependencies=["roles:2019.relationship.20"]
+        ),
+    ),
+}
+
+
+@pytest.mark.parametrize("mutation", sorted(D637_SCOPE_MUTATIONS))
+def test_d637_amendments_are_held_to_their_ratified_scope(mutation):
+    name, change = D637_SCOPE_MUTATIONS[mutation]
+    document = registry.load_registry(name)
+    registry.validate_registry(document, expected_name=name)
+    changed = copy.deepcopy(document)
+    change(changed)
+    assert json.dumps(changed) != json.dumps(document)
+    with pytest.raises(registry.SourceAdjudicationError):
+        registry.validate_registry(changed, expected_name=name)
+
+
+def test_d637_scope_matches_the_committed_entries():
+    """Every applied d637 amendment sits on exactly its scope's entries, in
+    its own registry, and no other entry records a d637 ruling."""
+    scoped = {
+        (scope["registry"], key): amendment
+        for amendment, scope in registry.RATIFIED_AMENDMENTS.items()
+        for key in scope["entries"]
+    }
+    found = {}
+    for name in registry.REGISTRY_NAMES:
+        for entry in registry.load_registry(name)["entries"]:
+            ruling = entry.get("ruling", {})
+            if ruling.get("decision") == "d637":
+                found[(name, entry["id"])] = ruling["amendment"]
+    assert found == scoped
+    for scope in registry.RATIFIED_AMENDMENTS.values():
+        assert scope["ruling"]["decision"] == "d637"
+        assert len(scope["entries"]) == len(set(scope["entries"]))

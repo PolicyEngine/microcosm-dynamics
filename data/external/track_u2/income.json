@@ -4568,7 +4568,6 @@
       "wave": 2015,
       "route": "wife_age",
       "variable": "ER60019",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/family/2015/FAM2015ER.sps",
@@ -4600,13 +4599,23 @@
       "negative_domain_documented": false,
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
-      "question": "In 2015, how do the family-file spouse age/sex universe and spouse income slot treat individual code 90 and a male code 20? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 68).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 68,
         "disposition": "A",
         "amendment": 2
-      }
+      },
+      "status": "RESOLVED",
+      "usage": "slot_metadata_only",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse age and its inapplicability wording ('Head is female or single male') never decide whether a person occupies the spouse slot: the occupant is the in-family code-20 or code-22 person under the relationship rules (section 3; section 16a amendment 1), as the roles registry records them. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "2"
+      },
+      "superseded_question": "In 2015, how do the family-file spouse age/sex universe and spouse income slot treat individual code 90 and a male code 20? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 68)."
     },
     {
       "id": "income.2015.n_children",
@@ -7490,7 +7499,6 @@
       "wave": 2015,
       "route": "wife_sex",
       "variable": "ER60020",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/family/2015/FAM2015ER.sps",
@@ -7522,13 +7530,23 @@
       "negative_domain_documented": false,
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
-      "question": "In 2015, how do the family-file spouse age/sex universe and spouse income slot treat individual code 90 and a male code 20? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 69).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 69,
         "disposition": "A",
         "amendment": 2
-      }
+      },
+      "status": "RESOLVED",
+      "usage": "slot_metadata_only",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse sex and its inapplicability wording ('Head is female or single male') never decide whether a person occupies the spouse slot: the occupant is the in-family code-20 or code-22 person under the relationship rules (section 3; section 16a amendment 1), as the roles registry records them. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "2"
+      },
+      "superseded_question": "In 2015, how do the family-file spouse age/sex universe and spouse income slot treat individual code 90 and a male code 20? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 69)."
     },
     {
       "id": "income.2015.head_farm_acc",
@@ -9138,7 +9156,6 @@
       "wave": 2017,
       "route": "wife_age",
       "variable": "ER66019",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/family/2017/FAM2017ER.sps",
@@ -9170,13 +9187,23 @@
       "negative_domain_documented": false,
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
-      "question": "In 2017, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 71).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 71,
         "disposition": "A",
         "amendment": 2
-      }
+      },
+      "status": "RESOLVED",
+      "usage": "slot_metadata_only",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse age and its inapplicability wording ('Reference Person is female or single male') never decide whether a person occupies the spouse slot: the occupant is the in-family code-20 or code-22 person under the relationship rules (section 3; section 16a amendment 1), as the roles registry records them. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "2"
+      },
+      "superseded_question": "In 2017, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 71)."
     },
     {
       "id": "income.2017.n_children",
@@ -12076,7 +12103,6 @@
       "wave": 2017,
       "route": "wife_sex",
       "variable": "ER66020",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/family/2017/FAM2017ER.sps",
@@ -12108,13 +12134,23 @@
       "negative_domain_documented": false,
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
-      "question": "In 2017, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 72).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 72,
         "disposition": "A",
         "amendment": 2
-      }
+      },
+      "status": "RESOLVED",
+      "usage": "slot_metadata_only",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse sex and its inapplicability wording ('Reference Person is single male or female') never decide whether a person occupies the spouse slot: the occupant is the in-family code-20 or code-22 person under the relationship rules (section 3; section 16a amendment 1), as the roles registry records them. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "2"
+      },
+      "superseded_question": "In 2017, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 72)."
     },
     {
       "id": "income.2017.head_farm_acc",
@@ -13716,7 +13752,6 @@
       "wave": 2019,
       "route": "wife_age",
       "variable": "ER72019",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/family/2019/FAM2019ER.sps",
@@ -13748,13 +13783,23 @@
       "negative_domain_documented": false,
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
-      "question": "In 2019, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 74).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 74,
         "disposition": "A",
         "amendment": 2
-      }
+      },
+      "status": "RESOLVED",
+      "usage": "slot_metadata_only",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse age and its inapplicability wording ('Reference Person is female or single male') never decide whether a person occupies the spouse slot: the occupant is the in-family code-20 or code-22 person under the relationship rules (section 3; section 16a amendment 1), as the roles registry records them. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "2"
+      },
+      "superseded_question": "In 2019, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 74)."
     },
     {
       "id": "income.2019.n_children",
@@ -16646,7 +16691,6 @@
       "wave": 2019,
       "route": "wife_sex",
       "variable": "ER72020",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/family/2019/FAM2019ER.sps",
@@ -16678,13 +16722,23 @@
       "negative_domain_documented": false,
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
-      "question": "In 2019, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 75).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 75,
         "disposition": "A",
         "amendment": 2
-      }
+      },
+      "status": "RESOLVED",
+      "usage": "slot_metadata_only",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse sex and its inapplicability wording ('Reference Person is single male or female') never decide whether a person occupies the spouse slot: the occupant is the in-family code-20 or code-22 person under the relationship rules (section 3; section 16a amendment 1), as the roles registry records them. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "2"
+      },
+      "superseded_question": "In 2019, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 75)."
     },
     {
       "id": "income.2019.head_farm_acc",
@@ -18296,7 +18350,6 @@
       "wave": 2021,
       "route": "wife_age",
       "variable": "ER78019",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/family/2021/FAM2021ER.sps",
@@ -18328,13 +18381,23 @@
       "negative_domain_documented": false,
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
-      "question": "In 2021, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 77).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 77,
         "disposition": "A",
         "amendment": 2
-      }
+      },
+      "status": "RESOLVED",
+      "usage": "slot_metadata_only",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse age and its inapplicability wording ('Reference Person is female or single male') never decide whether a person occupies the spouse slot: the occupant is the in-family code-20 or code-22 person under the relationship rules (section 3; section 16a amendment 1), as the roles registry records them. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "2"
+      },
+      "superseded_question": "In 2021, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 77)."
     },
     {
       "id": "income.2021.n_children",
@@ -21296,7 +21359,6 @@
       "wave": 2021,
       "route": "wife_sex",
       "variable": "ER78020",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/family/2021/FAM2021ER.sps",
@@ -21333,13 +21395,23 @@
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
       "format_text": "1  'Male'\r\n    2  'Female'\r\n    0  'Inap.:  Reference Person is single male or female; no Spouse/Partner in FU (ER79524=5)'",
-      "question": "In 2021, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 78).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 78,
         "disposition": "A",
         "amendment": 2
-      }
+      },
+      "status": "RESOLVED",
+      "usage": "slot_metadata_only",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse sex and its inapplicability wording ('Reference Person is single male or female') never decide whether a person occupies the spouse slot: the occupant is the in-family code-20 or code-22 person under the relationship rules (section 3; section 16a amendment 1), as the roles registry records them. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "2"
+      },
+      "superseded_question": "In 2021, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 78)."
     },
     {
       "id": "income.2021.head_farm_acc",
@@ -23091,7 +23163,6 @@
       "wave": 2023,
       "route": "wife_age",
       "variable": "ER82020",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/family/2023/FAM2023ER.sps",
@@ -23123,13 +23194,23 @@
       "negative_domain_documented": false,
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
-      "question": "In 2023, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 80).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 80,
         "disposition": "A",
         "amendment": 2
-      }
+      },
+      "status": "RESOLVED",
+      "usage": "slot_metadata_only",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse age and its inapplicability wording ('Reference Person is female or single male') never decide whether a person occupies the spouse slot: the occupant is the in-family code-20 or code-22 person under the relationship rules (section 3; section 16a amendment 1), as the roles registry records them. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "2"
+      },
+      "superseded_question": "In 2023, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 80)."
     },
     {
       "id": "income.2023.n_children",
@@ -26091,7 +26172,6 @@
       "wave": 2023,
       "route": "wife_sex",
       "variable": "ER82021",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/family/2023/FAM2023ER.sps",
@@ -26128,13 +26208,23 @@
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
       "format_text": "1  'Male'\r\n    2  'Female'\r\n    0  'Inap.:  Reference Person is single male or female; no Spouse/Partner in FU (ER83493=5)'",
-      "question": "In 2023, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 81).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 81,
         "disposition": "A",
         "amendment": 2
-      }
+      },
+      "status": "RESOLVED",
+      "usage": "slot_metadata_only",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse sex and its inapplicability wording ('Reference Person is single male or female') never decide whether a person occupies the spouse slot: the occupant is the in-family code-20 or code-22 person under the relationship rules (section 3; section 16a amendment 1), as the roles registry records them. Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "2"
+      },
+      "superseded_question": "In 2023, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 81)."
     },
     {
       "id": "income.2023.head_farm_acc",
@@ -27885,6 +27975,15 @@
       "date": "2026-10-10",
       "specification_section": "16c",
       "note": "Max's ruling d1090 (2026-10-10; specification section 16c) on blockers B1 and B2: the seven role refusals and pension:2015.route.respondent_slots are replaced by the ratified family-unit exclusions (B1, section 16a option 1d-2, amending draft-3 line 160; B2, option 1e-1, amending draft-3 lines 152, 154 and 158 for 2019-2023), and the dependencies on the seven role entries are released. Each entry keeps its adjudication record (disposition F) and its superseded refusal text."
+    },
+    {
+      "decision": "d637",
+      "date": "2026-09-30",
+      "specification_section": "16b",
+      "amendments": [
+        "2"
+      ],
+      "note": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendments 2-5 as written and amendment 6's option 1, an explicit amendment to draft-3 line 134. Applied here, each in its own reviewed commit: amendment 2 resolves the ten 2015-2023 family-file spouse age and sex records as slot metadata only, with a no-slot-inference rule. Each ruled entry keeps its adjudication record and gains a ruling; an open question or refusal the ruling answers is kept as superseded_question or superseded_refusal."
     }
   ]
 }

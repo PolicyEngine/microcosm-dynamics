@@ -75,6 +75,40 @@ _EXCLUSION_OF_ENTRY = {
     for name, scope in RATIFIED_EXCLUSIONS.items()
     for entry in scope["entries"]
 }
+_D637 = {
+    "decision": "d637",
+    "date": "2026-09-30",
+    "specification_section": "16b",
+}
+_LATER_WAVES = (2015, 2017, 2019, 2021, 2023)
+#: The u2-draft-4 amendments Max ratified on 2026-09-30 (d637;
+#: specification section 16b) that a registry commit has applied, each
+#: with its exact scope: the registry and entries it rules, the ruling
+#: they record, the gate fields it fixes (``fields``, exact values) and
+#: the fields it removes (``absent``).  An entry that records a d637
+#: ruling must be in its amendment's scope and hold those values, and
+#: every entry in a scope must record the ruling.  Each registry commit
+#: adds its amendment here (section 16a, "Registry effect of the
+#: rulings").
+RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
+    "2": {
+        "registry": "income",
+        "entries": tuple(
+            f"income.{wave}.{route}"
+            for wave in _LATER_WAVES
+            for route in ("wife_age", "wife_sex")
+        ),
+        "ruling": {**_D637, "amendment": "2"},
+        "fields": {"status": "RESOLVED", "usage": "slot_metadata_only"},
+        "absent": ("action", "blocking_dependencies", "question"),
+    },
+}
+#: The d637 amendment each ruled entry belongs to, by (registry, id).
+_AMENDMENT_OF_ENTRY = {
+    (scope["registry"], entry): name
+    for name, scope in RATIFIED_AMENDMENTS.items()
+    for entry in scope["entries"]
+}
 
 
 class SourceAdjudicationError(ValueError):
@@ -131,6 +165,44 @@ def _ruling(entry: dict[str, Any]) -> None:
     _fields(
         ruling, {"decision": str, "date": str, "specification_section": str}
     )
+
+
+def _same(first: Any, second: Any) -> bool:
+    """Equal as JSON, so ``True`` never stands in for ``1``."""
+    return json.dumps(first, sort_keys=True) == json.dumps(
+        second, sort_keys=True
+    )
+
+
+def _ratified_amendment(entry: dict[str, Any], name: str) -> None:
+    """A d637 ruling, held to its amendment's exact scope
+    (:data:`RATIFIED_AMENDMENTS`)."""
+    ruling = entry["ruling"]
+    amendment = ruling.get("amendment")
+    scope = RATIFIED_AMENDMENTS.get(amendment)
+    if scope is None:
+        raise SourceAdjudicationError(
+            f"Unratified d637 amendment for {entry['id']}"
+        )
+    if _AMENDMENT_OF_ENTRY.get((name, entry["id"])) != amendment:
+        raise SourceAdjudicationError(
+            f"d637 amendment {amendment} is not ratified for "
+            f"{name}:{entry['id']}"
+        )
+    if not _same(ruling, scope["ruling"]):
+        raise SourceAdjudicationError(
+            f"ruling is not the ratified one for {entry['id']}"
+        )
+    for field, value in scope["fields"].items():
+        if field not in entry or not _same(entry[field], value):
+            raise SourceAdjudicationError(
+                f"{field} is not the ratified one for {entry['id']}"
+            )
+    for field in scope["absent"]:
+        if field in entry:
+            raise SourceAdjudicationError(
+                f"{field} remains after the d637 ruling for {entry['id']}"
+            )
 
 
 def _family_unit_exclusion(entry: dict[str, Any]) -> None:
@@ -522,7 +594,23 @@ def validate_registry(document: dict[str, Any], *, expected_name: str) -> None:
             _fields(entry, {"requires_role_registry": bool})
         if "ruling" in entry:
             _ruling(entry)
+            if entry["ruling"]["decision"] == "d637":
+                _ratified_amendment(entry, expected_name)
         _entry_payload(entry, expected_name)
+    # Every entry an applied d637 amendment rules records that ruling, so
+    # no ruled entry can drop its record and still pass.
+    for (name, key), amendment in _AMENDMENT_OF_ENTRY.items():
+        if name != expected_name:
+            continue
+        entry = next((e for e in entries if e["id"] == key), None)
+        if entry is None:
+            raise SourceAdjudicationError(
+                f"Missing d637 amendment {amendment} entry {name}:{key}"
+            )
+        if entry.get("ruling", {}).get("decision") != "d637":
+            raise SourceAdjudicationError(
+                f"{name}:{key} lacks its d637 amendment {amendment} ruling"
+            )
 
 
 def load_registry(name: str) -> dict[str, Any]:

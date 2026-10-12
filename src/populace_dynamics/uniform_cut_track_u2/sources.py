@@ -223,10 +223,15 @@ DECLARED = INVENTED_DECLARED
 #: the eight B1 and B2 refusals became the ratified family-unit
 #: exclusions and the role dependencies they carried were released
 #: (``test_d1090_moved_only_the_ruled_gate_fields`` pins exactly which
-#: gate fields moved).
+#: gate fields moved).  Max's d637 ruling (2026-09-30, section 16b) moves
+#: them again, one reviewed commit per ratified amendment
+#: (``test_d637_moved_only_the_ruled_gate_fields`` pins every gate field
+#: those commits moved against the registries d1090 left): amendment 2
+#: moved the income bytes (the later spouse age and sex records became
+#: slot metadata).
 REGISTRY_SHA256: dict[str, str] = {
     "income": (
-        "3d4e8742356ba06986dc7dd3c664ffb1d679498e133fde8801456a76d9ff7431"
+        "8cd237e291ef746c98cfa0454ebaca865420fc4e729f55da6d148c74f15107ae"
     ),
     "wealth": (
         "3a22247849ea2eccbef6e522c0d74c901beb90195f92fd2e7b23b123fab6b816"
@@ -252,9 +257,13 @@ REGISTRY_SHA256: dict[str, str] = {
 }
 
 #: The family-file income concepts the U2 income rows need (the union
-#: over the ten rows; section 4).  ``wife_age`` gives the spouse-slot
-#: presence flag (not 0: "no Spouse/Partner in FU"), which rows U3 (the
-#: couple convention for new enrollment) and U4 (the unit size) read.
+#: over the ten rows; section 4).  ``wife_age`` gives the family file's
+#: spouse-slot flag (not 0: "no Spouse/Partner in FU"), which rows U3 (the
+#: couple convention for new enrollment) and U4 (the unit size) read once
+#: :func:`.cohort.income_rows` has held it equal to the roster's code-20
+#: or code-22 occupant.  The spouse age and sex are slot metadata only
+#: (amendment 2, ratified by d637; section 16b): they never decide slot
+#: occupancy, and a disagreement refuses.
 INCOME_CONCEPTS: tuple[str, ...] = (
     "interview",
     "fu_size",
@@ -1390,8 +1399,12 @@ def decode_income(frame: pd.DataFrame) -> pd.DataFrame:
     """Decode parsed income fields as the income rows need them.
 
     ``wife_present`` is ``wife_age`` not 0 ("no Spouse/Partner in FU"):
-    the designated spouse *income slot* is occupied (section 3); an age
-    of 999 (DK; NA) still marks the slot occupied.
+    the family file reports the designated spouse *income slot* occupied
+    (section 3); an age of 999 (DK; NA) still marks it occupied.  This is
+    slot metadata only (amendment 2, ratified by d637): occupancy comes
+    from the roster's code-20 or code-22 person, and
+    :func:`.cohort.income_rows` refuses any observation whose flag
+    disagrees with it.
     """
 
     out = frame.copy()
