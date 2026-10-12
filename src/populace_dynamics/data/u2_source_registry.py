@@ -87,8 +87,10 @@ _LATER_WAVES = (2015, 2017, 2019, 2021, 2023)
 #: they record, the adjudication disposition they keep, the gate fields
 #: it fixes (``fields``, exact values), the fields it removes
 #: (``absent``), the fields that must hold its text (``required``,
-#: nonempty) and the fixed values that only its entries may carry
-#: (``markers``).  An entry that records a d637 ruling must be in its
+#: nonempty), the fixed values that only its entries may carry
+#: (``markers``) and, for amendment 5, the route entries the builder
+#: reads that it governs (``governs``: exact fields, and fields that must
+#: be absent).  An entry that records a d637 ruling must be in its
 #: amendment's scope and hold those values, and every entry in a scope
 #: must record the ruling.  Each registry commit adds its amendment here
 #: (section 16a, "Registry effect of the rulings").
@@ -196,6 +198,10 @@ RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
             "superseded_refusal",
         ),
         "markers": ("refused_branch", "off_route_disposition"),
+        "governs": {
+            "2015.route.previous_combined": ({"accepted_plan_types": [7]}, ()),
+            "2015.route.previous_dc_only": ({"accepted_plan_types": [5]}, ()),
+        },
     },
     "5a": {
         "registry": "pension",
@@ -218,6 +224,29 @@ RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
             "superseded_refusal",
         ),
         "markers": (),
+        # The route dc_route reads for each wave: the DC-only checkpoint,
+        # the combined plan's items and the DC-only plan's (5a).
+        "governs": {
+            **{
+                f"{wave}.route.formula_unknown_checkpoint": (
+                    {
+                        "status": "RESOLVED",
+                        "accepted_plan_types": [5],
+                        "rejected_plan_types": [1, 7, 8, 9],
+                    },
+                    ("accepted_conditional_types",),
+                )
+                for wave in _LATER_WAVES[1:]
+            },
+            **{
+                f"{wave}.route.{route}": ({"accepted_plan_types": types}, ())
+                for wave in _LATER_WAVES[1:]
+                for route, types in (
+                    ("previous_combined", [7]),
+                    ("previous_dc_only", [5]),
+                )
+            },
+        },
     },
     "6": {
         "registry": "weights",
@@ -854,6 +883,26 @@ def validate_registry(document: dict[str, Any], *, expected_name: str) -> None:
             raise SourceAdjudicationError(
                 f"{name}:{key} lacks its d637 amendment {amendment} ruling"
             )
+    # The route entries an amendment governs hold its ruled values.
+    for amendment, scope in RATIFIED_AMENDMENTS.items():
+        if scope["registry"] != expected_name:
+            continue
+        by_id = {entry["id"]: entry for entry in entries}
+        for key, (fixed, absent) in scope.get("governs", {}).items():
+            entry = by_id.get(key)
+            if entry is None:
+                raise SourceAdjudicationError(
+                    f"Missing entry {key} that d637 amendment {amendment} "
+                    "governs"
+                )
+            if any(
+                field not in entry or not _same(entry[field], value)
+                for field, value in fixed.items()
+            ) or any(field in entry for field in absent):
+                raise SourceAdjudicationError(
+                    f"{expected_name}:{key} is not the route d637 amendment "
+                    f"{amendment} ratified"
+                )
     # A value only an amendment's entries may carry stays inside its scope.
     for amendment, scope in RATIFIED_AMENDMENTS.items():
         if scope["registry"] != expected_name:

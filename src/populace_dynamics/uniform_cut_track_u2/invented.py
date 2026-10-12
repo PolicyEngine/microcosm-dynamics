@@ -46,8 +46,10 @@ population:
 * **employer DC** (row U7): a current-job account, a combined plan
   whose current type counts, a DK amount, a combined previous plan left
   to accumulate (and its re-asked account items, a duplicate), account,
-  formula and DK plans on the declared account route, an IRA rollover
-  and an off-route amount;
+  formula and DK plans on the declared account route in 2013 (formula
+  and DK plans off-route from 2015, amendment 5), a DK amount on an
+  account plan's route and one on an off-route plan from 2019, an IRA
+  rollover and an off-route amount;
 * **design** (section 10): strata including the 2017/2019 refresher
   strata 88-94 and a singleton stratum.
 
@@ -1070,8 +1072,13 @@ def _dc_raw(family: Mapping[str, Any], wave: int) -> dict[str, int]:
             # An off-route amount: a formula-only current plan.
             row["wife_current_type"] = 1
             row["wife_current_amount"] = 4_000
-            # A DK amount on the route (counted as zero, unreported).
+            # A DK amount on the DK-type plan, off-route from 2015
+            # (amendment 5): counted off-route, never an unreported zero.
             row["wife_prev1_dc_amount"] = dk8
+            # A DK amount on an account plan's route (counted as zero,
+            # unreported).
+            row["head_prev2_type"] = 5
+            row["head_prev2_dc_amount"] = dk8
     return row
 
 

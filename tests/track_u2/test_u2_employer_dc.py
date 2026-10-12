@@ -103,6 +103,30 @@ def test_declared_account_items_route(wave, plan_type):
     assert out["employer_dc_off_route_items"] == int(not counted)
 
 
+@pytest.mark.parametrize("wave", [2013, 2019])
+@pytest.mark.parametrize("plan_type", [5, 1, 8, 9])
+@pytest.mark.parametrize(
+    "amount", [15_000, 10**8 - 2, 10**8 - 1], ids=["15000", "dk", "na"]
+)
+def test_an_off_route_amount_is_never_zero_filled(wave, plan_type, amount):
+    """Amendment 5 (ratified by d637): an off-route plan's P65 amount, a
+    DK or NA sentinel included, is counted off-route and never as an
+    unreported zero; an on-route sentinel is the unreported zero (review
+    of the amendment-5 commits, finding 5)."""
+    out = _balance(
+        _declared(wave),
+        wife_prev2_type=plan_type,
+        wife_prev2_dc_disposition=3,
+        wife_prev2_dc_amount=amount,
+    )
+    on_route = plan_type == 5 or (wave == 2013 and plan_type in (1, 8))
+    sentinel = amount != 15_000
+    assert out["employer_dc_off_route_items"] == int(not on_route)
+    assert out["employer_dc_unreported"] == int(on_route and sentinel)
+    assert out["employer_dc_items"] == int(on_route and not sentinel)
+    assert out["employer_dc"] == (amount if on_route and not sentinel else 0)
+
+
 def _section_16a_fragment() -> dict:
     """Amendment 5's ``previous_routes`` fragment as section 16a prints it."""
     import json
@@ -246,25 +270,57 @@ def test_2013_registry_route_equals_the_declared_route_and_u1_rule(
 REGISTRY_DC_WAVES = sources.SUPPORT_WAVES
 
 
-@pytest.mark.parametrize("wave", [2015, 2017, 2019, 2021, 2023])
-def test_a_blocked_later_route_refuses_under_the_registry_gate(
-    wave, committed_registries, monkeypatch
+#: Every route entry ``dc_route`` requires, by wave.
+_DC_ROUTE_ENTRIES = [
+    (wave, route)
+    for wave in sources.SUPPORT_WAVES
+    for route in (
+        "current_job",
+        "previous_combined",
+        "previous_dc_only",
+        "formula_unknown_checkpoint",
+        "ira_rollovers",
+        "duplicate_and_off_route",
+        "amounts_brackets_top_codes",
+        "respondent_slots",
+        *(("inherited_route_amendment",) if wave >= 2017 else ()),
+    )
+]
+
+
+@pytest.mark.parametrize(
+    "block, message",
+    [
+        ({"blocking_dependencies": ["pension:example"]}, "blocked by"),
+        ({"action": "refuse_example"}, "refuse_example"),
+    ],
+    ids=["blocked", "refusing"],
+)
+@pytest.mark.parametrize(
+    "wave, route",
+    _DC_ROUTE_ENTRIES,
+    ids=[f"{w}.{r}" for w, r in _DC_ROUTE_ENTRIES],
+)
+def test_a_blocked_route_refuses_under_the_registry_gate(
+    wave, route, block, message, committed_registries, monkeypatch
 ):
-    """The registry gate still refuses a route entry that is blocked, as
-    each later wave's was before the d637 5b and 5a commits; the entry is
+    """The registry gate refuses the wave's route if any entry it requires
+    is blocked or refusing, as 2015's checkpoint and 2017-2023's
+    inherited-route amendments were before the d637 5b and 5a commits
+    (review of the amendment-5 commits, finding 3); each entry is
     re-blocked in memory only."""
     original = sources.RegistrySet.entry
-    key = f"{wave}.route.previous_dc_only"
+    key = f"{wave}.route.{route}"
 
     def entry(self, name, entry_id):
         found = original(self, name, entry_id)
         if (name, entry_id) == ("pension", key):
-            return {**found, "blocking_dependencies": ["pension:example"]}
+            return {**found, **block}
         return found
 
     monkeypatch.setattr(sources.RegistrySet, "entry", entry)
     gate = sources.SourceGate(sources.REGISTRY, committed_registries)
-    with pytest.raises(sources.U2SourceRefusal, match="blocked by"):
+    with pytest.raises(sources.U2SourceRefusal, match=message):
         sources.dc_route(wave, gate)
 
 

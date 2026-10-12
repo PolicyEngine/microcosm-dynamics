@@ -247,7 +247,8 @@ DECLARED = INVENTED_DECLARED
 #: refused.  The first-round review fixes moved the income bytes again
 #: (amendment 2's rule text and amendment 3's resolution), and the
 #: second-round fixes the weights bytes (one word of the 2017 weight's
-#: construction note).
+#: construction note) and the pension bytes (amendment 5's texts name the
+#: duplicate guard for a combined plan's re-asked items).
 REGISTRY_SHA256: dict[str, str] = {
     "income": (
         "aea295524e689e3464147669c72b64c474208ceefe1efe0d33bcb0381e22dca3"
@@ -259,7 +260,7 @@ REGISTRY_SHA256: dict[str, str] = {
         "1cb368486d689e20e116b775ee2198504b0492fb3c7efa4d6fe7e985a2b1307c"
     ),
     "pension": (
-        "241aeaddb7e8b134ac5807f944053c4be59458d17bcf68c52177da5cab5328a6"
+        "6b9ae82b0dec99c56860654d6981fce8f71c4c074c95c85ff9448a612fce8351"
     ),
     "roles": (
         "79feadac7b4847c545e37cee33784873bb0324b9999cfc2693292af6aaacf43d"

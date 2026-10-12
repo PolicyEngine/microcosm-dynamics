@@ -635,8 +635,8 @@ D637_TEXT_SHA256 = {
     "2": ("64a67aae69d9d0bd6c6743328e8169304708003845395830ad628a6ee708887d"),
     "3": ("8d93d501819d981c6605b02fde3ff89d05488738146757bd179a84c02e131598"),
     "4": ("0b79677a5d1b41a76b17709152bec0d3789d118c75859b9716ea505c3413cd9c"),
-    "5b": ("7b16f9fdaa76d42d0d9c64dff3b7607a22e476378d35f3a9b1360d94f3c18552"),
-    "5a": ("1ce1d48c5661374960454e2c2d82a19fbc6a33abb432a50a0df40c773d8b8e76"),
+    "5b": ("ca59c757b3b2b3f9402643c51ae910c16f9dd5927848d03fed327172cb38b513"),
+    "5a": ("7f2b79ac154d570a4f246f7f985f4aaef47ba40c3506dc0b12f5707ba69da24e"),
     "6": ("ad76188063ca16ddcdcc2d8e2165348293a4c88e9437e8e173765df91ffc0d2f"),
 }
 #: The operative clauses each amendment's entries must state, by field
@@ -674,12 +674,32 @@ D637_CLAUSES = {
         ("resolution", "is refused pending PSID clarification"),
         ("resolution", "off-route under the named disposition off_route"),
         ("resolution", "never zero-filled"),
+        (
+            "resolution",
+            "a combined plan's re-asked P64/P65 items under "
+            "both_plan_account_items_reasked",
+        ),
         ("condition", "DC-only plan (P46=5)"),
     ],
     "5a": [
         ("ruling_effect", "Under 5a the {wave} previous-employer account"),
         ("ruling_effect", "only P46=5 (DC only) reaches P64/P65"),
-        ("ruling_effect", "under the named disposition off_route"),
+        (
+            "ruling_effect",
+            "which supersedes section 15's generic account/formula/dk "
+            "previous route",
+        ),
+        (
+            "ruling_effect",
+            "section 15's own text is unchanged until section 20 step 5",
+        ),
+        (
+            "ruling_effect",
+            "a combined plan's re-asked P64/P65 items under "
+            "both_plan_account_items_reasked (the duplicate guard, "
+            "pension:{wave}.route.duplicate_and_off_route) and the others' "
+            "under off_route",
+        ),
         ("ruling_effect", "combined-plan P48/P49 is counted once"),
         ("ruling_effect", "IRA-rollover disposition 2 is excluded"),
     ],
@@ -773,6 +793,13 @@ D637_TEXT_MUTATIONS = [
         "ruling_effect",
         "only P46=5 (DC only)",
         "P46=1 and P46=5",
+    ),
+    (
+        "pension",
+        "2019.route.inherited_route_amendment",
+        "ruling_effect",
+        "both_plan_account_items_reasked",
+        "off_route",
     ),
     (
         "weights",
@@ -1352,7 +1379,8 @@ D1090_CLAUSES = {
         "nine corrected wealth accuracy flags, resolved the 2015 P62ACKPT "
         "checkpoint under 5b, released the 2017\N{EN DASH}2023 P64/P65 "
         "records under 5a and resolved the 2017 weight ER34651 under "
-        "amendment 6's option 1. The 6 TO VERIFY records left are code "
+        "amendment 6's option 1; the \N{SECTION SIGN}15 fragment itself is "
+        "materialized under item 9. The 6 TO VERIFY records left are code "
         "88's, open until Max confirms the 1a\N{EN DASH}1c reading (d745).",
         "8. Complete the pre-registration structural, reconciliation and "
         "F17 component pass, including only the counts that the ratified B1 "

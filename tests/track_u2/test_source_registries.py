@@ -966,6 +966,38 @@ D637_SCOPE_MUTATIONS = {
             + " Recalibrate 2017 to ACS."
         ),
     ),
+    # Second-round review (of the amendment-5 commits): the routes
+    # dc_route reads are the ruled ones.
+    "a5a_checkpoint_widened": (
+        "pension",
+        lambda d: _entry(d, "2021.route.formula_unknown_checkpoint").update(
+            accepted_conditional_types=[1, 8]
+        ),
+    ),
+    "a5a_checkpoint_admits_formula": (
+        "pension",
+        lambda d: _entry(d, "2017.route.formula_unknown_checkpoint").update(
+            accepted_plan_types=[5, 1]
+        ),
+    ),
+    "a5a_combined_widened": (
+        "pension",
+        lambda d: _entry(d, "2019.route.previous_combined").update(
+            accepted_plan_types=[7, 1]
+        ),
+    ),
+    "a5a_dc_only_widened": (
+        "pension",
+        lambda d: _entry(d, "2023.route.previous_dc_only").update(
+            accepted_plan_types=[5, 8]
+        ),
+    ),
+    "a5b_combined_widened": (
+        "pension",
+        lambda d: _entry(d, "2015.route.previous_combined").update(
+            accepted_plan_types=[7, 1]
+        ),
+    ),
     "a2_blocked_again": (
         "income",
         lambda d: _entry(d, "income.2019.wife_sex").update(

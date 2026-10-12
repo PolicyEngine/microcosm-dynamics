@@ -729,7 +729,9 @@ def test_crosswalks_are_never_executable_inputs(declared_gate, registry_gate):
 
 
 #: The waves whose family-record specs (income, wealth and employer-DC
-#: items) the registry gate applies: every support wave.  Until the d1090
+#: items) the registry gate applies: every support wave; a re-blocked
+#: entry still refuses (``test_registry_gate_refuses_a_reblocked_family_
+#: record``).  Until the d1090
 #: registry commit (section 16c), 2015's income entries depended on the
 #: refused 2015 code-20 route and 2019-2023's on the refused code-90/92
 #: routes; until the d637 amendment-2 commit (section 16b), every later
@@ -737,23 +739,42 @@ def test_crosswalks_are_never_executable_inputs(declared_gate, registry_gate):
 #: and 5a commits, the P64/P65 items waited on 2015's P62ACKPT checkpoint
 #: and on 2017-2023's inherited-route amendments.
 OPEN_WAVES_RESOLVED = sources.SUPPORT_WAVES
-FIRST_BLOCKER: dict[int, str] = {}
 
 
-def test_registry_gate_refuses_every_open_wave(registry_gate):
+def test_registry_gate_applies_every_support_wave(registry_gate):
     # 2013: every mapping U2 reads is resolved (the 2013 meanings are
     # U1's); 2015-2023 since the d637 commits for amendments 2, 5b and
-    # 5a.  A wave still open would meet its first blocked entry.
+    # 5a.
     for wave in OPEN_WAVES_RESOLVED:
         specs = loader.family_record_specs(wave, registry_gate)
         concepts = {spec.concept for spec in specs}
         assert set(sources.INCOME_CONCEPTS) <= concepts
         assert {"wealth1", "vehicles", "head_current_amount"} <= concepts
         assert all(spec.gate == sources.REGISTRY for spec in specs)
-    for wave, blocker in FIRST_BLOCKER.items():
-        with pytest.raises(sources.U2SourceRefusal) as error:
-            loader.family_record_specs(wave, registry_gate)
-        assert blocker in str(error.value), (wave, str(error.value)[:200])
+
+
+@pytest.mark.parametrize("wave", (2015, 2017, 2019, 2021, 2023))
+def test_registry_gate_refuses_a_reblocked_family_record(
+    wave, committed_registries, monkeypatch
+):
+    """A later wave meets the blocker of any family-record entry, as each
+    did before the d637 commits; the first P64 item is re-blocked in
+    memory only (review of the amendment-5 commits, finding 3)."""
+    original = sources.RegistrySet.entry
+    key = f"{wave}.head_prev1_dc_disposition"
+    blocker = f"pension:{wave}.route.inherited_route_amendment"
+
+    def entry(self, name, entry_id):
+        found = original(self, name, entry_id)
+        if (name, entry_id) == ("pension", key):
+            return {**found, "blocking_dependencies": [blocker]}
+        return found
+
+    monkeypatch.setattr(sources.RegistrySet, "entry", entry)
+    gate = sources.SourceGate(sources.REGISTRY, committed_registries)
+    with pytest.raises(sources.U2SourceRefusal) as error:
+        loader.family_record_specs(wave, gate)
+    assert f"pension:{key}: blocked by {blocker}" in str(error.value)
 
 
 @pytest.mark.parametrize("wave", sources.SUPPORT_WAVES)
@@ -844,9 +865,26 @@ def test_source_preflight_refuses_before_opening_any_psid_file(
 def test_source_preflight_lists_the_open_entries(committed_registries):
     with pytest.raises(loader.U2LoaderRefusal) as error:
         loader.source_preflight(committed_registries)
-    assert "weights:2017.cross_section_weight" in str(error.value) or (
-        "registry blockers" in str(error.value)
+    # Since the d637 registry commits the only blockers are code 88's
+    # (amendment 1c, pending d745): TO VERIFY and its refusal, each wave.
+    assert str(error.value).startswith("12 registry blockers refuse")
+    # The preflight's own rule: an absent code (code 92 in 2013 and 2015)
+    # passes when it is RESOLVED; every other entry counts its blockers.
+    refused = []
+    for name, entry_id in loader.required_entries(committed_registries):
+        entry = committed_registries.entry(name, entry_id)
+        if name == "roles" and entry.get("present") is False:
+            assert entry["status"] == "RESOLVED", entry_id
+            continue
+        refused += sources.blockers(entry, name)
+    assert len(refused) == 12
+    assert sorted({reason.split(": ")[0] for reason in refused}) == sorted(
+        f"roles:{wave}.relationship.88" for wave in sources.SUPPORT_WAVES
     )
+    for wave in sources.SUPPORT_WAVES:
+        key = f"roles:{wave}.relationship.88"
+        assert f"{key}: refuse_substantive_routing" in refused
+        assert any(r.startswith(f"{key}: TO VERIFY: ") for r in refused)
     entries = loader.required_entries(committed_registries)
     assert ("weights", "2017.cross_section_weight") in entries
     assert ("roles", "2019.relationship.92") in entries
