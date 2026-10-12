@@ -30,7 +30,26 @@ pytestmark = pytest.mark.skipif(
 )
 
 
+def _require_pinned_poppler():
+    """Skip where the local pdftotext is not the Poppler the scripts pin.
+
+    The builder and the replay refuse any other version before parsing a
+    source ("Poppler version drift before semantic parsing"), so on such a
+    machine these source rebuilds cannot run at all.
+    """
+    # The literal both scripts compare against (rebuild ...:1140, replay
+    # ...:532), not the extraction module's constant.
+    pinned = "26.04.0"
+    try:
+        version = builder.extraction.pdftotext_version()
+    except FileNotFoundError:
+        pytest.skip("pdftotext is not installed")
+    if version != pinned:
+        pytest.skip(f"local pdftotext is {version}, not the pinned {pinned}")
+
+
 def test_fresh_47_source_build_is_byte_equal_to_committed_authority():
+    _require_pinned_poppler()
     completed = subprocess.run(
         [
             sys.executable,
@@ -60,6 +79,7 @@ def test_fresh_47_source_build_is_byte_equal_to_committed_authority():
 
 
 def test_r05_direct_cli_streams_sources_to_exact_terminal_blocker(tmp_path):
+    _require_pinned_poppler()
     environment = os.environ.copy()
     environment.pop("PYTHONPATH", None)
     completed = subprocess.run(
@@ -136,6 +156,7 @@ def _run_with_output(output):
 
 
 def test_successful_write_normalizes_output_mode(tmp_path):
+    _require_pinned_poppler()
     output = tmp_path / "authority.json"
     output.write_bytes(b"predecessor")
     output.chmod(0o600)
