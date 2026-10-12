@@ -1,0 +1,1863 @@
+# Published figures are source-quoted. Derived rates are labelled separately.
+schema_version: 1
+verification_class: statutory_conformance
+admitted_scope: Gross benefits for supported invented configurations and captured
+  statutory examples only; no population, behavioral or forecast claim.
+tag_vocabulary:
+- cola_path
+- credits:own_rib
+- credits:widow_basis
+- credits:worker
+- dual:all_dual
+- dual:child
+- dual:method_b
+- dual:method_c
+- dual:parent
+- dwb
+- formula:bend_points
+- formula:maximum
+- historical:refused
+- ieds
+- maximum:binding
+- maximum:disability_aime
+- maximum:disability_cap
+- maximum:disability_floor
+- maximum:nonbinding
+- outside:divorced_spouse
+- outside:ieds
+- outside:surviving_divorced_spouse
+- parent:one
+- parent:two
+- record:disability
+- record:retirement
+- record:survivor
+- redistribution:own_age_reduced
+- redistribution:partial
+- redistribution:zero
+- reduction:spouse
+- reduction:widow
+- reduction:worker
+- rib_lim
+- role:child
+- role:disabled_widow
+- role:divorced_spouse
+- role:mother_father
+- role:parent
+- role:spouse
+- role:spouse_child_in_care
+- role:surviving_divorced_spouse
+- role:widow
+- source:erratum
+- ssfa:gpo_ignored
+- ssfa:wep_regular_pia
+supported_classes:
+- cola_path
+- credits:own_rib
+- credits:widow_basis
+- credits:worker
+- dual:all_dual
+- dual:child
+- dual:method_b
+- dual:method_c
+- dual:parent
+- dwb
+- ieds
+- maximum:binding
+- maximum:disability_aime
+- maximum:disability_cap
+- maximum:disability_floor
+- maximum:nonbinding
+- outside:divorced_spouse
+- outside:ieds
+- outside:surviving_divorced_spouse
+- parent:one
+- parent:two
+- record:disability
+- record:retirement
+- record:survivor
+- redistribution:own_age_reduced
+- redistribution:partial
+- redistribution:zero
+- reduction:spouse
+- reduction:widow
+- reduction:worker
+- rib_lim
+- role:child
+- role:disabled_widow
+- role:divorced_spouse
+- role:mother_father
+- role:parent
+- role:spouse
+- role:spouse_child_in_care
+- role:surviving_divorced_spouse
+- role:widow
+- ssfa:gpo_ignored
+- ssfa:wep_regular_pia
+invented_only_classes:
+  cola_path:
+    reason: The captures state the COLA ordering, but no in-scope numerical gross-family
+      COLA path is published.
+    tests:
+    - tests/test_track_b_gross_benefits.py::test_record_state_applies_the_same_colas_to_pia_and_maximum
+  dual:all_dual:
+    reason: RS 00615.768 states that all-dual families disregard redistribution without
+      publishing numerical figures.
+    tests:
+    - tests/test_track_b_gross_benefits.py::test_poms_768_all_dually_entitled_disregards_the_rule
+  dual:parent:
+    reason: RS 00209.015 states own-RIB/DIB offsets but gives no worked-money example.
+    tests:
+    - tests/test_track_b_gross_benefits_parents_ieds.py::test_parent_hand_reference_dib_retains_technical_entitlement
+  dwb:
+    reason: The DWB capture states 28.5% and the January 1984 recalculation without
+      worked monetary figures.
+    tests:
+    - tests/test_track_b_gross_benefits_dwb.py::test_dwb_hand_reference_reduces_the_maximum_share
+  ieds:
+    reason: RS 00202.100 states IEDS entitlement and formula but gives no worked
+      monetary example.
+    tests:
+    - tests/test_track_b_gross_benefits_parents_ieds.py::test_ieds_hand_reference_dual_entitlement_uses_the_spouse_method
+  maximum:disability_aime:
+    reason: The captured disability examples do not have the 85%-AIME branch binding.
+    tests:
+    - tests/test_track_b_gross_benefits.py::test_disability_family_maximum
+  maximum:disability_floor:
+    reason: The Bulletin publishes the disability cap case; floor cases are invented
+      exact 403(a)(6) references.
+    tests:
+    - tests/test_track_b_gross_benefits.py::test_disabled_worker_family_can_leave_nothing_for_auxiliaries
+  outside:divorced_spouse:
+    reason: The captures give the outside-maximum rule without a monetary living-worker
+      divorce example.
+    tests:
+    - tests/test_track_b_gross_benefits.py::test_divorced_spouse_is_ignored_by_everyone_else
+  outside:ieds:
+    reason: RS 00202.100 has no monetary IEDS worked example.
+    tests:
+    - tests/test_track_b_gross_benefits_parents_ieds.py::test_ieds_is_outside_the_maximum_and_other_divorced_spouses
+  parent:one:
+    reason: RS 00209.015 gives the 82.5% rule without a monetary parent example.
+    tests:
+    - tests/test_track_b_gross_benefits_parents_ieds.py::test_parent_hand_reference_one_or_two_entitled_parents
+  parent:two:
+    reason: RS 00209.015 gives the 75%-each rule without a monetary parent example.
+    tests:
+    - tests/test_track_b_gross_benefits_parents_ieds.py::test_parent_hand_reference_one_or_two_entitled_parents
+  role:disabled_widow:
+    reason: RS 00615.310/.315 provide rules without a numerical DWB example.
+    tests:
+    - tests/test_track_b_gross_benefits_dwb.py::test_dwb_hand_reference_and_round_up
+  role:divorced_spouse:
+    reason: The captured divorced-spouse sections give entitlement and payment rules
+      without a worked-money life example.
+    tests:
+    - tests/test_track_b_gross_benefits.py::test_divorced_spouse_is_ignored_by_everyone_else
+  role:parent:
+    reason: RS 00209.001/.015 provide rules without a numerical example.
+    tests:
+    - tests/test_track_b_gross_benefits_parents_ieds.py::test_parent_hand_reference_one_or_two_entitled_parents
+  role:spouse_child_in_care:
+    reason: The captures give the exemption from age reduction but no worked-money
+      child-in-care dual-entitlement example.
+    tests:
+    - tests/test_track_b_gross_benefits.py::test_child_in_care_spouse_offset_uses_the_reduced_rib
+  ssfa:gpo_ignored:
+    reason: GN 02608.100 publishes the repeal boundary, not worked gross-family monetary
+      figures.
+    tests:
+    - tests/test_track_b_gross_benefits_ssfa.py::test_gpo_refuses_december_2023_and_computes_january_2024
+  ssfa:wep_regular_pia:
+    reason: 'RS 00605.360 publishes WEP repeal from January 2024 without a gross-family
+      monetary example. G takes the PIA as an input: a WEP-affected PIA is supplied
+      by the caller before 2024, and a regular-formula PIA is supplied from January
+      2024.'
+    tests:
+    - tests/test_track_b_gross_benefits_ssfa.py::test_wep_pia_is_supplied_by_caller_and_regular_pia_applies_after_repeal
+    - tests/test_track_b_gross_benefits_parents_ieds.py::test_ieds_worker_wep_december_2023_january_2024_boundary
+examples:
+- id: rs-00615-756-seven-children
+  capture_id: poms_rs_00615_756
+  section: B.3
+  tags:
+  - record:survivor
+  - role:widow
+  - role:child
+  - maximum:binding
+  inputs:
+    scenarios:
+      case:
+        operation: family
+        state:
+          kind: survivor
+          pia: '492.90'
+          family_maximum: '862.60'
+        members:
+        - beneficiary_id: D
+          role: widow
+        - beneficiary_id: C0
+          role: child
+        - beneficiary_id: C1
+          role: child
+        - beneficiary_id: C2
+          role: child
+        - beneficiary_id: C3
+          role: child
+        - beneficiary_id: C4
+          role: child
+        - beneficiary_id: C5
+          role: child
+        - beneficiary_id: C6
+          role: child
+  figure_count: 12
+  expected:
+  - path: case.state.pia
+    value: '492.90'
+    literal: $492.90
+  - path: case.state.family_maximum
+    value: '862.60'
+    literal: $862.60
+  - path: case.rows.C0.original_benefit
+    value: '369.60'
+    literal: $369.60
+  - path: case.result.total_original_benefits
+    value: '3080.10'
+    literal: $3080.10
+  - path: case.rows.D.auxiliary_payable
+    value: '138.00'
+    literal: $138.00
+  - path: case.rows.C0.auxiliary_payable
+    value: '103.50'
+    literal: $103.50 each
+  - path: case.rows.C1.auxiliary_payable
+    value: '103.50'
+    literal: $103.50 each
+  - path: case.rows.C2.auxiliary_payable
+    value: '103.50'
+    literal: $103.50 each
+  - path: case.rows.C3.auxiliary_payable
+    value: '103.50'
+    literal: $103.50 each
+  - path: case.rows.C4.auxiliary_payable
+    value: '103.50'
+    literal: $103.50 each
+  - path: case.rows.C5.auxiliary_payable
+    value: '103.50'
+    literal: $103.50 each
+  - path: case.rows.C6.auxiliary_payable
+    value: '103.50'
+    literal: $103.50 each
+  derived_expected:
+  - path: case.rows.D.whole_dollar_auxiliary
+    value: '138'
+    derivation: '215(g): floor 138.00'
+  - path: case.result.record_total
+    value: '862.50'
+    derivation: 138.00 + 7 * 103.50
+  - path: case.result.record_total_whole_dollars
+    value: '859'
+    derivation: '215(g): 138 + 7 * 103'
+- id: rs-00615-756-windexed
+  capture_id: poms_rs_00615_756
+  section: B.4
+  tags:
+  - record:survivor
+  - role:widow
+  - role:child
+  - maximum:binding
+  - credits:widow_basis
+  inputs:
+    scenarios:
+      case:
+        operation: family
+        state:
+          kind: survivor
+          pia: '300'
+          family_maximum: '450'
+        members:
+        - beneficiary_id: Nora
+          role: widow
+          original_benefit_basis: '310'
+        - beneficiary_id: Michael
+          role: child
+  figure_count: 7
+  expected:
+  - path: case.state.pia
+    value: '300'
+    literal: $300.00
+  - path: case.state.family_maximum
+    value: '450'
+    literal: $450.00
+  - path: case.rows.Nora.original_benefit
+    value: '310'
+    literal: $310.00
+  - path: case.rows.Michael.original_benefit
+    value: '225'
+    literal: $225.00
+  - path: case.result.total_original_benefits
+    value: '535'
+    literal: $535.00
+  - path: case.rows.Nora.auxiliary_payable
+    value: '260.70'
+    literal: $260.70
+  - path: case.rows.Michael.auxiliary_payable
+    value: '189.20'
+    literal: $189.20
+  derived_expected:
+  - path: case.result.record_total_whole_dollars
+    value: '449'
+    derivation: '215(g): 260 + 189'
+- id: rs-00615-710-widow-drc
+  capture_id: poms_rs_00615_710
+  section: Example
+  tags:
+  - record:survivor
+  - role:widow
+  - role:child
+  - maximum:binding
+  - credits:widow_basis
+  inputs:
+    scenarios:
+      case:
+        operation: family
+        state:
+          kind: survivor
+          pia: '400'
+          family_maximum: '700'
+        members:
+        - beneficiary_id: W
+          role: widow
+          original_benefit_basis: '410'
+        - beneficiary_id: C
+          role: child
+  figure_count: 6
+  expected:
+  - path: case.state.pia
+    value: '400'
+    literal: $400
+  - path: case.state.family_maximum
+    value: '700'
+    literal: $700
+  - path: case.rows.W.original_benefit
+    value: '410'
+    literal: $410
+  - path: case.rows.C.original_benefit
+    value: '300'
+    literal: $300
+  - path: case.rows.W.auxiliary_payable
+    value: '404.20'
+    literal: '404.20'
+  - path: case.rows.C.auxiliary_payable
+    value: '295.70'
+    literal: '295.70'
+  derived_expected:
+  - path: case.result.record_total_whole_dollars
+    value: '699'
+    derivation: '215(g): 404 + 295'
+- id: rs-00615-682-divorced-widow
+  capture_id: poms_rs_00615_682
+  section: Example
+  tags:
+  - record:survivor
+  - role:mother_father
+  - role:child
+  - role:surviving_divorced_spouse
+  - reduction:widow
+  - maximum:binding
+  - maximum:nonbinding
+  - outside:surviving_divorced_spouse
+  inputs:
+    scenarios:
+      before:
+        operation: family
+        state:
+          kind: survivor
+          pia: '203.90'
+          family_maximum: '305.90'
+        members:
+        - beneficiary_id: E1
+          role: mother_father
+        - &id001
+          beneficiary_id: C1
+          role: child
+        - &id002
+          beneficiary_id: C2
+          role: child
+      after:
+        operation: family
+        state:
+          kind: survivor
+          pia: '203.90'
+          family_maximum: '305.90'
+        members:
+        - beneficiary_id: D6
+          role: surviving_divorced_spouse
+          reduction_months: 60
+          reduction_period_months: 60
+        - *id001
+        - *id002
+  figure_count: 8
+  expected:
+  - path: before.state.pia
+    value: '203.90'
+    literal: $203.90
+  - path: before.state.family_maximum
+    value: '305.90'
+    literal: $305.90
+  - path: before.rows.E1.auxiliary_payable
+    value: '101.90'
+    literal: $101.90 each
+  - path: before.rows.C1.auxiliary_payable
+    value: '101.90'
+    literal: $101.90 each
+  - path: before.rows.C2.auxiliary_payable
+    value: '101.90'
+    literal: $101.90 each
+  - path: after.rows.D6.auxiliary_payable
+    value: '145.70'
+    literal: $145.70
+  - path: after.rows.C1.auxiliary_payable
+    value: '152.90'
+    literal: $152.90 to each child
+  - path: after.rows.C2.auxiliary_payable
+    value: '152.90'
+    literal: $152.90 to each child
+  derived_expected:
+  - path: after.result.record_total_whole_dollars
+    value: '449'
+    derivation: '215(g): 145 + 152 + 152'
+- id: rs-00615-768-zero-spouse
+  capture_id: poms_rs_00615_768
+  section: E.1
+  tags:
+  - record:retirement
+  - role:spouse
+  - role:child
+  - dual:method_c
+  - maximum:binding
+  - redistribution:zero
+  inputs:
+    scenarios:
+      case:
+        operation: family
+        state:
+          kind: retirement
+          pia: '400'
+          family_maximum: '650'
+        members:
+        - beneficiary_id: B
+          role: spouse
+          own_benefit:
+            kind: old_age
+            pia: '100'
+          own_benefit_first: true
+        - *id001
+        - *id002
+  figure_count: 6
+  expected:
+  - path: case.state.pia
+    value: '400'
+    literal: $400.00
+  - path: case.state.family_maximum
+    value: '650'
+    literal: $650.00
+  - path: case.rows.B.standard_rate
+    value: '83.30'
+    literal: $83.30 each
+  - path: case.extra.B.own_pia
+    value: '100'
+    literal: $100.00
+  - path: case.rows.C1.auxiliary_payable
+    value: '125'
+    literal: $125.00
+  - path: case.rows.C2.auxiliary_payable
+    value: '125'
+    literal: $125.00
+  derived_expected:
+  - path: case.rows.B.auxiliary_payable
+    value: '0'
+    derivation: max(83.30 - own PIA 100, 0)
+  - path: case.result.record_total_whole_dollars
+    value: '650'
+    derivation: '215(g): 400 + 125 + 125'
+- id: rs-00615-768-partial-child
+  capture_id: poms_rs_00615_768
+  section: E.2
+  tags:
+  - record:disability
+  - role:child
+  - dual:child
+  - maximum:binding
+  - redistribution:partial
+  inputs:
+    scenarios:
+      case:
+        operation: family
+        state:
+          kind: disability
+          pia: '600'
+          family_maximum: '900'
+        members:
+        - beneficiary_id: HC2
+          role: child
+          own_benefit:
+            kind: disability
+            pia: '120'
+        - beneficiary_id: HC1
+          role: child
+  figure_count: 5
+  expected:
+  - path: case.state.pia
+    value: '600'
+    literal: $600
+  - path: case.state.family_maximum
+    value: '900'
+    literal: $900
+  - path: case.extra.HC2.own_pia
+    value: '120'
+    literal: $120
+  - path: case.rows.HC2.auxiliary_payable
+    value: '30'
+    literal: $30
+  - path: case.rows.HC1.auxiliary_payable
+    value: '270'
+    literal: $270
+  derived_expected:
+  - path: case.result.record_total_whole_dollars
+    value: '900'
+    derivation: '215(g): 600 + 30 + 270'
+- id: rs-00615-320-rib-lim
+  capture_id: poms_rs_00615_320
+  section: C. Example
+  tags:
+  - record:survivor
+  - role:widow
+  - maximum:nonbinding
+  - rib_lim
+  inputs:
+    scenarios:
+      case:
+        operation: family
+        state:
+          kind: survivor
+          pia: '374.90'
+          family_maximum: '600'
+          rib_lim_benefit: '350'
+        members:
+        - beneficiary_id: W
+          role: widow
+  figure_count: 4
+  expected:
+  - path: case.state.pia
+    value: '374.90'
+    literal: $374.90
+  - path: case.state.rib_lim_benefit
+    value: '350'
+    literal: $350
+  - path: case.rib_lim_floor
+    value: '309.20'
+    literal: $309.20
+  - path: case.rows.W.auxiliary_payable
+    value: '350'
+    literal: $350 in this example.
+  derived_expected:
+  - path: case.result.record_total_whole_dollars
+    value: '350'
+    derivation: '215(g): floor 350'
+- id: rs-00615-694-own-drc
+  capture_id: poms_rs_00615_694
+  section: C. Example
+  tags:
+  - record:retirement
+  - role:spouse
+  - credits:own_rib
+  - dual:method_c
+  - maximum:nonbinding
+  inputs:
+    scenarios:
+      case:
+        operation: family
+        state:
+          kind: retirement
+          pia: '1600'
+          family_maximum: '2400'
+        members:
+        - beneficiary_id: Toni
+          role: spouse
+          own_benefit:
+            kind: old_age
+            pia: '500'
+            reduction_months: 36
+            delayed_credit_months: 5
+            birth_year: 1935
+          own_benefit_first: true
+  figure_count: 8
+  expected:
+  - path: case.state.pia
+    value: '1600'
+    literal: $1600.00
+  - path: case.extra.Toni.own_pia
+    value: '500'
+    literal: $500.00
+  - path: case.extra.Toni.own_base
+    value: '400'
+    literal: $400.00
+  - path: case.rows.Toni.original_benefit
+    value: '800'
+    literal: $800
+  - path: case.extra.Toni.ob_excess
+    value: '300'
+    literal: $300
+  - path: case.rows.Toni.age_adjusted_rate
+    value: '700'
+    literal: $700.00
+  - path: case.rows.Toni.own_benefit
+    value: '410'
+    literal: $410.00
+  - path: case.rows.Toni.auxiliary_payable
+    value: '290'
+    literal: $290
+  derived_expected:
+  - path: case.rows.Toni.whole_dollar_auxiliary
+    value: '290'
+    derivation: '215(g): floor 290'
+  - path: case.rows.Toni.whole_dollar_own
+    value: '410'
+    derivation: '215(g): floor 410'
+- id: rs-00615-240-method-b
+  capture_id: poms_rs_00615_240
+  section: Example
+  tags:
+  - record:retirement
+  - role:spouse
+  - reduction:spouse
+  - dual:method_b
+  - maximum:nonbinding
+  inputs:
+    scenarios:
+      case:
+        operation: family
+        state:
+          kind: retirement
+          pia: '1200'
+          family_maximum: '2100'
+        members:
+        - beneficiary_id: S
+          role: spouse
+          reduction_months: 36
+          own_benefit:
+            kind: old_age
+            pia: '250'
+            reduction_months: 36
+          own_benefit_first: false
+  figure_count: 4
+  expected:
+  - path: case.rows.S.age_adjusted_rate
+    value: '450'
+    literal: $450.00
+  - path: case.rows.S.own_benefit
+    value: '200'
+    literal: $200.00
+  - path: case.rows.S.auxiliary_payable
+    value: '250'
+    literal: $250.00
+  - path: case.rows.S.total_received
+    value: '450'
+    literal: $450.00
+  derived_expected:
+  - path: case.rows.S.whole_dollar_auxiliary
+    value: '250'
+    derivation: '215(g): floor 250'
+  - path: case.rows.S.whole_dollar_own
+    value: '200'
+    derivation: '215(g): floor 200'
+- id: ssb-table-1
+  capture_id: ssa_ssb_v75n3_family_maximum
+  section: Table 1
+  tags:
+  - record:survivor
+  - role:mother_father
+  - role:child
+  - maximum:binding
+  inputs:
+    scenarios:
+      case:
+        operation: family
+        worker_record:
+          kind: survivor
+          eligibility_year: 2015
+          eligibility_pia: '1200'
+        members:
+        - beneficiary_id: Spouse
+          role: mother_father
+        - beneficiary_id: Child1
+          role: child
+        - beneficiary_id: Child2
+          role: child
+        month:
+        - 2015
+        - 6
+  figure_count: 7
+  expected:
+  - path: case.state.pia
+    value: '1200'
+    literal: $1,200
+  - path: case.pre_maximum_total
+    value: '2700'
+    literal: 2,700
+  - path: case.state.family_maximum
+    value: '1976'
+    literal: $1,976
+    rounding: nearest_dollar
+  - path: case.rows.Spouse.auxiliary_payable
+    value: '659'
+    literal: '659'
+    rounding: nearest_dollar
+  - path: case.rows.Child1.auxiliary_payable
+    value: '659'
+    literal: '659'
+    rounding: nearest_dollar
+  - path: case.rows.Child2.auxiliary_payable
+    value: '659'
+    literal: '659'
+    rounding: nearest_dollar
+  - path: case.result.record_total
+    value: '1976'
+    literal: 1,976
+    rounding: nearest_dollar
+  derived_expected:
+  - path: case.state.family_maximum
+    value: '1975.60'
+    derivation: floor_dime(1.5 * 1056 + 2.72 * 144)
+  - path: case.rows.Spouse.auxiliary_payable
+    value: '658.50'
+    derivation: floor_dime(1975.60 / 3)
+  - path: case.rows.Child1.auxiliary_payable
+    value: '658.50'
+    derivation: floor_dime(1975.60 / 3)
+  - path: case.rows.Child2.auxiliary_payable
+    value: '658.50'
+    derivation: floor_dime(1975.60 / 3)
+  - path: case.rows.Spouse.whole_dollar_auxiliary
+    value: '658'
+    derivation: '215(g): floor 658.50'
+  - path: case.rows.Child1.whole_dollar_auxiliary
+    value: '658'
+    derivation: '215(g): floor 658.50'
+  - path: case.rows.Child2.whole_dollar_auxiliary
+    value: '658'
+    derivation: '215(g): floor 658.50'
+  - path: case.result.record_total
+    value: '1975.50'
+    derivation: 3 * 658.50
+  - path: case.result.record_total_whole_dollars
+    value: '1974'
+    derivation: '215(g): 3 * 658'
+  source_start: Table 1.
+  source_end: Table 2.
+- id: ssb-table-2
+  capture_id: ssa_ssb_v75n3_family_maximum
+  section: Table 2
+  tags:
+  - record:disability
+  - role:spouse
+  - role:child
+  - maximum:disability_cap
+  - maximum:binding
+  inputs:
+    scenarios:
+      case:
+        operation: family
+        worker_record:
+          kind: disability
+          eligibility_year: 2015
+          eligibility_pia: '1200'
+          aime: 2253
+          first_dib_entitlement:
+          - 2015
+          - 6
+        members:
+        - beneficiary_id: Spouse
+          role: spouse
+        - beneficiary_id: Child1
+          role: child
+        - beneficiary_id: Child2
+          role: child
+        month:
+        - 2015
+        - 6
+  figure_count: 12
+  expected:
+  - path: case.input.worker_record.aime
+    value: '2253'
+    literal: $2,253
+  - path: case.state.pia
+    value: '1200'
+    literal: $1,200
+  - path: case.state.family_maximum
+    value: '1800'
+    literal: $1,800
+  - path: case.result.worker_benefit
+    value: '1200'
+    literal: 1,200
+  - path: case.pre_maximum_total
+    value: '3000'
+    literal: 3,000
+  - path: case.record_plus_own
+    value: '1800'
+    literal: 1,800
+  - path: case.extra.Spouse.potential_ob
+    value: '600'
+    literal: '600'
+  - path: case.extra.Child1.potential_ob
+    value: '600'
+    literal: '600'
+  - path: case.extra.Child2.potential_ob
+    value: '600'
+    literal: '600'
+  - path: case.rows.Spouse.auxiliary_payable
+    value: '200'
+    literal: '200'
+  - path: case.rows.Child1.auxiliary_payable
+    value: '200'
+    literal: '200'
+  - path: case.rows.Child2.auxiliary_payable
+    value: '200'
+    literal: '200'
+  derived_expected:
+  - path: case.rows.Spouse.whole_dollar_auxiliary
+    value: '200'
+    derivation: '215(g): floor of the published integer rate'
+  - path: case.rows.Child1.whole_dollar_auxiliary
+    value: '200'
+    derivation: '215(g): floor of the published integer rate'
+  - path: case.rows.Child2.whole_dollar_auxiliary
+    value: '200'
+    derivation: '215(g): floor of the published integer rate'
+  source_start: Table 2.
+  source_end: Table A-1.
+- id: ssb-table-a1
+  capture_id: ssa_ssb_v75n3_family_maximum
+  section: Table A-1
+  tags:
+  - record:disability
+  - role:spouse
+  - role:child
+  - maximum:disability_cap
+  - maximum:nonbinding
+  inputs:
+    scenarios:
+      case:
+        operation: family
+        worker_record:
+          kind: disability
+          eligibility_year: 2015
+          eligibility_pia: '1200'
+          aime: 2253
+          first_dib_entitlement:
+          - 2015
+          - 6
+        members:
+        - beneficiary_id: Spouse
+          role: spouse
+          own_benefit:
+            kind: old_age
+            pia: '1000'
+          own_benefit_first: true
+        - beneficiary_id: Child1
+          role: child
+        - beneficiary_id: Child2
+          role: child
+        month:
+        - 2015
+        - 6
+  figure_count: 12
+  expected:
+  - path: case.input.worker_record.aime
+    value: '2253'
+    literal: $2,253
+  - path: case.state.pia
+    value: '1200'
+    literal: $1,200
+  - path: case.state.family_maximum
+    value: '1800'
+    literal: $1,800
+  - path: case.result.worker_benefit
+    value: '1200'
+    literal: 1,200
+  - path: case.pre_maximum_total
+    value: '3400'
+    literal: 3,400
+  - path: case.record_plus_own
+    value: '2800'
+    literal: 2,800
+  - path: case.extra.Spouse.potential_ob
+    value: '600'
+    literal: '600'
+  - path: case.extra.Child1.potential_ob
+    value: '600'
+    literal: '600'
+  - path: case.extra.Child2.potential_ob
+    value: '600'
+    literal: '600'
+  - path: case.rows.Child1.auxiliary_payable
+    value: '300'
+    literal: '300'
+  - path: case.rows.Child2.auxiliary_payable
+    value: '300'
+    literal: '300'
+  - path: case.rows.Spouse.own_benefit
+    value: '1000'
+    literal: 1,000
+  derived_expected:
+  - path: case.rows.Child1.whole_dollar_auxiliary
+    value: '300'
+    derivation: '215(g): floor of the published integer rate'
+  - path: case.rows.Child2.whole_dollar_auxiliary
+    value: '300'
+    derivation: '215(g): floor of the published integer rate'
+  source_start: Table A-1.
+  source_end: Table A-2.
+- id: ssb-table-a2
+  capture_id: ssa_ssb_v75n3_family_maximum
+  section: Table A-2
+  tags:
+  - record:disability
+  - role:spouse
+  - role:child
+  - maximum:disability_cap
+  - maximum:binding
+  - dual:method_c
+  - redistribution:partial
+  inputs:
+    scenarios:
+      case:
+        operation: family
+        worker_record:
+          kind: disability
+          eligibility_year: 2015
+          eligibility_pia: '1200'
+          aime: 2253
+          first_dib_entitlement:
+          - 2015
+          - 6
+        members:
+        - beneficiary_id: Spouse
+          role: spouse
+          own_benefit:
+            kind: old_age
+            pia: '100'
+          own_benefit_first: true
+        - beneficiary_id: Child1
+          role: child
+        - beneficiary_id: Child2
+          role: child
+        month:
+        - 2015
+        - 6
+  figure_count: 14
+  expected:
+  - path: case.input.worker_record.aime
+    value: '2253'
+    literal: $2,253
+  - path: case.state.pia
+    value: '1200'
+    literal: $1,200
+  - path: case.state.family_maximum
+    value: '1800'
+    literal: $1,800
+  - path: case.result.worker_benefit
+    value: '1200'
+    literal: 1,200
+  - path: case.pre_maximum_total
+    value: '3000'
+    literal: 3,000
+  - path: case.record_plus_own
+    value: '1900'
+    literal: 1,900
+  - path: case.extra.Spouse.potential_ob
+    value: '600'
+    literal: '600'
+  - path: case.extra.Child1.potential_ob
+    value: '600'
+    literal: '600'
+  - path: case.extra.Child2.potential_ob
+    value: '600'
+    literal: '600'
+  - path: case.rows.Spouse.auxiliary_payable
+    value: '100'
+    literal: '100'
+  - path: case.rows.Child1.auxiliary_payable
+    value: '250'
+    literal: '250'
+  - path: case.rows.Child2.auxiliary_payable
+    value: '250'
+    literal: '250'
+  - path: case.rows.Spouse.own_benefit
+    value: '100'
+    literal: '100'
+  - path: case.extra.Spouse.ob_excess
+    value: '500'
+    literal: '500'
+  derived_expected:
+  - path: case.rows.Spouse.whole_dollar_auxiliary
+    value: '100'
+    derivation: '215(g): floor of the published integer rate'
+  - path: case.rows.Child1.whole_dollar_auxiliary
+    value: '250'
+    derivation: '215(g): floor of the published integer rate'
+  - path: case.rows.Child2.whole_dollar_auxiliary
+    value: '250'
+    derivation: '215(g): floor of the published integer rate'
+  source_start: Table A-2.
+  source_end: null
+- id: ssb-table-a2-household
+  capture_id: ssa_ssb_v75n3_family_maximum
+  section: Table A-2 household integration
+  tags:
+  - record:disability
+  - record:retirement
+  - role:spouse
+  - role:child
+  - dual:method_c
+  - maximum:binding
+  - maximum:disability_cap
+  - redistribution:partial
+  inputs:
+    scenarios:
+      case:
+        operation: household
+        month:
+        - 2015
+        - 6
+        records:
+          insured:
+            worker_id: A
+            state:
+              kind: disability
+              pia: '1200'
+              family_maximum: '1800'
+            members:
+            - beneficiary_id: Spouse
+              role: spouse
+              own_benefit:
+                kind: old_age
+                pia: '100'
+              own_benefit_first: true
+            - beneficiary_id: Child1
+              role: child
+            - beneficiary_id: Child2
+              role: child
+          own:
+            worker_id: Spouse
+            state:
+              kind: retirement
+              pia: '100'
+              family_maximum: '150'
+  figure_count: 6
+  expected:
+  - path: case.records.insured.result.worker_benefit
+    value: '1200'
+    literal: 1,200
+  - path: case.records.own.result.worker_benefit
+    value: '100'
+    literal: '100'
+  - path: case.records.insured.rows.Spouse.auxiliary_payable
+    value: '100'
+    literal: '100'
+  - path: case.records.insured.rows.Child1.auxiliary_payable
+    value: '250'
+    literal: '250'
+  - path: case.records.insured.rows.Child2.auxiliary_payable
+    value: '250'
+    literal: '250'
+  - path: case.result.record_total
+    value: '1900'
+    literal: 1,900
+  derived_expected:
+  - path: case.result.record_total_whole_dollars
+    value: '1900'
+    derivation: '215(g): every benefit is already an integer'
+  source_start: Table A-2.
+- id: rs-00615-005-exact-fraction
+  capture_id: poms_rs_00615_005
+  section: B. Example
+  tags:
+  - record:retirement
+  - reduction:worker
+  inputs:
+    scenarios:
+      case:
+        operation: worker_age
+        pia: '802.80'
+        reduction_months: 5
+        decimal_comparison: true
+  figure_count: 4
+  expected:
+  - path: case.pia
+    value: '802.80'
+    literal: $802.80
+  - path: case.reduction_months
+    value: '5'
+    literal: 5 months
+  - path: case.base
+    value: '780.50'
+    literal: $780.50
+  - path: case.decimal_comparison
+    value: '780.40'
+    literal: $780.40
+  derived_expected:
+  - path: case.base
+    value: '780'
+    derivation: '215(g): floor 780.50'
+    rounding: whole_dollar_floor
+- id: rs-00615-301-widow-reduction
+  capture_id: poms_rs_00615_301
+  section: B.1 example
+  tags:
+  - record:survivor
+  - role:widow
+  - reduction:widow
+  inputs:
+    scenarios:
+      case:
+        operation: widow_age
+        ob: '987.60'
+        months: 37
+        period: 62
+  figure_count: 4
+  expected:
+  - path: case.ob
+    value: '987.60'
+    literal: $987.60
+  - path: case.months
+    value: '37'
+    literal: RF is 37
+  - path: case.period
+    value: '62'
+    literal: total possible RF is 62
+  - path: case.rate
+    value: '819.60'
+    literal: $819.60
+  derived_expected:
+  - path: case.rate
+    value: '819'
+    derivation: '215(g): floor 819.60'
+    rounding: whole_dollar_floor
+- id: rs-00615-692-worker-drc
+  capture_id: poms_rs_00615_692
+  section: Example
+  tags:
+  - record:retirement
+  - credits:worker
+  inputs:
+    scenarios:
+      case:
+        operation: worker_age
+        pia: '1000.00'
+        delayed_credit_months: 30
+        birth_year: 1940
+  figure_count: 4
+  expected:
+  - path: case.pia
+    value: '1000.00'
+    literal: $1000.00
+  - path: case.delayed_credit_months
+    value: '30'
+    literal: 30 DRCs
+  - path: case.increment
+    value: '175.00'
+    literal: $175.00
+  - path: case.credited
+    value: '1175.00'
+    literal: $1175.00
+  derived_expected:
+  - path: case.credited
+    value: '1175'
+    derivation: '215(g): floor 1175'
+    rounding: whole_dollar_floor
+- id: rs-00615-736-pre1982-1
+  capture_id: poms_rs_00615_736
+  section: B.3 historical formula example 1
+  tags:
+  - formula:maximum
+  - historical:refused
+  inputs:
+    scenarios:
+      case:
+        operation: maximum_formula
+        pia: '359.30'
+        year: 1979
+  figure_count: 3
+  expected:
+  - path: case.pia
+    value: '359.30'
+    literal: $359.30
+  - path: case.rounded_up
+    value: '659.10'
+    literal: $659.10
+  - path: case.shown_cents
+    value: '659.02'
+    literal: $659.02
+  derived_expected: []
+- id: rs-00615-736-pre1982-2
+  capture_id: poms_rs_00615_736
+  section: B.3 historical formula example 2
+  tags:
+  - formula:maximum
+  - historical:refused
+  inputs:
+    scenarios:
+      case:
+        operation: maximum_formula
+        pia: '359.30'
+        year: 1981
+  figure_count: 3
+  expected:
+  - path: case.pia
+    value: '359.30'
+    literal: $359.30
+  - path: case.rounded_up
+    value: '647.90'
+    literal: $647.90
+  - path: case.shown_cents
+    value: '647.89'
+    literal: $647.89
+  derived_expected: []
+- id: rs-00615-736-pre1982-3
+  capture_id: poms_rs_00615_736
+  section: B.3 historical formula example 3
+  tags:
+  - formula:maximum
+  - historical:refused
+  inputs:
+    scenarios:
+      case:
+        operation: maximum_formula
+        pia: '341.10'
+        year: 1980
+  figure_count: 3
+  expected:
+  - path: case.pia
+    value: '341.10'
+    literal: $341.10
+  - path: case.rounded_up
+    value: '625.30'
+    literal: $625.30
+  - path: case.shown_cents
+    value: '625.23'
+    literal: $625.23
+  derived_expected: []
+- id: rs-00615-736-pre1982-4
+  capture_id: poms_rs_00615_736
+  section: B.3 historical formula example 4
+  tags:
+  - formula:maximum
+  - historical:refused
+  inputs:
+    scenarios:
+      case:
+        operation: maximum_formula
+        pia: '423.70'
+        year: 1980
+  figure_count: 2
+  expected:
+  - path: case.pia
+    value: '423.70'
+    literal: $423.70
+  - path: case.rounded_up
+    value: '759.30'
+    literal: $759.30
+  derived_expected: []
+- id: oact-2026-bend-points
+  capture_id: ssa_oact_familymax
+  section: 2026 determination
+  tags:
+  - formula:bend_points
+  inputs:
+    scenarios:
+      case:
+        operation: bend_points
+        year: 2026
+        nawi: '69846.57'
+        base_nawi: '9779.44'
+  figure_count: 8
+  expected:
+  - path: case.nawi
+    value: '69846.57'
+    literal: 69,846.57
+  - path: case.base_nawi
+    value: '9779.44'
+    literal: 9,779.44
+  - path: case.shown.0
+    value: '1642.70'
+    literal: 1,642.70
+  - path: case.shown.1
+    value: '2371.21'
+    literal: 2,371.21
+  - path: case.shown.2
+    value: '3092.57'
+    literal: 3,092.57
+  - path: case.points.0
+    value: '1643'
+    literal: 1,643
+  - path: case.points.1
+    value: '2371'
+    literal: 2,371
+  - path: case.points.2
+    value: '3093'
+    literal: 3,093
+  derived_expected: []
+- id: rs-00605-910-1981-erratum
+  capture_id: poms_rs_00605_910
+  section: 1981 third constant
+  tags:
+  - formula:maximum
+  - source:erratum
+  inputs:
+    scenarios:
+      case:
+        operation: chart_erratum
+        year: 1981
+        point: 508
+        published: '899.52'
+  figure_count: 1
+  expected:
+  - path: case.published
+    value: '899.52'
+    literal: '899.52'
+  derived_expected:
+  - path: case.computed
+    value: '889.52'
+    derivation: '403(a)(1): 731.40 + 1.34 * (508 - 390)'
+  - path: case.difference
+    value: '10'
+    derivation: 899.52 printed minus 889.52 statutory
+- id: gn-02603-060-a5
+  capture_id: poms_gn_02603_060
+  section: A.5
+  tags:
+  - record:retirement
+  - role:spouse
+  - role:child
+  - maximum:binding
+  - redistribution:zero
+  - dual:method_c
+  inputs:
+    scenarios:
+      before:
+        operation: family
+        state: &id003
+          kind: retirement
+          pia: '400.00'
+          family_maximum: '650.00'
+        members:
+        - beneficiary_id: B
+          role: spouse
+          reduction_months: 0
+          birth_year: 1935
+        - beneficiary_id: C1
+          role: child
+        - beneficiary_id: C2
+          role: child
+        month:
+        - 2000
+        - 1
+      after:
+        operation: household
+        month:
+        - 2000
+        - 1
+        records:
+          insured:
+            worker_id: A
+            state: *id003
+            members: &id005
+            - beneficiary_id: B
+              role: spouse
+              reduction_months: 0
+              birth_year: 1935
+              own_benefit: &id004
+                kind: old_age
+                pia: '100.00'
+                reduction_months: 0
+                birth_year: 1935
+              own_benefit_first: true
+            - beneficiary_id: C1
+              role: child
+            - beneficiary_id: C2
+              role: child
+          own:
+            worker_id: B
+            state:
+              kind: retirement
+              pia: '100.00'
+              family_maximum: '150'
+              worker: *id004
+      dual_reference:
+        operation: family
+        state: *id003
+        members: *id005
+        month:
+        - 2000
+        - 1
+  figure_count: 15
+  expected:
+  - path: before.state.pia
+    value: '400.00'
+    literal: '400.00'
+  - path: before.state.family_maximum
+    value: '650.00'
+    literal: '650.00'
+  - path: before.rows.B.auxiliary_payable
+    value: '83.30'
+    literal: '83.30'
+  - path: after.records.own.result.worker_benefit
+    value: '100.00'
+    literal: '100.00'
+  - path: before.rows.B.original_benefit
+    value: '200.00'
+    literal: '200.00'
+  - path: before.rows.B.standard_rate
+    value: '83.30'
+    literal: '83.30'
+  - path: after.records.insured.rows.B.auxiliary_payable
+    value: '0.00'
+    literal: '0.00'
+  - path: before.rows.C1.original_benefit
+    value: '200.00'
+    literal: '200.00'
+  - path: before.rows.C1.standard_rate
+    value: '83.30'
+    literal: '83.30'
+  - path: after.records.insured.rows.C1.auxiliary_payable
+    value: '125.00'
+    literal: '125.00'
+  - path: before.rows.C2.original_benefit
+    value: '200.00'
+    literal: '200.00'
+  - path: before.rows.C2.standard_rate
+    value: '83.30'
+    literal: '83.30'
+  - path: after.records.insured.rows.C2.auxiliary_payable
+    value: '125.00'
+    literal: '125.00'
+  - path: after.records.insured.rows.B.counted_against_maximum
+    value: '0.00'
+    literal: '0.00'
+  - path: dual_reference.extra.B.own_pia
+    value: '100.00'
+    literal: '100.00'
+  derived_expected:
+  - path: after.records.insured.rows.B.whole_dollar_auxiliary
+    value: '0'
+    derivation: '215(g): floor published auxiliary rate'
+  - path: after.records.insured.rows.C1.whole_dollar_auxiliary
+    value: '125'
+    derivation: '215(g): floor published auxiliary rate'
+  - path: after.records.insured.rows.C2.whole_dollar_auxiliary
+    value: '125'
+    derivation: '215(g): floor published auxiliary rate'
+  - path: after.records.own.result.record_total_whole_dollars
+    value: '100'
+    derivation: '215(g): floor own-record rate'
+  source_start: 5. Full deduction for dual entitlement
+  source_end: 6. Full deduction because
+- id: gn-02603-060-a8
+  capture_id: poms_gn_02603_060
+  section: A.8
+  tags:
+  - record:retirement
+  - role:spouse
+  - role:child
+  - maximum:binding
+  - redistribution:zero
+  - dual:method_c
+  - reduction:spouse
+  - redistribution:own_age_reduced
+  inputs:
+    scenarios:
+      before:
+        operation: family
+        state: &id006
+          kind: retirement
+          pia: '400.00'
+          family_maximum: '650.00'
+        members:
+        - beneficiary_id: B
+          role: spouse
+          reduction_months: 36
+          birth_year: 1935
+        - beneficiary_id: C1
+          role: child
+        - beneficiary_id: C2
+          role: child
+        month:
+        - 2000
+        - 1
+      after:
+        operation: household
+        month:
+        - 2000
+        - 1
+        records:
+          insured:
+            worker_id: A
+            state: *id006
+            members: &id008
+            - beneficiary_id: B
+              role: spouse
+              reduction_months: 36
+              birth_year: 1935
+              own_benefit: &id007
+                kind: old_age
+                pia: '100.00'
+                reduction_months: 36
+                birth_year: 1935
+              own_benefit_first: true
+            - beneficiary_id: C1
+              role: child
+            - beneficiary_id: C2
+              role: child
+          own:
+            worker_id: B
+            state:
+              kind: retirement
+              pia: '100.00'
+              family_maximum: '150'
+              worker: *id007
+      dual_reference:
+        operation: family
+        state: *id006
+        members: *id008
+        month:
+        - 2000
+        - 1
+  figure_count: 15
+  expected:
+  - path: before.state.pia
+    value: '400.00'
+    literal: '400.00'
+  - path: before.state.family_maximum
+    value: '650.00'
+    literal: '650.00'
+  - path: before.rows.B.auxiliary_payable
+    value: '62.40'
+    literal: '62.40'
+  - path: after.records.own.result.worker_benefit
+    value: '80.00'
+    literal: '80.00'
+  - path: before.rows.B.original_benefit
+    value: '200.00'
+    literal: '200.00'
+  - path: before.rows.B.standard_rate
+    value: '83.30'
+    literal: '83.30'
+  - path: after.records.insured.rows.B.auxiliary_payable
+    value: '0.00'
+    literal: '0.00'
+  - path: before.rows.C1.original_benefit
+    value: '200.00'
+    literal: '200.00'
+  - path: before.rows.C1.standard_rate
+    value: '83.30'
+    literal: '83.30'
+  - path: after.records.insured.rows.C1.auxiliary_payable
+    value: '125.00'
+    literal: '125.00'
+  - path: before.rows.C2.original_benefit
+    value: '200.00'
+    literal: '200.00'
+  - path: before.rows.C2.standard_rate
+    value: '83.30'
+    literal: '83.30'
+  - path: after.records.insured.rows.C2.auxiliary_payable
+    value: '125.00'
+    literal: '125.00'
+  - path: after.records.insured.rows.B.counted_against_maximum
+    value: '0.00'
+    literal: '0.00'
+  - path: dual_reference.extra.B.own_pia
+    value: '100.00'
+    literal: '100.00'
+  derived_expected:
+  - path: after.records.insured.rows.B.whole_dollar_auxiliary
+    value: '0'
+    derivation: '215(g): floor published auxiliary rate'
+  - path: after.records.insured.rows.C1.whole_dollar_auxiliary
+    value: '125'
+    derivation: '215(g): floor published auxiliary rate'
+  - path: after.records.insured.rows.C2.whole_dollar_auxiliary
+    value: '125'
+    derivation: '215(g): floor published auxiliary rate'
+  - path: after.records.own.result.record_total_whole_dollars
+    value: '80'
+    derivation: '215(g): floor own-record rate'
+  source_start: 8. Full deduction because
+  source_end: 9. Full deduction because
+- id: gn-02603-060-a9
+  capture_id: poms_gn_02603_060
+  section: A.9
+  tags:
+  - record:retirement
+  - role:spouse
+  - role:child
+  - maximum:binding
+  - redistribution:zero
+  - dual:child
+  - reduction:spouse
+  inputs:
+    scenarios:
+      before:
+        operation: family
+        state: &id009
+          kind: retirement
+          pia: '600.00'
+          family_maximum: '900.00'
+        members:
+        - beneficiary_id: B
+          role: spouse
+          reduction_months: 36
+          birth_year: 1935
+        - beneficiary_id: C1
+          role: child
+        - beneficiary_id: C2
+          role: child
+        month:
+        - 2000
+        - 1
+      after:
+        operation: household
+        month:
+        - 2000
+        - 1
+        records:
+          insured:
+            worker_id: A
+            state: *id009
+            members: &id010
+            - beneficiary_id: B
+              role: spouse
+              reduction_months: 36
+              birth_year: 1935
+            - beneficiary_id: C1
+              role: child
+            - beneficiary_id: C2
+              role: child
+              own_benefit:
+                kind: disability
+                pia: '200.00'
+                reduction_months: 0
+          own:
+            worker_id: C2
+            state:
+              kind: disability
+              pia: '200.00'
+              family_maximum: '300'
+      dual_reference:
+        operation: family
+        state: *id009
+        members: *id010
+        month:
+        - 2000
+        - 1
+  figure_count: 15
+  expected:
+  - path: before.state.pia
+    value: '600.00'
+    literal: '600.00'
+  - path: before.state.family_maximum
+    value: '900.00'
+    literal: '900.00'
+  - path: before.rows.B.auxiliary_payable
+    value: '75.00'
+    literal: '75.00'
+  - path: after.records.own.result.worker_benefit
+    value: '200.00'
+    literal: '200.00'
+  - path: before.rows.B.original_benefit
+    value: '300.00'
+    literal: '300.00'
+  - path: before.rows.B.standard_rate
+    value: '100.00'
+    literal: '100.00'
+  - path: after.records.insured.rows.B.auxiliary_payable
+    value: '112.50'
+    literal: '112.50'
+  - path: before.rows.C1.original_benefit
+    value: '300.00'
+    literal: '300.00'
+  - path: before.rows.C1.standard_rate
+    value: '100.00'
+    literal: '100.00'
+  - path: after.records.insured.rows.C1.auxiliary_payable
+    value: '150.00'
+    literal: '150.00'
+  - path: before.rows.C2.original_benefit
+    value: '300.00'
+    literal: '300.00'
+  - path: before.rows.C2.standard_rate
+    value: '100.00'
+    literal: '100.00'
+  - path: after.records.insured.rows.C2.auxiliary_payable
+    value: '0.00'
+    literal: '0.00'
+  - path: after.records.insured.rows.C2.counted_against_maximum
+    value: '0.00'
+    literal: '0.00'
+  - path: dual_reference.extra.C2.own_pia
+    value: '200.00'
+    literal: '200.00'
+  derived_expected:
+  - path: after.records.insured.rows.B.whole_dollar_auxiliary
+    value: '112'
+    derivation: '215(g): floor published auxiliary rate'
+  - path: after.records.insured.rows.C1.whole_dollar_auxiliary
+    value: '150'
+    derivation: '215(g): floor published auxiliary rate'
+  - path: after.records.insured.rows.C2.whole_dollar_auxiliary
+    value: '0'
+    derivation: '215(g): floor published auxiliary rate'
+  - path: after.records.own.result.record_total_whole_dollars
+    value: '200'
+    derivation: '215(g): floor own-record rate'
+  source_start: 9. Full deduction because
+  source_end: B. Examples of permanent partial deductions
+- id: gn-02603-060-b2
+  capture_id: poms_gn_02603_060
+  section: B.2
+  tags:
+  - record:retirement
+  - role:spouse
+  - role:child
+  - maximum:binding
+  - redistribution:partial
+  - dual:method_c
+  - reduction:spouse
+  - redistribution:own_age_reduced
+  inputs:
+    scenarios:
+      before:
+        operation: family
+        state: &id011
+          kind: retirement
+          pia: '500.00'
+          family_maximum: '750.00'
+        members:
+        - beneficiary_id: B
+          role: spouse
+          reduction_months: 36
+          birth_year: 1935
+        - beneficiary_id: C1
+          role: child
+        - beneficiary_id: C2
+          role: child
+        month:
+        - 2000
+        - 1
+      after:
+        operation: household
+        month:
+        - 2000
+        - 1
+        records:
+          insured:
+            worker_id: A
+            state: *id011
+            members: &id013
+            - beneficiary_id: B
+              role: spouse
+              reduction_months: 36
+              birth_year: 1935
+              own_benefit: &id012
+                kind: old_age
+                pia: '80.00'
+                reduction_months: 36
+                birth_year: 1935
+              own_benefit_first: true
+            - beneficiary_id: C1
+              role: child
+            - beneficiary_id: C2
+              role: child
+          own:
+            worker_id: B
+            state:
+              kind: retirement
+              pia: '80.00'
+              family_maximum: '120'
+              worker: *id012
+      dual_reference:
+        operation: family
+        state: *id011
+        members: *id013
+        month:
+        - 2000
+        - 1
+  figure_count: 17
+  expected:
+  - path: before.state.pia
+    value: '500.00'
+    literal: '500.00'
+  - path: before.state.family_maximum
+    value: '750.00'
+    literal: '750.00'
+  - path: before.rows.B.auxiliary_payable
+    value: '62.40'
+    literal: '62.40'
+  - path: after.records.own.result.worker_benefit
+    value: '64.00'
+    literal: '64.00'
+  - path: before.rows.B.original_benefit
+    value: '250.00'
+    literal: '250.00'
+  - path: before.rows.B.standard_rate
+    value: '83.30'
+    literal: '83.30'
+  - path: after.records.insured.rows.B.auxiliary_payable
+    value: '2.40'
+    literal: '2.40'
+  - path: before.rows.C1.original_benefit
+    value: '250.00'
+    literal: '250.00'
+  - path: before.rows.C1.standard_rate
+    value: '83.30'
+    literal: '83.30'
+  - path: after.records.insured.rows.C1.auxiliary_payable
+    value: '123.30'
+    literal: '123.30'
+  - path: before.rows.C2.original_benefit
+    value: '250.00'
+    literal: '250.00'
+  - path: before.rows.C2.standard_rate
+    value: '83.30'
+    literal: '83.30'
+  - path: after.records.insured.rows.C2.auxiliary_payable
+    value: '123.30'
+    literal: '123.30'
+  - path: after.records.insured.rows.B.counted_against_maximum
+    value: '3.30'
+    literal: '3.30'
+  - path: dual_reference.extra.B.own_pia
+    value: '80.00'
+    literal: '80.00'
+  - path: dual_reference.extra.B.deductee_age_amount
+    value: '0.90'
+    literal: '0.90'
+  - path: dual_reference.ptap
+    value: '246.70'
+    literal: '246.70'
+  derived_expected:
+  - path: after.records.insured.rows.B.whole_dollar_auxiliary
+    value: '2'
+    derivation: '215(g): floor published auxiliary rate'
+  - path: after.records.insured.rows.C1.whole_dollar_auxiliary
+    value: '123'
+    derivation: '215(g): floor published auxiliary rate'
+  - path: after.records.insured.rows.C2.whole_dollar_auxiliary
+    value: '123'
+    derivation: '215(g): floor published auxiliary rate'
+  - path: after.records.own.result.record_total_whole_dollars
+    value: '64'
+    derivation: '215(g): floor own-record rate'
+  source_start: 2. Partial deduction and age reduction Involved
+  source_end: 3. Partial deduction for dual entitlement
