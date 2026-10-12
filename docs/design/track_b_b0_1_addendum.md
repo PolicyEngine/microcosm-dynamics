@@ -1390,11 +1390,18 @@ sharpened after round 1 (below).
     `stem?md`, `stem[.]md`. An unbalanced brace is literal text, and the
     scan goes on after it. Only a wildcard that holds part of a stem
     stays unclassified.
+  - Since the follow-up to Q6 round 10 (PR #534), a pattern is also read
+    as ripgrep, Node and Bun read it, so a bracket class is one
+    character whatever it holds (`stem[.,]md`), a brace group without a
+    comma stands for its content, escapes, extglobs and POSIX classes are
+    resolved and case is ignored, and the denied names are every file
+    the root record removed, the codebook files and code-map tables
+    included.
   - Each log's schema version records the rule it was made under. The
-    rule as it now stands is `track_b_b0_1_review_read_log.v6`.
+    rule as it now stands is `track_b_b0_1_review_read_log.v7`.
   - It also checks returned paths given relative to the root, as the
     harness returns them.
-  - Rounds 5-9's logs were regenerated under the rule as it now stands.
+  - Rounds 5-10's logs were regenerated under the rule as it now stands.
     Round 1's log came from another session's transcript, under the rule
     as it stood then, and is not regenerated.
 - **Numbers.** Numerical reproduction is in the CI-pinned tests, not the
@@ -1824,9 +1831,9 @@ Round 10 confirms them.
   9's form. Its transcript records Opus 5.5 and the tools Glob, Grep and
   Read. It ran on 2026-10-12 from 02:03 to 02:06 UTC and exited 0.
 - **Read log.** `docs/design/track_b_b0_1_addendum_q6_readlog_r10.json`
-  (schema v6) covers 21 tool calls. Every path named or returned lies
-  inside the root, and no pattern is absolute, leaves the root or names a
-  denied path. Round 10 counts.
+  (made as v6, regenerated as v7) covers 21 tool calls. Every path named
+  or returned lies inside the root, and no pattern is absolute, leaves
+  the root or names a denied path. Round 10 counts.
 - **Verdict.** `APPROVE`, with no high or medium finding and one low,
   which bears on the review tooling only and which the review says should
   not hold the merge. The review is
@@ -1837,15 +1844,16 @@ Round 10 confirms them.
 
 | Finding | Disposition |
 |---|---|
-| L1 (tooling): a character class holding a comma or a brace, such as `stem[.,]md`, hides a whole denied stem from the wildcard rule | Left for a follow-up change to the read-log tool, outside this addendum. No recorded round's pattern has a class of that shape. Until it lands, the rule's disclosure is as above: a wildcard holding the whole stem is caught when its classes hold no comma or brace |
-| Observation (tooling): the codebook files and the removed code-map tables are checked only through the codebook directory, not by their own basenames | The same follow-up passes every removed file to the read log |
+| L1 (tooling): a character class holding a comma or a brace, such as `stem[.,]md`, hides a whole denied stem from the wildcard rule | Left for a follow-up change to the read-log tool, outside this addendum. No recorded round's pattern has a class of that shape. PR #534 is that change: a class is read whole, as the glob engines read it (v7, above). Rounds 5-10's logs, regenerated, keep their verdicts |
+| Observation (tooling): the six codebook files are checked only through the codebook directory, not by their own basenames; the four removed code-map tables are not checked at all | The same follow-up passes every removed file to the read log. PR #534 fixes both: the read log's denied names are every file the root record removed, the six codebook files and the four code-map tables included |
 | Observation (record): section 5 forbade only a rescoped registration before Max rules, which a registration changing how the critical value is set when ν is 0 might not be | Section 5 now says no rescoped or amended registration is written before he rules |
 
 Rounds 7, 8, 9 and 10 each approved, and each counts. Round 10's head,
 `1aa179e`, is the last one a Q6 review read. After it this addendum
 gained only round 10's record, the one-word change to section 5 above,
 and the merge of `master`. An independent review of that change precedes
-the merge.
+the merge. After the merge, PR #534 changed only this section's read-log
+text and round 10's two tooling rows.
 
 ## 16. Protocol record
 

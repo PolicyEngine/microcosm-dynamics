@@ -806,7 +806,7 @@ def test_addendum_carries_the_round_8_fixes(prose, sentence):
         # Q6 round 9: the read-log rule as it stands, and its version
         "Since Q6 round 9, a segment that holds a denied name's whole stem "
         "and, read as a wildcard, matches that name also names it",
-        "The rule as it now stands is `track_b_b0_1_review_read_log.v6`.",
+        "Each log's schema version records the rule it was made under.",
         # Q6 round 9: what is queued when nu is 0
         "Rescoping the surface or a tolerance cannot cure ν = 0, so there "
         "the decision queued is how the critical value is set.",
@@ -829,6 +829,49 @@ def test_addendum_carries_the_round_9_fixes(prose, sentence):
 )
 def test_addendum_carries_the_round_10_record(prose, sentence):
     assert sentence in prose
+
+
+@pytest.mark.parametrize(
+    "sentence",
+    [
+        # The follow-up to Q6 round 10 (PR #534): the v7 read-log rule
+        "Since the follow-up to Q6 round 10 (PR #534), a pattern is also "
+        "read as ripgrep, Node and Bun read it, so a bracket class is one "
+        "character whatever it holds (`stem[.,]md`)",
+        "the denied names are every file the root record removed, the "
+        "codebook files and code-map tables included.",
+        "The rule as it now stands is `track_b_b0_1_review_read_log.v7`.",
+        "Rounds 5-10's logs were regenerated under the rule as it now "
+        "stands.",
+        "(made as v6, regenerated as v7) covers 21 tool calls.",
+        "PR #534 is that change: a class is read whole, as the glob "
+        "engines read it (v7, above).",
+        # #505's merge-gate review: round 10's observation as the review
+        # stated it, the two cases apart
+        "| Observation (tooling): the six codebook files are checked only "
+        "through the codebook directory, not by their own basenames; the "
+        "four removed code-map tables are not checked at all | The same "
+        "follow-up passes every removed file to the read log. PR #534 "
+        "fixes both:",
+        "After the merge, PR #534 changed only this section's read-log "
+        "text and round 10's two tooling rows.",
+    ],
+)
+def test_addendum_carries_the_round_10_follow_up(prose, sentence):
+    assert sentence in prose
+
+
+@pytest.mark.parametrize(
+    "stale",
+    [
+        "The rule as it now stands is `track_b_b0_1_review_read_log.v6`.",
+        "Until it lands, the rule's disclosure is as above",
+        "the codebook files and the removed code-map tables are checked "
+        "only through the codebook directory",
+    ],
+)
+def test_addendum_drops_the_round_10_stale_wording(prose, stale):
+    assert stale not in prose
 
 
 @pytest.mark.parametrize("round_number", [5, 6, 7, 8, 9, 10])

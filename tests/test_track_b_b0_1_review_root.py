@@ -1186,6 +1186,9 @@ def test_v7_voids_whatever_v6_voided(pattern):
 
 @settings(max_examples=600, deadline=None)
 @given(pattern=_mixed())
+# fnmatch reads ``[^.,]`` as a class holding ``^``, ``.`` and ``,``; the
+# engines read it as negated, so only the smallest fix catches this one.
+@example("deep_{denied[^.,]md,x}")
 def test_v7_catches_what_round_10_s_smallest_fix_would(pattern):
     """Differential: round 10's smallest fix ran the whole-stem test on
     each alternative's ``/``-segments, uncut at commas or braces. Every
@@ -1328,9 +1331,10 @@ def _spellings(seed, count):
 def test_every_engine_match_of_a_spelled_denied_name_is_flagged(
     tmp_path, engine
 ):
-    """Differential: wherever ripgrep (Grep's engine), Node or Bun finds
-    a denied file through a pattern that spells its name with syntax
-    alone, the classifier flags the pattern."""
+    """Differential: wherever ripgrep, Node or Bun finds a denied file
+    through a pattern that spells its name with syntax alone, the
+    classifier flags the pattern. Which engine the lanes' Glob and Grep
+    tools use is not assumed, so all three are checked."""
     if not _engine_available(engine):
         pytest.skip(f"{engine} is not installed")
     root = _invented_root(tmp_path)
