@@ -22,7 +22,10 @@ be applied:
   with :class:`U2SourceRefusal`; nothing falls back to another route.
 * ``invented_declared`` (invented data only): applies the *declared*
   interpretation the specification writes down (the section 3 role table
-  and the section 15 routes) to every documented layout, so an invented
+  and the section 15 routes, amended where Max's rulings differ: section
+  16c's exclusions and amendment 5's previous-plan route, see
+  :data:`DECLARED_PREVIOUS_ACCOUNT_ITEMS`) to every documented layout, so
+  an invented
   dry run can exercise each mapping and role branch.  It records, for
   every entry it applies, the blockers the ``registry`` gate would refuse
   on.  It is not a fallback, and nothing on the real-data path accepts
@@ -96,8 +99,8 @@ the documented sign domain); :func:`parse_fixed_width` reads records with
 them and :func:`encode_fixed_width` writes invented records in the same
 layout (tests and the invented dry run).  :func:`dc_route` builds the
 employer-DC route of a wave from the pension registry's route entries
-(registry gate) or from the section 15 declared route (invented only),
-and :func:`employer_dc_balances` applies it.
+(registry gate) or from the declared route (invented only;
+:func:`declared_dc_route`), and :func:`employer_dc_balances` applies it.
 
 Nothing here opens a survey record: the adapters parse the lines they are
 given, and :mod:`.loader` decides whether any record may be read.
@@ -122,7 +125,9 @@ from populace_dynamics.data import u2_source_registry as registry
 __all__ = [
     "ADMINISTRATIVE_BIRTH_SUPPORT_CODES",
     "DECLARED",
+    "DC_ITEM_PLAN_TYPES",
     "DECLARED_DC_ROUTE_TYPES",
+    "DECLARED_PREVIOUS_ACCOUNT_ITEMS",
     "FAMILY_UNIT_EXCLUSIONS",
     "GATES",
     "INCOME_CONCEPTS",
@@ -153,6 +158,7 @@ __all__ = [
     "check_invented_records",
     "check_overlaps",
     "dc_route",
+    "declared_dc_route",
     "decode_income",
     "declared_role_rules",
     "employer_dc_balances",
@@ -320,13 +326,34 @@ WEALTH_CONCEPTS: tuple[str, ...] = (
     "vehicles",
     "home_equity",
 )
-#: Declared previous-plan account-item types (section 15
-#: ``employer_dc.previous_routes.account_items``: account, formula, DK) in
-#: the 2011-and-later plan-type codes every U2 wave uses (5, 1, 8).
+#: Declared current-job account types and previous combined-plan types
+#: (section 15 ``employer_dc``), the same in every wave.
 DECLARED_DC_ROUTE_TYPES: dict[str, tuple[int, ...]] = {
     "current_account": (5, 7),
     "previous_both": (7,),
-    "previous_account_items": (5, 1, 8),
+}
+#: Section 15's previous-plan item names in the 2011-and-later plan-type
+#: codes every U2 wave uses (P46): account 5, formula 1, DK 8.
+DC_ITEM_PLAN_TYPES: dict[str, int] = {"account": 5, "formula": 1, "dk": 8}
+#: Declared previous-plan account items by wave.  Section 16a amendment
+#: 5, ratified as written by Max's d637 ruling (section 16b), replaces
+#: section 15's generic ``previous_routes.account_items`` (account,
+#: formula, DK) with its ``account_items_by_wave`` fragment: 2013 keeps
+#: the route inherited from U1; 2015-2023 admit account plans (P46 = 5)
+#: only, so a formula, combined, DK, refused or NA plan's account items
+#: are off-route, and an amount reached only through 2015's refused
+#: P62ACKPT branch is too (5b).  Where a ratified amendment and sections
+#: 3-15 differ the amendment governs (section 16b); section 15's own text
+#: keeps draft 3's wording until section 20 step 5 materializes the final
+#: parameter block.  ``tests/track_u2/test_u2_employer_dc.py`` holds this
+#: table equal to the fragment in section 16a.
+DECLARED_PREVIOUS_ACCOUNT_ITEMS: dict[int, tuple[str, ...]] = {
+    2013: ("account", "formula", "dk"),
+    2015: ("account",),
+    2017: ("account",),
+    2019: ("account",),
+    2021: ("account",),
+    2023: ("account",),
 }
 _COUNTED_DISPOSITION = 3
 _EXCLUDED_IRA_DISPOSITION = 2
@@ -1543,12 +1570,12 @@ def dc_route(wave: int, gate: SourceGate) -> DcRoute:
     (current job; previous combined; previous DC-only; the checkpoint's
     formula/unknown route; IRA rollovers; duplicate and off-route rule).
     Any route still TO VERIFY or blocked refuses -- today 2015's
-    checkpoint and respondent slots and 2017-2023's inherited-route
-    amendment -- and so do disposition codes on which the IRA-rollover,
-    previous-combined and previous-DC-only entries disagree.  Invented
-    declared gate: the section 15 route (current account or combined
-    plan; "both" items of a combined plan; account items of an account,
-    formula or DK plan), recording the registry blockers.
+    checkpoint and 2017-2023's inherited-route amendment -- and so do
+    disposition codes on which the IRA-rollover, previous-combined and
+    previous-DC-only entries disagree.  Invented declared gate:
+    :func:`declared_dc_route` (current account or combined plan; "both"
+    items of a combined plan; account items of the wave's declared
+    previous-plan types), recording the registry blockers.
     """
 
     wave = int(wave)
@@ -1569,16 +1596,7 @@ def dc_route(wave: int, gate: SourceGate) -> DcRoute:
     if wave >= 2017:
         gate.require("pension", f"{wave}.route.inherited_route_amendment")
     if gate.kind == INVENTED_DECLARED:
-        types = DECLARED_DC_ROUTE_TYPES
-        return DcRoute(
-            wave,
-            types["current_account"],
-            types["previous_both"],
-            types["previous_account_items"],
-            _COUNTED_DISPOSITION,
-            _EXCLUDED_IRA_DISPOSITION,
-            "section_15_declared_route_invented_only",
-        )
+        return declared_dc_route(wave)
     rollover = entries["ira_rollovers"]
     combined = entries["previous_combined"]
     dc_only = entries["previous_dc_only"]
@@ -1615,6 +1633,28 @@ def dc_route(wave: int, gate: SourceGate) -> DcRoute:
         counted.pop(),
         excluded.pop(),
         "pension_registry_routes",
+    )
+
+
+def declared_dc_route(wave: int) -> DcRoute:
+    """The declared employer-DC route of ``wave`` (invented data only):
+    section 15's route with amendment 5's previous-plan account items
+    (:data:`DECLARED_PREVIOUS_ACCOUNT_ITEMS`)."""
+
+    wave = int(wave)
+    if wave not in DECLARED_PREVIOUS_ACCOUNT_ITEMS:
+        raise U2SourceRefusal(f"no declared employer-DC route for {wave}")
+    return DcRoute(
+        wave,
+        DECLARED_DC_ROUTE_TYPES["current_account"],
+        DECLARED_DC_ROUTE_TYPES["previous_both"],
+        tuple(
+            DC_ITEM_PLAN_TYPES[item]
+            for item in DECLARED_PREVIOUS_ACCOUNT_ITEMS[wave]
+        ),
+        _COUNTED_DISPOSITION,
+        _EXCLUDED_IRA_DISPOSITION,
+        "section_15_declared_route_invented_only",
     )
 
 

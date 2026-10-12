@@ -1047,12 +1047,14 @@ def _dc_raw(family: Mapping[str, Any], wave: int) -> dict[str, int]:
                 "head_prev1_combo_amount": 9_000,
                 "head_prev1_dc_disposition": 3,
                 "head_prev1_dc_amount": 9_000,
-                # A formula plan's account items (declared route).
+                # A formula plan's account items: on the declared route
+                # in 2013 only, off-route from 2015 (amendment 5).
                 "head_prev2_type": 1,
                 "head_prev2_dc_disposition": 3,
                 "head_prev2_dc_amount": 15_000,
-                # A DK-type plan left to accumulate, and an account plan
-                # rolled over into an IRA (excluded).
+                # A DK-type plan left to accumulate (on the declared
+                # route in 2013 only, off-route from 2015), and an account
+                # plan rolled over into an IRA (excluded).
                 "wife_prev1_type": 8,
                 "wife_prev1_dc_disposition": 3,
                 "wife_prev1_dc_amount": 12_000,
@@ -1091,15 +1093,7 @@ def _dc_frame(families: list[dict], wave: int) -> pd.DataFrame:
         for concept in raw.columns
         if concept.endswith("_amount")
     }
-    route = sources.DcRoute(
-        wave,
-        sources.DECLARED_DC_ROUTE_TYPES["current_account"],
-        sources.DECLARED_DC_ROUTE_TYPES["previous_both"],
-        sources.DECLARED_DC_ROUTE_TYPES["previous_account_items"],
-        3,
-        2,
-        "section_15_declared_route_invented_only",
-    )
+    route = sources.declared_dc_route(wave)
     return sources.employer_dc_balances(raw, route, widths)
 
 

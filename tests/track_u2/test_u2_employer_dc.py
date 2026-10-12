@@ -50,20 +50,7 @@ def _widths(frame: pd.DataFrame) -> dict[str, int]:
 
 
 def _declared(wave: int = 2019) -> sources.DcRoute:
-    return sources.DcRoute(
-        wave,
-        *(
-            sources.DECLARED_DC_ROUTE_TYPES[key]
-            for key in (
-                "current_account",
-                "previous_both",
-                "previous_account_items",
-            )
-        ),
-        3,
-        2,
-        "test",
-    )
+    return sources.declared_dc_route(wave)
 
 
 def _balance(route: sources.DcRoute | None = None, **values: int) -> dict:
@@ -97,15 +84,82 @@ def test_combined_previous_plan_counts_its_both_items_once():
     assert out["employer_dc_off_route_items"] == 0
 
 
-@pytest.mark.parametrize("plan_type", [5, 1, 8])
-def test_declared_account_items_route(plan_type):
+@pytest.mark.parametrize("wave", sources.SUPPORT_WAVES)
+@pytest.mark.parametrize("plan_type", [5, 1, 8, 9])
+def test_declared_account_items_route(wave, plan_type):
+    """Amendment 5 (ratified by d637): a previous plan's account items
+    count for an account plan in every wave and, in 2013 only, for a
+    formula or DK plan too (U1's inherited route); otherwise they are
+    off-route, counted under that disposition and never zero-filled."""
     out = _balance(
+        _declared(wave),
         wife_prev2_type=plan_type,
         wife_prev2_dc_disposition=3,
         wife_prev2_dc_amount=15_000,
     )
-    assert out["employer_dc_previous"] == 15_000
-    assert out["employer_dc_items"] == 1
+    counted = plan_type == 5 or (wave == 2013 and plan_type in (1, 8))
+    assert out["employer_dc_previous"] == (15_000 if counted else 0)
+    assert out["employer_dc_items"] == int(counted)
+    assert out["employer_dc_off_route_items"] == int(not counted)
+
+
+def _section_16a_fragment() -> dict:
+    """Amendment 5's ``previous_routes`` fragment as section 16a prints it."""
+    import json
+    import re
+
+    from populace_dynamics.uniform_cut_track_u2 import identity
+
+    text = identity.SPECIFICATION_PATH.read_text(encoding="utf-8")
+    section = text[text.index("## 16a. ") : text.index("## 16b. ")]
+    lead = (
+        "Proposed replacement for \N{SECTION SIGN}15 "
+        "`income_concept.employer_dc.previous_routes`:"
+    )
+    after = section[section.index(lead) :]
+    (block,) = re.findall(r"```json\n(.*?)\n```", after, re.S)[:1]
+    return json.loads("{" + block + "}")["previous_routes"]
+
+
+def test_declared_route_follows_the_ratified_amendment_5_fragment():
+    """Max's d637 ruling ratified amendment 5 as written (section 16b),
+    so the declared route is section 16a's ``previous_routes`` fragment:
+    the same items per wave, with 2013 equal to section 15's generic
+    route.  Section 15's block keeps draft 3's generic route until section
+    20 step 5 materializes the final parameter block; this test then has
+    to change with it."""
+    from populace_dynamics.uniform_cut_track_u2 import rows
+
+    fragment = _section_16a_fragment()
+    assert fragment["both_items"] == ["both"]
+    assert {
+        int(wave): tuple(items)
+        for wave, items in fragment["account_items_by_wave"].items()
+    } == sources.DECLARED_PREVIOUS_ACCOUNT_ITEMS
+    assert set(sources.DECLARED_PREVIOUS_ACCOUNT_ITEMS) == set(
+        sources.SUPPORT_WAVES
+    )
+    assert fragment["refused_branches"] == {
+        "2015": "P62ACKPT: P46=1 AND P52=1 AND P62AMT=DK/RF"
+    }
+    block = rows.specification_block()["income_concept"]["employer_dc"]
+    assert block["previous_routes"] == {
+        "both_items": ["both"],
+        "account_items": ["account", "formula", "dk"],
+    }
+    assert tuple(block["previous_routes"]["account_items"]) == (
+        sources.DECLARED_PREVIOUS_ACCOUNT_ITEMS[2013]
+    )
+    for wave in sources.SUPPORT_WAVES:
+        route = sources.declared_dc_route(wave)
+        assert route.previous_account_items == tuple(
+            sources.DC_ITEM_PLAN_TYPES[item]
+            for item in sources.DECLARED_PREVIOUS_ACCOUNT_ITEMS[wave]
+        )
+        assert route.current_account == (5, 7)
+        assert route.previous_both == (7,)
+    with pytest.raises(sources.U2SourceRefusal):
+        sources.declared_dc_route(2011)
 
 
 def test_rollover_into_an_ira_is_excluded_and_counted():
@@ -131,7 +185,9 @@ def test_other_dispositions_count_nothing(disposition):
 def test_off_route_and_unreported_and_top_codes():
     dk = 10**8 - 2
     top = 10**9 - 3
+    # 2013's route, where a DK-type plan's account items are on route.
     out = _balance(
+        _declared(2013),
         head_prev1_type=9,
         head_prev1_dc_disposition=3,
         head_prev1_dc_amount=4_000,
@@ -157,6 +213,9 @@ def test_2013_registry_route_equals_the_declared_route_and_u1_rule(
     )
     assert set(route.previous_both) == {7}
     assert set(route.previous_account_items) == {5, 1, 8}
+    assert route.previous_account_items == (
+        sources.declared_dc_route(2013).previous_account_items
+    )
     # The same items through U1's 2013 rule give the same balance.
     frame = _items(
         head_current_type=5,
