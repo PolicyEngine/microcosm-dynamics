@@ -882,6 +882,11 @@ def test_denied_from_record_takes_every_removed_file():
         ("Glob", "**/deep_denied[[:ascii:]]md", False),
         ("Glob", "docs\\sub\\deep_denied.md", False),
         ("Glob", "**/d+(e)p_denied.md", False),
+        # only ripgrep's brace reading (a class closed at \] and a group
+        # without a comma) spells these, and only Bun's (a class that
+        # escapes \] and holds the comma) spells the other
+        ("Glob", "**/deep_{denied[.\\]m,zz]}{d}", False),
+        ("Glob", "**/deep_d{enied[.\\],]md}", False),
         # a filter that excludes a denied name names it (conservative)
         ("Glob", "**/deep_denied!(.md)", False),
         # nested too deep to read: unclassified, so void
