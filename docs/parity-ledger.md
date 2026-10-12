@@ -10,7 +10,9 @@ full parity with DYNASIM for Social Security analysis requires, one
 capability at a time, and where each piece stands.
 
 *Statuses verified against the repository at commit `216acab1` and
-against the open pull requests and issues on 11 October 2026.*
+against the open pull requests and issues on 11 October 2026. The
+forward-earnings and group rows also reflect that day's later events:
+ruling d1342, B1 v2's registration and the merge of #513.*
 
 ## Bottom line
 
@@ -76,7 +78,7 @@ them. Paths are relative to the repository root.
 |-----------|----------------|------------------------|---------------|--------|-----------|
 | Earnings histories | Builds each person's lifetime earnings history from survey and administrative records ([overview][ov]; [DYNASIM4 fact sheet][d4]). | *Gate passed* for the generated earnings process: gate 1 passes (`runs/gate1_rank_knn_v5.json`), scoring 1998–2022 at ages 25–59, not whole careers. *Used in a blind test, ungated* for the recorded PSID careers that exercises 1, 3 and 4 read; the paper reports that about half of the career years through 2010 for the 7,486 cohort members who reach 62 between 1979 and 2030 hold imputed or zero values. A test of learned fills, `gate_epuf_fill`, had its tolerance ratified on 10 October (d927); its lock sits in [#515][pr515], is not yet in `gates.yaml`, and no held-out person has been read. | Whole careers set against SSA's Earnings Public-Use File by birth cohort and sex: years without covered earnings, low-earnings years, persistence and the 35-year AIME, including low earners and broken careers. | [#515][pr515], [#516][pr516]; d927, d929 | Merge #515 and #516 and score `gate_epuf_fill` once; d929 then decides whether exercises 1, 3 and 4 rerun with the learned fills. |
 | Covered earnings and agreement with SSA records | Separates employment that Social Security covers from noncovered employment ([DYNASIM3 primer][d3]). | *None* for a covered/noncovered split: the projections and the Axiom bridge treat all PSID labor income as covered, and the correction design is a draft (`docs/design/covered_earnings_correction.md`). *Report-only* for the comparison of the PSID's own 1998–2004 earnings with SSA's public-use file: `gate_epuf` closed without locking and has scored no model output (`docs/amendments/gate_epuf_registration_proposal.md`). | A covered/noncovered split of PSID earnings, checked against SSA's totals of covered workers and taxable earnings, and a fresh gate on the public-use file with power beyond gate 1. | [#403][i403], open but idle: it belongs to the correction campaign, which stopped on 9 September 2026, and that campaign's last design PR, [#405][pr405], closed unmerged | Decide whether to restart the covered-earnings correction, now as a registered gate. |
-| Forward earnings | Projects employment, hours, wages and pension coverage each year ([DYNASIM4 fact sheet][d4]). | *Gate passed, not used in a blind test.* The forward law, fitted on PSID earnings through 2014 at ages 25–64, passes gate m6 in 4 of 5 seeds (`runs/gate_m6_candidate3_v1.json`). It has no fitted distribution above 64, and both projection tests draw no earnings after 2010 (`src/populace_dynamics/cola_track_a/adapters.py`). In every seed, its two-year earnings growth at ages 25 to 44 runs below the PSID's. | Track B's sequence: B1 v2 reproduces gate m6's histories; B2 tests the bridge from the 2010 cohort to the law's 2014 boundary on PSID 2012 and 2014, gating six level cells (median, 90th percentile and zero rate by cohort) and reporting ten more (d781); B3 refits ages 25–69 with gates at 62–64, 65–66 and 67–69; B3L backtests 2006 to 2022; an independent joint holdout comes before any 2030 claim. Because B2 gates levels only, growth and persistence need their own test. | [#505][pr505]; d515, d622, d693, d765, d781, d782, d1342 (open) | Settle d1342, which holds B2 because its six cells reach 0.813 power on the ruled design, short of the 0.952 d781 assumed; merge #505; then post and run B1 v2, and register B2. |
+| Forward earnings | Projects employment, hours, wages and pension coverage each year ([DYNASIM4 fact sheet][d4]). | *Gate passed, not used in a blind test.* The forward law, fitted on PSID earnings through 2014 at ages 25–64, passes gate m6 in 4 of 5 seeds (`runs/gate_m6_candidate3_v1.json`). It has no fitted distribution above 64, and both projection tests draw no earnings after 2010 (`src/populace_dynamics/cola_track_a/adapters.py`). In every seed, its two-year earnings growth at ages 25 to 44 runs below the PSID's. | Track B's sequence: B1 v2 reproduces gate m6's histories; B2 tests the bridge from the 2010 cohort to the law's 2014 boundary on PSID 2012 and 2014, gating six level cells (median, 90th percentile and zero rate by cohort) and reporting ten more (d781); B3 refits ages 25–69 with gates at 62–64, 65–66 and 67–69; B3L backtests 2006 to 2022; an independent joint holdout comes before any 2030 claim. Because B2 gates levels only, growth and persistence need their own test. | [#505][pr505]; d515, d622, d693, d765, d781, d782, d1342; [B1 v2 registration][regb1] | Merge #505 and report B1 v2's one run, registered on 11 October. Then register B2. Its six cells reach 0.813 power on the ruled design, short of the 0.952 d781 assumed, so under d1342 B2's floor build drops cells until power reaches 0.90, keeping at least four. If it cannot, B2 stops there, before any candidate result. |
 
 ### Disability, mortality and claiming
 
@@ -116,7 +118,7 @@ them. Paths are relative to the repository root.
 | Supplemental Security Income (SSI) | Applies SSI's income and resource rules and models eligibility, participation and benefits ([DYNASIM3 primer][d3]). | *Used in a blind test*, static. Exercise 2 offsets the cut for people who already report SSI and enrolls no one new (`src/populace_dynamics/estimates/adjusted_poverty.py`); in its committed run, the registered alternative SSI rules leave the headline unchanged. Registration 19 computed SSI's asset test on Microcosm's frame through PolicyEngine-US, static and report-only, with a disclosed frame defect; its code is in draft [#511][pr511]. Nothing projects SSI. | Eligibility, resource, deeming and state-supplement worked examples; participation against SSA caseloads by age and type; then projected caseloads, payments and the poverty effect of a Social Security cut. | [#511][pr511]; d905; [microcosm#1178][mc1178] | Merge #511, then register and run the rerun on the corrected frame; see [known gaps](#known-gaps-without-a-tracking-issue) for projected SSI. |
 | Wealth, pensions and other income | Projects pension coverage and benefits, retirement-account balances and withdrawals, asset income and wealth ([DYNASIM4 fact sheet][d4]; [overview][ov]). | *Used in a blind test* for reported wealth only: exercise 2 turns PSID-reported wealth into an annuity income (`src/populace_dynamics/estimates/adjusted_poverty.py`). *None* for projection: the model projects no wealth, pensions or asset income. | Projected pension coverage and benefits, account balances and drawdowns, asset income and wealth by cohort and lifetime-earnings group, first against later PSID waves the model did not see, then against DYNASIM's published tables. | None; [#45][i45] reserves balance-sheet state for capital gains and plans no wealth or pension projection | See [known gaps](#known-gaps-without-a-tracking-issue). |
 | Poverty and income distribution | Reports poverty, adequacy and distributional effects of reforms from projected family income ([Five Democratic Approaches][fd]). | *Used in a blind test*, static. Exercise 2 computes adjusted poverty at 67 on incomes the PSID recorded: a 13 percent cut raises it 0.46 percentage points in the model and 2 points in DYNASIM3, a registered comparison with no pass or fail rule. Nothing projects family income. The follow-on test for the 1946–55 cohort (U2) is not registered: [#524][pr524] applies ruling d1090, d1242 is open, and the test's loader still refuses to run. | The comparator's income definition, unit, thresholds and ages, with uncertainty; for full parity, poverty and adequacy on projected family income by cohort and group. | [#524][pr524]; d1090, d1242 (open) | Merge #524, settle d1242, clear the loader's remaining blockers, then register U2 on #42. |
-| Results by group | Urban's published DYNASIM output reports income for people 62 and older by age, sex, race and ethnicity, education and lifetime earnings ([Urban's DYNASIM output][out]); SSA's MINT adds rows by beneficiary type. | *Used in a blind test*, in part. Exercise 2 computes 15 of its source report's 36 rows and names the 21 it omits: race and ethnicity, education, labor-force experience, and own and shared lifetime earnings (`src/populace_dynamics/estimates/uniform_cut_tabulation.py`). Exercises 1 and 3 report by age and exercise 4 by sex. Rows by beneficiary type cannot be computed yet (`benchmarks/wall.md`). [#513][pr513] adds MINT's group categories as code only. | For each comparison, every cell DYNASIM or MINT publishes for that table, with the same definitions and denominators. | [#513][pr513]; [#367][i367] | Merge #513, then register group runs of the four tests on #42. |
+| Results by group | Urban's published DYNASIM output reports income for people 62 and older by age, sex, race and ethnicity, education and lifetime earnings ([Urban's DYNASIM output][out]); SSA's MINT adds rows by beneficiary type. | *Used in a blind test*, in part. Exercise 2 computes 15 of its source report's 36 rows and names the 21 it omits: race and ethnicity, education, labor-force experience, and own and shared lifetime earnings (`src/populace_dynamics/estimates/uniform_cut_tabulation.py`). Exercises 1 and 3 report by age and exercise 4 by sex. Rows by beneficiary type cannot be computed yet (`benchmarks/wall.md`). [#513][pr513], merged on 11 October, adds MINT's group categories as code only; no real-data group run is registered. | For each comparison, every cell DYNASIM or MINT publishes for that table, with the same definitions and denominators. | [#513][pr513]; [#367][i367] | Register group runs of the four tests on #42. |
 | Behavioral responses to reform | Published DYNASIM4 analyses include assumed responses of wages, compensation and investment income to tax changes ([Five Democratic Approaches][fd]). | *None* for estimated responses. Exercise 3's registered claiming alternatives delay claims by the full rise in the retirement age, a stylized assumption with no quasi-experimental basis. | Claiming responses estimated from real policy changes and backtested against observed shifts after past increases in the retirement age; earnings and investment-income responses with their own registered estimates. | d515, which defers any claiming-response build until data identify one | Name, in a registration, the policy variation a claiming-response estimate would use. |
 
 ### Financing and the long horizon
@@ -152,8 +154,10 @@ kept outside this repository; `docs/design/track_b_b0_1_audit.md`,
    error that resamples the PSID's design clusters within strata
    (d782). The B0.1 addendum in [#505][pr505] records them and finds
    that on this design the six cells reach 0.813 power, short of the
-   0.952 the ruling assumed, so B2 is held until ruling d1342 settles
-   its cells or tolerance. #505 is still a draft. The career-fill test
+   0.952 the ruling assumed. Ruling d1342, the same day, keeps the six
+   cells: B2's floor build drops cells until power reaches 0.90,
+   keeping at least four, and stops B2 before any candidate result if
+   it cannot. #505 is still a draft. The career-fill test
    `gate_epuf_fill` has to lock and score its held-out persons once
    ([#515][pr515], [#516][pr516], d927). Microcosm's frame needs the fix for the defect Registration
    19 disclosed ([microcosm#1178][mc1178]) before any projection starts
@@ -162,7 +166,8 @@ kept outside this repository; `docs/design/track_b_b0_1_audit.md`,
    gate registers; no B0.2 record is in the repository yet.
 2. **Bridge forward earnings to the projections.** B1 v2 reproduces
    gate m6's earnings histories by reconstruction, which d622 lets
-   unlock B2 with a weaker label. B2 then tests the bridge from the
+   unlock B2 with a weaker label. It was
+   [registered][regb1] on 11 October. B2 then tests the bridge from the
    2010 cohort to the law's 2014 boundary on PSID 2012 and 2014 and
    discloses that those waves already shaped the model. H, the history
    recorder, follows B2 and keeps labor, covered and earnings-test
@@ -220,7 +225,7 @@ which `docs/plans/microcosm-start.md` summarizes, puts forward
 earnings in the projections in months 2 to 5 and the earnings test and
 family maximum, as one item, in months 2 to 4. It leaves moving the
 engine into Microcosm outside its 24 months. The plan predates the
-11 October rulings and the hold on B2 under d1342. Applying the
+11 October rulings. Applying the
 earnings test in a projection needs R2, R3, H and I first (step 3
 above), which the plan does not list as separate items.
 
@@ -239,7 +244,7 @@ Issue drafts for each are with the maintainers.
 - **Projected wealth, pensions and other income.** The model
   annuitizes reported wealth and projects none of these.
 - **Complete group-output validation against DYNASIM and MINT.**
-  [#513][pr513] adds MINT's group categories as code; nothing yet
+  [#513][pr513] added MINT's group categories as code; nothing yet
   registers or scores the full set of published group cells,
   lifetime-earnings groups or beneficiary types.
 - **Admitting a joint projection past 2030.** No gate scores a
@@ -275,7 +280,7 @@ Issue drafts for each are with the maintainers.
 | d947 | Open | Whether to post the registration for starting projections from Microcosm | `docs/plans/microcosm-start-registration-draft.md` |
 | d1090 | 10 October 2026 | Settles two of the 1946–55 test's (U2) blockers | [#524][pr524] |
 | d1242 | Open | How U2 counts and discloses one blocker's exclusions | [#524][pr524] |
-| d1342 | Open | Whether B2 proceeds at 0.813 power or changes its cells or tolerance | [#505][pr505] |
+| d1342 | 11 October 2026 | B2 proceeds with its six cells: the floor build drops cells until power reaches 0.90, keeping at least four, and B2 stops before any candidate result if it cannot | [#505][pr505] |
 
 ## Sources on DYNASIM
 
@@ -315,6 +320,7 @@ cite repository paths, pull requests, issues and public URLs only.
 [out]: https://github.com/UrbanInstitute/dynasim-shiny1
 [ltss]: https://www.urban.org/research/publication/incorporating-long-term-services-and-supports-health-care-proposals
 [reg18]: https://github.com/PolicyEngine/microcosm-dynamics/issues/42#issuecomment-5919983573
+[regb1]: https://github.com/PolicyEngine/microcosm-dynamics/issues/42#issuecomment-6110674288
 [mc1178]: https://github.com/PolicyEngine/microcosm/issues/1178
 [i42]: https://github.com/PolicyEngine/microcosm-dynamics/issues/42
 [i45]: https://github.com/PolicyEngine/microcosm-dynamics/issues/45
