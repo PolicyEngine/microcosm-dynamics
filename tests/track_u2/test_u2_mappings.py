@@ -353,6 +353,17 @@ D637_TOP = {
     "support": {"independent_adjudication"},
     "weights": {"rulings_applied", "independent_adjudication"},
 }
+#: The exact note of a d637 record in a registry where the ruling only
+#: released a dependency (the individual registry, amendment 6).
+D637_RECORD_NOTES = {
+    "individual": (
+        "Max's ruling d637 (2026-09-30; specification section 16b) took "
+        "amendment 6's option 1 for the 2017 cross-sectional weight "
+        "(weights:2017.cross_section_weight, ER34651). Its registry commit "
+        "released this registry's 2017.weight from its dependency on that "
+        "record; no entry here records a ruling."
+    ),
+}
 #: The wording commit's note, after the adjudication's own sentences.
 D637_ADJUDICATION_NOTE_END = (
     "A items stayed TO VERIFY pending u2-draft-4 amendments 1-6 and Max's "
@@ -419,6 +430,18 @@ def test_d637_moved_only_the_ruled_gate_fields():
                 "16b",
             )
             assert record["amendments"] == D637_RECORDED[name], name
+            assert set(record) == {
+                "decision",
+                "date",
+                "specification_section",
+                "amendments",
+                "note",
+            }, name
+            assert record["note"].startswith(
+                "Max's ruling d637 (2026-09-30; specification section 16b) "
+            ), name
+            if name in D637_RECORD_NOTES:
+                assert record["note"] == D637_RECORD_NOTES[name], name
             assert after["rulings_applied"][:-1] == before.get(
                 "rulings_applied", []
             ), name
@@ -705,12 +728,15 @@ def test_spouse_age_and_sex_are_read_nowhere_else():
     text = Path(adjusted_poverty.__file__).read_text(encoding="utf-8")
     assert "wife_age" not in text and "wife_sex" not in text
     root = Path(registry.REGISTRY_DIRECTORY).parents[2]
-    scripts = [
-        path
-        for path in sorted((root / "scripts").glob("*track_u2*.py"))
-        if not path.name.startswith("capture_")
-    ]
-    assert len(scripts) >= 4
+    # The U2-owned scripts (test_u2_isolation.py: scripts/*track_u2* and
+    # scripts/u2_*), less the capture scripts.
+    owned = {
+        *(root / "scripts").glob("*track_u2*.py"),
+        *(root / "scripts").glob("u2_*.py"),
+    }
+    scripts = sorted(p for p in owned if not p.name.startswith("capture_"))
+    assert "u2_u1_differential.py" in {p.name for p in scripts}
+    assert len(scripts) >= 5
     uses = [
         (path.name, line.strip())
         for path in scripts
