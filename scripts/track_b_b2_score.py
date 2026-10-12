@@ -580,12 +580,11 @@ def check_floor_record(
     from an ancestor of HEAD and share this run's rules and records."""
     if floor_record.get("schema") != floor_builder.SCHEMA:
         raise RuntimeError("the floor artifact's schema is not B2's")
-    if floor_record.get(
-        "outcome"
-    ) != b2.LADDER_CLEARED or not floor_record.get("candidate_runs_permitted"):
+    outcome = floor_record.get("outcome")
+    permitted = bool(floor_record.get("candidate_runs_permitted"))
+    if outcome != b2.LADDER_CLEARED or not permitted:
         raise RuntimeError(
-            f"the floor artifact does not permit a candidate run "
-            f"({floor_record.get('outcome')})"
+            f"the floor artifact does not permit a candidate run ({outcome})"
         )
     if floor_record.get("registration_id") != registration_id:
         raise RuntimeError(
