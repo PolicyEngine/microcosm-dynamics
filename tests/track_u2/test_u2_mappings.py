@@ -341,13 +341,25 @@ D637_RELEASED: dict[str, frozenset[str]] = {
 #: How many entries, by registry, lost a released dependency (each then
 #: has none left).
 D637_RELEASED_COUNTS = {"pension": 34 + 40, "individual": 1}
-#: The top-level fields each registry's d637 commits changed.
+#: The top-level fields each registry's d637 commits changed: the d637
+#: ``rulings_applied`` record, and in the last (wording) commit every
+#: ``independent_adjudication`` note and the wealth ``status_scope``.
 D637_TOP = {
-    "income": {"rulings_applied"},
-    "wealth": {"rulings_applied"},
-    "pension": {"rulings_applied"},
-    "weights": {"rulings_applied"},
+    "income": {"rulings_applied", "independent_adjudication"},
+    "wealth": {"rulings_applied", "independent_adjudication", "status_scope"},
+    "pension": {"rulings_applied", "independent_adjudication"},
+    "roles": {"independent_adjudication"},
+    "support": {"independent_adjudication"},
+    "weights": {"rulings_applied", "independent_adjudication"},
 }
+#: The wording commit's note, after the adjudication's own sentences.
+D637_ADJUDICATION_NOTE_END = (
+    "A items stayed TO VERIFY pending u2-draft-4 amendments 1-6 and Max's "
+    "ruling. Max ruled on 2026-09-30 (d637) and, for blockers B1 and B2, on "
+    "2026-10-10 (d1090); rulings_applied records what each ruling changed "
+    "here. The six code-88 role records (amendment 1c) stay TO VERIFY "
+    "pending Max's confirmation of the 1a-1c reading (d745)."
+)
 #: The amendments each registry's ``rulings_applied`` d637 record lists.
 D637_RECORDED = {
     "income": ["2", "3"],
@@ -389,6 +401,18 @@ def test_d637_moved_only_the_ruled_gate_fields():
             assert after["rulings_applied"][:-1] == before.get(
                 "rulings_applied", []
             ), name
+        if "independent_adjudication" in top:
+            old_meta = before["independent_adjudication"]
+            new_meta = after["independent_adjudication"]
+            assert _changed_keys(old_meta, new_meta) == {"note"}, name
+            assert new_meta["note"].endswith(D637_ADJUDICATION_NOTE_END)
+            assert new_meta["note"].startswith(
+                old_meta["note"].split("A items stay TO VERIFY")[0]
+            ), name
+        if "status_scope" in top:
+            assert after["status_scope"] == before["status_scope"].replace(
+                "is separately refused by", "is decided separately by"
+            )
         assert [e["id"] for e in before["entries"]] == [
             e["id"] for e in after["entries"]
         ], name

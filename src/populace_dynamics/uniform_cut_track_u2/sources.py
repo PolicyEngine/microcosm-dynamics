@@ -240,28 +240,32 @@ DECLARED = INVENTED_DECLARED
 #: the pension bytes (the 2015 P62ACKPT checkpoint, the 2017-2023
 #: inherited-route amendments and the P64/P65 entries they released), and
 #: amendment 6 the weights and individual bytes (the 2017 weight ER34651
-#: under option 1, and the individual weight it released).
+#: under option 1, and the individual weight it released).  A last
+#: wording commit moved six registries' bytes once more: each
+#: ``independent_adjudication`` note now records the rulings, and the
+#: wealth registry's ``status_scope`` no longer says role assignment is
+#: refused.
 REGISTRY_SHA256: dict[str, str] = {
     "income": (
-        "ac8310a166a66fa71a39d19cb79dec0dda5c41ff5a7033e535d70ebffe87204c"
+        "034d3f2e3b1d121e544584c650fc317454112500fd900043dc4e7ec0be611562"
     ),
     "wealth": (
-        "e2d24c2665db23c24f9313dd44876c35a22b7e67b4d0acfad1c65b48c64e6602"
+        "cebf9bfad6a07d2a0e7ec8c627f30ed10641512c479bc482b91998b9e21294e8"
     ),
     "individual": (
         "1cb368486d689e20e116b775ee2198504b0492fb3c7efa4d6fe7e985a2b1307c"
     ),
     "pension": (
-        "1801b1414503e441de65196a834dae4286a6fecc958e7f5e4a3ad2f8c5489a8b"
+        "241aeaddb7e8b134ac5807f944053c4be59458d17bcf68c52177da5cab5328a6"
     ),
     "roles": (
-        "df2b7afe76cda4f92380f88b478d9e6866e0f532b0d85f081d8226ee2e33dc87"
+        "79feadac7b4847c545e37cee33784873bb0324b9999cfc2693292af6aaacf43d"
     ),
     "support": (
-        "5102825d8555e1e8648dfafbd4e6c72eef78d09e453a6d25279ec3b9298d5109"
+        "419341b90e0adae2c8a8ee1c2324d405bbd5e0a49faa54a00c19025fc6fd57c9"
     ),
     "weights": (
-        "519901c7647a0e9300ed9e3d4e9f83d47a3224e63888e1919960ca56ff3f239e"
+        "6042524ae68d2163bd5b119ecfc0837e6c9e59713b0d50cffe9fc5b788a20e2c"
     ),
     "design": (
         "56181372d412811af6d06f5c0d8d1e071049f7fb73c34bd394aaff8f5e0c2fd6"
