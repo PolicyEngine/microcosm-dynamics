@@ -1,6 +1,10 @@
 # Track B G: the gross-benefit layer
 
-**Status: build-only, 2026-09-29; review fixes 2026-09-30. No real-data
+**Verification class: statutory conformance. Admitted scope: gross monthly
+benefits for supported invented or published statutory cases only; no
+population, behavioral or forecast claim.**
+
+**Status: build-only, 2026-09-29; review fixes 2026-10-11. No real-data
 computation.** Inputs are invented families and SSA's published worked
 examples.
 
@@ -118,7 +122,8 @@ Design §6 suggests reusing the existing worker and auxiliary primitives in
   `test_float_ledger_dime_errors_counted_exhaustively` covers every PIA
   from $0.10 to $557.20 by dime with 1-60 reduction months: 334,320 cells.
   `floor_to_dime` over `early_reduction` lands a dime low in 11,572 of
-  them and never high. POMS's own $802.80 example is one of the low cells.
+  them and never high. POMS's $802.80 example is low in the wider one-off
+  count; it is outside the 334,320-cell ledger's PIA range.
 - **The float delayed credit is short for births 1917-1942.**
   `ss.benefits.delayed_credit` caps the window at 48 months (issue #494,
   below).
@@ -244,11 +249,11 @@ G computes one month and does not compute the raise. It refuses instead.
   month. The highest protected total is carried forward. RS 00630.400
   states SSA's version of this condition as "Benefits for that month are
   reduced for the MAX" (its 1972 Family Payment Saving Clause).
-- **It refuses any later month whose total falls below the protected total**
+- **It refuses any later governed month whose total falls below the protected total**
   (`savings_clause_403a5`), whether or not the PIA rose into it. It also
-  refuses every later month after that one, because the clause stays in
+  refuses every later governed month after that one, because the clause stays in
   effect.
-- **It refuses every later month once a protected total may exist that G
+- **It refuses every later governed month once a protected total may exist that G
   cannot see** (`savings_clause_history_unknown`). That covers:
   - a path that does not start at the record's first month of entitlement;
   - a month G refused for another reason while a protected total was in
@@ -286,7 +291,9 @@ auxiliaries never shrinks.
 **Known over-refusals.** Each is conservative and inflates the unsupported
 rate:
 
-- **A beneficiary who leaves, for example in the COLA month.** In
+- **Any fall after any protected month, at any later time.** A beneficiary
+  leaving six months after a December COLA triggers refusal of every later
+  governed month on the record, including a widow month the next year. In
   `test_known_over_refusal_a_beneficiary_leaves_in_a_cola_month`, two of
   three children leave in December and the total falls from $1,750.00 to
   $1,537.50. G refuses December. No captured source says whether a change of
@@ -295,8 +302,8 @@ rate:
   benefits, so on the statute's text a larger maximum changes nothing there.
   But SSA's procedure in RS 00630.400 divides the protected payment among
   the auxiliaries without mentioning the OB cap.
-- **Every month after a refused month** while a protected total is in force.
-- **Every month of a path with unknown history.** A simulation that starts
+- **Every governed month after a refused month** while a protected total is in force.
+- **Every governed month of a path with unknown history.** A simulation that starts
   with families already on the rolls must either reconstruct each record
   from its first month of entitlement or accept these refusals.
 
@@ -309,11 +316,14 @@ age". G does not require it, which can only add refusals.
 | --- | --- |
 | Retirement (living worker on RIB, with any reduction or credits) | Aged spouse, spouse with child in care, divorced spouse, child |
 | Disability (worker on DIB, entitled after June 1980) | The same |
-| Survivor | Aged widow(er), surviving divorced spouse, mother or father, child |
+| Survivor | Aged widow(er), disabled widow(er) from January 1984, surviving divorced spouse, mother or father, child, one or two parents |
+| Retirement, eligible living worker not entitled (from January 1985) | Independently entitled divorced spouses only; no worker payment |
 
-Every configuration outside this table raises
+These role families are supported when inputs are valid and none of the
+refusals below applies. Invalid inputs raise `InvalidFamilyInput` before
+coverage refusals. Valid unsupported configurations raise
 `FamilyConfigurationUnsupported` (code `FAMILY_CONFIG_UNSUPPORTED`, design §7).
-It never falls back to a single-worker computation.
+G never falls back to a single-worker computation.
 
 | Reason | Trigger |
 | --- | --- |
@@ -323,19 +333,19 @@ It never falls back to a single-worker computation.
 | `combined_family_maximum` | A child entitled on another record (403(a)(3)(A)), declared or found by the household check |
 | `multiple_auxiliary_records` | Anyone else entitled as an auxiliary or survivor on two records (household check) |
 | `deemed_or_putative_spouse` | 403(a)(3)(D) |
-| `parent_benefit` | 402(h) |
-| `disabled_widow_under_60` | Disabled widow(er)'s benefits before 60 |
+| `parent_benefit` | More than two declared parents, or the circular own-RIB entitlement interval for two potential parents (RS 00209.001/.015) |
+| `disabled_widow_before_1984` | DWB payment months before January 1984 (RS 00615.310B.1/B.3) |
 | `dib_guarantee_pia` | RS 00615.736B.2, .738 |
 | `dib_after_reduced_rib` | 402(q)(2) |
 | `workers_compensation_offset` | Section 224 |
-| `government_pension_offset` | 202(k)(5) |
+| `government_pension_offset` | 202(k)(5), only benefit months through December 2023 |
 | `administrative_finality` | Protected rates (RS 00615.754A.3) |
-| `dual_entitlement_sequence` | A spouse's DIB after the spouse benefit (RS 00615.260), a widow(er) with DIB, a widow(er) born before 1929 (RS 00615.020B method D) |
-| `parisi_redistribution_ambiguous` | The "payable before any age reduction" amount has two readings |
+| `dual_entitlement_sequence` | A spouse's DIB after the spouse benefit (RS 00615.260), an aged widow(er) with DIB or born before 1929 (RS 00615.020B method D), or DWB with own RIB or DIB |
+| `parisi_redistribution_ambiguous` | Own delayed credits, RIB-LIM, or dual zero reached only after auxiliary age reduction remain unsettled by GN 02603.050A/C |
 | `parisi_before_october_1999` | A binding maximum with dual entitlement before 10/99 |
-| `independently_entitled_divorced_spouse` | A divorced spouse whose living ex-spouse is not entitled (402(b)(4)(A), (c)(4)(A)) |
+| `independently_entitled_divorced_spouse` | IEDS before January 1985 or a WEP-affected worker record before January 2024 (RS 00202.100) |
 | `non_aime_formula_pia` | Old-start, special-minimum and frozen-minimum PIAs (RS 00615.740B.1) |
-| `savings_clause_403a5` | A month whose total fell below a 403(a)(5) protected total, and every month after it |
+| `savings_clause_403a5` | A governed month whose total fell below a 403(a)(5) protected total, and every later governed month |
 | `savings_clause_history_unknown` | A month for which a protected total G cannot see may exist (a path not started at entitlement, or a month G did not compute) |
 | `delayed_credits_born_before_1917` | Delayed credits for births before 1917 (402(w)(6)(A)'s 1/12 of 1 percent) |
 
@@ -428,8 +438,9 @@ absorbed as unsupported rows.
   low in 11,572 cells (3.46 percent) and never high. A test pins these
   counts. Over PIAs to $4,500.00 (2,700,000 cells) the count is 94,530
   (3.50 percent); that wider figure comes from a one-off script, not a test.
-  POMS's own example is one of the low cells ($802.80 over 5 months gives
-  $780.40, not $780.50). G uses exact fractions and pins this example. The
+  POMS's own example is low in that wider one-off count, outside the
+  334,320-cell ledger ($802.80 over 5 months gives $780.40, not $780.50).
+  G uses exact fractions and pins this example. The
   sealed ledger is not edited here.
 - **No Axiom differential yet.** rulespec-us at `83abd9ece` (origin/main,
   2026-09-29) has no `us/statutes/42/403` encoding. Its 402(a)/(q)/(w) and
@@ -466,3 +477,256 @@ absorbed as unsupported rows.
 - No population, behavioral or forecast claim is admitted.
 - `engine/loop.py`, `engine/steps.py`, `gates.yaml` and committed `runs/` are
   untouched.
+
+
+## Conformance review of October 11, 2026
+
+Input checks precede coverage refusals for both direct `RecordState` inputs
+and `WorkerRecord` inputs built inside `evaluate_family`. `record_state`
+carries a deferred refusal; a pre-1983 maximum sentinel is never payable.
+402(q)(6) and RS 00615.010 bound worker and spouse reductions at FRA minus
+744 months when the cohort is given. RS 00615.692E bounds pre-1917 credits
+at year-only maxima of 84 months through 1912, 72 for 1913, and 60 for
+1914-1916 (the earlier bands depend on birth month);
+legal credits remain refused because the bundle lacks their rate.
+
+The own-benefit birth year must match the beneficiary's when both are
+provided. RS 00615.301B.2 fixes a widow's reduction period when both ends
+of her calendar birth year lie in the same band; boundary years require
+the caller's period. Under 403(a)(2)(D), retirement eligibility cannot be
+later than birth year plus 62, but an earlier DIB eligibility year is kept.
+These bounds and input-before-refusal order extend invariants 6 and 11.
+
+The final denominator audit executed another minimized instance of
+invariant 6: a closure constructing an own DIB with one prior-RIB reduction
+month and duplicate child ids returned `dib_after_reduced_rib`. OwnBenefit
+now carries that valid unsupported configuration without refusing in its
+constructor; the refusal is raised by `own_monthly_benefit` or the family
+coverage stage after every input check (402(q)(2)). The standalone primitive
+also validates impossible reduction months before refusing. The new
+own-input-order tests execute both construction styles and Hypothesis
+duplicate, wrong-role and invalid reduction-field cases. Valid reduced-DIB
+configurations retain the same refusal and denominator.
+
+`household_month_outcome` validates every input and guard before advancing
+any guard. It advances every record for the month and returns one household
+outcome, attaching the record id to a record refusal. This extends
+invariants 7-9 to the monthly assembly entry point. The guard does not
+compute the saving-clause raise. A child leaving in June after a December
+COLA can trigger refusal, and every later governed month remains refused,
+including an aged-widow month in the next year. The review's executed
+survivor case begins with a 2020 record, PIA $1,500 and maximum $2,584.20,
+a mother and two children. A December 2025 COLA raises the total to
+$2,648.70; one child leaves in June 2026 and the total falls to $2,306.20.
+`test_review_child_departure_six_months_after_cola_refuses_later_widow`
+executes the entire path, including a refused 2027 widow month.
+
+
+## Dual entitlement and deduction before reduction
+
+GN 02603.045 applies the new rule to benefits payable from October 1999
+(the earlier First Circuit cases remain refused). GN 02603.050C defines
+PTAP as the family maximum less the life-case PIA, auxiliary age reduction
+amounts for deductees, and their partial payable amounts. Other deductions
+are R2's. Its non-deductee formula is OB times PTAP divided by TOTOB less
+the deductees' OBs, capped at OB and dime-floored. GN 02603.050A.2 excludes
+a dual rate reduced to zero; all-dual families retain the ordinary maximum.
+`maximum_redistribution_rates` accepts payable amounts and separate age or
+other deduction amounts so R2 can extend deduction handling without
+rewriting distribution. GN 02603.050D's temporary cases require R2 to
+select each eligible household's denominator and supply its OB mapping
+separately. This helper computes rates, not work deductions.
+
+GN 02603.060 examples A.5, A.8, A.9 and B.2 are reproduced. A.5 pays
+children $125 each and spouse $0 plus own $100. A.8 pays children $125 each
+and spouse $0 plus reduced own $80. A.9 pays the aged spouse $112.50, one
+child $150, and a dual child $0 plus own DIB $200. B.2 pays spouse $2.40
+plus own RIB $64 and children $123.30 each: PTAP is $750 minus $500 minus
+$0.90 minus $2.40, or $246.70. The own-RIB $16 age reduction is not removed
+from this pool. Both C examples involve work deductions and belong to R2.
+
+Invariants 1, 2, 5 and 8 extend to own RIB age reduction. The pure PTAP
+helper is deterministic and independent of mapping order, returns only
+non-deductee ids, caps rates at OB, floors to dimes, and allocates at most
+the nonnegative pool. Separate supplied deductions reduce that pool
+monotonically. Its independent exact formula property provides a
+differential with zero tolerance. Own delayed credits and RIB-LIM remain
+`parisi_redistribution_ambiguous`: no captured example settles their
+interaction with the PTAP age-reduction and partial-payable terms.
+
+
+### Zero reached after auxiliary age reduction
+
+This reading needs Max's judgment. GN 02603.045 says the counted amount is
+"before any applicable reduction for age". GN 02603.050C requires the
+"Age reduction amount for all workers or deductees". GN 02603.050A.2
+instead says "If dual entitlement reduces a beneficiary's rate to $0.00
+(technically entitled)" to disregard that beneficiary. A method-B spouse
+with PIA $500, maximum $750, own RIB $64 and 36 auxiliary reduction months
+has standard rate $83.30, age-adjusted $62.40, and zero auxiliary payable.
+Disregarding the spouse pays children $125 each; retaining the $20.90 age
+term pays $114.50 each, a $21 record-total difference. A reading of the
+before-age text alone counts $83.30 minus $64, or $19.30, paying children
+$115.30 each and a record total of $730.60. G refuses this
+case as `parisi_redistribution_ambiguous`, rather than selecting the higher
+payment. Zero before auxiliary age reduction is supported, including A.5
+and A.8. The alternatives and the refusal are executed by the Parisi tests.
+
+
+## Disabled widow(er) benefits
+
+402(e)(1)(B)(ii) and (f)(1)(B)(ii) provide disabled widow(er) entitlement
+at 50-59. The caller attests that entitlement; G does not adjudicate medical
+or insured status. RS 00615.310B.1 says "DWB are reduced by 28.5 percent.
+No additional reduction applies for the period before age 60." B.3
+recalculates earlier entitlements effective January 1984 without the pre-60
+reduction. G therefore supports payment months from January 1984 and refuses
+prior months as `disabled_widow_before_1984`.
+
+DWB OBs use the widow basis, share the family maximum, then take a fixed
+28.5 percent reduction whose amount rounds up to a dime (402(q)(8);
+RS 00615.301). The RIB-LIM then applies under 402(e)(2)(D) and RS
+00615.320's general widow(er) rule. Reduction-month inputs are invalid for
+this fixed initial reduction; later ARF adjustments belong to R3.
+RS 00615.315 discusses election between WIB and DWB, not sequencing of an
+own RIB or DIB. Both own-benefit combinations remain refused as
+`dual_entitlement_sequence`.
+
+Captured DWB sources contain rules without monetary worked examples.
+Invented hand references use a $1,000 OB: reduction $285 and payable $715.
+A $1,000.10 OB has reduction $285.10 (up from $285.0285) and payable $715.
+Invariants: the reduction is exactly ceil-dime of 28.5 percent of the
+post-maximum rate, payments are nonnegative dime amounts, are monotone in
+the rate, and equal the existing widow helper at a full reduction period
+(zero-tolerance differential). Family-maximum bounds and beneficiary-order
+independence continue to hold. The DWB example and Hypothesis tests execute
+these rules and the January 1984 boundary.
+
+
+## Social Security Fairness Act
+
+Pub. L. 118-273 was enacted January 5, 2025. The captured GN 02608.100
+and RS 00605.360 bodies state that it eliminates GPO and WEP "for benefits
+payable for months after December 2023" and that regular payments begin
+with benefits due for January 2024, paid in February 2024. This is the
+benefit-month boundary, not the enactment month or check month. A declared
+GPO condition remains `government_pension_offset` through December 2023;
+from January 2024 it has no effect on G's computed benefit.
+
+G takes a PIA; it does not compute WEP. Before January 2024 the caller is
+responsible for the WEP-affected PIA and associated maximum (RS
+00605.360C.3). From January 2024 supply the regular-formula eligibility-year
+PIA and its COLAs to rebuild the regular maximum. Keeping a pre-repeal
+WEP PIA as input would not implement the repeal. The captures have 2025
+transmittals despite older displayed page dates; the pinned body supplies
+the repeal text. Invariants: exact equality between flagged and unflagged
+post-repeal families and households; refusal retention before repeal; and
+input validation preceding either payment-month branch. SSFA example and
+Hypothesis tests execute the December 2023 / January 2024 boundary.
+
+## Independently entitled divorced spouses and parents
+
+From January 1985, `WORKER_NOT_ENTITLED` identifies a living, insured,
+eligible worker who has not claimed. The caller attests two continuous
+years of divorce for each beneficiary (202(b)(4)(A), (c)(4)(A); RS
+00202.005 and .100). Only divorced spouses are admitted on this retirement
+record. Their OB is half the eligibility-year PIA after applicable COLAs,
+with the ordinary spouse age reduction and dual-entitlement methods. They
+are outside the maximum, and no worker payment is added. The public
+`WorkerRecord` and `RecordState` accept this form; household checks distinguish
+an unclaimed living worker from a deceased worker. A WEP-affected worker
+record, declared with `WINDFALL_ELIMINATION_PROVISION`, is refused for IEDS
+before January 2024 (RS 00202.100's WEP note). That flag has no effect from
+January 2024 under Pub. L. 118-273. Ordinary records still take the caller's
+correct PIA; this layer does not calculate WEP.
+
+Parents on survivor records use 82.5 percent for one entitled parent and
+75 percent each for two, floored to a dime (202(h)(2); RS 00209.015). The
+maximum applies before 202(k)(3)(A)'s own-benefit offset. There is no age
+reduction. A parent's own RIB must be less than the parent's OB to establish
+entitlement (RS 00209.001). This compares the actual reduced or credited
+own RIB and the dime-rounded OB, rather than the own PIA. An own-DIB parent
+remains technically entitled even if no parent benefit is payable (RS
+00209.015); that parent still counts for the two-parent rate. More than two
+declared parents is refused as `parent_benefit`: the captured one/two-parent
+rules do not settle that configuration.
+
+Needs Max's judgment: the parent entitlement count can be circular. RS
+00209.001 requires "not be entitled to retirement insurance benefit (RIB)
+equal to or exceeding
+the amount of the parent's original benefit (One parent = 82 1/2%; Two parents
+= 75%);". RS 00209.015 distinguishes "2. One parent entitled" from
+"3. Two parents entitled". For PIA $1,000 and maximum $1,750, two potential
+parents, one with own RIB $780, qualify together at the one-parent OB of
+$825 but that first parent's RIB exceeds the two-parent OB of $750. Counting
+two first excludes that parent and pays the other $825; testing eligibility
+at $825 first would count two and pay the other $750 (a $75 difference),
+while paying no auxiliary to the $780 own-RIB parent. Neither fixed order
+is silently selected: `parent_benefit` refuses the interval between the two
+dime-rounded OBs when both parents are potential entitlements.
+
+Invented hand references (the captures publish rules without monetary
+worked examples for these classes): PIA $1,000 pays a solo parent $825 or
+two parents $750 each. An own RIB of $1,000 reduced for 36 months is $800
+and leaves a solo-parent auxiliary of $25. Two parents and a child with
+maximum $1,500 and one parent's own DIB $600 pay $0/$750/$750; own DIB $100
+pays $400/$550/$550 after redistribution. IEDS OB $500 reduces to $375
+for 36 months. With method C, own PIA $200 reduced to $160 leaves the
+$300 spouse excess reduced to $225; the own record is counted once when
+present in the household.
+
+Additional executed invariants are: parent rates follow the entitled count;
+own DIB remains technical while disqualifying own RIB does not count;
+parent allocations retain exact dime arithmetic, maximum bounds and order
+independence; adding a subject child cannot increase an existing payment;
+IEDS has no worker payment, ignores the maximum, and adding another divorced
+spouse leaves existing payments unchanged; dual offsets remain nonnegative
+and exact; January 1985 and January 2024 boundaries are deterministic;
+refusals remain in denominators and every invalid family is checked first.
+The new parent/IEDS tests execute examples and Hypothesis checks beside them.
+
+## Registry, coverage and invented denominators
+
+`tests/data/track_b/gross_benefit_examples.yaml` is the single statutory
+worked-example registry. Its 27 entries reproduce 205 figures quoted from
+the manifest's captures and 53 separately labelled derived rates or
+whole-dollar floors. Each figure links an output path, exact expected value
+and verbatim capture literal. The .910 erratum retains published $899.52
+beside the formula's $889.52. Bulletin presentation rounding is separate:
+Table 1's displayed $659 is an exact $658.50 rate and a statutory $658
+whole-dollar payment, with whole-dollar family total $1,974. These derived
+figures are not represented as printed source figures.
+
+The tag vocabulary enumerates record kind, every role, reductions, credits,
+dual method, binding/disability maxima, redistribution, outside-maximum
+roles, RIB-LIM, COLA, DWB, parent, IEDS and SSFA classes. All 42 supported
+classes have a registered example or one of 17 explicit invented-only
+explanations with test references. The coverage test derives kind and role
+classes from G's enums; a missing supported class, figure or source literal
+fails. Hypothesis tests execute completeness, class loss, determinism and
+scenario order independence.
+
+`scripts/track_b_g_conformance_report.py` writes the canonical JSON report
+under this design directory. The exhaustive declared product is three
+record kinds, all 55 role multisets of sizes zero through two, eight dual
+modes, two reduction flags, three payment eras and fourteen single-condition
+choices. Flags apply to the first beneficiary in Role enum order; empty
+multisets with a beneficiary flag are invalid. Fixed invented money, cohort,
+and snapshot assumptions are stated in the artifact. Conditions are none
+or one declared record/beneficiary flag; combinations beyond that finite
+axis and larger families are not claimed as enumerated.
+
+There are 110,880 cells: 3,640 supported, 22,106 refused and 85,134 invalid.
+All cells stay in the denominator. Twenty-one named invented witnesses form
+a separate denominator, one executed refusal for every retained reason,
+including historical, multi-record and protected-path cases absent from the
+lattice. Statutory registry counts are separate again. These are invented
+configuration counts, with no population weights or population claim.
+
+Report invariants are unique/exhaustive declared cells, supported/refused/
+invalid conservation, reason and era conservation, deterministic/order
+independent classification, invalid-before-refusal order, separate
+denominators and canonical byte equality on regeneration. Each is executed
+by example and Hypothesis checks in the conformance-report tests. All ten
+deliberate mutations failed and were restored; commands, failing tests and
+the delivery limitation are in `track_b_g_conformance_20261011.md`.

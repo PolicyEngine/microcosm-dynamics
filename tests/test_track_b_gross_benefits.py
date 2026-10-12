@@ -83,7 +83,7 @@ def test_manifest_pins_every_capture():
         assert hashlib.sha256(data).hexdigest() == source["sha256"]
         assert source["url"].startswith("https://")
         assert re.fullmatch(
-            r"2026-09-(2\d|30)T\d\d:\d\d:\d\dZ",
+            r"2026-(?:09-(?:2\d|30)|10-11)T\d\d:\d\d:\d\dZ",
             source["retrieved_at_utc"],
         )
         assert source["capture"] in document["capture_formats"]
@@ -481,7 +481,7 @@ def test_disability_maximum_refuses_pre_july_1980_entitlement():
         first_dib_entitlement=g.YearMonth(1980, 6),
     )
     with pytest.raises(g.FamilyConfigurationUnsupported) as caught:
-        g.record_state(record, PARAMS)
+        _family(g.record_state(record, PARAMS), [])
     reason = g.UnsupportedReason.DI_ENTITLEMENT_BEFORE_JULY_1980
     assert caught.value.reason is reason
 
@@ -1656,13 +1656,16 @@ def _survivor_state():
 def _unsupported_cases():
     widow_dib = g.OwnBenefit(DISABILITY, F(300))
     return {
-        g.UnsupportedReason.ELIGIBILITY_BEFORE_1983: lambda: g.record_state(
-            g.WorkerRecord(g.FamilyKind.SURVIVOR, 1982, F(500)), PARAMS
+        g.UnsupportedReason.ELIGIBILITY_BEFORE_1983: lambda: _family(
+            g.record_state(
+                g.WorkerRecord(g.FamilyKind.SURVIVOR, 1982, F(500)), PARAMS
+            ),
+            [],
         ),
         g.UnsupportedReason.PAYMENT_MONTH_BEFORE_1983: lambda: _family(
             _survivor_state(), [], month=g.YearMonth(1982, 12)
         ),
-        g.UnsupportedReason.DI_ENTITLEMENT_BEFORE_JULY_1980: lambda: (
+        g.UnsupportedReason.DI_ENTITLEMENT_BEFORE_JULY_1980: lambda: _family(
             g.record_state(
                 g.WorkerRecord(
                     g.FamilyKind.DISABILITY,
@@ -1672,7 +1675,8 @@ def _unsupported_cases():
                     first_dib_entitlement=g.YearMonth(1979, 12),
                 ),
                 PARAMS,
-            )
+            ),
+            [],
         ),
         g.UnsupportedReason.COMBINED_FAMILY_MAXIMUM: lambda: _family(
             _survivor_state(),
@@ -1699,22 +1703,44 @@ def _unsupported_cases():
             ],
         ),
         g.UnsupportedReason.PARENT_BENEFIT: lambda: _family(
-            _survivor_state(), [g.Beneficiary("P", g.Role.PARENT)]
+            _survivor_state(),
+            [
+                g.Beneficiary(
+                    "P",
+                    g.Role.PARENT,
+                    own_benefit=g.OwnBenefit(OLD_AGE, F(780)),
+                ),
+                g.Beneficiary("P2", g.Role.PARENT),
+            ],
         ),
         g.UnsupportedReason.DISABLED_WIDOW_UNDER_60: lambda: _family(
-            _survivor_state(), [g.Beneficiary("W", g.Role.DISABLED_WIDOW)]
+            _survivor_state(),
+            [g.Beneficiary("W", g.Role.DISABLED_WIDOW)],
+            month=g.YearMonth(1983, 12),
         ),
-        g.UnsupportedReason.DIB_GUARANTEE_PIA: lambda: g.record_state(
-            g.WorkerRecord(
-                g.FamilyKind.SURVIVOR,
-                2000,
-                F(900),
-                conditions={g.RecordCondition.DIB_GUARANTEE_PIA},
+        g.UnsupportedReason.DIB_GUARANTEE_PIA: lambda: _family(
+            g.record_state(
+                g.WorkerRecord(
+                    g.FamilyKind.SURVIVOR,
+                    2000,
+                    F(900),
+                    conditions={g.RecordCondition.DIB_GUARANTEE_PIA},
+                ),
+                PARAMS,
             ),
-            PARAMS,
+            [],
         ),
-        g.UnsupportedReason.DIB_AFTER_REDUCED_RIB: lambda: g.OwnBenefit(
-            DISABILITY, F(500), reduction_months=12
+        g.UnsupportedReason.DIB_AFTER_REDUCED_RIB: lambda: _family(
+            _survivor_state(),
+            [
+                g.Beneficiary(
+                    "C",
+                    g.Role.CHILD,
+                    own_benefit=g.OwnBenefit(
+                        DISABILITY, F(500), reduction_months=12
+                    ),
+                )
+            ],
         ),
         g.UnsupportedReason.WORKERS_COMPENSATION_OFFSET: lambda: _family(
             g.RecordState(
@@ -1736,6 +1762,7 @@ def _unsupported_cases():
                     },
                 )
             ],
+            month=g.YearMonth(2023, 12),
         ),
         g.UnsupportedReason.ADMINISTRATIVE_FINALITY: lambda: _family(
             _retired(750, 1312.50),
@@ -1797,15 +1824,19 @@ def _unsupported_cases():
                 conditions={g.RecordCondition.WORKER_NOT_ENTITLED},
             ),
             [g.Beneficiary("X", g.Role.DIVORCED_SPOUSE)],
+            month=g.YearMonth(1984, 12),
         ),
-        g.UnsupportedReason.NON_AIME_FORMULA_PIA: lambda: g.record_state(
-            g.WorkerRecord(
-                g.FamilyKind.SURVIVOR,
-                2000,
-                F(900),
-                conditions={g.RecordCondition.NON_AIME_FORMULA_PIA},
+        g.UnsupportedReason.NON_AIME_FORMULA_PIA: lambda: _family(
+            g.record_state(
+                g.WorkerRecord(
+                    g.FamilyKind.SURVIVOR,
+                    2000,
+                    F(900),
+                    conditions={g.RecordCondition.NON_AIME_FORMULA_PIA},
+                ),
+                PARAMS,
             ),
-            PARAMS,
+            [],
         ),
         g.UnsupportedReason.MULTIPLE_AUXILIARY_RECORDS: lambda: (
             g.household_benefits(
@@ -1923,10 +1954,12 @@ def test_other_refused_sequences():
     crowded = [reduced_own_widow] + [
         g.Beneficiary(f"C{i}", g.Role.CHILD) for i in range(3)
     ]
-    with pytest.raises(g.FamilyConfigurationUnsupported) as caught:
-        _family(_survivor_state(), crowded)
-    assert caught.value.reason is g.UnsupportedReason.PARISI_AMBIGUOUS
-    assert caught.value.beneficiary_id == "W"
+    # GN 02603.050C settles the age-reduced own-RIB case: subtract the
+    # actual partial payable, not the own RIB's age-reduction amount.
+    result = _family(_survivor_state(), crowded)
+    rates = {row.beneficiary_id: row for row in result.beneficiaries}
+    assert rates["W"].auxiliary_payable == F("351.80")
+    assert all(rates[f"C{i}"].auxiliary_payable == F(466) for i in range(3))
 
 
 # ===========================================================================
@@ -2076,7 +2109,15 @@ def test_unsupported_rows_stay_in_the_denominator_and_block_totals():
         "b",
         F(1, 2),
         lambda: _family(
-            _survivor_state(), [g.Beneficiary("P", g.Role.PARENT)]
+            _survivor_state(),
+            [
+                g.Beneficiary(
+                    "P",
+                    g.Role.PARENT,
+                    own_benefit=g.OwnBenefit(OLD_AGE, F(780)),
+                ),
+                g.Beneficiary("P2", g.Role.PARENT),
+            ],
         ),
     )
     denominator = g.count_family_outcomes([supported, unsupported])

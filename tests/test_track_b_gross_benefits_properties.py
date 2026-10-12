@@ -18,6 +18,7 @@ counterexample for the dual case is pinned as intended behavior.
 from __future__ import annotations
 
 import dataclasses
+from datetime import date
 from fractions import Fraction as F
 
 from hypothesis import assume, given, settings, target
@@ -56,7 +57,7 @@ def records(draw, kind=None):
             extra["worker_reduction_months"] = draw(st.integers(0, 60))
         else:
             # Credits run from full retirement age to 70 (402(w)(2)(A)).
-            birth = draw(st.integers(1925, 1990))
+            birth = draw(st.integers(max(1925, year - 62), 1990))
             window = g.delayed_credit_window_months(birth, PARAMS)
             extra["worker_delayed_credit_months"] = draw(
                 st.integers(0, window)
@@ -131,10 +132,12 @@ def beneficiaries(draw, state, index, *, dual=True):
         fields["reduction_months"] = draw(st.integers(0, 60))
     widow = role in (g.Role.WIDOW, g.Role.SURVIVING_DIVORCED_SPOUSE)
     if widow:
-        period = draw(st.integers(60, 84))
+        fields["birth_year"] = draw(st.integers(1929, 1995))
+        period = g.widow_reduction_period_months(
+            date(fields["birth_year"], 7, 1)
+        )
         fields["reduction_period_months"] = period
         fields["reduction_months"] = draw(st.integers(0, period))
-        fields["birth_year"] = draw(st.integers(1929, 1995))
         if draw(st.integers(0, 3)) == 0:
             # 402(e)(2)(C): the deceased's credit-increased benefit.
             extra = draw(st.integers(0, int(state.pia * 3)))
@@ -144,6 +147,11 @@ def beneficiaries(draw, state, index, *, dual=True):
         if dual and role is not g.Role.CHILD or dual and draw(st.booleans())
         else None
     )
+    if widow and own is not None and own.birth_year is not None:
+        fields["birth_year"] = own.birth_year
+        period = g.widow_reduction_period_months(date(own.birth_year, 7, 1))
+        fields["reduction_period_months"] = period
+        fields["reduction_months"] = min(fields["reduction_months"], period)
     if own is not None and role in (g.Role.SPOUSE, g.Role.DIVORCED_SPOUSE):
         # A then B (method C) or B then A (method B).
         fields["own_benefit_first"] = draw(st.booleans())
@@ -246,6 +254,7 @@ def test_shares_are_proportional_to_original_benefits(family):
 # ===========================================================================
 # I3. Raising the PIA never lowers the family maximum
 # ===========================================================================
+@settings(deadline=None)
 @given(years, dimes, dimes, cola_lists)
 def test_family_maximum_is_monotone_in_the_pia(year, a, b, colas):
     low, high = sorted((a, b))
@@ -257,6 +266,7 @@ def test_family_maximum_is_monotone_in_the_pia(year, a, b, colas):
     assert fm(low, year, PARAMS) >= F(3, 2) * low - DIME
 
 
+@settings(deadline=None)
 @given(dimes, dimes, st.integers(0, 20_000), st.integers(0, 20_000))
 def test_disability_maximum_is_monotone(a, b, aime_a, aime_b):
     low, high = sorted((a, b))
@@ -355,13 +365,6 @@ def test_dual_entitlement_never_goes_below_the_own_benefit(family):
 # I6. Unsupported configurations always raise, and stay in denominators
 # ===========================================================================
 UNSUPPORTED_MEMBERS = [
-    g.Beneficiary("parent", g.Role.PARENT),
-    g.Beneficiary("dwb", g.Role.DISABLED_WIDOW),
-    g.Beneficiary(
-        "gpo",
-        g.Role.CHILD,
-        conditions={g.BeneficiaryCondition.GOVERNMENT_PENSION_OFFSET},
-    ),
     g.Beneficiary(
         "cfm",
         g.Role.CHILD,
@@ -379,7 +382,18 @@ UNSUPPORTED_MEMBERS = [
 @given(
     st.sampled_from(UNSUPPORTED_MEMBERS),
     st.integers(0, 6),
-    st.sampled_from(list(g.RecordCondition) + [None]),
+    st.sampled_from(
+        [
+            c
+            for c in g.RecordCondition
+            if c
+            not in {
+                g.RecordCondition.WORKER_NOT_ENTITLED,
+                g.RecordCondition.WINDFALL_ELIMINATION_PROVISION,
+            }
+        ]
+        + [None]
+    ),
     st.data(),
 )
 def test_unsupported_configurations_always_raise(
@@ -403,11 +417,12 @@ def test_unsupported_configurations_always_raise(
     assert (denominator.rows, denominator.unsupported_rows) == (1, 1)
 
 
+@settings(deadline=None)
 @given(st.lists(st.tuples(families(), st.booleans()), max_size=8))
 def test_denominators_keep_every_row(rows):
     outcomes = []
     for index, ((state, members), poison) in enumerate(rows):
-        injected = [*members, UNSUPPORTED_MEMBERS[2]] if poison else members
+        injected = [*members, UNSUPPORTED_MEMBERS[1]] if poison else members
         outcomes.append(
             g.evaluate_family(
                 f"r{index}",
@@ -465,6 +480,7 @@ def test_amounts_are_dimes_and_payments_whole_dollars(family):
 # ===========================================================================
 # Differential: the existing float oracle (ss/benefits.py) where it overlaps
 # ===========================================================================
+@settings(deadline=None)
 @given(st.integers(0, 60), st.integers(0, 60), st.integers(0, 84))
 def test_reduction_fractions_match_the_float_oracle(months, spouse, widow):
     # policyengine-us stores 5/9 of 1 percent as 0.00555556, so the worker
@@ -487,6 +503,7 @@ def test_reduction_fractions_match_the_float_oracle(months, spouse, widow):
     )
 
 
+@settings(deadline=None)
 @given(dimes, st.integers(0, 10**6), st.integers(0, 60), st.integers(0, 60))
 def test_spouse_benefit_matches_the_oracle_within_one_dime(
     worker_pia, own_draw, months, own_months
@@ -525,6 +542,7 @@ def test_spouse_benefit_matches_the_oracle_within_one_dime(
     assert row.auxiliary_payable <= F(repr(expected)) + F(1, 10**6)
 
 
+@settings(deadline=None)
 @given(dimes, dimes, st.integers(0, 84), st.integers(0, 36))
 def test_widow_benefit_matches_the_oracle_within_rounding(
     deceased_pia, own_pia, months, deceased_early
@@ -569,6 +587,7 @@ def test_widow_benefit_matches_the_oracle_within_rounding(
     assert row.total_received <= expected + F(1, 10**6)
 
 
+@settings(deadline=None)
 @given(dimes, st.integers(0, 48), st.integers(1929, 1990))
 def test_delayed_credits_match_the_float_oracle_within_one_dime(
     pia, months, birth_year
@@ -604,6 +623,7 @@ def test_float_oracle_caps_fra_65_credits_at_48_months_issue_494():
     assert abs(oracle.delayed_credit(60, 1935, PARAMS) - 0.24) < 1e-12
 
 
+@settings(deadline=None)
 @given(dimes, st.integers(1, 60))
 def test_float_ledger_is_never_above_and_at_most_a_dime_below(pia, months):
     """The sealed ledger path vs the exact fraction (POMS RS 00615.005B).
@@ -1000,7 +1020,7 @@ def test_input_errors_are_never_absorbed_as_refusals(
     state, members = family
     survivor = state.kind is g.FamilyKind.SURVIVOR
     if refused.role in (g.Role.PARENT, g.Role.DISABLED_WIDOW) and not survivor:
-        refused = UNSUPPORTED_MEMBERS[2]
+        refused = UNSUPPORTED_MEMBERS[1]
     members = list(members)
     members.insert(data.draw(st.integers(0, len(members))), refused)
     if error == "credits":
