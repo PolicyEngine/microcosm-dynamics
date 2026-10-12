@@ -26,8 +26,8 @@ Microcosm Dynamics aims to follow a representative population of Americans throu
 
   The draft registration fixes their held-out data, cells, pass rules, H1's three candidates and the rule for adopting one, all before anything is built.
 - **What comes first.** Two pieces of open work feed this one:
-  - the fills learned on SSA's earnings file (gate_epuf_fill, awaiting Max's ruling d927 and pull requests #515 and #516);
-  - forward earnings in the projections (Track B, awaiting d765, d781 and d782).
+  - the fills learned on SSA's earnings file (gate_epuf_fill; Max ratified its tolerance on 10 October, d927, and its lock and candidates await pull requests #515 and #516);
+  - forward earnings in the projections (Track B: Max ruled d765, d781, d782 and d1342 on 11 October, B1 v2 passed that day, and B2 awaits the B0.1 addendum's merge, #505, and its own registration).
 
   The history work can start now. H1's one scored run waits for gate_epuf_fill's verdict, and any real-data projection waits for Track B.
 - **The schedule.** The draft 24-month plan shown at NASI builds the projected population through PolicyEngine in months 5 to 9, on the current PSID projections, after the earnings test and family maximum. It leaves running the dynamics on Microcosm's frame outside the 24 months. This plan proposes a lighter path: run the existing engine on frame persons, without the kernel changes Microcosm's design names, so the months 5 to 9 population can start from Microcosm. It needs about 70 to 109 agent-days of build work and 22 to 29.5 days of human review (assumptions, section 4.2).
@@ -320,10 +320,10 @@ The **effective sample size** (Kish) is the number of equally weighted people a 
 | Part of a Microcosm start | Test today | What it leaves open |
 |---|---|---|
 | Earnings dynamics learned from the PSID | gate 1 passes, under two amendments (`runs/gate1_rank_knn_v5.json`) | Scores 1998–2022 and ages 25–59, pooled over sex, on PSID people's own anchors (`gates.yaml:50-58`); never frame people or whole careers |
-| Filling years the PSID did not record | gate_epuf_fill, registered and unlocked (pull requests #515, #516; d927) | Certifies fills on EPUF's concept, not the PSID-to-SSA gap |
+| Filling years the PSID did not record | gate_epuf_fill, registered; tolerance ratified (d927), lock pending in pull request #515, candidates in #516 | Certifies fills on EPUF's concept, not the PSID-to-SSA gap |
 | PSID earnings against SSA records | gate_epuf, report-only (#509) | Gates nothing |
 | PSID processes carried onto the frame | gate w1 passes (`runs/gate_w1_candidate4_v1.json`) | Scores cross-sectional joints; certifies no transition and no history (`paper/paper.qmd:362`) |
-| Forward earnings | gate m6 passes 4 of 5 seeds (`runs/gate_m6_candidate3_v1.json`); Track B's B2 awaits d765, d781 and d782 | Fitted through 2014, ages 25–64; a 2024 boundary needs a refit and its own gate |
+| Forward earnings | gate m6 passes 4 of 5 seeds (`runs/gate_m6_candidate3_v1.json`); Track B's B2 is designed (d765, d781, d782, d1342) and awaits its registration | Fitted through 2014, ages 25–64; a 2024 boundary needs a refit and its own gate |
 | Marriage, households, marriage by earnings | gates 2, 2b and 2c pass, 4 of 5 seeds each | Not yet inside a projection |
 | Disability | gate m4 passes 5 of 5 seeds; SSDI entitlement not gated | |
 | Mortality, claiming | not gated | |
@@ -354,7 +354,7 @@ Each test is drafted in full in the [draft registration](microcosm-start-registr
 
 ### 3.3 How the tests get fixed before anything runs
 
-The registration fixes each test's question, held-out data, split, cells, statistics, tolerance rule, pass rule and H1's candidates. The tolerance multipliers it proposes are drafts until Max ratifies them at lock, as he is ruling on gate_epuf_fill's (d927). After posting:
+The registration fixes each test's question, held-out data, split, cells, statistics, tolerance rule, pass rule and H1's candidates. The tolerance multipliers it proposes are drafts until Max ratifies them at lock, as he did for gate_epuf_fill's (d927). After posting:
 
 1. **Floors.** They come from real data only, and no candidate is scored.
 2. **Partition and bite.** The partition is fixed before any candidate runs. Then a method known to be wrong must fail by a clear margin (gate 1's failed QRF baseline for H1, on data no scored seed holds out; engines with no mortality or no new awards for gate 3, on an invented frame). A test with no bite does not lock. Gate 3 goes through this step later than H1, once its engine exists.
@@ -392,8 +392,8 @@ Comparing them is therefore a reported differential (task T13), not a property. 
 
 ### 4.1 What has to land first
 
-- **gate_epuf_fill.** Max's ruling on its tolerance (d927), then its lock, then pull request #516's candidates and the one reading of its test data. Frame histories use the fills it certifies (section 1.5). H1's registered run waits for that verdict, because H1's deployed configuration uses the certified fill procedure (or the current rules, if none is certified), refit on H1's own training part. The frame itself uses gate_epuf_fill's own fit.
-- **Track B.** Max's rulings on d765, d781 and d782, then B2's registration, then forward earnings in the projections (months 2 to 5), then a refit of the law at a 2024 boundary with its own gate (section 1.8). The history work (tasks T1 to T7 below) does not wait for Track B; any real-data projection from the frame does.
+- **gate_epuf_fill.** Max ratified its tolerance on 10 October (d927). Next come its lock, then pull request #516's candidates and the one reading of its test data. Frame histories use the fills it certifies (section 1.5). H1's registered run waits for that verdict, because H1's deployed configuration uses the certified fill procedure (or the current rules, if none is certified), refit on H1's own training part. The frame itself uses gate_epuf_fill's own fit.
+- **Track B.** Max ruled on B2's design on 11 October (d765, d781, d782 and d1342), and B1 v2, which B2 needs, passed that day. Next come the B0.1 addendum's merge (#505), B2's registration, then forward earnings in the projections (months 2 to 5), then a refit of the law at a 2024 boundary with its own gate (section 1.8). The history work (tasks T1 to T7 below) does not wait for Track B; any real-data projection from the frame does.
 - **Pull request #512**, which makes the 2026 Trustees Report and CBO's 2026 projections selectable as the projection's baseline, merged on 4 October 2026 (`ff3fe306`). A 2024 start needs one of them. The 2008 Trustees path that the DYNASIM3 tests use stops at 2030 and predates every year the frame describes (Registration 18).
 - **Four requests to Microcosm** (sections 5.1 and 5.4):
   - restore educational attainment to the US release;
