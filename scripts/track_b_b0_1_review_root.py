@@ -651,18 +651,21 @@ def _engine_kinds(
 def pattern_kind(pattern: str, denied: Sequence[str]) -> str:
     """How a Glob pattern or a Grep file filter is classed.
 
-    The pattern is read the way any of three glob engines might read it,
-    and it is flagged if any reading is:
+    The pattern is expanded every way a glob engine might read it: its
+    brace groups as bash and Node read them and as ripgrep and Bun read
+    them (``brace_expansions``), then its extglobs
+    (``extglob_expansions``). The pattern and every text so produced are
+    read two ways, and flagged if either reading flags them:
 
-    1. As written and as bash expands its braces, cut into segments at
-       ``/`` and at every brace or comma (the v6 rule).
-    2. As ripgrep, Bun and Node read it: braces expanded both ways
-       (``brace_expansions``), extglobs resolved (``extglob_expansions``),
-       each backslash escape and bracket class one character
-       (``glob_tokens``), and segments cut at ``/`` and at any brace or
-       comma left as literal text, never inside a class. A class of one
-       character is that character. Each such reading is also tested with
-       its case folded, since the review root's file system ignores case.
+    1. With ``fnmatchcase``, on segments cut at ``/`` and at every brace
+       or comma (the v6 rule), and, for the whole-stem test below, also on
+       segments cut at ``/`` only (round 10's smallest fix).
+    2. As the engines read it (``glob_tokens``): each backslash escape
+       and bracket class is one character, a class of one character is
+       that character, and segments are cut at ``/`` and at any brace or
+       comma left as literal text, never inside a class. This reading is
+       tested again with case folded: the root's file system ignores
+       case, and so does Node's glob on macOS.
 
     In any reading:
 

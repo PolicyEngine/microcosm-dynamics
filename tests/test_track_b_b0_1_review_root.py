@@ -866,6 +866,8 @@ def test_denied_from_record_takes_every_removed_file():
         ("Glob", "**/deep_denied[^,]md", False),
         ("Glob", "**/[d]eep_denied.md", False),
         ("Glob", "docs/sub[/x]deep_denied.md", False),
+        # ripgrep lets a negated class stand for a slash
+        ("Grep", "docs/sub[!x]deep_denied.md", False),
         # case: the root's file system ignores it
         ("Glob", "docs/sub/DEEP_DENIED.MD", False),
         ("Read", "GATES.YAML", False),
@@ -1177,6 +1179,9 @@ def _mixed(draw):
 
 @settings(max_examples=600, deadline=None)
 @given(pattern=_mixed() | st.text(alphabet="ab./{},*[]!^\\", max_size=14))
+# v6 cut inside the class and saw ``deep_denied.md]``; the engines read one
+# character. v7 keeps v6's cut, so it still voids this.
+@example("[,deep_denied.md]")
 def test_v7_voids_whatever_v6_voided(pattern):
     """Differential: every pattern the round-10 rule (v6) did not class as
     inside the root, v7 does not either."""
