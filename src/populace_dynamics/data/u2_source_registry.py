@@ -122,6 +122,31 @@ RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
         "required": ("resolution", "ruling_effect", "completeness_disclosure"),
         "markers": ("completeness_disclosure",),
     },
+    # 2013's inherited code-90 meaning was RESOLVED in milestone 1 and
+    # carries no adjudication record (disposition None).
+    "1b": {
+        "registry": "roles",
+        "entries": ("2013.relationship.90",),
+        "ruling": {**_D637, "amendment": "1b", **_D745},
+        "disposition": None,
+        "fields": {
+            "status": "RESOLVED",
+            "label": "Legal husband of Head",
+            "action": "documented_rule",
+            "income_role": "ofum",
+            "spouse_slot": False,
+            "legal_spouse_annuity": True,
+            "marital_resolution": True,
+        },
+        "absent": (
+            "refusal",
+            "question",
+            "blocking_dependencies",
+            "family_unit_exclusion",
+        ),
+        "required": ("ruling_effect",),
+        "markers": (),
+    },
     "2": {
         "registry": "income",
         "entries": tuple(
@@ -478,7 +503,12 @@ def _ratified_amendment(entry: dict[str, Any], name: str) -> None:
             f"A d637 ruling applies only unblocked, for {entry['id']}"
         )
     record = entry.get("adjudication")
-    if (
+    if scope["disposition"] is None:
+        if record is not None:
+            raise SourceAdjudicationError(
+                f"Unexpected adjudication record for {entry['id']}"
+            )
+    elif (
         not isinstance(record, dict)
         or record.get("disposition") != scope["disposition"]
         or not _same(record.get("amendment"), int(amendment[0]))

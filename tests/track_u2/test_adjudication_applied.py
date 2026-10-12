@@ -81,6 +81,7 @@ OPEN_ITEMS = 6
 #: the adjudication disposition its entries carry.
 D637_APPLIED = {
     "1a": "D",
+    "1b": None,
     "2": "A",
     "3": "A",
     "4": "D",
@@ -520,9 +521,11 @@ def test_d637_rulings_are_recorded_on_their_entries(documents, monkeypatch):
                 ruling["specification_section"],
                 ruling["amendment"],
             ) == ("d637", "2026-09-30", "16b", amendment)
-            record = entry["adjudication"]
+            # 2013's code-90 meaning (1b) has no adjudication record.
+            record = entry.get("adjudication", {"disposition": None})
             assert record["disposition"] == D637_APPLIED[amendment], key
-            assert record["amendment"] == number, key
+            if record["disposition"] is not None:
+                assert record["amendment"] == number, key
             assert entry["status"] == "RESOLVED", key
             assert any(
                 "d637" in entry.get(field, "")
@@ -637,6 +640,7 @@ D637_TEXT_FIELDS = (
 #: (reviews of 02e3f3e2 and 06fa7d98).
 D637_TEXT_SHA256 = {
     "1a": ("2f4bca660f85b99cac371c970bb02fe3ae3978e5e52c12d661dd3fdd5690b88d"),
+    "1b": ("ca251770719feb29812705e2ef7d3868ec6f95a925806e40792f1fda63c69be8"),
     "2": ("64a67aae69d9d0bd6c6743328e8169304708003845395830ad628a6ee708887d"),
     "3": ("8d93d501819d981c6605b02fde3ff89d05488738146757bd179a84c02e131598"),
     "4": ("0b79677a5d1b41a76b17709152bec0d3789d118c75859b9716ea505c3413cd9c"),
@@ -661,6 +665,19 @@ D637_CLAUSES = {
             "completeness_disclosure",
             "Registration discloses this (section 16a amendment 1a).",
         ),
+    ],
+    "1b": [
+        (
+            "ruling_effect",
+            "ratified amendment 1's parts 1a-1c as written, as Max confirmed "
+            "on 2026-10-12 (d745; section 16b)",
+        ),
+        ("ruling_effect", "Under 1b 2013 keeps the inherited meanings"),
+        ("ruling_effect", "'Legal husband of Head'"),
+        ("ruling_effect", "section 3 lines 147, 150, 156 and 175"),
+        ("ruling_effect", "an OFUM income role outside the spouse slot"),
+        ("ruling_effect", "the co-resident legal-spouse annuity life"),
+        ("ruling_effect", "relationship-based marital resolution"),
     ],
     "2": [
         ("use_restriction", "Slot metadata only (u2-draft-4 amendment 2)."),
@@ -1439,10 +1456,10 @@ D1090_CLAUSES = {
         "records under 5a and resolved the 2017 weight ER34651 under "
         "amendment 6's option 1; the \N{SECTION SIGN}15 fragment itself is "
         "materialized under item 9. Max confirmed 1a\N{EN DASH}1c on "
-        "2026-10-12 (d745), and the 1a commit recorded the ruling on the "
-        "documented 2015 code-90 and 2017 code-90 and code-92 routes. The 6 "
-        "TO VERIFY records left are code 88's, open until amendment 1c's "
-        "registry commit lands.",
+        "2026-10-12 (d745), and the 1a and 1b commits recorded the ruling on "
+        "the documented 2015 code-90 and 2017 code-90 and code-92 routes and "
+        "on 2013's inherited code-90 meaning. The 6 TO VERIFY records left "
+        "are code 88's, open until amendment 1c's registry commit lands.",
         "8. Complete the pre-registration structural, reconciliation and "
         "F17 component pass, including only the counts that the ratified B1 "
         "and B2 options name (under the 2026-10-10 ruling, the counts "

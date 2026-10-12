@@ -282,6 +282,7 @@ def test_d1090_moved_only_the_ruled_gate_fields():
 D637_RULED_FIELDS = {
     # Amendment 1a's three D items keep their documentary resolution.
     "1a": {"ruling_effect", "completeness_disclosure", "ruling"},
+    "1b": {"ruling_effect", "ruling"},
     "2": {
         "status",
         "usage",
@@ -382,7 +383,7 @@ D637_RECORDED = {
     "pension": ["5b", "5a"],
     "weights": ["6"],
     "individual": ["6"],
-    "roles": ["1a"],
+    "roles": ["1a", "1b"],
 }
 
 

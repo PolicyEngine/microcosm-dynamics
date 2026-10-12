@@ -253,7 +253,8 @@ DECLARED = INVENTED_DECLARED
 #: ``rulings_applied`` records a ruling "where present", and the
 #: individual registry records amendment 6's release.  Max's d745
 #: confirmation (2026-10-12) of amendment 1a-1c moved the roles bytes:
-#: 1a records the ruling on the documented code-90/92 routes.
+#: 1a records the ruling on the documented code-90/92 routes, 1b on 2013's
+#: inherited code-90 meaning.
 REGISTRY_SHA256: dict[str, str] = {
     "income": (
         "ddf49639c5678c35d525438b595393d7c55cba00956c23e42f68515ac56446d5"
@@ -268,7 +269,7 @@ REGISTRY_SHA256: dict[str, str] = {
         "bd22e07a8576ea9239818ca40377839c5c3151fffb403f3e5f1ef1549da546cf"
     ),
     "roles": (
-        "faf8440ca4c11c61bd0689eb29ea02446eb0aebbb93c388feb625bfdaeeb753c"
+        "3a2924122555a612d976f9dbd3e4d764f133fede0467a65b2c9eb67932e60c51"
     ),
     "support": (
         "533c39187214fef6626e565362b2d97ff393b8d1f0034ffe365a7c87dadada6d"

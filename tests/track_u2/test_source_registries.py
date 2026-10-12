@@ -1029,6 +1029,29 @@ D637_SCOPE_MUTATIONS = {
             ]
         ),
     ),
+    "a1b_meaning_changed": (
+        "roles",
+        lambda d: _entry(d, "2013.relationship.90").update(
+            legal_spouse_annuity=False
+        ),
+    ),
+    "a1b_adjudication_invented": (
+        "roles",
+        lambda d: _entry(d, "2013.relationship.90").update(
+            adjudication={
+                "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+                "line": 59,
+                "disposition": "D",
+                "amendment": 1,
+            }
+        ),
+    ),
+    "a1b_ruling_on_2013_code_20": (
+        "roles",
+        lambda d: _copy_ruling(
+            d, "2013.relationship.90", "2013.relationship.20"
+        ),
+    ),
     "a2_blocked_again": (
         "income",
         lambda d: _entry(d, "income.2019.wife_sex").update(

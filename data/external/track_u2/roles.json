@@ -281,6 +281,15 @@
           "line": 154
         },
         "reason": "docs/design/boomers2004_1946_55_comparison.md:154 concerns the later-wave code-90 definition; lines 147, 150, 156 and 175 state the code-90 role, the 2013 meanings, the annuity pairing and the 2013 label test. The 2013 label remains 'Legal husband of Head' (IND2023ER_codebook.pdf p. 916)."
+      },
+      "ruling_effect": "Max's ruling d637 (2026-09-30; specification section 16b) ratified amendment 1's parts 1a-1c as written, as Max confirmed on 2026-10-12 (d745; section 16b). Under 1b 2013 keeps the inherited meanings: code 90 is 'Legal husband of Head' (IND2023ER codebook p. 916), with the rules of section 3 lines 147, 150, 156 and 175: an OFUM income role outside the spouse slot, the co-resident legal-spouse annuity life and relationship-based marital resolution.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "1b",
+        "confirmed_by": "d745",
+        "confirmed_on": "2026-10-12"
       }
     },
     {
@@ -1926,9 +1935,10 @@
       "date": "2026-09-30",
       "specification_section": "16b",
       "amendments": [
-        "1a"
+        "1a",
+        "1b"
       ],
-      "note": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendments 2-5 as written and amendment 6's option 1; on 2026-10-12 Max confirmed that it ratified amendment 1's parts 1a-1c as written too (d745; section 16b). Applied here, each in its own reviewed commit: 1a records the ruling on the documented 2015 code-90 and 2017 code-90 and code-92 OFUM routes, with the completeness disclosure registration states. Each ruled entry keeps its adjudication record, if any, and gains a ruling; an open question or refusal the ruling answers is kept as superseded_question or superseded_refusal."
+      "note": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendments 2-5 as written and amendment 6's option 1; on 2026-10-12 Max confirmed that it ratified amendment 1's parts 1a-1c as written too (d745; section 16b). Applied here, each in its own reviewed commit: 1a records the ruling on the documented 2015 code-90 and 2017 code-90 and code-92 OFUM routes, with the completeness disclosure registration states; 1b records the ruling on 2013's inherited code-90 meaning. Each ruled entry keeps its adjudication record, if any, and gains a ruling; an open question or refusal the ruling answers is kept as superseded_question or superseded_refusal."
     }
   ]
 }
