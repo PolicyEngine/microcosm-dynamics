@@ -2,15 +2,18 @@
 
 Oracle tier: reads the policyengine-us checkout that
 ``POPULACE_DYNAMICS_PE_US_DIR`` (default ``~/PolicyEngine/policyengine-us``)
-names, and skips when the checkout is absent or its parameter files are
+names, and skips when the checkout is absent, its parameter files are
 not the ones the repository pins
-(``estimates.parameters.SSA_PARAMETER_SHA256``).
+(``estimates.parameters.SSA_PARAMETER_SHA256``).  The statutory checks
+run on the pinned files at any commit; the comparisons that carry the
+checkout's revision skip unless git reports the one the capture records.
 """
 
 from __future__ import annotations
 
 import importlib.util
 import json
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -41,6 +44,42 @@ def _pinned_checkout() -> Path:
     return root
 
 
+def _skip_unless_captured_revision(root: Path, *, exact: bool) -> str:
+    """Skip when the checkout is not at the commit the capture records.
+
+    The capture carries the checkout's abbreviated revision as well as the
+    file digests, so the same files at another commit are a different
+    input.  The revision comes from git directly, not from the loader
+    under test, so a change to how the loader records it still fails.
+    ``exact`` demands the recorded string itself (a byte-for-byte
+    recapture); otherwise it must prefix git's abbreviation.
+    """
+    captured = json.loads(statutory.CAPTURE_PATH.read_text())["source"][
+        "policyengine_us_revision"
+    ]
+    try:
+        completed = subprocess.run(
+            ["git", "log", "-1", "--format=%h"],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except FileNotFoundError:  # no git: the revision cannot be the pin
+        completed = None
+    revision = (
+        completed.stdout.strip()
+        if completed is not None and completed.returncode == 0
+        else ""
+    )
+    if not (revision == captured if exact else revision.startswith(captured)):
+        pytest.skip(
+            f"policyengine-us checkout {root} is at {revision!r}, not the "
+            f"captured {captured!r}"
+        )
+    return captured
+
+
 def test_capture_script_reproduces_the_committed_capture(tmp_path):
     root = _pinned_checkout()
     module = _capture_script()
@@ -48,6 +87,14 @@ def test_capture_script_reproduces_the_committed_capture(tmp_path):
     assert (
         module.main(["--pe-us-dir", str(root), "--output", str(output)]) == 0
     )
+    # Pinned files fix every field but the recorded revision, so compare
+    # the rest at any commit; only the bytes need the captured one.
+    fresh = json.loads(output.read_text())
+    committed = json.loads(statutory.CAPTURE_PATH.read_text())
+    for document in (fresh, committed):
+        document["source"].pop("policyengine_us_revision")
+    assert fresh == committed
+    _skip_unless_captured_revision(root, exact=True)
     assert output.read_bytes() == statutory.CAPTURE_PATH.read_bytes()
 
 
@@ -73,7 +120,5 @@ def test_oracle_parameters_pass_every_statutory_check():
         if not check["consistent"]
     }
     assert inconsistent == {}
-    capture = json.loads(statutory.CAPTURE_PATH.read_text())
-    assert runtime.pe_us_revision.startswith(
-        capture["source"]["policyengine_us_revision"]
-    )
+    captured = _skip_unless_captured_revision(root, exact=False)
+    assert runtime.pe_us_revision.startswith(captured)
