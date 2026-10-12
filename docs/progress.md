@@ -2,9 +2,11 @@
 
 # Development progress
 
-*Snapshot as of 2026-09-09T11:51Z (UTC); updated at least daily while the evidence campaign is active. The data behind this page is committed at [`docs/progress/progress.json`](progress/progress.json).*
+> **Historical snapshot.** The covered-earnings evidence campaign this page tracked stopped on 9 September 2026, and its design pull request, #405, closed unmerged. The page is kept as a record of that campaign. For where Microcosm Dynamics stands today against DYNASIM, capability by capability, see the [DYNASIM parity ledger](parity-ledger.md).
 
-Dynamics builds Social Security earnings histories from the PSID, and the corrected covered-earnings series is only as credible as the reading of the source documentation beneath it. Before that series ships, every piece of documentation the construction relies on is independently verified by the three arms below; the design is pre-registered and ratifies only when they complete. (Internally: the evidence campaign behind Amendment 20 (two-arm evidence charter for the covered-earnings correction design), under review in PR #405, open; draft ratified through round 6.2; next step, the A4 evidence freeze, then the C20 ratification chain toward revision 22.)
+*Snapshot as of 2026-09-09T11:51Z (UTC). The data behind this page is committed at [`docs/progress/progress.json`](progress/progress.json).*
+
+Dynamics builds Social Security earnings histories from the PSID, and the corrected covered-earnings series is only as credible as the reading of the source documentation beneath it. Before that series ships, every piece of documentation the construction relies on is independently verified by the three arms below; the design is pre-registered and ratifies only when they complete. (Internally: the evidence campaign behind Amendment 20 (two-arm evidence charter for the covered-earnings correction design), under review in PR #405, closed unmerged; next step, the A4 evidence freeze, then the C20 ratification chain toward revision 22.)
 
 ## Already built
 
