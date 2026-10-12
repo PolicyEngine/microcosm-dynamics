@@ -998,6 +998,37 @@ D637_SCOPE_MUTATIONS = {
             accepted_plan_types=[7, 1]
         ),
     ),
+    # Amendment 1a (d637, confirmed by d745).
+    "a1a_ruling_on_2013_code_90": (
+        "roles",
+        lambda d: _copy_ruling(
+            d, "2015.relationship.90", "2013.relationship.90"
+        ),
+    ),
+    "a1a_confirmation_dropped": (
+        "roles",
+        lambda d: _entry(d, "2017.relationship.92")["ruling"].pop(
+            "confirmed_by"
+        ),
+    ),
+    "a1a_disclosure_dropped": (
+        "roles",
+        lambda d: _entry(d, "2017.relationship.90").pop(
+            "completeness_disclosure"
+        ),
+    ),
+    "a1a_into_the_slot": (
+        "roles",
+        lambda d: _entry(d, "2015.relationship.90").update(spouse_slot=True),
+    ),
+    "a1a_disclosure_on_code_20": (
+        "roles",
+        lambda d: _entry(d, "2017.relationship.20").update(
+            completeness_disclosure=_entry(d, "2017.relationship.90")[
+                "completeness_disclosure"
+            ]
+        ),
+    ),
     "a2_blocked_again": (
         "income",
         lambda d: _entry(d, "income.2019.wife_sex").update(

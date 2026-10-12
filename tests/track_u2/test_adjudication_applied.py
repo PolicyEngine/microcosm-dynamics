@@ -80,6 +80,7 @@ OPEN_ITEMS = 6
 #: Each d637 amendment a registry commit has applied (section 16b), with
 #: the adjudication disposition its entries carry.
 D637_APPLIED = {
+    "1a": "D",
     "2": "A",
     "3": "A",
     "4": "D",
@@ -622,6 +623,7 @@ def test_d637_amendment_6_uses_er34651_as_released(documents):
 
 #: The text fields a d637 ruling writes or keeps.
 D637_TEXT_FIELDS = (
+    "completeness_disclosure",
     "condition",
     "resolution",
     "use_restriction",
@@ -634,6 +636,7 @@ D637_TEXT_FIELDS = (
 #: fields, as canonical JSON): no wording moves without this pin moving
 #: (reviews of 02e3f3e2 and 06fa7d98).
 D637_TEXT_SHA256 = {
+    "1a": ("2f4bca660f85b99cac371c970bb02fe3ae3978e5e52c12d661dd3fdd5690b88d"),
     "2": ("64a67aae69d9d0bd6c6743328e8169304708003845395830ad628a6ee708887d"),
     "3": ("8d93d501819d981c6605b02fde3ff89d05488738146757bd179a84c02e131598"),
     "4": ("0b79677a5d1b41a76b17709152bec0d3789d118c75859b9716ea505c3413cd9c"),
@@ -644,6 +647,21 @@ D637_TEXT_SHA256 = {
 #: The operative clauses each amendment's entries must state, by field
 #: (``{wave}`` is the entry's wave).
 D637_CLAUSES = {
+    "1a": [
+        (
+            "ruling_effect",
+            "ratified amendment 1's parts 1a-1c as written, as Max confirmed "
+            "on 2026-10-12 (d745; section 16b)",
+        ),
+        ("ruling_effect", "Under 1a this documented route governs"),
+        ("ruling_effect", "an OFUM income role outside the spouse slot"),
+        ("completeness_disclosure", "OFUM route is documented"),
+        ("completeness_disclosure", "income was reported is not"),
+        (
+            "completeness_disclosure",
+            "Registration discloses this (section 16a amendment 1a).",
+        ),
+    ],
     "2": [
         ("use_restriction", "Slot metadata only (u2-draft-4 amendment 2)."),
         (
@@ -1420,9 +1438,11 @@ D1090_CLAUSES = {
         "checkpoint under 5b, released the 2017\N{EN DASH}2023 P64/P65 "
         "records under 5a and resolved the 2017 weight ER34651 under "
         "amendment 6's option 1; the \N{SECTION SIGN}15 fragment itself is "
-        "materialized under item 9. The 6 TO VERIFY records left are code "
-        "88's, open until amendment 1c's registry commit lands (Max "
-        "confirmed 1a\N{EN DASH}1c on 2026-10-12, d745).",
+        "materialized under item 9. Max confirmed 1a\N{EN DASH}1c on "
+        "2026-10-12 (d745), and the 1a commit recorded the ruling on the "
+        "documented 2015 code-90 and 2017 code-90 and code-92 routes. The 6 "
+        "TO VERIFY records left are code 88's, open until amendment 1c's "
+        "registry commit lands.",
         "8. Complete the pre-registration structural, reconciliation and "
         "F17 component pass, including only the counts that the ratified B1 "
         "and B2 options name (under the 2026-10-10 ruling, the counts "
@@ -1814,6 +1834,13 @@ def test_released_dependencies(documents):
 
 def test_master_record_matches_registries(documents):
     text = MASTER.read_text(encoding="utf-8")
+    # One section per ruling's registry commits, each listing every
+    # applied d637 amendment once.
+    assert text.count("\n## Max's ruling d637 applied ") == 1
+    for amendment in registry.RATIFIED_AMENDMENTS:
+        assert (
+            len(re.findall(rf"^\| {amendment}: ", text, re.M)) == 1
+        ), amendment
     rows = dict(
         re.findall(r"^\| `([a-z]+:[^`]+)` \| ([A-Z ]+?) \| ", text, re.M)
     )

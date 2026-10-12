@@ -280,6 +280,8 @@ def test_d1090_moved_only_the_ruled_gate_fields():
 #: entry changes, by amendment (prose keys excluded: ``question`` is
 #: prose, so its move to ``superseded_question`` shows as the new key).
 D637_RULED_FIELDS = {
+    # Amendment 1a's three D items keep their documentary resolution.
+    "1a": {"ruling_effect", "completeness_disclosure", "ruling"},
     "2": {
         "status",
         "usage",
@@ -349,7 +351,7 @@ D637_TOP = {
     "wealth": {"rulings_applied", "independent_adjudication", "status_scope"},
     "pension": {"rulings_applied", "independent_adjudication"},
     "individual": {"rulings_applied"},
-    "roles": {"independent_adjudication"},
+    "roles": {"rulings_applied", "independent_adjudication"},
     "support": {"independent_adjudication"},
     "weights": {"rulings_applied", "independent_adjudication"},
 }
@@ -380,6 +382,7 @@ D637_RECORDED = {
     "pension": ["5b", "5a"],
     "weights": ["6"],
     "individual": ["6"],
+    "roles": ["1a"],
 }
 
 

@@ -81,6 +81,9 @@ _D637 = {
     "specification_section": "16b",
 }
 _LATER_WAVES = (2015, 2017, 2019, 2021, 2023)
+#: Max confirmed on 2026-10-12 that d637 ratified amendment 1's parts
+#: 1a-1c as written (d745; specification section 16b).
+_D745 = {"confirmed_by": "d745", "confirmed_on": "2026-10-12"}
 #: The u2-draft-4 amendments Max ratified on 2026-09-30 (d637;
 #: specification section 16b) that a registry commit has applied, each
 #: with its exact scope: the registry and entries it rules, the ruling
@@ -95,6 +98,30 @@ _LATER_WAVES = (2015, 2017, 2019, 2021, 2023)
 #: must record the ruling.  Each registry commit adds its amendment here
 #: (section 16a, "Registry effect of the rulings").
 RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
+    "1a": {
+        "registry": "roles",
+        "entries": (
+            "2015.relationship.90",
+            "2017.relationship.90",
+            "2017.relationship.92",
+        ),
+        "ruling": {**_D637, "amendment": "1a", **_D745},
+        "disposition": "D",
+        "fields": {
+            "status": "RESOLVED",
+            "action": "documented_rule",
+            "income_role": "ofum",
+            "spouse_slot": False,
+        },
+        "absent": (
+            "refusal",
+            "question",
+            "blocking_dependencies",
+            "family_unit_exclusion",
+        ),
+        "required": ("resolution", "ruling_effect", "completeness_disclosure"),
+        "markers": ("completeness_disclosure",),
+    },
     "2": {
         "registry": "income",
         "entries": tuple(

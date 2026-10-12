@@ -251,7 +251,9 @@ DECLARED = INVENTED_DECLARED
 #: duplicate guard for a combined plan's re-asked items).  The third
 #: round moved seven registries' bytes: the six adjudication notes say
 #: ``rulings_applied`` records a ruling "where present", and the
-#: individual registry records amendment 6's release.
+#: individual registry records amendment 6's release.  Max's d745
+#: confirmation (2026-10-12) of amendment 1a-1c moved the roles bytes:
+#: 1a records the ruling on the documented code-90/92 routes.
 REGISTRY_SHA256: dict[str, str] = {
     "income": (
         "ddf49639c5678c35d525438b595393d7c55cba00956c23e42f68515ac56446d5"
@@ -266,7 +268,7 @@ REGISTRY_SHA256: dict[str, str] = {
         "bd22e07a8576ea9239818ca40377839c5c3151fffb403f3e5f1ef1549da546cf"
     ),
     "roles": (
-        "b7521b6b9919e4ca7369c110894377c02ee8ef9e5f51e4637332248eed35290b"
+        "faf8440ca4c11c61bd0689eb29ea02446eb0aebbb93c388feb625bfdaeeb753c"
     ),
     "support": (
         "533c39187214fef6626e565362b2d97ff393b8d1f0034ffe365a7c87dadada6d"

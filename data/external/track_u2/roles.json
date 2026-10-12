@@ -576,6 +576,16 @@
         "line": 105,
         "disposition": "D",
         "amendment": 1
+      },
+      "ruling_effect": "Max's ruling d637 (2026-09-30; specification section 16b) ratified amendment 1's parts 1a-1c as written, as Max confirmed on 2026-10-12 (d745; section 16b). Under 1a this documented route governs: code 90 is an OFUM income role outside the spouse slot in 2015, with the annuity and marital rules recorded here, and registration states the completeness_disclosure.",
+      "completeness_disclosure": "The 2015 code-90 OFUM route is documented; how completely the uncooperative legal spouse's income was reported is not. FAQ question 74 says the code is used when one half of the couple withholds information about the other or refuses to have their information included. By deduction, missing OFUM amounts fall under PSID's documented processing of missing data ('All missing data were assigned', FAM2015ER pp. 1968-1975), but no document says how a member about whom all information was withheld was treated. Registration discloses this (section 16a amendment 1a).",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "1a",
+        "confirmed_by": "d745",
+        "confirmed_on": "2026-10-12"
       }
     },
     {
@@ -842,6 +852,16 @@
         "line": 107,
         "disposition": "D",
         "amendment": 1
+      },
+      "ruling_effect": "Max's ruling d637 (2026-09-30; specification section 16b) ratified amendment 1's parts 1a-1c as written, as Max confirmed on 2026-10-12 (d745; section 16b). Under 1a this documented route governs: code 90 is an OFUM income role outside the spouse slot in 2017, with the annuity and marital rules recorded here, and registration states the completeness_disclosure.",
+      "completeness_disclosure": "The 2017 code-90 OFUM route is documented; how completely the uncooperative legal spouse's income was reported is not. FAQ question 74 says the code is used when one half of the couple withholds information about the other or refuses to have their information included. By deduction, missing OFUM amounts fall under PSID's documented processing of missing data ('All missing data were assigned', FAM2017ER pp. 2021-2028), but no document says how a member about whom all information was withheld was treated. Registration discloses this (section 16a amendment 1a).",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "1a",
+        "confirmed_by": "d745",
+        "confirmed_on": "2026-10-12"
       }
     },
     {
@@ -899,6 +919,16 @@
         "line": 108,
         "disposition": "D",
         "amendment": 1
+      },
+      "ruling_effect": "Max's ruling d637 (2026-09-30; specification section 16b) ratified amendment 1's parts 1a-1c as written, as Max confirmed on 2026-10-12 (d745; section 16b). Under 1a this documented route governs: code 92 is an OFUM income role outside the spouse slot in 2017, with the annuity and marital rules recorded here, and registration states the completeness_disclosure.",
+      "completeness_disclosure": "The 2017 code-92 OFUM route is documented; how completely the uncooperative partner's income was reported is not. FAQ question 74 says the code is used when one half of the couple withholds information about the other or refuses to have their information included. By deduction, missing OFUM amounts fall under PSID's documented processing of missing data ('All missing data were assigned', FAM2017ER pp. 2021-2028), but no document says how a member about whom all information was withheld was treated. Registration discloses this (section 16a amendment 1a).",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "1a",
+        "confirmed_by": "d745",
+        "confirmed_on": "2026-10-12"
       }
     },
     {
@@ -1890,6 +1920,15 @@
       "date": "2026-10-10",
       "specification_section": "16c",
       "note": "Max's ruling d1090 (2026-10-10; specification section 16c) on blockers B1 and B2: the seven role refusals and pension:2015.route.respondent_slots are replaced by the ratified family-unit exclusions (B1, section 16a option 1d-2, amending draft-3 line 160; B2, option 1e-1, amending draft-3 lines 152, 154 and 158 for 2019-2023), and the dependencies on the seven role entries are released. Each entry keeps its adjudication record (disposition F) and its superseded refusal text."
+    },
+    {
+      "decision": "d637",
+      "date": "2026-09-30",
+      "specification_section": "16b",
+      "amendments": [
+        "1a"
+      ],
+      "note": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendments 2-5 as written and amendment 6's option 1; on 2026-10-12 Max confirmed that it ratified amendment 1's parts 1a-1c as written too (d745; section 16b). Applied here, each in its own reviewed commit: 1a records the ruling on the documented 2015 code-90 and 2017 code-90 and code-92 OFUM routes, with the completeness disclosure registration states. Each ruled entry keeps its adjudication record, if any, and gains a ruling; an open question or refusal the ruling answers is kept as superseded_question or superseded_refusal."
     }
   ]
 }
