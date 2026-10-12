@@ -28,6 +28,13 @@ ADJUDICATION_PATH = (
     reason="PSID family codebooks or pdftotext not staged",
 )
 def test_all_codebook_eras_and_adjudication_reproduce_byte_for_byte():
+    try:
+        inventory._pdftotext_version()
+    except inventory.DictionaryDriftError as error:
+        pytest.skip(
+            "local pdftotext is not the pinned "
+            f"{inventory.PDF_TEXT_EXTRACTION_VERSION}: {error}"
+        )
     artifacts = []
     for era_id, _ in inventory.CODEBOOK_ERA_SPECS:
         artifact = inventory.build_codebook_era_evidence(
