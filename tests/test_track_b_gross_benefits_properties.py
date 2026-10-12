@@ -604,6 +604,7 @@ def test_sealed_legacy_oracle_keeps_the_48_month_cap_issue_494():
     assert statutory_delayed_credit(60, 1935, PARAMS) == 0.30
 
 
+@settings(deadline=None)
 @given(dimes, st.integers(1917, 1990), st.data())
 def test_delayed_credits_match_the_statutory_float_function_over_the_whole_window(
     pia, birth_year, data

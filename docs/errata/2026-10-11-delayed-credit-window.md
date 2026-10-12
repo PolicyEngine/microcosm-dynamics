@@ -80,6 +80,8 @@ joint birth-year and claim-age distribution.
 | Track A COLA, `runs/replication_urban2010_cola_v1.json`, issue #42 comment 5804420283 | `scripts/run_track_a_registered.py:304–312,362` builds and runs the 2011/2009 cohorts. `cohorts/psid2010.py:1365–1379` excludes unresolved births and births above 1980, with no lower cutoff; `:1935–1950` draws opening retired-worker claim ages. `cola_track_a/benefits.py:345` calls the factor for worker records, including linked spouse/deceased records at `:619` and `:385`. Artifact `/config/populations` records starts 2010/2008, `born_max=1980`, and projection to 2030. | Births 1917–1942 claiming at 70 are reachable. An intact opening recipient's own payment is carried from its observed amount (`cola_track_a/benefits.py:822–836`), so the existence of an old recipient alone does not imply its own payment changes. Other worker-record paths still reach the oracle. |
 | FRA 68, `runs/replication_urban2010_fra68_v1.json`, issue #42 comment 5840600730 | `scripts/run_fra68_registered.py` runs the same recorded 2011/2009 population. `fra68_track/benefits.py:432–433` inherits Track A's worker-record calculation; `:402` also recalculates a moved claim's factor. `fra68_track/reform.py:517–518` compares baseline and reform factors. The artifact's `/config/populations` retains `born_max=1980`, starts 2010/2008, and reference year 2030. | The old-cohort late-credit region is reachable in baseline and inherited worker-record calculations. The reform's cohort schedule may change a particular person's window; no aggregate change is inferred here. |
 | Track M minimum benefit, `runs/replication_urban2006_minimum_benefit_v1.json`, issue #42 comment 5855753783 | `scripts/run_track_m_registered.py:345–358` builds both own-receipt readings and their career inputs. `min_benefit_track_m/careers.py:268–277` checks the oracle domain then computes every worker record's factor; `:100–111` uses `rules.claim_factor` only for old age. `rules.py:739–742` uses whole-year entitlement minus birth against FRA. `cohort.py:443–449` permits a boundary-derived late entitlement year. The committed all-record old-age ages span 62–87 (`runs/replication_urban2006_minimum_benefit_v1.json:7256–7278`); the d430 sensitivity spans 62–87 as well (`:6573–6596`). | Births 1917–1942 with entitlement after FRA plus four years are reachable. Disability- and death-basis records have factor 1. The age histogram alone does not prove which older cohorts are late. MS5 divides an observed benefit by the claim factor (`rules.py:692–720`), so selecting the statutory convention in a later rerun can also change its inferred PIA. |
+| R7 earnings sharing, `runs/replication_r7_sharing_v1.json`, issue #42 comment 4911171806 | `scripts/replication_r7_sharing.py:389–396` restricts the career frame to births 1943–1957. The separate PIA-supply loop (`replication_r7_sharing.py:398–410`) admits older linked workers with positive earnings and an indexable history. `score_population` iterates the career frame at `:723`, checks linked PIA coverage at `:730`, and evaluates the baseline at `:740` and package 1a at `:747`. The baseline deceased-record path at `:619–641` and the package-1a deceased shared-vector path at `:676–705` both call `household.survivor_benefit_at_death` (`:632,696`), whose deceased factor at `household.py:218` reaches `claiming.py:375`. | Older linked deceased workers born 1917–1942 with late claims can reach the differing window in both baseline and 1a survivor evaluations, despite being outside the career frame. Indexable pre-1917 linked records can also reach positive-credit evaluations. The artifact's career-frame metadata does not restrict the linked PIA supply. |
+| Cost ordering, R7 component of `runs/replication_cost_ordering_v1.json` | `scripts/replication_cost_ordering.py:586` constructs R7's `StudyData`; `replication_cost_ordering.py:587` calls R7's `score_population`, including the baseline and 1a survivor evaluations above. The descriptive output uses the 1b aggregate cost change at `:588–610`; `replication_r7_sharing.py:1035–1046` puts the R7 baseline in its denominator. | The R7 component reaches the same older linked deceased records, including possible pre-1917 evaluations. A baseline change can enter the reported 1b cost ratio; 1a is evaluated during scoring even though this descriptive output reports 1b. The separate Mermin component remains outside the differing region. |
 | Track A v2 registered entry point, `scripts/track_a_v2_registered.py` | `track_a_v2/protocol.py:313–359` builds the inherited Track A cohort; `track_a_v2/benefits.py` composes its calculators from the inherited Track A/FRA 68 calculators and calls `worker_record` at `:152,220`. `track_a_v2/runner.py:259–267` uses the inherited projector. | The mechanism can reach the same old-cohort window. There is no Track A v2 numeric artifact under `runs/` in this checkout, and this audit does not assert that a one-shot has executed. |
 | Anchor-context registrations 1–5 and `runs/anchor_context_report_v1.json` | Each `docs/registrations/anchor_context_registration_{1,2,3,4,5}_configuration.json:1` binds the already committed `runs/first_estimates_v1.json` at SHA-256 `719604ca4364e7cdef2293329ed0beb0e011e5d4d1c34f0e508c8f2fd9932977`; the runner fixes that input at `scripts/run_anchor_context_report.py:62,87,206`. | These consumers read the committed first-estimates results, rather than executing a credit function. Their input can carry the older-window error. Their bytes do not change automatically. |
 
@@ -102,9 +104,8 @@ The three direct production callers are `claiming.benefit_factor`
 
 | Path or committed artifact family | Evidence and conclusion |
 |---|---|
-| R7 earnings sharing, `runs/replication_r7_sharing_v1.json` | `scripts/replication_r7_sharing.py:503–512` calls `claiming.expected_reduction_factor`, which calls the factor at `claiming.py:413`. The PIA supply excludes eligibility outside 2005–2019 (`replication_r7_sharing.py:392–395`), so workers are born 1943–1957, including any linked spouse whose PIA is used. The artifact's `/study_population/career_frame_rule` records the same births. The region where the windows differ is unreachable. |
 | Mermin rows, `runs/replication_mermin_rows_v1.json` | Both the direct delayed-credit call and PMF baseline deliberately use birth year 1988 (`scripts/replication_mermin_rows.py:206,279–305`) and a 36-month window. The underlying career supply is the same 1943–1957 frame. The region where the windows differ is unreachable. |
-| Cost ordering, `runs/replication_cost_ordering_v1.json` | `scripts/replication_cost_ordering.py:307–309` reuses the Mermin score and `:587` the R7 score. Those factor paths use the cohorts above. The region where the windows differ is unreachable. |
+| Cost ordering, Mermin component of `runs/replication_cost_ordering_v1.json` | `scripts/replication_cost_ordering.py:307–309` builds the caregiver/Mermin common frame and reuses the Mermin score. `replication_mermin_rows.py:298–305,448` uses the fixed 1988 factor cohort, with no linked deceased-record factor. This component is outside the differing region; the separately scored R7 component is reachable as recorded above. |
 | M2, `runs/m2_pseudo_projection_v1.json` | The common-frame Mermin score is reused at `scripts/m2_pseudo_projection.py:363–364`; the own-record baseline uses birth 1988 at `:409` and its FRA-72 alternative uses Mermin's explicit-FRA helper at `:413`. The region where the windows differ is unreachable. |
 | Deployment W1 candidates 1–4 and forensics 1–3 | Family B calls `disability_conversion.assign_claim_or_conversion` at `models/transport_deployment_v1.py:792`, for frame ages 62–66 (`:764`) with birth `2024-age` (`:50,757`), hence births 1958–1962. Choice claimers call the factor (`disability_conversion.py:185`), while conversions use 1 (`:163–164`). Family C uses transported birth cohorts 1943–1957 (`transport_deployment_v1.py:867–868,953`) and runs M2 (`:1089`); v2/v3 delegate to these routines. `scripts/gate_w1_forensics3.py:183–201` reuses the same transport and M2 path. Therefore the region where the windows differ is unreachable for `runs/gate_w1_candidate{1,2,3,4}_v1.json` and `runs/gate_w1_forensics{1,2,3}_v1.json`. |
 | Illustrative auxiliary benefits, `runs/aux_benefit_examples_v1.json` | `household.py:108,218` calls the factor for own and deceased benefits. Its builder fixes the FRA-66 worked-example/deceased birth at 1954 (`scripts/build_aux_benefit_examples.py:71,149–153,495`) and the couple/surviving worker births at 1960 (`:444,494`). The region where the windows differ is unreachable. |
@@ -112,6 +113,44 @@ The three direct production callers are `claiming.benefit_factor`
 | Invented Track M and PolicyEngine bridge examples | `min_benefit_track_m/invented.py:191,286` calls `rules.claim_factor`; `scripts/pe_us_minimum_benefit_sample_households.py:779` and `scripts/pe_us_depletion_cut_sample_households.py:565` call it for illustrative worker inputs. `scripts/pe_us_population_invented.py` builds the invented M4/M5 inputs. These are invented-input surfaces, without a registered real-population result under `runs/` on these paths. These callers still exercise the legacy oracle; statutory comparison requires an explicit opt-in to the new function. No population claim follows. |
 | Imports of shared study code without credit calculations | `scripts/replication_ppi_shared.py` reuses `StudyData` and relevant marriage episodes but does not call R7 scoring or its expected claim factor. `replication_caregiver.py`, `replication_ppi_mermin.py`, `w2_seam_caregiver.py`, and `reform_delta_diagnostic.py` do not call the delayed-credit machinery. Track U/U2 use observed-benefit reductions and poverty tabulations rather than Track M's claim-factor computation. Their artifacts are outside the call graph. |
 | Artifact-only downstream consumers | Tranche-2 benchmark builders and first-estimates/anchor-context publication readers consume the retained JSON bytes. Their citations to a registered artifact do not execute the statutory credit function. |
+
+The 12 October 2026 review correction rechecked every row above for a
+restriction applied to the scored career frame but omitted from linked
+worker records. It found that pattern in R7 and its cost-ordering caller;
+the other classifications remain supported by their actual factor paths.
+Mermin iterates its career frame (`replication_mermin_rows.py:441`) and
+passes the fixed 1988 cohort to its factor calculations (`:298–305,448`).
+M2's calendar ledger and common-frame calculations use those own-record
+paths (`m2_pseudo_projection.py:363–364,409–413`); importing cost-ordering
+helpers does not call its separate R7 scorer. Deployment family B passes
+only its age-masked records into conversion
+(`transport_deployment_v1.py:764,785–792`); family C and forensics call M2
+(`:1089` and
+`gate_w1_forensics3.py:228`), with no R7 scoring. The auxiliary builder's
+foundation grid fixes births 1954 and 1960
+(`build_aux_benefit_examples.py:293,386`); its separate linked-coverage
+metadata calls only
+`household.both_spouse_coverage` (`:525–533`), not a benefit factor.
+PPI-shared imports R7's study/episode machinery
+(`replication_ppi_shared.py:166–170`) but computes scheduled PIAs
+(`:397–398`) without a delayed-credit or survivor-factor call. Imports and
+linked coverage alone therefore do not make those additional results
+reachable.
+
+`tests/test_delayed_credit_reachability.py` executes the R7 constructor
+with invented earnings and marriage loaders. A survivor born 1945 is in
+the career frame, while a linked deceased worker born 1937 is outside it
+and remains in the PIA supply. Both baseline and 1a survivor paths evaluate
+the deceased's 60-month credit at age 70. The baseline using the constructed
+PIAs $225.00 and $259.20 is $218.41231551242228 under the sealed convention
+and $218.6072054833109 under the statutory convention, before payment
+rounding. Isolating invented PIAs $1 and $1,000 and claims at 70 gives
+exactly $1,260 versus $1,325. This is the 1937 statutory arithmetic below,
+reached through an older linked worker rather than a career-frame member.
+The property test covers deceased cohorts 1913–1942 and both survivor paths;
+it checks that linked PIA supply and factor evaluation do not inherit the
+career cutoff. The audit-consistency test pins the reachable R7 and
+cost-ordering rows to this executed counterexample.
 
 ## Births before 1917: statutory refusal and retained registered behavior
 
@@ -129,7 +168,7 @@ at `ss/params.py:283–297`. Its `(1900, 0.03)` first bracket gives these
 cohorts 3 percent annually. This is an upstream parameter defect, not a
 statutory alternative. The PolicyEngine checkout is not edited.
 
-The static audit found two registered mechanisms that admit pre-1917
+The static audit found three registered mechanisms that admit pre-1917
 positive-month inputs to the sealed oracle:
 
 - **Track A and inherited FRA 68/v2 calculators.** The cohort has no lower
@@ -149,8 +188,22 @@ positive-month inputs to the sealed oracle:
   birth 1916, old-age entitlement 1983, threshold 1978 passes this existing
   domain check and reaches 24 positive months. This domain-check
   counterexample was executed using only the invented one-row frame.
+- **R7 and the R7 component of cost ordering.** The career-frame restriction
+  does not apply to linked PIA supply (`replication_r7_sharing.py:389–410`).
+  A linked worker born 1916 with positive invented earnings from 1951
+  through 1977 has an indexable age-60 year of 1976 and a PIA of $116.10,
+  while remaining outside the career frame. A survivor born 1945 has PIA
+  $225.00 and observed widowhood before eligibility. Both the baseline
+  (`:632`) and 1a (`:696`) evaluate the older deceased factor through
+  `household.py:218`, including 60 positive months at age 70. The invented
+  legacy baseline is $187.2862853209459 before payment rounding. Selecting
+  the statutory function for either survivor path raises its pre-1917
+  refusal. Cost ordering inherits both evaluations through R7 scoring
+  (`replication_cost_ordering.py:587`); its reported 1b cost ratio uses the
+  baseline. These cases use only invented loaders and do not establish a
+  pre-1917 record in either committed population.
 
-The allowed metadata cannot determine whether either counterexample
+The allowed metadata cannot determine whether any of these counterexamples
 occurred in a committed population. The sealed oracle preserves its legacy
 rate and 48-month cap for those paths; those credits have no
 statutory-conformance admission. The new function refuses positive delay
@@ -214,7 +267,14 @@ The diagnostic that would answer those questions is to reconstruct the
 original admitted worker-record/claim inputs for each reachable computation,
 including linked spouse and deceased records, and retain record identifier,
 birth cohort, origin, old-age/disability/death basis, entitlement age in
-months, PIA, record weight and the original payment path. Compute the same
+months, PIA, record weight and the original payment path. Include R7 and
+the R7 component of cost ordering, tracing both the baseline deceased PIA
+and the package-1a deceased shared vector. Preserve each survivor/deceased
+claim-age pair, its PMF weight, the package scalar and the originating
+worker record. Separate a factor evaluation from an evaluation with
+positive mass that enters a survivor payment or reported aggregate; cost
+ordering evaluates 1a during scoring but reports the 1b cost ratio against
+the baseline. Compute the same
 `late_months = entitlement_age_months - fra_months(birth_year)` used by that
 original caller; for Track M, preserve its whole-year entitlement-age
 convention. Flag old-age factor evaluations satisfying either

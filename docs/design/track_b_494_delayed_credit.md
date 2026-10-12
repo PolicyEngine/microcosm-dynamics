@@ -63,10 +63,28 @@ The reachability test establishes that sealed production paths do not import
 it transitively. No registered caller is retargeted. The
 [erratum](../errata/2026-10-11-delayed-credit-window.md) preserves the
 file-and-line audit of reachable registrations and the paths outside the
-changed region. First estimates, Track A COLA, FRA 68 and Track M retain
-their registered legacy computations and committed results. A later
+changed region. First estimates, Track A COLA, FRA 68, Track M, R7 earnings
+sharing and the R7 component of cost ordering retain their registered
+legacy computations and committed results. A later
 registered rerun must select `DelayedCreditWindow.STATUTORY` explicitly and
 state that choice.
+
+R7's eligibility cutoff applies to its scored career frame
+(`scripts/replication_r7_sharing.py:389–396`), while its separate PIA supply
+accepts older linked records with positive, indexable earnings
+(`:398–410`). Both the baseline deceased-record path (`:632`) and the
+package-1a deceased shared-vector path (`:696`) evaluate that older worker's
+credit through `household.py:218` and `claiming.py:375`. Cost ordering calls
+the same R7 score (`scripts/replication_cost_ordering.py:587`); its reported
+1b cost ratio uses the baseline, and scoring also evaluates 1a. Births
+1917–1942 can reach the differing window through these links, and
+indexable pre-1917 links can reach positive credit inputs. The other
+previously excluded rows were rechecked for the same career-versus-linked
+scope pattern: Mermin and M2 use fixed 1988 own-record factors, deployment
+uses the documented age/cohort frames and M2, and the other linked-study
+imports and coverage metadata do not evaluate delayed-credit factors.
+The erratum records the file-and-line evidence. No registered artifact was
+edited or rerun, and no count of affected people is known.
 
 ## Supported and refused configurations
 
@@ -181,6 +199,15 @@ Its only round-trip surface is the named convention's string value.
     `test_pre_1943_conventions_differ_only_by_months_above_48` checks this
     bound as a property; `test_the_largest_legacy_shortfall_is_1937_at_age_70`
     pins its maximum at 1937.
+16. R7's career-frame cutoff does not constrain its linked PIA supply or
+    deceased-worker factor evaluations in either baseline or 1a survivors.
+    `test_older_linked_deceased_outside_career_frame_reaches_credit_factor`
+    executes 1937 and 1916 examples for both paths;
+    `test_linked_pia_supply_and_survivor_factor_do_not_inherit_career_cutoff`
+    samples cohorts 1913–1942 and both paths with invented loaders.
+    `test_executed_linked_counterexample_is_in_the_reachable_audit`
+    requires the R7 and cost-ordering reachable rows to match the executed
+    counterexample. This invariant admits code-path reachability only.
 
 G's `test_delayed_credits_match_the_sealed_legacy_oracle_within_one_dime`
 preserves its differential through `min(48, window)`.
@@ -189,6 +216,12 @@ convention's intentional 1935 result. The live-bundle
 `test_statutory_float_function_live_bundle_credits_every_captured_cohort_window`
 checks the statutory computation when a policyengine-us parameter tree is
 available.
+
+The whole-window G differential sets `@settings(deadline=None)`, matching
+the statutory property file. Its correctness assertions compare the
+complete statutory window under the documented rounding tolerance; their
+result must not depend on a shared host's elapsed execution time. No other
+inherited property's settings change.
 
 ## Worked examples and findings
 
@@ -221,6 +254,27 @@ On invented PIA $1,000 the credit is $260.00 under the legacy convention
 and $325.00 under the statutory convention. No count of affected people,
 aggregate effect or empirical result is computed.
 
+The linked-record regression reaches that same $65 difference through
+R7's actual constructor and baseline survivor math, using invented loaders.
+A career-frame survivor born 1945 has constructed PIA $225.00; the linked
+1937 deceased worker has PIA $259.20 and remains outside the career frame.
+The pre-rounding baseline is $218.41231551242228 under the sealed convention
+and $218.6072054833109 under the statutory convention. Replacing only these
+invented PIAs with $1 and $1,000, and conditioning both claim distributions
+on age 70, gives exactly $1,260 versus $1,325 in
+`test_linked_1937_age_70_case_preserves_the_65_dollar_difference`. The 1a
+path independently reaches the same deceased credit input using its shared
+earnings vector. These figures describe invented code-path probes, not an
+SSA published example or a committed result.
+
+A linked 1916 worker with invented positive earnings from 1951 through
+1977 also remains outside the career frame while receiving constructed
+PIA $116.10. The same survivor's legacy baseline is
+$187.2862853209459 before payment rounding. Both baseline and 1a evaluate
+the pre-1917 positive-credit factor, and both refuse when the statutory
+function is selected. The erratum includes R7 and its cost-ordering caller
+among the three registered mechanisms with model-possible pre-1917 inputs.
+
 ## Parameter defect
 
 For pre-1917 births, 402(w)(6)(A) says "1 ⁄ 12 of 1 percent" for first
@@ -244,6 +298,11 @@ Decision `d1408` is reserved for Max's judgment on a separately authorized
 diagnostic of the registered paths. The erratum specifies the diagnostic
 and the unknown population quantities. This decision does not block the
 isolated statutory computation or authorize a registered rerun.
+Its scope includes older R7 linked deceased records in both the baseline
+and package-1a shared-vector survivor evaluations, plus cost ordering's
+R7 component. The diagnostic would preserve claim-pair PMF weights and
+distinguish evaluations from positive-mass contributions to a payment or
+reported cost ratio; pre-1917 records remain a separately refused class.
 
 ## Not in scope
 

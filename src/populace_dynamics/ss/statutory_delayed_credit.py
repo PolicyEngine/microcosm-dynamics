@@ -28,8 +28,12 @@ The sealed oracle keeps its 48-month cap by design. ``ss/benefits.py``
 and ``ss/params.py`` belong to the source identity sealed against reviewed
 commit ``1c7f3540`` by ``scripts/first_estimates_birth_evidence.py``.
 They remain byte-identical to their reviewed implementation. Registered
-first estimates, Track A COLA, FRA 68, and Track M results used that
-legacy computation and stand as registered; the reachability audit is
+first estimates, Track A COLA, FRA 68, Track M, R7 earnings sharing, and
+cost ordering's R7 component used that legacy computation and stand as
+registered. R7's career-frame cutoff does not restrict linked PIA supply:
+older deceased workers can reach the credit in baseline and 1a survivor
+paths, including indexable births before 1917. No affected-person count
+is known, and no committed artifact is edited or rerun. The static audit is
 ``docs/errata/2026-10-11-delayed-credit-window.md``. As with
 ``ss/statutory_aime.py``, this module sits beside the sealed oracle and
 names both conventions. New work and any later registered rerun selects
