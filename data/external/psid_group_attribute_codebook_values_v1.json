@@ -1,0 +1,9920 @@
+{
+ "extraction": "pdftotext version 26.09.0 -layout; value rows are the codebook's 'Count / % / Value/Range Code / Value/Range Text' table with continuation lines joined (counts and percents dropped); page is the 1-based PDF page of the variable header",
+ "family": {
+  "1985": {
+   "codebook": {
+    "path": "family/1985/FAM1985_codebook.pdf",
+    "sha256": "ef9cdf2eafccf167b5ab0495cab085877dce4787ccb9a2c01fdf4a868d13909a"
+   },
+   "formats_sas": null,
+   "variables": {
+    "V11937": {
+     "label": "G31 SPANISH DESCENT-HEAD",
+     "page": 277,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: is not Spanish/Hispanic"
+      },
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combination; more than 1 mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V11938": {
+     "label": "G32 RACE OF HEAD (1 MEN)",
+     "page": 277,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no second mention"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "More than 2 mentions"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V11939": {
+     "label": "G32 RACE OF HEAD (2 MEN)",
+     "page": 278,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no second mention"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "More than 2 mentions"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V12292": {
+     "label": "N31 SPANISH DESCENT-WIFE",
+     "page": 413,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: is not Spanish/Hispanic; Head is male, no Wife/\"Wife\" in FU now (V11999=2); Head is female (V12261=2)"
+      },
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combination; more than 1 mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V12293": {
+     "label": "N32 RACE OF WIFE (1 MEN)",
+     "page": 413,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: Head is male, no Wife/\"Wife\" in FU now (V11999=2); Head is female (V12261=2)"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "More than 2 mentions"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V12294": {
+     "label": "N32 RACE OF WIFE (2 MEN)",
+     "page": 414,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no second mention; Head is male, no Wife/ \"Wife\" in FU now (V11999=2); Head is female (V12261=2)"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "More than 2 mentions"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    }
+   }
+  },
+  "1986": {
+   "codebook": {
+    "path": "family/1986/FAM1986_codebook.pdf",
+    "sha256": "6483a31953e3f969b8757c97779ff6f2c45734b54a2806e8fd506db72c220112"
+   },
+   "formats_sas": null,
+   "variables": {
+    "V13499": {
+     "label": "K18 SPANISH DESCENT WF",
+     "page": 344,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: is not Spanish/Hispanic; no Wife/\"Wife\" in FU (V13484=5)"
+      },
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combination; more than one mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V13500": {
+     "label": "K19 RACE OF WIFE 1",
+     "page": 345,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no Wife/\"Wife\" in FU (V13484=5)"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V13501": {
+     "label": "K19 RACE OF WIFE 2",
+     "page": 345,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no second mention; no Wife/\"Wife\" in FU (V13484=5)"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "More than two mentions"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V13564": {
+     "label": "L31 SPANISH DESCENT HD",
+     "page": 376,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: is not Spanish/Hispanic"
+      },
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combination; more than 1 mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V13565": {
+     "label": "L32 RACE OF HEAD 1",
+     "page": 376,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V13566": {
+     "label": "L32 RACE OF HEAD 2",
+     "page": 377,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no second mention"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "More than two mentions"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    }
+   }
+  },
+  "1987": {
+   "codebook": {
+    "path": "family/1987/FAM1987_codebook.pdf",
+    "sha256": "86065d5cb127766a27037735ee428d1cec5afeeac554bfc9cc2cabfebd300056"
+   },
+   "formats_sas": null,
+   "variables": {
+    "V14546": {
+     "label": "K18 SPANISH DESCENT WF",
+     "page": 296,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: is not Spanish/Hispanic; no Wife/\"Wife\" in FU (V14531=5)"
+      },
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combination; more than one mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V14547": {
+     "label": "K19 RACE OF WIFE 1",
+     "page": 296,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no Wife/\"Wife\" in FU (V14531=5)"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V14548": {
+     "label": "K19 RACE OF WIFE 2",
+     "page": 297,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no second mention; no Wife/\"Wife\" in FU (V14531=5)"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "More than two mentions"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V14611": {
+     "label": "L31 SPANISH DESCENT HD",
+     "page": 326,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: is not Spanish/Hispanic"
+      },
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combination; more than 1 mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V14612": {
+     "label": "L32 RACE OF HEAD 1",
+     "page": 326,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V14613": {
+     "label": "L32 RACE OF HEAD 2",
+     "page": 327,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no second mention"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "More than two mentions"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    }
+   }
+  },
+  "1988": {
+   "codebook": {
+    "path": "family/1988/FAM1988_codebook.pdf",
+    "sha256": "4e2a75c05ee4b2ca9d44a31063096567f45c97285127a124d2d98a913f772c8f"
+   },
+   "formats_sas": null,
+   "variables": {
+    "V16020": {
+     "label": "K18 SPANISH DESCENT WF",
+     "page": 406,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: is not Spanish/Hispanic; no Wife/\"Wife\" in FU (V16005=5)"
+      },
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combination; more than one mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V16021": {
+     "label": "K19 RACE OF WIFE 1",
+     "page": 406,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no Wife/\"Wife\" in FU (V16005=5)"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V16022": {
+     "label": "K19 RACE OF WIFE 2",
+     "page": 407,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no second mention; no Wife/\"Wife\" in FU (V16005=5)"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "More than two mentions"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V16085": {
+     "label": "L31 SPANISH DESCENT HD",
+     "page": 437,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: is not Spanish/Hispanic"
+      },
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combination; more than 1 mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V16086": {
+     "label": "L32 RACE OF HEAD 1",
+     "page": 438,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V16087": {
+     "label": "L32 RACE OF HEAD 2",
+     "page": 438,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no second mention"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "More than two mentions"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    }
+   }
+  },
+  "1989": {
+   "codebook": {
+    "path": "family/1989/FAM1989_codebook.pdf",
+    "sha256": "1dff0473a8df0b7564f1716fd01ef67d276920105d17a986f6f167de5e1a049a"
+   },
+   "formats_sas": null,
+   "variables": {
+    "V17417": {
+     "label": "K18 SPANISH DESCENT WF",
+     "page": 358,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: is not Spanish/Hispanic; no Wife/\"Wife\" in FU (V17402=5)"
+      },
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combination; more than one mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V17418": {
+     "label": "K19 RACE OF WIFE 1",
+     "page": 359,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no Wife/\"Wife\" in FU (V17402=5)"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V17419": {
+     "label": "K19 RACE OF WIFE 2",
+     "page": 359,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no second mention; no Wife/\"Wife\" in FU (V17402=5)"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "More than two mentions"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V17482": {
+     "label": "L31 SPANISH DESCENT HD",
+     "page": 389,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: is not Spanish/Hispanic"
+      },
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combination; more than 1 mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V17483": {
+     "label": "L32 RACE OF HEAD 1",
+     "page": 389,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V17484": {
+     "label": "L32 RACE OF HEAD 2",
+     "page": 390,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no second mention"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "More than two mentions"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    }
+   }
+  },
+  "1990": {
+   "codebook": {
+    "path": "family/1990/FAM1990_codebook.pdf",
+    "sha256": "4e6e0d3c22eedc50137b3d8a8b33e949064681b5bf42275d51da4b349734b32f"
+   },
+   "formats_sas": null,
+   "variables": {
+    "V18748": {
+     "label": "L18 SPANISH DESCENT WF",
+     "page": 326,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: is not Spanish/Hispanic; no Wife/\"Wife\" in FU (V18733=5)"
+      },
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combination; more than one mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V18749": {
+     "label": "L19 RACE OF WIFE 1",
+     "page": 327,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no Wife/\"Wife\" in FU (V18733=5)"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V18750": {
+     "label": "L19 RACE OF WIFE 2",
+     "page": 327,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no second mention; no Wife/\"Wife\" in FU (V18733=5)"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "More than two mentions"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V18813": {
+     "label": "M31 SPANISH DESCENT HD",
+     "page": 355,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: is not Spanish/Hispanic"
+      },
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combination; more than one mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V18814": {
+     "label": "M32 RACE OF HEAD 1",
+     "page": 355,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V18815": {
+     "label": "M32 RACE OF HEAD 2",
+     "page": 356,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no second mention"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "More than two mentions"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    }
+   }
+  },
+  "1991": {
+   "codebook": {
+    "path": "family/1991/FAM1991_codebook.pdf",
+    "sha256": "cb25d86256acb143cbc7b6f400702dc6a20787af9476dfbe9fc277ccecca424c"
+   },
+   "formats_sas": null,
+   "variables": {
+    "V20048": {
+     "label": "K18 SPANISH DESCENT WF",
+     "page": 326,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: is not Spanish/Hispanic; no Wife/\"Wife\" in FU (V20033=5)"
+      },
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combination; more than one mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V20049": {
+     "label": "K19 RACE OF WIFE 1",
+     "page": 327,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no Wife/\"Wife\" in FU (V20033=5)"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V20050": {
+     "label": "K19 RACE OF WIFE 2",
+     "page": 327,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no second mention; no Wife/\"Wife\" in FU (V20033=5)"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "More than two mentions"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V20113": {
+     "label": "L31 SPANISH DESCENT HD",
+     "page": 351,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: is not Spanish/Hispanic"
+      },
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combination; more than one mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V20114": {
+     "label": "L32 RACE OF HEAD 1",
+     "page": 351,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V20115": {
+     "label": "L32 RACE OF HEAD 2",
+     "page": 352,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no second mention"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "More than two mentions"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    }
+   }
+  },
+  "1992": {
+   "codebook": {
+    "path": "family/1992/FAM1992_codebook.pdf",
+    "sha256": "249b4c1a9a333792df66511c4fc63ae2ac51a28bb764f38aff4bc04a6d389d52"
+   },
+   "formats_sas": null,
+   "variables": {
+    "V21354": {
+     "label": "L18 SPANISH DESCENT WF",
+     "page": 329,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: is not Spanish/Hispanic; no Wife/\"Wife\" in FU (V21339=5)"
+      },
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combination; more than one mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V21355": {
+     "label": "L19 RACE OF WIFE 1",
+     "page": 329,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no Wife/\"Wife\" in FU (V21339=5)"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V21356": {
+     "label": "L19 RACE OF WIFE 2",
+     "page": 329,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no second mention; no Wife/\"Wife\" in FU (V21339=5)"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "More than two mentions"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V21419": {
+     "label": "M31 SPANISH DESCENT HD",
+     "page": 353,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: is not Spanish/Hispanic"
+      },
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combination; more than one mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V21420": {
+     "label": "M32 RACE OF HEAD 1",
+     "page": 354,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V21421": {
+     "label": "M32 RACE OF HEAD 2",
+     "page": 354,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no second mention"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "More than two mentions"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    }
+   }
+  },
+  "1993": {
+   "codebook": {
+    "path": "family/1993/fam1993_codebook.pdf",
+    "sha256": "a4659bad3b0d2a4ec0040f9ad63994060d1d98c5924327853dfc7899ac172411"
+   },
+   "formats_sas": null,
+   "variables": {
+    "V23211": {
+     "label": "K18 WTR WF OF SPANISH DESCENT",
+     "page": 409,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: is not Spanish/Hispanic; no wife/\"wife\" in FU"
+      },
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combination; more than one mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V23212": {
+     "label": "K19 RACE OF WF-1ST MENTION",
+     "page": 409,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V23213": {
+     "label": "K19 RACE OF WF-2ND MENTION",
+     "page": 410,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no second mention; no wife/\"wife\" in FU"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "More than two mentions"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V23275": {
+     "label": "L31 WTR HD OF SPANISH DESCENT",
+     "page": 432,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: is not Spanish/Hispanic"
+      },
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combination; more than one mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V23276": {
+     "label": "L32 RACE OF HD-1ST MENTION",
+     "page": 432,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V23277": {
+     "label": "L32 RACE OF HD-2ND MENTION",
+     "page": 433,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap.: no second mention"
+      },
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "More than two mentions"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V23333": {
+     "label": "COMPLETED ED-HD 1993",
+     "page": 459,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap: completed no grades of school"
+      },
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "V23334": {
+     "label": "COMPLETED ED-WF 1993",
+     "page": 460,
+     "values": [
+      {
+       "code": 0,
+       "text": "Inap: completed no grades of school; no wife/\"wife\" in FU"
+      },
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "NA; DK"
+      }
+     ]
+    }
+   }
+  },
+  "1994": {
+   "codebook": {
+    "path": "family/1994/FAM1994ER_codebook_public.pdf",
+    "sha256": "ecf8667f3b6d2a5ac7e312ecd9761a00ae7c1d2db6bee2f8af049e495ff1cf56"
+   },
+   "formats_sas": null,
+   "variables": {
+    "ER3880": {
+     "label": "K18 SPANISH DESCENT 1 WF",
+     "page": 545,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combination; more than one mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU"
+      }
+     ]
+    },
+    "ER3883": {
+     "label": "K19 RACE OF WIFE 1",
+     "page": 546,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU"
+      }
+     ]
+    },
+    "ER3884": {
+     "label": "K19 RACE OF WIFE 2",
+     "page": 546,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no second mention; no wife/\"wife\" in FU; DK/NA to first mention"
+      }
+     ]
+    },
+    "ER3885": {
+     "label": "K19 RACE OF WIFE 3",
+     "page": 547,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no third mention; no wife/\"wife\" in FU; DK/NA to first mention"
+      }
+     ]
+    },
+    "ER3941": {
+     "label": "L31 SPANISH DESCENT 1 HD",
+     "page": 566,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combination; more than one mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: not Spanish, Hispanic or Latino"
+      }
+     ]
+    },
+    "ER3944": {
+     "label": "L32 RACE OF HEAD 1",
+     "page": 567,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      }
+     ]
+    },
+    "ER3945": {
+     "label": "L32 RACE OF HEAD 2",
+     "page": 568,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.; no second mention; DK/NA to first mention"
+      }
+     ]
+    },
+    "ER3946": {
+     "label": "L32 RACE OF HEAD 3",
+     "page": 568,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.; no third mention; DK/NA to first mention"
+      }
+     ]
+    },
+    "ER4158": {
+     "label": "COMPLETED ED-HD",
+     "page": 669,
+     "values": [
+      {
+       "code": 0,
+       "text": "Completed no grades of school"
+      },
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "ER4159": {
+     "label": "COMPLETED ED-WF",
+     "page": 669,
+     "values": [
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; completed no grades of school"
+      }
+     ]
+    }
+   }
+  },
+  "1995": {
+   "codebook": {
+    "path": "family/1995/FAM1995ER_codebook_public.pdf",
+    "sha256": "c4a161e935244487d26d7a581ff68b1c7f844c8032fe756eda82c035f51cb985"
+   },
+   "formats_sas": null,
+   "variables": {
+    "ER6750": {
+     "label": "K18 SPANISH DESCENT 1 WF",
+     "page": 496,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combination; more than one mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU"
+      }
+     ]
+    },
+    "ER6753": {
+     "label": "K19 RACE OF WIFE 1",
+     "page": 497,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU"
+      }
+     ]
+    },
+    "ER6754": {
+     "label": "K19 RACE OF WIFE 2",
+     "page": 498,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no second mention; no wife/\"wife\" in FU; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER6755": {
+     "label": "K19 RACE OF WIFE 3",
+     "page": 498,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no third mention; no wife/\"wife\" in FU; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER6811": {
+     "label": "L31 SPANISH DESCENT 1 HD",
+     "page": 517,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combination; more than one mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: not Spanish, Hispanic or Latino"
+      }
+     ]
+    },
+    "ER6814": {
+     "label": "L32 RACE OF HEAD 1",
+     "page": 518,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      }
+     ]
+    },
+    "ER6815": {
+     "label": "L32 RACE OF HEAD 2",
+     "page": 519,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.; no second mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER6816": {
+     "label": "L32 RACE OF HEAD 3",
+     "page": 519,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.; no third mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER6998": {
+     "label": "COMPLETED ED-HD",
+     "page": 612,
+     "values": [
+      {
+       "code": 0,
+       "text": "Completed no grades of school"
+      },
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "ER6999": {
+     "label": "COMPLETED ED-WF",
+     "page": 612,
+     "values": [
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; completed no grades of school"
+      }
+     ]
+    }
+   }
+  },
+  "1996": {
+   "codebook": {
+    "path": "family/1996/FAM1996ER_codebook_public.pdf",
+    "sha256": "aa52222228e4ecc3d7309c39c61929a7603951615c6a80b3ba3423e7f3ba8300"
+   },
+   "formats_sas": null,
+   "variables": {
+    "ER8996": {
+     "label": "K18 SPANISH DESCENT 1 WF",
+     "page": 604,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combination; more than one mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU"
+      }
+     ]
+    },
+    "ER8999": {
+     "label": "K19 RACE OF WIFE 1",
+     "page": 605,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU"
+      }
+     ]
+    },
+    "ER9000": {
+     "label": "K19 RACE OF WIFE 2",
+     "page": 605,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; no second mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER9001": {
+     "label": "K19 RACE OF WIFE 3",
+     "page": 606,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; no third mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER9057": {
+     "label": "L31 SPANISH DESCENT 1 HD",
+     "page": 625,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 6,
+       "text": "Combinations; more than one mention"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: not Spanish, Hispanic or Latino"
+      }
+     ]
+    },
+    "ER9060": {
+     "label": "L32 RACE OF HEAD 1",
+     "page": 626,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      }
+     ]
+    },
+    "ER9061": {
+     "label": "L32 RACE OF HEAD 2",
+     "page": 627,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.; no second mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER9062": {
+     "label": "L32 RACE OF HEAD 3",
+     "page": 627,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.; no third mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER9249": {
+     "label": "COMPLETED ED-HD",
+     "page": 719,
+     "values": [
+      {
+       "code": 0,
+       "text": "Completed no grades of school"
+      },
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "ER9250": {
+     "label": "COMPLETED ED-WF",
+     "page": 720,
+     "values": [
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; completed no grades of school"
+      }
+     ]
+    }
+   }
+  },
+  "1997": {
+   "codebook": {
+    "path": "family/1997/FAM1997ER_codebook_public.pdf",
+    "sha256": "9716779d9b1102fb5be611e620525759a6cb8676714ba9722a34da8c7287bb3d"
+   },
+   "formats_sas": null,
+   "variables": {
+    "ER11760": {
+     "label": "K34/87 RACE OF WIFE 1",
+     "page": 470,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU"
+      }
+     ]
+    },
+    "ER11761": {
+     "label": "K34/87 RACE OF WIFE 2",
+     "page": 471,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; no second mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER11762": {
+     "label": "K34/87 RACE OF WIFE 3",
+     "page": 471,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; no third mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER11763": {
+     "label": "K34/87 RACE OF WIFE 4",
+     "page": 471,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; no fourth mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER11848": {
+     "label": "L40/95 RACE OF HEAD 1",
+     "page": 504,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      }
+     ]
+    },
+    "ER11849": {
+     "label": "L40/95 RACE OF HEAD 2",
+     "page": 504,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.; no second mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER11850": {
+     "label": "L40/95 RACE OF HEAD 3",
+     "page": 504,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.; no third mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER11851": {
+     "label": "L40/95 RACE OF HEAD 4",
+     "page": 505,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "Native American"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Color besides black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no fourth mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER12222": {
+     "label": "COMPLETED ED-HD",
+     "page": 660,
+     "values": [
+      {
+       "code": 0,
+       "text": "Completed no grades of school"
+      },
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "ER12223": {
+     "label": "COMPLETED ED-WF",
+     "page": 660,
+     "values": [
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; completed no grades of school"
+      }
+     ]
+    }
+   }
+  },
+  "1999": {
+   "codebook": {
+    "path": "family/1999/FAM1999ER_codebook.pdf",
+    "sha256": "5accefc4c1b50b3447b1a674ac2750de94568c538873f9bab34c2049c80c6107"
+   },
+   "formats_sas": null,
+   "variables": {
+    "ER15836": {
+     "label": "K34/87 RACE OF WIFE 1",
+     "page": 818,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU"
+      }
+     ]
+    },
+    "ER15837": {
+     "label": "K34/87 RACE OF WIFE 2",
+     "page": 819,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; no second mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER15838": {
+     "label": "K34/87 RACE OF WIFE 3",
+     "page": 819,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; no third mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER15839": {
+     "label": "K34/87 RACE OF WIFE 4",
+     "page": 819,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; no fourth mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER15928": {
+     "label": "L40/95 RACE OF HEAD 1",
+     "page": 858,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      }
+     ]
+    },
+    "ER15929": {
+     "label": "L40/95 RACE OF HEAD 2",
+     "page": 858,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no second mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER15930": {
+     "label": "L40/95 RACE OF HEAD 3",
+     "page": 858,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no third mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER15931": {
+     "label": "L40/95 RACE OF HEAD 4",
+     "page": 859,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "Native American"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Color besides black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no fourth mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER16516": {
+     "label": "COMPLETED ED-HD",
+     "page": 1079,
+     "values": [
+      {
+       "code": 0,
+       "text": "Completed no grades of school"
+      },
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "ER16517": {
+     "label": "COMPLETED ED-WF",
+     "page": 1079,
+     "values": [
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; completed no grades of school"
+      }
+     ]
+    }
+   }
+  },
+  "2001": {
+   "codebook": {
+    "path": "family/2001/FAM2001ER_codebook.pdf",
+    "sha256": "13ae45ce24125c2ac30c15e62f1efeddc7842dc924b3415fe5aaa058666029a0"
+   },
+   "formats_sas": null,
+   "variables": {
+    "ER19897": {
+     "label": "K34/87 RACE OF WIFE 1",
+     "page": 821,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU"
+      }
+     ]
+    },
+    "ER19898": {
+     "label": "K34/87 RACE OF WIFE 2",
+     "page": 822,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; no second mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER19899": {
+     "label": "K34/87 RACE OF WIFE 3",
+     "page": 822,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; no third mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER19900": {
+     "label": "K34/87 RACE OF WIFE 4",
+     "page": 822,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; no fourth mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER19989": {
+     "label": "L40/95 RACE OF HEAD 1",
+     "page": 860,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      }
+     ]
+    },
+    "ER19990": {
+     "label": "L40/95 RACE OF HEAD 2",
+     "page": 861,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no second mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER19991": {
+     "label": "L40/95 RACE OF HEAD 3",
+     "page": 861,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "American Indian, Aleut, Eskimo"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Mentions Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Mentions color other than black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no third mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER19992": {
+     "label": "L40/95 RACE OF HEAD 4",
+     "page": 862,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "Native American"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Color besides black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no fourth mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER20457": {
+     "label": "COMPLETED ED-HD",
+     "page": 1037,
+     "values": [
+      {
+       "code": 0,
+       "text": "Completed no grades of school"
+      },
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "ER20458": {
+     "label": "COMPLETED ED-WF",
+     "page": 1038,
+     "values": [
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; completed no grades of school"
+      }
+     ]
+    }
+   }
+  },
+  "2003": {
+   "codebook": {
+    "path": "family/2003/FAM2003ER_codebook.pdf",
+    "sha256": "5a69ee0e605aec1305a23931330da97d75dd21c32d183b8d67c3b6597f23a201"
+   },
+   "formats_sas": null,
+   "variables": {
+    "ER23334": {
+     "label": "K34/87 RACE OF WIFE 1",
+     "page": 673,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "Native American"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Color besides black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU"
+      }
+     ]
+    },
+    "ER23335": {
+     "label": "K34/87 RACE OF WIFE 2",
+     "page": 674,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "Native American"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Color besides black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; no second mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER23336": {
+     "label": "K34/87 RACE OF WIFE 3",
+     "page": 674,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "Native American"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Color besides black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; fewer than three mentions; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER23337": {
+     "label": "K34/87 RACE OF WIFE 4",
+     "page": 674,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "Native American"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Color besides black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; fewer than four mentions; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER23426": {
+     "label": "L40/95 RACE OF HEAD 1",
+     "page": 714,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "Native American"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Color besides black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "ER23427": {
+     "label": "L40/95 RACE OF HEAD 2",
+     "page": 714,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "Native American"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Color besides black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no second mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER23428": {
+     "label": "L40/95 RACE OF HEAD 3",
+     "page": 714,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "Native American"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Color besides black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: fewer than three mentions; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER23429": {
+     "label": "L40/95 RACE OF HEAD 4",
+     "page": 715,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black"
+      },
+      {
+       "code": 3,
+       "text": "Native American"
+      },
+      {
+       "code": 4,
+       "text": "Asian, Pacific Islander"
+      },
+      {
+       "code": 5,
+       "text": "Latino origin or descent"
+      },
+      {
+       "code": 6,
+       "text": "Color besides black or white"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: fewer than four mentions; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER24148": {
+     "label": "COMPLETED ED-HD",
+     "page": 1004,
+     "values": [
+      {
+       "code": 0,
+       "text": "Completed no grades of school"
+      },
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "ER24149": {
+     "label": "COMPLETED ED-WF",
+     "page": 1005,
+     "values": [
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; completed no grades of school"
+      }
+     ]
+    }
+   }
+  },
+  "2005": {
+   "codebook": {
+    "path": "family/2005/FAM2005ER_codebook.pdf",
+    "sha256": "eec8de3c04ac88ffce0495622f0cbe0ac621780b201ce6bd0b4b54344a3a6243"
+   },
+   "formats_sas": null,
+   "variables": {
+    "ER27296": {
+     "label": "K33A SPANISH DESCENT-WIFE",
+     "page": 665,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; not Spanish, Hispanic or Latino"
+      }
+     ]
+    },
+    "ER27297": {
+     "label": "K34 RACE OF WIFE-MENTION 1",
+     "page": 666,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU"
+      }
+     ]
+    },
+    "ER27298": {
+     "label": "K34 RACE OF WIFE-MENTION 2",
+     "page": 666,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; no second mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER27299": {
+     "label": "K34 RACE OF WIFE-MENTION 3",
+     "page": 666,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; fewer than three mentions; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER27300": {
+     "label": "K34 RACE OF WIFE-MENTION 4",
+     "page": 667,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; fewer than four mentions; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER27392": {
+     "label": "L39A SPANISH DESCENT-HEAD",
+     "page": 708,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: not Spanish, Hispanic or Latino"
+      }
+     ]
+    },
+    "ER27393": {
+     "label": "L40 RACE OF HEAD-MENTION 1",
+     "page": 708,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Wild code"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "ER27394": {
+     "label": "L40 RACE OF HEAD-MENTION 2",
+     "page": 708,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no second mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER27395": {
+     "label": "L40 RACE OF HEAD-MENTION 3",
+     "page": 709,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: fewer than three mentions; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER27396": {
+     "label": "L40 RACE OF HEAD-MENTION 4",
+     "page": 709,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: fewer than four mentions; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER28047": {
+     "label": "COMPLETED ED-HD",
+     "page": 961,
+     "values": [
+      {
+       "code": 0,
+       "text": "Completed no grades of school"
+      },
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "ER28048": {
+     "label": "COMPLETED ED-WF",
+     "page": 962,
+     "values": [
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; completed no grades of school"
+      }
+     ]
+    }
+   }
+  },
+  "2007": {
+   "codebook": {
+    "path": "family/2007/FAM2007ER_codebook.pdf",
+    "sha256": "d92bc05151cf1b77513e4520578402305d356a669c7998f10f91ad48ac66c89e"
+   },
+   "formats_sas": null,
+   "variables": {
+    "ER40471": {
+     "label": "K39 SPANISH DESCENT-WIFE",
+     "page": 1357,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; not Spanish, Hispanic or Latino"
+      }
+     ]
+    },
+    "ER40472": {
+     "label": "K40 RACE OF WIFE-MENTION 1",
+     "page": 1358,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU;"
+      }
+     ]
+    },
+    "ER40473": {
+     "label": "K40 RACE OF WIFE-MENTION 2",
+     "page": 1358,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; no second mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER40474": {
+     "label": "K40 RACE OF WIFE-MENTION 3",
+     "page": 1358,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; fewer than three mentions; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER40475": {
+     "label": "K40 RACE OF WIFE-MENTION 4",
+     "page": 1359,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; fewer than four mentions; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER40564": {
+     "label": "L39 SPANISH DESCENT-HEAD",
+     "page": 1399,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: not Spanish, Hispanic or Latino"
+      }
+     ]
+    },
+    "ER40565": {
+     "label": "L40 RACE OF HEAD-MENTION 1",
+     "page": 1399,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Wild code"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "ER40566": {
+     "label": "L40 RACE OF HEAD-MENTION 2",
+     "page": 1399,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no second mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER40567": {
+     "label": "L40 RACE OF HEAD-MENTION 3",
+     "page": 1400,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: fewer than three mentions; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER40568": {
+     "label": "L40 RACE OF HEAD-MENTION 4",
+     "page": 1400,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: fewer than four mentions; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER41037": {
+     "label": "COMPLETED ED-HD",
+     "page": 1590,
+     "values": [
+      {
+       "code": 0,
+       "text": "Completed no grades of school"
+      },
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "NA; DK"
+      }
+     ]
+    },
+    "ER41038": {
+     "label": "COMPLETED ED-WF",
+     "page": 1591,
+     "values": [
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "NA; DK"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU; completed no grades of school"
+      }
+     ]
+    }
+   }
+  },
+  "2009": {
+   "codebook": {
+    "path": "family/2009/FAM2009ER_codebook.pdf",
+    "sha256": "2639c0cad9d5b6e1a08eae57c578d9698a249ed331475b79df525a0caa7c4c6b"
+   },
+   "formats_sas": null,
+   "variables": {
+    "ER46448": {
+     "label": "K39 SPANISH DESCENT-WIFE",
+     "page": 1458,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU (ER42019=0); not Spanish, Hispanic or Latino"
+      }
+     ]
+    },
+    "ER46449": {
+     "label": "K40 RACE OF WIFE-MENTION 1",
+     "page": 1459,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU (ER42019=0);"
+      }
+     ]
+    },
+    "ER46450": {
+     "label": "K40 RACE OF WIFE-MENTION 2",
+     "page": 1459,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU (ER42019=0); no second mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER46451": {
+     "label": "K40 RACE OF WIFE-MENTION 3",
+     "page": 1459,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU (ER42019=0); fewer than three mentions; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER46452": {
+     "label": "K40 RACE OF WIFE-MENTION 4",
+     "page": 1460,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU (ER42019=0); fewer than four mentions; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER46542": {
+     "label": "L39 SPANISH DESCENT-HEAD",
+     "page": 1500,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: not Spanish, Hispanic or Latino"
+      }
+     ]
+    },
+    "ER46543": {
+     "label": "L40 RACE OF HEAD-MENTION 1",
+     "page": 1501,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA"
+      }
+     ]
+    },
+    "ER46544": {
+     "label": "L40 RACE OF HEAD-MENTION 2",
+     "page": 1501,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no second mention; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER46545": {
+     "label": "L40 RACE OF HEAD-MENTION 3",
+     "page": 1501,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: fewer than three mentions; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER46546": {
+     "label": "L40 RACE OF HEAD-MENTION 4",
+     "page": 1502,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: fewer than four mentions; NA, DK to first mention"
+      }
+     ]
+    },
+    "ER46981": {
+     "label": "COMPLETED ED-HD",
+     "page": 1671,
+     "values": [
+      {
+       "code": 0,
+       "text": "Completed no grades of school"
+      },
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA"
+      }
+     ]
+    },
+    "ER46982": {
+     "label": "COMPLETED ED-WF",
+     "page": 1672,
+     "values": [
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no wife/\"wife\" in FU (ER42019=0); completed no grades of school"
+      }
+     ]
+    }
+   }
+  },
+  "2011": {
+   "codebook": {
+    "path": "family/2011/FAM2011ER_codebook.pdf",
+    "sha256": "00c0517569b94efcc7fc6594529a263feb9e3bb9a88efff3becf5b8aaeebdd3c"
+   },
+   "formats_sas": null,
+   "variables": {
+    "ER51809": {
+     "label": "K39 SPANISH DESCENT-WIFE",
+     "page": 1610,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Wife/\"Wife\" in FU (ER47319=0); not Spanish, Hispanic or Latino"
+      }
+     ]
+    },
+    "ER51810": {
+     "label": "K40 RACE OF WIFE-MENTION 1",
+     "page": 1610,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Wife/\"Wife\" in FU (ER47319=0)"
+      }
+     ]
+    },
+    "ER51811": {
+     "label": "K40 RACE OF WIFE-MENTION 2",
+     "page": 1611,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Wife/\"Wife\" in FU (ER47319=0); NA, DK, RF to first mention (ER51810=8 or 9); no second mention"
+      }
+     ]
+    },
+    "ER51812": {
+     "label": "K40 RACE OF WIFE-MENTION 3",
+     "page": 1611,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: fewer than three mentions; no Wife/\"Wife\" in FU (ER47319=0); NA, DK, RF to first mention (ER51810=8 or 9)"
+      }
+     ]
+    },
+    "ER51813": {
+     "label": "K40 RACE OF WIFE-MENTION 4",
+     "page": 1611,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: fewer than four mentions; no Wife/\"Wife\" in FU (ER47319=0); NA, DK, RF to first mention (ER51810=8 or 9)"
+      }
+     ]
+    },
+    "ER51903": {
+     "label": "L39 SPANISH DESCENT-HEAD",
+     "page": 1655,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: not Spanish, Hispanic or Latino"
+      }
+     ]
+    },
+    "ER51904": {
+     "label": "L40 RACE OF HEAD-MENTION 1",
+     "page": 1655,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      }
+     ]
+    },
+    "ER51905": {
+     "label": "L40 RACE OF HEAD-MENTION 2",
+     "page": 1656,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: NA, DK, RF to first mention (ER51904=8 or 9); no second mention"
+      }
+     ]
+    },
+    "ER51906": {
+     "label": "L40 RACE OF HEAD-MENTION 3",
+     "page": 1656,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: fewer than three mentions; NA, DK, RF to first mention (ER51904=8 or 9)"
+      }
+     ]
+    },
+    "ER51907": {
+     "label": "L40 RACE OF HEAD-MENTION 4",
+     "page": 1656,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 8,
+       "text": "DK"
+      },
+      {
+       "code": 9,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: fewer than four mentions; NA, DK, RF to first mention (ER51904=8 or 9)"
+      }
+     ]
+    },
+    "ER52405": {
+     "label": "COMPLETED ED-HD",
+     "page": 1861,
+     "values": [
+      {
+       "code": 0,
+       "text": "Completed no grades of school"
+      },
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA"
+      }
+     ]
+    },
+    "ER52406": {
+     "label": "COMPLETED ED-WF",
+     "page": 1862,
+     "values": [
+      {
+       "range": [
+        1,
+        16
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 17,
+       "text": "At least some post-graduate work"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Wife/\"Wife\" in FU (ER47319=0); completed no grades of school"
+      }
+     ]
+    }
+   }
+  },
+  "2013": {
+   "codebook": {
+    "path": "family/2013/FAM2013ER_codebook.pdf",
+    "sha256": "40cc2de6af801b94b93518f7252e24c7c95098e713fc97f9ead1af74c4ce25d6"
+   },
+   "formats_sas": null,
+   "variables": {
+    "ER57541": {
+     "label": "K33 STATE WIFE WAS BORN",
+     "page": 1618,
+     "values": [
+      {
+       "range": [
+        1,
+        56
+       ],
+       "text": "Actual state (FIPS code)"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: U.S. territory or foreign country; no Wife/\"Wife\" in FU (ER54305=5)"
+      }
+     ]
+    },
+    "ER57542": {
+     "label": "K33YR YEAR CAME TO UNITED STATES-WF",
+     "page": 1619,
+     "values": [
+      {
+       "range": [
+        1901,
+        2013
+       ],
+       "text": "Actual year"
+      },
+      {
+       "code": 9997,
+       "text": "Not living in the United States"
+      },
+      {
+       "code": 9998,
+       "text": "DK"
+      },
+      {
+       "code": 9999,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Wife/\"Wife\" in FU (ER54305=5); Wife/\"Wife\" was born in the United States or U.S. territory"
+      }
+     ]
+    },
+    "ER57548": {
+     "label": "K39 SPANISH DESCENT-WIFE",
+     "page": 1620,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Wife/\"Wife\" in FU (ER54305=5); not Spanish, Hispanic or Latino"
+      }
+     ]
+    },
+    "ER57549": {
+     "label": "K40 RACE OF WIFE-MENTION 1",
+     "page": 1621,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Wife/\"Wife\" in FU (ER54305=5)"
+      }
+     ]
+    },
+    "ER57550": {
+     "label": "K40 RACE OF WIFE-MENTION 2",
+     "page": 1621,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Wife/\"Wife\" in FU (ER54305=5); DK, NA, or RF to first mention (ER57549=8 or 9); no second mention"
+      }
+     ]
+    },
+    "ER57551": {
+     "label": "K40 RACE OF WIFE-MENTION 3",
+     "page": 1621,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: fewer than three mentions; no Wife/\"Wife\" in FU (ER54305=5); DK, NA, or RF to first mention (ER57549=8 or 9)"
+      }
+     ]
+    },
+    "ER57552": {
+     "label": "K40 RACE OF WIFE-MENTION 4",
+     "page": 1622,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: fewer than four mentions; no Wife/\"Wife\" in FU (ER54305=5); DK, NA, or RF to first mention (ER57549=8 or 9)"
+      }
+     ]
+    },
+    "ER57651": {
+     "label": "L33 STATE HEAD WAS BORN",
+     "page": 1675,
+     "values": [
+      {
+       "range": [
+        1,
+        56
+       ],
+       "text": "Actual state (FIPS code)"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: U.S. territory or foreign country"
+      }
+     ]
+    },
+    "ER57652": {
+     "label": "L33YR YEAR CAME TO UNITED STATES-HD",
+     "page": 1675,
+     "values": [
+      {
+       "range": [
+        1901,
+        2013
+       ],
+       "text": "Actual year"
+      },
+      {
+       "code": 9997,
+       "text": "Not living in the United States"
+      },
+      {
+       "code": 9998,
+       "text": "DK"
+      },
+      {
+       "code": 9999,
+       "text": "NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: Head was born in the United States or U.S. territory"
+      }
+     ]
+    },
+    "ER57658": {
+     "label": "L39 SPANISH DESCENT-HEAD",
+     "page": 1677,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: not Spanish, Hispanic or Latino"
+      }
+     ]
+    },
+    "ER57659": {
+     "label": "L40 RACE OF HEAD-MENTION 1",
+     "page": 1677,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      }
+     ]
+    },
+    "ER57660": {
+     "label": "L40 RACE OF HEAD-MENTION 2",
+     "page": 1678,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: DK, NA, or RF to first mention (ER57659=8 or 9); no second mention"
+      }
+     ]
+    },
+    "ER57661": {
+     "label": "L40 RACE OF HEAD-MENTION 3",
+     "page": 1678,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: fewer than three mentions; DK, NA, or RF to first mention (ER57659=8 or 9)"
+      }
+     ]
+    },
+    "ER57662": {
+     "label": "L40 RACE OF HEAD-MENTION 4",
+     "page": 1678,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: fewer than four mentions; DK, NA, or RF to first mention (ER57659=8 or 9)"
+      }
+     ]
+    },
+    "ER58223": {
+     "label": "COMPLETED ED-HD",
+     "page": 1876,
+     "values": [
+      {
+       "code": 0,
+       "text": "Completed no grades of school"
+      },
+      {
+       "range": [
+        1,
+        17
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA"
+      }
+     ]
+    },
+    "ER58224": {
+     "label": "COMPLETED ED-WF",
+     "page": 1877,
+     "values": [
+      {
+       "range": [
+        1,
+        17
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Wife/\"Wife\" in FU (ER54305=5); completed no grades of school"
+      }
+     ]
+    }
+   }
+  },
+  "2015": {
+   "codebook": {
+    "path": "family/2015/FAM2015ER_codebook.pdf",
+    "sha256": "7dcb71f823e309a286b904531410243d58cde48b8f50079401856de9ac762238"
+   },
+   "formats_sas": null,
+   "variables": {
+    "ER64663": {
+     "label": "K33 STATE SPOUSE WAS BORN",
+     "page": 1677,
+     "values": [
+      {
+       "range": [
+        1,
+        56
+       ],
+       "text": "Actual state (FIPS code)"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER61347=5); U.S. territory or foreign country"
+      }
+     ]
+    },
+    "ER64664": {
+     "label": "K33YR YEAR CAME TO UNITED STATES-SP",
+     "page": 1677,
+     "values": [
+      {
+       "range": [
+        1920,
+        2015
+       ],
+       "text": "Actual year"
+      },
+      {
+       "code": 9997,
+       "text": "Not living in the United States"
+      },
+      {
+       "code": 9999,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER61347=5); Spouse/Partner was born in the United States or U.S. territory"
+      }
+     ]
+    },
+    "ER64670": {
+     "label": "K39 SPANISH DESCENT-SPOUSE",
+     "page": 1679,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER61347=5); not Spanish, Hispanic or Latino"
+      }
+     ]
+    },
+    "ER64671": {
+     "label": "K40 RACE OF SPOUSE-MENTION 1",
+     "page": 1679,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER61347=5)"
+      }
+     ]
+    },
+    "ER64672": {
+     "label": "K40 RACE OF SPOUSE-MENTION 2",
+     "page": 1680,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER61347=5); DK, NA, or RF to first mention (ER64671=9); no second mention"
+      }
+     ]
+    },
+    "ER64673": {
+     "label": "K40 RACE OF SPOUSE-MENTION 3",
+     "page": 1680,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER61347=5); DK, NA, or RF to first mention (ER64671=9); fewer than three mentions"
+      }
+     ]
+    },
+    "ER64674": {
+     "label": "K40 RACE OF SPOUSE-MENTION 4",
+     "page": 1680,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER61347=5); DK, NA, or RF to first mention (ER64671=9); fewer than four mentions"
+      }
+     ]
+    },
+    "ER64802": {
+     "label": "L33 STATE HEAD WAS BORN",
+     "page": 1769,
+     "values": [
+      {
+       "range": [
+        1,
+        56
+       ],
+       "text": "Actual state (FIPS code)"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: U.S. territory or foreign country"
+      }
+     ]
+    },
+    "ER64803": {
+     "label": "L33YR YEAR CAME TO UNITED STATES-HD",
+     "page": 1769,
+     "values": [
+      {
+       "range": [
+        1901,
+        2015
+       ],
+       "text": "Actual year"
+      },
+      {
+       "code": 9997,
+       "text": "Not living in the United States"
+      },
+      {
+       "code": 9999,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: Head was born in the United States or U.S. territory"
+      }
+     ]
+    },
+    "ER64809": {
+     "label": "L39 SPANISH DESCENT-HEAD",
+     "page": 1771,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: not Spanish, Hispanic or Latino"
+      }
+     ]
+    },
+    "ER64810": {
+     "label": "L40 RACE OF HEAD-MENTION 1",
+     "page": 1771,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      }
+     ]
+    },
+    "ER64811": {
+     "label": "L40 RACE OF HEAD-MENTION 2",
+     "page": 1772,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: DK, NA, or RF to first mention (ER64810=9); no second mention"
+      }
+     ]
+    },
+    "ER64812": {
+     "label": "L40 RACE OF HEAD-MENTION 3",
+     "page": 1772,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: DK, NA, or RF to first mention (ER64810=9); fewer than three mentions"
+      }
+     ]
+    },
+    "ER64813": {
+     "label": "L40 RACE OF HEAD-MENTION 4",
+     "page": 1772,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: DK, NA, or RF to first mention (ER64810=9); fewer than four mentions"
+      }
+     ]
+    },
+    "ER65459": {
+     "label": "COMPLETED ED-HD",
+     "page": 2017,
+     "values": [
+      {
+       "code": 0,
+       "text": "Completed no grades of school"
+      },
+      {
+       "range": [
+        1,
+        17
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA"
+      }
+     ]
+    },
+    "ER65460": {
+     "label": "COMPLETED ED-SP",
+     "page": 2018,
+     "values": [
+      {
+       "range": [
+        1,
+        17
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: completed no grades of school; no Spouse/Partner in FU (ER61347=5)"
+      }
+     ]
+    }
+   }
+  },
+  "2017": {
+   "codebook": {
+    "path": "family/2017/FAM2017ER_codebook.pdf",
+    "sha256": "19bfba9f7a3fecc82a18711466e2b2a5f00b49c9d3db0f9f8587795fad2bf8c1"
+   },
+   "formats_sas": null,
+   "variables": {
+    "ER70736": {
+     "label": "K33 STATE SPOUSE WAS BORN",
+     "page": 1708,
+     "values": [
+      {
+       "range": [
+        1,
+        56
+       ],
+       "text": "Actual state (FIPS code)"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER67399=5); U.S. territory or foreign country"
+      }
+     ]
+    },
+    "ER70737": {
+     "label": "K33YR YEAR CAME TO UNITED STATES-SP",
+     "page": 1708,
+     "values": [
+      {
+       "range": [
+        1920,
+        2017
+       ],
+       "text": "Actual year"
+      },
+      {
+       "code": 9997,
+       "text": "Not living in the United States"
+      },
+      {
+       "code": 9999,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER67399=5); Spouse/Partner was born in the United States or U.S. territory"
+      }
+     ]
+    },
+    "ER70743": {
+     "label": "K39 SPANISH DESCENT-SPOUSE",
+     "page": 1709,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER67399=5); not Spanish, Hispanic or Latino"
+      }
+     ]
+    },
+    "ER70744": {
+     "label": "K40 RACE OF SPOUSE-MENTION 1",
+     "page": 1710,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER67399=5)"
+      }
+     ]
+    },
+    "ER70745": {
+     "label": "K40 RACE OF SPOUSE-MENTION 2",
+     "page": 1710,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER67399=5); DK, NA, or RF to first mention (ER70744=9); no second mention"
+      }
+     ]
+    },
+    "ER70746": {
+     "label": "K40 RACE OF SPOUSE-MENTION 3",
+     "page": 1710,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER67399=5); DK, NA, or RF to first mention (ER70744=9); fewer than three mentions"
+      }
+     ]
+    },
+    "ER70747": {
+     "label": "K40 RACE OF SPOUSE-MENTION 4",
+     "page": 1711,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER67399=5); DK, NA, or RF to first mention (ER70744=9); fewer than four mentions"
+      }
+     ]
+    },
+    "ER70874": {
+     "label": "L33 STATE REFERENCE PERSON WAS BORN",
+     "page": 1799,
+     "values": [
+      {
+       "range": [
+        1,
+        56
+       ],
+       "text": "Actual state (FIPS code)"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: U.S. territory or foreign country"
+      }
+     ]
+    },
+    "ER70875": {
+     "label": "L33YR YEAR CAME TO UNITED STATES-RP",
+     "page": 1799,
+     "values": [
+      {
+       "range": [
+        1901,
+        2017
+       ],
+       "text": "Actual year"
+      },
+      {
+       "code": 9997,
+       "text": "Not living in the United States"
+      },
+      {
+       "code": 9999,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: Reference Person was born in the United States or U.S. territory"
+      }
+     ]
+    },
+    "ER70881": {
+     "label": "L39 SPANISH DESCENT-RP",
+     "page": 1801,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: not Spanish, Hispanic or Latino"
+      }
+     ]
+    },
+    "ER70882": {
+     "label": "L40 RACE OF REFERENCE PERSON-MENTION 1",
+     "page": 1802,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      }
+     ]
+    },
+    "ER70883": {
+     "label": "L40 RACE OF REFERENCE PERSON-MENTION 2",
+     "page": 1802,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: DK, NA, or RF to first mention (ER70882=9); no second mention"
+      }
+     ]
+    },
+    "ER70884": {
+     "label": "L40 RACE OF REFERENCE PERSON-MENTION 3",
+     "page": 1802,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: DK, NA, or RF to first mention (ER70882=9); fewer than three mentions"
+      }
+     ]
+    },
+    "ER70885": {
+     "label": "L40 RACE OF REFERENCE PERSON-MENTION 4",
+     "page": 1803,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: DK, NA, or RF to first mention (ER70882=9); fewer than four mentions"
+      }
+     ]
+    },
+    "ER71538": {
+     "label": "COMPLETED ED-RP",
+     "page": 2071,
+     "values": [
+      {
+       "code": 0,
+       "text": "Completed no grades of school"
+      },
+      {
+       "range": [
+        1,
+        17
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA"
+      }
+     ]
+    },
+    "ER71539": {
+     "label": "COMPLETED ED-SP",
+     "page": 2072,
+     "values": [
+      {
+       "range": [
+        1,
+        17
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: completed no grades of school; no Spouse/Partner in FU (ER67399=5)"
+      }
+     ]
+    }
+   }
+  },
+  "2019": {
+   "codebook": {
+    "path": "family/2019/fam2019er_codebook.pdf",
+    "sha256": "ce637e37e0f5e306dd7f10455e85069b56c9b13d5c138d3eb4b9c8d6a8452406"
+   },
+   "formats_sas": null,
+   "variables": {
+    "ER76744": {
+     "label": "K33 STATE SPOUSE WAS BORN",
+     "page": 1706,
+     "values": [
+      {
+       "range": [
+        1,
+        56
+       ],
+       "text": "Actual state (FIPS code)"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER73422=5); U.S. territory or foreign country"
+      }
+     ]
+    },
+    "ER76745": {
+     "label": "K33YR YEAR CAME TO UNITED STATES-SP",
+     "page": 1706,
+     "values": [
+      {
+       "range": [
+        1920,
+        2019
+       ],
+       "text": "Actual year"
+      },
+      {
+       "code": 9997,
+       "text": "Not living in the United States"
+      },
+      {
+       "code": 9999,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER73422=5); Spouse/Partner was born in the United States or U.S. territory"
+      }
+     ]
+    },
+    "ER76751": {
+     "label": "K39 SPANISH DESCENT-SPOUSE",
+     "page": 1707,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER73422=5); not Spanish, Hispanic or Latino"
+      }
+     ]
+    },
+    "ER76752": {
+     "label": "K40 RACE OF SPOUSE-MENTION 1",
+     "page": 1708,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER73422=5)"
+      }
+     ]
+    },
+    "ER76753": {
+     "label": "K40 RACE OF SPOUSE-MENTION 2",
+     "page": 1708,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER73422=5); DK, NA, or RF to first mention (ER76752=9); no second mention"
+      }
+     ]
+    },
+    "ER76754": {
+     "label": "K40 RACE OF SPOUSE-MENTION 3",
+     "page": 1708,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER73422=5); DK, NA, or RF to first mention (ER76752=9); fewer than three mentions"
+      }
+     ]
+    },
+    "ER76755": {
+     "label": "K40 RACE OF SPOUSE-MENTION 4",
+     "page": 1709,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER73422=5); DK, NA, or RF to first mention (ER76752=9); fewer than four mentions"
+      }
+     ]
+    },
+    "ER76889": {
+     "label": "L33 STATE REFERENCE PERSON WAS BORN",
+     "page": 1791,
+     "values": [
+      {
+       "range": [
+        1,
+        56
+       ],
+       "text": "Actual state (FIPS code)"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: U.S. territory or foreign country"
+      }
+     ]
+    },
+    "ER76890": {
+     "label": "L33YR YEAR CAME TO UNITED STATES-RP",
+     "page": 1791,
+     "values": [
+      {
+       "range": [
+        1901,
+        2019
+       ],
+       "text": "Actual year"
+      },
+      {
+       "code": 9997,
+       "text": "Not living in the United States"
+      },
+      {
+       "code": 9999,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: Reference Person was born in the United States or U.S. territory"
+      }
+     ]
+    },
+    "ER76896": {
+     "label": "L39 SPANISH DESCENT-RP",
+     "page": 1792,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: not Spanish, Hispanic or Latino"
+      }
+     ]
+    },
+    "ER76897": {
+     "label": "L40 RACE OF REFERENCE PERSON-MENTION 1",
+     "page": 1793,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      }
+     ]
+    },
+    "ER76898": {
+     "label": "L40 RACE OF REFERENCE PERSON-MENTION 2",
+     "page": 1793,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: DK, NA, or RF to first mention (ER76897=9); no second mention"
+      }
+     ]
+    },
+    "ER76899": {
+     "label": "L40 RACE OF REFERENCE PERSON-MENTION 3",
+     "page": 1793,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: DK, NA, or RF to first mention (ER76897=9); fewer than three mentions"
+      }
+     ]
+    },
+    "ER76900": {
+     "label": "L40 RACE OF REFERENCE PERSON-MENTION 4",
+     "page": 1794,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: DK, NA, or RF to first mention (ER76897=9); fewer than four mentions"
+      }
+     ]
+    },
+    "ER77599": {
+     "label": "COMPLETED ED-RP",
+     "page": 2056,
+     "values": [
+      {
+       "code": 0,
+       "text": "Completed no grades of school"
+      },
+      {
+       "range": [
+        1,
+        17
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA"
+      }
+     ]
+    },
+    "ER77600": {
+     "label": "COMPLETED ED-SP",
+     "page": 2057,
+     "values": [
+      {
+       "range": [
+        1,
+        17
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: completed no grades of school; no Spouse/Partner in FU (ER73422=5)"
+      }
+     ]
+    }
+   }
+  },
+  "2021": {
+   "codebook": {
+    "path": "family/2021/FAM2021ER_codebook.pdf",
+    "sha256": "e3b88ef394952fa05b9b98eb7f05bf9a99896840515942562aa37399e1bcd462"
+   },
+   "formats_sas": {
+    "path": "family/2021/FAM2021ER_formats.sas",
+    "sha256": "0f38201437ece15f8c5ac1b8c773e36e8f2db25e362aa0434b75a34cea3e0e99"
+   },
+   "variables": {
+    "ER81009": {
+     "label": "K33 STATE SPOUSE WAS BORN",
+     "page": 1048,
+     "values": [
+      {
+       "range": [
+        1,
+        56
+       ],
+       "text": "Actual state (FIPS code)"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER79524=5); U.S. territory or foreign country"
+      }
+     ]
+    },
+    "ER81010": {
+     "label": "K33YR YEAR CAME TO UNITED STATES-SP",
+     "page": 1048,
+     "values": [
+      {
+       "range": [
+        1920,
+        2021
+       ],
+       "text": "Actual year"
+      },
+      {
+       "code": 9997,
+       "text": "Not living in the United States"
+      },
+      {
+       "code": 9999,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER79524=5); Spouse/Partner was born in the United States or U.S. territory"
+      }
+     ]
+    },
+    "ER81016": {
+     "label": "K39 SPANISH DESCENT-SPOUSE",
+     "page": 1050,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER79524=5); not Spanish, Hispanic or Latino"
+      }
+     ]
+    },
+    "ER81017": {
+     "label": "K40 RACE OF SPOUSE-MENTION 1",
+     "page": 1050,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER79524=5)"
+      }
+     ]
+    },
+    "ER81018": {
+     "label": "K40 RACE OF SPOUSE-MENTION 2",
+     "page": 1050,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER79524=5); DK, NA, or RF to first mention (ER81017=9); no second mention"
+      }
+     ]
+    },
+    "ER81019": {
+     "label": "K40 RACE OF SPOUSE-MENTION 3",
+     "page": 1051,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER79524=5); DK, NA, or RF to first mention (ER81017=9); fewer than three mentions"
+      }
+     ]
+    },
+    "ER81020": {
+     "label": "K40 RACE OF SPOUSE-MENTION 4",
+     "page": 1051,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER79524=5); DK, NA, or RF to first mention (ER81017=9); fewer than four mentions"
+      }
+     ]
+    },
+    "ER81136": {
+     "label": "L33 STATE REFERENCE PERSON WAS BORN",
+     "page": 1122,
+     "values": [
+      {
+       "range": [
+        1,
+        56
+       ],
+       "text": "Actual state (FIPS code)"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: U.S. territory or foreign country"
+      }
+     ]
+    },
+    "ER81137": {
+     "label": "L33YR YEAR CAME TO UNITED STATES-RP",
+     "page": 1122,
+     "values": [
+      {
+       "range": [
+        1901,
+        2021
+       ],
+       "text": "Actual year"
+      },
+      {
+       "code": 9997,
+       "text": "Not living in the United States"
+      },
+      {
+       "code": 9999,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: Reference Person was born in the United States or U.S. territory"
+      }
+     ]
+    },
+    "ER81143": {
+     "label": "L39 SPANISH DESCENT-RP",
+     "page": 1123,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: not Spanish, Hispanic or Latino"
+      }
+     ]
+    },
+    "ER81144": {
+     "label": "L40 RACE OF REFERENCE PERSON-MENTION 1",
+     "page": 1124,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      }
+     ]
+    },
+    "ER81145": {
+     "label": "L40 RACE OF REFERENCE PERSON-MENTION 2",
+     "page": 1124,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: DK, NA, or RF to first mention (ER81144=9); no second mention"
+      }
+     ]
+    },
+    "ER81146": {
+     "label": "L40 RACE OF REFERENCE PERSON-MENTION 3",
+     "page": 1124,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: DK, NA, or RF to first mention (ER81144=9); fewer than three mentions"
+      }
+     ]
+    },
+    "ER81147": {
+     "label": "L40 RACE OF REFERENCE PERSON-MENTION 4",
+     "page": 1125,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: DK, NA, or RF to first mention (ER81144=9); fewer than four mentions"
+      }
+     ]
+    },
+    "ER81926": {
+     "label": "COMPLETED ED-RP",
+     "page": 1420,
+     "values": [
+      {
+       "code": 0,
+       "text": "Completed no grades of school"
+      },
+      {
+       "range": [
+        1,
+        17
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA"
+      }
+     ]
+    },
+    "ER81927": {
+     "label": "COMPLETED ED-SP",
+     "page": 1421,
+     "values": [
+      {
+       "range": [
+        1,
+        17
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: completed no grades of school; no Spouse/Partner in FU (ER79524=5)"
+      }
+     ]
+    }
+   }
+  },
+  "2023": {
+   "codebook": {
+    "path": "family/2023/FAM2023ER_codebook.pdf",
+    "sha256": "85a4078ebb79146d023df3d9d4e2d2ef6017eced849656ca39f4b740cb5a5688"
+   },
+   "formats_sas": {
+    "path": "family/2023/FAM2023ER_formats.sas",
+    "sha256": "a1c2c4531369f2857de5502169ac8d70ab12f79c859a650eaeceeb18c36ba17f"
+   },
+   "variables": {
+    "ER84986": {
+     "label": "K33 STATE SPOUSE WAS BORN",
+     "page": 1039,
+     "values": [
+      {
+       "range": [
+        1,
+        56
+       ],
+       "text": "Actual state (FIPS code)"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER83493=5); U.S. territory or foreign country"
+      }
+     ]
+    },
+    "ER84987": {
+     "label": "K33YR YEAR CAME TO UNITED STATES-SP",
+     "page": 1039,
+     "values": [
+      {
+       "range": [
+        1920,
+        2023
+       ],
+       "text": "Actual year"
+      },
+      {
+       "code": 9997,
+       "text": "Not living in the United States"
+      },
+      {
+       "code": 9999,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER83493=5); Spouse/Partner was born in the United States or U.S. territory"
+      }
+     ]
+    },
+    "ER84993": {
+     "label": "K39 SPANISH DESCENT-SPOUSE",
+     "page": 1041,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER83493=5); not Spanish, Hispanic or Latino"
+      }
+     ]
+    },
+    "ER84994": {
+     "label": "K40 RACE OF SPOUSE-MENTION 1",
+     "page": 1041,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER83493=5)"
+      }
+     ]
+    },
+    "ER84995": {
+     "label": "K40 RACE OF SPOUSE-MENTION 2",
+     "page": 1041,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER83493=5); DK, NA, or RF to first mention (ER84994=9); no second mention"
+      }
+     ]
+    },
+    "ER84996": {
+     "label": "K40 RACE OF SPOUSE-MENTION 3",
+     "page": 1042,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER83493=5); DK, NA, or RF to first mention (ER84994=9); fewer than three mentions"
+      }
+     ]
+    },
+    "ER84997": {
+     "label": "K40 RACE OF SPOUSE-MENTION 4",
+     "page": 1042,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: no Spouse/Partner in FU (ER83493=5); DK, NA, or RF to first mention (ER84994=9); fewer than four mentions"
+      }
+     ]
+    },
+    "ER85113": {
+     "label": "L33 STATE REFERENCE PERSON WAS BORN",
+     "page": 1113,
+     "values": [
+      {
+       "range": [
+        1,
+        56
+       ],
+       "text": "Actual state (FIPS code)"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: U.S. territory or foreign country"
+      }
+     ]
+    },
+    "ER85114": {
+     "label": "L33YR YEAR CAME TO UNITED STATES-RP",
+     "page": 1113,
+     "values": [
+      {
+       "range": [
+        1901,
+        2023
+       ],
+       "text": "Actual year"
+      },
+      {
+       "code": 9997,
+       "text": "Not living in the United States"
+      },
+      {
+       "code": 9999,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: Reference Person was born in the United States or U.S. territory"
+      }
+     ]
+    },
+    "ER85120": {
+     "label": "L39 SPANISH DESCENT-RP",
+     "page": 1114,
+     "values": [
+      {
+       "code": 1,
+       "text": "Mexican"
+      },
+      {
+       "code": 2,
+       "text": "Mexican American"
+      },
+      {
+       "code": 3,
+       "text": "Chicano"
+      },
+      {
+       "code": 4,
+       "text": "Puerto Rican"
+      },
+      {
+       "code": 5,
+       "text": "Cuban"
+      },
+      {
+       "code": 7,
+       "text": "Other Spanish; Hispanic; Latino"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: not Spanish, Hispanic or Latino"
+      }
+     ]
+    },
+    "ER85121": {
+     "label": "L40 RACE OF REFERENCE PERSON-MENTION 1",
+     "page": 1115,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 9,
+       "text": "DK; NA; refused"
+      }
+     ]
+    },
+    "ER85122": {
+     "label": "L40 RACE OF REFERENCE PERSON-MENTION 2",
+     "page": 1115,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: DK, NA, or RF to first mention (ER85121=9); no second mention"
+      }
+     ]
+    },
+    "ER85123": {
+     "label": "L40 RACE OF REFERENCE PERSON-MENTION 3",
+     "page": 1115,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: DK, NA, or RF to first mention (ER85121=9); fewer than three mentions"
+      }
+     ]
+    },
+    "ER85124": {
+     "label": "L40 RACE OF REFERENCE PERSON-MENTION 4",
+     "page": 1116,
+     "values": [
+      {
+       "code": 1,
+       "text": "White"
+      },
+      {
+       "code": 2,
+       "text": "Black, African-American, or Negro"
+      },
+      {
+       "code": 3,
+       "text": "American Indian or Alaska Native"
+      },
+      {
+       "code": 4,
+       "text": "Asian"
+      },
+      {
+       "code": 5,
+       "text": "Native Hawaiian or Pacific Islander"
+      },
+      {
+       "code": 7,
+       "text": "Other"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: DK, NA, or RF to first mention (ER85121=9); fewer than four mentions"
+      }
+     ]
+    },
+    "ER85780": {
+     "label": "COMPLETED ED-RP",
+     "page": 1338,
+     "values": [
+      {
+       "code": 0,
+       "text": "Completed no grades of school"
+      },
+      {
+       "range": [
+        1,
+        17
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA"
+      }
+     ]
+    },
+    "ER85781": {
+     "label": "COMPLETED ED-SP",
+     "page": 1339,
+     "values": [
+      {
+       "range": [
+        1,
+        17
+       ],
+       "text": "Actual number"
+      },
+      {
+       "code": 99,
+       "text": "DK; NA"
+      },
+      {
+       "code": 0,
+       "text": "Inap.: completed no grades of school; no Spouse/Partner in FU (ER83493=5)"
+      }
+     ]
+    }
+   }
+  }
+ },
+ "generated_by": "scripts/build_group_attribute_codebook_values.py",
+ "note": "Documentation only: labels, value codes and their text from the staged PSID family codebook PDFs. No data value or count is recorded.",
+ "schema_version": "psid_group_attribute_codebook.v1"
+}
