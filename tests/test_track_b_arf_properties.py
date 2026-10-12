@@ -326,6 +326,50 @@ def test_zero_credits_matches_g_exactly_and_remaining_months_differential(
 
 
 @settings(deadline=None)
+@example(F("26.2"), F(15), F("15.1"), 0)
+@example(F(650), F(200), F(208), 0)
+@given(amounts, amounts, amounts, st.integers(0, 60))
+def test_post_arf_own_payable_offset_is_independent_of_pia_and_idempotent(
+    unreduced, own_pia, own_payable, credited
+):
+    """RS 00615.500A.1: subtract supplied own payment after spouse ARF.
+
+    PIA and payable vary independently, including separately adjusted own
+    benefits. G supplies the same spouse reduction; tolerance is zero.
+    """
+    own = a.SpouseOwnBenefit(
+        own_pia, own_payable, a.SpouseOwnSequence.AFTER_SPOUSE_ARF
+    )
+    claim = a.ARFClaim(
+        a.ARFBenefitKind.SPOUSE,
+        date(1960, 1, 2),
+        (2022, 1),
+        unreduced,
+        full_work_deduction_months=months(g.YearMonth(2022, 1), credited),
+        spouse_own=own,
+    )
+    result = a.apply_arf(claim, payment_month=(2028, 1), params=PARAMS)
+    expected = max(
+        F(0),
+        g.spouse_age_reduced(unreduced, 60 - credited, PARAMS) - own_payable,
+    )
+    assert result.benefit == expected
+    assert result.whole_dollar_benefit == g.whole_dollars(expected)
+    changed_pia = replace(
+        claim, spouse_own=replace(own, pia=own_pia + F(1, 10))
+    )
+    assert (
+        a.apply_arf(
+            changed_pia, payment_month=(2028, 1), params=PARAMS
+        ).benefit
+        == expected
+    )
+    assert (
+        a.apply_arf(result, payment_month=(2028, 1), params=PARAMS) == result
+    )
+
+
+@settings(deadline=None)
 @given(st.dates(min_value=date(1938, 1, 1), max_value=date(2000, 12, 31)))
 def test_fra_calendar_differential_with_original_cohort_schedule(birth):
     """Independent month assembly; same R1/G parameter schedule, zero tolerance."""
@@ -392,3 +436,61 @@ def test_invalid_age_precedes_any_disabled_widow_coverage_refusal(
     )
     with pytest.raises(g.InvalidFamilyInput):
         a.apply_arf(claim, payment_month=(2027, 1), params=PARAMS)
+
+
+@settings(deadline=None)
+@example("bracket", 35, "explicit", F(0), 1)
+@given(
+    st.sampled_from(["bracket", "first-rate", "later-rate"]),
+    st.integers(0, 120).filter(lambda value: value != 36),
+    st.sampled_from(["ordinary", "explicit", "historical", "reentitlement"]),
+    amounts,
+    st.integers(0, 100),
+)
+def test_invalid_statutory_parameters_never_become_arf_refusals(
+    field, bad_bracket, coverage, amount, weight
+):
+    """G's bundle errors propagate identically through all ARF entrypoints."""
+    overrides = {
+        "bracket": {"early_first_bracket_months": bad_bracket},
+        "first-rate": {"early_monthly_rates": (0, 0.00416667)},
+        "later-rate": {"early_monthly_rates": (0.00555556, 0)},
+    }[field]
+    params = ssa_params(**overrides)
+    with pytest.raises(ValueError) as expected:
+        g.statutory_rates(params)
+    claim = rib_claim(unreduced_benefit=amount)
+    payment = g.YearMonth(2027, 1)
+    if coverage == "explicit":
+        claim = replace(
+            claim,
+            conditions=iter([a.ARFUnsupportedReason.OTHER_SUSPENSION]),
+        )
+    elif coverage == "historical":
+        claim = replace(
+            claim,
+            birth_date=date(1915, 1, 2),
+            first_reduction_month=(1977, 1),
+        )
+    elif coverage == "reentitlement":
+        claim = replace(
+            claim,
+            kind=a.ARFBenefitKind.SPOUSE,
+            nonentitlement_months={(2022, 2)},
+        )
+        payment = g.YearMonth(2024, 1)
+
+    def compute():
+        return a.apply_arf(claim, payment_month=payment, params=params)
+
+    def evaluate():
+        return a.evaluate_arf("invalid", F(weight), compute)
+
+    for invoke in (
+        compute,
+        evaluate,
+        lambda: a.count_arf_outcomes(evaluate() for _ in range(2)),
+    ):
+        with pytest.raises(ValueError) as caught:
+            invoke()
+        assert str(caught.value) == str(expected.value)

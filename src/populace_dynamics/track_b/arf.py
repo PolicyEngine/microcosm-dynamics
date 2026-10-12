@@ -27,8 +27,10 @@ Pre-FRA spouse reentitlement is refused because RS 00615.201A.1 and
 .491A conflict on when termination months leave the reduction factor.
 
 Unsupported configurations raise FamilyConfigurationUnsupported with
-named ARF reasons. Invalid inputs are checked first. evaluate_arf and
-count_arf_outcomes retain every refusal in the weighted denominator.
+named ARF reasons. Invalid inputs, including G's statutory rate bundle,
+are checked before coverage and benefit arithmetic. Parameter ValueErrors
+propagate through evaluate_arf and count_arf_outcomes; only valid coverage
+refusals enter the weighted denominator.
 This module does not assemble payments, deductions, or event histories.
 """
 
@@ -51,6 +53,7 @@ from populace_dynamics.track_b.gross_benefits import (
     count_family_outcomes,
     floor_dime,
     spouse_reduction_fraction,
+    statutory_rates,
     survivor_reduction_fraction,
     whole_dollars,
     widow_reduction_period_months,
@@ -310,7 +313,7 @@ class ARFResult:
 
 
 def _check_claim(claim: ARFClaim, params: SSAParameters) -> ARFClaim:
-    """Validate all inputs before deciding whether coverage is supported."""
+    """Validate claim and statutory bundle before coverage or money rules."""
     if not isinstance(claim, ARFClaim):
         raise InvalidFamilyInput("claim must be an ARFClaim")
     if not isinstance(claim.kind, ARFBenefitKind):
@@ -384,6 +387,7 @@ def _check_claim(claim: ARFClaim, params: SSAParameters) -> ARFClaim:
             _amount(own.payable, "own payable"),
             own.sequence,
         )
+    statutory_rates(params)
     fra = _fra_month_for_input_validation(claim.birth_date, claim.kind, params)
     if claim.kind is ARFBenefitKind.WIDOW:
         minimum_age = (

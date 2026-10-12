@@ -18,6 +18,26 @@ from tests.track_b_gross_benefit_support import ssa_params
 PARAMS = ssa_params()
 FRA = g.YearMonth(2027, 1)
 
+INVALID_RIB_PARAMETERS = [
+    pytest.param(
+        {"early_first_bracket_months": 35},
+        "early_first_bracket_months must be 36 (402(q))",
+        id="bracket",
+    ),
+    pytest.param(
+        {"early_monthly_rates": (0, 0.00416667)},
+        "Parameter bundle early_monthly_rates[0]=0 disagrees with the "
+        "statutory 1/180; refusing to compute gross benefits.",
+        id="first-rate",
+    ),
+    pytest.param(
+        {"early_monthly_rates": (0.00555556, 0)},
+        "Parameter bundle early_monthly_rates[1]=0 disagrees with the "
+        "statutory 1/240; refusing to compute gross benefits.",
+        id="later-rate",
+    ),
+]
+
 
 def months(first, count):
     """Generate invented final deduction months, independently of ARF."""
@@ -371,6 +391,40 @@ def test_own_entitlement_after_spouse_arf_preserves_spouse_adjustment():
 
 
 @pytest.mark.parametrize(
+    "unreduced,own_pia,own_payable,expected,whole_dollars",
+    [
+        (F("26.2"), F(15), F("15.1"), F("1.9"), 1),
+        (F(650), F(200), F(208), F("214.5"), 214),
+    ],
+)
+def test_own_entitlement_after_spouse_arf_offsets_own_payable_not_pia(
+    unreduced, own_pia, own_payable, expected, whole_dollars
+):
+    """Invented reviewer cases: separately adjusted own RIB changes money.
+
+    At 60 RF the single spouse rates are $17.00 and $422.50. The supplied
+    own payments, $15.10 and $208.00, leave $1.90/$1 and $214.50/$214.
+    RS 00615.500A.1 preserves the spouse ARF before this own offset.
+    """
+    claim = a.ARFClaim(
+        a.ARFBenefitKind.SPOUSE,
+        date(1960, 1, 2),
+        (2022, 1),
+        unreduced,
+        spouse_own=a.SpouseOwnBenefit(
+            own_pia, own_payable, a.SpouseOwnSequence.AFTER_SPOUSE_ARF
+        ),
+    )
+    result = a.apply_arf(claim, payment_month=(2028, 1), params=PARAMS)
+    assert result.adjusted_reduction_months == 60
+    assert result.benefit == expected
+    assert result.whole_dollar_benefit == whole_dollars
+    assert (
+        a.apply_arf(result, payment_month=(2028, 1), params=PARAMS) == result
+    )
+
+
+@pytest.mark.parametrize(
     "kind,first",
     [
         (a.ARFBenefitKind.RIB, (2021, 12)),
@@ -670,3 +724,112 @@ def test_poms_00615_015_date_erratum_is_pinned_against_correct_table():
         ).original_reduction_months
         == 37
     )
+
+
+@pytest.mark.parametrize("overrides,message", INVALID_RIB_PARAMETERS)
+@pytest.mark.parametrize("entrypoint", ["apply", "evaluate", "count"])
+@pytest.mark.parametrize(
+    "claim,payment",
+    [
+        pytest.param(
+            rib_claim(first_reduction_month=(2027, 1), unreduced_benefit=F(0)),
+            FRA,
+            id="ordinary-zero-rf",
+        ),
+        pytest.param(
+            rib_claim(
+                first_reduction_month=(2027, 1),
+                unreduced_benefit=F(0),
+                conditions=iter([a.ARFUnsupportedReason.OTHER_SUSPENSION]),
+            ),
+            FRA,
+            id="explicit-suspension-zero-rf",
+        ),
+        pytest.param(
+            rib_claim(
+                birth_date=date(1915, 1, 2),
+                first_reduction_month=(1977, 1),
+                unreduced_benefit=F(0),
+            ),
+            (1983, 1),
+            id="automatic-historical-entitlement",
+        ),
+        pytest.param(
+            rib_claim(
+                birth_date=date(1920, 1, 2),
+                first_reduction_month=(1982, 1),
+                unreduced_benefit=F(0),
+            ),
+            (1982, 1),
+            id="automatic-historical-payment",
+        ),
+        pytest.param(
+            a.ARFClaim(
+                a.ARFBenefitKind.WIDOW,
+                date(1911, 1, 2),
+                (1972, 1),
+                F(0),
+            ),
+            (1983, 1),
+            id="automatic-historical-widow-conflict",
+        ),
+        pytest.param(
+            a.ARFClaim(
+                a.ARFBenefitKind.SPOUSE,
+                date(1960, 1, 2),
+                (2022, 1),
+                F(0),
+                nonentitlement_months={(2022, 2)},
+            ),
+            (2024, 1),
+            id="automatic-spouse-reentitlement",
+        ),
+        pytest.param(
+            a.ARFClaim(
+                a.ARFBenefitKind.SPOUSE,
+                date(1960, 1, 2),
+                (2022, 1),
+                F(0),
+                spouse_own=a.SpouseOwnBenefit(
+                    F(200), F(160), a.SpouseOwnSequence.AFTER_SPOUSE_BEFORE_ARF
+                ),
+            ),
+            FRA,
+            id="automatic-own-entitlement-sequence",
+        ),
+    ],
+)
+def test_invalid_rib_parameters_precede_all_arf_refusals_and_counts(
+    overrides, message, entrypoint, claim, payment
+):
+    """Invalid bundles propagate; no unsupported outcome is constructed."""
+    params = ssa_params(**overrides)
+
+    def compute():
+        return a.apply_arf(claim, payment_month=payment, params=params)
+
+    with pytest.raises(ValueError) as caught:
+        if entrypoint == "apply":
+            compute()
+        elif entrypoint == "evaluate":
+            a.evaluate_arf("invalid", F(1), compute)
+        else:
+            a.count_arf_outcomes(
+                a.evaluate_arf(key, F(1), compute) for key in ("left", "right")
+            )
+    assert str(caught.value) == message
+
+
+@pytest.mark.parametrize("overrides,message", INVALID_RIB_PARAMETERS)
+def test_invalid_rib_parameters_precede_arf_money_arithmetic(
+    monkeypatch, overrides, message
+):
+    def forbidden(*args, **kwargs):
+        pytest.fail("invalid statutory bundle reached money arithmetic")
+
+    monkeypatch.setattr(a, "worker_reduction_fraction", forbidden)
+    with pytest.raises(ValueError) as caught:
+        a.apply_arf(
+            rib_claim(), payment_month=FRA, params=ssa_params(**overrides)
+        )
+    assert str(caught.value) == message

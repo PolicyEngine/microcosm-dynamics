@@ -38,6 +38,18 @@ refusal. Iterator and immutable-set inputs have exactly the same supported
 results and refusal reasons. This implements deterministic record-specific
 credits and retention of unsupported rows under design sections 6 and 7.
 
+ARF input validation also calls G's `statutory_rates` to check the complete
+shared rate bundle, including the RIB rates and 36-month bracket
+(402(q)(1)(A); 20 CFR 404.410; RS 00615.101). A mismatched bundle raises
+G's original `ValueError` before any explicit or automatic coverage
+refusal and before benefit arithmetic. That error propagates through
+`apply_arf`, `evaluate_arf` and lazy inputs to `count_arf_outcomes`; no
+unsupported outcome or denominator is constructed for the invalid row.
+Valid coverage refusals still precede benefit arithmetic. Recomputation
+uses a separate parameter surface: required NAWI and contribution bases
+are already validated before coverage; ARF age-reduction rates are not
+inputs to its original 90/32/15-percent formula (415(a)(1), (f)(2)(C)).
+
 ARF applies at FRA for RIB and spouses. Ordinary widow adjustments apply at
 age 62 and again at widow FRA; credits recognized at 62 persist until FRA,
 without adding intervening credits early (402(q)(1)(B)(ii); 20 CFR
@@ -54,6 +66,14 @@ already adjusted for any family maximum. G's `worker_reduction_fraction`,
 spreads 28.5 percent across the cohort's full reduction period. The money
 reduction rounds upward to a dime, then the benefit rounds downward to a
 whole dollar separately (402(q)(8)-(9); RS 00615.101, .201, .301).
+
+When own entitlement starts after completed spouse ARF, retain the single
+spouse adjustment and subtract the supplied independently adjusted own
+payment, bounded below by zero (402(k)(3)(A); RS 00615.500A.1). Own PIA
+and payable may differ, including because of delayed retirement credits.
+Varying own PIA with that payment fixed leaves this spouse component
+unchanged. Reapplication retains the supplied payment. Concurrent or
+preceding own entitlement uses the excess over own PIA under .500A.2.
 
 Recomputation extends computation base years through the earnings year,
 while preserving the original indexing year, computation-year count and
@@ -152,6 +172,8 @@ Each row has a Hypothesis property test beside the example tests.
 | Zero credits preserve G's benefit; benefits are dime multiples in [0, unreduced amount], factors in [0, 1] | `test_zero_credits_matches_g_exactly_and_remaining_months_differential` |
 | FRA follows the original cohort schedule and SSA day-before-birthday calendar | `test_fra_calendar_differential_with_original_cohort_schedule` |
 | Invalid age inputs remain errors even with an exceptional-history refusal flag | `test_invalid_age_precedes_any_disabled_widow_coverage_refusal` |
+| G's statutory parameter errors propagate unchanged before explicit and automatic ARF refusals through application, evaluation and counting; invalid inputs never become unsupported rows | `test_invalid_statutory_parameters_never_become_arf_refusals` |
+| After completed spouse ARF, the benefit is the nonnegative excess of G's exact adjusted spouse amount over supplied own payable; own PIA changes alone do not affect it, whole dollars floor that excess, and reapplication preserves it | `test_post_arf_own_payable_offset_is_independent_of_pia_and_idempotent` |
 | Every ARF row and its weight remains in the denominator | `test_refusal_denominator_keeps_every_weight` |
 | Original indexing, computation count and per-year caps match an independent Fraction reference; later NAWI cannot change earlier indexing | `test_original_index_count_and_caps_against_independent_fraction_reference` |
 | Original ordinary computation-year count agrees with the statutory count and stays frozen | `test_frozen_ordinary_year_count_matches_original_statutory_count` |
@@ -186,6 +208,19 @@ months leave 48 months: 25 percent reduction, $325, gives $975. All 60
 months credited give $1,300. Dime values are $910.00/$975.00/$1,300.00;
 whole-dollar benefits are 910/975/1300. RS 00615.480-.598 contains no numeric
 ARF worked examples, so the other ARF combinations are invented cases.
+
+Two invented post-ARF own-entitlement cases distinguish own PIA from own
+payable under RS 00615.500A.1. Both use birth January 2, 1960, first spouse
+entitlement January 2022, no credits and payment January 2028: 60 RF gives
+a 35-percent reduction. Unreduced spouse amount $26.20 has reduction
+$9.17 rounded up to $9.20, leaving $17.00. Own PIA $15.00 with independently
+adjusted own payable $15.10 leaves $1.90 and whole-dollar $1; using the
+PIA as offset would instead give $2.00/$2. Unreduced $650.00 has reduction
+$227.50 and adjusted spouse amount $422.50. Own PIA $200.00 and payable
+$208.00 leave $214.50/$214; a PIA offset would give $222.50/$222. Both
+cases and repeated application are pinned by
+`test_own_entitlement_after_spouse_arf_offsets_own_payable_not_pia`. Their
+figures are invented diagnostics, not published worked-example figures.
 
 RS 00615.015 contains twelve birthday cases. Intermediate dime benefits
 below are derived exactly; the source prints whole-dollar payments.
@@ -247,6 +282,12 @@ Tests also assert the derived whole-dollar amounts: 429 initially,
 448/512/569 for the candidate and 471/539/599 for the original after COLAs.
 
 ## Findings and readings requiring judgment
+
+**Ruling d1418 (Max, 2026-10-12): keep the current defaults, and reopen any
+one when a population target needs it.** The three readings below that
+change money (survivor FRA for births 1911-01-02 to 1912-01-01, nonbinding
+widow(er) child-in-care credits, and the timing of a reentitled spouse's
+termination credits) stay refused by name and counted in denominators.
 
 RS 00615.015 says "In 2/1998 Demi has 37 RF." Its table and the same
 example's payment text say "Demi - $1122 starting 2/2000". Tests pin both;

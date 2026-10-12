@@ -70,6 +70,16 @@ def test_manifest_pins_every_capture():
     }
 
 
+def test_ssa_full_pdf_capture_provenance_names_separate_r2_pr():
+    entry = next(
+        source
+        for source in manifest()["sources"]
+        if source["id"] == "ssa_pub_05_10069_arf_recompute_excerpts"
+    )
+    assert "R2 PR #528" in entry["note"]
+    assert "../ret_ledger_sources/" not in entry["note"]
+
+
 RULE_QUOTES = {
     "poms_rs_00615_003": [
         "FRA for retirement or spouse's benefits is age 65."
@@ -95,7 +105,8 @@ RULE_QUOTES = {
         "all months of termination will be eliminated from the reduction months:"
     ],
     "poms_rs_00615_500": [
-        "The adjusted spouse reduction factor is applied to the excess spouse's benefit."
+        "Entitlement to RIB or DIB does not affect the ARF for the spouse benefit.",
+        "The adjusted spouse reduction factor is applied to the excess spouse's benefit.",
     ],
     "poms_rs_00615_580": ["Different methods are used for these adjustments."],
     "poms_rs_00615_582": [

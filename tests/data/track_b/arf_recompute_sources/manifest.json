@@ -476,7 +476,7 @@
           "sha256": "2ecbfd9234ba445e73259f284d861277ca186d2a8582744a541f2ac1077bbf4f"
         }
       ],
-      "note": "www.ssa.gov answers curl with HTTP 403; PDF fetched in the in-app browser and hashed in-page; text by pdftotext -layout (Poppler). The same PDF is captured in full in ../ret_ledger_sources/ by the R2 lane.",
+      "note": "www.ssa.gov answers curl with HTTP 403; PDF fetched in the in-app browser and hashed in-page; text by pdftotext -layout (Poppler). The full PDF capture is in R2 PR #528.",
       "url": "https://www.ssa.gov/pubs/EN-05-10069.pdf",
       "retrieved_at_utc": "2026-10-11T11:38:33Z",
       "bytes": 1466,
