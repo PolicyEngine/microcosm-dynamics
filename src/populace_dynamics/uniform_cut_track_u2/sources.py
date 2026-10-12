@@ -75,15 +75,15 @@ Code  Income role and spouse slot     Annuity life    Marital resolution
 ====  ==============================  ==============  ===================
 
 This is the section 3 table (``u2-draft-3``'s), amended where Max's
-rulings differ from it.  Under amendment 1c (d637, 2026-09-30,
-section 16b; confirmed by d745 on 2026-10-12) code 88, the first-year
-cohabitor, has the OFUM income role outside the spouse slot, is no
-annuity life, never resolves a marital history by its code and keeps
-its administrative birth support.  Under d1090 (2026-10-10, section
-16c) a 2015 family unit that holds a code-20 person recorded male (blocker B1), and a
-2019-2023 family unit that holds a code-90 or code-92 person (blocker
-B2), supplies no observation to any row: each observation it would have
-supplied is counted under the named disposition
+rulings differ from it.  Under amendment 1c (d637, 2026-09-30, section
+16b; confirmed by d745 on 2026-10-12) code 88, the first-year cohabitor,
+has the OFUM income role outside the spouse slot, is no annuity life,
+never resolves a marital history by its code and keeps its
+administrative birth support.  Under d1090 (2026-10-10, section 16c) a
+2015 family unit that holds a code-20 person recorded male (blocker B1),
+and a 2019-2023 family unit that holds a code-90 or code-92 person
+(blocker B2), supplies no observation to any row: each observation it
+would have supplied is counted under the named disposition
 (:data:`MALE_CODE_20_2015`, :data:`UNCOOPERATIVE_SPOUSE_OR_PARTNER`; the
 rule's :class:`FamilyUnitExclusion`, applied by
 :func:`family_unit_exclusion`), so 2019-2023 codes 90 and 92 have no
@@ -91,9 +91,9 @@ income role.  The committed roles registry resolves the same rule for
 2013-2017 code 90 and 2017 code 92 (adjudication disposition D) and, by
 its d1090 commit, the same exclusions for 2015 code 20 and 2019-2023
 codes 90 and 92, which the adjudication had refused (disposition F); the
-registry gate follows the registry.  The roles registry records the
-same convention for code 88 in every wave (amendment 1c's registry
-commit), so the registry context applies it too.
+registry gate follows the registry.  The roles registry records the same
+convention for code 88 in every wave (amendment 1c's registry commit),
+so the registry context applies it too.
 
 Any other in-family code keeps the inherited OFUM income role with no
 spouse status.  Legacy identifiers ``wife``, ``wife_present`` and
@@ -263,42 +263,43 @@ DECLARED = INVENTED_DECLARED
 #: inherited code-90 meaning, and 1c resolves the six code-88 records
 #: under the first-year cohabitor convention (no blocker remains); the 1c
 #: commit also moved the income bytes, where amendment 2's ten records say
-#: a code-88 cohabitor does not occupy the spouse slot.
+#: a code-88 cohabitor does not occupy the spouse slot.  The six
+#: adjudication notes then record d745 and the 1c commit (six byte pins).
 REGISTRY_SHA256: dict[str, str] = {
     "income": (
-        "9598798b6a5924e71f15f0c3cff6ca445e096540d46f33e87c6d07ff016916e5"
+        "79b8f953eda2111389b762608cea1025fb45d96ceb0468169eaf9ed405b0d4eb"
     ),
     "wealth": (
-        "4fa58c6621738f071fbbc3e0e4ec3b2f6f0db9bcb6a942b43684137aa829a716"
+        "c5c8fa1ddf283c07ac4dcac4490afb9754d336ef3618a159e028ce2b39f874a1"
     ),
     "individual": (
         "283c65c46ccfbc6b3a5b700ec7d0d1783e61c931352455b842828cc0186cedda"
     ),
     "pension": (
-        "bd22e07a8576ea9239818ca40377839c5c3151fffb403f3e5f1ef1549da546cf"
+        "7cc17ff1f6f4a5896b86cafa5edc59028102d28bfcdfa42840d55b628074f3dd"
     ),
     "roles": (
-        "014b4402f65d5cda2ecbc2c038c6b6dc408d2e994ebcc5001de926537d103674"
+        "f10c4a7dff38f74a29291fcec4a96c8c7b31d58561798a10c53094d6dcf393b7"
     ),
     "support": (
-        "533c39187214fef6626e565362b2d97ff393b8d1f0034ffe365a7c87dadada6d"
+        "279515f5dab832155583829aec312078547a28d7152bcd07e90a2cf9bb863b8a"
     ),
     "weights": (
-        "afefd67942e57076775d262849a3edbd292b1158a1a741c0b3811153d87ae738"
+        "47c9f2d1b4b95f8259107d589aadc370b835dc807d45fa5268cf88abd72cc3be"
     ),
     "design": (
         "56181372d412811af6d06f5c0d8d1e071049f7fb73c34bd394aaff8f5e0c2fd6"
     ),
 }
 
-#: The family-file income concepts the U2 income rows need (the union
-#: over the ten rows; section 4).  ``wife_age`` gives the family file's
-#: spouse-slot flag (not 0: "no Spouse/Partner in FU"), which rows U3 (the
-#: couple convention for new enrollment) and U4 (the unit size) read once
-#: :func:`.cohort.income_rows` has held it equal to the roster's unique
-#: spouse-slot occupant (the person whose role rule has ``spouse_slot``).  The spouse age and sex are slot metadata only
-#: (amendment 2, ratified by d637; section 16b): they never decide slot
-#: occupancy, and a disagreement refuses.
+#: The family-file income concepts the U2 income rows need (the union over the
+#: ten rows; section 4).  ``wife_age`` gives the family file's spouse-slot flag
+#: (not 0: "no Spouse/Partner in FU"), which rows U3 (the couple convention for
+#: new enrollment) and U4 (the unit size) read once :func:`.cohort.income_rows`
+#: has held it equal to the roster's unique spouse-slot occupant (the person
+#: whose role rule has ``spouse_slot``).  The spouse age and sex are slot
+#: metadata only (amendment 2, ratified by d637; section 16b): they never
+#: decide slot occupancy, and a disagreement refuses.
 INCOME_CONCEPTS: tuple[str, ...] = (
     "interview",
     "fu_size",
@@ -1016,10 +1017,11 @@ class RoleContext:
     ``registry``: the committed roles registry; any code the loader's
     ``require_resolved`` refuses, refuses here (code 92's absence in 2013
     and 2015; until amendment 1c's registry commit also code 88 in every
-    wave, and until the d1090 commit 2015 code 20 and 2019-2023 codes 90
-    and 92, which now carry section 16c's exclusions).  ``invented_declared``: the declared rules, section 3's
-    table with section 16c's two family-unit exclusions and amendment
-    1c's code-88 convention; accepted only with invented inputs.
+    wave, and until the d1090 commit 2015 code 20 and 2019-2023 codes 90 and
+    92, which now carry section 16c's exclusions).  ``invented_declared``:
+    the declared rules, section 3's table with section 16c's two family-unit
+    exclusions and amendment 1c's code-88 convention; accepted only with
+    invented inputs.
 
     The kind is a binding, not a label: construction refuses rules other
     than the kind's own (the committed registry's or the declared

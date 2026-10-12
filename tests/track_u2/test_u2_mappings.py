@@ -383,8 +383,9 @@ D637_ADJUDICATION_NOTE_END = (
     "ruling. Max ruled on 2026-09-30 (d637) and, for blockers B1 and B2, on "
     "2026-10-10 (d1090); a registry's rulings_applied, where present, "
     "records what each ruling changed "
-    "in it. The six code-88 role records (amendment 1c) stay TO VERIFY "
-    "pending Max's confirmation of the 1a-1c reading (d745)."
+    "in it. On 2026-10-12 Max confirmed that d637 ratified amendment 1's "
+    "parts 1a-1c as written (d745), and the 1c registry commit resolved the "
+    "six code-88 role records; no A item stays TO VERIFY."
 )
 #: The amendments each registry's ``rulings_applied`` d637 record lists.
 D637_RECORDED = {
