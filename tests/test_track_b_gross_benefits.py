@@ -7,6 +7,12 @@ URL, UTC retrieval time, byte count and SHA-256, and
 figures appear verbatim in the captures) or is derived arithmetically from
 the statute in the test itself. Inputs are invented or published examples;
 no survey data and no comparator values are used.
+
+Direct survivor fixtures explicitly exclude RS 00615.712 protection.
+Invented families have no May 1978 entitlement. In published cases the
+.756 windexed example has no deceased-worker DRCs, the .710 survivors
+first qualify in March 2000, and the .682 record has no DRC widow. Other
+quoted direct snapshots have no credit-increased widow benefit.
 """
 
 from __future__ import annotations
@@ -818,7 +824,12 @@ def test_delayed_credit_rows_are_never_dropped_or_half_counted():
 # Families: SSA worked examples
 # ===========================================================================
 def test_poms_756_widow_and_seven_children():
-    state = g.RecordState(g.FamilyKind.SURVIVOR, F("492.90"), F("862.60"))
+    state = g.RecordState(
+        g.FamilyKind.SURVIVOR,
+        F("492.90"),
+        F("862.60"),
+        widow_drc_savings_clause=False,
+    )
     children = [g.Beneficiary(f"C{i}", g.Role.CHILD) for i in range(7)]
     result = _family(state, [g.Beneficiary("D", g.Role.WIDOW), *children])
     rows = result.by_id()
@@ -834,7 +845,9 @@ def test_poms_756_widow_and_seven_children():
 
 
 def test_poms_756_windexed_widow_and_child():
-    state = g.RecordState(g.FamilyKind.SURVIVOR, F(300), F(450))
+    state = g.RecordState(
+        g.FamilyKind.SURVIVOR, F(300), F(450), widow_drc_savings_clause=False
+    )
     nora = g.Beneficiary("Nora", g.Role.WIDOW, original_benefit_basis=F(310))
     michael = g.Beneficiary("Michael", g.Role.CHILD)
     result = _family(state, [nora, michael])
@@ -842,14 +855,21 @@ def test_poms_756_windexed_widow_and_child():
 
 
 def test_poms_710_widow_delayed_credits_share_the_maximum():
-    state = g.RecordState(g.FamilyKind.SURVIVOR, F(400), F(700))
+    state = g.RecordState(
+        g.FamilyKind.SURVIVOR, F(400), F(700), widow_drc_savings_clause=False
+    )
     widow = g.Beneficiary("W", g.Role.WIDOW, original_benefit_basis=F(410))
     result = _family(state, [widow, g.Beneficiary("C", g.Role.CHILD)])
     assert _payable(result) == {"W": F("404.20"), "C": F("295.70")}
 
 
 def test_poms_682_surviving_divorced_spouse_paid_outside_the_maximum():
-    state = g.RecordState(g.FamilyKind.SURVIVOR, F("203.90"), F("305.90"))
+    state = g.RecordState(
+        g.FamilyKind.SURVIVOR,
+        F("203.90"),
+        F("305.90"),
+        widow_drc_savings_clause=False,
+    )
     children = [g.Beneficiary(f"C{i}", g.Role.CHILD) for i in (1, 2)]
     before = _family(
         state, [g.Beneficiary("E1", g.Role.MOTHER_FATHER), *children]
@@ -937,13 +957,21 @@ def test_poms_768_all_dually_entitled_disregards_the_rule():
 
 def test_poms_320_rib_lim():
     state = g.RecordState(
-        g.FamilyKind.SURVIVOR, F("374.90"), F("600"), rib_lim_benefit=F(350)
+        g.FamilyKind.SURVIVOR,
+        F("374.90"),
+        F("600"),
+        widow_drc_savings_clause=False,
+        rib_lim_benefit=F(350),
     )
     result = _family(state, [g.Beneficiary("W", g.Role.WIDOW)])
     assert _payable(result) == {"W": F(350)}
     # With a smaller deceased RIB the 82.5 percent floor governs: 309.20.
     lower = g.RecordState(
-        g.FamilyKind.SURVIVOR, F("374.90"), F("600"), rib_lim_benefit=F(300)
+        g.FamilyKind.SURVIVOR,
+        F("374.90"),
+        F("600"),
+        widow_drc_savings_clause=False,
+        rib_lim_benefit=F(300),
     )
     assert _payable(_family(lower, [g.Beneficiary("W", g.Role.WIDOW)])) == {
         "W": F("309.20")
@@ -1104,7 +1132,9 @@ def test_spouse_not_entitled_when_own_pia_reaches_half():
 
 
 def test_widow_entitlement_compares_own_rib_with_the_deemed_pia():
-    state = g.RecordState(g.FamilyKind.SURVIVOR, F(1000), F(1500))
+    state = g.RecordState(
+        g.FamilyKind.SURVIVOR, F(1000), F(1500), widow_drc_savings_clause=False
+    )
     own = g.OwnBenefit(OLD_AGE, F(1050))
     plain = g.Beneficiary("W", g.Role.WIDOW, own_benefit=own, birth_year=1960)
     assert not _family(state, [plain]).by_id()["W"].entitled
@@ -1124,7 +1154,9 @@ def test_widow_entitlement_compares_own_rib_with_the_deemed_pia():
 
 def test_widow_dual_entitlement_is_method_b():
     # RS 00615.020A.3 method B: both reduced independently, then offset.
-    state = g.RecordState(g.FamilyKind.SURVIVOR, F(1000), F(1500))
+    state = g.RecordState(
+        g.FamilyKind.SURVIVOR, F(1000), F(1500), widow_drc_savings_clause=False
+    )
     widow = g.Beneficiary(
         "W",
         g.Role.WIDOW,
@@ -1481,12 +1513,22 @@ def test_savings_clause_admits_months_the_guarantee_cannot_change():
     # fall, but the guarantee does not reach her.
     widow = [g.Beneficiary("W", g.Role.WIDOW, original_benefit_basis=1300)]
     before = _family(
-        g.RecordState(g.FamilyKind.SURVIVOR, F(1000), F(1200)),
+        g.RecordState(
+            g.FamilyKind.SURVIVOR,
+            F(1000),
+            F(1200),
+            widow_drc_savings_clause=False,
+        ),
         widow,
         month=NOV,
     )
     after = _family(
-        g.RecordState(g.FamilyKind.SURVIVOR, F("1000.10"), F("1199.90")),
+        g.RecordState(
+            g.FamilyKind.SURVIVOR,
+            F("1000.10"),
+            F("1199.90"),
+            widow_drc_savings_clause=False,
+        ),
         widow,
         month=DEC,
     )
@@ -1650,7 +1692,9 @@ def test_savings_clause_guard_needs_every_month_in_order():
 # Refusals: every unsupported configuration raises, by name
 # ===========================================================================
 def _survivor_state():
-    return g.RecordState(g.FamilyKind.SURVIVOR, F(1000), F(1750))
+    return g.RecordState(
+        g.FamilyKind.SURVIVOR, F(1000), F(1750), widow_drc_savings_clause=False
+    )
 
 
 def _unsupported_cases():
@@ -1860,6 +1904,20 @@ def _unsupported_cases():
         g.UnsupportedReason.SAVINGS_CLAUSE_HISTORY_UNKNOWN: lambda: (
             _guard(NOV, unknown=True).admit(_review_m2_path()[0])
         ),
+        g.UnsupportedReason.WIDOW_DRC_SAVINGS_CLAUSE: lambda: _family(
+            dataclasses.replace(
+                _survivor_state(), widow_drc_savings_clause=True
+            ),
+            [],
+        ),
+        g.UnsupportedReason.WIDOW_DRC_SAVINGS_CLAUSE_HISTORY_UNKNOWN: (
+            lambda: _family(
+                dataclasses.replace(
+                    _survivor_state(), widow_drc_savings_clause=None
+                ),
+                [],
+            )
+        ),
         g.UnsupportedReason.DELAYED_CREDITS_BEFORE_1917: lambda: _family(
             _retired(1000, 1500),
             [
@@ -1985,8 +2043,18 @@ def test_other_refused_sequences():
             _survivor_state(),
             [g.Beneficiary("W", g.Role.WIDOW, reduction_months=12)],
         ),
-        lambda: g.RecordState(g.FamilyKind.SURVIVOR, F("100.05"), F(200)),
-        lambda: g.RecordState(g.FamilyKind.SURVIVOR, F(1000), F(999)),
+        lambda: g.RecordState(
+            g.FamilyKind.SURVIVOR,
+            F("100.05"),
+            F(200),
+            widow_drc_savings_clause=False,
+        ),
+        lambda: g.RecordState(
+            g.FamilyKind.SURVIVOR,
+            F(1000),
+            F(999),
+            widow_drc_savings_clause=False,
+        ),
         lambda: g.RecordState(g.FamilyKind.RETIREMENT, F(1000), F(1500)),
         lambda: g.spouse_age_reduced(F(100), 61, PARAMS),
         lambda: g.survivor_age_reduced(F(100), 10, 59, PARAMS),

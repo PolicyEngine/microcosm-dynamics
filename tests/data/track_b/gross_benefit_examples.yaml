@@ -192,6 +192,8 @@ examples:
           kind: survivor
           pia: '492.90'
           family_maximum: '862.60'
+          # RS 00615.756B.3: "WIB DRCs Not Involved".
+          widow_drc_savings_clause: false
         members:
         - beneficiary_id: D
           role: widow
@@ -274,6 +276,8 @@ examples:
           kind: survivor
           pia: '300'
           family_maximum: '450'
+          # RS 00615.756B.4: the enhanced widow basis is Windexing, not DRCs.
+          widow_drc_savings_clause: false
         members:
         - beneficiary_id: Nora
           role: widow
@@ -324,6 +328,8 @@ examples:
           kind: survivor
           pia: '400'
           family_maximum: '700'
+          # RS 00615.710C: both survivors first become entitled in 3/00.
+          widow_drc_savings_clause: false
         members:
         - beneficiary_id: W
           role: widow
@@ -374,6 +380,8 @@ examples:
           kind: survivor
           pia: '203.90'
           family_maximum: '305.90'
+          # RS 00615.682: mother and children, without a DRC-increased widow.
+          widow_drc_savings_clause: false
         members:
         - beneficiary_id: E1
           role: mother_father
@@ -389,6 +397,8 @@ examples:
           kind: survivor
           pia: '203.90'
           family_maximum: '305.90'
+          # RS 00615.682: the divorced widow is outside the family maximum.
+          widow_drc_savings_clause: false
         members:
         - beneficiary_id: D6
           role: surviving_divorced_spouse
@@ -543,6 +553,8 @@ examples:
           pia: '374.90'
           family_maximum: '600'
           rib_lim_benefit: '350'
+          # RS 00615.320C: only the widow is entitled; no other survivor.
+          widow_drc_savings_clause: false
         members:
         - beneficiary_id: W
           role: widow
@@ -844,7 +856,7 @@ examples:
   - role:spouse
   - role:child
   - maximum:disability_cap
-  - maximum:nonbinding
+  - maximum:binding
   inputs:
     scenarios:
       case:

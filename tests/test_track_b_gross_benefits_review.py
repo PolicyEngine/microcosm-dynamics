@@ -321,8 +321,8 @@ def test_review_direct_state_eligibility_cannot_follow_worker_age_62(
 def test_review_year_decided_widow_periods_must_match_the_birth_year(
     birth, supplied
 ):
-    expected = g.widow_reduction_period_months(date(birth, 1, 1))
-    assert expected == g.widow_reduction_period_months(date(birth, 12, 31))
+    expected = g.widow_reduction_period_months(date(birth, 1, 2))
+    assert expected == g.widow_reduction_period_months(date(birth + 1, 1, 1))
     widow = g.Beneficiary(
         "w",
         g.Role.WIDOW,
@@ -330,7 +330,9 @@ def test_review_year_decided_widow_periods_must_match_the_birth_year(
         reduction_period_months=supplied,
         birth_year=birth,
     )
-    state = g.RecordState(g.FamilyKind.SURVIVOR, F(1000), F(1750))
+    state = g.RecordState(
+        g.FamilyKind.SURVIVOR, F(1000), F(1750), widow_drc_savings_clause=False
+    )
     if supplied == expected:
         _family(state, [widow])
     else:
@@ -407,7 +409,10 @@ def test_review_guarded_household_keeps_refused_record_and_denominator(
     pia = F(dimes, 10)
     kids = tuple(g.Beneficiary(c, g.Role.CHILD) for c in ("c1", "c2", "c3"))
     state = g.RecordState(
-        g.FamilyKind.SURVIVOR, pia, g.floor_dime(pia * F(3, 2))
+        g.FamilyKind.SURVIVOR,
+        pia,
+        g.floor_dime(pia * F(3, 2)),
+        widow_drc_savings_clause=False,
     )
     records = {
         "protected": g.HouseholdRecord("dead", state, kids),

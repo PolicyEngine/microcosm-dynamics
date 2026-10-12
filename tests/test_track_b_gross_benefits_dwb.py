@@ -41,7 +41,14 @@ def _family(state, members, month=NOW):
 
 
 def _survivor(pia=F(1000), maximum=F(1750), **kwargs):
-    return g.RecordState(g.FamilyKind.SURVIVOR, pia, maximum, **kwargs)
+    # Invented families have no protected May 1978 survivor entitlement.
+    return g.RecordState(
+        g.FamilyKind.SURVIVOR,
+        pia,
+        maximum,
+        widow_drc_savings_clause=False,
+        **kwargs,
+    )
 
 
 def _dwb(**kwargs):
@@ -273,7 +280,9 @@ def test_dwb_is_invalid_on_living_worker_records(kind):
         if kind is g.FamilyKind.RETIREMENT
         else None
     )
-    state = g.RecordState(kind, F(1000), F(1750), worker=worker)
+    state = g.RecordState(
+        kind, F(1000), F(1750), widow_drc_savings_clause=False, worker=worker
+    )
     with pytest.raises(g.InvalidFamilyInput):
         _family(state, [_dwb()])
 

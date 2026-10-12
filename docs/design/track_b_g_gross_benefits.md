@@ -4,7 +4,7 @@
 benefits for supported invented or published statutory cases only; no
 population, behavioral or forecast claim.**
 
-**Status: build-only, 2026-09-29; review fixes 2026-10-11. No real-data
+**Status: build-only, 2026-09-29; review fixes 2026-10-12. No real-data
 computation.** Inputs are invented families and SSA's published worked
 examples.
 
@@ -341,12 +341,14 @@ G never falls back to a single-worker computation.
 | `government_pension_offset` | 202(k)(5), only benefit months through December 2023 |
 | `administrative_finality` | Protected rates (RS 00615.754A.3) |
 | `dual_entitlement_sequence` | A spouse's DIB after the spouse benefit (RS 00615.260), an aged widow(er) with DIB or born before 1929 (RS 00615.020B method D), or DWB with own RIB or DIB |
-| `parisi_redistribution_ambiguous` | Own delayed credits, RIB-LIM, or dual zero reached only after auxiliary age reduction remain unsettled by GN 02603.050A/C |
+| `parisi_redistribution_ambiguous` | Own delayed credits, an actually limiting RIB-LIM after maximum and age reduction, or dual zero reached only after auxiliary age reduction remain unsettled by GN 02603.050A/C |
 | `parisi_before_october_1999` | A binding maximum with dual entitlement before 10/99 |
 | `independently_entitled_divorced_spouse` | IEDS before January 1985 or a WEP-affected worker record before January 2024 (RS 00202.100) |
 | `non_aime_formula_pia` | Old-start, special-minimum and frozen-minimum PIAs (RS 00615.740B.1) |
 | `savings_clause_403a5` | A governed month whose total fell below a 403(a)(5) protected total, and every later governed month |
 | `savings_clause_history_unknown` | A month for which a protected total G cannot see may exist (a path not started at entitlement, or a month G did not compute) |
+| `widow_drc_savings_clause` | A May 1978 beneficiary protected from widow(er) deceased-worker DRC reductions (RS 00615.712) |
+| `widow_drc_savings_clause_history_unknown` | A survivor snapshot without eligibility metadata, or with known DIB by May 1978, has not attested whether RS 00615.712 applies |
 | `delayed_credits_born_before_1917` | Delayed credits for births before 1917 (402(w)(6)(A)'s 1/12 of 1 percent) |
 
 `evaluate_family` and `count_family_outcomes` keep unsupported rows, whether
@@ -407,6 +409,33 @@ absorbed as unsupported rows.
 11. **Delayed-credit windows.** For every cohort 1917-1960 on the RS
     00615.692E chart, the window is `840 - FRA` and the rate is the chart's.
     G accepts the whole window and rejects one month more.
+
+12. **Widow cohort periods.** Every January 2-January 1 cohort fixes exactly
+    one RS 00615.301B.2 period. Both construction styles reject another
+    period or excess months before any refusal. Exact family payments equal
+    the independent widow primitive with zero tolerance. Fix-round examples
+    and Hypothesis tests execute every boundary cohort.
+13. **Widow DRC protection.** Known RS 00615.712 protection and unknown
+    direct-snapshot history have distinct named refusals. Every refusal
+    retains its row and weight and blocks totals; duplicate inputs raise
+    first. Modern eligibility cannot hide known DIB by May 1978. Fix-round
+    Hypothesis tests execute these rules in both construction styles.
+14. **RIB-LIM scope.** A nonlimiting declaration has no effect on settled
+    Parisi payments; equality is nonlimiting. Actually limiting cases retain
+    refusals and denominators. Payment-review examples and Hypothesis
+    properties execute equivalence, order independence and exact thresholds.
+15. **Historical DIB scope.** Direct and built snapshots both refuse known
+    initial DIB entitlement before July 1980. July is supported; impossible
+    dates and duplicate members raise first. The payment-review differential
+    and input-priority properties execute both entry styles.
+16. **Registry tag truth.** Every binding/nonbinding tag matches at least one
+    computed scenario in its example. Registry examples and Hypothesis
+    tests reject false tags and preserve scenario order independence.
+17. **Illustration compatibility.** All seven recorded G fields for every
+    G-using household and month equal current G exactly. The unit
+    compatibility module tests the finite set exhaustively and through
+    Hypothesis; the artifact pin executes the proof before its one-file
+    exclusion. This admits an invented-case regression only.
 
 ## Worked examples reproduced exactly
 
@@ -491,9 +520,11 @@ at year-only maxima of 84 months through 1912, 72 for 1913, and 60 for
 legal credits remain refused because the bundle lacks their rate.
 
 The own-benefit birth year must match the beneficiary's when both are
-provided. RS 00615.301B.2 fixes a widow's reduction period when both ends
-of her calendar birth year lie in the same band; boundary years require
-the caller's period. Under 403(a)(2)(D), retirement eligibility cannot be
+provided. Every birth-year input denotes SSA's January 2 through January 1
+cohort; a January 1 birth uses the previous cohort year. RS 00615.301B.2
+therefore fixes a widow's reduction period for every cohort, including
+boundary cohorts. A supplied period must match it and reduction months
+cannot exceed it. Under 403(a)(2)(D), retirement eligibility cannot be
 later than birth year plus 62, but an earlier DIB eligibility year is kept.
 These bounds and input-before-refusal order extend invariants 6 and 11.
 
@@ -550,7 +581,8 @@ helper is deterministic and independent of mapping order, returns only
 non-deductee ids, caps rates at OB, floors to dimes, and allocates at most
 the nonnegative pool. Separate supplied deductions reduce that pool
 monotonically. Its independent exact formula property provides a
-differential with zero tolerance. Own delayed credits and RIB-LIM remain
+differential with zero tolerance. Own delayed credits and an actually
+limiting RIB-LIM remain
 `parisi_redistribution_ambiguous`: no captured example settles their
 interaction with the PTAP age-reduction and partial-payable terms.
 
@@ -709,15 +741,15 @@ scenario order independence.
 `scripts/track_b_g_conformance_report.py` writes the canonical JSON report
 under this design directory. The exhaustive declared product is three
 record kinds, all 55 role multisets of sizes zero through two, eight dual
-modes, two reduction flags, three payment eras and fourteen single-condition
+modes, two reduction flags, three payment eras and fifteen single-condition
 choices. Flags apply to the first beneficiary in Role enum order; empty
 multisets with a beneficiary flag are invalid. Fixed invented money, cohort,
 and snapshot assumptions are stated in the artifact. Conditions are none
 or one declared record/beneficiary flag; combinations beyond that finite
 axis and larger families are not claimed as enumerated.
 
-There are 110,880 cells: 3,640 supported, 22,106 refused and 85,134 invalid.
-All cells stay in the denominator. Twenty-one named invented witnesses form
+There are 118,800 cells: 3,640 supported, 24,074 refused and 91,086 invalid.
+All cells stay in the denominator. Twenty-three named invented witnesses form
 a separate denominator, one executed refusal for every retained reason,
 including historical, multi-record and protected-path cases absent from the
 lattice. Statutory registry counts are separate again. These are invented
@@ -730,3 +762,72 @@ denominators and canonical byte equality on regeneration. Each is executed
 by example and Hypothesis checks in the conformance-report tests. All ten
 deliberate mutations failed and were restored; the commands and failing
 tests are listed in the pull request (#530).
+
+
+## Fix round of October 12, 2026
+
+RS 00615.320A.3 applies RIB-LIM only when the widow's rate after maximum
+and age reduction exceeds both 82.5 percent of the death PIA and the RIB
+or DIB the deceased would receive. A declared limit that cannot change
+this rate does not trigger the Parisi refusal. The review's invented
+PIA $1,000, maximum $1,750, old RIB $100, widow own RIB $200 case has
+standard widow $700 below the $825 threshold; redistribution pays widow
+$500 and children $625 each, exactly as without the irrelevant limit.
+Equality and a case where age reduction makes the limit irrelevant are
+separately pinned. Actually limiting redistribution remains refused.
+The direct historical-DIB guard now follows the same coverage rule as the
+builder (RS 00615.740B.2). RS 00202.100 requires the WEP PIA for pre-2024
+IEDS; G's comment now describes that calculation as unimplemented.
+
+### Widow DRC saving clause
+
+RS 00615.712 protects beneficiaries entitled for May 1978 against a future
+reduction because a widow(er) receives the deceased's delayed credits.
+The capture says, "The only criterion for this to apply is entitlement for
+the specific month of 5/78." Entitlement in another month does not establish
+or exclude protection. Benefit-rate preservation is not implemented;
+`WIDOW_DRC_SAVINGS_CLAUSE` marks a protected beneficiary and refuses the
+family as `widow_drc_savings_clause`. A direct `RecordState` can declare
+that protection with `widow_drc_savings_clause=True`.
+
+For direct survivor snapshots without eligibility metadata, the caller must
+explicitly attest `widow_drc_savings_clause=False` when protection cannot
+apply. The default `None` refuses as
+`widow_drc_savings_clause_history_unknown`. Modern current eligibility does not exclude May 1978 protection when
+known prior DIB began by that month. RS 00615.736B.2b permits a new
+eligibility year after an earlier DIB period ended. Both direct and built
+states therefore require an attestation for that known earlier history;
+without known earlier DIB, modern eligibility retains the existing scope. Existing
+published snapshots attest exclusions from their captured facts: no DRC
+widow, windexing, or first survivor entitlement in March 2000. Invented
+snapshots explicitly assume no protected May 1978 beneficiary. All family
+input checks precede either new refusal.
+
+The published .712 case has March 2000 entitlement, PIA $400, ordinary
+maximum $700, a child continuously entitled since March 1978, and widow
+DRCs $10. Widow OB $410 plus child OB $300 totals $710. Ordinary
+apportionment gives widow $404.20 and child $295.70. Protection keeps the
+child at $300, so the master record's savings maximum is $704.20 and the
+whole-dollar total is $704. The test independently reproduces every step
+and checks every figure against the capture. G refuses the family with
+either $700 or the master-record $704.20 maximum. The prior code paid
+$406.60/$297.50 using that latter maximum (whole-dollar total $703).
+This is an omitted settled rule, not a competing statutory reading.
+
+### Artifact compatibility and registry truth
+
+The committed depletion-cut illustration retains its original provenance
+commit and recorded `track-b-g-v1` version. The unit compatibility test
+reconstructs each G-using household's worker, spouse and COLA inputs for
+every recorded month and requires exact equality of PIA, maximum, binding
+flag, worker payment, spouse OB, spouse payable and spouse payment. It
+uses the published-NAWI unit bundle. The provenance gate executes this
+proof before excluding exactly `gross_benefits.py` from its source pin.
+No artifact bytes or recorded provenance are changed.
+
+The `ssb-table-a1` registry tag is `maximum:binding`: its $1,800 maximum
+leaves $300 for each child after the $1,200 worker. Every example's maximum
+tag is now checked against its computed scenarios. The conformance JSON
+is regenerated with this tag and the named .712 refusals, including the
+expanded condition axis and both new refusal witnesses. These remain
+invented configuration counts without population weights or claims.

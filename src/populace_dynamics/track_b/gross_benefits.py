@@ -47,7 +47,7 @@ What this layer computes, for one insured worker's record and one month:
    rule is disregarded (RS 00615.768C). GN 02603.050C defines the pool as the maximum less the worker PIA,
    deductees' auxiliary age reductions and their partial payable amounts;
    GN 02603.060B.2 settles own RIB age reduction. Own delayed credits and
-   RIB-LIM redistribution remain refused.
+   an actually limiting RIB-LIM redistribution remain refused.
 5. **Age reductions after the family maximum** (RS 00615.754A.1, .210,
    .301B.1.c): spouse 25/36 of 1 percent for 36 months and 5/12 of 1 percent
    beyond, dime-floored (RS 00615.201); widow(er) 28.5 percent spread over
@@ -118,6 +118,18 @@ December 2023 (GN 02608.100; RS 00605.360). GPO flags are refused only
 through December 2023. G takes the PIA as input: the caller supplies a
 WEP-affected PIA before January 2024 and the regular-formula PIA from that
 month, rebuilding the maximum from that eligibility-year PIA and COLAs.
+
+Birth-year inputs denote SSA cohorts from January 2 through January 1 of
+the following calendar year. A widow(er)'s cohort fixes the RS 00615.301B.2
+reduction period, including every boundary cohort.
+
+RS 00615.712 protects survivors entitled for May 1978 from reductions due
+to a widow(er)'s deceased-worker delayed credits. Protected cases are
+refused. Direct survivor snapshots without eligibility metadata require
+``widow_drc_savings_clause=False`` to attest that the clause cannot apply;
+unknown history is refused separately. Current eligibility from 1983 is
+insufficient when a known earlier DIB could allow May 1978 entitlement
+(RS 00615.736B.2b).
 
 Not implemented, and refused rather than approximated: 403(a)(5). When two
 or more persons are entitled for a month in which the maximum reduces
@@ -262,7 +274,8 @@ _MAX_SPOUSE_REDUCTION_MONTHS = 60
 _SURVIVOR_PERIOD_RANGE = (60, 84)
 #: POMS RS 00615.020B chart: a widow(er) born before 1/2/1928 who took
 #: widow(er)'s benefits before 62 and then RIB carries a reduction over
-#: (method D). The earliest whole birth year clear of it is 1929.
+#: (method D). G conservatively admits own-RIB widow combinations from
+#: cohort 1929; the earlier method-D surface remains refused.
 _FIRST_METHOD_B_WIDOW_BIRTH_YEAR = 1929
 
 
@@ -296,6 +309,10 @@ class UnsupportedReason(Enum):
     MULTIPLE_AUXILIARY_RECORDS = "multiple_auxiliary_records"
     SAVINGS_CLAUSE = "savings_clause_403a5"
     SAVINGS_CLAUSE_HISTORY_UNKNOWN = "savings_clause_history_unknown"
+    WIDOW_DRC_SAVINGS_CLAUSE = "widow_drc_savings_clause"
+    WIDOW_DRC_SAVINGS_CLAUSE_HISTORY_UNKNOWN = (
+        "widow_drc_savings_clause_history_unknown"
+    )
     DELAYED_CREDITS_BEFORE_1917 = "delayed_credits_born_before_1917"
 
 
@@ -966,7 +983,8 @@ class RecordCondition(Enum):
     #: The caller attests insured eligibility and two continuous years
     #: of divorce (RS 00202.100); G computes payment, not entitlement facts.
     WORKER_NOT_ENTITLED = "worker_not_entitled"
-    #: Pre-2024 IEDS cannot use a WEP-reduced worker PIA (RS 00202.100).
+    #: Pre-2024 WEP-affected IEDS computation is not implemented; IEDS
+    #: must use the worker's WEP PIA when applicable (RS 00202.100).
     WINDFALL_ELIMINATION_PROVISION = "windfall_elimination_provision"
     #: The PIA is not an AIME-formula PIA (for example an old-start,
     #: special-minimum or frozen-minimum PIA; RS 00615.740B.1 lists them).
@@ -984,6 +1002,9 @@ class BeneficiaryCondition(Enum):
     #: A DIB between a reduced spouse's benefit and a later RIB, which
     #: changes the later spouse excess (RS 00615.260B.2).
     DIB_BETWEEN_SPOUSE_BENEFIT_AND_RIB = "dib_between_spouse_benefit_and_rib"
+    #: Entitlement for May 1978 protects this survivor's rate from a
+    #: widow(er)'s deceased-worker DRC increase (RS 00615.712).
+    WIDOW_DRC_SAVINGS_CLAUSE = "widow_drc_savings_clause"
 
 
 _RECORD_CONDITION_REASONS = {
@@ -1011,6 +1032,11 @@ _RECORD_CONDITION_REASONS = {
     ),
 }
 _BENEFICIARY_CONDITION_REASONS = {
+    BeneficiaryCondition.WIDOW_DRC_SAVINGS_CLAUSE: (
+        UnsupportedReason.WIDOW_DRC_SAVINGS_CLAUSE,
+        "a May 1978 beneficiary protected against the widow(er)'s "
+        "deceased-worker DRC increase (RS 00615.712) is not implemented",
+    ),
     BeneficiaryCondition.ENTITLED_ON_ANOTHER_RECORD: (
         UnsupportedReason.COMBINED_FAMILY_MAXIMUM,
         "a child entitled on more than one record may need a combined "
@@ -1128,7 +1154,9 @@ class Beneficiary:
       00615.240), and it is required: the two differ in money, and there
       is no default. A spouse's DIB after the spouse benefit is refused (RS
       00615.260). Other roles do not use the order; it may be left None.
-    * ``birth_year``: needed for a widow(er) with an own old-age benefit.
+    * ``birth_year``: SSA cohort year (January 2 through the following
+      January 1); needed for a widow(er) with an own old-age benefit. When
+      given, it fixes the reduction period under RS 00615.301B.2.
     * ``conditions``: declared special conditions; GPO is inoperative for
       benefit months from January 2024 (Pub. L. 118-273).
     """
@@ -1297,6 +1325,15 @@ class RecordState:
     ``eligibility_year`` and ``first_dib_entitlement`` are the record's
     dates when known (:func:`record_state` fills them in); a payment month
     before either is an :class:`InvalidFamilyInput`.
+    A known initial DIB entitlement before July 1980 is refused on a
+    disability snapshot, as on a built record (RS 00615.740B.2).
+    ``widow_drc_savings_clause`` attests whether any beneficiary is protected
+    under RS 00615.712: entitlement for May 1978 with a widow(er) receiving
+    the deceased's delayed credits. True is refused; None is unknown and
+    refused for survivor snapshots without modern eligibility metadata.
+    False explicitly attests that the clause cannot apply. Modern current
+    eligibility is insufficient when known prior DIB entitlement could
+    allow May 1978 protection (RS 00615.736B.2b).
     """
 
     kind: FamilyKind
@@ -1309,10 +1346,15 @@ class RecordState:
     eligibility_year: int | None = None
     first_dib_entitlement: YearMonth | None = None
     deferred_refusal: tuple[UnsupportedReason, str] | None = None
+    widow_drc_savings_clause: bool | None = None
 
     def __post_init__(self):
         if not isinstance(self.kind, FamilyKind):
             raise TypeError("kind must be a FamilyKind")
+        if self.widow_drc_savings_clause is not None and (
+            type(self.widow_drc_savings_clause) is not bool
+        ):
+            raise TypeError("widow_drc_savings_clause must be a bool or None")
         if self.eligibility_year is not None and (
             type(self.eligibility_year) is not int
         ):
@@ -1593,20 +1635,16 @@ def _check_beneficiary_inputs(
         )
     if beneficiary.role in _WIDOW_ROLES:
         if beneficiary.birth_year is not None:
-            # A calendar birth year alone decides only when both ends of
-            # the year fall in the same RS 00615.301B.2 band.
+            # All birth-year inputs use SSA's January 2-January 1 cohort,
+            # so even a boundary cohort fixes exactly one .301B.2 period.
             year = beneficiary.birth_year
-            early = widow_reduction_period_months(date(year, 1, 1))
-            late = widow_reduction_period_months(date(year, 12, 31))
+            expected = widow_reduction_period_months(date(year, 1, 2))
             period = beneficiary.reduction_period_months
-            if early == late:
-                _months(
-                    beneficiary.reduction_months, "reduction_months", early
+            if period is not None and period != expected:
+                raise InvalidFamilyInput(
+                    "reduction period differs from birth cohort"
                 )
-                if period is not None and period != early:
-                    raise InvalidFamilyInput(
-                        "reduction period differs from birth year"
-                    )
+            _months(beneficiary.reduction_months, "reduction_months", expected)
         if beneficiary.reduction_months and (
             beneficiary.reduction_period_months is None
         ):
@@ -1840,8 +1878,10 @@ def _parisi_counted(
     The own-RIB reduction is not an auxiliary age reduction (GN
     02603.060B.2: $2.40 payable + $0.90 reduction, not the $16 own-RIB
     reduction). GN 02603.050A.2 disregards a dual rate reduced to zero.
-    Own delayed credits and RIB-LIM redistribution remain refused: none
-    of the captured worked cases settles those interacting amounts.
+    Own delayed credits and redistribution with an actually limiting
+    RIB-LIM remain refused: none of the captured worked cases settles
+    those interacting amounts. A considered but nonlimiting RIB-LIM
+    changes no rate (RS 00615.320A.3).
     """
     beneficiary = row.beneficiary
     own = beneficiary.own_benefit
@@ -1853,11 +1893,22 @@ def _parisi_counted(
             beneficiary_id=beneficiary.beneficiary_id,
         )
     if beneficiary.role in _WIDOW_ROLES and state.rib_lim_benefit is not None:
-        raise FamilyConfigurationUnsupported(
-            UnsupportedReason.PARISI_AMBIGUOUS,
-            "redistribution around a RIB-LIM limited widow(er)",
-            beneficiary_id=beneficiary.beneficiary_id,
+        # RS 00615.320A.3: consideration alone does not impose a limit.
+        # The WIB after the maximum and age reduction must exceed both
+        # thresholds. A nonlimiting RIB-LIM changes no PTAP amount.
+        unlimited, _ = _reduce_and_offset(
+            row, state, params, apply_rib_lim=False
         )
+        limit = max(
+            state.rib_lim_benefit,
+            floor_dime(statutory_rates(params).rib_lim_share * state.pia),
+        )
+        if unlimited > limit:
+            raise FamilyConfigurationUnsupported(
+                UnsupportedReason.PARISI_AMBIGUOUS,
+                "redistribution around a RIB-LIM limited widow(er)",
+                beneficiary_id=beneficiary.beneficiary_id,
+            )
     age_adjusted, payable = _reduce_and_offset(row, state, params)
     method_c = (
         beneficiary.role in (Role.SPOUSE, Role.DIVORCED_SPOUSE)
@@ -1885,13 +1936,19 @@ def _parisi_counted(
 
 
 def _reduce_and_offset(
-    row: _Row, state: RecordState, params: SSAParameters
+    row: _Row,
+    state: RecordState,
+    params: SSAParameters,
+    *,
+    apply_rib_lim: bool = True,
 ) -> tuple[Fraction, Fraction]:
     """402(q) (and the RIB-LIM), then 402(k)(3)(A).
 
     Returns ``(age_adjusted, payable)``: the auxiliary benefit after its
     age reduction, and the amount payable on this record after the
-    dual-entitlement offset.
+    dual-entitlement offset. ``apply_rib_lim=False`` lets the Parisi
+    coverage check establish whether a considered RIB-LIM actually limits
+    the rate after the family maximum and age reduction (RS 00615.320A.3).
     """
     beneficiary = row.beneficiary
     own = beneficiary.own_benefit
@@ -1936,7 +1993,7 @@ def _reduce_and_offset(
                 beneficiary.reduction_period_months,
                 params,
             )
-        if state.rib_lim_benefit is not None:
+        if apply_rib_lim and state.rib_lim_benefit is not None:
             rates = statutory_rates(params)
             limit = max(
                 state.rib_lim_benefit,
@@ -2100,6 +2157,17 @@ def _family_benefits(
     if state.eligibility_year is not None:
         _require_supported_eligibility(state.eligibility_year)
     _raise_record_conditions(state.conditions)
+    if (
+        state.kind is FamilyKind.DISABILITY
+        and state.first_dib_entitlement is not None
+        and state.first_dib_entitlement.as_tuple()
+        < DI_MAXIMUM_FIRST_ENTITLEMENT
+    ):
+        raise FamilyConfigurationUnsupported(
+            UnsupportedReason.DI_ENTITLEMENT_BEFORE_JULY_1980,
+            "DIB first entitled before July 1980 keeps the pre-1980 "
+            "maximum (POMS RS 00615.740B.2)",
+        )
     if payment_month.as_tuple() < FIRST_SUPPORTED_PAYMENT_MONTH:
         raise FamilyConfigurationUnsupported(
             UnsupportedReason.PAYMENT_MONTH_BEFORE_1983,
@@ -2121,6 +2189,27 @@ def _family_benefits(
             "IEDS before January 1985, or on a WEP-affected worker record "
             "before January 2024, is not implemented (RS 00202.100)",
         )
+    if state.kind is FamilyKind.SURVIVOR:
+        if state.widow_drc_savings_clause is True:
+            raise FamilyConfigurationUnsupported(
+                UnsupportedReason.WIDOW_DRC_SAVINGS_CLAUSE,
+                "a May 1978 survivor protected by the widow(er)'s DRC "
+                "saving clause (RS 00615.712) is not implemented",
+            )
+        if state.widow_drc_savings_clause is None and (
+            state.eligibility_year is None
+            or state.eligibility_year < FIRST_SUPPORTED_ELIGIBILITY_YEAR
+            or (
+                state.first_dib_entitlement is not None
+                and state.first_dib_entitlement <= YearMonth(1978, 5)
+            )
+        ):
+            raise FamilyConfigurationUnsupported(
+                UnsupportedReason.WIDOW_DRC_SAVINGS_CLAUSE_HISTORY_UNKNOWN,
+                "a survivor snapshot must attest whether May 1978 "
+                "entitlement and widow(er) deceased-worker DRCs invoke "
+                "RS 00615.712; the history is unknown",
+            )
     parent_count = _entitled_parent_count(state, beneficiaries, params)
     life_case = state.kind is not FamilyKind.SURVIVOR and not ieds
     worker_benefit = None

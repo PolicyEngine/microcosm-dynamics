@@ -125,6 +125,8 @@ def _retired(pia=F(1000), maximum=F(1500), **extra):
 
 
 def _survivor(**extra):
+    # Invented snapshots explicitly exclude protected May 1978 entitlement.
+    extra.setdefault("widow_drc_savings_clause", False)
     return g.RecordState(g.FamilyKind.SURVIVOR, F(1000), F(1750), **extra)
 
 
@@ -174,6 +176,7 @@ def compute_configuration(case: Configuration):
         case.kind,
         F(1000),
         F(1750) if case.kind is g.FamilyKind.SURVIVOR else F(1500),
+        widow_drc_savings_clause=False,
         worker=worker,
         conditions=conditions,
         source="invented conformance lattice; given current PIA and maximum",
@@ -452,6 +455,14 @@ def refusal_witnesses() -> dict[g.UnsupportedReason, tuple[str, Callable]]:
             "Governed month begins with unknown prior entitlement months",
             lambda: _savings_witness(unknown=True),
         ),
+        reasons.WIDOW_DRC_SAVINGS_CLAUSE: (
+            "May 1978 survivor protected from widow deceased-worker DRCs",
+            lambda: _family(_survivor(widow_drc_savings_clause=True)),
+        ),
+        reasons.WIDOW_DRC_SAVINGS_CLAUSE_HISTORY_UNKNOWN: (
+            "Direct survivor snapshot lacks May 1978 widow-DRC attestation",
+            lambda: _family(_survivor(widow_drc_savings_clause=None)),
+        ),
         reasons.DELAYED_CREDITS_BEFORE_1917: (
             "Own RIB has 12 credit months for a 1916 birth",
             lambda: _family(
@@ -582,7 +593,7 @@ def build_report(registry_path: Path = DEFAULT_REGISTRY) -> dict:
                     "own_rib_credit_months": 12,
                 },
                 "birth_band": "1946 for the focal beneficiary and own RIB; widow reduction period 72 months. The living worker is unreduced, without credits; IEDS worker records have no worker payment.",
-                "snapshot_scope": "Standalone snapshots; monthly paths require SavingsClauseGuard. Refusal witnesses for guarded histories and multiple records are counted separately.",
+                "snapshot_scope": "Standalone snapshots explicitly attest no protected May 1978 widow-DRC history unless the named condition is declared; monthly paths require SavingsClauseGuard. Refusal witnesses for unknown history, guarded histories and multiple records are counted separately.",
             },
             "denominator": denominator,
             "refused_by_reason": dict(sorted(refusals.items())),

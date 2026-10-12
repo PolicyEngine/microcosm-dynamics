@@ -5,7 +5,8 @@ captured statutory examples are admitted, with no population, behavioral or
 forecast claim. Published figures retain capture literals. Derived monthly
 rates and statutory dollar floors are labelled separately from published
 presentation figures. Registry completeness, determinism, scenario order
-independence and declared coverage are executable invariants.
+independence, declared coverage and maximum-tag truth are executable
+invariants.
 """
 
 from __future__ import annotations
@@ -253,6 +254,26 @@ def run_example(example):
     }
 
 
+def _check_maximum_tags(example):
+    bindings = set()
+    for scenario in run_example(example).values():
+        result = scenario.get("result")
+        if isinstance(result, g.FamilyBenefits):
+            bindings.add(result.family_maximum_binding)
+        elif isinstance(result, g.HouseholdBenefits):
+            bindings.update(
+                record.family_maximum_binding
+                for record in result.records.values()
+            )
+    for tag, binding in (
+        ("maximum:binding", True),
+        ("maximum:nonbinding", False),
+    ):
+        if tag in example["tags"]:
+            assert binding in bindings, (example["id"], tag, bindings)
+    return bindings
+
+
 def _resolve(values, path):
     for component in path.split("."):
         values = (
@@ -316,6 +337,47 @@ def check_example(example):
 @pytest.mark.parametrize("example", EXAMPLES, ids=lambda value: value["id"])
 def test_registered_statutory_example_reproduces_every_figure(example):
     check_example(example)
+
+
+@pytest.mark.parametrize("example", EXAMPLES, ids=lambda value: value["id"])
+def test_registered_maximum_tags_match_computed_scenarios(example):
+    _check_maximum_tags(example)
+
+
+def test_survivor_snapshot_attestations_are_supported_by_capture_facts():
+    facts = {
+        ("rs-00615-756-seven-children", "case"): (
+            "Death Case - Different Original Benefits - WIB DRCs Not Involved"
+        ),
+        ("rs-00615-756-windexed", "case"): (
+            "Nora is entitled as a widow with an OB calculated under the "
+            "alternate computation as prescribed by the 1983 amendments"
+        ),
+        ("rs-00615-710-widow-drc", "case"): (
+            "The survivors to be entitled in 3/00 are a widow and a child."
+        ),
+        ("rs-00615-682-divorced-widow", "before"): (
+            "A surviving divorced mother (E1) and two children are entitled "
+            "to $101.90 each"
+        ),
+        ("rs-00615-682-divorced-widow", "after"): (
+            "At age 60, E1 becomes entitled as D6 and is paid outside the "
+            "maximum."
+        ),
+        ("rs-00615-320-rib-lim", "case"): (
+            "B's spouse, age 66, comes in to file for widow's benefits."
+        ),
+    }
+    snapshots = {
+        (example["id"], name): (example, raw["state"])
+        for example in EXAMPLES
+        for name, raw in example["inputs"]["scenarios"].items()
+        if raw.get("state", {}).get("kind") == "survivor"
+    }
+    assert set(snapshots) == set(facts)
+    for key, (example, state) in snapshots.items():
+        assert state["widow_drc_savings_clause"] is False, key
+        assert facts[key] in source_text(example["capture_id"]), key
 
 
 def test_registry_schema_and_declared_figures_are_complete():
@@ -448,3 +510,45 @@ def test_registry_is_deterministic_and_scenario_order_independent(
         reversed(scenarios) if reverse else scenarios
     )
     assert initial == run_example(changed)
+
+
+@given(st.sampled_from(EXAMPLES), st.booleans())
+@settings(deadline=None, max_examples=50)
+def test_registry_maximum_tag_truth_is_scenario_order_independent(
+    example, reverse
+):
+    bindings = _check_maximum_tags(example)
+    changed = copy.deepcopy(example)
+    scenarios = list(changed["inputs"]["scenarios"].items())
+    changed["inputs"]["scenarios"] = dict(
+        reversed(scenarios) if reverse else scenarios
+    )
+    assert bindings == _check_maximum_tags(changed)
+
+
+@given(
+    st.sampled_from(
+        [
+            example
+            for example in EXAMPLES
+            if len(
+                set(example["tags"])
+                & {"maximum:binding", "maximum:nonbinding"}
+            )
+            == 1
+            and all(
+                raw["operation"] == "family"
+                for raw in example["inputs"]["scenarios"].values()
+            )
+        ]
+    )
+)
+@settings(deadline=None)
+def test_registry_false_maximum_tags_are_rejected(example):
+    bindings = _check_maximum_tags(example)
+    assert len(bindings) == 1
+    false_tag = "maximum:nonbinding" if True in bindings else "maximum:binding"
+    changed = copy.deepcopy(example)
+    changed["tags"].append(false_tag)
+    with pytest.raises(AssertionError):
+        _check_maximum_tags(changed)

@@ -560,6 +560,7 @@ def test_widow_benefit_matches_the_oracle_within_rounding(
         g.FamilyKind.SURVIVOR,
         deceased_pia,
         g.floor_dime(F(188, 100) * deceased_pia),
+        widow_drc_savings_clause=False,
         rib_lim_benefit=deceased_rib if deceased_early else None,
     )
     widow = g.Beneficiary(

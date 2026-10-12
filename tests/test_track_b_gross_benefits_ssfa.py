@@ -37,6 +37,7 @@ def _state(kind, pia=F(1000)):
         kind,
         pia,
         g.floor_dime(pia * F(7, 4)),
+        widow_drc_savings_clause=False,
         worker=(
             g.OwnBenefit(g.OwnBenefitKind.OLD_AGE, pia)
             if kind is g.FamilyKind.RETIREMENT

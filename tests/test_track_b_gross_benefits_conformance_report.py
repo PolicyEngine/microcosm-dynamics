@@ -71,8 +71,8 @@ def test_lattice_is_the_complete_documented_cartesian_product(regenerated):
     expected = len(g.FamilyKind) * multisets * 8 * 2 * 3 * condition_choices
     keys = [case.key for case in report.configurations()]
     assert multisets == 55
-    assert condition_choices == 14
-    assert expected == 110880
+    assert condition_choices == 15
+    assert expected == 118800
     assert len(keys) == len(set(keys)) == expected
     assert regenerated["lattice"]["denominator"]["rows"] == expected
     definition = regenerated["lattice"]["definition"]
@@ -144,11 +144,11 @@ def test_every_retained_refusal_has_an_executed_named_witness(reason):
 
 def test_named_witness_denominator_is_separate_from_the_lattice(regenerated):
     witnesses = regenerated["supplemental_refusal_witnesses"]
-    assert len(g.UnsupportedReason) == 21
+    assert len(g.UnsupportedReason) == 23
     assert witnesses["denominator"] == {
-        "rows": 21,
+        "rows": 23,
         "supported": 0,
-        "refused": 21,
+        "refused": 23,
         "invalid": 0,
     }
     expected = {reason.value for reason in g.UnsupportedReason}

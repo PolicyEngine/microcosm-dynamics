@@ -5,21 +5,21 @@
   "lattice": {
     "by_payment_era": {
       "before_october_1999": {
-        "invalid": 28378,
-        "refused": 7717,
-        "rows": 36960,
+        "invalid": 30362,
+        "refused": 8373,
+        "rows": 39600,
         "supported": 865
       },
       "from_january_2024": {
-        "invalid": 28378,
-        "refused": 6924,
-        "rows": 36960,
+        "invalid": 30362,
+        "refused": 7580,
+        "rows": 39600,
         "supported": 1658
       },
       "october_1999_through_december_2023": {
-        "invalid": 28378,
-        "refused": 7465,
-        "rows": 36960,
+        "invalid": 30362,
+        "refused": 8121,
+        "rows": 39600,
         "supported": 1117
       }
     },
@@ -81,6 +81,10 @@
         {
           "condition": "dib_between_spouse_benefit_and_rib",
           "scope": "beneficiary"
+        },
+        {
+          "condition": "widow_drc_savings_clause",
+          "scope": "beneficiary"
         }
       ],
       "dual_modes": [
@@ -134,12 +138,12 @@
         1,
         2
       ],
-      "snapshot_scope": "Standalone snapshots; monthly paths require SavingsClauseGuard. Refusal witnesses for guarded histories and multiple records are counted separately."
+      "snapshot_scope": "Standalone snapshots explicitly attest no protected May 1978 widow-DRC history unless the named condition is declared; monthly paths require SavingsClauseGuard. Refusal witnesses for unknown history, guarded histories and multiple records are counted separately."
     },
     "denominator": {
-      "invalid": 85134,
-      "refused": 22106,
-      "rows": 110880,
+      "invalid": 91086,
+      "refused": 24074,
+      "rows": 118800,
       "supported": 3640
     },
     "refused_by_reason": {
@@ -151,7 +155,7 @@
       "dib_after_reduced_rib": 1977,
       "dib_guarantee_pia": 1977,
       "disabled_widow_before_1984": 0,
-      "dual_entitlement_sequence": 2806,
+      "dual_entitlement_sequence": 2848,
       "eligibility_before_1983": 0,
       "government_pension_offset": 1284,
       "independently_entitled_divorced_spouse": 0,
@@ -163,6 +167,8 @@
       "payment_month_before_1983": 0,
       "savings_clause_403a5": 0,
       "savings_clause_history_unknown": 0,
+      "widow_drc_savings_clause": 1926,
+      "widow_drc_savings_clause_history_unknown": 0,
       "workers_compensation_offset": 1977
     }
   },
@@ -182,11 +188,11 @@
       "formula:maximum": 5,
       "historical:refused": 4,
       "ieds": 0,
-      "maximum:binding": 14,
+      "maximum:binding": 15,
       "maximum:disability_aime": 0,
       "maximum:disability_cap": 4,
       "maximum:disability_floor": 0,
-      "maximum:nonbinding": 5,
+      "maximum:nonbinding": 4,
       "outside:divorced_spouse": 0,
       "outside:ieds": 0,
       "outside:surviving_divorced_spouse": 1,
@@ -323,7 +329,7 @@
         ]
       }
     },
-    "sha256": "9d352b6bdfe797705b647a981c9ec4214e2b5646de8d6515d2d53bef31fc880b",
+    "sha256": "734160d99d60e716938e9b7171e1cf7bb8c2db99a53ce9b686121ed89031da19",
     "supported_classes": [
       "cola_path",
       "credits:own_rib",
@@ -373,8 +379,8 @@
   "supplemental_refusal_witnesses": {
     "denominator": {
       "invalid": 0,
-      "refused": 21,
-      "rows": 21,
+      "refused": 23,
+      "rows": 23,
       "supported": 0
     },
     "refused_by_reason": {
@@ -398,6 +404,8 @@
       "payment_month_before_1983": 1,
       "savings_clause_403a5": 1,
       "savings_clause_history_unknown": 1,
+      "widow_drc_savings_clause": 1,
+      "widow_drc_savings_clause_history_unknown": 1,
       "workers_compensation_offset": 1
     },
     "scope": "Named invented witnesses outside the finite lattice; separate denominator, one valid refusal for every retained UnsupportedReason.",
@@ -520,6 +528,18 @@
         "description": "Governed month begins with unknown prior entitlement months",
         "id": "savings_clause_history_unknown",
         "reason": "savings_clause_history_unknown",
+        "status": "refused"
+      },
+      {
+        "description": "May 1978 survivor protected from widow deceased-worker DRCs",
+        "id": "widow_drc_savings_clause",
+        "reason": "widow_drc_savings_clause",
+        "status": "refused"
+      },
+      {
+        "description": "Direct survivor snapshot lacks May 1978 widow-DRC attestation",
+        "id": "widow_drc_savings_clause_history_unknown",
+        "reason": "widow_drc_savings_clause_history_unknown",
         "status": "refused"
       },
       {

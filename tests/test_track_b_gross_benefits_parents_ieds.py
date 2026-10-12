@@ -45,7 +45,10 @@ def _family(state, members, month=NOW):
 
 
 def _survivor(pia=F(1000), maximum=F(1750)):
-    return g.RecordState(g.FamilyKind.SURVIVOR, pia, maximum)
+    # Invented families have no protected May 1978 survivor entitlement.
+    return g.RecordState(
+        g.FamilyKind.SURVIVOR, pia, maximum, widow_drc_savings_clause=False
+    )
 
 
 def _parent(bid="p", **kwargs):
@@ -508,6 +511,7 @@ def test_ieds_only_accepts_retirement_records(kind):
         kind,
         F(1000),
         F(1750),
+        widow_drc_savings_clause=False,
         conditions={g.RecordCondition.WORKER_NOT_ENTITLED},
     )
     with pytest.raises(g.InvalidFamilyInput):
