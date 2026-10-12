@@ -245,7 +245,9 @@ DECLARED = INVENTED_DECLARED
 #: ``independent_adjudication`` note now records the rulings, and the
 #: wealth registry's ``status_scope`` no longer says role assignment is
 #: refused.  The first-round review fixes moved the income bytes again
-#: (amendment 2's rule text and amendment 3's resolution).
+#: (amendment 2's rule text and amendment 3's resolution), and the
+#: second-round fixes the weights bytes (one word of the 2017 weight's
+#: construction note).
 REGISTRY_SHA256: dict[str, str] = {
     "income": (
         "aea295524e689e3464147669c72b64c474208ceefe1efe0d33bcb0381e22dca3"
@@ -266,7 +268,7 @@ REGISTRY_SHA256: dict[str, str] = {
         "419341b90e0adae2c8a8ee1c2324d405bbd5e0a49faa54a00c19025fc6fd57c9"
     ),
     "weights": (
-        "6042524ae68d2163bd5b119ecfc0837e6c9e59713b0d50cffe9fc5b788a20e2c"
+        "456666033dc02e79c9603a7cbe3dfd7b879eaea92e8398c508923aaf73c68221"
     ),
     "design": (
         "56181372d412811af6d06f5c0d8d1e071049f7fb73c34bd394aaff8f5e0c2fd6"

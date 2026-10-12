@@ -686,8 +686,11 @@ D637_CLAUSES = {
     "6": [
         ("resolution", "took amendment 6's option 1 for blocker B3"),
         ("resolution", "ER34651 is used as released"),
-        ("resolution", "no immigrant exclusion"),
-        ("resolution", "no recalibration"),
+        (
+            "resolution",
+            "no immigrant exclusion, no reconstructed weight and no "
+            "recalibration",
+        ),
     ],
 }
 

@@ -229,7 +229,74 @@ RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
             "amends_draft_3_lines": [134],
         },
         "disposition": "A",
-        "fields": {"status": "RESOLVED", "variable": "ER34651"},
+        "fields": {
+            "status": "RESOLVED",
+            "variable": "ER34651",
+            "selection": (
+                "positive recorded cross-sectional weight; do not infer a "
+                "domain from empirical ranges printed in codebook"
+            ),
+            "purpose": (
+                "Use reporting-wave individual cross-sectional weight times "
+                "documentary plan multiplier. No cohort reweighting or "
+                "immigrant exclusion."
+            ),
+            # Option 1's disclosure, exactly (section 16a amendment 6).
+            "registration_disclosure": {
+                "documented": [
+                    (
+                        "the weight's identity: ER34651, CORE/IMM INDIVIDUAL "
+                        "CROSS-SECTION WT 17, the 2017 individual weight in "
+                        "Table A3 of PSID's April 2021 and June 2026 "
+                        "cross-sectional weight reports"
+                    ),
+                    (
+                        "the 2017 population control: the ACS one-year PUMS "
+                        "population total, with the CPS not used, and its two "
+                        "named exclusions, individuals in donut-hole families "
+                        "and post-1997 immigrants living in group quarters"
+                    ),
+                    (
+                        "the calibration-variable selection approach PSID has "
+                        "used since 2017"
+                    ),
+                    (
+                        "some calibration controls: gender, race, region and "
+                        "age in 10-year groups, in comparisons that include "
+                        "2017 (April 2021 report)"
+                    ),
+                    (
+                        "how the 2017 Immigrant sample's base weights were "
+                        "formed and integrated with the core sample, for the "
+                        "2019 weights (the 2019 longitudinal-weights report)"
+                    ),
+                ],
+                "not_published": [
+                    (
+                        "which starting weights the revised 2017 weight used "
+                        "for the 2017 Immigrant sample, whose 2017 "
+                        "longitudinal family weight is zero"
+                    ),
+                    (
+                        "how that sample's joint families were integrated "
+                        "with the core sample in the revised 2017 weight"
+                    ),
+                    (
+                        "the complete 2017 raking specification: every "
+                        "calibration variable and interaction, the collapsed "
+                        "categories and the trimming"
+                    ),
+                ],
+                "coverage_bound": (
+                    "The control's documented exclusions bound coverage: the "
+                    "donut-hole group includes post-1997 immigrants who "
+                    "co-reside with individuals born in 1960-1971, with no "
+                    "limit on their own birth year, and post-1997 immigrants "
+                    "in group quarters are excluded too (June 2026 report, "
+                    "Table A2 note)."
+                ),
+            },
+        },
         "absent": ("action", "refusal", "question", "blocking_dependencies"),
         "required": (
             "resolution",

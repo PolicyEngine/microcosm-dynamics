@@ -930,6 +930,42 @@ D637_SCOPE_MUTATIONS = {
             "registration_disclosure"
         ),
     ),
+    # Second-round review (of 57778fa1): option 1's disclosure, selection
+    # and purpose, exactly.
+    "a6_coverage_bound_emptied": (
+        "weights",
+        lambda d: _entry(d, "2017.cross_section_weight")[
+            "registration_disclosure"
+        ].update(coverage_bound=""),
+    ),
+    "a6_documented_overstated": (
+        "weights",
+        lambda d: _entry(d, "2017.cross_section_weight")[
+            "registration_disclosure"
+        ]["documented"].__setitem__(
+            4, "the complete construction of the revised 2017 weight"
+        ),
+    ),
+    "a6_not_published_item_dropped": (
+        "weights",
+        lambda d: _entry(d, "2017.cross_section_weight")[
+            "registration_disclosure"
+        ]["not_published"].pop(),
+    ),
+    "a6_selection_excludes_immigrants": (
+        "weights",
+        lambda d: _entry(d, "2017.cross_section_weight").update(
+            selection="positive recorded cross-sectional weight; exclude "
+            "the 2017 Immigrant sample"
+        ),
+    ),
+    "a6_purpose_recalibrates": (
+        "weights",
+        lambda d: _entry(d, "2017.cross_section_weight").update(
+            purpose=_entry(d, "2017.cross_section_weight")["purpose"]
+            + " Recalibrate 2017 to ACS."
+        ),
+    ),
     "a2_blocked_again": (
         "income",
         lambda d: _entry(d, "income.2019.wife_sex").update(
