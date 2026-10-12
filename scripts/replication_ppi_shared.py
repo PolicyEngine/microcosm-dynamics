@@ -662,8 +662,8 @@ def anchor_provenance() -> dict[str, Any]:
     """
     return {
         "paper": (
-            "Mermin, G. B. T. (2005). The Effect of Benefit Reductions on "
-            "the Distribution of Social Security Benefits. Urban Institute "
+            "Mermin, G. B. T. (2005). Distributional Effects of Reforming "
+            "Social Security through Benefit Reductions. Urban Institute "
             "report 411260. DYNASIM3, Runid 432. 2005 Trustees intermediate "
             "assumptions."
         ),
