@@ -6,10 +6,26 @@ recomputation mechanics only. No population or forecast evidence.
 
 import hashlib
 import re
+from datetime import date
+from fractions import Fraction
+from pathlib import Path
 
 import pytest
 
+from populace_dynamics.track_b import arf, gross_benefits
 from tests.track_b_arf_recompute_support import SOURCES, manifest, source_text
+from tests.track_b_gross_benefit_support import (
+    SOURCES as GROSS_SOURCES,
+)
+from tests.track_b_gross_benefit_support import (
+    manifest as gross_manifest,
+)
+from tests.track_b_gross_benefit_support import (
+    source_text as gross_source_text,
+)
+from tests.track_b_gross_benefit_support import (
+    ssa_params,
+)
 
 
 def test_manifest_pins_every_capture():
@@ -329,3 +345,100 @@ READING_QUOTES = {
 )
 def test_alternative_readings_are_quoted_from_captures(source_id, quote):
     assert quote in source_text(source_id)
+
+
+SPOUSE_REENTITLEMENT_QUOTES = {
+    "RS 00615.201A.1": (
+        "After 12/72 a spouse reentitled prior to FRA as a spouse on the "
+        "same earnings is reduced the same number of months as the "
+        "earlier entitlement. An ARF at FRA will remove all months of "
+        "nonentitlement."
+    ),
+    "RS 00615.491A": (
+        "Beginning in 1/78, if a reduced spouse is terminated and then "
+        "reentitled, (months in which the spouse's benefits were "
+        "terminated will be eliminated from the reduction factor when "
+        "the spouse is reentitled."
+    ),
+}
+
+
+def test_spouse_reentitlement_conflict_quotes_and_refusal_are_documented():
+    """Both already captured POMS readings must remain visible to review."""
+    # The .201 source is listed in G's manifest rather than R3's. Check
+    # those referenced bytes here as well as the verbatim quoted text.
+    entry = next(
+        s
+        for s in gross_manifest()["sources"]
+        if s["id"] == "poms_rs_00615_201"
+    )
+    data = (GROSS_SOURCES / entry["file"]).read_bytes()
+    assert len(data) == entry["bytes"]
+    assert hashlib.sha256(data).hexdigest() == entry["sha256"]
+    texts = {
+        "RS 00615.201A.1": gross_source_text("poms_rs_00615_201"),
+        "RS 00615.491A": source_text("poms_rs_00615_491"),
+    }
+    note = (
+        Path(__file__).parents[1] / "docs/design/track_b_r3_arf_recompute.md"
+    ).read_text()
+    judgment = " ".join(
+        note.split("## Findings and readings requiring judgment", 1)[1]
+        .split("## Monthly assembly inputs", 1)[0]
+        .split()
+    )
+    refusal_row = next(
+        line
+        for line in note.splitlines()
+        if line.startswith("| Earlier reentitled spouse adjustment |")
+    )
+    for authority, quote in SPOUSE_REENTITLEMENT_QUOTES.items():
+        assert quote in texts[authority]
+        assert quote in judgment
+        assert authority in refusal_row
+    assert "conflict" in refusal_row
+    assert "arf_spouse_reentitlement_before_fra" in refusal_row
+    for amount in ("$422.50", "$425.20", "$2.70"):
+        assert amount in judgment
+
+
+def test_spouse_reentitlement_counterfactual_readings_keep_named_refusal():
+    """Invented 1960-01-02 spouse: $650, 60 RF versus 59 RF.
+
+    First entitlement 2022-01, termination 2022-02, reentitlement
+    2022-03. The .201 reading preserves 60 RF: 35% reduction gives
+    $422.50/$422. The .491 reading removes the terminated month: 59 RF
+    has reduction 83/240, rounded upward from $224.7916... to $224.80,
+    giving $425.20/$425. These are counterfactual arithmetic diagnostics;
+    neither reading is admitted by the refused pre-FRA claim.
+    """
+    params = ssa_params()
+    unreduced = Fraction(650)
+    amounts = tuple(
+        gross_benefits.floor_dime(
+            unreduced
+            - gross_benefits.ceil_dime(
+                unreduced
+                * gross_benefits.spouse_reduction_fraction(months, params)
+            )
+        )
+        for months in (60, 59)
+    )
+    assert amounts == (Fraction("422.50"), Fraction("425.20"))
+    assert tuple(map(gross_benefits.whole_dollars, amounts)) == (422, 425)
+    assert amounts[1] - amounts[0] == Fraction("2.70")
+    claim = arf.ARFClaim(
+        kind=arf.ARFBenefitKind.SPOUSE,
+        birth_date=date(1960, 1, 2),
+        first_reduction_month=(2022, 1),
+        unreduced_benefit=unreduced,
+        nonentitlement_months=frozenset({(2022, 2)}),
+    )
+    with pytest.raises(
+        gross_benefits.FamilyConfigurationUnsupported
+    ) as caught:
+        arf.apply_arf(claim, payment_month=(2022, 3), params=params)
+    assert (
+        caught.value.reason
+        is arf.ARFUnsupportedReason.SPOUSE_REENTITLEMENT_BEFORE_FRA
+    )

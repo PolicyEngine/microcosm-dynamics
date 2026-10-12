@@ -19,6 +19,13 @@ persists, without new credits, until FRA (RS 00615.582; CFR 404.412(b)).
 The month of age attainment precedes the birth month for a first-day
 birthday; a January 1 birth also uses the preceding FRA cohort.
 
+Collection inputs are snapshotted into immutable tuples or frozensets at
+construction, including one-shot iterators. Repeated original-claim
+evaluation preserves both dollar amounts and coverage refusals. Contents
+are validated before coverage is decided, without consuming caller state.
+Pre-FRA spouse reentitlement is refused because RS 00615.201A.1 and
+.491A conflict on when termination months leave the reduction factor.
+
 Unsupported configurations raise FamilyConfigurationUnsupported with
 named ARF reasons. Invalid inputs are checked first. evaluate_arf and
 count_arf_outcomes retain every refusal in the weighted denominator.
@@ -52,6 +59,14 @@ from populace_dynamics.track_b.gross_benefits import (
 
 ARF_VERSION = "track-b-r3-arf-v1"
 MonthInput = YearMonth | tuple[int, int]
+_CREDIT_FIELDS = (
+    "full_work_deduction_months",
+    "partial_work_deduction_months",
+    "child_in_care_months",
+    "nonentitlement_months",
+    "simultaneous_dib_months",
+    "mother_father_rate_months",
+)
 
 
 class ARFBenefitKind(Enum):
@@ -216,35 +231,52 @@ class ARFClaim:
     month. Nonentitlement months mean termination under 402(q)(7)(C)/(E),
     not missing records. Mother/father-rate months mean (q)(5)(D) actually
     determined the widow(er)'s benefit, rather than every caregiving month.
+    All month and condition iterables are copied at construction. Tuple
+    snapshots retain malformed contents for the complete validation that
+    precedes coverage checks, while never retaining a mutable collection
+    or a one-shot iterator as claim state.
     """
 
     kind: ARFBenefitKind
     birth_date: date
     first_reduction_month: MonthInput
     unreduced_benefit: Fraction
-    full_work_deduction_months: frozenset[MonthInput] = field(
+    full_work_deduction_months: Iterable[MonthInput] = field(
         default_factory=frozenset
     )
-    partial_work_deduction_months: frozenset[MonthInput] = field(
+    partial_work_deduction_months: Iterable[MonthInput] = field(
         default_factory=frozenset
     )
-    child_in_care_months: frozenset[MonthInput] = field(
+    child_in_care_months: Iterable[MonthInput] = field(
         default_factory=frozenset
     )
-    nonentitlement_months: frozenset[MonthInput] = field(
+    nonentitlement_months: Iterable[MonthInput] = field(
         default_factory=frozenset
     )
-    simultaneous_dib_months: frozenset[MonthInput] = field(
+    simultaneous_dib_months: Iterable[MonthInput] = field(
         default_factory=frozenset
     )
-    mother_father_rate_months: frozenset[MonthInput] = field(
+    mother_father_rate_months: Iterable[MonthInput] = field(
         default_factory=frozenset
     )
     death_date: date | None = None
     spouse_own: SpouseOwnBenefit | None = None
-    conditions: frozenset[ARFUnsupportedReason] = field(
+    conditions: Iterable[ARFUnsupportedReason] = field(
         default_factory=frozenset
     )
+
+    def __post_init__(self):
+        for name in (*_CREDIT_FIELDS, "conditions"):
+            try:
+                values = getattr(self, name)
+                snapshot = (
+                    values if isinstance(values, frozenset) else tuple(values)
+                )
+            except TypeError as error:
+                raise InvalidFamilyInput(
+                    f"{name} must be an iterable"
+                ) from error
+            object.__setattr__(self, name, snapshot)
 
 
 @dataclass(frozen=True)
@@ -269,6 +301,13 @@ class ARFResult:
     benefit: Fraction
     whole_dollar_benefit: int
 
+    def __post_init__(self):
+        object.__setattr__(
+            self,
+            "crediting_months",
+            _month_set(self.crediting_months, "crediting_months"),
+        )
+
 
 def _check_claim(claim: ARFClaim, params: SSAParameters) -> ARFClaim:
     """Validate all inputs before deciding whether coverage is supported."""
@@ -289,14 +328,7 @@ def _check_claim(claim: ARFClaim, params: SSAParameters) -> ARFClaim:
             "conditions must contain ARFUnsupportedReason"
         )
     values = {}
-    for name in (
-        "full_work_deduction_months",
-        "partial_work_deduction_months",
-        "child_in_care_months",
-        "nonentitlement_months",
-        "simultaneous_dib_months",
-        "mother_father_rate_months",
-    ):
+    for name in _CREDIT_FIELDS:
         values[name] = _month_set(getattr(claim, name), name)
     if (
         values["child_in_care_months"]
@@ -453,7 +485,7 @@ def apply_arf(
     ):
         _refuse(
             ARFUnsupportedReason.SPOUSE_REENTITLEMENT_BEFORE_FRA,
-            "RS 00615.491 adjusts termination credits upon reentitlement; "
+            "RS 00615.201A.1 and .491A conflict on pre-FRA reentitlement timing; "
             "this module supports the final FRA adjustment only",
         )
     if (

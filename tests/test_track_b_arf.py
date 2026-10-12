@@ -39,6 +39,112 @@ def rib_claim(**kwargs):
     return a.ARFClaim(**values)
 
 
+def test_original_claim_iterator_credit_survives_repeated_application():
+    """Reviewer counterexample: one credit always pays $915.40/$915."""
+    claim = rib_claim(full_work_deduction_months=iter([(2022, 1)]))
+    first = a.apply_arf(claim, payment_month=FRA, params=PARAMS)
+    second = a.apply_arf(claim, payment_month=FRA, params=PARAMS)
+    assert first.adjusted_reduction_months == 59
+    assert first.benefit == F("915.4")
+    assert first.whole_dollar_benefit == 915
+    assert second == first
+
+
+def test_original_claim_iterator_refusal_survives_repeated_evaluation():
+    """Reviewer counterexample: evaluating a refusal never erases it."""
+    claim = rib_claim(
+        conditions=iter([a.ARFUnsupportedReason.OTHER_SUSPENSION])
+    )
+    outcomes = [
+        a.evaluate_arf(
+            key,
+            F(1),
+            lambda: a.apply_arf(claim, payment_month=FRA, params=PARAMS),
+        )
+        for key in ("left", "right")
+    ]
+    for outcome in outcomes:
+        assert not outcome.supported
+        assert (
+            outcome.unsupported.reason
+            is a.ARFUnsupportedReason.OTHER_SUSPENSION
+        )
+    denominator = a.count_arf_outcomes(outcomes)
+    assert denominator.rows == denominator.unsupported_rows == 2
+    assert denominator.weight == denominator.unsupported_weight == 2
+
+
+@pytest.mark.parametrize(
+    "kind,field",
+    [
+        (a.ARFBenefitKind.RIB, "full_work_deduction_months"),
+        (a.ARFBenefitKind.RIB, "partial_work_deduction_months"),
+        (a.ARFBenefitKind.SPOUSE, "child_in_care_months"),
+        (a.ARFBenefitKind.SPOUSE, "nonentitlement_months"),
+        (a.ARFBenefitKind.RIB, "simultaneous_dib_months"),
+        (a.ARFBenefitKind.WIDOW, "mother_father_rate_months"),
+    ],
+)
+def test_every_iterator_credit_field_is_stable_for_supported_and_refused_claims(
+    kind, field
+):
+    for refused in (False, True):
+        claim = rib_claim(
+            kind=kind,
+            **{field: iter([(2022, 1)])},
+            conditions=iter(
+                [a.ARFUnsupportedReason.OTHER_SUSPENSION] if refused else []
+            ),
+        )
+
+        def compute(claim=claim):
+            return a.apply_arf(claim, payment_month=FRA, params=PARAMS)
+
+        first = a.evaluate_arf("same", F(1), compute)
+        second = a.evaluate_arf("same", F(1), compute)
+        assert second.supported == first.supported == (not refused)
+        if refused:
+            assert second.unsupported.reason is first.unsupported.reason
+        else:
+            assert second.benefits == first.benefits
+            assert first.benefits.crediting_months == frozenset(
+                {g.YearMonth(2022, 1)}
+            )
+            assert first.benefits.adjusted_reduction_months == (
+                first.benefits.original_reduction_months - 1
+            )
+        assert isinstance(getattr(claim, field), (tuple, frozenset))
+        assert isinstance(claim.conditions, (tuple, frozenset))
+
+
+def test_iterator_inputs_are_snapshotted_before_the_caller_can_consume_them():
+    credits = iter([(2022, 1)])
+    conditions = iter([a.ARFUnsupportedReason.OTHER_SUSPENSION])
+    claim = rib_claim(
+        full_work_deduction_months=credits, conditions=conditions
+    )
+    assert list(credits) == list(conditions) == []
+    with pytest.raises(g.FamilyConfigurationUnsupported) as caught:
+        a.apply_arf(claim, payment_month=FRA, params=PARAMS)
+    assert caught.value.reason is a.ARFUnsupportedReason.OTHER_SUSPENSION
+    supported = a.apply_arf(
+        replace(claim, conditions=()), payment_month=FRA, params=PARAMS
+    )
+    assert supported.benefit == F("915.4")
+
+
+def test_result_iterator_credits_are_immutable_and_survive_inspection():
+    result = a.apply_arf(
+        rib_claim(full_work_deduction_months={(2022, 1)}),
+        payment_month=FRA,
+        params=PARAMS,
+    )
+    direct = replace(result, crediting_months=iter(result.crediting_months))
+    assert direct == result
+    assert frozenset(direct.crediting_months) == result.crediting_months
+    assert frozenset(direct.crediting_months) == result.crediting_months
+
+
 @pytest.mark.parametrize("credits,expected", [(0, 910), (12, 975), (60, 1300)])
 def test_publication_05_10069_worked_example(credits, expected):
     """SSA: PIA1300,60 RF;0/12/60credits give910/975/1300 exactly.

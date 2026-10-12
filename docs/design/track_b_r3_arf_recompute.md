@@ -1,6 +1,7 @@
 # Track B R3: adjustment of the reduction factor and recomputation
 
-**Verification class: statutory conformance. Build only, 2026-10-11.**
+**Verification class: statutory conformance. Build only, 2026-10-11;
+review fixes 2026-10-12.**
 Admitted scope is ARF credits and earnings recomputation mechanics for
 supported cases. Inputs are invented histories and captured SSA examples.
 There is no population, behavioral, forecast or payment-processing claim.
@@ -21,11 +22,21 @@ verbatim quotations are in `tests/test_track_b_r3_sources.py`.
 ## Statutory order
 
 R2 supplies final full or partial work-deduction months for each benefit
-record. R3 takes plain sets of `YearMonth` or `(year, month)` values and
+record. R3 takes iterables of `YearMonth` or `(year, month)` values and
 imports no R2 implementation. Provisional or prorated suspensions are not
 final deduction months. Credits are a union, so overlapping categories
 credit a month once. Only original reduction-window months count
 (42 U.S.C. 402(q)(6)-(7); RS 00615.482).
+
+Every iterable field in an ARF claim is snapshotted once at construction
+into a tuple or frozenset. Month contents and condition types are still
+validated before any coverage refusal. An ARF result freezes its crediting
+months, and a recomputation basis freezes its conditions at construction;
+its bend points require a tuple. Neither evaluating the original claim nor
+inspecting a result can consume credits or erase an exceptional-history
+refusal. Iterator and immutable-set inputs have exactly the same supported
+results and refusal reasons. This implements deterministic record-specific
+credits and retention of unsupported rows under design sections 6 and 7.
 
 ARF applies at FRA for RIB and spouses. Ordinary widow adjustments apply at
 age 62 and again at widow FRA; credits recognized at 62 persist until FRA,
@@ -59,6 +70,16 @@ entitlement are supplied as established facts; earnings arithmetic does
 not verify insured status or quarters of coverage. Low-level arbitrary
 computation counts and synthetic parameters are formula diagnostics, not
 complete claimant cases.
+
+Required NAWI and contribution-base availability, positivity and finite
+values are validated separately from AIME capping, indexing and selection.
+Complete earnings and COLA histories and all required parameters are checked
+before coverage. Coverage refusals precede any ordinary AIME or PIA
+calculation (415(f)(2)(B)-(C); CFR 404.283-.284). An annual sequence validates
+every required year through its last cutoff before its first refusal,
+without calculating AIME. Unsupported formulas retain their named reason
+and produce no ordinary candidate; invalid required inputs still raise
+`InvalidFamilyInput` rather than being counted as coverage gaps.
 
 PIA is the exact 90/32/15-percent formula, floored to a dime. Original bend
 points are $180 and $1,085 scaled by NAWI, with half-dollar ties upward
@@ -99,7 +120,7 @@ case or removed from a denominator.
 | Deceased RIB number holder | Hypothetical adjustment at would-have-been FRA, final RIB deductions before death month; RS 00615.598. The result is a survivor-limit component, never payment to the deceased |
 | Ordinary AIME RIB recomputation | Supported eligibility from 1983, complete original basis and histories, continuous declared entitlement; 415(f)(2), CFR 404.284 |
 | Death-year recomputation at or after FRA | Supported, effective death month, COLAs cut off at that month; 415(f)(2)(D)(ii) |
-| Earlier reentitled spouse adjustment | `arf_spouse_reentitlement_before_fra`; .491 permits adjustment on reentitlement, which needs an additional dated election timeline. A known prior terminating month automatically triggers this refusal before FRA |
+| Earlier reentitled spouse adjustment | `arf_spouse_reentitlement_before_fra`; RS 00615.201A.1 conflicts with RS 00615.491A on whether nonentitlement months are removed at FRA or on earlier reentitlement. Both readings are quoted below. A known prior terminating month automatically triggers this refusal before FRA; neither reading is silently admitted |
 | Own entitlement after spouse but before ARF | `arf_spouse_own_after_spouse_before_arf`; sequence not settled by the captured .500 procedures |
 | Disabled widow and widow dual DIB or RIB | `arf_disabled_widow`, `arf_widow_dual_dib`, `arf_widow_dual_rib`; .590/.595 conversion and earlier reduction histories require additional state |
 | RIB-LIM widow | `arf_widow_rib_limit`; .585 requires its separate cap and sometimes no increase despite ARF |
@@ -122,6 +143,7 @@ Each row has a Hypothesis property test beside the example tests.
 | Invariant | Property test |
 | --- | --- |
 | ARF is idempotent, deterministic and retains the original claim | `test_arf_is_idempotent_deterministic_and_preserves_original_claim` |
+| Repeated evaluation of any supported or refused iterator ARF claim preserves results, reasons and denominator weights; result credits remain immutable on repeated inspection; immutable-set and iterator inputs agree exactly | `test_iterator_claim_evaluation_preserves_results_and_refusals` |
 | Adjusted months + distinct credits = original months; credits are bounded and only original-window months count; input order does not matter | `test_credit_bounds_window_and_order_independence` |
 | More credits never lower the nominal benefit factor, dime benefit or whole-dollar benefit; the factor is nonincreasing in adjusted months | `test_more_credits_never_lower_benefit_or_nominal_factor` |
 | A partial deduction counts as a full month; duplicate full/partial inputs never double credit | `test_partial_deduction_equals_full_credit_and_duplicate_categories_do_not_add` |
@@ -144,6 +166,10 @@ Each row has a Hypothesis property test beside the example tests.
 | PIA is nonnegative, monotone in AIME and a dime multiple | `test_pia_is_dime_multiple_monotone_and_nonnegative` |
 | Application is equivalent to positive earnings and at least $1 after COLAs; rejected candidates preserve the PIA | `test_dollar_rule_exact_equivalence` |
 | Earnings map order does not change results; repeated evaluation is deterministic | `test_earnings_mapping_order_independent_and_deterministic` |
+| Iterator conditions in a recomputation basis preserve repeated supported results and refused outcomes, with every weight retained | `test_iterator_conditions_preserve_repeated_results_and_outcomes` |
+| Every recomputation coverage refusal precedes ordinary AIME/PIA arithmetic, in annual calls and sequences | `test_all_coverage_refusals_precede_ordinary_arithmetic` |
+| Invalid required NAWI and contribution bases raise before any coverage refusal or ordinary arithmetic | `test_invalid_required_parameters_precede_refusal_without_arithmetic` |
+| An invalid original ordinary computation count raises before a later death-before-FRA refusal in a sequence | `test_invalid_original_count_precedes_sequence_death_refusal` |
 | Refusals retain every row and weight and block a PIA target | `test_refusals_retained_in_weighted_denominator` |
 | Invalid histories are never counted as coverage gaps | `test_input_error_is_never_classified_as_coverage` |
 | Death-month effectiveness excludes later COLAs | `test_death_effective_month_excludes_later_cola` |
@@ -237,7 +263,7 @@ Python's ties-to-even bend-point rounding also differs from the statute at
 an exact half dollar; the named tie test pins the statutory upward result.
 These are arithmetic diagnostics, not competing statutory interpretations.
 
-Two source readings change money and require Max's judgment:
+Three source readings change money and require Max's judgment:
 
 1. **Historical widow cohort.** RS 00615.003 says "People Born Before
    1/2/1911" and "FRA for widow(er)'s benefits was age 62", then "People
@@ -260,6 +286,27 @@ Two source readings change money and require Max's judgment:
    36/84 of 28.5 percent gives $877.80. Crediting six nonbinding caregiving
    months under the broader CFR reading gives $898.20: $20.40 per month.
    Both counterfactual amounts and the explicit refusal are tested.
+3. **Spouse reentitlement before FRA.** RS 00615.201A.1 says "After
+   12/72 a spouse reentitled prior to FRA as a spouse on the same earnings
+   is reduced the same number of months as the earlier entitlement. An
+   ARF at FRA will remove all months of nonentitlement." RS 00615.491A
+   says "Beginning in 1/78, if a reduced spouse is terminated and then
+   reentitled, (months in which the spouse's benefits were terminated will
+   be eliminated from the reduction factor when the spouse is reentitled."
+   The unmatched parenthesis is present in the captured .491 text. The
+   first reading keeps the original reduction months until FRA; the second
+   removes terminated months on reentitlement. For an invented birth on
+   January 2, 1960, first reduced entitlement in January 2022, termination
+   in February 2022 and reentitlement in March 2022, unreduced benefit
+   $650 and FRA in January 2027 give 60 original reduction months.
+   Keeping all 60 under .201 gives $422.50 and whole-dollar $422.
+   Removing February under .491 leaves 59 months and gives $425.20 and
+   whole-dollar $425, a $2.70 monthly benefit difference and $3 difference
+   after whole-dollar rounding. The named refusal
+   `arf_spouse_reentitlement_before_fra` remains in force for the March
+   2022 claim. Both counterfactual amounts and the refusal are pinned by
+   `test_spouse_reentitlement_counterfactual_readings_keep_named_refusal`;
+   the source and documentation quote test keeps both readings visible.
 
 The $1-after-COLAs rule is settled expressly by RS 00605.501. Historical
 upward rounding is different law, not a source erratum. No choice between

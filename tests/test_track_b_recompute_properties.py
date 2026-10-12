@@ -3,6 +3,7 @@
 import math
 from dataclasses import replace
 from fractions import Fraction as F
+from unittest.mock import patch
 
 import pytest
 from hypothesis import given, settings
@@ -15,6 +16,7 @@ from populace_dynamics.ss.statutory_aime import (
 )
 from populace_dynamics.track_b import recompute as r
 from populace_dynamics.track_b.gross_benefits import (
+    FamilyConfigurationUnsupported,
     FamilyTargetBlocked,
     InvalidFamilyInput,
     YearMonth,
@@ -242,6 +244,174 @@ def test_earnings_mapping_order_independent_and_deterministic(values):
     forward = annual(history=dict(items))
     backward = annual(history=dict(reversed(items)))
     assert forward == backward == annual(history=dict(items))
+
+
+@settings(deadline=None)
+@given(
+    st.lists(st.sampled_from(list(r.RecomputationCondition))),
+    st.lists(st.integers(0, 100_000), min_size=3, max_size=3),
+)
+def test_iterator_conditions_preserve_repeated_results_and_outcomes(
+    conditions, values
+):
+    original = basis(conditions=iter(conditions))
+    history = dict(zip(range(2018, 2021), values, strict=True))
+    outcomes = [
+        r.evaluate_recomputation(
+            key, 1, lambda: annual(basis=original, history=history)
+        )
+        for key in ("first", "second")
+    ]
+    first, second = outcomes
+    assert original.conditions == frozenset(conditions)
+    assert isinstance(original.conditions, frozenset)
+    assert first.supported == second.supported == (not conditions)
+    assert first.result == second.result
+    counts = count_family_outcomes(outcomes)
+    assert (counts.rows, counts.weight) == (2, 2)
+    assert (
+        counts.unsupported_rows
+        == counts.unsupported_weight
+        == (2 if conditions else 0)
+    )
+    if conditions:
+        assert first.unsupported.reason == second.unsupported.reason
+
+
+@settings(deadline=None)
+@given(
+    st.sampled_from(
+        [f for f in r.PIAFormula if f is not r.PIAFormula.AIME]
+        + list(r.RecomputationCondition)
+        + ["pre1983", "death_before_fra"]
+    ),
+    st.lists(st.integers(0, 100_000), min_size=5, max_size=5),
+    st.booleans(),
+    st.integers(1, 3),
+)
+def test_all_coverage_refusals_precede_ordinary_arithmetic(
+    refusal, values, sequence, year_count
+):
+    original = basis()
+    options = {}
+    last_year = 2019 + year_count
+    if isinstance(refusal, r.PIAFormula):
+        original = basis(formula=refusal)
+    elif isinstance(refusal, r.RecomputationCondition):
+        original = basis(conditions=iter([refusal]))
+    elif refusal == "pre1983":
+        original = basis(
+            eligibility_year=1979,
+            indexing_year=1977,
+            computation_years=23,
+            bend_points=(180, 1085),
+            entitlement_month=YearMonth(1979, 6),
+        )
+    else:
+        options = {
+            "death_month": YearMonth(last_year, 11),
+            "fra_month": YearMonth(2025, 2),
+        }
+    history = explicit_early_zeros(
+        dict(zip(range(2018, 2023), values, strict=True))
+    )
+    colas = {
+        year: 0 for year in range(original.eligibility_year, last_year + 1)
+    }
+    with (
+        patch.object(
+            r, "_aime_from_prefix", wraps=r._aime_from_prefix
+        ) as adapter,
+        patch.object(
+            r,
+            "aime_with_computation_years",
+            wraps=r.aime_with_computation_years,
+        ) as aime,
+        patch.object(r, "exact_pia", wraps=r.exact_pia) as pia,
+    ):
+        with pytest.raises(FamilyConfigurationUnsupported):
+            if sequence:
+                r.recompute_sequence(
+                    original,
+                    history,
+                    list(range(2020, last_year + 1)),
+                    0,
+                    PARAMS,
+                    colas,
+                    **options,
+                )
+            else:
+                r.annual_recomputation(
+                    original, history, last_year, 0, PARAMS, colas, **options
+                )
+        assert (adapter.call_count, aime.call_count, pia.call_count) == (
+            0,
+            0,
+            0,
+        )
+
+
+@settings(deadline=None)
+@given(
+    st.integers(1951, 2018),
+    st.booleans(),
+    st.sampled_from(["nawi", "wage_base"]),
+    st.booleans(),
+)
+def test_invalid_required_parameters_precede_refusal_without_arithmetic(
+    year, missing, parameter, sequence
+):
+    original = basis(formula=r.PIAFormula.AMW)
+    if parameter == "nawi":
+        values = PARAMS.nawi.copy()
+        if missing:
+            del values[year]
+        else:
+            values[year] = 0
+        params = replace(PARAMS, nawi=values)
+    else:
+        params = replace(
+            PARAMS,
+            wage_base={} if missing else {1951: 1_000_000, 2021: 0},
+        )
+    history = {base_year: 0 for base_year in range(1951, 2022)}
+    with (
+        patch.object(
+            r, "_aime_from_prefix", wraps=r._aime_from_prefix
+        ) as adapter,
+        patch.object(r, "exact_pia", wraps=r.exact_pia) as pia,
+    ):
+        with pytest.raises(InvalidFamilyInput):
+            if sequence:
+                r.recompute_sequence(
+                    original,
+                    history,
+                    [2020, 2021],
+                    0,
+                    params,
+                    {2020: 0, 2021: 0},
+                )
+            else:
+                r.annual_recomputation(
+                    original, history, 2021, 0, params, {2020: 0, 2021: 0}
+                )
+        assert (adapter.call_count, pia.call_count) == (0, 0)
+
+
+@settings(deadline=None)
+@given(st.integers(2, 34), st.integers(2020, 2024))
+def test_invalid_original_count_precedes_sequence_death_refusal(count, year):
+    with pytest.raises(InvalidFamilyInput, match="computation count"):
+        r.recompute_sequence(
+            basis(computation_years=count),
+            {base_year: 0 for base_year in range(1951, year + 1)},
+            list(range(2020, year + 1)),
+            0,
+            PARAMS,
+            {cola_year: 0 for cola_year in range(2020, year + 1)},
+            death_month=YearMonth(year, 11),
+            fra_month=YearMonth(2025, 2),
+        )
 
 
 @settings(deadline=None)

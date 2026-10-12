@@ -10,7 +10,7 @@ from datetime import date
 from fractions import Fraction as F
 
 import pytest
-from hypothesis import given, settings
+from hypothesis import example, given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.track_b import arf as a
@@ -62,6 +62,88 @@ def test_arf_is_idempotent_deterministic_and_preserves_original_claim(
     assert twice == result == at_fra(claim)
     assert result.claim.first_reduction_month == claim.first_reduction_month
     assert result.original_reduction_months == original
+
+
+@settings(deadline=None)
+@example(a.ARFBenefitKind.RIB, F(1300), [0], [])
+@example(
+    a.ARFBenefitKind.RIB,
+    F(1300),
+    [],
+    [a.ARFUnsupportedReason.OTHER_SUSPENSION],
+)
+@given(
+    kinds,
+    amounts,
+    st.lists(st.integers(-20, 110), max_size=100),
+    st.lists(st.sampled_from(list(a.ARFUnsupportedReason)), max_size=5),
+)
+def test_iterator_claim_evaluation_preserves_results_and_refusals(
+    kind, amount, offsets, conditions
+):
+    """Every supported or refused iterator claim has stable meaning."""
+    base_claim = claim_for(kind, amount)
+    base = base_claim.first_reduction_month.year * 12
+    supplied = [
+        g.YearMonth((base + i) // 12, (base + i) % 12 + 1) for i in offsets
+    ]
+    category = {
+        a.ARFBenefitKind.RIB: "simultaneous_dib_months",
+        a.ARFBenefitKind.SPOUSE: "child_in_care_months",
+        a.ARFBenefitKind.WIDOW: "mother_father_rate_months",
+    }[kind]
+    claim = replace(
+        base_claim,
+        full_work_deduction_months=iter(supplied),
+        partial_work_deduction_months=iter(supplied),
+        **{category: iter(supplied)},
+        nonentitlement_months=iter(
+            supplied if kind is not a.ARFBenefitKind.RIB else []
+        ),
+        conditions=iter(conditions),
+    )
+    canonical = replace(
+        base_claim,
+        full_work_deduction_months=frozenset(supplied),
+        partial_work_deduction_months=frozenset(supplied),
+        **{category: frozenset(supplied)},
+        nonentitlement_months=frozenset(
+            supplied if kind is not a.ARFBenefitKind.RIB else []
+        ),
+        conditions=frozenset(conditions),
+    )
+    outcomes = [
+        a.evaluate_arf(str(index), F(1), lambda value=value: at_fra(value))
+        for index, value in enumerate((claim, claim, canonical))
+    ]
+    first, second, expected = outcomes
+    assert first.supported == second.supported == expected.supported
+    if first.supported:
+        assert first.benefits == second.benefits == expected.benefits
+        snapshotted_result = replace(
+            first.benefits,
+            crediting_months=iter(first.benefits.crediting_months),
+        )
+        assert snapshotted_result == first.benefits
+        assert (
+            frozenset(snapshotted_result.crediting_months)
+            == frozenset(snapshotted_result.crediting_months)
+            == first.benefits.crediting_months
+        )
+    else:
+        assert (
+            first.unsupported.reason
+            is second.unsupported.reason
+            is expected.unsupported.reason
+        )
+        assert first.unsupported.detail == second.unsupported.detail
+    counts = a.count_arf_outcomes(outcomes[:2])
+    assert counts.rows == counts.weight == 2
+    assert (
+        counts.unsupported_rows
+        == counts.unsupported_weight
+        == (0 if first.supported else 2)
+    )
 
 
 @settings(deadline=None)

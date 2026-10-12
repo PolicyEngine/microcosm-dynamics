@@ -36,6 +36,8 @@ sub-$1 recomputation (RS 00605.501A).
 
 Unsupported configurations raise G's FamilyConfigurationUnsupported with
 named reasons. Invalid inputs are validated before coverage refusals.
+History and required-parameter validation precede every coverage check;
+ordinary AIME indexing, selection and PIA arithmetic run only after it.
 Pre-1983 eligibility, other PIA formulas, DIB/freeze/prior DIB, WEP before
 2024, administrative finality, waived/disadvantageous recomputations,
 special credits and death before FRA under 415(f)(5) are explicitly
@@ -180,7 +182,8 @@ class RecomputationBasis:
     ``first_base_year`` is 1951 for the ordinary AIME cases supported here.
     Every year through the earnings cutoff must be explicitly reported.
     The entitlement window is continuous; interruption cases require
-    their own adapter.
+    their own adapter. Conditions are frozen once at construction,
+    including when supplied as a one-shot iterator.
     """
 
     eligibility_year: int
@@ -360,29 +363,58 @@ def _history_prefix(
     return values
 
 
+def _aime_parameters(
+    prefix: Mapping[int, Fraction],
+    basis: RecomputationBasis,
+    params: SSAParameters,
+) -> tuple[dict[int, Fraction], dict[int, Fraction]]:
+    """Check availability and positivity without computing any earnings."""
+    try:
+        nawi = {
+            basis.indexing_year: Fraction(
+                str(params.nawi[basis.indexing_year])
+            )
+        }
+        if nawi[basis.indexing_year] <= 0:
+            raise InvalidFamilyInput("NAWI must be positive")
+        wage_base = {}
+        for year in prefix:
+            wage_base[year] = Fraction(str(params.wage_base_for(year)))
+            if wage_base[year] <= 0:
+                raise InvalidFamilyInput("wage base must be positive")
+            if year < basis.indexing_year:
+                nawi[year] = Fraction(str(params.nawi[year]))
+                if nawi[year] <= 0:
+                    raise InvalidFamilyInput("NAWI must be positive")
+    except (
+        KeyError,
+        TypeError,
+        ValueError,
+        ZeroDivisionError,
+        OverflowError,
+    ) as exc:
+        raise InvalidFamilyInput(
+            "required AIME parameter is unavailable or invalid"
+        ) from exc
+    return nawi, wage_base
+
+
 def _aime_from_prefix(
     prefix: Mapping[int, Fraction],
     basis: RecomputationBasis,
     params: SSAParameters,
+    checked_parameters: tuple[dict[int, Fraction], dict[int, Fraction]],
 ) -> int:
     """Reuse statutory AIME, guarding the float oracle's integer boundary."""
+    nawi, wage_base = checked_parameters
     try:
-        index = Fraction(str(params.nawi[basis.indexing_year]))
-        if index <= 0:
-            raise InvalidFamilyInput("NAWI must be positive")
         indexed = []
         capped = {}
         for year, earnings in prefix.items():
-            wage_base = Fraction(str(params.wage_base_for(year)))
-            if wage_base <= 0:
-                raise InvalidFamilyInput("wage base must be positive")
-            amount = min(earnings, wage_base)
+            amount = min(earnings, wage_base[year])
             capped[year] = amount
             if year < basis.indexing_year:
-                nawi = Fraction(str(params.nawi[year]))
-                if nawi <= 0:
-                    raise InvalidFamilyInput("NAWI must be positive")
-                amount *= index / nawi
+                amount *= nawi[basis.indexing_year] / nawi[year]
             indexed.append(amount)
         top = sorted(indexed, reverse=True)[: basis.computation_years]
         exact = math.floor(sum(top) / (12 * basis.computation_years))
@@ -419,8 +451,9 @@ def earnings_aime(
         raise InvalidFamilyInput("basis must be a RecomputationBasis")
     if earnings_year < basis.first_base_year:
         raise InvalidFamilyInput("earnings cutoff precedes the base period")
+    prefix = _history_prefix(history, basis, earnings_year)
     return _aime_from_prefix(
-        _history_prefix(history, basis, earnings_year), basis, params
+        prefix, basis, params, _aime_parameters(prefix, basis, params)
     )
 
 
@@ -477,6 +510,23 @@ def _require_coverage(
         )
 
 
+def _validate_original_computation_count(basis: RecomputationBasis) -> None:
+    """415(b)(2): ordinary RIB's original count follows eligibility."""
+    # 415(b)(2)(A), (B)(iii): elapsed years start after1950 (or age21),
+    # end before age62; deduct5, with40 elapsed/35 computed at most.
+    # ELY1956 is1951+5. Prior-DIB exceptions require their own basis.
+    if (
+        basis.eligibility_year >= 1983
+        and basis.formula is PIAFormula.AIME
+        and not basis.conditions
+        and basis.computation_years
+        != max(2, min(35, basis.eligibility_year - 1956))
+    ):
+        raise InvalidFamilyInput(
+            "original ordinary RIB computation count disagrees with eligibility year"
+        )
+
+
 def annual_recomputation(
     basis: RecomputationBasis,
     history: Mapping[int, object],
@@ -491,7 +541,9 @@ def annual_recomputation(
     """415(f)(2): one earnings year; January next year or death month.
 
     ``eligibility_pia_of_record`` is the eligibility-level amount last
-    accepted, before COLAs. Missing histories raise before any refusal.
+    accepted, before COLAs. Complete history and parameter validation
+    precede coverage refusal; no ordinary AIME or PIA is calculated for
+    refused cases.
     Death-year input requires FRA so 415(f)(5) cannot be bypassed.
     """
     if not isinstance(basis, RecomputationBasis):
@@ -532,21 +584,8 @@ def annual_recomputation(
     )
     prefix = _history_prefix(history, basis, year)
     colas = _colas(december_cola_percent, basis.eligibility_year, effective)
-    aime = _aime_from_prefix(prefix, basis, params)
-    candidate_base = exact_pia(aime, basis.bend_points)
-    # 415(b)(2)(A), (B)(iii): ordinary RIB elapsed years start after1950
-    # (or age21), end before age62; deduct5, with40 elapsed/35 computed
-    # at most. ELY1956 is1951+5. Prior-DIB exceptions are refused below.
-    if (
-        basis.eligibility_year >= 1983
-        and basis.formula is PIAFormula.AIME
-        and not basis.conditions
-        and basis.computation_years
-        != max(2, min(35, basis.eligibility_year - 1956))
-    ):
-        raise InvalidFamilyInput(
-            "original ordinary RIB computation count disagrees with eligibility year"
-        )
+    checked_parameters = _aime_parameters(prefix, basis, params)
+    _validate_original_computation_count(basis)
     _require_coverage(
         basis,
         (
@@ -556,6 +595,8 @@ def annual_recomputation(
         ),
         fra_month,
     )
+    aime = _aime_from_prefix(prefix, basis, params, checked_parameters)
+    candidate_base = exact_pia(aime, basis.bend_points)
     decision = recomputation_decision(
         increase_by_colas(old_base, colas),
         increase_by_colas(candidate_base, colas),
@@ -584,8 +625,11 @@ def recompute_sequence(
 ) -> tuple[RecomputationResult, ...]:
     """Chronological annual fold, carrying only an accepted base PIA.
 
-    Validate all required earnings and COLAs before entering a fold that
-    can refuse coverage, so a later input error is never counted as a gap.
+    Validate all required earnings, COLAs and parameters before entering
+    a fold that can refuse coverage, so a later input error is never
+    counted as a gap. Validation performs no ordinary AIME or PIA
+    calculation. A refusal in any required earnings year blocks the
+    entire sequence before its first arithmetic step.
     """
     if not isinstance(basis, RecomputationBasis):
         raise InvalidFamilyInput("basis must be a RecomputationBasis")
@@ -624,7 +668,7 @@ def recompute_sequence(
             )
     if years:
         prefix = _history_prefix(history, basis, years[-1])
-        _aime_from_prefix(prefix, basis, params)
+        _aime_parameters(prefix, basis, params)
         final_month = (
             death_month
             if death_month is not None and death_month.year == years[-1]
@@ -632,6 +676,16 @@ def recompute_sequence(
         )
         _month(final_month, "final effective month")
         _colas(december_cola_percent, basis.eligibility_year, final_month)
+        _validate_original_computation_count(basis)
+        _require_coverage(
+            basis,
+            (
+                death_month
+                if death_month is not None and death_month.year == years[-1]
+                else None
+            ),
+            fra_month,
+        )
     results = []
     for year in years:
         result = annual_recomputation(

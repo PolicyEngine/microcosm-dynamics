@@ -14,6 +14,7 @@ import re
 from dataclasses import replace
 from fractions import Fraction as F
 from hashlib import sha256
+from unittest.mock import patch
 
 import pytest
 
@@ -318,6 +319,56 @@ def test_later_death_before_fra_does_not_change_earlier_recomputation():
     )
 
 
+def test_later_death_refuses_entire_sequence_before_any_arithmetic():
+    history = {year: 0 for year in range(1951, 2022)}
+    with (
+        patch.object(
+            r, "_aime_from_prefix", wraps=r._aime_from_prefix
+        ) as adapter,
+        patch.object(
+            r,
+            "aime_with_computation_years",
+            wraps=r.aime_with_computation_years,
+        ) as aime,
+        patch.object(r, "exact_pia", wraps=r.exact_pia) as pia,
+    ):
+        with pytest.raises(FamilyConfigurationUnsupported) as error:
+            r.recompute_sequence(
+                basis(),
+                history,
+                [2020, 2021],
+                0,
+                PARAMS,
+                {2020: 0, 2021: 0},
+                death_month=YearMonth(2021, 11),
+                fra_month=YearMonth(2025, 2),
+            )
+        assert (
+            error.value.reason
+            is r.RecomputationUnsupportedReason.DEATH_BEFORE_FRA
+        )
+        assert (adapter.call_count, aime.call_count, pia.call_count) == (
+            0,
+            0,
+            0,
+        )
+
+
+def test_invalid_original_count_precedes_later_death_sequence_refusal():
+    history = {year: 0 for year in range(1951, 2022)}
+    with pytest.raises(InvalidFamilyInput, match="computation count"):
+        r.recompute_sequence(
+            basis(computation_years=2),
+            history,
+            [2020, 2021],
+            0,
+            PARAMS,
+            {2020: 0, 2021: 0},
+            death_month=YearMonth(2021, 11),
+            fra_month=YearMonth(2025, 2),
+        )
+
+
 def test_ordinary_rib_original_count_must_match_known_eligibility_basis():
     with pytest.raises(InvalidFamilyInput, match="computation count"):
         annual(basis=basis(computation_years=2))
@@ -343,6 +394,147 @@ def test_non_aime_formulas_are_refused(formula):
         error.value.reason
         is r.RecomputationUnsupportedReason.NON_AIME_FORMULA_PIA
     )
+
+
+@pytest.mark.parametrize(
+    "formula", [f for f in r.PIAFormula if f is not r.PIAFormula.AIME]
+)
+@pytest.mark.parametrize("sequence", [False, True])
+def test_refused_formula_never_calculates_ordinary_aime_or_pia(
+    formula, sequence
+):
+    """Review's minimized AMW case: complete zero history, ELY2020."""
+    original = basis(formula=formula)
+    history = {year: 0 for year in range(1951, 2021)}
+    with (
+        patch.object(
+            r, "_aime_from_prefix", wraps=r._aime_from_prefix
+        ) as adapter,
+        patch.object(
+            r,
+            "aime_with_computation_years",
+            wraps=r.aime_with_computation_years,
+        ) as aime,
+        patch.object(r, "exact_pia", wraps=r.exact_pia) as pia,
+    ):
+        with pytest.raises(FamilyConfigurationUnsupported) as error:
+            if sequence:
+                r.recompute_sequence(
+                    original, history, [2020], 0, PARAMS, {2020: 0}
+                )
+            else:
+                r.annual_recomputation(
+                    original, history, 2020, 0, PARAMS, {2020: 0}
+                )
+        assert (
+            error.value.reason
+            is r.RecomputationUnsupportedReason.NON_AIME_FORMULA_PIA
+        )
+        assert (adapter.call_count, aime.call_count, pia.call_count) == (
+            0,
+            0,
+            0,
+        )
+
+
+@pytest.mark.parametrize("sequence", [False, True])
+@pytest.mark.parametrize(
+    "params",
+    [
+        replace(PARAMS, nawi=PARAMS.nawi | {2018: 0}),
+        replace(PARAMS, nawi=PARAMS.nawi | {1951: -1}),
+        replace(PARAMS, nawi=PARAMS.nawi | {2018: float("nan")}),
+        replace(
+            PARAMS, nawi={k: v for k, v in PARAMS.nawi.items() if k != 2018}
+        ),
+        replace(
+            PARAMS, nawi={k: v for k, v in PARAMS.nawi.items() if k != 1951}
+        ),
+        replace(PARAMS, wage_base={}),
+        replace(PARAMS, wage_base={1951: float("inf")}),
+        replace(PARAMS, wage_base={1951: 1_000_000, 2021: 0}),
+    ],
+    ids=[
+        "zero-original-nawi",
+        "negative-early-nawi",
+        "nonfinite-original-nawi",
+        "missing-original-nawi",
+        "missing-early-nawi",
+        "missing-wage-base",
+        "nonfinite-wage-base",
+        "invalid-later-wage-base",
+    ],
+)
+def test_refused_formula_validates_all_parameters_without_calculation(
+    params, sequence
+):
+    original = basis(formula=r.PIAFormula.AMW)
+    history = {year: 0 for year in range(1951, 2022)}
+    with (
+        patch.object(
+            r, "_aime_from_prefix", wraps=r._aime_from_prefix
+        ) as adapter,
+        patch.object(r, "exact_pia", wraps=r.exact_pia) as pia,
+    ):
+        with pytest.raises(InvalidFamilyInput):
+            if sequence:
+                r.recompute_sequence(
+                    original,
+                    history,
+                    [2020, 2021],
+                    0,
+                    params,
+                    {2020: 0, 2021: 0},
+                )
+            else:
+                r.annual_recomputation(
+                    original, history, 2021, 0, params, {2020: 0, 2021: 0}
+                )
+        assert (adapter.call_count, pia.call_count) == (0, 0)
+
+
+@pytest.mark.parametrize("sequence", [False, True])
+@pytest.mark.parametrize("field", ["earnings", "cola"])
+def test_refused_formula_validates_complete_histories_before_calculation(
+    field, sequence
+):
+    original = basis(formula=r.PIAFormula.AMW)
+    history = {year: 0 for year in range(1951, 2022)}
+    colas = {2020: 0, 2021: 0}
+    (history if field == "earnings" else colas)[2021] = r.UNAVAILABLE
+    with patch.object(
+        r, "_aime_from_prefix", wraps=r._aime_from_prefix
+    ) as adapter:
+        with pytest.raises(InvalidFamilyInput, match="2021"):
+            if sequence:
+                r.recompute_sequence(
+                    original, history, [2020, 2021], 0, PARAMS, colas
+                )
+            else:
+                r.annual_recomputation(
+                    original, history, 2021, 0, PARAMS, colas
+                )
+        assert adapter.call_count == 0
+
+
+@pytest.mark.parametrize(
+    "conditions", [[], [r.RecomputationCondition.ADMINISTRATIVE_FINALITY]]
+)
+def test_iterator_conditions_are_frozen_for_repeated_evaluation(conditions):
+    original = basis(conditions=iter(conditions))
+    assert original.conditions == frozenset(conditions)
+    assert isinstance(original.conditions, frozenset)
+    first = r.evaluate_recomputation(
+        "first", 1, lambda: annual(basis=original)
+    )
+    second = r.evaluate_recomputation(
+        "second", 1, lambda: annual(basis=original)
+    )
+    assert first.result == second.result
+    assert first.supported == second.supported == (not conditions)
+    if conditions:
+        assert first.unsupported.reason == second.unsupported.reason
+        assert count_family_outcomes([first, second]).unsupported_rows == 2
 
 
 def test_cfr1979_roundup_example_explicitly_outside_modern_scope():
