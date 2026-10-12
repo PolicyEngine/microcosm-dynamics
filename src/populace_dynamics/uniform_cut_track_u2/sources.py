@@ -38,9 +38,8 @@ be applied:
   :class:`FieldSpec` and :class:`DcRoute` are plain value objects, so a
   caller who hand-assembles them with the declared types is not stopped;
   no U2 entry point does so.
-  Where the specification declares nothing (code 88's substantive
-  routing, the historical combined spouse-retirement crosswalk) it
-  refuses too.
+  Where the specification declares nothing (the historical combined
+  spouse-retirement crosswalk) it refuses too.
 
 The role rules follow the same split in a :class:`RoleContext`, which is
 bound to its kind: a ``registry`` context holds exactly the committed
@@ -60,8 +59,9 @@ stop deliberate tampering with private state (``object.__setattr__``,
 the registered path builds every object it uses itself and rechecks the
 pinned identities before any PSID record is read.
 
-**Role rules** (section 3 relationship-code amendment, with the two
-family-unit exclusions of section 16c):
+**Role rules** (section 3 relationship-code amendment, with amendment
+1c's code-88 convention and the two family-unit exclusions of section
+16c):
 
 ====  ==============================  ==============  ===================
 Code  Income role and spouse slot     Annuity life    Marital resolution
@@ -69,14 +69,18 @@ Code  Income role and spouse slot     Annuity life    Marital resolution
 10    head / reference person         head            (is the head)
 20    spouse slot, either sex         legal spouse    yes
 22    spouse slot (cohabitor)         no              no
-88    TO VERIFY: refuses (no declared substantive rule; birth support only)
+88    OFUM (not the slot)             no              never
 90    OFUM, 2013-2017 (not the slot)  legal spouse    yes
 92    OFUM, 2017 only                 no              never
 ====  ==============================  ==============  ===================
 
 This is the section 3 table (``u2-draft-3``'s), amended where Max's
-d1090 ruling (2026-10-10, section 16c) differs from it.  A 2015 family
-unit that holds a code-20 person recorded male (blocker B1), and a
+rulings differ from it.  Under amendment 1c (d637, 2026-09-30,
+section 16b; confirmed by d745 on 2026-10-12) code 88, the first-year
+cohabitor, has the OFUM income role outside the spouse slot, is no
+annuity life, never resolves a marital history by its code and keeps
+its administrative birth support.  Under d1090 (2026-10-10, section
+16c) a 2015 family unit that holds a code-20 person recorded male (blocker B1), and a
 2019-2023 family unit that holds a code-90 or code-92 person (blocker
 B2), supplies no observation to any row: each observation it would have
 supplied is counted under the named disposition
@@ -87,7 +91,9 @@ income role.  The committed roles registry resolves the same rule for
 2013-2017 code 90 and 2017 code 92 (adjudication disposition D) and, by
 its d1090 commit, the same exclusions for 2015 code 20 and 2019-2023
 codes 90 and 92, which the adjudication had refused (disposition F); the
-registry gate follows the registry.
+registry gate follows the registry.  The registry leaves code 88 TO
+VERIFY until amendment 1c's registry commit, so until then the
+registry context refuses it.
 
 Any other in-family code keeps the inherited OFUM income role with no
 spouse status.  Legacy identifiers ``wife``, ``wife_present`` and
@@ -662,8 +668,8 @@ class SourceGate:
     ``registry``: refuse any entry with a blocker.  ``invented_declared``:
     apply the declared interpretation and record what the registry gate
     would refuse (``would_refuse``).  What the specification declares
-    nothing for refuses in the callers under both gates (code 88's
-    substantive role, documentary crosswalks as inputs).  Frozen, so a
+    nothing for refuses in the callers under both gates (documentary
+    crosswalks as inputs).  Frozen, so a
     gate's kind cannot change after the registry check at construction
     (the use records are appended in place).
     """
@@ -810,12 +816,6 @@ OFUM_RULE = dict(
     marital_resolution=False,
     administrative_birth_support=False,
 )
-_CODE_88_REFUSAL = (
-    "code 88 (first-year cohabitor): section 3 verifies its label and "
-    "keeps it in the inherited administrative birth-support selection; "
-    "any income slot, annuity or marital rule remains TO VERIFY and none "
-    "is declared, so an observation whose family holds one refuses"
-)
 
 
 #: The two ratified exclusions as role-rule attachments (section 16c).
@@ -826,10 +826,15 @@ _B2_EXCLUSION = FamilyUnitExclusion(UNCOOPERATIVE_SPOUSE_OR_PARTNER)
 def declared_role_rules() -> dict[tuple[int, int], RoleRule]:
     """The declared rules for codes 10-92 in every support wave.
 
-    Section 3's table, amended where Max's d1090 ruling (2026-10-10,
-    section 16c) differs from it: 2015 code 20 keeps the spouse slot and
-    brings B1's exclusion when the person is recorded male, and 2019-2023
-    codes 90 and 92 bring B2's exclusion and have no income role.
+    Section 3's table, amended where Max's rulings differ from it.  Under
+    d1090 (2026-10-10, section 16c) 2015 code 20 keeps the spouse slot
+    and brings B1's exclusion when the person is recorded male, and
+    2019-2023 codes 90 and 92 bring B2's exclusion and have no income
+    role.  Under amendment 1c (d637, section 16b; confirmed by d745 on
+    2026-10-12) code 88, the first-year cohabitor, has the OFUM income
+    role on the family basis outside the spouse slot, is no legal-spouse
+    annuity life, never resolves a marital history by its code and
+    keeps the inherited administrative birth support.
     """
 
     out: dict[tuple[int, int], RoleRule] = {}
@@ -854,7 +859,7 @@ def declared_role_rules() -> dict[tuple[int, int], RoleRule]:
             wave, 22, True, "wife", True, False, False, True
         )
         out[(wave, 88)] = RoleRule(
-            wave, 88, True, None, False, False, False, True, _CODE_88_REFUSAL
+            wave, 88, True, "ofum", False, False, False, True
         )
         b2 = _B2_EXCLUSION if wave in _B2_WAVES else None
         out[(wave, 90)] = RoleRule(
@@ -1007,11 +1012,12 @@ class RoleContext:
 
     ``registry``: the committed roles registry; any code the loader's
     ``require_resolved`` refuses, refuses here (code 88 in every wave,
-    TO VERIFY, and code 92's absence in 2013 and 2015; until the d1090
-    commit also 2015 code 20 and 2019-2023 codes 90 and 92, which now
-    carry section 16c's exclusions).  ``invented_declared``: the declared rules, section 3's table
-    with section 16c's two family-unit exclusions (code 88 still
-    refuses); accepted only with invented inputs.
+    TO VERIFY until amendment 1c's registry commit, and code 92's
+    absence in 2013 and 2015; until the d1090 commit also 2015 code 20
+    and 2019-2023 codes 90 and 92, which now carry section 16c's
+    exclusions).  ``invented_declared``: the declared rules, section 3's
+    table with section 16c's two family-unit exclusions and amendment
+    1c's code-88 convention; accepted only with invented inputs.
 
     The kind is a binding, not a label: construction refuses rules other
     than the kind's own (the committed registry's or the declared

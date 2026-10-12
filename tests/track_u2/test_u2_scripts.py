@@ -117,8 +117,27 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
         exclusions = built["rows"][row]["family_unit_exclusions"]
         assert set(exclusions) == set(sources.FAMILY_UNIT_EXCLUSIONS)
         assert all(count > 0 for count in exclusions.values()), row
+    # Amendment 1c: the declared context builds a code-88 first-year
+    # cohabitor's family with every observation and disposition
+    # unchanged; the registry context refuses code 88 until the roles
+    # registry records 1c.
     assert roles["code_88_under_registry_context"]["refused"]
-    assert roles["code_88_under_declared_context"]["refused"]
+    declared_88 = roles["code_88_under_declared_context"]
+    assert not declared_88["refused"]
+    assert declared_88["observations_equal"]
+    assert declared_88["dispositions_equal"]
+    assert declared_88["rule"] == {
+        "wave": 2019,
+        "code": 88,
+        "present": True,
+        "income_role": "ofum",
+        "spouse_slot": False,
+        "legal_spouse_annuity": False,
+        "marital_resolution": False,
+        "administrative_birth_support": True,
+        "refusal": None,
+        "family_unit_exclusion": None,
+    }
     assert roles["declared_context_on_non_invented_inputs"]["refused"]
     assert roles["registry_rules_equal_declared_where_resolved"]
     refusals = roles["registry_rule_refusals"]
@@ -166,10 +185,9 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
         "spouse_slot_occupant_without_family_spouse_2019",
     ]
     assert all(entry["regenerated"] for entry in variants.values())
+    # Amendment 1c: the two code-88 variants build under the declared
+    # context (the cohabitor has the OFUM role).
     build_refused = {
-        "code_88_first_year_cohabitor": "U2RoleRefusal",
-        # Section 16c: a code-88 refusal is never hidden by an exclusion.
-        "code_88_in_excluded_unit_2019": "U2RoleRefusal",
         "missing_family_record_2019": "U2CohortError",
         "duplicate_family_record_2019": "U2CohortError",
         "duplicate_person_record_2019": "U2CohortError",

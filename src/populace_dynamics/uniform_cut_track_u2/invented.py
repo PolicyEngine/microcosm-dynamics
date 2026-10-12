@@ -1271,7 +1271,7 @@ def check_invented_inputs(inputs: cohort.U2Inputs) -> dict[str, Any]:
 
 
 def with_code_88_cohabitor(inputs: cohort.U2Inputs) -> cohort.U2Inputs:
-    """The invented inputs plus a code-88 first-year cohabitor (refusal).
+    """The invented inputs plus a code-88 first-year cohabitor (OFUM).
 
     The ``code_88_first_year_cohabitor`` variant of ``inputs``' seed.
     """
@@ -1548,8 +1548,11 @@ _VARIANT_BUILDERS = {
 _VARIANT_NOTES: dict[str, str] = {
     "code_88_first_year_cohabitor": (
         "a code-88 first-year cohabitor joins the first 2019 family; "
-        "section 3 declares no substantive rule for code 88, so every "
-        "role context refuses (refusal case)"
+        "under amendment 1c's convention (d637, confirmed by d745) it "
+        "has the OFUM income role outside the spouse slot, is no annuity "
+        "life and resolves no marital history, so every observation and "
+        "disposition is unchanged; a role context that leaves code 88 "
+        "open refuses"
     ),
     "missing_family_record_2019": (
         "the first 2019 family-file income record is dropped; an "
@@ -1589,9 +1592,10 @@ _VARIANT_NOTES: dict[str, str] = {
     ),
     "code_88_in_excluded_unit_2019": (
         "a code-88 first-year cohabitor joins the 2019 family of U0's "
-        "first observation that the section 16c B2 exclusion removes: the "
-        "code-88 refusal still refuses, never hidden by the exclusion "
-        "(refusal case)"
+        "first observation that the section 16c B2 exclusion removes: "
+        "under amendment 1c it has the OFUM role, and the unit stays "
+        "excluded, counted under its disposition; a role context that "
+        "leaves code 88 open refuses, never hidden by the exclusion"
     ),
     "zero_weight_target_in_excluded_unit_2015": (
         "the target of U0's first 2015 observation that the B1 exclusion "

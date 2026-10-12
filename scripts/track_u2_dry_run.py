@@ -20,8 +20,11 @@ invented data.  The checks record the refusals the real path gives:
   seven/eight-asset WEALTH1 identities, every employer-DC route);
 * under the committed registries, the source gate refuses each wave the
   milestone-1 record leaves open, the registry role context refuses the
-  TO VERIFY relationship codes, code 88 refuses under every context, and
-  the loader's preflight refuses before any PSID file is opened;
+  TO VERIFY relationship codes (code 88 until amendment 1c's registry
+  commit), the declared context builds a code-88 first-year cohabitor's
+  family under amendment 1c's OFUM convention with every observation
+  unchanged, and the loader's preflight refuses before any PSID file is
+  opened;
 * the registered runner refuses these invented inputs and parameters;
 * each tested route from other data to the invented declared rules and
   routes refuses: relabelled or hand-copied invented provenance, frames
@@ -612,6 +615,32 @@ def _registry_context_check(
     return out
 
 
+def _code_88_check(
+    inputs: cohort.U2Inputs,
+    code88: cohort.U2Inputs,
+    context: sources.RoleContext,
+) -> dict[str, Any]:
+    """Build U0 with and without the code-88 first-year cohabitor under
+    ``context``: equal under amendment 1c's OFUM convention, refused
+    where the context leaves code 88 open."""
+
+    try:
+        with_88 = cohort.build_u2_cohort(code88, role_context=context)
+    except Exception as error:  # recorded, not swallowed
+        return {
+            "refused": True,
+            "error": type(error).__name__,
+            "message": str(error)[:600],
+        }
+    base = cohort.build_u2_cohort(inputs, role_context=context)
+    return {
+        "refused": False,
+        "rule": context.rule(2019, 88).as_dict(),
+        "observations_equal": with_88.observations.equals(base.observations),
+        "dispositions_equal": with_88.dispositions.equals(base.dispositions),
+    }
+
+
 def _invented_gate_refusals(
     inputs: cohort.U2Inputs,
     params: parameters.U2Parameters,
@@ -852,13 +881,15 @@ def checks(
             "registry_context_on_invented_inputs": _registry_context_check(
                 inputs, births, registry_roles, declared
             ),
-            "code_88_under_registry_context": _refusal(
-                lambda: cohort.build_u2_cohort(
-                    code88, role_context=registry_roles, births=births
-                )
+            # Amendment 1c (d637, confirmed by d745): a code-88
+            # first-year cohabitor has the OFUM role outside the spouse
+            # slot, so adding one changes no observation or disposition;
+            # a context that leaves code 88 open refuses.
+            "code_88_under_registry_context": _code_88_check(
+                inputs, code88, registry_roles
             ),
-            "code_88_under_declared_context": _refusal(
-                lambda: cohort.build_u2_cohort(code88, role_context=declared)
+            "code_88_under_declared_context": _code_88_check(
+                inputs, code88, declared
             ),
             "declared_context_on_non_invented_inputs": _refusal(
                 lambda: cohort.build_u2_cohort(
@@ -1138,11 +1169,14 @@ def results_markdown(result: dict[str, Any]) -> str:
             .get("family_unit_exclusions", {})
             .items()
         )
-        + ". Refusals: code 88 under the registry context "
-        f"{role['code_88_under_registry_context']['refused']};"
-        " code 88 under the declared context "
-        f"{role['code_88_under_declared_context']['refused']};"
-        " declared context on non-invented inputs "
+        + ". Code 88 (amendment 1c's OFUM convention): refused under the "
+        "registry context "
+        f"{role['code_88_under_registry_context']['refused']}, under the "
+        "declared context "
+        f"{role['code_88_under_declared_context']['refused']} (U0 "
+        "unchanged: "
+        f"{role['code_88_under_declared_context'].get('observations_equal')}"
+        "). Refusals: declared context on non-invented inputs "
         f"{role['declared_context_on_non_invented_inputs']['refused']}.",
         "- Loader preflight refuses before any PSID file is opened: "
         f"{check['loader_preflight']['refused']}.",

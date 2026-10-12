@@ -2,8 +2,8 @@
 
 Groups: labels (codes 10/20/22/88/90 in every support wave; code 92
 absent in 2013/2015 and present 2017-2023; reported-birth-year anchors)
-and roles (code 20 of either sex, code 90, code 92, code 88's
-administrative-support distinction, cohabitor income slots, zero-weight
+and roles (code 20 of either sex, code 90, code 92, code 88's OFUM
+convention and administrative support, cohabitor income slots, zero-weight
 legal spouses, unresolved and ambiguous pairings), with the two
 family-unit exclusions Max ratified on 2026-10-10 (d1090; section 16c).
 INVENTED DATA - NOT A COMPARISON.
@@ -150,7 +150,11 @@ def test_declared_rules_follow_the_section_3_table():
         assert (ninety.income_role, ninety.spouse_slot) == (role, False)
         assert ninety.family_unit_exclusion == exclusion
         assert ninety.legal_spouse_annuity and ninety.marital_resolution
-        assert rules[(wave, 88)].refusal is not None
+        # Amendment 1c (d637, confirmed by d745): the first-year
+        # cohabitor's convention.
+        assert rules[(wave, 88)] == sources.RoleRule(
+            wave, 88, True, "ofum", False, False, False, True
+        )
         assert rules[(wave, 88)].family_unit_exclusion is None
         assert rules[(wave, 22)].family_unit_exclusion is None
         assert rules[(wave, 10)].family_unit_exclusion is None
@@ -292,22 +296,33 @@ def test_registry_context_refuses_refused_codes():
         )
 
 
-def test_code_88_refuses_under_every_context(u2_inputs):
+def test_code_88_takes_the_amendment_1c_convention(u2_inputs):
+    """Amendment 1c (d637, confirmed by d745): a code-88 first-year
+    cohabitor has the OFUM role outside the spouse slot, is no annuity
+    life and resolves no marital history, so adding one to a family that
+    supplies observations changes no observation or disposition.  The
+    registry context refuses code 88 until the roles registry records
+    1c."""
+
     variant = invented.with_code_88_cohabitor(u2_inputs)
-    with pytest.raises(sources.U2RoleRefusal, match="code 88"):
-        cohort.build_u2_cohort(
-            variant,
-            cohort.U2CohortSpec(row="U1"),
-            role_context=sources.RoleContext.declared(),
-        )
+    spec = cohort.U2CohortSpec(row="U1")
+    declared = sources.RoleContext.declared()
+    built = cohort.build_u2_cohort(variant, spec, role_context=declared)
+    base = cohort.build_u2_cohort(u2_inputs, spec, role_context=declared)
+    # The cohabitor's family supplies observations, so its roles are read.
+    family = int(u2_inputs.family_income[2019]["interview"].iloc[0])
+    obs = built.observations
+    assert (obs["wave"].eq(2019) & obs["interview"].eq(family)).any()
+    pd.testing.assert_frame_equal(built.observations, base.observations)
+    pd.testing.assert_frame_equal(built.dispositions, base.dispositions)
+    # The same family refuses where code 88 is still open, so the
+    # cohabitor's rule is read, not skipped.
     registry = sources.RoleContext.from_registry()
     for wave in sources.SUPPORT_WAVES:
         with pytest.raises(sources.U2RoleRefusal, match="relationship.88"):
             registry.rule(wave, 88)
     with pytest.raises(sources.U2RoleRefusal):
-        cohort.build_u2_cohort(
-            variant, cohort.U2CohortSpec(row="U1"), role_context=registry
-        )
+        cohort.build_u2_cohort(variant, spec, role_context=registry)
 
 
 def test_declared_context_refuses_non_invented_inputs(u2_inputs, declared):
@@ -715,20 +730,30 @@ def test_earlier_dispositions_keep_precedence(
         pd.testing.assert_frame_equal(built.observations, base.observations)
 
 
-def test_code_88_in_an_excluded_unit_still_refuses(u2_inputs):
-    """A refusal is never hidden by an exclusion: a code-88 member in a
-    unit that B2 excludes refuses the build under both role contexts
-    (review of 07916bb, finding 3)."""
+def test_code_88_in_an_excluded_unit_keeps_the_exclusion(u2_inputs):
+    """A code-88 member never hides or changes an exclusion: under
+    amendment 1c's convention a unit that B2 excludes stays excluded,
+    counted under its disposition, and nothing else moves; a role context
+    that leaves code 88 open refuses the build, never hidden by the
+    exclusion (review of 07916bb, finding 3)."""
 
     changed = invented.invented_variant(
         u2_inputs, "code_88_in_excluded_unit_2019"
     )
-    for context in (
-        sources.RoleContext.declared(),
-        sources.RoleContext.from_registry(),
-    ):
-        with pytest.raises(sources.U2RoleRefusal, match="88"):
-            cohort.build_u2_cohort(changed, role_context=context)
+    declared = sources.RoleContext.declared()
+    built = cohort.build_u2_cohort(changed, role_context=declared)
+    base = cohort.build_u2_cohort(u2_inputs, role_context=declared)
+    pd.testing.assert_frame_equal(built.observations, base.observations)
+    pd.testing.assert_frame_equal(built.dispositions, base.dispositions)
+    assert (
+        built.dispositions["disposition"]
+        .eq(sources.UNCOOPERATIVE_SPOUSE_OR_PARTNER)
+        .any()
+    )
+    with pytest.raises(sources.U2RoleRefusal, match="88"):
+        cohort.build_u2_cohort(
+            changed, role_context=sources.RoleContext.from_registry()
+        )
 
 
 def test_structure_and_runner_disclose_each_exclusion(u1_cohort, u2_run):
