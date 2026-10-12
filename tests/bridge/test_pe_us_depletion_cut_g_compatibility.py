@@ -17,7 +17,7 @@ from fractions import Fraction
 from pathlib import Path
 
 import pytest
-from hypothesis import given
+from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.track_b import gross_benefits as gross
@@ -151,6 +151,7 @@ def test__artifact_g_inputs__then_current_g_matches_every_recorded_field(
 
 
 @given(st.sampled_from(G_CASES))
+@settings(deadline=None)
 def test__given_a_recorded_g_case__then_every_output_matches_exactly(case):
     """Property counterpart to the exhaustive monthly example checks."""
 

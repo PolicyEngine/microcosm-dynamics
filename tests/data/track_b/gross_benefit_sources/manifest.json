@@ -730,6 +730,18 @@
       "sha256": "99ce6e28bc9cb044bfcf6cd1c24f6471d6635efcc8f130c449d078a1bab9c54b",
       "poms_transmittal": "TN 135 (07-25)",
       "page_date": "06/24/2013"
+    },
+    {
+      "id": "poms_rs_00615_340",
+      "citation": "POMS RS 00615.340 Widow(er) with Child-in-Care",
+      "url": "https://secure.ssa.gov/poms.nsf/lnx/0300615340",
+      "retrieved_at_utc": "2026-10-12T11:52:38Z",
+      "capture": "http_body",
+      "file": "poms_rs_00615_340.html",
+      "bytes": 20846,
+      "sha256": "2015c4840633e813391f43cb82324e5c46855a78c9459d78ad8003ed6340ffcd",
+      "poms_transmittal": "TN 39 (11-23)",
+      "page_date": "11/14/2023"
     }
   ]
 }

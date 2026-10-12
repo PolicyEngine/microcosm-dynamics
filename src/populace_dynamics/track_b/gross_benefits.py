@@ -53,6 +53,15 @@ What this layer computes, for one insured worker's record and one month:
    beyond, dime-floored (RS 00615.201); widow(er) 28.5 percent spread over
    the reduction period, the reduction amount rounded *up* to a dime (RS
    00615.301); the RIB-LIM afterwards (402(e)(2)(D); RS 00615.320).
+   Total possible widow(er) reduction periods are exactly 60, 62, ..., 84
+   months (RS 00615.301B.2). In a month with an entitled child in care,
+   reduced WIB is raised to the mother/father amount after the maximum,
+   when larger (RS 00615.340/.010); the own-benefit offset still applies.
+   The caller names that child on the same record or attests False. An
+   entitled widow(er) with an entitled child and unknown care status
+   refuses. This minimum applies from January 1973; G's payment scope
+   starts in January 1983. Its floor months are ARF crediting months at
+   FRA (RS 00615.340), recorded by R3 rather than this monthly snapshot.
 6. **Dual entitlement.** 402(k)(3)(A): the auxiliary benefit, after 402(q)
    and 403(a), is reduced (not below zero) by the person's own old-age or
    disability benefit after 402(q). For an aged spouse entitled to the own
@@ -128,8 +137,11 @@ to a widow(er)'s deceased-worker delayed credits. Protected cases are
 refused. Direct survivor snapshots without eligibility metadata require
 ``widow_drc_savings_clause=False`` to attest that the clause cannot apply;
 unknown history is refused separately. Current eligibility from 1983 is
-insufficient when a known earlier DIB could allow May 1978 entitlement
-(RS 00615.736B.2b).
+insufficient when an earlier DIB could allow May 1978 entitlement
+(RS 00615.736B.2b): an omitted first DIB date is unknown history. When a
+subject widow(er)'s OB exceeds the death PIA and another survivor is
+subject to the maximum, require the explicit False attestation or a known
+first-ever DIB date after May 1978, in both built and direct snapshots.
 
 Not implemented, and refused rather than approximated: 403(a)(5). When two
 or more persons are entitled for a month in which the maximum reduces
@@ -145,7 +157,7 @@ from __future__ import annotations
 import math
 from collections import Counter
 from collections.abc import Callable, Iterable, Mapping, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import date
 from decimal import Decimal
 from enum import Enum
@@ -271,7 +283,9 @@ _AGE_70_MONTHS = 70 * 12
 _MAX_DELAYED_CREDIT_MONTHS = 84
 _MAX_WORKER_REDUCTION_MONTHS = 60
 _MAX_SPOUSE_REDUCTION_MONTHS = 60
-_SURVIVOR_PERIOD_RANGE = (60, 84)
+#: POMS RS 00615.301B.2: FRA rises in two-month increments from 65 to
+#: 67, so total possible reduction months are exactly 60, 62, ..., 84.
+_SURVIVOR_PERIODS = frozenset(range(60, 85, 2))
 #: POMS RS 00615.020B chart: a widow(er) born before 1/2/1928 who took
 #: widow(er)'s benefits before 62 and then RIB carries a reduction over
 #: (method D). G conservatively admits own-RIB widow combinations from
@@ -313,6 +327,7 @@ class UnsupportedReason(Enum):
     WIDOW_DRC_SAVINGS_CLAUSE_HISTORY_UNKNOWN = (
         "widow_drc_savings_clause_history_unknown"
     )
+    WIDOW_CHILD_IN_CARE_UNKNOWN = "widow_child_in_care_unknown"
     DELAYED_CREDITS_BEFORE_1917 = "delayed_credits_born_before_1917"
 
 
@@ -879,10 +894,10 @@ def survivor_age_reduced(
 
 
 def _survivor_period(value: int) -> int:
-    low, high = _SURVIVOR_PERIOD_RANGE
-    if type(value) is not int or not low <= value <= high:
+    if type(value) is not int or value not in _SURVIVOR_PERIODS:
         raise InvalidFamilyInput(
-            "reduction_period_months must be an int between 60 and 84"
+            "reduction_period_months must be a statutory cohort period "
+            "(60, 62, ..., 84)"
         )
     return value
 
@@ -1159,6 +1174,10 @@ class Beneficiary:
       given, it fixes the reduction period under RS 00615.301B.2.
     * ``conditions``: declared special conditions; GPO is inoperative for
       benefit months from January 2024 (Pub. L. 118-273).
+    * ``child_in_care``: the id of an entitled child on this record for
+      this month, or False to attest no child in care. None is unknown;
+      a widow(er) with an entitled child then refuses. RS 00615.340 and
+      .010 raise reduced WIB to the mother/father amount when larger.
     """
 
     beneficiary_id: str
@@ -1172,12 +1191,26 @@ class Beneficiary:
     conditions: frozenset[BeneficiaryCondition] = field(
         default_factory=frozenset
     )
+    child_in_care: str | bool | None = None
 
     def __post_init__(self):
         if not isinstance(self.beneficiary_id, str) or not self.beneficiary_id:
             raise InvalidFamilyInput("beneficiary_id must be a nonempty str")
         if not isinstance(self.role, Role):
             raise TypeError("role must be a Role")
+        if self.child_in_care is not None:
+            if self.role not in _WIDOW_ROLES:
+                raise InvalidFamilyInput(
+                    "child_in_care is an input for widow(er) benefits"
+                )
+            if self.child_in_care is not False and (
+                not isinstance(self.child_in_care, str)
+                or not self.child_in_care
+            ):
+                raise InvalidFamilyInput(
+                    "child_in_care must name an entitled child, or be "
+                    "False or None"
+                )
         object.__setattr__(self, "conditions", frozenset(self.conditions))
         for condition in self.conditions:
             if not isinstance(condition, BeneficiaryCondition):
@@ -1332,8 +1365,11 @@ class RecordState:
     the deceased's delayed credits. True is refused; None is unknown and
     refused for survivor snapshots without modern eligibility metadata.
     False explicitly attests that the clause cannot apply. Modern current
-    eligibility is insufficient when known prior DIB entitlement could
-    allow May 1978 protection (RS 00615.736B.2b).
+    eligibility is insufficient when prior DIB entitlement could allow
+    May 1978 protection (RS 00615.736B.2b). An omitted first DIB date is
+    unknown history: a subject widow(er) OB above the death PIA with
+    another subject survivor needs False or a known first-ever DIB date
+    after May 1978, equally for built and direct snapshots.
     """
 
     kind: FamilyKind
@@ -1760,6 +1796,7 @@ class _Row:
     standard: Fraction = Fraction(0)
     rate: Fraction = Fraction(0)
     counted: Fraction = Fraction(0)
+    mother_father_rate: Fraction = Fraction(0)
     note: str = ""
 
     @property
@@ -2000,6 +2037,10 @@ def _reduce_and_offset(
                 floor_dime(rates.rib_lim_share * state.pia),
             )
             reduced = min(reduced, limit)
+        # RS 00615.340/.010: compare with what a mother/father would
+        # receive after the maximum. RIB-LIM cannot override this minimum.
+        # 402(k)(3)(A) still offsets the own benefit below.
+        reduced = max(reduced, row.mother_father_rate)
     else:
         reduced = rate
     if own is None:
@@ -2086,6 +2127,20 @@ def _check_family_inputs(
         raise InvalidFamilyInput("beneficiary_id values must be unique")
     for beneficiary in beneficiaries:
         _check_beneficiary_inputs(beneficiary, state, params)
+        if isinstance(beneficiary.child_in_care, str):
+            child = next(
+                (
+                    b
+                    for b in beneficiaries
+                    if b.beneficiary_id == beneficiary.child_in_care
+                ),
+                None,
+            )
+            if child is None or child.role is not Role.CHILD:
+                raise InvalidFamilyInput(
+                    "child_in_care must name an entitled child on the "
+                    "same record in the payment month"
+                )
     if RecordCondition.WORKER_NOT_ENTITLED in state.conditions and (
         state.kind is not FamilyKind.RETIREMENT
         or any(b.role is not Role.DIVORCED_SPOUSE for b in beneficiaries)
@@ -2143,6 +2198,106 @@ def _entitled_parent_count(
     return max(1, len(potential))
 
 
+def _mother_father_care_rate(
+    state: RecordState,
+    beneficiaries: Sequence[Beneficiary],
+    caregiver: Beneficiary,
+    payment_month: YearMonth,
+    params: SSAParameters,
+) -> Fraction:
+    """RS 00615.340 minimum, using the existing mother/father rules.
+
+    Replace only the caregiver's entitlement for the comparison: 75% OB,
+    its maximum share, and any settled Parisi redistribution. Surviving
+    divorced spouses remain outside the maximum (403(a)(3)(C)). The
+    comparison has no age reduction or RIB-LIM; its own-benefit offset
+    is applied by the actual widow computation. Other care flags are
+    cleared so this comparison cannot recursively compare widow floors.
+    """
+    comparison = []
+    outside = caregiver.role in _OUTSIDE_MAXIMUM
+    for member in beneficiaries:
+        if member.beneficiary_id == caregiver.beneficiary_id:
+            comparison.append(
+                replace(
+                    member,
+                    role=Role.MOTHER_FATHER,
+                    reduction_months=0,
+                    reduction_period_months=None,
+                    original_benefit_basis=None,
+                    child_in_care=None,
+                )
+            )
+        elif member.role in _WIDOW_ROLES:
+            comparison.append(replace(member, child_in_care=False))
+        else:
+            comparison.append(member)
+    if outside:
+        # A surviving divorced mother's/father's benefit, like its WIB,
+        # is excluded by 403(a)(3)(C); it cannot reduce the other shares.
+        ob = original_benefit(Role.MOTHER_FATHER, state.kind, state.pia)
+        own_mba = (
+            None
+            if caregiver.own_benefit is None
+            else own_monthly_benefit(caregiver.own_benefit, params)[1]
+        )
+        mother = next(
+            b
+            for b in comparison
+            if b.beneficiary_id == caregiver.beneficiary_id
+        )
+        entitled, _ = _is_entitled(mother, state.pia, own_mba)
+        return ob if entitled else Fraction(0)
+    result = _family_benefits(state, comparison, payment_month, params)
+    return result.by_id()[caregiver.beneficiary_id].age_adjusted_rate
+
+
+def _refuse_widow_drc_savings_clause(
+    state: RecordState, rows: Sequence[_Row]
+) -> None:
+    """Refuse unresolved May 1978 protection before maximum apportionment.
+
+    An omitted first-ever DIB date is unknown history, not proof that
+    current eligibility was the worker's first eligibility. RS 00615.736B.2b
+    permits modern eligibility after ended prior DIB. A known first-ever
+    DIB date after May 1978 excludes that earlier DIB route; otherwise a
+    subject widow(er)'s OB above the death PIA with another subject survivor
+    requires the caller's explicit no-protection attestation. The schema
+    does not distinguish deceased DRCs from windexing in that larger OB.
+    Earlier snapshot/history refusals remain conservative.
+    """
+    if state.kind is not FamilyKind.SURVIVOR:
+        return
+    if state.widow_drc_savings_clause is True:
+        raise FamilyConfigurationUnsupported(
+            UnsupportedReason.WIDOW_DRC_SAVINGS_CLAUSE,
+            "a May 1978 survivor protected by the widow(er)'s DRC "
+            "saving clause (RS 00615.712) is not implemented",
+        )
+    if state.widow_drc_savings_clause is False:
+        return
+    subject = [row for row in rows if row.subject]
+    possible_drc_protection = len(subject) > 1 and any(
+        row.beneficiary.role in _WIDOW_ROLES and row.ob > state.pia
+        for row in subject
+    )
+    if (
+        state.eligibility_year is None
+        or state.eligibility_year < FIRST_SUPPORTED_ELIGIBILITY_YEAR
+        or (
+            state.first_dib_entitlement is not None
+            and state.first_dib_entitlement <= YearMonth(1978, 5)
+        )
+        or (state.first_dib_entitlement is None and possible_drc_protection)
+    ):
+        raise FamilyConfigurationUnsupported(
+            UnsupportedReason.WIDOW_DRC_SAVINGS_CLAUSE_HISTORY_UNKNOWN,
+            "a survivor snapshot must attest whether May 1978 "
+            "entitlement and widow(er) deceased-worker DRCs invoke "
+            "RS 00615.712; an omitted first DIB date is unknown history",
+        )
+
+
 def _family_benefits(
     state: RecordState,
     beneficiaries: Sequence[Beneficiary],
@@ -2189,27 +2344,6 @@ def _family_benefits(
             "IEDS before January 1985, or on a WEP-affected worker record "
             "before January 2024, is not implemented (RS 00202.100)",
         )
-    if state.kind is FamilyKind.SURVIVOR:
-        if state.widow_drc_savings_clause is True:
-            raise FamilyConfigurationUnsupported(
-                UnsupportedReason.WIDOW_DRC_SAVINGS_CLAUSE,
-                "a May 1978 survivor protected by the widow(er)'s DRC "
-                "saving clause (RS 00615.712) is not implemented",
-            )
-        if state.widow_drc_savings_clause is None and (
-            state.eligibility_year is None
-            or state.eligibility_year < FIRST_SUPPORTED_ELIGIBILITY_YEAR
-            or (
-                state.first_dib_entitlement is not None
-                and state.first_dib_entitlement <= YearMonth(1978, 5)
-            )
-        ):
-            raise FamilyConfigurationUnsupported(
-                UnsupportedReason.WIDOW_DRC_SAVINGS_CLAUSE_HISTORY_UNKNOWN,
-                "a survivor snapshot must attest whether May 1978 "
-                "entitlement and widow(er) deceased-worker DRCs invoke "
-                "RS 00615.712; the history is unknown",
-            )
     parent_count = _entitled_parent_count(state, beneficiaries, params)
     life_case = state.kind is not FamilyKind.SURVIVOR and not ieds
     worker_benefit = None
@@ -2247,6 +2381,7 @@ def _family_benefits(
             )
         )
 
+    _refuse_widow_drc_savings_clause(state, rows)
     available = state.family_maximum - (state.pia if life_case else 0)
     subject = [row for row in rows if row.subject]
     total_ob = sum((row.ob for row in subject), Fraction(0))
@@ -2258,6 +2393,25 @@ def _family_benefits(
     for row in rows:
         if row.entitled and not row.subject:
             row.standard = row.rate = row.ob
+
+    entitled_children = any(
+        row.entitled and row.beneficiary.role is Role.CHILD for row in rows
+    )
+    for row in rows:
+        beneficiary = row.beneficiary
+        if not row.entitled or beneficiary.role not in _WIDOW_ROLES:
+            continue
+        if entitled_children and beneficiary.child_in_care is None:
+            raise FamilyConfigurationUnsupported(
+                UnsupportedReason.WIDOW_CHILD_IN_CARE_UNKNOWN,
+                "a widow(er) with an entitled child must attest child-in-care "
+                "status for the month (RS 00615.340/.010)",
+                beneficiary_id=beneficiary.beneficiary_id,
+            )
+        if isinstance(beneficiary.child_in_care, str):
+            row.mother_father_rate = _mother_father_care_rate(
+                state, beneficiaries, beneficiary, payment_month, params
+            )
 
     dual = [row for row in subject if row.dual]
     nondual = [row for row in subject if not row.dual]

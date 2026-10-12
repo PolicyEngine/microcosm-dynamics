@@ -323,21 +323,26 @@ def test_review_year_decided_widow_periods_must_match_the_birth_year(
 ):
     expected = g.widow_reduction_period_months(date(birth, 1, 2))
     assert expected == g.widow_reduction_period_months(date(birth + 1, 1, 1))
-    widow = g.Beneficiary(
-        "w",
-        g.Role.WIDOW,
-        reduction_months=1,
-        reduction_period_months=supplied,
-        birth_year=birth,
-    )
+
+    def compute():
+        widow = g.Beneficiary(
+            "w",
+            g.Role.WIDOW,
+            reduction_months=1,
+            reduction_period_months=supplied,
+            birth_year=birth,
+            child_in_care=False,
+        )
+        return _family(state, [widow])
+
     state = g.RecordState(
         g.FamilyKind.SURVIVOR, F(1000), F(1750), widow_drc_savings_clause=False
     )
     if supplied == expected:
-        _family(state, [widow])
+        compute()
     else:
         with pytest.raises(g.InvalidFamilyInput):
-            _family(state, [widow])
+            compute()
 
 
 def _months_between(first, last):
@@ -390,7 +395,10 @@ def test_review_child_departure_six_months_after_cola_refuses_later_widow():
         future = (
             members
             if month.year == 2026
-            else [g.Beneficiary("m", g.Role.WIDOW), *members[1:]]
+            else [
+                g.Beneficiary("m", g.Role.WIDOW, child_in_care=False),
+                *members[1:],
+            ]
         )
         result = _family(state, future, month)
         assert g.savings_clause_total(result) >= guard.protected_total

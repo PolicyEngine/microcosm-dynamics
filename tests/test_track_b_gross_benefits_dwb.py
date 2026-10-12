@@ -52,7 +52,9 @@ def _survivor(pia=F(1000), maximum=F(1750), **kwargs):
 
 
 def _dwb(**kwargs):
-    return g.Beneficiary("w", g.Role.DISABLED_WIDOW, **kwargs)
+    return g.Beneficiary(
+        "w", g.Role.DISABLED_WIDOW, **kwargs, child_in_care=False
+    )
 
 
 def _fixed_reduced_dimes(rate_dimes):
@@ -149,7 +151,7 @@ def test_dwb_has_no_additional_reduction_for_pre_60_months(dimes, age):
 
 @given(
     st.integers(0, 1_000_000),
-    st.integers(60, 84),
+    st.sampled_from(tuple(range(60, 85, 2))),
 )
 @settings(deadline=None)
 def test_dwb_matches_the_full_period_widow_reduction_exactly(dimes, period):

@@ -5,26 +5,27 @@
   "lattice": {
     "by_payment_era": {
       "before_october_1999": {
-        "invalid": 30362,
-        "refused": 8373,
-        "rows": 39600,
-        "supported": 865
+        "invalid": 93998,
+        "refused": 22481,
+        "rows": 118800,
+        "supported": 2321
       },
       "from_january_2024": {
-        "invalid": 30362,
-        "refused": 7580,
-        "rows": 39600,
-        "supported": 1658
+        "invalid": 93998,
+        "refused": 20329,
+        "rows": 118800,
+        "supported": 4473
       },
       "october_1999_through_december_2023": {
-        "invalid": 30362,
-        "refused": 8121,
-        "rows": 39600,
-        "supported": 1117
+        "invalid": 93998,
+        "refused": 21785,
+        "rows": 118800,
+        "supported": 3017
       }
     },
     "definition": {
       "birth_band": "1946 for the focal beneficiary and own RIB; widow reduction period 72 months. The living worker is unreduced, without credits; IEDS worker records have no worker payment.",
+      "child_in_care": "Every widow(er), surviving divorced spouse and disabled widow(er) receives the selected care input. None is unknown; False attests no care; entitled_child names the first child role on this record, or an absent-child sentinel if no child is present. Unknown care may refuse; naming an absent or non-entitled child is invalid. All three flag cells remain in the denominator even when the flag does not affect a non-widow role.",
       "declared_conditions": [
         {
           "condition": null,
@@ -138,38 +139,44 @@
         1,
         2
       ],
-      "snapshot_scope": "Standalone snapshots explicitly attest no protected May 1978 widow-DRC history unless the named condition is declared; monthly paths require SavingsClauseGuard. Refusal witnesses for unknown history, guarded histories and multiple records are counted separately."
+      "snapshot_scope": "Standalone snapshots explicitly attest no protected May 1978 widow-DRC history unless the named condition is declared; monthly paths require SavingsClauseGuard. Refusal witnesses for unknown history, guarded histories and multiple records are counted separately.",
+      "widow_child_in_care": [
+        null,
+        false,
+        "entitled_child"
+      ]
     },
     "denominator": {
-      "invalid": 91086,
-      "refused": 24074,
-      "rows": 118800,
-      "supported": 3640
+      "invalid": 281994,
+      "refused": 64595,
+      "rows": 356400,
+      "supported": 9811
     },
     "refused_by_reason": {
-      "administrative_finality": 3903,
-      "combined_family_maximum": 1926,
-      "deemed_or_putative_spouse": 3852,
+      "administrative_finality": 10503,
+      "combined_family_maximum": 5196,
+      "deemed_or_putative_spouse": 10392,
       "delayed_credits_born_before_1917": 0,
       "di_entitlement_before_july_1980": 0,
-      "dib_after_reduced_rib": 1977,
-      "dib_guarantee_pia": 1977,
+      "dib_after_reduced_rib": 5307,
+      "dib_guarantee_pia": 5307,
       "disabled_widow_before_1984": 0,
-      "dual_entitlement_sequence": 2848,
+      "dual_entitlement_sequence": 7276,
       "eligibility_before_1983": 0,
-      "government_pension_offset": 1284,
+      "government_pension_offset": 3464,
       "independently_entitled_divorced_spouse": 0,
       "multiple_auxiliary_records": 0,
-      "non_aime_formula_pia": 1977,
+      "non_aime_formula_pia": 5307,
       "parent_benefit": 0,
-      "parisi_before_october_1999": 302,
-      "parisi_redistribution_ambiguous": 125,
+      "parisi_before_october_1999": 832,
+      "parisi_redistribution_ambiguous": 340,
       "payment_month_before_1983": 0,
       "savings_clause_403a5": 0,
       "savings_clause_history_unknown": 0,
-      "widow_drc_savings_clause": 1926,
+      "widow_child_in_care_unknown": 168,
+      "widow_drc_savings_clause": 5196,
       "widow_drc_savings_clause_history_unknown": 0,
-      "workers_compensation_offset": 1977
+      "workers_compensation_offset": 5307
     }
   },
   "registry": {
@@ -192,7 +199,7 @@
       "maximum:disability_aime": 0,
       "maximum:disability_cap": 4,
       "maximum:disability_floor": 0,
-      "maximum:nonbinding": 4,
+      "maximum:nonbinding": 6,
       "outside:divorced_spouse": 0,
       "outside:ieds": 0,
       "outside:surviving_divorced_spouse": 1,
@@ -200,15 +207,15 @@
       "parent:two": 0,
       "record:disability": 5,
       "record:retirement": 10,
-      "record:survivor": 7,
+      "record:survivor": 9,
       "redistribution:own_age_reduced": 2,
       "redistribution:partial": 4,
       "redistribution:zero": 4,
       "reduction:spouse": 4,
-      "reduction:widow": 2,
+      "reduction:widow": 4,
       "reduction:worker": 1,
       "rib_lim": 1,
-      "role:child": 15,
+      "role:child": 17,
       "role:disabled_widow": 0,
       "role:divorced_spouse": 0,
       "role:mother_father": 2,
@@ -216,13 +223,14 @@
       "role:spouse": 11,
       "role:spouse_child_in_care": 0,
       "role:surviving_divorced_spouse": 1,
-      "role:widow": 5,
+      "role:widow": 7,
       "source:erratum": 1,
       "ssfa:gpo_ignored": 0,
-      "ssfa:wep_regular_pia": 0
+      "ssfa:wep_regular_pia": 0,
+      "widow:child_in_care": 2
     },
-    "examples": 27,
-    "figures": 205,
+    "examples": 29,
+    "figures": 216,
     "file": "tests/data/track_b/gross_benefit_examples.yaml",
     "invented_only_classes": {
       "cola_path": {
@@ -329,7 +337,7 @@
         ]
       }
     },
-    "sha256": "734160d99d60e716938e9b7171e1cf7bb8c2db99a53ce9b686121ed89031da19",
+    "sha256": "b6fa149b0aaf24559e55b5f2d2c4b449eb8f00cb75f9a98230b62da8f674aa76",
     "supported_classes": [
       "cola_path",
       "credits:own_rib",
@@ -372,15 +380,16 @@
       "role:surviving_divorced_spouse",
       "role:widow",
       "ssfa:gpo_ignored",
-      "ssfa:wep_regular_pia"
+      "ssfa:wep_regular_pia",
+      "widow:child_in_care"
     ]
   },
   "schema_version": 1,
   "supplemental_refusal_witnesses": {
     "denominator": {
       "invalid": 0,
-      "refused": 23,
-      "rows": 23,
+      "refused": 24,
+      "rows": 24,
       "supported": 0
     },
     "refused_by_reason": {
@@ -404,6 +413,7 @@
       "payment_month_before_1983": 1,
       "savings_clause_403a5": 1,
       "savings_clause_history_unknown": 1,
+      "widow_child_in_care_unknown": 1,
       "widow_drc_savings_clause": 1,
       "widow_drc_savings_clause_history_unknown": 1,
       "workers_compensation_offset": 1
@@ -531,13 +541,19 @@
         "status": "refused"
       },
       {
+        "description": "A widow and an entitled child lack a current care attestation",
+        "id": "widow_child_in_care_unknown",
+        "reason": "widow_child_in_care_unknown",
+        "status": "refused"
+      },
+      {
         "description": "May 1978 survivor protected from widow deceased-worker DRCs",
         "id": "widow_drc_savings_clause",
         "reason": "widow_drc_savings_clause",
         "status": "refused"
       },
       {
-        "description": "Direct survivor snapshot lacks May 1978 widow-DRC attestation",
+        "description": "Direct survivor snapshot has widow DRCs and a child but lacks May 1978 attestation",
         "id": "widow_drc_savings_clause_history_unknown",
         "reason": "widow_drc_savings_clause_history_unknown",
         "status": "refused"

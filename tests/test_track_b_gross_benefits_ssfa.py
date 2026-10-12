@@ -48,6 +48,12 @@ def _state(kind, pia=F(1000)):
 
 def _beneficiary(role, reductions=0, *, flagged=True):
     fields = dict(conditions={GPO} if flagged else set())
+    if role in (
+        g.Role.WIDOW,
+        g.Role.SURVIVING_DIVORCED_SPOUSE,
+        g.Role.DISABLED_WIDOW,
+    ):
+        fields["child_in_care"] = False
     if role in (g.Role.SPOUSE, g.Role.DIVORCED_SPOUSE):
         fields.update(reduction_months=min(reductions, 60), birth_year=1960)
     elif role in (g.Role.WIDOW, g.Role.SURVIVING_DIVORCED_SPOUSE):

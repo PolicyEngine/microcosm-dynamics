@@ -67,6 +67,10 @@ def records(draw, kind=None):
         kind, year, pia, cola_percents=tuple(draw(cola_lists)), **extra
     )
     state = g.record_state(record, PARAMS)
+    if kind is g.FamilyKind.SURVIVOR:
+        # Invented records explicitly exclude May 1978 protection; an
+        # omitted prior DIB date alone does not establish that fact.
+        state = dataclasses.replace(state, widow_drc_savings_clause=False)
     if kind is g.FamilyKind.SURVIVOR and draw(st.booleans()):
         # The deceased took a reduced RIB (402(e)(2)(D), RS 00615.320):
         # the RIB-LIM is that reduced benefit at the current PIA.
@@ -132,6 +136,7 @@ def beneficiaries(draw, state, index, *, dual=True):
         fields["reduction_months"] = draw(st.integers(0, 60))
     widow = role in (g.Role.WIDOW, g.Role.SURVIVING_DIVORCED_SPOUSE)
     if widow:
+        fields["child_in_care"] = False
         fields["birth_year"] = draw(st.integers(1929, 1995))
         period = g.widow_reduction_period_months(
             date(fields["birth_year"], 7, 1)
@@ -570,6 +575,7 @@ def test_widow_benefit_matches_the_oracle_within_rounding(
         reduction_period_months=84,
         own_benefit=g.OwnBenefit(OLD_AGE, own_pia),
         birth_year=1962,
+        child_in_care=False,
     )
     row = _compute(state, [widow]).by_id()["w"]
     oracle_factor = float(deceased_rib / deceased_pia) if deceased_early else 1
@@ -848,7 +854,12 @@ def test_formula_maximums_with_a_cola_never_trip_the_savings_clause(
         record = g.WorkerRecord(
             kind, year, pia, cola_percents=tuple(increases), **extra
         )
-        return g.record_state(record, PARAMS)
+        result = g.record_state(record, PARAMS)
+        if kind is g.FamilyKind.SURVIVOR:
+            result = dataclasses.replace(
+                result, widow_drc_savings_clause=False
+            )
+        return result
 
     before_state = state(colas)
     after_state = state([*colas, F(tenths, 10)])
@@ -971,6 +982,7 @@ def test_a_reduced_joiner_after_a_cola_is_refused_iff_the_total_falls(
             g.Role.WIDOW,
             reduction_months=months,
             reduction_period_months=84,
+            child_in_care=False,
         )
     else:
         joiner = g.Beneficiary(
@@ -1031,7 +1043,11 @@ def test_input_errors_are_never_absorbed_as_refusals(
         )
         bad = (
             g.Beneficiary(
-                "bad", g.Role.WIDOW, own_benefit=own, birth_year=1960
+                "bad",
+                g.Role.WIDOW,
+                own_benefit=own,
+                birth_year=1960,
+                child_in_care=False,
             )
             if survivor
             else g.Beneficiary(

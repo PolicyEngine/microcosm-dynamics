@@ -43,6 +43,7 @@ def _widow_and_children(pia=F(1000), reduction_months=0):
             own_benefit=g.OwnBenefit(
                 g.OwnBenefitKind.OLD_AGE, pia / 5, birth_year=1935
             ),
+            child_in_care=False,
         ),
         g.Beneficiary("C1", g.Role.CHILD),
         g.Beneficiary("C2", g.Role.CHILD),

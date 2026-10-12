@@ -74,6 +74,13 @@ RULE_QUOTES = (
         "necessary) by the number of months of entitlement before FRA.",
     ),
     (
+        "poms_rs_00615_010",
+        "Determine the WIB under the appropriate rules summarized above "
+        "subject to the condition that it shall not be less than the "
+        "mother's or father's benefit would be for any month the "
+        "widow(er) has an entitled child in care (see RS 00615.340 ).",
+    ),
+    (
         "poms_rs_00615_310",
         "DWB are reduced by 28.5 percent. No additional reduction "
         "applies for the period before age 60.",
@@ -83,6 +90,35 @@ RULE_QUOTES = (
         "Beneficiaries who were entitled to DWB prior to 1/84 had their "
         "benefits recalculated effective 1/84 as if the reduction for "
         "the period prior to age 60 did not exist.",
+    ),
+    (
+        "poms_rs_00615_340",
+        "Any month a person receiving a reduced widow(er) benefit has an "
+        "entitled child-in-care they cannot receive less than the amount "
+        "a mother and father would receive. The benefit amount is raised "
+        "for all months the child is in care.",
+    ),
+    (
+        "poms_rs_00615_340",
+        "At FRA attainment the widow(er) is granted an ARF to remove all "
+        "months the increase was applied.",
+    ),
+    (
+        "poms_rs_00615_340",
+        "If the widow(er) receives a higher benefit as a widow(er) do not "
+        "change the benefit to the mother and father amount and an ARF "
+        "will not apply.",
+    ),
+    (
+        "poms_rs_00615_340",
+        "A surviving divorced spouse who is eligible for and has elected "
+        "reduced benefits can receive the mother's/father's benefit "
+        "amount if larger than the reduced WIB without meeting the "
+        "additional requirements in RS 00208.001",
+    ),
+    (
+        "poms_rs_00615_340",
+        "This policy applies to benefits payable 1/73 and later.",
     ),
     (
         "poms_rs_00615_315",
@@ -201,18 +237,144 @@ RULE_QUOTES = (
 )
 
 
+# Some older manifest entries had integrity checks alone; others had table
+# checks without a quoted rule. These instructions substantively pin the
+# arithmetic and refusal boundaries cited by G, so every retained capture
+# has a quoted rule or a registered example.
+REFERENCE_RULE_QUOTES = (
+    (
+        "poms_rs_00605_900",
+        "Bend points are used to derive the PIA from the AIME and the "
+        "family maximum from the PIA. A different set of bend points "
+        "is established each year.",
+    ),
+    (
+        "poms_rs_00615_020",
+        "Method B - Both benefits calculated and reduced independently; "
+        "small MBA paid plus excess of larger MBA.",
+    ),
+    (
+        "poms_rs_00615_101",
+        "Round the result down to the next dime for benefits after 5/82 "
+        "and up to the next dime for benefits prior to 6/82.",
+    ),
+    (
+        "poms_rs_00615_201",
+        "When RIB entitlement is involved, for months with a child-in-care, "
+        "the amount payable as a spouse will always be the difference "
+        "between the unreduced spouse benefit and the reduced RIB rate.",
+    ),
+    (
+        "poms_rs_00615_210",
+        "Reduce the OB for the maximum, then",
+    ),
+    (
+        "poms_rs_00615_250",
+        "Then subtract the RIB PIA from the unreduced spouse's benefit, "
+        "and reduce the excess by the spouse's reduction factor.",
+    ),
+    (
+        "poms_rs_00615_260",
+        "Reduce the DIB PIA by the number of months of reduced RIB "
+        "prior to the DIB MOE.",
+    ),
+    (
+        "poms_rs_00615_680",
+        "The benefit of a divorced spouse or surviving divorced spouse "
+        "(B6/BR, D6/DC or W6/WR) is not subject to reduction for the maximum.",
+    ),
+    (
+        "poms_rs_00615_684",
+        "When there are both a deemed or putative spouse and a legal spouse "
+        "on a record, the legal spouse is paid outside the family maximum",
+    ),
+    (
+        "poms_rs_00615_695",
+        "Do not subtract the amount after the DRC increase.",
+    ),
+    (
+        "poms_rs_00615_730",
+        "If the total of all original rates exceeds the maximum, "
+        "the rates must be adjusted.",
+    ),
+    (
+        "poms_rs_00615_740",
+        "The NH was ever entitled to DIB before July 1980",
+    ),
+    (
+        "poms_rs_00615_742",
+        "The DMAX will be converted to an AIME maximum when "
+        "the DIB is changed to RIB or the NH dies.",
+    ),
+    (
+        "poms_rs_00615_752",
+        "If an auxiliary or survivor is entitled to reduced benefits "
+        "or is subject to offset, use the unreduced amount.",
+    ),
+    (
+        "poms_rs_00615_754",
+        "Benefits are first adjusted for the maximum and then reduced "
+        "for age.",
+    ),
+    (
+        "poms_rs_00615_766",
+        "If a deduction is made before reduction for the maximum, "
+        "other beneficiaries on the record may receive an increase.",
+    ),
+    (
+        "ssa_act_202_215",
+        "Such mother's or father's insurance benefit for each month "
+        "shall be equal to three-fourths of the primary insurance amount "
+        "of such deceased individual.",
+    ),
+    (
+        "ssa_oact_dibfamilymax",
+        "The family maximum for a family of a disabled worker is "
+        "85 percent of the worker's Average Indexed Monthly Earnings "
+        "(AIME). However, it cannot be less than the worker's PIA "
+        "nor more than 150 percent of the PIA.",
+    ),
+)
+
+
 @pytest.mark.parametrize(("source_id", "quote"), RULE_QUOTES)
 def test_rule_text_is_quoted_from_the_captures(source_id, quote):
     assert quote in source_text(source_id)
+
+
+@pytest.mark.parametrize(("source_id", "quote"), REFERENCE_RULE_QUOTES)
+def test_reference_rule_text_is_quoted_from_the_captures(source_id, quote):
+    assert quote in source_text(source_id)
+
+
+def test_every_manifest_capture_has_a_quoted_rule_or_registered_figure():
+    from tests.test_track_b_gross_benefits import (
+        RULE_QUOTES as original_rules,
+    )
+    from tests.test_track_b_gross_benefits import (
+        WORKED_EXAMPLE_QUOTES as original_figures,
+    )
+    from tests.test_track_b_gross_benefits_registry import REGISTRY
+
+    quoted = (
+        set(original_rules)
+        | set(original_figures)
+        | {source_id for source_id, _ in RULE_QUOTES}
+        | {source_id for source_id, _ in REFERENCE_RULE_QUOTES}
+        | {example["capture_id"] for example in REGISTRY["examples"]}
+    )
+    assert quoted == {source["id"] for source in manifest()["sources"]}
 
 
 def test_every_new_capture_has_a_rule_and_pinned_bytes():
     sources = {
         source["id"]: source
         for source in manifest()["sources"]
-        if source["retrieved_at_utc"].startswith("2026-10-11T")
+        if source["retrieved_at_utc"].startswith(
+            ("2026-10-11T", "2026-10-12T")
+        )
     }
-    assert len(sources) == 21
+    assert len(sources) == 22
     assert set(sources) == {source_id for source_id, _ in RULE_QUOTES}
     for source_id, source in sources.items():
         data = (SOURCES / source["file"]).read_bytes()

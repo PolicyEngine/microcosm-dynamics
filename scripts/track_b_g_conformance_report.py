@@ -46,6 +46,7 @@ DUAL_MODES = (
     "dib_c",
 )
 REDUCTION_FLAGS = (0, 36)
+CHILD_IN_CARE_FLAGS = (None, False, "entitled_child")
 PAYMENT_ERAS = {
     "before_october_1999": g.YearMonth(1999, 9),
     "october_1999_through_december_2023": g.YearMonth(2023, 12),
@@ -68,6 +69,7 @@ class Configuration:
     payment_era: str
     condition_scope: str = "none"
     condition: g.RecordCondition | g.BeneficiaryCondition | None = None
+    child_in_care: str | bool | None = False
 
     @property
     def key(self) -> tuple:
@@ -79,6 +81,7 @@ class Configuration:
             self.payment_era,
             self.condition_scope,
             self.condition.value if self.condition else None,
+            self.child_in_care,
         )
 
 
@@ -100,17 +103,26 @@ def role_multisets() -> tuple[tuple[g.Role, ...], ...]:
 
 
 def configurations() -> Iterator[Configuration]:
-    for kind, roles, dual, reductions, era, declared in itertools.product(
+    for (
+        kind,
+        roles,
+        dual,
+        reductions,
+        era,
+        declared,
+        care,
+    ) in itertools.product(
         tuple(g.FamilyKind),
         role_multisets(),
         DUAL_MODES,
         REDUCTION_FLAGS,
         tuple(PAYMENT_ERAS),
         declared_conditions(),
+        CHILD_IN_CARE_FLAGS,
     ):
         scope, condition = declared
         yield Configuration(
-            kind, roles, dual, reductions, era, scope, condition
+            kind, roles, dual, reductions, era, scope, condition, care
         )
 
 
@@ -182,6 +194,11 @@ def compute_configuration(case: Configuration):
         source="invented conformance lattice; given current PIA and maximum",
     )
     members = []
+    children = [
+        f"b{index}"
+        for index, role in enumerate(case.roles)
+        if role is g.Role.CHILD
+    ]
     for index, role in enumerate(case.roles):
         fields = {}
         if index == 0:
@@ -196,6 +213,16 @@ def compute_configuration(case: Configuration):
         if role in (g.Role.WIDOW, g.Role.SURVIVING_DIVORCED_SPOUSE):
             fields["reduction_period_months"] = 72
             fields.setdefault("birth_year", 1946)
+        if role in (
+            g.Role.WIDOW,
+            g.Role.SURVIVING_DIVORCED_SPOUSE,
+            g.Role.DISABLED_WIDOW,
+        ):
+            fields["child_in_care"] = (
+                (children[0] if children else "absent_child")
+                if case.child_in_care == "entitled_child"
+                else case.child_in_care
+            )
         members.append(g.Beneficiary(f"b{index}", role, **fields))
     return _family(state, members, PAYMENT_ERAS[case.payment_era])
 
@@ -460,8 +487,35 @@ def refusal_witnesses() -> dict[g.UnsupportedReason, tuple[str, Callable]]:
             lambda: _family(_survivor(widow_drc_savings_clause=True)),
         ),
         reasons.WIDOW_DRC_SAVINGS_CLAUSE_HISTORY_UNKNOWN: (
-            "Direct survivor snapshot lacks May 1978 widow-DRC attestation",
-            lambda: _family(_survivor(widow_drc_savings_clause=None)),
+            "Direct survivor snapshot has widow DRCs and a child but lacks May 1978 attestation",
+            lambda: _family(
+                _survivor(widow_drc_savings_clause=None),
+                [
+                    g.Beneficiary(
+                        "w",
+                        g.Role.WIDOW,
+                        original_benefit_basis=F(1100),
+                        child_in_care=False,
+                    ),
+                    g.Beneficiary("c", g.Role.CHILD),
+                ],
+            ),
+        ),
+        reasons.WIDOW_CHILD_IN_CARE_UNKNOWN: (
+            "A widow and an entitled child lack a current care attestation",
+            lambda: _family(
+                _survivor(),
+                [
+                    g.Beneficiary(
+                        "w",
+                        g.Role.WIDOW,
+                        reduction_months=60,
+                        reduction_period_months=60,
+                        child_in_care=None,
+                    ),
+                    g.Beneficiary("c", g.Role.CHILD),
+                ],
+            ),
         ),
         reasons.DELAYED_CREDITS_BEFORE_1917: (
             "Own RIB has 12 credit months for a 1916 birth",
@@ -571,6 +625,7 @@ def build_report(registry_path: Path = DEFAULT_REGISTRY) -> dict:
                 "role_multiset_count": len(role_multisets()),
                 "dual_modes": list(DUAL_MODES),
                 "reduction_months": list(REDUCTION_FLAGS),
+                "widow_child_in_care": list(CHILD_IN_CARE_FLAGS),
                 "payment_eras": {
                     era: f"{month.year:04d}-{month.month:02d}"
                     for era, month in PAYMENT_ERAS.items()
@@ -593,6 +648,7 @@ def build_report(registry_path: Path = DEFAULT_REGISTRY) -> dict:
                     "own_rib_credit_months": 12,
                 },
                 "birth_band": "1946 for the focal beneficiary and own RIB; widow reduction period 72 months. The living worker is unreduced, without credits; IEDS worker records have no worker payment.",
+                "child_in_care": "Every widow(er), surviving divorced spouse and disabled widow(er) receives the selected care input. None is unknown; False attests no care; entitled_child names the first child role on this record, or an absent-child sentinel if no child is present. Unknown care may refuse; naming an absent or non-entitled child is invalid. All three flag cells remain in the denominator even when the flag does not affect a non-widow role.",
                 "snapshot_scope": "Standalone snapshots explicitly attest no protected May 1978 widow-DRC history unless the named condition is declared; monthly paths require SavingsClauseGuard. Refusal witnesses for unknown history, guarded histories and multiple records are counted separately.",
             },
             "denominator": denominator,

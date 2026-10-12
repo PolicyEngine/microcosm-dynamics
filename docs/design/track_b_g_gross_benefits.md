@@ -75,7 +75,15 @@ For one worker's record and one benefit month:
      dime-floored (RS 00615.201).
    - Widow(er): the 28.5 percent maximum spread over the reduction period, with
      the reduction amount rounded *up* to the dime (RS 00615.301).
+   - The widow(er) period is one of 60, 62, ..., 84 months, even without a
+     birth cohort. A known cohort fixes exactly one of those periods
+     (RS 00615.301B.2).
    - The RIB-LIM applies next (402(e)(2)(D); RS 00615.320).
+   - A widow(er) with an entitled child in care receives at least what a
+     mother or father would receive after the maximum, when that is larger
+     (RS 00615.340; .010). The comparison uses the mother/father 75-percent
+     OB under 202(g)(2), its maximum share and any settled dual-entitlement
+     redistribution; the actual widow's own-benefit offset follows.
 6. **Dual entitlement** (402(k)(3)(A)). The auxiliary benefit is reduced, but
    not below zero, by the own benefit after 402(q).
    - An aged spouse entitled to the own benefit in or before the spouse
@@ -222,7 +230,11 @@ in every record's family. Input errors include:
 - a payment month before the record's eligibility year or first DIB
   entitlement;
 - a duplicate beneficiary id;
-- a role the record cannot have.
+- a role the record cannot have;
+- a widow(er) reduction period outside 60, 62, ..., 84, or a period that
+  differs from a known cohort;
+- `child_in_care` that does not name an entitled child on this record for
+  the payment month.
 
 This ordering means `evaluate_family` can never count an invalid row as a
 coverage gap. `InvalidFamilyInput` propagates out of `evaluate_family` by
@@ -348,7 +360,8 @@ G never falls back to a single-worker computation.
 | `savings_clause_403a5` | A governed month whose total fell below a 403(a)(5) protected total, and every later governed month |
 | `savings_clause_history_unknown` | A month for which a protected total G cannot see may exist (a path not started at entitlement, or a month G did not compute) |
 | `widow_drc_savings_clause` | A May 1978 beneficiary protected from widow(er) deceased-worker DRC reductions (RS 00615.712) |
-| `widow_drc_savings_clause_history_unknown` | A survivor snapshot without eligibility metadata, or with known DIB by May 1978, has not attested whether RS 00615.712 applies |
+| `widow_drc_savings_clause_history_unknown` | A widow(er) subject to the maximum has an OB that may include deceased-worker delayed credits, another beneficiary is subject to the maximum, and neither an explicit exclusion nor complete first-ever DIB history rules out May 1978 protection (RS 00615.712; .736B.2b) |
+| `widow_child_in_care_unknown` | A widow(er), including a disabled widow(er) or surviving divorced spouse, and an entitled child are on the record without a current-month care attestation (RS 00615.340; .010) |
 | `delayed_credits_born_before_1917` | Delayed credits for births before 1917 (402(w)(6)(A)'s 1/12 of 1 percent) |
 
 `evaluate_family` and `count_family_outcomes` keep unsupported rows, whether
@@ -411,15 +424,20 @@ absorbed as unsupported rows.
     G accepts the whole window and rejects one month more.
 
 12. **Widow cohort periods.** Every January 2-January 1 cohort fixes exactly
-    one RS 00615.301B.2 period. Both construction styles reject another
-    period or excess months before any refusal. Exact family payments equal
-    the independent widow primitive with zero tolerance. Fix-round examples
-    and Hypothesis tests execute every boundary cohort.
+    one RS 00615.301B.2 period. Only 60, 62, ..., 84 are legal without a
+    cohort. The primitives and both construction styles reject every other
+    integer period, a conflicting cohort period or excess months before any
+    refusal. Exact family payments equal the independent widow primitive
+    with zero tolerance. Fix-round examples and Hypothesis tests execute
+    every boundary cohort and the independent exact integer reference.
 13. **Widow DRC protection.** Known RS 00615.712 protection and unknown
-    direct-snapshot history have distinct named refusals. Every refusal
-    retains its row and weight and blocks totals; duplicate inputs raise
-    first. Modern eligibility cannot hide known DIB by May 1978. Fix-round
-    Hypothesis tests execute these rules in both construction styles.
+    history have distinct named refusals. Every refusal retains its row and
+    weight and blocks totals; duplicate inputs raise first. Modern
+    eligibility cannot hide known DIB by May 1978 or unknown prior DIB.
+    First-ever DIB after May 1978 or an explicit no-protection attestation
+    excludes the history refusal. Fix-round Hypothesis tests execute these
+    rules, including the exact May/June boundary, in both construction
+    styles.
 14. **RIB-LIM scope.** A nonlimiting declaration has no effect on settled
     Parisi payments; equality is nonlimiting. Actually limiting cases retain
     refusals and denominators. Payment-review examples and Hypothesis
@@ -436,6 +454,16 @@ absorbed as unsupported rows.
     compatibility module tests the finite set exhaustively and through
     Hypothesis; the artifact pin executes the proof before its one-file
     exclusion. This admits an invented-case regression only.
+18. **Widow child-in-care minimum.** The widow's payable amount is the
+    larger of its ordinary reduced amount and the mother/father comparison
+    amount, with zero-tolerance differential, including settled dual
+    offsets. A higher WIB is unchanged. Other beneficiaries keep their
+    ordinary widow-family amounts. Record and subject totals remain within
+    the maximum; amounts remain nonnegative dimes, whole-dollar floors and
+    sums remain exact, and results remain deterministic and independent of
+    beneficiary order. Unknown care retains its row and weight and blocks
+    aggregates; invalid named children raise before coverage refusals.
+    Fix-round child-in-care examples and Hypothesis tests execute each rule.
 
 ## Worked examples reproduced exactly
 
@@ -446,6 +474,7 @@ absorbed as unsupported rows.
 | RS 00615.682 | $101.90 each; then the surviving divorced spouse at $145.70, outside the maximum, and children capped at $152.90 |
 | RS 00615.768 | Examples 1 and 2 (the Parisi rule): $125.00 each; $30 / $270 |
 | RS 00615.320 | RIB-LIM $350, with the $309.20 floor |
+| RS 00615.340 | Example a: 64 reduction months, 71.5 percent raised to 75 percent for January-June 2005, then 71.5 percent from July. Example b: 16 months, about 92.9 percent unchanged. On the explicitly invented $1,000 scale these are $750.00/$715.00 and $928.70 (whole dollars $750/$715/$928) |
 | RS 00615.240 | Spouse then RIB (method B): $450.00 spouse, $200.00 RIB, $250.00 paid as a spouse |
 | RS 00615.694 | Spouse payment $290 after delayed credits on the own RIB |
 | RS 00615.005, .101, .201, .301, .692 | $780.50 (not $780.40); every chart fraction; $819.60; $1,175; every RS 00615.692E cohort's maximum delayed-credit months |
@@ -720,8 +749,8 @@ The new parent/IEDS tests execute examples and Hypothesis checks beside them.
 ## Registry, coverage and invented denominators
 
 `tests/data/track_b/gross_benefit_examples.yaml` is the single statutory
-worked-example registry. Its 27 entries reproduce 205 figures quoted from
-the manifest's captures and 53 separately labelled derived rates or
+worked-example registry. Its 29 entries reproduce 216 figures quoted from
+the manifest's captures and 65 separately labelled derived rates or
 whole-dollar floors. Each figure links an output path, exact expected value
 and verbatim capture literal. The .910 erratum retains published $899.52
 beside the formula's $889.52. Bulletin presentation rounding is separate:
@@ -731,25 +760,30 @@ figures are not represented as printed source figures.
 
 The tag vocabulary enumerates record kind, every role, reductions, credits,
 dual method, binding/disability maxima, redistribution, outside-maximum
-roles, RIB-LIM, COLA, DWB, parent, IEDS and SSFA classes. All 42 supported
-classes have a registered example or one of 17 explicit invented-only
-explanations with test references. The coverage test derives kind and role
-classes from G's enums; a missing supported class, figure or source literal
-fails. Hypothesis tests execute completeness, class loss, determinism and
-scenario order independence.
+roles, RIB-LIM, COLA, DWB, parent, IEDS, SSFA and widow child-in-care
+classes. All 43 supported classes have a registered example or one of 17
+explicit invented-only explanations with test references. The coverage
+test derives kind and role classes from G's enums; a missing supported
+class, figure or source literal fails. Hypothesis tests execute
+completeness, class loss, determinism and scenario order independence.
 
 `scripts/track_b_g_conformance_report.py` writes the canonical JSON report
 under this design directory. The exhaustive declared product is three
 record kinds, all 55 role multisets of sizes zero through two, eight dual
-modes, two reduction flags, three payment eras and fifteen single-condition
-choices. Flags apply to the first beneficiary in Role enum order; empty
-multisets with a beneficiary flag are invalid. Fixed invented money, cohort,
-and snapshot assumptions are stated in the artifact. Conditions are none
-or one declared record/beneficiary flag; combinations beyond that finite
-axis and larger families are not claimed as enumerated.
+modes, two reduction flags, three payment eras, fifteen single-condition
+choices and three widow child-in-care inputs (`None`, `False` and the first
+entitled child's id). Focal flags apply to the first beneficiary in Role
+enum order; empty multisets with a beneficiary flag are invalid. Fixed
+invented money, cohort and snapshot assumptions are stated in the artifact.
+Conditions are none or one declared record/beneficiary flag; combinations
+beyond that finite axis and larger families are not claimed as enumerated.
+The care input
+applies to every widow(er) role in the cell; a named-child cell without a
+child is invalid, and unknown care with an entitled child refuses. Cells
+without widow(er)s still retain all three care choices in the denominator.
 
-There are 118,800 cells: 3,640 supported, 24,074 refused and 91,086 invalid.
-All cells stay in the denominator. Twenty-three named invented witnesses form
+There are 356,400 cells: 9,811 supported, 64,595 refused and 281,994 invalid.
+All cells stay in the denominator. Twenty-four named invented witnesses form
 a separate denominator, one executed refusal for every retained reason,
 including historical, multi-record and protected-path cases absent from the
 lattice. Statutory registry counts are separate again. These are invented
@@ -759,9 +793,10 @@ Report invariants are unique/exhaustive declared cells, supported/refused/
 invalid conservation, reason and era conservation, deterministic/order
 independent classification, invalid-before-refusal order, separate
 denominators and canonical byte equality on regeneration. Each is executed
-by example and Hypothesis checks in the conformance-report tests. All ten
-deliberate mutations failed and were restored; the commands and failing
-tests are listed in the pull request (#530).
+by example and Hypothesis checks in the conformance-report tests. The
+original review's ten deliberate mutations failed and were restored; the
+commands and failing tests are listed in the pull request (#530). Fix-round
+mutation evidence is recorded separately in `scratch/review`.
 
 
 ## Fix round of October 12, 2026
@@ -790,14 +825,19 @@ or exclude protection. Benefit-rate preservation is not implemented;
 family as `widow_drc_savings_clause`. A direct `RecordState` can declare
 that protection with `widow_drc_savings_clause=True`.
 
-For direct survivor snapshots without eligibility metadata, the caller must
-explicitly attest `widow_drc_savings_clause=False` when protection cannot
-apply. The default `None` refuses as
-`widow_drc_savings_clause_history_unknown`. Modern current eligibility does not exclude May 1978 protection when
-known prior DIB began by that month. RS 00615.736B.2b permits a new
-eligibility year after an earlier DIB period ended. Both direct and built
-states therefore require an attestation for that known earlier history;
-without known earlier DIB, modern eligibility retains the existing scope. Existing
+When a widow(er) subject to the maximum has an OB that may include
+deceased-worker delayed credits and another beneficiary is subject to the
+maximum, both direct and built snapshots need
+`widow_drc_savings_clause=False` or complete first-ever DIB history that
+excludes May 1978 protection. The default `None` refuses as
+`widow_drc_savings_clause_history_unknown`. `first_dib_entitlement=None`
+means unknown history; it does not attest no DIB. Modern current
+eligibility does not exclude May 1978 protection: RS 00615.736B.2b permits
+a new eligibility year after an earlier DIB period ended. A known
+first-ever DIB entitlement after May 1978 excludes the protection; one on
+or before that month does not. The larger-OB input also represents
+windexing without a separate cause field, so an explicit exclusion is
+needed to distinguish that case when the history cannot settle it. Existing
 published snapshots attest exclusions from their captured facts: no DRC
 widow, windexing, or first survivor entitlement in March 2000. Invented
 snapshots explicitly assume no protected May 1978 beneficiary. All family
@@ -813,6 +853,59 @@ and checks every figure against the capture. G refuses the family with
 either $700 or the master-record $704.20 maximum. The prior code paid
 $406.60/$297.50 using that latter maximum (whole-dollar total $703).
 This is an omitted settled rule, not a competing statutory reading.
+
+### Widow(er) with an entitled child in care
+
+RS 00615.340 states, "Any month a person receiving a reduced widow(er)
+benefit has an entitled child-in-care they cannot receive less than the
+amount a mother and father would receive. The benefit amount is raised
+for all months the child is in care." RS 00615.010 repeats that minimum.
+The policy applies to benefits payable from January 1973. G's pre-1983
+payment scope already refuses every earlier month; it does not extend the
+floor to historical months outside that scope.
+
+`child_in_care` names one entitled child on the same worker record for the
+payment month. `False` explicitly attests no entitled child in care;
+`None` is unknown. Invalid ids, another record's child, non-child ids and
+non-entitled children are input errors before any coverage refusal. When
+an entitled widow(er) and an entitled child are present but care is unknown,
+`widow_child_in_care_unknown` refuses and preserves the invented row and
+its weight. The generic reduced-WIB rule covers disabled widow(er)s too.
+RS 00615.340 expressly includes a surviving divorced spouse who elected
+reduced benefits; that spouse's comparison remains outside the maximum
+under 403(a)(3)(C), so it does not lower anyone else's share.
+
+The comparison replaces the caregiver with a mother/father entitlement,
+whose OB is 75 percent of the death PIA (202(g)(2)), applies the family
+maximum and settled Parisi rules as that entitlement would be paid, and
+keeps any own-benefit offset. The widow gets whichever amount is larger.
+With PIA $1,000 and maximum $1,750, a 1935 widow reduced for 60 months and
+one child receives $750 with the child in care, rather than $715 without;
+the child receives $750 in either case and the caring total is $1,500.
+With two children and a binding maximum, the mother/father share is
+$583.30, rather than the unadjusted $750 OB; the ordinary widow rate is
+$500.50 and each child keeps its ordinary widow-family $525 share. The
+caring total is $1,633.30. This pins reduction after the maximum without
+reallocating the children's ordinary widow shares.
+
+Example a in RS 00615.340 publishes 64 reduction months and 71.5 percent
+WIB, raised to 75 percent for January-June 2005 while an entitled child
+is in care, then returned to 71.5 percent in July. Example b publishes
+16 reduction months and about 92.9 percent, unchanged because it exceeds
+75 percent. The registry's invented $1,000 PIA gives exact rates $715.00,
+$750.00 and $928.70, and floors each monthly payment under 215(g). The
+source's "about 92.9%" is presentation rounding of 92.87 percent after
+the dime reduction; both values are retained separately, without an
+erratum or adjusted statutory calculation.
+
+RS 00615.340 states, "At FRA attainment the widow(er) is granted an ARF
+to remove all months the increase was applied". G computes the current
+floor only. R3's certified mother/father-rate months already cover these
+ARF crediting months; G does not reduce the supplied reduction-month count
+or perform the FRA adjustment. A higher WIB is unchanged and earns no ARF
+credit from this rule. The odd-period, care-minimum and unknown-prior-DIB
+findings correct omitted settled rules and inputs. They introduce no new
+competing statutory reading; the prior Needs Max's judgment items remain.
 
 ### Artifact compatibility and registry truth
 

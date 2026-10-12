@@ -50,6 +50,7 @@ tag_vocabulary:
 - source:erratum
 - ssfa:gpo_ignored
 - ssfa:wep_regular_pia
+- widow:child_in_care
 supported_classes:
 - cola_path
 - credits:own_rib
@@ -93,6 +94,7 @@ supported_classes:
 - role:widow
 - ssfa:gpo_ignored
 - ssfa:wep_regular_pia
+- widow:child_in_care
 invented_only_classes:
   cola_path:
     reason: The captures state the COLA ordering, but no in-scope numerical gross-family
@@ -197,6 +199,7 @@ examples:
         members:
         - beneficiary_id: D
           role: widow
+          child_in_care: false
         - beneficiary_id: C0
           role: child
         - beneficiary_id: C1
@@ -281,6 +284,7 @@ examples:
         members:
         - beneficiary_id: Nora
           role: widow
+          child_in_care: false
           original_benefit_basis: '310'
         - beneficiary_id: Michael
           role: child
@@ -333,6 +337,7 @@ examples:
         members:
         - beneficiary_id: W
           role: widow
+          child_in_care: false
           original_benefit_basis: '410'
         - beneficiary_id: C
           role: child
@@ -402,6 +407,7 @@ examples:
         members:
         - beneficiary_id: D6
           role: surviving_divorced_spouse
+          child_in_care: false
           reduction_months: 60
           reduction_period_months: 60
         - *id001
@@ -558,6 +564,7 @@ examples:
         members:
         - beneficiary_id: W
           role: widow
+          child_in_care: false
   figure_count: 4
   expected:
   - path: case.state.pia
@@ -1873,3 +1880,182 @@ examples:
     derivation: '215(g): floor own-record rate'
   source_start: 2. Partial deduction and age reduction Involved
   source_end: 3. Partial deduction for dual entitlement
+
+- id: rs-00615-340-increased-amount
+  capture_id: poms_rs_00615_340
+  section: 3.a
+  source_start: a. Increased Amount
+  source_end: b. No Increase in Amount
+  tags:
+  - record:survivor
+  - role:widow
+  - role:child
+  - reduction:widow
+  - maximum:nonbinding
+  - widow:child_in_care
+  inputs:
+    scenarios:
+      january: &rs340_increased
+        operation: family
+        month: [2005, 1]
+        # The source publishes percentages; $1,000 PIA/$1,750 MAX are
+        # invented scales with no deceased-worker delayed credits.
+        state: &rs340_state
+          kind: survivor
+          pia: '1000'
+          family_maximum: '1750'
+          widow_drc_savings_clause: false
+        members:
+        - beneficiary_id: W
+          role: widow
+          birth_year: 1941
+          reduction_months: 64
+          reduction_period_months: 64
+          child_in_care: C
+        - beneficiary_id: C
+          role: child
+      february:
+        <<: *rs340_increased
+        month: [2005, 2]
+      march:
+        <<: *rs340_increased
+        month: [2005, 3]
+      april:
+        <<: *rs340_increased
+        month: [2005, 4]
+      may:
+        <<: *rs340_increased
+        month: [2005, 5]
+      june:
+        <<: *rs340_increased
+        month: [2005, 6]
+      july:
+        operation: family
+        month: [2005, 7]
+        state: *rs340_state
+        members:
+        - beneficiary_id: W
+          role: widow
+          birth_year: 1941
+          reduction_months: 64
+          reduction_period_months: 64
+          child_in_care: false
+        - beneficiary_id: C
+          role: child
+  figure_count: 8
+  expected:
+  - path: january.extra.W.auxiliary_percent_of_pia
+    value: '75'
+    literal: raised to 75% of the PIA
+  - path: february.extra.W.auxiliary_percent_of_pia
+    value: '75'
+    literal: raised to 75% of the PIA
+  - path: march.extra.W.auxiliary_percent_of_pia
+    value: '75'
+    literal: raised to 75% of the PIA
+  - path: april.extra.W.auxiliary_percent_of_pia
+    value: '75'
+    literal: raised to 75% of the PIA
+  - path: may.extra.W.auxiliary_percent_of_pia
+    value: '75'
+    literal: raised to 75% of the PIA
+  - path: june.extra.W.auxiliary_percent_of_pia
+    value: '75'
+    literal: raised to 75% of the PIA
+  - path: july.extra.W.auxiliary_percent_of_pia
+    value: '71.5'
+    literal: their rate goes back to the 71.5%
+  - path: july.members.W.reduction_months
+    value: '64'
+    literal: because of the 64 RF
+  derived_expected:
+  - path: january.rows.W.auxiliary_payable
+    value: '750'
+    derivation: 'Invented $1,000 PIA scale: the 75% floor is $750.00.'
+  - path: january.rows.C.auxiliary_payable
+    value: '750'
+    derivation: '202(d)(2): 75% of the invented $1,000 PIA.'
+  - path: january.result.record_total
+    value: '1500'
+    derivation: '$750.00 widow plus $750.00 child.'
+  - path: january.result.record_total_whole_dollars
+    value: '1500'
+    derivation: '215(g): floor each $750.00 beneficiary amount.'
+  - path: july.rows.W.auxiliary_payable
+    value: '715'
+    derivation: 'Invented $1,000 PIA scale: the 71.5% reduced WIB is $715.00.'
+  - path: july.rows.W.whole_dollar_auxiliary
+    value: '715'
+    derivation: '215(g): floor $715.00.'
+- id: rs-00615-340-no-increase
+  capture_id: poms_rs_00615_340
+  section: 3.b
+  source_start: b. No Increase in Amount
+  source_end: To Link to this section
+  tags:
+  - record:survivor
+  - role:widow
+  - role:child
+  - reduction:widow
+  - maximum:nonbinding
+  - widow:child_in_care
+  inputs:
+    scenarios:
+      ordinary:
+        operation: family
+        month: [2005, 6]
+        # Percentages are published; dollar scale and MAX are invented.
+        state: *rs340_state
+        members:
+        - beneficiary_id: W
+          role: widow
+          birth_year: 1941
+          reduction_months: 16
+          reduction_period_months: 64
+          child_in_care: false
+        - beneficiary_id: C
+          role: child
+      caring:
+        operation: family
+        month: [2005, 7]
+        state: *rs340_state
+        members:
+        - beneficiary_id: W
+          role: widow
+          birth_year: 1941
+          reduction_months: 16
+          reduction_period_months: 64
+          child_in_care: C
+        - beneficiary_id: C
+          role: child
+  figure_count: 3
+  expected:
+  - path: caring.members.W.reduction_months
+    value: '16'
+    literal: Their RF is 16
+  - path: caring.extra.W.auxiliary_percent_of_pia
+    value: '92.9'
+    literal: about 92.9% of the PIA
+    rounding: nearest_tenth
+  - path: caring.extra.C.auxiliary_percent_of_pia
+    value: '75'
+    literal: only be 75% of the PIA
+  derived_expected:
+  - path: ordinary.rows.W.auxiliary_payable
+    value: '928.70'
+    derivation: 'Invented $1,000 PIA: 1000 - ceil_dime(1000 x .285 x 16/64).'
+  - path: caring.rows.W.auxiliary_payable
+    value: '928.70'
+    derivation: 'The exact $928.70 reduced WIB exceeds the $750.00 floor.'
+  - path: caring.rows.W.whole_dollar_auxiliary
+    value: '928'
+    derivation: '215(g): floor $928.70.'
+  - path: caring.rows.C.auxiliary_payable
+    value: '750'
+    derivation: '202(d)(2): 75% of the invented $1,000 PIA.'
+  - path: caring.result.record_total
+    value: '1678.70'
+    derivation: '$928.70 widow plus $750.00 child.'
+  - path: caring.result.record_total_whole_dollars
+    value: '1678'
+    derivation: '215(g): $928 widow plus $750 child.'

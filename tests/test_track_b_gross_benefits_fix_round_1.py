@@ -67,14 +67,15 @@ def _state(prebuilt, pia=F(1000), refused=False):
 def test_review_boundary_widow_counterexamples_are_invalid(
     prebuilt, pia, months, period
 ):
-    widow = g.Beneficiary(
-        "w",
-        g.Role.WIDOW,
-        birth_year=1940,
-        reduction_months=months,
-        reduction_period_months=period,
-    )
     with pytest.raises(g.InvalidFamilyInput, match="cohort"):
+        widow = g.Beneficiary(
+            "w",
+            g.Role.WIDOW,
+            birth_year=1940,
+            reduction_months=months,
+            reduction_period_months=period,
+            child_in_care=False,
+        )
         _family(_state(prebuilt, pia), [widow])
 
 
@@ -90,6 +91,7 @@ def test_review_every_boundary_cohort_rejects_excess_months_before_refusal(
         birth_year=cohort,
         reduction_months=period + 1,
         reduction_period_months=min(period + 2, 84),
+        child_in_care=False,
     )
     with pytest.raises(g.InvalidFamilyInput):
         _family(_state(prebuilt, refused=True), [widow])
@@ -105,21 +107,26 @@ def test_property_widow_cohort_fixes_exact_period_in_both_entry_styles(
     if prebuilt:
         # Invented snapshot: no beneficiary was entitled in May 1978.
         state = replace(state, widow_drc_savings_clause=False)
-    widow = g.Beneficiary(
-        "w",
-        g.Role.WIDOW,
-        birth_year=cohort,
-        reduction_months=1,
-        reduction_period_months=supplied,
-    )
+
+    def compute():
+        widow = g.Beneficiary(
+            "w",
+            g.Role.WIDOW,
+            birth_year=cohort,
+            reduction_months=1,
+            reduction_period_months=supplied,
+            child_in_care=False,
+        )
+        return _family(state, [widow])
+
     if supplied == expected:
-        result = _family(state, [widow])
+        result = compute()
         assert result.by_id()["w"].auxiliary_payable == g.survivor_age_reduced(
             state.pia, 1, expected, PARAMS
         )
     else:
         with pytest.raises(g.InvalidFamilyInput, match="cohort"):
-            _family(state, [widow])
+            compute()
 
 
 @given(st.sampled_from(BOUNDARY_COHORTS), st.integers(0, 90), st.booleans())
@@ -137,6 +144,7 @@ def test_property_widow_cohort_bounds_months_and_matches_exact_primitive(
         birth_year=cohort,
         reduction_months=months,
         reduction_period_months=period,
+        child_in_care=False,
     )
     if months > period:
         with pytest.raises(g.InvalidFamilyInput):
@@ -161,6 +169,7 @@ def test_review_1940_cohort_legal_period_pays_exact_counterexample_reference(
         birth_year=1940,
         reduction_months=months,
         reduction_period_months=62,
+        child_in_care=False,
     )
     result = _family(_state(False, pia), [widow])
     assert result.by_id()["w"].auxiliary_payable == payable
@@ -171,7 +180,12 @@ def test_review_1940_cohort_legal_period_pays_exact_counterexample_reference(
 def test_review_712_unattested_master_record_refuses_published_case(maximum):
     state = g.RecordState(g.FamilyKind.SURVIVOR, F(400), maximum)
     members = [
-        g.Beneficiary("w", g.Role.WIDOW, original_benefit_basis=F(410)),
+        g.Beneficiary(
+            "w",
+            g.Role.WIDOW,
+            original_benefit_basis=F(410),
+            child_in_care=False,
+        ),
         g.Beneficiary("c", g.Role.CHILD),
     ]
     with pytest.raises(g.FamilyConfigurationUnsupported) as exc:
@@ -199,7 +213,12 @@ def test_review_712_protected_child_refuses_both_published_maxima(
         else set()
     )
     members = [
-        g.Beneficiary("w", g.Role.WIDOW, original_benefit_basis=F(410)),
+        g.Beneficiary(
+            "w",
+            g.Role.WIDOW,
+            original_benefit_basis=F(410),
+            child_in_care=False,
+        ),
         g.Beneficiary("c", g.Role.CHILD, conditions=conditions),
     ]
     outcome = g.evaluate_family(
@@ -304,7 +323,12 @@ def test_review_712_modern_eligibility_does_not_hide_known_prior_dib(prebuilt):
         )
     )
     members = [
-        g.Beneficiary("w", g.Role.WIDOW, original_benefit_basis=F(410)),
+        g.Beneficiary(
+            "w",
+            g.Role.WIDOW,
+            original_benefit_basis=F(410),
+            child_in_care=False,
+        ),
         g.Beneficiary("c", g.Role.CHILD),
     ]
     with pytest.raises(g.FamilyConfigurationUnsupported) as exc:

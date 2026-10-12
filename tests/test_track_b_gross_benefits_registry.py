@@ -120,6 +120,9 @@ def _family_output(state, members, month):
             "deductee_age_amount": (
                 row.counted_against_maximum - row.auxiliary_payable
             ),
+            "auxiliary_percent_of_pia": (
+                row.auxiliary_payable * 100 / state.pia if state.pia else F(0)
+            ),
         }
     return {
         "state": state,
@@ -291,6 +294,8 @@ def _rounded(value, rule):
         return F(int(value + F(1, 2)))
     if rule == "whole_dollar_floor":
         return F(value.numerator // value.denominator)
+    if rule == "nearest_tenth":
+        return F(int(value * 10 + F(1, 2)), 10)
     raise AssertionError(f"Unknown registry rounding: {rule}")
 
 
@@ -344,6 +349,39 @@ def test_registered_maximum_tags_match_computed_scenarios(example):
     _check_maximum_tags(example)
 
 
+def test_poms_340_certified_child_in_care_reproduces_reviewer_amounts():
+    state = _state(
+        {
+            "kind": "survivor",
+            "pia": "1000",
+            "family_maximum": "1750",
+            "widow_drc_savings_clause": False,
+        }
+    )
+    common = {
+        "beneficiary_id": "w",
+        "role": "widow",
+        "birth_year": 1935,
+        "reduction_months": 60,
+        "reduction_period_months": 60,
+    }
+    child = {"beneficiary_id": "c", "role": "child"}
+    caring = _family_output(
+        state,
+        _members([{**common, "child_in_care": "c"}, child]),
+        g.YearMonth(2026, 1),
+    )
+    ordinary = _family_output(
+        state,
+        _members([{**common, "child_in_care": False}, child]),
+        g.YearMonth(2026, 1),
+    )
+    assert caring["rows"]["w"].auxiliary_payable == F(750)
+    assert caring["rows"]["c"].auxiliary_payable == F(750)
+    assert caring["result"].record_total == F(1500)
+    assert ordinary["rows"]["w"].auxiliary_payable == F(715)
+
+
 def test_survivor_snapshot_attestations_are_supported_by_capture_facts():
     facts = {
         ("rs-00615-756-seven-children", "case"): (
@@ -366,6 +404,26 @@ def test_survivor_snapshot_attestations_are_supported_by_capture_facts():
         ),
         ("rs-00615-320-rib-lim", "case"): (
             "B's spouse, age 66, comes in to file for widow's benefits."
+        ),
+        **{
+            ("rs-00615-340-increased-amount", name): (
+                "are reduced to 71.5% of the PIA because of the 64 RF."
+            )
+            for name in (
+                "january",
+                "february",
+                "march",
+                "april",
+                "may",
+                "june",
+                "july",
+            )
+        },
+        ("rs-00615-340-no-increase", "ordinary"): (
+            "after age reduction they receive about 92.9% of the PIA."
+        ),
+        ("rs-00615-340-no-increase", "caring"): (
+            "after age reduction they receive about 92.9% of the PIA."
         ),
     }
     snapshots = {
@@ -432,6 +490,7 @@ FEATURE_CLASSES = {
     "ieds",
     "ssfa:gpo_ignored",
     "ssfa:wep_regular_pia",
+    "widow:child_in_care",
 }
 
 

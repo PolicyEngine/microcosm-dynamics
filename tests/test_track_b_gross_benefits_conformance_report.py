@@ -40,6 +40,7 @@ def lattice_cases(draw):
         draw(st.sampled_from(tuple(report.PAYMENT_ERAS))),
         scope,
         condition,
+        draw(st.sampled_from(report.CHILD_IN_CARE_FLAGS)),
     )
 
 
@@ -68,16 +69,23 @@ def test_lattice_is_the_complete_documented_cartesian_product(regenerated):
     condition_choices = (
         1 + len(g.RecordCondition) + len(g.BeneficiaryCondition)
     )
-    expected = len(g.FamilyKind) * multisets * 8 * 2 * 3 * condition_choices
+    expected = (
+        len(g.FamilyKind) * multisets * 8 * 2 * 3 * condition_choices * 3
+    )
     keys = [case.key for case in report.configurations()]
     assert multisets == 55
     assert condition_choices == 15
-    assert expected == 118800
+    assert expected == 356400
     assert len(keys) == len(set(keys)) == expected
     assert regenerated["lattice"]["denominator"]["rows"] == expected
     definition = regenerated["lattice"]["definition"]
     assert definition["role_multiset_count"] == multisets
     assert definition["role_enum_order"] == [role.value for role in g.Role]
+    assert definition["widow_child_in_care"] == [
+        None,
+        False,
+        "entitled_child",
+    ]
     assert set(definition["payment_eras"].values()) == {
         "1999-09",
         "2023-12",
@@ -144,11 +152,11 @@ def test_every_retained_refusal_has_an_executed_named_witness(reason):
 
 def test_named_witness_denominator_is_separate_from_the_lattice(regenerated):
     witnesses = regenerated["supplemental_refusal_witnesses"]
-    assert len(g.UnsupportedReason) == 23
+    assert len(g.UnsupportedReason) == 24
     assert witnesses["denominator"] == {
-        "rows": 23,
+        "rows": 24,
         "supported": 0,
-        "refused": 23,
+        "refused": 24,
         "invalid": 0,
     }
     expected = {reason.value for reason in g.UnsupportedReason}
