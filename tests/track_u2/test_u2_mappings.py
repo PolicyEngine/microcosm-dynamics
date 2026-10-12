@@ -298,16 +298,40 @@ D637_RULED_FIELDS = {
     # Amendment 4's nine D items already held their resolution: the
     # ruling and the ratified restriction wording move.
     "4": {"use_restriction", "ruling"},
+    # The 2015 checkpoint's refusal is a gate field; its question is prose.
+    "5b": {
+        "status",
+        "accepted_plan_types",
+        "rejected_plan_types",
+        "condition",
+        "refused_branch",
+        "off_route_disposition",
+        "resolution",
+        "ruling",
+        "superseded_question",
+        "refusal",
+        "superseded_refusal",
+    },
 }
 #: The dependencies each amendment released.
-D637_RELEASED: dict[str, frozenset[str]] = {}
+D637_RELEASED: dict[str, frozenset[str]] = {
+    "5b": frozenset({"pension:2015.route.formula_unknown_checkpoint"}),
+}
+#: How many entries, by registry, lost a released dependency (each then
+#: has none left).
+D637_RELEASED_COUNTS = {"pension": 34}
 #: The top-level fields each registry's d637 commits changed.
 D637_TOP = {
     "income": {"rulings_applied"},
     "wealth": {"rulings_applied"},
+    "pension": {"rulings_applied"},
 }
 #: The amendments each registry's ``rulings_applied`` d637 record lists.
-D637_RECORDED = {"income": ["2", "3"], "wealth": ["4"]}
+D637_RECORDED = {
+    "income": ["2", "3"],
+    "wealth": ["4"],
+    "pension": ["5b"],
+}
 
 
 def test_d637_moved_only_the_ruled_gate_fields():
@@ -369,7 +393,11 @@ def test_d637_moved_only_the_ruled_gate_fields():
             ), (name, entry["id"])
     # Every ruled entry moved, so no scope names an untouched entry.
     assert set(ruled) <= moved
-    assert sum(released.values()) == len(released) == 0
+    by_registry = {}
+    for name, _ in released:
+        by_registry[name] = by_registry.get(name, 0) + 1
+    assert by_registry == D637_RELEASED_COUNTS
+    assert all(released.values())
 
 
 def test_the_gate_projection_sees_a_moved_gate_field():
@@ -599,35 +627,34 @@ def test_crosswalks_are_never_executable_inputs(declared_gate, registry_gate):
 #: The first registry blocker each later wave's family-record specs meet
 #: (income concepts are read first, in :data:`sources.INCOME_CONCEPTS`
 #: order, then wealth, then the employer-DC items): the first P64
-#: disposition, which waits on the 2015 P62ACKPT checkpoint (amendment
-#: 5b) or on 2017-2023's inherited-route amendment (5a).  Until the d1090
-#: registry commit (section 16c), 2015's income entries depended on the
-#: refused 2015 code-20 route and 2019-2023's on the refused code-90/92
-#: routes; until the d637 amendment-2 commit (section 16b), every later
-#: wave first met its spouse age slot metadata, TO VERIFY.  No income or
-#: wealth entry blocks a later wave now.
+#: disposition, which waits on 2017-2023's inherited-route amendment
+#: (5a).  Until the d1090 registry commit (section 16c), 2015's income
+#: entries depended on the refused 2015 code-20 route and 2019-2023's on
+#: the refused code-90/92 routes; until the d637 amendment-2 commit
+#: (section 16b), every later wave first met its spouse age slot
+#: metadata, TO VERIFY; until the 5b commit, 2015's P64 items waited on
+#: its P62ACKPT checkpoint.  No income or wealth entry blocks a later wave
+#: now, and 2015 meets no blocker.
+OPEN_WAVES_RESOLVED = (2013, 2015)
 FIRST_BLOCKER = {
-    2015: (
-        "pension:2015.head_prev1_dc_disposition: blocked by "
-        "pension:2015.route.formula_unknown_checkpoint"
-    ),
-    **{
-        wave: (
-            f"pension:{wave}.head_prev1_dc_disposition: blocked by "
-            f"pension:{wave}.route.inherited_route_amendment"
-        )
-        for wave in (2017, 2019, 2021, 2023)
-    },
+    wave: (
+        f"pension:{wave}.head_prev1_dc_disposition: blocked by "
+        f"pension:{wave}.route.inherited_route_amendment"
+    )
+    for wave in (2017, 2019, 2021, 2023)
 }
 
 
 def test_registry_gate_refuses_every_open_wave(registry_gate):
     # 2013: every mapping U2 reads is resolved (the 2013 meanings are
-    # U1's); 2015-2023: each wave meets a TO VERIFY or refused entry.
-    specs = loader.family_record_specs(2013, registry_gate)
-    concepts = {spec.concept for spec in specs}
-    assert set(sources.INCOME_CONCEPTS) <= concepts
-    assert {"wealth1", "vehicles", "head_current_amount"} <= concepts
+    # U1's); 2015 since the d637 commits for amendments 2 and 5b; each
+    # other wave meets a blocked entry.
+    for wave in OPEN_WAVES_RESOLVED:
+        specs = loader.family_record_specs(wave, registry_gate)
+        concepts = {spec.concept for spec in specs}
+        assert set(sources.INCOME_CONCEPTS) <= concepts
+        assert {"wealth1", "vehicles", "head_current_amount"} <= concepts
+        assert all(spec.gate == sources.REGISTRY for spec in specs)
     for wave, blocker in FIRST_BLOCKER.items():
         with pytest.raises(sources.U2SourceRefusal) as error:
             loader.family_record_specs(wave, registry_gate)

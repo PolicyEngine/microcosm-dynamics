@@ -235,8 +235,9 @@ DECLARED = INVENTED_DECLARED
 #: those commits moved against the registries d1090 left): amendments 2
 #: and 3 moved the income bytes (the later spouse age and sex records
 #: became slot metadata; the spouse-retirement crosswalks became
-#: non-executable metadata) and amendment 4 the wealth bytes (the nine
-#: corrected accuracy flags record the ruling).
+#: non-executable metadata), amendment 4 the wealth bytes (the nine
+#: corrected accuracy flags record the ruling) and amendment 5b the
+#: pension bytes (the 2015 P62ACKPT checkpoint and its dependents).
 REGISTRY_SHA256: dict[str, str] = {
     "income": (
         "ac8310a166a66fa71a39d19cb79dec0dda5c41ff5a7033e535d70ebffe87204c"
@@ -248,7 +249,7 @@ REGISTRY_SHA256: dict[str, str] = {
         "4eab8e0abc69668c287310931baa049b8546d3f3e265a106f1b945b948c7649e"
     ),
     "pension": (
-        "0e329d0a871b70800a93908f2927415a728ac020175a079b38664b532b551d9a"
+        "d6a26939ced0a960805edd2c4b3dad02edfde311f6ce8120d53173034661adf9"
     ),
     "roles": (
         "df2b7afe76cda4f92380f88b478d9e6866e0f532b0d85f081d8226ee2e33dc87"
@@ -1569,8 +1570,8 @@ def dc_route(wave: int, gate: SourceGate) -> DcRoute:
     Registry gate: built from the pension registry's route entries
     (current job; previous combined; previous DC-only; the checkpoint's
     formula/unknown route; IRA rollovers; duplicate and off-route rule).
-    Any route still TO VERIFY or blocked refuses -- today 2015's
-    checkpoint and 2017-2023's inherited-route amendment -- and so do
+    Any route still TO VERIFY or blocked refuses -- today 2017-2023's
+    inherited-route amendment -- and so do
     disposition codes on which the IRA-rollover, previous-combined and
     previous-DC-only entries disagree.  Invented declared gate:
     :func:`declared_dc_route` (current account or combined plan; "both"

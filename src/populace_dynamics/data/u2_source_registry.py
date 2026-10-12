@@ -138,6 +138,29 @@ RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
         },
         "absent": ("action", "blocking_dependencies", "question"),
     },
+    "5b": {
+        "registry": "pension",
+        "entries": ("2015.route.formula_unknown_checkpoint",),
+        "ruling": {
+            **_D637,
+            "amendment": "5b",
+            "replaces_draft_3_lines": [1173, 1174, 1175, 1176],
+        },
+        "fields": {
+            "status": "RESOLVED",
+            "accepted_plan_types": [5],
+            "rejected_plan_types": [1, 7, 8, 9],
+            "refused_branch": "P62ACKPT: P46=1 AND P52=1 AND P62AMT=DK/RF",
+            "off_route_disposition": "off_route",
+        },
+        "absent": (
+            "action",
+            "refusal",
+            "question",
+            "blocking_dependencies",
+            "accepted_conditional_types",
+        ),
+    },
 }
 #: The d637 amendment each ruled entry belongs to, by (registry, id).
 _AMENDMENT_OF_ENTRY = {

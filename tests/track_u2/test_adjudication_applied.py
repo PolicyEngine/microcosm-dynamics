@@ -64,7 +64,7 @@ EXPECTED_COUNTS = {
     "income": (764, 0, 0),
     "wealth": (234, 0, 0),
     "individual": (59, 0, 0),
-    "pension": (647, 0, 1),
+    "pension": (648, 0, 0),
     "roles": (30, 0, 6),
     "support": (16, 0, 0),
     "weights": (6, 0, 1),
@@ -72,11 +72,11 @@ EXPECTED_COUNTS = {
 }
 SSI_AND_CENSUS_RESOLVED = 26
 #: TO VERIFY records left: the adjudication's 24 A items less those the
-#: d637 commits resolved (amendment 2: 10; amendment 3: 6).
-OPEN_ITEMS = 8
+#: d637 commits resolved (amendment 2: 10; amendment 3: 6; 5b: 1).
+OPEN_ITEMS = 7
 #: Each d637 amendment a registry commit has applied (section 16b), with
 #: the adjudication disposition its entries carry.
-D637_APPLIED = {"2": "A", "3": "A", "4": "D"}
+D637_APPLIED = {"2": "A", "3": "A", "4": "D", "5b": "A"}
 
 D_ITEMS = {
     "wealth": {
@@ -1097,10 +1097,12 @@ D1090_CLAUSES = {
         "dependents. The d637 commits, one per ratified amendment, have so "
         "far resolved amendment 2's ten later spouse age and sex records as "
         "slot metadata and amendment 3's six spouse-retirement crosswalks "
-        "as non-executable metadata, and recorded amendment 4's ruling on "
-        "the nine corrected wealth accuracy flags. Until the rest of them "
-        "(and, for code 88, d745) land, the 8 TO VERIFY records stay open "
-        "and the 2017\N{EN DASH}2023 P64/P65 records stay blocked.",
+        "as non-executable metadata, recorded amendment 4's ruling on the "
+        "nine corrected wealth accuracy flags, and resolved the 2015 "
+        "P62ACKPT checkpoint under 5b, releasing its dependents. Until the "
+        "rest of them (and, for code 88, d745) land, the 7 TO VERIFY "
+        "records stay open and the 2017\N{EN DASH}2023 P64/P65 records "
+        "stay blocked.",
         "8. Complete the pre-registration structural, reconciliation and "
         "F17 component pass, including only the counts that the ratified B1 "
         "and B2 options name (under the 2026-10-10 ruling, the counts "
@@ -1442,6 +1444,11 @@ def test_released_dependencies(documents):
     for wave in registry.U2_SOURCE_WAVES:
         entry = pension[f"{wave}.route.respondent_slots"]
         assert "blocking_dependencies" not in entry, wave
+    # d637's 5b commit released every dependent of the 2015 checkpoint.
+    checkpoint = "pension:2015.route.formula_unknown_checkpoint"
+    for document in documents.values():
+        for entry in document["entries"]:
+            assert checkpoint not in entry.get("blocking_dependencies", [])
     for wave in (2017, 2019, 2021, 2023):
         for person in ("head", "wife"):
             for plan in (1, 2):

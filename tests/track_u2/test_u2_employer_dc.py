@@ -241,7 +241,14 @@ def test_2013_registry_route_equals_the_declared_route_and_u1_rule(
         assert int(mine[column].iloc[0]) == int(theirs[column].iloc[0]), column
 
 
-@pytest.mark.parametrize("wave", [2015, 2017, 2019, 2021, 2023])
+#: The waves whose employer-DC route the registry gate applies: 2013
+#: (U1's route) and, since the d637 5b commit, 2015.
+REGISTRY_DC_WAVES = (2013, 2015)
+
+
+@pytest.mark.parametrize(
+    "wave", [w for w in sources.SUPPORT_WAVES if w not in REGISTRY_DC_WAVES]
+)
 def test_later_wave_routes_refuse_under_the_registry_gate(
     wave, committed_registries
 ):
@@ -250,6 +257,20 @@ def test_later_wave_routes_refuse_under_the_registry_gate(
         sources.dc_route(wave, gate)
     with pytest.raises(sources.U2SourceRefusal):
         sources.pension_field_specs(wave, gate)
+
+
+@pytest.mark.parametrize("wave", REGISTRY_DC_WAVES)
+def test_registry_route_equals_the_declared_route(wave, committed_registries):
+    """Differential: wherever the registry gate applies a wave's route,
+    it is the declared route (amendment 5, ratified by d637), apart from
+    the label naming where it came from."""
+    gate = sources.SourceGate(sources.REGISTRY, committed_registries)
+    registry_route = sources.dc_route(wave, gate).as_dict()
+    declared = sources.declared_dc_route(wave).as_dict()
+    assert registry_route.pop("source") == "pension_registry_routes"
+    assert declared.pop("source") == "section_15_declared_route_invented_only"
+    assert registry_route == declared
+    assert sources.pension_field_specs(wave, gate)
 
 
 def test_registry_documents_dc_only_checkpoints_from_2017(

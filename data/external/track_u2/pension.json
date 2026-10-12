@@ -5038,10 +5038,7 @@
       "codebook_documentation": "P52. (Now about the part of your pension where benefits are based on a formula.)\n(Do/Does) (you/he/she) expect to receive benefits from this plan in the future, (are/is)\n(you/he/she) receiving them now, did (you/he/she) get a cash settlement when (you/he/she)\nleft, did (you/he/she) lose (your/his/her) benefits, or what? [ENTER ALL THAT APPLY]--\nFIRST MENTION FOR FIRST PENSION FROM FORMER EMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n8 DK\n9 NA; refused\n0 Inap.: has never worked for money (ER61932=2); no\npensions through a former employer (ER61988=5); DK, NA,\nor RF whether had any pensions through a former employer\n(ER61988=8 or 9); defined contribution retirement plan\n(ER61990=5); DK, NA, or RF type of retirement plan\n(ER61990=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.head_er62010",
@@ -5078,10 +5075,7 @@
       "codebook_documentation": "P52. (Now about the part of your pension where benefits are based on a formula.)\n(Do/Does) (you/he/she) expect to receive benefits from this plan in the future, (are/is)\n(you/he/she) receiving them now, did (you/he/she) get a cash settlement when (you/he/she)\nleft, did (you/he/she) lose (your/his/her) benefits, or what?--SECOND MENTION FOR FIRST\nPENSION FROM FORMER EMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n0 Inap.: only one mention; has never worked for money\n(ER61932=2); no pensions through a former employer\n(ER61988=5); DK, NA, or RF whether had any pensions\nthrough a former employer (ER61988=8 or 9); defined\ncontribution retirement plan (ER61990=5); DK, NA, or RF\ntype of retirement plan (ER61990=8 or 9); DK, NA, or RF\nto first mention (ER62009=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.head_er62011",
@@ -5122,10 +5116,7 @@
       "codebook_documentation": "P52. (Now about the part of your pension where benefits are based on a formula.)\n(Do/Does) (you/he/she) expect to receive benefits from this plan in the future, (are/is)\n(you/he/she) receiving them now, did (you/he/she) get a cash settlement when (you/he/she)\nleft, did (you/he/she) lose (your/his/her) benefits, or what?--THIRD MENTION FOR FIRST\nPENSION FROM FORMER EMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n0 Inap.: fewer than three mentions; has never worked for\nmoney (ER61932=2); no pensions through a former employer\n(ER61988=5); DK, NA, or RF whether had any pensions\nthrough a former employer (ER61988=8 or 9); defined\ncontribution retirement plan (ER61990=5); DK, NA, or RF\ntype of retirement plan (ER61990=8 or 9); DK, NA, or RF\nto first mention (ER62009=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.head_er62012",
@@ -5162,10 +5153,7 @@
       "codebook_documentation": "P52. (Now about the part of your pension where benefits are based on a formula.)\n(Do/Does) (you/he/she) expect to receive benefits from this plan in the future, (are/is)\n(you/he/she) receiving them now, did (you/he/she) get a cash settlement when (you/he/she)\nleft, did (you/he/she) lose (your/his/her) benefits, or what?--FOURTH MENTION FOR FIRST\nPENSION FROM FORMER EMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n0 Inap.: fewer than four mentions; has never worked for\nmoney (ER61932=2); no pensions through a former employer\n(ER61988=5); DK, NA, or RF whether had any pensions\nthrough a former employer (ER61988=8 or 9); defined\ncontribution retirement plan (ER61990=5); DK, NA, or RF\ntype of retirement plan (ER61990=8 or 9); DK, NA, or RF\nto first mention (ER62009=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.head_er62013",
@@ -5206,10 +5194,7 @@
       "codebook_documentation": "P52. (Now about the part of your pension where benefits are based on a formula.)\n(Do/Does) (you/he/she) expect to receive benefits from this plan in the future, (are/is)\n(you/he/she) receiving them now, did (you/he/she) get a cash settlement when (you/he/she)\nleft, did (you/he/she) lose (your/his/her) benefits, or what?--FIFTH MENTION FOR FIRST\nPENSION FROM FORMER EMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n0 Inap.: fewer than five mentions; has never worked for\nmoney (ER61932=2); no pensions through a former employer\n(ER61988=5); DK, NA, or RF whether had any pensions\nthrough a former employer (ER61988=8 or 9); defined\ncontribution retirement plan (ER61990=5); DK, NA, or RF\ntype of retirement plan (ER61990=8 or 9); DK, NA, or RF\nto first mention (ER62009=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.head_er62014",
@@ -5246,10 +5231,7 @@
       "codebook_documentation": "P52. (Now about the part of your pension where benefits are based on a formula.)\n(Do/Does) (you/he/she) expect to receive benefits from this plan in the future, (are/is)\n(you/he/she) receiving them now, did (you/he/she) get a cash settlement when (you/he/she)\nleft, did (you/he/she) lose (your/his/her) benefits, or what?--SIXTH MENTION FOR FIRST\nPENSION FROM FORMER EMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n0 Inap.: fewer than six mentions; has never worked for\nmoney (ER61932=2); no pensions through a former employer\n(ER61988=5); DK, NA, or RF whether had any pensions\nthrough a former employer (ER61988=8 or 9); defined\ncontribution retirement plan (ER61990=5); DK, NA, or RF\ntype of retirement plan (ER61990=8 or 9); DK, NA, or RF\nto first mention (ER62009=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.head_er62042",
@@ -5405,10 +5387,7 @@
       "codebook_documentation": "P64. When (you/he/she) left that employer, did (you/he/she) transfer (your/his/her)\naccount to a new employer, roll it over into an IRA, leave it to accumulate in\n(your/his/her) old plan, convert it to an annuity or what?--FIRST PENSION FROM FORMER\nEMPLOYER\n1 Transferred to new employer\n2 Rolled over into IRA\n3 Left to accumulate\n4 Converted to annuity\n7 Other\n8 DK\n9 NA; refused\n0 Inap.: has never worked for money (ER61932=2); no\npensions through a former employer (ER61988=5); DK, NA,\nor RF whether had any pensions through a former employer\n(ER61988=8 or 9); defined benefit retirement plan or\ncombination plan (ER61990=1 or 7); NA or RF type of\nretirement plan (ER61990=9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.head_prev1_dc_amount",
@@ -5462,10 +5441,7 @@
         "dk": "zero_counted_unreported",
         "na_refused": "zero_counted_unreported",
         "brackets": "not_used"
-      },
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      }
     },
     {
       "id": "2015.head_er62058",
@@ -5978,10 +5954,7 @@
       "codebook_documentation": "P52. Now about the part of (your/his/her) pension where benefits are based on a formula.\n(Do/Does) (you/he/she) expect to receive benefits from this plan in the future, (are/is)\n(you/he/she) receiving them now, did (you/he/she) get a cash settlement when (you/he/she)\nleft, did (you/he/she) lose your benefits, or what? [ENTER ALL THAT APPLY]--FIRST MENTION\nFOR SECOND PENSION FROM PREVIOUS EMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n8 DK\n9 NA; refused\n0 Inap.: has never worked for money (ER61932=2); no\npensions through a former employer (ER61988=5); DK, NA,\nor RF whether had any pensions through a former employer\n(ER61988=8 or 9); no second pension through a former\nemployer (ER62069=5); defined contribution plan\n(ER62070=5); NA, RF type of retirement plan (ER62070=9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.head_er62090",
@@ -6022,10 +5995,7 @@
       "codebook_documentation": "P52. Now about the part of (your/his/her) pension where benefits are based on a formula.\n(Do/Does) (you/he/she) expect to receive benefits from this plan in the future, (are/is)\n(you/he/she) receiving them now, did (you/he/she) get a cash settlement when (you/he/she)\nleft, did (you/he/she) lose your benefits, or what?--SECOND MENTION FOR SECOND PENSION\nFROM PREVIOUS EMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n0 Inap.: only one mention; has never worked for money\n(ER61932=2); no pensions through a former employer\n(ER61988=5); DK, NA, or RF whether had any pensions\nthrough a former employer (ER61988=8 or 9); no second\npension through a former employer (ER62069=5); defined\ncontribution plan (ER62070=5); NA, RF type of retirement\nplan (ER62070=9); DK, NA, or RF to first mention\n(ER62089=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.head_er62091",
@@ -6062,10 +6032,7 @@
       "codebook_documentation": "P52. Now about the part of (your/his/her) pension where benefits are based on a formula.\n(Do/Does) (you/he/she) expect to receive benefits from this plan in the future, (are/is)\n(you/he/she) receiving them now, did (you/he/she) get a cash settlement when (you/he/she)\nleft, did (you/he/she) lose your benefits, or what?--THIRD MENTION FOR SECOND PENSION FROM\nPREVIOUS EMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n0 Inap.: fewer than three mentions; has never worked for\nmoney (ER61932=2); no pensions through a former employer\n(ER61988=5); DK, NA, or RF whether had any pensions\nthrough a former employer (ER61988=8 or 9); no second\npension through a former employer (ER62069=5); defined\ncontribution plan (ER62070=5); NA, RF type of retirement\nplan (ER62070=9); DK, NA, or RF to first mention\n(ER62089=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.head_er62092",
@@ -6102,10 +6069,7 @@
       "codebook_documentation": "P52. Now about the part of (your/his/her) pension where benefits are based on a formula.\n(Do/Does) (you/he/she) expect to receive benefits from this plan in the future, (are/is)\n(you/he/she) receiving them now, did (you/he/she) get a cash settlement when (you/he/she)\nleft, did (you/he/she) lose your benefits, or what?--FOURTH MENTION FOR SECOND PENSION\nFROM PREVIOUS EMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n0 Inap.: fewer than four mentions; has never worked for\nmoney (ER61932=2); no pensions through a former employer\n(ER61988=5); DK, NA, or RF whether had any pensions\nthrough a former employer (ER61988=8 or 9); no second\npension through a former employer (ER62069=5); defined\ncontribution plan (ER62070=5); NA, RF type of retirement\nplan (ER62070=9); DK, NA, or RF to first mention\n(ER62089=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.head_er62093",
@@ -6142,10 +6106,7 @@
       "codebook_documentation": "P52. Now about the part of (your/his/her) pension where benefits are based on a formula.\n(Do/Does) (you/he/she) expect to receive benefits from this plan in the future, (are/is)\n(you/he/she) receiving them now, did (you/he/she) get a cash settlement when (you/he/she)\nleft, did (you/he/she) lose your benefits, or what?--FIFTH MENTION FOR SECOND PENSION FROM\nPREVIOUS EMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n0 Inap.: fewer than five mentions; has never worked for\nmoney (ER61932=2); no pensions through a former employer\n(ER61988=5); DK, NA, or RF whether had any pensions\nthrough a former employer (ER61988=8 or 9); no second\npension through a former employer (ER62069=5); defined\ncontribution plan (ER62070=5); NA, RF type of retirement\nplan (ER62070=9); DK, NA, or RF to first mention\n(ER62089=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.head_er62094",
@@ -6182,10 +6143,7 @@
       "codebook_documentation": "P52. Now about the part of (your/his/her) pension where benefits are based on a formula.\n(Do/Does) (you/he/she) expect to receive benefits from this plan in the future, (are/is)\n(you/he/she) receiving them now, did (you/he/she) get a cash settlement when (you/he/she)\nleft, did (you/he/she) lose your benefits, or what?--SIXTH MENTION FOR SECOND PENSION FROM\nPREVIOUS EMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n0 Inap.: fewer than six mentions; has never worked for\nmoney (ER61932=2); no pensions through a former employer\n(ER61988=5); DK, NA, or RF whether had any pensions\nthrough a former employer (ER61988=8 or 9); no second\npension through a former employer (ER62069=5); defined\ncontribution plan (ER62070=5); NA, RF type of retirement\nplan (ER62070=9); DK, NA, or RF to first mention\n(ER62089=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.head_er62122",
@@ -6337,10 +6295,7 @@
       "codebook_documentation": "P64. When (you/he/she) left that employer, did (you/he/she) transfer (your/his/her)\naccount to a new employer, roll it over into an IRA, leave it to accumulate in\n(your/his/her) old plan, convert it to an annuity or what?--SECOND PENSION FROM PREVIOUS\nEMPLOYER\n1 Transferred to new employer\n2 Rolled over into IRA\n3 Left to accumulate\n4 Converted to annuity\n7 Other\n8 DK\n9 NA; refused\n0 Inap.: has never worked for money (ER61932=2); no\npensions through a former employer (ER61988=5); DK, NA,\nor RF whether had any pensions through a former employer\n(ER61988=8 or 9); no second pension through a former\nemployer (ER62069=5); defined benefit retirement plan or\ncombination plan (ER62070=1 or 7); NA or RF type of\nretirement plan (ER62070=9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.head_prev2_dc_amount",
@@ -6398,10 +6353,7 @@
         "dk": "zero_counted_unreported",
         "na_refused": "zero_counted_unreported",
         "brackets": "not_used"
-      },
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      }
     },
     {
       "id": "2015.head_er62138",
@@ -7383,10 +7335,7 @@
       "codebook_documentation": "P52. Now about the part of (your/her) pension where benefits are based on a formula.\n(Do/Does) (you/she) expect to receive benefits from this plan in the future, (are/is)\n(you/she) receiving them now, did (you/she) get a cash settlement when (you/she) left, did\n(you/she) lose (your/her) benefits, or what? [ENTER ALL THAT APPLY]--FIRST MENTION FOR\nFIRST PENSION FROM PREVIOUS EMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n8 DK\n9 NA; refused\n0 Inap.: no Spouse/Partner in FU (ER61347=5); never\nworked for money (ER60667=5); no pensions through a\nformer employer (ER62205=5); DK, NA, or RF whether have\npensions through a former employer (ER62205=8 or 9);\ndefined contribution plan (ER62207=5); NA or RF type of\npension or retirement plan (ER62207=9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62227",
@@ -7423,10 +7372,7 @@
       "codebook_documentation": "P52. Now about the part of (your/her) pension where benefits are based on a formula.\n(Do/Does) (you/she) expect to receive benefits from this plan in the future, (are/is)\n(you/she) receiving them now, did (you/she) get a cash settlement when (you/she) left, did\n(you/she) lose (your/her) benefits, or what?--SECOND MENTION FOR FIRST PENSION FROM\nPREVIOUS EMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n0 Inap.: only one mention; no Spouse/Partner in FU\n(ER61347=5); never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); defined contribution plan (ER62207=5);\nNA or RF type of pension or retirement plan (ER62207=9);\nDK, NA, or RF to first mention (ER62226=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62228",
@@ -7467,10 +7413,7 @@
       "codebook_documentation": "P52. Now about the part of (your/her) pension where benefits are based on a formula.\n(Do/Does) (you/she) expect to receive benefits from this plan in the future, (are/is)\n(you/she) receiving them now, did (you/she) get a cash settlement when (you/she) left, did\n(you/she) lose (your/her) benefits, or what?--THIRD MENTION FOR FIRST PENSION FROM\nPREVIOUS EMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n0 Inap.: fewer than three mentions; no Spouse/Partner in\nFU (ER61347=5); never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); defined contribution plan (ER62207=5);\nNA or RF type of pension or retirement plan (ER62207=9);\nDK, NA, or RF to first mention (ER62226=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62229",
@@ -7507,10 +7450,7 @@
       "codebook_documentation": "P52. Now about the part of (your/her) pension where benefits are based on a formula.\n(Do/Does) (you/she) expect to receive benefits from this plan in the future, (are/is)\n(you/she) receiving them now, did (you/she) get a cash settlement when (you/she) left, did\n(you/she) lose (your/her) benefits, or what?--FOURTH MENTION FOR FIRST PENSION FROM\nPREVIOUS EMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n0 Inap.: fewer than four mentions; no Spouse/Partner in FU\n(ER61347=5); never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); defined contribution plan (ER62207=5);\nNA or RF type of pension or retirement plan (ER62207=9);\nDK, NA, or RF to first mention (ER62226=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62230",
@@ -7551,10 +7491,7 @@
       "codebook_documentation": "P52. Now about the part of (your/her) pension where benefits are based on a formula.\n(Do/Does) (you/she) expect to receive benefits from this plan in the future, (are/is)\n(you/she) receiving them now, did (you/she) get a cash settlement when (you/she) left, did\n(you/she) lose (your/her) benefits, or what?--FIFTH MENTION FOR FIRST PENSION FROM\nPREVIOUS EMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n0 Inap.: fewer than five mentions; no Spouse/Partner in FU\n(ER61347=5); never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); defined contribution plan (ER62207=5);\nNA or RF type of pension or retirement plan (ER62207=9);\nDK, NA, or RF to first mention (ER62226=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62231",
@@ -7591,10 +7528,7 @@
       "codebook_documentation": "P52. Now about the part of (your/her) pension where benefits are based on a formula.\n(Do/Does) (you/she) expect to receive benefits from this plan in the future, (are/is)\n(you/she) receiving them now, did (you/she) get a cash settlement when (you/she) left, did\n(you/she) lose (your/her) benefits, or what?--SIXTH MENTION FOR FIRST PENSION FROM\nPREVIOUS EMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n0 Inap.: fewer than six mentions; no Spouse/Partner in FU\n(ER61347=5); never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); defined contribution plan (ER62207=5);\nNA or RF type of pension or retirement plan (ER62207=9);\nDK, NA, or RF to first mention (ER62226=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62259",
@@ -7746,10 +7680,7 @@
       "codebook_documentation": "P64. When (you/she) left that employer, did (you/she) transfer (your/her) account to a\nnew employer, roll it over into an IRA, leave it to accumulate in (your/her) old plan,\nconvert it to an annuity or what?--FIRST PENSION FROM PREVIOUS EMPLOYER\n1 Transferred to new employer\n2 Rolled over into IRA\n3 Left to accumulate\n4 Converted to annuity\n7 Other\n8 DK\n9 NA; refused\n0 Inap.: no Spouse/Partner in FU (ER61347=5); has never\nworked for money (ER60667=5); no pensions through a\nformer employer (ER62205=5); DK, NA, or RF whether have\npensions through a former employer (ER62205=8 or 9);\ndefined benefit or combination plan (ER62207=1 or 7); NA\nor RF type of pension or retirement plan (ER62207=9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_prev1_dc_amount",
@@ -7803,10 +7734,7 @@
         "dk": "zero_counted_unreported",
         "na_refused": "zero_counted_unreported",
         "brackets": "not_used"
-      },
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      }
     },
     {
       "id": "2015.wife_er62275",
@@ -8311,10 +8239,7 @@
       "codebook_documentation": "P52. Now about the part of her pension where benefits are based on a formula. (Do/Does)\n(you/she) expect to receive benefits from this plan in the future, (are/is) (you/she)\nreceiving them now, did (you/she) get a cash settlement when (you/she) left, did (you/she)\nlose (your/her) benefits, or what? [ENTER ALL THAT APPLY]--FIRST MENTION FOR SECOND\nPENSION FROM PREVIOUS EMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n8 DK\n9 NA; refused\n0 Inap.: no Spouse/Partner in FU (ER61347=5); has never\nworked for money (ER60667=5); no pensions through a\nformer employer (ER62205=5); DK, NA, or RF whether have\npensions through a former employer (ER62205=8 or 9); no\nsecond pension through a former employer (ER62286=5);\nretirement plan defined contribution plan (ER62287=5);\nNA, RF type of retirement plan (ER62287=9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62307",
@@ -8355,10 +8280,7 @@
       "codebook_documentation": "P52. Now about the part of (your/her) pension where benefits are based on a formula.\n(Do/Does) (you/she) expect to receive benefits from this plan in the future, (are/is)\n(you/she) receiving them now, did (she/you) get a cash settlement when (you/she) left, did\n(you/she) lose (your/her) benefits, or what?--SECOND MENTION FOR SECOND PENSION FROM\nPREVIOUS EMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n0 Inap.: only one mention; no Spouse/Partner in FU\n(ER61347=5); has never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); no second pension through a former\nemployer (ER62286=5); retirement plan defined\ncontribution plan (ER62287=5); NA, RF type of retirement\nplan (ER62287=9); DK, NA, or RF to first mention\n(ER62306=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62308",
@@ -8395,10 +8317,7 @@
       "codebook_documentation": "P52. Now about the part of her pension where benefits are based on a formula. (Do/Does)\n(you/she) expect to receive benefits from this plan in the future, (are/is) (you/she)\nreceiving them now, did (you/she) get a cash settlement when (you/she) left, did (you/she)\nlose (your/her) benefits, or what?--THIRD MENTION FOR SECOND PENSION FROM PREVIOUS\nEMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n0 Inap.: fewer than three mentions; no Spouse/Partner in\nFU (ER61347=5); has never worked for money (ER60667=5);\nno pensions through a former employer (ER62205=5); DK,\nNA, or RF whether have pensions through a former employer\n(ER62205=8 or 9); no second pension through a former\nemployer (ER62286=5); retirement plan defined\ncontribution plan (ER62287=5); NA, RF type of retirement\nplan (ER62287=9); DK, NA, or RF to first mention\n(ER62306=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62309",
@@ -8439,10 +8358,7 @@
       "codebook_documentation": "P52. Now about the part of her pension where benefits are based on a formula. (Do/Does)\n(you/she) expect to receive benefits from this plan in the future, (are/is) (you/she)\nreceiving them now, did (you/she) get a cash settlement when (you/she) left, did (you/she)\nlose (your/her) benefits, or what?--FOURTH MENTION FOR SECOND PENSION FROM PREVIOUS\nEMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n0 Inap.: fewer than four mentions; no Spouse/Partner in FU\n(ER61347=5); has never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); no second pension through a former\nemployer (ER62286=5); retirement plan defined\ncontribution plan (ER62287=5); NA, RF type of retirement\nplan (ER62287=9); DK, NA, or RF to first mention\n(ER62306=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62310",
@@ -8479,10 +8395,7 @@
       "codebook_documentation": "P52. Now about the part of her pension where benefits are based on a formula. (Do/Does)\n(you/she) expect to receive benefits from this plan in the future, (are/is) (you/she)\nreceiving them now, did (you/she) get a cash settlement when (you/she) left, did (you/she)\nlose (your/her) benefits, or what?--FIFTH MENTION FOR SECOND PENSION FROM PREVIOUS\nEMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n0 Inap.: fewer than five mentions; no Spouse/Partner in FU\n(ER61347=5); has never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); no second pension through a former\nemployer (ER62286=5); retirement plan defined\ncontribution plan (ER62287=5); NA, RF type of retirement\nplan (ER62287=9); DK, NA, or RF to first mention\n(ER62306=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62311",
@@ -8523,10 +8436,7 @@
       "codebook_documentation": "P52. Now about the part of her pension where benefits are based on a formula. (Do/Does)\n(you/she) expect to receive benefits from this plan in the future, (are/is) (you/she)\nreceiving them now, did (you/she) get a cash settlement when (you/she) left, did (you/she)\nlose (your/her) benefits, or what?--SIXTH MENTION FOR SECOND PENSION FROM PREVIOUS\nEMPLOYER\n1 Expect future benefits\n2 Receiving benefits now\n3 Received cash settlement\n4 Rolled over into IRA\n5 Lost benefits\n7 Other\n0 Inap.: fewer than six mentions; no Spouse/Partner in FU\n(ER61347=5); has never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); no second pension through a former\nemployer (ER62286=5); retirement plan defined\ncontribution plan (ER62287=5); NA, RF type of retirement\nplan (ER62287=9); DK, NA, or RF to first mention\n(ER62306=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62339",
@@ -8686,10 +8596,7 @@
       "codebook_documentation": "P64. When (you/she) left that employer, did (you/she) transfer (your/her) account to a\nnew employer, roll it over into an IRA, leave it to accumulate in (your/her) old plan,\nconvert it to an annuity or what?--SECOND PENSION FROM PREVIOUS EMPLOYER\n1 Transferred to new employer\n2 Rolled over into IRA\n3 Left to accumulate\n4 Converted to annuity\n7 Other\n8 DK\n9 NA; refused\n0 Inap.: actual amount reported; future benefits estimated\nas percent of pay; no Spouse/Partner in FU (ER61347=5);\nhas never worked for money (ER60667=5); no pensions\nthrough a former employer (ER62205=5); DK, NA, or RF\nwhether have pensions through a former employer\n(ER62205=8 or 9); no second pension through a former\nemployer (ER62286=5); retirement plan defined benefit or\ncombination plan (ER62287=1 or 7); NA, RF type of\nretirement plan (ER62287=9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_prev2_dc_amount",
@@ -8743,10 +8650,7 @@
         "dk": "zero_counted_unreported",
         "na_refused": "zero_counted_unreported",
         "brackets": "not_used"
-      },
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      }
     },
     {
       "id": "2015.wife_er62355",
@@ -9009,10 +8913,7 @@
         5
       ],
       "counted_disposition": 3,
-      "excluded_ira_disposition": 2,
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "excluded_ira_disposition": 2
     },
     {
       "id": "2015.route.checkpoint_documentation",
@@ -9036,7 +8937,6 @@
       "id": "2015.route.formula_unknown_checkpoint",
       "wave": 2015,
       "kind": "route",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/documentation/capture1/q2015.pdf",
@@ -9065,14 +8965,40 @@
       ],
       "finding": "The 2015 P62ACKPT heading requires P46=1 AND P52=1 AND P62AMT=DK/RF, but its displayed branch label says only P62AMT=DK/RF. P64/P65 codebook Inap. descriptions exclude formula and combined types.",
       "required_amendment": "Replace generic inherited previous_routes with a wave-specific 2015 P62ACKPT predicate after source adjudication.",
-      "question": "Does the 2015 instrument route only formula plans expecting benefits with P62AMT DK/RF, or any P62AMT DK/RF (including unknown or combined plans)? Obtain a PSID documentary clarification of heading versus branch label and the codebook conflict; preregister the exact accepted plan types and expectation gate before executing. No observed category may resolve this. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 5, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 123).",
-      "refusal": "Do not execute this pension route until independent documentary adjudication and any stated preregistration amendment are complete.",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 123,
         "disposition": "A",
         "amendment": 5
-      }
+      },
+      "status": "RESOLVED",
+      "accepted_plan_types": [
+        5
+      ],
+      "rejected_plan_types": [
+        1,
+        7,
+        8,
+        9
+      ],
+      "condition": "DC-only plan (P46=5), the documentary intersection of the 2015 P62ACKPT heading, its branch label and the FAM2015ER P65 universe",
+      "refused_branch": "P62ACKPT: P46=1 AND P52=1 AND P62AMT=DK/RF",
+      "off_route_disposition": "off_route",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 5 as written. Under 5b the 2015 route admits the documentary intersection: P46=5 (DC only) reaches P64/P65, and P46=7 (combined) reaches P48/P49 (pension:2015.route.previous_combined). The disputed P62ACKPT branch, whose heading reads 'P46=1 AND P52=1 AND P62AMT= DK/RF' while its branch label reads only 'P62AMT =DK/RF' (q2015 p. 164), is refused pending PSID clarification: an amount reached only through it is off-route under the named disposition off_route (section 15 employer_dc.excluded), never zero-filled. Formula (1), combined (7), DK (8) and NA or refused (9) plan types are off-route for P64/P65. refused_branch records amendment 5's section 15 fragment entry refused_branches for 2015. The adjudication's question and the route's refusal are kept as superseded_question and superseded_refusal.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "5b",
+        "replaces_draft_3_lines": [
+          1173,
+          1174,
+          1175,
+          1176
+        ]
+      },
+      "superseded_question": "Does the 2015 instrument route only formula plans expecting benefits with P62AMT DK/RF, or any P62AMT DK/RF (including unknown or combined plans)? Obtain a PSID documentary clarification of heading versus branch label and the codebook conflict; preregister the exact accepted plan types and expectation gate before executing. No observed category may resolve this. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 5, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 123).",
+      "superseded_refusal": "Do not execute this pension route until independent documentary adjudication and any stated preregistration amendment are complete."
     },
     {
       "id": "2015.route.ira_rollovers",
@@ -9126,10 +9052,7 @@
       ],
       "finding": "Use combined-plan P49 at most once; never add combined-plan P65 alongside it. Amounts outside the adjudicated current/previous route remain explicit off-route dispositions. The inherited duplicate guard is preserved even where the later instrument no longer re-asks combined accounts.",
       "duplicate_exclusion": "P65 when P46=7",
-      "requires_resolved_route": "2015.route.formula_unknown_checkpoint",
-      "blocking_dependencies": [
-        "pension:2015.route.formula_unknown_checkpoint"
-      ]
+      "requires_resolved_route": "2015.route.formula_unknown_checkpoint"
     },
     {
       "id": "2015.route.amounts_brackets_top_codes",
@@ -26693,6 +26616,15 @@
       "date": "2026-10-10",
       "specification_section": "16c",
       "note": "Max's ruling d1090 (2026-10-10; specification section 16c) on blockers B1 and B2: the seven role refusals and pension:2015.route.respondent_slots are replaced by the ratified family-unit exclusions (B1, section 16a option 1d-2, amending draft-3 line 160; B2, option 1e-1, amending draft-3 lines 152, 154 and 158 for 2019-2023), and the dependencies on the seven role entries are released. Each entry keeps its adjudication record (disposition F) and its superseded refusal text."
+    },
+    {
+      "decision": "d637",
+      "date": "2026-09-30",
+      "specification_section": "16b",
+      "amendments": [
+        "5b"
+      ],
+      "note": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendments 2-5 as written and amendment 6's option 1, an explicit amendment to draft-3 line 134. Applied here, each in its own reviewed commit: amendment 5b resolves the 2015 P62ACKPT checkpoint as the documentary intersection, refuses the disputed branch and releases its dependents. Each ruled entry keeps its adjudication record and gains a ruling; an open question or refusal the ruling answers is kept as superseded_question or superseded_refusal."
     }
   ]
 }

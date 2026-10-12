@@ -721,6 +721,50 @@ D637_SCOPE_MUTATIONS = {
         "wealth",
         lambda d: _entry(d, "wealth.2019.wealth2_acc").pop("ruling"),
     ),
+    "a5b_conditional_types_readded": (
+        "pension",
+        lambda d: _entry(d, "2015.route.formula_unknown_checkpoint").update(
+            accepted_conditional_types=[1, 8]
+        ),
+    ),
+    "a5b_formula_admitted": (
+        "pension",
+        lambda d: _entry(d, "2015.route.formula_unknown_checkpoint").update(
+            accepted_plan_types=[5, 1]
+        ),
+    ),
+    "a5b_branch_rewritten": (
+        "pension",
+        lambda d: _entry(d, "2015.route.formula_unknown_checkpoint").update(
+            refused_branch="P62ACKPT: P62AMT=DK/RF"
+        ),
+    ),
+    "a5b_disposition_renamed": (
+        "pension",
+        lambda d: _entry(d, "2015.route.formula_unknown_checkpoint").update(
+            off_route_disposition="zero_filled"
+        ),
+    ),
+    "a5b_refusal_kept": (
+        "pension",
+        lambda d: _entry(d, "2015.route.formula_unknown_checkpoint").update(
+            refusal="kept"
+        ),
+    ),
+    "a5b_on_2017_checkpoint": (
+        "pension",
+        lambda d: _copy_ruling(
+            d,
+            "2015.route.formula_unknown_checkpoint",
+            "2017.route.formula_unknown_checkpoint",
+        ),
+    ),
+    "a5b_lines_narrowed": (
+        "pension",
+        lambda d: _entry(d, "2015.route.formula_unknown_checkpoint")[
+            "ruling"
+        ].update(replaces_draft_3_lines=[1175]),
+    ),
     "a2_blocked_again": (
         "income",
         lambda d: _entry(d, "income.2019.wife_sex").update(
