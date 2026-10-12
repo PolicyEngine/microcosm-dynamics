@@ -1161,6 +1161,31 @@ SECTION_SHA256 = {
         "312ac7673e2b3c16cd67b1fe8bb3c68cf1fc5e2e40c6055e9cf616e2043bcdab"
     ),
 }
+#: Max's confirmation of amendment 1a-1c (2026-10-12, d745), appended to
+#: section 16b, which says his answer "will be recorded here": every line.
+D745_RECORD = [
+    "**Max's confirmation of amendment 1a\N{EN DASH}1c (2026-10-12, "
+    "d745).** Max confirmed the reading above on 2026-10-12. His answer, "
+    "as recorded in the chief-of-staff decision log:",
+    "",
+    '> "yes: d637 ratified U2 amendments 1a-1c as written (Max in chat '
+    '2026-10-12)"',
+    "",
+    "So amendment 1's parts 1a\N{EN DASH}1c are ratified as written by "
+    "d637. The 2015 code-90 route, the 2017 code-90 and code-92 routes, "
+    "2013's inherited meanings and the code-88 convention govern, with "
+    "1a's completeness disclosure at registration; the wave table governs "
+    "outside blockers B1 and B2, which d1090 settled "
+    "(\N{SECTION SIGN}16c). Where this section reads 1a\N{EN DASH}1c as "
+    "ratified pending Max's confirmation (d745), that confirmation is now "
+    "given; the rest of this section is unchanged, as the record of the "
+    "ruling and the reading. Each part's registry effect "
+    '(\N{SECTION SIGN}16a, "Registry effect of the rulings": "Record '
+    '1a\N{EN DASH}1c") is its own reviewed commit (\N{SECTION SIGN}17 '
+    "item 2). No count, statistic or outcome was computed to record this "
+    "confirmation, and no file on the restricted list was opened for "
+    "reading.",
+]
 #: Max's d1090 ruling (2026-10-10): the §16a option each blocker takes,
 #: the option's amendment statement as §16a words it, and its named
 #: disposition.
@@ -1211,11 +1236,13 @@ D1090_CLAUSES = {
     "header_version": [
         "- **Version:** `u2-draft-4` (milestone 1b, 2026-09-28; revised "
         "2026-09-29 after the independent review; Max's rulings recorded "
-        "2026-09-30 and 2026-10-10): proposed amendments 1\N{EN DASH}6 in "
-        "\N{SECTION SIGN}16a, ruled by Max on 2026-09-30 (d637) as recorded "
-        "in \N{SECTION SIGN}16b, with blockers B1 and B2 ruled on "
-        "2026-10-10 (d1090) as recorded in \N{SECTION SIGN}16c. Previous "
-        "version: `u2-draft-3` (round 2).",
+        "2026-09-30, 2026-10-10 and 2026-10-12): proposed amendments "
+        "1\N{EN DASH}6 in \N{SECTION SIGN}16a, ruled by Max on 2026-09-30 "
+        "(d637) as recorded in \N{SECTION SIGN}16b, with blockers B1 and B2 "
+        "ruled on 2026-10-10 (d1090) as recorded in \N{SECTION SIGN}16c, "
+        "and amendment 1's parts 1a\N{EN DASH}1c confirmed on 2026-10-12 "
+        "(d745) as recorded in \N{SECTION SIGN}16b. Previous version: "
+        "`u2-draft-3` (round 2).",
     ],
     "header_status": [
         "- **Status:** decisions ruled for `u2-draft-3`. On 2026-09-28 Max "
@@ -1235,7 +1262,8 @@ D1090_CLAUSES = {
         "amendments to draft-3 line 160 (B1) and to draft-3 lines 152, 154 "
         "and 158 for 2019\N{EN DASH}2023 (B2). No blocker hold remains. "
         "Amendment 1's parts 1a\N{EN DASH}1c, which the d637 ruling's list "
-        "does not name, are read as ratified pending Max's confirmation "
+        "does not name, were read as ratified pending Max's confirmation, "
+        "and on 2026-10-12 he confirmed that d637 ratified them as written "
         "(d745; \N{SECTION SIGN}16b). Not registered or authorized for "
         "execution.",
     ],
@@ -1378,8 +1406,9 @@ D1090_CLAUSES = {
         "(d1090; \N{SECTION SIGN}16c), after PSID answered:** B1 takes "
         "option 2, with its amendment to draft-3 line 160 ratified, and B2 "
         "takes option 1, with its amendment to draft-3 lines 152, 154 and "
-        "158 ratified for 2019\N{EN DASH}2023. This item stays open only "
-        "for 1a\N{EN DASH}1c, until Max confirms.",
+        "158 ratified for 2019\N{EN DASH}2023. **Confirmed 2026-10-12 "
+        "(d745; \N{SECTION SIGN}16b):** amendment 1's parts "
+        "1a\N{EN DASH}1c are ratified as written. This item is closed.",
         "2. Each ruling is applied to the registries in its own reviewed "
         "commit. The d1090 commit (2026-10-10) replaced the eight B1 and B2 "
         "refusals with \N{SECTION SIGN}16c's exclusions and released their "
@@ -1392,7 +1421,8 @@ D1090_CLAUSES = {
         "records under 5a and resolved the 2017 weight ER34651 under "
         "amendment 6's option 1; the \N{SECTION SIGN}15 fragment itself is "
         "materialized under item 9. The 6 TO VERIFY records left are code "
-        "88's, open until Max confirms the 1a\N{EN DASH}1c reading (d745).",
+        "88's, open until amendment 1c's registry commit lands (Max "
+        "confirmed 1a\N{EN DASH}1c on 2026-10-12, d745).",
         "8. Complete the pre-registration structural, reconciliation and "
         "F17 component pass, including only the counts that the ratified B1 "
         "and B2 options name (under the 2026-10-10 ruling, the counts "
@@ -1409,9 +1439,9 @@ D1090_CLAUSES = {
         "\N{SECTION SIGN}16b).** B3 is resolved by option 1. B1 and B2 were "
         "held until PSID answered; **Max ruled on them on 2026-10-10 "
         "(d1090; \N{SECTION SIGN}16c)**: B1 by option 2 and B2 by option 1, "
-        "each an exclusion under a named disposition. This step stays open "
-        "only because amendment 1's parts 1a\N{EN DASH}1c await Max's "
-        "confirmation of the reading in \N{SECTION SIGN}16b (d745).",
+        "each an exclusion under a named disposition. Max confirmed the "
+        "reading of amendment 1's parts 1a\N{EN DASH}1c in "
+        "\N{SECTION SIGN}16b on 2026-10-12 (d745), so this step is done.",
     ],
 }
 
@@ -1492,6 +1522,15 @@ def test_section_16c_records_the_d1090_ruling():
         SECTION_SHA256.items(), starts[1:3], strict=True
     ):
         text = spec[spec.index(heading) : end]
+        if heading == "## 16b. ":
+            # Max's d745 confirmation is appended; the d637 text before it
+            # is unchanged, and the confirmation is exactly D745_RECORD.
+            text, appended = text.split(D745_RECORD[0], 1)
+            assert (D745_RECORD[0] + appended).split("\n") == [
+                *D745_RECORD,
+                "",
+                "",
+            ]
         assert hashlib.sha256(text.encode()).hexdigest() == digest, heading
     proposals = spec[starts[0] : starts[1]]
     record = spec[starts[2] : starts[3]]
@@ -1509,6 +1548,28 @@ def test_section_16c_records_the_d1090_ruling():
         assert re.findall(r"\b\d{3,4}\b", cell) == numbers, blocker
         assert f"`{disposition}`" in row, blocker
     check_d1090_record(spec)
+
+
+@pytest.mark.parametrize(
+    "old, new",
+    [
+        ('"yes: d637 ratified', '"no: d637 did not ratify'),
+        ("are ratified as written by d637", "stay proposed"),
+        ("the code-88 convention govern", "the code-88 refusal govern"),
+        ("is its own reviewed commit", "lands without review"),
+    ],
+)
+def test_the_d745_record_catches_each_mutation(old, new):
+    """Section 16b's d745 paragraph is pinned line by line, and the d637
+    text before it by hash: a changed word fails."""
+    spec = (ROOT / SPEC).read_text(encoding="utf-8")
+    start = spec.index(D745_RECORD[0])
+    end = spec.index("## 16c. ")
+    assert old in spec[start:end]
+    mutated = spec[:start] + spec[start:end].replace(old, new, 1) + spec[end:]
+    section = mutated[mutated.index("## 16b. ") : mutated.index("## 16c. ")]
+    _, appended = section.split(D745_RECORD[0], 1)
+    assert (D745_RECORD[0] + appended).split("\n") != [*D745_RECORD, "", ""]
 
 
 #: Mutations of the d1090 record that change what it says, each by
@@ -1564,7 +1625,7 @@ D1090_MUTATIONS = [
     ),
     (
         "execution",
-        "of the reading in \N{SECTION SIGN}16b (d745).",
+        "so this step is done.",
         "only if the structural pass finds nonzero exclusions.",
     ),
     (
@@ -1607,10 +1668,9 @@ D1090_MUTATIONS = [
     ),
     (
         "outstanding",
-        "This item stays open only for 1a\N{EN DASH}1c, until Max "
-        "confirms.",
-        "This item stays open only for 1a\N{EN DASH}1c, until Max "
-        "confirms.\n   B1 and B2 remain held.",
+        "1a\N{EN DASH}1c are ratified as written. This item is closed.",
+        "1a\N{EN DASH}1c are ratified as written. This item is closed.\n"
+        "   B1 and B2 remain held.",
     ),
     ("outstanding", "and B2 takes option 1,", "and B2 takes option 2,"),
     ("outstanding", "each disclosed and deciding nothing", "each disclosed"),

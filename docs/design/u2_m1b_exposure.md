@@ -383,6 +383,7 @@ A Claude Code session (Opus 5.5, session `943a9dba-…`) applied Max's ruling d6
 - The chief-of-staff decision log, filtered for d637, d745 and d1090; the filter also matched d1242, whose one-line summary concerns B2's count unit.
 - In the repository, at #524's head and then on this branch: the specification (header, §3's relationship amendment, §15's parameter block and §§16–20), the research record's §3, the master record (summary, blocker rows, the d1090 section and the rows of the entries changed), this file's 2026-10-10 section, the eight registries and `u1_identity.json`, `src/populace_dynamics/data/u2_source_registry.py`, the U2 package's `sources.py`, `loader.py`, `cohort.py`, `invented.py`, `rows.py` and `estimator.py` (in part), `scripts/track_u2_dry_run.py` (in part), the tests under `tests/track_u2/` that the brief names, and `tests/README-tiers.md` with `tests/tier_counts.json`.
 - `git worktree list`, the state, checks and file lists of #524 and #525, and #525's diff to `sources.py` and `loader.py`.
+- On 2026-10-12, the decision log's record of d745 (its ruling, date and note), after the coordinating session relayed it.
 
 ### Not opened
 
@@ -406,6 +407,7 @@ The U2 tests ran with the PSID root staged. They read staged PSID documentation 
 - Amendment-6 review fixes: `weights.json` (one word of the 2017 weight's construction note) and `u1_identity.json`; the specification's §19; `u2_source_registry.py` (amendment 6's exact fields) and `sources.py` (the weights byte pin); `tests/track_u2/test_adjudication_applied.py` and `test_source_registries.py`; and this section.
 - Amendment-5 review fixes: `pension.json` (the four 5a `ruling_effect` texts and the 2015 checkpoint's resolution) and `u1_identity.json`; the specification's §17 item 2 and §19; the master record (the P64/P65 blocker row and five rows); `u2_source_registry.py` (the governed routes), `sources.py` (the pension byte pin) and `invented.py` (the 2019–2023 DC items and comments); `tests/track_u2/test_adjudication_applied.py`, `test_source_registries.py`, `test_u2_mappings.py` and `test_u2_employer_dc.py`; and this section.
 - Delta-review fixes: the six adjudication notes and a d637 record in `individual.json`, and `u1_identity.json`; the specification's §19; `u2_source_registry.py` (a type check), `sources.py` (seven byte pins and two docstrings); `tests/track_u2/test_adjudication_applied.py` and `test_u2_mappings.py`; and this section. The amendment-5 answers also changed `tests/track_u2/test_u2_scripts.py`'s variant expectations.
+- Max's confirmation of 1a–1c (d745): the specification (lines 3 and 4, §16b's closing paragraph, §17 items 1 and 2, §19 and §20 step 1) and `u1_identity.json`; the master record (the summary, the code-88 blocker row, the pointer to §16b and the d637 section); `tests/track_u2/test_adjudication_applied.py`; and this section.
 - Outside the repository: the registry and master-record edit scripts and the review records, copied to `EV/rulings-records-20261011/`.
 
 No U1 file, engine file, `gates.yaml` or `runs/*.json` was edited.
