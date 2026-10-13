@@ -6,6 +6,7 @@ exercised on a temporary directory with invented content.
 
 from __future__ import annotations
 
+import inspect
 import json
 import random
 import re
@@ -946,6 +947,30 @@ def test_read_log_v7_cases(tmp_path, tool, value, counts):
 )
 def test_patterns_too_large_to_read_are_unclassified(pattern):
     assert review_root.pattern_kind(pattern, DENIED) == "unclassified"
+
+
+def test_each_work_limit_holds_below_the_length_limit():
+    """Every limit gives unclassified on a pattern short enough to pass
+    PATTERN_LIMIT: the closure budget, the work budget, recursion depth
+    and a sequence number too long for int()."""
+    kind = review_root.pattern_kind
+    assert kind("+()" * 300 + "deep_denied.md", DENIED) == "unclassified"
+    filler = "x" * (review_root.PATTERN_LIMIT - 26)
+    assert kind("{a,b}" * 5 + filler, DENIED) == "unclassified"
+    nested = "@(" * 150 + "x" + ")" * 150
+    limit = sys.getrecursionlimit()
+    sys.setrecursionlimit(len(inspect.stack()) + 60)
+    try:
+        assert kind(nested, DENIED) == "unclassified"
+    finally:
+        sys.setrecursionlimit(limit)
+    digits = sys.get_int_max_str_digits()
+    sys.set_int_max_str_digits(640)
+    try:
+        assert kind("{" + "1" * 700 + "..1}", DENIED) == "unclassified"
+    finally:
+        sys.set_int_max_str_digits(digits)
+    assert len(nested) < review_root.PATTERN_LIMIT
 
 
 def test_unbalanced_openers_up_to_the_limit_are_still_read():
