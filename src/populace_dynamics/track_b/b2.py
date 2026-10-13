@@ -6,12 +6,10 @@ three scripts apply one copy of each rule:
 
 - B2's geometry, seeds, streams and replicate counts (sections 4 and 7);
 - the root-parameterised household and design multiplicities (section 13,
-  "To B2"). They are copies of the planning script's
-  ``anchor_multiplicities`` and ``design_multiplicities`` whose only change
-  is a ``root`` argument passed on every call; they never read protocol
-  v2's root;
-- the stratum census, its two-cluster guard and the design degrees of
-  freedom (section 7);
+  "To B2"); the design copy implements section 7's merged-stratum rule,
+  and neither copy reads protocol v2's root;
+- the stratum census, simultaneous merges, integer-copy scale and design
+  degrees of freedom (section 7);
 - ``t_star``, the registered standard error and the bound rule (section 7);
 - the Monte Carlo and undefined-replicate rules (section 7);
 - validity and the pass conjunction, INVALID, then FAIL, then PASS, then
@@ -119,13 +117,9 @@ OUTCOMES = (INVALID, FAIL, PASS, INCONCLUSIVE)
 
 LADDER_CLEARED = "LADDER_CLEARED"
 WEAK_POWER_OR_VACUITY = "WEAK_POWER_OR_VACUITY"
-STOPPED_STRATUM_GUARD = "STOPPED_STRATUM_GUARD"
-STOPPED_SE_UP_UNDEFINED = "STOPPED_SE_UP_UNDEFINED"
 FLOOR_OUTCOMES = (
     LADDER_CLEARED,
     WEAK_POWER_OR_VACUITY,
-    STOPPED_STRATUM_GUARD,
-    STOPPED_SE_UP_UNDEFINED,
 )
 
 # --------------------------------------------------------------------------
@@ -220,10 +214,16 @@ B1_EVIDENCE = (
     "6110674288 (registration) and 6113379406 (result) (d622)"
 )
 CANDIDATE_3_DISCLOSURE = (
-    "B2 transports candidate 3's law (q = 0.55, rho = -0.6), whose "
-    "structure is in-sample for selection, and inherits design section 2's "
-    "disclosure of candidate 3 in full (design lines 29-41, outside this "
-    "repository; audit section 3). The registration carries that text."
+    "**Candidate 3 records a valid M6 pass; it certifies nothing about "
+    "mortality drift.** The artifact records four passing seeds, q=0.55 "
+    "and rho=−0.6. Fits use data through 2014; gated demographic flows "
+    "cover 2015–2019 and earnings cover 2016/2018. The 2020–2022 window "
+    "is diagnostic only. Certification is conditional on prior structural "
+    "and same-holdout surface selection. The v4 point estimate "
+    "`p_gate=0.9018301` clears 0.90 by 0.0018301, but its clearance is not "
+    "statistically resolved: the reported jackknife SE is approximately "
+    "0.013–0.019. Synthesized support, redrawn initial states and endogenous "
+    "widowhood require the decision-5 successor gate."
 )
 CODEBOOK_CONCEPT_CHECK = (
     "audit section 4.2: definitions only; all six labor-income variables "
@@ -553,25 +553,28 @@ def design_multiplicities(
 ) -> dict[int, int]:
     """Design replicate b's Rao-Wu multiplicities, stream [root, b, 4].
 
-    The planning script's ``design_multiplicities`` with the root passed
-    explicitly. In a stratum with two clusters one is drawn and copied
-    twice; a stratum with one cluster keeps it once; a stratum with three
-    or more draws that many with replacement, which is not Rao-Wu. B2
-    admits only two-cluster strata (``design_guard``), so the last two
-    branches never run in a registered B2 run.
+    Singleton strata merge simultaneously before drawing. At scale L,
+    two-cluster strata preserve arm D's random call and copy the selected
+    cluster 2L times. Larger strata draw n - 1 clusters with replacement
+    by multinomial and copy each draw L*n/(n - 1) times. Strata and their
+    original (stratum, cluster) identities are visited in sorted order.
     """
+    design, _ = merge_design_strata(design)
+    sizes = design.groupby("stratum")["cluster"].nunique()
+    if int((sizes - 1).sum()) == 0:
+        raise ValueError("the merged design has no degree of freedom")
+    scale = math.lcm(*(int(n) - 1 for n in sizes))
     rng = stream(root, int(replicate), DESIGN_WORD)
     by_secu: dict[tuple[int, int], int] = {}
     for stratum, group in design.groupby("stratum", sort=True):
         clusters = np.sort(group["cluster"].unique())
         n = len(clusters)
-        if n == 1:
-            counts = np.array([1])
-        elif n == 2:
+        if n == 2:
             counts = np.zeros(2, dtype=int)
-            counts[rng.integers(0, 2)] = 2
+            counts[rng.integers(0, 2)] = 2 * scale
         else:
-            counts = rng.multinomial(n, np.full(n, 1.0 / n))
+            counts = rng.multinomial(n - 1, np.full(n, 1.0 / n))
+            counts *= scale * n // (n - 1)
         for cluster, count in zip(clusters, counts, strict=True):
             by_secu[(int(stratum), int(cluster))] = int(count)
     return {
@@ -586,8 +589,36 @@ def design_multiplicities(
 
 
 # --------------------------------------------------------------------------
-# Stratum census, guard and degrees of freedom (section 7)
+# Stratum census, simultaneous merges and degrees of freedom (section 7)
 # --------------------------------------------------------------------------
+def _validated_design(design: pd.DataFrame) -> pd.DataFrame:
+    """A nonempty design with unique persons and integer design codes."""
+    if design.empty:
+        raise ValueError("the design table is empty")
+    required = ("person_id", "stratum", "cluster")
+    missing = [name for name in required if name not in design]
+    if missing:
+        raise ValueError(f"the design table lacks {', '.join(missing)}")
+    validated = design.copy()
+    for name in required:
+        try:
+            values = pd.to_numeric(design[name], errors="raise")
+            if (
+                values.isna().any()
+                or not np.isfinite(values).all()
+                or not (values == np.floor(values)).all()
+            ):
+                raise ValueError
+            validated[name] = values.astype("int64")
+        except (TypeError, ValueError, OverflowError) as error:
+            raise ValueError(
+                f"the design table's {name} must contain finite integers"
+            ) from error
+    if validated["person_id"].duplicated().any():
+        raise ValueError("the design table repeats a person")
+    return validated
+
+
 def stratum_census(design: pd.DataFrame) -> dict[str, Any]:
     """The design strata among the truth-support persons, by cluster count.
 
@@ -596,10 +627,7 @@ def stratum_census(design: pd.DataFrame) -> dict[str, Any]:
     count, and the design degrees of freedom nu = sum over strata of
     (clusters - 1), so a stratum with one cluster adds nothing.
     """
-    if design.empty:
-        raise ValueError("the design table is empty")
-    if design["person_id"].duplicated().any():
-        raise ValueError("the design table repeats a person")
+    design = _validated_design(design)
     sizes = design.groupby("stratum")["cluster"].nunique()
     histogram = sizes.value_counts().sort_index()
     return {
@@ -616,19 +644,82 @@ def stratum_census(design: pd.DataFrame) -> dict[str, Any]:
     }
 
 
-def design_guard(census: Mapping[str, Any]) -> bool:
-    """Section 7: only two-cluster strata are admitted.
+def merge_design_strata(
+    design: pd.DataFrame,
+) -> tuple[pd.DataFrame, list[dict[str, int]]]:
+    """Apply section 7's simultaneous singleton-stratum merges.
 
-    False when any stratum has one cluster, or three or more. B2 then stops
-    before any candidate run, and a dated amendment registers how those
-    strata are handled.
+    Targets are chosen only among strata with at least two clusters in
+    the original design. Distance is by stratum code, lower code on a
+    tie. If every original stratum is a singleton, the lowest code is
+    the sole merged stratum. Cluster codes may repeat between original
+    strata: their original pairs remain distinct after a merge, by a
+    deterministic integer recoding within each affected target stratum.
     """
-    return (
-        int(census["strata"]) > 0
-        and int(census["strata_with_one_cluster"]) == 0
-        and int(census["strata_with_three_or_more_clusters"]) == 0
-        and int(census["strata_with_two_clusters"]) == int(census["strata"])
+    merged = _validated_design(design)
+    sizes = merged.groupby("stratum")["cluster"].nunique()
+    targets = sorted(int(code) for code in sizes.index[sizes >= 2])
+    if not targets:
+        targets = [int(sizes.index.min())]
+    destinations = {
+        int(code): min(
+            targets, key=lambda target: (abs(target - code), target)
+        )
+        for code in sizes.index[sizes == 1]
+    }
+    destinations = {
+        source: target
+        for source, target in destinations.items()
+        if source != target
+    }
+    merges = [
+        {"from_stratum": source, "to_stratum": target}
+        for source, target in sorted(destinations.items())
+    ]
+    if not merges:
+        return merged, merges
+    original = merged[["stratum", "cluster"]].copy()
+    merged["stratum"] = merged["stratum"].map(
+        lambda code: destinations.get(int(code), int(code))
     )
+    for target in sorted(set(destinations.values())):
+        selected = merged["stratum"] == target
+        identities = sorted(
+            set(
+                zip(
+                    original.loc[selected, "stratum"],
+                    original.loc[selected, "cluster"],
+                    strict=True,
+                )
+            )
+        )
+        by_identity = {
+            identity: index for index, identity in enumerate(identities)
+        }
+        merged.loc[selected, "cluster"] = [
+            by_identity[(stratum, cluster)]
+            for stratum, cluster in zip(
+                original.loc[selected, "stratum"],
+                original.loc[selected, "cluster"],
+                strict=True,
+            )
+        ]
+    return merged, merges
+
+
+def design_summary(design: pd.DataFrame) -> dict[str, Any]:
+    """The frozen floor record: original census, merges, merged census, L, ν."""
+    before = stratum_census(design)
+    merged, merges = merge_design_strata(design)
+    after = stratum_census(merged)
+    sizes = merged.groupby("stratum")["cluster"].nunique()
+    return {
+        "before_merges": before,
+        "merges": merges,
+        "after_merges": after,
+        "scale_l": math.lcm(*(int(n) - 1 for n in sizes)),
+        "design_degrees_of_freedom": after["design_degrees_of_freedom"],
+    }
 
 
 def t_star(m: int, nu: float | None) -> float:
@@ -1250,18 +1341,32 @@ def write_exclusive(path: Path, record: Mapping[str, Any]) -> str:
     return hashlib.sha256(text.encode()).hexdigest()
 
 
+#: The thread variables every B2 process must set to 1.
+THREAD_VARIABLES = (
+    "OMP_NUM_THREADS",
+    "OPENBLAS_NUM_THREADS",
+    "MKL_NUM_THREADS",
+    "VECLIB_MAXIMUM_THREADS",
+    "NUMEXPR_NUM_THREADS",
+)
+
+
 def thread_settings() -> dict[str, str]:
-    """The run's thread settings: at most four BLAS and OpenMP threads and
-    a passive OpenMP wait policy (Max, 2026-10-11, the shared host)."""
-    names = (
-        "OMP_NUM_THREADS",
-        "OPENBLAS_NUM_THREADS",
-        "VECLIB_MAXIMUM_THREADS",
-    )
-    settings = {name: os.environ.get(name, "") for name in names}
+    """The run's thread settings: one BLAS, OpenMP and numexpr thread per
+    process, and a passive OpenMP wait policy.
+
+    Max ruled on 2026-10-11 that runs on the shared host use at most four
+    BLAS and OpenMP threads and ``OMP_WAIT_POLICY=PASSIVE``. B2 uses one
+    thread per process, and up to four worker processes, because in its
+    pinned environment candidate 3's projection loop hangs in the
+    participation gates' ``HistGradientBoostingClassifier.predict_proba``
+    with more than one OpenMP thread. It hung at 2 and 4 threads, under
+    both PASSIVE and ACTIVE, on invented data; one thread completes.
+    """
+    settings = {name: os.environ.get(name, "") for name in THREAD_VARIABLES}
     for name, value in settings.items():
-        if not value.isdigit() or not 1 <= int(value) <= 4:
-            raise RuntimeError(f"set {name} to an integer from 1 to 4")
+        if value != "1":
+            raise RuntimeError(f"set {name}=1")
     policy = os.environ.get("OMP_WAIT_POLICY", "")
     if policy.upper() != "PASSIVE":
         raise RuntimeError("set OMP_WAIT_POLICY=PASSIVE")

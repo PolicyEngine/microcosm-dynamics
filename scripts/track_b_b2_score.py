@@ -26,8 +26,9 @@ expected commit, and its output is exclusive: after any candidate outcome
 the registration permits no rerun. For example::
 
     PYTHONDONTWRITEBYTECODE=1 PYTHONWARNINGS='ignore::FutureWarning' \\
-      PYTHONPATH=src:scripts OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 \\
-      VECLIB_MAXIMUM_THREADS=4 OMP_WAIT_POLICY=PASSIVE \\
+      PYTHONPATH=src:scripts OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 \\
+      MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 \\
+      OMP_WAIT_POLICY=PASSIVE \\
       POPULACE_DYNAMICS_PSID_DIR=/Users/maxghenis/PolicyEngine/psid-data \\
       POPULACE_DYNAMICS_PE_US_DIR=/path/to/site-packages \\
       /path/to/runtime/bin/python scripts/track_b_b2_score.py \\
@@ -43,6 +44,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import sys
 import time
@@ -384,8 +386,6 @@ def score(
         draws_c = [values[name] for values in draw_values]
         floor_cell = floor_record["cells"][name]
         a_c = b2.registered_estimation_ratio(planning_record["cells"][name])
-        if floor_cell["registered_estimation_ratio"] != a_c:
-            raise AssertionError(f"{name}'s a_c differs from the floor's")
         se_boot, design_undefined = b2.defined_sd(
             [
                 None if record.get("failed") else record["gaps"][name]
@@ -410,8 +410,9 @@ def score(
             "projected_mean": projected,
             "gap": full_gaps[name],
             "valid_full_support": b2.frame_valid(truth_values[name], draws_c),
-            "within_tolerance": b2.within(
-                full_gaps[name], floor_cell["tolerance"]
+            "within_tolerance": (
+                floor_cell["tolerance"] is not None
+                and b2.within(full_gaps[name], floor_cell["tolerance"])
             ),
             "mc_error": planning.monte_carlo_error(metric, draws_c),
             "se_boot": se_boot,
@@ -427,14 +428,19 @@ def score(
                     "seed": side["seed"],
                     "valid": side["valid"][name],
                     "gap": side["gap"][name],
-                    "within_tolerance": b2.within(
-                        side["gap"][name], floor_cell["tolerance"]
+                    "within_tolerance": (
+                        floor_cell["tolerance"] is not None
+                        and b2.within(
+                            side["gap"][name], floor_cell["tolerance"]
+                        )
                     ),
                 }
                 for side in sides
             ],
         }
-        cells[name]["monte_carlo_rule"] = b2.monte_carlo_passes(
+        cells[name]["monte_carlo_rule"] = floor_cell[
+            "tolerance"
+        ] is not None and b2.monte_carlo_passes(
             cells[name]["mc_error"], floor_cell["tolerance"]
         )
         if name not in gated:
@@ -489,6 +495,62 @@ def score(
     }
 
 
+def check_scoring_inputs(
+    floor_record: Mapping[str, Any],
+    planning_record: Mapping[str, Any],
+) -> None:
+    """Validate every gated and report-only input before any fit begins."""
+    if floor_record.get(
+        "outcome"
+    ) != b2.LADDER_CLEARED or not floor_record.get("candidate_runs_permitted"):
+        raise ValueError("the floor does not permit a candidate run")
+    try:
+        gated = [entry["cell"] for entry in floor_record["surface"]["gated"]]
+        if (
+            len(gated) < b2.MIN_GATED_CELLS
+            or len(set(gated)) != len(gated)
+            or not set(gated) <= set(b2.LEVEL_CELLS)
+        ):
+            raise ValueError("the floor's gated surface is invalid")
+        b2.t_star(
+            len(gated), floor_record["design"]["design_degrees_of_freedom"]
+        )
+        for name in b2.CELLS:
+            cell = floor_record["cells"][name]
+            a_c = b2.registered_estimation_ratio(
+                planning_record["cells"][name]
+            )
+            if cell["registered_estimation_ratio"] != a_c:
+                raise ValueError(f"{name}'s a_c differs from the floor's")
+            tolerance = cell["tolerance"]
+            if tolerance is None:
+                valid_tolerance = name not in gated
+            else:
+                valid_tolerance = math.isfinite(tolerance) and (
+                    tolerance > 0 if name in gated else tolerance >= 0
+                )
+            if not valid_tolerance or not isinstance(cell["plain_units"], str):
+                raise ValueError(f"{name}'s floor tolerance is invalid")
+            se_up = cell["se_up"]
+            value = se_up["se_up"]
+            if value is not None and not (math.isfinite(value) and value >= 0):
+                raise ValueError(f"{name}'s se_up is invalid")
+            if name in gated and (value is None or value == 0):
+                raise ValueError(f"{name}'s gated se_up is undefined")
+            total, undefined = se_up["replicates"], se_up["undefined"]
+            if not (
+                isinstance(total, int)
+                and isinstance(undefined, int)
+                and total > 0
+                and 0 <= undefined <= total
+            ):
+                raise ValueError(f"{name}'s replicate counts are invalid")
+    except (KeyError, TypeError, ValueError) as error:
+        raise ValueError(
+            f"B2 scoring inputs are incomplete or invalid: {error}"
+        ) from error
+
+
 def run_score(
     earnings: pd.DataFrame,
     anchor_demo: pd.DataFrame,
@@ -501,6 +563,7 @@ def run_score(
     qrf_factory: Any = None,
 ) -> dict[str, Any]:
     """Check the sources against the floor, then fit, project and score."""
+    check_scoring_inputs(floor_record, planning_record)
     full_anchor = b2.full_anchor_frame(anchor_demo)
     data_domain = b2.domain_person_ids(earnings, full_anchor)
     domain = floor_record["domain"]
@@ -523,8 +586,8 @@ def run_score(
     )
     if set(design["person_id"].astype(int)) != truth_persons:
         raise AssertionError("a truth-support person has no design variables")
-    if b2.stratum_census(design) != floor_record["design"]["census"]:
-        raise AssertionError("the stratum census differs from the floor's")
+    if b2.design_summary(design) != floor_record["design"]:
+        raise AssertionError("the design summary differs from the floor's")
 
     fit_input = truncate_estimation_frame(
         earnings,

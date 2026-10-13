@@ -18,8 +18,8 @@ What they establish:
 - at the 2006 geometry the scorer's fit, context and frames equal the
   planning script's, and the scorer and arm F build identical copied frames
   and gaps for the same multiplicities;
-- the floor builder stops on a one- or three-cluster stratum and on an
-  undefined se_up, and runs the ruled ladder otherwise;
+- the floor builder merges singleton strata, uses exact Rao-Wu, and stops
+  on zero degrees of freedom or uninformative candidate quantities;
 - the scorer, end to end, scores every cell and returns section 8's
   outcome, and refuses a floor that is not the data's;
 - both scripts refuse to run without their preconditions.
@@ -27,6 +27,7 @@ What they establish:
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import math
@@ -280,8 +281,10 @@ def test_domain_truth_and_floors_equal_the_selectors(
     assert hashes["floor_block_six_cells_sha256"] == (
         selector._canonical_sha256(selector_2010.floor)
     )
-    assert hashes["seed_detail_all_cells_sha256"] == (
-        selector._canonical_sha256(selector_2010.floor_gate_seed_detail)
+    assert hashes["seed_detail_six_cells_sha256"] == (
+        selector._canonical_sha256(
+            b2.six_cell_seed_detail(selector_2010.floor_gate_seed_detail)
+        )
     )
     domain_record = measured["record"]["domain"]
     assert domain_record["domain_ids_sha256"] == (
@@ -311,17 +314,13 @@ def test_the_comparator_matches_the_selectors_fields_after_json(
     result = comparator.compare(
         measured["record"]["person_split"], ledger["floor"], ledger["detail"]
     )
-    assert result == {
-        "floor_block_six_cells_equal": True,
-        "seed_detail_six_cells_equal": True,
-        "seed_detail_all_cells_equal": True,
-    }
+    assert result == (True, True)
     moved = json.loads(json.dumps(ledger))
     moved["floor"]["earn_p10.prime"]["mean"] += 1e-12
     assert (
         comparator.compare(
             measured["record"]["person_split"], moved["floor"], moved["detail"]
-        )["floor_block_six_cells_equal"]
+        )[0]
         is False
     )
 
@@ -485,7 +484,7 @@ def test_decide_runs_the_ruled_ladder(invented, measured):
         measured, invented["design"], invented["planning"]
     )
     assert record["outcome"] in (b2.LADDER_CLEARED, b2.WEAK_POWER_OR_VACUITY)
-    assert record["design"]["census"]["strata_with_two_clusters"] == 10
+    assert record["design"]["after_merges"]["strata_with_two_clusters"] == 10
     assert record["design"]["design_degrees_of_freedom"] == 10
     ladder = record["ladder"]
     assert ladder["eligible"] == list(b2.LEVEL_CELLS)
@@ -545,21 +544,44 @@ def test_cleared_floor_publishes_the_surface(cleared_floor):
     assert power["t_star"] == b2.t_star(6, 10)
 
 
-def test_floor_stops_on_a_one_or_three_cluster_stratum(invented, measured):
+def test_floor_and_scorer_apply_singleton_merges_and_exact_rao_wu(
+    invented, measured, fit_2010, monkeypatch
+):
     design = _design_for(invented["person_wave"], extra_cluster=True)
+    design.loc[design["stratum"] == 3, "cluster"] = 1
+    monkeypatch.setattr(
+        floor_builder, "ladder_power", lambda *args: lambda names: 0.95
+    )
     record = floor_builder.decide(measured, design, invented["planning"])
-    assert record["outcome"] == b2.STOPPED_STRATUM_GUARD
-    assert record["design"]["only_two_cluster_strata"] is False
-    assert record["design"]["census"]["strata_with_three_or_more_clusters"]
-    assert record["ladder"] is None and record["power"] is None
-    assert record["candidate_runs_permitted"] is False
-    assert record["surface"]["gated"] == []
-    single = invented["design"].copy()
-    lone = single["stratum"] == 3
-    single.loc[lone, "cluster"] = 1
-    stopped = floor_builder.decide(measured, single, invented["planning"])
-    assert stopped["outcome"] == b2.STOPPED_STRATUM_GUARD
-    assert stopped["design"]["census"]["strata_with_one_cluster"] == 1
+    summary = record["design"]
+    assert summary["before_merges"]["strata_with_one_cluster"] == 1
+    assert summary["before_merges"]["strata_with_three_or_more_clusters"] == 1
+    assert summary["merges"] == [{"from_stratum": 3, "to_stratum": 2}]
+    assert summary["after_merges"]["strata_by_cluster_count"] == {
+        "2": 7,
+        "3": 2,
+    }
+    assert summary["scale_l"] == 2
+    assert summary["design_degrees_of_freedom"] == 11
+    assert record["outcome"] == b2.LADDER_CLEARED
+    assert record["candidate_runs_permitted"] is True
+    # Reuse the invented fit; run_score still performs all input checks and
+    # invokes fit_law, the selectors' projection loop and the design workers.
+    monkeypatch.setattr(
+        scorer, "fit_law", lambda *args, **kwargs: fit_2010["fitted"]
+    )
+    scored = scorer.run_score(
+        invented["earnings"],
+        invented["anchor_demo"],
+        design,
+        invented["nawi_2010"],
+        record,
+        invented["planning"],
+        config=scorer.ScoreConfig(b_design=2, workers=1),
+    )
+    assert scored["gate"]["design_degrees_of_freedom"] == 11
+    assert scored["gate"]["critical_value"] == b2.t_star(6, 11)
+    assert not scored["design_replicate_failures"]
 
 
 def test_floor_stops_when_an_eligible_se_up_is_undefined(invented, measured):
@@ -574,8 +596,69 @@ def test_floor_stops_when_an_eligible_se_up_is_undefined(invented, measured):
     record = floor_builder.decide(
         broken, invented["design"], invented["planning"]
     )
-    assert record["outcome"] == b2.STOPPED_SE_UP_UNDEFINED
-    assert record["se_up_undefined_cells"] == ["earn_p50.prime"]
+    assert record["outcome"] == b2.WEAK_POWER_OR_VACUITY
+    assert record["stop_causes"] == [
+        {"cell": "earn_p50.prime", "quantity": "se_up"},
+        {"cell": "earn_p50.prime", "quantity": "tau"},
+    ]
+    assert record["candidate_runs_permitted"] is False
+
+
+def test_floor_stops_at_zero_nu_before_ladder_or_fit(
+    invented, measured, monkeypatch
+):
+    def forbidden(*args, **kwargs):
+        pytest.fail("the ladder or fit began")
+
+    monkeypatch.setattr(floor_builder, "ladder_power", forbidden)
+    monkeypatch.setattr(scorer, "fit_law", forbidden)
+    design = invented["design"].assign(stratum=1, cluster=1)
+    record = floor_builder.decide(measured, design, invented["planning"])
+    assert record["outcome"] == b2.WEAK_POWER_OR_VACUITY
+    assert record["design"]["design_degrees_of_freedom"] == 0
+    assert record["stop_causes"] == [{"cell": None, "quantity": "nu"}]
+    assert record["ladder"] is None and record["power"] is None
+    assert record["candidate_runs_permitted"] is False
+    with pytest.raises(ValueError, match="does not permit"):
+        scorer.run_score(
+            invented["earnings"],
+            invented["anchor_demo"],
+            design,
+            invented["nawi_2010"],
+            record,
+            invented["planning"],
+            config=scorer.ScoreConfig(b_design=1, workers=1),
+        )
+
+
+@pytest.mark.parametrize(
+    "quantity, value",
+    [("sigma", 0), ("sigma", None), ("se_up", 0), ("tau", math.nan)],
+)
+def test_floor_stops_on_uninformative_candidate_quantities(
+    invented, measured, monkeypatch, quantity, value
+):
+    broken = copy.deepcopy(measured)
+    name = "earn_p50.prime"
+    if quantity == "sigma":
+        broken["floor_household"][name]["realized_sigma"] = value
+        # Even an ineligible member of the six is a candidate cell.
+        broken["floor_household"][name]["n_defined_seeds"] = 0
+    elif quantity == "se_up":
+        broken["se_up"][name]["se_up"] = value
+    else:
+        broken["floor_household"][name]["mean"] = value
+
+    def forbidden(*args):
+        pytest.fail("the ladder began")
+
+    monkeypatch.setattr(floor_builder, "ladder_power", forbidden)
+    record = floor_builder.decide(
+        broken, invented["design"], invented["planning"]
+    )
+    assert record["outcome"] == b2.WEAK_POWER_OR_VACUITY
+    assert {"cell": name, "quantity": quantity} in record["stop_causes"]
+    assert record["ladder"] is None
     assert record["candidate_runs_permitted"] is False
 
 
@@ -800,8 +883,8 @@ def test_scorer_refuses_a_floor_that_is_not_the_datas(invented, cleared_floor):
                 qrf_factory=_StochasticFactory(),
             )
     wrong = json.loads(json.dumps(cleared_floor))
-    wrong["design"]["census"]["clusters"] += 1
-    with pytest.raises(AssertionError, match="census"):
+    wrong["design"]["after_merges"]["clusters"] += 1
+    with pytest.raises(AssertionError, match="design summary"):
         scorer.run_score(
             invented["earnings"],
             invented["anchor_demo"],
@@ -811,6 +894,142 @@ def test_scorer_refuses_a_floor_that_is_not_the_datas(invented, cleared_floor):
             invented["planning"],
             config=scorer.ScoreConfig(b_design=1, workers=1),
             qrf_factory=_StochasticFactory(),
+        )
+
+
+@pytest.mark.parametrize(
+    "field", ["merges", "scale_l", "design_degrees_of_freedom"]
+)
+def test_scorer_refuses_changed_design_before_fit(
+    invented, cleared_floor, monkeypatch, field
+):
+    wrong = copy.deepcopy(cleared_floor)
+    wrong["design"][field] = (
+        [{"from_stratum": 1, "to_stratum": 2}]
+        if field == "merges"
+        else wrong["design"][field] + 1
+    )
+    monkeypatch.setattr(
+        scorer, "fit_law", lambda *a, **k: pytest.fail("fit began")
+    )
+    with pytest.raises(AssertionError, match="design summary"):
+        scorer.run_score(
+            invented["earnings"],
+            invented["anchor_demo"],
+            invented["design"],
+            invented["nawi_2010"],
+            wrong,
+            invented["planning"],
+            config=scorer.ScoreConfig(b_design=1, workers=1),
+        )
+
+
+@pytest.mark.parametrize(
+    "missing",
+    [
+        "e_b2",
+        "planning_cell",
+        "tolerance",
+        "plain_units",
+        "se_up",
+        "replicates",
+        "undefined",
+        "a_c",
+    ],
+)
+def test_scorer_refuses_missing_report_only_input_before_fit(
+    invented, cleared_floor, monkeypatch, missing
+):
+    floor = copy.deepcopy(cleared_floor)
+    planning = copy.deepcopy(invented["planning"])
+    name = "earn_autocorr_lag2"
+    assert name not in b2.LEVEL_CELLS
+    if missing == "e_b2":
+        del planning["cells"][name]["estimation_variance"]["e_b2"]
+    elif missing == "planning_cell":
+        del planning["cells"][name]
+    elif missing in ("replicates", "undefined"):
+        del floor["cells"][name]["se_up"][missing]
+    else:
+        key = "registered_estimation_ratio" if missing == "a_c" else missing
+        del floor["cells"][name][key]
+    monkeypatch.setattr(
+        scorer, "fit_law", lambda *a, **k: pytest.fail("fit began")
+    )
+    with pytest.raises(ValueError, match="scoring inputs"):
+        scorer.run_score(
+            invented["earnings"],
+            invented["anchor_demo"],
+            invented["design"],
+            invented["nawi_2010"],
+            floor,
+            planning,
+            config=scorer.ScoreConfig(b_design=1, workers=1),
+        )
+
+
+def test_candidate_3_disclosure_is_carried_verbatim():
+    expected = (
+        "**Candidate 3 records a valid M6 pass; it certifies nothing about "
+        "mortality drift.** The artifact records four passing seeds, q=0.55 "
+        "and rho=−0.6. Fits use data through 2014; gated demographic flows "
+        "cover 2015–2019 and earnings cover 2016/2018. The 2020–2022 window "
+        "is diagnostic only. Certification is conditional on prior structural "
+        "and same-holdout surface selection. The v4 point estimate "
+        "`p_gate=0.9018301` clears 0.90 by 0.0018301, but its clearance is not "
+        "statistically resolved: the reported jackknife SE is approximately "
+        "0.013–0.019. Synthesized support, redrawn initial states and endogenous "
+        "widowhood require the decision-5 successor gate."
+    )
+    assert b2.CANDIDATE_3_DISCLOSURE == expected
+    # The floor and score both carry statements() in their records.
+    assert floor_builder.statements()["candidate_3_disclosure"] == expected
+
+
+def test_report_only_undefined_tolerance_and_se_are_published(
+    invented, cleared_floor, fit_2010, monkeypatch
+):
+    floor = copy.deepcopy(cleared_floor)
+    name = "earn_autocorr_lag2"
+    floor["cells"][name]["tolerance"] = None
+    floor["cells"][name]["plain_units"] = "undefined tolerance"
+    floor["cells"][name]["se_up"]["se_up"] = None
+    monkeypatch.setattr(scorer, "fit_law", lambda *a, **k: fit_2010["fitted"])
+    result = scorer.run_score(
+        invented["earnings"],
+        invented["anchor_demo"],
+        invented["design"],
+        invented["nawi_2010"],
+        floor,
+        invented["planning"],
+        config=scorer.ScoreConfig(b_design=2, workers=1),
+    )
+    cell = result["cells"][name]
+    assert cell["gated"] is False
+    assert cell["tolerance"] is None
+    assert cell["within_tolerance"] is False
+    assert cell["monte_carlo_rule"] is False
+    assert cell["se"] is None and cell["report_interval_95"] is None
+    assert all(side["within_tolerance"] is False for side in cell["side_a"])
+
+
+def test_scorer_refuses_zero_gated_tolerance_before_fit(
+    invented, cleared_floor, monkeypatch
+):
+    floor = copy.deepcopy(cleared_floor)
+    floor["cells"][b2.LEVEL_CELLS[0]]["tolerance"] = 0
+    monkeypatch.setattr(
+        scorer, "fit_law", lambda *a, **k: pytest.fail("fit began")
+    )
+    with pytest.raises(ValueError, match="scoring inputs"):
+        scorer.run_score(
+            invented["earnings"],
+            invented["anchor_demo"],
+            invented["design"],
+            invented["nawi_2010"],
+            floor,
+            invented["planning"],
+            config=scorer.ScoreConfig(b_design=1, workers=1),
         )
 
 
@@ -877,7 +1096,7 @@ def _valid_floor_record(head: str) -> dict:
     [
         ({"schema": "other"}, "schema"),
         ({"outcome": b2.WEAK_POWER_OR_VACUITY}, "does not permit"),
-        ({"outcome": b2.STOPPED_STRATUM_GUARD}, "does not permit"),
+        ({"outcome": "unregistered outcome"}, "does not permit"),
         ({"candidate_runs_permitted": False}, "does not permit"),
         ({"registration_id": "r2"}, "another registration"),
         ({"repository_head": "0" * 40}, "ancestor"),
@@ -919,4 +1138,4 @@ def test_statements_carry_section_13s_items():
     assert "no candidate output, projection or selection ledger" in (
         statements["reads"]
     )
-    assert "29-41" in statements["candidate_3_disclosure"]
+    assert statements["candidate_3_disclosure"] == b2.CANDIDATE_3_DISCLOSURE

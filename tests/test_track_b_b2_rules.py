@@ -272,7 +272,7 @@ def test_anchor_multiplicities_equal_on_the_planning_cluster_table():
 
 
 def test_design_multiplicities_equal_the_planning_function_at_its_root():
-    design = _invented_design(extra=(1, 3, 4))
+    design = _invented_design()
     for replicate in range(100):
         assert b2.design_multiplicities(
             design, replicate, root=PROTOCOL_V2_ROOT
@@ -402,29 +402,43 @@ def test_design_multiplicities_keep_each_stratums_cluster_count(
 ):
     design = _invented_design(two_cluster, tuple(extra))
     mult = b2.design_multiplicities(design, replicate, root=b2.ROOT_SEED)
-    frame = design.assign(m=design["person_id"].map(mult))
+    merged, _ = b2.merge_design_strata(design)
+    scale = b2.design_summary(design)["scale_l"]
+    frame = merged.assign(m=merged["person_id"].map(mult))
     per_secu = frame.groupby(["stratum", "cluster"])["m"]
     assert (per_secu.nunique() == 1).all()
     totals = per_secu.first().groupby("stratum").sum()
-    sizes = design.groupby("stratum")["cluster"].nunique()
-    assert (totals == sizes).all()
-    for stratum in range(1, two_cluster + 1):
-        assert sorted(per_secu.first().loc[stratum]) == [0, 2]
+    sizes = merged.groupby("stratum")["cluster"].nunique()
+    assert (totals == scale * sizes).all()
+    for stratum in sizes.index[sizes == 2]:
+        assert sorted(per_secu.first().loc[stratum]) == [0, 2 * scale]
     assert mult == b2.design_multiplicities(
         design, replicate, root=b2.ROOT_SEED
     )
 
 
 # --------------------------------------------------------------------------
-# Stratum census, guard and nu (section 7)
+# Stratum census, merges and nu (section 7)
 # --------------------------------------------------------------------------
 @pytest.mark.parametrize(
-    "extra, guard",
-    [((), True), ((1,), False), ((3,), False), ((4, 1), False)],
+    "extra, merged_sizes",
+    [
+        ((), [2] * 5),
+        ((1,), [2] * 4 + [3]),
+        ((3,), [2] * 5 + [3]),
+        ((4, 1), [2] * 5 + [5]),
+    ],
 )
-def test_the_guard_admits_only_two_cluster_strata(extra, guard):
-    census = b2.stratum_census(_invented_design(5, extra))
-    assert b2.design_guard(census) is guard
+def test_summary_records_the_merged_cluster_counts(extra, merged_sizes):
+    design = _invented_design(5, extra)
+    summary = b2.design_summary(design)
+    merged, merges = b2.merge_design_strata(design)
+    assert summary["merges"] == merges
+    assert summary["before_merges"] == b2.stratum_census(design)
+    assert summary["after_merges"] == b2.stratum_census(merged)
+    assert sorted(merged.groupby("stratum")["cluster"].nunique()) == (
+        sorted(merged_sizes)
+    )
 
 
 def test_census_extends_the_planning_design_summary():
@@ -463,7 +477,6 @@ def test_nu_is_clusters_minus_strata(sizes):
         int(n) * count
         for n, count in census["strata_by_cluster_count"].items()
     ) == sum(sizes)
-    assert b2.design_guard(census) == all(size == 2 for size in sizes)
 
 
 def test_census_refuses_an_empty_or_repeating_design():
@@ -472,14 +485,6 @@ def test_census_refuses_an_empty_or_repeating_design():
     design = _invented_design(2)
     with pytest.raises(ValueError, match="repeats"):
         b2.stratum_census(pd.concat([design, design.iloc[:1]]))
-    assert not b2.design_guard(
-        {
-            "strata": 0,
-            "strata_with_one_cluster": 0,
-            "strata_with_two_clusters": 0,
-            "strata_with_three_or_more_clusters": 0,
-        }
-    )
 
 
 # --------------------------------------------------------------------------
@@ -1149,15 +1154,30 @@ def test_registration_and_thread_settings(monkeypatch):
     for bad in (None, "", "  ", "two words"):
         with pytest.raises(RuntimeError, match="registration"):
             b2.require_registration(bad)
-    for name in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS"):
-        monkeypatch.setenv(name, "4")
-    monkeypatch.setenv("VECLIB_MAXIMUM_THREADS", "2")
+    # BLAS, OpenMP and numexpr (which pandas uses) are all pinned.
+    assert b2.THREAD_VARIABLES == (
+        "OMP_NUM_THREADS",
+        "OPENBLAS_NUM_THREADS",
+        "MKL_NUM_THREADS",
+        "VECLIB_MAXIMUM_THREADS",
+        "NUMEXPR_NUM_THREADS",
+    )
+    for name in b2.THREAD_VARIABLES:
+        monkeypatch.setenv(name, "1")
     monkeypatch.setenv("OMP_WAIT_POLICY", "PASSIVE")
-    assert b2.thread_settings()["VECLIB_MAXIMUM_THREADS"] == "2"
-    monkeypatch.setenv("OMP_NUM_THREADS", "8")
-    with pytest.raises(RuntimeError, match="OMP_NUM_THREADS"):
-        b2.thread_settings()
-    monkeypatch.setenv("OMP_NUM_THREADS", "4")
+    settings = b2.thread_settings()
+    assert all(settings[name] == "1" for name in b2.THREAD_VARIABLES)
+    # Every variable must be exactly 1: more threads hang the gates'
+    # predict in the pinned environment, and an unset one is refused too.
+    for name in b2.THREAD_VARIABLES:
+        for value in ("2", "4", "0", ""):
+            monkeypatch.setenv(name, value)
+            with pytest.raises(RuntimeError, match=name):
+                b2.thread_settings()
+        monkeypatch.delenv(name)
+        with pytest.raises(RuntimeError, match=name):
+            b2.thread_settings()
+        monkeypatch.setenv(name, "1")
     monkeypatch.setenv("OMP_WAIT_POLICY", "ACTIVE")
     with pytest.raises(RuntimeError, match="PASSIVE"):
         b2.thread_settings()

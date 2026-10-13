@@ -13,10 +13,10 @@ on. This script is section 9's floor builder, steps 2-6:
    and, without gating on it, the person-split floor.
 4. It computes each cell's tolerance (section 6) and se_up (section 7,
    4,000 household replicates on streams [20261002, b, 0]). It counts the
-   design strata among the truth-support persons by cluster count, and
-   nu. If any stratum has one cluster, or three or more, it stops there:
-   the artifact records the stop, and no candidate may run until a dated
-   amendment registers how those strata are handled.
+   design strata among the truth-support persons, applies the fixed
+   singleton merges, and publishes counts before and after, merges, L and
+   nu. A zero nu or uninformative candidate-cell tolerance stops the build
+   as WEAK_POWER_OR_VACUITY before the ladder or any candidate run.
 5. It applies eligibility, the ladder and the guards inside the six level
    cells (d781 (a), d1342 option A). Power is the ruled binding evaluation
    (``scripts/track_b_b0_1_ruled_power.py``) with r, the 95th percentile
@@ -32,8 +32,9 @@ the comparator's and the addendum, from a clean worktree at that commit
 and in the selectors' pinned runtime, for example::
 
     PYTHONDONTWRITEBYTECODE=1 PYTHONWARNINGS='ignore::FutureWarning' \\
-      PYTHONPATH=src:scripts OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 \\
-      VECLIB_MAXIMUM_THREADS=4 OMP_WAIT_POLICY=PASSIVE \\
+      PYTHONPATH=src:scripts OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 \\
+      MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 \\
+      OMP_WAIT_POLICY=PASSIVE \\
       POPULACE_DYNAMICS_PSID_DIR=/Users/maxghenis/PolicyEngine/psid-data \\
       /path/to/runtime/bin/python scripts/track_b_b2_floor.py \\
       --registration-id <#42 comment id> --expected-commit <sha> \\
@@ -47,6 +48,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import sys
 import time
@@ -317,9 +319,6 @@ def measure(
                 "seed_detail_six_cells_sha256": b2.canonical_sha256(
                     b2.six_cell_seed_detail(detail_person)
                 ),
-                "seed_detail_all_cells_sha256": b2.canonical_sha256(
-                    detail_person
-                ),
                 "cells": list(b2.M6_RETAINED),
                 "seeds": [int(entry["seed"]) for entry in detail_person],
             },
@@ -346,9 +345,27 @@ def cell_records(
     cells: dict[str, dict[str, Any]] = {}
     for name, metric in b2.CELL_METRICS.items():
         floor = floor_household[name]
-        tolerance = b2.tolerance(floor["mean"], floor["sd"], metric)
+        if all(
+            floor[key] is not None and math.isfinite(floor[key])
+            for key in ("mean", "sd")
+        ):
+            tolerance = b2.tolerance(floor["mean"], floor["sd"], metric)
+        else:
+            tolerance = {
+                "tolerance": None,
+                "uncapped": None,
+                "cap": b2.METRIC_CAP[metric],
+                "at_cap": False,
+                "metric": metric,
+                "plain_units": "undefined tolerance",
+            }
         planning_cell = planning_record["cells"][name]
-        eligible_floor = b2.floor_eligible(floor, n_seeds)
+        sigma = floor["realized_sigma"]
+        eligible_floor = bool(
+            sigma is not None
+            and math.isfinite(sigma)
+            and b2.floor_eligible(floor, n_seeds)
+        )
         planning_defined = bool(planning_cell.get("defined"))
         value = se_up[name]["se_up"]
         cells[name] = {
@@ -371,7 +388,12 @@ def cell_records(
             **tolerance,
             "se_up": dict(se_up[name]),
             "tau_se_up_units": (
-                None if value is None else tolerance["tolerance"] / value
+                tolerance["tolerance"] / value
+                if value is not None
+                and math.isfinite(value)
+                and value > 0
+                and tolerance["tolerance"] is not None
+                else None
             ),
             "registered_estimation_ratio": (
                 b2.registered_estimation_ratio(planning_cell)
@@ -387,7 +409,7 @@ def decide(
     design: pd.DataFrame,
     planning_record: Mapping[str, Any],
 ) -> dict[str, Any]:
-    """Step 4's stratum census and stop, and step 5's eligibility, ladder
+    """Step 4's stratum merges and stops, and step 5's eligibility, ladder
     and guards inside the six level cells."""
     truth = measured["truth"]
     truth_persons = set(int(value) for value in truth["person_id"].unique())
@@ -396,9 +418,8 @@ def decide(
     )
     if set(design["person_id"].astype(int)) != truth_persons:
         raise AssertionError("a truth-support person has no design variables")
-    census = b2.stratum_census(design)
-    nu = int(census["design_degrees_of_freedom"])
-    guard = b2.design_guard(census)
+    summary = b2.design_summary(design)
+    nu = int(summary["design_degrees_of_freedom"])
     cells = cell_records(
         measured["floor_household"],
         measured["se_up"],
@@ -407,27 +428,28 @@ def decide(
     )
     record: dict[str, Any] = {
         **measured["record"],
-        "design": {
-            "census": census,
-            "design_degrees_of_freedom": nu,
-            "only_two_cluster_strata": guard,
-        },
+        "design": summary,
         "cells": cells,
     }
-    if not guard:
-        record["outcome"] = b2.STOPPED_STRATUM_GUARD
-        record["ladder"] = None
-        return finish(record, cells)
-    eligible = [name for name in b2.LEVEL_CELLS if cells[name]["eligible"]]
-    missing = [
-        name for name in eligible if cells[name]["se_up"]["se_up"] is None
-    ]
-    if missing:
-        record["outcome"] = b2.STOPPED_SE_UP_UNDEFINED
-        record["se_up_undefined_cells"] = missing
+    causes = []
+    if nu == 0:
+        causes.append({"cell": None, "quantity": "nu"})
+    for name in b2.LEVEL_CELLS:
+        quantities = {
+            "sigma": cells[name]["floor_household"]["realized_sigma"],
+            "se_up": cells[name]["se_up"]["se_up"],
+            "tau": cells[name]["tau_se_up_units"],
+        }
+        for quantity, value in quantities.items():
+            if value is None or not math.isfinite(value) or value <= 0:
+                causes.append({"cell": name, "quantity": quantity})
+    if causes:
+        record["outcome"] = b2.WEAK_POWER_OR_VACUITY
+        record["stop_causes"] = causes
         record["ladder"] = None
         return finish(record, cells)
 
+    eligible = [name for name in b2.LEVEL_CELLS if cells[name]["eligible"]]
     tau = {name: cells[name]["tau_se_up_units"] for name in eligible}
     power = ladder_power(planning_record, tau, nu)
     result = b2.ladder(

@@ -6,8 +6,8 @@ with the selectors' key layout (``boundaries -> "2010" -> floor`` and
 The tests check that the comparator
 
 - reads exactly the two boundary-2010 fields and nothing else matters;
-- reports equality when the fields are the builder's, in either hash form
-  of the seed detail, and inequality on any change;
+- reports equality when the six-cell fields are the builder's, and
+  inequality on any change to them;
 - prints booleans only, and refuses a floor artifact that is not
   committed.
 """
@@ -85,7 +85,6 @@ def _builder(floor: dict, detail: list[dict]) -> dict:
         "seed_detail_six_cells_sha256": b2.canonical_sha256(
             b2.six_cell_seed_detail(detail)
         ),
-        "seed_detail_all_cells_sha256": b2.canonical_sha256(detail),
     }
 
 
@@ -132,14 +131,27 @@ def test_key_paths_are_the_selectors():
 
 def test_ledger_fields_reads_the_two_boundary_2010_fields(tmp_path):
     floor, detail = _floor(), _detail()
+    floor["unretained"] = {"malformed": "ignored"}
+    detail[0]["unrelated"] = "ignored"
+    detail[0]["cells"]["unretained"] = "malformed but ignored"
     path = _write(tmp_path / "ledger.json", _ledger(floor, detail))
     got_floor, got_detail = comparator.ledger_fields(path)
-    assert got_floor == floor
-    assert got_detail == detail
+    assert got_floor == b2.six_cell_floor_block(floor)
+    assert got_detail == b2.six_cell_seed_detail(detail)
     broken = _ledger(floor, detail)
     del broken["boundaries"]["2010"]
     with pytest.raises(KeyError):
         comparator.ledger_fields(_write(tmp_path / "broken.json", broken))
+    broken = _ledger({}, detail)
+    with pytest.raises(KeyError):
+        comparator.ledger_fields(
+            _write(tmp_path / "partial_floor.json", broken)
+        )
+    broken = _ledger(floor, [{"seed": 0, "cells": {}}])
+    with pytest.raises(KeyError):
+        comparator.ledger_fields(
+            _write(tmp_path / "partial_detail.json", broken)
+        )
 
 
 def test_equal_fields_compare_equal_and_any_change_does_not(tmp_path):
@@ -149,46 +161,44 @@ def test_equal_fields_compare_equal_and_any_change_does_not(tmp_path):
     artifact.write_text(json.dumps(builder), encoding="utf-8")
     same = _write(tmp_path / "same.json", _ledger(floor, detail))
     result = comparator.run(artifact, [same])
-    assert result == {
-        "ledgers": {
-            "same.json": {
-                "floor_block_six_cells_equal": True,
-                "seed_detail_six_cells_equal": True,
-                "seed_detail_all_cells_equal": True,
-            }
-        }
-    }
+    assert result == [(True, True)]
     # Only another boundary's floor moved: still equal.
     other = _ledger(floor, detail)
     other["boundaries"]["2008"]["floor"] = _floor(9.0)
     other_path = _write(tmp_path / "other.json", other)
-    assert all(
-        comparator.run(artifact, [other_path])["ledgers"][
-            "other.json"
-        ].values()
-    )
-    # A report-only cell's seed detail moved: six-cell form still equal.
+    assert comparator.run(artifact, [other_path]) == [(True, True)]
+    # A report-only cell's seed detail moved: both fields still equal.
     moved = json.loads(json.dumps(detail))
     moved[2]["cells"]["earn_dlog_skew.prime"]["score"] += 0.001
     path = _write(tmp_path / "moved.json", _ledger(floor, moved))
-    assert comparator.run(artifact, [path])["ledgers"]["moved.json"] == {
-        "floor_block_six_cells_equal": True,
-        "seed_detail_six_cells_equal": True,
-        "seed_detail_all_cells_equal": False,
-    }
-    # A retained cell's seed detail moved: both forms differ.
+    assert comparator.run(artifact, [path]) == [(True, True)]
+    # A retained cell's seed detail moved: only its field differs.
     moved = json.loads(json.dumps(detail))
     moved[0]["cells"]["earn_p10.prime"]["n_events_a"] += 1
     path = _write(tmp_path / "retained.json", _ledger(floor, moved))
-    flags = comparator.run(artifact, [path])["ledgers"]["retained.json"]
-    assert flags["seed_detail_six_cells_equal"] is False
-    assert flags["seed_detail_all_cells_equal"] is False
+    assert comparator.run(artifact, [path]) == [(True, False)]
     # The floor block moved.
     shifted = json.loads(json.dumps(floor))
     shifted["earn_zero_rate.older"]["sd"] *= 1.0 + 1e-15
     path = _write(tmp_path / "floor_moved.json", _ledger(shifted, detail))
-    flags = comparator.run(artifact, [path])["ledgers"]["floor_moved.json"]
-    assert flags["floor_block_six_cells_equal"] is False
+    assert comparator.run(artifact, [path]) == [(False, True)]
+
+
+def test_each_ledger_is_compared_even_with_duplicate_names(tmp_path):
+    floor, detail = _floor(), _detail()
+    artifact = _write(
+        tmp_path / "floor.json", {"person_split": _builder(floor, detail)}
+    )
+    first, second = tmp_path / "first", tmp_path / "second"
+    first.mkdir()
+    second.mkdir()
+    shifted = json.loads(json.dumps(floor))
+    shifted["earn_p10.prime"]["mean"] += 0.001
+    ledgers = [
+        _write(first / "ledger.json", _ledger(floor, detail)),
+        _write(second / "ledger.json", _ledger(shifted, detail)),
+    ]
+    assert comparator.run(artifact, ledgers) == [(True, True), (False, True)]
 
 
 @settings(max_examples=150, deadline=None)
@@ -247,24 +257,26 @@ def test_main_prints_booleans_only_for_a_committed_artifact(
     run("add", "floor.json")
     run("commit", "-q", "-m", "floor")
     ledger = _write(tmp_path / "ledger.json", _ledger(floor, detail))
+    shifted = json.loads(json.dumps(detail))
+    shifted[0]["cells"]["earn_p10.prime"]["score"] += 0.001
+    changed = _write(tmp_path / "changed.json", _ledger(floor, shifted))
     monkeypatch.setattr(comparator, "ROOT", repo)
     stream = io.StringIO()
     with redirect_stdout(stream):
         assert (
             comparator.main(
-                ["--floor-artifact", str(artifact), "--ledger", str(ledger)]
+                [
+                    "--floor-artifact",
+                    str(artifact),
+                    "--ledger",
+                    str(ledger),
+                    "--ledger",
+                    str(changed),
+                ]
             )
             == 0
         )
-    printed = json.loads(stream.getvalue())
-    assert set(printed) == {"floor_artifact", "ledgers"}
-    assert printed["floor_artifact"]["path"] == "floor.json"
-    assert printed["floor_artifact"]["commit"] == run("rev-parse", "HEAD")
-    for flags in printed["ledgers"].values():
-        assert all(isinstance(value, bool) for value in flags.values())
-        assert all(flags.values())
-    # No ledger value reaches the output.
-    assert "0.01" not in stream.getvalue()
+    assert stream.getvalue() == "true\ntrue\ntrue\nfalse\n"
 
 
 def test_main_refuses_an_uncommitted_artifact(tmp_path, monkeypatch):
