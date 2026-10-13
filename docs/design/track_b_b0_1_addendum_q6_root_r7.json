@@ -1,0 +1,113 @@
+{
+ "base": "origin/master",
+ "codebook_check_allowed": [
+  "docs/design/track_b_b0_1_addendum_reads.json",
+  "scripts/track_b_b0_1_review_root.py",
+  "tests/test_track_b_b0_1_review_root.py"
+ ],
+ "context_copies": {
+  "OPTIONS.md": {
+   "sha256": "fabbcbb42cfbc3f9e4703577a2a6844b068e8bed7285b1595f2e49ea1045660d",
+   "source": "/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/trackb-reviews-20260929/q6-r2-context/d1342-OPTIONS.md"
+  },
+  "d1342-ruling.md": {
+   "sha256": "66d69a4c57c6b388c3b608aa6285ba613972ec677b7857adae0771292a1ec1e0",
+   "source": "/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/trackb-reviews-20260929/q6-r2-context/d1342-ruling.md"
+  },
+  "d622-ruling.md": {
+   "sha256": "52429f06c03e494a5abf8436bfa1ef43b45705f7fdcb1db8f5133024123b76fa",
+   "source": "/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/trackb-reviews-20260929/q6-r2-context/d622-ruling.md"
+  },
+  "d693-RECOMMENDATION.md": {
+   "sha256": "6fc4ee59e91bae0d9db2c6d5255ee5bba556b7f7e9bef3945c522f8fca392a2d",
+   "source": "/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/trackb-reviews-20260929/q6-r2-context/d693-RECOMMENDATION.md"
+  },
+  "d693-ruling.md": {
+   "sha256": "acb1a766b5459f99045f6243626d8577b9d54007f0018e45325496af1f22ed30",
+   "source": "/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/trackb-reviews-20260929/q6-r2-context/d693-ruling.md"
+  },
+  "d765-ruling.md": {
+   "sha256": "7fe9699d0188c5e524122776d2d9802a0e7cd892a439b91a5c08148e6b66deff",
+   "source": "/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/trackb-reviews-20260929/q6-r2-context/d765-ruling.md"
+  },
+  "d781-ruling.md": {
+   "sha256": "c86cabd7135220979f1bf88aafd396bcce78af5123b0f286905a90682de2ba40",
+   "source": "/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/trackb-reviews-20260929/q6-r2-context/d781-ruling.md"
+  },
+  "d782-ruling.md": {
+   "sha256": "7e30ed5fbf76461c9907e10dfa1d31b7135ed62156b0303dcb3b261f2046f0a4",
+   "source": "/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/trackb-reviews-20260929/q6-r2-context/d782-ruling.md"
+  },
+  "pr490-comments.md": {
+   "sha256": "95d24a5a71c85be1dfc2cc9a6182b5dd95c88d9705b8100da1cdec251223a904",
+   "source": "/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/trackb-reviews-20260929/q6-r2-context/pr490-comments.md"
+  },
+  "trackb-design-20260928.md": {
+   "sha256": "6fd6f4aa5a83da802f5a93a974240b0a4a590138ac8c00a5586581d2401b5958",
+   "source": "/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909/trackb-reviews-20260929/q6-r2-context/trackb-design-20260928.md"
+  }
+ },
+ "denied_paths": [
+  "docs/amendments/m6_amendment_4_qstar_lock_addendum.md",
+  "docs/analysis/m6_c3_f1_mechanism_diagnostic_results.json",
+  "docs/analysis/m6_candidate2_registered_abort_execution_v1.txt",
+  "docs/analysis/m6_qstar_train_only_selection.md",
+  "docs/analysis/m6_qstar_train_only_selection_results.json",
+  "docs/analysis/m6_rhostar_train_only_selection.md",
+  "docs/analysis/m6_rhostar_train_only_selection_results.json",
+  "docs/design/m6_candidate2_program.md",
+  "docs/design/m6_candidate3_lock_addendum.md",
+  "docs/design/m6_candidate3_program.md",
+  "docs/design/m6_projection_engine.md",
+  "docs/forecasts/timeline_ledger.json",
+  "gates.yaml",
+  "paper/figures/m6_q_frontier.svg",
+  "paper/paper.qmd",
+  "tests/harness/test_epuf_gate.py",
+  "tests/test_m6_c3_f1_mechanism_diagnostic.py",
+  "tests/test_m6_candidate2_runner.py",
+  "tests/test_m6_candidate3_runner.py",
+  "tests/test_m6_qstar_selection.py",
+  "tests/test_m6_rhostar_selection.py"
+ ],
+ "head": "05dbd5be9820cf1f1017fc492019e05652adf937",
+ "manifest_sha256": "a999c4d27cf771468670e5dc8b168e19a8dbe095433322c06651ecd76128a14c",
+ "n_files": 1942,
+ "removed": [
+  "data/external/psid_codebook_field_evidence/ry1975_1977_spouse_concept_seam_v1.json",
+  "data/external/psid_codebook_field_evidence/ry1978_1992_pre_er_totals_v1.json",
+  "data/external/psid_codebook_field_evidence/ry1993_2001_er_transition_v1.json",
+  "data/external/psid_codebook_field_evidence/ry2002_2014_modern_bc_de_v1.json",
+  "data/external/psid_codebook_field_evidence/ry2015_2022_exclusion_lineage_v1.json",
+  "data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json",
+  "docs/amendments/m6_amendment_4_qstar_lock_addendum.md",
+  "docs/analysis/m6_c3_f1_mechanism_diagnostic_results.json",
+  "docs/analysis/m6_candidate2_registered_abort_execution_v1.txt",
+  "docs/analysis/m6_qstar_train_only_selection.md",
+  "docs/analysis/m6_qstar_train_only_selection_results.json",
+  "docs/analysis/m6_rhostar_train_only_selection.md",
+  "docs/analysis/m6_rhostar_train_only_selection_results.json",
+  "docs/design/m6_candidate2_program.md",
+  "docs/design/m6_candidate3_lock_addendum.md",
+  "docs/design/m6_candidate3_program.md",
+  "docs/design/m6_projection_engine.md",
+  "docs/forecasts/timeline_ledger.json",
+  "gates.yaml",
+  "paper/figures/m6_q_frontier.svg",
+  "paper/paper.qmd",
+  "tests/harness/test_epuf_gate.py",
+  "tests/test_m6_c3_f1_mechanism_diagnostic.py",
+  "tests/test_m6_candidate2_runner.py",
+  "tests/test_m6_candidate3_runner.py",
+  "tests/test_m6_qstar_selection.py",
+  "tests/test_m6_rhostar_selection.py"
+ ],
+ "removed_codebook_tables": [
+  ".test_durations",
+  "data/external/amendment_11_originating_records/claude-ce-v3compiler-codebook-report.md",
+  "docs/design/covered_earnings_correction.md",
+  "src/populace_dynamics/data/psid_questionnaire_inventory.py"
+ ],
+ "root": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r7-20261011/root",
+ "schema": "track_b_b0_1_review_root.v1"
+}
