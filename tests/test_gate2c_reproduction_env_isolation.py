@@ -70,8 +70,9 @@ _pe_us_dir_env = _module._pe_us_dir_env
 
 # Seed the prior value after import so the pin's configured checkout is
 # different. The real fixture must replace it and then restore it exactly.
-if {prior!r} is not None:
-    os.environ[{variable!r}] = {prior!r}
+_PRIOR = {prior!r}
+if _PRIOR is not None:
+    os.environ[{variable!r}] = _PRIOR
 
 
 @pytest.fixture(scope="module")
