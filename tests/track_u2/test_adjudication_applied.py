@@ -847,7 +847,6 @@ D1090_CLAUSES = {
         "execution.",
     ],
     "record": [
-        *D1090_ROWS.values(),
         "## 16c. Max's ruling on blockers B1 and B2 (2026-10-10, d1090)",
         "> **RULED on 2026-10-10.** Max ruled on blockers B1 and B2 on "
         "2026-10-10 (decision d1090), after PSID answered the documentary "
@@ -879,6 +878,9 @@ D1090_CLAUSES = {
         "| Part of \N{SECTION SIGN}16a | Ruling | Draft-3 lines amended | "
         "Effect |",
         "|---|---|---|---|",
+        D1090_ROWS["B1"],
+        D1090_ROWS["B2"],
+        D1090_ROWS["5c"],
         "Both rules are fixed by this ruling, before any count, and each is "
         "vacuous if no such unit supplies an observation. Each count is "
         "disclosed after the authorized structural pass (\N{SECTION SIGN}4) "
@@ -1026,10 +1028,12 @@ def d1090_locations(spec):
     }
 
 
-def _record_lines(record):
-    """The pinned lines of section 16c in the order they stand."""
-    pinned = set(D1090_CLAUSES["record"])
-    return [x for x in record.split("\n") if x in pinned]
+#: Each pinned section 17 or 20 line and the line that must follow it, so
+#: nothing can be added after it (review of e7a558f, info finding 2).
+D1090_FOLLOWERS = {
+    "outstanding": {0: "2. ", 1: "3. ", 2: "9. "},
+    "execution": {0: "", 1: "2. Complete implementation, manifests and "},
+}
 
 
 def check_d1090_record(spec):
@@ -1043,10 +1047,29 @@ def check_d1090_record(spec):
     assert record.startswith(
         "## 16c. Max's ruling on blockers B1 and B2 (2026-10-10, d1090)\n"
     )
-    # Section 16c holds exactly the pinned lines, in order.
-    assert [x for x in record.split("\n") if x.strip()] == _record_lines(
-        record
+    # Section 16c holds exactly the declared lines, in the declared order
+    # (review of e7a558f, info finding 1: the order is not read from the
+    # text under test).
+    assert [x for x in record.split("\n") if x.strip()] == (
+        D1090_CLAUSES["record"]
     )
+    # Nothing follows a pinned line of section 17 or 20 but what must.
+    for place, followers in D1090_FOLLOWERS.items():
+        lines = places[place].split("\n")
+        for index, follower in followers.items():
+            at = lines.index(D1090_CLAUSES[place][index])
+            following = lines[at + 1]
+            assert following.startswith(follower) and (
+                follower or following == ""
+            ), (place, index)
+    execution = places["execution"].split("\n")
+    assert execution[:5] == [
+        "## 20. Ratification and execution record",
+        "",
+        D1090_CLAUSES["execution"][0],
+        "",
+        D1090_CLAUSES["execution"][1],
+    ]
     for text in places.values():
         assert "decides whether" not in text
     assert (
@@ -1170,6 +1193,25 @@ D1090_MUTATIONS = [
     ("record", "pending d745", "confirmed by d745"),
     ("record", "U2 stays unregistered and unauthorized", "U2 is registered"),
     ("record", "This is how the rules are applied, not", "This is"),
+    # Insertions after pinned lines (review of e7a558f, info finding 2).
+    (
+        "execution",
+        "**Pending.**",
+        "**Pending.**\n\n**Current status: registered and authorized.**",
+    ),
+    (
+        "outstanding",
+        "each disclosed and deciding nothing; \N{SECTION SIGN}16c).",
+        "each disclosed and deciding nothing; \N{SECTION SIGN}16c).\n"
+        "   Exploratory counts may also be computed.",
+    ),
+    (
+        "outstanding",
+        "This item stays open only for 1a\N{EN DASH}1c, until Max "
+        "confirms.",
+        "This item stays open only for 1a\N{EN DASH}1c, until Max "
+        "confirms.\n   B1 and B2 remain held.",
+    ),
     ("outstanding", "and B2 takes option 1,", "and B2 takes option 2,"),
     ("outstanding", "each disclosed and deciding nothing", "each disclosed"),
     (
@@ -1183,6 +1225,20 @@ D1090_MUTATIONS = [
         "B1 by option 1 and B2 by option 2",
     ),
 ]
+
+
+def test_the_d1090_checks_catch_a_reordered_record():
+    """Swapping any two adjacent declared lines of section 16c fails the
+    check (review of e7a558f, info finding 1)."""
+    spec = (ROOT / SPEC).read_text(encoding="utf-8")
+    record = d1090_locations(spec)["record"]
+    declared = D1090_CLAUSES["record"]
+    for first, second in zip(declared, declared[1:], strict=False):
+        swapped = record.replace(first, "\0", 1).replace(second, first, 1)
+        swapped = swapped.replace("\0", second, 1)
+        assert swapped != record
+        with pytest.raises(AssertionError):
+            check_d1090_record(spec.replace(record, swapped, 1))
 
 
 @pytest.mark.parametrize(
