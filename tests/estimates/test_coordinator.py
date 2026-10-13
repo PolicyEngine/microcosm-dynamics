@@ -1544,6 +1544,14 @@ def test__estimator_surface__pins_complete_module_tuple():
     epuf_fill_surface = tuple(
         path for path in observed if path.name == "epuf_fill.py"
     )
+    # The NASI group-breakdown tabulator and lifetime measures re-tabulate
+    # finished blind tests after the fact; they are likewise post-compute
+    # and outside the registered first-estimates surface.
+    group_breakdown_surface = tuple(
+        path
+        for path in observed
+        if path.name in ("group_breakdown.py", "lifetime_measures.py")
+    )
     first_estimates_surface = tuple(
         path
         for path in observed
@@ -1551,6 +1559,7 @@ def test__estimator_surface__pins_complete_module_tuple():
         and path not in tabulation_surface
         and path not in track_u_surface
         and path not in epuf_fill_surface
+        and path not in group_breakdown_surface
     )
 
     assert coordinator._ESTIMATOR_SURFACE_SOURCES == expected
@@ -1564,6 +1573,10 @@ def test__estimator_surface__pins_complete_module_tuple():
     )
     assert epuf_fill_surface == (
         Path("src/populace_dynamics/estimates/epuf_fill.py"),
+    )
+    assert group_breakdown_surface == (
+        Path("src/populace_dynamics/estimates/group_breakdown.py"),
+        Path("src/populace_dynamics/estimates/lifetime_measures.py"),
     )
     assert context_surface == (
         Path("src/populace_dynamics/estimates/anchor_context_coordinator.py"),

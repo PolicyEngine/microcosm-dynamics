@@ -546,7 +546,10 @@ We leverage a rich ecosystem of open-source tools:
 - Microcosm as starting point — shipped, and the certified default
   U.S. microdata in policyengine.py
 - proven data construction and calibration pipeline
-- Social Security rules already implemented in PolicyEngine-US
+- Social Security parameters and own-benefit formulas (AIME and PIA) in
+  PolicyEngine-US; PolicyEngine-US has no spouse or survivor benefit
+  formulas, so this repository carries those itself
+  ([technical-specifications.md](technical-specifications.md))
 - infrastructure for web/API deployment
 
 **Additional methodological approaches** (to evaluate during proof of concept):
