@@ -67,8 +67,10 @@ repository; design line numbers refer to it.
   63 degrees of freedom (section 7).
 - **Power on that configuration.** The six level cells reach 0.813 on the
   binding evaluation, against the 0.952 d781 cites on household
-  resampling. Every evaluation that keeps the t value is below 0.90, and
-  only the most lenient reaches it, at 0.907 (section 11).
+  resampling. Every evaluation that keeps the t value is below 0.90.
+  Of the evaluations on the ruled configuration (household resampling,
+  d781's basis, excepted), only the most lenient reaches it, at 0.907
+  (section 11).
   - Section 16's rule does not stop B2: four of the six reach 0.964, so
     B2's floor and ladder would decide.
   - The ruling rested on 0.952, so B2 was held for Max, who confirmed
@@ -124,6 +126,11 @@ addendum queued (section 13). The decision log records them as:
 | d765 | Arm R's household half-samples stand, so the planning record's e and e_B2 are B2's registered estimation-variance values | Sections 7, 10 |
 | d781 (a) | Element 6: B2's gate family is the six level cells; the other ten are report-only; the headline and what H and B3L may rely on | Sections 5, 13 |
 | d782 | Element 8: se_boot resamples design clusters within strata (Rao-Wu); the floor and gate-seed splits stay household. With round-1 finding M2's rider, the critical value is Student t with the design's degrees of freedom | Sections 7, 8 |
+
+d782's ruling text does not name the critical value. The t value came
+from round-1 finding M2's rider, and Max saw it: d1342's question
+described the ruled configuration as "d781 six level cells, d782 Rao-Wu
+SE, t at 63 df", and he ruled option A on that configuration.
 
 The 0.952 that d781 cites is household resampling's figure. On the
 configuration the three rulings and the M2 rider set together, the six
@@ -245,15 +252,20 @@ autocorrelation.
 
 **Guards.** At least four gated cells, and not every gated tolerance at
 its cap (`m6_cells.py:64-67`). In M6 the four-cell guard counted flow
-cells; here it counts B2's earnings cells. With six eligible families
-the ladder cannot go below six cells, so the four-cell guard binds only
-if three or more families have no eligible cell.
+cells; here it counts B2's earnings cells. On d693's 16-cell surface,
+with six eligible families, the ladder cannot go below six cells, so the
+four-cell guard binds only if three or more families have no eligible
+cell. Inside d781's six there are two families, so the guard can bind
+after two prunes (above).
 
-**If the ladder ends below 0.90 or a guard fails.** B2 is
+**If the ladder ends below 0.90, a guard fails, or ν is 0 after section
+7's merges.** B2 is
 `WEAK_POWER_OR_VACUITY` (design line 454). The floor artifact records
 it, B2 stops, and a decision is queued for Max with the rescoping
-options. No rescoped registration is written before he rules. This
-covers every case d693's Q2 flip names.
+options. Rescoping the surface or a tolerance cannot cure ν = 0, so
+there the decision queued is how the critical value is set. No rescoped
+or amended registration is written before he rules. This covers every
+case d693's Q2 flip names.
 
 **Pruned cells.** Every pruned or ineligible cell is scored and
 published, report-only, with its own unadjusted 95% interval, outside
@@ -303,28 +315,53 @@ For each gated cell c, on full support:
   over 4,000 design replicates, with the law fixed and each person's
   projected paths fixed. A design replicate resamples PSID's
   sampling-error clusters (`ER31997`) within strata (`ER31996`) among
-  the truth-support persons, by Rao-Wu, as arm D did. Its multiplicities
-  follow arm D's `design_multiplicities` rule, through the
-  root-parameterised copy section 13 specifies ("To B2"), never the
-  pinned function, which reads protocol v2's root:
-  - in a stratum with two clusters, one is drawn and copied twice;
-  - a stratum with one cluster keeps it once;
-  - a stratum with three or more clusters draws that many with
-    replacement. That is not Rao-Wu, and it understates the stratum's
-    variance by (n_h - 1)/n_h. At the 2006 pseudo-origin every one of the
-    63 strata had exactly two clusters.
+  the truth-support persons, by Rao-Wu.
+  - **Two-cluster strata** follow arm D's `design_multiplicities` rule:
+    one cluster is drawn and copied twice. That rule is applied through
+    the root-parameterised copy section 13 specifies ("To B2"), never the
+    pinned function, which reads protocol v2's root.
+  - **Other strata** follow the stratum rule below, not arm D.
+    - Arm D keeps a one-cluster stratum once.
+    - It draws a stratum of three or more clusters with replacement.
+      That is not Rao-Wu, and it understates the stratum's variance by
+      (n_h - 1)/n_h.
 
-  **Only two-cluster strata are admitted (Q6 round 2).** Arm D's rule is
-  Rao-Wu only where a stratum has two clusters:
+  At the 2006 pseudo-origin every one of the 63 strata had exactly two
+  clusters.
+
+  **Arm D's rule is Rao-Wu only for two-cluster strata (Q6 round 2).**
+  Applied to other strata it would go wrong:
   - a stratum with three or more is resampled by the ordinary bootstrap,
     which narrows the bound;
   - a stratum with one cluster adds no variance, which needs a
     certainty-unit justification.
 
   So B2's floor builder counts the strata among B2's truth-support persons
-  by cluster count before any candidate run. If any stratum has one
-  cluster, or three or more, B2 stops there, and a dated amendment
-  registers how those strata are handled before any candidate run.
+  by cluster count before any candidate run, and handles the other cases
+  by this rule, fixed here (Q6 round 5):
+  - **One cluster.** Such a stratum is merged into the nearest stratum
+    by code among the strata with two or more clusters, the lower code on
+    a tie. If no stratum has two or more clusters, all the one-cluster
+    strata merge into one. All merges are applied together, before
+    anything else, and the merged strata are then counted with their
+    combined clusters.
+  - **Three or more clusters.** Exact Rao-Wu, by integer copies. Each
+    replicate draws n_h - 1 clusters with replacement in such a stratum,
+    and each draw counts n_h/(n_h - 1). To keep counts whole, every
+    stratum's multiplicities, including those of the two-cluster
+    strata, are multiplied by L, the least common multiple of n_h - 1
+    over the strata. A two-cluster stratum's drawn cluster is then
+    copied 2L times, and a draw in a stratum of n_h clusters
+    L·n_h/(n_h - 1) times.
+  - **Scale.** Scaling every person's copies by the same L leaves
+    weighted quantiles and weighted rates unchanged, so the gated level
+    cells are unaffected. The report-only mobility cells, which bin by
+    midpoint weighted rank, are not exactly invariant to it.
+  - **When every stratum has two clusters**, as at the 2006 pseudo-origin,
+    L is 1 and the rule is arm D's.
+
+  ν is Σ_h (n_h - 1) after the merges. The floor builder publishes the
+  counts, the merges and L before any candidate run.
 
   The floor and gate-seed splits stay household (d693 Q3, d782).
 - **The household bootstrap.** se_up,c uses its own 4,000 replicates:
@@ -338,8 +375,12 @@ For each gated cell c, on full support:
   `copy_persons`. Weights are never multiplied instead, because the
   mobility cells bin by midpoint weighted ranks.
 - **Design degrees of freedom.** ν = Σ_h (n_h - 1) over the strata among
-  B2's truth-support persons, n_h being stratum h's cluster count, so a
-  stratum with one cluster adds nothing. The floor builder counts ν from
+  B2's truth-support persons after the stratum rule's merges, n_h being
+  stratum h's cluster count after them. A one-cluster stratum merged
+  into another adds its cluster there, and so one degree of freedom. If
+  ν is 0 after the merges, which needs every truth-support person in one
+  cluster, t\*_m,ν is undefined and B2 stops at floor build as
+  `WEAK_POWER_OR_VACUITY`. The floor builder counts ν from
   the design variables before any candidate outcome and publishes the
   strata counted by cluster count, as `design_summary` does. At the 2006
   pseudo-origin ν was 63.
@@ -429,9 +470,10 @@ This replaces the audit's draft rule (§9.2) on the ruled basis.
 3. It computes the household-split floor (section 4's split, seeds
    0-99) and, without gating on it, the person-split floor.
 4. It computes each cell's tolerance (section 6) and se_up,c (section 7).
-   It counts the design strata by cluster count and ν (section 7). If
-   any stratum has one cluster, or three or more, it stops before any
-   candidate run (section 7).
+   It counts the design strata by cluster count, applies section 7's
+   stratum rule, and publishes the counts, the merges, L and ν before any
+   candidate run. If ν is 0, B2 stops here as `WEAK_POWER_OR_VACUITY`
+   (sections 5 and 7).
 5. It applies eligibility, the ladder and the guards (section 5) inside
    the ruled surface (d781). Power comes from the ruled binding
    evaluation (`scripts/track_b_b0_1_ruled_power.py`, section 11):
@@ -489,7 +531,11 @@ against the repository.
   frame agreed within 1e-9, relative.
 - The record's outcome-blind flags are constants the script writes, not
   checks. The evidence that nothing after 2010 was read or recorded is
-  elsewhere:
+  elsewhere, with one exception. `transport.support_2010` copies B2's
+  scored-support counts for reference years 2012 and 2014 from the frozen
+  record `docs/design/track_b_b0_1_counts.json` (protocol input 7). They
+  are presence counts, not split by earnings sign, and the record holds
+  nothing else about those years. The evidence:
   - the read guard refuses any other PSID open before it happens;
   - the opened files match the audit's pins and include no wave after
     2011;
@@ -759,8 +805,10 @@ the figure d781 cites.
 
 **The six together fall short of 0.90.** On the binding evaluation they
 reach 0.813, and every evaluation that keeps the t value is below 0.90.
-Only the most lenient combination reaches the bar, at 0.907, and it drops
-the t value, the upper design ratios and the gating variances together.
+Of the evaluations on the ruled configuration (household resampling,
+d781's basis, excepted), only the most lenient combination reaches the
+bar, at 0.907. It drops the t value, the upper design ratios and the
+gating variances together.
 
 - `earn_p50.older` is the weak cell. It has the largest design ratio
   (95th percentile 1.259) and the largest gap variance. On its own it
@@ -1060,10 +1108,14 @@ decisions and decide nothing:
     the planning functions' multiplicities for replicates 0-99.
   - A second test checks that the scorer never reads
     `BOOTSTRAP_ROOT_SEED`.
-- Refuse, before any candidate run, any stratum with one cluster or with
-  three or more (section 7), and test the refusal on invented inputs.
-- Use t\*_m,ν with ν counted by the floor builder (section 7), and
-  publish the strata counted by cluster count before any candidate run.
+- Implement section 7's stratum rule: merge one-cluster strata, and use
+  exact Rao-Wu by integer copies at scale L. Test it on invented inputs,
+  including a differential test that at L = 1 it equals arm D's
+  multiplicities.
+- Use t\*_m,ν with ν counted by the floor builder after the merges
+  (section 7), and publish the strata counted by cluster count before any
+  candidate run. If ν is 0, stop at floor build as
+  `WEAK_POWER_OR_VACUITY`.
 - Name the gated surface in the headline (d781): earnings levels and
   zero rates only, with H and B3L relying on B2 for levels only.
 - Carry d1342 (option A). The floor builder runs section 5's ladder inside
@@ -1245,7 +1297,46 @@ Calls that took in excluded files, each mechanically:
   import every test module and print one count each;
 - `git diff --stat` and `--name-status` listings;
 - one rerun of the reads extractor on the round-1 export. The session did
-  not open the export (section 15).
+  not open the export (section 15);
+- the exposure inventory, rerun at each review head from round 2 on, which
+  reads every tracked file's bytes and records only line ranges, pattern
+  families and counts;
+- the review-root builder, run for each round from 2 on, which extracts
+  the head, removes the denied files unread and scans the rest only for
+  the two codebook tokens.
+
+Further reads and actions of this session, recorded here in prose. No
+transcript-derived record exists for this session; only the first
+author's reads have one.
+
+- **B1 v2.** This session froze, registered and launched the B1 v2 run,
+  and published its result.
+  - It wrote both issue #42 comments: the registration, 6110674288, and
+    the result, 6113379406. It read no other #42 comment.
+  - It built B1's pinned environment and probed it without data.
+  - It never opened B1's raw output, its evidence files or its sealed
+    logs. It listed the output directory's file names and counted them,
+    listed the sealed directory's file sizes, and read each file's
+    modification time.
+  - Every B1 figure in this addendum comes from the frozen summarizer's
+    value-free summary, which reports statuses, counts and hashes only.
+  - The candidate-3 artifact fields it read are those listed above. Its
+    `provenance` holds row counts for M6's boundary-2014 run: the source
+    rows, the anchor's person count and the 2015-2019 truth rows. It
+    holds no earnings level, gap or floor.
+- **d1342.** This session drafted d1342's decision aid
+  (`trackb-ruled-power-20261011/OPTIONS.md` in the launch-evidence
+  directory).
+  - It had two GPT-6.1 Sol reviews of the ruled power and the aid, each on
+    a narrow root: the planning and power records, the power scripts and
+    tests, this addendum, the rulings and the aid.
+  - B1's freeze had five Sol reviews, on roots holding B1's code, its
+    registration and the candidate-3 artifact and sidecar.
+  - No root held a file on the §15.4 list.
+- **The B2 build.** This session briefed an Opus build lane to write B2's
+  floor builder, comparator and scorer in a standalone clone. Its tests
+  use invented data only. The brief forbids running any of it on PSID and
+  reading any §15.4 file or selection ledger.
 
 ## 15. The blinded review (Q6)
 
@@ -1267,7 +1358,10 @@ sharpened after round 1 (below).
   scanned with the inventory's patterns: the Track B design, the d693
   `RECOMMENDATION.md`, PR #490's two review comments, and the d693 and
   d622 ruling texts. They are the only launch-evidence material in the
-  root.
+  root. They are a deliberate exception to the Q6 rider's exclusion of
+  the launch-evidence directory. From round 2 the root also holds the
+  d765, d781 and d782 ruling texts and d1342's decision aid, nine copies
+  in all; from round 4 it also holds the d1342 ruling text, ten in all.
 - **Lane.** `subfleet run --task review -m opus -I -s read-only -D
   <root>`: Read, Glob and Grep only.
 - **Read log.** `scripts/track_b_b0_1_review_root.py readlog` extracts
@@ -1278,6 +1372,31 @@ sharpened after round 1 (below).
   not reads. When the harness saves an oversized result outside the
   root, the log records the notice, and the review is void only if a
   later call opens that file.
+  - Since Q6 round 6, the log also checks each Glob pattern and each
+    Grep file filter. One that is absolute, holds a `..` segment, or
+    names a denied path voids the review, even if it only confirms the
+    path's absence.
+  - Since Q6 round 7, a pattern also names a denied path when one of its
+    segments is the path's basename, or its stem followed by a dot, and
+    names the codebook directory when a segment is its last one. A
+    wildcard fragment of a name, such as `*name_part*`, is not
+    classified; the review prompt forbids it.
+  - Since Q6 round 8, the log expands a pattern's brace groups first, so
+    a name split across a group, such as `{stem,x}.md`, is read whole.
+    A pattern with more than 4,096 alternatives is not classified, and
+    voids the review.
+  - Since Q6 round 9, a segment that holds a denied name's whole stem
+    and, read as a wildcard, matches that name also names it: `stem*`,
+    `stem?md`, `stem[.]md`. An unbalanced brace is literal text, and the
+    scan goes on after it. Only a wildcard that holds part of a stem
+    stays unclassified.
+  - Each log's schema version records the rule it was made under. The
+    rule as it now stands is `track_b_b0_1_review_read_log.v6`.
+  - It also checks returned paths given relative to the root, as the
+    harness returns them.
+  - Rounds 5-9's logs were regenerated under the rule as it now stands.
+    Round 1's log came from another session's transcript, under the rule
+    as it stood then, and is not regenerated.
 - **Numbers.** Numerical reproduction is in the CI-pinned tests, not the
   reviewer's job.
 
@@ -1408,7 +1527,7 @@ place at this head:
 
 | Finding | Disposition |
 |---|---|
-| M: a stratum with three or more clusters would be resampled by the ordinary bootstrap, not Rao-Wu | Section 7 admits only two-cluster strata. B2's floor builder stops before any candidate run if any stratum has one cluster or three or more (sections 7, 9, 13) |
+| M: a stratum with three or more clusters would be resampled by the ordinary bootstrap, not Rao-Wu | Section 7 admits only two-cluster strata. B2's floor builder stops before any candidate run if any stratum has one cluster or three or more (sections 7, 9, 13). (Superseded by round 5's L3: the stratum rule is now fixed in section 7.) |
 | M: the reads extractor missed `git grep` output prefixed with a revision | The counter tests the field after a revision too, and a test pins it. The record was regenerated: two agent calls moved to "names or counts only". Section 14 and this section are restated |
 | M: the Codex read log approved a path built from `$PWD` | The read log voids any unquoted shell expansion. Tests cover `$NAME`, `$Ellipsis`, `$(...)` and backquotes, and allow single-quoted dollars. Under the fixed rule this round's log still counts |
 | L: "thirteen" scope-flagged calls; the record has fourteen | Corrected and pinned |
@@ -1487,10 +1606,246 @@ root, with no shell and no web".
 - So rounds 2-4 count as additional independent reviews, which shaped
   the fixes above, not as the Q6 review of record.
 
-**Round 5** is the Q6 review of record, in round 1's form: Opus 5.5 in
-isolated-review mode, with Read, Glob and Grep only, no MCP servers, plan
-permission mode, the root as its only directory, and the Claude read log.
-Its record follows.
+**Round 5** was dispatched as the Q6 review of record, in round 1's
+form: Opus 5.5 in isolated-review mode, with Read, Glob and Grep only, no
+MCP servers, plan permission mode, the root as its only directory, and
+the Claude read log.
+A first dispatch, job `20261011-163220-b01-addendum-q6-r5`, was cancelled
+about a minute after launch so that master could be merged first. Its
+transcript holds only the session's start event and no tool call. Round 5
+reviews the head after that merge.
+
+**Round 5 (void as the Q6 review of record under the rule fixed after
+round 6): request changes.**
+
+- **Root.** `git archive` of `046480a`, 1,934 files, manifest
+  SHA-256 `5098b02ca4cfb2fa…`.
+  - The inventory rerun is
+    `docs/design/track_b_b0_1_addendum_q6_inventory_r5.json`. It flagged
+    nothing new.
+  - The same 27 files were removed whole, and four
+    code-map tables. The ten context copies went in.
+  - The root record is `docs/design/track_b_b0_1_addendum_q6_root_r5.json`.
+- **Lane.** Subfleet job `20261011-164355-b01-addendum-q6-r5b`, on Opus 5.5
+  in isolated-review mode with Read, Glob and Grep only, plan permission
+  mode and the root as its only directory. It ran on 2026-10-11 from
+  20:47 to 20:56 UTC and exited 0.
+  - Subfleet then marked the job lost, because a process of the lane
+    lingered after the exit receipt, and it exported no deliverable.
+  - The review below is the result event of the lane's own stream-json
+    transcript, copied verbatim.
+- **Read log.** `docs/design/track_b_b0_1_addendum_q6_readlog_r5.json`,
+  from that transcript, covers 45 tool calls. Every path named or
+  returned lies inside the root, and no oversized result was saved
+  outside it.
+  - One Glob's pattern names denied paths: an absence check that
+    returned nothing. The first log missed it, because it did not
+    classify patterns; Q6 round 6 found the gap.
+  - Under the rule as fixed after round 6, which voids a review whose
+    calls name a denied path, round 5 does not count as the Q6 review of
+    record. Its findings were answered all the same.
+- **Verdict.** `REQUEST CHANGES`, with no high finding, one medium and five
+  low. The review is `docs/design/track_b_b0_1_addendum_q6_review_r5.md`.
+  - It met no B2 outcome and no 2008/2010 selector outcome.
+  - It checked every figure in section 11's ruled subsection by hand.
+  - It found the rulings carried exactly, and the protocol block pinned
+    and last in the file.
+
+| Finding | Disposition |
+|---|---|
+| M1: section 14 omitted this session's #42 comments, its part in B1's run, whether it opened B1's output, d1342's aid and its reviews, and that its reads have no extractor record | Section 14 adds each, and states that no B1 output, evidence file or sealed log was opened |
+| L1: "only the most lenient" sat beside household resampling's 0.952 | Both sentences now say "of the evaluations on the ruled configuration (household resampling, d781's basis, excepted)" |
+| L2: the t value's authority was cited only to the round-1 rider | Section 2 adds that d1342's question named "t at 63 df" and Max ruled A on that configuration |
+| L3: the stratum fallback was left to an amendment after the floor | Section 7 fixes it now: one-cluster strata merge into the nearest stratum code; strata with three or more clusters get exact Rao-Wu by integer copies at scale L; ν is counted after the merges. Sections 9 and 13 follow |
+| L4: stale wording on the ladder's floor and on the context copies | Both are corrected |
+| L5: "nothing after 2010 was recorded" | Section 10 names the 2012/2014 support counts the record copies from the frozen audit record |
+
+**Round 6: request changes.**
+
+- **Root.** `git archive` of `0487adc`, 1,938 files, manifest SHA-256
+  `13c185da7f233ab4…`.
+  - The inventory rerun is
+    `docs/design/track_b_b0_1_addendum_q6_inventory_r6.json`. It flagged
+    nothing new.
+  - The same 27 files were removed whole, and four code-map tables. The
+    ten context copies went in.
+  - The root record is `docs/design/track_b_b0_1_addendum_q6_root_r6.json`.
+- **Lane.** Subfleet job `20261011-170343-b01-addendum-q6-r6`, in round 5's
+  form (Opus 5.5, isolated review, Read, Glob and Grep only). It ran on
+  2026-10-11 from 21:13 to 21:22 UTC and exited 0.
+  - As in round 5, Subfleet then marked the job lost because a lane
+    process lingered, so the review is the result event of the lane's
+    transcript, copied verbatim.
+- **Read log.** `docs/design/track_b_b0_1_addendum_q6_readlog_r6.json`,
+  under the fixed rule, covers 37 tool calls.
+  - Every path named or returned, the relative result paths included, lies
+    inside the root.
+  - No pattern is absolute, leaves the root or names a denied path.
+  - So round 6 counts. It is the first Q6 review of record under the rule
+    as fixed.
+- **Verdict.** `REQUEST CHANGES`, with no high finding, one medium and
+  three low. The review is
+  `docs/design/track_b_b0_1_addendum_q6_review_r6.md`.
+  - It met no B2 outcome and no 2008/2010 selector outcome.
+  - It checked each of round 5's dispositions in substance, and section
+    11's figures.
+
+| Finding | Disposition |
+|---|---|
+| M1: the Claude read log classified neither Glob patterns nor results given relative to the root, so round 5's Glob naming denied paths went unflagged | The read log classifies Glob patterns and Grep file filters: absolute, `..` or denied-name patterns void the review. It takes relative result lines as paths. Tests cover each case, and four mutants fail them. Rounds 5 and 6's logs were regenerated, round 5 no longer counts, and this section and the plan's read-log rule say so |
+| L1: element 8 gave arm D's rule and the stratum rule side by side | Element 8 applies arm D's rule to two-cluster strata only; other strata follow the stratum rule. Round 2's row is marked superseded |
+| L2: the one-cluster merge was ambiguous when such strata are adjacent | They merge into the nearest stratum with two or more clusters, the lower code on a tie. If there is none, all merge into one. Merges apply together, then the strata are counted |
+| L3: section 14 omitted the inventory reruns and root builds | Section 14 lists both |
+
+**Round 7: approve.**
+
+- **Root.** `git archive` of `05dbd5b`, 1,942 files, manifest SHA-256
+  `a999c4d27cf77146…`.
+  - The inventory rerun is
+    `docs/design/track_b_b0_1_addendum_q6_inventory_r7.json`. It flagged
+    nothing new.
+  - The same 27 files were removed whole, and four code-map tables. The
+    ten context copies went in.
+  - The root record is `docs/design/track_b_b0_1_addendum_q6_root_r7.json`.
+- **Lane.** Subfleet job `20261011-173633-b01-addendum-q6-r7`, in round 6's
+  form, served by Opus 5.5. It ran on 2026-10-11 from 21:40 to 21:48 UTC
+  and exited 0. Its prompt added that no pattern or file filter may name
+  a file expected to be absent, even to confirm that it is.
+- **Read log.** `docs/design/track_b_b0_1_addendum_q6_readlog_r7.json`
+  covers 32 tool calls. Every path named or returned lies inside the
+  root, and no pattern is absolute, leaves the root or names a denied
+  path, under the rule as tightened after this round. Round 7 counts.
+- **Verdict.** `APPROVE`, with no high or medium finding and three low.
+  The review is `docs/design/track_b_b0_1_addendum_q6_review_r7.md`.
+  - It met no B2 outcome and no 2008/2010 selector outcome.
+  - It checked each of round 6's dispositions in substance, section 11's
+    figures against the record, and the rulings' quotations against the
+    ruling texts.
+
+| Finding | Disposition |
+|---|---|
+| L1: the read log flagged a denied file only when a pattern held its full path, not its basename | A segment equal to a denied basename, or to its stem followed by a dot, or to the codebook directory's last segment, now voids the review. Tests cover a nested denied file by basename and by stem, and the codebook directory; four mutants fail them. Wildcard fragments stay unclassified, and the plan's rule says so. Rounds 5-7's logs were regenerated: round 5 stays void, rounds 6 and 7 count |
+| L2: element 8 kept "only two-cluster strata are admitted" and "a stratum with one cluster adds nothing", against its own stratum rule | The heading now says arm D's rule is Rao-Wu only for two-cluster strata. ν is counted after the merges, where a merged one-cluster stratum adds one. `design_degrees_of_freedom` follows the same reading and raises when ν would be 0; two mutants fail its test. The 2006 record had no one-cluster stratum, so ν there stays 63 and no figure moves. The review's edge case, ν = 0 after the merges, now stops B2 at floor build |
+| L3: the context-copy sentence read as if round 2 held the d1342 ruling | Round 2 held nine copies; the d1342 ruling went in from round 4, making ten |
+
+Round 7 approved `05dbd5b`, and these fixes changed the head after it.
+Round 8 confirms them.
+
+**Round 8: approve.**
+
+- **Root.** `git archive` of `1e4d226`, 1,946 files, manifest SHA-256
+  `73c0d9c2f409eaaa…`.
+  - The inventory rerun is
+    `docs/design/track_b_b0_1_addendum_q6_inventory_r8.json`. It flagged
+    nothing new.
+  - The same 27 files were removed whole, and four code-map tables. The
+    ten context copies went in.
+  - The root record is `docs/design/track_b_b0_1_addendum_q6_root_r8.json`.
+- **Lane.** Subfleet job `20261011-175818-b01-addendum-q6-r8`, in round 7's
+  form, served by Opus 5.5. It ran on 2026-10-11 from 22:11 to 22:14 UTC
+  and exited 0. Its prompt named the files changed since round 7 and asked
+  four questions: whether each round-7 finding is resolved in substance,
+  whether the changes bring a new problem, whether they touch the protocol
+  block or blindness, and whether section 15's round-7 record matches its
+  records.
+- **Read log.** `docs/design/track_b_b0_1_addendum_q6_readlog_r8.json`
+  covers 22 tool calls. Every path named or returned lies inside the
+  root, and no pattern is absolute, leaves the root or names a denied
+  path, under the rule as tightened after this round. Round 8 counts.
+- **Verdict.** `APPROVE`, with no high or medium finding and two low.
+  The review is `docs/design/track_b_b0_1_addendum_q6_review_r8.md`.
+  - It met no B2 outcome and no 2008/2010 selector outcome.
+  - It found each of round 7's three findings fixed in substance, the
+    ν = 0 rule correct and no figure on the 2006 record moved.
+
+| Finding | Disposition |
+|---|---|
+| L1: the read log missed a denied file named by its stem inside braces, with the extension outside them | `pattern_kind` expands brace groups before it classifies, nested groups included, and still cuts the pattern as written at its braces. Property tests check that a denied name cut into a brace group at any two points is flagged, that a pattern naming nothing denied is not, and that the classifier flags whatever round 7's rule flagged. Six mutants fail them. Rounds 5-8's logs were regenerated: round 5 stays void, rounds 6-8 count |
+| L2: section 5 did not list the ν = 0 trigger for `WEAK_POWER_OR_VACUITY` | Section 5's rule, section 9's step 4 and the "To B2" list now name it |
+
+Its observation, that the log lists Grep's context-line prefixes as
+paths inside the root, is left as it is: it adds entries and hides none.
+
+Round 8 approved `1e4d226`, and these fixes changed the head after it.
+Round 9 confirms them.
+
+**Round 9: approve.**
+
+- **Root.** `git archive` of `266dd96`, 1,950 files, manifest SHA-256
+  `103a6f11174bef67…`.
+  - The inventory rerun is
+    `docs/design/track_b_b0_1_addendum_q6_inventory_r9.json`. It flagged
+    nothing new.
+  - The same 27 files were removed whole, and four code-map tables. The
+    ten context copies went in.
+  - The root record is `docs/design/track_b_b0_1_addendum_q6_root_r9.json`.
+- **Lane.** Subfleet job `20261011-185659-b01-addendum-q6-r9`, in round 8's
+  form. Its transcript records Opus 5.5 and the tools Glob, Grep and
+  Read. It ran on 2026-10-11 from 22:59 to 23:04 UTC and exited 0.
+  - As in rounds 5 and 6, Subfleet then marked the job lost because a
+    lane process lingered, so the review is the result event of the
+    lane's transcript, copied verbatim.
+  - Its prompt named the files changed since round 8, asked round 8's
+    four questions of them, and asked of each finding whether it bears on
+    the frozen record or only on the review tooling.
+- **Read log.** `docs/design/track_b_b0_1_addendum_q6_readlog_r9.json`
+  covers 20 tool calls. Every path named or returned lies inside the
+  root, and no pattern is absolute, leaves the root or names a denied
+  path, under the rule as tightened after this round. Round 9 counts.
+- **Verdict.** `APPROVE`, with no high or medium finding and two low.
+  The review is `docs/design/track_b_b0_1_addendum_q6_review_r9.md`.
+  - It met no B2 outcome and no 2008/2010 selector outcome.
+  - It found the B2 record sound and both of round 8's findings fixed in
+    substance. It marks both of its own findings as bearing on the review
+    tooling only.
+
+| Finding | Disposition |
+|---|---|
+| L1 (tooling): an unbalanced `{` before a brace group stopped that group from being expanded | `brace_expansions` keeps an unbalanced brace as literal text and scans on, and every alternative is cut at any brace or comma left in it. A property test puts unbalanced braces and commas before a group that splits a denied name |
+| L2 (tooling): a whole denied stem followed by a wildcard instead of a dot still passed | A segment that holds a denied name's whole stem and matches the name as a wildcard is now denied. A property test replaces the extension, or any of its characters, with wildcards. Four mutants fail the two fixes' tests. The plan's rule names the forms caught and the one left out |
+| Observation: the log's schema stayed v5 across round 8's fix | The schema is v6 for the rule as it stands, and the plan says a log's version records its rule. Rounds 5-9's logs were regenerated as v6: round 5 stays void, rounds 6-9 count |
+| Observation: rescoping cannot cure ν = 0 | Section 5 says the decision queued there is how the critical value is set |
+
+Round 9 approved `266dd96`, and these fixes changed the head after it.
+Round 10 confirms them.
+
+**Round 10: approve.**
+
+- **Root.** `git archive` of `1aa179e`, 1,954 files, manifest SHA-256
+  `f18f52572c4a5ae4…`.
+  - The inventory rerun is
+    `docs/design/track_b_b0_1_addendum_q6_inventory_r10.json`. It flagged
+    nothing new.
+  - The same 27 files were removed whole, and four code-map tables. The
+    ten context copies went in.
+  - The root record is
+    `docs/design/track_b_b0_1_addendum_q6_root_r10.json`.
+- **Lane.** Subfleet job `20261011-191406-b01-addendum-q6-r10`, in round
+  9's form. Its transcript records Opus 5.5 and the tools Glob, Grep and
+  Read. It ran on 2026-10-12 from 02:03 to 02:06 UTC and exited 0.
+- **Read log.** `docs/design/track_b_b0_1_addendum_q6_readlog_r10.json`
+  (schema v6) covers 21 tool calls. Every path named or returned lies
+  inside the root, and no pattern is absolute, leaves the root or names a
+  denied path. Round 10 counts.
+- **Verdict.** `APPROVE`, with no high or medium finding and one low,
+  which bears on the review tooling only and which the review says should
+  not hold the merge. The review is
+  `docs/design/track_b_b0_1_addendum_q6_review_r10.md`.
+  - It met no B2 outcome and no 2008/2010 selector outcome.
+  - It found round 9's findings and observations resolved, and the B2
+    record unchanged in everything it registers on.
+
+| Finding | Disposition |
+|---|---|
+| L1 (tooling): a character class holding a comma or a brace, such as `stem[.,]md`, hides a whole denied stem from the wildcard rule | Left for a follow-up change to the read-log tool, outside this addendum. No recorded round's pattern has a class of that shape. Until it lands, the rule's disclosure is as above: a wildcard holding the whole stem is caught when its classes hold no comma or brace |
+| Observation (tooling): the codebook files and the removed code-map tables are checked only through the codebook directory, not by their own basenames | The same follow-up passes every removed file to the read log |
+| Observation (record): section 5 forbade only a rescoped registration before Max rules, which a registration changing how the critical value is set when ν is 0 might not be | Section 5 now says no rescoped or amended registration is written before he rules |
+
+Rounds 7, 8, 9 and 10 each approved, and each counts. Round 10's head,
+`1aa179e`, is the last one a Q6 review read. After it this addendum
+gained only round 10's record, the one-word change to section 5 above,
+and the merge of `master`. An independent review of that change precedes
+the merge.
 
 ## 16. Protocol record
 

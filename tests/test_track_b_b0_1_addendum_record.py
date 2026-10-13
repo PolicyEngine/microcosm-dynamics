@@ -714,3 +714,145 @@ def test_ruled_power_figures_come_from_the_record(prose, ruled_record):
     ]
     for phrase in expected:
         assert phrase in prose, phrase
+
+
+@pytest.mark.parametrize(
+    "sentence",
+    [
+        # Q6 round 5: the stratum rule is fixed before the floor; round
+        # 6 (L2) made the merge target unambiguous
+        "Such a stratum is merged into the nearest stratum by code among "
+        "the strata with two or more clusters, the lower code on a tie",
+        "All merges are applied together, before anything else",
+        "Exact Rao-Wu, by integer copies",
+        "ν is Σ_h (n_h - 1) after the merges",
+        # Q6 round 5: the revision session's B1 exposure
+        "It never opened B1's raw output, its evidence files or its sealed "
+        "logs",
+        "No transcript-derived record exists for this session",
+        # Q6 round 5: the t value's authority
+        '"d781 six level cells, d782 Rao-Wu SE, t at 63 df"',
+    ],
+)
+def test_addendum_carries_the_round_5_fixes(prose, sentence):
+    assert sentence in prose
+
+
+@pytest.mark.parametrize(
+    "sentence",
+    [
+        # Q6 round 6 L1: arm D's rule binds only two-cluster strata
+        "**Two-cluster strata** follow arm D's `design_multiplicities` "
+        "rule",
+        "**Other strata** follow the stratum rule below, not arm D.",
+        # Q6 round 6 M1: the read log classifies patterns
+        "Since Q6 round 6, the log also checks each Glob pattern and each "
+        "Grep file filter",
+        "round 5 does not count as the Q6 review of record",
+        # Q6 round 6 L3: section 14 lists the inventory and root builds
+        "the exposure inventory, rerun at each review head from round 2 on",
+        "the review-root builder, run for each round from 2 on",
+    ],
+)
+def test_addendum_carries_the_round_6_fixes(prose, sentence):
+    assert sentence in prose
+
+
+@pytest.mark.parametrize(
+    "sentence",
+    [
+        # Q6 round 7 L1: patterns naming a denied file by basename or stem
+        "Since Q6 round 7, a pattern also names a denied path when one of "
+        "its segments is the path's basename, or its stem followed by a dot",
+        # Q6 round 7 L2: one reading of nu, after the merges
+        "**Arm D's rule is Rao-Wu only for two-cluster strata (Q6 round 2).**",
+        "B2's truth-support persons after the stratum rule's merges",
+        "A one-cluster stratum merged into another adds its cluster there, "
+        "and so one degree of freedom.",
+        "If ν is 0 after the merges, which needs every truth-support person "
+        "in one cluster, t\\*_m,ν is undefined and B2 stops at floor build",
+        # Q6 round 7 L3: the context copies by round
+        "d765, d781 and d782 ruling texts and d1342's decision aid, nine "
+        "copies in all; from round 4 it also holds the d1342 ruling text, "
+        "ten in all.",
+        "**Round 7: approve.**",
+    ],
+)
+def test_addendum_carries_the_round_7_fixes(prose, sentence):
+    assert sentence in prose
+
+
+@pytest.mark.parametrize(
+    "sentence",
+    [
+        # Q6 round 8 L1: brace groups are expanded before classifying
+        "Since Q6 round 8, the log expands a pattern's brace groups first",
+        # Q6 round 8 L2: every place that lists the floor-build stops
+        "**If the ladder ends below 0.90, a guard fails, or ν is 0 after "
+        "section 7's merges.** B2 is `WEAK_POWER_OR_VACUITY`",
+        "If ν is 0, B2 stops here as `WEAK_POWER_OR_VACUITY` (sections 5 "
+        "and 7).",
+        "If ν is 0, stop at floor build as `WEAK_POWER_OR_VACUITY`.",
+        "**Round 8: approve.**",
+    ],
+)
+def test_addendum_carries_the_round_8_fixes(prose, sentence):
+    assert sentence in prose
+
+
+@pytest.mark.parametrize(
+    "sentence",
+    [
+        # Q6 round 9: the read-log rule as it stands, and its version
+        "Since Q6 round 9, a segment that holds a denied name's whole stem "
+        "and, read as a wildcard, matches that name also names it",
+        "The rule as it now stands is `track_b_b0_1_review_read_log.v6`.",
+        # Q6 round 9: what is queued when nu is 0
+        "Rescoping the surface or a tolerance cannot cure ν = 0, so there "
+        "the decision queued is how the critical value is set.",
+        "**Round 9: approve.**",
+    ],
+)
+def test_addendum_carries_the_round_9_fixes(prose, sentence):
+    assert sentence in prose
+
+
+@pytest.mark.parametrize(
+    "sentence",
+    [
+        # Q6 round 10: the stop at floor build forbids any changed
+        # registration before Max rules
+        "No rescoped or amended registration is written before he rules.",
+        "**Round 10: approve.**",
+        "Rounds 7, 8, 9 and 10 each approved, and each counts.",
+    ],
+)
+def test_addendum_carries_the_round_10_record(prose, sentence):
+    assert sentence in prose
+
+
+@pytest.mark.parametrize("round_number", [5, 6, 7, 8, 9, 10])
+def test_committed_read_logs_follow_the_rule_as_it_stands(round_number):
+    """Rounds 5-10's logs are made under the current rule: round 5 is
+    void, and every later round counts."""
+    path = (
+        ROOT
+        / "docs"
+        / "design"
+        / f"track_b_b0_1_addendum_q6_readlog_r{round_number}.json"
+    )
+    log = json.loads(path.read_text(encoding="utf-8"))
+    assert log["schema"] == "track_b_b0_1_review_read_log.v6"
+    assert log["review_counts"] is (round_number != 5)
+
+
+@pytest.mark.parametrize(
+    "stale",
+    [
+        "Only two-cluster strata are admitted",
+        "so a stratum with one cluster adds nothing",
+        "d765, d781, d782 and d1342 ruling texts and d1342's decision aid",
+    ],
+)
+def test_addendum_drops_round_7_stale_wording(prose, stale):
+    assert stale not in prose

@@ -11,6 +11,8 @@ import sys
 from pathlib import Path
 
 import pytest
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -200,7 +202,12 @@ def test_read_log_ignores_quoted_paths_and_records_harness_notices(tmp_path):
     assert log["review_counts"] is True
     assert log["harness_persisted_outputs"] == [saved]
     assert log["persisted_outputs_opened"] == []
-    assert set(log["paths"]) == {str(root / "docs/keep.md"), str(root)}
+    assert set(log["paths"]) == {
+        str(root / "docs/keep.md"),
+        str(root),
+        "pattern:**/*.md",
+    }
+    assert log["paths"]["pattern:**/*.md"] == "inside_root"
 
     lines += [call("o", "Read", file_path=saved)]
     transcript.write_text("\n".join(lines), encoding="utf-8")
@@ -384,3 +391,411 @@ def test_codex_read_log_exempts_programs_only_in_program_position(tmp_path):
         _codex_transcript(tmp_path, commands), root, ["docs/denied.md"]
     )
     assert log["review_counts"] is True, log["flagged_kinds"]
+
+
+def _claude_transcript(tmp_path, blocks):
+    lines = [json.dumps({"message": {"content": [block]}}) for block in blocks]
+    path = tmp_path / "claude.jsonl"
+    path.write_text("\n".join(lines), encoding="utf-8")
+    return path
+
+
+@pytest.mark.parametrize(
+    ("blocks", "counts"),
+    [
+        # Q6 round 6: a Glob pattern naming a denied path, even one that
+        # only confirms absence, voids the review
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g1",
+                    "name": "Glob",
+                    "input": {"pattern": "{gates.yaml,docs/denied.md}"},
+                },
+                {"type": "tool_result", "tool_use_id": "g1", "content": ""},
+            ],
+            False,
+        ),
+        # an absolute or escaping pattern voids it
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g2",
+                    "name": "Glob",
+                    "input": {"pattern": "../**/*.md"},
+                }
+            ],
+            False,
+        ),
+        # a relative result path to a denied file voids it
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g3",
+                    "name": "Grep",
+                    "input": {"pattern": "bound", "glob": "*.md"},
+                },
+                {
+                    "type": "tool_result",
+                    "tool_use_id": "g3",
+                    "content": [
+                        {"type": "text", "text": "docs/denied.md:3:bound"}
+                    ],
+                },
+            ],
+            False,
+        ),
+        # a relative result path that escapes voids it
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g4",
+                    "name": "Glob",
+                    "input": {"pattern": "*.md"},
+                },
+                {
+                    "type": "tool_result",
+                    "tool_use_id": "g4",
+                    "content": [{"type": "text", "text": "../elsewhere.md"}],
+                },
+            ],
+            False,
+        ),
+        # Q6 round 7 L1: a nested denied file named by its basename, by its
+        # stem before a dot, or the codebook directory by its last segment
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g6",
+                    "name": "Glob",
+                    "input": {"pattern": "**/deep_denied.md"},
+                }
+            ],
+            False,
+        ),
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g7",
+                    "name": "Grep",
+                    "input": {"pattern": "x", "glob": "{a.md,deep_denied.*}"},
+                }
+            ],
+            False,
+        ),
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g8",
+                    "name": "Glob",
+                    "input": {"pattern": "**/psid_codebook_field_evidence/*"},
+                }
+            ],
+            False,
+        ),
+        # Q6 round 8 L1: a denied name split across a brace group, a
+        # brace alternative that leaves the root, and a group too large
+        # to expand
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g12",
+                    "name": "Glob",
+                    "input": {"pattern": "**/{deep_denied,x}.md"},
+                }
+            ],
+            False,
+        ),
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g13",
+                    "name": "Grep",
+                    "input": {
+                        "pattern": "x",
+                        "glob": "deep_{x,den{ied,y}}.md",
+                    },
+                }
+            ],
+            False,
+        ),
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g14",
+                    "name": "Glob",
+                    "input": {"pattern": "{/etc,docs}/*.md"},
+                }
+            ],
+            False,
+        ),
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g15",
+                    "name": "Glob",
+                    "input": {"pattern": "{a,b}" * 13},
+                }
+            ],
+            False,
+        ),
+        # an unbalanced group is literal to the tool; its pieces are
+        # still read
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g16",
+                    "name": "Glob",
+                    "input": {"pattern": "{deep_denied.md,x"},
+                }
+            ],
+            False,
+        ),
+        # Q6 round 9 L1: an unbalanced brace before a group is literal
+        # text, and the group after it still expands
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g17",
+                    "name": "Glob",
+                    "input": {"pattern": "{,deep_{denied,y}.md"},
+                }
+            ],
+            False,
+        ),
+        # Q6 round 9 L2: a whole denied stem with a wildcard in place of
+        # the dot or the extension
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g18",
+                    "name": "Glob",
+                    "input": {"pattern": "**/deep_denied?md"},
+                }
+            ],
+            False,
+        ),
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g19",
+                    "name": "Grep",
+                    "input": {"pattern": "x", "glob": "deep_denied[.]md"},
+                }
+            ],
+            False,
+        ),
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g20",
+                    "name": "Glob",
+                    "input": {"pattern": "docs/**/deep_denied*"},
+                }
+            ],
+            False,
+        ),
+        # broad patterns and wildcard fragments name nothing, and count
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g9",
+                    "name": "Glob",
+                    "input": {"pattern": "**/*"},
+                },
+                {
+                    "type": "tool_use",
+                    "id": "g10",
+                    "name": "Glob",
+                    "input": {"pattern": "**/*deep*"},
+                },
+                {
+                    "type": "tool_use",
+                    "id": "g11",
+                    "name": "Grep",
+                    "input": {"pattern": "x", "glob": "deep_denied_notes.md"},
+                },
+            ],
+            True,
+        ),
+        # ordinary relative results inside the root, and a Grep regex that
+        # mentions a denied file's name as text, count
+        (
+            [
+                {
+                    "type": "tool_use",
+                    "id": "g5",
+                    "name": "Grep",
+                    "input": {"pattern": "gates.yaml", "path": "docs"},
+                },
+                {
+                    "type": "tool_result",
+                    "tool_use_id": "g5",
+                    "content": [
+                        {"type": "text", "text": "docs/keep.md:1:gates.yaml"}
+                    ],
+                },
+            ],
+            True,
+        ),
+    ],
+)
+def test_claude_read_log_checks_patterns_and_relative_results(
+    tmp_path, blocks, counts
+):
+    root = _invented_root(tmp_path)
+    log = review_root.read_log(
+        _claude_transcript(tmp_path, blocks),
+        root,
+        ["docs/denied.md", "gates.yaml", "docs/sub/deep_denied.md"],
+    )
+    assert log["review_counts"] is counts, log["paths_outside_root_or_denied"]
+
+
+# Brace expansion and the pattern classifier (Q6 round 8 L1).
+
+DENIED = ["docs/denied.md", "gates.yaml", "docs/sub/deep_denied.md"]
+_plain = st.text(alphabet="xyz*?", max_size=4)
+
+
+def test_brace_expansions_follow_glob_semantics():
+    expand = review_root.brace_expansions
+    assert expand("a{b,c}d") == ["abd", "acd"]
+    assert expand("a{b,{c,d}}e") == ["abe", "ace", "ade"]
+    assert expand("x{,y}") == ["x", "xy"]
+    assert expand("{a,b}{c,d}") == ["ac", "ad", "bc", "bd"]
+    # no comma at the group's own depth, or no closing brace: literal
+    assert expand("{a}") == ["{a}"]
+    assert expand("{a{b,c}}") == ["{ab}", "{ac}"]
+    assert expand("{a,b") == ["{a,b"]
+    # Q6 round 9 L1: the scan goes on after an unbalanced brace
+    assert expand("{,a{b,c}d") == ["{,abd", "{,acd"]
+    assert expand("a}{b,c}{d") == ["a}b{d", "a}c{d"]
+    assert expand("plain/*.md") == ["plain/*.md"]
+    with pytest.raises(OverflowError):
+        expand("{a,b}" * 13)
+    assert len(expand("{a,b}" * 12)) == review_root.BRACE_LIMIT
+    assert review_root.pattern_kind("{a,b}" * 13, DENIED) == "unclassified"
+
+
+@settings(max_examples=200, deadline=None)
+@given(
+    prefix=_plain,
+    suffix=_plain,
+    alternatives=st.lists(_plain, min_size=2, max_size=5),
+)
+def test_one_brace_group_expands_to_its_alternatives(
+    prefix, suffix, alternatives
+):
+    pattern = prefix + "{" + ",".join(alternatives) + "}" + suffix
+    assert review_root.brace_expansions(pattern) == [
+        prefix + alternative + suffix for alternative in alternatives
+    ]
+
+
+@settings(max_examples=300, deadline=None)
+@given(data=st.data())
+def test_a_denied_name_split_across_a_brace_group_is_flagged(data):
+    """Invariant: however a denied basename is cut into a brace group,
+    under any directory prefix, the pattern is classed as denied."""
+    name = data.draw(
+        st.sampled_from([Path(d).name for d in DENIED])
+        | st.just(Path(review_root.CODEBOOK_DIR).name)
+    )
+    start = data.draw(st.integers(0, len(name)))
+    stop = data.draw(st.integers(start, len(name)))
+    others = data.draw(st.lists(_plain, min_size=1, max_size=3))
+    place = data.draw(st.integers(0, len(others)))
+    group = [*others[:place], name[start:stop], *others[place:]]
+    prefix = data.draw(st.sampled_from(["", "**/", "docs/", "*/x/"]))
+    pattern = prefix + name[:start] + "{" + ",".join(group) + "}" + name[stop:]
+    assert review_root.pattern_kind(pattern, DENIED) == "denied", pattern
+
+
+@settings(max_examples=300, deadline=None)
+@given(pattern=st.text(alphabet="xyz*?/{},", max_size=18))
+def test_a_pattern_naming_nothing_denied_stays_inside_the_root(pattern):
+    """Invariant: a relative pattern with no dot and none of the denied
+    names' letters is never flagged."""
+    kind = review_root.pattern_kind(pattern, DENIED)
+    absolute = any(
+        text.startswith("/") for text in review_root.brace_expansions(pattern)
+    )
+    assert kind == ("outside_root" if absolute else "inside_root"), pattern
+
+
+@settings(max_examples=200, deadline=None)
+@given(pattern=st.text(alphabet="ab./{},*", max_size=14))
+def test_the_classifier_is_no_weaker_than_the_round_7_rule(pattern):
+    """Differential: whatever the round-7 segment rule flagged on the
+    pattern as written, the expanding classifier flags too."""
+    denied = ["a/b.a", "ab"]
+    names = {"b.a", "ab", Path(review_root.CODEBOOK_DIR).name}
+    stems = {"b"}
+    pieces = pattern.replace("{", "/").replace("}", "/").replace(",", "/")
+    old_denied = any(d in pattern for d in denied) or any(
+        piece in names or any(piece.startswith(f"{s}.") for s in stems)
+        for piece in pieces.split("/")
+    )
+    old_outside = pattern.startswith(("/", "~")) or ".." in pieces.split("/")
+    kind = review_root.pattern_kind(pattern, denied)
+    if old_outside:
+        assert kind == "outside_root", pattern
+    elif old_denied:
+        assert kind == "denied", pattern
+
+
+@settings(max_examples=300, deadline=None)
+@given(data=st.data())
+def test_a_whole_stem_with_a_wildcard_tail_is_flagged(data):
+    """Invariant (Q6 round 9 L2): a segment holding a denied file's whole
+    stem, with any of its extension's characters replaced by ``?`` or a
+    one-character class, or the extension by ``*``, is classed as denied."""
+    name = data.draw(st.sampled_from([Path(d).name for d in DENIED]))
+    stem, extension = Path(name).stem, Path(name).suffix
+    tail = data.draw(
+        st.just("*")
+        | st.tuples(
+            *(st.sampled_from([char, "?", f"[{char}]"]) for char in extension)
+        ).map("".join)
+    )
+    # A head that demands a character, such as ``?``, would not match the
+    # name itself, so only an empty head or ``*`` belongs here.
+    head = data.draw(st.sampled_from(["", "*"]))
+    prefix = data.draw(st.sampled_from(["", "**/", "docs/", "*/x/"]))
+    pattern = prefix + head + stem + tail
+    assert review_root.pattern_kind(pattern, DENIED) == "denied", pattern
+
+
+@settings(max_examples=200, deadline=None)
+@given(
+    junk=st.text(alphabet="{,", min_size=1, max_size=3),
+    data=st.data(),
+)
+def test_literal_braces_do_not_hide_a_split_denied_name(junk, data):
+    """Invariant (Q6 round 9 L1): unbalanced opening braces and commas
+    before a group that splits a denied name do not stop it being read."""
+    name = data.draw(st.sampled_from([Path(d).name for d in DENIED]))
+    start = data.draw(st.integers(0, len(name)))
+    stop = data.draw(st.integers(start, len(name)))
+    pattern = (
+        junk + name[:start] + "{" + name[start:stop] + ",y}" + name[stop:]
+    )
+    assert review_root.pattern_kind(pattern, DENIED) == "denied", pattern

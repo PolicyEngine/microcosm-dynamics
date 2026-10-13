@@ -181,11 +181,14 @@ longitudinal structure. The project has to clear both bars.
 ### 6. The long horizon ships as a sensitivity surface
 
 The 75-year balance is dominated by assumptions no one has forecast
-well. The model therefore never publishes a point depletion date or
-75-year balance as a prediction; long-horizon outputs are surfaces
-over documented assumption ranges, and every output carries its
-domain-of-validity tier as metadata
-([domains-of-validity.md](domains-of-validity.md)).
+well. The model therefore will never publish a point depletion date
+or 75-year balance as a prediction; long-horizon outputs will be
+surfaces over documented assumption ranges, and every output will
+carry its domain-of-validity tier as metadata
+([domains-of-validity.md](domains-of-validity.md)). The model has
+published no national long-horizon estimate yet; its one long-horizon
+artifact is a report-only analogue on a closed PSID frame
+(`runs/m2_pseudo_projection_v1.json`).
 
 ## Deliverables
 
@@ -231,6 +234,9 @@ that cannot be extended later.
 
 ## Guide to the rest of the book
 
+- [parity-ledger.md](parity-ledger.md) lists what full parity with
+  DYNASIM for Social Security analysis requires and where each piece
+  stands today.
 - [funder-summary.md](funder-summary.md) is a standalone concept note
   describing the project's methodological premise and contribution.
 - [domains-of-validity.md](domains-of-validity.md) states which
