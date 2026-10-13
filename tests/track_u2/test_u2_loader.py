@@ -11,7 +11,7 @@ family file and setup per support wave, written at the registry layouts,
 and an individual file and setup -- in a temporary directory and runs
 :func:`loader.load_u2_inputs` against it, an unfrozen load with an
 invented authorization record (:data:`TEST_AUTHORIZATION`, naming no
-real decision), with four patches, each named where it is applied:
+real decision), with up to five patches, each named where it is applied:
 
 * ``sources.blockers`` returns no blocker, so stage 1 and the registry
   gate pass whatever the committed registries hold (the registry's own
@@ -20,7 +20,11 @@ real decision), with four patches, each named where it is applied:
   cite the real PSID setup files and codebooks, which are not staged
   here (the rehash itself is tested in ``test_u2_mappings.py``);
 * the inherited marriage-history and earnings readers return the
-  invented frames.
+  invented frames;
+* for a frozen load, ``loader.read_preregistration_evidence`` returns the
+  invented evidence record the load is given, standing in for the
+  committed record (none is committed yet; a frozen load refuses any
+  other record, ``test_a_frozen_load_needs_the_committed_record``).
 
 An audit hook refuses any open under the PSID directory -- the default
 one and the one under the account's real home, which differ when HOME is
@@ -205,6 +209,14 @@ def _load(
             "family_earnings_panel",
             lambda *, waves=None, data_dir=None: inputs.observed_earnings,
         )
+        if evidence is not None:
+            patch.setattr(
+                loader,
+                "read_preregistration_evidence",
+                lambda *args, **kwargs: loader.check_preregistration_evidence(
+                    evidence
+                ),
+            )
         _GUARD["active"], _GUARD["opened"] = True, []
         if evidence is None:
             return loader.load_u2_inputs(
@@ -877,8 +889,76 @@ def test_a_file_read_but_not_frozen_refuses(
         "psid_files_sha256": files,
         "psid_files_bundle_sha256": loader.files_bundle_sha256(files),
     }
-    with pytest.raises(loader.U2LoaderRefusal, match="read but not frozen"):
-        _load(tmp_path, u2_inputs, evidence=narrower)
+    # Review of 630a68c3, finding 1: the unfrozen file is refused when it
+    # is opened, before any of its records is parsed.
+    parsed = []
+    patch = pytest.MonkeyPatch()
+    original = loader.read_family_records
+    patch.setattr(
+        loader,
+        "read_family_records",
+        lambda handle, wave, gate: parsed.append(wave)
+        or original(handle, wave, gate),
+    )
+    try:
+        with pytest.raises(
+            loader.U2FrozenIdentityMismatch,
+            match="family/2017/FAM2017ER.txt is under the PSID directory "
+            "but not in the frozen",
+        ):
+            _load(tmp_path, u2_inputs, evidence=narrower)
+    finally:
+        patch.undo()
+    assert 2017 not in parsed
+    assert parsed == [2013, 2015]
+
+
+def test_a_frozen_load_needs_the_committed_record(
+    tmp_path, evidence, monkeypatch
+):
+    """Review of 630a68c3, finding 1: a frozen load reads PSID records only
+    against the committed pre-registration record, so a fabricated record,
+    however well-formed, cannot stand in for the authorization an unfrozen
+    load needs.  It refuses before any PSID path is resolved or any file
+    opened: while no record is committed, and when the committed one
+    differs."""
+
+    import sys
+
+    from populace_dynamics.data import psid
+
+    resolved, opened = [], []
+
+    def spy(event, args):
+        if event == "open" and args and str(args[0]).startswith(str(tmp_path)):
+            opened.append(str(args[0]))
+
+    sys.addaudithook(spy)
+    original = psid._resolve_data_dir
+    monkeypatch.setattr(
+        psid,
+        "_resolve_data_dir",
+        lambda data_dir: resolved.append(data_dir) or original(data_dir),
+    )
+    assert not loader.PREREGISTRATION_EVIDENCE_PATH.exists()
+    with pytest.raises(
+        loader.U2FrozenIdentityMismatch, match="no pre-registration evidence"
+    ):
+        loader.load_u2_inputs(data_dir=tmp_path, evidence=evidence)
+    committed = {**evidence, "input_frames_sha256": "0" * 64}
+    monkeypatch.setattr(
+        loader,
+        "read_preregistration_evidence",
+        lambda *args, **kwargs: loader.check_preregistration_evidence(
+            committed
+        ),
+    )
+    with pytest.raises(
+        loader.U2FrozenIdentityMismatch,
+        match="not the committed pre-registration record",
+    ):
+        loader.load_u2_inputs(data_dir=tmp_path, evidence=evidence)
+    assert resolved == [] and opened == []
 
 
 def _altered(evidence, **changes):

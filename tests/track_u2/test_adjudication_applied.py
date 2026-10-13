@@ -521,10 +521,13 @@ def test_d637_rulings_are_recorded_on_their_entries(documents, monkeypatch):
                 ruling["specification_section"],
                 ruling["amendment"],
             ) == ("d637", "2026-09-30", "16b", amendment)
-            # 2013's code-90 meaning (1b) has no adjudication record.
-            record = entry.get("adjudication", {"disposition": None})
-            assert record["disposition"] == D637_APPLIED[amendment], key
-            if record["disposition"] is not None:
+            if D637_APPLIED[amendment] is None:
+                # 2013's code-90 meaning (1b) has no adjudication record
+                # (review of 7950065b).
+                assert "adjudication" not in entry, key
+            else:
+                record = entry["adjudication"]
+                assert record["disposition"] == D637_APPLIED[amendment], key
                 assert record["amendment"] == number, key
             assert entry["status"] == "RESOLVED", key
             assert any(

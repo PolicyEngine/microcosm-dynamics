@@ -1524,6 +1524,60 @@ def _sex_unknown_target_in_excluded_unit_2019(
     return dataclasses.replace(base, persons=persons)
 
 
+#: The code-88 cohort target's recorded (ended) marriage: amendment 1c
+#: keeps a first-year cohabitor's own legal marital history.
+_CODE_88_TARGET_MARRIAGE = {
+    "marriage_order": 1,
+    "start_year": 1972,
+    "end_year": 1986,
+    "how_ended": "divorce",
+    "last_known_status": "divorced",
+    "most_recent_report_year": 2023,
+    "n_marriages": 1,
+    "n_records": 1,
+    "is_marriage": True,
+}
+
+
+def _code_88_target_with_ofum_income_2019(
+    base: cohort.U2Inputs,
+) -> cohort.U2Inputs:
+    income = base.family_income[2019]
+    family = int(
+        income.loc[
+            income["ofum_ss"].gt(0) & income["ofum_ssi"].gt(0), "interview"
+        ].iloc[0]
+    )
+    anchor = base.anchors[2019]
+    sequence = int(
+        anchor.loc[anchor["interview"].eq(family), "sequence"].max()
+    )
+    person = _PERSON_BASE - 4
+    changed = _added_person(
+        base,
+        person,
+        wave=2019,
+        interview=family,
+        sequence=sequence + 1,
+        relationship=88,
+        age=68,
+        weight=500.0,
+        sex="female",
+    )
+    history = base.marriage_history
+    record = {column: pd.NA for column in history.columns}
+    record.update(
+        person_id=person,
+        sex="female",
+        birth_year=1951,
+        **_CODE_88_TARGET_MARRIAGE,
+    )
+    history = pd.concat(
+        [history, pd.DataFrame([record])], ignore_index=True
+    ).astype(history.dtypes.to_dict())
+    return dataclasses.replace(changed, marriage_history=history)
+
+
 # Appended in order, so every earlier variant is unchanged.
 _VARIANT_BUILDERS = {
     "code_88_first_year_cohabitor": _code_88_first_year_cohabitor,
@@ -1543,6 +1597,9 @@ _VARIANT_BUILDERS = {
     ),
     "spouse_slot_occupant_without_family_spouse_2019": (
         _spouse_slot_occupant_without_family_spouse_2019
+    ),
+    "code_88_target_with_ofum_income_2019": (
+        _code_88_target_with_ofum_income_2019
     ),
 }
 _VARIANT_NOTES: dict[str, str] = {
@@ -1613,6 +1670,13 @@ _VARIANT_NOTES: dict[str, str] = {
         "FU': the family file's spouse age never decides slot occupancy "
         "(amendment 2, ratified by d637), so the slot flag and the roster "
         "disagree and the income rows refuse (refusal case)"
+    ),
+    "code_88_target_with_ofum_income_2019": (
+        "a code-88 first-year cohabitor born 1951, divorced in 1986, joins "
+        "the first 2019 family with OFUM Social Security and SSI: a U0 "
+        "target whose own observation has the OFUM role under amendment "
+        "1c (the family income basis in U4 and the OFUM SSI cap), keeps "
+        "its recorded marital history and is no spouse-slot occupant"
     ),
 }
 #: The generator's named variants (see :data:`_VARIANT_NOTES`).

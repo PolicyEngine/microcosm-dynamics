@@ -70,7 +70,7 @@ The cohort builder applies the two exclusions (`src/populace_dynamics/uniform_cu
 
 ## Max's ruling d637 applied (registry commits from 2026-10-11)
 
-Max ruled on the §16a amendments on 2026-09-30 (d637; specification §16b): amendments 2–5 ratified as written and amendment 6's option 1 ratified as an explicit amendment to draft-3 line 134. Each amendment's registry effect is its own reviewed commit, and `RATIFIED_AMENDMENTS` in `src/populace_dynamics/data/u2_source_registry.py` pins each applied amendment's entries, ruling and gate fields. Each ruled entry keeps its adjudication record and gains a `ruling`; an open question or refusal the ruling answers is kept as `superseded_question` or `superseded_refusal`. Max confirmed on 2026-10-12 that d637 ratified amendment 1's parts 1a–1c as written (d745), and their registry commits are listed here too.
+Max ruled on the §16a amendments on 2026-09-30 (d637; specification §16b): amendments 2–5 ratified as written and amendment 6's option 1 ratified as an explicit amendment to draft-3 line 134. Each amendment's registry effect is its own reviewed commit, and `RATIFIED_AMENDMENTS` in `src/populace_dynamics/data/u2_source_registry.py` pins each applied amendment's entries, ruling and gate fields. Each ruled entry keeps its adjudication record and gains a `ruling`; an open question or refusal the ruling answers is kept as `superseded_question` or `superseded_refusal`. Max confirmed on 2026-10-12 that d637 ratified amendment 1's parts 1a–1c as written (d745); the 1a, 1b and 1c rows below record their registry commits.
 
 | Amendment | Records | Registry effect |
 |---|---:|---|

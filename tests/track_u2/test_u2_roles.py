@@ -344,6 +344,71 @@ def test_code_88_takes_the_amendment_1c_convention(u2_inputs, monkeypatch):
         )
 
 
+def test_a_code_88_target_has_the_ofum_role_and_keeps_its_history(
+    u2_inputs, u2_params
+):
+    """Review of 1bcb8765, finding 1: a code-88 first-year cohabitor who is
+    itself a U0 target (born 1951, observed in 2019) in a family with OFUM
+    Social Security and SSI.  Under amendment 1c, and under both role
+    contexts, its own observation has the OFUM role and keeps its recorded
+    (ended) marriage; in U4 (the head/wife income unit) it keeps the
+    family income basis and the OFUM SSI cap, so a builder that gave it
+    the spouse slot's role would fail here."""
+
+    variant = invented.invented_variant(
+        u2_inputs, "code_88_target_with_ofum_income_2019"
+    )
+    anchor = variant.anchors[2019]
+    (person,) = set(anchor.loc[anchor["relationship"].eq(88), "person_id"])
+    for context in (
+        sources.RoleContext.declared(),
+        sources.RoleContext.from_registry(),
+    ):
+        built = cohort.build_u2_cohort(variant, role_context=context)
+        obs = built.observations
+        (row,) = obs[obs["person_id"].eq(person)].itertuples(index=False)
+        assert (row.birth_year, row.wave, row.member_role) == (
+            1951,
+            2019,
+            "ofum",
+        ), context.kind
+        assert (row.marital_status, row.marital_resolution) == (
+            "divorced",
+            "marriage_history",
+        ), context.kind
+        assert not row.married and pd.isna(row.spouse_person_id)
+    built = cohort.build_u2_cohort(
+        variant, role_context=sources.RoleContext.declared()
+    )
+    members = cohort.income_rows(built, variant).reset_index(drop=True)
+    spec = estimator.U2IncomeSpec(income_unit="head_wife")
+    out = estimator.u2_adjusted_incomes(
+        members,
+        spec,
+        context=estimator.U2EstimatorContext(sources.INVENTED_DECLARED),
+        data_provenance=ap.INVENTED,
+        life_table=u2_params.life_tables[spec.mortality_basis],
+        thresholds=u2_params.thresholds,
+        ssi=u2_params.ssi,
+    )
+    (index,) = members.index[members["person_id"].eq(person)]
+    row = members.loc[index]
+    assert row["member_role"] == "ofum"
+    assert out.loc[index, "income_basis"] == "family_unit"
+    assert row["ofum_ss"] > 0 and row["ofum_ssi"] > 0
+    assert row["head_ssi"] == row["wife_ssi"] == 0
+    # The OFUM SSI cap (U1's rule): the countable Social Security fall
+    # under the 13 percent cut, capped at the individual rate less the
+    # OFUM SSI, as the whole SSI offset.
+    general = 12 * u2_params.ssi.general_income_exclusion_monthly
+    ss, cut = float(row["ofum_ss"]), spec.cut_rate
+    fall = max(0.0, ss - general) - max(0.0, (1.0 - cut) * ss - general)
+    year = int(row["income_year"])
+    cap = max(0.0, u2_params.ssi.fbr_annual(year, False) - row["ofum_ssi"])
+    assert out.loc[index, "ssi_offset"] == pytest.approx(min(fall, cap))
+    assert out.loc[index, "ssi_offset"] > 0
+
+
 def test_declared_context_refuses_non_invented_inputs(u2_inputs, declared):
     caller = cohort.replace_provenance(u2_inputs, kind="caller_frames")
     with pytest.raises(cohort.U2CohortError, match="invented"):

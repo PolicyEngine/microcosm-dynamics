@@ -109,6 +109,7 @@ RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
         "disposition": "D",
         "fields": {
             "status": "RESOLVED",
+            "present": True,
             "action": "documented_rule",
             "income_role": "ofum",
             "spouse_slot": False,
@@ -121,6 +122,31 @@ RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
         ),
         "required": ("resolution", "ruling_effect", "completeness_disclosure"),
         "markers": ("completeness_disclosure",),
+        # Section 16a 1a: code 90 keeps the co-resident legal-spouse
+        # annuity life and relationship-based marital resolution, code 92
+        # section 3's nonspouse conventions; only code 90 keeps the
+        # inherited administrative birth support (section 3).
+        "governs": {
+            **{
+                key: (
+                    {
+                        "legal_spouse_annuity": True,
+                        "marital_resolution": True,
+                        "administrative_birth_support": True,
+                    },
+                    (),
+                )
+                for key in ("2015.relationship.90", "2017.relationship.90")
+            },
+            "2017.relationship.92": (
+                {
+                    "legal_spouse_annuity": False,
+                    "marital_resolution": False,
+                    "administrative_birth_support": False,
+                },
+                (),
+            ),
+        },
     },
     # 2013's inherited code-90 meaning was RESOLVED in milestone 1 and
     # carries no adjudication record (disposition None).
@@ -131,14 +157,17 @@ RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
         "disposition": None,
         "fields": {
             "status": "RESOLVED",
+            "present": True,
             "label": "Legal husband of Head",
             "action": "documented_rule",
             "income_role": "ofum",
             "spouse_slot": False,
             "legal_spouse_annuity": True,
             "marital_resolution": True,
+            "administrative_birth_support": True,
         },
         "absent": (
+            "adjudication",
             "refusal",
             "question",
             "blocking_dependencies",
@@ -415,6 +444,21 @@ RATIFIED_AMENDMENTS: dict[str, dict[str, Any]] = {
         "markers": ("registration_disclosure",),
     },
 }
+#: The prose fields an amendment's ``required`` may name: each must be a
+#: nonblank string (review of 630a68c3, finding 2); the other required
+#: fields keep their own types (a list of variables, a dict).
+_RULED_PROSE = frozenset(
+    {
+        "completeness_disclosure",
+        "condition",
+        "required_amendment",
+        "resolution",
+        "ruling_effect",
+        "superseded_question",
+        "superseded_refusal",
+        "use_restriction",
+    }
+)
 #: The rulings a registry entry may record.
 _RULED_DECISIONS = ("d637", "d1090")
 #: The d637 amendment each ruled entry belongs to, by (registry, id).
@@ -526,13 +570,14 @@ def _ratified_amendment(entry: dict[str, Any], name: str) -> None:
             raise SourceAdjudicationError(
                 f"d637 amendment {amendment} needs {field} for {entry['id']}"
             )
+    _fields(entry, {f: str for f in scope["required"] if f in _RULED_PROSE})
     if entry.get("blocking_dependencies"):
         raise SourceAdjudicationError(
             f"A d637 ruling applies only unblocked, for {entry['id']}"
         )
     record = entry.get("adjudication")
     if scope["disposition"] is None:
-        if record is not None:
+        if "adjudication" in entry:
             raise SourceAdjudicationError(
                 f"Unexpected adjudication record for {entry['id']}"
             )

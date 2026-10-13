@@ -193,8 +193,27 @@ def test_milestone_1b_moved_only_citations_and_prose():
 
 
 def _changed_keys(before, after):
+    """The keys whose presence or JSON value differs: a key added as null
+    is a change, and ``true`` is not ``1`` (review of e74a5546, finding
+    3)."""
     keys = set(before) | set(after)
-    return {k for k in keys if before.get(k, None) != after.get(k, None)}
+    return {
+        k
+        for k in keys
+        if k not in before
+        or k not in after
+        or json.dumps(before[k], sort_keys=True)
+        != json.dumps(after[k], sort_keys=True)
+    }
+
+
+def test_changed_keys_sees_a_key_added_as_null():
+    """Review of e74a5546, finding 3: the differential's field comparison
+    sees presence and JSON type, not just ``dict.get``."""
+    assert _changed_keys({"a": 1}, {"a": 1, "b": None}) == {"b"}
+    assert _changed_keys({"a": 1, "b": None}, {"a": 1}) == {"b"}
+    assert _changed_keys({"a": 1}, {"a": True}) == {"a"}
+    assert _changed_keys({"a": [1, {"x": 2}]}, {"a": [1, {"x": 2}]}) == set()
 
 
 def test_d1090_moved_only_the_ruled_gate_fields():

@@ -51,7 +51,8 @@ time; an unfrozen :func:`load_u2_inputs` refuses without that record,
 before the source preflight and before any PSID path is resolved
 (:class:`U2AuthorizationRefusal`).  The record only records the
 authorization; it does not grant one.  The registered run's load is
-frozen instead: its evidence binds every file and frame digest.
+frozen instead: its evidence, which must be the committed record, binds
+every file and frame digest.
 
 **Frozen identities** (section 14: "changed source bytes, changed frame
 digests ... refuse execution.  Pre-registration mapping checks resolve
@@ -62,9 +63,12 @@ the sealed ``input_frames_sha256`` (:func:`preregistration_evidence`,
 written by ``scripts/track_u2_structure.py``); the committed record lives
 at :data:`PREREGISTRATION_EVIDENCE_PATH`, and the registered run binds its
 hash, file hashes and frame digest into the registration binding.  Given
-that record, :func:`load_u2_inputs` rehashes every frozen file before any
-record is parsed and refuses a changed or missing one, then refuses a
-read file set or frame digest other than the frozen ones
+that record -- the committed one: any other, however well-formed,
+refuses before any PSID path is resolved -- :func:`load_u2_inputs`
+rehashes every frozen file before any record is parsed and refuses a
+changed or missing one, refuses to open any file under the PSID
+directory that the record does not freeze while it reads, then refuses
+a read file set or frame digest other than the frozen ones
 (:class:`U2FrozenIdentityMismatch`); the seal then records the evidence
 hash, which a registered run requires.
 
@@ -80,12 +84,16 @@ readers patched
 
 from __future__ import annotations
 
+import contextlib
+import contextvars
 import dataclasses
 import datetime
 import hashlib
 import json
+import os
 import re
-from collections.abc import Iterable, Mapping, Sequence
+import sys
+from collections.abc import Iterable, Iterator, Mapping, Sequence
 from pathlib import Path, PurePosixPath
 from types import MappingProxyType
 from typing import Any
@@ -553,18 +561,32 @@ def load_u2_inputs(
 
     ``evidence`` is the frozen pre-registration record
     (:func:`check_preregistration_evidence`).  The registered run passes
-    it; the section 20 step-4 pass, which writes it, passes nothing.  With
-    it, every frozen file is rehashed before any record is parsed
-    (:func:`check_frozen_files`), and after reading, the files read and
+    it; the section 20 step-4 pass, which writes it, passes nothing.  It
+    must be the committed, reviewed record
+    (:func:`read_preregistration_evidence`), not just any well-formed
+    one: a fabricated record would otherwise stand in for the
+    authorization an unfrozen load needs.  An absent or different record
+    refuses before any PSID path is resolved.  With it, every frozen file
+    is rehashed before any record is parsed (:func:`check_frozen_files`);
+    while records are read, opening any file under the PSID directory
+    that the record does not freeze refuses before the file is read
+    (:func:`_only_frozen_files`); and after reading, the files read and
     the frame digest must equal the frozen ones, or the load refuses
     (:class:`U2FrozenIdentityMismatch`).
     """
 
     if evidence is None:
         check_structural_pass_authorization(authorization)
-    frozen = (
-        None if evidence is None else check_preregistration_evidence(evidence)
-    )
+        frozen = None
+    else:
+        frozen = check_preregistration_evidence(evidence)
+        if frozen != read_preregistration_evidence():
+            raise U2FrozenIdentityMismatch(
+                "the evidence passed is not the committed pre-registration "
+                f"record ({PREREGISTRATION_EVIDENCE_PATH}): a frozen load "
+                "reads PSID records only against the reviewed record the "
+                "section 20 step-4 pass wrote"
+            )
     registries = sources.RegistrySet.committed()
     preflight = source_preflight(registries)
     # Stages 2 and 3 run only once every required route is resolved.
@@ -582,7 +604,12 @@ def load_u2_inputs(
                 "execution (section 14)"
             )
         check_frozen_files(frozen, data_root)
-    with psid2010.record_files_read(data_root) as files:
+    guard = (
+        contextlib.nullcontext()
+        if frozen is None
+        else _only_frozen_files(data_root, frozen["psid_files_sha256"])
+    )
+    with guard, psid2010.record_files_read(data_root) as files:
         incomes, wealth, pensions = {}, {}, {}
         for wave in sources.SUPPORT_WAVES:
             sps_path, txt_path = family._family_paths(wave, data_root)
@@ -838,6 +865,60 @@ def check_frozen_files(
             "changed source bytes refuse execution (section 14)"
         )
     return dict(frozen["psid_files_sha256"])
+
+
+#: The PSID directory and frozen files of the frozen load in progress
+#: (:func:`_only_frozen_files`), or ``None``.
+_FROZEN_OPENS: contextvars.ContextVar[
+    tuple[tuple[Path, ...], frozenset[str]] | None
+] = contextvars.ContextVar("u2_frozen_opens", default=None)
+_FROZEN_HOOK_INSTALLED = False
+
+
+def _refuse_unfrozen_open(event: str, args: tuple[Any, ...]) -> None:
+    """Audit hook: during a frozen load, refuse to open a file under the
+    PSID directory that the evidence does not freeze."""
+
+    if event != "open":
+        return
+    state = _FROZEN_OPENS.get()
+    if state is None or not args or isinstance(args[0], int):
+        return
+    roots, allowed = state
+    literal = Path(os.path.abspath(os.fsdecode(args[0])))
+    for path in (literal, literal.resolve()):
+        for root in roots:
+            if path.is_relative_to(root):
+                relative = path.relative_to(root).as_posix()
+                if relative in allowed:
+                    return
+                raise U2FrozenIdentityMismatch(
+                    f"{relative} is under the PSID directory but not in the "
+                    "frozen pre-registration evidence: an unfrozen file "
+                    "is never read (section 14)"
+                )
+
+
+@contextlib.contextmanager
+def _only_frozen_files(
+    data_root: Path, frozen_files: Mapping[str, str]
+) -> Iterator[None]:
+    """While the block runs, opening any file under ``data_root`` that is
+    not in ``frozen_files`` refuses before the file is read (a Python audit
+    hook, installed once per process)."""
+
+    global _FROZEN_HOOK_INSTALLED
+    if not _FROZEN_HOOK_INSTALLED:
+        sys.addaudithook(_refuse_unfrozen_open)
+        _FROZEN_HOOK_INSTALLED = True
+    literal = Path(os.path.abspath(Path(data_root).expanduser()))
+    token = _FROZEN_OPENS.set(
+        ((literal, literal.resolve()), frozenset(frozen_files))
+    )
+    try:
+        yield
+    finally:
+        _FROZEN_OPENS.reset(token)
 
 
 def _check_against_frozen(

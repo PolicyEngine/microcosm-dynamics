@@ -564,9 +564,9 @@ def _row_branches(
 
 
 def _forged_committed(registries: sources.RegistrySet) -> None:
-    """Registries labelled committed whose 2015 code-88 role entry (TO
-    VERIFY) has been edited to apply: refused (the label is bound to the
-    pins)."""
+    """Registries labelled committed whose RESOLVED 2015 code-88 role
+    entry has its ratified action removed: refused (the label is bound to
+    the pins)."""
 
     documents = copy.deepcopy(dict(registries.documents))
     for entry in documents["roles"]["entries"]:

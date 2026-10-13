@@ -1029,6 +1029,69 @@ D637_SCOPE_MUTATIONS = {
             ]
         ),
     ),
+    # Review of e74a5546: 1a's per-entry role conventions and typed text.
+    "a1a_code_90_annuity_dropped": (
+        "roles",
+        lambda d: _entry(d, "2015.relationship.90").update(
+            legal_spouse_annuity=False
+        ),
+    ),
+    "a1a_code_90_marital_dropped": (
+        "roles",
+        lambda d: _entry(d, "2017.relationship.90").update(
+            marital_resolution=False
+        ),
+    ),
+    "a1a_code_92_annuity_added": (
+        "roles",
+        lambda d: _entry(d, "2017.relationship.92").update(
+            legal_spouse_annuity=True
+        ),
+    ),
+    "a1a_code_92_marital_added": (
+        "roles",
+        lambda d: _entry(d, "2017.relationship.92").update(
+            marital_resolution=True
+        ),
+    ),
+    "a1a_code_92_birth_support_added": (
+        "roles",
+        lambda d: _entry(d, "2017.relationship.92").update(
+            administrative_birth_support=True
+        ),
+    ),
+    "a1a_marked_absent": (
+        "roles",
+        lambda d: _entry(d, "2017.relationship.90").update(
+            present=False, label=None
+        ),
+    ),
+    "a1a_disclosure_blank": (
+        "roles",
+        lambda d: _entry(d, "2017.relationship.92").update(
+            completeness_disclosure="   "
+        ),
+    ),
+    "a1a_disclosure_not_text": (
+        "roles",
+        lambda d: _entry(d, "2015.relationship.90").update(
+            completeness_disclosure=True
+        ),
+    ),
+    "a1a_effect_blank": (
+        "roles",
+        lambda d: _entry(d, "2017.relationship.90").update(ruling_effect=" "),
+    ),
+    "a1b_adjudication_null": (
+        "roles",
+        lambda d: _entry(d, "2013.relationship.90").update(adjudication=None),
+    ),
+    "a1b_birth_support_dropped": (
+        "roles",
+        lambda d: _entry(d, "2013.relationship.90").update(
+            administrative_birth_support=False
+        ),
+    ),
     "a1b_meaning_changed": (
         "roles",
         lambda d: _entry(d, "2013.relationship.90").update(
@@ -1118,6 +1181,27 @@ D637_SCOPE_MUTATIONS = {
         "roles",
         lambda d: _entry(d, "2021.relationship.88")["ruling"].pop(
             "confirmed_by"
+        ),
+    ),
+    # Review of 630a68c3, finding 2: required prose is nonblank text.
+    "a1c_resolution_a_number": (
+        "roles",
+        lambda d: _entry(d, "2019.relationship.88").update(resolution=42),
+    ),
+    "a1c_question_a_list": (
+        "roles",
+        lambda d: _entry(d, "2019.relationship.88").update(
+            superseded_question=["not a question"]
+        ),
+    ),
+    "a1c_resolution_blank": (
+        "roles",
+        lambda d: _entry(d, "2021.relationship.88").update(resolution="  "),
+    ),
+    "a2_restriction_blank": (
+        "income",
+        lambda d: _entry(d, "income.2019.wife_age").update(
+            use_restriction="\t"
         ),
     ),
     "a1c_adjudication_changed": (
