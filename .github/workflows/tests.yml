@@ -17,10 +17,14 @@ concurrency:
 jobs:
   pytest-shard:
     runs-on: ubuntu-latest
-    # The slowest shard took 49-73 min on 2026-10-06..08 (shard 2/4; the
-    # committed .test_durations predates half the suite). The cap frees a
-    # hung shard's runner after 2 h instead of GitHub's 6 h default.
-    timeout-minutes: 120
+    # With a fresh .test_durations the four shards' test sessions took 21 to
+    # 33 minutes (run 38006981101, 2026-10-10). A shard far above that
+    # suggests the file has gone stale: refresh it as
+    # described below. The cap leaves 15 minutes over the 75 the slowest
+    # shard took before that refresh, and frees a hung shard's runner after
+    # 1.5 h instead of GitHub's 6 h default. A shard that times out uploads
+    # no durations, so if one ever does, raise the cap for the refresh run.
+    timeout-minutes: 90
     strategy:
       fail-fast: false
       matrix:
@@ -44,8 +48,35 @@ jobs:
       - name: Install package
         run: pip install -e ".[dev]" pytest-split
 
+      # pytest-split reads the committed .test_durations to choose this
+      # shard. When the session ends it overwrites the file in this checkout
+      # (--store-durations --clean-durations) with only the durations it
+      # measured here. Keep the durations path inside the checkout. In run
+      # 37958192723 the path pointed outside it, with no test path on the
+      # command line, and pytest took a root above the repository: it
+      # ignored pyproject.toml and prefixed every test ID, so no stored
+      # duration matched and the shards got nearly equal test counts.
+      # To refresh the committed file, download the four
+      # test-durations-shard-* artifacts from one successful master run and
+      # merge them with
+      # `jq -S --indent 4 -s add test-durations-shard-*/.test_durations > .test_durations`.
+      # Before committing, check that the four files share no test ID and
+      # that the merged file has an entry for every collected test: a shard
+      # that fails early uploads a partial or unchanged file.
       - name: Run tests (shard ${{ matrix.shard }}/4)
-        run: pytest -q --splits 4 --group ${{ matrix.shard }} --splitting-algorithm duration_based_chunks --durations-path .test_durations
+        run: pytest -q --splits 4 --group ${{ matrix.shard }} --splitting-algorithm duration_based_chunks --durations-path .test_durations --store-durations --clean-durations
+
+      # Skip on cancellation or timeout: the file may then hold the committed
+      # durations, or only part of this shard's.
+      - name: Upload measured shard durations
+        if: ${{ !cancelled() && github.event_name == 'push' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-durations-shard-${{ matrix.shard }}
+          path: .test_durations
+          include-hidden-files: true
+          retention-days: 14
+          if-no-files-found: warn
 
   graph-integration:
     runs-on: ubuntu-latest
@@ -67,8 +98,8 @@ jobs:
       - name: Run graph and existing mortality regressions
         run: pytest -q tests/test_graph_mortality.py tests/test_graph_mortality_trajectory.py tests/test_graph_trajectory_accounting.py tests/test_m6_engine_refit.py tests/test_m6_engine_steps.py
 
-  # Fan-in jobs keeping the branch-protection context names
-  # ("pytest (3.11)" / "pytest (3.13)") stable across the shard split.
+  # Fan-in job keeping the branch-protection context name
+  # ("pytest (3.14)") stable across the shard split.
   pytest:
     name: pytest (${{ matrix.python-version }})
     needs: [pytest-shard, graph-integration]
