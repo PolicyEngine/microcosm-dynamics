@@ -1016,18 +1016,6 @@ D1090_CLAUSES = {
 }
 
 
-def d1090_locations(spec):
-    """The text of each place the d1090 record stands in ``spec``."""
-    lines = spec.split("\n")
-    return {
-        "header_version": lines[2],
-        "header_status": lines[3],
-        "record": spec[spec.index("## 16c. ") : spec.index("## 17. ")],
-        "outstanding": spec[spec.index("## 17. ") : spec.index("## 18. ")],
-        "execution": spec[spec.index("## 20. ") :],
-    }
-
-
 #: Each pinned section 17 or 20 line and the whole line that must follow
 #: it, so nothing can be added after it (review of e7a558f, info finding
 #: 2; whole lines, not prefixes, after the final review of 742590b).
@@ -1053,16 +1041,94 @@ D1090_FOLLOWERS = {
 }
 
 
-#: The section headings the record's places are cut at; each must stand
-#: once, so a forged heading cannot cut a place short (review of 0c4eab5).
-D1090_HEADINGS = ("## 16a. ", "## 16b. ", "## 16c. ", "## 17. ", "## 18. ")
+def _heading_line(lines, number):
+    """The index of the one line that opens section ``number``."""
+    found = [i for i, x in enumerate(lines) if x.startswith(f"## {number}. ")]
+    assert len(found) == 1, number
+    return found[0]
+
+
+def d1090_locations(spec):
+    """The text of each place the d1090 record stands in ``spec``, cut at
+    the section heading lines."""
+    lines = spec.split("\n")
+
+    def section(first, last=None):
+        start = _heading_line(lines, first)
+        end = len(lines) if last is None else _heading_line(lines, last)
+        return "\n".join(lines[start:end])
+
+    return {
+        "header_version": lines[2],
+        "header_status": lines[3],
+        "record": section("16c", "17"),
+        "outstanding": section("17", "18"),
+        "execution": section("20"),
+    }
+
+
+#: The sections the record's places are cut at, and section 20.  Each must
+#: open with exactly one ATX heading, in any Markdown spacing, outside code
+#: (reviews of 0c4eab5 and 91695a5).
+D1090_SECTIONS = ("16a", "16b", "16c", "17", "18", "20")
+#: Pinned lines that stand more than once in the whole specification,
+#: whitespace ignored, with their counts; every other pinned line stands
+#: once.  "What the ruling does not change." also heads part of §16b.
+D1090_SHARED_LINES = {"**What the ruling does not change.**": 2}
+_FENCE = re.compile(r"^ {0,3}(```|~~~)")
+_HTML_BLOCK = re.compile(r"^ {0,3}<[A-Za-z/!?]")
+
+
+def _fenced(lines):
+    """For each line, whether it is a fence or inside fenced code."""
+    inside, out = False, []
+    for line in lines:
+        if _FENCE.match(line):
+            out.append(True)
+            inside = not inside
+        else:
+            out.append(inside)
+    return out
 
 
 def check_d1090_record(spec):
-    """The semantic checks of the d1090 record, independent of any pin."""
+    """The semantic checks of the d1090 record, independent of any pin.
+
+    This is the layer under the specification's whole-file SHA-256 pin:
+    it catches an edit to the record of d1090 that a re-pin would
+    otherwise carry through unnoticed.  It reads the file as Markdown far
+    enough to refuse hiding (HTML comments, raw HTML blocks, fenced code)
+    and forged or duplicated headings and lines.  It is not a CommonMark
+    renderer: against deliberate obfuscation the pin, and the review that
+    any re-pin requires, remain the control.
+    """
     every = spec.split("\n")
-    for heading in (*D1090_HEADINGS, "## 20. "):
-        assert sum(x.startswith(heading) for x in every) == 1, heading
+    fenced = _fenced(every)
+    # Nothing in the file may be commented out or held in a raw HTML block.
+    assert "<!--" not in spec and "-->" not in spec
+    for index, line in enumerate(every):
+        assert fenced[index] or not _HTML_BLOCK.match(line), index
+    for number in D1090_SECTIONS:
+        heading = re.compile(
+            rf"^ {{0,3}}#{{1,6}}[ \t]+{re.escape(number)}\.(?:[ \t]|$)"
+        )
+        found = [i for i, x in enumerate(every) if heading.match(x)]
+        assert len(found) == 1, number
+        assert every[found[0]].startswith(f"## {number}. "), number
+        assert not fenced[found[0]], number
+    # Every pinned line and follower stands as often as declared in the
+    # whole file, whitespace ignored, and never inside fenced code.
+    pinned = [c for clauses in D1090_CLAUSES.values() for c in clauses]
+    pinned += [
+        f
+        for followers in D1090_FOLLOWERS.values()
+        for f in followers.values()
+        if f
+    ]
+    for line in pinned:
+        at = [i for i, x in enumerate(every) if x.strip() == line.strip()]
+        assert len(at) == D1090_SHARED_LINES.get(line, 1), line[:60]
+        assert not any(fenced[i] for i in at), line[:60]
     places = d1090_locations(spec)
     for place, clauses in D1090_CLAUSES.items():
         lines = places[place].split("\n")
@@ -1087,12 +1153,6 @@ def check_d1090_record(spec):
                 follower = D1090_CLAUSES[place][index + 1]
             at = lines.index(D1090_CLAUSES[place][index])
             assert lines[at + 1] == follower, (place, index)
-            if follower:
-                # Once in the whole specification, whitespace ignored.
-                assert sum(x.strip() == follower for x in every) == 1, (
-                    place,
-                    index,
-                )
     execution = places["execution"].split("\n")
     assert execution[:5] == [
         "## 20. Ratification and execution record",
@@ -1224,6 +1284,55 @@ D1090_MUTATIONS = [
     ("record", "pending d745", "confirmed by d745"),
     ("record", "U2 stays unregistered and unauthorized", "U2 is registered"),
     ("record", "This is how the rules are applied, not", "This is"),
+    # A whitespace-indented duplicate of a pinned line, an exact duplicate
+    # elsewhere, headings in other Markdown spacing, and hiding by comment,
+    # raw HTML or code fence (review of 91695a5).
+    (
+        "outstanding",
+        D1090_FOLLOWERS["outstanding"][2],
+        D1090_FOLLOWERS["outstanding"][2]
+        + "\n "
+        + D1090_CLAUSES["outstanding"][2]
+        + "\n   Exploratory counts may also be computed.",
+    ),
+    (
+        "execution",
+        D1090_FOLLOWERS["execution"][1],
+        D1090_FOLLOWERS["execution"][1] + "\n" + D1090_CLAUSES["record"][6],
+    ),
+    (
+        "outstanding",
+        D1090_FOLLOWERS["outstanding"][2],
+        D1090_FOLLOWERS["outstanding"][2]
+        + "\n ## 16c. Max's ruling, revised\nB1 takes option 1 and B2 "
+        "takes option 2.",
+    ),
+    (
+        "outstanding",
+        D1090_FOLLOWERS["outstanding"][2],
+        D1090_FOLLOWERS["outstanding"][2]
+        + "\n##  16c. Max's ruling, revised\nB1 takes option 1.",
+    ),
+    (
+        "execution",
+        "## 20. Ratification and execution record",
+        "<!--\n## 20. Ratification and execution record",
+    ),
+    (
+        "execution",
+        "## 20. Ratification and execution record",
+        "<div>\n## 20. Ratification and execution record",
+    ),
+    (
+        "execution",
+        "## 20. Ratification and execution record",
+        "```\n## 20. Ratification and execution record",
+    ),
+    (
+        "outstanding",
+        D1090_CLAUSES["outstanding"][2],
+        "<!--\n" + D1090_CLAUSES["outstanding"][2] + "\n-->",
+    ),
     # Whitespace-indented duplicates of a follower, and a forged section
     # boundary that hides an exact one (review of 0c4eab5).
     *(
