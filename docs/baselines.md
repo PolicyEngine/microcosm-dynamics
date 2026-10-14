@@ -244,7 +244,9 @@ assumptions is the CPI (`data/tr2008.py:445-447`, `:707`).
 
 Registration 18 (A-COLA) compares a one-point COLA cut from December
 2027 with the 2030 cost effects that OACT and the Penn Wharton Budget
-Model publish for that provision. Its "Baseline COLA path" line states
+Model publish for that provision. It adds a MINT5 sub-row on 2030
+benefits by age, run from MINT5's own 2011 start. Its "Baseline COLA
+path" line states
 that "the realized series runs through 2007", that TR2008 intermediate
 rates apply from 2008, and that the path stops at 2030, "so 2030 is the
 only year this test can read". Its population is exercise 1's R0. Its

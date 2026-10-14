@@ -257,5 +257,10 @@ def test_collecting_the_suite_writes_no_environment_variable(tmp_path):
         ROOT,
         env,
     )
+    # A failed collection can still leave an empty report, so the
+    # child's exit status is checked first.
+    assert result.returncode == 0, (
+        result.stdout[-2000:] + result.stderr[-2000:]
+    )
     assert report.is_file(), result.stdout[-2000:] + result.stderr[-2000:]
     assert json.loads(report.read_text()) == []

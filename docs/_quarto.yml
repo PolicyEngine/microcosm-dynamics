@@ -25,6 +25,7 @@ book:
   chapters:
     - index.md
     - progress.md
+    - parity-ledger.md
     - funder-summary.md
     - domains-of-validity.md
     - policy-applications.md
