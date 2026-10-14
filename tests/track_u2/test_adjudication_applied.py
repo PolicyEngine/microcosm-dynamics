@@ -1075,19 +1075,41 @@ D1090_SECTIONS = ("16a", "16b", "16c", "17", "18", "20")
 #: whitespace ignored, with their counts; every other pinned line stands
 #: once.  "What the ruling does not change." also heads part of §16b.
 D1090_SHARED_LINES = {"**What the ruling does not change.**": 2}
-_FENCE = re.compile(r"^ {0,3}(```|~~~)")
+_FENCE_OPEN = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
 _HTML_BLOCK = re.compile(r"^ {0,3}<[A-Za-z/!?]")
+
+
+def _fence_blocks(lines):
+    """Each fenced code block as (opener, closer) line indices, as
+    CommonMark reads fences: a fence closes only on the same character, a
+    run at least as long and nothing after it but whitespace, and an
+    unclosed fence runs to the end (closer None; review of 53b3a9e)."""
+    blocks, opener, fence = [], None, None
+    for index, line in enumerate(lines):
+        if fence is None:
+            opened = _FENCE_OPEN.match(line)
+            if opened and not (
+                opened.group(1)[0] == "`" and "`" in opened.group(2)
+            ):
+                opener = index
+                fence = (opened.group(1)[0], len(opened.group(1)))
+            continue
+        char, length = fence
+        if re.match(rf"^ {{0,3}}{re.escape(char)}{{{length},}}[ \t]*$", line):
+            blocks.append((opener, index))
+            fence = None
+    if fence is not None:
+        blocks.append((opener, None))
+    return blocks
 
 
 def _fenced(lines):
     """For each line, whether it is a fence or inside fenced code."""
-    inside, out = False, []
-    for line in lines:
-        if _FENCE.match(line):
-            out.append(True)
-            inside = not inside
-        else:
-            out.append(inside)
+    out = [False] * len(lines)
+    for opener, closer in _fence_blocks(lines):
+        last = len(lines) - 1 if closer is None else closer
+        for index in range(opener, last + 1):
+            out[index] = True
     return out
 
 
@@ -1416,6 +1438,46 @@ D1090_MUTATIONS = [
         "B1 by option 1 and B2 by option 2",
     ),
 ]
+
+
+def _last_fence_before_16c(lines):
+    """The opener and closer of the last fenced block before section 16c."""
+    end = _heading_line(lines, "16c")
+    return [
+        b for b in _fence_blocks(lines) if b[1] is not None and b[1] < end
+    ][-1]
+
+
+@pytest.mark.parametrize(
+    "case",
+    ["longer_opener", "other_marker", "closer_with_text", "valid_longer"],
+)
+def test_the_d1090_checks_follow_markdown_fences(case):
+    """A fence typo that would render section 16c, 17 or 20 as code fails
+    the check; a valid change of fence length does not (review of
+    53b3a9e)."""
+    spec = (ROOT / SPEC).read_text(encoding="utf-8")
+    lines = spec.split("\n")
+    opener, closer = _last_fence_before_16c(lines)
+    assert lines[opener].lstrip().startswith("```")
+    assert lines[closer].strip() == "```"
+    changed = list(lines)
+    if case == "longer_opener":
+        changed[opener] = "`" + lines[opener].lstrip()
+    elif case == "other_marker":
+        changed[opener] = lines[opener].lstrip().replace("```", "~~~", 1)
+    elif case == "closer_with_text":
+        changed[closer] = "``` json"
+    else:
+        changed[opener] = "`" + lines[opener].lstrip()
+        changed[closer] = "````"
+    mutated = "\n".join(changed)
+    assert mutated != spec
+    if case == "valid_longer":
+        check_d1090_record(mutated)
+    else:
+        with pytest.raises(AssertionError):
+            check_d1090_record(mutated)
 
 
 def test_the_d1090_checks_catch_a_reordered_record():
