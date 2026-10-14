@@ -1,0 +1,90 @@
+{
+ "base": "dd222b9af926c773a0f92732e2d08be507793378",
+ "codebook_check_allowed": [
+  "docs/design/track_b_b0_1_addendum_reads.json",
+  "scripts/track_b_b0_1_review_root.py",
+  "tests/test_track_b_b0_1_review_root.py"
+ ],
+ "context_copies": {
+  "d622-ruling.md": {
+   "sha256": "0e292da392655597efacb5f1de7eb2127554b0033458d2bea378ff8b230640b3",
+   "source": "/private/tmp/claude-501/-Users-maxghenis-Library-Application-Support-Claude-scratch-workspaces-ee3763f4-e7ea-4177-bcaf-1362266768c1-4457aa9d-2dc0-4bcf-a128-e50adae6be25-scratch-2026-09-22-b65ec9/af842ed1-c915-4edb-8db1-e65d63f0bb3a/scratchpad/review_context/d622-ruling.md"
+  },
+  "d693-RECOMMENDATION.md": {
+   "sha256": "6fc4ee59e91bae0d9db2c6d5255ee5bba556b7f7e9bef3945c522f8fca392a2d",
+   "source": "/private/tmp/claude-501/-Users-maxghenis-Library-Application-Support-Claude-scratch-workspaces-ee3763f4-e7ea-4177-bcaf-1362266768c1-4457aa9d-2dc0-4bcf-a128-e50adae6be25-scratch-2026-09-22-b65ec9/af842ed1-c915-4edb-8db1-e65d63f0bb3a/scratchpad/review_context/d693-RECOMMENDATION.md"
+  },
+  "d693-ruling.md": {
+   "sha256": "c41c747332e83cb90d7266a7cf5b5d27abafa4e94e2ea7e88554c22f72a7fb1d",
+   "source": "/private/tmp/claude-501/-Users-maxghenis-Library-Application-Support-Claude-scratch-workspaces-ee3763f4-e7ea-4177-bcaf-1362266768c1-4457aa9d-2dc0-4bcf-a128-e50adae6be25-scratch-2026-09-22-b65ec9/af842ed1-c915-4edb-8db1-e65d63f0bb3a/scratchpad/review_context/d693-ruling.md"
+  },
+  "pr490-comments.md": {
+   "sha256": "9a477028c948e6cb5a747a7a43fd204eeb82494afd4bd331875016fa6b7fc065",
+   "source": "/private/tmp/claude-501/-Users-maxghenis-Library-Application-Support-Claude-scratch-workspaces-ee3763f4-e7ea-4177-bcaf-1362266768c1-4457aa9d-2dc0-4bcf-a128-e50adae6be25-scratch-2026-09-22-b65ec9/af842ed1-c915-4edb-8db1-e65d63f0bb3a/scratchpad/review_context/pr490-comments.md"
+  },
+  "trackb-design-20260928.md": {
+   "sha256": "6fd6f4aa5a83da802f5a93a974240b0a4a590138ac8c00a5586581d2401b5958",
+   "source": "/private/tmp/claude-501/-Users-maxghenis-Library-Application-Support-Claude-scratch-workspaces-ee3763f4-e7ea-4177-bcaf-1362266768c1-4457aa9d-2dc0-4bcf-a128-e50adae6be25-scratch-2026-09-22-b65ec9/af842ed1-c915-4edb-8db1-e65d63f0bb3a/scratchpad/review_context/trackb-design-20260928.md"
+  }
+ },
+ "denied_paths": [
+  "docs/amendments/m6_amendment_4_qstar_lock_addendum.md",
+  "docs/analysis/m6_c3_f1_mechanism_diagnostic_results.json",
+  "docs/analysis/m6_candidate2_registered_abort_execution_v1.txt",
+  "docs/analysis/m6_qstar_train_only_selection.md",
+  "docs/analysis/m6_qstar_train_only_selection_results.json",
+  "docs/analysis/m6_rhostar_train_only_selection.md",
+  "docs/analysis/m6_rhostar_train_only_selection_results.json",
+  "docs/design/m6_candidate2_program.md",
+  "docs/design/m6_candidate3_lock_addendum.md",
+  "docs/design/m6_candidate3_program.md",
+  "docs/design/m6_projection_engine.md",
+  "docs/forecasts/timeline_ledger.json",
+  "gates.yaml",
+  "paper/figures/m6_q_frontier.svg",
+  "paper/paper.qmd",
+  "tests/test_m6_c3_f1_mechanism_diagnostic.py",
+  "tests/test_m6_candidate2_runner.py",
+  "tests/test_m6_candidate3_runner.py",
+  "tests/test_m6_qstar_selection.py",
+  "tests/test_m6_rhostar_selection.py"
+ ],
+ "head": "5813d8f0",
+ "manifest_sha256": "9dad8761a38c19c0b53e403e85a40b2c1b605997a728656ff037e83ae028116b",
+ "n_files": 1709,
+ "removed": [
+  "data/external/psid_codebook_field_evidence/ry1975_1977_spouse_concept_seam_v1.json",
+  "data/external/psid_codebook_field_evidence/ry1978_1992_pre_er_totals_v1.json",
+  "data/external/psid_codebook_field_evidence/ry1993_2001_er_transition_v1.json",
+  "data/external/psid_codebook_field_evidence/ry2002_2014_modern_bc_de_v1.json",
+  "data/external/psid_codebook_field_evidence/ry2015_2022_exclusion_lineage_v1.json",
+  "data/external/psid_codebook_field_evidence/wave1968_ry1968_1974_early_totals_v1.json",
+  "docs/amendments/m6_amendment_4_qstar_lock_addendum.md",
+  "docs/analysis/m6_c3_f1_mechanism_diagnostic_results.json",
+  "docs/analysis/m6_candidate2_registered_abort_execution_v1.txt",
+  "docs/analysis/m6_qstar_train_only_selection.md",
+  "docs/analysis/m6_qstar_train_only_selection_results.json",
+  "docs/analysis/m6_rhostar_train_only_selection.md",
+  "docs/analysis/m6_rhostar_train_only_selection_results.json",
+  "docs/design/m6_candidate2_program.md",
+  "docs/design/m6_candidate3_lock_addendum.md",
+  "docs/design/m6_candidate3_program.md",
+  "docs/design/m6_projection_engine.md",
+  "docs/forecasts/timeline_ledger.json",
+  "gates.yaml",
+  "paper/figures/m6_q_frontier.svg",
+  "paper/paper.qmd",
+  "tests/test_m6_c3_f1_mechanism_diagnostic.py",
+  "tests/test_m6_candidate2_runner.py",
+  "tests/test_m6_candidate3_runner.py",
+  "tests/test_m6_qstar_selection.py",
+  "tests/test_m6_rhostar_selection.py"
+ ],
+ "removed_codebook_tables": [
+  "data/external/amendment_11_originating_records/claude-ce-v3compiler-codebook-report.md",
+  "docs/design/covered_earnings_correction.md",
+  "src/populace_dynamics/data/psid_questionnaire_inventory.py"
+ ],
+ "root": "/Users/maxghenis/PolicyEngine/_trackb-b01-q6-review/root",
+ "schema": "track_b_b0_1_review_root.v1"
+}

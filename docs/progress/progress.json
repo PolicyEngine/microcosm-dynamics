@@ -2,10 +2,13 @@
   "schema_version": 1,
   "description": "Data behind docs/progress.md (the development-progress dashboard). Update this file and run `python scripts/build_progress_page.py`; never edit docs/progress.md by hand.",
   "as_of": "2026-09-09T11:51Z",
+  "archived": {
+    "note": "The covered-earnings evidence campaign this page tracked stopped on 9 September 2026, and its design pull request, #405, closed unmerged. The page is kept as a record of that campaign. For where Microcosm Dynamics stands today against DYNASIM, capability by capability, see the [DYNASIM parity ledger](parity-ledger.md)."
+  },
   "framework": {
     "amendment": "Amendment 20 (two-arm evidence charter for the covered-earnings correction design)",
     "pr": 405,
-    "pr_state": "open; draft ratified through round 6.2",
+    "pr_state": "closed unmerged",
     "next_ceremony": "A4 evidence freeze, then the C20 ratification chain toward revision 22"
   },
   "foundations": [
