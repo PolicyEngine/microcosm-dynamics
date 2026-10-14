@@ -9,6 +9,7 @@ cases and published examples; no population, behavioral or forecast claim.
 from __future__ import annotations
 
 import hashlib
+import inspect
 import re
 from datetime import datetime
 from fractions import Fraction as F
@@ -26,6 +27,44 @@ from populace_dynamics.track_b.ret_grace import (
 )
 from populace_dynamics.track_b.ret_params import load_ret_parameters
 from tests.track_b_ret_ledger_support import SOURCES, manifest, source_text
+
+
+def test_source_conflict_ids_are_linked_at_the_decision_lines():
+    decisions = (
+        (
+            r.countable_earnings,
+            "us:oasdi-ret-negative-nese-proration",
+            "if nese_proration_policy is NESEProrationPolicy.FLOOR",
+        ),
+        (
+            grace_year,
+            "us:oasdi-ret-grace-simultaneous-rib-dib",
+            "not month.entitled_types & DISABILITY_TYPES",
+        ),
+        (
+            r._protected,
+            "us:oasdi-ret-own-work-age-exemptions",
+            "or b.benefit_types[month - 1] in DISABILITY_TYPES",
+        ),
+        (
+            r.apply_ret_year,
+            "us:oasdi-ret-deemed-entitlement-basis",
+            "if b.deemed_entitled and not b.deemed_married_to_nh:",
+        ),
+        (
+            r.apply_ret_year,
+            "us:oasdi-ret-deemed-entitlement-basis",
+            "if b.deemed_entitled and any(",
+        ),
+    )
+    for function, conflict_id, decision in decisions:
+        source = inspect.getsource(function)
+        expected = (
+            re.escape(f"# Source conflict {conflict_id}")
+            + r"\n\s*"
+            + re.escape(decision)
+        )
+        assert re.search(expected, source), (conflict_id, decision)
 
 
 def test_manifest_pins_every_capture():
@@ -75,6 +114,9 @@ RULE_QUOTES = {
         "2001 $10,680 $890 $2 over $10,680 $25,000 $2,084",
     ],
     "poms_rs_02501_030": [
+        "Child's benefits as defined in section 202(d) of the Social Security Act (the Act),",
+        "A grace year does not apply to a disabled beneficiary in any year if entitled solely to DIB, disabled widow(er)'s (DWB), or childhood disability benefits (CDB).",
+        "Do not annotate the LMETY field if the only reason to apply the MET is the termination grace year or all months of entitlement are in the month of FRA or later.",
         "there is a break in entitlement of at least 1 month",
         "A grace year does not apply to a disabled beneficiary in any year if entitled solely to DIB",
         "Do not annotate the LMETY field if the only reason to apply the MET is the termination grace year",
@@ -187,6 +229,9 @@ RULE_QUOTES = {
         "Where the time devoted to the business is less than 15 hours a month, the services are not substantial."
     ],
     "ecfr_20cfr404_subpart_e": [
+        "A beneficiary entitled to child's benefits",
+        "is entitled to a termination grace year in any year the beneficiary's entitlement to these types of benefits terminates.",
+        "a month that occurred while the beneficiary was entitled to disability benefits under section 223 of the Social Security Act or as a disabled widow, widower, or child under section 202.",
         "a child's insurance benefit based on the child's disability",
         "Are age 18 or over and entitled to a child's insurance benefit based on disability",
         "Are entitled to a widow's or widower's insurance benefit based on disability",
@@ -213,6 +258,8 @@ RULE_QUOTES = {
         "we must deduct $1 from your benefits for each $2 you earn above $24,480"
     ],
     "ssa_act_203": [
+        "or under section 202(d) or (g), if such month is in a year in which such entitlement ends for a reason other than the death of such individual",
+        "is not entitled to any benefits under this title for the month following",
         "Notwithstanding any other provision of this subsection",
         "for each month of any taxable year ending after 1999 and before 2001, $1,416.66 2/3",
         "for each month of any taxable year ending after 2000 and before 2002, $2,083.33 1/3",

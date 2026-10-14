@@ -28,6 +28,7 @@ from tests.test_track_b_ret_ledger import (
     earnings,
     record,
 )
+from tests.track_b_ret_ledger_support import source_text
 
 
 def _simultaneous_dib_elected_rib(rate, work, reading):
@@ -424,6 +425,153 @@ def test_deemed_ordinary_child_requires_explicit_adult_age_facts():
             PARAMS,
         )
     assert error.value.reason is r.UnsupportedReason.DEEMED_ENTITLEMENT_BASIS
+
+
+def _deemed_cdb_january_counterfactual(nh, recipient, *, broader_poms):
+    """Test-only full-January-charge reading on an unrelated CDB record.
+
+    This deliberately narrow harness admits only a positive NH rate and
+    enough wage excess to deduct the entire combined January family rate.
+    It never changes marriage facts or enables the broader reading through
+    the public API. The CDB recipient has no excess of their own.
+    """
+    assert recipient.deemed_entitled and not recipient.deemed_married_to_nh
+    assert set(recipient.benefit_types) == {BenefitType.CDB}
+    assert 1 in nh.entitled_months & recipient.entitled_months
+    assert recipient.earnings == earnings()
+    assert nh.fra_month is None and nh.grace is None
+    assert nh.earnings.nese == 0 and nh.gross_rates[0] > 0
+    year = PARAMS.for_year(YEAR)
+    excess = int(
+        max(F(0), sum(nh.earnings.wages) - year.lower_exempt_amount.value)
+        * year.lower_withholding_rate.value
+    )
+    assert excess >= nh.gross_rates[0] + recipient.gross_rates[0]
+    # RS 02501.140 puts the other-record CDB rate in the NH's full family
+    # deduction. Act 203(b)(1) / CFR .420 leave an unmarried recipient's
+    # separate record outside that charge. This is test-only arithmetic.
+    nh_deduction = recipient.gross_rates[0] if broader_poms else F(0)
+    return recipient.gross_rates[0] - nh_deduction
+
+
+def test_unmarried_deemed_entitlement_counterfactual_changes_200_dollars():
+    """Invented $400/$200 rates and $600 excess, with no real data."""
+    assert (
+        "is married to an individual entitled to old-age insurance benefits under section 202(a)"
+        in source_text("ssa_act_203")
+    )
+    assert "a person who is married to an old-age insurance beneficiary" in (
+        source_text("ecfr_20cfr404_subpart_e")
+    )
+    assert (
+        "deem a retirement beneficiary's spouse or child entitled on their record"
+        in source_text("poms_rs_02501_140")
+    )
+    assert (
+        "also to the spouse's or child's benefits that are based on the other ER."
+        in source_text("poms_rs_02501_140")
+    )
+    nh = beneficiary(rate=400, work=earnings(24_480 + 1200))
+    recipient = beneficiary(
+        "deemed",
+        rate=200,
+        benefit_type=BenefitType.CDB,
+        deemed_entitled=True,
+    )
+    with pytest.raises(r.RETConfigurationUnsupported) as error:
+        r.apply_ret_year(record(nh, recipient), PARAMS)
+    assert error.value.reason is r.UnsupportedReason.DEEMED_ENTITLEMENT_BASIS
+
+    married = r.apply_ret_year(
+        record(nh, replace(recipient, deemed_married_to_nh=True)), PARAMS
+    )
+    unrelated = r.apply_ret_year(
+        r.RecordYear(
+            YEAR,
+            "other",
+            kind=r.RecordKind.DECEASED,
+            beneficiaries=(replace(recipient, deemed_entitled=False),),
+        ),
+        PARAMS,
+    )
+    act_cfr_due = _deemed_cdb_january_counterfactual(
+        nh, recipient, broader_poms=False
+    )
+    poms_due = _deemed_cdb_january_counterfactual(
+        nh, recipient, broader_poms=True
+    )
+    married_january = married.for_beneficiary("deemed")[0]
+    unrelated_january = unrelated.for_beneficiary("deemed")[0]
+    nh_worker = next(w for w in married.workers if w.beneficiary_id == "nh")
+    assert nh_worker.excess == nh_worker.charged == 600
+    assert married_january.nh_deduction == 200
+    assert married_january.own_deduction == 0
+    assert act_cfr_due == unrelated_january.net_due == 200
+    assert poms_due == married_january.net_due == 0
+    assert int(act_cfr_due) - int(poms_due) == 200
+    assert unrelated_january.payment == 200
+    assert married_january.payment == 0
+    assert all(row.deduction == 0 for row in unrelated.months)
+    assert sum(row.payment for row in unrelated.months) == 2400
+    assert (
+        sum(row.payment for row in married.for_beneficiary("deemed")) == 2200
+    )
+
+
+@settings(max_examples=50, deadline=None)
+@given(st.integers(1, 2000), st.integers(1, 2000))
+def test_property_deemed_counterfactual_matches_full_married_charge(
+    nh_rate, cdb_rate
+):
+    """Independent reading harness and married ledger agree exactly.
+
+    Shared surface: whole-dollar RIB/CDB rates, no other excess/protection,
+    and NH excess equal to the combined January rate. Tolerance is zero.
+    The Act/CFR counterfactual always preserves the unrelated CDB rate;
+    the public API always retains the unmarried source-conflict refusal.
+    """
+    family_rate = nh_rate + cdb_rate
+    nh = beneficiary(
+        rate=nh_rate,
+        work=earnings(
+            PARAMS.for_year(YEAR).lower_exempt_amount.value + 2 * family_rate
+        ),
+    )
+    recipient = beneficiary(
+        "deemed",
+        rate=cdb_rate,
+        benefit_type=BenefitType.CDB,
+        deemed_entitled=True,
+    )
+    with pytest.raises(r.RETConfigurationUnsupported) as error:
+        r.apply_ret_year(record(nh, recipient), PARAMS)
+    assert error.value.reason is r.UnsupportedReason.DEEMED_ENTITLEMENT_BASIS
+    married = r.apply_ret_year(
+        record(nh, replace(recipient, deemed_married_to_nh=True)), PARAMS
+    )
+    unrelated = r.apply_ret_year(
+        r.RecordYear(
+            YEAR,
+            "other",
+            kind=r.RecordKind.DECEASED,
+            beneficiaries=(replace(recipient, deemed_entitled=False),),
+        ),
+        PARAMS,
+    )
+    january = married.for_beneficiary("deemed")[0]
+    assert (
+        _deemed_cdb_january_counterfactual(nh, recipient, broader_poms=True)
+        == january.net_due
+        == 0
+    )
+    assert january.nh_deduction == cdb_rate
+    assert january.own_deduction == 0
+    assert (
+        _deemed_cdb_january_counterfactual(nh, recipient, broader_poms=False)
+        == unrelated.for_beneficiary("deemed")[0].net_due
+        == cdb_rate
+    )
+    assert all(row.deduction == 0 for row in unrelated.months)
 
 
 def test_deemed_entitlement_requires_a_different_rib_number_holder():

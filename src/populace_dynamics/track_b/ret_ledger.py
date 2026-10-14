@@ -466,6 +466,7 @@ def countable_earnings(
         quotient = earnings.nese / len(earnings.self_employment_months)
         monthly = (
             floor(quotient)
+            # Source conflict us:oasdi-ret-negative-nese-proration
             if nese_proration_policy is NESEProrationPolicy.FLOOR
             else int(quotient)
         )
@@ -628,6 +629,7 @@ def _protected(
     return (
         month not in b.entitled_months
         or (b.fra_month is not None and month >= b.fra_month)
+        # Source conflict us:oasdi-ret-own-work-age-exemptions
         or b.benefit_types[month - 1] in DISABILITY_TYPES
         or month in b.own_work_exempt_months
         or (
@@ -706,12 +708,14 @@ def apply_ret_year(
                 reason, "Outside R2 part (a)'s admitted scope"
             )
     for b in record.beneficiaries:
+        # Source conflict us:oasdi-ret-deemed-entitlement-basis
         if b.deemed_entitled and not b.deemed_married_to_nh:
             raise RETConfigurationUnsupported(
                 UnsupportedReason.DEEMED_ENTITLEMENT_BASIS,
                 "Unmarried deemed entitlement: RS .140 is broader than Act 203(b)(1) / CFR .420",
                 beneficiary_id=b.beneficiary_id,
             )
+        # Source conflict us:oasdi-ret-deemed-entitlement-basis
         if b.deemed_entitled and any(
             b.benefit_types[m - 1] is BenefitType.CHILD
             for m in b.entitled_months

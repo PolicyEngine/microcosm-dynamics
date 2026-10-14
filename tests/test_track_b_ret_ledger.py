@@ -18,8 +18,10 @@ from populace_dynamics.track_b import ret_ledger as r
 from populace_dynamics.track_b.gross_benefits import InvalidFamilyInput
 from populace_dynamics.track_b.ret_grace import (
     BenefitType,
+    GraceKind,
     GraceMonth,
     GraceYearState,
+    TerminationEvent,
     grace_year,
 )
 from populace_dynamics.track_b.ret_params import (
@@ -131,6 +133,57 @@ def lower_earnings_for_excess(excess, year=YEAR):
 
 def higher_earnings_for_excess(excess, year=YEAR):
     return PARAMS.for_year(year).higher_exempt_amount.value + 3 * excess
+
+
+def test_mixed_child_cdb_termination_grace_preserves_one_dollar_january_check():
+    # Review round 3's minimized case: ordinary child at 17 in January,
+    # disability-based child at 18 in February, legal non-death termination
+    # after February, and no March entitlement. No age exemption is asserted
+    # for January. Caller-classified NESE has no substantial services.
+    state = GraceYearState(
+        last_met_year=2025,
+        previous_entitled_types={BenefitType.CHILD},
+        had_entitlement=True,
+        last_processed_year=2025,
+    )
+    months = [
+        GraceMonth({BenefitType.CHILD}, {BenefitType.CHILD}, True),
+        GraceMonth({BenefitType.CDB}, {BenefitType.CDB}, True),
+    ] + [GraceMonth()] * 10
+    decision = grace_year(
+        YEAR,
+        state,
+        months,
+        termination_events=[TerminationEvent(2, BenefitType.CDB)],
+    )
+    child = dataclasses.replace(
+        beneficiary(
+            "child",
+            rate=1,
+            original_rate=1,
+            entitled={1, 2},
+            benefit_type=BenefitType.CDB,
+            work=r.WorkEarnings(
+                nese=24482,
+                self_employment_months=MONTHS,
+            ),
+            grace=decision,
+        ),
+        benefit_types=(BenefitType.CHILD,) + (BenefitType.CDB,) * 11,
+    )
+    result = ledger(child, kind=r.RecordKind.DECEASED)
+    rows = by_month(result, "child")
+    assert rows[1].payment == 1
+    assert rows[1].deduction == 0
+    assert rows[2].payment == 1
+    assert rows[2].deduction == 0
+    assert sum(row.payment for row in result.months) == 2
+    assert worker(result, "child").excess == 1
+    assert worker(result, "child").charged == 0
+    assert worker(result, "child").uncharged == 1
+    assert decision.kinds == {GraceKind.TERMINATION}
+    assert decision.met_eligible_months == decision.protected_months == {1}
+    assert decision.next_state.last_met_year == 2025
 
 
 @pytest.mark.parametrize("offset, excess", [(0, 0), (1, 0), (2, 1), (3, 1)])

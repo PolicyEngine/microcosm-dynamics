@@ -13,6 +13,10 @@ does not calculate earnings or determine disability cessation. Call once
 per consecutive calendar year and carry ``next_state`` into the next call.
 Termination events use the last entitled month, not the termination month:
 a January termination therefore belongs to the preceding year's call.
+Ordinary CHILD and CDB both terminate child's benefits under Act 202(d).
+In a mixed year, CDB termination can protect earlier non-disability NSMs;
+disability months remain ineligible, and a disability-only year has no
+grace year (20 CFR 404.435(b)(3)-(4); RS 02501.030B.3-4).
 """
 
 from __future__ import annotations
@@ -324,6 +328,7 @@ def grace_year(
         if month.received_types - DISABILITY_TYPES
         and (fra_month is None or index < fra_month)
         and (
+            # Source conflict us:oasdi-ret-grace-simultaneous-rib-dib
             not month.entitled_types & DISABILITY_TYPES
             or (
                 disability_reading is DisabilityGraceReading.POMS_RIB_ELECTION
@@ -368,11 +373,17 @@ def grace_year(
                 last_met = year
                 pending = False
 
+    # RS 02501.030B.4 excludes a year entitled solely to disability benefits.
+    disability_only_year = not any(
+        month.entitled_types - DISABILITY_TYPES for month in months
+    )
     for event in events:
         eligible_type = (
             event.benefit_type
             in (
                 BenefitType.CHILD,
+                # Act 202(d), 203(f)(1)(F); 404.435(b)(4); RS .030B.3.a.
+                BenefitType.CDB,
                 BenefitType.MOTHER_FATHER,
             )
             or event.young_spouse
@@ -382,6 +393,7 @@ def grace_year(
         )
         if (
             eligible_type
+            and not disability_only_year
             and event.reason is TerminationReason.NORMAL
             and not next_month_entitled
         ):

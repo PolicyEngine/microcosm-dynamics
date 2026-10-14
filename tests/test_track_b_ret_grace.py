@@ -291,6 +291,100 @@ def test_disability_only_year_has_no_grace(kind):
     assert result.next_state.last_met_year is None
 
 
+@settings(max_examples=150, deadline=None)
+@given(
+    child_months=st.integers(1, 11),
+    cdb_months=st.integers(1, 11),
+    nonservice=st.lists(st.booleans(), min_size=12, max_size=12),
+    fra=st.one_of(st.none(), st.integers(1, 12)),
+    lmety=st.integers(2000, 2025),
+)
+def test_property_mixed_child_cdb_termination_protects_only_child_nsms(
+    child_months, cdb_months, nonservice, fra, lmety
+):
+    cdb_months = min(cdb_months, 12 - child_months)
+    last_month = child_months + cdb_months
+    state = replace(prior(2025, B.CHILD), last_met_year=lmety)
+    months = (
+        [month(B.CHILD, nonservice=nonservice[i]) for i in range(child_months)]
+        + [month(B.CDB)] * cdb_months
+        + [EMPTY] * (12 - last_month)
+    )
+    events = [TerminationEvent(last_month, B.CDB)]
+    decision = grace_year(
+        2026, state, months, fra_month=fra, termination_events=events
+    )
+    eligible = {
+        i for i in range(1, child_months + 1) if fra is None or i < fra
+    }
+    assert decision.kinds == {K.TERMINATION}
+    assert decision.met_eligible_months == eligible
+    assert decision.protected_months == {
+        i for i in eligible if nonservice[i - 1]
+    }
+    assert decision.next_state.last_met_year == lmety
+    assert (
+        grace_year(
+            2026, state, months, fra_month=fra, termination_events=events
+        )
+        == decision
+    )
+
+
+@settings(max_examples=150, deadline=None)
+@given(
+    last_month=st.integers(1, 12),
+    kinds=st.lists(
+        st.sampled_from([B.DIB, B.DWB, B.CDB]), min_size=12, max_size=12
+    ),
+    lmety=st.one_of(st.none(), st.integers(2000, 2025)),
+)
+def test_property_disability_only_cdb_termination_has_no_grace(
+    last_month, kinds, lmety
+):
+    months = [month(kind) for kind in kinds[:last_month]]
+    months[-1] = month(B.CDB)
+    months += [EMPTY] * (12 - last_month)
+    state = replace(prior(2025, B.CDB), last_met_year=lmety)
+    decision = grace_year(
+        2026,
+        state,
+        months,
+        termination_events=[TerminationEvent(last_month, B.CDB)],
+    )
+    assert not decision.applies
+    assert not decision.kinds
+    assert not decision.met_eligible_months
+    assert not decision.protected_months
+    assert decision.next_state.last_met_year == lmety
+
+
+@settings(max_examples=150, deadline=None)
+@given(
+    reason=st.sampled_from(list(T)),
+    next_kind=st.one_of(
+        st.none(), st.sampled_from([kind for kind in B if kind is not B.CDB])
+    ),
+)
+def test_property_cdb_termination_keeps_cause_and_next_month_exclusions(
+    reason, next_kind
+):
+    months = [month(B.CHILD), month(B.CDB), EMPTY] + [EMPTY] * 9
+    if next_kind is not None:
+        months[2] = month(next_kind)
+    decision = grace_year(
+        2026,
+        prior(2025, B.CHILD),
+        months,
+        termination_events=[TerminationEvent(2, B.CDB, reason=reason)],
+    )
+    applies = reason is T.NORMAL and next_kind is None
+    assert decision.applies == applies
+    assert decision.kinds == ({K.TERMINATION} if applies else set())
+    assert decision.protected_months == ({1} if applies else set())
+    assert decision.next_state.last_met_year == 2025
+
+
 @pytest.mark.parametrize("reason", list(T)[1:])
 def test_termination_excluded_causes_do_not_grant_grace(reason):
     result = grace_year(
@@ -612,13 +706,13 @@ def test_property_termination_only_never_changes_lmety(
 
 
 @settings(max_examples=150, deadline=None)
-@given(st.integers(1, 12))
-def test_property_termination_event_order_independence(last_month):
+@given(st.integers(1, 12), st.sampled_from([B.CHILD, B.CDB]))
+def test_property_termination_event_order_independence(last_month, child_type):
     both = GraceMonth(
-        {B.CHILD, B.MOTHER_FATHER}, {B.CHILD, B.MOTHER_FATHER}, True
+        {child_type, B.MOTHER_FATHER}, {child_type, B.MOTHER_FATHER}, True
     )
     events = [
-        TerminationEvent(last_month, B.CHILD),
+        TerminationEvent(last_month, child_type),
         TerminationEvent(last_month, B.MOTHER_FATHER),
     ]
     months = [both] * last_month + [EMPTY] * (12 - last_month)

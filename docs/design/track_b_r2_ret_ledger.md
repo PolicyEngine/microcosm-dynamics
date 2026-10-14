@@ -4,7 +4,7 @@
 earnings test rule mechanics on invented record-years and published
 statutory worked examples. No population, behavioral or forecast claim.**
 
-**Status: build-only, revised 2026-10-12 after PR #528 review rounds 1–2.
+**Status: build-only, revised 2026-10-12 after PR #528 review rounds 1–3.
 No real-data computation.** This is the
 single-record ledger core. Deduction before reduction, which can change
 the other beneficiaries' gross rates, remains part (b).
@@ -324,7 +324,14 @@ Changing spouse to divorced-spouse does not create a new legal benefit
 type: both are Act 202(b)/(c) benefits (RS 02501.030B.1-2 and D).
 
 Child, young-spouse and mother/father terminations can supply a termination
-grace year. It belongs to the year of the last entitled month: a January
+grace year. Child's benefits under Act 202(d) include both ordinary
+`CHILD` and disability-based `CDB` (Act 203(f)(1)(F); 20 CFR
+404.435(b)(4); RS 02501.030B.3.a). Ending CDB entitlement in a mixed
+ordinary-child/CDB year can therefore protect the earlier ordinary-child
+NSMs. The CDB months remain ineligible NSMs under 404.435(b)(3), and
+a year entitled solely to DIB/DWB/CDB cannot have a grace year even
+when CDB entitlement ends normally (RS 02501.030B.4).
+It belongs to the year of the last entitled month: a January
 termination belongs to the preceding December's year. Death, contiguous
 conversion, conversion to an aged spouse and mere child-in-care failure
 do not qualify. A termination-only grace does not overwrite LMETY. Any
@@ -365,6 +372,7 @@ year is explicit.
 | Disability NH, or DIB/DWB/CDB elected payment months | Supported own-work exemption; RIB elections remain tested | RS 02501.021B.5.a |
 | Deceased record and widow(er), mother/father or child own work | Supported without binding-maximum readjustment | RS 02501.095B.3 |
 | Variable monthly rates and entitlement | Supported; twelve months retained | RS 02501.100B.1 |
+| Normal CDB termination in a mixed ordinary-child/CDB year | Supported termination grace for eligible ordinary-child NSMs; disability-only years, disability NSMs and other termination exclusions stay excluded | Act 203(f)(1)(F); 20 CFR 404.435(b)(3)-(4); RS 02501.030B.3-4 |
 | Three-or-more-beneficiary partial pools with a sub-$1 capped overflow | Supported with the mandatory stop and an explicit undistributed residual | 20 CFR 404.440; RS 02501.110B.2 |
 | Qualifying divorced spouse | Excluded from NH charging; own earnings still tested | Act 203(b)(2); RS 02501.021B.5.b |
 | Legally married deemed-entitled CDB or mother/father recipient | Supported against NH excess when the legal facts are asserted | Act 203(b)(1); 20 CFR 404.420 |
@@ -443,6 +451,7 @@ In the table, unqualified property test names are in
 | Actual and estimated grace statuses are distinct; changed service facts can require recovery even when annual earnings coincide | readings `test_estimated_initial_grace_and_actual_grace_are_separate`; `test_property_changed_grace_estimate_can_require_recovery` |
 | Zero payable caps retain their original shares and count toward the three-beneficiary sub-dollar stop; exact net shares plus the residual conserve the pool | `test_zero_cap_participants_preserve_total_and_trigger_source_stop`; unit `test_entitled_zero_rate_auxiliary_keeps_its_original_partial_share` |
 | Explicit Act 203(f)(1)(C)-(D) protections exempt only the recipient's own work in asserted CHILD/WIDOW months | readings `test_property_other_statutory_own_exemptions_protect_only_that_workers_excess`; `test_own_work_exempt_flag_requires_a_statutory_benefit_type` |
+| The test-only broader deemed-CDB reading agrees exactly with the supported married full-family charge; the Act/CFR reading preserves the unrelated record, while the public unmarried input always refuses | readings `test_property_deemed_counterfactual_matches_full_married_charge`; `test_unmarried_deemed_entitlement_counterfactual_changes_200_dollars` |
 
 The `ss/benefits.py` float oracle has no earnings-test ledger implementation,
 so there is no second RET-payment implementation against which to invent a
@@ -461,6 +470,9 @@ The grace-state invariants are executed in
 | Continuous entitlement cannot create a second initial/after-break grace | `test_property_continuous_entitlement_cannot_create_second_grace` |
 | A new after-break grace requires a gap and a different legal type; the same type never renews it | `test_property_new_type_requires_gap_but_same_type_never_renews` |
 | A termination-only grace leaves LMETY unchanged | `test_property_termination_only_never_changes_lmety` |
+| Mixed ordinary-child/CDB termination protects exactly ordinary-child pre-FRA NSMs, excludes CDB months, preserves LMETY and gives deterministic results | `test_property_mixed_child_cdb_termination_protects_only_child_nsms`; ledger `test_mixed_child_cdb_termination_grace_preserves_one_dollar_january_check` |
+| A disability-only year has no grace even when CDB entitlement ends normally | `test_property_disability_only_cdb_termination_has_no_grace` |
+| CDB termination keeps every excluded cause and the next-month entitlement exclusion | `test_property_cdb_termination_keeps_cause_and_next_month_exclusions` |
 | Termination-event order does not change the decision or next state | `test_property_termination_event_order_independence` |
 | The POMS election reading uses RIB receipt while preserving technical disability entitlement history | `test_property_poms_rib_election_separates_entitlement_from_receipt` |
 | Returned state advances exactly one year, without mutating the input state | `test_property_state_advances_exactly_one_year_without_hidden_mutation` |
@@ -632,6 +644,31 @@ a child turning 16 terminates the parent's entitlement. Tests
 `test_normal_termination_still_excludes_next_month_other_benefit` pin
 the distinction.
 
+## Review round 3: mixed child and CDB termination
+
+The executed minimized counterexample has ordinary CHILD entitlement in
+January 2026 at age 17, disability-based CDB entitlement in February at
+age 18, and established non-death termination after February with no
+March entitlement. LMETY is 2025. Both entitled months have a $1.00
+gross rate; original rates are $1.00. Countable annual NESE is $24,482
+over twelve self-employment months, with zero wages and no substantial
+services. The annual limit is $24,480 and excess is exactly
+`floor(($24,482 - $24,480) / 2) = $1`.
+
+The reviewed omission deducted $1.00 in January and paid a $0 check,
+with annual checks $1. Recognizing the termination of child's benefits
+under Act 202(d) gives termination grace, protects January, and pays
+$1.00 / a $1 check there. February remains ineligible as an NSM and
+exempt from its own work deduction, also paying $1. Annual checks are
+$2, charged excess is $0, uncharged excess is $1, and LMETY remains
+2025. `test_mixed_child_cdb_termination_grace_preserves_one_dollar_january_check`
+failed first with January check $0 versus $1 and then passed. The three
+new grace properties pin the mixed-year protection, disability-only-year
+exclusion, non-death/next-month exclusions and LMETY preservation.
+This corrects an implementation omission; no source erratum or new
+money-changing reading was found (Act 203(f)(1)(F); 20 CFR
+404.435(b)(3)-(4); RS 02501.030B.3-4).
+
 ## Needs Max's judgment
 
 **Ruling d1418 (Max, 2026-10-12): keep the current defaults for these
@@ -645,6 +682,13 @@ The review resolved the historical monthly fractions and sub-dollar
 reapportionment stop directly from the captured Act and CFR text. Those
 rules are implemented above and are no longer judgment items. The
 remaining money-changing readings are explicit below.
+The production decision comments link the retained readings to the
+source-conflict register IDs `us:oasdi-ret-negative-nese-proration`,
+`us:oasdi-ret-grace-simultaneous-rib-dib`,
+`us:oasdi-ret-own-work-age-exemptions` and
+`us:oasdi-ret-deemed-entitlement-basis`.
+`test_source_conflict_ids_are_linked_at_the_decision_lines` checks every
+link at its decision, including both deemed-entitlement refusals.
 
 ### Signed NESE: floor versus dropping cents
 
@@ -759,6 +803,17 @@ recipient; treating the unrelated record independently leaves it
 untouched. `test_unmarried_deemed_entitlement_is_refused_pending_source_judgment`
 and `test_married_deemed_disabled_child_is_charged_number_holders_excess`
 pin the refusal and the statutory benchmark.
+`test_unmarried_deemed_entitlement_counterfactual_changes_200_dollars`
+now executes both alternative readings with an explicit test-only
+full-January-charge helper: the broader POMS reading pays $0 instead
+of $200 on the unrelated recipient's record. Annual checks are $2,200
+versus $2,400 in the otherwise identical married benchmark and separate
+unrelated record. It checks the public unmarried input still refuses.
+`test_property_deemed_counterfactual_matches_full_married_charge` compares
+the narrow helper with the supported married ledger and separate record
+over invented whole-dollar rates, with zero tolerance. This helper does
+not change marriage facts or enable the broader reading through the
+public API; ruling d1418's defaults remain in effect.
 The Act's ordinary-adult-child wording would include the same $200 in
 that benchmark. The CFR disability-only boundary refuses that ordinary
 child case. `test_deemed_ordinary_child_requires_explicit_adult_age_facts`
@@ -921,6 +976,41 @@ integration-PSID, 520 legacy-reproduction and 220 PolicyEngine-oracle
 tests, totaling 12,979. The tier-policy test passed with 12,978 tests
 deselected. Both microdata directory overrides pointed to nonexistent
 paths during every whole-suite collection and the tier-policy run.
+
+Review fix round 3 first reproduced January check $0 instead of $1 in
+the minimized mixed CHILD/CDB termination case, then passed the monetary
+regression and four selected grace properties after the correction.
+All five affected R2 test files passed 570 tests, including every source
+hash, rule quotation and worked-example figure. Birth-evidence checks
+passed all 13 cases with the artifact rebuild excluded. No assertion was
+weakened and no test failure was suppressed.
+
+The four source-conflict IDs are linked at their five decision sites.
+The explicit test-only deemed-entitlement counterfactual executes the
+$200 January difference while retaining the public refusal. Its new
+property compares both readings with supported ledger computations at
+zero tolerance. Three new grace properties and the expanded event-order
+property execute the corrected mixed-year boundary and every retained
+exclusion. The docstring and admitted scope reflect that boundary.
+
+Six deliberate one-line CDB implementation mutations failed the intended
+tests in isolated scratch packages: omitting CDB termination, allowing a
+disability-only termination grace, admitting CDB NSMs, allowing excluded
+causes, ignoring next-month entitlement and overwriting termination-only
+LMETY. The same nodes passed after each restoration. A seventh mutation
+ignored the test-only broader deemed reading; both new reading tests
+failed, then passed after byte-identical restoration. Production mutation
+copies were isolated and their import paths verified. Source captures
+were unchanged. Black and Ruff passed on all ten PR Python files and
+the four review helper scripts.
+
+The round-3 independent tier recount found 7,120 unit, 3,929 artifact,
+1,346 integration-PSID, 520 legacy-reproduction and 232 PolicyEngine-oracle
+tests, totaling 13,147. The tier-policy test passed with 13,146 tests
+deselected. Both microdata directory overrides pointed to nonexistent
+paths during every whole-suite collection and the tier-policy run.
+These checks admit statutory mechanics only; ruling d1418's defaults
+remain in effect.
 
 ## Not in scope
 
