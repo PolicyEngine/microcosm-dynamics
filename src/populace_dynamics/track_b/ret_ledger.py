@@ -19,6 +19,8 @@ particular a deemed-entitled CDB recipient can be charged the NH's excess.
 Auxiliary work that would free binding family-maximum room is refused for
 part (b), as are other deduction events. No unsupported row is dropped
 from an outcome denominator or silently computed as a single worker.
+Every raw month-set element must be an integer month before deduplication;
+malformed input raises before a coverage refusal can become an outcome.
 
 Monthly limits are exact annual/12, including the fractional amounts in
 Act 203(f)(8)(D)(v)-(vi) for 2000/2001. The chart ceiling is an explicitly
@@ -124,12 +126,12 @@ def _sequence(values: Iterable[object], label: str) -> tuple:
 
 def _months(values: Iterable[int], label: str) -> frozenset[int]:
     try:
-        result = frozenset(values)
+        raw = tuple(values)
     except TypeError as error:
         raise InvalidFamilyInput(f"{label} must contain months") from error
-    if any(type(m) is not int or not 1 <= m <= 12 for m in result):
+    if any(type(m) is not int or not 1 <= m <= 12 for m in raw):
         raise InvalidFamilyInput(f"{label} must contain months 1 through 12")
-    return result
+    return frozenset(raw)
 
 
 def _fra(month: int | None) -> None:

@@ -114,6 +114,7 @@ RULE_QUOTES = {
         "2001 $10,680 $890 $2 over $10,680 $25,000 $2,084",
     ],
     "poms_rs_02501_030": [
+        "becomes entitled to a different type of benefit (i.e., retirement, wife's, husband's, child's, widow's, widower's, mother's, father's, or parent's);",
         "Child's benefits as defined in section 202(d) of the Social Security Act (the Act),",
         "A grace year does not apply to a disabled beneficiary in any year if entitled solely to DIB, disabled widow(er)'s (DWB), or childhood disability benefits (CDB).",
         "Do not annotate the LMETY field if the only reason to apply the MET is the termination grace year or all months of entitlement are in the month of FRA or later.",
@@ -229,6 +230,8 @@ RULE_QUOTES = {
         "Where the time devoted to the business is less than 15 hours a month, the services are not substantial."
     ],
     "ecfr_20cfr404_subpart_e": [
+        "A beneficiary may have another grace year each time his or her entitlement to one type of benefit ends and, after a break in entitlement of at least one month, the beneficiary becomes entitled to a different type of retirement or survivors benefit.",
+        "we will not count as a non-service month, a month that occurred while the beneficiary was entitled to disability benefits under section 223 of the Social Security Act or as a disabled widow, widower, or child under section 202.",
         "A beneficiary entitled to child's benefits",
         "is entitled to a termination grace year in any year the beneficiary's entitlement to these types of benefits terminates.",
         "a month that occurred while the beneficiary was entitled to disability benefits under section 223 of the Social Security Act or as a disabled widow, widower, or child under section 202.",
@@ -258,6 +261,8 @@ RULE_QUOTES = {
         "we must deduct $1 from your benefits for each $2 you earn above $24,480"
     ],
     "ssa_act_203": [
+        "subsection (a), (b), (c), (d), (e), (f), (g), or (h) of section 202",
+        "benefits payable under section 202(d) by reason of being under a disability",
         "or under section 202(d) or (g), if such month is in a year in which such entitlement ends for a reason other than the death of such individual",
         "is not entitled to any benefits under this title for the month following",
         "Notwithstanding any other provision of this subsection",

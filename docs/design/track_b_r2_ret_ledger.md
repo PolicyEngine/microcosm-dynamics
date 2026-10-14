@@ -4,7 +4,7 @@
 earnings test rule mechanics on invented record-years and published
 statutory worked examples. No population, behavioral or forecast claim.**
 
-**Status: build-only, revised 2026-10-12 after PR #528 review rounds 1–3.
+**Status: build-only, revised 2026-10-14 after PR #528 review rounds 1–4.
 No real-data computation.** This is the
 single-record ledger core. Deduction before reduction, which can change
 the other beneficiaries' gross rates, remains part (b).
@@ -322,6 +322,12 @@ least one entirely unentitled month can create another grace year when
 its first NSM occurs. Pending eligibility survives a year with no NSM.
 Changing spouse to divorced-spouse does not create a new legal benefit
 type: both are Act 202(b)/(c) benefits (RS 02501.030B.1-2 and D).
+For the same comparison, `CDB` and `CHILD` are child's benefits under
+Act 202(d), and `DWB` and `WIDOW` are widow(er)'s benefits under Act
+202(e)/(f). A change between these classifications after a gap cannot
+create new after-break eligibility or overwrite LMETY. This normalization
+affects only the legal-type comparison; disability months still cannot
+be NSMs (20 CFR 404.435(b)(2)-(3); RS 02501.030B.2 and C).
 
 Child, young-spouse and mother/father terminations can supply a termination
 grace year. Child's benefits under Act 202(d) include both ordinary
@@ -373,6 +379,7 @@ year is explicit.
 | Deceased record and widow(er), mother/father or child own work | Supported without binding-maximum readjustment | RS 02501.095B.3 |
 | Variable monthly rates and entitlement | Supported; twelve months retained | RS 02501.100B.1 |
 | Normal CDB termination in a mixed ordinary-child/CDB year | Supported termination grace for eligible ordinary-child NSMs; disability-only years, disability NSMs and other termination exclusions stay excluded | Act 203(f)(1)(F); 20 CFR 404.435(b)(3)-(4); RS 02501.030B.3-4 |
+| Re-entitlement after a gap to the same legal child or widow(er) type, including CDB/CHILD and DWB/WIDOW changes | Supported without a fresh after-break grace; initial grace and pending genuinely different-type eligibility remain available | Act 202(d), (e)/(f); 20 CFR 404.435(b)(2)-(3); RS 02501.030B.1-2 |
 | Three-or-more-beneficiary partial pools with a sub-$1 capped overflow | Supported with the mandatory stop and an explicit undistributed residual | 20 CFR 404.440; RS 02501.110B.2 |
 | Qualifying divorced spouse | Excluded from NH charging; own earnings still tested | Act 203(b)(2); RS 02501.021B.5.b |
 | Legally married deemed-entitled CDB or mother/father recipient | Supported against NH excess when the legal facts are asserted | Act 203(b)(1); 20 CFR 404.420 |
@@ -407,6 +414,16 @@ catches coverage refusals only; invalid input propagates.
 including counts by reason. `weighted_ret_total` raises
 `FamilyTargetBlocked` if any row was refused. A refusal cannot improve
 the apparent coverage denominator by disappearing.
+
+Every month-set constructor validates the raw elements before deduplicating:
+each must have `type(month) is int` and lie in 1–12. Equal boolean or float
+values therefore raise `InvalidFamilyInput` in either order, including
+when a record would otherwise refuse for foreign work. This applies to
+self-employment, substantial services, entitlement, divorced-spouse,
+deemed-child age, own-work exemptions, binding-maximum and other-deduction
+months, and external grace decisions' eligible and protected months.
+Valid integer duplicates remain accepted as sets. Invalid input never
+creates an outcome row or enters a coverage denominator (design §7).
 
 ## Executed invariants and differentials
 
@@ -447,6 +464,7 @@ In the table, unqualified property test names are in
 | Every outcome row and weight stays in the coverage denominator; any refusal blocks an aggregate | `test_coverage_denominators_keep_every_supported_or_refused_row`; unit `test_coverage_denominator_keeps_refusals_and_blocks_aggregate` |
 | Exact 1/2 and 1/3 excess rates use an integer floor: excess is nonnegative and differs from the unrounded amount by less than $1 | readings `test_property_excess_uses_exact_statutory_rate_and_dollar_floor`; unit `test_lower_threshold_and_whole_dollar_floor`; unit `test_fra_threshold_uses_one_third_and_floors`; R1 differential above |
 | Invalid input is never counted as a statutory coverage gap | `test_coverage_denominators_keep_every_supported_or_refused_row`; unit `test_invalid_wage_inputs_raise_before_coverage_refusal`; `test_invalid_rates_raise_before_coverage_refusal`; `test_duplicate_identity_is_invalid_even_in_an_unsupported_record`; `test_invalid_inputs_are_not_counted_as_coverage_gaps` |
+| Every raw month-set element is validated before deduplication, independent of order; valid integer duplicates in the ledger preserve the same set | `test_every_raw_month_set_element_is_validated_before_deduplication`; `test_valid_month_set_duplicates_and_order_preserve_the_same_months`; grace `test_property_external_grace_month_sets_validate_before_deduplication`; unit `test_invalid_self_employment_month_collision_is_an_input_error`; `test_invalid_entitlement_month_collision_precedes_foreign_work_refusal` |
 | Under the explicit POMS election reading, only eligible elected RIB NSMs receive grace protection; the conservative CFR reading supplies none during concurrent disability entitlement | readings `test_property_explicit_poms_election_protects_only_eligible_rib_months`; `test_simultaneous_dib_rib_source_readings_change_4200_dollars` |
 | Actual and estimated grace statuses are distinct; changed service facts can require recovery even when annual earnings coincide | readings `test_estimated_initial_grace_and_actual_grace_are_separate`; `test_property_changed_grace_estimate_can_require_recovery` |
 | Zero payable caps retain their original shares and count toward the three-beneficiary sub-dollar stop; exact net shares plus the residual conserve the pool | `test_zero_cap_participants_preserve_total_and_trigger_source_stop`; unit `test_entitled_zero_rate_auxiliary_keeps_its_original_partial_share` |
@@ -468,7 +486,8 @@ The grace-state invariants are executed in
 | Protected months are exactly eligible, entitled, non-disability, pre-FRA NSMs under the chosen reading | `test_property_only_entitled_nondisability_prefra_nonservice_months_protected` |
 | Grace results are deterministic and benefit-type input order independent | `test_property_determinism_and_type_order_independence` |
 | Continuous entitlement cannot create a second initial/after-break grace | `test_property_continuous_entitlement_cannot_create_second_grace` |
-| A new after-break grace requires a gap and a different legal type; the same type never renews it | `test_property_new_type_requires_gap_but_same_type_never_renews` |
+| A new after-break grace requires a gap and a different legal type; the same type never renews it, including both directions of CDB/CHILD, DWB/WIDOW and spouse/divorced-spouse changes | `test_property_new_type_requires_gap_but_same_type_never_renews`; `test_property_same_legal_type_gap_never_creates_new_grace`; ledger `test_carried_child_cdb_same_legal_type_gap_charges_one_dollar_january` |
+| Legal-type normalization retains an unused initial grace and pending eligibility for a genuinely different type across disability months and a further same-type gap | `test_property_legal_type_normalization_preserves_initial_and_pending_grace` |
 | A termination-only grace leaves LMETY unchanged | `test_property_termination_only_never_changes_lmety` |
 | Mixed ordinary-child/CDB termination protects exactly ordinary-child pre-FRA NSMs, excludes CDB months, preserves LMETY and gives deterministic results | `test_property_mixed_child_cdb_termination_protects_only_child_nsms`; ledger `test_mixed_child_cdb_termination_grace_preserves_one_dollar_january_check` |
 | A disability-only year has no grace even when CDB entitlement ends normally | `test_property_disability_only_cdb_termination_has_no_grace` |
@@ -668,6 +687,44 @@ exclusion, non-death/next-month exclusions and LMETY preservation.
 This corrects an implementation omission; no source erratum or new
 money-changing reading was found (Act 203(f)(1)(F); 20 CFR
 404.435(b)(3)-(4); RS 02501.030B.3-4).
+
+## Review round 4: legal benefit types and raw month validation
+
+The captured RS 02501.030B.2 enumerates “retirement, wife's, husband's,
+child's, widow's, widower's, mother's, father's, or parent's” benefit
+types for after-break grace. CFR 404.435(b)(2) requires a “different type
+of retirement or survivors benefit”; paragraph (b)(3) separately excludes
+disabled widow(er)/child months from NSMs. Neither capture establishes a
+separate CDB or DWB legal type for paragraph (b)(2). Normalization therefore
+uses Act 202(d)'s CHILD type for CDB and 202(e)/(f)'s WIDOW type for DWB
+only when comparing types. The elected and entitled classifications
+remain explicit for disability protection. New verbatim source assertions
+pin the enumeration, different-type requirement and disability exclusion.
+
+The failing-first carried-history regression starts with CHILD and initial
+grace in 2024. January 2025 is CHILD, February–November is CDB, and
+December is unentitled after established normal CDB termination.
+Termination grace protects January 2025 and preserves LMETY 2024.
+January 2026 is student CHILD, February–December is CDB, with continuous
+entitlement that year and no termination event. All 2026 monthly gross
+and original rates are $1.00. Zero wages, $24,482 annual NESE over twelve
+months and no substantial services yield $1 excess above the $24,480
+annual exemption. The reviewed implementation falsely renewed grace,
+paid January $1 and annual checks $12, and overwrote LMETY with 2026.
+The corrected ledger deducts $1.00 in January, pays January $0 and annual
+checks $11, charges all $1 excess, leaves $0 uncharged and retains LMETY
+2024. CDB months still pay $1 each under their own-work exclusion.
+This is an invented case, not a published worked example or a source erratum.
+
+The second executed minimum, `WorkEarnings(nese=1,
+self_employment_months=(1, 1.0))`, hid the float by deduplicating before
+validation. The foreign-work case likewise accepted entitled months
+`(1, True)` and incorrectly returned `noncovered_foreign_work`.
+Both orders now raise `InvalidFamilyInput` before any refusal. Hypothesis
+checks cover all ten month-set fields, and valid-integer duplicate/order
+properties preserve the ledger's established set behavior. External grace decisions
+receive the same validation ordering. Neither finding changes a statutory
+reading, d1418's defaults, or part (b)'s scope.
 
 ## Needs Max's judgment
 
@@ -1011,6 +1068,33 @@ deselected. Both microdata directory overrides pointed to nonexistent
 paths during every whole-suite collection and the tier-policy run.
 These checks admit statutory mechanics only; ruling d1418's defaults
 remain in effect.
+
+
+Review fix round 4 first reproduced the carried CHILD/CDB history's false
+$1 January payment and the raw bool/float month collisions before correcting
+production code. All seven RET test files then passed 797 tests, including
+the source-conformance tests with five new verbatim source assertions.
+All 13 birth-evidence checks passed with the artifact rebuild excluded.
+Black and Ruff passed on all ten PR Python files and the scratch mutation
+runner. Independent review confirmed the preserved disability exclusions,
+initial and pending grace, and round-3 mixed-year termination behavior.
+
+Five new one-line mutations were killed: omitting CDB legal normalization,
+omitting DWB legal normalization, deduplicating eligible or protected grace
+months before validation, and deduplicating ledger month values inside
+validation. Each relevant test passed after restoration. The four grace
+mutations ran in an isolated scratch package with an asserted import path;
+the ledger mutation was restored before the final 797-test run. No mutation
+is retained in production. Source captures and d1418 defaults stayed unchanged.
+
+
+The round-4 independent tier recount found 7,380 unit, 4,046 artifact,
+1,346 integration-PSID, 520 legacy-reproduction and 307 PolicyEngine-oracle
+tests, totaling 13,599. The tier-policy test passed with 13,598 other tests
+deselected. Both staged microdata overrides pointed to nonexistent paths
+during every whole-suite collection and the selected policy-test run.
+The committed-branch and working-tree diffs contain no protected files.
+Changes remain uncommitted as required by this fix round.
 
 ## Not in scope
 

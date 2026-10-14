@@ -17,6 +17,10 @@ Ordinary CHILD and CDB both terminate child's benefits under Act 202(d).
 In a mixed year, CDB termination can protect earlier non-disability NSMs;
 disability months remain ineligible, and a disability-only year has no
 grace year (20 CFR 404.435(b)(3)-(4); RS 02501.030B.3-4).
+For after-break grace, CDB/CHILD share Act 202(d)'s legal benefit type,
+and DWB/WIDOW share Act 202(e)/(f)'s type (RS 02501.030B.2). This
+comparison preserves the separate disability-month NSM exclusion.
+Externally supplied month sets validate every raw value before deduplication.
 """
 
 from __future__ import annotations
@@ -230,8 +234,8 @@ class GraceYearDecision:
             raise InvalidFamilyInput("A grace decision needs carried state")
         try:
             kinds = frozenset(self.kinds)
-            eligible = frozenset(self.met_eligible_months)
-            protected = frozenset(self.protected_months)
+            eligible = tuple(self.met_eligible_months)
+            protected = tuple(self.protected_months)
         except TypeError as error:
             raise InvalidFamilyInput(
                 "Grace decision sets must be iterable"
@@ -240,9 +244,11 @@ class GraceYearDecision:
             raise InvalidFamilyInput("Use explicit GraceKind values")
         if any(
             type(month) is not int or not 1 <= month <= 12
-            for month in eligible | protected
+            for month in (*eligible, *protected)
         ):
             raise InvalidFamilyInput("Protected months must be 1 through 12")
+        eligible = frozenset(eligible)
+        protected = frozenset(protected)
         if not protected <= eligible:
             raise InvalidFamilyInput("Protected months must be MET eligible")
         if self.applies != bool(kinds) or (protected and not self.applies):
@@ -255,10 +261,16 @@ class GraceYearDecision:
 
 
 def _legal_types(types: frozenset[BenefitType]) -> frozenset[BenefitType]:
-    # Divorced spouse remains a wife's/husband's benefit under 202(b)/(c).
+    # RS 02501.030B.2 compares Act benefit types, independently of the
+    # disability-month exclusion in 404.435(b)(3). Divorced spouse is
+    # 202(b)/(c); ordinary/disabled child is 202(d); widow(er) is 202(e)/(f).
+    legal_type = {
+        BenefitType.DIVORCED_SPOUSE: BenefitType.SPOUSE,
+        BenefitType.CDB: BenefitType.CHILD,
+        BenefitType.DWB: BenefitType.WIDOW,
+    }
     return frozenset(
-        BenefitType.SPOUSE if t is BenefitType.DIVORCED_SPOUSE else t
-        for t in types
+        legal_type.get(benefit_type, benefit_type) for benefit_type in types
     )
 
 

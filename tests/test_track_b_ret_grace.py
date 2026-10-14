@@ -502,6 +502,117 @@ def test_same_spouse_type_after_divorce_and_gap_does_not_grant_fresh_grace():
     assert not result.applies
 
 
+@pytest.mark.parametrize(
+    "disabled, ordinary", [(B.CDB, B.CHILD), (B.DWB, B.WIDOW)]
+)
+def test_disabled_to_ordinary_same_legal_type_gap_preserves_lmety(
+    disabled, ordinary
+):
+    first = grace_year(2024, GraceYearState(), [month(ordinary)] * 12)
+    interrupted = grace_year(
+        2025, first.next_state, [month(disabled)] * 11 + [EMPTY]
+    )
+    assert not interrupted.applies
+    result = grace_year(2026, interrupted.next_state, [month(ordinary)] * 12)
+    assert not result.applies
+    assert not result.protected_months
+    assert result.next_state.last_met_year == 2024
+    assert not result.next_state.pending_after_break
+
+
+@settings(max_examples=200, deadline=None)
+@given(
+    st.sampled_from(
+        [
+            (B.RIB,),
+            (B.SPOUSE, B.DIVORCED_SPOUSE),
+            (B.CHILD, B.CDB),
+            (B.WIDOW, B.DWB),
+            (B.MOTHER_FATHER,),
+            (B.DIB,),
+        ]
+    ),
+    st.integers(0, 1),
+    st.integers(0, 1),
+    st.integers(0, 10),
+    st.integers(1, 2),
+    st.integers(2000, 2025),
+)
+def test_property_same_legal_type_gap_never_creates_new_grace(
+    legal_family, before_index, after_index, before, gap_length, lmety
+):
+    old = legal_family[before_index % len(legal_family)]
+    new = legal_family[after_index % len(legal_family)]
+    state = prior(lmety, old, gap=before == 0)
+    months = (
+        [month(old)] * before
+        + [EMPTY] * gap_length
+        + [month(new)] * (12 - before - gap_length)
+    )
+    result = grace_year(lmety + 1, state, months)
+    assert not result.applies
+    assert not result.kinds
+    assert not result.protected_months
+    assert result.next_state.last_met_year == lmety
+    assert not result.next_state.pending_after_break
+
+
+@settings(max_examples=100, deadline=None)
+@given(st.sampled_from([(B.CHILD, B.CDB), (B.WIDOW, B.DWB)]))
+def test_property_legal_type_normalization_preserves_initial_and_pending_grace(
+    types,
+):
+    ordinary, disabled = types
+    months = [month(ordinary, nonservice=False)] + [month(disabled)] * 10
+    months += [EMPTY]
+    for initial in (True, False):
+        state = GraceYearState() if initial else prior(2024, B.RIB, gap=True)
+        first = grace_year(2025, state, months)
+        assert not first.applies
+        assert first.next_state.pending_after_break == (not initial)
+        second = grace_year(2026, first.next_state, [month(ordinary)] * 12)
+        assert second.kinds == ({K.INITIAL} if initial else {K.AFTER_BREAK})
+        assert second.protected_months == set(range(1, 13))
+        assert second.next_state.last_met_year == 2026
+        assert not second.next_state.pending_after_break
+
+
+@pytest.mark.parametrize("field", ["met_eligible_months", "protected_months"])
+@pytest.mark.parametrize("raw", [(1, True), (True, 1), (1, 1.0), (1.0, 1)])
+def test_external_grace_month_sets_reject_equal_invalid_raw_values(field, raw):
+    kwargs = dict(
+        applies=True,
+        kinds={K.INITIAL},
+        met_eligible_months={1},
+        protected_months={1},
+        next_state=GraceYearState(),
+    )
+    kwargs[field] = raw
+    with pytest.raises(InvalidFamilyInput):
+        GraceYearDecision(**kwargs)
+
+
+@settings(max_examples=100, deadline=None)
+@given(st.integers(1, 12), st.booleans())
+def test_property_external_grace_month_sets_validate_before_deduplication(
+    month_number, use_bool
+):
+    valid = 1 if use_bool else month_number
+    invalid = True if use_bool else float(valid)
+    for field in ("met_eligible_months", "protected_months"):
+        for raw in ((valid, invalid), (invalid, valid)):
+            kwargs = dict(
+                applies=True,
+                kinds={K.INITIAL},
+                met_eligible_months={valid},
+                protected_months={valid},
+                next_state=GraceYearState(),
+            )
+            kwargs[field] = raw
+            with pytest.raises(InvalidFamilyInput):
+                GraceYearDecision(**kwargs)
+
+
 @settings(max_examples=150, deadline=None)
 @given(st.sampled_from([B.DIB, B.DWB, B.CDB]), st.integers(1, 12))
 def test_property_disability_reentry_after_break_cannot_create_pending_grace(

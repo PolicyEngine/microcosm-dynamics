@@ -794,6 +794,73 @@ def test_coverage_denominators_keep_every_supported_or_refused_row(cases):
         )
 
 
+MONTH_SET_FIELDS = (
+    "self_employment_months",
+    "substantial_service_months",
+    "entitled_months",
+    "divorced_months",
+    "deemed_child_age_18_months",
+    "own_work_exempt_months",
+    "family_maximum_binding_months",
+    "other_deduction_months",
+)
+INVALID_MONTH_COLLISIONS = st.one_of(
+    st.just((1, True)),
+    st.integers(1, 12).map(lambda month: (month, float(month))),
+)
+
+
+def _month_set_case(field, values, month):
+    """Otherwise-valid inputs exposing every public ledger month set."""
+    if field == "self_employment_months":
+        return r.WorkEarnings(nese=1, self_employment_months=values)
+    if field == "substantial_service_months":
+        return r.WorkEarnings(
+            nese=1,
+            self_employment_months=MONTHS,
+            substantial_service_months=values,
+        )
+    if field in (
+        "family_maximum_binding_months",
+        "other_deduction_months",
+    ):
+        return record(**{field: values})
+    benefit_type = (
+        BenefitType.DIVORCED_SPOUSE
+        if field == "divorced_months"
+        else BenefitType.CHILD
+    )
+    return dataclasses.replace(
+        beneficiary(benefit_type=benefit_type, entitled={month}),
+        **{field: values},
+    )
+
+
+@pytest.mark.parametrize("field", MONTH_SET_FIELDS)
+@settings(max_examples=30, deadline=None)
+@given(INVALID_MONTH_COLLISIONS)
+@example((1, True))
+@example((1, 1.0))
+def test_every_raw_month_set_element_is_validated_before_deduplication(
+    field, collision
+):
+    month = collision[0]
+    for values in (collision, collision[::-1]):
+        with pytest.raises(r.InvalidFamilyInput):
+            _month_set_case(field, values, month)
+
+
+@pytest.mark.parametrize("field", MONTH_SET_FIELDS)
+@settings(max_examples=30, deadline=None)
+@given(st.lists(st.integers(1, 12), min_size=1, max_size=30))
+def test_valid_month_set_duplicates_and_order_preserve_the_same_months(
+    field, months
+):
+    case = _month_set_case(field, tuple(months), months[0])
+    reverse = _month_set_case(field, tuple(reversed(months)), months[0])
+    assert getattr(case, field) == getattr(reverse, field) == frozenset(months)
+
+
 @settings(max_examples=150, deadline=None)
 @given(DIME_RATES, EXCESSES, EXCESSES, PROTECTED)
 def test_auxiliary_own_deductions_are_monotone_with_protected_months_fixed(

@@ -186,6 +186,63 @@ def test_mixed_child_cdb_termination_grace_preserves_one_dollar_january_check():
     assert decision.next_state.last_met_year == 2025
 
 
+def test_carried_child_cdb_same_legal_type_gap_charges_one_dollar_january():
+    # Review round 4: DOB February 2007, CHILD in 2024, CDB from
+    # February 2025, established normal termination after November 2025,
+    # student CHILD in January 2026 and CDB from February onward. No
+    # optional Act-age exemption is asserted; d1418 defaults apply.
+    child_month = GraceMonth({BenefitType.CHILD}, {BenefitType.CHILD}, True)
+    cdb_month = GraceMonth({BenefitType.CDB}, {BenefitType.CDB}, True)
+    initial = grace_year(2024, GraceYearState(), [child_month] * 12)
+    assert initial.kinds == {GraceKind.INITIAL}
+    assert initial.next_state.last_met_year == 2024
+    terminated = grace_year(
+        2025,
+        initial.next_state,
+        [child_month] + [cdb_month] * 10 + [GraceMonth()],
+        termination_events=[TerminationEvent(11, BenefitType.CDB)],
+    )
+    assert terminated.kinds == {GraceKind.TERMINATION}
+    assert terminated.protected_months == {1}
+    assert terminated.next_state == GraceYearState(
+        last_met_year=2024,
+        previous_entitled_types={BenefitType.CDB},
+        had_entitlement=True,
+        gap_since_entitlement=True,
+        last_processed_year=2025,
+    )
+    decision = grace_year(
+        YEAR, terminated.next_state, [child_month] + [cdb_month] * 11
+    )
+    child = dataclasses.replace(
+        beneficiary(
+            "child",
+            rate=1,
+            original_rate=1,
+            benefit_type=BenefitType.CDB,
+            work=r.WorkEarnings(nese=24482, self_employment_months=MONTHS),
+            grace=decision,
+        ),
+        benefit_types=(BenefitType.CHILD,) + (BenefitType.CDB,) * 11,
+    )
+    result = ledger(child, kind=r.RecordKind.DECEASED)
+    rows = by_month(result, "child")
+    assert rows[1].payment == 0
+    assert rows[1].deduction == 1
+    assert all(rows[m].payment == 1 for m in range(2, 13))
+    assert all(rows[m].deduction == 0 for m in range(2, 13))
+    assert sum(row.payment for row in result.months) == 11
+    assert worker(result, "child").excess == 1
+    assert worker(result, "child").charged == 1
+    assert worker(result, "child").uncharged == 0
+    assert not decision.applies
+    assert not decision.kinds
+    assert decision.met_eligible_months == {1}
+    assert not decision.protected_months
+    assert decision.next_state.last_met_year == 2024
+    assert not decision.next_state.pending_after_break
+
+
 @pytest.mark.parametrize("offset, excess", [(0, 0), (1, 0), (2, 1), (3, 1)])
 def test_lower_threshold_and_whole_dollar_floor(offset, excess):
     limit = PARAMS.for_year(YEAR).lower_exempt_amount.value
@@ -866,6 +923,32 @@ def test_invalid_inputs_are_not_counted_as_coverage_gaps():
             "invalid",
             1,
             lambda: ledger(beneficiary(fra_month=13), fiscal_year=True),
+        )
+
+
+@pytest.mark.parametrize("months", [(1, True), (True, 1), (1, 1.0), (1.0, 1)])
+def test_invalid_self_employment_month_collision_is_an_input_error(months):
+    # Round 4's minimized NESE case must inspect both raw equal values.
+    with pytest.raises(InvalidFamilyInput):
+        r.WorkEarnings(nese=1, self_employment_months=months)
+
+
+@pytest.mark.parametrize("months", [(1, True), (True, 1), (1, 1.0), (1.0, 1)])
+def test_invalid_entitlement_month_collision_precedes_foreign_work_refusal(
+    months,
+):
+    # Construct inside the outcome callback: malformed facts must raise
+    # before the foreign-work flag can create a retained coverage refusal.
+    with pytest.raises(InvalidFamilyInput):
+        r.evaluate_ret(
+            "malformed-months",
+            1,
+            lambda: ledger(
+                dataclasses.replace(
+                    beneficiary(entitled={1}), entitled_months=months
+                ),
+                foreign_work=True,
+            ),
         )
 
 
