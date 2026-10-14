@@ -48,6 +48,9 @@ def _state(kind, pia=F(1000)):
 
 def _beneficiary(role, reductions=0, *, flagged=True):
     fields = dict(conditions={GPO} if flagged else set())
+    if role is g.Role.DIVORCED_SPOUSE:
+        fields["child_in_care"] = False
+        fields["first_entitlement_child_in_care"] = False
     if role in (
         g.Role.WIDOW,
         g.Role.SURVIVING_DIVORCED_SPOUSE,

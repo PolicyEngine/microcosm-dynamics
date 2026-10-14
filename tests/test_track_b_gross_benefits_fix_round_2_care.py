@@ -212,7 +212,7 @@ def test_review_care_floor_preserves_surviving_divorced_maximum_exception():
         _state(), [replace(widow, child_in_care=False), *children]
     )
     row = result.by_id()["w"]
-    assert row.auxiliary_payable == 750
+    assert row.auxiliary_payable == 715
     assert not row.subject_to_family_maximum
     assert row.counted_against_maximum == 0
     assert result.subject_total == ordinary.subject_total == F("1749.90")

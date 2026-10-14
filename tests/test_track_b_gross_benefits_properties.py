@@ -134,6 +134,9 @@ def beneficiaries(draw, state, index, *, dual=True):
     fields = {}
     if role in (g.Role.SPOUSE, g.Role.DIVORCED_SPOUSE):
         fields["reduction_months"] = draw(st.integers(0, 60))
+    if role is g.Role.DIVORCED_SPOUSE:
+        fields["child_in_care"] = False
+        fields["first_entitlement_child_in_care"] = False
     widow = role in (g.Role.WIDOW, g.Role.SURVIVING_DIVORCED_SPOUSE)
     if widow:
         fields["child_in_care"] = False

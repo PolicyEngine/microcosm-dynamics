@@ -1114,7 +1114,13 @@ def test_worker_delayed_credits_are_outside_the_maximum():
 def test_divorced_spouse_is_ignored_by_everyone_else():
     state = _retired(1000, 1500)
     children = [g.Beneficiary(c, g.Role.CHILD) for c in ("C1", "C2")]
-    divorced = g.Beneficiary("X", g.Role.DIVORCED_SPOUSE, reduction_months=12)
+    divorced = g.Beneficiary(
+        "X",
+        g.Role.DIVORCED_SPOUSE,
+        reduction_months=12,
+        child_in_care=False,
+        first_entitlement_child_in_care=False,
+    )
     without = _family(state, children)
     with_divorced = _family(state, [*children, divorced])
     for child in ("C1", "C2"):
@@ -1971,6 +1977,30 @@ def _unsupported_cases():
             [
                 g.Beneficiary("W", g.Role.WIDOW),
                 g.Beneficiary("C", g.Role.CHILD),
+            ],
+        ),
+        g.UnsupportedReason.DIVORCED_SPOUSE_CHILD_IN_CARE_UNKNOWN: (
+            lambda: _family(
+                _retired(1000, 1500),
+                [
+                    g.Beneficiary(
+                        "D",
+                        g.Role.DIVORCED_SPOUSE,
+                        first_entitlement_child_in_care=False,
+                    ),
+                    g.Beneficiary("C", g.Role.CHILD),
+                ],
+            )
+        ),
+        g.UnsupportedReason.DIVORCED_SPOUSE_CARE_HISTORY: lambda: _family(
+            _retired(1000, 1500),
+            [
+                g.Beneficiary(
+                    "D",
+                    g.Role.DIVORCED_SPOUSE,
+                    reduction_months=36,
+                    child_in_care=False,
+                )
             ],
         ),
     }

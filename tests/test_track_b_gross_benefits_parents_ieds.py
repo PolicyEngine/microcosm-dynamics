@@ -72,6 +72,8 @@ def _ieds(pia=F(1000), maximum=F(1750), *, worker=None, conditions=()):
 
 
 def _divorce(bid="d", **kwargs):
+    kwargs.setdefault("child_in_care", False)
+    kwargs.setdefault("first_entitlement_child_in_care", False)
     return g.Beneficiary(bid, g.Role.DIVORCED_SPOUSE, **kwargs)
 
 

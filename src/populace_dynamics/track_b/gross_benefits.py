@@ -73,7 +73,12 @@ What this layer computes, for one insured worker's record and one month:
    00615.240, method B). A widow(er)'s benefit and own benefit are reduced
    independently (method B, 402(q)(3)(E); RS 00615.020A.3). A spouse with
    a child in care is never reduced for age (402(q)(5)(A)(ii)) and is paid
-   the excess over the reduced RIB (RS 00615.020A.3 note).
+   the excess over the reduced RIB (RS 00615.020A.3 note). This includes
+   divorced spouses (RS 00615.010/.201A.2), who remain outside the maximum
+   under 403(a)(3)(C). Their current care requires a named entitled child;
+   unknown care with a child on the record refuses. Without current care,
+   unknown or protected first-entitlement care history refuses when it
+   could change the ordinary aged amount (RS 00615.201A.2).
 7. **Monthly family payment.** Every benefit amount is kept as an exact
    dime multiple; 215(g) rounds each monthly benefit down to a whole dollar.
    Gross means before 203(b) earnings-test deductions and the 1840(a)(1)
@@ -330,6 +335,10 @@ class UnsupportedReason(Enum):
         "widow_drc_savings_clause_history_unknown"
     )
     WIDOW_CHILD_IN_CARE_UNKNOWN = "widow_child_in_care_unknown"
+    DIVORCED_SPOUSE_CHILD_IN_CARE_UNKNOWN = (
+        "divorced_spouse_child_in_care_unknown"
+    )
+    DIVORCED_SPOUSE_CARE_HISTORY = "divorced_spouse_care_history"
     DELAYED_CREDITS_BEFORE_1917 = "delayed_credits_born_before_1917"
 
 
@@ -1184,7 +1193,9 @@ class Beneficiary:
       For an aged spouse or divorced spouse this selects method C (True: A
       then B, or A with B; RS 00615.250) or method B (False: B then A; RS
       00615.240), and it is required: the two differ in money, and there
-      is no default. A spouse's DIB after the spouse benefit is refused (RS
+      is no default. Current-care divorced spouses with own RIB do not
+      need this order: RS 00615.201A.2 settles their amount either way.
+      A spouse's DIB after the spouse benefit is refused (RS
       00615.260). Other roles do not use the order; it may be left None.
     * ``birth_year``: SSA cohort year (January 2 through the following
       January 1); needed for a widow(er) with an own old-age benefit. When
@@ -1193,8 +1204,17 @@ class Beneficiary:
       benefit months from January 2024 (Pub. L. 118-273).
     * ``child_in_care``: the id of an entitled child on this record for
       this month, or False to attest no child in care. None is unknown;
-      a widow(er) with an entitled child then refuses. RS 00615.340 and
-      .010 raise reduced WIB to the mother/father amount when larger.
+      a widow(er) or divorced spouse with an entitled child then refuses.
+      RS 00615.340 and .010 raise reduced WIB to the mother/father amount
+      when larger. For a divorced spouse, current care exempts the spouse
+      amount from age reduction and offsets the reduced own RIB, regardless
+      of entitlement order (RS 00615.201A.2).
+    * ``first_entitlement_child_in_care``: divorced-spouse-only attestation
+      about care in the first month of divorced entitlement. False permits
+      the ordinary aged formula when there is no current care; unknown
+      history or True refuses if the continued exemption could change that
+      amount. This snapshot does not implement conversion/ARF history after
+      care ends (RS 00615.201A.2; .010).
     """
 
     beneficiary_id: str
@@ -1209,6 +1229,7 @@ class Beneficiary:
         default_factory=frozenset
     )
     child_in_care: str | bool | None = None
+    first_entitlement_child_in_care: bool | None = None
 
     def __post_init__(self):
         if not isinstance(self.beneficiary_id, str) or not self.beneficiary_id:
@@ -1216,9 +1237,10 @@ class Beneficiary:
         if not isinstance(self.role, Role):
             raise TypeError("role must be a Role")
         if self.child_in_care is not None:
-            if self.role not in _WIDOW_ROLES:
+            if self.role not in _WIDOW_ROLES | {Role.DIVORCED_SPOUSE}:
                 raise InvalidFamilyInput(
-                    "child_in_care is an input for widow(er) benefits"
+                    "child_in_care is an input for widow(er) or divorced "
+                    "spouse benefits"
                 )
             if self.child_in_care is not False and (
                 not isinstance(self.child_in_care, str)
@@ -1227,6 +1249,16 @@ class Beneficiary:
                 raise InvalidFamilyInput(
                     "child_in_care must name an entitled child, or be "
                     "False or None"
+                )
+        if self.first_entitlement_child_in_care is not None:
+            if self.role is not Role.DIVORCED_SPOUSE:
+                raise InvalidFamilyInput(
+                    "first_entitlement_child_in_care describes a divorced "
+                    "spouse only"
+                )
+            if type(self.first_entitlement_child_in_care) is not bool:
+                raise InvalidFamilyInput(
+                    "first_entitlement_child_in_care must be a bool or None"
                 )
         object.__setattr__(self, "conditions", frozenset(self.conditions))
         for condition in self.conditions:
@@ -1254,9 +1286,18 @@ class Beneficiary:
                     "own_benefit_first describes an own benefit; there is "
                     "none"
                 )
-        elif self.own_benefit is not None and self.role in (
-            Role.SPOUSE,
-            Role.DIVORCED_SPOUSE,
+        elif (
+            self.own_benefit is not None
+            and self.role
+            in (
+                Role.SPOUSE,
+                Role.DIVORCED_SPOUSE,
+            )
+            and not (
+                self.role is Role.DIVORCED_SPOUSE
+                and isinstance(self.child_in_care, str)
+                and self.own_benefit.kind is OwnBenefitKind.OLD_AGE
+            )
         ):
             raise InvalidFamilyInput(
                 f"A dually entitled {self.role.value} needs own_benefit_first"
@@ -2008,6 +2049,14 @@ def _reduce_and_offset(
     beneficiary = row.beneficiary
     own = beneficiary.own_benefit
     rate = row.rate
+    if beneficiary.role is Role.DIVORCED_SPOUSE and isinstance(
+        beneficiary.child_in_care, str
+    ):
+        # RS 00615.010/.201A.2: current care overrides both aged methods.
+        # The role retains its 403(a)(3)(C) outside-maximum status.
+        return rate, (
+            rate if own is None else max(Fraction(0), rate - row.own_mba)
+        )
     if beneficiary.role in (Role.SPOUSE, Role.DIVORCED_SPOUSE):
         if own is None or not beneficiary.own_benefit_first:
             reduced = spouse_age_reduced(
@@ -2229,14 +2278,15 @@ def _mother_father_care_rate(
     """RS 00615.340 minimum, using the existing mother/father rules.
 
     Replace only the caregiver's entitlement for the comparison: 75% OB,
-    its maximum share, and any settled Parisi redistribution. Surviving
-    divorced spouses remain outside the maximum (403(a)(3)(C)). The
-    comparison has no age reduction or RIB-LIM; its own-benefit offset
+    its maximum share, and any settled Parisi redistribution. The
+    hypothetical 202(g) mother/father is subject to the maximum, including
+    for a surviving divorced caregiver (RS 00615.682). Only the actual
+    202(e)/(f) surviving divorced spouse stays outside (403(a)(3)(C)).
+    The comparison has no age reduction or RIB-LIM; its own-benefit offset
     is applied by the actual widow computation. Other care flags are
     cleared so this comparison cannot recursively compare widow floors.
     """
     comparison = []
-    outside = caregiver.role in _OUTSIDE_MAXIMUM
     for member in beneficiaries:
         if member.beneficiary_id == caregiver.beneficiary_id:
             comparison.append(
@@ -2253,22 +2303,6 @@ def _mother_father_care_rate(
             comparison.append(replace(member, child_in_care=False))
         else:
             comparison.append(member)
-    if outside:
-        # A surviving divorced mother's/father's benefit, like its WIB,
-        # is excluded by 403(a)(3)(C); it cannot reduce the other shares.
-        ob = original_benefit(Role.MOTHER_FATHER, state.kind, state.pia)
-        own_mba = (
-            None
-            if caregiver.own_benefit is None
-            else own_monthly_benefit(caregiver.own_benefit, params)[1]
-        )
-        mother = next(
-            b
-            for b in comparison
-            if b.beneficiary_id == caregiver.beneficiary_id
-        )
-        entitled, _ = _is_entitled(mother, state.pia, own_mba)
-        return ob if entitled else Fraction(0)
     result = _family_benefits(state, comparison, payment_month, params)
     return result.by_id()[caregiver.beneficiary_id].age_adjusted_rate
 
@@ -2420,6 +2454,36 @@ def _family_benefits(
     )
     for row in rows:
         beneficiary = row.beneficiary
+        if row.entitled and beneficiary.role is Role.DIVORCED_SPOUSE:
+            if entitled_children and beneficiary.child_in_care is None:
+                raise FamilyConfigurationUnsupported(
+                    UnsupportedReason.DIVORCED_SPOUSE_CHILD_IN_CARE_UNKNOWN,
+                    "a divorced spouse with an entitled child must attest "
+                    "current child-in-care status (RS 00615.010/.201A.2)",
+                    beneficiary_id=beneficiary.beneficiary_id,
+                )
+            if (
+                not isinstance(beneficiary.child_in_care, str)
+                and beneficiary.first_entitlement_child_in_care is not False
+            ):
+                ordinary = _reduce_and_offset(row, state, params)
+                exempt = (
+                    row.rate,
+                    (
+                        row.rate
+                        if row.own_mba is None
+                        else max(Fraction(0), row.rate - row.own_mba)
+                    ),
+                )
+                if ordinary != exempt:
+                    raise FamilyConfigurationUnsupported(
+                        UnsupportedReason.DIVORCED_SPOUSE_CARE_HISTORY,
+                        "without current care, unknown or protected first-"
+                        "entitlement care history can change the aged amount; "
+                        "continued exemption/conversion after care ends is "
+                        "not implemented (RS 00615.201A.2/.010)",
+                        beneficiary_id=beneficiary.beneficiary_id,
+                    )
         if not row.entitled or beneficiary.role not in _WIDOW_ROLES:
             continue
         if entitled_children and beneficiary.child_in_care is None:

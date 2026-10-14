@@ -4,7 +4,7 @@
 benefits for supported invented or published statutory cases only; no
 population, behavioral or forecast claim.**
 
-**Status: build-only, 2026-09-29; review fixes 2026-10-12. No real-data
+**Status: build-only, 2026-09-29; review fixes through 2026-10-14. No real-data
 computation.** Inputs are invented families and SSA's published worked
 examples.
 
@@ -94,12 +94,16 @@ For one worker's record and one benefit month:
      (RS 00615.240). The spouse benefit keeps its 402(q)(1) reduction and is
      paid in excess of the RIB.
    - The caller must say which came first (`own_benefit_first`) for every
-     dually entitled spouse or divorced spouse. There is no default: in the
+     dually entitled aged spouse or divorced spouse. Current-care divorced
+     spouses with own RIB do not require this order. There is no default
+     for aged methods: in the
      RS 00615.240 example the two methods pay $250.00 and $262.50.
    - Widow(er)s use method B: both benefits are reduced independently
      (402(q)(3)(E); RS 00615.020A.3).
    - A spouse with a child in care is never reduced for age (402(q)(5)(A)(ii))
      and is paid the excess over the reduced RIB (RS 00615.020A.3 note).
+     RS 00615.010/.201A.2 explicitly include a divorced spouse with current
+     care; that spouse keeps its 403(a)(3)(C) outside-maximum status.
    - A spouse is not entitled when the own PIA is at least half the worker's
      PIA (202(b)(1)(D)).
    - A widow(er) is not entitled when the own RIB is at least the deemed PIA
@@ -344,7 +348,7 @@ Until then this module applies the literal refusal.
 
 | Record | Supported beneficiaries |
 | --- | --- |
-| Retirement (living worker on RIB, with any reduction or credits) | Aged spouse, spouse with child in care, divorced spouse, child |
+| Retirement (living worker on RIB, with any reduction or credits) | Aged spouse, spouse with child in care, divorced spouse with settled current care or aged history, child |
 | Disability (worker on DIB, entitled after June 1980) | The same |
 | Survivor | Aged widow(er), disabled widow(er) from January 1984, surviving divorced spouse, mother or father, child, one or two parents |
 | Retirement, eligible living worker not entitled (from January 1985) | Independently entitled divorced spouses only; no worker payment |
@@ -380,6 +384,8 @@ G never falls back to a single-worker computation.
 | `widow_drc_savings_clause` | A May 1978 beneficiary protected from widow(er) deceased-worker DRC reductions (RS 00615.712) |
 | `widow_drc_savings_clause_history_unknown` | A widow(er) subject to the maximum has an OB that may include deceased-worker delayed credits, another beneficiary is subject to the maximum, and neither an explicit exclusion nor complete first-ever DIB history rules out May 1978 protection (RS 00615.712; .736B.2b) |
 | `widow_child_in_care_unknown` | A widow(er), including a disabled widow(er) or surviving divorced spouse, and an entitled child are on the record without a current-month care attestation (RS 00615.340; .010) |
+| `divorced_spouse_child_in_care_unknown` | An entitled divorced spouse and an entitled child are on the record without a current-month care attestation (RS 00615.010/.201A.2) |
+| `divorced_spouse_care_history` | Without current care, first-entitlement care is unknown or attested True, and continued exemption could change the ordinary aged amount; conversion and ARF history after care ends are outside this snapshot (RS 00615.201A.2; .010) |
 | `delayed_credits_born_before_1917` | Delayed credits for births before 1917 (402(w)(6)(A)'s 1/12 of 1 percent) |
 
 `evaluate_family` and `count_family_outcomes` keep unsupported rows, whether
@@ -476,12 +482,28 @@ absorbed as unsupported rows.
     larger of its ordinary reduced amount and the mother/father comparison
     amount, with zero-tolerance differential, including settled dual
     offsets. A higher WIB is unchanged. Other beneficiaries keep their
-    ordinary widow-family amounts. Record and subject totals remain within
-    the maximum; amounts remain nonnegative dimes, whole-dollar floors and
+    ordinary widow-family amounts. Subject totals remain within the
+    maximum; an actual surviving-divorced payment remains outside it while
+    its hypothetical 202(g) comparison is subject. Amounts remain
+    nonnegative dimes, whole-dollar floors and
     sums remain exact, and results remain deterministic and independent of
     beneficiary order. Unknown care retains its row and weight and blocks
     aggregates; invalid named children raise before coverage refusals.
     Fix-round child-in-care examples and Hypothesis tests execute each rule.
+19. **Divorced-spouse care.** Current care pays the unreduced spouse OB less
+    the reduced own RIB, bounded between zero and OB. Changing auxiliary
+    reduction months or own-RIB entitlement order does not change that
+    payment. Adding the divorced spouse changes no worker or child amount,
+    counts zero against the maximum, and preserves the subject-total cap.
+    Amounts are exact dimes, record totals and individual whole-dollar
+    floors add exactly, results are deterministic and independent of order.
+    Unknown or protected first-entitlement care history that can change an
+    aged amount refuses; every row and weight remains in the denominator
+    and both aggregates block. Malformed current-care references and history
+    inputs raise before coverage refusals. The round-4 divorced-care examples
+    and Hypothesis properties execute these rules, with exact differentials
+    against the ordinary child-in-care spouse surface and both record
+    construction styles.
 
 ## Worked examples reproduced exactly
 
@@ -547,6 +569,10 @@ absorbed as unsupported rows.
 - RET deductions and their ordering against the maximum (403(a)(4) first
   sentence) are R2's.
 - ARF and recomputation are R3's.
+- Divorced-spouse conversion and ARF history after care ends are outside
+  this snapshot. Unknown or protected first-entitlement care history that
+  changes the ordinary aged amount raises `divorced_spouse_care_history`
+  (RS 00615.201A.2; .010).
 - Monthly timing and event journals are I's. For 403(a)(5), I must feed
   every month of each record, from its first month of entitlement, to one
   `SavingsClauseGuard`, and keep the guard's refusals in its denominators.
@@ -810,19 +836,20 @@ completeness, class loss, determinism and scenario order independence.
 under this design directory. The exhaustive declared product is three
 record kinds, all 55 role multisets of sizes zero through two, eight dual
 modes, two reduction flags, three payment eras, fifteen single-condition
-choices and three widow child-in-care inputs (`None`, `False` and the first
+choices and three current child-in-care inputs (`None`, `False` and the first
 entitled child's id). Focal flags apply to the first beneficiary in Role
 enum order; empty multisets with a beneficiary flag are invalid. Fixed
 invented money, cohort and snapshot assumptions are stated in the artifact.
 Conditions are none or one declared record/beneficiary flag; combinations
 beyond that finite axis and larger families are not claimed as enumerated.
 The care input
-applies to every widow(er) role in the cell; a named-child cell without a
+applies to every widow(er) and divorced-spouse role in the cell; divorced
+spouses explicitly attest False for first-entitlement care. A named-child cell without a
 child is invalid, and unknown care with an entitled child refuses. Cells
-without widow(er)s still retain all three care choices in the denominator.
+without these roles still retain all three care choices in the denominator.
 
-There are 356,400 cells: 9,811 supported, 64,595 refused and 281,994 invalid.
-All cells stay in the denominator. Twenty-four named invented witnesses form
+There are 356,400 cells: 8,831 supported, 60,775 refused and 286,794 invalid.
+All cells stay in the denominator. Twenty-six named invented witnesses form
 a separate denominator, one executed refusal for every retained reason,
 including historical, multi-record and protected-path cases absent from the
 lattice. Statutory registry counts are separate again. These are invented
@@ -911,8 +938,11 @@ an entitled widow(er) and an entitled child are present but care is unknown,
 `widow_child_in_care_unknown` refuses and preserves the invented row and
 its weight. The generic reduced-WIB rule covers disabled widow(er)s too.
 RS 00615.340 expressly includes a surviving divorced spouse who elected
-reduced benefits; that spouse's comparison remains outside the maximum
-under 403(a)(3)(C), so it does not lower anyone else's share.
+reduced benefits. The hypothetical mother/father benefit under 202(g)
+remains subject to the maximum: 403(a)(3)(C) exempts divorced-spouse
+benefits under 202(b)/(c) and surviving-divorced-spouse benefits under
+202(e)/(f), and does not name 202(g). The actual surviving-divorced payment
+stays outside the maximum and does not lower anyone else's share.
 
 The comparison replaces the caregiver with a mother/father entitlement,
 whose OB is 75 percent of the death PIA (202(g)(2)), applies the family
@@ -926,6 +956,19 @@ $583.30, rather than the unadjusted $750 OB; the ordinary widow rate is
 $500.50 and each child keeps its ordinary widow-family $525 share. The
 caring total is $1,633.30. This pins reduction after the maximum without
 reallocating the children's ordinary widow shares.
+
+For a surviving divorced spouse and two children with the same $1,000 PIA
+and $1,750 maximum, the hypothetical mother receives $583.30. The ordinary
+divorced widow receives $715, so current care leaves that payment at $715;
+each child receives $750, total $2,215. RS 00615.682 supplies a published
+control through this same path: PIA $203.90, maximum $305.90, hypothetical
+mother $101.90, actual divorced widow $145.70 after 60 reduction months,
+and children $152.90 each. The record total is $451.50, and individual
+215(g) floors sum to $449. Every published figure is checked verbatim in
+the manifest-listed capture. The minimized invented dime case has PIA
+$0.40 and maximum $0.60: the widow receives $0.20 rather than $0.30.
+The minimized whole-dollar case has PIA $2.70 and maximum $4.00: the widow
+receives $1.90, floored to $1, rather than $2.00, floored to $2.
 
 Example a in RS 00615.340 publishes 64 reduction months and 71.5 percent
 WIB, raised to 75 percent for January-June 2005 while an entitled child
@@ -1016,3 +1059,50 @@ monetary rule, rounding order or source-conflict default changes. The three
 decision sites link the Axiom source-conflict ids in comments; the parent
 counterfactual above now executes the $75 difference using a test-only
 helper. No new source capture or published monetary example is introduced.
+
+### Divorced spouse with an entitled child in care
+
+RS 00615.010 exempts both spouses and divorced spouses from age reduction
+in months with an entitled child in care. RS 00615.201A.2 states that with
+RIB entitlement the spouse payment for such months is always the
+unreduced spouse benefit less the reduced RIB. This implements the care
+exemption in 202(q)(5); the available primary excerpt captures
+402(q)(5)(A)(ii), while the direct 402(q)(5)(B) body remains an existing
+source-inventory limitation. No additional direct-primary-source coverage
+is claimed. A current-care divorced spouse retains its 403(a)(3)(C)
+outside-maximum role, and its payment does not depend on ordinary method
+B/C chronology or on auxiliary reduction months. The existing own-PIA
+entitlement threshold and unsupported DIB sequencing are unchanged.
+
+`child_in_care` now accepts a named entitled same-record child for a
+`DIVORCED_SPOUSE`. `False` attests no current care, and `None` is unknown;
+an entitled child on the record then requires an explicit attestation.
+`first_entitlement_child_in_care` is a divorced-spouse-only Boolean or
+unknown. RS 00615.201A.2 exempts all pre-FRA months if the child was in care
+in the first month of divorced entitlement, and RS 00615.010 says that
+exemption continues after the child's benefit terminates. Current care
+settles the amount without that history. Without current care, an explicit
+False initial-care attestation permits the ordinary aged formula. Unknown
+or True initial-care history refuses as `divorced_spouse_care_history` if
+the ordinary and exempt amounts differ. Conversion, FRA and ARF history
+after care ends are outside this monthly snapshot. If both computations
+are identical, missing history cannot change money and the month remains
+supported. Existing invented aged fixtures now explicitly attest no care
+in either month; their expected amounts have not changed.
+
+The reviewer's invented PIA $1,000, maximum $1,500 and own PIA $200 with
+36 own reduction months give own RIB $160. The unreduced outside-maximum
+spouse OB is $500, so the auxiliary payment is $340. The worker receives
+$1,000 and the child $500, giving record total $1,840. This holds for both
+direct `RecordState` and built `record_state`, auxiliary RF zero or 36,
+and either entitlement order. Without current or initial care, ordinary
+method C still pays $300 at RF zero and $225 at RF 36. The minimized
+invented case has PIA $0.30, maximum $0.40, own PIA $0.10 and one own
+reduction month: own RIB rounds to zero and the care auxiliary pays $0.10,
+rather than the previous zero.
+
+The new current-care formula is differentially checked against the
+ordinary `SPOUSE_CHILD_IN_CARE` surface on a nonbinding maximum, and the
+direct and built record paths are compared exactly. There is zero
+rounding tolerance. The source-settled fixes do not reopen or change the
+PR's existing needs-Max items, including rulings d1418 and d1338.

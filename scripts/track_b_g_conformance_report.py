@@ -217,12 +217,15 @@ def compute_configuration(case: Configuration):
             g.Role.WIDOW,
             g.Role.SURVIVING_DIVORCED_SPOUSE,
             g.Role.DISABLED_WIDOW,
+            g.Role.DIVORCED_SPOUSE,
         ):
             fields["child_in_care"] = (
                 (children[0] if children else "absent_child")
                 if case.child_in_care == "entitled_child"
                 else case.child_in_care
             )
+        if role is g.Role.DIVORCED_SPOUSE:
+            fields["first_entitlement_child_in_care"] = False
         members.append(g.Beneficiary(f"b{index}", role, **fields))
     return _family(state, members, PAYMENT_ERAS[case.payment_era])
 
@@ -517,6 +520,34 @@ def refusal_witnesses() -> dict[g.UnsupportedReason, tuple[str, Callable]]:
                 ],
             ),
         ),
+        reasons.DIVORCED_SPOUSE_CHILD_IN_CARE_UNKNOWN: (
+            "A divorced spouse and an entitled child lack a current care attestation",
+            lambda: _family(
+                _retired(),
+                [
+                    g.Beneficiary(
+                        "d",
+                        g.Role.DIVORCED_SPOUSE,
+                        first_entitlement_child_in_care=False,
+                    ),
+                    g.Beneficiary("c", g.Role.CHILD),
+                ],
+            ),
+        ),
+        reasons.DIVORCED_SPOUSE_CARE_HISTORY: (
+            "An aged divorced spouse lacks first-entitlement care history that can change the amount",
+            lambda: _family(
+                _retired(),
+                [
+                    g.Beneficiary(
+                        "d",
+                        g.Role.DIVORCED_SPOUSE,
+                        reduction_months=36,
+                        child_in_care=False,
+                    )
+                ],
+            ),
+        ),
         reasons.DELAYED_CREDITS_BEFORE_1917: (
             "Own RIB has 12 credit months for a 1916 birth",
             lambda: _family(
@@ -626,6 +657,8 @@ def build_report(registry_path: Path = DEFAULT_REGISTRY) -> dict:
                 "dual_modes": list(DUAL_MODES),
                 "reduction_months": list(REDUCTION_FLAGS),
                 "widow_child_in_care": list(CHILD_IN_CARE_FLAGS),
+                "divorced_spouse_child_in_care": list(CHILD_IN_CARE_FLAGS),
+                "divorced_spouse_first_entitlement_child_in_care": False,
                 "payment_eras": {
                     era: f"{month.year:04d}-{month.month:02d}"
                     for era, month in PAYMENT_ERAS.items()
@@ -648,7 +681,7 @@ def build_report(registry_path: Path = DEFAULT_REGISTRY) -> dict:
                     "own_rib_credit_months": 12,
                 },
                 "birth_band": "1946 for the focal beneficiary and own RIB; widow reduction period 72 months. The living worker is unreduced, without credits; IEDS worker records have no worker payment.",
-                "child_in_care": "Every widow(er), surviving divorced spouse and disabled widow(er) receives the selected care input. None is unknown; False attests no care; entitled_child names the first child role on this record, or an absent-child sentinel if no child is present. Unknown care may refuse; naming an absent or non-entitled child is invalid. All three flag cells remain in the denominator even when the flag does not affect a non-widow role.",
+                "child_in_care": "Every widow(er), surviving divorced spouse, disabled widow(er) and divorced spouse receives the selected care input. None is unknown; False attests no care; entitled_child names the first child role on this record, or an absent-child sentinel if no child is present. Divorced spouses explicitly attest no entitled child in care at first entitlement. Unknown current care may refuse; naming an absent or non-entitled child is invalid. All three flag cells remain in the denominator even when the flag does not affect a role.",
                 "snapshot_scope": "Standalone snapshots explicitly attest no protected May 1978 widow-DRC history unless the named condition is declared; monthly paths require SavingsClauseGuard. Refusal witnesses for unknown history, guarded histories and multiple records are counted separately.",
             },
             "denominator": denominator,

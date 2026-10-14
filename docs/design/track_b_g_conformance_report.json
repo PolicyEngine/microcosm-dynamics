@@ -5,27 +5,27 @@
   "lattice": {
     "by_payment_era": {
       "before_october_1999": {
-        "invalid": 93998,
-        "refused": 22481,
+        "invalid": 95598,
+        "refused": 21165,
         "rows": 118800,
-        "supported": 2321
+        "supported": 2037
       },
       "from_january_2024": {
-        "invalid": 93998,
-        "refused": 20329,
+        "invalid": 95598,
+        "refused": 19141,
         "rows": 118800,
-        "supported": 4473
+        "supported": 4061
       },
       "october_1999_through_december_2023": {
-        "invalid": 93998,
-        "refused": 21785,
+        "invalid": 95598,
+        "refused": 20469,
         "rows": 118800,
-        "supported": 3017
+        "supported": 2733
       }
     },
     "definition": {
       "birth_band": "1946 for the focal beneficiary and own RIB; widow reduction period 72 months. The living worker is unreduced, without credits; IEDS worker records have no worker payment.",
-      "child_in_care": "Every widow(er), surviving divorced spouse and disabled widow(er) receives the selected care input. None is unknown; False attests no care; entitled_child names the first child role on this record, or an absent-child sentinel if no child is present. Unknown care may refuse; naming an absent or non-entitled child is invalid. All three flag cells remain in the denominator even when the flag does not affect a non-widow role.",
+      "child_in_care": "Every widow(er), surviving divorced spouse, disabled widow(er) and divorced spouse receives the selected care input. None is unknown; False attests no care; entitled_child names the first child role on this record, or an absent-child sentinel if no child is present. Divorced spouses explicitly attest no entitled child in care at first entitlement. Unknown current care may refuse; naming an absent or non-entitled child is invalid. All three flag cells remain in the denominator even when the flag does not affect a role.",
       "declared_conditions": [
         {
           "condition": null,
@@ -88,6 +88,12 @@
           "scope": "beneficiary"
         }
       ],
+      "divorced_spouse_child_in_care": [
+        null,
+        false,
+        "entitled_child"
+      ],
+      "divorced_spouse_first_entitlement_child_in_care": false,
       "dual_modes": [
         "none",
         "rib_unreduced_b",
@@ -147,26 +153,28 @@
       ]
     },
     "denominator": {
-      "invalid": 281994,
-      "refused": 64595,
+      "invalid": 286794,
+      "refused": 60775,
       "rows": 356400,
-      "supported": 9811
+      "supported": 8831
     },
     "refused_by_reason": {
-      "administrative_finality": 10503,
-      "combined_family_maximum": 5196,
-      "deemed_or_putative_spouse": 10392,
+      "administrative_finality": 9831,
+      "combined_family_maximum": 4860,
+      "deemed_or_putative_spouse": 9720,
       "delayed_credits_born_before_1917": 0,
       "di_entitlement_before_july_1980": 0,
-      "dib_after_reduced_rib": 5307,
-      "dib_guarantee_pia": 5307,
+      "dib_after_reduced_rib": 4971,
+      "dib_guarantee_pia": 4971,
       "disabled_widow_before_1984": 0,
-      "dual_entitlement_sequence": 7276,
+      "divorced_spouse_care_history": 0,
+      "divorced_spouse_child_in_care_unknown": 196,
+      "dual_entitlement_sequence": 6844,
       "eligibility_before_1983": 0,
-      "government_pension_offset": 3464,
+      "government_pension_offset": 3240,
       "independently_entitled_divorced_spouse": 0,
       "multiple_auxiliary_records": 0,
-      "non_aime_formula_pia": 5307,
+      "non_aime_formula_pia": 4971,
       "parent_benefit": 0,
       "parisi_before_october_1999": 832,
       "parisi_redistribution_ambiguous": 340,
@@ -174,9 +182,9 @@
       "savings_clause_403a5": 0,
       "savings_clause_history_unknown": 0,
       "widow_child_in_care_unknown": 168,
-      "widow_drc_savings_clause": 5196,
+      "widow_drc_savings_clause": 4860,
       "widow_drc_savings_clause_history_unknown": 0,
-      "workers_compensation_offset": 5307
+      "workers_compensation_offset": 4971
     }
   },
   "registry": {
@@ -388,8 +396,8 @@
   "supplemental_refusal_witnesses": {
     "denominator": {
       "invalid": 0,
-      "refused": 24,
-      "rows": 24,
+      "refused": 26,
+      "rows": 26,
       "supported": 0
     },
     "refused_by_reason": {
@@ -401,6 +409,8 @@
       "dib_after_reduced_rib": 1,
       "dib_guarantee_pia": 1,
       "disabled_widow_before_1984": 1,
+      "divorced_spouse_care_history": 1,
+      "divorced_spouse_child_in_care_unknown": 1,
       "dual_entitlement_sequence": 1,
       "eligibility_before_1983": 1,
       "government_pension_offset": 1,
@@ -466,6 +476,18 @@
         "description": "DWB benefit month December 1983",
         "id": "disabled_widow_before_1984",
         "reason": "disabled_widow_before_1984",
+        "status": "refused"
+      },
+      {
+        "description": "An aged divorced spouse lacks first-entitlement care history that can change the amount",
+        "id": "divorced_spouse_care_history",
+        "reason": "divorced_spouse_care_history",
+        "status": "refused"
+      },
+      {
+        "description": "A divorced spouse and an entitled child lack a current care attestation",
+        "id": "divorced_spouse_child_in_care_unknown",
+        "reason": "divorced_spouse_child_in_care_unknown",
         "status": "refused"
       },
       {

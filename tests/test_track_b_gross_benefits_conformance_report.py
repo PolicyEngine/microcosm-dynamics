@@ -54,6 +54,34 @@ def _histogram(cases):
     return statuses, reasons
 
 
+@pytest.mark.parametrize(
+    "care,expected",
+    [(False, 300), ("entitled_child", 420), (None, None)],
+)
+def test_lattice_divorced_spouse_applies_current_care_with_fixed_initial_history(
+    care, expected
+):
+    case = report.Configuration(
+        g.FamilyKind.RETIREMENT,
+        (g.Role.DIVORCED_SPOUSE, g.Role.CHILD),
+        "rib_reduced_c",
+        36,
+        "from_january_2024",
+        child_in_care=care,
+    )
+    if expected is None:
+        assert report.classify_configuration(case) == (
+            "refused",
+            g.UnsupportedReason.DIVORCED_SPOUSE_CHILD_IN_CARE_UNKNOWN.value,
+        )
+    else:
+        result = report.compute_configuration(case)
+        row = result.by_id()["b0"]
+        assert row.auxiliary_payable == expected
+        assert not row.subject_to_family_maximum
+        assert result.record_total == 1500 + expected
+
+
 def test_committed_invented_conformance_report_regenerates_byte_for_byte(
     regenerated,
 ):
@@ -86,6 +114,14 @@ def test_lattice_is_the_complete_documented_cartesian_product(regenerated):
         False,
         "entitled_child",
     ]
+    assert definition["divorced_spouse_child_in_care"] == [
+        None,
+        False,
+        "entitled_child",
+    ]
+    assert (
+        definition["divorced_spouse_first_entitlement_child_in_care"] is False
+    )
     assert set(definition["payment_eras"].values()) == {
         "1999-09",
         "2023-12",
@@ -152,11 +188,11 @@ def test_every_retained_refusal_has_an_executed_named_witness(reason):
 
 def test_named_witness_denominator_is_separate_from_the_lattice(regenerated):
     witnesses = regenerated["supplemental_refusal_witnesses"]
-    assert len(g.UnsupportedReason) == 24
+    assert len(g.UnsupportedReason) == 26
     assert witnesses["denominator"] == {
-        "rows": 24,
+        "rows": 26,
         "supported": 0,
-        "refused": 24,
+        "refused": 26,
         "invalid": 0,
     }
     expected = {reason.value for reason in g.UnsupportedReason}
