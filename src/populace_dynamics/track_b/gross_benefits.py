@@ -99,9 +99,11 @@ All arithmetic is exact (``fractions.Fraction``). SSA requires fractions,
 not decimal equivalents, because decimals often yield an answer 10 cents
 lower (POMS RS 00615.005B). Statutory rates are cross-checked at use
 against the repository's parameter bundle (``ss.params.SSAParameters``,
-loaded from policyengine-us), and the exact statutory fraction is then
-used; NAWI, full retirement ages and delayed-credit rates come from that
-bundle. Delayed-credit months run from full retirement age to age 70
+loaded from policyengine-us), rejecting non-finite or mismatched rates
+with ValueError before family or household coverage refusals. The exact
+statutory fraction is then used; NAWI, full retirement ages and
+delayed-credit rates come from that bundle and must be finite when used.
+Delayed-credit months run from full retirement age to age 70
 (402(w)(2)(A)), at most ``840 - FRA`` months for each cohort (POMS RS
 00615.692E); the bundle's four-year ``max_delayed_months`` is not used,
 because it is short for births 1917-1942. Credits for births before 1917
@@ -482,7 +484,11 @@ _RATE_TOLERANCE = 1e-7
 
 
 def _agrees(observed: float, expected: Fraction, label: str) -> None:
-    if abs(float(observed) - float(expected)) > _RATE_TOLERANCE:
+    value = float(observed)
+    if (
+        not math.isfinite(value)
+        or abs(value - float(expected)) > _RATE_TOLERANCE
+    ):
         raise ValueError(
             f"Parameter bundle {label}={observed!r} disagrees with the "
             f"statutory {expected}; refusing to compute gross benefits."
@@ -495,6 +501,9 @@ def statutory_rates(params: SSAParameters) -> StatutoryRates:
     policyengine-us stores 5/9 of 1 percent as the decimal 0.00555556, and
     SSA computes with the fraction (POMS RS 00615.005B), so the fraction is
     what is used once the bundle is confirmed to encode the same rate.
+    Non-finite or mismatched rates raise ValueError, an input error rather
+    than a coverage refusal. Family and household entry points check them
+    before any coverage refusal.
     """
     worker_first, worker_later = params.early_monthly_rates
     _agrees(worker_first, _STATUTE["worker_first"], "early_monthly_rates[0]")
@@ -736,6 +745,14 @@ def _refuse_early_delayed_credits(birth_year: int) -> None:
         )
 
 
+def _fra_months(birth_year: int, params: SSAParameters) -> int:
+    """416(l): a finite bundle FRA before any month-bound comparison."""
+    months = params.fra_months(birth_year)
+    if not math.isfinite(months):
+        raise ValueError("Full retirement age months must be finite")
+    return months
+
+
 def delayed_credit_window_months(
     birth_year: int, params: SSAParameters
 ) -> int:
@@ -750,7 +767,7 @@ def delayed_credit_window_months(
     if type(birth_year) is not int:
         raise TypeError("birth_year must be an int")
     _refuse_early_delayed_credits(birth_year)
-    return _AGE_70_MONTHS - params.fra_months(birth_year)
+    return _AGE_70_MONTHS - _fra_months(birth_year, params)
 
 
 def _delayed_credit_months(
@@ -790,7 +807,7 @@ def _delayed_credit_months(
         return months
     if params is None:
         return months
-    fra = params.fra_months(birth_year)
+    fra = _fra_months(birth_year, params)
     window = _AGE_70_MONTHS - fra
     if months > window:
         raise InvalidFamilyInput(
@@ -805,7 +822,7 @@ def _cohort_reduction_months(
     months: int, birth_year: int | None, params: SSAParameters, label: str
 ) -> int:
     """402(q)(6): months cannot precede age 62 (RS 00615.010)."""
-    upper = 60 if birth_year is None else params.fra_months(birth_year) - 744
+    upper = 60 if birth_year is None else _fra_months(birth_year, params) - 744
     return _months(months, label, upper)
 
 
@@ -1953,6 +1970,7 @@ def _parisi_counted(
     )
     if payable == 0:
         before_age = row.standard - (own.pia if method_c else row.own_mba)
+        # Source conflict us:oasdi-dual-entitlement-zero-after-age-reduction
         if before_age > 0:
             raise FamilyConfigurationUnsupported(
                 UnsupportedReason.PARISI_AMBIGUOUS,
@@ -2089,6 +2107,8 @@ def _check_family_inputs(
     params: SSAParameters,
 ) -> None:
     """Every input error in one record's family, before any refusal."""
+    # Household paths check every record here before household refusals.
+    statutory_rates(params)
     if not isinstance(state, RecordState):
         raise TypeError("state must be a RecordState")
     if not isinstance(payment_month, YearMonth):
@@ -2183,6 +2203,7 @@ def _entitled_parent_count(
         potential.append((parent, own_mba))
     if len(potential) == 2:
         for parent, own_mba in potential:
+            # Source conflict us:oasdi-parent-entitlement-count-interval
             if (
                 parent.own_benefit is not None
                 and parent.own_benefit.kind is OwnBenefitKind.OLD_AGE
@@ -2692,7 +2713,8 @@ def household_benefits(
     """Every record in a household for one month, checked together.
 
     This is G's integration entry point. Every input error, in the
-    household and in each record's family, is raised first; then the
+    household, the statutory rate bundle and each record's family, is
+    raised first; then the
     household refusals of :func:`check_household_records`; then each
     record is computed as :func:`family_benefits` would.
     """
@@ -2983,6 +3005,7 @@ class SavingsClauseGuard:
         self._prior = _PriorMonth(month, result, result.pia)
         self._next = _next_month(month)
         total = savings_clause_total(result)
+        # Source conflict us:oasdi-family-maximum-saving-clause
         below = self._floor is not None and total < self._floor
         first_fall = below and self._refused_since is None
         if first_fall:

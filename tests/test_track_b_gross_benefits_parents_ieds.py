@@ -17,6 +17,12 @@ redistributed 750 each. Own DIB 100 instead leaves 400 and redistributes
 With own PIA 200 reduced to 160, method C pays (500 - 200) * .75 = 225;
 method B pays 500 * .75 - 160 = 215. Each figure is invented arithmetic,
 not a claim that SSA published a monetary example.
+
+The test-only parent count counterfactual uses PIA 1000, maximum 1750 and
+own RIB 780. Counting two first excludes that parent and leaves the other
+at 825; testing entitlement at 825 first counts two and leaves the other
+at 750. Rechecking either result reverses its count. This intended cycle
+explains the public refusal; the helper chooses no statutory default.
 """
 
 from __future__ import annotations
@@ -71,6 +77,37 @@ def _divorce(bid="d", **kwargs):
 
 def _rows(result):
     return {row.beneficiary_id: row for row in result.beneficiaries}
+
+
+def _parent_count_order_counterfactual(
+    pia, maximum, own_rib, *, initial_parent_count
+):
+    """Execute two one-pass readings without choosing a public default.
+
+    This test-only calculation is restricted to a nonbinding maximum.
+    The first parent's own RIB is tested at the initially chosen count;
+    the resulting count then determines the other parent's candidate rate.
+    Rechecking that rate exposes the absence of a stable entitlement count.
+    """
+
+    def original_benefit(count):
+        share = F(165, 200) if count == 1 else F(3, 4)
+        return F(int(pia * share * 10), 10)
+
+    assert maximum >= 2 * original_benefit(1)
+    threshold = original_benefit(initial_parent_count)
+    own_parent_entitled = own_rib < threshold
+    counted = 1 + int(own_parent_entitled)
+    candidate = original_benefit(counted)
+    return {
+        "entitlement_threshold": threshold,
+        "counted_parents": counted,
+        "other_parent_payable": candidate,
+        "own_parent_payable": (
+            max(F(0), candidate - own_rib) if own_parent_entitled else F(0)
+        ),
+        "count_if_rechecked": 1 + int(own_rib < candidate),
+    }
 
 
 @pytest.mark.parametrize(
@@ -215,6 +252,71 @@ def test_two_potential_parents_refuse_the_own_rib_entitlement_cycle(
             [_parent("p1", own_benefit=own), _parent("p2")],
         )
     assert caught.value.reason is g.UnsupportedReason.PARENT_BENEFIT
+
+
+def test_parent_entitlement_count_counterfactual_changes_payment_by_75():
+    """Invented $780 own RIB executes both orders behind the refusal."""
+    pia, maximum, own_rib = F(1000), F(1750), F(780)
+    count_two_first = _parent_count_order_counterfactual(
+        pia, maximum, own_rib, initial_parent_count=2
+    )
+    assert count_two_first == {
+        "entitlement_threshold": F(750),
+        "counted_parents": 1,
+        "other_parent_payable": F(825),
+        "own_parent_payable": F(0),
+        "count_if_rechecked": 2,
+    }
+    test_at_one_parent_rate = _parent_count_order_counterfactual(
+        pia, maximum, own_rib, initial_parent_count=1
+    )
+    assert test_at_one_parent_rate == {
+        "entitlement_threshold": F(825),
+        "counted_parents": 2,
+        "other_parent_payable": F(750),
+        "own_parent_payable": F(0),
+        "count_if_rechecked": 1,
+    }
+    assert count_two_first["other_parent_payable"] - test_at_one_parent_rate[
+        "other_parent_payable"
+    ] == F(75)
+    own = g.OwnBenefit(g.OwnBenefitKind.OLD_AGE, own_rib)
+    with pytest.raises(g.FamilyConfigurationUnsupported) as caught:
+        _family(
+            _survivor(pia, maximum),
+            [_parent("p1", own_benefit=own), _parent("p2")],
+        )
+    assert caught.value.reason is g.UnsupportedReason.PARENT_BENEFIT
+
+
+@given(st.integers(100, 1_000_000), st.integers(0, 100))
+@settings(deadline=None)
+def test_parent_count_counterfactual_orders_cycle_across_the_refused_band(
+    dimes, position
+):
+    pia = F(dimes, 10)
+    low, high = dimes * 750 // 1000, dimes * 825 // 1000
+    own_dimes = low + (high - low - 1) * position // 100
+    own_rib = F(own_dimes, 10)
+    two_first = _parent_count_order_counterfactual(
+        pia, pia * 2, own_rib, initial_parent_count=2
+    )
+    one_first = _parent_count_order_counterfactual(
+        pia, pia * 2, own_rib, initial_parent_count=1
+    )
+    assert (two_first["counted_parents"], two_first["count_if_rechecked"]) == (
+        1,
+        2,
+    )
+    assert (one_first["counted_parents"], one_first["count_if_rechecked"]) == (
+        2,
+        1,
+    )
+    assert two_first["own_parent_payable"] == one_first["own_parent_payable"]
+    assert two_first["own_parent_payable"] == 0
+    assert two_first["other_parent_payable"] - one_first[
+        "other_parent_payable"
+    ] == F(high - low, 10)
 
 
 @given(st.integers(100, 1_000_000))

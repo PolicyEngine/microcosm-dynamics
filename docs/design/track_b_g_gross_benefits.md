@@ -322,6 +322,24 @@ rate:
 RS 00630.400's summary also requires "at least one beneficiary is reduced for
 age". G does not require it, which can only add refusals.
 
+Needs Max's judgment: the literal 203(a)(5) guarantee that totals "for any
+such subsequent month will not be less" reaches later composition changes.
+RS 00630.400's operational condition instead states "Total family payment
+is less after the PIA increase than it was before." Its additional condition
+is "Benefits for that month are reduced for the MAX and at least one
+beneficiary is reduced for age;". In the invented three-child case above,
+two children leaving in the COLA month lowers the total from $1,750.00 to
+$1,537.50. The literal reading refuses; the operational reading admits that
+$1,537.50 total when no beneficiary is reduced for age. This module keeps
+the literal refusal.
+
+Ruling d1418 (2026-10-12): keep the current defaults; reopen any one when a
+population target needs it.
+
+Ruling d1338 (2026-10-12): adopt SSA's operational reading (RS 00630.400),
+keeping the literal reading behind a switch; implemented in G part 2.
+Until then this module applies the literal refusal.
+
 ## Supported and refused configurations
 
 | Record | Supported beneficiaries |
@@ -633,6 +651,9 @@ case as `parisi_redistribution_ambiguous`, rather than selecting the higher
 payment. Zero before auxiliary age reduction is supported, including A.5
 and A.8. The alternatives and the refusal are executed by the Parisi tests.
 
+Ruling d1418 (2026-10-12): keep the current defaults; reopen any one when a
+population target needs it.
+
 
 ## Disabled widow(er) benefits
 
@@ -725,6 +746,24 @@ at $825 first would count two and pay the other $750 (a $75 difference),
 while paying no auxiliary to the $780 own-RIB parent. Neither fixed order
 is silently selected: `parent_benefit` refuses the interval between the two
 dime-rounded OBs when both parents are potential entitlements.
+
+`test_parent_entitlement_count_counterfactual_changes_payment_by_75`
+executes both readings with a test-only exact helper. Counting two first
+tests entitlement at $750, excludes the $780-own-RIB parent, and gives the
+other parent's candidate payment $825. Rechecking entitlement at $825
+would count two. Testing entitlement at $825 first counts two, changes the
+other parent's candidate payment to $750, and then excludes the first
+parent when entitlement is rechecked at $750. Both candidates pay that
+first parent no auxiliary, and the other parent's candidates differ by
+$75. The public result remains the `parent_benefit` refusal. The Hypothesis
+test `test_parent_count_counterfactual_orders_cycle_across_the_refused_band`
+executes the same count reversal and the exact difference between the two
+dime-rounded OBs throughout the refused interval. These reversals are an
+intended diagnostic inconsistency of the two one-pass readings, not a
+supported payment or a bug in the public refusal.
+
+Ruling d1418 (2026-10-12): keep the current defaults; reopen any one when a
+population target needs it.
 
 Invented hand references (the captures publish rules without monetary
 worked examples for these classes): PIA $1,000 pays a solo parent $825 or
@@ -924,3 +963,56 @@ tag is now checked against its computed scenarios. The conformance JSON
 is regenerated with this tag and the named .712 refusals, including the
 expanded condition axis and both new refusal witnesses. These remain
 invented configuration counts without population weights or claims.
+
+### Non-finite parameter bundles
+
+The 402(q), 402(b)-(f) and 402(e)(2)(D) bundle cross-check rejects NaN and
+both infinities with the same `ValueError` as a finite statutory-rate
+mismatch. The eight checked values are both worker monthly reduction rates,
+both spouse monthly reduction rates, the survivor reduction floor, the
+RIB-LIM PIA share, the spouse PIA share and the survivor PIA share. The
+existing absolute tolerance remains `1e-7`; accepted decimal encodings are
+still replaced by the exact statutory fractions (RS 00615.005B).
+
+The reviewed-head comparison admitted NaN because its absolute difference
+never exceeded the tolerance. Household paths could also refuse combined
+records before checking any rate, even a finite mismatch. Each record's
+input-validation pass now checks the bundle before household coverage
+decisions, including `household_month_outcome`, so invalid parameters cannot
+become coverage outcomes or advance a monthly guard. `evaluate_family`
+continues to catch coverage refusals only.
+
+The numeric audit found another minimized counterexample: an infinite FRA,
+PIA $1,000, cohort 1960, zero reduction months and zero delayed-credit months
+returned $1,000; the credit-window helper returned non-finite windows for
+all three non-finite values. All three FRA lookups now share a finite check
+before computing the 416(l) reduction bound or the 402(w)(2)(A) credit
+window. NAWI and annual delayed-credit rates already reject non-finite
+values through exact conversion; the two 36-month bracket checks already
+reject them by equality. G does not consume the bundle's PIA factors, wage
+base, four-year delayed-credit cap or default survivor reduction period.
+
+Executed invariants in
+`tests/test_track_b_gross_benefits_fix_round_3_rates.py` are:
+
+- Every non-finite checked rate raises an input error before coverage
+  refusal at the single-family, household and evaluated entry points;
+  guarded household input errors leave every guard at its current month.
+  The full example matrix and Hypothesis
+  `test_nonfinite_rate_never_becomes_a_coverage_outcome` execute this.
+- Finite rate encodings inside the existing tolerance produce exactly the
+  same `StatutoryRates` fractions and provenance as the ordinary bundle.
+  Hypothesis
+  `test_finite_rate_tolerance_preserves_exact_statutory_fractions`
+  executes this identity across all eight values.
+- A non-finite FRA cannot produce a benefit or credit window.
+  `test_nonfinite_full_retirement_age_is_an_input_error` and Hypothesis
+  `test_nonfinite_full_retirement_age_never_produces_a_credit_window`
+  execute the rejected values and cohort ranges.
+
+Healthy-bundle controls retain the `non_aime_formula_pia` and
+`combined_family_maximum` refusals and their denominators. No supported
+monetary rule, rounding order or source-conflict default changes. The three
+decision sites link the Axiom source-conflict ids in comments; the parent
+counterfactual above now executes the $75 difference using a test-only
+helper. No new source capture or published monetary example is introduced.
