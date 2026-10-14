@@ -893,6 +893,11 @@ def test_denied_from_record_takes_every_removed_file():
         ("Grep", "deep_d[\\e]nied.md", False),
         # a file name holds no /, so ripgrep's [d/] pins the stem
         ("Glob", "**/[d/]eep_denied.md", False),
+        # #534 round 3: nor a NUL, so Node's and Bun's [d\0] pins it
+        ("Glob", "**/[d\x00]eep_denied.md", False),
+        ("Grep", "d[e\x00]ep_denied.md", False),
+        # 64 classes that may be / give 2,145 segments, under the limit
+        ("Glob", "[a/]" * 64 + "deep_denied.md", False),
         # a filter that excludes a denied name names it (conservative)
         ("Glob", "**/deep_denied!(.md)", False),
         # nested too deep to read: unclassified, so void
@@ -940,9 +945,15 @@ def test_read_log_v7_cases(tmp_path, tool, value, counts):
         # empty extglobs whose automaton passes CLOSURE_LIMIT
         "{" + "1" * 4500 + "..1}",
         "+()" * 900 + "deep_denied.md",
-        # longer than PATTERN_LIMIT, and too many segments to read
+        # longer than PATTERN_LIMIT, and too many segments to read:
+        # 90 classes that may be / give 91 * 92 / 2 = 4,186
         "x" * (review_root.PATTERN_LIMIT + 1),
-        "[a/]" * 70 + "deep_denied.md",
+        "[a/]" * 90 + "deep_denied.md",
+        # #534 round 3: a class past CLASS_LIMIT, and work charged while
+        # braces expand behind 100 unmatched openers
+        "[ -\U0010ffff]eep_denied.md",
+        "{" * 100 + "{a,b}" * 12 + "deep_denied.md",
+        "[" * 100 + "{a,b}" * 12 + "deep_denied.md",
     ],
 )
 def test_patterns_too_large_to_read_are_unclassified(pattern):
@@ -952,11 +963,15 @@ def test_patterns_too_large_to_read_are_unclassified(pattern):
 def test_each_work_limit_holds_below_the_length_limit():
     """Every limit gives unclassified on a pattern short enough to pass
     PATTERN_LIMIT: the closure budget, the work budget, recursion depth
-    and a sequence number too long for int()."""
+    and a sequence number too long for int(). Each call leaves no work
+    budget running and no memo table filled."""
     kind = review_root.pattern_kind
     assert kind("+()" * 300 + "deep_denied.md", DENIED) == "unclassified"
-    filler = "x" * (review_root.PATTERN_LIMIT - 26)
-    assert kind("{a,b}" * 5 + filler, DENIED) == "unclassified"
+    product = "{" * 100 + "{a,b}" * 12 + "deep_denied.md" + "}" * 100
+    assert kind(product, DENIED) == "unclassified"
+    assert review_root._WORK.left is None
+    assert review_root._automaton.cache_info().currsize == 0
+    assert review_root.class_end.cache_info().currsize == 0
     nested = "@(" * 150 + "x" + ")" * 150
     limit = sys.getrecursionlimit()
     sys.setrecursionlimit(len(inspect.stack()) + 60)
@@ -1431,6 +1446,10 @@ def _engine_matches(engine, root, patterns, tmp_path):
     if engine == "rg":
         out = {}
         for pattern in patterns:
+            if "\x00" in pattern:
+                # A command line cannot hold a NUL.
+                out[pattern] = []
+                continue
             listed = subprocess.run(
                 ["rg", "--files", "--no-ignore", "-g", pattern, "."],
                 cwd=root,
@@ -1463,7 +1482,8 @@ def _spellings(seed, count):
     character, flip its case, put it in a one-character class or a
     two-case class, put an extension character in a class with other
     characters (or a POSIX, negated or escaped-bracket class), put any
-    character in Bun's escaped class or ripgrep's ``[c/]``, wrap a run
+    character in Bun's escaped class, ripgrep's ``[c/]`` or a class with
+    a NUL, wrap a run
     in a brace group or an extglob, spell a doubled letter by repetition
     (``+(e)``) or a letter by a one-item sequence (``{e..e}``), or read
     two extension characters by a repeated class. The path may be
@@ -1502,7 +1522,9 @@ def _spellings(seed, count):
             elif change == "escaped-one" and len(char) == 1:
                 # Bun reads [\\c] as c alone; in a file name ripgrep's
                 # [c/] can only be c
-                units[index] = rng.choice([f"[\\{char}]", f"[{char}/]"])
+                units[index] = rng.choice(
+                    [f"[\\{char}]", f"[{char}/]", f"[{char}\x00]"]
+                )
             elif change == "escaped-class" and index >= cut:
                 units[index] = rng.choice(
                     [f"[{char}\\]]", "[[:ascii:]]", f"[\\]{char}]"]

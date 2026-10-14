@@ -856,7 +856,14 @@ def test_addendum_carries_the_round_10_record(prose, sentence):
         "follow-up passes every removed file to the read log. PR #534 "
         "fixes both:",
         "After the merge, PR #534 changed only this section's read-log "
-        "text and round 10's two tooling rows.",
+        "text and its tooling rows (round 10's two, and the tense of round "
+        "9's schema row).",
+        # #534 round 3: the refusal limits, and round 9's schema in the
+        # past tense
+        "since PR #534 so is one longer than 1,024 characters, past the "
+        "read log's work limits or with a class of more than 1,024 "
+        "characters.",
+        "The schema became v6 for the rule as it then stood",
     ],
 )
 def test_addendum_carries_the_round_10_follow_up(prose, sentence):
@@ -872,6 +879,8 @@ def test_addendum_carries_the_round_10_follow_up(prose, sentence):
         "only through the codebook directory",
         # Q6 #534 round 2: the exclusion wording overstated the code
         "an extglob that excludes a name names it too",
+        # #534 round 3: round 9's disposition spoke of v6 as current
+        "The schema is v6 for the rule as it stands",
     ],
 )
 def test_addendum_drops_the_round_10_stale_wording(prose, stale):

@@ -1384,7 +1384,9 @@ sharpened after round 1 (below).
   - Since Q6 round 8, the log expands a pattern's brace groups first, so
     a name split across a group, such as `{stem,x}.md`, is read whole.
     A pattern with more than 4,096 alternatives is not classified, and
-    voids the review.
+    voids the review; since PR #534 so is one longer than 1,024
+    characters, past the read log's work limits or with a class of more
+    than 1,024 characters.
   - Since Q6 round 9, a segment that holds a denied name's whole stem
     and, read as a wildcard, matches that name also names it: `stem*`,
     `stem?md`, `stem[.]md`. An unbalanced brace is literal text, and the
@@ -1812,7 +1814,7 @@ Round 9 confirms them.
 |---|---|
 | L1 (tooling): an unbalanced `{` before a brace group stopped that group from being expanded | `brace_expansions` keeps an unbalanced brace as literal text and scans on, and every alternative is cut at any brace or comma left in it. A property test puts unbalanced braces and commas before a group that splits a denied name |
 | L2 (tooling): a whole denied stem followed by a wildcard instead of a dot still passed | A segment that holds a denied name's whole stem and matches the name as a wildcard is now denied. A property test replaces the extension, or any of its characters, with wildcards. Four mutants fail the two fixes' tests. The plan's rule names the forms caught and the one left out |
-| Observation: the log's schema stayed v5 across round 8's fix | The schema is v6 for the rule as it stands, and the plan says a log's version records its rule. Rounds 5-9's logs were regenerated as v6: round 5 stays void, rounds 6-9 count |
+| Observation: the log's schema stayed v5 across round 8's fix | The schema became v6 for the rule as it then stood, and the plan says a log's version records its rule. Rounds 5-9's logs were regenerated as v6: round 5 stays void, rounds 6-9 count |
 | Observation: rescoping cannot cure ν = 0 | Section 5 says the decision queued there is how the critical value is set |
 
 Round 9 approved `266dd96`, and these fixes changed the head after it.
@@ -1855,7 +1857,8 @@ Rounds 7, 8, 9 and 10 each approved, and each counts. Round 10's head,
 gained only round 10's record, the one-word change to section 5 above,
 and the merge of `master`. An independent review of that change precedes
 the merge. After the merge, PR #534 changed only this section's read-log
-text and round 10's two tooling rows.
+text and its tooling rows (round 10's two, and the tense of round 9's
+schema row).
 
 ## 16. Protocol record
 

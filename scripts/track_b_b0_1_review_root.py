@@ -251,11 +251,38 @@ def _result_paths(name: str | None, text: str) -> list[str]:
 #: A pattern whose brace groups expand to more alternatives than this is
 #: not classified, and voids the review.
 BRACE_LIMIT = 4096
-#: A pattern longer than this, or whose readings' squared lengths sum past
-#: ``WORK_LIMIT``, is not classified, and voids the review: no Glob
-#: pattern a review needs is that long, and the scans are quadratic.
+#: A pattern longer than this is not classified, and voids the review:
+#: no Glob pattern a review needs is that long.
 PATTERN_LIMIT = 1024
-WORK_LIMIT = 1 << 24
+#: The scan steps one classification may take: characters scanned,
+#: alternatives built, automaton states read. Past it the pattern is not
+#: classified, and voids the review.
+WORK_LIMIT = 1 << 22
+#: A bracket class of more characters than this is not read, and its
+#: pattern is not classified (``[ -\U0010ffff]``).
+CLASS_LIMIT = 1024
+#: Characters no file name holds. A class member among them is no other
+#: character at a stem position.
+NOT_IN_NAMES = frozenset("/\0")
+
+
+class _Work:
+    """The scan steps left to the classification under way, if any.
+
+    ``pattern_kind`` sets ``left`` for its call; outside one, spending is
+    free, so the helpers can be called on their own.
+    """
+
+    left: int | None = None
+
+    def spend(self, steps: int = 1) -> None:
+        if self.left is not None:
+            self.left -= steps
+            if self.left < 0:
+                raise OverflowError("past the work limit")
+
+
+_WORK = _Work()
 
 
 @functools.lru_cache(maxsize=1 << 16)
@@ -275,6 +302,7 @@ def class_end(text: str, start: int, escapes: bool = False) -> int:
     if index < len(text) and text[index] == "]":
         index += 1
     while index < len(text):
+        _WORK.spend()
         if text[index] == "]":
             return index
         if escapes and text[index] == "\\":
@@ -299,6 +327,7 @@ def _next_token(
     inside them are not syntax. Otherwise every character is one token.
     ``escapes`` is ``class_end``'s.
     """
+    _WORK.spend()
     if glob and text[index] == "\\":
         return index + 2
     if glob and text[index] == "[":
@@ -311,6 +340,7 @@ def _next_token(
 def _find_open(text: str, index: int, glob: bool, escapes: bool) -> int:
     """The first ``{`` at or after ``index`` that is brace syntax."""
     if not glob:
+        _WORK.spend(len(text) - index)
         return text.find("{", index)
     while index < len(text):
         if text[index] == "{":
@@ -416,6 +446,7 @@ def brace_expansions(
         if parts is not None:
             out: list[str] = []
             for part in parts:
+                _WORK.spend(len(pattern))
                 out.extend(
                     brace_expansions(
                         pattern[:start] + part + pattern[end + 1 :],
@@ -489,6 +520,7 @@ def extglob_expansions(text: str, limit: int = BRACE_LIMIT) -> list[str]:
                 alternatives = ["", *alternatives]
             out: list[str] = []
             for alternative in alternatives:
+                _WORK.spend(len(text))
                 out.extend(
                     extglob_expansions(
                         text[:index] + alternative + text[end + 1 :],
@@ -577,6 +609,9 @@ def _class_token(body: str, fold: bool, escapes: bool = False) -> Token:
             and items[index + 2][0] == "char"
         ):
             low, high = ord(item[1]), ord(items[index + 2][1])
+            if high - low + 1 > CLASS_LIMIT:
+                raise OverflowError("a class too large to read")
+            _WORK.spend(max(high - low + 1, 1))
             chars.update(map(chr, range(low, high + 1)))
             index += 3
             continue
@@ -606,6 +641,7 @@ def glob_tokens(
     tokens: list[Token] = []
     index = 0
     while index < len(text):
+        _WORK.spend()
         char = text[index]
         if char == "\\" and index + 1 < len(text):
             escaped = text[index + 1]
@@ -642,7 +678,7 @@ def glob_tokens(
     return tuple(tokens)
 
 
-@functools.lru_cache(maxsize=4096)
+@functools.lru_cache(maxsize=512)
 def _automaton(tokens: tuple[Token, ...]) -> tuple[Any, ...]:
     """A Thompson automaton for ``tokens`` read as one path segment.
 
@@ -714,6 +750,7 @@ def _automaton(tokens: tuple[Token, ...]) -> tuple[Any, ...]:
             if states[current][0] == "split":
                 stack.extend(states[current][1])
         total += len(seen)
+        _WORK.spend(len(seen))
         if total > CLOSURE_LIMIT:
             raise OverflowError("automaton too large")
         closures.append(frozenset(seen))
@@ -740,6 +777,7 @@ def _forward(tokens: tuple[Token, ...], name: str) -> list[frozenset[int]]:
     current = closures[start]
     out = [current]
     for char in name:
+        _WORK.spend(len(current))
         current = frozenset().union(
             *(
                 closures[states[s][3]]
@@ -763,9 +801,9 @@ def pins_stem(name: str, tokens: Sequence[Token]) -> bool:
     That is the test of a segment that names ``name``: the stem is spelled
     whatever syntax spells it (``[d]eep``, ``d+(e)p``, ``{d}eep``), while
     a wildcard, a negated class or a class of two characters that differ
-    other than in case stands for part of it. A file name holds no ``/``,
-    so a class's ``/`` is no other character here (``[d/]eep`` pins, as
-    ripgrep reads it).
+    other than in case stands for part of it. No file name holds ``/`` or
+    a NUL, so a class's ``/`` or NUL is no other character here
+    (``[d/]eep`` pins, as ripgrep reads it).
     """
     tokens = tuple(tokens)
     states, _, accept, closures, holders = _automaton(tokens)
@@ -776,6 +814,7 @@ def pins_stem(name: str, tokens: Sequence[Token]) -> bool:
     finishing = [frozenset()] * (len(name) + 1)
     finishing[-1] = holders[accept]
     for j in range(len(name) - 1, -1, -1):
+        _WORK.spend(len(states))
         finishing[j] = frozenset().union(
             *(
                 holders[s]
@@ -792,7 +831,7 @@ def pins_stem(name: str, tokens: Sequence[Token]) -> bool:
             if state[2] or any(
                 char.casefold() != name[i].casefold()
                 for char in state[1]
-                if char != "/"
+                if char not in NOT_IN_NAMES
             ):
                 return False
     return True
@@ -848,8 +887,9 @@ def glob_segments(tokens: Sequence[Token]) -> list[tuple[Token, ...]]:
         maybe = [i for i, token in enumerate(run) if may_be_slash(token)]
         starts = [0, *(i + 1 for i in maybe)]
         ends = [*maybe, len(run)]
-        if len(out) + len(starts) * len(ends) > BRACE_LIMIT:
+        if len(out) + (len(maybe) + 1) * (len(maybe) + 2) // 2 > BRACE_LIMIT:
             raise OverflowError("too many segments")
+        _WORK.spend(len(starts) * len(ends))
         out.extend(tuple(run[a:b]) for a in starts for b in ends if a <= b)
     return out
 
@@ -865,6 +905,7 @@ def _written_kinds(
     the whole-stem test on ``text``'s ``/``-segments, uncut at braces or
     commas, so a class holding one (``stem[.,]md``) is read whole."""
     kinds = set()
+    _WORK.spend(len(text) * (len(names) + 1))
     segments = re.split(r"[/{},]", text)
     if text.startswith(("/", "~")) or ".." in segments:
         kinds.add("outside_root")
@@ -904,6 +945,7 @@ def _engine_kinds(
     if any(d in view for d in denied):
         kinds.add("denied")
     for segment in segments:
+        _WORK.spend(len(segment) + len(names))
         literal = _view(segment)
         if literal in names or any(
             literal.startswith(f"{stem}.") for stem in stems
@@ -961,9 +1003,10 @@ def pattern_kind(pattern: str, denied: Sequence[str]) -> str:
     stands at a position of the stem (``*name_part*``, ``[xy]tem.md``)
     is not classified. A pattern is ``unclassified`` if it is longer than
     ``PATTERN_LIMIT``, has more than ``BRACE_LIMIT`` readings or segments
-    in one reading, has readings past ``WORK_LIMIT``, is nested too deep
-    to read, has an automaton past ``CLOSURE_LIMIT`` or has a sequence
-    number too long to read.
+    in one reading, takes more than ``WORK_LIMIT`` scan steps (charged as
+    the work is done), has a class of more than ``CLASS_LIMIT``
+    characters, is nested too deep to read, has an automaton past
+    ``CLOSURE_LIMIT`` or has a sequence number too long to read.
     """
     names = {Path(d).name for d in denied} | {Path(CODEBOOK_DIR).name}
     stems = {Path(d).stem for d in denied if Path(d).suffix}
@@ -976,6 +1019,7 @@ def pattern_kind(pattern: str, denied: Sequence[str]) -> str:
     kinds = set()
     if len(pattern) > PATTERN_LIMIT:
         return "unclassified"
+    _WORK.left = WORK_LIMIT
     try:
         alternatives = {
             *brace_expansions(pattern),
@@ -989,10 +1033,7 @@ def pattern_kind(pattern: str, denied: Sequence[str]) -> str:
             readings.update(extglob_expansions(alternative))
             if len(readings) > BRACE_LIMIT:
                 raise OverflowError("too many readings")
-        texts = {pattern, *alternatives, *readings}
-        if sum(len(text) ** 2 for text in texts) > WORK_LIMIT:
-            raise OverflowError("too much text to read")
-        for text in texts:
+        for text in {pattern, *alternatives, *readings}:
             kinds |= _written_kinds(text, denied, names, stems)
             for escapes in (False, True):
                 kinds |= _engine_kinds(
@@ -1003,6 +1044,11 @@ def pattern_kind(pattern: str, denied: Sequence[str]) -> str:
                 )
     except (OverflowError, RecursionError):
         return "unclassified"
+    finally:
+        # The memo tables hold this pattern's texts and automata only.
+        _WORK.left = None
+        for memo in (class_end, _extglob_group, _automaton):
+            memo.cache_clear()
     for kind in ("outside_root", "denied"):
         if kind in kinds:
             return kind
