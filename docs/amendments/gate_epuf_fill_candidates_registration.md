@@ -229,6 +229,60 @@ them would need a refit. Neither changes a registered draw:
    conditional-quantile chain (see "The four candidates"), never as a QRF
    result.
 
+## TEST result (scored once, 2026-10-14)
+
+The registered scoring ran once. It started at 2026-10-13 23:49:37 UTC,
+wrote its start marker before reading TEST, and finished at 2026-10-14
+00:23:33 UTC. It ran from master `7a81fd39` with clean code files, after
+#515 locked the gate (decision d927) and #516 registered the candidates.
+- **Inputs**: TEST's 878,481 persons, read through `test_part`; the four
+  candidates, loaded by SHA-256 from the staged fills; the v3 floors; the
+  20 registered draw seeds.
+- **Record**: `runs/epuf_fill_gate_test_v1.json` (`registered_test_scoring`
+  true, nothing injected), its environment sidecar, and the start marker.
+  `tests/test_epuf_fill_gate_test_result.py` re-derives every pass, failing
+  count, tier and adoption from the recorded cells with the registered
+  functions.
+- **Undefined truth**: none; no gating cell was dropped.
+
+| Family | Current rule failing | Primary | Alternative | Adopted |
+|---|---|---|---|---|
+| odd | 100 of 183 (fallback reading), 99 (two-sided) | `odd_forest`: improves, 8 of 183 failing | `odd_knn`: not adopted, 48 failing | `odd_forest`, uncertified |
+| pre | 131 of 136 | `pre_donor`: certified, 0 of 136 failing | `pre_chain`: not adopted, 50 failing | `pre_donor`, certified |
+
+**The odd primary's eight failing cells** (gap over tolerance; a
+correlation's gap is the fill's value minus the truth, a rate's is the log
+ratio). All eight are within the improves allowance.
+- `r1`, the Spearman of the masked year against the years either side, is
+  below the truth for men 22-29 (-2.87), women 22-29 (-2.09), women 60-74
+  (-1.51), men 22-74 (-1.22) and women 22-74 (-1.14). For men 22-29 that is
+  0.792 against 0.813. The current rule's gaps in these cells are +6.7 to
+  +24.3 tolerances: it overstates this persistence.
+- `r3`, against the years three either side, men 22-29 (-1.09).
+- `zint`, the zero rate among units positive in both neighbouring years,
+  is above the truth for men 22-29 (+1.53) and women 22-29 (+1.21).
+
+Six of the eight also failed in the DEV dry run. `odd.men.a22_29.r3` and
+`odd.men.a22_74.r1`, at 0.93 and 0.97 tolerances on DEV, fail on TEST.
+`odd.women.a22_74.zint`, at 1.23 on DEV, passes on TEST.
+
+**The pre primary** passes every gating cell. Its largest gap is 0.98
+tolerances (`pre.women.b1946_1980.yr_cross`, the Spearman of earnings at
+age 21 against age 24).
+
+**The alternatives.** `odd_knn` fails 48 cells, most of all `wint` (up to
+10.5 tolerances). `pre_chain` fails 50, most of all youth earnings levels
+(`ylevel`, up to 19.2 tolerances). `pre_chain` is the one-step binned
+conditional-quantile chain described above, so its result says nothing
+about a QRF that conditions on many of a person's real years.
+
+**What adoption changes.** Under the registered rule both primaries are
+adopted: `odd_forest` for the odd years and `pre_donor` for the pre-career
+years. They are applied through `cohorts/psid2010_epuf_fill.fill_careers`,
+which is opt-in. The career assembler (`estimates/career.py`) and every
+registered DYNASIM run keep the current rules; runs with the fills need
+new registrations (decision d929).
+
 ## Exploratory follow-up (after TEST, not a candidate)
 
 A full-career QRF fill, using microcosm-fit's QRF, in which each
