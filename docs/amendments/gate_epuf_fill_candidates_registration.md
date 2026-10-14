@@ -258,9 +258,9 @@ ratio). All eight are within the improves allowance.
   below the truth for men 22-29 (-2.87), women 22-29 (-2.09), women 60-74
   (-1.51), men 22-74 (-1.22) and women 22-74 (-1.14). For men 22-29 that is
   0.792 against 0.813. The current rule overstates this persistence: its
-  gaps in these cells are +6.7 to +23.5 tolerances on the fallback
-  reading, which sets the improves allowance here (+6.7 to +24.3 on the
-  two-sided reading).
+  gaps in these cells are +6.7 to +23.5 tolerances on the fallback reading
+  (+24.3 at most on the two-sided reading). In all five cells the improves
+  allowance is therefore the 3-tolerance cap.
 - `r3`, against the years three either side, men 22-29 (-1.09).
 - `zint`, the zero rate among units positive in both neighbouring years,
   is above the truth for men 22-29 (+1.53) and women 22-29 (+1.21).
