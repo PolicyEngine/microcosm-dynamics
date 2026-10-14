@@ -80,7 +80,7 @@ def records(draw, kind=None):
     return state
 
 
-def _own_benefits(draw, *, old_age_only):
+def _own_benefits(draw, *, old_age_only, birth_year=None):
     if draw(st.integers(0, 2)) == 0:
         return None
     pia = draw(dimes)
@@ -98,8 +98,14 @@ def _own_benefits(draw, *, old_age_only):
             delayed_credit_months=draw(st.integers(1, window)),
             birth_year=birth,
         )
+    # A widow's cohort is already known even when this own field is omitted.
+    # Keep inheritance exercised, with every legal reduced-RIB month for
+    # that cohort. The global generator still spans all 1-60 months.
+    maximum_months = (
+        60 if birth_year is None else PARAMS.fra_months(birth_year) - 744
+    )
     return g.OwnBenefit(
-        OLD_AGE, pia, reduction_months=draw(st.integers(1, 60))
+        OLD_AGE, pia, reduction_months=draw(st.integers(1, maximum_months))
     )
 
 
@@ -132,8 +138,6 @@ def beneficiaries(draw, state, index, *, dual=True):
             )
         )
     fields = {}
-    if role in (g.Role.SPOUSE, g.Role.DIVORCED_SPOUSE):
-        fields["reduction_months"] = draw(st.integers(0, 60))
     if role is g.Role.DIVORCED_SPOUSE:
         fields["child_in_care"] = False
         fields["first_entitlement_child_in_care"] = False
@@ -151,7 +155,9 @@ def beneficiaries(draw, state, index, *, dual=True):
             extra = draw(st.integers(0, int(state.pia * 3)))
             fields["original_benefit_basis"] = state.pia + F(extra, 10)
     own = (
-        _own_benefits(draw, old_age_only=widow)
+        _own_benefits(
+            draw, old_age_only=widow, birth_year=fields.get("birth_year")
+        )
         if dual and role is not g.Role.CHILD or dual and draw(st.booleans())
         else None
     )
@@ -160,9 +166,18 @@ def beneficiaries(draw, state, index, *, dual=True):
         period = g.widow_reduction_period_months(date(own.birth_year, 7, 1))
         fields["reduction_period_months"] = period
         fields["reduction_months"] = min(fields["reduction_months"], period)
-    if own is not None and role in (g.Role.SPOUSE, g.Role.DIVORCED_SPOUSE):
-        # A then B (method C) or B then A (method B).
-        fields["own_benefit_first"] = draw(st.booleans())
+    if role in (g.Role.SPOUSE, g.Role.DIVORCED_SPOUSE):
+        # Own delayed credits supply a cohort for the auxiliary too. Draw
+        # every legal month once that metadata is known; unknown cohorts
+        # and FRA-67 cohorts retain the full global 0-60 month range.
+        cohort = None if own is None else own.birth_year
+        maximum_months = (
+            60 if cohort is None else PARAMS.fra_months(cohort) - 744
+        )
+        fields["reduction_months"] = draw(st.integers(0, maximum_months))
+        if own is not None:
+            # A then B (method C) or B then A (method B).
+            fields["own_benefit_first"] = draw(st.booleans())
     return g.Beneficiary(bid, role, own_benefit=own, **fields)
 
 

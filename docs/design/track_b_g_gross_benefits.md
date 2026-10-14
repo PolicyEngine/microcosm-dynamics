@@ -237,6 +237,9 @@ in every record's family. Input errors include:
 - a role the record cannot have;
 - a widow(er) reduction period outside 60, 62, ..., 84, or a period that
   differs from a known cohort;
+- conflicting beneficiary/own-benefit birth years, or reduction months
+  outside the one cohort known from either field (402(q)(6);
+  RS 00615.003/.010);
 - `child_in_care` that does not name an entitled child on this record for
   the payment month.
 
@@ -385,7 +388,7 @@ G never falls back to a single-worker computation.
 | `widow_drc_savings_clause_history_unknown` | A widow(er) subject to the maximum has an OB that may include deceased-worker delayed credits, another beneficiary is subject to the maximum, and neither an explicit exclusion nor complete first-ever DIB history rules out May 1978 protection (RS 00615.712; .736B.2b) |
 | `widow_child_in_care_unknown` | A widow(er), including a disabled widow(er) or surviving divorced spouse, and an entitled child are on the record without a current-month care attestation (RS 00615.340; .010) |
 | `divorced_spouse_child_in_care_unknown` | An entitled divorced spouse and an entitled child are on the record without a current-month care attestation (RS 00615.010/.201A.2) |
-| `divorced_spouse_care_history` | Without current care, first-entitlement care is unknown or attested True, and continued exemption could change the ordinary aged amount; conversion and ARF history after care ends are outside this snapshot (RS 00615.201A.2; .010) |
+| `divorced_spouse_care_history` | Without current care, first-entitlement care is unknown or attested True, and continued exemption could change the settled auxiliary payable; different intermediate rates with identical payables are supported with a diagnostic note. Conversion and ARF history after care ends are outside this snapshot (202(k)(3)(A); RS 00615.201A.2; .010) |
 | `delayed_credits_born_before_1917` | Delayed credits for births before 1917 (402(w)(6)(A)'s 1/12 of 1 percent) |
 
 `evaluate_family` and `count_family_outcomes` keep unsupported rows, whether
@@ -497,13 +500,33 @@ absorbed as unsupported rows.
     counts zero against the maximum, and preserves the subject-total cap.
     Amounts are exact dimes, record totals and individual whole-dollar
     floors add exactly, results are deterministic and independent of order.
-    Unknown or protected first-entitlement care history that can change an
-    aged amount refuses; every row and weight remains in the denominator
+    Unknown or protected first-entitlement care history that can change the
+    auxiliary payable refuses; every row and weight remains in the denominator
     and both aggregates block. Malformed current-care references and history
     inputs raise before coverage refusals. The round-4 divorced-care examples
     and Hypothesis properties execute these rules, with exact differentials
     against the ordinary child-in-care spouse surface and both record
     construction styles.
+    The round-5 property
+    `test_property_care_history_refuses_exactly_when_payables_differ`
+    additionally proves that refusal holds exactly when the ordinary and
+    exempt payables differ. Equal payables remain supported even when
+    intermediate rates differ; the note labels the ordinary intermediate
+    rate as diagnostic and records the exempt alternative.
+20. **One person, one cohort.** Supplying the cohort in the beneficiary
+    field, the own-benefit field, or both equal gives the same result or
+    input error. Conflicting supplied cohorts raise before every refusal.
+    That cohort bounds own-RIB and spouse reduction months at FRA minus
+    744, and fixes the widow auxiliary period. Validation and computation
+    use immutable normalized copies, preserving caller inputs. The direct,
+    built, household, evaluated and guarded entry points agree exactly;
+    invalid input leaves all monthly guards unchanged. The round-5
+    `test_review_rf37_is_invalid_before_any_refusal`, RF36 controls and
+    Hypothesis `test_property_cohort_placement_has_identical_outcome`,
+    `test_property_conflicting_cohorts_are_input_errors` and
+    `test_property_own_only_cohort_fixes_widow_auxiliary_period` execute
+    these identities and bounds. Own-RIB calculation also equals the
+    independent worker primitive with zero tolerance.
 
 ## Worked examples reproduced exactly
 
@@ -571,7 +594,7 @@ absorbed as unsupported rows.
 - ARF and recomputation are R3's.
 - Divorced-spouse conversion and ARF history after care ends are outside
   this snapshot. Unknown or protected first-entitlement care history that
-  changes the ordinary aged amount raises `divorced_spouse_care_history`
+  changes the auxiliary payable raises `divorced_spouse_care_history`
   (RS 00615.201A.2; .010).
 - Monthly timing and event journals are I's. For 403(a)(5), I must feed
   every month of each record, from its first month of entitlement, to one
@@ -587,13 +610,16 @@ Input checks precede coverage refusals for both direct `RecordState` inputs
 and `WorkerRecord` inputs built inside `evaluate_family`. `record_state`
 carries a deferred refusal; a pre-1983 maximum sentinel is never payable.
 402(q)(6) and RS 00615.010 bound worker and spouse reductions at FRA minus
-744 months when the cohort is given. RS 00615.692E bounds pre-1917 credits
+744 months when the cohort is given in either beneficiary birth-year field.
+RS 00615.692E bounds pre-1917 credits
 at year-only maxima of 84 months through 1912, 72 for 1913, and 60 for
 1914-1916 (the earlier bands depend on birth month);
 legal credits remain refused because the bundle lacks their rate.
 
 The own-benefit birth year must match the beneficiary's when both are
-provided. Every birth-year input denotes SSA's January 2 through January 1
+provided. When one is omitted, the other supplies the person's effective
+cohort for validation and calculation. Every birth-year input denotes
+SSA's January 2 through January 1
 cohort; a January 1 birth uses the previous cohort year. RS 00615.301B.2
 therefore fixes a widow's reduction period for every cohort, including
 boundary cohorts. A supplied period must match it and reduction months
@@ -1084,10 +1110,12 @@ exemption continues after the child's benefit terminates. Current care
 settles the amount without that history. Without current care, an explicit
 False initial-care attestation permits the ordinary aged formula. Unknown
 or True initial-care history refuses as `divorced_spouse_care_history` if
-the ordinary and exempt amounts differ. Conversion, FRA and ARF history
-after care ends are outside this monthly snapshot. If both computations
-are identical, missing history cannot change money and the month remains
-supported. Existing invented aged fixtures now explicitly attest no care
+the ordinary and exempt auxiliary payables differ. Conversion, FRA and ARF
+history after care ends are outside this monthly snapshot. If the settled
+payables are identical, missing history cannot change money and the month
+remains supported. Different unused intermediate rates are disclosed in
+the beneficiary note, with `age_adjusted_rate` showing the ordinary
+diagnostic rate. Existing invented aged fixtures now explicitly attest no care
 in either month; their expected amounts have not changed.
 
 The reviewer's invented PIA $1,000, maximum $1,500 and own PIA $200 with
@@ -1106,3 +1134,70 @@ ordinary `SPOUSE_CHILD_IN_CARE` surface on a nonbinding maximum, and the
 direct and built record paths are compared exactly. There is zero
 rounding tolerance. The source-settled fixes do not reopen or change the
 PR's existing needs-Max items, including rulings d1418 and d1338.
+
+## Fix round 5 of October 14, 2026
+
+The review's two findings are source-settled corrections. The existing
+Needs Max's judgment items and rulings d1418 and d1338 remain unchanged.
+No new capture, source erratum or published worked example is introduced.
+Verification remains statutory conformance on invented cases only.
+
+### Effective beneficiary cohort
+
+RS 00615.003A.1 says, "People Born 1/1/38 or Earlier FRA for retirement
+or spouse's benefits is age 65." RS 00615.010 states that RIB is reduced
+by months of entitlement before FRA. With 402(q)(6)'s age-62 floor, the
+1935 cohort therefore admits at most 36 own-RIB and spouse reduction
+months. G previously lost that known cohort if the other duplicate
+birth-year field was omitted. It could support RF37 or count the invalid
+input as a GPO refusal with invented weight 7/3.
+
+The validation pass now resolves one cohort and passes immutable copies
+with that year to all own and auxiliary checks and computations. It also
+preserves RS 00615.301B.2 widow periods and the pre-1929 method-D refusal.
+The standalone `OwnBenefit` constructor still requires its own birth year
+when delayed credits are positive; a later beneficiary cannot supply
+metadata before that constructor runs. The new placement differential
+covers validly constructed own benefits with zero delayed-credit months.
+
+The reviewer case has survivor PIA $1,000, maximum $1,750 and own PIA $100.
+RF37 now raises `InvalidFamilyInput` before GPO or payment; RF36 pays own
+  RIB $80 and widow auxiliary $920 when GPO is absent. Both omission
+directions, both equal fields and all five entry points are tested on
+direct and built snapshots. The minimized positive-dime case, PIA and
+own PIA $0.10 with RF37, is also invalid. RF36 with GPO through December
+2023 retains the valid `government_pension_offset` refusal and weight 7/3.
+
+The broader invariant generator formerly admitted the same invalid pairs:
+a 1929 widow with own RF37 and an omitted own birth year, and a spouse
+with auxiliary RF37 whose own delayed credits supply cohort 1929.
+Hypothesis minimized and executed both. Its valid-family strategy now
+draws own and auxiliary months within the effective cohort's legal bound;
+the global own RF1-60 and auxiliary RF0-60 ranges remain reachable.
+Every existing invariant assertion, published figure and invalid-input
+test is retained. Invalid rows are not caught or filtered as refusals.
+
+### Settled care-history payment
+
+202(k)(3)(A) says the benefit "shall be reduced, but not below zero" by
+the own benefit. The review's retirement PIA $1.10, maximum $1.60,
+divorced-spouse own PIA $0.50, own RF36 and DRC48 produce own RIB $0.50
+and spouse OB $0.50. Ordinary method C gives intermediate $0.40; the
+care-exempt intermediate is $0.50 (RS 00615.201A.2). Both histories pay
+zero after the own-RIB offset, so missing or protected initial-care
+history now supports that settled payment. The own and auxiliary
+whole-dollar amounts are both zero; the record pays only the worker's
+$1.10, floored to $1.
+
+The `age_adjusted_rate` field retains the ordinary $0.40 as a diagnostic;
+the note explicitly records both intermediate alternatives. This
+beneficiary is outside the maximum under 403(a)(3)(C), so the diagnostic
+is excluded from both the subject total and `savings_clause_total`.
+It cannot change another beneficiary's rate or a 403(a)(5) guard total.
+The minimized auxiliary-RF witness is PIA $0.30, own PIA/RIB $0.10 and
+one spouse reduction month: ordinary intermediate zero and exempt
+intermediate $0.10 both pay zero. Both examples and the Hypothesis
+payment differential pin the boundary; cases whose payables differ still
+refuse as `divorced_spouse_care_history`, retain their weights and block
+totals. The earlier $715 surviving-divorced caregiver and $340 current-care
+divorced-spouse regressions remain exact.

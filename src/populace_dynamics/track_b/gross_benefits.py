@@ -78,7 +78,10 @@ What this layer computes, for one insured worker's record and one month:
    under 403(a)(3)(C). Their current care requires a named entitled child;
    unknown care with a child on the record refuses. Without current care,
    unknown or protected first-entitlement care history refuses when it
-   could change the ordinary aged amount (RS 00615.201A.2).
+   could change the auxiliary payable (RS 00615.201A.2). When both
+   histories settle the same payable despite different intermediate age
+   rates, the ordinary intermediate rate is diagnostic and its note also
+   records the care-exempt rate.
 7. **Monthly family payment.** Every benefit amount is kept as an exact
    dime multiple; 215(g) rounds each monthly benefit down to a whole dollar.
    Gross means before 203(b) earnings-test deductions and the 1840(a)(1)
@@ -136,8 +139,12 @@ WEP-affected PIA before January 2024 and the regular-formula PIA from that
 month, rebuilding the maximum from that eligibility-year PIA and COLAs.
 
 Birth-year inputs denote SSA cohorts from January 2 through January 1 of
-the following calendar year. A widow(er)'s cohort fixes the RS 00615.301B.2
-reduction period, including every boundary cohort.
+the following calendar year. A beneficiary has one effective cohort, from
+either ``Beneficiary.birth_year`` or ``OwnBenefit.birth_year``; supplied
+years must agree. That cohort bounds both own-RIB and auxiliary reduction
+months before any coverage refusal (402(q)(6); RS 00615.003/.010), and fixes
+the widow(er)'s RS 00615.301B.2 period, including every boundary cohort.
+Normalization uses immutable copies and does not change the caller's inputs.
 
 RS 00615.712 protects survivors entitled for May 1978 from reductions due
 to a widow(er)'s deceased-worker delayed credits. Protected cases are
@@ -1198,8 +1205,10 @@ class Beneficiary:
       A spouse's DIB after the spouse benefit is refused (RS
       00615.260). Other roles do not use the order; it may be left None.
     * ``birth_year``: SSA cohort year (January 2 through the following
-      January 1); needed for a widow(er) with an own old-age benefit. When
-      given, it fixes the reduction period under RS 00615.301B.2.
+      January 1), shared with ``own_benefit.birth_year``. Either supplied
+      field fixes both reduction bounds and the widow(er)'s period under
+      RS 00615.301B.2; different supplied years are an input error. An aged
+      widow(er) with own RIB needs a cohort in at least one field.
     * ``conditions``: declared special conditions; GPO is inoperative for
       benefit months from January 2024 (Pub. L. 118-273).
     * ``child_in_care``: the id of an entitled child on this record for
@@ -1213,8 +1222,9 @@ class Beneficiary:
       about care in the first month of divorced entitlement. False permits
       the ordinary aged formula when there is no current care; unknown
       history or True refuses if the continued exemption could change that
-      amount. This snapshot does not implement conversion/ARF history after
-      care ends (RS 00615.201A.2; .010).
+      auxiliary payable after the own-benefit offset and zero floor. This
+      snapshot does not implement conversion/ARF history after care ends
+      (202(k)(3)(A); RS 00615.201A.2; .010).
     """
 
     beneficiary_id: str
@@ -1607,7 +1617,10 @@ class BeneficiaryBenefit:
     * ``counted_against_maximum``: what this beneficiary uses of the
       maximum; zero for a beneficiary outside it.
     * ``age_adjusted_rate``: after 402(q) and the RIB-LIM, before the
-      dual-entitlement offset.
+      dual-entitlement offset. For divorced-spouse care history that
+      settles the same auxiliary payable under both histories, a differing
+      ordinary intermediate rate is diagnostic; ``note`` explicitly
+      identifies it and the alternate care-exempt intermediate rate.
     * ``auxiliary_payable``: paid on this record after 402(k)(3)(A).
     * ``own_benefit``: the own RIB/DIB paid on the person's own record.
     """
@@ -1706,10 +1719,38 @@ def original_benefit(
     return floor_dime(share * pia)
 
 
+def _with_effective_cohort(beneficiary: Beneficiary) -> Beneficiary:
+    """Resolve one person's cohort without changing the caller's inputs.
+
+    RS 00615.003/.010: a known FRA governs both own-RIB and spouse bounds;
+    RS 00615.301B.2: a known widow cohort also fixes its reduction period.
+    """
+    own = beneficiary.own_benefit
+    year = beneficiary.birth_year
+    if (
+        own is not None
+        and own.birth_year is not None
+        and year is not None
+        and own.birth_year != year
+    ):
+        raise InvalidFamilyInput(
+            "own_benefit.birth_year differs from birth_year"
+        )
+    if year is None and own is not None:
+        year = own.birth_year
+    if year is None:
+        return beneficiary
+    if own is not None and own.birth_year is None:
+        own = replace(own, birth_year=year)
+    if year == beneficiary.birth_year and own is beneficiary.own_benefit:
+        return beneficiary
+    return replace(beneficiary, birth_year=year, own_benefit=own)
+
+
 def _check_beneficiary_inputs(
     beneficiary: Beneficiary, state: RecordState, params: SSAParameters
 ) -> None:
-    """Input errors for one beneficiary; raised before any refusal."""
+    """Input errors for a beneficiary with a resolved cohort, before refusal."""
     kind = state.kind
     allowed = _SURVIVOR_ROLES if kind is FamilyKind.SURVIVOR else _LIFE_ROLES
     if beneficiary.role not in allowed:
@@ -1718,15 +1759,6 @@ def _check_beneficiary_inputs(
             f"{kind.value} record"
         )
     own = beneficiary.own_benefit
-    if (
-        own is not None
-        and own.birth_year is not None
-        and beneficiary.birth_year is not None
-        and own.birth_year != beneficiary.birth_year
-    ):
-        raise InvalidFamilyInput(
-            "own_benefit.birth_year differs from birth_year"
-        )
     if beneficiary.role in _WIDOW_ROLES:
         if beneficiary.birth_year is not None:
             # All birth-year inputs use SSA's January 2-January 1 cohort,
@@ -2154,8 +2186,8 @@ def _check_family_inputs(
     beneficiaries: Sequence[Beneficiary],
     payment_month: YearMonth,
     params: SSAParameters,
-) -> None:
-    """Every input error in one record's family, before any refusal."""
+) -> tuple[Beneficiary, ...]:
+    """Check every input before refusal; return copies with resolved cohorts."""
     # Household paths check every record here before household refusals.
     statutory_rates(params)
     if not isinstance(state, RecordState):
@@ -2165,6 +2197,7 @@ def _check_family_inputs(
     for beneficiary in beneficiaries:
         if not isinstance(beneficiary, Beneficiary):
             raise TypeError("beneficiaries must be Beneficiary objects")
+    beneficiaries = tuple(_with_effective_cohort(b) for b in beneficiaries)
     if (
         state.eligibility_year is not None
         and state.eligibility_year > payment_month.year
@@ -2218,6 +2251,7 @@ def _check_family_inputs(
             "An eligible unclaimed worker record is retirement-only and "
             "admits only independently entitled divorced spouses"
         )
+    return beneficiaries
 
 
 def _entitled_parent_count(
@@ -2361,7 +2395,9 @@ def _family_benefits(
 ) -> FamilyBenefits:
     beneficiaries = tuple(beneficiaries)
     rates = statutory_rates(params)
-    _check_family_inputs(state, beneficiaries, payment_month, params)
+    beneficiaries = _check_family_inputs(
+        state, beneficiaries, payment_month, params
+    )
     if state.deferred_refusal is not None:
         raise FamilyConfigurationUnsupported(*state.deferred_refusal)
     if state.eligibility_year is not None:
@@ -2475,14 +2511,24 @@ def _family_benefits(
                         else max(Fraction(0), row.rate - row.own_mba)
                     ),
                 )
-                if ordinary != exempt:
+                # 202(k)(3)(A)'s zero floor can settle the payment even
+                # when care history leaves the intermediate rate open.
+                if ordinary[1] != exempt[1]:
                     raise FamilyConfigurationUnsupported(
                         UnsupportedReason.DIVORCED_SPOUSE_CARE_HISTORY,
                         "without current care, unknown or protected first-"
-                        "entitlement care history can change the aged amount; "
+                        "entitlement care history can change the auxiliary "
+                        "payable; "
                         "continued exemption/conversion after care ends is "
                         "not implemented (RS 00615.201A.2/.010)",
                         beneficiary_id=beneficiary.beneficiary_id,
+                    )
+                if ordinary[0] != exempt[0]:
+                    row.note = (
+                        "care history does not affect auxiliary payable; "
+                        "age_adjusted_rate displays the ordinary diagnostic "
+                        f"rate {ordinary[0]}; the care-exempt rate is "
+                        f"{exempt[0]}"
                     )
         if not row.entitled or beneficiary.role not in _WIDOW_ROLES:
             continue
