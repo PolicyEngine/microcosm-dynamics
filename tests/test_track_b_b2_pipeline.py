@@ -18,8 +18,9 @@ What they establish:
 - at the 2006 geometry the scorer's fit, context and frames equal the
   planning script's, and the scorer and arm F build identical copied frames
   and gaps for the same multiplicities;
-- the floor builder merges singleton strata, uses exact Rao-Wu, and stops
-  on zero degrees of freedom or uninformative candidate quantities;
+- the floor builder merges singleton strata, uses exact Rao-Wu, scores an
+  ineligible cell report-only, and stops on zero degrees of freedom or an
+  eligible cell's undefined power;
 - the scorer, end to end, scores every cell and returns section 8's
   outcome, and refuses a floor that is not the data's;
 - both scripts refuse to run without their preconditions.
@@ -56,13 +57,19 @@ PLANNING = ROOT / "docs" / "design" / "track_b_b0_1_planning_values.json"
 
 
 @pytest.fixture(autouse=True)
-def registered_thread_settings(monkeypatch):
+def registered_thread_settings(monkeypatch, tmp_path):
     """The entry points refuse anything but one thread per process
     (``b2.thread_settings``); set it here, as a registered launch does.
-    Tests of the refusal override one variable."""
+    Tests of the refusal override one variable. The scripts' outputs and
+    attempt log point into the test's own directory, so B2's committed run
+    files never change what a test sees."""
     for name in b2.THREAD_VARIABLES:
         monkeypatch.setenv(name, "1")
     monkeypatch.setenv("OMP_WAIT_POLICY", "PASSIVE")
+    monkeypatch.setenv("POPULACE_FIT_N_JOBS", "4")
+    monkeypatch.setattr(floor_builder, "OUTPUT", tmp_path / "floor.json")
+    monkeypatch.setattr(scorer, "OUTPUT", tmp_path / "score.json")
+    monkeypatch.setattr(scorer, "ATTEMPT", tmp_path / "attempt.jsonl")
 
 
 PROTOCOL_V2_ROOT = 20260930
@@ -1287,3 +1294,117 @@ def test_scorer_refuses_when_an_attempt_was_made(monkeypatch, tmp_path):
     monkeypatch.setattr(b2, "committed_sha256", untouched)
     with pytest.raises(FileExistsError, match="attempted"):
         scorer.main(["--registration-id", "r1", "--expected-commit", "h"])
+
+
+@pytest.mark.parametrize("module", ["track_b_b2_floor", "track_b_b2_score"])
+@pytest.mark.parametrize("jobs", ["8", "0", ""])
+def test_entry_points_refuse_fit_jobs_outside_one_to_four(
+    monkeypatch, module, jobs
+):
+    script = __import__(module)
+    monkeypatch.setenv("POPULACE_FIT_N_JOBS", jobs)
+
+    def untouched(*args, **kwargs):
+        raise AssertionError("ran before the thread guard")
+
+    monkeypatch.setattr(b2, "require_registration", untouched)
+    with pytest.raises(RuntimeError, match="POPULACE_FIT_N_JOBS"):
+        script.main(["--registration-id", "1", "--expected-commit", "x"])
+
+
+def test_the_attempt_log_opens_after_the_data_free_checks(
+    monkeypatch, tmp_path
+):
+    """The log is created after every check that needs no PSID data, and
+    before any PSID data is read."""
+    order = []
+    floor_path = tmp_path / "floor_artifact.json"
+    floor_path.write_text("{}", encoding="utf-8")
+    psid = tmp_path / "psid"
+    pe_us = tmp_path / "pe_us"
+    psid.mkdir()
+    pe_us.mkdir()
+    monkeypatch.setenv(floor_builder.PSID_ENV, str(psid))
+    monkeypatch.setenv(scorer.PE_US_ENV, str(pe_us))
+    monkeypatch.setattr(b2, "require_clean_head", lambda root, commit: commit)
+    monkeypatch.setattr(b2, "committed_sha256", lambda root, path: "pin")
+    monkeypatch.setattr(scorer, "check_floor_record", lambda *args: None)
+    monkeypatch.setattr(scorer, "assert_registered", lambda config: None)
+    monkeypatch.setattr(pv, "runtime_record", lambda: {})
+
+    def scoring_inputs(*args):
+        assert not scorer.ATTEMPT.exists()
+        order.append("scoring inputs")
+
+    def nawi(directory):
+        assert not scorer.ATTEMPT.exists()
+        order.append("nawi")
+        return {}, {}
+
+    class Stop(Exception):
+        pass
+
+    def read_inputs(*args):
+        lines = scorer.ATTEMPT.read_text().splitlines()
+        assert json.loads(lines[0])["attempt"]["registration_id"] == "r1"
+        order.append("read inputs")
+        raise Stop
+
+    monkeypatch.setattr(scorer, "check_scoring_inputs", scoring_inputs)
+    monkeypatch.setattr(scorer, "nawi_2010", nawi)
+    monkeypatch.setattr(floor_builder, "read_inputs", read_inputs)
+    try:
+        with pytest.raises(Stop):
+            scorer.main(
+                [
+                    "--registration-id",
+                    "r1",
+                    "--expected-commit",
+                    "h",
+                    "--floor-artifact",
+                    str(floor_path),
+                ]
+            )
+    finally:
+        b2.close_attempt()
+    assert order == ["scoring inputs", "nawi", "read inputs"]
+
+
+def test_a_scorer_replicate_copies_past_the_pinned_scale():
+    """The scorer's own replicate, at L = 1,001 (merged strata of 2, 8, 12
+    and 14 clusters): every copy count passes 1,000 and the replicate is
+    defined."""
+    rows, design_rows, person = [], [], 0
+    for stratum, clusters in enumerate((2, 8, 12, 14), start=1):
+        for cluster in range(clusters):
+            person += 1
+            design_rows.append(
+                {"person_id": person, "stratum": stratum, "cluster": cluster}
+            )
+            for year in b2.SCORED_PERIODS:
+                rows.append(
+                    {
+                        "person_id": person,
+                        "period": year,
+                        "cohort": "prime" if person % 2 else "older",
+                        "weight": float(1 + person % 4),
+                        "earnings": (
+                            0.0
+                            if person % 5 == 0
+                            else float(2000 + 97 * person + year)
+                        ),
+                    }
+                )
+    truth = pd.DataFrame(rows)
+    draws = [
+        truth.assign(earnings=truth["earnings"] * factor)
+        for factor in (0.9, 1.0, 1.1)
+    ]
+    design = pd.DataFrame(design_rows)
+    assert b2.design_summary(design)["scale_l"] == 1001
+    payload = {"design": design, "truth": truth, "draws": draws}
+    multiplicity = b2.design_multiplicities(design, 0, root=b2.ROOT_SEED)
+    assert min(c for c in multiplicity.values() if c) >= pv.ID_SCALE
+    (result,) = b2.run_replicates(scorer.design_replicate, 1, payload, 1)
+    assert "failed" not in result
+    assert result["replicate"] == 0

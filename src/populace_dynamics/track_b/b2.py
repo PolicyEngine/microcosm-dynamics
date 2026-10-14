@@ -1265,7 +1265,9 @@ _ATTEMPT: dict[str, Path | None] = {"path": None}
 def open_attempt(path: Path, header: Mapping[str, Any]) -> None:
     """Create the one-shot attempt log; refuse if it exists.
 
-    The scorer opens it after its checks and before it reads any data. The
+    The scorer opens it after every check that needs no PSID data (the
+    floor, the planning record, the scoring inputs and NAWI) and before it
+    reads any. The
     header records the run's identity; every later ``progress`` stage is
     appended with its UTC time and synced to disk. So a run that ends
     without its output leaves a durable record of the last stage it
@@ -1279,6 +1281,13 @@ def open_attempt(path: Path, header: Mapping[str, Any]) -> None:
         stream_.write(line + "\n")
         stream_.flush()
         os.fsync(stream_.fileno())
+    # The new entry in its directory is synced too, so the log survives a
+    # power loss, not only a killed process.
+    directory = os.open(path.parent, os.O_RDONLY)
+    try:
+        os.fsync(directory)
+    finally:
+        os.close(directory)
     _ATTEMPT["path"] = path
 
 
@@ -1290,7 +1299,9 @@ def close_attempt() -> None:
 def _utc_now() -> str:
     import datetime
 
-    return datetime.datetime.now(datetime.UTC).isoformat(timespec="seconds")
+    return datetime.datetime.now(datetime.timezone.utc).isoformat(
+        timespec="seconds"
+    )
 
 
 def progress(message: str) -> None:
@@ -1439,7 +1450,9 @@ MAX_WORKERS = 4
 def require_workers(workers: int) -> int:
     """The run's worker count, refused outside 1 to ``MAX_WORKERS``."""
     if isinstance(workers, bool) or not isinstance(workers, int):
-        raise RuntimeError("workers must be an integer from 1 to 4")
+        raise RuntimeError(
+            f"workers must be an integer from 1 to {MAX_WORKERS}"
+        )
     if not 1 <= workers <= MAX_WORKERS:
         raise RuntimeError(f"workers must be from 1 to {MAX_WORKERS}")
     return workers
@@ -1453,6 +1466,12 @@ THREAD_VARIABLES = (
     "VECLIB_MAXIMUM_THREADS",
     "NUMEXPR_NUM_THREADS",
 )
+
+
+#: populace-fit's forest job count. Unset, it is -1, every core, which the
+#: shared host's cap forbids; protocol v2 pinned it to 4. Forests are
+#: built with fixed per-tree seeds, so the count does not change a fit.
+FIT_JOBS_VARIABLE = "POPULACE_FIT_N_JOBS"
 
 
 def thread_settings() -> dict[str, str]:
@@ -1471,7 +1490,12 @@ def thread_settings() -> dict[str, str]:
     for name, value in settings.items():
         if value != "1":
             raise RuntimeError(f"set {name}=1")
+    jobs = os.environ.get(FIT_JOBS_VARIABLE, "")
+    if jobs not in {str(n) for n in range(1, MAX_WORKERS + 1)}:
+        raise RuntimeError(
+            f"set {FIT_JOBS_VARIABLE} to an integer from 1 to {MAX_WORKERS}"
+        )
     policy = os.environ.get("OMP_WAIT_POLICY", "")
     if policy.upper() != "PASSIVE":
         raise RuntimeError("set OMP_WAIT_POLICY=PASSIVE")
-    return {**settings, "OMP_WAIT_POLICY": policy}
+    return {**settings, FIT_JOBS_VARIABLE: jobs, "OMP_WAIT_POLICY": policy}

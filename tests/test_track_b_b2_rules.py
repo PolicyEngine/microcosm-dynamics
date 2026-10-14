@@ -1165,8 +1165,23 @@ def test_registration_and_thread_settings(monkeypatch):
     for name in b2.THREAD_VARIABLES:
         monkeypatch.setenv(name, "1")
     monkeypatch.setenv("OMP_WAIT_POLICY", "PASSIVE")
+    monkeypatch.setenv("POPULACE_FIT_N_JOBS", "4")
     settings = b2.thread_settings()
     assert all(settings[name] == "1" for name in b2.THREAD_VARIABLES)
+    assert settings["POPULACE_FIT_N_JOBS"] == "4"
+    # populace-fit's forest jobs: unset means every core, so 1 to 4 only.
+    assert b2.FIT_JOBS_VARIABLE == "POPULACE_FIT_N_JOBS"
+    for value in ("1", "2", "3"):
+        monkeypatch.setenv("POPULACE_FIT_N_JOBS", value)
+        assert b2.thread_settings()["POPULACE_FIT_N_JOBS"] == value
+    for value in ("0", "5", "-1", "4.0", ""):
+        monkeypatch.setenv("POPULACE_FIT_N_JOBS", value)
+        with pytest.raises(RuntimeError, match="POPULACE_FIT_N_JOBS"):
+            b2.thread_settings()
+    monkeypatch.delenv("POPULACE_FIT_N_JOBS")
+    with pytest.raises(RuntimeError, match="POPULACE_FIT_N_JOBS"):
+        b2.thread_settings()
+    monkeypatch.setenv("POPULACE_FIT_N_JOBS", "4")
     # Every variable must be exactly 1: more threads hang the gates'
     # predict in the pinned environment, and an unset one is refused too.
     for name in b2.THREAD_VARIABLES:

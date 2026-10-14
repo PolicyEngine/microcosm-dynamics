@@ -15,10 +15,12 @@ on. This script is section 9's floor builder, steps 2-6:
    4,000 household replicates on streams [20261002, b, 0]). It counts the
    design strata among the truth-support persons, applies the fixed
    singleton merges, and publishes counts before and after, merges, L and
-   nu. A zero nu or uninformative candidate-cell tolerance stops the build
-   as WEAK_POWER_OR_VACUITY before the ladder or any candidate run.
-5. It applies eligibility, the ladder and the guards inside the six level
-   cells (d781 (a), d1342 option A). Power is the ruled binding evaluation
+   nu.
+5. It applies eligibility inside the six level cells (d781 (a), d1342
+   option A); a cell that fails it is scored report-only. A zero nu, or
+   an eligible cell whose se_up or tau is zero or undefined, stops the
+   build as WEAK_POWER_OR_VACUITY before the ladder or any candidate run.
+   Otherwise it runs the ladder and the guards over the eligible cells. Power is the ruled binding evaluation
    (``scripts/track_b_b0_1_ruled_power.py``) with r, the 95th percentile
    of d and s2_gate from the planning record, and nu, tau = tol / se_up
    and t*_{m,nu} from B2's own floor.

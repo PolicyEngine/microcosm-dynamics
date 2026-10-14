@@ -138,7 +138,7 @@ scripts apply them, in this order, each once:
    with two or more clusters, larger strata get exact Rao-Wu by integer
    copies at scale L, and ν is counted after the merges. It publishes
    the strata, the merges, L and ν. If ν is 0, if an eligible cell's
-   se_up or τ is undefined, or if the ladder cannot reach 0.90 power
+   se_up or τ is zero or undefined, or if the ladder cannot reach 0.90 power
    with four cells, it says `WEAK_POWER_OR_VACUITY` and no candidate may
    run. A cell that fails eligibility is scored report-only.
 2. `scripts/track_b_b2_compare_floor.py` runs after that artifact is
@@ -151,8 +151,9 @@ scripts apply them, in this order, each once:
    data is read), and writes `runs/track_b_b2_score.json` exclusively.
 
 Both the builder and the scorer require one BLAS, OpenMP and numexpr
-thread per process, `OMP_WAIT_POLICY=PASSIVE`, at most four worker
-processes, and the selectors' pinned fitting stack. They check the
+thread per process, `OMP_WAIT_POLICY=PASSIVE`, `POPULACE_FIT_N_JOBS` from
+1 to 4, at most four worker processes, and the selectors' pinned fitting
+stack. They check the
 threads and workers first. In that environment candidate 3's projection
 hangs in the participation gates' `HistGradientBoostingClassifier`
 predict with more than one OpenMP thread. Their tests

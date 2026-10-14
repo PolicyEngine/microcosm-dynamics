@@ -721,6 +721,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         floor_builder.PLANNING.read_text(encoding="utf-8")
     )
 
+    # Every check that needs no PSID data runs before the attempt log
+    # exists, so an operator error there leaves no attempt behind.
+    check_scoring_inputs(floor_record, planning_record)
+    nawi, nawi_record = nawi_2010(pe_us_dir)
     b2.open_attempt(
         ATTEMPT,
         {
@@ -736,7 +740,6 @@ def main(argv: Sequence[str] | None = None) -> int:
     earnings, anchor_demo, design, opened = floor_builder.read_inputs(
         psid_dir, floor_builder.read_set()
     )
-    nawi, nawi_record = nawi_2010(pe_us_dir)
     record = run_score(
         earnings,
         anchor_demo,

@@ -381,6 +381,7 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "populace_dynamics.track_b.runner",
         "populace_dynamics.track_b.reconstructed",
         "populace_dynamics.track_b.gross_benefits",
+        "populace_dynamics.track_b.b2",
     }
     assert track_b_modules.issubset(module_paths)
     u2_registry = "populace_dynamics.data.u2_source_registry"

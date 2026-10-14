@@ -272,6 +272,7 @@ def test_candidate3_fit_and_projection_are_deterministic(tmp_path):
         environment = dict(os.environ)
         environment.update({name: "1" for name in b2.THREAD_VARIABLES})
         environment["OMP_WAIT_POLICY"] = "PASSIVE"
+        environment["POPULACE_FIT_N_JOBS"] = "4"
         environment["PYTHONHASHSEED"] = hash_seed
         environment["PYTHONPATH"] = os.pathsep.join(
             (str(ROOT / "src"), str(ROOT / "scripts"))
