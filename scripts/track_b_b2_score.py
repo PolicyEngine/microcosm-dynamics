@@ -80,6 +80,8 @@ from populace_dynamics.track_b import b2  # noqa: E402
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = "track_b_b2_score.v1"
 OUTPUT = ROOT / "runs" / "track_b_b2_score.json"
+#: The one-shot attempt log, opened before any data is read.
+ATTEMPT = ROOT / "runs" / "track_b_b2_score.attempt.jsonl"
 FLOOR = floor_builder.OUTPUT
 PE_US_ENV = "POPULACE_DYNAMICS_PE_US_DIR"
 POLICYENGINE_US_VERSION = planning.POLICYENGINE_US_VERSION
@@ -270,8 +272,9 @@ def copied_frames(
 ) -> tuple[pd.DataFrame, list[pd.DataFrame]]:
     """Copy every person c times, truth rows and each draw's projected rows
     alike, by the addendum's ``copy_persons`` (arm F's construction)."""
-    return planning.copy_persons(truth, multiplicity), [
-        planning.copy_persons(frame, multiplicity) for frame in draws
+    return b2.copy_persons(truth, multiplicity, planning.copy_persons), [
+        b2.copy_persons(frame, multiplicity, planning.copy_persons)
+        for frame in draws
     ]
 
 
@@ -689,12 +692,17 @@ def main(argv: Sequence[str] | None = None) -> int:
     # First, before anything is read: more than one thread hangs
     # candidate 3's projection in this environment (b2.thread_settings).
     threads = b2.thread_settings()
+    b2.require_workers(args.workers)
 
     started = time.time()
     registration = b2.require_registration(args.registration_id)
     head = b2.require_clean_head(ROOT, args.expected_commit)
     if OUTPUT.exists():
         raise FileExistsError(f"{OUTPUT} exists; B2's score is one-shot")
+    if ATTEMPT.exists():
+        raise FileExistsError(
+            f"{ATTEMPT} exists: B2 has been attempted; see its last stage"
+        )
     floor_pin = b2.committed_sha256(ROOT, args.floor_artifact)
     floor_record = json.loads(args.floor_artifact.read_text(encoding="utf-8"))
     check_floor_record(floor_record, registration, head)
@@ -713,6 +721,17 @@ def main(argv: Sequence[str] | None = None) -> int:
         floor_builder.PLANNING.read_text(encoding="utf-8")
     )
 
+    b2.open_attempt(
+        ATTEMPT,
+        {
+            "registration_id": registration,
+            "expected_commit": args.expected_commit,
+            "repository_head": head,
+            "floor_artifact": floor_pin,
+            "workers": config.workers,
+            "threads": threads,
+        },
+    )
     b2.progress("reading B2's pinned read set under the read guard")
     earnings, anchor_demo, design, opened = floor_builder.read_inputs(
         psid_dir, floor_builder.read_set()
@@ -751,10 +770,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         "wall_seconds": round(time.time() - started, 1),
     }
     digest = b2.write_exclusive(OUTPUT, output)
-    b2.progress(
-        f"wrote {OUTPUT.relative_to(ROOT)} (sha256 {digest}); "
-        f"outcome {record['outcome']}"
-    )
+    b2.progress(f"wrote {OUTPUT.relative_to(ROOT)} (sha256 {digest})")
+    b2.close_attempt()
+    b2.progress(f"outcome {record['outcome']}")
     return 0
 
 

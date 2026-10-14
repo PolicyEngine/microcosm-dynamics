@@ -53,6 +53,18 @@ from populace_dynamics.harness import m6_cells, m6_scoring  # noqa: E402
 from populace_dynamics.track_b import b2  # noqa: E402
 
 PLANNING = ROOT / "docs" / "design" / "track_b_b0_1_planning_values.json"
+
+
+@pytest.fixture(autouse=True)
+def registered_thread_settings(monkeypatch):
+    """The entry points refuse anything but one thread per process
+    (``b2.thread_settings``); set it here, as a registered launch does.
+    Tests of the refusal override one variable."""
+    for name in b2.THREAD_VARIABLES:
+        monkeypatch.setenv(name, "1")
+    monkeypatch.setenv("OMP_WAIT_POLICY", "PASSIVE")
+
+
 PROTOCOL_V2_ROOT = 20260930
 FEW_FLOOR_SEEDS = tuple(range(5))
 FEW_DRAW_SEEDS = (6200, 6201, 6202)
@@ -633,18 +645,16 @@ def test_floor_stops_at_zero_nu_before_ladder_or_fit(
 
 @pytest.mark.parametrize(
     "quantity, value",
-    [("sigma", 0), ("sigma", None), ("se_up", 0), ("tau", math.nan)],
+    [("se_up", 0), ("se_up", None), ("tau", math.nan)],
 )
-def test_floor_stops_on_uninformative_candidate_quantities(
+def test_floor_stops_on_an_eligible_cells_undefined_power(
     invented, measured, monkeypatch, quantity, value
 ):
+    """An eligible cell whose se_up or tau is zero or undefined has no
+    power, so B2 stops at floor build before the ladder."""
     broken = copy.deepcopy(measured)
     name = "earn_p50.prime"
-    if quantity == "sigma":
-        broken["floor_household"][name]["realized_sigma"] = value
-        # Even an ineligible member of the six is a candidate cell.
-        broken["floor_household"][name]["n_defined_seeds"] = 0
-    elif quantity == "se_up":
+    if quantity == "se_up":
         broken["se_up"][name]["se_up"] = value
     else:
         broken["floor_household"][name]["mean"] = value
@@ -656,10 +666,49 @@ def test_floor_stops_on_uninformative_candidate_quantities(
     record = floor_builder.decide(
         broken, invented["design"], invented["planning"]
     )
+    assert record["cells"][name]["eligible"] is True
     assert record["outcome"] == b2.WEAK_POWER_OR_VACUITY
     assert {"cell": name, "quantity": quantity} in record["stop_causes"]
     assert record["ladder"] is None
     assert record["candidate_runs_permitted"] is False
+
+
+@pytest.mark.parametrize(
+    "change",
+    ["sigma_zero", "sigma_undefined", "seeds_undefined", "se_up_zero_too"],
+)
+def test_an_ineligible_cell_is_report_only_and_the_ladder_runs(
+    invented, measured, change
+):
+    """Section 5: a cell of the six that fails eligibility is scored
+    report-only, and the ladder runs on the eligible cells. Its own se_up
+    or tau does not stop B2."""
+    broken = copy.deepcopy(measured)
+    name = "earn_p50.prime"
+    floor = broken["floor_household"][name]
+    if change == "sigma_zero":
+        floor["realized_sigma"] = 0.0
+    elif change == "sigma_undefined":
+        floor["realized_sigma"] = None
+    elif change == "seeds_undefined":
+        floor["n_defined_seeds"] = 0
+    else:
+        floor["realized_sigma"] = 0.0
+        broken["se_up"][name]["se_up"] = 0.0
+    record = floor_builder.decide(
+        broken, invented["design"], invented["planning"]
+    )
+    assert record["cells"][name]["eligible"] is False
+    assert record.get("stop_causes") is None
+    assert record["ladder"] is not None
+    assert name not in record["ladder"]["eligible"]
+    assert set(record["ladder"]["eligible"]) == set(b2.LEVEL_CELLS) - {name}
+    report = {
+        entry["cell"]: entry for entry in record["surface"]["report_only"]
+    }
+    assert report[name]["reason"] == "floor ineligible"
+    gated = {entry["cell"] for entry in record["surface"]["gated"]}
+    assert name not in gated
 
 
 def test_floor_refuses_a_truth_person_without_design_variables(
@@ -1162,3 +1211,79 @@ def test_entry_points_refuse_more_than_one_thread_first(
     monkeypatch.setattr(b2, "committed_sha256", untouched)
     with pytest.raises(RuntimeError, match=variable):
         script.main(["--registration-id", "1", "--expected-commit", "x"])
+
+
+@pytest.mark.parametrize("module", ["track_b_b2_floor", "track_b_b2_score"])
+@pytest.mark.parametrize("workers", [0, 5, 18, -1])
+def test_entry_points_refuse_workers_outside_one_to_four(
+    monkeypatch, module, workers
+):
+    """With one thread per process, at most four workers keep a run inside
+    the shared host's cap; the check runs before anything else."""
+    script = __import__(module)
+    for name in b2.THREAD_VARIABLES:
+        monkeypatch.setenv(name, "1")
+    monkeypatch.setenv("OMP_WAIT_POLICY", "PASSIVE")
+
+    def untouched(*args, **kwargs):
+        raise AssertionError("ran before the worker check")
+
+    monkeypatch.setattr(b2, "require_registration", untouched)
+    monkeypatch.setattr(b2, "require_clean_head", untouched)
+    monkeypatch.setattr(b2, "committed_sha256", untouched)
+    with pytest.raises(RuntimeError, match="workers"):
+        script.main(
+            [
+                "--registration-id",
+                "1",
+                "--expected-commit",
+                "x",
+                "--workers",
+                str(workers),
+            ]
+        )
+
+
+@pytest.mark.parametrize("workers", [1, 2, 3, 4])
+def test_one_to_four_workers_are_accepted(workers):
+    assert b2.require_workers(workers) == workers
+    for bad in (True, 2.0, "4"):
+        with pytest.raises(RuntimeError, match="workers"):
+            b2.require_workers(bad)
+
+
+def test_the_attempt_log_is_one_shot_and_records_each_stage(tmp_path):
+    """The attempt log is created exclusively and every later stage is
+    appended, so an interrupted run's last stage survives on disk."""
+    path = tmp_path / "logs" / "attempt.jsonl"
+    try:
+        b2.open_attempt(path, {"registration_id": "r1"})
+        b2.progress("fitting candidate 3's law at origin 2010")
+        b2.progress("full-support cells")
+        with pytest.raises(FileExistsError):
+            b2.open_attempt(path, {"registration_id": "r1"})
+    finally:
+        b2.close_attempt()
+    b2.progress("after close")
+    lines = [json.loads(line) for line in path.read_text().splitlines()]
+    assert lines[0]["attempt"] == {"registration_id": "r1"}
+    assert [line.get("stage") for line in lines[1:]] == [
+        "fitting candidate 3's law at origin 2010",
+        "full-support cells",
+    ]
+    assert all("utc" in line for line in lines)
+
+
+def test_scorer_refuses_when_an_attempt_was_made(monkeypatch, tmp_path):
+    attempt = tmp_path / "attempt.jsonl"
+    attempt.write_text("{}\n", encoding="utf-8")
+    monkeypatch.setattr(b2, "require_clean_head", lambda root, commit: commit)
+    monkeypatch.setattr(scorer, "OUTPUT", tmp_path / "score.json")
+    monkeypatch.setattr(scorer, "ATTEMPT", attempt)
+
+    def untouched(*args, **kwargs):
+        raise AssertionError("read past the attempt check")
+
+    monkeypatch.setattr(b2, "committed_sha256", untouched)
+    with pytest.raises(FileExistsError, match="attempted"):
+        scorer.main(["--registration-id", "r1", "--expected-commit", "h"])

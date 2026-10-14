@@ -1207,6 +1207,30 @@ def test_replicate_driver_orders_results_and_counts_failures():
     assert failed[1]["exception_class"] == "ValueError"
 
 
+def _design_counts(index):
+    payload = b2.worker_payload()
+    copies = b2.design_multiplicities(
+        payload["design"], index, root=payload["root"]
+    )
+    return {"replicate": index, "copies": sorted(copies.items())}
+
+
+@pytest.mark.parametrize("workers", [2, 3])
+def test_replicates_are_the_same_in_worker_processes(workers):
+    """Determinism across the process pool: the replicates are a function
+    of the index and the payload alone, so serial and pooled runs agree
+    and come back in index order."""
+    design = _invented_design(two_cluster_strata=5, extra=(3, 1))
+    payload = {"design": design, "root": b2.ROOT_SEED}
+    serial = b2.run_replicates(_design_counts, 9, payload, 1)
+    pooled = b2.run_replicates(_design_counts, 9, payload, workers)
+    assert pooled == serial
+    assert [r["replicate"] for r in pooled] == list(range(9))
+    assert b2.run_replicates(_square, 7, {"k": 5}, workers) == (
+        b2.run_replicates(_square, 7, {"k": 5}, 1)
+    )
+
+
 def test_registered_settings_are_enforced(monkeypatch):
     with pytest.raises(AssertionError, match="4,000"):
         floor_builder.assert_registered(floor_builder.FloorConfig(8, 1))

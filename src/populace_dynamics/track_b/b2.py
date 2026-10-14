@@ -548,6 +548,53 @@ def anchor_multiplicities(
     )
 
 
+def copy_scale(max_count: int) -> int:
+    """The identifier scale for copies: ``ID_SCALE`` while every count is
+    below it, else the smallest power of ten above the largest count."""
+    if max_count < ID_SCALE:
+        return ID_SCALE
+    return 10 ** len(str(int(max_count)))
+
+
+def copy_persons(
+    frame: pd.DataFrame,
+    multiplicity: Mapping[int, int],
+    pinned: Callable[[pd.DataFrame, Mapping[int, int]], pd.DataFrame],
+) -> pd.DataFrame:
+    """Copy each person's rows c times, as the addendum's ``copy_persons``.
+
+    ``pinned`` is the planning script's ``copy_persons`` (section 13, "To
+    B2"), which numbers copies ``person * ID_SCALE + k`` and refuses a
+    count of ``ID_SCALE`` or more. Below that it is called unchanged, so
+    frames equal arm F's. Section 7's stratum rule can need more copies at
+    scale L, so above it the same construction runs with a wider scale
+    (``copy_scale``). Only the identifiers' encoding differs; rows, order
+    and every other column are the same.
+    """
+    counts = (
+        frame["person_id"]
+        .astype("int64")
+        .map(lambda person: multiplicity.get(int(person), 0))
+        .to_numpy(dtype=np.int64)
+    )
+    largest = int(counts.max()) if counts.size else 0
+    if largest < ID_SCALE:
+        return pinned(frame, multiplicity)
+    scale = copy_scale(largest)
+    top = int(frame["person_id"].astype("int64").max())
+    if (top + 1) * scale >= np.iinfo(np.int64).max:
+        raise OverflowError("copied identifiers would overflow int64")
+    repeated = frame.loc[frame.index.repeat(counts)].copy()
+    copy = repeated.groupby(level=0).cumcount().to_numpy(dtype=np.int64)
+    repeated["person_id"] = (
+        repeated["person_id"].astype("int64") * scale + copy
+    )
+    return repeated.sort_values(
+        ["person_id", "period"] if "period" in repeated else ["person_id"],
+        kind="stable",
+    ).reset_index(drop=True)
+
+
 def design_multiplicities(
     design: pd.DataFrame, replicate: int, *, root: int
 ) -> dict[int, int]:
@@ -1211,9 +1258,52 @@ def run_replicates(
     return [results[index] for index in range(count)]
 
 
+#: The open attempt log, if any (``open_attempt``).
+_ATTEMPT: dict[str, Path | None] = {"path": None}
+
+
+def open_attempt(path: Path, header: Mapping[str, Any]) -> None:
+    """Create the one-shot attempt log; refuse if it exists.
+
+    The scorer opens it after its checks and before it reads any data. The
+    header records the run's identity; every later ``progress`` stage is
+    appended with its UTC time and synced to disk. So a run that ends
+    without its output leaves a durable record of the last stage it
+    reached, and whether any candidate gap had been computed.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    line = json.dumps(
+        {"utc": _utc_now(), "attempt": plain(dict(header))}, sort_keys=True
+    )
+    with path.open("x", encoding="utf-8") as stream_:
+        stream_.write(line + "\n")
+        stream_.flush()
+        os.fsync(stream_.fileno())
+    _ATTEMPT["path"] = path
+
+
+def close_attempt() -> None:
+    """Stop appending stages (the log itself stays on disk)."""
+    _ATTEMPT["path"] = None
+
+
+def _utc_now() -> str:
+    import datetime
+
+    return datetime.datetime.now(datetime.UTC).isoformat(timespec="seconds")
+
+
 def progress(message: str) -> None:
-    """Stage names and counts only, on stderr."""
+    """Stage names and counts only, on stderr, and appended to the open
+    attempt log, if there is one."""
     print(message, file=sys.stderr, flush=True)
+    path = _ATTEMPT["path"]
+    if path is not None:
+        line = json.dumps({"utc": _utc_now(), "stage": message})
+        with path.open("a", encoding="utf-8") as stream_:
+            stream_.write(line + "\n")
+            stream_.flush()
+            os.fsync(stream_.fileno())
 
 
 _GUARD: dict[str, Any] = {"roots": None, "allowed": None, "installed": False}
@@ -1339,6 +1429,20 @@ def write_exclusive(path: Path, record: Mapping[str, Any]) -> str:
     with path.open("x", encoding="utf-8") as stream_:
         stream_.write(text)
     return hashlib.sha256(text.encode()).hexdigest()
+
+
+#: The most worker processes a B2 run may use: with one thread each, the
+#: shared-host cap of four (Max, 2026-10-11).
+MAX_WORKERS = 4
+
+
+def require_workers(workers: int) -> int:
+    """The run's worker count, refused outside 1 to ``MAX_WORKERS``."""
+    if isinstance(workers, bool) or not isinstance(workers, int):
+        raise RuntimeError("workers must be an integer from 1 to 4")
+    if not 1 <= workers <= MAX_WORKERS:
+        raise RuntimeError(f"workers must be from 1 to {MAX_WORKERS}")
+    return workers
 
 
 #: The thread variables every B2 process must set to 1.

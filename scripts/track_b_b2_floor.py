@@ -196,7 +196,9 @@ def household_replicate(replicate: int) -> dict[str, Any]:
     mult = b2.anchor_multiplicities(
         payload["clusters"], replicate, root=b2.ROOT_SEED
     )
-    values = b2.cell_values(planning.copy_persons(payload["truth"], mult))
+    values = b2.cell_values(
+        b2.copy_persons(payload["truth"], mult, planning.copy_persons)
+    )
     reference = payload["reference"]
     return {
         "replicate": int(replicate),
@@ -431,12 +433,18 @@ def decide(
         "design": summary,
         "cells": cells,
     }
+    # Section 5's eligibility comes first: a cell of the six that fails it
+    # (its floor, which includes a positive sigma, or its planning values)
+    # is scored report-only, and the ladder runs on the others. B2 stops
+    # only when nu is 0 after the merges, or when an eligible cell's power
+    # is undefined because its se_up or tau is zero or undefined (the
+    # design's "undefined cells, or uninformative tolerances").
+    eligible = [name for name in b2.LEVEL_CELLS if cells[name]["eligible"]]
     causes = []
     if nu == 0:
         causes.append({"cell": None, "quantity": "nu"})
-    for name in b2.LEVEL_CELLS:
+    for name in eligible:
         quantities = {
-            "sigma": cells[name]["floor_household"]["realized_sigma"],
             "se_up": cells[name]["se_up"]["se_up"],
             "tau": cells[name]["tau_se_up_units"],
         }
@@ -449,7 +457,6 @@ def decide(
         record["ladder"] = None
         return finish(record, cells)
 
-    eligible = [name for name in b2.LEVEL_CELLS if cells[name]["eligible"]]
     tau = {name: cells[name]["tau_se_up_units"] for name in eligible}
     power = ladder_power(planning_record, tau, nu)
     result = b2.ladder(
@@ -619,6 +626,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     # First, before anything is read: more than one thread hangs
     # candidate 3's projection in this environment (b2.thread_settings).
     threads = b2.thread_settings()
+    b2.require_workers(args.workers)
 
     started = time.time()
     registration = b2.require_registration(args.registration_id)

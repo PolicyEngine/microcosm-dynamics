@@ -287,3 +287,135 @@ def test_one_cluster_publishes_zero_nu_and_refuses_resampling():
     assert record["design_degrees_of_freedom"] == record["scale_l"] == 0
     with pytest.raises(ValueError, match="no degree of freedom"):
         b2.design_multiplicities(design, 0, root=20261002)
+
+
+# The copier at scale L (Q: the pinned copier refuses 1,000 copies or more).
+
+
+def _panel(persons):
+    rows = []
+    for person in range(1, persons + 1):
+        for year in b2.SCORED_PERIODS:
+            rows.append(
+                {
+                    "person_id": person,
+                    "period": year,
+                    "cohort": "prime" if person % 2 else "older",
+                    "weight": float(1 + person % 5),
+                    "earnings": (
+                        0.0
+                        if person % 7 == 0
+                        else float(1000 + person * 137 + year)
+                    ),
+                }
+            )
+    return pd.DataFrame(rows)
+
+
+def test_the_copy_scale_is_the_pinned_one_below_it():
+    assert b2.ID_SCALE == planning.ID_SCALE
+    assert b2.copy_scale(0) == b2.copy_scale(999) == planning.ID_SCALE
+    assert b2.copy_scale(1000) == 10_000
+    assert b2.copy_scale(9999) == 10_000
+    assert b2.copy_scale(10_000) == 100_000
+
+
+@settings(max_examples=60, deadline=None)
+@given(st.lists(st.integers(0, 999), min_size=12, max_size=12))
+def test_below_the_scale_the_copier_is_arm_fs(counts):
+    """Differential: below 1,000 copies the frames equal the pinned
+    ``copy_persons`` exactly (section 13, "To B2")."""
+    panel = _panel(12)
+    multiplicity = {person: count for person, count in enumerate(counts, 1)}
+    pd.testing.assert_frame_equal(
+        b2.copy_persons(panel, multiplicity, planning.copy_persons),
+        planning.copy_persons(panel, multiplicity),
+    )
+
+
+@settings(max_examples=20, deadline=None)
+@given(
+    st.lists(st.integers(0, 3), min_size=6, max_size=6),
+    st.integers(1000, 2500),
+)
+def test_above_the_scale_the_copier_keeps_every_row_and_person(counts, factor):
+    """Above 1,000 copies: each person's rows appear exactly c times, in
+    the pinned order, under distinct identifiers that decode to the
+    person, and every other column is unchanged."""
+    panel = _panel(6)
+    multiplicity = {
+        person: count * factor for person, count in enumerate(counts, 1)
+    }
+    copied = b2.copy_persons(panel, multiplicity, planning.copy_persons)
+    scale = b2.copy_scale(max(multiplicity.values()))
+    assert len(copied) == sum(multiplicity[int(p)] for p in panel["person_id"])
+    person = copied["person_id"] // scale
+    index = copied["person_id"] % scale
+    for original, count in multiplicity.items():
+        rows = copied[person == original]
+        assert sorted(set(index[person == original])) == list(range(count))
+        source = panel[panel["person_id"] == original]
+        assert len(rows) == count * len(source)
+    pairs = copied[["person_id", "period"]]
+    assert not pairs.duplicated().any()
+    assert copied.equals(
+        copied.sort_values(["person_id", "period"], kind="stable")
+    )
+    restored = copied.assign(person_id=person).drop_duplicates()
+    pd.testing.assert_frame_equal(
+        restored.sort_values(["person_id", "period"]).reset_index(drop=True),
+        panel[panel["person_id"].map(multiplicity).fillna(0) > 0]
+        .sort_values(["person_id", "period"])
+        .reset_index(drop=True),
+        check_dtype=False,
+    )
+
+
+def test_the_level_cells_are_the_same_at_scale_1001():
+    """Section 7: a common copy scale leaves the six level cells
+    unchanged, including past the pinned copier's limit."""
+    panel = _panel(30)
+    base = {person: 1 + person % 3 for person in range(1, 31)}
+    small = b2.cell_values(b2.copy_persons(panel, base, planning.copy_persons))
+    large = b2.cell_values(
+        b2.copy_persons(
+            panel,
+            {person: count * 1001 for person, count in base.items()},
+            planning.copy_persons,
+        )
+    )
+    for name in b2.LEVEL_CELLS:
+        assert small[name] is not None
+        assert large[name] == small[name]
+
+
+@pytest.mark.parametrize("replicate", [0, 1, 7])
+def test_the_sampler_to_copier_path_works_at_l_1001(replicate):
+    """The reviewer's design: merged strata of 2, 8, 12 and 14 clusters
+    give L = lcm(1, 7, 11, 13) = 1,001, so every positive multiplicity is
+    past the pinned copier's limit. The full path still copies each
+    stratum's clusters to L * n_h copies in total."""
+    design = invented_design([1, 2, 3, 4], [2, 8, 12, 14])
+    summary = b2.design_summary(design)
+    assert summary["scale_l"] == 1001
+    multiplicity = b2.design_multiplicities(
+        design, replicate, root=b2.ROOT_SEED
+    )
+    assert max(multiplicity.values()) >= planning.ID_SCALE
+    panel = pd.DataFrame(
+        {
+            "person_id": design["person_id"].astype("int64"),
+            "period": b2.LEVEL_YEARS[0],
+        }
+    )
+    copied = b2.copy_persons(panel, multiplicity, planning.copy_persons)
+    scale = b2.copy_scale(max(multiplicity.values()))
+    persons = copied["person_id"] // scale
+    by_stratum = (
+        design.set_index("person_id")["stratum"].reindex(persons).to_numpy()
+    )
+    totals = pd.Series(1, index=by_stratum).groupby(level=0).sum()
+    sizes = design.groupby("stratum")["cluster"].nunique()
+    # two persons per invented cluster
+    for stratum, size in sizes.items():
+        assert totals[stratum] == 2 * 1001 * size

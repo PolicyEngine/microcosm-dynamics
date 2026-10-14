@@ -313,6 +313,10 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # Track B G (the gross-benefit layer) is an opt-in statutory reference;
     # nothing in the historical projection imports it.
     Path("src/populace_dynamics/track_b/gross_benefits.py"),
+    # Track B B2 (the 2010-2014 transport gate's shared rules) is used only
+    # by B2's floor builder and scorer; nothing in the historical
+    # projection imports it.
+    Path("src/populace_dynamics/track_b/b2.py"),
     # U2 documentary metadata stays outside the historical projection.
     Path("src/populace_dynamics/data/u2_source_registry.py"),
     Path("scripts/capture_track_u2_income_wealth.py"),

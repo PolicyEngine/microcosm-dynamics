@@ -34,6 +34,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -260,6 +261,9 @@ def _probe(output: Path) -> None:
 
 def test_candidate3_fit_and_projection_are_deterministic(tmp_path):
     """Two fresh processes, different hash seeds, the same law and draws."""
+    # Candidate 3's fitting stack lives only in the gate environment.
+    pytest.importorskip("populace.fit")
+    pytest.importorskip("quantile_forest")
     from populace_dynamics.track_b import b2
 
     outputs = []
@@ -272,14 +276,16 @@ def test_candidate3_fit_and_projection_are_deterministic(tmp_path):
         environment["PYTHONPATH"] = os.pathsep.join(
             (str(ROOT / "src"), str(ROOT / "scripts"))
         )
-        subprocess.run(
+        completed = subprocess.run(
             [sys.executable, str(Path(__file__).resolve()), str(output)],
             cwd=ROOT,
             env=environment,
-            check=True,
+            check=False,
             capture_output=True,
+            text=True,
             timeout=600,
         )
+        assert completed.returncode == 0, completed.stderr[-4000:]
         settings = json.loads((output / "settings.json").read_bytes())
         assert all(settings[name] == "1" for name in b2.THREAD_VARIABLES)
         assert settings["OMP_WAIT_POLICY"] == "PASSIVE"
