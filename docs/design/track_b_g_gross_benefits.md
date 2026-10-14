@@ -203,10 +203,11 @@ rounding on it needs Max's acceptance.
 
 ## Households and the entry point
 
-A family that draws on more than one record cannot be computed one record at
-a time. `household_benefits` is the only integration entry point. It takes
-every record in a household and runs `check_household_records` first. The
-check does three things:
+A family that draws on more than one record cannot be computed one record
+at a time. `household_benefits` computes every record together;
+`household_month_outcome` adds one monthly guard per record. Both use the
+household checks exposed by `check_household_records`, validating all
+family inputs before coverage refusals. The household checks do three things:
 
 - A child entitled on two or more records raises `combined_family_maximum`,
   because 403(a)(3)(A) may combine the maximums (RS 00615.770).
@@ -214,8 +215,13 @@ check does three things:
   raises `multiple_auxiliary_records` (RS 00615.768A).
 - A living worker who is also an auxiliary on another record must declare
   that record's RIB or DIB as `own_benefit`. The check compares kind, PIA,
-  reduction months and credits. A mismatch, a worker with two records, or a
-  deceased worker entered as a beneficiary raises `InvalidFamilyInput`.
+  reduction months, credits and every supplied birth year. One person has
+  one cohort across their worker record and all beneficiary rows
+  (402(q)(6); RS 00615.003/.010). A known year is carried into immutable
+  copies of every occurrence before family validation and calculation;
+  missing duplicate metadata does not erase it. A mismatch, a worker with
+  two records, or a deceased worker entered as a beneficiary raises
+  `InvalidFamilyInput`.
 
 `family_benefits` computes a single record only when the caller passes
 `standalone=True`. That is the caller's statement that no beneficiary is
@@ -237,8 +243,8 @@ in every record's family. Input errors include:
 - a role the record cannot have;
 - a widow(er) reduction period outside 60, 62, ..., 84, or a period that
   differs from a known cohort;
-- conflicting beneficiary/own-benefit birth years, or reduction months
-  outside the one cohort known from either field (402(q)(6);
+- conflicting worker-record/beneficiary/own-benefit birth years, or reduction
+  months outside the one cohort known from any record (402(q)(6);
   RS 00615.003/.010);
 - `child_in_care` that does not name an entitled child on this record for
   the payment month.
@@ -512,9 +518,14 @@ absorbed as unsupported rows.
     additionally proves that refusal holds exactly when the ordinary and
     exempt payables differ. Equal payables remain supported even when
     intermediate rates differ; the note labels the ordinary intermediate
-    rate as diagnostic and records the exempt alternative.
+    rate as diagnostic and records the exempt alternative. Earlier notes
+    survive that appended diagnostic, with every payment field unchanged;
+    the round-6 `test_settled_care_history_appends_to_earlier_note` and
+    `test_property_care_diagnostic_preserves_prior_note_and_payment`
+    exercise this diagnostic invariant using an injected earlier note.
 20. **One person, one cohort.** Supplying the cohort in the beneficiary
-    field, the own-benefit field, or both equal gives the same result or
+    field, the own-benefit field, the person's worker record, or any equal
+    combination gives the same result or
     input error. Conflicting supplied cohorts raise before every refusal.
     That cohort bounds own-RIB and spouse reduction months at FRA minus
     744, and fixes the widow auxiliary period. Validation and computation
@@ -526,7 +537,19 @@ absorbed as unsupported rows.
     `test_property_conflicting_cohorts_are_input_errors` and
     `test_property_own_only_cohort_fixes_widow_auxiliary_period` execute
     these identities and bounds. Own-RIB calculation also equals the
-    independent worker primitive with zero tolerance.
+    independent worker primitive with zero tolerance. The round-6
+    `test_property_household_cohort_placement_and_order_are_equivalent`
+    tests all seven nonempty placements across the three sources, record
+    order, unchanged caller inputs and exact refusal weights. Its
+    `test_property_household_conflicts_precede_refusals` checks conflicting
+    years before refusal and before either monthly guard advances. The
+    round-6 RF36 control also equals explicitly annotated standalone
+    records with zero tolerance. Auxiliary-only repeated people obey the
+    same conflict rule under
+    `test_property_auxiliary_only_cohort_conflicts_precede_record_refusals`;
+    a shared spouse's RF36 preserves the multiple-record refusal and RF37
+    is invalid in
+    `test_auxiliary_only_shared_cohort_precedes_multiple_record_refusal`.
 
 ## Worked examples reproduced exactly
 
@@ -1201,3 +1224,62 @@ payment differential pin the boundary; cases whose payables differ still
 refuse as `divorced_spouse_care_history`, retain their weights and block
 totals. The earlier $715 surviving-divorced caregiver and $340 current-care
 divorced-spouse regressions remain exact.
+
+## Fix round 6 of October 14, 2026
+
+Verification class: statutory conformance on invented cases only. This
+round introduces no population, behavioral or forecast claim, source,
+published example, statutory interpretation or refusal code. The earlier
+Needs Max's judgment items and rulings d1418 and d1338 remain unchanged.
+
+### Cohorts across household records
+
+The round-5 reviewer traced, but did not execute, a cross-record omission.
+It reproduces at f4799e04: worker p on record A has PIA $100 and cohort
+1935; worker q on B has PIA $1,000 and maximum $1,500. Person p is also
+q's spouse with RF37 and declared own PIA $100, but no duplicate cohort.
+December 2023 incorrectly pays p an auxiliary $298.30 ($298 whole dollars),
+or counts a GPO refusal with weight 7/3. Supplying conflicting cohort 1960
+on that declared own benefit produces the same incorrect result. Both
+guards incorrectly advance to January 2024.
+
+RS 00615.003A.1 fixes the 1935 person's FRA at 65, and 402(q)(6)'s age-62
+floor permits only 36 spouse reduction months. The household now resolves
+one cohort from all supplied worker, beneficiary and own-benefit years,
+rejects conflicts even without delayed credits, and uses immutable copies
+in both household entry points. Resolution works in either direction:
+a beneficiary's known cohort also bounds their own worker record. All
+family inputs are checked before any coverage refusal or guard advancement.
+
+| Invented configuration | Result |
+| --- | --- |
+| Worker cohort 1935, spouse RF36, duplicate cohort omitted or equal | Supported: auxiliary $300; household $1,400, also $1,400 whole dollars |
+| Same RF36 case, pre-2024 GPO flag | `government_pension_offset`; row and weight 7/3 retained |
+| Worker cohort 1935, spouse RF37 | `InvalidFamilyInput`; neither guard advances |
+| Worker cohort 1935, beneficiary or declared own cohort 1960, RF36 or RF37 | `InvalidFamilyInput` before GPO; neither guard advances |
+
+The failing-first regressions cover both direct and built snapshots and
+both household entry points. A positive-dime minimization, own PIA $0.10
+and RF37, still raises. Hypothesis exercises all seven nonempty metadata
+placements, own and auxiliary reduction bounds, reversed record order,
+unchanged inputs, conflict priority, refusal weights and guard state.
+The RF36 payment differential equals the standalone family computations
+exactly; no rounding tolerance is admitted.
+
+### Preserved care diagnostics
+
+The equal-payable care-history diagnostic now appends to `row.note`, with
+a separator only when an earlier note exists. No payment rule changes
+(202(k)(3)(A); RS 00615.201A.2). The current entitlement function emits
+nonempty notes only for unentitled rows, so this was a latent overwrite;
+there is no current public-input example with an earlier entitled-row note.
+The regression explicitly injects that note at the entitlement boundary
+while retaining the real computation, using the earlier PIA $0.30 / own
+RIB $0.10 / spouse RF1 case. Both intermediate histories pay zero.
+Hypothesis proves the earlier text survives and every other benefit field
+equals the unmodified diagnostic case, including the empty-note case.
+
+These fixes extend invariants 6-8, 19 and 20. The retained source/hash,
+registry, round-3/4/5, conformance-report and depletion-cut compatibility
+checks continue to apply. Cohort resolution does not implement combined
+family maximums or multiple auxiliary entitlement; both remain refused.

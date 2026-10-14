@@ -81,7 +81,7 @@ What this layer computes, for one insured worker's record and one month:
    could change the auxiliary payable (RS 00615.201A.2). When both
    histories settle the same payable despite different intermediate age
    rates, the ordinary intermediate rate is diagnostic and its note also
-   records the care-exempt rate.
+   records the care-exempt rate, preserving any earlier diagnostic note.
 7. **Monthly family payment.** Every benefit amount is kept as an exact
    dime multiple; 215(g) rounds each monthly benefit down to a whole dollar.
    Gross means before 203(b) earnings-test deductions and the 1840(a)(1)
@@ -128,7 +128,10 @@ computed one record at a time by accident. :func:`family_benefits`
 computes one record only when the caller passes ``standalone=True``.
 Input errors (:class:`InvalidFamilyInput`) are reported before any
 coverage refusal, so :func:`evaluate_family` never counts an invalid row as
-a coverage gap. :func:`evaluate_family`, :func:`count_family_outcomes` and
+a coverage gap. All supplied birth years for a person, including their own
+worker record, must agree; the household carries that cohort into every
+own and auxiliary check (402(q)(6); RS 00615.003/.010) using immutable
+copies. :func:`evaluate_family`, :func:`count_family_outcomes` and
 the weighted aggregates keep unsupported rows in every denominator and
 block totals that would need them.
 
@@ -2524,7 +2527,7 @@ def _family_benefits(
                         beneficiary_id=beneficiary.beneficiary_id,
                     )
                 if ordinary[0] != exempt[0]:
-                    row.note = (
+                    row.note += ("; " if row.note else "") + (
                         "care history does not affect auxiliary payable; "
                         "age_adjusted_rate displays the ordinary diagnostic "
                         f"rate {ordinary[0]}; the care-exempt rate is "
@@ -2716,8 +2719,10 @@ def _same_own_benefit(declared: OwnBenefit | None, actual: OwnBenefit) -> bool:
     names = ("kind", "pia", "reduction_months", "delayed_credit_months")
     if any(getattr(declared, n) != getattr(actual, n) for n in names):
         return False
-    return not actual.delayed_credit_months or (
-        declared.birth_year == actual.birth_year
+    return (
+        declared.birth_year is None
+        or actual.birth_year is None
+        or declared.birth_year == actual.birth_year
     )
 
 
@@ -2733,18 +2738,28 @@ def check_household_records(records: Mapping[str, HouseholdRecord]) -> None:
       declare that record's RIB or DIB as ``own_benefit`` (402(k)(3)(A)).
       A mismatch, a worker with two records, or a deceased worker entered
       as someone's beneficiary raises :class:`InvalidFamilyInput`.
+    * All supplied birth years for a person, including their worker
+      record, must agree (RS 00615.003/.010). A known cohort is carried
+      into immutable copies for subsequent family validation/computation.
 
     Input errors are raised before either refusal, so a coverage refusal
     never masks one.
     """
-    held = _check_household_inputs(records)
+    _, held = _check_household_inputs(records)
     _refuse_household(held)
 
 
 def _check_household_inputs(
     records: Mapping[str, HouseholdRecord],
-) -> dict[str, list[tuple[str, Beneficiary]]]:
-    """The household's input errors; returns each person's entitlements."""
+) -> tuple[
+    dict[str, HouseholdRecord], dict[str, list[tuple[str, Beneficiary]]]
+]:
+    """Check household inputs; return cohort-resolved records/entitlements.
+
+    One person's FRA governs every record (402(q)(6); RS 00615.003/.010).
+    Resolve all supplied years before any family check or coverage refusal,
+    without changing caller inputs or depending on record order.
+    """
     if not isinstance(records, Mapping) or not records:
         raise InvalidFamilyInput("A household needs at least one record")
     workers: dict[str, str] = {}
@@ -2757,6 +2772,45 @@ def _check_household_inputs(
                 f"({workers[record.worker_id]}, {record_id})"
             )
         workers[record.worker_id] = record_id
+    cohorts: dict[str, int] = {}
+
+    def remember_cohort(person: str, year: int | None) -> None:
+        if year is None:
+            return
+        if person in cohorts and cohorts[person] != year:
+            raise InvalidFamilyInput(
+                f"{person}'s birth_year differs across household records"
+            )
+        cohorts[person] = year
+
+    for record in records.values():
+        if record.state.worker is not None:
+            remember_cohort(record.worker_id, record.state.worker.birth_year)
+        for beneficiary in record.beneficiaries:
+            remember_cohort(beneficiary.beneficiary_id, beneficiary.birth_year)
+            if beneficiary.own_benefit is not None:
+                remember_cohort(
+                    beneficiary.beneficiary_id,
+                    beneficiary.own_benefit.birth_year,
+                )
+    resolved = {}
+    for record_id, record in records.items():
+        state = record.state
+        year = cohorts.get(record.worker_id)
+        if state.worker is not None and year is not None:
+            state = replace(
+                state, worker=replace(state.worker, birth_year=year)
+            )
+        beneficiaries = tuple(
+            _with_effective_cohort(
+                replace(b, birth_year=cohorts.get(b.beneficiary_id))
+            )
+            for b in record.beneficiaries
+        )
+        resolved[record_id] = replace(
+            record, state=state, beneficiaries=beneficiaries
+        )
+    records = resolved
     held: dict[str, list[tuple[str, Beneficiary]]] = {}
     for record_id, record in records.items():
         for beneficiary in record.beneficiaries:
@@ -2787,7 +2841,7 @@ def _check_household_inputs(
                     f"record {record_id} their own_benefit must be that "
                     "record's benefit (402(k)(3)(A))"
                 )
-    return held
+    return resolved, held
 
 
 def _refuse_household(
@@ -2824,11 +2878,12 @@ def household_benefits(
 
     This is G's integration entry point. Every input error, in the
     household, the statutory rate bundle and each record's family, is
-    raised first; then the
+    raised first. A person's cohort is shared across their worker and
+    beneficiary records before family validation. Then come the
     household refusals of :func:`check_household_records`; then each
     record is computed as :func:`family_benefits` would.
     """
-    held = _check_household_inputs(records)
+    records, held = _check_household_inputs(records)
     for record in records.values():
         _check_family_inputs(
             record.state, record.beneficiaries, payment_month, params
@@ -2854,12 +2909,13 @@ def household_month_outcome(
 ) -> FamilyOutcome:
     """Evaluate one household month with one 403(a)(5) guard per record.
 
-    Validate the whole household before any guard advances. Every record's
+    Resolve each person's cohort across all records and validate the whole
+    household before any guard advances. Every record's
     guard advances even if another record refuses; a refusal carries its
     record id. The household outcome stays in the coverage denominator.
     """
     _outcome_weight(weight)
-    held = _check_household_inputs(records)
+    records, held = _check_household_inputs(records)
     if set(guards) != set(records):
         raise InvalidFamilyInput("guards must match the household record ids")
     if len({id(guard) for guard in guards.values()}) != len(guards):
