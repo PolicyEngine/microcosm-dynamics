@@ -988,6 +988,21 @@ def test_each_work_limit_holds_below_the_length_limit():
     assert len(nested) < review_root.PATTERN_LIMIT
 
 
+def test_limits_refuse_only_past_their_bounds():
+    """A class of CLASS_LIMIT characters is read and one more is not;
+    64 classes that may stand for / (2,145 segments) are read, while 90
+    (4,186) are not."""
+    kind = review_root.pattern_kind
+    widest = review_root.CLASS_LIMIT - 1
+    read = "deep_denied[\x00-" + chr(widest) + "]md"
+    refused = "deep_denied[\x00-" + chr(widest + 1) + "]md"
+    assert kind(read, DENIED) == "denied"
+    assert kind(refused, DENIED) == "unclassified"
+    assert kind("[a/]" * 64 + "notes.md", DENIED) == "inside_root"
+    assert kind("[a/]" * 64 + "deep_denied.md", DENIED) == "denied"
+    assert kind("[a/]" * 90 + "notes.md", DENIED) == "unclassified"
+
+
 def test_unbalanced_openers_up_to_the_limit_are_still_read():
     """Unclosed braces, extglobs and classes at the length limit are read
     to the end (each class end is found once), and a denied name after
