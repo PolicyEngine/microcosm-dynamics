@@ -1028,11 +1028,28 @@ def d1090_locations(spec):
     }
 
 
-#: Each pinned section 17 or 20 line and the line that must follow it, so
-#: nothing can be added after it (review of e7a558f, info finding 2).
+#: Each pinned section 17 or 20 line and the whole line that must follow
+#: it, so nothing can be added after it (review of e7a558f, info finding
+#: 2; whole lines, not prefixes, after the final review of 742590b).
 D1090_FOLLOWERS = {
-    "outstanding": {0: "2. ", 1: "3. ", 2: "9. "},
-    "execution": {0: "", 1: "2. Complete implementation, manifests and "},
+    "outstanding": {
+        # Item 2 is itself pinned in D1090_CLAUSES.
+        0: None,
+        1: "3. The recommendations asked Max to send PSID the questions in "
+        "`docs/design/u2_m1b_psid_research.md` \N{SECTION SIGN}\N{SECTION SIGN}"
+        "1\N{EN DASH}3 now. He ruled to send all three as a held draft for "
+        "him (d637), and they were sent on 2026-09-30 (\N{SECTION SIGN}16b). "
+        "PSID answered all three on 2026-10-07 (research record "
+        "\N{SECTION SIGN}\N{SECTION SIGN}1\N{EN DASH}3), and Max ruled on B1 "
+        "and B2 on 2026-10-10 (d1090; \N{SECTION SIGN}16c).",
+        2: "9. Check the specification, literal named deltas, parameter "
+        "block (with the amendment 5 fragment, ratified 2026-09-30), "
+        "manifests and ten-row implementation for equality.",
+    },
+    "execution": {
+        0: "",
+        1: "2. Complete implementation, manifests and parameter capture.",
+    },
 }
 
 
@@ -1053,15 +1070,17 @@ def check_d1090_record(spec):
     assert [x for x in record.split("\n") if x.strip()] == (
         D1090_CLAUSES["record"]
     )
-    # Nothing follows a pinned line of section 17 or 20 but what must.
+    # Nothing follows a pinned line of section 17 or 20 but the whole line
+    # that must, and that line stands there exactly once.
     for place, followers in D1090_FOLLOWERS.items():
         lines = places[place].split("\n")
         for index, follower in followers.items():
+            if follower is None:
+                follower = D1090_CLAUSES[place][index + 1]
             at = lines.index(D1090_CLAUSES[place][index])
-            following = lines[at + 1]
-            assert following.startswith(follower) and (
-                follower or following == ""
-            ), (place, index)
+            assert lines[at + 1] == follower, (place, index)
+            if follower:
+                assert lines.count(follower) == 1, (place, index)
     execution = places["execution"].split("\n")
     assert execution[:5] == [
         "## 20. Ratification and execution record",
@@ -1193,6 +1212,34 @@ D1090_MUTATIONS = [
     ("record", "pending d745", "confirmed by d745"),
     ("record", "U2 stays unregistered and unauthorized", "U2 is registered"),
     ("record", "This is how the rules are applied, not", "This is"),
+    # Insertions after pinned lines that copy the next item's number (final
+    # review of 742590b, finding 1).
+    (
+        "outstanding",
+        "This item stays open only for 1a\N{EN DASH}1c, until Max "
+        "confirms.",
+        "This item stays open only for 1a\N{EN DASH}1c, until Max "
+        "confirms.\n2. U2 is registered and authorized.",
+    ),
+    (
+        "outstanding",
+        "the 2017\N{EN DASH}2023 P64/P65 records stay blocked.",
+        "the 2017\N{EN DASH}2023 P64/P65 records stay blocked.\n"
+        "3. B1 and B2 remain held.",
+    ),
+    (
+        "outstanding",
+        "each disclosed and deciding nothing; \N{SECTION SIGN}16c).",
+        "each disclosed and deciding nothing; \N{SECTION SIGN}16c).\n"
+        "9. Exploratory counts may also be computed.",
+    ),
+    (
+        "execution",
+        "await Max's confirmation of the reading in \N{SECTION SIGN}16b "
+        "(d745).",
+        "await Max's confirmation of the reading in \N{SECTION SIGN}16b "
+        "(d745).\n2. Registration is complete.",
+    ),
     # Insertions after pinned lines (review of e7a558f, info finding 2).
     (
         "execution",
