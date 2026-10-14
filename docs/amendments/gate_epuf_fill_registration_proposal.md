@@ -804,6 +804,9 @@ of PR #515):
 - [x] Lock flip in `gates.yaml` (this PR; the block is the draft with the
   lock-time deltas in its history, bound by
   `tests/test_gate_epuf_fill_lock.py`); ratifying merge of this PR
-- [ ] Candidates registered (code commit, fitted-artifact SHA-256)
-- [ ] TEST read through `test_part()` and scored once; result published
-  whether it passes or fails
+- [x] Candidates registered (code commit, fitted-artifact SHA-256): #516,
+  merged 2026-10-13 (`7a81fd39`)
+- [x] TEST read through `test_part()` and scored once (2026-10-14,
+  `runs/epuf_fill_gate_test_v1.json`); result published: odd primary
+  improves (8 of 183 failing) and adopted uncertified, pre primary
+  certified (0 of 136) and adopted
