@@ -686,6 +686,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--floor-artifact", type=Path, default=FLOOR)
     parser.add_argument("--workers", type=int, default=4)
     args = parser.parse_args(argv)
+    # First, before anything is read: more than one thread hangs
+    # candidate 3's projection in this environment (b2.thread_settings).
+    threads = b2.thread_settings()
 
     started = time.time()
     registration = b2.require_registration(args.registration_id)
@@ -695,7 +698,6 @@ def main(argv: Sequence[str] | None = None) -> int:
     floor_pin = b2.committed_sha256(ROOT, args.floor_artifact)
     floor_record = json.loads(args.floor_artifact.read_text(encoding="utf-8"))
     check_floor_record(floor_record, registration, head)
-    threads = b2.thread_settings()
     runtime = planning.runtime_record()
     config = ScoreConfig(workers=args.workers)
     assert_registered(config)

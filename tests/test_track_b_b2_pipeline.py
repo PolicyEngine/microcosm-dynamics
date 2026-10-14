@@ -1139,3 +1139,26 @@ def test_statements_carry_section_13s_items():
         statements["reads"]
     )
     assert statements["candidate_3_disclosure"] == b2.CANDIDATE_3_DISCLOSURE
+
+
+@pytest.mark.parametrize("module", ["track_b_b2_floor", "track_b_b2_score"])
+@pytest.mark.parametrize("variable", b2.THREAD_VARIABLES)
+def test_entry_points_refuse_more_than_one_thread_first(
+    monkeypatch, module, variable
+):
+    """A launch with any thread variable above 1 stops before it reads,
+    checks or writes anything (the projection would hang)."""
+    script = __import__(module)
+    for name in b2.THREAD_VARIABLES:
+        monkeypatch.setenv(name, "1")
+    monkeypatch.setenv("OMP_WAIT_POLICY", "PASSIVE")
+    monkeypatch.setenv(variable, "4")
+
+    def untouched(*args, **kwargs):
+        raise AssertionError("ran before the thread guard")
+
+    monkeypatch.setattr(b2, "require_registration", untouched)
+    monkeypatch.setattr(b2, "require_clean_head", untouched)
+    monkeypatch.setattr(b2, "committed_sha256", untouched)
+    with pytest.raises(RuntimeError, match=variable):
+        script.main(["--registration-id", "1", "--expected-commit", "x"])

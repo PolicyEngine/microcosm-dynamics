@@ -616,13 +616,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--expected-commit", required=True)
     parser.add_argument("--workers", type=int, default=4)
     args = parser.parse_args(argv)
+    # First, before anything is read: more than one thread hangs
+    # candidate 3's projection in this environment (b2.thread_settings).
+    threads = b2.thread_settings()
 
     started = time.time()
     registration = b2.require_registration(args.registration_id)
     head = b2.require_clean_head(ROOT, args.expected_commit)
     if OUTPUT.exists():
         raise FileExistsError(f"{OUTPUT} exists; the floor build is one-shot")
-    threads = b2.thread_settings()
     runtime = planning.runtime_record()
     config = FloorConfig(workers=args.workers)
     assert_registered(config)
