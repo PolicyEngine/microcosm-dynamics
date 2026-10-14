@@ -364,12 +364,7 @@ def cell_records(
                 "plain_units": "undefined tolerance",
             }
         planning_cell = planning_record["cells"][name]
-        sigma = floor["realized_sigma"]
-        eligible_floor = bool(
-            sigma is not None
-            and math.isfinite(sigma)
-            and b2.floor_eligible(floor, n_seeds)
-        )
+        eligible_floor = bool(b2.floor_eligible(floor, n_seeds))
         planning_defined = bool(planning_cell.get("defined"))
         value = se_up[name]["se_up"]
         cells[name] = {
@@ -436,17 +431,19 @@ def decide(
         "cells": cells,
     }
     # Section 5's eligibility comes first: a cell of the six that fails it
-    # (its floor, which includes a positive sigma, or its planning values)
-    # is scored report-only, and the ladder runs on the others. B2 stops
-    # only when nu is 0 after the merges, or when an eligible cell's power
-    # is undefined because its se_up or tau is zero or undefined (the
-    # design's "undefined cells, or uninformative tolerances").
+    # (its floor's seeds or events, or its planning values) is scored
+    # report-only, and the ladder runs on the others. B2 stops only when nu
+    # is 0 after the merges, or when an eligible cell's sigma, se_up or tau
+    # is zero or undefined: its tolerance is uninformative or its power
+    # undefined (the design's "undefined cells, or uninformative
+    # tolerances"), and section 5 never drops an eligible cell.
     eligible = [name for name in b2.LEVEL_CELLS if cells[name]["eligible"]]
     causes = []
     if nu == 0:
         causes.append({"cell": None, "quantity": "nu"})
     for name in eligible:
         quantities = {
+            "sigma": cells[name]["floor_household"]["realized_sigma"],
             "se_up": cells[name]["se_up"]["se_up"],
             "tau": cells[name]["tau_se_up_units"],
         }

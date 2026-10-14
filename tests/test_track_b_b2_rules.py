@@ -838,7 +838,9 @@ def test_plain_units_are_section_6s():
         (100, 20, 0.1, True),
         (100, 19, 0.1, False),
         (99, 40, 0.1, False),
-        (100, 40, 0.0, False),
+        # Section 5 lists no sigma condition: a zero sigma is eligible and
+        # then stops B2 as an uninformative tolerance (the floor builder).
+        (100, 40, 0.0, True),
     ],
 )
 def test_floor_eligibility_truth_table(n_defined, events, sigma, eligible):
@@ -849,7 +851,7 @@ def test_floor_eligibility_truth_table(n_defined, events, sigma, eligible):
     }
     assert b2.floor_eligible(record) is eligible
     assert b2.floor_eligible(record, n_seeds=99) is (
-        n_defined == 99 and events >= 20 and sigma > 0
+        n_defined == 99 and events >= 20
     )
 
 
@@ -859,16 +861,20 @@ def test_floor_eligibility_truth_table(n_defined, events, sigma, eligible):
     st.integers(min_value=0, max_value=40),
     st.floats(min_value=0, max_value=1),
 )
-def test_floor_eligibility_is_the_planning_rule(n_defined, events, sigma):
+def test_floor_eligibility_is_the_planning_rule_without_sigma(
+    n_defined, events, sigma
+):
+    """Differential: B2's rule is the planning script's ``floor_eligible``
+    less its positive-sigma condition, which section 5 does not list."""
     record = {
         "n_defined_seeds": n_defined,
         "min_events_weaker_half": events,
         "realized_sigma": sigma,
     }
-    assert b2.floor_eligible(record) == pv.floor_eligible(record)
-    assert b2.floor_eligible(record) == (
-        n_defined == 100 and events >= 20 and sigma > 0
+    assert (b2.floor_eligible(record) and sigma > 0) == pv.floor_eligible(
+        record
     )
+    assert b2.floor_eligible(record) == (n_defined == 100 and events >= 20)
 
 
 # --------------------------------------------------------------------------

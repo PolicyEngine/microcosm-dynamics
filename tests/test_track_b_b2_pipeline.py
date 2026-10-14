@@ -652,19 +652,37 @@ def test_floor_stops_at_zero_nu_before_ladder_or_fit(
 
 @pytest.mark.parametrize(
     "quantity, value",
-    [("se_up", 0), ("se_up", None), ("tau", math.nan)],
+    [
+        ("se_up", 0),
+        ("se_up", None),
+        ("tau", math.nan),
+        ("sigma", 0.0),
+        ("sigma", None),
+        ("zero_floor", 0.0),
+    ],
 )
 def test_floor_stops_on_an_eligible_cells_undefined_power(
     invented, measured, monkeypatch, quantity, value
 ):
-    """An eligible cell whose se_up or tau is zero or undefined has no
-    power, so B2 stops at floor build before the ladder."""
+    """An eligible cell whose sigma, se_up or tau is zero or undefined has
+    an uninformative tolerance or no power. Section 5 never drops an
+    eligible cell, so B2 stops at floor build before the ladder (which
+    would otherwise divide by sigma)."""
     broken = copy.deepcopy(measured)
     name = "earn_p50.prime"
+    floor = broken["floor_household"][name]
     if quantity == "se_up":
         broken["se_up"][name]["se_up"] = value
+    elif quantity == "tau":
+        floor["mean"] = value
+    elif quantity == "sigma":
+        floor["realized_sigma"] = value
     else:
-        broken["floor_household"][name]["mean"] = value
+        # A consistent zero floor: every split score zero, so the mean, the
+        # SD, sigma and the tolerance are all 0, with seeds and events
+        # intact.
+        floor.update(mean=value, sd=value, realized_sigma=value)
+        quantity = "sigma"
 
     def forbidden(*args):
         pytest.fail("the ladder began")
@@ -682,24 +700,23 @@ def test_floor_stops_on_an_eligible_cells_undefined_power(
 
 @pytest.mark.parametrize(
     "change",
-    ["sigma_zero", "sigma_undefined", "seeds_undefined", "se_up_zero_too"],
+    ["seeds_undefined", "too_few_events", "uninformative_too"],
 )
 def test_an_ineligible_cell_is_report_only_and_the_ladder_runs(
     invented, measured, change
 ):
-    """Section 5: a cell of the six that fails eligibility is scored
-    report-only, and the ladder runs on the eligible cells. Its own se_up
-    or tau does not stop B2."""
+    """Section 5: a cell of the six that fails eligibility (its seeds or
+    its events) is scored report-only, and the ladder runs on the eligible
+    cells. Its own sigma, se_up or tau does not stop B2."""
     broken = copy.deepcopy(measured)
     name = "earn_p50.prime"
     floor = broken["floor_household"][name]
-    if change == "sigma_zero":
-        floor["realized_sigma"] = 0.0
-    elif change == "sigma_undefined":
-        floor["realized_sigma"] = None
-    elif change == "seeds_undefined":
+    if change == "seeds_undefined":
         floor["n_defined_seeds"] = 0
+    elif change == "too_few_events":
+        floor["min_events_weaker_half"] = 19
     else:
+        floor["n_defined_seeds"] = 0
         floor["realized_sigma"] = 0.0
         broken["se_up"][name]["se_up"] = 0.0
     record = floor_builder.decide(

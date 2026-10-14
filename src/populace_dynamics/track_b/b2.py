@@ -1082,13 +1082,17 @@ def plain_units(metric: str, value: float) -> str:
 def floor_eligible(
     record: Mapping[str, Any], n_seeds: int = len(FLOOR_SEEDS)
 ) -> bool:
-    """Section 5's floor condition: every seed defined, at least 20 events
-    in the weaker half on every seed (``m6_cells.py:56``), and a positive
-    sigma, as the planning script's ``floor_eligible`` requires."""
+    """Section 5's floor condition, exactly: every seed defined and at least
+    20 events in the weaker half on every seed (``m6_cells.py:56``).
+
+    Unlike the planning script's ``floor_eligible``, it does not require a
+    positive sigma. A zero or undefined sigma on an eligible cell is an
+    uninformative tolerance, which stops B2 at floor build (the design's
+    trigger for ``WEAK_POWER_OR_VACUITY``); it does not drop the cell.
+    """
     return (
         int(record["n_defined_seeds"]) == n_seeds
         and int(record["min_events_weaker_half"]) >= MIN_EVENTS
-        and float(record["realized_sigma"]) > 0
     )
 
 
