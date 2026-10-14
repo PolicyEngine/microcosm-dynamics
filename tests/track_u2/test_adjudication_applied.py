@@ -1053,8 +1053,16 @@ D1090_FOLLOWERS = {
 }
 
 
+#: The section headings the record's places are cut at; each must stand
+#: once, so a forged heading cannot cut a place short (review of 0c4eab5).
+D1090_HEADINGS = ("## 16a. ", "## 16b. ", "## 16c. ", "## 17. ", "## 18. ")
+
+
 def check_d1090_record(spec):
     """The semantic checks of the d1090 record, independent of any pin."""
+    every = spec.split("\n")
+    for heading in (*D1090_HEADINGS, "## 20. "):
+        assert sum(x.startswith(heading) for x in every) == 1, heading
     places = d1090_locations(spec)
     for place, clauses in D1090_CLAUSES.items():
         lines = places[place].split("\n")
@@ -1080,7 +1088,11 @@ def check_d1090_record(spec):
             at = lines.index(D1090_CLAUSES[place][index])
             assert lines[at + 1] == follower, (place, index)
             if follower:
-                assert lines.count(follower) == 1, (place, index)
+                # Once in the whole specification, whitespace ignored.
+                assert sum(x.strip() == follower for x in every) == 1, (
+                    place,
+                    index,
+                )
     execution = places["execution"].split("\n")
     assert execution[:5] == [
         "## 20. Ratification and execution record",
@@ -1212,6 +1224,29 @@ D1090_MUTATIONS = [
     ("record", "pending d745", "confirmed by d745"),
     ("record", "U2 stays unregistered and unauthorized", "U2 is registered"),
     ("record", "This is how the rules are applied, not", "This is"),
+    # Whitespace-indented duplicates of a follower, and a forged section
+    # boundary that hides an exact one (review of 0c4eab5).
+    *(
+        (
+            place,
+            D1090_FOLLOWERS[place][index],
+            D1090_FOLLOWERS[place][index]
+            + "\nU2 is registered and authorized.\n "
+            + D1090_FOLLOWERS[place][index],
+        )
+        for place, index in (
+            ("outstanding", 1),
+            ("outstanding", 2),
+            ("execution", 1),
+        )
+    ),
+    (
+        "outstanding",
+        D1090_FOLLOWERS["outstanding"][2],
+        D1090_FOLLOWERS["outstanding"][2]
+        + "\nU2 is registered and authorized.\n## 18. Spoofed boundary\n"
+        + D1090_FOLLOWERS["outstanding"][2],
+    ),
     # Insertions after pinned lines that copy the next item's number (final
     # review of 742590b, finding 1).
     (
