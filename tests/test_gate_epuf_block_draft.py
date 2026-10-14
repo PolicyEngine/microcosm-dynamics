@@ -13,6 +13,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import re
 import statistics
 from pathlib import Path
 
@@ -78,7 +79,11 @@ def test_block_is_unlocked_gates_nothing_and_gates_yaml_is_untouched():
     assert (ROOT / block["referee_round_1"]["report"]).is_file()
     gates = yaml.safe_load(GATES.read_text(encoding="utf-8"))["gates"]
     assert "gate_epuf" not in gates
-    assert "gate_epuf" not in GATES.read_text(encoding="utf-8")
+    # Other gates may mention "gate_epuf" in their names (gate_epuf_fill,
+    # locked 2026-10-10); this gate's own key must appear nowhere.
+    assert not re.search(
+        r"^\s*gate_epuf:", GATES.read_text(encoding="utf-8"), re.M
+    )
     assert artifact["ceremony"]["gates_yaml_untouched"] is True
 
 
