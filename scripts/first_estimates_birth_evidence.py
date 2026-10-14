@@ -250,6 +250,10 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # beside the sealed ss.benefits, which it calls but does not edit; the
     # historical ledger never imports it.
     Path("src/populace_dynamics/ss/statutory_aime.py"),
+    # The opt-in statutory delayed credit (42 USC 402(w)(2), (6)) sits
+    # beside the sealed ss.benefits and leaves its 48-month cap unchanged;
+    # the historical ledger never imports the new convention selector.
+    Path("src/populace_dynamics/ss/statutory_delayed_credit.py"),
     # The opt-in Track M layer (DynaSim exercise 4, the minimum benefit)
     # calls the oracle but is never imported by the historical reducer;
     # the transitive reachability test guards it.
@@ -340,6 +344,8 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/bridge/__init__.py"),
     Path("src/populace_dynamics/bridge/policyengine_us.py"),
     Path("src/populace_dynamics/bridge/depletion_cut.py"),
+    Path("src/populace_dynamics/bridge/depletion_cut_population.py"),
+    Path("src/populace_dynamics/bridge/depletion_cut_population_child.py"),
     Path("src/populace_dynamics/bridge/invented_population.py"),
     Path("src/populace_dynamics/bridge/population.py"),
     Path("src/populace_dynamics/bridge/population_summary.py"),
@@ -351,6 +357,14 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/harness/epuf_cells.py"),
     Path("src/populace_dynamics/harness/epuf_gate.py"),
     Path("src/populace_dynamics/harness/epuf_run.py"),
+    # The opt-in rules of the EPUF career-fill gate score fills on held-out
+    # EPUF careers after the fact; nothing historical imports them.
+    Path("src/populace_dynamics/harness/epuf_fill_gate.py"),
+    Path("src/populace_dynamics/harness/epuf_fill_scoring.py"),
+    # The opt-in learned EPUF career fills and their application to a
+    # built PSID-2010 cohort; nothing historical imports them.
+    Path("src/populace_dynamics/estimates/epuf_fill.py"),
+    Path("src/populace_dynamics/cohorts/psid2010_epuf_fill.py"),
     # The selectable projection baselines (NASI follow-up, 2026-10-01) are
     # opt-in inputs for unregistered projections; every registered result
     # keeps the TR2008 path, and nothing historical imports them.
@@ -369,6 +383,19 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     Path("src/populace_dynamics/baselines/realized.py"),
     Path("src/populace_dynamics/baselines/tr2026_intermediate.py"),
     Path("src/populace_dynamics/baselines/track_a.py"),
+    # NASI group attributes, lifetime measures, tabulation and post hoc
+    # replay adapters are opt-in and unreachable from the reviewed
+    # birth-evidence projection. Preserve its historical identity seal.
+    Path("src/populace_dynamics/cohorts/group_attributes.py"),
+    Path("src/populace_dynamics/data/group_attributes_psid.py"),
+    Path("src/populace_dynamics/estimates/group_breakdown.py"),
+    Path("src/populace_dynamics/estimates/lifetime_measures.py"),
+    Path("src/populace_dynamics/group_breakdowns/__init__.py"),
+    Path("src/populace_dynamics/group_breakdowns/common.py"),
+    Path("src/populace_dynamics/group_breakdowns/cola.py"),
+    Path("src/populace_dynamics/group_breakdowns/fra68.py"),
+    Path("src/populace_dynamics/group_breakdowns/uniform_cut.py"),
+    Path("src/populace_dynamics/group_breakdowns/min_benefit.py"),
 )
 POST_REVIEW_SHARED_SOURCE_BLOBS = {
     Path(

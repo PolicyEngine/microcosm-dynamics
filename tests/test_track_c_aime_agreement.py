@@ -4,7 +4,7 @@ Every person, career, wage index and contribution base below is INVENTED
 for mechanics; none is PSID or SSA data.  The fake-engine tests check
 transport, classification and recording.  The actual-engine test runs the
 pinned Axiom binary on invented careers and skips when the engine or its
-retained evidence is absent.
+retained evidence is absent or is not the pinned file.
 """
 
 from __future__ import annotations
@@ -24,6 +24,7 @@ from populace_dynamics.cola_track_a.benefits import TRACK_A_COMPUTATION_YEARS
 from populace_dynamics.ss import benefits
 from populace_dynamics.ss.params import SSAParameters
 from populace_dynamics.ss.statutory_aime import ComputationYears
+from tests.test_axiom_benefit_bridge import unpinned_engine_inputs
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -1096,10 +1097,11 @@ def test_render_refuses_a_result_of_another_schema(fake_binding):
 
 def test_actual_engine_agrees_with_the_oracle_on_invented_careers():
     binding = bridge.reviewed_case_a_binding()
-    missing = [str(path) for path in binding.missing_files()]
-    if missing:
+    unpinned = unpinned_engine_inputs(binding)
+    if unpinned:
         pytest.skip(
-            "actual Axiom engine or evidence absent: " + ", ".join(missing)
+            "actual Axiom engine or evidence is absent or not pinned: "
+            + "; ".join(unpinned)
         )
     career = _career(1935)
     career[1990] = 45191.8  # INVENTED non-dyadic amount

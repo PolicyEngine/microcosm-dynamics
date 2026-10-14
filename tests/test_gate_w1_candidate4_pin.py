@@ -42,8 +42,10 @@ NOTES = ROOT / "runs" / "NOTES-gate_w1_candidate4.md"
 ARTIFACT_BLOB = "d944ed2270a2c46c36ed3d0cd7e3328f1c8dbe88"
 CONTRACT_BLOB = "1efbf0958b722d8172697ac3f9a48c043de09bcf"
 # The LIVE contract blob moves only at ratified flips; the scored-against pin
-# above is frozen forever. Updated at the amendment-4 design_commit flip (#233).
-CONTRACT_BLOB_LIVE = "b0c39af1e13a705f90b85d3e6b9a91e1d3c5485c"
+# above is frozen forever. Updated at the amendment-4 design_commit flip (#233)
+# and since at each ratified flip; last at the gate_epuf_fill lock flip
+# (#515, decision d927).
+CONTRACT_BLOB_LIVE = "6c1cf7674917d9ea40cee1f12cfac0729f8047b5"
 FRAME_SHA_PREFIX = "c2065b64"
 GATED_CELLS = 43
 CUBE_SHAPE = [20, GATED_CELLS, 5]

@@ -1,0 +1,41 @@
+K=1 reproduction mismatches: none
+
+| K | odd primary | odd alt | odd cur fb/2s | odd adopted | pre primary | pre alt | pre cur | pre adopted |
+|---|---|---|---|---|---|---|---|---|
+| 0.5 | 29 not_adopted | 65 not_adopted | 103/101 | None | 6 improves | 74 not_adopted | 136 | primary |
+| 0.75 | 14 not_adopted | 53 not_adopted | 101/100 | None | 1 improves | 63 not_adopted | 132 | primary |
+| 1.0 | 7 improves | 46 not_adopted | 100/99 | primary | 0 certified | 50 not_adopted | 131 | primary |
+| 1.25 | 4 improves | 43 not_adopted | 98/99 | primary | 0 certified | 42 not_adopted | 126 | primary |
+| 1.5 | 3 improves | 39 not_adopted | 97/98 | primary | 0 certified | 39 not_adopted | 123 | primary |
+| 2.0 | 2 improves | 29 not_adopted | 96/97 | primary | 0 certified | 29 not_adopted | 112 | primary |
+| 2.5 | 1 improves | 22 not_adopted | 91/93 | primary | 0 certified | 23 not_adopted | 98 | primary |
+| 3.0 | 0 certified | 19 not_adopted | 85/88 | primary | 0 certified | 18 not_adopted | 88 | primary |
+
+odd primary worst 10 |gap|/sigma:
+  2.690  odd.men.a22_29.r1
+  2.019  odd.women.a22_29.r1
+  1.585  odd.women.a22_29.zint
+  1.365  odd.men.a22_29.zint
+  1.232  odd.women.a22_74.zint
+  1.170  odd.women.a60_74.r1
+  1.093  odd.women.a22_74.r1
+  0.969  odd.men.a22_74.r1
+  0.928  odd.men.a22_29.r3
+  0.858  odd.women.a22_29.wint
+smallest K certifying odd primary = max |gap|/sigma = 2.6903
+  check at that K: {'n_failing': 0, 'tier': 'certified'} ; at K-1e-9: {'n_failing': 1, 'tier': 'improves'}
+
+transitions on K grid 0.25..4.0 step 0.005:
+  odd K>=0.25: primary=not_adopted (fail 49), alt=not_adopted (fail 81), cur={'fallback': 108, 'two_sided': 104}, adopted=None
+  odd K>=0.9: primary=improves (fail 9), alt=not_adopted (fail 48), cur={'fallback': 100, 'two_sided': 99}, adopted=primary
+  odd K>=2.695: primary=certified (fail 0), alt=not_adopted (fail 20), cur={'fallback': 87, 'two_sided': 90}, adopted=primary
+  odd K>=3.415: primary=certified (fail 0), alt=improves (fail 14), cur={'fallback': 81, 'two_sided': 86}, adopted=primary
+  pre K>=0.25: primary=not_adopted (fail 34), alt=not_adopted (fail 97), cur={'fallback': 136}, adopted=None
+  pre K>=0.26: primary=improves (fail 32), alt=not_adopted (fail 96), cur={'fallback': 136}, adopted=primary
+  pre K>=0.77: primary=certified (fail 0), alt=not_adopted (fail 60), cur={'fallback': 132}, adopted=primary
+
+odd primary improves-blockers at K=0.5 (cell, |gap|/sigma, |cur gap|/sigma): [('odd.men.a22_29.r1', 2.69, 11.583), ('odd.women.a22_29.r1', 2.019, 13.643), ('odd.women.a22_29.zint', 1.585, inf), ('odd.women.a60_74.r3', 0.651, 0.617)]
+
+odd primary improves-blockers at K=0.75 (cell, |gap|/sigma, |cur gap|/sigma): [('odd.men.a22_29.r1', 2.69, 11.583)]
+
+pre primary worst 5 |gap|/sigma: [(0.769, 'pre.men.b1946_1980.yzero'), (0.723, 'pre.women.b1956_1965.yr_cross'), (0.718, 'pre.women.b1946_1980.yzero'), (0.657, 'pre.men.b1956_1965.yzero'), (0.607, 'pre.men.b1946_1980.ylevel')]
