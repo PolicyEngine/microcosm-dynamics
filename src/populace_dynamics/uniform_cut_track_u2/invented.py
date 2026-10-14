@@ -13,14 +13,22 @@ The family mix is chosen to exercise every U2 path, not to resemble any
 population:
 
 * **roles** (section 3): married heads with a code-20 legal spouse
-  (including a **male** code-20 spouse in 2015); a code-22 cohabiting
-  partner whose birth year is inferred from invented earnings; a female
-  head with a code-90 uncooperative legal spouse (OFUM income role,
+  (including a **male** code-20 spouse in 2015, whose 2015 family unit
+  the section 16c B1 exclusion removes, and a 2015 couple with a female
+  code-20 spouse, which it keeps); a code-22 cohabiting partner whose
+  birth year is inferred from invented earnings; a female head with a
+  code-90 uncooperative legal spouse in 2015-2017 (OFUM income role,
   legal-spouse annuity life, resolves the head's unresolved history); a
   head with a code-92 uncooperative partner from 2017 (OFUM, never a
   legal spouse, never resolves); a head whose marriage history cannot be
   dated with a code-20 spouse without a record; a parent living as an
   OFUM (code 50) in an adult child's family with a grandchild;
+* **section 16c exclusions** (d1090): code-90 and code-92 members in
+  2019-2023 family units, which the B2 exclusion removes whether the
+  target is the reference person, the uncooperative spouse or partner,
+  or another member (an OFUM sibling), and a code-90 husband who is in an
+  institution in 2021 (sequence 51), outside the family unit, so that
+  unit stays;
 * **plans** (section 3): every U0 birth year at 67; every even birth
   year 1946-1954 at 66 and 68 (every one of row U1's fifteen cells holds
   an observation), 1946 at 66 in the 2013 wave; an even-birth member who
@@ -138,6 +146,17 @@ FAMILY_COUNTS: dict[str, int] = {
     "refresher_stratum": 3,
     "separated": 2,
     "even_birth_1954": 2,
+    # Section 16c (d1090), appended so every earlier family keeps its id,
+    # interview numbers and random draws: a 2015 couple with a female
+    # code-20 spouse (B1 keeps it), a 2017 code-92 partner (OFUM in 2017,
+    # B2 excludes the 2019 unit), a 2019-2023 code-90 husband with an
+    # OFUM sibling (B2 excludes every unit, whoever the target), and a
+    # code-90 husband in an institution in 2021 (outside the family unit,
+    # so B2 does not exclude it that year).
+    "couple_2015": 1,
+    "code92_partner_2017": 1,
+    "code90_spouse_2019": 1,
+    "code90_institution_2021": 1,
 }
 #: WEALTH1's documented components by concept (section 4; held equal to
 #: the wealth registry identities by the tests).
@@ -539,6 +558,42 @@ def _family_spec(kind: str, index: int, rng: np.random.Generator) -> dict:
         roster = _roster({1: (1, 10)})
         spec["income"] = {"head_ss": 16_500}
         spec["wealth"] = 45_000
+    elif kind == "couple_2015":
+        persons = [
+            _person(1, "male", 1947, "married", spouse_slot=2),
+            _person(2, "female", 1948, "married", spouse_slot=1),
+        ]
+        roster = _roster({1: (1, 10), 2: (2, 20)})
+        spec["income"] = {"head_ss": 18_000, "wife_ss": 11_000}
+        spec["wealth"] = 70_000
+    elif kind == "code92_partner_2017":
+        persons = [
+            _person(1, "male", 1949, "never"),
+            _person(2, "female", 1950, "none", earnings=True),
+        ]
+        roster = _roster(
+            {1: (1, 10), 2: (2, 92)},
+            {2013: {2: (0, 0)}, 2015: {2: (0, 0)}},
+        )
+        spec["income"] = {"head_ss": 12_500, "ofum_ss": 8_000}
+        spec["wealth"] = 3_000
+    elif kind == "code90_spouse_2019":
+        persons = [
+            _person(1, "female", 1953, "none"),
+            _person(2, "male", 1952, "none"),
+            _person(3, "female", 1955, "never"),
+        ]
+        roster = _roster({1: (1, 10), 2: (2, 90), 3: (3, 40)})
+        spec["income"] = {"head_ss": 10_500, "ofum_ss": 14_000}
+        spec["wealth"] = 8_000
+    elif kind == "code90_institution_2021":
+        persons = [
+            _person(1, "female", 1953, "none"),
+            _person(2, "male", 1950, "none"),
+        ]
+        roster = _roster({1: (1, 10), 2: (2, 90)}, {2021: {2: (51, 90)}})
+        spec["income"] = {"head_ss": 9_800}
+        spec["wealth"] = 4_000
     else:  # pragma: no cover - every kind is listed in FAMILY_COUNTS
         raise ValueError(kind)
     for person in persons:
@@ -1391,6 +1446,66 @@ def _duplicate_person_record_2019(base: cohort.U2Inputs) -> cohort.U2Inputs:
     return dataclasses.replace(base, anchors={**base.anchors, 2019: repeated})
 
 
+def _first_excluded(
+    base: cohort.U2Inputs, disposition: str, wave: int
+) -> tuple[int, int]:
+    """U0's first would-be observation in ``wave`` that a section 16c
+    exclusion removes under the declared rules: its target and interview."""
+
+    disp = cohort.build_u2_cohort(
+        base, role_context=sources.RoleContext.declared()
+    ).dispositions
+    row = disp[
+        disp["disposition"].eq(disposition) & disp["wave"].eq(wave)
+    ].iloc[0]
+    person = int(row["person_id"])
+    anchor = base.anchors[wave]
+    interview = anchor.loc[anchor["person_id"].eq(person), "interview"]
+    return person, int(interview.iloc[0])
+
+
+def _first_excluded_2019(base: cohort.U2Inputs) -> tuple[int, int]:
+    return _first_excluded(base, sources.UNCOOPERATIVE_SPOUSE_OR_PARTNER, 2019)
+
+
+def _code_88_in_excluded_unit_2019(base: cohort.U2Inputs) -> cohort.U2Inputs:
+    _, interview = _first_excluded_2019(base)
+    return _added_person(
+        base,
+        _PERSON_BASE - 3,
+        wave=2019,
+        interview=interview,
+        sequence=4,
+        relationship=88,
+        age=58,
+        weight=500.0,
+        sex="female",
+    )
+
+
+def _zero_weight_target_in_excluded_unit_2015(
+    base: cohort.U2Inputs,
+) -> cohort.U2Inputs:
+    person, _ = _first_excluded(base, sources.MALE_CODE_20_2015, 2015)
+    frame = base.anchors[2015]
+    changed = frame.assign(
+        weight=frame["weight"].where(frame["person_id"] != person, 0.0)
+    )
+    return dataclasses.replace(base, anchors={**base.anchors, 2015: changed})
+
+
+def _sex_unknown_target_in_excluded_unit_2019(
+    base: cohort.U2Inputs,
+) -> cohort.U2Inputs:
+    person, _ = _first_excluded_2019(base)
+    persons = base.persons.assign(
+        sex=base.persons["sex"].where(
+            base.persons["person_id"] != person, "na"
+        )
+    )
+    return dataclasses.replace(base, persons=persons)
+
+
 # Appended in order, so every earlier variant is unchanged.
 _VARIANT_BUILDERS = {
     "code_88_first_year_cohabitor": _code_88_first_year_cohabitor,
@@ -1401,6 +1516,13 @@ _VARIANT_BUILDERS = {
     "missing_head": _missing_head,
     "duplicate_family_record_2019": _duplicate_family_record_2019,
     "duplicate_person_record_2019": _duplicate_person_record_2019,
+    "code_88_in_excluded_unit_2019": _code_88_in_excluded_unit_2019,
+    "zero_weight_target_in_excluded_unit_2015": (
+        _zero_weight_target_in_excluded_unit_2015
+    ),
+    "sex_unknown_target_in_excluded_unit_2019": (
+        _sex_unknown_target_in_excluded_unit_2019
+    ),
 }
 _VARIANT_NOTES: dict[str, str] = {
     "code_88_first_year_cohabitor": (
@@ -1443,6 +1565,23 @@ _VARIANT_NOTES: dict[str, str] = {
         "the 2019 anchor record of U0's first 2019 observation appears "
         "twice: a repeated person identifier refuses (duplicate "
         "identifier, section 14)"
+    ),
+    "code_88_in_excluded_unit_2019": (
+        "a code-88 first-year cohabitor joins the 2019 family of U0's "
+        "first observation that the section 16c B2 exclusion removes: the "
+        "code-88 refusal still refuses, never hidden by the exclusion "
+        "(refusal case)"
+    ),
+    "zero_weight_target_in_excluded_unit_2015": (
+        "the target of U0's first 2015 observation that the B1 exclusion "
+        "removes has zero 2015 weight: it keeps its zero-weight "
+        "disposition, and a unit that supplies no other observation adds "
+        "nothing to B1's person count (section 16c precedence)"
+    ),
+    "sex_unknown_target_in_excluded_unit_2019": (
+        "the target of U0's first 2019 observation that the B2 exclusion "
+        "removes has unknown sex: it keeps its sex-unknown disposition "
+        "(section 16c precedence)"
     ),
 }
 #: The generator's named variants (see :data:`_VARIANT_NOTES`).
