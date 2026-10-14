@@ -38,17 +38,20 @@ refusal. Iterator and immutable-set inputs have exactly the same supported
 results and refusal reasons. This implements deterministic record-specific
 credits and retention of unsupported rows under design sections 6 and 7.
 
-ARF input validation also calls G's `statutory_rates` to check the complete
-shared rate bundle, including the RIB rates and 36-month bracket
-(402(q)(1)(A); 20 CFR 404.410; RS 00615.101). A mismatched bundle raises
-G's original `ValueError` before any explicit or automatic coverage
-refusal and before benefit arithmetic. That error propagates through
-`apply_arf`, `evaluate_arf` and lazy inputs to `count_arf_outcomes`; no
-unsupported outcome or denominator is constructed for the invalid row.
-Valid coverage refusals still precede benefit arithmetic. Recomputation
-uses a separate parameter surface: required NAWI and contribution bases
-are already validated before coverage; ARF age-reduction rates are not
-inputs to its original 90/32/15-percent formula (415(a)(1), (f)(2)(C)).
+ARF input validation first rejects non-finite numeric statutory-rate,
+benefit-share and bracket values, including NaN and either infinity, with
+`ValueError`. It then calls G's unmodified `statutory_rates` to check the
+complete shared rate bundle, including the RIB and spouse rates and their
+36-month brackets (402(q)(1)(A); 20 CFR 404.410; RS 00615.101, .201).
+A mismatched finite bundle retains G's original `ValueError`. Both errors
+precede any explicit or automatic coverage refusal and benefit arithmetic,
+and propagate through `apply_arf`, `evaluate_arf` and lazy inputs to
+`count_arf_outcomes`; no unsupported outcome or denominator is constructed
+for the invalid row. Valid coverage refusals still precede benefit
+arithmetic. Recomputation uses a separate parameter surface: required NAWI
+and contribution bases are already checked for finite positive values
+before coverage; ARF age-reduction rates and benefit shares are not inputs
+to its original 90/32/15-percent formula (415(a)(1), (f)(2)(C)).
 
 ARF applies at FRA for RIB and spouses. Ordinary widow adjustments apply at
 age 62 and again at widow FRA; credits recognized at 62 persist until FRA,
@@ -173,6 +176,7 @@ Each row has a Hypothesis property test beside the example tests.
 | FRA follows the original cohort schedule and SSA day-before-birthday calendar | `test_fra_calendar_differential_with_original_cohort_schedule` |
 | Invalid age inputs remain errors even with an exceptional-history refusal flag | `test_invalid_age_precedes_any_disabled_widow_coverage_refusal` |
 | G's statutory parameter errors propagate unchanged before explicit and automatic ARF refusals through application, evaluation and counting; invalid inputs never become unsupported rows | `test_invalid_statutory_parameters_never_become_arf_refusals` |
+| Non-finite numeric rates, shares and brackets raise the same input error through application, evaluation and lazy counting, before ordinary arithmetic or explicit and automatic coverage refusals; invalid rows produce neither an ARF result nor an unsupported outcome | `test_nonfinite_statutory_fields_never_create_arf_results_or_refusals` |
 | After completed spouse ARF, the benefit is the nonnegative excess of G's exact adjusted spouse amount over supplied own payable; own PIA changes alone do not affect it, whole dollars floor that excess, and reapplication preserves it | `test_post_arf_own_payable_offset_is_independent_of_pia_and_idempotent` |
 | Every ARF row and its weight remains in the denominator | `test_refusal_denominator_keeps_every_weight` |
 | Original indexing, computation count and per-year caps match an independent Fraction reference; later NAWI cannot change earlier indexing | `test_original_index_count_and_caps_against_independent_fraction_reference` |
@@ -306,7 +310,8 @@ These are arithmetic diagnostics, not competing statutory interpretations.
 
 Three source readings change money and require Max's judgment:
 
-1. **Historical widow cohort.** RS 00615.003 says "People Born Before
+1. **Historical widow cohort.** Source conflict
+   `us:oasdi-survivor-fra-1911-births`. RS 00615.003 says "People Born Before
    1/2/1911" and "FRA for widow(er)'s benefits was age 62", then "People
    Born from 1/2/1911 Through 1/1/40" at age 65. CFR 404.409 says "Before
    1/2/1912 62 years." and "1/2/1912—1/1/1940 65 years." Births
@@ -315,7 +320,8 @@ Three source readings change money and require Max's judgment:
    1973 with PIA $1,000 gives $829 under FRA 65 (36/60 of 28.5 percent)
    versus $1,000 under FRA 62: $171 per month. Neither reading is silently
    admitted.
-2. **Nonbinding widow child-in-care floor.** CFR 404.412(a)(4) credits
+2. **Nonbinding widow child-in-care floor.** Source conflict
+   `us:oasdi-arf-widow-child-in-care-credits`. CFR 404.412(a)(4) credits
    "any month in which she or he had in her or his care a child of the
    deceased insured individual and for which the child was entitled to
    child's benefits". RS 00615.482 instead specifies "widow(er)'s
@@ -327,7 +333,8 @@ Three source readings change money and require Max's judgment:
    36/84 of 28.5 percent gives $877.80. Crediting six nonbinding caregiving
    months under the broader CFR reading gives $898.20: $20.40 per month.
    Both counterfactual amounts and the explicit refusal are tested.
-3. **Spouse reentitlement before FRA.** RS 00615.201A.1 says "After
+3. **Spouse reentitlement before FRA.** Source conflict
+   `us:oasdi-arf-spouse-reentitlement-credits`. RS 00615.201A.1 says "After
    12/72 a spouse reentitled prior to FRA as a spouse on the same earnings
    is reduced the same number of months as the earlier entitlement. An
    ARF at FRA will remove all months of nonentitlement." RS 00615.491A

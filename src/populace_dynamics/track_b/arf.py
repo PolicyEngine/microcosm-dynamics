@@ -28,14 +28,17 @@ Pre-FRA spouse reentitlement is refused because RS 00615.201A.1 and
 
 Unsupported configurations raise FamilyConfigurationUnsupported with
 named ARF reasons. Invalid inputs, including G's statutory rate bundle,
-are checked before coverage and benefit arithmetic. Parameter ValueErrors
-propagate through evaluate_arf and count_arf_outcomes; only valid coverage
-refusals enter the weighted denominator.
+are checked before coverage and benefit arithmetic. Non-finite numeric
+rates, benefit shares and brackets are rejected locally before G's
+statutory comparison. Parameter ValueErrors propagate through evaluate_arf
+and lazy count_arf_outcomes; only valid coverage refusals enter the weighted
+denominator.
 This module does not assemble payments, deductions, or event histories.
 """
 
 from __future__ import annotations
 
+import math
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from datetime import date
@@ -203,6 +206,7 @@ def full_retirement_age_month(
     if kind is ARFBenefitKind.WIDOW and date(1911, 1, 2) <= birth_date <= date(
         1912, 1, 1
     ):
+        # Source conflict us:oasdi-survivor-fra-1911-births
         _refuse(
             ARFUnsupportedReason.HISTORICAL_WIDOW_FRA_CONFLICT,
             "RS 00615.003 gives FRA 65 but 20 CFR 404.409 gives FRA 62",
@@ -312,6 +316,36 @@ class ARFResult:
         )
 
 
+def _check_finite_statutory_parameters(params: SSAParameters) -> None:
+    """Reject non-finite bundle values before G's rate comparisons.
+
+    Check the full shared statutory bundle for every ARF record kind.
+    Finite mismatches still use G's existing statutory_rates errors.
+    """
+    fields = [
+        (f"{name}[{index}]", value)
+        for name in ("early_monthly_rates", "spousal_early_monthly_rates")
+        for index, value in enumerate(getattr(params, name))
+    ]
+    fields.extend(
+        (name, getattr(params, name))
+        for name in (
+            "early_first_bracket_months",
+            "spousal_early_first_bracket_months",
+            "survivor_reduction_floor",
+            "rib_lim_pia_share",
+            "spousal_pia_share",
+            "survivor_pia_share",
+        )
+    )
+    for label, value in fields:
+        if not math.isfinite(float(value)):
+            raise ValueError(
+                f"Parameter bundle {label}={value!r} must be finite; "
+                "refusing to compute ARF."
+            )
+
+
 def _check_claim(claim: ARFClaim, params: SSAParameters) -> ARFClaim:
     """Validate claim and statutory bundle before coverage or money rules."""
     if not isinstance(claim, ARFClaim):
@@ -387,6 +421,7 @@ def _check_claim(claim: ARFClaim, params: SSAParameters) -> ARFClaim:
             _amount(own.payable, "own payable"),
             own.sequence,
         )
+    _check_finite_statutory_parameters(params)
     statutory_rates(params)
     fra = _fra_month_for_input_validation(claim.birth_date, claim.kind, params)
     if claim.kind is ARFBenefitKind.WIDOW:
@@ -454,6 +489,7 @@ def apply_arf(
     if claim.kind is ARFBenefitKind.WIDOW and date(
         1911, 1, 2
     ) <= claim.birth_date <= date(1912, 1, 1):
+        # Source conflict us:oasdi-survivor-fra-1911-births
         _refuse(
             ARFUnsupportedReason.HISTORICAL_WIDOW_FRA_CONFLICT,
             "RS 00615.003 gives FRA 65 but 20 CFR 404.409 gives FRA 62",
@@ -475,6 +511,8 @@ def apply_arf(
             ARFUnsupportedReason.WIDOW_FRA_BEFORE_1911,
             "RS 00615.003B.1's historical FRA 62 is outside G's widow period",
         )
+    # Source conflict us:oasdi-arf-widow-child-in-care-credits
+    # Declared nonbinding care is refused; actual rate months count below.
     if claim.conditions:
         reason = sorted(claim.conditions, key=lambda c: c.value)[0]
         _refuse(
@@ -487,6 +525,7 @@ def apply_arf(
             first <= month < payment for month in claim.nonentitlement_months
         )
     ):
+        # Source conflict us:oasdi-arf-spouse-reentitlement-credits
         _refuse(
             ARFUnsupportedReason.SPOUSE_REENTITLEMENT_BEFORE_FRA,
             "RS 00615.201A.1 and .491A conflict on pre-FRA reentitlement timing; "
@@ -519,6 +558,7 @@ def apply_arf(
         | claim.child_in_care_months
         | claim.nonentitlement_months
         | claim.simultaneous_dib_months
+        # Source conflict us:oasdi-arf-widow-child-in-care-credits
         | claim.mother_father_rate_months
     )
     credits = frozenset(

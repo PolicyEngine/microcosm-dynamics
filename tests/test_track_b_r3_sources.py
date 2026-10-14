@@ -5,6 +5,7 @@ recomputation mechanics only. No population or forecast evidence.
 """
 
 import hashlib
+import inspect
 import re
 from datetime import date
 from fractions import Fraction
@@ -26,6 +27,56 @@ from tests.track_b_gross_benefit_support import (
 from tests.track_b_gross_benefit_support import (
     ssa_params,
 )
+
+
+@pytest.mark.parametrize(
+    ("function_name", "decision", "conflict_id"),
+    [
+        pytest.param(
+            "full_retirement_age_month",
+            "ARFUnsupportedReason.HISTORICAL_WIDOW_FRA_CONFLICT,",
+            "us:oasdi-survivor-fra-1911-births",
+            id="historical-fra-helper",
+        ),
+        pytest.param(
+            "apply_arf",
+            "ARFUnsupportedReason.HISTORICAL_WIDOW_FRA_CONFLICT,",
+            "us:oasdi-survivor-fra-1911-births",
+            id="historical-fra-application",
+        ),
+        pytest.param(
+            "apply_arf",
+            "if claim.conditions:",
+            "us:oasdi-arf-widow-child-in-care-credits",
+            id="nonbinding-child-care-refusal",
+        ),
+        pytest.param(
+            "apply_arf",
+            "| claim.mother_father_rate_months",
+            "us:oasdi-arf-widow-child-in-care-credits",
+            id="certified-mother-father-rate-credit",
+        ),
+        pytest.param(
+            "apply_arf",
+            "ARFUnsupportedReason.SPOUSE_REENTITLEMENT_BEFORE_FRA,",
+            "us:oasdi-arf-spouse-reentitlement-credits",
+            id="spouse-reentitlement-refusal",
+        ),
+    ],
+)
+def test_source_conflict_markers_are_adjacent_to_runtime_decisions(
+    function_name, decision, conflict_id
+):
+    """Connect each statutory reading to its source-conflict register."""
+    lines = [
+        line.strip()
+        for line in inspect.getsource(getattr(arf, function_name)).splitlines()
+    ]
+    decision_line = lines.index(decision)
+    assert (
+        f"# Source conflict {conflict_id}"
+        in lines[max(0, decision_line - 4) : decision_line]
+    )
 
 
 def test_manifest_pins_every_capture():

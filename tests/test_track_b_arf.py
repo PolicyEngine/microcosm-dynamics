@@ -7,6 +7,7 @@ Published figures are checked against locally captured SSA text.
 
 from dataclasses import replace
 from datetime import date
+from decimal import Decimal
 from fractions import Fraction as F
 
 import pytest
@@ -37,6 +38,51 @@ INVALID_RIB_PARAMETERS = [
         id="later-rate",
     ),
 ]
+
+# Every scalar in the complete shared bundle read by G's statutory_rates.
+# ARF validates this bundle for each record kind before any coverage rule.
+STATUTORY_RATE_FIELDS = (
+    ("early_monthly_rates", 0),
+    ("early_monthly_rates", 1),
+    ("early_first_bracket_months", None),
+    ("spousal_early_monthly_rates", 0),
+    ("spousal_early_monthly_rates", 1),
+    ("spousal_early_first_bracket_months", None),
+    ("survivor_reduction_floor", None),
+    ("rib_lim_pia_share", None),
+    ("spousal_pia_share", None),
+    ("survivor_pia_share", None),
+)
+
+
+def nonfinite_statutory_params(field, index, value):
+    """Replace one scalar while retaining every other statutory value."""
+    if index is None:
+        replacement = value
+    else:
+        replacement = list(getattr(PARAMS, field))
+        replacement[index] = value
+        replacement = tuple(replacement)
+    return ssa_params(**{field: replacement})
+
+
+def statutory_validation_claim(kind, coverage, amount=F(1300)):
+    """Valid invented claims, including a condition-free coverage refusal."""
+    claim = a.ARFClaim(kind, date(1960, 1, 2), (2022, 1), amount)
+    payment = FRA
+    if coverage == "explicit":
+        claim = replace(
+            claim, conditions=(a.ARFUnsupportedReason.OTHER_SUSPENSION,)
+        )
+    elif coverage == "automatic":
+        # All three kinds validly reach INITIAL_ENTITLEMENT_BEFORE_1978.
+        claim = replace(
+            claim,
+            birth_date=date(1915, 1, 2),
+            first_reduction_month=(1977, 1),
+        )
+        payment = g.YearMonth(1983, 1)
+    return claim, payment
 
 
 def months(first, count):
@@ -833,3 +879,106 @@ def test_invalid_rib_parameters_precede_arf_money_arithmetic(
             rib_claim(), payment_month=FRA, params=ssa_params(**overrides)
         )
     assert str(caught.value) == message
+
+
+@pytest.mark.parametrize(
+    "conditions", [(), (a.ARFUnsupportedReason.OTHER_SUSPENSION,)]
+)
+def test_reviewer_nan_rib_rate_is_an_input_error_before_support_or_refusal(
+    conditions,
+):
+    """Reviewer NaN counterexample: neither a $0 result nor a refused row."""
+    params = ssa_params(early_monthly_rates=(float("nan"), 0.00416667))
+    claim = rib_claim(
+        first_reduction_month=(2027, 1),
+        unreduced_benefit=F(0),
+        conditions=conditions,
+    )
+    with pytest.raises(ValueError, match="finite") as caught:
+        a.apply_arf(claim, payment_month=FRA, params=params)
+    assert "early_monthly_rates[0]" in str(caught.value)
+
+
+@pytest.mark.parametrize(
+    "field,index",
+    STATUTORY_RATE_FIELDS,
+    ids=[
+        field if index is None else f"{field}[{index}]"
+        for field, index in STATUTORY_RATE_FIELDS
+    ],
+)
+@pytest.mark.parametrize(
+    "value",
+    [float("nan"), float("inf"), float("-inf")],
+    ids=["nan", "positive-infinity", "negative-infinity"],
+)
+@pytest.mark.parametrize("kind", list(a.ARFBenefitKind), ids=lambda k: k.value)
+@pytest.mark.parametrize("coverage", ["ordinary", "explicit", "automatic"])
+@pytest.mark.parametrize("entrypoint", ["apply", "evaluate", "count"])
+def test_nonfinite_statutory_fields_precede_arf_refusals_and_arithmetic(
+    monkeypatch, field, index, value, kind, coverage, entrypoint
+):
+    """Invalid rates/brackets cannot create benefits or unsupported rows."""
+    params = nonfinite_statutory_params(field, index, value)
+    claim, payment = statutory_validation_claim(kind, coverage)
+
+    def forbidden(*args, **kwargs):
+        pytest.fail("non-finite statutory input reached coverage or money")
+
+    for name in (
+        "statutory_rates",
+        "_refuse",
+        "worker_reduction_fraction",
+        "spouse_reduction_fraction",
+        "survivor_reduction_fraction",
+        "ceil_dime",
+        "floor_dime",
+        "whole_dollars",
+    ):
+        monkeypatch.setattr(a, name, forbidden)
+
+    calls = []
+
+    def compute():
+        calls.append("compute")
+        return a.apply_arf(claim, payment_month=payment, params=params)
+
+    def evaluate():
+        return a.evaluate_arf("invalid", F(3), compute)
+
+    if entrypoint == "apply":
+        invoke = compute
+    elif entrypoint == "evaluate":
+        invoke = evaluate
+    else:
+        outcomes = (evaluate() for _ in range(2))
+        assert calls == []  # The invalid row is not evaluated at creation.
+
+        def invoke():
+            return a.count_arf_outcomes(outcomes)
+
+    with pytest.raises(ValueError, match="finite") as caught:
+        invoke()
+    label = field if index is None else f"{field}[{index}]"
+    assert label in str(caught.value)
+    assert calls == ["compute"]  # No invalid row enters the denominator.
+
+
+@pytest.mark.parametrize(
+    "field,index",
+    [
+        ("early_monthly_rates", 0),
+        ("spousal_early_first_bracket_months", None),
+        ("survivor_reduction_floor", None),
+    ],
+)
+@pytest.mark.parametrize("value", ["NaN", "Infinity", "-Infinity"])
+def test_nonfinite_decimal_statutory_fields_are_input_errors(
+    field, index, value
+):
+    """Numeric finiteness also applies to Decimal rate and bracket inputs."""
+    params = nonfinite_statutory_params(field, index, Decimal(value))
+    with pytest.raises(ValueError, match="finite") as caught:
+        a.apply_arf(rib_claim(), payment_month=FRA, params=params)
+    label = field if index is None else f"{field}[{index}]"
+    assert label in str(caught.value)

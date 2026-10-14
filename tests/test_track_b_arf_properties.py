@@ -15,7 +15,13 @@ from hypothesis import strategies as st
 
 from populace_dynamics.track_b import arf as a
 from populace_dynamics.track_b import gross_benefits as g
-from tests.test_track_b_arf import months, rib_claim
+from tests.test_track_b_arf import (
+    STATUTORY_RATE_FIELDS,
+    months,
+    nonfinite_statutory_params,
+    rib_claim,
+    statutory_validation_claim,
+)
 from tests.track_b_gross_benefit_support import ssa_params
 
 PARAMS = ssa_params()
@@ -494,3 +500,53 @@ def test_invalid_statutory_parameters_never_become_arf_refusals(
         with pytest.raises(ValueError) as caught:
             invoke()
         assert str(caught.value) == str(expected.value)
+
+
+@settings(deadline=None)
+@example(
+    ("early_monthly_rates", 0),
+    float("nan"),
+    a.ARFBenefitKind.RIB,
+    "explicit",
+    F(0),
+    1,
+)
+@given(
+    st.sampled_from(STATUTORY_RATE_FIELDS),
+    st.sampled_from([float("nan"), float("inf"), float("-inf")]),
+    kinds,
+    st.sampled_from(["ordinary", "explicit", "automatic"]),
+    amounts,
+    st.integers(0, 100),
+)
+def test_nonfinite_statutory_fields_never_create_arf_results_or_refusals(
+    field_spec, value, kind, coverage, amount, weight
+):
+    """Input error and lazy failure are independent of money and row weight."""
+    field, index = field_spec
+    params = nonfinite_statutory_params(field, index, value)
+    claim, payment = statutory_validation_claim(kind, coverage, amount)
+    calls = []
+
+    def compute():
+        calls.append("compute")
+        return a.apply_arf(claim, payment_month=payment, params=params)
+
+    def evaluate():
+        return a.evaluate_arf("invalid", F(weight), compute)
+
+    outcomes = (evaluate() for _ in range(2))
+    assert calls == []
+    errors = []
+    for invoke in (
+        compute,
+        evaluate,
+        lambda: a.count_arf_outcomes(outcomes),
+    ):
+        with pytest.raises(ValueError, match="finite") as caught:
+            invoke()
+        errors.append(str(caught.value))
+    label = field if index is None else f"{field}[{index}]"
+    assert label in errors[0]
+    assert errors[0] == errors[1] == errors[2]
+    assert calls == ["compute"] * 3
