@@ -102,15 +102,31 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
         assert entry["registry_gate_dc_route"]["refused"] == (wave != "2013")
     assert checks["mapping"]["negative_where_undocumented_refused"]["refused"]
     assert checks["mapping"]["crosswalk_as_input_refused"]["refused"]
+    from populace_dynamics.uniform_cut_track_u2 import sources
+
     roles = checks["role_refusals"]
-    assert roles["registry_context_on_invented_inputs"]["refused"]
+    # Section 16c (d1090): the registry context builds the invented
+    # population exactly as the declared context does, exclusions included.
+    built = roles["registry_context_on_invented_inputs"]
+    assert not built["refused"]
+    for row in ("U0", "U1"):
+        assert built["rows"][row]["observations_equal"], row
+        assert built["rows"][row]["dispositions_equal"], row
+        exclusions = built["rows"][row]["family_unit_exclusions"]
+        assert set(exclusions) == set(sources.FAMILY_UNIT_EXCLUSIONS)
+        assert all(count > 0 for count in exclusions.values()), row
+    assert roles["code_88_under_registry_context"]["refused"]
     assert roles["code_88_under_declared_context"]["refused"]
     assert roles["declared_context_on_non_invented_inputs"]["refused"]
     assert roles["registry_rules_equal_declared_where_resolved"]
     refusals = roles["registry_rule_refusals"]
     assert refusals and all(entry["refused"] for entry in refusals.values())
-    for key in ("2015.20", "2019.90", "2021.92", "2023.90", "2013.88"):
-        assert key in refusals, key
+    # Only code 88 (TO VERIFY) and code 92's absence before 2017 refuse.
+    assert set(refusals) == {
+        *(f"{wave}.88" for wave in sources.SUPPORT_WAVES),
+        "2013.92",
+        "2015.92",
+    }
     members = roles["invented_members_with_refused_codes"]
     # The invented population holds a member of every refused code
     # except code 88, which the separate code-88 variant adds.
@@ -142,10 +158,15 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
         "missing_head",
         "duplicate_family_record_2019",
         "duplicate_person_record_2019",
+        "code_88_in_excluded_unit_2019",
+        "zero_weight_target_in_excluded_unit_2015",
+        "sex_unknown_target_in_excluded_unit_2019",
     ]
     assert all(entry["regenerated"] for entry in variants.values())
     build_refused = {
         "code_88_first_year_cohabitor": "U2RoleRefusal",
+        # Section 16c: a code-88 refusal is never hidden by an exclusion.
+        "code_88_in_excluded_unit_2019": "U2RoleRefusal",
         "missing_family_record_2019": "U2CohortError",
         "duplicate_family_record_2019": "U2CohortError",
         "duplicate_person_record_2019": "U2CohortError",
