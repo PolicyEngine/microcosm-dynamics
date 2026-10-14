@@ -240,9 +240,10 @@ wrote its start marker before reading TEST, and finished at 2026-10-14
   20 registered draw seeds.
 - **Record**: `runs/epuf_fill_gate_test_v1.json` (`registered_test_scoring`
   true, nothing injected), its environment sidecar, and the start marker.
-  `tests/test_epuf_fill_gate_test_result.py` re-derives every pass, failing
-  count, tier and adoption from the recorded cells with the registered
-  functions.
+  `tests/test_epuf_fill_gate_test_result.py` pins the three files by
+  SHA-256, re-derives every recorded gap from its filled and true values,
+  and re-derives every pass and failing count (the current rule's readings
+  included), tier and adoption with the registered functions.
 - **Undefined truth**: none; no gating cell was dropped.
 
 | Family | Current rule failing | Primary | Alternative | Adopted |
@@ -256,8 +257,10 @@ ratio). All eight are within the improves allowance.
 - `r1`, the Spearman of the masked year against the years either side, is
   below the truth for men 22-29 (-2.87), women 22-29 (-2.09), women 60-74
   (-1.51), men 22-74 (-1.22) and women 22-74 (-1.14). For men 22-29 that is
-  0.792 against 0.813. The current rule's gaps in these cells are +6.7 to
-  +24.3 tolerances: it overstates this persistence.
+  0.792 against 0.813. The current rule overstates this persistence: its
+  gaps in these cells are +6.7 to +23.5 tolerances on the fallback
+  reading, which sets the improves allowance here (+6.7 to +24.3 on the
+  two-sided reading).
 - `r3`, against the years three either side, men 22-29 (-1.09).
 - `zint`, the zero rate among units positive in both neighbouring years,
   is above the truth for men 22-29 (+1.53) and women 22-29 (+1.21).
@@ -270,9 +273,10 @@ Six of the eight also failed in the DEV dry run. `odd.men.a22_29.r3` and
 tolerances (`pre.women.b1946_1980.yr_cross`, the Spearman of earnings at
 age 21 against age 24).
 
-**The alternatives.** `odd_knn` fails 48 cells, most of all `wint` (up to
-10.5 tolerances). `pre_chain` fails 50, most of all youth earnings levels
-(`ylevel`, up to 19.2 tolerances). `pre_chain` is the one-step binned
+**The alternatives.** `odd_knn` fails 48 cells; its largest gap is in
+`wint` (10.5 tolerances, `odd.men.a22_74.wint`). `pre_chain` fails 50; its
+largest gaps are in youth earnings levels (`ylevel`, up to 19.2
+tolerances). `pre_chain` is the one-step binned
 conditional-quantile chain described above, so its result says nothing
 about a QRF that conditions on many of a person's real years.
 
