@@ -17,8 +17,13 @@ from pathlib import Path
 
 try:
     from scripts.d1408_common import HEADER, PSID_ROOT, ROOT, SCRATCH
+    from scripts.d1408_publication_view import (
+        differencing_violations,
+        public_view,
+    )
 except ModuleNotFoundError:
     from d1408_common import HEADER, PSID_ROOT, ROOT, SCRATCH
+    from d1408_publication_view import differencing_violations, public_view
 
 DESTINATION = (
     ROOT / "docs/errata/2026-10-11-delayed-credit-window-diagnostic.json"
@@ -55,9 +60,8 @@ def assemble():
             results.append(part)
     validate_result_scope(results)
     validate_projection_publication(results)
+    results = [public_view(result) for result in results]
     for result in results:
-        if result.get("artifact") in PROJECTION_ARTIFACTS:
-            result["pre1917_flagged_evaluations"] = projection_pre1917(result)
         if "real_data_files_read" in result:
             result["real_data_files_read"] = [
                 psid_relative(path) for path in result["real_data_files_read"]
@@ -68,7 +72,7 @@ def assemble():
         "verification_class": "labelled diagnostic",
         "ruling": "d1408 (2026-10-12)",
         "registered_artifacts_retained": True,
-        "privacy": "aggregate counts and changes only; positive cells below ten people are suppressed together with weights, shares and changes; overlapping subtotals are withheld where subtraction would reveal a small complementary group",
+        "privacy": "aggregate counts and changes only. Per result and wave, at most one flagged subtotal is published (first estimates publishes its support, actual-person and expected bounds instead), with the seed-cohort or admitted denominator its share uses (first estimates' per-draw denominators stay in its committed artifact); payment paths are reported only as none, fewer than ten, ten or more, or withheld. Positive cells below ten people are suppressed with their weights, shares and changes. Every published count declares the population it measures; a population republished in several cells has the same count and weight in each and enters once; and no signed (+1/-1) combination of distinct populations within a population family, people and worker-record counts pooled together, of any size, equals one through nine. Rounded population-level aggregates are published even where fewer than ten people's payments change; they show only that the combined effect stays below the reported precision.",
         "statutory_authority": [
             "42 USC 402(w)(2)(A)",
             "42 USC 402(w)(6)(A)",
@@ -77,20 +81,16 @@ def assemble():
         "results": results,
     }
     validate_publication(document)
+    violations = differencing_violations(document)
+    if violations:
+        raise ValueError(
+            f"{len(violations)} published differences reveal a group "
+            f"under ten, first {violations[0]}"
+        )
     DESTINATION.write_text(
         json.dumps(document, indent=2, allow_nan=False) + "\n"
     )
     return document
-
-
-def projection_pre1917(result):
-    """State the projections' pre-1917 flags; cells exist only if flagged."""
-    present = any(
-        key.startswith("unsupported_pre1917/")
-        for wave in result.get("counts", {}).values()
-        for key in wave
-    )
-    return "see counts" if present else 0
 
 
 def psid_relative(path):

@@ -5,11 +5,8 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from scripts.d1408_common import PSID_ROOT
-from scripts.d1408_diagnostic import (
-    projection_pre1917,
-    psid_relative,
-    validate_publication,
-)
+from scripts.d1408_diagnostic import psid_relative, validate_publication
+from scripts.d1408_publication_view import projection_pre1917
 
 
 @settings(deadline=None)
@@ -68,5 +65,5 @@ def test_projection_pre1917_states_zero_only_without_unsupported_cells(
     if unsupported:
         wave["unsupported_pre1917/factor_evaluation"] = {"people": "<10"}
     result = {"counts": {"2011": {"denominator": "invented"}, "2009": wave}}
-    assert projection_pre1917(result) == ("see counts" if unsupported else 0)
+    assert projection_pre1917(result) == ("withheld" if unsupported else 0)
     assert projection_pre1917({}) == 0

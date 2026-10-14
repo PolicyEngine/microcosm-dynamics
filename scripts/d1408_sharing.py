@@ -18,7 +18,6 @@ import pickle
 import subprocess
 import sys
 from contextlib import contextmanager
-from copy import deepcopy
 from hashlib import sha256
 from pathlib import Path
 from types import ModuleType
@@ -37,8 +36,8 @@ from d1408_common import (
     write_aggregate,
 )
 
-R7_BUILD_PIN = "a8704357f48bc491dc591834e86600cf98ab75f1"
-R7_COMMIT = "6b310a86957aa2d8141a6800be9b05b0f00710f7"
+# runs/replication_r7_sharing_v1.json revision_pins.populace_dynamics_sha.
+R7_COMMIT = "a8704357f48bc491dc591834e86600cf98ab75f1"
 COST_COMMIT = "e86ec0c6b3508ebb0d08afe24ba16282a99769a2"
 PARAMETER_COMMIT = "bf71be3b"
 R7_SCRIPT = "scripts/replication_r7_sharing.py"
@@ -591,7 +590,7 @@ def retain_unsupported_rows(legacy, statutory, unsupported_recipients):
     return statutory
 
 
-def worker(source_dir, result_name, commit, output, paired_cost_source=None):
+def worker(source_dir, result_name, commit, output):
     print(f"d1408 {result_name}: importing historical model", flush=True)
     reads = install_read_guard()
     module = model_module(source_dir)
@@ -675,9 +674,8 @@ def worker(source_dir, result_name, commit, output, paired_cost_source=None):
         "code_commit": commit,
         "parameter_commit": PARAMETER_COMMIT,
         "code_commit_reason": (
-            "Original committed R7 artifact and builder; its recorded build pin "
-            + R7_BUILD_PIN
-            + " is not present in the local object database. The brief permits the commit at which the artifact was committed; every model headline and registered half-split is cross-checked."
+            "The R7 artifact's revision_pins.populace_dynamics_sha records "
+            "this code commit."
             if result_name == "r7_sharing"
             else "The committed cost-ordering artifact records this code commit. Only its R7 model component is reconstructed."
         ),
@@ -736,51 +734,6 @@ def worker(source_dir, result_name, commit, output, paired_cost_source=None):
         "real_data_files_read": sorted(reads),
     }
     write_aggregate(output, result)
-    if paired_cost_source is not None:
-        proof = imported_source_identity(source_dir, paired_cost_source)
-        paired = deepcopy(result)
-        paired["result"] = "cost_ordering_r7"
-        paired["artifact"] = "runs/replication_cost_ordering_v1.json"
-        paired["code_commit"] = COST_COMMIT
-        paired["code_commit_reason"] = (
-            "The cost-ordering artifact records this commit. Every historical source "
-            "in the executed R7 import closure and selected helpers is byte-identical "
-            "to the original committed R7 sources; SHA-256 identities are listed. "
-            "The same admitted input/benefit reconstruction therefore supplies this "
-            "component, with an independent exact cross-check of cost-ordering's "
-            "committed model headlines."
-        )
-        paired["historical_source_identity"] = proof
-        cost_artifact = json.loads((ROOT / paired["artifact"]).read_text())
-        paired["reproduction"] = reproduction_check(
-            module, legacy, cost_artifact, "cost_ordering_r7"
-        )
-        write_aggregate(SCRATCH / "cost_ordering_r7-aggregate.json", paired)
-    elif result_name == "cost_ordering_r7":
-        # Separate-worker mode supplies the partner result only after its
-        # executed historical import closure is proved byte-identical.
-        r7_source = SCRATCH / ("src-" + R7_COMMIT)
-        proof = imported_source_identity(source_dir, r7_source)
-        paired = deepcopy(result)
-        paired["result"] = "r7_sharing"
-        paired["artifact"] = "runs/replication_r7_sharing_v1.json"
-        paired["code_commit"] = R7_COMMIT
-        paired["code_commit_reason"] = (
-            "The original R7 artifact and builder were committed here. Its recorded "
-            "build pin "
-            + R7_BUILD_PIN
-            + " is unavailable locally. The executed "
-            "cost-ordering R7 import closure and selected helpers are byte-identical "
-            "to this original commit; path/SHA-256 identities are listed. Original "
-            "R7 model headlines and all registered half-splits are independently "
-            "cross-checked exactly."
-        )
-        paired["historical_source_identity"] = proof
-        r7_artifact = json.loads((ROOT / paired["artifact"]).read_text())
-        paired["reproduction"] = reproduction_check(
-            module, legacy, r7_artifact, "r7_sharing"
-        )
-        write_aggregate(SCRATCH / "r7_sharing-aggregate.json", paired)
     print(f"d1408 {result_name}: aggregate diagnostics written", flush=True)
     cache.unlink(missing_ok=True)
 
@@ -791,24 +744,21 @@ def main():
     parser.add_argument("--source-dir", type=Path)
     parser.add_argument("--result", choices=("r7_sharing", "cost_ordering_r7"))
     parser.add_argument("--commit")
-    parser.add_argument("--paired-cost-source", type=Path)
     parser.add_argument(
         "--output", type=Path, default=SCRATCH / "sharing-aggregate.json"
     )
     args = parser.parse_args()
     if args.worker:
-        worker(
-            args.source_dir,
-            args.result,
-            args.commit,
-            args.output,
-            args.paired_cost_source,
-        )
+        worker(args.source_dir, args.result, args.commit, args.output)
         return
     results = []
     commands = []
-    cost_source = export_history(COST_COMMIT, extra_paths=EXTRA_PATHS)
-    for result_name, commit in (("r7_sharing", R7_COMMIT),):
+    # Each result runs at its own recorded commit; neither borrows the
+    # other's reconstruction.
+    for result_name, commit in (
+        ("r7_sharing", R7_COMMIT),
+        ("cost_ordering_r7", COST_COMMIT),
+    ):
         source_dir = export_history(commit, extra_paths=EXTRA_PATHS)
         output = SCRATCH / (result_name + "-aggregate.json")
         env = dict(os.environ)
@@ -832,15 +782,10 @@ def main():
             commit,
             "--output",
             str(output),
-            "--paired-cost-source",
-            str(cost_source),
         ]
         subprocess.run(command, env=env, cwd=ROOT, check=True)
         commands.append(command)
         results.append(json.loads(output.read_text()))
-    results.append(
-        json.loads((SCRATCH / "cost_ordering_r7-aggregate.json").read_text())
-    )
     write_aggregate(
         args.output,
         {"label": HEADER, "results": results, "commands": commands},

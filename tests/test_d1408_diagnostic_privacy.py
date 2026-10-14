@@ -140,6 +140,11 @@ def test_assembly_requires_completed_projection_privacy_audit(
             "DESTINATION",
             SimpleNamespace(write_text=publications.append),
         ),
+        # The public schema and differencing guard have their own tests in
+        # test_d1408_publication_differencing.py; this test isolates the
+        # audit gate and launcher.
+        patch.object(diagnostic, "public_view", lambda result: result),
+        patch.object(diagnostic, "differencing_violations", lambda doc: []),
     ):
         if ready and not absent:
             document = diagnostic.assemble()
