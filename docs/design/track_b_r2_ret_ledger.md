@@ -4,7 +4,7 @@
 earnings test rule mechanics on invented record-years and published
 statutory worked examples. No population, behavioral or forecast claim.**
 
-**Status: build-only, revised 2026-10-14 after PR #528 review rounds 1–4.
+**Status: build-only, revised 2026-10-14 after PR #528 review rounds 1–5.
 No real-data computation.** This is the
 single-record ledger core. Deduction before reduction, which can change
 the other beneficiaries' gross rates, remains part (b).
@@ -326,8 +326,14 @@ For the same comparison, `CDB` and `CHILD` are child's benefits under
 Act 202(d), and `DWB` and `WIDOW` are widow(er)'s benefits under Act
 202(e)/(f). A change between these classifications after a gap cannot
 create new after-break eligibility or overwrite LMETY. This normalization
-affects only the legal-type comparison; disability months still cannot
-be NSMs (20 CFR 404.435(b)(2)-(3); RS 02501.030B.2 and C).
+compares every entitled section 202 benefit, including months entered as
+`DWB` or `CDB`. Entry to a genuinely different normalized legal type
+after a gap establishes pending eligibility even when that first month
+is a disability month. `DIB` is a distinct section 223 benefit and does
+not itself establish different-type retirement or survivor eligibility.
+This comparison does not change the disability-month exclusion: the
+first eligible NSM establishes the new grace year and updates LMETY
+(20 CFR 404.435(b)(2)-(3); RS 02501.030B.2 and C).
 
 Child, young-spouse and mother/father terminations can supply a termination
 grace year. Child's benefits under Act 202(d) include both ordinary
@@ -356,7 +362,12 @@ estimated earnings over the eligible months. It does not assume that
 the same months are NSMs under two different earnings reports (RS
 02501.030C; RS 02510.005, .015).
 
-DIB/DWB/CDB-only years cannot create NSMs. The conservative default also
+DIB/DWB/CDB-only years cannot create NSMs or apply grace. A genuinely
+different section 202 type entered as DWB or CDB after a gap can still
+carry pending eligibility to a later year's first eligible NSM; the
+disability-only-year exclusion does not erase that entitlement history
+(20 CFR 404.435(b)(2)-(3); RS 02501.030B.2 and B.4).
+The conservative default also
 excludes simultaneous disability entitlement, following 20 CFR
 404.435(b)(3). The named POMS alternative permits NSMs in months RIB is
 elected while technical DIB entitlement continues, reproducing RS
@@ -380,6 +391,7 @@ year is explicit.
 | Variable monthly rates and entitlement | Supported; twelve months retained | RS 02501.100B.1 |
 | Normal CDB termination in a mixed ordinary-child/CDB year | Supported termination grace for eligible ordinary-child NSMs; disability-only years, disability NSMs and other termination exclusions stay excluded | Act 203(f)(1)(F); 20 CFR 404.435(b)(3)-(4); RS 02501.030B.3-4 |
 | Re-entitlement after a gap to the same legal child or widow(er) type, including CDB/CHILD and DWB/WIDOW changes | Supported without a fresh after-break grace; initial grace and pending genuinely different-type eligibility remain available | Act 202(d), (e)/(f); 20 CFR 404.435(b)(2)-(3); RS 02501.030B.1-2 |
+| Genuinely different section 202 entitlement entered as DWB or CDB after a gap | Supported pending after-break eligibility until an eligible ordinary-benefit NSM; disability months remain ineligible and DIB alone does not create pending eligibility | 20 CFR 404.435(b)(2)-(3); RS 02501.030B.2, B.4 |
 | Three-or-more-beneficiary partial pools with a sub-$1 capped overflow | Supported with the mandatory stop and an explicit undistributed residual | 20 CFR 404.440; RS 02501.110B.2 |
 | Qualifying divorced spouse | Excluded from NH charging; own earnings still tested | Act 203(b)(2); RS 02501.021B.5.b |
 | Legally married deemed-entitled CDB or mother/father recipient | Supported against NH excess when the legal facts are asserted | Act 203(b)(1); 20 CFR 404.420 |
@@ -496,7 +508,8 @@ The grace-state invariants are executed in
 | The POMS election reading uses RIB receipt while preserving technical disability entitlement history | `test_property_poms_rib_election_separates_entitlement_from_receipt` |
 | Returned state advances exactly one year, without mutating the input state | `test_property_state_advances_exactly_one_year_without_hidden_mutation` |
 | Pending after-break eligibility survives a year without an NSM | `test_property_after_break_eligibility_survives_year_without_nonservice` |
-| A reentry involving only disability benefits cannot create pending different-type grace eligibility | `test_property_disability_reentry_after_break_cannot_create_pending_grace` |
+| After a gap, DWB/CDB entry creates pending eligibility exactly when its normalized section 202 type is genuinely different; a same legal type or DIB entry cannot create it; disability-only years apply no grace but retain pending eligibility for the first eligible NSM | `test_property_disability_reentry_compares_legal_types_before_nsm` |
+| DWB/CDB after-break eligibility is retained until the first eligible ordinary-benefit NSM, with gap placement, disability duration, work conditions and FRA controlling when it is consumed | `test_property_disabled_different_type_preserves_pending_until_eligible_nsm`; `test_different_type_entered_as_disability_gets_same_year_after_break_grace`; ledger `test_carried_different_disability_type_grace_preserves_one_dollar_february` |
 | A second gap with the same benefit type cannot erase pending post-break eligibility before the first eligible NSM | `test_property_pending_grace_survives_another_same_type_gap`; `test_same_type_gap_does_not_erase_pending_grace` |
 
 The source invariants are executed by
@@ -725,6 +738,48 @@ checks cover all ten month-set fields, and valid-integer duplicate/order
 properties preserve the ledger's established set behavior. External grace decisions
 receive the same validation ordering. Neither finding changes a statutory
 reading, d1418's defaults, or part (b)'s scope.
+
+## Review round 5: a different legal type entered during disability
+
+20 CFR 404.435(b)(2) places the new grace year in “the taxable year in
+which the first non-service month occurs after the break in entitlement.”
+Paragraph (b)(3) separately says “we will not count as a non-service
+month” a disability-entitlement month. It does not remove that month's
+section 202 legal type from the different-type comparison. RS
+02501.030B.4 excludes grace “if entitled solely to DIB, disabled
+widow(er)'s (DWB), or childhood disability benefits (CDB).” A mixed
+DWB/WIDOW or CDB/CHILD year does not satisfy that exclusion.
+
+The executed invented carried-year case has young-spouse entitlement
+and initial grace in 2024, spouse entitlement through November 2025,
+and an unentitled December after a qualifying termination. LMETY stays
+2024. Following the former spouse's death, disabled surviving-widow
+entitlement begins in January 2026, with ordinary widow entitlement
+continuing from February at age 60. G's survivor PIA and original benefit
+of $1.40, with an 84-month reduction period, produce a $1.00 gross rate.
+Zero wages, $24,482 NESE over twelve self-employment months, and no
+substantial services give exactly $1 excess above the $24,480 annual
+exemption. The optional Act own-work-age exemption remains empty.
+
+Removing DWB from the type comparison lost pending eligibility and paid
+February $0 and annual checks $11. Comparing January's normalized WIDOW
+type with the prior SPOUSE type establishes pending after-break
+eligibility. February's first eligible NSM then creates AFTER_BREAK
+grace, protects February–December and updates LMETY to 2026. January
+still pays $1 under the disability own-work exclusion and remains
+ineligible as an NSM. Correct February payment is $1, annual checks are
+$12, charged excess is $0 and uncharged excess is $1. The regressions
+also cover a same-year DWB entry after a gap and the analogous different
+type entered as CDB, followed by an eligible ordinary-child month, using
+invented G rates for the carried monetary cases. The properties retain
+the same-legal-type rule,
+DIB's distinct section 223 treatment, pending eligibility through a
+disability-only year and every disability NSM exclusion.
+
+This corrects an implementation omission rather than a source erratum
+or a new statutory reading (20 CFR 404.435(b)(2)-(3); RS 02501.030B.2,
+B.4). Ruling d1418's defaults and the mixed-year CDB termination rule
+remain unchanged.
 
 ## Needs Max's judgment
 
@@ -1095,6 +1150,31 @@ deselected. Both staged microdata overrides pointed to nonexistent paths
 during every whole-suite collection and the selected policy-test run.
 The committed-branch and working-tree diffs contain no protected files.
 Changes remain uncommitted as required by this fix round.
+
+Review fix round 5 first reproduced both carried-year DWB/WIDOW and
+CDB/CHILD $1 February underpayments at the reviewed implementation.
+The same-year examples and corrected disability-entry properties also
+failed before the fix. All seven RET test files then passed 803 tests;
+all 13 birth-evidence checks passed with the artifact rebuild excluded.
+Black and Ruff passed on all ten PR Python files. All 41 source hashes
+and byte counts match their manifest. No existing assertion outside the
+explicitly corrected disability-reentry property was weakened.
+
+Seven one-line mutations were killed: dropping DWB entry, dropping CDB
+entry, allowing DIB to create section 202 eligibility, splitting the
+DWB/WIDOW legal type, splitting the CDB/CHILD legal type, allowing DWB
+NSMs and allowing CDB NSMs. Each targeted node passed after restoration
+of the exact corrected implementation bytes. The full mutation details
+and command evidence are in `scratch/review/fix-round-1-report.md` and
+`scratch/review/r5_mutations.json`; no mutation remains in production.
+
+The round-5 tier recount found 7,386 unit, 4,046 artifact, 1,346
+integration-PSID, 520 legacy-reproduction and 307 PolicyEngine-oracle
+tests, totaling 13,605. The selected tier-policy test passed with 13,604
+other tests deselected. Both staged microdata overrides pointed to
+nonexistent paths for every collection and the policy-test run. The
+committed-branch and working-tree diffs contain no protected files.
+Ruling d1418's defaults remain in effect.
 
 ## Not in scope
 

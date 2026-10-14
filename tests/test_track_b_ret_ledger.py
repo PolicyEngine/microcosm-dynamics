@@ -243,6 +243,97 @@ def test_carried_child_cdb_same_legal_type_gap_charges_one_dollar_january():
     assert not decision.next_state.pending_after_break
 
 
+@pytest.mark.parametrize(
+    "disabled, ordinary, role",
+    [
+        (BenefitType.DWB, BenefitType.WIDOW, g.Role.WIDOW),
+        (BenefitType.CDB, BenefitType.CHILD, g.Role.CHILD),
+    ],
+    ids=["dwb-widow", "cdb-child"],
+)
+def test_carried_different_disability_type_grace_preserves_one_dollar_february(
+    disabled, ordinary, role
+):
+    # Review round 5: young-spouse entitlement through November 2025,
+    # no December entitlement, then a genuinely different section 202
+    # entitlement in January 2026, initially disability-based. The widow
+    # turns 60 in February; the CDB analogue has established disability
+    # cessation and ordinary child entitlement from February. Caller
+    # supplies the legal facts; d1418's optional own-work exemption is empty.
+    spouse = GraceMonth({BenefitType.SPOUSE}, {BenefitType.SPOUSE}, True)
+    initial = grace_year(2024, GraceYearState(), [spouse] * 12)
+    assert initial.kinds == {GraceKind.INITIAL}
+    assert initial.next_state.last_met_year == 2024
+    terminated = grace_year(
+        2025,
+        initial.next_state,
+        [spouse] * 11 + [GraceMonth()],
+        termination_events=[
+            TerminationEvent(11, BenefitType.SPOUSE, young_spouse=True)
+        ],
+    )
+    assert terminated.kinds == {GraceKind.TERMINATION}
+    assert terminated.next_state.last_met_year == 2024
+    assert terminated.next_state.gap_since_entitlement
+    assert not terminated.next_state.pending_after_break
+    types = (disabled,) + (ordinary,) * 11
+    decision = grace_year(
+        YEAR,
+        terminated.next_state,
+        [GraceMonth({kind}, {kind}, True) for kind in types],
+    )
+    params = ssa_params()
+    state = g.RecordState(
+        g.FamilyKind.SURVIVOR,
+        F("1.40"),
+        g.retirement_survivor_family_maximum(F("1.40"), YEAR, params),
+        eligibility_year=YEAR,
+    )
+    reduction = (
+        dict(reduction_months=84, reduction_period_months=84)
+        if role is g.Role.WIDOW
+        else {}
+    )
+    family = g.family_benefits(
+        state,
+        [g.Beneficiary("survivor", role, **reduction)],
+        payment_month=g.YearMonth(YEAR, 2),
+        params=params,
+        standalone=True,
+    )
+    rate = family.by_id()["survivor"]
+    assert rate.auxiliary_payable == 1
+    assert rate.original_benefit == (
+        F("1.40") if role is g.Role.WIDOW else F(1)
+    )
+    survivor = dataclasses.replace(
+        beneficiary(
+            "survivor",
+            rate=rate.auxiliary_payable,
+            original_rate=rate.original_benefit,
+            benefit_type=ordinary,
+            work=r.WorkEarnings(nese=24482, self_employment_months=MONTHS),
+            grace=decision,
+        ),
+        benefit_types=types,
+    )
+    result = ledger(survivor, kind=r.RecordKind.DECEASED)
+    rows = by_month(result, "survivor")
+    assert rows[1].payment == 1
+    assert rows[2].payment == 1
+    assert rows[2].deduction == 0
+    assert all(row.payment == 1 for row in result.months)
+    assert sum(row.payment for row in result.months) == 12
+    assert worker(result, "survivor").excess == 1
+    assert worker(result, "survivor").charged == 0
+    assert worker(result, "survivor").uncharged == 1
+    assert decision.kinds == {GraceKind.AFTER_BREAK}
+    assert decision.met_eligible_months == set(range(2, 13))
+    assert decision.protected_months == set(range(2, 13))
+    assert decision.next_state.last_met_year == YEAR
+    assert not decision.next_state.pending_after_break
+
+
 @pytest.mark.parametrize("offset, excess", [(0, 0), (1, 0), (2, 1), (3, 1)])
 def test_lower_threshold_and_whole_dollar_floor(offset, excess):
     limit = PARAMS.for_year(YEAR).lower_exempt_amount.value

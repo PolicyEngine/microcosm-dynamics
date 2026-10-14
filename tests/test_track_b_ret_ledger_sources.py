@@ -231,6 +231,7 @@ RULE_QUOTES = {
     ],
     "ecfr_20cfr404_subpart_e": [
         "A beneficiary may have another grace year each time his or her entitlement to one type of benefit ends and, after a break in entitlement of at least one month, the beneficiary becomes entitled to a different type of retirement or survivors benefit.",
+        "The new grace year would then be the taxable year in which the first non-service month occurs after the break in entitlement.",
         "we will not count as a non-service month, a month that occurred while the beneficiary was entitled to disability benefits under section 223 of the Social Security Act or as a disabled widow, widower, or child under section 202.",
         "A beneficiary entitled to child's benefits",
         "is entitled to a termination grace year in any year the beneficiary's entitlement to these types of benefits terminates.",

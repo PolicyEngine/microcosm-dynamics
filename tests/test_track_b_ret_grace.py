@@ -613,24 +613,150 @@ def test_property_external_grace_month_sets_validate_before_deduplication(
                 GraceYearDecision(**kwargs)
 
 
-@settings(max_examples=150, deadline=None)
-@given(st.sampled_from([B.DIB, B.DWB, B.CDB]), st.integers(1, 12))
-def test_property_disability_reentry_after_break_cannot_create_pending_grace(
-    kind, month_of_rib
+@settings(max_examples=200, deadline=None)
+@given(
+    st.sampled_from([(B.CDB, B.CHILD), (B.DWB, B.WIDOW), (B.DIB, B.RIB)]),
+    st.sampled_from(list(B)),
+    st.integers(1, 12),
+)
+def test_property_disability_reentry_compares_legal_types_before_nsm(
+    types, previous, first_ordinary_month
 ):
+    disabled, ordinary = types
+    legal_type = {
+        B.DIVORCED_SPOUSE: B.SPOUSE,
+        B.CDB: B.CHILD,
+        B.DWB: B.WIDOW,
+    }
+    different_section_202_type = disabled is not B.DIB and (
+        legal_type.get(disabled, disabled)
+        != legal_type.get(previous, previous)
+    )
     first = grace_year(
         2011,
-        prior(2010, B.WIDOW, gap=True),
-        [month(kind)] * 12,
+        prior(2010, previous, gap=True),
+        [month(disabled)] * 12,
     )
-    assert not first.next_state.pending_after_break
+    assert not first.applies
+    assert not first.kinds
+    assert not first.met_eligible_months
+    assert not first.protected_months
+    assert first.next_state.last_met_year == 2010
+    assert first.next_state.previous_entitled_types == {disabled}
+    assert first.next_state.pending_after_break == different_section_202_type
     second = grace_year(
         2012,
         first.next_state,
-        [month(kind)] * (month_of_rib - 1) + [RIB] * (13 - month_of_rib),
+        [month(disabled)] * (first_ordinary_month - 1)
+        + [month(ordinary)] * (13 - first_ordinary_month),
     )
-    assert not second.applies
-    assert second.next_state.last_met_year == 2010
+    eligible = set(range(first_ordinary_month, 13))
+    assert second.met_eligible_months == eligible
+    assert second.kinds == (
+        {K.AFTER_BREAK} if different_section_202_type else set()
+    )
+    assert second.protected_months == (
+        eligible if different_section_202_type else set()
+    )
+    assert second.next_state.last_met_year == (
+        2012 if different_section_202_type else 2010
+    )
+    assert not second.next_state.pending_after_break
+
+
+@pytest.mark.parametrize(
+    "disabled, ordinary", [(B.DWB, B.WIDOW), (B.CDB, B.CHILD)]
+)
+def test_different_type_entered_as_disability_gets_same_year_after_break_grace(
+    disabled, ordinary
+):
+    state = replace(prior(2025, B.SPOUSE), last_met_year=2024)
+    months = [month(B.SPOUSE), EMPTY, month(disabled)] + [month(ordinary)] * 9
+    result = grace_year(2026, state, months)
+    eligible = {1, *range(4, 13)}
+    assert result.kinds == {K.AFTER_BREAK}
+    assert result.met_eligible_months == eligible
+    assert result.protected_months == eligible
+    assert result.next_state.last_met_year == 2026
+    assert not result.next_state.pending_after_break
+
+
+@settings(max_examples=250, deadline=None)
+@given(
+    st.sampled_from([(B.CDB, B.CHILD), (B.DWB, B.WIDOW)]),
+    st.sampled_from(list(B)),
+    st.integers(0, 8),
+    st.integers(1, 2),
+    st.data(),
+)
+def test_property_disabled_different_type_preserves_pending_until_eligible_nsm(
+    types, previous, before, gap_length, data
+):
+    disabled, ordinary = types
+    disabled_months = data.draw(
+        st.integers(1, 11 - before - gap_length), label="disabled_months"
+    )
+    work_flags = data.draw(
+        st.lists(st.booleans(), min_size=12, max_size=12), label="work_flags"
+    )
+    fra = data.draw(
+        st.one_of(st.none(), st.integers(1, 12)), label="fra_month"
+    )
+    legal_type = {
+        B.DIVORCED_SPOUSE: B.SPOUSE,
+        B.CDB: B.CHILD,
+        B.DWB: B.WIDOW,
+    }
+    different = legal_type.get(previous, previous) is not ordinary
+    state = prior(2025, previous)
+    prefix = (
+        [month(previous, nonservice=False)] * before
+        + [EMPTY] * gap_length
+        + [month(disabled)] * disabled_months
+    )
+    waiting = grace_year(
+        2026, state, prefix + [EMPTY] * (12 - len(prefix)), fra_month=fra
+    )
+    assert not waiting.applies
+    assert not waiting.kinds
+    assert not waiting.protected_months
+    assert waiting.next_state.last_met_year == 2025
+    assert waiting.next_state.pending_after_break == different
+
+    result = grace_year(
+        2026,
+        state,
+        prefix
+        + [
+            month(ordinary, nonservice=work_flags[index - 1])
+            for index in range(len(prefix) + 1, 13)
+        ],
+        fra_month=fra,
+    )
+    eligible = {
+        index
+        for index in range(1, 13)
+        if (index <= before and previous not in DISABILITY_TYPES)
+        or index > len(prefix)
+    }
+    eligible = {index for index in eligible if fra is None or index < fra}
+    ordinary_nsms = {
+        index
+        for index in eligible
+        if index > len(prefix) and work_flags[index - 1]
+    }
+    consumes_pending = different and bool(ordinary_nsms)
+    assert result.met_eligible_months == eligible
+    assert result.kinds == ({K.AFTER_BREAK} if consumes_pending else set())
+    assert result.protected_months == (
+        ordinary_nsms if consumes_pending else set()
+    )
+    assert result.next_state.last_met_year == (
+        2026 if consumes_pending else 2025
+    )
+    assert result.next_state.pending_after_break == (
+        different and not consumes_pending
+    )
 
 
 @pytest.mark.parametrize(

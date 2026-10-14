@@ -18,7 +18,11 @@ In a mixed year, CDB termination can protect earlier non-disability NSMs;
 disability months remain ineligible, and a disability-only year has no
 grace year (20 CFR 404.435(b)(3)-(4); RS 02501.030B.3-4).
 For after-break grace, CDB/CHILD share Act 202(d)'s legal benefit type,
-and DWB/WIDOW share Act 202(e)/(f)'s type (RS 02501.030B.2). This
+and DWB/WIDOW share Act 202(e)/(f)'s type (RS 02501.030B.2). Every
+entitled section 202 month participates, including DWB/CDB entry after a
+gap; a genuinely different legal type establishes pending eligibility
+until the first eligible NSM. DIB under section 223 does not itself
+establish different-type retirement or survivor eligibility. This
 comparison preserves the separate disability-month NSM exclusion.
 Externally supplied month sets validate every raw value before deduplication.
 """
@@ -138,7 +142,9 @@ class GraceYearState:
     set, even after a gap. ``gap_since_entitlement`` records at least one
     entirely unentitled month since that set. ``pending_after_break``
     retains a new entitlement's eligibility until its first NSM, even after
-    another gap to that same type or in a later taxable year. No hidden or
+    another gap to that same type or in a later taxable year. Entry as DWB
+    or CDB can establish it for a different section 202 legal type, while
+    disability months cannot supply the first eligible NSM. No hidden or
     population state is used.
     """
 
@@ -291,6 +297,8 @@ def grace_year(
     when FRA was attained in an earlier year. Survivors supply the RIB FRA
     (RS 02501.021B.3). The state must follow consecutive yearly calls so an
     omitted year cannot silently create or erase a break in entitlement.
+    Different-type entry compares section 202 entitlement even during
+    DWB/CDB months; disability NSM eligibility is checked separately.
     """
     _year(year, "Year")
     if not isinstance(state, GraceYearState):
@@ -365,11 +373,12 @@ def grace_year(
                 gap = True
             continue
         if gap:
-            # RS 02501.030B.2 requires a gap and a different type to create
-            # eligibility. Another same-type gap cannot erase it before
-            # the taxable year's first eligible NSM.
+            # 404.435(b)(2); RS 02501.030B.2: section 202 legal types
+            # include DWB/CDB even though (b)(3) excludes disability NSMs.
+            # Section 223 DIB is not a retirement or survivor type. Another
+            # same-type gap cannot erase eligibility before the first NSM.
             pending = pending or bool(
-                _legal_types(month.entitled_types - DISABILITY_TYPES)
+                _legal_types(month.entitled_types - {BenefitType.DIB})
                 - _legal_types(previous)
             )
         previous = month.entitled_types
