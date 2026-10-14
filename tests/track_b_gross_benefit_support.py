@@ -17,6 +17,7 @@ from __future__ import annotations
 import html
 import json
 import re
+from fractions import Fraction as F
 from functools import cache
 from pathlib import Path
 
@@ -122,3 +123,73 @@ def poms_bend_point_table() -> dict[int, tuple[int, ...]]:
         int(year): tuple(int(v.replace(",", "")) for v in values)
         for year, *values in rows
     }
+
+
+@cache
+def poms_delayed_credit_chart(
+    through_birth_year: int = 1960,
+) -> dict[int, tuple[int, F, int, F]]:
+    """RS 00615.692E's January 2 birth-year bands, through the given year.
+
+    Each value is (FRA in months, monthly credit, maximum months, maximum
+    credit in percent). A January 1 birth belongs to the previous year's
+    row. ``through_birth_year`` expands the chart's open-ended 1960+ row;
+    the default preserves G's original 1914-1960 source cross-check.
+    """
+    text = source_text("poms_rs_00615_692")
+    chart = text[
+        text.index("E. Chart for Maximum Delayed") : text.index(
+            "To Link to this section"
+        )
+    ]
+    rows = re.findall(
+        r"(?:After 01/01/(60)|01/02/(\d\d) thru 01/01/(\d\d)) "
+        r"(\d\d)(?:&(\d+))? (\d+/\d+)% [\d.]+% (\d+) ([\d.]+)%",
+        chart,
+    )
+    cohorts = {}
+    for after, start, end, years, months, monthly, most, percent in rows:
+        first = 1900 + int(after or start)
+        last = through_birth_year if after else 1900 + int(end) - 1
+        for year in range(first, last + 1):
+            cohorts[year] = (
+                12 * int(years) + int(months or 0),
+                F(monthly) / 100,
+                int(most),
+                F(percent),
+            )
+    return cohorts
+
+
+@cache
+def poms_delayed_credit_rates(
+    through_birth_year: int = 1962,
+) -> dict[int, tuple[F, F]]:
+    """RS 00615.692D's exact (monthly, annual) rates by birth year.
+
+    January 1 belongs to the preceding birth-year band. The chart's
+    before-1917 row is expanded only from 1900, matching the test bundle.
+    """
+    text = source_text("poms_rs_00615_692")
+    chart = text[
+        text.index("D. Chart for Delayed") : text.index(
+            "E. Chart for Maximum Delayed"
+        )
+    ]
+    rows = re.findall(
+        r"(?:After 01/01/(43)|Before 01/02/(17)|"
+        r"01/02/(\d\d) thru 01/01/(\d\d)) "
+        r"(\d+/\d+)% [\d.]+ ([\d.]+)%",
+        chart,
+    )
+    cohorts = {}
+    for after, before, start, end, monthly, annual in rows:
+        first = 1900 if before else 1900 + int(after or start)
+        last = (
+            1916
+            if before
+            else through_birth_year if after else 1900 + int(end) - 1
+        )
+        for year in range(first, last + 1):
+            cohorts[year] = (F(monthly) / 100, F(annual) / 100)
+    return cohorts

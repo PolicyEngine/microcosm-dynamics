@@ -4,7 +4,11 @@
 byte count and SHA-256, plus the POMS transmittal where there is one. The
 tests in `tests/test_track_b_gross_benefits.py` recompute every hash and
 check that each worked-example figure they use appears verbatim in the
-capture.
+capture. `tests/ss/test_delayed_credit_statute.py` reuses the RS 00615.692
+and 402(w) captures for the statutory float reference beside the sealed
+oracle (#494). It checks both D/E
+charts, verbatim rules and figures, and the published $1,175.00 example;
+its E-chart parser is shared with G.
 
 Three capture formats are used:
 
