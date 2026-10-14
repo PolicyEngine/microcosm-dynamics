@@ -1476,7 +1476,8 @@ FIT_JOBS_VARIABLE = "POPULACE_FIT_N_JOBS"
 
 def thread_settings() -> dict[str, str]:
     """The run's thread settings: one BLAS, OpenMP and numexpr thread per
-    process, and a passive OpenMP wait policy.
+    process, a passive OpenMP wait policy, and ``POPULACE_FIT_N_JOBS``
+    from 1 to 4 (registered at 4, as protocol v2 ran).
 
     Max ruled on 2026-10-11 that runs on the shared host use at most four
     BLAS and OpenMP threads and ``OMP_WAIT_POLICY=PASSIVE``. B2 uses one

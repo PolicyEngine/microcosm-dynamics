@@ -28,7 +28,7 @@ the registration permits no rerun. For example::
     PYTHONDONTWRITEBYTECODE=1 PYTHONWARNINGS='ignore::FutureWarning' \\
       PYTHONPATH=src:scripts OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 \\
       MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 \\
-      OMP_WAIT_POLICY=PASSIVE \\
+      OMP_WAIT_POLICY=PASSIVE POPULACE_FIT_N_JOBS=4 \\
       POPULACE_DYNAMICS_PSID_DIR=/Users/maxghenis/PolicyEngine/psid-data \\
       POPULACE_DYNAMICS_PE_US_DIR=/path/to/site-packages \\
       /path/to/runtime/bin/python scripts/track_b_b2_score.py \\

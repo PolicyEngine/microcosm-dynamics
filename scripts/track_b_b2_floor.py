@@ -36,7 +36,7 @@ and in the selectors' pinned runtime, for example::
     PYTHONDONTWRITEBYTECODE=1 PYTHONWARNINGS='ignore::FutureWarning' \\
       PYTHONPATH=src:scripts OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 \\
       MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 \\
-      OMP_WAIT_POLICY=PASSIVE \\
+      OMP_WAIT_POLICY=PASSIVE POPULACE_FIT_N_JOBS=4 \\
       POPULACE_DYNAMICS_PSID_DIR=/Users/maxghenis/PolicyEngine/psid-data \\
       /path/to/runtime/bin/python scripts/track_b_b2_floor.py \\
       --registration-id <#42 comment id> --expected-commit <sha> \\
