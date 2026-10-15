@@ -7,7 +7,8 @@
 * ``scripts/track_u2_structure.py`` and
   ``scripts/track_u2_component_diagnostics.py`` cannot reach the income
   concept or the tabulation (static transitive import graph, package
-  initializers included).
+  initializers included), and refuse without Max's recorded
+  authorization (``--authorized-by``) before any PSID path is resolved.
 * ``scripts/run_track_u2_registered.py`` refuses every other state
   before reading PSID, with a fake ``git`` and hand-built specification
   blocks.  Its checks run in the script's own order (pointer, commit,
@@ -98,25 +99,61 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
         assert entry["income_equal_to_invented_frame"], wave
         assert entry["dc_equal_to_invented_frame"], wave
         assert entry["wealth1_identity"]["n_exact"] == entry["n_records"]
-        assert entry["registry_gate"]["refused"] == (wave != "2013")
-        assert entry["registry_gate_dc_route"]["refused"] == (wave != "2013")
+        # 2015-2023 resolved with the d637 commits for amendments 2, 5b
+        # and 5a: the registry gate applies every wave's family records.
+        assert not entry["registry_gate"]["refused"], wave
+        assert not entry["registry_gate_dc_route"]["refused"], wave
     assert checks["mapping"]["negative_where_undocumented_refused"]["refused"]
     assert checks["mapping"]["crosswalk_as_input_refused"]["refused"]
+    from populace_dynamics.uniform_cut_track_u2 import sources
+
     roles = checks["role_refusals"]
-    assert roles["registry_context_on_invented_inputs"]["refused"]
-    assert roles["code_88_under_declared_context"]["refused"]
+    # Section 16c (d1090): the registry context builds the invented
+    # population exactly as the declared context does, exclusions included.
+    built = roles["registry_context_on_invented_inputs"]
+    assert not built["refused"]
+    for row in ("U0", "U1"):
+        assert built["rows"][row]["observations_equal"], row
+        assert built["rows"][row]["dispositions_equal"], row
+        exclusions = built["rows"][row]["family_unit_exclusions"]
+        assert set(exclusions) == set(sources.FAMILY_UNIT_EXCLUSIONS)
+        assert all(count > 0 for count in exclusions.values()), row
+    # Amendment 1c (d637, confirmed by d745): both role contexts build a
+    # code-88 first-year cohabitor's family with every observation and
+    # disposition unchanged.
+    for context in ("registry", "declared"):
+        entry = roles[f"code_88_under_{context}_context"]
+        assert not entry["refused"], context
+        assert entry["observations_equal"], context
+        assert entry["dispositions_equal"], context
+        assert entry["rule"] == {
+            "wave": 2019,
+            "code": 88,
+            "present": True,
+            "income_role": "ofum",
+            "spouse_slot": False,
+            "legal_spouse_annuity": False,
+            "marital_resolution": False,
+            "administrative_birth_support": True,
+            "refusal": None,
+            "family_unit_exclusion": None,
+        }, context
     assert roles["declared_context_on_non_invented_inputs"]["refused"]
     assert roles["registry_rules_equal_declared_where_resolved"]
     refusals = roles["registry_rule_refusals"]
     assert refusals and all(entry["refused"] for entry in refusals.values())
-    for key in ("2015.20", "2019.90", "2021.92", "2023.90", "2013.88"):
-        assert key in refusals, key
-    members = roles["invented_members_with_refused_codes"]
-    # The invented population holds a member of every refused code
-    # except code 88, which the separate code-88 variant adds.
-    for key, count in members.items():
-        assert (count > 0) == (not key.endswith(".88")), key
-    assert checks["loader_preflight"]["refused"]
+    # Only code 92's absence before 2017 refuses: code 88 takes amendment
+    # 1c's convention since its registry commit.
+    assert set(refusals) == {"2013.92", "2015.92"}
+    # Both are absences, so no present relationship code refuses: the
+    # count of invented members holding one is over no code.
+    assert roles["invented_members_with_refused_codes"] == {}
+    # No blocker remains, and an unfrozen load without Max's recorded
+    # authorization refuses before any PSID path is resolved.
+    assert not checks["loader_preflight"]["refused"]
+    unauthorized = checks["unauthorized_unfrozen_load"]
+    assert unauthorized["error"] == "U2AuthorizationRefusal"
+    assert "needs Max's authorization" in unauthorized["message"]
     gate_refusals = checks["invented_gate_refusals"]
     assert set(gate_refusals) == {
         "relabel_as_invented",
@@ -142,10 +179,16 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
         "missing_head",
         "duplicate_family_record_2019",
         "duplicate_person_record_2019",
+        "code_88_in_excluded_unit_2019",
+        "zero_weight_target_in_excluded_unit_2015",
+        "sex_unknown_target_in_excluded_unit_2019",
+        "spouse_slot_occupant_without_family_spouse_2019",
+        "code_88_target_with_ofum_income_2019",
     ]
     assert all(entry["regenerated"] for entry in variants.values())
+    # Amendment 1c: the two code-88 variants build under the declared
+    # context (the cohabitor has the OFUM role).
     build_refused = {
-        "code_88_first_year_cohabitor": "U2RoleRefusal",
         "missing_family_record_2019": "U2CohortError",
         "duplicate_family_record_2019": "U2CohortError",
         "duplicate_person_record_2019": "U2CohortError",
@@ -161,6 +204,9 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
         # family file's slot flag, so the income rows refuse.
         "ambiguous_legal_spouse": "U2CohortError",
         "spouse_slot_disagreement_2019": "U2CohortError",
+        # Amendment 2 (d637): the family file's "no spouse" code never
+        # removes the roster's occupant; the disagreement refuses.
+        "spouse_slot_occupant_without_family_spouse_2019": "U2CohortError",
         "missing_head": "AdjustedPovertyError",
     }
     for name, entry in variants.items():
@@ -253,7 +299,14 @@ def test_dry_run_markdown_names_the_refusals(dry_run):
     text = (dry_run / "RESULTS.md").read_text()
     assert "INVENTED" in text
     assert "not a comparison" in text.lower()
-    assert "Loader preflight refuses" in text
+    assert (
+        "Loader source preflight passes at the committed registries "
+        "(no blocker): True" in text
+    )
+    assert (
+        "an unfrozen load without Max's recorded authorization refuses "
+        "before any PSID path is resolved: True" in text
+    )
     assert "Round-1 review refusals (invented;" in text
     assert "Round-2 review refusals (invented;" in text
     assert "Round-3 review refusals (invented):" in text
@@ -321,35 +374,53 @@ def _reachable(root: str) -> set[str]:
     return seen
 
 
-@pytest.mark.parametrize(
-    "script", ["track_u2_structure", "track_u2_component_diagnostics"]
-)
-def test_pre_registration_scripts_refuse_before_opening_psid(script, tmp_path):
-    """Section 20 step 4 is not authorized and the registries hold open
-    routes: each structural entry point, run in a fresh interpreter,
-    refuses in the loader's source preflight before any file under the
-    PSID directory is opened, with no poverty module loaded, and writes
-    nothing."""
+#: The two section 20 step-4 entry points.
+STRUCTURAL_SCRIPTS = ["track_u2_structure", "track_u2_component_diagnostics"]
 
+
+def _probe(script, argv, tmp_path, *, resolve):
+    """Run ``script`` with ``argv`` in a fresh interpreter: an audit hook
+    records every open under the staged and the default PSID directory
+    (the default pointed at a sentinel directory), and
+    ``psid._resolve_data_dir`` records each call and, unless ``resolve``,
+    raises.  Returns the exit code, stderr, the refusal, the opens and
+    resolutions, and any poverty module loaded."""
+
+    import os
     import subprocess
     import sys
 
+    from populace_dynamics.data import psid
+
     data_dir = tmp_path / "psid"
-    data_dir.mkdir()
-    output_dir = tmp_path / "out"
+    data_dir.mkdir(exist_ok=True)
+    default = tmp_path / "default-psid"
+    default.mkdir(exist_ok=True)
+    watched = [str(data_dir), str(default), str(psid._DEFAULT_DATA_DIR)]
     path = ROOT / "scripts" / f"{script}.py"
     probe = f"""
 import json, runpy, sys
-opened = []
+opened, resolved = [], []
 def spy(event, args):
-    if event == "open" and args and str(args[0]).startswith({str(data_dir)!r}):
+    if event == "open" and args and any(
+        str(args[0]).startswith(w) for w in {watched!r}
+    ):
         opened.append(str(args[0]))
 sys.addaudithook(spy)
-sys.argv = [{str(path)!r}, "--output-dir", {str(output_dir)!r},
-            "--data-dir", {str(data_dir)!r}]
-refusal = None
+from populace_dynamics.data import psid
+original = psid._resolve_data_dir
+def sentinel(data_dir):
+    resolved.append(None if data_dir is None else str(data_dir))
+    if not {resolve!r}:
+        raise RuntimeError("a PSID path was resolved")
+    return original(data_dir)
+psid._resolve_data_dir = sentinel
+sys.argv = [{str(path)!r}, *{argv!r}]
+code, refusal = None, None
 try:
     runpy.run_path({str(path)!r}, run_name="__main__")
+except SystemExit as error:
+    code = error.code
 except BaseException as error:
     refusal = [type(error).__name__, str(error)]
 forbidden = [
@@ -360,8 +431,8 @@ forbidden = [
     )
     if name in sys.modules
 ]
-print(json.dumps({{"refusal": refusal, "opened": opened,
-                  "forbidden": forbidden}}))
+print(json.dumps({{"code": code, "refusal": refusal, "opened": opened,
+                  "resolved": resolved, "forbidden": forbidden}}))
 """
     done = subprocess.run(
         [sys.executable, "-c", probe],
@@ -369,13 +440,183 @@ print(json.dumps({{"refusal": refusal, "opened": opened,
         capture_output=True,
         text=True,
         check=True,
+        env={**os.environ, psid._DEFAULT_DATA_DIR_ENV: str(default)},
     )
     record = json.loads(done.stdout.strip().splitlines()[-1])
+    record["stderr"] = done.stderr
+    record["data_dir"] = str(data_dir)
+    return record
+
+
+@pytest.mark.parametrize("script", STRUCTURAL_SCRIPTS)
+@pytest.mark.parametrize(
+    "flags",
+    [
+        [],
+        ["--data-dir", "{data_dir}"],
+        ["--authorized-by", "yes"],
+        ["--authorized-by", "D745"],
+        ["--authorized-by", ""],
+        ["--authorized-by", "d0", "--data-dir", "{data_dir}"],
+    ],
+)
+def test_structural_pass_refuses_without_max_s_authorization(
+    script, flags, tmp_path
+):
+    """Section 20 step 4 reads real PSID records, so it needs Max's
+    authorization, recorded as a chief-of-staff decision: without
+    ``--authorized-by <decision id>`` (or with anything but a decision
+    id) each structural entry point, run in a fresh interpreter, exits
+    non-zero before any PSID path is resolved or any file under the
+    staged or default PSID directory is opened, with no poverty module
+    loaded, and writes nothing."""
+
+    output_dir = tmp_path / "out"
+    data_dir = str(tmp_path / "psid")
+    argv = ["--output-dir", str(output_dir)] + [
+        flag.format(data_dir=data_dir) for flag in flags
+    ]
+    record = _probe(script, argv, tmp_path, resolve=False)
+    assert record["code"] == 2, record
+    assert record["refusal"] is None, record
+    assert "needs Max's authorization" in record["stderr"]
+    assert "does not grant" in record["stderr"]
+    assert record["resolved"] == [] and record["opened"] == []
+    assert record["forbidden"] == []
+    assert not output_dir.exists()
+
+
+@pytest.mark.parametrize("script", STRUCTURAL_SCRIPTS)
+def test_an_authorized_structural_pass_reaches_the_loader(script, tmp_path):
+    """With a decision id the pass gets past the authorization check and
+    the source preflight (no blocker remains) and reaches the staged
+    directory, where an empty one refuses at the cited-source rehash:
+    nothing under it is opened and nothing is written.  The flag records
+    the authorization; it grants nothing a decision id does not name."""
+
+    output_dir = tmp_path / "out"
+    data_dir = str(tmp_path / "psid")
+    argv = [
+        "--output-dir",
+        str(output_dir),
+        "--data-dir",
+        data_dir,
+        "--authorized-by",
+        "d999999999",
+    ]
+    record = _probe(script, argv, tmp_path, resolve=True)
     assert record["refusal"][0] == "U2LoaderRefusal", record
-    assert "registry blockers" in record["refusal"][1]
+    assert "is not staged" in record["refusal"][1]
+    assert record["resolved"] == [data_dir]
     assert record["opened"] == []
     assert record["forbidden"] == []
     assert not output_dir.exists()
+
+
+@pytest.mark.parametrize("script", STRUCTURAL_SCRIPTS)
+def test_structural_build_refuses_without_an_authorization_record(
+    script, monkeypatch
+):
+    """``build`` itself refuses without a valid record, or with one made
+    at another git head, before the loader is called."""
+
+    from populace_dynamics.uniform_cut_track_u2 import loader
+
+    module = _script(script)
+    calls = []
+    monkeypatch.setattr(
+        module.loader, "load_u2_inputs", lambda **kwargs: calls.append(kwargs)
+    )
+    for authorization in (None, {}, {"decision": "d745"}):
+        with pytest.raises(loader.U2AuthorizationRefusal):
+            module.build(authorization=authorization)
+    elsewhere = loader.structural_pass_authorization("d745", git_head="f" * 40)
+    with pytest.raises(loader.U2AuthorizationRefusal, match="another git"):
+        module.build(authorization=elsewhere)
+    assert calls == []
+
+
+def test_the_component_pass_records_its_authorization(u2_inputs, monkeypatch):
+    """The output records the decision id, the git head and the UTC time
+    (here on invented inputs, with the import guard and the loader
+    patched: no PSID path is touched)."""
+
+    from populace_dynamics.uniform_cut_track_u2 import loader
+
+    module = _script("track_u2_component_diagnostics")
+    monkeypatch.setattr(module, "_leaked", lambda: [])
+    monkeypatch.setattr(
+        module.loader, "load_u2_inputs", lambda **kwargs: u2_inputs
+    )
+    record = loader.structural_pass_authorization(
+        "d1234", git_head=module._git("rev-parse", "HEAD")
+    )
+    result = module.build(authorization=record)
+    assert result["authorization"] == record
+
+
+@pytest.mark.parametrize("script", STRUCTURAL_SCRIPTS)
+def test_main_hands_build_the_recorded_authorization(
+    script, tmp_path, monkeypatch
+):
+    module = _script(script)
+    seen = {}
+
+    def build(data_dir, *, authorization):
+        seen.update(authorization)
+        return {"authorization": authorization, "preregistration_evidence": {}}
+
+    monkeypatch.setattr(module, "build", build)
+    module.main(
+        [
+            "--output-dir",
+            str(tmp_path),
+            "--authorized-by",
+            "d1234",
+        ]
+    )
+    assert seen["decision"] == "d1234"
+    assert seen["git_head"] == module._git("rev-parse", "HEAD")
+    name = {
+        "track_u2_structure": "track-u2-structure.json",
+        "track_u2_component_diagnostics": (
+            "track-u2-component-diagnostics.json"
+        ),
+    }[script]
+    written = json.loads((tmp_path / name).read_text())
+    assert written["authorization"] == seen
+
+
+@pytest.mark.parametrize("script", STRUCTURAL_SCRIPTS)
+def test_build_returns_the_authorization_in_its_output(script):
+    """Statically: ``build`` puts the checked record in what it returns,
+    under ``authorization`` (the structure pass cannot run to its end on
+    invented inputs, whose seal its loader evidence refuses)."""
+
+    tree = ast.parse((ROOT / "scripts" / f"{script}.py").read_text())
+    (build,) = [
+        node
+        for node in tree.body
+        if isinstance(node, ast.FunctionDef) and node.name == "build"
+    ]
+    returned = [
+        node.value
+        for node in ast.walk(build)
+        if isinstance(node, ast.Return) and isinstance(node.value, ast.Dict)
+    ]
+    (output,) = returned
+    pairs = {
+        key.value: value
+        for key, value in zip(output.keys, output.values, strict=True)
+        if isinstance(key, ast.Constant)
+    }
+    assert isinstance(pairs["authorization"], ast.Name)
+    assert pairs["authorization"].id == "authorization"
+    first = build.body[0]
+    assert ast.unparse(first) == (
+        "authorization = "
+        "loader.check_structural_pass_authorization(authorization)"
+    )
 
 
 @pytest.mark.parametrize(
@@ -530,13 +771,33 @@ def test_preflight_refuses_incomplete_specifications(
         _preflight(registered, specification=block)
 
 
-def test_preflight_refuses_a_wrong_binding_then_the_open_mapping(registered):
+def test_preflight_refuses_a_wrong_binding_then_checks_the_mapping(
+    registered, monkeypatch
+):
     with pytest.raises(ValueError, match="binds"):
         _preflight(registered)
     binding = registered.binding_sha256("b" * 64, _invented_evidence())
-    from populace_dynamics.uniform_cut_track_u2 import loader
+    from populace_dynamics.uniform_cut_track_u2 import loader, sources
 
-    with pytest.raises(loader.U2LoaderRefusal, match="registry blockers"):
+    # Since amendment 1c's registry commit the mapping review passes at
+    # the committed registries (with the invented specification and
+    # evidence here; the committed ones refuse first, items 4 and 8) ...
+    state = _preflight(registered, binding=binding)
+    assert state["mapping_review"]["all_resolved"] is True
+    assert state["binding_sha256"] == binding
+    # ... and a blocker on any required entry refuses it.
+    sources.RoleContext.from_registry()
+    original = sources.blockers
+    monkeypatch.setattr(
+        sources,
+        "blockers",
+        lambda entry, name: (
+            ["reblocked (test)"]
+            if entry.get("id") == "2019.relationship.88"
+            else original(entry, name)
+        ),
+    )
+    with pytest.raises(loader.U2LoaderRefusal, match="^1 registry blockers"):
         _preflight(registered, binding=binding)
 
 
@@ -557,7 +818,7 @@ def test_preflight_refuses_a_plan_the_support_registry_does_not_hold(
 def test_preflight_checks_the_plan_before_the_mapping_review(
     registered, monkeypatch
 ):
-    from populace_dynamics.uniform_cut_track_u2 import cohort, loader
+    from populace_dynamics.uniform_cut_track_u2 import cohort
 
     calls = []
     original = cohort.check_plan_against_support_registry
@@ -568,8 +829,9 @@ def test_preflight_checks_the_plan_before_the_mapping_review(
 
     monkeypatch.setattr(cohort, "check_plan_against_support_registry", spy)
     binding = registered.binding_sha256("b" * 64, _invented_evidence())
-    with pytest.raises(loader.U2LoaderRefusal, match="registry blockers"):
-        _preflight(registered, binding=binding)
+    assert _preflight(registered, binding=binding)["mapping_review"][
+        "all_resolved"
+    ]
     # Once in the preflight, once again in the loader's source preflight.
     assert calls == ["committed", "committed"]
 

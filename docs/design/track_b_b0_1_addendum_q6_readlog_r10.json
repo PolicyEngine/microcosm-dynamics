@@ -1,0 +1,154 @@
+{
+ "harness_persisted_outputs": [],
+ "n_tool_calls": 21,
+ "paths": {
+  "--": "inside_root",
+  "833-": "inside_root",
+  "docs/design": "inside_root",
+  "docs/design/track_b_b0_1_addendum.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_power.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_inventory_r3.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_inventory_r4.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_inventory_r5.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_inventory_r6.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_inventory_r7.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_inventory_r8.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_inventory_r9.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_readlog_r1.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_readlog_r2.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_readlog_r3.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_readlog_r4.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_readlog_r5.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_readlog_r6.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_readlog_r7.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_readlog_r8.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_readlog_r9.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_review_r1.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_review_r2.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_review_r3.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_review_r4.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_review_r5.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_review_r6.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_review_r7.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_review_r8.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_review_r9.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_root_r1.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_root_r2.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_root_r3.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_root_r4.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_root_r5.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_root_r6.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_root_r7.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_root_r8.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_root_r9.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_reads.json": "inside_root",
+  "pattern:docs/design/track_b_b0_1_addendum*": "inside_root",
+  "pattern:scripts/track_b_b0_1_review_root.py": "inside_root",
+  "pattern:track_b_b0_1_addendum_q6_readlog_r*.json": "inside_root",
+  "scripts/track_b_b0_1_review_root.py": "inside_root",
+  "tests/README-tiers.md": "inside_root",
+  "tests/test_track_b_b0_1_addendum_record.py": "inside_root",
+  "tests/test_track_b_b0_1_review_root.py": "inside_root",
+  "tests/tier_counts.json": "inside_root"
+ },
+ "paths_outside_root_or_denied": [],
+ "persisted_outputs_opened": [],
+ "review_counts": true,
+ "root": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r10-20261011/root",
+ "schema": "track_b_b0_1_review_read_log.v6",
+ "tool_calls": [
+  {
+   "pattern": "docs/design/track_b_b0_1_addendum*",
+   "tool": "Glob"
+  },
+  {
+   "pattern": "scripts/track_b_b0_1_review_root.py",
+   "tool": "Glob"
+  },
+  {
+   "file_path": "docs/design/track_b_b0_1_addendum_q6_review_r9.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "scripts/track_b_b0_1_review_root.py",
+   "tool": "Read"
+  },
+  {
+   "path": "docs/design/track_b_b0_1_addendum.md",
+   "pattern": "\u03bd is 0|rescop|nu is 0|\u03bd = 0",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "docs/design/track_b_b0_1_addendum.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "docs/design/track_b_b0_1_addendum.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "docs/design/track_b_b0_1_addendum_q6_root_r9.json",
+   "tool": "Read"
+  },
+  {
+   "file_path": "docs/design/track_b_b0_1_addendum_q6_readlog_r9.json",
+   "tool": "Read"
+  },
+  {
+   "path": "docs/design/track_b_b0_1_addendum_q6_inventory_r9.json",
+   "pattern": "\"(schema|head|n_[a-z_]+|generated[a-z_]*|commit)\"\\s*:",
+   "tool": "Grep"
+  },
+  {
+   "path": "tests/test_track_b_b0_1_review_root.py",
+   "pattern": "def test_|unbalanced|wildcard|v6",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "tests/test_track_b_b0_1_review_root.py",
+   "tool": "Read"
+  },
+  {
+   "path": "scripts/track_b_b0_1_review_root.py",
+   "pattern": "read_log\\(|readlog|removed_codebook_tables|def main|denied_paths\\b",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "scripts/track_b_b0_1_review_root.py",
+   "tool": "Read"
+  },
+  {
+   "path": "tests/test_track_b_b0_1_addendum_record.py",
+   "pattern": "critical value is set|cannot cure|v6|round 9|Round 9",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "docs/design/track_b_b0_1_addendum.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "tests/test_track_b_b0_1_addendum_record.py",
+   "tool": "Read"
+  },
+  {
+   "glob": "track_b_b0_1_addendum_q6_readlog_r*.json",
+   "path": "docs/design",
+   "pattern": "\"schema\"|\"review_counts\"|\"n_tool_calls\"|\"pattern:",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "tests/tier_counts.json",
+   "tool": "Read"
+  },
+  {
+   "path": "tests/README-tiers.md",
+   "pattern": "\\d{1,3},\\d{3}|\\d{4,}",
+   "tool": "Grep"
+  },
+  {
+   "path": "docs/design/track_b_b0_1_addendum.md",
+   "pattern": "protocol-v2:(begin|end)|^## 1[5-6]\\.",
+   "tool": "Grep"
+  }
+ ]
+}

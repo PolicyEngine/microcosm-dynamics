@@ -1,0 +1,562 @@
+{
+  "schema_version": "ssa_trust_fund_interest_rates.v1",
+  "table": "Average annual special-issue interest rates on new issues and effective annual interest rates (percent)",
+  "unit": "percent",
+  "vintage_year": 2026,
+  "latest_observation_year": 2025,
+  "series": {
+    "effective_oasdi": {
+      "label": "Effective (combined OASI and DI trust funds)",
+      "definition": "An effective interest rate for a calendar year is the interest earned in that year divided by the average level of assets held during the year. This rate reflects the entire portfolio of securites held by the Social Security trust funds",
+      "source": "trust_fund_interest_rates"
+    },
+    "average_new_issue": {
+      "label": "Average annual special-issue rate on new issues",
+      "definition": "The average special-issue interest rate for a calendar year is the average of the 12 monthly interest rates on new issues during the year.",
+      "source": "trust_fund_interest_rates"
+    },
+    "effective_oasi": {
+      "label": "Effective (OASI trust fund)",
+      "source": "effective_rates_1940_1979, effective_rates_1980_on"
+    },
+    "effective_di": {
+      "label": "Effective (DI trust fund; none before 1957)",
+      "source": "effective_rates_1940_1979, effective_rates_1980_on"
+    }
+  },
+  "vintage_note": "Fetched 2026-10-01; covers 1940-2025. A post-2014 vintage, so not for code bound to the M7 2014 information boundary.",
+  "validation": {
+    "first_observation_year": 1940,
+    "latest_observation_year": 2025,
+    "n_observations": 86,
+    "continuous_calendar_years": true,
+    "combined_effective_equals_per_fund_oasdi": true
+  },
+  "build": {
+    "built_by": "scripts/extract_lifetime_measure_sources.py",
+    "sources": [
+      "trust_fund_interest_rates",
+      "effective_rates_1980_on",
+      "effective_rates_1940_1979"
+    ],
+    "provenance_file": "data/external/lifetime_measure_sources.provenance.json"
+  },
+  "data": {
+    "1940": {
+      "average_new_issue": 2.5,
+      "effective_oasdi": 2.4,
+      "effective_oasi": 2.4,
+      "effective_di": null
+    },
+    "1941": {
+      "average_new_issue": 2.5,
+      "effective_oasdi": 2.4,
+      "effective_oasi": 2.4,
+      "effective_di": null
+    },
+    "1942": {
+      "average_new_issue": 2.2,
+      "effective_oasdi": 2.3,
+      "effective_oasi": 2.3,
+      "effective_di": null
+    },
+    "1943": {
+      "average_new_issue": 1.9,
+      "effective_oasdi": 2.1,
+      "effective_oasi": 2.1,
+      "effective_di": null
+    },
+    "1944": {
+      "average_new_issue": 1.9,
+      "effective_oasdi": 2.0,
+      "effective_oasi": 2.0,
+      "effective_di": null
+    },
+    "1945": {
+      "average_new_issue": 1.9,
+      "effective_oasdi": 2.1,
+      "effective_oasi": 2.1,
+      "effective_di": null
+    },
+    "1946": {
+      "average_new_issue": 1.9,
+      "effective_oasdi": 2.0,
+      "effective_oasi": 2.0,
+      "effective_di": null
+    },
+    "1947": {
+      "average_new_issue": 2.0,
+      "effective_oasdi": 1.9,
+      "effective_oasi": 1.9,
+      "effective_di": null
+    },
+    "1948": {
+      "average_new_issue": 2.1,
+      "effective_oasdi": 2.8,
+      "effective_oasi": 2.8,
+      "effective_di": null
+    },
+    "1949": {
+      "average_new_issue": 2.1,
+      "effective_oasdi": 1.3,
+      "effective_oasi": 1.3,
+      "effective_di": null
+    },
+    "1950": {
+      "average_new_issue": 2.1,
+      "effective_oasdi": 2.0,
+      "effective_oasi": 2.0,
+      "effective_di": null
+    },
+    "1951": {
+      "average_new_issue": 2.2,
+      "effective_oasdi": 2.9,
+      "effective_oasi": 2.9,
+      "effective_di": null
+    },
+    "1952": {
+      "average_new_issue": 2.3,
+      "effective_oasdi": 2.2,
+      "effective_oasi": 2.2,
+      "effective_di": null
+    },
+    "1953": {
+      "average_new_issue": 2.4,
+      "effective_oasdi": 2.3,
+      "effective_oasi": 2.3,
+      "effective_di": null
+    },
+    "1954": {
+      "average_new_issue": 2.3,
+      "effective_oasdi": 2.3,
+      "effective_oasi": 2.3,
+      "effective_di": null
+    },
+    "1955": {
+      "average_new_issue": 2.3,
+      "effective_oasdi": 2.2,
+      "effective_oasi": 2.2,
+      "effective_di": null
+    },
+    "1956": {
+      "average_new_issue": 2.5,
+      "effective_oasdi": 2.4,
+      "effective_oasi": 2.4,
+      "effective_di": null
+    },
+    "1957": {
+      "average_new_issue": 2.5,
+      "effective_oasdi": 2.5,
+      "effective_oasi": 2.5,
+      "effective_di": 2.3
+    },
+    "1958": {
+      "average_new_issue": 2.6,
+      "effective_oasdi": 2.5,
+      "effective_oasi": 2.5,
+      "effective_di": 2.4
+    },
+    "1959": {
+      "average_new_issue": 2.6,
+      "effective_oasdi": 2.6,
+      "effective_oasi": 2.6,
+      "effective_di": 2.5
+    },
+    "1960": {
+      "average_new_issue": 2.9,
+      "effective_oasdi": 2.6,
+      "effective_oasi": 2.6,
+      "effective_di": 2.6
+    },
+    "1961": {
+      "average_new_issue": 3.8,
+      "effective_oasdi": 2.8,
+      "effective_oasi": 2.7,
+      "effective_di": 2.9
+    },
+    "1962": {
+      "average_new_issue": 3.9,
+      "effective_oasdi": 2.8,
+      "effective_oasi": 2.8,
+      "effective_di": 2.9
+    },
+    "1963": {
+      "average_new_issue": 3.9,
+      "effective_oasdi": 2.9,
+      "effective_oasi": 2.9,
+      "effective_di": 3.0
+    },
+    "1964": {
+      "average_new_issue": 4.1,
+      "effective_oasdi": 3.1,
+      "effective_oasi": 3.1,
+      "effective_di": 3.2
+    },
+    "1965": {
+      "average_new_issue": 4.2,
+      "effective_oasdi": 3.2,
+      "effective_oasi": 3.2,
+      "effective_di": 3.4
+    },
+    "1966": {
+      "average_new_issue": 4.9,
+      "effective_oasdi": 3.5,
+      "effective_oasi": 3.5,
+      "effective_di": 3.7
+    },
+    "1967": {
+      "average_new_issue": 5.0,
+      "effective_oasdi": 3.8,
+      "effective_oasi": 3.7,
+      "effective_di": 4.1
+    },
+    "1968": {
+      "average_new_issue": 5.5,
+      "effective_oasdi": 4.0,
+      "effective_oasi": 3.9,
+      "effective_di": 4.4
+    },
+    "1969": {
+      "average_new_issue": 6.6,
+      "effective_oasdi": 4.4,
+      "effective_oasi": 4.4,
+      "effective_di": 5.1
+    },
+    "1970": {
+      "average_new_issue": 7.3,
+      "effective_oasdi": 5.1,
+      "effective_oasi": 5.0,
+      "effective_di": 5.8
+    },
+    "1971": {
+      "average_new_issue": 6.0,
+      "effective_oasdi": 5.3,
+      "effective_oasi": 5.2,
+      "effective_di": 6.0
+    },
+    "1972": {
+      "average_new_issue": 5.9,
+      "effective_oasdi": 5.4,
+      "effective_oasi": 5.3,
+      "effective_di": 6.0
+    },
+    "1973": {
+      "average_new_issue": 6.6,
+      "effective_oasdi": 5.8,
+      "effective_oasi": 5.7,
+      "effective_di": 6.2
+    },
+    "1974": {
+      "average_new_issue": 7.5,
+      "effective_oasdi": 6.2,
+      "effective_oasi": 6.2,
+      "effective_di": 6.5
+    },
+    "1975": {
+      "average_new_issue": 7.4,
+      "effective_oasdi": 6.6,
+      "effective_oasi": 6.6,
+      "effective_di": 6.7
+    },
+    "1976": {
+      "average_new_issue": 7.1,
+      "effective_oasdi": 6.7,
+      "effective_oasi": 6.7,
+      "effective_di": 6.8
+    },
+    "1977": {
+      "average_new_issue": 7.1,
+      "effective_oasdi": 7.0,
+      "effective_oasi": 6.9,
+      "effective_di": 7.1
+    },
+    "1978": {
+      "average_new_issue": 8.2,
+      "effective_oasdi": 7.2,
+      "effective_oasi": 7.2,
+      "effective_di": 7.5
+    },
+    "1979": {
+      "average_new_issue": 9.1,
+      "effective_oasdi": 7.5,
+      "effective_oasi": 7.4,
+      "effective_di": 8.0
+    },
+    "1980": {
+      "average_new_issue": 11.0,
+      "effective_oasdi": 8.6,
+      "effective_oasi": 8.5,
+      "effective_di": 8.8
+    },
+    "1981": {
+      "average_new_issue": 13.3,
+      "effective_oasdi": 9.9,
+      "effective_oasi": 9.9,
+      "effective_di": 10.1
+    },
+    "1982": {
+      "average_new_issue": 12.8,
+      "effective_oasdi": 11.2,
+      "effective_oasi": 10.9,
+      "effective_di": 11.9
+    },
+    "1983": {
+      "average_new_issue": 11.0,
+      "effective_oasdi": 10.8,
+      "effective_oasi": 10.9,
+      "effective_di": 10.4
+    },
+    "1984": {
+      "average_new_issue": 12.4,
+      "effective_oasdi": 11.6,
+      "effective_oasi": 11.8,
+      "effective_di": 10.7
+    },
+    "1985": {
+      "average_new_issue": 10.8,
+      "effective_oasdi": 11.2,
+      "effective_oasi": 11.3,
+      "effective_di": 10.6
+    },
+    "1986": {
+      "average_new_issue": 8.0,
+      "effective_oasdi": 11.1,
+      "effective_oasi": 11.3,
+      "effective_di": 10.1
+    },
+    "1987": {
+      "average_new_issue": 8.4,
+      "effective_oasdi": 10.1,
+      "effective_oasi": 10.1,
+      "effective_di": 9.7
+    },
+    "1988": {
+      "average_new_issue": 8.8,
+      "effective_oasdi": 9.8,
+      "effective_oasi": 9.8,
+      "effective_di": 9.6
+    },
+    "1989": {
+      "average_new_issue": 8.7,
+      "effective_oasdi": 9.6,
+      "effective_oasi": 9.6,
+      "effective_di": 9.6
+    },
+    "1990": {
+      "average_new_issue": 8.6,
+      "effective_oasdi": 9.3,
+      "effective_oasi": 9.3,
+      "effective_di": 9.4
+    },
+    "1991": {
+      "average_new_issue": 8.0,
+      "effective_oasdi": 9.1,
+      "effective_oasi": 9.1,
+      "effective_di": 9.2
+    },
+    "1992": {
+      "average_new_issue": 7.1,
+      "effective_oasdi": 8.7,
+      "effective_oasi": 8.7,
+      "effective_di": 8.9
+    },
+    "1993": {
+      "average_new_issue": 6.1,
+      "effective_oasdi": 8.3,
+      "effective_oasi": 8.3,
+      "effective_di": 8.6
+    },
+    "1994": {
+      "average_new_issue": 7.1,
+      "effective_oasdi": 8.0,
+      "effective_oasi": 8.0,
+      "effective_di": 8.2
+    },
+    "1995": {
+      "average_new_issue": 6.9,
+      "effective_oasdi": 7.8,
+      "effective_oasi": 7.9,
+      "effective_di": 7.4
+    },
+    "1996": {
+      "average_new_issue": 6.6,
+      "effective_oasdi": 7.6,
+      "effective_oasi": 7.7,
+      "effective_di": 6.9
+    },
+    "1997": {
+      "average_new_issue": 6.6,
+      "effective_oasdi": 7.5,
+      "effective_oasi": 7.6,
+      "effective_di": 7.0
+    },
+    "1998": {
+      "average_new_issue": 5.6,
+      "effective_oasdi": 7.2,
+      "effective_oasi": 7.3,
+      "effective_di": 6.8
+    },
+    "1999": {
+      "average_new_issue": 5.9,
+      "effective_oasdi": 6.9,
+      "effective_oasi": 7.0,
+      "effective_di": 6.6
+    },
+    "2000": {
+      "average_new_issue": 6.2,
+      "effective_oasdi": 6.9,
+      "effective_oasi": 6.9,
+      "effective_di": 6.6
+    },
+    "2001": {
+      "average_new_issue": 5.2,
+      "effective_oasdi": 6.6,
+      "effective_oasi": 6.7,
+      "effective_di": 6.5
+    },
+    "2002": {
+      "average_new_issue": 4.9,
+      "effective_oasdi": 6.4,
+      "effective_oasi": 6.4,
+      "effective_di": 6.3
+    },
+    "2003": {
+      "average_new_issue": 4.1,
+      "effective_oasdi": 6.0,
+      "effective_oasi": 6.0,
+      "effective_di": 5.9
+    },
+    "2004": {
+      "average_new_issue": 4.3,
+      "effective_oasdi": 5.7,
+      "effective_oasi": 5.7,
+      "effective_di": 5.7
+    },
+    "2005": {
+      "average_new_issue": 4.3,
+      "effective_oasdi": 5.5,
+      "effective_oasi": 5.4,
+      "effective_di": 5.5
+    },
+    "2006": {
+      "average_new_issue": 4.8,
+      "effective_oasdi": 5.3,
+      "effective_oasi": 5.3,
+      "effective_di": 5.4
+    },
+    "2007": {
+      "average_new_issue": 4.7,
+      "effective_oasdi": 5.3,
+      "effective_oasi": 5.2,
+      "effective_di": 5.3
+    },
+    "2008": {
+      "average_new_issue": 3.6,
+      "effective_oasdi": 5.1,
+      "effective_oasi": 5.1,
+      "effective_di": 5.2
+    },
+    "2009": {
+      "average_new_issue": 2.9,
+      "effective_oasdi": 4.9,
+      "effective_oasi": 4.8,
+      "effective_di": 5.0
+    },
+    "2010": {
+      "average_new_issue": 2.8,
+      "effective_oasdi": 4.6,
+      "effective_oasi": 4.6,
+      "effective_di": 4.9
+    },
+    "2011": {
+      "average_new_issue": 2.4,
+      "effective_oasdi": 4.4,
+      "effective_oasi": 4.4,
+      "effective_di": 4.8
+    },
+    "2012": {
+      "average_new_issue": 1.5,
+      "effective_oasdi": 4.1,
+      "effective_oasi": 4.1,
+      "effective_di": 4.7
+    },
+    "2013": {
+      "average_new_issue": 1.9,
+      "effective_oasdi": 3.8,
+      "effective_oasi": 3.8,
+      "effective_di": 4.5
+    },
+    "2014": {
+      "average_new_issue": 2.3,
+      "effective_oasdi": 3.6,
+      "effective_oasi": 3.6,
+      "effective_di": 4.5
+    },
+    "2015": {
+      "average_new_issue": 2.0,
+      "effective_oasdi": 3.4,
+      "effective_oasi": 3.3,
+      "effective_di": 4.6
+    },
+    "2016": {
+      "average_new_issue": 1.8,
+      "effective_oasdi": 3.2,
+      "effective_oasi": 3.1,
+      "effective_di": 3.6
+    },
+    "2017": {
+      "average_new_issue": 2.3,
+      "effective_oasdi": 3.0,
+      "effective_oasi": 3.0,
+      "effective_di": 3.2
+    },
+    "2018": {
+      "average_new_issue": 2.9,
+      "effective_oasdi": 2.9,
+      "effective_oasi": 2.9,
+      "effective_di": 3.1
+    },
+    "2019": {
+      "average_new_issue": 2.2,
+      "effective_oasdi": 2.8,
+      "effective_oasi": 2.8,
+      "effective_di": 3.1
+    },
+    "2020": {
+      "average_new_issue": 1.0,
+      "effective_oasdi": 2.6,
+      "effective_oasi": 2.6,
+      "effective_di": 2.9
+    },
+    "2021": {
+      "average_new_issue": 1.4,
+      "effective_oasdi": 2.5,
+      "effective_oasi": 2.4,
+      "effective_di": 2.8
+    },
+    "2022": {
+      "average_new_issue": 3.0,
+      "effective_oasdi": 2.4,
+      "effective_oasi": 2.3,
+      "effective_di": 2.7
+    },
+    "2023": {
+      "average_new_issue": 4.1,
+      "effective_oasdi": 2.4,
+      "effective_oasi": 2.4,
+      "effective_di": 2.9
+    },
+    "2024": {
+      "average_new_issue": 4.3,
+      "effective_oasdi": 2.5,
+      "effective_oasi": 2.5,
+      "effective_di": 3.3
+    },
+    "2025": {
+      "average_new_issue": 4.3,
+      "effective_oasdi": 2.6,
+      "effective_oasi": 2.5,
+      "effective_di": 3.6
+    }
+  }
+}

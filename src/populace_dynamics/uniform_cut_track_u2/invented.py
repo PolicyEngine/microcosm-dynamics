@@ -13,14 +13,22 @@ The family mix is chosen to exercise every U2 path, not to resemble any
 population:
 
 * **roles** (section 3): married heads with a code-20 legal spouse
-  (including a **male** code-20 spouse in 2015); a code-22 cohabiting
-  partner whose birth year is inferred from invented earnings; a female
-  head with a code-90 uncooperative legal spouse (OFUM income role,
+  (including a **male** code-20 spouse in 2015, whose 2015 family unit
+  the section 16c B1 exclusion removes, and a 2015 couple with a female
+  code-20 spouse, which it keeps); a code-22 cohabiting partner whose
+  birth year is inferred from invented earnings; a female head with a
+  code-90 uncooperative legal spouse in 2015-2017 (OFUM income role,
   legal-spouse annuity life, resolves the head's unresolved history); a
   head with a code-92 uncooperative partner from 2017 (OFUM, never a
   legal spouse, never resolves); a head whose marriage history cannot be
   dated with a code-20 spouse without a record; a parent living as an
   OFUM (code 50) in an adult child's family with a grandchild;
+* **section 16c exclusions** (d1090): code-90 and code-92 members in
+  2019-2023 family units, which the B2 exclusion removes whether the
+  target is the reference person, the uncooperative spouse or partner,
+  or another member (an OFUM sibling), and a code-90 husband who is in an
+  institution in 2021 (sequence 51), outside the family unit, so that
+  unit stays;
 * **plans** (section 3): every U0 birth year at 67; every even birth
   year 1946-1954 at 66 and 68 (every one of row U1's fifteen cells holds
   an observation), 1946 at 66 in the 2013 wave; an even-birth member who
@@ -38,8 +46,10 @@ population:
 * **employer DC** (row U7): a current-job account, a combined plan
   whose current type counts, a DK amount, a combined previous plan left
   to accumulate (and its re-asked account items, a duplicate), account,
-  formula and DK plans on the declared account route, an IRA rollover
-  and an off-route amount;
+  formula and DK plans on the declared account route in 2013 (formula
+  and DK plans off-route from 2015, amendment 5), a DK amount on an
+  account plan's route and one on an off-route plan from 2019, an IRA
+  rollover and an off-route amount;
 * **design** (section 10): strata including the 2017/2019 refresher
   strata 88-94 and a singleton stratum.
 
@@ -138,6 +148,17 @@ FAMILY_COUNTS: dict[str, int] = {
     "refresher_stratum": 3,
     "separated": 2,
     "even_birth_1954": 2,
+    # Section 16c (d1090), appended so every earlier family keeps its id,
+    # interview numbers and random draws: a 2015 couple with a female
+    # code-20 spouse (B1 keeps it), a 2017 code-92 partner (OFUM in 2017,
+    # B2 excludes the 2019 unit), a 2019-2023 code-90 husband with an
+    # OFUM sibling (B2 excludes every unit, whoever the target), and a
+    # code-90 husband in an institution in 2021 (outside the family unit,
+    # so B2 does not exclude it that year).
+    "couple_2015": 1,
+    "code92_partner_2017": 1,
+    "code90_spouse_2019": 1,
+    "code90_institution_2021": 1,
 }
 #: WEALTH1's documented components by concept (section 4; held equal to
 #: the wealth registry identities by the tests).
@@ -539,6 +560,42 @@ def _family_spec(kind: str, index: int, rng: np.random.Generator) -> dict:
         roster = _roster({1: (1, 10)})
         spec["income"] = {"head_ss": 16_500}
         spec["wealth"] = 45_000
+    elif kind == "couple_2015":
+        persons = [
+            _person(1, "male", 1947, "married", spouse_slot=2),
+            _person(2, "female", 1948, "married", spouse_slot=1),
+        ]
+        roster = _roster({1: (1, 10), 2: (2, 20)})
+        spec["income"] = {"head_ss": 18_000, "wife_ss": 11_000}
+        spec["wealth"] = 70_000
+    elif kind == "code92_partner_2017":
+        persons = [
+            _person(1, "male", 1949, "never"),
+            _person(2, "female", 1950, "none", earnings=True),
+        ]
+        roster = _roster(
+            {1: (1, 10), 2: (2, 92)},
+            {2013: {2: (0, 0)}, 2015: {2: (0, 0)}},
+        )
+        spec["income"] = {"head_ss": 12_500, "ofum_ss": 8_000}
+        spec["wealth"] = 3_000
+    elif kind == "code90_spouse_2019":
+        persons = [
+            _person(1, "female", 1953, "none"),
+            _person(2, "male", 1952, "none"),
+            _person(3, "female", 1955, "never"),
+        ]
+        roster = _roster({1: (1, 10), 2: (2, 90), 3: (3, 40)})
+        spec["income"] = {"head_ss": 10_500, "ofum_ss": 14_000}
+        spec["wealth"] = 8_000
+    elif kind == "code90_institution_2021":
+        persons = [
+            _person(1, "female", 1953, "none"),
+            _person(2, "male", 1950, "none"),
+        ]
+        roster = _roster({1: (1, 10), 2: (2, 90)}, {2021: {2: (51, 90)}})
+        spec["income"] = {"head_ss": 9_800}
+        spec["wealth"] = 4_000
     else:  # pragma: no cover - every kind is listed in FAMILY_COUNTS
         raise ValueError(kind)
     for person in persons:
@@ -992,12 +1049,14 @@ def _dc_raw(family: Mapping[str, Any], wave: int) -> dict[str, int]:
                 "head_prev1_combo_amount": 9_000,
                 "head_prev1_dc_disposition": 3,
                 "head_prev1_dc_amount": 9_000,
-                # A formula plan's account items (declared route).
+                # A formula plan's account items: on the declared route
+                # in 2013 only, off-route from 2015 (amendment 5).
                 "head_prev2_type": 1,
                 "head_prev2_dc_disposition": 3,
                 "head_prev2_dc_amount": 15_000,
-                # A DK-type plan left to accumulate, and an account plan
-                # rolled over into an IRA (excluded).
+                # A DK-type plan left to accumulate (on the declared
+                # route in 2013 only, off-route from 2015), and an account
+                # plan rolled over into an IRA (excluded).
                 "wife_prev1_type": 8,
                 "wife_prev1_dc_disposition": 3,
                 "wife_prev1_dc_amount": 12_000,
@@ -1013,8 +1072,13 @@ def _dc_raw(family: Mapping[str, Any], wave: int) -> dict[str, int]:
             # An off-route amount: a formula-only current plan.
             row["wife_current_type"] = 1
             row["wife_current_amount"] = 4_000
-            # A DK amount on the route (counted as zero, unreported).
+            # A DK amount on the DK-type plan, off-route from 2015
+            # (amendment 5): counted off-route, never an unreported zero.
             row["wife_prev1_dc_amount"] = dk8
+            # A DK amount on an account plan's route (counted as zero,
+            # unreported).
+            row["head_prev2_type"] = 5
+            row["head_prev2_dc_amount"] = dk8
     return row
 
 
@@ -1036,15 +1100,7 @@ def _dc_frame(families: list[dict], wave: int) -> pd.DataFrame:
         for concept in raw.columns
         if concept.endswith("_amount")
     }
-    route = sources.DcRoute(
-        wave,
-        sources.DECLARED_DC_ROUTE_TYPES["current_account"],
-        sources.DECLARED_DC_ROUTE_TYPES["previous_both"],
-        sources.DECLARED_DC_ROUTE_TYPES["previous_account_items"],
-        3,
-        2,
-        "section_15_declared_route_invented_only",
-    )
+    route = sources.declared_dc_route(wave)
     return sources.employer_dc_balances(raw, route, widths)
 
 
@@ -1215,7 +1271,7 @@ def check_invented_inputs(inputs: cohort.U2Inputs) -> dict[str, Any]:
 
 
 def with_code_88_cohabitor(inputs: cohort.U2Inputs) -> cohort.U2Inputs:
-    """The invented inputs plus a code-88 first-year cohabitor (refusal).
+    """The invented inputs plus a code-88 first-year cohabitor (OFUM).
 
     The ``code_88_first_year_cohabitor`` variant of ``inputs``' seed.
     """
@@ -1360,6 +1416,23 @@ def _spouse_slot_disagreement_2019(base: cohort.U2Inputs) -> cohort.U2Inputs:
     )
 
 
+def _spouse_slot_occupant_without_family_spouse_2019(
+    base: cohort.U2Inputs,
+) -> cohort.U2Inputs:
+    obs = _declared_u0(base)
+    occupied = obs[obs["wave"].eq(2019) & obs["spouse_slot_occupied_roster"]][
+        "interview"
+    ].iloc[0]
+    income = base.family_income[2019].copy()
+    family = income["interview"].eq(occupied)
+    # The family file's "no Spouse/Partner in FU" code: age 0, slot empty.
+    income.loc[family, "wife_present"] = False
+    income["wife_age"] = income["wife_age"].mask(family)
+    return dataclasses.replace(
+        base, family_income={**base.family_income, 2019: income}
+    )
+
+
 def _missing_head(base: cohort.U2Inputs) -> cohort.U2Inputs:
     obs = _declared_u0(base)
     target = obs[obs["relationship"].eq(50)].iloc[0]
@@ -1391,6 +1464,120 @@ def _duplicate_person_record_2019(base: cohort.U2Inputs) -> cohort.U2Inputs:
     return dataclasses.replace(base, anchors={**base.anchors, 2019: repeated})
 
 
+def _first_excluded(
+    base: cohort.U2Inputs, disposition: str, wave: int
+) -> tuple[int, int]:
+    """U0's first would-be observation in ``wave`` that a section 16c
+    exclusion removes under the declared rules: its target and interview."""
+
+    disp = cohort.build_u2_cohort(
+        base, role_context=sources.RoleContext.declared()
+    ).dispositions
+    row = disp[
+        disp["disposition"].eq(disposition) & disp["wave"].eq(wave)
+    ].iloc[0]
+    person = int(row["person_id"])
+    anchor = base.anchors[wave]
+    interview = anchor.loc[anchor["person_id"].eq(person), "interview"]
+    return person, int(interview.iloc[0])
+
+
+def _first_excluded_2019(base: cohort.U2Inputs) -> tuple[int, int]:
+    return _first_excluded(base, sources.UNCOOPERATIVE_SPOUSE_OR_PARTNER, 2019)
+
+
+def _code_88_in_excluded_unit_2019(base: cohort.U2Inputs) -> cohort.U2Inputs:
+    _, interview = _first_excluded_2019(base)
+    return _added_person(
+        base,
+        _PERSON_BASE - 3,
+        wave=2019,
+        interview=interview,
+        sequence=4,
+        relationship=88,
+        age=58,
+        weight=500.0,
+        sex="female",
+    )
+
+
+def _zero_weight_target_in_excluded_unit_2015(
+    base: cohort.U2Inputs,
+) -> cohort.U2Inputs:
+    person, _ = _first_excluded(base, sources.MALE_CODE_20_2015, 2015)
+    frame = base.anchors[2015]
+    changed = frame.assign(
+        weight=frame["weight"].where(frame["person_id"] != person, 0.0)
+    )
+    return dataclasses.replace(base, anchors={**base.anchors, 2015: changed})
+
+
+def _sex_unknown_target_in_excluded_unit_2019(
+    base: cohort.U2Inputs,
+) -> cohort.U2Inputs:
+    person, _ = _first_excluded_2019(base)
+    persons = base.persons.assign(
+        sex=base.persons["sex"].where(
+            base.persons["person_id"] != person, "na"
+        )
+    )
+    return dataclasses.replace(base, persons=persons)
+
+
+#: The code-88 cohort target's recorded (ended) marriage: amendment 1c
+#: keeps a first-year cohabitor's own legal marital history.
+_CODE_88_TARGET_MARRIAGE = {
+    "marriage_order": 1,
+    "start_year": 1972,
+    "end_year": 1986,
+    "how_ended": "divorce",
+    "last_known_status": "divorced",
+    "most_recent_report_year": 2023,
+    "n_marriages": 1,
+    "n_records": 1,
+    "is_marriage": True,
+}
+
+
+def _code_88_target_with_ofum_income_2019(
+    base: cohort.U2Inputs,
+) -> cohort.U2Inputs:
+    income = base.family_income[2019]
+    family = int(
+        income.loc[
+            income["ofum_ss"].gt(0) & income["ofum_ssi"].gt(0), "interview"
+        ].iloc[0]
+    )
+    anchor = base.anchors[2019]
+    sequence = int(
+        anchor.loc[anchor["interview"].eq(family), "sequence"].max()
+    )
+    person = _PERSON_BASE - 4
+    changed = _added_person(
+        base,
+        person,
+        wave=2019,
+        interview=family,
+        sequence=sequence + 1,
+        relationship=88,
+        age=68,
+        weight=500.0,
+        sex="female",
+    )
+    history = base.marriage_history
+    record = {column: pd.NA for column in history.columns}
+    record.update(
+        person_id=person,
+        sex="female",
+        birth_year=1951,
+        **_CODE_88_TARGET_MARRIAGE,
+    )
+    history = pd.concat(
+        [history, pd.DataFrame([record])], ignore_index=True
+    ).astype(history.dtypes.to_dict())
+    return dataclasses.replace(changed, marriage_history=history)
+
+
 # Appended in order, so every earlier variant is unchanged.
 _VARIANT_BUILDERS = {
     "code_88_first_year_cohabitor": _code_88_first_year_cohabitor,
@@ -1401,12 +1588,27 @@ _VARIANT_BUILDERS = {
     "missing_head": _missing_head,
     "duplicate_family_record_2019": _duplicate_family_record_2019,
     "duplicate_person_record_2019": _duplicate_person_record_2019,
+    "code_88_in_excluded_unit_2019": _code_88_in_excluded_unit_2019,
+    "zero_weight_target_in_excluded_unit_2015": (
+        _zero_weight_target_in_excluded_unit_2015
+    ),
+    "sex_unknown_target_in_excluded_unit_2019": (
+        _sex_unknown_target_in_excluded_unit_2019
+    ),
+    "spouse_slot_occupant_without_family_spouse_2019": (
+        _spouse_slot_occupant_without_family_spouse_2019
+    ),
+    "code_88_target_with_ofum_income_2019": (
+        _code_88_target_with_ofum_income_2019
+    ),
 }
 _VARIANT_NOTES: dict[str, str] = {
     "code_88_first_year_cohabitor": (
         "a code-88 first-year cohabitor joins the first 2019 family; "
-        "section 3 declares no substantive rule for code 88, so every "
-        "role context refuses (refusal case)"
+        "under amendment 1c's convention (d637, confirmed by d745) it "
+        "has the OFUM income role outside the spouse slot, is no annuity "
+        "life and resolves no marital history, so every observation and "
+        "disposition is unchanged under either role context"
     ),
     "missing_family_record_2019": (
         "the first 2019 family-file income record is dropped; an "
@@ -1443,6 +1645,38 @@ _VARIANT_NOTES: dict[str, str] = {
         "the 2019 anchor record of U0's first 2019 observation appears "
         "twice: a repeated person identifier refuses (duplicate "
         "identifier, section 14)"
+    ),
+    "code_88_in_excluded_unit_2019": (
+        "a code-88 first-year cohabitor joins the 2019 family of U0's "
+        "first observation that the section 16c B2 exclusion removes: "
+        "under amendment 1c it has the OFUM role, and the unit stays "
+        "excluded, counted under its disposition, under either role "
+        "context"
+    ),
+    "zero_weight_target_in_excluded_unit_2015": (
+        "the target of U0's first 2015 observation that the B1 exclusion "
+        "removes has zero 2015 weight: it keeps its zero-weight "
+        "disposition, and a unit that supplies no other observation adds "
+        "nothing to B1's person count (section 16c precedence)"
+    ),
+    "sex_unknown_target_in_excluded_unit_2019": (
+        "the target of U0's first 2019 observation that the B2 exclusion "
+        "removes has unknown sex: it keeps its sex-unknown disposition "
+        "(section 16c precedence)"
+    ),
+    "spouse_slot_occupant_without_family_spouse_2019": (
+        "the family file of U0's first 2019 observation with a code-20 or "
+        "code-22 occupant codes the spouse age 0, 'no Spouse/Partner in "
+        "FU': the family file's spouse age never decides slot occupancy "
+        "(amendment 2, ratified by d637), so the slot flag and the roster "
+        "disagree and the income rows refuse (refusal case)"
+    ),
+    "code_88_target_with_ofum_income_2019": (
+        "a code-88 first-year cohabitor born 1951, divorced in 1986, joins "
+        "the first 2019 family with OFUM Social Security and SSI: a U0 "
+        "target whose own observation has the OFUM role under amendment "
+        "1c (the family income basis in U4 and the OFUM SSI cap), keeps "
+        "its recorded marital history and is no spouse-slot occupant"
     ),
 }
 #: The generator's named variants (see :data:`_VARIANT_NOTES`).

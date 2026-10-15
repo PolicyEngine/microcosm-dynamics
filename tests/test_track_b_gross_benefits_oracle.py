@@ -17,11 +17,13 @@ from pathlib import Path
 import pytest
 
 from populace_dynamics.ss.params import load_ssa_parameters
+from populace_dynamics.ss.statutory_delayed_credit import delayed_credit
 from populace_dynamics.track_b import gross_benefits as g
 from tests.track_b_gross_benefit_support import (
     DELAYED_CREDIT_SCHEDULE,
     FULL_RETIREMENT_AGE_SCHEDULE,
     poms_bend_point_table,
+    poms_delayed_credit_chart,
     published_nawi,
 )
 
@@ -82,6 +84,25 @@ def test_live_bundle_credits_the_whole_window_past_its_48_month_cap(params):
     assert g.delayed_credit_window_months(1960, params) == 36
     with pytest.raises(g.InvalidFamilyInput):
         g.worker_age_adjusted(F(1000), 0, 37, 1960, params)
+
+
+def test_statutory_float_function_live_bundle_credits_every_captured_cohort_window(
+    params,
+):
+    """402(w)(2)(A), (6); RS 00615.692D-E, through the statutory sibling."""
+    chart = poms_delayed_credit_chart(through_birth_year=1962)
+    for birth_year in range(1917, 1963):
+        fra, monthly, window, _ = chart[birth_year]
+        assert params.fra_months(birth_year) == fra
+        assert window == 840 - fra
+        assert params.delayed_credit_annual_rate(birth_year) == pytest.approx(
+            float(monthly * 12), rel=0, abs=1e-12
+        )
+        for months in range(window + 25):
+            expected = float(min(months, window) * monthly)
+            assert delayed_credit(months, birth_year, params) == pytest.approx(
+                expected, rel=0, abs=1e-12
+            )
 
 
 def test_worked_examples_hold_on_the_live_bundle(params):

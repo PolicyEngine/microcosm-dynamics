@@ -1,0 +1,298 @@
+{
+ "harness_persisted_outputs": [],
+ "n_tool_calls": 37,
+ "paths": {
+  "--": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/_review_context/OPTIONS.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/_review_context/d1342-ruling.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/_review_context/d622-ruling.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/_review_context/d693-RECOMMENDATION.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/_review_context/d693-ruling.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/_review_context/d765-ruling.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/_review_context/d781-ruling.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/_review_context/d782-ruling.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/_review_context/trackb-design-20260928.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/docs/design/track_b_b0_1_addendum.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/docs/design/track_b_b0_1_addendum_q6_readlog_r5.json": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/docs/design/track_b_b0_1_addendum_q6_review_r5.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/docs/design/track_b_b0_1_addendum_q6_root_r5.json": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/docs/design/track_b_b0_1_ruled_power.json": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/scripts/track_b_b0_1_exposure_inventory.py": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/scripts/track_b_b0_1_planning_values.py": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/scripts/track_b_b0_1_review_root.py": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/scripts/track_b_b0_1_ruled_power.py": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/src": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/src/populace_dynamics/harness/m6_cells.py": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/tests/test_track_b_b0_1_addendum_record.py": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/tests/test_track_b_b0_1_review_root.py": "inside_root",
+  "1000-": "inside_root",
+  "1010-": "inside_root",
+  "1011-": "inside_root",
+  "138-": "inside_root",
+  "155-": "inside_root",
+  "156-": "inside_root",
+  "204-": "inside_root",
+  "210-": "inside_root",
+  "968-": "inside_root",
+  "999-": "inside_root",
+  "_review_context/OPTIONS.md": "inside_root",
+  "_review_context/d1342-ruling.md": "inside_root",
+  "_review_context/d622-ruling.md": "inside_root",
+  "_review_context/d693-RECOMMENDATION.md": "inside_root",
+  "_review_context/d693-ruling.md": "inside_root",
+  "_review_context/d765-ruling.md": "inside_root",
+  "_review_context/d781-ruling.md": "inside_root",
+  "_review_context/d782-ruling.md": "inside_root",
+  "_review_context/pr490-comments.md": "inside_root",
+  "_review_context/trackb-design-20260928.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_power.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_inventory_r3.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_inventory_r4.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_inventory_r5.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_readlog_r1.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_readlog_r2.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_readlog_r3.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_readlog_r4.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_readlog_r5.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_review_r1.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_review_r2.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_review_r3.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_review_r4.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_review_r5.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_root_r1.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_root_r2.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_root_r3.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_root_r4.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_root_r5.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_reads.json": "inside_root",
+  "docs/design/track_b_b0_1_audit.md": "inside_root",
+  "docs/design/track_b_b0_1_counts.json": "inside_root",
+  "docs/design/track_b_b0_1_exposure_inventory.json": "inside_root",
+  "docs/design/track_b_b0_1_exposure_inventory_addendum.json": "inside_root",
+  "docs/design/track_b_b0_1_exposure_inventory_r2.json": "inside_root",
+  "docs/design/track_b_b0_1_gate_leak_check.txt": "inside_root",
+  "docs/design/track_b_b0_1_planning_values.json": "inside_root",
+  "docs/design/track_b_b0_1_ruled_power.json": "inside_root",
+  "pattern:**/*": "inside_root",
+  "pattern:_review_context/*": "inside_root",
+  "pattern:docs/design/track_b_b0_1*": "inside_root",
+  "pattern:scripts/track_b*": "inside_root",
+  "pattern:tests/test_track_b_b0_1*": "inside_root",
+  "scripts/track_b_b0_1_addendum_power.py": "inside_root",
+  "scripts/track_b_b0_1_addendum_reads.py": "inside_root",
+  "scripts/track_b_b0_1_addendum_tables.py": "inside_root",
+  "scripts/track_b_b0_1_counts.py": "inside_root",
+  "scripts/track_b_b0_1_exposure_inventory.py": "inside_root",
+  "scripts/track_b_b0_1_gate_leak_check.py": "inside_root",
+  "scripts/track_b_b0_1_planning_values.py": "inside_root",
+  "scripts/track_b_b0_1_review_power.py": "inside_root",
+  "scripts/track_b_b0_1_review_root.py": "inside_root",
+  "scripts/track_b_b0_1_ruled_power.py": "inside_root",
+  "src/populace_dynamics/data/couple_earnings.py": "inside_root",
+  "src/populace_dynamics/data/couple_earnings.py-1003-": "inside_root",
+  "src/populace_dynamics/data/couple_earnings.py-985-": "inside_root",
+  "src/populace_dynamics/data/couple_earnings.py-986-": "inside_root",
+  "src/populace_dynamics/data/cps_tenure.py": "inside_root",
+  "src/populace_dynamics/data/cps_tenure.py-429-": "inside_root",
+  "src/populace_dynamics/data/cps_tenure.py-430-": "inside_root",
+  "src/populace_dynamics/data/cps_tenure.py-437-": "inside_root",
+  "src/populace_dynamics/data/deployment_frame.py": "inside_root",
+  "src/populace_dynamics/data/deployment_frame.py-150-": "inside_root",
+  "src/populace_dynamics/data/deployment_frame.py-151-": "inside_root",
+  "src/populace_dynamics/data/deployment_frame.py-158-": "inside_root",
+  "src/populace_dynamics/data/deployment_frame.py-159-": "inside_root",
+  "src/populace_dynamics/harness/metrics.py": "inside_root",
+  "src/populace_dynamics/harness/metrics.py-100-": "inside_root",
+  "src/populace_dynamics/harness/metrics.py-109-": "inside_root",
+  "src/populace_dynamics/harness/metrics.py-85-": "inside_root",
+  "src/populace_dynamics/harness/metrics.py-99-": "inside_root",
+  "src/populace_dynamics/harness/moments.py": "inside_root",
+  "src/populace_dynamics/harness/moments.py-110-": "inside_root",
+  "src/populace_dynamics/harness/moments.py-95-": "inside_root",
+  "src/populace_dynamics/harness/moments.py-96-": "inside_root",
+  "src/populace_dynamics/uniform_cut_track_u/diagnostics.py": "inside_root",
+  "src/populace_dynamics/uniform_cut_track_u/diagnostics.py-382-": "inside_root",
+  "src/populace_dynamics/uniform_cut_track_u/diagnostics.py-386-": "inside_root",
+  "src/populace_dynamics/uniform_cut_track_u/diagnostics.py-400-": "inside_root",
+  "src/populace_dynamics/uniform_cut_track_u/diagnostics.py-401-": "inside_root",
+  "src/populace_dynamics/uniform_cut_track_u/diagnostics.py-405-": "inside_root",
+  "src/populace_dynamics/uniform_cut_track_u/diagnostics.py-406-": "inside_root",
+  "tests/test_track_b_b0_1_addendum_power.py": "inside_root",
+  "tests/test_track_b_b0_1_addendum_reads.py": "inside_root",
+  "tests/test_track_b_b0_1_addendum_record.py": "inside_root",
+  "tests/test_track_b_b0_1_audit_record.py": "inside_root",
+  "tests/test_track_b_b0_1_counts.py": "inside_root",
+  "tests/test_track_b_b0_1_planning_values.py": "inside_root",
+  "tests/test_track_b_b0_1_review_root.py": "inside_root",
+  "tests/test_track_b_b0_1_revision1_tools.py": "inside_root",
+  "tests/test_track_b_b0_1_ruled_power.py": "inside_root"
+ },
+ "paths_outside_root_or_denied": [],
+ "persisted_outputs_opened": [],
+ "review_counts": true,
+ "root": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root",
+ "schema": "track_b_b0_1_review_read_log.v6",
+ "tool_calls": [
+  {
+   "pattern": "**/*",
+   "tool": "Glob"
+  },
+  {
+   "pattern": "docs/design/track_b_b0_1*",
+   "tool": "Glob"
+  },
+  {
+   "pattern": "_review_context/*",
+   "tool": "Glob"
+  },
+  {
+   "pattern": "scripts/track_b*",
+   "tool": "Glob"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/docs/design/track_b_b0_1_addendum.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/docs/design/track_b_b0_1_addendum.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/docs/design/track_b_b0_1_addendum.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/docs/design/track_b_b0_1_addendum_q6_review_r5.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/_review_context/d1342-ruling.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/_review_context/d782-ruling.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/_review_context/d781-ruling.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/_review_context/d765-ruling.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/_review_context/d693-ruling.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/_review_context/d622-ruling.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/_review_context/d693-RECOMMENDATION.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/scripts/track_b_b0_1_ruled_power.py",
+   "tool": "Read"
+  },
+  {
+   "pattern": "tests/test_track_b_b0_1*",
+   "tool": "Glob"
+  },
+  {
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/docs/design/track_b_b0_1_addendum.md",
+   "pattern": "amendment|three or more|one cluster|refus",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/tests/test_track_b_b0_1_addendum_record.py",
+   "tool": "Read"
+  },
+  {
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/src",
+   "pattern": "def _weighted_quantile|def weighted_quantile",
+   "tool": "Grep"
+  },
+  {
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/src/populace_dynamics/harness/m6_cells.py",
+   "pattern": "quantile",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/src/populace_dynamics/harness/m6_cells.py",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/_review_context/OPTIONS.md",
+   "tool": "Read"
+  },
+  {
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/docs/design/track_b_b0_1_ruled_power.json",
+   "pattern": "orders_clearing|\"t_star\"|\"z_star\"|design_degrees|\"k\":|correlation_max|\"verdict\"",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/docs/design/track_b_b0_1_ruled_power.json",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/docs/design/track_b_b0_1_addendum_q6_root_r5.json",
+   "tool": "Read"
+  },
+  {
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/docs/design/track_b_b0_1_addendum_q6_readlog_r5.json",
+   "pattern": "\"(calls|tool_calls|counts|verdict|outside|denied|oversized|n_calls|summary)\"",
+   "tool": "Grep"
+  },
+  {
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/docs/design/track_b_b0_1_addendum_q6_readlog_r5.json",
+   "pattern": "\"tool\": \"",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/docs/design/track_b_b0_1_addendum_q6_readlog_r5.json",
+   "tool": "Read"
+  },
+  {
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/docs/design/track_b_b0_1_addendum_q6_readlog_r5.json",
+   "pattern": "\"pattern\"",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/docs/design/track_b_b0_1_addendum_q6_readlog_r5.json",
+   "tool": "Read"
+  },
+  {
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/scripts/track_b_b0_1_review_root.py",
+   "pattern": "def readlog|Glob|pattern|denied",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/scripts/track_b_b0_1_review_root.py",
+   "tool": "Read"
+  },
+  {
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/tests/test_track_b_b0_1_review_root.py",
+   "pattern": "_result_paths|read_log\\(|pattern|relative",
+   "tool": "Grep"
+  },
+  {
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/scripts/track_b_b0_1_planning_values.py",
+   "pattern": "def design_multiplicities",
+   "tool": "Grep"
+  },
+  {
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/_review_context/trackb-design-20260928.md",
+   "pattern": "Each record lists all ten|WEAK_POWER_OR_VACUITY|Insufficient precision",
+   "tool": "Grep"
+  },
+  {
+   "path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r6-20261011/root/scripts/track_b_b0_1_exposure_inventory.py",
+   "pattern": "read_text|read_bytes|git\", \"(ls-files|grep|show)",
+   "tool": "Grep"
+  }
+ ]
+}
