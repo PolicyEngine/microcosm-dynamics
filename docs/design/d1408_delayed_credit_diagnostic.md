@@ -71,8 +71,8 @@ claim. The publication fixture names the six authorized artifact paths
 but never reads those artifacts, and the differencing tests read the
 committed diagnostic JSON, the erratum and the first-estimates artifact as
 aggregate artifacts. The repository's static tier policy classifies these
-thirty-nine cases as `artifact`; the other seventy-two cases are `unit`.
-There are 111 cases across ten modules.
+thirty-nine cases as `artifact`; the other seventy-seven cases are `unit`.
+There are 116 cases across eleven modules.
 
 ### Shared convention and accounting
 
@@ -210,17 +210,26 @@ admitted record totals. The public schema publishes none of them.
 | The sweep equals brute force over every sign pattern, and each witness sums to its value using each population once; a pool over the bound refuses. | `test_sweep_equals_brute_force_over_every_sign_pattern`, `test_pool_beyond_the_bound_refuses` |
 | Every positive count in the committed JSON declares a population; only the R7 frame is shared, by its two results; Track M's flagged record count is absent; a declared population enters once and must match in count and weight; different ids never merge; people and records of one family pool together while families stay apart; a count without a population refuses. | `test_every_positive_count_declares_its_population`, `test_declared_population_enters_once_and_must_match`, `test_units_pool_together_but_families_do_not`, `test_count_without_a_population_refuses` |
 | No published count is 1–9; every family is pooled. | `test_no_published_count_is_a_small_cell`, `test_every_family_is_pooled` |
-| No count is exempt from the sweep: first estimates' per-draw admitted counts are not republished, each per-draw share equals the bound's weight divided by a draw weight present in the committed artifact, and republishing two draws' counts (1,526 and 1,525) would be refused. Different draws are different samples, not nested sets, and the 21-person bound is a roster subset rather than a subset of any one draw's admitted set, so combining them with the artifact's denominators has no set meaning; they are kept out of the publication rather than argued safe. | `test_no_count_is_exempt_and_bound_shares_use_committed_weights`, `test_republishing_first_estimates_draw_denominators_is_refused` |
+| No count is exempt from the sweep: first estimates' per-draw admitted counts are not republished, each per-draw share equals the bound's weight divided by a draw weight present in the committed artifact, and republishing two draws' counts that differ by one person would be refused. Different draws are different samples, not nested sets, and the 21-person bound is a roster subset rather than a subset of any one draw's admitted set, so combining them with the artifact's denominators has no set meaning; they are kept out of the publication rather than argued safe. | `test_no_count_is_exempt_and_bound_shares_use_committed_weights`, `test_republishing_first_estimates_draw_denominators_is_refused` |
 | Every count or weight in the erratum's results table appears in the JSON. | `test_erratum_table_publishes_nothing_beyond_the_json` |
 | A planted total equal to 1–9 plus up to six distinct published subtotals is always found; counts spaced by multiples of ten never violate; the result is order independent; families are not pooled together. | `test_planted_small_difference_is_found`, `test_counts_spaced_by_at_least_ten_never_violate`, `test_enumeration_is_order_independent`, `test_units_pool_together_but_families_do_not` |
 | Each round-1 route leaks in the wide schema and is absent from the public view. | `test_round1_row_and_role_routes_are_present_raw_and_gone_public`, `test_round1_track_m_reading_route_is_present_raw_and_gone_public` |
 | A nonzero Track M change refuses rather than being summarized as zero; path categories never carry a count; assembly refuses a document with a small difference. | `test_nonzero_track_m_change_is_refused_not_summarized`, `test_path_category_never_publishes_a_count`, `test_assembler_refuses_a_document_with_a_small_difference` |
 
-Every fixture in these tests uses synthetic counts and weights chosen to
-reproduce a failure mechanism; no diagnostic count, weight or withheld
-value appears in test source, design text or commit messages (review
-round 4 found an earlier draft that had copied real counts into
-fixtures; that draft was withdrawn before merge).
+Every count and weight in a d1408 test fixture comes from the seeded
+generator `tests/d1408_synthetic.py` (seed 20261015, one salt per
+fixture) or from Hypothesis; mechanism differences of one through nine
+are written as arithmetic on generated values. No diagnostic count,
+weight or withheld value appears in test source, design text or commit
+messages: review round 4 found that an earlier draft had copied real
+counts into fixtures, and that draft was withdrawn before merge.
+`tests/test_d1408_fixture_provenance.py` enforces the rule. It always
+checks that no literal other than 0 or 1 sits in a count or weight
+position of any d1408 test, and that every generator call can be
+recomputed; on the run host it also recomputes every generated value and
+checks that none lies within ten of a count, or equals a weight, in the
+private aggregates or the published JSON. Its self-tests show both checks
+catch a planted copy.
 
 Mutation proof: dropping subtraction from the sweep, pooling by equal
 count and weight instead of declared id, skipping the identity check,

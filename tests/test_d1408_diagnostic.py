@@ -7,6 +7,7 @@ from hypothesis import strategies as st
 from scripts.d1408_common import PSID_ROOT
 from scripts.d1408_diagnostic import psid_relative, validate_publication
 from scripts.d1408_publication_view import projection_pre1917
+from tests import d1408_synthetic as synthetic
 
 
 @settings(deadline=None)
@@ -60,7 +61,8 @@ def test_psid_reads_outside_the_root_are_refused():
 def test_projection_pre1917_states_zero_only_without_unsupported_cells(
     roles, unsupported
 ):
-    wave = {"seed_cohort_weight": 10.0, "denominator": "invented"}
+    (seed_weight,) = synthetic.weights("pre1917-wave", 1)
+    wave = {"seed_cohort_weight": seed_weight, "denominator": "invented"}
     wave.update({f"supported/{role}": {"people": 0} for role in roles})
     if unsupported:
         wave["unsupported_pre1917/factor_evaluation"] = {"people": "<10"}

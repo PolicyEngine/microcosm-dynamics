@@ -2,16 +2,18 @@
 
 Verification class: labelled diagnostic publication guard. The committed
 JSON is read as an aggregate artifact; no microdata is opened. The
-guarantee is that no signed (+1/-1) combination of distinct published
-populations within a population family and unit, of any size, equals one
-through nine. Every positive count declares the population it measures;
-a population republished in several cells enters once and must match. Each family publishes at most ``MAX_CELLS`` distinct counts,
-so the committed JSON is also checked by listing all 3**n sign patterns
-outright. The invented-input properties show that the sweep finds every
-planted small combination and agrees with brute force, and the
-regressions replay the three differencing routes found in review round 1
-(COLA rows, nested role subtotals, Track M's two readings) on invented
-aggregates.
+guarantee is that no signed (+1/-1) combination, of any size, of the
+distinct published populations within a population family, people and
+worker-record counts pooled together, equals one through nine. Every
+positive count declares the population it measures; a population
+republished in several cells enters once and must match. Each family
+publishes at most ``MAX_CELLS`` distinct populations, so the committed
+JSON is also checked by listing all 3**n sign patterns outright. The
+invented-input properties show that the sweep finds every planted small
+combination and agrees with brute force, and the regressions replay the
+three differencing routes found in review round 1 (COLA rows, nested role
+subtotals, Track M's two readings) on seeded synthetic aggregates from
+``tests/d1408_synthetic.py``.
 """
 
 import itertools
@@ -38,6 +40,7 @@ from scripts.d1408_publication_view import (
     published_counts,
     reachable_sums,
 )
+from tests import d1408_synthetic as synthetic
 
 ROOT = Path(__file__).resolve().parents[1]
 PUBLISHED = (
@@ -268,22 +271,25 @@ def _rows(*cells):
 
 
 def test_declared_population_enters_once_and_must_match():
-    same = _rows((5000, 1.0, "denominator"), (5000, 1.0, "denominator"))
+    a, b = synthetic.counts("declared-population", 2)
+    w1, w2 = synthetic.weights("declared-population", 2)
+    same = _rows((a, w1, "denominator"), (a, w1, "denominator"))
     assert len(distinct_cells(same)["projection"]) == 1
     with pytest.raises(ValueError, match="does not match"):
-        distinct_cells(_rows((5000, 1.0, "d"), (4991, 1.0, "d")))
+        distinct_cells(_rows((a, w1, "d"), (a - 9, w1, "d")))
     with pytest.raises(ValueError, match="does not match"):
-        distinct_cells(_rows((5000, 1.0, "d"), (5000, 2.0, "d")))
+        distinct_cells(_rows((a, w1, "d"), (a, w2, "d")))
     # Different populations never merge, even with equal count and weight.
-    twins = _rows((5000, 1.0, "a"), (5000, 1.0, "b"), (9991, 1.0, "c"))
+    twins = _rows((a, w1, "a"), (a, w1, "b"), (2 * a - 9, w1, "c"))
     assert len(distinct_cells(twins)["projection"]) == 3
     assert 9 in {v["value"] for v in differencing_violations(twins)}
-    unweighted = _invented([40, 40, 85])
+    unweighted = _invented([b, b, 2 * b + 5])
     assert [v["value"] for v in differencing_violations(unweighted)] == [5]
 
 
 def test_count_without_a_population_refuses():
-    document = {"results": [{"result": "cola", "w": {"people": 40}}]}
+    (count,) = synthetic.counts("no-population", 1)
+    document = {"results": [{"result": "cola", "w": {"people": count}}]}
     with pytest.raises(ValueError, match="without a population"):
         differencing_violations(document)
 
@@ -314,16 +320,17 @@ def test_enumeration_is_order_independent(base, small, rnd):
 
 def test_units_pool_together_but_families_do_not():
     # People and worker records of one family are differenced together:
-    # 21 people minus 15 records is a violation (round 3's Track M route).
+    # people minus records equal to six is a violation (round 3's route).
+    people, other = synthetic.counts("unit-pooling", 2)
     same_family = {
         "results": [
             {
                 "result": "cola",
-                "waves": {"2011": {"people": 21, "population": "a"}},
+                "waves": {"2011": {"people": people, "population": "a"}},
             },
             {
                 "result": "fra68",
-                "w": {"worker_records": 15, "population": "c"},
+                "w": {"worker_records": people - 6, "population": "c"},
             },
         ]
     }
@@ -332,11 +339,11 @@ def test_units_pool_together_but_families_do_not():
         "results": [
             {
                 "result": "cola",
-                "waves": {"2011": {"people": 21, "population": "a"}},
+                "waves": {"2011": {"people": people, "population": "a"}},
             },
             {
                 "result": "r7_sharing",
-                "flagged": {"people": 12, "population": "b"},
+                "flagged": {"people": people - 6, "population": "b"},
             },
         ]
     }
@@ -373,28 +380,38 @@ def _cell(people, records, weight):
 
 
 def _invented_projection():
-    # Synthetic counts and weights (no diagnostic value): nested row and
+    # Seeded synthetic values (tests/d1408_synthetic.py): nested row and
     # role subtotals whose differences are 4, 1, 2 and 5, the shape of
     # review round 1's routes.
+    flagged, deceased, spouse, row_factor, row_spouse, r0, r5 = (
+        synthetic.counts("projection", 7)
+    )
+    w = synthetic.weights("projection", 11)
     wave = {
-        "seed_cohort_weight": 1e6,
+        "seed_cohort_weight": w[0],
         "denominator": "invented",
-        "supported/factor_evaluation": _cell(50, 50, 9000.0),
-        "supported/deceased_auxiliary_basis": _cell(31, 31, 3000.0),
-        "supported/positive_survivor_payment": _cell(26, 26, 1700.0),
-        "supported/linked_spouse_basis": _cell(14, 14, 1900.0),
+        "supported/factor_evaluation": _cell(flagged, flagged, w[1]),
+        "supported/deceased_auxiliary_basis": _cell(deceased, deceased, w[2]),
+        "supported/positive_survivor_payment": _cell(
+            deceased - 5, deceased - 5, w[3]
+        ),
+        "supported/linked_spouse_basis": _cell(spouse, spouse, w[4]),
     }
     row = {
-        "admitted_people": 5000,
-        "admitted_weight": 1.4e6,
-        "supported/factor_evaluation": _cell(44, 40, 900.0),
-        "supported/linked_spouse_basis": _cell(22, 22, 300.0),
+        "admitted_people": r0,
+        "admitted_weight": w[5],
+        "supported/factor_evaluation": _cell(row_factor, row_factor - 3, w[6]),
+        "supported/linked_spouse_basis": _cell(row_spouse, row_spouse, w[7]),
     }
     restricted = {
-        "admitted_people": 4800,
-        "admitted_weight": 1.3e6,
-        "supported/factor_evaluation": _cell(40, 39, 880.0),
-        "supported/linked_spouse_basis": _cell(20, 20, 280.0),
+        "admitted_people": r5,
+        "admitted_weight": w[8],
+        "supported/factor_evaluation": _cell(
+            row_factor - 4, row_factor - 4, w[9]
+        ),
+        "supported/linked_spouse_basis": _cell(
+            row_spouse - 2, row_spouse - 2, w[10]
+        ),
     }
     return {
         "result": "cola",
@@ -428,19 +445,34 @@ def test_round1_row_and_role_routes_are_present_raw_and_gone_public():
     assert "admitted_weight_share" not in flagged
 
 
+(
+    _TRACK_M_ADMITTED,
+    _TRACK_M_RECORDS,
+    _TRACK_M_FLAGGED,
+    _TRACK_M_FLAGGED_RECORDS,
+) = synthetic.counts("track-m", 4)
+_TRACK_M_WEIGHT, _TRACK_M_FLAGGED_WEIGHT = synthetic.weights("track-m", 2)
+
+
+def _track_m_flagged():
+    return _cell(
+        _TRACK_M_FLAGGED, _TRACK_M_FLAGGED_RECORDS, _TRACK_M_FLAGGED_WEIGHT
+    )
+
+
 def _reading(records, flagged):
     zero = {
-        "admitted_people": 1800,
-        "admitted_weight": 3.0e7,
+        "admitted_people": _TRACK_M_ADMITTED,
+        "admitted_weight": _TRACK_M_WEIGHT,
         "changed_receiving_people": 0,
         "supported_subset_change_percentage_points": 0.0,
         "change_in_admitted_people": 0,
     }
     small = {"people": "<10", "worker_records": "<10", "weight": "<10"}
     return {
-        "admitted_people": 1800,
+        "admitted_people": _TRACK_M_ADMITTED,
         "admitted_worker_records": records,
-        "admitted_weight": 3.0e7,
+        "admitted_weight": _TRACK_M_WEIGHT,
         "supported": {
             "all_flagged_evaluations": flagged,
             "admitted_flagged_worker_owners": small,
@@ -463,9 +495,9 @@ def test_round1_track_m_reading_route_is_present_raw_and_gone_public():
     raw = {
         "result": "track_m_minimum_benefit",
         "readings": {
-            "scored": _reading(1650, _cell(40, 33, 55555.0)),
+            "scored": _reading(_TRACK_M_RECORDS, _track_m_flagged()),
             "d430_sensitivity": _reading(
-                1644,
+                _TRACK_M_RECORDS - 6,
                 {
                     "people": "suppressed_complementary",
                     "worker_records": "suppressed_complementary",
@@ -483,9 +515,12 @@ def test_round1_track_m_reading_route_is_present_raw_and_gone_public():
     # Round 3: people (with linked beneficiaries) minus flagged records
     # would bound a withheld cell, so the flagged record count is dropped.
     scored_flagged = public["readings"]["scored"]["flagged_supported"]
-    assert scored_flagged["people"] == 40
+    assert scored_flagged["people"] == _TRACK_M_FLAGGED
     assert "worker_records" not in scored_flagged
-    assert public["readings"]["scored"]["admitted"]["worker_records"] == 1650
+    assert (
+        public["readings"]["scored"]["admitted"]["worker_records"]
+        == _TRACK_M_RECORDS
+    )
     assert public["readings"]["d430_sensitivity"]["flagged_supported"] == (
         "withheld"
     )
@@ -493,7 +528,7 @@ def test_round1_track_m_reading_route_is_present_raw_and_gone_public():
 
 
 def test_nonzero_track_m_change_is_refused_not_summarized():
-    reading = _reading(1650, _cell(40, 33, 55555.0))
+    reading = _reading(_TRACK_M_RECORDS, _track_m_flagged())
     reading["rows"]["MS0"]["changes"]["option_2/all"][
         "supported_subset_change_percentage_points"
     ] = 0.1
@@ -506,14 +541,17 @@ def test_nonzero_track_m_change_is_refused_not_summarized():
         )
 
 
+_THRESHOLD = 10  # the small-cell threshold, not a fixture count
+
+
 @pytest.mark.parametrize(
     ("cell", "expected"),
     [
         (None, "none"),
         ({"people": 0}, "none"),
         ({"people": 1}, "fewer than ten"),
-        ({"people": 9}, "fewer than ten"),
-        ({"people": 10}, "ten or more"),
+        ({"people": _THRESHOLD - 1}, "fewer than ten"),
+        ({"people": _THRESHOLD}, "ten or more"),
         ({"people": "<10"}, "fewer than ten"),
         ({"people": "suppressed_complementary"}, "withheld"),
     ],
@@ -522,13 +560,16 @@ def test_path_category_never_publishes_a_count(cell, expected):
     assert path_category(cell) == expected
 
 
+(_FAKE,) = synthetic.counts("assembler", 1)
+
+
 def test_assembler_refuses_a_document_with_a_small_difference(monkeypatch):
     def fake(results):
         return {
             "result": results["result"],
             "waves": {
-                "a": {"people": 40, "population": "a"},
-                "b": {"people": 37, "population": "b"},
+                "a": {"people": _FAKE, "population": "a"},
+                "b": {"people": _FAKE - 3, "population": "b"},
             },
         }
 
@@ -561,15 +602,17 @@ def test_assembler_refuses_a_document_with_a_small_difference(monkeypatch):
 
 
 def test_republishing_first_estimates_draw_denominators_is_refused():
-    # Round 2: draws 1 and 11 admit 1,526 and 1,525 people in the committed
-    # artifact; republishing both would make a difference of one.
+    # Round 2: two draws' admitted counts that differ by one person would
+    # make a difference of one if both were republished.
     document = _document()
     (first,) = [
         r for r in document["results"] if r["result"] == "first_estimates"
     ]
+    (draw,) = synthetic.counts("draw-denominators", 1)
+    w1, w2 = synthetic.weights("draw-denominators", 2)
     rows = [
-        {"draw_index": 1, "people": 1526, "weight": 1.0},
-        {"draw_index": 11, "people": 1525, "weight": 2.0},
+        {"draw_index": 1, "people": draw, "weight": w1},
+        {"draw_index": 11, "people": draw - 1, "weight": w2},
     ]
     first["counts"]["draw_denominators"] = rows
     with pytest.raises(ValueError, match="without a population"):

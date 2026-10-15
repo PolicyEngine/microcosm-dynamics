@@ -17,6 +17,8 @@ from d1408_first_estimates import (  # noqa: E402
     window_support,
 )
 
+from tests import d1408_synthetic as synthetic  # noqa: E402
+
 
 def test_window_support_uses_strict_48_month_boundary():
     assert window_support([69, 70], 1935, 780) == [False, True]
@@ -82,14 +84,16 @@ def test_empty_stock_support_cannot_be_replayed(exposure):
 
 @given(st.integers(0, 30))
 def test_small_complementary_cell_withholds_replay_subtotal(difference):
+    (people,) = synthetic.counts("replay-group", 1)
+    (weight,) = synthetic.weights("replay-group", 1)
     original = {
-        "people": 20,
+        "people": people,
         "worker_records": None,
-        "weight": 1000.0,
+        "weight": weight,
         "roster_weight_share": 0.1,
     }
     result = publish_replay_group(original, difference)
-    assert original["people"] == 20
+    assert original["people"] == people
     assert result == publish_replay_group(original, difference)
     if 0 < difference < 10:
         assert all(
