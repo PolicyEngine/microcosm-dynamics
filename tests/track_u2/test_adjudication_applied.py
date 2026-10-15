@@ -1696,6 +1696,13 @@ def check_d1090_record(spec):
                 follower = D1090_CLAUSES[place][index + 1]
             at = lines.index(D1090_CLAUSES[place][index])
             assert lines[at + 1] == follower, (place, index)
+    # The header's lines stand between a blank line and the next header
+    # bullet, so nothing can be appended under the status line (review of
+    # c3ddc16).
+    assert every[1] == ""
+    assert every[4] == (
+        "- **Intended file:** `docs/design/boomers2004_1946_55_comparison.md`."
+    )
     execution = places["execution"].split("\n")
     assert execution[:5] == [
         "## 20. Ratification and execution record",
@@ -1906,6 +1913,20 @@ D1090_MUTATIONS = [
         "outstanding",
         D1090_CLAUSES["outstanding"][2],
         "<!--\n" + D1090_CLAUSES["outstanding"][2] + "\n-->",
+    ),
+    # A note appended under the header status, as a continuation line or a
+    # new bullet (review of c3ddc16).
+    (
+        "header_status",
+        "Not registered or authorized for execution.",
+        "Not registered or authorized for execution.\n"
+        "  U2 is now registered and authorized for execution.",
+    ),
+    (
+        "header_status",
+        "Not registered or authorized for execution.",
+        "Not registered or authorized for execution.\n"
+        "- **Status update:** registered and authorized.",
     ),
     # Whitespace-indented duplicates of a follower, and a forged section
     # boundary that hides an exact one (review of 0c4eab5).
