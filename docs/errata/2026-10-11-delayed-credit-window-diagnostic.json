@@ -1,0 +1,1826 @@
+{
+  "header": "labelled diagnostic under ruling d1408; no registered artifact rerun or replaced",
+  "schema_version": 1,
+  "verification_class": "labelled diagnostic",
+  "ruling": "d1408 (2026-10-12)",
+  "registered_artifacts_retained": true,
+  "privacy": "aggregate counts and changes only. Per result and wave, at most one flagged subtotal is published (first estimates publishes its support, actual-person and expected bounds instead), with the seed-cohort or admitted denominator its share uses (first estimates' per-draw denominators stay in its committed artifact); payment paths are reported only as none, fewer than ten, ten or more, or withheld. Positive cells below ten people are suppressed with their weights, shares and changes. Every published count declares the population it measures; a population republished in several cells has the same count and weight in each and enters once; and no signed (+1/-1) combination of distinct populations within a population family, people and worker-record counts pooled together, of any size, equals one through nine. Rounded population-level aggregates are published even where fewer than ten people's payments change; they show only that the combined effect stays below the reported precision.",
+  "statutory_authority": [
+    "42 USC 402(w)(2)(A)",
+    "42 USC 402(w)(6)(A)",
+    "POMS RS 00615.692D-E"
+  ],
+  "results": [
+    {
+      "header": "labelled diagnostic under ruling d1408; no registered artifact rerun or replaced",
+      "result": "first_estimates",
+      "artifact": "runs/first_estimates_v1.json",
+      "code_commit": "e31eca40ddb00afe0eb82507307b10315e0035be",
+      "code_commit_basis": "committed environment sidecar contract.head_sha",
+      "verification": "unverified bound; exact reproduction unavailable",
+      "method": "Historical demographic/sex/marriage/family earnings readers; historical realized-anchor and birth precedence from cutoff-2014 train-context marriage records and the full-window family earnings panel. These match original preparation: it reads marriage records from refit_inputs.family_context and earnings from the full batch.inputs.earnings_panel; the full loader replaces only refit_inputs. Seed ages retain collection-wave coordinates and anchor_wave minus one; frozen claim-age reference; opening-stock person-keyed seed8108. No registered coordinator, projection or artifact assembler was executed. Full PMF support bounds all Stage A-D admitted old-cohort claimants; synthetic entrants cannot attain age62 within 2014-2022. Actual inclusion and payment presence require the unavailable registered fitted projection.",
+      "real_data_files_read": [
+        "psid-data/family/1968/FAM1968.sps",
+        "psid-data/family/1968/FAM1968.txt",
+        "psid-data/family/1969/FAM1969.sps",
+        "psid-data/family/1969/FAM1969.txt",
+        "psid-data/family/1970/FAM1970.sps",
+        "psid-data/family/1970/FAM1970.txt",
+        "psid-data/family/1971/FAM1971.sps",
+        "psid-data/family/1971/FAM1971.txt",
+        "psid-data/family/1972/FAM1972.sps",
+        "psid-data/family/1972/FAM1972.txt",
+        "psid-data/family/1973/FAM1973.sps",
+        "psid-data/family/1973/FAM1973.txt",
+        "psid-data/family/1974/FAM1974.sps",
+        "psid-data/family/1974/FAM1974.txt",
+        "psid-data/family/1975/FAM1975.sps",
+        "psid-data/family/1975/FAM1975.txt",
+        "psid-data/family/1976/FAM1976.sps",
+        "psid-data/family/1976/FAM1976.txt",
+        "psid-data/family/1977/FAM1977.sps",
+        "psid-data/family/1977/FAM1977.txt",
+        "psid-data/family/1978/FAM1978.sps",
+        "psid-data/family/1978/FAM1978.txt",
+        "psid-data/family/1979/FAM1979.sps",
+        "psid-data/family/1979/FAM1979.txt",
+        "psid-data/family/1980/FAM1980.sps",
+        "psid-data/family/1980/FAM1980.txt",
+        "psid-data/family/1981/FAM1981.sps",
+        "psid-data/family/1981/FAM1981.txt",
+        "psid-data/family/1982/FAM1982.sps",
+        "psid-data/family/1982/FAM1982.txt",
+        "psid-data/family/1983/FAM1983.sps",
+        "psid-data/family/1983/FAM1983.txt",
+        "psid-data/family/1984/FAM1984.sps",
+        "psid-data/family/1984/FAM1984.txt",
+        "psid-data/family/1985/FAM1985.sps",
+        "psid-data/family/1985/FAM1985.txt",
+        "psid-data/family/1986/FAM1986.sps",
+        "psid-data/family/1986/FAM1986.txt",
+        "psid-data/family/1987/FAM1987.sps",
+        "psid-data/family/1987/FAM1987.txt",
+        "psid-data/family/1988/FAM1988.sps",
+        "psid-data/family/1988/FAM1988.txt",
+        "psid-data/family/1989/FAM1989.sps",
+        "psid-data/family/1989/FAM1989.txt",
+        "psid-data/family/1990/FAM1990.sps",
+        "psid-data/family/1990/FAM1990.txt",
+        "psid-data/family/1991/FAM1991.sps",
+        "psid-data/family/1991/FAM1991.txt",
+        "psid-data/family/1992/FAM1992.sps",
+        "psid-data/family/1992/FAM1992.txt",
+        "psid-data/family/1993/FAM1993.sps",
+        "psid-data/family/1993/FAM1993.txt",
+        "psid-data/family/1994/FAM1994ER.sps",
+        "psid-data/family/1994/FAM1994ER.txt",
+        "psid-data/family/1995/FAM1995ER.sps",
+        "psid-data/family/1995/FAM1995ER.txt",
+        "psid-data/family/1996/FAM1996ER.sps",
+        "psid-data/family/1996/FAM1996ER.txt",
+        "psid-data/family/1997/FAM1997ER.sps",
+        "psid-data/family/1997/FAM1997ER.txt",
+        "psid-data/family/1999/FAM1999ER.sps",
+        "psid-data/family/1999/FAM1999ER.txt",
+        "psid-data/family/2001/FAM2001ER.sps",
+        "psid-data/family/2001/FAM2001ER.txt",
+        "psid-data/family/2003/FAM2003ER.sps",
+        "psid-data/family/2003/FAM2003ER.txt",
+        "psid-data/family/2005/FAM2005ER.sps",
+        "psid-data/family/2005/FAM2005ER.txt",
+        "psid-data/family/2007/FAM2007ER.sps",
+        "psid-data/family/2007/FAM2007ER.txt",
+        "psid-data/family/2009/FAM2009ER.sps",
+        "psid-data/family/2009/FAM2009ER.txt",
+        "psid-data/family/2011/FAM2011ER.sps",
+        "psid-data/family/2011/FAM2011ER.txt",
+        "psid-data/family/2013/FAM2013ER.sps",
+        "psid-data/family/2013/FAM2013ER.txt",
+        "psid-data/family/2015/FAM2015ER.sps",
+        "psid-data/family/2015/FAM2015ER.txt",
+        "psid-data/family/2017/FAM2017ER.sps",
+        "psid-data/family/2017/FAM2017ER.txt",
+        "psid-data/family/2019/FAM2019ER.sps",
+        "psid-data/family/2019/FAM2019ER.txt",
+        "psid-data/family/2021/FAM2021ER.sps",
+        "psid-data/family/2021/FAM2021ER.txt",
+        "psid-data/family/2023/FAM2023ER.sps",
+        "psid-data/family/2023/FAM2023ER.txt",
+        "psid-data/ind2023er/IND2023ER.sps",
+        "psid-data/ind2023er/IND2023ER.txt",
+        "psid-data/mh85_23/MH85_23.sps",
+        "psid-data/mh85_23/MH85_23.txt"
+      ],
+      "reproduction_check": {
+        "passed": false,
+        "computed": false,
+        "reason": "registered fitting stack is unavailable",
+        "environment": {
+          "missing_registered_packages": [
+            "populace.fit",
+            "populace.frame",
+            "policyengine_us"
+          ],
+          "sklearn_live": "1.9.0",
+          "sklearn_registered": "1.8.0",
+          "known_gate_environments_present": []
+        }
+      },
+      "headline_changes": null,
+      "headline_changes_reason": "No statutory amount is claimed without an exact legacy reconstruction; revenue is independent of the credit function.",
+      "parameter_bundle_verified": "f2c4069caf30807f99183e2a4f852ad54930fdb7058d2ea303f295eeeda49387",
+      "registration_configurations": [
+        {
+          "configuration": "docs/registrations/first_estimates_registration_2_configuration.json",
+          "sha256": "e07bde68bc3b9fa2f1305a75189866b67f5a5da3e29f086734369a036e2e6e70",
+          "registration": "populace-dynamics#289",
+          "same_projection_as_published": true,
+          "same_opening_stock_as_published": true,
+          "same_design_as_published": false,
+          "same_parameters_as_published": false,
+          "incident_metadata": [
+            {
+              "path": "runs/first_estimates_incident_2.json",
+              "registration": "populace-dynamics#289",
+              "phase": "preparation",
+              "reason": "preparation_abort",
+              "headline_sections_present": []
+            }
+          ],
+          "actual_count_claim": "none: retained metadata records an aborted attempt without retained model headline quantities"
+        },
+        {
+          "configuration": "docs/registrations/first_estimates_registration_3_configuration.json",
+          "sha256": "0be0387229e0cb71d10239fcf8de9d9c841a2c335d9b5b6b2b82eee7a74afa70",
+          "registration": "populace-dynamics#292",
+          "same_projection_as_published": true,
+          "same_opening_stock_as_published": true,
+          "same_design_as_published": false,
+          "same_parameters_as_published": true,
+          "incident_metadata": [
+            {
+              "path": "runs/first_estimates_incident_3.json",
+              "registration": "populace-dynamics#292",
+              "phase": "preparation",
+              "reason": "preparation_abort",
+              "headline_sections_present": []
+            }
+          ],
+          "actual_count_claim": "none: retained metadata records an aborted attempt without retained model headline quantities"
+        },
+        {
+          "configuration": "docs/registrations/first_estimates_registration_4_configuration.json",
+          "sha256": "18b3aa08ee59135d9516e89880bfb54af1dcf962b718b40b53622cbab1c577a4",
+          "registration": "populace-dynamics#295",
+          "same_projection_as_published": true,
+          "same_opening_stock_as_published": true,
+          "same_design_as_published": false,
+          "same_parameters_as_published": true,
+          "incident_metadata": [
+            {
+              "path": "runs/first_estimates_incident_4.json",
+              "registration": "populace-dynamics#295",
+              "phase": "compute",
+              "reason": "compute_abort",
+              "headline_sections_present": []
+            }
+          ],
+          "actual_count_claim": "none: retained metadata records an aborted attempt without retained model headline quantities"
+        },
+        {
+          "configuration": "docs/registrations/first_estimates_registration_5_configuration.json",
+          "sha256": "5fcd29436d7542acf38e92ce0ed966976858301340e8909c7bf2983b7e63a21e",
+          "registration": "populace-dynamics#299",
+          "same_projection_as_published": true,
+          "same_opening_stock_as_published": true,
+          "same_design_as_published": false,
+          "same_parameters_as_published": true,
+          "incident_metadata": [
+            {
+              "path": "runs/first_estimates_incident_5.json",
+              "registration": "populace-dynamics#299",
+              "phase": "invariant",
+              "reason": "invariant_abort",
+              "headline_sections_present": []
+            }
+          ],
+          "actual_count_claim": "none: retained metadata records an aborted attempt without retained model headline quantities"
+        },
+        {
+          "configuration": "docs/registrations/first_estimates_registration_6_configuration.json",
+          "sha256": "20a77da76760489b638884cafaa61c3bcd579a589c9a463645d67fc047313b92",
+          "registration": "populace-dynamics#305",
+          "same_projection_as_published": true,
+          "same_opening_stock_as_published": true,
+          "same_design_as_published": true,
+          "same_parameters_as_published": true,
+          "incident_metadata": [
+            {
+              "path": "runs/first_estimates_incident_6.json",
+              "registration": "populace-dynamics#305",
+              "phase": "preparation",
+              "reason": "preparation_fresh_registration_adjudication_required_attempt_claim",
+              "headline_sections_present": []
+            }
+          ],
+          "actual_count_claim": "none: retained metadata records an aborted attempt without retained model headline quantities"
+        },
+        {
+          "configuration": "docs/registrations/first_estimates_registration_7_configuration.json",
+          "sha256": "de6f317bad010dd1c47adf5a8433405c25a9f7021c3d1f66d4872154d784f8f7",
+          "registration": "populace-dynamics#307",
+          "same_projection_as_published": true,
+          "same_opening_stock_as_published": true,
+          "same_design_as_published": true,
+          "same_parameters_as_published": true,
+          "incident_metadata": [],
+          "actual_count_claim": "published artifact is diagnosed below"
+        }
+      ],
+      "counts": {
+        "real_roster": {
+          "people": 29792,
+          "weight": 379926222.0,
+          "population": "first_estimates/report_seed_roster"
+        },
+        "support_upper_bound": {
+          "people": 980,
+          "worker_records": null,
+          "weight": 26888277.0,
+          "weight_share_denominator": "real report seed roster",
+          "classification": "unverified support upper bound",
+          "roster_weight_share": 0.07077236432498729,
+          "population": "first_estimates/supported_birth_cohort"
+        },
+        "actual_person_upper_bound": {
+          "people": 21,
+          "worker_records": null,
+          "weight": 571250.0,
+          "classification": "unverified actual-person upper bound: complete-support stock replays plus rows whose seed age does not preserve complete support",
+          "weight_share_denominator": "real report seed roster",
+          "roster_weight_share": 0.0015035813979694195,
+          "population": "first_estimates/actual_person_upper_bound"
+        },
+        "expected_support_bound": {
+          "people": 22.313200950545287,
+          "weight": 611191.2748881687,
+          "roster_weight_share": 0.0016087104271738544,
+          "classification": "expected upper bound under the registered full opening-stock PMF, conditional on all support people becoming non-DI opening claimants; not an expectation of admitted claimants",
+          "population": "first_estimates/expected_support_bound"
+        },
+        "upper_bound_shares_by_draw": [
+          {
+            "draw_index": 0,
+            "admitted_weight_share_upper_bound": 0.016163563663290262
+          },
+          {
+            "draw_index": 1,
+            "admitted_weight_share_upper_bound": 0.0161551587543766
+          },
+          {
+            "draw_index": 2,
+            "admitted_weight_share_upper_bound": 0.01625133933083855
+          },
+          {
+            "draw_index": 3,
+            "admitted_weight_share_upper_bound": 0.01621182643444085
+          },
+          {
+            "draw_index": 4,
+            "admitted_weight_share_upper_bound": 0.01590620437756008
+          },
+          {
+            "draw_index": 5,
+            "admitted_weight_share_upper_bound": 0.016399444477251307
+          },
+          {
+            "draw_index": 6,
+            "admitted_weight_share_upper_bound": 0.016468799862264617
+          },
+          {
+            "draw_index": 7,
+            "admitted_weight_share_upper_bound": 0.016342099459576424
+          },
+          {
+            "draw_index": 8,
+            "admitted_weight_share_upper_bound": 0.01615010867998299
+          },
+          {
+            "draw_index": 9,
+            "admitted_weight_share_upper_bound": 0.016311578242350563
+          },
+          {
+            "draw_index": 10,
+            "admitted_weight_share_upper_bound": 0.01636990406677419
+          },
+          {
+            "draw_index": 11,
+            "admitted_weight_share_upper_bound": 0.016276830520853734
+          },
+          {
+            "draw_index": 12,
+            "admitted_weight_share_upper_bound": 0.016189286526735874
+          },
+          {
+            "draw_index": 13,
+            "admitted_weight_share_upper_bound": 0.016232738915298407
+          },
+          {
+            "draw_index": 14,
+            "admitted_weight_share_upper_bound": 0.016339019626787903
+          },
+          {
+            "draw_index": 15,
+            "admitted_weight_share_upper_bound": 0.016253357189610313
+          },
+          {
+            "draw_index": 16,
+            "admitted_weight_share_upper_bound": 0.016012348611127422
+          },
+          {
+            "draw_index": 17,
+            "admitted_weight_share_upper_bound": 0.01580286915924227
+          },
+          {
+            "draw_index": 18,
+            "admitted_weight_share_upper_bound": 0.016541267211351414
+          },
+          {
+            "draw_index": 19,
+            "admitted_weight_share_upper_bound": 0.01644352503350737
+          }
+        ],
+        "share_denominators": "runs/first_estimates_v1.json, each draw's admitted weight",
+        "pre1917_evaluations": 0,
+        "pre1917_reason": "excluded_pre1979_eligibility before ledger"
+      }
+    },
+    {
+      "header": "labelled diagnostic under ruling d1408; no registered artifact rerun or replaced",
+      "result": "track_m_minimum_benefit",
+      "artifact": "runs/replication_urban2006_minimum_benefit_v1.json",
+      "code_commit": "2e4e08beaad1614da089d76b2ad639d0a4884e2e",
+      "commit_basis": "artifact run.registered_commit and run.git_head",
+      "parameter_commit": "a03e82e503",
+      "method": {
+        "claim_age": "12 * (entitlement_year - birth_year) - FRA months",
+        "rng": "none in cohort, entitlement classification or benefit shares",
+        "rounding": "original history PIA dime floor; original MS5 inverse PIA has no rounding; original payment-gate and fsum share paths",
+        "weights": "admitted beneficiary weights, deduplicated within each group; linked deceased worker records have no independent 2023 weight",
+        "unsupported_handling": "pre-1917 legacy factors retained solely as placeholders for supported-subset differences; no statutory amount assigned",
+        "no_registered_entry_point_or_pipeline_called": true,
+        "cross_reading_suppression": "Sensitivity flagged count and weight subtotals conservatively withheld because aggregate differences could disclose a small residual. The final strict-flow run verified original cells and deleted input checkpoints before exact private overlap assessment; no PSID reread was performed for this conservative publication-only mask."
+      },
+      "real_data_files_read": [
+        "psid-data/family/1968/FAM1968.sps",
+        "psid-data/family/1968/FAM1968.txt",
+        "psid-data/family/1969/FAM1969.sps",
+        "psid-data/family/1969/FAM1969.txt",
+        "psid-data/family/1970/FAM1970.sps",
+        "psid-data/family/1970/FAM1970.txt",
+        "psid-data/family/1971/FAM1971.sps",
+        "psid-data/family/1971/FAM1971.txt",
+        "psid-data/family/1972/FAM1972.sps",
+        "psid-data/family/1972/FAM1972.txt",
+        "psid-data/family/1973/FAM1973.sps",
+        "psid-data/family/1973/FAM1973.txt",
+        "psid-data/family/1974/FAM1974.sps",
+        "psid-data/family/1974/FAM1974.txt",
+        "psid-data/family/1975/FAM1975.sps",
+        "psid-data/family/1975/FAM1975.txt",
+        "psid-data/family/1976/FAM1976.sps",
+        "psid-data/family/1976/FAM1976.txt",
+        "psid-data/family/1977/FAM1977.sps",
+        "psid-data/family/1977/FAM1977.txt",
+        "psid-data/family/1978/FAM1978.sps",
+        "psid-data/family/1978/FAM1978.txt",
+        "psid-data/family/1979/FAM1979.sps",
+        "psid-data/family/1979/FAM1979.txt",
+        "psid-data/family/1980/FAM1980.sps",
+        "psid-data/family/1980/FAM1980.txt",
+        "psid-data/family/1981/FAM1981.sps",
+        "psid-data/family/1981/FAM1981.txt",
+        "psid-data/family/1982/FAM1982.sps",
+        "psid-data/family/1982/FAM1982.txt",
+        "psid-data/family/1983/FAM1983.sps",
+        "psid-data/family/1983/FAM1983.txt",
+        "psid-data/family/1984/FAM1984.sps",
+        "psid-data/family/1984/FAM1984.txt",
+        "psid-data/family/1985/FAM1985.sps",
+        "psid-data/family/1985/FAM1985.txt",
+        "psid-data/family/1986/FAM1986.sps",
+        "psid-data/family/1986/FAM1986.txt",
+        "psid-data/family/1987/FAM1987.sps",
+        "psid-data/family/1987/FAM1987.txt",
+        "psid-data/family/1988/FAM1988.sps",
+        "psid-data/family/1988/FAM1988.txt",
+        "psid-data/family/1989/FAM1989.sps",
+        "psid-data/family/1989/FAM1989.txt",
+        "psid-data/family/1990/FAM1990.sps",
+        "psid-data/family/1990/FAM1990.txt",
+        "psid-data/family/1991/FAM1991.sps",
+        "psid-data/family/1991/FAM1991.txt",
+        "psid-data/family/1992/FAM1992.sps",
+        "psid-data/family/1992/FAM1992.txt",
+        "psid-data/family/1993/FAM1993.sps",
+        "psid-data/family/1993/FAM1993.txt",
+        "psid-data/family/1994/FAM1994ER.sps",
+        "psid-data/family/1994/FAM1994ER.txt",
+        "psid-data/family/1995/FAM1995ER.sps",
+        "psid-data/family/1995/FAM1995ER.txt",
+        "psid-data/family/1996/FAM1996ER.sps",
+        "psid-data/family/1996/FAM1996ER.txt",
+        "psid-data/family/1997/FAM1997ER.sps",
+        "psid-data/family/1997/FAM1997ER.txt",
+        "psid-data/family/1999/FAM1999ER.sps",
+        "psid-data/family/1999/FAM1999ER.txt",
+        "psid-data/family/2001/FAM2001ER.sps",
+        "psid-data/family/2001/FAM2001ER.txt",
+        "psid-data/family/2003/FAM2003ER.sps",
+        "psid-data/family/2003/FAM2003ER.txt",
+        "psid-data/family/2005/FAM2005ER.sps",
+        "psid-data/family/2005/FAM2005ER.txt",
+        "psid-data/family/2007/FAM2007ER.sps",
+        "psid-data/family/2007/FAM2007ER.txt",
+        "psid-data/family/2009/FAM2009ER.sps",
+        "psid-data/family/2009/FAM2009ER.txt",
+        "psid-data/family/2011/FAM2011ER.sps",
+        "psid-data/family/2011/FAM2011ER.txt",
+        "psid-data/family/2013/FAM2013ER.sps",
+        "psid-data/family/2013/FAM2013ER.txt",
+        "psid-data/family/2015/FAM2015ER.sps",
+        "psid-data/family/2015/FAM2015ER.txt",
+        "psid-data/family/2017/FAM2017ER.sps",
+        "psid-data/family/2017/FAM2017ER.txt",
+        "psid-data/family/2019/FAM2019ER.sps",
+        "psid-data/family/2019/FAM2019ER.txt",
+        "psid-data/family/2021/FAM2021ER.sps",
+        "psid-data/family/2021/FAM2021ER.txt",
+        "psid-data/family/2023/FAM2023ER.sps",
+        "psid-data/family/2023/FAM2023ER.txt",
+        "psid-data/ind2023er/IND2023ER.sps",
+        "psid-data/ind2023er/IND2023ER.txt",
+        "psid-data/ind2023er/IND2023ER_formats.sas",
+        "psid-data/mh85_23/MH85_23.sps",
+        "psid-data/mh85_23/MH85_23.txt"
+      ],
+      "psid_files_match_artifact_sha256": true,
+      "legacy_reproduction_verified": true,
+      "readings": {
+        "scored": {
+          "flagged_supported": {
+            "people": 34,
+            "weight": 776587.0,
+            "admitted_weight_share": 0.017232662749036506,
+            "population": "track_m/scored/flagged_supported"
+          },
+          "paths": {
+            "admitted_flagged_worker_owners": "withheld",
+            "linked_auxiliary_basis": "fewer than ten",
+            "factor_entered_survivor_payment_gate": "fewer than ten",
+            "factor_entered_inverse_ms5_pia": "withheld"
+          },
+          "pre1917_flagged_people": 0,
+          "changes": {
+            "cells": 84,
+            "legacy_reproduction_exact_in_every_cell": true,
+            "changed_receiving_people_in_every_cell": 0,
+            "model_share_change_percentage_points_in_every_cell": 0.0
+          },
+          "legacy_reproduction_verified": true,
+          "admitted": {
+            "people": 2135,
+            "worker_records": 2391,
+            "weight": 45064829.0,
+            "population": "track_m/scored/admitted"
+          }
+        },
+        "d430_sensitivity": {
+          "flagged_supported": "withheld",
+          "paths": {
+            "admitted_flagged_worker_owners": "withheld",
+            "linked_auxiliary_basis": "withheld",
+            "factor_entered_survivor_payment_gate": "withheld",
+            "factor_entered_inverse_ms5_pia": "withheld"
+          },
+          "pre1917_flagged_people": 0,
+          "changes": {
+            "cells": 12,
+            "legacy_reproduction_exact_in_every_cell": true,
+            "changed_receiving_people_in_every_cell": 0,
+            "model_share_change_percentage_points_in_every_cell": 0.0
+          },
+          "legacy_reproduction_verified": true
+        }
+      }
+    },
+    {
+      "label": "labelled diagnostic under ruling d1408; no registered artifact rerun or replaced",
+      "result": "r7_sharing",
+      "artifact": "runs/replication_r7_sharing_v1.json",
+      "code_commit": "a8704357f48bc491dc591834e86600cf98ab75f1",
+      "code_commit_reason": "The R7 artifact's revision_pins.populace_dynamics_sha records this code commit.",
+      "parameter_commit": "bf71be3b",
+      "method": {
+        "input_building": "Original StudyData and benefit helpers selected unmodified from historical AST; no registered run/main or anchor helper is executed.",
+        "claim_inputs": "Exact deterministic expectations over each original sex/year claim-age PMF. No sampled claim ages; registered seeds 0-4 drive only person-disjoint half-split floors, cross-checked exactly.",
+        "late_months": "Original claiming.months_late: max(0,min(int(claim_age_months),840)-cohort FRA).",
+        "flag": "1917<=birth_year<=1942 and late_months>48; or birth_year<1917 and late_months>0.",
+        "worker_record_definition": "Unique worker person plus original/shared earnings basis; multiple PMF calls and admitted recipients are deduplicated.",
+        "weight_definition": "Recipients: original admitted last observed PSID weights and share of all admitted weight. Workers: their own last observed PSID weights; linked workers can lie outside admitted frame, so no denominator share is assigned.",
+        "rounding": "Historical PIA dollar/dime rules, float household operations, and headline rounding remain exactly as registered. No new G whole-dollar payment rounding is introduced.",
+        "pre_1917": "Statutorily unsupported; kept in every denominator, no statutory amount. Headline changes cover supported records only if any such recipient exists.",
+        "suppression": "Any positive affected group below 10 people has its entire count/weight/share/change cell suppressed as <10. Zero affected groups are structural zeros."
+      },
+      "real_data_files_read": [
+        "psid-data/family/1968/FAM1968.sps",
+        "psid-data/family/1968/FAM1968.txt",
+        "psid-data/family/1969/FAM1969.sps",
+        "psid-data/family/1969/FAM1969.txt",
+        "psid-data/family/1970/FAM1970.sps",
+        "psid-data/family/1970/FAM1970.txt",
+        "psid-data/family/1971/FAM1971.sps",
+        "psid-data/family/1971/FAM1971.txt",
+        "psid-data/family/1972/FAM1972.sps",
+        "psid-data/family/1972/FAM1972.txt",
+        "psid-data/family/1973/FAM1973.sps",
+        "psid-data/family/1973/FAM1973.txt",
+        "psid-data/family/1974/FAM1974.sps",
+        "psid-data/family/1974/FAM1974.txt",
+        "psid-data/family/1975/FAM1975.sps",
+        "psid-data/family/1975/FAM1975.txt",
+        "psid-data/family/1976/FAM1976.sps",
+        "psid-data/family/1976/FAM1976.txt",
+        "psid-data/family/1977/FAM1977.sps",
+        "psid-data/family/1977/FAM1977.txt",
+        "psid-data/family/1978/FAM1978.sps",
+        "psid-data/family/1978/FAM1978.txt",
+        "psid-data/family/1979/FAM1979.sps",
+        "psid-data/family/1979/FAM1979.txt",
+        "psid-data/family/1980/FAM1980.sps",
+        "psid-data/family/1980/FAM1980.txt",
+        "psid-data/family/1981/FAM1981.sps",
+        "psid-data/family/1981/FAM1981.txt",
+        "psid-data/family/1982/FAM1982.sps",
+        "psid-data/family/1982/FAM1982.txt",
+        "psid-data/family/1983/FAM1983.sps",
+        "psid-data/family/1983/FAM1983.txt",
+        "psid-data/family/1984/FAM1984.sps",
+        "psid-data/family/1984/FAM1984.txt",
+        "psid-data/family/1985/FAM1985.sps",
+        "psid-data/family/1985/FAM1985.txt",
+        "psid-data/family/1986/FAM1986.sps",
+        "psid-data/family/1986/FAM1986.txt",
+        "psid-data/family/1987/FAM1987.sps",
+        "psid-data/family/1987/FAM1987.txt",
+        "psid-data/family/1988/FAM1988.sps",
+        "psid-data/family/1988/FAM1988.txt",
+        "psid-data/family/1989/FAM1989.sps",
+        "psid-data/family/1989/FAM1989.txt",
+        "psid-data/family/1990/FAM1990.sps",
+        "psid-data/family/1990/FAM1990.txt",
+        "psid-data/family/1991/FAM1991.sps",
+        "psid-data/family/1991/FAM1991.txt",
+        "psid-data/family/1992/FAM1992.sps",
+        "psid-data/family/1992/FAM1992.txt",
+        "psid-data/family/1993/FAM1993.sps",
+        "psid-data/family/1993/FAM1993.txt",
+        "psid-data/family/1994/FAM1994ER.sps",
+        "psid-data/family/1994/FAM1994ER.txt",
+        "psid-data/family/1995/FAM1995ER.sps",
+        "psid-data/family/1995/FAM1995ER.txt",
+        "psid-data/family/1996/FAM1996ER.sps",
+        "psid-data/family/1996/FAM1996ER.txt",
+        "psid-data/family/1997/FAM1997ER.sps",
+        "psid-data/family/1997/FAM1997ER.txt",
+        "psid-data/family/1999/FAM1999ER.sps",
+        "psid-data/family/1999/FAM1999ER.txt",
+        "psid-data/family/2001/FAM2001ER.sps",
+        "psid-data/family/2001/FAM2001ER.txt",
+        "psid-data/family/2003/FAM2003ER.sps",
+        "psid-data/family/2003/FAM2003ER.txt",
+        "psid-data/family/2005/FAM2005ER.sps",
+        "psid-data/family/2005/FAM2005ER.txt",
+        "psid-data/family/2007/FAM2007ER.sps",
+        "psid-data/family/2007/FAM2007ER.txt",
+        "psid-data/family/2009/FAM2009ER.sps",
+        "psid-data/family/2009/FAM2009ER.txt",
+        "psid-data/family/2011/FAM2011ER.sps",
+        "psid-data/family/2011/FAM2011ER.txt",
+        "psid-data/family/2013/FAM2013ER.sps",
+        "psid-data/family/2013/FAM2013ER.txt",
+        "psid-data/family/2015/FAM2015ER.sps",
+        "psid-data/family/2015/FAM2015ER.txt",
+        "psid-data/family/2017/FAM2017ER.sps",
+        "psid-data/family/2017/FAM2017ER.txt",
+        "psid-data/family/2019/FAM2019ER.sps",
+        "psid-data/family/2019/FAM2019ER.txt",
+        "psid-data/family/2021/FAM2021ER.sps",
+        "psid-data/family/2021/FAM2021ER.txt",
+        "psid-data/family/2023/FAM2023ER.sps",
+        "psid-data/family/2023/FAM2023ER.txt",
+        "psid-data/ind2023er/IND2023ER.sps",
+        "psid-data/ind2023er/IND2023ER.txt",
+        "psid-data/mh85_23/MH85_23.sps",
+        "psid-data/mh85_23/MH85_23.txt"
+      ],
+      "guard_findings": [
+        "The initial source/artifact inspection inadvertently displayed embedded external-anchor fields and small original half-split cells from authorized repository files. No comparator path, restricted source, result comment or evidence artifact was opened. None of those fields is used or reproduced in the diagnostic.",
+        "Subsequent historical execution selects model AST nodes only, and cross-checks model fields only. No registered one-shot entry point executes; committed artifacts are read only.",
+        "A temporary historical StudyData cache is confined to scratch/d1408, keyed to its code commit, and deleted after successful aggregate output. Trace events and payment rows stay in memory."
+      ],
+      "pre_1917_refusal": {
+        "reason_code": "POSITIVE_DELAYED_CREDIT_BEFORE_1917_UNSUPPORTED",
+        "authority": "42 USC 402(w)(6)(A); POMS RS 00615.692D-E",
+        "statutory_amount": null
+      },
+      "reproduction": {
+        "exact": true,
+        "quantities_checked": 1267,
+        "mismatch_count": 0,
+        "mismatch_names": [],
+        "counts_verified": true,
+        "tolerance": "Exact equality at original output precision; no tolerance."
+      },
+      "admitted": {
+        "people": 1016,
+        "weight": 22432859.0,
+        "population": "r7_frame/admitted"
+      },
+      "flagged_supported": {
+        "people": 12,
+        "worker_records": 24,
+        "weight": 462445.0,
+        "admitted_weight_share": 0.02061462607151411,
+        "population": "r7_frame/flagged_supported"
+      },
+      "pre1917_flagged_people": 0,
+      "paths": {
+        "entered_changed_computed_payment": "fewer than ten",
+        "computed_own_payment": "none",
+        "linked_survivor_basis": "ten or more",
+        "inverse_ms5_pia": "Not on either historical R7 path.",
+        "disability_basis": "Not on either historical R7 path; registered R7 excludes DI and disability conversions."
+      },
+      "changes": {
+        "status": "computed",
+        "aggregate_cost_change_pp": {
+          "weighted_aggregate_pct_change_1b": 0.0,
+          "weighted_aggregate_pct_change_1b_noscalar": 0.0
+        },
+        "model_share_cells": {
+          "1b": {
+            "married:male": "no change",
+            "married:female": "no change",
+            "divorced:male": "no change",
+            "divorced:female": "no change",
+            "widowed:male": "withheld",
+            "widowed:female": "withheld",
+            "never_married:male": "no change",
+            "never_married:female": "no change"
+          },
+          "1a": {
+            "married:male": "no change",
+            "married:female": "no change",
+            "divorced:male": "no change",
+            "divorced:female": "no change",
+            "widowed:male": "withheld",
+            "widowed:female": "withheld",
+            "never_married:male": "no change",
+            "never_married:female": "no change"
+          },
+          "1b_noscalar": {
+            "married:male": "no change",
+            "married:female": "no change",
+            "divorced:male": "no change",
+            "divorced:female": "no change",
+            "widowed:male": "withheld",
+            "widowed:female": "withheld",
+            "never_married:male": "no change",
+            "never_married:female": "no change"
+          }
+        }
+      }
+    },
+    {
+      "label": "labelled diagnostic under ruling d1408; no registered artifact rerun or replaced",
+      "result": "cost_ordering_r7",
+      "artifact": "runs/replication_cost_ordering_v1.json",
+      "code_commit": "e86ec0c6b3508ebb0d08afe24ba16282a99769a2",
+      "code_commit_reason": "The committed cost-ordering artifact records this code commit. Only its R7 model component is reconstructed.",
+      "parameter_commit": "bf71be3b",
+      "method": {
+        "input_building": "Original StudyData and benefit helpers selected unmodified from historical AST; no registered run/main or anchor helper is executed.",
+        "claim_inputs": "Exact deterministic expectations over each original sex/year claim-age PMF. No sampled claim ages; registered seeds 0-4 drive only person-disjoint half-split floors, cross-checked exactly.",
+        "late_months": "Original claiming.months_late: max(0,min(int(claim_age_months),840)-cohort FRA).",
+        "flag": "1917<=birth_year<=1942 and late_months>48; or birth_year<1917 and late_months>0.",
+        "worker_record_definition": "Unique worker person plus original/shared earnings basis; multiple PMF calls and admitted recipients are deduplicated.",
+        "weight_definition": "Recipients: original admitted last observed PSID weights and share of all admitted weight. Workers: their own last observed PSID weights; linked workers can lie outside admitted frame, so no denominator share is assigned.",
+        "rounding": "Historical PIA dollar/dime rules, float household operations, and headline rounding remain exactly as registered. No new G whole-dollar payment rounding is introduced.",
+        "pre_1917": "Statutorily unsupported; kept in every denominator, no statutory amount. Headline changes cover supported records only if any such recipient exists.",
+        "suppression": "Any positive affected group below 10 people has its entire count/weight/share/change cell suppressed as <10. Zero affected groups are structural zeros."
+      },
+      "real_data_files_read": [
+        "psid-data/family/1968/FAM1968.sps",
+        "psid-data/family/1968/FAM1968.txt",
+        "psid-data/family/1969/FAM1969.sps",
+        "psid-data/family/1969/FAM1969.txt",
+        "psid-data/family/1970/FAM1970.sps",
+        "psid-data/family/1970/FAM1970.txt",
+        "psid-data/family/1971/FAM1971.sps",
+        "psid-data/family/1971/FAM1971.txt",
+        "psid-data/family/1972/FAM1972.sps",
+        "psid-data/family/1972/FAM1972.txt",
+        "psid-data/family/1973/FAM1973.sps",
+        "psid-data/family/1973/FAM1973.txt",
+        "psid-data/family/1974/FAM1974.sps",
+        "psid-data/family/1974/FAM1974.txt",
+        "psid-data/family/1975/FAM1975.sps",
+        "psid-data/family/1975/FAM1975.txt",
+        "psid-data/family/1976/FAM1976.sps",
+        "psid-data/family/1976/FAM1976.txt",
+        "psid-data/family/1977/FAM1977.sps",
+        "psid-data/family/1977/FAM1977.txt",
+        "psid-data/family/1978/FAM1978.sps",
+        "psid-data/family/1978/FAM1978.txt",
+        "psid-data/family/1979/FAM1979.sps",
+        "psid-data/family/1979/FAM1979.txt",
+        "psid-data/family/1980/FAM1980.sps",
+        "psid-data/family/1980/FAM1980.txt",
+        "psid-data/family/1981/FAM1981.sps",
+        "psid-data/family/1981/FAM1981.txt",
+        "psid-data/family/1982/FAM1982.sps",
+        "psid-data/family/1982/FAM1982.txt",
+        "psid-data/family/1983/FAM1983.sps",
+        "psid-data/family/1983/FAM1983.txt",
+        "psid-data/family/1984/FAM1984.sps",
+        "psid-data/family/1984/FAM1984.txt",
+        "psid-data/family/1985/FAM1985.sps",
+        "psid-data/family/1985/FAM1985.txt",
+        "psid-data/family/1986/FAM1986.sps",
+        "psid-data/family/1986/FAM1986.txt",
+        "psid-data/family/1987/FAM1987.sps",
+        "psid-data/family/1987/FAM1987.txt",
+        "psid-data/family/1988/FAM1988.sps",
+        "psid-data/family/1988/FAM1988.txt",
+        "psid-data/family/1989/FAM1989.sps",
+        "psid-data/family/1989/FAM1989.txt",
+        "psid-data/family/1990/FAM1990.sps",
+        "psid-data/family/1990/FAM1990.txt",
+        "psid-data/family/1991/FAM1991.sps",
+        "psid-data/family/1991/FAM1991.txt",
+        "psid-data/family/1992/FAM1992.sps",
+        "psid-data/family/1992/FAM1992.txt",
+        "psid-data/family/1993/FAM1993.sps",
+        "psid-data/family/1993/FAM1993.txt",
+        "psid-data/family/1994/FAM1994ER.sps",
+        "psid-data/family/1994/FAM1994ER.txt",
+        "psid-data/family/1995/FAM1995ER.sps",
+        "psid-data/family/1995/FAM1995ER.txt",
+        "psid-data/family/1996/FAM1996ER.sps",
+        "psid-data/family/1996/FAM1996ER.txt",
+        "psid-data/family/1997/FAM1997ER.sps",
+        "psid-data/family/1997/FAM1997ER.txt",
+        "psid-data/family/1999/FAM1999ER.sps",
+        "psid-data/family/1999/FAM1999ER.txt",
+        "psid-data/family/2001/FAM2001ER.sps",
+        "psid-data/family/2001/FAM2001ER.txt",
+        "psid-data/family/2003/FAM2003ER.sps",
+        "psid-data/family/2003/FAM2003ER.txt",
+        "psid-data/family/2005/FAM2005ER.sps",
+        "psid-data/family/2005/FAM2005ER.txt",
+        "psid-data/family/2007/FAM2007ER.sps",
+        "psid-data/family/2007/FAM2007ER.txt",
+        "psid-data/family/2009/FAM2009ER.sps",
+        "psid-data/family/2009/FAM2009ER.txt",
+        "psid-data/family/2011/FAM2011ER.sps",
+        "psid-data/family/2011/FAM2011ER.txt",
+        "psid-data/family/2013/FAM2013ER.sps",
+        "psid-data/family/2013/FAM2013ER.txt",
+        "psid-data/family/2015/FAM2015ER.sps",
+        "psid-data/family/2015/FAM2015ER.txt",
+        "psid-data/family/2017/FAM2017ER.sps",
+        "psid-data/family/2017/FAM2017ER.txt",
+        "psid-data/family/2019/FAM2019ER.sps",
+        "psid-data/family/2019/FAM2019ER.txt",
+        "psid-data/family/2021/FAM2021ER.sps",
+        "psid-data/family/2021/FAM2021ER.txt",
+        "psid-data/family/2023/FAM2023ER.sps",
+        "psid-data/family/2023/FAM2023ER.txt",
+        "psid-data/ind2023er/IND2023ER.sps",
+        "psid-data/ind2023er/IND2023ER.txt",
+        "psid-data/mh85_23/MH85_23.sps",
+        "psid-data/mh85_23/MH85_23.txt"
+      ],
+      "guard_findings": [
+        "The initial source/artifact inspection inadvertently displayed embedded external-anchor fields and small original half-split cells from authorized repository files. No comparator path, restricted source, result comment or evidence artifact was opened. None of those fields is used or reproduced in the diagnostic.",
+        "Subsequent historical execution selects model AST nodes only, and cross-checks model fields only. No registered one-shot entry point executes; committed artifacts are read only.",
+        "A temporary historical StudyData cache is confined to scratch/d1408, keyed to its code commit, and deleted after successful aggregate output. Trace events and payment rows stay in memory."
+      ],
+      "pre_1917_refusal": {
+        "reason_code": "POSITIVE_DELAYED_CREDIT_BEFORE_1917_UNSUPPORTED",
+        "authority": "42 USC 402(w)(6)(A); POMS RS 00615.692D-E",
+        "statutory_amount": null
+      },
+      "reproduction": {
+        "exact": true,
+        "quantities_checked": 5,
+        "mismatch_count": 0,
+        "mismatch_names": [],
+        "counts_verified": true,
+        "tolerance": "Exact equality at original output precision; no tolerance."
+      },
+      "admitted": {
+        "people": 1016,
+        "weight": 22432859.0,
+        "population": "r7_frame/admitted"
+      },
+      "flagged_supported": {
+        "people": 12,
+        "worker_records": 24,
+        "weight": 462445.0,
+        "admitted_weight_share": 0.02061462607151411,
+        "population": "r7_frame/flagged_supported"
+      },
+      "pre1917_flagged_people": 0,
+      "paths": {
+        "entered_changed_computed_payment": "fewer than ten",
+        "computed_own_payment": "none",
+        "linked_survivor_basis": "ten or more",
+        "inverse_ms5_pia": "Not on either historical R7 path.",
+        "disability_basis": "Not on either historical R7 path; registered R7 excludes DI and disability conversions."
+      },
+      "changes": {
+        "status": "computed",
+        "aggregate_cost_change_pp": {
+          "weighted_aggregate_pct_change_1b": 0.0,
+          "weighted_aggregate_pct_change_1b_noscalar": 0.0
+        },
+        "model_share_cells": {
+          "1b": {
+            "married:male": "no change",
+            "married:female": "no change",
+            "divorced:male": "no change",
+            "divorced:female": "no change",
+            "widowed:male": "withheld",
+            "widowed:female": "withheld",
+            "never_married:male": "no change",
+            "never_married:female": "no change"
+          },
+          "1a": {
+            "married:male": "no change",
+            "married:female": "no change",
+            "divorced:male": "no change",
+            "divorced:female": "no change",
+            "widowed:male": "withheld",
+            "widowed:female": "withheld",
+            "never_married:male": "no change",
+            "never_married:female": "no change"
+          },
+          "1b_noscalar": {
+            "married:male": "no change",
+            "married:female": "no change",
+            "divorced:male": "no change",
+            "divorced:female": "no change",
+            "widowed:male": "withheld",
+            "widowed:female": "withheld",
+            "never_married:male": "no change",
+            "never_married:female": "no change"
+          }
+        }
+      }
+    },
+    {
+      "header": "labelled diagnostic under ruling d1408; no registered artifact rerun or replaced",
+      "result": "cola",
+      "artifact": "runs/replication_urban2010_cola_v1.json",
+      "code_commit": "002264d92fb75f0ff22d7dc1fa9cdcef736a4cf6",
+      "code_commit_reason": "artifact run.registered_commit and git_head agree",
+      "parameter_commit": "a03e82e503",
+      "method": "Historical admitted cohorts and exact registered engine draws; original benefit and rounding functions, no registered runner. Pre1917 legacy placeholders are excluded from statutory claims.",
+      "real_data_files_read": [
+        "psid-data/family/1968/FAM1968.sps",
+        "psid-data/family/1968/FAM1968.txt",
+        "psid-data/family/1969/FAM1969.sps",
+        "psid-data/family/1969/FAM1969.txt",
+        "psid-data/family/1970/FAM1970.sps",
+        "psid-data/family/1970/FAM1970.txt",
+        "psid-data/family/1971/FAM1971.sps",
+        "psid-data/family/1971/FAM1971.txt",
+        "psid-data/family/1972/FAM1972.sps",
+        "psid-data/family/1972/FAM1972.txt",
+        "psid-data/family/1973/FAM1973.sps",
+        "psid-data/family/1973/FAM1973.txt",
+        "psid-data/family/1974/FAM1974.sps",
+        "psid-data/family/1974/FAM1974.txt",
+        "psid-data/family/1975/FAM1975.sps",
+        "psid-data/family/1975/FAM1975.txt",
+        "psid-data/family/1976/FAM1976.sps",
+        "psid-data/family/1976/FAM1976.txt",
+        "psid-data/family/1977/FAM1977.sps",
+        "psid-data/family/1977/FAM1977.txt",
+        "psid-data/family/1978/FAM1978.sps",
+        "psid-data/family/1978/FAM1978.txt",
+        "psid-data/family/1979/FAM1979.sps",
+        "psid-data/family/1979/FAM1979.txt",
+        "psid-data/family/1980/FAM1980.sps",
+        "psid-data/family/1980/FAM1980.txt",
+        "psid-data/family/1981/FAM1981.sps",
+        "psid-data/family/1981/FAM1981.txt",
+        "psid-data/family/1982/FAM1982.sps",
+        "psid-data/family/1982/FAM1982.txt",
+        "psid-data/family/1983/FAM1983.sps",
+        "psid-data/family/1983/FAM1983.txt",
+        "psid-data/family/1984/FAM1984.sps",
+        "psid-data/family/1984/FAM1984.txt",
+        "psid-data/family/1985/FAM1985.sps",
+        "psid-data/family/1985/FAM1985.txt",
+        "psid-data/family/1986/FAM1986.sps",
+        "psid-data/family/1986/FAM1986.txt",
+        "psid-data/family/1987/FAM1987.sps",
+        "psid-data/family/1987/FAM1987.txt",
+        "psid-data/family/1988/FAM1988.sps",
+        "psid-data/family/1988/FAM1988.txt",
+        "psid-data/family/1989/FAM1989.sps",
+        "psid-data/family/1989/FAM1989.txt",
+        "psid-data/family/1990/FAM1990.sps",
+        "psid-data/family/1990/FAM1990.txt",
+        "psid-data/family/1991/FAM1991.sps",
+        "psid-data/family/1991/FAM1991.txt",
+        "psid-data/family/1992/FAM1992.sps",
+        "psid-data/family/1992/FAM1992.txt",
+        "psid-data/family/1993/FAM1993.sps",
+        "psid-data/family/1993/FAM1993.txt",
+        "psid-data/family/1994/FAM1994ER.sps",
+        "psid-data/family/1994/FAM1994ER.txt",
+        "psid-data/family/1995/FAM1995ER.sps",
+        "psid-data/family/1995/FAM1995ER.txt",
+        "psid-data/family/1996/FAM1996ER.sps",
+        "psid-data/family/1996/FAM1996ER.txt",
+        "psid-data/family/1997/FAM1997ER.sps",
+        "psid-data/family/1997/FAM1997ER.txt",
+        "psid-data/family/1999/FAM1999ER.sps",
+        "psid-data/family/1999/FAM1999ER.txt",
+        "psid-data/family/2001/FAM2001ER.sps",
+        "psid-data/family/2001/FAM2001ER.txt",
+        "psid-data/family/2003/FAM2003ER.sps",
+        "psid-data/family/2003/FAM2003ER.txt",
+        "psid-data/family/2005/FAM2005ER.sps",
+        "psid-data/family/2005/FAM2005ER.txt",
+        "psid-data/family/2007/FAM2007ER.sps",
+        "psid-data/family/2007/FAM2007ER.txt",
+        "psid-data/family/2009/FAM2009ER.sps",
+        "psid-data/family/2009/FAM2009ER.txt",
+        "psid-data/family/2011/FAM2011ER.sps",
+        "psid-data/family/2011/FAM2011ER.txt",
+        "psid-data/family/2013/FAM2013ER.sps",
+        "psid-data/family/2013/FAM2013ER.txt",
+        "psid-data/family/2015/FAM2015ER.sps",
+        "psid-data/family/2015/FAM2015ER.txt",
+        "psid-data/family/2017/FAM2017ER.sps",
+        "psid-data/family/2017/FAM2017ER.txt",
+        "psid-data/family/2019/FAM2019ER.sps",
+        "psid-data/family/2019/FAM2019ER.txt",
+        "psid-data/family/2021/FAM2021ER.sps",
+        "psid-data/family/2021/FAM2021ER.txt",
+        "psid-data/family/2023/FAM2023ER.sps",
+        "psid-data/family/2023/FAM2023ER.txt",
+        "psid-data/ind2023er/IND2023ER.sps",
+        "psid-data/ind2023er/IND2023ER.txt",
+        "psid-data/ind2023er/IND2023ER_formats.sas",
+        "psid-data/mh85_23/MH85_23.sps",
+        "psid-data/mh85_23/MH85_23.txt"
+      ],
+      "reproduction_check": {
+        "projection_draws_exact": true,
+        "model_headlines_exact_by_row": {
+          "R0": true,
+          "R1": true,
+          "R2": true,
+          "R3": true,
+          "R4": true,
+          "R5": true,
+          "R6": true
+        },
+        "verified": true
+      },
+      "changed_recipient_definition": "original selected-component baseline or reform amount, or original recipient mask, changes under the statutory window; people deduplicated across registered draws",
+      "counts_verified": true,
+      "cross_result_publication_audit": {
+        "completed": true,
+        "method": "Cross-result person and worker memberships were assessed for differencing. FRA flagged subtotals and positive changed-row or age cells that could disclose a residual below ten are conservatively withheld. Original admitted denominators, empty cells and reproduction checks remain.",
+        "temporary_memberships_deleted": true
+      },
+      "headline_changes": {
+        "R0": {
+          "changed_recipients": "suppressed_complementary",
+          "groups": {
+            "50-61": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "cola/R0/50-61/changed_recipients"
+            },
+            "62-64": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "cola/R0/62-64/changed_recipients"
+            },
+            "65-69": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "cola/R0/65-69/changed_recipients"
+            },
+            "70-79": {
+              "changed_recipients": "<10",
+              "model_headlines": "<10",
+              "population": "cola/R0/70-79/changed_recipients"
+            },
+            "80+": {
+              "changed_recipients": "suppressed_complementary",
+              "model_headlines": "suppressed_complementary",
+              "population": "cola/R0/80+/changed_recipients"
+            }
+          },
+          "population": "cola/R0/changed_recipients"
+        },
+        "R1": {
+          "changed_recipients": "suppressed_complementary",
+          "groups": {
+            "50-61": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "cola/R1/50-61/changed_recipients"
+            },
+            "62-64": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "cola/R1/62-64/changed_recipients"
+            },
+            "65-69": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "cola/R1/65-69/changed_recipients"
+            },
+            "70-79": {
+              "changed_recipients": "<10",
+              "model_headlines": "<10",
+              "population": "cola/R1/70-79/changed_recipients"
+            },
+            "80+": {
+              "changed_recipients": "suppressed_complementary",
+              "model_headlines": "suppressed_complementary",
+              "population": "cola/R1/80+/changed_recipients"
+            }
+          },
+          "population": "cola/R1/changed_recipients"
+        },
+        "R2": {
+          "changed_recipients": "suppressed_complementary",
+          "groups": {
+            "50-61": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "cola/R2/50-61/changed_recipients"
+            },
+            "62-64": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "cola/R2/62-64/changed_recipients"
+            },
+            "65-69": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "cola/R2/65-69/changed_recipients"
+            },
+            "70-79": {
+              "changed_recipients": "<10",
+              "model_headlines": "<10",
+              "population": "cola/R2/70-79/changed_recipients"
+            },
+            "80+": {
+              "changed_recipients": "suppressed_complementary",
+              "model_headlines": "suppressed_complementary",
+              "population": "cola/R2/80+/changed_recipients"
+            }
+          },
+          "population": "cola/R2/changed_recipients"
+        },
+        "R3": {
+          "changed_recipients": "suppressed_complementary",
+          "groups": {
+            "50-61": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "cola/R3/50-61/changed_recipients"
+            },
+            "62-64": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "cola/R3/62-64/changed_recipients"
+            },
+            "65-69": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "cola/R3/65-69/changed_recipients"
+            },
+            "70-79": {
+              "changed_recipients": "<10",
+              "model_headlines": "<10",
+              "population": "cola/R3/70-79/changed_recipients"
+            },
+            "80+": {
+              "changed_recipients": "suppressed_complementary",
+              "model_headlines": "suppressed_complementary",
+              "population": "cola/R3/80+/changed_recipients"
+            }
+          },
+          "population": "cola/R3/changed_recipients"
+        },
+        "R4": {
+          "changed_recipients": "suppressed_complementary",
+          "groups": {
+            "50-61": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "cola/R4/50-61/changed_recipients"
+            },
+            "62-64": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "cola/R4/62-64/changed_recipients"
+            },
+            "65-69": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "cola/R4/65-69/changed_recipients"
+            },
+            "70-79": {
+              "changed_recipients": "<10",
+              "model_headlines": "<10",
+              "population": "cola/R4/70-79/changed_recipients"
+            },
+            "80+": {
+              "changed_recipients": "suppressed_complementary",
+              "model_headlines": "suppressed_complementary",
+              "population": "cola/R4/80+/changed_recipients"
+            }
+          },
+          "population": "cola/R4/changed_recipients"
+        },
+        "R5": {
+          "changed_recipients": "suppressed_complementary",
+          "groups": {
+            "50-61": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "cola/R5/50-61/changed_recipients"
+            },
+            "62-64": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "cola/R5/62-64/changed_recipients"
+            },
+            "65-69": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "cola/R5/65-69/changed_recipients"
+            },
+            "70-79": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "cola/R5/70-79/changed_recipients"
+            },
+            "80+": {
+              "changed_recipients": "suppressed_complementary",
+              "model_headlines": "suppressed_complementary",
+              "population": "cola/R5/80+/changed_recipients"
+            }
+          },
+          "population": "cola/R5/changed_recipients"
+        },
+        "R6": {
+          "changed_recipients": 35,
+          "groups": {
+            "50-61": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "cola/R6/50-61/changed_recipients"
+            },
+            "62-64": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "cola/R6/62-64/changed_recipients"
+            },
+            "65-69": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "cola/R6/65-69/changed_recipients"
+            },
+            "70-79": {
+              "changed_recipients": "<10",
+              "model_headlines": "<10",
+              "population": "cola/R6/70-79/changed_recipients"
+            },
+            "80+": {
+              "changed_recipients": "suppressed_complementary",
+              "model_headlines": "suppressed_complementary",
+              "population": "cola/R6/80+/changed_recipients"
+            }
+          },
+          "population": "cola/R6/changed_recipients"
+        }
+      },
+      "pre1917_flagged_evaluations": 0,
+      "waves": {
+        "2011": {
+          "seed_cohort_weight": 171855006.0,
+          "flagged_supported": {
+            "people": 75,
+            "weight": 1176152.0,
+            "one_worker_record_per_person": true,
+            "seed_cohort_weight_share": 0.006843862319611452,
+            "population": "cola/2011/flagged_supported"
+          },
+          "paths": {
+            "own_record": "withheld",
+            "linked_spouse_basis": "ten or more",
+            "deceased_auxiliary_basis": "ten or more",
+            "opening_stock_adjustment": "none",
+            "positive_worker_payment": "ten or more",
+            "positive_survivor_payment": "ten or more",
+            "positive_spouse_basis_factor_unused": "fewer than ten",
+            "positive_opening_stock_adjustment": "none"
+          }
+        },
+        "2009": {
+          "seed_cohort_weight": 175961799.0,
+          "flagged_supported": {
+            "people": 62,
+            "weight": 948185.0,
+            "one_worker_record_per_person": true,
+            "seed_cohort_weight_share": 0.005388584371088409,
+            "population": "cola/2009/flagged_supported"
+          },
+          "paths": {
+            "own_record": "withheld",
+            "linked_spouse_basis": "fewer than ten",
+            "deceased_auxiliary_basis": "ten or more",
+            "opening_stock_adjustment": "none",
+            "positive_worker_payment": "ten or more",
+            "positive_survivor_payment": "fewer than ten",
+            "positive_spouse_basis_factor_unused": "none",
+            "positive_opening_stock_adjustment": "none"
+          }
+        }
+      }
+    },
+    {
+      "header": "labelled diagnostic under ruling d1408; no registered artifact rerun or replaced",
+      "result": "fra68",
+      "artifact": "runs/replication_urban2010_fra68_v1.json",
+      "code_commit": "08a695a43078a7d6415c746c08371c5a6ee8e0ac",
+      "code_commit_reason": "artifact run.registered_commit and git_head agree",
+      "parameter_commit": "a03e82e503",
+      "method": "Historical admitted cohorts and exact registered engine draws; original benefit and rounding functions, no registered runner. Pre1917 legacy placeholders are excluded from statutory claims.",
+      "real_data_files_read": [
+        "psid-data/family/1968/FAM1968.sps",
+        "psid-data/family/1968/FAM1968.txt",
+        "psid-data/family/1969/FAM1969.sps",
+        "psid-data/family/1969/FAM1969.txt",
+        "psid-data/family/1970/FAM1970.sps",
+        "psid-data/family/1970/FAM1970.txt",
+        "psid-data/family/1971/FAM1971.sps",
+        "psid-data/family/1971/FAM1971.txt",
+        "psid-data/family/1972/FAM1972.sps",
+        "psid-data/family/1972/FAM1972.txt",
+        "psid-data/family/1973/FAM1973.sps",
+        "psid-data/family/1973/FAM1973.txt",
+        "psid-data/family/1974/FAM1974.sps",
+        "psid-data/family/1974/FAM1974.txt",
+        "psid-data/family/1975/FAM1975.sps",
+        "psid-data/family/1975/FAM1975.txt",
+        "psid-data/family/1976/FAM1976.sps",
+        "psid-data/family/1976/FAM1976.txt",
+        "psid-data/family/1977/FAM1977.sps",
+        "psid-data/family/1977/FAM1977.txt",
+        "psid-data/family/1978/FAM1978.sps",
+        "psid-data/family/1978/FAM1978.txt",
+        "psid-data/family/1979/FAM1979.sps",
+        "psid-data/family/1979/FAM1979.txt",
+        "psid-data/family/1980/FAM1980.sps",
+        "psid-data/family/1980/FAM1980.txt",
+        "psid-data/family/1981/FAM1981.sps",
+        "psid-data/family/1981/FAM1981.txt",
+        "psid-data/family/1982/FAM1982.sps",
+        "psid-data/family/1982/FAM1982.txt",
+        "psid-data/family/1983/FAM1983.sps",
+        "psid-data/family/1983/FAM1983.txt",
+        "psid-data/family/1984/FAM1984.sps",
+        "psid-data/family/1984/FAM1984.txt",
+        "psid-data/family/1985/FAM1985.sps",
+        "psid-data/family/1985/FAM1985.txt",
+        "psid-data/family/1986/FAM1986.sps",
+        "psid-data/family/1986/FAM1986.txt",
+        "psid-data/family/1987/FAM1987.sps",
+        "psid-data/family/1987/FAM1987.txt",
+        "psid-data/family/1988/FAM1988.sps",
+        "psid-data/family/1988/FAM1988.txt",
+        "psid-data/family/1989/FAM1989.sps",
+        "psid-data/family/1989/FAM1989.txt",
+        "psid-data/family/1990/FAM1990.sps",
+        "psid-data/family/1990/FAM1990.txt",
+        "psid-data/family/1991/FAM1991.sps",
+        "psid-data/family/1991/FAM1991.txt",
+        "psid-data/family/1992/FAM1992.sps",
+        "psid-data/family/1992/FAM1992.txt",
+        "psid-data/family/1993/FAM1993.sps",
+        "psid-data/family/1993/FAM1993.txt",
+        "psid-data/family/1994/FAM1994ER.sps",
+        "psid-data/family/1994/FAM1994ER.txt",
+        "psid-data/family/1995/FAM1995ER.sps",
+        "psid-data/family/1995/FAM1995ER.txt",
+        "psid-data/family/1996/FAM1996ER.sps",
+        "psid-data/family/1996/FAM1996ER.txt",
+        "psid-data/family/1997/FAM1997ER.sps",
+        "psid-data/family/1997/FAM1997ER.txt",
+        "psid-data/family/1999/FAM1999ER.sps",
+        "psid-data/family/1999/FAM1999ER.txt",
+        "psid-data/family/2001/FAM2001ER.sps",
+        "psid-data/family/2001/FAM2001ER.txt",
+        "psid-data/family/2003/FAM2003ER.sps",
+        "psid-data/family/2003/FAM2003ER.txt",
+        "psid-data/family/2005/FAM2005ER.sps",
+        "psid-data/family/2005/FAM2005ER.txt",
+        "psid-data/family/2007/FAM2007ER.sps",
+        "psid-data/family/2007/FAM2007ER.txt",
+        "psid-data/family/2009/FAM2009ER.sps",
+        "psid-data/family/2009/FAM2009ER.txt",
+        "psid-data/family/2011/FAM2011ER.sps",
+        "psid-data/family/2011/FAM2011ER.txt",
+        "psid-data/family/2013/FAM2013ER.sps",
+        "psid-data/family/2013/FAM2013ER.txt",
+        "psid-data/family/2015/FAM2015ER.sps",
+        "psid-data/family/2015/FAM2015ER.txt",
+        "psid-data/family/2017/FAM2017ER.sps",
+        "psid-data/family/2017/FAM2017ER.txt",
+        "psid-data/family/2019/FAM2019ER.sps",
+        "psid-data/family/2019/FAM2019ER.txt",
+        "psid-data/family/2021/FAM2021ER.sps",
+        "psid-data/family/2021/FAM2021ER.txt",
+        "psid-data/family/2023/FAM2023ER.sps",
+        "psid-data/family/2023/FAM2023ER.txt",
+        "psid-data/ind2023er/IND2023ER.sps",
+        "psid-data/ind2023er/IND2023ER.txt",
+        "psid-data/ind2023er/IND2023ER_formats.sas",
+        "psid-data/mh85_23/MH85_23.sps",
+        "psid-data/mh85_23/MH85_23.txt"
+      ],
+      "reproduction_check": {
+        "projection_draws_exact": true,
+        "model_headlines_exact_by_row": {
+          "F0": true,
+          "F1": true,
+          "F2": true,
+          "F3": true,
+          "F4": true,
+          "F5": true,
+          "F6": true,
+          "F7": true,
+          "F8": true
+        },
+        "verified": true
+      },
+      "changed_recipient_definition": "original selected-component baseline or reform amount, or original recipient mask, changes under the statutory window; people deduplicated across registered draws",
+      "counts_verified": true,
+      "cross_result_publication_audit": {
+        "completed": true,
+        "method": "Cross-result person and worker memberships were assessed for differencing. FRA flagged subtotals and positive changed-row or age cells that could disclose a residual below ten are conservatively withheld. Original admitted denominators, empty cells and reproduction checks remain.",
+        "temporary_memberships_deleted": true
+      },
+      "headline_changes": {
+        "F0": {
+          "changed_recipients": "suppressed_complementary",
+          "groups": {
+            "50-61": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F0/50-61/changed_recipients"
+            },
+            "62-64": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F0/62-64/changed_recipients"
+            },
+            "65-69": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F0/65-69/changed_recipients"
+            },
+            "70-79": {
+              "changed_recipients": "<10",
+              "model_headlines": "<10",
+              "population": "fra68/F0/70-79/changed_recipients"
+            },
+            "80+": {
+              "changed_recipients": "suppressed_complementary",
+              "model_headlines": "suppressed_complementary",
+              "population": "fra68/F0/80+/changed_recipients"
+            }
+          },
+          "population": "fra68/F0/changed_recipients"
+        },
+        "F1": {
+          "changed_recipients": "suppressed_complementary",
+          "groups": {
+            "50-61": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F1/50-61/changed_recipients"
+            },
+            "62-64": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F1/62-64/changed_recipients"
+            },
+            "65-69": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F1/65-69/changed_recipients"
+            },
+            "70-79": {
+              "changed_recipients": "<10",
+              "model_headlines": "<10",
+              "population": "fra68/F1/70-79/changed_recipients"
+            },
+            "80+": {
+              "changed_recipients": "suppressed_complementary",
+              "model_headlines": "suppressed_complementary",
+              "population": "fra68/F1/80+/changed_recipients"
+            }
+          },
+          "population": "fra68/F1/changed_recipients"
+        },
+        "F2": {
+          "changed_recipients": "suppressed_complementary",
+          "groups": {
+            "50-61": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F2/50-61/changed_recipients"
+            },
+            "62-64": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F2/62-64/changed_recipients"
+            },
+            "65-69": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F2/65-69/changed_recipients"
+            },
+            "70-79": {
+              "changed_recipients": "<10",
+              "model_headlines": "<10",
+              "population": "fra68/F2/70-79/changed_recipients"
+            },
+            "80+": {
+              "changed_recipients": "suppressed_complementary",
+              "model_headlines": "suppressed_complementary",
+              "population": "fra68/F2/80+/changed_recipients"
+            }
+          },
+          "population": "fra68/F2/changed_recipients"
+        },
+        "F3": {
+          "changed_recipients": "suppressed_complementary",
+          "groups": {
+            "50-61": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F3/50-61/changed_recipients"
+            },
+            "62-64": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F3/62-64/changed_recipients"
+            },
+            "65-69": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F3/65-69/changed_recipients"
+            },
+            "70-79": {
+              "changed_recipients": "<10",
+              "model_headlines": "<10",
+              "population": "fra68/F3/70-79/changed_recipients"
+            },
+            "80+": {
+              "changed_recipients": "suppressed_complementary",
+              "model_headlines": "suppressed_complementary",
+              "population": "fra68/F3/80+/changed_recipients"
+            }
+          },
+          "population": "fra68/F3/changed_recipients"
+        },
+        "F4": {
+          "changed_recipients": "suppressed_complementary",
+          "groups": {
+            "50-61": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F4/50-61/changed_recipients"
+            },
+            "62-64": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F4/62-64/changed_recipients"
+            },
+            "65-69": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F4/65-69/changed_recipients"
+            },
+            "70-79": {
+              "changed_recipients": "<10",
+              "model_headlines": "<10",
+              "population": "fra68/F4/70-79/changed_recipients"
+            },
+            "80+": {
+              "changed_recipients": "suppressed_complementary",
+              "model_headlines": "suppressed_complementary",
+              "population": "fra68/F4/80+/changed_recipients"
+            }
+          },
+          "population": "fra68/F4/changed_recipients"
+        },
+        "F5": {
+          "changed_recipients": "suppressed_complementary",
+          "groups": {
+            "50-61": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F5/50-61/changed_recipients"
+            },
+            "62-64": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F5/62-64/changed_recipients"
+            },
+            "65-69": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F5/65-69/changed_recipients"
+            },
+            "70-79": {
+              "changed_recipients": "<10",
+              "model_headlines": "<10",
+              "population": "fra68/F5/70-79/changed_recipients"
+            },
+            "80+": {
+              "changed_recipients": "suppressed_complementary",
+              "model_headlines": "suppressed_complementary",
+              "population": "fra68/F5/80+/changed_recipients"
+            }
+          },
+          "population": "fra68/F5/changed_recipients"
+        },
+        "F6": {
+          "changed_recipients": "suppressed_complementary",
+          "groups": {
+            "50-61": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F6/50-61/changed_recipients"
+            },
+            "62-64": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F6/62-64/changed_recipients"
+            },
+            "65-69": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F6/65-69/changed_recipients"
+            },
+            "70-79": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F6/70-79/changed_recipients"
+            },
+            "80+": {
+              "changed_recipients": "suppressed_complementary",
+              "model_headlines": "suppressed_complementary",
+              "population": "fra68/F6/80+/changed_recipients"
+            }
+          },
+          "population": "fra68/F6/changed_recipients"
+        },
+        "F7": {
+          "changed_recipients": "suppressed_complementary",
+          "groups": {
+            "50-61": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F7/50-61/changed_recipients"
+            },
+            "62-64": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F7/62-64/changed_recipients"
+            },
+            "65-69": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F7/65-69/changed_recipients"
+            },
+            "70-79": {
+              "changed_recipients": "<10",
+              "model_headlines": "<10",
+              "population": "fra68/F7/70-79/changed_recipients"
+            },
+            "80+": {
+              "changed_recipients": "suppressed_complementary",
+              "model_headlines": "suppressed_complementary",
+              "population": "fra68/F7/80+/changed_recipients"
+            }
+          },
+          "population": "fra68/F7/changed_recipients"
+        },
+        "F8": {
+          "changed_recipients": "suppressed_complementary",
+          "groups": {
+            "50-61": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F8/50-61/changed_recipients"
+            },
+            "62-64": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F8/62-64/changed_recipients"
+            },
+            "65-69": {
+              "changed_recipients": 0,
+              "model_headlines": {
+                "all_model_headline_changes": 0.0
+              },
+              "population": "fra68/F8/65-69/changed_recipients"
+            },
+            "70-79": {
+              "changed_recipients": "<10",
+              "model_headlines": "<10",
+              "population": "fra68/F8/70-79/changed_recipients"
+            },
+            "80+": {
+              "changed_recipients": "suppressed_complementary",
+              "model_headlines": "suppressed_complementary",
+              "population": "fra68/F8/80+/changed_recipients"
+            }
+          },
+          "population": "fra68/F8/changed_recipients"
+        }
+      },
+      "pre1917_flagged_evaluations": 0,
+      "waves": {
+        "2011": {
+          "seed_cohort_weight": 171855006.0,
+          "flagged_supported": {
+            "people": "suppressed_complementary",
+            "worker_records": "suppressed_complementary",
+            "weight": "suppressed_complementary",
+            "seed_cohort_weight_share": "suppressed_complementary",
+            "population": "fra68/2011/flagged_supported"
+          },
+          "paths": {
+            "own_record": "withheld",
+            "linked_spouse_basis": "withheld",
+            "deceased_auxiliary_basis": "withheld",
+            "opening_stock_adjustment": "withheld",
+            "positive_worker_payment": "withheld",
+            "positive_survivor_payment": "withheld",
+            "positive_spouse_basis_factor_unused": "fewer than ten",
+            "positive_opening_stock_adjustment": "withheld"
+          }
+        },
+        "2009": {
+          "seed_cohort_weight": 175961799.0,
+          "flagged_supported": {
+            "people": "suppressed_complementary",
+            "worker_records": "suppressed_complementary",
+            "weight": "suppressed_complementary",
+            "seed_cohort_weight_share": "suppressed_complementary",
+            "population": "fra68/2009/flagged_supported"
+          },
+          "paths": {
+            "own_record": "withheld",
+            "linked_spouse_basis": "fewer than ten",
+            "deceased_auxiliary_basis": "withheld",
+            "opening_stock_adjustment": "fewer than ten",
+            "positive_worker_payment": "withheld",
+            "positive_survivor_payment": "fewer than ten",
+            "positive_spouse_basis_factor_unused": "none",
+            "positive_opening_stock_adjustment": "fewer than ten"
+          }
+        }
+      }
+    }
+  ]
+}
