@@ -219,9 +219,10 @@ admitted record totals. The public schema publishes none of them.
 Every count and weight in a d1408 test fixture comes from the seeded
 generator `tests/d1408_synthetic.py` (seed 20261015, one salt per
 fixture) or from Hypothesis; mechanism differences of one through nine
-are written as arithmetic on generated values. No diagnostic count,
-weight or withheld value appears in test source, design text or commit
-messages: review round 4 found that an earlier draft had copied real
+are written as arithmetic on generated values. No unpublished
+diagnostic count, weight or withheld value appears in test source, design
+text or commit messages (published values, such as the first-estimates
+bound, appear only where the text reports them): review round 4 found that an earlier draft had copied real
 counts into fixtures, and that draft was withdrawn before merge.
 `tests/test_d1408_fixture_provenance.py` enforces the rule. It always
 checks that no literal other than 0 or 1 sits in a count or weight
