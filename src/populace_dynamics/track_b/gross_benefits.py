@@ -71,8 +71,12 @@ What this layer computes, for one insured worker's record and one month:
    spouse entitled first and to the RIB later keeps the spouse benefit as
    reduced under 402(q)(1) and is paid its excess over the RIB (RS
    00615.240, method B). A widow(er)'s benefit and own benefit are reduced
-   independently (method B, 402(q)(3)(E); RS 00615.020A.3). A spouse with
-   a child in care is never reduced for age (402(q)(5)(A)(ii)) and is paid
+   independently (method B, 402(q)(3)(E); RS 00615.020A.3). Own-RIB widow
+   support begins with cohort 1929, an implementation boundary narrower
+   than the January 2, 1928 source boundary (RS 00615.010/.020B); cohort
+   1928 remains a known over-refusal pending expanded sequence coverage.
+   A spouse with a child in care is never reduced for age (402(q)(5)(A)(ii))
+   and is paid
    the excess over the reduced RIB (RS 00615.020A.3 note). This includes
    divorced spouses (RS 00615.010/.201A.2), who remain outside the maximum
    under 403(a)(3)(C). Their current care requires a named entitled child;
@@ -131,7 +135,9 @@ coverage refusal, so :func:`evaluate_family` never counts an invalid row as
 a coverage gap. All supplied birth years for a person, including their own
 worker record, must agree; the household carries that cohort into every
 own and auxiliary check (402(q)(6); RS 00615.003/.010) using immutable
-copies. :func:`evaluate_family`, :func:`count_family_outcomes` and
+copies. ``RecordState.worker_birth_year`` preserves the insured person's
+cohort for every record kind, independently of own-benefit entitlement.
+:func:`evaluate_family`, :func:`count_family_outcomes` and
 the weighted aggregates keep unsupported rows in every denominator and
 block totals that would need them.
 
@@ -148,6 +154,14 @@ years must agree. That cohort bounds both own-RIB and auxiliary reduction
 months before any coverage refusal (402(q)(6); RS 00615.003/.010), and fixes
 the widow(er)'s RS 00615.301B.2 period, including every boundary cohort.
 Normalization uses immutable copies and does not change the caller's inputs.
+
+An own RIB with positive PIA and reduction months refuses for a known
+cohort before 1916: first entitlement could precede January 1978, requiring
+the reduction and PIA money history in RS 00615.005C.2. These inputs carry
+current PIA and months after any ARF, which cannot establish that history.
+A zero PIA or zero reduction does not need the missing reduction amount.
+Omitted cohorts retain the current-formula domain only; they do not
+establish statutory conformance for an undated historical award.
 
 RS 00615.712 protects survivors entitled for May 1978 from reductions due
 to a widow(er)'s deceased-worker delayed credits. Protected cases are
@@ -305,8 +319,10 @@ _MAX_SPOUSE_REDUCTION_MONTHS = 60
 _SURVIVOR_PERIODS = frozenset(range(60, 85, 2))
 #: POMS RS 00615.020B chart: a widow(er) born before 1/2/1928 who took
 #: widow(er)'s benefits before 62 and then RIB carries a reduction over
-#: (method D). G conservatively admits own-RIB widow combinations from
-#: cohort 1929; the earlier method-D surface remains refused.
+#: (method D). RS 00615.010 admits usual RIB reduction from 1/2/1928.
+#: G retains its validated implementation boundary of cohort 1929 pending
+#: expanded sequence coverage; cohort 1928 is a known over-refusal, not
+#: a method-D source requirement or ambiguity in the SSA cohort input.
 _FIRST_METHOD_B_WIDOW_BIRTH_YEAR = 1929
 
 
@@ -350,6 +366,7 @@ class UnsupportedReason(Enum):
     )
     DIVORCED_SPOUSE_CARE_HISTORY = "divorced_spouse_care_history"
     DELAYED_CREDITS_BEFORE_1917 = "delayed_credits_born_before_1917"
+    OWN_RIB_HISTORY_BEFORE_1978 = "own_rib_history_before_1978"
 
 
 class FamilyConfigurationUnsupported(Exception):
@@ -853,6 +870,32 @@ def _check_own_benefit(own: OwnBenefit, params: SSAParameters) -> None:
     _delayed_credit_months(own.delayed_credit_months, own.birth_year, params)
 
 
+def _refuse_historical_own_rib(
+    pia: Fraction, reduction_months: int, birth_year: int | None
+) -> None:
+    """RS 00615.005C.2 needs money history for pre-1978 entitlement.
+
+    A cohort before 1916 could take RIB before January 1978. Reduction
+    months are after any ARF, so they cannot establish initial entitlement.
+    Undated scalar inputs retain the current-formula domain; they do not
+    validate a historical award. A zero PIA or no reduction needs no
+    historical reduction amount.
+    """
+    if (
+        pia > 0
+        and reduction_months > 0
+        and birth_year is not None
+        and birth_year < 1916
+    ):
+        raise FamilyConfigurationUnsupported(
+            UnsupportedReason.OWN_RIB_HISTORY_BEFORE_1978,
+            "own RIB with a positive reduction for a cohort before 1916 "
+            "could have initial entitlement before January 1978; "
+            "RS 00615.005C.2 requires the current money amount of "
+            "reduction and historical PIA, which these inputs omit",
+        )
+
+
 def worker_age_adjusted(
     pia: object,
     reduction_months: int,
@@ -870,6 +913,11 @@ def worker_age_adjusted(
     Credit months run from full retirement age to 70, at most
     :func:`delayed_credit_window_months`; more is an input error. Credits
     for births before 1917 are refused (402(w)(6)(A)).
+
+    Positive reductions with positive PIA for cohorts before 1916 refuse:
+    initial entitlement could precede January 1978, and RS 00615.005C.2
+    needs reduction/PIA history absent here. Undated inputs use the current
+    formula and do not establish conformance for historical awards.
     """
     rates = statutory_rates(params)
     amount = _dimes(pia, "PIA")
@@ -879,6 +927,7 @@ def worker_age_adjusted(
     delayed_credit_months = _delayed_credit_months(
         delayed_credit_months, birth_year, params
     )
+    _refuse_historical_own_rib(amount, reduction_months, birth_year)
     base = floor_dime(
         amount * (1 - _worker_reduction(reduction_months, rates))
     )
@@ -1133,8 +1182,11 @@ class OwnBenefit:
     ``birth_year`` for the 402(w) rate and window: at most ``840 - FRA``
     (:func:`delayed_credit_window_months`, checked when the benefit is
     computed), and refused for births before 1917. SSA's cohort bands run
-    from January 2, so a January 1 birth takes the previous year. A DIB is
-    unreduced and has no credits here (402(q)(2) cases are refused when
+    from January 2, so a January 1 birth takes the previous year. Positive
+    own-RIB reductions with positive PIA for a known cohort before 1916
+    need pre-1978 money history and refuse (RS 00615.005C.2). An omitted
+    cohort invokes the current formula, not a historical award validation.
+    A DIB is unreduced and has no credits here (402(q)(2) cases refuse when
     computed, after all family input checks, rather than in this constructor).
     """
 
@@ -1163,11 +1215,15 @@ class OwnBenefit:
 
 
 def _refuse_own_benefit(own: OwnBenefit) -> None:
-    """402(q)(2) coverage, after own/family input checks have completed."""
+    """Own-benefit coverage, after own/family input checks have completed."""
     if own.kind is OwnBenefitKind.DISABILITY and own.reduction_months:
         raise FamilyConfigurationUnsupported(
             UnsupportedReason.DIB_AFTER_REDUCED_RIB,
             "a DIB reduced for prior reduced RIB (402(q)(2))",
+        )
+    if own.kind is OwnBenefitKind.OLD_AGE:
+        _refuse_historical_own_rib(
+            own.pia, own.reduction_months, own.birth_year
         )
 
 
@@ -1350,9 +1406,11 @@ class WorkerRecord:
     the AIME and the month of the worker's initial DIB entitlement ever
     (the RS 00615.740B test for the 1980 disability maximum). A DIB that
     has converted to a RIB, or a worker who has died, takes a retirement or
-    survivor record (RS 00615.742.2). ``worker_*`` fields
-    describe the living worker's own RIB (retirement records only); delayed
-    credits need ``worker_birth_year`` and run from full retirement age to
+    survivor record (RS 00615.742.2). Worker reduction and credit months
+    describe the living worker's own RIB (retirement records only).
+    ``worker_birth_year`` describes the insured person's SSA cohort for
+    every record kind, whether or not the worker is entitled. Delayed
+    credits need that cohort and run from full retirement age to
     70 (:func:`delayed_credit_window_months`, checked by
     :func:`record_state`). ``rib_lim_benefit`` is, for a death, the
     reduced RIB or DIB the deceased would receive if alive (402(e)(2)(D));
@@ -1426,6 +1484,9 @@ class RecordState:
     when a published example (or SSA's master record) gives both amounts.
     For an entitled retirement worker ``worker`` is the worker's own RIB;
     it may be absent with WORKER_NOT_ENTITLED (IEDS, RS 00202.100).
+    ``worker_birth_year`` retains the insured person's SSA cohort even
+    without own-benefit entitlement. It must agree with ``worker`` when
+    both supply a cohort; either supplies the other's missing cohort.
     ``eligibility_year`` and ``first_dib_entitlement`` are the record's
     dates when known (:func:`record_state` fills them in); a payment month
     before either is an :class:`InvalidFamilyInput`.
@@ -1454,10 +1515,28 @@ class RecordState:
     first_dib_entitlement: YearMonth | None = None
     deferred_refusal: tuple[UnsupportedReason, str] | None = None
     widow_drc_savings_clause: bool | None = None
+    worker_birth_year: int | None = None
 
     def __post_init__(self):
         if not isinstance(self.kind, FamilyKind):
             raise TypeError("kind must be a FamilyKind")
+        if self.worker_birth_year is not None and (
+            type(self.worker_birth_year) is not int
+        ):
+            raise TypeError("worker_birth_year must be an int")
+        if self.worker is not None:
+            year = self.worker_birth_year
+            own_year = self.worker.birth_year
+            if year is not None and own_year is not None and year != own_year:
+                raise InvalidFamilyInput(
+                    "worker birth_year differs from the record cohort"
+                )
+            if year is None:
+                object.__setattr__(self, "worker_birth_year", own_year)
+            elif own_year is None:
+                object.__setattr__(
+                    self, "worker", replace(self.worker, birth_year=year)
+                )
         if self.widow_drc_savings_clause is not None and (
             type(self.widow_drc_savings_clause) is not bool
         ):
@@ -1601,6 +1680,7 @@ def record_state(record: WorkerRecord, params: SSAParameters) -> RecordState:
         eligibility_year=record.eligibility_year,
         first_dib_entitlement=record.first_dib_entitlement,
         deferred_refusal=deferred,
+        worker_birth_year=record.worker_birth_year,
     )
 
 
@@ -1859,8 +1939,10 @@ def _refuse_beneficiary(
         if beneficiary.birth_year < _FIRST_METHOD_B_WIDOW_BIRTH_YEAR:
             raise FamilyConfigurationUnsupported(
                 UnsupportedReason.DUAL_ENTITLEMENT_SEQUENCE,
-                "widow(er)s born before 1929 may carry a WIB reduction "
-                "into RIB (POMS RS 00615.020B, method D)",
+                "own-RIB widow(er)s before cohort 1929 are outside G's "
+                "implementation boundary; the source boundary is "
+                "January 2, 1928 (POMS RS 00615.010/.020B), so cohort "
+                "1928 is a known over-refusal",
                 beneficiary_id=bid,
             )
     if (
@@ -2709,7 +2791,11 @@ def _own_benefit_on_record(state: RecordState) -> OwnBenefit | None:
     if state.kind is FamilyKind.RETIREMENT:
         return state.worker
     if state.kind is FamilyKind.DISABILITY:
-        return OwnBenefit(OwnBenefitKind.DISABILITY, state.pia)
+        return OwnBenefit(
+            OwnBenefitKind.DISABILITY,
+            state.pia,
+            birth_year=state.worker_birth_year,
+        )
     return None
 
 
@@ -2784,6 +2870,7 @@ def _check_household_inputs(
         cohorts[person] = year
 
     for record in records.values():
+        remember_cohort(record.worker_id, record.state.worker_birth_year)
         if record.state.worker is not None:
             remember_cohort(record.worker_id, record.state.worker.birth_year)
         for beneficiary in record.beneficiaries:
@@ -2797,10 +2884,8 @@ def _check_household_inputs(
     for record_id, record in records.items():
         state = record.state
         year = cohorts.get(record.worker_id)
-        if state.worker is not None and year is not None:
-            state = replace(
-                state, worker=replace(state.worker, birth_year=year)
-            )
+        if year is not None:
+            state = replace(state, worker_birth_year=year)
         beneficiaries = tuple(
             _with_effective_cohort(
                 replace(b, birth_year=cohorts.get(b.beneficiary_id))

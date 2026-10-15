@@ -4,7 +4,7 @@
 benefits for supported invented or published statutory cases only; no
 population, behavioral or forecast claim.**
 
-**Status: build-only, 2026-09-29; review fixes through 2026-10-14. No real-data
+**Status: build-only, 2026-09-29; review fixes through 2026-10-15. No real-data
 computation.** Inputs are invented families and SSA's published worked
 examples.
 
@@ -98,8 +98,10 @@ For one worker's record and one benefit month:
      spouses with own RIB do not require this order. There is no default
      for aged methods: in the
      RS 00615.240 example the two methods pay $250.00 and $262.50.
-   - Widow(er)s use method B: both benefits are reduced independently
-     (402(q)(3)(E); RS 00615.020A.3).
+   - Supported widow(er)s use method B: both benefits are reduced
+     independently (402(q)(3)(E); RS 00615.020A.3). G's own-RIB widow
+     support begins at cohort 1929, a deliberately narrower implementation
+     boundary than the source's January 2, 1928 boundary; see below.
    - A spouse with a child in care is never reduced for age (402(q)(5)(A)(ii))
      and is paid the excess over the reduced RIB (RS 00615.020A.3 note).
      RS 00615.010/.201A.2 explicitly include a divorced spouse with current
@@ -219,7 +221,11 @@ family inputs before coverage refusals. The household checks do three things:
   one cohort across their worker record and all beneficiary rows
   (402(q)(6); RS 00615.003/.010). A known year is carried into immutable
   copies of every occurrence before family validation and calculation;
-  missing duplicate metadata does not erase it. A mismatch, a worker with
+  missing duplicate metadata does not erase it. `RecordState.worker_birth_year`
+  preserves the insured person's cohort for every record kind, including
+  an eligible worker who has not claimed. Own-benefit entitlement determines
+  whether a RIB or DIB must be declared; it does not determine whether the
+  person's known cohort constrains another record. A mismatch, a worker with
   two records, or a deceased worker entered as a beneficiary raises
   `InvalidFamilyInput`.
 
@@ -383,7 +389,7 @@ G never falls back to a single-worker computation.
 | `workers_compensation_offset` | Section 224 |
 | `government_pension_offset` | 202(k)(5), only benefit months through December 2023 |
 | `administrative_finality` | Protected rates (RS 00615.754A.3) |
-| `dual_entitlement_sequence` | A spouse's DIB after the spouse benefit (RS 00615.260), an aged widow(er) with DIB or born before 1929 (RS 00615.020B method D), or DWB with own RIB or DIB |
+| `dual_entitlement_sequence` | A spouse's DIB after the spouse benefit (RS 00615.260), an aged widow(er) with DIB, an own-RIB widow(er) before G's cohort-1929 implementation boundary (the source's method-D boundary is January 2, 1928; RS 00615.010/.020B), or DWB with own RIB or DIB |
 | `parisi_redistribution_ambiguous` | Own delayed credits, an actually limiting RIB-LIM after maximum and age reduction, or dual zero reached only after auxiliary age reduction remain unsettled by GN 02603.050A/C |
 | `parisi_before_october_1999` | A binding maximum with dual entitlement before 10/99 |
 | `independently_entitled_divorced_spouse` | IEDS before January 1985 or a WEP-affected worker record before January 2024 (RS 00202.100) |
@@ -396,6 +402,7 @@ G never falls back to a single-worker computation.
 | `divorced_spouse_child_in_care_unknown` | An entitled divorced spouse and an entitled child are on the record without a current-month care attestation (RS 00615.010/.201A.2) |
 | `divorced_spouse_care_history` | Without current care, first-entitlement care is unknown or attested True, and continued exemption could change the settled auxiliary payable; different intermediate rates with identical payables are supported with a diagnostic note. Conversion and ARF history after care ends are outside this snapshot (202(k)(3)(A); RS 00615.201A.2; .010) |
 | `delayed_credits_born_before_1917` | Delayed credits for births before 1917 (402(w)(6)(A)'s 1/12 of 1 percent) |
+| `own_rib_history_before_1978` | A known own-RIB cohort before 1916, positive current PIA and positive reduction months: first entitlement could precede January 1978, and the historical reduction/PIA amounts needed by RS 00615.005C.2 are absent |
 
 `evaluate_family` and `count_family_outcomes` keep unsupported rows, whether
 single records or households, in every denominator by reason and weight.
@@ -403,6 +410,64 @@ single records or households, in every denominator by reason and weight.
 `FamilyTargetBlocked` rather than drop them. Invalid inputs raise
 `InvalidFamilyInput`. They are errors, not coverage gaps, and are never
 absorbed as unsupported rows.
+
+### Own-RIB reductions with pre-1978 entitlement history
+
+RS 00615.005C.1 applies to "Initial Entitlement 1/78 or Later" and states:
+"Subsequent higher PIAs or unreduced amounts (adjusted for family maximum
+if necessary) are reduced by the original reduction factor (ORF)."
+Its C.2 instead covers "Initial Entitlement Before 1/78" and computes
+the new money amount of reduction from the new PIA, the current money
+amount of reduction and the current PIA: `(NPIA or NUR) x CMAR / (CPIA or CUR)`.
+The capture then directs: "The new money amount of reduction is subtracted
+from the new PIA or the new unreduced rate to obtain the new monthly
+benefit amount."
+
+A cohort before 1916 could first receive RIB before January 1978. G's
+inputs supply current PIA and reduction months after any ARF, rather than
+first-entitlement date and the required money history. Even RF1 cannot
+establish a late first entitlement. With a positive PIA and reduction,
+these cohorts therefore raise `own_rib_history_before_1978` after all
+input checks. A zero PIA or zero reduction does not require the missing
+reduction amount. Cohorts from 1916 cannot first receive RIB before
+January 1978; the existing current formula remains supported. If the
+cohort is omitted, the scalar and family calculation retains its existing
+current-formula domain; this does not validate an undated historical award.
+
+The review's invented spouse has cohort 1912, own PIA $1,000 and RF1.
+Previously G returned $994.40 without the historical inputs. It now
+refuses, keeps the row and weight in every denominator, and blocks totals.
+The captured text does not establish a replacement dollar amount, so no
+historical payment is imputed. Changing the cohort to 1916, 1917 or 1935
+keeps the supported $994.40 current-formula control. The new history tests
+quote both instructions, exercise both cohort placements and all family
+entry points, and compare the scalar calculation to an independent exact
+fraction formula with zero tolerance. This implements a missing-input
+coverage refusal and introduces no alternative statutory interpretation.
+
+### Own-RIB widow support boundary
+
+RS 00615.010 identifies "RIB After Reduced WIB (D then A) with date of birth
+of 1/2/1928 or later" and directs: "Reduce the RIB in the usual manner
+without regard to the WIB". RS 00615.020B specifies method D only when the
+date of birth is "prior to 1/2/1928" for the stated widow-before-age-62
+sequence. The statutory-source boundary is therefore January 2, 1928.
+
+G retains cohort 1929 as its conservative implementation boundary to preserve
+the previously validated support surface until sequence coverage is expanded
+for cohort 1928. This is a known over-refusal, not a claim that the source
+requires method D for cohort 1928. Birth years already denote SSA's
+January 2-January 1 cohorts, so missing day-of-birth precision is not the
+reason. No new statutory interpretation is selected.
+
+The review's invented widow has survivor PIA and maximum of $1,000, own
+RIB of $200 and no reductions or credits. Cohort 1928 remains refused as
+`dual_entitlement_sequence`; changing only the cohort to 1929 admits own
+$200.00 plus auxiliary $800.00 (whole dollars $200 and $800). The refusal
+retains the 1928 row in every denominator instead of producing a zero
+payment. `test_review_1928_widow_refusal_discloses_implementation_boundary`
+pins an accurate diagnostic, the 1929 control pins the exact payments, and
+`test_1928_source_boundary_is_quoted_from_captures` pins both source texts.
 
 ## Invariants (all executed as tests)
 
@@ -550,6 +615,40 @@ absorbed as unsupported rows.
     a shared spouse's RF36 preserves the multiple-record refusal and RF37
     is invalid in
     `test_auxiliary_only_shared_cohort_precedes_multiple_record_refusal`.
+    This invariant holds independently of own-benefit entitlement and
+    record kind. The round-7
+    `test_review_unclaimed_worker_cohort_makes_rf37_invalid` and
+    `test_unclaimed_worker_cohort_conflict_precedes_gpo` reject the
+    unclaimed worker's RF37 and conflicting metadata before GPO or guard
+    advancement. Its RF36 control pays $375.00 auxiliary and $1,375.00
+    household total, or retains the GPO refusal with weight 7/3.
+    `test_property_unclaimed_cohort_validation_is_order_independent`
+    checks cohort propagation, exact equality with explicitly supplied
+    cohorts, immutable inputs, record order and unchanged guards on errors.
+    `test_property_unclaimed_builder_and_direct_cohorts_agree` compares
+    both construction styles exactly;
+    `test_property_record_builder_preserves_cohort_without_rib` covers
+    every record kind independently of entitlement.
+    `test_property_record_and_own_cohorts_reconcile_immutably` checks all
+    metadata placements and conflicting years, and
+    `test_property_unclaimed_cohort_conflicts_precede_refusals` exercises
+    conflict priority across construction styles and record orders.
+21. **Historical own-RIB scope.** Positive reductions of a positive own
+    PIA for known cohorts before 1916 always refuse with
+    `own_rib_history_before_1978`; each row and weight remains in its
+    denominator and aggregate totals block. Invalid reduction inputs
+    raise first and leave monthly guards unchanged. A zero PIA or zero
+    reduction stays supported, and cohorts from 1916 match the independent
+    exact current formula with zero tolerance.
+    `test_property_historical_reduction_refusal_preserves_denominators`
+    and `test_property_1978_boundary_preserves_post_1977_formula` execute
+    the coverage/denominator and arithmetic properties.
+    `test_history_refusal_follows_all_family_input_errors` and the
+    unreduced/zero-PIA controls execute their boundary cases. The former
+    varies old cohorts and impossible auxiliary reduction months through
+    Hypothesis while retaining the explicit 1912/RF37 control;
+    `test_property_zero_pia_or_zero_reduction_needs_no_history` executes
+    both supported exceptions across cohorts 1900-1915.
 
 ## Worked examples reproduced exactly
 
@@ -898,10 +997,12 @@ child is invalid, and unknown care with an entitled child refuses. Cells
 without these roles still retain all three care choices in the denominator.
 
 There are 356,400 cells: 8,831 supported, 60,775 refused and 286,794 invalid.
-All cells stay in the denominator. Twenty-six named invented witnesses form
+All cells stay in the denominator. Twenty-seven named invented witnesses form
 a separate denominator, one executed refusal for every retained reason,
 including historical, multi-record and protected-path cases absent from the
-lattice. Statutory registry counts are separate again. These are invented
+lattice. The `own_rib_history_before_1978` witness retains the cohort-1912,
+own-PIA-$1,000, RF1 case; that reason is absent from the lattice's fixed
+1946 cohort. Statutory registry counts are separate again. These are invented
 configuration counts, with no population weights or population claim.
 
 Report invariants are unique/exhaustive declared cells, supported/refused/
@@ -1283,3 +1384,32 @@ These fixes extend invariants 6-8, 19 and 20. The retained source/hash,
 registry, round-3/4/5, conformance-report and depletion-cut compatibility
 checks continue to apply. Cohort resolution does not implement combined
 family maximums or multiple auxiliary entitlement; both remain refused.
+
+## Fix round 7 of October 15, 2026
+
+Verification class: statutory conformance on invented cases only. This
+round preserves all earlier controls and introduces no population,
+behavioral or forecast claim. The earlier Needs Max's judgment items and
+rulings d1418 and d1338 remain unchanged.
+
+Worker cohorts now survive record construction independently of own-benefit
+entitlement and record kind. The unclaimed 1935 worker's RF37 spouse row
+raises `InvalidFamilyInput` in both household APIs, before GPO or any guard
+advancement (402(q)(6); RS 00615.003/.010). RF36 pays $375 auxiliary and
+$1,375 household total, or retains the valid GPO refusal and weight 7/3.
+Direct and built records, cohort placements and record order agree exactly.
+
+Positive own-RIB reductions for known cohorts before 1916 now refuse as
+`own_rib_history_before_1978`, because RS 00615.005C.2 requires historical
+PIA and money-reduction inputs that G does not carry. The review's 1912,
+$1,000, RF1 case no longer reports the unsupported $994.40 result.
+Its refusal stays in the separate 27-witness denominator; the fixed-cohort
+356,400-cell lattice remains unchanged. Invariant 21 records the historical
+scope, input-error priority and supported zero/no-reduction boundaries.
+
+The own-RIB widow boundary remains conservatively at cohort 1929. The
+design, module documentation and refusal diagnostic now distinguish that
+implementation limit from the source's January 2, 1928 boundary
+(RS 00615.010/.020B). The known 1928 over-refusal and the 1929 control,
+$200 own plus $800 auxiliary, are explicit; no alternative statutory
+interpretation was selected.

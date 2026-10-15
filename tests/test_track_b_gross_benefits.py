@@ -2003,6 +2003,19 @@ def _unsupported_cases():
                 )
             ],
         ),
+        g.UnsupportedReason.OWN_RIB_HISTORY_BEFORE_1978: lambda: _family(
+            _retired(2000, 3000),
+            [
+                g.Beneficiary(
+                    "S",
+                    g.Role.SPOUSE,
+                    own_benefit=g.OwnBenefit(
+                        OLD_AGE, F(1000), reduction_months=1, birth_year=1912
+                    ),
+                    own_benefit_first=True,
+                )
+            ],
+        ),
     }
 
 

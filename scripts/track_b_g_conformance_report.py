@@ -568,6 +568,27 @@ def refusal_witnesses() -> dict[g.UnsupportedReason, tuple[str, Callable]]:
                 ],
             ),
         ),
+        reasons.OWN_RIB_HISTORY_BEFORE_1978: (
+            "Spouse born in 1912 has own RIB PIA 1000 and RF1 but no pre-January-1978 reduction or PIA history",
+            lambda: _family(
+                _retired(F(2000), F(3000)),
+                [
+                    g.Beneficiary(
+                        "spouse",
+                        g.Role.SPOUSE,
+                        own_benefit=g.OwnBenefit(
+                            rib,
+                            F(1000),
+                            reduction_months=1,
+                            birth_year=1912,
+                        ),
+                        own_benefit_first=True,
+                        birth_year=1912,
+                    )
+                ],
+                g.YearMonth(2023, 12),
+            ),
+        ),
     }
 
 

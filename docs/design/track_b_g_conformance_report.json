@@ -175,6 +175,7 @@
       "independently_entitled_divorced_spouse": 0,
       "multiple_auxiliary_records": 0,
       "non_aime_formula_pia": 4971,
+      "own_rib_history_before_1978": 0,
       "parent_benefit": 0,
       "parisi_before_october_1999": 832,
       "parisi_redistribution_ambiguous": 340,
@@ -396,8 +397,8 @@
   "supplemental_refusal_witnesses": {
     "denominator": {
       "invalid": 0,
-      "refused": 26,
-      "rows": 26,
+      "refused": 27,
+      "rows": 27,
       "supported": 0
     },
     "refused_by_reason": {
@@ -417,6 +418,7 @@
       "independently_entitled_divorced_spouse": 1,
       "multiple_auxiliary_records": 1,
       "non_aime_formula_pia": 1,
+      "own_rib_history_before_1978": 1,
       "parent_benefit": 1,
       "parisi_before_october_1999": 1,
       "parisi_redistribution_ambiguous": 1,
@@ -524,6 +526,12 @@
         "description": "Declared PIA outside the AIME formula",
         "id": "non_aime_formula_pia",
         "reason": "non_aime_formula_pia",
+        "status": "refused"
+      },
+      {
+        "description": "Spouse born in 1912 has own RIB PIA 1000 and RF1 but no pre-January-1978 reduction or PIA history",
+        "id": "own_rib_history_before_1978",
+        "reason": "own_rib_history_before_1978",
         "status": "refused"
       },
       {
