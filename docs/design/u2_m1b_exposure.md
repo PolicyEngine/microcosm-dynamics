@@ -336,3 +336,85 @@ No file the restricted list names was opened for reading: no page of the Boomers
 - `docs/design/boomers2004_1946_55_comparison.md` (lines 3 and 4, §16b, and §§17, 19 and 20), `docs/design/u2_m1b_psid_research.md` (the header sentence and the three question labels), `docs/design/u2_m1_source_adjudication.md` (the pointer to §16a), `data/external/track_u2/u1_identity.json` (the specification pin and its note), and this section.
 
 No registry entry, §15 line, test, U1 file, engine file, `gates.yaml` or `runs/*.json` was edited.
+
+## Ruling recorded and applied (2026-10-10, d1090)
+
+A Claude Code session (Opus 5.5) recorded Max's ruling d1090 on blockers B1 and B2 as the specification's §16c and applied it to the U2 source registries and the cohort builder. It is not a U2 forecaster or referee, and it computed nothing from real data.
+
+### Read
+
+- `EV/RESTRICTED-FILES.md` (SHA-256 `2e1b5c2a…`), in full and first, to know what not to open.
+- The chief-of-staff decision log's entries for d637, d745 and d1090, and a listing of decisions filtered for those ids.
+- `EV/rulings-records-20260930/README.md` (`29f9b525…`) and `registry-followup-brief.md` (`aefefe0c…`), the d637 registry brief, and that folder's file listing.
+- In the repository: the specification (its header, the §3 lines on family units and sequences, and §§15–20), the research record in full, the master record (summary tables, blocker rows and the rows of the entries this work changes), this file's 2026-09-30 section, the eight registries, `u1_identity.json`, `src/populace_dynamics/data/u2_source_registry.py`, the U2 package's `sources.py`, `cohort.py`, `loader.py` and `invented.py`, `scripts/track_u2_dry_run.py`, and the tests under `tests/track_u2/`.
+- `git worktree list` and the titles of the repository's open pull requests.
+
+### Not opened
+
+No file on the restricted list was opened: no page of the Boomers 2004 report, no comparator, seal, values scan or result, and no PSID data file. PSID's reply and its screenshots (`EV/phase2-20260927/psid-help-reply-20261007/`) were not opened; the research record's account of them was used. No issue #42 comment was listed or read, and no Subfleet job folder other than this session's own review runs was opened.
+
+### Tests
+
+The U2 tests ran with the PSID root staged. They read staged PSID documentation (setup files, codebooks and questionnaires, through text extraction) and invented records; the loader tests' audit hook refuses any open under the PSID data roots. No raw PSID record was read and no statistic was computed on real data.
+
+### Incidental exposure
+
+- The decision listing printed one-line summaries of unrelated decisions (travel, other repositories); none concerns a comparator or U2's outcome.
+- The d1090 decision record paraphrases PSID's answer. Besides the whole-file count of two that the research record already discloses, it gives one record-level detail about one of the two people, which the research record withholds. It is not reproduced in the specification, the registries or here.
+
+### Files written
+
+- `docs/design/boomers2004_1946_55_comparison.md` (lines 3 and 4, §16c, §§17, 19 and 20), `docs/design/u2_m1b_psid_research.md` (the header and the answers to §§1 and 2), `docs/design/u2_m1_source_adjudication.md` (the summary counts and table, the blocker rows, a section on the d1090 registry commit, the pointer to §16b and the rows of the eight ruled entries), `data/external/track_u2/u1_identity.json` (the specification pin and its note), and this section.
+- `data/external/track_u2/roles.json`, `income.json` and `pension.json` (the eight ruled entries, the released dependencies and a `rulings_applied` record).
+- `src/populace_dynamics/data/u2_source_registry.py`; `src/populace_dynamics/uniform_cut_track_u2/sources.py`, `cohort.py`, `invented.py` and `loader.py` (docstring); `scripts/track_u2_dry_run.py`.
+- `tests/track_u2/test_adjudication_applied.py`, `test_source_registries.py`, `test_u2_roles.py`, `test_u2_properties.py`, `test_u2_mappings.py`, `test_u2_loader.py` and `test_u2_scripts.py`, and `tests/data/test_track_u2_income_wealth.py`.
+- Outside the repository: the registry edit script and the review records, copied to `EV/rulings-records-20261010/`.
+
+No U1 file, engine file, `gates.yaml` or `runs/*.json` was edited.
+
+## Rulings applied to the registries (from 2026-10-11, d637)
+
+A Claude Code session (Opus 5.5, session `943a9dba-…`) applied Max's ruling d637 (2026-09-30; specification §16b) to the U2 source registries, one reviewed commit per ratified amendment. It is not a U2 forecaster or referee, and it computed nothing from real data.
+
+### Read
+
+- `EV/RESTRICTED-FILES.md` (SHA-256 `2e1b5c2a…`), first, to know what not to open: lines 1–120 and 200–235 (the exercise sections, most of the trust-fund test section, the NASI follow-ups, the mixed working files and the cleared list) and search hits elsewhere.
+- `EV/rulings-records-20260930/registry-followup-brief.md` (`7d64f32a…`, with its 2026-10-12 update) and that folder's listing; `EV/rulings-records-20261010/README.md` (`d656e27e…`), `apply_d1090_registry.py` (`4b95db62…`) and that folder's listing.
+- The chief-of-staff decision log, filtered for d637, d745 and d1090; the filter also matched d1242, whose one-line summary concerns B2's count unit.
+- In the repository, at #524's head and then on this branch: the specification (header, §3's relationship amendment, §15's parameter block and §§16–20), the research record's §3, the master record (summary, blocker rows, the d1090 section and the rows of the entries changed), this file's 2026-10-10 section, the eight registries and `u1_identity.json`, `src/populace_dynamics/data/u2_source_registry.py`, the U2 package's `sources.py`, `loader.py`, `cohort.py`, `invented.py`, `rows.py` and `estimator.py` (in part), `scripts/track_u2_dry_run.py` (in part), the tests under `tests/track_u2/` that the brief names, and `tests/README-tiers.md` with `tests/tier_counts.json`.
+- `git worktree list`, the state, checks and file lists of #524 and #525, and #525's diff to `sources.py` and `loader.py`.
+- On 2026-10-12, the decision log's record of d745 (its ruling, date and note), after the coordinating session relayed it.
+
+### Not opened
+
+No file on the restricted list was opened: no page of the Boomers 2004 report, no comparator, seal, values scan or result, and no PSID data file. PSID's 2026-10-07 reply and its screenshots were not opened; the research record's account of them was used. No issue #42 comment was listed or read, and no Subfleet job folder other than this session's own review runs was opened. This session's own tool-output files and scratchpad sit under the Claude Code project and temporary folders that the restricted list names for other sessions' transcripts; only this session's own files there were opened.
+
+### Tests
+
+The U2 tests ran with the PSID root staged. They read staged PSID documentation and invented records; the loader tests' audit hook refuses any open under the PSID data roots. The blocker counts reported for each commit come from `loader.source_preflight`'s own rule applied to the committed registries; it opens no PSID file. No raw PSID record was read and no statistic was computed on real data.
+
+### Files written
+
+- Amendment 2: `data/external/track_u2/income.json` (the ten later spouse age and sex records and a d637 `rulings_applied` record) and `u1_identity.json` (the specification pin); `docs/design/boomers2004_1946_55_comparison.md` (§17 item 2 and §19); `docs/design/u2_m1_source_adjudication.md` (summary counts and table, the spouse age/sex blocker row, the d1090 section's closing sentence, a d637 section and the ten rows); `src/populace_dynamics/data/u2_source_registry.py` (`RATIFIED_AMENDMENTS` and its validation); `src/populace_dynamics/uniform_cut_track_u2/sources.py` (the income byte pin and two docstrings) and `invented.py` (one new named variant); `tests/track_u2/test_adjudication_applied.py`, `test_source_registries.py`, `test_u2_mappings.py`, `test_u2_roles.py` and `test_u2_scripts.py`; `tests/tier_counts.json` and `tests/README-tiers.md`; and this section.
+- Amendment 3: `income.json` (the six crosswalk records and the d637 record) and `u1_identity.json`; the specification's §17 item 2 and §19; the master record (summary, table, the crosswalk blocker row, the d637 section and the six rows); `u2_source_registry.py` (amendment 3's scope) and `sources.py` (the income byte pin); `tests/track_u2/test_adjudication_applied.py`, `test_source_registries.py` and `test_u2_mappings.py`; and this section.
+- Amendment 4: `wealth.json` (the nine flags and a d637 record) and `u1_identity.json`; the specification's §17 item 2 and §19; the master record (the wealth blocker row, the d637 section and the nine rows); `u2_source_registry.py` (amendment 4's scope) and `sources.py` (the wealth byte pin); `tests/track_u2/test_adjudication_applied.py`, `test_source_registries.py` and `test_u2_mappings.py`, and `tests/data/test_track_u2_income_wealth.py`; and this section.
+- Amendment 5, builder: `src/populace_dynamics/uniform_cut_track_u2/sources.py` (the declared employer-DC route by wave and `declared_dc_route`), `invented.py` (the invented DC frames use it), `__init__.py` (docstring); the specification's §19 and `u1_identity.json`; `tests/track_u2/test_u2_employer_dc.py`; and this section.
+- Amendment 5b: `pension.json` (the 2015 checkpoint, its 34 dependents and a d637 record) and `u1_identity.json`; the specification's §17 item 2 and §19; the master record (summary, table, the P62A blocker row, the d637 section and 35 rows); `u2_source_registry.py` (5b's scope), `sources.py` (the pension byte pin and a docstring) and `loader.py` (docstring); `tests/track_u2/test_adjudication_applied.py`, `test_source_registries.py`, `test_u2_mappings.py`, `test_pension_registry.py`, `test_u2_employer_dc.py` and `test_u2_scripts.py`; and this section.
+- Amendment 5a: `pension.json` (the four inherited-route amendments, their 40 dependents and the d637 record) and `u1_identity.json`; the specification's §17 item 2 and §19; the master record (the P64/P65 blocker row, the d637 section and 44 rows); `u2_source_registry.py` (5a's scope), `sources.py` (the pension byte pin and a docstring) and `loader.py` (docstring); `tests/track_u2/test_adjudication_applied.py`, `test_source_registries.py`, `test_u2_mappings.py`, `test_pension_registry.py`, `test_u2_employer_dc.py` and `test_u2_scripts.py`; and this section.
+- Amendment 6: `weights.json` (the 2017 weight and a d637 record), `individual.json` (the released 2017 weight) and `u1_identity.json`; the specification's §17 item 2 and §19; the master record (summary, table, the weight blocker row, the d637 section and two rows); `u2_source_registry.py` (amendment 6's scope), `sources.py` (two byte pins) and `loader.py` (docstring); `tests/track_u2/test_adjudication_applied.py`, `test_source_registries.py` and `test_u2_mappings.py`; and this section.
+- Wording: `income.json`, `wealth.json`, `pension.json`, `roles.json`, `support.json` and `weights.json` (each `independent_adjudication` note; the wealth `status_scope`) and `u1_identity.json`; the specification's §19; the master record (the milestone-1b D row); `sources.py` (six byte pins); `tests/track_u2/test_u2_mappings.py`; and this section.
+- First-round review fixes: `income.json` (amendment 2's ten rules and amendment 3's six resolutions) and `u1_identity.json`; the specification's §19; the master record (the spouse age/sex blocker row, the d637 section and 16 rows); `u2_source_registry.py` (the scope checks) and `sources.py` (the slot-metadata guard and the income byte pin); `tests/track_u2/test_adjudication_applied.py`, `test_source_registries.py` and `test_u2_mappings.py`; and this section. The reviews' own reading is in their records.
+- Amendment-6 review fixes: `weights.json` (one word of the 2017 weight's construction note) and `u1_identity.json`; the specification's §19; `u2_source_registry.py` (amendment 6's exact fields) and `sources.py` (the weights byte pin); `tests/track_u2/test_adjudication_applied.py` and `test_source_registries.py`; and this section.
+- Amendment-5 review fixes: `pension.json` (the four 5a `ruling_effect` texts and the 2015 checkpoint's resolution) and `u1_identity.json`; the specification's §17 item 2 and §19; the master record (the P64/P65 blocker row and five rows); `u2_source_registry.py` (the governed routes), `sources.py` (the pension byte pin) and `invented.py` (the 2019–2023 DC items and comments); `tests/track_u2/test_adjudication_applied.py`, `test_source_registries.py`, `test_u2_mappings.py` and `test_u2_employer_dc.py`; and this section.
+- Delta-review fixes: the six adjudication notes and a d637 record in `individual.json`, and `u1_identity.json`; the specification's §19; `u2_source_registry.py` (a type check), `sources.py` (seven byte pins and two docstrings); `tests/track_u2/test_adjudication_applied.py` and `test_u2_mappings.py`; and this section. The amendment-5 answers also changed `tests/track_u2/test_u2_scripts.py`'s variant expectations.
+- Max's confirmation of 1a–1c (d745): the specification (lines 3 and 4, §16b's closing paragraph, §17 items 1 and 2, §19 and §20 step 1) and `u1_identity.json`; the master record (the summary, the code-88 blocker row, the pointer to §16b and the d637 section); `tests/track_u2/test_adjudication_applied.py`; and this section.
+- Amendment 1a: `roles.json` (the three documented routes and a d637 record) and `u1_identity.json`; the specification's §17 item 2 and §19; the master record (the code-90 and code-92 blocker rows, the d637 section and three rows); `u2_source_registry.py` (1a's scope) and `sources.py` (the roles byte pin); `tests/track_u2/test_adjudication_applied.py`, `test_source_registries.py` and `test_u2_mappings.py`; and this section.
+- Amendment 1b: `roles.json` (2013's code-90 record and the d637 record) and `u1_identity.json`; the specification's §17 item 2 and §19; the master record (the 2013 code-90 row and the d637 section); `u2_source_registry.py` (1b's scope, the first with no adjudication disposition) and `sources.py` (the roles byte pin); `tests/track_u2/test_adjudication_applied.py`, `test_source_registries.py` and `test_u2_mappings.py`; and this section.
+- Amendment 1c, builder: `sources.py` (the declared code-88 rule and its docstrings), `cohort.py` and `estimator.py` (docstrings), `invented.py` (the two code-88 variant notes) and `scripts/track_u2_dry_run.py` (the code-88 checks); `u1_identity.json`; the specification's §19; `tests/track_u2/test_u2_roles.py` and `test_u2_scripts.py`; and this section.
+- Amendment 1c: `roles.json` (the six code-88 records and the d637 record), `income.json` (amendment 2's ten `use_restriction` sentences) and `u1_identity.json`; the specification's §17 item 2, §19 and §20 step 4; the master record (the summary, the code-88 and spouse age/sex blocker rows, the d637 section and sixteen per-route rows); `u2_source_registry.py` (1c's scope), `sources.py` (the roles and income byte pins and docstrings), `loader.py` (the structural-pass authorization), `invented.py` (two variant notes), `scripts/track_u2_structure.py` and `scripts/track_u2_component_diagnostics.py` (`--authorized-by`), `scripts/track_u2_dry_run.py` and `scripts/run_track_u2_registered.py` (checks and docstrings); `tests/track_u2/test_adjudication_applied.py`, `test_source_registries.py`, `test_u2_mappings.py`, `test_u2_roles.py`, `test_u2_scripts.py` and `test_u2_loader.py`; and this section.
+- Wording after d745: the six `independent_adjudication` notes (`income.json`, `wealth.json`, `pension.json`, `roles.json`, `support.json`, `weights.json`) and `u1_identity.json`; the specification's §19; `sources.py` (six byte pins and three docstring and comment paragraphs rewrapped) and the package docstring; `tests/track_u2/test_u2_mappings.py`; and this section.
+- Answers to the d745 and 1a–1c reviews: `loader.py` (the committed-record check and the unfrozen-open guard), `u2_source_registry.py` (typed prose fields, 1a's governed role conventions, 1b's absent adjudication), `invented.py` (one variant appended), `rows.py` and `scripts/track_u2_dry_run.py` (docstrings), and `u1_identity.json`; the specification's §19; the master record (the d637 section's introduction); `tests/track_u2/test_adjudication_applied.py`, `test_source_registries.py`, `test_u2_loader.py`, `test_u2_mappings.py`, `test_u2_roles.py` and `test_u2_scripts.py`; and this section.
+- Delta-review notes: `tests/track_u2/test_u2_loader.py` and `test_u2_roles.py`; the specification's §19 and `u1_identity.json`; and this section.
+- Outside the repository: the registry and master-record edit scripts and the review records, copied to `EV/rulings-records-20261011/`.
+
+No U1 file, engine file, `gates.yaml` or `runs/*.json` was edited.

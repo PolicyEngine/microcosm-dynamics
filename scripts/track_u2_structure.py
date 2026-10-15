@@ -1,8 +1,8 @@
 """Structural counts of the U2 age-67 population (counts only; built).
 
 Specification sections 4 and 14: the pre-registration structural,
-join and reconciliation pass (section 20 step 4), which is separately
-authorized and has **not** been run.  When authorized it builds the U0
+join and reconciliation pass (section 20 step 4), which needs Max's
+authorization and has **not** been run.  When authorized it builds the U0
 and U1 observations from the staged PSID through the U2 loader and the
 committed-registry role context and writes ``track-u2-structure.json``:
 dispositions, observations, roles, pairings, design strata, the family
@@ -21,13 +21,26 @@ or frame digest.
 
 It computes **no** income concept, annuity, threshold, poverty status or
 poverty rate and never imports the income concept or the tabulation
-(:data:`FORBIDDEN_MODULES`, checked before and after).  Until every
-required route is resolved, the loader refuses before opening any PSID
-file, so running it at the adjudicated registries writes nothing.
+(:data:`FORBIDDEN_MODULES`, checked before and after).  Since amendment
+1c's registry commit every required route is resolved, so the loader's
+source preflight passes: the authorization is what stands before the
+PSID records are read.
+
+**Authorization.**  The pass reads real PSID records, so section 20
+step 4 needs Max's authorization, recorded as a chief-of-staff decision.
+``--authorized-by <decision id>`` names that decision, and the output
+records it with the git head and the UTC time (``authorization``).  The
+flag only records the authorization; it does not grant one, and nothing
+here reads the decision log.  Without the flag, or with anything but a
+decision id, the script exits non-zero before any PSID path is resolved
+or opened; :func:`build` and the loader refuse the same way
+(:func:`populace_dynamics.uniform_cut_track_u2.loader.
+check_structural_pass_authorization`).
 
 Usage::
 
-    python scripts/track_u2_structure.py --output-dir DIR
+    python scripts/track_u2_structure.py --authorized-by DECISION \\
+        --output-dir DIR
 """
 
 from __future__ import annotations
@@ -36,6 +49,7 @@ import argparse
 import json
 import subprocess
 import sys
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
@@ -71,11 +85,22 @@ def _git(*args: str) -> str:
     ).stdout.strip()
 
 
-def build(data_dir: Path | None = None) -> dict[str, Any]:
+def build(
+    data_dir: Path | None = None,
+    *,
+    authorization: Mapping[str, str] | None = None,
+) -> dict[str, Any]:
+    authorization = loader.check_structural_pass_authorization(authorization)
+    if authorization["git_head"] != _git("rev-parse", "HEAD"):
+        raise loader.U2AuthorizationRefusal(
+            "the authorization was recorded at another git head"
+        )
     leaked = _leaked()
     if leaked:
         raise RuntimeError(f"forbidden modules already imported: {leaked}")
-    inputs = loader.load_u2_inputs(data_dir=data_dir)
+    inputs = loader.load_u2_inputs(
+        data_dir=data_dir, authorization=authorization
+    )
     registries = sources.RegistrySet.committed()
     roles = sources.RoleContext.from_registry(registries)
     births = cohort.derive_u2_births(inputs)
@@ -112,6 +137,7 @@ def build(data_dir: Path | None = None) -> dict[str, Any]:
             "was computed."
         ),
         "labels": ["PSID-realized outcomes (not a projection)", "counts only"],
+        "authorization": authorization,
         "code_commit": _git("rev-parse", "HEAD"),
         "provenance": {
             k: v
@@ -131,8 +157,24 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--data-dir", type=Path, default=None)
+    parser.add_argument(
+        "--authorized-by",
+        metavar="DECISION",
+        default=None,
+        help=(
+            "the chief-of-staff decision recording Max's authorization of "
+            "the section 20 step-4 pass (e.g. d1234); recorded in the "
+            "output, it does not grant the authorization"
+        ),
+    )
     args = parser.parse_args(argv)
-    result = build(args.data_dir)
+    try:
+        authorization = loader.structural_pass_authorization(
+            args.authorized_by, git_head=_git("rev-parse", "HEAD")
+        )
+    except loader.U2AuthorizationRefusal as refusal:
+        parser.exit(2, f"{parser.prog}: refused: {refusal}\n")
+    result = build(args.data_dir, authorization=authorization)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     path = args.output_dir / "track-u2-structure.json"
     path.write_text(
