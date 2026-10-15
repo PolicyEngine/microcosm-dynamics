@@ -1010,6 +1010,13 @@ def test_limits_refuse_only_past_their_bounds():
     over = "[\x00-" + chr(half) + chr(half + 1) + "-" + chr(2 * half) + "]"
     assert kind("deep_denied" + two + "md", DENIED) == "denied"
     assert kind("deep_denied" + over + "md", DENIED) == "unclassified"
+    # and the 128 members [:ascii:] adds after a range
+    wide = "\u0100-" + chr(0x100 + review_root.CLASS_LIMIT - 128)
+    narrow = "\u0100-" + chr(0x100 + review_root.CLASS_LIMIT - 129)
+    assert kind("deep_denied[" + narrow + "[:ascii:]]md", DENIED) == "denied"
+    assert (
+        kind("deep_denied[" + wide + "[:ascii:]]md", DENIED) == "unclassified"
+    )
 
 
 def test_a_negation_is_unclassified_unless_it_names_a_denied_path():
