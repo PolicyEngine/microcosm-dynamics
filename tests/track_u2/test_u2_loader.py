@@ -983,6 +983,42 @@ def test_frozen_cited_sources_must_match(
     assert parsed == []
 
 
+def test_a_frozen_cited_source_with_changed_bytes_refuses(
+    tmp_path, u2_inputs, committed_registries, evidence
+):
+    """The same cited file, frozen at one hash and rehashed at another,
+    refuses before any family record is parsed: a comparison of the cited
+    files' names alone would pass it (review of #540 at b274f424, nit
+    1)."""
+
+    _stage(tmp_path, u2_inputs, committed_registries)
+    cited = "PSID/family/2019/FAM2019ER.sps"
+    pinned = {**evidence, "cited_sources_sha256": {cited: "b" * 64}}
+    parsed = []
+    patch = pytest.MonkeyPatch()
+    original = loader.read_family_records
+    patch.setattr(
+        loader,
+        "read_family_records",
+        lambda handle, wave, gate: parsed.append(wave)
+        or original(handle, wave, gate),
+    )
+    try:
+        with pytest.raises(
+            loader.U2FrozenIdentityMismatch,
+            match="cited setup files and codebooks differ",
+        ):
+            _load(
+                tmp_path,
+                u2_inputs,
+                evidence=pinned,
+                source_hashes={cited: "a" * 64},
+            )
+    finally:
+        patch.undo()
+    assert parsed == []
+
+
 def test_a_frozen_load_needs_the_committed_record(
     tmp_path, evidence, monkeypatch
 ):
