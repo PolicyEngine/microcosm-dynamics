@@ -1,0 +1,235 @@
+{
+  "schema_version": 1,
+  "verification_class": "statutory conformance",
+  "admitted_scope": "Invented cases and captured statutory worked examples only; no population, behavioral or forecast claim.",
+  "reviewed_head": "285d5468a0a1d2c79b149f4cf45fb988c7885332",
+  "mutation_method": "One deliberate line change per isolated scratch package check. Each import path was asserted, each original byte snapshot restored, and the same targeted tests rerun successfully. Tracked implementation bytes were never mutated; scratch package copies were deleted.",
+  "restored_source_sha256": {
+    "src/populace_dynamics/track_b/ret_ledger.py": "cdc128bc9c745b37276e2601c4b883699f21481786942306c900154fb34d5755"
+  },
+  "independent_allocation_differential": {
+    "cases": 10000,
+    "seed": 528,
+    "tolerance": "exact Fraction equality; zero tolerance",
+    "surface": "1-8 beneficiaries; zero/dime caps; penny pools; positive dime weights",
+    "additional_fixtures": "Exactly-$1 overflow and later-iteration stop",
+    "result": "passed",
+    "script": "scratch/review/fix-round-1-independent-differential.py",
+    "log": "scratch/review/fix-round-1-independent-differential.log"
+  },
+  "checks": [
+    {
+      "name": "default_nonstatutory_monthly_ceiling",
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "before": "monthly_limit_policy: MonthlyLimitPolicy = MonthlyLimitPolicy.EXACT_TWELFTH,",
+      "after": "monthly_limit_policy: MonthlyLimitPolicy = MonthlyLimitPolicy.NONSTATUTORY_CHART_CEILING,",
+      "source_snapshot_sha256": "cdc128bc9c745b37276e2601c4b883699f21481786942306c900154fb34d5755",
+      "mutated": {
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-package-default_nonstatutory_monthly_ceiling/src:/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -c 'import pathlib, sys; from populace_dynamics.track_b import ret_ledger; expected=pathlib.Path('\"'\"'/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-package-default_nonstatutory_monthly_ceiling/src/populace_dynamics/track_b/ret_ledger.py'\"'\"').resolve(); actual=pathlib.Path(ret_ledger.__file__).resolve(); assert actual == expected, (actual, expected); print('\"'\"'ISOLATED_IMPORT='\"'\"' + str(actual), flush=True); import pytest; sys.exit(pytest.main(sys.argv[1:]))' -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger_readings.py::test_act_203_f_8_d_vi_exact_limit_is_not_chart_ceiling",
+        "exit_code": 1,
+        "log": "scratch/review/fix-round-1-mutations-default_nonstatutory_monthly_ceiling-mutated.log",
+        "failed_test_names": [
+          "tests/test_track_b_ret_ledger_readings.py::test_act_203_f_8_d_vi_exact_limit_is_not_chart_ceiling"
+        ],
+        "summary": [
+          "1 failed in 35.08s"
+        ],
+        "isolated_import": "/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-package-default_nonstatutory_monthly_ceiling/src/populace_dynamics/track_b/ret_ledger.py"
+      },
+      "restored": {
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-package-default_nonstatutory_monthly_ceiling/src:/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -c 'import pathlib, sys; from populace_dynamics.track_b import ret_ledger; expected=pathlib.Path('\"'\"'/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-package-default_nonstatutory_monthly_ceiling/src/populace_dynamics/track_b/ret_ledger.py'\"'\"').resolve(); actual=pathlib.Path(ret_ledger.__file__).resolve(); assert actual == expected, (actual, expected); print('\"'\"'ISOLATED_IMPORT='\"'\"' + str(actual), flush=True); import pytest; sys.exit(pytest.main(sys.argv[1:]))' -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger_readings.py::test_act_203_f_8_d_vi_exact_limit_is_not_chart_ceiling",
+        "exit_code": 0,
+        "log": "scratch/review/fix-round-1-mutations-default_nonstatutory_monthly_ceiling-restored.log",
+        "failed_test_names": [],
+        "summary": [
+          "1 passed in 28.50s"
+        ],
+        "isolated_import": "/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-package-default_nonstatutory_monthly_ceiling/src/populace_dynamics/track_b/ret_ledger.py"
+      },
+      "scratch_package_removed": true
+    },
+    {
+      "name": "stop_at_exactly_one_dollar",
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "before": "if len(caps) >= 3 and overflow < 1:",
+      "after": "if len(caps) >= 3 and overflow <= 1:",
+      "source_snapshot_sha256": "cdc128bc9c745b37276e2601c4b883699f21481786942306c900154fb34d5755",
+      "mutated": {
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-package-stop_at_exactly_one_dollar/src:/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -c 'import pathlib, sys; from populace_dynamics.track_b import ret_ledger; expected=pathlib.Path('\"'\"'/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-package-stop_at_exactly_one_dollar/src/populace_dynamics/track_b/ret_ledger.py'\"'\"').resolve(); actual=pathlib.Path(ret_ledger.__file__).resolve(); assert actual == expected, (actual, expected); print('\"'\"'ISOLATED_IMPORT='\"'\"' + str(actual), flush=True); import pytest; sys.exit(pytest.main(sys.argv[1:]))' -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_exactly_one_dollar_overflow_is_reapportioned",
+        "exit_code": 1,
+        "log": "scratch/review/fix-round-1-mutations-stop_at_exactly_one_dollar-mutated.log",
+        "failed_test_names": [
+          "tests/test_track_b_ret_ledger.py::test_exactly_one_dollar_overflow_is_reapportioned"
+        ],
+        "summary": [
+          "1 failed in 16.80s"
+        ],
+        "isolated_import": "/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-package-stop_at_exactly_one_dollar/src/populace_dynamics/track_b/ret_ledger.py"
+      },
+      "restored": {
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-package-stop_at_exactly_one_dollar/src:/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -c 'import pathlib, sys; from populace_dynamics.track_b import ret_ledger; expected=pathlib.Path('\"'\"'/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-package-stop_at_exactly_one_dollar/src/populace_dynamics/track_b/ret_ledger.py'\"'\"').resolve(); actual=pathlib.Path(ret_ledger.__file__).resolve(); assert actual == expected, (actual, expected); print('\"'\"'ISOLATED_IMPORT='\"'\"' + str(actual), flush=True); import pytest; sys.exit(pytest.main(sys.argv[1:]))' -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_exactly_one_dollar_overflow_is_reapportioned",
+        "exit_code": 0,
+        "log": "scratch/review/fix-round-1-mutations-stop_at_exactly_one_dollar-restored.log",
+        "failed_test_names": [],
+        "summary": [
+          "1 passed in 5.59s"
+        ],
+        "isolated_import": "/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-package-stop_at_exactly_one_dollar/src/populace_dynamics/track_b/ret_ledger.py"
+      },
+      "scratch_package_removed": true
+    },
+    {
+      "name": "remove_subdollar_stop",
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "before": "if len(caps) >= 3 and overflow < 1:",
+      "after": "if len(caps) >= 3 and overflow < 0:",
+      "source_snapshot_sha256": "cdc128bc9c745b37276e2601c4b883699f21481786942306c900154fb34d5755",
+      "mutated": {
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src:/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -c 'import pathlib, sys; from populace_dynamics.track_b import ret_ledger; expected=pathlib.Path('\"'\"'/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src/populace_dynamics/track_b/ret_ledger.py'\"'\"').resolve(); actual=pathlib.Path(ret_ledger.__file__).resolve(); assert actual == expected, (actual, expected); print('\"'\"'ISOLATED_IMPORT='\"'\"' + str(actual), flush=True); import pytest; sys.exit(pytest.main(sys.argv[1:]))' -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_review_subdollar_stop_preserves_last_shares_and_residual",
+        "exit_code": 1,
+        "log": "scratch/review/fix-round-1-mutations-remove_subdollar_stop-mutated.log",
+        "failed_test_names": [
+          "tests/test_track_b_ret_ledger.py::test_review_subdollar_stop_preserves_last_shares_and_residual[pool0-nh_share0-child_share0-residual0]",
+          "tests/test_track_b_ret_ledger.py::test_review_subdollar_stop_preserves_last_shares_and_residual[pool1-nh_share1-child_share1-residual1]"
+        ],
+        "summary": [
+          "2 failed in 42.24s"
+        ],
+        "isolated_import": "/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src/populace_dynamics/track_b/ret_ledger.py"
+      },
+      "restored": {
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src:/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -c 'import pathlib, sys; from populace_dynamics.track_b import ret_ledger; expected=pathlib.Path('\"'\"'/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src/populace_dynamics/track_b/ret_ledger.py'\"'\"').resolve(); actual=pathlib.Path(ret_ledger.__file__).resolve(); assert actual == expected, (actual, expected); print('\"'\"'ISOLATED_IMPORT='\"'\"' + str(actual), flush=True); import pytest; sys.exit(pytest.main(sys.argv[1:]))' -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_review_subdollar_stop_preserves_last_shares_and_residual",
+        "exit_code": 0,
+        "log": "scratch/review/fix-round-1-mutations-remove_subdollar_stop-restored.log",
+        "failed_test_names": [],
+        "summary": [
+          "2 passed in 40.26s"
+        ],
+        "isolated_import": "/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src/populace_dynamics/track_b/ret_ledger.py"
+      },
+      "scratch_package_removed": true
+    },
+    {
+      "name": "count_only_active_beneficiaries",
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "before": "if len(caps) >= 3 and overflow < 1:",
+      "after": "if len(active) >= 3 and overflow < 1:",
+      "source_snapshot_sha256": "cdc128bc9c745b37276e2601c4b883699f21481786942306c900154fb34d5755",
+      "mutated": {
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src:/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -c 'import pathlib, sys; from populace_dynamics.track_b import ret_ledger; expected=pathlib.Path('\"'\"'/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src/populace_dynamics/track_b/ret_ledger.py'\"'\"').resolve(); actual=pathlib.Path(ret_ledger.__file__).resolve(); assert actual == expected, (actual, expected); print('\"'\"'ISOLATED_IMPORT='\"'\"' + str(actual), flush=True); import pytest; sys.exit(pytest.main(sys.argv[1:]))' -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_later_subdollar_stop_retains_previously_capped_beneficiary",
+        "exit_code": 1,
+        "log": "scratch/review/fix-round-1-mutations-count_only_active_beneficiaries-mutated.log",
+        "failed_test_names": [
+          "tests/test_track_b_ret_ledger.py::test_later_subdollar_stop_retains_previously_capped_beneficiary"
+        ],
+        "summary": [
+          "1 failed in 45.43s"
+        ],
+        "isolated_import": "/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src/populace_dynamics/track_b/ret_ledger.py"
+      },
+      "restored": {
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src:/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -c 'import pathlib, sys; from populace_dynamics.track_b import ret_ledger; expected=pathlib.Path('\"'\"'/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src/populace_dynamics/track_b/ret_ledger.py'\"'\"').resolve(); actual=pathlib.Path(ret_ledger.__file__).resolve(); assert actual == expected, (actual, expected); print('\"'\"'ISOLATED_IMPORT='\"'\"' + str(actual), flush=True); import pytest; sys.exit(pytest.main(sys.argv[1:]))' -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_later_subdollar_stop_retains_previously_capped_beneficiary",
+        "exit_code": 0,
+        "log": "scratch/review/fix-round-1-mutations-count_only_active_beneficiaries-restored.log",
+        "failed_test_names": [],
+        "summary": [
+          "1 passed in 37.17s"
+        ],
+        "isolated_import": "/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src/populace_dynamics/track_b/ret_ledger.py"
+      },
+      "scratch_package_removed": true
+    },
+    {
+      "name": "charge_residual_as_excess",
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "before": "charged[key] += taken\n",
+      "after": "charged[key] += taken + residuals[key]\n",
+      "source_snapshot_sha256": "cdc128bc9c745b37276e2601c4b883699f21481786942306c900154fb34d5755",
+      "mutated": {
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src:/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -c 'import pathlib, sys; from populace_dynamics.track_b import ret_ledger; expected=pathlib.Path('\"'\"'/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src/populace_dynamics/track_b/ret_ledger.py'\"'\"').resolve(); actual=pathlib.Path(ret_ledger.__file__).resolve(); assert actual == expected, (actual, expected); print('\"'\"'ISOLATED_IMPORT='\"'\"' + str(actual), flush=True); import pytest; sys.exit(pytest.main(sys.argv[1:]))' -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_review_source_stop_with_rates_generated_by_g",
+        "exit_code": 1,
+        "log": "scratch/review/fix-round-1-mutations-charge_residual_as_excess-mutated.log",
+        "failed_test_names": [
+          "tests/test_track_b_ret_ledger.py::test_review_source_stop_with_rates_generated_by_g"
+        ],
+        "summary": [
+          "1 failed in 16.11s"
+        ],
+        "isolated_import": "/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src/populace_dynamics/track_b/ret_ledger.py"
+      },
+      "restored": {
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src:/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -c 'import pathlib, sys; from populace_dynamics.track_b import ret_ledger; expected=pathlib.Path('\"'\"'/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src/populace_dynamics/track_b/ret_ledger.py'\"'\"').resolve(); actual=pathlib.Path(ret_ledger.__file__).resolve(); assert actual == expected, (actual, expected); print('\"'\"'ISOLATED_IMPORT='\"'\"' + str(actual), flush=True); import pytest; sys.exit(pytest.main(sys.argv[1:]))' -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_review_source_stop_with_rates_generated_by_g",
+        "exit_code": 0,
+        "log": "scratch/review/fix-round-1-mutations-charge_residual_as_excess-restored.log",
+        "failed_test_names": [],
+        "summary": [
+          "1 passed in 34.79s"
+        ],
+        "isolated_import": "/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src/populace_dynamics/track_b/ret_ledger.py"
+      },
+      "scratch_package_removed": true
+    },
+    {
+      "name": "suppress_residual_reporting",
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "before": "result, undistributed_subdollar_residual=overflow",
+      "after": "result, undistributed_subdollar_residual=Fraction(0)",
+      "source_snapshot_sha256": "cdc128bc9c745b37276e2601c4b883699f21481786942306c900154fb34d5755",
+      "mutated": {
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src:/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -c 'import pathlib, sys; from populace_dynamics.track_b import ret_ledger; expected=pathlib.Path('\"'\"'/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src/populace_dynamics/track_b/ret_ledger.py'\"'\"').resolve(); actual=pathlib.Path(ret_ledger.__file__).resolve(); assert actual == expected, (actual, expected); print('\"'\"'ISOLATED_IMPORT='\"'\"' + str(actual), flush=True); import pytest; sys.exit(pytest.main(sys.argv[1:]))' -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_review_subdollar_stop_preserves_last_shares_and_residual",
+        "exit_code": 1,
+        "log": "scratch/review/fix-round-1-mutations-suppress_residual_reporting-mutated.log",
+        "failed_test_names": [
+          "tests/test_track_b_ret_ledger.py::test_review_subdollar_stop_preserves_last_shares_and_residual[pool0-nh_share0-child_share0-residual0]",
+          "tests/test_track_b_ret_ledger.py::test_review_subdollar_stop_preserves_last_shares_and_residual[pool1-nh_share1-child_share1-residual1]"
+        ],
+        "summary": [
+          "2 failed in 22.60s"
+        ],
+        "isolated_import": "/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src/populace_dynamics/track_b/ret_ledger.py"
+      },
+      "restored": {
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src:/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -c 'import pathlib, sys; from populace_dynamics.track_b import ret_ledger; expected=pathlib.Path('\"'\"'/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src/populace_dynamics/track_b/ret_ledger.py'\"'\"').resolve(); actual=pathlib.Path(ret_ledger.__file__).resolve(); assert actual == expected, (actual, expected); print('\"'\"'ISOLATED_IMPORT='\"'\"' + str(actual), flush=True); import pytest; sys.exit(pytest.main(sys.argv[1:]))' -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_review_subdollar_stop_preserves_last_shares_and_residual",
+        "exit_code": 0,
+        "log": "scratch/review/fix-round-1-mutations-suppress_residual_reporting-restored.log",
+        "failed_test_names": [],
+        "summary": [
+          "2 passed in 33.39s"
+        ],
+        "isolated_import": "/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src/populace_dynamics/track_b/ret_ledger.py"
+      },
+      "scratch_package_removed": true
+    },
+    {
+      "name": "truncate_signed_nese_by_default",
+      "source": "src/populace_dynamics/track_b/ret_ledger.py",
+      "before": "floor(quotient)",
+      "after": "int(quotient)",
+      "source_snapshot_sha256": "cdc128bc9c745b37276e2601c4b883699f21481786942306c900154fb34d5755",
+      "mutated": {
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src:/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -c 'import pathlib, sys; from populace_dynamics.track_b import ret_ledger; expected=pathlib.Path('\"'\"'/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src/populace_dynamics/track_b/ret_ledger.py'\"'\"').resolve(); actual=pathlib.Path(ret_ledger.__file__).resolve(); assert actual == expected, (actual, expected); print('\"'\"'ISOLATED_IMPORT='\"'\"' + str(actual), flush=True); import pytest; sys.exit(pytest.main(sys.argv[1:]))' -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_negative_nese_floor_and_drop_cents_readings_are_explicit tests/test_track_b_ret_ledger.py::test_negative_nese_reading_changes_final_deduction_by_one_dollar",
+        "exit_code": 1,
+        "log": "scratch/review/fix-round-1-mutations-truncate_signed_nese_by_default-mutated.log",
+        "failed_test_names": [
+          "tests/test_track_b_ret_ledger.py::test_negative_nese_floor_and_drop_cents_readings_are_explicit",
+          "tests/test_track_b_ret_ledger.py::test_negative_nese_reading_changes_final_deduction_by_one_dollar"
+        ],
+        "summary": [
+          "2 failed in 36.30s"
+        ],
+        "isolated_import": "/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src/populace_dynamics/track_b/ret_ledger.py"
+      },
+      "restored": {
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src:/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -c 'import pathlib, sys; from populace_dynamics.track_b import ret_ledger; expected=pathlib.Path('\"'\"'/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src/populace_dynamics/track_b/ret_ledger.py'\"'\"').resolve(); actual=pathlib.Path(ret_ledger.__file__).resolve(); assert actual == expected, (actual, expected); print('\"'\"'ISOLATED_IMPORT='\"'\"' + str(actual), flush=True); import pytest; sys.exit(pytest.main(sys.argv[1:]))' -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_negative_nese_floor_and_drop_cents_readings_are_explicit tests/test_track_b_ret_ledger.py::test_negative_nese_reading_changes_final_deduction_by_one_dollar",
+        "exit_code": 0,
+        "log": "scratch/review/fix-round-1-mutations-truncate_signed_nese_by_default-restored.log",
+        "failed_test_names": [],
+        "summary": [
+          "2 passed in 37.03s"
+        ],
+        "isolated_import": "/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/scratch/review/fix-round-1-mutations-isolated-package/src/populace_dynamics/track_b/ret_ledger.py"
+      },
+      "scratch_package_removed": true
+    }
+  ]
+}
