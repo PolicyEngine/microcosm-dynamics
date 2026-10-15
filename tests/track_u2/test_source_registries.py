@@ -313,16 +313,26 @@ def test_relationship_labels_and_routing_blockers_are_wave_specific():
                 assert entry["income_role"] == "ofum"
                 assert not entry["spouse_slot"]
             else:
-                # Independent adjudication F: OFUM assignment refused.
+                # Independent adjudication F (OFUM assignment refused),
+                # replaced by Max's d1090 ruling (section 16c): the family
+                # unit is excluded and no income role is assigned.
                 assert entry["adjudication"]["disposition"] == "F"
-                assert entry["action"] == (
-                    "refuse_ofum_assignment_per_u2_adjudicate_F"
-                )
-                assert entry["refused_income_role"] == "ofum"
+                assert entry["action"] == "exclude_family_unit_per_d1090"
+                assert entry["income_role"] == "excluded"
+                assert entry["family_unit_exclusion"] == {
+                    "disposition": (
+                        "uncooperative spouse or partner in family unit"
+                    )
+                }
+                assert entry["ruling"]["decision"] == "d1090"
     code20 = by_key[2015, 20]
-    assert code20["action"] == "refuse_male_code20_per_u2_adjudicate_F"
-    assert code20["refusal_condition"] == {"sex": 1}
+    assert code20["action"] == "documented_rule_with_family_unit_exclusion"
+    assert code20["family_unit_exclusion"] == {
+        "disposition": "male code 20 in 2015 family unit",
+        "condition": {"sex": 1},
+    }
     assert code20["adjudication"]["disposition"] == "F"
+    assert code20["ruling"]["decision"] == "d1090"
 
 
 def test_documentary_calendar_support():
@@ -409,3 +419,169 @@ def test_u1_waves_and_registries_remain_pinned():
     assert tuple(age67.ANCHOR_LAYOUTS) == waves
     assert family_income.WEALTH_WAVES == (2009, 2011, 2013)
     assert family_income.WEALTH_SUPPLEMENT_WAVES == (2005, 2007)
+
+
+# ---------------------------------------------------------------------------
+# Max's d1090 ruling (section 16c): each ratified exclusion, held to its
+# exact scope (review of 07916bb, finding 1)
+# ---------------------------------------------------------------------------
+def _entry(document, key):
+    return next(e for e in document["entries"] if e["id"] == key)
+
+
+def _move(document, source, target):
+    """Move the exclusion fields of ``source`` onto ``target``."""
+    moved = _entry(document, source)
+    entry = _entry(document, target)
+    for field in ("family_unit_exclusion", "income_role", "action", "ruling"):
+        entry[field] = copy.deepcopy(moved[field])
+    entry.pop("adjudication", None)
+
+
+def _swap(document, field, first, second):
+    """Swap one numeric field of two entries, leaving their ids alone."""
+    a, b = _entry(document, first), _entry(document, second)
+    a[field], b[field] = b[field], a[field]
+
+
+def _absent(document, key):
+    _entry(document, key).update(present=False, label=None)
+
+
+D1090_SCOPE_MUTATIONS = {
+    # Review of db735e5, finding 2: the rules are keyed on an entry's wave
+    # and code, so swapping those under unchanged ids, or marking the code
+    # absent, must not move or remove an exclusion.
+    "b1_code_swapped_with_22": lambda d: _swap(
+        d, "code", "2015.relationship.20", "2015.relationship.22"
+    ),
+    "b1_wave_swapped_with_2017": lambda d: _swap(
+        d, "wave", "2015.relationship.20", "2017.relationship.20"
+    ),
+    "b2_code_swapped_with_10": lambda d: _swap(
+        d, "code", "2019.relationship.90", "2019.relationship.10"
+    ),
+    "b2_wave_swapped_with_2017": lambda d: _swap(
+        d, "wave", "2019.relationship.92", "2017.relationship.92"
+    ),
+    "b1_marked_absent": lambda d: _absent(d, "2015.relationship.20"),
+    "b2_marked_absent": lambda d: _absent(d, "2021.relationship.90"),
+    "unruled_codes_swapped": lambda d: _swap(
+        d, "code", "2013.relationship.10", "2013.relationship.22"
+    ),
+    "b1_on_female_spouses": lambda d: _entry(d, "2015.relationship.20")[
+        "family_unit_exclusion"
+    ].update(condition={"sex": 2}),
+    "b1_unconditional": lambda d: _entry(d, "2015.relationship.20")[
+        "family_unit_exclusion"
+    ].pop("condition"),
+    "b1_condition_as_bool": lambda d: _entry(d, "2015.relationship.20")[
+        "family_unit_exclusion"
+    ].update(condition={"sex": True}),
+    "b1_on_code_22": lambda d: _move(
+        d, "2015.relationship.20", "2015.relationship.22"
+    ),
+    "b1_on_2017_code_20": lambda d: _move(
+        d, "2015.relationship.20", "2017.relationship.20"
+    ),
+    "b2_on_2017_code_92": lambda d: _move(
+        d, "2019.relationship.92", "2017.relationship.92"
+    ),
+    "b2_on_2019_code_10": lambda d: _move(
+        d, "2019.relationship.90", "2019.relationship.10"
+    ),
+    "b2_conditional_with_ofum_income": lambda d: (
+        _entry(d, "2019.relationship.90")["family_unit_exclusion"].update(
+            condition={"sex": 1}
+        ),
+        _entry(d, "2019.relationship.90").update(income_role="ofum"),
+    ),
+    "b2_assigns_ofum_income": lambda d: _entry(
+        d, "2021.relationship.92"
+    ).update(income_role="ofum"),
+    "b1_option_changed": lambda d: _entry(d, "2015.relationship.20")[
+        "ruling"
+    ].update(option="1d-1"),
+    "b1_decision_fabricated": lambda d: _entry(d, "2015.relationship.20")[
+        "ruling"
+    ].update(decision="d999"),
+    "b2_amended_lines_changed": lambda d: _entry(d, "2023.relationship.90")[
+        "ruling"
+    ].update(amends_draft_3_lines=[152]),
+    "b2_waves_narrowed": lambda d: _entry(d, "2023.relationship.92")[
+        "ruling"
+    ].update(amended_waves=[2023]),
+    "disposition_renamed": lambda d: _entry(d, "2019.relationship.92")[
+        "family_unit_exclusion"
+    ].update(disposition="uncooperative member in family unit"),
+    "b1_exclusion_dropped": lambda d: _entry(d, "2015.relationship.20").pop(
+        "family_unit_exclusion"
+    ),
+    "b2_exclusion_dropped": lambda d: (
+        _entry(d, "2021.relationship.90").pop("family_unit_exclusion"),
+        _entry(d, "2021.relationship.90").update(income_role="ofum"),
+    ),
+    "b2_action_documented_rule": lambda d: _entry(
+        d, "2019.relationship.92"
+    ).update(action="documented_rule"),
+}
+
+
+@pytest.mark.parametrize("mutation", sorted(D1090_SCOPE_MUTATIONS))
+def test_d1090_exclusions_are_held_to_their_ratified_scope(mutation):
+    document = registry.load_registry("roles")
+    registry.validate_registry(document, expected_name="roles")
+    changed = copy.deepcopy(document)
+    D1090_SCOPE_MUTATIONS[mutation](changed)
+    # Serialized, so a bool standing in for 1 still counts as a change.
+    assert json.dumps(changed) != json.dumps(document)
+    with pytest.raises(registry.SourceAdjudicationError):
+        registry.validate_registry(changed, expected_name="roles")
+
+
+def test_d1090_scope_matches_the_committed_entries():
+    """Every ratified exclusion sits on exactly its scope's entries, each
+    present and named by its own wave and code."""
+    entries = registry.load_registry("roles")["entries"]
+    for entry in entries:
+        assert entry["id"] == (
+            f"{entry['wave']}.relationship.{entry['code']}"
+        ), entry["id"]
+    for name, scope in registry.RATIFIED_EXCLUSIONS.items():
+        carrying = {
+            e["id"]: e
+            for e in entries
+            if e.get("family_unit_exclusion", {}).get("disposition") == name
+        }
+        assert set(carrying) == set(scope["entries"]), name
+        assert all(e["present"] is True for e in carrying.values()), name
+
+
+def test_d1090_scope_mutations_would_move_the_operative_rule():
+    """Why the numeric fields matter: the builder's rules follow an
+    entry's wave and code, so each swap above, if the validator let it
+    through, would move or drop an exclusion in the role rules."""
+    from populace_dynamics.uniform_cut_track_u2 import sources
+
+    document = registry.load_registry("roles")
+    expected = {
+        key
+        for key, rule in sources.RoleContext.from_registry().rules.items()
+        if rule.family_unit_exclusion
+    }
+    for name in (
+        "b1_code_swapped_with_22",
+        "b1_wave_swapped_with_2017",
+        "b2_code_swapped_with_10",
+        "b2_wave_swapped_with_2017",
+        "b1_marked_absent",
+        "b2_marked_absent",
+    ):
+        changed = copy.deepcopy(document)
+        D1090_SCOPE_MUTATIONS[name](changed)
+        moved = {
+            (int(e["wave"]), int(e["code"]))
+            for e in changed["entries"]
+            if e["present"] and "family_unit_exclusion" in e
+        }
+        assert moved != expected, name

@@ -6597,10 +6597,7 @@
       "numeric_format": "NUM(1.0)",
       "codebook_documentation": "P0. INTERVIEWER CHECKPOINT\n1 Spouse/Partner in FU working now or only temporarily laid\noff, on sick/maternity leave\n2 Spouse/Partner in FU has never worked for money\n3 Spouse/Partner in FU has worked but is no longer working\nfor money: retired, disabled, keeping house, student\n5 All others\n9 DK; NA; refused\n0 Inap.:   no Spouse/Partner in FU (ER61347=5)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62150",
@@ -6636,10 +6633,7 @@
       "numeric_format": "NUM(1.0)",
       "codebook_documentation": "P1. Not including Social Security or Railroad Retirement, (are/is) (you/SPOUSE/PARTNER)\nparticipating in a pension or retirement plan through (your/her) present job, or through\n(your/her) union?\nFor questions P1-P44pct, current employer's name was pre-loaded and included in the\nquestion text.\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: no Spouse/Partner in FU (ER61347=5); not\ncurrently employed (ER60426, ER60427, or ER60428 ne 1\nor 2 and ER60430=5); DK, NA, or RF whether currently\nemployed (ER60426=99); DK, NA, or RF whether doing any\nwork for money now (ER60430=8 or 9); has never worked for\nmoney (ER60667=5); DK, NA, or RF whether has ever worked\n(ER60667=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_current_type",
@@ -6675,10 +6669,7 @@
       "numeric_format": "NUM(1.0)",
       "codebook_documentation": "P16. Some pension and retirement plans base benefits on a formula involving age, years of\nservice and salary, often called a defined benefit plan. Some plans base benefits on how\nmuch money has accumulated in a person's pension or retirement account, often called a\ndefined contribution plan. Other plans use both ways of setting benefits. What type of\nplan (do you/does [SPOUSE/PARTNER]) have?\nDefined Contribution plans include 401-K 403-B, ESOP, SRA, thrift/savings, stock/profit\nsharing, and money purchase plans, and target date funds (TDF).\n1 Defined benefit formula\n5 Defined contribution plan/Money accumulated in account\n7 Both\n8 DK\n9 NA; refused\n0 Inap.: no Spouse/Partner in FU (ER61347=5); not currently\nemployed (ER60426, ER60427, or ER60428 ne 1 or 2 and\nER60430=5); DK, NA, or RF whether currently employed\n(ER60426=99); DK, NA, or RF whether doing any work for\nmoney now (ER60430=8 or 9); has never worked for money\n(ER60667=5); DK, NA, or RF whether has ever worked\n(ER60667=8 or 9); not covered by pension or retirement\nplan through current job or union (ER62150=5); DK, NA, or\nRF whether participating in a pension or retirement plan\nthrough current job or union (ER62150=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_current_amount",
@@ -6731,10 +6722,7 @@
         "dk": "zero_counted_unreported",
         "na_refused": "zero_counted_unreported",
         "brackets": "not_used"
-      },
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      }
     },
     {
       "id": "2015.wife_er62174",
@@ -6770,10 +6758,7 @@
       "numeric_format": "NUM(1.0)",
       "codebook_documentation": "P20b. Is it $50,000 or more?\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: actual amount reported; no Spouse/Partner in FU\n(ER61347=5); not currently employed (ER60426, ER60427,\nor ER60428 ne 1 or 2 and ER60430=5); DK, NA, or RF\nwhether currently employed (ER60426=99); DK, NA, or RF\nwhether doing any work for money now (ER60430=8 or 9);\nhas never worked for money (ER60667=5); DK, NA, or RF\nwhether has ever worked (ER60667=8 or 9); not covered by\npension or retirement plan through current job or union\n(ER62150=5); DK, NA, or RF whether participating in a\npension or retirement plan through current job or union\n(ER62150=8 or 9); defined benefit formula only\n(ER62165=1); DK, NA, or RF whether defined benefit\nformula, money accumulated or accrued (ER62165=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62175",
@@ -6809,10 +6794,7 @@
       "numeric_format": "NUM(1.0)",
       "codebook_documentation": "P20c. $100,000 or more?\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: actual amount reported; no Spouse/Partner in FU\n(ER61347=5); not currently employed (ER60426, ER60427,\nor ER60428 ne 1 or 2 and ER60430=5); DK, NA, or RF\nwhether currently employed (ER60426=99); DK, NA, or RF\nwhether doing any work for money now (ER60430=8 or 9);\nhas never worked for money (ER60667=5); DK, NA, or RF\nwhether has ever worked (ER60667=8 or 9); not covered by\npension or retirement plan through current job or union\n(ER62150=5); DK, NA, or RF whether participating in a\npension or retirement plan through current job or union\n(ER62150=8 or 9); defined benefit formula only\n(ER62165=1); DK, NA, or RF whether defined benefit\nformula, money accumulated or accrued (ER62165=8 or 9);\namount less than $50,000 (ER62174=5); DK, NA, or RF\nwhether $50,000 or more (ER62174=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62176",
@@ -6852,10 +6834,7 @@
       "numeric_format": "NUM(1.0)",
       "codebook_documentation": "P20d. $200,000 or more?\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: actual amount reported; no Spouse/Partner in FU\n(ER61347=5); not currently employed (ER60426, ER60427,\nor ER60428 ne 1 or 2 and ER60430=5); DK, NA, or RF\nwhether currently employed (ER60426=99); DK, NA, or RF\nwhether doing any work for money now (ER60430=8 or 9);\nhas never worked for money (ER60667=5); DK, NA, or RF\nwhether has ever worked (ER60667=8 or 9); not covered by\npension or retirement plan through current job or union\n(ER62150=5); DK, NA, or RF whether participating in a\npension or retirement plan through current job or union\n(ER62150=8 or 9); defined benefit formula only\n(ER62165=1); DK, NA, or RF whether defined benefit\nformula, money accumulated or accrued (ER62165=8 or 9);\namount less than $50,000 (ER62174=5); DK, NA, or RF\nwhether $50,000 or more (ER62174=8 or 9); amount was less\nthan $100,000 (ER62175=5); DK, NA, or RF whether $100,000\nor more (ER62175=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62177",
@@ -6891,10 +6870,7 @@
       "numeric_format": "NUM(1.0)",
       "codebook_documentation": "P20e. $20,000 or more?\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: actual amount reported; no Spouse/Partner in FU\n(ER61347=5); not currently employed (ER60426, ER60427,\nor ER60428 ne 1 or 2 and ER60430=5); DK, NA, or RF\nwhether currently employed (ER60426=99); DK, NA, or RF\nwhether doing any work for money now (ER60430=8 or 9);\nhas never worked for money (ER60667=5); DK, NA, or RF\nwhether has ever worked (ER60667=8 or 9); not covered by\npension or retirement plan through current job or union\n(ER62150=5); DK, NA, or RF whether participating in a\npension or retirement plan through current job or union\n(ER62150=8 or 9); defined benefit formula only\n(ER62165=1); DK, NA, or RF whether defined benefit\nformula, money accumulated or accrued (ER62165=8 or 9);\namount $50,000 or more (ER62174=1); DK, NA, or RF whether\n$50,000 or more (ER62174=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62178",
@@ -6934,10 +6910,7 @@
       "numeric_format": "NUM(1.0)",
       "codebook_documentation": "P20a. Are the funds invested mostly in stocks and stock mutual funds, or mostly in bonds,\nbond mutual funds and annuities, or some of each?\n1 Mostly (or all) stocks\n2 Some of each\n3 Mostly (or all) bonds and annuities\n7 Other\n8 DK\n9 NA; refused\n0 Inap.: no Spouse/Partner in FU (ER61347=5); not currently\nemployed (ER60426, ER60427, or ER60428 ne 1 or 2 and\nER60430=5); DK, NA, or RF whether currently employed\n(ER60426=99); DK, NA, or RF whether doing any work for\nmoney now (ER60430=8 or 9); has never worked for money\n(ER60667=5); DK, NA, or RF whether has ever worked\n(ER60667=8 or 9); not covered by pension or retirement\nplan through current job or union (ER62150=5); DK, NA, or\nRF whether participating in a pension or retirement plan\nthrough current job or union (ER62150=8 or 9); defined\nbenefit formula only (ER62165=1); DK, NA, or RF whether\ndefined benefit formula, money accumulated or accrued\n(ER62165=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62179",
@@ -6973,10 +6946,7 @@
       "numeric_format": "NUM(1.0)",
       "codebook_documentation": "P22. INTERVIEWER CHECKPOINT: Age of SPOUSE/PARTNER and type of pension\n1 Defined benefit formula\n5 Defined contribution-money accumulated\n7 Both\n0 Inap.: no Spouse/Partner in FU (ER61347=5); not currently\nemployed (ER60426, ER60427, or ER60428 ne 1 or 2 and\nER60430=5); DK, NA, or RF whether currently employed\n(ER60426=99); DK, NA, or RF whether doing any work for\nmoney now (ER60430=8 or 9); has never worked for money\n(ER60667=5); DK, NA, or RF whether has ever worked\n(ER60667=8 or 9); not covered by pension or retirement\nplan through current job or union (ER62150=5); DK, NA, or\nRF whether participating in a pension or retirement plan\nthrough current job or union (ER62150=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62199",
@@ -7012,10 +6982,7 @@
       "numeric_format": "NUM(1.0)",
       "codebook_documentation": "P42. (In addition to the pension or retirement plan you already mentioned, [do you/does\nSPOUSE/PARTNER] / [Do you /Does SPOUSE/PARTNER] ) have any tax-deferred compensation or\nsavings plans on this job, such as a \"thrift\", profit-sharing, or Keogh plan?\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: no Spouse/Partner in FU (ER61347=5); not\ncurrently employed (ER60426, ER60427, or ER60428 ne 1\nor 2 and ER60430=5); DK, NA, or RF whether currently\nemployed (ER60426=99); DK, NA, or RF whether doing any\nwork for money now (ER60430=8 or 9); has never worked for\nmoney (ER60667=5); DK, NA, or RF whether ever worked for\nmoney (ER60667=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62205",
@@ -7051,10 +7018,7 @@
       "numeric_format": "NUM(1.0)",
       "codebook_documentation": "P45. These next questions are about pensions through a former employer. Aside from IRA or\nKeogh Plans, (do you/does SPOUSE/PARTNER) have any pension or retirement plan from\nprevious employers from which (you/she) [have/has not begun to receive regular benefit\npayments but] expect(s) to receive benefits?\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: no Spouse/Partner in FU (ER61347=5);    never\nworked for money (ER60667=5)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62206",
@@ -7090,10 +7054,7 @@
       "numeric_format": "NUM(1.0)",
       "codebook_documentation": "P45a. How many such (pension or retirement) plans (through a former employer) do you have\nfrom which you expect to receive benefits?\n1 - 5 Actual number of pension or retirement plans through a\nformer employer\n8 DK\n9 NA; refused\n0 Inap.: no Spouse/Partner in FU (ER61347=5); has never\nworked for money (ER62149=2); no pension or retirement\nplans through a former employer (ER62205=5); DK, NA, or\nRF whether any pension or retirement plans through a\nformer employer (ER62205=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_prev1_type",
@@ -7130,10 +7091,7 @@
       "codebook_documentation": "P46. What type of plan was this second pension or retirement plan?\nA defined benefit plan that bases benefits on a formula involving age, years of service\nand salary, or a defined contribution plan that bases benefits on how much money has\naccumulated in a person's pension or retirement account?--FIRST PENSION FROM PREVIOUS\nEMPLOYER\nDefined contribution plans include 401-K, 403-B, ESOP, SRA, thrift/savings, stock/profit\nsharing, and money purchase plans, and target date funds (TDF).\n1 Defined benefit plan\n5 Defined contribution plan/Money accumulated in account\n7 Both\n8 DK\n9 NA; refused\n0 Inap.: no Spouse/Partner in FU (ER61347=5); never\nworked for money (ER60667=5); no pensions through a\nformer employer (ER62205=5); DK, NA, or RF whether have\npensions through a former employer (ER62205=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_prev1_combo_disposition",
@@ -7170,10 +7128,7 @@
       "codebook_documentation": "P48. When (you/she) left that employer, did (you/she) withdraw this money, roll it over\ninto an IRA, leave it to accumulate in the old plan, convert it to an annuity, or what?--\nFIRST PENSION FROM PREVIOUS EMPLOYER\n1 Withdrew the money\n2 Rolled over into IRA\n3 Left to accumulate\n4 Converted to annuity\n7 Other\n8 DK\n9 NA; refused\n0 Inap.: no Spouse/Partner in FU (ER61347=5); never\nworked for money (ER60667=5); no pensions through a\nformer employer (ER62205=5); DK, NA, or RF whether have\npensions through a former employer (ER62205=8 or 9);\ndefined benefit or defined contribution plan (ER62207=1\nor 5); DK, NA, or RF type of pension or retirement plan\n(ER62207=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_prev1_combo_amount",
@@ -7231,10 +7186,7 @@
         "dk": "zero_counted_unreported",
         "na_refused": "zero_counted_unreported",
         "brackets": "not_used"
-      },
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      }
     },
     {
       "id": "2015.wife_er62215",
@@ -7271,10 +7223,7 @@
       "codebook_documentation": "P49b. Is it $50,000 or more?--FIRST PENSION FROM PREVIOUS EMPLOYER\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: actual amount reported; no Spouse/Partner in FU\n(ER61347=5); never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); defined benefit or defined contribution\nplan (ER62207=1 or 5); DK, NA, or RF type of pension or\nretirement plan (ER62207=8 or 9); withdrew the money or\nconverted to an annuity (ER62213=1 or 4); other; more\nthan one response given (ER62213=7); DK, NA, or RF what\nwas done with pension from previous employer (ER62213=8\nor 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62216",
@@ -7315,10 +7264,7 @@
       "codebook_documentation": "P49c. $100,000 or more?--FIRST PENSION FROM PREVIOUS EMPLOYER\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: actual amount reported; no Spouse/Partner in FU\n(ER61347=5); never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); defined benefit or defined contribution\nplan (ER62207=1 or 5); DK, NA, or RF type of pension or\nretirement plan (ER62207=8 or 9); withdrew the money or\nconverted to an annuity (ER62213=1 or 4); other; more\nthan one response given (ER62213=7); DK, NA, or RF what\nwas done with pension from previous employer (ER62213=8\nor 9); amount less than $50,000 (ER62215=5); DK, NA, or\nRF whether $50,000 or more (ER62215=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62217",
@@ -7355,10 +7301,7 @@
       "codebook_documentation": "P49d. $200,000 or more?--FIRST PENSION FROM PREVIOUS EMPLOYER\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: actual amount reported; no Spouse/Partner in FU\n(ER61347=5); never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); defined benefit or defined contribution\nplan (ER62207=1 or 5); DK, NA, or RF type of pension or\nretirement plan (ER62207=8 or 9); withdrew the money or\nconverted to an annuity (ER62213=1 or 4); other; more\nthan one response given (ER62213=7); DK, NA, or RF what\nwas done with pension from previous employer (ER62213=8\nor 9); amount less than $50,000 (ER62215=5); DK, NA, or\nRF whether $50,000 or more (ER62215=8 or 9); amount less\nthan $100,000 (ER62216=5); DK, NA, or RF whether $100,000\nor more (ER62216=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62218",
@@ -7399,10 +7342,7 @@
       "codebook_documentation": "P49e. $20,000 or more?--FIRST PENSION FROM PREVIOUS EMPLOYER\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: actual amount reported; no Spouse/Partner in FU\n(ER61347=5); never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); defined benefit or defined contribution\nplan (ER62207=1 or 5); DK, NA, or RF type of pension or\nretirement plan (ER62207=8 or 9); withdrew the money or\nconverted to an annuity (ER62213=1 or 4); other; more\nthan one response given (ER62213=7); DK, NA, or RF what\nwas done with pension from previous employer (ER62213=8\nor 9); amount $50,000 or more (ER62215=1); DK, NA, or RF\nwhether $50,000 or more (ER62215=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62226",
@@ -7445,7 +7385,6 @@
       "previous_plan": 1,
       "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
       "blocking_dependencies": [
-        "roles:2015.relationship.20",
         "pension:2015.route.formula_unknown_checkpoint"
       ]
     },
@@ -7486,7 +7425,6 @@
       "previous_plan": 1,
       "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
       "blocking_dependencies": [
-        "roles:2015.relationship.20",
         "pension:2015.route.formula_unknown_checkpoint"
       ]
     },
@@ -7531,7 +7469,6 @@
       "previous_plan": 1,
       "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
       "blocking_dependencies": [
-        "roles:2015.relationship.20",
         "pension:2015.route.formula_unknown_checkpoint"
       ]
     },
@@ -7572,7 +7509,6 @@
       "previous_plan": 1,
       "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
       "blocking_dependencies": [
-        "roles:2015.relationship.20",
         "pension:2015.route.formula_unknown_checkpoint"
       ]
     },
@@ -7617,7 +7553,6 @@
       "previous_plan": 1,
       "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
       "blocking_dependencies": [
-        "roles:2015.relationship.20",
         "pension:2015.route.formula_unknown_checkpoint"
       ]
     },
@@ -7658,7 +7593,6 @@
       "previous_plan": 1,
       "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
       "blocking_dependencies": [
-        "roles:2015.relationship.20",
         "pension:2015.route.formula_unknown_checkpoint"
       ]
     },
@@ -7697,10 +7631,7 @@
       "codebook_documentation": "P62. How much (do/does) (you/she) expect to receive (, either as a percent of [your/her]\npay when [you/she] left that job or as an amount per month or year)?--FIRST PENSION FROM\nPREVIOUS EMPLOYER--AMOUNT\n1 - 999,996 Actual amount\n999,997 $999,997 or more\n999,998 DK\n999,999 NA; refused\n0 Inap.: response given as percent of pay or lump sum; no\nSpouse/Partner in FU (ER61347=5); has never worked for\nmoney (ER60667=5); no pensions through a former employer\n(ER62205=5); DK, NA, or RF whether have pensions through\na former employer (ER62205=8 or 9); defined contribution\nplan (ER62207=5); NA or RF type of pension or retirement\nplan (ER62207=9); no mention of expecting future benefits\n(ER62226-ER62231 NE 1); DK, NA, or RF whether receiving\nprevious pension (ER62226=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62260",
@@ -7737,10 +7668,7 @@
       "codebook_documentation": "P62. How much (do/does) (you/she) expect to receive (, either as a percent of [your/her]\npay when [you/she] left that job or as an amount per month or year)?--FIRST PENSION FROM\nPREVIOUS EMPLOYER--TIME UNIT\n5 Month\n6 Year\n7 Other\n8 DK\n9 NA; refused\n0 Inap.: response given as percent of pay or lump sum; no\nSpouse/Partner in FU (ER61347=5); has never worked for\nmoney (ER60667=5); no pensions through a former employer\n(ER62205=5); DK, NA, or RF whether have pensions through\na former employer (ER62205=8 or 9); defined contribution\nplan (ER62207=5); NA or RF type of pension or retirement\nplan (ER62207=9); no mention of expecting future benefits\n(ER62226-ER62231 NE 1); DK, NA, or RF whether receiving\nprevious pension (ER62226=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62261",
@@ -7777,10 +7705,7 @@
       "codebook_documentation": "P62. How much (do/does) (you/she] expect to receive (, as a percent of [your/her] pay\nwhen [you/she] left that job)--FIRST PENSION FROM PREVIOUS EMPLOYER\n1.0 - 100.0 Actual percentage\n998.0 DK\n999.0 NA; refused\n.0 Inap.: response given as dollar amount or lump sum; no\nSpouse/Partner in FU (ER61347=5); has never worked for\nmoney (ER60667=5); no pensions through a former employer\n(ER62205=5); DK, NA, or RF whether have pensions through\na former employer (ER62205=8 or 9); defined contribution\nplan (ER62207=5); NA or RF type of pension or retirement\nplan (ER62207=9); no mention of expecting future benefits\n(ER62226-ER62231 NE 1); DK, NA, or RF whether receiving\nprevious pension (ER62226=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_prev1_dc_disposition",
@@ -7823,7 +7748,6 @@
       "previous_plan": 1,
       "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
       "blocking_dependencies": [
-        "roles:2015.relationship.20",
         "pension:2015.route.formula_unknown_checkpoint"
       ]
     },
@@ -7881,7 +7805,6 @@
         "brackets": "not_used"
       },
       "blocking_dependencies": [
-        "roles:2015.relationship.20",
         "pension:2015.route.formula_unknown_checkpoint"
       ]
     },
@@ -7920,10 +7843,7 @@
       "codebook_documentation": "P65b. Is it $50,000 or more?--FIRST PENSION FROM PREVIOUS EMPLOYER\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: actual amount reported; no Spouse/Partner in FU\n(ER61347=5); has never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); defined benefit or combination plan\n(ER62207=1 or 7); NA or RF type of pension or retirement\nplan (ER62207=9); transferred to new employer, converted\nto annuity, or other/more than one response (ER62273=1,\n4, or 7); DK, NA, or RF what was done with account\n(ER62273=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62276",
@@ -7960,10 +7880,7 @@
       "codebook_documentation": "P65c. $100,000 or more?--FIRST PENSION FROM PREVIOUS EMPLOYER\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: actual amount reported; no Spouse/Partner in FU\n(ER61347=5); has never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); defined benefit or combination plan\n(ER62207=1 or 7); NA or RF type of pension or retirement\nplan (ER62207=9); transferred to new employer, converted\nto annuity, or other/more than one response (ER62273=1,\n4, or 7); DK, NA, or RF what was done with account\n(ER62273=8 or 9); amount less than $50,000 (ER62275=5);\nDK, NA, or RF whether $50,000 or more (ER62275=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62277",
@@ -8000,10 +7917,7 @@
       "codebook_documentation": "P65d. $200,000 or more?--FIRST PENSION FROM PREVIOUS EMPLOYER\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: actual amount reported; no Spouse/Partner in FU\n(ER61347=5); has never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); defined benefit or combination plan\n(ER62207=1 or 7); NA or RF type of pension or retirement\nplan (ER62207=9); transferred to new employer, converted\nto annuity, or other/more than one response (ER62273=1,\n4, or 7); DK, NA, or RF what was done with account\n(ER62273=8 or 9); amount less than $50,000 (ER62275=5);\nDK, NA, or RF whether $50,000 or more (ER62275=8 or 9);\namount less than $100,000 (ER62276=5); DK, NA, or RF\nwhether $100,000 or more (ER62276=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62278",
@@ -8044,10 +7958,7 @@
       "codebook_documentation": "P65e. $20,000 or more?--FIRST PENSION FROM PREVIOUS EMPLOYER\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: actual amount reported; no Spouse/Partner in FU\n(ER61347=5); has never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); defined benefit or combination plan\n(ER62207=1 or 7); NA or RF type of pension or retirement\nplan (ER62207=9); transferred to new employer, converted\nto annuity, or other/more than one response (ER62273=1,\n4, or 7); DK, NA, or RF what was done with account\n(ER62273=8 or 9); amount $50,000 or more (ER62275=1);\nDK, NA, or RF whether $50,000 or more (ER62275=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 1,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62286",
@@ -8083,10 +7994,7 @@
       "numeric_format": "NUM(1.0)",
       "codebook_documentation": "P69. (Do/Does) (you/she) have any other pensions from a former employer that you haven't\nalready told me about?\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: no Spouse/Partner in FU (ER61347=5); has never\nworked for money (ER60667=5); no pensions through a\nformer employer (ER62205=5); DK, NA, or RF whether have\npensions through a former employer (ER62205=8 or 9); NA\nor RF type of pension or retirement plan (ER62207=9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_prev2_type",
@@ -8123,10 +8031,7 @@
       "codebook_documentation": "P46. I would like to know what type of plan this was.\n(Was it a defined benefit plan that bases benefits on a formula involving age, years of\nservice and salary, or a defined contribution plan that bases benefits on how much money\nhas accumulated in a person's pension or retirement account?)--SECOND PENSION FROM\nPREVIOUS EMPLOYER\nDefined contribution plans include 401-K, 403-B, ESOP, SRA, thrift/savings, stock/profit\nsharing, and money purchase plans, and target date funds (TDF).\n1 Defined benefit plan\n5 Defined contribution plan/Money accumulated in account\n7 Both\n8 DK\n9 NA; refused\n0 Inap.: no Spouse/Partner in FU (ER61347=5); has never\nworked for money (ER60667=5); no pensions through a\nformer employer (ER62205=5); DK, NA, or RF whether have\npensions through a former employer (ER62205=8 or 9); no\nsecond pension through a former employer (ER62286=5)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_prev2_combo_disposition",
@@ -8167,10 +8072,7 @@
       "codebook_documentation": "P48. When (you/she) left that employer, did (you/she) withdraw this money, roll it over\ninto an IRA, leave it to accumulate in the old plan, convert it to an annuity, or what?--\nSECOND PENSION FROM PREVIOUS EMPLOYER\n1 Withdrew the money\n2 Rolled over into IRA\n3 Left to accumulate\n4 Converted to annuity\n7 Other\n8 DK\n9 NA; refused\n0 Inap.: no Spouse/Partner in FU (ER61347=5); has never\nworked for money (ER60667=5); no pensions through a\nformer employer (ER62205=5); DK, NA, or RF whether have\npensions through a former employer (ER62205=8 or 9); no\nsecond pension through a former employer (ER62286=5);\nretirement plan either defined benefit plan OR defined\ncontribution plan (ER62287=1 or 5); DK, NA, or RF type of\nretirement plan (ER62287=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_prev2_combo_amount",
@@ -8224,10 +8126,7 @@
         "dk": "zero_counted_unreported",
         "na_refused": "zero_counted_unreported",
         "brackets": "not_used"
-      },
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      }
     },
     {
       "id": "2015.wife_er62295",
@@ -8264,10 +8163,7 @@
       "codebook_documentation": "P49b. $50,000 or more?--SECOND PENSION FROM PREVIOUS EMPLOYER\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: actual amount reported; no Spouse/Partner in FU\n(ER61347=5); has never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); no second pension through a former\nemployer (ER62286=5); retirement plan either defined\nbenefit plan OR defined contribution plan (ER62287=1 or\n5); DK, NA, or RF type of retirement plan (ER62287=8 or\n9); withdrew the money, converted to an annuity, or\n\"other\", more than one response (ER62293=1, 4, or 7); DK,\nNA, or RF what was done with pension from previous\nemployer (ER62293=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62296",
@@ -8304,10 +8200,7 @@
       "codebook_documentation": "P49c. $100,000 or more?--SECOND PENSION FROM PREVIOUS EMPLOYER\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: actual amount reported; no Spouse/Partner in FU\n(ER61347=5); has never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); no second pension through a former\nemployer (ER62286=5); retirement plan either defined\nbenefit plan OR defined contribution plan (ER62287=1 or\n5); DK, NA, or RF type of retirement plan (ER62287=8 or\n9); withdrew the money, converted to an annuity, or\n\"other\", more than one response (ER62293=1, 4, or 7); DK,\nNA, or RF what was done with pension from previous\nemployer (ER62293=8 or 9); amount less than $50,000\n(ER62295=5); DK, NA, or RF whether $50,000 or more\n(ER62295=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62297",
@@ -8344,10 +8237,7 @@
       "codebook_documentation": "P49d. $200,000 or more?--SECOND PENSION FROM PREVIOUS EMPLOYER\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: actual amount reported; no Spouse/Partner in FU\n(ER61347=5); has never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); no second pension through a former\nemployer (ER62286=5); retirement plan either defined\nbenefit plan OR defined contribution plan (ER62287=1 or\n5); DK, NA, or RF type of retirement plan (ER62287=8 or\n9); withdrew the money, converted to an annuity, or\n\"other\", more than one response (ER62293=1, 4, or 7); DK,\nNA, or RF what was done with pension from previous\nemployer (ER62293=8 or 9); amount less than $50,000\n(ER62295=5); DK, NA, or RF whether $50,000 or more\n(ER62295=8 or 9); amount less than $100,000 (ER62296=5);\nDK, NA, or RF whether $100,000 or more (ER62296=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62298",
@@ -8384,10 +8274,7 @@
       "codebook_documentation": "P49e. $20,000 or more?--SECOND PENSION FROM PREVIOUS EMPLOYER\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: actual amount reported; no Spouse/Partner in FU\n(ER61347=5); has never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); no second pension through a former\nemployer (ER62286=5); retirement plan either defined\nbenefit plan OR defined contribution plan (ER62287=1 or\n5); DK, NA, or RF type of retirement plan (ER62287=8 or\n9); withdrew the money, converted to an annuity, or\n\"other\", more than one response (ER62293=1, 4, or 7); DK,\nNA, or RF what was done with pension from previous\nemployer (ER62293=8 or 9); $50,000 or more (ER62295=1);\nDK, NA, or RF whether $50,000 or more (ER62295=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62306",
@@ -8426,7 +8313,6 @@
       "previous_plan": 2,
       "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
       "blocking_dependencies": [
-        "roles:2015.relationship.20",
         "pension:2015.route.formula_unknown_checkpoint"
       ]
     },
@@ -8471,7 +8357,6 @@
       "previous_plan": 2,
       "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
       "blocking_dependencies": [
-        "roles:2015.relationship.20",
         "pension:2015.route.formula_unknown_checkpoint"
       ]
     },
@@ -8512,7 +8397,6 @@
       "previous_plan": 2,
       "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
       "blocking_dependencies": [
-        "roles:2015.relationship.20",
         "pension:2015.route.formula_unknown_checkpoint"
       ]
     },
@@ -8557,7 +8441,6 @@
       "previous_plan": 2,
       "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
       "blocking_dependencies": [
-        "roles:2015.relationship.20",
         "pension:2015.route.formula_unknown_checkpoint"
       ]
     },
@@ -8598,7 +8481,6 @@
       "previous_plan": 2,
       "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
       "blocking_dependencies": [
-        "roles:2015.relationship.20",
         "pension:2015.route.formula_unknown_checkpoint"
       ]
     },
@@ -8643,7 +8525,6 @@
       "previous_plan": 2,
       "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
       "blocking_dependencies": [
-        "roles:2015.relationship.20",
         "pension:2015.route.formula_unknown_checkpoint"
       ]
     },
@@ -8686,10 +8567,7 @@
       "codebook_documentation": "P62. How much (do/does) (you/she) expect to receive (, either as a percent of [your/her]\npay when [you/she] left that job or as an amount per month or year)?--SECOND PENSION--\nAMOUNT FROM PREVIOUS EMPLOYER\n1 - 999,996 Actual amount\n999,997 $999,997 or more\n999,998 DK\n999,999 NA; refused\n0 Inap.: response given as percent of pay or lump sum; no\nSpouse/Partner in FU (ER61347=5); has never worked for\nmoney (ER60667=5); no pensions through a former employer\n(ER62205=5); DK, NA, or RF whether have pensions through\na former employer (ER62205=8 or 9); no second pension\nthrough a former employer (ER62286=5); retirement plan\ndefined contribution plan (ER62287=5); NA, RF type of\nretirement plan (ER62287=9); no mention of expecting\nfuture benefits (ER62306-ER62311 NE 1); DK, NA, or RF\nwhether receiving previous pension (ER62306=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62340",
@@ -8726,10 +8604,7 @@
       "codebook_documentation": "P62. How much (do/does) (you/she) expect to receive (, either as a percent of [your/her]\npay when [you/she] left that job or as an amount per month or year)?--SECOND PENSION FROM\nPREVIOUS EMPLOYER--TIME UNIT\n5 Month\n6 Year\n7 Other\n8 DK\n9 NA; refused\n0 Inap.: response given as percent of pay or lump sum; no\nSpouse/Partner in FU (ER61347=5); has never worked for\nmoney (ER60667=5); no pensions through a former employer\n(ER62205=5); DK, NA, or RF whether have pensions through\na former employer (ER62205=8 or 9); no second pension\nthrough a former employer (ER62286=5); retirement plan\ndefined contribution plan (ER62287=5); NA, RF type of\nretirement plan (ER62287=9); no mention of expecting\nfuture benefits (ER62306-ER62311 NE 1); DK, NA, or RF\nwhether receiving previous pension (ER62306=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62341",
@@ -8770,10 +8645,7 @@
       "codebook_documentation": "P62. How much (do/does) (you/she) expect to receive (, as a percent of [your/her] pay\nwhen [you/she] left that job)?--SECOND PENSION FROM PREVIOUS EMPLOYER\n1.0 - 100.0 Actual percentage\n998.0 DK\n999.0 NA; refused\n.0 Inap.: response given as dollar amount or lump sum; no\nSpouse/Partner in FU (ER61347=5); has never worked for\nmoney (ER60667=5); no pensions through a former employer\n(ER62205=5); DK, NA, or RF whether have pensions through\na former employer (ER62205=8 or 9); no second pension\nthrough a former employer (ER62286=5); retirement plan\ndefined contribution plan (ER62287=5); NA, RF type of\nretirement plan (ER62287=9); no mention of expecting\nfuture benefits (ER62306-ER62311 NE 1); DK, NA, or RF\nwhether receiving previous pension (ER62306=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_prev2_dc_disposition",
@@ -8816,7 +8688,6 @@
       "previous_plan": 2,
       "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
       "blocking_dependencies": [
-        "roles:2015.relationship.20",
         "pension:2015.route.formula_unknown_checkpoint"
       ]
     },
@@ -8874,7 +8745,6 @@
         "brackets": "not_used"
       },
       "blocking_dependencies": [
-        "roles:2015.relationship.20",
         "pension:2015.route.formula_unknown_checkpoint"
       ]
     },
@@ -8917,10 +8787,7 @@
       "codebook_documentation": "P65b. $50,000 or more?--SECOND PENSION FROM PREVIOUS EMPLOYER\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: actual amount reported; no Spouse/Partner in FU\n(ER61347=5); has never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); no second pension through a former\nemployer (ER62286=5); retirement plan defined benefit or\ncombination plan (ER62287=1 or 7); NA, RF type of\nretirement plan (ER62287=9); transferred to new employer,\nconverted to annuity, or other, multiple responses given\n(ER62353=1, 4, or 7); DK, NA, or RF what was done with\naccount when left employer (ER62353=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62356",
@@ -8957,10 +8824,7 @@
       "codebook_documentation": "P65c. $100,000 or more?--SECOND PENSION FROM PREVIOUS EMPLOYER\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: actual amount reported; no Spouse/Partner in FU\n(ER61347=5); has never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); no second pension through a former\nemployer (ER62286=5); retirement plan defined benefit or\ncombination plan (ER62287=1 or 7); NA, RF type of\nretirement plan (ER62287=9); transferred to new employer,\nconverted to annuity, or other, multiple responses given\n(ER62353=1, 4, or 7); DK, NA, or RF what was done with\naccount when left employer (ER62353=8 or 9); amount less\nthan $50,000 (ER62355=5); DK, NA, or RF whether $50,000\nor more (ER62355=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62357",
@@ -9001,10 +8865,7 @@
       "codebook_documentation": "P65d. $200,000 or more?--SECOND PENSION FROM PREVIOUS EMPLOYER\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: actual amount reported; no Spouse/Partner in FU\n(ER61347=5); has never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); no second pension through a former\nemployer (ER62286=5); retirement plan defined benefit or\ncombination plan (ER62287=1 or 7); NA, RF type of\nretirement plan (ER62287=9); transferred to new employer,\nconverted to annuity, or other, multiple responses given\n(ER62353=1, 4, or 7); DK, NA, or RF what was done with\naccount when left employer (ER62353=8 or 9); amount less\nthan $50,000 (ER62355=5); DK, NA, or RF whether $50,000\nor more (ER62355=8 or 9); amount less than $100,000\n(ER62356=5); DK, NA, or RF whether $100,000 or more\n(ER62356=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.wife_er62358",
@@ -9041,10 +8902,7 @@
       "codebook_documentation": "P65e. $20,000 or more?--SECOND PENSION FROM PREVIOUS EMPLOYER\n1 Yes\n5 No\n8 DK\n9 NA; refused\n0 Inap.: actual amount reported; no Spouse/Partner in FU\n(ER61347=5); has never worked for money (ER60667=5); no\npensions through a former employer (ER62205=5); DK, NA,\nor RF whether have pensions through a former employer\n(ER62205=8 or 9); no second pension through a former\nemployer (ER62286=5); retirement plan defined benefit or\ncombination plan (ER62287=1 or 7); NA, RF type of\nretirement plan (ER62287=9); transferred to new employer,\nconverted to annuity, or other, multiple responses given\n(ER62353=1, 4, or 7); DK, NA, or RF what was done with\naccount when left employer (ER62353=8 or 9); amount\n$50,000 or more (ER62355=1); DK, NA, or RF whether\n$50,000 or more (ER62355=8 or 9)",
       "adjudication_scope": "Variable identity, setup layout, documented code domain and universe; routing and role blockers remain separate entries.",
       "previous_plan": 2,
-      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited.",
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ]
+      "format_verification": "No separate family SPSS formats file staged for this wave; setup and codebook are cited."
     },
     {
       "id": "2015.route.current_job",
@@ -9420,7 +9278,6 @@
       ],
       "finding": "The pension loop covers the family-file head/reference-person slot and designated spouse/partner slot. Other family members are not separate pension-loop respondents. P70CKPT supplies the explicit spouse-loop family-list relationship gate. Individual-record role assignment remains the separate U2 role registry task.",
       "requires_role_registry": true,
-      "refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 124; disposition F, amendment 5): q2015 p. 166 P70CKPT reads 'WHETHER WIFE/“WIFE” IN FU (CYFUHU=1, 4 & CYAQRTH=202, 222)' and supplies no male code-20 pension-slot bridge. U7 remains unavailable as specified; no assumption of absence or zero balance is permitted.",
       "family_list_gate": {
         "CYFUHU": [
           1,
@@ -9431,18 +9288,23 @@
           222
         ]
       },
-      "blocking_dependencies": [
-        "roles:2015.relationship.20"
-      ],
-      "action": "refuse_male_code20_pension_slot_per_u2_adjudicate_F",
-      "part_b_finding": "See roles:2015.relationship.20. Documented 2015 male legal spouses are Head, code 90 or code 98 and are not pension-loop spouse respondents; the residual male code-20 question is open (docs/design/u2_m1b_psid_research.md).",
-      "open_question": "If any 2015 Relation to Head code-20 person is male (family-listing CYAQRTH 201), which family-file variables hold his employer-pension items, given that P70CKPT admits only CYAQRTH 202 and 222 to the 2015 spouse pension loop? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 1; not sent. It is answered from documentation only, never from observed records.)",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 124,
         "disposition": "F",
         "amendment": 5
-      }
+      },
+      "resolution": "Max's ruling d1090 (2026-10-10; specification section 16c) on blocker B1, with amendment 5c (ratified by d637): U7's 2015 spouse slot is the documented female spouse or partner slot that P70CKPT gates (family_list_gate: CYFUHU 1 and 4, CYAQRTH 202 and 222), and B1's exclusion (roles:2015.relationship.20, male code 20 in 2015 family unit) applies to U7 as to every other row, so no family unit that supplies an observation holds a male code-20 person. This replaces the adjudication's refusal, kept as superseded_refusal.",
+      "ruling": {
+        "decision": "d1090",
+        "date": "2026-10-10",
+        "specification_section": "16c",
+        "option": "1d-2",
+        "amendment": "5c"
+      },
+      "superseded_refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 124; disposition F, amendment 5): q2015 p. 166 P70CKPT reads 'WHETHER WIFE/“WIFE” IN FU (CYFUHU=1, 4 & CYAQRTH=202, 222)' and supplies no male code-20 pension-slot bridge. U7 remains unavailable as specified; no assumption of absence or zero balance is permitted.",
+      "part_b_finding": "Follows roles:2015.relationship.20 (blocker B1). Documented 2015 male legal spouses are Head, code 90 or code 98 and are not pension-loop spouse respondents; PSID answered the residual male code-20 question on 2026-10-07 (docs/design/u2_m1b_psid_research.md section 1), and Max ruled on 2026-10-10 (d1090; specification section 16c).",
+      "open_question": "If any 2015 Relation to Head code-20 person is male (family-listing CYAQRTH 201), which family-file variables hold his employer-pension items, given that P70CKPT admits only CYAQRTH 202 and 222 to the 2015 spouse pension loop? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 1; sent 2026-09-30 and answered 2026-10-07 as that section records. Max's ruling d1090 settles U2's treatment by a population rule, not from observed records.)"
     },
     {
       "id": "2015.route.other_current_plan",
@@ -17692,11 +17554,7 @@
           201,
           222
         ]
-      },
-      "blocking_dependencies": [
-        "roles:2019.relationship.90",
-        "roles:2019.relationship.92"
-      ]
+      }
     },
     {
       "id": "2019.route.other_current_plan",
@@ -22199,11 +22057,7 @@
           201,
           222
         ]
-      },
-      "blocking_dependencies": [
-        "roles:2021.relationship.90",
-        "roles:2021.relationship.92"
-      ]
+      }
     },
     {
       "id": "2021.route.other_current_plan",
@@ -26753,11 +26607,7 @@
           201,
           222
         ]
-      },
-      "blocking_dependencies": [
-        "roles:2023.relationship.90",
-        "roles:2023.relationship.92"
-      ]
+      }
     },
     {
       "id": "2023.route.other_current_plan",
@@ -26836,5 +26686,13 @@
     "bytes": 26564,
     "applied_by": "u2-m1b",
     "note": "Independent adjudication of milestone 1 (VERDICT: ERRORS FOUND). Amendment 7 citation corrections, D resolutions and F refusals are applied here; A items stay TO VERIFY pending u2-draft-4 amendments 1-6 and Max's ruling."
-  }
+  },
+  "rulings_applied": [
+    {
+      "decision": "d1090",
+      "date": "2026-10-10",
+      "specification_section": "16c",
+      "note": "Max's ruling d1090 (2026-10-10; specification section 16c) on blockers B1 and B2: the seven role refusals and pension:2015.route.respondent_slots are replaced by the ratified family-unit exclusions (B1, section 16a option 1d-2, amending draft-3 line 160; B2, option 1e-1, amending draft-3 lines 152, 154 and 158 for 2019-2023), and the dependencies on the seven role entries are released. Each entry keeps its adjudication record (disposition F) and its superseded refusal text."
+    }
+  ]
 }

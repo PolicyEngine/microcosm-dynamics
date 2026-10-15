@@ -396,23 +396,36 @@
         }
       ],
       "administrative_birth_support": true,
-      "action": "refuse_male_code20_per_u2_adjudicate_F",
       "income_role": "spouse",
       "spouse_slot": true,
       "legal_spouse_annuity": true,
       "marital_resolution": true,
-      "refusal_condition": {
-        "sex": 1
-      },
-      "refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 103; disposition F, amendment 1): q2015 pp. 89 and 166 gate the spouse income and pension loops on 'CYAQRTH=202, 222' and FAM2015ER ER60020 (p. 6) lists only '2 Female', so no documented family-file spouse-slot route exists for a male code-20 person. The refusal removes the asserted financial mapping, not the person; it does not authorize exclusion, zero-filling, reassignment or fallback. The loader refuses this whole entry; refusal_condition records that the gap concerns sex=1.",
-      "part_b_finding": "PARTIAL (u2-m1b Part B, docs/design/u2_m1b_psid_research.md section 1): official documentation routes every documented kind of male legal spouse in 2015 away from code 20. Through 2015 the husband of a heterosexual couple is Head (UserGuide2017 PDF p. 13; FAQ question 73), a husband who is not Head is 'Husband of Head' code 90 and 'was asked the same questions as an Ofum' (FAQ question 74), and 2015 same-sex partners are code 98 'Other nonrelatives (includes same-sex partners ...)' flagged by ER34304 (IND2023ER_codebook p. 978; UserGuide2015 PDF p. 33; UserGuide2017 PDF p. 35). The 2015 Section J qualifier classes values 102-222 as female, where the 2017 qualifier classes 101, 201 and 221 as male (research record section 1, item 11; q2015 p. 190; q2017 p. 184). No document states that code 20 is never male in 2015, and FAQ question 70 says generally that from 2015 a Spouse/Partner couple 'can consist of heterosexual or same sex couples', so the documents do not settle how a male Head's legally married same-sex spouse was coded. The 2015 'RTH Lookup List' named for CYAQRTH (q2015 p. 5) is absent from the staged documentation. Registry status follows the adjudication until Max rules on u2-draft-4 amendment 1.",
-      "open_question": "In the 2015 wave, how was the legally married same-sex spouse of a male Head coded: Relation to Head ER34303 = 20 (and, if so, under which family-listing CYAQRTH value), or 98 with ER34304 = 1? If any 2015 code-20 person is male, in which family-file variables were his income, Social Security, SSI and employer-pension items stored, given that the 2015 spouse income and pension loops admit only CYAQRTH 202 and 222? And could PSID share the 2015 \"RTH Lookup List\" for the family-listing item CYAQRTH (q2015 p. 5), in particular whether it offered the value 201? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 1; not sent. It is answered from documentation only, never from observed records.)",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 103,
         "disposition": "F",
         "amendment": 1
-      }
+      },
+      "action": "documented_rule_with_family_unit_exclusion",
+      "family_unit_exclusion": {
+        "disposition": "male code 20 in 2015 family unit",
+        "condition": {
+          "sex": 1
+        }
+      },
+      "resolution": "Max's ruling d1090 (2026-10-10; specification section 16c), section 16a option 1d-2, ratified as an explicit amendment to draft-3 line 160: 2015 code 20 occupies the spouse slot as documented, and every 2015 family-unit observation that contains a person recorded male (ER32000 = 1) with 2015 relationship code 20 is excluded from every row under the named disposition male code 20 in 2015 family unit. The rule is fixed before any count and is vacuous if no such unit supplies an observation; the count is disclosed after the authorized structural pass and decides nothing. This replaces the adjudication's refusal, kept as superseded_refusal; family_unit_exclusion.condition records that the exclusion concerns sex=1.",
+      "ruling": {
+        "decision": "d1090",
+        "date": "2026-10-10",
+        "specification_section": "16c",
+        "option": "1d-2",
+        "amends_draft_3_lines": [
+          160
+        ]
+      },
+      "superseded_refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 103; disposition F, amendment 1): q2015 pp. 89 and 166 gate the spouse income and pension loops on 'CYAQRTH=202, 222' and FAM2015ER ER60020 (p. 6) lists only '2 Female', so no documented family-file spouse-slot route exists for a male code-20 person. The refusal removes the asserted financial mapping, not the person; it does not authorize exclusion, zero-filling, reassignment or fallback. The loader refuses this whole entry; refusal_condition records that the gap concerns sex=1.",
+      "part_b_finding": "PARTIAL (u2-m1b Part B, docs/design/u2_m1b_psid_research.md section 1): official documentation routes every documented kind of male legal spouse in 2015 away from code 20. Through 2015 the husband of a heterosexual couple is Head (UserGuide2017 PDF p. 13; FAQ question 73), a husband who is not Head is 'Husband of Head' code 90 and 'was asked the same questions as an Ofum' (FAQ question 74), and 2015 same-sex partners are code 98 'Other nonrelatives (includes same-sex partners ...)' flagged by ER34304 (IND2023ER_codebook p. 978; UserGuide2015 PDF p. 33; UserGuide2017 PDF p. 35). The 2015 Section J qualifier classes values 102-222 as female, where the 2017 qualifier classes 101, 201 and 221 as male (research record section 1, item 11; q2015 p. 190; q2017 p. 184). No document states that code 20 is never male in 2015, and FAQ question 70 says generally that from 2015 a Spouse/Partner couple 'can consist of heterosexual or same sex couples', so the documents do not settle how a male Head's legally married same-sex spouse was coded. The 2015 'RTH Lookup List' named for CYAQRTH (q2015 p. 5) is absent from the staged documentation. PSID answered on 2026-10-07 that no male should have code 20 in 2015 (research record section 1), and Max ruled on 2026-10-10 (d1090; specification section 16c).",
+      "open_question": "In the 2015 wave, how was the legally married same-sex spouse of a male Head coded: Relation to Head ER34303 = 20 (and, if so, under which family-listing CYAQRTH value), or 98 with ER34304 = 1? If any 2015 code-20 person is male, in which family-file variables were his income, Social Security, SSI and employer-pension items stored, given that the 2015 spouse income and pension loops admit only CYAQRTH 202 and 222? And could PSID share the 2015 \"RTH Lookup List\" for the family-listing item CYAQRTH (q2015 p. 5), in particular whether it offered the value 201? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 1; sent 2026-09-30 and answered 2026-10-07 as that section records. Max's ruling d1090 settles U2's treatment by a population rule, not from observed records.)"
     },
     {
       "id": "2015.relationship.22",
@@ -1104,21 +1117,40 @@
         }
       ],
       "administrative_birth_support": true,
-      "action": "refuse_ofum_assignment_per_u2_adjudicate_F",
       "spouse_slot": false,
       "legal_spouse_annuity": true,
       "marital_resolution": true,
-      "income_role": "refused",
-      "refused_income_role": "ofum",
-      "refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 110; disposition F, amendment 1): the q2019 p. 103 Big OFUM gate admits 'CYAQRTH=301-882 or 951-982', excluding 901/902, and the spouse gate admits 201-222. The asserted OFUM financial assignment is refused. The refusal removes the mapping, not the person; it does not authorize exclusion, zero-filling, reassignment or fallback.",
-      "part_b_finding": "PARTIAL (u2-m1b Part B, docs/design/u2_m1b_psid_research.md): the instrument asks 901/902 no Section G income questions in 2019 (spouse series CYAQRTH=201-222; Big and Little OFUM series 301-882 or 951-982), and PSID FAQ question 74 says the code is used when one half of the couple withholds information about the other or refuses to have their information included. No online document states whether any of the person's income enters the family-file aggregates.",
-      "open_question": "In 2019, the Section G spouse series (CYAQRTH=201-222) and the Big and Little OFUM series (CYAQRTH=301-882 or 951-982) both exclude CYAQRTH 901/902. Is any income, Social Security or SSI of a relationship-code-90 person reported, edited or imputed into the family-file aggregates (total family income and its seven components), or is it excluded from them? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 2; not sent. It is answered from documentation only, never from observed records.)",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 110,
         "disposition": "F",
         "amendment": 1
-      }
+      },
+      "action": "exclude_family_unit_per_d1090",
+      "income_role": "excluded",
+      "family_unit_exclusion": {
+        "disposition": "uncooperative spouse or partner in family unit"
+      },
+      "resolution": "Max's ruling d1090 (2026-10-10; specification section 16c), section 16a option 1e-1, ratified as an explicit amendment to draft-3 lines 152, 154 and 158 for 2019-2023: every 2019 family-unit observation that contains a code-90 or code-92 person is excluded from every row under the named disposition uncooperative spouse or partner in family unit, whether the target person is the reference person, the uncooperative spouse or partner, or another member. The rule is fixed before any count and is vacuous if no such unit supplies an observation; the count is disclosed after the authorized structural pass and decides nothing. No income, Social Security or SSI is assigned to the code-90 uncooperative legal spouse and no OFUM routing is asserted for them (income_role excluded). This replaces the adjudication's refusal, kept as superseded_refusal.",
+      "ruling": {
+        "decision": "d1090",
+        "date": "2026-10-10",
+        "specification_section": "16c",
+        "option": "1e-1",
+        "amends_draft_3_lines": [
+          152,
+          154,
+          158
+        ],
+        "amended_waves": [
+          2019,
+          2021,
+          2023
+        ]
+      },
+      "superseded_refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 110; disposition F, amendment 1): the q2019 p. 103 Big OFUM gate admits 'CYAQRTH=301-882 or 951-982', excluding 901/902, and the spouse gate admits 201-222. The asserted OFUM financial assignment is refused. The refusal removes the mapping, not the person; it does not authorize exclusion, zero-filling, reassignment or fallback.",
+      "part_b_finding": "PARTIAL (u2-m1b Part B, docs/design/u2_m1b_psid_research.md): the instrument asks 901/902 no Section G income questions in 2019 (spouse series CYAQRTH=201-222; Big and Little OFUM series 301-882 or 951-982), and PSID FAQ question 74 says the code is used when one half of the couple withholds information about the other or refuses to have their information included. No online document states whether any of the person's income enters the family-file aggregates. PSID's 2026-10-07 answer confirmed that these persons are skipped out of the Section G income questions and did not say whether their income is edited or imputed into the family-file aggregates (research record section 2); Max ruled on 2026-10-10 (d1090; specification section 16c).",
+      "open_question": "In 2019, the Section G spouse series (CYAQRTH=201-222) and the Big and Little OFUM series (CYAQRTH=301-882 or 951-982) both exclude CYAQRTH 901/902. Is any income, Social Security or SSI of a relationship-code-90 person reported, edited or imputed into the family-file aggregates (total family income and its seven components), or is it excluded from them? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 2; sent 2026-09-30 and answered in part 2026-10-07 as that section records. Max's ruling d1090 excludes these family units, so U2 relies on no answer to it, and none is taken from observed records.)"
     },
     {
       "id": "2019.relationship.92",
@@ -1159,21 +1191,40 @@
         }
       ],
       "administrative_birth_support": false,
-      "action": "refuse_ofum_assignment_per_u2_adjudicate_F",
       "spouse_slot": false,
       "legal_spouse_annuity": false,
       "marital_resolution": false,
-      "income_role": "refused",
-      "refused_income_role": "ofum",
-      "refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 111; disposition F, amendment 1): the q2019 p. 103 Big OFUM gate admits 'CYAQRTH=301-882 or 951-982', excluding 921/922, and the spouse gate admits 201-222. The asserted OFUM financial assignment is refused. The refusal removes the mapping, not the person; it does not authorize exclusion, zero-filling, reassignment or fallback.",
-      "part_b_finding": "PARTIAL (u2-m1b Part B, docs/design/u2_m1b_psid_research.md): the instrument asks 921/922 no Section G income questions in 2019 (spouse series CYAQRTH=201-222; Big and Little OFUM series 301-882 or 951-982), and PSID FAQ question 74 says the code is used when one half of the couple withholds information about the other or refuses to have their information included. No online document states whether any of the person's income enters the family-file aggregates.",
-      "open_question": "In 2019, the Section G spouse series (CYAQRTH=201-222) and the Big and Little OFUM series (CYAQRTH=301-882 or 951-982) both exclude CYAQRTH 921/922. Is any income, Social Security or SSI of a relationship-code-92 person reported, edited or imputed into the family-file aggregates (total family income and its seven components), or is it excluded from them? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 2; not sent. It is answered from documentation only, never from observed records.)",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 111,
         "disposition": "F",
         "amendment": 1
-      }
+      },
+      "action": "exclude_family_unit_per_d1090",
+      "income_role": "excluded",
+      "family_unit_exclusion": {
+        "disposition": "uncooperative spouse or partner in family unit"
+      },
+      "resolution": "Max's ruling d1090 (2026-10-10; specification section 16c), section 16a option 1e-1, ratified as an explicit amendment to draft-3 lines 152, 154 and 158 for 2019-2023: every 2019 family-unit observation that contains a code-90 or code-92 person is excluded from every row under the named disposition uncooperative spouse or partner in family unit, whether the target person is the reference person, the uncooperative spouse or partner, or another member. The rule is fixed before any count and is vacuous if no such unit supplies an observation; the count is disclosed after the authorized structural pass and decides nothing. No income, Social Security or SSI is assigned to the code-92 uncooperative partner and no OFUM routing is asserted for them (income_role excluded). This replaces the adjudication's refusal, kept as superseded_refusal.",
+      "ruling": {
+        "decision": "d1090",
+        "date": "2026-10-10",
+        "specification_section": "16c",
+        "option": "1e-1",
+        "amends_draft_3_lines": [
+          152,
+          154,
+          158
+        ],
+        "amended_waves": [
+          2019,
+          2021,
+          2023
+        ]
+      },
+      "superseded_refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 111; disposition F, amendment 1): the q2019 p. 103 Big OFUM gate admits 'CYAQRTH=301-882 or 951-982', excluding 921/922, and the spouse gate admits 201-222. The asserted OFUM financial assignment is refused. The refusal removes the mapping, not the person; it does not authorize exclusion, zero-filling, reassignment or fallback.",
+      "part_b_finding": "PARTIAL (u2-m1b Part B, docs/design/u2_m1b_psid_research.md): the instrument asks 921/922 no Section G income questions in 2019 (spouse series CYAQRTH=201-222; Big and Little OFUM series 301-882 or 951-982), and PSID FAQ question 74 says the code is used when one half of the couple withholds information about the other or refuses to have their information included. No online document states whether any of the person's income enters the family-file aggregates. PSID's 2026-10-07 answer confirmed that these persons are skipped out of the Section G income questions and did not say whether their income is edited or imputed into the family-file aggregates (research record section 2); Max ruled on 2026-10-10 (d1090; specification section 16c).",
+      "open_question": "In 2019, the Section G spouse series (CYAQRTH=201-222) and the Big and Little OFUM series (CYAQRTH=301-882 or 951-982) both exclude CYAQRTH 921/922. Is any income, Social Security or SSI of a relationship-code-92 person reported, edited or imputed into the family-file aggregates (total family income and its seven components), or is it excluded from them? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 2; sent 2026-09-30 and answered in part 2026-10-07 as that section records. Max's ruling d1090 excludes these family units, so U2 relies on no answer to it, and none is taken from observed records.)"
     },
     {
       "id": "2021.relationship.10",
@@ -1391,21 +1442,40 @@
         }
       ],
       "administrative_birth_support": true,
-      "action": "refuse_ofum_assignment_per_u2_adjudicate_F",
       "spouse_slot": false,
       "legal_spouse_annuity": true,
       "marital_resolution": true,
-      "income_role": "refused",
-      "refused_income_role": "ofum",
-      "refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 113; disposition F, amendment 1): the q2021 p. 205 Big OFUM gate admits 'CYAQRTH=301-882 or 951-982', excluding 901/902, and the spouse gate admits 201-222. The asserted OFUM financial assignment is refused. The refusal removes the mapping, not the person; it does not authorize exclusion, zero-filling, reassignment or fallback.",
-      "part_b_finding": "PARTIAL (u2-m1b Part B, docs/design/u2_m1b_psid_research.md): the instrument asks 901/902 no Section G income questions in 2021 (spouse series CYAQRTH=201-222; Big and Little OFUM series 301-882 or 951-982), and PSID FAQ question 74 says the code is used when one half of the couple withholds information about the other or refuses to have their information included. No online document states whether any of the person's income enters the family-file aggregates.",
-      "open_question": "In 2021, the Section G spouse series (CYAQRTH=201-222) and the Big and Little OFUM series (CYAQRTH=301-882 or 951-982) both exclude CYAQRTH 901/902. Is any income, Social Security or SSI of a relationship-code-90 person reported, edited or imputed into the family-file aggregates (total family income and its seven components), or is it excluded from them? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 2; not sent. It is answered from documentation only, never from observed records.)",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 113,
         "disposition": "F",
         "amendment": 1
-      }
+      },
+      "action": "exclude_family_unit_per_d1090",
+      "income_role": "excluded",
+      "family_unit_exclusion": {
+        "disposition": "uncooperative spouse or partner in family unit"
+      },
+      "resolution": "Max's ruling d1090 (2026-10-10; specification section 16c), section 16a option 1e-1, ratified as an explicit amendment to draft-3 lines 152, 154 and 158 for 2019-2023: every 2021 family-unit observation that contains a code-90 or code-92 person is excluded from every row under the named disposition uncooperative spouse or partner in family unit, whether the target person is the reference person, the uncooperative spouse or partner, or another member. The rule is fixed before any count and is vacuous if no such unit supplies an observation; the count is disclosed after the authorized structural pass and decides nothing. No income, Social Security or SSI is assigned to the code-90 uncooperative legal spouse and no OFUM routing is asserted for them (income_role excluded). This replaces the adjudication's refusal, kept as superseded_refusal.",
+      "ruling": {
+        "decision": "d1090",
+        "date": "2026-10-10",
+        "specification_section": "16c",
+        "option": "1e-1",
+        "amends_draft_3_lines": [
+          152,
+          154,
+          158
+        ],
+        "amended_waves": [
+          2019,
+          2021,
+          2023
+        ]
+      },
+      "superseded_refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 113; disposition F, amendment 1): the q2021 p. 205 Big OFUM gate admits 'CYAQRTH=301-882 or 951-982', excluding 901/902, and the spouse gate admits 201-222. The asserted OFUM financial assignment is refused. The refusal removes the mapping, not the person; it does not authorize exclusion, zero-filling, reassignment or fallback.",
+      "part_b_finding": "PARTIAL (u2-m1b Part B, docs/design/u2_m1b_psid_research.md): the instrument asks 901/902 no Section G income questions in 2021 (spouse series CYAQRTH=201-222; Big and Little OFUM series 301-882 or 951-982), and PSID FAQ question 74 says the code is used when one half of the couple withholds information about the other or refuses to have their information included. No online document states whether any of the person's income enters the family-file aggregates. PSID's 2026-10-07 answer confirmed that these persons are skipped out of the Section G income questions and did not say whether their income is edited or imputed into the family-file aggregates (research record section 2); Max ruled on 2026-10-10 (d1090; specification section 16c).",
+      "open_question": "In 2021, the Section G spouse series (CYAQRTH=201-222) and the Big and Little OFUM series (CYAQRTH=301-882 or 951-982) both exclude CYAQRTH 901/902. Is any income, Social Security or SSI of a relationship-code-90 person reported, edited or imputed into the family-file aggregates (total family income and its seven components), or is it excluded from them? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 2; sent 2026-09-30 and answered in part 2026-10-07 as that section records. Max's ruling d1090 excludes these family units, so U2 relies on no answer to it, and none is taken from observed records.)"
     },
     {
       "id": "2021.relationship.92",
@@ -1446,21 +1516,40 @@
         }
       ],
       "administrative_birth_support": false,
-      "action": "refuse_ofum_assignment_per_u2_adjudicate_F",
       "spouse_slot": false,
       "legal_spouse_annuity": false,
       "marital_resolution": false,
-      "income_role": "refused",
-      "refused_income_role": "ofum",
-      "refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 114; disposition F, amendment 1): the q2021 p. 205 Big OFUM gate admits 'CYAQRTH=301-882 or 951-982', excluding 921/922, and the spouse gate admits 201-222. The asserted OFUM financial assignment is refused. The refusal removes the mapping, not the person; it does not authorize exclusion, zero-filling, reassignment or fallback.",
-      "part_b_finding": "PARTIAL (u2-m1b Part B, docs/design/u2_m1b_psid_research.md): the instrument asks 921/922 no Section G income questions in 2021 (spouse series CYAQRTH=201-222; Big and Little OFUM series 301-882 or 951-982), and PSID FAQ question 74 says the code is used when one half of the couple withholds information about the other or refuses to have their information included. No online document states whether any of the person's income enters the family-file aggregates.",
-      "open_question": "In 2021, the Section G spouse series (CYAQRTH=201-222) and the Big and Little OFUM series (CYAQRTH=301-882 or 951-982) both exclude CYAQRTH 921/922. Is any income, Social Security or SSI of a relationship-code-92 person reported, edited or imputed into the family-file aggregates (total family income and its seven components), or is it excluded from them? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 2; not sent. It is answered from documentation only, never from observed records.)",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 114,
         "disposition": "F",
         "amendment": 1
-      }
+      },
+      "action": "exclude_family_unit_per_d1090",
+      "income_role": "excluded",
+      "family_unit_exclusion": {
+        "disposition": "uncooperative spouse or partner in family unit"
+      },
+      "resolution": "Max's ruling d1090 (2026-10-10; specification section 16c), section 16a option 1e-1, ratified as an explicit amendment to draft-3 lines 152, 154 and 158 for 2019-2023: every 2021 family-unit observation that contains a code-90 or code-92 person is excluded from every row under the named disposition uncooperative spouse or partner in family unit, whether the target person is the reference person, the uncooperative spouse or partner, or another member. The rule is fixed before any count and is vacuous if no such unit supplies an observation; the count is disclosed after the authorized structural pass and decides nothing. No income, Social Security or SSI is assigned to the code-92 uncooperative partner and no OFUM routing is asserted for them (income_role excluded). This replaces the adjudication's refusal, kept as superseded_refusal.",
+      "ruling": {
+        "decision": "d1090",
+        "date": "2026-10-10",
+        "specification_section": "16c",
+        "option": "1e-1",
+        "amends_draft_3_lines": [
+          152,
+          154,
+          158
+        ],
+        "amended_waves": [
+          2019,
+          2021,
+          2023
+        ]
+      },
+      "superseded_refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 114; disposition F, amendment 1): the q2021 p. 205 Big OFUM gate admits 'CYAQRTH=301-882 or 951-982', excluding 921/922, and the spouse gate admits 201-222. The asserted OFUM financial assignment is refused. The refusal removes the mapping, not the person; it does not authorize exclusion, zero-filling, reassignment or fallback.",
+      "part_b_finding": "PARTIAL (u2-m1b Part B, docs/design/u2_m1b_psid_research.md): the instrument asks 921/922 no Section G income questions in 2021 (spouse series CYAQRTH=201-222; Big and Little OFUM series 301-882 or 951-982), and PSID FAQ question 74 says the code is used when one half of the couple withholds information about the other or refuses to have their information included. No online document states whether any of the person's income enters the family-file aggregates. PSID's 2026-10-07 answer confirmed that these persons are skipped out of the Section G income questions and did not say whether their income is edited or imputed into the family-file aggregates (research record section 2); Max ruled on 2026-10-10 (d1090; specification section 16c).",
+      "open_question": "In 2021, the Section G spouse series (CYAQRTH=201-222) and the Big and Little OFUM series (CYAQRTH=301-882 or 951-982) both exclude CYAQRTH 921/922. Is any income, Social Security or SSI of a relationship-code-92 person reported, edited or imputed into the family-file aggregates (total family income and its seven components), or is it excluded from them? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 2; sent 2026-09-30 and answered in part 2026-10-07 as that section records. Max's ruling d1090 excludes these family units, so U2 relies on no answer to it, and none is taken from observed records.)"
     },
     {
       "id": "2023.relationship.10",
@@ -1678,21 +1767,40 @@
         }
       ],
       "administrative_birth_support": true,
-      "action": "refuse_ofum_assignment_per_u2_adjudicate_F",
       "spouse_slot": false,
       "legal_spouse_annuity": true,
       "marital_resolution": true,
-      "income_role": "refused",
-      "refused_income_role": "ofum",
-      "refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 116; disposition F, amendment 1): the q2023 p. 203 Big OFUM gate admits 'CYAQRTH=301-882 or 951-982', excluding 901/902, and the spouse gate admits 201-222. The asserted OFUM financial assignment is refused. The refusal removes the mapping, not the person; it does not authorize exclusion, zero-filling, reassignment or fallback.",
-      "part_b_finding": "PARTIAL (u2-m1b Part B, docs/design/u2_m1b_psid_research.md): the instrument asks 901/902 no Section G income questions in 2023 (spouse series CYAQRTH=201-222; Big and Little OFUM series 301-882 or 951-982), and PSID FAQ question 74 says the code is used when one half of the couple withholds information about the other or refuses to have their information included. No online document states whether any of the person's income enters the family-file aggregates.",
-      "open_question": "In 2023, the Section G spouse series (CYAQRTH=201-222) and the Big and Little OFUM series (CYAQRTH=301-882 or 951-982) both exclude CYAQRTH 901/902. Is any income, Social Security or SSI of a relationship-code-90 person reported, edited or imputed into the family-file aggregates (total family income and its seven components), or is it excluded from them? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 2; not sent. It is answered from documentation only, never from observed records.)",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 116,
         "disposition": "F",
         "amendment": 1
-      }
+      },
+      "action": "exclude_family_unit_per_d1090",
+      "income_role": "excluded",
+      "family_unit_exclusion": {
+        "disposition": "uncooperative spouse or partner in family unit"
+      },
+      "resolution": "Max's ruling d1090 (2026-10-10; specification section 16c), section 16a option 1e-1, ratified as an explicit amendment to draft-3 lines 152, 154 and 158 for 2019-2023: every 2023 family-unit observation that contains a code-90 or code-92 person is excluded from every row under the named disposition uncooperative spouse or partner in family unit, whether the target person is the reference person, the uncooperative spouse or partner, or another member. The rule is fixed before any count and is vacuous if no such unit supplies an observation; the count is disclosed after the authorized structural pass and decides nothing. No income, Social Security or SSI is assigned to the code-90 uncooperative legal spouse and no OFUM routing is asserted for them (income_role excluded). This replaces the adjudication's refusal, kept as superseded_refusal.",
+      "ruling": {
+        "decision": "d1090",
+        "date": "2026-10-10",
+        "specification_section": "16c",
+        "option": "1e-1",
+        "amends_draft_3_lines": [
+          152,
+          154,
+          158
+        ],
+        "amended_waves": [
+          2019,
+          2021,
+          2023
+        ]
+      },
+      "superseded_refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 116; disposition F, amendment 1): the q2023 p. 203 Big OFUM gate admits 'CYAQRTH=301-882 or 951-982', excluding 901/902, and the spouse gate admits 201-222. The asserted OFUM financial assignment is refused. The refusal removes the mapping, not the person; it does not authorize exclusion, zero-filling, reassignment or fallback.",
+      "part_b_finding": "PARTIAL (u2-m1b Part B, docs/design/u2_m1b_psid_research.md): the instrument asks 901/902 no Section G income questions in 2023 (spouse series CYAQRTH=201-222; Big and Little OFUM series 301-882 or 951-982), and PSID FAQ question 74 says the code is used when one half of the couple withholds information about the other or refuses to have their information included. No online document states whether any of the person's income enters the family-file aggregates. PSID's 2026-10-07 answer confirmed that these persons are skipped out of the Section G income questions and did not say whether their income is edited or imputed into the family-file aggregates (research record section 2); Max ruled on 2026-10-10 (d1090; specification section 16c).",
+      "open_question": "In 2023, the Section G spouse series (CYAQRTH=201-222) and the Big and Little OFUM series (CYAQRTH=301-882 or 951-982) both exclude CYAQRTH 901/902. Is any income, Social Security or SSI of a relationship-code-90 person reported, edited or imputed into the family-file aggregates (total family income and its seven components), or is it excluded from them? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 2; sent 2026-09-30 and answered in part 2026-10-07 as that section records. Max's ruling d1090 excludes these family units, so U2 relies on no answer to it, and none is taken from observed records.)"
     },
     {
       "id": "2023.relationship.92",
@@ -1733,21 +1841,40 @@
         }
       ],
       "administrative_birth_support": false,
-      "action": "refuse_ofum_assignment_per_u2_adjudicate_F",
       "spouse_slot": false,
       "legal_spouse_annuity": false,
       "marital_resolution": false,
-      "income_role": "refused",
-      "refused_income_role": "ofum",
-      "refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 117; disposition F, amendment 1): the q2023 p. 203 Big OFUM gate admits 'CYAQRTH=301-882 or 951-982', excluding 921/922, and the spouse gate admits 201-222. The asserted OFUM financial assignment is refused. The refusal removes the mapping, not the person; it does not authorize exclusion, zero-filling, reassignment or fallback.",
-      "part_b_finding": "PARTIAL (u2-m1b Part B, docs/design/u2_m1b_psid_research.md): the instrument asks 921/922 no Section G income questions in 2023 (spouse series CYAQRTH=201-222; Big and Little OFUM series 301-882 or 951-982), and PSID FAQ question 74 says the code is used when one half of the couple withholds information about the other or refuses to have their information included. No online document states whether any of the person's income enters the family-file aggregates.",
-      "open_question": "In 2023, the Section G spouse series (CYAQRTH=201-222) and the Big and Little OFUM series (CYAQRTH=301-882 or 951-982) both exclude CYAQRTH 921/922. Is any income, Social Security or SSI of a relationship-code-92 person reported, edited or imputed into the family-file aggregates (total family income and its seven components), or is it excluded from them? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 2; not sent. It is answered from documentation only, never from observed records.)",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 117,
         "disposition": "F",
         "amendment": 1
-      }
+      },
+      "action": "exclude_family_unit_per_d1090",
+      "income_role": "excluded",
+      "family_unit_exclusion": {
+        "disposition": "uncooperative spouse or partner in family unit"
+      },
+      "resolution": "Max's ruling d1090 (2026-10-10; specification section 16c), section 16a option 1e-1, ratified as an explicit amendment to draft-3 lines 152, 154 and 158 for 2019-2023: every 2023 family-unit observation that contains a code-90 or code-92 person is excluded from every row under the named disposition uncooperative spouse or partner in family unit, whether the target person is the reference person, the uncooperative spouse or partner, or another member. The rule is fixed before any count and is vacuous if no such unit supplies an observation; the count is disclosed after the authorized structural pass and decides nothing. No income, Social Security or SSI is assigned to the code-92 uncooperative partner and no OFUM routing is asserted for them (income_role excluded). This replaces the adjudication's refusal, kept as superseded_refusal.",
+      "ruling": {
+        "decision": "d1090",
+        "date": "2026-10-10",
+        "specification_section": "16c",
+        "option": "1e-1",
+        "amends_draft_3_lines": [
+          152,
+          154,
+          158
+        ],
+        "amended_waves": [
+          2019,
+          2021,
+          2023
+        ]
+      },
+      "superseded_refusal": "Refused by the independent adjudication (EV/phase2-20260927/out/u2-adjudicate.md line 117; disposition F, amendment 1): the q2023 p. 203 Big OFUM gate admits 'CYAQRTH=301-882 or 951-982', excluding 921/922, and the spouse gate admits 201-222. The asserted OFUM financial assignment is refused. The refusal removes the mapping, not the person; it does not authorize exclusion, zero-filling, reassignment or fallback.",
+      "part_b_finding": "PARTIAL (u2-m1b Part B, docs/design/u2_m1b_psid_research.md): the instrument asks 921/922 no Section G income questions in 2023 (spouse series CYAQRTH=201-222; Big and Little OFUM series 301-882 or 951-982), and PSID FAQ question 74 says the code is used when one half of the couple withholds information about the other or refuses to have their information included. No online document states whether any of the person's income enters the family-file aggregates. PSID's 2026-10-07 answer confirmed that these persons are skipped out of the Section G income questions and did not say whether their income is edited or imputed into the family-file aggregates (research record section 2); Max ruled on 2026-10-10 (d1090; specification section 16c).",
+      "open_question": "In 2023, the Section G spouse series (CYAQRTH=201-222) and the Big and Little OFUM series (CYAQRTH=301-882 or 951-982) both exclude CYAQRTH 921/922. Is any income, Social Security or SSI of a relationship-code-92 person reported, edited or imputed into the family-file aggregates (total family income and its seven components), or is it excluded from them? (Question for PSID staff, docs/design/u2_m1b_psid_research.md section 2; sent 2026-09-30 and answered in part 2026-10-07 as that section records. Max's ruling d1090 excludes these family units, so U2 relies on no answer to it, and none is taken from observed records.)"
     }
   ],
   "independent_adjudication": {
@@ -1756,5 +1883,13 @@
     "bytes": 26564,
     "applied_by": "u2-m1b",
     "note": "Independent adjudication of milestone 1 (VERDICT: ERRORS FOUND). Amendment 7 citation corrections, D resolutions and F refusals are applied here; A items stay TO VERIFY pending u2-draft-4 amendments 1-6 and Max's ruling."
-  }
+  },
+  "rulings_applied": [
+    {
+      "decision": "d1090",
+      "date": "2026-10-10",
+      "specification_section": "16c",
+      "note": "Max's ruling d1090 (2026-10-10; specification section 16c) on blockers B1 and B2: the seven role refusals and pension:2015.route.respondent_slots are replaced by the ratified family-unit exclusions (B1, section 16a option 1d-2, amending draft-3 line 160; B2, option 1e-1, amending draft-3 lines 152, 154 and 158 for 2019-2023), and the dependencies on the seven role entries are released. Each entry keeps its adjudication record (disposition F) and its superseded refusal text."
+    }
+  ]
 }

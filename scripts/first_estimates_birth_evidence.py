@@ -250,6 +250,10 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # beside the sealed ss.benefits, which it calls but does not edit; the
     # historical ledger never imports it.
     Path("src/populace_dynamics/ss/statutory_aime.py"),
+    # The opt-in statutory delayed credit (42 USC 402(w)(2), (6)) sits
+    # beside the sealed ss.benefits and leaves its 48-month cap unchanged;
+    # the historical ledger never imports the new convention selector.
+    Path("src/populace_dynamics/ss/statutory_delayed_credit.py"),
     # The opt-in Track M layer (DynaSim exercise 4, the minimum benefit)
     # calls the oracle but is never imported by the historical reducer;
     # the transitive reachability test guards it.
@@ -312,6 +316,10 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # Track B R3 is a statutory reference, with no historical projection use.
     Path("src/populace_dynamics/track_b/arf.py"),
     Path("src/populace_dynamics/track_b/recompute.py"),
+    # Track B B2 (the 2010-2014 transport gate's shared rules) is used only
+    # by B2's floor builder, comparator and scorer; nothing in the
+    # historical projection imports it.
+    Path("src/populace_dynamics/track_b/b2.py"),
     # U2 documentary metadata stays outside the historical projection.
     Path("src/populace_dynamics/data/u2_source_registry.py"),
     Path("scripts/capture_track_u2_income_wealth.py"),
