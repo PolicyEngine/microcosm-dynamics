@@ -313,6 +313,9 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # Track B G (the gross-benefit layer) is an opt-in statutory reference;
     # nothing in the historical projection imports it.
     Path("src/populace_dynamics/track_b/gross_benefits.py"),
+    # R2 statutory payment mechanics also stay outside birth evidence.
+    Path("src/populace_dynamics/track_b/ret_grace.py"),
+    Path("src/populace_dynamics/track_b/ret_ledger.py"),
     # Track B R3 is a statutory reference, with no historical projection use.
     Path("src/populace_dynamics/track_b/arf.py"),
     Path("src/populace_dynamics/track_b/recompute.py"),
