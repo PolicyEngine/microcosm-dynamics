@@ -1398,9 +1398,10 @@ sharpened after round 1 (below).
     stands for its content; brace sequences, escapes, Node's backslash
     separators, extglobs and POSIX classes are resolved; case is
     ignored), a segment that matches a denied name and reads no other
-    character at any position of its stem names it, `!(...)` reads as
-    `*`, and the denied names are every file the root record removed,
-    the codebook files and code-map tables included.
+    character at any position of its stem names it, a pattern holding
+    `!(...)` that names no denied path is not classified, and the denied
+    names are every file the root record removed, the codebook files and
+    code-map tables included.
   - Each log's schema version records the rule it was made under. The
     rule as it now stands is `track_b_b0_1_review_read_log.v7`.
   - It also checks returned paths given relative to the root, as the

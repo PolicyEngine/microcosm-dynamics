@@ -839,7 +839,8 @@ def test_addendum_carries_the_round_10_record(prose, sentence):
         "read as ripgrep, Node and Bun read it (a bracket class is one "
         "character whatever it holds, as in `stem[.,]md`;",
         "a segment that matches a denied name and reads no other character "
-        "at any position of its stem names it, `!(...)` reads as `*`,",
+        "at any position of its stem names it, a pattern holding `!(...)` "
+        "that names no denied path is not classified,",
         "the denied names are every file the root record removed, the "
         "codebook files and code-map tables included.",
         "The rule as it now stands is `track_b_b0_1_review_read_log.v7`.",
@@ -881,6 +882,8 @@ def test_addendum_carries_the_round_10_follow_up(prose, sentence):
         "an extglob that excludes a name names it too",
         # #534 round 3: round 9's disposition spoke of v6 as current
         "The schema is v6 for the rule as it stands",
+        # #534 round 4: a negation can spell a name, so it is not read as *
+        "`!(...)` reads as `*`,",
     ],
 )
 def test_addendum_drops_the_round_10_stale_wording(prose, stale):

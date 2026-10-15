@@ -258,8 +258,9 @@ PATTERN_LIMIT = 1024
 #: alternatives built, automaton states read. Past it the pattern is not
 #: classified, and voids the review.
 WORK_LIMIT = 1 << 22
-#: A bracket class of more characters than this is not read, and its
-#: pattern is not classified (``[ -\U0010ffff]``).
+#: A bracket class of more characters than this, counted over all its
+#: ranges and members, is not read, and its pattern is not classified
+#: (``[ -\U0010ffff]``).
 CLASS_LIMIT = 1024
 #: Characters no file name holds. A class member among them is no other
 #: character at a stem position.
@@ -609,13 +610,17 @@ def _class_token(body: str, fold: bool, escapes: bool = False) -> Token:
             and items[index + 2][0] == "char"
         ):
             low, high = ord(item[1]), ord(items[index + 2][1])
-            if high - low + 1 > CLASS_LIMIT:
+            if len(chars) + high - low + 1 > CLASS_LIMIT:
                 raise OverflowError("a class too large to read")
             _WORK.spend(max(high - low + 1, 1))
             chars.update(map(chr, range(low, high + 1)))
             index += 3
             continue
-        chars.update(item[1] if item[0] == "set" else {item[1]})
+        members = item[1] if item[0] == "set" else {item[1]}
+        _WORK.spend(len(members))
+        chars.update(members)
+        if len(chars) > CLASS_LIMIT:
+            raise OverflowError("a class too large to read")
         index += 1
     if fold:
         chars = {char.casefold() for char in chars}
@@ -845,11 +850,24 @@ def _letters(tokens: Sequence[Token]) -> set[str]:
         if kind in ("lit", "cut"):
             out.add(value)
         elif kind == "set":
+            _WORK.spend(len(value))
             out |= value
         elif kind == "group":
             for alternative in value[1]:
                 out |= _letters(alternative)
     return out
+
+
+def _negates(tokens: Sequence[Token]) -> bool:
+    """Whether ``tokens`` hold an extglob ``!(...)``, at any depth."""
+    return any(
+        kind == "group"
+        and (
+            value[0] == "!"
+            or any(_negates(alternative) for alternative in value[1])
+        )
+        for kind, value in tokens
+    )
 
 
 def _view(tokens: Sequence[Token]) -> str:
@@ -997,11 +1015,14 @@ def pattern_kind(pattern: str, denied: Sequence[str]) -> str:
       name and reads no other character at any position of its stem
       (``pins_stem``: ``[d]eep``, ``d+(e)p``).
 
-    ``!(...)`` reads as ``*``, so a filter that excludes a name beside a
-    whole denied stem (``stem!(.md)``) is classed as naming it. A
-    wildcard, a negated class or a class of two or more characters that
-    stands at a position of the stem (``*name_part*``, ``[xy]tem.md``)
-    is not classified. A pattern is ``unclassified`` if it is longer than
+    In the automaton ``!(...)`` reads as ``*``, so a filter that
+    excludes a name beside a whole denied stem (``stem!(.md)``) is
+    classed as naming it. Any other pattern holding ``!(...)`` is
+    ``unclassified``: a negation can spell a name by excluding everything
+    else (``!(|[!d]|??*)`` is ``d``). A wildcard, a negated class or a
+    class of two or more characters that stands at a position of the
+    stem (``*name_part*``, ``[xy]tem.md``) is not classified. A pattern
+    is ``unclassified`` if it is longer than
     ``PATTERN_LIMIT``, has more than ``BRACE_LIMIT`` readings or segments
     in one reading, takes more than ``WORK_LIMIT`` scan steps (charged as
     the work is done), has a class of more than ``CLASS_LIMIT``
@@ -1033,12 +1054,13 @@ def pattern_kind(pattern: str, denied: Sequence[str]) -> str:
             readings.update(extglob_expansions(alternative))
             if len(readings) > BRACE_LIMIT:
                 raise OverflowError("too many readings")
+        negated = False
         for text in {pattern, *alternatives, *readings}:
             kinds |= _written_kinds(text, denied, names, stems)
             for escapes in (False, True):
-                kinds |= _engine_kinds(
-                    glob_tokens(text, escapes=escapes), *plain
-                )
+                tokens = glob_tokens(text, escapes=escapes)
+                negated = negated or _negates(tokens)
+                kinds |= _engine_kinds(tokens, *plain)
                 kinds |= _engine_kinds(
                     glob_tokens(text, fold=True, escapes=escapes), *folded
                 )
@@ -1052,7 +1074,9 @@ def pattern_kind(pattern: str, denied: Sequence[str]) -> str:
     for kind in ("outside_root", "denied"):
         if kind in kinds:
             return kind
-    return "inside_root"
+    # ``!(...)`` can spell a name by excluding everything else
+    # (``!(|[!d]|??*)`` is ``d``), which the automaton does not read.
+    return "unclassified" if negated else "inside_root"
 
 
 def denied_from_record(record: Mapping[str, Any]) -> list[str]:

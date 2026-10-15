@@ -898,6 +898,9 @@ def test_denied_from_record_takes_every_removed_file():
         ("Grep", "d[e\x00]ep_denied.md", False),
         # 64 classes that may be / give 2,145 segments, under the limit
         ("Glob", "[a/]" * 64 + "deep_denied.md", False),
+        # #534 round 4: a negation can spell a letter by excluding the rest
+        ("Glob", "**/!(|[!d]|??*)eep_denied.md", False),
+        ("Grep", "@(!(|[!d]|??*))eep_denied.md", False),
         # a filter that excludes a denied name names it (conservative)
         ("Glob", "**/deep_denied!(.md)", False),
         # nested too deep to read: unclassified, so void
@@ -1001,6 +1004,23 @@ def test_limits_refuse_only_past_their_bounds():
     assert kind("[a/]" * 64 + "notes.md", DENIED) == "inside_root"
     assert kind("[a/]" * 64 + "deep_denied.md", DENIED) == "denied"
     assert kind("[a/]" * 90 + "notes.md", DENIED) == "unclassified"
+    # the class limit counts every range and member of one class
+    half = review_root.CLASS_LIMIT // 2
+    two = "[\x00-" + chr(half - 1) + chr(half) + "-" + chr(2 * half - 1) + "]"
+    over = "[\x00-" + chr(half) + chr(half + 1) + "-" + chr(2 * half) + "]"
+    assert kind("deep_denied" + two + "md", DENIED) == "denied"
+    assert kind("deep_denied" + over + "md", DENIED) == "unclassified"
+
+
+def test_a_negation_is_unclassified_unless_it_names_a_denied_path():
+    """``!(...)`` reads as ``*`` in the automaton. Beside a whole denied
+    stem that names it; anywhere else the pattern is unclassified, since a
+    negation can spell a name by excluding everything else."""
+    kind = review_root.pattern_kind
+    assert kind("**/deep_denied!(.md)", DENIED) == "denied"
+    assert kind("**/!(|[!d]|??*)eep_denied.md", DENIED) == "unclassified"
+    assert kind("**/*.!(md)", DENIED) == "unclassified"
+    assert kind("**/*.md", DENIED) == "inside_root"
 
 
 def test_unbalanced_openers_up_to_the_limit_are_still_read():
@@ -1518,6 +1538,7 @@ def _spellings(seed, count):
             change = rng.choice(
                 ["escape", "case", "one", "cases", "class", "class", "wrap"]
                 + ["repeat", "sequence", "escaped-class", "escaped-one"]
+                + ["negation"]
             )
             index = rng.randrange(len(units))
             char = units[index]
@@ -1534,6 +1555,9 @@ def _spellings(seed, count):
                 else:
                     low, high = chr(ord(char) - 1), chr(ord(char) + 1)
                     units[index] = f"{{{low}..{high}}}"
+            elif change == "negation" and len(char) == 1 and char != "*":
+                # Node reads !(|[!c]|??*) as c alone
+                units[index] = f"!(|[!{char}]|??*)"
             elif change == "escaped-one" and len(char) == 1:
                 # Bun reads [\\c] as c alone; in a file name ripgrep's
                 # [c/] can only be c
@@ -1549,6 +1573,7 @@ def _spellings(seed, count):
                 "sequence",
                 "escaped-class",
                 "escaped-one",
+                "negation",
             ):
                 continue
             elif change == "wrap" or len(char) != 1:
