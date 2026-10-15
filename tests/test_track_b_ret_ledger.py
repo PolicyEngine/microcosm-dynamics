@@ -135,6 +135,74 @@ def higher_earnings_for_excess(excess, year=YEAR):
     return PARAMS.for_year(year).higher_exempt_amount.value + 3 * excess
 
 
+def test_pre_1978_nsm_preserves_initial_grace_and_one_dollar_mother_check():
+    # Round 6: mother aged 20 in 1977, with continuing disabled child
+    # in care. January 1977 cannot consume Act 203(f)(1)(E)'s initial grace.
+    kind = BenefitType.MOTHER_FATHER
+    state = grace_year(
+        1977,
+        GraceYearState(),
+        [GraceMonth({kind}, {kind}, month == 1) for month in range(1, 13)],
+    ).next_state
+    for year in range(1978, 2000):
+        state = grace_year(
+            year, state, [GraceMonth({kind}, {kind}, False)] * 12
+        ).next_state
+    decision = grace_year(2000, state, [GraceMonth({kind}, {kind}, True)] * 12)
+    mother = beneficiary(
+        "mother",
+        rate=1,
+        benefit_type=kind,
+        work=r.WorkEarnings(nese=10082, self_employment_months=MONTHS),
+        grace=decision,
+    )
+    child = beneficiary("child", rate=1, benefit_type=BenefitType.CDB)
+    result = ledger(mother, child, year=2000, kind=r.RecordKind.DECEASED)
+    assert by_month(result, "mother")[1].payment == 1
+    assert sum(row.payment for row in result.for_beneficiary("mother")) == 12
+    assert sum(row.payment for row in result.for_beneficiary("child")) == 12
+    assert sum(row.payment for row in result.months) == 24
+    assert worker(result, "mother").charged == 0
+    assert worker(result, "mother").uncharged == 1
+    assert decision.kinds == {GraceKind.INITIAL}
+    assert decision.next_state.last_met_year == 2000
+
+
+@pytest.mark.parametrize("dib_months", [11, 1], ids=["review", "minimized"])
+def test_dib_bridge_preserves_after_break_grace_and_one_dollar_widow_check(
+    dib_months,
+):
+    # Round 6: spouse -> unentitled month -> DIB -> ordinary widow.
+    # DIB is section 223, so it cannot overwrite the prior section-202 type.
+    spouse = GraceMonth({BenefitType.SPOUSE}, {BenefitType.SPOUSE}, True)
+    dib = GraceMonth({BenefitType.DIB}, {BenefitType.DIB}, True)
+    widow = GraceMonth({BenefitType.WIDOW}, {BenefitType.WIDOW}, True)
+    state = grace_year(2024, GraceYearState(), [spouse] * 12).next_state
+    state = grace_year(
+        2025,
+        state,
+        [spouse] * (11 - dib_months) + [GraceMonth()] + [dib] * dib_months,
+    ).next_state
+    decision = grace_year(2026, state, [widow] * 12)
+    result = ledger(
+        beneficiary(
+            "widow",
+            rate=1,
+            original_rate=F("1.40"),
+            benefit_type=BenefitType.WIDOW,
+            work=r.WorkEarnings(nese=24482, self_employment_months=MONTHS),
+            grace=decision,
+        ),
+        kind=r.RecordKind.DECEASED,
+    )
+    assert by_month(result, "widow")[1].payment == 1
+    assert sum(row.payment for row in result.months) == 12
+    assert worker(result, "widow").charged == 0
+    assert worker(result, "widow").uncharged == 1
+    assert decision.kinds == {GraceKind.AFTER_BREAK}
+    assert decision.next_state.last_met_year == 2026
+
+
 def test_mixed_child_cdb_termination_grace_preserves_one_dollar_january_check():
     # Review round 3's minimized case: ordinary child at 17 in January,
     # disability-based child at 18 in February, legal non-death termination

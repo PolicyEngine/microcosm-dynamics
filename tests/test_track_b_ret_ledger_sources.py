@@ -262,7 +262,9 @@ RULE_QUOTES = {
         "we must deduct $1 from your benefits for each $2 you earn above $24,480"
     ],
     "ssa_act_203": [
+        "the taxable year in which occurs the first month after December 1977",
         "subsection (a), (b), (c), (d), (e), (f), (g), or (h) of section 202",
+        "without having been entitled for the preceding month to a benefit under any other of such subsections",
         "benefits payable under section 202(d) by reason of being under a disability",
         "or under section 202(d) or (g), if such month is in a year in which such entitlement ends for a reason other than the death of such individual",
         "is not entitled to any benefits under this title for the month following",

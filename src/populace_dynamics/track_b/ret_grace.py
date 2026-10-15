@@ -22,8 +22,12 @@ and DWB/WIDOW share Act 202(e)/(f)'s type (RS 02501.030B.2). Every
 entitled section 202 month participates, including DWB/CDB entry after a
 gap; a genuinely different legal type establishes pending eligibility
 until the first eligible NSM. DIB under section 223 does not itself
-establish different-type retirement or survivor eligibility. This
-comparison preserves the separate disability-month NSM exclusion.
+establish different-type retirement or survivor eligibility. DIB-only
+months preserve the last section 202 type and count as a section 202 gap;
+the complete entitlement history remains separate. Initial grace starts
+with the first eligible NSM after December 1977 (Act 203(f)(1)(E)); earlier
+months carry entitlement facts without consuming it. These comparisons
+preserve the separate disability-month NSM exclusion.
 Externally supplied month sets validate every raw value before deduplication.
 """
 
@@ -145,7 +149,13 @@ class GraceYearState:
     another gap to that same type or in a later taxable year. Entry as DWB
     or CDB can establish it for a different section 202 legal type, while
     disability months cannot supply the first eligible NSM. No hidden or
-    population state is used.
+    population state is used. ``previous_section_202_types`` and
+    ``gap_since_section_202`` separately retain the last section 202 set
+    and its interruption through DIB-only months. Omitted section 202
+    fields derive from the complete history for directly constructed
+    states; callers replaying a DIB bridge must carry the returned state.
+    A supplied LMETY requires prior section 202 types, even when the
+    most recent complete entitlement set contains only DIB.
     """
 
     last_met_year: int | None = None
@@ -156,9 +166,57 @@ class GraceYearState:
     gap_since_entitlement: bool = False
     pending_after_break: bool = False
     last_processed_year: int | None = None
+    previous_section_202_types: frozenset[BenefitType] | None = None
+    gap_since_section_202: bool | None = None
 
     def __post_init__(self):
         previous = _types(self.previous_entitled_types)
+        section_202 = (
+            previous - {BenefitType.DIB}
+            if self.previous_section_202_types is None
+            else _types(self.previous_section_202_types)
+        )
+        section_gap = (
+            bool(section_202)
+            and (
+                self.gap_since_entitlement or not previous - {BenefitType.DIB}
+            )
+            if self.gap_since_section_202 is None
+            else self.gap_since_section_202
+        )
+        _boolean(section_gap, "Section 202 entitlement gap")
+        if BenefitType.DIB in section_202:
+            raise InvalidFamilyInput(
+                "Section 223 DIB is not a section 202 type"
+            )
+        if section_202 and not self.had_entitlement:
+            raise InvalidFamilyInput(
+                "Section 202 types require entitlement history"
+            )
+        if section_gap and not section_202:
+            raise InvalidFamilyInput(
+                "A section 202 break requires its prior types"
+            )
+        if self.last_met_year is not None and not section_202:
+            raise InvalidFamilyInput(
+                "LMETY requires prior section 202 entitlement history"
+            )
+        if (
+            section_202
+            and not previous - {BenefitType.DIB}
+            and not section_gap
+        ):
+            raise InvalidFamilyInput(
+                "DIB-only history preserves a section 202 break"
+            )
+        current_section_202 = previous - {BenefitType.DIB}
+        if current_section_202 and (
+            section_202 != current_section_202
+            or section_gap != self.gap_since_entitlement
+        ):
+            raise InvalidFamilyInput(
+                "Section 202 history must match latest entitlement"
+            )
         for name in (
             "had_entitlement",
             "gap_since_entitlement",
@@ -185,6 +243,8 @@ class GraceYearState:
                 "LMETY requires earlier processed entitlement history"
             )
         object.__setattr__(self, "previous_entitled_types", previous)
+        object.__setattr__(self, "previous_section_202_types", section_202)
+        object.__setattr__(self, "gap_since_section_202", section_gap)
 
 
 @dataclass(frozen=True)
@@ -299,6 +359,8 @@ def grace_year(
     omitted year cannot silently create or erase a break in entitlement.
     Different-type entry compares section 202 entitlement even during
     DWB/CDB months; disability NSM eligibility is checked separately.
+    DIB-only months interrupt section 202 entitlement without replacing
+    its previous type. Initial grace cannot be consumed before 1978.
     """
     _year(year, "Year")
     if not isinstance(state, GraceYearState):
@@ -367,24 +429,31 @@ def grace_year(
     had_entitlement = state.had_entitlement
     gap = state.gap_since_entitlement
     pending = state.pending_after_break
+    previous_section_202 = state.previous_section_202_types
+    section_202_gap = state.gap_since_section_202
     for index, month in enumerate(months, 1):
+        section_202 = month.entitled_types - {BenefitType.DIB}
+        if not section_202:
+            if previous_section_202:
+                section_202_gap = True
+        else:
+            if section_202_gap:
+                # Act 203(f)(1)(E): only section 202(a)-(h) types enter
+                # this comparison; DIB-only months cannot erase its gap.
+                pending = pending or bool(
+                    _legal_types(section_202)
+                    - _legal_types(previous_section_202)
+                )
+            previous_section_202 = section_202
+            section_202_gap = False
         if not month.entitled_types:
             if had_entitlement:
                 gap = True
             continue
-        if gap:
-            # 404.435(b)(2); RS 02501.030B.2: section 202 legal types
-            # include DWB/CDB even though (b)(3) excludes disability NSMs.
-            # Section 223 DIB is not a retirement or survivor type. Another
-            # same-type gap cannot erase eligibility before the first NSM.
-            pending = pending or bool(
-                _legal_types(month.entitled_types - {BenefitType.DIB})
-                - _legal_types(previous)
-            )
         previous = month.entitled_types
         had_entitlement = True
         gap = False
-        if index in eligible_nsms:
+        if year >= 1978 and index in eligible_nsms:
             if last_met is None:
                 kinds.add(GraceKind.INITIAL)
                 last_met = year
@@ -432,5 +501,7 @@ def grace_year(
             gap_since_entitlement=gap,
             pending_after_break=pending,
             last_processed_year=year,
+            previous_section_202_types=previous_section_202,
+            gap_since_section_202=section_202_gap,
         ),
     )

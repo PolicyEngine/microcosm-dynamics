@@ -4,7 +4,7 @@
 earnings test rule mechanics on invented record-years and published
 statutory worked examples. No population, behavioral or forecast claim.**
 
-**Status: build-only, revised 2026-10-14 after PR #528 review rounds 1–5.
+**Status: build-only, revised 2026-10-14 after PR #528 review rounds 1–6.
 No real-data computation.** This is the
 single-record ledger core. Deduction before reduction, which can change
 the other beneficiaries' gross rates, remains part (b).
@@ -24,6 +24,9 @@ makes no Axiom or population conformance claim.
   `tests/test_track_b_ret_ledger_properties.py` executes Hypothesis
   invariants and R1 differentials; `tests/test_track_b_ret_grace.py`
   exercises carried state, all published grace examples and properties;
+  `tests/test_track_b_ret_grace_differential.py` compares full invented
+  histories with `tests/track_b_ret_grace_reference.py`, an independent
+  test-only implementation of the captured grace rules;
   `tests/test_track_b_ret_ledger_readings.py` checks the ledger money
   consequences and properties of simultaneous RIB/DIB readings;
   `tests/test_track_b_ret_ledger_sources.py` pins source bytes, quotations
@@ -89,9 +92,10 @@ Input errors raise `InvalidFamilyInput` before a coverage refusal. These
 include floats, invalid months, negative or non-dime rates, nonzero gross
 outside entitlement, duplicate identities, inconsistent death or divorce
 facts, noniterable monthly inputs, infinite monetary values, invalid
-own-exemption or deemed-entitlement facts, and grace evidence for another
-year. Missing supported R1 parameter years raise `KeyError` before
-coverage refusal; a missing parameter is never silently replaced by the
+own-exemption or deemed-entitlement facts, grace evidence for another
+year, and a carried LMETY without its required earlier section 202
+entitlement history. Missing supported R1 parameter years raise
+`KeyError` before coverage refusal; a missing parameter is never silently replaced by the
 prior year's amount or relabelled as a statutory coverage refusal.
 
 ## What it computes, in statutory order
@@ -316,10 +320,14 @@ payment type are separate. The caller carries the returned `next_state`
 through consecutive calendar years; an omitted year is an input error.
 The helper uses no population data and performs no monetary calculation.
 
-The initial grace year is the first year with an eligible NSM during
-entitlement and before FRA. A new type of benefit after a break of at
-least one entirely unentitled month can create another grace year when
-its first NSM occurs. Pending eligibility survives a year with no NSM.
+The initial grace year is the first year from 1978 with an eligible NSM
+during entitlement and before FRA. Act 203(f)(1)(E) expressly starts
+with the “first month after December 1977”; earlier months preserve
+entitlement history without consuming initial grace. A different section
+202 legal type after at least one month without section 202 entitlement
+can create another grace year when its first eligible NSM occurs.
+Pending eligibility survives a year with no NSM (20 CFR 404.435(b)(1)-(3);
+RS 02501.030B.1-2).
 Changing spouse to divorced-spouse does not create a new legal benefit
 type: both are Act 202(b)/(c) benefits (RS 02501.030B.1-2 and D).
 For the same comparison, `CDB` and `CHILD` are child's benefits under
@@ -329,8 +337,22 @@ create new after-break eligibility or overwrite LMETY. This normalization
 compares every entitled section 202 benefit, including months entered as
 `DWB` or `CDB`. Entry to a genuinely different normalized legal type
 after a gap establishes pending eligibility even when that first month
-is a disability month. `DIB` is a distinct section 223 benefit and does
-not itself establish different-type retirement or survivor eligibility.
+is a disability month. `DIB` is a distinct section 223 benefit. A
+DIB-only month neither replaces the last section 202 legal type nor
+ends its section 202 break, and cannot itself establish different-type
+eligibility. Thus a SPOUSE/DIB/WIDOW sequence can create after-break
+grace, while SPOUSE/DIB/SPOUSE cannot; a separate entirely unentitled
+month is unnecessary. Concurrent DIB does not interrupt continuing
+section 202 entitlement (Act 203(f)(1)(E)). The carried state keeps
+`previous_entitled_types` and `gap_since_entitlement` for the complete
+history, while `previous_section_202_types` and `gap_since_section_202`
+retain the separate statutory type comparison through DIB-only months.
+A directly constructed state with an LMETY must supply or imply its
+previous section 202 type. An LMETY plus latest DIB-only entitlement
+without that earlier section 202 information is incomplete input and
+raises `InvalidFamilyInput`; assuming a type would change grace money.
+A DIB-first history with no LMETY remains valid without a section 202
+history. Carrying the returned state preserves all required facts.
 This comparison does not change the disability-month exclusion: the
 first eligible NSM establishes the new grace year and updates LMETY
 (20 CFR 404.435(b)(2)-(3); RS 02501.030B.2 and C).
@@ -347,9 +369,9 @@ It belongs to the year of the last entitled month: a January
 termination belongs to the preceding December's year. Death, contiguous
 conversion, conversion to an aged spouse and mere child-in-care failure
 do not qualify. A termination-only grace does not overwrite LMETY. Any
-Social Security entitlement in the next month excludes the termination
-grace when that next month is present in the current year's inputs,
-even if a caller labels the ending event normal. For a December ending,
+Social Security entitlement, including DIB, in the next month excludes
+the termination grace when that next month is present in the current
+year's inputs, even if a caller labels the ending event normal. For a December ending,
 the caller must establish a January conversion exclusion through the
 termination reason; this year's helper cannot infer next year's elected
 benefit (20 CFR 404.435(b)(4); RS 02501.030B.3 and D).
@@ -379,8 +401,10 @@ recorded under Needs Max's judgment.
 The default R1 bundle supplies published annual values through 2026.
 Later years need R1 parameters from an explicitly permitted input vintage;
 the ledger does not project or fill missing years. The nonmonetary grace
-helper can process earlier history so the state at a supported payment
-year is explicit.
+helper processes pre-1978 entitlement history so the state at a supported
+payment year is explicit, but only qualifying months from January 1978
+can consume initial grace. This is a current-law history calculation,
+not a reconstruction of monetary RET under pre-1978 law.
 
 | Configuration | Result or refusal reason | Authority and boundary |
 | --- | --- | --- |
@@ -389,6 +413,8 @@ year is explicit.
 | Disability NH, or DIB/DWB/CDB elected payment months | Supported own-work exemption; RIB elections remain tested | RS 02501.021B.5.a |
 | Deceased record and widow(er), mother/father or child own work | Supported without binding-maximum readjustment | RS 02501.095B.3 |
 | Variable monthly rates and entitlement | Supported; twelve months retained | RS 02501.100B.1 |
+| Pre-1978 entitlement history | Supported for carried legal types and breaks; pre-1978 NSMs never consume initial grace | Act 203(f)(1)(E)'s first qualifying month after December 1977 |
+| DIB-only months between section 202 entitlements | Supported; preserve the previous section 202 type and its break, so only a genuinely different later section 202 type creates after-break eligibility | Act 203(f)(1)(E); 20 CFR 404.435(b)(2)-(3); RS 02501.030B.2 |
 | Normal CDB termination in a mixed ordinary-child/CDB year | Supported termination grace for eligible ordinary-child NSMs; disability-only years, disability NSMs and other termination exclusions stay excluded | Act 203(f)(1)(F); 20 CFR 404.435(b)(3)-(4); RS 02501.030B.3-4 |
 | Re-entitlement after a gap to the same legal child or widow(er) type, including CDB/CHILD and DWB/WIDOW changes | Supported without a fresh after-break grace; initial grace and pending genuinely different-type eligibility remain available | Act 202(d), (e)/(f); 20 CFR 404.435(b)(2)-(3); RS 02501.030B.1-2 |
 | Genuinely different section 202 entitlement entered as DWB or CDB after a gap | Supported pending after-break eligibility until an eligible ordinary-benefit NSM; disability months remain ineligible and DIB alone does not create pending eligibility | 20 CFR 404.435(b)(2)-(3); RS 02501.030B.2, B.4 |
@@ -497,10 +523,14 @@ The grace-state invariants are executed in
 | --- | --- |
 | Protected months are exactly eligible, entitled, non-disability, pre-FRA NSMs under the chosen reading | `test_property_only_entitled_nondisability_prefra_nonservice_months_protected` |
 | Grace results are deterministic and benefit-type input order independent | `test_property_determinism_and_type_order_independence` |
-| Continuous entitlement cannot create a second initial/after-break grace | `test_property_continuous_entitlement_cannot_create_second_grace` |
+| Annual carried decisions equal an independent full-history reference exactly for kinds, eligible/protected months, LMETY and pending after-break eligibility | differential `test_property_carried_grace_equals_independent_full_history` |
+| Pre-1978 NSMs never consume initial grace; the first qualifying post-1977 NSM establishes the initial year while earlier entitlement history remains carried | `test_property_pre_1978_nsms_cannot_consume_initial_grace`; ledger `test_pre_1978_nsm_preserves_initial_grace_and_one_dollar_mother_check` |
+| Carried complete and section 202 histories remain distinct through DIB-only months and survive dataclass reconstruction unchanged; contradictory section 202 fields or LMETY without prior section 202 history are input errors; DIB-first history with no LMETY remains valid | `test_property_dib_preserves_section_202_state_through_round_trip`; `test_inconsistent_section_202_history_is_an_input_error` |
+| A DIB-only bridge has the same subsequent section 202 grace decision as an equally long section 202 gap; it preserves the previous legal type, with fresh after-break grace only for a genuinely different later type | `test_property_dib_only_bridge_equals_section_202_gap`; `test_dib_bridge_compares_last_section_202_type`; ledger `test_dib_bridge_preserves_after_break_grace_and_one_dollar_widow_check` |
+| With no pending eligibility, continuous section 202 entitlement cannot create a second initial/after-break grace | `test_property_continuous_entitlement_cannot_create_second_grace` |
 | A new after-break grace requires a gap and a different legal type; the same type never renews it, including both directions of CDB/CHILD, DWB/WIDOW and spouse/divorced-spouse changes | `test_property_new_type_requires_gap_but_same_type_never_renews`; `test_property_same_legal_type_gap_never_creates_new_grace`; ledger `test_carried_child_cdb_same_legal_type_gap_charges_one_dollar_january` |
 | Legal-type normalization retains an unused initial grace and pending eligibility for a genuinely different type across disability months and a further same-type gap | `test_property_legal_type_normalization_preserves_initial_and_pending_grace` |
-| A termination-only grace leaves LMETY unchanged | `test_property_termination_only_never_changes_lmety` |
+| A termination-only grace leaves LMETY unchanged; its status can exist with no eligible or protected NSM, and next-month DIB still excludes it | `test_property_termination_only_never_changes_lmety`; `test_property_next_month_dib_blocks_termination_grace`; differential `test_reference_termination_status_does_not_require_an_eligible_nsm`; `test_reference_next_month_dib_blocks_termination_but_is_section_202_gap` |
 | Mixed ordinary-child/CDB termination protects exactly ordinary-child pre-FRA NSMs, excludes CDB months, preserves LMETY and gives deterministic results | `test_property_mixed_child_cdb_termination_protects_only_child_nsms`; ledger `test_mixed_child_cdb_termination_grace_preserves_one_dollar_january_check` |
 | A disability-only year has no grace even when CDB entitlement ends normally | `test_property_disability_only_cdb_termination_has_no_grace` |
 | CDB termination keeps every excluded cause and the next-month entitlement exclusion | `test_property_cdb_termination_keeps_cause_and_next_month_exclusions` |
@@ -780,6 +810,118 @@ This corrects an implementation omission rather than a source erratum
 or a new statutory reading (20 CFR 404.435(b)(2)-(3); RS 02501.030B.2,
 B.4). Ruling d1418's defaults and the mixed-year CDB termination rule
 remain unchanged.
+
+## Review round 6: initial-year boundary and section 202 history
+
+Act 203(f)(1)(E) limits the first qualifying NSM to the “first month
+after December 1977”. The current CFR and POMS describe the initial
+grace rule without repeating that historical boundary. Their wording
+does not override the explicit statutory date. The helper retains
+pre-1978 entitlement and breaks, but no earlier NSM can consume initial
+grace. This corrects the advertised earlier-history contract without
+refusing that history.
+
+The invented reviewer history starts with MOTHER_FATHER entitlement
+throughout 1977 and a January NSM, then continuous entitlement without
+NSMs through 1999. In 2000, all twelve months are NSMs. At age 20 in
+1977, the mother remains below FRA in 2000, with an entitled disabled
+child continuously in care. Mother and CDB gross rates are $1 per month.
+Zero wages, $10,082 NESE, and no substantial services create $1 excess
+over the $10,080 annual exemption. Consuming initial grace in 1977
+incorrectly leaves January 2000 unpaid: mother's annual checks $11,
+child's $12, family $23. Correct initial grace and LMETY 2000 protect
+all twelve mother months: January $1, mother $12, child $12, family $24,
+and zero excess charged.
+`test_pre_1978_nsm_preserves_initial_grace_and_one_dollar_mother_check`
+executes the complete carried history and payment. The Hypothesis test
+`test_property_pre_1978_nsms_cannot_consume_initial_grace` varies the
+earlier years from 1975–1977 and the first qualifying later year from
+1978–2030. These are invented rule cases, not additional SSA-published
+worked examples.
+
+The same statutory clause enumerates entitlement under “subsection (a),
+(b), (c), (d), (e), (f), (g), or (h) of section 202”. DIB under section
+223 lies outside that comparison. DIB-only months therefore retain the
+last section 202 legal type and count toward its break; they neither
+supply an NSM nor create different-type eligibility themselves.
+DWB/CDB remain in section 202 as widow(er)'s/child's legal types and
+remain excluded from NSMs, retaining rounds 3–5's behavior. Concurrent
+technical section 202 entitlement still prevents a section 202 break.
+
+The second invented reviewer history has SPOUSE entitlement and initial
+grace in 2024, no entitlement in January 2025, and DIB-only entitlement
+February–December 2025. Ordinary WIDOW entitlement begins January 2026
+after disability cessation. All 2026 months are NSMs; $24,482 NESE and
+zero wages create $1 excess over the $24,480 exemption. Gross rate $1
+and original rate $1.40 are held fixed. DIB replacing the prior SPOUSE
+history incorrectly pays January $0 and annual checks $11. Retaining
+the SPOUSE history gives AFTER_BREAK grace and LMETY 2026, January $1
+and annual checks $12. The minimized bridge needs only November 2025
+unentitled and December DIB after SPOUSE through October. Same-type
+bridges remain ineligible for a new after-break grace.
+`test_dib_bridge_preserves_after_break_grace_and_one_dollar_widow_check`
+executes both the full and minimized monetary histories;
+`test_dib_bridge_compares_last_section_202_type` covers same/different
+legal types with and without an entirely unentitled month. The property
+`test_property_dib_only_bridge_equals_section_202_gap` checks that DIB
+cannot change the subsequent section 202 grace decision relative to a
+gap of the same length. The round-5 disability-reentry property now
+compares later RIB against the preserved section 202 type rather than
+assuming every DIB/RIB sequence must lack after-break grace.
+An additional input audit found that a manually supplied LMETY together
+with latest DIB entitlement could omit the earlier section 202 type.
+The state now rejects that incomplete seed instead of silently assuming
+no prior section 202 history. The round-trip Hypothesis property checks
+this input error alongside valid reconstructed and DIB-first states.
+This does not exclude any complete carried history or introduce a
+statutory coverage refusal.
+
+The independent test-only reference reads the entire month timeline.
+It first finds the first qualifying NSM after 1977, then identifies
+termination years, then pairs consecutive section 202 entitled months
+to identify a gap followed by a new legal type and searches for the
+first subsequent eligible NSM. It derives each year's result from
+those searches, without production's carried previous-type, gap, or
+pending state machine. Its type mapping names the statutory subsections
+and separately normalizes CDB/CHILD, DWB/WIDOW, and spouse/divorced-spouse.
+
+`test_property_carried_grace_equals_independent_full_history` compares
+production calls carried year by year against that model over invented
+1975–2030 histories with type spans, gaps, terminations, disability
+months, concurrent entitlement, work conditions, and a single FRA date.
+The comparison covers grace kinds, applicability, eligible and protected
+months, LMETY, and pending eligibility at zero tolerance. It exercises
+both the default CFR disability exclusion and the explicit POMS election
+alternative. At December terminations, inputs explicitly label known
+January conversions as excluded, preserving the annual interface's
+existing requirement. Captured quotations are checked by
+`test_reference_rules_are_verbatim_in_manifest_captures`. This
+differential establishes statutory mechanics only. Its completed run
+matched all 600 generated histories and three explicit histories without
+numerical tolerance; all nine differential/source-reference tests passed.
+
+The first differential exposed an error in the draft reference's
+termination guard, minimized to January 1975 concurrent CHILD/CDB
+entitlement, CHILD receipt, no NSM, and a normal January CDB ending;
+the remaining 1975–1976 months were empty. The draft incorrectly
+required an eligible NSM in the termination year. POMS RS 02501.030B.4
+instead excludes a year entitled solely to disability benefits; ordinary
+CHILD entitlement means the year is not disability-only even when
+concurrent CDB prevents every NSM. Production's TERMINATION status
+with empty eligible/protected sets was intended. The reference now
+checks that entitlement condition independently, and
+`test_reference_termination_status_does_not_require_an_eligible_nsm`
+pins this case. No production change or exclusion from the differential
+was needed for that mismatch.
+
+The separation is specific to section 203(f)(1)(E). Termination grace
+under section 203(f)(1)(F) instead requires that the beneficiary “is
+not entitled to any benefits under this title for the month following”.
+Thus DIB-only entitlement in the next month still excludes termination
+grace (20 CFR 404.435(b)(4)). Neither review correction changes the
+concurrent-disability default, the termination exclusions, refusal
+codes, or any ruling d1418 choice. No new statutory judgment or source
+erratum is introduced by these two corrections.
 
 ## Needs Max's judgment
 
@@ -1175,6 +1317,27 @@ other tests deselected. Both staged microdata overrides pointed to
 nonexistent paths for every collection and the policy-test run. The
 committed-branch and working-tree diffs contain no protected files.
 Ruling d1418's defaults remain in effect.
+
+Review fix round 6 first reproduced both reviewer payment defects,
+including the minimized one-month DIB bridge. All 830 RET tests passed
+after the corrections, including the new independent reference and
+all rounds 3–5 regressions. The reference matched 600 generated and
+three explicit histories; its sole newly minimized discrepancy was the
+draft reference's termination guard, corrected and pinned as described
+above. The five deliberate implementation mutations were killed and
+production bytes restored. All 13 birth-evidence checks passed with
+the artifact rebuild excluded. After tightening incomplete manually
+supplied LMETY/DIB state validation, the complete RET and birth-evidence
+gates passed again with no warnings. Black and Ruff passed on all twelve PR
+Python files. These results admit statutory mechanics only; d1418's
+defaults remain unchanged.
+
+The round-6 independent tier recount found 7,413 unit, 4,046 artifact,
+1,346 integration-PSID, 520 legacy-reproduction and 307 PolicyEngine-oracle
+tests, totaling 13,632. The selected tier-policy test passed with 13,631
+other tests deselected. Both staged microdata directory overrides pointed
+to nonexistent paths for every whole-suite collection and the selected
+policy test; that test's temporary directory was inside the workspace.
 
 ## Not in scope
 

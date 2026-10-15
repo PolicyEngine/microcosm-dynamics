@@ -43,12 +43,17 @@ RIB = month()
 
 
 def prior(year=2010, kind=B.RIB, *, gap=False):
+    # A prior LMETY cannot come from DIB alone. For the generated DIB
+    # cases, it came from earlier RIB, followed by cessation and DIB-only
+    # entitlement. Carry that section-202 history explicitly.
     return GraceYearState(
         last_met_year=year,
         previous_entitled_types=frozenset({kind}),
         had_entitlement=True,
         gap_since_entitlement=gap,
         last_processed_year=year,
+        previous_section_202_types={B.RIB} if kind is B.DIB else {kind},
+        gap_since_section_202=gap or kind is B.DIB,
     )
 
 
@@ -96,6 +101,149 @@ def test_initial_grace_2011_before_august_fra():
     assert result.kinds == {K.INITIAL}
     assert result.protected_months == {6, 7}
     assert result.next_state.last_met_year == 2011
+
+
+@settings(max_examples=100, deadline=None)
+@given(st.integers(1975, 1977), st.integers(1, 12), st.integers(1978, 2030))
+def test_property_pre_1978_nsms_cannot_consume_initial_grace(
+    first_year, old_nsm, initial_year
+):
+    state = GraceYearState()
+    for year in range(first_year, initial_year):
+        result = grace_year(
+            year,
+            state,
+            [
+                month(B.MOTHER_FATHER, nonservice=year < 1978 and i == old_nsm)
+                for i in range(1, 13)
+            ],
+        )
+        assert not result.applies
+        assert result.next_state.last_met_year is None
+        assert result.next_state.previous_entitled_types == {B.MOTHER_FATHER}
+        state = result.next_state
+    result = grace_year(initial_year, state, [month(B.MOTHER_FATHER)] * 12)
+    assert result.kinds == {K.INITIAL}
+    assert result.protected_months == set(range(1, 13))
+    assert result.next_state.last_met_year == initial_year
+
+
+@pytest.mark.parametrize("following", [B.SPOUSE, B.WIDOW])
+@pytest.mark.parametrize("empty_months", [0, 1])
+def test_dib_bridge_compares_last_section_202_type(following, empty_months):
+    state = grace_year(
+        2024, GraceYearState(), [month(B.SPOUSE)] * 12
+    ).next_state
+    bridge = grace_year(
+        2025,
+        state,
+        [EMPTY] * empty_months + [month(B.DIB)] * (12 - empty_months),
+    )
+    assert not bridge.applies
+    assert not bridge.met_eligible_months
+    assert not bridge.protected_months
+    result = grace_year(2026, bridge.next_state, [month(following)] * 12)
+    different = following is not B.SPOUSE
+    assert result.kinds == ({K.AFTER_BREAK} if different else set())
+    assert result.protected_months == (
+        set(range(1, 13)) if different else set()
+    )
+    assert result.next_state.last_met_year == (2026 if different else 2024)
+
+
+@pytest.mark.parametrize(
+    "values",
+    [
+        {"previous_section_202_types": {B.DIB}},
+        {"previous_section_202_types": {B.WIDOW}},
+        {"gap_since_section_202": 1},
+        {"gap_since_section_202": True},
+        {"previous_entitled_types": {B.DIB}, "gap_since_section_202": False},
+    ],
+)
+def test_inconsistent_section_202_history_is_an_input_error(values):
+    with pytest.raises(InvalidFamilyInput):
+        replace(prior(2024, B.SPOUSE), **values)
+
+
+@settings(max_examples=80, deadline=None)
+@given(st.sampled_from([B.RIB, B.SPOUSE, B.CHILD, B.WIDOW, B.MOTHER_FATHER]))
+def test_property_dib_preserves_section_202_state_through_round_trip(previous):
+    state = grace_year(
+        2024, GraceYearState(), [month(previous)] * 12
+    ).next_state
+    bridge = grace_year(2025, state, [month(B.DIB)] * 12).next_state
+    assert bridge.previous_entitled_types == {B.DIB}
+    assert not bridge.gap_since_entitlement
+    assert bridge.previous_section_202_types == {previous}
+    assert bridge.gap_since_section_202
+    assert replace(bridge) == bridge
+    # LMETY proves earlier section-202 entitlement. A DIB-only seed must
+    # supply that type rather than silently discarding the bridge history.
+    with pytest.raises(InvalidFamilyInput, match="section 202"):
+        GraceYearState(
+            last_met_year=bridge.last_met_year,
+            previous_entitled_types=bridge.previous_entitled_types,
+            had_entitlement=True,
+            last_processed_year=bridge.last_processed_year,
+        )
+    for following in (previous, B.MOTHER_FATHER):
+        assert grace_year(2026, bridge, [month(following)] * 12) == grace_year(
+            2026, replace(bridge), [month(following)] * 12
+        )
+
+
+@settings(max_examples=80, deadline=None)
+@given(
+    st.integers(1, 11), st.sampled_from([B.CHILD, B.MOTHER_FATHER, B.SPOUSE])
+)
+def test_property_next_month_dib_blocks_termination_grace(last_month, kind):
+    result = grace_year(
+        2025,
+        prior(2024, kind),
+        [month(kind)] * last_month + [month(B.DIB)] * (12 - last_month),
+        termination_events=[
+            TerminationEvent(last_month, kind, young_spouse=kind is B.SPOUSE)
+        ],
+    )
+    assert not result.kinds
+    assert not result.protected_months
+    assert result.next_state.last_met_year == 2024
+    assert result.next_state.previous_section_202_types == {kind}
+    assert result.next_state.gap_since_section_202
+
+
+@settings(max_examples=150, deadline=None)
+@given(
+    st.sampled_from([B.RIB, B.SPOUSE, B.CHILD, B.WIDOW, B.MOTHER_FATHER]),
+    st.sampled_from([B.RIB, B.SPOUSE, B.CHILD, B.WIDOW, B.MOTHER_FATHER]),
+    st.integers(0, 11),
+    st.integers(1, 3),
+)
+def test_property_dib_only_bridge_equals_section_202_gap(
+    previous, following, empty_months, bridge_years
+):
+    state = grace_year(
+        2020, GraceYearState(), [month(previous)] * 12
+    ).next_state
+    empty_state = state
+    for year in range(2021, 2021 + bridge_years):
+        bridge = grace_year(
+            year,
+            state,
+            [EMPTY] * empty_months + [month(B.DIB)] * (12 - empty_months),
+        )
+        assert not bridge.applies
+        assert not bridge.met_eligible_months
+        state = bridge.next_state
+        empty_state = grace_year(year, empty_state, [EMPTY] * 12).next_state
+    year = 2021 + bridge_years
+    result = grace_year(year, state, [month(following)] * 12)
+    expected = grace_year(year, empty_state, [month(following)] * 12)
+    assert result == expected
+    assert result.kinds == (
+        {K.AFTER_BREAK} if previous is not following else set()
+    )
 
 
 def test_mother_2010_break_then_rib_2011_has_another_grace():
@@ -644,6 +792,13 @@ def test_property_disability_reentry_compares_legal_types_before_nsm(
     assert first.next_state.last_met_year == 2010
     assert first.next_state.previous_entitled_types == {disabled}
     assert first.next_state.pending_after_break == different_section_202_type
+    # DIB cannot create pending grace, but cannot erase the preceding
+    # section-202 break either. A later RIB compares with that earlier type.
+    later_different_type = different_section_202_type or (
+        disabled is B.DIB
+        and previous is not B.DIB
+        and legal_type.get(previous, previous) is not ordinary
+    )
     second = grace_year(
         2012,
         first.next_state,
@@ -652,14 +807,12 @@ def test_property_disability_reentry_compares_legal_types_before_nsm(
     )
     eligible = set(range(first_ordinary_month, 13))
     assert second.met_eligible_months == eligible
-    assert second.kinds == (
-        {K.AFTER_BREAK} if different_section_202_type else set()
-    )
+    assert second.kinds == ({K.AFTER_BREAK} if later_different_type else set())
     assert second.protected_months == (
-        eligible if different_section_202_type else set()
+        eligible if later_different_type else set()
     )
     assert second.next_state.last_met_year == (
-        2012 if different_section_202_type else 2010
+        2012 if later_different_type else 2010
     )
     assert not second.next_state.pending_after_break
 
