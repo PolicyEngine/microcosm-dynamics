@@ -115,6 +115,14 @@ def test_documentary_accuracy_conflicts_are_preserved():
             amount = by_id[entry["id"].removesuffix("_acc")]
             assert amount["variable"] == target
             assert "never changes amounts" in entry["use_restriction"]
+            # Max ratified amendment 4 on 2026-09-30 (d637; spec 16b).
+            assert "pending Max's ruling" not in entry["use_restriction"]
+            assert entry["ruling"] == {
+                "decision": "d637",
+                "date": "2026-09-30",
+                "specification_section": "16b",
+                "amendment": "4",
+            }
             resolved += 1
     assert resolved == 9
 

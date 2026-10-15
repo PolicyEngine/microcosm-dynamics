@@ -2,8 +2,8 @@
 
 Groups: labels (codes 10/20/22/88/90 in every support wave; code 92
 absent in 2013/2015 and present 2017-2023; reported-birth-year anchors)
-and roles (code 20 of either sex, code 90, code 92, code 88's
-administrative-support distinction, cohabitor income slots, zero-weight
+and roles (code 20 of either sex, code 90, code 92, code 88's OFUM
+convention and administrative support, cohabitor income slots, zero-weight
 legal spouses, unresolved and ambiguous pairings), with the two
 family-unit exclusions Max ratified on 2026-10-10 (d1090; section 16c).
 INVENTED DATA - NOT A COMPARISON.
@@ -150,7 +150,11 @@ def test_declared_rules_follow_the_section_3_table():
         assert (ninety.income_role, ninety.spouse_slot) == (role, False)
         assert ninety.family_unit_exclusion == exclusion
         assert ninety.legal_spouse_annuity and ninety.marital_resolution
-        assert rules[(wave, 88)].refusal is not None
+        # Amendment 1c (d637, confirmed by d745): the first-year
+        # cohabitor's convention.
+        assert rules[(wave, 88)] == sources.RoleRule(
+            wave, 88, True, "ofum", False, False, False, True
+        )
         assert rules[(wave, 88)].family_unit_exclusion is None
         assert rules[(wave, 22)].family_unit_exclusion is None
         assert rules[(wave, 10)].family_unit_exclusion is None
@@ -178,15 +182,14 @@ def test_administrative_birth_support_is_administrative_only():
         assert not rules[(wave, 92)].administrative_birth_support
 
 
-#: The role entries the committed registries refuse: code 88 everywhere
-#: (TO VERIFY) and code 92's absence in 2013 and 2015.  2013 and
-#: 2015-2017 code 90 and 2017 code 92 are documented rules (disposition
-#: D).  2015 code 20 and 2019-2023 codes 90 and 92, which the
-#: adjudication refused (disposition F), carry section 16c's ratified
-#: exclusions since the d1090 registry commit (:data:`D1090_RULED`).
-REFUSED_ROLES = frozenset(
-    {(wave, 88) for wave in sources.SUPPORT_WAVES} | {(2013, 92), (2015, 92)}
-)
+#: The role entries the committed registries refuse: code 92's absence
+#: in 2013 and 2015.  2013 and 2015-2017 code 90 and 2017 code 92 are
+#: documented rules (disposition D).  2015 code 20 and 2019-2023 codes 90
+#: and 92, which the adjudication refused (disposition F), carry section
+#: 16c's ratified exclusions since the d1090 registry commit
+#: (:data:`D1090_RULED`).  Code 88, TO VERIFY until then, takes amendment
+#: 1c's convention in every wave since its d637 registry commit.
+REFUSED_ROLES = frozenset({(2013, 92), (2015, 92)})
 D1090_RULED = frozenset(
     {(2015, 20)} | {(wave, code) for wave in B2_WAVES for code in (90, 92)}
 )
@@ -280,9 +283,11 @@ def test_registry_context_refuses_refused_codes():
     registry = sources.RoleContext.from_registry()
     with pytest.raises(sources.U2RoleRefusal, match="code 92 absent in 2015"):
         registry.rule(2015, 92)
+    # Amendment 1c (d637, confirmed by d745): code 88 resolves to the
+    # declared convention in every wave.
+    declared = sources.RoleContext.declared()
     for wave in sources.SUPPORT_WAVES:
-        with pytest.raises(sources.U2RoleRefusal, match="TO VERIFY"):
-            registry.rule(wave, 88)
+        assert registry.rule(wave, 88) == declared.rule(wave, 88)
     # The ruled codes resolve, each with its exclusion (section 16c).
     for wave, code in sorted(D1090_RULED):
         rule = registry.rule(wave, code)
@@ -292,22 +297,137 @@ def test_registry_context_refuses_refused_codes():
         )
 
 
-def test_code_88_refuses_under_every_context(u2_inputs):
+def test_code_88_takes_the_amendment_1c_convention(u2_inputs, monkeypatch):
+    """Amendment 1c (d637, confirmed by d745): a code-88 first-year
+    cohabitor has the OFUM role outside the spouse slot, is no annuity
+    life and resolves no marital history, so adding one to a family that
+    supplies observations changes no observation or disposition, under
+    the declared and the registry role context alike."""
+
     variant = invented.with_code_88_cohabitor(u2_inputs)
-    with pytest.raises(sources.U2RoleRefusal, match="code 88"):
-        cohort.build_u2_cohort(
-            variant,
-            cohort.U2CohortSpec(row="U1"),
-            role_context=sources.RoleContext.declared(),
-        )
+    spec = cohort.U2CohortSpec(row="U1")
+    declared = sources.RoleContext.declared()
+    built = cohort.build_u2_cohort(variant, spec, role_context=declared)
+    base = cohort.build_u2_cohort(u2_inputs, spec, role_context=declared)
+    # The cohabitor's family supplies observations, so its roles are read.
+    family = int(u2_inputs.family_income[2019]["interview"].iloc[0])
+    obs = built.observations
+    assert (obs["wave"].eq(2019) & obs["interview"].eq(family)).any()
+    pd.testing.assert_frame_equal(built.observations, base.observations)
+    pd.testing.assert_frame_equal(built.dispositions, base.dispositions)
     registry = sources.RoleContext.from_registry()
-    for wave in sources.SUPPORT_WAVES:
-        with pytest.raises(sources.U2RoleRefusal, match="relationship.88"):
-            registry.rule(wave, 88)
-    with pytest.raises(sources.U2RoleRefusal):
-        cohort.build_u2_cohort(
-            variant, cohort.U2CohortSpec(row="U1"), role_context=registry
+    by_registry = cohort.build_u2_cohort(variant, spec, role_context=registry)
+    base_registry = cohort.build_u2_cohort(
+        u2_inputs, spec, role_context=registry
+    )
+    pd.testing.assert_frame_equal(
+        by_registry.observations, base_registry.observations
+    )
+    pd.testing.assert_frame_equal(
+        by_registry.dispositions, base_registry.dispositions
+    )
+    # The cohabitor's rule is read, not skipped: were code 88 to refuse,
+    # as its declared rule did before amendment 1c, this family would.
+    original = sources.declared_role_rules
+
+    def refusing():
+        rules = original()
+        rules[(2019, 88)] = dataclasses.replace(
+            rules[(2019, 88)], income_role=None, refusal="refused (test)"
         )
+        return rules
+
+    monkeypatch.setattr(sources, "declared_role_rules", refusing)
+    with pytest.raises(sources.U2RoleRefusal, match="code 88: refused"):
+        cohort.build_u2_cohort(
+            variant, spec, role_context=sources.RoleContext.declared()
+        )
+
+
+def test_a_code_88_target_has_the_ofum_role_and_keeps_its_history(
+    u2_inputs, u2_params
+):
+    """Review of 1bcb8765, finding 1: a code-88 first-year cohabitor who is
+    itself a U0 target (born 1951, observed in 2019) in a family with OFUM
+    Social Security and SSI.  Under amendment 1c, and under both role
+    contexts, its own observation has the OFUM role and keeps its recorded
+    (ended) marriage; in U4 (the head/wife income unit) it keeps the
+    family income basis and the OFUM SSI cap, so a builder that gave it
+    the spouse slot's role would fail here."""
+
+    variant = invented.invented_variant(
+        u2_inputs, "code_88_target_with_ofum_income_2019"
+    )
+    anchor = variant.anchors[2019]
+    (person,) = set(anchor.loc[anchor["relationship"].eq(88), "person_id"])
+    for context in (
+        sources.RoleContext.declared(),
+        sources.RoleContext.from_registry(),
+    ):
+        built = cohort.build_u2_cohort(variant, role_context=context)
+        obs = built.observations
+        (row,) = obs[obs["person_id"].eq(person)].itertuples(index=False)
+        assert (row.birth_year, row.wave, row.member_role) == (
+            1951,
+            2019,
+            "ofum",
+        ), context.kind
+        assert (row.marital_status, row.marital_resolution) == (
+            "divorced",
+            "marriage_history",
+        ), context.kind
+        assert not row.married and pd.isna(row.spouse_person_id)
+    built = cohort.build_u2_cohort(
+        variant, role_context=sources.RoleContext.declared()
+    )
+    members = cohort.income_rows(built, variant).reset_index(drop=True)
+    spec = estimator.U2IncomeSpec(income_unit="head_wife")
+    out = estimator.u2_adjusted_incomes(
+        members,
+        spec,
+        context=estimator.U2EstimatorContext(sources.INVENTED_DECLARED),
+        data_provenance=ap.INVENTED,
+        life_table=u2_params.life_tables[spec.mortality_basis],
+        thresholds=u2_params.thresholds,
+        ssi=u2_params.ssi,
+    )
+    (index,) = members.index[members["person_id"].eq(person)]
+    row = members.loc[index]
+    assert row["member_role"] == "ofum"
+    assert out.loc[index, "income_basis"] == "family_unit"
+    assert row["ofum_ss"] > 0 and row["ofum_ssi"] > 0
+    assert row["head_ssi"] == row["wife_ssi"] == 0
+    # The OFUM SSI cap (U1's rule): the countable Social Security fall
+    # under the 13 percent cut, capped at the individual rate less the
+    # OFUM SSI, as the whole SSI offset.
+    general = 12 * u2_params.ssi.general_income_exclusion_monthly
+    ss, cut = float(row["ofum_ss"]), spec.cut_rate
+    fall = max(0.0, ss - general) - max(0.0, (1.0 - cut) * ss - general)
+    year = int(row["income_year"])
+    cap = max(0.0, u2_params.ssi.fbr_annual(year, False) - row["ofum_ssi"])
+    assert out.loc[index, "ssi_offset"] == pytest.approx(min(fall, cap))
+    assert out.loc[index, "ssi_offset"] > 0
+    # Here the fall binds.  With the OFUM SSI raised to $500 below the
+    # individual rate the cap binds instead, so a cap at the couple rate,
+    # or one that ignored the OFUM SSI, would fail (review of the d745 and
+    # 1a-1c answers, nit 3).
+    assert fall < cap
+    individual = u2_params.ssi.fbr_annual(year, False)
+    assert u2_params.ssi.fbr_annual(year, True) - individual > fall
+    raised = members.copy()
+    raised.loc[index, "ofum_ssi"] = int(individual) - 500
+    capped = estimator.u2_adjusted_incomes(
+        raised,
+        spec,
+        context=estimator.U2EstimatorContext(sources.INVENTED_DECLARED),
+        data_provenance=ap.INVENTED,
+        life_table=u2_params.life_tables[spec.mortality_basis],
+        thresholds=u2_params.thresholds,
+        ssi=u2_params.ssi,
+    )
+    expected = individual - (int(individual) - 500)
+    assert expected < fall
+    assert capped.loc[index, "ssi_offset"] == pytest.approx(expected)
 
 
 def test_declared_context_refuses_non_invented_inputs(u2_inputs, declared):
@@ -715,10 +835,11 @@ def test_earlier_dispositions_keep_precedence(
         pd.testing.assert_frame_equal(built.observations, base.observations)
 
 
-def test_code_88_in_an_excluded_unit_still_refuses(u2_inputs):
-    """A refusal is never hidden by an exclusion: a code-88 member in a
-    unit that B2 excludes refuses the build under both role contexts
-    (review of 07916bb, finding 3)."""
+def test_code_88_in_an_excluded_unit_keeps_the_exclusion(u2_inputs):
+    """A code-88 member never hides or changes an exclusion: under
+    amendment 1c's convention a unit that B2 excludes stays excluded,
+    counted under its disposition, and nothing else moves, under either
+    role context (review of 07916bb, finding 3)."""
 
     changed = invented.invented_variant(
         u2_inputs, "code_88_in_excluded_unit_2019"
@@ -727,8 +848,15 @@ def test_code_88_in_an_excluded_unit_still_refuses(u2_inputs):
         sources.RoleContext.declared(),
         sources.RoleContext.from_registry(),
     ):
-        with pytest.raises(sources.U2RoleRefusal, match="88"):
-            cohort.build_u2_cohort(changed, role_context=context)
+        built = cohort.build_u2_cohort(changed, role_context=context)
+        base = cohort.build_u2_cohort(u2_inputs, role_context=context)
+        pd.testing.assert_frame_equal(built.observations, base.observations)
+        pd.testing.assert_frame_equal(built.dispositions, base.dispositions)
+        assert (
+            built.dispositions["disposition"]
+            .eq(sources.UNCOOPERATIVE_SPOUSE_OR_PARTNER)
+            .any()
+        )
 
 
 def test_structure_and_runner_disclose_each_exclusion(u1_cohort, u2_run):
@@ -839,6 +967,40 @@ def test_spouse_slot_disagreement_refuses(u2_inputs, declared):
         cohort.income_rows(built, inputs)
 
 
+@pytest.mark.parametrize("context", ["declared", "registry"])
+def test_family_file_no_spouse_code_never_removes_the_occupant(
+    u2_inputs, declared, context
+):
+    """Amendment 2 (ratified by d637, section 16b): the family file's
+    spouse age is slot metadata only.  Its 0 code, 'no Spouse/Partner in
+    FU', never removes the roster's code-20 or code-22 occupant: the
+    roster keeps the occupant, the two disagree, and the income rows
+    refuse rather than let either source decide."""
+    inputs = invented.invented_variant(
+        u2_inputs, "spouse_slot_occupant_without_family_spouse_2019"
+    )
+    roles = (
+        declared
+        if context == "declared"
+        else sources.RoleContext.from_registry()
+    )
+    base = cohort.build_u2_cohort(u2_inputs, role_context=declared)
+    obs = base.observations
+    family = obs[obs["wave"].eq(2019) & obs["spouse_slot_occupied_roster"]][
+        "interview"
+    ].iloc[0]
+    built = cohort.build_u2_cohort(inputs, role_context=roles)
+    rows = built.observations[
+        built.observations["wave"].eq(2019)
+        & built.observations["interview"].eq(family)
+    ]
+    assert len(rows) and rows["spouse_slot_occupied_roster"].all()
+    income = inputs.family_income[2019]
+    assert not income.loc[income["interview"].eq(family), "wife_present"].any()
+    with pytest.raises(cohort.U2CohortError, match="spouse income slot"):
+        cohort.income_rows(built, inputs)
+
+
 def test_missing_head_refuses_the_annuity(u2_inputs, declared, u2_params):
     obs = cohort.build_u2_cohort(u2_inputs, role_context=declared).observations
     target = obs[obs["relationship"].eq(50)].iloc[0]
@@ -882,7 +1044,7 @@ def test_a_registry_context_cannot_carry_the_declared_rules():
     with pytest.raises(sources.U2SourceRefusal, match="declared table"):
         sources.RoleContext(sources.INVENTED_DECLARED, registry.rules)
     # Any one rule changed is refused, e.g. 2015 code 20 without its
-    # section 16c exclusion, or code 88 made applicable.
+    # section 16c exclusion, or code 88 given the spouse slot.
     for key, changed in (
         (
             (2015, 20),
@@ -892,7 +1054,7 @@ def test_a_registry_context_cannot_carry_the_declared_rules():
         ),
         (
             (2019, 88),
-            dataclasses.replace(registry.rules[(2019, 88)], refusal=None),
+            dataclasses.replace(registry.rules[(2019, 88)], spouse_slot=True),
         ),
     ):
         rules = dict(registry.rules)

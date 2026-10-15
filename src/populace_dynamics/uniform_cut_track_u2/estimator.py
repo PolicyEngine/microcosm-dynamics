@@ -27,7 +27,7 @@ the U2 guards:
   registry context, and the invented declared context runs only on
   invented rows.  The income units follow the section 3 income slots
   already on the rows: ``member_role`` (head, the spouse slot ``wife``,
-  or ``ofum``, which includes codes 90 and 92), ``wife_present`` (the
+  or ``ofum``, which includes codes 88, 90 and 92), ``wife_present`` (the
   designated spouse income slot) and the head/legal-spouse annuity
   lives.
 * **Provenance.**  As U1: ``invented`` for tests and dry runs;

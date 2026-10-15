@@ -585,3 +585,667 @@ def test_d1090_scope_mutations_would_move_the_operative_rule():
             if e["present"] and "family_unit_exclusion" in e
         }
         assert moved != expected, name
+
+
+# ---------------------------------------------------------------------------
+# Max's d637 ruling (section 16b): each applied amendment, held to its exact
+# scope (``u2_source_registry.RATIFIED_AMENDMENTS``)
+# ---------------------------------------------------------------------------
+def _copy_ruling(document, source, target):
+    """Put ``source``'s d637 ruling on ``target`` as well."""
+    _entry(document, target)["ruling"] = copy.deepcopy(
+        _entry(document, source)["ruling"]
+    )
+
+
+#: (registry, mutation): each moves, drops, widens or rewrites an applied
+#: d637 amendment, and each must fail validation.
+D637_SCOPE_MUTATIONS = {
+    "a2_ruling_on_2013_spouse_age": (
+        "income",
+        lambda d: _copy_ruling(
+            d, "income.2015.wife_age", "income.2013.wife_age"
+        ),
+    ),
+    "a2_ruling_on_a_slot_income_item": (
+        "income",
+        lambda d: _copy_ruling(
+            d, "income.2019.wife_sex", "income.2019.wife_labor"
+        ),
+    ),
+    "a2_ruling_dropped": (
+        "income",
+        lambda d: _entry(d, "income.2021.wife_age").pop("ruling"),
+    ),
+    "a2_decision_fabricated": (
+        "income",
+        lambda d: _entry(d, "income.2023.wife_sex")["ruling"].update(
+            decision="d999"
+        ),
+    ),
+    "a2_amendment_renumbered": (
+        "income",
+        lambda d: _entry(d, "income.2017.wife_age")["ruling"].update(
+            amendment="3"
+        ),
+    ),
+    "a2_ruling_dated_otherwise": (
+        "income",
+        lambda d: _entry(d, "income.2017.wife_sex")["ruling"].update(
+            date="2026-10-10"
+        ),
+    ),
+    "a2_usage_widened": (
+        "income",
+        lambda d: _entry(d, "income.2019.wife_age").update(
+            usage="slot_occupancy"
+        ),
+    ),
+    "a2_usage_dropped": (
+        "income",
+        lambda d: _entry(d, "income.2015.wife_sex").pop("usage"),
+    ),
+    "a2_reopened": (
+        "income",
+        lambda d: _entry(d, "income.2023.wife_age").update(
+            status="TO VERIFY", question="reopened"
+        ),
+    ),
+    "a2_question_kept": (
+        "income",
+        lambda d: _entry(d, "income.2021.wife_sex").update(question="kept"),
+    ),
+    "a2_refusing_action": (
+        "income",
+        lambda d: _entry(d, "income.2015.wife_age").update(
+            action="refuse_slot_inference"
+        ),
+    ),
+    "a3_ruling_on_a_component": (
+        "income",
+        lambda d: _copy_ruling(
+            d,
+            "income.2017.wife_retirement_annuities",
+            "income.2017.wife_annuities",
+        ),
+    ),
+    "a3_made_executable": (
+        "income",
+        lambda d: _entry(d, "income.2019.wife_retirement_annuities").update(
+            kind="variable"
+        ),
+    ),
+    "a3_usage_rewritten": (
+        "income",
+        lambda d: _entry(d, "income.2013.wife_retirement_annuities").update(
+            usage="Executable scalar crosswalk"
+        ),
+    ),
+    "a3_ruling_dropped": (
+        "income",
+        lambda d: _entry(d, "income.2023.wife_retirement_annuities").pop(
+            "ruling"
+        ),
+    ),
+    "a3_ruling_as_amendment_2": (
+        "income",
+        lambda d: _entry(d, "income.2015.wife_retirement_annuities")[
+            "ruling"
+        ].update(amendment="2"),
+    ),
+    "a4_ruling_on_wealth1_acc": (
+        "wealth",
+        lambda d: _copy_ruling(
+            d, "wealth.2013.wealth2_acc", "wealth.2013.wealth1_acc"
+        ),
+    ),
+    "a4_restriction_reverted": (
+        "wealth",
+        lambda d: _entry(d, "wealth.2015.checking_saving_acc").update(
+            use_restriction=_entry(d, "wealth.2015.checking_saving_acc")[
+                "use_restriction"
+            ].replace(
+                "ratified by Max on 2026-09-30: d637, specification section "
+                "16b",
+                "pending Max's ruling",
+            )
+        ),
+    ),
+    "a4_restriction_widened": (
+        "wealth",
+        lambda d: _entry(d, "wealth.2023.wealth2_acc").update(
+            use_restriction="Imputation and sample selection"
+        ),
+    ),
+    "a4_ruling_dropped": (
+        "wealth",
+        lambda d: _entry(d, "wealth.2019.wealth2_acc").pop("ruling"),
+    ),
+    "a5b_conditional_types_readded": (
+        "pension",
+        lambda d: _entry(d, "2015.route.formula_unknown_checkpoint").update(
+            accepted_conditional_types=[1, 8]
+        ),
+    ),
+    "a5b_formula_admitted": (
+        "pension",
+        lambda d: _entry(d, "2015.route.formula_unknown_checkpoint").update(
+            accepted_plan_types=[5, 1]
+        ),
+    ),
+    "a5b_branch_rewritten": (
+        "pension",
+        lambda d: _entry(d, "2015.route.formula_unknown_checkpoint").update(
+            refused_branch="P62ACKPT: P62AMT=DK/RF"
+        ),
+    ),
+    "a5b_disposition_renamed": (
+        "pension",
+        lambda d: _entry(d, "2015.route.formula_unknown_checkpoint").update(
+            off_route_disposition="zero_filled"
+        ),
+    ),
+    "a5b_refusal_kept": (
+        "pension",
+        lambda d: _entry(d, "2015.route.formula_unknown_checkpoint").update(
+            refusal="kept"
+        ),
+    ),
+    "a5b_on_2017_checkpoint": (
+        "pension",
+        lambda d: _copy_ruling(
+            d,
+            "2015.route.formula_unknown_checkpoint",
+            "2017.route.formula_unknown_checkpoint",
+        ),
+    ),
+    "a5b_lines_narrowed": (
+        "pension",
+        lambda d: _entry(d, "2015.route.formula_unknown_checkpoint")[
+            "ruling"
+        ].update(replaces_draft_3_lines=[1175]),
+    ),
+    "a5a_refusal_restored": (
+        "pension",
+        lambda d: _entry(d, "2019.route.inherited_route_amendment").update(
+            action="refuse_pending_amendment_5_ruling"
+        ),
+    ),
+    "a5a_on_a_dependent_route": (
+        "pension",
+        lambda d: _copy_ruling(
+            d,
+            "2017.route.inherited_route_amendment",
+            "2017.route.previous_dc_only",
+        ),
+    ),
+    "a5a_ruling_dropped": (
+        "pension",
+        lambda d: _entry(d, "2023.route.inherited_route_amendment").pop(
+            "ruling"
+        ),
+    ),
+    "a5a_as_5b": (
+        "pension",
+        lambda d: _entry(d, "2021.route.inherited_route_amendment")[
+            "ruling"
+        ].update(amendment="5b"),
+    ),
+    "a5a_blocked_again": (
+        "pension",
+        lambda d: _entry(d, "2021.route.inherited_route_amendment").update(
+            blocking_dependencies=["weights:2017.cross_section_weight"]
+        ),
+    ),
+    "a6_option_changed": (
+        "weights",
+        lambda d: _entry(d, "2017.cross_section_weight")["ruling"].update(
+            option="3"
+        ),
+    ),
+    "a6_line_dropped": (
+        "weights",
+        lambda d: _entry(d, "2017.cross_section_weight")["ruling"].update(
+            amends_draft_3_lines=[]
+        ),
+    ),
+    "a6_longitudinal_weight": (
+        "weights",
+        lambda d: _entry(d, "2017.cross_section_weight").update(
+            variable="ER34650"
+        ),
+    ),
+    "a6_on_2019_weight": (
+        "weights",
+        lambda d: _copy_ruling(
+            d, "2017.cross_section_weight", "2019.cross_section_weight"
+        ),
+    ),
+    "a6_reopened": (
+        "weights",
+        lambda d: _entry(d, "2017.cross_section_weight").update(
+            status="TO VERIFY", question="reopened"
+        ),
+    ),
+    # First-round reviews (of 02e3f3e2, 06fa7d98 and 6b047381).
+    "a2_amendment_record_mismatch": (
+        "income",
+        lambda d: _entry(d, "income.2019.wife_age")["adjudication"].update(
+            amendment=3
+        ),
+    ),
+    "a2_restriction_dropped": (
+        "income",
+        lambda d: _entry(d, "income.2017.wife_sex").pop("use_restriction"),
+    ),
+    "a2_question_record_dropped": (
+        "income",
+        lambda d: _entry(d, "income.2023.wife_age").pop("superseded_question"),
+    ),
+    "a2_usage_on_2013": (
+        "income",
+        lambda d: _entry(d, "income.2013.wife_age").update(
+            usage="slot_metadata_only"
+        ),
+    ),
+    "a3_variable_added": (
+        "income",
+        lambda d: _entry(d, "income.2013.wife_retirement_annuities").update(
+            variable="ER58101"
+        ),
+    ),
+    "a3_crosswalk_blocked": (
+        "income",
+        lambda d: _entry(d, "income.2013.wife_retirement_annuities").update(
+            blocking_dependencies=["roles:2013.relationship.20"]
+        ),
+    ),
+    "a3_restriction_permits_input": (
+        "income",
+        lambda d: _entry(d, "income.2021.wife_retirement_annuities").update(
+            use_restriction="U2 reads this crosswalk as the spouse input."
+        ),
+    ),
+    "a4_target_reverted": (
+        "wealth",
+        lambda d: _entry(d, "wealth.2013.wealth2_acc").update(
+            accuracy_for_variable="ER58209"
+        ),
+    ),
+    "a4_conflict_target_reverted": (
+        "wealth",
+        lambda d: _entry(d, "wealth.2015.wealth2_acc")[
+            "source_wording_conflict"
+        ].update(resolved_accuracy_for_variable="ER65406"),
+    ),
+    "a4_disposition_changed": (
+        "wealth",
+        lambda d: _entry(d, "wealth.2017.checking_saving_acc")[
+            "adjudication"
+        ].update(disposition="A"),
+    ),
+    "a4_restriction_on_an_unruled_flag": (
+        "wealth",
+        lambda d: _entry(d, "wealth.2019.checking_saving_acc").update(
+            use_restriction=_entry(d, "wealth.2019.wealth2_acc")[
+                "use_restriction"
+            ]
+        ),
+    ),
+    "a4_decision_misspelled": (
+        "wealth",
+        lambda d: _entry(d, "wealth.2019.checking_saving_acc").update(
+            ruling={
+                "decision": "d637 ",
+                "date": "2026-09-30",
+                "specification_section": "16b",
+            }
+        ),
+    ),
+    "a5b_branch_on_2017_checkpoint": (
+        "pension",
+        lambda d: _entry(d, "2017.route.formula_unknown_checkpoint").update(
+            refused_branch="P62ACKPT: P46=1 AND P52=1 AND P62AMT=DK/RF"
+        ),
+    ),
+    "a5a_ruling_effect_dropped": (
+        "pension",
+        lambda d: _entry(d, "2019.route.inherited_route_amendment").pop(
+            "ruling_effect"
+        ),
+    ),
+    "a6_disclosure_on_2019_weight": (
+        "weights",
+        lambda d: _entry(d, "2019.cross_section_weight").update(
+            registration_disclosure=copy.deepcopy(
+                _entry(d, "2017.cross_section_weight")[
+                    "registration_disclosure"
+                ]
+            )
+        ),
+    ),
+    "a6_disclosure_dropped": (
+        "weights",
+        lambda d: _entry(d, "2017.cross_section_weight").pop(
+            "registration_disclosure"
+        ),
+    ),
+    # Second-round review (of 57778fa1): option 1's disclosure, selection
+    # and purpose, exactly.
+    "a6_coverage_bound_emptied": (
+        "weights",
+        lambda d: _entry(d, "2017.cross_section_weight")[
+            "registration_disclosure"
+        ].update(coverage_bound=""),
+    ),
+    "a6_documented_overstated": (
+        "weights",
+        lambda d: _entry(d, "2017.cross_section_weight")[
+            "registration_disclosure"
+        ]["documented"].__setitem__(
+            4, "the complete construction of the revised 2017 weight"
+        ),
+    ),
+    "a6_not_published_item_dropped": (
+        "weights",
+        lambda d: _entry(d, "2017.cross_section_weight")[
+            "registration_disclosure"
+        ]["not_published"].pop(),
+    ),
+    "a6_selection_excludes_immigrants": (
+        "weights",
+        lambda d: _entry(d, "2017.cross_section_weight").update(
+            selection="positive recorded cross-sectional weight; exclude "
+            "the 2017 Immigrant sample"
+        ),
+    ),
+    "a6_purpose_recalibrates": (
+        "weights",
+        lambda d: _entry(d, "2017.cross_section_weight").update(
+            purpose=_entry(d, "2017.cross_section_weight")["purpose"]
+            + " Recalibrate 2017 to ACS."
+        ),
+    ),
+    # Second-round review (of the amendment-5 commits): the routes
+    # dc_route reads are the ruled ones.
+    "a5a_checkpoint_widened": (
+        "pension",
+        lambda d: _entry(d, "2021.route.formula_unknown_checkpoint").update(
+            accepted_conditional_types=[1, 8]
+        ),
+    ),
+    "a5a_checkpoint_admits_formula": (
+        "pension",
+        lambda d: _entry(d, "2017.route.formula_unknown_checkpoint").update(
+            accepted_plan_types=[5, 1]
+        ),
+    ),
+    "a5a_combined_widened": (
+        "pension",
+        lambda d: _entry(d, "2019.route.previous_combined").update(
+            accepted_plan_types=[7, 1]
+        ),
+    ),
+    "a5a_dc_only_widened": (
+        "pension",
+        lambda d: _entry(d, "2023.route.previous_dc_only").update(
+            accepted_plan_types=[5, 8]
+        ),
+    ),
+    "a5b_combined_widened": (
+        "pension",
+        lambda d: _entry(d, "2015.route.previous_combined").update(
+            accepted_plan_types=[7, 1]
+        ),
+    ),
+    # Amendment 1a (d637, confirmed by d745).
+    "a1a_ruling_on_2013_code_90": (
+        "roles",
+        lambda d: _copy_ruling(
+            d, "2015.relationship.90", "2013.relationship.90"
+        ),
+    ),
+    "a1a_confirmation_dropped": (
+        "roles",
+        lambda d: _entry(d, "2017.relationship.92")["ruling"].pop(
+            "confirmed_by"
+        ),
+    ),
+    "a1a_disclosure_dropped": (
+        "roles",
+        lambda d: _entry(d, "2017.relationship.90").pop(
+            "completeness_disclosure"
+        ),
+    ),
+    "a1a_into_the_slot": (
+        "roles",
+        lambda d: _entry(d, "2015.relationship.90").update(spouse_slot=True),
+    ),
+    "a1a_disclosure_on_code_20": (
+        "roles",
+        lambda d: _entry(d, "2017.relationship.20").update(
+            completeness_disclosure=_entry(d, "2017.relationship.90")[
+                "completeness_disclosure"
+            ]
+        ),
+    ),
+    # Review of e74a5546: 1a's per-entry role conventions and typed text.
+    "a1a_code_90_annuity_dropped": (
+        "roles",
+        lambda d: _entry(d, "2015.relationship.90").update(
+            legal_spouse_annuity=False
+        ),
+    ),
+    "a1a_code_90_marital_dropped": (
+        "roles",
+        lambda d: _entry(d, "2017.relationship.90").update(
+            marital_resolution=False
+        ),
+    ),
+    "a1a_code_92_annuity_added": (
+        "roles",
+        lambda d: _entry(d, "2017.relationship.92").update(
+            legal_spouse_annuity=True
+        ),
+    ),
+    "a1a_code_92_marital_added": (
+        "roles",
+        lambda d: _entry(d, "2017.relationship.92").update(
+            marital_resolution=True
+        ),
+    ),
+    "a1a_code_92_birth_support_added": (
+        "roles",
+        lambda d: _entry(d, "2017.relationship.92").update(
+            administrative_birth_support=True
+        ),
+    ),
+    "a1a_marked_absent": (
+        "roles",
+        lambda d: _entry(d, "2017.relationship.90").update(
+            present=False, label=None
+        ),
+    ),
+    "a1a_disclosure_blank": (
+        "roles",
+        lambda d: _entry(d, "2017.relationship.92").update(
+            completeness_disclosure="   "
+        ),
+    ),
+    "a1a_disclosure_not_text": (
+        "roles",
+        lambda d: _entry(d, "2015.relationship.90").update(
+            completeness_disclosure=True
+        ),
+    ),
+    "a1a_effect_blank": (
+        "roles",
+        lambda d: _entry(d, "2017.relationship.90").update(ruling_effect=" "),
+    ),
+    "a1b_adjudication_null": (
+        "roles",
+        lambda d: _entry(d, "2013.relationship.90").update(adjudication=None),
+    ),
+    "a1b_birth_support_dropped": (
+        "roles",
+        lambda d: _entry(d, "2013.relationship.90").update(
+            administrative_birth_support=False
+        ),
+    ),
+    "a1b_meaning_changed": (
+        "roles",
+        lambda d: _entry(d, "2013.relationship.90").update(
+            legal_spouse_annuity=False
+        ),
+    ),
+    "a1b_adjudication_invented": (
+        "roles",
+        lambda d: _entry(d, "2013.relationship.90").update(
+            adjudication={
+                "source": "EV/phase2-20260927/out/u2-adjudicate.md",
+                "line": 59,
+                "disposition": "D",
+                "amendment": 1,
+            }
+        ),
+    ),
+    "a1b_ruling_on_2013_code_20": (
+        "roles",
+        lambda d: _copy_ruling(
+            d, "2013.relationship.90", "2013.relationship.20"
+        ),
+    ),
+    "a1c_reopened": (
+        "roles",
+        lambda d: _entry(d, "2019.relationship.88").update(status="TO VERIFY"),
+    ),
+    "a1c_into_the_slot": (
+        "roles",
+        lambda d: _entry(d, "2021.relationship.88").update(spouse_slot=True),
+    ),
+    "a1c_legal_spouse_annuity": (
+        "roles",
+        lambda d: _entry(d, "2013.relationship.88").update(
+            legal_spouse_annuity=True
+        ),
+    ),
+    "a1c_marital_resolution": (
+        "roles",
+        lambda d: _entry(d, "2017.relationship.88").update(
+            marital_resolution=True
+        ),
+    ),
+    "a1c_no_income_role": (
+        "roles",
+        lambda d: _entry(d, "2015.relationship.88").update(income_role="head"),
+    ),
+    "a1c_birth_support_dropped": (
+        "roles",
+        lambda d: _entry(d, "2023.relationship.88").update(
+            administrative_birth_support=False
+        ),
+    ),
+    "a1c_refusal_restored": (
+        "roles",
+        lambda d: _entry(d, "2019.relationship.88").update(
+            action="refuse_substantive_routing"
+        ),
+    ),
+    "a1c_question_kept_open": (
+        "roles",
+        lambda d: _entry(d, "2019.relationship.88").update(
+            question=_entry(d, "2019.relationship.88")["superseded_question"]
+        ),
+    ),
+    "a1c_question_dropped": (
+        "roles",
+        lambda d: _entry(d, "2013.relationship.88").pop("superseded_question"),
+    ),
+    "a1c_ruling_dropped": (
+        "roles",
+        lambda d: _entry(d, "2015.relationship.88").pop("ruling"),
+    ),
+    "a1c_ruling_on_code_22": (
+        "roles",
+        lambda d: _copy_ruling(
+            d, "2019.relationship.88", "2019.relationship.22"
+        ),
+    ),
+    "a1c_convention_on_code_22": (
+        "roles",
+        lambda d: _entry(d, "2019.relationship.22").update(
+            action="convention_per_d637_1c"
+        ),
+    ),
+    "a1c_confirmation_dropped": (
+        "roles",
+        lambda d: _entry(d, "2021.relationship.88")["ruling"].pop(
+            "confirmed_by"
+        ),
+    ),
+    # Review of 630a68c3, finding 2: required prose is nonblank text.
+    "a1c_resolution_a_number": (
+        "roles",
+        lambda d: _entry(d, "2019.relationship.88").update(resolution=42),
+    ),
+    "a1c_question_a_list": (
+        "roles",
+        lambda d: _entry(d, "2019.relationship.88").update(
+            superseded_question=["not a question"]
+        ),
+    ),
+    "a1c_resolution_blank": (
+        "roles",
+        lambda d: _entry(d, "2021.relationship.88").update(resolution="  "),
+    ),
+    "a2_restriction_blank": (
+        "income",
+        lambda d: _entry(d, "income.2019.wife_age").update(
+            use_restriction="\t"
+        ),
+    ),
+    "a1c_adjudication_changed": (
+        "roles",
+        lambda d: _entry(d, "2023.relationship.88")["adjudication"].update(
+            disposition="D"
+        ),
+    ),
+    "a2_blocked_again": (
+        "income",
+        lambda d: _entry(d, "income.2019.wife_sex").update(
+            blocking_dependencies=["roles:2019.relationship.20"]
+        ),
+    ),
+}
+
+
+@pytest.mark.parametrize("mutation", sorted(D637_SCOPE_MUTATIONS))
+def test_d637_amendments_are_held_to_their_ratified_scope(mutation):
+    name, change = D637_SCOPE_MUTATIONS[mutation]
+    document = registry.load_registry(name)
+    registry.validate_registry(document, expected_name=name)
+    changed = copy.deepcopy(document)
+    change(changed)
+    assert json.dumps(changed) != json.dumps(document)
+    with pytest.raises(registry.SourceAdjudicationError):
+        registry.validate_registry(changed, expected_name=name)
+
+
+def test_d637_scope_matches_the_committed_entries():
+    """Every applied d637 amendment sits on exactly its scope's entries, in
+    its own registry, and no other entry records a d637 ruling."""
+    scoped = {
+        (scope["registry"], key): amendment
+        for amendment, scope in registry.RATIFIED_AMENDMENTS.items()
+        for key in scope["entries"]
+    }
+    found = {}
+    for name in registry.REGISTRY_NAMES:
+        for entry in registry.load_registry(name)["entries"]:
+            ruling = entry.get("ruling", {})
+            if ruling.get("decision") == "d637":
+                found[(name, entry["id"])] = ruling["amendment"]
+    assert found == scoped
+    for scope in registry.RATIFIED_AMENDMENTS.values():
+        assert scope["ruling"]["decision"] == "d637"
+        assert len(scope["entries"]) == len(set(scope["entries"]))
