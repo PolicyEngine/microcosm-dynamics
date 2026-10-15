@@ -120,3 +120,44 @@ configurations only. Unsupported configurations raise
 `FAMILY_CONFIG_UNSUPPORTED` and stay in denominators. The design note is
 `docs/design/track_b_g_gross_benefits.md`; the worked-example sources are
 under `tests/data/track_b/gross_benefit_sources/`.
+
+## B2: the 2010→2014 transport gate's floor builder, comparator and scorer
+
+`b2.py` holds B2's rules, exactly as `docs/design/track_b_b0_1_addendum.md`
+freezes them: the six level cells (d781 (a)), tolerances on B2's own
+household-split floor, the Rao-Wu standard error with Student t at the
+design's degrees of freedom (d782), section 8's INVALID, FAIL, PASS,
+INCONCLUSIVE order, and section 5's ladder inside the six (d1342). Three
+scripts apply them, in this order, each once:
+
+1. `scripts/track_b_b2_floor.py` builds the truth-only floor after B2's
+   registration on #42 pins its commit. It reads only the 80 files of
+   `b2_read_set_sha256`, under a guard that refuses any other open, and
+   writes `runs/track_b_b2_floor.json` exclusively. It applies element
+   8's stratum rule: one-cluster strata merge into the nearest stratum
+   with two or more clusters, larger strata get exact Rao-Wu by integer
+   copies at scale L, and ν is counted after the merges. It publishes
+   the strata, the merges, L and ν. Eligibility is section 5's: every
+   seed defined, at least 20 events, and planning values present; a cell
+   that fails it is scored report-only. If ν is 0, if an eligible cell's
+   σ, se_up or τ is zero or undefined, or if the ladder cannot reach 0.90
+   power with four cells, it says `WEAK_POWER_OR_VACUITY` and no
+   candidate may run.
+2. `scripts/track_b_b2_compare_floor.py` runs after that artifact is
+   committed. It reads two boundary-2010 fields of each selection ledger
+   and prints whether their hashes equal the builder's; it gates nothing.
+3. `scripts/track_b_b2_score.py` runs once, only on a committed floor
+   artifact that cleared, with the registration id and the expected
+   commit. It checks every input before it fits. After every check that
+   needs no PSID data, NAWI included, and before any PSID data is read,
+   it creates `runs/track_b_b2_score.attempt.jsonl` exclusively and
+   records each stage there. It writes `runs/track_b_b2_score.json`
+   exclusively.
+
+Both the builder and the scorer require one BLAS, OpenMP and numexpr
+thread per process, `OMP_WAIT_POLICY=PASSIVE`, `POPULACE_FIT_N_JOBS` from
+1 to 4, at most four worker processes, and the selectors' pinned fitting
+stack. They check the threads and workers first. In that environment candidate 3's projection
+hangs in the participation gates' `HistGradientBoostingClassifier`
+predict with more than one OpenMP thread. Their tests
+(`tests/test_track_b_b2_*.py`) use invented panels only.
