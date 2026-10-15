@@ -2016,6 +2016,19 @@ def _unsupported_cases():
                 )
             ],
         ),
+        g.UnsupportedReason.REDUCED_BENEFIT_HISTORY_BEFORE_1978: lambda: (
+            _family(
+                _retired(1000, 1500),
+                [
+                    g.Beneficiary(
+                        "S",
+                        g.Role.SPOUSE,
+                        reduction_months=1,
+                        birth_year=1912,
+                    )
+                ],
+            )
+        ),
     }
 
 

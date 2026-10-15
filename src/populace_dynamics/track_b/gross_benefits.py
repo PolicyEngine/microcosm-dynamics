@@ -157,11 +157,23 @@ Normalization uses immutable copies and does not change the caller's inputs.
 
 An own RIB with positive PIA and reduction months refuses for a known
 cohort before 1916: first entitlement could precede January 1978, requiring
-the reduction and PIA money history in RS 00615.005C.2. These inputs carry
-current PIA and months after any ARF, which cannot establish that history.
-A zero PIA or zero reduction does not need the missing reduction amount.
-Omitted cohorts retain the current-formula domain only; they do not
-establish statutory conformance for an undated historical award.
+the reduction and PIA money history in RS 00615.005C.2. Reduced spouse
+benefits likewise need that history before cohort 1916. Widow(er)s need
+it before cohort 1928: DWB can begin at 50 and convert to aged WIB at FRA
+(RS 00615.310A), and the inputs do not exclude that prior entitlement.
+The specific post-1983 DWB .715 instruction in RS 00615.301B.3 is an
+alternative reading to the general historical-money rule; these known
+historical cases conservatively refuse pending a ruling.
+
+The inputs carry current rates and months after any ARF, which cannot
+establish initial entitlement or money history. Zero reductions and rates,
+current care exemptions, and amounts settled across a conservative full
+historical-rate interval need no missing history. The interval is a
+sufficient settlement check, not a claim that every endpoint is an
+attainable historical award. Subject rates must also settle before the own
+offset, because 403(a)(5) protects that amount. Omitted cohorts retain the
+current-formula domain only; they do not establish statutory conformance
+for an undated historical award.
 
 RS 00615.712 protects survivors entitled for May 1978 from reductions due
 to a widow(er)'s deceased-worker delayed credits. Protected cases are
@@ -367,6 +379,7 @@ class UnsupportedReason(Enum):
     DIVORCED_SPOUSE_CARE_HISTORY = "divorced_spouse_care_history"
     DELAYED_CREDITS_BEFORE_1917 = "delayed_credits_born_before_1917"
     OWN_RIB_HISTORY_BEFORE_1978 = "own_rib_history_before_1978"
+    REDUCED_BENEFIT_HISTORY_BEFORE_1978 = "reduced_benefit_history_before_1978"
 
 
 class FamilyConfigurationUnsupported(Exception):
@@ -1268,6 +1281,10 @@ class Beneficiary:
       field fixes both reduction bounds and the widow(er)'s period under
       RS 00615.301B.2; different supplied years are an input error. An aged
       widow(er) with own RIB needs a cohort in at least one field.
+      A reduced spouse before cohort 1916 or a reduced widow(er) before
+      1928 needs pre-1978 money history unless the amount is settled without
+      it (RS 00615.005C.2). The latter includes possible prior DWB beginning
+      at 50 and conversion to aged WIB at FRA (RS 00615.310A).
     * ``conditions``: declared special conditions; GPO is inoperative for
       benefit months from January 2024 (Pub. L. 118-273).
     * ``child_in_care``: the id of an entitled child on this record for
@@ -1490,6 +1507,10 @@ class RecordState:
     ``eligibility_year`` and ``first_dib_entitlement`` are the record's
     dates when known (:func:`record_state` fills them in); a payment month
     before either is an :class:`InvalidFamilyInput`.
+    Retirement eligibility cannot follow the insured person's age-62
+    cohort year, including when the worker remains unclaimed. All entry
+    points check this before coverage refusals or guard advancement
+    (403(a)(2)(A), with earlier DIB eligibility under 403(a)(2)(D)).
     A known initial DIB entitlement before July 1980 is refused on a
     disability snapshot, as on a built record (RS 00615.740B.2).
     ``widow_drc_savings_clause`` attests whether any beneficiary is protected
@@ -1591,6 +1612,24 @@ def _raise_record_conditions(conditions: Iterable[RecordCondition]) -> None:
         raise FamilyConfigurationUnsupported(reason, detail)
 
 
+def _check_retirement_eligibility(
+    kind: FamilyKind, eligibility_year: int | None, birth_year: int | None
+) -> None:
+    """403(a)(2): retirement eligibility is no later than the age-62 year.
+
+    The insured person's cohort governs even without own entitlement.
+    Earlier DIB eligibility can remain applicable under 403(a)(2)(D).
+    Every builder and family/household route uses this same input check.
+    """
+    if (
+        kind is FamilyKind.RETIREMENT
+        and eligibility_year is not None
+        and birth_year is not None
+        and eligibility_year > birth_year + 62
+    ):
+        raise InvalidFamilyInput("eligibility_year exceeds birth year + 62")
+
+
 def record_state(record: WorkerRecord, params: SSAParameters) -> RecordState:
     """Compute the record's current PIA and family maximum.
 
@@ -1618,12 +1657,9 @@ def record_state(record: WorkerRecord, params: SSAParameters) -> RecordState:
     )
     if type(record.eligibility_year) is not int:
         raise TypeError("eligibility_year must be an int")
-    if (
-        record.kind is FamilyKind.RETIREMENT
-        and record.worker_birth_year is not None
-        and record.eligibility_year > record.worker_birth_year + 62
-    ):
-        raise InvalidFamilyInput("eligibility_year exceeds birth year + 62")
+    _check_retirement_eligibility(
+        record.kind, record.eligibility_year, record.worker_birth_year
+    )
     _delayed_credit_months(
         record.worker_delayed_credit_months, record.worker_birth_year, params
     )
@@ -2148,6 +2184,96 @@ def _parisi_counted(
     return payable, age_reduction
 
 
+def _refuse_historical_auxiliary(
+    row: _Row,
+    state: RecordState,
+    params: SSAParameters,
+    *,
+    apply_rib_lim: bool,
+) -> None:
+    """Refuse unresolved RS 00615.005C.2 money history after the maximum.
+
+    Earliest reduced entitlement is 62 for spouses and 50 for DWB
+    (402(b)/(c)/(e)/(f); RS 00615.005A/.310A). Aged WIB can carry earlier
+    DWB history after conversion at FRA, so its possible age is also 50.
+    Ordinary aged WIB starts at 60, but these inputs do not attest that
+    there was no prior DWB. Current
+    reduction months after an ARF cannot date the original entitlement.
+    Historical current-money reductions are absent. The full interval
+    from zero to the unreduced rate therefore supplies conservative bounds;
+    a modern reduction fraction cannot bound its historical counterpart.
+    Apply the same offset, RIB-LIM and care minimum to both endpoints.
+    If both settle the amount, the missing history cannot change it.
+
+    For beneficiaries subject to the maximum, the pre-offset rate must
+    also be settled: 403(a)(5) carries that rate to later months. Outside
+    the maximum, a settled payable suffices and any ordinary intermediate
+    rate remains diagnostic, as with divorced-spouse care history.
+    """
+    beneficiary = row.beneficiary
+    role = beneficiary.role
+    if role in (Role.SPOUSE, Role.DIVORCED_SPOUSE):
+        first_age = 62
+        if isinstance(beneficiary.child_in_care, str):
+            return
+    elif role is Role.DISABLED_WIDOW:
+        first_age = 50
+    elif role in _AGED_WIDOW_ROLES:
+        first_age = 50
+    else:
+        return
+    year = beneficiary.birth_year
+    if (
+        year is None
+        or year + first_age >= 1978
+        or (
+            role is not Role.DISABLED_WIDOW
+            and not beneficiary.reduction_months
+        )
+    ):
+        return
+
+    own = beneficiary.own_benefit
+    low, high = Fraction(0), row.rate
+    if role in (Role.SPOUSE, Role.DIVORCED_SPOUSE):
+        if own is not None and beneficiary.own_benefit_first:
+            excess = max(Fraction(0), row.rate - own.pia)
+            high = max(Fraction(0), row.rate - (own.pia - row.own_base))
+            low = max(Fraction(0), high - excess)
+    else:
+        if apply_rib_lim and state.rib_lim_benefit is not None:
+            limit = max(
+                state.rib_lim_benefit,
+                floor_dime(statutory_rates(params).rib_lim_share * state.pia),
+            )
+            low, high = min(low, limit), min(high, limit)
+        low = max(low, row.mother_father_rate)
+        high = max(high, row.mother_father_rate)
+    historical_age_interval = (low, high)
+    if own is not None and not row.subject:
+        low = max(Fraction(0), low - row.own_mba)
+        high = max(Fraction(0), high - row.own_mba)
+    if low == high:
+        if historical_age_interval[0] != historical_age_interval[1]:
+            note = (
+                "pre-1978 history does not affect auxiliary payable; "
+                "age_adjusted_rate displays an ordinary diagnostic rate "
+                "within historical bounds "
+                f"{historical_age_interval[0]} to {historical_age_interval[1]}"
+            )
+            if note not in row.note:
+                row.note += ("; " if row.note else "") + note
+        return
+    raise FamilyConfigurationUnsupported(
+        UnsupportedReason.REDUCED_BENEFIT_HISTORY_BEFORE_1978,
+        f"a reduced {role.value} for cohort {year} could first be entitled "
+        "before January 1978; RS 00615.005C.2 needs the historical money "
+        "reduction and unreduced rate, and the supplied offsets, maximum "
+        "and care minimum do not settle the amount without them",
+        beneficiary_id=beneficiary.beneficiary_id,
+    )
+
+
 def _reduce_and_offset(
     row: _Row,
     state: RecordState,
@@ -2166,6 +2292,9 @@ def _reduce_and_offset(
     beneficiary = row.beneficiary
     own = beneficiary.own_benefit
     rate = row.rate
+    _refuse_historical_auxiliary(
+        row, state, params, apply_rib_lim=apply_rib_lim
+    )
     if beneficiary.role is Role.DIVORCED_SPOUSE and isinstance(
         beneficiary.child_in_care, str
     ):
@@ -2299,16 +2428,11 @@ def _check_family_inputs(
             f"first DIB entitlement {state.first_dib_entitlement} is after "
             f"the payment month {payment_month}"
         )
+    _check_retirement_eligibility(
+        state.kind, state.eligibility_year, state.worker_birth_year
+    )
     if state.worker is not None:
         _check_own_benefit(state.worker, params)
-        if (
-            state.eligibility_year is not None
-            and state.worker.birth_year is not None
-            and state.eligibility_year > state.worker.birth_year + 62
-        ):
-            raise InvalidFamilyInput(
-                "eligibility_year exceeds birth year + 62"
-            )
     ids = [b.beneficiary_id for b in beneficiaries]
     if len(set(ids)) != len(ids):
         raise InvalidFamilyInput("beneficiary_id values must be unique")
@@ -2966,7 +3090,8 @@ def household_benefits(
     raised first. A person's cohort is shared across their worker and
     beneficiary records before family validation. Then come the
     household refusals of :func:`check_household_records`; then each
-    record is computed as :func:`family_benefits` would.
+    record is computed as :func:`family_benefits` would, in sorted record
+    order, matching :func:`household_month_outcome` when several refuse.
     """
     records, held = _check_household_inputs(records)
     for record in records.values():
@@ -2976,9 +3101,12 @@ def household_benefits(
     _refuse_household(held)
     results = {
         record_id: _family_benefits(
-            record.state, record.beneficiaries, payment_month, params
+            records[record_id].state,
+            records[record_id].beneficiaries,
+            payment_month,
+            params,
         )
-        for record_id, record in records.items()
+        for record_id in sorted(records)
     }
     return HouseholdBenefits(payment_month, MappingProxyType(results))
 

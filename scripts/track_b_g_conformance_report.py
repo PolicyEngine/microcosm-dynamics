@@ -589,6 +589,21 @@ def refusal_witnesses() -> dict[g.UnsupportedReason, tuple[str, Callable]]:
                 g.YearMonth(2023, 12),
             ),
         ),
+        reasons.REDUCED_BENEFIT_HISTORY_BEFORE_1978: (
+            "Spouse born in 1912 has RF1 on an unreduced 500 benefit but no pre-January-1978 money reduction or unreduced-rate history",
+            lambda: _family(
+                _retired(),
+                [
+                    g.Beneficiary(
+                        "spouse",
+                        g.Role.SPOUSE,
+                        reduction_months=1,
+                        birth_year=1912,
+                    )
+                ],
+                g.YearMonth(2023, 12),
+            ),
+        ),
     }
 
 

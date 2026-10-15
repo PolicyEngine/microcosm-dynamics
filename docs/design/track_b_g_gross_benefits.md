@@ -403,6 +403,7 @@ G never falls back to a single-worker computation.
 | `divorced_spouse_care_history` | Without current care, first-entitlement care is unknown or attested True, and continued exemption could change the settled auxiliary payable; different intermediate rates with identical payables are supported with a diagnostic note. Conversion and ARF history after care ends are outside this snapshot (202(k)(3)(A); RS 00615.201A.2; .010) |
 | `delayed_credits_born_before_1917` | Delayed credits for births before 1917 (402(w)(6)(A)'s 1/12 of 1 percent) |
 | `own_rib_history_before_1978` | A known own-RIB cohort before 1916, positive current PIA and positive reduction months: first entitlement could precede January 1978, and the historical reduction/PIA amounts needed by RS 00615.005C.2 are absent |
+| `reduced_benefit_history_before_1978` | A reduced spouse or divorced spouse before cohort 1916, or widow(er), surviving divorced spouse or DWB before cohort 1928, whose missing pre-1978 reduction money history can change a payable, a maximum allocation or a savings-clause rate. The widow boundary includes possible earlier DWB and conversion at FRA (RS 00615.005C.2; .310A). Settled exceptions and the conservative DWB reading are detailed below |
 
 `evaluate_family` and `count_family_outcomes` keep unsupported rows, whether
 single records or households, in every denominator by reason and weight.
@@ -649,6 +650,22 @@ pins an accurate diagnostic, the 1929 control pins the exact payments, and
     Hypothesis while retaining the explicit 1912/RF37 control;
     `test_property_zero_pia_or_zero_reduction_needs_no_history` executes
     both supported exceptions across cohorts 1900-1915.
+
+22. **Historical auxiliary scope.** Missing reduction-money history refuses
+    for pre-1978-capable spouse, divorced-spouse and survivor cohorts when
+    conservative bounds leave the payable, maximum allocation or protected
+    pre-offset rate unsettled. Zero reductions and settled exceptions remain
+    supported; the automatic DWB reduction has its explicit conservative
+    interpretation below. `test_property_history_refusal_exactly_tracks_role_cohort_and_amount`
+    executes every auxiliary role/cohort and preserves refusal denominators.
+    `test_property_invalid_family_member_precedes_every_history_refusal`
+    checks error priority and guards. The properties
+    `test_property_zero_spousal_excess_survives_parisi_redistribution`,
+    `test_property_current_divorced_care_exemption_settles_historical_rate`
+    and `test_property_zero_rib_lim_settles_positive_outside_maximum_history`
+    pin settled exceptions, using exact comparisons. The
+    `test_settled_subject_payable_does_not_fabricate_savings_clause_rate`
+    regression rejects hidden variation in a subject's protected rate.
 
 ## Worked examples reproduced exactly
 
@@ -997,12 +1014,14 @@ child is invalid, and unknown care with an entitled child refuses. Cells
 without these roles still retain all three care choices in the denominator.
 
 There are 356,400 cells: 8,831 supported, 60,775 refused and 286,794 invalid.
-All cells stay in the denominator. Twenty-seven named invented witnesses form
+All cells stay in the denominator. Twenty-eight named invented witnesses form
 a separate denominator, one executed refusal for every retained reason,
 including historical, multi-record and protected-path cases absent from the
 lattice. The `own_rib_history_before_1978` witness retains the cohort-1912,
 own-PIA-$1,000, RF1 case; that reason is absent from the lattice's fixed
-1946 cohort. Statutory registry counts are separate again. These are invented
+1946 cohort. The `reduced_benefit_history_before_1978` witness adds the
+cohort-1912 spouse with no own benefit and RF1; its lattice count is also
+zero. Statutory registry counts are separate again. These are invented
 configuration counts, with no population weights or population claim.
 
 Report invariants are unique/exhaustive declared cells, supported/refused/
@@ -1413,3 +1432,153 @@ implementation limit from the source's January 2, 1928 boundary
 (RS 00615.010/.020B). The known 1928 over-refusal and the 1929 control,
 $200 own plus $800 auxiliary, are explicit; no alternative statutory
 interpretation was selected.
+
+
+## Fix round 8 of October 15, 2026
+
+Verification class: statutory conformance on invented cases only. No
+population, behavioral or forecast claim, real data, new source capture or
+published monetary example is introduced. The earlier $715 surviving-divorced
+caregiver, $340 divorced-spouse caregiver, per-person and household cohort
+controls remain required. Rulings d1418 and d1338 are unchanged.
+
+### Identical validation at every entry point
+
+Section 203(a)(2)(A), with the earlier-DIB exception in 203(a)(2)(D),
+requires retirement eligibility no later than the insured person's age-62
+year. The shared check now uses the resolved `worker_birth_year`, whether
+or not the worker is entitled. Both `record_state` and the input-validation
+pass used by family, household and guarded calculations call it.
+
+The review's unclaimed cohort-1935 worker, eligibility year 1998, PIA
+$1,000 and maximum $1,500, with a divorced spouse flagged for GPO in
+December 2023, now raises `InvalidFamilyInput`. No weight is counted and
+no guard advances. The same error occurs when both monetary fields are
+zero. Eligibility year 1997 remains a valid GPO refusal with weight 7/3.
+
+The differential also minimized an order disagreement to two zero-PIA
+records: record-0 declared a non-AIME PIA and record-1 had a spouse with
+GPO. The ordinary household path followed insertion order while the
+monthly-outcome path sorted record ids. Both now compute in sorted record
+order after validating every input, selecting the same refusal without
+changing any payment rule. An invalid later record still raises before
+an earlier record's coverage refusal.
+
+Invariant 20 now includes eligibility/cohort consistency independently of
+entitlement, exact canonical payment and refusal equality across the
+builder, direct snapshot, household and monthly-outcome routes, preserved
+inputs, and unchanged guards after errors. The new entry-point Hypothesis
+tests generate unclaimed and deceased workers, missing and conflicting
+cohorts, dual entitlement, GPO and multiple records. Multi-record comparisons
+use the household APIs because standalone family computation cannot assert
+cross-record consistency. Refusal equality uses the reason code; input
+errors use the exception class. Supported comparisons use exact fractions
+and whole-dollar amounts, with zero tolerance.
+
+### Historical reductions for auxiliaries and survivors
+
+RS 00615.005C.2 states that its money-history method applies in "all cases
+involving single entitlement to actuarially reduced benefits prior to 1/78".
+The required current money amount of reduction and current unreduced rate
+are not supplied by this snapshot. A modern reduction factor alone cannot
+recover their ratio. RS 00615.201 and .301 also distinguish historical
+rounding: before June 1982, spouse benefits rounded upward and widow
+reductions rounded downward. A modern rate of zero after rounding is
+therefore not proof of a historically settled zero.
+
+Reduced spouse and divorced-spouse entitlement can begin at age 62, so
+cohorts before 1916 can predate January 1978. Aged widow entitlement starts
+at 60, but RS 00615.310A states that DWB converts to reduced aged widow
+benefits at FRA. DWB starts at 50; an aged widow or surviving divorced
+spouse born before 1928 can therefore carry a pre-1978 disability history.
+The inputs do not exclude that route. These auxiliary cases refuse as
+`reduced_benefit_history_before_1978` when the relevant amount is unsettled.
+Own RIB retains `own_rib_history_before_1978` and its age-62 boundary.
+
+The coverage check conservatively propagates the full zero-to-unreduced-rate
+interval for the missing historical reduction through the applicable own
+benefit offset, RIB-LIM and child-care minimum. These are safe bounds, not
+a claim that every endpoint is attainable for every dated award. It does
+not invent historical money inputs or date an award from its current RF.
+Zero reduction, no payable rate, current spouse care, a zero method-C
+excess, and clipping that settles both endpoints remain supported. DWB has
+an automatic reduction even when its input RF is zero.
+
+For a beneficiary subject to the maximum, the pre-offset age-adjusted
+amount must also be settled: it enters the 203(a)(5) savings-clause total
+and may affect Parisi redistribution. An offset that merely hides its
+variation in the current payable is insufficient. Outside the maximum,
+an equal payable can be supported with any uncertain intermediate value
+labelled as a diagnostic, preserving earlier notes. All input errors are
+checked before these refusals; refused rows and weights remain in every
+denominator and required totals block.
+
+The review's cohort-1912 spouse, no own benefit, PIA $1,000, maximum $1,500
+and RF1 formerly paid $496.50 ($496 whole dollars). The corresponding
+widow with RF1/period 60 formerly paid $995.20 ($995 whole dollars).
+Neither is a known historical payment. Both now refuse with the new reason
+and retain weight 7/3. No replacement historical dollar figure is imputed.
+The 356,400-cell conformance lattice is unchanged; the new executed
+historical witness makes the separate refusal denominator 28.
+
+Invariant 22 extends historical coverage to every reduced auxiliary role:
+for each cohort and role, refuse exactly when pre-1978 entitlement is
+possible under the declared coverage boundary and the conservative
+missing-money bounds leave a relevant amount unsettled. The role/cohort
+property, invalid-input property, settled-care and zero-excess differentials,
+RIB-LIM exception, denominator checks and savings-clause regression execute
+this contract. The envelope is deliberately conservative; it does not
+certify a tight set of all possible dated histories. Narrower historical
+support needs dated entitlement and reduction-money evidence.
+
+### Needs Max's judgment: DWB after January 1984
+
+The broad instruction in RS 00615.005C.2 is "all cases involving single
+entitlement to actuarially reduced benefits prior to 1/78". In contrast,
+RS 00615.301B.3 says "all disabled widow(er)s under age 60 receive .715 of
+the full unreduced WIB for 1/84 and later". RS 00615.005A.7 also states
+that the 1983 amendments "Eliminated the additional reduction for the
+period between age 50 and age 60." A specific-rule reading could treat
+that change as settling the entire later amount, including earlier awards.
+The general historical reading still requires the missing monetary ratio.
+
+This round conservatively refuses an otherwise unsettled pre-1978-capable
+DWB cohort and its possible aged-widow conversion; it does not assign a
+historical payment. For cohort 1927 in January 1984, with invented PIA and unreduced rate
+$1,000, the fixed 71.5% reading would pay $715.00 ($715 whole dollars), while the implemented
+reading refuses and retains the row and weight. Tests pin the captured
+texts, the alternative exact $715 formula and the actual refusal. This is
+an explicit support-boundary judgment item, separate from the earlier
+$715 surviving-divorced child-care regression, which remains supported.
+
+Dual-entitlement snapshots also lack dates and earlier money history.
+RS 00615.250 gives the current reduced-excess procedure and refers to
+RS 00615.005F for subsequent adjustments, but the captured .005 has no
+section F. The implementation conservatively refuses an unsettled old
+auxiliary history; a zero reduced excess stays supported. It does not
+claim that the conservative interval identifies a particular historical
+dual-entitlement amount. Expanding that historical surface is not in scope.
+
+
+### Needs Max's judgment: historical dual entitlement
+
+RS 00615.005C.2 explicitly describes "single entitlement". RS 00615.020
+states "Method C - First benefit calculated independently; reduce excess
+of second benefit for age (if larger)." Applying that instruction directly
+to the current excess suggests the modern calculation even for an old
+cohort with an unreduced own benefit. The historical instruction instead
+leaves the dated reduction-money history unresolved. RS 00615.240 explicitly
+retains historical treatment for spouse-before-RIB awards: "For initial
+entitlement to the reduced benefit prior to 1/78, separately reduce any
+increases before 1/78 but apply the basic formula for post 1977 increases
+in PIAs or spouse's original rate." That text does not settle every
+own-first sequence.
+
+For an invented cohort-1912 spouse with unreduced own RIB $400, spouse OB
+$500 and auxiliary RF1, the current method-C reading pays auxiliary
+$99.30 ($99 whole dollars), with own $400. The conservative implementation
+refuses `reduced_benefit_history_before_1978`, retaining the row and weight;
+it does not assign a different historical dollar amount. The source-quote
+test executes that alternative and the cohort-1916 control side by side
+with the historical refusal. Resolving this narrower historical dual
+surface needs Max's judgment; no new monetary default is silently chosen.

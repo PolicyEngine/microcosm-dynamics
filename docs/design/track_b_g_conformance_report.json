@@ -180,6 +180,7 @@
       "parisi_before_october_1999": 832,
       "parisi_redistribution_ambiguous": 340,
       "payment_month_before_1983": 0,
+      "reduced_benefit_history_before_1978": 0,
       "savings_clause_403a5": 0,
       "savings_clause_history_unknown": 0,
       "widow_child_in_care_unknown": 168,
@@ -397,8 +398,8 @@
   "supplemental_refusal_witnesses": {
     "denominator": {
       "invalid": 0,
-      "refused": 27,
-      "rows": 27,
+      "refused": 28,
+      "rows": 28,
       "supported": 0
     },
     "refused_by_reason": {
@@ -423,6 +424,7 @@
       "parisi_before_october_1999": 1,
       "parisi_redistribution_ambiguous": 1,
       "payment_month_before_1983": 1,
+      "reduced_benefit_history_before_1978": 1,
       "savings_clause_403a5": 1,
       "savings_clause_history_unknown": 1,
       "widow_child_in_care_unknown": 1,
@@ -556,6 +558,12 @@
         "description": "December 1982 benefit month",
         "id": "payment_month_before_1983",
         "reason": "payment_month_before_1983",
+        "status": "refused"
+      },
+      {
+        "description": "Spouse born in 1912 has RF1 on an unreduced 500 benefit but no pre-January-1978 money reduction or unreduced-rate history",
+        "id": "reduced_benefit_history_before_1978",
+        "reason": "reduced_benefit_history_before_1978",
         "status": "refused"
       },
       {

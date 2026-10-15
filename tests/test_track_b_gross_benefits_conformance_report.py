@@ -188,11 +188,11 @@ def test_every_retained_refusal_has_an_executed_named_witness(reason):
 
 def test_named_witness_denominator_is_separate_from_the_lattice(regenerated):
     witnesses = regenerated["supplemental_refusal_witnesses"]
-    assert len(g.UnsupportedReason) == 27
+    assert len(g.UnsupportedReason) == 28
     assert witnesses["denominator"] == {
-        "rows": 27,
+        "rows": 28,
         "supported": 0,
-        "refused": 27,
+        "refused": 28,
         "invalid": 0,
     }
     expected = {reason.value for reason in g.UnsupportedReason}
@@ -214,9 +214,24 @@ def test_pre_1978_own_rib_history_has_an_executed_refusal_witness():
     assert caught.value.reason.value == "own_rib_history_before_1978"
 
 
+def test_pre_1978_auxiliary_history_has_an_executed_refusal_witness():
+    witnesses = {
+        reason.value: witness
+        for reason, witness in report.refusal_witnesses().items()
+    }
+    _, compute = witnesses["reduced_benefit_history_before_1978"]
+    with pytest.raises(g.FamilyConfigurationUnsupported) as caught:
+        compute()
+    assert caught.value.reason.value == "reduced_benefit_history_before_1978"
+
+
 def test_pre_1978_own_rib_history_is_outside_the_1946_lattice(regenerated):
     lattice = regenerated["lattice"]
     assert lattice["refused_by_reason"]["own_rib_history_before_1978"] == 0
+    assert (
+        lattice["refused_by_reason"]["reduced_benefit_history_before_1978"]
+        == 0
+    )
     assert lattice["denominator"] == {
         "rows": 356400,
         "supported": 8831,
