@@ -4351,7 +4351,6 @@
         "ER58101",
         "ER58103"
       ],
-      "status": "TO VERIFY",
       "label": "Earlier U1 route represented by later split variables",
       "citations": [
         {
@@ -4418,14 +4417,23 @@
       "codebook_text": "ER58097: Wife/\"Wife's\" income from retirement pay or pensions.\nThe values for this variable represent the income from retirement pay or pensions in whole\ndollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: no Wife/\"Wife\" in FU (ER54305=5); did not receive\nincome from retirement pay or pensions in 2012\n\nER58099: Wife/\"Wife's\" income from annuities.\nThe values for this variable represent the income from annuities in whole dollars.   All\nmissing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: no Wife/\"Wife\" in FU (ER54305=5); did not receive\nincome from annuities in 2012\n\nER58101: Wife/\"Wife\" income from IRAs in 2012.\nThe values for this variable represent the income from IRAs in whole dollars.   All missing\ndata were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: no Wife/\"Wife\" in FU (ER54305=5); did not receive\nincome from IRAs in 2012\n\nER58103: Wife/\"Wife's\" income from other (retirement).\nThe values for this variable represent the income from other (retirement) in whole\ndollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: no Wife/\"Wife\" in FU (ER54305=5); did not receive\nincome from other (retirement) in 2012",
       "documented_domain": "Separate component domains apply; no scalar source variable is declared.",
       "usage": "Documentary crosswalk only; not an executable derived input",
-      "question": "The earlier U1 wife retirement/annuities item has no single 2013 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 67).",
       "blocking_dependencies": [],
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 67,
         "disposition": "A",
         "amendment": 3
-      }
+      },
+      "status": "RESOLVED",
+      "use_restriction": "Non-executable metadata (u2-draft-4 amendment 3): no U2 input or row reads this crosswalk, and no scalar historical equivalence is inferred from it.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time; U2 reads none of the four as an input of its own. No row changes. The adjudication's question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "3"
+      },
+      "superseded_question": "The earlier U1 wife retirement/annuities item has no single 2013 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 67)."
     },
     {
       "id": "income.2015.interview",
@@ -4568,7 +4576,6 @@
       "wave": 2015,
       "route": "wife_age",
       "variable": "ER60019",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/family/2015/FAM2015ER.sps",
@@ -4600,13 +4607,23 @@
       "negative_domain_documented": false,
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
-      "question": "In 2015, how do the family-file spouse age/sex universe and spouse income slot treat individual code 90 and a male code 20? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 68).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 68,
         "disposition": "A",
         "amendment": 2
-      }
+      },
+      "status": "RESOLVED",
+      "usage": "slot_metadata_only",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse age and its inapplicability wording ('Head is female or single male') never decide whether a person occupies the spouse slot: slot occupancy comes from the relationship rules, as the roles registry's spouse_slot field records them (section 3; section 16a amendment 1, whose parts 1a-1c d637 ratified, as Max confirmed on 2026-10-12, d745), and a code-88 first-year cohabitor does not occupy the slot (amendment 1c). Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "2"
+      },
+      "superseded_question": "In 2015, how do the family-file spouse age/sex universe and spouse income slot treat individual code 90 and a male code 20? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 68)."
     },
     {
       "id": "income.2015.n_children",
@@ -7490,7 +7507,6 @@
       "wave": 2015,
       "route": "wife_sex",
       "variable": "ER60020",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/family/2015/FAM2015ER.sps",
@@ -7522,13 +7538,23 @@
       "negative_domain_documented": false,
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
-      "question": "In 2015, how do the family-file spouse age/sex universe and spouse income slot treat individual code 90 and a male code 20? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 69).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 69,
         "disposition": "A",
         "amendment": 2
-      }
+      },
+      "status": "RESOLVED",
+      "usage": "slot_metadata_only",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse sex and its inapplicability wording ('Head is female or single male') never decide whether a person occupies the spouse slot: slot occupancy comes from the relationship rules, as the roles registry's spouse_slot field records them (section 3; section 16a amendment 1, whose parts 1a-1c d637 ratified, as Max confirmed on 2026-10-12, d745), and a code-88 first-year cohabitor does not occupy the slot (amendment 1c). Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "2"
+      },
+      "superseded_question": "In 2015, how do the family-file spouse age/sex universe and spouse income slot treat individual code 90 and a male code 20? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 69)."
     },
     {
       "id": "income.2015.head_farm_acc",
@@ -8922,7 +8948,6 @@
         "ER65296",
         "ER65298"
       ],
-      "status": "TO VERIFY",
       "label": "Earlier U1 route represented by later split variables",
       "citations": [
         {
@@ -8989,13 +9014,22 @@
       "codebook_text": "ER65292: Spouse's/Partner's Income from Retirement Pay or Pensions in 2014\nThe values for this variable represent Spouse's/Partner's income from retirement pay or\npensions, in 2014, in whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from retirement pay or\npensions in 2014; no Spouse/Partner in FU (ER61347=5)\n\nER65294: Spouse's/Partner's Income from Annuities in 2014\nThe values for this variable represent Spouse's/Partner's income from annuities, in 2014,\nin whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from annuities in 2014; no\nSpouse/Partner in FU (ER61347=5)\n\nER65296: Spouse's/Partner's income from IRAs in 2014.\nThe values for this variable represent Spouse's/Partner's income from IRAs, in 2014, in\nwhole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from IRAs in 2014; no\nSpouse/Partner in FU (ER61347=5)\n\nER65298: Spouse's/Partner's Income from Other Retirement in 2014\nThe values for this variable represent Spouse's/Partner's income from other retirement, in\n2014, in whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from other retirement in\n2014; no Spouse/Partner in FU (ER61347=5)",
       "documented_domain": "Separate component domains apply; no scalar source variable is declared.",
       "usage": "Documentary crosswalk only; not an executable derived input",
-      "question": "The earlier U1 wife retirement/annuities item has no single 2015 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 70).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 70,
         "disposition": "A",
         "amendment": 3
-      }
+      },
+      "status": "RESOLVED",
+      "use_restriction": "Non-executable metadata (u2-draft-4 amendment 3): no U2 input or row reads this crosswalk, and no scalar historical equivalence is inferred from it.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time; U2 reads none of the four as an input of its own. No row changes. The adjudication's question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "3"
+      },
+      "superseded_question": "The earlier U1 wife retirement/annuities item has no single 2015 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 70)."
     },
     {
       "id": "income.2017.interview",
@@ -9138,7 +9172,6 @@
       "wave": 2017,
       "route": "wife_age",
       "variable": "ER66019",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/family/2017/FAM2017ER.sps",
@@ -9170,13 +9203,23 @@
       "negative_domain_documented": false,
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
-      "question": "In 2017, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 71).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 71,
         "disposition": "A",
         "amendment": 2
-      }
+      },
+      "status": "RESOLVED",
+      "usage": "slot_metadata_only",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse age and its inapplicability wording ('Reference Person is female or single male') never decide whether a person occupies the spouse slot: slot occupancy comes from the relationship rules, as the roles registry's spouse_slot field records them (section 3; section 16a amendment 1, whose parts 1a-1c d637 ratified, as Max confirmed on 2026-10-12, d745), and a code-88 first-year cohabitor does not occupy the slot (amendment 1c). Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "2"
+      },
+      "superseded_question": "In 2017, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 71)."
     },
     {
       "id": "income.2017.n_children",
@@ -12076,7 +12119,6 @@
       "wave": 2017,
       "route": "wife_sex",
       "variable": "ER66020",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/family/2017/FAM2017ER.sps",
@@ -12108,13 +12150,23 @@
       "negative_domain_documented": false,
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
-      "question": "In 2017, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 72).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 72,
         "disposition": "A",
         "amendment": 2
-      }
+      },
+      "status": "RESOLVED",
+      "usage": "slot_metadata_only",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse sex and its inapplicability wording ('Reference Person is single male or female') never decide whether a person occupies the spouse slot: slot occupancy comes from the relationship rules, as the roles registry's spouse_slot field records them (section 3; section 16a amendment 1, whose parts 1a-1c d637 ratified, as Max confirmed on 2026-10-12, d745), and a code-88 first-year cohabitor does not occupy the slot (amendment 1c). Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "2"
+      },
+      "superseded_question": "In 2017, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 72)."
     },
     {
       "id": "income.2017.head_farm_acc",
@@ -13500,7 +13552,6 @@
         "ER71373",
         "ER71375"
       ],
-      "status": "TO VERIFY",
       "label": "Earlier U1 route represented by later split variables",
       "citations": [
         {
@@ -13567,13 +13618,22 @@
       "codebook_text": "ER71369: Spouse's/Partner's Income from Retirement Pay or Pensions in 2016\nThe values for this variable represent Spouse's/Partner's income from retirement pay or\npensions, in 2016, in whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from retirement pay or\npensions in 2016; no Spouse/Partner in FU (ER67399=5)\n\nER71371: Spouse's/Partner's Income from Annuities in 2016\nThe values for this variable represent Spouse's/Partner's income from annuities, in 2016,\nin whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from annuities in 2016; no\nSpouse/Partner in FU (ER67399=5)\n\nER71373: Spouse's/Partner's income from I.R.A.s in 2016.\nThe values for this variable represent Spouse's/Partner's income from IRAs, in 2016, in\nwhole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from IRAs in 2016; no\nSpouse/Partner in FU (ER67399=5)\n\nER71375: Spouse's/Partner's Income from Other Retirement in 2016\nThe values for this variable represent Spouse's/Partner's income from other retirement, in\n2016, in whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from other retirement in\n2016; no Spouse/Partner in FU (ER67399=5)",
       "documented_domain": "Separate component domains apply; no scalar source variable is declared.",
       "usage": "Documentary crosswalk only; not an executable derived input",
-      "question": "The earlier U1 wife retirement/annuities item has no single 2017 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 73).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 73,
         "disposition": "A",
         "amendment": 3
-      }
+      },
+      "status": "RESOLVED",
+      "use_restriction": "Non-executable metadata (u2-draft-4 amendment 3): no U2 input or row reads this crosswalk, and no scalar historical equivalence is inferred from it.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time; U2 reads none of the four as an input of its own. No row changes. The adjudication's question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "3"
+      },
+      "superseded_question": "The earlier U1 wife retirement/annuities item has no single 2017 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 73)."
     },
     {
       "id": "income.2019.interview",
@@ -13716,7 +13776,6 @@
       "wave": 2019,
       "route": "wife_age",
       "variable": "ER72019",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/family/2019/FAM2019ER.sps",
@@ -13748,13 +13807,23 @@
       "negative_domain_documented": false,
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
-      "question": "In 2019, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 74).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 74,
         "disposition": "A",
         "amendment": 2
-      }
+      },
+      "status": "RESOLVED",
+      "usage": "slot_metadata_only",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse age and its inapplicability wording ('Reference Person is female or single male') never decide whether a person occupies the spouse slot: slot occupancy comes from the relationship rules, as the roles registry's spouse_slot field records them (section 3; section 16a amendment 1, whose parts 1a-1c d637 ratified, as Max confirmed on 2026-10-12, d745), and a code-88 first-year cohabitor does not occupy the slot (amendment 1c). Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "2"
+      },
+      "superseded_question": "In 2019, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 74)."
     },
     {
       "id": "income.2019.n_children",
@@ -16646,7 +16715,6 @@
       "wave": 2019,
       "route": "wife_sex",
       "variable": "ER72020",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/family/2019/FAM2019ER.sps",
@@ -16678,13 +16746,23 @@
       "negative_domain_documented": false,
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
-      "question": "In 2019, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 75).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 75,
         "disposition": "A",
         "amendment": 2
-      }
+      },
+      "status": "RESOLVED",
+      "usage": "slot_metadata_only",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse sex and its inapplicability wording ('Reference Person is single male or female') never decide whether a person occupies the spouse slot: slot occupancy comes from the relationship rules, as the roles registry's spouse_slot field records them (section 3; section 16a amendment 1, whose parts 1a-1c d637 ratified, as Max confirmed on 2026-10-12, d745), and a code-88 first-year cohabitor does not occupy the slot (amendment 1c). Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "2"
+      },
+      "superseded_question": "In 2019, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 75)."
     },
     {
       "id": "income.2019.head_farm_acc",
@@ -18070,7 +18148,6 @@
         "ER77395",
         "ER77397"
       ],
-      "status": "TO VERIFY",
       "label": "Earlier U1 route represented by later split variables",
       "citations": [
         {
@@ -18137,13 +18214,22 @@
       "codebook_text": "ER77391: Spouse's/Partner's Income from Retirement Pay or Pensions in 2018\nThe values for this variable represent Spouse's/Partner's income from retirement pay or\npensions, in 2018, in whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from retirement pay or\npensions in 2018; no Spouse/Partner in FU (ER73422=5)\n\nER77393: Spouse's/Partner's Income from Annuities in 2018\nThe values for this variable represent Spouse's/Partner's income from annuities, in 2018,\nin whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from annuities in 2018; no\nSpouse/Partner in FU (ER73422=5)\n\nER77395: Spouse's/Partner's income from I.R.A.s in 2018.\nThe values for this variable represent Spouse's/Partner's income from IRAs, in 2018, in\nwhole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from IRAs in 2018; no\nSpouse/Partner in FU (ER73422=5)\n\nER77397: Spouse's/Partner's Income from Other Retirement in 2018\nThe values for this variable represent Spouse's/Partner's income from other retirement, in\n2018, in whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from other retirement in\n2018; no Spouse/Partner in FU (ER73422=5)",
       "documented_domain": "Separate component domains apply; no scalar source variable is declared.",
       "usage": "Documentary crosswalk only; not an executable derived input",
-      "question": "The earlier U1 wife retirement/annuities item has no single 2019 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 76).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 76,
         "disposition": "A",
         "amendment": 3
-      }
+      },
+      "status": "RESOLVED",
+      "use_restriction": "Non-executable metadata (u2-draft-4 amendment 3): no U2 input or row reads this crosswalk, and no scalar historical equivalence is inferred from it.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time; U2 reads none of the four as an input of its own. No row changes. The adjudication's question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "3"
+      },
+      "superseded_question": "The earlier U1 wife retirement/annuities item has no single 2019 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 76)."
     },
     {
       "id": "income.2021.interview",
@@ -18296,7 +18382,6 @@
       "wave": 2021,
       "route": "wife_age",
       "variable": "ER78019",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/family/2021/FAM2021ER.sps",
@@ -18328,13 +18413,23 @@
       "negative_domain_documented": false,
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
-      "question": "In 2021, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 77).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 77,
         "disposition": "A",
         "amendment": 2
-      }
+      },
+      "status": "RESOLVED",
+      "usage": "slot_metadata_only",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse age and its inapplicability wording ('Reference Person is female or single male') never decide whether a person occupies the spouse slot: slot occupancy comes from the relationship rules, as the roles registry's spouse_slot field records them (section 3; section 16a amendment 1, whose parts 1a-1c d637 ratified, as Max confirmed on 2026-10-12, d745), and a code-88 first-year cohabitor does not occupy the slot (amendment 1c). Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "2"
+      },
+      "superseded_question": "In 2021, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 77)."
     },
     {
       "id": "income.2021.n_children",
@@ -21296,7 +21391,6 @@
       "wave": 2021,
       "route": "wife_sex",
       "variable": "ER78020",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/family/2021/FAM2021ER.sps",
@@ -21333,13 +21427,23 @@
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
       "format_text": "1  'Male'\r\n    2  'Female'\r\n    0  'Inap.:  Reference Person is single male or female; no Spouse/Partner in FU (ER79524=5)'",
-      "question": "In 2021, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 78).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 78,
         "disposition": "A",
         "amendment": 2
-      }
+      },
+      "status": "RESOLVED",
+      "usage": "slot_metadata_only",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse sex and its inapplicability wording ('Reference Person is single male or female') never decide whether a person occupies the spouse slot: slot occupancy comes from the relationship rules, as the roles registry's spouse_slot field records them (section 3; section 16a amendment 1, whose parts 1a-1c d637 ratified, as Max confirmed on 2026-10-12, d745), and a code-88 first-year cohabitor does not occupy the slot (amendment 1c). Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "2"
+      },
+      "superseded_question": "In 2021, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 78)."
     },
     {
       "id": "income.2021.head_farm_acc",
@@ -22865,7 +22969,6 @@
         "ER81722",
         "ER81724"
       ],
-      "status": "TO VERIFY",
       "label": "Earlier U1 route represented by later split variables",
       "citations": [
         {
@@ -22932,13 +23035,22 @@
       "codebook_text": "ER81718: Spouse's/Partner's Income from Retirement Pay or Pensions in 2020\nThe values for this variable represent Spouse's/Partner's income from retirement pay or\npensions, in 2020, in whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from retirement pay or\npensions in 2020; no Spouse/Partner in FU (ER79524=5)\n\nER81720: Spouse's/Partner's Income from Annuities in 2020\nThe values for this variable represent Spouse's/Partner's income from annuities, in 2020,\nin whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from annuities in 2020; no\nSpouse/Partner in FU (ER79524=5)\n\nER81722: Spouse's/Partner's income from I.R.A.s in 2020.\nThe values for this variable represent Spouse's/Partner's income from IRAs, in 2020, in\nwhole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from IRAs in 2020; no\nSpouse/Partner in FU (ER79524=5)\n\nER81724: Spouse's/Partner's Income from Other Retirement in 2020\nThe values for this variable represent Spouse's/Partner's income from other retirement, in\n2020, in whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from other retirement in\n2020; no Spouse/Partner in FU (ER79524=5)",
       "documented_domain": "Separate component domains apply; no scalar source variable is declared.",
       "usage": "Documentary crosswalk only; not an executable derived input",
-      "question": "The earlier U1 wife retirement/annuities item has no single 2021 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 79).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 79,
         "disposition": "A",
         "amendment": 3
-      }
+      },
+      "status": "RESOLVED",
+      "use_restriction": "Non-executable metadata (u2-draft-4 amendment 3): no U2 input or row reads this crosswalk, and no scalar historical equivalence is inferred from it.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time; U2 reads none of the four as an input of its own. No row changes. The adjudication's question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "3"
+      },
+      "superseded_question": "The earlier U1 wife retirement/annuities item has no single 2021 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 79)."
     },
     {
       "id": "income.2023.interview",
@@ -23091,7 +23203,6 @@
       "wave": 2023,
       "route": "wife_age",
       "variable": "ER82020",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/family/2023/FAM2023ER.sps",
@@ -23123,13 +23234,23 @@
       "negative_domain_documented": false,
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
-      "question": "In 2023, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 80).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 80,
         "disposition": "A",
         "amendment": 2
-      }
+      },
+      "status": "RESOLVED",
+      "usage": "slot_metadata_only",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse age and its inapplicability wording ('Reference Person is female or single male') never decide whether a person occupies the spouse slot: slot occupancy comes from the relationship rules, as the roles registry's spouse_slot field records them (section 3; section 16a amendment 1, whose parts 1a-1c d637 ratified, as Max confirmed on 2026-10-12, d745), and a code-88 first-year cohabitor does not occupy the slot (amendment 1c). Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "2"
+      },
+      "superseded_question": "In 2023, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 80)."
     },
     {
       "id": "income.2023.n_children",
@@ -26091,7 +26212,6 @@
       "wave": 2023,
       "route": "wife_sex",
       "variable": "ER82021",
-      "status": "TO VERIFY",
       "citations": [
         {
           "file": "PSID/family/2023/FAM2023ER.sps",
@@ -26128,13 +26248,23 @@
       "all_missing_assigned_statement_present": false,
       "verification_scope": "Exact setup label, position/width, printed codebook definition and domain; not empirical validation or individual relationship routing",
       "format_text": "1  'Male'\r\n    2  'Female'\r\n    0  'Inap.:  Reference Person is single male or female; no Spouse/Partner in FU (ER83493=5)'",
-      "question": "In 2023, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 81).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 81,
         "disposition": "A",
         "amendment": 2
-      }
+      },
+      "status": "RESOLVED",
+      "usage": "slot_metadata_only",
+      "use_restriction": "Slot metadata only (u2-draft-4 amendment 2). The family-file spouse sex and its inapplicability wording ('Reference Person is single male or female') never decide whether a person occupies the spouse slot: slot occupancy comes from the relationship rules, as the roles registry's spouse_slot field records them (section 3; section 16a amendment 1, whose parts 1a-1c d637 ratified, as Max confirmed on 2026-10-12, d745), and a code-88 first-year cohabitor does not occupy the slot (amendment 1c). Annuity lives and every age- or sex-dependent rule use each person's recorded sex (ER32000) and derived income-year age (section 3, Annuitant ages), never this variable.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 2 (annuitant input precedence) as written: the family-file spouse age and sex variables are slot metadata only, under the no-slot-inference rule in use_restriction. The layout and documented domain stand as recorded. The rule answers the adjudication's question without reference to any observed record; the question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "2"
+      },
+      "superseded_question": "In 2023, how do the family-file spouse age/sex universe and spouse income slot treat individual codes 90 and 92? These layout and domain matches do not settle person-to-slot routing; require documentary resolution and the reviewed section 3 amendment before use. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 2, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 81)."
     },
     {
       "id": "income.2023.head_farm_acc",
@@ -27660,7 +27790,6 @@
         "ER85576",
         "ER85578"
       ],
-      "status": "TO VERIFY",
       "label": "Earlier U1 route represented by later split variables",
       "citations": [
         {
@@ -27727,13 +27856,22 @@
       "codebook_text": "ER85572: Spouse's/Partner's Income from Retirement Pay or Pensions in 2022\nThe values for this variable represent Spouse's/Partner's income from retirement pay or\npensions, in 2022, in whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from retirement pay or\npensions in 2022; no Spouse/Partner in FU (ER83493=5)\n\nER85574: Spouse's/Partner's Income from Annuities in 2022\nThe values for this variable represent Spouse's/Partner's income from annuities, in 2022,\nin whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from annuities in 2022; no\nSpouse/Partner in FU (ER83493=5)\n\nER85576: Spouse's/Partner's income from I.R.A.s in 2022.\nThe values for this variable represent Spouse's/Partner's income from IRAs, in 2022, in\nwhole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from IRAs in 2022; no\nSpouse/Partner in FU (ER83493=5)\n\nER85578: Spouse's/Partner's Income from Other Retirement in 2022\nThe values for this variable represent Spouse's/Partner's income from other retirement, in\n2022, in whole dollars. All missing data were assigned.\nValue/Range Code Value/Range Text\n1 - 999,997 Actual amount\n0 Inap.: did not receive income from other retirement in\n2022; no Spouse/Partner in FU (ER83493=5)",
       "documented_domain": "Separate component domains apply; no scalar source variable is declared.",
       "usage": "Documentary crosswalk only; not an executable derived input",
-      "question": "The earlier U1 wife retirement/annuities item has no single 2023 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 82).",
       "adjudication": {
         "source": "EV/phase2-20260927/out/u2-adjudicate.md",
         "line": 82,
         "disposition": "A",
         "amendment": 3
-      }
+      },
+      "status": "RESOLVED",
+      "use_restriction": "Non-executable metadata (u2-draft-4 amendment 3): no U2 input or row reads this crosswalk, and no scalar historical equivalence is inferred from it.",
+      "resolution": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendment 3 (historical spouse-retirement crosswalk) as written: this crosswalk stays non-executable. No scalar equivalence is asserted between U1's combined 'WIFE RETIREMENT/ANNUITIES' item and the separately documented spouse pension, annuity, IRA and other-retirement items listed under variables. Those components, spouse IRA income included, stay inside total family money income under section 4 and are never added a second time; U2 reads none of the four as an input of its own. No row changes. The adjudication's question is kept as superseded_question.",
+      "ruling": {
+        "decision": "d637",
+        "date": "2026-09-30",
+        "specification_section": "16b",
+        "amendment": "3"
+      },
+      "superseded_question": "The earlier U1 wife retirement/annuities item has no single 2023 counterpart. Later documentation identifies pensions, annuities, IRAs and other retirement separately but does not establish which reproduce that earlier combined item's IRA coverage. Do not infer a scalar historical equivalence. U2 uses the separately documented later fields under its inherited spouse-retirement retention convention. Independent adjudication: A (genuinely ambiguous); needs u2-draft-4 amendment 3, pending Max's ruling (EV/phase2-20260927/out/u2-adjudicate.md line 82)."
     }
   ],
   "sources": [
@@ -27877,7 +28015,7 @@
     "sha256": "a891762bf9be39e05509e59c5b7cd3fdab0eb34feb9ad5b9bb4a8ec3afc39662",
     "bytes": 26564,
     "applied_by": "u2-m1b",
-    "note": "Independent adjudication of milestone 1 (VERDICT: ERRORS FOUND). Amendment 7 citation corrections, D resolutions and F refusals are applied here; A items stay TO VERIFY pending u2-draft-4 amendments 1-6 and Max's ruling."
+    "note": "Independent adjudication of milestone 1 (VERDICT: ERRORS FOUND). Amendment 7 citation corrections, D resolutions and F refusals are applied here; A items stayed TO VERIFY pending u2-draft-4 amendments 1-6 and Max's ruling. Max ruled on 2026-09-30 (d637) and, for blockers B1 and B2, on 2026-10-10 (d1090); a registry's rulings_applied, where present, records what each ruling changed in it. On 2026-10-12 Max confirmed that d637 ratified amendment 1's parts 1a-1c as written (d745), and the 1c registry commit resolved the six code-88 role records; no A item stays TO VERIFY."
   },
   "rulings_applied": [
     {
@@ -27885,6 +28023,16 @@
       "date": "2026-10-10",
       "specification_section": "16c",
       "note": "Max's ruling d1090 (2026-10-10; specification section 16c) on blockers B1 and B2: the seven role refusals and pension:2015.route.respondent_slots are replaced by the ratified family-unit exclusions (B1, section 16a option 1d-2, amending draft-3 line 160; B2, option 1e-1, amending draft-3 lines 152, 154 and 158 for 2019-2023), and the dependencies on the seven role entries are released. Each entry keeps its adjudication record (disposition F) and its superseded refusal text."
+    },
+    {
+      "decision": "d637",
+      "date": "2026-09-30",
+      "specification_section": "16b",
+      "amendments": [
+        "2",
+        "3"
+      ],
+      "note": "Max's ruling d637 (2026-09-30; specification section 16b) ratified u2-draft-4 amendments 2-5 as written and amendment 6's option 1, an explicit amendment to draft-3 line 134. Applied here, each in its own reviewed commit: amendment 2 resolves the ten 2015-2023 family-file spouse age and sex records as slot metadata only, with a no-slot-inference rule; amendment 3 resolves the six wife_retirement_annuities crosswalk records as non-executable metadata. Each ruled entry keeps its adjudication record and gains a ruling; an open question or refusal the ruling answers is kept as superseded_question or superseded_refusal."
     }
   ]
 }

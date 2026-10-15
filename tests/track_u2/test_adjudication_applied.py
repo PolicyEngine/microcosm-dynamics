@@ -3,6 +3,7 @@
 Documentary checks only: no survey records, counts or outcome calculations.
 """
 
+import copy
 import hashlib
 import html
 import json
@@ -56,18 +57,38 @@ def quoted_spans(markdown):
 
 # Registry: (RESOLVED mappings, REFUSED by disposition F and not replaced
 # by a ruling, TO VERIFY).  Max's d1090 ruling (2026-10-10; spec section
-# 16c) replaced all eight F refusals (roles 7, pension 1).
+# 16c) replaced all eight F refusals (roles 7, pension 1).  The d637
+# registry commits (2026-09-30 ruling; spec section 16b) resolve the A
+# items of amendments 1c, 2, 3, 5 and 6, every one now.
 EXPECTED_COUNTS = {
-    "income": (748, 0, 16),
+    "income": (764, 0, 0),
     "wealth": (234, 0, 0),
     "individual": (59, 0, 0),
-    "pension": (647, 0, 1),
-    "roles": (30, 0, 6),
+    "pension": (648, 0, 0),
+    "roles": (36, 0, 0),
     "support": (16, 0, 0),
-    "weights": (6, 0, 1),
+    "weights": (7, 0, 0),
     "design": (2, 0, 0),
 }
 SSI_AND_CENSUS_RESOLVED = 26
+#: TO VERIFY records left: the adjudication's 24 A items less those the
+#: d637 commits resolved (amendment 2: 10; amendment 3: 6; 5b: 1; 5a's
+#: four entries were D items, RESOLVED already; amendment 6: 1; and, as
+#: Max confirmed on 2026-10-12 (d745), amendment 1c: code 88's 6).
+OPEN_ITEMS = 0
+#: Each d637 amendment a registry commit has applied (section 16b), with
+#: the adjudication disposition its entries carry.
+D637_APPLIED = {
+    "1a": "D",
+    "1b": None,
+    "1c": "A",
+    "2": "A",
+    "3": "A",
+    "4": "D",
+    "5b": "A",
+    "5a": "D",
+    "6": "A",
+}
 
 D_ITEMS = {
     "wealth": {
@@ -258,7 +279,11 @@ def test_status_counts_after_independent_adjudication(documents):
         for key in totals:
             totals[key] += counts[key]
     totals["RESOLVED"] += SSI_AND_CENSUS_RESOLVED
-    assert totals == {"RESOLVED": 1768, "REFUSED": 0, "TO VERIFY": 24}
+    assert totals == {
+        "RESOLVED": 1792 - OPEN_ITEMS,
+        "REFUSED": 0,
+        "TO VERIFY": OPEN_ITEMS,
+    }
     # Milestone 1: 1744 RESOLVED and 48 TO VERIFY over the same records.
     assert sum(totals.values()) == 1744 + 48
 
@@ -413,8 +438,10 @@ def test_d1090_replaced_every_refusal_with_its_exclusion(
                 assert entry["income_role"] == "excluded"
                 assert not entry["spouse_slot"]
     for name in ("roles", "income", "pension"):
-        (applied,) = documents[name]["rulings_applied"]
-        assert applied["decision"] == "d1090", name
+        # d1090's record comes first; the d637 commits append their own.
+        applied = documents[name]["rulings_applied"]
+        assert applied[0]["decision"] == "d1090", name
+        assert [r["decision"] for r in applied[1:]] in ([], ["d637"]), name
 
 
 def test_documentary_resolutions_carry_evidence(documents):
@@ -432,8 +459,14 @@ def test_documentary_resolutions_carry_evidence(documents):
                 assert entry["income_role"] == "ofum"
                 assert not entry["spouse_slot"]
             if name == "pension":
-                assert entry["action"] == "refuse_pending_amendment_5_ruling"
-                assert "amendment 5" in entry["refusal"]
+                # Applied by Max's d637 ruling under 5a (section 16b).
+                assert "action" not in entry and "refusal" not in entry
+                assert "amendment 5" in entry["superseded_refusal"]
+                assert entry["ruling"]["amendment"] == "5a"
+                assert entry["ruling_effect"].startswith(
+                    "Max's ruling d637 (2026-09-30; specification section "
+                    "16b) ratified u2-draft-4 amendment 5 as written."
+                )
 
 
 def test_open_items_name_their_amendment(documents, monkeypatch):
@@ -451,7 +484,452 @@ def test_open_items_name_their_amendment(documents, monkeypatch):
             assert f"amendment {record['amendment']}" in entry["question"]
             with pytest.raises(registry.SourceAdjudicationError):
                 registry.require_resolved(name, entry["id"])
-    assert open_items == 24
+    assert open_items == OPEN_ITEMS
+
+
+def test_d637_rulings_are_recorded_on_their_entries(documents, monkeypatch):
+    """Each d637 amendment a registry commit applied (section 16b), on
+    exactly its scope: the ratified ruling, text naming d637, the
+    adjudication record kept, the answered question kept verbatim, and
+    the entry applies."""
+    assert set(registry.RATIFIED_AMENDMENTS) == set(D637_APPLIED)
+    recorded = set()
+    for name, document in documents.items():
+        for entry in document["entries"]:
+            if entry.get("ruling", {}).get("decision") == "d637":
+                recorded.add((name, entry["id"]))
+    scoped = {
+        (scope["registry"], key)
+        for scope in registry.RATIFIED_AMENDMENTS.values()
+        for key in scope["entries"]
+    }
+    assert recorded == scoped
+    for amendment, scope in registry.RATIFIED_AMENDMENTS.items():
+        name = scope["registry"]
+        document = documents[name]
+        monkeypatch.setattr(
+            registry, "load_registry", lambda _n, d=document: d
+        )
+        by_id = {e["id"]: e for e in document["entries"]}
+        number = int(amendment[0])
+        for key in scope["entries"]:
+            entry = by_id[key]
+            ruling = entry["ruling"]
+            assert (
+                ruling["decision"],
+                ruling["date"],
+                ruling["specification_section"],
+                ruling["amendment"],
+            ) == ("d637", "2026-09-30", "16b", amendment)
+            if D637_APPLIED[amendment] is None:
+                # 2013's code-90 meaning (1b) has no adjudication record
+                # (review of 7950065b).
+                assert "adjudication" not in entry, key
+            else:
+                record = entry["adjudication"]
+                assert record["disposition"] == D637_APPLIED[amendment], key
+                assert record["amendment"] == number, key
+            assert entry["status"] == "RESOLVED", key
+            assert any(
+                "d637" in entry.get(field, "")
+                for field in ("resolution", "ruling_effect", "use_restriction")
+            ), key
+            if record["disposition"] == "A":
+                assert "question" not in entry, key
+                assert entry["superseded_question"].endswith(
+                    f"needs u2-draft-4 amendment {number}, pending Max's "
+                    f"ruling ({ADJUDICATION} line {record['line']})."
+                ), key
+            assert registry.require_resolved(name, key) == entry
+    for name in {
+        scope["registry"] for scope in registry.RATIFIED_AMENDMENTS.values()
+    }:
+        (applied,) = [
+            r
+            for r in documents[name]["rulings_applied"]
+            if r["decision"] == "d637"
+        ]
+        assert applied["amendments"] == [
+            a
+            for a, scope in registry.RATIFIED_AMENDMENTS.items()
+            if scope["registry"] == name
+        ], name
+
+
+def test_d637_amendment_2_spouse_metadata_never_decides_the_slot(documents):
+    """Amendment 2 (section 16a; ratified by d637): the later family-file
+    spouse age and sex are slot metadata only.  Each record quotes its own
+    inapplicability wording as wording that decides no slot, defers slot
+    occupancy to the roles registry (under amendment 1c a code-88
+    cohabitor does not occupy the slot), and names the recorded sex and
+    derived age as what age- and sex-dependent rules use."""
+    entries = {e["id"]: e for e in documents["income"]["entries"]}
+    for key in registry.RATIFIED_AMENDMENTS["2"]["entries"]:
+        entry = entries[key]
+        assert entry["usage"] == "slot_metadata_only"
+        domain = " ".join(entry["documented_domain"].split())
+        wording = re.search(r"0 Inap\.: (.*?); no Spouse/Partner", domain)
+        assert wording, key
+        rule = entry["use_restriction"]
+        assert (
+            f"('{wording.group(1)}') never decide whether a person occupies "
+            "the spouse slot" in rule
+        ), key
+        # Occupancy is the role rules', not a closed list of codes; code 88
+        # is outside the slot by amendment 1c (d637, confirmed by d745).
+        assert (
+            "slot occupancy comes from the relationship rules, as the roles "
+            "registry's spouse_slot field records them" in rule
+        )
+        assert (
+            "a code-88 first-year cohabitor does not occupy the slot "
+            "(amendment 1c)" in rule
+        )
+        assert "TO VERIFY" not in rule and "await" not in rule
+        assert "code-20 or code-22 person" not in rule
+        assert "recorded sex (ER32000) and derived income-year age" in rule
+    # 2013 is U1's wave: its spouse age and sex keep U1's mapping.
+    for route in ("wife_age", "wife_sex"):
+        entry = entries.get(f"income.2013.{route}")
+        assert entry is None or "usage" not in entry
+
+
+def test_d637_amendment_6_uses_er34651_as_released(documents):
+    """Amendment 6, option 1 (ratified by d637 as an explicit amendment to
+    draft-3 line 134): ER34651 as released, selected by positive weight,
+    with the disclosure option 1 specifies; the 2017 individual weight is
+    released with it."""
+    record = json.loads(
+        (registry.REGISTRY_DIRECTORY / "u1_identity.json").read_text()
+    )["u2_specification"]
+    line_134 = draft_3_bytes(record).decode("utf-8").split("\n")[133]
+    entry = next(
+        e
+        for e in documents["weights"]["entries"]
+        if e["id"] == "2017.cross_section_weight"
+    )
+    assert entry["ruling"]["amends_draft_3_lines"] == [134]
+    assert entry["ruling"]["option"] == "1"
+    assert f"'{line_134}'" in entry["resolution"]
+    assert "no immigrant exclusion" in entry["resolution"]
+    assert entry["selection"].startswith("positive recorded cross-sectional")
+    assert "No cohort reweighting or immigrant exclusion" in entry["purpose"]
+    disclosure = entry["registration_disclosure"]
+    assert set(disclosure) == {"documented", "not_published", "coverage_bound"}
+    assert len(disclosure["documented"]) == 5
+    assert len(disclosure["not_published"]) == 3
+    for phrase in ("starting weights", "joint families", "raking"):
+        assert any(phrase in item for item in disclosure["not_published"])
+    for phrase in ("ER34651", "ACS one-year PUMS", "donut-hole"):
+        assert any(phrase in item for item in disclosure["documented"])
+    weight = next(
+        e
+        for e in documents["individual"]["entries"]
+        if e["id"] == "2017.weight"
+    )
+    assert weight["variable"] == "ER34651"
+    assert "blocking_dependencies" not in weight
+
+
+#: The text fields a d637 ruling writes or keeps.
+D637_TEXT_FIELDS = (
+    "completeness_disclosure",
+    "condition",
+    "resolution",
+    "use_restriction",
+    "ruling_effect",
+    "registration_disclosure",
+    "superseded_question",
+    "superseded_refusal",
+)
+#: SHA-256 of each applied amendment's ruled text (its entries' text
+#: fields, as canonical JSON): no wording moves without this pin moving
+#: (reviews of 02e3f3e2 and 06fa7d98).
+D637_TEXT_SHA256 = {
+    "1a": ("2f4bca660f85b99cac371c970bb02fe3ae3978e5e52c12d661dd3fdd5690b88d"),
+    "1b": ("ca251770719feb29812705e2ef7d3868ec6f95a925806e40792f1fda63c69be8"),
+    "1c": ("23767199b72112d6e686ad7fd99bcbcf77a7225f511ef5257817d509edef87cb"),
+    "2": ("6f6df518e66bd3588b6bed230c0c21bd6acc07db7586c4b38fa65c91719a9099"),
+    "3": ("8d93d501819d981c6605b02fde3ff89d05488738146757bd179a84c02e131598"),
+    "4": ("0b79677a5d1b41a76b17709152bec0d3789d118c75859b9716ea505c3413cd9c"),
+    "5b": ("ca59c757b3b2b3f9402643c51ae910c16f9dd5927848d03fed327172cb38b513"),
+    "5a": ("7f2b79ac154d570a4f246f7f985f4aaef47ba40c3506dc0b12f5707ba69da24e"),
+    "6": ("ad76188063ca16ddcdcc2d8e2165348293a4c88e9437e8e173765df91ffc0d2f"),
+}
+#: The operative clauses each amendment's entries must state, by field
+#: (``{wave}`` is the entry's wave).
+D637_CLAUSES = {
+    "1a": [
+        (
+            "ruling_effect",
+            "ratified amendment 1's parts 1a-1c as written, as Max confirmed "
+            "on 2026-10-12 (d745; section 16b)",
+        ),
+        ("ruling_effect", "Under 1a this documented route governs"),
+        ("ruling_effect", "an OFUM income role outside the spouse slot"),
+        ("completeness_disclosure", "OFUM route is documented"),
+        ("completeness_disclosure", "income was reported is not"),
+        (
+            "completeness_disclosure",
+            "Registration discloses this (section 16a amendment 1a).",
+        ),
+    ],
+    "1b": [
+        (
+            "ruling_effect",
+            "ratified amendment 1's parts 1a-1c as written, as Max confirmed "
+            "on 2026-10-12 (d745; section 16b)",
+        ),
+        ("ruling_effect", "Under 1b 2013 keeps the inherited meanings"),
+        ("ruling_effect", "'Legal husband of Head'"),
+        ("ruling_effect", "section 3 lines 147, 150, 156 and 175"),
+        ("ruling_effect", "an OFUM income role outside the spouse slot"),
+        ("ruling_effect", "the co-resident legal-spouse annuity life"),
+        ("ruling_effect", "relationship-based marital resolution"),
+    ],
+    "1c": [
+        (
+            "resolution",
+            "ratified amendment 1's parts 1a-1c as written, as Max confirmed "
+            "on 2026-10-12 (d745; section 16b)",
+        ),
+        (
+            "resolution",
+            "Under 1c a first-year cohabitor ({wave} code 88) has an OFUM "
+            "income role on the family basis",
+        ),
+        ("resolution", "its SSI falls in section 8's OFUM unit"),
+        ("resolution", "does not occupy the spouse slot"),
+        ("resolution", "is not a legal-spouse annuity life"),
+        (
+            "resolution",
+            "never resolves the head's or reference person's marital "
+            "history as married by relationship code alone",
+        ),
+        ("resolution", "keeps its recorded legal marital history"),
+        ("resolution", "keeps the inherited administrative birth support"),
+        (
+            "superseded_question",
+            "Which family income/SSI slot and substantive annuity or "
+            "marital rule, if any, is authorized for first-year cohabitors?",
+        ),
+    ],
+    "2": [
+        ("use_restriction", "Slot metadata only (u2-draft-4 amendment 2)."),
+        (
+            "use_restriction",
+            "never decide whether a person occupies the spouse slot",
+        ),
+        (
+            "use_restriction",
+            "a code-88 first-year cohabitor does not occupy the slot "
+            "(amendment 1c)",
+        ),
+        (
+            "use_restriction",
+            "whose parts 1a-1c d637 ratified, as Max confirmed on "
+            "2026-10-12, d745",
+        ),
+        ("use_restriction", "never this variable."),
+        ("resolution", "ratified u2-draft-4 amendment 2"),
+    ],
+    "3": [
+        ("resolution", "this crosswalk stays non-executable"),
+        ("resolution", "No scalar equivalence is asserted"),
+        (
+            "resolution",
+            "spouse IRA income included, stay inside total family money "
+            "income under section 4 and are never added a second time",
+        ),
+        ("resolution", "U2 reads none of the four as an input of its own"),
+        ("resolution", "No row changes."),
+    ],
+    "4": [
+        ("use_restriction", "Imputation diagnostics only"),
+        ("use_restriction", "never changes amounts or sample inclusion"),
+    ],
+    "5b": [
+        ("resolution", "P46=5 (DC only) reaches P64/P65"),
+        ("resolution", "P46=7 (combined) reaches P48/P49"),
+        ("resolution", "is refused pending PSID clarification"),
+        ("resolution", "off-route under the named disposition off_route"),
+        ("resolution", "never zero-filled"),
+        (
+            "resolution",
+            "a combined plan's re-asked P64/P65 items under "
+            "both_plan_account_items_reasked",
+        ),
+        ("condition", "DC-only plan (P46=5)"),
+    ],
+    "5a": [
+        ("ruling_effect", "Under 5a the {wave} previous-employer account"),
+        ("ruling_effect", "only P46=5 (DC only) reaches P64/P65"),
+        (
+            "ruling_effect",
+            "which supersedes section 15's generic account/formula/dk "
+            "previous route",
+        ),
+        (
+            "ruling_effect",
+            "section 15's own text is unchanged until section 20 step 5",
+        ),
+        (
+            "ruling_effect",
+            "a combined plan's re-asked P64/P65 items under "
+            "both_plan_account_items_reasked (the duplicate guard, "
+            "pension:{wave}.route.duplicate_and_off_route) and the others' "
+            "under off_route",
+        ),
+        ("ruling_effect", "combined-plan P48/P49 is counted once"),
+        ("ruling_effect", "IRA-rollover disposition 2 is excluded"),
+    ],
+    "6": [
+        ("resolution", "took amendment 6's option 1 for blocker B3"),
+        ("resolution", "ER34651 is used as released"),
+        (
+            "resolution",
+            "no immigrant exclusion, no reconstructed weight and no "
+            "recalibration",
+        ),
+    ],
+}
+
+
+def d637_texts(documents, amendment):
+    """Each ruled entry's text fields, in scope order."""
+    scope = registry.RATIFIED_AMENDMENTS[amendment]
+    by_id = {e["id"]: e for e in documents[scope["registry"]]["entries"]}
+    return [
+        {
+            "id": key,
+            **{f: by_id[key][f] for f in D637_TEXT_FIELDS if f in by_id[key]},
+        }
+        for key in scope["entries"]
+    ]
+
+
+def check_d637_texts(documents):
+    """The d637 entries' wording: each amendment's pinned hash and its
+    operative clauses."""
+    assert set(D637_TEXT_SHA256) == set(registry.RATIFIED_AMENDMENTS)
+    for amendment, digest in D637_TEXT_SHA256.items():
+        texts = d637_texts(documents, amendment)
+        raw = json.dumps(texts, sort_keys=True, ensure_ascii=False)
+        assert hashlib.sha256(raw.encode()).hexdigest() == digest, amendment
+        for item in texts:
+            wave = item["id"].split(".")[1 if item["id"][0].isalpha() else 0]
+            for field, clause in D637_CLAUSES[amendment]:
+                assert clause.format(wave=wave) in item[field], (
+                    item["id"],
+                    clause,
+                )
+
+
+def test_d637_texts_are_pinned(documents):
+    check_d637_texts(documents)
+
+
+#: (registry, entry, field, old, new): each changes what a d637 entry
+#: says and must fail ``check_d637_texts``.
+D637_TEXT_MUTATIONS = [
+    (
+        "roles",
+        "2019.relationship.88",
+        "resolution",
+        "; does not occupy the spouse slot",
+        "",
+    ),
+    (
+        "income",
+        "income.2019.wife_age",
+        "use_restriction",
+        ", and a code-88 first-year cohabitor does not occupy the slot",
+        "",
+    ),
+    (
+        "income",
+        "income.2017.wife_retirement_annuities",
+        "resolution",
+        " and are never added a second time",
+        "",
+    ),
+    (
+        "income",
+        "income.2013.wife_retirement_annuities",
+        "resolution",
+        "No scalar equivalence is asserted",
+        "A scalar equivalence is asserted",
+    ),
+    (
+        "pension",
+        "2015.route.formula_unknown_checkpoint",
+        "resolution",
+        "never zero-filled",
+        "zero-filled",
+    ),
+    (
+        "pension",
+        "2021.route.inherited_route_amendment",
+        "ruling_effect",
+        "only P46=5 (DC only)",
+        "P46=1 and P46=5",
+    ),
+    (
+        "pension",
+        "2019.route.inherited_route_amendment",
+        "ruling_effect",
+        "both_plan_account_items_reasked",
+        "off_route",
+    ),
+    (
+        "weights",
+        "2017.cross_section_weight",
+        "resolution",
+        "no immigrant exclusion",
+        "an immigrant exclusion",
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "name,key,field,old,new",
+    D637_TEXT_MUTATIONS,
+    ids=[f"{m[1]}:{m[2]}" for m in D637_TEXT_MUTATIONS],
+)
+def test_the_d637_text_checks_catch_each_mutation(
+    documents, name, key, field, old, new, monkeypatch
+):
+    """Each mutation fails the hash pin and, with the hash re-pinned to the
+    mutated text as an editor would, still fails an operative clause
+    (review of the answers, finding 3).  A rewritten superseded question
+    is caught by the registry differential, which compares it in full."""
+    changed = {n: copy.deepcopy(d) for n, d in documents.items()}
+    entry = next(e for e in changed[name]["entries"] if e["id"] == key)
+    assert old in entry[field], (key, field)
+    entry[field] = entry[field].replace(old, new, 1)
+    with pytest.raises(AssertionError):
+        check_d637_texts(changed)
+    amendment = entry["ruling"]["amendment"]
+    raw = json.dumps(
+        d637_texts(changed, amendment), sort_keys=True, ensure_ascii=False
+    )
+    monkeypatch.setitem(
+        D637_TEXT_SHA256, amendment, hashlib.sha256(raw.encode()).hexdigest()
+    )
+    with pytest.raises(AssertionError, match=r"\("):
+        check_d637_texts(changed)
+
+
+def test_a_dropped_disclosure_item_fails_the_text_check(documents):
+    changed = {n: copy.deepcopy(d) for n, d in documents.items()}
+    weight = next(
+        e
+        for e in changed["weights"]["entries"]
+        if e["id"] == "2017.cross_section_weight"
+    )
+    weight["registration_disclosure"]["not_published"].pop()
+    with pytest.raises(AssertionError):
+        check_d637_texts(changed)
 
 
 def test_corrected_specification_citations(documents):
@@ -768,6 +1246,31 @@ SECTION_SHA256 = {
         "312ac7673e2b3c16cd67b1fe8bb3c68cf1fc5e2e40c6055e9cf616e2043bcdab"
     ),
 }
+#: Max's confirmation of amendment 1a-1c (2026-10-12, d745), appended to
+#: section 16b, which says his answer "will be recorded here": every line.
+D745_RECORD = [
+    "**Max's confirmation of amendment 1a\N{EN DASH}1c (2026-10-12, "
+    "d745).** Max confirmed the reading above on 2026-10-12. His answer, "
+    "as recorded in the chief-of-staff decision log:",
+    "",
+    '> "yes: d637 ratified U2 amendments 1a-1c as written (Max in chat '
+    '2026-10-12)"',
+    "",
+    "So amendment 1's parts 1a\N{EN DASH}1c are ratified as written by "
+    "d637. The 2015 code-90 route, the 2017 code-90 and code-92 routes, "
+    "2013's inherited meanings and the code-88 convention govern, with "
+    "1a's completeness disclosure at registration; the wave table governs "
+    "outside blockers B1 and B2, which d1090 settled "
+    "(\N{SECTION SIGN}16c). Where this section reads 1a\N{EN DASH}1c as "
+    "ratified pending Max's confirmation (d745), that confirmation is now "
+    "given; the rest of this section is unchanged, as the record of the "
+    "ruling and the reading. Each part's registry effect "
+    '(\N{SECTION SIGN}16a, "Registry effect of the rulings": "Record '
+    '1a\N{EN DASH}1c") is its own reviewed commit (\N{SECTION SIGN}17 '
+    "item 2). No count, statistic or outcome was computed to record this "
+    "confirmation, and no file on the restricted list was opened for "
+    "reading.",
+]
 #: Max's d1090 ruling (2026-10-10): the §16a option each blocker takes,
 #: the option's amendment statement as §16a words it, and its named
 #: disposition.
@@ -818,11 +1321,13 @@ D1090_CLAUSES = {
     "header_version": [
         "- **Version:** `u2-draft-4` (milestone 1b, 2026-09-28; revised "
         "2026-09-29 after the independent review; Max's rulings recorded "
-        "2026-09-30 and 2026-10-10): proposed amendments 1\N{EN DASH}6 in "
-        "\N{SECTION SIGN}16a, ruled by Max on 2026-09-30 (d637) as recorded "
-        "in \N{SECTION SIGN}16b, with blockers B1 and B2 ruled on "
-        "2026-10-10 (d1090) as recorded in \N{SECTION SIGN}16c. Previous "
-        "version: `u2-draft-3` (round 2).",
+        "2026-09-30, 2026-10-10 and 2026-10-12): proposed amendments "
+        "1\N{EN DASH}6 in \N{SECTION SIGN}16a, ruled by Max on 2026-09-30 "
+        "(d637) as recorded in \N{SECTION SIGN}16b, with blockers B1 and B2 "
+        "ruled on 2026-10-10 (d1090) as recorded in \N{SECTION SIGN}16c, "
+        "and amendment 1's parts 1a\N{EN DASH}1c confirmed on 2026-10-12 "
+        "(d745) as recorded in \N{SECTION SIGN}16b. Previous version: "
+        "`u2-draft-3` (round 2).",
     ],
     "header_status": [
         "- **Status:** decisions ruled for `u2-draft-3`. On 2026-09-28 Max "
@@ -842,7 +1347,8 @@ D1090_CLAUSES = {
         "amendments to draft-3 line 160 (B1) and to draft-3 lines 152, 154 "
         "and 158 for 2019\N{EN DASH}2023 (B2). No blocker hold remains. "
         "Amendment 1's parts 1a\N{EN DASH}1c, which the d637 ruling's list "
-        "does not name, are read as ratified pending Max's confirmation "
+        "does not name, were read as ratified pending Max's confirmation, "
+        "and on 2026-10-12 he confirmed that d637 ratified them as written "
         "(d745; \N{SECTION SIGN}16b). Not registered or authorized for "
         "execution.",
     ],
@@ -985,14 +1491,29 @@ D1090_CLAUSES = {
         "(d1090; \N{SECTION SIGN}16c), after PSID answered:** B1 takes "
         "option 2, with its amendment to draft-3 line 160 ratified, and B2 "
         "takes option 1, with its amendment to draft-3 lines 152, 154 and "
-        "158 ratified for 2019\N{EN DASH}2023. This item stays open only "
-        "for 1a\N{EN DASH}1c, until Max confirms.",
+        "158 ratified for 2019\N{EN DASH}2023. **Confirmed 2026-10-12 "
+        "(d745; \N{SECTION SIGN}16b):** amendment 1's parts "
+        "1a\N{EN DASH}1c are ratified as written. This item is closed.",
         "2. Each ruling is applied to the registries in its own reviewed "
         "commit. The d1090 commit (2026-10-10) replaced the eight B1 and B2 "
         "refusals with \N{SECTION SIGN}16c's exclusions and released their "
-        "dependents. Until the registry commits for d637 (and, for code 88, "
-        "d745) land, the 24 TO VERIFY records stay open and the "
-        "2017\N{EN DASH}2023 P64/P65 records stay blocked.",
+        "dependents. The d637 commits, one per ratified amendment, have so "
+        "far resolved amendment 2's ten later spouse age and sex records as "
+        "slot metadata and amendment 3's six spouse-retirement crosswalks "
+        "as non-executable metadata, recorded amendment 4's ruling on the "
+        "nine corrected wealth accuracy flags, resolved the 2015 P62ACKPT "
+        "checkpoint under 5b, released the 2017\N{EN DASH}2023 P64/P65 "
+        "records under 5a and resolved the 2017 weight ER34651 under "
+        "amendment 6's option 1; the \N{SECTION SIGN}15 fragment itself is "
+        "materialized under item 9. Max confirmed 1a\N{EN DASH}1c on "
+        "2026-10-12 (d745), and the 1a, 1b and 1c commits recorded the "
+        "ruling on "
+        "the documented 2015 code-90 and 2017 code-90 and code-92 routes and "
+        "on 2013's inherited code-90 meaning, and resolved the six code-88 "
+        "records under the first-year cohabitor convention. No TO VERIFY "
+        "record remains, and the loader's source preflight passes; the "
+        "structural pass still needs Max's authorization (item 8; "
+        "\N{SECTION SIGN}20 step 4).",
         "8. Complete the pre-registration structural, reconciliation and "
         "F17 component pass, including only the counts that the ratified B1 "
         "and B2 options name (under the 2026-10-10 ruling, the counts "
@@ -1009,9 +1530,9 @@ D1090_CLAUSES = {
         "\N{SECTION SIGN}16b).** B3 is resolved by option 1. B1 and B2 were "
         "held until PSID answered; **Max ruled on them on 2026-10-10 "
         "(d1090; \N{SECTION SIGN}16c)**: B1 by option 2 and B2 by option 1, "
-        "each an exclusion under a named disposition. This step stays open "
-        "only because amendment 1's parts 1a\N{EN DASH}1c await Max's "
-        "confirmation of the reading in \N{SECTION SIGN}16b (d745).",
+        "each an exclusion under a named disposition. Max confirmed the "
+        "reading of amendment 1's parts 1a\N{EN DASH}1c in "
+        "\N{SECTION SIGN}16b on 2026-10-12 (d745), so this step is done.",
     ],
 }
 
@@ -1205,6 +1726,15 @@ def test_section_16c_records_the_d1090_ruling():
         SECTION_SHA256.items(), starts[1:3], strict=True
     ):
         text = spec[spec.index(heading) : end]
+        if heading == "## 16b. ":
+            # Max's d745 confirmation is appended; the d637 text before it
+            # is unchanged, and the confirmation is exactly D745_RECORD.
+            text, appended = text.split(D745_RECORD[0], 1)
+            assert (D745_RECORD[0] + appended).split("\n") == [
+                *D745_RECORD,
+                "",
+                "",
+            ]
         assert hashlib.sha256(text.encode()).hexdigest() == digest, heading
     proposals = spec[starts[0] : starts[1]]
     record = spec[starts[2] : starts[3]]
@@ -1222,6 +1752,28 @@ def test_section_16c_records_the_d1090_ruling():
         assert re.findall(r"\b\d{3,4}\b", cell) == numbers, blocker
         assert f"`{disposition}`" in row, blocker
     check_d1090_record(spec)
+
+
+@pytest.mark.parametrize(
+    "old, new",
+    [
+        ('"yes: d637 ratified', '"no: d637 did not ratify'),
+        ("are ratified as written by d637", "stay proposed"),
+        ("the code-88 convention govern", "the code-88 refusal govern"),
+        ("is its own reviewed commit", "lands without review"),
+    ],
+)
+def test_the_d745_record_catches_each_mutation(old, new):
+    """Section 16b's d745 paragraph is pinned line by line, and the d637
+    text before it by hash: a changed word fails."""
+    spec = (ROOT / SPEC).read_text(encoding="utf-8")
+    start = spec.index(D745_RECORD[0])
+    end = spec.index("## 16c. ")
+    assert old in spec[start:end]
+    mutated = spec[:start] + spec[start:end].replace(old, new, 1) + spec[end:]
+    section = mutated[mutated.index("## 16b. ") : mutated.index("## 16c. ")]
+    _, appended = section.split(D745_RECORD[0], 1)
+    assert (D745_RECORD[0] + appended).split("\n") != [*D745_RECORD, "", ""]
 
 
 #: Mutations of the d1090 record that change what it says, each by
@@ -1277,7 +1829,7 @@ D1090_MUTATIONS = [
     ),
     (
         "execution",
-        "of the reading in \N{SECTION SIGN}16b (d745).",
+        "so this step is done.",
         "only if the structural pass finds nonzero exclusions.",
     ),
     (
@@ -1382,15 +1934,14 @@ D1090_MUTATIONS = [
     # review of 742590b, finding 1).
     (
         "outstanding",
-        "This item stays open only for 1a\N{EN DASH}1c, until Max "
-        "confirms.",
-        "This item stays open only for 1a\N{EN DASH}1c, until Max "
-        "confirms.\n2. U2 is registered and authorized.",
+        "are ratified as written. This item is closed.",
+        "are ratified as written. This item is closed.\n"
+        "2. U2 is registered and authorized.",
     ),
     (
         "outstanding",
-        "the 2017\N{EN DASH}2023 P64/P65 records stay blocked.",
-        "the 2017\N{EN DASH}2023 P64/P65 records stay blocked.\n"
+        "authorization (item 8; \N{SECTION SIGN}20 step 4).",
+        "authorization (item 8; \N{SECTION SIGN}20 step 4).\n"
         "3. B1 and B2 remain held.",
     ),
     (
@@ -1401,10 +1952,8 @@ D1090_MUTATIONS = [
     ),
     (
         "execution",
-        "await Max's confirmation of the reading in \N{SECTION SIGN}16b "
-        "(d745).",
-        "await Max's confirmation of the reading in \N{SECTION SIGN}16b "
-        "(d745).\n2. Registration is complete.",
+        "so this step is done.",
+        "so this step is done.\n2. Registration is complete.",
     ),
     # Insertions after pinned lines (review of e7a558f, info finding 2).
     (
@@ -1420,10 +1969,9 @@ D1090_MUTATIONS = [
     ),
     (
         "outstanding",
-        "This item stays open only for 1a\N{EN DASH}1c, until Max "
-        "confirms.",
-        "This item stays open only for 1a\N{EN DASH}1c, until Max "
-        "confirms.\n   B1 and B2 remain held.",
+        "1a\N{EN DASH}1c are ratified as written. This item is closed.",
+        "1a\N{EN DASH}1c are ratified as written. This item is closed.\n"
+        "   B1 and B2 remain held.",
     ),
     ("outstanding", "and B2 takes option 1,", "and B2 takes option 2,"),
     ("outstanding", "each disclosed and deciding nothing", "each disclosed"),
@@ -1530,8 +2078,9 @@ def test_part_b_verdicts_agree():
     assert finding.startswith("PARTIAL")
     master = MASTER.read_text(encoding="utf-8")
     assert (
-        "| Revised 2017 individual-weight construction | TO VERIFY "
-        "(adjudication A); Part B PARTIAL |" in master
+        "| Revised 2017 individual-weight construction | RESOLVED by Max's "
+        "ruling d637 (amendment 6, option 1; adjudication A); Part B "
+        "PARTIAL |" in master
     )
     assert "NOT DOCUMENTED ONLINE" not in master
     for blocker in (
@@ -1587,18 +2136,32 @@ def test_released_dependencies(documents):
     for wave in registry.U2_SOURCE_WAVES:
         entry = pension[f"{wave}.route.respondent_slots"]
         assert "blocking_dependencies" not in entry, wave
-    for wave in (2017, 2019, 2021, 2023):
+    # d637's 5b and 5a commits released every dependent of the 2015
+    # checkpoint and of the 2017-2023 inherited-route amendments.
+    routes = {"pension:2015.route.formula_unknown_checkpoint"} | {
+        f"pension:{wave}.route.inherited_route_amendment"
+        for wave in (2017, 2019, 2021, 2023)
+    }
+    for document in documents.values():
+        for entry in document["entries"]:
+            assert not routes & set(entry.get("blocking_dependencies", []))
+    for wave in registry.U2_SOURCE_WAVES:
         for person in ("head", "wife"):
             for plan in (1, 2):
-                entry = pension[f"{wave}.{person}_prev{plan}_dc_amount"]
-                assert (
-                    f"pension:{wave}.route.inherited_route_amendment"
-                    in entry["blocking_dependencies"]
-                )
+                for item in ("dc_disposition", "dc_amount"):
+                    entry = pension[f"{wave}.{person}_prev{plan}_{item}"]
+                    assert "blocking_dependencies" not in entry
 
 
 def test_master_record_matches_registries(documents):
     text = MASTER.read_text(encoding="utf-8")
+    # One section per ruling's registry commits, each listing every
+    # applied d637 amendment once.
+    assert text.count("\n## Max's ruling d637 applied ") == 1
+    for amendment in registry.RATIFIED_AMENDMENTS:
+        assert (
+            len(re.findall(rf"^\| {amendment}: ", text, re.M)) == 1
+        ), amendment
     rows = dict(
         re.findall(r"^\| `([a-z]+:[^`]+)` \| ([A-Z ]+?) \| ", text, re.M)
     )
@@ -1608,7 +2171,10 @@ def test_master_record_matches_registries(documents):
         for entry in document["entries"]
     }
     assert rows == expected
-    assert "**1768 RESOLVED; 0 REFUSED; 24 TO VERIFY**" in text
+    assert (
+        f"**{1792 - OPEN_ITEMS} RESOLVED; 0 REFUSED; {OPEN_ITEMS} TO VERIFY**"
+        in text
+    )
     # Each per-route row states exactly its entry's remaining blocking
     # dependencies (review of 8103881, finding 3: d1090 released 554).
     sentences = dict(

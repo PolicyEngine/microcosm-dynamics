@@ -10,6 +10,7 @@ INVENTED DATA - NOT A COMPARISON.
 
 from __future__ import annotations
 
+import datetime
 import functools
 import hashlib
 import json
@@ -90,11 +91,15 @@ _ADJUDICATED_GATE_PROJECTION_SHA256 = {
 
 
 #: Max's d1090 ruling (2026-10-10, section 16c) moved the gate fields of
-#: three registries in its own reviewed commit; the other five keep the
-#: adjudicated projection.  The registries before that commit are read
-#: from Git (CI fetches full history) at master's last pre-d1090 commit.
+#: three registries in its own reviewed commit; the other five kept the
+#: adjudicated projection.  The registries before and after that commit
+#: are read from Git (CI fetches full history): at master's last pre-d1090
+#: commit and at the d1090 registry commit, whose registries are master's
+#: until the first d637 registry commit (no later d1090 commit touched
+#: them).
 D1090_MOVED = ("income", "pension", "roles")
 PRE_D1090_COMMIT = "1fadf50a70d1f66151597e27a81daa191ee37e4a"
+D1090_COMMIT = "07916bba0ca25b73e213f97ebdba831a7f2005fa"
 _D1090_GATE_PROJECTION_SHA256 = {
     "income": (
         "15c439a3282857caddbc911f8e1a133f1cb09ac00a90142699bf67e87d8a865e"
@@ -119,16 +124,25 @@ D1090_ROLES = frozenset(
 D1090_DEPENDENCIES = frozenset(f"roles:{key}" for key in D1090_ROLES)
 
 
-def _pre_d1090(name):
+def _at(commit, name):
+    """Registry ``name`` as committed at ``commit`` (from Git history)."""
     import subprocess
 
-    blob = f"{PRE_D1090_COMMIT}:data/external/track_u2/{name}.json"
+    blob = f"{commit}:data/external/track_u2/{name}.json"
     found = subprocess.run(
         ["git", "-C", str(registry.REGISTRY_DIRECTORY), "show", blob],
         capture_output=True,
     )
     assert found.returncode == 0, found.stderr.decode()
     return found.stdout
+
+
+def _pre_d1090(name):
+    return _at(PRE_D1090_COMMIT, name)
+
+
+def _current(name):
+    return (registry.REGISTRY_DIRECTORY / f"{name}.json").read_bytes()
 
 
 def _projection_sha256(raw):
@@ -159,35 +173,55 @@ def test_milestone_1b_moved_only_citations_and_prose():
 
     Every status, disposition, dependency, action, role and layout field
     is where the adjudicated registries put it: in the five registries
-    d1090 left alone today, and in the three it moved as they stood before
-    its commit.  So every route that refused at 883ea48 refused until
-    d1090, and its moves are exactly those the next test pins.
+    d1090 left alone, as they stood at its commit, and in the three it
+    moved, as they stood before it.  So every route that refused at
+    883ea48 refused until d1090, and its moves are exactly those the next
+    test pins; the d637 commits' moves are pinned after it.
     """
     assert set(_ADJUDICATED_GATE_PROJECTION_SHA256) == set(
         sources.REGISTRY_SHA256
     )
     for name, expected in _ADJUDICATED_GATE_PROJECTION_SHA256.items():
-        raw = (registry.REGISTRY_DIRECTORY / f"{name}.json").read_bytes()
+        raw = _current(name)
         assert hashlib.sha256(raw).hexdigest() == sources.REGISTRY_SHA256[name]
+        at_d1090 = _projection_sha256(_at(D1090_COMMIT, name))
         if name in D1090_MOVED:
             assert _projection_sha256(_pre_d1090(name)) == expected, name
-            current = _D1090_GATE_PROJECTION_SHA256[name]
-            assert _projection_sha256(raw) == current, name
+            assert at_d1090 == _D1090_GATE_PROJECTION_SHA256[name], name
         else:
-            assert _projection_sha256(raw) == expected, name
+            assert at_d1090 == expected, name
 
 
 def _changed_keys(before, after):
+    """The keys whose presence or JSON value differs: a key added as null
+    is a change, and ``true`` is not ``1`` (review of e74a5546, finding
+    3)."""
     keys = set(before) | set(after)
-    return {k for k in keys if before.get(k, None) != after.get(k, None)}
+    return {
+        k
+        for k in keys
+        if k not in before
+        or k not in after
+        or json.dumps(before[k], sort_keys=True)
+        != json.dumps(after[k], sort_keys=True)
+    }
+
+
+def test_changed_keys_sees_a_key_added_as_null():
+    """Review of e74a5546, finding 3: the differential's field comparison
+    sees presence and JSON type, not just ``dict.get``."""
+    assert _changed_keys({"a": 1}, {"a": 1, "b": None}) == {"b"}
+    assert _changed_keys({"a": 1, "b": None}, {"a": 1}) == {"b"}
+    assert _changed_keys({"a": 1}, {"a": True}) == {"a"}
+    assert _changed_keys({"a": [1, {"x": 2}]}, {"a": [1, {"x": 2}]}) == set()
 
 
 def test_d1090_moved_only_the_ruled_gate_fields():
-    """The d1090 registry commit (section 16c), field by field: the eight
-    ruled entries change only their action, refusal, role, exclusion,
-    resolution and ruling fields; every other entry changes only by losing
-    a dependency on a ruled role entry; no entry is added, dropped or
-    reordered, and nothing else moves."""
+    """The d1090 registry commit (section 16c), field by field, read from
+    Git on both sides: the eight ruled entries change only their action,
+    refusal, role, exclusion, resolution and ruling fields; every other
+    entry changes only by losing a dependency on a ruled role entry; no
+    entry is added, dropped or reordered, and nothing else moves."""
     ruled = {
         ("roles", "2015.relationship.20"): {
             "action",
@@ -222,11 +256,7 @@ def test_d1090_moved_only_the_ruled_gate_fields():
     released = {}
     for name in D1090_MOVED:
         before = _gate_projection(json.loads(_pre_d1090(name)))
-        after = _gate_projection(
-            json.loads(
-                (registry.REGISTRY_DIRECTORY / f"{name}.json").read_bytes()
-            )
-        )
+        after = _gate_projection(json.loads(_at(D1090_COMMIT, name)))
         top = _changed_keys(before, after) - {"entries"}
         assert top == (
             {"rulings_applied", "status_scope"}
@@ -265,10 +295,242 @@ def test_d1090_moved_only_the_ruled_gate_fields():
     assert sum(released.values()) == 492 + 45
 
 
+#: Max's d637 ruling (2026-09-30, section 16b), applied one reviewed
+#: registry commit per ratified amendment.  The gate fields each ruled
+#: entry changes, by amendment (prose keys excluded: ``question`` is
+#: prose, so its move to ``superseded_question`` shows as the new key).
+D637_RULED_FIELDS = {
+    # Amendment 1a's three D items keep their documentary resolution.
+    "1a": {"ruling_effect", "completeness_disclosure", "ruling"},
+    "1b": {"ruling_effect", "ruling"},
+    # Code 88's six A items resolve under the convention.
+    "1c": {
+        "status",
+        "action",
+        "income_role",
+        "resolution",
+        "ruling",
+        "superseded_question",
+    },
+    "2": {
+        "status",
+        "usage",
+        "use_restriction",
+        "resolution",
+        "ruling",
+        "superseded_question",
+    },
+    "3": {
+        "status",
+        "use_restriction",
+        "resolution",
+        "ruling",
+        "superseded_question",
+    },
+    # Amendment 4's nine D items already held their resolution: the
+    # ruling and the ratified restriction wording move.
+    "4": {"use_restriction", "ruling"},
+    # The 2015 checkpoint's refusal is a gate field; its question is prose.
+    "5b": {
+        "status",
+        "accepted_plan_types",
+        "rejected_plan_types",
+        "condition",
+        "refused_branch",
+        "off_route_disposition",
+        "resolution",
+        "ruling",
+        "superseded_question",
+        "refusal",
+        "superseded_refusal",
+    },
+    # The 2017-2023 D items keep their documentary resolution; the
+    # refusal pending the ruling moves out.
+    "5a": {
+        "action",
+        "refusal",
+        "ruling_effect",
+        "ruling",
+        "superseded_refusal",
+    },
+    "6": {
+        "status",
+        "resolution",
+        "registration_disclosure",
+        "ruling",
+        "superseded_question",
+    },
+}
+#: The dependencies each amendment released.
+D637_RELEASED: dict[str, frozenset[str]] = {
+    "5b": frozenset({"pension:2015.route.formula_unknown_checkpoint"}),
+    "5a": frozenset(
+        f"pension:{wave}.route.inherited_route_amendment"
+        for wave in (2017, 2019, 2021, 2023)
+    ),
+    "6": frozenset({"weights:2017.cross_section_weight"}),
+}
+#: How many entries, by registry, lost a released dependency (each then
+#: has none left).
+D637_RELEASED_COUNTS = {"pension": 34 + 40, "individual": 1}
+#: The top-level fields each registry's d637 commits changed: the d637
+#: ``rulings_applied`` record, and in the last (wording) commit every
+#: ``independent_adjudication`` note and the wealth ``status_scope``.
+D637_TOP = {
+    "income": {"rulings_applied", "independent_adjudication"},
+    "wealth": {"rulings_applied", "independent_adjudication", "status_scope"},
+    "pension": {"rulings_applied", "independent_adjudication"},
+    "individual": {"rulings_applied"},
+    "roles": {"rulings_applied", "independent_adjudication"},
+    "support": {"independent_adjudication"},
+    "weights": {"rulings_applied", "independent_adjudication"},
+}
+#: The exact note of a d637 record in a registry where the ruling only
+#: released a dependency (the individual registry, amendment 6).
+D637_RECORD_NOTES = {
+    "individual": (
+        "Max's ruling d637 (2026-09-30; specification section 16b) took "
+        "amendment 6's option 1 for the 2017 cross-sectional weight "
+        "(weights:2017.cross_section_weight, ER34651). Its registry commit "
+        "released this registry's 2017.weight from its dependency on that "
+        "record; no entry here records a ruling."
+    ),
+}
+#: The wording commit's note, after the adjudication's own sentences.
+D637_ADJUDICATION_NOTE_END = (
+    "A items stayed TO VERIFY pending u2-draft-4 amendments 1-6 and Max's "
+    "ruling. Max ruled on 2026-09-30 (d637) and, for blockers B1 and B2, on "
+    "2026-10-10 (d1090); a registry's rulings_applied, where present, "
+    "records what each ruling changed "
+    "in it. On 2026-10-12 Max confirmed that d637 ratified amendment 1's "
+    "parts 1a-1c as written (d745), and the 1c registry commit resolved the "
+    "six code-88 role records; no A item stays TO VERIFY."
+)
+#: The amendments each registry's ``rulings_applied`` d637 record lists.
+D637_RECORDED = {
+    "income": ["2", "3"],
+    "wealth": ["4"],
+    "pension": ["5b", "5a"],
+    "weights": ["6"],
+    "individual": ["6"],
+    "roles": ["1a", "1b", "1c"],
+}
+
+
+def test_d637_moved_only_the_ruled_gate_fields():
+    """The d637 registry commits, field by field, against the registries
+    the d1090 commit left (read from Git): each ruled entry is exactly its
+    amendment's scope (``u2_source_registry.RATIFIED_AMENDMENTS``) and
+    changes exactly its amendment's fields; every other entry changes only
+    by losing a dependency an amendment released; no entry is added,
+    dropped or reordered, and nothing else moves."""
+    ruled = {
+        (scope["registry"], key): amendment
+        for amendment, scope in registry.RATIFIED_AMENDMENTS.items()
+        for key in scope["entries"]
+    }
+    assert set(registry.RATIFIED_AMENDMENTS) == set(D637_RULED_FIELDS)
+    releasable = set().union(*D637_RELEASED.values())
+    moved, released = set(), {}
+    for name in registry.REGISTRY_NAMES:
+        raw_before = json.loads(_at(D1090_COMMIT, name))
+        raw_after = json.loads(_current(name))
+        before = _gate_projection(raw_before)
+        after = _gate_projection(raw_after)
+        # A question or refusal a ruling answers is kept verbatim: compared
+        # in full, since ``question`` is prose the projection drops.
+        old_raw = {e["id"]: e for e in raw_before["entries"]}
+        for entry in raw_after["entries"]:
+            if (name, entry["id"]) not in ruled:
+                continue
+            for kept, field in (
+                ("superseded_question", "question"),
+                ("superseded_refusal", "refusal"),
+            ):
+                if kept in entry:
+                    assert entry[kept] == old_raw[entry["id"]][field], (
+                        name,
+                        entry["id"],
+                    )
+                    assert field not in entry, (name, entry["id"])
+        top = _changed_keys(before, after) - {"entries"}
+        assert top == D637_TOP.get(name, set()), name
+        if name in D637_RECORDED:
+            (record,) = [
+                r for r in after["rulings_applied"] if r["decision"] == "d637"
+            ]
+            assert (record["date"], record["specification_section"]) == (
+                "2026-09-30",
+                "16b",
+            )
+            assert record["amendments"] == D637_RECORDED[name], name
+            assert set(record) == {
+                "decision",
+                "date",
+                "specification_section",
+                "amendments",
+                "note",
+            }, name
+            assert record["note"].startswith(
+                "Max's ruling d637 (2026-09-30; specification section 16b) "
+            ), name
+            if name in D637_RECORD_NOTES:
+                assert record["note"] == D637_RECORD_NOTES[name], name
+            assert after["rulings_applied"][:-1] == before.get(
+                "rulings_applied", []
+            ), name
+        if "independent_adjudication" in top:
+            old_meta = before["independent_adjudication"]
+            new_meta = after["independent_adjudication"]
+            assert _changed_keys(old_meta, new_meta) == {"note"}, name
+            # Exactly the adjudication's own sentences, then the new end.
+            assert new_meta["note"] == (
+                old_meta["note"].split("A items stay TO VERIFY")[0]
+                + D637_ADJUDICATION_NOTE_END
+            ), name
+        if "status_scope" in top:
+            assert after["status_scope"] == before["status_scope"].replace(
+                "is separately refused by", "is decided separately by"
+            )
+        assert [e["id"] for e in before["entries"]] == [
+            e["id"] for e in after["entries"]
+        ], name
+        for old, new in zip(before["entries"], after["entries"], strict=True):
+            changed = _changed_keys(old, new)
+            if not changed:
+                continue
+            key = (name, old["id"])
+            moved.add(key)
+            if key in ruled:
+                assert changed == D637_RULED_FIELDS[ruled[key]], key
+                continue
+            assert changed == {"blocking_dependencies"}, key
+            dropped = set(old["blocking_dependencies"]) - set(
+                new.get("blocking_dependencies", [])
+            )
+            assert dropped and dropped <= releasable, key
+            assert set(new.get("blocking_dependencies", [])) <= set(
+                old["blocking_dependencies"]
+            ), key
+            released[key] = not new.get("blocking_dependencies")
+        for entry in after["entries"]:
+            assert not set(entry.get("blocking_dependencies", [])) & (
+                releasable
+            ), (name, entry["id"])
+    # Every ruled entry moved, so no scope names an untouched entry.
+    assert set(ruled) <= moved
+    by_registry = {}
+    for name, _ in released:
+        by_registry[name] = by_registry.get(name, 0) + 1
+    assert by_registry == D637_RELEASED_COUNTS
+    assert all(released.values())
+
+
 def test_the_gate_projection_sees_a_moved_gate_field():
-    """A changed status is not prose: the projection hash moves."""
-    raw = (registry.REGISTRY_DIRECTORY / "weights.json").read_bytes()
-    document = json.loads(raw)
+    """A changed status is not prose: the projection hash moves.  Read at
+    the d1090 commit, whose weights registry still held the 2017 weight
+    TO VERIFY (the d637 amendment-6 commit resolved it)."""
+    document = json.loads(_at(D1090_COMMIT, "weights"))
     target = next(
         entry
         for entry in document["entries"]
@@ -460,11 +722,87 @@ def test_wealth1_identity_counts_a_broken_identity(u2_inputs, declared_gate):
     )
 
 
-def test_crosswalks_are_never_executable_inputs(declared_gate):
+@pytest.mark.parametrize(
+    "gate_kind", [sources.REGISTRY, sources.INVENTED_DECLARED]
+)
+def test_slot_metadata_is_read_only_as_the_slot_flag(
+    gate_kind, committed_registries
+):
+    """Amendment 2 (ratified by d637): the later family-file spouse age and
+    sex are slot metadata only.  The adapter reads the spouse age, for the
+    slot flag the income rows hold equal to the roster, and refuses the
+    spouse sex under either gate."""
+    for wave in (2015, 2017, 2019, 2021, 2023):
+        gate = sources.SourceGate(gate_kind, committed_registries)
+        (spec,) = sources.field_specs("income", wave, ["wife_age"], gate)
+        assert spec.kind == "age"
+        with pytest.raises(sources.U2SourceRefusal, match="slot metadata"):
+            sources.field_specs("income", wave, ["wife_sex"], gate)
+    assert "wife_sex" not in sources.INCOME_CONCEPTS
+
+
+def test_spouse_age_and_sex_are_read_nowhere_else():
+    """Static guard for amendment 2: no U2 module but the adapters and the
+    invented generator names the family-file spouse age or sex, no U2
+    script does but for the dry run's count of invented DK ages, and U1's
+    income concept, which U2's rows feed, names neither.  The capture
+    scripts are left out: the income one names both because it builds the
+    documentary registries from the codebooks, and runs nothing."""
+    from pathlib import Path
+
+    from populace_dynamics.estimates import adjusted_poverty
+
+    package = Path(sources.__file__).parent
+    allowed = {"sources.py", "invented.py"}
+    for path in sorted(package.glob("*.py")):
+        if path.name in allowed:
+            continue
+        text = path.read_text(encoding="utf-8")
+        assert "wife_age" not in text and "wife_sex" not in text, path.name
+    text = Path(adjusted_poverty.__file__).read_text(encoding="utf-8")
+    assert "wife_age" not in text and "wife_sex" not in text
+    root = Path(registry.REGISTRY_DIRECTORY).parents[2]
+    # The U2-owned scripts (test_u2_isolation.py: scripts/*track_u2* and
+    # scripts/u2_*), less the capture scripts.
+    owned = {
+        *(root / "scripts").glob("*track_u2*.py"),
+        *(root / "scripts").glob("u2_*.py"),
+    }
+    scripts = sorted(p for p in owned if not p.name.startswith("capture_"))
+    assert "u2_u1_differential.py" in {p.name for p in scripts}
+    assert len(scripts) >= 5
+    uses = [
+        (path.name, line.strip())
+        for path in scripts
+        for line in path.read_text(encoding="utf-8").split("\n")
+        if "wife_age" in line or "wife_sex" in line
+    ]
+    assert uses == [
+        (
+            "track_u2_dry_run.py",
+            '"spouse_age_dk_na": int((raw["wife_age"] == 999).sum()),',
+        )
+    ]
+
+
+def test_crosswalks_are_never_executable_inputs(declared_gate, registry_gate):
     with pytest.raises(sources.U2SourceRefusal, match="documentary"):
         sources.field_specs(
             "income", 2019, ["wife_retirement_annuities"], declared_gate
         )
+    # Amendment 3 (ratified by d637, section 16b) resolved every
+    # spouse-retirement crosswalk as non-executable metadata: the registry
+    # gate now passes the entry, and the adapter still refuses it as an
+    # input in every wave.
+    for wave in sources.SUPPORT_WAVES:
+        key = f"income.{wave}.wife_retirement_annuities"
+        assert registry.require_resolved("income", key)["kind"] == (
+            "historical_route_crosswalk"
+        )
+        with pytest.raises(sources.U2SourceRefusal, match="documentary"):
+            sources.field_specs(
+                "income", wave, ["wife_retirement_annuities"], registry_gate
+            )
     with pytest.raises(sources.U2SourceRefusal, match="documentary"):
         sources.field_specs(
             "wealth",
@@ -476,30 +814,59 @@ def test_crosswalks_are_never_executable_inputs(declared_gate):
         )
 
 
-#: The first registry blocker each later wave's family-record specs meet
-#: (income concepts are read first, in :data:`sources.INCOME_CONCEPTS`
-#: order): every later wave's spouse age slot metadata, still TO VERIFY
-#: (amendment 2).  Until the d1090 registry commit (section 16c), 2015's
-#: income entries depended on the refused 2015 code-20 route and
-#: 2019-2023's on the refused code-90/92 routes; those dependencies are
-#: released.
-FIRST_BLOCKER = {
-    wave: f"income:income.{wave}.wife_age: TO VERIFY"
-    for wave in (2015, 2017, 2019, 2021, 2023)
-}
+#: The waves whose family-record specs (income, wealth and employer-DC
+#: items) the registry gate applies: every support wave; a re-blocked
+#: entry still refuses (``test_registry_gate_refuses_a_reblocked_family_
+#: record``).  Until the d1090
+#: registry commit (section 16c), 2015's income entries depended on the
+#: refused 2015 code-20 route and 2019-2023's on the refused code-90/92
+#: routes; until the d637 amendment-2 commit (section 16b), every later
+#: wave first met its spouse age slot metadata, TO VERIFY; until the 5b
+#: and 5a commits, the P64/P65 items waited on 2015's P62ACKPT checkpoint
+#: and on 2017-2023's inherited-route amendments.
+OPEN_WAVES_RESOLVED = sources.SUPPORT_WAVES
 
 
-def test_registry_gate_refuses_every_open_wave(registry_gate):
+def test_registry_gate_applies_every_support_wave(registry_gate):
     # 2013: every mapping U2 reads is resolved (the 2013 meanings are
-    # U1's); 2015-2023: each wave meets a TO VERIFY or refused entry.
-    specs = loader.family_record_specs(2013, registry_gate)
-    concepts = {spec.concept for spec in specs}
-    assert set(sources.INCOME_CONCEPTS) <= concepts
-    assert {"wealth1", "vehicles", "head_current_amount"} <= concepts
-    for wave, blocker in FIRST_BLOCKER.items():
-        with pytest.raises(sources.U2SourceRefusal) as error:
-            loader.family_record_specs(wave, registry_gate)
-        assert blocker in str(error.value), (wave, str(error.value)[:200])
+    # U1's); 2015-2023 since the d637 commits for amendments 2, 5b and
+    # 5a.
+    for wave in OPEN_WAVES_RESOLVED:
+        specs = loader.family_record_specs(wave, registry_gate)
+        concepts = {spec.concept for spec in specs}
+        assert set(sources.INCOME_CONCEPTS) <= concepts
+        assert {"wealth1", "vehicles", "head_current_amount"} <= concepts
+        assert all(spec.gate == sources.REGISTRY for spec in specs)
+
+
+@pytest.mark.parametrize("wave", (2015, 2017, 2019, 2021, 2023))
+def test_registry_gate_refuses_a_reblocked_family_record(
+    wave, committed_registries, monkeypatch
+):
+    """A later wave meets the blocker of any family-record entry, as each
+    did before the d637 commits; the first P64 item is re-blocked in
+    memory only (review of the amendment-5 commits, finding 3)."""
+    original = sources.RegistrySet.entry
+    key = f"{wave}.head_prev1_dc_disposition"
+    # The blocker each wave's P64 items had before the d637 commits.
+    route = (
+        "formula_unknown_checkpoint"
+        if wave == 2015
+        else "inherited_route_amendment"
+    )
+    blocker = f"pension:{wave}.route.{route}"
+
+    def entry(self, name, entry_id):
+        found = original(self, name, entry_id)
+        if (name, entry_id) == ("pension", key):
+            return {**found, "blocking_dependencies": [blocker]}
+        return found
+
+    monkeypatch.setattr(sources.RegistrySet, "entry", entry)
+    gate = sources.SourceGate(sources.REGISTRY, committed_registries)
+    with pytest.raises(sources.U2SourceRefusal) as error:
+        loader.family_record_specs(wave, gate)
+    assert f"pension:{key}: blocked by {blocker}" in str(error.value)
 
 
 @pytest.mark.parametrize("wave", sources.SUPPORT_WAVES)
@@ -545,45 +912,127 @@ def test_declared_gate_records_what_the_registry_gate_refuses(
     loader.family_record_specs(2019, gate)
     audit = gate.audit()
     assert audit["gate"] == sources.INVENTED_DECLARED
-    refused = audit["would_refuse_under_registry_gate"]
-    assert "income:income.2019.wife_age" in refused
-    # Since d1090 no reason is a ruled role entry (section 16c).
-    assert not any(
-        dependency in reason
-        for reasons in refused.values()
-        for reason in reasons
-        for dependency in D1090_DEPENDENCIES
+    # Since the d637 commits for amendments 2 and 5a (section 16b) the
+    # registry gate refuses nothing in 2019's family records.
+    assert audit["would_refuse_under_registry_gate"] == {}
+    assert audit["n_entries_applied"] > 0
+    # The record is kept when an entry is blocked: the same specs on an
+    # invented copy of the registries with one P64 item re-blocked, as
+    # before 5a.
+    documents = json.loads(json.dumps(dict(committed_registries.documents)))
+    blocked = "pension:2019.route.inherited_route_amendment"
+    for entry in documents["pension"]["entries"]:
+        if entry["id"] == "2019.head_prev1_dc_amount":
+            entry["blocking_dependencies"] = [blocked]
+    copied = sources.RegistrySet(
+        documents, dict(committed_registries.sha256), "invented"
     )
-    assert any(
-        "pension:2019.route.inherited_route_amendment" in reason
-        for reasons in refused.values()
-        for reason in reasons
-    )
+    gate = sources.SourceGate(sources.INVENTED_DECLARED, copied)
+    loader.family_record_specs(2019, gate)
+    refused = gate.audit()["would_refuse_under_registry_gate"]
+    assert refused == {
+        "pension:2019.head_prev1_dc_amount": [
+            f"pension:2019.head_prev1_dc_amount: blocked by {blocked}"
+        ]
+    }
 
 
-def test_source_preflight_refuses_before_opening_any_psid_file(
+def test_an_unauthorized_load_refuses_before_any_psid_path(
     tmp_path, monkeypatch
 ):
-    opened = []
+    """Section 20 step 4 needs Max's recorded authorization: an unfrozen
+    load without it refuses before the source preflight and before any
+    PSID path is resolved, and a malformed record refuses the same way.
+    With a record, the load passes the source preflight (no blocker) and
+    refuses at the cited-source rehash, the staged directory being
+    empty; nothing under it is opened."""
+
+    import sys
+
+    from populace_dynamics.data import psid
+
+    opened, resolved = [], []
 
     def spy(event, args):
         if event == "open" and args and str(args[0]).startswith(str(tmp_path)):
             opened.append(args[0])
 
-    import sys
-
     sys.addaudithook(spy)
-    with pytest.raises(loader.U2LoaderRefusal, match="registry blockers"):
-        loader.load_u2_inputs(data_dir=tmp_path)
+    original = psid._resolve_data_dir
+    monkeypatch.setattr(
+        psid,
+        "_resolve_data_dir",
+        lambda data_dir: resolved.append(data_dir) or original(data_dir),
+    )
+    head = "0" * 40
+    for authorization in (
+        None,
+        {},
+        {"decision": "d745"},
+        {"decision": "yes", "git_head": head, "recorded_at_utc": "x"},
+        {
+            "decision": "d745",
+            "git_head": "HEAD",
+            "recorded_at_utc": "2026-10-12T00:00:00Z",
+        },
+        {
+            "decision": "d745",
+            "git_head": head,
+            "recorded_at_utc": "2026-10-12 00:00",
+        },
+    ):
+        with pytest.raises(loader.U2AuthorizationRefusal):
+            loader.load_u2_inputs(
+                data_dir=tmp_path, authorization=authorization
+            )
+    assert resolved == [] and opened == []
+    record = loader.structural_pass_authorization("d1", git_head=head)
+    with pytest.raises(loader.U2LoaderRefusal, match="is not staged"):
+        loader.load_u2_inputs(data_dir=tmp_path, authorization=record)
+    assert resolved == [tmp_path]
     assert opened == []
 
 
-def test_source_preflight_lists_the_open_entries(committed_registries):
-    with pytest.raises(loader.U2LoaderRefusal) as error:
-        loader.source_preflight(committed_registries)
-    assert "weights:2017.cross_section_weight" in str(error.value) or (
-        "registry blockers" in str(error.value)
-    )
+def test_structural_pass_authorization_records_and_refuses():
+    head = "a" * 40
+    record = loader.structural_pass_authorization("d1234", git_head=head)
+    assert set(record) == {"decision", "git_head", "recorded_at_utc"}
+    assert (record["decision"], record["git_head"]) == ("d1234", head)
+    stamp = datetime.datetime.strptime(
+        record["recorded_at_utc"], "%Y-%m-%dT%H:%M:%SZ"
+    ).replace(tzinfo=datetime.timezone.utc)
+    now = datetime.datetime.now(datetime.timezone.utc)
+    assert abs((now - stamp).total_seconds()) < 120
+    assert loader.check_structural_pass_authorization(record) == record
+    for decision in (None, "", "d", "d0", "D745", "d745 ", "745", "yes"):
+        with pytest.raises(loader.U2AuthorizationRefusal):
+            loader.structural_pass_authorization(decision, git_head=head)
+    with pytest.raises(loader.U2AuthorizationRefusal):
+        loader.check_structural_pass_authorization({**record, "granted": True})
+
+
+def test_source_preflight_passes_at_the_committed_registries(
+    committed_registries,
+):
+    # Since amendment 1c's registry commit (d637, confirmed by d745) no
+    # blocker remains: the preflight passes, opening no PSID file.
+    review = loader.source_preflight(committed_registries)
+    assert review["all_resolved"] is True
+    # The preflight's own rule: an absent code (code 92 in 2013 and 2015)
+    # passes when it is RESOLVED; every other entry counts its blockers.
+    refused = []
+    for name, entry_id in loader.required_entries(committed_registries):
+        entry = committed_registries.entry(name, entry_id)
+        if name == "roles" and entry.get("present") is False:
+            assert entry["status"] == "RESOLVED", entry_id
+            continue
+        refused += sources.blockers(entry, name)
+    assert refused == []
+    for wave in sources.SUPPORT_WAVES:
+        assert (
+            "roles",
+            f"{wave}.relationship.88",
+        ) in loader.required_entries(committed_registries)
     entries = loader.required_entries(committed_registries)
     assert ("weights", "2017.cross_section_weight") in entries
     assert ("roles", "2019.relationship.92") in entries
@@ -742,8 +1191,7 @@ def test_registry_documents_are_read_only(committed_registries):
         )
     # The frozen documents still serialize to the pinned canonical form.
     assert json.loads(json.dumps(committed_registries.documents["design"]))
-    with pytest.raises(loader.U2LoaderRefusal, match="registry blockers"):
-        loader.source_preflight(committed_registries)
+    assert loader.source_preflight(committed_registries)["all_resolved"]
 
 
 # ---------------------------------------------------------------------------
@@ -776,8 +1224,7 @@ def test_registry_set_copies_and_pickles_keep_their_binding(
         restored.entry("pension", "2021.route.previous_dc_only")[
             "status"
         ] = "RESOLVED"
-    with pytest.raises(loader.U2LoaderRefusal, match="registry blockers"):
-        loader.source_preflight(restored)
+    assert loader.source_preflight(restored)["all_resolved"]
 
 
 def test_a_committed_set_built_from_plain_documents_is_frozen():
