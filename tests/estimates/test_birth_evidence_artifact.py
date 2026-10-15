@@ -142,6 +142,7 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/uniform_cut_track_u/rows.py"),
         Path("src/populace_dynamics/uniform_cut_track_u/runner.py"),
         Path("src/populace_dynamics/ss/statutory_aime.py"),
+        Path("src/populace_dynamics/ss/statutory_delayed_credit.py"),
         Path("src/populace_dynamics/min_benefit_track_m/__init__.py"),
         Path("src/populace_dynamics/min_benefit_track_m/coverage.py"),
         Path("src/populace_dynamics/min_benefit_track_m/policy.py"),
@@ -181,6 +182,11 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/track_a_v2/structural_inputs.py"),
         Path("src/populace_dynamics/track_b/reconstructed.py"),
         Path("src/populace_dynamics/track_b/gross_benefits.py"),
+        Path("src/populace_dynamics/track_b/ret_grace.py"),
+        Path("src/populace_dynamics/track_b/ret_ledger.py"),
+        Path("src/populace_dynamics/track_b/arf.py"),
+        Path("src/populace_dynamics/track_b/recompute.py"),
+        Path("src/populace_dynamics/track_b/b2.py"),
         Path("src/populace_dynamics/data/u2_source_registry.py"),
         Path("scripts/capture_track_u2_income_wealth.py"),
         Path("scripts/capture_track_u2_ssi_parameters.py"),
@@ -206,6 +212,8 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/bridge/__init__.py"),
         Path("src/populace_dynamics/bridge/policyengine_us.py"),
         Path("src/populace_dynamics/bridge/depletion_cut.py"),
+        Path("src/populace_dynamics/bridge/depletion_cut_population.py"),
+        Path("src/populace_dynamics/bridge/depletion_cut_population_child.py"),
         Path("src/populace_dynamics/bridge/invented_population.py"),
         Path("src/populace_dynamics/bridge/population.py"),
         Path("src/populace_dynamics/bridge/population_summary.py"),
@@ -214,6 +222,10 @@ def test_post_review_sources_are_outside_historical_reducer_identity():
         Path("src/populace_dynamics/harness/epuf_cells.py"),
         Path("src/populace_dynamics/harness/epuf_gate.py"),
         Path("src/populace_dynamics/harness/epuf_run.py"),
+        Path("src/populace_dynamics/harness/epuf_fill_gate.py"),
+        Path("src/populace_dynamics/harness/epuf_fill_scoring.py"),
+        Path("src/populace_dynamics/estimates/epuf_fill.py"),
+        Path("src/populace_dynamics/cohorts/psid2010_epuf_fill.py"),
         Path("src/populace_dynamics/data/tr2026.py"),
         Path("src/populace_dynamics/data/cbo2026.py"),
         Path("src/populace_dynamics/data/life_table.py"),
@@ -373,6 +385,11 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "populace_dynamics.track_b.runner",
         "populace_dynamics.track_b.reconstructed",
         "populace_dynamics.track_b.gross_benefits",
+        "populace_dynamics.track_b.ret_grace",
+        "populace_dynamics.track_b.ret_ledger",
+        "populace_dynamics.track_b.arf",
+        "populace_dynamics.track_b.recompute",
+        "populace_dynamics.track_b.b2",
     }
     assert track_b_modules.issubset(module_paths)
     u2_registry = "populace_dynamics.data.u2_source_registry"
@@ -479,6 +496,8 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "populace_dynamics.bridge",
         "populace_dynamics.bridge.policyengine_us",
         "populace_dynamics.bridge.depletion_cut",
+        "populace_dynamics.bridge.depletion_cut_population",
+        "populace_dynamics.bridge.depletion_cut_population_child",
         "populace_dynamics.bridge.invented_population",
         "populace_dynamics.bridge.population",
         "populace_dynamics.bridge.population_summary",
@@ -494,6 +513,10 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "populace_dynamics.harness.epuf_cells",
         "populace_dynamics.harness.epuf_gate",
         "populace_dynamics.harness.epuf_run",
+        "populace_dynamics.harness.epuf_fill_gate",
+        "populace_dynamics.harness.epuf_fill_scoring",
+        "populace_dynamics.estimates.epuf_fill",
+        "populace_dynamics.cohorts.psid2010_epuf_fill",
     }
     assert epuf_modules.issubset(module_paths)
     assert epuf_modules.isdisjoint(reachable), (
@@ -622,12 +645,15 @@ def test_post_review_exclusions_are_unreachable_from_birth_evidence():
         "the opt-in Track U layer became reachable from the "
         f"birth-evidence reducer: {sorted(track_u_modules & reachable)}"
     )
-    statutory_aime = "populace_dynamics.ss.statutory_aime"
-    assert statutory_aime in module_paths
+    statutory_ss_modules = {
+        "populace_dynamics.ss.statutory_aime",
+        "populace_dynamics.ss.statutory_delayed_credit",
+    }
+    assert statutory_ss_modules.issubset(module_paths)
     assert "populace_dynamics.ss.benefits" in reachable
-    assert statutory_aime not in reachable, (
-        "the opt-in statutory AIME became reachable from the "
-        "birth-evidence reducer"
+    assert statutory_ss_modules.isdisjoint(reachable), (
+        "an opt-in statutory SS reference became reachable from the "
+        f"birth-evidence reducer: {sorted(statutory_ss_modules & reachable)}"
     )
     track_m_modules = (
         {"populace_dynamics.min_benefit_track_m"}

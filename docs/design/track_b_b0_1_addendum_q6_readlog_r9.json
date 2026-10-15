@@ -1,0 +1,152 @@
+{
+ "harness_persisted_outputs": [],
+ "n_tool_calls": 20,
+ "paths": {
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r9-20261011/root/docs/design/track_b_b0_1_addendum.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r9-20261011/root/docs/design/track_b_b0_1_addendum_q6_readlog_r8.json": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r9-20261011/root/docs/design/track_b_b0_1_addendum_q6_review_r8.md": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r9-20261011/root/docs/design/track_b_b0_1_addendum_q6_root_r8.json": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r9-20261011/root/scripts/track_b_b0_1_review_root.py": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r9-20261011/root/tests/test_track_b_b0_1_addendum_record.py": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r9-20261011/root/tests/test_track_b_b0_1_review_root.py": "inside_root",
+  "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r9-20261011/root/tests/tier_counts.json": "inside_root",
+  "45-": "inside_root",
+  "46-": "inside_root",
+  "52-": "inside_root",
+  "53-": "inside_root",
+  "docs/design": "inside_root",
+  "docs/design/track_b_b0_1_addendum.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_inventory_r3.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_inventory_r4.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_inventory_r5.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_inventory_r6.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_inventory_r7.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_inventory_r8.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_readlog_r1.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_readlog_r2.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_readlog_r3.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_readlog_r4.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_readlog_r5.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_readlog_r6.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_readlog_r7.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_readlog_r8.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_review_r1.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_review_r2.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_review_r3.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_review_r4.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_review_r5.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_review_r6.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_review_r7.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_review_r8.md": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_root_r1.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_root_r2.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_root_r3.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_root_r4.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_root_r5.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_root_r6.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_root_r7.json": "inside_root",
+  "docs/design/track_b_b0_1_addendum_q6_root_r8.json": "inside_root",
+  "pattern:docs/design/track_b_b0_1_addendum_q6_*": "inside_root",
+  "pattern:track_b_b0_1_addendum_q6_readlog_r*.json": "inside_root",
+  "scripts/track_b_b0_1_review_root.py": "inside_root",
+  "tests/README-tiers.md": "inside_root",
+  "tests/test_track_b_b0_1_addendum_record.py": "inside_root",
+  "tests/test_track_b_b0_1_review_root.py": "inside_root"
+ },
+ "paths_outside_root_or_denied": [],
+ "persisted_outputs_opened": [],
+ "review_counts": true,
+ "root": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r9-20261011/root",
+ "schema": "track_b_b0_1_review_read_log.v6",
+ "tool_calls": [
+  {
+   "path": "scripts/track_b_b0_1_review_root.py",
+   "pattern": "def (brace_expansions|pattern_kind)",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r9-20261011/root/scripts/track_b_b0_1_review_root.py",
+   "tool": "Read"
+  },
+  {
+   "path": "tests/test_track_b_b0_1_review_root.py",
+   "pattern": "brace|pattern_kind",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r9-20261011/root/tests/test_track_b_b0_1_review_root.py",
+   "tool": "Read"
+  },
+  {
+   "path": "docs/design/track_b_b0_1_addendum.md",
+   "pattern": "^#{1,3} ",
+   "tool": "Grep"
+  },
+  {
+   "path": "docs/design/track_b_b0_1_addendum.md",
+   "pattern": "\u03bd = 0|nu = 0|\u03bd=0|WEAK_POWER_OR_VACUITY",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r9-20261011/root/docs/design/track_b_b0_1_addendum.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r9-20261011/root/docs/design/track_b_b0_1_addendum.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r9-20261011/root/docs/design/track_b_b0_1_addendum.md",
+   "tool": "Read"
+  },
+  {
+   "pattern": "docs/design/track_b_b0_1_addendum_q6_*",
+   "tool": "Glob"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r9-20261011/root/docs/design/track_b_b0_1_addendum_q6_review_r8.md",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r9-20261011/root/docs/design/track_b_b0_1_addendum_q6_readlog_r8.json",
+   "tool": "Read"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r9-20261011/root/docs/design/track_b_b0_1_addendum_q6_root_r8.json",
+   "tool": "Read"
+  },
+  {
+   "glob": "track_b_b0_1_addendum_q6_readlog_r*.json",
+   "path": "docs/design",
+   "pattern": "\"pattern:|\"review_counts\"|\"n_tool_calls\"|\"schema\"",
+   "tool": "Grep"
+  },
+  {
+   "path": "tests/test_track_b_b0_1_addendum_record.py",
+   "pattern": "round 8|Round 8|r8|\u03bd is 0|brace",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r9-20261011/root/tests/tier_counts.json",
+   "tool": "Read"
+  },
+  {
+   "path": "tests/README-tiers.md",
+   "pattern": "\\d{3,}",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r9-20261011/root/tests/test_track_b_b0_1_addendum_record.py",
+   "tool": "Read"
+  },
+  {
+   "path": "tests/test_track_b_b0_1_addendum_record.py",
+   "pattern": "def prose|split\\(\\)|re\\.sub",
+   "tool": "Grep"
+  },
+  {
+   "file_path": "/Users/maxghenis/PolicyEngine/_trackb-reviews/q6-r9-20261011/root/docs/design/track_b_b0_1_addendum.md",
+   "tool": "Read"
+  }
+ ]
+}
