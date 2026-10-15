@@ -183,10 +183,14 @@ def _load(
     *,
     evidence=None,
     history: pd.DataFrame | None = None,
+    source_hashes: dict[str, str] | None = None,
 ) -> cohort.U2Inputs:
     """Run the real loader on ``root`` with the four named patches
     (``evidence`` is passed through; ``history`` replaces the invented
-    marriage history the patched reader returns)."""
+    marriage history the patched reader returns; ``source_hashes`` is what
+    the patched cited-source rehash returns, nothing by default)."""
+
+    cited = {} if source_hashes is None else dict(source_hashes)
 
     history = inputs.marriage_history if history is None else history
 
@@ -197,7 +201,7 @@ def _load(
     try:
         patch.setattr(sources, "blockers", lambda entry, name: [])
         patch.setattr(
-            loader, "check_source_hashes", lambda registries, data_dir: {}
+            loader, "check_source_hashes", lambda registries, data_dir: cited
         )
         patch.setattr(
             marriage,
@@ -878,19 +882,82 @@ def test_a_changed_frame_digest_refuses(
         _load(tmp_path, u2_inputs, evidence=evidence, history=history)
 
 
-def test_a_file_read_but_not_frozen_refuses(
-    tmp_path, u2_inputs, committed_registries, evidence
+@pytest.mark.parametrize(
+    "relative",
+    [
+        # Each reader's own opener: the family file through Path.open, a
+        # setup file through the layout parser, the individual file
+        # through pandas (review of the d745 and 1a-1c answers, nit 1).
+        "family/2017/FAM2017ER.txt",
+        "family/2013/FAM2013ER.sps",
+        "ind2023er/IND2023ER.txt",
+    ],
+)
+def test_a_file_read_but_not_frozen_refuses_at_open(
+    tmp_path, u2_inputs, committed_registries, evidence, relative
 ):
+    """Review of 630a68c3, finding 1: a file under the PSID directory that
+    the record does not freeze is refused when it is opened, before any
+    reader returns its contents."""
+
     _stage(tmp_path, u2_inputs, committed_registries)
     files = dict(evidence["psid_files_sha256"])
-    files.pop("family/2017/FAM2017ER.txt")
+    files.pop(relative)
     narrower = {
         **evidence,
         "psid_files_sha256": files,
         "psid_files_bundle_sha256": loader.files_bundle_sha256(files),
     }
-    # Review of 630a68c3, finding 1: the unfrozen file is refused when it
-    # is opened, before any of its records is parsed.
+    parsed, layouts, products = [], [], []
+    patch = pytest.MonkeyPatch()
+    family_reader = loader.read_family_records
+    layout_reader = psid.parse_sps_layout
+    product_reader = psid.read_psid
+    patch.setattr(
+        loader,
+        "read_family_records",
+        lambda handle, wave, gate: parsed.append(wave)
+        or family_reader(handle, wave, gate),
+    )
+
+    def layout(path):
+        frame = layout_reader(path)
+        layouts.append(Path(path).relative_to(tmp_path).as_posix())
+        return frame
+
+    def product(name, *args, **kwargs):
+        frame = product_reader(name, *args, **kwargs)
+        products.append(name)
+        return frame
+
+    patch.setattr(psid, "parse_sps_layout", layout)
+    patch.setattr(psid, "read_psid", product)
+    try:
+        with pytest.raises(
+            loader.U2FrozenIdentityMismatch,
+            match=f"{relative} is under the PSID directory but not in the "
+            "frozen",
+        ):
+            _load(tmp_path, u2_inputs, evidence=narrower)
+    finally:
+        patch.undo()
+    if relative == "family/2017/FAM2017ER.txt":
+        assert parsed == [2013, 2015]
+    elif relative == "family/2013/FAM2013ER.sps":
+        assert parsed == [] and relative not in layouts
+    else:
+        assert parsed == list(sources.SUPPORT_WAVES)
+        assert "ind2023er" not in products
+
+
+def test_frozen_cited_sources_must_match(
+    tmp_path, u2_inputs, committed_registries, evidence
+):
+    """The setup files and codebooks the registries cite must hash as the
+    evidence froze them; a difference refuses before any family record is
+    parsed (review of the d745 and 1a-1c answers, nit 2)."""
+
+    _stage(tmp_path, u2_inputs, committed_registries)
     parsed = []
     patch = pytest.MonkeyPatch()
     original = loader.read_family_records
@@ -903,14 +970,17 @@ def test_a_file_read_but_not_frozen_refuses(
     try:
         with pytest.raises(
             loader.U2FrozenIdentityMismatch,
-            match="family/2017/FAM2017ER.txt is under the PSID directory "
-            "but not in the frozen",
+            match="cited setup files and codebooks differ",
         ):
-            _load(tmp_path, u2_inputs, evidence=narrower)
+            _load(
+                tmp_path,
+                u2_inputs,
+                evidence=evidence,
+                source_hashes={"PSID/family/2019/FAM2019ER.sps": "a" * 64},
+            )
     finally:
         patch.undo()
-    assert 2017 not in parsed
-    assert parsed == [2013, 2015]
+    assert parsed == []
 
 
 def test_a_frozen_load_needs_the_committed_record(

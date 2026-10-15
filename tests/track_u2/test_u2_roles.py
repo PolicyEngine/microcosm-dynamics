@@ -407,6 +407,27 @@ def test_a_code_88_target_has_the_ofum_role_and_keeps_its_history(
     cap = max(0.0, u2_params.ssi.fbr_annual(year, False) - row["ofum_ssi"])
     assert out.loc[index, "ssi_offset"] == pytest.approx(min(fall, cap))
     assert out.loc[index, "ssi_offset"] > 0
+    # Here the fall binds.  With the OFUM SSI raised to $500 below the
+    # individual rate the cap binds instead, so a cap at the couple rate,
+    # or one that ignored the OFUM SSI, would fail (review of the d745 and
+    # 1a-1c answers, nit 3).
+    assert fall < cap
+    individual = u2_params.ssi.fbr_annual(year, False)
+    assert u2_params.ssi.fbr_annual(year, True) - individual > fall
+    raised = members.copy()
+    raised.loc[index, "ofum_ssi"] = int(individual) - 500
+    capped = estimator.u2_adjusted_incomes(
+        raised,
+        spec,
+        context=estimator.U2EstimatorContext(sources.INVENTED_DECLARED),
+        data_provenance=ap.INVENTED,
+        life_table=u2_params.life_tables[spec.mortality_basis],
+        thresholds=u2_params.thresholds,
+        ssi=u2_params.ssi,
+    )
+    expected = individual - (int(individual) - 500)
+    assert expected < fall
+    assert capped.loc[index, "ssi_offset"] == pytest.approx(expected)
 
 
 def test_declared_context_refuses_non_invented_inputs(u2_inputs, declared):
