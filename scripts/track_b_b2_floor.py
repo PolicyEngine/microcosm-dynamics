@@ -16,11 +16,13 @@ on. This script is section 9's floor builder, steps 2-6:
    design strata among the truth-support persons, applies the fixed
    singleton merges, and publishes counts before and after, merges, L and
    nu.
-5. It applies eligibility inside the six level cells (d781 (a), d1342
-   option A); a cell that fails it is scored report-only. A zero nu, or
-   an eligible cell whose se_up or tau is zero or undefined, stops the
-   build as WEAK_POWER_OR_VACUITY before the ladder or any candidate run.
-   Otherwise it runs the ladder and the guards over the eligible cells. Power is the ruled binding evaluation
+5. It applies eligibility inside B2's gate surface (``b2.GATE_SURFACE``:
+   d781 (a)'s six level cells less both medians, d1606 option C1); a cell
+   that fails it is scored report-only. A zero nu, or an eligible cell
+   whose sigma, se_up or tau is zero or undefined, stops the build as
+   WEAK_POWER_OR_VACUITY before the ladder or any candidate run.
+   Otherwise it runs the ladder and the guards over the eligible cells.
+   Power is the ruled binding evaluation
    (``scripts/track_b_b0_1_ruled_power.py``) with r, the 95th percentile
    of d and s2_gate from the planning record, and nu, tau = tol / se_up
    and t*_{m,nu} from B2's own floor.
@@ -76,7 +78,7 @@ from populace_dynamics.harness import m6_cells  # noqa: E402
 from populace_dynamics.track_b import b2  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
-SCHEMA = "track_b_b2_floor.v1"
+SCHEMA = "track_b_b2_floor.v2"
 OUTPUT = ROOT / "runs" / "track_b_b2_floor.json"
 ADDENDUM = ROOT / "docs" / "design" / "track_b_b0_1_addendum.md"
 PLANNING = ROOT / "docs" / "design" / "track_b_b0_1_planning_values.json"
@@ -409,7 +411,7 @@ def decide(
     planning_record: Mapping[str, Any],
 ) -> dict[str, Any]:
     """Step 4's stratum merges and stops, and step 5's eligibility, ladder
-    and guards inside the six level cells."""
+    and guards inside B2's gate surface (d1606 option C1)."""
     truth = measured["truth"]
     truth_persons = set(int(value) for value in truth["person_id"].unique())
     design = design[design["person_id"].isin(truth_persons)].reset_index(
@@ -430,14 +432,14 @@ def decide(
         "design": summary,
         "cells": cells,
     }
-    # Section 5's eligibility comes first: a cell of the six that fails it
+    # Section 5's eligibility comes first: a gate-surface cell that fails it
     # (its floor's seeds or events, or its planning values) is scored
     # report-only, and the ladder runs on the others. B2 stops only when nu
     # is 0 after the merges, or when an eligible cell's sigma, se_up or tau
     # is zero or undefined: its tolerance is uninformative or its power
     # undefined (the design's "undefined cells, or uninformative
     # tolerances"), and section 5 never drops an eligible cell.
-    eligible = [name for name in b2.LEVEL_CELLS if cells[name]["eligible"]]
+    eligible = [name for name in b2.GATE_SURFACE if cells[name]["eligible"]]
     causes = []
     if nu == 0:
         causes.append({"cell": None, "quantity": "nu"})
@@ -512,6 +514,8 @@ def finish(
     def reason(name: str) -> str:
         if name not in b2.LEVEL_CELLS:
             return "outside the ruled surface (d781 (a))"
+        if name not in b2.GATE_SURFACE:
+            return "outside the rescoped surface (d1606 option C1)"
         if not cells[name]["planning_values_defined"]:
             return "no planning values"
         if not cells[name]["floor_eligible"]:
@@ -534,6 +538,7 @@ def finish(
     labels = [cells[name]["exposure_label"] for name in gated]
     record["surface"] = {
         "ruled_surface": list(b2.LEVEL_CELLS),
+        "gate_surface": list(b2.GATE_SURFACE),
         "gated": [entry(name) for name in gated],
         "report_only": [
             {**entry(name), "reason": reason(name)}
@@ -622,8 +627,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--expected-commit", required=True)
     parser.add_argument("--workers", type=int, default=4)
     args = parser.parse_args(argv)
-    # First, before anything is read: more than one thread hangs
-    # candidate 3's projection in this environment (b2.thread_settings).
+    # First, before anything is read: B2 runs one thread per process
+    # (b2.thread_settings says why).
     threads = b2.thread_settings()
     b2.require_workers(args.workers)
 
