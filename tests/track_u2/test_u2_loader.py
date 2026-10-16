@@ -1768,7 +1768,11 @@ def test_a_registered_run_refuses_every_row_set_before_any_check(
         raise _Reached
 
     with pytest.MonkeyPatch.context() as patch:
+        # run_track_u2 calls the private _check_inputs; both are patched so
+        # the refusal is shown to come first by construction (closeout
+        # mutation lane b2: the public one alone was never called).
         patch.setattr(runner, "check_inputs", reached)
+        patch.setattr(runner, "_check_inputs", reached)
         patch.setattr(parameters, "check_u2_parameters", reached)
         patch.setattr(runner, "_compute_row", reached)
         with pytest.raises(runner.U2RunError, match="row_set"):
@@ -1977,6 +1981,80 @@ class _ComparesAs(str):
         return hash(str(self._other))
 
 
+def test_a_snapshot_edited_after_the_check_reaches_no_row(
+    frozen_load, evidence, monkeypatch
+):
+    """The births check against the bound record's frozen digest is a
+    backstop: no public-API input reaches it.  Code that reaches the
+    private snapshot through ``gc`` -- outside the stated limits -- and
+    edits its frames, forging its seal again over them, passes every row
+    build's seal and births comparisons; only that check refuses it
+    (closeout mutation lane d2, mutant 21).  INVENTED offset."""
+
+    import dataclasses
+    import gc
+
+    def snapshots():
+        return [
+            o
+            for o in gc.get_objects()
+            if type(o) is cohort.U2Inputs
+            and (o.provenance or {}).get(cohort.SNAPSHOT_KEY) is True
+        ]
+
+    before = snapshots()
+    edited = []
+
+    def act():
+        new = [s for s in snapshots() if not any(s is b for b in before)]
+        if edited or not new:
+            return
+        (snapshot,) = new
+        frame = snapshot.family_income[2019]
+        column = frame.columns.get_loc("total_family_income")
+        old = frame.iat[0, column]
+        frame.iat[0, column] = (
+            _INVENTED_OFFSET if pd.isna(old) else old + _INVENTED_OFFSET
+        )
+        seal = {
+            **dict(snapshot.loader_seal),
+            "input_frames_sha256": cohort.input_frames_sha256(snapshot),
+        }
+        object.__setattr__(snapshot, "loader_seal", MappingProxyType(seal))
+        edited.append(snapshot)
+
+    pinned = parameters.committed_u2_parameters()
+    params = dataclasses.replace(
+        pinned,
+        thresholds=dataclasses.replace(
+            pinned.thresholds,
+            provenance=_MutatingProvenance(pinned.thresholds.provenance, act),
+        ),
+    )
+
+    def compute_row(*args, **kwargs):
+        raise _Reached
+
+    monkeypatch.setattr(runner, "_compute_row", compute_row)
+    with pytest.raises(
+        runner.U2RunError, match="changed after the registered"
+    ):
+        runner.run_track_u2(
+            frozen_load["inputs"],
+            params,
+            data_provenance=ap.REGISTERED_REAL,
+            role_context=sources.RoleContext.from_registry(),
+            registration_pointer=POINTER,
+            preregistration_evidence_sha256=frozen_load["sha256"],
+            preregistration_evidence=evidence,
+        )
+    (snapshot,) = edited
+    # The forgery is self-consistent: the seal check alone accepts it.
+    assert cohort._input_provenance(snapshot)["input_frames_sha256"] != (
+        evidence["input_frames_sha256"]
+    )
+
+
 def test_a_rigged_digest_in_the_record_refuses(frozen_load, evidence):
     """Round 3, second pass: a record whose frame digest is a str subclass
     holding the frozen text (so it hashes to the bound value) but equal
@@ -2054,6 +2132,29 @@ def _two_faced(frames: dict, altered: dict, lie: str):
         return getattr(dict, lie)(altered, *args, **kwargs)
 
     return type("_TwoFaced", (dict,), {lie: method})(frames)
+
+
+@pytest.mark.parametrize("container", _CONTAINERS)
+def test_a_frame_container_that_is_not_a_dict_refuses(
+    frozen_load, evidence, container
+):
+    """Closeout mutation lane d2: a read-only mapping over the very frames
+    the loader sealed is a Mapping but not a dict, so the digest refuses
+    it, though it lies about nothing (the property below builds only dict
+    subclasses).  INVENTED DATA - NOT A COMPARISON."""
+
+    import dataclasses
+
+    rechecked = frozen_load["inputs"]
+    proxy = MappingProxyType(dict(getattr(rechecked, container)))
+    wrapped = dataclasses.replace(rechecked, **{container: proxy})
+    object.__setattr__(wrapped, "loader_seal", rechecked.loader_seal)
+    with pytest.raises(cohort.U2CohortError, match="plain dict"):
+        cohort.input_frames_sha256(wrapped)
+    with pytest.raises(runner.U2RunError, match="plain dict"):
+        _registered_check(
+            wrapped, frozen_load, preregistration_evidence=evidence
+        )
 
 
 @settings(max_examples=40, deadline=None)
