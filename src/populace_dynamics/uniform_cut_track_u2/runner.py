@@ -303,6 +303,12 @@ def _check_inputs(
     # (``object.__setattr__`` on the frozen field), so the inputs are held
     # to the record the bound hash names, not to the seal's own claim.
     frozen = _bound_evidence(preregistration_evidence, bound)
+    # The digest hashes pandas' dtype names and CSV text, so the run uses
+    # the pandas the step-4 pass froze the digest under.
+    try:
+        loader.check_frame_environment(frozen)
+    except loader.U2LoaderRefusal as error:
+        raise U2RunError(str(error)) from error
     # Check, then use (review round 3): the digest is taken from each
     # frame's text written once, and the run computes on frames parsed
     # from that same text, so nothing the caller's objects do reaches it.

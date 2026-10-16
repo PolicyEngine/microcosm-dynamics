@@ -968,6 +968,10 @@ def test_a_changed_ssi_capture_refuses(tmp_path, monkeypatch):
     changed.write_bytes(raw.replace(b"{", b"{ ", 1))
     assert json.loads(changed.read_bytes()) == json.loads(raw)
     monkeypatch.setattr(parameters, "SSI_PATH", changed)
+    # The readers record the capture's path relative to the repository;
+    # rooting it at the copy's directory leaves the pin as the only check
+    # that can refuse (#544 review, S5).
+    monkeypatch.setattr(identity, "ROOT", tmp_path)
     with pytest.raises(parameters.U2ParameterError, match="U2's pin"):
         parameters.load_u2_ssi_parameters()
     with pytest.raises(ValueError, match="U2 pin"):

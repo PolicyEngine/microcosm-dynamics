@@ -115,6 +115,7 @@ __all__ = [
     "check_frozen_files",
     "check_individual_values",
     "check_layouts_against_setup",
+    "check_frame_environment",
     "check_preregistration_evidence",
     "check_source_hashes",
     "check_structural_pass_authorization",
@@ -180,7 +181,7 @@ _PERSON_SEX: dict[int, str] = {1: "male", 2: "female", 9: "na"}
 
 #: The pre-registration evidence record (section 14 frozen identities).
 PREREGISTRATION_SCHEMA = (
-    "populace_dynamics.track_u2_preregistration_evidence.v1"
+    "populace_dynamics.track_u2_preregistration_evidence.v2"
 )
 #: Where the committed record lives once the section 20 step-4 pass has
 #: written it (``scripts/track_u2_structure.py``) and it is reviewed and
@@ -197,7 +198,10 @@ _EVIDENCE_KEYS: tuple[str, ...] = (
     "psid_files_sha256",
     "psid_files_bundle_sha256",
     "input_frames_sha256",
+    "frame_environment",
 )
+#: The keys of the record's frame environment (``cohort.frame_environment``).
+_ENVIRONMENT_KEYS = ("future_infer_string", "pandas_version")
 _HEX64 = re.compile(r"[0-9a-f]{64}")
 #: A chief-of-staff decision id: ``d`` and its number (e.g. ``d745``).
 _DECISION_ID = re.compile(r"d[1-9][0-9]*")
@@ -587,6 +591,7 @@ def load_u2_inputs(
                 "reads PSID records only against the reviewed record the "
                 "section 20 step-4 pass wrote"
             )
+        check_frame_environment(frozen)
     registries = sources.RegistrySet.committed()
     preflight = source_preflight(registries)
     # Stages 2 and 3 run only once every required route is resolved.
@@ -743,7 +748,9 @@ def check_preregistration_evidence(record: Any) -> dict[str, Any]:
     :data:`~populace_dynamics.uniform_cut_track_u2.sources.
     REGISTRY_SHA256`, the cited-source hashes, a nonempty map of PSID
     files (paths relative to the PSID directory) to SHA-256, their bundle
-    digest (recomputed here) and the sealed frame digest.  Every value
+    digest (recomputed here), the sealed frame digest and the pandas
+    settings it was taken under (``cohort.frame_environment``; schema v2).
+    Every value
     below the top-level mapping must be plain JSON data by exact type
     (:func:`_plain_json`; review round 3), as ``json.loads`` builds it.
     """
@@ -795,6 +802,19 @@ def check_preregistration_evidence(record: Any) -> dict[str, Any]:
         raise U2FrozenIdentityMismatch(
             "the evidence's input_frames_sha256 is not a 64-hex SHA-256"
         )
+    environment = record["frame_environment"]
+    if (
+        type(environment) is not dict
+        or tuple(sorted(environment)) != _ENVIRONMENT_KEYS
+        or type(environment["pandas_version"]) is not str
+        or not environment["pandas_version"]
+        or type(environment["future_infer_string"]) is not bool
+    ):
+        raise U2FrozenIdentityMismatch(
+            "the evidence's frame_environment must be exactly "
+            f"{list(_ENVIRONMENT_KEYS)}: a nonempty pandas version string "
+            "and a bool"
+        )
     return {
         "schema_version": PREREGISTRATION_SCHEMA,
         "target_id": identity.TARGET_ID,
@@ -808,7 +828,30 @@ def check_preregistration_evidence(record: Any) -> dict[str, Any]:
         "psid_files_sha256": files,
         "psid_files_bundle_sha256": bundle,
         "input_frames_sha256": frames,
+        "frame_environment": {
+            "future_infer_string": environment["future_infer_string"],
+            "pandas_version": environment["pandas_version"],
+        },
     }
+
+
+def check_frame_environment(frozen: Mapping[str, Any]) -> None:
+    """Refuse unless pandas here is as the evidence record froze it.
+
+    The frame digest hashes pandas' dtype names and CSV text
+    (``cohort.frame_environment``), so a load or run under another pandas
+    version or string inference setting could refuse a legitimate frame
+    or digest it differently.  Checked before any PSID path is resolved.
+    """
+
+    current = cohort.frame_environment()
+    if frozen["frame_environment"] != current:
+        raise U2FrozenIdentityMismatch(
+            "the pre-registration evidence froze its frame digest under "
+            f"pandas {frozen['frame_environment']}, not this environment's "
+            f"{current}: the digest hashes pandas' dtype names and CSV text, "
+            "so a frozen load or registered run uses the same pandas"
+        )
 
 
 def preregistration_evidence_sha256(record: Mapping[str, Any]) -> str:
@@ -868,6 +911,7 @@ def preregistration_evidence(inputs: cohort.U2Inputs) -> dict[str, Any]:
             "psid_files_sha256": dict(provenance["psid_files_sha256"]),
             "psid_files_bundle_sha256": provenance["psid_files_bundle_sha256"],
             "input_frames_sha256": provenance["input_frames_sha256"],
+            "frame_environment": cohort.frame_environment(),
         }
     )
 

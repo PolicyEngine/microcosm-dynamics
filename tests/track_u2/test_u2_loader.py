@@ -1216,6 +1216,7 @@ def frozen_stage(tmp_path_factory, u2_inputs, committed_registries):
         "psid_files_sha256": files,
         "psid_files_bundle_sha256": loader.files_bundle_sha256(files),
         "input_frames_sha256": "0" * 64,
+        "frame_environment": cohort.frame_environment(),
     }
     return {"root": root, "evidence": record, "files": sorted(files)}
 
@@ -1438,6 +1439,120 @@ def _income_forgery(rechecked: cohort.U2Inputs) -> cohort.U2Inputs:
         income[2019], "total_family_income", 0, _INVENTED_OFFSET
     )
     return _forge(rechecked, family_income=income)
+
+
+def test_the_evidence_records_the_frame_environment(evidence):
+    """Section 20 step 2 (#544): the step-4 record freezes the pandas
+    settings its frame digest was taken under, since the digest hashes
+    pandas' dtype names and CSV text (INVENTED DATA - NOT A COMPARISON)."""
+
+    assert evidence["schema_version"].endswith(".v2")
+    assert evidence["frame_environment"] == cohort.frame_environment()
+    assert sorted(evidence["frame_environment"]) == [
+        "future_infer_string",
+        "pandas_version",
+    ]
+    assert evidence["frame_environment"]["pandas_version"] == pd.__version__
+
+
+@pytest.mark.parametrize(
+    "environment",
+    [
+        None,
+        {},
+        {"pandas_version": "3.0.6"},
+        {"pandas_version": "3.0.6", "future_infer_string": True, "x": 1},
+        {"pandas_version": "", "future_infer_string": True},
+        {"pandas_version": 3, "future_infer_string": True},
+        {"pandas_version": "3.0.6", "future_infer_string": 1},
+        {"pandas_version": "3.0.6", "future_infer_string": "true"},
+        ["3.0.6", True],
+    ],
+)
+def test_a_malformed_frame_environment_refuses(evidence, environment):
+    """The record's frame environment must be exactly a nonempty pandas
+    version string and a bool (INVENTED values)."""
+
+    record = {**evidence, "frame_environment": environment}
+    message = "frame_environment must be exactly"
+    if environment is None:
+        del record["frame_environment"]
+        message = "not exactly"
+    with pytest.raises(loader.U2FrozenIdentityMismatch, match=message):
+        loader.check_preregistration_evidence(record)
+
+
+@settings(max_examples=60, deadline=None)
+@given(
+    version=st.text(min_size=1, max_size=12),
+    infer=st.booleans(),
+)
+@example(
+    version=pd.__version__, infer=bool(pd.get_option("future.infer_string"))
+)
+@example(
+    version=pd.__version__,
+    infer=not pd.get_option("future.infer_string"),
+)
+def test_any_other_frame_environment_refuses_the_registered_check(
+    frozen_load, evidence, version, infer
+):
+    """Invariant (#544): a registered check passes only under the pandas
+    version and string inference setting the evidence record froze; any
+    other refuses before the snapshot is built (INVENTED environments)."""
+
+    current = cohort.frame_environment()
+    other = {"pandas_version": version, "future_infer_string": infer}
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(cohort, "frame_environment", lambda: dict(other))
+        patch.setattr(cohort, "_registered_snapshot", _reached_snapshot)
+        if other == current:
+            with pytest.raises(_Reached):
+                _registered_check(
+                    frozen_load["inputs"],
+                    frozen_load,
+                    preregistration_evidence=evidence,
+                )
+        else:
+            with pytest.raises(runner.U2RunError, match="froze its frame"):
+                _registered_check(
+                    frozen_load["inputs"],
+                    frozen_load,
+                    preregistration_evidence=evidence,
+                )
+
+
+def _reached_snapshot(*args, **kwargs):
+    raise _Reached
+
+
+@pytest.mark.parametrize("field", ["pandas_version", "future_infer_string"])
+def test_a_frozen_load_refuses_another_frame_environment(
+    loaded, evidence, u2_inputs, field
+):
+    """A frozen load refuses under another pandas version or string
+    inference setting before any PSID path is resolved (INVENTED
+    environments)."""
+
+    current = cohort.frame_environment()
+    other = dict(current)
+    other[field] = (
+        current[field] + ".invented"
+        if field == "pandas_version"
+        else not current[field]
+    )
+
+    def refuse_paths(*args, **kwargs):
+        raise AssertionError("a PSID path was resolved")
+
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(cohort, "frame_environment", lambda: dict(other))
+        patch.setattr(
+            loader, "read_preregistration_evidence", lambda: evidence
+        )
+        patch.setattr(psid, "_resolve_data_dir", refuse_paths)
+        with pytest.raises(loader.U2FrozenIdentityMismatch, match="froze"):
+            loader.load_u2_inputs(data_dir=loaded["root"], evidence=evidence)
 
 
 def _registered_check(inputs, frozen_load, **evidence):

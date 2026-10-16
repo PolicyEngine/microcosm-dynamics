@@ -142,6 +142,7 @@ __all__ = [
     "derive_u2_births",
     "design_frame",
     "income_rows",
+    "frame_environment",
     "input_frames_sha256",
     "marital_status_4",
     "observation_plan",
@@ -650,6 +651,23 @@ def _digest_frames(
     for field_name, label, frames in containers:
         for wave in sorted(frames):
             yield field_name, wave, f"{label}_{wave}", frames[wave]
+
+
+def frame_environment() -> dict[str, Any]:
+    """The pandas settings the frame digest depends on.
+
+    The digest hashes each frame's dtype names and CSV text as pandas
+    writes them (:func:`_frame_text`), so another pandas version or string
+    inference setting can write a legitimate frame differently.  The
+    section 20 step-4 pass records these with the digest it freezes
+    (``loader.preregistration_evidence``), and a frozen load or registered
+    run refuses under any other.
+    """
+
+    return {
+        "pandas_version": str(pd.__version__),
+        "future_infer_string": bool(pd.get_option("future.infer_string")),
+    }
 
 
 def input_frames_sha256(inputs: U2Inputs) -> str:

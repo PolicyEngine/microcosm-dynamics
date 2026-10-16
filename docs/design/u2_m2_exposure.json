@@ -1113,6 +1113,7 @@
   ],
   "guard_logs": "empty for mut-a, mut-c, b2, d2, both reviews and this lane; mut-b's and mut-d's were truncated unread by this lane when it reset those clones, and their stream logs show no refusal and no tool input naming a restricted directory",
   "psid_documentation_opened_by_tests": "none: test_psid_research_sources.py's 244 documentation tests skipped because the PSID root was an empty directory; its other 147 tests open no PSID file",
-  "values_printed": "invented offsets, invented cells, invented-run counts and dispositions, hashes and timings; no 1946-55 value or direction"
+  "values_printed": "invented offsets, invented cells, invented-run counts and dispositions, hashes and timings; no 1946-55 value or direction",
+  "section_20_follow_up": "PR #544, cut from master f7a84d0b: the section 17, 19 and 20 record, the SSI changed-bytes test and the frame environment in the pre-registration evidence (schema v2); read only the specification ranges listed under 'specification' and the merged PR records #481, #486, #487, #500, #524, #525 and #540; ran the U1 differential at f7a84d0b and the U2 files under the hook (nothing refused); its review 20261016-140335-pr544-review (Claude Opus 5.5, standalone clone with the hook) read the specification and nothing else restricted"
  }
 }

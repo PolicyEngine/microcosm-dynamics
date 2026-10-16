@@ -684,7 +684,7 @@ _INVENTED_FILES = {
 
 
 def _invented_evidence(**changes):
-    from populace_dynamics.uniform_cut_track_u2 import loader, sources
+    from populace_dynamics.uniform_cut_track_u2 import cohort, loader, sources
 
     files = changes.pop("psid_files_sha256", _INVENTED_FILES)
     record = {
@@ -696,6 +696,7 @@ def _invented_evidence(**changes):
         "psid_files_sha256": dict(files),
         "psid_files_bundle_sha256": loader.files_bundle_sha256(files),
         "input_frames_sha256": "3" * 64,
+        "frame_environment": cohort.frame_environment(),
     }
     record.update(changes)
     return record
