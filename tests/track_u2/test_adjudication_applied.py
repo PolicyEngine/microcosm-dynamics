@@ -1551,13 +1551,34 @@ D1090_FOLLOWERS = {
         "PSID answered all three on 2026-10-07 (research record "
         "\N{SECTION SIGN}\N{SECTION SIGN}1\N{EN DASH}3), and Max ruled on B1 "
         "and B2 on 2026-10-10 (d1090; \N{SECTION SIGN}16c).",
-        2: "9. Check the specification, literal named deltas, parameter "
-        "block (with the amendment 5 fragment, ratified 2026-09-30), "
-        "manifests and ten-row implementation for equality.",
+        2: (
+            "9. Check the specification, literal named deltas, parameter "
+            "block (with the amendment 5 fragment, ratified 2026-09-30), "
+            "manifests and ten-row implementation for equality. **Partly "
+            "checked (2026-10-16):** the named deltas equal "
+            "\N{SECTION SIGN}12 literally and the rows equal the "
+            "\N{SECTION SIGN}15 block "
+            "(`test_u2_identity.py::test_named_deltas_equal_section_12_literally`, "
+            "`::test_rows_equal_the_section_15_block`). The equality check of "
+            "the final parameter block waits for \N{SECTION SIGN}20 step 5, "
+            "which materializes it."
+        ),
     },
     "execution": {
         0: "",
-        1: "2. Complete implementation, manifests and parameter capture.",
+        1: (
+            "2. Complete implementation, manifests and parameter capture. "
+            "**Done (2026-10-16).** Implementation: milestone 2 (#487) and "
+            "its three review rounds, the last landing as #525 (`f7a84d0b`). "
+            "Manifests: the source registries hold 1,792 RESOLVED records and "
+            "none REFUSED or TO VERIFY, and the loader's source preflight "
+            "passes "
+            "(`test_u2_mappings.py::test_source_preflight_passes_at_the_committed_registries`; "
+            "#524, #540). Parameter capture: the U2 SSI capture and the Track "
+            "M threshold capture, each pinned by hash in the code "
+            "(\N{SECTION SIGN}17 item 5). The final parameter block is step "
+            "5's."
+        ),
     },
 }
 

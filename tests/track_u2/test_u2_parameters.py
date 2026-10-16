@@ -951,3 +951,24 @@ def test_a_bundle_subclass_refuses(pinned):
     )
     with pytest.raises(parameters.U2ParameterError, match="exactly"):
         parameters.check_u2_parameters(bundle, ap.REGISTERED_REAL)
+
+
+def test_a_changed_ssi_capture_refuses(tmp_path, monkeypatch):
+    """Specification section 17 item 5: the U2 SSI capture is pinned by
+    its SHA-256 in the code.  The committed file hashes to the pin, and
+    both readers refuse a copy whose bytes differ by one added space
+    while its JSON content is equal (INVENTED edit of a copy)."""
+
+    import hashlib
+
+    raw = U2_SSI.read_bytes()
+    assert hashlib.sha256(raw).hexdigest() == parameters.SSI_SHA256
+    assert diagnostics.SSI_SHA256 == parameters.SSI_SHA256
+    changed = tmp_path / U2_SSI.name
+    changed.write_bytes(raw.replace(b"{", b"{ ", 1))
+    assert json.loads(changed.read_bytes()) == json.loads(raw)
+    monkeypatch.setattr(parameters, "SSI_PATH", changed)
+    with pytest.raises(parameters.U2ParameterError, match="U2's pin"):
+        parameters.load_u2_ssi_parameters()
+    with pytest.raises(ValueError, match="U2 pin"):
+        diagnostics.federal_benefit_rates(changed)
