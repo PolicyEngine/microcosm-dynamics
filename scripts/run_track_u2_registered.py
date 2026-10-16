@@ -33,8 +33,10 @@ verifies, in order:
    section 20 step-4 structure pass wrote
    (:data:`~populace_dynamics.uniform_cut_track_u2.loader.
    PREREGISTRATION_EVIDENCE_PATH`), holding the SHA-256 of every PSID
-   file the loader reads and the sealed ``input_frames_sha256``, under
-   this checkout's pinned registries; while it is absent the run refuses;
+   file the loader reads, the sealed ``input_frames_sha256`` and the
+   pandas settings it was taken under, under this checkout's pinned
+   registries; while it is absent, or this run's pandas differs, the run
+   refuses;
 9. the registration binding -- target, specification SHA-256, rows,
    plans, registry (map) SHA-256s, source identities, parameter pins and
    the frozen input identities (the evidence record's SHA-256, every
