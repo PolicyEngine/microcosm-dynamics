@@ -2935,10 +2935,9 @@ def _one_text_cell(text, dtype):
 @settings(max_examples=300, deadline=None)
 @given(frame=_frames())
 # The closeout review's minimized counterexample: a one-column frame
-# whose only text cell is ASCII whitespace writes a whitespace-only CSV
-# line, which pandas' default parser drops (finding 3).  U+3000 is a
-# control: pandas treats only ASCII whitespace as blank, so it always
-# rebuilt.
+# whose only text cell is spaces or tabs writes a line that pandas'
+# default parser drops as blank (finding 3).  U+3000 is a control: the
+# parser keeps it, so it always rebuilt.
 @example(frame=_one_text_cell(" ", "str"))
 @example(frame=_one_text_cell("\u3000", "string"))
 @example(frame=_one_text_cell(" ", "object"))
@@ -2963,10 +2962,11 @@ def test_every_frame_over_the_allowed_dtypes_rebuilds_exactly(frame):
 @pytest.mark.parametrize("text", [" ", "\t", "\u3000", " \t "])
 def test_a_whitespace_only_text_cell_rebuilds(text, dtype):
     """The closeout review's finding 3 (INVENTED cells): a one-column
-    frame holding an ASCII-whitespace-only cell writes a whitespace-only
-    CSV line.  The rebuild keeps blank lines as rows, so the frame
-    rebuilds exactly instead of being falsely refused at step 4.  The
-    U+3000 cases are controls: pandas never treated them as blank."""
+    frame holding a cell of spaces or tabs writes a line that pandas'
+    default parser drops as blank.  The rebuild keeps blank lines as
+    rows, so the frame rebuilds exactly instead of being falsely refused
+    at step 4.  The U+3000 cases are controls: the parser never dropped
+    them."""
 
     frame = _one_text_cell(text, dtype)
     rebuilt = cohort._rebuild_frame(
