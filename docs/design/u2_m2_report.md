@@ -13,7 +13,8 @@ The exposure record is [`u2_m2_exposure.md`](u2_m2_exposure.md).
 - **Branch:** `dynamics-u2-m2-20260928`, rebased onto `b948d6b` (milestone 1b's fixed head, which includes milestone 1 and the applied source adjudication at `883ea48`).
 - **Code-final commit:** `12e1db0`. Later commits change only `tests/tier_counts.json`, `tests/README-tiers.md` and `docs/design/` (this report, the exposure record and the differential's report).
 - **Round 1 review fixes:** `0d742fd`, `8ec6953`, `9368931` and `b211ee7` answer the independent review of `f946334` ("Round 1 review fixes", the last section).
-- **Round 3 informational fixes:** `5e8524c`, `77a17ce`, `380f52b`, `75c16d5`, `c27e46f` and `c2f15bc` answer the three informational items the approving round-3 review of `34e3f65` left, and what three rounds of adversarial verification found ("Round 3 informational fixes", the last section).
+- **Round 3 informational fixes:** `5e8524c`, `77a17ce`, `380f52b`, `75c16d5`, `c27e46f` and `c2f15bc` answer the three informational items the approving round-3 review of `34e3f65` left, and what three rounds of adversarial verification found ("Round 3 informational fixes").
+- **Round 3 closeout:** `183c7ef3` merges master `9af53921`; `e08b98dd` and `fcfc4025` answer the closeout review of `183c7ef3` and the fourth-pass mutation run ("Round 3 closeout", the last section).
 - **Blindness:** no lane opened any file `RESTRICTED-FILES.md` restricts, and nothing here states or implies a 1946–55 value or direction. Every number in the code, tests and dry run is invented, a policy parameter or a committed public parameter capture.
 
 ## §13 and §14 completeness audit
@@ -699,3 +700,128 @@ Other runs:
 - **The pandas environment.** The frame digest hashes pandas' dtype names. A different pandas version or string-inference setting at the one-shot than at step 4 would therefore refuse a legitimate load. This predates round 3, and it must be pinned or recorded before step 4. It is a separate follow-up.
 - **PR #524 (d1090)** changes the same U2 files. Whichever of the two lands second needs a conflict pass.
 - **Independent review of this round's commits.**
+
+## Round 3 closeout (2026-10-15 to 2026-10-16)
+
+The round-3 lane's owner session ended on 2026-10-11 with four items open:
+
+- the fourth-pass mutation run, whose Subfleet job (`20261011-113833-u2r3-mutation`) reached its six-hour limit without a report;
+- the report's round-3 section and the exposure record, which described `db9725f`;
+- the tier recount, the U1 suite and the U1 differential at the final commit;
+- an independent review.
+
+The "Microcosm dynamics" coordinator adopted PR #525 and handed it to this lane: the main session of a Claude Code session (Claude Opus 5.5, blind builder). This lane finished the four items and fixed what the closeout review and the mutation run found. Its exposure record is in [`u2_m2_exposure.md`](u2_m2_exposure.md#round-3-closeout-lane).
+
+**INVENTED DATA - NOT A COMPARISON:** every case below is the invented population, its invented staged files or an invented frame. No real PSID record was read.
+
+### Merge with master
+
+`183c7ef3` merges master `9af53921` into the branch. Since the branch's last merge (`db9725fe`), master had gained #524 (Max's d1090 ruling: the B1 and B2 family-unit exclusions), #540 (the d637 registry commits, after which the loader's source preflight passes with 0 blockers) and other PRs. Three files conflicted:
+
+- `tests/tier_counts.json` and `tests/README-tiers.md`: recounted by collection on the merged tree.
+- `tests/track_u2/test_u2_loader.py`: only the docstring of `test_loaded_inputs_take_the_registered_path_only`. The merged docstring states both the round-3 record binding and #524's registry build. The body merged without conflict.
+
+Checks on the files that merged without conflict:
+
+- A `RoleContext` holds `RoleRule(**rule.as_dict())` copies (`sources.py:1123`). Since #524, `RoleRule.__post_init__` reads the exclusion mapping back into a `FamilyUnitExclusion` (`sources.py:780`), so the copies round-trip exactly, exclusions included. `test_u2_roles.py::test_role_rules_round_trip_through_as_dict` and `::test_registry_context_builds_as_the_declared_context` pass.
+- `role_rules_text` writes each exclusion through its `as_dict()`.
+- `test_u2_scripts.py`'s invented-variant list keeps #524's three appended variants.
+
+### Closeout review
+
+An independent review of `183c7ef3` returned **APPROVE**. It was a Claude Opus 5.5 reviewer with a shell (Subfleet job `20261015-145546-pr525-review-opus`); the Codex lanes were under an operator hold, so the GPT-6.1 Sol job was cancelled before launch. It found no blocking defect and no bypass of the registered-run binding through `run_track_u2` or `check_inputs`, and 13 of the 16 fixes it reverted made the new tests fail. Its findings:
+
+| Finding | Severity | Resolution |
+|---|---|---|
+| 1. Most file:line references in the round-3 section moved with the master merge | should-fix | Updated to the code-final commit |
+| 2. The "before" commits `0e84127`, `c8ca02d` and `00caf93` predate the rebase and are not on GitHub | should-fix | The section cites the rebased commits `77a17ce`, `75c16d5` and `c27e46f`, each equal in every U2 file, and names the originals |
+| 3. Invariant 20 is false as written: a one-column frame whose only text cell is whitespace writes a whitespace-only CSV line, which pandas drops, so the rebuild refuses the frame | informational | Fixed: `_rebuild_frame` keeps blank lines as rows (`cohort.py:697`). Invariant 20 now states its remaining precondition: nonempty labels and no NUL in the text |
+| 4. No test pins that each role context holds its own `FamilyUnitExclusion` objects | informational | `test_u2_loader.py::test_role_contexts_hold_private_exclusion_objects` and `::test_exclusions_edited_from_the_callback_reach_no_row` |
+| 5. Two guards cannot be reached from the public API: the births-digest check (`runner.py:719-728`) and the step-4 digest comparison (`loader.py:854-858`) | informational | Kept as backstops and described as such |
+| 6. A broken anchor; invariant 13's test paths; the PR body and exposure record still at `db9725f` | informational | Fixed |
+
+### Fourth-pass mutation run
+
+The run that the round-3 lane dispatched (`20261011-113833-u2r3-mutation`) reached its six-hour limit with no report, so its 28 mutants were split across four Subfleet lanes (Claude Opus 5.5, one standalone clone each, at `183c7ef3`). Three new mutants probe #524's exclusions. A host restart ended three lanes before their reports, and their stream logs and progress files kept every result they had reached. Two finishing lanes ran the remaining mutants at `e08b98dd`. Each lane applied one mutant at a time, ran the U2 test files that reach it, and restored the tree. A survivor got a probe on invented data, and a test for each real gap was written, run both ways and added (`e08b98dd`, `fcfc4025`). This lane checked every added test the same way: it applies the mutant by exact string replacement, runs the test, and restores the file.
+
+**Result: every mutant is killed at `fcfc4025`.** Six survived the tests that existed and now have killing tests: 10, 16, 20, 21, 27 and 29. Two more were killed by a message check only. Mutant 9 now has a behavioral test, and 23a's input is still refused before any row.
+
+| # | Mutation | Lane | Result | Killing tests at `fcfc4025` (`test_u2_loader.py::` unless named) |
+|---|---|---|---|---|
+| 1 | `run_track_u2` computes on the caller's inputs, not the snapshot | d | killed | `test_rows_never_read_the_callers_arrays`, `test_the_snapshot_records_the_bound_records_provenance`, `test_frames_changed_after_the_check_reach_no_row`, `test_no_evidence_is_recorded_from_a_registered_snapshot` |
+| 2 | `_rebuild_frame` drops the rewritten-text refusal | a | killed | `test_the_step_4_evidence_refuses_frames_that_do_not_rebuild` |
+| 3 | `_rebuild_frame` drops the round-trip float parser | a | killed | `test_every_frame_over_the_allowed_dtypes_rebuilds_exactly`, `test_computed_floats_rebuild_exactly` |
+| 4 | the type rules drop the `attrs` refusal | a | killed | `test_an_attrs_object_on_an_input_frame_refuses` |
+| 5 | the type rules allow empty strings | a | killed | `test_the_type_rules_refuse_each_case[empty-string]` |
+| 6 | object columns allow `None` and `pd.NA` | a | killed | `test_an_object_column_holds_only_nan_as_missing` |
+| 7 | any NumPy dtype is allowed | a | killed | `test_the_type_rules_refuse_each_case[int32]` |
+| 8, 8b | any extension dtype is allowed by `isinstance` (8b: only the two allowed classes, by `isinstance`) | a | killed | `test_an_unlisted_column_dtype_refuses`, `[category]`, `[dtype-subclass]` |
+| 9 | `_plain_hashes` returns its argument unchecked | b | killed only by message; now killed by behavior | `test_a_recorded_hash_map_must_be_exactly_a_dict` (new) |
+| 10 | the bundle check drops its exact-`str` rule | b | survived | `test_a_recorded_file_bundle_must_be_an_exact_str` (new) |
+| 11 | the registration pointer is checked by `isinstance` | b | killed | `test_a_registration_pointer_must_be_an_exact_str` |
+| 12 | a registered run accepts a source gate | b | killed | `test_a_registered_run_takes_no_source_gate` |
+| 13 | `RoleRule` is not final | c | killed | `test_role_rules_are_final_and_bound_by_text` |
+| 14 | contexts hold the shared cached rules | c | killed | `test_role_contexts_hold_private_rule_objects`, `test_rules_edited_in_place_from_the_callback_reach_no_row` and two others |
+| 15 | a context stores the caller's rules | c | killed | `test_role_rules_are_final_and_bound_by_text` |
+| 16 | `role_rules_text` drops its exact-type rule | c | survived | `test_a_lookalike_rule_context_refuses` (new) |
+| 17 | `_committed_roles` does not wrap refusals as `U2RunError` | c | killed | `test_a_role_registry_refusal_is_a_run_error` |
+| 18 | the step-4 writer accepts a registered snapshot | d | killed | `test_no_evidence_is_recorded_from_a_registered_snapshot` |
+| 19 | the step-4 writer drops the rebuild check | d | killed | `test_the_step_4_evidence_refuses_frames_that_do_not_rebuild` |
+| 20 | the snapshot takes its provenance from the caller | d | survived | `test_the_snapshot_never_reads_the_callers_recorded_hashes` (new) |
+| 21 | `run_track_u2` drops the births check | d2 | survived | `test_a_snapshot_edited_after_the_check_reaches_no_row` (new; a backstop, reached only through `gc`) |
+| 22 | `_frame_text` drops the Unicode check | d2 | killed | `test_invalid_unicode_refuses_as_a_cohort_error` |
+| 23a | the label check is dropped from `run_track_u2` only | b | killed by message; every label is still refused before any row | `test_a_registered_run_takes_only_an_exact_provenance_label[str-subclass]` |
+| 23b | the label check is dropped from both entry points | b | killed | `test_a_registered_run_takes_only_an_exact_provenance_label[rigged-equality]`, `[str-subclass]` |
+| 24 | `run_track_u2` drops the row-set refusal | b2 | killed | `test_a_registered_run_refuses_every_row_set_before_any_check`, `test_a_registered_run_refuses_altered_row_definitions`, `test_u2_scripts.py::test_dry_run_records_every_branch_and_refusal` |
+| 25 | `_plain_json` checks by `isinstance` | d2 | killed | `test_a_malformed_evidence_record_refuses` (3 cases), `test_a_rigged_digest_in_the_record_refuses` |
+| 26a | `_wave_frames` accepts any mapping | d2 | killed | `test_no_frame_container_but_a_plain_dict_is_digested`; `test_a_frame_container_that_is_not_a_dict_refuses` (new) covers a non-dict mapping |
+| 26b | `_wave_frames` accepts `int`-subclass keys | d2 | killed | `test_a_wave_key_must_be_exactly_int[int-subclass]`, `[bool]` |
+| 27 | `check_inputs` compares the rules with `==`, not as text | c | survived | `test_rewritten_rules_with_a_rigged_field_refuse` (new) |
+| 28 | the bound and sealed hashes lose their exact-`str` rule | b2 | killed | `test_loaded_inputs_take_the_registered_path_only`, `test_a_registered_run_needs_the_evidence_its_registration_binds[unnamed]`, `test_a_rigged_evidence_hash_refuses[bound]`, `[seal]` |
+| 29 | contexts' copies are shallow, so they share exclusion objects | this lane | survived (also the review's M16) | `test_role_contexts_hold_private_exclusion_objects`, `test_exclusions_edited_from_the_callback_reach_no_row` (new) |
+| 30 | `RoleRule.as_dict` drops the exclusion's sex | b2 | killed | seven `test_u2_roles.py` tests, among them `test_exclusions_remove_exactly_the_units_that_hold_a_trigger`; the two new exclusion tests |
+| 31 | `RoleRule` accepts any object as its exclusion | b2 | killed | `test_u2_roles.py::test_role_rules_round_trip_through_as_dict` |
+
+The step-4 digest comparison (`loader.py:854-858`; the review's M14) still has no killing test. It is a backstop behind the seal check and the rebuild refusal, as finding 5 says.
+
+**Other findings of the mutation lanes:**
+
+- **Fixed in `e08b98dd`:**
+  - the whitespace-only rebuild (lane a, independently of the review);
+  - big-endian dtypes, which passed the type rules and then crashed the rebuild with a raw `KeyError` (lane a);
+  - a `FamilyUnitExclusion` lookalike, which `check_inputs` accepted (lane c).
+- **Within the stated limits, not changed:** code that reaches the private snapshot through `gc` can edit it during the `progress` callback, after the births check (lane d2). The limits already exclude code that reaches private objects through `gc`, and `main` passes a fixed `print` callback. If the threat model ever widens, a registered run could also refuse a caller-supplied callback, as it refuses `row_set` and `source_gate`.
+- **Test harness:** under `pytest -n`, a failure report that holds a lone surrogate (`test_invalid_unicode_refuses_as_a_cohort_error`, under a mutant) cannot cross xdist's channel and ends the run with an INTERNALERROR (lane d2). CI runs without xdist.
+
+### Before and after (closeout)
+
+| Case (invented) | Before | Fixed |
+|---|---|---|
+| One-column `str`, `string` or object frame whose only cell is `" "`, a tab or an ideographic space | refused at step 4 at `183c7ef3` (a false refusal) | rebuilds exactly |
+| A big-endian (`>i8` or `>f8`) `person_id` column | passed the type rules, then raised a raw `KeyError` in the rebuild at `183c7ef3` | refused at the digest: dtype |
+| A registry context whose 2015 code-20 rule holds an object that prints as the B1 exclusion but applies to nobody | accepted by `check_inputs` at `183c7ef3`; the rows were unaffected, because a registered run computes with a fresh committed context | refused: not exactly a `FamilyUnitExclusion`; the class is final |
+
+### Invariants (closeout)
+
+20. **Faithful rebuild**, restated. Every frame over the allowed dtypes whose labels are nonempty and whose text holds no NUL rebuilds exactly from its digested text, with no refusal. The property draws object columns too and pins the whitespace cases (`test_u2_loader.py::test_every_frame_over_the_allowed_dtypes_rebuilds_exactly`, 300 examples plus 3 explicit; `::test_a_whitespace_only_text_cell_rebuilds`, 12 cases).
+21. **The digest pins what it reads**, extended: it refuses a non-native byte order, whose dtype name matches an allowed one while its written name does not (`::test_the_type_rules_refuse_each_case[big-endian-int64]` and `[big-endian-float64]`).
+22. **Exact role rules.** Every rule a role context holds is exactly a `RoleRule`, every exclusion it carries is exactly a `FamilyUnitExclusion`, and both classes are final. Each context holds its own objects, so no edit of one context reaches another or a registered run's fresh one (`::test_a_lookalike_rule_context_refuses`, `::test_a_rule_holds_exactly_a_family_unit_exclusion`, `::test_role_contexts_hold_private_exclusion_objects`, `::test_exclusions_edited_from_the_callback_reach_no_row`).
+
+### Test results (closeout)
+
+Every Python command below ran under an audit hook that refused any open, listing, scan or glob under the PSID directory, the evidence directory or REFS. HOME and `POPULACE_DYNAMICS_PSID_DIR` pointed at empty directories. The hook refused nothing.
+
+- **The U2 files at `fcfc4025`** (every `tests/track_u2` file, `tests/data/test_track_u2_income_wealth.py` and `tests/estimates/test_birth_evidence_artifact.py`; `-n 4`): **1,297 passed, 254 skipped, 0 failed.**
+  - 244 skips are `test_psid_research_sources.py`, whose documentation PDFs are not staged under the empty PSID root, so it opened nothing.
+  - 10 skips are `test_u2_pipeline.py`, whose registered artifact does not exist.
+  - `tests/test_legacy_manifest.py`: 11 passed.
+- **The §13 U1 suite, unmodified, at `e08b98dd`** (the code-final commit; later commits change only tests and documents): **390 passed, 39 skipped, 0 failed**, the same files and counts as rounds 1 to 3. `git diff 9cee2423` over the §13 list is empty.
+- **The U1 differential at `e08b98dd` against `9cee2423`**, in fresh standalone clones, both clean: `all_equal` and `all_checks_passed` are true and the dry run was not skipped. Its report is committed as [`u2_m2_u1_differential_e08b98d.json`](u2_m2_u1_differential_e08b98d.json) (SHA-256 `f0023ebbe6a9c8828bc18de9834de90e889c49641646b218d70449a3124fad3c`). It differs from the round-3 report (`db9725f`) only in clone paths, heads, dates and the dry run's temporary output directory, which the dry-run hashes include. Within each run, the base and the candidate agree.
+- **Black 26.5.1 (`-l 79`) and ruff** are clean on the changed Python files.
+- **Tiers** (`pytest --collect-only -q -m <tier>`): unit 9,046 (+90 over master `9af53921`, 28 of them added at this closeout), artifact 4,205 (+4), integration_psid 1,401, reproduction_legacy 520, oracle_policyengine 308. The total, 15,480, equals the full collection.
+
+### Not done (closeout)
+
+- **The evidence record itself**, as in rounds 1 to 3. The §20 step-4 structural pass writes it on real data, and that pass needs Max's authorization.
+- **The pandas environment** (carried from round 3). The frame digest hashes pandas' dtype names, so the pandas version and string-inference setting at the one-shot must equal step 4's. They must be pinned or recorded before step 4.
+- **The tier recount at the landing slot.** Tiers are recounted again when the coordinator's merge slot comes up, since other PRs land first.

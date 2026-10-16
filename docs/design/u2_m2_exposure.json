@@ -1060,5 +1060,56 @@
   ],
   "psid_documentation_opened_by_tests": "tests/track_u2/test_psid_research_sources.py only (documentation PDFs, as in rounds 1 and 2); no survey record file",
   "values_printed": "invented offsets and invented-run counts, invented cells of the invented population, hashes and timings; no 1946-55 value or direction"
+ },
+ "round_3_closeout_lane": {
+  "lane": "u2-m2 round-3 closeout (main session, Claude Opus 5.5, blind builder, 2026-10-15 to 2026-10-16); adopted PR #525 from the coordinator",
+  "commits": [
+   "183c7ef3",
+   "e08b98dd",
+   "a5df03c2",
+   "fcfc4025"
+  ],
+  "evidence_directory_opened": [
+   "EV/coordinator/pr525-u2-m2-closeout-brief-20261015.md (full, first)",
+   "EV/RESTRICTED-FILES.md (U2 and exercise-2 sections and a text search first, then the whole file; terminal view cut lines longer than about 300 characters; includes the 2026-09-29 02:40 entry)"
+  ],
+  "evidence_directory_listed_names_only": [],
+  "outside_repository_opened": [
+   "~/.subfleet/jobs/20261011-113833-u2r3-mutation: prompt.md and run metadata (the adopted round-3 lane's own mutation job)",
+   "this lane's own Subfleet jobs' outputs and stream logs",
+   "/private/tmp/claude-501/pr525-guard.log (a guard log this lane created there; empty; deleted)"
+  ],
+  "specification": "opened for the section 20 follow-up: lines 1-15, 106-135, 267-334, 1021-1036, 1220-1352 (ssi entry and blocked_by), section headings, sections 17, 19 and 20; test_u2_roles.py and test_adjudication_applied.py also read it during test runs",
+  "repository_opened": [
+   "src/populace_dynamics/uniform_cut_track_u2/runner.py, cohort.py, loader.py, sources.py (ranges the merge and fixes touch), parameters.py (SSI pin)",
+   "tests/track_u2/test_u2_loader.py, test_u2_scripts.py, test_u2_parameters.py, test_adjudication_applied.py (ranges changed or checked)",
+   "scripts/u2_u1_differential.py, scripts/run_track_u2_registered.py and scripts/track_u2_dry_run.py (line checks)",
+   "docs/design/u2_m2_report.md, u2_m2_exposure.md, u2_m2_exposure.json, u2_m1_source_adjudication.md (header and blocker table)",
+   "tests/README-tiers.md, tests/tier_counts.json, .github/workflows, CLAUDE.md; PR #524, #525, #539, #540 bodies and comments"
+  ],
+  "probes": [
+   "rebuild of invented one-column frames (whitespace, tab, NUL, missing values) with and without blank-line skipping",
+   "mutant-kill checks: each closeout mutant applied by exact string replacement, its new tests run, the file restored"
+  ],
+  "executed": [
+   "every Python command under an audit hook refusing any open/listing/scan/glob under PSID, EV and REFS, with HOME and POPULACE_DYNAMICS_PSID_DIR pointed at empty directories; the hook refused nothing outside its self-tests",
+   "tier recount (pytest --collect-only -q -m <tier>) at 183c7ef3, e08b98dd and fcfc4025",
+   "tests/track_u2 and the U2 data and birth-evidence files at 183c7ef3, e08b98dd and fcfc4025 (test_psid_research_sources.py skipped: nothing staged under the empty PSID root)",
+   "the section 13 U1 suite at 183c7ef3 and e08b98dd",
+   "scripts/u2_u1_differential.py against 9cee2423 at 183c7ef3 and e08b98dd",
+   "black 26.5.1 and ruff"
+  ],
+  "verification_lanes": [
+   "wf_f2fc33e9-92a: four mutation lanes and a reviewer (in-session, Claude Opus 5.5, own clones); stopped at the weekly limit during baselines, no results; no restricted path except the reviewer's hook self-test and a repository grep for the directory names",
+   "one in-session evidence-map agent: stopped before its first tool call",
+   "20261015-145340-pr525-mut-a (Subfleet, Claude Opus 5.5): finished, mutants 2-8",
+   "20261015-145341-pr525-mut-b, -mut-c, -mut-d (Subfleet, Claude Opus 5.5): ended by provider errors at the host restart; results kept in stream logs and progress files",
+   "20261015-145341-pr525-review (Subfleet, GPT-6.1 Sol): cancelled before launch (Codex lanes held)",
+   "20261015-145546-pr525-review-opus (Subfleet, Claude Opus 5.5): closeout review of 183c7ef3, APPROVE",
+   "20261015-225702-pr525-mut-b2, -mut-d2 (Subfleet, Claude Opus 5.5): finished, the remaining mutants at e08b98dd"
+  ],
+  "guard_logs": "empty for mut-a, mut-c, b2, d2, the review and this lane; mut-b's and mut-d's were truncated unread by this lane when it reset those clones, and their stream logs show no refusal and no tool input naming a restricted directory",
+  "psid_documentation_opened_by_tests": "none: test_psid_research_sources.py skipped every documentation test because the PSID root was an empty directory",
+  "values_printed": "invented offsets, invented cells, invented-run counts and dispositions, hashes and timings; no 1946-55 value or direction"
  }
 }

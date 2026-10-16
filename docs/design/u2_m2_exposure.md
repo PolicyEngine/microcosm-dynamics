@@ -1,6 +1,6 @@
 # U2 milestone 2 exposure record
 
-This record covers every lane that built or reviewed U2 milestone 2 (the implementation of specification §§13–14 on invented data), the lane that finished it on 2026-09-29, and the lane that fixed the round-1 review's findings ("Round-1 fix lane", below). The machine-readable inventory is [`u2_m2_exposure.json`](u2_m2_exposure.json). It holds every path each lane read, wrote, searched or named in a command, plus the restricted-path check.
+This record covers every lane that built or reviewed U2 milestone 2 (the implementation of specification §§13–14 on invented data), the lane that finished it on 2026-09-29, the lanes that fixed the findings of review rounds 1 to 3, and the round-3 closeout lane (below). The machine-readable inventory is [`u2_m2_exposure.json`](u2_m2_exposure.json). It holds every path each lane read, wrote, searched or named in a command, plus the restricted-path check.
 
 `EV` is the evidence directory `/Users/maxghenis/microcosm-launch-evidence/dynasim-parity-20260909`. `REFS` is `/Users/maxghenis/PolicyEngine/dynasim-refs`. `PSID` is `~/PolicyEngine/psid-data`.
 
@@ -296,3 +296,55 @@ Each lane read `EV/RESTRICTED-FILES.md`, worked in its own clone or an existing 
 - hashes and timings.
 
 **Values:** the lane stated and inferred no 1946–55 value or direction. Every number it added or printed is invented, a count, a hash, a timing or a public parameter from the committed captures.
+
+## Round-3 closeout lane
+
+This lane finished PR #525 after the round-3 lane's owner session ended. It was the main session of a Claude Code session (Claude Opus 5.5, blind builder), 2026-10-15 to 2026-10-16, which the "Microcosm dynamics" coordinator handed the adopted PR. It merged master into the branch (`183c7ef3`), fixed what the closeout review and the mutation run found (`e08b98dd`) and wrote the report's "Round 3 closeout" section and this entry. It worked in the worktree `.claude/worktrees/mystifying-nash-eec1cc` and in standalone clones under `~/reviews/pr525-closeout-20261015/`. The machine-readable list is `round_3_closeout_lane` in [`u2_m2_exposure.json`](u2_m2_exposure.json).
+
+**Evidence directory (all builder-allowed):**
+
+- `EV/coordinator/pr525-u2-m2-closeout-brief-20261015.md`, the coordinator's brief, read in full first.
+- `EV/RESTRICTED-FILES.md`, read next: first its U2 and exercise-2 sections and a search of its text for U2, PSID and Boomers terms, then the whole file. The terminal view cut lines longer than about 300 characters. It includes the 2026-09-29 02:40 entry, so the disclosure above applies to this lane too; nothing here depends on it.
+
+It did not open, list or search anything else under `EV`, `REFS` or `PSID`. In particular it did not open the cleared U2 availability statement, any Boomers 2004 or Urban report page, any comparator lane or seal, or any scratchpad archive.
+
+**Outside the repository:**
+
+- The round-3 lane's own Subfleet job folder for its fourth-pass mutation run (`~/.subfleet/jobs/20261011-113833-u2r3-mutation`): the job's prompt and its run metadata, to learn that the run had ended without a report. This lane adopted that work. It opened no other session's job folder except its own jobs' output and stream logs.
+- `/private/tmp/claude-501/pr525-guard.log`, a guard log this lane created there, found empty and deleted; later logs went under the review folder. A host restart cleared the lane's scratchpad on 2026-10-16.
+
+**Specification** (`docs/design/boomers2004_1946_55_comparison.md`): opened for the §20 follow-up, not for this PR's code. It read the header (lines 1–15), §3's identification paragraphs (lines 106–135), §4's required manifests and mapping pass (lines 267–334), §14's registered-run preflight (lines 1021–1036), §15's `ssi` entry and `blocked_by` list (lines 1220–1352), the section headings, §17, §19's changelog and §20. The parts it read state no comparator value.
+
+**Repository:** the files the merge and the fixes touched or depend on, read in the ranges needed: `runner.py`, `cohort.py`, `loader.py` and `sources.py`, plus `parameters.py` around the SSI pin. It also read:
+
+- the U2 test files it changed or ran (`test_u2_loader.py`, `test_u2_scripts.py`, `test_u2_parameters.py`, `test_adjudication_applied.py`);
+- `scripts/u2_u1_differential.py`, `scripts/run_track_u2_registered.py` and `scripts/track_u2_dry_run.py` (line checks);
+- this record, the report, `docs/design/u2_m1_source_adjudication.md` (header and blocker table), the tier files, the CI workflows, `CLAUDE.md` and PR #524, #525, #539 and #540's bodies and comments.
+
+**Executed, all on invented data, every Python command under an audit hook** that refused any open, listing, scan or glob under `PSID`, `EV` or `REFS`, with HOME and `POPULACE_DYNAMICS_PSID_DIR` pointed at empty directories:
+
+- the tier recount (`pytest --collect-only -q -m <tier>`) at `183c7ef3` and again after the fixes;
+- every `tests/track_u2` file and the U2 data and birth-evidence files, at `183c7ef3` and after the fixes. One differential test first failed because the hook's own path resolution made the `lstat` calls that test records; the hook was changed to resolve paths without touching the file system, and the test passed;
+- the §13 U1 suite at `183c7ef3` and `e08b98dd`;
+- the U1 differential (`scripts/u2_u1_differential.py`) against `9cee2423` at `183c7ef3` and `e08b98dd`;
+- probes of the rebuild on invented one-column frames (whitespace, tab, NUL, missing values), and a mutant-kill check that applies each closeout mutant by exact string replacement, runs its new tests and restores the file;
+- `black` 26.5.1 and `ruff`.
+
+The hook refused nothing at any of these runs. Its only refusals were the self-tests, on a nonexistent probe path under `PSID`.
+
+**Verification lanes:**
+
+- In-session workflow `wf_f2fc33e9-92a` (four mutation lanes and a reviewer, Claude Opus 5.5, own clones): stopped at the account's weekly limit during their baselines and returned nothing. Their transcripts name no restricted path except the reviewer's hook self-test (a nonexistent probe path under `PSID`, refused) and a search of the repository's test files for the three directory names.
+- One in-session agent for the §20 evidence map: stopped before its first tool call.
+- Subfleet, each in its own standalone clone with the same hook:
+  - `20261015-145340-pr525-mut-a` (Claude Opus 5.5): finished; mutants 2–8.
+  - `20261015-145341-pr525-mut-b`, `-mut-c` and `-mut-d` (Claude Opus 5.5): ended by provider errors when the host restarted, before their reports. Their stream logs and progress files hold their per-mutant results.
+  - `20261015-145341-pr525-review` (GPT-6.1 Sol): cancelled before launch, as the Codex lanes were held.
+  - `20261015-145546-pr525-review-opus` (Claude Opus 5.5): the closeout review, APPROVE.
+  - `20261015-225702-pr525-mut-b2` and `-mut-d2` (Claude Opus 5.5): finished; the mutants the restart left unrun, at `e08b98dd`.
+
+    Lane b2 noted that `test_u2_roles.py::test_exclusion_dispositions_are_the_ratified_names` reads the U2 specification for its disposition names. So does `test_adjudication_applied.py`. Every run of those files (this lane's, the review's and the mutation lanes') read the specification through those tests only.
+
+  Every lane read `EV/RESTRICTED-FILES.md`'s rules from its brief, not the file. No lane's stream log shows a refusal by the hook or a tool input that names a restricted directory; the only matches are listings of the hook's own source. The hook logs of mut-a, mut-c, b2, d2, the review and this lane are empty. This lane truncated the hook logs of mut-b and mut-d without reading them when it reset those clones for the finishing lanes; their stream logs are the record for those two.
+
+**Values:** this lane and its lanes stated and inferred no 1946–55 value or direction. Every number they printed is invented (offsets, invented cells, invented-run counts and dispositions), a count, a hash, a timing or a public parameter from the committed captures.
