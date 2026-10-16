@@ -952,6 +952,66 @@ def test_the_binding_changes_with_every_frozen_identity(key, digest):
     ) == same
 
 
+@settings(max_examples=60, deadline=None)
+@given(
+    version=st.text(min_size=1, max_size=12),
+    infer=st.booleans(),
+)
+def test_the_binding_changes_with_the_frame_environment(version, infer):
+    """Invariant (#544): the binding covers the pandas settings the frame
+    digest was taken under, through the evidence record's SHA-256: it
+    changes exactly when the environment does (INVENTED environments)."""
+
+    from populace_dynamics.uniform_cut_track_u2 import cohort
+
+    registered = _registered_module()
+    base = _invented_evidence()
+    environment = {"pandas_version": version, "future_infer_string": infer}
+    other = _invented_evidence(frame_environment=environment)
+    same = environment == cohort.frame_environment()
+    assert (
+        registered.binding_sha256("b" * 64, other)
+        == registered.binding_sha256("b" * 64, base)
+    ) == same
+
+
+def test_the_structure_pass_records_its_environment():
+    """The step-4 pass's output records the interpreter and package
+    versions it ran under, beside the frozen pandas settings, exactly as
+    the registered run's sidecar records its own, so the one-shot can be
+    run under the same ones (#544 review)."""
+
+    import platform
+
+    import pandas as pd
+
+    module = _script("track_u2_structure")
+    environment = module._environment()
+    assert environment["python"] == platform.python_version()
+    assert environment["packages"]["pandas"] == pd.__version__
+    assert {"numpy", "pandas"} <= set(environment["packages"])
+    # The same record the registered run's sidecar writes (two
+    # implementations; the structure pass may not import the runner).
+    assert environment == _registered_module()._environment()
+    tree = ast.parse((ROOT / "scripts" / "track_u2_structure.py").read_text())
+    (build,) = [
+        node
+        for node in tree.body
+        if isinstance(node, ast.FunctionDef) and node.name == "build"
+    ]
+    (output,) = [
+        node.value
+        for node in ast.walk(build)
+        if isinstance(node, ast.Return) and isinstance(node.value, ast.Dict)
+    ]
+    pairs = {
+        key.value: value
+        for key, value in zip(output.keys, output.values, strict=True)
+        if isinstance(key, ast.Constant)
+    }
+    assert ast.unparse(pairs["environment"]) == "_environment()"
+
+
 def test_the_registered_main_passes_the_evidence_to_the_loader(
     registered, monkeypatch
 ):

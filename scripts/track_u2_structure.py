@@ -10,9 +10,13 @@ income and WEALTH1 identity counts per wave and the registry status.
 
 It also writes ``track-u2-preregistration-evidence.json``: the frozen
 input identities section 14 says execution rechecks -- the SHA-256 of
-every PSID file the loader read and the sealed ``input_frames_sha256``
-(:func:`populace_dynamics.uniform_cut_track_u2.loader.
-preregistration_evidence`).  Once reviewed, that record is committed at
+every PSID file the loader read, the sealed ``input_frames_sha256`` and
+the pandas settings that digest was taken under
+(``cohort.frame_environment``; a frozen load or registered run refuses
+under any other) (:func:`populace_dynamics.uniform_cut_track_u2.loader.
+preregistration_evidence`).  ``track-u2-structure.json`` also records the
+interpreter and package versions the pass ran under (``environment``), so
+the registered one-shot can be run under the same ones.  Once reviewed, that record is committed at
 ``docs/design/u2_preregistration_evidence.json``
 (:data:`~populace_dynamics.uniform_cut_track_u2.loader.
 PREREGISTRATION_EVIDENCE_PATH`); the registered run binds its hash and
@@ -46,7 +50,9 @@ Usage::
 from __future__ import annotations
 
 import argparse
+import importlib.metadata
 import json
+import platform
 import subprocess
 import sys
 from collections.abc import Mapping
@@ -73,6 +79,26 @@ FORBIDDEN_MODULES = (
     "populace_dynamics.uniform_cut_track_u2.parameters",
     "populace_dynamics.uniform_cut_track_u2.invented",
 )
+
+
+#: The distributions whose versions the pass records (as the registered
+#: run's sidecar does), so the one-shot can be run under the same ones.
+ENV_IMPORTS = ("numpy", "pandas", "populace_dynamics")
+
+
+def _environment() -> dict[str, Any]:
+    """The interpreter, platform and package versions of this pass."""
+
+    packages = importlib.metadata.packages_distributions()
+    versions = {}
+    for name in ENV_IMPORTS:
+        for distribution in dict.fromkeys(packages.get(name, ())):
+            versions[distribution] = importlib.metadata.version(distribution)
+    return {
+        "python": platform.python_version(),
+        "platform": platform.platform(),
+        "packages": dict(sorted(versions.items())),
+    }
 
 
 def _leaked() -> list[str]:
@@ -149,6 +175,7 @@ def build(
         "identities": identities,
         "rows": rows,
         "preregistration_evidence": loader.preregistration_evidence(inputs),
+        "environment": _environment(),
         "forbidden_modules_loaded": _leaked(),
     }
 

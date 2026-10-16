@@ -1522,6 +1522,31 @@ def test_any_other_frame_environment_refuses_the_registered_check(
                 )
 
 
+def test_check_frame_environment_normalizes_its_record(evidence):
+    """A direct call reads only a normalized record: a dict subclass
+    whose comparisons always agree (INVENTED) is refused as not plain
+    data, though its values would pass (#544 review, info 1)."""
+
+    class _AlwaysEqual(dict):
+        def __eq__(self, other):
+            return True
+
+        def __ne__(self, other):
+            return False
+
+        __hash__ = None
+
+    record = {
+        **evidence,
+        "frame_environment": _AlwaysEqual(
+            pandas_version="0.0.invented", future_infer_string=False
+        ),
+    }
+    with pytest.raises(loader.U2FrozenIdentityMismatch):
+        loader.check_frame_environment(record)
+    loader.check_frame_environment(evidence)
+
+
 def _reached_snapshot(*args, **kwargs):
     raise _Reached
 

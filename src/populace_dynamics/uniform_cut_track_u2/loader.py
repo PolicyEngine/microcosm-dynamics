@@ -112,10 +112,10 @@ __all__ = [
     "U2FrozenIdentityMismatch",
     "U2LoaderRefusal",
     "U2UndocumentedValue",
+    "check_frame_environment",
     "check_frozen_files",
     "check_individual_values",
     "check_layouts_against_setup",
-    "check_frame_environment",
     "check_preregistration_evidence",
     "check_source_hashes",
     "check_structural_pass_authorization",
@@ -570,7 +570,9 @@ def load_u2_inputs(
     (:func:`read_preregistration_evidence`), not just any well-formed
     one: a fabricated record would otherwise stand in for the
     authorization an unfrozen load needs.  An absent or different record
-    refuses before any PSID path is resolved.  With it, every frozen file
+    refuses before any PSID path is resolved, and so does a pandas other
+    than the one its frame digest was taken under
+    (:func:`check_frame_environment`).  With it, every frozen file
     is rehashed before any record is parsed (:func:`check_frozen_files`);
     while records are read, opening any file under the PSID directory
     that the record does not freeze refuses before the file is read
@@ -842,8 +844,10 @@ def check_frame_environment(frozen: Mapping[str, Any]) -> None:
     (``cohort.frame_environment``), so a load or run under another pandas
     version or string inference setting could refuse a legitimate frame
     or digest it differently.  Checked before any PSID path is resolved.
+    The record is normalized first, so only plain JSON data compares.
     """
 
+    frozen = check_preregistration_evidence(frozen)
     current = cohort.frame_environment()
     if frozen["frame_environment"] != current:
         raise U2FrozenIdentityMismatch(
