@@ -6,12 +6,20 @@ exercised on a temporary directory with invented content.
 
 from __future__ import annotations
 
+import inspect
 import json
+import random
+import re
+import shutil
+import subprocess
 import sys
+import tracemalloc
+from fnmatch import fnmatchcase
+from itertools import pairwise
 from pathlib import Path
 
 import pytest
-from hypothesis import given, settings
+from hypothesis import example, given, settings
 from hypothesis import strategies as st
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -731,12 +739,18 @@ def test_a_denied_name_split_across_a_brace_group_is_flagged(data):
 
 @settings(max_examples=300, deadline=None)
 @given(pattern=st.text(alphabet="xyz*?/{},", max_size=18))
+@example("{/}x")
+@example("{,{/}}x")
 def test_a_pattern_naming_nothing_denied_stays_inside_the_root(pattern):
     """Invariant: a relative pattern with no dot and none of the denied
-    names' letters is never flagged."""
+    names' letters is never flagged. It leaves the root exactly when bash
+    or a glob engine expands it to an absolute alternative (ripgrep and
+    Bun read ``{/}x`` as ``/x``)."""
     kind = review_root.pattern_kind(pattern, DENIED)
     absolute = any(
-        text.startswith("/") for text in review_root.brace_expansions(pattern)
+        text.startswith("/")
+        for glob in (False, True)
+        for text in review_root.brace_expansions(pattern, glob=glob)
     )
     assert kind == ("outside_root" if absolute else "inside_root"), pattern
 
@@ -745,7 +759,10 @@ def test_a_pattern_naming_nothing_denied_stays_inside_the_root(pattern):
 @given(pattern=st.text(alphabet="ab./{},*", max_size=14))
 def test_the_classifier_is_no_weaker_than_the_round_7_rule(pattern):
     """Differential: whatever the round-7 segment rule flagged on the
-    pattern as written, the expanding classifier flags too."""
+    pattern as written, the expanding classifier flags too. Since v7 a
+    pattern it called denied may be classed as leaving the root instead,
+    when an engine reads it as absolute (``{/ab}`` is ``/ab`` to
+    ripgrep); either voids the review."""
     denied = ["a/b.a", "ab"]
     names = {"b.a", "ab", Path(review_root.CODEBOOK_DIR).name}
     stems = {"b"}
@@ -759,7 +776,7 @@ def test_the_classifier_is_no_weaker_than_the_round_7_rule(pattern):
     if old_outside:
         assert kind == "outside_root", pattern
     elif old_denied:
-        assert kind == "denied", pattern
+        assert kind in ("denied", "outside_root"), pattern
 
 
 @settings(max_examples=300, deadline=None)
@@ -799,3 +816,900 @@ def test_literal_braces_do_not_hide_a_split_denied_name(junk, data):
         junk + name[:start] + "{" + name[start:stop] + ",y}" + name[stop:]
     )
     assert review_root.pattern_kind(pattern, DENIED) == "denied", pattern
+
+
+# The v7 rule (after Q6 round 10): patterns read as glob engines read
+# them, and every removed file denied.
+
+#: An invented root record: three excluded files, one codebook file and
+#: one other code-map table the builder removed.
+RECORD = {
+    "denied_paths": DENIED,
+    "removed": [
+        *DENIED,
+        f"{review_root.CODEBOOK_DIR}/ry_invented_field_v1.json",
+    ],
+    "removed_codebook_tables": ["data/invented_code_map_table.md"],
+}
+
+
+def test_denied_from_record_takes_every_removed_file():
+    assert review_root.denied_from_record(RECORD) == sorted(
+        {
+            *DENIED,
+            f"{review_root.CODEBOOK_DIR}/ry_invented_field_v1.json",
+            "data/invented_code_map_table.md",
+        }
+    )
+    with pytest.raises(KeyError):
+        review_root.denied_from_record({"denied_paths": DENIED})
+
+
+@pytest.mark.parametrize(
+    ("tool", "value", "counts"),
+    [
+        # Q6 round 10 L1: a class holding a comma or a brace
+        ("Glob", "**/deep_denied[.,]md", False),
+        ("Grep", "deep_denied[!,]md", False),
+        ("Glob", "deep_denied[{.]md", False),
+        # Q6 round 10 observation: a codebook file and a removed code-map
+        # table named by basename, and the table's path
+        ("Glob", "**/ry_invented_field_v1.json", False),
+        ("Grep", "invented_code_map_table.md", False),
+        ("Glob", "**/invented_code_map_table*", False),
+        ("Read", "data/invented_code_map_table.md", False),
+        # forms the engines read as the name (probed on invented files)
+        ("Glob", "**/deep_{denied[.,]md,x}", False),
+        ("Glob", "**/deep_{denied}.md", False),
+        ("Grep", "deep_denied{.}md", False),
+        ("Glob", "**/deep_denied\\.md", False),
+        ("Glob", "**/deep_@(denied).md", False),
+        ("Glob", "**/deep_denied[[:punct:]]md", False),
+        ("Glob", "**/deep_denied[^,]md", False),
+        ("Glob", "**/[d]eep_denied.md", False),
+        ("Glob", "docs/sub[/x]deep_denied.md", False),
+        # ripgrep lets a negated class stand for a slash
+        ("Grep", "docs/sub[!x]deep_denied.md", False),
+        # case: the root's file system ignores it
+        ("Glob", "docs/sub/DEEP_DENIED.MD", False),
+        ("Read", "GATES.YAML", False),
+        ("Glob", "[gG]ates.yaml", False),
+        # the #534 review's five: extglob repetition, Node's brace
+        # sequences, Bun's escaped ] in a class, POSIX ascii and Node's
+        # backslash separators; and a stem spelled by repetition
+        ("Glob", "**/deep_denied+([.m])d", False),
+        ("Glob", "**/deep_denied*([.m])d", False),
+        ("Glob", "**/deep_denied[.,]{m..m}d", False),
+        ("Glob", "**/deep_denied[.\\]]md", False),
+        ("Glob", "**/deep_denied[[:ascii:]]md", False),
+        ("Glob", "docs\\sub\\deep_denied.md", False),
+        ("Glob", "**/d+(e)p_denied.md", False),
+        # only ripgrep's brace reading (a class closed at \] and a group
+        # without a comma) spells these, and only Bun's (a class that
+        # escapes \] and holds the comma) spells the other
+        ("Glob", "**/deep_{denied[.\\]m,zz]}{d}", False),
+        ("Glob", "**/deep_d{enied[.\\],]md}", False),
+        # #534 round 2: Bun reads [\\d] as d, which pins the stem
+        ("Glob", "**/[\\d]eep_denied.md", False),
+        ("Grep", "deep_d[\\e]nied.md", False),
+        # a file name holds no /, so ripgrep's [d/] pins the stem
+        ("Glob", "**/[d/]eep_denied.md", False),
+        # #534 round 3: nor a NUL, so Node's and Bun's [d\0] pins it
+        ("Glob", "**/[d\x00]eep_denied.md", False),
+        ("Grep", "d[e\x00]ep_denied.md", False),
+        # 64 classes that may be / give 2,145 segments, under the limit
+        ("Glob", "[a/]" * 64 + "deep_denied.md", False),
+        # #534 round 4: a negation can spell a letter by excluding the rest
+        ("Glob", "**/!(|[!d]|??*)eep_denied.md", False),
+        ("Grep", "@(!(|[!d]|??*))eep_denied.md", False),
+        # #534 round 5: Node's plain ( is literal, so these groups close at
+        # the ) after x; and ripgrep reads the chain [d-d-d] as d
+        ("Glob", "**/!(|[!d]|??*|(x)eep_denied.md", False),
+        ("Glob", "**/@([d]|(x)eep_denied.md", False),
+        ("Glob", "**/[d-d-d]eep_denied.md", False),
+        # a filter that excludes a denied name names it (conservative)
+        ("Glob", "**/deep_denied!(.md)", False),
+        # nested too deep to read: unclassified, so void
+        ("Glob", "@(x)" * 1100, False),
+        # broad patterns and wildcard fragments name nothing, and count
+        ("Glob", "**/*", True),
+        ("Glob", "**/*deep*", True),
+        ("Grep", "deep_denied_notes.md", True),
+        ("Glob", "**/*b0_1*", True),
+        ("Glob", "_review_context/**", True),
+        ("Glob", "*.{py,json}", True),
+        ("Glob", "{tier_counts.json,README-tiers.md}", True),
+        ("Glob", "track_b_b0_1_addendum_q6_readlog_r[567].json", True),
+        # the disclosed limit: a wildcard standing for part of a stem
+        ("Glob", "?ates.yaml", True),
+        ("Glob", "[gx]ates.yaml", True),
+        # an extglob alternative, like a brace alternative, spells it
+        ("Glob", "g*(a|x)tes.yaml", False),
+    ],
+)
+def test_read_log_v7_cases(tmp_path, tool, value, counts):
+    root = _invented_root(tmp_path)
+    given = {
+        "Glob": {"pattern": value},
+        "Grep": {"pattern": "x", "glob": value},
+        "Read": {"file_path": str(root / value)},
+    }[tool]
+    blocks = [{"type": "tool_use", "id": "v", "name": tool, "input": given}]
+    log = review_root.read_log(
+        _claude_transcript(tmp_path, blocks),
+        root,
+        review_root.denied_from_record(RECORD),
+    )
+    assert log["schema"] == "track_b_b0_1_review_read_log.v7"
+    assert log["n_denied"] == 5
+    assert log["review_counts"] is counts, log["paths"]
+
+
+@pytest.mark.parametrize(
+    "pattern",
+    [
+        # #534 round 1: nested too deep to read
+        "@(x)" * 1100,
+        # #534 round 2: a sequence number too long to read, and a chain of
+        # empty extglobs whose automaton passes CLOSURE_LIMIT
+        "{" + "1" * 4500 + "..1}",
+        "+()" * 900 + "deep_denied.md",
+        # longer than PATTERN_LIMIT, and too many segments to read:
+        # 90 classes that may be / give 91 * 92 / 2 = 4,186
+        "x" * (review_root.PATTERN_LIMIT + 1),
+        "[a/]" * 90 + "deep_denied.md",
+        # #534 round 3: a class past CLASS_LIMIT, and work charged while
+        # braces expand behind 100 unmatched openers
+        "[ -\U0010ffff]eep_denied.md",
+        "{" * 100 + "{a,b}" * 12 + "deep_denied.md",
+        "[" * 100 + "{a,b}" * 12 + "deep_denied.md",
+    ],
+)
+def test_patterns_too_large_to_read_are_unclassified(pattern):
+    assert review_root.pattern_kind(pattern, DENIED) == "unclassified"
+
+
+def test_each_work_limit_holds_below_the_length_limit():
+    """Every limit gives unclassified on a pattern short enough to pass
+    PATTERN_LIMIT: the closure budget, the work budget, recursion depth
+    and a sequence number too long for int(). Each call leaves no work
+    budget running and no memo table filled."""
+    kind = review_root.pattern_kind
+    assert kind("+()" * 300 + "deep_denied.md", DENIED) == "unclassified"
+    product = "{" * 100 + "{a,b}" * 12 + "deep_denied.md" + "}" * 100
+    assert kind(product, DENIED) == "unclassified"
+    assert review_root._WORK.left is None
+    assert review_root._automaton.cache_info().currsize == 0
+    assert review_root.class_end.cache_info().currsize == 0
+    nested = "@(" * 150 + "x" + ")" * 150
+    limit = sys.getrecursionlimit()
+    sys.setrecursionlimit(len(inspect.stack()) + 60)
+    try:
+        assert kind(nested, DENIED) == "unclassified"
+    finally:
+        sys.setrecursionlimit(limit)
+    digits = sys.get_int_max_str_digits()
+    sys.set_int_max_str_digits(640)
+    try:
+        assert kind("{" + "1" * 700 + "..1}", DENIED) == "unclassified"
+    finally:
+        sys.set_int_max_str_digits(digits)
+    assert len(nested) < review_root.PATTERN_LIMIT
+
+
+def test_limits_refuse_only_past_their_bounds():
+    """A class of CLASS_LIMIT characters is read and one more is not;
+    64 classes that may stand for / (2,145 segments) are read, while 90
+    (4,186) are not."""
+    kind = review_root.pattern_kind
+    widest = review_root.CLASS_LIMIT - 1
+    read = "deep_denied[\x00-" + chr(widest) + "]md"
+    refused = "deep_denied[\x00-" + chr(widest + 1) + "]md"
+    assert kind(read, DENIED) == "denied"
+    assert kind(refused, DENIED) == "unclassified"
+    assert kind("[a/]" * 64 + "notes.md", DENIED) == "inside_root"
+    assert kind("[a/]" * 64 + "deep_denied.md", DENIED) == "denied"
+    assert kind("[a/]" * 90 + "notes.md", DENIED) == "unclassified"
+    # the class limit counts every range and member of one class
+    half = review_root.CLASS_LIMIT // 2
+    two = "[\x00-" + chr(half - 1) + chr(half) + "-" + chr(2 * half - 1) + "]"
+    over = "[\x00-" + chr(half) + chr(half + 1) + "-" + chr(2 * half) + "]"
+    assert kind("deep_denied" + two + "md", DENIED) == "denied"
+    assert kind("deep_denied" + over + "md", DENIED) == "unclassified"
+    # and the 128 members [:ascii:] adds after a range
+    wide = "\u0100-" + chr(0x100 + review_root.CLASS_LIMIT - 128)
+    narrow = "\u0100-" + chr(0x100 + review_root.CLASS_LIMIT - 129)
+    assert kind("deep_denied[" + narrow + "[:ascii:]]md", DENIED) == "denied"
+    assert (
+        kind("deep_denied[" + wide + "[:ascii:]]md", DENIED) == "unclassified"
+    )
+
+
+def test_class_unions_are_charged_to_the_work_budget():
+    """A range, a POSIX class and a class read back as letters each spend
+    one step per character, so a small budget stops them."""
+    wide = review_root.glob_tokens("[\x00-\u03ff]")
+    try:
+        review_root._WORK.left = 100
+        with pytest.raises(OverflowError):
+            review_root.glob_tokens("[\x00-\u03ff]")
+        review_root._WORK.left = 100
+        with pytest.raises(OverflowError):
+            review_root.glob_tokens("[[:ascii:]]")
+        review_root._WORK.left = 100
+        with pytest.raises(OverflowError):
+            review_root._letters(wide)
+    finally:
+        review_root._WORK.left = None
+
+
+def test_a_wide_range_is_refused_before_it_is_built():
+    """A range wider than CLASS_LIMIT raises before its million members
+    are allocated."""
+    tracemalloc.start()
+    try:
+        with pytest.raises(OverflowError):
+            review_root.glob_tokens("[ -\U0010ffff]")
+        _, peak = tracemalloc.get_traced_memory()
+    finally:
+        tracemalloc.stop()
+    assert peak < 1 << 20, peak
+
+
+def test_ranges_are_bounded_one_by_one_and_counted_after_the_union():
+    """Overlapping ranges count their distinct members, and a chained
+    range, which ripgrep reads differently, is not classified."""
+    kind = review_root.pattern_kind
+    overlap = "\u1000-\u13ff" * 2
+    assert kind("deep_denied[" + overlap + "]", DENIED) == "inside_root"
+    assert kind("deep_denied[" + overlap + ".]md", DENIED) == "unclassified"
+    assert kind("**/[d-d-d]eep_denied.md", DENIED) == "unclassified"
+    assert kind("**/[a-c-]x.md", DENIED) == "inside_root"
+
+
+def test_a_negation_is_unclassified_unless_it_names_a_denied_path():
+    """``!(...)`` reads as ``*`` in the automaton. Beside a whole denied
+    stem that names it; anywhere else the pattern is unclassified, since a
+    negation can spell a name by excluding everything else."""
+    kind = review_root.pattern_kind
+    assert kind("**/deep_denied!(.md)", DENIED) == "denied"
+    assert kind("**/!(|[!d]|??*)eep_denied.md", DENIED) == "unclassified"
+    assert kind("**/*.!(md)", DENIED) == "unclassified"
+    assert kind("**/*.md", DENIED) == "inside_root"
+    # a negation that does not parse as a group is still a negation
+    assert kind("**/!(|[!d]|??*|(x)eep_denied.md", DENIED) == "unclassified"
+    assert kind("x!(y", DENIED) == "unclassified"
+    # a literal !( in a class or after a backslash is no negation
+    assert kind("notes![(]draft.md", DENIED) == "inside_root"
+    assert review_root._negation_text("notes!(draft.md")
+    assert not review_root._negation_text("notes![(]draft.md")
+    assert not review_root._negation_text("notes[!(]draft.md")
+    assert not review_root._negation_text("notes\\!(draft.md")
+
+
+def test_unbalanced_openers_up_to_the_limit_are_still_read():
+    """Unclosed braces, extglobs and classes at the length limit are read
+    to the end (each class end is found once), and a denied name after
+    them is still seen."""
+    filler = "{@(["
+    pattern = filler * ((review_root.PATTERN_LIMIT - 20) // len(filler))
+    assert review_root.pattern_kind(pattern, DENIED) == "inside_root"
+    assert (
+        review_root.pattern_kind(pattern + "/deep_denied.md", DENIED)
+        == "denied"
+    )
+
+
+def test_readlog_cli_denies_every_file_the_root_record_removed(tmp_path):
+    root = _invented_root(tmp_path)
+    record = tmp_path / "root-record.json"
+    record.write_text(json.dumps(RECORD), encoding="utf-8")
+    transcript = _claude_transcript(
+        tmp_path,
+        [
+            {
+                "type": "tool_use",
+                "id": "c",
+                "name": "Glob",
+                "input": {"pattern": "**/invented_code_map_table.md"},
+            }
+        ],
+    )
+    out = tmp_path / "log.json"
+    argv = ["readlog", "--transcript", str(transcript), "--root", str(root)]
+    argv += ["--root-record", str(record), "--record", str(out)]
+    assert review_root.main(argv) == 0
+    log = json.loads(out.read_text(encoding="utf-8"))
+    assert log["n_denied"] == 5
+    assert log["review_counts"] is False
+    assert log["paths"] == {"pattern:**/invented_code_map_table.md": "denied"}
+
+
+def test_glob_readings_follow_the_engines():
+    expand = review_root.brace_expansions
+    # bash and Node: a group with no comma is literal, and a comma inside
+    # a class splits
+    assert expand("a{b}c") == ["a{b}c"]
+    assert expand("{a[.,]b,c}") == ["a[.", "]b", "c"]
+    # ripgrep and Bun: a group with no comma is its content; a class and
+    # an escape are one token
+    assert expand("a{b}c", glob=True) == ["abc"]
+    assert expand("x{}y", glob=True) == ["xy"]
+    assert expand("{{i}}", glob=True) == ["i"]
+    assert expand("{a[.,]b,c}", glob=True) == ["a[.,]b", "c"]
+    assert expand("a\\{b,c}", glob=True) == ["a\\{b,c}"]
+    assert expand("{,a{b,c}d", glob=True) == ["{,abd", "{,acd"]
+    extglob = review_root.extglob_expansions
+    assert extglob("a@(b|c)d") == ["abd", "acd"]
+    assert extglob("+(b)") == ["b"]
+    assert extglob("?(b)x") == ["x", "bx"]
+    assert extglob("*(b|c)") == ["", "b", "c"]
+    assert extglob("!(b)x") == ["*x"]
+    assert extglob("@(a|@(b|c))") == ["a", "b", "c"]
+    assert extglob("@(a") == ["@(a"]
+    assert extglob("a[@(]b|c)") == ["a[@(]b|c)"]
+    # only an extglob opener nests; a plain ( is literal (Node)
+    assert review_root._extglob_group("@(a|(b|c))", 0) == (8, (3, 6))
+    assert review_root._extglob_group("@(a|@(b|c))", 0) == (10, (3,))
+    assert extglob("@([d]|(x)y") == ["[d]y", "(xy"]
+    assert extglob("\\@(a)") == ["\\@(a)"]
+    tokens = review_root.glob_tokens
+    assert tokens("a[.,]b") == (
+        ("lit", "a"),
+        ("set", frozenset(".,")),
+        ("lit", "b"),
+    )
+    assert tokens("[!x][^x]") == (("notset", frozenset("x")),) * 2
+    assert tokens("[]a][a-c][[:digit:]]") == (
+        ("set", frozenset("]a")),
+        ("set", frozenset("abc")),
+        ("set", frozenset("0123456789")),
+    )
+    assert tokens("[g]\\.{,}*?") == (
+        ("lit", "g"),
+        ("lit", "."),
+        ("cut", "{"),
+        ("cut", ","),
+        ("cut", "}"),
+        ("star", ""),
+        ("any", ""),
+    )
+    assert tokens("[Gg]X", fold=True) == (("lit", "g"), ("lit", "x"))
+    assert tokens("[a") == (("lit", "["), ("lit", "a"))
+    with pytest.raises(OverflowError):
+        extglob("@(a|b)" * 13)
+    # bash and Node's sequences, only when asked for
+    assert expand("a{1..3}b") == ["a{1..3}b"]
+    assert expand("a{1..3}b", sequences=True) == ["a1b", "a2b", "a3b"]
+    assert expand("{c..a}", sequences=True) == ["c", "b", "a"]
+    assert expand("{1..5..2}", sequences=True) == ["1", "3", "5"]
+    # a zero-padded end pads every item to the longer end's width
+    assert expand("{08..10}", sequences=True) == ["08", "09", "10"]
+    assert expand("{-05..5..5}", sequences=True) == ["-05", "000", "005"]
+    assert expand("{a..1}", sequences=True) == ["{a..1}"]
+    with pytest.raises(OverflowError):
+        expand("{1..99999}", sequences=True)
+    # Bun: a backslash inside a class escapes the next character, so
+    # [\\d] is d alone; ripgrep reads it as a backslash or d
+    assert tokens("[\\d]") == (("set", frozenset("\\d")),)
+    assert tokens("[\\d]", escapes=True) == (("lit", "d"),)
+    assert review_root.class_end("[.\\]]", 0) == 3
+    assert review_root.class_end("[.\\]]", 0, escapes=True) == 4
+    assert expand("{a[.\\],]b,c}", glob=True, escapes=True) == [
+        "a[.\\],]b",
+        "c",
+    ]
+    # an extglob is one token, read exactly
+    assert tokens("a+(b|[cd])") == (
+        ("lit", "a"),
+        ("group", ("+", ((("lit", "b"),), (("set", frozenset("cd")),)))),
+    )
+    assert tokens("[[:ascii:]][[:nonesuch:]]")[0] == (
+        "set",
+        frozenset(map(chr, range(128))),
+    )
+    assert len(tokens("[[:nonesuch:]]")[0][1]) == 95
+    assert review_root.pattern_kind("@(a|b)" * 13, DENIED) == "unclassified"
+
+
+#: Pattern pieces whose fnmatch reading is the engines' reading.
+_PIECES = ["a", "b", ".", "*", "?", "[ab]", "[.a]", "[!a]", "[a-b]", "[]a]"]
+
+
+@settings(max_examples=400, deadline=None)
+@given(
+    pieces=st.lists(st.sampled_from(_PIECES), max_size=6),
+    name=st.text(alphabet="ab.]", max_size=6),
+)
+def test_glob_match_agrees_with_fnmatch_where_they_share_syntax(pieces, name):
+    """Differential: on syntax fnmatch and the engines read alike, the
+    token matcher and ``fnmatchcase`` agree."""
+    pattern = "".join(pieces)
+    assert review_root.glob_match(
+        name, review_root.glob_tokens(pattern)
+    ) is fnmatchcase(name, pattern), (pattern, name)
+
+
+@settings(max_examples=300, deadline=None)
+@given(text=st.text(alphabet="ab./{},*?", max_size=16))
+def test_class_free_segments_are_the_plain_cut(text):
+    """Without classes or escapes, the engines' segments are the v6 cut
+    at every slash, brace and comma."""
+    views = [
+        "".join(v if k in ("lit", "cut") else "\0" for k, v in segment)
+        for segment in review_root.glob_segments(review_root.glob_tokens(text))
+    ]
+    plain = re.split(r"[/{},]", text.replace("*", "\0").replace("?", "\0"))
+    assert views == plain, text
+
+
+def _draw_extension_classes(data, extension, members, negated):
+    """The extension with at least one character replaced by a class."""
+    replace = data.draw(
+        st.lists(
+            st.booleans(), min_size=len(extension), max_size=len(extension)
+        ).filter(any)
+    )
+    out = []
+    for char, swap in zip(extension, replace, strict=True):
+        if not swap:
+            out.append(char)
+            continue
+        extra = data.draw(st.lists(st.sampled_from(members), unique=True))
+        if negated and data.draw(st.booleans()):
+            # A negated class of characters that are not the true one.
+            others = [c for c in extra if c != char] or [","]
+            out.append("[" + data.draw(st.sampled_from("!^")))
+            out.append("".join(data.draw(st.permutations(others))) + "]")
+            continue
+        body = data.draw(st.permutations([char, *extra]))
+        out.append("[" + "".join(body) + "]")
+    return "".join(out)
+
+
+@settings(max_examples=400, deadline=None)
+@given(data=st.data())
+def test_a_class_holding_a_comma_or_brace_still_names_the_file(data):
+    """Invariant (Q6 round 10 L1): a denied basename whose extension
+    characters are replaced by bracket classes that hold the true
+    character and any of ``,``, ``{`` and ``}`` is classed as denied, as
+    are negated classes of those three (``stem[!,]md``)."""
+    name = data.draw(st.sampled_from([Path(d).name for d in DENIED]))
+    stem, extension = Path(name).stem, Path(name).suffix
+    tail = _draw_extension_classes(data, extension, ",{}", negated=True)
+    head = data.draw(st.sampled_from(["", "*"]))
+    prefix = data.draw(st.sampled_from(["", "**/", "docs/", "*/x/"]))
+    pattern = prefix + head + stem + tail
+    assert review_root.pattern_kind(pattern, DENIED) == "denied", pattern
+
+
+@settings(max_examples=300, deadline=None)
+@given(data=st.data())
+def test_engine_spellings_of_a_denied_name_are_flagged(data):
+    """Invariant: a denied basename spelled with engine syntax alone is
+    classed as denied, however its letters are cased, escaped, wrapped in
+    a brace group without a comma, or wrapped in an extglob."""
+    name = data.draw(
+        st.sampled_from([Path(d).name for d in RECORD["removed"]])
+        | st.sampled_from(RECORD["removed_codebook_tables"]).map(
+            lambda p: Path(p).name
+        )
+    )
+    chars = []
+    for char in name:
+        cased = data.draw(st.sampled_from([char, char.upper()]))
+        chars.append(data.draw(st.sampled_from([cased, "\\" + cased])))
+    start = data.draw(st.integers(0, len(chars)))
+    stop = data.draw(st.integers(start, len(chars)))
+    opener, closer = data.draw(
+        st.sampled_from(
+            [("{", "}"), ("{{", "}}"), ("@(", ")"), ("+(", ")"), ("", "")]
+        )
+    )
+    spelled = (
+        "".join(chars[:start])
+        + opener
+        + "".join(chars[start:stop])
+        + closer
+        + "".join(chars[stop:])
+    )
+    prefix = data.draw(st.sampled_from(["", "**/", "docs/sub/"]))
+    pattern = prefix + spelled
+    # Node reads a backslash as a slash, so an escape at the start of a
+    # segment can also read as leaving the root; either voids the review.
+    assert review_root.pattern_kind(
+        pattern, review_root.denied_from_record(RECORD)
+    ) in ("denied", "outside_root"), pattern
+
+
+#: Extglob-bearing pieces and the regular expression each stands for.
+_GROUP_PIECES = {
+    "a": "a",
+    "b": "b",
+    "A": "A",
+    ".": r"\.",
+    "*": "[^/]*",
+    "?": "[^/]",
+    "[ab]": "[ab]",
+    "[aA]": "[aA]",
+    "[!a]": "[^/a]",
+    "@(a|b)": "(?:a|b)",
+    "+(a)": "(?:a)+",
+    "*(b)": "(?:b)*",
+    "?(a)": "(?:a)?",
+    "+([ab])": "(?:[ab])+",
+    "[a/]": "[a/]",
+    "@(a|+(b))": "(?:a|(?:b)+)",
+    "!(a)": "[^/]*",
+}
+
+
+@settings(max_examples=500, deadline=None)
+@given(
+    pieces=st.lists(st.sampled_from(sorted(_GROUP_PIECES)), max_size=5),
+    name=st.text(alphabet="abAB.", max_size=6),
+)
+def test_the_automaton_matches_as_a_regular_expression(pieces, name):
+    """Differential: the automaton reads extglob repetition exactly, as a
+    regular expression does (``!(...)`` read as ``*`` in both)."""
+    pattern = "".join(pieces)
+    expected = "".join(_GROUP_PIECES[piece] for piece in pieces)
+    assert review_root.glob_match(
+        name, review_root.glob_tokens(pattern)
+    ) is bool(re.fullmatch(expected, name)), (pattern, name)
+
+
+@settings(max_examples=500, deadline=None)
+@given(
+    pieces=st.lists(st.sampled_from(sorted(_GROUP_PIECES)), max_size=5),
+    name=st.text(alphabet="abAB.", min_size=1, max_size=6),
+)
+# a class of one letter's two cases pins it, case aside
+@example(pieces=["[aA]", "b"], name="ab")
+def test_pins_stem_is_the_brute_force_rule(pieces, name):
+    """Differential: ``pins_stem`` holds exactly when the segment matches
+    the name and no name differing at one stem position, other than in
+    case, also matches. ``\\x01`` stands for every character no piece
+    names."""
+    tokens = review_root.glob_tokens("".join(pieces))
+    match = review_root.glob_match
+    stem = len(Path(name).stem)
+    brute = match(name, tokens) and not any(
+        match(name[:i] + other + name[i + 1 :], tokens)
+        for i in range(stem)
+        for other in "abAB.\x01"
+        if other.casefold() != name[i].casefold()
+    )
+    assert review_root.pins_stem(name, tokens) is brute, (pieces, name)
+
+
+# The v6 classifier, frozen as it stood at round 10, for the differential
+# test below.
+
+
+def _v6_brace_expansions(pattern, limit=review_root.BRACE_LIMIT):
+    start = pattern.find("{")
+    while start != -1:
+        depth = 0
+        commas = []
+        end = -1
+        for index in range(start, len(pattern)):
+            char = pattern[index]
+            if char == "{":
+                depth += 1
+            elif char == "}":
+                depth -= 1
+                if depth == 0:
+                    end = index
+                    break
+            elif char == "," and depth == 1:
+                commas.append(index)
+        if end != -1 and commas:
+            out = []
+            for left, right in pairwise([start, *commas, end]):
+                out.extend(
+                    _v6_brace_expansions(
+                        pattern[:start]
+                        + pattern[left + 1 : right]
+                        + pattern[end + 1 :],
+                        limit,
+                    )
+                )
+                if len(out) > limit:
+                    raise OverflowError
+            return out
+        start = pattern.find("{", start + 1)
+    return [pattern]
+
+
+def _v6_pattern_kind(pattern, denied):
+    codebook = review_root.CODEBOOK_DIR
+    names = {Path(d).name for d in denied} | {Path(codebook).name}
+    stems = {Path(d).stem for d in denied if Path(d).suffix}
+    try:
+        alternatives = _v6_brace_expansions(pattern)
+    except OverflowError:
+        return "unclassified"
+    kinds = set()
+    for text in {pattern, *alternatives}:
+        segments = re.split(r"[/{},]", text)
+        if text.startswith(("/", "~")) or ".." in segments:
+            kinds.add("outside_root")
+        if any(d in text for d in denied) or codebook in text:
+            kinds.add("denied")
+        for segment in segments:
+            if segment in names or any(
+                segment.startswith(f"{stem}.") for stem in stems
+            ):
+                kinds.add("denied")
+            if any(
+                Path(name).stem in segment and fnmatchcase(name, segment)
+                for name in names
+            ):
+                kinds.add("denied")
+    for kind in ("outside_root", "denied"):
+        if kind in kinds:
+            return kind
+    return "inside_root"
+
+
+#: Glob syntax the mixed strategy splices into a denied name.
+_SYNTAX = ["[", "]", "{", "}", ",", "!", "^", "*", "?", "/", "\\", "@(", ")"]
+
+
+@st.composite
+def _mixed(draw):
+    """A denied name, or plain letters, with glob syntax spliced in."""
+    base = draw(
+        st.sampled_from([Path(d).name for d in DENIED])
+        | st.text(alphabet="ab.", max_size=6)
+    )
+    pieces = list(base)
+    for _ in range(draw(st.integers(0, 4))):
+        at = draw(st.integers(0, len(pieces)))
+        pieces.insert(at, draw(st.sampled_from(_SYNTAX)))
+    prefix = draw(st.sampled_from(["", "**/", "docs/", "/", "../"]))
+    return prefix + "".join(pieces)
+
+
+@settings(max_examples=600, deadline=None)
+@given(pattern=_mixed() | st.text(alphabet="ab./{},*[]!^\\", max_size=14))
+# v6 cut inside the class and saw ``deep_denied.md]``; the engines read one
+# character. v7 keeps v6's cut, so it still voids this.
+@example("[,deep_denied.md]")
+def test_v7_voids_whatever_v6_voided(pattern):
+    """Differential: every pattern the round-10 rule (v6) did not class as
+    inside the root, v7 does not either."""
+    if _v6_pattern_kind(pattern, DENIED) != "inside_root":
+        assert review_root.pattern_kind(pattern, DENIED) != "inside_root"
+
+
+@settings(max_examples=600, deadline=None)
+@given(pattern=_mixed())
+# fnmatch reads ``[^.,]`` as a class holding ``^``, ``.`` and ``,``; the
+# engines read it as negated, so only the smallest fix catches this one.
+@example("deep_{denied[^.,]md,x}")
+def test_v7_catches_what_round_10_s_smallest_fix_would(pattern):
+    """Differential: round 10's smallest fix ran the whole-stem test on
+    each alternative's ``/``-segments, uncut at commas or braces. Every
+    pattern it would flag, v7 flags."""
+    names = {Path(d).name for d in DENIED}
+    try:
+        alternatives = {
+            pattern,
+            *review_root.brace_expansions(pattern),
+            *review_root.brace_expansions(pattern, glob=True),
+        }
+    except OverflowError:
+        return
+    flagged = any(
+        Path(name).stem in segment and fnmatchcase(name, segment)
+        for text in alternatives
+        for segment in text.split("/")
+        for name in names
+    )
+    if flagged:
+        assert review_root.pattern_kind(pattern, DENIED) != "inside_root"
+
+
+# Differential against the glob engines themselves, on invented files.
+
+_NODE_PROBE = """
+const fs = require("node:fs");
+const [cwd, list] = process.argv.slice(2);
+const out = {};
+for (const p of JSON.parse(fs.readFileSync(list, "utf8"))) {
+  try { out[p] = fs.globSync(p, { cwd }); } catch (e) { out[p] = []; }
+}
+console.log(JSON.stringify(out));
+"""
+_BUN_PROBE = """
+const fs = require("node:fs");
+const [cwd, list] = process.argv.slice(2);
+const out = {};
+for (const p of JSON.parse(fs.readFileSync(list, "utf8"))) {
+  try { out[p] = [...new Bun.Glob(p).scanSync({ cwd })]; }
+  catch (e) { out[p] = []; }
+}
+console.log(JSON.stringify(out));
+"""
+
+
+def _engine_available(engine):
+    if engine == "node":
+        if shutil.which("node") is None:
+            return False
+        probe = "process.exit(require('node:fs').globSync ? 0 : 1)"
+        return subprocess.run(["node", "-e", probe]).returncode == 0
+    return shutil.which(engine) is not None
+
+
+def _engine_matches(engine, root, patterns, tmp_path):
+    """Which invented files each pattern matches under ``engine``."""
+    if engine == "rg":
+        out = {}
+        for pattern in patterns:
+            if "\x00" in pattern:
+                # A command line cannot hold a NUL.
+                out[pattern] = []
+                continue
+            listed = subprocess.run(
+                ["rg", "--files", "--no-ignore", "-g", pattern, "."],
+                cwd=root,
+                capture_output=True,
+                text=True,
+            ).stdout
+            out[pattern] = [
+                line.removeprefix("./") for line in listed.splitlines()
+            ]
+        return out
+    tmp_path.mkdir(exist_ok=True)
+    listing = tmp_path / "patterns.json"
+    listing.write_text(json.dumps(patterns), encoding="utf-8")
+    script = tmp_path / f"probe_{engine}.js"
+    probe = _NODE_PROBE if engine == "node" else _BUN_PROBE
+    script.write_text(probe, encoding="utf-8")
+    result = subprocess.run(
+        [engine, str(script), str(root), str(listing)],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return json.loads(result.stdout)
+
+
+def _spellings(seed, count):
+    """Patterns that spell a denied name with engine syntax alone.
+
+    Each pattern applies one to three changes to the name: escape a
+    character, flip its case, put it in a one-character class or a
+    two-case class, put an extension character in a class with other
+    characters (or a POSIX, negated or escaped-bracket class), put any
+    character in Bun's escaped class, ripgrep's ``[c/]`` or a class with
+    a NUL, wrap a run
+    in a brace group or an extglob, spell a doubled letter by repetition
+    (``+(e)``) or a letter by a one-item sequence (``{e..e}``), or read
+    two extension characters by a repeated class. The path may be
+    written with Node's backslashes. None puts a wildcard in place of a
+    stem character, so every engine match spells the name.
+    """
+    rng = random.Random(seed)
+    extras = [",", "{", "}", "/", "x", "-", "!", "^", "]", "["]
+    wraps = ["{%s}", "{%s,}", "{,%s}", "{%s,zz}", "{{%s}}"]
+    wraps += ["@(%s)", "+(%s)", "?(%s)", "*(%s)", "@(%s|zz)"]
+    out = []
+    for _ in range(count):
+        name = rng.choice([Path(d).name for d in DENIED])
+        cut = len(Path(name).stem)
+        units = list(name)
+        for _ in range(rng.randint(1, 3)):
+            change = rng.choice(
+                ["escape", "case", "one", "cases", "class", "class", "wrap"]
+                + ["repeat", "sequence", "escaped-class", "escaped-one"]
+                + ["negation", "paren", "chain"]
+            )
+            index = rng.randrange(len(units))
+            char = units[index]
+            following = units[index + 1] if index + 1 < len(units) else ""
+            if change == "repeat" and len(char) == 1 and char == following:
+                # a doubled letter spelled by repetition: ee as +(e)
+                units[index : index + 2] = [f"+({char})"]
+            elif change == "repeat" and index >= cut and len(following) == 1:
+                # two extension characters read by a repeated class
+                units[index : index + 2] = [f"+([{char}{following}])"]
+            elif change == "sequence" and char.isalpha() and len(char) == 1:
+                if index < cut:
+                    units[index] = f"{{{char}..{char}}}"
+                else:
+                    low, high = chr(ord(char) - 1), chr(ord(char) + 1)
+                    units[index] = f"{{{low}..{high}}}"
+            elif change == "paren" and len(char) == 1 and char.isalpha():
+                # Node closes @( at the ) of a plain (, so the group is
+                # the letter or "(x"
+                units[index] = f"@({char}|(x)"
+            elif change == "chain" and len(char) == 1 and char.isalpha():
+                # ripgrep reads the chain c-c-c as c alone
+                units[index] = f"[{char}-{char}-{char}]"
+            elif change == "negation" and len(char) == 1 and char != "*":
+                # Node reads !(|[!c]|??*) as c alone
+                units[index] = f"!(|[!{char}]|??*)"
+            elif change == "escaped-one" and len(char) == 1:
+                # Bun reads [\\c] as c alone; in a file name ripgrep's
+                # [c/] can only be c
+                units[index] = rng.choice(
+                    [f"[\\{char}]", f"[{char}/]", f"[{char}\x00]"]
+                )
+            elif change == "escaped-class" and index >= cut:
+                units[index] = rng.choice(
+                    [f"[{char}\\]]", "[[:ascii:]]", f"[\\]{char}]"]
+                )
+            elif change in (
+                "repeat",
+                "sequence",
+                "escaped-class",
+                "escaped-one",
+                "negation",
+                "paren",
+                "chain",
+            ):
+                continue
+            elif change == "wrap" or len(char) != 1:
+                stop = rng.randint(index + 1, len(units))
+                inner = "".join(units[index:stop])
+                units[index:stop] = [rng.choice(wraps) % inner]
+            elif change == "escape":
+                units[index] = "\\" + char
+            elif change == "case":
+                units[index] = char.swapcase()
+            elif change == "one":
+                units[index] = f"[{char}]"
+            elif change == "cases":
+                units[index] = f"[{char}{char.swapcase()}]"
+            elif index >= cut:
+                members = [char, *rng.sample(extras, rng.randint(1, 2))]
+                rng.shuffle(members)
+                units[index] = rng.choice(
+                    [
+                        "[" + "".join(members) + "]",
+                        "[[:punct:]]" if char == "." else "[[:alpha:]]",
+                        "[!,{}]",
+                        "[^/,]",
+                    ]
+                )
+        prefix = rng.choice(
+            ["", "**/", "docs/sub/", "docs/**/", "docs\\sub\\"]
+        )
+        out.append(prefix + "".join(units))
+    return sorted(set(out))
+
+
+@pytest.mark.parametrize("engine", ["rg", "node", "bun"])
+def test_every_engine_match_of_a_spelled_denied_name_is_flagged(
+    tmp_path, engine
+):
+    """Differential: wherever ripgrep, Node or Bun finds a denied file
+    through a pattern that spells its name with syntax alone, the
+    classifier flags the pattern. Which engine the lanes' Glob and Grep
+    tools use is not assumed, so all three are checked."""
+    if not _engine_available(engine):
+        pytest.skip(f"{engine} is not installed")
+    root = _invented_root(tmp_path)
+    (root / "docs/sub").mkdir(parents=True)
+    (root / "docs/sub/deep_denied.md").write_text("x", encoding="utf-8")
+    (root / "docs/sub/deep_x.md").write_text("x", encoding="utf-8")
+    patterns = _spellings(seed=20261012, count=1000)
+    matches = _engine_matches(engine, root, patterns, tmp_path / "probe")
+    denied = {d.casefold() for d in DENIED}
+    hits = [
+        pattern
+        for pattern in patterns
+        if any(path.casefold() in denied for path in matches[pattern])
+    ]
+    # The corpus must exercise the engine, or the test proves nothing.
+    assert len(hits) >= 100, (engine, len(hits))
+    missed = [
+        pattern
+        for pattern in hits
+        if review_root.pattern_kind(pattern, DENIED) == "inside_root"
+    ]
+    assert missed == [], missed[:20]
