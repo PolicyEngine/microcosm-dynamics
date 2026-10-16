@@ -724,7 +724,10 @@ class SourceGate:
 # ===========================================================================
 # Role rules (section 3)
 # ===========================================================================
-@dataclass(frozen=True)
+# Slotted, like RoleRule (closeout delta review): an instance has no
+# __dict__, so no instance attribute can shadow ``applies`` or ``as_dict``
+# while the type and the written text stay exact.
+@dataclass(frozen=True, slots=True)
 class FamilyUnitExclusion:
     """A ratified exclusion that a member's code brings on its family unit.
 
@@ -762,7 +765,7 @@ class FamilyUnitExclusion:
         return {"disposition": self.disposition, "sex": self.sex}
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class RoleRule:
     """One relationship code's U2 semantics in one wave."""
 
@@ -842,7 +845,9 @@ def role_rules_text(rules: Mapping[Any, Any]) -> str:
     own characters, never calls its comparison.  The exclusion's type is
     checked too (closeout mutation lane c): an object written into a
     rule after construction could print as a ratified exclusion while
-    applying to nobody.
+    applying to nobody.  Both classes are final and slotted, so neither a
+    subclass nor an instance attribute can override ``applies`` or
+    ``as_dict`` behind an exact type and text.
     """
 
     out = []

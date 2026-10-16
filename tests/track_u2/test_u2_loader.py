@@ -2935,8 +2935,10 @@ def _one_text_cell(text, dtype):
 @settings(max_examples=300, deadline=None)
 @given(frame=_frames())
 # The closeout review's minimized counterexample: a one-column frame
-# whose only text cell is whitespace writes a whitespace-only CSV line,
-# which pandas' default parser drops (finding 3).
+# whose only text cell is ASCII whitespace writes a whitespace-only CSV
+# line, which pandas' default parser drops (finding 3).  U+3000 is a
+# control: pandas treats only ASCII whitespace as blank, so it always
+# rebuilt.
 @example(frame=_one_text_cell(" ", "str"))
 @example(frame=_one_text_cell("\u3000", "string"))
 @example(frame=_one_text_cell(" ", "object"))
@@ -2961,9 +2963,10 @@ def test_every_frame_over_the_allowed_dtypes_rebuilds_exactly(frame):
 @pytest.mark.parametrize("text", [" ", "\t", "\u3000", " \t "])
 def test_a_whitespace_only_text_cell_rebuilds(text, dtype):
     """The closeout review's finding 3 (INVENTED cells): a one-column
-    frame holding a whitespace-only cell writes a whitespace-only CSV
-    line.  The rebuild keeps blank lines as rows, so the frame rebuilds
-    exactly instead of being falsely refused at step 4."""
+    frame holding an ASCII-whitespace-only cell writes a whitespace-only
+    CSV line.  The rebuild keeps blank lines as rows, so the frame
+    rebuilds exactly instead of being falsely refused at step 4.  The
+    U+3000 cases are controls: pandas never treated them as blank."""
 
     frame = _one_text_cell(text, dtype)
     rebuilt = cohort._rebuild_frame(
@@ -3144,6 +3147,30 @@ def test_a_rule_holds_exactly_a_family_unit_exclusion(frozen_load, evidence):
     with pytest.raises(sources.U2SourceRefusal, match="FamilyUnitExclusion"):
         sources.role_rules_text(caller.rules)
     with pytest.raises(runner.U2RunError, match="FamilyUnitExclusion"):
+        _checked_context(frozen_load, evidence, caller)
+
+
+def test_rules_and_exclusions_hold_no_instance_attributes(
+    frozen_load, evidence
+):
+    """Closeout delta review: RoleRule and FamilyUnitExclusion are
+    slotted, so an instance attribute cannot shadow ``applies`` or
+    ``as_dict`` behind an exact type and the committed text.  An
+    in-place edit of a field still changes the text, so the registered
+    check refuses it (INVENTED edits)."""
+
+    caller = sources.RoleContext.from_registry()
+    rule = caller.rules[(2015, 20)]
+    exclusion = rule.family_unit_exclusion
+    for target in (rule, exclusion):
+        assert not hasattr(target, "__dict__")
+    with pytest.raises(AttributeError):
+        object.__setattr__(exclusion, "applies", lambda sex: False)
+    with pytest.raises(AttributeError):
+        object.__setattr__(rule, "as_dict", lambda: {})
+    assert exclusion.applies("male")
+    object.__setattr__(exclusion, "sex", "female")  # INVENTED edit in place
+    with pytest.raises(runner.U2RunError, match="role rules"):
         _checked_context(frozen_load, evidence, caller)
 
 
