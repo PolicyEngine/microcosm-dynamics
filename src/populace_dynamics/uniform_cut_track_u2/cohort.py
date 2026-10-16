@@ -43,13 +43,14 @@ code-92 person, is not built and is counted under the named disposition
 family_unit_exclusion`).  An observation already disposed of (not in the
 file, not present, zero weight, sex unknown) keeps that disposition.
 The income role follows the income slot: 10 head, 20 and 22 the spouse
-slot (``wife``, irrespective of sex), 90 and 92 (2013-2017) and every
-other code OFUM.  The primary annuity lives are the unique code-10 person
-and the unique co-resident legal spouse (code 20 or 90), each with
-recorded sex and derived income-year age; a uniquely paired head and
-legal spouse resolve an otherwise unresolved marital history as married,
-each naming the other.  Code 22 and 92 never resolve; a missing or ambiguous pairing
-stays unresolved and is counted.
+slot (``wife``, irrespective of sex), 88 (the first-year cohabitor,
+amendment 1c), 90 and 92 (2013-2017) and every other code OFUM.  The
+primary annuity lives are the unique code-10 person and the unique
+co-resident legal spouse (code 20 or 90), each with recorded sex and
+derived income-year age; a uniquely paired head and legal spouse resolve
+an otherwise unresolved marital history as married, each naming the
+other.  Codes 22, 88 and 92 never resolve; a missing or ambiguous
+pairing stays unresolved and is counted.
 
 **Weights, design and units.**  Observation weight = the reporting wave's
 core/immigrant cross-section weight times the planned multiplier; no

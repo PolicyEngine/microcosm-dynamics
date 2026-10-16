@@ -68,6 +68,12 @@ _module = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_module)
 _pe_us_dir_env = _module._pe_us_dir_env
 
+# Seed the prior value after import so the pin's configured checkout is
+# different. The real fixture must replace it and then restore it exactly.
+_PRIOR = {prior!r}
+if _PRIOR is not None:
+    os.environ[{variable!r}] = _PRIOR
+
 
 @pytest.fixture(scope="module")
 def seen_by_a_module_fixture():
@@ -86,12 +92,12 @@ _AFTER_PROBE = """
 import os
 
 
-def test_the_next_module_does_not_see_it():
-    assert {variable!r} not in os.environ
+def test_the_next_module_sees_the_original_environment():
+    assert os.environ.get({variable!r}) == {prior!r}
 """
 
-# Loaded with ``-p`` (before any conftest), it traces every write to
-# ``os.environ`` while pytest starts and collects, attributes it to the first
+# Loaded with ``-p`` (before any conftest), it audits environment mutations
+# while pytest starts and collects, attributes them to the first
 # caller outside the mapping and patching helpers, and reports the writes
 # made by the repository's own code.  Dependencies may set variables at
 # import (scikit-learn sets two ``KMP_*`` ones); those are not the suite's
@@ -112,6 +118,7 @@ _PATCHERS = (
     os.path.join("unittest", "mock.py"),
 )
 _writes = []
+_modules = set()
 
 
 def _is_helper(filename):
@@ -136,30 +143,42 @@ def _record(key):
         _writes.append(f"{where}:{frame.f_lineno} {key}")
 
 
-_Environ = type(os.environ)
-_setitem = _Environ.__setitem__
-_delitem = _Environ.__delitem__
+def _audit(event, args):
+    # Both environment mappings (including update/setdefault/pop) call
+    # putenv/unsetenv. Audit events also catch direct calls and aliases
+    # captured before this plugin loaded, without double-counting writes.
+    if event in ("os.putenv", "os.unsetenv"):
+        _record(args[0])
 
 
-def _traced_setitem(self, key, value):
-    if self is os.environ:
-        _record(key)
-    _setitem(self, key, value)
+sys.addaudithook(_audit)
 
 
-def _traced_delitem(self, key):
-    if self is os.environ:
-        _record(key)
-    _delitem(self, key)
-
-
-_Environ.__setitem__ = _traced_setitem
-_Environ.__delitem__ = _traced_delitem
+def pytest_collectreport(report):
+    # Module reports include imports with no tests or a module-level skip,
+    # and arrive before -k/-m deselection. Item lists miss those imports.
+    if report.nodeid.endswith(".py") and not report.failed:
+        _modules.add(report.nodeid)
 
 
 def pytest_collection_finish(session):
     with open(_REPORT, "w", encoding="utf-8") as handle:
-        json.dump(_writes, handle)
+        json.dump({"writes": _writes, "modules": sorted(_modules)}, handle)
+"""
+
+_MUTATION_PROBE = """
+import importlib.util
+import sys
+from os import putenv as cached_putenv
+
+import env_guard_plugin
+
+path = sys.argv[1]
+spec = importlib.util.spec_from_file_location("mutant", path)
+module = importlib.util.module_from_spec(spec)
+module.cached_putenv = cached_putenv
+spec.loader.exec_module(module)
+env_guard_plugin.pytest_collection_finish(None)
 """
 
 
@@ -210,8 +229,14 @@ def test_importing_keeps_and_honours_an_override(module, tmp_path):
 
 
 @pytest.mark.parametrize("module", MODULES)
-def test_the_checkout_is_exported_only_while_the_module_runs(module, tmp_path):
+@pytest.mark.parametrize(
+    "has_override", [False, True], ids=["unset", "override"]
+)
+def test_the_checkout_is_exported_only_while_the_module_runs(
+    module, has_override, tmp_path
+):
     path = TESTS / module
+    prior = str(tmp_path / "prior-pe-us-sentinel") if has_override else None
     (tmp_path / "pytest.ini").write_text("[pytest]\n")
     (tmp_path / "test_a_module.py").write_text(
         _FIXTURE_PROBE.format(
@@ -219,22 +244,88 @@ def test_the_checkout_is_exported_only_while_the_module_runs(module, tmp_path):
             path=str(path),
             variable=PE_US_ENV,
             expected=str(FROZEN_DEFAULT),
+            prior=prior,
         )
     )
     (tmp_path / "test_b_after.py").write_text(
-        _AFTER_PROBE.format(variable=PE_US_ENV)
+        _AFTER_PROBE.format(variable=PE_US_ENV, prior=prior)
     )
     result = _run(
         ["-m", "pytest", "-q", "-p", "no:cacheprovider", str(tmp_path)],
         tmp_path,
         _without_variable(),
     )
-    assert result.returncode == 0, result.stdout[-3000:]
+    assert result.returncode == 0, (
+        result.stdout[-3000:] + result.stderr[-1000:]
+    )
     assert "3 passed" in result.stdout
 
 
+@pytest.mark.parametrize(
+    ("operation", "prior"),
+    [
+        ("os.environ[key] = 'mutant'", None),
+        ("del os.environ[key]", "sentinel"),
+        ("os.environ.update({key: 'mutant'})", None),
+        ("os.environ.setdefault(key, 'mutant')", None),
+        ("os.environ.pop(key)", "sentinel"),
+        ("os.environb[key.encode()] = b'mutant'", None),
+        ("del os.environb[key.encode()]", "sentinel"),
+        ("os.environb.update({key.encode(): b'mutant'})", None),
+        ("os.environb.setdefault(key.encode(), b'mutant')", None),
+        ("os.environb.pop(key.encode())", "sentinel"),
+        ("os.putenv(key, 'mutant')", None),
+        ("os.putenv(key.encode(), b'mutant')", None),
+        ("os.unsetenv(key)", "sentinel"),
+        ("os.unsetenv(key.encode())", "sentinel"),
+        ("cached_putenv(key, 'mutant')", None),
+    ],
+)
+def test_the_guard_traces_each_environment_mutation(
+    operation, prior, tmp_path
+):
+    if ("environb" in operation or ".encode()" in operation) and not (
+        os.supports_bytes_environ
+    ):
+        pytest.skip("Byte environment APIs are unavailable")
+    tests = tmp_path / "tests"
+    tests.mkdir()
+    mutant = tests / "test_mutation.py"
+    mutant.write_text(f"import os\nkey = {PE_US_ENV!r}\n{operation}\n")
+    (tmp_path / "env_guard_plugin.py").write_text(_ENV_GUARD_PLUGIN)
+    report = tmp_path / "report.json"
+    env = _without_variable()
+    if prior is not None:
+        env[PE_US_ENV] = prior
+    env.update(
+        ENV_GUARD_ROOT=str(tmp_path),
+        ENV_GUARD_REPORT=str(report),
+    )
+    result = _run(["-c", _MUTATION_PROBE, str(mutant)], tmp_path, env)
+    assert result.returncode == 0, result.stdout + result.stderr
+    writes = json.loads(report.read_text())["writes"]
+    assert len(writes) == 1, writes
+    assert writes[0].startswith("tests/test_mutation.py:"), writes
+    assert PE_US_ENV in writes[0], writes
+
+
 def test_collecting_the_suite_writes_no_environment_variable(tmp_path):
-    """No repository code may write ``os.environ`` during collection."""
+    """No repository code may mutate environment APIs during collection."""
+    tracked = subprocess.run(
+        ["git", "ls-files", "-z", "--", "tests"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    # This inventory is independent of pytest's testpaths, ignores and
+    # addopts. There are no deliberately excluded tracked test modules.
+    expected_modules = {
+        path
+        for path in tracked.stdout.split("\0")
+        if Path(path).name.startswith("test_") and path.endswith(".py")
+    }
+    assert expected_modules, "Git's test-module inventory is empty"
     (tmp_path / "env_guard_plugin.py").write_text(_ENV_GUARD_PLUGIN)
     report = tmp_path / "report.json"
     env = _without_variable()
@@ -263,4 +354,7 @@ def test_collecting_the_suite_writes_no_environment_variable(tmp_path):
         result.stdout[-2000:] + result.stderr[-2000:]
     )
     assert report.is_file(), result.stdout[-2000:] + result.stderr[-2000:]
-    assert json.loads(report.read_text()) == []
+    seen = json.loads(report.read_text())
+    missing = expected_modules - set(seen["modules"])
+    assert not missing, f"Collection did not import: {sorted(missing)}"
+    assert seen["writes"] == []

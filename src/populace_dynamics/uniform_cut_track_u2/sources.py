@@ -22,7 +22,10 @@ be applied:
   with :class:`U2SourceRefusal`; nothing falls back to another route.
 * ``invented_declared`` (invented data only): applies the *declared*
   interpretation the specification writes down (the section 3 role table
-  and the section 15 routes) to every documented layout, so an invented
+  and the section 15 routes, amended where Max's rulings differ: section
+  16c's exclusions and amendment 5's previous-plan route, see
+  :data:`DECLARED_PREVIOUS_ACCOUNT_ITEMS`) to every documented layout, so
+  an invented
   dry run can exercise each mapping and role branch.  It records, for
   every entry it applies, the blockers the ``registry`` gate would refuse
   on.  It is not a fallback, and nothing on the real-data path accepts
@@ -35,9 +38,8 @@ be applied:
   :class:`FieldSpec` and :class:`DcRoute` are plain value objects, so a
   caller who hand-assembles them with the declared types is not stopped;
   no U2 entry point does so.
-  Where the specification declares nothing (code 88's substantive
-  routing, the historical combined spouse-retirement crosswalk) it
-  refuses too.
+  Where the specification declares nothing (the historical combined
+  spouse-retirement crosswalk) it refuses too.
 
 The role rules follow the same split in a :class:`RoleContext`, which is
 bound to its kind: a ``registry`` context holds exactly the committed
@@ -57,8 +59,9 @@ stop deliberate tampering with private state (``object.__setattr__``,
 the registered path builds every object it uses itself and rechecks the
 pinned identities before any PSID record is read.
 
-**Role rules** (section 3 relationship-code amendment, with the two
-family-unit exclusions of section 16c):
+**Role rules** (section 3 relationship-code amendment, with amendment
+1c's code-88 convention and the two family-unit exclusions of section
+16c):
 
 ====  ==============================  ==============  ===================
 Code  Income role and spouse slot     Annuity life    Marital resolution
@@ -66,17 +69,21 @@ Code  Income role and spouse slot     Annuity life    Marital resolution
 10    head / reference person         head            (is the head)
 20    spouse slot, either sex         legal spouse    yes
 22    spouse slot (cohabitor)         no              no
-88    TO VERIFY: refuses (no declared substantive rule; birth support only)
+88    OFUM (not the slot)             no              never
 90    OFUM, 2013-2017 (not the slot)  legal spouse    yes
 92    OFUM, 2017 only                 no              never
 ====  ==============================  ==============  ===================
 
 This is the section 3 table (``u2-draft-3``'s), amended where Max's
-d1090 ruling (2026-10-10, section 16c) differs from it.  A 2015 family
-unit that holds a code-20 person recorded male (blocker B1), and a
-2019-2023 family unit that holds a code-90 or code-92 person (blocker
-B2), supplies no observation to any row: each observation it would have
-supplied is counted under the named disposition
+rulings differ from it.  Under amendment 1c (d637, 2026-09-30, section
+16b; confirmed by d745 on 2026-10-12) code 88, the first-year cohabitor,
+has the OFUM income role outside the spouse slot, is no annuity life,
+never resolves a marital history by its code and keeps its
+administrative birth support.  Under d1090 (2026-10-10, section 16c) a
+2015 family unit that holds a code-20 person recorded male (blocker B1),
+and a 2019-2023 family unit that holds a code-90 or code-92 person
+(blocker B2), supplies no observation to any row: each observation it
+would have supplied is counted under the named disposition
 (:data:`MALE_CODE_20_2015`, :data:`UNCOOPERATIVE_SPOUSE_OR_PARTNER`; the
 rule's :class:`FamilyUnitExclusion`, applied by
 :func:`family_unit_exclusion`), so 2019-2023 codes 90 and 92 have no
@@ -84,7 +91,9 @@ income role.  The committed roles registry resolves the same rule for
 2013-2017 code 90 and 2017 code 92 (adjudication disposition D) and, by
 its d1090 commit, the same exclusions for 2015 code 20 and 2019-2023
 codes 90 and 92, which the adjudication had refused (disposition F); the
-registry gate follows the registry.
+registry gate follows the registry.  The roles registry records the same
+convention for code 88 in every wave (amendment 1c's registry commit),
+so the registry context applies it too.
 
 Any other in-family code keeps the inherited OFUM income role with no
 spouse status.  Legacy identifiers ``wife``, ``wife_present`` and
@@ -96,8 +105,8 @@ the documented sign domain); :func:`parse_fixed_width` reads records with
 them and :func:`encode_fixed_width` writes invented records in the same
 layout (tests and the invented dry run).  :func:`dc_route` builds the
 employer-DC route of a wave from the pension registry's route entries
-(registry gate) or from the section 15 declared route (invented only),
-and :func:`employer_dc_balances` applies it.
+(registry gate) or from the declared route (invented only;
+:func:`declared_dc_route`), and :func:`employer_dc_balances` applies it.
 
 Nothing here opens a survey record: the adapters parse the lines they are
 given, and :mod:`.loader` decides whether any record may be read.
@@ -122,7 +131,9 @@ from populace_dynamics.data import u2_source_registry as registry
 __all__ = [
     "ADMINISTRATIVE_BIRTH_SUPPORT_CODES",
     "DECLARED",
+    "DC_ITEM_PLAN_TYPES",
     "DECLARED_DC_ROUTE_TYPES",
+    "DECLARED_PREVIOUS_ACCOUNT_ITEMS",
     "FAMILY_UNIT_EXCLUSIONS",
     "GATES",
     "INCOME_CONCEPTS",
@@ -153,6 +164,7 @@ __all__ = [
     "check_invented_records",
     "check_overlaps",
     "dc_route",
+    "declared_dc_route",
     "decode_income",
     "declared_role_rules",
     "employer_dc_balances",
@@ -223,38 +235,71 @@ DECLARED = INVENTED_DECLARED
 #: the eight B1 and B2 refusals became the ratified family-unit
 #: exclusions and the role dependencies they carried were released
 #: (``test_d1090_moved_only_the_ruled_gate_fields`` pins exactly which
-#: gate fields moved).
+#: gate fields moved).  Max's d637 ruling (2026-09-30, section 16b) moves
+#: them again, one reviewed commit per ratified amendment
+#: (``test_d637_moved_only_the_ruled_gate_fields`` pins every gate field
+#: those commits moved against the registries d1090 left): amendments 2
+#: and 3 moved the income bytes (the later spouse age and sex records
+#: became slot metadata; the spouse-retirement crosswalks became
+#: non-executable metadata), amendment 4 the wealth bytes (the nine
+#: corrected accuracy flags record the ruling) and amendments 5b and 5a
+#: the pension bytes (the 2015 P62ACKPT checkpoint, the 2017-2023
+#: inherited-route amendments and the P64/P65 entries they released), and
+#: amendment 6 the weights and individual bytes (the 2017 weight ER34651
+#: under option 1, and the individual weight it released).  A last
+#: wording commit moved six registries' bytes once more: each
+#: ``independent_adjudication`` note now records the rulings, and the
+#: wealth registry's ``status_scope`` no longer says role assignment is
+#: refused.  The first-round review fixes moved the income bytes again
+#: (amendment 2's rule text and amendment 3's resolution), and the
+#: second-round fixes the weights bytes (one word of the 2017 weight's
+#: construction note) and the pension bytes (amendment 5's texts name the
+#: duplicate guard for a combined plan's re-asked items).  The third
+#: round moved seven registries' bytes: the six adjudication notes say
+#: ``rulings_applied`` records a ruling "where present", and the
+#: individual registry records amendment 6's release.  Max's d745
+#: confirmation (2026-10-12) of amendment 1a-1c moved the roles bytes:
+#: 1a records the ruling on the documented code-90/92 routes, 1b on 2013's
+#: inherited code-90 meaning, and 1c resolves the six code-88 records
+#: under the first-year cohabitor convention (no blocker remains); the 1c
+#: commit also moved the income bytes, where amendment 2's ten records say
+#: a code-88 cohabitor does not occupy the spouse slot.  The six
+#: adjudication notes then record d745 and the 1c commit (six byte pins).
 REGISTRY_SHA256: dict[str, str] = {
     "income": (
-        "3d4e8742356ba06986dc7dd3c664ffb1d679498e133fde8801456a76d9ff7431"
+        "79b8f953eda2111389b762608cea1025fb45d96ceb0468169eaf9ed405b0d4eb"
     ),
     "wealth": (
-        "3a22247849ea2eccbef6e522c0d74c901beb90195f92fd2e7b23b123fab6b816"
+        "c5c8fa1ddf283c07ac4dcac4490afb9754d336ef3618a159e028ce2b39f874a1"
     ),
     "individual": (
-        "4eab8e0abc69668c287310931baa049b8546d3f3e265a106f1b945b948c7649e"
+        "283c65c46ccfbc6b3a5b700ec7d0d1783e61c931352455b842828cc0186cedda"
     ),
     "pension": (
-        "0e329d0a871b70800a93908f2927415a728ac020175a079b38664b532b551d9a"
+        "7cc17ff1f6f4a5896b86cafa5edc59028102d28bfcdfa42840d55b628074f3dd"
     ),
     "roles": (
-        "df2b7afe76cda4f92380f88b478d9e6866e0f532b0d85f081d8226ee2e33dc87"
+        "f10c4a7dff38f74a29291fcec4a96c8c7b31d58561798a10c53094d6dcf393b7"
     ),
     "support": (
-        "5102825d8555e1e8648dfafbd4e6c72eef78d09e453a6d25279ec3b9298d5109"
+        "279515f5dab832155583829aec312078547a28d7152bcd07e90a2cf9bb863b8a"
     ),
     "weights": (
-        "356fcbd8dd19f4baf3e34406d75b4a6ae608dc25330d975ecdb9c2d9bb5cf84f"
+        "47c9f2d1b4b95f8259107d589aadc370b835dc807d45fa5268cf88abd72cc3be"
     ),
     "design": (
         "56181372d412811af6d06f5c0d8d1e071049f7fb73c34bd394aaff8f5e0c2fd6"
     ),
 }
 
-#: The family-file income concepts the U2 income rows need (the union
-#: over the ten rows; section 4).  ``wife_age`` gives the spouse-slot
-#: presence flag (not 0: "no Spouse/Partner in FU"), which rows U3 (the
-#: couple convention for new enrollment) and U4 (the unit size) read.
+#: The family-file income concepts the U2 income rows need (the union over the
+#: ten rows; section 4).  ``wife_age`` gives the family file's spouse-slot flag
+#: (not 0: "no Spouse/Partner in FU"), which rows U3 (the couple convention for
+#: new enrollment) and U4 (the unit size) read once :func:`.cohort.income_rows`
+#: has held it equal to the roster's unique spouse-slot occupant (the person
+#: whose role rule has ``spouse_slot``).  The spouse age and sex are slot
+#: metadata only (amendment 2, ratified by d637; section 16b): they never
+#: decide slot occupancy, and a disagreement refuses.
 INCOME_CONCEPTS: tuple[str, ...] = (
     "interview",
     "fu_size",
@@ -309,14 +354,38 @@ WEALTH_CONCEPTS: tuple[str, ...] = (
     "vehicles",
     "home_equity",
 )
-#: Declared previous-plan account-item types (section 15
-#: ``employer_dc.previous_routes.account_items``: account, formula, DK) in
-#: the 2011-and-later plan-type codes every U2 wave uses (5, 1, 8).
+#: Declared current-job account types and previous combined-plan types
+#: (section 15 ``employer_dc``), the same in every wave.
 DECLARED_DC_ROUTE_TYPES: dict[str, tuple[int, ...]] = {
     "current_account": (5, 7),
     "previous_both": (7,),
-    "previous_account_items": (5, 1, 8),
 }
+#: Section 15's previous-plan item names in the 2011-and-later plan-type
+#: codes every U2 wave uses (P46): account 5, formula 1, DK 8.
+DC_ITEM_PLAN_TYPES: dict[str, int] = {"account": 5, "formula": 1, "dk": 8}
+#: Declared previous-plan account items by wave.  Section 16a amendment
+#: 5, ratified as written by Max's d637 ruling (section 16b), replaces
+#: section 15's generic ``previous_routes.account_items`` (account,
+#: formula, DK) with its ``account_items_by_wave`` fragment: 2013 keeps
+#: the route inherited from U1; 2015-2023 admit account plans (P46 = 5)
+#: only, so a formula, combined, DK, refused or NA plan's account items
+#: are off-route, and an amount reached only through 2015's refused
+#: P62ACKPT branch is too (5b).  Where a ratified amendment and sections
+#: 3-15 differ the amendment governs (section 16b); section 15's own text
+#: keeps draft 3's wording until section 20 step 5 materializes the final
+#: parameter block.  ``tests/track_u2/test_u2_employer_dc.py`` holds this
+#: table equal to the fragment in section 16a.
+DECLARED_PREVIOUS_ACCOUNT_ITEMS: dict[int, tuple[str, ...]] = {
+    2013: ("account", "formula", "dk"),
+    2015: ("account",),
+    2017: ("account",),
+    2019: ("account",),
+    2021: ("account",),
+    2023: ("account",),
+}
+#: The one slot-metadata concept U2 reads: the family file's spouse age,
+#: for its slot flag only (amendment 2; :func:`field_specs`).
+_SLOT_FLAG_CONCEPTS = frozenset({"wife_age"})
 _COUNTED_DISPOSITION = 3
 _EXCLUDED_IRA_DISPOSITION = 2
 _DC_PERSONS = ("head", "wife")
@@ -603,8 +672,8 @@ class SourceGate:
     ``registry``: refuse any entry with a blocker.  ``invented_declared``:
     apply the declared interpretation and record what the registry gate
     would refuse (``would_refuse``).  What the specification declares
-    nothing for refuses in the callers under both gates (code 88's
-    substantive role, documentary crosswalks as inputs).  Frozen, so a
+    nothing for refuses in the callers under both gates (documentary
+    crosswalks as inputs).  Frozen, so a
     gate's kind cannot change after the registry check at construction
     (the use records are appended in place).
     """
@@ -751,12 +820,6 @@ OFUM_RULE = dict(
     marital_resolution=False,
     administrative_birth_support=False,
 )
-_CODE_88_REFUSAL = (
-    "code 88 (first-year cohabitor): section 3 verifies its label and "
-    "keeps it in the inherited administrative birth-support selection; "
-    "any income slot, annuity or marital rule remains TO VERIFY and none "
-    "is declared, so an observation whose family holds one refuses"
-)
 
 
 #: The two ratified exclusions as role-rule attachments (section 16c).
@@ -767,10 +830,15 @@ _B2_EXCLUSION = FamilyUnitExclusion(UNCOOPERATIVE_SPOUSE_OR_PARTNER)
 def declared_role_rules() -> dict[tuple[int, int], RoleRule]:
     """The declared rules for codes 10-92 in every support wave.
 
-    Section 3's table, amended where Max's d1090 ruling (2026-10-10,
-    section 16c) differs from it: 2015 code 20 keeps the spouse slot and
-    brings B1's exclusion when the person is recorded male, and 2019-2023
-    codes 90 and 92 bring B2's exclusion and have no income role.
+    Section 3's table, amended where Max's rulings differ from it.  Under
+    d1090 (2026-10-10, section 16c) 2015 code 20 keeps the spouse slot
+    and brings B1's exclusion when the person is recorded male, and
+    2019-2023 codes 90 and 92 bring B2's exclusion and have no income
+    role.  Under amendment 1c (d637, section 16b; confirmed by d745 on
+    2026-10-12) code 88, the first-year cohabitor, has the OFUM income
+    role on the family basis outside the spouse slot, is no legal-spouse
+    annuity life, never resolves a marital history by its code and
+    keeps the inherited administrative birth support.
     """
 
     out: dict[tuple[int, int], RoleRule] = {}
@@ -795,7 +863,7 @@ def declared_role_rules() -> dict[tuple[int, int], RoleRule]:
             wave, 22, True, "wife", True, False, False, True
         )
         out[(wave, 88)] = RoleRule(
-            wave, 88, True, None, False, False, False, True, _CODE_88_REFUSAL
+            wave, 88, True, "ofum", False, False, False, True
         )
         b2 = _B2_EXCLUSION if wave in _B2_WAVES else None
         out[(wave, 90)] = RoleRule(
@@ -947,12 +1015,13 @@ class RoleContext:
     """The role rules a U2 build applies, and whether it may run on data.
 
     ``registry``: the committed roles registry; any code the loader's
-    ``require_resolved`` refuses, refuses here (code 88 in every wave,
-    TO VERIFY, and code 92's absence in 2013 and 2015; until the d1090
-    commit also 2015 code 20 and 2019-2023 codes 90 and 92, which now
-    carry section 16c's exclusions).  ``invented_declared``: the declared rules, section 3's table
-    with section 16c's two family-unit exclusions (code 88 still
-    refuses); accepted only with invented inputs.
+    ``require_resolved`` refuses, refuses here (code 92's absence in 2013
+    and 2015; until amendment 1c's registry commit also code 88 in every
+    wave, and until the d1090 commit 2015 code 20 and 2019-2023 codes 90 and
+    92, which now carry section 16c's exclusions).  ``invented_declared``:
+    the declared rules, section 3's table with section 16c's two family-unit
+    exclusions and amendment 1c's code-88 convention; accepted only with
+    invented inputs.
 
     The kind is a binding, not a label: construction refuses rules other
     than the kind's own (the committed registry's or the declared
@@ -1123,7 +1192,12 @@ def field_specs(
     gate: SourceGate,
 ) -> list[FieldSpec]:
     """Fixed-width specs of ``concepts`` from registry ``name`` (income or
-    wealth), each entry passed through ``gate``."""
+    wealth), each entry passed through ``gate``.
+
+    A slot-metadata entry (amendment 2, ratified by d637: the later
+    family-file spouse age and sex) is read only as ``wife_age``, for the
+    family file's slot flag that :func:`.cohort.income_rows` holds equal
+    to the roster; any other such concept refuses under either gate."""
 
     if name not in ("income", "wealth"):
         raise ValueError("field_specs reads the income or wealth registry")
@@ -1135,6 +1209,14 @@ def field_specs(
             raise U2SourceRefusal(
                 f"{name}:{entry_id} is a {entry.get('kind')}: documentary "
                 "only, not an executable input (section 4)"
+            )
+        if (
+            entry.get("usage") == "slot_metadata_only"
+            and concept not in _SLOT_FLAG_CONCEPTS
+        ):
+            raise U2SourceRefusal(
+                f"{name}:{entry_id} is slot metadata only (amendment 2, "
+                "ratified by d637): no U2 input reads it"
             )
         specs.append(
             FieldSpec(
@@ -1390,8 +1472,13 @@ def decode_income(frame: pd.DataFrame) -> pd.DataFrame:
     """Decode parsed income fields as the income rows need them.
 
     ``wife_present`` is ``wife_age`` not 0 ("no Spouse/Partner in FU"):
-    the designated spouse *income slot* is occupied (section 3); an age
-    of 999 (DK; NA) still marks the slot occupied.
+    the family file reports the designated spouse *income slot* occupied
+    (section 3); an age of 999 (DK; NA) still marks it occupied.  This is
+    slot metadata only (amendment 2, ratified by d637): occupancy comes
+    from the roster's unique person whose role rule has ``spouse_slot``,
+    and
+    :func:`.cohort.income_rows` refuses any observation whose flag
+    disagrees with it.
     """
 
     out = frame.copy()
@@ -1527,13 +1614,14 @@ def dc_route(wave: int, gate: SourceGate) -> DcRoute:
     Registry gate: built from the pension registry's route entries
     (current job; previous combined; previous DC-only; the checkpoint's
     formula/unknown route; IRA rollovers; duplicate and off-route rule).
-    Any route still TO VERIFY or blocked refuses -- today 2015's
-    checkpoint and respondent slots and 2017-2023's inherited-route
-    amendment -- and so do disposition codes on which the IRA-rollover,
-    previous-combined and previous-DC-only entries disagree.  Invented
-    declared gate: the section 15 route (current account or combined
-    plan; "both" items of a combined plan; account items of an account,
-    formula or DK plan), recording the registry blockers.
+    Any route still TO VERIFY or blocked refuses (since the d637
+    registry commits for 5b and 5a, none in the committed registries),
+    and so do
+    disposition codes on which the IRA-rollover, previous-combined and
+    previous-DC-only entries disagree.  Invented declared gate:
+    :func:`declared_dc_route` (current account or combined plan; "both"
+    items of a combined plan; account items of the wave's declared
+    previous-plan types), recording the registry blockers.
     """
 
     wave = int(wave)
@@ -1554,16 +1642,7 @@ def dc_route(wave: int, gate: SourceGate) -> DcRoute:
     if wave >= 2017:
         gate.require("pension", f"{wave}.route.inherited_route_amendment")
     if gate.kind == INVENTED_DECLARED:
-        types = DECLARED_DC_ROUTE_TYPES
-        return DcRoute(
-            wave,
-            types["current_account"],
-            types["previous_both"],
-            types["previous_account_items"],
-            _COUNTED_DISPOSITION,
-            _EXCLUDED_IRA_DISPOSITION,
-            "section_15_declared_route_invented_only",
-        )
+        return declared_dc_route(wave)
     rollover = entries["ira_rollovers"]
     combined = entries["previous_combined"]
     dc_only = entries["previous_dc_only"]
@@ -1600,6 +1679,28 @@ def dc_route(wave: int, gate: SourceGate) -> DcRoute:
         counted.pop(),
         excluded.pop(),
         "pension_registry_routes",
+    )
+
+
+def declared_dc_route(wave: int) -> DcRoute:
+    """The declared employer-DC route of ``wave`` (invented data only):
+    section 15's route with amendment 5's previous-plan account items
+    (:data:`DECLARED_PREVIOUS_ACCOUNT_ITEMS`)."""
+
+    wave = int(wave)
+    if wave not in DECLARED_PREVIOUS_ACCOUNT_ITEMS:
+        raise U2SourceRefusal(f"no declared employer-DC route for {wave}")
+    return DcRoute(
+        wave,
+        DECLARED_DC_ROUTE_TYPES["current_account"],
+        DECLARED_DC_ROUTE_TYPES["previous_both"],
+        tuple(
+            DC_ITEM_PLAN_TYPES[item]
+            for item in DECLARED_PREVIOUS_ACCOUNT_ITEMS[wave]
+        ),
+        _COUNTED_DISPOSITION,
+        _EXCLUDED_IRA_DISPOSITION,
+        "section_15_declared_route_invented_only",
     )
 
 
