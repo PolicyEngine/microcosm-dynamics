@@ -10,7 +10,6 @@ from populace_dynamics.track_b.gross_benefits import InvalidFamilyInput
 from populace_dynamics.track_b.ret_grace import (
     DISABILITY_TYPES,
     GraceMonth,
-    GraceYearDecision,
     GraceYearState,
     TerminationEvent,
     grace_year,
@@ -728,16 +727,11 @@ def test_property_legal_type_normalization_preserves_initial_and_pending_grace(
 @pytest.mark.parametrize("field", ["met_eligible_months", "protected_months"])
 @pytest.mark.parametrize("raw", [(1, True), (True, 1), (1, 1.0), (1.0, 1)])
 def test_external_grace_month_sets_reject_equal_invalid_raw_values(field, raw):
-    kwargs = dict(
-        applies=True,
-        kinds={K.INITIAL},
-        met_eligible_months={1},
-        protected_months={1},
-        next_state=GraceYearState(),
-    )
+    result = grace_year(2026, GraceYearState(), [RIB] + [EMPTY] * 11)
+    restore, (cls, kwargs) = result.__reduce__()
     kwargs[field] = raw
     with pytest.raises(InvalidFamilyInput):
-        GraceYearDecision(**kwargs)
+        restore(cls, kwargs)
 
 
 @settings(max_examples=100, deadline=None)
@@ -749,16 +743,13 @@ def test_property_external_grace_month_sets_validate_before_deduplication(
     invalid = True if use_bool else float(valid)
     for field in ("met_eligible_months", "protected_months"):
         for raw in ((valid, invalid), (invalid, valid)):
-            kwargs = dict(
-                applies=True,
-                kinds={K.INITIAL},
-                met_eligible_months={valid},
-                protected_months={valid},
-                next_state=GraceYearState(),
-            )
+            months = [EMPTY] * 12
+            months[valid - 1] = RIB
+            result = grace_year(2026, GraceYearState(), months)
+            restore, (cls, kwargs) = result.__reduce__()
             kwargs[field] = raw
             with pytest.raises(InvalidFamilyInput):
-                GraceYearDecision(**kwargs)
+                restore(cls, kwargs)
 
 
 @settings(max_examples=200, deadline=None)
@@ -963,16 +954,11 @@ def test_invalid_input_is_an_input_error(construct):
     ],
 )
 def test_invalid_external_grace_decision_is_an_input_error(values):
-    kwargs = dict(
-        applies=True,
-        kinds={K.INITIAL},
-        met_eligible_months={1},
-        protected_months={1},
-        next_state=GraceYearState(),
-    )
+    result = grace_year(2026, GraceYearState(), [RIB] + [EMPTY] * 11)
+    restore, (cls, kwargs) = result.__reduce__()
     kwargs.update(values)
     with pytest.raises(InvalidFamilyInput):
-        GraceYearDecision(**kwargs)
+        restore(cls, kwargs)
 
 
 @st.composite

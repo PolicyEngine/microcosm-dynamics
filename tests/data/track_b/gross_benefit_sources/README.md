@@ -59,3 +59,43 @@ records the published figure and the statutory one side by side.
 
 These captures establish statutory conformance for worked examples only.
 They admit no population, behavioral or forecast claim.
+
+## October 2026 conformance review captures
+
+The 21 complete HTTP bodies retrieved on 2026-10-11 are folded into the
+same manifest schema. Their capture log has been removed after integration.
+`tests/test_track_b_gross_benefits_sources_20261011.py` checks at least one
+verbatim program instruction from every new source, their byte counts and
+SHA-256 values. The existing manifest test continues checking every capture.
+
+| Source | Used for |
+| --- | --- |
+| GN 02603.045, .050, .060 | The nationwide October 1999 Parisi rule, PTAP redistribution, age reduction of deductees, and published dual-entitlement cases |
+| RS 00615.003, .010 | Retirement-age cohorts and the applicable reduction-period rules |
+| RS 00615.310, .315, .590 | Disabled widow(er) 28.5 percent reduction after December 1983, WIB/DWB elections, and the ARF boundary retained for R3 |
+| RS 00615.712, .758 | Historical widow(er) DRC saving clause and family-composition reapportionment |
+| RS 00615.770, .772, .774, .776, .778 | Continuing combined-maximum refusals: upper limits, payment-record selection, indivisible child groups, reevaluation events, and loss of the combined maximum |
+| RS 00202.005, .100 | Independently entitled divorced spouses, January 1985 commencement, two-year divorce attestation, and pre-2024 worker WEP |
+| RS 00209.001, .015 | Parent entitlement, one/two-parent rates, maximum adjustment, and simultaneous own RIB/DIB entitlement |
+| GN 02608.100, RS 00605.360 | Social Security Fairness Act repeal of GPO/WEP for benefits payable after December 2023 |
+| RS 00615.340 (retrieved 2026-10-12) | Widow(er) child-in-care mother/father-rate minimum from January 1973, surviving divorced spouses, unchanged higher widow(er) amounts, and ARF credits for months raised to the minimum; both published examples |
+
+The GPO and WEP bodies contain the 2025 repeal instructions although their
+page dates remain 2022 and 2013 respectively. The manifest preserves those
+dates and the 2025 transmittal identifiers exactly as captured.
+
+The complete RS 00615.340 HTTP body retrieved on 2026-10-12 uses the same
+manifest schema. Its capture log was removed after byte-count and SHA-256
+verification. The source tests pin its child-in-care, effective-date and ARF
+instructions; the example registry reproduces the 71.5-to-75-percent
+January-June 2005 increase and the unchanged approximately 92.9-percent
+widow(er) rate. For the second example, 92.9 percent is the source's rounded
+presentation: with an invented $1,000 PIA, the exact dime payment is $928.70
+(92.87 percent), unchanged by the $750.00 mother/father minimum.
+
+The same source-test file now quotes a program instruction from each of 18
+older captures that previously had only generic integrity or table checks.
+These instructions pin the existing maximum, rounding, dual-entitlement and
+refusal boundaries. A completeness test requires all 58 retained captures
+to have a quoted rule or a registered worked figure as well as a byte-count
+and SHA-256 check.

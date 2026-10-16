@@ -126,9 +126,14 @@ def test_iterator_claim_evaluation_preserves_results_and_refusals(
     assert first.supported == second.supported == expected.supported
     if first.supported:
         assert first.benefits == second.benefits == expected.benefits
-        snapshotted_result = replace(
-            first.benefits,
-            crediting_months=iter(first.benefits.crediting_months),
+        snapshotted_result = at_fra(
+            replace(
+                first.benefits.claim,
+                **{
+                    field: iter(getattr(first.benefits.claim, field))
+                    for field in a._CREDIT_FIELDS
+                },
+            )
         )
         assert snapshotted_result == first.benefits
         assert (

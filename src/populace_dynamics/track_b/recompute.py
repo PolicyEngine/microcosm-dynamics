@@ -34,8 +34,14 @@ candidate never replaces the PIA of record; later years compare against
 the last accepted PIA. A year without earnings cannot trigger a delayed
 sub-$1 recomputation (RS 00605.501A).
 
-Unsupported configurations raise G's FamilyConfigurationUnsupported with
-named reasons. Invalid inputs are validated before coverage refusals.
+Unsupported configurations raise RecomputationConfigurationUnsupported,
+within the shared FamilyConfigurationUnsupported family, with exactly
+RecomputationUnsupportedReason. A package-private capability seals decisions,
+results, refusals and outcomes; direct construction, replacement and copying
+are invalid, and pickle restoration repeats identity validation. Evaluators
+and PIA aggregates require unchanged recomputation results. The shared
+counter admits every sealed layer outcome and keeps all refused weights.
+Invalid inputs are validated before coverage refusals.
 History and required-parameter validation precede every coverage check;
 ordinary AIME indexing, selection and PIA arithmetic run only after it.
 Pre-1983 eligibility, other PIA formulas, DIB/freeze/prior DIB, WEP before
@@ -60,9 +66,22 @@ from populace_dynamics.track_b.gross_benefits import (
     FamilyTargetBlocked,
     InvalidFamilyInput,
     YearMonth,
+    _check_evaluation_inputs,
+    _outcome_weight,
     count_family_outcomes,
     floor_dime,
     increase_by_colas,
+)
+
+from ._provenance import (
+    _check_refusal,
+    _check_seal,
+    _checked_result,
+    _computed,
+    _sealed_refusal,
+    _sealed_result,
+    _SealedOutcome,
+    _SealedResult,
 )
 
 __all__ = [
@@ -70,6 +89,7 @@ __all__ = [
     "PIAFormula",
     "RecomputationBasis",
     "RecomputationCondition",
+    "RecomputationConfigurationUnsupported",
     "RecomputationDecision",
     "RecomputationResult",
     "RecomputationOutcome",
@@ -126,6 +146,11 @@ class RecomputationUnsupportedReason(str, Enum):
     DEATH_BEFORE_FRA = "recompute_death_before_fra_415f5"
 
 
+@_sealed_refusal(RecomputationUnsupportedReason)
+class RecomputationConfigurationUnsupported(FamilyConfigurationUnsupported):
+    """A sealed recomputation refusal with exactly its layer's reason enum."""
+
+
 def _year(value: object, label: str) -> int:
     if type(value) is not int or not 1 <= value <= 9999:
         raise InvalidFamilyInput(f"{label} must be an integer year 1-9999")
@@ -154,10 +179,12 @@ def _dimes(value: object, label: str) -> Fraction:
 
 
 def _month(value: object, label: str) -> YearMonth:
-    if not isinstance(value, YearMonth):
+    if type(value) is not YearMonth:
         raise InvalidFamilyInput(f"{label} must be a YearMonth")
-    _year(value.year, label)
-    return value
+    try:
+        return YearMonth(value.year, value.month)
+    except (AttributeError, TypeError, ValueError) as error:
+        raise InvalidFamilyInput(f"{label}: {error}") from error
 
 
 def _bend_points(values: object) -> tuple[int, int]:
@@ -240,8 +267,9 @@ class RecomputationBasis:
         object.__setattr__(self, "conditions", conditions)
 
 
+@_sealed_result
 @dataclass(frozen=True)
-class RecomputationDecision:
+class RecomputationDecision(_SealedResult):
     """Threshold comparison at the effective-month PIA level, not checks."""
 
     pia_of_record: Fraction
@@ -249,10 +277,34 @@ class RecomputationDecision:
     increase: Fraction
     applied: bool
     pia_in_force: Fraction
+    has_earnings: bool = True
+
+    def __post_init__(self):
+        old = _dimes(self.pia_of_record, "PIA of record")
+        candidate = _dimes(self.candidate_pia, "candidate PIA")
+        if (
+            type(self.has_earnings) is not bool
+            or type(self.applied) is not bool
+        ):
+            raise InvalidFamilyInput(
+                "recomputation decision flags must be bools"
+            )
+        increase = candidate - old
+        applied = self.has_earnings and increase >= 1
+        if (
+            self.increase != increase
+            or self.applied != applied
+            or _dimes(self.pia_in_force, "PIA in force")
+            != (candidate if applied else old)
+        ):
+            raise InvalidFamilyInput(
+                "recomputation threshold identities disagree"
+            )
 
 
+@_sealed_result
 @dataclass(frozen=True)
-class RecomputationResult:
+class RecomputationResult(_SealedResult):
     earnings_year: int
     effective_month: YearMonth
     aime: int
@@ -260,9 +312,43 @@ class RecomputationResult:
     eligibility_pia_in_force: Fraction
     decision: RecomputationDecision
 
+    def __post_init__(self):
+        _year(self.earnings_year, "earnings_year")
+        effective = _month(self.effective_month, "effective_month")
+        if not (
+            effective.year == self.earnings_year
+            or effective == YearMonth(self.earnings_year + 1, 1)
+        ):
+            raise InvalidFamilyInput(
+                "recomputation effective month disagrees with earnings year"
+            )
+        if type(self.aime) is not int or self.aime < 0:
+            raise InvalidFamilyInput("AIME must be nonnegative whole dollars")
+        candidate = _dimes(
+            self.candidate_eligibility_pia, "candidate eligibility PIA"
+        )
+        current = _dimes(
+            self.eligibility_pia_in_force, "eligibility PIA in force"
+        )
+        decision = _checked_result(
+            self.decision, RecomputationDecision, "decision"
+        )
+        if decision.applied and candidate != current:
+            raise InvalidFamilyInput(
+                "accepted eligibility PIA differs from candidate"
+            )
+        if (
+            candidate > decision.candidate_pia
+            or current > decision.pia_in_force
+        ):
+            raise InvalidFamilyInput(
+                "nonnegative COLAs cannot lower eligibility PIAs"
+            )
 
+
+@_sealed_result
 @dataclass(frozen=True)
-class RecomputationOutcome:
+class RecomputationOutcome(_SealedOutcome):
     """An earnings-year row retained for G's common denominator counter."""
 
     key: str
@@ -271,12 +357,20 @@ class RecomputationOutcome:
     unsupported: FamilyConfigurationUnsupported | None
 
     def __post_init__(self):
+        _check_evaluation_inputs(self.key, self.weight, lambda: None)
         if (self.result is None) == (self.unsupported is None):
             raise InvalidFamilyInput("exactly one result/refusal is required")
-        object.__setattr__(self, "weight", _exact(self.weight, "weight"))
+        if self.result is not None:
+            _checked_result(
+                self.result, RecomputationResult, "recomputation result"
+            )
+        if self.unsupported is not None:
+            _check_refusal(self.unsupported)
+        object.__setattr__(self, "weight", _outcome_weight(self.weight))
 
     @property
     def supported(self) -> bool:
+        _check_seal(self)
         return self.result is not None
 
 
@@ -286,14 +380,20 @@ def evaluate_recomputation(
     compute: Callable[[], RecomputationResult],
 ) -> RecomputationOutcome:
     """Catch coverage only; input errors never become denominator gaps."""
-    checked_weight = _exact(weight, "weight")
+    _check_evaluation_inputs(key, weight, compute)
+    checked_weight = _outcome_weight(weight)
     try:
         result = compute()
     except FamilyConfigurationUnsupported as error:
-        return RecomputationOutcome(key, checked_weight, None, error)
-    if not isinstance(result, RecomputationResult):
-        raise InvalidFamilyInput("compute must return a recomputation result")
-    return RecomputationOutcome(key, checked_weight, result, None)
+        return _computed(
+            RecomputationOutcome,
+            key,
+            checked_weight,
+            None,
+            _check_refusal(error),
+        )
+    _checked_result(result, RecomputationResult, "recomputation result")
+    return _computed(RecomputationOutcome, key, checked_weight, result, None)
 
 
 def weighted_recomputed_pia(
@@ -301,6 +401,8 @@ def weighted_recomputed_pia(
 ) -> Fraction:
     """PIA aggregate over all rows, blocked when any row was refused."""
     rows = tuple(outcomes)
+    for row in rows:
+        _checked_result(row, RecomputationOutcome, "recomputation outcome")
     counts = count_family_outcomes(rows)
     if counts.unsupported_rows:
         raise FamilyTargetBlocked(
@@ -467,8 +569,14 @@ def recomputation_decision(
         raise InvalidFamilyInput("has_earnings must be a bool")
     increase = candidate - old
     applied = has_earnings and increase >= 1
-    return RecomputationDecision(
-        old, candidate, increase, applied, candidate if applied else old
+    return _computed(
+        RecomputationDecision,
+        old,
+        candidate,
+        increase,
+        applied,
+        candidate if applied else old,
+        has_earnings,
     )
 
 
@@ -504,7 +612,8 @@ def _require_coverage(
     elif death_month is not None and death_month < fra_month:
         reason = RecomputationUnsupportedReason.DEATH_BEFORE_FRA
     if reason is not None:
-        raise FamilyConfigurationUnsupported(
+        raise _computed(
+            RecomputationConfigurationUnsupported,
             reason,
             "Original AIME RIB recomputation only; see R3 coverage table",
         )
@@ -602,7 +711,8 @@ def annual_recomputation(
         increase_by_colas(candidate_base, colas),
         has_earnings=prefix[year] > 0,
     )
-    return RecomputationResult(
+    return _computed(
+        RecomputationResult,
         year,
         effective,
         aime,

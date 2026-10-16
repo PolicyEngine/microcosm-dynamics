@@ -37,6 +37,87 @@ makes no Axiom or population conformance claim.
   with POMS transmittals and page dates. R1's full Act 203 capture remains
   at `tests/data/track_b/ret_sources/ssa_act_203.html`.
 
+## Shared result and denominator contract
+
+G's round-12 integration changes provenance checks, with no change to
+Act 203's deduction amounts or coverage. `RETConfigurationUnsupported`
+remains a `FamilyConfigurationUnsupported` with code
+`FAMILY_CONFIG_UNSUPPORTED`, and accepts exactly `RETUnsupportedReason`;
+the original R2 `UnsupportedReason` import remains an alias. Each Track B
+layer has its own declared refusal and reason enum. `evaluate_ret` catches
+the shared refusal family, validates metadata before computation, and
+accepts only an unaltered `RETLedger` computed by R2 as a supported result.
+
+The package-private `_provenance.py` capability seals grace decisions, partial allocations,
+monthly and worker results, ledgers, outcomes and the shared denominator.
+Direct construction, `dataclasses.replace`, `copy` and `deepcopy` raise
+`InvalidFamilyInput`; pickle reconstruction repeats validation. Each
+monthly result reconciles gross, net and deductions and floors its checks
+under Act 215(g). Worker results reconcile calculated excess, charged and
+uncharged amounts. The ledger verifies every beneficiary's twelve months,
+crediting-month sets, provisional reconciliation and aggregate deductions,
+including the separate CFR 404.440 residual. Nested alteration is rejected
+before a result is consumed or counted. Allocation mapping reads check the
+seal too, so a caller cannot feed an altered allocation back as partial-payment
+rates or original shares. Ordinary input mappings remain accepted.
+
+`GraceYearDecision` is also money evidence: its eligibility can prevent a
+RET deduction. It is built only by `grace_year`, copies and validates its
+nested `next_state`, and reconciles the initial/after-break categories with
+current-year LMETY and protected post-1977 NSMs. `GraceYearState` remains a
+constructible declaration of initial history. Beneficiary construction,
+record-year construction and `apply_ret_year` each reject caller-built or
+altered actual or estimated grace decisions before any coverage refusal.
+`tests/test_track_b_ret_grace_provenance.py` exercises this invariant through
+`test_grace_decision_rejects_public_construction_and_copy`,
+`test_every_ret_admission_rejects_invalid_grace_evidence`,
+`test_grace_pickle_restore_revalidates_nested_state_and_identities`, and
+Hypothesis `test_grace_pickle_roundtrip_and_tamper_rejection_preserve_money`.
+The three existing malformed-decision tests now modify the reconstruction
+fields of an actual helper result, retaining every invalid-field assertion.
+
+`RETDenominator` aliases G's `FamilyDenominator`, and `count_ret_outcomes`
+delegates to `count_family_outcomes`; both accept every declared layer's
+sealed outcomes. Refused rows retain their rows and weights. RET money
+aggregation accepts only R2 outcomes and ledgers; G's household, guard and
+report consumers continue to require G results.
+
+The additional contract invariants and executable checks are:
+
+- Computation provenance and exact layer membership:
+  `test_ret_computed_values_reject_public_construction_and_copy`,
+  `test_evaluate_ret_rejects_caller_built_or_altered_ledger`,
+  `test_ret_evaluator_rejects_other_layer_results_as_input_error`, and the
+  Hypothesis `test_ret_evaluator_rejects_every_altered_month`, and the shared
+  contract test
+  `test_partial_payment_money_inputs_reject_unsealed_or_altered_allocations`
+  and Hypothesis
+  `test_partial_payments_reject_altered_allocation_money_inputs`.
+- Input errors precede a callback or denominator contribution:
+  `test_ret_evaluator_validates_metadata_before_computation` and
+  `test_ret_counter_rejects_unsealed_or_altered_outcomes`.
+- Counts are identical through the R2 and common counter, with refusals
+  retained: `test_ret_counter_and_common_counter_have_identical_counts`
+  and Hypothesis
+  `test_ret_seals_pickle_and_common_denominator_preserve_rows`.
+- Pickle round trips preserve monetary results, identities and refusal
+  reasons; reconstruction rejects altered accounting fields:
+  `test_ret_computed_values_round_trip_through_pickle_validation`,
+  `test_ret_pickle_restore_rechecks_accounting_identities`, and Hypothesis
+  `test_ret_pickle_restore_preserves_month_and_worker_accounting`.
+
+The binding-survivor fixture now states its original no-care assumption
+explicitly. Both `child_in_care=False` and the positive attestation
+`child_in_care="cdb"` produce a $796.40 widow rate and $0 CDB auxiliary
+rate, retain the entitled CDB's $750 original share, and refuse auxiliary
+work as `deduction_before_reduction_part_b`. This is the paired
+`test_binding_survivor_maximum_with_zero_rate_cdb_is_deferred_to_part_b`.
+G v2 requires the child's identity for positive care; literal boolean
+`True` is an input error, pinned by
+`test_survivor_care_requires_child_identity_not_boolean_true`.
+RS 00615.340's mother/father comparison does not increase this particular
+widow rate. No statutory reading changed.
+
 ## Authority and inputs
 
 The authorities are [Act 203(b), (f), (h)](https://www.ssa.gov/OP_Home/ssact/title02/0203.htm),

@@ -26,8 +26,13 @@ are validated before coverage is decided, without consuming caller state.
 Pre-FRA spouse reentitlement is refused because RS 00615.201A.1 and
 .491A conflict on when termination months leave the reduction factor.
 
-Unsupported configurations raise FamilyConfigurationUnsupported with
-named ARF reasons. Invalid inputs, including G's statutory rate bundle,
+Unsupported configurations raise ARFConfigurationUnsupported, in the shared
+FamilyConfigurationUnsupported family, with exactly ARFUnsupportedReason.
+A package-private capability seals results, refusals and outcomes. Direct
+construction, replacement and copying are invalid; pickle restoration
+revalidates identities. Evaluators and apply_arf require unchanged ARF
+results, while the common denominator admits every sealed layer outcome.
+Invalid inputs, including G's statutory rate bundle,
 are checked before coverage and benefit arithmetic. Non-finite numeric
 rates, benefit shares and brackets are rejected locally before G's
 statutory comparison. Parameter ValueErrors propagate through evaluate_arf
@@ -49,9 +54,10 @@ from populace_dynamics.ss.params import SSAParameters
 from populace_dynamics.track_b.gross_benefits import (
     FamilyConfigurationUnsupported,
     FamilyDenominator,
-    FamilyOutcome,
     InvalidFamilyInput,
     YearMonth,
+    _check_evaluation_inputs,
+    _outcome_weight,
     ceil_dime,
     count_family_outcomes,
     floor_dime,
@@ -61,6 +67,17 @@ from populace_dynamics.track_b.gross_benefits import (
     whole_dollars,
     widow_reduction_period_months,
     worker_reduction_fraction,
+)
+
+from ._provenance import (
+    _check_refusal,
+    _check_seal,
+    _checked_result,
+    _computed,
+    _sealed_refusal,
+    _sealed_result,
+    _SealedOutcome,
+    _SealedResult,
 )
 
 ARF_VERSION = "track-b-r3-arf-v1"
@@ -100,6 +117,11 @@ class ARFUnsupportedReason(Enum):
     OTHER_SUSPENSION = "arf_other_suspension"
 
 
+@_sealed_refusal(ARFUnsupportedReason)
+class ARFConfigurationUnsupported(FamilyConfigurationUnsupported):
+    """A sealed ARF coverage refusal with exactly an ARF reason."""
+
+
 class SpouseOwnSequence(Enum):
     """The supported RS 00615.500 sequencing, and one named refusal."""
 
@@ -109,8 +131,11 @@ class SpouseOwnSequence(Enum):
 
 
 def _month(value: MonthInput, label: str) -> YearMonth:
-    if isinstance(value, YearMonth):
-        result = value
+    if type(value) is YearMonth:
+        try:
+            result = YearMonth(value.year, value.month)
+        except (AttributeError, TypeError, ValueError) as error:
+            raise InvalidFamilyInput(f"{label}: {error}") from error
     elif isinstance(value, tuple) and len(value) == 2:
         try:
             result = YearMonth(*value)
@@ -286,8 +311,9 @@ class ARFClaim:
             object.__setattr__(self, name, snapshot)
 
 
+@_sealed_result
 @dataclass(frozen=True)
-class ARFResult:
+class ARFResult(_SealedResult):
     """Benefit component after ARF and, when supplied, the own offset.
 
     factor is the nominal age factor before dime rounding or own offset.
@@ -314,6 +340,170 @@ class ARFResult:
             "crediting_months",
             _month_set(self.crediting_months, "crediting_months"),
         )
+        if type(self.claim) is not ARFClaim:
+            raise InvalidFamilyInput("ARF result requires its original claim")
+        payment = _month(self.payment_month, "payment_month")
+        fra = _month(self.fra_month, "fra_month")
+        claim = _check_claim(self.claim, None, result_fra=fra)
+        object.__setattr__(self, "claim", claim)
+        first = claim.first_reduction_month
+        own = claim.spouse_own
+        if payment < first or (
+            own is not None
+            and own.sequence is SpouseOwnSequence.AFTER_SPOUSE_ARF
+            and payment < fra
+        ):
+            raise InvalidFamilyInput(
+                "ARF result contradicts its entitlement window"
+            )
+        if (
+            claim.conditions
+            or first < YearMonth(1978, 1)
+            or payment < YearMonth(1983, 1)
+            or (
+                claim.kind is ARFBenefitKind.WIDOW
+                and claim.birth_date < date(1912, 1, 2)
+            )
+            or (
+                own is not None
+                and own.sequence is SpouseOwnSequence.AFTER_SPOUSE_BEFORE_ARF
+            )
+            or (
+                claim.kind is ARFBenefitKind.SPOUSE
+                and payment < fra
+                and any(
+                    first <= month < payment
+                    for month in claim.nonentitlement_months
+                )
+            )
+        ):
+            raise InvalidFamilyInput(
+                "ARF result cannot contain a refused original claim"
+            )
+        if claim.kind is ARFBenefitKind.WIDOW and fra != age_attainment_month(
+            claim.birth_date,
+            720 + widow_reduction_period_months(claim.birth_date),
+        ):
+            raise InvalidFamilyInput(
+                "ARF widow FRA disagrees with original cohort"
+            )
+        original = _index(fra) - _index(first)
+        if (
+            any(
+                type(value) is not int or value < 0
+                for value in (
+                    self.original_reduction_months,
+                    self.adjusted_reduction_months,
+                )
+            )
+            or self.original_reduction_months != original
+        ):
+            raise InvalidFamilyInput("ARF original reduction window disagrees")
+        effective = fra if payment >= fra else None
+        age62 = age_attainment_month(claim.birth_date, 744)
+        if (
+            claim.kind is ARFBenefitKind.WIDOW
+            and first <= age62 <= payment < fra
+        ):
+            effective = age62
+        if self.effective_adjustment_month != effective:
+            raise InvalidFamilyInput(
+                "ARF effective adjustment month disagrees"
+            )
+        limit = effective
+        if limit is not None and claim.death_date is not None:
+            limit = min(
+                limit, YearMonth(claim.death_date.year, claim.death_date.month)
+            )
+        eligible = frozenset().union(
+            *(
+                _month_set(getattr(claim, field), field)
+                for field in _CREDIT_FIELDS
+            )
+        )
+        expected = frozenset(
+            month
+            for month in eligible
+            if limit is not None and first <= month < limit
+        )
+        if self.crediting_months != expected:
+            raise InvalidFamilyInput(
+                "ARF credited months disagree with original window"
+            )
+        adjusted = original - len(expected)
+        if self.adjusted_reduction_months != adjusted:
+            raise InvalidFamilyInput(
+                "ARF adjusted months plus credits must equal original"
+            )
+        if claim.kind is ARFBenefitKind.RIB:
+            reduction_fraction = min(adjusted, 36) * Fraction(1, 180) + max(
+                0, adjusted - 36
+            ) * Fraction(1, 240)
+        elif claim.kind is ARFBenefitKind.SPOUSE:
+            reduction_fraction = min(adjusted, 36) * Fraction(1, 144) + max(
+                0, adjusted - 36
+            ) * Fraction(1, 240)
+        elif claim.kind is ARFBenefitKind.WIDOW:
+            reduction_fraction = (
+                Fraction(57, 200)
+                * adjusted
+                / widow_reduction_period_months(claim.birth_date)
+            )
+        else:
+            raise InvalidFamilyInput("ARF result requires its benefit kind")
+        if self.factor != 1 - reduction_fraction or not 0 <= self.factor <= 1:
+            raise InvalidFamilyInput(
+                "ARF nominal factor disagrees with adjusted months"
+            )
+        base = _amount(claim.unreduced_benefit, "unreduced_benefit")
+        own = claim.spouse_own
+        if (
+            own is not None
+            and own.sequence is SpouseOwnSequence.CONCURRENT_OR_PRECEDING
+        ):
+            base = max(Fraction(0), base - own.pia)
+        reduction = ceil_dime(base * reduction_fraction)
+        benefit = floor_dime(base - reduction)
+        if (
+            own is not None
+            and own.sequence is SpouseOwnSequence.AFTER_SPOUSE_ARF
+        ):
+            benefit = max(Fraction(0), benefit - own.payable)
+        if (
+            _amount(self.reduction, "reduction") != reduction
+            or _amount(self.benefit, "benefit") != benefit
+            or type(self.whole_dollar_benefit) is not int
+            or self.whole_dollar_benefit != whole_dollars(benefit)
+        ):
+            raise InvalidFamilyInput(
+                "ARF reduction and payable identities disagree"
+            )
+
+
+@_sealed_result
+@dataclass(frozen=True)
+class ARFOutcome(_SealedOutcome):
+    """One sealed ARF result or shared-family refusal, with its full weight."""
+
+    key: str
+    weight: Fraction
+    benefits: ARFResult | None
+    unsupported: FamilyConfigurationUnsupported | None
+
+    def __post_init__(self):
+        _check_evaluation_inputs(self.key, self.weight, lambda: None)
+        if (self.benefits is None) == (self.unsupported is None):
+            raise InvalidFamilyInput("exactly one result/refusal is required")
+        if self.benefits is not None:
+            _checked_result(self.benefits, ARFResult, "ARF benefits")
+        if self.unsupported is not None:
+            _check_refusal(self.unsupported)
+        object.__setattr__(self, "weight", _outcome_weight(self.weight))
+
+    @property
+    def supported(self) -> bool:
+        _check_seal(self)
+        return self.benefits is not None
 
 
 def _check_finite_statutory_parameters(params: SSAParameters) -> None:
@@ -346,8 +536,18 @@ def _check_finite_statutory_parameters(params: SSAParameters) -> None:
             )
 
 
-def _check_claim(claim: ARFClaim, params: SSAParameters) -> ARFClaim:
-    """Validate claim and statutory bundle before coverage or money rules."""
+def _check_claim(
+    claim: ARFClaim,
+    params: SSAParameters | None,
+    *,
+    result_fra: YearMonth | None = None,
+) -> ARFClaim:
+    """Validate declarations before money, or when restoring a sealed result.
+
+    Computation supplies its statutory bundle. Result restoration retains
+    the computed FRA and revalidates all claim fields and available window
+    identities without a parameter bundle or a new FRA schedule choice.
+    """
     if not isinstance(claim, ARFClaim):
         raise InvalidFamilyInput("claim must be an ARFClaim")
     if not isinstance(claim.kind, ARFBenefitKind):
@@ -421,9 +621,14 @@ def _check_claim(claim: ARFClaim, params: SSAParameters) -> ARFClaim:
             _amount(own.payable, "own payable"),
             own.sequence,
         )
-    _check_finite_statutory_parameters(params)
-    statutory_rates(params)
-    fra = _fra_month_for_input_validation(claim.birth_date, claim.kind, params)
+    if params is None:
+        fra = _month(result_fra, "result_fra")
+    else:
+        _check_finite_statutory_parameters(params)
+        statutory_rates(params)
+        fra = _fra_month_for_input_validation(
+            claim.birth_date, claim.kind, params
+        )
     if claim.kind is ARFBenefitKind.WIDOW:
         minimum_age = (
             600 if ARFUnsupportedReason.DISABLED_WIDOW in conditions else 720
@@ -452,7 +657,7 @@ def _check_claim(claim: ARFClaim, params: SSAParameters) -> ARFClaim:
 
 
 def _refuse(reason: ARFUnsupportedReason, detail: str) -> None:
-    raise FamilyConfigurationUnsupported(reason, detail)
+    raise _computed(ARFConfigurationUnsupported, reason, detail)
 
 
 def apply_arf(
@@ -468,7 +673,7 @@ def apply_arf(
     Zero credits leave the benefit exactly as G would compute it.
     """
     if isinstance(claim, ARFResult):
-        claim = claim.claim
+        claim = _checked_result(claim, ARFResult, "claim").claim
     claim = _check_claim(claim, params)
     payment = _month(payment_month, "payment_month")
     fra = _fra_month_for_input_validation(claim.birth_date, claim.kind, params)
@@ -585,7 +790,8 @@ def apply_arf(
     benefit = floor_dime(base - reduction)
     if own is not None and own.sequence is SpouseOwnSequence.AFTER_SPOUSE_ARF:
         benefit = max(Fraction(0), benefit - own.payable)
-    return ARFResult(
+    return _computed(
+        ARFResult,
         claim,
         payment,
         fra,
@@ -602,22 +808,23 @@ def apply_arf(
 
 def evaluate_arf(
     key: str, weight: object, compute: Callable[[], ARFResult]
-) -> FamilyOutcome:
-    """Keep ARF refusals in G's existing weighted outcome denominator.
+) -> ARFOutcome:
+    """Keep sealed ARF results and shared-family refusals in one denominator.
 
-    FamilyOutcome's benefits field carries an ARFResult here; G's
-    denominator uses only supported/weight/unsupported, not family money.
-    G's family-money aggregation functions are not ARF aggregators.
+    Metadata errors precede computation. Only unchanged results produced
+    by apply_arf may enter supported rows; G money consumers remain G-only.
     """
+    _check_evaluation_inputs(key, weight, compute)
     try:
         result = compute()
     except FamilyConfigurationUnsupported as error:
-        return FamilyOutcome(key, weight, None, error)
-    if not isinstance(result, ARFResult):
-        raise TypeError("compute must return an ARFResult")
-    return FamilyOutcome(key, weight, result, None)
+        return _computed(ARFOutcome, key, weight, None, _check_refusal(error))
+    _checked_result(result, ARFResult, "ARF result")
+    return _computed(ARFOutcome, key, weight, result, None)
 
 
-def count_arf_outcomes(outcomes: Iterable[FamilyOutcome]) -> FamilyDenominator:
-    """Reuse G's denominator: unsupported rows and weights are retained."""
+def count_arf_outcomes(
+    outcomes: Iterable[_SealedOutcome],
+) -> FamilyDenominator:
+    """Reuse the shared denominator, retaining every row and refused weight."""
     return count_family_outcomes(outcomes)
