@@ -822,6 +822,10 @@ def test_decide_stops_and_gates_only_on_the_gate_surface(
         entry["cell"]: entry["reason"]
         for entry in record["surface"]["report_only"]
     }
+    published = gated + [
+        entry["cell"] for entry in record["surface"]["report_only"]
+    ]
+    assert len(published) == len(set(published)) == len(b2.CELLS)
     assert set(gated) <= set(b2.GATE_SURFACE)
     assert set(gated) | set(report) == set(b2.CELLS)
     for name in ("earn_p50.older", "earn_p50.prime"):

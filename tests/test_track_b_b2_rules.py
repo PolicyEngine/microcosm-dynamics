@@ -156,11 +156,12 @@ def test_the_published_surface_gates_only_gate_surface_cells(
     out = floor_builder.finish(record, cells)
     surface = out["surface"]
     gated = [entry["cell"] for entry in surface["gated"]]
+    published = gated + [entry["cell"] for entry in surface["report_only"]]
+    assert len(published) == len(set(published)) == len(b2.CELLS)
+    assert set(published) == set(b2.CELLS)
     report = {
         entry["cell"]: entry["reason"] for entry in surface["report_only"]
     }
-    assert len(gated) + len(report) == len(b2.CELLS)
-    assert set(gated) | set(report) == set(b2.CELLS)
     assert set(gated) <= set(b2.GATE_SURFACE)
     assert gated == (sorted(retained) if cleared else [])
     for name in b2.CELLS:
