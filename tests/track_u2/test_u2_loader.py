@@ -37,16 +37,18 @@ from __future__ import annotations
 
 import copy
 import hashlib
+import math
 import os
 import pwd
 import sys
+from collections.abc import Mapping
 from pathlib import Path
 from types import MappingProxyType
 
 import numpy as np
 import pandas as pd
 import pytest
-from hypothesis import assume, given, settings
+from hypothesis import assume, example, given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.data import family, marriage, panels, psid
@@ -2541,6 +2543,131 @@ def test_rigged_recorded_hashes_refuse(frozen_load, evidence, where):
         )
 
 
+@pytest.mark.parametrize(
+    "where", ["psid_files_sha256", "cited_sources_sha256"]
+)
+def test_a_recorded_hash_map_must_be_exactly_a_dict(
+    frozen_load, evidence, where
+):
+    """Closeout mutation lane b (mutant 9): a read-only proxy of the
+    recorded map itself equals the frozen map, so only the plain-dict
+    rule refuses it (INVENTED DATA - NOT A COMPARISON)."""
+
+    import dataclasses
+
+    rechecked = frozen_load["inputs"]
+    proxy = MappingProxyType(dict(rechecked.provenance[where]))
+    assert proxy == evidence[where]
+    edited = dataclasses.replace(
+        rechecked, provenance={**rechecked.provenance, where: proxy}
+    )
+    object.__setattr__(edited, "loader_seal", rechecked.loader_seal)
+    with pytest.raises(runner.U2RunError, match="plain dict of exact"):
+        _registered_check(
+            edited, frozen_load, preregistration_evidence=evidence
+        )
+
+
+def test_a_recorded_file_bundle_must_be_an_exact_str(frozen_load, evidence):
+    """Closeout mutation lane b (mutant 10): the recorded file bundle must
+    be exactly a str.  With the file hashes a plain dict of exact str, a
+    str subclass that equals every value, written into the provenance and
+    the seal (so the loader-seal check accepts it), would otherwise stand
+    in for any other bundle (INVENTED DATA - NOT A COMPARISON)."""
+
+    import dataclasses
+
+    rechecked = frozen_load["inputs"]
+    assert type(rechecked.provenance["psid_files_sha256"]) is dict
+    bundle = _RiggedText("0" * 64)
+    forged = dataclasses.replace(
+        rechecked,
+        provenance={
+            **rechecked.provenance,
+            "psid_files_bundle_sha256": bundle,
+        },
+    )
+    object.__setattr__(
+        forged,
+        "loader_seal",
+        MappingProxyType(
+            {**rechecked.loader_seal, "psid_files_bundle_sha256": bundle}
+        ),
+    )
+    # The loader-seal check accepts it; only the exact-type rule refuses.
+    cohort._input_provenance(forged)
+    with pytest.raises(runner.U2RunError, match="PSID file hashes"):
+        _registered_check(
+            forged, frozen_load, preregistration_evidence=evidence
+        )
+
+
+class _TwoFacedProvenance(Mapping):
+    """INVENTED: a provenance mapping whose ``[]`` (and so ``dict()``)
+    serves ``served`` while its ``get`` serves ``honest``."""
+
+    def __init__(self, honest, served):
+        self._honest, self._served = dict(honest), dict(served)
+
+    def __getitem__(self, key):
+        return self._served[key]
+
+    def __iter__(self):
+        return iter(self._served)
+
+    def __len__(self):
+        return len(self._served)
+
+    def get(self, key, default=None):
+        return self._honest.get(key, default)
+
+
+def test_the_snapshot_never_reads_the_callers_recorded_hashes(
+    frozen_load, evidence, monkeypatch
+):
+    """Closeout mutation lane d (mutant 20): the snapshot's PSID file
+    hashes, bundle and cited-source hashes are the bound record's, never
+    the caller's.  A provenance mapping that serves the loader's hashes to
+    the run's comparisons (``get``) and INVENTED ones to ``[]``, under a
+    seal re-forged over the INVENTED bundle, passes every check; the run
+    record and the rows must still carry the record's hashes."""
+
+    import dataclasses
+
+    rechecked = frozen_load["inputs"]
+    honest = dict(rechecked.provenance)
+    files = {key: "e" * 64 for key in honest["psid_files_sha256"]}
+    bundle = loader.files_bundle_sha256(files)
+    served = {
+        **honest,
+        "psid_files_sha256": files,
+        "psid_files_bundle_sha256": bundle,
+        "cited_sources_sha256": {"PSID/invented.sps": "e" * 64},
+    }
+    two_faced = dataclasses.replace(
+        rechecked, provenance=_TwoFacedProvenance(honest, served)
+    )
+    seal = {**dict(rechecked.loader_seal), "psid_files_bundle_sha256": bundle}
+    object.__setattr__(two_faced, "loader_seal", MappingProxyType(seal))
+    result = runner.run_track_u2(
+        two_faced,
+        parameters.committed_u2_parameters(),
+        data_provenance=ap.REGISTERED_REAL,
+        role_context=sources.RoleContext.from_registry(),
+        registration_pointer=POINTER,
+        preregistration_evidence_sha256=frozen_load["sha256"],
+        preregistration_evidence=evidence,
+    )
+    assert result["psid_files_sha256"] == evidence["psid_files_sha256"]
+    assert result["cohort_provenance"]["psid_files_bundle_sha256"] == (
+        evidence["psid_files_bundle_sha256"]
+    )
+    used = _row_inputs(frozen_load, evidence, monkeypatch, two_faced)
+    assert dict(used.provenance["cited_sources_sha256"]) == (
+        evidence["cited_sources_sha256"]
+    )
+
+
 def test_a_registered_run_takes_no_source_gate(frozen_load, evidence):
     gate = sources.SourceGate(
         sources.REGISTRY, sources.RegistrySet.committed()
@@ -2621,9 +2748,10 @@ def test_the_snapshot_rebuilds_the_loader_and_generator_frames_exactly(
             )
 
 
-#: INVENTED text: printable characters, including the CSV delimiter and
-#: quote, without control characters or lone surrogates (which the digest
-#: refuses as invalid Unicode).
+#: INVENTED text: printable characters, including the CSV delimiter,
+#: quote and whitespace, without lone surrogates (which the digest refuses
+#: as invalid Unicode) or control characters (a NUL does not survive the
+#: CSV round trip, so a frame holding one refuses at the rebuild).
 _TEXT = st.text(
     alphabet=st.characters(blacklist_categories=("Cs", "Cc")),
     min_size=1,
@@ -2640,7 +2768,15 @@ def _frames(draw):
     kinds = draw(
         st.lists(
             st.sampled_from(
-                ("int64", "float64", "bool", "Int64", "str", "string")
+                (
+                    "int64",
+                    "float64",
+                    "bool",
+                    "Int64",
+                    "str",
+                    "string",
+                    "object",
+                )
             ),
             min_size=1,
             max_size=6,
@@ -2670,31 +2806,69 @@ def _frames(draw):
                     max_size=n,
                 )
             )
+        elif kind == "object":
+            # An object column's missing cells are NaN (round 3: None or
+            # pd.NA would rebuild as NaN, so the type rules refuse them).
+            values = draw(
+                st.lists(st.just(math.nan) | _TEXT, min_size=n, max_size=n)
+            )
         else:
             values = draw(st.lists(st.none() | _TEXT, min_size=n, max_size=n))
-        columns[name] = (
-            pd.array(values, dtype=kind)
-            if kind != "float64"
-            else np.array(values, dtype="float64")
-        )
+        if kind == "float64":
+            columns[name] = np.array(values, dtype="float64")
+        elif kind == "object":
+            columns[name] = np.array(values, dtype=object)
+        else:
+            columns[name] = pd.array(values, dtype=kind)
     return pd.DataFrame(columns)
+
+
+def _one_text_cell(text, dtype):
+    """An INVENTED one-column frame holding one text cell."""
+
+    if dtype == "object":
+        return pd.DataFrame({"c0": np.array([text], dtype=object)})
+    return pd.DataFrame({"c0": pd.array([text], dtype=dtype)})
 
 
 @settings(max_examples=300, deadline=None)
 @given(frame=_frames())
+# The closeout review's minimized counterexample: a one-column frame
+# whose only text cell is whitespace writes a whitespace-only CSV line,
+# which pandas' default parser drops (finding 3).
+@example(frame=_one_text_cell(" ", "str"))
+@example(frame=_one_text_cell("\u3000", "string"))
+@example(frame=_one_text_cell(" ", "object"))
 def test_every_frame_over_the_allowed_dtypes_rebuilds_exactly(frame):
     """Invariant (round 3): every frame built from base types over the
     allowed dtypes -- full-precision floats, NaN, infinities, missing
-    values, text with delimiters and quotes -- is accepted by the type
-    rules and rebuilds from its digested text to the same values and
-    dtypes.  No refusal passes: a refusal here would be a false refusal
-    of a legitimate frame at step 4 (the third round of verification
-    found pandas' default float parser misreading 16-17 digit reprs)."""
+    values, text with delimiters, quotes and whitespace, object columns
+    of text and NaN -- is accepted by the type rules and rebuilds from
+    its digested text to the same values and dtypes.  No refusal passes:
+    a refusal here would be a false refusal of a legitimate frame at
+    step 4 (the third round of verification found pandas' default float
+    parser misreading 16-17 digit reprs; the closeout review, a dropped
+    whitespace-only line)."""
 
     text = cohort._frame_text("invented", frame)
     rebuilt = cohort._rebuild_frame("invented", text)
     pd.testing.assert_frame_equal(rebuilt, frame, check_exact=True)
     assert cohort._frame_text("invented", rebuilt) == text
+
+
+@pytest.mark.parametrize("dtype", ["str", "string", "object"])
+@pytest.mark.parametrize("text", [" ", "\t", "\u3000", " \t "])
+def test_a_whitespace_only_text_cell_rebuilds(text, dtype):
+    """The closeout review's finding 3 (INVENTED cells): a one-column
+    frame holding a whitespace-only cell writes a whitespace-only CSV
+    line.  The rebuild keeps blank lines as rows, so the frame rebuilds
+    exactly instead of being falsely refused at step 4."""
+
+    frame = _one_text_cell(text, dtype)
+    rebuilt = cohort._rebuild_frame(
+        "invented", cohort._frame_text("invented", frame)
+    )
+    pd.testing.assert_frame_equal(rebuilt, frame, check_exact=True)
 
 
 def test_computed_floats_rebuild_exactly():
@@ -2728,6 +2902,194 @@ def test_role_contexts_hold_private_rule_objects():
         sources.role_rules_text(sources.RoleContext.from_registry().rules)
         == committed
     )
+
+
+def test_role_contexts_hold_private_exclusion_objects():
+    """Closeout review, finding 4: a context's rules hold their own
+    FamilyUnitExclusion objects (``RoleRule(**rule.as_dict())`` rebuilds
+    them), shared with no other context, the cached committed rules, the
+    declared table or the module's two exclusions.  So an in-place edit
+    of one context's exclusion reaches no other context -- a registered
+    run's fresh one included."""
+
+    def exclusions(rules):
+        return {
+            id(rule.family_unit_exclusion)
+            for rule in rules.values()
+            if rule.family_unit_exclusion is not None
+        }
+
+    first = sources.RoleContext.from_registry()
+    second = sources.RoleContext.from_registry()
+    held = exclusions(first.rules)
+    assert held  # section 16c's exclusions are attached
+    for other in (
+        second.rules,
+        sources.RoleContext.declared().rules,
+        sources._committed_role_rules(),
+        sources.declared_role_rules(),
+    ):
+        assert held.isdisjoint(exclusions(other))
+    assert held.isdisjoint(
+        {id(sources._B1_EXCLUSION), id(sources._B2_EXCLUSION)}
+    )
+    committed = sources.role_rules_text(second.rules)
+    exclusion = first.rules[(2015, 20)].family_unit_exclusion
+    object.__setattr__(exclusion, "sex", None)  # INVENTED edit in place
+    assert sources.role_rules_text(first.rules) != committed
+    assert sources.role_rules_text(second.rules) == committed
+    assert (
+        sources.role_rules_text(sources.RoleContext.from_registry().rules)
+        == committed
+    )
+
+
+def _checked_context(frozen_load, evidence, context):
+    return runner.check_inputs(
+        frozen_load["inputs"],
+        ap.REGISTERED_REAL,
+        POINTER,
+        context,
+        preregistration_evidence_sha256=frozen_load["sha256"],
+        preregistration_evidence=evidence,
+    )
+
+
+class _LookalikeRule:
+    """INVENTED: not a RoleRule, but writes a committed rule's as_dict()
+    and reports no refusal, whatever the rule it copies says."""
+
+    refusal = None
+
+    def __init__(self, rule):
+        self._rule = rule
+
+    def as_dict(self):
+        return self._rule.as_dict()
+
+
+def test_a_lookalike_rule_context_refuses(frozen_load, evidence):
+    """Closeout mutation lane c (mutant 16): rules written into a context
+    after construction must each be exactly a RoleRule, even when they
+    write the committed rules' text (INVENTED DATA - NOT A COMPARISON)."""
+
+    registry = sources.RoleContext.from_registry()
+    lookalikes = {
+        key: _LookalikeRule(rule) for key, rule in registry.rules.items()
+    }
+    with pytest.raises(sources.U2SourceRefusal, match="exactly a RoleRule"):
+        sources.role_rules_text(lookalikes)
+    with pytest.raises(sources.U2SourceRefusal, match="exactly a RoleRule"):
+        sources.RoleContext(sources.REGISTRY, lookalikes)
+    object.__setattr__(registry, "rules", MappingProxyType(lookalikes))
+    with pytest.raises(runner.U2RunError, match="exactly a RoleRule"):
+        _checked_context(frozen_load, evidence, registry)
+
+
+def test_rewritten_rules_with_a_rigged_field_refuse(frozen_load, evidence):
+    """Closeout mutation lane c (mutant 27): every income role rewritten,
+    after construction, to an INVENTED rigged str of "head" -- equal to
+    everything, so ``==`` on the rules would pass -- is refused, because
+    the check compares the rules' text."""
+
+    import dataclasses
+
+    registry = sources.RoleContext.from_registry()
+    rigged = {
+        key: dataclasses.replace(
+            rule,
+            income_role=(
+                None if rule.income_role is None else _RiggedText("head")
+            ),
+        )
+        for key, rule in registry.rules.items()
+    }
+    object.__setattr__(registry, "rules", MappingProxyType(rigged))
+    with pytest.raises(runner.U2RunError, match="role rules"):
+        _checked_context(frozen_load, evidence, registry)
+
+
+class _ExclusionLookalike:
+    """INVENTED: prints as the committed B1 exclusion but applies to
+    nobody."""
+
+    def __init__(self, exclusion):
+        self.disposition, self.sex = exclusion.disposition, exclusion.sex
+
+    def applies(self, sex):
+        return False
+
+    def as_dict(self):
+        return {"disposition": self.disposition, "sex": self.sex}
+
+
+def test_a_rule_holds_exactly_a_family_unit_exclusion(frozen_load, evidence):
+    """Closeout mutation lane c: the exclusion a rule holds must be
+    exactly a FamilyUnitExclusion.  The class is final, and an object
+    written into a rule after construction that prints as the committed
+    exclusion but applies to nobody is refused by the registered check
+    (INVENTED DATA - NOT A COMPARISON)."""
+
+    with pytest.raises(TypeError, match="final"):
+        type("_Exclusion", (sources.FamilyUnitExclusion,), {})
+    caller = sources.RoleContext.from_registry()
+    rule = caller.rules[(2015, 20)]
+    swapped = _ExclusionLookalike(rule.family_unit_exclusion)
+    object.__setattr__(rule, "family_unit_exclusion", swapped)
+    assert not caller.rule(2015, 20).family_unit_exclusion.applies("male")
+    assert rule.as_dict() == (
+        sources.RoleContext.from_registry().rules[(2015, 20)].as_dict()
+    )
+    with pytest.raises(sources.U2SourceRefusal, match="FamilyUnitExclusion"):
+        sources.role_rules_text(caller.rules)
+    with pytest.raises(runner.U2RunError, match="FamilyUnitExclusion"):
+        _checked_context(frozen_load, evidence, caller)
+
+
+def _exclusions(context):
+    return [
+        rule.family_unit_exclusion
+        for rule in context.rules.values()
+        if rule.family_unit_exclusion is not None
+    ]
+
+
+def test_exclusions_edited_from_the_callback_reach_no_row(
+    frozen_load, evidence, monkeypatch
+):
+    """Closeout mutation lane c (mutant 29): the progress callback edits
+    the passed context's exclusions in place after the run built its
+    fresh context; the rows' rules are still the committed ones (INVENTED
+    edit)."""
+
+    caller = sources.RoleContext.from_registry()
+    committed = sources.role_rules_text(caller.rules)
+    edited = _exclusions(caller)
+    assert edited
+    seen = []
+
+    def progress(message):
+        for exclusion in edited:
+            object.__setattr__(exclusion, "sex", "female")  # INVENTED edit
+
+    def compute_row(row, inputs, params, births, *, role_context, **kwargs):
+        seen.append(sources.role_rules_text(role_context.rules))
+        raise _Reached
+
+    monkeypatch.setattr(runner, "_compute_row", compute_row)
+    with pytest.raises(_Reached):
+        runner.run_track_u2(
+            frozen_load["inputs"],
+            parameters.committed_u2_parameters(),
+            data_provenance=ap.REGISTERED_REAL,
+            role_context=caller,
+            registration_pointer=POINTER,
+            preregistration_evidence_sha256=frozen_load["sha256"],
+            preregistration_evidence=evidence,
+            progress=progress,
+        )
+    assert sources.role_rules_text(caller.rules) != committed
+    assert seen == [committed]
 
 
 def test_rules_edited_in_place_from_the_callback_reach_no_row(
@@ -2877,6 +3239,21 @@ def test_a_role_registry_refusal_is_a_run_error(
             ),
             "dtype",
         ),
+        # Closeout mutation lane a: a non-native byte order keeps the
+        # dtype's name ("int64") but the digest writes ">i8", which no
+        # snapshot parses.
+        (
+            lambda f: f.assign(
+                person_id=f["person_id"].to_numpy().astype(">i8")
+            ),
+            "dtype",
+        ),
+        (
+            lambda f: f.assign(
+                person_id=f["person_id"].to_numpy().astype(">f8")
+            ),
+            "dtype",
+        ),
     ],
     ids=[
         "category",
@@ -2887,6 +3264,8 @@ def test_a_role_registry_refusal_is_a_run_error(
         "duplicate-labels",
         "index-subclass",
         "dtype-subclass",
+        "big-endian-int64",
+        "big-endian-float64",
     ],
 )
 def test_the_type_rules_refuse_each_case(u2_inputs, change, message):

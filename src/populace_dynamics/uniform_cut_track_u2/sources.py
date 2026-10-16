@@ -749,6 +749,10 @@ class FamilyUnitExclusion:
         if self.sex is not None and self.sex not in _SEX_CODES.values():
             raise ValueError(f"exclusion sex must be one of {_SEX_CODES}")
 
+    # Final, like RoleRule (closeout mutation lane c): a subclass could
+    # print as a ratified exclusion while ``applies`` excluded nobody.
+    __init_subclass__ = classmethod(_final)
+
     def applies(self, sex: str) -> bool:
         """Whether a member of recorded ``sex`` brings the exclusion."""
 
@@ -830,11 +834,15 @@ _B2_EXCLUSION = FamilyUnitExclusion(UNCOOPERATIVE_SPOUSE_OR_PARTNER)
 
 
 def role_rules_text(rules: Mapping[Any, Any]) -> str:
-    """Role rules as canonical JSON text, each rule exactly a RoleRule.
+    """Role rules as canonical JSON text, each rule exactly a RoleRule
+    whose exclusion, if any, is exactly a FamilyUnitExclusion.
 
     Compared as text, a rule cannot pass by a field whose ``__eq__`` is
     rigged (review round 3): the JSON encoder writes a string subclass's
-    own characters, never calls its comparison.
+    own characters, never calls its comparison.  The exclusion's type is
+    checked too (closeout mutation lane c): an object written into a
+    rule after construction could print as a ratified exclusion while
+    applying to nobody.
     """
 
     out = []
@@ -843,6 +851,15 @@ def role_rules_text(rules: Mapping[Any, Any]) -> str:
             raise U2SourceRefusal(
                 f"role rule {key!r} is a {type(rule).__qualname__}, not "
                 "exactly a RoleRule"
+            )
+        exclusion = rule.family_unit_exclusion
+        if exclusion is not None and type(exclusion) is not (
+            FamilyUnitExclusion
+        ):
+            raise U2SourceRefusal(
+                f"role rule {key!r} holds a {type(exclusion).__qualname__} "
+                "as its family-unit exclusion, not exactly a "
+                "FamilyUnitExclusion"
             )
         out.append([list(key), rule.as_dict()])
     try:

@@ -486,8 +486,11 @@ def _missing(value: Any) -> bool:
 
 
 def _allowed_dtype(dtype: Any) -> bool:
+    # By the name the digest writes, ``str(dtype)``: a non-native byte
+    # order keeps ``dtype.name`` ("int64") but writes ">i8", which no
+    # snapshot parses (closeout mutation lane a).
     if isinstance(dtype, np.dtype):
-        return dtype.name in ("int64", "float64", "bool", "object")
+        return str(dtype) in ("int64", "float64", "bool", "object")
     return type(dtype) in (pd.Int64Dtype, pd.StringDtype) and (
         str(dtype) in _FRAME_DTYPES
     )
@@ -671,9 +674,12 @@ def _rebuild_frame(name: str, text: tuple[str, str, str]) -> pd.DataFrame:
 
     Floats are parsed with the round-trip converter: pandas' default one
     misreads some 16-17 digit reprs, which ``to_csv`` writes for computed
-    floats (review round 3).  The rebuilt frame has a default RangeIndex
-    (the digest omits the index; the loader's frames have one, and no U2
-    computation reads the input frames' index).
+    floats (review round 3).  Blank lines are rows: a one-column frame
+    writes a whitespace-only text cell as a whitespace-only line, which
+    the default parser would drop (closeout review, finding 3).  The
+    rebuilt frame has a default RangeIndex (the digest omits the index;
+    the loader's frames have one, and no U2 computation reads the input
+    frames' index).
     """
 
     labels_text, dtypes_text, csv_text = text
@@ -688,6 +694,7 @@ def _rebuild_frame(name: str, text: tuple[str, str, str]) -> pd.DataFrame:
             keep_default_na=False,
             na_values=[""],
             float_precision="round_trip",
+            skip_blank_lines=False,
         )
     except (ValueError, pd.errors.ParserError) as error:
         raise U2CohortError(
