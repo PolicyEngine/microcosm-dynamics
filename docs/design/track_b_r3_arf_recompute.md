@@ -1,7 +1,8 @@
 # Track B R3: adjustment of the reduction factor and recomputation
 
 **Verification class: statutory conformance. Build only, 2026-10-11;
-review fixes 2026-10-12.**
+statutory review fixes 2026-10-12; shared input boundary revised
+2026-10-16 for PR #530 round 14.**
 Admitted scope is ARF credits and earnings recomputation mechanics for
 supported cases. Inputs are invented histories and captured SSA examples.
 There is no population, behavioral, forecast or payment-processing claim.
@@ -19,23 +20,101 @@ and Hypothesis tests are `tests/test_track_b_arf.py`,
 and `tests/test_track_b_recompute_properties.py`. Source integrity and
 verbatim quotations are in `tests/test_track_b_r3_sources.py`.
 
+## Input boundary and threat model
+
+Every public argument and declaration field has a declared schema. The
+boundary admits only the declared built-in scalar kinds by exact type
+(`bool` is not `int`), canonical enum members by identity, exact registered
+declaration classes, and exact built-in `tuple`, `list`, `dict`, `set` and
+`frozenset` containers where that schema permits them. Exact monetary
+encodings become built-in `Fraction` values. Dates remain exact `date`
+values, and sealed result slots require the declared result layer and an
+unchanged seal. A callback slot is checked with `callable()` and retained
+without reconstruction; its return still requires its layer's sealed
+result. Callable dataclasses therefore remain valid callbacks.
+
+The boundary checks every raw key, value and element before reconstruction
+or hashing. A mapping must yield exactly its length in distinct valid
+keys. Unknown objects, scalar or container subclasses, forged enum values,
+`__class__` spoofs and arbitrary iterators are input errors before a
+coverage refusal or denominator row. Built-in mutable containers are
+snapshotted per call. Their later mutation cannot change admitted results.
+The boundary does not cache validation by input identity. Private internal
+helpers consume the owned snapshot without re-entering public validation.
+R1's generated parameter mapping proxies are accepted only around exact
+built-in dictionaries and their fields receive the same schema checks.
+The Hypothesis regression
+`test_r2_r3_snapshot_each_parameter_bundle_once_per_public_call` executes
+the one-parameter-snapshot invariant for R2, ARF and a multi-year
+recomputation fold. Its monetary inputs and fold lengths vary; no public
+entry reuses a cached input identity. The same property requires zero
+internal calls to public declaration constructors in R2, ARF, recomputation
+and grace-year computation. Private construction retains the original
+domain checks while skipping the public schema walk on owned values.
+
+This contract concerns callers using the public API. It does not claim
+protection from code reaching private names, monkeypatching modules, or
+mutating an input from another thread during a call. Sealed result
+identities and statutory cross-field identities remain checked when results
+are produced or consumed. No amount, supported refusal or statutory example
+changes under this input-boundary revision.
+
+The shared external `SSAParameters` declaration retains its exact built-in
+integer, float and text encodings, as the prior boundary did. Its numeric
+leaves must still be finite and its field shapes must match the schema;
+consumed monetary values use exact `Fraction` arithmetic. Decimal and
+Fraction objects are detached. This representation compatibility does not
+admit subclasses or custom scalar behavior.
+
+Call-layout caches hold signature metadata only: positional counts, keyword
+names and declared defaults. They never retain supplied values. A schema-wide
+Hypothesis differential compares positional, keyword, mixed and omitted-default
+calls with Python's signature binding, including missing, duplicate and unknown
+arguments. Reusing a layout with fresh values must use the new values. These
+checks are in
+`test_every_public_argument_and_declaration_field_declares_a_schema`.
+
+Private derived declarations and field replacements invoke their original
+initializers, retaining domain checks without re-entering the public schema.
+The G snapshot property and
+`test_r2_r3_snapshot_each_parameter_bundle_once_per_public_call` assert zero
+public declaration-constructor calls inside family, RET, ARF, recomputation
+and grace computations after their input fixtures have been built. A
+deliberate return to a public constructor fails these checks.
+
+`test_all_valid_public_argument_controls_still_compute` checks each public
+function and guard method against valid controls while counting schema
+entries. Each call enters its public argument schema exactly once; internal
+guard evaluation and date formatting use private helpers. The same property
+checks invalid-date and out-of-order errors and an unknown-history refusal:
+errors leave no denominator row, while a legal refusal retains one row.
+Callbacks in this check return precomputed sealed results so separate public
+calls made by user callback code do not count as internal revalidation.
+
+The five public savings-clause guard getters also declare their receiver
+schema. Even an unbound getter call rejects an unknown object before
+attribute lookup can imitate initialization. The metadata and valid-control
+properties above cover these receivers, retain all five genuine getter
+values, and require one schema entry per getter. Public sealed-result reads
+retain their existing seal checks and reject the same receiver spoofs.
+
 ## Statutory order
 
 R2 supplies final full or partial work-deduction months for each benefit
-record. R3 takes iterables of `YearMonth` or `(year, month)` values and
+record. R3 takes built-in collections of `YearMonth` or `(year, month)` values and
 imports no R2 implementation. Provisional or prorated suspensions are not
 final deduction months. Credits are a union, so overlapping categories
 credit a month once. Only original reduction-window months count
 (42 U.S.C. 402(q)(6)-(7); RS 00615.482).
 
-Every iterable field in an ARF claim is validated and snapshotted once
+Every collection field in an ARF claim is validated and snapshotted once
 at construction into a frozenset. Scalar money, dates and enumeration
 fields are checked immediately; cohort and entitlement-window crosschecks
 using the parameter bundle still precede any coverage refusal. An ARF result freezes its crediting
 months, and a recomputation basis freezes its conditions at construction;
 its bend points require a tuple. Neither evaluating the original claim nor
 inspecting a result can consume credits or erase an exceptional-history
-refusal. Iterator and immutable-set inputs have exactly the same supported
+refusal. Built-in list and immutable-set inputs have exactly the same supported
 results and refusal reasons. This implements deterministic record-specific
 credits and retention of unsupported rows under design sections 6 and 7.
 
@@ -46,7 +125,7 @@ complete shared rate bundle, including the RIB and spouse rates and their
 36-month brackets (402(q)(1)(A); 20 CFR 404.410; RS 00615.101, .201).
 A mismatched finite bundle retains G's original `ValueError`. Both errors
 precede any explicit or automatic coverage refusal and benefit arithmetic,
-and propagate through `apply_arf`, `evaluate_arf` and lazy inputs to
+and propagate through `apply_arf`, `evaluate_arf` and row construction for
 `count_arf_outcomes`; no unsupported outcome or denominator is constructed
 for the invalid row. Valid coverage refusals still precede benefit
 arithmetic. Recomputation uses a separate parameter surface: required NAWI
@@ -185,8 +264,8 @@ outcomes, with `count_arf_outcomes` delegating to that same counter.
 Unsealed or altered rows and nested values never count. Metadata is checked
 before computation; input errors remain errors, outside the denominator.
 
-Every public computation rebuilds complete declared inputs through their
-registered constructors before coverage. The shared exact-number helper
+Every public computation validates its declared inputs once and computes
+with an owned snapshot before coverage. The shared exact-number helper
 rejects numeric subclasses; no custom arithmetic object can remain in a
 weight, result, parameter snapshot or denominator. Accepted exact monetary
 values become fresh built-in fractions. Date/count fields retain built-in
@@ -261,7 +340,7 @@ Each row has a Hypothesis property test beside the example tests.
 | Invariant | Property test |
 | --- | --- |
 | ARF is idempotent, deterministic and retains the original claim | `test_arf_is_idempotent_deterministic_and_preserves_original_claim` |
-| Repeated evaluation of any supported or refused iterator ARF claim preserves results, reasons and denominator weights; result credits remain immutable on repeated inspection; immutable-set and iterator inputs agree exactly | `test_iterator_claim_evaluation_preserves_results_and_refusals` |
+| Repeated evaluation of any supported or refused built-in collection ARF claim preserves results, reasons and denominator weights; result credits remain immutable on repeated inspection; immutable-set and list inputs agree exactly | `test_collection_claim_evaluation_preserves_results_and_refusals` |
 | Adjusted months + distinct credits = original months; credits are bounded and only original-window months count; input order does not matter | `test_credit_bounds_window_and_order_independence` |
 | More credits never lower the nominal benefit factor, dime benefit or whole-dollar benefit; the factor is nonincreasing in adjusted months | `test_more_credits_never_lower_benefit_or_nominal_factor` |
 | A partial deduction counts as a full month; duplicate full/partial inputs never double credit | `test_partial_deduction_equals_full_credit_and_duplicate_categories_do_not_add` |
@@ -287,7 +366,7 @@ Each row has a Hypothesis property test beside the example tests.
 | PIA is nonnegative, monotone in AIME and a dime multiple | `test_pia_is_dime_multiple_monotone_and_nonnegative` |
 | Application is equivalent to positive earnings and at least $1 after COLAs; rejected candidates preserve the PIA | `test_dollar_rule_exact_equivalence` |
 | Earnings map order does not change results; repeated evaluation is deterministic | `test_earnings_mapping_order_independent_and_deterministic` |
-| Iterator conditions in a recomputation basis preserve repeated supported results and refused outcomes, with every weight retained | `test_iterator_conditions_preserve_repeated_results_and_outcomes` |
+| Built-in collection conditions in a recomputation basis preserve repeated supported results and refused outcomes, with every weight retained | `test_collection_conditions_preserve_repeated_results_and_outcomes` |
 | Every recomputation coverage refusal precedes ordinary AIME/PIA arithmetic, in annual calls and sequences | `test_all_coverage_refusals_precede_ordinary_arithmetic` |
 | Invalid required NAWI and contribution bases raise before any coverage refusal or ordinary arithmetic | `test_invalid_required_parameters_precede_refusal_without_arithmetic` |
 | An invalid original ordinary computation count raises before a later death-before-FRA refusal in a sequence | `test_invalid_original_count_precedes_sequence_death_refusal` |

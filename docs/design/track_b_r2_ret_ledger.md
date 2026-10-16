@@ -4,7 +4,8 @@
 earnings test rule mechanics on invented record-years and published
 statutory worked examples. No population, behavioral or forecast claim.**
 
-**Status: build-only, revised 2026-10-14 after PR #528 review rounds 1–6.
+**Status: build-only, R2 rules revised 2026-10-14 after PR #528 review
+rounds 1–6; shared input boundary revised 2026-10-16 for PR #530 round 14.
 No real-data computation.** This is the
 single-record ledger core. Deduction before reduction, which can change
 the other beneficiaries' gross rates, remains part (b).
@@ -37,6 +38,84 @@ makes no Axiom or population conformance claim.
   with POMS transmittals and page dates. R1's full Act 203 capture remains
   at `tests/data/track_b/ret_sources/ssa_act_203.html`.
 
+## Input boundary and threat model
+
+Every public argument and declaration field has a declared schema. The
+boundary admits only the declared built-in scalar kinds by exact type
+(`bool` is not `int`), canonical enum members by identity, exact registered
+declaration classes, and exact built-in `tuple`, `list`, `dict`, `set` and
+`frozenset` containers where that schema permits them. Exact monetary
+encodings become built-in `Fraction` values. Dates remain exact `date`
+values, and sealed result slots require the declared result layer and an
+unchanged seal. A callback slot is checked with `callable()` and retained
+without reconstruction; its return still requires its layer's sealed
+result. Callable dataclasses therefore remain valid callbacks.
+
+The boundary checks every raw key, value and element before reconstruction
+or hashing. A mapping must yield exactly its length in distinct valid
+keys. Unknown objects, scalar or container subclasses, forged enum values,
+`__class__` spoofs and arbitrary iterators are input errors before a
+coverage refusal or denominator row. Built-in mutable containers are
+snapshotted per call. Their later mutation cannot change admitted results.
+The boundary does not cache validation by input identity. Private internal
+helpers consume the owned snapshot without re-entering public validation.
+R1's generated parameter mapping proxies are accepted only around exact
+built-in dictionaries and their fields receive the same schema checks.
+The Hypothesis regression
+`test_r2_r3_snapshot_each_parameter_bundle_once_per_public_call` executes
+the one-parameter-snapshot invariant for R2, ARF and a multi-year
+recomputation fold. Its monetary inputs and fold lengths vary; no public
+entry reuses a cached input identity. The same property requires zero
+internal calls to public declaration constructors in R2, ARF, recomputation
+and grace-year computation. Private construction retains the original
+domain checks while skipping the public schema walk on owned values.
+
+This contract concerns callers using the public API. It does not claim
+protection from code reaching private names, monkeypatching modules, or
+mutating an input from another thread during a call. Sealed result
+identities and statutory cross-field identities remain checked when results
+are produced or consumed. No amount, supported refusal or statutory example
+changes under this input-boundary revision.
+
+The shared external `SSAParameters` declaration retains its exact built-in
+integer, float and text encodings, as the prior boundary did. Its numeric
+leaves must still be finite and its field shapes must match the schema;
+consumed monetary values use exact `Fraction` arithmetic. Decimal and
+Fraction objects are detached. This representation compatibility does not
+admit subclasses or custom scalar behavior.
+
+Call-layout caches hold signature metadata only: positional counts, keyword
+names and declared defaults. They never retain supplied values. A schema-wide
+Hypothesis differential compares positional, keyword, mixed and omitted-default
+calls with Python's signature binding, including missing, duplicate and unknown
+arguments. Reusing a layout with fresh values must use the new values. These
+checks are in
+`test_every_public_argument_and_declaration_field_declares_a_schema`.
+
+Private derived declarations and field replacements invoke their original
+initializers, retaining domain checks without re-entering the public schema.
+The G snapshot property and
+`test_r2_r3_snapshot_each_parameter_bundle_once_per_public_call` assert zero
+public declaration-constructor calls inside family, RET, ARF, recomputation
+and grace computations after their input fixtures have been built. A
+deliberate return to a public constructor fails these checks.
+
+`test_all_valid_public_argument_controls_still_compute` checks each public
+function and guard method against valid controls while counting schema
+entries. Each call enters its public argument schema exactly once; internal
+guard evaluation and date formatting use private helpers. The same property
+checks invalid-date and out-of-order errors and an unknown-history refusal:
+errors leave no denominator row, while a legal refusal retains one row.
+Callbacks in this check return precomputed sealed results so separate public
+calls made by user callback code do not count as internal revalidation.
+
+The five public savings-clause guard getters also declare their receiver
+schema. Even an unbound getter call rejects an unknown object before
+attribute lookup can imitate initialization. The metadata and valid-control
+properties above cover these receivers, retain all five genuine getter
+values, and require one schema entry per getter. Public sealed-result reads
+retain their existing seal checks and reject the same receiver spoofs.
+
 ## Shared result and denominator contract
 
 G's round-12 integration changes provenance checks, with no change to
@@ -61,7 +140,7 @@ crediting-month sets, provisional reconciliation and aggregate deductions,
 including the separate CFR 404.440 residual. Nested alteration is rejected
 before a result is consumed or counted. Allocation mapping reads check the
 seal too, so a caller cannot feed an altered allocation back as partial-payment
-rates or original shares. Ordinary input mappings remain accepted.
+rates or original shares. Ordinary exact built-in dictionaries remain accepted.
 
 `GraceYearDecision` is also money evidence: its eligibility can prevent a
 RET deduction. It is built only by `grace_year`, copies and validates its
@@ -111,8 +190,8 @@ The additional contract invariants and executable checks are:
 
 ## Declared inputs and detached access
 
-Every public computation rebuilds its entire declared input tree through
-registered constructors before any coverage decision. This includes
+Every public computation validates its declared input tree once and builds
+an owned snapshot before any coverage decision. This includes
 `RecordYear`, every `RETBeneficiary`, `WorkEarnings`, grace state, month and
 termination declarations, and nested R1 parameters. A declaration subclass
 is an input error. Numeric subclasses cannot contribute custom arithmetic:

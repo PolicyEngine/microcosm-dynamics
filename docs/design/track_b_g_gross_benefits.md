@@ -32,6 +32,87 @@ now, with Axiom differentials as diagnostics once a pinned rule exists.
 - Sources: `tests/data/track_b/gross_benefit_sources/`. The manifest pins each
   URL, UTC retrieval time, byte count and SHA-256.
 
+## Input boundary and threat model
+
+Every public argument and declaration field declares a schema. Scalar
+values must have the exact built-in declared type (`type(x) is T`); `bool`
+is not an integer. Number encodings retain their documented conversion to
+owned built-in `Fraction` values. Enum values must be canonical members of
+the declared enum, compared by identity. Declarations must have the exact
+declared Track B class and are rebuilt field by field through that schema.
+Containers must be exact built-in `tuple`, `list`, `dict`, `set` or
+`frozenset` of the shape declared by their slot. Every raw key, value and
+element is checked before any new hash container is built. Dictionaries
+must yield exactly their length in distinct valid keys. Subclasses,
+`__class__` impersonation, custom mappings and iterators are input errors.
+For compatibility with R1's immutable parameter declarations, its read-only
+mapping views are unwrapped only when their backing object is an exact
+built-in dictionary; that dictionary then follows the same schema.
+
+The declared `compute` slot uses `callable()` and preserves the callback
+object, including callable dataclasses. Callback results still require the
+proper layer's computation seal. Each public call validates and detaches
+its inputs once; private helpers compute on that owned snapshot. Derived
+statutory rates belong to that snapshot only. No caller-object identity
+cache carries validation across calls, so mutation between calls is checked
+again. Invalid inputs create no denominator row.
+
+This is a public API contract. It makes no claim about code that reaches
+private names, monkeypatches modules, or mutates an input from another
+thread during a call. Statutory amounts, coverage refusals, source captures
+and worked-example figures are unchanged. The strict container contract
+supersedes the earlier acceptance of one-shot iterators; equivalent built-in
+list controls retain their amount and refusal assertions.
+
+Executed boundary invariants are: exact type and enum-member admission;
+validation of all raw container members before hashing; invalid-before-
+refusal precedence with zero denominator rows; callback preservation and
+sealed-result checking; one parameter snapshot per public family call;
+and revalidation after mutation between calls. The schema-wide Hypothesis
+checks and reviewer counterexamples are in
+`tests/test_track_b_input_schema.py`. Existing statutory, rounding,
+monotonicity, order-independence and denominator invariants below remain in
+force. No new statutory interpretation is introduced by this boundary.
+
+The shared external `SSAParameters` declaration retains its exact built-in
+integer, float and text encodings, as the prior boundary did. Its numeric
+leaves must still be finite and its field shapes must match the schema;
+consumed monetary values use exact `Fraction` arithmetic. Decimal and
+Fraction objects are detached. This representation compatibility does not
+admit subclasses or custom scalar behavior.
+
+Call-layout caches hold signature metadata only: positional counts, keyword
+names and declared defaults. They never retain supplied values. A schema-wide
+Hypothesis differential compares positional, keyword, mixed and omitted-default
+calls with Python's signature binding, including missing, duplicate and unknown
+arguments. Reusing a layout with fresh values must use the new values. These
+checks are in
+`test_every_public_argument_and_declaration_field_declares_a_schema`.
+
+Private derived declarations and field replacements invoke their original
+initializers, retaining domain checks without re-entering the public schema.
+The G snapshot property and
+`test_r2_r3_snapshot_each_parameter_bundle_once_per_public_call` assert zero
+public declaration-constructor calls inside family, RET, ARF, recomputation
+and grace computations after their input fixtures have been built. A
+deliberate return to a public constructor fails these checks.
+
+`test_all_valid_public_argument_controls_still_compute` checks each public
+function and guard method against valid controls while counting schema
+entries. Each call enters its public argument schema exactly once; internal
+guard evaluation and date formatting use private helpers. The same property
+checks invalid-date and out-of-order errors and an unknown-history refusal:
+errors leave no denominator row, while a legal refusal retains one row.
+Callbacks in this check return precomputed sealed results so separate public
+calls made by user callback code do not count as internal revalidation.
+
+The five public savings-clause guard getters also declare their receiver
+schema. Even an unbound getter call rejects an unknown object before
+attribute lookup can imitate initialization. The metadata and valid-control
+properties above cover these receivers, retain all five genuine getter
+values, and require one schema entry per getter. Public sealed-result reads
+retain their existing seal checks and reject the same receiver spoofs.
+
 ## What it computes, in statutory order
 
 For one worker's record and one benefit month:
@@ -692,7 +773,7 @@ pins an accurate diagnostic, the 1929 control pins the exact payments, and
     `test_settled_subject_payable_does_not_fabricate_savings_clause_rate`
     regression rejects hidden variation in a subject's protected rate.
 
-23. **Complete input validation precedes coverage.** Corrupting one public
+23. **Schema-declared input validation precedes coverage.** Corrupting one public
     input field of a valid invented family with a wrong type or an invalid
     value raises `InvalidFamilyInput` at every applicable entry point.
     This includes exact enum classes, booleans distinct from integers,
@@ -1685,7 +1766,7 @@ source text only. This round admits input-error classification and
 consistent refusal selection for the existing G surface. It introduces
 no population, behavioral or forecast claim and no new monetary rule.
 
-### Validate the complete input before deciding coverage
+### Validate schema-declared input before deciding coverage
 
 The design's §6 and §7 require valid unsupported family rows to remain in
 coverage denominators. An invalid row is not a coverage observation.
@@ -2289,9 +2370,9 @@ The additional executed invariants are:
 No new statutory interpretation needs judgment. Existing d1418/d1338
 boundaries and the judgment items elsewhere in this note remain unchanged.
 
-The external SSA parameter boundary validates the detached snapshot as well
-as the original shape, so a custom mapping that changes between reads cannot
-plant an invalid unused field after validation.
+The external SSA parameter boundary checks each raw field through its
+schema before building the owned snapshot. Custom mappings are rejected
+before their iteration methods can run.
 `test_ssa_parameter_validation_checks_the_actual_mapping_snapshot` pins this
 case. Raw condition elements in grace, ARF and recomputation are validated
 before set deduplication; equality with a legal enum does not admit another

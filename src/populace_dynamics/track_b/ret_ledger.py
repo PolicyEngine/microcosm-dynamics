@@ -34,8 +34,8 @@ event by itself. Complete redistribution is unavailable.
 R2 result values and outcomes share the package-private provenance seal
 with G and R3. Only computation builds them; consumption validates their
 identities and nested seals. Serialization is an input error: persist
-declared inputs and recompute. Public entries recursively reconstruct
-declarations before coverage and exact money uses built-in fractions. RET
+declared inputs and recompute. Public entries validate declared schemas
+once, then compute with owned snapshots and built-in fractions. RET
 refusals bind exactly RETUnsupportedReason while retaining
 FamilyConfigurationUnsupported as the shared catch type. The common
 denominator counts every layer's sealed rows;
@@ -73,8 +73,8 @@ from populace_dynamics.track_b.gross_benefits import (
     FamilyTargetBlocked,
     InvalidFamilyInput,
     _check_evaluation_inputs,
-    count_family_outcomes,
-    whole_dollars,
+    _count_family_outcomes_validated,
+    _whole_dollars_validated,
 )
 from populace_dynamics.track_b.ret_grace import (
     DISABILITY_TYPES,
@@ -662,7 +662,9 @@ class BeneficiaryMonth(_SealedResult):
             (self.net_due, self.payment),
             (self.provisional_net, self.provisional_payment),
         ):
-            if type(payment) is not int or payment != whole_dollars(amount):
+            if type(payment) is not int or payment != _whole_dollars_validated(
+                amount
+            ):
                 raise InvalidFamilyInput(
                     "Monthly check must floor its exact net amount"
                 )
@@ -715,7 +717,7 @@ class WorkerLedger(_SealedResult):
                 )
         if (
             self.excess
-            != calculated_excess(
+            != _calculated_excess_validated(
                 self.countable_earnings,
                 self.annual_exempt,
                 self.withholding_rate,
@@ -974,15 +976,15 @@ def apply_ret_year(
             is MonthlyLimitPolicy.NONSTATUTORY_CHART_CEILING
         ):
             monthly = Fraction(ceil(monthly))
-        actual = countable_earnings(
+        actual = _countable_earnings_validated(
             b.earnings,
             b.fra_month,
             nese_proration_policy=nese_proration_policy,
         )
         estimated = b.estimated_earnings or b.earnings
-        excess = calculated_excess(actual, exempt, rate)
-        estimate = calculated_excess(
-            countable_earnings(
+        excess = _calculated_excess_validated(actual, exempt, rate)
+        estimate = _calculated_excess_validated(
+            _countable_earnings_validated(
                 estimated,
                 b.fra_month,
                 nese_proration_policy=nese_proration_policy,
@@ -1068,7 +1070,7 @@ def apply_ret_year(
                 if provisional or taken == total:
                     payments = {k: Fraction(0) for k in caps}
                 else:
-                    payments = partial_payments(
+                    payments = _partial_payments_validated(
                         total - taken,
                         caps,
                         {k: people[k].original_rates[m - 1] for k in caps},
@@ -1097,10 +1099,10 @@ def apply_ret_year(
             b.gross_rates[m - 1],
             final[k, m],
             b.gross_rates[m - 1] - final[k, m],
-            whole_dollars(final[k, m]),
+            _whole_dollars_validated(final[k, m]),
             provisional[k, m],
             b.gross_rates[m - 1] - provisional[k, m],
-            whole_dollars(provisional[k, m]),
+            _whole_dollars_validated(provisional[k, m]),
             nh[k, m],
             own[k, m],
         )
@@ -1194,7 +1196,7 @@ RETDenominator = FamilyDenominator
 @_validated_entry
 def count_ret_outcomes(outcomes: Iterable[_SealedOutcome]) -> RETDenominator:
     """Use Track B's single denominator for every registered layer."""
-    return count_family_outcomes(outcomes)
+    return _count_family_outcomes_validated(outcomes)
 
 
 @_validated_entry
@@ -1203,7 +1205,7 @@ def weighted_ret_total(outcomes: Iterable[RETOutcome]) -> Fraction:
         _checked_result(outcome, RETOutcome, "RET outcome")
         for outcome in outcomes
     )
-    denominator = count_ret_outcomes(rows)
+    denominator = _count_ret_outcomes_validated(rows)
     if denominator.unsupported_rows:
         raise FamilyTargetBlocked(
             f"{denominator.unsupported_rows} of {denominator.rows} RET rows refused; total needs every row"
@@ -1212,3 +1214,13 @@ def weighted_ret_total(outcomes: Iterable[RETOutcome]) -> Fraction:
         (o.weight * sum(m.payment for m in o.ledger.months) for o in rows),
         Fraction(0),
     )
+
+
+# Internal calls consume the snapshot owned by the public boundary.
+_apply_ret_year_validated = apply_ret_year.__wrapped__
+_calculated_excess_validated = calculated_excess.__wrapped__
+_count_ret_outcomes_validated = count_ret_outcomes.__wrapped__
+_countable_earnings_validated = countable_earnings.__wrapped__
+_evaluate_ret_validated = evaluate_ret.__wrapped__
+_partial_payments_validated = partial_payments.__wrapped__
+_weighted_ret_total_validated = weighted_ret_total.__wrapped__

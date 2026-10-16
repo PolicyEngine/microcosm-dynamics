@@ -164,7 +164,7 @@ def test_r3_shared_counter_differential_and_pickle_rejection(left, right):
     )
     expected = g.count_family_outcomes(rows)
     assert expected == a.count_arf_outcomes(rows)
-    assert expected == g.count_family_outcomes(reversed(rows))
+    assert expected == g.count_family_outcomes(tuple(reversed(rows)))
     assert expected.rows == 4
     assert expected.weight == F(left + right, 10) + 8
     assert expected.unsupported_rows == 2

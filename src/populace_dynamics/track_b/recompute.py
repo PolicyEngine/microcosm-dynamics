@@ -67,10 +67,10 @@ from populace_dynamics.track_b.gross_benefits import (
     InvalidFamilyInput,
     YearMonth,
     _check_evaluation_inputs,
+    _count_family_outcomes_validated,
+    _floor_dime_validated,
+    _increase_by_colas_validated,
     _outcome_weight,
-    count_family_outcomes,
-    floor_dime,
-    increase_by_colas,
 )
 
 from ._provenance import (
@@ -78,6 +78,7 @@ from ._provenance import (
     _check_seal,
     _checked_result,
     _computed,
+    _construct_declared,
     _declared_input,
     _exact_number,
     _sealed_refusal,
@@ -180,7 +181,7 @@ def _month(value: object, label: str) -> YearMonth:
     if type(value) is not YearMonth:
         raise InvalidFamilyInput(f"{label} must be a YearMonth")
     try:
-        return YearMonth(value.year, value.month)
+        return _construct_declared(YearMonth, value.year, value.month)
     except (AttributeError, TypeError, ValueError) as error:
         raise InvalidFamilyInput(f"{label}: {error}") from error
 
@@ -208,8 +209,8 @@ class RecomputationBasis:
     ``first_base_year`` is 1951 for the ordinary AIME cases supported here.
     Every year through the earnings cutoff must be explicitly reported.
     The entitlement window is continuous; interruption cases require
-    their own adapter. Conditions are frozen once at construction,
-    including when supplied as a one-shot iterator.
+    their own adapter. Built-in condition containers are frozen at
+    construction; arbitrary iterators are input errors.
     """
 
     eligibility_year: int
@@ -316,7 +317,8 @@ class RecomputationResult(_SealedResult):
         effective = _month(self.effective_month, "effective_month")
         if not (
             effective.year == self.earnings_year
-            or effective == YearMonth(self.earnings_year + 1, 1)
+            or effective
+            == _construct_declared(YearMonth, self.earnings_year + 1, 1)
         ):
             raise InvalidFamilyInput(
                 "recomputation effective month disagrees with earnings year"
@@ -404,7 +406,7 @@ def weighted_recomputed_pia(
     rows = tuple(outcomes)
     for row in rows:
         _checked_result(row, RecomputationOutcome, "recomputation outcome")
-    counts = count_family_outcomes(rows)
+    counts = _count_family_outcomes_validated(rows)
     if counts.unsupported_rows:
         raise FamilyTargetBlocked(
             f"{counts.unsupported_rows} of {counts.rows} recomputations are "
@@ -452,7 +454,7 @@ def exact_pia(aime: int, bend_points: tuple[int, int]) -> Fraction:
         + Fraction(8, 25) * max(0, min(aime, second) - first)
         + Fraction(3, 20) * max(0, aime - second)
     )
-    return floor_dime(amount)
+    return _floor_dime_validated(amount)
 
 
 def _history_prefix(
@@ -703,7 +705,7 @@ def annual_recomputation(
     effective = (
         death_month
         if death_month is not None and death_month.year == year
-        else YearMonth(year + 1, 1)
+        else _construct_declared(YearMonth, year + 1, 1)
     )
     prefix = _history_prefix(history, basis, year)
     colas = _colas(december_cola_percent, basis.eligibility_year, effective)
@@ -719,10 +721,10 @@ def annual_recomputation(
         fra_month,
     )
     aime = _aime_from_prefix(prefix, basis, params, checked_parameters)
-    candidate_base = exact_pia(aime, basis.bend_points)
-    decision = recomputation_decision(
-        increase_by_colas(old_base, colas),
-        increase_by_colas(candidate_base, colas),
+    candidate_base = _exact_pia_validated(aime, basis.bend_points)
+    decision = _recomputation_decision_validated(
+        _increase_by_colas_validated(old_base, colas),
+        _increase_by_colas_validated(candidate_base, colas),
         has_earnings=prefix[year] > 0,
     )
     return _computed(
@@ -799,7 +801,7 @@ def recompute_sequence(
         final_month = (
             death_month
             if death_month is not None and death_month.year == years[-1]
-            else YearMonth(years[-1] + 1, 1)
+            else _construct_declared(YearMonth, years[-1] + 1, 1)
         )
         _month(final_month, "final effective month")
         _colas(december_cola_percent, basis.eligibility_year, final_month)
@@ -815,7 +817,7 @@ def recompute_sequence(
         )
     results = []
     for year in years:
-        result = annual_recomputation(
+        result = _annual_recomputation_validated(
             basis,
             history,
             year,
@@ -828,3 +830,14 @@ def recompute_sequence(
         results.append(result)
         current = result.eligibility_pia_in_force
     return tuple(results)
+
+
+# Internal calls consume the snapshot owned by the public boundary.
+_annual_recomputation_validated = annual_recomputation.__wrapped__
+_earnings_aime_validated = earnings_aime.__wrapped__
+_eligibility_bend_points_validated = eligibility_bend_points.__wrapped__
+_evaluate_recomputation_validated = evaluate_recomputation.__wrapped__
+_exact_pia_validated = exact_pia.__wrapped__
+_recomputation_decision_validated = recomputation_decision.__wrapped__
+_recompute_sequence_validated = recompute_sequence.__wrapped__
+_weighted_recomputed_pia_validated = weighted_recomputed_pia.__wrapped__

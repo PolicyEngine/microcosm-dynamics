@@ -3,20 +3,29 @@
 Verification class: statutory conformance on invented and published cases
 only. This is an API contract, with no population or forecast claim and no
 security boundary against access to Python's private implementation names.
+Public arguments and declaration fields have explicit schemas. Raw scalar
+kinds and declaration types use identity, enum values must be canonical
+members, and containers must be exact built-ins. Raw container contents are
+checked before hashing or reconstruction. Callback slots are executable,
+not data. Each public call owns a fresh snapshot; private helpers reuse it.
+The contract excludes code accessing private names, monkeypatching modules,
+or mutating an input from another thread during a call.
 One private capability seals every declared G, R2 and R3 result, refusal,
 outcome and denominator. Public construction and copying are input errors;
 serialization is rejected. Persist declared inputs and recompute instead.
 """
 
 import math
-from collections.abc import Mapping
-from dataclasses import fields, is_dataclass
+from collections.abc import Callable, Iterable, Mapping, Sequence
+from dataclasses import MISSING, fields, is_dataclass
+from datetime import date
 from decimal import Decimal
 from enum import Enum
 from fractions import Fraction
-from functools import wraps
+from functools import cache, wraps
 from inspect import signature
-from types import MappingProxyType
+from types import MappingProxyType, UnionType
+from typing import Literal, Union, get_args, get_origin, get_type_hints
 
 __all__ = []
 
@@ -82,35 +91,43 @@ def _result_values(value):
 
 def _seal_value(value):
     """An immutable, type-sensitive snapshot, including nested seals."""
-    if isinstance(value, (int, float, Fraction, Decimal)) and not isinstance(
-        value, bool
+    cls = type(value)
+    if cls is Fraction:
+        return Fraction, _fraction_parts(value, "sealed number")
+    if _has_declared_type(
+        value, (bool, int, float, str, bytes, Decimal, date, type(None))
     ):
-        if not _has_declared_type(value, (int, float, Fraction, Decimal)):
-            raise InvalidFamilyInput(
-                "Numeric subclasses are not declared inputs"
-            )
-        if type(value) is Fraction:
-            return Fraction, _fraction_parts(value, "sealed number")
-    if isinstance(value, _SealedResult):
+        return cls, value
+    if _has_declared_type(value, _RESULT_TYPES):
         _check_seal(value)
         payload = value._g_seal[2]
-    elif is_dataclass(value):
+    elif _has_declared_type(value, _DECLARATION_TYPES):
         payload = tuple(
             (item.name, _seal_value(getattr(value, item.name)))
             for item in fields(value)
         )
-    elif isinstance(value, Mapping):
+    elif cls is dict or cls is MappingProxyType:
+        if cls is MappingProxyType:
+            from gc import get_referents
+
+            backing = get_referents(value)
+            if len(backing) != 1 or type(backing[0]) is not dict:
+                raise _InvalidInputType("Sealed mappings need a built-in dict")
+            value = backing[0]
         payload = tuple(
             (_seal_value(key), _seal_value(item))
             for key, item in value.items()
         )
-    elif isinstance(value, (tuple, list)):
+    elif cls is tuple or cls is list:
         payload = tuple(_seal_value(item) for item in value)
-    elif isinstance(value, (set, frozenset)):
-        payload = frozenset(_seal_value(item) for item in value)
+    elif cls is set or cls is frozenset:
+        items = [_seal_value(item) for item in value]
+        payload = frozenset(items)
+    elif isinstance(cls, type) and issubclass(cls, Enum):
+        payload = _enum_schema(cls)(value, "sealed enum")
     else:
-        payload = value
-    return type(value), payload
+        raise _InvalidInputType("Undeclared computed-result field")
+    return cls, payload
 
 
 def _seal_payload(value):
@@ -218,7 +235,7 @@ def _sealed_refusal(reason_type):
 
 def _check_reason(refusal, reason):
     expected = _REFUSAL_REASONS.get(type(refusal))
-    if expected is None or type(reason) is not expected:
+    if expected is None or not any(reason is member for member in expected):
         raise InvalidFamilyInput("reason must use the declared layer's enum")
 
 
@@ -238,7 +255,11 @@ def _check_outcome(value):
 
 
 def _check_denominator_reason(reason):
-    if not _has_declared_type(reason, _REFUSAL_REASONS.values()):
+    if not any(
+        reason is member
+        for enum in _REFUSAL_REASONS.values()
+        for member in enum
+    ):
         raise InvalidFamilyInput("Unknown Track B refusal reason enum")
 
 
@@ -270,41 +291,366 @@ def _exact_number(value, label):
         raise InvalidFamilyInput(f"{label} must be a finite number") from error
 
 
-def _declared_input(cls):
-    """Register an exact declaration and detach its entire validated tree."""
-    _DECLARATION_TYPES.add(cls)
-    initialize = cls.__init__
-    constructor = signature(initialize)
-
-    @wraps(initialize)
-    def initialize_declared(self, *args, **kwargs):
-        if type(self) is not cls:
-            raise InvalidFamilyInput("Undeclared Track B input subclass")
-        try:
-            bound = constructor.bind(self, *args, **kwargs)
-            bound.apply_defaults()
-            for name, value in tuple(bound.arguments.items()):
-                if name != "self":
-                    bound.arguments[name] = _rebuild_declared(value)
-            initialize(*bound.args, **bound.kwargs)
-        except InvalidFamilyInput:
-            raise
-        except (AttributeError, TypeError, ValueError, OverflowError) as error:
-            raise _InvalidInputType("Malformed declared input") from error
-
-    cls.__init__ = initialize_declared
-    return cls
+# Schemas are compiled once; caller values are never cached. An annotation is
+# a declaration of shape, with the few legacy numeric aliases resolved below.
+_INITIALIZERS = {}
 
 
-def _rebuild_declared(value):
-    """Recursively rebuild declarations before any coverage decision.
+def _numeric_schema(value, label, *, floats=True):
+    if not floats and type(value) is float:
+        raise _InvalidInputType(f"{label} requires an exact number")
+    return _exact_number(value, label)
 
-    Sealed evidence is checked, never treated as a declaration. The two
-    external parameter schemas retain their builtin float encodings;
-    layer-specific statutory checks still validate their meaning.
-    """
+
+def _parameter_encoding_schema(value, label):
+    """Preserve immutable external SSA encodings, as before this boundary."""
+    if type(value) is int:
+        return value
+    if type(value) is float and math.isfinite(value):
+        return value
     try:
-        return _rebuild_declared_value(value)
+        exact = _exact_number(value, label)
+    except _InvalidInputType:
+        raise
+    except InvalidFamilyInput as error:
+        raise InvalidFamilyInput(
+            f"{error}; parameter value disagrees with the statutory domain"
+        ) from error
+    return value if type(value) is str else exact
+
+
+def _calendar_schema(value, label):
+    if type(value) is not int or not 1 <= value <= 9999:
+        raise _InvalidInputType(
+            f"{label} needs calendar-year keys (built-in int)"
+        )
+    return value
+
+
+def _scalar_schema(expected):
+    def read(value, label):
+        if expected is int and (
+            (type(value) is float and not math.isfinite(value))
+            or (type(value) is Decimal and not value.is_finite())
+        ):
+            raise _InvalidInputType(f"{label} must be finite")
+        if type(value) is not expected:
+            raise _InvalidInputType(f"{label} must be an {expected.__name__}")
+        return value
+
+    return read
+
+
+def _enum_schema(expected):
+    members = tuple(expected)
+
+    def read(value, label):
+        if not any(value is member for member in members):
+            raise _InvalidInputType(
+                f"{label} must be a canonical {expected.__name__} member"
+            )
+        return value
+
+    return read
+
+
+def _union_schema(readers):
+    def read(value, label):
+        first = None
+        for reader in readers:
+            try:
+                return reader(value, label)
+            except InvalidFamilyInput as error:
+                if first is None:
+                    first = error
+        raise first
+
+    return read
+
+
+def _optional_schema(reader):
+    def read(value, label):
+        return None if value is None else reader(value, label)
+
+    return read
+
+
+def _collection_schema(readers, *, pair=False, unordered=False):
+    allowed = (tuple, list, set, frozenset) if unordered else (tuple, list)
+
+    def read(value, label):
+        if not _has_declared_type(value, allowed):
+            raise _InvalidInputType(f"{label} must be a built-in collection")
+        if pair and len(value) != len(readers):
+            raise _InvalidInputType(f"{label} needs {len(readers)} values")
+        # No hashing/deduplication until EVERY raw element has been checked.
+        items = [
+            (readers[index] if pair else readers[0])(item, f"{label}[{index}]")
+            for index, item in enumerate(value)
+        ]
+        return type(value)(items)
+
+    return read
+
+
+def _mapping_schema(key_reader, value_reader, *, r1_proxy=False):
+    def read(value, label):
+        if r1_proxy and type(value) is MappingProxyType:
+            # R1 stores its declared dictionary behind a read-only view.
+            # Inspect the backing object before invoking mapping methods;
+            # a proxy around a custom Mapping is not a declared dictionary.
+            from gc import get_referents
+
+            backing = get_referents(value)
+            if len(backing) != 1 or type(backing[0]) is not dict:
+                raise _InvalidInputType(f"{label} needs a built-in dict")
+            value = backing[0]
+        if type(value) is not dict:
+            raise _InvalidInputType(f"{label} must be a built-in dict")
+        length = len(value)
+        items = [
+            (key_reader(key, label + " key"), value_reader(item, label))
+            for key, item in value.items()
+        ]
+        result = dict(items)
+        if len(items) != length or len(result) != length:
+            raise _InvalidInputType(f"{label} needs distinct valid keys")
+        return result
+
+    return read
+
+
+def _callback_schema(value, label):
+    if not callable(value):
+        raise _InvalidInputType(f"{label} must be callable")
+    return value
+
+
+@cache
+def _external_declarations():
+    from populace_dynamics.ss.params import SSAParameters
+    from populace_dynamics.track_b.ret_params import (
+        ParameterValue,
+        ProjectionInputs,
+        RETParameters,
+        RETYear,
+        SourcePin,
+    )
+
+    return (
+        SSAParameters,
+        ParameterValue,
+        ProjectionInputs,
+        RETParameters,
+        RETYear,
+        SourcePin,
+    )
+
+
+def _schema(annotation, module, *, name="", owner=None):
+    origin, args = get_origin(annotation), get_args(annotation)
+    exact = module.endswith((".arf", ".recompute", ".ret_ledger"))
+    if annotation is object or annotation is Fraction:
+        return lambda value, label: _numeric_schema(
+            value,
+            label,
+            floats=not exact
+            or (name == "weight" and not module.endswith(".ret_ledger")),
+        )
+    if annotation in (int, str, bool, bytes, date, type(None)):
+        return _scalar_schema(annotation)
+    if annotation in (float, Decimal):
+        return _parameter_encoding_schema
+    if origin in (Union, UnionType):
+        optional = type(None) in args
+        readers = tuple(
+            _schema(a, module) for a in args if a is not type(None)
+        )
+        reader = readers[0] if len(readers) == 1 else _union_schema(readers)
+        return _optional_schema(reader) if optional else reader
+    if origin is Literal:
+
+        def literal(value, label):
+            if not any(type(value) is type(a) and value == a for a in args):
+                raise _InvalidInputType(f"{label} must be one of {args}")
+            return value
+
+        return literal
+    if origin is Callable or annotation is Callable:
+        return _callback_schema
+    if origin in (tuple, list, set, frozenset, Iterable, Sequence):
+        pair = origin is tuple and len(args) > 1 and args[-1] is not Ellipsis
+        elements = args if pair else args[:1]
+        return _collection_schema(
+            tuple(_schema(a, module) for a in elements),
+            pair=pair,
+            unordered=origin in (set, frozenset, Iterable),
+        )
+    if origin in (dict, Mapping):
+        key, item = args
+        item_reader = _schema(item, module)
+        if module.endswith(".recompute") and name in (
+            "history",
+            "december_cola_percent",
+        ):
+            from populace_dynamics.track_b.recompute import (
+                EarningsAvailability,
+            )
+
+            item_reader = _union_schema(
+                (
+                    _enum_schema(EarningsAvailability),
+                    item_reader,
+                )
+            )
+        return _mapping_schema(
+            _schema(key, module),
+            item_reader,
+            r1_proxy=owner in _external_declarations()[1:],
+        )
+    if isinstance(annotation, type) and issubclass(annotation, Enum):
+        return _enum_schema(annotation)
+    if (
+        annotation in _DECLARATION_TYPES
+        or annotation in _external_declarations()
+    ):
+
+        def declaration(value, label):
+            if type(value) is not annotation:
+                raise _InvalidInputType(
+                    f"{label} must be an {annotation.__name__}"
+                )
+            return _snapshot_declaration(value)
+
+        return declaration
+    if annotation in _RESULT_TYPES or annotation is _SealedOutcome:
+
+        def result(value, label):
+            if annotation is _SealedOutcome:
+                if not any(
+                    type(value) is t and issubclass(t, _SealedOutcome)
+                    for t in _RESULT_TYPES
+                ):
+                    raise _InvalidInputType(
+                        f"{label} needs a declared outcome"
+                    )
+            elif type(value) is not annotation:
+                raise _InvalidInputType(
+                    f"{label} must be an {annotation.__name__}"
+                )
+            _check_seal(value)
+            return value
+
+        return result
+    # Guards are stateful public receivers, not declaration data. Their
+    # identity must survive a household call; their state is checked by them.
+    from populace_dynamics.track_b.gross_benefits import SavingsClauseGuard
+
+    if annotation is SavingsClauseGuard:
+
+        def guard(value, label):
+            if type(value) is not SavingsClauseGuard:
+                raise _InvalidInputType(
+                    f"{label} must be a SavingsClauseGuard"
+                )
+            value._check_initialized()
+            return value
+
+        return guard
+    raise TypeError(f"No Track B input schema for {annotation!r}")
+
+
+@cache
+def _declaration_schemas(cls):
+    hints = get_type_hints(cls)
+    schemas = {
+        item.name: _schema(
+            hints[item.name], cls.__module__, name=item.name, owner=cls
+        )
+        for item in fields(cls)
+        if item.init
+    }
+    if cls is _external_declarations()[0]:
+        for name in ("nawi", "wage_base"):
+            schemas[name] = _mapping_schema(
+                _calendar_schema, _parameter_encoding_schema
+            )
+        schemas["fra_months_by_birth_year"] = _collection_schema(
+            (
+                _collection_schema(
+                    (_calendar_schema, _scalar_schema(int)), pair=True
+                ),
+            )
+        )
+        schemas["delayed_credit_by_birth_year"] = _collection_schema(
+            (
+                _collection_schema(
+                    (_calendar_schema, _parameter_encoding_schema), pair=True
+                ),
+            )
+        )
+
+        def revision(value, label):
+            if type(value) is not str or not value:
+                raise _InvalidInputType("pe_us_revision must be nonempty text")
+            return value
+
+        schemas["pe_us_revision"] = revision
+    if cls.__name__ == "WorkerRecord":
+        # The AIME declaration has always admitted only integers or exact
+        # integral Fractions, unlike the more general money encodings.
+        number = schemas["aime"]
+
+        def aime(value, label):
+            if value is not None and not _has_declared_type(
+                value, (int, Fraction)
+            ):
+                raise _InvalidInputType(
+                    "AIME must be an int or an integral Fraction"
+                )
+            return number(value, label)
+
+        schemas["aime"] = aime
+    return schemas
+
+
+def _snapshot_declaration(value):
+    cls = type(value)
+    values = {
+        name: read(getattr(value, name), name)
+        for name, read in _declaration_schemas(cls).items()
+    }
+    result = object.__new__(cls)
+    initialize = _INITIALIZERS.get(cls, cls.__init__)
+    initialize(result, **values)
+    return result
+
+
+def _construct_declared(cls, *args, **kwargs):
+    """Build derived private data without re-entering its public schema.
+
+    Callers supply already-owned fields or internally derived values. The
+    original initializer still executes the declaration's domain checks.
+    """
+    result = object.__new__(cls)
+    _INITIALIZERS[cls](result, *args, **kwargs)
+    return result
+
+
+def _replace_declared(value, **changes):
+    """Replace fields of owned private data, retaining domain checks."""
+    values = {
+        item.name: getattr(value, item.name)
+        for item in fields(value)
+        if item.init
+    }
+    values.update(changes)
+    return _construct_declared(type(value), **values)
+
+
+def _translate_input_error(action):
+    try:
+        return action()
     except InvalidFamilyInput:
         raise
     except (
@@ -314,200 +660,165 @@ def _rebuild_declared(value):
         OverflowError,
         RecursionError,
     ) as error:
-        # Limit translation to traversing declared data. Exceptions raised
-        # by a caller's computation remain programming errors.
-        raise _InvalidInputType("Malformed declared input tree") from error
+        raise _InvalidInputType(
+            f"Malformed declared input: {error}"
+        ) from error
 
 
-def _rebuild_declared_value(value):
-    """Copy one tree node; recursive children use the checked traversal."""
-    value_type = type(value)
-    if (
-        value_type is bool
-        or value_type is int
-        or value_type is float
-        or value_type is str
-        or value_type is bytes
-        or value is None
+def _call_binder(function, *, defaults):
+    """Compile call layouts, never retaining any caller's argument values."""
+    declared = signature(function)
+    # Track B has fixed, keyword-addressable public signatures. Keeping this
+    # invariant explicit avoids quietly mishandling a future variadic API.
+    if any(
+        parameter.kind
+        not in (parameter.POSITIONAL_OR_KEYWORD, parameter.KEYWORD_ONLY)
+        for parameter in declared.parameters.values()
     ):
-        return value
-    if isinstance(value, _SealedResult):
-        _check_seal(value)
-        return value
-    if isinstance(value, Enum):
-        return value
-    if isinstance(value, (int, float, Fraction, Decimal)):
-        if type(value) is bool:
-            return value
-        if not _has_declared_type(value, (int, float, Fraction, Decimal)):
-            raise _InvalidInputType(
-                "Numeric subclasses are not declared inputs"
-            )
-        if type(value) is Fraction or type(value) is Decimal:
-            return _exact_number(value, "declared number")
-        return value
-    if isinstance(value, (str, bytes)):
-        if type(value) is not str and type(value) is not bytes:
-            raise _InvalidInputType("Text subclasses are not declared inputs")
-        return value
-    if isinstance(value, Mapping):
-        rebuilt = {
-            _rebuild_declared(key): _rebuild_declared(item)
-            for key, item in value.items()
-        }
-        return (
-            MappingProxyType(rebuilt)
-            if type(value) is MappingProxyType
-            else rebuilt
-        )
-    if isinstance(value, (tuple, list, set, frozenset)):
-        if not _has_declared_type(value, (tuple, list, set, frozenset)):
-            raise _InvalidInputType(
-                "Collection subclasses are not declared inputs"
-            )
-        return type(value)(_rebuild_declared(item) for item in value)
-    if is_dataclass(value) and not isinstance(value, type):
-        # Parameter schemas are shared with other tracks, so registration
-        # here must not change their public constructors elsewhere.
-        from populace_dynamics.ss.params import SSAParameters
-        from populace_dynamics.track_b.ret_params import (
-            ParameterValue,
-            ProjectionInputs,
-            RETParameters,
-            RETYear,
-            SourcePin,
-        )
+        raise TypeError("Track B public calls need fixed declared arguments")
 
-        allowed = _DECLARATION_TYPES | {
-            SSAParameters,
-            ParameterValue,
-            ProjectionInputs,
-            RETParameters,
-            RETYear,
-            SourcePin,
-        }
-        if not _has_declared_type(value, allowed):
-            raise _InvalidInputType("Undeclared Track B input subclass")
-        registered = _has_declared_type(value, _DECLARATION_TYPES)
-        try:
-            if type(value) is SSAParameters:
-                _check_parameter_shape(value)
-            rebuilt = type(value)(
-                **{
-                    item.name: (
-                        getattr(value, item.name)
-                        if registered
-                        else _rebuild_declared(getattr(value, item.name))
-                    )
-                    for item in fields(value)
-                    if item.init
-                }
+    @cache
+    def layout(positional_count, keyword_names):
+        # signature.bind supplies Python's missing/duplicate/unknown-argument
+        # checks once per layout. The placeholders contain no caller data.
+        positional = [None] * positional_count
+        keywords = dict.fromkeys(keyword_names)
+        bound = declared.bind(*positional, **keywords)
+        positional_names = tuple(bound.arguments)[:positional_count]
+        entries = tuple(enumerate(positional_names))
+        supplied = set(bound.arguments)
+        omitted = (
+            tuple(
+                (name, parameter.default)
+                for name, parameter in declared.parameters.items()
+                if name not in supplied
             )
-            if type(value) is SSAParameters:
-                # A user-supplied Mapping can change between reads. Check
-                # the detached snapshot that the computation will consume,
-                # as well as the original for field-specific diagnostics.
-                _check_parameter_shape(rebuilt)
-            return rebuilt
-        except InvalidFamilyInput:
-            raise
-        except (AttributeError, TypeError, ValueError, OverflowError) as error:
-            raise _InvalidInputType("Malformed declared input") from error
-    return value
+            if defaults
+            else ()
+        )
+        return entries, omitted
+
+    def bind(args, kwargs):
+        if any(type(name) is not str for name in kwargs):
+            raise _InvalidInputType("Argument names must be built-in strings")
+        entries, omitted = layout(len(args), tuple(kwargs))
+        values = {name: args[index] for index, name in entries}
+        values.update(kwargs)
+        values.update(omitted)
+        return values
+
+    return bind
+
+
+def _declared_input(cls):
+    """Declare a field schema and validate each constructor exactly once."""
+    _DECLARATION_TYPES.add(cls)
+    initialize = cls.__init__
+    _INITIALIZERS[cls] = initialize
+    bind = _call_binder(initialize, defaults=False)
+    defaults = {item.name: item for item in fields(cls)}
+
+    @wraps(initialize)
+    def initialize_declared(self, *args, **kwargs):
+        if type(self) is not cls:
+            raise InvalidFamilyInput("Undeclared Track B input subclass")
+
+        def construct():
+            arguments = bind((self, *args), kwargs)
+            values = {}
+            for name, read in _declaration_schemas(cls).items():
+                if name in arguments:
+                    value = arguments[name]
+                else:
+                    item = defaults[name]
+                    value = (
+                        item.default_factory()
+                        if item.default_factory is not MISSING
+                        else item.default
+                    )
+                values[name] = read(value, name)
+            initialize(self, **values)
+
+        _translate_input_error(construct)
+
+    cls.__init__ = initialize_declared
+    return cls
+
+
+@cache
+def _argument_schemas(function):
+    hints = get_type_hints(function)
+    declared = signature(function)
+    schemas = {}
+    for name, parameter in declared.parameters.items():
+        annotation = hints.get(name)
+        if name == "self":
+            cls_name = function.__qualname__.split(".")[0]
+            annotation = function.__globals__[cls_name]
+        if annotation is None:
+            raise TypeError(
+                f"Missing Track B input schema: {function.__qualname__}.{name}"
+            )
+        schemas[name] = (
+            _scalar_schema(annotation)
+            if name == "self" and function.__name__ == "__init__"
+            else _schema(annotation, function.__module__, name=name)
+        )
+        if parameter.default is None and annotation is object:
+            schemas[name] = _optional_schema(schemas[name])
+    return schemas
 
 
 def _validated_entry(function):
-    """Compute from rebuilt declared inputs, before any coverage branch."""
+    """Validate a public call once, then run on its owned snapshot.
+
+    Internal callers use private helpers. A callback is an executable slot;
+    it is checked with callable(), never inspected or reconstructed as data.
+    """
+    bind = _call_binder(function, defaults=True)
 
     @wraps(function)
     def validated(*args, **kwargs):
-        return function(
-            *(_rebuild_declared(value) for value in args),
-            **{key: _rebuild_declared(value) for key, value in kwargs.items()},
-        )
+        def snapshot():
+            values = bind(args, kwargs)
+            readers = _argument_schemas(function)
+            return {
+                name: readers[name](value, name)
+                for name, value in values.items()
+            }
+
+        values = _translate_input_error(snapshot)
+        return function(**values)
 
     return validated
 
 
-def _check_number_encoding(value, label):
-    """Check a parameter leaf without allocating a discarded exact value."""
-    if type(value) is int:
-        return
-    if type(value) is float and math.isfinite(value):
-        return
-    try:
-        _exact_number(value, label)
-    except _InvalidInputType:
-        raise
-    except InvalidFamilyInput as error:
-        # Preserve both existing nonfinite-parameter diagnostics and G's
-        # statutory-mismatch diagnostic at this earlier shared boundary.
-        raise InvalidFamilyInput(
-            f"{error}; parameter value disagrees with the statutory domain"
-        ) from error
+def _rebuild_declared(value):
+    """Private snapshot adapter, with no undeclared pass-through case."""
 
-
-def _check_parameter_shape(params):
-    """Validate the full external SSA declaration, including unused fields.
-
-    SSAParameters has no validating constructor. This checks its declared
-    structure and finite numeric encodings; each layer still checks the
-    statutory domains it consumes. Empty series retain missing-data errors.
-    """
-    for item in fields(params):
-        name, value = item.name, getattr(params, item.name)
-        if name == "pe_us_revision":
-            if type(value) is not str or not value:
-                raise _InvalidInputType("pe_us_revision must be nonempty text")
-        elif name in ("nawi", "wage_base"):
-            if not isinstance(value, Mapping):
-                raise _InvalidInputType(f"{name} must be a mapping")
-            for year, amount in value.items():
-                if type(year) is not int or not 1 <= year <= 9999:
-                    raise _InvalidInputType(f"{name} needs calendar-year keys")
-                _check_number_encoding(amount, name)
-        elif name in (
-            "pia_factors",
-            "early_monthly_rates",
-            "spousal_early_monthly_rates",
+    def snapshot():
+        cls = type(value)
+        if _has_declared_type(value, _DECLARATION_TYPES) or _has_declared_type(
+            value, _external_declarations()
         ):
-            length = 3 if name == "pia_factors" else 2
-            if (
-                not _has_declared_type(value, (tuple, list))
-                or len(value) != length
-            ):
-                raise _InvalidInputType(f"{name} needs {length} numbers")
-            for index, number in enumerate(value):
-                _check_number_encoding(number, f"{name}[{index}]")
-        elif name in (
-            "fra_months_by_birth_year",
-            "delayed_credit_by_birth_year",
+            return _snapshot_declaration(value)
+        if _has_declared_type(value, _RESULT_TYPES):
+            _check_seal(value)
+            return value
+        if _has_declared_type(value, (Fraction, Decimal)):
+            return _exact_number(value, "declared number")
+        if _has_declared_type(
+            value, (int, float, str, bool, bytes, date, type(None))
         ):
-            if not _has_declared_type(value, (tuple, list)):
-                raise _InvalidInputType(f"{name} must be a schedule")
-            for entry in value:
-                if (
-                    not _has_declared_type(entry, (tuple, list))
-                    or len(entry) != 2
-                ):
-                    raise _InvalidInputType(f"{name} needs year/value pairs")
-                year, number = entry
-                if type(year) is not int or not 1 <= year <= 9999:
-                    raise _InvalidInputType(f"{name} needs calendar years")
-                _check_number_encoding(number, name)
-                if (
-                    name == "fra_months_by_birth_year"
-                    and type(number) is not int
-                ):
-                    raise _InvalidInputType(
-                        "FRA months must be a built-in int"
-                    )
-        elif item.type == "int":
-            _check_number_encoding(value, name)
-            if type(value) is not int:
-                raise _InvalidInputType(f"{name} must be a built-in int")
-        else:
-            _check_number_encoding(value, name)
+            return value
+        if isinstance(cls, type) and issubclass(cls, Enum):
+            return _enum_schema(cls)(value, "declared enum")
+        if _has_declared_type(value, (tuple, list, set, frozenset)):
+            items = [_rebuild_declared(item) for item in value]
+            return cls(items)
+        raise _InvalidInputType("Undeclared Track B input")
+
+    return _translate_input_error(snapshot)
 
 
 def _fraction_parts(value, label):

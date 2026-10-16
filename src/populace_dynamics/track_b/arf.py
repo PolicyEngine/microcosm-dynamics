@@ -19,9 +19,9 @@ persists, without new credits, until FRA (RS 00615.582; CFR 404.412(b)).
 The month of age attainment precedes the birth month for a first-day
 birthday; a January 1 birth also uses the preceding FRA cohort.
 
-Collection inputs are validated and snapshotted into immutable frozensets
-at construction, including one-shot iterators. Scalar money, dates and enum
-fields are also checked immediately. Repeated original-claim
+Built-in collection inputs are validated and snapshotted into immutable
+frozensets at construction; arbitrary iterators are input errors. Scalar
+money, dates and canonical enum members are checked immediately. Repeated original-claim
 evaluation preserves both dollar amounts and coverage refusals. Contents
 are validated before coverage is decided, without consuming caller state.
 Pre-FRA spouse reentitlement is refused because RS 00615.201A.1 and
@@ -38,7 +38,7 @@ Invalid inputs, including G's statutory rate bundle,
 are checked before coverage and benefit arithmetic. Non-finite numeric
 rates, benefit shares and brackets are rejected locally before G's
 statutory comparison. Parameter ValueErrors propagate through evaluate_arf
-and lazy count_arf_outcomes; only valid coverage refusals enter the weighted
+and count_arf_outcomes; only valid coverage refusals enter the weighted
 denominator.
 This module does not assemble payments, deductions, or event histories.
 """
@@ -57,17 +57,17 @@ from populace_dynamics.track_b.gross_benefits import (
     FamilyDenominator,
     InvalidFamilyInput,
     YearMonth,
+    _ceil_dime_validated,
     _check_evaluation_inputs,
+    _count_family_outcomes_validated,
+    _floor_dime_validated,
     _outcome_weight,
-    ceil_dime,
-    count_family_outcomes,
-    floor_dime,
-    spouse_reduction_fraction,
-    statutory_rates,
-    survivor_reduction_fraction,
-    whole_dollars,
-    widow_reduction_period_months,
-    worker_reduction_fraction,
+    _spouse_reduction_fraction_validated,
+    _statutory_rates_validated,
+    _survivor_reduction_fraction_validated,
+    _whole_dollars_validated,
+    _widow_reduction_period_months_validated,
+    _worker_reduction_fraction_validated,
 )
 
 from ._provenance import (
@@ -75,6 +75,7 @@ from ._provenance import (
     _check_seal,
     _checked_result,
     _computed,
+    _construct_declared,
     _declared_input,
     _exact_number,
     _sealed_refusal,
@@ -137,12 +138,12 @@ class SpouseOwnSequence(Enum):
 def _month(value: MonthInput, label: str) -> YearMonth:
     if type(value) is YearMonth:
         try:
-            result = YearMonth(value.year, value.month)
+            result = _construct_declared(YearMonth, value.year, value.month)
         except (AttributeError, TypeError, ValueError) as error:
             raise InvalidFamilyInput(f"{label}: {error}") from error
     elif isinstance(value, tuple) and len(value) == 2:
         try:
-            result = YearMonth(*value)
+            result = _construct_declared(YearMonth, *value)
         except (TypeError, ValueError) as error:
             raise InvalidFamilyInput(f"{label}: {error}") from error
     else:
@@ -181,7 +182,7 @@ def _index(month: YearMonth) -> int:
 
 def _from_index(index: int) -> YearMonth:
     year, month = divmod(index, 12)
-    return YearMonth(year, month + 1)
+    return _construct_declared(YearMonth, year, month + 1)
 
 
 @_validated_entry
@@ -215,14 +216,14 @@ def _fra_month_for_input_validation(
         months = (
             744
             if birth_date < date(1911, 1, 2)
-            else 720 + widow_reduction_period_months(birth_date)
+            else 720 + _widow_reduction_period_months_validated(birth_date)
         )
     else:
         cohort = birth_date.year - (
             birth_date.month == 1 and birth_date.day == 1
         )
         months = params.fra_months(cohort)
-    return age_attainment_month(birth_date, months)
+    return _age_attainment_month_validated(birth_date, months)
 
 
 @_validated_entry
@@ -278,8 +279,8 @@ class ARFClaim:
     month. Nonentitlement months mean termination under 402(q)(7)(C)/(E),
     not missing records. Mother/father-rate months mean (q)(5)(D) actually
     determined the widow(er)'s benefit, rather than every caregiving month.
-    All month and condition iterables are validated and copied at
-    construction. Money, dates and enum fields are checked immediately.
+    All built-in month and condition containers are validated and copied
+    at construction. Money, dates and enum fields are checked immediately.
     Cohort and entitlement-window crosschecks using the parameter bundle
     are repeated at computation before any coverage decision.
     """
@@ -406,8 +407,8 @@ class ARFResult(_SealedResult):
             )
         if (
             claim.conditions
-            or first < YearMonth(1978, 1)
-            or payment < YearMonth(1983, 1)
+            or first < _construct_declared(YearMonth, 1978, 1)
+            or payment < _construct_declared(YearMonth, 1983, 1)
             or (
                 claim.kind is ARFBenefitKind.WIDOW
                 and claim.birth_date < date(1912, 1, 2)
@@ -428,9 +429,14 @@ class ARFResult(_SealedResult):
             raise InvalidFamilyInput(
                 "ARF result cannot contain a refused original claim"
             )
-        if claim.kind is ARFBenefitKind.WIDOW and fra != age_attainment_month(
-            claim.birth_date,
-            720 + widow_reduction_period_months(claim.birth_date),
+        if (
+            claim.kind is ARFBenefitKind.WIDOW
+            and fra
+            != _age_attainment_month_validated(
+                claim.birth_date,
+                720
+                + _widow_reduction_period_months_validated(claim.birth_date),
+            )
         ):
             raise InvalidFamilyInput(
                 "ARF widow FRA disagrees with original cohort"
@@ -448,7 +454,7 @@ class ARFResult(_SealedResult):
         ):
             raise InvalidFamilyInput("ARF original reduction window disagrees")
         effective = fra if payment >= fra else None
-        age62 = age_attainment_month(claim.birth_date, 744)
+        age62 = _age_attainment_month_validated(claim.birth_date, 744)
         if (
             claim.kind is ARFBenefitKind.WIDOW
             and first <= age62 <= payment < fra
@@ -461,7 +467,10 @@ class ARFResult(_SealedResult):
         limit = effective
         if limit is not None and claim.death_date is not None:
             limit = min(
-                limit, YearMonth(claim.death_date.year, claim.death_date.month)
+                limit,
+                _construct_declared(
+                    YearMonth, claim.death_date.year, claim.death_date.month
+                ),
             )
         eligible = frozenset().union(
             *(
@@ -495,7 +504,7 @@ class ARFResult(_SealedResult):
             reduction_fraction = (
                 Fraction(57, 200)
                 * adjusted
-                / widow_reduction_period_months(claim.birth_date)
+                / _widow_reduction_period_months_validated(claim.birth_date)
             )
         else:
             raise InvalidFamilyInput("ARF result requires its benefit kind")
@@ -510,8 +519,8 @@ class ARFResult(_SealedResult):
             and own.sequence is SpouseOwnSequence.CONCURRENT_OR_PRECEDING
         ):
             base = max(Fraction(0), base - own.pia)
-        reduction = ceil_dime(base * reduction_fraction)
-        benefit = floor_dime(base - reduction)
+        reduction = _ceil_dime_validated(base * reduction_fraction)
+        benefit = _floor_dime_validated(base - reduction)
         if (
             own is not None
             and own.sequence is SpouseOwnSequence.AFTER_SPOUSE_ARF
@@ -521,7 +530,7 @@ class ARFResult(_SealedResult):
             _amount(self.reduction, "reduction") != reduction
             or _amount(self.benefit, "benefit") != benefit
             or type(self.whole_dollar_benefit) is not int
-            or self.whole_dollar_benefit != whole_dollars(benefit)
+            or self.whole_dollar_benefit != _whole_dollars_validated(benefit)
         ):
             raise InvalidFamilyInput(
                 "ARF reduction and payable identities disagree"
@@ -646,7 +655,12 @@ def _check_claim(
             raise InvalidFamilyInput(
                 "death_date applies to the deceased RIB only"
             )
-        if YearMonth(claim.death_date.year, claim.death_date.month) < first:
+        if (
+            _construct_declared(
+                YearMonth, claim.death_date.year, claim.death_date.month
+            )
+            < first
+        ):
             raise InvalidFamilyInput(
                 "death cannot precede first reduction month"
             )
@@ -660,7 +674,8 @@ def _check_claim(
             )
         if not isinstance(own.sequence, SpouseOwnSequence):
             raise InvalidFamilyInput("invalid spouse own entitlement sequence")
-        own = SpouseOwnBenefit(
+        own = _construct_declared(
+            SpouseOwnBenefit,
             _amount(own.pia, "own PIA"),
             _amount(own.payable, "own payable"),
             own.sequence,
@@ -669,7 +684,7 @@ def _check_claim(
         fra = _month(result_fra, "result_fra")
     else:
         _check_finite_statutory_parameters(params)
-        statutory_rates(params)
+        _statutory_rates_validated(params)
         fra = _fra_month_for_input_validation(
             claim.birth_date, claim.kind, params
         )
@@ -679,7 +694,7 @@ def _check_claim(
         )
     else:
         minimum_age = 744
-    earliest = age_attainment_month(claim.birth_date, minimum_age)
+    earliest = _age_attainment_month_validated(claim.birth_date, minimum_age)
     if claim.kind is ARFBenefitKind.RIB and claim.birth_date.day != 2:
         earliest = _from_index(_index(earliest) + 1)
     if first < earliest:
@@ -688,7 +703,8 @@ def _check_claim(
         )
     if first > fra:
         raise InvalidFamilyInput("first reduction month must not follow FRA")
-    return ARFClaim(
+    return _construct_declared(
+        ARFClaim,
         claim.kind,
         claim.birth_date,
         first,
@@ -746,12 +762,12 @@ def apply_arf(
             ARFUnsupportedReason.HISTORICAL_WIDOW_FRA_CONFLICT,
             "RS 00615.003 gives FRA 65 but 20 CFR 404.409 gives FRA 62",
         )
-    if first < YearMonth(1978, 1):
+    if first < _construct_declared(YearMonth, 1978, 1):
         _refuse(
             ARFUnsupportedReason.INITIAL_ENTITLEMENT_BEFORE_1978,
             "RS 00615.490B.2 requires the historical money-reduction ratio",
         )
-    if payment < YearMonth(1983, 1):
+    if payment < _construct_declared(YearMonth, 1983, 1):
         _refuse(
             ARFUnsupportedReason.PAYMENT_BEFORE_1983,
             "G's shared dime-rounding surface begins January 1983",
@@ -791,13 +807,15 @@ def apply_arf(
             ARFUnsupportedReason.SPOUSE_OWN_AFTER_SPOUSE_BEFORE_ARF,
             "RS 00615.500 does not supply this entitlement sequence's procedure",
         )
-    age62 = age_attainment_month(claim.birth_date, 744)
+    age62 = _age_attainment_month_validated(claim.birth_date, 744)
     effective = fra if payment >= fra else None
     if claim.kind is ARFBenefitKind.WIDOW and first <= age62 <= payment < fra:
         effective = age62
     limit = effective
     if claim.death_date is not None:
-        death_month = YearMonth(claim.death_date.year, claim.death_date.month)
+        death_month = _construct_declared(
+            YearMonth, claim.death_date.year, claim.death_date.month
+        )
         # Final RIB work deductions precede the death month: the worker
         # has no RIB benefit in the month of death. RS 00615.598 permits
         # the hypothetical adjustment only at would-have-been FRA.
@@ -820,12 +838,18 @@ def apply_arf(
     )
     adjusted = original - len(credits)
     if claim.kind is ARFBenefitKind.RIB:
-        reduction_fraction = worker_reduction_fraction(adjusted, params)
+        reduction_fraction = _worker_reduction_fraction_validated(
+            adjusted, params
+        )
     elif claim.kind is ARFBenefitKind.SPOUSE:
-        reduction_fraction = spouse_reduction_fraction(adjusted, params)
+        reduction_fraction = _spouse_reduction_fraction_validated(
+            adjusted, params
+        )
     else:
-        reduction_fraction = survivor_reduction_fraction(
-            adjusted, widow_reduction_period_months(claim.birth_date), params
+        reduction_fraction = _survivor_reduction_fraction_validated(
+            adjusted,
+            _widow_reduction_period_months_validated(claim.birth_date),
+            params,
         )
     base = claim.unreduced_benefit
     if (
@@ -833,8 +857,8 @@ def apply_arf(
         and own.sequence is SpouseOwnSequence.CONCURRENT_OR_PRECEDING
     ):
         base = max(Fraction(0), base - own.pia)
-    reduction = ceil_dime(base * reduction_fraction)
-    benefit = floor_dime(base - reduction)
+    reduction = _ceil_dime_validated(base * reduction_fraction)
+    benefit = _floor_dime_validated(base - reduction)
     if own is not None and own.sequence is SpouseOwnSequence.AFTER_SPOUSE_ARF:
         benefit = max(Fraction(0), benefit - own.payable)
     return _computed(
@@ -849,7 +873,7 @@ def apply_arf(
         1 - reduction_fraction,
         reduction,
         benefit,
-        whole_dollars(benefit),
+        _whole_dollars_validated(benefit),
     )
 
 
@@ -876,4 +900,12 @@ def count_arf_outcomes(
     outcomes: Iterable[_SealedOutcome],
 ) -> FamilyDenominator:
     """Reuse the shared denominator, retaining every row and refused weight."""
-    return count_family_outcomes(outcomes)
+    return _count_family_outcomes_validated(outcomes)
+
+
+# Internal calls consume the snapshot owned by the public boundary.
+_age_attainment_month_validated = age_attainment_month.__wrapped__
+_apply_arf_validated = apply_arf.__wrapped__
+_count_arf_outcomes_validated = count_arf_outcomes.__wrapped__
+_evaluate_arf_validated = evaluate_arf.__wrapped__
+_full_retirement_age_month_validated = full_retirement_age_month.__wrapped__

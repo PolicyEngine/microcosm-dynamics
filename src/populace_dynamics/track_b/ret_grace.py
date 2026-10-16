@@ -38,13 +38,14 @@ remains an explicit, constructible declaration of initial history.
 from __future__ import annotations
 
 from collections.abc import Sequence
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, field
 from enum import Enum
 
 from populace_dynamics.track_b._provenance import (
     _computed,
+    _construct_declared,
     _declared_input,
-    _rebuild_declared,
+    _replace_declared,
     _sealed_result,
     _SealedResult,
     _validated_entry,
@@ -314,7 +315,7 @@ class GraceYearDecision(_SealedResult):
         _boolean(self.applies, "Grace applies flag")
         if type(self.next_state) is not GraceYearState:
             raise InvalidFamilyInput("A grace decision needs carried state")
-        state = replace(self.next_state)
+        state = _replace_declared(self.next_state)
         if state.last_processed_year is None:
             raise InvalidFamilyInput("A grace decision needs a processed year")
         object.__setattr__(self, "next_state", state)
@@ -405,8 +406,8 @@ def grace_year(
     ):
         raise InvalidFamilyInput("Process consecutive years of entitlement")
     try:
-        months = _rebuild_declared(tuple(months))
-        events = _rebuild_declared(tuple(termination_events))
+        months = tuple(months)
+        events = tuple(termination_events)
     except TypeError as error:
         raise InvalidFamilyInput(
             "Supply iterable month and termination inputs"
@@ -530,7 +531,8 @@ def grace_year(
         kinds=frozenset(kinds),
         met_eligible_months=met_eligible,
         protected_months=eligible_nsms if applies else frozenset(),
-        next_state=GraceYearState(
+        next_state=_construct_declared(
+            GraceYearState,
             last_met_year=last_met,
             previous_entitled_types=previous,
             had_entitlement=had_entitlement,

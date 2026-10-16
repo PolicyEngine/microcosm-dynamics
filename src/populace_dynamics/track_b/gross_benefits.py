@@ -9,6 +9,17 @@ reference now, with Axiom differential checks as diagnostics once a pinned
 rule exists. At this module's creation rulespec-us had no 42 U.S.C. 403
 encoding, so no Axiom differential is run.
 
+Input boundary: every public argument and declaration field has a schema.
+It accepts exact built-in scalars of the declared kind, canonical enum
+members by identity, exact declared classes, and exact built-in containers
+whose raw contents are checked before reconstruction or hashing. Numeric
+encodings become owned Fractions. Callbacks are checked with callable() and
+never reconstructed; their results must carry the proper computation seal.
+Each public call owns one snapshot; internal helpers consume that snapshot.
+This contract does not cover access to private names, monkeypatching modules,
+or another thread mutating an input during the call. It admits no broader
+security or population claim.
+
 What this layer computes, for one insured worker's record and one month:
 
 1. **Family maximum.** 42 U.S.C. 403(a)(1)-(2): 150/272/134/175 percent of
@@ -219,7 +230,7 @@ from __future__ import annotations
 import math
 from collections import Counter
 from collections.abc import Callable, Iterable, Mapping, Sequence
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, field
 from datetime import date
 from decimal import Decimal
 from enum import Enum
@@ -228,6 +239,7 @@ from types import MappingProxyType
 
 from populace_dynamics.ss.params import SSAParameters
 from populace_dynamics.track_b._provenance import (
+    _RESULT_TYPES,
     InvalidFamilyInput,
     _check_denominator_reason,
     _check_outcome,
@@ -235,12 +247,13 @@ from populace_dynamics.track_b._provenance import (
     _check_refusal,
     _check_seal,
     _computed,
+    _construct_declared,
     _declared_input,
     _detached_result,
     _exact_number,
     _has_declared_type,
     _InvalidInputType,
-    _rebuild_declared,
+    _replace_declared,
     _sealed_refusal,
     _sealed_result,
     _SealedOutcome,
@@ -463,7 +476,11 @@ class FamilyTargetBlocked(RuntimeError):
 # ---------------------------------------------------------------------------
 # Exact money helpers
 # ---------------------------------------------------------------------------
-_exact = _exact_number
+def _exact(value, label):
+    """Use owned exact money without reconstructing it inside computation."""
+    if type(value) is Fraction:
+        return value
+    return _exact_number(value, label)
 
 
 def _dimes(value: object, label: str) -> Fraction:
@@ -516,18 +533,15 @@ def _input_conditions(value: object, enum: type) -> None:
 
 
 def _checked_input(value, expected: type, label: str):
-    """Revalidate input copies or require an unchanged computed-result seal.
+    """Check the type of an already-owned declaration or a sealed result.
 
-    Constructors and entry points use the same field validation. Rebuilding
-    also repeats their cross-field checks and numeric normalization, so even
-    a deserialized or altered frozen declaration cannot bypass validation.
-    No coverage decision belongs in this pass.
+    Public boundaries have already detached declarations recursively. This
+    private helper deliberately does not take another snapshot.
     """
     _input_type(value, expected, label)
-    if isinstance(value, _SealedResult):
+    if type(value) in _RESULT_TYPES:
         _check_seal(value)
-        return value
-    return _rebuild_declared(value)
+    return value
 
 
 def _validated_refusal(error) -> FamilyConfigurationUnsupported:
@@ -736,10 +750,12 @@ class YearMonth:
     def __post_init__(self):
         _validate_input_fields(self)
 
+    @_validated_entry
     def as_tuple(self) -> tuple[int, int]:
         month = _checked_input(self, YearMonth, "month")
         return (month.year, month.month)
 
+    @_validated_entry
     def __str__(self) -> str:
         month = _checked_input(self, YearMonth, "month")
         return f"{month.year:04d}-{month.month:02d}"
@@ -863,7 +879,7 @@ def _agrees(observed: float, expected: Fraction, label: str) -> None:
         raise
     except (InvalidFamilyInput, OverflowError) as error:
         raise InvalidFamilyInput(
-            f"Parameter bundle {label}={observed!r} disagrees with the "
+            f"Parameter bundle {label}={observed} disagrees with the "
             f"statutory {expected}; refusing to compute gross benefits."
         ) from error
     if (
@@ -871,7 +887,7 @@ def _agrees(observed: float, expected: Fraction, label: str) -> None:
         or abs(value - float(expected)) > _RATE_TOLERANCE
     ):
         raise InvalidFamilyInput(
-            f"Parameter bundle {label}={observed!r} disagrees with the "
+            f"Parameter bundle {label}={observed} disagrees with the "
             f"statutory {expected}; refusing to compute gross benefits."
         )
 
@@ -916,7 +932,8 @@ def statutory_rates(params: SSAParameters) -> StatutoryRates:
         _input_type(getattr(params, name), int, name)
         if getattr(params, name) != 36:
             raise InvalidFamilyInput(f"{name} must be 36 (402(q))")
-    return StatutoryRates(
+    return _construct_declared(
+        StatutoryRates,
         worker_first=_STATUTE["worker_first"],
         worker_later=_STATUTE["worker_later"],
         worker_bracket_months=36,
@@ -978,7 +995,7 @@ def family_maximum_formula(
 ) -> Fraction:
     """403(a)(1)(A)-(D) before rounding: the exact formula amount."""
     amount = _dimes(pia, "PIA")
-    points = family_maximum_bend_points(eligibility_year, params)
+    points = _family_maximum_bend_points_validated(eligibility_year, params)
     lower = (0, *points)
     upper = (*points, None)
     total = Fraction(0)
@@ -1003,9 +1020,11 @@ def retirement_survivor_family_maximum(
     """
     amount = _dimes(pia, "PIA")
     _input_year(eligibility_year, "eligibility_year")
-    statutory_rates(params)
+    _statutory_rates_validated(params)
     _require_supported_eligibility(eligibility_year)
-    return floor_dime(family_maximum_formula(amount, eligibility_year, params))
+    return _floor_dime_validated(
+        _family_maximum_formula_validated(amount, eligibility_year, params)
+    )
 
 
 @_validated_entry
@@ -1019,7 +1038,7 @@ def disability_family_maximum(pia: object, aime: object) -> Fraction:
     earnings = _exact(aime, "AIME")
     if earnings < 0 or earnings.denominator != 1:
         raise InvalidFamilyInput("AIME must be a nonnegative whole dollar")
-    return floor_dime(
+    return _floor_dime_validated(
         min(max(_DI_AIME_SHARE * earnings, amount), _DI_PIA_CAP * amount)
     )
 
@@ -1037,7 +1056,7 @@ def increase_by_colas(amount: object, percents: Iterable[object]) -> Fraction:
         rate = _exact(percent, f"COLA percent #{index}")
         if rate < 0:
             raise InvalidFamilyInput("A COLA percentage cannot be negative")
-        value = floor_dime(value * (1 + rate / 100))
+        value = _floor_dime_validated(value * (1 + rate / 100))
     return value
 
 
@@ -1072,7 +1091,7 @@ def applicable_cola_percents(
     if eligibility_year > payment_month.year:
         raise InvalidFamilyInput(
             f"eligibility year {eligibility_year} is after the payment "
-            f"month {payment_month}"
+            f"month {_month_text_validated(payment_month)}"
         )
     _require_supported_eligibility(eligibility_year)
     last = payment_month.year - (0 if payment_month.month == 12 else 1)
@@ -1123,14 +1142,14 @@ def _spouse_reduction(months: int, rates: StatutoryRates) -> Fraction:
 def worker_reduction_fraction(months: int, params: SSAParameters) -> Fraction:
     """402(q)(1) old-age reduction for ``months`` months (RS 00615.101)."""
     months = _months(months, "months", _MAX_WORKER_REDUCTION_MONTHS)
-    return _worker_reduction(months, statutory_rates(params))
+    return _worker_reduction(months, _statutory_rates_validated(params))
 
 
 @_validated_entry
 def spouse_reduction_fraction(months: int, params: SSAParameters) -> Fraction:
     """402(q)(1) spouse's reduction for ``months`` months (RS 00615.201)."""
     months = _months(months, "months", _MAX_SPOUSE_REDUCTION_MONTHS)
-    return _spouse_reduction(months, statutory_rates(params))
+    return _spouse_reduction(months, _statutory_rates_validated(params))
 
 
 @_validated_entry
@@ -1144,7 +1163,11 @@ def survivor_reduction_fraction(
     """
     period = _survivor_period(reduction_period_months)
     months = _months(months, "months", period)
-    return statutory_rates(params).survivor_max_reduction * months / period
+    return (
+        _statutory_rates_validated(params).survivor_max_reduction
+        * months
+        / period
+    )
 
 
 def _drc_monthly_rate(birth_year: int, params: SSAParameters) -> Fraction:
@@ -1208,7 +1231,7 @@ def delayed_credit_window_months(
     birth. Births before 1917 are refused (402(w)(6)(A)).
     """
     _input_year(birth_year, "birth_year")
-    statutory_rates(params)
+    _statutory_rates_validated(params)
     fra = _fra_months(birth_year, params)
     _refuse_early_delayed_credits(birth_year)
     return _AGE_70_MONTHS - fra
@@ -1331,7 +1354,7 @@ def worker_age_adjusted(
     needs reduction/PIA history absent here. Undated inputs use the current
     formula and do not establish conformance for historical awards.
     """
-    rates = statutory_rates(params)
+    rates = _statutory_rates_validated(params)
     amount = _dimes(pia, "PIA")
     reduction_months = _cohort_reduction_months(
         reduction_months, birth_year, params, "reduction_months"
@@ -1340,13 +1363,13 @@ def worker_age_adjusted(
         delayed_credit_months, birth_year, params
     )
     _refuse_historical_own_rib(amount, reduction_months, birth_year)
-    base = floor_dime(
+    base = _floor_dime_validated(
         amount * (1 - _worker_reduction(reduction_months, rates))
     )
     if delayed_credit_months == 0:
         return base, base
     _refuse_early_delayed_credits(birth_year)
-    credit = floor_dime(
+    credit = _floor_dime_validated(
         base * delayed_credit_months * _drc_monthly_rate(birth_year, params)
     )
     return base, base + credit
@@ -1362,12 +1385,14 @@ def spouse_age_reduced(
     00615.201B.1.c). ``amount`` is the OB, or the family-maximum share when
     the maximum applies.
     """
-    rates = statutory_rates(params)
+    rates = _statutory_rates_validated(params)
     value = _dimes(amount, "spouse benefit")
     months = _months(
         reduction_months, "reduction_months", _MAX_SPOUSE_REDUCTION_MONTHS
     )
-    return floor_dime(value * (1 - _spouse_reduction(months, rates)))
+    return _floor_dime_validated(
+        value * (1 - _spouse_reduction(months, rates))
+    )
 
 
 @_validated_entry
@@ -1382,11 +1407,11 @@ def survivor_age_reduced(
     MAR = amount x RF x .285 / total possible RF, rounded *up* to the dime;
     MBA = amount - MAR (POMS RS 00615.301B.1.c-d).
     """
-    rates = statutory_rates(params)
+    rates = _statutory_rates_validated(params)
     value = _dimes(amount, "widow(er) benefit")
     period = _survivor_period(reduction_period_months)
     months = _months(reduction_months, "reduction_months", period)
-    reduction = ceil_dime(
+    reduction = _ceil_dime_validated(
         value * months * rates.survivor_max_reduction / period
     )
     return value - reduction
@@ -1694,10 +1719,10 @@ def own_monthly_benefit(
 ) -> tuple[Fraction, Fraction]:
     """The own benefit ``(without_credits, with_credits)`` after 402(q)/(w)."""
     own = _checked_input(own, OwnBenefit, "own")
-    statutory_rates(params)
+    _statutory_rates_validated(params)
     _check_own_benefit(own, params)
     _refuse_own_benefit(own)
-    return worker_age_adjusted(
+    return _worker_age_adjusted_validated(
         own.pia,
         own.reduction_months,
         own.delayed_credit_months,
@@ -1985,7 +2010,9 @@ class RecordState:
                 object.__setattr__(self, "worker_birth_year", own_year)
             elif own_year is None:
                 object.__setattr__(
-                    self, "worker", replace(self.worker, birth_year=year)
+                    self,
+                    "worker",
+                    _replace_declared(self.worker, birth_year=year),
                 )
         pia = _dimes(self.pia, "PIA")
         maximum = _dimes(self.family_maximum, "family maximum")
@@ -2037,7 +2064,10 @@ def _refuse_record(record: WorkerRecord | RecordState) -> None:
     if (
         record.kind is FamilyKind.DISABILITY
         and record.first_dib_entitlement is not None
-        and record.first_dib_entitlement.as_tuple()
+        and (
+            record.first_dib_entitlement.year,
+            record.first_dib_entitlement.month,
+        )
         < DI_MAXIMUM_FIRST_ENTITLEMENT
     ):
         raise _computed(
@@ -2075,7 +2105,7 @@ def record_state(record: WorkerRecord, params: SSAParameters) -> RecordState:
     this builder is called inside an evaluate_family closure.
     """
     record = _checked_input(record, WorkerRecord, "record")
-    statutory_rates(params)
+    _statutory_rates_validated(params)
     disability_maximum = None
     if record.kind is FamilyKind.DISABILITY:
         if record.aime is None or record.first_dib_entitlement is None:
@@ -2083,7 +2113,7 @@ def record_state(record: WorkerRecord, params: SSAParameters) -> RecordState:
                 "A disability record needs aime and first_dib_entitlement"
             )
         # Computed here so that an invalid AIME is an input error first.
-        disability_maximum = disability_family_maximum(
+        disability_maximum = _disability_family_maximum_validated(
             record.eligibility_pia, record.aime
         )
     _cohort_reduction_months(
@@ -2099,7 +2129,9 @@ def record_state(record: WorkerRecord, params: SSAParameters) -> RecordState:
     _delayed_credit_months(
         record.worker_delayed_credit_months, record.worker_birth_year, params
     )
-    pia = increase_by_colas(record.eligibility_pia, record.cola_percents)
+    pia = _increase_by_colas_validated(
+        record.eligibility_pia, record.cola_percents
+    )
     deferred = None
     try:
         _refuse_record(record)
@@ -2112,22 +2144,24 @@ def record_state(record: WorkerRecord, params: SSAParameters) -> RecordState:
     elif record.kind is FamilyKind.DISABILITY:
         base_maximum = disability_maximum
     else:
-        base_maximum = retirement_survivor_family_maximum(
+        base_maximum = _retirement_survivor_family_maximum_validated(
             record.eligibility_pia, record.eligibility_year, params
         )
-    maximum = increase_by_colas(base_maximum, record.cola_percents)
+    maximum = _increase_by_colas_validated(base_maximum, record.cola_percents)
     worker = None
     if record.kind is FamilyKind.RETIREMENT and (
         RecordCondition.WORKER_NOT_ENTITLED not in record.conditions
     ):
-        worker = OwnBenefit(
+        worker = _construct_declared(
+            OwnBenefit,
             kind=OwnBenefitKind.OLD_AGE,
             pia=pia,
             reduction_months=record.worker_reduction_months,
             delayed_credit_months=record.worker_delayed_credit_months,
             birth_year=record.worker_birth_year,
         )
-    return RecordState(
+    return _construct_declared(
+        RecordState,
         kind=record.kind,
         pia=pia,
         family_maximum=maximum,
@@ -2360,7 +2394,7 @@ class FamilyBenefits(_SealedResult):
             _check_role_arguments(row.role, kind=self.kind)
             expected = row.original_benefit
             if row.subject_to_family_maximum and self.total_original_benefits:
-                expected = floor_dime(
+                expected = _floor_dime_validated(
                     row.original_benefit
                     * min(
                         Fraction(1),
@@ -2465,7 +2499,7 @@ def original_benefit(
         share = Fraction(165, 200) if parent_count == 1 else Fraction(3, 4)
     else:
         raise ValueError(f"No original benefit is defined for {role}")
-    return floor_dime(share * pia)
+    return _floor_dime_validated(share * pia)
 
 
 def _with_effective_cohort(beneficiary: Beneficiary) -> Beneficiary:
@@ -2490,10 +2524,10 @@ def _with_effective_cohort(beneficiary: Beneficiary) -> Beneficiary:
     if year is None:
         return beneficiary
     if own is not None and own.birth_year is None:
-        own = replace(own, birth_year=year)
+        own = _replace_declared(own, birth_year=year)
     if year == beneficiary.birth_year and own is beneficiary.own_benefit:
         return beneficiary
-    return replace(beneficiary, birth_year=year, own_benefit=own)
+    return _replace_declared(beneficiary, birth_year=year, own_benefit=own)
 
 
 def _check_beneficiary_inputs(
@@ -2511,7 +2545,9 @@ def _check_beneficiary_inputs(
             # All birth-year inputs use SSA's January 2-January 1 cohort,
             # so even a boundary cohort fixes exactly one .301B.2 period.
             year = beneficiary.birth_year
-            expected = widow_reduction_period_months(date(year, 1, 2))
+            expected = _widow_reduction_period_months_validated(
+                date(year, 1, 2)
+            )
             period = beneficiary.reduction_period_months
             if period is not None and period != expected:
                 raise InvalidFamilyInput(
@@ -2565,7 +2601,7 @@ def _refuse_beneficiary(
     if beneficiary.own_benefit is not None:
         _refuse_own_benefit(beneficiary.own_benefit)
     if beneficiary.role is Role.DISABLED_WIDOW:
-        if payment_month < YearMonth(1984, 1):
+        if payment_month < _construct_declared(YearMonth, 1984, 1):
             raise _computed(
                 FamilyConfigurationUnsupported,
                 UnsupportedReason.DISABLED_WIDOW_UNDER_60,
@@ -2584,7 +2620,7 @@ def _refuse_beneficiary(
     for condition in sorted(beneficiary.conditions, key=lambda c: c.value):
         if (
             condition is BeneficiaryCondition.GOVERNMENT_PENSION_OFFSET
-            and payment_month >= YearMonth(2024, 1)
+            and payment_month >= _construct_declared(YearMonth, 2024, 1)
         ):
             # Pub. L. 118-273; GN 02608.100: repeal is retroactive to
             # benefits for months after December 2023, not enactment month.
@@ -2691,7 +2727,10 @@ def _proportional(rows: Sequence[_Row], available: Fraction) -> list[Fraction]:
     if total <= available:
         return [row.ob for row in rows]
     return [
-        max(Fraction(0), min(row.ob, floor_dime(row.ob * available / total)))
+        max(
+            Fraction(0),
+            min(row.ob, _floor_dime_validated(row.ob * available / total)),
+        )
         for row in rows
     ]
 
@@ -2759,7 +2798,9 @@ def maximum_redistribution_rates(
         return MappingProxyType({key: Fraction(0) for key in nondual})
     return MappingProxyType(
         {
-            key: max(Fraction(0), min(ob, floor_dime(ob * pool / total)))
+            key: max(
+                Fraction(0), min(ob, _floor_dime_validated(ob * pool / total))
+            )
             for key, ob in nondual.items()
         }
     )
@@ -2797,7 +2838,9 @@ def _parisi_counted(
         )
         limit = max(
             state.rib_lim_benefit,
-            floor_dime(statutory_rates(params).rib_lim_share * state.pia),
+            _floor_dime_validated(
+                _statutory_rates_validated(params).rib_lim_share * state.pia
+            ),
         )
         if unlimited > limit:
             raise _computed(
@@ -2826,7 +2869,7 @@ def _parisi_counted(
         return Fraction(0), Fraction(0)
     if method_c:
         excess = max(Fraction(0), row.standard - own.pia)
-        age_reduction = excess - spouse_age_reduced(
+        age_reduction = excess - _spouse_age_reduced_validated(
             excess, beneficiary.reduction_months, params
         )
     else:
@@ -2894,7 +2937,10 @@ def _refuse_historical_auxiliary(
         if apply_rib_lim and state.rib_lim_benefit is not None:
             limit = max(
                 state.rib_lim_benefit,
-                floor_dime(statutory_rates(params).rib_lim_share * state.pia),
+                _floor_dime_validated(
+                    _statutory_rates_validated(params).rib_lim_share
+                    * state.pia
+                ),
             )
             low, high = min(low, limit), min(high, limit)
         low = max(low, row.mother_father_rate)
@@ -2956,7 +3002,7 @@ def _reduce_and_offset(
         )
     if beneficiary.role in (Role.SPOUSE, Role.DIVORCED_SPOUSE):
         if own is None or not beneficiary.own_benefit_first:
-            reduced = spouse_age_reduced(
+            reduced = _spouse_age_reduced_validated(
                 rate, beneficiary.reduction_months, params
             )
             if own is None:
@@ -2970,7 +3016,7 @@ def _reduce_and_offset(
         # benefit is reduced by the own benefit's 402(q) reduction plus the
         # spousal reduction of the excess over the own PIA.
         excess = max(Fraction(0), rate - own.pia)
-        reduced_excess = spouse_age_reduced(
+        reduced_excess = _spouse_age_reduced_validated(
             excess, beneficiary.reduction_months, params
         )
         age_adjusted = max(
@@ -2986,19 +3032,19 @@ def _reduce_and_offset(
         if beneficiary.role is Role.DISABLED_WIDOW:
             # 402(e)/(f), 402(q)(8); RS 00615.310B.1/B.3 and .301:
             # fixed 28.5% from January 1984, reduction rounded up to dime.
-            reduced = rate - ceil_dime(rate * Fraction(285, 1000))
+            reduced = rate - _ceil_dime_validated(rate * Fraction(285, 1000))
         elif beneficiary.reduction_months:
-            reduced = survivor_age_reduced(
+            reduced = _survivor_age_reduced_validated(
                 rate,
                 beneficiary.reduction_months,
                 beneficiary.reduction_period_months,
                 params,
             )
         if apply_rib_lim and state.rib_lim_benefit is not None:
-            rates = statutory_rates(params)
+            rates = _statutory_rates_validated(params)
             limit = max(
                 state.rib_lim_benefit,
-                floor_dime(rates.rib_lim_share * state.pia),
+                _floor_dime_validated(rates.rib_lim_share * state.pia),
             )
             reduced = min(reduced, limit)
         # RS 00615.340/.010: compare with what a mother/father would
@@ -3055,7 +3101,7 @@ def _check_family_inputs(
 ) -> tuple[Beneficiary, ...]:
     """Check every input before refusal; return copies with resolved cohorts."""
     # Household paths check every record here before household refusals.
-    statutory_rates(params)
+    _statutory_rates_validated(params)
     state = _checked_input(state, RecordState, "state")
     _checked_input(payment_month, YearMonth, "payment_month")
     _input_sequence(beneficiaries, "beneficiaries")
@@ -3069,15 +3115,16 @@ def _check_family_inputs(
     ):
         raise InvalidFamilyInput(
             f"eligibility year {state.eligibility_year} is after the "
-            f"payment month {payment_month}"
+            f"payment month {_month_text_validated(payment_month)}"
         )
     if (
         state.first_dib_entitlement is not None
         and state.first_dib_entitlement > payment_month
     ):
         raise InvalidFamilyInput(
-            f"first DIB entitlement {state.first_dib_entitlement} is after "
-            f"the payment month {payment_month}"
+            "first DIB entitlement "
+            f"{_month_text_validated(state.first_dib_entitlement)} is after "
+            f"the payment month {_month_text_validated(payment_month)}"
         )
     _check_retirement_eligibility(
         state.kind, state.eligibility_year, state.worker_birth_year
@@ -3133,14 +3180,20 @@ def _entitled_parent_count(
             "more than two declared parents is outside the one/two-parent "
             "rates settled by 402(h)(2) and RS 00209.015",
         )
-    one_ob = original_benefit(Role.PARENT, FamilyKind.SURVIVOR, state.pia)
-    two_ob = original_benefit(
+    one_ob = _original_benefit_validated(
+        Role.PARENT, FamilyKind.SURVIVOR, state.pia
+    )
+    two_ob = _original_benefit_validated(
         Role.PARENT, FamilyKind.SURVIVOR, state.pia, parent_count=2
     )
     potential = []
     for parent in parents:
         own = parent.own_benefit
-        own_mba = None if own is None else own_monthly_benefit(own, params)[1]
+        own_mba = (
+            None
+            if own is None
+            else _own_monthly_benefit_validated(own, params)[1]
+        )
         if own is not None and own.kind is OwnBenefitKind.OLD_AGE:
             if own_mba >= one_ob:
                 continue
@@ -3186,7 +3239,7 @@ def _mother_father_care_rate(
     for member in beneficiaries:
         if member.beneficiary_id == caregiver.beneficiary_id:
             comparison.append(
-                replace(
+                _replace_declared(
                     member,
                     role=Role.MOTHER_FATHER,
                     reduction_months=0,
@@ -3196,7 +3249,7 @@ def _mother_father_care_rate(
                 )
             )
         elif member.role in _WIDOW_ROLES:
-            comparison.append(replace(member, child_in_care=False))
+            comparison.append(_replace_declared(member, child_in_care=False))
         else:
             comparison.append(member)
     result = _family_benefits(state, comparison, payment_month, params)
@@ -3238,7 +3291,8 @@ def _refuse_widow_drc_savings_clause(
         or state.eligibility_year < FIRST_SUPPORTED_ELIGIBILITY_YEAR
         or (
             state.first_dib_entitlement is not None
-            and state.first_dib_entitlement <= YearMonth(1978, 5)
+            and state.first_dib_entitlement
+            <= _construct_declared(YearMonth, 1978, 5)
         )
         or (state.first_dib_entitlement is None and possible_drc_protection)
     ):
@@ -3258,7 +3312,7 @@ def _family_benefits(
     params: SSAParameters,
 ) -> FamilyBenefits:
     state = _checked_input(state, RecordState, "state")
-    rates = statutory_rates(params)
+    rates = _statutory_rates_validated(params)
     beneficiaries = _check_family_inputs(
         state, beneficiaries, payment_month, params
     )
@@ -3267,7 +3321,10 @@ def _family_benefits(
         raise _computed(
             FamilyConfigurationUnsupported, *state.deferred_refusal
         )
-    if payment_month.as_tuple() < FIRST_SUPPORTED_PAYMENT_MONTH:
+    if (
+        payment_month.year,
+        payment_month.month,
+    ) < FIRST_SUPPORTED_PAYMENT_MONTH:
         raise _computed(
             FamilyConfigurationUnsupported,
             UnsupportedReason.PAYMENT_MONTH_BEFORE_1983,
@@ -3278,10 +3335,10 @@ def _family_benefits(
         _refuse_beneficiary(beneficiary, payment_month)
     ieds = RecordCondition.WORKER_NOT_ENTITLED in state.conditions
     if ieds and (
-        payment_month < YearMonth(1985, 1)
+        payment_month < _construct_declared(YearMonth, 1985, 1)
         or (
             RecordCondition.WINDFALL_ELIMINATION_PROVISION in state.conditions
-            and payment_month < YearMonth(2024, 1)
+            and payment_month < _construct_declared(YearMonth, 2024, 1)
         )
     ):
         raise _computed(
@@ -3294,7 +3351,9 @@ def _family_benefits(
     life_case = state.kind is not FamilyKind.SURVIVOR and not ieds
     worker_benefit = None
     if state.kind is FamilyKind.RETIREMENT and not ieds:
-        worker_benefit = own_monthly_benefit(state.worker, params)[1]
+        worker_benefit = _own_monthly_benefit_validated(state.worker, params)[
+            1
+        ]
     elif state.kind is FamilyKind.DISABILITY:
         worker_benefit = state.pia
 
@@ -3302,10 +3361,10 @@ def _family_benefits(
     for beneficiary in beneficiaries:
         own_base = own_mba = None
         if beneficiary.own_benefit is not None:
-            own_base, own_mba = own_monthly_benefit(
+            own_base, own_mba = _own_monthly_benefit_validated(
                 beneficiary.own_benefit, params
             )
-        ob = original_benefit(
+        ob = _original_benefit_validated(
             beneficiary.role,
             state.kind,
             state.pia,
@@ -3408,7 +3467,10 @@ def _family_benefits(
     nondual = [row for row in subject if not row.dual]
     redistributed = bool(binding and dual and nondual)
     if redistributed:
-        if payment_month.as_tuple() < PARISI_FIRST_PAYMENT_MONTH:
+        if (
+            payment_month.year,
+            payment_month.month,
+        ) < PARISI_FIRST_PAYMENT_MONTH:
             raise _computed(
                 FamilyConfigurationUnsupported,
                 UnsupportedReason.PARISI_BEFORE_OCTOBER_1999,
@@ -3423,7 +3485,7 @@ def _family_benefits(
             deductee_payables[bid] = payable
             age_reductions[bid] = age_reduction
             row.counted = payable + age_reduction
-        shares = maximum_redistribution_rates(
+        shares = _maximum_redistribution_rates_validated(
             {row.beneficiary.beneficiary_id: row.ob for row in subject},
             available,
             deductee_payables=deductee_payables,
@@ -3455,9 +3517,11 @@ def _family_benefits(
                 age_adjusted_rate=age_adjusted,
                 auxiliary_payable=payable,
                 own_benefit=row.own_mba,
-                whole_dollar_auxiliary=whole_dollars(payable),
+                whole_dollar_auxiliary=_whole_dollars_validated(payable),
                 whole_dollar_own=(
-                    None if row.own_mba is None else whole_dollars(row.own_mba)
+                    None
+                    if row.own_mba is None
+                    else _whole_dollars_validated(row.own_mba)
                 ),
                 note=row.note,
             )
@@ -3475,7 +3539,9 @@ def _family_benefits(
         (row.auxiliary_payable for row in results), Fraction(0)
     )
     record_whole = (
-        0 if worker_benefit is None else whole_dollars(worker_benefit)
+        0
+        if worker_benefit is None
+        else _whole_dollars_validated(worker_benefit)
     ) + sum(row.whole_dollar_auxiliary for row in results)
     return _computed(
         FamilyBenefits,
@@ -3489,7 +3555,9 @@ def _family_benefits(
         redistribution_applied=redistributed,
         worker_benefit=worker_benefit,
         whole_dollar_worker=(
-            None if worker_benefit is None else whole_dollars(worker_benefit)
+            None
+            if worker_benefit is None
+            else _whole_dollars_validated(worker_benefit)
         ),
         beneficiaries=tuple(results),
         record_total=record_total,
@@ -3584,7 +3652,8 @@ def _own_benefit_on_record(state: RecordState) -> OwnBenefit | None:
     if state.kind is FamilyKind.RETIREMENT:
         return state.worker
     if state.kind is FamilyKind.DISABILITY:
-        return OwnBenefit(
+        return _construct_declared(
+            OwnBenefit,
             OwnBenefitKind.DISABILITY,
             state.pia,
             birth_year=state.worker_birth_year,
@@ -3683,14 +3752,14 @@ def _check_household_inputs(
         state = record.state
         year = cohorts.get(record.worker_id)
         if year is not None:
-            state = replace(state, worker_birth_year=year)
+            state = _replace_declared(state, worker_birth_year=year)
         beneficiaries = tuple(
             _with_effective_cohort(
-                replace(b, birth_year=cohorts.get(b.beneficiary_id))
+                _replace_declared(b, birth_year=cohorts.get(b.beneficiary_id))
             )
             for b in record.beneficiaries
         )
-        resolved[record_id] = replace(
+        resolved[record_id] = _replace_declared(
             record, state=state, beneficiaries=beneficiaries
         )
     records = resolved
@@ -3831,13 +3900,15 @@ def household_month_outcome(
         _refuse_household(held)
     except FamilyConfigurationUnsupported as error:
         for record_id, record in records.items():
-            guards[record_id].skip(payment_month, pia=record.state.pia)
+            guards[record_id]._skip_validated(
+                payment_month, pia=record.state.pia
+            )
         return _computed(FamilyOutcome, key, weight, None, error)
     results = {}
     refusal = None
     for record_id in sorted(records):
         record = records[record_id]
-        outcome = guards[record_id].evaluate(
+        outcome = guards[record_id]._evaluate_validated(
             record_id,
             weight,
             lambda record=record: _family_benefits(
@@ -3891,14 +3962,14 @@ def savings_clause_total(result: FamilyBenefits) -> Fraction:
 
 def _next_month(month: YearMonth) -> YearMonth:
     if month.month == 12:
-        return YearMonth(month.year + 1, 1)
-    return YearMonth(month.year, month.month + 1)
+        return _construct_declared(YearMonth, month.year + 1, 1)
+    return _construct_declared(YearMonth, month.year, month.month + 1)
 
 
 def _previous_month(month: YearMonth) -> YearMonth:
     if month.month == 1:
-        return YearMonth(month.year - 1, 12)
-    return YearMonth(month.year, month.month - 1)
+        return _construct_declared(YearMonth, month.year - 1, 12)
+    return _construct_declared(YearMonth, month.year, month.month - 1)
 
 
 def _money_text(amount: Fraction) -> str:
@@ -3993,6 +4064,7 @@ class SavingsClauseGuard:
     input, result or snapshot cannot change a later decision.
     """
 
+    @_validated_entry
     def __init__(
         self, first_month: YearMonth, *, earlier_months_unknown: bool
     ):
@@ -4045,43 +4117,49 @@ class SavingsClauseGuard:
         raise InvalidFamilyInput("Savings-clause guards cannot be serialized")
 
     @property
+    @_validated_entry
     def next_month(self) -> YearMonth:
         """The month the guard expects next."""
-        self._check_initialized()
-        return replace(self._next)
+        return _replace_declared(self._next)
 
     @property
+    @_validated_entry
     def protected_total(self) -> Fraction | None:
         """The highest total protected so far (None: nothing protected)."""
-        self._check_initialized()
-        return None if self._floor is None else _exact(self._floor, "total")
-
-    @property
-    def protected_since(self) -> YearMonth | None:
-        """The qualifying month whose total is :attr:`protected_total`."""
-        self._check_initialized()
         return (
-            None if self._floor_month is None else replace(self._floor_month)
+            None
+            if self._floor is None
+            else _exact_number(self._floor, "total")
         )
 
     @property
+    @_validated_entry
+    def protected_since(self) -> YearMonth | None:
+        """The qualifying month whose total is :attr:`protected_total`."""
+        return (
+            None
+            if self._floor_month is None
+            else _replace_declared(self._floor_month)
+        )
+
+    @property
+    @_validated_entry
     def refused_since(self) -> YearMonth | None:
         """The first month whose total fell below the protected total."""
-        self._check_initialized()
         return (
             None
             if self._refused_since is None
-            else replace(self._refused_since)
+            else _replace_declared(self._refused_since)
         )
 
     @property
+    @_validated_entry
     def unknown_since(self) -> YearMonth | None:
         """The month from which a protection G cannot see may exist."""
-        self._check_initialized()
         return (
             None
             if self._unknown_since is None
-            else replace(self._unknown_since)
+            else _replace_declared(self._unknown_since)
         )
 
     def _expect(self, month: YearMonth) -> None:
@@ -4093,7 +4171,8 @@ class SavingsClauseGuard:
         _next_month(month)
         if month != self._next:
             raise InvalidFamilyInput(
-                f"the guard expects {self._next}, not {month}: give it "
+                f"the guard expects {_month_text_validated(self._next)}, "
+                f"not {_month_text_validated(month)}: give it "
                 "every month of the record, in order"
             )
 
@@ -4110,10 +4189,11 @@ class SavingsClauseGuard:
             # G never saw.
             self._unknown_since = self._unknown_since or prior.month
         elif _qualifies(prior.result):
-            total = savings_clause_total(prior.result)
+            total = _savings_clause_total_validated(prior.result)
             if self._floor is None or total > self._floor:
                 self._floor, self._floor_month = total, prior.month
 
+    @_validated_entry
     def admit(self, result: FamilyBenefits) -> FamilyBenefits:
         """Carry the protection into ``result``'s month.
 
@@ -4126,7 +4206,7 @@ class SavingsClauseGuard:
         result = _detached_result(result)
         month = result.payment_month
         self._expect(month)
-        total = savings_clause_total(result)
+        total = _savings_clause_total_validated(result)
         self._carry(result.pia)
         self._prior = _PriorMonth(month, result, result.pia)
         self._next = _next_month(month)
@@ -4141,7 +4221,8 @@ class SavingsClauseGuard:
             raise _computed(
                 FamilyConfigurationUnsupported,
                 UnsupportedReason.SAVINGS_CLAUSE,
-                f"403(a)(5) took effect in {self._refused_since} and stays "
+                "403(a)(5) took effect in "
+                f"{_month_text_validated(self._refused_since)} and stays "
                 "in effect (POMS RS 00615.801B.2); G does not compute the "
                 "raised total",
             )
@@ -4149,7 +4230,8 @@ class SavingsClauseGuard:
             raise _computed(
                 FamilyConfigurationUnsupported,
                 UnsupportedReason.SAVINGS_CLAUSE_HISTORY_UNKNOWN,
-                f"a protected total may exist from {self._unknown_since} "
+                "a protected total may exist from "
+                f"{_month_text_validated(self._unknown_since)} "
                 "that G did not see (a month it did not compute, or a path "
                 "that does not start at entitlement)",
             )
@@ -4159,11 +4241,13 @@ class SavingsClauseGuard:
                 UnsupportedReason.SAVINGS_CLAUSE,
                 f"the total after 403(a) and 402(q) is {_money_text(total)}"
                 f", below the {_money_text(self._floor)} protected since "
-                f"{self._floor_month}; 403(a)(5) would raise it (not "
+                f"{_month_text_validated(self._floor_month)}; "
+                "403(a)(5) would raise it (not "
                 "implemented)",
             )
         return original
 
+    @_validated_entry
     def skip(self, month: YearMonth, *, pia: object = None) -> None:
         """Record a month of this record that G did not compute.
 
@@ -4181,6 +4265,7 @@ class SavingsClauseGuard:
         self._prior = _PriorMonth(month, None, amount)
         self._next = _next_month(month)
 
+    @_validated_entry
     def evaluate(
         self,
         key: str,
@@ -4207,7 +4292,7 @@ class SavingsClauseGuard:
             result = compute()
         except FamilyConfigurationUnsupported as error:
             error = _validated_refusal(error)
-            self.skip(month, pia=pia)
+            self._skip_validated(month, pia=pia)
             return _computed(FamilyOutcome, key, weight, None, error)
         result = _checked_input(result, FamilyBenefits, "compute result")
         if pia is not None and _dimes(pia, "PIA") != result.pia:
@@ -4215,7 +4300,7 @@ class SavingsClauseGuard:
                 f"pia {pia} disagrees with the computed PIA {result.pia}"
             )
         try:
-            self.admit(result)
+            self._admit_validated(result)
         except FamilyConfigurationUnsupported as error:
             return _computed(FamilyOutcome, key, weight, None, error)
         return _computed(FamilyOutcome, key, weight, result, None)
@@ -4428,7 +4513,7 @@ def _checked_outcomes(
 def _require_all_supported(outcomes: Sequence[FamilyOutcome]) -> None:
     blocked = [o for o in outcomes if not o.supported]
     if blocked:
-        denominator = count_family_outcomes(outcomes)
+        denominator = _count_family_outcomes_validated(outcomes)
         reasons = ", ".join(
             f"{reason.value}={count}"
             for reason, (count, _) in sorted(
@@ -4457,8 +4542,69 @@ def weighted_record_total(outcomes: Iterable[FamilyOutcome]) -> Fraction:
 def weighted_mean_record_total(outcomes: Iterable[FamilyOutcome]) -> Fraction:
     """Weighted mean over *all* rows; blocked if any row is unsupported."""
     outcomes = _checked_outcomes(outcomes)
-    denominator = count_family_outcomes(outcomes)
+    denominator = _count_family_outcomes_validated(outcomes)
     _require_all_supported(outcomes)
     if denominator.weight == 0:
         raise ZeroDivisionError("No weight in the denominator")
-    return weighted_record_total(outcomes) / denominator.weight
+    return _weighted_record_total_validated(outcomes) / denominator.weight
+
+
+# Private implementations consume the snapshot owned by their public caller.
+_applicable_cola_percents_validated = applicable_cola_percents.__wrapped__
+_ceil_dime_validated = ceil_dime.__wrapped__
+_check_household_records_validated = check_household_records.__wrapped__
+_count_family_outcomes_validated = count_family_outcomes.__wrapped__
+_delayed_credit_window_months_validated = (
+    delayed_credit_window_months.__wrapped__
+)
+_disability_family_maximum_validated = disability_family_maximum.__wrapped__
+_evaluate_family_validated = evaluate_family.__wrapped__
+_family_benefits_validated = family_benefits.__wrapped__
+_family_maximum_bend_points_validated = family_maximum_bend_points.__wrapped__
+_family_maximum_formula_validated = family_maximum_formula.__wrapped__
+_floor_dime_validated = floor_dime.__wrapped__
+_household_benefits_validated = household_benefits.__wrapped__
+_household_month_outcome_validated = household_month_outcome.__wrapped__
+_increase_by_colas_validated = increase_by_colas.__wrapped__
+_maximum_redistribution_rates_validated = (
+    maximum_redistribution_rates.__wrapped__
+)
+_original_benefit_validated = original_benefit.__wrapped__
+_own_monthly_benefit_validated = own_monthly_benefit.__wrapped__
+_record_state_validated = record_state.__wrapped__
+_retirement_survivor_family_maximum_validated = (
+    retirement_survivor_family_maximum.__wrapped__
+)
+_savings_clause_total_validated = savings_clause_total.__wrapped__
+_spouse_age_reduced_validated = spouse_age_reduced.__wrapped__
+_spouse_reduction_fraction_validated = spouse_reduction_fraction.__wrapped__
+
+
+def _statutory_rates_validated(params):
+    rates = getattr(params, "_track_b_statutory_rates", None)
+    if rates is None:
+        rates = statutory_rates.__wrapped__(params)
+        object.__setattr__(params, "_track_b_statutory_rates", rates)
+    return rates
+
+
+_survivor_age_reduced_validated = survivor_age_reduced.__wrapped__
+_survivor_reduction_fraction_validated = (
+    survivor_reduction_fraction.__wrapped__
+)
+_weighted_mean_record_total_validated = weighted_mean_record_total.__wrapped__
+_weighted_record_total_validated = weighted_record_total.__wrapped__
+_whole_dollars_validated = whole_dollars.__wrapped__
+_widow_reduction_period_months_validated = (
+    widow_reduction_period_months.__wrapped__
+)
+_worker_age_adjusted_validated = worker_age_adjusted.__wrapped__
+_worker_reduction_fraction_validated = worker_reduction_fraction.__wrapped__
+
+_month_text_validated = YearMonth.__str__.__wrapped__
+
+SavingsClauseGuard._admit_validated = SavingsClauseGuard.admit.__wrapped__
+SavingsClauseGuard._evaluate_validated = (
+    SavingsClauseGuard.evaluate.__wrapped__
+)
+SavingsClauseGuard._skip_validated = SavingsClauseGuard.skip.__wrapped__

@@ -84,10 +84,10 @@ def test_arf_is_idempotent_deterministic_and_preserves_original_claim(
     st.lists(st.integers(-20, 110), max_size=100),
     st.lists(st.sampled_from(list(a.ARFUnsupportedReason)), max_size=5),
 )
-def test_iterator_claim_evaluation_preserves_results_and_refusals(
+def test_collection_claim_evaluation_preserves_results_and_refusals(
     kind, amount, offsets, conditions
 ):
-    """Every supported or refused iterator claim has stable meaning."""
+    """Every supported or refused collection claim has stable meaning."""
     base_claim = claim_for(kind, amount)
     base = base_claim.first_reduction_month.year * 12
     supplied = [
@@ -100,13 +100,13 @@ def test_iterator_claim_evaluation_preserves_results_and_refusals(
     }[kind]
     claim = replace(
         base_claim,
-        full_work_deduction_months=iter(supplied),
-        partial_work_deduction_months=iter(supplied),
-        **{category: iter(supplied)},
-        nonentitlement_months=iter(
+        full_work_deduction_months=list(supplied),
+        partial_work_deduction_months=list(supplied),
+        **{category: list(supplied)},
+        nonentitlement_months=list(
             supplied if kind is not a.ARFBenefitKind.RIB else []
         ),
-        conditions=iter(conditions),
+        conditions=list(conditions),
     )
     canonical = replace(
         base_claim,
@@ -130,7 +130,7 @@ def test_iterator_claim_evaluation_preserves_results_and_refusals(
             replace(
                 first.benefits.claim,
                 **{
-                    field: iter(getattr(first.benefits.claim, field))
+                    field: list(getattr(first.benefits.claim, field))
                     for field in a._CREDIT_FIELDS
                 },
             )
@@ -475,7 +475,7 @@ def test_invalid_statutory_parameters_never_become_arf_refusals(
     if coverage == "explicit":
         claim = replace(
             claim,
-            conditions=iter([a.ARFUnsupportedReason.OTHER_SUSPENSION]),
+            conditions=list([a.ARFUnsupportedReason.OTHER_SUSPENSION]),
         )
     elif coverage == "historical":
         claim = replace(
@@ -500,7 +500,7 @@ def test_invalid_statutory_parameters_never_become_arf_refusals(
     for invoke in (
         compute,
         evaluate,
-        lambda: a.count_arf_outcomes(evaluate() for _ in range(2)),
+        lambda: a.count_arf_outcomes([evaluate() for _ in range(2)]),
     ):
         with pytest.raises(ValueError) as caught:
             invoke()
@@ -527,7 +527,7 @@ def test_invalid_statutory_parameters_never_become_arf_refusals(
 def test_nonfinite_statutory_fields_never_create_arf_results_or_refusals(
     field_spec, value, kind, coverage, amount, weight
 ):
-    """Input error and lazy failure are independent of money and row weight."""
+    """Input error and row-construction failure are independent of money and row weight."""
     field, index = field_spec
     params = nonfinite_statutory_params(field, index, value)
     claim, payment = statutory_validation_claim(kind, coverage, amount)
@@ -540,13 +540,12 @@ def test_nonfinite_statutory_fields_never_create_arf_results_or_refusals(
     def evaluate():
         return a.evaluate_arf("invalid", F(weight), compute)
 
-    outcomes = (evaluate() for _ in range(2))
     assert calls == []
     errors = []
     for invoke in (
         compute,
         evaluate,
-        lambda: a.count_arf_outcomes(outcomes),
+        lambda: a.count_arf_outcomes([evaluate() for _ in range(2)]),
     ):
         with pytest.raises(ValueError, match="finite") as caught:
             invoke()
