@@ -618,7 +618,7 @@ def execute_refusal_witnesses() -> list[dict]:
         outcome = g.evaluate_family(expected.value, 1, compute)
         if outcome.supported:
             raise AssertionError(f"Witness {expected.value} was not refused")
-        error = outcome.unsupported
+        error = g._validated_refusal(outcome.unsupported)
         if error.reason is not expected:
             raise AssertionError((expected, error.reason)) from error
         results.append(

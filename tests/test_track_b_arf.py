@@ -205,7 +205,14 @@ def test_result_iterator_credits_are_immutable_and_survive_inspection():
         payment_month=FRA,
         params=PARAMS,
     )
-    direct = replace(result, crediting_months=iter(result.crediting_months))
+    direct = a.apply_arf(
+        replace(
+            result.claim,
+            full_work_deduction_months=iter(result.crediting_months),
+        ),
+        payment_month=FRA,
+        params=PARAMS,
+    )
     assert direct == result
     assert frozenset(direct.crediting_months) == result.crediting_months
     assert frozenset(direct.crediting_months) == result.crediting_months

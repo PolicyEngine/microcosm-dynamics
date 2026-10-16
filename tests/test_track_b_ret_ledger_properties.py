@@ -12,12 +12,14 @@ and a child cap reached only after the spouse's overflow is reapportioned.
 from __future__ import annotations
 
 import dataclasses
+import pickle
 from fractions import Fraction as F
 
 import pytest
 from hypothesis import example, given, settings
 from hypothesis import strategies as st
 
+from populace_dynamics.track_b import gross_benefits as g
 from populace_dynamics.track_b import ret_ledger as r
 from populace_dynamics.track_b.ret_grace import (
     BenefitType,
@@ -948,3 +950,70 @@ def test_auxiliary_own_excess_uses_earliest_entitled_unprotected_months(
             assert row.deduction == 0
         if row.deduction < row.gross:
             unexhausted_seen = True
+
+
+@settings(max_examples=40, deadline=None)
+@given(st.integers(0, 10000), st.integers(0, 10000), st.booleans())
+def test_ret_seals_pickle_and_common_denominator_preserve_rows(
+    weight, rate, refused
+):
+    outcome = r.evaluate_ret(
+        "record",
+        weight,
+        lambda: _apply(record(beneficiary(rate=rate), fiscal_year=refused)),
+    )
+    restored = pickle.loads(pickle.dumps(outcome))
+    expected = r.count_ret_outcomes([outcome])
+    assert r.count_ret_outcomes([restored]) == expected
+    assert g.count_family_outcomes([restored]) == expected
+    assert expected.rows == 1
+    assert expected.weight == weight
+    assert expected.unsupported_rows == int(refused)
+    assert expected.unsupported_weight == weight * refused
+    with pytest.raises(r.InvalidFamilyInput):
+        dataclasses.replace(restored)
+    object.__setattr__(restored, "weight", F(weight + 1))
+    with pytest.raises(r.InvalidFamilyInput):
+        r.count_ret_outcomes([restored])
+
+
+@settings(max_examples=40, deadline=None)
+@given(DIME_RATES, st.integers(1, 12), st.integers(1, 100))
+def test_ret_evaluator_rejects_every_altered_month(rate, month, increment):
+    result = _apply(record(beneficiary(rate=rate)))
+    row = result.months[month - 1]
+    object.__setattr__(row, "payment", row.payment + increment)
+    with pytest.raises(r.InvalidFamilyInput):
+        r.evaluate_ret("altered", 1, lambda: result)
+
+
+@settings(max_examples=40, deadline=None)
+@given(DIME_RATES, st.integers(1, 100))
+def test_ret_pickle_restore_preserves_month_and_worker_accounting(rate, delta):
+    result = _apply(record(beneficiary(rate=rate)))
+    for target, field in (
+        (result.months[0], "net_due"),
+        (result.months[0], "payment"),
+        (result.months[0], "provisional_payment"),
+        (result.workers[0], "charged"),
+        (result.workers[0], "excess"),
+    ):
+        restore, (cls, fields) = target.__reduce__()
+        fields[field] += delta
+        with pytest.raises(r.InvalidFamilyInput):
+            restore(cls, fields)
+
+
+@settings(max_examples=30, deadline=None)
+@given(DIME_RATES, st.booleans(), st.integers(1, 100))
+def test_partial_payments_reject_altered_allocation_money_inputs(
+    rate, use_as_original, delta
+):
+    allocation = r.partial_payments(rate, {"nh": rate * 2}, {"nh": rate * 2})
+    object.__setattr__(allocation, "shares", {"nh": rate + delta})
+    with pytest.raises(r.InvalidFamilyInput):
+        r.partial_payments(
+            rate,
+            {"nh": rate * 2} if use_as_original else allocation,
+            allocation if use_as_original else {"nh": rate * 2},
+        )

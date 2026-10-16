@@ -135,8 +135,12 @@ coverage refusal, so :func:`evaluate_family` never counts an invalid row as
 a coverage gap. Constructors and entry points share one field-validation
 layer, including nested declarations, enum classes, calendar/cohort years,
 exact integer/Boolean types and all existing cross-field checks. Public
-result, refusal and outcome types are sealed: only G's computation creates
-them, and direct construction, replacement or copying is an input error.
+result, refusal and outcome types are sealed with the package-private
+Track B capability: each layer's computation creates its own types, and
+direct construction, replacement or copying is an input error. Every layer
+refuses through a declared FamilyConfigurationUnsupported subclass bound
+to exactly its own reason enum. The shared denominator counts all sealed
+layer outcomes; G money consumers and the 403(a)(5) guard require G results.
 Sealing validates nested fields and derivable accounting identities;
 consumers check provenance and unchanged fields before aggregation or guard
 changes. Guard history retains detached sealed snapshots. Every exported
@@ -212,16 +216,30 @@ from __future__ import annotations
 import math
 from collections import Counter
 from collections.abc import Callable, Iterable, Mapping, Sequence
-from dataclasses import dataclass, field, fields, is_dataclass, replace
+from dataclasses import dataclass, field, replace
 from datetime import date
 from decimal import Decimal
 from enum import Enum
 from fractions import Fraction
-from functools import wraps
 from numbers import Rational
 from types import MappingProxyType
 
 from populace_dynamics.ss.params import SSAParameters
+from populace_dynamics.track_b._provenance import (
+    InvalidFamilyInput,
+    _check_denominator_reason,
+    _check_outcome,
+    _check_reason,
+    _check_refusal,
+    _check_seal,
+    _computed,
+    _detached_result,
+    _InvalidInputType,
+    _sealed_refusal,
+    _sealed_result,
+    _SealedOutcome,
+    _SealedResult,
+)
 
 __all__ = [
     "BASE_NAWI_YEAR",
@@ -354,142 +372,6 @@ _FIRST_METHOD_B_WIDOW_BIRTH_YEAR = 1929
 # ---------------------------------------------------------------------------
 # Errors
 # ---------------------------------------------------------------------------
-class InvalidFamilyInput(ValueError):
-    """The inputs do not describe a legal family (not a coverage gap)."""
-
-
-class _InvalidInputType(InvalidFamilyInput, TypeError):
-    """An input error, also retaining the constructor's TypeError contract."""
-
-
-_RESULT_SEAL = object()
-
-
-class _SealedResult:
-    """Computed values cannot be constructed or copied through public APIs.
-
-    The seal is an API provenance check, not a security boundary against
-    code accessing module-private machinery. It is outside dataclass fields
-    so public read access, equality and constructor introspection stay stable.
-    """
-
-    def __copy__(self):
-        raise InvalidFamilyInput("G results can only be created by G")
-
-    def __deepcopy__(self, memo):
-        raise InvalidFamilyInput("G results can only be created by G")
-
-    def __reduce__(self):
-        _check_seal(self)
-        values = {
-            key: dict(value) if isinstance(value, Mapping) else value
-            for key, value in _result_values(self).items()
-        }
-        return _restore_sealed, (type(self), values)
-
-
-def _result_values(value):
-    names = (
-        [item.name for item in fields(value)]
-        if is_dataclass(value)
-        else ("reason", "detail", "beneficiary_id", "record_id")
-    )
-    return {name: getattr(value, name) for name in names}
-
-
-def _seal_value(value):
-    """An immutable, type-sensitive snapshot, including nested seals."""
-    if isinstance(value, _SealedResult):
-        _check_seal(value)
-        payload = value._g_seal[2]
-    elif is_dataclass(value):
-        payload = tuple(
-            (item.name, _seal_value(getattr(value, item.name)))
-            for item in fields(value)
-        )
-    elif isinstance(value, Mapping):
-        payload = tuple(
-            (_seal_value(key), _seal_value(item))
-            for key, item in value.items()
-        )
-    elif isinstance(value, (tuple, list)):
-        payload = tuple(_seal_value(item) for item in value)
-    else:
-        payload = value
-    return type(value), payload
-
-
-def _seal_payload(value):
-    return tuple(
-        (key, _seal_value(item)) for key, item in _result_values(value).items()
-    )
-
-
-def _check_seal(value):
-    seal = getattr(value, "_g_seal", None)
-    if (
-        not isinstance(seal, tuple)
-        or len(seal) != 3
-        or seal[0] is not _RESULT_SEAL
-        or seal[1] != id(value)
-        or seal[2] != _seal_payload(value)
-    ):
-        raise InvalidFamilyInput("Expected an unaltered result computed by G")
-
-
-def _sealed_result(cls):
-    """Require G's private capability, then validate and seal the result."""
-    initialize = cls.__init__
-
-    @wraps(initialize)
-    def initialize_computed(self, *args, _seal=None, **kwargs):
-        if _seal is not _RESULT_SEAL:
-            raise InvalidFamilyInput("G results can only be created by G")
-        initialize(self, *args, **kwargs)
-        object.__setattr__(
-            self, "_g_seal", (_RESULT_SEAL, id(self), _seal_payload(self))
-        )
-
-    cls.__init__ = initialize_computed
-    return cls
-
-
-def _computed(cls, *args, **kwargs):
-    return cls(*args, _seal=_RESULT_SEAL, **kwargs)
-
-
-def _restore_sealed(cls, values):
-    """Private pickle reconstruction repeats all seal-time identities."""
-    if cls not in (
-        BeneficiaryBenefit,
-        FamilyBenefits,
-        HouseholdBenefits,
-        FamilyOutcome,
-        FamilyDenominator,
-        FamilyConfigurationUnsupported,
-    ):
-        raise InvalidFamilyInput("Unknown G result type")
-    return _computed(cls, **values)
-
-
-def _detached_result(value):
-    """Keep guard history independent of caller-held result objects."""
-    if isinstance(value, _SealedResult):
-        _check_seal(value)
-        return _computed(
-            type(value),
-            **{
-                key: _detached_result(item)
-                for key, item in _result_values(value).items()
-            },
-        )
-    if isinstance(value, Mapping):
-        return {key: _detached_result(item) for key, item in value.items()}
-    if isinstance(value, tuple):
-        return tuple(_detached_result(item) for item in value)
-    if is_dataclass(value):
-        return replace(value)
-    return value
 
 
 class UnsupportedReason(Enum):
@@ -529,15 +411,16 @@ class UnsupportedReason(Enum):
     REDUCED_BENEFIT_HISTORY_BEFORE_1978 = "reduced_benefit_history_before_1978"
 
 
-@_sealed_result
+@_sealed_refusal(UnsupportedReason)
 class FamilyConfigurationUnsupported(_SealedResult, Exception):
     """``FAMILY_CONFIG_UNSUPPORTED``: a configuration G cannot compute.
 
     Rows raising this stay in every denominator (use
     :func:`evaluate_family` and :func:`count_family_outcomes`); a target
     that needs them is blocked (:class:`FamilyTargetBlocked`).
-    Only G creates refusals. Sealing validates the reason's exact enum
-    class and metadata; consumers reject altered or unsealed exceptions.
+    G creates this exact class with UnsupportedReason. R2 and R3 declare
+    subclasses bound to their own exact reason enums. All layers catch this
+    common family; consumers reject altered or unsealed exceptions.
     """
 
     code = "FAMILY_CONFIG_UNSUPPORTED"
@@ -550,7 +433,7 @@ class FamilyConfigurationUnsupported(_SealedResult, Exception):
         beneficiary_id: str | None = None,
         record_id: str | None = None,
     ):
-        _input_type(reason, UnsupportedReason, "reason")
+        _check_reason(self, reason)
         _input_text(detail, "detail")
         for label, identifier in (
             ("beneficiary_id", beneficiary_id),
@@ -4280,7 +4163,7 @@ def _check_evaluation_inputs(
 
 @_sealed_result
 @dataclass(frozen=True)
-class FamilyOutcome(_SealedResult):
+class FamilyOutcome(_SealedOutcome):
     """One record-month: validated benefits or a validated coverage refusal.
 
     Nested declarations are revalidated on construction, including a
@@ -4309,7 +4192,7 @@ class FamilyOutcome(_SealedResult):
             )
         if self.unsupported is not None:
             object.__setattr__(
-                self, "unsupported", _validated_refusal(self.unsupported)
+                self, "unsupported", _check_refusal(self.unsupported)
             )
         if (self.benefits is None) == (self.unsupported is None):
             raise InvalidFamilyInput(
@@ -4362,7 +4245,7 @@ class FamilyDenominator(_SealedResult):
     supported_weight: Fraction
     unsupported_rows: int
     unsupported_weight: Fraction
-    unsupported_by_reason: Mapping[UnsupportedReason, tuple[int, Fraction]]
+    unsupported_by_reason: Mapping[Enum, tuple[int, Fraction]]
 
     def __post_init__(self):
         for name in ("rows", "supported_rows", "unsupported_rows"):
@@ -4375,7 +4258,7 @@ class FamilyDenominator(_SealedResult):
             raise _InvalidInputType("unsupported_by_reason must be a mapping")
         reasons = {}
         for reason, value in self.unsupported_by_reason.items():
-            _input_type(reason, UnsupportedReason, "unsupported reason")
+            _check_denominator_reason(reason)
             _input_type(value, tuple, "unsupported count and weight")
             if len(value) != 2:
                 raise InvalidFamilyInput("Each reason needs count and weight")
@@ -4411,11 +4294,14 @@ class FamilyDenominator(_SealedResult):
 
 
 def count_family_outcomes(
-    outcomes: Iterable[FamilyOutcome],
+    outcomes: Iterable[_SealedOutcome],
 ) -> FamilyDenominator:
-    """Tabulate outcomes; unsupported rows are counted, never dropped."""
-    outcomes = _checked_outcomes(outcomes)
-    by_reason: dict[UnsupportedReason, tuple[int, Fraction]] = {}
+    """Tabulate every layer's sealed outcomes; never drop refused rows.
+
+    This counter reads coverage metadata only. Monetary aggregators still
+    require their own layer's outcome and result classes."""
+    outcomes = _checked_outcomes(outcomes, common=True)
+    by_reason: dict[Enum, tuple[int, Fraction]] = {}
     for outcome in outcomes:
         if outcome.unsupported is not None:
             count, weight = by_reason.get(
@@ -4439,10 +4325,16 @@ def count_family_outcomes(
     )
 
 
-def _checked_outcomes(outcomes: Iterable[FamilyOutcome]) -> tuple:
+def _checked_outcomes(
+    outcomes: Iterable[_SealedOutcome], *, common: bool = False
+) -> tuple:
     """Validate every observation before coverage or denominator decisions."""
     outcomes = tuple(
-        _checked_input(outcome, FamilyOutcome, "outcome")
+        (
+            _check_outcome(outcome)
+            if common
+            else _checked_input(outcome, FamilyOutcome, "outcome")
+        )
         for outcome in _input_iterable(outcomes, "outcomes")
     )
     keys = Counter(outcome.key for outcome in outcomes)

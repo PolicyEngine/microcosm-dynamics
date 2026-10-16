@@ -159,6 +159,61 @@ case or removed from a denominator.
 | Special earnings credits | `recompute_special_earnings_credits`; 415(f)(6) requires additional evidence |
 | Death before FRA | `recompute_death_before_fra_415f5`; separate formula under 415(f)(5). Missing FRA is an input error |
 
+## Shared result and denominator contract
+
+R3 retains the statutory money rules above (402(q)(6)-(9) for ARF;
+415(f)(2), (4) and RS 00605.501A for recomputation). Its coverage exceptions
+are now declared members of the shared `FamilyConfigurationUnsupported`
+family: `ARFConfigurationUnsupported` accepts exactly
+`ARFUnsupportedReason`, and `RecomputationConfigurationUnsupported` accepts
+exactly `RecomputationUnsupportedReason`. All carry the existing
+`FAMILY_CONFIG_UNSUPPORTED` code. Each evaluator catches the shared family,
+so a valid dependency refusal keeps its row and weight without changing
+its original reason enum. G's 403(a)(5) guard and reason inventory continue
+to accept G reasons only.
+
+The package-private `_provenance.py` capability seals ARF results,
+recomputation decisions and results, both layers' outcomes, and their
+refusals. Direct construction, `dataclasses.replace`, `copy` and `deepcopy`
+raise `InvalidFamilyInput`; pickle restoration repeats the original
+validation, including canonical reconstruction of nested calendar months
+so altered month numbers cannot survive restoration. `ARFOutcome.benefits` is an `ARFResult`, while
+`RecomputationOutcome.result` is a `RecomputationResult`. The common
+`count_family_outcomes` accepts both exact sealed outcome types and G's
+outcomes, with `count_arf_outcomes` delegating to that same counter.
+Unsealed or altered rows and nested values never count. Metadata is checked
+before computation; input errors remain errors, outside the denominator.
+
+Each evaluator accepts only unchanged results computed by its own layer.
+`apply_arf` also checks a result before using its original claim as a money
+input. `weighted_recomputed_pia` requires recomputation outcomes; G's money
+aggregators require G outcomes. ARF seals reconcile the original window,
+distinct credits, adjusted months, effective date, factor, dime reduction,
+benefit and whole dollars. Restoration reuses the full ARF claim-field
+validator with the retained FRA, then rejects any original claim whose
+known conditions, historical dates or entitlement sequence require refusal;
+a fabricated supported result cannot bypass that coverage decision.
+Recomputation decisions preserve `has_earnings`
+as an additional diagnostic Boolean so restoration can check the full
+RS 00605.501A threshold identity: application is equivalent to positive
+earnings and an increase of at least $1. Results reconcile the sealed
+decision, effective year and accepted eligibility PIA. These validation
+changes do not alter any supported amount or coverage reason.
+
+`tests/test_track_b_r3_provenance.py` executes these additional invariants:
+
+| Invariant | Executing tests |
+| --- | --- |
+| Results cannot be constructed, copied or replaced by callers; altered results cannot be serialized | `test_r3_results_cannot_be_constructed_directly`, `test_r3_results_cannot_be_copied_or_replaced`, `test_r3_altered_result_cannot_be_pickled`, `test_r3_sealed_result_identities_and_round_trips` |
+| Refusal classes bind their exact layer enum while retaining the shared catch type and code | `test_r3_declared_refusals_bind_exact_reason_enums` |
+| Each evaluator validates its own result before building a row; ARF result money inputs require the same provenance | `test_r3_evaluators_only_admit_their_own_unchanged_results`, `test_r3_evaluator_rejects_before_outcome_construction`, `test_arf_money_input_rejects_unsealed_and_altered_results` |
+| Invalid key or weight is rejected before invoking a computation | `test_r3_metadata_errors_precede_computation` |
+| Mixed layer rows have identical counts through both counters, independent of order and pickle round trips; refused rows and weights remain included, while altered or unsealed rows cannot count | `test_r3_shared_counter_differential_and_pickle_round_trip` (Hypothesis) |
+| ARF month and money identities, idempotence after serialization, and the full recomputation threshold identity hold for generated inputs | `test_r3_sealed_result_identities_and_round_trips` (Hypothesis) |
+| Restoring a result cannot admit an original ARF claim that ordinary computation refuses | `test_arf_pickle_restore_cannot_admit_a_refused_original_claim` in the shared round-12 contract file |
+| Nested result calendar months are revalidated at restoration, including months 0 and 13 | `test_r3_pickle_restore_revalidates_nested_calendar_months` in the shared round-12 contract file |
+| Caller-built sibling outcomes cannot count, and sibling outcomes cannot reach G money aggregation | `test_r3_outcome_cannot_be_constructed_directly_or_used_as_g_money` |
+
 ## Executed invariants
 
 Each row has a Hypothesis property test beside the example tests.

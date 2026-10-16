@@ -1983,3 +1983,128 @@ The additional branch verifies the earlier PIA increase, qualifying maximum,
 actual decline, exact protected total and continuing refusal after the joiner.
 No generated case is discarded or weakened to make the property pass. This
 extends invariant 9's executed coverage without adding a collected test node.
+
+## Fix round 12 of October 16, 2026
+
+Verification class: statutory conformance. This integration admits only
+invented and captured statutory cases, with no population, behavioral,
+payment-timing or forecast claim. It changes no statutory amount, refusal
+reason or source capture. It preserves the round-11 construction contract
+while integrating the merged R2 and R3 implementations.
+
+### Shared provenance and layer boundaries
+
+`track_b/_provenance.py` holds one package-private capability and the declared
+result and refusal classes. G, R2 and R3 use that same capability internally;
+it is never a public constructor parameter or exported API. Direct
+construction, `dataclasses.replace`, `copy` and `deepcopy` of computed results,
+refusals, outcomes and denominators raise `InvalidFamilyInput`. The seal
+binds exact type, object identity and recursively captured field values,
+including nested results, mappings and sets of credited months. Pickling
+reconstructs through the same field and accounting validation. This remains
+an API contract, not a security boundary against private Python internals.
+
+There is one catchable refusal family and one declared reason enum per layer:
+
+| Layer | Declared refusal class | Exact reason enum |
+| --- | --- | --- |
+| G | `FamilyConfigurationUnsupported` | G `UnsupportedReason` |
+| R2 | `RETConfigurationUnsupported` | `RETUnsupportedReason` (also available under R2's original `UnsupportedReason` alias) |
+| R3 ARF | `ARFConfigurationUnsupported` | `ARFUnsupportedReason` |
+| R3 recomputation | `RecomputationConfigurationUnsupported` | `RecomputationUnsupportedReason` |
+
+All classes retain code `FAMILY_CONFIG_UNSUPPORTED`. Each evaluator catches
+this common family, including a genuine upstream refusal, without recasting
+its reason. Each declared class accepts exactly its bound enum, including
+during pickle reconstruction. Metadata and input errors raise before a
+callback can produce a coverage row.
+
+`count_family_outcomes` is the sole denominator implementation. It accepts
+sealed `FamilyOutcome`, `RETOutcome`, `ARFOutcome` and
+`RecomputationOutcome` rows, checks provenance before counting, rejects
+duplicate keys, and retains every refused row and weight, including zero
+weights. `count_arf_outcomes` and `count_ret_outcomes` delegate to it;
+`RETDenominator` aliases `FamilyDenominator`. Counts and weights partition
+exactly into supported and refused totals and the per-reason inventory.
+
+The result boundary is narrower than the denominator boundary. Each evaluator
+accepts only its own exact result type and unchanged seal. `apply_arf` also
+checks a prior `ARFResult` before using its claim as an input. G household
+aggregation, its money totals and the 203(a)(5) guard accept only G results;
+G money totals accept only G outcome envelopes. R2 and recomputation money
+aggregates likewise require their own outcomes. The guard and G conformance
+report's refusal inventory accept only G's exact refusal class and reasons.
+None of the common denominator machinery converts an ARF or recomputed PIA
+into a family payment.
+
+Seal-time identities retain G's 202/203 accounting. R2 validates the existing
+203(b)/(f) gross/net/deduction and final/provisional reconciliation identities.
+R3 validates the 202(q)(7) credited-month and benefit identities and the
+215(f)(4) recomputation threshold. The original supported/refused tables and
+all existing statutory readings remain in force; malformed provenance is an
+input error with no coverage reason code.
+
+### Executed cross-layer invariants
+
+29. **Exact refusal binding and retention.**
+    `test_each_refusal_has_one_exact_layer_reason_enum` and
+    `test_every_evaluator_retains_a_genuine_refusal_family` exercise every
+    layer and evaluator. `test_g_guard_and_report_reject_sibling_refusal_reasons`
+    preserves G's reason inventory and guard boundary.
+30. **One conserved, order-independent denominator.**
+    `test_common_denominator_partition_order_and_layer_counter_differential`
+    generates weights with Hypothesis, compares all counters with zero
+    tolerance, reverses row order and verifies exact count/weight partitions.
+    `test_common_counter_rejects_unsealed_or_altered_outcomes` covers every
+    layer. Duplicate-key rejection and zero weights retain their existing
+    semantics.
+31. **Provenance and serialization closure.**
+    `test_all_layer_outputs_require_the_shared_private_capability` and
+    `test_all_layer_pickle_roundtrips_retain_denominator_and_copy_protection`
+    cover construction/copy denial and valid pickle round trips. The shared
+    tests also mutate nested credited months and transplant a seal to a
+    different object. Existing round-11 Hypothesis tests continue to execute
+    G's accounting and detached guard-history invariants.
+32. **Layer-specific monetary admission and input-error atomicity.**
+    `test_g_money_consumers_reject_other_layer_results_and_outcomes`,
+    `test_invalid_evaluator_metadata_precedes_computation` and
+    `test_invalid_computation_is_never_a_denominator_row` keep the money
+    boundaries and invalid-before-coverage ordering. R2 and R3's design notes
+    name their result/accounting property tests and evaluator checks.
+
+### Widow and entitled CDB regression
+
+The existing R2 binding-survivor-maximum case now explicitly attests
+`child_in_care=False`, the assumption behind its original expected amounts.
+All original assertions remain. The positive-care reading names the entitled
+child (`child_in_care="cdb"`), as required by G's input schema. Both readings
+compute widow $796.40, entitled CDB $0 and a binding maximum, and both retain
+R2's `deduction_before_reduction_part_b` refusal. Boolean `True` is separately
+pinned as `InvalidFamilyInput`; it does not name an entitled child. No care
+rule or money reading is changed (202(q)(5)(D); RS 00615.340/.010).
+
+### Source seal, judgment and scope
+
+G, R2 and R3 were already excluded from the historical birth-evidence source
+seal. The private provenance module is added to that same exclusion tuple
+and its test mirror, and to the Track B module set whose disjointness from
+the birth-evidence import graph is checked. No historical production source
+or committed run is changed.
+
+No new statutory interpretation needs Max's judgment. Earlier open judgments
+and rulings remain as documented. The G conformance report must regenerate
+byte for byte; all captured-source hashes and worked-example assertions stay
+unchanged. This integration does not expand statutory coverage or implement
+monthly assembly I.
+
+R2's `GraceYearDecision` is also sealed computation evidence: it determines
+protected months and therefore money under 203(f). `RETBeneficiary`,
+`RecordYear` and `apply_ret_year` validate both final and estimated grace
+evidence before coverage checks, including evidence altered after an input
+record was constructed. `GraceYearState` remains a constructible declaration
+of starting history. `test_every_ret_admission_rejects_invalid_grace_evidence`
+and Hypothesis `test_grace_pickle_roundtrip_and_tamper_rejection_preserve_money`
+execute this boundary; `test_grace_pickle_restore_revalidates_nested_state_and_identities`
+reconciles grace categories, eligible/protected months and carried history.
+Malformed or deleted result fields are likewise input errors, as exercised by
+Hypothesis `test_deleted_outcome_fields_are_input_errors`.
