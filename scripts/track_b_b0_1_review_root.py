@@ -474,19 +474,25 @@ def _extglob_group(
     text: str, index: int, escapes: bool = False
 ) -> tuple[int, tuple[int, ...]] | None:
     """If an extglob group opens at ``text[index]``, its closing index and
-    the ``|`` at its own depth. Parentheses inside a bracket class or after
+    the ``|`` at its own depth.
+
+    As Node's minimatch reads it, only an extglob opener (``@(``, ``!(``
+    and the like) nests; a plain ``(`` is literal, so ``@(a|(b)`` closes
+    at the ``)`` after ``b``. Parentheses inside a bracket class or after
     a backslash are not syntax, and a group that never closes is literal
     text (``None``)."""
     if text[index] not in _EXTGLOB or not text.startswith("(", index + 1):
         return None
-    depth = 0
+    depth = 1
     bars: list[int] = []
-    scan = index + 1
+    scan = index + 2
     while scan < len(text):
         char = text[scan]
-        if char == "(":
+        if char in _EXTGLOB and text.startswith("(", scan + 1):
             depth += 1
-        elif char == ")":
+            scan += 2
+            continue
+        if char == ")":
             depth -= 1
             if depth == 0:
                 return scan, tuple(bars)
@@ -610,10 +616,19 @@ def _class_token(body: str, fold: bool, escapes: bool = False) -> Token:
             and items[index + 2][0] == "char"
         ):
             low, high = ord(item[1]), ord(items[index + 2][1])
-            if len(chars) + high - low + 1 > CLASS_LIMIT:
+            if high - low + 1 > CLASS_LIMIT:
                 raise OverflowError("a class too large to read")
+            if (
+                index + 4 < len(items)
+                and items[index + 3] == ("char", "-", False)
+                and items[index + 4][0] == "char"
+            ):
+                # ripgrep reads a chain (``d-d-d``) unlike Node and Bun.
+                raise OverflowError("a chained range")
             _WORK.spend(max(high - low + 1, 1))
             chars.update(map(chr, range(low, high + 1)))
+            if len(chars) > CLASS_LIMIT:
+                raise OverflowError("a class too large to read")
             index += 3
             continue
         members = item[1] if item[0] == "set" else {item[1]}
@@ -858,6 +873,17 @@ def _letters(tokens: Sequence[Token]) -> set[str]:
     return out
 
 
+def _negation_text(text: str) -> bool:
+    """Whether ``text`` holds ``!(`` outside a class or an escape, whether
+    or not the group parses."""
+    index = 0
+    while index < len(text):
+        if text.startswith("!(", index):
+            return True
+        index = _next_token(text, index, True)
+    return False
+
+
 def _negates(tokens: Sequence[Token]) -> bool:
     """Whether ``tokens`` hold an extglob ``!(...)``, at any depth."""
     return any(
@@ -1026,8 +1052,9 @@ def pattern_kind(pattern: str, denied: Sequence[str]) -> str:
     ``PATTERN_LIMIT``, has more than ``BRACE_LIMIT`` readings or segments
     in one reading, takes more than ``WORK_LIMIT`` scan steps (charged as
     the work is done), has a class of more than ``CLASS_LIMIT``
-    characters, is nested too deep to read, has an automaton past
-    ``CLOSURE_LIMIT`` or has a sequence number too long to read.
+    characters or a chained range (``[d-d-d]``, which ripgrep reads
+    unlike Node and Bun), is nested too deep to read, has an automaton
+    past ``CLOSURE_LIMIT`` or has a sequence number too long to read.
     """
     names = {Path(d).name for d in denied} | {Path(CODEBOOK_DIR).name}
     stems = {Path(d).stem for d in denied if Path(d).suffix}
@@ -1056,6 +1083,7 @@ def pattern_kind(pattern: str, denied: Sequence[str]) -> str:
                 raise OverflowError("too many readings")
         negated = False
         for text in {pattern, *alternatives, *readings}:
+            negated = negated or _negation_text(text)
             kinds |= _written_kinds(text, denied, names, stems)
             for escapes in (False, True):
                 tokens = glob_tokens(text, escapes=escapes)

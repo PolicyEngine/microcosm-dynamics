@@ -901,6 +901,11 @@ def test_denied_from_record_takes_every_removed_file():
         # #534 round 4: a negation can spell a letter by excluding the rest
         ("Glob", "**/!(|[!d]|??*)eep_denied.md", False),
         ("Grep", "@(!(|[!d]|??*))eep_denied.md", False),
+        # #534 round 5: Node's plain ( is literal, so these groups close at
+        # the ) after x; and ripgrep reads the chain [d-d-d] as d
+        ("Glob", "**/!(|[!d]|??*|(x)eep_denied.md", False),
+        ("Glob", "**/@([d]|(x)eep_denied.md", False),
+        ("Glob", "**/[d-d-d]eep_denied.md", False),
         # a filter that excludes a denied name names it (conservative)
         ("Glob", "**/deep_denied!(.md)", False),
         # nested too deep to read: unclassified, so void
@@ -1019,6 +1024,35 @@ def test_limits_refuse_only_past_their_bounds():
     )
 
 
+def test_class_unions_are_charged_to_the_work_budget():
+    """A range, a POSIX class and a class read back as letters each spend
+    one step per character, so a small budget stops them."""
+    wide = review_root.glob_tokens("[\x00-\u03ff]")
+    try:
+        review_root._WORK.left = 100
+        with pytest.raises(OverflowError):
+            review_root.glob_tokens("[\x00-\u03ff]")
+        review_root._WORK.left = 100
+        with pytest.raises(OverflowError):
+            review_root.glob_tokens("[[:ascii:]]")
+        review_root._WORK.left = 100
+        with pytest.raises(OverflowError):
+            review_root._letters(wide)
+    finally:
+        review_root._WORK.left = None
+
+
+def test_ranges_are_bounded_one_by_one_and_counted_after_the_union():
+    """Overlapping ranges count their distinct members, and a chained
+    range, which ripgrep reads differently, is not classified."""
+    kind = review_root.pattern_kind
+    overlap = "\u1000-\u13ff" * 2
+    assert kind("deep_denied[" + overlap + "]", DENIED) == "inside_root"
+    assert kind("deep_denied[" + overlap + ".]md", DENIED) == "unclassified"
+    assert kind("**/[d-d-d]eep_denied.md", DENIED) == "unclassified"
+    assert kind("**/[a-c-]x.md", DENIED) == "inside_root"
+
+
 def test_a_negation_is_unclassified_unless_it_names_a_denied_path():
     """``!(...)`` reads as ``*`` in the automaton. Beside a whole denied
     stem that names it; anywhere else the pattern is unclassified, since a
@@ -1028,6 +1062,9 @@ def test_a_negation_is_unclassified_unless_it_names_a_denied_path():
     assert kind("**/!(|[!d]|??*)eep_denied.md", DENIED) == "unclassified"
     assert kind("**/*.!(md)", DENIED) == "unclassified"
     assert kind("**/*.md", DENIED) == "inside_root"
+    # a negation that does not parse as a group is still a negation
+    assert kind("**/!(|[!d]|??*|(x)eep_denied.md", DENIED) == "unclassified"
+    assert kind("x!(y", DENIED) == "unclassified"
 
 
 def test_unbalanced_openers_up_to_the_limit_are_still_read():
@@ -1091,6 +1128,10 @@ def test_glob_readings_follow_the_engines():
     assert extglob("@(a|@(b|c))") == ["a", "b", "c"]
     assert extglob("@(a") == ["@(a"]
     assert extglob("a[@(]b|c)") == ["a[@(]b|c)"]
+    # only an extglob opener nests; a plain ( is literal (Node)
+    assert review_root._extglob_group("@(a|(b|c))", 0) == (8, (3, 6))
+    assert review_root._extglob_group("@(a|@(b|c))", 0) == (10, (3,))
+    assert extglob("@([d]|(x)y") == ["[d]y", "(xy"]
     assert extglob("\\@(a)") == ["\\@(a)"]
     tokens = review_root.glob_tokens
     assert tokens("a[.,]b") == (
@@ -1545,7 +1586,7 @@ def _spellings(seed, count):
             change = rng.choice(
                 ["escape", "case", "one", "cases", "class", "class", "wrap"]
                 + ["repeat", "sequence", "escaped-class", "escaped-one"]
-                + ["negation"]
+                + ["negation", "paren", "chain"]
             )
             index = rng.randrange(len(units))
             char = units[index]
@@ -1562,6 +1603,13 @@ def _spellings(seed, count):
                 else:
                     low, high = chr(ord(char) - 1), chr(ord(char) + 1)
                     units[index] = f"{{{low}..{high}}}"
+            elif change == "paren" and len(char) == 1 and char.isalpha():
+                # Node closes @( at the ) of a plain (, so the group is
+                # the letter or "(x"
+                units[index] = f"@({char}|(x)"
+            elif change == "chain" and len(char) == 1 and char.isalpha():
+                # ripgrep reads the chain c-c-c as c alone
+                units[index] = f"[{char}-{char}-{char}]"
             elif change == "negation" and len(char) == 1 and char != "*":
                 # Node reads !(|[!c]|??*) as c alone
                 units[index] = f"!(|[!{char}]|??*)"
@@ -1581,6 +1629,8 @@ def _spellings(seed, count):
                 "escaped-class",
                 "escaped-one",
                 "negation",
+                "paren",
+                "chain",
             ):
                 continue
             elif change == "wrap" or len(char) != 1:

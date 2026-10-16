@@ -862,8 +862,8 @@ def test_addendum_carries_the_round_10_record(prose, sentence):
         # #534 round 3: the refusal limits, and round 9's schema in the
         # past tense
         "since PR #534 so is one longer than 1,024 characters, past the "
-        "read log's work limits or with a class of more than 1,024 "
-        "characters.",
+        "read log's work limits, with a class of more than 1,024 characters "
+        "or with a chained range such as `[a-c-e]`.",
         "The schema became v6 for the rule as it then stood",
     ],
 )

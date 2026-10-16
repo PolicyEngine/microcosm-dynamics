@@ -1385,8 +1385,8 @@ sharpened after round 1 (below).
     a name split across a group, such as `{stem,x}.md`, is read whole.
     A pattern with more than 4,096 alternatives is not classified, and
     voids the review; since PR #534 so is one longer than 1,024
-    characters, past the read log's work limits or with a class of more
-    than 1,024 characters.
+    characters, past the read log's work limits, with a class of more
+    than 1,024 characters or with a chained range such as `[a-c-e]`.
   - Since Q6 round 9, a segment that holds a denied name's whole stem
     and, read as a wildcard, matches that name also names it: `stem*`,
     `stem?md`, `stem[.]md`. An unbalanced brace is literal text, and the
