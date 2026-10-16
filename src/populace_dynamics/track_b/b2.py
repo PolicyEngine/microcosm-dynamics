@@ -14,8 +14,9 @@ three scripts apply one copy of each rule:
 - the Monte Carlo and undefined-replicate rules (section 7);
 - validity and the pass conjunction, INVALID, then FAIL, then PASS, then
   INCONCLUSIVE (section 8);
-- eligibility and the decompounding ladder inside the six level cells
-  under d1342 (section 5);
+- eligibility and the decompounding ladder inside B2's gate surface: the
+  six level cells of d781 (a), rescoped by d1606 (option C1) to p90 and
+  the zero rate by cohort (section 5);
 - tolerances, their plain-unit statements and the exposure labels
   (sections 5 and 6);
 - the unadjusted 95% interval of every report-only cell (section 5).
@@ -159,10 +160,20 @@ CELL_METRICS = dict(
     )
 )
 CELLS = tuple(CELL_METRICS)
-#: d781 (a): B2's gate family is the six level cells.
+#: d781 (a): the six level cells, B2's ruled surface.
 LEVEL_CELLS = (
     "earn_p50.older",
     "earn_p50.prime",
+    "earn_p90.older",
+    "earn_p90.prime",
+    "earn_zero_rate.older",
+    "earn_zero_rate.prime",
+)
+#: d1606, option C1 (2026-10-16): B2's gate surface. Its first floor
+#: stopped the ladder inside the six (#42 comment 6200099988); priced on
+#: that floor (#42 comment 6201696504), only the six less both medians
+#: cleared at k = 3. The medians and the other ten cells are report-only.
+GATE_SURFACE = (
     "earn_p90.older",
     "earn_p90.prime",
     "earn_zero_rate.older",
@@ -188,9 +199,10 @@ EXPOSURE_FLOOR_DETAIL = (
 # Statements B2's records carry (sections 4, 5, 6 and 13)
 # --------------------------------------------------------------------------
 HEADLINE_SCOPE = (
-    "B2's gate covers earnings levels and zero rates only, not changes, "
-    "dispersion, mobility or persistence. H and B3L rely on B2 for levels "
-    "only (d781 (a))."
+    "B2's gate covers p90 earnings and the zero-earnings rate, by cohort, "
+    "only: not median earnings, changes, dispersion, mobility or "
+    "persistence. H and B3L rely on B2 for those two level statistics only "
+    "(d781 (a), d1606 option C1)."
 )
 FALLBACK_SCOPE = (
     "EXPOSURE_UNRESOLVED fires (Q8(b)): B2's registration is the registered "
@@ -1117,7 +1129,7 @@ def ladder(
     target: float = POWER_TARGET,
     min_cells: int = MIN_GATED_CELLS,
 ) -> dict[str, Any]:
-    """Section 5's decompounding ladder, run inside the ruled surface.
+    """Section 5's decompounding ladder, run inside B2's gate surface.
 
     1. Order the eligible cells by descending tolerance/sigma, ties by
        name.
@@ -1474,7 +1486,8 @@ THREAD_VARIABLES = (
 
 #: populace-fit's forest job count. Unset, it is -1, every core, which the
 #: shared host's cap forbids; protocol v2 pinned it to 4. Forests are
-#: built with fixed per-tree seeds, so the count does not change a fit.
+#: built with fixed per-tree seeds, so the count is not expected to change
+#: a fit; B2 fixes it and does not rely on that expectation.
 FIT_JOBS_VARIABLE = "POPULACE_FIT_N_JOBS"
 
 
@@ -1485,11 +1498,12 @@ def thread_settings() -> dict[str, str]:
 
     Max ruled on 2026-10-11 that runs on the shared host use at most four
     BLAS and OpenMP threads and ``OMP_WAIT_POLICY=PASSIVE``. B2 uses one
-    thread per process, and up to four worker processes, because in its
-    pinned environment candidate 3's projection loop hangs in the
-    participation gates' ``HistGradientBoostingClassifier.predict_proba``
-    with more than one OpenMP thread. It hung at 2 and 4 threads, under
-    both PASSIVE and ACTIVE, on invented data; one thread completes.
+    thread per process, and up to four worker processes. On 2026-10-13 a
+    probe of candidate 3's fit and projection on invented data stalled
+    once at 0% CPU with more than one OpenMP thread. On 2026-10-15 the
+    same probe completed at 1, 2 and 4 threads, so the stall was not
+    reproduced; its cause is unknown. B2 uses one thread because it
+    completed in every run (B2's registration on #42, "Why one thread").
     """
     settings = {name: os.environ.get(name, "") for name in THREAD_VARIABLES}
     for name, value in settings.items():

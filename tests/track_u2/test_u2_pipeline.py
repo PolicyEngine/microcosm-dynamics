@@ -187,6 +187,25 @@ def test_runner_refuses_a_partial_row_set(u2_inputs, u2_params, declared):
         )
 
 
+def test_an_invented_run_accepts_the_ten_rows_given_explicitly(
+    u2_inputs, u2_params, declared, u2_run
+):
+    """Round 3: only a registered run refuses a row_set.  An invented run
+    given the ten registered rows (a plain copy) computes the same rows as
+    the default."""
+
+    explicit = runner.run_track_u2(
+        u2_inputs,
+        u2_params,
+        data_provenance=ap.INVENTED,
+        role_context=declared,
+        row_set=dict(rows.REGISTERED_ROWS),
+    )
+    assert json.dumps(explicit["rows"], sort_keys=True) == json.dumps(
+        u2_run["rows"], sort_keys=True
+    )
+
+
 def test_runner_refuses_tampered_invented_inputs(
     u2_inputs, u2_params, declared
 ):

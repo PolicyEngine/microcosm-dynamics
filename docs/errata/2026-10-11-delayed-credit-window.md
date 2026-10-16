@@ -1,10 +1,11 @@
 # Erratum: the delayed-retirement-credit window
 
-**Verification class: statutory conformance.** This note records a
-statutory float credit function beside the unchanged sealed oracle for
-cohorts from 1917. The impact audit below is a static audit of model code
-and committed metadata; it admits no population count, behavioral result,
-or forecast claim.
+**Verification class: statutory conformance.** This note records a statutory
+float credit function beside the unchanged sealed oracle for cohorts from
+1917. The original impact audit below is a static audit of model code and
+committed metadata. The appended d1408 section is a separately authorized,
+labelled diagnostic using local PSID. Neither admits a new registered
+result, behavioral estimate or forecast claim.
 
 11 October 2026. Issue #494 identified a four-year cap in
 `ss.benefits.delayed_credit` that shortened the statutory credit window for
@@ -91,10 +92,11 @@ record, not a fresh computation under the statutory convention. No forecast
 verdict is changed by this patch.
 
 The repository contains frozen first-estimates configurations 2–7, but no
-configuration 1. The published report's `/prior_incidents` names incident
-artifacts 1–6 that are also absent from this checkout. Their unavailable
-bytes cannot establish additional cohort exclusions or changed numeric
-pins; the same report mechanism's reachability is established above.
+configuration 1. The repository also contains incident artifacts 1–6
+(`runs/first_estimates_incident_{1..6}.json`). They record aborted
+preparation or computation attempts, with no retained model headline
+tables, so they add no registered money result to reconstruct. The published #307 report and
+its report mechanism remain the first-estimates numeric scope.
 
 ## Other call paths and results outside the differing region
 
@@ -246,7 +248,7 @@ the dollar effect. Where a mechanism carries observed opening benefits,
 an unchanged observed amount can produce no own-payment change despite
 the older worker-record path.
 
-## Retained artifacts and the queued diagnostic
+## Retained artifacts
 
 No committed `runs/*.json`, registration configuration, committed-result pin,
 forecast verdict, or protected engine/gate file is edited. In particular,
@@ -255,43 +257,99 @@ the reachable registered artifact families above and
 bytes. Anchor-context readers retain their original first-estimates input
 hash.
 
-No count of affected people has been computed. Unknown without a
-separately authorized real-data diagnostic are the
-number and weight of affected workers, their PIA amounts, which projected
-or auxiliary worker-record paths use them, the net change in any aggregate
-or ratio, and whether any actual registered record reaches positive
-credits before 1917. Decision `d1408` is queued for Max on that diagnostic;
-the orchestrator will fill in the decision number.
+## The d1408 diagnostic
 
-The diagnostic that would answer those questions is to reconstruct the
-original admitted worker-record/claim inputs for each reachable computation,
-including linked spouse and deceased records, and retain record identifier,
-birth cohort, origin, old-age/disability/death basis, entitlement age in
-months, PIA, record weight and the original payment path. Include R7 and
-the R7 component of cost ordering, tracing both the baseline deceased PIA
-and the package-1a deceased shared vector. Preserve each survivor/deceased
-claim-age pair, its PMF weight, the package scalar and the originating
-worker record. Separate a factor evaluation from an evaluation with
-positive mass that enters a survivor payment or reported aggregate; cost
-ordering evaluates 1a during scoring but reports the 1b cost ratio against
-the baseline. Compute the same
-`late_months = entitlement_age_months - fra_months(birth_year)` used by that
-original caller; for Track M, preserve its whole-year entitlement-age
-convention. Flag old-age factor evaluations satisfying either
+**Verification class: labelled diagnostic under ruling d1408; no registered
+artifact rerun or replaced.** On 12 October 2026 Max ruled (d1408): "run the
+#494 erratum diagnostic as a labelled diagnostic (affected people, weights
+and the change under the statutory window in the four reachable registered
+results), posted on #42 as an erratum note; no rerun or replacement of any
+registered artifact." The R7 and cost-ordering paths found reachable after
+the ruling are included, so the scope is six results. The conditions were
+local PSID only, nothing opened from the restricted-file list, and counts
+and changes only.
+
+For each result the diagnostic exported the code at the commit the artifact
+records, rebuilt the admitted records and claim inputs through the original
+input builders and benefit functions (never a registered entry point), and
+flagged every old-age factor evaluation with
 `1917 <= birth_year <= 1942 and late_months > 48` or
-`birth_year < 1917 and late_months > 0`. Report distinct persons and worker
-records, their weights, and which evaluations actually entered a computed
-payment, linked auxiliary basis or inverse-MS5 PIA. Reconcile the flagged
-supported records under both named conventions through the original
-rounding, payment and inverse-MS5 paths. Report pre-1917 records separately
-as statutorily unsupported by the new bundle, rather than assigning them a
-statutory money amount. This diagnostic requires the separate decision; it
-does not overwrite or silently rerun an original one-shot.
+`birth_year < 1917 and late_months > 0`, computing `late_months` as the
+original caller does (Track M keeps whole-year entitlement ages). For five
+results it reproduced the committed model headlines with
+`LEGACY_48_MONTH_CAP`, then replaced only the credit window with
+`DelayedCreditWindow.STATUTORY` and carried the result through the original
+rounding and payment paths. First estimates is the exception: it is bounded
+from the seed roster and the registered claim-age distribution, not
+reproduced (see the table). External benchmark values are not used or
+reported, and every change is in the model's own values. While the R7
+builder was locating metadata, it displayed external-anchor fields that are
+embedded in the committed R7 artifact and script. The reconstruction
+executes model code and cross-checks model fields only.
+
+The publication is deliberately small. For each result and wave it gives
+at most one flagged subtotal (first estimates gives its support,
+actual-person and expected bounds instead) and the denominator its share
+uses (the seed cohort
+for COLA and FRA 68, the admitted population for Track M and R7; first
+estimates' per-draw denominators stay in its committed artifact); row
+denominators and the Track M sensitivity reading's denominators are not
+published. Each
+payment path is reported only as none, fewer than ten, ten or more, or
+withheld. Cells under ten people are withheld with their weights, shares
+and changes. Every published count names the population it measures; the
+R7 frame, which cost ordering also scores, is the one population
+published twice, and both copies must match. No signed combination (each
+population added, subtracted or left out) of the published populations
+among results that describe the same people (COLA with FRA 68, R7 with
+cost ordering), across rows, waves and both Track M readings, and with
+people and worker-record counts pooled together, equals one through nine.
+Each such family publishes at most 20 distinct populations, and a test
+checks every sign pattern. Rounded population-level aggregates (R7's and
+cost ordering's aggregate cost change) are published even where fewer than
+ten people's payments change; they show only that the combined effect
+stays below the reported precision. The full output is
+`docs/errata/2026-10-11-delayed-credit-window-diagnostic.json`. The method,
+its invariants and tests are in
+`docs/design/d1408_delayed_credit_diagnostic.md` and `scripts/d1408_*.py`.
+
+| Result (code commit) | Legacy reproduction | Flagged supported evaluations (1917–1942) | Change in the model's headline values under the statutory window |
+|---|---|---|---|
+| Track M minimum benefit (`2e4e08be`) | Exact in every cell: 84 in the scored reading, 12 in the d430 sensitivity reading | 34 people, weight 776,587: 1.72% of the 45,064,829 admitted weight (2,135 people). The flagged worker-record count is not published: beside the people count, which includes linked beneficiaries, it would narrow a withheld cell | None. In both readings, no person's receipt changes and every model share changes by 0.0 percentage points |
+| R7 earnings sharing (`a8704357`, the artifact's recorded build pin) | Exact, 1,267 quantities | 12 admitted recipients through 24 linked deceased worker records, weight 462,445: 2.06% of the 22,432,859 admitted weight (1,016 people). Fewer than ten enter a changed computed payment | Aggregate 1b cost change 0.0 percentage points, with and without the scalar. In packages 1a, 1b and 1b without the scalar, every married, divorced and never-married cell shows no change; the widowed cells are withheld |
+| Cost ordering, R7 component (`e86ec0c6`) | Exact, 5 quantities | As R7 | 0.0 percentage points in the reported 1b cost ratio |
+| Track A COLA (`002264d9`) | Exact: every registered draw and every model headline, rows R0–R6 | 2011 cohort: 75 people, one flagged worker record each, weight 1,176,152 (0.68% of the seed cohort's 171,855,006). 2009 cohort: 62, weight 948,185 (0.54% of 175,961,799) | 0.0 in the 50–61, 62–64 and 65–69 groups in every row. The 70–79 and 80+ groups are withheld: fewer than ten people change at 70–79 in six of seven rows (none in R5), and the 80+ cells would reveal small cells by comparison with the row totals and other rows. In R6, 35 recipients change across the registered draws |
+| FRA 68 (`08a695a4`) | Exact: every registered draw and every model headline, rows F0–F8 | Withheld: each subtotal would reveal a cell of fewer than ten by comparison with COLA, which shares its seed cohorts | 0.0 in the 50–61, 62–64 and 65–69 groups in every row, and in F6's 70–79 group, where none changed; the other older groups are withheld as for COLA |
+| First estimates, #307 (`e31eca40`) | Not computed. Actual inclusion needs the registered fitted projection; its fitting stack (populace-fit, populace-frame, policyengine-us, scikit-learn 1.8.0) is not installed in the diagnostic environment, and the diagnostic did not refit it | Unverified upper bound: at most 21 people, weight 571,250, at most 1.58–1.65% of each draw's committed admitted weight | Not computed |
+
+No result has a flagged pre-1917 evaluation. First estimates excludes those
+births before the ledger (its pre-1979 eligibility rule); the other five
+emit no pre-1917 flag.
+
+So under the statutory window Track M's model values are unchanged, and
+the R7 and cost-ordering aggregate cost changes are 0.0 at their reported
+precision; R7's widowed share cells, where its flagged survivors sit, are
+withheld. COLA and FRA 68 are unchanged in every group under 70, and in
+COLA R5's and FRA 68 F6's 70–79 groups; their other older groups are
+withheld, so this note cannot say how much those cells move. For any one supported worker, the added gross delayed credit before
+payment rounding is at most 6.5 percentage points of PIA ("Largest
+possible per-person difference between the conventions" above); dime and
+dollar rounding can move the paid difference slightly past that (on a PIA
+of $1,001 at 70 for a 1937 birth, $1,261.20 becomes $1,326.30, a $65.10
+difference). That section's limits on totals, ratios and inverse MS5
+apply here too. The
+first-estimates exposure is bounded but not reproduced. Every registered
+artifact stands as registered.
+
+An earlier version of this note said the first-estimates incident artifacts
+1–6 were absent from the repository. They are committed
+(`runs/first_estimates_incident_{1..6}.json`); see the corrected paragraph
+above.
 
 ## Not in scope
 
-No new real-data diagnostic, registered rerun, comparator, upstream
-PolicyEngine parameter edit, revision of committed results, or change to
-claiming behavior is part of this correction. Neither an unchanged
-artifact test nor static reachability establishes an unchanged population
-outcome.
+Beyond the d1408 diagnostic above, no real-data diagnostic, registered
+rerun, comparator, upstream PolicyEngine parameter edit, revision of
+committed results, or change to claiming behavior is part of this
+correction. Neither an unchanged artifact test nor static reachability
+establishes an unchanged population outcome.

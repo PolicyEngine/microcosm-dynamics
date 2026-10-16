@@ -492,9 +492,10 @@ def parameters_content_sha256(params: U2Parameters) -> dict[str, Any]:
     containers; ``int`` years and child counts; ``str`` rows, sexes,
     bases and names; ``float`` values, or ``int`` values exactly equal to
     a float.  On that domain the key encoding is injective, so two
-    bundles have equal digests iff they have the same keys and every
-    value is the same number; a dict's insertion order, an integer-valued
-    float stored as an int, or the sign of a zero changes nothing.
+    bundles have equal digests iff they have the same keys and life-table
+    names and every value is the same number; a dict's insertion order, an
+    integer-valued float stored as an int, or the sign of a zero changes
+    nothing.
     """
 
     _exact_instance(params, U2Parameters, "the parameter bundle")

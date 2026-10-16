@@ -1,0 +1,417 @@
+{
+  "schema_version": 1,
+  "verification_class": "statutory conformance",
+  "admitted_scope": "Invented record-years and captured statutory worked examples; no population, behavioral or forecast claim.",
+  "mutation_method": "One deliberate production-line change per check; targeted pytest expected to fail; original bytes restored before the next check. No mutated implementation is committed.",
+  "restored_source_sha256": {
+    "src/populace_dynamics/track_b/ret_ledger.py": "d2ee691723ef67e0403f5e9048d25678b3bb8d0b1f54f27a74de838e76303001",
+    "src/populace_dynamics/track_b/ret_grace.py": "b44d818a1c055005b9a2498a58551a32843afef4fc26fcb2f49f757328e4e7d6"
+  },
+  "checks": [
+    {
+      "mutation": "lower 1/2 -> 1/3",
+      "old": "else year.lower_withholding_rate",
+      "new": "else year.higher_withholding_rate",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_lower_threshold_and_whole_dollar_floor",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger.py::test_lower_threshold_and_whole_dollar_floor[2-1]"
+      ],
+      "summary": "1 failed, 3 passed in 12.97s",
+      "restored": true
+    },
+    {
+      "mutation": "higher 1/3 -> 1/2",
+      "old": "            year.higher_withholding_rate\n",
+      "new": "            year.lower_withholding_rate\n",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_fra_threshold_uses_one_third_and_floors",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger.py::test_fra_threshold_uses_one_third_and_floors[0-0]",
+        "tests/test_track_b_ret_ledger.py::test_fra_threshold_uses_one_third_and_floors[1-0]",
+        "tests/test_track_b_ret_ledger.py::test_fra_threshold_uses_one_third_and_floors[2-0]",
+        "tests/test_track_b_ret_ledger.py::test_fra_threshold_uses_one_third_and_floors[3-1]",
+        "tests/test_track_b_ret_ledger.py::test_fra_threshold_uses_one_third_and_floors[5-1]",
+        "tests/test_track_b_ret_ledger.py::test_fra_threshold_uses_one_third_and_floors[6-2]"
+      ],
+      "summary": "6 failed in 37.33s",
+      "restored": true
+    },
+    {
+      "mutation": "excess floor -> round",
+      "old": "return floor(max(Fraction(0), income - amount) * fraction)",
+      "new": "return round(max(Fraction(0), income - amount) * fraction)",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_lower_threshold_and_whole_dollar_floor",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger.py::test_lower_threshold_and_whole_dollar_floor[3-1]"
+      ],
+      "summary": "1 failed, 3 passed in 20.57s",
+      "restored": true
+    },
+    {
+      "mutation": "count FRA month wages",
+      "old": "before = fra_month - 1",
+      "new": "before = fra_month",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_fra_month_wages_and_later_wages_are_not_counted",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger.py::test_fra_month_wages_and_later_wages_are_not_counted"
+      ],
+      "summary": "1 failed in 28.72s",
+      "restored": true
+    },
+    {
+      "mutation": "charge auxiliary before NH",
+      "old": "for key in order:",
+      "new": "for key in reversed(order):",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_auxiliarys_own_excess_begins_after_number_holders_full_deductions",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger.py::test_auxiliarys_own_excess_begins_after_number_holders_full_deductions"
+      ],
+      "summary": "1 failed in 59.94s",
+      "restored": true
+    },
+    {
+      "mutation": "carry uncharged excess into next year January",
+      "old": "excess = calculated_excess(actual, exempt, rate)",
+      "new": "excess = calculated_excess(actual, exempt, rate) + globals().get(\"_mutation_carry\", 0); globals()[\"_mutation_carry\"] = max(0, excess - sum(b.gross_rates))",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_uncharged_excess_does_not_carry_into_the_next_year",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger.py::test_uncharged_excess_does_not_carry_into_the_next_year"
+      ],
+      "summary": "1 failed in 67.90s (0:01:07)",
+      "restored": true
+    },
+    {
+      "mutation": "drop qualifying divorced-spouse exclusion",
+      "old": "[k for k in people if not _divorced_excluded(people[k], m)]",
+      "new": "[k for k in people]",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_qualifying_divorced_spouse_is_outside_number_holders_test",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger.py::test_qualifying_divorced_spouse_is_outside_number_holders_test[two_years]",
+        "tests/test_track_b_ret_ledger.py::test_qualifying_divorced_spouse_is_outside_number_holders_test[prior_rib]"
+      ],
+      "summary": "2 failed in 41.50s",
+      "restored": true
+    },
+    {
+      "mutation": "charge grace-year non-service months",
+      "old": "and grace.applies",
+      "new": "and False",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_grace_nonservice_months_protect_own_benefit",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger.py::test_grace_nonservice_months_protect_own_benefit"
+      ],
+      "summary": "1 failed in 40.70s",
+      "restored": true
+    },
+    {
+      "mutation": "round partial shares before reapportionment",
+      "old": "shares = {k: remaining * weights[k] / weight for k in active}",
+      "new": "shares = {k: Fraction(floor(remaining * weights[k] / weight)) for k in active}",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger_sources.py::test_poms_02501_110_partial_benefit_example_3_capped_reapportionment",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_sources.py::test_poms_02501_110_partial_benefit_example_3_capped_reapportionment"
+      ],
+      "summary": "1 failed in 54.79s",
+      "restored": true
+    },
+    {
+      "mutation": "NESE monthly floor -> round",
+      "old": "floor(quotient)",
+      "new": "round(quotient)",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger_sources.py::test_poms_02501_080_fra_wage_and_nese_examples",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_sources.py::test_poms_02501_080_fra_wage_and_nese_examples[earnings2-6-9776-0]"
+      ],
+      "summary": "1 failed, 3 passed in 55.41s",
+      "restored": true
+    },
+    {
+      "mutation": "charge December before January",
+      "old": "for m in range(1, 13):",
+      "new": "for m in range(12, 0, -1):",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_charging_starts_with_first_entitled_month_and_tracks_rate_changes",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger.py::test_charging_starts_with_first_entitled_month_and_tracks_rate_changes"
+      ],
+      "summary": "1 failed in 53.57s",
+      "restored": true
+    },
+    {
+      "mutation": "provisional partial month instead of full month",
+      "old": "if provisional or taken == total:",
+      "new": "if taken == total:",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_last_month_is_partial_final_but_full_provisional",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger.py::test_last_month_is_partial_final_but_full_provisional"
+      ],
+      "summary": "1 failed in 69.86s (0:01:09)",
+      "restored": true
+    },
+    {
+      "mutation": "use reduced G rates instead of original shares",
+      "old": "{k: people[k].original_rates[m - 1] for k in caps}",
+      "new": "caps",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger_sources.py::test_poms_02501_110_partial_benefit_example_2_original_shares",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_sources.py::test_poms_02501_110_partial_benefit_example_2_original_shares"
+      ],
+      "summary": "1 failed in 56.61s",
+      "restored": true
+    },
+    {
+      "mutation": "remove partial-payment caps",
+      "old": "capped = {k for k in active if shares[k] > caps[k]}",
+      "new": "capped = set()",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger_sources.py::test_poms_02501_110_partial_benefit_example_3_capped_reapportionment",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_sources.py::test_poms_02501_110_partial_benefit_example_3_capped_reapportionment"
+      ],
+      "summary": "1 failed in 81.19s (0:01:21)",
+      "restored": true
+    },
+    {
+      "mutation": "charge DIB/DWB/CDB own earnings",
+      "old": "or b.benefit_types[month - 1] in DISABILITY_TYPES",
+      "new": "or False",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_disability_benefits_are_exempt_from_their_own_work_test",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger.py::test_disability_benefits_are_exempt_from_their_own_work_test[BenefitType.DIB]",
+        "tests/test_track_b_ret_ledger.py::test_disability_benefits_are_exempt_from_their_own_work_test[BenefitType.DWB]",
+        "tests/test_track_b_ret_ledger.py::test_disability_benefits_are_exempt_from_their_own_work_test[BenefitType.CDB]"
+      ],
+      "summary": "3 failed in 49.89s",
+      "restored": true
+    },
+    {
+      "mutation": "prorate annual limit in year of death",
+      "old": "monthly = exempt / 12",
+      "new": "exempt = exempt * (b.death_month - 1) / 12 if b.death_month else exempt; monthly = exempt / 12",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_year_of_death_uses_full_annual_exemption",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger.py::test_year_of_death_uses_full_annual_exemption"
+      ],
+      "summary": "1 failed in 61.30s (0:01:01)",
+      "restored": true
+    },
+    {
+      "mutation": "remove binding-maximum refusal",
+      "old": "and m in record.family_maximum_binding_months",
+      "new": "and False",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_auxiliary_excess_with_binding_family_maximum_is_deferred_to_part_b",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger.py::test_auxiliary_excess_with_binding_family_maximum_is_deferred_to_part_b"
+      ],
+      "summary": "1 failed in 100.42s (0:01:40)",
+      "restored": true
+    },
+    {
+      "mutation": "credit provisional instead of final deduction months",
+      "old": "and row.deduction > 0",
+      "new": "and row.provisional_deduction > 0",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_actual_and_estimated_earnings_are_separate_inputs",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger.py::test_actual_and_estimated_earnings_are_separate_inputs"
+      ],
+      "summary": "1 failed in 80.80s (0:01:20)",
+      "restored": true
+    },
+    {
+      "mutation": "whole-dollar final payment floor -> ceil",
+      "old": "whole_dollars(final[k, m])",
+      "new": "ceil(final[k, m])",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger_properties.py::test_every_month_conserves_exact_money_and_checks_are_floored",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_properties.py::test_every_month_conserves_exact_money_and_checks_are_floored"
+      ],
+      "summary": "1 failed in 118.84s (0:01:58)",
+      "restored": true
+    },
+    {
+      "mutation": "ignore sub-dollar stop/refusal",
+      "old": "and overflow < 1",
+      "new": "and False",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger_readings.py::test_subdollar_stop_and_complete_reading_can_change_a_check_by_one_dollar",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_readings.py::test_subdollar_stop_and_complete_reading_can_change_a_check_by_one_dollar"
+      ],
+      "summary": "1 failed in 84.90s (0:01:24)",
+      "restored": true
+    },
+    {
+      "mutation": "apply sub-dollar stop to two beneficiaries",
+      "old": "len(caps) >= 3",
+      "new": "len(caps) >= 2",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_two_beneficiary_capped_payment_pays_exact_balance_without_subdollar_stop",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger.py::test_two_beneficiary_capped_payment_pays_exact_balance_without_subdollar_stop"
+      ],
+      "summary": "1 failed in 51.29s",
+      "restored": true
+    },
+    {
+      "mutation": "reuse final grace decision for estimate",
+      "old": "if provisional and b.estimated_grace is not None",
+      "new": "if False",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger_readings.py::test_estimated_initial_grace_and_actual_grace_are_separate",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_readings.py::test_estimated_initial_grace_and_actual_grace_are_separate"
+      ],
+      "summary": "1 failed in 79.80s (0:01:19)",
+      "restored": true
+    },
+    {
+      "mutation": "charge_fra_month",
+      "old": "index < fra_month",
+      "new": "index <= fra_month",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/src:/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_grace.py::test_dib_2009_through_january_2011_then_fra_rib_creates_no_nsm",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_grace.py::test_dib_2009_through_january_2011_then_fra_rib_creates_no_nsm"
+      ],
+      "summary": "1 failed in 41.48s",
+      "restored": true
+    },
+    {
+      "mutation": "repeat_initial_grace",
+      "old": "if last_met is None:",
+      "new": "if True:",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/src:/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_grace.py::test_widow_to_rib_without_break_transfers_2010_lmety",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_grace.py::test_widow_to_rib_without_break_transfers_2010_lmety"
+      ],
+      "summary": "1 failed in 47.51s",
+      "restored": true
+    },
+    {
+      "mutation": "renew_same_type_after_gap",
+      "old": "- _legal_types(previous)",
+      "new": "- frozenset()",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/src:/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_grace.py::test_same_spouse_type_after_divorce_and_gap_does_not_grant_fresh_grace",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_grace.py::test_same_spouse_type_after_divorce_and_gap_does_not_grant_fresh_grace"
+      ],
+      "summary": "1 failed in 27.66s",
+      "restored": true
+    },
+    {
+      "mutation": "overwrite_lmety_for_termination_only",
+      "old": "last_met_year=last_met,",
+      "new": "last_met_year=year if kinds else last_met,",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/src:/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_grace.py::test_january_2010_child_termination_belongs_to_2009",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_grace.py::test_january_2010_child_termination_belongs_to_2009"
+      ],
+      "summary": "1 failed in 27.39s",
+      "restored": true
+    },
+    {
+      "mutation": "drop_cfr_disability_exclusion",
+      "old": "not month.entitled_types & DISABILITY_TYPES",
+      "new": "True",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/src:/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_grace.py::test_simultaneous_disability_cfr_default_and_poms_alternative_are_explicit",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_grace.py::test_simultaneous_disability_cfr_default_and_poms_alternative_are_explicit"
+      ],
+      "summary": "1 failed in 51.11s",
+      "restored": true
+    },
+    {
+      "mutation": "erase_pending_grace_at_another_gap",
+      "old": "pending = pending or bool(",
+      "new": "pending = bool(",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011/src:/Users/maxghenis/PolicyEngine/_clones/mdyn-trackb-r2-20261011 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q 'tests/test_track_b_ret_grace.py::test_same_type_gap_does_not_erase_pending_grace[1]'",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_grace.py::test_same_type_gap_does_not_erase_pending_grace[1]"
+      ],
+      "summary": "1 failed in 53.50s",
+      "restored": true
+    },
+    {
+      "mutation": "retain_zero_payable_original_partial_shares",
+      "old": "and people[k].original_rates[m - 1] > 0",
+      "new": "and net[k, m] > 0",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_entitled_zero_rate_auxiliary_keeps_its_original_partial_share",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger.py::test_entitled_zero_rate_auxiliary_keeps_its_original_partial_share"
+      ],
+      "summary": "1 failed in 2.58s",
+      "restored": true
+    },
+    {
+      "mutation": "retain_zero_payable_binding_maximum_beneficiaries",
+      "old": "and other.original_rates[m - 1] > 0",
+      "new": "and net[k, m] > 0",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_binding_survivor_maximum_with_zero_rate_cdb_is_deferred_to_part_b",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger.py::test_binding_survivor_maximum_with_zero_rate_cdb_is_deferred_to_part_b"
+      ],
+      "summary": "1 failed in 2.47s",
+      "restored": true
+    },
+    {
+      "mutation": "enforce_own_work_exemption_legal_benefit_types",
+      "old": "types[m - 1] not in (BenefitType.CHILD, BenefitType.WIDOW)",
+      "new": "False",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger_readings.py::test_own_work_exempt_flag_requires_a_statutory_benefit_type",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_readings.py::test_own_work_exempt_flag_requires_a_statutory_benefit_type[BenefitType.RIB]",
+        "tests/test_track_b_ret_ledger_readings.py::test_own_work_exempt_flag_requires_a_statutory_benefit_type[BenefitType.SPOUSE]"
+      ],
+      "summary": "2 failed in 2.74s",
+      "restored": true
+    },
+    {
+      "mutation": "monthly_chart_ceiling_not_floor",
+      "old": "monthly = Fraction(ceil(monthly))",
+      "new": "monthly = Fraction(floor(monthly))",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger.py::test_chart_ceiling_and_exact_monthly_limit_readings_change_grace_payment",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger.py::test_chart_ceiling_and_exact_monthly_limit_readings_change_grace_payment"
+      ],
+      "summary": "1 failed in 2.25s",
+      "restored": true
+    },
+    {
+      "mutation": "refuse_ordinary_adult_deemed_child_reading",
+      "old": "b.benefit_types[m - 1] is BenefitType.CHILD",
+      "new": "False",
+      "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_ret_ledger_readings.py::test_deemed_ordinary_child_requires_explicit_adult_age_facts",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_ret_ledger_readings.py::test_deemed_ordinary_child_requires_explicit_adult_age_facts"
+      ],
+      "summary": "1 failed in 3.07s",
+      "restored": true
+    }
+  ]
+}

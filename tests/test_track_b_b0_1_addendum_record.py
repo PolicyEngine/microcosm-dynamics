@@ -806,7 +806,7 @@ def test_addendum_carries_the_round_8_fixes(prose, sentence):
         # Q6 round 9: the read-log rule as it stands, and its version
         "Since Q6 round 9, a segment that holds a denied name's whole stem "
         "and, read as a wildcard, matches that name also names it",
-        "The rule as it now stands is `track_b_b0_1_review_read_log.v6`.",
+        "Each log's schema version records the rule it was made under.",
         # Q6 round 9: what is queued when nu is 0
         "Rescoping the surface or a tolerance cannot cure ν = 0, so there "
         "the decision queued is how the critical value is set.",
@@ -831,6 +831,67 @@ def test_addendum_carries_the_round_10_record(prose, sentence):
     assert sentence in prose
 
 
+@pytest.mark.parametrize(
+    "sentence",
+    [
+        # The follow-up to Q6 round 10 (PR #534): the v7 read-log rule
+        "Since the follow-up to Q6 round 10 (PR #534), a pattern is also "
+        "read as ripgrep, Node and Bun read it (a bracket class is one "
+        "character whatever it holds, as in `stem[.,]md`;",
+        "a segment that matches a denied name and reads no other character "
+        "at any position of its stem names it, a pattern holding `!(` "
+        "outside a class or escape, whether or not the group closes, that "
+        "names no denied path is not classified (a literal `!(` is written "
+        "`![(]`),",
+        "the denied names are every file the root record removed, the "
+        "codebook files and code-map tables included.",
+        "The rule as it now stands is `track_b_b0_1_review_read_log.v7`.",
+        "Rounds 5-10's logs were regenerated under the rule as it now "
+        "stands.",
+        "(made as v6, regenerated as v7) covers 21 tool calls.",
+        "PR #534 is that change: a class is read whole, as the glob "
+        "engines read it (v7, above).",
+        # #505's merge-gate review: round 10's observation as the review
+        # stated it, the two cases apart
+        "| Observation (tooling): the six codebook files are checked only "
+        "through the codebook directory, not by their own basenames; the "
+        "four removed code-map tables are not checked at all | The same "
+        "follow-up passes every removed file to the read log. PR #534 "
+        "fixes both:",
+        "After the merge, PR #534 changed only this section's read-log "
+        "text and its tooling rows (round 10's two, and the tense of round "
+        "9's schema row).",
+        # #534 round 3: the refusal limits, and round 9's schema in the
+        # past tense
+        "since PR #534 so is one longer than 1,024 characters, past the "
+        "read log's work limits, with a class of more than 1,024 characters "
+        "or with a chained range such as `[a-c-e]`.",
+        "The schema became v6 for the rule as it then stood",
+    ],
+)
+def test_addendum_carries_the_round_10_follow_up(prose, sentence):
+    assert sentence in prose
+
+
+@pytest.mark.parametrize(
+    "stale",
+    [
+        "The rule as it now stands is `track_b_b0_1_review_read_log.v6`.",
+        "Until it lands, the rule's disclosure is as above",
+        "the codebook files and the removed code-map tables are checked "
+        "only through the codebook directory",
+        # Q6 #534 round 2: the exclusion wording overstated the code
+        "an extglob that excludes a name names it too",
+        # #534 round 3: round 9's disposition spoke of v6 as current
+        "The schema is v6 for the rule as it stands",
+        # #534 round 4: a negation can spell a name, so it is not read as *
+        "`!(...)` reads as `*`,",
+    ],
+)
+def test_addendum_drops_the_round_10_stale_wording(prose, stale):
+    assert stale not in prose
+
+
 @pytest.mark.parametrize("round_number", [5, 6, 7, 8, 9, 10])
 def test_committed_read_logs_follow_the_rule_as_it_stands(round_number):
     """Rounds 5-10's logs are made under the current rule: round 5 is
@@ -842,7 +903,10 @@ def test_committed_read_logs_follow_the_rule_as_it_stands(round_number):
         / f"track_b_b0_1_addendum_q6_readlog_r{round_number}.json"
     )
     log = json.loads(path.read_text(encoding="utf-8"))
-    assert log["schema"] == "track_b_b0_1_review_read_log.v6"
+    assert log["schema"] == "track_b_b0_1_review_read_log.v7"
+    # v7 checks every file the root record removed: 27 files and four
+    # code-map tables.
+    assert log["n_denied"] == 31
     assert log["review_counts"] is (round_number != 5)
 
 

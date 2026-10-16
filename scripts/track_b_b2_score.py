@@ -512,7 +512,7 @@ def check_scoring_inputs(
         if (
             len(gated) < b2.MIN_GATED_CELLS
             or len(set(gated)) != len(gated)
-            or not set(gated) <= set(b2.LEVEL_CELLS)
+            or not set(gated) <= set(b2.GATE_SURFACE)
         ):
             raise ValueError("the floor's gated surface is invalid")
         b2.t_star(
@@ -689,8 +689,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--floor-artifact", type=Path, default=FLOOR)
     parser.add_argument("--workers", type=int, default=4)
     args = parser.parse_args(argv)
-    # First, before anything is read: more than one thread hangs
-    # candidate 3's projection in this environment (b2.thread_settings).
+    # First, before anything is read: B2 runs one thread per process
+    # (b2.thread_settings says why).
     threads = b2.thread_settings()
     b2.require_workers(args.workers)
 
