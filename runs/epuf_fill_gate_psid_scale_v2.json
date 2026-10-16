@@ -1,0 +1,380 @@
+{
+  "schema": "populace_dynamics.epuf_fill_gate_psid_scale.v2",
+  "registration_id": "2026-10-03-epuf-career-fill",
+  "code_commit": "7061200dd3ee0d6fcc37c5d55fae97f33ebaa4d7",
+  "spec": {
+    "anchor_wave": 2011,
+    "presence": "in_family",
+    "max_birth_year": 1980,
+    "retirement_age": 62,
+    "status_rule": "plan_age_m4_widowhood",
+    "under_62_precedence": "m4_then_widowhood",
+    "under_62_residual": "disabled_worker",
+    "aged_m4_disabled_di_below_age": null,
+    "m4_waves": [
+      2011
+    ],
+    "reported_type_precedence": [
+      "disability",
+      "survivor",
+      "retirement",
+      "dependent_of_disabled",
+      "dependent_of_retired",
+      "other"
+    ],
+    "ofum_ss_source": "individual_file",
+    "bracket_resolution": "first_observed",
+    "claim_table_max_year": 2008,
+    "stock_imputation_root_seed": 2010,
+    "separated_is_married": true
+  },
+  "psid_provenance": {
+    "kind": "psid_files",
+    "anchor_wave": 2011,
+    "psid_data_dir": "/Users/maxghenis/PolicyEngine/psid-data",
+    "psid_files_sha256": {
+      "family/1968/FAM1968.sps": "a2adbebfb2af38cafb2669e2aebef489f24e9e1d0c1b5e8cd2b23287dcadaaa5",
+      "family/1968/FAM1968.txt": "9fb3f8b872e139f23afc158cc205440af385a1e619a5cc9a95f83fa61b85bb78",
+      "family/1969/FAM1969.sps": "94a07c16e393cae68538d715d6a722a3c0de6e02dc8c9e56c5e658725db622c2",
+      "family/1969/FAM1969.txt": "f564d78850ce6a5e262389df9dc20fae52a3e63f5ae6b141bba787dd04c72fdd",
+      "family/1970/FAM1970.sps": "0212c4fd983a19b9c1cdd71feb4d92beed9d3906f807b485ef209ebd9f6d75f0",
+      "family/1970/FAM1970.txt": "8d28224213dc9d2dd31e1ac70ee9775ff257350926c0f595782de95f5ad4d84c",
+      "family/1971/FAM1971.sps": "8a6ccfc9ba6110dabe8147b528c2e0b2ada2d701889ea9bb03aa6c9bf0d479ae",
+      "family/1971/FAM1971.txt": "97360718a1f76e910ff2f2941dc0c65d6022016a570d53435b8ede97cef0b73c",
+      "family/1972/FAM1972.sps": "04b8594dda71404ff2e27734ff20ba8c7f9b982d2a4c834e61d59958000a5b9e",
+      "family/1972/FAM1972.txt": "5b1148272096ea8b50351ae4a98c1792be666b9ab140b344ee72434abd867055",
+      "family/1973/FAM1973.sps": "10f4b5e346529c6f5f4705842dfaa25186d514725fac6cc3a6b50dfabe3c33c4",
+      "family/1973/FAM1973.txt": "ae656b7f4b689f82259bec0e392e425df61eb8ab446b1bcb4187e25de568d011",
+      "family/1974/FAM1974.sps": "e043119eca809a3a32cbd086b5a17db114da72305446cb54ffa6e134e5ca0082",
+      "family/1974/FAM1974.txt": "579d98750c34753bfd3ee16149bb1124dd8cbd531b97c65a41e9fe0ae7e7f6cf",
+      "family/1975/FAM1975.sps": "a120da243300e5684f946f98acc25414f62579ec8c9c675267bbcce48c88f6e3",
+      "family/1975/FAM1975.txt": "26f6c07de11b9cbfc1ca0ff2942851b73f9e2f89df1abd0b77f2cda5fc097776",
+      "family/1976/FAM1976.sps": "f1884fe637284802ee2c4d0d147ed5f42a048e5f9d30a9c8c05bc53142d61771",
+      "family/1976/FAM1976.txt": "b35387e2b04bb9515f5edc1a31cc4b55a5bf018f9aa102ead4d7399e5d8b0824",
+      "family/1977/FAM1977.sps": "2367ae4b09af04ae0b69ef4cd65a1b47303f7526e24a16483ff1edd21fabbe53",
+      "family/1977/FAM1977.txt": "6314e1ae1784a6d5267ec863c96432c11a8b22a45a09170d7c7322ff0faaa1d8",
+      "family/1978/FAM1978.sps": "2a0eaa0fab5a17dc02a3c344b65599d3169d0a95bab1a2d6b9129454c4886239",
+      "family/1978/FAM1978.txt": "39764f180bf8431e7947027ef656c7910e832c01facfb86c8534735bdf42e12d",
+      "family/1979/FAM1979.sps": "3c1041d482cde534562f251f7cf6a9a7369980fdf5e4b691fa7413c5fa7e58ed",
+      "family/1979/FAM1979.txt": "6666f099d276fe353180b0e1d3881e06be70f656bda87d4f05a04ef7ed80e529",
+      "family/1980/FAM1980.sps": "acba02dc6d341d2cc4a8cd0a8b1365edf9f1d2c90dba32b4ddc83667b6750d67",
+      "family/1980/FAM1980.txt": "a1e28e6e689cbe990ae0cf9d4bbc268c75c5a30a21e0ff7297a970f69ac8a054",
+      "family/1981/FAM1981.sps": "a914dd7d130fca11745d2f099f5181d3e347d4a1206706a4524982f1bc5d4509",
+      "family/1981/FAM1981.txt": "b38c3093711aaa9e74875a610d874f155be6ed4b3a2bf67badc740a7373a149e",
+      "family/1982/FAM1982.sps": "e99097b4fad8dbd1fc99740ee6632db2cfb678dd3dbd7142f62f50bb4b1ff05a",
+      "family/1982/FAM1982.txt": "dc3510d641a9b878528977bdaa1173c46e9cb89db2e0003575213db80cc6476b",
+      "family/1983/FAM1983.sps": "685e7c076eb68a79a5a7c5e4f6a6bbe94fa7769ba5c5883775978b7b2ece0f3e",
+      "family/1983/FAM1983.txt": "acf81d4911373984974e02fce4707bb4779c72f00e30d01fbc7c16d6cc68a140",
+      "family/1984/FAM1984.sps": "ad90da0506c5c556ef8b527e1d6c75a057b30bd05ba5e09588df514053630368",
+      "family/1984/FAM1984.txt": "bc92bb4d845241db96864b038476a6524ae5f43311db708972dd8bd8084bb9ef",
+      "family/1985/FAM1985.sps": "07b156f52c91dbcc66944b983f601553d9ddb94bb343248434d55e3d01eb7c2f",
+      "family/1985/FAM1985.txt": "db0daa1860e69fce5c66567a5d64b0bd07be3d31e0c70046bc7e474d22119f51",
+      "family/1986/FAM1986.sps": "a8d57b14f4efc36170cc2577174ab336b026a01e61f0639f8e3b8d1f82d930da",
+      "family/1986/FAM1986.txt": "f78ba17a5e50df3860b65e957777ad778bd0a49308b1ab684ad7ca9893a8d3c8",
+      "family/1987/FAM1987.sps": "3f1816e8bd169ba55ddb2c42cc5488d00adb8913f17687d7885cec8fe5f812bd",
+      "family/1987/FAM1987.txt": "b0512acd98ef280878271840229af34401f30702e01d8d646191f049e4bdcba0",
+      "family/1988/FAM1988.sps": "a2971802f1e81107e27cf7c426986f387db8bed9481026a4cf876bcd9bad6f69",
+      "family/1988/FAM1988.txt": "e30bd0ead4bba2238108a51eb2e24eee935a4a38e0d4257efdd1cff1bd23389c",
+      "family/1989/FAM1989.sps": "bf034bb3e45dc8ff5ec6a25c34d81f7888e922686e66362f2fa57bfd7c452058",
+      "family/1989/FAM1989.txt": "524d0627d471a66dcfa73ace35389e8117d426d56d6c7804df742e91ab7be728",
+      "family/1990/FAM1990.sps": "8eb30ab1a766c3b60e0e84aab24f197992c2cd0947c33acfb6d34684fc28fe67",
+      "family/1990/FAM1990.txt": "318fc47527ec48f8ebc8bc7114649a5a85b978e591a964fd46a8735935c0dc95",
+      "family/1991/FAM1991.sps": "dec4e504682dc08014a82307e3dd78d2833cc0f16ae8a3eaee1693f2fdf11e32",
+      "family/1991/FAM1991.txt": "01e39177b72be26da8eeb62d193ac0c5e47265a530a8a484dc271687e45fd3cb",
+      "family/1992/FAM1992.sps": "0c512da1ad8bc7ffb764b07376edf5200a5a166287ca4c4070a4b371010c9bb5",
+      "family/1992/FAM1992.txt": "d392f84b96b5f76bff8cccc0dde3defa8fc02a1646d3fcf607e0f5e91d3698b7",
+      "family/1993/FAM1993.sps": "acf13fda9d02d5a2cfdcf4a180a3bffbb4dcd2a64770b6312d0933cf7b111a08",
+      "family/1993/FAM1993.txt": "76ac2c830d9912cba11c3187a6c1c47612142894592f955ac1f03aabb8e3153e",
+      "family/1994/FAM1994ER.sps": "c5ae483c602e0cb1ce5cb280c4704d9ee49bd09ba5fd2ff1747c571abd693c43",
+      "family/1994/FAM1994ER.txt": "326dfb30ed4a7193c9aa41527c646ec9e58e44165175f70db32b31d7ee94eae3",
+      "family/1995/FAM1995ER.sps": "5487bb3e0f782124d0b872ab43d09ee424c15b801868605121e3719483dce3a1",
+      "family/1995/FAM1995ER.txt": "c24d9982413259fce6bf386ff84195b5deb77ebb0e834705cdffe8987cb6a0db",
+      "family/1996/FAM1996ER.sps": "9aa5ad480b2f80b300af58d457c15e5f8c2c027dcb1a78ed1aecc9821c665067",
+      "family/1996/FAM1996ER.txt": "8b607a5f0f3aeaa706c5036c0240e46c684d083c66da31a38b2c835e3adfdbb3",
+      "family/1997/FAM1997ER.sps": "a40333ad1795c7f19d194797137e340732b093d4a4c0108589dd1512b66f4b99",
+      "family/1997/FAM1997ER.txt": "1fb8b8bee3fdd1a2e8f6637b6c3e434019d8dca5eacb94478e0419d5fbcfc8e9",
+      "family/1999/FAM1999ER.sps": "7afad10e0da6969cd434a588f7d336923451d7a2fa8a71959c6edf376b023a9b",
+      "family/1999/FAM1999ER.txt": "92d7bef0eb5794cccb9137a4fe177dadfb2ba92709628b5cbc4004f8e7d786a0",
+      "family/2001/FAM2001ER.sps": "c6dc0e81131ece42ebeb70a67ee58082b939049815bd359724e745780d0afc12",
+      "family/2001/FAM2001ER.txt": "cc55d16f2fd44bcc89c1ab812e21f3f4f7bc26b15645b3170e590f55d1320ca5",
+      "family/2003/FAM2003ER.sps": "09f96449a9410a2478c0c24c042b5510ea0a75e7c97d83102a60d1faab747ac3",
+      "family/2003/FAM2003ER.txt": "f06914b61c017d34c471343d9667d2c19ad5d59f78890ee26ff613d465555ef1",
+      "family/2005/FAM2005ER.sps": "9a3440f8c3ba8af3ab2a40bde19b3a7382e20b82b0d91bd7b4ccf5e36ee7ec0d",
+      "family/2005/FAM2005ER.txt": "29e9d9a3eb7cdf33df8831cc55f27ab6e230e8202b4cdd982da79b759c0a749f",
+      "family/2007/FAM2007ER.sps": "4c8bd5b1d7bdce8a9d596e191f2791004ceb3413bf0b88c68cadccd33277977d",
+      "family/2007/FAM2007ER.txt": "f811e277303fe90a42edef602ad1a92405e8df0c9ee0dd36eff4ff531202ebbf",
+      "family/2009/FAM2009ER.sps": "4faa45e30b5a4719a3fa12f9d5d48568f644f315457ee3eed3e4ff8872459e4c",
+      "family/2009/FAM2009ER.txt": "59cf31106cf4c3d2e62903bd841b1689c9229e15674bdc5fd896453286b085f2",
+      "family/2011/FAM2011ER.sps": "6a994d8b65803a515eaa3bf62c74e278dd5943b8b578428ef4fd462d96cba45c",
+      "family/2011/FAM2011ER.txt": "3253586567a76a43d3e4a568dd5ca8af0f8a3c69db829d6a55bdf0942c60992f",
+      "family/2013/FAM2013ER.sps": "526595b50a2087adc635da3c1288a396aa7179b075c11506f10338ab6348a0b5",
+      "family/2013/FAM2013ER.txt": "0406aed042d660f51712d0f18a6e80f939717c0c2fc68b8d3a8d6dcbf48180e1",
+      "family/2015/FAM2015ER.sps": "6500c8e88a2353e7a6c5322a898f3879662228fdefa329e0901eb254fc9e3fff",
+      "family/2015/FAM2015ER.txt": "e4a64b275a9c6dbe8e7b562be7ed0906d4082b0c49cad79d764c69b8de318ec2",
+      "family/2017/FAM2017ER.sps": "24abae319022d4e3da9bce8052455dfee6b00b7b9c642004eddcfa06cb8d59e5",
+      "family/2017/FAM2017ER.txt": "c4220fe0569f3dbb8e110029a9d4d896c41635c50c86b7cb9edd0e7a5de82b0f",
+      "family/2019/FAM2019ER.sps": "c9f8ba8698779aeaf239c0eea4b1f98d32975b1c77767acfd35601fcb883a5b0",
+      "family/2019/FAM2019ER.txt": "80602015789c552cff3b75dfec6813204e918837f767f2e71744f51c07a9056d",
+      "family/2021/FAM2021ER.sps": "50526906dafd86271074ba15fd426ab7030c2b62f29acf3d819b577fdc9442e2",
+      "family/2021/FAM2021ER.txt": "c8a7a0589962bd3e6300e99595be16cb198ef48b3bb2b9b626743fe44cd185ae",
+      "family/2023/FAM2023ER.sps": "915755685965a41743e96e42abbbfdddd7eab1df33234e462b0813b25d4df169",
+      "family/2023/FAM2023ER.txt": "384c63924b6667ecebd7b3ca797bfae94fcea4c0de1708c46ab25659a16432b2",
+      "ind2023er/IND2023ER.sps": "92d32d0efd65d50e984e971c681f6e9231b720973444cdc8f20f397039c9a462",
+      "ind2023er/IND2023ER.txt": "d68554ac828a690491572f37323eba1d8488e8b0001ed2aa89df4d4ade26c869",
+      "ind2023er/IND2023ER_formats.sas": "7b7f7f9547bd831e437ab1778fa36deba88129ba6433e93154a2cd86b31ccd13",
+      "mh85_23/MH85_23.sps": "6f4a194b74c2dc7b95f2a163aeab19244384099ac0966dbe735157a60c1953ad",
+      "mh85_23/MH85_23.txt": "05297c541ae3cc62abd834b0c8e06aa189df4712e56f3507bb64c15e05b38ff7"
+    },
+    "psid_files_bundle_sha256": "2e7dba8b85cfc579c1f75ace5dfa44010805873379b33600cfcd5a2980a01b1a",
+    "psid_files_bundle_basis": "sha256 of canonical JSON {path relative to the PSID data directory: raw sha256} (sorted keys, compact separators, trailing newline)",
+    "earnings_waves": [
+      1968,
+      2023
+    ],
+    "claiming_reference": "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.claude/worktrees/mystifying-nash-eec1cc/data/external/ssa_claim_ages_2014supplement.json",
+    "claiming_reference_sha256": "b88e45a08909f0f88a0ff37074c757891759ec988fd7e9fe14362eebd0abe462",
+    "employment_status_formats": {
+      "2009": "ER34016F",
+      "2011": "ER34116F"
+    }
+  },
+  "cohort_provenance": {
+    "kind": "psid_files",
+    "psid_data_dir": "/Users/maxghenis/PolicyEngine/psid-data",
+    "psid_files_sha256": {
+      "family/1968/FAM1968.sps": "a2adbebfb2af38cafb2669e2aebef489f24e9e1d0c1b5e8cd2b23287dcadaaa5",
+      "family/1968/FAM1968.txt": "9fb3f8b872e139f23afc158cc205440af385a1e619a5cc9a95f83fa61b85bb78",
+      "family/1969/FAM1969.sps": "94a07c16e393cae68538d715d6a722a3c0de6e02dc8c9e56c5e658725db622c2",
+      "family/1969/FAM1969.txt": "f564d78850ce6a5e262389df9dc20fae52a3e63f5ae6b141bba787dd04c72fdd",
+      "family/1970/FAM1970.sps": "0212c4fd983a19b9c1cdd71feb4d92beed9d3906f807b485ef209ebd9f6d75f0",
+      "family/1970/FAM1970.txt": "8d28224213dc9d2dd31e1ac70ee9775ff257350926c0f595782de95f5ad4d84c",
+      "family/1971/FAM1971.sps": "8a6ccfc9ba6110dabe8147b528c2e0b2ada2d701889ea9bb03aa6c9bf0d479ae",
+      "family/1971/FAM1971.txt": "97360718a1f76e910ff2f2941dc0c65d6022016a570d53435b8ede97cef0b73c",
+      "family/1972/FAM1972.sps": "04b8594dda71404ff2e27734ff20ba8c7f9b982d2a4c834e61d59958000a5b9e",
+      "family/1972/FAM1972.txt": "5b1148272096ea8b50351ae4a98c1792be666b9ab140b344ee72434abd867055",
+      "family/1973/FAM1973.sps": "10f4b5e346529c6f5f4705842dfaa25186d514725fac6cc3a6b50dfabe3c33c4",
+      "family/1973/FAM1973.txt": "ae656b7f4b689f82259bec0e392e425df61eb8ab446b1bcb4187e25de568d011",
+      "family/1974/FAM1974.sps": "e043119eca809a3a32cbd086b5a17db114da72305446cb54ffa6e134e5ca0082",
+      "family/1974/FAM1974.txt": "579d98750c34753bfd3ee16149bb1124dd8cbd531b97c65a41e9fe0ae7e7f6cf",
+      "family/1975/FAM1975.sps": "a120da243300e5684f946f98acc25414f62579ec8c9c675267bbcce48c88f6e3",
+      "family/1975/FAM1975.txt": "26f6c07de11b9cbfc1ca0ff2942851b73f9e2f89df1abd0b77f2cda5fc097776",
+      "family/1976/FAM1976.sps": "f1884fe637284802ee2c4d0d147ed5f42a048e5f9d30a9c8c05bc53142d61771",
+      "family/1976/FAM1976.txt": "b35387e2b04bb9515f5edc1a31cc4b55a5bf018f9aa102ead4d7399e5d8b0824",
+      "family/1977/FAM1977.sps": "2367ae4b09af04ae0b69ef4cd65a1b47303f7526e24a16483ff1edd21fabbe53",
+      "family/1977/FAM1977.txt": "6314e1ae1784a6d5267ec863c96432c11a8b22a45a09170d7c7322ff0faaa1d8",
+      "family/1978/FAM1978.sps": "2a0eaa0fab5a17dc02a3c344b65599d3169d0a95bab1a2d6b9129454c4886239",
+      "family/1978/FAM1978.txt": "39764f180bf8431e7947027ef656c7910e832c01facfb86c8534735bdf42e12d",
+      "family/1979/FAM1979.sps": "3c1041d482cde534562f251f7cf6a9a7369980fdf5e4b691fa7413c5fa7e58ed",
+      "family/1979/FAM1979.txt": "6666f099d276fe353180b0e1d3881e06be70f656bda87d4f05a04ef7ed80e529",
+      "family/1980/FAM1980.sps": "acba02dc6d341d2cc4a8cd0a8b1365edf9f1d2c90dba32b4ddc83667b6750d67",
+      "family/1980/FAM1980.txt": "a1e28e6e689cbe990ae0cf9d4bbc268c75c5a30a21e0ff7297a970f69ac8a054",
+      "family/1981/FAM1981.sps": "a914dd7d130fca11745d2f099f5181d3e347d4a1206706a4524982f1bc5d4509",
+      "family/1981/FAM1981.txt": "b38c3093711aaa9e74875a610d874f155be6ed4b3a2bf67badc740a7373a149e",
+      "family/1982/FAM1982.sps": "e99097b4fad8dbd1fc99740ee6632db2cfb678dd3dbd7142f62f50bb4b1ff05a",
+      "family/1982/FAM1982.txt": "dc3510d641a9b878528977bdaa1173c46e9cb89db2e0003575213db80cc6476b",
+      "family/1983/FAM1983.sps": "685e7c076eb68a79a5a7c5e4f6a6bbe94fa7769ba5c5883775978b7b2ece0f3e",
+      "family/1983/FAM1983.txt": "acf81d4911373984974e02fce4707bb4779c72f00e30d01fbc7c16d6cc68a140",
+      "family/1984/FAM1984.sps": "ad90da0506c5c556ef8b527e1d6c75a057b30bd05ba5e09588df514053630368",
+      "family/1984/FAM1984.txt": "bc92bb4d845241db96864b038476a6524ae5f43311db708972dd8bd8084bb9ef",
+      "family/1985/FAM1985.sps": "07b156f52c91dbcc66944b983f601553d9ddb94bb343248434d55e3d01eb7c2f",
+      "family/1985/FAM1985.txt": "db0daa1860e69fce5c66567a5d64b0bd07be3d31e0c70046bc7e474d22119f51",
+      "family/1986/FAM1986.sps": "a8d57b14f4efc36170cc2577174ab336b026a01e61f0639f8e3b8d1f82d930da",
+      "family/1986/FAM1986.txt": "f78ba17a5e50df3860b65e957777ad778bd0a49308b1ab684ad7ca9893a8d3c8",
+      "family/1987/FAM1987.sps": "3f1816e8bd169ba55ddb2c42cc5488d00adb8913f17687d7885cec8fe5f812bd",
+      "family/1987/FAM1987.txt": "b0512acd98ef280878271840229af34401f30702e01d8d646191f049e4bdcba0",
+      "family/1988/FAM1988.sps": "a2971802f1e81107e27cf7c426986f387db8bed9481026a4cf876bcd9bad6f69",
+      "family/1988/FAM1988.txt": "e30bd0ead4bba2238108a51eb2e24eee935a4a38e0d4257efdd1cff1bd23389c",
+      "family/1989/FAM1989.sps": "bf034bb3e45dc8ff5ec6a25c34d81f7888e922686e66362f2fa57bfd7c452058",
+      "family/1989/FAM1989.txt": "524d0627d471a66dcfa73ace35389e8117d426d56d6c7804df742e91ab7be728",
+      "family/1990/FAM1990.sps": "8eb30ab1a766c3b60e0e84aab24f197992c2cd0947c33acfb6d34684fc28fe67",
+      "family/1990/FAM1990.txt": "318fc47527ec48f8ebc8bc7114649a5a85b978e591a964fd46a8735935c0dc95",
+      "family/1991/FAM1991.sps": "dec4e504682dc08014a82307e3dd78d2833cc0f16ae8a3eaee1693f2fdf11e32",
+      "family/1991/FAM1991.txt": "01e39177b72be26da8eeb62d193ac0c5e47265a530a8a484dc271687e45fd3cb",
+      "family/1992/FAM1992.sps": "0c512da1ad8bc7ffb764b07376edf5200a5a166287ca4c4070a4b371010c9bb5",
+      "family/1992/FAM1992.txt": "d392f84b96b5f76bff8cccc0dde3defa8fc02a1646d3fcf607e0f5e91d3698b7",
+      "family/1993/FAM1993.sps": "acf13fda9d02d5a2cfdcf4a180a3bffbb4dcd2a64770b6312d0933cf7b111a08",
+      "family/1993/FAM1993.txt": "76ac2c830d9912cba11c3187a6c1c47612142894592f955ac1f03aabb8e3153e",
+      "family/1994/FAM1994ER.sps": "c5ae483c602e0cb1ce5cb280c4704d9ee49bd09ba5fd2ff1747c571abd693c43",
+      "family/1994/FAM1994ER.txt": "326dfb30ed4a7193c9aa41527c646ec9e58e44165175f70db32b31d7ee94eae3",
+      "family/1995/FAM1995ER.sps": "5487bb3e0f782124d0b872ab43d09ee424c15b801868605121e3719483dce3a1",
+      "family/1995/FAM1995ER.txt": "c24d9982413259fce6bf386ff84195b5deb77ebb0e834705cdffe8987cb6a0db",
+      "family/1996/FAM1996ER.sps": "9aa5ad480b2f80b300af58d457c15e5f8c2c027dcb1a78ed1aecc9821c665067",
+      "family/1996/FAM1996ER.txt": "8b607a5f0f3aeaa706c5036c0240e46c684d083c66da31a38b2c835e3adfdbb3",
+      "family/1997/FAM1997ER.sps": "a40333ad1795c7f19d194797137e340732b093d4a4c0108589dd1512b66f4b99",
+      "family/1997/FAM1997ER.txt": "1fb8b8bee3fdd1a2e8f6637b6c3e434019d8dca5eacb94478e0419d5fbcfc8e9",
+      "family/1999/FAM1999ER.sps": "7afad10e0da6969cd434a588f7d336923451d7a2fa8a71959c6edf376b023a9b",
+      "family/1999/FAM1999ER.txt": "92d7bef0eb5794cccb9137a4fe177dadfb2ba92709628b5cbc4004f8e7d786a0",
+      "family/2001/FAM2001ER.sps": "c6dc0e81131ece42ebeb70a67ee58082b939049815bd359724e745780d0afc12",
+      "family/2001/FAM2001ER.txt": "cc55d16f2fd44bcc89c1ab812e21f3f4f7bc26b15645b3170e590f55d1320ca5",
+      "family/2003/FAM2003ER.sps": "09f96449a9410a2478c0c24c042b5510ea0a75e7c97d83102a60d1faab747ac3",
+      "family/2003/FAM2003ER.txt": "f06914b61c017d34c471343d9667d2c19ad5d59f78890ee26ff613d465555ef1",
+      "family/2005/FAM2005ER.sps": "9a3440f8c3ba8af3ab2a40bde19b3a7382e20b82b0d91bd7b4ccf5e36ee7ec0d",
+      "family/2005/FAM2005ER.txt": "29e9d9a3eb7cdf33df8831cc55f27ab6e230e8202b4cdd982da79b759c0a749f",
+      "family/2007/FAM2007ER.sps": "4c8bd5b1d7bdce8a9d596e191f2791004ceb3413bf0b88c68cadccd33277977d",
+      "family/2007/FAM2007ER.txt": "f811e277303fe90a42edef602ad1a92405e8df0c9ee0dd36eff4ff531202ebbf",
+      "family/2009/FAM2009ER.sps": "4faa45e30b5a4719a3fa12f9d5d48568f644f315457ee3eed3e4ff8872459e4c",
+      "family/2009/FAM2009ER.txt": "59cf31106cf4c3d2e62903bd841b1689c9229e15674bdc5fd896453286b085f2",
+      "family/2011/FAM2011ER.sps": "6a994d8b65803a515eaa3bf62c74e278dd5943b8b578428ef4fd462d96cba45c",
+      "family/2011/FAM2011ER.txt": "3253586567a76a43d3e4a568dd5ca8af0f8a3c69db829d6a55bdf0942c60992f",
+      "family/2013/FAM2013ER.sps": "526595b50a2087adc635da3c1288a396aa7179b075c11506f10338ab6348a0b5",
+      "family/2013/FAM2013ER.txt": "0406aed042d660f51712d0f18a6e80f939717c0c2fc68b8d3a8d6dcbf48180e1",
+      "family/2015/FAM2015ER.sps": "6500c8e88a2353e7a6c5322a898f3879662228fdefa329e0901eb254fc9e3fff",
+      "family/2015/FAM2015ER.txt": "e4a64b275a9c6dbe8e7b562be7ed0906d4082b0c49cad79d764c69b8de318ec2",
+      "family/2017/FAM2017ER.sps": "24abae319022d4e3da9bce8052455dfee6b00b7b9c642004eddcfa06cb8d59e5",
+      "family/2017/FAM2017ER.txt": "c4220fe0569f3dbb8e110029a9d4d896c41635c50c86b7cb9edd0e7a5de82b0f",
+      "family/2019/FAM2019ER.sps": "c9f8ba8698779aeaf239c0eea4b1f98d32975b1c77767acfd35601fcb883a5b0",
+      "family/2019/FAM2019ER.txt": "80602015789c552cff3b75dfec6813204e918837f767f2e71744f51c07a9056d",
+      "family/2021/FAM2021ER.sps": "50526906dafd86271074ba15fd426ab7030c2b62f29acf3d819b577fdc9442e2",
+      "family/2021/FAM2021ER.txt": "c8a7a0589962bd3e6300e99595be16cb198ef48b3bb2b9b626743fe44cd185ae",
+      "family/2023/FAM2023ER.sps": "915755685965a41743e96e42abbbfdddd7eab1df33234e462b0813b25d4df169",
+      "family/2023/FAM2023ER.txt": "384c63924b6667ecebd7b3ca797bfae94fcea4c0de1708c46ab25659a16432b2",
+      "ind2023er/IND2023ER.sps": "92d32d0efd65d50e984e971c681f6e9231b720973444cdc8f20f397039c9a462",
+      "ind2023er/IND2023ER.txt": "d68554ac828a690491572f37323eba1d8488e8b0001ed2aa89df4d4ade26c869",
+      "ind2023er/IND2023ER_formats.sas": "7b7f7f9547bd831e437ab1778fa36deba88129ba6433e93154a2cd86b31ccd13",
+      "mh85_23/MH85_23.sps": "6f4a194b74c2dc7b95f2a163aeab19244384099ac0966dbe735157a60c1953ad",
+      "mh85_23/MH85_23.txt": "05297c541ae3cc62abd834b0c8e06aa189df4712e56f3507bb64c15e05b38ff7"
+    },
+    "psid_files_bundle_sha256": "2e7dba8b85cfc579c1f75ace5dfa44010805873379b33600cfcd5a2980a01b1a",
+    "input_frames_sha256": "83207442f36454ff61a10d8bf2cf034c137688cc1fb4acd12af0ed02a8766d07",
+    "anchor_wave": 2011,
+    "start_year": 2010,
+    "set_by": "populace_dynamics.cohorts.psid2010.build_psid2010_cohort",
+    "content_sha256": "c409a098c444fe05ea39539fd67b7352696e08369b50bc0c9b54fbe26608525d",
+    "content_basis": "sha256 over the persons and careers frames, each as its column names, dtypes and CSV text (pandas to_csv, no index, '\\n' line ends)"
+  },
+  "n_members": 11405,
+  "weighting": "unweighted counts",
+  "groups": {
+    "odd.men.a22_29": {
+      "filled_person_years": 3949,
+      "persons": 1462
+    },
+    "odd.men.a22_74": {
+      "filled_person_years": 27239,
+      "persons": 4626
+    },
+    "odd.men.a30_44": {
+      "filled_person_years": 11148,
+      "persons": 3247
+    },
+    "odd.men.a45_59": {
+      "filled_person_years": 9472,
+      "persons": 2351
+    },
+    "odd.men.a60_74": {
+      "filled_person_years": 2670,
+      "persons": 836
+    },
+    "odd.men.b1936_1940": {
+      "persons": 145
+    },
+    "odd.men.b1936_1945": {
+      "persons": 389
+    },
+    "odd.men.b1941_1945": {
+      "persons": 244
+    },
+    "odd.men.b1946_1955": {
+      "persons": 1036
+    },
+    "odd.men.b1946_1980": {
+      "persons": 4188
+    },
+    "odd.men.b1956_1965": {
+      "persons": 1159
+    },
+    "odd.men.b1966_1980": {
+      "persons": 1993
+    },
+    "odd.women.a22_29": {
+      "filled_person_years": 5318,
+      "persons": 1844
+    },
+    "odd.women.a22_74": {
+      "filled_person_years": 32681,
+      "persons": 5343
+    },
+    "odd.women.a30_44": {
+      "filled_person_years": 13927,
+      "persons": 3851
+    },
+    "odd.women.a45_59": {
+      "filled_person_years": 10663,
+      "persons": 2707
+    },
+    "odd.women.a60_74": {
+      "filled_person_years": 2773,
+      "persons": 831
+    },
+    "odd.women.b1936_1940": {
+      "persons": 161
+    },
+    "odd.women.b1936_1945": {
+      "persons": 393
+    },
+    "odd.women.b1941_1945": {
+      "persons": 232
+    },
+    "odd.women.b1946_1955": {
+      "persons": 1136
+    },
+    "odd.women.b1946_1980": {
+      "persons": 4936
+    },
+    "odd.women.b1956_1965": {
+      "persons": 1504
+    },
+    "odd.women.b1966_1980": {
+      "persons": 2296
+    },
+    "pre.men.b1930_1934": {
+      "persons": 92
+    },
+    "pre.men.b1930_1945": {
+      "persons": 501
+    },
+    "pre.men.b1935_1939": {
+      "persons": 131
+    },
+    "pre.men.b1940_1945": {
+      "persons": 278
+    },
+    "pre.men.b1946_1955": {
+      "persons": 1036
+    },
+    "pre.men.b1946_1980": {
+      "persons": 4188
+    },
+    "pre.men.b1956_1965": {
+      "persons": 1159
+    },
+    "pre.men.b1966_1980": {
+      "persons": 1993
+    },
+    "pre.women.b1930_1934": {
+      "persons": 153
+    },
+    "pre.women.b1930_1945": {
+      "persons": 572
+    },
+    "pre.women.b1935_1939": {
+      "persons": 149
+    },
+    "pre.women.b1940_1945": {
+      "persons": 270
+    },
+    "pre.women.b1946_1955": {
+      "persons": 1136
+    },
+    "pre.women.b1946_1980": {
+      "persons": 4936
+    },
+    "pre.women.b1956_1965": {
+      "persons": 1504
+    },
+    "pre.women.b1966_1980": {
+      "persons": 2296
+    }
+  },
+  "elapsed_seconds": 256.6
+}

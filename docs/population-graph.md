@@ -16,11 +16,10 @@ and the Microcosm graph/frame revisions containing typed artifact edges and
 continues to support Python 3.10–3.14 without importing Microcosm. The entry
 point checks capabilities and gives installation guidance when they are absent.
 
-The `graph` extra pins both graph and Frame to core commit
-`3ff92b0aea14407d09479bff5623dc7d1a92d008`. An older package merely sharing
+The `graph` extra pins both graph and Frame to core main commit
+`c28b45376209f31676286e07f5dcb4593bcd248d`. An older package merely sharing
 the version number `0.1.0` is insufficient. In an isolated Python 3.13 or 3.14
-environment, install with `uv pip install '.[graph]'`. The core change must be
-reviewed before this dependent integration is released; replace the Git pins
+environment, install with `uv pip install '.[graph]'`. Replace the Git pins
 with a compatible published release when one exists. CI installs this exact
 extra, refuses missing capabilities, and runs the integration on both supported
 Python versions. Do not modify the existing scientific gate environment. No
@@ -191,9 +190,10 @@ draw under a law with support ending at 120. The graph does not silently assign
 such people a zero death probability. A typed failure outcome guards later
 applications and expansions, preserving the latest valid population and the
 original diagnostic. Blocked application status is reported separately from
-the core's execution/cache receipts: this pinned executor still runs guarded
-nodes and does not provide native `unreached` receipts. A failed evaluation
-does not propagate this application block.
+the core's execution/cache receipts. This integration uses typed transition
+artifacts to guard descendant kernels; blocked application status does not
+mean a native `unreached` receipt. A failed evaluation does not propagate this
+application block.
 
 Snapshots include the full materialized history, so their storage grows with
 both population size and horizon. This synthetic integration has not been
@@ -206,6 +206,7 @@ the retained diagnostic path covers application and evaluation failures.
 ```sh
 python -m pytest -q tests/test_graph_mortality.py \
   tests/test_graph_mortality_trajectory.py \
+  tests/test_graph_trajectory_accounting.py \
   tests/test_m6_engine_refit.py tests/test_m6_engine_steps.py
 ```
 

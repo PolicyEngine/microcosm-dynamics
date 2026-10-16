@@ -41,12 +41,21 @@ def build() -> str:
         "scripts/build_progress_page.py -->\n"
     )
     parts.append("# Development progress\n")
-    parts.append(
-        f"*Snapshot as of {data['as_of']} (UTC); updated at least "
-        "daily while the evidence campaign is active. The data behind "
-        "this page is committed at "
-        "[`docs/progress/progress.json`](progress/progress.json).*\n"
-    )
+    archived = data.get("archived")
+    if archived:
+        parts.append(f"> **Historical snapshot.** {archived['note']}\n")
+        parts.append(
+            f"*Snapshot as of {data['as_of']} (UTC). The data behind "
+            "this page is committed at "
+            "[`docs/progress/progress.json`](progress/progress.json).*\n"
+        )
+    else:
+        parts.append(
+            f"*Snapshot as of {data['as_of']} (UTC); updated at least "
+            "daily while the evidence campaign is active. The data "
+            "behind this page is committed at "
+            "[`docs/progress/progress.json`](progress/progress.json).*\n"
+        )
     fw = data["framework"]
     parts.append(
         "Dynamics builds Social Security earnings histories from the "
