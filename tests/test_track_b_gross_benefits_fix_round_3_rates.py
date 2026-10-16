@@ -105,7 +105,7 @@ def _compute_refused(entry_point, params):
 def test_nonfinite_statutory_rate_is_an_input_error(field, index, bad):
     with pytest.raises(ValueError, match="disagrees with the statutory") as e:
         g.statutory_rates(_with_rate(field, index, bad))
-    assert type(e.value) is ValueError
+    assert type(e.value) is g.InvalidFamilyInput
 
 
 @pytest.mark.parametrize("field,index", RATE_FIELDS, ids=RATE_IDS)
@@ -116,7 +116,7 @@ def test_nonfinite_rate_error_precedes_coverage_refusal(
 ):
     with pytest.raises(ValueError, match="disagrees with the statutory") as e:
         _compute_refused(entry_point, _with_rate(field, index, bad))
-    assert type(e.value) is ValueError
+    assert type(e.value) is g.InvalidFamilyInput
 
 
 @pytest.mark.parametrize("entry_point", ENTRY_POINTS)

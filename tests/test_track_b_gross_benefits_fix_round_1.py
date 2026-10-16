@@ -85,15 +85,15 @@ def test_review_every_boundary_cohort_rejects_excess_months_before_refusal(
     cohort, period, prebuilt
 ):
     assert g.widow_reduction_period_months(date(cohort, 1, 2)) == period
-    widow = g.Beneficiary(
-        "w",
-        g.Role.WIDOW,
-        birth_year=cohort,
-        reduction_months=period + 1,
-        reduction_period_months=min(period + 2, 84),
-        child_in_care=False,
-    )
     with pytest.raises(g.InvalidFamilyInput):
+        widow = g.Beneficiary(
+            "w",
+            g.Role.WIDOW,
+            birth_year=cohort,
+            reduction_months=period + 1,
+            reduction_period_months=min(period + 2, 84),
+            child_in_care=False,
+        )
         _family(_state(prebuilt, refused=True), [widow])
 
 
@@ -138,19 +138,23 @@ def test_property_widow_cohort_bounds_months_and_matches_exact_primitive(
     state = _state(prebuilt)
     if prebuilt:
         state = replace(state, widow_drc_savings_clause=False)
-    widow = g.Beneficiary(
-        "w",
-        g.Role.WIDOW,
-        birth_year=cohort,
-        reduction_months=months,
-        reduction_period_months=period,
-        child_in_care=False,
-    )
+
+    def compute():
+        widow = g.Beneficiary(
+            "w",
+            g.Role.WIDOW,
+            birth_year=cohort,
+            reduction_months=months,
+            reduction_period_months=period,
+            child_in_care=False,
+        )
+        return _family(state, [widow])
+
     if months > period:
         with pytest.raises(g.InvalidFamilyInput):
-            _family(state, [widow])
+            compute()
     else:
-        result = _family(state, [widow])
+        result = compute()
         expected = g.survivor_age_reduced(state.pia, months, period, PARAMS)
         assert result.by_id()["w"].auxiliary_payable == expected
         assert result.record_total_whole_dollars == g.whole_dollars(expected)

@@ -232,7 +232,7 @@ def _family_cases(draw):
 
 def _result_key(result):
     if isinstance(result, g.FamilyBenefits):
-        return replace(result, state_source="")
+        return replace(result, state_source="normalized-for-comparison")
     return tuple(
         (key, _result_key(result.records[key]))
         for key in sorted(result.records)

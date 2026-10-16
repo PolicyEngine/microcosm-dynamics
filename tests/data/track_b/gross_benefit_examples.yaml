@@ -444,7 +444,7 @@ examples:
     derivation: '215(g): 145 + 152 + 152'
 - id: rs-00615-768-zero-spouse
   capture_id: poms_rs_00615_768
-  section: E.1
+  section: F.1
   tags:
   - record:retirement
   - role:spouse
@@ -498,7 +498,7 @@ examples:
     derivation: '215(g): 400 + 125 + 125'
 - id: rs-00615-768-partial-child
   capture_id: poms_rs_00615_768
-  section: E.2
+  section: F.2
   tags:
   - record:disability
   - role:child
@@ -1197,7 +1197,7 @@ examples:
     rounding: whole_dollar_floor
 - id: rs-00615-736-pre1982-1
   capture_id: poms_rs_00615_736
-  section: B.3 historical formula example 1
+  section: B.3 example 1 (1979 formula)
   tags:
   - formula:maximum
   - historical:refused
@@ -1221,7 +1221,7 @@ examples:
   derived_expected: []
 - id: rs-00615-736-pre1982-2
   capture_id: poms_rs_00615_736
-  section: B.3 historical formula example 2
+  section: B.3 example 1 (1981 formula)
   tags:
   - formula:maximum
   - historical:refused
@@ -1245,7 +1245,7 @@ examples:
   derived_expected: []
 - id: rs-00615-736-pre1982-3
   capture_id: poms_rs_00615_736
-  section: B.3 historical formula example 3
+  section: B.3 example 2
   tags:
   - formula:maximum
   - historical:refused
@@ -1269,7 +1269,7 @@ examples:
   derived_expected: []
 - id: rs-00615-736-pre1982-4
   capture_id: poms_rs_00615_736
-  section: B.3 historical formula example 4
+  section: B.3 example 3
   tags:
   - formula:maximum
   - historical:refused

@@ -112,7 +112,7 @@ not decimal equivalents, because decimals often yield an answer 10 cents
 lower (POMS RS 00615.005B). Statutory rates are cross-checked at use
 against the repository's parameter bundle (``ss.params.SSAParameters``,
 loaded from policyengine-us), rejecting non-finite or mismatched rates
-with ValueError before family or household coverage refusals. The exact
+with InvalidFamilyInput (a ValueError subclass) before coverage refusals. The exact
 statutory fraction is then used; NAWI, full retirement ages and
 delayed-credit rates come from that bundle and must be finite when used.
 Delayed-credit months run from full retirement age to age 70
@@ -134,7 +134,10 @@ Input errors (:class:`InvalidFamilyInput`) are reported before any
 coverage refusal, so :func:`evaluate_family` never counts an invalid row as
 a coverage gap. Constructors and entry points share one field-validation
 layer, including nested declarations, enum classes, calendar/cohort years,
-exact integer/Boolean types and all existing cross-field checks. Invalid
+exact integer/Boolean types and all existing cross-field checks. Public
+result and refusal constructors validate nested fields too; consumers
+revalidate copies before aggregating or changing guard state. Every exported
+helper validates its arguments before a coverage refusal. Invalid
 outcome metadata is checked before invoking a computation; invalid monthly
 inputs leave every savings-clause guard unchanged. Built and direct records
 share refusal precedence: eligibility year, record conditions, initial DIB
@@ -398,6 +401,8 @@ class FamilyConfigurationUnsupported(Exception):
     Rows raising this stay in every denominator (use
     :func:`evaluate_family` and :func:`count_family_outcomes`); a target
     that needs them is blocked (:class:`FamilyTargetBlocked`).
+    Construction validates the reason's exact enum class and every piece
+    of metadata, so malformed exceptions cannot declare coverage gaps.
     """
 
     code = "FAMILY_CONFIG_UNSUPPORTED"
@@ -410,6 +415,14 @@ class FamilyConfigurationUnsupported(Exception):
         beneficiary_id: str | None = None,
         record_id: str | None = None,
     ):
+        _input_type(reason, UnsupportedReason, "reason")
+        _input_text(detail, "detail")
+        for label, identifier in (
+            ("beneficiary_id", beneficiary_id),
+            ("record_id", record_id),
+        ):
+            if identifier is not None:
+                _input_text(identifier, label)
         self.reason = reason
         self.detail = detail
         self.beneficiary_id = beneficiary_id
@@ -485,6 +498,16 @@ def _input_sequence(value: object, label: str) -> None:
         raise _InvalidInputType(f"{label} must be a sequence")
 
 
+def _input_iterable(value: object, label: str) -> tuple:
+    """Materialize an iterable before validation, without treating text as rows."""
+    if isinstance(value, (str, bytes, Mapping)):
+        raise _InvalidInputType(f"{label} must be an iterable of values")
+    try:
+        return tuple(value)
+    except TypeError as error:
+        raise _InvalidInputType(f"{label} must be iterable") from error
+
+
 def _input_conditions(value: object, enum: type) -> None:
     if type(value) not in (set, frozenset, tuple, list):
         raise _InvalidInputType("conditions must be a collection of enums")
@@ -502,6 +525,42 @@ def _checked_input(value, expected: type, label: str):
     """
     _input_type(value, expected, label)
     return replace(value)
+
+
+def _validated_refusal(error) -> FamilyConfigurationUnsupported:
+    """Validate and copy refusal fields before recording coverage."""
+    _input_type(error, FamilyConfigurationUnsupported, "unsupported")
+    return FamilyConfigurationUnsupported(
+        error.reason,
+        error.detail,
+        beneficiary_id=error.beneficiary_id,
+        record_id=error.record_id,
+    )
+
+
+def _nonnegative_integer(value, label: str) -> None:
+    _input_type(value, int, label)
+    if value < 0:
+        raise InvalidFamilyInput(f"{label} must be nonnegative")
+
+
+def _result_money_fields(value, names: tuple[str, ...]) -> None:
+    """Normalize exact nonnegative dime amounts in immutable results."""
+    for name in names:
+        object.__setattr__(value, name, _dimes(getattr(value, name), name))
+
+
+def _optional_result_money(value, amount_name: str, whole_name: str) -> None:
+    amount, whole = getattr(value, amount_name), getattr(value, whole_name)
+    if amount is None:
+        if whole is not None:
+            raise InvalidFamilyInput(f"{whole_name} needs {amount_name}")
+        return
+    amount = _dimes(amount, amount_name)
+    _nonnegative_integer(whole, whole_name)
+    if whole != math.floor(amount):
+        raise InvalidFamilyInput(f"{whole_name} must floor {amount_name}")
+    object.__setattr__(value, amount_name, amount)
 
 
 def _validate_input_fields(value) -> None:
@@ -641,18 +700,21 @@ def _validate_input_fields(value) -> None:
 
 def floor_dime(amount: Fraction) -> Fraction:
     """Decrease to the next lower multiple of $0.10 (exact)."""
+    amount = _exact(amount, "amount")
     return Fraction(math.floor(amount * 10), 10)
 
 
 def ceil_dime(amount: Fraction) -> Fraction:
     """Increase to the next higher multiple of $0.10 (exact)."""
+    amount = _exact(amount, "amount")
     return Fraction(math.ceil(amount * 10), 10)
 
 
 def whole_dollars(amount: Fraction) -> int:
     """42 U.S.C. 415(g): round a monthly benefit down to a whole dollar."""
+    amount = _exact(amount, "amount")
     if amount < 0:
-        raise ValueError("A benefit amount cannot be negative")
+        raise InvalidFamilyInput("A benefit amount cannot be negative")
     return math.floor(amount)
 
 
@@ -697,6 +759,28 @@ class StatutoryRates:
     widow_share: Fraction
     pe_us_revision: str
 
+    def __post_init__(self):
+        for name in (
+            "worker_first",
+            "worker_later",
+            "spouse_first",
+            "spouse_later",
+            "survivor_max_reduction",
+            "rib_lim_share",
+            "spouse_share",
+            "widow_share",
+        ):
+            value = _exact(getattr(self, name), name)
+            if not 0 <= value <= 1:
+                raise InvalidFamilyInput(f"{name} must be between 0 and 1")
+            object.__setattr__(self, name, value)
+        for name in ("worker_bracket_months", "spouse_bracket_months"):
+            months = getattr(self, name)
+            _input_type(months, int, name)
+            if not 1 <= months <= _MAX_WORKER_REDUCTION_MONTHS:
+                raise InvalidFamilyInput(f"{name} must be between 1 and 60")
+        _input_text(self.pe_us_revision, "pe_us_revision")
+
 
 _STATUTE = {
     # 402(q)(1)(A): 5/9 of 1 percent; 5/12 of 1 percent beyond 36 months
@@ -721,13 +805,66 @@ _STATUTE = {
 _RATE_TOLERANCE = 1e-7
 
 
+def _parameter_number(value: object, label: str):
+    """Validate supplied bundle numbers without changing their encoding."""
+    if type(value) is float:
+        if not math.isfinite(value):
+            raise InvalidFamilyInput(f"{label} must be finite")
+        return value
+    return _exact(value, label)
+
+
+def _check_parameter_series(params: SSAParameters) -> None:
+    """Check the G-consumed series before coverage, including unused entries.
+
+    Missing observations remain the documented KeyError at lookup. Supplied
+    observations must be valid even on a historically refused computation.
+    Other SSAParameters fields are outside G's arithmetic surface.
+    """
+    _input_type(params, SSAParameters, "params")
+    if not isinstance(params.nawi, Mapping):
+        raise _InvalidInputType("nawi must be a mapping")
+    for year, value in params.nawi.items():
+        _input_year(year, "NAWI year")
+        if _parameter_number(value, "NAWI") <= 0:
+            raise InvalidFamilyInput("NAWI must be positive")
+    for name in ("fra_months_by_birth_year", "delayed_credit_by_birth_year"):
+        schedule = getattr(params, name)
+        _input_sequence(schedule, name)
+        previous = 0
+        for entry in schedule:
+            _input_sequence(entry, f"{name} entry")
+            if len(entry) != 2:
+                raise InvalidFamilyInput(f"{name} entry needs year and value")
+            year, value = entry
+            _input_year(year, f"{name} year")
+            if year <= previous:
+                raise InvalidFamilyInput(f"{name} years must increase")
+            previous = year
+            number = _parameter_number(value, name)
+            if name == "fra_months_by_birth_year":
+                _input_type(value, int, "Full retirement age months")
+                if not 756 <= number <= 804:
+                    raise InvalidFamilyInput("FRA months must be in 756..804")
+            elif not 0 <= number <= 1:
+                raise InvalidFamilyInput("DRC annual rate must be in 0..1")
+
+
 def _agrees(observed: float, expected: Fraction, label: str) -> None:
-    value = float(observed)
+    try:
+        value = float(_exact(observed, label))
+    except _InvalidInputType:
+        raise
+    except (InvalidFamilyInput, OverflowError) as error:
+        raise InvalidFamilyInput(
+            f"Parameter bundle {label}={observed!r} disagrees with the "
+            f"statutory {expected}; refusing to compute gross benefits."
+        ) from error
     if (
         not math.isfinite(value)
         or abs(value - float(expected)) > _RATE_TOLERANCE
     ):
-        raise ValueError(
+        raise InvalidFamilyInput(
             f"Parameter bundle {label}={observed!r} disagrees with the "
             f"statutory {expected}; refusing to compute gross benefits."
         )
@@ -739,10 +876,18 @@ def statutory_rates(params: SSAParameters) -> StatutoryRates:
     policyengine-us stores 5/9 of 1 percent as the decimal 0.00555556, and
     SSA computes with the fraction (POMS RS 00615.005B), so the fraction is
     what is used once the bundle is confirmed to encode the same rate.
-    Non-finite or mismatched rates raise ValueError, an input error rather
+    Non-finite or mismatched rates raise InvalidFamilyInput, an error rather
     than a coverage refusal. Family and household entry points check them
     before any coverage refusal.
     """
+    _input_type(params, SSAParameters, "params")
+    _check_parameter_series(params)
+    _input_text(params.pe_us_revision, "pe_us_revision")
+    for name in ("early_monthly_rates", "spousal_early_monthly_rates"):
+        pair = getattr(params, name)
+        _input_sequence(pair, name)
+        if len(pair) != 2:
+            raise InvalidFamilyInput(f"{name} must contain two rates")
     worker_first, worker_later = params.early_monthly_rates
     _agrees(worker_first, _STATUTE["worker_first"], "early_monthly_rates[0]")
     _agrees(worker_later, _STATUTE["worker_later"], "early_monthly_rates[1]")
@@ -750,17 +895,20 @@ def statutory_rates(params: SSAParameters) -> StatutoryRates:
     _agrees(spouse_first, _STATUTE["spouse_first"], "spousal rate[0]")
     _agrees(spouse_later, _STATUTE["spouse_later"], "spousal rate[1]")
     _agrees(
-        1 - params.survivor_reduction_floor,
-        _STATUTE["survivor_max_reduction"],
-        "1 - survivor_reduction_floor",
+        params.survivor_reduction_floor,
+        1 - _STATUTE["survivor_max_reduction"],
+        "survivor_reduction_floor",
     )
     _agrees(params.rib_lim_pia_share, _STATUTE["rib_lim_share"], "rib_lim")
     _agrees(params.spousal_pia_share, _STATUTE["spouse_share"], "spouse")
     _agrees(params.survivor_pia_share, _STATUTE["widow_share"], "widow")
-    if params.early_first_bracket_months != 36:
-        raise ValueError("early_first_bracket_months must be 36 (402(q))")
-    if params.spousal_early_first_bracket_months != 36:
-        raise ValueError("spousal first bracket must be 36 months (402(q))")
+    for name in (
+        "early_first_bracket_months",
+        "spousal_early_first_bracket_months",
+    ):
+        _input_type(getattr(params, name), int, name)
+        if getattr(params, name) != 36:
+            raise InvalidFamilyInput(f"{name} must be 36 (402(q))")
     return StatutoryRates(
         worker_first=_STATUTE["worker_first"],
         worker_later=_STATUTE["worker_later"],
@@ -780,12 +928,18 @@ def statutory_rates(params: SSAParameters) -> StatutoryRates:
 # Family maximum
 # ---------------------------------------------------------------------------
 def _nawi(params: SSAParameters, year: int) -> Fraction:
+    _input_type(params, SSAParameters, "params")
+    if not isinstance(params.nawi, Mapping):
+        raise _InvalidInputType("nawi must be a mapping")
     if year not in params.nawi:
         raise KeyError(
             f"NAWI for {year} is not in the parameter bundle "
             f"(revision {params.pe_us_revision})."
         )
-    return _exact(params.nawi[year], f"NAWI({year})")
+    amount = _exact(params.nawi[year], f"NAWI({year})")
+    if amount <= 0:
+        raise InvalidFamilyInput("NAWI must be positive")
+    return amount
 
 
 def family_maximum_bend_points(
@@ -796,8 +950,12 @@ def family_maximum_bend_points(
     Each 1979 amount times NAWI(year - 2) / NAWI(1977), rounded to the
     nearest dollar with 50-cent ties upward (215(a)(1)(B)(iii)).
     """
-    if type(eligibility_year) is not int or eligibility_year < 1979:
-        raise ValueError("The 403(a)(1) formula starts with 1979 eligibility")
+    _input_year(eligibility_year, "eligibility_year")
+    _check_parameter_series(params)
+    if eligibility_year < 1979:
+        raise InvalidFamilyInput(
+            "The 403(a)(1) formula starts with 1979 eligibility"
+        )
     ratio = _nawi(params, eligibility_year - 2) / _nawi(params, BASE_NAWI_YEAR)
     first, second, third = (
         _nearest_dollar_ties_up(base * ratio)
@@ -833,8 +991,11 @@ def retirement_survivor_family_maximum(
     (POMS RS 00615.736A.1). The result is dime-floored (403(a)(1), last
     sentence). Apply COLAs with :func:`increase_by_colas`.
     """
+    amount = _dimes(pia, "PIA")
+    _input_year(eligibility_year, "eligibility_year")
+    statutory_rates(params)
     _require_supported_eligibility(eligibility_year)
-    return floor_dime(family_maximum_formula(pia, eligibility_year, params))
+    return floor_dime(family_maximum_formula(amount, eligibility_year, params))
 
 
 def disability_family_maximum(pia: object, aime: object) -> Fraction:
@@ -860,7 +1021,7 @@ def increase_by_colas(amount: object, percents: Iterable[object]) -> Fraction:
     not exist under 215(i) and are refused.
     """
     value = _dimes(amount, "amount")
-    for index, percent in enumerate(percents):
+    for index, percent in enumerate(_input_iterable(percents, "percents")):
         rate = _exact(percent, f"COLA percent #{index}")
         if rate < 0:
             raise InvalidFamilyInput("A COLA percentage cannot be negative")
@@ -884,10 +1045,17 @@ def applicable_cola_percents(
     rather than counting as zero, and an eligibility year after the
     payment month's year is an input error, not an empty list.
     """
-    if not isinstance(payment_month, YearMonth):
-        raise TypeError("payment_month must be a YearMonth")
-    if type(eligibility_year) is not int:
-        raise TypeError("eligibility_year must be an int")
+    payment_month = _checked_input(payment_month, YearMonth, "payment_month")
+    _input_year(eligibility_year, "eligibility_year")
+    if not isinstance(december_cola_percent, Mapping):
+        raise _InvalidInputType("december_cola_percent must be a mapping")
+    validated = {}
+    for year, percent in december_cola_percent.items():
+        _input_year(year, "COLA year")
+        percent = _exact(percent, f"COLA {year}")
+        if percent < 0:
+            raise InvalidFamilyInput("A COLA percentage cannot be negative")
+        validated[year] = percent
     if eligibility_year > payment_month.year:
         raise InvalidFamilyInput(
             f"eligibility year {eligibility_year} is after the payment "
@@ -897,15 +1065,14 @@ def applicable_cola_percents(
     last = payment_month.year - (0 if payment_month.month == 12 else 1)
     percents = []
     for year in range(eligibility_year, last + 1):
-        if year not in december_cola_percent:
+        if year not in validated:
             raise KeyError(f"No COLA percentage for December {year}")
-        percents.append(_exact(december_cola_percent[year], f"COLA {year}"))
+        percents.append(validated[year])
     return tuple(percents)
 
 
 def _require_supported_eligibility(eligibility_year: int) -> None:
-    if type(eligibility_year) is not int:
-        raise TypeError("eligibility_year must be an int")
+    _input_year(eligibility_year, "eligibility_year")
     if eligibility_year < FIRST_SUPPORTED_ELIGIBILITY_YEAR:
         raise FamilyConfigurationUnsupported(
             UnsupportedReason.ELIGIBILITY_BEFORE_1983,
@@ -920,8 +1087,7 @@ def _require_supported_eligibility(eligibility_year: int) -> None:
 # Age adjustments (exact fractions, POMS RS 00615.101/.201/.301/.692)
 # ---------------------------------------------------------------------------
 def _months(value: int, label: str, upper: int) -> int:
-    if type(value) is not int:
-        raise TypeError(f"{label} must be an int")
+    _input_type(value, int, label)
     if not 0 <= value <= upper:
         raise InvalidFamilyInput(f"{label} must be between 0 and {upper}")
     return value
@@ -985,9 +1151,29 @@ def _refuse_early_delayed_credits(birth_year: int) -> None:
 
 def _fra_months(birth_year: int, params: SSAParameters) -> int:
     """416(l): a finite bundle FRA before any month-bound comparison."""
+    _input_year(birth_year, "birth_year")
+    _input_type(params, SSAParameters, "params")
+    schedule = params.fra_months_by_birth_year
+    _input_sequence(schedule, "fra_months_by_birth_year")
+    if not schedule:
+        raise InvalidFamilyInput("Full retirement age schedule is empty")
+    previous = 0
+    for entry in schedule:
+        _input_sequence(entry, "FRA schedule entry")
+        if len(entry) != 2:
+            raise InvalidFamilyInput("FRA entry needs year and months")
+        year, months = entry
+        _input_year(year, "FRA year")
+        _exact(months, "Full retirement age months")
+        _input_type(months, int, "Full retirement age months")
+        if year <= previous or not 756 <= months <= 804:
+            raise InvalidFamilyInput(
+                "FRA schedule needs increasing years and months in 756..804"
+            )
+        previous = year
     months = params.fra_months(birth_year)
     if not math.isfinite(months):
-        raise ValueError("Full retirement age months must be finite")
+        raise InvalidFamilyInput("Full retirement age months must be finite")
     return months
 
 
@@ -1002,10 +1188,11 @@ def delayed_credit_window_months(
     bands run from January 2, so pass the previous year for a January 1
     birth. Births before 1917 are refused (402(w)(6)(A)).
     """
-    if type(birth_year) is not int:
-        raise TypeError("birth_year must be an int")
+    _input_year(birth_year, "birth_year")
+    statutory_rates(params)
+    fra = _fra_months(birth_year, params)
     _refuse_early_delayed_credits(birth_year)
-    return _AGE_70_MONTHS - _fra_months(birth_year, params)
+    return _AGE_70_MONTHS - fra
 
 
 def _delayed_credit_months(
@@ -1019,16 +1206,15 @@ def _delayed_credit_months(
     ``840 - FRA`` bounds births from 1917; earlier births are refused
     later, when a benefit is computed.
     """
-    if type(months) is not int:
-        raise TypeError("delayed_credit_months must be an int")
+    _input_type(months, int, "delayed_credit_months")
+    if birth_year is not None:
+        _input_year(birth_year, "birth_year")
     if months < 0:
         raise InvalidFamilyInput("delayed_credit_months must be nonnegative")
     if months == 0:
         return 0
     if birth_year is None:
         raise InvalidFamilyInput("Delayed credits need the birth year")
-    if type(birth_year) is not int:
-        raise TypeError("birth_year must be an int")
     if months > _MAX_DELAYED_CREDIT_MONTHS:
         raise InvalidFamilyInput(
             f"delayed_credit_months {months} exceeds "
@@ -1060,6 +1246,8 @@ def _cohort_reduction_months(
     months: int, birth_year: int | None, params: SSAParameters, label: str
 ) -> int:
     """402(q)(6): months cannot precede age 62 (RS 00615.010)."""
+    if birth_year is not None:
+        _input_year(birth_year, "birth_year")
     upper = 60 if birth_year is None else _fra_months(birth_year, params) - 744
     return _months(months, label, upper)
 
@@ -1215,8 +1403,7 @@ def widow_reduction_period_months(birth_date: date) -> int:
     year to 66 (born 1/2/45-1/1/57), then to 67 for births on or after
     1/2/62. The period runs from age 60 to that FRA.
     """
-    if not isinstance(birth_date, date):
-        raise TypeError("birth_date must be a datetime.date")
+    _input_type(birth_date, date, "birth_date")
     for last_birth_date, period in _WIDOW_PERIOD_BY_BIRTH:
         if birth_date <= last_birth_date:
             return period
@@ -1402,8 +1589,11 @@ class OwnBenefit:
     def __post_init__(self):
         _validate_input_fields(self)
         object.__setattr__(self, "pia", _dimes(self.pia, "own PIA"))
-        if self.reduction_months < 0:
-            raise InvalidFamilyInput("reduction_months must be nonnegative")
+        _months(
+            self.reduction_months,
+            "reduction_months",
+            _MAX_WORKER_REDUCTION_MONTHS,
+        )
         _delayed_credit_months(
             self.delayed_credit_months, self.birth_year, None
         )
@@ -1430,6 +1620,7 @@ def own_monthly_benefit(
 ) -> tuple[Fraction, Fraction]:
     """The own benefit ``(without_credits, with_credits)`` after 402(q)/(w)."""
     own = _checked_input(own, OwnBenefit, "own")
+    statutory_rates(params)
     _check_own_benefit(own, params)
     _refuse_own_benefit(own)
     return worker_age_adjusted(
@@ -1562,6 +1753,11 @@ class Beneficiary:
             )
         if self.reduction_months < 0:
             raise InvalidFamilyInput("reduction_months must be nonnegative")
+        _months(
+            self.reduction_months,
+            "reduction_months",
+            84 if self.role in _WIDOW_ROLES else _MAX_SPOUSE_REDUCTION_MONTHS,
+        )
         if self.reduction_months and self.role not in _AGE_REDUCED_ROLES:
             raise InvalidFamilyInput(
                 f"A {self.role.value} benefit is not reduced for age"
@@ -1622,6 +1818,11 @@ class WorkerRecord:
 
     def __post_init__(self):
         _validate_input_fields(self)
+        _months(
+            self.worker_reduction_months,
+            "worker_reduction_months",
+            _MAX_WORKER_REDUCTION_MONTHS,
+        )
         object.__setattr__(
             self, "eligibility_pia", _dimes(self.eligibility_pia, "PIA")
         )
@@ -1815,8 +2016,7 @@ def record_state(record: WorkerRecord, params: SSAParameters) -> RecordState:
         params,
         "worker_reduction_months",
     )
-    if type(record.eligibility_year) is not int:
-        raise TypeError("eligibility_year must be an int")
+    _input_year(record.eligibility_year, "eligibility_year")
     _check_retirement_eligibility(
         record.kind, record.eligibility_year, record.worker_birth_year
     )
@@ -1908,6 +2108,34 @@ class BeneficiaryBenefit:
     whole_dollar_own: int | None
     note: str = ""
 
+    def __post_init__(self):
+        _input_text(self.beneficiary_id, "beneficiary_id")
+        _input_type(self.role, Role, "role")
+        _input_type(self.entitled, bool, "entitled")
+        _input_type(
+            self.subject_to_family_maximum, bool, "subject_to_family_maximum"
+        )
+        _result_money_fields(
+            self,
+            (
+                "original_benefit",
+                "standard_rate",
+                "family_maximum_rate",
+                "counted_against_maximum",
+                "age_adjusted_rate",
+                "auxiliary_payable",
+            ),
+        )
+        _nonnegative_integer(
+            self.whole_dollar_auxiliary, "whole_dollar_auxiliary"
+        )
+        if self.whole_dollar_auxiliary != math.floor(self.auxiliary_payable):
+            raise InvalidFamilyInput(
+                "whole_dollar_auxiliary must floor auxiliary_payable"
+            )
+        _optional_result_money(self, "own_benefit", "whole_dollar_own")
+        _input_type(self.note, str, "note")
+
     @property
     def total_received(self) -> Fraction:
         """Auxiliary plus own benefit (the person's gross monthly total)."""
@@ -1916,7 +2144,12 @@ class BeneficiaryBenefit:
 
 @dataclass(frozen=True)
 class FamilyBenefits:
-    """Gross monthly benefits on one record for one month."""
+    """Gross monthly benefits on one record for one month.
+
+    Construction validates every field and nested row before admitting the
+    result, including nonnegative dime amounts, whole-dollar payments and
+    record totals. Replacing a field repeats these checks.
+    """
 
     kind: FamilyKind
     payment_month: YearMonth
@@ -1935,6 +2168,59 @@ class FamilyBenefits:
     state_source: str
     pe_us_revision: str
     version: str = GROSS_BENEFITS_VERSION
+
+    def __post_init__(self):
+        _input_type(self.kind, FamilyKind, "kind")
+        object.__setattr__(
+            self,
+            "payment_month",
+            _checked_input(self.payment_month, YearMonth, "payment_month"),
+        )
+        _result_money_fields(
+            self,
+            (
+                "pia",
+                "family_maximum",
+                "available_for_auxiliaries",
+                "total_original_benefits",
+                "record_total",
+                "subject_total",
+            ),
+        )
+        for name in ("family_maximum_binding", "redistribution_applied"):
+            _input_type(getattr(self, name), bool, name)
+        _optional_result_money(self, "worker_benefit", "whole_dollar_worker")
+        _nonnegative_integer(
+            self.record_total_whole_dollars, "record_total_whole_dollars"
+        )
+        _input_sequence(self.beneficiaries, "beneficiaries")
+        beneficiaries = tuple(
+            _checked_input(row, BeneficiaryBenefit, "beneficiary result")
+            for row in self.beneficiaries
+        )
+        if len({row.beneficiary_id for row in beneficiaries}) != len(
+            beneficiaries
+        ):
+            raise InvalidFamilyInput("Duplicate beneficiary result IDs")
+        object.__setattr__(self, "beneficiaries", beneficiaries)
+        for name in ("state_source", "pe_us_revision", "version"):
+            _input_text(getattr(self, name), name)
+        if self.family_maximum < self.pia:
+            raise InvalidFamilyInput("The family maximum is below the PIA")
+        if self.subject_total > self.family_maximum:
+            raise InvalidFamilyInput("subject_total exceeds family_maximum")
+        expected_total = (self.worker_benefit or Fraction(0)) + sum(
+            (row.auxiliary_payable for row in beneficiaries), Fraction(0)
+        )
+        expected_whole = (self.whole_dollar_worker or 0) + sum(
+            row.whole_dollar_auxiliary for row in beneficiaries
+        )
+        if self.record_total != expected_total:
+            raise InvalidFamilyInput("record_total differs from payments")
+        if self.record_total_whole_dollars != expected_whole:
+            raise InvalidFamilyInput(
+                "record_total_whole_dollars differs from payments"
+            )
 
     def by_id(self) -> Mapping[str, BeneficiaryBenefit]:
         return MappingProxyType(
@@ -1960,6 +2246,14 @@ def original_benefit(
     402(g)(2) 3/4; 402(h)(2) 82.5 percent for one entitled parent,
     75 percent for each of two (RS 00209.015).
     """
+    _input_type(role, Role, "role")
+    _input_type(kind, FamilyKind, "kind")
+    pia = _dimes(pia, "PIA")
+    if basis is not None:
+        basis = _dimes(basis, "basis")
+    _input_type(parent_count, int, "parent_count")
+    if parent_count not in (1, 2):
+        raise InvalidFamilyInput("parent_count must be one or two")
     if role in _SPOUSE_ROLES:
         share = Fraction(1, 2)
     elif role is Role.CHILD:
@@ -2232,6 +2526,19 @@ def maximum_redistribution_rates(
     household's OB mapping separately. This helper applies no earnings-test
     or other deduction itself.
     """
+    for name, mapping in (
+        ("original_benefits", original_benefits),
+        ("deductee_payables", deductee_payables),
+        ("age_reductions", {} if age_reductions is None else age_reductions),
+        (
+            "other_deductions",
+            {} if other_deductions is None else other_deductions,
+        ),
+    ):
+        if not isinstance(mapping, Mapping):
+            raise _InvalidInputType(f"{name} must be a mapping")
+        for key in mapping:
+            _input_text(key, f"{name} key")
     obs = {
         key: _dimes(value, "OB") for key, value in original_benefits.items()
     }
@@ -3023,6 +3330,22 @@ class HouseholdBenefits:
     payment_month: YearMonth
     records: Mapping[str, FamilyBenefits]
 
+    def __post_init__(self):
+        month = _checked_input(self.payment_month, YearMonth, "payment_month")
+        if not isinstance(self.records, Mapping):
+            raise _InvalidInputType("records must be a mapping")
+        records = {}
+        for key, result in self.records.items():
+            _input_text(key, "record key")
+            result = _checked_input(result, FamilyBenefits, "record result")
+            if result.payment_month != month:
+                raise InvalidFamilyInput(
+                    "Every record must have the household payment_month"
+                )
+            records[key] = result
+        object.__setattr__(self, "payment_month", month)
+        object.__setattr__(self, "records", MappingProxyType(records))
+
     @property
     def record_total(self) -> Fraction:
         return sum(
@@ -3279,7 +3602,7 @@ def household_month_outcome(
             record.state, record.beneficiaries, payment_month, params
         )
         if not isinstance(guards[record_id], SavingsClauseGuard):
-            raise TypeError("guards must be SavingsClauseGuards")
+            raise _InvalidInputType("guards must be SavingsClauseGuards")
         guards[record_id]._expect(payment_month)
     try:
         _refuse_household(held)
@@ -3329,8 +3652,7 @@ def savings_clause_total(result: FamilyBenefits) -> Fraction:
     after age reduction and before the 402(k)(3)(A) offset. Divorced
     beneficiaries are outside 403(a) (403(a)(3)(C)).
     """
-    if not isinstance(result, FamilyBenefits):
-        raise TypeError("savings_clause_total takes one record's result")
+    result = _checked_input(result, FamilyBenefits, "result")
     return (result.worker_benefit or Fraction(0)) + sum(
         (
             row.age_adjusted_rate
@@ -3518,21 +3840,21 @@ class SavingsClauseGuard:
         raises :class:`FamilyConfigurationUnsupported`. Either way the
         guard moves to the next month.
         """
-        if not isinstance(result, FamilyBenefits):
-            raise TypeError("admit takes one record's FamilyBenefits")
+        original = result
+        result = _checked_input(result, FamilyBenefits, "result")
         month = result.payment_month
         self._expect(month)
+        total = savings_clause_total(result)
         self._carry(result.pia)
         self._prior = _PriorMonth(month, result, result.pia)
         self._next = _next_month(month)
-        total = savings_clause_total(result)
         # Source conflict us:oasdi-family-maximum-saving-clause
         below = self._floor is not None and total < self._floor
         first_fall = below and self._refused_since is None
         if first_fall:
             self._refused_since = month
         if not _governed(result):
-            return result
+            return original
         if self._refused_since is not None and not first_fall:
             raise FamilyConfigurationUnsupported(
                 UnsupportedReason.SAVINGS_CLAUSE,
@@ -3555,7 +3877,7 @@ class SavingsClauseGuard:
                 f"{self._floor_month}; 403(a)(5) would raise it (not "
                 "implemented)",
             )
-        return result
+        return original
 
     def skip(self, month: YearMonth, *, pia: object = None) -> None:
         """Record a month of this record that G did not compute.
@@ -3596,12 +3918,10 @@ class SavingsClauseGuard:
         try:
             result = compute()
         except FamilyConfigurationUnsupported as error:
+            error = _validated_refusal(error)
             self.skip(month, pia=pia)
             return FamilyOutcome(key, weight, None, error)
-        if not isinstance(result, FamilyBenefits):
-            raise _InvalidInputType(
-                "compute must return one record's FamilyBenefits"
-            )
+        result = _checked_input(result, FamilyBenefits, "compute result")
         if pia is not None and _dimes(pia, "PIA") != result.pia:
             raise InvalidFamilyInput(
                 f"pia {pia} disagrees with the computed PIA {result.pia}"
@@ -3635,7 +3955,11 @@ def _check_evaluation_inputs(
 
 @dataclass(frozen=True)
 class FamilyOutcome:
-    """One record-month: its benefits, or why it is unsupported."""
+    """One record-month: validated benefits or a validated coverage refusal.
+
+    Nested declarations are revalidated on construction, including a
+    refusal's reason, so a malformed result contributes no denominator row.
+    """
 
     key: str
     weight: Fraction
@@ -3651,9 +3975,15 @@ class FamilyOutcome:
             raise _InvalidInputType(
                 "benefits must be family or household benefits"
             )
+        if self.benefits is not None:
+            object.__setattr__(
+                self,
+                "benefits",
+                _checked_input(self.benefits, type(self.benefits), "benefits"),
+            )
         if self.unsupported is not None:
-            _input_type(
-                self.unsupported, FamilyConfigurationUnsupported, "unsupported"
+            object.__setattr__(
+                self, "unsupported", _validated_refusal(self.unsupported)
             )
         if (self.benefits is None) == (self.unsupported is None):
             raise InvalidFamilyInput(
@@ -3692,7 +4022,11 @@ def evaluate_family(
 
 @dataclass(frozen=True)
 class FamilyDenominator:
-    """Counts over every outcome, supported or not."""
+    """Validated counts over every outcome, supported or not.
+
+    Both counts and weights reconcile supported, unsupported and per-reason
+    totals. The reason mapping is an immutable snapshot of its input.
+    """
 
     rows: int
     weight: Fraction
@@ -3701,6 +4035,44 @@ class FamilyDenominator:
     unsupported_rows: int
     unsupported_weight: Fraction
     unsupported_by_reason: Mapping[UnsupportedReason, tuple[int, Fraction]]
+
+    def __post_init__(self):
+        for name in ("rows", "supported_rows", "unsupported_rows"):
+            _nonnegative_integer(getattr(self, name), name)
+        for name in ("weight", "supported_weight", "unsupported_weight"):
+            object.__setattr__(
+                self, name, _outcome_weight(getattr(self, name))
+            )
+        if not isinstance(self.unsupported_by_reason, Mapping):
+            raise _InvalidInputType("unsupported_by_reason must be a mapping")
+        reasons = {}
+        for reason, value in self.unsupported_by_reason.items():
+            _input_type(reason, UnsupportedReason, "unsupported reason")
+            _input_type(value, tuple, "unsupported count and weight")
+            if len(value) != 2:
+                raise InvalidFamilyInput("Each reason needs count and weight")
+            count, weight = value
+            _nonnegative_integer(count, "unsupported reason count")
+            reasons[reason] = (count, _outcome_weight(weight))
+        if self.rows != self.supported_rows + self.unsupported_rows:
+            raise InvalidFamilyInput(
+                "rows differ from supported + unsupported"
+            )
+        if self.weight != self.supported_weight + self.unsupported_weight:
+            raise InvalidFamilyInput(
+                "weight differs from supported + unsupported"
+            )
+        if self.unsupported_rows != sum(
+            count for count, _ in reasons.values()
+        ):
+            raise InvalidFamilyInput("unsupported rows differ from reasons")
+        if self.unsupported_weight != sum(
+            (weight for _, weight in reasons.values()), Fraction(0)
+        ):
+            raise InvalidFamilyInput("unsupported weight differs from reasons")
+        object.__setattr__(
+            self, "unsupported_by_reason", MappingProxyType(reasons)
+        )
 
     @property
     def supported_weight_share(self) -> Fraction:
@@ -3713,11 +4085,7 @@ def count_family_outcomes(
     outcomes: Iterable[FamilyOutcome],
 ) -> FamilyDenominator:
     """Tabulate outcomes; unsupported rows are counted, never dropped."""
-    outcomes = tuple(outcomes)
-    keys = Counter(outcome.key for outcome in outcomes)
-    duplicates = sorted(key for key, count in keys.items() if count > 1)
-    if duplicates:
-        raise ValueError(f"Duplicate outcome keys: {duplicates[:5]}")
+    outcomes = _checked_outcomes(outcomes)
     by_reason: dict[UnsupportedReason, tuple[int, Fraction]] = {}
     for outcome in outcomes:
         if outcome.unsupported is not None:
@@ -3741,6 +4109,19 @@ def count_family_outcomes(
     )
 
 
+def _checked_outcomes(outcomes: Iterable[FamilyOutcome]) -> tuple:
+    """Validate every observation before coverage or denominator decisions."""
+    outcomes = tuple(
+        _checked_input(outcome, FamilyOutcome, "outcome")
+        for outcome in _input_iterable(outcomes, "outcomes")
+    )
+    keys = Counter(outcome.key for outcome in outcomes)
+    duplicates = sorted(key for key, count in keys.items() if count > 1)
+    if duplicates:
+        raise InvalidFamilyInput(f"Duplicate outcome keys: {duplicates[:5]}")
+    return outcomes
+
+
 def _require_all_supported(outcomes: Sequence[FamilyOutcome]) -> None:
     blocked = [o for o in outcomes if not o.supported]
     if blocked:
@@ -3761,7 +4142,7 @@ def _require_all_supported(outcomes: Sequence[FamilyOutcome]) -> None:
 
 def weighted_record_total(outcomes: Iterable[FamilyOutcome]) -> Fraction:
     """Weighted sum of record totals; blocked if any row is unsupported."""
-    outcomes = tuple(outcomes)
+    outcomes = _checked_outcomes(outcomes)
     _require_all_supported(outcomes)
     return sum(
         (o.weight * o.benefits.record_total for o in outcomes), Fraction(0)
@@ -3770,7 +4151,7 @@ def weighted_record_total(outcomes: Iterable[FamilyOutcome]) -> Fraction:
 
 def weighted_mean_record_total(outcomes: Iterable[FamilyOutcome]) -> Fraction:
     """Weighted mean over *all* rows; blocked if any row is unsupported."""
-    outcomes = tuple(outcomes)
+    outcomes = _checked_outcomes(outcomes)
     denominator = count_family_outcomes(outcomes)
     _require_all_supported(outcomes)
     if denominator.weight == 0:

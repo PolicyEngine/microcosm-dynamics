@@ -5,8 +5,8 @@ captured statutory examples are admitted, with no population, behavioral or
 forecast claim. Published figures retain capture literals. Derived monthly
 rates and statutory dollar floors are labelled separately from published
 presentation figures. Registry completeness, determinism, scenario order
-independence, declared coverage and maximum-tag truth are executable
-invariants.
+independence, declared coverage, maximum-tag truth, and capture-section
+containment are executable invariants.
 """
 
 from __future__ import annotations
@@ -299,11 +299,237 @@ def _rounded(value, rule):
     raise AssertionError(f"Unknown registry rounding: {rule}")
 
 
+# Shorthand citations resolve to captured headings and their following peer.
+# Each pair narrows the previous section, so a child heading cannot silently
+# match elsewhere in the document. The captures use headings, bold examples,
+# plain-text tables and table rows; not every section has an HTML anchor.
+CITATION_SECTIONS = {
+    "poms_rs_00615_756": {
+        "B.3": (
+            ("B. Procedure", "To Link to this section"),
+            (
+                "3. Death Case - Different Original Benefits - WIB DRCs Not Involved",
+                "4. Widow(er) and Other Survivor Rates Based on Different PIAs - Windexing",
+            ),
+        ),
+        "B.4": (
+            ("B. Procedure", "To Link to this section"),
+            (
+                "4. Widow(er) and Other Survivor Rates Based on Different PIAs - Windexing",
+                None,
+            ),
+        ),
+    },
+    "poms_rs_00615_710": {
+        "Example": (("C. EXAMPLE", "To Link to this section"),),
+    },
+    "poms_rs_00615_682": {
+        "Example": (("EXAMPLE:", "To Link to this section"),),
+    },
+    "poms_rs_00615_768": {
+        "F.1": (
+            ("F. EXAMPLES", "To Link to this section"),
+            (
+                "EXAMPLE 1. Dually Entitled Beneficiary Reduced to Zero Payable",
+                "EXAMPLE 2. Dually Entitled Beneficiary with a Partial Payable",
+            ),
+        ),
+        "F.2": (
+            ("F. EXAMPLES", "To Link to this section"),
+            (
+                "EXAMPLE 2. Dually Entitled Beneficiary with a Partial Payable",
+                "EXAMPLE 3. Dually Entitled Beneficiary with Zero Payable and a Combined Family Maximum",
+            ),
+        ),
+    },
+    "poms_rs_00615_320": {
+        "C. Example": (("C. Example", "To Link to this section"),),
+    },
+    "poms_rs_00615_694": {
+        "C. Example": (("C. Example", "D. Reference"),),
+    },
+    "poms_rs_00615_240": {
+        "Example": (
+            (
+                "3. Spouse's Benefit with Subsequent RIB",
+                "4. Spouse's Reentitlement",
+            ),
+            ("Example:", None),
+        ),
+    },
+    "ssa_ssb_v75n3_family_maximum": {
+        "Table 1": (("Table 1.", "Table 2."),),
+        "Table 2": (("Table 2.", "Table A-1."),),
+        "Table A-1": (("Table A-1.", "Table A-2."),),
+        "Table A-2": (("Table A-2.", None),),
+        "Table A-2 household integration": (("Table A-2.", None),),
+    },
+    "poms_rs_00615_005": {
+        "B. Example": (
+            (
+                "B. POLICY - USE OF FRACTIONS INSTEAD OF DECIMAL EQUIVALENTS",
+                "C. POLICY - ADJUSTMENTS TO REDUCED BENEFITS AFTER 1/78 DUE TO COLA OR RECOMPUTATION",
+            ),
+            ("EXAMPLE:", None),
+        ),
+    },
+    "poms_rs_00615_301": {
+        "B.1 example": (
+            (
+                "B. Policy - reduced widow(er)'s benefits",
+                "To Link to this section",
+            ),
+            (
+                "1. Amount of WIB reduction",
+                "2. Chart - widow(er)'s benefit reduction factors",
+            ),
+        ),
+    },
+    "poms_rs_00615_692": {
+        "Example": (
+            (
+                "C. Formula for computing DRCs",
+                "D. Chart for Delayed Retirement Credits",
+            ),
+            (
+                "2. Computation errors with the decimal equivalent or multiplication sequence",
+                None,
+            ),
+            ("For example:", None),
+        ),
+    },
+    "poms_rs_00615_736": {
+        label: (
+            ("B. Procedure", "To Link to this section"),
+            ("3. EXAMPLES", None),
+            bounds,
+        )
+        for label, bounds in {
+            "B.3 example 1 (1979 formula)": ("Example 1 .", "Example 2."),
+            "B.3 example 1 (1981 formula)": ("Example 1 .", "Example 2."),
+            "B.3 example 2": ("Example 2.", "Example 3."),
+            "B.3 example 3": ("Example 3.", None),
+        }.items()
+    },
+    "ssa_oact_familymax": {
+        "2026 determination": (
+            ("Determination of family-maximum bend points for 2026", None),
+        ),
+    },
+    "poms_rs_00605_910": {
+        "1981 third constant": (
+            ("RS 00605.910 Family Maximum Chart", "To Link to this section"),
+            ("1981 Up through 270.00", "1982 Up through 294.00"),
+        ),
+    },
+    "poms_gn_02603_060": {
+        "A.5": (
+            (
+                "A. Examples of permanent full deductions",
+                "B. Examples of permanent partial deductions",
+            ),
+            (
+                "5. Full deduction for dual entitlement",
+                "6. Full deduction because",
+            ),
+        ),
+        "A.8": (
+            (
+                "A. Examples of permanent full deductions",
+                "B. Examples of permanent partial deductions",
+            ),
+            ("8. Full deduction because", "9. Full deduction because"),
+        ),
+        "A.9": (
+            (
+                "A. Examples of permanent full deductions",
+                "B. Examples of permanent partial deductions",
+            ),
+            ("9. Full deduction because", None),
+        ),
+        "B.2": (
+            (
+                "B. Examples of permanent partial deductions",
+                "C. Examples of temporary deductions",
+            ),
+            (
+                "2. Partial deduction and age reduction Involved",
+                "3. Partial deduction for dual entitlement",
+            ),
+        ),
+    },
+    "poms_rs_00615_340": {
+        "3.a": (
+            ("3. Examples", "To Link to this section"),
+            ("a. Increased Amount", "b. No Increase in Amount"),
+        ),
+        "3.b": (
+            ("3. Examples", "To Link to this section"),
+            ("b. No Increase in Amount", None),
+        ),
+    },
+}
+
+
+def _citation_section(example):
+    source = example["capture_id"]
+    citation = example["section"]
+    assert source in CITATION_SECTIONS, (example["id"], source)
+    assert citation in CITATION_SECTIONS[source], (example["id"], citation)
+    text = source_text(source)
+    for start, end in CITATION_SECTIONS[source][citation]:
+        assert start in text, (example["id"], citation, start)
+        # Include the heading so existing source_start boundaries remain
+        # independently checked within this same captured section.
+        text = text[text.index(start) :]
+        if end is not None:
+            assert end in text, (example["id"], citation, end)
+            text = text[: text.index(end)]
+    return text
+
+
+@pytest.mark.parametrize("example", EXAMPLES, ids=lambda value: value["id"])
+def test_registry_cited_section_contains_every_published_figure(example):
+    text = _citation_section(example)
+    for figure in example["expected"]:
+        assert figure["literal"] in text, (example["id"], figure["literal"])
+
+
+@given(st.sampled_from(EXAMPLES))
+@settings(deadline=None)
+def test_registry_unknown_sections_are_rejected(example):
+    test_registry_cited_section_contains_every_published_figure(example)
+    changed = copy.deepcopy(example)
+    changed["section"] = "MUTATED: NO SUCH CAPTURE SECTION"
+    with pytest.raises(AssertionError):
+        _citation_section(changed)
+
+
+@pytest.mark.parametrize("section", ["F.1", "F.2"])
+def test_registry_other_parisi_example_figures_are_rejected(section):
+    example = next(
+        example
+        for example in EXAMPLES
+        if example["capture_id"] == "poms_rs_00615_768"
+        and example["section"] == section
+    )
+    changed = copy.deepcopy(example)
+    changed["section"] = "F.2" if section == "F.1" else "F.1"
+    with pytest.raises(AssertionError):
+        check_example(changed)
+
+
 def _capture_section(example):
+    cited = _citation_section(example)
+    for figure in example["expected"]:
+        assert figure["literal"] in cited, (example["id"], figure["literal"])
+    # Preserve the earlier explicit boundaries as an independent check.
     text = source_text(example["capture_id"])
     if example.get("source_start"):
+        assert example["source_start"] in text, example["id"]
         text = text.split(example["source_start"], 1)[1]
     if example.get("source_end"):
+        assert example["source_end"] in text, example["id"]
         text = text.split(example["source_end"], 1)[0]
     return text
 

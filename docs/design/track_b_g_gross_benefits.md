@@ -4,7 +4,7 @@
 benefits for supported invented or published statutory cases only; no
 population, behavioral or forecast claim.**
 
-**Status: build-only, 2026-09-29; review fixes through 2026-10-15. No real-data
+**Status: build-only, 2026-09-29; review fixes through 2026-10-16. No real-data
 computation.** Inputs are invented families and SSA's published worked
 examples.
 
@@ -700,6 +700,35 @@ pins an accurate diagnostic, the 1929 control pins the exact payments, and
     execute the regression and cross-entry differential with zero
     tolerance for reason codes and supported payment fields.
 
+25. **Public object and helper closure.** Every public dataclass field and
+    exported function argument is classified against `__all__`, dataclass
+    fields and callable signatures. A single malformed type, wrong enum
+    class, non-finite value or out-of-domain value raises
+    `InvalidFamilyInput` before producing an object or outcome, contributing
+    a row or weight, or changing a monthly guard. Public consumers also
+    revalidate caller-supplied results and refusals. The Hypothesis tests
+    `test_every_public_constructor_field_rejects_corruption` and
+    `test_every_public_argument_rejects_corruption_before_output` execute
+    the corruption catalog; `test_public_api_has_no_unclassified_name_field_or_argument`
+    prevents additions escaping it. `test_public_argument_properties_start_from_valid_calls`
+    verifies that every function's uncorrupted seeds remain valid.
+    `test_parameter_field_corruption_preserves_guard_and_denominator`
+    extends the property to supplied NAWI and delayed-credit series entries.
+    `test_result_and_denominator_total_identities_reject_positive_corruption`
+    checks result and denominator identities;
+    `test_result_mappings_are_immutable_snapshots` checks mapping isolation.
+    `test_guard_revalidates_entire_result_before_any_state_change` and
+    `test_guard_revalidates_refusal_before_skipping` cover altered nested
+    values, and `test_consumers_validate_all_rows_before_coverage` checks
+    that an earlier valid refusal cannot mask a later malformed row.
+26. **Citation containment.** Each registry citation resolves to headings
+    present in its capture, and every quoted figure occurs within those
+    section boundaries. `test_registry_cited_section_contains_every_published_figure`
+    executes all 29 entries, `test_registry_unknown_sections_are_rejected`
+    is the Hypothesis malformed-citation property, and
+    `test_registry_other_parisi_example_figures_are_rejected` prevents a
+    valid but wrong section from borrowing figures elsewhere in the capture.
+
 ## Worked examples reproduced exactly
 
 | Source | Case |
@@ -1212,7 +1241,7 @@ invented configuration counts without population weights or claims.
 ### Non-finite parameter bundles
 
 The 402(q), 402(b)-(f) and 402(e)(2)(D) bundle cross-check rejects NaN and
-both infinities with the same `ValueError` as a finite statutory-rate
+both infinities with the same `InvalidFamilyInput` (also a `ValueError`) as a finite statutory-rate
 mismatch. The eight checked values are both worker monthly reduction rates,
 both spouse monthly reduction rates, the survivor reduction floor, the
 RIB-LIM PIA share, the spouse PIA share and the survivor PIA share. The
@@ -1701,3 +1730,85 @@ The round changes no supported monetary formula, historical support
 boundary, source capture or protected evidence artifact. The earlier
 historical DWB and dual-entitlement judgment items remain open. No new
 statutory reading is selected.
+
+
+## Fix round 10 of October 16, 2026
+
+Verification class: statutory conformance. Admitted scope remains supported
+invented and captured statutory cases only; no population, behavioral or
+forecast claim. No supported amount, statutory formula, refusal code or
+source capture changes.
+
+### Validate objects and every exported helper
+
+All public input and result dataclasses now validate at construction,
+including `dataclasses.replace`. Result validation covers nested rows,
+nonnegative finite dime amounts, whole-dollar pairs, exact enums and
+booleans, calendar years, nonempty identifiers, and payment and denominator
+identities. Mappings are copied to immutable views. A refusal requires an
+`UnsupportedReason`, never a similarly named `BeneficiaryCondition`.
+These are the design's §6–7 input/coverage distinction and the existing
+202(q), 203(a), 215(g) and exact-arithmetic rules, not new entitlement rules.
+
+The review's malformed refusal, `beneficiaries=None` result replacement,
+and negative `record_total` replacement now raise `InvalidFamilyInput`
+at construction. Aggregates defensively validate all rows before counting
+or deciding whether coverage blocks a total. A malformed later row cannot
+be hidden by an earlier valid refusal.
+
+The exported maximum, COLA, age, rounding, redistribution and aggregate
+helpers apply the same error class. Boolean PIA with eligibility 1982
+raises before `eligibility_before_1983`; no weight 7/3 enters a denominator.
+`applicable_cola_percents` revalidates calendar fields and all supplied
+COLA entries before its coverage check. Signed dime rounding remains
+supported for internal residual calculations; payable amounts and weights
+remain nonnegative. Existing exact-number conversions remain supported.
+Consumed parameter series also validate their shape, year keys and finite
+nonnegative values before coverage; a negative delayed-credit rate can no
+longer decrease an old-age benefit. Missing observations keep their
+documented lookup error. The two prior tests requiring precisely the base
+`ValueError` now require
+precisely its `InvalidFamilyInput` subclass; their diagnostic checks remain.
+Earlier widow-period tests now include construction inside their existing
+invalid-input assertions. Their full cohort/month domains and supported
+payment assertions remain unchanged.
+
+`SavingsClauseGuard.admit` and `.evaluate` validate the complete nested
+result or refusal before carrying protection, recording history or
+advancing the month. Invalid input leaves all guard attributes unchanged.
+A valid unsupported month still advances and retains its row and weight.
+`admit` preserves its return-identity contract while storing the validated,
+normalized copy in its history; changing the caller's original object cannot
+poison a later month. No 203(a)(5) interpretation changes.
+
+| Configuration | Result |
+| --- | --- |
+| Malformed public declaration, result, refusal, helper argument or nested outcome | `InvalidFamilyInput`; no observation, denominator contribution or guard change |
+| Existing valid supported configuration | Identical exact and whole-dollar payments |
+| Existing valid refused configuration | Identical `UnsupportedReason`, retained row and weight |
+
+### Bind registry citations to their captured sections
+
+RS 00615.768's two examples now cite F.1 and F.2, under the captured
+`F. EXAMPLES`, instead of E.1 and E.2. The zero-payable spouse example
+retains PIA $400, maximum $650, own $100, standard shares $83.30 and
+redistributed child shares $125. The partial-payable child example retains
+PIA $600, maximum $900, own $120, partial payable $30 and redistributed
+rate $270. All six and five quoted figures remain unchanged.
+
+The same audit corrects RS 00615.736B.3 labels: captured example 1 includes
+both the 1979 and 1981 formulas; the next two registry cases are examples
+2 and 3. The amounts and the pre-1982 historical upward-rounding refusals
+remain unchanged. Every registry entry now checks its actual section
+heading and boundaries, in addition to the existing figure, byte-hash,
+source-erratum and monetary checks. Regeneration changes only the report's
+registry file hash; its invented classification counts remain identical.
+
+### Not in scope
+
+No new module, population data, source retrieval, monetary rule or
+statutory interpretation is introduced. Earlier Needs Max's judgment
+items and rulings d1418 and d1338 remain unchanged. Constructor checks
+establish structural validity; they do not certify a caller-invented result
+as an independently verified statutory calculation. Calendar, cohort and
+family rules that require a parameter bundle still run at the entry point.
