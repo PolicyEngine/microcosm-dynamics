@@ -1129,7 +1129,7 @@ def ladder(
     target: float = POWER_TARGET,
     min_cells: int = MIN_GATED_CELLS,
 ) -> dict[str, Any]:
-    """Section 5's decompounding ladder, run inside the ruled surface.
+    """Section 5's decompounding ladder, run inside B2's gate surface.
 
     1. Order the eligible cells by descending tolerance/sigma, ties by
        name.
@@ -1486,7 +1486,8 @@ THREAD_VARIABLES = (
 
 #: populace-fit's forest job count. Unset, it is -1, every core, which the
 #: shared host's cap forbids; protocol v2 pinned it to 4. Forests are
-#: built with fixed per-tree seeds, so the count does not change a fit.
+#: built with fixed per-tree seeds, so the count is not expected to change
+#: a fit; B2 fixes it and does not rely on that expectation.
 FIT_JOBS_VARIABLE = "POPULACE_FIT_N_JOBS"
 
 
@@ -1500,8 +1501,8 @@ def thread_settings() -> dict[str, str]:
     thread per process, and up to four worker processes. On 2026-10-13 a
     probe of candidate 3's fit and projection on invented data stalled
     once at 0% CPU with more than one OpenMP thread. On 2026-10-15 the
-    same probe completed at 1, 2 and 4 threads, so the stall is
-    intermittent and its cause unknown. B2 uses one thread because it
+    same probe completed at 1, 2 and 4 threads, so the stall was not
+    reproduced; its cause is unknown. B2 uses one thread because it
     completed in every run (B2's registration on #42, "Why one thread").
     """
     settings = {name: os.environ.get(name, "") for name in THREAD_VARIABLES}

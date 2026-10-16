@@ -1270,8 +1270,8 @@ def test_registration_and_thread_settings(monkeypatch):
     with pytest.raises(RuntimeError, match="POPULACE_FIT_N_JOBS"):
         b2.thread_settings()
     monkeypatch.setenv("POPULACE_FIT_N_JOBS", "4")
-    # Every variable must be exactly 1: more threads hang the gates'
-    # predict in the pinned environment, and an unset one is refused too.
+    # Every variable must be exactly 1, as registered (b2.thread_settings
+    # says why), and an unset one is refused too.
     for name in b2.THREAD_VARIABLES:
         for value in ("2", "4", "0", ""):
             monkeypatch.setenv(name, value)

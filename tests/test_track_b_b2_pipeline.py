@@ -38,6 +38,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -756,6 +758,86 @@ def test_an_ineligible_cell_is_report_only_and_the_ladder_runs(
     assert name not in gated
 
 
+def test_the_invented_floor_caps_every_gate_surface_tolerance(
+    invented, measured, narrowed
+):
+    """The premise of ``narrowed``: on the invented panel every
+    gate-surface tolerance is at its cap, so the ladder fails the cap
+    guard; narrowed, ``earn_p90.prime`` is below its cap."""
+
+    def records(source):
+        return floor_builder.cell_records(
+            source["floor_household"],
+            source["se_up"],
+            invented["planning"],
+            len(m6_cells.FLOOR_SEEDS),
+        )
+
+    assert all(records(measured)[name]["at_cap"] for name in b2.GATE_SURFACE)
+    assert not records(narrowed)["earn_p90.prime"]["at_cap"]
+    record = floor_builder.decide(
+        measured, invented["design"], invented["planning"]
+    )
+    assert record["outcome"] == b2.WEAK_POWER_OR_VACUITY
+    assert record["ladder"]["guards"]["not_every_tolerance_at_cap"] is False
+
+
+LEVEL_STATES = ("ok", "ineligible", "se_up_undefined")
+
+
+@settings(max_examples=40, deadline=None)
+@given(
+    states=st.fixed_dictionaries(
+        {name: st.sampled_from(LEVEL_STATES) for name in b2.LEVEL_CELLS}
+    ),
+    power=st.sampled_from((0.5, 0.95)),
+)
+def test_decide_stops_and_gates_only_on_the_gate_surface(
+    invented, narrowed, states, power
+):
+    """For any mix of eligible, ineligible and undefined level cells and
+    either power, decide() stops only for an eligible gate-surface cell,
+    runs the ladder on the eligible gate-surface cells alone, gates only
+    gate-surface cells and reports both medians as outside the rescoped
+    surface."""
+    broken = copy.deepcopy(narrowed)
+    for name, state in states.items():
+        if state == "ineligible":
+            broken["floor_household"][name]["n_defined_seeds"] = 0
+        elif state == "se_up_undefined":
+            broken["se_up"][name]["se_up"] = None
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(
+            floor_builder, "ladder_power", lambda *args: lambda names: power
+        )
+        record = floor_builder.decide(
+            broken, invented["design"], invented["planning"]
+        )
+    eligible = [n for n in b2.GATE_SURFACE if states[n] != "ineligible"]
+    undefined = [n for n in eligible if states[n] == "se_up_undefined"]
+    causes = record.get("stop_causes") or []
+    assert {cause["cell"] for cause in causes} == set(undefined)
+    gated = [entry["cell"] for entry in record["surface"]["gated"]]
+    report = {
+        entry["cell"]: entry["reason"]
+        for entry in record["surface"]["report_only"]
+    }
+    assert set(gated) <= set(b2.GATE_SURFACE)
+    assert set(gated) | set(report) == set(b2.CELLS)
+    for name in ("earn_p50.older", "earn_p50.prime"):
+        assert report[name] == (
+            "outside the rescoped surface (d1606 option C1)"
+        )
+    if undefined:
+        assert record["outcome"] == b2.WEAK_POWER_OR_VACUITY
+        assert record["ladder"] is None and not gated
+        return
+    assert record["ladder"]["eligible"] == eligible
+    cleared = power >= b2.POWER_TARGET and len(eligible) == 4
+    assert (record["outcome"] == b2.LADDER_CLEARED) is cleared
+    assert gated == (sorted(eligible) if cleared else [])
+
+
 @pytest.mark.parametrize("change", ["se_up", "sigma", "seeds"])
 def test_a_median_outside_the_gate_surface_never_stops_b2(
     invented, narrowed, monkeypatch, change
@@ -905,7 +987,7 @@ def test_score_outcome_is_section_8s_on_its_own_cells(scored):
             )
             for name in scored["gate"]["gated_cells"]
         ],
-        b2.t_star(6, 10),
+        b2.t_star(4, 10),
     )
     assert recomputed["outcome"] == scored["outcome"]
     assert recomputed["seed_passes"] == scored["gate"]["seed_passes"]
@@ -1107,6 +1189,25 @@ def test_scorer_refuses_a_gated_cell_outside_the_gate_surface(
         scorer.check_scoring_inputs(floor, invented["planning"])
 
 
+@pytest.mark.parametrize(
+    "cells",
+    [
+        b2.GATE_SURFACE[:3],
+        b2.GATE_SURFACE[:1],
+        (*b2.GATE_SURFACE[:3], b2.GATE_SURFACE[0]),
+    ],
+    ids=["three", "one", "repeated"],
+)
+def test_scorer_refuses_fewer_than_four_or_repeated_gated_cells(
+    invented, cleared_floor, cells
+):
+    floor = copy.deepcopy(cleared_floor)
+    by_name = {entry["cell"]: entry for entry in floor["surface"]["gated"]}
+    floor["surface"]["gated"] = [dict(by_name[name]) for name in cells]
+    with pytest.raises(ValueError, match="gated surface is invalid"):
+        scorer.check_scoring_inputs(floor, invented["planning"])
+
+
 def test_candidate_3_disclosure_is_carried_verbatim():
     expected = (
         "**Candidate 3 records a valid M6 pass; it certifies nothing about "
@@ -1289,7 +1390,7 @@ def test_entry_points_refuse_more_than_one_thread_first(
     monkeypatch, module, variable
 ):
     """A launch with any thread variable above 1 stops before it reads,
-    checks or writes anything (the projection would hang)."""
+    checks or writes anything (b2.thread_settings says why)."""
     script = __import__(module)
     for name in b2.THREAD_VARIABLES:
         monkeypatch.setenv(name, "1")
