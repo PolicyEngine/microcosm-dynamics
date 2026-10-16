@@ -33,6 +33,7 @@ from tests.track_b_gross_benefit_support import (
     SOURCES,
     manifest,
     poms_bend_point_table,
+    poms_delayed_credit_chart,
     source_text,
     ssa_params,
 )
@@ -592,45 +593,13 @@ def test_poms_692_delayed_credits():
 # ===========================================================================
 # Delayed credits run from full retirement age to 70 (g-r1 M1 and L1)
 # ===========================================================================
-def _poms_692_chart():
-    """RS 00615.692E rows whose bands start on January 2, by birth year.
-
-    Each value is (FRA in months, monthly credit, maximum months, maximum
-    credit in percent). SSA's bands run from January 2 to January 1, so a
-    January 1 birth belongs to the previous year's row.
-    """
-    text = source_text("poms_rs_00615_692")
-    chart = text[
-        text.index("E. Chart for Maximum Delayed") : text.index(
-            "To Link to this section"
-        )
-    ]
-    rows = re.findall(
-        r"(?:After 01/01/(60)|01/02/(\d\d) thru 01/01/(\d\d)) "
-        r"(\d\d)(?:&(\d+))? (\d+/\d+)% [\d.]+% (\d+) ([\d.]+)%",
-        chart,
-    )
-    cohorts = {}
-    for after, start, end, years, months, monthly, most, percent in rows:
-        first = 1900 + int(after or start)
-        last = 1960 if after else 1900 + int(end) - 1
-        for year in range(first, last + 1):
-            cohorts[year] = (
-                12 * int(years) + int(months or 0),
-                F(monthly) / 100,
-                int(most),
-                F(percent),
-            )
-    return cohorts
-
-
 def test_delayed_credit_window_matches_the_poms_chart_for_every_cohort():
     """RS 00615.692E row by row: the window is 840 - FRA, from 1917 on.
 
     Before 1917 the chart's rate is 1/12 of 1 percent (402(w)(6)(A)) while
     the bundle, like policyengine-us, says 3 percent a year, so G refuses.
     """
-    chart = _poms_692_chart()
+    chart = poms_delayed_credit_chart()
     assert (min(chart), max(chart)) == (1914, 1960)
     for year, (fra, monthly, most, percent) in chart.items():
         if year < g.FIRST_SUPPORTED_DELAYED_CREDIT_BIRTH_YEAR:

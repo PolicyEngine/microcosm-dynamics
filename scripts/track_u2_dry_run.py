@@ -18,10 +18,13 @@ invented data.  The checks record the refusals the real path gives:
 * every family-record mapping round-trips through the registry layouts
   (invented fixed-width records: losses, sentinels, top codes, the
   seven/eight-asset WEALTH1 identities, every employer-DC route);
-* under the committed registries, the source gate refuses each wave the
-  milestone-1 record leaves open, the registry role context refuses the
-  TO VERIFY relationship codes, code 88 refuses under every context, and
-  the loader's preflight refuses before any PSID file is opened;
+* under the committed registries, the source gate applies every wave's
+  family records, the registry role context refuses only code 92 where
+  it is absent (2013 and 2015), both role contexts build a code-88
+  first-year cohabitor's family under amendment 1c's OFUM convention
+  with every observation unchanged, the loader's source preflight passes
+  (no blocker remains), and an unfrozen load without Max's recorded
+  authorization refuses before any PSID path is resolved;
 * the registered runner refuses these invented inputs and parameters;
 * each tested route from other data to the invented declared rules and
   routes refuses: relabelled or hand-copied invented provenance, frames
@@ -96,6 +99,8 @@ from populace_dynamics.uniform_cut_track_u2 import (  # noqa: E402
     tabulation,
 )
 
+#: A data directory that does not exist, for the unauthorized-load check.
+_SENTINEL_PSID_DIR = Path("/nonexistent/track-u2-dry-run-psid")
 #: A syntactically valid pointer used only to show that the registered
 #: path refuses invented inputs (no such comment is implied).
 _GUARD_POINTER = (
@@ -559,15 +564,83 @@ def _row_branches(
 
 
 def _forged_committed(registries: sources.RegistrySet) -> None:
-    """Registries labelled committed whose 2015 code-20 role entry has
-    been edited to apply: refused (the label is bound to the pins)."""
+    """Registries labelled committed whose RESOLVED 2015 code-88 role
+    entry has its ratified action removed: refused (the label is bound to
+    the pins)."""
 
     documents = copy.deepcopy(dict(registries.documents))
     for entry in documents["roles"]["entries"]:
-        if entry["id"] == "2015.relationship.20":
+        if entry["id"] == "2015.relationship.88":
             entry.pop("action", None)
-            entry["blocking_dependencies"] = []
+            entry["status"] = "RESOLVED"
+            entry["income_role"] = "ofum"
     sources.RegistrySet(documents, dict(registries.sha256), "committed")
+
+
+def _registry_context_check(
+    inputs: cohort.U2Inputs,
+    births: cohort.U2Births,
+    registry_roles: sources.RoleContext,
+    declared: sources.RoleContext,
+) -> dict[str, Any]:
+    """Build U0 and U1 under both role contexts and compare: equal apart
+    from the context's own label, with the section 16c exclusion counts."""
+
+    out: dict[str, Any] = {"refused": False, "rows": {}}
+    for row in ("U0", "U1"):
+        spec = cohort.U2CohortSpec(row=row)
+        try:
+            by_registry = cohort.build_u2_cohort(
+                inputs, spec, role_context=registry_roles, births=births
+            )
+        except Exception as error:  # recorded, not swallowed
+            return {
+                "refused": True,
+                "error": type(error).__name__,
+                "message": str(error)[:600],
+            }
+        by_declared = cohort.build_u2_cohort(
+            inputs, spec, role_context=declared, births=births
+        )
+        label = ["income_role_rule"]
+        disp = by_registry.dispositions
+        out["rows"][row] = {
+            "observations_equal": by_registry.observations.drop(
+                columns=label
+            ).equals(by_declared.observations.drop(columns=label)),
+            "dispositions_equal": disp.equals(by_declared.dispositions),
+            "family_unit_exclusions": {
+                name: int(disp["disposition"].eq(name).sum())
+                for name in sources.FAMILY_UNIT_EXCLUSIONS
+            },
+        }
+    return out
+
+
+def _code_88_check(
+    inputs: cohort.U2Inputs,
+    code88: cohort.U2Inputs,
+    context: sources.RoleContext,
+) -> dict[str, Any]:
+    """Build U0 with and without the code-88 first-year cohabitor under
+    ``context``: equal under amendment 1c's OFUM convention, refused
+    where the context leaves code 88 open."""
+
+    try:
+        with_88 = cohort.build_u2_cohort(code88, role_context=context)
+    except Exception as error:  # recorded, not swallowed
+        return {
+            "refused": True,
+            "error": type(error).__name__,
+            "message": str(error)[:600],
+        }
+    base = cohort.build_u2_cohort(inputs, role_context=context)
+    return {
+        "refused": False,
+        "rule": context.rule(2019, 88).as_dict(),
+        "observations_equal": with_88.observations.equals(base.observations),
+        "dispositions_equal": with_88.dispositions.equals(base.dispositions),
+    }
 
 
 def _invented_gate_refusals(
@@ -803,13 +876,22 @@ def checks(
         },
         "mapping": _mapping_checks(inputs),
         "role_refusals": {
-            "registry_context_on_invented_inputs": _refusal(
-                lambda: cohort.build_u2_cohort(
-                    inputs, role_context=registry_roles, births=births
-                )
+            # Since the d1090 registry commit (section 16c) the registry
+            # context resolves every code the invented population holds,
+            # so it builds that population exactly as the declared context
+            # does, the two exclusions included.
+            "registry_context_on_invented_inputs": _registry_context_check(
+                inputs, births, registry_roles, declared
             ),
-            "code_88_under_declared_context": _refusal(
-                lambda: cohort.build_u2_cohort(code88, role_context=declared)
+            # Amendment 1c (d637, confirmed by d745): a code-88
+            # first-year cohabitor has the OFUM role outside the spouse
+            # slot, so adding one changes no observation or disposition
+            # under either context.
+            "code_88_under_registry_context": _code_88_check(
+                inputs, code88, registry_roles
+            ),
+            "code_88_under_declared_context": _code_88_check(
+                inputs, code88, declared
             ),
             "declared_context_on_non_invented_inputs": _refusal(
                 lambda: cohort.build_u2_cohort(
@@ -850,6 +932,12 @@ def checks(
         ),
         "invented_variants": _variants(inputs, params),
         "loader_preflight": _refusal(loader.source_preflight),
+        # Section 20 step 4 needs Max's recorded authorization: without
+        # it an unfrozen load refuses before any PSID path is resolved
+        # (the sentinel directory does not exist).
+        "unauthorized_unfrozen_load": _refusal(
+            lambda: loader.load_u2_inputs(data_dir=_SENTINEL_PSID_DIR)
+        ),
         "registered_guard_refuses_invented_inputs": _refusal(
             lambda: runner.run_track_u2(
                 inputs,
@@ -1023,6 +1111,9 @@ def results_markdown(result: dict[str, Any]) -> str:
         "identical_births_and_annuitant_attributes"
     ]
     role = check["role_refusals"]
+    registry_built = role["registry_context_on_invented_inputs"].get(
+        "rows", {}
+    )
     thresholds_refused = check[
         "registered_parameter_check_refuses_invented_thresholds"
     ]["refused"]
@@ -1069,14 +1160,37 @@ def results_markdown(result: dict[str, Any]) -> str:
             for wave, entry in mapping.items()
         )
         + ".",
-        "- Role refusals: registry context on invented inputs "
-        f"{role['registry_context_on_invented_inputs']['refused']};"
-        " code 88 under the declared context "
-        f"{role['code_88_under_declared_context']['refused']};"
-        " declared context on non-invented inputs "
+        "- Roles: the registry context builds the invented population as "
+        "the declared context does (U0 and U1 observations and "
+        "dispositions equal: "
+        + ", ".join(
+            f"{row} {entry['observations_equal']}"
+            f"/{entry['dispositions_equal']}"
+            for row, entry in registry_built.items()
+        )
+        + "; refused "
+        + str(role["registry_context_on_invented_inputs"]["refused"])
+        + "); section 16c exclusions in U1: "
+        + ", ".join(
+            f"{name} {count}"
+            for name, count in registry_built.get("U1", {})
+            .get("family_unit_exclusions", {})
+            .items()
+        )
+        + ". Code 88 (amendment 1c's OFUM convention): refused under the "
+        "registry context "
+        f"{role['code_88_under_registry_context']['refused']}, under the "
+        "declared context "
+        f"{role['code_88_under_declared_context']['refused']} (U0 "
+        "unchanged: "
+        f"{role['code_88_under_declared_context'].get('observations_equal')}"
+        "). Refusals: declared context on non-invented inputs "
         f"{role['declared_context_on_non_invented_inputs']['refused']}.",
-        "- Loader preflight refuses before any PSID file is opened: "
-        f"{check['loader_preflight']['refused']}.",
+        "- Loader source preflight passes at the committed registries "
+        f"(no blocker): {not check['loader_preflight']['refused']}; an "
+        "unfrozen load without Max's recorded authorization refuses before "
+        "any PSID path is resolved: "
+        f"{check['unauthorized_unfrozen_load']['refused']}.",
         "- Tested routes from other data to the invented declared rules "
         "and routes, each refused: "
         + ", ".join(

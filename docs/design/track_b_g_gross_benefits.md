@@ -4,7 +4,8 @@
 benefits for supported invented or published statutory cases only; no
 population, behavioral or forecast claim.**
 
-**Status: build-only, 2026-09-29; review fixes through 2026-10-16. No real-data
+**Status: build-only, 2026-09-29; statutory delayed-credit convention
+(#494), 2026-10-11; review fixes through 2026-10-16. No real-data
 computation.** Inputs are invented families and SSA's published worked
 examples.
 
@@ -24,8 +25,8 @@ now, with Axiom differentials as diagnostics once a pinned rule exists.
   - `tests/test_track_b_gross_benefits.py` covers the worked examples,
     boundaries, households, the 403(a)(5) guard and refusals.
   - `tests/test_track_b_gross_benefits_properties.py` holds the Hypothesis
-    invariants and the differentials against `ss/benefits.py` and the sealed
-    ledger's rounding.
+    invariants and the differentials against `ss/benefits.py`,
+    `ss/statutory_delayed_credit.py` and the sealed ledger's rounding.
   - `tests/test_track_b_gross_benefits_oracle.py` checks the policyengine-us
     bundle (skipped without a checkout).
 - Sources: `tests/data/track_b/gross_benefit_sources/`. The manifest pins each
@@ -138,21 +139,30 @@ Design §6 suggests reusing the existing worker and auxiliary primitives in
   `floor_to_dime` over `early_reduction` lands a dime low in 11,572 of
   them and never high. POMS's $802.80 example is low in the wider one-off
   count; it is outside the 334,320-cell ledger's PIA range.
-- **The float delayed credit is short for births 1917-1942.**
-  `ss.benefits.delayed_credit` caps the window at 48 months (issue #494,
-  below).
+- **The sealed oracle keeps its legacy delayed-credit cap.**
+  `ss.benefits.delayed_credit` remains byte-identical because the
+  first-estimates birth-evidence source seal binds it to the reviewed
+  implementation. Its standard bundle limits credits to 48 months, which
+  is short for births 1917–1942. The sibling
+  `ss/statutory_delayed_credit.py` uses the full `840 - FRA` window and
+  agrees with G over that whole window. G retains exact fractions and its
+  validation of increment months; the new float function truncates claims
+  after 70. `DelayedCreditWindow` names the statutory and sealed legacy
+  conventions explicitly.
 - **Its survivor path has one reduction period per parameter bundle.** The
   default spreads the widow(er) reduction over 84 months, exact only for
   survivors born 1962 or later (`ss/params.py`). G takes each widow(er)'s
   period as an input, and `widow_reduction_period_months` implements the
   RS 00615.301B.2 birth-date table.
 
-The differential tests keep the two aligned where they overlap. The
-reduction fractions, `spousal_benefit`, `widow_benefit` and
-`delayed_credit` must agree with G within their documented rounding, and a
-change to either side that breaks the agreement fails the suite. That is
-invariant 10 below. The one pinned divergence is `delayed_credit` past 48
-months for births 1917-1942, which is the oracle's bug (#494). This
+The differential tests keep these implementations aligned over their
+shared surfaces. The reduction fractions, `spousal_benefit` and
+`widow_benefit` in `ss/benefits.py` agree with G within documented rounding.
+Its sealed delayed-credit function agrees through `min(48, window)`;
+the new statutory float function agrees over the whole FRA-to-70 window,
+including months past 48 for births 1917–1942 (#494). A named pin preserves
+the sealed legacy result rather than treating that retained convention as
+an open bug. These are invariant 10 below. The exact monetary
 reimplementation needs Max's ratification, because §6 asked for reuse.
 
 ## Delayed credits
@@ -174,8 +184,13 @@ most `840 - FRA` months.
   `family_benefits`).
 - The bundle's `max_delayed_months` (policyengine-us `max_delayed_years: 4`,
   so 48) is not used. It is short for births 1917-1942, and the FRA-to-70
-  window bounds every later cohort anyway. `ss.benefits.delayed_credit`
-  still applies it (issue #494).
+  window bounds every later cohort anyway. The new
+  `ss.statutory_delayed_credit.delayed_credit` also ignores it. The sealed
+  `ss.benefits.delayed_credit` retains the captured bundle's cap by design.
+  The statutory float function accepts months from FRA to entitlement, so
+  a claim after 70 earns the window credit. G accepts already-counted
+  increment months and rejects more than the window. Tests pin both input
+  conventions and both named oracle conventions.
 - Credits for births before 1917 are refused
   (`delayed_credits_born_before_1917`). 402(w)(6)(A) gives 1/12 of 1 percent a month to a person first eligible
   before 1979. The bundle, like policyengine-us, starts its schedule at 3
@@ -511,11 +526,15 @@ pins an accurate diagnostic, the 1929 control pins the exact payments, and
    - a refused month has someone under the maximum and a fall behind it;
    - a month with nobody under the maximum is always computed;
    - a path whose PIA never rises is never refused.
-10. **Differentials.** The reduction fractions, `spousal_benefit`,
-   `widow_benefit` and `delayed_credit` in `ss/benefits.py` agree with G
-   within their documented rounding. `delayed_credit` is compared only
-   within its 48-month cap. Past it, for births 1917-1942, the divergence
-   is pinned as the oracle's bug (#494). The sealed ledger's float path
+10. **Differentials.** The reduction fractions, `spousal_benefit` and
+   `widow_benefit` in `ss/benefits.py` agree with G within their documented
+   rounding. Its sealed legacy `delayed_credit` agrees with G through
+   `min(48, window)` and keeps its 1935/60-month value of 0.24 by design.
+   `ss/statutory_delayed_credit.py` agrees with G across the full statutory
+   window for births from 1917, including months past 48. The scalar
+   whole-window fraction differential uses PIA $2,400 to remove monetary
+   rounding and has tolerance `1e-12`; G's arbitrary-dime-PIA monetary
+   differential retains its one-dime tolerance. The sealed ledger's float path
    (`estimates.ledgers.floor_to_dime` over `early_reduction`) is never above
    G's exact amount, and never more than a dime below it.
 11. **Delayed-credit windows.** For every cohort 1917-1960 on the RS
@@ -785,8 +804,15 @@ pins an accurate diagnostic, the 1929 control pins the exact payments, and
   RS 00615.801 and RS 00630.400 were captured on 2026-09-30, and 402(w)(2)
   and (w)(6) were added to the LII excerpts from a body that matched the
   pinned SHA-256.
-- **Oracle bug filed.** `ss.benefits.delayed_credit` caps credits at 48
-  months: PolicyEngine/microcosm-dynamics#494.
+- **Statutory delayed-credit convention #494 (2026-10-11).**
+  `ss/statutory_delayed_credit.py` credits every month from FRA to the
+  month before 70, beside the unchanged sealed oracle. A 1935 birth
+  entitled at 70 agrees with G at 30 percent of PIA under `STATUTORY` and
+  retains 24 percent under `LEGACY_48_MONTH_CAP`. The statutory table and
+  full-window differentials are described in `track_b_494_delayed_credit.md`.
+  The erratum audits registered-result reachability; those results stand
+  under their registered legacy convention. A later registered rerun must
+  select `DelayedCreditWindow.STATUTORY` explicitly and state that choice.
 
 ## Not in scope
 

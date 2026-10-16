@@ -26,6 +26,9 @@ from hypothesis import strategies as st
 
 from populace_dynamics.estimates.ledgers import floor_to_dime
 from populace_dynamics.ss import benefits as oracle
+from populace_dynamics.ss.statutory_delayed_credit import (
+    delayed_credit as statutory_delayed_credit,
+)
 from populace_dynamics.track_b import gross_benefits as g
 from tests.track_b_gross_benefit_support import ssa_params
 
@@ -613,18 +616,18 @@ def test_widow_benefit_matches_the_oracle_within_rounding(
 
 
 @settings(deadline=None)
-@given(dimes, st.integers(0, 48), st.integers(1929, 1990))
-def test_delayed_credits_match_the_float_oracle_within_one_dime(
+@given(dimes, st.integers(0, 60), st.integers(1917, 1990))
+def test_delayed_credits_match_the_sealed_legacy_oracle_within_one_dime(
     pia, months, birth_year
 ):
-    """``delayed_credit`` gives the 402(w) fraction; G floors the credit.
+    """The sealed oracle's 48-month convention and G's shared surface.
 
-    Within the oracle's window (credits stop at 70), G's credited benefit
-    is the unrounded PIA x (1 + fraction) floored to the dime, up to float
-    error in the oracle's fraction.
+    Within min(48, FRA-to-70 window), G's credited benefit is the unrounded
+    PIA x (1 + fraction) floored to the dime, up to float error in the
+    oracle's fraction. Registered paths retain this legacy convention.
     """
     fra = PARAMS.fra_months(birth_year)
-    assume(months <= min(PARAMS.max_delayed_months, 70 * 12 - fra))
+    assume(months <= min(48, 70 * 12 - fra))
     base, credited = g.worker_age_adjusted(pia, 0, months, birth_year, PARAMS)
     assert base == pia
     fraction = oracle.delayed_credit(months, birth_year, PARAMS)
@@ -633,19 +636,37 @@ def test_delayed_credits_match_the_float_oracle_within_one_dime(
     assert credited <= unrounded + F(1, 10**6)
 
 
-def test_float_oracle_caps_fra_65_credits_at_48_months_issue_494():
-    """A known oracle defect, pinned where the differential stops.
+def test_sealed_legacy_oracle_keeps_the_48_month_cap_issue_494():
+    """The sealed legacy convention is preserved beside statutory credit.
 
-    ``ss.benefits.delayed_credit`` bounds the window at
-    ``min(max_delayed_months, 840 - FRA)``, and the bundle's
-    ``max_delayed_months`` is 48, so a 1935 birth (FRA 65) gets 24 percent
-    for 60 months instead of 30 (PolicyEngine/microcosm-dynamics#494). G
-    credits the whole FRA-to-70 window, so the differential above compares
-    only months within the oracle's cap.
+    A 1935 birth (FRA 65) earns 30 percent for 60 months in G and the
+    statutory sibling. The sealed oracle retains 24 percent by design.
     """
     assert PARAMS.max_delayed_months == 48
     assert g.worker_age_adjusted(F(1000), 0, 60, 1935, PARAMS)[1] == F(1300)
-    assert abs(oracle.delayed_credit(60, 1935, PARAMS) - 0.24) < 1e-12
+    assert oracle.delayed_credit(60, 1935, PARAMS) == 0.24
+    assert statutory_delayed_credit(60, 1935, PARAMS) == 0.30
+
+
+@settings(deadline=None)
+@given(dimes, st.integers(1917, 1990), st.data())
+def test_delayed_credits_match_the_statutory_float_function_over_the_whole_window(
+    pia, birth_year, data
+):
+    """G floors the credit; the statutory float function retains fractions.
+
+    The differential covers every admissible credit month, including
+    months beyond 48 for pre-1943 births. Its tolerance is one dime plus
+    1e-6 for float representation, as in the legacy shared-window check.
+    """
+    window = g.delayed_credit_window_months(birth_year, PARAMS)
+    months = data.draw(st.integers(0, window), label="credit months")
+    base, credited = g.worker_age_adjusted(pia, 0, months, birth_year, PARAMS)
+    assert base == pia
+    fraction = statutory_delayed_credit(months, birth_year, PARAMS)
+    unrounded = pia * (1 + F(repr(fraction)))
+    assert unrounded - DIME - F(1, 10**6) < credited
+    assert credited <= unrounded + F(1, 10**6)
 
 
 @settings(deadline=None)

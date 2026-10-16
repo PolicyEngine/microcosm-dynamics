@@ -1,10 +1,15 @@
 """Held-out target U2: Boomers 2004, 1946-55 column, uniform 13% cut.
 
 Specification ``docs/design/boomers2004_1946_55_comparison.md``
-(``u2-draft-4``), sections 3-15; section 16a's amendments are proposals
-pending Max's ruling and change nothing here.  U2 extends U1's static
-measurement (:mod:`populace_dynamics.uniform_cut_track_u`) to the
-1946-55 birth cohort on the 2013-2023 PSID waves.  It never edits a U1 module: U1's
+(``u2-draft-4``), sections 3-15, with section 16a's amendments as Max
+ruled on them: d637 (section 16b) ratified amendments 2-5, amendment 6's
+option 1 and, as Max confirmed on 2026-10-12 (d745), amendment 1's parts
+1a-1c; d1090 (section 16c) ruled on blockers B1 and B2.  Each ruling
+reaches this package through the source registries, one reviewed commit
+per amendment, and through the declared rules where the declared
+interpretation changes.  U2 extends U1's static measurement
+(:mod:`populace_dynamics.uniform_cut_track_u`) to the 1946-55 birth
+cohort on the 2013-2023 PSID waves.  It never edits a U1 module: U1's
 constants, defaults, registered behaviour, parameter captures and
 artifacts stay byte-identical, and every U2 identity (target, column,
 rows, rulings, parameters, artifact path) is separate and refuses its U1
@@ -33,7 +38,9 @@ Modules (imported explicitly, never re-exported here, so importing
 * :mod:`.memo` -- the comparison-memo classification rules of section
   10a (no comparator value is held anywhere in the repository);
 * :mod:`.loader` -- the registered real-data loader, which refuses before
-  opening any PSID record while a required route is unresolved.
+  opening any PSID record while a required route is unresolved, and
+  refuses an unfrozen load (the section 20 step-4 pass) without Max's
+  recorded authorization.
 
 Every output is a *PSID-realized outcome (not a projection)* computed
 with a *Python income concept (not Axiom)* under *mechanical incidence*.

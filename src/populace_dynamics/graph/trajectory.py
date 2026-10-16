@@ -137,8 +137,9 @@ def _apply(context):
         else:
             outcome = _apply_complete(context)
     except Exception as error:
-        # The exact pinned core requires every declared artifact even on a
-        # failed gate. Publish an explicit typed failure, never survivor data.
+        # A raising gate would leave the transition unavailable and its
+        # consumers unreached. Publish an explicit typed failure instead, so
+        # next year's apply records `blocked`; never publish survivor data.
         outcome = _outcome(
             year,
             "failed",
