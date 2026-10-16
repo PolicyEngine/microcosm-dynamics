@@ -1043,9 +1043,11 @@ def pattern_kind(pattern: str, denied: Sequence[str]) -> str:
 
     In the automaton ``!(...)`` reads as ``*``, so a filter that
     excludes a name beside a whole denied stem (``stem!(.md)``) is
-    classed as naming it. Any other pattern holding ``!(...)`` is
+    classed as naming it. Any other pattern holding ``!(`` outside a
+    class or escape, whether or not the group closes, is
     ``unclassified``: a negation can spell a name by excluding everything
-    else (``!(|[!d]|??*)`` is ``d``). A wildcard, a negated class or a
+    else (``!(|[!d]|??*)`` is ``d``). A literal ``!(`` is written
+    ``![(]``. A wildcard, a negated class or a
     class of two or more characters that stands at a position of the
     stem (``*name_part*``, ``[xy]tem.md``) is not classified. A pattern
     is ``unclassified`` if it is longer than

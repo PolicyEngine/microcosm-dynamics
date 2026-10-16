@@ -1079,6 +1079,12 @@ def test_a_negation_is_unclassified_unless_it_names_a_denied_path():
     # a negation that does not parse as a group is still a negation
     assert kind("**/!(|[!d]|??*|(x)eep_denied.md", DENIED) == "unclassified"
     assert kind("x!(y", DENIED) == "unclassified"
+    # a literal !( in a class or after a backslash is no negation
+    assert kind("notes![(]draft.md", DENIED) == "inside_root"
+    assert review_root._negation_text("notes!(draft.md")
+    assert not review_root._negation_text("notes![(]draft.md")
+    assert not review_root._negation_text("notes[!(]draft.md")
+    assert not review_root._negation_text("notes\\!(draft.md")
 
 
 def test_unbalanced_openers_up_to_the_limit_are_still_read():

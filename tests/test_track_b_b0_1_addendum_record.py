@@ -839,8 +839,10 @@ def test_addendum_carries_the_round_10_record(prose, sentence):
         "read as ripgrep, Node and Bun read it (a bracket class is one "
         "character whatever it holds, as in `stem[.,]md`;",
         "a segment that matches a denied name and reads no other character "
-        "at any position of its stem names it, a pattern holding `!(...)` "
-        "that names no denied path is not classified,",
+        "at any position of its stem names it, a pattern holding `!(` "
+        "outside a class or escape, whether or not the group closes, that "
+        "names no denied path is not classified (a literal `!(` is written "
+        "`![(]`),",
         "the denied names are every file the root record removed, the "
         "codebook files and code-map tables included.",
         "The rule as it now stands is `track_b_b0_1_review_read_log.v7`.",
