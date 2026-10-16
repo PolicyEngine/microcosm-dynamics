@@ -667,6 +667,39 @@ pins an accurate diagnostic, the 1929 control pins the exact payments, and
     `test_settled_subject_payable_does_not_fabricate_savings_clause_rate`
     regression rejects hidden variation in a subject's protected rate.
 
+23. **Complete input validation precedes coverage.** Corrupting one public
+    input field of a valid invented family with a wrong type or an invalid
+    value raises `InvalidFamilyInput` at every applicable entry point.
+    This includes exact enum classes, booleans distinct from integers,
+    monetary values, dates, conditions, household metadata and public
+    guard inputs.
+    No outcome is returned, no row or weight enters a refusal denominator,
+    caller inputs remain unchanged and every monthly guard retains its
+    state. `test_review_malformed_inputs_precede_refusal_and_guard` pins
+    the executed counterexamples.
+    `test_malformed_catalog_covers_every_public_input_dataclass_field`
+    checks the corruption catalog against dataclass fields, and
+    `test_malformed_field_never_counts_or_advances_any_entry` applies its
+    corruptions to Hypothesis-generated families across the direct,
+    built, household, evaluated and guarded routes.
+    `test_malformed_property_starts_from_supported_families` checks the
+    valid seeds.
+    `test_property_malformed_outcomes_never_compute_count_or_advance`
+    checks outcome keys, weights and callables before a closure runs or a
+    guard advances. Valid coverage refusals continue to retain their rows
+    and weights as required by invariant 6.
+24. **Refusal precedence is shared across entry points.** On identical
+    valid inputs, direct and built snapshots and household entry points
+    select the same refusal reason, including pre-1983 eligibility
+    combined with record conditions. Record refusals use eligibility
+    before 1983 first, then conditions in alphabetical value order, then
+    historical DIB entitlement. Record order remains canonical at the
+    household level. `test_review_pre_1983_refusal_precedence_matches_every_entry`,
+    `test_property_all_single_record_entry_points_have_identical_outcomes`
+    and `test_property_multi_record_entry_points_have_identical_outcomes`
+    execute the regression and cross-entry differential with zero
+    tolerance for reason codes and supported payment fields.
+
 ## Worked examples reproduced exactly
 
 | Source | Case |
@@ -1535,7 +1568,7 @@ support needs dated entitlement and reduction-money evidence.
 
 The broad instruction in RS 00615.005C.2 is "all cases involving single
 entitlement to actuarially reduced benefits prior to 1/78". In contrast,
-RS 00615.301B.3 says "all disabled widow(er)s under age 60 receive .715 of
+RS 00615.301B.1.e says "all disabled widow(er)s under age 60 receive .715 of
 the full unreduced WIB for 1/84 and later". RS 00615.005A.7 also states
 that the 1983 amendments "Eliminated the additional reduction for the
 period between age 50 and age 60." A specific-rule reading could treat
@@ -1582,3 +1615,89 @@ it does not assign a different historical dollar amount. The source-quote
 test executes that alternative and the cohort-1916 control side by side
 with the historical refusal. Resolving this narrower historical dual
 surface needs Max's judgment; no new monetary default is silently chosen.
+
+
+## Fix round 9 of October 15, 2026
+
+Verification class: statutory conformance on invented inputs and captured
+source text only. This round admits input-error classification and
+consistent refusal selection for the existing G surface. It introduces
+no population, behavioral or forecast claim and no new monetary rule.
+
+### Validate the complete input before deciding coverage
+
+The design's §6 and §7 require valid unsupported family rows to remain in
+coverage denominators. An invalid row is not a coverage observation.
+The common validation layer therefore checks every public input field
+before any coverage decision: the worker description, direct snapshot,
+own benefits, beneficiaries, household records, conditions, payment month
+and the guards' constructor inputs, mapping and expected month. It checks
+the declared types and value ranges,
+including exact enum classes and integers that exclude booleans, then the
+existing date, cohort, role, amount and cross-record consistency rules.
+Those existing rules derive from 202(q), 202(w), 203(a)(2) and 203(a)(5),
+with the captured POMS instructions cited above; this refactor adds no
+statutory eligibility or payment rule.
+
+The review supplied two invalid families that previously produced a
+coverage refusal and advanced a monthly guard. One mixed
+`RecordCondition.ADMINISTRATIVE_FINALITY` with a `BeneficiaryCondition`
+inside record conditions. The other supplied `birth_year=True` for a
+widow. Each now raises `InvalidFamilyInput` before a refusal can be
+selected, so its weight 7/3 is never counted and no guard changes.
+The malformed-input properties extend this assertion to one-field
+corruptions across the entire declared input surface, preserving the
+valid seed families and the earlier input-before-refusal controls.
+
+Calendar and cohort years use the representable calendar range 1–9999.
+Guard advancement checks the successor month before changing protection
+or history; December 9999 therefore raises an input error atomically.
+`test_terminal_calendar_month_errors_leave_every_guard_unchanged` exercises
+supported and refused computations through both guarded routes. Outcome
+keys, weights and callbacks are checked before invoking computation.
+Wrong-type errors remain catchable as `TypeError` for existing callers,
+and also inherit `InvalidFamilyInput`, so every malformed declaration has
+the same input-error contract. Monetary fields retain their documented
+conversion to exact fractions; no valid numerical representation changes.
+Whole-dollar AIME accepts an int or an integral Fraction, retaining the
+existing direct/built DIB differential's exact representation. Booleans
+and fractional-dollar AIME remain invalid.
+
+| Configuration | Result in round 9 |
+| --- | --- |
+| Wrong enum class in a condition collection, boolean in an integer field, or another malformed input field | `InvalidFamilyInput`; no outcome, denominator contribution or guard advancement |
+| Valid existing supported family | Existing exact payment and whole-dollar fields |
+| Valid existing unsupported family | Existing refusal reason, with its row and weight retained |
+| Retirement record, eligibility 1982, zero PIA/maximum/own benefit and `NON_AIME_FORMULA_PIA` | `eligibility_before_1983` on every route |
+
+The last row previously selected `eligibility_before_1983` for a direct
+snapshot and `non_aime_formula_pia` for a built snapshot. Both now use one
+record-refusal order: eligibility before 1983, conditions sorted by their
+values, then historical DIB entitlement. The pre-1983 boundary remains a
+coverage limit; this change only makes reason selection independent of
+construction style. Invariants 23 and 24 above state the new executed
+contracts. The extended round-8 differential includes historical cohorts
+and combined conditions, comparing exact refusal reasons as well as
+supported payment fields.
+
+### Correct the disabled-widow pinpoint citation
+
+The captured RS 00615.301 places the instruction that disabled widow(er)s
+under age 60 receive .715 of unreduced WIB from January 1984 under
+B.1.e, "Additional reduction for months prior to age 60". Both the
+module documentation and the earlier judgment item now cite
+RS 00615.301B.1.e. The separate RS 00615.310B.3 provision remains
+"1/84 DWB Recalculation". The regression
+`test_disabled_widow_instruction_is_under_captured_b1e_and_b3_is_separate`
+checks each quote within its actual captured HTML section, and
+`test_disabled_widow_citation_matches_capture_in_design_and_module`
+checks both documentation locations while retaining the .310 citation.
+The corrected pinpoint does not settle the historical DWB interpretation
+already listed under "Needs Max's judgment" and changes no amount.
+
+### Not in scope
+
+The round changes no supported monetary formula, historical support
+boundary, source capture or protected evidence artifact. The earlier
+historical DWB and dual-entitlement judgment items remain open. No new
+statutory reading is selected.

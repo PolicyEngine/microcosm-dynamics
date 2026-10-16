@@ -107,10 +107,17 @@ def test_valid_unclaimed_eligibility_gpo_stays_in_denominator(built):
 def _direct_state(record):
     """Construct the same dated snapshot without calling record_state."""
     pia = g.increase_by_colas(record.eligibility_pia, record.cola_percents)
-    maximum = g.increase_by_colas(
-        g.retirement_survivor_family_maximum(
+    # Historical maxima are outside coverage. Match the builder's harmless
+    # sentinel so family validation and the shared refusal order still run.
+    base_maximum = (
+        record.eligibility_pia
+        if record.eligibility_year < g.FIRST_SUPPORTED_ELIGIBILITY_YEAR
+        else g.retirement_survivor_family_maximum(
             record.eligibility_pia, record.eligibility_year, PARAMS
-        ),
+        )
+    )
+    maximum = g.increase_by_colas(
+        base_maximum,
         record.cola_percents,
     )
     worker = None
@@ -137,7 +144,7 @@ def _direct_state(record):
 @st.composite
 def _family_cases(draw):
     mode = draw(st.sampled_from(("claimed", "unclaimed", "deceased")))
-    worker_year = draw(st.integers(1922, 1960))
+    worker_year = draw(st.integers(1918, 1960))
     eligibility = worker_year + 62 + draw(st.integers(-1, 1))
     known_worker = draw(st.booleans())
     record = g.WorkerRecord(
@@ -157,6 +164,16 @@ def _family_cases(draw):
             {g.RecordCondition.WORKER_NOT_ENTITLED}
             if mode == "unclaimed"
             else set()
+        )
+        | draw(
+            st.sets(
+                st.sampled_from(
+                    (
+                        g.RecordCondition.NON_AIME_FORMULA_PIA,
+                        g.RecordCondition.ADMINISTRATIVE_FINALITY,
+                    )
+                )
+            )
         ),
     )
     year = draw(st.integers(1912, 1962))
@@ -286,7 +303,28 @@ def _single_route(case, route):
     return result.records["record"]
 
 
+def _pre_1983_competing_refusals():
+    return (
+        g.WorkerRecord(
+            g.FamilyKind.RETIREMENT,
+            1982,
+            F(0),
+            conditions={g.RecordCondition.NON_AIME_FORMULA_PIA},
+        ),
+        (),
+        NOW,
+    )
+
+
+@pytest.mark.parametrize("route", ROUTES)
+def test_review_pre_1983_refusal_precedence_matches_every_entry(route):
+    assert _capture(
+        lambda: _single_route(_pre_1983_competing_refusals(), route)
+    ) == ("refused", g.UnsupportedReason.ELIGIBILITY_BEFORE_1983)
+
+
 @settings(max_examples=300, deadline=None, derandomize=True)
+@example(_pre_1983_competing_refusals())
 @given(_family_cases())
 def test_property_all_single_record_entry_points_have_identical_outcomes(case):
     original = deepcopy(case)
@@ -344,6 +382,10 @@ def _competing_refusals():
 
 @settings(max_examples=500, deadline=None, derandomize=True)
 @example(_competing_refusals(), "independent")
+@example(
+    [_pre_1983_competing_refusals(), _competing_refusals()[1]],
+    "independent",
+)
 @given(
     st.lists(_family_cases(), min_size=2, max_size=3),
     st.sampled_from(("independent", "same-auxiliary", "worker-is-auxiliary")),

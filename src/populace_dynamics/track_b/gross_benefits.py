@@ -132,7 +132,13 @@ computed one record at a time by accident. :func:`family_benefits`
 computes one record only when the caller passes ``standalone=True``.
 Input errors (:class:`InvalidFamilyInput`) are reported before any
 coverage refusal, so :func:`evaluate_family` never counts an invalid row as
-a coverage gap. All supplied birth years for a person, including their own
+a coverage gap. Constructors and entry points share one field-validation
+layer, including nested declarations, enum classes, calendar/cohort years,
+exact integer/Boolean types and all existing cross-field checks. Invalid
+outcome metadata is checked before invoking a computation; invalid monthly
+inputs leave every savings-clause guard unchanged. Built and direct records
+share refusal precedence: eligibility year, record conditions, initial DIB
+history, then any remaining deferred refusal. All supplied birth years for a person, including their own
 worker record, must agree; the household carries that cohort into every
 own and auxiliary check (402(q)(6); RS 00615.003/.010) using immutable
 copies. ``RecordState.worker_birth_year`` preserves the insured person's
@@ -161,7 +167,7 @@ the reduction and PIA money history in RS 00615.005C.2. Reduced spouse
 benefits likewise need that history before cohort 1916. Widow(er)s need
 it before cohort 1928: DWB can begin at 50 and convert to aged WIB at FRA
 (RS 00615.310A), and the inputs do not exclude that prior entitlement.
-The specific post-1983 DWB .715 instruction in RS 00615.301B.3 is an
+The specific post-1983 DWB .715 instruction in RS 00615.301B.1.e is an
 alternative reading to the general historical-money rule; these known
 historical cases conservatively refuse pending a ruling.
 
@@ -345,6 +351,10 @@ class InvalidFamilyInput(ValueError):
     """The inputs do not describe a legal family (not a coverage gap)."""
 
 
+class _InvalidInputType(InvalidFamilyInput, TypeError):
+    """An input error, also retaining the constructor's TypeError contract."""
+
+
 class UnsupportedReason(Enum):
     """Why a statutory configuration is outside this layer (design §7)."""
 
@@ -422,19 +432,25 @@ def _exact(value: object, label: str) -> Fraction:
     becomes the decimal it prints as, never its binary expansion.
     """
     if isinstance(value, bool):
-        raise TypeError(f"{label} must be a number, not a bool")
+        raise _InvalidInputType(f"{label} must be a number, not a bool")
     if isinstance(value, Fraction):
         return value
     if isinstance(value, (int, Rational)):
         return Fraction(value)
     if isinstance(value, float):
         if not math.isfinite(value):
-            raise ValueError(f"{label} must be finite")
+            raise InvalidFamilyInput(f"{label} must be finite")
         return Fraction(repr(value))
     if isinstance(value, (str, Decimal)):
-        result = Fraction(value)
-        return result
-    raise TypeError(f"{label} must be an exact number, got {type(value)}")
+        try:
+            return Fraction(value)
+        except (ValueError, OverflowError, ZeroDivisionError) as error:
+            raise InvalidFamilyInput(
+                f"{label} must be a finite number"
+            ) from error
+    raise _InvalidInputType(
+        f"{label} must be an exact number, got {type(value)}"
+    )
 
 
 def _dimes(value: object, label: str) -> Fraction:
@@ -445,6 +461,182 @@ def _dimes(value: object, label: str) -> Fraction:
     if (amount * 10).denominator != 1:
         raise InvalidFamilyInput(f"{label} must be a multiple of $0.10")
     return amount
+
+
+def _input_type(value: object, expected: type, label: str) -> None:
+    if type(value) is not expected:
+        raise _InvalidInputType(f"{label} must be an {expected.__name__}")
+
+
+def _input_year(value: object, label: str) -> None:
+    _input_type(value, int, label)
+    if not 1 <= value <= 9999:
+        raise InvalidFamilyInput(f"{label} must be between 1 and 9999")
+
+
+def _input_text(value: object, label: str) -> None:
+    _input_type(value, str, label)
+    if not value:
+        raise InvalidFamilyInput(f"{label} must be a nonempty str")
+
+
+def _input_sequence(value: object, label: str) -> None:
+    if not isinstance(value, Sequence) or isinstance(value, (str, bytes)):
+        raise _InvalidInputType(f"{label} must be a sequence")
+
+
+def _input_conditions(value: object, enum: type) -> None:
+    if type(value) not in (set, frozenset, tuple, list):
+        raise _InvalidInputType("conditions must be a collection of enums")
+    for condition in value:
+        _input_type(condition, enum, "condition")
+
+
+def _checked_input(value, expected: type, label: str):
+    """Revalidate a declaration, including nested fields, on an immutable copy.
+
+    Constructors and entry points use the same field validation. Rebuilding
+    also repeats their cross-field checks and numeric normalization, so even
+    a deserialized or altered frozen declaration cannot bypass validation.
+    No coverage decision belongs in this pass.
+    """
+    _input_type(value, expected, label)
+    return replace(value)
+
+
+def _validate_input_fields(value) -> None:
+    """The shared public-declaration schema, before any coverage refusal.
+
+    Monetary inputs retain the documented exact-number conversions. Enums,
+    booleans and integers require their exact classes. Calendar and cohort
+    years use datetime's 1..9999 domain. Parameter-dependent month bounds
+    and family/household consistency run after cohort resolution.
+    """
+    if isinstance(value, YearMonth):
+        _input_year(value.year, "year")
+        _input_type(value.month, int, "month")
+        if not 1 <= value.month <= 12:
+            raise InvalidFamilyInput("month must be 1-12")
+        return
+    if isinstance(value, OwnBenefit):
+        _input_type(value.kind, OwnBenefitKind, "kind")
+        _dimes(value.pia, "own PIA")
+        for name in ("reduction_months", "delayed_credit_months"):
+            number = getattr(value, name)
+            _input_type(number, int, name)
+            if number < 0:
+                raise InvalidFamilyInput(f"{name} must be nonnegative")
+        if value.birth_year is not None:
+            _input_year(value.birth_year, "birth_year")
+        return
+    if isinstance(value, Beneficiary):
+        _input_text(value.beneficiary_id, "beneficiary_id")
+        _input_type(value.role, Role, "role")
+        _input_type(value.reduction_months, int, "reduction_months")
+        if value.reduction_period_months is not None:
+            _input_type(
+                value.reduction_period_months, int, "reduction_period_months"
+            )
+        if value.birth_year is not None:
+            _input_year(value.birth_year, "birth_year")
+        _input_conditions(value.conditions, BeneficiaryCondition)
+        if (
+            value.child_in_care is not None
+            and value.child_in_care is not False
+        ):
+            _input_text(value.child_in_care, "child_in_care")
+        if value.own_benefit is not None:
+            object.__setattr__(
+                value,
+                "own_benefit",
+                _checked_input(value.own_benefit, OwnBenefit, "own_benefit"),
+            )
+        for name in ("own_benefit_first", "first_entitlement_child_in_care"):
+            flag = getattr(value, name)
+            if flag is not None:
+                _input_type(flag, bool, name)
+        # Role-specific care and OB-basis checks are shared by __post_init__.
+        return
+    if isinstance(value, (WorkerRecord, RecordState)):
+        _input_type(value.kind, FamilyKind, "kind")
+        if value.worker_birth_year is not None:
+            _input_year(value.worker_birth_year, "worker_birth_year")
+        if (
+            isinstance(value, WorkerRecord)
+            or value.eligibility_year is not None
+        ):
+            _input_year(value.eligibility_year, "eligibility_year")
+        _input_conditions(value.conditions, RecordCondition)
+        if value.first_dib_entitlement is not None:
+            _checked_input(
+                value.first_dib_entitlement, YearMonth, "first_dib_entitlement"
+            )
+        if isinstance(value, WorkerRecord):
+            _input_sequence(value.cola_percents, "cola_percents")
+            for percent in value.cola_percents:
+                if _exact(percent, "COLA percent") < 0:
+                    raise InvalidFamilyInput(
+                        "A COLA percent cannot be negative"
+                    )
+            if value.aime is not None:
+                if type(value.aime) not in (int, Fraction):
+                    raise _InvalidInputType(
+                        "AIME must be an int or an integral Fraction"
+                    )
+                if value.aime < 0 or Fraction(value.aime).denominator != 1:
+                    raise InvalidFamilyInput(
+                        "AIME must be a nonnegative whole dollar"
+                    )
+            for name in (
+                "worker_reduction_months",
+                "worker_delayed_credit_months",
+            ):
+                number = getattr(value, name)
+                _input_type(number, int, name)
+                if number < 0:
+                    raise InvalidFamilyInput(f"{name} must be nonnegative")
+        else:
+            _input_text(value.source, "source")
+            if value.worker is not None:
+                object.__setattr__(
+                    value,
+                    "worker",
+                    _checked_input(value.worker, OwnBenefit, "worker"),
+                )
+            if value.widow_drc_savings_clause is not None:
+                _input_type(
+                    value.widow_drc_savings_clause,
+                    bool,
+                    "widow_drc_savings_clause",
+                )
+            if value.deferred_refusal is not None:
+                _input_type(value.deferred_refusal, tuple, "deferred_refusal")
+                if len(value.deferred_refusal) != 2:
+                    raise InvalidFamilyInput(
+                        "deferred_refusal needs a reason and detail"
+                    )
+                reason, detail = value.deferred_refusal
+                _input_type(
+                    reason, UnsupportedReason, "deferred_refusal reason"
+                )
+                _input_text(detail, "deferred_refusal detail")
+        return
+    if isinstance(value, HouseholdRecord):
+        _input_text(value.worker_id, "worker_id")
+        object.__setattr__(
+            value, "state", _checked_input(value.state, RecordState, "state")
+        )
+        _input_sequence(value.beneficiaries, "beneficiaries")
+        object.__setattr__(
+            value,
+            "beneficiaries",
+            tuple(
+                _checked_input(b, Beneficiary, "beneficiary")
+                for b in value.beneficiaries
+            ),
+        )
+        return
+    raise _InvalidInputType("Unknown input declaration")
 
 
 def floor_dime(amount: Fraction) -> Fraction:
@@ -477,10 +669,7 @@ class YearMonth:
     month: int
 
     def __post_init__(self):
-        if type(self.year) is not int or type(self.month) is not int:
-            raise TypeError("YearMonth fields must be integers")
-        if not 1 <= self.month <= 12:
-            raise ValueError("month must be 1-12")
+        _validate_input_fields(self)
 
     def as_tuple(self) -> tuple[int, int]:
         return (self.year, self.month)
@@ -877,6 +1066,7 @@ def _cohort_reduction_months(
 
 def _check_own_benefit(own: OwnBenefit, params: SSAParameters) -> None:
     """The own-benefit input checks that need the parameter bundle."""
+    own = _checked_input(own, OwnBenefit, "own")
     _cohort_reduction_months(
         own.reduction_months, own.birth_year, params, "reduction_months"
     )
@@ -1210,15 +1400,10 @@ class OwnBenefit:
     birth_year: int | None = None
 
     def __post_init__(self):
-        if not isinstance(self.kind, OwnBenefitKind):
-            raise TypeError("kind must be an OwnBenefitKind")
+        _validate_input_fields(self)
         object.__setattr__(self, "pia", _dimes(self.pia, "own PIA"))
-        if type(self.reduction_months) is not int:
-            raise TypeError("reduction_months must be an int")
         if self.reduction_months < 0:
             raise InvalidFamilyInput("reduction_months must be nonnegative")
-        if self.birth_year is not None and type(self.birth_year) is not int:
-            raise TypeError("birth_year must be an int")
         _delayed_credit_months(
             self.delayed_credit_months, self.birth_year, None
         )
@@ -1244,6 +1429,7 @@ def own_monthly_benefit(
     own: OwnBenefit, params: SSAParameters
 ) -> tuple[Fraction, Fraction]:
     """The own benefit ``(without_credits, with_credits)`` after 402(q)/(w)."""
+    own = _checked_input(own, OwnBenefit, "own")
     _check_own_benefit(own, params)
     _refuse_own_benefit(own)
     return worker_age_adjusted(
@@ -1318,10 +1504,7 @@ class Beneficiary:
     first_entitlement_child_in_care: bool | None = None
 
     def __post_init__(self):
-        if not isinstance(self.beneficiary_id, str) or not self.beneficiary_id:
-            raise InvalidFamilyInput("beneficiary_id must be a nonempty str")
-        if not isinstance(self.role, Role):
-            raise TypeError("role must be a Role")
+        _validate_input_fields(self)
         if self.child_in_care is not None:
             if self.role not in _WIDOW_ROLES | {Role.DIVORCED_SPOUSE}:
                 raise InvalidFamilyInput(
@@ -1342,14 +1525,7 @@ class Beneficiary:
                     "first_entitlement_child_in_care describes a divorced "
                     "spouse only"
                 )
-            if type(self.first_entitlement_child_in_care) is not bool:
-                raise InvalidFamilyInput(
-                    "first_entitlement_child_in_care must be a bool or None"
-                )
         object.__setattr__(self, "conditions", frozenset(self.conditions))
-        for condition in self.conditions:
-            if not isinstance(condition, BeneficiaryCondition):
-                raise TypeError("conditions must be BeneficiaryConditions")
         if self.original_benefit_basis is not None:
             if self.role not in _WIDOW_ROLES:
                 raise InvalidFamilyInput(
@@ -1360,13 +1536,7 @@ class Beneficiary:
                 "original_benefit_basis",
                 _dimes(self.original_benefit_basis, "OB basis"),
             )
-        if self.own_benefit is not None and not isinstance(
-            self.own_benefit, OwnBenefit
-        ):
-            raise TypeError("own_benefit must be an OwnBenefit")
         if self.own_benefit_first is not None:
-            if type(self.own_benefit_first) is not bool:
-                raise TypeError("own_benefit_first must be a bool or None")
             if self.own_benefit is None:
                 raise InvalidFamilyInput(
                     "own_benefit_first describes an own benefit; there is "
@@ -1390,8 +1560,6 @@ class Beneficiary:
                 ": method C (own benefit first, RS 00615.250) and method B "
                 "(spouse benefit first, RS 00615.240) pay different amounts"
             )
-        if type(self.reduction_months) is not int:
-            raise TypeError("reduction_months must be an int")
         if self.reduction_months < 0:
             raise InvalidFamilyInput("reduction_months must be nonnegative")
         if self.reduction_months and self.role not in _AGE_REDUCED_ROLES:
@@ -1423,8 +1591,10 @@ class WorkerRecord:
     the AIME and the month of the worker's initial DIB entitlement ever
     (the RS 00615.740B test for the 1980 disability maximum). A DIB that
     has converted to a RIB, or a worker who has died, takes a retirement or
-    survivor record (RS 00615.742.2). Worker reduction and credit months
-    describe the living worker's own RIB (retirement records only).
+    survivor record (RS 00615.742.2). AIME is a nonnegative whole-dollar
+    amount, supplied as an int or an integral Fraction. Worker reduction
+    and credit months describe the living worker's own RIB (retirement
+    records only).
     ``worker_birth_year`` describes the insured person's SSA cohort for
     every record kind, whether or not the worker is entitled. Delayed
     credits need that cohort and run from full retirement age to
@@ -1442,7 +1612,7 @@ class WorkerRecord:
     eligibility_year: int
     eligibility_pia: Fraction
     cola_percents: tuple[Fraction, ...] = ()
-    aime: int | None = None
+    aime: int | Fraction | None = None
     first_dib_entitlement: YearMonth | None = None
     worker_reduction_months: int = 0
     worker_delayed_credit_months: int = 0
@@ -1451,8 +1621,7 @@ class WorkerRecord:
     conditions: frozenset[RecordCondition] = field(default_factory=frozenset)
 
     def __post_init__(self):
-        if not isinstance(self.kind, FamilyKind):
-            raise TypeError("kind must be a FamilyKind")
+        _validate_input_fields(self)
         object.__setattr__(
             self, "eligibility_pia", _dimes(self.eligibility_pia, "PIA")
         )
@@ -1478,19 +1647,9 @@ class WorkerRecord:
             raise InvalidFamilyInput(
                 "Own-RIB months describe a living retired worker only"
             )
-        if type(self.worker_reduction_months) is not int:
-            raise TypeError("worker_reduction_months must be an int")
-        if self.worker_birth_year is not None and (
-            type(self.worker_birth_year) is not int
-        ):
-            raise TypeError("worker_birth_year must be an int")
         _delayed_credit_months(
             self.worker_delayed_credit_months, self.worker_birth_year, None
         )
-        if self.first_dib_entitlement is not None and not isinstance(
-            self.first_dib_entitlement, YearMonth
-        ):
-            raise TypeError("first_dib_entitlement must be a YearMonth")
 
 
 @dataclass(frozen=True)
@@ -1539,12 +1698,7 @@ class RecordState:
     worker_birth_year: int | None = None
 
     def __post_init__(self):
-        if not isinstance(self.kind, FamilyKind):
-            raise TypeError("kind must be a FamilyKind")
-        if self.worker_birth_year is not None and (
-            type(self.worker_birth_year) is not int
-        ):
-            raise TypeError("worker_birth_year must be an int")
+        _validate_input_fields(self)
         if self.worker is not None:
             year = self.worker_birth_year
             own_year = self.worker.birth_year
@@ -1558,18 +1712,6 @@ class RecordState:
                 object.__setattr__(
                     self, "worker", replace(self.worker, birth_year=year)
                 )
-        if self.widow_drc_savings_clause is not None and (
-            type(self.widow_drc_savings_clause) is not bool
-        ):
-            raise TypeError("widow_drc_savings_clause must be a bool or None")
-        if self.eligibility_year is not None and (
-            type(self.eligibility_year) is not int
-        ):
-            raise TypeError("eligibility_year must be an int")
-        if self.first_dib_entitlement is not None and not isinstance(
-            self.first_dib_entitlement, YearMonth
-        ):
-            raise TypeError("first_dib_entitlement must be a YearMonth")
         pia = _dimes(self.pia, "PIA")
         maximum = _dimes(self.family_maximum, "family maximum")
         if maximum < pia:
@@ -1612,6 +1754,24 @@ def _raise_record_conditions(conditions: Iterable[RecordCondition]) -> None:
         raise FamilyConfigurationUnsupported(reason, detail)
 
 
+def _refuse_record(record: WorkerRecord | RecordState) -> None:
+    """One precedence for built and direct records, after all input checks."""
+    if record.eligibility_year is not None:
+        _require_supported_eligibility(record.eligibility_year)
+    _raise_record_conditions(record.conditions)
+    if (
+        record.kind is FamilyKind.DISABILITY
+        and record.first_dib_entitlement is not None
+        and record.first_dib_entitlement.as_tuple()
+        < DI_MAXIMUM_FIRST_ENTITLEMENT
+    ):
+        raise FamilyConfigurationUnsupported(
+            UnsupportedReason.DI_ENTITLEMENT_BEFORE_JULY_1980,
+            "DIB first entitled before July 1980 keeps the pre-1980 "
+            "maximum (POMS RS 00615.740B.2)",
+        )
+
+
 def _check_retirement_eligibility(
     kind: FamilyKind, eligibility_year: int | None, birth_year: int | None
 ) -> None:
@@ -1637,8 +1797,8 @@ def record_state(record: WorkerRecord, params: SSAParameters) -> RecordState:
     the RecordState and raised only after family input checks, even when
     this builder is called inside an evaluate_family closure.
     """
-    if not isinstance(record, WorkerRecord):
-        raise TypeError("record must be a WorkerRecord")
+    record = _checked_input(record, WorkerRecord, "record")
+    statutory_rates(params)
     disability_maximum = None
     if record.kind is FamilyKind.DISABILITY:
         if record.aime is None or record.first_dib_entitlement is None:
@@ -1666,18 +1826,7 @@ def record_state(record: WorkerRecord, params: SSAParameters) -> RecordState:
     pia = increase_by_colas(record.eligibility_pia, record.cola_percents)
     deferred = None
     try:
-        _raise_record_conditions(record.conditions)
-        _require_supported_eligibility(record.eligibility_year)
-        if (
-            record.kind is FamilyKind.DISABILITY
-            and record.first_dib_entitlement.as_tuple()
-            < DI_MAXIMUM_FIRST_ENTITLEMENT
-        ):
-            raise FamilyConfigurationUnsupported(
-                UnsupportedReason.DI_ENTITLEMENT_BEFORE_JULY_1980,
-                "DIB first entitled before July 1980 keeps the pre-1980 "
-                "maximum (POMS RS 00615.740B.2)",
-            )
+        _refuse_record(record)
     except FamilyConfigurationUnsupported as error:
         deferred = (error.reason, error.detail)
     if record.eligibility_year < FIRST_SUPPORTED_ELIGIBILITY_YEAR:
@@ -2387,7 +2536,7 @@ def family_benefits(
     coverage refusal, so an invalid family is never counted as a gap.
     """
     if standalone is not True:
-        raise ValueError(
+        raise InvalidFamilyInput(
             "family_benefits computes one record in isolation; pass "
             "standalone=True only when no beneficiary is entitled on "
             "another record, and use household_benefits otherwise"
@@ -2404,14 +2553,13 @@ def _check_family_inputs(
     """Check every input before refusal; return copies with resolved cohorts."""
     # Household paths check every record here before household refusals.
     statutory_rates(params)
-    if not isinstance(state, RecordState):
-        raise TypeError("state must be a RecordState")
-    if not isinstance(payment_month, YearMonth):
-        raise TypeError("payment_month must be a YearMonth")
-    for beneficiary in beneficiaries:
-        if not isinstance(beneficiary, Beneficiary):
-            raise TypeError("beneficiaries must be Beneficiary objects")
-    beneficiaries = tuple(_with_effective_cohort(b) for b in beneficiaries)
+    state = _checked_input(state, RecordState, "state")
+    _checked_input(payment_month, YearMonth, "payment_month")
+    _input_sequence(beneficiaries, "beneficiaries")
+    beneficiaries = tuple(
+        _with_effective_cohort(_checked_input(b, Beneficiary, "beneficiary"))
+        for b in beneficiaries
+    )
     if (
         state.eligibility_year is not None
         and state.eligibility_year > payment_month.year
@@ -2602,27 +2750,14 @@ def _family_benefits(
     payment_month: YearMonth,
     params: SSAParameters,
 ) -> FamilyBenefits:
-    beneficiaries = tuple(beneficiaries)
+    state = _checked_input(state, RecordState, "state")
     rates = statutory_rates(params)
     beneficiaries = _check_family_inputs(
         state, beneficiaries, payment_month, params
     )
+    _refuse_record(state)
     if state.deferred_refusal is not None:
         raise FamilyConfigurationUnsupported(*state.deferred_refusal)
-    if state.eligibility_year is not None:
-        _require_supported_eligibility(state.eligibility_year)
-    _raise_record_conditions(state.conditions)
-    if (
-        state.kind is FamilyKind.DISABILITY
-        and state.first_dib_entitlement is not None
-        and state.first_dib_entitlement.as_tuple()
-        < DI_MAXIMUM_FIRST_ENTITLEMENT
-    ):
-        raise FamilyConfigurationUnsupported(
-            UnsupportedReason.DI_ENTITLEMENT_BEFORE_JULY_1980,
-            "DIB first entitled before July 1980 keeps the pre-1980 "
-            "maximum (POMS RS 00615.740B.2)",
-        )
     if payment_month.as_tuple() < FIRST_SUPPORTED_PAYMENT_MONTH:
         raise FamilyConfigurationUnsupported(
             UnsupportedReason.PAYMENT_MONTH_BEFORE_1983,
@@ -2865,14 +3000,9 @@ class HouseholdRecord:
     beneficiaries: tuple[Beneficiary, ...] = ()
 
     def __post_init__(self):
-        if not isinstance(self.worker_id, str) or not self.worker_id:
-            raise InvalidFamilyInput("worker_id must be a nonempty str")
-        if not isinstance(self.state, RecordState):
-            raise TypeError("state must be a RecordState")
+        _validate_input_fields(self)
         object.__setattr__(self, "beneficiaries", tuple(self.beneficiaries))
         for beneficiary in self.beneficiaries:
-            if not isinstance(beneficiary, Beneficiary):
-                raise TypeError("beneficiaries must be Beneficiary objects")
             if beneficiary.beneficiary_id == self.worker_id:
                 raise InvalidFamilyInput(
                     f"{self.worker_id} cannot be a beneficiary on their own "
@@ -2972,10 +3102,14 @@ def _check_household_inputs(
     """
     if not isinstance(records, Mapping) or not records:
         raise InvalidFamilyInput("A household needs at least one record")
+    for record_id in records:
+        _input_text(record_id, "record_id")
+    records = {
+        record_id: _checked_input(record, HouseholdRecord, "record")
+        for record_id, record in records.items()
+    }
     workers: dict[str, str] = {}
     for record_id, record in records.items():
-        if not isinstance(record, HouseholdRecord):
-            raise TypeError("records must map ids to HouseholdRecords")
         if record.worker_id in workers:
             raise InvalidFamilyInput(
                 f"worker {record.worker_id} has two records "
@@ -3127,8 +3261,15 @@ def household_month_outcome(
     guard advances even if another record refuses; a refusal carries its
     record id. The household outcome stays in the coverage denominator.
     """
+    _input_text(key, "key")
     _outcome_weight(weight)
+    _checked_input(payment_month, YearMonth, "payment_month")
     records, held = _check_household_inputs(records)
+    if not isinstance(guards, Mapping):
+        raise _InvalidInputType("guards must be a mapping")
+    for record_id, guard in guards.items():
+        _input_text(record_id, "guard record_id")
+        _input_type(guard, SavingsClauseGuard, "guard")
     if set(guards) != set(records):
         raise InvalidFamilyInput("guards must match the household record ids")
     if len({id(guard) for guard in guards.values()}) != len(guards):
@@ -3303,10 +3444,8 @@ class SavingsClauseGuard:
     def __init__(
         self, first_month: YearMonth, *, earlier_months_unknown: bool
     ):
-        if not isinstance(first_month, YearMonth):
-            raise TypeError("first_month must be a YearMonth")
-        if type(earlier_months_unknown) is not bool:
-            raise TypeError("earlier_months_unknown must be a bool")
+        first_month = _checked_input(first_month, YearMonth, "first_month")
+        _input_type(earlier_months_unknown, bool, "earlier_months_unknown")
         self._next = first_month
         self._prior: _PriorMonth | None = (
             _PriorMonth(_previous_month(first_month), None, None)
@@ -3344,8 +3483,11 @@ class SavingsClauseGuard:
         return self._unknown_since
 
     def _expect(self, month: YearMonth) -> None:
-        if not isinstance(month, YearMonth):
-            raise TypeError("month must be a YearMonth")
+        _checked_input(month, YearMonth, "month")
+        _checked_input(self._next, YearMonth, "guard next_month")
+        # Check advancement before carrying protection or changing any history.
+        # December 9999 has no representable successor in the calendar domain.
+        _next_month(month)
         if month != self._next:
             raise InvalidFamilyInput(
                 f"the guard expects {self._next}, not {month}: give it "
@@ -3446,15 +3588,20 @@ class SavingsClauseGuard:
         could change is kept with its savings-clause reason. Invalid inputs
         still raise and leave the guard where it was.
         """
-        _outcome_weight(weight)
+        _check_evaluation_inputs(key, weight, compute)
         month = self._next
+        self._expect(month)
+        if pia is not None:
+            pia = _dimes(pia, "PIA")
         try:
             result = compute()
         except FamilyConfigurationUnsupported as error:
             self.skip(month, pia=pia)
             return FamilyOutcome(key, weight, None, error)
         if not isinstance(result, FamilyBenefits):
-            raise TypeError("compute must return one record's FamilyBenefits")
+            raise _InvalidInputType(
+                "compute must return one record's FamilyBenefits"
+            )
         if pia is not None and _dimes(pia, "PIA") != result.pia:
             raise InvalidFamilyInput(
                 f"pia {pia} disagrees with the computed PIA {result.pia}"
@@ -3472,8 +3619,18 @@ class SavingsClauseGuard:
 def _outcome_weight(weight: object) -> Fraction:
     value = _exact(weight, "weight")
     if value < 0:
-        raise ValueError("weight must be nonnegative")
+        raise InvalidFamilyInput("weight must be nonnegative")
     return value
+
+
+def _check_evaluation_inputs(
+    key: str, weight: object, compute: object
+) -> None:
+    """Reject outcome metadata before invoking a potentially stateful closure."""
+    _input_text(key, "key")
+    _outcome_weight(weight)
+    if not callable(compute):
+        raise _InvalidInputType("compute must be callable")
 
 
 @dataclass(frozen=True)
@@ -3486,8 +3643,22 @@ class FamilyOutcome:
     unsupported: FamilyConfigurationUnsupported | None
 
     def __post_init__(self):
+        _input_text(self.key, "key")
+        if self.benefits is not None and type(self.benefits) not in (
+            FamilyBenefits,
+            HouseholdBenefits,
+        ):
+            raise _InvalidInputType(
+                "benefits must be family or household benefits"
+            )
+        if self.unsupported is not None:
+            _input_type(
+                self.unsupported, FamilyConfigurationUnsupported, "unsupported"
+            )
         if (self.benefits is None) == (self.unsupported is None):
-            raise ValueError("Exactly one of benefits/unsupported is set")
+            raise InvalidFamilyInput(
+                "Exactly one of benefits/unsupported is set"
+            )
         object.__setattr__(self, "weight", _outcome_weight(self.weight))
 
     @property
@@ -3507,12 +3678,15 @@ def evaluate_family(
     :class:`FamilyConfigurationUnsupported` is caught. Invalid inputs and
     bugs still raise, so an error never masquerades as a coverage gap.
     """
+    _check_evaluation_inputs(key, weight, compute)
     try:
         benefits = compute()
     except FamilyConfigurationUnsupported as error:
         return FamilyOutcome(key, weight, None, error)
     if not isinstance(benefits, (FamilyBenefits, HouseholdBenefits)):
-        raise TypeError("compute must return family or household benefits")
+        raise _InvalidInputType(
+            "compute must return family or household benefits"
+        )
     return FamilyOutcome(key, weight, benefits, None)
 
 
