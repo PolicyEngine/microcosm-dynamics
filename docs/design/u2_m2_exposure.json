@@ -1067,7 +1067,9 @@
    "183c7ef3",
    "e08b98dd",
    "a5df03c2",
-   "fcfc4025"
+   "fcfc4025",
+   "a1858bb9",
+   "ed82c02d"
   ],
   "evidence_directory_opened": [
    "EV/coordinator/pr525-u2-m2-closeout-brief-20261015.md (full, first)",
@@ -1093,10 +1095,10 @@
   ],
   "executed": [
    "every Python command under an audit hook refusing any open/listing/scan/glob under PSID, EV and REFS, with HOME and POPULACE_DYNAMICS_PSID_DIR pointed at empty directories; the hook refused nothing outside its self-tests",
-   "tier recount (pytest --collect-only -q -m <tier>) at 183c7ef3, e08b98dd and fcfc4025",
-   "tests/track_u2 and the U2 data and birth-evidence files at 183c7ef3, e08b98dd and fcfc4025 (test_psid_research_sources.py skipped: nothing staged under the empty PSID root)",
-   "the section 13 U1 suite at 183c7ef3 and e08b98dd",
-   "scripts/u2_u1_differential.py against 9cee2423 at 183c7ef3 and e08b98dd",
+   "tier recount (pytest --collect-only -q -m <tier>) at 183c7ef3, e08b98dd, fcfc4025 and ed82c02d",
+   "tests/track_u2 and the U2 data and birth-evidence files at 183c7ef3, e08b98dd, fcfc4025 and ed82c02d (test_psid_research_sources.py: its 244 documentation tests skipped, nothing staged under the empty PSID root; its other 147 tests ran without PSID files)",
+   "the section 13 U1 suite at 183c7ef3, e08b98dd and ed82c02d",
+   "scripts/u2_u1_differential.py against 9cee2423 at 183c7ef3, e08b98dd and ed82c02d",
    "black 26.5.1 and ruff"
   ],
   "verification_lanes": [
@@ -1106,10 +1108,11 @@
    "20261015-145341-pr525-mut-b, -mut-c, -mut-d (Subfleet, Claude Opus 5.5): ended by provider errors at the host restart; results kept in stream logs and progress files",
    "20261015-145341-pr525-review (Subfleet, GPT-6.1 Sol): cancelled before launch (Codex lanes held)",
    "20261015-145546-pr525-review-opus (Subfleet, Claude Opus 5.5): closeout review of 183c7ef3, APPROVE",
+   "20261016-015339-pr525-delta-review (Subfleet, Claude Opus 5.5): delta review of 183c7ef3..a1858bb9, APPROVE",
    "20261015-225702-pr525-mut-b2, -mut-d2 (Subfleet, Claude Opus 5.5): finished, the remaining mutants at e08b98dd"
   ],
-  "guard_logs": "empty for mut-a, mut-c, b2, d2, the review and this lane; mut-b's and mut-d's were truncated unread by this lane when it reset those clones, and their stream logs show no refusal and no tool input naming a restricted directory",
-  "psid_documentation_opened_by_tests": "none: test_psid_research_sources.py skipped every documentation test because the PSID root was an empty directory",
+  "guard_logs": "empty for mut-a, mut-c, b2, d2, both reviews and this lane; mut-b's and mut-d's were truncated unread by this lane when it reset those clones, and their stream logs show no refusal and no tool input naming a restricted directory",
+  "psid_documentation_opened_by_tests": "none: test_psid_research_sources.py's 244 documentation tests skipped because the PSID root was an empty directory; its other 147 tests open no PSID file",
   "values_printed": "invented offsets, invented cells, invented-run counts and dispositions, hashes and timings; no 1946-55 value or direction"
  }
 }

@@ -299,7 +299,7 @@ Each lane read `EV/RESTRICTED-FILES.md`, worked in its own clone or an existing 
 
 ## Round-3 closeout lane
 
-This lane finished PR #525 after the round-3 lane's owner session ended. It was the main session of a Claude Code session (Claude Opus 5.5, blind builder), 2026-10-15 to 2026-10-16, which the "Microcosm dynamics" coordinator handed the adopted PR. It merged master into the branch (`183c7ef3`), fixed what the closeout review and the mutation run found (`e08b98dd`) and wrote the report's "Round 3 closeout" section and this entry. It worked in the worktree `.claude/worktrees/mystifying-nash-eec1cc` and in standalone clones under `~/reviews/pr525-closeout-20261015/`. The machine-readable list is `round_3_closeout_lane` in [`u2_m2_exposure.json`](u2_m2_exposure.json).
+This lane finished PR #525 after the round-3 lane's owner session ended. It was the main session of a Claude Code session (Claude Opus 5.5, blind builder), 2026-10-15 to 2026-10-16, which the "Microcosm dynamics" coordinator handed the adopted PR. It merged master into the branch (`183c7ef3`), fixed what the closeout review, the mutation run and the delta review found (`e08b98dd`, `fcfc4025`, `ed82c02d`) and wrote the report's "Round 3 closeout" section and this entry. It worked in the worktree `.claude/worktrees/mystifying-nash-eec1cc` and in standalone clones under `~/reviews/pr525-closeout-20261015/`. The machine-readable list is `round_3_closeout_lane` in [`u2_m2_exposure.json`](u2_m2_exposure.json).
 
 **Evidence directory (all builder-allowed):**
 
@@ -325,8 +325,8 @@ It did not open, list or search anything else under `EV`, `REFS` or `PSID`. In p
 
 - the tier recount (`pytest --collect-only -q -m <tier>`) at `183c7ef3` and again after the fixes;
 - every `tests/track_u2` file and the U2 data and birth-evidence files, at `183c7ef3` and after the fixes. One differential test first failed because the hook's own path resolution made the `lstat` calls that test records; the hook was changed to resolve paths without touching the file system, and the test passed;
-- the §13 U1 suite at `183c7ef3` and `e08b98dd`;
-- the U1 differential (`scripts/u2_u1_differential.py`) against `9cee2423` at `183c7ef3` and `e08b98dd`;
+- the §13 U1 suite at `183c7ef3`, `e08b98dd` and `ed82c02d`;
+- the U1 differential (`scripts/u2_u1_differential.py`) against `9cee2423` at `183c7ef3`, `e08b98dd` and `ed82c02d`;
 - probes of the rebuild on invented one-column frames (whitespace, tab, NUL, missing values), and a mutant-kill check that applies each closeout mutant by exact string replacement, runs its new tests and restores the file;
 - `black` 26.5.1 and `ruff`.
 
@@ -341,10 +341,11 @@ The hook refused nothing at any of these runs. Its only refusals were the self-t
   - `20261015-145341-pr525-mut-b`, `-mut-c` and `-mut-d` (Claude Opus 5.5): ended by provider errors when the host restarted, before their reports. Their stream logs and progress files hold their per-mutant results.
   - `20261015-145341-pr525-review` (GPT-6.1 Sol): cancelled before launch, as the Codex lanes were held.
   - `20261015-145546-pr525-review-opus` (Claude Opus 5.5): the closeout review, APPROVE.
+  - `20261016-015339-pr525-delta-review` (Claude Opus 5.5): the delta review of `183c7ef3..a1858bb9`, APPROVE.
   - `20261015-225702-pr525-mut-b2` and `-mut-d2` (Claude Opus 5.5): finished; the mutants the restart left unrun, at `e08b98dd`.
 
     Lane b2 noted that `test_u2_roles.py::test_exclusion_dispositions_are_the_ratified_names` reads the U2 specification for its disposition names. So does `test_adjudication_applied.py`. Every run of those files (this lane's, the review's and the mutation lanes') read the specification through those tests only.
 
-  Every lane read `EV/RESTRICTED-FILES.md`'s rules from its brief, not the file. No lane's stream log shows a refusal by the hook or a tool input that names a restricted directory; the only matches are listings of the hook's own source. The hook logs of mut-a, mut-c, b2, d2, the review and this lane are empty. This lane truncated the hook logs of mut-b and mut-d without reading them when it reset those clones for the finishing lanes; their stream logs are the record for those two.
+  Every lane read `EV/RESTRICTED-FILES.md`'s rules from its brief, not the file. No lane's stream log shows a refusal by the hook or a tool input that names a restricted directory; the only matches are listings of the hook's own source. The hook logs of mut-a, mut-c, b2, d2, both reviews and this lane are empty. This lane truncated the hook logs of mut-b and mut-d without reading them when it reset those clones for the finishing lanes; their stream logs are the record for those two.
 
 **Values:** this lane and its lanes stated and inferred no 1946–55 value or direction. Every number they printed is invented (offsets, invented cells, invented-run counts and dispositions), a count, a hash, a timing or a public parameter from the committed captures.
