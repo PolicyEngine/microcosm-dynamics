@@ -724,7 +724,10 @@ class SourceGate:
 # ===========================================================================
 # Role rules (section 3)
 # ===========================================================================
-@dataclass(frozen=True)
+# Slotted, like RoleRule (closeout delta review): an instance has no
+# __dict__, so no instance attribute can shadow ``applies`` or ``as_dict``
+# while the type and the written text stay exact.
+@dataclass(frozen=True, slots=True)
 class FamilyUnitExclusion:
     """A ratified exclusion that a member's code brings on its family unit.
 
@@ -749,6 +752,10 @@ class FamilyUnitExclusion:
         if self.sex is not None and self.sex not in _SEX_CODES.values():
             raise ValueError(f"exclusion sex must be one of {_SEX_CODES}")
 
+    # Final, like RoleRule (closeout mutation lane c): a subclass could
+    # print as a ratified exclusion while ``applies`` excluded nobody.
+    __init_subclass__ = classmethod(_final)
+
     def applies(self, sex: str) -> bool:
         """Whether a member of recorded ``sex`` brings the exclusion."""
 
@@ -758,7 +765,7 @@ class FamilyUnitExclusion:
         return {"disposition": self.disposition, "sex": self.sex}
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class RoleRule:
     """One relationship code's U2 semantics in one wave."""
 
@@ -790,6 +797,8 @@ class RoleRule:
                 "family_unit_exclusion must be a FamilyUnitExclusion, its "
                 "as_dict() mapping or None"
             )
+
+    __init_subclass__ = classmethod(_final)
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -825,6 +834,49 @@ OFUM_RULE = dict(
 #: The two ratified exclusions as role-rule attachments (section 16c).
 _B1_EXCLUSION = FamilyUnitExclusion(MALE_CODE_20_2015, "male")
 _B2_EXCLUSION = FamilyUnitExclusion(UNCOOPERATIVE_SPOUSE_OR_PARTNER)
+
+
+def role_rules_text(rules: Mapping[Any, Any]) -> str:
+    """Role rules as canonical JSON text, each rule exactly a RoleRule
+    whose exclusion, if any, is exactly a FamilyUnitExclusion.
+
+    Compared as text, a rule cannot pass by a field whose ``__eq__`` is
+    rigged (review round 3): the JSON encoder writes a string subclass's
+    own characters, never calls its comparison.  The exclusion's type is
+    checked too (closeout mutation lane c): an object written into a
+    rule after construction could print as a ratified exclusion while
+    applying to nobody.  Both classes are final and slotted, so neither a
+    subclass nor an instance attribute can override ``applies`` or
+    ``as_dict`` behind an exact type and text.
+    """
+
+    out = []
+    for key, rule in rules.items():
+        if type(rule) is not RoleRule:
+            raise U2SourceRefusal(
+                f"role rule {key!r} is a {type(rule).__qualname__}, not "
+                "exactly a RoleRule"
+            )
+        exclusion = rule.family_unit_exclusion
+        if exclusion is not None and type(exclusion) is not (
+            FamilyUnitExclusion
+        ):
+            raise U2SourceRefusal(
+                f"role rule {key!r} holds a {type(exclusion).__qualname__} "
+                "as its family-unit exclusion, not exactly a "
+                "FamilyUnitExclusion"
+            )
+        out.append([list(key), rule.as_dict()])
+    try:
+        return json.dumps(
+            sorted(out, key=lambda item: json.dumps(item[0])),
+            sort_keys=True,
+            allow_nan=False,
+        )
+    except (TypeError, ValueError) as error:
+        raise U2SourceRefusal(
+            f"the role rules are not plain data: {error}"
+        ) from error
 
 
 def declared_role_rules() -> dict[tuple[int, int], RoleRule]:
@@ -1044,11 +1096,14 @@ class RoleContext:
             else declared_role_rules()
         )
         rules = dict(self.rules)
-        if rules != dict(expected):
+        if role_rules_text(rules) != role_rules_text(expected):
             differ = sorted(
                 key
                 for key in set(rules) | set(expected)
-                if rules.get(key) != expected.get(key)
+                if key not in rules
+                or key not in expected
+                or role_rules_text({key: rules[key]})
+                != role_rules_text({key: expected[key]})
             )
             source = (
                 "the committed roles registry"
@@ -1059,7 +1114,22 @@ class RoleContext:
                 f"a {self.kind!r} role context holds rules other than "
                 f"{source}'s (first differing (wave, code): {differ[:3]})"
             )
-        object.__setattr__(self, "rules", MappingProxyType(rules))
+        # Hold private copies of the verified committed (or declared)
+        # rules, never the caller's objects (equal text, but only these are
+        # known to behave as RoleRules) and never the shared cached ones: a
+        # frozen RoleRule can still be edited in place, and a copy shared
+        # between contexts would carry one caller's edit into another
+        # context, a registered run's fresh one included (review round 3).
+        object.__setattr__(
+            self,
+            "rules",
+            MappingProxyType(
+                {
+                    key: RoleRule(**rule.as_dict())
+                    for key, rule in expected.items()
+                }
+            ),
+        )
 
     @classmethod
     def declared(cls) -> RoleContext:

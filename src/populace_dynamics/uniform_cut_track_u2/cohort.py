@@ -95,13 +95,16 @@ from __future__ import annotations
 
 import dataclasses
 import hashlib
+import io
 import json
+import math
 import sys
 from collections.abc import Mapping
 from dataclasses import asdict, dataclass, field
 from types import MappingProxyType
 from typing import Any
 
+import numpy as np
 import pandas as pd
 
 from populace_dynamics.cohorts import psid2010
@@ -121,6 +124,7 @@ __all__ = [
     "PRIMARY_BIRTH_YEARS",
     "PRIMARY_WAVES",
     "PSID_FILES",
+    "SNAPSHOT_KEY",
     "ROWS",
     "SEED_WAVE_RULE",
     "SUPPORT_WAVES",
@@ -143,6 +147,7 @@ __all__ = [
     "observation_plan",
     "pending_decisions",
     "plan_cells",
+    "rebuilt_input_frames",
     "structural_summary",
 ]
 
@@ -164,8 +169,13 @@ PSID_FILES = "psid_files"
 CALLER_FRAMES = "caller_frames"
 #: The loader seal's and provenance's record of the frozen pre-registration
 #: evidence the inputs were rechecked against (section 14; set only by
-#: :func:`~populace_dynamics.uniform_cut_track_u2.loader.load_u2_inputs`).
+#: :func:`~populace_dynamics.uniform_cut_track_u2.loader.load_u2_inputs`,
+#: and by a registered run's private snapshot from the bound record,
+#: :func:`_registered_snapshot`).
 EVIDENCE_KEY = "preregistration_evidence_sha256"
+#: The provenance mark of a registered run's private snapshot (review round
+#: 3): pre-registration evidence is never recorded from one.
+SNAPSHOT_KEY = "registered_snapshot"
 MARITAL_STATUS_4: tuple[str, ...] = (
     "married",
     "widowed",
@@ -446,35 +456,339 @@ class U2Inputs:
         identity.check_target(self.target_id, "U2Inputs")
 
 
-def _frame_digest(digest: Any, name: str, frame: pd.DataFrame) -> None:
+#: The dtypes an input frame may hold, by the name the digest writes, and
+#: the dtype a snapshot parses each column's text with (review round 3):
+#: the dtypes the U2 loader and U1's marriage and earnings readers build.
+#: Each stores machine values or strings, and each rebuilds exactly from
+#: the CSV text the digest hashes (:func:`_registered_snapshot`); any other
+#: dtype refuses at the digest, so at every load, before any registration.
+_FRAME_DTYPES: dict[str, Any] = {
+    "int64": "int64",
+    "float64": "float64",
+    "bool": "bool",
+    "object": object,
+    "Int64": "Int64",
+    "str": "str",
+    "string": "string",
+}
+
+
+def _nan(value: Any) -> bool:
+    return type(value) is float and math.isnan(value)
+
+
+def _missing(value: Any) -> bool:
+    return (
+        value is None
+        or value is pd.NA
+        or (type(value) is float and math.isnan(value))
+    )
+
+
+def _allowed_dtype(dtype: Any) -> bool:
+    # By the name the digest writes, ``str(dtype)``: a non-native byte
+    # order keeps ``dtype.name`` ("int64") but writes ">i8", which no
+    # snapshot parses (closeout mutation lane a).
+    if isinstance(dtype, np.dtype):
+        return str(dtype) in ("int64", "float64", "bool", "object")
+    return type(dtype) in (pd.Int64Dtype, pd.StringDtype) and (
+        str(dtype) in _FRAME_DTYPES
+    )
+
+
+def _check_frame_types(name: str, frame: pd.DataFrame) -> None:
+    """Refuse a frame whose digest would not fix what a run reads.
+
+    The digest hashes the column labels' text, the dtype names and the
+    CSV text (:func:`_frame_digest`).  A subclass can print as one value
+    and compare, hash or index as another, and an object in ``attrs``
+    runs code whenever pandas copies the frame, so (review round 3):
+    ``attrs`` must be empty (checked first: reading it runs nothing); the
+    labels distinct exact ``str`` in an exact ``pd.Index``; each dtype one
+    of :data:`_FRAME_DTYPES`, by exact type; and every cell of an object
+    or string column a nonempty exact ``str`` or missing (the CSV text
+    writes an empty string and a missing value alike).  The U2 loader,
+    U1's marriage and earnings readers and the invented generator build
+    only such frames.  A registered run further computes only on frames
+    rebuilt from the digested text (:func:`_registered_snapshot`).
+    """
+
+    if frame.attrs:
+        raise U2CohortError(
+            f"input frame {name} carries attrs {sorted(map(str, frame.attrs))}"
+            ": pandas copies attrs into every frame it derives, so an object "
+            "there runs code during the digest (review round 3)"
+        )
+    columns = frame.columns
+    if (
+        type(columns) is not pd.Index
+        or any(type(label) is not str for label in columns)
+        or not columns.is_unique
+    ):
+        raise U2CohortError(
+            f"input frame {name}'s column labels must be distinct exact "
+            "str: a label subclass can print as one column's name and "
+            "index another's data (review round 3)"
+        )
+    for position, dtype in enumerate(frame.dtypes):
+        if not _allowed_dtype(dtype):
+            raise U2CohortError(
+                f"input frame {name} column {columns[position]!r} has dtype "
+                f"{dtype!r} ({type(dtype).__qualname__}); an input frame "
+                f"holds only the dtypes {sorted(_FRAME_DTYPES)} (review "
+                "round 3)"
+            )
+        textual = isinstance(dtype, np.dtype) and dtype.kind == "O"
+        if not textual and type(dtype) is not pd.StringDtype:
+            continue
+        # A string dtype holds one missing marker of its own; an object
+        # column's missing cells must be the float NaN a rebuild parses, so
+        # the rebuilt frame holds exactly the same values.
+        missing = _missing if not textual else _nan
+        for value in frame.iloc[:, position].tolist():
+            if (type(value) is not str or value == "") and not missing(value):
+                raise U2CohortError(
+                    f"input frame {name} column {columns[position]!r} holds "
+                    f"a {type(value).__qualname__} cell {value!r:.40}; every "
+                    "cell of an object or string column must be a nonempty "
+                    "exact str or missing (NaN in an object column), since a "
+                    "subclass can print as one value and compare as another "
+                    "(review round 3)"
+                )
+
+
+def _frame_text(name: str, frame: Any) -> tuple[str, str, str]:
+    """What the digest hashes of one frame: its labels, its dtype names
+    and its CSV text, each written once."""
+
     if type(frame) is not pd.DataFrame:
         raise U2CohortError(
             f"input frame {name} is a {type(frame).__name__}, not a "
             "pandas.DataFrame: a frame's digest must come from its data"
         )
+    _check_frame_types(name, frame)
+    text = (
+        json.dumps([str(c) for c in frame.columns]),
+        json.dumps([str(t) for t in frame.dtypes]),
+        frame.to_csv(index=False, lineterminator="\n"),
+    )
+    try:
+        for part in text:
+            part.encode()
+    except UnicodeError as error:
+        raise U2CohortError(
+            f"input frame {name} holds text that is not valid Unicode: "
+            f"{error}"
+        ) from error
+    return text
+
+
+def _frame_digest(digest: Any, name: str, frame: Any) -> tuple[str, str, str]:
+    text = _frame_text(name, frame)
     digest.update(f"{name}\n".encode())
-    digest.update(json.dumps([str(c) for c in frame.columns]).encode())
-    digest.update(json.dumps([str(t) for t in frame.dtypes]).encode())
-    digest.update(frame.to_csv(index=False, lineterminator="\n").encode())
+    for part in text:
+        digest.update(part.encode())
+    return text
+
+
+def _wave_frames(frames: Any, name: str) -> dict[int, pd.DataFrame]:
+    """``frames`` if it is a plain ``dict`` keyed by exact ``int`` waves.
+
+    The digest and the computation read a container through different
+    methods (``[]``, ``get``, iteration), so a mapping subclass could hand
+    the digest the loaded frames and the rows other ones (review round
+    3).  On a plain dict they all read the same frame.
+    """
+
+    if type(frames) is not dict:
+        raise U2CohortError(
+            f"input frames {name} must be a plain dict keyed by wave, not a "
+            f"{type(frames).__qualname__}: a mapping subclass can hand the "
+            "digest other frames than a run reads (review round 3)"
+        )
+    for wave in frames:
+        if type(wave) is not int:
+            raise U2CohortError(
+                f"input frames {name} are keyed by a "
+                f"{type(wave).__qualname__} wave; the U2 loader keys them "
+                "by int (review round 3)"
+            )
+    return frames
+
+
+_WAVE_FIELDS: tuple[tuple[str, str], ...] = (
+    ("family_income", "income"),
+    ("family_wealth", "wealth"),
+    ("employer_dc", "employer_dc"),
+)
+_SINGLE_FIELDS: tuple[str, ...] = (
+    "design",
+    "persons",
+    "marriage_history",
+    "observed_earnings",
+)
+
+
+def _digest_frames(
+    inputs: U2Inputs,
+) -> Any:
+    """``(field, wave or None, digest name, frame)`` in digest order."""
+
+    anchors = _wave_frames(inputs.anchors, "anchors")
+    containers = [
+        (
+            field_name,
+            label,
+            _wave_frames(getattr(inputs, field_name), field_name),
+        )
+        for field_name, label in _WAVE_FIELDS
+    ]
+    for wave in sorted(anchors):
+        yield "anchors", wave, f"anchor_{wave}", anchors[wave]
+    for field_name in _SINGLE_FIELDS:
+        yield field_name, None, field_name, getattr(inputs, field_name)
+    for field_name, label, frames in containers:
+        for wave in sorted(frames):
+            yield field_name, wave, f"{label}_{wave}", frames[wave]
 
 
 def input_frames_sha256(inputs: U2Inputs) -> str:
-    """SHA-256 of every U2 input frame and the target identity."""
+    """SHA-256 of every U2 input frame and the target identity.
+
+    Refuses inputs whose digest would not fix what a run reads: a frame
+    container that is not a plain ``dict`` keyed by ``int``
+    (:func:`_wave_frames`), and a frame that is not exactly a DataFrame of
+    exact types (:func:`_check_frame_types`).
+    """
 
     digest = hashlib.sha256()
     digest.update(f"target:{inputs.target_id}\n".encode())
-    for wave in sorted(inputs.anchors):
-        _frame_digest(digest, f"anchor_{wave}", inputs.anchors[wave])
-    for name in ("design", "persons", "marriage_history", "observed_earnings"):
-        _frame_digest(digest, name, getattr(inputs, name))
-    for label, frames in (
-        ("income", inputs.family_income),
-        ("wealth", inputs.family_wealth),
-        ("employer_dc", inputs.employer_dc),
-    ):
-        for wave in sorted(frames):
-            _frame_digest(digest, f"{label}_{wave}", frames[wave])
+    for _field, _wave, name, frame in _digest_frames(inputs):
+        _frame_digest(digest, name, frame)
     return digest.hexdigest()
+
+
+def _rebuild_frame(name: str, text: tuple[str, str, str]) -> pd.DataFrame:
+    """The frame parsed from ``text`` (labels, dtype names, CSV), which
+    must write ``text`` again exactly.
+
+    Floats are parsed with the round-trip converter: pandas' default one
+    misreads some 16-17 digit reprs, which ``to_csv`` writes for computed
+    floats (review round 3).  Blank lines are rows: a one-column frame
+    writes a whitespace-only text cell as a whitespace-only line, which
+    the default parser would drop (closeout review, finding 3).  The
+    rebuilt frame has a default RangeIndex (the digest omits the index;
+    the loader's frames have one, and no U2 computation reads the input
+    frames' index).
+    """
+
+    labels_text, dtypes_text, csv_text = text
+    labels, dtypes = json.loads(labels_text), json.loads(dtypes_text)
+    try:
+        frame = pd.read_csv(
+            io.StringIO(csv_text),
+            dtype={
+                label: _FRAME_DTYPES[dtype]
+                for label, dtype in zip(labels, dtypes, strict=True)
+            },
+            keep_default_na=False,
+            na_values=[""],
+            float_precision="round_trip",
+            skip_blank_lines=False,
+        )
+    except (ValueError, pd.errors.ParserError) as error:
+        raise U2CohortError(
+            f"input frame {name} does not parse from the text its digest "
+            f"hashes: {error}"
+        ) from error
+    if _frame_text(name, frame) != text:
+        raise U2CohortError(
+            f"input frame {name} does not rebuild from the text its digest "
+            "hashes (labels, dtypes and CSV): a registered run computes "
+            "only on frames that do (review round 3)"
+        )
+    return frame
+
+
+def rebuilt_input_frames(inputs: U2Inputs) -> tuple[dict[str, Any], str]:
+    """Every input frame parsed from the text its digest hashes, and that
+    digest: the frame fields of :class:`U2Inputs` (plain dicts keyed by
+    int for the wave fields).  Each frame's text is written once, hashed,
+    and parsed back (:func:`_rebuild_frame`), so the frames returned are
+    exactly what the digest pins (review round 3)."""
+
+    digest = hashlib.sha256()
+    digest.update(f"target:{identity.TARGET_ID}\n".encode())
+    rebuilt: dict[str, Any] = {
+        "anchors": {},
+        **{field_name: {} for field_name, _ in _WAVE_FIELDS},
+    }
+    for field_name, wave, name, frame in _digest_frames(inputs):
+        frame = _rebuild_frame(name, _frame_digest(digest, name, frame))
+        if wave is None:
+            rebuilt[field_name] = frame
+        else:
+            rebuilt[field_name][int(wave)] = frame
+    return rebuilt, digest.hexdigest()
+
+
+def _registered_snapshot(
+    inputs: U2Inputs,
+    evidence: Mapping[str, Any],
+    evidence_sha256: str,
+) -> tuple[U2Inputs, str]:
+    """The private inputs a registered run computes on, and their digest.
+
+    Private: only :func:`~populace_dynamics.uniform_cut_track_u2.runner.
+    check_inputs` calls it, with a record it has validated
+    (``loader.check_preregistration_evidence``) and shown to hash to the
+    bound value.  The snapshot is marked (:data:`SNAPSHOT_KEY`), and no
+    pre-registration evidence is recorded from it.
+
+    Check, then use (review round 3).  Each input frame's text is written
+    once as the digest writes it and hashed, and a new frame is parsed
+    from that same text (:func:`_rebuild_frame`).  So a run on the
+    snapshot reads exactly what the digest pins, whatever the caller's
+    objects do afterwards or in other code paths (an array or index
+    subclass, an ``attrs`` hook, an in-place edit).  The caller compares
+    the returned digest with the bound record's frozen one.
+
+    ``evidence`` is the bound, normalized pre-registration record and
+    ``evidence_sha256`` its hash.  The snapshot's provenance comes from
+    them and the committed registry pins, never from the caller's inputs:
+    its PSID file hashes and bundle and cited-source hashes are the
+    record's, and it records no data directory.  It is sealed as the
+    loader seals, so each build's seal check holds.
+    """
+
+    rebuilt, frames_sha256 = rebuilt_input_frames(inputs)
+    files = {str(k): str(v) for k, v in evidence["psid_files_sha256"].items()}
+    provenance = {
+        "kind": PSID_FILES,
+        "psid_files_sha256": files,
+        "psid_files_bundle_sha256": str(evidence["psid_files_bundle_sha256"]),
+        "registries": sources.RegistrySet.committed().provenance(),
+        "cited_sources_sha256": {
+            str(k): str(v) for k, v in evidence["cited_sources_sha256"].items()
+        },
+        EVIDENCE_KEY: str(evidence_sha256),
+        SNAPSHOT_KEY: True,
+    }
+    snapshot = U2Inputs(provenance=provenance, **rebuilt)
+    object.__setattr__(
+        snapshot,
+        "loader_seal",
+        MappingProxyType(
+            {
+                "input_frames_sha256": frames_sha256,
+                "psid_files_bundle_sha256": provenance[
+                    "psid_files_bundle_sha256"
+                ],
+                EVIDENCE_KEY: provenance[EVIDENCE_KEY],
+            }
+        ),
+    )
+    return snapshot, frames_sha256
 
 
 _INVENTED_MODULE = "populace_dynamics.uniform_cut_track_u2.invented"
@@ -591,6 +905,8 @@ def _input_provenance(inputs: U2Inputs) -> dict[str, Any]:
         }
         if evidence is not None:
             out[EVIDENCE_KEY] = evidence
+        if recorded.get(SNAPSHOT_KEY) is True:
+            out[SNAPSHOT_KEY] = True
         return out
     return {
         "kind": CALLER_FRAMES,

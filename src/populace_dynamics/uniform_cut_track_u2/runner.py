@@ -14,22 +14,47 @@ cannot run stops the run (missing mappings, parameters or sources block
 execution; they never trigger fallback or silent omission, section 11).
 The two-percent interest sensitivity is reported on U0, unscored.
 
-Guards, before anything is computed:
+Guards, in the order they run, before any row is computed.  Every run
+first needs a provenance label that is exactly one of the two strings;
+then (after the registered row-set guard, item 1 below) exactly the ten
+row ids and the fixed U0 headline.
 
 * ``invented``: the inputs must re-generate from the invented U2
   generator's seed and named variant; any role context may run (the
   registry context then refuses on the refused and TO VERIFY codes,
   which the dry run records).
-* ``registered_real``: an issue #42 comment pointer; inputs sealed by the
-  U2 loader (``psid_files``) after it rechecked them against the frozen
-  pre-registration evidence, whose hash (the seal's
-  ``preregistration_evidence_sha256``, section 14) must equal the one the
-  caller's registration binds; the committed-registry role context; U2's
-  pinned parameters, by content (:func:`~populace_dynamics.
-  uniform_cut_track_u2.parameters.check_u2_parameters`), after which the
-  run computes with the fresh read of the pinned files, not the caller's
-  bundle; and, when a source gate's audit is recorded, the registry gate
-  only.
+* ``registered_real``, in order:
+
+  1. the registered rows only (no ``row_set``);
+  2. no source gate (the run applies none, so its audit would be the
+     caller's claim; a declared gate is refused by name first);
+  3. an issue #42 comment pointer, exactly a str;
+  4. inputs whose provenance records the U2 loader (``psid_files``);
+  5. the committed-registry role context, holding the committed rules;
+  6. a loader seal that matches the inputs (their frame digest, which
+     refuses containers, labels, dtypes and string cells of other than
+     exact types, and their file bundle), whose evidence hash
+     (``preregistration_evidence_sha256``, section 14; the loader writes
+     it only after rechecking the inputs against the frozen
+     pre-registration evidence) equals the hash the caller's
+     registration binds, both exactly str;
+  7. that evidence record itself must be plain JSON data, valid, and
+     hash to the bound value; each input frame's text is written once,
+     hashed, and parsed into a private snapshot that must write the same
+     text again (:func:`~populace_dynamics.uniform_cut_track_u2.cohort.
+     _registered_snapshot`), and that digest, and the inputs' recorded
+     PSID file and cited-source hashes (plain dicts of exact str), must
+     equal the record's frozen ones (the seal is only the loader's
+     claim);
+  8. U2's pinned parameters, by content (:func:`~populace_dynamics.
+     uniform_cut_track_u2.parameters.check_u2_parameters`);
+  9. after the births are derived, their frame digest must be the one the
+     bound record froze; every row's build compares the frames with it.
+
+  The run then computes on the snapshot, whose provenance comes from the
+  bound record and the committed pins, with the fresh read of the pinned
+  parameter files and a fresh committed role context: never the caller's
+  objects.
 
 The output records the U2 identity, the ten rows, the literal named
 deltas, U2's rulings record and the fixed headline.
@@ -53,6 +78,7 @@ from populace_dynamics.uniform_cut_track_u2 import (
     estimator,
     identity,
     invented,
+    loader,
     parameters,
     rows,
     sources,
@@ -94,6 +120,25 @@ def check_headline(headline: str) -> str:
     return headline
 
 
+def _check_provenance_label(data_provenance: Any) -> str:
+    """Refuse a label that is not exactly one of the two strings.
+
+    The label decides which guards run, so a value whose comparisons are
+    rigged (equal to nothing and unequal to nothing) could skip the
+    registered run's row-set guard while its input checks still ran
+    (review round 3).
+    """
+
+    if (
+        type(data_provenance) is not str
+        or data_provenance not in ap.DATA_PROVENANCES
+    ):
+        raise U2RunError(
+            f"data_provenance must be exactly one of {ap.DATA_PROVENANCES}"
+        )
+    return data_provenance
+
+
 def check_inputs(
     inputs: cohort.U2Inputs,
     data_provenance: str,
@@ -101,16 +146,69 @@ def check_inputs(
     role_context: sources.RoleContext,
     *,
     preregistration_evidence_sha256: str | None = None,
+    preregistration_evidence: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """The provenance guards (U1's order and wording, U2's identity).
+    """The provenance guards: U1's, a stricter provenance label, and U2's
+    identity, loader seal, bound evidence record and role rules.
+
+    Returns what the checks verified (the run records it).  A registered
+    run computes on the private snapshot the checks build
+    (:func:`~populace_dynamics.uniform_cut_track_u2.cohort.
+    _registered_snapshot`), never on ``inputs``.
 
     ``preregistration_evidence_sha256`` is the evidence hash the
     registration binds (``run_track_u2_registered.py`` passes the one its
     preflight bound).  A registered run needs it and refuses unless it
     equals the hash the loader sealed after its recheck; an invented run
     binds none (review round 2).
+
+    ``preregistration_evidence`` is the record with that hash (``main``
+    passes the one its preflight read).  A registered run needs it too,
+    because the seal is only the loader's own claim: a seal written
+    in-process over other frames repeats it (review round 3, info 1).  So
+    the inputs' frame digest, recomputed from the frames, and their
+    recorded PSID file and cited-source hashes must equal the record's
+    frozen ones; an invented run binds none.
     """
 
+    return _check_inputs(
+        inputs,
+        data_provenance,
+        registration_pointer,
+        role_context,
+        preregistration_evidence_sha256=preregistration_evidence_sha256,
+        preregistration_evidence=preregistration_evidence,
+    )[0]
+
+
+def _plain_hashes(value: Any, what: str) -> dict[str, str]:
+    """``value`` if it is a plain dict of exact-str keys and values."""
+
+    if type(value) is not dict or any(
+        type(key) is not str or type(digest) is not str
+        for key, digest in value.items()
+    ):
+        raise U2RunError(
+            f"these inputs record {what} that are not a plain dict of exact "
+            "str: a subclass could compare equal to the frozen hashes "
+            "(review round 3)"
+        )
+    return value
+
+
+def _check_inputs(
+    inputs: cohort.U2Inputs,
+    data_provenance: str,
+    registration_pointer: str | None,
+    role_context: sources.RoleContext,
+    *,
+    preregistration_evidence_sha256: str | None = None,
+    preregistration_evidence: Mapping[str, Any] | None = None,
+) -> tuple[dict[str, Any], cohort.U2Inputs]:
+    """:func:`check_inputs`, and the inputs a run computes on: ``inputs``
+    for an invented run, the registered snapshot for a registered one."""
+
+    _check_provenance_label(data_provenance)
     if type(inputs) is not cohort.U2Inputs:
         raise U2RunError("a U2 run needs U2Inputs")
     if type(role_context) is not sources.RoleContext:
@@ -119,22 +217,25 @@ def check_inputs(
     if data_provenance == ap.INVENTED:
         if registration_pointer is not None:
             raise U2RunError("an invented run carries no registration pointer")
-        if preregistration_evidence_sha256 is not None:
+        if (
+            preregistration_evidence_sha256 is not None
+            or preregistration_evidence is not None
+        ):
             raise U2RunError(
                 "an invented run binds no pre-registration evidence"
             )
         try:
-            return {"invented_inputs": invented.check_invented_inputs(inputs)}
+            return (
+                {"invented_inputs": invented.check_invented_inputs(inputs)},
+                inputs,
+            )
         except ValueError as error:
             raise U2RunError(
                 f"an invented run needs the invented generator's inputs: "
                 f"{error}"
             ) from error
-    if data_provenance != ap.REGISTERED_REAL:
-        raise U2RunError(
-            f"data_provenance must be one of {ap.DATA_PROVENANCES}"
-        )
-    if not isinstance(registration_pointer, str) or not (
+    # _check_provenance_label left exactly ap.REGISTERED_REAL.
+    if type(registration_pointer) is not str or not (
         REGISTRATION_POINTER.fullmatch(registration_pointer)
     ):
         raise U2RunError(
@@ -152,6 +253,20 @@ def check_inputs(
         raise U2RunError(
             "a registered U2 run applies the committed roles registry"
         )
+    # Review round 3: a RoleContext checks its rules only when built, so
+    # rules rewritten afterwards (object.__setattr__) keep the kind.  The
+    # run computes with a fresh committed context (run_track_u2); here the
+    # caller's must hold the same rules.
+    try:
+        caller_rules = sources.role_rules_text(role_context.rules)
+    except sources.U2SourceRefusal as error:
+        raise U2RunError(str(error)) from error
+    if caller_rules != sources.role_rules_text(_committed_roles().rules):
+        raise U2RunError(
+            "the registry role context holds role rules other than the "
+            "committed roles registry's: a registered U2 run applies the "
+            "committed rules only (section 14)"
+        )
     # Section 14: "execution rechecks their frozen identities".  Only the
     # loader, given the frozen pre-registration evidence, seals this hash
     # (and only after the PSID files and frame digest matched it).
@@ -160,21 +275,23 @@ def check_inputs(
     except cohort.U2CohortError as error:
         raise U2RunError(str(error)) from error
     evidence = provenance.get(cohort.EVIDENCE_KEY)
-    if not isinstance(evidence, str) or not _HEX64.fullmatch(evidence):
+    if type(evidence) is not str or not _HEX64.fullmatch(evidence):
         raise U2RunError(
             "a registered U2 run needs inputs the U2 loader rechecked "
             "against the frozen pre-registration evidence (PSID file "
-            "hashes and frame digest); these inputs carry no such recheck "
-            "(section 14)"
+            "hashes and frame digest); these inputs carry no such recheck, "
+            "sealed as 64 lowercase hex in exactly a str (section 14)"
         )
     # Review round 2, info 2: the seal proves a recheck against *some*
     # evidence record; the run must name the record its registration binds.
     bound = preregistration_evidence_sha256
-    if not isinstance(bound, str) or not _HEX64.fullmatch(bound):
+    # Exactly str (review round 3): a subclass could compare equal to any
+    # other hash.
+    if type(bound) is not str or not _HEX64.fullmatch(bound):
         raise U2RunError(
-            "a registered U2 run must name, as 64 lowercase hex, the "
-            "pre-registration evidence hash its registration binds; it "
-            f"was given {bound!r} (section 14)"
+            "a registered U2 run must name, as 64 lowercase hex in exactly "
+            "a str, the pre-registration evidence hash its registration "
+            f"binds; it was given {bound!r} (section 14)"
         )
     if evidence != bound:
         raise U2RunError(
@@ -182,7 +299,83 @@ def check_inputs(
             f"{bound[:12]}..., but the loader rechecked these inputs against "
             f"{evidence[:12]}...: not the registered state (section 14)"
         )
-    return {cohort.EVIDENCE_KEY: evidence}
+    # Review round 3, info 1: the seal proves nothing a caller cannot write
+    # (``object.__setattr__`` on the frozen field), so the inputs are held
+    # to the record the bound hash names, not to the seal's own claim.
+    frozen = _bound_evidence(preregistration_evidence, bound)
+    # Check, then use (review round 3): the digest is taken from each
+    # frame's text written once, and the run computes on frames parsed
+    # from that same text, so nothing the caller's objects do reaches it.
+    try:
+        snapshot, frames = cohort._registered_snapshot(inputs, frozen, bound)
+    except cohort.U2CohortError as error:
+        raise U2RunError(str(error)) from error
+    if frozen["input_frames_sha256"] != frames:
+        raise U2RunError(
+            f"these inputs' frame digest {frames[:12]}... is not the frame "
+            f"digest {frozen['input_frames_sha256'][:12]}... the bound "
+            "evidence record froze, whatever their seal says: not the "
+            "registered inputs (section 14)"
+        )
+    recorded = inputs.provenance
+    files = _plain_hashes(
+        recorded.get("psid_files_sha256"), "PSID file hashes"
+    )
+    bundle = recorded.get("psid_files_bundle_sha256")
+    if frozen["psid_files_sha256"] != files or (
+        type(bundle) is not str or frozen["psid_files_bundle_sha256"] != bundle
+    ):
+        raise U2RunError(
+            "the PSID file hashes these inputs record differ from those "
+            "the bound evidence record froze (section 14)"
+        )
+    cited = _plain_hashes(
+        recorded.get("cited_sources_sha256"), "cited-source hashes"
+    )
+    if frozen["cited_sources_sha256"] != cited:
+        raise U2RunError(
+            "the cited setup files and codebooks these inputs record differ "
+            "from those the bound evidence record froze (section 14)"
+        )
+    return (
+        {cohort.EVIDENCE_KEY: evidence, "input_frames_sha256": frames},
+        snapshot,
+    )
+
+
+def _committed_roles() -> sources.RoleContext:
+    """A fresh committed-registry role context, its refusals as U2RunError."""
+
+    try:
+        return sources.RoleContext.from_registry()
+    except sources.U2SourceRefusal as error:
+        raise U2RunError(str(error)) from error
+
+
+def _bound_evidence(record: Any, bound: str) -> dict[str, Any]:
+    """The pre-registration evidence record whose SHA-256 is ``bound``,
+    normalized; refuse a missing, invalid or other record."""
+
+    if record is None:
+        raise U2RunError(
+            "a registered U2 run needs the pre-registration evidence record "
+            f"its registration binds (SHA-256 {bound[:12]}...), to compare "
+            "the inputs with its frozen identities rather than trust the "
+            "loader seal's claim (section 14)"
+        )
+    try:
+        frozen = loader.check_preregistration_evidence(record)
+    except loader.U2LoaderRefusal as error:
+        raise U2RunError(
+            f"the pre-registration evidence record is not valid: {error}"
+        ) from error
+    digest = loader.preregistration_evidence_sha256(frozen)
+    if digest != bound:
+        raise U2RunError(
+            f"the evidence record given hashes to {digest[:12]}..., not the "
+            f"{bound[:12]}... the registration binds (section 14)"
+        )
+    return frozen
 
 
 def official_concept_rates(
@@ -444,13 +637,29 @@ def run_track_u2(
     source_gate: sources.SourceGate | None = None,
     progress: Callable[[str], None] | None = None,
     preregistration_evidence_sha256: str | None = None,
+    preregistration_evidence: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Every registered U2 row, the F17 diagnostics and the provenance.
 
     A registered run passes ``preregistration_evidence_sha256``, the
-    evidence hash its registration binds (:func:`check_inputs`).
+    evidence hash its registration binds, and ``preregistration_evidence``,
+    the record with that hash (:func:`check_inputs`).  It computes exactly
+    :data:`~populace_dynamics.uniform_cut_track_u2.rows.REGISTERED_ROWS`,
+    the rows ``main``'s preflight binds, and refuses any ``row_set``: a
+    row set is checked only by its ids, and a row equal by value may still
+    compute otherwise (review round 3, info 2).  It computes with the
+    fresh read of the pinned parameter files and a fresh committed role
+    context, and only once the births carry the frame digest the bound
+    record froze.  An invented run may pass the ten rows.
     """
 
+    _check_provenance_label(data_provenance)
+    if data_provenance == ap.REGISTERED_REAL and row_set is not None:
+        raise U2RunError(
+            "a registered U2 run computes exactly the registered rows "
+            "(rows.REGISTERED_ROWS, which main's preflight binds) and takes "
+            "no row_set; the given row_set is refused, whatever its rows"
+        )
     row_set = rows.REGISTERED_ROWS if row_set is None else row_set
     if list(row_set) != list(rows.ROW_IDS):
         raise U2RunError(
@@ -472,12 +681,23 @@ def run_track_u2(
                 f"gate, not {source_gate.kind!r}: the invented declared "
                 "gate applies to invented records alone"
             )
-    checks = check_inputs(
+        if data_provenance == ap.REGISTERED_REAL:
+            # Review round 3: the run never applies the gate, so its audit
+            # (mutable use records) would be the caller's claim.
+            raise U2RunError(
+                "a registered U2 run takes no source gate: it applies none, "
+                "so a gate's audit would record the caller's claim (main "
+                "passes none)"
+            )
+    # A registered run computes on the private snapshot the checks built
+    # from the frozen frames' text, never on the caller's inputs.
+    checks, inputs = _check_inputs(
         inputs,
         data_provenance,
         registration_pointer,
         role_context,
         preregistration_evidence_sha256=preregistration_evidence_sha256,
+        preregistration_evidence=preregistration_evidence,
     )
     try:
         # A registered run computes with the fresh read of the pinned files
@@ -485,8 +705,27 @@ def run_track_u2(
         params = parameters.check_u2_parameters(params, data_provenance)
     except parameters.U2ParameterError as error:
         raise U2RunError(str(error)) from error
+    if data_provenance == ap.REGISTERED_REAL:
+        # Likewise the role rules (review round 3): check_inputs showed the
+        # caller's context equal to the committed one; the rows get a fresh
+        # one, so nothing the caller still holds can reach them.
+        role_context = _committed_roles()
     say = progress or (lambda message: None)
     births = cohort.derive_u2_births(inputs)
+    # Check, then use (review round 3): the parameter check above reads the
+    # caller's objects, so the frames could change between the input check
+    # and here.  Every row's build compares the frames with the births'
+    # digest, so the births must carry the digest the bound record froze.
+    if (
+        data_provenance == ap.REGISTERED_REAL
+        and births.inputs_sha256 != checks["input_frames_sha256"]
+    ):
+        raise U2RunError(
+            "the input frames changed after the registered check: the "
+            "births were derived from frames other than those the bound "
+            "evidence record froze, and every row is built from the births "
+            "(section 14)"
+        )
     results: dict[str, Any] = {}
     headline: tuple[pd.DataFrame, pd.DataFrame, cohort.U2Cohort] | None = None
     for row_id, row in row_set.items():
