@@ -1741,8 +1741,9 @@ source capture changes.
 
 ### Validate objects and every exported helper
 
-All public input and result dataclasses now validate at construction,
-including `dataclasses.replace`. Result validation covers nested rows,
+All public input dataclasses validate at construction, including
+`dataclasses.replace`. Result construction was validated in round 10;
+round 11 below restricts it to G and rejects public replacement or copying. Result validation covers nested rows,
 nonnegative finite dime amounts, whole-dollar pairs, exact enums and
 booleans, calendar years, nonempty identifiers, and payment and denominator
 identities. Mappings are copied to immutable views. A refusal requires an
@@ -1808,7 +1809,151 @@ registry file hash; its invented classification counts remain identical.
 
 No new module, population data, source retrieval, monetary rule or
 statutory interpretation is introduced. Earlier Needs Max's judgment
-items and rulings d1418 and d1338 remain unchanged. Constructor checks
-establish structural validity; they do not certify a caller-invented result
-as an independently verified statutory calculation. Calendar, cohort and
+items and rulings d1418 and d1338 remain unchanged. Input constructor
+checks establish structural validity. Round 11 below closes the separate
+result-provenance gap by admitting only sealed G computations. Calendar, cohort and
 family rules that require a parameter bundle still run at the entry point.
+
+## Fix round 11 of October 16, 2026
+
+Verification class: statutory conformance. Admitted scope remains supported
+invented and captured statutory cases only, with no population, behavioral,
+payment-timing or forecast claim. This round changes no supported dollar
+amount, source capture, refusal code or statutory interpretation.
+
+### Seal computed results and coverage outcomes
+
+`BeneficiaryBenefit`, `FamilyBenefits`, `HouseholdBenefits`, `FamilyOutcome`,
+`FamilyDenominator` and `FamilyConfigurationUnsupported` now require G's
+private construction capability. Public direct construction,
+`dataclasses.replace`, `copy.copy` and `copy.deepcopy` raise
+`InvalidFamilyInput`, even when the supplied fields look consistent. Input
+declarations remain constructible and replaceable. Public result fields,
+dataclass equality and pickling remain available. Pickle reconstruction
+repeats seal-time validation; it is private implementation machinery, not a
+new result-input API. This is an API provenance contract, not a security
+boundary against Python code accessing private internals.
+
+Each seal binds the object identity and a type-sensitive immutable snapshot
+of its fields, including nested results. Every coverage, savings-clause,
+weighted-total, household-total and report consumer requires an unchanged
+seal. Altered or unsealed results raise before contributing a denominator
+row or changing guard state. The guard retains its own detached sealed
+history, so bypassing frozen fields on a caller's old result cannot change
+the next month's protection. Valid refusals retain their reason, row and
+weight. The conformance report's supplemental witnesses also go through
+`evaluate_family`, which verifies refusal provenance.
+
+Sealing retains field validation and adds the derivable identities:
+auxiliary payable is `max(0, age_adjusted_rate - own_benefit)` under
+202(k)(3)(A); original, standard, redistributed and counted amounts obey
+203(a)(4) and the original-benefit caps; outside beneficiaries consume no
+maximum under 203(a)(3)(C); non-entitled beneficiaries have zero auxiliary
+rates; available maximum, original-benefit totals, binding and redistribution
+flags, proportional standard shares, subject totals and payment totals
+reconcile. Whole-dollar pairs still follow 215(g). A widow's child-in-care
+floor can exceed her own proportional share (RS 00615.340/.010), so no false
+`age_adjusted_rate <= family_maximum_rate` bound is imposed.
+
+The review's minimized invented case has a retired-worker PIA of $1.10,
+maximum $1.90 and two children. Each child's share is $0.40 and the January
+record total and protected total are $1.90. February's PIA is $1.20 with the
+same maximum; dime rounding gives $0.30 to each child and total $1.80. The
+unchanged 203(a)(5) guard refuses February, leaving one supported and one
+refused row. Replacing one January child's age-adjusted rate with zero while
+retaining its $0.40 payable now raises `InvalidFamilyInput`. These invented
+figures are executable counterexamples, not figures attributed to SSA.
+
+### Use one role and record compatibility table
+
+The same immutable table governs beneficiary declarations, family validation,
+seal-time role checks and `original_benefit`, the sole exported helper with
+both role and record-kind arguments. The table follows 202(b)-(h):
+
+| Roles | Record kinds | Role-specific original-benefit arguments |
+| --- | --- | --- |
+| Spouse, spouse with a child in care, divorced spouse | Retirement, disability | Neither alternate basis nor parent count |
+| Child | Retirement, disability, survivor | Neither alternate basis nor parent count |
+| Widow(er), surviving divorced spouse, disabled widow(er) | Survivor | Optional basis at least the death PIA, under 202(e)/(f)(2)(B)-(C) |
+| Mother/father | Survivor | Neither alternate basis nor parent count |
+| Parent | Survivor | Optional count one or two, under 202(h)(2), RS 00209.015 |
+
+An omitted or `None` parent count means one for a parent. Supplying a count
+for any other role is invalid; the family computation passes the count only
+to parents. A non-widow basis is invalid even if it equals the PIA. The
+review's widow/retirement helper call and child/survivor call with PIA $1,000
+and basis $2,000 now raise `InvalidFamilyInput` rather than returning $1,000
+and $750. Compatible calls keep precisely the family entry point's original
+benefit, including parent, widow-basis and dime-rounding cases.
+
+| Configuration | Result |
+| --- | --- |
+| Unchanged result or refusal produced by G | Existing payments, coverage and denominator behavior |
+| Public result/refusal construction, replacement or copying | `InvalidFamilyInput`; no coverage refusal code |
+| Unsealed or altered result at any consumer | `InvalidFamilyInput`; no row, weight or guard change |
+| Incompatible role/record, non-widow basis or non-parent count | `InvalidFamilyInput` before any coverage refusal |
+| Existing supported or refused statutory configuration | Same amount or `UnsupportedReason`, with every refusal retained |
+
+### Executed invariants
+
+27. **Computed-result provenance and accounting closure.**
+    `test_only_g_computation_can_construct_results` and
+    `test_property_public_copy_cannot_create_sealed_outputs` cover all six
+    sealed types. `test_every_consumer_rejects_unsealed_or_altered_results`,
+    `test_property_changed_outcome_never_counts_or_advances` and
+    `test_report_witnesses_require_sealed_refusals` cover consumers and
+    denominator/guard atomicity. `test_guard_history_is_detached_from_caller_result`
+    and `test_review_altered_age_rate_cannot_lower_savings_clause_protection`
+    preserve the protected total and coverage counts.
+    `test_sealed_accounting_and_serialization_round_trip`,
+    `test_property_seal_time_reconciles_family_accounting`,
+    `test_property_seal_time_bounds_beneficiary_rates`,
+    `test_seal_time_reconciles_binding_and_proportional_rates` and
+    `test_seal_time_rejects_inconsistent_computed_payable` execute monetary
+    identities independently of the public construction barrier.
+    `test_every_sealed_type_survives_pickle_without_losing_its_seal` preserves
+    serialization, while `test_derived_public_totals_and_status_require_unchanged_seals`
+    protects computed properties. Earlier control assertions remain, with
+    valid outputs obtained from public computations and comparison-only
+    replacements expressed as comparisons over every public field. The earlier
+    guard-history control now explicitly rejects changing a computed PIA
+    from a Fraction to an equivalent numeric string; it retains both the
+    return-identity and detached-history assertions on a genuine result.
+28. **Role/record and argument equivalence.**
+    `test_every_exported_role_record_helper_has_a_compatibility_property`
+    inventories exports. Hypothesis over each of the 27 role/record pairs
+    in `test_role_record_helpers_match_family_original_amounts_or_input_errors`
+    proves invalid-before-refusal and exact helper/family/independent-share
+    agreement (zero tolerance). `test_every_nonwidow_basis_is_invalid_in_helpers_and_family_declarations`,
+    `test_parent_count_is_invalid_for_every_nonparent_role`,
+    `test_widow_basis_below_pia_is_invalid_on_every_route` and
+    `test_two_parents_do_not_pass_their_count_to_other_survivor_roles`
+    execute the applicability, basis-bound and mixed-family properties.
+
+### Needs Max's judgment and not in scope
+
+No new statutory choice arises. All earlier judgment items, conservative
+refusals, source-erratum controls and rulings d1418/d1338 remain unchanged.
+This round does not implement savings-clause raised payments, new family
+configurations, new sources or real-data processing.
+
+### Existing property counterexample found by the full gate
+
+The full gate found an unstated premise in
+`test_a_reduced_joiner_after_a_cola_is_refused_iff_the_total_falls`: it
+unconditionally admitted the intervening COLA month. Hypothesis minimized
+the case to a survivor PIA $2.00, maximum $3.30, two unreduced widows and a
+mother/father. Their rates are $1.20/$0.90/$1.20. A 5% COLA gives PIA $2.10
+and maximum $3.40, but proportional dime flooring gives
+$1.20/$0.80/$1.20, a total of $3.20. The guard correctly refuses under the
+existing 203(a)(5) reading. The reviewed head and current implementation
+were executed side by side and produce identical amounts and refusal.
+This is an intended rounding counterexample to the test's admission premise,
+not a changed supported amount or a new statutory default.
+
+The same property now includes this reduced case as a Hypothesis `example`.
+Every original joiner-month assertion remains for admitted COLA months.
+The additional branch verifies the earlier PIA increase, qualifying maximum,
+actual decline, exact protected total and continuing refusal after the joiner.
+No generated case is discarded or weakened to make the property pass. This
+extends invariant 9's executed coverage without adding a collected test node.

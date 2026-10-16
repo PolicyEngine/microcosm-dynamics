@@ -615,21 +615,20 @@ def execute_refusal_witnesses() -> list[dict]:
     for expected, (description, compute) in sorted(
         witnesses.items(), key=lambda item: item[0].value
     ):
-        try:
-            compute()
-        except g.FamilyConfigurationUnsupported as error:
-            if error.reason is not expected:
-                raise AssertionError((expected, error.reason)) from error
-            results.append(
-                {
-                    "id": expected.value,
-                    "description": description,
-                    "status": "refused",
-                    "reason": error.reason.value,
-                }
-            )
-        else:
+        outcome = g.evaluate_family(expected.value, 1, compute)
+        if outcome.supported:
             raise AssertionError(f"Witness {expected.value} was not refused")
+        error = outcome.unsupported
+        if error.reason is not expected:
+            raise AssertionError((expected, error.reason)) from error
+        results.append(
+            {
+                "id": expected.value,
+                "description": description,
+                "status": "refused",
+                "reason": error.reason.value,
+            }
+        )
     return results
 
 

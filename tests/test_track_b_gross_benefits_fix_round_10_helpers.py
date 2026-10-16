@@ -9,7 +9,7 @@ from fractions import Fraction as F
 import pytest
 
 from populace_dynamics.track_b import gross_benefits as g
-from tests.track_b_gross_benefit_support import ssa_params
+from tests.track_b_gross_benefit_support import computed_refusal, ssa_params
 
 PARAMS = ssa_params()
 NOW = g.YearMonth(2023, 12)
@@ -78,10 +78,10 @@ def test_guard_revalidates_entire_result_before_any_state_change(
 
 
 def test_guard_revalidates_refusal_before_skipping():
-    refusal = g.FamilyConfigurationUnsupported(
-        g.UnsupportedReason.GOVERNMENT_PENSION_OFFSET, "invented refusal"
+    refusal = computed_refusal(g.UnsupportedReason.GOVERNMENT_PENSION_OFFSET)
+    object.__setattr__(
+        refusal, "reason", g.BeneficiaryCondition.GOVERNMENT_PENSION_OFFSET
     )
-    refusal.reason = g.BeneficiaryCondition.GOVERNMENT_PENSION_OFFSET
     guard = g.SavingsClauseGuard(NOW, earlier_months_unknown=False)
     before = vars(guard).copy()
 
@@ -102,15 +102,11 @@ def test_guard_revalidates_refusal_before_skipping():
     ],
 )
 def test_consumers_validate_all_rows_before_coverage(consumer):
-    refused = g.FamilyOutcome(
-        "refused",
-        F(7, 3),
-        None,
-        g.FamilyConfigurationUnsupported(
-            g.UnsupportedReason.GOVERNMENT_PENSION_OFFSET, "invented refusal"
-        ),
-    )
-    malformed = g.FamilyOutcome("bad", F(1), _result(), None)
+    def compute_refused():
+        raise computed_refusal(g.UnsupportedReason.GOVERNMENT_PENSION_OFFSET)
+
+    refused = g.evaluate_family("refused", F(7, 3), compute_refused)
+    malformed = g.evaluate_family("bad", F(1), _result)
     object.__setattr__(malformed.benefits, "record_total", F(-1))
     with pytest.raises(g.InvalidFamilyInput):
         consumer([refused, malformed])

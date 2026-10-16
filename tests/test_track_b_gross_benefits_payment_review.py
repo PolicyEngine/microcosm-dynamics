@@ -16,7 +16,11 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.track_b import gross_benefits as g
-from tests.track_b_gross_benefit_support import source_text, ssa_params
+from tests.track_b_gross_benefit_support import (
+    result_fields,
+    source_text,
+    ssa_params,
+)
 
 PARAMS = ssa_params()
 MONTH = g.YearMonth(2000, 1)
@@ -179,7 +183,9 @@ def test_nonlimiting_rib_lim_has_no_effect_for_every_generated_age_rate(
         dataclasses.replace(state, rib_lim_benefit=pia / 10), members
     )
     assert declared == baseline
-    assert _family(state, tuple(reversed(members))) == dataclasses.replace(
+    assert result_fields(
+        _family(state, tuple(reversed(members)))
+    ) == result_fields(
         baseline, beneficiaries=tuple(reversed(baseline.beneficiaries))
     )
 
@@ -249,7 +255,7 @@ def test_direct_and_built_dib_snapshots_share_the_july_1980_boundary(
             is (g.UnsupportedReason.DI_ENTITLEMENT_BEFORE_JULY_1980)
         )
     else:
-        assert outcomes[0].benefits == dataclasses.replace(
+        assert result_fields(outcomes[0].benefits) == result_fields(
             outcomes[1].benefits,
             state_source=outcomes[0].benefits.state_source,
         )

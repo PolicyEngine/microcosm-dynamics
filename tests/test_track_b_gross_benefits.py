@@ -1705,7 +1705,23 @@ def test_savings_clause_guard_needs_every_month_in_order():
     with pytest.raises(g.InvalidFamilyInput, match="PIA"):
         guard.evaluate("dec", 1, lambda: dec, pia=F(1000))
     with pytest.raises(TypeError):
-        guard.admit(g.HouseholdBenefits(DEC, {}))
+        guard.admit(
+            g.household_benefits(
+                {
+                    "record": g.HouseholdRecord(
+                        "worker",
+                        g.RecordState(
+                            g.FamilyKind.SURVIVOR,
+                            F(0),
+                            F(0),
+                            widow_drc_savings_clause=False,
+                        ),
+                    )
+                },
+                payment_month=DEC,
+                params=PARAMS,
+            )
+        )
     with pytest.raises(TypeError):
         g.SavingsClauseGuard(NOV, earlier_months_unknown=None)
     with pytest.raises(TypeError):

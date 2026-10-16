@@ -7,7 +7,6 @@ at that boundary to exercise the review's latent note-overwrite finding.
 The real benefit computation and all payment rules remain in use.
 """
 
-from dataclasses import replace
 from fractions import Fraction as F
 from unittest.mock import patch
 
@@ -16,7 +15,7 @@ from hypothesis import example, given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.track_b import gross_benefits as g
-from tests.track_b_gross_benefit_support import ssa_params
+from tests.track_b_gross_benefit_support import result_fields, ssa_params
 
 PARAMS = ssa_params()
 NOW = g.YearMonth(2026, 1)
@@ -92,4 +91,4 @@ def test_property_care_diagnostic_preserves_prior_note_and_payment(
     assert row.note == (
         (earlier_note + "; " if earlier_note else "") + CARE_NOTE
     )
-    assert replace(row, note=baseline.note) == baseline
+    assert result_fields(row, note=baseline.note) == result_fields(baseline)

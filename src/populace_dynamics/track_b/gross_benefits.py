@@ -135,8 +135,11 @@ coverage refusal, so :func:`evaluate_family` never counts an invalid row as
 a coverage gap. Constructors and entry points share one field-validation
 layer, including nested declarations, enum classes, calendar/cohort years,
 exact integer/Boolean types and all existing cross-field checks. Public
-result and refusal constructors validate nested fields too; consumers
-revalidate copies before aggregating or changing guard state. Every exported
+result, refusal and outcome types are sealed: only G's computation creates
+them, and direct construction, replacement or copying is an input error.
+Sealing validates nested fields and derivable accounting identities;
+consumers check provenance and unchanged fields before aggregation or guard
+changes. Guard history retains detached sealed snapshots. Every exported
 helper validates its arguments before a coverage refusal. Invalid
 outcome metadata is checked before invoking a computation; invalid monthly
 inputs leave every savings-clause guard unchanged. Built and direct records
@@ -209,11 +212,12 @@ from __future__ import annotations
 import math
 from collections import Counter
 from collections.abc import Callable, Iterable, Mapping, Sequence
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, field, fields, is_dataclass, replace
 from datetime import date
 from decimal import Decimal
 from enum import Enum
 from fractions import Fraction
+from functools import wraps
 from numbers import Rational
 from types import MappingProxyType
 
@@ -358,6 +362,136 @@ class _InvalidInputType(InvalidFamilyInput, TypeError):
     """An input error, also retaining the constructor's TypeError contract."""
 
 
+_RESULT_SEAL = object()
+
+
+class _SealedResult:
+    """Computed values cannot be constructed or copied through public APIs.
+
+    The seal is an API provenance check, not a security boundary against
+    code accessing module-private machinery. It is outside dataclass fields
+    so public read access, equality and constructor introspection stay stable.
+    """
+
+    def __copy__(self):
+        raise InvalidFamilyInput("G results can only be created by G")
+
+    def __deepcopy__(self, memo):
+        raise InvalidFamilyInput("G results can only be created by G")
+
+    def __reduce__(self):
+        _check_seal(self)
+        values = {
+            key: dict(value) if isinstance(value, Mapping) else value
+            for key, value in _result_values(self).items()
+        }
+        return _restore_sealed, (type(self), values)
+
+
+def _result_values(value):
+    names = (
+        [item.name for item in fields(value)]
+        if is_dataclass(value)
+        else ("reason", "detail", "beneficiary_id", "record_id")
+    )
+    return {name: getattr(value, name) for name in names}
+
+
+def _seal_value(value):
+    """An immutable, type-sensitive snapshot, including nested seals."""
+    if isinstance(value, _SealedResult):
+        _check_seal(value)
+        payload = value._g_seal[2]
+    elif is_dataclass(value):
+        payload = tuple(
+            (item.name, _seal_value(getattr(value, item.name)))
+            for item in fields(value)
+        )
+    elif isinstance(value, Mapping):
+        payload = tuple(
+            (_seal_value(key), _seal_value(item))
+            for key, item in value.items()
+        )
+    elif isinstance(value, (tuple, list)):
+        payload = tuple(_seal_value(item) for item in value)
+    else:
+        payload = value
+    return type(value), payload
+
+
+def _seal_payload(value):
+    return tuple(
+        (key, _seal_value(item)) for key, item in _result_values(value).items()
+    )
+
+
+def _check_seal(value):
+    seal = getattr(value, "_g_seal", None)
+    if (
+        not isinstance(seal, tuple)
+        or len(seal) != 3
+        or seal[0] is not _RESULT_SEAL
+        or seal[1] != id(value)
+        or seal[2] != _seal_payload(value)
+    ):
+        raise InvalidFamilyInput("Expected an unaltered result computed by G")
+
+
+def _sealed_result(cls):
+    """Require G's private capability, then validate and seal the result."""
+    initialize = cls.__init__
+
+    @wraps(initialize)
+    def initialize_computed(self, *args, _seal=None, **kwargs):
+        if _seal is not _RESULT_SEAL:
+            raise InvalidFamilyInput("G results can only be created by G")
+        initialize(self, *args, **kwargs)
+        object.__setattr__(
+            self, "_g_seal", (_RESULT_SEAL, id(self), _seal_payload(self))
+        )
+
+    cls.__init__ = initialize_computed
+    return cls
+
+
+def _computed(cls, *args, **kwargs):
+    return cls(*args, _seal=_RESULT_SEAL, **kwargs)
+
+
+def _restore_sealed(cls, values):
+    """Private pickle reconstruction repeats all seal-time identities."""
+    if cls not in (
+        BeneficiaryBenefit,
+        FamilyBenefits,
+        HouseholdBenefits,
+        FamilyOutcome,
+        FamilyDenominator,
+        FamilyConfigurationUnsupported,
+    ):
+        raise InvalidFamilyInput("Unknown G result type")
+    return _computed(cls, **values)
+
+
+def _detached_result(value):
+    """Keep guard history independent of caller-held result objects."""
+    if isinstance(value, _SealedResult):
+        _check_seal(value)
+        return _computed(
+            type(value),
+            **{
+                key: _detached_result(item)
+                for key, item in _result_values(value).items()
+            },
+        )
+    if isinstance(value, Mapping):
+        return {key: _detached_result(item) for key, item in value.items()}
+    if isinstance(value, tuple):
+        return tuple(_detached_result(item) for item in value)
+    if is_dataclass(value):
+        return replace(value)
+    return value
+
+
 class UnsupportedReason(Enum):
     """Why a statutory configuration is outside this layer (design §7)."""
 
@@ -395,14 +529,15 @@ class UnsupportedReason(Enum):
     REDUCED_BENEFIT_HISTORY_BEFORE_1978 = "reduced_benefit_history_before_1978"
 
 
-class FamilyConfigurationUnsupported(Exception):
+@_sealed_result
+class FamilyConfigurationUnsupported(_SealedResult, Exception):
     """``FAMILY_CONFIG_UNSUPPORTED``: a configuration G cannot compute.
 
     Rows raising this stay in every denominator (use
     :func:`evaluate_family` and :func:`count_family_outcomes`); a target
     that needs them is blocked (:class:`FamilyTargetBlocked`).
-    Construction validates the reason's exact enum class and every piece
-    of metadata, so malformed exceptions cannot declare coverage gaps.
+    Only G creates refusals. Sealing validates the reason's exact enum
+    class and metadata; consumers reject altered or unsealed exceptions.
     """
 
     code = "FAMILY_CONFIG_UNSUPPORTED"
@@ -516,7 +651,7 @@ def _input_conditions(value: object, enum: type) -> None:
 
 
 def _checked_input(value, expected: type, label: str):
-    """Revalidate a declaration, including nested fields, on an immutable copy.
+    """Revalidate input copies or require an unchanged computed-result seal.
 
     Constructors and entry points use the same field validation. Rebuilding
     also repeats their cross-field checks and numeric normalization, so even
@@ -524,18 +659,17 @@ def _checked_input(value, expected: type, label: str):
     No coverage decision belongs in this pass.
     """
     _input_type(value, expected, label)
+    if isinstance(value, _SealedResult):
+        _check_seal(value)
+        return value
     return replace(value)
 
 
 def _validated_refusal(error) -> FamilyConfigurationUnsupported:
-    """Validate and copy refusal fields before recording coverage."""
+    """Require a genuine, unaltered G refusal before recording coverage."""
     _input_type(error, FamilyConfigurationUnsupported, "unsupported")
-    return FamilyConfigurationUnsupported(
-        error.reason,
-        error.detail,
-        beneficiary_id=error.beneficiary_id,
-        record_id=error.record_id,
-    )
+    _check_seal(error)
+    return error
 
 
 def _nonnegative_integer(value, label: str) -> None:
@@ -1074,7 +1208,8 @@ def applicable_cola_percents(
 def _require_supported_eligibility(eligibility_year: int) -> None:
     _input_year(eligibility_year, "eligibility_year")
     if eligibility_year < FIRST_SUPPORTED_ELIGIBILITY_YEAR:
-        raise FamilyConfigurationUnsupported(
+        raise _computed(
+            FamilyConfigurationUnsupported,
             UnsupportedReason.ELIGIBILITY_BEFORE_1983,
             f"eligibility year {eligibility_year}: maximums fixed before "
             "June 1982 were rounded up to the dime (POMS RS 00615.736B.3) "
@@ -1140,7 +1275,8 @@ def _drc_monthly_rate(birth_year: int, params: SSAParameters) -> Fraction:
 
 def _refuse_early_delayed_credits(birth_year: int) -> None:
     if birth_year < FIRST_SUPPORTED_DELAYED_CREDIT_BIRTH_YEAR:
-        raise FamilyConfigurationUnsupported(
+        raise _computed(
+            FamilyConfigurationUnsupported,
             UnsupportedReason.DELAYED_CREDITS_BEFORE_1917,
             f"birth year {birth_year}: 402(w)(6)(A) gives 1/12 of 1 "
             "percent a month to a person first eligible before 1979 (born "
@@ -1278,7 +1414,8 @@ def _refuse_historical_own_rib(
         and birth_year is not None
         and birth_year < 1916
     ):
-        raise FamilyConfigurationUnsupported(
+        raise _computed(
+            FamilyConfigurationUnsupported,
             UnsupportedReason.OWN_RIB_HISTORY_BEFORE_1978,
             "own RIB with a positive reduction for a cohort before 1916 "
             "could have initial entitlement before January 1978; "
@@ -1435,19 +1572,66 @@ class Role(Enum):
     DISABLED_WIDOW = "disabled_widow"  # 402(e)/(f): fixed 28.5% from 1/1984
 
 
-_LIFE_ROLES = frozenset(
-    {Role.SPOUSE, Role.SPOUSE_CHILD_IN_CARE, Role.DIVORCED_SPOUSE, Role.CHILD}
-)
-_SURVIVOR_ROLES = frozenset(
+@dataclass(frozen=True)
+class _RoleCompatibility:
+    """The record and OB arguments permitted by 402(b)-(h)."""
+
+    record_kinds: frozenset[FamilyKind]
+    accepts_basis: bool = False
+    accepts_parent_count: bool = False
+
+
+_LIFE_RECORDS = frozenset({FamilyKind.RETIREMENT, FamilyKind.DISABILITY})
+_DEATH_RECORDS = frozenset({FamilyKind.SURVIVOR})
+_ROLE_COMPATIBILITY = MappingProxyType(
     {
-        Role.WIDOW,
-        Role.SURVIVING_DIVORCED_SPOUSE,
-        Role.MOTHER_FATHER,
-        Role.CHILD,
-        Role.PARENT,
-        Role.DISABLED_WIDOW,
+        Role.SPOUSE: _RoleCompatibility(_LIFE_RECORDS),
+        Role.SPOUSE_CHILD_IN_CARE: _RoleCompatibility(_LIFE_RECORDS),
+        Role.DIVORCED_SPOUSE: _RoleCompatibility(_LIFE_RECORDS),
+        Role.CHILD: _RoleCompatibility(frozenset(FamilyKind)),
+        Role.WIDOW: _RoleCompatibility(_DEATH_RECORDS, accepts_basis=True),
+        Role.SURVIVING_DIVORCED_SPOUSE: _RoleCompatibility(
+            _DEATH_RECORDS, accepts_basis=True
+        ),
+        Role.MOTHER_FATHER: _RoleCompatibility(_DEATH_RECORDS),
+        Role.PARENT: _RoleCompatibility(
+            _DEATH_RECORDS, accepts_parent_count=True
+        ),
+        Role.DISABLED_WIDOW: _RoleCompatibility(
+            _DEATH_RECORDS, accepts_basis=True
+        ),
     }
 )
+
+
+def _check_role_arguments(
+    role: Role,
+    *,
+    kind: FamilyKind | None = None,
+    basis: Fraction | None = None,
+    parent_count: int | None = None,
+) -> None:
+    """One compatibility contract for declarations, helpers and families."""
+    _input_type(role, Role, "role")
+    rule = _ROLE_COMPATIBILITY[role]
+    if kind is not None:
+        _input_type(kind, FamilyKind, "kind")
+        if kind not in rule.record_kinds:
+            raise InvalidFamilyInput(
+                f"A {role.value} cannot be entitled on a {kind.value} record"
+            )
+    if basis is not None and not rule.accepts_basis:
+        raise InvalidFamilyInput(
+            "Only a widow(er) OB can differ from the PIA share"
+        )
+    if parent_count is not None:
+        _input_type(parent_count, int, "parent_count")
+        if not rule.accepts_parent_count:
+            raise InvalidFamilyInput("parent_count describes parents only")
+        if parent_count not in (1, 2):
+            raise InvalidFamilyInput("parent_count must be one or two")
+
+
 _OUTSIDE_MAXIMUM = frozenset(
     {Role.DIVORCED_SPOUSE, Role.SURVIVING_DIVORCED_SPOUSE}
 )
@@ -1605,7 +1789,8 @@ class OwnBenefit:
 def _refuse_own_benefit(own: OwnBenefit) -> None:
     """Own-benefit coverage, after own/family input checks have completed."""
     if own.kind is OwnBenefitKind.DISABILITY and own.reduction_months:
-        raise FamilyConfigurationUnsupported(
+        raise _computed(
+            FamilyConfigurationUnsupported,
             UnsupportedReason.DIB_AFTER_REDUCED_RIB,
             "a DIB reduced for prior reduced RIB (402(q)(2))",
         )
@@ -1718,10 +1903,7 @@ class Beneficiary:
                 )
         object.__setattr__(self, "conditions", frozenset(self.conditions))
         if self.original_benefit_basis is not None:
-            if self.role not in _WIDOW_ROLES:
-                raise InvalidFamilyInput(
-                    "Only a widow(er) OB can differ from the PIA share"
-                )
+            _check_role_arguments(self.role, basis=self.original_benefit_basis)
             object.__setattr__(
                 self,
                 "original_benefit_basis",
@@ -1952,7 +2134,7 @@ def _raise_record_conditions(conditions: Iterable[RecordCondition]) -> None:
         }:
             continue
         reason, detail = _RECORD_CONDITION_REASONS[condition]
-        raise FamilyConfigurationUnsupported(reason, detail)
+        raise _computed(FamilyConfigurationUnsupported, reason, detail)
 
 
 def _refuse_record(record: WorkerRecord | RecordState) -> None:
@@ -1966,7 +2148,8 @@ def _refuse_record(record: WorkerRecord | RecordState) -> None:
         and record.first_dib_entitlement.as_tuple()
         < DI_MAXIMUM_FIRST_ENTITLEMENT
     ):
-        raise FamilyConfigurationUnsupported(
+        raise _computed(
+            FamilyConfigurationUnsupported,
             UnsupportedReason.DI_ENTITLEMENT_BEFORE_JULY_1980,
             "DIB first entitled before July 1980 keeps the pre-1980 "
             "maximum (POMS RS 00615.740B.2)",
@@ -2072,8 +2255,9 @@ def record_state(record: WorkerRecord, params: SSAParameters) -> RecordState:
 # ---------------------------------------------------------------------------
 # Results
 # ---------------------------------------------------------------------------
+@_sealed_result
 @dataclass(frozen=True)
-class BeneficiaryBenefit:
+class BeneficiaryBenefit(_SealedResult):
     """One beneficiary's gross amounts for the month (exact dimes).
 
     * ``original_benefit``: OB before the maximum.
@@ -2135,20 +2319,56 @@ class BeneficiaryBenefit:
             )
         _optional_result_money(self, "own_benefit", "whole_dollar_own")
         _input_type(self.note, str, "note")
+        if self.auxiliary_payable != max(
+            Fraction(0), self.age_adjusted_rate - (self.own_benefit or 0)
+        ):
+            raise InvalidFamilyInput(
+                "auxiliary_payable must offset age_adjusted_rate by own benefit"
+            )
+        if (
+            self.standard_rate > self.original_benefit
+            or self.family_maximum_rate > self.original_benefit
+            or self.counted_against_maximum > self.family_maximum_rate
+        ):
+            raise InvalidFamilyInput(
+                "Result rates exceed their original benefit"
+            )
+        if self.subject_to_family_maximum != (
+            self.entitled and self.role not in _OUTSIDE_MAXIMUM
+        ):
+            raise InvalidFamilyInput(
+                "Result maximum membership is inconsistent"
+            )
+        if not self.subject_to_family_maximum and self.counted_against_maximum:
+            raise InvalidFamilyInput("Outside beneficiaries use no maximum")
+        if not self.entitled and any(
+            (
+                self.original_benefit,
+                self.standard_rate,
+                self.family_maximum_rate,
+                self.age_adjusted_rate,
+                self.auxiliary_payable,
+            )
+        ):
+            raise InvalidFamilyInput(
+                "Non-entitled beneficiaries have no auxiliary rate"
+            )
 
     @property
     def total_received(self) -> Fraction:
         """Auxiliary plus own benefit (the person's gross monthly total)."""
+        _check_seal(self)
         return self.auxiliary_payable + (self.own_benefit or Fraction(0))
 
 
+@_sealed_result
 @dataclass(frozen=True)
-class FamilyBenefits:
+class FamilyBenefits(_SealedResult):
     """Gross monthly benefits on one record for one month.
 
-    Construction validates every field and nested row before admitting the
-    result, including nonnegative dime amounts, whole-dollar payments and
-    record totals. Replacing a field repeats these checks.
+    Only G's computation constructs this sealed result. Seal-time checks
+    reconcile rates, maximum shares, payments and whole-dollar totals.
+    Direct construction, replacement and copying are input errors.
     """
 
     kind: FamilyKind
@@ -2209,6 +2429,73 @@ class FamilyBenefits:
             raise InvalidFamilyInput("The family maximum is below the PIA")
         if self.subject_total > self.family_maximum:
             raise InvalidFamilyInput("subject_total exceeds family_maximum")
+        reserved = self.pia if self.worker_benefit is not None else Fraction(0)
+        subject = [
+            row for row in beneficiaries if row.subject_to_family_maximum
+        ]
+        if self.available_for_auxiliaries != self.family_maximum - reserved:
+            raise InvalidFamilyInput(
+                "Available maximum differs from worker reserve"
+            )
+        if self.total_original_benefits != sum(
+            (row.original_benefit for row in subject), Fraction(0)
+        ):
+            raise InvalidFamilyInput(
+                "Original benefits differ from subject rows"
+            )
+        if self.family_maximum_binding != (
+            self.total_original_benefits > self.available_for_auxiliaries
+        ):
+            raise InvalidFamilyInput(
+                "Binding flag differs from original benefits"
+            )
+        if self.redistribution_applied != bool(
+            self.family_maximum_binding
+            and any(row.own_benefit is not None for row in subject)
+            and any(row.own_benefit is None for row in subject)
+        ):
+            raise InvalidFamilyInput(
+                "Redistribution flag differs from subject rows"
+            )
+        if self.subject_total != reserved + sum(
+            (row.counted_against_maximum for row in subject), Fraction(0)
+        ):
+            raise InvalidFamilyInput(
+                "Subject total differs from counted rates"
+            )
+        for row in beneficiaries:
+            _check_role_arguments(row.role, kind=self.kind)
+            expected = row.original_benefit
+            if row.subject_to_family_maximum and self.total_original_benefits:
+                expected = floor_dime(
+                    row.original_benefit
+                    * min(
+                        Fraction(1),
+                        self.available_for_auxiliaries
+                        / self.total_original_benefits,
+                    )
+                )
+            if row.standard_rate != expected:
+                raise InvalidFamilyInput(
+                    "Standard rate differs from proportional maximum"
+                )
+            if (
+                not self.redistribution_applied
+                and row.family_maximum_rate != expected
+            ):
+                raise InvalidFamilyInput(
+                    "Unredistributed rate differs from standard rate"
+                )
+            if (
+                row.subject_to_family_maximum
+                and (
+                    not self.redistribution_applied or row.own_benefit is None
+                )
+                and row.counted_against_maximum != row.family_maximum_rate
+            ):
+                raise InvalidFamilyInput(
+                    "Counted rate differs from maximum rate"
+                )
         expected_total = (self.worker_benefit or Fraction(0)) + sum(
             (row.auxiliary_payable for row in beneficiaries), Fraction(0)
         )
@@ -2223,6 +2510,7 @@ class FamilyBenefits:
             )
 
     def by_id(self) -> Mapping[str, BeneficiaryBenefit]:
+        _check_seal(self)
         return MappingProxyType(
             {row.beneficiary_id: row for row in self.beneficiaries}
         )
@@ -2237,7 +2525,7 @@ def original_benefit(
     pia: Fraction,
     basis: Fraction | None = None,
     *,
-    parent_count: int = 1,
+    parent_count: int | None = None,
 ) -> Fraction:
     """The OB: the statutory share of the PIA, dime-floored.
 
@@ -2245,15 +2533,20 @@ def original_benefit(
     402(e)/(f)(2)(A) 100 percent (or the widow(er)'s larger OB basis);
     402(g)(2) 3/4; 402(h)(2) 82.5 percent for one entitled parent,
     75 percent for each of two (RS 00209.015).
+
+    Role/record compatibility and argument applicability are identical to
+    the family entry point. Only widow(er) roles accept ``basis``; only
+    parents accept ``parent_count`` (omission means one entitled parent).
+    Incompatible combinations are input errors, never coverage refusals.
     """
     _input_type(role, Role, "role")
     _input_type(kind, FamilyKind, "kind")
     pia = _dimes(pia, "PIA")
     if basis is not None:
         basis = _dimes(basis, "basis")
-    _input_type(parent_count, int, "parent_count")
-    if parent_count not in (1, 2):
-        raise InvalidFamilyInput("parent_count must be one or two")
+    _check_role_arguments(
+        role, kind=kind, basis=basis, parent_count=parent_count
+    )
     if role in _SPOUSE_ROLES:
         share = Fraction(1, 2)
     elif role is Role.CHILD:
@@ -2271,10 +2564,7 @@ def original_benefit(
     elif role is Role.MOTHER_FATHER:
         share = Fraction(3, 4)
     elif role is Role.PARENT:
-        if kind is not FamilyKind.SURVIVOR:
-            raise InvalidFamilyInput("A parent's benefit needs a death")
-        if type(parent_count) is not int or parent_count not in (1, 2):
-            raise InvalidFamilyInput("parent_count must be one or two")
+        parent_count = 1 if parent_count is None else parent_count
         share = Fraction(165, 200) if parent_count == 1 else Fraction(3, 4)
     else:
         raise ValueError(f"No original benefit is defined for {role}")
@@ -2313,13 +2603,11 @@ def _check_beneficiary_inputs(
     beneficiary: Beneficiary, state: RecordState, params: SSAParameters
 ) -> None:
     """Input errors for a beneficiary with a resolved cohort, before refusal."""
-    kind = state.kind
-    allowed = _SURVIVOR_ROLES if kind is FamilyKind.SURVIVOR else _LIFE_ROLES
-    if beneficiary.role not in allowed:
-        raise InvalidFamilyInput(
-            f"A {beneficiary.role.value} cannot be entitled on a "
-            f"{kind.value} record"
-        )
+    _check_role_arguments(
+        beneficiary.role,
+        kind=state.kind,
+        basis=beneficiary.original_benefit_basis,
+    )
     own = beneficiary.own_benefit
     if beneficiary.role in _WIDOW_ROLES:
         if beneficiary.birth_year is not None:
@@ -2381,14 +2669,16 @@ def _refuse_beneficiary(
         _refuse_own_benefit(beneficiary.own_benefit)
     if beneficiary.role is Role.DISABLED_WIDOW:
         if payment_month < YearMonth(1984, 1):
-            raise FamilyConfigurationUnsupported(
+            raise _computed(
+                FamilyConfigurationUnsupported,
                 UnsupportedReason.DISABLED_WIDOW_UNDER_60,
                 "DWB payment months before January 1984 used an additional "
                 "pre-60 reduction (RS 00615.310B.1/B.3), not implemented",
                 beneficiary_id=bid,
             )
         if beneficiary.own_benefit is not None:
-            raise FamilyConfigurationUnsupported(
+            raise _computed(
+                FamilyConfigurationUnsupported,
                 UnsupportedReason.DUAL_ENTITLEMENT_SEQUENCE,
                 "DWB with own RIB or DIB needs entitlement sequencing not "
                 "settled by RS 00615.315 (which governs WIB/DWB election)",
@@ -2403,20 +2693,22 @@ def _refuse_beneficiary(
             # benefits for months after December 2023, not enactment month.
             continue
         reason, detail = _BENEFICIARY_CONDITION_REASONS[condition]
-        raise FamilyConfigurationUnsupported(
-            reason, detail, beneficiary_id=bid
+        raise _computed(
+            FamilyConfigurationUnsupported, reason, detail, beneficiary_id=bid
         )
     own = beneficiary.own_benefit
     if beneficiary.role in _WIDOW_ROLES and own is not None:
         if own.kind is OwnBenefitKind.DISABILITY:
-            raise FamilyConfigurationUnsupported(
+            raise _computed(
+                FamilyConfigurationUnsupported,
                 UnsupportedReason.DUAL_ENTITLEMENT_SEQUENCE,
                 "a widow(er) also entitled to DIB (402(q)(3)(C); POMS "
                 "RS 00615.350) is not implemented",
                 beneficiary_id=bid,
             )
         if beneficiary.birth_year < _FIRST_METHOD_B_WIDOW_BIRTH_YEAR:
-            raise FamilyConfigurationUnsupported(
+            raise _computed(
+                FamilyConfigurationUnsupported,
                 UnsupportedReason.DUAL_ENTITLEMENT_SEQUENCE,
                 "own-RIB widow(er)s before cohort 1929 are outside G's "
                 "implementation boundary; the source boundary is "
@@ -2430,7 +2722,8 @@ def _refuse_beneficiary(
         and not beneficiary.own_benefit_first
         and own.kind is OwnBenefitKind.DISABILITY
     ):
-        raise FamilyConfigurationUnsupported(
+        raise _computed(
+            FamilyConfigurationUnsupported,
             UnsupportedReason.DUAL_ENTITLEMENT_SEQUENCE,
             "a spouse entitled to spouse's benefits before a DIB (B then "
             "HA; POMS RS 00615.260: deemed RIB filing and a later RIB "
@@ -2590,7 +2883,8 @@ def _parisi_counted(
     beneficiary = row.beneficiary
     own = beneficiary.own_benefit
     if own.delayed_credit_months:
-        raise FamilyConfigurationUnsupported(
+        raise _computed(
+            FamilyConfigurationUnsupported,
             UnsupportedReason.PARISI_AMBIGUOUS,
             "redistribution around delayed credits on the own benefit is "
             "not settled by GN 02603.050C or the captured examples",
@@ -2608,7 +2902,8 @@ def _parisi_counted(
             floor_dime(statutory_rates(params).rib_lim_share * state.pia),
         )
         if unlimited > limit:
-            raise FamilyConfigurationUnsupported(
+            raise _computed(
+                FamilyConfigurationUnsupported,
                 UnsupportedReason.PARISI_AMBIGUOUS,
                 "redistribution around a RIB-LIM limited widow(er)",
                 beneficiary_id=beneficiary.beneficiary_id,
@@ -2622,7 +2917,8 @@ def _parisi_counted(
         before_age = row.standard - (own.pia if method_c else row.own_mba)
         # Source conflict us:oasdi-dual-entitlement-zero-after-age-reduction
         if before_age > 0:
-            raise FamilyConfigurationUnsupported(
+            raise _computed(
+                FamilyConfigurationUnsupported,
                 UnsupportedReason.PARISI_AMBIGUOUS,
                 "dual payable reaches zero only after auxiliary age reduction: "
                 "GN 02603.045's before-age rule and GN 02603.050A.2's zero-rate "
@@ -2720,7 +3016,8 @@ def _refuse_historical_auxiliary(
             if note not in row.note:
                 row.note += ("; " if row.note else "") + note
         return
-    raise FamilyConfigurationUnsupported(
+    raise _computed(
+        FamilyConfigurationUnsupported,
         UnsupportedReason.REDUCED_BENEFIT_HISTORY_BEFORE_1978,
         f"a reduced {role.value} for cohort {year} could first be entitled "
         "before January 1978; RS 00615.005C.2 needs the historical money "
@@ -2931,7 +3228,8 @@ def _entitled_parent_count(
     """
     parents = [b for b in beneficiaries if b.role is Role.PARENT]
     if len(parents) > 2:
-        raise FamilyConfigurationUnsupported(
+        raise _computed(
+            FamilyConfigurationUnsupported,
             UnsupportedReason.PARENT_BENEFIT,
             "more than two declared parents is outside the one/two-parent "
             "rates settled by 402(h)(2) and RS 00209.015",
@@ -2956,7 +3254,8 @@ def _entitled_parent_count(
                 and parent.own_benefit.kind is OwnBenefitKind.OLD_AGE
                 and own_mba >= two_ob
             ):
-                raise FamilyConfigurationUnsupported(
+                raise _computed(
+                    FamilyConfigurationUnsupported,
                     UnsupportedReason.PARENT_BENEFIT,
                     "two potential parents with own RIB between the "
                     "75% and 82.5% OBs have a circular entitlement count "
@@ -3022,7 +3321,8 @@ def _refuse_widow_drc_savings_clause(
     if state.kind is not FamilyKind.SURVIVOR:
         return
     if state.widow_drc_savings_clause is True:
-        raise FamilyConfigurationUnsupported(
+        raise _computed(
+            FamilyConfigurationUnsupported,
             UnsupportedReason.WIDOW_DRC_SAVINGS_CLAUSE,
             "a May 1978 survivor protected by the widow(er)'s DRC "
             "saving clause (RS 00615.712) is not implemented",
@@ -3043,7 +3343,8 @@ def _refuse_widow_drc_savings_clause(
         )
         or (state.first_dib_entitlement is None and possible_drc_protection)
     ):
-        raise FamilyConfigurationUnsupported(
+        raise _computed(
+            FamilyConfigurationUnsupported,
             UnsupportedReason.WIDOW_DRC_SAVINGS_CLAUSE_HISTORY_UNKNOWN,
             "a survivor snapshot must attest whether May 1978 "
             "entitlement and widow(er) deceased-worker DRCs invoke "
@@ -3064,9 +3365,12 @@ def _family_benefits(
     )
     _refuse_record(state)
     if state.deferred_refusal is not None:
-        raise FamilyConfigurationUnsupported(*state.deferred_refusal)
+        raise _computed(
+            FamilyConfigurationUnsupported, *state.deferred_refusal
+        )
     if payment_month.as_tuple() < FIRST_SUPPORTED_PAYMENT_MONTH:
-        raise FamilyConfigurationUnsupported(
+        raise _computed(
+            FamilyConfigurationUnsupported,
             UnsupportedReason.PAYMENT_MONTH_BEFORE_1983,
             "months before 1983 are outside the post-May-1982 rounding "
             "rules this layer implements",
@@ -3081,7 +3385,8 @@ def _family_benefits(
             and payment_month < YearMonth(2024, 1)
         )
     ):
-        raise FamilyConfigurationUnsupported(
+        raise _computed(
+            FamilyConfigurationUnsupported,
             UnsupportedReason.INDEPENDENT_DIVORCED_SPOUSE,
             "IEDS before January 1985, or on a WEP-affected worker record "
             "before January 2024, is not implemented (RS 00202.100)",
@@ -3106,7 +3411,9 @@ def _family_benefits(
             state.kind,
             state.pia,
             beneficiary.original_benefit_basis,
-            parent_count=parent_count,
+            parent_count=(
+                parent_count if beneficiary.role is Role.PARENT else None
+            ),
         )
         entitled, note = _is_entitled(
             beneficiary, state.pia, own_mba, parent_ob=ob
@@ -3143,7 +3450,8 @@ def _family_benefits(
         beneficiary = row.beneficiary
         if row.entitled and beneficiary.role is Role.DIVORCED_SPOUSE:
             if entitled_children and beneficiary.child_in_care is None:
-                raise FamilyConfigurationUnsupported(
+                raise _computed(
+                    FamilyConfigurationUnsupported,
                     UnsupportedReason.DIVORCED_SPOUSE_CHILD_IN_CARE_UNKNOWN,
                     "a divorced spouse with an entitled child must attest "
                     "current child-in-care status (RS 00615.010/.201A.2)",
@@ -3165,7 +3473,8 @@ def _family_benefits(
                 # 202(k)(3)(A)'s zero floor can settle the payment even
                 # when care history leaves the intermediate rate open.
                 if ordinary[1] != exempt[1]:
-                    raise FamilyConfigurationUnsupported(
+                    raise _computed(
+                        FamilyConfigurationUnsupported,
                         UnsupportedReason.DIVORCED_SPOUSE_CARE_HISTORY,
                         "without current care, unknown or protected first-"
                         "entitlement care history can change the auxiliary "
@@ -3184,7 +3493,8 @@ def _family_benefits(
         if not row.entitled or beneficiary.role not in _WIDOW_ROLES:
             continue
         if entitled_children and beneficiary.child_in_care is None:
-            raise FamilyConfigurationUnsupported(
+            raise _computed(
+                FamilyConfigurationUnsupported,
                 UnsupportedReason.WIDOW_CHILD_IN_CARE_UNKNOWN,
                 "a widow(er) with an entitled child must attest child-in-care "
                 "status for the month (RS 00615.340/.010)",
@@ -3200,7 +3510,8 @@ def _family_benefits(
     redistributed = bool(binding and dual and nondual)
     if redistributed:
         if payment_month.as_tuple() < PARISI_FIRST_PAYMENT_MONTH:
-            raise FamilyConfigurationUnsupported(
+            raise _computed(
+                FamilyConfigurationUnsupported,
                 UnsupportedReason.PARISI_BEFORE_OCTOBER_1999,
                 "a binding maximum with dual entitlement before 10/99 used "
                 "the pre-Parisi rule (POMS RS 00615.768D), not implemented",
@@ -3230,7 +3541,8 @@ def _family_benefits(
         else:
             age_adjusted = payable = Fraction(0)
         results.append(
-            BeneficiaryBenefit(
+            _computed(
+                BeneficiaryBenefit,
                 beneficiary_id=beneficiary.beneficiary_id,
                 role=beneficiary.role,
                 entitled=row.entitled,
@@ -3266,7 +3578,8 @@ def _family_benefits(
     record_whole = (
         0 if worker_benefit is None else whole_dollars(worker_benefit)
     ) + sum(row.whole_dollar_auxiliary for row in results)
-    return FamilyBenefits(
+    return _computed(
+        FamilyBenefits,
         kind=state.kind,
         payment_month=payment_month,
         pia=state.pia,
@@ -3317,8 +3630,9 @@ class HouseholdRecord:
                 )
 
 
+@_sealed_result
 @dataclass(frozen=True)
-class HouseholdBenefits:
+class HouseholdBenefits(_SealedResult):
     """Gross monthly benefits on every record in a household for a month.
 
     Totals count what is paid on the household's records: each living
@@ -3348,6 +3662,7 @@ class HouseholdBenefits:
 
     @property
     def record_total(self) -> Fraction:
+        _check_seal(self)
         return sum(
             (result.record_total for result in self.records.values()),
             Fraction(0),
@@ -3355,6 +3670,7 @@ class HouseholdBenefits:
 
     @property
     def record_total_whole_dollars(self) -> int:
+        _check_seal(self)
         return sum(
             result.record_total_whole_dollars
             for result in self.records.values()
@@ -3519,13 +3835,15 @@ def _refuse_household(
             continue
         ids = sorted(record_id for record_id, _ in entitlements)
         if all(b.role is Role.CHILD for _, b in entitlements):
-            raise FamilyConfigurationUnsupported(
+            raise _computed(
+                FamilyConfigurationUnsupported,
                 UnsupportedReason.COMBINED_FAMILY_MAXIMUM,
                 f"a child entitled on records {ids}; 403(a)(3)(A) may "
                 "combine their maximums (POMS RS 00615.770)",
                 beneficiary_id=person,
             )
-        raise FamilyConfigurationUnsupported(
+        raise _computed(
+            FamilyConfigurationUnsupported,
             UnsupportedReason.MULTIPLE_AUXILIARY_RECORDS,
             f"entitled as an auxiliary or survivor on records {ids} "
             "(simultaneous or dual entitlement across records, POMS RS "
@@ -3565,7 +3883,9 @@ def household_benefits(
         )
         for record_id in sorted(records)
     }
-    return HouseholdBenefits(payment_month, MappingProxyType(results))
+    return _computed(
+        HouseholdBenefits, payment_month, MappingProxyType(results)
+    )
 
 
 def household_month_outcome(
@@ -3609,7 +3929,7 @@ def household_month_outcome(
     except FamilyConfigurationUnsupported as error:
         for record_id, record in records.items():
             guards[record_id].skip(payment_month, pia=record.state.pia)
-        return FamilyOutcome(key, weight, None, error)
+        return _computed(FamilyOutcome, key, weight, None, error)
     results = {}
     refusal = None
     for record_id in sorted(records):
@@ -3624,7 +3944,8 @@ def household_month_outcome(
         )
         if outcome.unsupported is not None and refusal is None:
             error = outcome.unsupported
-            refusal = FamilyConfigurationUnsupported(
+            refusal = _computed(
+                FamilyConfigurationUnsupported,
                 error.reason,
                 error.detail,
                 beneficiary_id=error.beneficiary_id,
@@ -3633,11 +3954,12 @@ def household_month_outcome(
         elif outcome.supported:
             results[record_id] = outcome.benefits
     if refusal is not None:
-        return FamilyOutcome(key, weight, None, refusal)
-    return FamilyOutcome(
+        return _computed(FamilyOutcome, key, weight, None, refusal)
+    return _computed(
+        FamilyOutcome,
         key,
         weight,
-        HouseholdBenefits(payment_month, MappingProxyType(results)),
+        _computed(HouseholdBenefits, payment_month, MappingProxyType(results)),
         None,
     )
 
@@ -3846,7 +4168,7 @@ class SavingsClauseGuard:
         self._expect(month)
         total = savings_clause_total(result)
         self._carry(result.pia)
-        self._prior = _PriorMonth(month, result, result.pia)
+        self._prior = _PriorMonth(month, _detached_result(result), result.pia)
         self._next = _next_month(month)
         # Source conflict us:oasdi-family-maximum-saving-clause
         below = self._floor is not None and total < self._floor
@@ -3856,21 +4178,24 @@ class SavingsClauseGuard:
         if not _governed(result):
             return original
         if self._refused_since is not None and not first_fall:
-            raise FamilyConfigurationUnsupported(
+            raise _computed(
+                FamilyConfigurationUnsupported,
                 UnsupportedReason.SAVINGS_CLAUSE,
                 f"403(a)(5) took effect in {self._refused_since} and stays "
                 "in effect (POMS RS 00615.801B.2); G does not compute the "
                 "raised total",
             )
         if self._unknown_since is not None:
-            raise FamilyConfigurationUnsupported(
+            raise _computed(
+                FamilyConfigurationUnsupported,
                 UnsupportedReason.SAVINGS_CLAUSE_HISTORY_UNKNOWN,
                 f"a protected total may exist from {self._unknown_since} "
                 "that G did not see (a month it did not compute, or a path "
                 "that does not start at entitlement)",
             )
         if first_fall:
-            raise FamilyConfigurationUnsupported(
+            raise _computed(
+                FamilyConfigurationUnsupported,
                 UnsupportedReason.SAVINGS_CLAUSE,
                 f"the total after 403(a) and 402(q) is {_money_text(total)}"
                 f", below the {_money_text(self._floor)} protected since "
@@ -3920,7 +4245,7 @@ class SavingsClauseGuard:
         except FamilyConfigurationUnsupported as error:
             error = _validated_refusal(error)
             self.skip(month, pia=pia)
-            return FamilyOutcome(key, weight, None, error)
+            return _computed(FamilyOutcome, key, weight, None, error)
         result = _checked_input(result, FamilyBenefits, "compute result")
         if pia is not None and _dimes(pia, "PIA") != result.pia:
             raise InvalidFamilyInput(
@@ -3929,8 +4254,8 @@ class SavingsClauseGuard:
         try:
             self.admit(result)
         except FamilyConfigurationUnsupported as error:
-            return FamilyOutcome(key, weight, None, error)
-        return FamilyOutcome(key, weight, result, None)
+            return _computed(FamilyOutcome, key, weight, None, error)
+        return _computed(FamilyOutcome, key, weight, result, None)
 
 
 # ---------------------------------------------------------------------------
@@ -3953,8 +4278,9 @@ def _check_evaluation_inputs(
         raise _InvalidInputType("compute must be callable")
 
 
+@_sealed_result
 @dataclass(frozen=True)
-class FamilyOutcome:
+class FamilyOutcome(_SealedResult):
     """One record-month: validated benefits or a validated coverage refusal.
 
     Nested declarations are revalidated on construction, including a
@@ -3993,6 +4319,7 @@ class FamilyOutcome:
 
     @property
     def supported(self) -> bool:
+        _check_seal(self)
         return self.benefits is not None
 
 
@@ -4012,16 +4339,17 @@ def evaluate_family(
     try:
         benefits = compute()
     except FamilyConfigurationUnsupported as error:
-        return FamilyOutcome(key, weight, None, error)
+        return _computed(FamilyOutcome, key, weight, None, error)
     if not isinstance(benefits, (FamilyBenefits, HouseholdBenefits)):
         raise _InvalidInputType(
             "compute must return family or household benefits"
         )
-    return FamilyOutcome(key, weight, benefits, None)
+    return _computed(FamilyOutcome, key, weight, benefits, None)
 
 
+@_sealed_result
 @dataclass(frozen=True)
-class FamilyDenominator:
+class FamilyDenominator(_SealedResult):
     """Validated counts over every outcome, supported or not.
 
     Both counts and weights reconcile supported, unsupported and per-reason
@@ -4076,6 +4404,7 @@ class FamilyDenominator:
 
     @property
     def supported_weight_share(self) -> Fraction:
+        _check_seal(self)
         if self.weight == 0:
             raise ZeroDivisionError("No weight in the denominator")
         return self.supported_weight / self.weight
@@ -4098,7 +4427,8 @@ def count_family_outcomes(
             )
     supported = [outcome for outcome in outcomes if outcome.supported]
     unsupported = [outcome for outcome in outcomes if not outcome.supported]
-    return FamilyDenominator(
+    return _computed(
+        FamilyDenominator,
         rows=len(outcomes),
         weight=sum((o.weight for o in outcomes), Fraction(0)),
         supported_rows=len(supported),

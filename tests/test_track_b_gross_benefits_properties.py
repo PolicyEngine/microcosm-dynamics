@@ -21,7 +21,7 @@ import dataclasses
 from datetime import date
 from fractions import Fraction as F
 
-from hypothesis import assume, given, settings, target
+from hypothesis import assume, example, given, settings, target
 from hypothesis import strategies as st
 
 from populace_dynamics.estimates.ledgers import floor_to_dime
@@ -981,6 +981,23 @@ def test_savings_clause_guard_along_month_paths(path):
 
 
 @settings(max_examples=300, deadline=None)
+@example(
+    family=(
+        g.RecordState(
+            g.FamilyKind.SURVIVOR,
+            F(2),
+            F("3.30"),
+            widow_drc_savings_clause=False,
+        ),
+        [
+            g.Beneficiary("w1", g.Role.WIDOW, child_in_care=False),
+            g.Beneficiary("m", g.Role.MOTHER_FATHER),
+            g.Beneficiary("w2", g.Role.WIDOW, child_in_care=False),
+        ],
+    ),
+    tenths=50,
+    months=1,
+)
 @given(
     families(dual=False, min_size=2, max_size=5),
     st.integers(1, 90),
@@ -989,9 +1006,13 @@ def test_savings_clause_guard_along_month_paths(path):
 def test_a_reduced_joiner_after_a_cola_is_refused_iff_the_total_falls(
     family, tenths, months
 ):
-    """g-r1 M2 generalized: a COLA, then an age-reduced spouse or widow(er)
-    joins in a month with no PIA increase. January is refused exactly when
-    November qualified and January's total fell below November's."""
+    """A reduced joiner cannot escape an earlier 403(a)(5) protection.
+
+    The COLA itself can lower the dime-rounded proportional total: PIA
+    2 -> 2.10 and maximum 3.30 -> 3.40 give 3.30 -> 3.20 for the explicit
+    widow/mother/widow case. A refusal then persists. If the COLA month
+    was admitted, retain the original joiner-month iff assertion.
+    """
     state, members = family
     raised, raised_members = _with_colas(state, members, [F(tenths, 10)])
     if state.kind is g.FamilyKind.SURVIVOR:
@@ -1019,7 +1040,15 @@ def test_a_reduced_joiner_after_a_cola_is_refused_iff_the_total_falls(
         g.YearMonth(2026, 10), earlier_months_unknown=False
     )
     guard.admit(path[0])
-    guard.admit(path[1])
+    prior_refused = False
+    try:
+        guard.admit(path[1])
+    except g.FamilyConfigurationUnsupported as error:
+        assert error.reason is SAVINGS_CLAUSE
+        assert path[1].pia > path[0].pia and _qualifies(path[0])
+        assert total(path[1]) < total(path[0])
+        assert guard.protected_total == total(path[0])
+        prior_refused = True
     try:
         guard.admit(path[2])
     except g.FamilyConfigurationUnsupported as error:
@@ -1028,7 +1057,11 @@ def test_a_reduced_joiner_after_a_cola_is_refused_iff_the_total_falls(
     else:
         refused = False
     protected = path[1].pia > path[0].pia and _qualifies(path[0])
-    assert refused == (protected and total(path[2]) < total(path[0]))
+    if prior_refused:
+        assert refused
+        assert guard.refused_since == path[1].payment_month
+    else:
+        assert refused == (protected and total(path[2]) < total(path[0]))
 
 
 # ===========================================================================

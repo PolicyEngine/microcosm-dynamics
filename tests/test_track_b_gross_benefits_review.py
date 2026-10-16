@@ -433,7 +433,7 @@ def test_review_guarded_household_keeps_refused_record_and_denominator(
         for key in records
     }
     admitted = g.household_month_outcome(
-        records, payment_month=first, params=PARAMS, guards=guards
+        records, payment_month=first, params=PARAMS, guards=guards, key="first"
     )
     assert admitted.supported
     # A PIA rise protects the preceding three-child total. One child now
@@ -445,7 +445,11 @@ def test_review_guarded_household_keeps_refused_record_and_denominator(
     )
     records["protected"] = g.HouseholdRecord("dead", higher, kids[:1])
     refused = g.household_month_outcome(
-        records, payment_month=second, params=PARAMS, guards=guards
+        records,
+        payment_month=second,
+        params=PARAMS,
+        guards=guards,
+        key="second",
     )
     assert not refused.supported
     assert refused.unsupported.reason is g.UnsupportedReason.SAVINGS_CLAUSE
@@ -453,12 +457,7 @@ def test_review_guarded_household_keeps_refused_record_and_denominator(
     assert all(
         guard.next_month == g.YearMonth(2026, 1) for guard in guards.values()
     )
-    counts = g.count_family_outcomes(
-        [
-            dataclasses.replace(admitted, key="first"),
-            dataclasses.replace(refused, key="second"),
-        ]
-    )
+    counts = g.count_family_outcomes([admitted, refused])
     assert (counts.rows, counts.supported_rows, counts.unsupported_rows) == (
         2,
         1,

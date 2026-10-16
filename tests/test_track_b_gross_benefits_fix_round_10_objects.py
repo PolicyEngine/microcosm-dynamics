@@ -12,7 +12,7 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.track_b import gross_benefits as g
-from tests.track_b_gross_benefit_support import ssa_params
+from tests.track_b_gross_benefit_support import computed_refusal, ssa_params
 
 PARAMS = ssa_params()
 MONTH = g.YearMonth(2023, 12)
@@ -63,7 +63,7 @@ def _declarations():
     result = _result()
     own = g.OwnBenefit(g.OwnBenefitKind.OLD_AGE, F(0))
     state = g.RecordState(g.FamilyKind.RETIREMENT, F(0), F(0), own)
-    outcome = g.FamilyOutcome("valid", F(1), result, None)
+    outcome = g.evaluate_family("valid", F(1), lambda: result)
     return {
         "YearMonth": MONTH,
         "StatutoryRates": g.statutory_rates(PARAMS),
@@ -74,7 +74,11 @@ def _declarations():
         "HouseholdRecord": g.HouseholdRecord("worker", state),
         "BeneficiaryBenefit": result.beneficiaries[0],
         "FamilyBenefits": result,
-        "HouseholdBenefits": g.HouseholdBenefits(MONTH, {"worker": result}),
+        "HouseholdBenefits": g.household_benefits(
+            {"worker": g.HouseholdRecord("worker", state)},
+            payment_month=MONTH,
+            params=PARAMS,
+        ),
         "FamilyOutcome": outcome,
         "FamilyDenominator": g.count_family_outcomes([outcome]),
     }
@@ -166,17 +170,17 @@ def test_refusal_validates_every_field(field):
 
 def test_nested_results_and_refusals_are_revalidated_at_construction():
     result = _result()
-    bad_row = replace(result.beneficiaries[0])
+    bad_row = _result().beneficiaries[0]
     object.__setattr__(bad_row, "role", g.FamilyKind.SURVIVOR)
     with pytest.raises(g.InvalidFamilyInput):
         replace(result, beneficiaries=(bad_row,))
     object.__setattr__(result, "record_total", F(-1))
     with pytest.raises(g.InvalidFamilyInput):
         g.FamilyOutcome("bad", F(7, 3), result, None)
-    refusal = g.FamilyConfigurationUnsupported(
-        g.UnsupportedReason.GOVERNMENT_PENSION_OFFSET, "declared condition"
+    refusal = computed_refusal(g.UnsupportedReason.GOVERNMENT_PENSION_OFFSET)
+    object.__setattr__(
+        refusal, "reason", g.BeneficiaryCondition.GOVERNMENT_PENSION_OFFSET
     )
-    refusal.reason = g.BeneficiaryCondition.GOVERNMENT_PENSION_OFFSET
     with pytest.raises(g.InvalidFamilyInput):
         g.FamilyOutcome("bad", F(7, 3), None, refusal)
 
@@ -191,17 +195,34 @@ def test_nested_results_and_refusals_are_revalidated_at_construction():
     )
 )
 def test_result_mappings_are_immutable_snapshots(keys):
-    records = {key: _result() for key in keys}
-    household = g.HouseholdBenefits(MONTH, records)
+    records = {
+        key: g.HouseholdRecord(
+            key,
+            g.RecordState(
+                g.FamilyKind.SURVIVOR,
+                F(0),
+                F(0),
+                widow_drc_savings_clause=False,
+            ),
+        )
+        for key in keys
+    }
+    household = g.household_benefits(
+        records, payment_month=MONTH, params=PARAMS
+    )
     records.clear()
     assert set(household.records) == set(keys)
     with pytest.raises(TypeError):
         household.records["other"] = _result()
-    reasons = {g.UnsupportedReason.SAVINGS_CLAUSE: (len(keys), F(len(keys)))}
-    denominator = g.FamilyDenominator(
-        len(keys), F(len(keys)), 0, F(0), len(keys), F(len(keys)), reasons
-    )
-    reasons.clear()
+
+    def refused():
+        raise computed_refusal(g.UnsupportedReason.SAVINGS_CLAUSE)
+
+    outcomes = [g.evaluate_family(key, F(1), refused) for key in keys]
+    denominator = g.count_family_outcomes(outcomes)
+    outcomes.clear()
+    assert denominator.rows == denominator.unsupported_rows == len(keys)
+    assert denominator.weight == denominator.unsupported_weight == len(keys)
     assert set(denominator.unsupported_by_reason) == {
         g.UnsupportedReason.SAVINGS_CLAUSE
     }
@@ -221,7 +242,7 @@ def test_result_and_denominator_total_identities_reject_positive_corruption(
 ):
     result = _result()
     denominator = g.count_family_outcomes(
-        [g.FamilyOutcome("valid", F(1), result, None)]
+        [g.evaluate_family("valid", F(1), lambda: result)]
     )
     for name, value in (
         ("record_total", F(amount)),

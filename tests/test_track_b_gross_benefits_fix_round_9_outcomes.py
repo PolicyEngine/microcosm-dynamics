@@ -12,7 +12,7 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.track_b import gross_benefits as g
-from tests.track_b_gross_benefit_support import ssa_params
+from tests.track_b_gross_benefit_support import computed_refusal, ssa_params
 
 PARAMS = ssa_params()
 NOW = g.YearMonth(2023, 12)
@@ -64,9 +64,7 @@ def test_outcome_metadata_is_invalid_before_compute(guarded, field, invalid):
 
     def compute():
         calls.append("called")
-        raise g.FamilyConfigurationUnsupported(
-            g.UnsupportedReason.ADMINISTRATIVE_FINALITY, "invented refusal"
-        )
+        raise computed_refusal(g.UnsupportedReason.ADMINISTRATIVE_FINALITY)
 
     fields = {"key": "family", "weight": WEIGHT, "compute": compute}
     fields[field] = invalid
@@ -222,10 +220,7 @@ def test_property_malformed_outcomes_never_compute_count_or_advance(case):
 
         def compute(calls=calls):
             calls.append("called")
-            raise g.FamilyConfigurationUnsupported(
-                g.UnsupportedReason.ADMINISTRATIVE_FINALITY,
-                "invented refusal",
-            )
+            raise computed_refusal(g.UnsupportedReason.ADMINISTRATIVE_FINALITY)
 
         fields = {"key": "family", "weight": WEIGHT, "compute": compute}
         fields[field] = invalid
@@ -273,10 +268,7 @@ def test_family_outcome_requires_exactly_one_result_or_refusal(both):
             WEIGHT,
             _benefits() if both else None,
             (
-                g.FamilyConfigurationUnsupported(
-                    g.UnsupportedReason.ADMINISTRATIVE_FINALITY,
-                    "invented refusal",
-                )
+                computed_refusal(g.UnsupportedReason.ADMINISTRATIVE_FINALITY)
                 if both
                 else None
             ),

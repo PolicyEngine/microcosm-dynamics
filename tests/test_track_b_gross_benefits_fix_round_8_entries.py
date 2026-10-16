@@ -14,7 +14,7 @@ from hypothesis import example, given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.track_b import gross_benefits as g
-from tests.track_b_gross_benefit_support import ssa_params
+from tests.track_b_gross_benefit_support import result_fields, ssa_params
 
 PARAMS = ssa_params()
 NOW = g.YearMonth(2023, 12)
@@ -232,7 +232,7 @@ def _family_cases(draw):
 
 def _result_key(result):
     if isinstance(result, g.FamilyBenefits):
-        return replace(result, state_source="normalized-for-comparison")
+        return result_fields(result, state_source="normalized-for-comparison")
     return tuple(
         (key, _result_key(result.records[key]))
         for key in sorted(result.records)

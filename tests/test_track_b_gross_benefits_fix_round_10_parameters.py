@@ -143,10 +143,15 @@ def test_parameter_field_corruption_preserves_guard_and_denominator(case):
 
 def test_guard_admit_preserves_identity_but_stores_validated_history():
     first = _valid_result()
-    # Consumer validation must use its normalized copy when a decoded or
-    # externally altered result carries an otherwise valid numeric string.
-    object.__setattr__(first, "pia", "1000")
     guard = g.SavingsClauseGuard(MONTH, earlier_months_unknown=False)
+    # Numeric strings remain valid inputs, but changing even an equivalent
+    # field on a computed result violates its round-11 provenance seal.
+    before = vars(guard).copy()
+    object.__setattr__(first, "pia", "1000")
+    with pytest.raises(g.InvalidFamilyInput):
+        guard.admit(first)
+    assert vars(guard) == before
+    first = _valid_result()
     assert guard.admit(first) is first
     object.__setattr__(first, "beneficiaries", None)
     outcome = guard.evaluate(

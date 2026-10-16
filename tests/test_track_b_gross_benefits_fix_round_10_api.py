@@ -392,8 +392,10 @@ def _world(pia):
         params=PARAMS,
         standalone=True,
     )
-    household = g.HouseholdBenefits(NOW, {"record": result})
-    outcome = g.FamilyOutcome("valid", F(7, 3), result, None)
+    household = g.household_benefits(
+        {"record": household_record}, payment_month=NOW, params=PARAMS
+    )
+    outcome = g.evaluate_family("valid", F(7, 3), lambda: result)
     objects = {
         "YearMonth": NOW,
         "StatutoryRates": g.statutory_rates(PARAMS),
@@ -420,7 +422,7 @@ def _world(pia):
         "delayed_credit_months": 0,
         "reduction_period_months": 62,
         "aime": pia,
-        "parent_count": 1,
+        "parent_count": None,
         "role": g.Role.WIDOW,
         "kind": g.FamilyKind.SURVIVOR,
         "basis": None,
