@@ -95,6 +95,88 @@ def test_cells_families_and_surfaces_match_their_sources():
     }
 
 
+def test_gate_surface_is_d1606_option_c1():
+    """d1606 ruled option C1: the six level cells less both medians, at the
+    registered k = 3. It keeps both of the six's families and exactly the
+    four cells the four-cell guard needs."""
+    assert b2.GATE_SURFACE == (
+        "earn_p90.older",
+        "earn_p90.prime",
+        "earn_zero_rate.older",
+        "earn_zero_rate.prime",
+    )
+    assert set(b2.GATE_SURFACE) < set(b2.LEVEL_CELLS)
+    assert set(b2.LEVEL_CELLS) - set(b2.GATE_SURFACE) == {
+        "earn_p50.older",
+        "earn_p50.prime",
+    }
+    assert {b2.concept(cell) for cell in b2.GATE_SURFACE} == {
+        b2.concept(cell) for cell in b2.LEVEL_CELLS
+    }
+    assert len(b2.GATE_SURFACE) == b2.MIN_GATED_CELLS
+    assert b2.TOLERANCE_K == 3
+
+
+@settings(max_examples=200, deadline=None)
+@given(
+    cleared=st.booleans(),
+    retained=st.sets(st.sampled_from(b2.GATE_SURFACE), min_size=1),
+    defined=st.dictionaries(st.sampled_from(b2.CELLS), st.booleans()),
+    eligible=st.dictionaries(st.sampled_from(b2.CELLS), st.booleans()),
+)
+def test_the_published_surface_gates_only_gate_surface_cells(
+    cleared, retained, defined, eligible
+):
+    """For any ladder end and any eligibility flags, the floor publishes
+    every gateable cell exactly once, gates only cells of the gate surface,
+    and reports both medians as outside the rescoped surface."""
+    cells = {
+        name: {
+            "metric": metric,
+            "family": b2.concept(name),
+            "tolerance": 0.1,
+            "plain_units": "invented",
+            "exposure_label": b2.exposure_label(name),
+            "planning_values_defined": defined.get(name, True),
+            "floor_eligible": eligible.get(name, True),
+        }
+        for name, metric in b2.CELL_METRICS.items()
+    }
+    record = {
+        "outcome": (
+            b2.LADDER_CLEARED if cleared else b2.WEAK_POWER_OR_VACUITY
+        ),
+        "ladder": {
+            "retained": sorted(retained),
+            "p_gate": 0.95,
+            "evaluation": "invented",
+        },
+        "design": {"design_degrees_of_freedom": 10},
+    }
+    out = floor_builder.finish(record, cells)
+    surface = out["surface"]
+    gated = [entry["cell"] for entry in surface["gated"]]
+    report = {
+        entry["cell"]: entry["reason"] for entry in surface["report_only"]
+    }
+    assert len(gated) + len(report) == len(b2.CELLS)
+    assert set(gated) | set(report) == set(b2.CELLS)
+    assert set(gated) <= set(b2.GATE_SURFACE)
+    assert gated == (sorted(retained) if cleared else [])
+    for name in b2.CELLS:
+        if name not in b2.LEVEL_CELLS:
+            assert report[name] == "outside the ruled surface (d781 (a))"
+        elif name not in b2.GATE_SURFACE:
+            assert report[name] == (
+                "outside the rescoped surface (d1606 option C1)"
+            )
+    assert out["candidate_runs_permitted"] is cleared
+    assert surface["headline"]["gated_cells"] == len(gated)
+    assert sum(surface["headline"]["gated_by_exposure_label"].values()) == (
+        len(gated)
+    )
+
+
 def test_exposure_labels_are_section_5s():
     for cell in b2.CELLS:
         expected = (

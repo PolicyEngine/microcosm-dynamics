@@ -258,9 +258,23 @@ def selector_2010(invented, fit_2010):
 
 
 @pytest.fixture(scope="module")
-def cleared_floor(invented, measured):
-    """The floor record with the ladder's power held at 0.95, so the six
-    clear at once, after a JSON round trip as the committed file would."""
+def narrowed(measured):
+    """``measured`` with one gate-surface cell's floor narrowed. On this
+    small invented panel all four gate-surface tolerances sit at their
+    caps, which fails the guard that not every gated tolerance is at its
+    cap; narrowing ``earn_p90.prime`` lets the surface clear."""
+    out = copy.deepcopy(measured)
+    out["floor_household"]["earn_p90.prime"].update(
+        mean=0.05, sd=0.02, realized_sigma=math.hypot(0.05, 0.02)
+    )
+    return out
+
+
+@pytest.fixture(scope="module")
+def cleared_floor(invented, narrowed):
+    """The floor record with the ladder's power held at 0.95, so the gate
+    surface clears at once, after a JSON round trip as the committed file
+    would."""
     with pytest.MonkeyPatch.context() as patch:
         patch.setattr(
             floor_builder,
@@ -268,7 +282,7 @@ def cleared_floor(invented, measured):
             lambda planning, tau, nu: (lambda names: 0.95),
         )
         record = floor_builder.decide(
-            measured, invented["design"], invented["planning"]
+            narrowed, invented["design"], invented["planning"]
         )
     return json.loads(json.dumps(b2.plain(record), allow_nan=False))
 
@@ -506,7 +520,7 @@ def test_decide_runs_the_ruled_ladder(invented, measured):
     assert record["design"]["after_merges"]["strata_with_two_clusters"] == 10
     assert record["design"]["design_degrees_of_freedom"] == 10
     ladder = record["ladder"]
-    assert ladder["eligible"] == list(b2.LEVEL_CELLS)
+    assert ladder["eligible"] == list(b2.GATE_SURFACE)
     tau = {
         name: record["cells"][name]["tau_se_up_units"]
         for name in ladder["eligible"]
@@ -539,8 +553,11 @@ def test_decide_runs_the_ruled_ladder(invented, measured):
 def test_cleared_floor_publishes_the_surface(cleared_floor):
     assert cleared_floor["outcome"] == b2.LADDER_CLEARED
     assert cleared_floor["candidate_runs_permitted"] is True
-    gated = cleared_floor["surface"]["gated"]
-    assert [entry["cell"] for entry in gated] == list(b2.LEVEL_CELLS)
+    surface = cleared_floor["surface"]
+    assert surface["ruled_surface"] == list(b2.LEVEL_CELLS)
+    assert surface["gate_surface"] == list(b2.GATE_SURFACE)
+    gated = surface["gated"]
+    assert [entry["cell"] for entry in gated] == list(b2.GATE_SURFACE)
     for entry in gated:
         assert entry["exposure_label"] == b2.exposure_label(entry["cell"])
         assert entry["plain_units"] == b2.plain_units(
@@ -550,28 +567,32 @@ def test_cleared_floor_publishes_the_surface(cleared_floor):
     assert headline["scope"] == b2.HEADLINE_SCOPE
     assert headline["gated_by_exposure_label"] == {
         b2.EXPOSURE_PUBLISHED_OUTCOMES: 1,
-        b2.EXPOSURE_FLOOR_DETAIL: 5,
+        b2.EXPOSURE_FLOOR_DETAIL: 3,
     }
     reasons = {
         entry["cell"]: entry["reason"]
         for entry in cleared_floor["surface"]["report_only"]
     }
-    assert len(reasons) == 10
+    assert len(reasons) == 12
+    for name in ("earn_p50.older", "earn_p50.prime"):
+        assert reasons.pop(name) == (
+            "outside the rescoped surface (d1606 option C1)"
+        )
     assert set(reasons.values()) == {"outside the ruled surface (d781 (a))"}
     power = cleared_floor["power"]
-    assert power["m"] == 6 and power["design_degrees_of_freedom"] == 10
-    assert power["t_star"] == b2.t_star(6, 10)
+    assert power["m"] == 4 and power["design_degrees_of_freedom"] == 10
+    assert power["t_star"] == b2.t_star(4, 10)
 
 
 def test_floor_and_scorer_apply_singleton_merges_and_exact_rao_wu(
-    invented, measured, fit_2010, monkeypatch
+    invented, narrowed, fit_2010, monkeypatch
 ):
     design = _design_for(invented["person_wave"], extra_cluster=True)
     design.loc[design["stratum"] == 3, "cluster"] = 1
     monkeypatch.setattr(
         floor_builder, "ladder_power", lambda *args: lambda names: 0.95
     )
-    record = floor_builder.decide(measured, design, invented["planning"])
+    record = floor_builder.decide(narrowed, design, invented["planning"])
     summary = record["design"]
     assert summary["before_merges"]["strata_with_one_cluster"] == 1
     assert summary["before_merges"]["strata_with_three_or_more_clusters"] == 1
@@ -599,7 +620,7 @@ def test_floor_and_scorer_apply_singleton_merges_and_exact_rao_wu(
         config=scorer.ScoreConfig(b_design=2, workers=1),
     )
     assert scored["gate"]["design_degrees_of_freedom"] == 11
-    assert scored["gate"]["critical_value"] == b2.t_star(6, 11)
+    assert scored["gate"]["critical_value"] == b2.t_star(4, 11)
     assert not scored["design_replicate_failures"]
 
 
@@ -607,8 +628,8 @@ def test_floor_stops_when_an_eligible_se_up_is_undefined(invented, measured):
     broken = dict(measured)
     broken["se_up"] = {
         **measured["se_up"],
-        "earn_p50.prime": {
-            **measured["se_up"]["earn_p50.prime"],
+        "earn_p90.prime": {
+            **measured["se_up"]["earn_p90.prime"],
             "se_up": None,
         },
     }
@@ -617,8 +638,8 @@ def test_floor_stops_when_an_eligible_se_up_is_undefined(invented, measured):
     )
     assert record["outcome"] == b2.WEAK_POWER_OR_VACUITY
     assert record["stop_causes"] == [
-        {"cell": "earn_p50.prime", "quantity": "se_up"},
-        {"cell": "earn_p50.prime", "quantity": "tau"},
+        {"cell": "earn_p90.prime", "quantity": "se_up"},
+        {"cell": "earn_p90.prime", "quantity": "tau"},
     ]
     assert record["candidate_runs_permitted"] is False
 
@@ -669,7 +690,7 @@ def test_floor_stops_on_an_eligible_cells_undefined_power(
     eligible cell, so B2 stops at floor build before the ladder (which
     would otherwise divide by sigma)."""
     broken = copy.deepcopy(measured)
-    name = "earn_p50.prime"
+    name = "earn_p90.prime"
     floor = broken["floor_household"][name]
     if quantity == "se_up":
         broken["se_up"][name]["se_up"] = value
@@ -705,11 +726,11 @@ def test_floor_stops_on_an_eligible_cells_undefined_power(
 def test_an_ineligible_cell_is_report_only_and_the_ladder_runs(
     invented, measured, change
 ):
-    """Section 5: a cell of the six that fails eligibility (its seeds or
+    """Section 5: a gate-surface cell that fails eligibility (its seeds or
     its events) is scored report-only, and the ladder runs on the eligible
     cells. Its own sigma, se_up or tau does not stop B2."""
     broken = copy.deepcopy(measured)
-    name = "earn_p50.prime"
+    name = "earn_p90.prime"
     floor = broken["floor_household"][name]
     if change == "seeds_undefined":
         floor["n_defined_seeds"] = 0
@@ -726,13 +747,44 @@ def test_an_ineligible_cell_is_report_only_and_the_ladder_runs(
     assert record.get("stop_causes") is None
     assert record["ladder"] is not None
     assert name not in record["ladder"]["eligible"]
-    assert set(record["ladder"]["eligible"]) == set(b2.LEVEL_CELLS) - {name}
+    assert set(record["ladder"]["eligible"]) == set(b2.GATE_SURFACE) - {name}
     report = {
         entry["cell"]: entry for entry in record["surface"]["report_only"]
     }
     assert report[name]["reason"] == "floor ineligible"
     gated = {entry["cell"] for entry in record["surface"]["gated"]}
     assert name not in gated
+
+
+@pytest.mark.parametrize("change", ["se_up", "sigma", "seeds"])
+def test_a_median_outside_the_gate_surface_never_stops_b2(
+    invented, narrowed, monkeypatch, change
+):
+    """d1606 (option C1): the medians are report-only. An undefined or
+    uninformative value on one stops nothing, and the ladder runs on the
+    gate surface alone."""
+    broken = copy.deepcopy(narrowed)
+    name = "earn_p50.older"
+    if change == "se_up":
+        broken["se_up"][name]["se_up"] = None
+    elif change == "sigma":
+        broken["floor_household"][name]["realized_sigma"] = 0.0
+    else:
+        broken["floor_household"][name]["n_defined_seeds"] = 0
+    monkeypatch.setattr(
+        floor_builder, "ladder_power", lambda *args: lambda names: 0.95
+    )
+    record = floor_builder.decide(
+        broken, invented["design"], invented["planning"]
+    )
+    assert record.get("stop_causes") is None
+    assert record["outcome"] == b2.LADDER_CLEARED
+    assert record["ladder"]["eligible"] == list(b2.GATE_SURFACE)
+    report = {
+        entry["cell"]: entry["reason"]
+        for entry in record["surface"]["report_only"]
+    }
+    assert report[name] == "outside the rescoped surface (d1606 option C1)"
 
 
 def test_floor_refuses_a_truth_person_without_design_variables(
@@ -797,9 +849,9 @@ def scored(invented, cleared_floor):
 def test_score_end_to_end(scored, cleared_floor):
     assert scored["outcome"] in b2.OUTCOMES
     assert set(scored["cells"]) == set(b2.CELLS)
-    assert scored["gate"]["gated_cells"] == list(b2.LEVEL_CELLS)
-    assert scored["gate"]["m"] == 6
-    assert scored["gate"]["critical_value"] == b2.t_star(6, 10)
+    assert scored["gate"]["gated_cells"] == list(b2.GATE_SURFACE)
+    assert scored["gate"]["m"] == 4
+    assert scored["gate"]["critical_value"] == b2.t_star(4, 10)
     assert scored["law"]["fit_seed"] == 5200
     assert scored["law"]["boundary"] == 2010
     assert scored["law"]["fit_input_max_period"] == 2010
@@ -1041,6 +1093,20 @@ def test_scorer_refuses_missing_report_only_input_before_fit(
         )
 
 
+@pytest.mark.parametrize(
+    "outside", ["earn_p50.older", "earn_p50.prime", "earn_p10.prime"]
+)
+def test_scorer_refuses_a_gated_cell_outside_the_gate_surface(
+    invented, cleared_floor, outside
+):
+    floor = copy.deepcopy(cleared_floor)
+    gated = floor["surface"]["gated"]
+    gated[0] = {**gated[0], "cell": outside}
+    scorer.check_scoring_inputs(cleared_floor, invented["planning"])
+    with pytest.raises(ValueError, match="gated surface is invalid"):
+        scorer.check_scoring_inputs(floor, invented["planning"])
+
+
 def test_candidate_3_disclosure_is_carried_verbatim():
     expected = (
         "**Candidate 3 records a valid M6 pass; it certifies nothing about "
@@ -1090,7 +1156,7 @@ def test_scorer_refuses_zero_gated_tolerance_before_fit(
     invented, cleared_floor, monkeypatch
 ):
     floor = copy.deepcopy(cleared_floor)
-    floor["cells"][b2.LEVEL_CELLS[0]]["tolerance"] = 0
+    floor["cells"][b2.GATE_SURFACE[0]]["tolerance"] = 0
     monkeypatch.setattr(
         scorer, "fit_law", lambda *a, **k: pytest.fail("fit began")
     )
@@ -1168,6 +1234,8 @@ def _valid_floor_record(head: str) -> dict:
     "change, message",
     [
         ({"schema": "other"}, "schema"),
+        # The first floor (v1) stopped B2 before d1606 rescoped it.
+        ({"schema": "track_b_b2_floor.v1"}, "schema"),
         ({"outcome": b2.WEAK_POWER_OR_VACUITY}, "does not permit"),
         ({"outcome": "unregistered outcome"}, "does not permit"),
         ({"candidate_runs_permitted": False}, "does not permit"),
@@ -1199,7 +1267,8 @@ def test_scorer_refuses_shared_code_changed_since_the_floor():
 def test_statements_carry_section_13s_items():
     statements = floor_builder.statements()
     assert statements["headline_scope"] == b2.HEADLINE_SCOPE
-    assert "levels and zero rates only" in statements["headline_scope"]
+    assert "not median earnings" in statements["headline_scope"]
+    assert "d1606 option C1" in statements["headline_scope"]
     assert "Not a 2010-vintage forecast" in statements["fallback_scope"]
     assert "25-61" in statements["section_5_3"]
     assert "recession" in statements["planning_caveat"]
