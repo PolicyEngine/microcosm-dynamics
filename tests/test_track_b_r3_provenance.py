@@ -17,6 +17,7 @@ from hypothesis import strategies as st
 from populace_dynamics.track_b import arf as a
 from populace_dynamics.track_b import gross_benefits as g
 from populace_dynamics.track_b import recompute as r
+from populace_dynamics.track_b._provenance import _computed, _result_values
 from tests.track_b_gross_benefit_support import ssa_params
 
 PARAMS = ssa_params(wage_base={1951: 1_000_000})
@@ -142,7 +143,7 @@ def test_r3_declared_refusals_bind_exact_reason_enums():
 
 @given(st.integers(0, 10000), st.integers(0, 10000))
 @settings(max_examples=20, deadline=None)
-def test_r3_shared_counter_differential_and_pickle_round_trip(left, right):
+def test_r3_shared_counter_differential_and_pickle_rejection(left, right):
     rows = (
         a.evaluate_arf("arf", F(left, 10), arf_result),
         r.evaluate_recomputation(
@@ -168,10 +169,9 @@ def test_r3_shared_counter_differential_and_pickle_round_trip(left, right):
     assert expected.weight == F(left + right, 10) + 8
     assert expected.unsupported_rows == 2
     assert expected.unsupported_weight == 8
-    restored = pickle.loads(pickle.dumps(rows))
-    assert expected == g.count_family_outcomes(restored)
-    assert restored[0].benefits == rows[0].benefits
-    assert restored[1].result == rows[1].result
+    for protocol in range(pickle.HIGHEST_PROTOCOL + 1):
+        with pytest.raises(g.InvalidFamilyInput):
+            pickle.dumps(rows, protocol=protocol)
     for row in rows:
         for operation in (copy.copy, copy.deepcopy, replace):
             with pytest.raises(g.InvalidFamilyInput):
@@ -236,7 +236,7 @@ def test_r3_evaluator_rejects_before_outcome_construction(
     st.booleans(),
 )
 @settings(max_examples=50, deadline=None)
-def test_r3_sealed_result_identities_and_round_trips(
+def test_r3_sealed_result_identities_and_pickle_rejection(
     credits, dimes, old_dimes, new_dimes, has_earnings
 ):
     claim = a.ARFClaim(
@@ -259,8 +259,9 @@ def test_r3_sealed_result_identities_and_round_trips(
     )
     assert result.benefit + result.reduction == claim.unreduced_benefit
     assert result.whole_dollar_benefit == g.whole_dollars(result.benefit)
-    restored = pickle.loads(pickle.dumps(result))
-    assert restored == result
+    with pytest.raises(g.InvalidFamilyInput):
+        pickle.dumps(result)
+    restored = result
     assert (
         a.apply_arf(
             restored, payment_month=g.YearMonth(2027, 1), params=PARAMS
@@ -275,12 +276,14 @@ def test_r3_sealed_result_identities_and_round_trips(
     assert decision.pia_in_force == (
         decision.candidate_pia if decision.applied else decision.pia_of_record
     )
-    assert pickle.loads(pickle.dumps(decision)) == decision
+    with pytest.raises(g.InvalidFamilyInput):
+        pickle.dumps(decision)
     for value, field in ((result, "benefit"), (decision, "increase")):
         for operation in (copy.copy, copy.deepcopy, replace):
             with pytest.raises(g.InvalidFamilyInput):
                 operation(value)
-        restore, (kind, values) = value.__reduce__()
+        # Private capability checks identities independently of serialization.
+        kind, values = type(value), _result_values(value)
         values[field] += F(1, 10)
         with pytest.raises(g.InvalidFamilyInput):
-            restore(kind, values)
+            _computed(kind, **values)

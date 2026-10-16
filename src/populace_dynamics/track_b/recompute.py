@@ -38,9 +38,10 @@ Unsupported configurations raise RecomputationConfigurationUnsupported,
 within the shared FamilyConfigurationUnsupported family, with exactly
 RecomputationUnsupportedReason. A package-private capability seals decisions,
 results, refusals and outcomes; direct construction, replacement and copying
-are invalid, and pickle restoration repeats identity validation. Evaluators
-and PIA aggregates require unchanged recomputation results. The shared
-counter admits every sealed layer outcome and keeps all refused weights.
+and serialization are invalid. Persist declared inputs and recompute.
+Evaluators and PIA aggregates require unchanged recomputation results.
+The shared counter admits every sealed layer outcome and keeps all refused
+weights.
 Invalid inputs are validated before coverage refusals.
 History and required-parameter validation precede every coverage check;
 ordinary AIME indexing, selection and PIA arithmetic run only after it.
@@ -55,7 +56,6 @@ from __future__ import annotations
 import math
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass
-from decimal import Decimal
 from enum import Enum
 from fractions import Fraction
 
@@ -78,10 +78,13 @@ from ._provenance import (
     _check_seal,
     _checked_result,
     _computed,
+    _declared_input,
+    _exact_number,
     _sealed_refusal,
     _sealed_result,
     _SealedOutcome,
     _SealedResult,
+    _validated_entry,
 )
 
 __all__ = [
@@ -158,14 +161,9 @@ def _year(value: object, label: str) -> int:
 
 
 def _exact(value: object, label: str) -> Fraction:
-    if isinstance(value, bool) or not isinstance(
-        value, (int, str, Decimal, Fraction)
-    ):
+    if isinstance(value, float):
         raise InvalidFamilyInput(f"{label} requires an exact number")
-    try:
-        amount = Fraction(value)
-    except (ValueError, TypeError, ZeroDivisionError) as exc:
-        raise InvalidFamilyInput(f"{label} requires a finite number") from exc
+    amount = _exact_number(value, label)
     if amount < 0:
         raise InvalidFamilyInput(f"{label} must be nonnegative")
     return amount
@@ -202,6 +200,7 @@ def _bend_points(values: object) -> tuple[int, int]:
     return first, second
 
 
+@_declared_input
 @dataclass(frozen=True)
 class RecomputationBasis:
     """Original, established 415 computation factors; never derived anew.
@@ -257,14 +256,14 @@ class RecomputationBasis:
         if not isinstance(self.formula, PIAFormula):
             raise InvalidFamilyInput("formula must be a PIAFormula")
         try:
-            conditions = frozenset(self.conditions)
+            conditions = tuple(self.conditions)
         except TypeError as exc:
             raise InvalidFamilyInput(
                 "conditions must be a collection"
             ) from exc
         if any(not isinstance(c, RecomputationCondition) for c in conditions):
             raise InvalidFamilyInput("unknown recomputation condition")
-        object.__setattr__(self, "conditions", conditions)
+        object.__setattr__(self, "conditions", frozenset(conditions))
 
 
 @_sealed_result
@@ -374,6 +373,7 @@ class RecomputationOutcome(_SealedOutcome):
         return self.result is not None
 
 
+@_validated_entry
 def evaluate_recomputation(
     key: str,
     weight: object,
@@ -396,6 +396,7 @@ def evaluate_recomputation(
     return _computed(RecomputationOutcome, key, checked_weight, result, None)
 
 
+@_validated_entry
 def weighted_recomputed_pia(
     outcomes: Iterable[RecomputationOutcome],
 ) -> Fraction:
@@ -415,6 +416,7 @@ def weighted_recomputed_pia(
     )
 
 
+@_validated_entry
 def eligibility_bend_points(
     eligibility_year: int, params: SSAParameters
 ) -> tuple[int, int]:
@@ -424,10 +426,12 @@ def eligibility_bend_points(
     uses Python's ties-to-even ``round``; the statutory half-dollar case
     is an intended divergence, pinned explicitly by a test.
     """
+    if type(params) is not SSAParameters:
+        raise InvalidFamilyInput("params must be SSAParameters")
     _year(eligibility_year, "eligibility_year")
     try:
-        index = Fraction(str(params.nawi[eligibility_year - 2]))
-        base = Fraction(str(params.nawi[1977]))
+        index = _exact_number(params.nawi[eligibility_year - 2], "index NAWI")
+        base = _exact_number(params.nawi[1977], "base NAWI")
     except (KeyError, ValueError, ZeroDivisionError) as exc:
         raise InvalidFamilyInput("required NAWI is unavailable") from exc
     if index <= 0 or base <= 0:
@@ -437,6 +441,7 @@ def eligibility_bend_points(
     )
 
 
+@_validated_entry
 def exact_pia(aime: int, bend_points: tuple[int, int]) -> Fraction:
     """415(a)(1): original 90/32/15 formula, dime-floored exactly."""
     if type(aime) is not int or aime < 0:
@@ -473,19 +478,21 @@ def _aime_parameters(
     """Check availability and positivity without computing any earnings."""
     try:
         nawi = {
-            basis.indexing_year: Fraction(
-                str(params.nawi[basis.indexing_year])
+            basis.indexing_year: _exact_number(
+                params.nawi[basis.indexing_year], "index NAWI"
             )
         }
         if nawi[basis.indexing_year] <= 0:
             raise InvalidFamilyInput("NAWI must be positive")
         wage_base = {}
         for year in prefix:
-            wage_base[year] = Fraction(str(params.wage_base_for(year)))
+            wage_base[year] = _exact_number(
+                params.wage_base_for(year), f"wage base {year}"
+            )
             if wage_base[year] <= 0:
                 raise InvalidFamilyInput("wage base must be positive")
             if year < basis.indexing_year:
-                nawi[year] = Fraction(str(params.nawi[year]))
+                nawi[year] = _exact_number(params.nawi[year], f"NAWI {year}")
                 if nawi[year] <= 0:
                     raise InvalidFamilyInput("NAWI must be positive")
     except (
@@ -541,6 +548,7 @@ def _aime_from_prefix(
     return reference if reference == exact else exact
 
 
+@_validated_entry
 def earnings_aime(
     history: Mapping[int, object],
     basis: RecomputationBasis,
@@ -549,7 +557,9 @@ def earnings_aime(
 ) -> int:
     """Complete explicit prefix to AIME, retaining original index/count."""
     _year(earnings_year, "earnings_year")
-    if not isinstance(basis, RecomputationBasis):
+    if type(params) is not SSAParameters:
+        raise InvalidFamilyInput("params must be SSAParameters")
+    if type(basis) is not RecomputationBasis:
         raise InvalidFamilyInput("basis must be a RecomputationBasis")
     if earnings_year < basis.first_base_year:
         raise InvalidFamilyInput("earnings cutoff precedes the base period")
@@ -559,6 +569,7 @@ def earnings_aime(
     )
 
 
+@_validated_entry
 def recomputation_decision(
     pia_of_record: object, candidate_pia: object, *, has_earnings: bool = True
 ) -> RecomputationDecision:
@@ -636,6 +647,7 @@ def _validate_original_computation_count(basis: RecomputationBasis) -> None:
         )
 
 
+@_validated_entry
 def annual_recomputation(
     basis: RecomputationBasis,
     history: Mapping[int, object],
@@ -655,7 +667,9 @@ def annual_recomputation(
     refused cases.
     Death-year input requires FRA so 415(f)(5) cannot be bypassed.
     """
-    if not isinstance(basis, RecomputationBasis):
+    if type(params) is not SSAParameters:
+        raise InvalidFamilyInput("params must be SSAParameters")
+    if type(basis) is not RecomputationBasis:
         raise InvalidFamilyInput("basis must be a RecomputationBasis")
     year = _year(earnings_year, "earnings_year")
     old_base = _dimes(eligibility_pia_of_record, "eligibility PIA of record")
@@ -722,6 +736,7 @@ def annual_recomputation(
     )
 
 
+@_validated_entry
 def recompute_sequence(
     basis: RecomputationBasis,
     history: Mapping[int, object],
@@ -741,7 +756,9 @@ def recompute_sequence(
     calculation. A refusal in any required earnings year blocks the
     entire sequence before its first arithmetic step.
     """
-    if not isinstance(basis, RecomputationBasis):
+    if type(params) is not SSAParameters:
+        raise InvalidFamilyInput("params must be SSAParameters")
+    if type(basis) is not RecomputationBasis:
         raise InvalidFamilyInput("basis must be a RecomputationBasis")
     try:
         years = tuple(earnings_years)

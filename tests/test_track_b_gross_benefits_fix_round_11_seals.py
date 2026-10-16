@@ -154,10 +154,11 @@ def test_every_consumer_rejects_unsealed_or_altered_results(
 
 @settings(max_examples=40, deadline=None, derandomize=True)
 @given(st.integers(0, 10000), st.integers(0, 10000))
-def test_sealed_accounting_and_serialization_round_trip(pia_dimes, room_dimes):
+def test_sealed_accounting_and_serialization_rejection(pia_dimes, room_dimes):
     pia, maximum = F(pia_dimes, 10), F(pia_dimes + room_dimes, 10)
     result = _family(pia=pia, maximum=maximum)
-    assert pickle.loads(pickle.dumps(result)) == result
+    with pytest.raises(g.InvalidFamilyInput):
+        pickle.dumps(result)
     for row in result.beneficiaries:
         assert row.auxiliary_payable == max(
             F(0), row.age_adjusted_rate - (row.own_benefit or 0)
@@ -174,9 +175,7 @@ def test_sealed_accounting_and_serialization_round_trip(pia_dimes, room_dimes):
     assert result.family_maximum_binding == (
         result.total_original_benefits > result.available_for_auxiliaries
     )
-    assert g.evaluate_family(
-        "roundtrip", 1, lambda: pickle.loads(pickle.dumps(result))
-    ).supported
+    assert g.evaluate_family("computed", 1, lambda: result).supported
 
 
 def test_seal_time_rejects_inconsistent_computed_payable(monkeypatch):
@@ -207,10 +206,11 @@ def test_guard_history_is_detached_from_caller_result(extra):
 
 
 @pytest.mark.parametrize("index", range(6))
-def test_every_sealed_type_survives_pickle_without_losing_its_seal(index):
+def test_every_sealed_type_rejects_pickle_without_losing_its_seal(index):
     original = _outputs()[index]
-    restored = pickle.loads(pickle.dumps(original))
-    assert _values(restored) == _values(original)
+    with pytest.raises(g.InvalidFamilyInput):
+        pickle.dumps(original)
+    restored = original  # Check the computed value after serialization denial.
     with pytest.raises(g.InvalidFamilyInput):
         copy(restored)
     if isinstance(restored, g.FamilyOutcome):
@@ -256,8 +256,9 @@ def test_report_witnesses_require_sealed_refusals(monkeypatch, changed):
 @given(st.sampled_from(range(6)), st.sampled_from((copy, deepcopy)))
 def test_property_public_copy_cannot_create_sealed_outputs(index, duplicate):
     original = _outputs()[index]
-    restored = pickle.loads(pickle.dumps(original))
-    assert _values(restored) == _values(original)
+    with pytest.raises(g.InvalidFamilyInput):
+        pickle.dumps(original)
+    restored = original  # Check the computed value after serialization denial.
     with pytest.raises(g.InvalidFamilyInput):
         duplicate(restored)
 

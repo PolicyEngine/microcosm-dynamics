@@ -329,10 +329,16 @@ independently:
 - `test_a_reduced_joiner_after_a_cola_is_refused_iff_the_total_falls`
   generalizes the counterexample.
 
-With the statutory maximum, a COLA alone never trips the guard for families
-that are not dually entitled; a property test asserts this. A COLA raises
-the maximum by at least as many dimes as the PIA, so the room left for
-auxiliaries never shrinks.
+With the statutory maximum, a COLA can trip the guard even for families
+that are not dually entitled. A COLA raises the maximum by at least as many
+dimes as the PIA, so the room left for auxiliaries never shrinks. The
+separately dime-rounded proportional shares need not have a monotone sum
+(215(i)(2)(A)(ii); 403(a)(4); POMS RS 00615.756). The property
+`test_formula_maximum_colas_preserve_available_room_and_guard_contract`
+checks the available room and the actual 403(a)(5) contract: a qualifying
+PIA increase followed by a lower total is refused, with its full row and
+weight retained; otherwise the month is admitted. Its survivor generator
+includes parents.
 
 **Known over-refusals.** Each is conservative and inflates the unsupported
 rate:
@@ -1854,11 +1860,12 @@ amount, source capture, refusal code or statutory interpretation.
 private construction capability. Public direct construction,
 `dataclasses.replace`, `copy.copy` and `copy.deepcopy` raise
 `InvalidFamilyInput`, even when the supplied fields look consistent. Input
-declarations remain constructible and replaceable. Public result fields,
-dataclass equality and pickling remain available. Pickle reconstruction
-repeats seal-time validation; it is private implementation machinery, not a
-new result-input API. This is an API provenance contract, not a security
-boundary against Python code accessing private internals.
+declarations remain constructible and replaceable. Public result fields
+and dataclass equality remain available. Round 13 removes serialization:
+every pickle protocol and `copyreg` path raises `InvalidFamilyInput` for
+sealed values. Persist declared inputs and recompute the result. This is
+an API provenance contract, not a security boundary against Python code
+accessing private internals.
 
 Each seal binds the object identity and a type-sensitive immutable snapshot
 of its fields, including nested results. Every coverage, savings-clause,
@@ -1931,14 +1938,14 @@ benefit, including parent, widow-basis and dime-rounding cases.
     denominator/guard atomicity. `test_guard_history_is_detached_from_caller_result`
     and `test_review_altered_age_rate_cannot_lower_savings_clause_protection`
     preserve the protected total and coverage counts.
-    `test_sealed_accounting_and_serialization_round_trip`,
+    The sealed accounting property,
     `test_property_seal_time_reconciles_family_accounting`,
     `test_property_seal_time_bounds_beneficiary_rates`,
     `test_seal_time_reconciles_binding_and_proportional_rates` and
     `test_seal_time_rejects_inconsistent_computed_payable` execute monetary
     identities independently of the public construction barrier.
-    `test_every_sealed_type_survives_pickle_without_losing_its_seal` preserves
-    serialization, while `test_derived_public_totals_and_status_require_unchanged_seals`
+    Round 13's serialization-denial tests reject every pickle protocol;
+    `test_derived_public_totals_and_status_require_unchanged_seals`
     protects computed properties. Earlier control assertions remain, with
     valid outputs obtained from public computations and comparison-only
     replacements expressed as comparisons over every public field. The earlier
@@ -2000,9 +2007,10 @@ it is never a public constructor parameter or exported API. Direct
 construction, `dataclasses.replace`, `copy` and `deepcopy` of computed results,
 refusals, outcomes and denominators raise `InvalidFamilyInput`. The seal
 binds exact type, object identity and recursively captured field values,
-including nested results, mappings and sets of credited months. Pickling
-reconstructs through the same field and accounting validation. This remains
-an API contract, not a security boundary against private Python internals.
+including nested results, mappings and sets of credited months. Round 13
+prohibits pickling and removes restoration helpers. Persistence stores
+declared inputs and recomputes results. This remains an API contract, not a
+security boundary against private Python internals.
 
 There is one catchable refusal family and one declared reason enum per layer:
 
@@ -2015,8 +2023,8 @@ There is one catchable refusal family and one declared reason enum per layer:
 
 All classes retain code `FAMILY_CONFIG_UNSUPPORTED`. Each evaluator catches
 this common family, including a genuine upstream refusal, without recasting
-its reason. Each declared class accepts exactly its bound enum, including
-during pickle reconstruction. Metadata and input errors raise before a
+its reason. Each declared class accepts exactly its bound enum at its
+private computation boundary. Metadata and input errors raise before a
 callback can produce a coverage row.
 
 `count_family_outcomes` is the sole denominator implementation. It accepts
@@ -2060,8 +2068,8 @@ input error with no coverage reason code.
     semantics.
 31. **Provenance and serialization closure.**
     `test_all_layer_outputs_require_the_shared_private_capability` and
-    `test_all_layer_pickle_roundtrips_retain_denominator_and_copy_protection`
-    cover construction/copy denial and valid pickle round trips. The shared
+    round 13's cross-layer serialization tests cover construction, copying
+    and pickle denial. The shared
     tests also mutate nested credited months and transplant a seal to a
     different object. Existing round-11 Hypothesis tests continue to execute
     G's accounting and detached guard-history invariants.
@@ -2103,8 +2111,236 @@ protected months and therefore money under 203(f). `RETBeneficiary`,
 evidence before coverage checks, including evidence altered after an input
 record was constructed. `GraceYearState` remains a constructible declaration
 of starting history. `test_every_ret_admission_rejects_invalid_grace_evidence`
-and Hypothesis `test_grace_pickle_roundtrip_and_tamper_rejection_preserve_money`
-execute this boundary; `test_grace_pickle_restore_revalidates_nested_state_and_identities`
-reconciles grace categories, eligible/protected months and carried history.
+and the grace serialization-denial and tamper-rejection property execute
+this boundary. Seal-time validation tests call the private computation
+capability explicitly to reconcile grace categories, eligible/protected
+months and carried history; no public restoration path exists.
 Malformed or deleted result fields are likewise input errors, as exercised by
 Hypothesis `test_deleted_outcome_fields_are_input_errors`.
+
+## Fix round 13 of October 16, 2026
+
+Verification class: statutory conformance. Admitted scope remains invented
+and captured statutory cases, with no population, behavioral or forecast
+claim. No amount, refusal code, source capture or published worked example
+changes in this round.
+
+### Detached guard history and public snapshots
+
+`SavingsClauseGuard` copies each admitted result and each skipped calendar
+month into private history. Its calendar properties and `protected_total`
+return fresh values. Caller-held objects can therefore be altered with
+`object.__setattr__` without changing subsequent continuity, the protected
+total or any coverage decision. `evaluate` also copies the outcome weight
+before invoking the computation, so a callback cannot change an already
+validated weight or create a metadata error after the guard has advanced.
+Guard subclasses and uninitialized guards
+are invalid inputs. Guards cannot be copied or serialized; persisted work
+stores declared inputs and recomputes the monthly path.
+
+The reviewer's invented January–March case gives a January retirement PIA
+of $1.10, maximum $1.90 and one child's total of $1.60, with no binding
+maximum. February adds a second child and totals $1.90 under a binding
+maximum. March raises the PIA to $1.20 with the same maximum and totals
+$1.80. Altering the returned February `next_month` snapshot to March cannot
+skip February. Supplying March at that point raises `InvalidFamilyInput`.
+After admitting February, March retains its $1.90 protection and its
+`savings_clause_403a5` refusal (203(a)(5); POMS RS 00615.801B.2). Explicitly
+skipping February retains the existing `savings_clause_history_unknown`
+reading. No amount or savings-clause interpretation changes.
+
+### COLA rounding counterexamples
+
+The available formula maximum is monotone under a COLA, but separately
+dime-rounded proportional shares can sum to less (215(i)(2)(A)(ii);
+203(a)(4); POMS RS 00615.756). Two invented witnesses now replay the
+reviewer's exact draws through the corrected formula-maximum property:
+
+| Family and COLA | Before | After |
+| --- | --- | --- |
+| Two unreduced widows and a mother/father; eligibility 2026; 2.3% COLA | PIA $4.40, maximum $6.60; shares $2.40/$2.40/$1.80; total $6.60 | PIA $4.50, maximum $6.70; shares $2.40/$2.40/$1.70; total $6.50 |
+| One parent and three children; eligibility 2025 PIA $17.10, prior COLA 6.5%; additional COLA 0.6% | PIA $18.20, maximum $27.20; shares $7.30/$6.60/$6.60/$6.60; total $27.10 | PIA $18.30, maximum $27.30; shares $7.20/$6.60/$6.60/$6.60; total $27.00 |
+
+Both later months are refused under the unchanged 203(a)(5) guard, and both
+refused rows and their full weights remain in the denominator. Parents are
+now included in the general survivor-beneficiary generator. No previously
+generated case is discarded by the corrected assertion. The widows'
+original benefits are $4.40/$4.40/$3.30 before and $4.50/$4.50/$3.30 after;
+whole-dollar payments sum to $5 in each month. The parent's family has
+original benefits $15.00/$13.60/$13.60/$13.60 before and
+$15.00/$13.70/$13.70/$13.70 after; whole-dollar payments sum to $25 in each
+month. These invented examples pin the pre-whole-dollar total protected by
+the guard, as well as the separate whole-dollar payment fields.
+
+### Executed guard invariants
+
+33. **Detached state and decision determinism.**
+    `test_guard_every_public_snapshot_is_detached` mutates all five public
+    properties and compares the next decision with an unmutated twin.
+    `test_guard_admitted_objects_cannot_change_later_decisions` does the
+    same for constructor inputs, admitted and evaluated results, skipped
+    months and PIA arguments.
+    `test_guard_detaches_weight_before_calling_computation` mutates the
+    caller's numeric weight inside the callback and preserves the original
+    denominator weight. `test_review_next_month_mutation_cannot_skip_qualifying_february`
+    pins continuity and exact protection. Numeric-subclass rejection or
+    canonicalization is pinned by
+    `test_review_live_fraction_cannot_change_qualifying_pia_increase`.
+    `test_guard_rejects_uninitialized_instances_at_every_public_entry`,
+    `test_guard_rejects_undeclared_subclasses` and
+    `test_guard_denies_copy_and_serialization` cover uninitialized state,
+    subclasses, shallow/deep copies, every pickle protocol and `copyreg`.
+34. **Available-room monotonicity, exact protection and denominator retention.**
+    `test_formula_maximum_colas_preserve_available_room_and_guard_contract`
+    generates every family kind, parents included, and checks monotone
+    available room, exact protection after a qualifying PIA increase,
+    refusal exactly when a governed total falls, and exact count/weight
+    partitions. `test_review_formula_cola_rounded_decline_exercises_property`
+    pins both reviewed rounding witnesses. These are intended violations of
+    rounded-total monotonicity; they are not amount regressions.
+
+### Supported and refused configurations
+
+| Configuration | Result |
+| --- | --- |
+| Unchanged monthly path and supported family | Identical amount and guard decision |
+| Altered caller-held input or returned guard snapshot after admission | Identical later decision to an unmutated twin |
+| Attempt to omit a month through a changed snapshot | `InvalidFamilyInput`; guard remains at the required month |
+| Qualifying PIA increase and lower governed rounded total | Existing `savings_clause_403a5` refusal; full denominator row and weight retained |
+| Skipped qualifying history | Existing `savings_clause_history_unknown` refusal |
+| Uninitialized/subclassed guard, guard copying or guard serialization | `InvalidFamilyInput`; no coverage refusal code |
+
+### Needs Max's judgment and not in scope
+
+No new statutory interpretation is selected. Earlier judgment items and
+conservative savings-clause readings remain unchanged. This round does not
+implement raised savings-clause payments, monthly assembly I, new source
+captures or population processing.
+
+### Shared declaration and result boundaries
+
+Verification remains statutory conformance on invented and published cases.
+These changes alter input admission and object ownership, without changing
+any monetary formula, supported statutory configuration, or refusal reason.
+The unchanged Act 203/215 computations are still exercised by the complete
+conformance report and the R2/R3 differential against `origin/master`.
+
+G, R2 and R3 use `_provenance._exact_number` for exact numbers. Numeric
+subclasses are rejected rather than retaining caller-defined arithmetic;
+`bool` is rejected in numeric slots. Accepted money is a fresh built-in
+`Fraction` whose numerator and denominator are validated built-in integers.
+Seals store those integer components, never the caller's live number.
+Integer calendar and count slots retain their strict built-in integer types.
+The boundary also rejects text and collection subclasses; declared enums
+retain their exact enum identities. Existing float parameter encodings are
+preserved before each layer's statutory cross-check.
+
+Every public calculation rebuilds the complete declared input tree through
+its constructors before considering coverage. Registered declaration classes
+reject subclass construction. Nested inputs and defaults are rebuilt before
+constructor logic can inspect them. The external `SSAParameters` class has
+no validating constructor, so the shared boundary additionally checks every
+field's declared structure and finite numeric encodings, including unused
+fields. Each layer retains its existing statutory range checks. An invalid
+alteration raises `InvalidFamilyInput`; a valid alteration computes exactly
+as a fresh declaration. It creates no refusal or denominator row merely
+because some other field requests an unsupported configuration.
+
+All sealed results, refusals, outcomes and denominators reject every pickle
+protocol, `__reduce__`, `__reduce_ex__`, and the `copyreg` state path with
+`InvalidFamilyInput`. Restore helpers were removed. To persist work, store
+declared inputs and recompute. Tests of internal accounting validation call
+the private computation capability explicitly; that capability is not a
+public input or persistence API. Uninitialized refusals are checked for a
+seal before their reason is read. A refusal with another layer's reason
+cannot become a counted row.
+
+`FamilyBenefits.by_id()` and R2's beneficiary-ledger accessor return detached
+sealed rows. Altering those snapshots cannot change the original result.
+Direct mutation of a sealed result or its fields still invalidates that
+result at every consumer. R2 and R3 are functional computations: declarations
+used to carry state are rebuilt on the next call, and no hidden controller
+retains caller-owned history.
+
+The additional executed invariants are:
+
+- Numeric admission is canonical or rejected, and mutation of the original
+  number cannot change weights, sums, denominators or guard decisions:
+  `test_mutable_weight_cannot_change_denominator_or_aggregate`,
+  `test_builtin_fraction_inputs_are_detached_before_admission`,
+  `test_g_numeric_arguments_canonicalize_or_reject_mutable_subclasses`,
+  and the complete SSA numeric-leaf matrix.
+- No sealed value can be serialized: the all-type/all-protocol audit,
+  `test_sealed_values_reject_every_pickle_protocol`, and
+  `test_arf_1959_1960_pickle_patch_is_blocked_at_serialization`.
+- Invalid declared fields precede coverage, while valid altered inputs agree
+  with freshly constructed declarations: the G round-10 argument/field
+  matrix and the round-13 R2/R3 field and Hypothesis mutation matrices.
+- Every public result accessor validates provenance; detached row accessors
+  leave the original result unchanged when their returned row is altered:
+  `test_every_result_accessor_rejects_unsealed_public_fields`,
+  `test_family_by_id_returns_detached_beneficiary_rows`, and
+  `test_ret_beneficiary_accessor_returns_detached_sealed_rows`.
+- Uninitialized, subclassed, changed or wrong-layer sealed evidence never
+  enters a denominator: the all-sealed-type audit, nested-row properties,
+  `test_uninitialized_refusal_is_an_input_error`, and round-12 cross-layer
+  accounting properties.
+
+No new statutory interpretation needs judgment. Existing d1418/d1338
+boundaries and the judgment items elsewhere in this note remain unchanged.
+
+The external SSA parameter boundary validates the detached snapshot as well
+as the original shape, so a custom mapping that changes between reads cannot
+plant an invalid unused field after validation.
+`test_ssa_parameter_validation_checks_the_actual_mapping_snapshot` pins this
+case. Raw condition elements in grace, ARF and recomputation are validated
+before set deduplication; equality with a legal enum does not admit another
+type. These are input-contract checks and change no statutory amount.
+
+Malformed recursive declarations and sealed-state trees also raise
+`InvalidFamilyInput`. This includes a declared numeric field pointing back
+to its enclosing declaration, a COLA list containing itself, a denominator
+mapping pointing to its denominator, and a sealed outcome weight pointing
+to its row. Mapping traversal that produces an unhashable key is likewise
+an input error. The translation is confined to declared-tree reconstruction
+and seal-payload validation: an error raised by the computation callback
+still propagates as a programming error. No coverage refusal or denominator
+row absorbs these malformed inputs.
+
+The executed invariant is that malformed traversal cannot bypass the shared
+input-error contract, independently of the statutory layer.
+`test_cyclic_declared_number_is_input_error`,
+`test_cyclic_cola_collection_is_input_error`, and
+`test_cyclic_denominator_state_is_input_error` pin the minimized G cases.
+`test_cyclic_r2_r3_declarations_are_input_errors_before_refusal` and
+`test_cyclic_sealed_rows_are_input_errors_in_every_layer` extend them across
+RET, ARF and recomputation.
+`test_malformed_mapping_traversal_is_input_error` pins the custom mapping;
+`test_callback_recursion_error_remains_a_programming_error` protects the
+distinction between malformed input and a computation bug.
+
+The seal snapshot includes the declared result class as well as every field.
+Changing an outcome's `__class__` to another layer's declared outcome cannot
+reuse the original seal, even when both dataclasses have identical field
+names. `test_seal_binds_the_declared_outcome_class` checks every ordered pair
+of layers, both supported and refused rows, and generated exact weights.
+
+
+Type admission uses identity, including numeric leaves, declaration classes,
+sealed classes and parameter collection shapes. A numeric subclass whose
+metaclass claims equality with a built-in type cannot enter a declaration,
+seal or denominator. The existing mutable-number audit now combines that
+attack with mutable public state. Its
+`test_nested_ssa_and_ret_parameter_numbers_are_rejected_before_refusal`
+property pins both the historical-coverage precedence case and a tampered
+whole-dollar result field. The complete numeric-leaf and public-argument
+matrices use the same stronger fixtures. No statutory amount or refusal rule
+changes.
+
+
+The same identity rule applies to G's condition collections, AIME encodings
+and nested outcome-result classes. A custom iterable whose metaclass claims
+to be a set cannot drop a condition between validation and construction.
+The existing `test_declaration_subclasses_cannot_override_constructor_validation`
+cases for `Beneficiary`, `WorkerRecord` and `RecordState` retain their original
+subclass assertions and additionally pin this changing-iterator attack.

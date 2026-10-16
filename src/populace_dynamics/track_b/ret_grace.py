@@ -43,8 +43,11 @@ from enum import Enum
 
 from populace_dynamics.track_b._provenance import (
     _computed,
+    _declared_input,
+    _rebuild_declared,
     _sealed_result,
     _SealedResult,
+    _validated_entry,
 )
 from populace_dynamics.track_b.gross_benefits import InvalidFamilyInput
 
@@ -101,12 +104,12 @@ class TerminationReason(Enum):
 
 def _types(values: frozenset[BenefitType]) -> frozenset[BenefitType]:
     try:
-        result = frozenset(values)
+        result = tuple(values)
     except TypeError as error:
         raise InvalidFamilyInput("Benefit types must be iterable") from error
     if any(not isinstance(value, BenefitType) for value in result):
         raise InvalidFamilyInput("Use explicit BenefitType values")
-    return result
+    return frozenset(result)
 
 
 def _year(value: int, label: str) -> None:
@@ -119,6 +122,7 @@ def _boolean(value: bool, label: str) -> None:
         raise InvalidFamilyInput(f"{label} must be a boolean")
 
 
+@_declared_input
 @dataclass(frozen=True)
 class GraceMonth:
     """One month's entitlement, elected payments, and work-condition flag.
@@ -147,6 +151,7 @@ class GraceMonth:
         object.__setattr__(self, "received_types", received)
 
 
+@_declared_input
 @dataclass(frozen=True)
 class GraceYearState:
     """The caller's carried LMETY and complete transition facts.
@@ -256,6 +261,7 @@ class GraceYearState:
         object.__setattr__(self, "gap_since_section_202", section_gap)
 
 
+@_declared_input
 @dataclass(frozen=True)
 class TerminationEvent:
     """A dated entitlement ending and its explicitly supplied cause.
@@ -313,7 +319,7 @@ class GraceYearDecision(_SealedResult):
             raise InvalidFamilyInput("A grace decision needs a processed year")
         object.__setattr__(self, "next_state", state)
         try:
-            kinds = frozenset(self.kinds)
+            kinds = tuple(self.kinds)
             eligible = tuple(self.met_eligible_months)
             protected = tuple(self.protected_months)
         except TypeError as error:
@@ -327,6 +333,7 @@ class GraceYearDecision(_SealedResult):
             for month in (*eligible, *protected)
         ):
             raise InvalidFamilyInput("Protected months must be 1 through 12")
+        kinds = frozenset(kinds)
         eligible = frozenset(eligible)
         protected = frozenset(protected)
         if not protected <= eligible:
@@ -367,6 +374,7 @@ def _legal_types(types: frozenset[BenefitType]) -> frozenset[BenefitType]:
     )
 
 
+@_validated_entry
 def grace_year(
     year: int,
     state: GraceYearState,
@@ -397,8 +405,8 @@ def grace_year(
     ):
         raise InvalidFamilyInput("Process consecutive years of entitlement")
     try:
-        months = tuple(months)
-        events = tuple(termination_events)
+        months = _rebuild_declared(tuple(months))
+        events = _rebuild_declared(tuple(termination_events))
     except TypeError as error:
         raise InvalidFamilyInput(
             "Supply iterable month and termination inputs"

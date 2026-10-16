@@ -32,18 +32,22 @@ that residual; the residual is neither excess charged nor a crediting
 event by itself. Complete redistribution is unavailable.
 
 R2 result values and outcomes share the package-private provenance seal
-with G and R3. Only computation builds them; consumption and pickle restore
-validate their identities and nested seals. RET refusals bind exactly
-RETUnsupportedReason while retaining FamilyConfigurationUnsupported as the
-shared catch type. The common denominator counts every layer's sealed rows;
+with G and R3. Only computation builds them; consumption validates their
+identities and nested seals. Serialization is an input error: persist
+declared inputs and recompute. Public entries recursively reconstruct
+declarations before coverage and exact money uses built-in fractions. RET
+refusals bind exactly RETUnsupportedReason while retaining
+FamilyConfigurationUnsupported as the shared catch type. The common
+denominator counts every layer's sealed rows;
 RET money aggregation accepts only RETOutcome and RETLedger values.
+Beneficiary identities and partial-payment keys are nonempty built-in
+strings, so caller-defined hashing cannot change sealed ledger lookups.
 """
 
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass, field
-from decimal import Decimal
 from enum import Enum
 from fractions import Fraction
 from math import ceil, floor
@@ -54,10 +58,14 @@ from populace_dynamics.track_b._provenance import (
     _check_seal,
     _checked_result,
     _computed,
+    _declared_input,
+    _detached_result,
+    _exact_number,
     _sealed_refusal,
     _sealed_result,
     _SealedOutcome,
     _SealedResult,
+    _validated_entry,
 )
 from populace_dynamics.track_b.gross_benefits import (
     FamilyConfigurationUnsupported,
@@ -129,14 +137,15 @@ class NESEProrationPolicy(Enum):
 
 
 def _exact(value: object, label: str) -> Fraction:
-    if isinstance(value, bool) or not isinstance(
-        value, (int, str, Decimal, Fraction)
-    ):
+    if isinstance(value, float):
         raise InvalidFamilyInput(f"{label} requires an exact number")
-    try:
-        return Fraction(value)
-    except (ValueError, ZeroDivisionError, OverflowError) as error:
-        raise InvalidFamilyInput(f"Invalid {label}") from error
+    return _exact_number(value, label)
+
+
+def _identity(value: object, label: str) -> str:
+    if type(value) is not str or not value.strip():
+        raise InvalidFamilyInput(f"{label} needs a nonempty built-in identity")
+    return value
 
 
 def _sequence(values: Iterable[object], label: str) -> tuple:
@@ -174,6 +183,7 @@ def _rates(values: Iterable[object], label: str) -> tuple[Fraction, ...]:
     return result
 
 
+@_declared_input
 @dataclass(frozen=True)
 class WorkEarnings:
     """RET-countable wages earned, annual NESE, and service-month facts.
@@ -211,6 +221,7 @@ class WorkEarnings:
         object.__setattr__(self, "substantial_service_months", services)
 
 
+@_declared_input
 @dataclass(frozen=True)
 class RETBeneficiary:
     """One person's monthly G rates and dated entitlement/work facts.
@@ -254,11 +265,7 @@ class RETBeneficiary:
     two_record_entitlement: bool = False
 
     def __post_init__(self):
-        if (
-            not isinstance(self.beneficiary_id, str)
-            or not self.beneficiary_id.strip()
-        ):
-            raise InvalidFamilyInput("A beneficiary needs a nonempty identity")
+        _identity(self.beneficiary_id, "A beneficiary")
         types = _sequence(self.benefit_types, "Benefit types")
         if len(types) != 12 or any(
             not isinstance(t, BenefitType) for t in types
@@ -354,6 +361,7 @@ class RETBeneficiary:
         object.__setattr__(self, "original_rates", original)
 
 
+@_declared_input
 @dataclass(frozen=True)
 class RecordYear:
     year: int
@@ -373,8 +381,7 @@ class RecordYear:
     def __post_init__(self):
         if type(self.year) is not int or self.year < 1:
             raise InvalidFamilyInput("Payment year must be positive")
-        if not isinstance(self.nh_id, str) or not self.nh_id.strip():
-            raise InvalidFamilyInput("Supply a number-holder identity")
+        _identity(self.nh_id, "The number holder")
         if not isinstance(self.kind, RecordKind) or not isinstance(
             self.suspension_method, SuspensionMethod
         ):
@@ -446,6 +453,7 @@ class RecordYear:
         object.__setattr__(self, "beneficiaries", beneficiaries)
 
 
+@_validated_entry
 def calculated_excess(earnings: object, exempt: object, rate: object) -> int:
     """Act 203(f)(3); POMS .080: exact multiplication, then dollar floor.
 
@@ -462,6 +470,7 @@ def calculated_excess(earnings: object, exempt: object, rate: object) -> int:
     return floor(max(Fraction(0), income - amount) * fraction)
 
 
+@_validated_entry
 def countable_earnings(
     earnings: WorkEarnings,
     fra_month: int | None,
@@ -474,7 +483,7 @@ def countable_earnings(
     truncation toward zero is an explicit judgment item in the design note.
     NESE is not prorated/rounded outside an FRA-attainment year.
     """
-    if not isinstance(earnings, WorkEarnings):
+    if type(earnings) is not WorkEarnings:
         raise InvalidFamilyInput("Supply explicit WorkEarnings")
     if not isinstance(nese_proration_policy, NESEProrationPolicy):
         raise InvalidFamilyInput("Use an explicit NESE proration policy")
@@ -517,7 +526,8 @@ class PartialPaymentAllocation(_SealedResult, Mapping[str, Fraction]):
         if not isinstance(self.shares, Mapping):
             raise InvalidFamilyInput("Partial shares require a mapping")
         shares = {
-            k: _exact(v, "Partial share") for k, v in self.shares.items()
+            _identity(k, "Partial shares"): _exact(v, "Partial share")
+            for k, v in self.shares.items()
         }
         residual = _exact(self.undistributed_subdollar_residual, "Residual")
         if (
@@ -532,7 +542,7 @@ class PartialPaymentAllocation(_SealedResult, Mapping[str, Fraction]):
 
     def __getitem__(self, key: str) -> Fraction:
         _check_seal(self)
-        return self.shares[key]
+        return self.shares[_identity(key, "Partial-share lookup")]
 
     def __iter__(self):
         _check_seal(self)
@@ -543,6 +553,7 @@ class PartialPaymentAllocation(_SealedResult, Mapping[str, Fraction]):
         return len(self.shares)
 
 
+@_validated_entry
 def partial_payments(
     total: object,
     rates: Mapping[str, object],
@@ -560,9 +571,13 @@ def partial_payments(
     ):
         raise InvalidFamilyInput("Partial rates require explicit mappings")
     amount = _exact(total, "Partial family benefit")
-    caps = {k: _exact(v, "Rate") for k, v in rates.items()}
+    caps = {
+        _identity(k, "Partial rates"): _exact(v, "Rate")
+        for k, v in rates.items()
+    }
     weights = {
-        k: _exact(v, "Original rate") for k, v in original_rates.items()
+        _identity(k, "Original rates"): _exact(v, "Original rate")
+        for k, v in original_rates.items()
     }
     if (
         set(caps) != set(weights)
@@ -617,11 +632,7 @@ class BeneficiaryMonth(_SealedResult):
     own_deduction: Fraction
 
     def __post_init__(self):
-        if (
-            not isinstance(self.beneficiary_id, str)
-            or not self.beneficiary_id.strip()
-        ):
-            raise InvalidFamilyInput("A monthly result needs a beneficiary")
+        _identity(self.beneficiary_id, "A monthly result")
         _months((self.month,), "Result month")
         for name in (
             "gross",
@@ -680,11 +691,7 @@ class WorkerLedger(_SealedResult):
     undistributed_subdollar_residual: Fraction
 
     def __post_init__(self):
-        if (
-            not isinstance(self.beneficiary_id, str)
-            or not self.beneficiary_id.strip()
-        ):
-            raise InvalidFamilyInput("A worker result needs a beneficiary")
+        _identity(self.beneficiary_id, "A worker result")
         for name in (
             "annual_exempt",
             "monthly_exempt",
@@ -811,12 +818,16 @@ class RETLedger(_SealedResult):
             self, "reconciliation", MappingProxyType(reconciliation)
         )
 
+    @_validated_entry
     def for_beneficiary(
         self, beneficiary_id: str
     ) -> tuple[BeneficiaryMonth, ...]:
         _check_seal(self)
+        _identity(beneficiary_id, "Beneficiary lookup")
         return tuple(
-            m for m in self.months if m.beneficiary_id == beneficiary_id
+            _detached_result(m)
+            for m in self.months
+            if m.beneficiary_id == beneficiary_id
         )
 
 
@@ -855,6 +866,7 @@ def _divorced_excluded(b: RETBeneficiary, month: int) -> bool:
     )
 
 
+@_validated_entry
 def apply_ret_year(
     record: RecordYear,
     parameters: RETParameters | None = None,
@@ -868,7 +880,7 @@ def apply_ret_year(
     months. Uncharged excess is disclosed and expires; it is never an input
     to the next year's computation. Death preserves the full annual limit.
     """
-    if not isinstance(record, RecordYear):
+    if type(record) is not RecordYear:
         raise InvalidFamilyInput("Supply explicit RecordYear")
     for beneficiary in record.beneficiaries:
         for decision in (beneficiary.grace, beneficiary.estimated_grace):
@@ -1161,6 +1173,7 @@ class RETOutcome(_SealedOutcome):
         return self.ledger is not None
 
 
+@_validated_entry
 def evaluate_ret(
     key: str, weight: object, compute: Callable[[], RETLedger]
 ) -> RETOutcome:
@@ -1178,11 +1191,13 @@ def evaluate_ret(
 RETDenominator = FamilyDenominator
 
 
+@_validated_entry
 def count_ret_outcomes(outcomes: Iterable[_SealedOutcome]) -> RETDenominator:
     """Use Track B's single denominator for every registered layer."""
     return count_family_outcomes(outcomes)
 
 
+@_validated_entry
 def weighted_ret_total(outcomes: Iterable[RETOutcome]) -> Fraction:
     rows = tuple(
         _checked_result(outcome, RETOutcome, "RET outcome")

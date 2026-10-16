@@ -21,6 +21,7 @@ from hypothesis import strategies as st
 
 from populace_dynamics.track_b import gross_benefits as g
 from populace_dynamics.track_b import ret_ledger as r
+from populace_dynamics.track_b._provenance import _computed, _result_values
 from populace_dynamics.track_b.ret_grace import (
     BenefitType,
     GraceMonth,
@@ -962,7 +963,10 @@ def test_ret_seals_pickle_and_common_denominator_preserve_rows(
         weight,
         lambda: _apply(record(beneficiary(rate=rate), fiscal_year=refused)),
     )
-    restored = pickle.loads(pickle.dumps(outcome))
+    for protocol in range(pickle.HIGHEST_PROTOCOL + 1):
+        with pytest.raises(r.InvalidFamilyInput):
+            pickle.dumps(outcome, protocol=protocol)
+    restored = outcome
     expected = r.count_ret_outcomes([outcome])
     assert r.count_ret_outcomes([restored]) == expected
     assert g.count_family_outcomes([restored]) == expected
@@ -989,7 +993,9 @@ def test_ret_evaluator_rejects_every_altered_month(rate, month, increment):
 
 @settings(max_examples=40, deadline=None)
 @given(DIME_RATES, st.integers(1, 100))
-def test_ret_pickle_restore_preserves_month_and_worker_accounting(rate, delta):
+def test_ret_private_capability_preserves_month_and_worker_accounting(
+    rate, delta
+):
     result = _apply(record(beneficiary(rate=rate)))
     for target, field in (
         (result.months[0], "net_due"),
@@ -998,10 +1004,11 @@ def test_ret_pickle_restore_preserves_month_and_worker_accounting(rate, delta):
         (result.workers[0], "charged"),
         (result.workers[0], "excess"),
     ):
-        restore, (cls, fields) = target.__reduce__()
+        # Private capability exercises seal-time validation; persistence is forbidden.
+        cls, fields = type(target), _result_values(target)
         fields[field] += delta
         with pytest.raises(r.InvalidFamilyInput):
-            restore(cls, fields)
+            _computed(cls, **fields)
 
 
 @settings(max_examples=30, deadline=None)

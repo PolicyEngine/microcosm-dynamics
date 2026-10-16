@@ -51,7 +51,9 @@ accepts only an unaltered `RETLedger` computed by R2 as a supported result.
 The package-private `_provenance.py` capability seals grace decisions, partial allocations,
 monthly and worker results, ledgers, outcomes and the shared denominator.
 Direct construction, `dataclasses.replace`, `copy` and `deepcopy` raise
-`InvalidFamilyInput`; pickle reconstruction repeats validation. Each
+`InvalidFamilyInput`. Every pickle protocol and copyreg reduction path also
+raises `InvalidFamilyInput`; persistence stores declared inputs and reruns
+the computation. Serialized bytes cannot restore trusted derived state. Each
 monthly result reconciles gross, net and deductions and floors its checks
 under Act 215(g). Worker results reconcile calculated excess, charged and
 uncharged amounts. The ledger verifies every beneficiary's twelve months,
@@ -71,10 +73,11 @@ altered actual or estimated grace decisions before any coverage refusal.
 `tests/test_track_b_ret_grace_provenance.py` exercises this invariant through
 `test_grace_decision_rejects_public_construction_and_copy`,
 `test_every_ret_admission_rejects_invalid_grace_evidence`,
-`test_grace_pickle_restore_revalidates_nested_state_and_identities`, and
-Hypothesis `test_grace_pickle_roundtrip_and_tamper_rejection_preserve_money`.
-The three existing malformed-decision tests now modify the reconstruction
-fields of an actual helper result, retaining every invalid-field assertion.
+`test_grace_private_capability_revalidates_nested_state_and_identities`, and
+Hypothesis `test_grace_pickle_rejection_and_recomputation_preserve_money`.
+Malformed-decision tests invoke the private computation capability to
+exercise seal-time fields directly, retaining every invalid-field assertion.
+They do not restore or serialize results.
 
 `RETDenominator` aliases G's `FamilyDenominator`, and `count_ret_outcomes`
 delegates to `count_family_outcomes`; both accept every declared layer's
@@ -100,11 +103,60 @@ The additional contract invariants and executable checks are:
   retained: `test_ret_counter_and_common_counter_have_identical_counts`
   and Hypothesis
   `test_ret_seals_pickle_and_common_denominator_preserve_rows`.
-- Pickle round trips preserve monetary results, identities and refusal
-  reasons; reconstruction rejects altered accounting fields:
-  `test_ret_computed_values_round_trip_through_pickle_validation`,
-  `test_ret_pickle_restore_rechecks_accounting_identities`, and Hypothesis
-  `test_ret_pickle_restore_preserves_month_and_worker_accounting`.
+- Serialization rejects all computed results, refusals, rows and denominators
+  for every pickle protocol. Private seal construction still rejects altered
+  accounting fields: `test_ret_computed_values_cannot_be_pickled`,
+  `test_ret_private_capability_rechecks_accounting_identities`, and Hypothesis
+  `test_ret_private_capability_preserves_month_and_worker_accounting`.
+
+## Declared inputs and detached access
+
+Every public computation rebuilds its entire declared input tree through
+registered constructors before any coverage decision. This includes
+`RecordYear`, every `RETBeneficiary`, `WorkEarnings`, grace state, month and
+termination declarations, and nested R1 parameters. A declaration subclass
+is an input error. Numeric subclasses cannot contribute custom arithmetic:
+the shared exact-number boundary accepts built-in numeric encodings and
+stores fresh built-in fractions, while integer calendar fields remain
+built-in integers and Boolean flags retain their declared type.
+
+A valid post-construction input change computes exactly as a freshly built
+declaration. An invalid change raises `InvalidFamilyInput`, even when the
+record also requires `foreign_work` or another coverage refusal. The
+reviewer's negative $0.10 gross-rate case now raises before an outcome or
+denominator row exists. This preserves the existing rule that invalid
+inputs do not become coverage gaps, without changing Act 203 deductions.
+
+R2 carries no hidden mutable controller. Inputs and returned carried state
+are independent copies. Altered sealed nested evidence fails validation
+when consumed. `RETLedger.for_beneficiary` returns fresh sealed monthly
+rows, so changing an accessor result leaves ledger history unchanged.
+The tests in `test_track_b_r3_fix_round_13.py` execute every declared-field
+error, generated error combinations, valid planted-value equivalence,
+canonical numeric rejection and accessor/state detachment. The invariants
+are recursive input validation before refusal, immutable arithmetic meaning,
+and independence of admitted output from later caller input changes.
+
+Grace benefit-type collections validate every raw element before set
+deduplication. A forged value equal to a legal enum cannot disappear and
+become a supported declaration. The generated
+`test_r2_r3_enum_collection_types_are_checked_before_equality_collapse`
+checks both input orders for grace month and carried-state declarations,
+alongside the same invariant in ARF and recomputation. Exact huge wages
+also remain exact through countable earnings and calculated excess;
+`test_huge_exact_ret_money_and_recomputation_caps_do_not_overflow` checks
+that boundary without changing any statutory rate or threshold.
+
+All beneficiary identities and partial-payment mapping keys are nonempty
+built-in strings. A mutable object used as a mapping key could previously
+change its hash after admission, break a lookup and leave the seal matching.
+The public apportionment function, private seal validation and lookup
+accessors now reject such keys, including string-enum subclasses. The
+same rule covers beneficiary, number-holder, monthly-result and worker
+identities. `test_ret_partial_mapping_keys_are_builtin_nonempty_text`
+executes the property at computation, sealing and lookup;
+`test_ret_identity_slots_reject_string_enum_subclasses` covers each
+identity slot. This changes no apportionment for declared valid inputs.
 
 The binding-survivor fixture now states its original no-care assumption
 explicitly. Both `child_in_care=False` and the positive attestation

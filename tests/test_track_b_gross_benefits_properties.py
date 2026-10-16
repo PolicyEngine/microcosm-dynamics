@@ -2,11 +2,12 @@
 
 Families are invented by Hypothesis: records from the statutory maximum
 (SSA-published NAWI, eligibility 1983-2026, random COLAs, RIB-LIM
-survivors), with random spouses, children, widow(er)s, mother/fathers and
-divorced beneficiaries, age reductions, credit-increased widow(er) OBs and
-dual entitlement (reduced, credited or disability own benefits; spouses by
-method B or C). Households pair two such records. Each property is stated
-in the PR and in ``docs/design/track_b_g_gross_benefits.md``.
+survivors), with random spouses, children, widow(er)s, mother/fathers,
+parents and divorced beneficiaries, age reductions, credit-increased
+widow(er) OBs and dual entitlement (reduced, credited or disability own
+benefits; spouses by method B or C). Households pair two such records. Each
+property is stated in the PR and in
+``docs/design/track_b_g_gross_benefits.md``.
 
 Intended violations are labelled: adding a *dually entitled* auxiliary can
 raise another auxiliary's benefit under POMS RS 00615.768 (the Parisi
@@ -123,6 +124,7 @@ def beneficiaries(draw, state, index, *, dual=True):
                     g.Role.WIDOW,
                     g.Role.SURVIVING_DIVORCED_SPOUSE,
                     g.Role.MOTHER_FATHER,
+                    g.Role.PARENT,
                     g.Role.CHILD,
                     g.Role.CHILD,
                 ]
@@ -872,17 +874,16 @@ def test_savings_clause_contract_across_a_cola(family, tenths):
     st.integers(1, 90),
     st.data(),
 )
-def test_formula_maximums_with_a_cola_never_trip_the_savings_clause(
+def test_formula_maximum_colas_preserve_available_room_and_guard_contract(
     kind, year, pia, colas, tenths, data
 ):
-    """With the statutory maximum, a COLA never trips 403(a)(5).
+    """A formula COLA preserves available room; rounded totals may fall.
 
     A COLA of c raises the maximum by floor(10 x FMAX x c) dimes and the
     PIA by floor(10 x PIA x c) dimes, and FMAX >= PIA, so the room left
-    for auxiliaries never shrinks. This property checks that the protected
-    total never falls either, for families that are not dually entitled.
-    The guard is for PIA increases that do not carry the maximum, and for
-    changes of membership.
+    for auxiliaries never shrinks. Separately dime-rounded proportional
+    shares need not have a monotone sum. A qualifying PIA increase protects
+    the earlier total: the guard refuses a lower total and retains the row.
     """
     extra = {}
     if kind is g.FamilyKind.DISABILITY:
@@ -914,8 +915,40 @@ def test_formula_maximums_with_a_cola_never_trip_the_savings_clause(
     except g.FamilyConfigurationUnsupported:
         assume(False)
     guard = g.SavingsClauseGuard(COLA_MONTHS[0], earlier_months_unknown=False)
-    assert guard.admit(before) is before
-    assert guard.admit(after) is after
+    assert after.available_for_auxiliaries >= before.available_for_auxiliaries
+    total = g.savings_clause_total
+    qualifying_increase = after.pia > before.pia and _qualifies(before)
+    must_refuse = (
+        qualifying_increase
+        and _governed(after)
+        and total(after) < total(before)
+    )
+    weight = F(7, 3)
+    outcomes = [
+        guard.evaluate("before COLA", weight, lambda: before),
+        guard.evaluate("after COLA", weight, lambda: after),
+    ]
+    assert outcomes[0].benefits is before
+    assert outcomes[1].supported is not must_refuse
+    if must_refuse:
+        assert outcomes[1].unsupported.reason is SAVINGS_CLAUSE
+        assert guard.refused_since == after.payment_month
+    else:
+        assert outcomes[1].benefits is after
+        assert guard.refused_since is None
+    assert guard.protected_total == (
+        total(before) if qualifying_increase else None
+    )
+    counts = g.count_family_outcomes(outcomes)
+    assert counts.rows == 2
+    assert counts.weight == 2 * weight
+    assert counts.supported_rows == 2 - int(must_refuse)
+    assert counts.supported_weight == (2 - int(must_refuse)) * weight
+    assert counts.unsupported_rows == int(must_refuse)
+    assert counts.unsupported_weight == int(must_refuse) * weight
+    assert counts.unsupported_by_reason == (
+        {SAVINGS_CLAUSE: (1, weight)} if must_refuse else {}
+    )
 
 
 @st.composite

@@ -17,6 +17,7 @@ import pytest
 
 from populace_dynamics.track_b import gross_benefits as g
 from populace_dynamics.track_b import ret_ledger as r
+from populace_dynamics.track_b._provenance import _computed, _result_values
 from populace_dynamics.track_b.gross_benefits import InvalidFamilyInput
 from populace_dynamics.track_b.ret_grace import (
     BenefitType,
@@ -1363,26 +1364,27 @@ def test_ret_counter_rejects_unsealed_or_altered_outcomes(tamper):
         r.count_ret_outcomes([outcome])
 
 
-def test_ret_computed_values_round_trip_through_pickle_validation():
+@pytest.mark.parametrize("protocol", range(pickle.HIGHEST_PROTOCOL + 1))
+def test_ret_computed_values_cannot_be_pickled(protocol):
     result = ledger()
     supported = r.evaluate_ret("supported", 2, lambda: result)
     refused = r.evaluate_ret("refused", 3, lambda: ledger(fiscal_year=True))
+    assert type(refused.unsupported) is r.RETConfigurationUnsupported
+    assert refused.unsupported.reason is r.UnsupportedReason.FISCAL_YEAR
+    assert refused.unsupported.code == "FAMILY_CONFIG_UNSUPPORTED"
+    assert r.count_ret_outcomes([refused]).unsupported_weight == 3
     for value in (
         r.partial_payments(1, {"nh": 2}, {"nh": 2}),
         result.months[0],
         result.workers[0],
         result,
         supported,
+        refused,
+        refused.unsupported,
         r.count_ret_outcomes([supported, refused]),
     ):
-        restored = pickle.loads(pickle.dumps(value))
-        assert restored == value
-    restored_refusal = pickle.loads(pickle.dumps(refused.unsupported))
-    assert type(restored_refusal) is r.RETConfigurationUnsupported
-    assert restored_refusal.reason is r.UnsupportedReason.FISCAL_YEAR
-    assert restored_refusal.code == "FAMILY_CONFIG_UNSUPPORTED"
-    restored_outcome = pickle.loads(pickle.dumps(refused))
-    assert r.count_ret_outcomes([restored_outcome]).unsupported_weight == 3
+        with pytest.raises(InvalidFamilyInput):
+            pickle.dumps(value, protocol=protocol)
 
 
 def test_ret_counter_and_common_counter_have_identical_counts():
@@ -1418,14 +1420,17 @@ def test_survivor_care_requires_child_identity_not_boolean_true():
         ("ledger", "reconciliation", {"nh": 1}),
     ],
 )
-def test_ret_pickle_restore_rechecks_accounting_identities(kind, field, value):
+def test_ret_private_capability_rechecks_accounting_identities(
+    kind, field, value
+):
     result = ledger()
     target = {
         "month": result.months[0],
         "worker": result.workers[0],
         "ledger": result,
     }[kind]
-    restore, (cls, fields) = target.__reduce__()
+    # Private capability exercises seal-time validation; persistence is forbidden.
+    cls, fields = type(target), _result_values(target)
     fields[field] = value
     with pytest.raises(InvalidFamilyInput):
-        restore(cls, fields)
+        _computed(cls, **fields)

@@ -143,8 +143,11 @@ to exactly its own reason enum. The shared denominator counts all sealed
 layer outcomes; G money consumers and the 403(a)(5) guard require G results.
 Sealing validates nested fields and derivable accounting identities;
 consumers check provenance and unchanged fields before aggregation or guard
-changes. Guard history retains detached sealed snapshots. Every exported
-helper validates its arguments before a coverage refusal. Invalid
+changes. Sealed values reject copy and every pickle protocol; persist
+declared inputs and recompute. A shared boundary rejects numeric subclasses
+and recursively rebuilds declarations through validating constructors. Guard
+history and public state snapshots are detached. Every exported helper
+validates its arguments before a coverage refusal. Invalid
 outcome metadata is checked before invoking a computation; invalid monthly
 inputs leave every savings-clause guard unchanged. Built and direct records
 share refusal precedence: eligibility year, record conditions, initial DIB
@@ -221,7 +224,6 @@ from datetime import date
 from decimal import Decimal
 from enum import Enum
 from fractions import Fraction
-from numbers import Rational
 from types import MappingProxyType
 
 from populace_dynamics.ss.params import SSAParameters
@@ -233,12 +235,17 @@ from populace_dynamics.track_b._provenance import (
     _check_refusal,
     _check_seal,
     _computed,
+    _declared_input,
     _detached_result,
+    _exact_number,
+    _has_declared_type,
     _InvalidInputType,
+    _rebuild_declared,
     _sealed_refusal,
     _sealed_result,
     _SealedOutcome,
     _SealedResult,
+    _validated_entry,
 )
 
 __all__ = [
@@ -456,32 +463,7 @@ class FamilyTargetBlocked(RuntimeError):
 # ---------------------------------------------------------------------------
 # Exact money helpers
 # ---------------------------------------------------------------------------
-def _exact(value: object, label: str) -> Fraction:
-    """Convert to an exact Fraction; floats go through their shortest repr.
-
-    ``repr(492.9)`` is ``'492.9'``, so a float PIA from the float oracle
-    becomes the decimal it prints as, never its binary expansion.
-    """
-    if isinstance(value, bool):
-        raise _InvalidInputType(f"{label} must be a number, not a bool")
-    if isinstance(value, Fraction):
-        return value
-    if isinstance(value, (int, Rational)):
-        return Fraction(value)
-    if isinstance(value, float):
-        if not math.isfinite(value):
-            raise InvalidFamilyInput(f"{label} must be finite")
-        return Fraction(repr(value))
-    if isinstance(value, (str, Decimal)):
-        try:
-            return Fraction(value)
-        except (ValueError, OverflowError, ZeroDivisionError) as error:
-            raise InvalidFamilyInput(
-                f"{label} must be a finite number"
-            ) from error
-    raise _InvalidInputType(
-        f"{label} must be an exact number, got {type(value)}"
-    )
+_exact = _exact_number
 
 
 def _dimes(value: object, label: str) -> Fraction:
@@ -527,7 +509,7 @@ def _input_iterable(value: object, label: str) -> tuple:
 
 
 def _input_conditions(value: object, enum: type) -> None:
-    if type(value) not in (set, frozenset, tuple, list):
+    if not _has_declared_type(value, (set, frozenset, tuple, list)):
         raise _InvalidInputType("conditions must be a collection of enums")
     for condition in value:
         _input_type(condition, enum, "condition")
@@ -545,7 +527,7 @@ def _checked_input(value, expected: type, label: str):
     if isinstance(value, _SealedResult):
         _check_seal(value)
         return value
-    return replace(value)
+    return _rebuild_declared(value)
 
 
 def _validated_refusal(error) -> FamilyConfigurationUnsupported:
@@ -655,7 +637,7 @@ def _validate_input_fields(value) -> None:
                         "A COLA percent cannot be negative"
                     )
             if value.aime is not None:
-                if type(value.aime) not in (int, Fraction):
+                if not _has_declared_type(value.aime, (int, Fraction)):
                     raise _InvalidInputType(
                         "AIME must be an int or an integral Fraction"
                     )
@@ -715,18 +697,21 @@ def _validate_input_fields(value) -> None:
     raise _InvalidInputType("Unknown input declaration")
 
 
+@_validated_entry
 def floor_dime(amount: Fraction) -> Fraction:
     """Decrease to the next lower multiple of $0.10 (exact)."""
     amount = _exact(amount, "amount")
     return Fraction(math.floor(amount * 10), 10)
 
 
+@_validated_entry
 def ceil_dime(amount: Fraction) -> Fraction:
     """Increase to the next higher multiple of $0.10 (exact)."""
     amount = _exact(amount, "amount")
     return Fraction(math.ceil(amount * 10), 10)
 
 
+@_validated_entry
 def whole_dollars(amount: Fraction) -> int:
     """42 U.S.C. 415(g): round a monthly benefit down to a whole dollar."""
     amount = _exact(amount, "amount")
@@ -740,6 +725,7 @@ def _nearest_dollar_ties_up(amount: Fraction) -> int:
     return math.floor(amount + _HALF)
 
 
+@_declared_input
 @dataclass(frozen=True, order=True)
 class YearMonth:
     """A calendar month (the benefit month being computed)."""
@@ -751,15 +737,18 @@ class YearMonth:
         _validate_input_fields(self)
 
     def as_tuple(self) -> tuple[int, int]:
-        return (self.year, self.month)
+        month = _checked_input(self, YearMonth, "month")
+        return (month.year, month.month)
 
     def __str__(self) -> str:
-        return f"{self.year:04d}-{self.month:02d}"
+        month = _checked_input(self, YearMonth, "month")
+        return f"{month.year:04d}-{month.month:02d}"
 
 
 # ---------------------------------------------------------------------------
 # Statutory rates, cross-checked against the repository's parameter bundle
 # ---------------------------------------------------------------------------
+@_declared_input
 @dataclass(frozen=True)
 class StatutoryRates:
     """Exact 402(q), 402(b)-(g) and 402(e)(2)(D) fractions."""
@@ -887,6 +876,7 @@ def _agrees(observed: float, expected: Fraction, label: str) -> None:
         )
 
 
+@_validated_entry
 def statutory_rates(params: SSAParameters) -> StatutoryRates:
     """Cross-check the bundle against the statute; return exact fractions.
 
@@ -959,6 +949,7 @@ def _nawi(params: SSAParameters, year: int) -> Fraction:
     return amount
 
 
+@_validated_entry
 def family_maximum_bend_points(
     eligibility_year: int, params: SSAParameters
 ) -> tuple[int, int, int]:
@@ -981,6 +972,7 @@ def family_maximum_bend_points(
     return first, second, third
 
 
+@_validated_entry
 def family_maximum_formula(
     pia: object, eligibility_year: int, params: SSAParameters
 ) -> Fraction:
@@ -999,6 +991,7 @@ def family_maximum_formula(
     return total
 
 
+@_validated_entry
 def retirement_survivor_family_maximum(
     pia: object, eligibility_year: int, params: SSAParameters
 ) -> Fraction:
@@ -1015,6 +1008,7 @@ def retirement_survivor_family_maximum(
     return floor_dime(family_maximum_formula(amount, eligibility_year, params))
 
 
+@_validated_entry
 def disability_family_maximum(pia: object, aime: object) -> Fraction:
     """403(a)(6): min(max(85% AIME, PIA), 150% PIA), dime-floored.
 
@@ -1030,6 +1024,7 @@ def disability_family_maximum(pia: object, aime: object) -> Fraction:
     )
 
 
+@_validated_entry
 def increase_by_colas(amount: object, percents: Iterable[object]) -> Fraction:
     """215(i)(2)(A)(ii): apply each COLA in order, dime-floored each time.
 
@@ -1046,6 +1041,7 @@ def increase_by_colas(amount: object, percents: Iterable[object]) -> Fraction:
     return value
 
 
+@_validated_entry
 def applicable_cola_percents(
     eligibility_year: int,
     payment_month: YearMonth,
@@ -1123,18 +1119,21 @@ def _spouse_reduction(months: int, rates: StatutoryRates) -> Fraction:
     return first * rates.spouse_first + later * rates.spouse_later
 
 
+@_validated_entry
 def worker_reduction_fraction(months: int, params: SSAParameters) -> Fraction:
     """402(q)(1) old-age reduction for ``months`` months (RS 00615.101)."""
     months = _months(months, "months", _MAX_WORKER_REDUCTION_MONTHS)
     return _worker_reduction(months, statutory_rates(params))
 
 
+@_validated_entry
 def spouse_reduction_fraction(months: int, params: SSAParameters) -> Fraction:
     """402(q)(1) spouse's reduction for ``months`` months (RS 00615.201)."""
     months = _months(months, "months", _MAX_SPOUSE_REDUCTION_MONTHS)
     return _spouse_reduction(months, statutory_rates(params))
 
 
+@_validated_entry
 def survivor_reduction_fraction(
     months: int, reduction_period_months: int, params: SSAParameters
 ) -> Fraction:
@@ -1196,6 +1195,7 @@ def _fra_months(birth_year: int, params: SSAParameters) -> int:
     return months
 
 
+@_validated_entry
 def delayed_credit_window_months(
     birth_year: int, params: SSAParameters
 ) -> int:
@@ -1307,6 +1307,7 @@ def _refuse_historical_own_rib(
         )
 
 
+@_validated_entry
 def worker_age_adjusted(
     pia: object,
     reduction_months: int,
@@ -1351,6 +1352,7 @@ def worker_age_adjusted(
     return base, base + credit
 
 
+@_validated_entry
 def spouse_age_reduced(
     amount: object, reduction_months: int, params: SSAParameters
 ) -> Fraction:
@@ -1368,6 +1370,7 @@ def spouse_age_reduced(
     return floor_dime(value * (1 - _spouse_reduction(months, rates)))
 
 
+@_validated_entry
 def survivor_age_reduced(
     amount: object,
     reduction_months: int,
@@ -1416,6 +1419,7 @@ _WIDOW_PERIOD_BY_BIRTH = (
 )
 
 
+@_validated_entry
 def widow_reduction_period_months(birth_date: date) -> int:
     """Total possible widow(er) reduction months for a date of birth.
 
@@ -1630,6 +1634,7 @@ class OwnBenefitKind(Enum):
     DISABILITY = "disability"
 
 
+@_declared_input
 @dataclass(frozen=True)
 class OwnBenefit:
     """A person's own old-age (RIB) or disability (DIB) benefit.
@@ -1683,6 +1688,7 @@ def _refuse_own_benefit(own: OwnBenefit) -> None:
         )
 
 
+@_validated_entry
 def own_monthly_benefit(
     own: OwnBenefit, params: SSAParameters
 ) -> tuple[Fraction, Fraction]:
@@ -1700,6 +1706,7 @@ def own_monthly_benefit(
     )
 
 
+@_declared_input
 @dataclass(frozen=True)
 class Beneficiary:
     """One auxiliary or survivor on the worker's record for the month.
@@ -1839,6 +1846,7 @@ class Beneficiary:
             _survivor_period(self.reduction_period_months)
 
 
+@_declared_input
 @dataclass(frozen=True)
 class WorkerRecord:
     """The insured worker's record, from which the maximum is computed.
@@ -1918,6 +1926,7 @@ class WorkerRecord:
         )
 
 
+@_declared_input
 @dataclass(frozen=True)
 class RecordState:
     """A record's current PIA and family maximum for the payment month.
@@ -2057,6 +2066,7 @@ def _check_retirement_eligibility(
         raise InvalidFamilyInput("eligibility_year exceeds birth year + 62")
 
 
+@_validated_entry
 def record_state(record: WorkerRecord, params: SSAParameters) -> RecordState:
     """Compute the record's current PIA and family maximum.
 
@@ -2395,13 +2405,17 @@ class FamilyBenefits(_SealedResult):
     def by_id(self) -> Mapping[str, BeneficiaryBenefit]:
         _check_seal(self)
         return MappingProxyType(
-            {row.beneficiary_id: row for row in self.beneficiaries}
+            {
+                row.beneficiary_id: _detached_result(row)
+                for row in self.beneficiaries
+            }
         )
 
 
 # ---------------------------------------------------------------------------
 # The family computation
 # ---------------------------------------------------------------------------
+@_validated_entry
 def original_benefit(
     role: Role,
     kind: FamilyKind,
@@ -2682,6 +2696,7 @@ def _proportional(rows: Sequence[_Row], available: Fraction) -> list[Fraction]:
     ]
 
 
+@_validated_entry
 def maximum_redistribution_rates(
     original_benefits: Mapping[str, Fraction],
     available: Fraction,
@@ -2997,6 +3012,7 @@ def _reduce_and_offset(
     return reduced, max(Fraction(0), reduced - row.own_mba)
 
 
+@_validated_entry
 def family_benefits(
     state: RecordState,
     beneficiaries: Sequence[Beneficiary],
@@ -3487,6 +3503,7 @@ def _family_benefits(
 # ---------------------------------------------------------------------------
 # Households: every record a family draws on, computed together
 # ---------------------------------------------------------------------------
+@_declared_input
 @dataclass(frozen=True)
 class HouseholdRecord:
     """One insured worker's record within a household.
@@ -3588,6 +3605,7 @@ def _same_own_benefit(declared: OwnBenefit | None, actual: OwnBenefit) -> bool:
     )
 
 
+@_validated_entry
 def check_household_records(records: Mapping[str, HouseholdRecord]) -> None:
     """Refuse a household that one-record computations would misstate.
 
@@ -3735,6 +3753,7 @@ def _refuse_household(
         )
 
 
+@_validated_entry
 def household_benefits(
     records: Mapping[str, HouseholdRecord],
     *,
@@ -3771,6 +3790,7 @@ def household_benefits(
     )
 
 
+@_validated_entry
 def household_month_outcome(
     records: Mapping[str, HouseholdRecord],
     *,
@@ -3850,6 +3870,7 @@ def household_month_outcome(
 # ---------------------------------------------------------------------------
 # 403(a)(5): carried across a record's months, refused, never approximated
 # ---------------------------------------------------------------------------
+@_validated_entry
 def savings_clause_total(result: FamilyBenefits) -> Fraction:
     """The total 403(a)(5) protects: after 403(a) and 402(q).
 
@@ -3966,11 +3987,19 @@ class SavingsClauseGuard:
     protected total is in force. The guard follows the record across a
     change of kind (a DIB converting to a RIB, or the worker's death),
     because 403(a)(5) speaks of the total "on the basis of such wages".
+
+    History holds private copies of admitted values. Every public calendar
+    or monetary accessor returns a fresh value, so altering a caller-held
+    input, result or snapshot cannot change a later decision.
     """
 
     def __init__(
         self, first_month: YearMonth, *, earlier_months_unknown: bool
     ):
+        if type(self) is not SavingsClauseGuard:
+            raise InvalidFamilyInput(
+                "Undeclared savings-clause guard subclass"
+            )
         first_month = _checked_input(first_month, YearMonth, "first_month")
         _input_type(earlier_months_unknown, bool, "earlier_months_unknown")
         self._next = first_month
@@ -3984,32 +4013,79 @@ class SavingsClauseGuard:
         self._unknown_since: YearMonth | None = None
         self._refused_since: YearMonth | None = None
 
+    def _check_initialized(self) -> None:
+        if type(self) is not SavingsClauseGuard or any(
+            not hasattr(self, name)
+            for name in (
+                "_next",
+                "_prior",
+                "_floor",
+                "_floor_month",
+                "_unknown_since",
+                "_refused_since",
+            )
+        ):
+            raise InvalidFamilyInput(
+                "Expected an initialized savings-clause guard"
+            )
+
+    def __copy__(self):
+        raise InvalidFamilyInput("Savings-clause guards cannot be copied")
+
+    def __deepcopy__(self, memo):
+        raise InvalidFamilyInput("Savings-clause guards cannot be copied")
+
+    def __getstate__(self):
+        raise InvalidFamilyInput("Savings-clause guards cannot be serialized")
+
+    def __reduce__(self):
+        raise InvalidFamilyInput("Savings-clause guards cannot be serialized")
+
+    def __reduce_ex__(self, protocol):
+        raise InvalidFamilyInput("Savings-clause guards cannot be serialized")
+
     @property
     def next_month(self) -> YearMonth:
         """The month the guard expects next."""
-        return self._next
+        self._check_initialized()
+        return replace(self._next)
 
     @property
     def protected_total(self) -> Fraction | None:
         """The highest total protected so far (None: nothing protected)."""
-        return self._floor
+        self._check_initialized()
+        return None if self._floor is None else _exact(self._floor, "total")
 
     @property
     def protected_since(self) -> YearMonth | None:
         """The qualifying month whose total is :attr:`protected_total`."""
-        return self._floor_month
+        self._check_initialized()
+        return (
+            None if self._floor_month is None else replace(self._floor_month)
+        )
 
     @property
     def refused_since(self) -> YearMonth | None:
         """The first month whose total fell below the protected total."""
-        return self._refused_since
+        self._check_initialized()
+        return (
+            None
+            if self._refused_since is None
+            else replace(self._refused_since)
+        )
 
     @property
     def unknown_since(self) -> YearMonth | None:
         """The month from which a protection G cannot see may exist."""
-        return self._unknown_since
+        self._check_initialized()
+        return (
+            None
+            if self._unknown_since is None
+            else replace(self._unknown_since)
+        )
 
     def _expect(self, month: YearMonth) -> None:
+        self._check_initialized()
         _checked_input(month, YearMonth, "month")
         _checked_input(self._next, YearMonth, "guard next_month")
         # Check advancement before carrying protection or changing any history.
@@ -4047,11 +4123,12 @@ class SavingsClauseGuard:
         """
         original = result
         result = _checked_input(result, FamilyBenefits, "result")
+        result = _detached_result(result)
         month = result.payment_month
         self._expect(month)
         total = savings_clause_total(result)
         self._carry(result.pia)
-        self._prior = _PriorMonth(month, _detached_result(result), result.pia)
+        self._prior = _PriorMonth(month, result, result.pia)
         self._next = _next_month(month)
         # Source conflict us:oasdi-family-maximum-saving-clause
         below = self._floor is not None and total < self._floor
@@ -4093,6 +4170,7 @@ class SavingsClauseGuard:
         ``pia`` is the record's PIA for that month, when the caller knows
         it; without it a PIA increase cannot be ruled out.
         """
+        month = _checked_input(month, YearMonth, "month")
         self._expect(month)
         amount = None if pia is None else _dimes(pia, "PIA")
         self._carry(amount)
@@ -4118,7 +4196,9 @@ class SavingsClauseGuard:
         could change is kept with its savings-clause reason. Invalid inputs
         still raise and leave the guard where it was.
         """
+        self._check_initialized()
         _check_evaluation_inputs(key, weight, compute)
+        weight = _outcome_weight(weight)
         month = self._next
         self._expect(month)
         if pia is not None:
@@ -4177,9 +4257,8 @@ class FamilyOutcome(_SealedOutcome):
 
     def __post_init__(self):
         _input_text(self.key, "key")
-        if self.benefits is not None and type(self.benefits) not in (
-            FamilyBenefits,
-            HouseholdBenefits,
+        if self.benefits is not None and not _has_declared_type(
+            self.benefits, (FamilyBenefits, HouseholdBenefits)
         ):
             raise _InvalidInputType(
                 "benefits must be family or household benefits"
@@ -4206,6 +4285,7 @@ class FamilyOutcome(_SealedOutcome):
         return self.benefits is not None
 
 
+@_validated_entry
 def evaluate_family(
     key: str,
     weight: object,
@@ -4293,6 +4373,7 @@ class FamilyDenominator(_SealedResult):
         return self.supported_weight / self.weight
 
 
+@_validated_entry
 def count_family_outcomes(
     outcomes: Iterable[_SealedOutcome],
 ) -> FamilyDenominator:
@@ -4362,6 +4443,7 @@ def _require_all_supported(outcomes: Sequence[FamilyOutcome]) -> None:
         )
 
 
+@_validated_entry
 def weighted_record_total(outcomes: Iterable[FamilyOutcome]) -> Fraction:
     """Weighted sum of record totals; blocked if any row is unsupported."""
     outcomes = _checked_outcomes(outcomes)
@@ -4371,6 +4453,7 @@ def weighted_record_total(outcomes: Iterable[FamilyOutcome]) -> Fraction:
     )
 
 
+@_validated_entry
 def weighted_mean_record_total(outcomes: Iterable[FamilyOutcome]) -> Fraction:
     """Weighted mean over *all* rows; blocked if any row is unsupported."""
     outcomes = _checked_outcomes(outcomes)

@@ -19,8 +19,9 @@ persists, without new credits, until FRA (RS 00615.582; CFR 404.412(b)).
 The month of age attainment precedes the birth month for a first-day
 birthday; a January 1 birth also uses the preceding FRA cohort.
 
-Collection inputs are snapshotted into immutable tuples or frozensets at
-construction, including one-shot iterators. Repeated original-claim
+Collection inputs are validated and snapshotted into immutable frozensets
+at construction, including one-shot iterators. Scalar money, dates and enum
+fields are also checked immediately. Repeated original-claim
 evaluation preserves both dollar amounts and coverage refusals. Contents
 are validated before coverage is decided, without consuming caller state.
 Pre-FRA spouse reentitlement is refused because RS 00615.201A.1 and
@@ -29,9 +30,10 @@ Pre-FRA spouse reentitlement is refused because RS 00615.201A.1 and
 Unsupported configurations raise ARFConfigurationUnsupported, in the shared
 FamilyConfigurationUnsupported family, with exactly ARFUnsupportedReason.
 A package-private capability seals results, refusals and outcomes. Direct
-construction, replacement and copying are invalid; pickle restoration
-revalidates identities. Evaluators and apply_arf require unchanged ARF
-results, while the common denominator admits every sealed layer outcome.
+construction, replacement, copying and serialization are invalid. Persist
+declared inputs and recompute; no bytes restore trusted derived state.
+Evaluators and apply_arf require unchanged ARF results, while the common
+denominator admits every sealed layer outcome.
 Invalid inputs, including G's statutory rate bundle,
 are checked before coverage and benefit arithmetic. Non-finite numeric
 rates, benefit shares and brackets are rejected locally before G's
@@ -43,7 +45,6 @@ This module does not assemble payments, deductions, or event histories.
 
 from __future__ import annotations
 
-import math
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from datetime import date
@@ -74,10 +75,13 @@ from ._provenance import (
     _check_seal,
     _checked_result,
     _computed,
+    _declared_input,
+    _exact_number,
     _sealed_refusal,
     _sealed_result,
     _SealedOutcome,
     _SealedResult,
+    _validated_entry,
 )
 
 ARF_VERSION = "track-b-r3-arf-v1"
@@ -163,12 +167,9 @@ def _month_set(
 
 def _amount(value: object, label: str) -> Fraction:
     """Use exact inputs, with explicit zeros; do not accept binary floats."""
-    if isinstance(value, (bool, float)):
-        raise InvalidFamilyInput(f"{label} must be an exact amount")
-    try:
-        result = Fraction(value)
-    except (ValueError, TypeError, ZeroDivisionError) as error:
-        raise InvalidFamilyInput(f"{label} must be an exact amount") from error
+    if isinstance(value, float):
+        raise InvalidFamilyInput(f"{label} requires an exact number")
+    result = _exact_number(value, label)
     if result < 0 or (result * 10).denominator != 1:
         raise InvalidFamilyInput(f"{label} must be nonnegative whole dimes")
     return result
@@ -183,6 +184,7 @@ def _from_index(index: int) -> YearMonth:
     return YearMonth(year, month + 1)
 
 
+@_validated_entry
 def age_attainment_month(birth_date: date, age_months: int) -> YearMonth:
     """SSA day-before-birthday month (RS 00615.004/.015).
 
@@ -223,10 +225,13 @@ def _fra_month_for_input_validation(
     return age_attainment_month(birth_date, months)
 
 
+@_validated_entry
 def full_retirement_age_month(
     birth_date: date, kind: ARFBenefitKind, params: SSAParameters
 ) -> YearMonth:
     """Record-specific FRA; refuse the disputed historic survivor cohort."""
+    if type(params) is not SSAParameters:
+        raise InvalidFamilyInput("params must be SSAParameters")
     result = _fra_month_for_input_validation(birth_date, kind, params)
     if kind is ARFBenefitKind.WIDOW and date(1911, 1, 2) <= birth_date <= date(
         1912, 1, 1
@@ -239,6 +244,7 @@ def full_retirement_age_month(
     return result
 
 
+@_declared_input
 @dataclass(frozen=True)
 class SpouseOwnBenefit:
     """Own RIB/DIB amounts supplied after their independent adjustment.
@@ -253,7 +259,16 @@ class SpouseOwnBenefit:
     payable: Fraction
     sequence: SpouseOwnSequence
 
+    def __post_init__(self):
+        object.__setattr__(self, "pia", _amount(self.pia, "own PIA"))
+        object.__setattr__(
+            self, "payable", _amount(self.payable, "own payable")
+        )
+        if type(self.sequence) is not SpouseOwnSequence:
+            raise InvalidFamilyInput("invalid spouse own entitlement sequence")
 
+
+@_declared_input
 @dataclass(frozen=True)
 class ARFClaim:
     """An original reduction window and explicit record-specific credits.
@@ -263,10 +278,10 @@ class ARFClaim:
     month. Nonentitlement months mean termination under 402(q)(7)(C)/(E),
     not missing records. Mother/father-rate months mean (q)(5)(D) actually
     determined the widow(er)'s benefit, rather than every caregiving month.
-    All month and condition iterables are copied at construction. Tuple
-    snapshots retain malformed contents for the complete validation that
-    precedes coverage checks, while never retaining a mutable collection
-    or a one-shot iterator as claim state.
+    All month and condition iterables are validated and copied at
+    construction. Money, dates and enum fields are checked immediately.
+    Cohort and entitlement-window crosschecks using the parameter bundle
+    are repeated at computation before any coverage decision.
     """
 
     kind: ARFBenefitKind
@@ -298,17 +313,50 @@ class ARFClaim:
     )
 
     def __post_init__(self):
-        for name in (*_CREDIT_FIELDS, "conditions"):
-            try:
-                values = getattr(self, name)
-                snapshot = (
-                    values if isinstance(values, frozenset) else tuple(values)
-                )
-            except TypeError as error:
-                raise InvalidFamilyInput(
-                    f"{name} must be an iterable"
-                ) from error
-            object.__setattr__(self, name, snapshot)
+        if type(self.kind) is not ARFBenefitKind:
+            raise InvalidFamilyInput("kind must be an ARFBenefitKind")
+        if type(self.birth_date) is not date:
+            raise InvalidFamilyInput("birth_date must be a datetime.date")
+        object.__setattr__(
+            self,
+            "first_reduction_month",
+            _month(self.first_reduction_month, "first_reduction_month"),
+        )
+        object.__setattr__(
+            self,
+            "unreduced_benefit",
+            _amount(self.unreduced_benefit, "unreduced_benefit"),
+        )
+        for name in _CREDIT_FIELDS:
+            object.__setattr__(
+                self, name, _month_set(getattr(self, name), name)
+            )
+        try:
+            conditions = tuple(self.conditions)
+        except TypeError as error:
+            raise InvalidFamilyInput(
+                "conditions must be an iterable"
+            ) from error
+        if any(
+            type(condition) is not ARFUnsupportedReason
+            for condition in conditions
+        ):
+            raise InvalidFamilyInput(
+                "conditions must contain ARFUnsupportedReason"
+            )
+        object.__setattr__(self, "conditions", frozenset(conditions))
+        if self.death_date is not None and (
+            type(self.death_date) is not date
+            or self.death_date < self.birth_date
+        ):
+            raise InvalidFamilyInput("death_date must be a date after birth")
+        if (
+            self.spouse_own is not None
+            and type(self.spouse_own) is not SpouseOwnBenefit
+        ):
+            raise InvalidFamilyInput(
+                "spouse_own requires a spouse own benefit"
+            )
 
 
 @_sealed_result
@@ -529,11 +577,7 @@ def _check_finite_statutory_parameters(params: SSAParameters) -> None:
         )
     )
     for label, value in fields:
-        if not math.isfinite(float(value)):
-            raise ValueError(
-                f"Parameter bundle {label}={value!r} must be finite; "
-                "refusing to compute ARF."
-            )
+        _exact_number(value, label)
 
 
 def _check_claim(
@@ -542,9 +586,9 @@ def _check_claim(
     *,
     result_fra: YearMonth | None = None,
 ) -> ARFClaim:
-    """Validate declarations before money, or when restoring a sealed result.
+    """Validate declarations before money and at private seal construction.
 
-    Computation supplies its statutory bundle. Result restoration retains
+    Computation supplies its statutory bundle. Seal-time validation retains
     the computed FRA and revalidates all claim fields and available window
     identities without a parameter bundle or a new FRA schedule choice.
     """
@@ -557,7 +601,7 @@ def _check_claim(
     first = _month(claim.first_reduction_month, "first_reduction_month")
     amount = _amount(claim.unreduced_benefit, "unreduced_benefit")
     try:
-        conditions = frozenset(claim.conditions)
+        conditions = tuple(claim.conditions)
     except TypeError as error:
         raise InvalidFamilyInput("conditions must be an iterable") from error
     if any(not isinstance(c, ARFUnsupportedReason) for c in conditions):
@@ -660,6 +704,7 @@ def _refuse(reason: ARFUnsupportedReason, detail: str) -> None:
     raise _computed(ARFConfigurationUnsupported, reason, detail)
 
 
+@_validated_entry
 def apply_arf(
     claim: ARFClaim | ARFResult,
     *,
@@ -672,6 +717,8 @@ def apply_arf(
     months. Crediting inputs outside the original window do not count.
     Zero credits leave the benefit exactly as G would compute it.
     """
+    if type(params) is not SSAParameters:
+        raise InvalidFamilyInput("params must be SSAParameters")
     if isinstance(claim, ARFResult):
         claim = _checked_result(claim, ARFResult, "claim").claim
     claim = _check_claim(claim, params)
@@ -806,6 +853,7 @@ def apply_arf(
     )
 
 
+@_validated_entry
 def evaluate_arf(
     key: str, weight: object, compute: Callable[[], ARFResult]
 ) -> ARFOutcome:
@@ -823,6 +871,7 @@ def evaluate_arf(
     return _computed(ARFOutcome, key, weight, result, None)
 
 
+@_validated_entry
 def count_arf_outcomes(
     outcomes: Iterable[_SealedOutcome],
 ) -> FamilyDenominator:

@@ -659,13 +659,15 @@ def test_widow_nonbinding_child_care_readings_are_explicit():
     ],
 )
 def test_invalid_input_precedes_coverage_refusal(change):
-    claim = rib_claim(
-        conditions={a.ARFUnsupportedReason.OTHER_SUSPENSION},
-        **{k: v for k, v in change.items() if k != "conditions"},
-    )
-    if "conditions" in change:
-        claim = replace(claim, **change)
+    # Intrinsic declaration errors now reject during construction; cohort
+    # checks still require apply_arf. The same invalid values must raise.
     with pytest.raises(g.InvalidFamilyInput):
+        claim = rib_claim(
+            conditions={a.ARFUnsupportedReason.OTHER_SUSPENSION},
+            **{k: v for k, v in change.items() if k != "conditions"},
+        )
+        if "conditions" in change:
+            claim = replace(claim, **change)
         a.apply_arf(claim, payment_month=FRA, params=PARAMS)
 
 

@@ -139,7 +139,7 @@ def test_each_refusal_has_one_exact_layer_reason_enum(layer):
     assert type(refusal.reason) is expected[layer]
     for other_layer in set(LAYERS) - {layer}:
         other_reason = next(iter(expected[other_layer]))
-        # The internal constructor simulates a computation or pickle restore;
+        # The internal constructor simulates a computation;
         # public constructors fail earlier because they lack the capability.
         with pytest.raises(g.InvalidFamilyInput):
             g._computed(type(refusal), other_reason, "wrong layer reason")
@@ -198,7 +198,8 @@ def test_common_denominator_partition_order_and_layer_counter_differential(
     assert expected.unsupported_weight == sum(
         weight for _, weight in expected.unsupported_by_reason.values()
     )
-    assert pickle.loads(pickle.dumps(expected)) == expected
+    with pytest.raises(g.InvalidFamilyInput):
+        pickle.dumps(expected)
 
 
 @pytest.mark.parametrize("layer", LAYERS)
@@ -266,17 +267,19 @@ def test_partial_payment_money_inputs_reject_unsealed_or_altered_allocations(
     ),
 )
 @pytest.mark.parametrize("month", (0, 13))
-def test_r3_pickle_restore_revalidates_nested_calendar_months(
+def test_r3_private_capability_revalidates_nested_calendar_months(
     factory, field, year, month
 ):
-    restore, (cls, values) = factory().__reduce__()
+    original = factory()
+    cls, values = type(original), _values(original)
+    # Private capability tests seal-time checks; public restoration is forbidden.
     invalid = g.YearMonth(year, 1)
     object.__setattr__(invalid, "month", month)
     with pytest.raises(g.InvalidFamilyInput):
-        restore(cls, values | {field: invalid})
+        g._computed(cls, **(values | {field: invalid}))
 
 
-def test_arf_pickle_restore_cannot_admit_a_refused_original_claim():
+def test_arf_private_capability_cannot_admit_a_refused_original_claim():
     result = _arf()
     refused_claim = replace(
         result.claim, conditions=(a.ARFUnsupportedReason.OTHER_SUSPENSION,)
@@ -286,9 +289,10 @@ def test_arf_pickle_restore_cannot_admit_a_refused_original_claim():
             refused_claim, payment_month=result.payment_month, params=PARAMS
         )
     assert refusal.value.reason is a.ARFUnsupportedReason.OTHER_SUSPENSION
-    restore, (cls, values) = result.__reduce__()
+    cls, values = type(result), _values(result)
+    # Private capability tests seal-time checks; public restoration is forbidden.
     with pytest.raises(g.InvalidFamilyInput):
-        restore(cls, values | {"claim": refused_claim})
+        g._computed(cls, **(values | {"claim": refused_claim}))
 
 
 @pytest.mark.parametrize("layer", LAYERS)
@@ -323,22 +327,25 @@ def test_all_layer_outputs_require_the_shared_private_capability(
 
 @pytest.mark.parametrize("layer", LAYERS)
 @pytest.mark.parametrize("refused", (False, True))
-def test_all_layer_pickle_roundtrips_retain_denominator_and_copy_protection(
+def test_all_layer_pickle_rejection_retains_denominator_and_copy_protection(
     layer, refused
 ):
     original = _outcome(layer, refused=refused, weight=F(11, 3))
-    restored = pickle.loads(pickle.dumps(original))
-    assert g.count_family_outcomes([restored]) == g.count_family_outcomes(
-        [original]
-    )
-    assert restored.supported == original.supported
+    expected = g.count_family_outcomes([original])
     with pytest.raises(g.InvalidFamilyInput):
-        copy(restored)
+        pickle.dumps(original)
+    recomputed = _outcome(layer, refused=refused, weight=F(11, 3))
+    assert g.count_family_outcomes([original]) == expected
+    assert g.count_family_outcomes([recomputed]) == expected
+    assert recomputed.supported == original.supported
     with pytest.raises(g.InvalidFamilyInput):
-        deepcopy(restored)
-    restore, (cls, values) = restored.__reduce__()
+        copy(recomputed)
     with pytest.raises(g.InvalidFamilyInput):
-        restore(cls, values | {"weight": F(-1)})
+        deepcopy(recomputed)
+    cls, values = type(recomputed), _values(recomputed)
+    # Use the private capability solely to exercise seal-time validation.
+    with pytest.raises(g.InvalidFamilyInput):
+        g._computed(cls, **(values | {"weight": F(-1)}))
 
 
 @settings(max_examples=30, deadline=None, derandomize=True)
@@ -348,20 +355,21 @@ def test_all_layer_pickle_roundtrips_retain_denominator_and_copy_protection(
     st.integers(0, 1000),
     st.sampled_from((copy, deepcopy)),
 )
-def test_layer_provenance_is_deterministic_and_survives_serialization(
+def test_layer_provenance_is_deterministic_and_rejects_serialization(
     layer, refused, numerator, duplicate
 ):
     weight = F(numerator, 17)
     first = _outcome(layer, refused=refused, weight=weight)
     second = _outcome(layer, refused=refused, weight=weight)
-    restored = pickle.loads(pickle.dumps(first))
     expected = g.count_family_outcomes([first])
+    with pytest.raises(g.InvalidFamilyInput):
+        pickle.dumps(first)
+    assert g.count_family_outcomes([first]) == expected
     assert g.count_family_outcomes([second]) == expected
-    assert g.count_family_outcomes([restored]) == expected
     with pytest.raises(g.InvalidFamilyInput):
-        duplicate(restored)
+        duplicate(second)
     with pytest.raises(g.InvalidFamilyInput):
-        replace(restored, weight=weight)
+        replace(second, weight=weight)
 
 
 @pytest.mark.parametrize("layer", LAYERS)
