@@ -13,6 +13,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tracemalloc
 from fnmatch import fnmatchcase
 from itertools import pairwise
 from pathlib import Path
@@ -1040,6 +1041,19 @@ def test_class_unions_are_charged_to_the_work_budget():
             review_root._letters(wide)
     finally:
         review_root._WORK.left = None
+
+
+def test_a_wide_range_is_refused_before_it_is_built():
+    """A range wider than CLASS_LIMIT raises before its million members
+    are allocated."""
+    tracemalloc.start()
+    try:
+        with pytest.raises(OverflowError):
+            review_root.glob_tokens("[ -\U0010ffff]")
+        _, peak = tracemalloc.get_traced_memory()
+    finally:
+        tracemalloc.stop()
+    assert peak < 1 << 20, peak
 
 
 def test_ranges_are_bounded_one_by_one_and_counted_after_the_union():
