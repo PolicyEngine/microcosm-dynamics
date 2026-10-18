@@ -96,6 +96,48 @@ def test_build_excludes_b2s_outcome_files_without_any_inventory(
     assert set(review_root.manifest(out)) == {"docs/keep.md"}
 
 
+def test_build_unions_named_and_standing_exclusions(tmp_path, monkeypatch):
+    """A named inventory that repeats a standing path and names a path the
+    archive lacks: the record denies the sorted union, removes only what
+    the archive held, and keeps everything else."""
+    files = {relative: "invented" for relative in B2_OUTCOME_FILES}
+    files.update({"docs/keep.md": "kept text", "docs/named.md": "named"})
+    monkeypatch.setattr(review_root, "subprocess", _archive_of(files))
+    named = tmp_path / "named.json"
+    named.write_text(
+        json.dumps(
+            {
+                "q6_exclusions": [
+                    {"path": "docs/named.md"},
+                    {"path": "runs/track_b_b2_score.json"},
+                    {"path": "docs/absent.md"},
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    out = tmp_path / "root"
+    record = review_root.build("h", out, [named], {})
+    expected = sorted(B2_OUTCOME_FILES | {"docs/named.md", "docs/absent.md"})
+    assert record["denied_paths"] == expected
+    assert record["removed"] == sorted(B2_OUTCOME_FILES | {"docs/named.md"})
+    assert set(review_root.manifest(out)) == {"docs/keep.md"}
+
+
+def test_a_missing_standing_record_leaves_no_partial_root(
+    tmp_path, monkeypatch
+):
+    monkeypatch.setattr(review_root, "STANDING_EXCLUSIONS", ("missing.json",))
+    monkeypatch.setattr(
+        review_root, "subprocess", _archive_of({"docs/keep.md": "kept"})
+    )
+    out = tmp_path / "root"
+    with pytest.raises(FileNotFoundError, match="missing.json"):
+        review_root.build("h", out, [], {})
+    assert not out.exists()
+    assert not (tmp_path / "root.tar").exists()
+
+
 @settings(max_examples=100, deadline=None)
 @given(
     st.lists(

@@ -171,6 +171,15 @@ def build(
         outside = sorted(set(allowed) - changed_files(base, head))
         if outside:
             raise ValueError(f"not changed by this pull request: {outside}")
+    # Read every exclusion record before anything is written, so that a
+    # missing or unreadable record leaves no partial root behind.
+    records = [
+        *(
+            json.loads(path.read_text(encoding="utf-8"))
+            for path in inventories
+        ),
+        *standing_inventories(),
+    ]
     out = out.resolve()
     if out.exists():
         raise FileExistsError(f"{out} exists")
@@ -186,15 +195,7 @@ def build(
     with tarfile.open(archive) as tar:
         tar.extractall(out, filter="data")
     archive.unlink()
-    denied = denied_paths(
-        [
-            *(
-                json.loads(path.read_text(encoding="utf-8"))
-                for path in inventories
-            ),
-            *standing_inventories(),
-        ]
-    )
+    denied = denied_paths(records)
     removed = remove_denied(out, denied)
     denied_set = set(denied)
     if denied_set & set(allowed):
