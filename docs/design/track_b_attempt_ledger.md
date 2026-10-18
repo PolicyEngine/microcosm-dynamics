@@ -4,9 +4,13 @@ The Track B design (§7, "Attempt ledger") requires this record:
 
 > Maintain a cumulative attempt ledger by mechanism and gate family. Renaming a module or registration does not reset the counter. Restart after exhaustion requires new independent evidence and a new registration.
 
-**Scope.** This ledger begins with B2. Earlier gates' candidates and attempts are recorded in their own registrations on issue #42.
+**Scope.** This ledger begins with B2.
 
-**What counts as an attempt.** A scored candidate run under a registration. A floor build that stops before any candidate run is recorded here but is not an attempt.
+**What counts as an attempt.** An attempt is either of these:
+- a scored candidate run;
+- a spent attempt under its registration's interruption and completeness rules. For B2 that means `ABORTED_AFTER_GAPS`, a second interruption, or an incomplete score file (#42 comment 6252388925, "Interruption" and step 5).
+
+A floor build that stops before any candidate run is recorded here, but is not an attempt.
 
 **When the program pauses.** Two independently justified registered successors that fail trigger `SUCCESSOR_EXHAUSTED` (design §7).
 
