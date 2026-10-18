@@ -1,0 +1,920 @@
+{
+ "addendum_sha256": "8896e8a7c183de1e6f9d8123ae6d9968f0c9d90f915472aa434c6c72b3d4f11c",
+ "candidate_runs_permitted": true,
+ "cells": {
+  "earn_autocorr_lag1": {
+   "at_cap": false,
+   "cap": 0.15,
+   "eligible": true,
+   "exposure_label": "published five-seed floor detail, no published candidate outcome",
+   "family": "autocorrelation",
+   "floor_eligible": true,
+   "floor_household": {
+    "mean": 0.015706295150320345,
+    "min_events_weaker_half": 5664,
+    "n_defined_seeds": 100,
+    "realized_sigma": 0.018786806196715994,
+    "sd": 0.01030807352146802
+   },
+   "metric": "abs_gap_corr",
+   "plain_units": "correlation within \u00b10.047",
+   "planning_values_defined": true,
+   "registered_estimation_ratio": 1.3616152574312241,
+   "se_up": {
+    "failed_replicate_classes": [],
+    "replicates": 4000,
+    "se_up": 0.010378378894460772,
+    "undefined": 0,
+    "undefined_share_ok": true
+   },
+   "tau_se_up_units": 4.528645608138782,
+   "tolerance": 0.047,
+   "uncapped": 0.047
+  },
+  "earn_autocorr_lag2": {
+   "at_cap": false,
+   "cap": 0.15,
+   "eligible": true,
+   "exposure_label": "published candidate-3-law outcomes at boundaries 2008 and 2010",
+   "family": "autocorrelation",
+   "floor_eligible": true,
+   "floor_household": {
+    "mean": 0.026440113007806697,
+    "min_events_weaker_half": 5664,
+    "n_defined_seeds": 100,
+    "realized_sigma": 0.032475378334305416,
+    "sd": 0.018856580339252516
+   },
+   "metric": "abs_gap_corr",
+   "plain_units": "correlation within \u00b10.083",
+   "planning_values_defined": true,
+   "registered_estimation_ratio": 0.40850233545979375,
+   "se_up": {
+    "failed_replicate_classes": [],
+    "replicates": 4000,
+    "se_up": 0.01654444857383964,
+    "undefined": 0,
+    "undefined_share_ok": true
+   },
+   "tau_se_up_units": 5.016788539645921,
+   "tolerance": 0.083,
+   "uncapped": 0.083
+  },
+  "earn_dlog_mean.older": {
+   "at_cap": false,
+   "cap": 0.4054651081081644,
+   "eligible": true,
+   "exposure_label": "published five-seed floor detail, no published candidate outcome",
+   "family": "change_mean",
+   "floor_eligible": true,
+   "floor_household": {
+    "mean": 0.015493557923819436,
+    "min_events_weaker_half": 6607,
+    "n_defined_seeds": 100,
+    "realized_sigma": 0.01917756021056582,
+    "sd": 0.011301702459856629
+   },
+   "metric": "abs_gap_log",
+   "plain_units": "mean two-year log change within \u00b10.049",
+   "planning_values_defined": true,
+   "registered_estimation_ratio": 0.9147923426804911,
+   "se_up": {
+    "failed_replicate_classes": [],
+    "replicates": 4000,
+    "se_up": 0.010901799300800414,
+    "undefined": 0,
+    "undefined_share_ok": true
+   },
+   "tau_se_up_units": 4.494670893125175,
+   "tolerance": 0.049,
+   "uncapped": 0.049
+  },
+  "earn_dlog_mean.prime": {
+   "at_cap": false,
+   "cap": 0.4054651081081644,
+   "eligible": true,
+   "exposure_label": "published candidate-3-law outcomes at boundaries 2008 and 2010",
+   "family": "change_mean",
+   "floor_eligible": true,
+   "floor_household": {
+    "mean": 0.0138564887508303,
+    "min_events_weaker_half": 7838,
+    "n_defined_seeds": 100,
+    "realized_sigma": 0.017788281215043687,
+    "sd": 0.011154401287545173
+   },
+   "metric": "abs_gap_log",
+   "plain_units": "mean two-year log change within \u00b10.047",
+   "planning_values_defined": true,
+   "registered_estimation_ratio": 0.5080075957791738,
+   "se_up": {
+    "failed_replicate_classes": [],
+    "replicates": 4000,
+    "se_up": 0.010219948207429209,
+    "undefined": 0,
+    "undefined_share_ok": true
+   },
+   "tau_se_up_units": 4.598849137594865,
+   "tolerance": 0.047,
+   "uncapped": 0.047
+  },
+  "earn_dlog_sd.older": {
+   "at_cap": false,
+   "cap": 0.4054651081081644,
+   "eligible": true,
+   "exposure_label": "published candidate-3-law outcomes at boundaries 2008 and 2010",
+   "family": "dispersion",
+   "floor_eligible": true,
+   "floor_household": {
+    "mean": 0.054116768099391074,
+    "min_events_weaker_half": 6607,
+    "n_defined_seeds": 100,
+    "realized_sigma": 0.07075477987332711,
+    "sd": 0.045580854373296946
+   },
+   "metric": "log_ratio",
+   "plain_units": "within a factor of e^0.191 = 1.2105, that is within 21.0% above or 17.4% below",
+   "planning_values_defined": true,
+   "registered_estimation_ratio": 1.2394277689728823,
+   "se_up": {
+    "failed_replicate_classes": [],
+    "replicates": 4000,
+    "se_up": 0.03788916053907112,
+    "undefined": 0,
+    "undefined_share_ok": true
+   },
+   "tau_se_up_units": 5.041019576114433,
+   "tolerance": 0.191,
+   "uncapped": 0.191
+  },
+  "earn_dlog_sd.prime": {
+   "at_cap": false,
+   "cap": 0.4054651081081644,
+   "eligible": true,
+   "exposure_label": "published five-seed floor detail, no published candidate outcome",
+   "family": "dispersion",
+   "floor_eligible": true,
+   "floor_household": {
+    "mean": 0.05418547942802872,
+    "min_events_weaker_half": 7838,
+    "n_defined_seeds": 100,
+    "realized_sigma": 0.0687696566957163,
+    "sd": 0.042346186383207585
+   },
+   "metric": "log_ratio",
+   "plain_units": "within a factor of e^0.181 = 1.1984, that is within 19.8% above or 16.6% below",
+   "planning_values_defined": true,
+   "registered_estimation_ratio": 3.0867975281513953,
+   "se_up": {
+    "failed_replicate_classes": [],
+    "replicates": 4000,
+    "se_up": 0.033716891664138215,
+    "undefined": 0,
+    "undefined_share_ok": true
+   },
+   "tau_se_up_units": 5.3682291298671005,
+   "tolerance": 0.181,
+   "uncapped": 0.181
+  },
+  "earn_mob_h1_diag": {
+   "at_cap": false,
+   "cap": 0.4054651081081644,
+   "eligible": true,
+   "exposure_label": "published candidate-3-law outcomes at boundaries 2008 and 2010",
+   "family": "mobility",
+   "floor_eligible": true,
+   "floor_household": {
+    "mean": 0.012112052313849576,
+    "min_events_weaker_half": 36,
+    "n_defined_seeds": 100,
+    "realized_sigma": 0.0154028957547217,
+    "sd": 0.009515639041987399
+   },
+   "metric": "log_ratio",
+   "plain_units": "within a factor of e^0.041 = 1.0419, that is within 4.2% above or 4.0% below",
+   "planning_values_defined": true,
+   "registered_estimation_ratio": 0.8698016578534462,
+   "se_up": {
+    "failed_replicate_classes": [],
+    "replicates": 4000,
+    "se_up": 0.009839168665856232,
+    "undefined": 0,
+    "undefined_share_ok": true
+   },
+   "tau_se_up_units": 4.167018717981502,
+   "tolerance": 0.041,
+   "uncapped": 0.041
+  },
+  "earn_mob_h2_diag": {
+   "at_cap": false,
+   "cap": 0.4054651081081644,
+   "eligible": true,
+   "exposure_label": "published five-seed floor detail, no published candidate outcome",
+   "family": "mobility",
+   "floor_eligible": true,
+   "floor_household": {
+    "mean": 0.025270483824675515,
+    "min_events_weaker_half": 36,
+    "n_defined_seeds": 100,
+    "realized_sigma": 0.031034673436253407,
+    "sd": 0.01801537128570228
+   },
+   "metric": "log_ratio",
+   "plain_units": "within a factor of e^0.079 = 1.0822, that is within 8.2% above or 7.6% below",
+   "planning_values_defined": true,
+   "registered_estimation_ratio": 0.663710603084252,
+   "se_up": {
+    "failed_replicate_classes": [],
+    "replicates": 4000,
+    "se_up": 0.016183750805816147,
+    "undefined": 0,
+    "undefined_share_ok": true
+   },
+   "tau_se_up_units": 4.881439472709184,
+   "tolerance": 0.079,
+   "uncapped": 0.079
+  },
+  "earn_p10.older": {
+   "at_cap": false,
+   "cap": 0.4054651081081644,
+   "eligible": true,
+   "exposure_label": "published five-seed floor detail, no published candidate outcome",
+   "family": "log_quantiles",
+   "floor_eligible": true,
+   "floor_household": {
+    "mean": 0.04603421418980389,
+    "min_events_weaker_half": 3117,
+    "n_defined_seeds": 100,
+    "realized_sigma": 0.08191028655441375,
+    "sd": 0.06775061746842925
+   },
+   "metric": "log_ratio",
+   "plain_units": "within a factor of e^0.249 = 1.2827, that is within 28.3% above or 22.0% below",
+   "planning_values_defined": true,
+   "registered_estimation_ratio": 1.279882738796901,
+   "se_up": {
+    "failed_replicate_classes": [],
+    "replicates": 4000,
+    "se_up": 0.05349346859630758,
+    "undefined": 0,
+    "undefined_share_ok": true
+   },
+   "tau_se_up_units": 4.654773873032929,
+   "tolerance": 0.249,
+   "uncapped": 0.249
+  },
+  "earn_p10.prime": {
+   "at_cap": false,
+   "cap": 0.4054651081081644,
+   "eligible": true,
+   "exposure_label": "published candidate-3-law outcomes at boundaries 2008 and 2010",
+   "family": "log_quantiles",
+   "floor_eligible": true,
+   "floor_household": {
+    "mean": 0.026986341733841134,
+    "min_events_weaker_half": 4271,
+    "n_defined_seeds": 100,
+    "realized_sigma": 0.060448803683224105,
+    "sd": 0.05409062050445818
+   },
+   "metric": "log_ratio",
+   "plain_units": "within a factor of e^0.189 = 1.2080, that is within 20.8% above or 17.2% below",
+   "planning_values_defined": true,
+   "registered_estimation_ratio": 2.2180479032320384,
+   "se_up": {
+    "failed_replicate_classes": [],
+    "replicates": 4000,
+    "se_up": 0.036304746881903334,
+    "undefined": 0,
+    "undefined_share_ok": true
+   },
+   "tau_se_up_units": 5.205930800586575,
+   "tolerance": 0.189,
+   "uncapped": 0.189
+  },
+  "earn_p50.older": {
+   "at_cap": false,
+   "cap": 0.4054651081081644,
+   "eligible": true,
+   "exposure_label": "published five-seed floor detail, no published candidate outcome",
+   "family": "log_quantiles",
+   "floor_eligible": true,
+   "floor_household": {
+    "mean": 0.036393711618951746,
+    "min_events_weaker_half": 3117,
+    "n_defined_seeds": 100,
+    "realized_sigma": 0.0431336895217562,
+    "sd": 0.02315195297066399
+   },
+   "metric": "log_ratio",
+   "plain_units": "within a factor of e^0.106 = 1.1118, that is within 11.2% above or 10.1% below",
+   "planning_values_defined": true,
+   "registered_estimation_ratio": 0.5047785979656627,
+   "se_up": {
+    "failed_replicate_classes": [],
+    "replicates": 4000,
+    "se_up": 0.02358172313891514,
+    "undefined": 0,
+    "undefined_share_ok": true
+   },
+   "tau_se_up_units": 4.495006551284464,
+   "tolerance": 0.106,
+   "uncapped": 0.106
+  },
+  "earn_p50.prime": {
+   "at_cap": false,
+   "cap": 0.4054651081081644,
+   "eligible": true,
+   "exposure_label": "published five-seed floor detail, no published candidate outcome",
+   "family": "log_quantiles",
+   "floor_eligible": true,
+   "floor_household": {
+    "mean": 0.026385716974956442,
+    "min_events_weaker_half": 4271,
+    "n_defined_seeds": 100,
+    "realized_sigma": 0.03178308351554688,
+    "sd": 0.017718869531483192
+   },
+   "metric": "log_ratio",
+   "plain_units": "within a factor of e^0.08 = 1.0833, that is within 8.3% above or 7.7% below",
+   "planning_values_defined": true,
+   "registered_estimation_ratio": 0.3168420240903672,
+   "se_up": {
+    "failed_replicate_classes": [],
+    "replicates": 4000,
+    "se_up": 0.01815481984891242,
+    "undefined": 0,
+    "undefined_share_ok": true
+   },
+   "tau_se_up_units": 4.40654331278272,
+   "tolerance": 0.08,
+   "uncapped": 0.08
+  },
+  "earn_p90.older": {
+   "at_cap": false,
+   "cap": 0.4054651081081644,
+   "eligible": true,
+   "exposure_label": "published five-seed floor detail, no published candidate outcome",
+   "family": "log_quantiles",
+   "floor_eligible": true,
+   "floor_household": {
+    "mean": 0.046275403600439954,
+    "min_events_weaker_half": 3117,
+    "n_defined_seeds": 100,
+    "realized_sigma": 0.05583725178004632,
+    "sd": 0.031247171199400986
+   },
+   "metric": "log_ratio",
+   "plain_units": "within a factor of e^0.14 = 1.1503, that is within 15.0% above or 13.1% below",
+   "planning_values_defined": true,
+   "registered_estimation_ratio": 0.397904212355652,
+   "se_up": {
+    "failed_replicate_classes": [],
+    "replicates": 4000,
+    "se_up": 0.03009058554247362,
+    "undefined": 0,
+    "undefined_share_ok": true
+   },
+   "tau_se_up_units": 4.6526180024774355,
+   "tolerance": 0.14,
+   "uncapped": 0.14
+  },
+  "earn_p90.prime": {
+   "at_cap": false,
+   "cap": 0.4054651081081644,
+   "eligible": true,
+   "exposure_label": "published five-seed floor detail, no published candidate outcome",
+   "family": "log_quantiles",
+   "floor_eligible": true,
+   "floor_household": {
+    "mean": 0.018194070716633294,
+    "min_events_weaker_half": 4271,
+    "n_defined_seeds": 100,
+    "realized_sigma": 0.034492017942681384,
+    "sd": 0.029303158405134443
+   },
+   "metric": "log_ratio",
+   "plain_units": "within a factor of e^0.106 = 1.1118, that is within 11.2% above or 10.1% below",
+   "planning_values_defined": true,
+   "registered_estimation_ratio": 0.29711181492055316,
+   "se_up": {
+    "failed_replicate_classes": [],
+    "replicates": 4000,
+    "se_up": 0.021069979288444063,
+    "undefined": 0,
+    "undefined_share_ok": true
+   },
+   "tau_se_up_units": 5.03085449439128,
+   "tolerance": 0.106,
+   "uncapped": 0.106
+  },
+  "earn_zero_rate.older": {
+   "at_cap": false,
+   "cap": 0.4054651081081644,
+   "eligible": true,
+   "exposure_label": "published candidate-3-law outcomes at boundaries 2008 and 2010",
+   "family": "zero_rate",
+   "floor_eligible": true,
+   "floor_household": {
+    "mean": 0.04554155601826386,
+    "min_events_weaker_half": 4257,
+    "n_defined_seeds": 100,
+    "realized_sigma": 0.05654951679044581,
+    "sd": 0.03352334298169332
+   },
+   "metric": "log_ratio",
+   "plain_units": "within a factor of e^0.146 = 1.1572, that is within 15.7% above or 13.6% below",
+   "planning_values_defined": true,
+   "registered_estimation_ratio": 0.2926043265392094,
+   "se_up": {
+    "failed_replicate_classes": [],
+    "replicates": 4000,
+    "se_up": 0.03032293778690945,
+    "undefined": 0,
+    "undefined_share_ok": true
+   },
+   "tau_se_up_units": 4.814836907492151,
+   "tolerance": 0.146,
+   "uncapped": 0.146
+  },
+  "earn_zero_rate.prime": {
+   "at_cap": false,
+   "cap": 0.4054651081081644,
+   "eligible": true,
+   "exposure_label": "published five-seed floor detail, no published candidate outcome",
+   "family": "zero_rate",
+   "floor_eligible": true,
+   "floor_household": {
+    "mean": 0.06006608462979065,
+    "min_events_weaker_half": 4926,
+    "n_defined_seeds": 100,
+    "realized_sigma": 0.0764841076958558,
+    "sd": 0.04734853965306739
+   },
+   "metric": "log_ratio",
+   "plain_units": "within a factor of e^0.202 = 1.2238, that is within 22.4% above or 18.3% below",
+   "planning_values_defined": true,
+   "registered_estimation_ratio": 0.381180014473609,
+   "se_up": {
+    "failed_replicate_classes": [],
+    "replicates": 4000,
+    "se_up": 0.04175789764357915,
+    "undefined": 0,
+    "undefined_share_ok": true
+   },
+   "tau_se_up_units": 4.837408284395761,
+   "tolerance": 0.202,
+   "uncapped": 0.202
+  }
+ },
+ "code_sha256": {
+  "scripts/select_m6_qstar_train_only.py": "624aeedda2280c420bf0be753fb44e9137115fd3db7cc746c686d46707ffdf8e",
+  "scripts/track_b_b0_1_addendum_power.py": "d7244fbcd034929789c789ecf8cb5034ba10d67c5072776018d6653913a59e53",
+  "scripts/track_b_b0_1_planning_values.py": "62bd282c4a2968e388e190806d8e0ad8612fcbcbd9564f5485d3e49752ec7c27",
+  "scripts/track_b_b0_1_ruled_power.py": "8cc64235f5157c13e99e14bd892317286a2e7f22a69dfb7443c7610c53f60af4",
+  "scripts/track_b_b2_floor.py": "84b52fc7697e75c72e91ba5254e617e70c6be6e33508c50f405d3b9192120c7c",
+  "src/populace_dynamics/harness/m6_cells.py": "faff61537aacccdf9b9ec335167e7d5f4178bcb2a73e0d6639141dea2f4af282",
+  "src/populace_dynamics/track_b/b2.py": "bdb1676d9a4a15c3ebc83d5f2c5e4643ed214012725373949fcfbca51aa587dc"
+ },
+ "config": {
+  "b_household": 4000,
+  "floor_seeds": 100,
+  "household_stream": "[20261002, b, 0]",
+  "root_seed": 20261002
+ },
+ "counts": {
+  "domain_persons": 13542,
+  "full_anchor_households": 8907,
+  "full_anchor_persons": 23134,
+  "scored_rows_by_period": {
+   "2010": 11066,
+   "2012": 10165,
+   "2014": 9310
+  }
+ },
+ "counts_record_sha256": "e93826d4c535a41ea28155b837307a1a941f9ac9d205f8e8bf60421481e54f99",
+ "design": {
+  "after_merges": {
+   "clusters": 126,
+   "design_degrees_of_freedom": 63,
+   "persons": 11776,
+   "strata": 63,
+   "strata_by_cluster_count": {
+    "2": 63
+   },
+   "strata_with_one_cluster": 0,
+   "strata_with_three_or_more_clusters": 0,
+   "strata_with_two_clusters": 63
+  },
+  "before_merges": {
+   "clusters": 126,
+   "design_degrees_of_freedom": 63,
+   "persons": 11776,
+   "strata": 63,
+   "strata_by_cluster_count": {
+    "2": 63
+   },
+   "strata_with_one_cluster": 0,
+   "strata_with_three_or_more_clusters": 0,
+   "strata_with_two_clusters": 63
+  },
+  "design_degrees_of_freedom": 63,
+  "merges": [],
+  "scale_l": 1
+ },
+ "domain": {
+  "domain_ids_sha256": "a9aace23a3649333ac72cc363a3709c537f28482f012ceee36b2faddbbad2fa0",
+  "full_anchor_ids_sha256": "29b1b3fa948c9efce76e81d8b6ab260fc331414b2eecba85dbdb35c4795c3eb3",
+  "truth_support_keys_sha256": "6f0def2970ee2063fc29834f3f27c4e81e752b46a4b4ed0f9826c1ae3c1b8a02",
+  "truth_support_rows": 30541
+ },
+ "geometry": {
+  "anchor_wave": 2011,
+  "change_years": [
+   2010,
+   2012,
+   2014
+  ],
+  "collection_wave_of": {
+   "2010": 2011,
+   "2012": 2013,
+   "2014": 2015
+  },
+  "level_years": [
+   2012,
+   2014
+  ],
+  "origin": 2010
+ },
+ "ladder": {
+  "clears": true,
+  "design_degrees_of_freedom": 63,
+  "eligible": [
+   "earn_p90.older",
+   "earn_p90.prime",
+   "earn_zero_rate.older",
+   "earn_zero_rate.prime"
+  ],
+  "evaluation": "ruled binding (d781 (a), d782, M2 rider, d765)",
+  "guards": {
+   "at_least_four_cells": true,
+   "not_every_tolerance_at_cap": true
+  },
+  "log": [],
+  "order": [
+   "earn_p90.prime",
+   "earn_zero_rate.prime",
+   "earn_zero_rate.older",
+   "earn_p90.older"
+  ],
+  "outcome": "LADDER_CLEARED",
+  "p_gate": 0.922585345157497,
+  "p_gate_before_pruning": 0.922585345157497,
+  "power_target": 0.9,
+  "pruned": [],
+  "retained": [
+   "earn_p90.older",
+   "earn_p90.prime",
+   "earn_zero_rate.older",
+   "earn_zero_rate.prime"
+  ],
+  "t_star": 2.5714411855382133,
+  "tol_over_sigma": {
+   "earn_p90.older": 2.5072867223388244,
+   "earn_p90.prime": 3.073174790067375,
+   "earn_zero_rate.older": 2.581808091146538,
+   "earn_zero_rate.prime": 2.6410715387210453
+  }
+ },
+ "outcome": "LADDER_CLEARED",
+ "person_split": {
+  "cells": [
+   "earn_autocorr_lag2",
+   "earn_dlog_mean.prime",
+   "earn_dlog_sd.older",
+   "earn_mob_h1_diag",
+   "earn_p10.prime",
+   "earn_zero_rate.older"
+  ],
+  "floor_block_six_cells_sha256": "7857744602b3a20c79157281c690462df9da45d75258d4ababe8e8b1d8220557",
+  "gating": false,
+  "seed_detail_six_cells_sha256": "d60bd2b1ac9356b54ed6b35675b96ad44442f02794fe57f22e0aa18db8d49e6a",
+  "seeds": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ]
+ },
+ "planning_values_sha256": "f8a29eee25d721d30422c936d3e19fff60a93f817e70b76e9cb74c866a67d897",
+ "power": {
+  "design_degrees_of_freedom": 63,
+  "evaluation": "ruled binding (d781 (a), d782, M2 rider, d765)",
+  "m": 4,
+  "p_gate": 0.922585345157497,
+  "t_star": 2.5714411855382133
+ },
+ "protocol_v2_sha256": "2a1681cdb3b6e28f30a8c1a319895b95f25c2fb27a175c50ded8a196d8488fe9",
+ "psid_dir": "/Users/maxghenis/PolicyEngine/psid-data",
+ "psid_files_opened_sha256": {
+  "family/1969/FAM1969.sps": "94a07c16e393cae68538d715d6a722a3c0de6e02dc8c9e56c5e658725db622c2",
+  "family/1969/FAM1969.txt": "f564d78850ce6a5e262389df9dc20fae52a3e63f5ae6b141bba787dd04c72fdd",
+  "family/1970/FAM1970.sps": "0212c4fd983a19b9c1cdd71feb4d92beed9d3906f807b485ef209ebd9f6d75f0",
+  "family/1970/FAM1970.txt": "8d28224213dc9d2dd31e1ac70ee9775ff257350926c0f595782de95f5ad4d84c",
+  "family/1971/FAM1971.sps": "8a6ccfc9ba6110dabe8147b528c2e0b2ada2d701889ea9bb03aa6c9bf0d479ae",
+  "family/1971/FAM1971.txt": "97360718a1f76e910ff2f2941dc0c65d6022016a570d53435b8ede97cef0b73c",
+  "family/1972/FAM1972.sps": "04b8594dda71404ff2e27734ff20ba8c7f9b982d2a4c834e61d59958000a5b9e",
+  "family/1972/FAM1972.txt": "5b1148272096ea8b50351ae4a98c1792be666b9ab140b344ee72434abd867055",
+  "family/1973/FAM1973.sps": "10f4b5e346529c6f5f4705842dfaa25186d514725fac6cc3a6b50dfabe3c33c4",
+  "family/1973/FAM1973.txt": "ae656b7f4b689f82259bec0e392e425df61eb8ab446b1bcb4187e25de568d011",
+  "family/1974/FAM1974.sps": "e043119eca809a3a32cbd086b5a17db114da72305446cb54ffa6e134e5ca0082",
+  "family/1974/FAM1974.txt": "579d98750c34753bfd3ee16149bb1124dd8cbd531b97c65a41e9fe0ae7e7f6cf",
+  "family/1975/FAM1975.sps": "a120da243300e5684f946f98acc25414f62579ec8c9c675267bbcce48c88f6e3",
+  "family/1975/FAM1975.txt": "26f6c07de11b9cbfc1ca0ff2942851b73f9e2f89df1abd0b77f2cda5fc097776",
+  "family/1976/FAM1976.sps": "f1884fe637284802ee2c4d0d147ed5f42a048e5f9d30a9c8c05bc53142d61771",
+  "family/1976/FAM1976.txt": "b35387e2b04bb9515f5edc1a31cc4b55a5bf018f9aa102ead4d7399e5d8b0824",
+  "family/1977/FAM1977.sps": "2367ae4b09af04ae0b69ef4cd65a1b47303f7526e24a16483ff1edd21fabbe53",
+  "family/1977/FAM1977.txt": "6314e1ae1784a6d5267ec863c96432c11a8b22a45a09170d7c7322ff0faaa1d8",
+  "family/1978/FAM1978.sps": "2a0eaa0fab5a17dc02a3c344b65599d3169d0a95bab1a2d6b9129454c4886239",
+  "family/1978/FAM1978.txt": "39764f180bf8431e7947027ef656c7910e832c01facfb86c8534735bdf42e12d",
+  "family/1979/FAM1979.sps": "3c1041d482cde534562f251f7cf6a9a7369980fdf5e4b691fa7413c5fa7e58ed",
+  "family/1979/FAM1979.txt": "6666f099d276fe353180b0e1d3881e06be70f656bda87d4f05a04ef7ed80e529",
+  "family/1980/FAM1980.sps": "acba02dc6d341d2cc4a8cd0a8b1365edf9f1d2c90dba32b4ddc83667b6750d67",
+  "family/1980/FAM1980.txt": "a1e28e6e689cbe990ae0cf9d4bbc268c75c5a30a21e0ff7297a970f69ac8a054",
+  "family/1981/FAM1981.sps": "a914dd7d130fca11745d2f099f5181d3e347d4a1206706a4524982f1bc5d4509",
+  "family/1981/FAM1981.txt": "b38c3093711aaa9e74875a610d874f155be6ed4b3a2bf67badc740a7373a149e",
+  "family/1982/FAM1982.sps": "e99097b4fad8dbd1fc99740ee6632db2cfb678dd3dbd7142f62f50bb4b1ff05a",
+  "family/1982/FAM1982.txt": "dc3510d641a9b878528977bdaa1173c46e9cb89db2e0003575213db80cc6476b",
+  "family/1983/FAM1983.sps": "685e7c076eb68a79a5a7c5e4f6a6bbe94fa7769ba5c5883775978b7b2ece0f3e",
+  "family/1983/FAM1983.txt": "acf81d4911373984974e02fce4707bb4779c72f00e30d01fbc7c16d6cc68a140",
+  "family/1984/FAM1984.sps": "ad90da0506c5c556ef8b527e1d6c75a057b30bd05ba5e09588df514053630368",
+  "family/1984/FAM1984.txt": "bc92bb4d845241db96864b038476a6524ae5f43311db708972dd8bd8084bb9ef",
+  "family/1985/FAM1985.sps": "07b156f52c91dbcc66944b983f601553d9ddb94bb343248434d55e3d01eb7c2f",
+  "family/1985/FAM1985.txt": "db0daa1860e69fce5c66567a5d64b0bd07be3d31e0c70046bc7e474d22119f51",
+  "family/1986/FAM1986.sps": "a8d57b14f4efc36170cc2577174ab336b026a01e61f0639f8e3b8d1f82d930da",
+  "family/1986/FAM1986.txt": "f78ba17a5e50df3860b65e957777ad778bd0a49308b1ab684ad7ca9893a8d3c8",
+  "family/1987/FAM1987.sps": "3f1816e8bd169ba55ddb2c42cc5488d00adb8913f17687d7885cec8fe5f812bd",
+  "family/1987/FAM1987.txt": "b0512acd98ef280878271840229af34401f30702e01d8d646191f049e4bdcba0",
+  "family/1988/FAM1988.sps": "a2971802f1e81107e27cf7c426986f387db8bed9481026a4cf876bcd9bad6f69",
+  "family/1988/FAM1988.txt": "e30bd0ead4bba2238108a51eb2e24eee935a4a38e0d4257efdd1cff1bd23389c",
+  "family/1989/FAM1989.sps": "bf034bb3e45dc8ff5ec6a25c34d81f7888e922686e66362f2fa57bfd7c452058",
+  "family/1989/FAM1989.txt": "524d0627d471a66dcfa73ace35389e8117d426d56d6c7804df742e91ab7be728",
+  "family/1990/FAM1990.sps": "8eb30ab1a766c3b60e0e84aab24f197992c2cd0947c33acfb6d34684fc28fe67",
+  "family/1990/FAM1990.txt": "318fc47527ec48f8ebc8bc7114649a5a85b978e591a964fd46a8735935c0dc95",
+  "family/1991/FAM1991.sps": "dec4e504682dc08014a82307e3dd78d2833cc0f16ae8a3eaee1693f2fdf11e32",
+  "family/1991/FAM1991.txt": "01e39177b72be26da8eeb62d193ac0c5e47265a530a8a484dc271687e45fd3cb",
+  "family/1992/FAM1992.sps": "0c512da1ad8bc7ffb764b07376edf5200a5a166287ca4c4070a4b371010c9bb5",
+  "family/1992/FAM1992.txt": "d392f84b96b5f76bff8cccc0dde3defa8fc02a1646d3fcf607e0f5e91d3698b7",
+  "family/1993/FAM1993.sps": "acf13fda9d02d5a2cfdcf4a180a3bffbb4dcd2a64770b6312d0933cf7b111a08",
+  "family/1993/FAM1993.txt": "76ac2c830d9912cba11c3187a6c1c47612142894592f955ac1f03aabb8e3153e",
+  "family/1994/FAM1994ER.sps": "c5ae483c602e0cb1ce5cb280c4704d9ee49bd09ba5fd2ff1747c571abd693c43",
+  "family/1994/FAM1994ER.txt": "326dfb30ed4a7193c9aa41527c646ec9e58e44165175f70db32b31d7ee94eae3",
+  "family/1995/FAM1995ER.sps": "5487bb3e0f782124d0b872ab43d09ee424c15b801868605121e3719483dce3a1",
+  "family/1995/FAM1995ER.txt": "c24d9982413259fce6bf386ff84195b5deb77ebb0e834705cdffe8987cb6a0db",
+  "family/1996/FAM1996ER.sps": "9aa5ad480b2f80b300af58d457c15e5f8c2c027dcb1a78ed1aecc9821c665067",
+  "family/1996/FAM1996ER.txt": "8b607a5f0f3aeaa706c5036c0240e46c684d083c66da31a38b2c835e3adfdbb3",
+  "family/1997/FAM1997ER.sps": "a40333ad1795c7f19d194797137e340732b093d4a4c0108589dd1512b66f4b99",
+  "family/1997/FAM1997ER.txt": "1fb8b8bee3fdd1a2e8f6637b6c3e434019d8dca5eacb94478e0419d5fbcfc8e9",
+  "family/1999/FAM1999ER.sps": "7afad10e0da6969cd434a588f7d336923451d7a2fa8a71959c6edf376b023a9b",
+  "family/1999/FAM1999ER.txt": "92d7bef0eb5794cccb9137a4fe177dadfb2ba92709628b5cbc4004f8e7d786a0",
+  "family/2001/FAM2001ER.sps": "c6dc0e81131ece42ebeb70a67ee58082b939049815bd359724e745780d0afc12",
+  "family/2001/FAM2001ER.txt": "cc55d16f2fd44bcc89c1ab812e21f3f4f7bc26b15645b3170e590f55d1320ca5",
+  "family/2003/FAM2003ER.sps": "09f96449a9410a2478c0c24c042b5510ea0a75e7c97d83102a60d1faab747ac3",
+  "family/2003/FAM2003ER.txt": "f06914b61c017d34c471343d9667d2c19ad5d59f78890ee26ff613d465555ef1",
+  "family/2005/FAM2005ER.sps": "9a3440f8c3ba8af3ab2a40bde19b3a7382e20b82b0d91bd7b4ccf5e36ee7ec0d",
+  "family/2005/FAM2005ER.txt": "29e9d9a3eb7cdf33df8831cc55f27ab6e230e8202b4cdd982da79b759c0a749f",
+  "family/2007/FAM2007ER.sps": "4c8bd5b1d7bdce8a9d596e191f2791004ceb3413bf0b88c68cadccd33277977d",
+  "family/2007/FAM2007ER.txt": "f811e277303fe90a42edef602ad1a92405e8df0c9ee0dd36eff4ff531202ebbf",
+  "family/2009/FAM2009ER.sps": "4faa45e30b5a4719a3fa12f9d5d48568f644f315457ee3eed3e4ff8872459e4c",
+  "family/2009/FAM2009ER.txt": "59cf31106cf4c3d2e62903bd841b1689c9229e15674bdc5fd896453286b085f2",
+  "family/2011/FAM2011ER.sps": "6a994d8b65803a515eaa3bf62c74e278dd5943b8b578428ef4fd462d96cba45c",
+  "family/2011/FAM2011ER.txt": "3253586567a76a43d3e4a568dd5ca8af0f8a3c69db829d6a55bdf0942c60992f",
+  "family/2013/FAM2013ER.sps": "526595b50a2087adc635da3c1288a396aa7179b075c11506f10338ab6348a0b5",
+  "family/2013/FAM2013ER.txt": "0406aed042d660f51712d0f18a6e80f939717c0c2fc68b8d3a8d6dcbf48180e1",
+  "family/2015/FAM2015ER.sps": "6500c8e88a2353e7a6c5322a898f3879662228fdefa329e0901eb254fc9e3fff",
+  "family/2015/FAM2015ER.txt": "e4a64b275a9c6dbe8e7b562be7ed0906d4082b0c49cad79d764c69b8de318ec2",
+  "ind2023er/IND2023ER.sps": "92d32d0efd65d50e984e971c681f6e9231b720973444cdc8f20f397039c9a462",
+  "ind2023er/IND2023ER.txt": "d68554ac828a690491572f37323eba1d8488e8b0001ed2aa89df4d4ade26c869"
+ },
+ "read_set_complete": true,
+ "registration_id": "6252388925",
+ "repository_head": "892040c88a6a2342d5545b8379920e077e0f4609",
+ "runtime": {
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "populace_fit_tree": "5c866378fdf5906b7a61da9977b8d028d1d36e9f",
+  "populace_frame_tree": "7cfb9ee78beb74911963913f202a4471aae2f52b",
+  "populace_head": "af02c917fcb3c50816bf3af9c2b64509e928889a",
+  "threads": {
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "POPULACE_FIT_N_JOBS": "4",
+   "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "versions": {
+   "numpy": "2.5.1",
+   "pandas": "3.0.3",
+   "populace_fit": "0.1.0",
+   "populace_frame": "0.1.0",
+   "python": "3.14.4",
+   "quantile_forest": "1.4.2",
+   "scikit_learn": "1.8.0",
+   "scipy": "1.18.0"
+  }
+ },
+ "schema": "track_b_b2_floor.v2",
+ "statements": {
+  "age_convention": "cohort and support use age at the collection wave (2011, 2013, 2015), not age in the income-reference year; prime is 25-44 and older 45-64",
+  "b1": "B1 v2 returned RECONSTRUCTED_REPRODUCTION: issue #42 comments 6110674288 (registration) and 6113379406 (result) (d622); label: reconstructed reproduction (weaker than bit-for-bit)",
+  "candidate_3_disclosure": "**Candidate 3 records a valid M6 pass; it certifies nothing about mortality drift.** The artifact records four passing seeds, q=0.55 and rho=\u22120.6. Fits use data through 2014; gated demographic flows cover 2015\u20132019 and earnings cover 2016/2018. The 2020\u20132022 window is diagnostic only. Certification is conditional on prior structural and same-holdout surface selection. The v4 point estimate `p_gate=0.9018301` clears 0.90 by 0.0018301, but its clearance is not statistically resolved: the reported jackknife SE is approximately 0.013\u20130.019. Synthesized support, redrawn initial states and endogenous widowhood require the decision-5 successor gate.",
+  "codebook_concept_check": "audit section 4.2: definitions only; all six labor-income variables exclude farm and unincorporated business income, and market gardening is absent from the 2015 component lists",
+  "fallback_scope": "EXPOSURE_UNRESOLVED fires (Q8(b)): B2's registration is the registered fallback at design section 3.2's scope, '2010\u21922014 continuity on the stated surface, ages 25\u201364. Not a 2010-vintage forecast' (design line 150). H and B3L may rely on B2 only within that scope. Removing this statement after any candidate run requires a dated amendment.",
+  "headline_scope": "B2's gate covers p90 earnings and the zero-earnings rate, by cohort, only: not median earnings, changes, dispersion, mobility or persistence. H and B3L rely on B2 for those two level statistics only (d781 (a), d1606 option C1).",
+  "planning_caveat": "The planning values come from a window whose truth years, 2008 and 2010, fall in a recession; neither their transport to 2012 and 2014 nor r's is tested.",
+  "reads": "The builder is truth-only. It read B2's pinned PSID read set, the B0.1 addendum, the frozen counts record (B2's read-set pin and source counts) and the addendum's planning-value record, which holds only variance ratios from the 2006 pseudo-origin. It read no candidate output, projection or selection ledger.",
+  "reference_year_mapping": "income-reference years 2010, 2012 and 2014 are collected at the 2011, 2013 and 2015 interviews; PSID has no 2012 or 2014 interview",
+  "section_5_3": "No Track B gate holds ages 25-61 earnings to a fixed limit (Q4).",
+  "wage_vintage": "policyengine-us 1.752.2 NAWI realized through 2010, with the fitter's log-linear projection over 2001-2010 after it (element 1)",
+  "wage_vintage_label": "pe_us_1_752_2_nawi_realized_2010_loglinear_2001_2010"
+ },
+ "surface": {
+  "gate_surface": [
+   "earn_p90.older",
+   "earn_p90.prime",
+   "earn_zero_rate.older",
+   "earn_zero_rate.prime"
+  ],
+  "gated": [
+   {
+    "cell": "earn_p90.older",
+    "exposure_label": "published five-seed floor detail, no published candidate outcome",
+    "family": "log_quantiles",
+    "metric": "log_ratio",
+    "plain_units": "within a factor of e^0.14 = 1.1503, that is within 15.0% above or 13.1% below",
+    "tolerance": 0.14
+   },
+   {
+    "cell": "earn_p90.prime",
+    "exposure_label": "published five-seed floor detail, no published candidate outcome",
+    "family": "log_quantiles",
+    "metric": "log_ratio",
+    "plain_units": "within a factor of e^0.106 = 1.1118, that is within 11.2% above or 10.1% below",
+    "tolerance": 0.106
+   },
+   {
+    "cell": "earn_zero_rate.older",
+    "exposure_label": "published candidate-3-law outcomes at boundaries 2008 and 2010",
+    "family": "zero_rate",
+    "metric": "log_ratio",
+    "plain_units": "within a factor of e^0.146 = 1.1572, that is within 15.7% above or 13.6% below",
+    "tolerance": 0.146
+   },
+   {
+    "cell": "earn_zero_rate.prime",
+    "exposure_label": "published five-seed floor detail, no published candidate outcome",
+    "family": "zero_rate",
+    "metric": "log_ratio",
+    "plain_units": "within a factor of e^0.202 = 1.2238, that is within 22.4% above or 18.3% below",
+    "tolerance": 0.202
+   }
+  ],
+  "headline": {
+   "gated_by_exposure_label": {
+    "published candidate-3-law outcomes at boundaries 2008 and 2010": 1,
+    "published five-seed floor detail, no published candidate outcome": 3
+   },
+   "gated_cells": 4,
+   "scope": "B2's gate covers p90 earnings and the zero-earnings rate, by cohort, only: not median earnings, changes, dispersion, mobility or persistence. H and B3L rely on B2 for those two level statistics only (d781 (a), d1606 option C1)."
+  },
+  "report_only": [
+   {
+    "cell": "earn_autocorr_lag1",
+    "exposure_label": "published five-seed floor detail, no published candidate outcome",
+    "family": "autocorrelation",
+    "metric": "abs_gap_corr",
+    "plain_units": "correlation within \u00b10.047",
+    "reason": "outside the ruled surface (d781 (a))",
+    "tolerance": 0.047
+   },
+   {
+    "cell": "earn_autocorr_lag2",
+    "exposure_label": "published candidate-3-law outcomes at boundaries 2008 and 2010",
+    "family": "autocorrelation",
+    "metric": "abs_gap_corr",
+    "plain_units": "correlation within \u00b10.083",
+    "reason": "outside the ruled surface (d781 (a))",
+    "tolerance": 0.083
+   },
+   {
+    "cell": "earn_dlog_mean.older",
+    "exposure_label": "published five-seed floor detail, no published candidate outcome",
+    "family": "change_mean",
+    "metric": "abs_gap_log",
+    "plain_units": "mean two-year log change within \u00b10.049",
+    "reason": "outside the ruled surface (d781 (a))",
+    "tolerance": 0.049
+   },
+   {
+    "cell": "earn_dlog_mean.prime",
+    "exposure_label": "published candidate-3-law outcomes at boundaries 2008 and 2010",
+    "family": "change_mean",
+    "metric": "abs_gap_log",
+    "plain_units": "mean two-year log change within \u00b10.047",
+    "reason": "outside the ruled surface (d781 (a))",
+    "tolerance": 0.047
+   },
+   {
+    "cell": "earn_dlog_sd.older",
+    "exposure_label": "published candidate-3-law outcomes at boundaries 2008 and 2010",
+    "family": "dispersion",
+    "metric": "log_ratio",
+    "plain_units": "within a factor of e^0.191 = 1.2105, that is within 21.0% above or 17.4% below",
+    "reason": "outside the ruled surface (d781 (a))",
+    "tolerance": 0.191
+   },
+   {
+    "cell": "earn_dlog_sd.prime",
+    "exposure_label": "published five-seed floor detail, no published candidate outcome",
+    "family": "dispersion",
+    "metric": "log_ratio",
+    "plain_units": "within a factor of e^0.181 = 1.1984, that is within 19.8% above or 16.6% below",
+    "reason": "outside the ruled surface (d781 (a))",
+    "tolerance": 0.181
+   },
+   {
+    "cell": "earn_mob_h1_diag",
+    "exposure_label": "published candidate-3-law outcomes at boundaries 2008 and 2010",
+    "family": "mobility",
+    "metric": "log_ratio",
+    "plain_units": "within a factor of e^0.041 = 1.0419, that is within 4.2% above or 4.0% below",
+    "reason": "outside the ruled surface (d781 (a))",
+    "tolerance": 0.041
+   },
+   {
+    "cell": "earn_mob_h2_diag",
+    "exposure_label": "published five-seed floor detail, no published candidate outcome",
+    "family": "mobility",
+    "metric": "log_ratio",
+    "plain_units": "within a factor of e^0.079 = 1.0822, that is within 8.2% above or 7.6% below",
+    "reason": "outside the ruled surface (d781 (a))",
+    "tolerance": 0.079
+   },
+   {
+    "cell": "earn_p10.older",
+    "exposure_label": "published five-seed floor detail, no published candidate outcome",
+    "family": "log_quantiles",
+    "metric": "log_ratio",
+    "plain_units": "within a factor of e^0.249 = 1.2827, that is within 28.3% above or 22.0% below",
+    "reason": "outside the ruled surface (d781 (a))",
+    "tolerance": 0.249
+   },
+   {
+    "cell": "earn_p10.prime",
+    "exposure_label": "published candidate-3-law outcomes at boundaries 2008 and 2010",
+    "family": "log_quantiles",
+    "metric": "log_ratio",
+    "plain_units": "within a factor of e^0.189 = 1.2080, that is within 20.8% above or 17.2% below",
+    "reason": "outside the ruled surface (d781 (a))",
+    "tolerance": 0.189
+   },
+   {
+    "cell": "earn_p50.older",
+    "exposure_label": "published five-seed floor detail, no published candidate outcome",
+    "family": "log_quantiles",
+    "metric": "log_ratio",
+    "plain_units": "within a factor of e^0.106 = 1.1118, that is within 11.2% above or 10.1% below",
+    "reason": "outside the rescoped surface (d1606 option C1)",
+    "tolerance": 0.106
+   },
+   {
+    "cell": "earn_p50.prime",
+    "exposure_label": "published five-seed floor detail, no published candidate outcome",
+    "family": "log_quantiles",
+    "metric": "log_ratio",
+    "plain_units": "within a factor of e^0.08 = 1.0833, that is within 8.3% above or 7.7% below",
+    "reason": "outside the rescoped surface (d1606 option C1)",
+    "tolerance": 0.08
+   }
+  ],
+  "ruled_surface": [
+   "earn_p50.older",
+   "earn_p50.prime",
+   "earn_p90.older",
+   "earn_p90.prime",
+   "earn_zero_rate.older",
+   "earn_zero_rate.prime"
+  ]
+ },
+ "threads": {
+  "MKL_NUM_THREADS": "1",
+  "NUMEXPR_NUM_THREADS": "1",
+  "OMP_NUM_THREADS": "1",
+  "OMP_WAIT_POLICY": "PASSIVE",
+  "OPENBLAS_NUM_THREADS": "1",
+  "POPULACE_FIT_N_JOBS": "4",
+  "VECLIB_MAXIMUM_THREADS": "1"
+ },
+ "wall_seconds": 82.3,
+ "workers": 4,
+ "worktree_clean": true
+}
