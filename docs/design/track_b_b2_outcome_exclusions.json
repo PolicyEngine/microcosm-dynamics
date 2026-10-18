@@ -1,0 +1,32 @@
+{
+ "added": "2026-10-18",
+ "q6_exclusions": [
+  {
+   "lines": null,
+   "path": "docs/design/track_b_attempt_ledger.md",
+   "scope": "whole_file"
+  },
+  {
+   "lines": null,
+   "path": "runs/track_b_b2_floor.json",
+   "scope": "whole_file"
+  },
+  {
+   "lines": null,
+   "path": "runs/track_b_b2_floor_v1_stopped.json",
+   "scope": "whole_file"
+  },
+  {
+   "lines": null,
+   "path": "runs/track_b_b2_score.attempt.jsonl",
+   "scope": "whole_file"
+  },
+  {
+   "lines": null,
+   "path": "runs/track_b_b2_score.json",
+   "scope": "whole_file"
+  }
+ ],
+ "reason": "B2's run record (PR #547) and the cumulative attempt ledger (PR #548) hold reference-year 2012 and 2014 floor values, truth moments and B2's candidate outcome (issue #42 comments 6252422772 and 6252752628). No exposure-inventory scan lists them, so this standing record excludes them from every blinded review root that scripts/track_b_b0_1_review_root.py builds.",
+ "schema": "track_b_b2_outcome_exclusions.v1"
+}
