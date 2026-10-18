@@ -1,0 +1,1248 @@
+{
+ "addendum_sha256": "8896e8a7c183de1e6f9d8123ae6d9968f0c9d90f915472aa434c6c72b3d4f11c",
+ "cells": {
+  "earn_autocorr_lag1": {
+   "a_c": 1.3616152574312241,
+   "design_replicates": 4000,
+   "design_undefined": 0,
+   "exposure_label": "published five-seed floor detail, no published candidate outcome",
+   "family": "autocorrelation",
+   "gap": -0.0016519225370194013,
+   "gated": false,
+   "household_replicates": 4000,
+   "household_undefined": 0,
+   "mc_error": 0.002287087912675291,
+   "metric": "abs_gap_corr",
+   "monte_carlo_rule": true,
+   "plain_units": "correlation within \u00b10.047",
+   "projected_mean": 0.7444618924128724,
+   "report_critical_value": 1.998340542520741,
+   "report_interval_95": [
+    -0.03492866243947736,
+    0.03162481736543856
+   ],
+   "se": 0.01665218674915243,
+   "se_boot": 0.011429554891291388,
+   "se_up": 0.010378378894460772,
+   "side_a": [
+    {
+     "gap": -0.01707063953506549,
+     "seed": 0,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": -0.009395898758282062,
+     "seed": 1,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.0062059426893908975,
+     "seed": 2,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": -0.008450610692947391,
+     "seed": 3,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.006877842736684903,
+     "seed": 4,
+     "valid": true,
+     "within_tolerance": true
+    }
+   ],
+   "tolerance": 0.047,
+   "truth": 0.7461138149498918,
+   "valid_full_support": true,
+   "within_tolerance": true
+  },
+  "earn_autocorr_lag2": {
+   "a_c": 0.40850233545979375,
+   "design_replicates": 4000,
+   "design_undefined": 0,
+   "exposure_label": "published candidate-3-law outcomes at boundaries 2008 and 2010",
+   "family": "autocorrelation",
+   "gap": 0.09478171198215557,
+   "gated": false,
+   "household_replicates": 4000,
+   "household_undefined": 0,
+   "mc_error": 0.0031579142624919474,
+   "metric": "abs_gap_corr",
+   "monte_carlo_rule": true,
+   "plain_units": "correlation within \u00b10.083",
+   "projected_mean": 0.7502941267206605,
+   "report_critical_value": 1.998340542520741,
+   "report_interval_95": [
+    0.044984406282120776,
+    0.14457901768219036
+   ],
+   "se": 0.024919329133571807,
+   "se_boot": 0.022564534210679,
+   "se_up": 0.01654444857383964,
+   "side_a": [
+    {
+     "gap": 0.07415302347731423,
+     "seed": 0,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.1114803326230348,
+     "seed": 1,
+     "valid": true,
+     "within_tolerance": false
+    },
+    {
+     "gap": 0.11931170372392919,
+     "seed": 2,
+     "valid": true,
+     "within_tolerance": false
+    },
+    {
+     "gap": 0.0994310783550989,
+     "seed": 3,
+     "valid": true,
+     "within_tolerance": false
+    },
+    {
+     "gap": 0.0972683550440564,
+     "seed": 4,
+     "valid": true,
+     "within_tolerance": false
+    }
+   ],
+   "tolerance": 0.083,
+   "truth": 0.655512414738505,
+   "valid_full_support": true,
+   "within_tolerance": false
+  },
+  "earn_dlog_mean.older": {
+   "a_c": 0.9147923426804911,
+   "design_replicates": 4000,
+   "design_undefined": 0,
+   "exposure_label": "published five-seed floor detail, no published candidate outcome",
+   "family": "change_mean",
+   "gap": 0.07388813384566323,
+   "gated": false,
+   "household_replicates": 4000,
+   "household_undefined": 0,
+   "mc_error": 0.0021380190398121238,
+   "metric": "abs_gap_log",
+   "monte_carlo_rule": true,
+   "plain_units": "mean two-year log change within \u00b10.049",
+   "projected_mean": 0.08451080373519301,
+   "report_critical_value": 1.998340542520741,
+   "report_interval_95": [
+    0.04600508758871415,
+    0.10177118010261231
+   ],
+   "se": 0.013953100416897379,
+   "se_boot": 0.009271820077027475,
+   "se_up": 0.010901799300800414,
+   "side_a": [
+    {
+     "gap": 0.059658760944491476,
+     "seed": 0,
+     "valid": true,
+     "within_tolerance": false
+    },
+    {
+     "gap": 0.0714192317688695,
+     "seed": 1,
+     "valid": true,
+     "within_tolerance": false
+    },
+    {
+     "gap": 0.05747786773139362,
+     "seed": 2,
+     "valid": true,
+     "within_tolerance": false
+    },
+    {
+     "gap": 0.07841453951165653,
+     "seed": 3,
+     "valid": true,
+     "within_tolerance": false
+    },
+    {
+     "gap": 0.07849584363683951,
+     "seed": 4,
+     "valid": true,
+     "within_tolerance": false
+    }
+   ],
+   "tolerance": 0.049,
+   "truth": 0.010622669889529777,
+   "valid_full_support": true,
+   "within_tolerance": false
+  },
+  "earn_dlog_mean.prime": {
+   "a_c": 0.5080075957791738,
+   "design_replicates": 4000,
+   "design_undefined": 0,
+   "exposure_label": "published candidate-3-law outcomes at boundaries 2008 and 2010",
+   "family": "change_mean",
+   "gap": 0.0076037646847632034,
+   "gated": false,
+   "household_replicates": 4000,
+   "household_undefined": 0,
+   "mc_error": 0.0014604293664799324,
+   "metric": "abs_gap_log",
+   "monte_carlo_rule": true,
+   "plain_units": "mean two-year log change within \u00b10.047",
+   "projected_mean": 0.14116511166497486,
+   "report_critical_value": 1.998340542520741,
+   "report_interval_95": [
+    -0.016476749198365635,
+    0.03168427856789204
+   ],
+   "se": 0.012050255384777045,
+   "se_boot": 0.009599406860178386,
+   "se_up": 0.010219948207429209,
+   "side_a": [
+    {
+     "gap": 0.009363198629603026,
+     "seed": 0,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.006817177754289694,
+     "seed": 1,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.014858750825605255,
+     "seed": 2,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": -0.014258722240977878,
+     "seed": 3,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.0002583467693177688,
+     "seed": 4,
+     "valid": true,
+     "within_tolerance": true
+    }
+   ],
+   "tolerance": 0.047,
+   "truth": 0.13356134698021166,
+   "valid_full_support": true,
+   "within_tolerance": true
+  },
+  "earn_dlog_sd.older": {
+   "a_c": 1.2394277689728823,
+   "design_replicates": 4000,
+   "design_undefined": 0,
+   "exposure_label": "published candidate-3-law outcomes at boundaries 2008 and 2010",
+   "family": "dispersion",
+   "gap": 0.056988867273299874,
+   "gated": false,
+   "household_replicates": 4000,
+   "household_undefined": 0,
+   "mc_error": 0.005544387557379475,
+   "metric": "log_ratio",
+   "monte_carlo_rule": true,
+   "plain_units": "within a factor of e^0.191 = 1.2105, that is within 21.0% above or 17.4% below",
+   "projected_mean": 0.7121289812381338,
+   "report_critical_value": 1.998340542520741,
+   "report_interval_95": [
+    -0.06291894400376122,
+    0.17689667855036098
+   ],
+   "se": 0.060003692426620805,
+   "se_boot": 0.0426747568244009,
+   "se_up": 0.03788916053907112,
+   "side_a": [
+    {
+     "gap": 0.0410319404535859,
+     "seed": 0,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.07919794967598337,
+     "seed": 1,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.05883862868342429,
+     "seed": 2,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.07689661828345672,
+     "seed": 3,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.028531578156946926,
+     "seed": 4,
+     "valid": true,
+     "within_tolerance": true
+    }
+   ],
+   "tolerance": 0.191,
+   "truth": 0.6726803010258282,
+   "valid_full_support": true,
+   "within_tolerance": true
+  },
+  "earn_dlog_sd.prime": {
+   "a_c": 3.0867975281513953,
+   "design_replicates": 4000,
+   "design_undefined": 0,
+   "exposure_label": "published five-seed floor detail, no published candidate outcome",
+   "family": "dispersion",
+   "gap": -0.027648002067411328,
+   "gated": false,
+   "household_replicates": 4000,
+   "household_undefined": 0,
+   "mc_error": 0.008882524269934801,
+   "metric": "log_ratio",
+   "monte_carlo_rule": true,
+   "plain_units": "within a factor of e^0.181 = 1.1984, that is within 19.8% above or 16.6% below",
+   "projected_mean": 0.7284482668097512,
+   "report_critical_value": 1.998340542520741,
+   "report_interval_95": [
+    -0.16051094408032968,
+    0.10521493994550701
+   ],
+   "se": 0.06648663687987971,
+   "se_boot": 0.030187954630694742,
+   "se_up": 0.033716891664138215,
+   "side_a": [
+    {
+     "gap": 0.051945876362196754,
+     "seed": 0,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": -0.043546311415856506,
+     "seed": 1,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": -0.05866716148914491,
+     "seed": 2,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": -0.01991900991759262,
+     "seed": 3,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": -0.032518290024016655,
+     "seed": 4,
+     "valid": true,
+     "within_tolerance": true
+    }
+   ],
+   "tolerance": 0.181,
+   "truth": 0.7488694070295051,
+   "valid_full_support": true,
+   "within_tolerance": true
+  },
+  "earn_mob_h1_diag": {
+   "a_c": 0.8698016578534462,
+   "design_replicates": 4000,
+   "design_undefined": 0,
+   "exposure_label": "published candidate-3-law outcomes at boundaries 2008 and 2010",
+   "family": "mobility",
+   "gap": -0.05802495225784035,
+   "gated": false,
+   "household_replicates": 4000,
+   "household_undefined": 0,
+   "mc_error": 0.0021869730050280505,
+   "metric": "log_ratio",
+   "monte_carlo_rule": true,
+   "plain_units": "within a factor of e^0.041 = 1.0419, that is within 4.2% above or 4.0% below",
+   "projected_mean": 0.5754271355632097,
+   "report_critical_value": 1.998340542520741,
+   "report_interval_95": [
+    -0.08746817293036052,
+    -0.028581731585320187
+   ],
+   "se": 0.014733835422955479,
+   "se_boot": 0.011527405119653646,
+   "se_up": 0.009839168665856232,
+   "side_a": [
+    {
+     "gap": -0.06653989615136872,
+     "seed": 0,
+     "valid": true,
+     "within_tolerance": false
+    },
+    {
+     "gap": -0.05220890023008693,
+     "seed": 1,
+     "valid": true,
+     "within_tolerance": false
+    },
+    {
+     "gap": -0.05677016957376235,
+     "seed": 2,
+     "valid": true,
+     "within_tolerance": false
+    },
+    {
+     "gap": -0.04198920244555039,
+     "seed": 3,
+     "valid": true,
+     "within_tolerance": false
+    },
+    {
+     "gap": -0.06565905518988485,
+     "seed": 4,
+     "valid": true,
+     "within_tolerance": false
+    }
+   ],
+   "tolerance": 0.041,
+   "truth": 0.609803980291263,
+   "valid_full_support": true,
+   "within_tolerance": false
+  },
+  "earn_mob_h2_diag": {
+   "a_c": 0.663710603084252,
+   "design_replicates": 4000,
+   "design_undefined": 0,
+   "exposure_label": "published five-seed floor detail, no published candidate outcome",
+   "family": "mobility",
+   "gap": 0.04592216977691722,
+   "gated": false,
+   "household_replicates": 4000,
+   "household_undefined": 0,
+   "mc_error": 0.003675398161793244,
+   "metric": "log_ratio",
+   "monte_carlo_rule": true,
+   "plain_units": "within a factor of e^0.079 = 1.0822, that is within 8.2% above or 7.6% below",
+   "projected_mean": 0.5374366502774931,
+   "report_critical_value": 1.998340542520741,
+   "report_interval_95": [
+    0.00027484360613703324,
+    0.0915694959476974
+   ],
+   "se": 0.02284261626058983,
+   "se_boot": 0.0186534221529323,
+   "se_up": 0.016183750805816147,
+   "side_a": [
+    {
+     "gap": 0.03580069210082585,
+     "seed": 0,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.06037584769766597,
+     "seed": 1,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.04692800444769143,
+     "seed": 2,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.04989663338768771,
+     "seed": 3,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.05448146126140735,
+     "seed": 4,
+     "valid": true,
+     "within_tolerance": true
+    }
+   ],
+   "tolerance": 0.079,
+   "truth": 0.5133145028618191,
+   "valid_full_support": true,
+   "within_tolerance": true
+  },
+  "earn_p10.older": {
+   "a_c": 1.279882738796901,
+   "design_replicates": 4000,
+   "design_undefined": 0,
+   "exposure_label": "published five-seed floor detail, no published candidate outcome",
+   "family": "log_quantiles",
+   "gap": 0.043686788250563394,
+   "gated": false,
+   "household_replicates": 4000,
+   "household_undefined": 0,
+   "mc_error": 0.012571126046671335,
+   "metric": "log_ratio",
+   "monte_carlo_rule": true,
+   "plain_units": "within a factor of e^0.249 = 1.2827, that is within 28.3% above or 22.0% below",
+   "projected_mean": 10446.551053888083,
+   "report_critical_value": 1.998340542520741,
+   "report_interval_95": [
+    -0.10742302774996072,
+    0.19479660425108752
+   ],
+   "se": 0.07561765013780464,
+   "se_boot": 0.0453384941053814,
+   "se_up": 0.05349346859630758,
+   "side_a": [
+    {
+     "gap": 0.09080293426522053,
+     "seed": 0,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.110335326206982,
+     "seed": 1,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": -0.06249335092077413,
+     "seed": 2,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.027331608850076964,
+     "seed": 3,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.07785820942981558,
+     "seed": 4,
+     "valid": true,
+     "within_tolerance": true
+    }
+   ],
+   "tolerance": 0.249,
+   "truth": 10000.0,
+   "valid_full_support": true,
+   "within_tolerance": true
+  },
+  "earn_p10.prime": {
+   "a_c": 2.2180479032320384,
+   "design_replicates": 4000,
+   "design_undefined": 0,
+   "exposure_label": "published candidate-3-law outcomes at boundaries 2008 and 2010",
+   "family": "log_quantiles",
+   "gap": 0.010214864459575049,
+   "gated": false,
+   "household_replicates": 4000,
+   "household_undefined": 0,
+   "mc_error": 0.009490838291943976,
+   "metric": "log_ratio",
+   "monte_carlo_rule": true,
+   "plain_units": "within a factor of e^0.189 = 1.2080, that is within 20.8% above or 17.2% below",
+   "projected_mean": 10102.67214284492,
+   "report_critical_value": 1.998340542520741,
+   "report_interval_95": [
+    -0.13812551343723622,
+    0.15855524235638635
+   ],
+   "se": 0.07423178119065342,
+   "se_boot": 0.05086151153314989,
+   "se_up": 0.036304746881903334,
+   "side_a": [
+    {
+     "gap": 0.03506828538311633,
+     "seed": 0,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": -0.00236185446763238,
+     "seed": 1,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.014811710022404348,
+     "seed": 2,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.058000625540864284,
+     "seed": 3,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": -0.01865970052861093,
+     "seed": 4,
+     "valid": true,
+     "within_tolerance": true
+    }
+   ],
+   "tolerance": 0.189,
+   "truth": 10000.0,
+   "valid_full_support": true,
+   "within_tolerance": true
+  },
+  "earn_p50.older": {
+   "a_c": 0.5047785979656627,
+   "design_replicates": 4000,
+   "design_undefined": 0,
+   "exposure_label": "published five-seed floor detail, no published candidate outcome",
+   "family": "log_quantiles",
+   "gap": 0.10783836491082262,
+   "gated": false,
+   "household_replicates": 4000,
+   "household_undefined": 0,
+   "mc_error": 0.001690406017783422,
+   "metric": "log_ratio",
+   "monte_carlo_rule": true,
+   "plain_units": "within a factor of e^0.106 = 1.1118, that is within 11.2% above or 10.1% below",
+   "projected_mean": 49010.17839219749,
+   "report_critical_value": 1.998340542520741,
+   "report_interval_95": [
+    0.06367717572676995,
+    0.15199955409487528
+   ],
+   "se": 0.02209893070995146,
+   "se_boot": 0.01441029278837171,
+   "se_up": 0.02358172313891514,
+   "side_a": [
+    {
+     "gap": 0.08532706745217508,
+     "seed": 0,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.11725227256513744,
+     "seed": 1,
+     "valid": true,
+     "within_tolerance": false
+    },
+    {
+     "gap": 0.11926517584682868,
+     "seed": 2,
+     "valid": true,
+     "within_tolerance": false
+    },
+    {
+     "gap": 0.14257651294525106,
+     "seed": 3,
+     "valid": true,
+     "within_tolerance": false
+    },
+    {
+     "gap": 0.0869194883530168,
+     "seed": 4,
+     "valid": true,
+     "within_tolerance": true
+    }
+   ],
+   "tolerance": 0.106,
+   "truth": 44000.0,
+   "valid_full_support": true,
+   "within_tolerance": false
+  },
+  "earn_p50.prime": {
+   "a_c": 0.3168420240903672,
+   "design_replicates": 4000,
+   "design_undefined": 0,
+   "exposure_label": "published five-seed floor detail, no published candidate outcome",
+   "family": "log_quantiles",
+   "gap": 0.06354617299382558,
+   "gated": false,
+   "household_replicates": 4000,
+   "household_undefined": 0,
+   "mc_error": 0.0024341835452285315,
+   "metric": "log_ratio",
+   "monte_carlo_rule": true,
+   "plain_units": "within a factor of e^0.08 = 1.0833, that is within 8.3% above or 7.7% below",
+   "projected_mean": 42624.34748035601,
+   "report_critical_value": 1.998340542520741,
+   "report_interval_95": [
+    0.026485868462201696,
+    0.10060647752544946
+   ],
+   "se": 0.018545540033369577,
+   "se_boot": 0.015476004692555244,
+   "se_up": 0.01815481984891242,
+   "side_a": [
+    {
+     "gap": 0.05285310475801458,
+     "seed": 0,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.062320364301371126,
+     "seed": 1,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.055855799553413896,
+     "seed": 2,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.025559421743704878,
+     "seed": 3,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.06161434381087472,
+     "seed": 4,
+     "valid": true,
+     "within_tolerance": true
+    }
+   ],
+   "tolerance": 0.08,
+   "truth": 40000.0,
+   "valid_full_support": true,
+   "within_tolerance": true
+  },
+  "earn_p90.older": {
+   "a_c": 0.397904212355652,
+   "bound": 0.18777073537226857,
+   "design_replicates": 4000,
+   "design_undefined": 0,
+   "exposure_label": "published five-seed floor detail, no published candidate outcome",
+   "family": "log_quantiles",
+   "gap": 0.12125004615725136,
+   "gated": true,
+   "household_replicates": 4000,
+   "household_undefined": 0,
+   "mc_error": 0.002656381026490319,
+   "metric": "log_ratio",
+   "monte_carlo_rule": true,
+   "plain_units": "within a factor of e^0.14 = 1.1503, that is within 15.0% above or 13.1% below",
+   "projected_mean": 130905.81599256687,
+   "se": 0.02586903001675854,
+   "se_boot": 0.017576319172495376,
+   "se_up": 0.03009058554247362,
+   "side_a": [
+    {
+     "gap": 0.0976043990172602,
+     "seed": 0,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.10233023495654299,
+     "seed": 1,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.09483777903477462,
+     "seed": 2,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.1520408015184331,
+     "seed": 3,
+     "valid": true,
+     "within_tolerance": false
+    },
+    {
+     "gap": 0.10641250451775223,
+     "seed": 4,
+     "valid": true,
+     "within_tolerance": true
+    }
+   ],
+   "tolerance": 0.14,
+   "truth": 115958.0,
+   "valid_full_support": true,
+   "within_tolerance": true
+  },
+  "earn_p90.prime": {
+   "a_c": 0.29711181492055316,
+   "bound": 0.090897417799538,
+   "design_replicates": 4000,
+   "design_undefined": 0,
+   "exposure_label": "published five-seed floor detail, no published candidate outcome",
+   "family": "log_quantiles",
+   "gap": 0.0371073916992709,
+   "gated": true,
+   "household_replicates": 4000,
+   "household_undefined": 0,
+   "mc_error": 0.0031620320602755102,
+   "metric": "log_ratio",
+   "monte_carlo_rule": true,
+   "plain_units": "within a factor of e^0.106 = 1.1118, that is within 11.2% above or 10.1% below",
+   "projected_mean": 103780.44664390456,
+   "se": 0.02091824086927682,
+   "se_boot": 0.01748347177810968,
+   "se_up": 0.021069979288444063,
+   "side_a": [
+    {
+     "gap": 0.043897700007183044,
+     "seed": 0,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.02084862818468146,
+     "seed": 1,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.054589574557746726,
+     "seed": 2,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.040741841120822825,
+     "seed": 3,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.02248291700398533,
+     "seed": 4,
+     "valid": true,
+     "within_tolerance": true
+    }
+   ],
+   "tolerance": 0.106,
+   "truth": 100000.0,
+   "valid_full_support": true,
+   "within_tolerance": true
+  },
+  "earn_zero_rate.older": {
+   "a_c": 0.2926043265392094,
+   "bound": 0.14886626552223658,
+   "design_replicates": 4000,
+   "design_undefined": 0,
+   "exposure_label": "published candidate-3-law outcomes at boundaries 2008 and 2010",
+   "family": "zero_rate",
+   "gap": 0.07735633790615987,
+   "gated": true,
+   "household_replicates": 4000,
+   "household_undefined": 0,
+   "mc_error": 0.00317539770215093,
+   "metric": "log_ratio",
+   "monte_carlo_rule": true,
+   "plain_units": "within a factor of e^0.146 = 1.1572, that is within 15.7% above or 13.6% below",
+   "projected_mean": 0.26563667921432416,
+   "se": 0.02780927987707773,
+   "se_boot": 0.022456893338548434,
+   "se_up": 0.03032293778690945,
+   "side_a": [
+    {
+     "gap": 0.12386191268353111,
+     "seed": 0,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.08068999424021775,
+     "seed": 1,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.06986814466659187,
+     "seed": 2,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.06990177469489535,
+     "seed": 3,
+     "valid": true,
+     "within_tolerance": true
+    },
+    {
+     "gap": 0.04992002662279279,
+     "seed": 4,
+     "valid": true,
+     "within_tolerance": true
+    }
+   ],
+   "tolerance": 0.146,
+   "truth": 0.2458626802263209,
+   "valid_full_support": true,
+   "within_tolerance": true
+  },
+  "earn_zero_rate.prime": {
+   "a_c": 0.381180014473609,
+   "bound": 0.40992764286225103,
+   "design_replicates": 4000,
+   "design_undefined": 0,
+   "exposure_label": "published five-seed floor detail, no published candidate outcome",
+   "family": "zero_rate",
+   "gap": 0.30336810241796364,
+   "gated": true,
+   "household_replicates": 4000,
+   "household_undefined": 0,
+   "mc_error": 0.0056717680302698125,
+   "metric": "log_ratio",
+   "monte_carlo_rule": true,
+   "plain_units": "within a factor of e^0.202 = 1.2238, that is within 22.4% above or 18.3% below",
+   "projected_mean": 0.16993813294717752,
+   "se": 0.0414396180023787,
+   "se_boot": 0.03244333455479377,
+   "se_up": 0.04175789764357915,
+   "side_a": [
+    {
+     "gap": 0.3083409905562557,
+     "seed": 0,
+     "valid": true,
+     "within_tolerance": false
+    },
+    {
+     "gap": 0.31454848030631777,
+     "seed": 1,
+     "valid": true,
+     "within_tolerance": false
+    },
+    {
+     "gap": 0.32577972510617315,
+     "seed": 2,
+     "valid": true,
+     "within_tolerance": false
+    },
+    {
+     "gap": 0.29107995595303787,
+     "seed": 3,
+     "valid": true,
+     "within_tolerance": false
+    },
+    {
+     "gap": 0.3842148143920364,
+     "seed": 4,
+     "valid": true,
+     "within_tolerance": false
+    }
+   ],
+   "tolerance": 0.202,
+   "truth": 0.1254699571374737,
+   "valid_full_support": true,
+   "within_tolerance": false
+  }
+ },
+ "code_sha256": {
+  "scripts/select_m6_qstar_train_only.py": "624aeedda2280c420bf0be753fb44e9137115fd3db7cc746c686d46707ffdf8e",
+  "scripts/track_b_b0_1_addendum_power.py": "d7244fbcd034929789c789ecf8cb5034ba10d67c5072776018d6653913a59e53",
+  "scripts/track_b_b0_1_planning_values.py": "62bd282c4a2968e388e190806d8e0ad8612fcbcbd9564f5485d3e49752ec7c27",
+  "scripts/track_b_b0_1_ruled_power.py": "8cc64235f5157c13e99e14bd892317286a2e7f22a69dfb7443c7610c53f60af4",
+  "scripts/track_b_b2_floor.py": "84b52fc7697e75c72e91ba5254e617e70c6be6e33508c50f405d3b9192120c7c",
+  "scripts/track_b_b2_score.py": "fce4e580c5c1cdbc39107c4ae61d1f664684cf266fe3d003196b78efdac16526",
+  "src/populace_dynamics/harness/m6_cells.py": "faff61537aacccdf9b9ec335167e7d5f4178bcb2a73e0d6639141dea2f4af282",
+  "src/populace_dynamics/track_b/b2.py": "bdb1676d9a4a15c3ebc83d5f2c5e4643ed214012725373949fcfbca51aa587dc"
+ },
+ "config": {
+  "b_design": 4000,
+  "design_stream": "[20261002, b, 4]",
+  "draw_seeds": [
+   6200,
+   6201,
+   6202,
+   6203,
+   6204,
+   6205,
+   6206,
+   6207,
+   6208,
+   6209,
+   6210,
+   6211,
+   6212,
+   6213,
+   6214,
+   6215,
+   6216,
+   6217,
+   6218,
+   6219
+  ],
+  "fit_seed": 5200,
+  "gate_seeds": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "root_seed": 20261002
+ },
+ "design_replicate_failures": [],
+ "expected_commit": "89c0ed9d6fe643469ada338cd5a2ae17059d194e",
+ "floor_artifact": {
+  "commit": "89c0ed9d6fe643469ada338cd5a2ae17059d194e",
+  "path": "runs/track_b_b2_floor.json",
+  "sha256": "65c5fa52d03ce20497c38faa2c9dd78f25845efefef88d9790cbbffe59ca9ccd"
+ },
+ "gate": {
+  "cells_outside_tolerance": [
+   "earn_zero_rate.prime"
+  ],
+  "critical_value": 2.5714411855382133,
+  "design_degrees_of_freedom": 63,
+  "gated_cells": [
+   "earn_p90.older",
+   "earn_p90.prime",
+   "earn_zero_rate.older",
+   "earn_zero_rate.prime"
+  ],
+  "invalid_cells": [],
+  "m": 4,
+  "n_seeds_passed": 0,
+  "outcome": "FAIL",
+  "per_cell": {
+   "earn_p90.older": {
+    "bound": 0.18777073537226857,
+    "bound_within_tolerance": false,
+    "design_undefined_share_ok": true,
+    "household_undefined_share_ok": true,
+    "mc_error_defined": true,
+    "monte_carlo_rule": true,
+    "passes": false,
+    "se_defined": true
+   },
+   "earn_p90.prime": {
+    "bound": 0.090897417799538,
+    "bound_within_tolerance": true,
+    "design_undefined_share_ok": true,
+    "household_undefined_share_ok": true,
+    "mc_error_defined": true,
+    "monte_carlo_rule": true,
+    "passes": true,
+    "se_defined": true
+   },
+   "earn_zero_rate.older": {
+    "bound": 0.14886626552223658,
+    "bound_within_tolerance": false,
+    "design_undefined_share_ok": true,
+    "household_undefined_share_ok": true,
+    "mc_error_defined": true,
+    "monte_carlo_rule": true,
+    "passes": false,
+    "se_defined": true
+   },
+   "earn_zero_rate.prime": {
+    "bound": 0.40992764286225103,
+    "bound_within_tolerance": false,
+    "design_undefined_share_ok": true,
+    "household_undefined_share_ok": true,
+    "mc_error_defined": true,
+    "monte_carlo_rule": true,
+    "passes": false,
+    "se_defined": true
+   }
+  },
+  "seed_passes": {
+   "0": false,
+   "1": false,
+   "2": false,
+   "3": false,
+   "4": false
+  }
+ },
+ "law": {
+  "anchor_forward_pairs": 113823,
+  "boundary": 2010,
+  "candidate_id": "m6_candidate3_engine_v1",
+  "candidate_spec_sha256": "c9be28a28d6fcc3911723872386906af559f6d0e0d5c89a87f741a5b2c3eacd6",
+  "draw_seeds": [
+   6200,
+   6201,
+   6202,
+   6203,
+   6204,
+   6205,
+   6206,
+   6207,
+   6208,
+   6209,
+   6210,
+   6211,
+   6212,
+   6213,
+   6214,
+   6215,
+   6216,
+   6217,
+   6218,
+   6219
+  ],
+  "fit_input_max_period": 2010,
+  "fit_input_rows": 321500,
+  "fit_seed": 5200,
+  "wage_vintage_label": "pe_us_1_752_2_nawi_realized_2010_loglinear_2001_2010"
+ },
+ "nawi": {
+  "mapping_sha256": "26b6a0498ccff6f5a23bf226ec6fe47347dca853b9844bb2da1c8a831579582c",
+  "maximum_key_year": 2010,
+  "policyengine_us_version": "1.752.2",
+  "prefix_bytes": 1588,
+  "prefix_sha256": "e272a7bc63a1e23fa4ca4c6abdd7bc35ef0e5fa56943e49b215a262c2e8440d7",
+  "wage_vintage": "policyengine-us 1.752.2 NAWI realized through 2010, with the fitter's log-linear projection over 2001-2010 after it (element 1)",
+  "wage_vintage_label": "pe_us_1_752_2_nawi_realized_2010_loglinear_2001_2010"
+ },
+ "outcome": "FAIL",
+ "planning_values_sha256": "f8a29eee25d721d30422c936d3e19fff60a93f817e70b76e9cb74c866a67d897",
+ "psid_files_opened_sha256": {
+  "family/1969/FAM1969.sps": "94a07c16e393cae68538d715d6a722a3c0de6e02dc8c9e56c5e658725db622c2",
+  "family/1969/FAM1969.txt": "f564d78850ce6a5e262389df9dc20fae52a3e63f5ae6b141bba787dd04c72fdd",
+  "family/1970/FAM1970.sps": "0212c4fd983a19b9c1cdd71feb4d92beed9d3906f807b485ef209ebd9f6d75f0",
+  "family/1970/FAM1970.txt": "8d28224213dc9d2dd31e1ac70ee9775ff257350926c0f595782de95f5ad4d84c",
+  "family/1971/FAM1971.sps": "8a6ccfc9ba6110dabe8147b528c2e0b2ada2d701889ea9bb03aa6c9bf0d479ae",
+  "family/1971/FAM1971.txt": "97360718a1f76e910ff2f2941dc0c65d6022016a570d53435b8ede97cef0b73c",
+  "family/1972/FAM1972.sps": "04b8594dda71404ff2e27734ff20ba8c7f9b982d2a4c834e61d59958000a5b9e",
+  "family/1972/FAM1972.txt": "5b1148272096ea8b50351ae4a98c1792be666b9ab140b344ee72434abd867055",
+  "family/1973/FAM1973.sps": "10f4b5e346529c6f5f4705842dfaa25186d514725fac6cc3a6b50dfabe3c33c4",
+  "family/1973/FAM1973.txt": "ae656b7f4b689f82259bec0e392e425df61eb8ab446b1bcb4187e25de568d011",
+  "family/1974/FAM1974.sps": "e043119eca809a3a32cbd086b5a17db114da72305446cb54ffa6e134e5ca0082",
+  "family/1974/FAM1974.txt": "579d98750c34753bfd3ee16149bb1124dd8cbd531b97c65a41e9fe0ae7e7f6cf",
+  "family/1975/FAM1975.sps": "a120da243300e5684f946f98acc25414f62579ec8c9c675267bbcce48c88f6e3",
+  "family/1975/FAM1975.txt": "26f6c07de11b9cbfc1ca0ff2942851b73f9e2f89df1abd0b77f2cda5fc097776",
+  "family/1976/FAM1976.sps": "f1884fe637284802ee2c4d0d147ed5f42a048e5f9d30a9c8c05bc53142d61771",
+  "family/1976/FAM1976.txt": "b35387e2b04bb9515f5edc1a31cc4b55a5bf018f9aa102ead4d7399e5d8b0824",
+  "family/1977/FAM1977.sps": "2367ae4b09af04ae0b69ef4cd65a1b47303f7526e24a16483ff1edd21fabbe53",
+  "family/1977/FAM1977.txt": "6314e1ae1784a6d5267ec863c96432c11a8b22a45a09170d7c7322ff0faaa1d8",
+  "family/1978/FAM1978.sps": "2a0eaa0fab5a17dc02a3c344b65599d3169d0a95bab1a2d6b9129454c4886239",
+  "family/1978/FAM1978.txt": "39764f180bf8431e7947027ef656c7910e832c01facfb86c8534735bdf42e12d",
+  "family/1979/FAM1979.sps": "3c1041d482cde534562f251f7cf6a9a7369980fdf5e4b691fa7413c5fa7e58ed",
+  "family/1979/FAM1979.txt": "6666f099d276fe353180b0e1d3881e06be70f656bda87d4f05a04ef7ed80e529",
+  "family/1980/FAM1980.sps": "acba02dc6d341d2cc4a8cd0a8b1365edf9f1d2c90dba32b4ddc83667b6750d67",
+  "family/1980/FAM1980.txt": "a1e28e6e689cbe990ae0cf9d4bbc268c75c5a30a21e0ff7297a970f69ac8a054",
+  "family/1981/FAM1981.sps": "a914dd7d130fca11745d2f099f5181d3e347d4a1206706a4524982f1bc5d4509",
+  "family/1981/FAM1981.txt": "b38c3093711aaa9e74875a610d874f155be6ed4b3a2bf67badc740a7373a149e",
+  "family/1982/FAM1982.sps": "e99097b4fad8dbd1fc99740ee6632db2cfb678dd3dbd7142f62f50bb4b1ff05a",
+  "family/1982/FAM1982.txt": "dc3510d641a9b878528977bdaa1173c46e9cb89db2e0003575213db80cc6476b",
+  "family/1983/FAM1983.sps": "685e7c076eb68a79a5a7c5e4f6a6bbe94fa7769ba5c5883775978b7b2ece0f3e",
+  "family/1983/FAM1983.txt": "acf81d4911373984974e02fce4707bb4779c72f00e30d01fbc7c16d6cc68a140",
+  "family/1984/FAM1984.sps": "ad90da0506c5c556ef8b527e1d6c75a057b30bd05ba5e09588df514053630368",
+  "family/1984/FAM1984.txt": "bc92bb4d845241db96864b038476a6524ae5f43311db708972dd8bd8084bb9ef",
+  "family/1985/FAM1985.sps": "07b156f52c91dbcc66944b983f601553d9ddb94bb343248434d55e3d01eb7c2f",
+  "family/1985/FAM1985.txt": "db0daa1860e69fce5c66567a5d64b0bd07be3d31e0c70046bc7e474d22119f51",
+  "family/1986/FAM1986.sps": "a8d57b14f4efc36170cc2577174ab336b026a01e61f0639f8e3b8d1f82d930da",
+  "family/1986/FAM1986.txt": "f78ba17a5e50df3860b65e957777ad778bd0a49308b1ab684ad7ca9893a8d3c8",
+  "family/1987/FAM1987.sps": "3f1816e8bd169ba55ddb2c42cc5488d00adb8913f17687d7885cec8fe5f812bd",
+  "family/1987/FAM1987.txt": "b0512acd98ef280878271840229af34401f30702e01d8d646191f049e4bdcba0",
+  "family/1988/FAM1988.sps": "a2971802f1e81107e27cf7c426986f387db8bed9481026a4cf876bcd9bad6f69",
+  "family/1988/FAM1988.txt": "e30bd0ead4bba2238108a51eb2e24eee935a4a38e0d4257efdd1cff1bd23389c",
+  "family/1989/FAM1989.sps": "bf034bb3e45dc8ff5ec6a25c34d81f7888e922686e66362f2fa57bfd7c452058",
+  "family/1989/FAM1989.txt": "524d0627d471a66dcfa73ace35389e8117d426d56d6c7804df742e91ab7be728",
+  "family/1990/FAM1990.sps": "8eb30ab1a766c3b60e0e84aab24f197992c2cd0947c33acfb6d34684fc28fe67",
+  "family/1990/FAM1990.txt": "318fc47527ec48f8ebc8bc7114649a5a85b978e591a964fd46a8735935c0dc95",
+  "family/1991/FAM1991.sps": "dec4e504682dc08014a82307e3dd78d2833cc0f16ae8a3eaee1693f2fdf11e32",
+  "family/1991/FAM1991.txt": "01e39177b72be26da8eeb62d193ac0c5e47265a530a8a484dc271687e45fd3cb",
+  "family/1992/FAM1992.sps": "0c512da1ad8bc7ffb764b07376edf5200a5a166287ca4c4070a4b371010c9bb5",
+  "family/1992/FAM1992.txt": "d392f84b96b5f76bff8cccc0dde3defa8fc02a1646d3fcf607e0f5e91d3698b7",
+  "family/1993/FAM1993.sps": "acf13fda9d02d5a2cfdcf4a180a3bffbb4dcd2a64770b6312d0933cf7b111a08",
+  "family/1993/FAM1993.txt": "76ac2c830d9912cba11c3187a6c1c47612142894592f955ac1f03aabb8e3153e",
+  "family/1994/FAM1994ER.sps": "c5ae483c602e0cb1ce5cb280c4704d9ee49bd09ba5fd2ff1747c571abd693c43",
+  "family/1994/FAM1994ER.txt": "326dfb30ed4a7193c9aa41527c646ec9e58e44165175f70db32b31d7ee94eae3",
+  "family/1995/FAM1995ER.sps": "5487bb3e0f782124d0b872ab43d09ee424c15b801868605121e3719483dce3a1",
+  "family/1995/FAM1995ER.txt": "c24d9982413259fce6bf386ff84195b5deb77ebb0e834705cdffe8987cb6a0db",
+  "family/1996/FAM1996ER.sps": "9aa5ad480b2f80b300af58d457c15e5f8c2c027dcb1a78ed1aecc9821c665067",
+  "family/1996/FAM1996ER.txt": "8b607a5f0f3aeaa706c5036c0240e46c684d083c66da31a38b2c835e3adfdbb3",
+  "family/1997/FAM1997ER.sps": "a40333ad1795c7f19d194797137e340732b093d4a4c0108589dd1512b66f4b99",
+  "family/1997/FAM1997ER.txt": "1fb8b8bee3fdd1a2e8f6637b6c3e434019d8dca5eacb94478e0419d5fbcfc8e9",
+  "family/1999/FAM1999ER.sps": "7afad10e0da6969cd434a588f7d336923451d7a2fa8a71959c6edf376b023a9b",
+  "family/1999/FAM1999ER.txt": "92d7bef0eb5794cccb9137a4fe177dadfb2ba92709628b5cbc4004f8e7d786a0",
+  "family/2001/FAM2001ER.sps": "c6dc0e81131ece42ebeb70a67ee58082b939049815bd359724e745780d0afc12",
+  "family/2001/FAM2001ER.txt": "cc55d16f2fd44bcc89c1ab812e21f3f4f7bc26b15645b3170e590f55d1320ca5",
+  "family/2003/FAM2003ER.sps": "09f96449a9410a2478c0c24c042b5510ea0a75e7c97d83102a60d1faab747ac3",
+  "family/2003/FAM2003ER.txt": "f06914b61c017d34c471343d9667d2c19ad5d59f78890ee26ff613d465555ef1",
+  "family/2005/FAM2005ER.sps": "9a3440f8c3ba8af3ab2a40bde19b3a7382e20b82b0d91bd7b4ccf5e36ee7ec0d",
+  "family/2005/FAM2005ER.txt": "29e9d9a3eb7cdf33df8831cc55f27ab6e230e8202b4cdd982da79b759c0a749f",
+  "family/2007/FAM2007ER.sps": "4c8bd5b1d7bdce8a9d596e191f2791004ceb3413bf0b88c68cadccd33277977d",
+  "family/2007/FAM2007ER.txt": "f811e277303fe90a42edef602ad1a92405e8df0c9ee0dd36eff4ff531202ebbf",
+  "family/2009/FAM2009ER.sps": "4faa45e30b5a4719a3fa12f9d5d48568f644f315457ee3eed3e4ff8872459e4c",
+  "family/2009/FAM2009ER.txt": "59cf31106cf4c3d2e62903bd841b1689c9229e15674bdc5fd896453286b085f2",
+  "family/2011/FAM2011ER.sps": "6a994d8b65803a515eaa3bf62c74e278dd5943b8b578428ef4fd462d96cba45c",
+  "family/2011/FAM2011ER.txt": "3253586567a76a43d3e4a568dd5ca8af0f8a3c69db829d6a55bdf0942c60992f",
+  "family/2013/FAM2013ER.sps": "526595b50a2087adc635da3c1288a396aa7179b075c11506f10338ab6348a0b5",
+  "family/2013/FAM2013ER.txt": "0406aed042d660f51712d0f18a6e80f939717c0c2fc68b8d3a8d6dcbf48180e1",
+  "family/2015/FAM2015ER.sps": "6500c8e88a2353e7a6c5322a898f3879662228fdefa329e0901eb254fc9e3fff",
+  "family/2015/FAM2015ER.txt": "e4a64b275a9c6dbe8e7b562be7ed0906d4082b0c49cad79d764c69b8de318ec2",
+  "ind2023er/IND2023ER.sps": "92d32d0efd65d50e984e971c681f6e9231b720973444cdc8f20f397039c9a462",
+  "ind2023er/IND2023ER.txt": "d68554ac828a690491572f37323eba1d8488e8b0001ed2aa89df4d4ade26c869"
+ },
+ "registration_id": "6252388925",
+ "repository_head": "89c0ed9d6fe643469ada338cd5a2ae17059d194e",
+ "runtime": {
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "populace_fit_tree": "5c866378fdf5906b7a61da9977b8d028d1d36e9f",
+  "populace_frame_tree": "7cfb9ee78beb74911963913f202a4471aae2f52b",
+  "populace_head": "af02c917fcb3c50816bf3af9c2b64509e928889a",
+  "threads": {
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "POPULACE_FIT_N_JOBS": "4",
+   "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "versions": {
+   "numpy": "2.5.1",
+   "pandas": "3.0.3",
+   "populace_fit": "0.1.0",
+   "populace_frame": "0.1.0",
+   "python": "3.14.4",
+   "quantile_forest": "1.4.2",
+   "scikit_learn": "1.8.0",
+   "scipy": "1.18.0"
+  }
+ },
+ "schema": "track_b_b2_score.v1",
+ "side_a_persons": {
+  "0": 6777,
+  "1": 6665,
+  "2": 6856,
+  "3": 6828,
+  "4": 6778
+ },
+ "statements": {
+  "age_convention": "cohort and support use age at the collection wave (2011, 2013, 2015), not age in the income-reference year; prime is 25-44 and older 45-64",
+  "b1": "B1 v2 returned RECONSTRUCTED_REPRODUCTION: issue #42 comments 6110674288 (registration) and 6113379406 (result) (d622); label: reconstructed reproduction (weaker than bit-for-bit)",
+  "candidate_3_disclosure": "**Candidate 3 records a valid M6 pass; it certifies nothing about mortality drift.** The artifact records four passing seeds, q=0.55 and rho=\u22120.6. Fits use data through 2014; gated demographic flows cover 2015\u20132019 and earnings cover 2016/2018. The 2020\u20132022 window is diagnostic only. Certification is conditional on prior structural and same-holdout surface selection. The v4 point estimate `p_gate=0.9018301` clears 0.90 by 0.0018301, but its clearance is not statistically resolved: the reported jackknife SE is approximately 0.013\u20130.019. Synthesized support, redrawn initial states and endogenous widowhood require the decision-5 successor gate.",
+  "codebook_concept_check": "audit section 4.2: definitions only; all six labor-income variables exclude farm and unincorporated business income, and market gardening is absent from the 2015 component lists",
+  "fallback_scope": "EXPOSURE_UNRESOLVED fires (Q8(b)): B2's registration is the registered fallback at design section 3.2's scope, '2010\u21922014 continuity on the stated surface, ages 25\u201364. Not a 2010-vintage forecast' (design line 150). H and B3L may rely on B2 only within that scope. Removing this statement after any candidate run requires a dated amendment.",
+  "headline_scope": "B2's gate covers p90 earnings and the zero-earnings rate, by cohort, only: not median earnings, changes, dispersion, mobility or persistence. H and B3L rely on B2 for those two level statistics only (d781 (a), d1606 option C1).",
+  "planning_caveat": "The planning values come from a window whose truth years, 2008 and 2010, fall in a recession; neither their transport to 2012 and 2014 nor r's is tested.",
+  "reads": "The builder is truth-only. It read B2's pinned PSID read set, the B0.1 addendum, the frozen counts record (B2's read-set pin and source counts) and the addendum's planning-value record, which holds only variance ratios from the 2006 pseudo-origin. It read no candidate output, projection or selection ledger.",
+  "reference_year_mapping": "income-reference years 2010, 2012 and 2014 are collected at the 2011, 2013 and 2015 interviews; PSID has no 2012 or 2014 interview",
+  "section_5_3": "No Track B gate holds ages 25-61 earnings to a fixed limit (Q4).",
+  "wage_vintage": "policyengine-us 1.752.2 NAWI realized through 2010, with the fitter's log-linear projection over 2001-2010 after it (element 1)",
+  "wage_vintage_label": "pe_us_1_752_2_nawi_realized_2010_loglinear_2001_2010"
+ },
+ "threads": {
+  "MKL_NUM_THREADS": "1",
+  "NUMEXPR_NUM_THREADS": "1",
+  "OMP_NUM_THREADS": "1",
+  "OMP_WAIT_POLICY": "PASSIVE",
+  "OPENBLAS_NUM_THREADS": "1",
+  "POPULACE_FIT_N_JOBS": "4",
+  "VECLIB_MAXIMUM_THREADS": "1"
+ },
+ "wall_seconds": 1743.6,
+ "workers": 4,
+ "worktree_clean": true
+}
