@@ -732,11 +732,13 @@ def test_b2_excludes_whoever_the_target_is(u1_cohort, u2_inputs):
 def test_exclusion_counts_are_the_ones_section_16c_names(
     row, u2_inputs, declared, u2_births
 ):
-    """Section 16c's disclosed person count, against an oracle from the
-    raw frames: per wave, the 2015 code-20 persons recorded male in family
-    units that would otherwise supply this row an observation (B1's count,
-    which option 1d-1 names and 1d-2 inherits).  B2's person count is a
-    proposal pending Max (d1242) and is not computed."""
+    """Section 16c's disclosed person counts, against an oracle from the
+    raw frames: per wave, the members who bring each exclusion in family
+    units that would otherwise supply this row an observation.  B1's: the
+    2015 code-20 persons recorded male (the count option 1d-1 names and
+    1d-2 inherits).  B2's: the code-90 and code-92 persons in 2019-2023
+    (section 16c's proposal, confirmed by Max in d1242).  INVENTED DATA -
+    NOT A COMPARISON."""
 
     built = cohort.build_u2_cohort(
         u2_inputs,
@@ -745,10 +747,19 @@ def test_exclusion_counts_are_the_ones_section_16c_names(
         births=u2_births,
     )
     stated = built.diagnostics["n_family_unit_exclusion_persons"]
-    assert sources.PERSON_COUNTED_EXCLUSIONS == (sources.MALE_CODE_20_2015,)
-    assert set(stated) == {sources.MALE_CODE_20_2015}
+    assert sources.PERSON_COUNTED_EXCLUSIONS == (
+        sources.MALE_CODE_20_2015,
+        sources.UNCOOPERATIVE_SPOUSE_OR_PARTNER,
+    )
+    assert set(stated) == set(sources.PERSON_COUNTED_EXCLUSIONS)
     assert stated == _oracle_exclusion_persons(u2_inputs, built)
     assert all(stated.values())
+    assert set(stated[sources.MALE_CODE_20_2015]) <= {
+        str(wave) for wave in B1_WAVES
+    }
+    assert set(stated[sources.UNCOOPERATIVE_SPOUSE_OR_PARTNER]) <= {
+        str(wave) for wave in B2_WAVES
+    }
     summary = cohort.structural_summary(built)
     assert summary["n_family_unit_exclusion_persons"] == stated
 
@@ -805,8 +816,8 @@ def test_earlier_dispositions_keep_precedence(
 ):
     """Section 16c: an observation already disposed of keeps that
     disposition, and a unit that supplies no other observation adds
-    nothing to B1's person count; under both role contexts (review of
-    07916bb, finding 2)."""
+    nothing to its exclusion's person count (B1's, and B2's since d1242);
+    under both role contexts (review of 07916bb, finding 2)."""
 
     changed = invented.invented_variant(u2_inputs, variant)
     for context in (
@@ -824,8 +835,9 @@ def test_earlier_dispositions_keep_precedence(
         persons_before = base.diagnostics["n_family_unit_exclusion_persons"]
         persons_after = built.diagnostics["n_family_unit_exclusion_persons"]
         assert persons_after == _oracle_exclusion_persons(changed, built)
-        if rule == sources.MALE_CODE_20_2015:
-            # The unit's male code-20 member no longer counts.
+        if rule in sources.PERSON_COUNTED_EXCLUSIONS:
+            # The unit's member who brings the exclusion (B1's male code
+            # 20; B2's code 90 or 92 since d1242) no longer counts.
             assert (
                 persons_after[rule][str(wave)]
                 == persons_before[rule][str(wave)] - 1

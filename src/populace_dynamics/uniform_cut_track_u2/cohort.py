@@ -1540,9 +1540,9 @@ def build_u2_cohort(
         "births_inputs_sha256": births.inputs_sha256,
         # Section 16c: per wave, the members who brought each counted
         # exclusion (sources.PERSON_COUNTED_EXCLUSIONS: B1's count, which
-        # option 1d-1 names and 1d-2 inherits) in family units that would
-        # otherwise have supplied this row an observation.  Disclosed;
-        # decides nothing.
+        # option 1d-1 names and 1d-2 inherits, and B2's, which Max
+        # confirmed in d1242) in family units that would otherwise have
+        # supplied this row an observation.  Disclosed; decides nothing.
         "n_family_unit_exclusion_persons": {
             name: {
                 str(wave): len(persons)

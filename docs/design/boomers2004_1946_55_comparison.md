@@ -1884,6 +1884,11 @@ Revision verification comprised the two touched test files and `tests/track_u2/t
 - The d1090 record test's follower lines for §17 item 9 and §20 step 2 move with their text.
 - No count, statistic or outcome was computed, no model or estimator was run on real data, and no file on the restricted list was opened for reading; the U1 differential ran on invented data and its loader guard recorded no access. The revision's reading is recorded with the round-3 closeout lane in `docs/design/u2_m2_exposure.md`.
 
+**`u2-draft-4`, Max's confirmation of B2's disclosed count recorded (2026-10-16, d1242):**
+
+- Max confirmed §16c's proposed clarification (d1242): B2's disclosed count is the number of code-90 and code-92 persons in 2019, 2021 and 2023 family units that would otherwise supply a U2 observation. `sources.PERSON_COUNTED_EXCLUSIONS` now names B2 as well as B1, so the structural pass discloses both counts, and each decides nothing (§16c). §16c's text, which records the proposal, is unchanged.
+- No count, statistic or outcome was computed, no model or estimator was run on real data, and no file on the restricted list was opened for reading. The revision's reading is recorded with the round-3 closeout lane in `docs/design/u2_m2_exposure.md`.
+
 ## 20. Ratification and execution record
 
 **Pending.**
