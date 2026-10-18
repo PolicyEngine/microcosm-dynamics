@@ -184,6 +184,7 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
         "sex_unknown_target_in_excluded_unit_2019",
         "spouse_slot_occupant_without_family_spouse_2019",
         "code_88_target_with_ofum_income_2019",
+        "second_trigger_in_excluded_unit_2019",
     ]
     assert all(entry["regenerated"] for entry in variants.values())
     # Amendment 1c: the two code-88 variants build under the declared

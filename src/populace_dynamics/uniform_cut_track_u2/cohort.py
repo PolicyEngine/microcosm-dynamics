@@ -1551,6 +1551,21 @@ def build_u2_cohort(
             }
             for name in sources.PERSON_COUNTED_EXCLUSIONS
         },
+        # The same members counted once across the waves: a person who
+        # brings an exclusion in two waves is one person, so the per-wave
+        # counts above sum to person-waves (d1242's count is persons).
+        "n_family_unit_exclusion_persons_distinct": {
+            name: len(
+                set().union(
+                    *(
+                        persons
+                        for (named, _), persons in excluded_persons.items()
+                        if named == name
+                    )
+                )
+            )
+            for name in sources.PERSON_COUNTED_EXCLUSIONS
+        },
     }
     cohort = U2Cohort(obs, disp, spec, diagnostics)
     object.__setattr__(

@@ -201,7 +201,8 @@ FAMILY_UNIT_EXCLUSIONS: tuple[str, ...] = (
 #: B2's, the code-90 and code-92 persons in 2019-2023 family units that
 #: would otherwise supply a U2 observation, as section 16c proposed and
 #: Max confirmed on 2026-10-16 (decision d1242).  Each count is disclosed
-#: and decides nothing.
+#: and decides nothing: per row, per wave (which sums to person-waves) and
+#: as distinct persons across the waves.
 PERSON_COUNTED_EXCLUSIONS: tuple[str, ...] = (
     MALE_CODE_20_2015,
     UNCOOPERATIVE_SPOUSE_OR_PARTNER,

@@ -1501,6 +1501,23 @@ def _code_88_in_excluded_unit_2019(base: cohort.U2Inputs) -> cohort.U2Inputs:
     )
 
 
+def _second_trigger_in_excluded_unit_2019(
+    base: cohort.U2Inputs,
+) -> cohort.U2Inputs:
+    _, interview = _first_excluded_2019(base)
+    return _added_person(
+        base,
+        _PERSON_BASE - 4,
+        wave=2019,
+        interview=interview,
+        sequence=5,
+        relationship=92,
+        age=40,
+        weight=500.0,
+        sex="na",
+    )
+
+
 def _zero_weight_target_in_excluded_unit_2015(
     base: cohort.U2Inputs,
 ) -> cohort.U2Inputs:
@@ -1601,6 +1618,9 @@ _VARIANT_BUILDERS = {
     "code_88_target_with_ofum_income_2019": (
         _code_88_target_with_ofum_income_2019
     ),
+    "second_trigger_in_excluded_unit_2019": (
+        _second_trigger_in_excluded_unit_2019
+    ),
 }
 _VARIANT_NOTES: dict[str, str] = {
     "code_88_first_year_cohabitor": (
@@ -1661,8 +1681,9 @@ _VARIANT_NOTES: dict[str, str] = {
     ),
     "sex_unknown_target_in_excluded_unit_2019": (
         "the target of U0's first 2019 observation that the B2 exclusion "
-        "removes has unknown sex: it keeps its sex-unknown disposition "
-        "(section 16c precedence)"
+        "removes has unknown sex: it keeps its sex-unknown disposition, "
+        "and a unit that supplies no other observation adds nothing to "
+        "B2's person count (section 16c precedence; d1242)"
     ),
     "spouse_slot_occupant_without_family_spouse_2019": (
         "the family file of U0's first 2019 observation with a code-20 or "
@@ -1677,6 +1698,13 @@ _VARIANT_NOTES: dict[str, str] = {
         "target whose own observation has the OFUM role under amendment "
         "1c (the family income basis in U4 and the OFUM SSI cap), keeps "
         "its recorded marital history and is no spouse-slot occupant"
+    ),
+    "second_trigger_in_excluded_unit_2019": (
+        "a second code-92 member, aged 40 and of unknown recorded sex, "
+        "joins the 2019 unit of U0's first observation that the B2 "
+        "exclusion removes: the unit stays excluded and every observation "
+        "and disposition is unchanged, but B2's person count (d1242) rises "
+        "by one, since it counts persons, not family units, of any sex"
     ),
 }
 #: The generator's named variants (see :data:`_VARIANT_NOTES`).
