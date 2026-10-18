@@ -1551,13 +1551,46 @@ D1090_FOLLOWERS = {
         "PSID answered all three on 2026-10-07 (research record "
         "\N{SECTION SIGN}\N{SECTION SIGN}1\N{EN DASH}3), and Max ruled on B1 "
         "and B2 on 2026-10-10 (d1090; \N{SECTION SIGN}16c).",
-        2: "9. Check the specification, literal named deltas, parameter "
-        "block (with the amendment 5 fragment, ratified 2026-09-30), "
-        "manifests and ten-row implementation for equality.",
+        2: (
+            "9. Check the specification, literal named deltas, parameter "
+            "block (with the amendment 5 fragment, ratified 2026-09-30), "
+            "manifests and ten-row implementation for equality. **Partly "
+            "checked (2026-10-16):** the named deltas equal "
+            "\N{SECTION SIGN}12 literally and the rows equal the "
+            "\N{SECTION SIGN}15 block "
+            "(`test_u2_identity.py::test_named_deltas_equal_section_12_literally`, "
+            "`::test_rows_equal_the_section_15_block`). The equality checks "
+            "of the specification, the manifests and the final parameter "
+            "block wait for \N{SECTION SIGN}20 step 5, which materializes the "
+            "block and empties \N{SECTION SIGN}15's `blocked_by`."
+        ),
     },
     "execution": {
         0: "",
-        1: "2. Complete implementation, manifests and parameter capture.",
+        1: (
+            "2. Complete implementation, manifests and parameter capture. "
+            "**Done (2026-10-16).** Implementation: milestone 2 (#487) and "
+            "its three review rounds, the last landing as #525 (`f7a84d0b`); "
+            "and #544, which records with the frame digest the pandas version "
+            "and string inference setting it was taken under and refuses a "
+            "frozen load or registered run under any other "
+            "(`test_u2_loader.py::test_any_other_frame_environment_refuses_the_registered_check`, "
+            "`::test_a_frozen_load_refuses_another_frame_environment`). "
+            "Manifests: the documentary source records, 1,766 registry "
+            "entries and 26 SSI and Census records, are all RESOLVED, none "
+            "REFUSED or TO VERIFY "
+            "(`test_adjudication_applied.py::test_status_counts_after_independent_adjudication`), "
+            "and the loader's source preflight passes "
+            "(`test_u2_mappings.py::test_source_preflight_passes_at_the_committed_registries`; "
+            "#524, #540). A RESOLVED record is a documentary finding; "
+            "reconciliation on real records is step 4's. Parameter capture: "
+            "the U2 SSI capture, the Track M threshold capture and U1's "
+            "inherited life tables, each pinned by hash in the code "
+            "(\N{SECTION SIGN}17 item 5; "
+            "`test_u2_parameters.py::test_threshold_capture_is_the_pinned_track_m_file`; "
+            "`parameters._LIFE_TABLE_PINS`). The final parameter block is "
+            "step 5's."
+        ),
     },
 }
 
