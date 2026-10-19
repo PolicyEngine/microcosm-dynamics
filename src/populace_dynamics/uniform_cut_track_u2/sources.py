@@ -197,12 +197,16 @@ FAMILY_UNIT_EXCLUSIONS: tuple[str, ...] = (
     UNCOOPERATIVE_SPOUSE_OR_PARTNER,
 )
 #: The exclusions whose person count the structural pass discloses
-#: (section 16c): B1's, the count option 1d-1 names and 1d-2 inherits.
-#: Option 1e-1 leaves B2's counting unit open; its person count is a
-#: proposal pending Max's confirmation (decision d1242) and is not
-#: computed until he confirms.  B2's excluded observations appear in the
-#: ordinary disposition counts either way.
-PERSON_COUNTED_EXCLUSIONS: tuple[str, ...] = (MALE_CODE_20_2015,)
+#: (section 16c): B1's, the count option 1d-1 names and 1d-2 inherits; and
+#: B2's, the code-90 and code-92 persons in 2019-2023 family units that
+#: would otherwise supply a U2 observation, as section 16c proposed and
+#: Max confirmed on 2026-10-16 (decision d1242).  Each count is disclosed
+#: and decides nothing: per row, per wave (which sums to person-waves) and
+#: as distinct persons across the waves.
+PERSON_COUNTED_EXCLUSIONS: tuple[str, ...] = (
+    MALE_CODE_20_2015,
+    UNCOOPERATIVE_SPOUSE_OR_PARTNER,
+)
 #: The waves of each ratified exclusion (section 16c).
 _B1_WAVES: tuple[int, ...] = (2015,)
 _B2_WAVES: tuple[int, ...] = (2019, 2021, 2023)
