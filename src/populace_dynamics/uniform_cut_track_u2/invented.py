@@ -1596,15 +1596,18 @@ def _code_88_target_with_ofum_income_2019(
 
 
 def _host(base: cohort.U2Inputs, waves: tuple[int, ...]) -> int:
-    """U1's first observed target who is in-family with a positive weight
-    in every one of ``waves`` (a family that supplies an observation)."""
+    """The first target with a U1 observation in the earliest of ``waves``
+    who is in-family with a positive weight in every one of them: its
+    family supplies an observation in the member's first wave."""
 
     built = cohort.build_u2_cohort(
         base,
         cohort.U2CohortSpec(row="U1"),
         role_context=sources.RoleContext.declared(),
     )
-    for person in sorted(set(built.observations["person_id"].astype(int))):
+    obs = built.observations
+    first = obs.loc[obs["wave"].eq(min(waves)), "person_id"].astype(int)
+    for person in sorted(set(first)):
         if all(
             bool(
                 (
@@ -1616,7 +1619,7 @@ def _host(base: cohort.U2Inputs, waves: tuple[int, ...]) -> int:
             for wave in waves
         ):
             return person
-    raise AssertionError(f"no U1 target is present in every wave {waves}")
+    raise AssertionError(f"no U1 target can host a member in {waves}")
 
 
 def _added_member(
@@ -1856,17 +1859,20 @@ _VARIANT_NOTES: dict[str, str] = {
         "by one, since it counts persons, not family units, of any sex"
     ),
     "seed_birth_years_outside_career_bounds": (
-        "three OFUM members with no marriage history or earnings join "
-        "families that supply U1 observations, each seeded outside the "
-        "birth law's derived-age support: a grandchild aged 3 in 2021 "
+        "three OFUM members with no marriage history or earnings join, in "
+        "their first wave, families that supply a U1 observation in that "
+        "wave, each seeded outside the birth law's derived-age support: a "
+        "grandchild aged 3 in 2021 "
         "(implied 2017) and a child aged 2 in 2023 (2020), and a parent "
         "aged 124 in 2013 (1888).  Under d1724 (section 16d) all three are "
         "counted out before the law, two after 2016 and one before 1889, "
         "and every observation, disposition and other count is unchanged"
     ),
     "seed_birth_years_at_career_bounds": (
-        "two OFUM members with no marriage history or earnings are seeded "
-        "at the ends of the birth law's derived-age support: a parent aged "
+        "two OFUM members with no marriage history or earnings join, in "
+        "their first wave, families that supply a U1 observation in that "
+        "wave, seeded at the ends of the birth law's derived-age support: a "
+        "parent aged "
         "123 in 2013 (born 1889) and a grandchild aged 2 in 2019 (born "
         "2016).  Neither is counted out (d1724, section 16d): both join "
         "the universe with derived birth years outside the cohort, and "
