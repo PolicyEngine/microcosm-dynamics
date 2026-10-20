@@ -2213,12 +2213,13 @@ D1724_RECORD = [
     "further pass the ruling authorizes, so the rule also covers seeds "
     "whose code the law refuses, toward the ruling's stated purpose: "
     "that step 4 runs once more and discloses the counts. Max approved "
-    "that widening, re-seeding included, on 2026-10-20, as noted on "
-    "d1724 in the decision log. The coordinating session had first "
-    "asked for code 0 to be counted out at once. Re-seeding it like any "
-    "refused code follows from code 0's documented meaning, Inap. "
-    "(above); it keeps a member of the cohort that counting out would "
-    "lose, and its count is disclosed.",
+    "that widening on 2026-10-20, as noted on d1724 in the decision "
+    "log, including that code 0 (Inap.) is re-seeded from the earliest "
+    "presence the law can date, like any refused code. Re-seeding "
+    "follows from code 0's documented meaning (above); it keeps a "
+    "member of the cohort that counting out would lose, and its count "
+    "is disclosed. (An earlier request from the coordinating session "
+    "had counted code 0 out at once.)",
     "**Why no member of the cohort is lost.** A person counted out on a "
     "side has no birth-year source but a seed whose year lies outside "
     "1889\N{EN DASH}2016. A person counted out under a refused code has "
@@ -2343,8 +2344,13 @@ D1724_MUTATIONS = [
     ),
     (
         "16d",
-        "Max approved that widening, re-seeding included, on 2026-10-20",
+        "Max approved that widening on 2026-10-20",
         "The coordinating session chose that widening on 2026-10-20",
+    ),
+    (
+        "16d",
+        "including that code 0 (Inap.) is re-seeded",
+        "except that code 0 (Inap.) is counted out",
     ),
     (
         "16d",
