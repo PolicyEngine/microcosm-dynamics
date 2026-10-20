@@ -30,11 +30,15 @@ U1's per-row ``earliest_presence_wave``, which :class:`U2CohortSpec`
 refuses).  Births are derived once (:func:`derive_u2_births`) and reused
 by every row.  Support waves identify people; they add no observation
 and no design unit to a row.  Max's ruling of 2026-10-19 (d1724; section
-16d) counts out, before the law runs, each person whose birth year the
-law could take only from the seed coordinate and whose seed implies a
-year outside the law's derived-age support
-(``career.DERIVED_BIRTH_MIN``-``DERIVED_BIRTH_MAX``, 1889-2016), as
-Track M does; each side's count is disclosed and decides nothing.
+16d) keeps every input the law would refuse away from it, for the
+persons whose birth year only the seed coordinate could give: a seed
+whose age code the law refuses (0, or any code but 1-125 and 999) is
+replaced by the person's earliest presence with an age of 2-125 whose
+implied year the law supports; a person with no such presence, or whose
+seed implies a year outside the law's derived-age support
+(``career.DERIVED_BIRTH_MIN``-``DERIVED_BIRTH_MAX``, 1889-2016), is
+counted out before the law runs, as Track M counts out young children.
+Each reason's count is disclosed and decides nothing.
 
 **Roles** (section 3 relationship-code amendment) come from a
 :class:`~populace_dynamics.uniform_cut_track_u2.sources.RoleContext`.
@@ -168,16 +172,20 @@ PRIMARY_WAVES: tuple[int, ...] = tuple(b + 68 for b in PRIMARY_BIRTH_YEARS)
 #: changes on U0's population (:mod:`.rows`).
 ROWS: tuple[str, ...] = ("U0", "U1")
 SEED_WAVE_RULE = "earliest_presence_in_common_support_waves"
-#: d1724 (section 16d): the two sides of the birth law's derived-age
-#: support.  ``career.derive_birth_years`` asserts that a birth year it
-#: derives from a seed coordinate (age code 2-125) lies in
-#: ``[DERIVED_BIRTH_MIN, DERIVED_BIRTH_MAX]``; ``career.py`` is read-only
-#: (section 14), so :func:`derive_u2_births` counts out, before the law,
-#: each person the seed clause would decide and whose seed implies a year
-#: on either side.
-SEED_BIRTH_COUNTED_OUT: tuple[str, str] = (
+#: d1724 (section 16d): the reasons :func:`derive_u2_births` counts a
+#: person out before the birth law, each disclosed.  The law
+#: (``career.derive_birth_years``, read-only under section 14) asserts
+#: that a year it derives from a seed (age code 2-125) lies in
+#: ``[DERIVED_BIRTH_MIN, DERIVED_BIRTH_MAX]``, and refuses every seed age
+#: code but 1-125 and 999.  A person the seed alone would date is counted
+#: out when the seed implies a year before or after that support, or
+#: when no presence carries an age the law can date (the first code 0,
+#: or another refused code).
+SEED_BIRTH_COUNTED_OUT: tuple[str, ...] = (
     f"before_{career.DERIVED_BIRTH_MIN}",
     f"after_{career.DERIVED_BIRTH_MAX}",
+    "seed_age_0",
+    "no_valid_seed_age",
 )
 U1_EVEN_BIRTH_YEAR_WEIGHT = 0.5
 U1_SINGLE_OBSERVATION_WEIGHT = 1.0
@@ -219,6 +227,8 @@ _MAX_AGE_CODE = 125
 #: (``seed year - age``); 1, 999 and missing are unresolved there, and any
 #: other code is refused there.
 _DERIVED_SEED_AGES = (2, 125)
+#: The documented DK/NA/refused age code, which the law leaves unresolved.
+_NA_AGE_CODE = 999
 _FAMILY_UNIT_SCALE = 100_000
 _UNRESOLVED_STATES = ("unknown", "no_marriage_history")
 _OMITTED_ROWS = (
@@ -978,9 +988,11 @@ def _check_role_context(
 class U2Births:
     """Birth-year records for the universe and the annuitant extension.
 
-    ``counted_out`` maps each side of :data:`SEED_BIRTH_COUNTED_OUT` to the
-    persons counted out of the universe before the law ran (d1724); they
-    have no record, so their birth year is ``None``.
+    ``counted_out`` maps each reason of :data:`SEED_BIRTH_COUNTED_OUT` to
+    the persons counted out of the universe before the law ran (d1724);
+    they have no record, so their birth year is ``None``.  ``reseeded``
+    holds the persons whose earliest presence carried an age code the law
+    refuses and whose seed is their earliest presence it can date.
     """
 
     records: Mapping[int, career.BirthYearRecord]
@@ -989,9 +1001,10 @@ class U2Births:
     inputs_sha256: str
     counted_out: Mapping[str, frozenset[int]] = field(
         default_factory=lambda: MappingProxyType(
-            {side: frozenset() for side in SEED_BIRTH_COUNTED_OUT}
+            {reason: frozenset() for reason in SEED_BIRTH_COUNTED_OUT}
         )
     )
+    reseeded: frozenset[int] = frozenset()
 
     def birth_year(self, person_id: int) -> int | None:
         record = self.records.get(int(person_id))
@@ -1079,24 +1092,35 @@ def check_person_joins(inputs: U2Inputs) -> None:
             )
 
 
-def _count_out_seed_births(
-    seed: pd.DataFrame, history: pd.DataFrame, earnings: pd.DataFrame
-) -> tuple[pd.DataFrame, dict[str, frozenset[int]]]:
-    """The seed rows the law can take, and the persons counted out (d1724).
+def _seed_for_the_law(
+    presences: list[pd.DataFrame],
+    history: pd.DataFrame,
+    earnings: pd.DataFrame,
+) -> tuple[pd.DataFrame, dict[str, frozenset[int]], frozenset[int]]:
+    """The seed rows the law can take, the persons counted out by reason,
+    and the persons re-seeded (d1724, section 16d).
 
-    The law's derived-age clause (seed age codes 2-125, year ``seed year
-    - age``) asserts a year in ``[career.DERIVED_BIRTH_MIN,
-    career.DERIVED_BIRTH_MAX]``.  It is reached only by a person whose
-    birth year neither the marriage history nor the observed earnings
-    give, so the law itself, run on the same frames without seed
-    coordinates, names those persons (its unresolved records).  Each of
-    them whose seed implies a year outside the support is counted out on
-    its side.  Everyone else keeps the law's precedence: a person with a
-    history or earnings year keeps it whatever the seed implies, and seed
-    codes 1, 999 and every other code stay on their existing paths.
+    ``presences`` holds every positive-weight, in-family presence of every
+    support wave.  The law reaches a seed only for a person whose birth
+    year neither the marriage history nor the observed earnings give, so
+    the law itself, run on the same frames without seed coordinates,
+    names those persons (its unresolved records); for everyone else the
+    earliest presence stays the seed and the law's precedence decides.
+    For each person the seed alone would date:
+
+    * if the earliest presence's age code is one the law refuses (0, or
+      any code but 1-125 and 999), the seed is the person's earliest
+      presence with an age of 2-125 whose implied year the law supports
+      (re-seeded); with none, the person is counted out under
+      ``seed_age_0`` (earliest code 0) or ``no_valid_seed_age``;
+    * if the seed's age is 2-125 and its year (``seed year - age``) lies
+      before 1889 or after 2016, the person is counted out on that side.
+
+    Codes 1 and 999 keep the law's unresolved path.
     """
 
-    people = set(int(pid) for pid in seed["person_id"])
+    first = _seed_frame(presences)
+    people = set(int(pid) for pid in first["person_id"])
     clauses = career.derive_birth_years(
         history[history["person_id"].isin(people)],
         earnings[earnings["person_id"].isin(people)],
@@ -1107,21 +1131,50 @@ def _count_out_seed_births(
         for record in clauses
         if record.source is career.BirthSource.UNRESOLVED
     }
-    ages = seed["age"].astype("int64")
-    implied = seed["year"].astype("int64") - ages
-    derived = seed["person_id"].isin(seed_only) & ages.between(
+    ages = first["age"].astype("int64")
+    accepted = ages.eq(_NA_AGE_CODE) | ages.between(1, _MAX_AGE_CODE)
+    refused = first["person_id"].isin(seed_only) & ~accepted
+    seed = first
+    reseeded: frozenset[int] = frozenset()
+    if refused.any():
+        every = pd.concat(presences, ignore_index=True)
+        every_ages = every["age"].astype("int64")
+        every_years = every["year"].astype("int64") - every_ages
+        valid = every[
+            every_ages.between(*_DERIVED_SEED_AGES)
+            & every_years.between(
+                career.DERIVED_BIRTH_MIN, career.DERIVED_BIRTH_MAX
+            )
+            & every["person_id"].isin(first.loc[refused, "person_id"])
+        ]
+        replacement = _seed_frame([valid])
+        reseeded = frozenset(int(pid) for pid in replacement["person_id"])
+        seed = (
+            pd.concat([first[~refused], replacement], ignore_index=True)
+            .astype(first.dtypes.to_dict())
+            .sort_values("person_id", kind="stable")
+            .reset_index(drop=True)
+        )
+    unseeded = refused & ~first["person_id"].isin(reseeded)
+    seed_ages = seed["age"].astype("int64")
+    implied = seed["year"].astype("int64") - seed_ages
+    derived = seed["person_id"].isin(seed_only) & seed_ages.between(
         *_DERIVED_SEED_AGES
     )
     before = derived & (implied < career.DERIVED_BIRTH_MIN)
     after = derived & (implied > career.DERIVED_BIRTH_MAX)
+    rows = (
+        seed.loc[before, "person_id"],
+        seed.loc[after, "person_id"],
+        first.loc[unseeded & ages.eq(0), "person_id"],
+        first.loc[unseeded & ~ages.eq(0), "person_id"],
+    )
     counted_out = {
-        side: frozenset(int(pid) for pid in seed.loc[rows, "person_id"])
-        for side, rows in zip(
-            SEED_BIRTH_COUNTED_OUT, (before, after), strict=True
-        )
+        reason: frozenset(int(pid) for pid in persons)
+        for reason, persons in zip(SEED_BIRTH_COUNTED_OUT, rows, strict=True)
     }
     kept = seed[~(before | after)].reset_index(drop=True)
-    return kept, counted_out
+    return kept, counted_out, reseeded
 
 
 def derive_u2_births(inputs: U2Inputs) -> U2Births:
@@ -1129,12 +1182,14 @@ def derive_u2_births(inputs: U2Inputs) -> U2Births:
 
     Universe: every person with a positive-weight, in-family presence in
     any support wave; seed coordinate: the earliest such presence
-    (``(wave - 1) - age``).  Before the law runs, a person whose birth
-    year only the seed could give and whose seed implies a year outside
-    the law's derived-age support (1889-2016) is counted out of the
-    universe on that side (d1724, section 16d;
-    :func:`_count_out_seed_births`); ``counted_out`` holds them, and no
-    other person's record changes.  Annuitant extension: in-family
+    (``(wave - 1) - age``).  Before the law runs, for a person whose
+    birth year only the seed could give, a seed age code the law refuses
+    is replaced by the earliest presence it can date (``reseeded``), and
+    a person with no such presence, or whose seed implies a year outside
+    the law's derived-age support (1889-2016), is counted out of the
+    universe under its reason (d1724, section 16d;
+    :func:`_seed_for_the_law`); ``counted_out`` holds them, and no other
+    person's record changes.  Annuitant extension: in-family
     persons of the administrative birth-support codes (10, 20, 22, 88,
     90; not 92) and marriage-history spouses of target-cohort members
     outside the universe, seeded by their earliest in-family presence at
@@ -1167,7 +1222,7 @@ def derive_u2_births(inputs: U2Inputs) -> U2Births:
     earnings = inputs.observed_earnings
     presence = _seed_frame(seeds)
     present = frozenset(int(pid) for pid in presence["person_id"])
-    seed, counted_out = _count_out_seed_births(presence, history, earnings)
+    seed, counted_out, reseeded = _seed_for_the_law(seeds, history, earnings)
     universe = frozenset(int(pid) for pid in seed["person_id"])
     records = career.derive_birth_years(
         history[history["person_id"].isin(universe)],
@@ -1236,6 +1291,7 @@ def derive_u2_births(inputs: U2Inputs) -> U2Births:
         seed=seed,
         inputs_sha256=input_frames_sha256(inputs),
         counted_out=MappingProxyType(counted_out),
+        reseeded=reseeded,
     )
 
 
@@ -1622,13 +1678,16 @@ def build_u2_cohort(
             births.birth_year(pid) is None for pid in outside
         ),
         # d1724 (section 16d): the persons counted out of the universe
-        # before the birth law, on each side of its derived-age support
-        # (their seed, their only birth-year source, implies a year
-        # before 1889 or after 2016).  Disclosed; decides nothing.
+        # before the birth law, whom only the seed could date, by reason
+        # (a seed year before 1889 or after 2016; no presence with an age
+        # the law can date, the first code 0 or another), and the persons
+        # re-seeded past an age code the law refuses.  Disclosed; each
+        # decides nothing.
         "n_seed_birth_year_counted_out": {
-            side: len(births.counted_out[side])
-            for side in SEED_BIRTH_COUNTED_OUT
+            reason: len(births.counted_out[reason])
+            for reason in SEED_BIRTH_COUNTED_OUT
         },
+        "n_seed_birth_year_reseeded": len(births.reseeded),
         "plan_birth_years": plan_years,
         "role_context": role_context.kind,
         "births_inputs_sha256": births.inputs_sha256,

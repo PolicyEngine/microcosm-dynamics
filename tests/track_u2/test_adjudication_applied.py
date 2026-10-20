@@ -2154,45 +2154,71 @@ D1724_RECORD = [
     "positive-weight, in-family person of any support wave, at any age "
     "(draft-3 lines 114 and 126), so a child aged 2 or 3 in the 2021 "
     "wave or 2\N{EN DASH}5 in the 2023 wave, or a person aged 124 or "
-    "125 in the 2013 wave, reaches that assertion. The masked error "
+    "125 in the 2013 wave, reaches that assertion. The law also "
+    "refuses, after its loop, every seed age code but 1\N{EN DASH}125 "
+    "and 999. The individual file documents age as 0 (Inap.), 1 "
+    "(newborn), 2\N{EN DASH}125 or 999 (DK, NA or refused), and the "
+    "loader refuses any other code, so a code 0 on an in-family, "
+    "positive-weight presence would reach that refusal; the assertion, "
+    "raised inside the loop, would have masked it. The masked error "
     "record does not show which end was crossed, so the rule covers "
-    "both. This record states no count or value from the pass.",
+    "both ends and the refusal. This record states no count or value "
+    "from the pass.",
     "**The note to \N{SECTION SIGN}3 (amends draft-3 line 114).** "
-    "Before the law runs, a person of the universe is counted out when "
-    "both hold:",
-    "1. the law would take the person's birth year from the seed "
+    "Before the law runs, the rule below applies to each person of the "
+    "universe whose birth year the law would take from the seed "
     "coordinate: neither the marriage history nor the observed earnings "
     "give one, as the law itself shows when run on the same frames "
-    "without seed coordinates (it leaves the person unresolved); and",
-    "2. the seed's age code is 2\N{EN DASH}125, and the year it implies "
-    "is before 1889 or after 2016.",
+    "without seed coordinates (it leaves the person unresolved).",
+    "1. If the seed's age code is one the law refuses (0, or any code "
+    "but 1\N{EN DASH}125 and 999), the seed becomes the person's "
+    "earliest positive-weight, in-family presence with an age of "
+    "2\N{EN DASH}125 whose implied year lies in 1889\N{EN DASH}2016 "
+    "(the person is re-seeded). A person with no such presence is "
+    "counted out: under `seed_age_0` when the first code is 0, and "
+    "under `no_valid_seed_age` otherwise.",
+    "2. If the seed's age is 2\N{EN DASH}125 and the year it implies is "
+    "before 1889 or after 2016, the person is counted out on that side.",
     "A counted-out person leaves the universe and the frames the law "
     "reads. Every other person keeps the law's precedence and the "
-    "record the law gives, whatever the seed implies: a "
-    "marriage-history or earnings year still wins. Seed codes 1 and 999 "
-    "stay unresolved, and any other code keeps the law's refusal. The "
-    "seed is still the earliest positive-weight presence; a later "
-    "presence never replaces it. A counted-out person had a "
-    "positive-weight presence, so is not outside the universe, and the "
-    "annuitant extension (line 188) does not seed it either; where such "
-    "a person is an annuitant, its age takes the inherited wave-age "
-    "fallback, counted. The extension seeds only presences whose "
-    "implied year the law supports, as before, so it cannot reach the "
-    "assertion.",
+    "record the law gives, whatever the seed implies or whatever code "
+    "it carries: a marriage-history or earnings year still wins. Seed "
+    "codes 1 and 999 stay unresolved. Apart from re-seeding, the seed "
+    "is still the earliest positive-weight presence; a later presence "
+    "never replaces a seed whose code the law takes. Code 0 is "
+    "documented as Inap., not as an age, so a member of the cohort "
+    "could carry it on one presence; it is therefore handled as any "
+    "refused code, not counted out at once. A newborn's later ages "
+    "imply 2012 or later, so re-seeding never dates one into "
+    "1946\N{EN DASH}55. A counted-out person had a positive-weight "
+    "presence, so is not outside the universe, and the annuitant "
+    "extension (line 188) does not seed it either; where such a person "
+    "is an annuitant, its age takes the inherited wave-age fallback, "
+    "counted. The extension seeds only presences whose code the law "
+    "takes and whose implied year it supports, as before, so it cannot "
+    "reach the assertion or the refusal.",
     "**How the ruling's words are read.** The decision speaks of "
     '"people whose seed coordinate implies a birth year outside" the '
     "support. This record reads that as the people whose birth year the "
-    "seed coordinate gives: condition 1 above. The seed gives no birth "
-    "year to a person with a marriage-history or earnings year. "
-    "Counting such a person out would let the seed override the "
-    'precedence \N{SECTION SIGN}3 keeps (line 114: "with its existing '
-    'history inputs and precedence") and could remove a member of the '
-    "cohort. The two readings differ only for a person with both an "
-    "out-of-support seed and a history or earnings year.",
-    "**Why no member of the cohort is lost.** A counted-out person's "
-    "only birth-year source is a seed whose year lies outside "
-    "1889\N{EN DASH}2016, which contains 1946\N{EN DASH}55, so no "
-    "counted-out person can belong to the cohort in any row.",
+    "seed coordinate gives. The seed gives no birth year to a person "
+    "with a marriage-history or earnings year. Counting such a person "
+    "out would let the seed override the precedence \N{SECTION SIGN}3 "
+    'keeps (line 114: "with its existing history inputs and '
+    'precedence") and could remove a member of the cohort. The two '
+    "readings differ only for a person with both an out-of-support seed "
+    "and a history or earnings year. The decision names out-of-bounds "
+    "seeds only. The refusal the first pass masked would stop the one "
+    "further pass the ruling authorizes, so at the dynamics "
+    "coordinating session's request (2026-10-20) the rule also covers "
+    "seeds whose code the law refuses, toward the ruling's stated "
+    "purpose: that step 4 runs once more and discloses the counts.",
+    "**Why no member of the cohort is lost.** A person counted out on a "
+    "side has no birth-year source but a seed whose year lies outside "
+    "1889\N{EN DASH}2016. A person counted out under a refused code has "
+    "no presence the law can date inside 1889\N{EN DASH}2016. That "
+    "range contains 1946\N{EN DASH}55, so no counted-out person can "
+    "belong to the cohort in any row, and a member of the cohort with "
+    "one refused code is re-seeded and keeps its observations.",
     "**Precedent.** Track M counts out, before the same law, the "
     "in-family, positive-weight persons aged 0\N{EN DASH}5 in its one "
     "seed wave, 2023, whose seed (income year 2022 minus age) implies a "
@@ -2200,14 +2226,16 @@ D1724_RECORD = [
     "(`src/populace_dynamics/min_benefit_track_m/structure.py`, the "
     "funnel count `age_0_5_counted_out_before_birth_law`, and "
     "`min_benefit_track_m/cohort.py`). U2 seeds from six waves, so its "
-    "rule tests the implied year on both sides, not an age; it applies "
-    "only to age codes 2\N{EN DASH}125, so codes 0 and 1 keep the law's "
-    "paths; and it applies only to persons the seed would date, so the "
-    "law's precedence is kept.",
-    "**Disclosure.** Each side's count is disclosed in every row's "
+    "rule tests the implied year on both sides, not an age, and can "
+    "re-seed a person past a refused code from a later presence; it "
+    "keeps code 1 on the law's unresolved path; and it applies only to "
+    "persons the seed would date, so the law's precedence is kept.",
+    "**Disclosure.** Each reason's count is disclosed in every row's "
     "structural counts, as `n_seed_birth_year_counted_out` with the "
-    "keys `before_1889` and `after_2016`, and decides nothing. The rule "
-    "is fixed before any count, and none was computed for this record.",
+    "keys `before_1889`, `after_2016`, `seed_age_0` and "
+    "`no_valid_seed_age`, and the re-seeded persons' count as "
+    "`n_seed_birth_year_reseeded`. Each decides nothing. The rule is "
+    "fixed before any count, and none was computed for this record.",
     "**What the ruling leaves unchanged.**",
     "- `src/populace_dynamics/estimates/career.py` is unchanged.",
     "- No row, plan cell, observation weight, disposition rule, design "
@@ -2268,8 +2296,9 @@ def test_section_16d_records_the_d1724_ruling():
     for clause in (
         "before 1889 or after 2016",
         "`n_seed_birth_year_counted_out`",
-        "`before_1889` and `after_2016`",
-        "and decides nothing",
+        "`before_1889`, `after_2016`, `seed_age_0` and `no_valid_seed_age`",
+        "`n_seed_birth_year_reseeded`",
+        "Each decides nothing.",
         "(amends draft-3 line 114)",
     ):
         assert section.count(clause) == 1, clause
@@ -2280,9 +2309,41 @@ def test_section_16d_records_the_d1724_ruling():
 #: disclosure, scope or authorization, a moved heading, an added line, and
 #: hiding by comment.
 D1724_MUTATIONS = [
-    ("16d", "before 1889 or after 2016.", "before 1889."),
-    ("16d", "age code is 2\N{EN DASH}125", "age code is 1\N{EN DASH}125"),
-    ("16d", "and decides nothing.", "and decides whether the pass proceeds."),
+    (
+        "16d",
+        "before 1889 or after 2016, the person",
+        "before 1889, the person",
+    ),
+    (
+        "16d",
+        "If the seed's age is 2\N{EN DASH}125",
+        "If the seed's age is 1\N{EN DASH}125",
+    ),
+    (
+        "16d",
+        "(0, or any code but 1\N{EN DASH}125 and 999)",
+        "(any code above 125)",
+    ),
+    (
+        "16d",
+        "under `seed_age_0` when the first code is 0",
+        "under `seed_age_0` when any code is 0",
+    ),
+    (
+        "16d",
+        "it is therefore handled as any refused code, not counted out at once",
+        "it is counted out at once",
+    ),
+    (
+        "16d",
+        " and the re-seeded persons' count as `n_seed_birth_year_reseeded`",
+        "",
+    ),
+    (
+        "16d",
+        "Each decides nothing.",
+        "Each decides whether the pass proceeds.",
+    ),
     (
         "16d",
         "a marriage-history or earnings year still wins",

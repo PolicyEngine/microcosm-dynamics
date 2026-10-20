@@ -1692,26 +1692,40 @@ def _added_member(
     )
 
 
-#: The members the two d1724 variants add (section 16d): each is placed
-#: by its seed, its earliest positive-weight in-family presence, whose
-#: implied birth year is ``(wave - 1) - age``.  None has a marriage
-#: history or earnings, so the seed is its only birth-year source.  Each
-#: entry: person id, ``{wave: age}`` (the waves it is present in, in the
-#: family of :func:`_host` for those waves), relationship (30 child, 50
-#: parent, 60 grandchild; each OFUM), sex.
-_SEED_BIRTH_OUTSIDE_MEMBERS = (
-    # 2020 - 3 = 2017: after 2016, counted out (also present in 2023).
+#: The members the two d1724 variants add (section 16d).  None has a
+#: marriage history or earnings, so the seed is its only birth-year
+#: source: its earliest positive-weight in-family presence, or, where
+#: that presence's age code is one the birth law refuses, its earliest
+#: presence with an age of 2-125 whose implied year (``(wave - 1) -
+#: age``) the law supports.  Each entry: person id, ``{wave: age code}``
+#: (the waves it is present in, in the family of :func:`_host`), the
+#: relationship (30 child, 40 sibling, 50 parent, 60 grandchild; each
+#: OFUM), sex.  Code 998 stands for an age code outside the loader's
+#: documented domain (0, 1-125, 999), which the law refuses.
+_SEED_BIRTH_COUNTED_OUT_MEMBERS = (
+    # 2020 - 3 = 2017: after 2016 (also present in 2023).
     (_PERSON_BASE - 11, {2021: 3, 2023: 5}, 60, "female"),
-    # 2022 - 2 = 2020: after 2016, counted out.
+    # 2022 - 2 = 2020: after 2016.
     (_PERSON_BASE - 12, {2023: 2}, 30, "male"),
-    # 2012 - 124 = 1888: before 1889, counted out.
+    # 2012 - 124 = 1888: before 1889.
     (_PERSON_BASE - 13, {2013: 124}, 50, "female"),
+    # First code 0; the later age implies 2020, outside the support: no
+    # presence the law can date (seed_age_0).
+    (_PERSON_BASE - 16, {2021: 0, 2023: 2}, 60, "male"),
+    # First code 998; the later code 1 dates nothing (no_valid_seed_age).
+    (_PERSON_BASE - 17, {2017: 998, 2019: 1}, 30, "female"),
 )
-_SEED_BIRTH_AT_BOUNDS_MEMBERS = (
-    # 2012 - 123 = 1889: the support's first year, kept.
+_SEED_BIRTH_KEPT_MEMBERS = (
+    # 2012 - 123 = 1889: the support's first year.
     (_PERSON_BASE - 14, {2013: 123}, 50, "male"),
-    # 2018 - 2 = 2016: the support's last year, kept (later waves agree).
+    # 2018 - 2 = 2016: the support's last year (later waves agree).
     (_PERSON_BASE - 15, {2019: 2, 2021: 4, 2023: 6}, 60, "female"),
+    # First code 0, then 66 in 2017: re-seeded, born 1950, a U1 target
+    # observed in 2017 and 2019.
+    (_PERSON_BASE - 18, {2015: 0, 2017: 66, 2019: 68}, 40, "female"),
+    # First code 998 in 2013, then 68 in 2015: re-seeded, born 1946, a U1
+    # target observed in both waves, the one with the refused code too.
+    (_PERSON_BASE - 19, {2013: 998, 2015: 68}, 40, "male"),
 )
 
 
@@ -1731,16 +1745,14 @@ def _with_members(
     return changed
 
 
-def _seed_birth_years_outside_career_bounds(
-    base: cohort.U2Inputs,
-) -> cohort.U2Inputs:
-    return _with_members(base, _SEED_BIRTH_OUTSIDE_MEMBERS)
+def _seed_births_counted_out(base: cohort.U2Inputs) -> cohort.U2Inputs:
+    return _with_members(base, _SEED_BIRTH_COUNTED_OUT_MEMBERS)
 
 
-def _seed_birth_years_at_career_bounds(
-    base: cohort.U2Inputs,
-) -> cohort.U2Inputs:
-    return _with_members(base, _SEED_BIRTH_AT_BOUNDS_MEMBERS)
+def _seed_births_every_case(base: cohort.U2Inputs) -> cohort.U2Inputs:
+    return _with_members(
+        base, _SEED_BIRTH_COUNTED_OUT_MEMBERS + _SEED_BIRTH_KEPT_MEMBERS
+    )
 
 
 # Appended in order, so every earlier variant is unchanged.
@@ -1769,10 +1781,8 @@ _VARIANT_BUILDERS = {
     "second_trigger_in_excluded_unit_2019": (
         _second_trigger_in_excluded_unit_2019
     ),
-    "seed_birth_years_outside_career_bounds": (
-        _seed_birth_years_outside_career_bounds
-    ),
-    "seed_birth_years_at_career_bounds": _seed_birth_years_at_career_bounds,
+    "seed_births_counted_out": _seed_births_counted_out,
+    "seed_births_every_case": _seed_births_every_case,
 }
 _VARIANT_NOTES: dict[str, str] = {
     "code_88_first_year_cohabitor": (
@@ -1858,25 +1868,26 @@ _VARIANT_NOTES: dict[str, str] = {
         "and disposition is unchanged, but B2's person count (d1242) rises "
         "by one, since it counts persons, not family units, of any sex"
     ),
-    "seed_birth_years_outside_career_bounds": (
-        "three OFUM members with no marriage history or earnings join, in "
+    "seed_births_counted_out": (
+        "five OFUM members with no marriage history or earnings join, in "
         "their first wave, families that supply a U1 observation in that "
-        "wave, each seeded outside the birth law's derived-age support: a "
-        "grandchild aged 3 in 2021 "
-        "(implied 2017) and a child aged 2 in 2023 (2020), and a parent "
-        "aged 124 in 2013 (1888).  Under d1724 (section 16d) all three are "
-        "counted out before the law, two after 2016 and one before 1889, "
-        "and every observation, disposition and other count is unchanged"
+        "wave; under d1724 (section 16d) the birth law cannot date any of "
+        "them, so each is counted out before it runs: a grandchild aged 3 "
+        "in 2021 (implied 2017) and a child aged 2 in 2023 (2020), after "
+        "2016; a parent aged 124 in 2013 (1888), before 1889; a grandchild "
+        "first coded 0 whose later age implies 2020 (seed_age_0); and a "
+        "child first coded 998, then 1 (no_valid_seed_age).  Every "
+        "observation, disposition and other count is unchanged"
     ),
-    "seed_birth_years_at_career_bounds": (
-        "two OFUM members with no marriage history or earnings join, in "
-        "their first wave, families that supply a U1 observation in that "
-        "wave, seeded at the ends of the birth law's derived-age support: a "
-        "parent aged "
-        "123 in 2013 (born 1889) and a grandchild aged 2 in 2019 (born "
-        "2016).  Neither is counted out (d1724, section 16d): both join "
-        "the universe with derived birth years outside the cohort, and "
-        "every observation and disposition is unchanged"
+    "seed_births_every_case": (
+        "the five counted-out members of seed_births_counted_out, plus four "
+        "kept under d1724 (section 16d): a parent aged 123 in 2013 (born "
+        "1889) and a grandchild aged 2 in 2019 (born 2016), at the ends of "
+        "the birth law's derived-age support; and two siblings whose "
+        "earliest presence carries an age code the law refuses (0 in 2015; "
+        "998 in 2013) and whose later age dates them, re-seeded: U1 "
+        "targets born 1950 and 1946, each with its own observations.  The "
+        "law completes on every case"
     ),
 }
 #: The generator's named variants (see :data:`_VARIANT_NOTES`).
