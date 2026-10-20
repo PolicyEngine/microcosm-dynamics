@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "description": "Data behind the development-scorecard sections of docs/progress.md. Update and run scripts/build_progress_page.py; never edit the generated page by hand.",
-  "as_of": "2026-08-30",
-  "headline": "Nine pre-registered gates in gates.yaml; all eight locked gates have a scored run; 52 one-shot candidate runs on the public record. Track B's registered tests, posted on issue #42: B1 v2 passed on 11 October 2026, and B2, which carries the forward earnings law from 2010 to 2014, failed on 18 October 2026.",
+  "as_of": "2026-10-20",
+  "headline": "Nine pre-registered gates in gates.yaml; all eight locked gates have a scored run; 52 one-shot candidate runs on the public record. Track B's registered tests, posted on issue #42: B1 v2 passed on 11 October 2026 as a reconstructed reproduction (weaker than bit-for-bit), and B2, which carries the forward earnings law from 2010 to 2014, failed on 18 October 2026.",
   "gates": [
     {
       "id": "gate_1",
@@ -63,7 +63,7 @@
     {
       "id": "gate_epuf_fill",
       "name": "Career fills against SSA's earnings file",
-      "tests": "The rules that fill the years recorded PSID careers leave out (the odd years 1997–2005 and every year before age 22 or before 1968, whichever is later), and learned replacements for them, scored on a held-out fifth of SSA's 2006 Earnings Public-Use File: 878,481 people.",
+      "tests": "The rules that fill the years recorded PSID careers leave out, and learned replacements for them, scored on a held-out fifth of SSA's 2006 Earnings Public-Use File (878,481 people) with the years the PSID would not record hidden: the odd years 1997–2005 and every year before age 22 or before 1968, whichever is later.",
       "locked": "2026-10-13",
       "candidates": 4,
       "first_pass": "Scored once (2026-10-13/14): the learned pre-career fill is certified (0/136 cells fail); the learned odd-year fill is adopted as an improvement but not certified (8/183 fail). The blind tests' current rules fail (100/183 and 131/136). The learned fills are opt-in, and no blind test uses them."
@@ -126,7 +126,7 @@
       {
         "component": "Forward projection",
         "dynasim": "Annual updating and alignment",
-        "ours": "Temporal-holdout gate m6 passed (2016/2018 earnings, 2015–2019 flows; nothing certified on mortality drift); B2, the registered 2010→2014 transport test of the forward earnings law, failed on 18 October 2026 (its projected zero-earnings rate at ages 25–44 is about 35% above the PSID's), and a successor law is being designed; forward gate (gate 3) unlocked and not yet run; the DynaSim tests do not yet draw forward earnings"
+        "ours": "Temporal-holdout gate m6 passed (2016/2018 earnings, 2015–2019 flows; nothing certified on mortality drift); B2, the registered 2010→2014 transport test of the forward earnings law, failed on 18 October 2026 (for 2012 and 2014, its projected zero-earnings rate for people aged 25 to 44 at the interview is about 35% above the PSID's), and a successor law is being designed; forward gate (gate 3) unlocked and not yet run; the DynaSim tests do not yet draw forward earnings"
       },
       {
         "component": "Social Security rule engine",
