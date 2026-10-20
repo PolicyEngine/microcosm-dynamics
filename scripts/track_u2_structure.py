@@ -8,10 +8,13 @@ committed-registry role context and writes ``track-u2-structure.json``:
 dispositions, observations, roles, pairings, design strata, the family
 income and WEALTH1 identity counts per wave and the registry status.
 Each row's counts include ``n_seed_birth_year_counted_out``: the persons
-counted out before the birth law on each side of its derived-age
-support, before 1889 and after 2016 (d1724, specification section 16d;
-:func:`populace_dynamics.uniform_cut_track_u2.cohort.derive_u2_births`),
-disclosed and deciding nothing.
+counted out before the birth law, by reason -- a seed year before 1889
+(``before_1889``) or after 2016 (``after_2016``), or no presence with an
+age the law can date (``seed_age_0``, ``no_valid_seed_age``) -- and
+``n_seed_birth_year_reseeded``, the persons re-seeded past an age code
+the law refuses (d1724, specification section 16d;
+:func:`populace_dynamics.uniform_cut_track_u2.cohort.derive_u2_births`).
+Each is disclosed and decides nothing.
 
 It also writes ``track-u2-preregistration-evidence.json``: the frozen
 input identities section 14 says execution rechecks -- the SHA-256 of

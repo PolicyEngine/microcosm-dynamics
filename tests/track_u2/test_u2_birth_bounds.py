@@ -455,6 +455,10 @@ def test_a_cohort_member_with_a_refused_code_keeps_a_seed(every_case):
             1948,
             True,
         ),
+        # Re-seeding reaches both ends of the support (2018 - 2 = 2016;
+        # 2014 - 125 = 1889).
+        ({2017: (0, 30, 500.0), 2019: (2, 30, 500.0)}, None, 2016, True),
+        ({2013: (998, 50, 500.0), 2015: (125, 50, 500.0)}, None, 1889, True),
         # Re-seeding skips a presence whose year the law does not support
         # (2021 - 1 - 3 = 2017), and takes the next (2022 - 60 = 1962).
         (
@@ -605,7 +609,7 @@ def test_the_extension_never_reaches_a_refusal(u2_inputs, host):
     whose implied year it supports (code 999 kept): zero-weight
     reference persons first seen at 124 in 2013 or with code 998 are
     seeded by the 2015 presence instead, and ones seen only at 3 in 2021
-    or with code 0 get no record; none stops the law."""
+    or only with code 0 in 2015 get no record; none stops the law."""
 
     inputs = _added(
         u2_inputs, ADDED, host, {2013: (124, 20, 0.0), 2015: (70, 20, 0.0)}
@@ -614,7 +618,9 @@ def test_the_extension_never_reaches_a_refusal(u2_inputs, host):
     inputs = _added(
         inputs, ADDED - 2, host, {2013: (998, 20, 0.0), 2015: (70, 20, 0.0)}
     )
-    inputs = _added(inputs, ADDED - 3, host, {2019: (0, 10, 0.0)})
+    # Code 0 where the implied year (2014 - 0) lies inside the support,
+    # so only the code filter keeps the presence from the law.
+    inputs = _added(inputs, ADDED - 3, host, {2015: (0, 10, 0.0)})
     births = cohort.derive_u2_births(inputs)
     for person in (ADDED, ADDED - 1, ADDED - 2, ADDED - 3):
         assert person not in births.universe

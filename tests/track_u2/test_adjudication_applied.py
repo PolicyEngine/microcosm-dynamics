@@ -2188,15 +2188,16 @@ D1724_RECORD = [
     "never replaces a seed whose code the law takes. Code 0 is "
     "documented as Inap., not as an age, so a member of the cohort "
     "could carry it on one presence; it is therefore handled as any "
-    "refused code, not counted out at once. A newborn's later ages "
-    "imply 2012 or later, so re-seeding never dates one into "
-    "1946\N{EN DASH}55. A counted-out person had a positive-weight "
-    "presence, so is not outside the universe, and the annuitant "
-    "extension (line 188) does not seed it either; where such a person "
-    "is an annuitant, its age takes the inherited wave-age fallback, "
-    "counted. The extension seeds only presences whose code the law "
-    "takes and whose implied year it supports, as before, so it cannot "
-    "reach the assertion or the refusal.",
+    "refused code, not counted out at once. Where code 0 marks an "
+    "infant, the person's later ages imply a year after 2010, so "
+    "re-seeding never dates one into 1946\N{EN DASH}55. A counted-out "
+    "person had a positive-weight presence, so is not outside the "
+    "universe, and the annuitant extension (line 188) does not seed it "
+    "either; where such a person is an annuitant, its age takes the "
+    "inherited fallback (the wave age, or missing), counted. The "
+    "extension seeds only presences whose code the law takes and whose "
+    "implied year it supports, as before, so it cannot reach the "
+    "assertion or the refusal.",
     "**How the ruling's words are read.** The decision speaks of "
     '"people whose seed coordinate implies a birth year outside" the '
     "support. This record reads that as the people whose birth year the "
@@ -2211,7 +2212,11 @@ D1724_RECORD = [
     "further pass the ruling authorizes, so at the dynamics "
     "coordinating session's request (2026-10-20) the rule also covers "
     "seeds whose code the law refuses, toward the ruling's stated "
-    "purpose: that step 4 runs once more and discloses the counts.",
+    "purpose: that step 4 runs once more and discloses the counts. That "
+    "request counted code 0 out at once. Re-seeding code 0 like any "
+    "refused code is this change's own choice, made because code 0 is "
+    "documented as Inap. (above); it can keep a member of the cohort "
+    "that counting out would lose, and its count is disclosed.",
     "**Why no member of the cohort is lost.** A person counted out on a "
     "side has no birth-year source but a seed whose year lies outside "
     "1889\N{EN DASH}2016. A person counted out under a refused code has "
@@ -2333,6 +2338,11 @@ D1724_MUTATIONS = [
         "16d",
         "it is therefore handled as any refused code, not counted out at once",
         "it is counted out at once",
+    ),
+    (
+        "16d",
+        "Re-seeding code 0 like any refused code is this change's own choice",
+        "Re-seeding code 0 was requested",
     ),
     (
         "16d",

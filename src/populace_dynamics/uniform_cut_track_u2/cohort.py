@@ -1220,8 +1220,9 @@ def derive_u2_births(inputs: U2Inputs) -> U2Births:
         )
     history = inputs.marriage_history
     earnings = inputs.observed_earnings
-    presence = _seed_frame(seeds)
-    present = frozenset(int(pid) for pid in presence["person_id"])
+    present_ids = frozenset(
+        int(pid) for frame in seeds for pid in frame["person_id"]
+    )
     seed, counted_out, reseeded = _seed_for_the_law(seeds, history, earnings)
     universe = frozenset(int(pid) for pid in seed["person_id"])
     records = career.derive_birth_years(
@@ -1251,7 +1252,7 @@ def derive_u2_births(inputs: U2Inputs) -> U2Births:
                 )
                 | anchor["person_id"].isin(spouses)
             )
-            & ~anchor["person_id"].isin(present)
+            & ~anchor["person_id"].isin(present_ids)
         ]
         ages = rows["age"].astype("int64")
         seed_birth = (wave - 1) - ages
