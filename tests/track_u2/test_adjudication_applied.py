@@ -2117,7 +2117,8 @@ D1724_RECORD = [
     "## 16d. Max's ruling on the birth law's support (2026-10-19, " "d1724)",
     "> **RULED on 2026-10-19.** Max ruled on 2026-10-19 (decision "
     "d1724), after the first \N{SECTION SIGN}20 step-4 structural pass "
-    "stopped before writing any output. This section is the "
+    "stopped before writing any output, and on 2026-10-20 approved the "
+    "widening this section records. This section is the "
     "\N{SECTION SIGN}3 note the ruling names. \N{SECTION SIGN}3 keeps "
     "its draft-3 text and line numbers, because the registries cite "
     "them (\N{SECTION SIGN}16c), so the note stands here and amends "
@@ -2209,14 +2210,15 @@ D1724_RECORD = [
     "readings differ only for a person with both an out-of-support seed "
     "and a history or earnings year. The decision names out-of-bounds "
     "seeds only. The refusal the first pass masked would stop the one "
-    "further pass the ruling authorizes, so at the dynamics "
-    "coordinating session's request (2026-10-20) the rule also covers "
-    "seeds whose code the law refuses, toward the ruling's stated "
-    "purpose: that step 4 runs once more and discloses the counts. That "
-    "request counted code 0 out at once. Re-seeding code 0 like any "
-    "refused code is this change's own choice, made because code 0 is "
-    "documented as Inap. (above); it can keep a member of the cohort "
-    "that counting out would lose, and its count is disclosed.",
+    "further pass the ruling authorizes, so the rule also covers seeds "
+    "whose code the law refuses, toward the ruling's stated purpose: "
+    "that step 4 runs once more and discloses the counts. Max approved "
+    "that widening, re-seeding included, on 2026-10-20, as noted on "
+    "d1724 in the decision log. The coordinating session had first "
+    "asked for code 0 to be counted out at once. Re-seeding it like any "
+    "refused code follows from code 0's documented meaning, Inap. "
+    "(above); it keeps a member of the cohort that counting out would "
+    "lose, and its count is disclosed.",
     "**Why no member of the cohort is lost.** A person counted out on a "
     "side has no birth-year source but a seed whose year lies outside "
     "1889\N{EN DASH}2016. A person counted out under a refused code has "
@@ -2341,8 +2343,13 @@ D1724_MUTATIONS = [
     ),
     (
         "16d",
-        "Re-seeding code 0 like any refused code is this change's own choice",
-        "Re-seeding code 0 was requested",
+        "Max approved that widening, re-seeding included, on 2026-10-20",
+        "The coordinating session chose that widening on 2026-10-20",
+    ),
+    (
+        "16d",
+        "and on 2026-10-20 approved the widening this section records",
+        "and later asked about a widening",
     ),
     (
         "16d",
