@@ -2215,8 +2215,12 @@ D1724_RECORD = [
     "that step 4 runs once more and discloses the counts. Max approved "
     "that widening on 2026-10-20, as noted on d1724 in the decision "
     "log, including that code 0 (Inap.) is re-seeded from the earliest "
-    "presence the law can date, like any refused code. Re-seeding "
-    "follows from code 0's documented meaning (above); it keeps a "
+    "presence the law can date, like any refused code. The widening as "
+    "described to Max also named code 999 (DK/NA) as refused. The law "
+    "does not refuse 999; it leaves it unresolved, as it does a missing "
+    "age, so this rule keeps 999 on that path, narrower than described, "
+    "as the correction noted on d1724 the same day records. Re-seeding "
+    "follows from code 0's documented meaning (above); it can keep a "
     "member of the cohort that counting out would lose, and its count "
     "is disclosed. (An earlier request from the coordinating session "
     "had counted code 0 out at once.)",
@@ -2351,6 +2355,12 @@ D1724_MUTATIONS = [
         "16d",
         "including that code 0 (Inap.) is re-seeded",
         "except that code 0 (Inap.) is counted out",
+    ),
+    ("16d", "keeps 999 on that path", "re-seeds 999 too"),
+    (
+        "16d",
+        "it can keep a member of the cohort",
+        "it keeps members of the cohort",
     ),
     (
         "16d",
