@@ -149,7 +149,8 @@ them. Paths are relative to the repository root.
 ## The critical path
 
 Two Track B workstreams are in progress. In forward earnings, B1 v2
-passed and B2 failed on 18 October; a successor to B2 is being
+passed as a reconstructed reproduction (weaker than bit-for-bit) and B2
+failed on 18 October; a successor to B2 is being
 designed (d1659). In payment rules, R1, G, R2 part (a), R3 and the fix
 for [#494][i494] are built, and G v2 ([#530][pr530]), G part 2, R2
 part (b) and I come next. The path to full parity runs through them and beyond, in this
