@@ -269,7 +269,7 @@ The three drill-down tables below decompose each arm's progress bar row by row. 
 
 ## Development scorecard
 
-Eight pre-registered gates; all seven locked gates have a registered first pass; 48 one-shot candidate runs on the public record.
+Nine pre-registered gates in gates.yaml; all eight locked gates have a scored run; 52 one-shot candidate runs on the public record. Track B's registered tests, posted on issue #42: B1 v2 passed on 11 October 2026 as a reconstructed reproduction (weaker than bit-for-bit), and B2, which carries the forward earnings law from 2010 to 2014, failed on 18 October 2026.
 
 Every candidate model is registered before its single scored run, and every run — pass or fail — is committed. The failures are part of the record.
 
@@ -282,6 +282,7 @@ Every candidate model is registered before its single scored run, and every run 
 | **Disability** | Work-limitation incidence and recovery hazards, disabled-occupancy prevalence, and near-retirement disability exit, anchored against SSA Disability Annual Statistical Report tables. | 1 | Candidate 1 (2026-07-12): 5/5 seeds, all 12 gated cells — passed on the first attempt. |
 | **Representative-frame transport** | The PSID-estimated generators transported onto the certified CPS representative frame: 44 gated cross-sectional cells plus SSA administrative margins. | 4 | Candidate 4 (2026-07-13): 43/43 cells in-band on 5/5 seeds — after 3 failing candidates. |
 | **Temporal-holdout projection drift** | The projection engine fits on data through 2014 only, then projects and is scored on the held-out 2015–2022 window — a genuine out-of-time test. | 3 | Candidate 3 (2026-07-24): 4/5 seeds across the 11 gated cells. |
+| **Career fills against SSA's earnings file** | The rules that fill the years recorded PSID careers leave out, and learned replacements for them, scored on a held-out fifth of SSA's 2006 Earnings Public-Use File (878,481 people) with the years the PSID would not record hidden: the odd years 1997–2005 and every year before age 22 or before 1968, whichever is later. | 4 | Scored once (2026-10-13/14): the learned pre-career fill is certified (0/136 cells fail); the learned odd-year fill is adopted as an improvement but not certified (8/183 fail). The blind tests' current rules fail (100/183 and 131/136). The learned fills are opt-in, and no blind test uses them. |
 | **Forward projection** | Near-term components resolve against future administrative publications on named resolution rules — scored when the numbers come out. | — | — (thresholds not yet locked) |
 
 ### Comparisons against the incumbent models
@@ -298,11 +299,11 @@ Component-by-component against DYNASIM, the main non-governmental dynamic benchm
 
 | Component | DYNASIM | This project |
 |---|---|---|
-| Historical earnings | Lifetime histories from survey plus linked administrative inputs | PSID 1968–2022 head and spouse panel, unreported years imputed or set to zero; gate 1 passed for the generated backcast process; exercises 1, 3 and 4 read the recorded careers |
+| Historical earnings | Lifetime histories from survey plus linked administrative inputs | PSID 1968–2022 head and spouse panel, unreported years imputed or set to zero; gate 1 passed for the generated backcast process; exercises 1, 3 and 4 read the recorded careers; their fill rules fail gate_epuf_fill, whose learned pre-career fill is certified |
 | Family structure | Marriage, divorce, and family in the annual simulation | Gates 2, 2b, 2c passed across three tranches |
 | Disability | Documented health and work-limitation modules | Gate m4 passed for self-reported work limitation, anchored to the shape of SSA's DI statistics; the SSDI entitlement the tests use is built, not gated |
 | Base population | SIPP-based starting sample | Certified CPS synthetic frame; transport gate w1 passed |
-| Forward projection | Annual updating and alignment | Temporal-holdout gate m6 passed (2016/2018 earnings, 2015–2019 flows; nothing certified on mortality drift); forward gate (gate 3) unlocked and not yet run; the DynaSim tests do not yet draw forward earnings |
+| Forward projection | Annual updating and alignment | Temporal-holdout gate m6 passed (2016/2018 earnings, 2015–2019 flows; nothing certified on mortality drift); B2, the registered 2010→2014 transport test of the forward earnings law, failed on 18 October 2026 (for 2012 and 2014, its projected zero-earnings rate for people aged 25 to 44 at the interview is about 35% above the PSID's), and a successor law is being designed; forward gate (gate 3) unlocked and not yet run; the DynaSim tests do not yet draw forward earnings |
 | Social Security rule engine | Rule-based, code not public | Python AIME/PIA oracle using PolicyEngine-US parameters (built, not gated); the Axiom engine matches its statutory AIME for 7,486 of 7,486 people (diagnostic) |
 | Claiming behavior | Retirement-and-timing model | Reduced-form claim-age distribution (built, reported, not gated) |
 | Auxiliary benefits | Spouse and survivor analysis in natural domain | Spousal, survivor, widow incl. dual-entitlement logic (built, not gated) |
