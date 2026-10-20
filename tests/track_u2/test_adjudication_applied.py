@@ -2395,8 +2395,8 @@ D1724_MUTATIONS = [
     ),
     (
         "16d",
-        "**Disclosure.** Each side's count",
-        "<!--\n**Disclosure.** Each side's count",
+        "**Disclosure.** Each reason's count",
+        "<!--\n**Disclosure.** Each reason's count",
     ),
 ]
 
