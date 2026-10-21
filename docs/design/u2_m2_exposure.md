@@ -386,3 +386,7 @@ A Claude Code session (Claude Opus 5.5), started by the dynamics coordinator ses
 - The repository at `1e739d32`: `CLAUDE.md`; the specification in full; the U1 specification's header, §15 block and §20; the U2 package, scripts and tests named in the PR; `data/external/track_u2/u1_identity.json` and the registries' entry ids and fields; the U2 SSI capture's provenance fields and its source manifest's records; `tests/README-tiers.md`; Track M's `specification.py` header; `estimates/cola_age_profile.specification_unratified_fields`. Also `~/PolicyEngine/CLAUDE.md`.
 
 **Not opened:** any other evidence-folder path; any comparator folder, seal or Boomers Report copy; `runs/track_b_b2_*`, `docs/design/track_b_attempt_ledger.md` and `paper/paper.qmd`; other sessions' transcripts or scratchpads; `~/.subfleet/` other than this session's own review jobs; any PSID file or codebook.
+
+**Ran:** the U2 and U1 test files, the specification tests and the birth-evidence artifact test, with `POPULACE_DYNAMICS_PSID_DIR` set to an empty directory, which stayed empty, so the checks that need PSID documentation skipped; Black and Ruff; the tier recount by collection; and the mutation checks listed in the PR. Every block, rulings and appendix check reads only the specification, the committed registries and the code.
+
+**Values:** it stated and inferred no 1946–55 value or direction. Every number it wrote is a hash, a commit, a CI run id, a date, a line number, a registry entry count, a test count or a constant of the code or the specification.

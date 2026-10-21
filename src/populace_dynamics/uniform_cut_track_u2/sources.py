@@ -374,11 +374,12 @@ DC_ITEM_PLAN_TYPES: dict[str, int] = {"account": 5, "formula": 1, "dk": 8}
 #: the route inherited from U1; 2015-2023 admit account plans (P46 = 5)
 #: only, so a formula, combined, DK, refused or NA plan's account items
 #: are off-route, and an amount reached only through 2015's refused
-#: P62ACKPT branch is too (5b).  Where a ratified amendment and sections
-#: 3-15 differ the amendment governs (section 16b); section 15's own text
-#: keeps draft 3's wording until section 20 step 5 materializes the final
-#: parameter block.  ``tests/track_u2/test_u2_employer_dc.py`` holds this
-#: table equal to the fragment in section 16a.
+#: P62ACKPT branch is too (5b).  Section 20 step 5 materialized the
+#: fragment in section 15's block, which
+#: :func:`~populace_dynamics.uniform_cut_track_u2.rows.
+#: check_block_against_code` holds equal to this table;
+#: ``tests/track_u2/test_u2_employer_dc.py`` also holds it equal to the
+#: fragment in section 16a.
 DECLARED_PREVIOUS_ACCOUNT_ITEMS: dict[int, tuple[str, ...]] = {
     2013: ("account", "formula", "dk"),
     2015: ("account",),

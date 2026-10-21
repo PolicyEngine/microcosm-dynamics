@@ -920,8 +920,10 @@ def checks(
     return {
         "specification_rows": rows.check_rows_against_block(block),
         "named_deltas": rows.check_named_deltas_against_specification(),
-        "u2_rulings_against_block": _refusal(
-            lambda: rows.check_u2_rulings_against_block(block)
+        "u2_rulings_against_block": rows.check_u2_rulings_against_block(block),
+        "u2_rulings_against_code": rows.check_rulings_against_code(registries),
+        "specification_block_against_code": rows.check_block_against_code(
+            block, registries
         ),
         "plans": {
             "u0_pairs": len(cohort.observation_plan(cohort.U2CohortSpec())),
@@ -1197,6 +1199,7 @@ def results_markdown(result: dict[str, Any]) -> str:
     round_2 = check["round_2_refusals"]
     round_3 = check["round_3_refusals"]
     u1_branch = check["row_branches"]["U1"]
+    against_code = check["specification_block_against_code"]
     lines += [
         "",
         "## Checks",
@@ -1206,9 +1209,13 @@ def results_markdown(result: dict[str, Any]) -> str:
         f"{check['specification_rows']['rows_equal_the_block']}; named "
         f"deltas equal section 12: "
         f"{check['named_deltas']['equal_to_section_12']}.",
-        "- U2 rulings record against the draft block: refused "
-        f"{check['u2_rulings_against_block']['refused']} (section 20 step 5 "
-        "materializes it).",
+        "- U2 rulings record equals the block's decisions: "
+        f"{check['u2_rulings_against_block']['rulings_equal']}; agrees with "
+        "the code and the committed registries: "
+        f"{check['u2_rulings_against_code']['rulings_equal_the_code']}; "
+        "the whole section 15 block equals the code "
+        f"({against_code['specification_version']}): "
+        f"{against_code['block_equals_code']}.",
         f"- Plans: U0 {check['plans']['u0_pairs']} pairs; U1 "
         f"{check['plans']['u1_pairs']} pairs over "
         f"{check['plans']['u1_birth_years']} birth years; equal to the "

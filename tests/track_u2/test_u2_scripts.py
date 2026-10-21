@@ -86,7 +86,12 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
     checks = result["checks"]
     assert checks["specification_rows"]["rows_equal_the_block"]
     assert checks["named_deltas"]["equal_to_section_12"]
-    assert checks["u2_rulings_against_block"]["refused"]
+    assert checks["u2_rulings_against_block"]["rulings_equal"]
+    assert checks["u2_rulings_against_code"]["rulings_equal_the_code"]
+    assert checks["specification_block_against_code"] == {
+        "specification_version": "u2-ratified-1",
+        "block_equals_code": True,
+    }
     assert checks["plans"]["u0_pairs"] == 5
     assert checks["plans"]["u1_pairs"] == 15
     assert checks["plans"]["u1_birth_years"] == 10
@@ -659,22 +664,30 @@ def registered():
 
 
 def _ratified_block():
+    """The committed block, which section 20 step 5 materialized."""
     block = copy.deepcopy(rows.specification_block())
-    block["status"] = "ratified_frozen"
-    block["version"] = "u2-ratified-1"
-    block["blocked_by"] = []
-    block["ssi"]["parameters"][
-        "sha256"
-    ] = "a58d55c160b48cd3e21f730d45265374bd3c8a9eb7eae947469a5a5dc0b23762"
-    block["income_concept"]["employer_dc"]["reader"] = "u2_employer_dc_adapter"
-    block["income_concept"]["employer_dc"][
-        "later_wave_mapping_status"
-    ] = "RESOLVED"
-    block["decisions"] = {
+    assert block["version"] == "u2-ratified-1"
+    assert block["status"] == "ratified_frozen"
+    assert block["blocked_by"] == []
+    assert block["ssi"]["parameters"]["sha256"] == (
+        "a58d55c160b48cd3e21f730d45265374bd3c8a9eb7eae947469a5a5dc0b23762"
+    )
+    assert block["decisions"] == {
         "ruled_by": "Max",
         "ruled_on": "2026-09-28",
-        **copy.deepcopy(rows.U2_RULINGS),
+        **rows.U2_RULINGS,
     }
+    return block
+
+
+def _draft_block():
+    """The committed block as it stood before section 20 step 5."""
+    block = _ratified_block()
+    block["version"] = "u2-draft-4"
+    block["status"] = "draft"
+    block["ssi"]["parameters"]["sha256"] = "TO_VERIFY"
+    block["decisions"] = {"u2_ratification": "pending_Max"}
+    block["blocked_by"] = ["preregistration_structure_reconciliation"]
     return block
 
 
@@ -743,7 +756,58 @@ def test_preflight_refuses_before_the_specification(
 
 def test_preflight_refuses_the_draft_specification(registered):
     with pytest.raises(ValueError, match="draft|ratified"):
-        _preflight(registered, specification=rows.specification_block())
+        _preflight(registered, specification=_draft_block())
+
+
+def test_preflight_passes_the_committed_specification(registered):
+    """Section 20 step 5: the committed block, which the preflight reads
+    when no specification is passed, passes items 4 and 5."""
+    binding = registered.binding_sha256("b" * 64, _invented_evidence())
+    state = _preflight(registered, specification=None, binding=binding)
+    assert state["rows"]["rows_equal_the_block"]
+    assert state["rulings"]["rulings_equal"]
+    assert state["rulings_against_code"]["rulings_equal_the_code"]
+    assert state["block_against_code"] == {
+        "specification_version": "u2-ratified-1",
+        "block_equals_code": True,
+    }
+
+
+@pytest.mark.parametrize(
+    "change, path",
+    [
+        (
+            lambda b: b["income_concept"]["employer_dc"][
+                "previous_routes"
+            ].update(account_items=["account", "formula", "dk"]),
+            "income_concept.employer_dc.previous_routes.account_items",
+        ),
+        (
+            lambda b: b["income_concept"]["employer_dc"].update(
+                reader="data/employer_dc.py"
+            ),
+            "income_concept.employer_dc.reader",
+        ),
+        (
+            lambda b: b["population"]["waves"]["2017"].update(
+                weight="ER34650"
+            ),
+            "population.waves.2017.weight",
+        ),
+        (
+            lambda b: b["threshold"].update(poor_if="income_at_or_below"),
+            "threshold.poor_if",
+        ),
+    ],
+)
+def test_preflight_refuses_a_block_that_differs_from_the_code(
+    registered, change, path
+):
+    block = _ratified_block()
+    change(block)
+    with pytest.raises(ValueError, match="differs from the code") as error:
+        _preflight(registered, specification=block)
+    assert path in str(error.value)
 
 
 @pytest.mark.parametrize(

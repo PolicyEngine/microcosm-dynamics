@@ -1004,7 +1004,7 @@ def test_specification_revision_keeps_cited_lines(documents):
     )
     lines = raw.split(b"\n")
     draft_3 = draft_3_bytes(record).split(b"\n")
-    assert lines[2].startswith(b"- **Version:** `u2-draft-4`")
+    assert lines[2].startswith(b"- **Version:** `u2-ratified-1`")
     assert draft_3[2].startswith(b"- **Version:** `u2-draft-3`")
     cited = {
         citation["line"]
@@ -1020,19 +1020,38 @@ def test_specification_revision_keeps_cited_lines(documents):
         assert lines[line - 1].strip(), line
         digest = hashlib.sha256(lines[line - 1]).hexdigest()
         assert digest == record["cited_lines_sha256"][str(line)], line
-    # §16a is inserted where draft 3 had §17, so every earlier line keeps its
-    # draft-3 number and text except the version, status and §15 version.
+    # Every line before §15 keeps its draft-3 number and text except the
+    # version and status lines.
+    section_15 = lines.index(b"## 15. Machine-readable parameter block")
+    assert draft_3[section_15] == lines[section_15]
+    assert {
+        number
+        for number in range(1, section_15 + 1)
+        if lines[number - 1] != draft_3[number - 1]
+    } == {3, 4}
+    # §20 step 5 materialized §15's block.  Through line 1185, the last line
+    # a registry cites, every line keeps its draft-3 number, and only the
+    # lines the materialization wrote differ: the two lines of prose, the
+    # version and status, the role rules' name, the employer-DC reader and
+    # amendment 5's fragment between the cited lines 1173 and 1185.
+    assert max(cited) == 1185
+    assert {
+        number
+        for number in range(section_15 + 1, max(cited) + 1)
+        if lines[number - 1] != draft_3[number - 1]
+    } == {1039, 1041, 1047, 1048, 1145, 1168, *range(1175, 1185)}
+    # §16, unchanged since draft 3, follows the longer block, and §16a stands
+    # where draft 3's §17 would stand after it.
+    heading_16 = b"## 16. Decisions and explicit departures from U1"
+    section_16 = lines.index(heading_16)
     section_16a = lines.index(
         b"## 16a. Proposed amendments for `u2-draft-4` (pending Max's ruling)"
     )
-    assert draft_3[section_16a].startswith(b"## 17. ")
-    changed = {
-        number
-        for number in range(1, section_16a + 1)
-        if lines[number - 1] != draft_3[number - 1]
-    }
-    assert changed == {3, 4, 1047}
-    assert cited < set(range(1, section_16a + 1))
+    draft_16 = draft_3.index(heading_16)
+    draft_17 = draft_16 + (section_16a - section_16)
+    assert draft_3[draft_17].startswith(b"## 17. ")
+    assert lines[section_16:section_16a] == draft_3[draft_16:draft_17]
+    assert cited <= set(range(1, section_16 + 1))
 
 
 def test_section_16a_quotes_draft_3_verbatim():
@@ -1319,38 +1338,47 @@ D1090_ROWS = {
 #: db735e5).
 D1090_CLAUSES = {
     "header_version": [
-        "- **Version:** `u2-draft-4` (milestone 1b, 2026-09-28; revised "
-        "2026-09-29 after the independent review; Max's rulings recorded "
-        "2026-09-30, 2026-10-10 and 2026-10-12): proposed amendments "
+        "- **Version:** `u2-ratified-1` (\N{SECTION SIGN}20 step 5, "
+        "2026-10-21): \N{SECTION SIGN}15 holds the final parameter block and "
+        "U2's rulings record, and the merge of this revision ratifies the "
+        "specification under d514 (\N{SECTION SIGN}20 step 6). Previous "
+        "version: `u2-draft-4` (milestone 1b, 2026-09-28; revised 2026-09-29 "
+        "after the independent review; Max's rulings recorded 2026-09-30, "
+        "2026-10-10, 2026-10-12 and 2026-10-19): proposed amendments "
         "1\N{EN DASH}6 in \N{SECTION SIGN}16a, ruled by Max on 2026-09-30 "
         "(d637) as recorded in \N{SECTION SIGN}16b, with blockers B1 and B2 "
         "ruled on 2026-10-10 (d1090) as recorded in \N{SECTION SIGN}16c, "
-        "and amendment 1's parts 1a\N{EN DASH}1c confirmed on 2026-10-12 "
-        "(d745) as recorded in \N{SECTION SIGN}16b. Previous version: "
-        "`u2-draft-3` (round 2).",
+        "amendment 1's parts 1a\N{EN DASH}1c confirmed on 2026-10-12 (d745) "
+        "as recorded in \N{SECTION SIGN}16b, and the birth law's support "
+        "ruled on 2026-10-19 (d1724) as recorded in \N{SECTION SIGN}16d. "
+        "Before it, `u2-draft-3` (round 2).",
     ],
     "header_status": [
-        "- **Status:** decisions ruled for `u2-draft-3`. On 2026-09-28 Max "
-        "approved the \N{SECTION SIGN}16 defaults and ratification of that "
-        "draft (d514, in chat). Per \N{SECTION SIGN}20, the version becomes "
-        "`u2-ratified-1` by the merge that completes \N{SECTION SIGN}20 "
-        "steps 2\N{EN DASH}5 and materializes the final parameter block; "
-        "that merge needs no further ruling unless it changes this "
-        "document's substance. `u2-draft-4` adds \N{SECTION SIGN}16a, whose "
-        "proposed amendments change substance, so each needed Max's ruling "
-        "first. He ruled on 2026-09-30 (d637; \N{SECTION SIGN}16b): B3 is "
-        "resolved by option 1, amendments 2\N{EN DASH}5 are ratified as "
-        "written, and blockers B1 and B2 were held until PSID answered. "
-        "PSID answered on 2026-10-07, and on 2026-10-10 he ruled on B1 and "
-        "B2 (d1090; \N{SECTION SIGN}16c): B1 takes option 2 and B2 option "
-        "1, each an exclusion under a named disposition, ratified as "
-        "amendments to draft-3 line 160 (B1) and to draft-3 lines 152, 154 "
-        "and 158 for 2019\N{EN DASH}2023 (B2). No blocker hold remains. "
-        "Amendment 1's parts 1a\N{EN DASH}1c, which the d637 ruling's list "
-        "does not name, were read as ratified pending Max's confirmation, "
-        "and on 2026-10-12 he confirmed that d637 ratified them as written "
-        "(d745; \N{SECTION SIGN}16b). Not registered or authorized for "
-        "execution.",
+        "- **Status:** ratified and frozen by the merge of this revision "
+        "(\N{SECTION SIGN}20 step 6). Decisions were ruled for `u2-draft-3`: "
+        "on 2026-09-28 Max approved the \N{SECTION SIGN}16 defaults and "
+        "ratification of that draft (d514, in chat). Per \N{SECTION SIGN}20, "
+        "the version becomes `u2-ratified-1` by the merge that completes "
+        "\N{SECTION SIGN}20 steps 2\N{EN DASH}5 and materializes the final "
+        "parameter block; that merge needs no further ruling unless it "
+        "changes this document's substance, and \N{SECTION SIGN}20 step 5 "
+        "records why this revision changes none. `u2-draft-4` adds "
+        "\N{SECTION SIGN}16a, whose proposed amendments change substance, so "
+        "each needed Max's ruling first. He ruled on 2026-09-30 (d637; "
+        "\N{SECTION SIGN}16b): B3 is resolved by option 1, amendments "
+        "2\N{EN DASH}5 are ratified as written, and blockers B1 and B2 were "
+        "held until PSID answered. PSID answered on 2026-10-07, and on "
+        "2026-10-10 he ruled on B1 and B2 (d1090; \N{SECTION SIGN}16c): B1 "
+        "takes option 2 and B2 option 1, each an exclusion under a named "
+        "disposition, ratified as amendments to draft-3 line 160 (B1) and to "
+        "draft-3 lines 152, 154 and 158 for 2019\N{EN DASH}2023 (B2). No "
+        "blocker hold remains. Amendment 1's parts 1a\N{EN DASH}1c, which the "
+        "d637 ruling's list does not name, were read as ratified pending "
+        "Max's confirmation, and on 2026-10-12 he confirmed that d637 "
+        "ratified them as written (d745; \N{SECTION SIGN}16b). On 2026-10-19 "
+        "he ruled on the birth law's support (d1724; \N{SECTION SIGN}16d), "
+        "and the \N{SECTION SIGN}20 step-4 pass completed under that ruling "
+        "on 2026-10-21. Not registered or authorized for execution.",
     ],
     "record": [
         "## 16c. Max's ruling on blockers B1 and B2 (2026-10-10, d1090)",
@@ -1514,11 +1542,17 @@ D1090_CLAUSES = {
         "record remains, and the loader's source preflight passes; the "
         "structural pass still needs Max's authorization (item 8; "
         "\N{SECTION SIGN}20 step 4).",
-        "8. Complete the pre-registration structural, reconciliation and "
-        "F17 component pass, including only the counts that the ratified B1 "
-        "and B2 options name (under the 2026-10-10 ruling, the counts "
-        "specified by \N{SECTION SIGN}16a options 1d-2 and 1e-1, each "
-        "disclosed and deciding nothing; \N{SECTION SIGN}16c).",
+        "8. Complete the pre-registration structural, reconciliation and F17 "
+        "component pass, including only the counts that the ratified B1 and "
+        "B2 options name (under the 2026-10-10 ruling, the counts specified "
+        "by \N{SECTION SIGN}16a options 1d-2 and 1e-1, each disclosed and "
+        "deciding nothing; \N{SECTION SIGN}16c). **Done (2026-10-21; "
+        "\N{SECTION SIGN}20 step 4):** the second pass, under d1724, "
+        "completed with no refusal, failure or mapping failure, and the "
+        "structural counts of rows U0 and U1 carry the per-exclusion person "
+        "counts (`n_family_unit_exclusion_persons` and "
+        "`n_family_unit_exclusion_persons_distinct`); this record states none "
+        "of them.",
     ],
     "execution": [
         "**Pending.**",
@@ -1562,7 +1596,16 @@ D1090_FOLLOWERS = {
             "`::test_rows_equal_the_section_15_block`). The equality checks "
             "of the specification, the manifests and the final parameter "
             "block wait for \N{SECTION SIGN}20 step 5, which materializes the "
-            "block and empties \N{SECTION SIGN}15's `blocked_by`."
+            "block and empties \N{SECTION SIGN}15's `blocked_by`. **Done "
+            "(2026-10-21; \N{SECTION SIGN}20 step 5):** \N{SECTION SIGN}15 "
+            "holds the final block, `u2-ratified-1`, with the amendment 5 "
+            "fragment, an empty `blocked_by` and U2's rulings record, and "
+            "`rows.check_block_against_code` holds the whole block equal to "
+            "the code, every key and value; the manifests it is checked "
+            "against are the committed registries, all RESOLVED "
+            "(\N{SECTION SIGN}20 step 2), which give each wave's weight, "
+            "family-unit and WEALTH1 variables and every registry entry the "
+            "rulings record names (`test_u2_specification_block.py`)."
         ),
     },
     "execution": {
