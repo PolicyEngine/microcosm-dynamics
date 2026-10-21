@@ -52,6 +52,7 @@ from populace_dynamics.estimates import uniform_cut_tabulation as ut
 from populace_dynamics.uniform_cut_track_u2 import (
     cohort,
     identity,
+    loader,
     memo,
     parameters,
     sources,
@@ -66,6 +67,7 @@ __all__ = [
     "NAMED_DELTAS",
     "REGISTERED_ROWS",
     "ROW_IDS",
+    "RULING_DECISIONS",
     "SENSITIVITIES_UNSCORED",
     "SPECIFICATION_STATUS",
     "SPECIFICATION_VERSION",
@@ -328,7 +330,7 @@ def _ruled(scope: Mapping[str, Any], **record: Any) -> dict[str, Any]:
     entry = {
         **record,
         "registry_entries": [
-            f"{scope['registry']}:{entry}" for entry in scope["entries"]
+            f"{scope['registry']}:{name}" for name in scope["entries"]
         ],
         "specification_section": ruling["specification_section"],
         "decision_record": ruling["decision"],
@@ -360,7 +362,7 @@ def _excluded(disposition: str, **record: Any) -> dict[str, Any]:
         "member_condition": (
             None if scope["condition"] is None else dict(scope["condition"])
         ),
-        "registry_entries": [f"roles:{entry}" for entry in scope["entries"]],
+        "registry_entries": [f"roles:{name}" for name in scope["entries"]],
         "option": ruling["option"],
         "amends_draft_3_lines": list(ruling["amends_draft_3_lines"]),
         "specification_section": ruling["specification_section"],
@@ -912,7 +914,8 @@ def expected_specification_block(
     support waves and their registry variables, the income-concept,
     annuity, threshold, cut and SSI parameters and their capture pins,
     the cells, floor and design settings, the memo rules, the rows, the
-    entry points, the labels and U2's rulings record.  The descriptive
+    entry points, the pre-registration evidence pin, the labels and U2's
+    rulings record.  The descriptive
     values the code does not otherwise hold (the Report's citation, the
     unit and financial-asset definitions, the comparator boundary, the
     cleared extracts' hashes and the wording keys) are written here once,
@@ -1210,6 +1213,16 @@ def expected_specification_block(
             "component_diagnostics": (
                 "scripts/track_u2_component_diagnostics.py"
             ),
+        },
+        "preregistration_evidence": {
+            "file": _relative(loader.PREREGISTRATION_EVIDENCE_PATH),
+            "sha256": loader.PREREGISTRATION_EVIDENCE_SHA256,
+            "schema_version": loader.PREREGISTRATION_SCHEMA,
+            "written_by": "scripts/track_u2_structure.py",
+            "authorized_by": U2_RULINGS["seed_birth_year_support"][
+                "decision_record"
+            ],
+            "pinned_from": "EV/track-u2-step4-pass-20261021-run2/MANIFEST.md",
         },
         "acceptance_rule": None,
         "labels": list(ap.OUTPUT_LABELS),
