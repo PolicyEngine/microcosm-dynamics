@@ -78,12 +78,16 @@ outcome. Its design inputs live in
 B0.2 and that lane must not see each other's evidence.
 
 - No B0.2 lane or reviewer reads the successor folder, or anything
-  derived from it.
+  derived from it. B0.2's own working files live in
+  `microcosm-launch-evidence/dynasim-parity-20260909/trackb-b0-2-20261021/`,
+  and its lanes run in a standalone clone with the design and
+  `RESTRICTED-FILES.md` copied in, and nothing else from the evidence
+  directory.
 - The successor lane must not read B0.2's counts, planning values or
-  records. Before any B0.2 file holding real-data counts reaches
-  master, B0.2 adds an exclusion inventory in the format
-  `scripts/track_b_b0_1_review_root.py` reads (`q6_exclusions`), which
-  successor-lane review roots name.
+  records, or B0.2's working folder. Before any B0.2 file holding
+  real-data counts reaches master, B0.2 adds an exclusion inventory in
+  the format `scripts/track_b_b0_1_review_root.py` reads
+  (`q6_exclusions`), which successor-lane review roots name.
 - B2's outcome is not restricted for B0.2. The 2026-10-18 entry in
   `RESTRICTED-FILES.md` restricts B2's outcome files for roles building
   or proposing a successor blind, and B0.2 must record that exposure.
