@@ -39,12 +39,14 @@ that file.
 - **Exposure.** B2's result is recorded as exposed before J's holdout is
   chosen (lines 297, 368).
 - **The held-out data registry.** `docs/design/track_b_holdout_registry.json`
-  is the single registry of held-out years, editions, tables and
-  partitions for every Track B gate and every open-population gate
-  (coordinator, 2026-10-21). J's candidates are registered first; the
+  (PR #560, on its own so that every lane can cite it on master) is the
+  single registry of held-out years, editions, tables and partitions for
+  every Track B gate and every open-population gate (coordinator,
+  2026-10-21). J's candidates are registered there first; the
   open-population lane's OP0.2 registers its picks for OP12 before it
-  freezes them; no unit is held out by two gates silently. So are the SSA Annual Statistical Supplement
-  pages that Track B participants have already opened (lines 290-295).
+  freezes them; no unit is held out by two gates silently. B0.2's
+  mechanical exposure inventory, `docs/design/track_b_b0_2_exposure_inventory.json`,
+  completes it.
 - **Pricing of the still-unpriced items** (§3.3, line 198; Q13, line
   618): data access, loaders and gate work for I's observational timing
   gate; the HRS loader and access; linked-withholding data access and
