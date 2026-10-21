@@ -9,6 +9,9 @@ is not a git repository, and removes, whole:
 
 - every file on the audit's Q6 exclusion list and every further file the
   exposure inventory flags when rerun at that commit;
+- every file on a standing exclusion record (``STANDING_EXCLUSIONS``),
+  whatever inventories the build names: B2's run record and attempt
+  ledger, which no inventory scan lists;
 - ``data/external/psid_codebook_field_evidence/``, whose code maps carry
   frequency columns for B2's 2012 and 2014 labor-income variables;
 - any other file that holds both a code map and frequencies, unless it
@@ -56,6 +59,11 @@ ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = "track_b_b0_1_review_root.v1"
 CODEBOOK_DIR = "data/external/psid_codebook_field_evidence"
 CONTEXT_DIR = "_review_context"
+#: Standing exclusion records, in the inventories' ``q6_exclusions`` form.
+#: Every root excludes their paths, whatever inventories a build names: they
+#: hold values a blind reviewer must not see, and no exposure-inventory scan
+#: lists them.
+STANDING_EXCLUSIONS = ("docs/design/track_b_b2_outcome_exclusions.json",)
 #: A file holding both of these is a codebook table and is removed.
 CODE_MAP_RX = re.compile(r"code_map", re.IGNORECASE)
 FREQUENCY_RX = re.compile(r"frequenc", re.IGNORECASE)
@@ -79,6 +87,20 @@ def denied_paths(inventories: Iterable[Mapping[str, Any]]) -> list[str]:
         for entry in inventory["q6_exclusions"]:
             paths.add(str(entry["path"]))
     return sorted(paths)
+
+
+def standing_inventories(repository: Path = ROOT) -> list[dict[str, Any]]:
+    """The standing exclusion records, read from ``repository``'s working
+    tree. A missing record refuses the build rather than dropping it."""
+    records: list[dict[str, Any]] = []
+    for relative in STANDING_EXCLUSIONS:
+        path = repository / relative
+        if not path.is_file():
+            raise FileNotFoundError(
+                f"the standing exclusion record {relative} is missing"
+            )
+        records.append(json.loads(path.read_text(encoding="utf-8")))
+    return records
 
 
 def remove_denied(root: Path, denied: Sequence[str]) -> list[str]:
@@ -149,6 +171,15 @@ def build(
         outside = sorted(set(allowed) - changed_files(base, head))
         if outside:
             raise ValueError(f"not changed by this pull request: {outside}")
+    # Read every exclusion record before anything is written, so that a
+    # missing or unreadable record leaves no partial root behind.
+    records = [
+        *(
+            json.loads(path.read_text(encoding="utf-8"))
+            for path in inventories
+        ),
+        *standing_inventories(),
+    ]
     out = out.resolve()
     if out.exists():
         raise FileExistsError(f"{out} exists")
@@ -164,9 +195,7 @@ def build(
     with tarfile.open(archive) as tar:
         tar.extractall(out, filter="data")
     archive.unlink()
-    denied = denied_paths(
-        json.loads(path.read_text(encoding="utf-8")) for path in inventories
-    )
+    denied = denied_paths(records)
     removed = remove_denied(out, denied)
     denied_set = set(denied)
     if denied_set & set(allowed):

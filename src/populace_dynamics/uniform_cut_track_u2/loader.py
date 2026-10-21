@@ -112,6 +112,7 @@ __all__ = [
     "U2FrozenIdentityMismatch",
     "U2LoaderRefusal",
     "U2UndocumentedValue",
+    "check_frame_environment",
     "check_frozen_files",
     "check_individual_values",
     "check_layouts_against_setup",
@@ -180,7 +181,7 @@ _PERSON_SEX: dict[int, str] = {1: "male", 2: "female", 9: "na"}
 
 #: The pre-registration evidence record (section 14 frozen identities).
 PREREGISTRATION_SCHEMA = (
-    "populace_dynamics.track_u2_preregistration_evidence.v1"
+    "populace_dynamics.track_u2_preregistration_evidence.v2"
 )
 #: Where the committed record lives once the section 20 step-4 pass has
 #: written it (``scripts/track_u2_structure.py``) and it is reviewed and
@@ -197,7 +198,10 @@ _EVIDENCE_KEYS: tuple[str, ...] = (
     "psid_files_sha256",
     "psid_files_bundle_sha256",
     "input_frames_sha256",
+    "frame_environment",
 )
+#: The keys of the record's frame environment (``cohort.frame_environment``).
+_ENVIRONMENT_KEYS = ("future_infer_string", "pandas_version")
 _HEX64 = re.compile(r"[0-9a-f]{64}")
 #: A chief-of-staff decision id: ``d`` and its number (e.g. ``d745``).
 _DECISION_ID = re.compile(r"d[1-9][0-9]*")
@@ -566,7 +570,9 @@ def load_u2_inputs(
     (:func:`read_preregistration_evidence`), not just any well-formed
     one: a fabricated record would otherwise stand in for the
     authorization an unfrozen load needs.  An absent or different record
-    refuses before any PSID path is resolved.  With it, every frozen file
+    refuses before any PSID path is resolved, and so does a pandas other
+    than the one its frame digest was taken under
+    (:func:`check_frame_environment`).  With it, every frozen file
     is rehashed before any record is parsed (:func:`check_frozen_files`);
     while records are read, opening any file under the PSID directory
     that the record does not freeze refuses before the file is read
@@ -587,6 +593,7 @@ def load_u2_inputs(
                 "reads PSID records only against the reviewed record the "
                 "section 20 step-4 pass wrote"
             )
+        check_frame_environment(frozen)
     registries = sources.RegistrySet.committed()
     preflight = source_preflight(registries)
     # Stages 2 and 3 run only once every required route is resolved.
@@ -708,6 +715,31 @@ def _hex_map(value: Any, what: str, *, paths: bool) -> dict[str, str]:
     return dict(sorted(out.items()))
 
 
+def _plain_json(value: Any, where: str) -> None:
+    """Refuse anything but plain JSON data, by exact type: ``dict`` with
+    ``str`` keys, ``list``, ``str``, ``int``, ``float``, ``bool`` or
+    ``None``.  A subclass can carry one digest's text (and so its hash)
+    while it compares equal to another (review round 3)."""
+
+    kind = type(value)
+    if kind is dict:
+        for key, item in value.items():
+            if type(key) is not str:
+                raise U2FrozenIdentityMismatch(
+                    f"the evidence record is not plain JSON data: {where} "
+                    f"has a {type(key).__qualname__} key"
+                )
+            _plain_json(item, f"{where}.{key}")
+    elif kind is list:
+        for index, item in enumerate(value):
+            _plain_json(item, f"{where}[{index}]")
+    elif kind not in (str, int, float, bool, type(None)):
+        raise U2FrozenIdentityMismatch(
+            f"the evidence record is not plain JSON data: {where} is a "
+            f"{kind.__qualname__}"
+        )
+
+
 def check_preregistration_evidence(record: Any) -> dict[str, Any]:
     """Refuse a pre-registration evidence record that is not U2's, not
     made under this checkout's pinned registries, or not self-consistent;
@@ -718,11 +750,17 @@ def check_preregistration_evidence(record: Any) -> dict[str, Any]:
     :data:`~populace_dynamics.uniform_cut_track_u2.sources.
     REGISTRY_SHA256`, the cited-source hashes, a nonempty map of PSID
     files (paths relative to the PSID directory) to SHA-256, their bundle
-    digest (recomputed here) and the sealed frame digest.
+    digest (recomputed here), the sealed frame digest and the pandas
+    settings it was taken under (``cohort.frame_environment``; schema v2).
+    Every value
+    below the top-level mapping must be plain JSON data by exact type
+    (:func:`_plain_json`; review round 3), as ``json.loads`` builds it.
     """
 
     if not isinstance(record, Mapping):
         raise U2FrozenIdentityMismatch("the evidence record is no mapping")
+    record = dict(record)
+    _plain_json(record, "the record")
     if set(record) != set(_EVIDENCE_KEYS):
         raise U2FrozenIdentityMismatch(
             f"the evidence record holds keys {sorted(record)}, not exactly "
@@ -766,6 +804,19 @@ def check_preregistration_evidence(record: Any) -> dict[str, Any]:
         raise U2FrozenIdentityMismatch(
             "the evidence's input_frames_sha256 is not a 64-hex SHA-256"
         )
+    environment = record["frame_environment"]
+    if (
+        type(environment) is not dict
+        or tuple(sorted(environment)) != _ENVIRONMENT_KEYS
+        or type(environment["pandas_version"]) is not str
+        or not environment["pandas_version"]
+        or type(environment["future_infer_string"]) is not bool
+    ):
+        raise U2FrozenIdentityMismatch(
+            "the evidence's frame_environment must be exactly "
+            f"{list(_ENVIRONMENT_KEYS)}: a nonempty pandas version string "
+            "and a bool"
+        )
     return {
         "schema_version": PREREGISTRATION_SCHEMA,
         "target_id": identity.TARGET_ID,
@@ -779,7 +830,32 @@ def check_preregistration_evidence(record: Any) -> dict[str, Any]:
         "psid_files_sha256": files,
         "psid_files_bundle_sha256": bundle,
         "input_frames_sha256": frames,
+        "frame_environment": {
+            "future_infer_string": environment["future_infer_string"],
+            "pandas_version": environment["pandas_version"],
+        },
     }
+
+
+def check_frame_environment(frozen: Mapping[str, Any]) -> None:
+    """Refuse unless pandas here is as the evidence record froze it.
+
+    The frame digest hashes pandas' dtype names and CSV text
+    (``cohort.frame_environment``), so a load or run under another pandas
+    version or string inference setting could refuse a legitimate frame
+    or digest it differently.  Checked before any PSID path is resolved.
+    The record is normalized first, so only plain JSON data compares.
+    """
+
+    frozen = check_preregistration_evidence(frozen)
+    current = cohort.frame_environment()
+    if frozen["frame_environment"] != current:
+        raise U2FrozenIdentityMismatch(
+            "the pre-registration evidence froze its frame digest under "
+            f"pandas {frozen['frame_environment']}, not this environment's "
+            f"{current}: the digest hashes pandas' dtype names and CSV text, "
+            "so a frozen load or registered run uses the same pandas"
+        )
 
 
 def preregistration_evidence_sha256(record: Mapping[str, Any]) -> str:
@@ -793,9 +869,13 @@ def preregistration_evidence_sha256(record: Mapping[str, Any]) -> str:
 def preregistration_evidence(inputs: cohort.U2Inputs) -> dict[str, Any]:
     """The frozen identities of loader-sealed inputs (section 20 step 4).
 
-    Refuses inputs the U2 loader did not seal, or whose frames or file
-    hashes changed after sealing (``cohort._input_provenance``).  The data
-    directory is not recorded: files are keyed relative to it.
+    Refuses inputs the U2 loader did not seal (a registered run's private
+    snapshot included), or whose frames or file hashes changed after
+    sealing (``cohort._input_provenance``), or whose
+    frames do not rebuild from the text their digest hashes
+    (``cohort.rebuilt_input_frames``): a registered run computes only on
+    rebuilt frames, so this refusal comes at step 4, before registration.
+    The data directory is not recorded: files are keyed relative to it.
     """
 
     if type(inputs) is not cohort.U2Inputs:
@@ -805,6 +885,23 @@ def preregistration_evidence(inputs: cohort.U2Inputs) -> dict[str, Any]:
         raise U2LoaderRefusal(
             "pre-registration evidence is recorded only from inputs the U2 "
             f"loader sealed, not {provenance['kind']!r}"
+        )
+    if provenance.get(cohort.SNAPSHOT_KEY):
+        raise U2LoaderRefusal(
+            "pre-registration evidence is recorded only from inputs the U2 "
+            "loader read, not from a registered run's private snapshot"
+        )
+    # A registered run computes only on frames rebuilt from the text their
+    # digest hashes (cohort._registered_snapshot); refuse here, before the
+    # digest is frozen, any frame that would not rebuild (review round 3).
+    try:
+        _, rebuilt = cohort.rebuilt_input_frames(inputs)
+    except cohort.U2CohortError as error:
+        raise U2LoaderRefusal(str(error)) from error
+    if rebuilt != provenance["input_frames_sha256"]:
+        raise U2LoaderRefusal(
+            "the inputs' frames rebuild to another digest than the sealed "
+            "one: a registered run could not compute on them"
         )
     return check_preregistration_evidence(
         {
@@ -818,6 +915,7 @@ def preregistration_evidence(inputs: cohort.U2Inputs) -> dict[str, Any]:
             "psid_files_sha256": dict(provenance["psid_files_sha256"]),
             "psid_files_bundle_sha256": provenance["psid_files_bundle_sha256"],
             "input_frames_sha256": provenance["input_frames_sha256"],
+            "frame_environment": cohort.frame_environment(),
         }
     )
 

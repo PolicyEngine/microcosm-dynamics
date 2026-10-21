@@ -184,6 +184,9 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
         "sex_unknown_target_in_excluded_unit_2019",
         "spouse_slot_occupant_without_family_spouse_2019",
         "code_88_target_with_ofum_income_2019",
+        "second_trigger_in_excluded_unit_2019",
+        "seed_births_counted_out",
+        "seed_births_every_case",
     ]
     assert all(entry["regenerated"] for entry in variants.values())
     # Amendment 1c: the two code-88 variants build under the declared
@@ -256,6 +259,24 @@ def test_dry_run_records_every_branch_and_refusal(dry_run):
         "ssi_subclass_under_the_pinned_label": "U2ParameterError",
         "invented_run_naming_an_evidence_hash": "U2RunError",
     }
+    round_3 = checks["round_3_refusals"]
+    assert {name: entry["error"] for name, entry in round_3.items()} == {
+        "registered_run_given_altered_row_definitions": "U2RunError",
+        "registered_run_given_the_registered_rows": "U2RunError",
+        "invented_run_naming_an_evidence_record": "U2RunError",
+        "frame_container_not_a_plain_dict": "U2CohortError",
+        "string_cell_not_exactly_a_str": "U2CohortError",
+    }
+    assert all(
+        "row_set" in round_3[name]["message"]
+        for name in (
+            "registered_run_given_altered_row_definitions",
+            "registered_run_given_the_registered_rows",
+        )
+    )
+    assert "binds no" in (
+        round_3["invented_run_naming_an_evidence_record"]["message"]
+    )
     for row_id, entry in checks["invariants"].items():
         for key, value in entry.items():
             if not key.startswith("n_"):
@@ -291,6 +312,7 @@ def test_dry_run_markdown_names_the_refusals(dry_run):
     )
     assert "Round-1 review refusals (invented;" in text
     assert "Round-2 review refusals (invented;" in text
+    assert "Round-3 review refusals (invented):" in text
     assert "routes from other data to the invented declared rules" in text
     assert "Named invented variants" in text
     for delta in rows.NAMED_DELTAS:
@@ -665,7 +687,7 @@ _INVENTED_FILES = {
 
 
 def _invented_evidence(**changes):
-    from populace_dynamics.uniform_cut_track_u2 import loader, sources
+    from populace_dynamics.uniform_cut_track_u2 import cohort, loader, sources
 
     files = changes.pop("psid_files_sha256", _INVENTED_FILES)
     record = {
@@ -677,6 +699,7 @@ def _invented_evidence(**changes):
         "psid_files_sha256": dict(files),
         "psid_files_bundle_sha256": loader.files_bundle_sha256(files),
         "input_frames_sha256": "3" * 64,
+        "frame_environment": cohort.frame_environment(),
     }
     record.update(changes)
     return record
@@ -932,6 +955,66 @@ def test_the_binding_changes_with_every_frozen_identity(key, digest):
     ) == same
 
 
+@settings(max_examples=60, deadline=None)
+@given(
+    version=st.text(min_size=1, max_size=12),
+    infer=st.booleans(),
+)
+def test_the_binding_changes_with_the_frame_environment(version, infer):
+    """Invariant (#544): the binding covers the pandas settings the frame
+    digest was taken under, through the evidence record's SHA-256: it
+    changes exactly when the environment does (INVENTED environments)."""
+
+    from populace_dynamics.uniform_cut_track_u2 import cohort
+
+    registered = _registered_module()
+    base = _invented_evidence()
+    environment = {"pandas_version": version, "future_infer_string": infer}
+    other = _invented_evidence(frame_environment=environment)
+    same = environment == cohort.frame_environment()
+    assert (
+        registered.binding_sha256("b" * 64, other)
+        == registered.binding_sha256("b" * 64, base)
+    ) == same
+
+
+def test_the_structure_pass_records_its_environment():
+    """The step-4 pass's output records the interpreter and package
+    versions it ran under, beside the frozen pandas settings, exactly as
+    the registered run's sidecar records its own, so the one-shot can be
+    run under the same ones (#544 review)."""
+
+    import platform
+
+    import pandas as pd
+
+    module = _script("track_u2_structure")
+    environment = module._environment()
+    assert environment["python"] == platform.python_version()
+    assert environment["packages"]["pandas"] == pd.__version__
+    assert {"numpy", "pandas"} <= set(environment["packages"])
+    # The same record the registered run's sidecar writes (two
+    # implementations; the structure pass may not import the runner).
+    assert environment == _registered_module()._environment()
+    tree = ast.parse((ROOT / "scripts" / "track_u2_structure.py").read_text())
+    (build,) = [
+        node
+        for node in tree.body
+        if isinstance(node, ast.FunctionDef) and node.name == "build"
+    ]
+    (output,) = [
+        node.value
+        for node in ast.walk(build)
+        if isinstance(node, ast.Return) and isinstance(node.value, ast.Dict)
+    ]
+    pairs = {
+        key.value: value
+        for key, value in zip(output.keys, output.values, strict=True)
+        if isinstance(key, ast.Constant)
+    }
+    assert ast.unparse(pairs["environment"]) == "_environment()"
+
+
 def test_the_registered_main_passes_the_evidence_to_the_loader(
     registered, monkeypatch
 ):
@@ -976,13 +1059,15 @@ def test_the_registered_main_passes_the_evidence_to_the_loader(
 def test_the_registered_main_passes_the_bound_evidence_hash_to_the_run(
     registered, monkeypatch
 ):
-    """Review round 2, info 2: ``main`` hands the run the evidence hash
-    the preflight bound, and the run compares it with the loader's seal
+    """Review rounds 2 and 3: ``main`` hands the run the evidence hash the
+    preflight bound and the evidence record itself; the run compares the
+    hash with the loader's seal and the frames and files with the record
     (``test_u2_loader.py``)."""
 
     from populace_dynamics.uniform_cut_track_u2 import loader
 
     bound = "e" * 64
+    record = {"invented": True}
     params = object()
     inputs = object()
     calls = []
@@ -994,7 +1079,7 @@ def test_the_registered_main_passes_the_bound_evidence_hash_to_the_run(
         registered,
         "preflight",
         lambda **kwargs: {
-            "evidence": {"invented": True},
+            "evidence": record,
             "params": params,
             "evidence_sha256": bound,
         },
@@ -1022,6 +1107,8 @@ def test_the_registered_main_passes_the_bound_evidence_hash_to_the_run(
     ((args, kwargs),) = calls
     assert args == (inputs, params)
     assert kwargs["preregistration_evidence_sha256"] == bound
+    assert kwargs["preregistration_evidence"] is record
+    assert "row_set" not in kwargs
 
 
 def test_registered_headline_choice_is_only_u0(registered):

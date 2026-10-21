@@ -29,7 +29,16 @@ earliest_presence_in_common_support_waves``, an explicit departure from
 U1's per-row ``earliest_presence_wave``, which :class:`U2CohortSpec`
 refuses).  Births are derived once (:func:`derive_u2_births`) and reused
 by every row.  Support waves identify people; they add no observation
-and no design unit to a row.
+and no design unit to a row.  Max's ruling of 2026-10-19 (d1724; section
+16d) keeps every input the law would refuse away from it, for the
+persons whose birth year only the seed coordinate could give: a seed
+whose age code the law refuses (0, or any code but 1-125 and 999) is
+replaced by the person's earliest presence with an age of 2-125 whose
+implied year the law supports; a person with no such presence, or whose
+seed implies a year outside the law's derived-age support
+(``career.DERIVED_BIRTH_MIN``-``DERIVED_BIRTH_MAX``, 1889-2016), is
+counted out before the law runs, as Track M counts out young children.
+Each reason's count is disclosed and decides nothing.
 
 **Roles** (section 3 relationship-code amendment) come from a
 :class:`~populace_dynamics.uniform_cut_track_u2.sources.RoleContext`.
@@ -95,13 +104,16 @@ from __future__ import annotations
 
 import dataclasses
 import hashlib
+import io
 import json
+import math
 import sys
 from collections.abc import Mapping
 from dataclasses import asdict, dataclass, field
 from types import MappingProxyType
 from typing import Any
 
+import numpy as np
 import pandas as pd
 
 from populace_dynamics.cohorts import psid2010
@@ -121,7 +133,9 @@ __all__ = [
     "PRIMARY_BIRTH_YEARS",
     "PRIMARY_WAVES",
     "PSID_FILES",
+    "SNAPSHOT_KEY",
     "ROWS",
+    "SEED_BIRTH_COUNTED_OUT",
     "SEED_WAVE_RULE",
     "SUPPORT_WAVES",
     "TARGET_AGE",
@@ -137,12 +151,14 @@ __all__ = [
     "check_unique_identifiers",
     "derive_u2_births",
     "design_frame",
+    "frame_environment",
     "income_rows",
     "input_frames_sha256",
     "marital_status_4",
     "observation_plan",
     "pending_decisions",
     "plan_cells",
+    "rebuilt_input_frames",
     "structural_summary",
 ]
 
@@ -156,6 +172,21 @@ PRIMARY_WAVES: tuple[int, ...] = tuple(b + 68 for b in PRIMARY_BIRTH_YEARS)
 #: changes on U0's population (:mod:`.rows`).
 ROWS: tuple[str, ...] = ("U0", "U1")
 SEED_WAVE_RULE = "earliest_presence_in_common_support_waves"
+#: d1724 (section 16d): the reasons :func:`derive_u2_births` counts a
+#: person out before the birth law, each disclosed.  The law
+#: (``career.derive_birth_years``, read-only under section 14) asserts
+#: that a year it derives from a seed (age code 2-125) lies in
+#: ``[DERIVED_BIRTH_MIN, DERIVED_BIRTH_MAX]``, and refuses every seed age
+#: code but 1-125 and 999.  A person the seed alone would date is counted
+#: out when the seed implies a year before or after that support, or
+#: when no presence carries an age the law can date (the first code 0,
+#: or another refused code).
+SEED_BIRTH_COUNTED_OUT: tuple[str, ...] = (
+    f"before_{career.DERIVED_BIRTH_MIN}",
+    f"after_{career.DERIVED_BIRTH_MAX}",
+    "seed_age_0",
+    "no_valid_seed_age",
+)
 U1_EVEN_BIRTH_YEAR_WEIGHT = 0.5
 U1_SINGLE_OBSERVATION_WEIGHT = 1.0
 U1_EVEN_BIRTH_AGES: tuple[int, int] = (66, 68)
@@ -164,8 +195,13 @@ PSID_FILES = "psid_files"
 CALLER_FRAMES = "caller_frames"
 #: The loader seal's and provenance's record of the frozen pre-registration
 #: evidence the inputs were rechecked against (section 14; set only by
-#: :func:`~populace_dynamics.uniform_cut_track_u2.loader.load_u2_inputs`).
+#: :func:`~populace_dynamics.uniform_cut_track_u2.loader.load_u2_inputs`,
+#: and by a registered run's private snapshot from the bound record,
+#: :func:`_registered_snapshot`).
 EVIDENCE_KEY = "preregistration_evidence_sha256"
+#: The provenance mark of a registered run's private snapshot (review round
+#: 3): pre-registration evidence is never recorded from one.
+SNAPSHOT_KEY = "registered_snapshot"
 MARITAL_STATUS_4: tuple[str, ...] = (
     "married",
     "widowed",
@@ -187,6 +223,12 @@ _SEQUENCE_GROUPS: tuple[tuple[str, int, int], ...] = (
     ("died", 81, 89),
 )
 _MAX_AGE_CODE = 125
+#: The seed age codes career's derived-age clause turns into a birth year
+#: (``seed year - age``); 1, 999 and missing are unresolved there, and any
+#: other code is refused there.
+_DERIVED_SEED_AGES = (2, 125)
+#: The documented DK/NA/refused age code, which the law leaves unresolved.
+_NA_AGE_CODE = 999
 _FAMILY_UNIT_SCALE = 100_000
 _UNRESOLVED_STATES = ("unknown", "no_marriage_history")
 _OMITTED_ROWS = (
@@ -446,35 +488,356 @@ class U2Inputs:
         identity.check_target(self.target_id, "U2Inputs")
 
 
-def _frame_digest(digest: Any, name: str, frame: pd.DataFrame) -> None:
+#: The dtypes an input frame may hold, by the name the digest writes, and
+#: the dtype a snapshot parses each column's text with (review round 3):
+#: the dtypes the U2 loader and U1's marriage and earnings readers build.
+#: Each stores machine values or strings, and each rebuilds exactly from
+#: the CSV text the digest hashes (:func:`_registered_snapshot`); any other
+#: dtype refuses at the digest, so at every load, before any registration.
+_FRAME_DTYPES: dict[str, Any] = {
+    "int64": "int64",
+    "float64": "float64",
+    "bool": "bool",
+    "object": object,
+    "Int64": "Int64",
+    "str": "str",
+    "string": "string",
+}
+
+
+def _nan(value: Any) -> bool:
+    return type(value) is float and math.isnan(value)
+
+
+def _missing(value: Any) -> bool:
+    return (
+        value is None
+        or value is pd.NA
+        or (type(value) is float and math.isnan(value))
+    )
+
+
+def _allowed_dtype(dtype: Any) -> bool:
+    # By the name the digest writes, ``str(dtype)``: a non-native byte
+    # order keeps ``dtype.name`` ("int64") but writes ">i8", which no
+    # snapshot parses (closeout mutation lane a).
+    if isinstance(dtype, np.dtype):
+        return str(dtype) in ("int64", "float64", "bool", "object")
+    return type(dtype) in (pd.Int64Dtype, pd.StringDtype) and (
+        str(dtype) in _FRAME_DTYPES
+    )
+
+
+def _check_frame_types(name: str, frame: pd.DataFrame) -> None:
+    """Refuse a frame whose digest would not fix what a run reads.
+
+    The digest hashes the column labels' text, the dtype names and the
+    CSV text (:func:`_frame_digest`).  A subclass can print as one value
+    and compare, hash or index as another, and an object in ``attrs``
+    runs code whenever pandas copies the frame, so (review round 3):
+    ``attrs`` must be empty (checked first: reading it runs nothing); the
+    labels distinct exact ``str`` in an exact ``pd.Index``; each dtype one
+    of :data:`_FRAME_DTYPES`, by exact type; and every cell of an object
+    or string column a nonempty exact ``str`` or missing (the CSV text
+    writes an empty string and a missing value alike).  The U2 loader,
+    U1's marriage and earnings readers and the invented generator build
+    only such frames.  A registered run further computes only on frames
+    rebuilt from the digested text (:func:`_registered_snapshot`).
+    """
+
+    if frame.attrs:
+        raise U2CohortError(
+            f"input frame {name} carries attrs {sorted(map(str, frame.attrs))}"
+            ": pandas copies attrs into every frame it derives, so an object "
+            "there runs code during the digest (review round 3)"
+        )
+    columns = frame.columns
+    if (
+        type(columns) is not pd.Index
+        or any(type(label) is not str for label in columns)
+        or not columns.is_unique
+    ):
+        raise U2CohortError(
+            f"input frame {name}'s column labels must be distinct exact "
+            "str: a label subclass can print as one column's name and "
+            "index another's data (review round 3)"
+        )
+    for position, dtype in enumerate(frame.dtypes):
+        if not _allowed_dtype(dtype):
+            raise U2CohortError(
+                f"input frame {name} column {columns[position]!r} has dtype "
+                f"{dtype!r} ({type(dtype).__qualname__}); an input frame "
+                f"holds only the dtypes {sorted(_FRAME_DTYPES)} (review "
+                "round 3)"
+            )
+        textual = isinstance(dtype, np.dtype) and dtype.kind == "O"
+        if not textual and type(dtype) is not pd.StringDtype:
+            continue
+        # A string dtype holds one missing marker of its own; an object
+        # column's missing cells must be the float NaN a rebuild parses, so
+        # the rebuilt frame holds exactly the same values.
+        missing = _missing if not textual else _nan
+        for value in frame.iloc[:, position].tolist():
+            if (type(value) is not str or value == "") and not missing(value):
+                raise U2CohortError(
+                    f"input frame {name} column {columns[position]!r} holds "
+                    f"a {type(value).__qualname__} cell {value!r:.40}; every "
+                    "cell of an object or string column must be a nonempty "
+                    "exact str or missing (NaN in an object column), since a "
+                    "subclass can print as one value and compare as another "
+                    "(review round 3)"
+                )
+
+
+def _frame_text(name: str, frame: Any) -> tuple[str, str, str]:
+    """What the digest hashes of one frame: its labels, its dtype names
+    and its CSV text, each written once."""
+
     if type(frame) is not pd.DataFrame:
         raise U2CohortError(
             f"input frame {name} is a {type(frame).__name__}, not a "
             "pandas.DataFrame: a frame's digest must come from its data"
         )
+    _check_frame_types(name, frame)
+    text = (
+        json.dumps([str(c) for c in frame.columns]),
+        json.dumps([str(t) for t in frame.dtypes]),
+        frame.to_csv(index=False, lineterminator="\n"),
+    )
+    try:
+        for part in text:
+            part.encode()
+    except UnicodeError as error:
+        raise U2CohortError(
+            f"input frame {name} holds text that is not valid Unicode: "
+            f"{error}"
+        ) from error
+    return text
+
+
+def _frame_digest(digest: Any, name: str, frame: Any) -> tuple[str, str, str]:
+    text = _frame_text(name, frame)
     digest.update(f"{name}\n".encode())
-    digest.update(json.dumps([str(c) for c in frame.columns]).encode())
-    digest.update(json.dumps([str(t) for t in frame.dtypes]).encode())
-    digest.update(frame.to_csv(index=False, lineterminator="\n").encode())
+    for part in text:
+        digest.update(part.encode())
+    return text
+
+
+def _wave_frames(frames: Any, name: str) -> dict[int, pd.DataFrame]:
+    """``frames`` if it is a plain ``dict`` keyed by exact ``int`` waves.
+
+    The digest and the computation read a container through different
+    methods (``[]``, ``get``, iteration), so a mapping subclass could hand
+    the digest the loaded frames and the rows other ones (review round
+    3).  On a plain dict they all read the same frame.
+    """
+
+    if type(frames) is not dict:
+        raise U2CohortError(
+            f"input frames {name} must be a plain dict keyed by wave, not a "
+            f"{type(frames).__qualname__}: a mapping subclass can hand the "
+            "digest other frames than a run reads (review round 3)"
+        )
+    for wave in frames:
+        if type(wave) is not int:
+            raise U2CohortError(
+                f"input frames {name} are keyed by a "
+                f"{type(wave).__qualname__} wave; the U2 loader keys them "
+                "by int (review round 3)"
+            )
+    return frames
+
+
+_WAVE_FIELDS: tuple[tuple[str, str], ...] = (
+    ("family_income", "income"),
+    ("family_wealth", "wealth"),
+    ("employer_dc", "employer_dc"),
+)
+_SINGLE_FIELDS: tuple[str, ...] = (
+    "design",
+    "persons",
+    "marriage_history",
+    "observed_earnings",
+)
+
+
+def _digest_frames(
+    inputs: U2Inputs,
+) -> Any:
+    """``(field, wave or None, digest name, frame)`` in digest order."""
+
+    anchors = _wave_frames(inputs.anchors, "anchors")
+    containers = [
+        (
+            field_name,
+            label,
+            _wave_frames(getattr(inputs, field_name), field_name),
+        )
+        for field_name, label in _WAVE_FIELDS
+    ]
+    for wave in sorted(anchors):
+        yield "anchors", wave, f"anchor_{wave}", anchors[wave]
+    for field_name in _SINGLE_FIELDS:
+        yield field_name, None, field_name, getattr(inputs, field_name)
+    for field_name, label, frames in containers:
+        for wave in sorted(frames):
+            yield field_name, wave, f"{label}_{wave}", frames[wave]
+
+
+def frame_environment() -> dict[str, Any]:
+    """The pandas settings the frame digest depends on.
+
+    The digest hashes each frame's dtype names and CSV text as pandas
+    writes them (:func:`_frame_text`), so another pandas version or string
+    inference setting can write a legitimate frame differently.  The
+    section 20 step-4 pass records these with the digest it freezes
+    (``loader.preregistration_evidence``), and a frozen load or registered
+    run refuses under any other.
+    """
+
+    return {
+        "pandas_version": str(pd.__version__),
+        "future_infer_string": bool(pd.get_option("future.infer_string")),
+    }
 
 
 def input_frames_sha256(inputs: U2Inputs) -> str:
-    """SHA-256 of every U2 input frame and the target identity."""
+    """SHA-256 of every U2 input frame and the target identity.
+
+    Refuses inputs whose digest would not fix what a run reads: a frame
+    container that is not a plain ``dict`` keyed by ``int``
+    (:func:`_wave_frames`), and a frame that is not exactly a DataFrame of
+    exact types (:func:`_check_frame_types`).
+    """
 
     digest = hashlib.sha256()
     digest.update(f"target:{inputs.target_id}\n".encode())
-    for wave in sorted(inputs.anchors):
-        _frame_digest(digest, f"anchor_{wave}", inputs.anchors[wave])
-    for name in ("design", "persons", "marriage_history", "observed_earnings"):
-        _frame_digest(digest, name, getattr(inputs, name))
-    for label, frames in (
-        ("income", inputs.family_income),
-        ("wealth", inputs.family_wealth),
-        ("employer_dc", inputs.employer_dc),
-    ):
-        for wave in sorted(frames):
-            _frame_digest(digest, f"{label}_{wave}", frames[wave])
+    for _field, _wave, name, frame in _digest_frames(inputs):
+        _frame_digest(digest, name, frame)
     return digest.hexdigest()
+
+
+def _rebuild_frame(name: str, text: tuple[str, str, str]) -> pd.DataFrame:
+    """The frame parsed from ``text`` (labels, dtype names, CSV), which
+    must write ``text`` again exactly.
+
+    Floats are parsed with the round-trip converter: pandas' default one
+    misreads some 16-17 digit reprs, which ``to_csv`` writes for computed
+    floats (review round 3).  Blank lines are rows: a one-column frame
+    writes a whitespace-only text cell as a whitespace-only line, which
+    the default parser would drop (closeout review, finding 3).  The
+    rebuilt frame has a default RangeIndex (the digest omits the index;
+    the loader's frames have one, and no U2 computation reads the input
+    frames' index).
+    """
+
+    labels_text, dtypes_text, csv_text = text
+    labels, dtypes = json.loads(labels_text), json.loads(dtypes_text)
+    try:
+        frame = pd.read_csv(
+            io.StringIO(csv_text),
+            dtype={
+                label: _FRAME_DTYPES[dtype]
+                for label, dtype in zip(labels, dtypes, strict=True)
+            },
+            keep_default_na=False,
+            na_values=[""],
+            float_precision="round_trip",
+            skip_blank_lines=False,
+        )
+    except (ValueError, pd.errors.ParserError) as error:
+        raise U2CohortError(
+            f"input frame {name} does not parse from the text its digest "
+            f"hashes: {error}"
+        ) from error
+    if _frame_text(name, frame) != text:
+        raise U2CohortError(
+            f"input frame {name} does not rebuild from the text its digest "
+            "hashes (labels, dtypes and CSV): a registered run computes "
+            "only on frames that do (review round 3)"
+        )
+    return frame
+
+
+def rebuilt_input_frames(inputs: U2Inputs) -> tuple[dict[str, Any], str]:
+    """Every input frame parsed from the text its digest hashes, and that
+    digest: the frame fields of :class:`U2Inputs` (plain dicts keyed by
+    int for the wave fields).  Each frame's text is written once, hashed,
+    and parsed back (:func:`_rebuild_frame`), so the frames returned are
+    exactly what the digest pins (review round 3)."""
+
+    digest = hashlib.sha256()
+    digest.update(f"target:{identity.TARGET_ID}\n".encode())
+    rebuilt: dict[str, Any] = {
+        "anchors": {},
+        **{field_name: {} for field_name, _ in _WAVE_FIELDS},
+    }
+    for field_name, wave, name, frame in _digest_frames(inputs):
+        frame = _rebuild_frame(name, _frame_digest(digest, name, frame))
+        if wave is None:
+            rebuilt[field_name] = frame
+        else:
+            rebuilt[field_name][int(wave)] = frame
+    return rebuilt, digest.hexdigest()
+
+
+def _registered_snapshot(
+    inputs: U2Inputs,
+    evidence: Mapping[str, Any],
+    evidence_sha256: str,
+) -> tuple[U2Inputs, str]:
+    """The private inputs a registered run computes on, and their digest.
+
+    Private: only :func:`~populace_dynamics.uniform_cut_track_u2.runner.
+    check_inputs` calls it, with a record it has validated
+    (``loader.check_preregistration_evidence``) and shown to hash to the
+    bound value.  The snapshot is marked (:data:`SNAPSHOT_KEY`), and no
+    pre-registration evidence is recorded from it.
+
+    Check, then use (review round 3).  Each input frame's text is written
+    once as the digest writes it and hashed, and a new frame is parsed
+    from that same text (:func:`_rebuild_frame`).  So a run on the
+    snapshot reads exactly what the digest pins, whatever the caller's
+    objects do afterwards or in other code paths (an array or index
+    subclass, an ``attrs`` hook, an in-place edit).  The caller compares
+    the returned digest with the bound record's frozen one.
+
+    ``evidence`` is the bound, normalized pre-registration record and
+    ``evidence_sha256`` its hash.  The snapshot's provenance comes from
+    them and the committed registry pins, never from the caller's inputs:
+    its PSID file hashes and bundle and cited-source hashes are the
+    record's, and it records no data directory.  It is sealed as the
+    loader seals, so each build's seal check holds.
+    """
+
+    rebuilt, frames_sha256 = rebuilt_input_frames(inputs)
+    files = {str(k): str(v) for k, v in evidence["psid_files_sha256"].items()}
+    provenance = {
+        "kind": PSID_FILES,
+        "psid_files_sha256": files,
+        "psid_files_bundle_sha256": str(evidence["psid_files_bundle_sha256"]),
+        "registries": sources.RegistrySet.committed().provenance(),
+        "cited_sources_sha256": {
+            str(k): str(v) for k, v in evidence["cited_sources_sha256"].items()
+        },
+        EVIDENCE_KEY: str(evidence_sha256),
+        SNAPSHOT_KEY: True,
+    }
+    snapshot = U2Inputs(provenance=provenance, **rebuilt)
+    object.__setattr__(
+        snapshot,
+        "loader_seal",
+        MappingProxyType(
+            {
+                "input_frames_sha256": frames_sha256,
+                "psid_files_bundle_sha256": provenance[
+                    "psid_files_bundle_sha256"
+                ],
+                EVIDENCE_KEY: provenance[EVIDENCE_KEY],
+            }
+        ),
+    )
+    return snapshot, frames_sha256
 
 
 _INVENTED_MODULE = "populace_dynamics.uniform_cut_track_u2.invented"
@@ -591,6 +954,8 @@ def _input_provenance(inputs: U2Inputs) -> dict[str, Any]:
         }
         if evidence is not None:
             out[EVIDENCE_KEY] = evidence
+        if recorded.get(SNAPSHOT_KEY) is True:
+            out[SNAPSHOT_KEY] = True
         return out
     return {
         "kind": CALLER_FRAMES,
@@ -621,12 +986,25 @@ def _check_role_context(
 # ===========================================================================
 @dataclass(frozen=True)
 class U2Births:
-    """Birth-year records for the universe and the annuitant extension."""
+    """Birth-year records for the universe and the annuitant extension.
+
+    ``counted_out`` maps each reason of :data:`SEED_BIRTH_COUNTED_OUT` to
+    the persons counted out of the universe before the law ran (d1724);
+    they have no record, so their birth year is ``None``.  ``reseeded``
+    holds the persons whose earliest presence carried an age code the law
+    refuses and whose seed is their earliest presence it can date.
+    """
 
     records: Mapping[int, career.BirthYearRecord]
     universe: frozenset[int]
     seed: pd.DataFrame
     inputs_sha256: str
+    counted_out: Mapping[str, frozenset[int]] = field(
+        default_factory=lambda: MappingProxyType(
+            {reason: frozenset() for reason in SEED_BIRTH_COUNTED_OUT}
+        )
+    )
+    reseeded: frozenset[int] = frozenset()
 
     def birth_year(self, person_id: int) -> int | None:
         record = self.records.get(int(person_id))
@@ -714,16 +1092,110 @@ def check_person_joins(inputs: U2Inputs) -> None:
             )
 
 
+def _seed_for_the_law(
+    presences: list[pd.DataFrame],
+    history: pd.DataFrame,
+    earnings: pd.DataFrame,
+) -> tuple[pd.DataFrame, dict[str, frozenset[int]], frozenset[int]]:
+    """The seed rows the law can take, the persons counted out by reason,
+    and the persons re-seeded (d1724, section 16d).
+
+    ``presences`` holds every positive-weight, in-family presence of every
+    support wave.  The law reaches a seed only for a person whose birth
+    year neither the marriage history nor the observed earnings give, so
+    the law itself, run on the same frames without seed coordinates,
+    names those persons (its unresolved records); for everyone else the
+    earliest presence stays the seed and the law's precedence decides.
+    For each person the seed alone would date:
+
+    * if the earliest presence's age code is one the law refuses (0, or
+      any code but 1-125 and 999), the seed is the person's earliest
+      presence with an age of 2-125 whose implied year the law supports
+      (re-seeded); with none, the person is counted out under
+      ``seed_age_0`` (earliest code 0) or ``no_valid_seed_age``;
+    * if the seed's age is 2-125 and its year (``seed year - age``) lies
+      before 1889 or after 2016, the person is counted out on that side.
+
+    Codes 1 and 999 keep the law's unresolved path.
+    """
+
+    first = _seed_frame(presences)
+    people = set(int(pid) for pid in first["person_id"])
+    clauses = career.derive_birth_years(
+        history[history["person_id"].isin(people)],
+        earnings[earnings["person_id"].isin(people)],
+        required_person_ids=people,
+    )
+    seed_only = {
+        record.person_id
+        for record in clauses
+        if record.source is career.BirthSource.UNRESOLVED
+    }
+    ages = first["age"].astype("int64")
+    accepted = ages.eq(_NA_AGE_CODE) | ages.between(1, _MAX_AGE_CODE)
+    refused = first["person_id"].isin(seed_only) & ~accepted
+    seed = first
+    reseeded: frozenset[int] = frozenset()
+    if refused.any():
+        every = pd.concat(presences, ignore_index=True)
+        every_ages = every["age"].astype("int64")
+        every_years = every["year"].astype("int64") - every_ages
+        valid = every[
+            every_ages.between(*_DERIVED_SEED_AGES)
+            & every_years.between(
+                career.DERIVED_BIRTH_MIN, career.DERIVED_BIRTH_MAX
+            )
+            & every["person_id"].isin(first.loc[refused, "person_id"])
+        ]
+        replacement = _seed_frame([valid])
+        reseeded = frozenset(int(pid) for pid in replacement["person_id"])
+        seed = (
+            pd.concat([first[~refused], replacement], ignore_index=True)
+            .astype(first.dtypes.to_dict())
+            .sort_values("person_id", kind="stable")
+            .reset_index(drop=True)
+        )
+    unseeded = refused & ~first["person_id"].isin(reseeded)
+    seed_ages = seed["age"].astype("int64")
+    implied = seed["year"].astype("int64") - seed_ages
+    derived = seed["person_id"].isin(seed_only) & seed_ages.between(
+        *_DERIVED_SEED_AGES
+    )
+    before = derived & (implied < career.DERIVED_BIRTH_MIN)
+    after = derived & (implied > career.DERIVED_BIRTH_MAX)
+    rows = (
+        seed.loc[before, "person_id"],
+        seed.loc[after, "person_id"],
+        first.loc[unseeded & ages.eq(0), "person_id"],
+        first.loc[unseeded & ~ages.eq(0), "person_id"],
+    )
+    counted_out = {
+        reason: frozenset(int(pid) for pid in persons)
+        for reason, persons in zip(SEED_BIRTH_COUNTED_OUT, rows, strict=True)
+    }
+    kept = seed[~(before | after)].reset_index(drop=True)
+    return kept, counted_out, reseeded
+
+
 def derive_u2_births(inputs: U2Inputs) -> U2Births:
     """The birth-year law over the common support waves (section 3).
 
     Universe: every person with a positive-weight, in-family presence in
     any support wave; seed coordinate: the earliest such presence
-    (``(wave - 1) - age``).  Annuitant extension: in-family persons of
-    the administrative birth-support codes (10, 20, 22, 88, 90; not 92)
-    and marriage-history spouses of target-cohort members outside the
-    universe, seeded by their earliest in-family presence at any weight;
-    the law runs without a required population for them, so a conflict
+    (``(wave - 1) - age``).  Before the law runs, for a person whose
+    birth year only the seed could give, a seed age code the law refuses
+    is replaced by the earliest presence it can date (``reseeded``), and
+    a person with no such presence, or whose seed implies a year outside
+    the law's derived-age support (1889-2016), is counted out of the
+    universe under its reason (d1724, section 16d;
+    :func:`_seed_for_the_law`); ``counted_out`` holds them, and no other
+    person's record changes.  Annuitant extension: in-family
+    persons of the administrative birth-support codes (10, 20, 22, 88,
+    90; not 92) and marriage-history spouses of target-cohort members
+    outside the universe, seeded by their earliest in-family presence at
+    any weight whose implied year the law supports (code 999 kept); a
+    counted-out person is not outside the universe, so never joins it.
+    The law runs without a required population for them, so a conflict
     leaves the person unresolved (the wave-age fallback, counted).
     """
 
@@ -746,10 +1218,13 @@ def derive_u2_births(inputs: U2Inputs) -> U2Births:
                 }
             )
         )
-    seed = _seed_frame(seeds)
-    universe = frozenset(int(pid) for pid in seed["person_id"])
     history = inputs.marriage_history
     earnings = inputs.observed_earnings
+    present_ids = frozenset(
+        int(pid) for frame in seeds for pid in frame["person_id"]
+    )
+    seed, counted_out, reseeded = _seed_for_the_law(seeds, history, earnings)
+    universe = frozenset(int(pid) for pid in seed["person_id"])
     records = career.derive_birth_years(
         history[history["person_id"].isin(universe)],
         earnings[earnings["person_id"].isin(universe)],
@@ -777,7 +1252,7 @@ def derive_u2_births(inputs: U2Inputs) -> U2Births:
                 )
                 | anchor["person_id"].isin(spouses)
             )
-            & ~anchor["person_id"].isin(universe)
+            & ~anchor["person_id"].isin(present_ids)
         ]
         ages = rows["age"].astype("int64")
         seed_birth = (wave - 1) - ages
@@ -816,6 +1291,8 @@ def derive_u2_births(inputs: U2Inputs) -> U2Births:
         universe=universe,
         seed=seed,
         inputs_sha256=input_frames_sha256(inputs),
+        counted_out=MappingProxyType(counted_out),
+        reseeded=reseeded,
     )
 
 
@@ -1201,20 +1678,46 @@ def build_u2_cohort(
         "n_unresolved_birth_year": sum(
             births.birth_year(pid) is None for pid in outside
         ),
+        # d1724 (section 16d): the persons counted out of the universe
+        # before the birth law, whom only the seed could date, by reason
+        # (a seed year before 1889 or after 2016; no presence with an age
+        # the law can date, the first code 0 or another), and the persons
+        # re-seeded past an age code the law refuses.  Disclosed; each
+        # decides nothing.
+        "n_seed_birth_year_counted_out": {
+            reason: len(births.counted_out[reason])
+            for reason in SEED_BIRTH_COUNTED_OUT
+        },
+        "n_seed_birth_year_reseeded": len(births.reseeded),
         "plan_birth_years": plan_years,
         "role_context": role_context.kind,
         "births_inputs_sha256": births.inputs_sha256,
         # Section 16c: per wave, the members who brought each counted
         # exclusion (sources.PERSON_COUNTED_EXCLUSIONS: B1's count, which
-        # option 1d-1 names and 1d-2 inherits) in family units that would
-        # otherwise have supplied this row an observation.  Disclosed;
-        # decides nothing.
+        # option 1d-1 names and 1d-2 inherits, and B2's, which Max
+        # confirmed in d1242) in family units that would otherwise have
+        # supplied this row an observation.  Disclosed; decides nothing.
         "n_family_unit_exclusion_persons": {
             name: {
                 str(wave): len(persons)
                 for (named, wave), persons in sorted(excluded_persons.items())
                 if named == name
             }
+            for name in sources.PERSON_COUNTED_EXCLUSIONS
+        },
+        # The same members counted once across the waves: a person who
+        # brings an exclusion in two waves is one person, so the per-wave
+        # counts above sum to person-waves (d1242's count is persons).
+        "n_family_unit_exclusion_persons_distinct": {
+            name: len(
+                set().union(
+                    *(
+                        persons
+                        for (named, _), persons in excluded_persons.items()
+                        if named == name
+                    )
+                )
+            )
             for name in sources.PERSON_COUNTED_EXCLUSIONS
         },
     }

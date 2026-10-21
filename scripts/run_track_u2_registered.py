@@ -33,8 +33,10 @@ verifies, in order:
    section 20 step-4 structure pass wrote
    (:data:`~populace_dynamics.uniform_cut_track_u2.loader.
    PREREGISTRATION_EVIDENCE_PATH`), holding the SHA-256 of every PSID
-   file the loader reads and the sealed ``input_frames_sha256``, under
-   this checkout's pinned registries; while it is absent the run refuses;
+   file the loader reads, the sealed ``input_frames_sha256`` and the
+   pandas settings it was taken under, under this checkout's pinned
+   registries; while it is absent, or this run's pandas differs, the run
+   refuses;
 9. the registration binding -- target, specification SHA-256, rows,
    plans, registry (map) SHA-256s, source identities, parameter pins and
    the frozen input identities (the evidence record's SHA-256, every
@@ -49,8 +51,11 @@ Only then are PSID files read (:func:`populace_dynamics.
 uniform_cut_track_u2.loader.load_u2_inputs` with the evidence record: it
 rehashes every frozen file before parsing any record and refuses a
 changed byte, a different file set or a different frame digest; section
-14), and the artifact and sidecar are created exclusively.  The artifact
-publishes regardless of outcome and never reads the sealed comparator.
+14).  The run then holds the loaded inputs to the same record and its
+bound hash (:func:`populace_dynamics.uniform_cut_track_u2.runner.
+check_inputs`), and the artifact and sidecar are created exclusively.
+The artifact publishes regardless of outcome and never reads the sealed
+comparator.
 
 Usage::
 
@@ -366,6 +371,7 @@ def main(argv: list[str] | None = None) -> int:
         registration_pointer=args.registration_pointer,
         progress=lambda message: print(message, file=sys.stderr),
         preregistration_evidence_sha256=state["evidence_sha256"],
+        preregistration_evidence=state["evidence"],
     )
     artifact = {
         "header": REGISTERED_HEADER,

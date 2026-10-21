@@ -1,0 +1,28 @@
+{"attempt": {"expected_commit": "89c0ed9d6fe643469ada338cd5a2ae17059d194e", "floor_artifact": {"commit": "89c0ed9d6fe643469ada338cd5a2ae17059d194e", "path": "runs/track_b_b2_floor.json", "sha256": "65c5fa52d03ce20497c38faa2c9dd78f25845efefef88d9790cbbffe59ca9ccd"}, "registration_id": "6252388925", "repository_head": "89c0ed9d6fe643469ada338cd5a2ae17059d194e", "threads": {"MKL_NUM_THREADS": "1", "NUMEXPR_NUM_THREADS": "1", "OMP_NUM_THREADS": "1", "OMP_WAIT_POLICY": "PASSIVE", "OPENBLAS_NUM_THREADS": "1", "POPULACE_FIT_N_JOBS": "4", "VECLIB_MAXIMUM_THREADS": "1"}, "workers": 4}, "utc": "2026-10-18T16:41:49+00:00"}
+{"utc": "2026-10-18T16:41:49+00:00", "stage": "reading B2's pinned read set under the read guard"}
+{"utc": "2026-10-18T16:42:00+00:00", "stage": "fitting candidate 3's law at origin 2010"}
+{"utc": "2026-10-18T16:42:16+00:00", "stage": "projecting the K draws to 2012 and 2014"}
+{"utc": "2026-10-18T16:55:59+00:00", "stage": "full-support cells"}
+{"utc": "2026-10-18T16:56:00+00:00", "stage": "design bootstrap, 4000 replicates"}
+{"utc": "2026-10-18T16:56:50+00:00", "stage": "200/4000 replicates done"}
+{"utc": "2026-10-18T16:57:34+00:00", "stage": "400/4000 replicates done"}
+{"utc": "2026-10-18T16:58:19+00:00", "stage": "600/4000 replicates done"}
+{"utc": "2026-10-18T16:59:05+00:00", "stage": "800/4000 replicates done"}
+{"utc": "2026-10-18T16:59:51+00:00", "stage": "1000/4000 replicates done"}
+{"utc": "2026-10-18T17:00:37+00:00", "stage": "1200/4000 replicates done"}
+{"utc": "2026-10-18T17:01:22+00:00", "stage": "1400/4000 replicates done"}
+{"utc": "2026-10-18T17:02:08+00:00", "stage": "1600/4000 replicates done"}
+{"utc": "2026-10-18T17:02:55+00:00", "stage": "1800/4000 replicates done"}
+{"utc": "2026-10-18T17:03:39+00:00", "stage": "2000/4000 replicates done"}
+{"utc": "2026-10-18T17:04:23+00:00", "stage": "2200/4000 replicates done"}
+{"utc": "2026-10-18T17:05:08+00:00", "stage": "2400/4000 replicates done"}
+{"utc": "2026-10-18T17:05:51+00:00", "stage": "2600/4000 replicates done"}
+{"utc": "2026-10-18T17:06:36+00:00", "stage": "2800/4000 replicates done"}
+{"utc": "2026-10-18T17:07:20+00:00", "stage": "3000/4000 replicates done"}
+{"utc": "2026-10-18T17:08:03+00:00", "stage": "3200/4000 replicates done"}
+{"utc": "2026-10-18T17:08:45+00:00", "stage": "3400/4000 replicates done"}
+{"utc": "2026-10-18T17:09:27+00:00", "stage": "3600/4000 replicates done"}
+{"utc": "2026-10-18T17:10:10+00:00", "stage": "3800/4000 replicates done"}
+{"utc": "2026-10-18T17:10:51+00:00", "stage": "4000/4000 replicates done"}
+{"utc": "2026-10-18T17:10:51+00:00", "stage": "side A of gate seeds 0-4"}
+{"utc": "2026-10-18T17:10:53+00:00", "stage": "wrote runs/track_b_b2_score.json (sha256 df82a102a2b4c40c34f0e36b4333dbe7b90d13bfb3658b60b3f6d3f3e2dd8489)"}

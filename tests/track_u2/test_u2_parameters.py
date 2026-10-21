@@ -455,10 +455,15 @@ _LOCATIONS = _locations(_PINNED)
     ),
 )
 def test_any_single_altered_value_refuses_the_registered_check(where, value):
-    """Invariant: the registered check accepts a bundle whose provenance
-    names the pinned captures iff every value equals the pinned files'.
-    One value moved anywhere (threshold, SSI or life-table ``qx``) under
-    the unchanged labels refuses."""
+    """Invariant 13, as restated in rounds 2 and 3: for a bundle whose
+    labels name U2's pinned sources (target U2; thresholds labelled the
+    pinned Track M Census capture and SSI the pinned U2 SSI capture, each
+    bound to U2; each life table's pinned SHA-256), the registered check
+    accepts it iff its digested content holds only the pinned loaders'
+    exact types, and it has the pinned files' keys and life-table names,
+    with every value equal to theirs.  Here labels, types, keys and names
+    are the pinned bundle's, so one value moved anywhere (threshold, SSI
+    or life-table ``qx``) refuses."""
 
     component, location = where
     if component == "qx":
@@ -664,8 +669,9 @@ def test_no_colliding_key_passes_the_registered_check(site, data, value):
 def test_a_canonical_rebuild_of_the_pinned_values_passes(seed, as_int):
     """Invariant (restated invariant 13, the other direction): a bundle
     rebuilt from the pinned values in fresh plain dicts and tuples, in any
-    insertion order and with integer-valued floats stored as ints, passes
-    -- the type rules refuse only what the pinned loaders never produce."""
+    insertion order and with integer-valued floats stored as ints, under
+    the pinned labels (the invariant's precondition), passes -- the type
+    rules refuse only what the pinned loaders never produce."""
 
     import random
 
@@ -709,6 +715,110 @@ def test_a_canonical_rebuild_of_the_pinned_values_passes(seed, as_int):
         _PINNED, thresholds=thresholds, ssi=ssi, life_tables=tables
     )
     parameters.check_u2_parameters(bundle, ap.REGISTERED_REAL)
+
+
+#: Invariant 13's precondition: each label the registered check reads
+#: before any value (``parameters.py``, ``check_u2_parameters``).  The
+#: content digest reads none of them.
+_LABEL_SITES = (
+    ("bundle", "target_id"),
+    ("thresholds", "kind"),
+    ("thresholds", "sha256"),
+    ("thresholds", "target_id"),
+    ("ssi", "kind"),
+    ("ssi", "sha256"),
+    ("ssi", "target_id"),
+    ("life_table", "nchs_2000"),
+    ("life_table", "ssa_period_2004"),
+)
+
+
+def _relabel(params, site, text):
+    """``params`` with the one label ``site`` set to ``text``."""
+
+    component, key = site
+    if component == "bundle":
+        bundle = copy.copy(params)
+        object.__setattr__(bundle, key, text)
+        return bundle, params.target_id
+    if component == "life_table":
+        table = params.life_tables[key]
+        return (
+            dataclasses.replace(
+                params,
+                life_tables={
+                    **params.life_tables,
+                    key: dataclasses.replace(
+                        table, source={**table.source, "sha256": text}
+                    ),
+                },
+            ),
+            table.source.get("sha256"),
+        )
+    part = getattr(params, component)
+    return (
+        dataclasses.replace(
+            params,
+            **{
+                component: dataclasses.replace(
+                    part, provenance={**part.provenance, key: text}
+                )
+            },
+        ),
+        part.provenance.get(key),
+    )
+
+
+@settings(max_examples=90, deadline=None)
+@given(
+    site=st.sampled_from(_LABEL_SITES), text=st.text(min_size=1, max_size=70)
+)
+def test_every_precondition_label_is_necessary(site, text):
+    """Invariant 13's precondition (review round 3, info 3): the content
+    digest reads no label, so a bundle holding exactly the pinned values
+    under any one changed label -- the bundle's target, a threshold or SSI
+    provenance kind, SHA-256 or target, or a life table's SHA-256 -- has
+    the pinned digest yet refuses the registered check.  The restated
+    'iff' holds for bundles meeting the precondition; outside it the check
+    refuses on the label alone (the conservative side).  Labels are
+    nonempty text: ``PovertyThresholds`` refuses to build with an empty
+    kind."""
+
+    relabelled, old = _relabel(_PINNED, site, text)
+    if text == old:
+        parameters.check_u2_parameters(relabelled, ap.REGISTERED_REAL)
+        return
+    assert parameters.parameters_content_sha256(relabelled) == (
+        parameters.parameters_content_sha256(_PINNED)
+    )
+    with pytest.raises(
+        (parameters.U2ParameterError, identity.U2IdentityError)
+    ):
+        parameters.check_u2_parameters(relabelled, ap.REGISTERED_REAL)
+
+
+@pytest.mark.parametrize("swap", [False, True], ids=["renamed", "swapped"])
+def test_life_table_names_are_content(swap):
+    """Invariant 13's second clause includes each life table's pinned name
+    (round 3): a renamed table, or the two names swapped, keeps every
+    label and number yet changes the digest and refuses."""
+
+    tables = dict(_PINNED.life_tables)
+    if swap:
+        names = {
+            "nchs_2000": "ssa_period_2004",
+            "ssa_period_2004": "nchs_2000",
+        }
+    else:
+        names = {"nchs_2000": "renamed_invented_table"}
+    for basis, name in names.items():
+        tables[basis] = dataclasses.replace(tables[basis], name=name)
+    bundle = dataclasses.replace(_PINNED, life_tables=tables)
+    assert parameters.parameters_content_sha256(bundle) != (
+        parameters.parameters_content_sha256(_PINNED)
+    )
+    with pytest.raises(parameters.U2ParameterError, match="filed under"):
+        parameters.check_u2_parameters(bundle, ap.REGISTERED_REAL)
 
 
 class _LyingDict(dict):
@@ -841,3 +951,28 @@ def test_a_bundle_subclass_refuses(pinned):
     )
     with pytest.raises(parameters.U2ParameterError, match="exactly"):
         parameters.check_u2_parameters(bundle, ap.REGISTERED_REAL)
+
+
+def test_a_changed_ssi_capture_refuses(tmp_path, monkeypatch):
+    """Specification section 17 item 5: the U2 SSI capture is pinned by
+    its SHA-256 in the code.  The committed file hashes to the pin, and
+    both readers refuse a copy whose bytes differ by one added space
+    while its JSON content is equal (INVENTED edit of a copy)."""
+
+    import hashlib
+
+    raw = U2_SSI.read_bytes()
+    assert hashlib.sha256(raw).hexdigest() == parameters.SSI_SHA256
+    assert diagnostics.SSI_SHA256 == parameters.SSI_SHA256
+    changed = tmp_path / U2_SSI.name
+    changed.write_bytes(raw.replace(b"{", b"{ ", 1))
+    assert json.loads(changed.read_bytes()) == json.loads(raw)
+    monkeypatch.setattr(parameters, "SSI_PATH", changed)
+    # The readers record the capture's path relative to the repository;
+    # rooting it at the copy's directory leaves the pin as the only check
+    # that can refuse (#544 review, S5).
+    monkeypatch.setattr(identity, "ROOT", tmp_path)
+    with pytest.raises(parameters.U2ParameterError, match="U2's pin"):
+        parameters.load_u2_ssi_parameters()
+    with pytest.raises(ValueError, match="U2 pin"):
+        diagnostics.federal_benefit_rates(changed)

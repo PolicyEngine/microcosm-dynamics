@@ -1501,6 +1501,23 @@ def _code_88_in_excluded_unit_2019(base: cohort.U2Inputs) -> cohort.U2Inputs:
     )
 
 
+def _second_trigger_in_excluded_unit_2019(
+    base: cohort.U2Inputs,
+) -> cohort.U2Inputs:
+    _, interview = _first_excluded_2019(base)
+    return _added_person(
+        base,
+        _PERSON_BASE - 4,
+        wave=2019,
+        interview=interview,
+        sequence=5,
+        relationship=92,
+        age=40,
+        weight=500.0,
+        sex="na",
+    )
+
+
 def _zero_weight_target_in_excluded_unit_2015(
     base: cohort.U2Inputs,
 ) -> cohort.U2Inputs:
@@ -1578,6 +1595,166 @@ def _code_88_target_with_ofum_income_2019(
     return dataclasses.replace(changed, marriage_history=history)
 
 
+def _host(base: cohort.U2Inputs, waves: tuple[int, ...]) -> int:
+    """The first target with a U1 observation in the earliest of ``waves``
+    who is in-family with a positive weight in every one of them: its
+    family supplies an observation in the member's first wave."""
+
+    built = cohort.build_u2_cohort(
+        base,
+        cohort.U2CohortSpec(row="U1"),
+        role_context=sources.RoleContext.declared(),
+    )
+    obs = built.observations
+    first = obs.loc[obs["wave"].eq(min(waves)), "person_id"].astype(int)
+    for person in sorted(set(first)):
+        if all(
+            bool(
+                (
+                    base.anchors[wave]["person_id"].eq(person)
+                    & base.anchors[wave]["sequence"].between(1, 20)
+                    & base.anchors[wave]["weight"].gt(0)
+                ).any()
+            )
+            for wave in waves
+        ):
+            return person
+    raise AssertionError(f"no U1 target can host a member in {waves}")
+
+
+def _added_member(
+    base: cohort.U2Inputs,
+    person_id: int,
+    *,
+    host: int,
+    ages: Mapping[int, int],
+    relationship: int,
+    sex: str,
+) -> cohort.U2Inputs:
+    """``base`` with one OFUM member in ``host``'s family in each wave of
+    ``ages``, at that age, with a positive weight, and absent elsewhere.
+
+    The member takes the host's stratum and cluster, so no row's design
+    frame gains a unit, and the next free sequence number in each family.
+    """
+
+    anchors = {}
+    for wave, frame in base.anchors.items():
+        row = {
+            "person_id": person_id,
+            "interview": 0,
+            "sequence": 0,
+            "relationship": 0,
+            "age": 0,
+            "reported_birth_year": pd.NA,
+            "weight": 0.0,
+        }
+        if wave in ages:
+            interview = int(
+                frame.loc[frame["person_id"].eq(host), "interview"].iloc[0]
+            )
+            family = frame[
+                frame["interview"].eq(interview)
+                & frame["sequence"].between(1, 20)
+            ]
+            row.update(
+                interview=interview,
+                sequence=int(family["sequence"].max()) + 1,
+                relationship=relationship,
+                age=int(ages[wave]),
+                weight=500.0,
+            )
+        anchors[wave] = pd.concat(
+            [frame, pd.DataFrame([row])], ignore_index=True
+        ).astype(frame.dtypes.to_dict())
+    design = base.design.set_index("person_id").loc[host]
+    design = pd.concat(
+        [
+            base.design,
+            pd.DataFrame(
+                [
+                    {
+                        "person_id": person_id,
+                        "stratum": int(design["stratum"]),
+                        "cluster": int(design["cluster"]),
+                    }
+                ]
+            ),
+        ],
+        ignore_index=True,
+    ).astype("int64")
+    persons = pd.concat(
+        [base.persons, pd.DataFrame([{"person_id": person_id, "sex": sex}])],
+        ignore_index=True,
+    ).astype({"person_id": "int64", "sex": "string"})
+    return dataclasses.replace(
+        base, anchors=anchors, design=design, persons=persons
+    )
+
+
+#: The members the two d1724 variants add (section 16d).  None has a
+#: marriage history or earnings, so the seed is its only birth-year
+#: source: its earliest positive-weight in-family presence, or, where
+#: that presence's age code is one the birth law refuses, its earliest
+#: presence with an age of 2-125 whose implied year (``(wave - 1) -
+#: age``) the law supports.  Each entry: person id, ``{wave: age code}``
+#: (the waves it is present in, in the family of :func:`_host`), the
+#: relationship (30 child, 40 sibling, 50 parent, 60 grandchild; each
+#: OFUM), sex.  Code 998 stands for an age code outside the loader's
+#: documented domain (0, 1-125, 999), which the law refuses.
+_SEED_BIRTH_COUNTED_OUT_MEMBERS = (
+    # 2020 - 3 = 2017: after 2016 (also present in 2023).
+    (_PERSON_BASE - 11, {2021: 3, 2023: 5}, 60, "female"),
+    # 2022 - 2 = 2020: after 2016.
+    (_PERSON_BASE - 12, {2023: 2}, 30, "male"),
+    # 2012 - 124 = 1888: before 1889.
+    (_PERSON_BASE - 13, {2013: 124}, 50, "female"),
+    # First code 0; the later age implies 2020, outside the support: no
+    # presence the law can date (seed_age_0).
+    (_PERSON_BASE - 16, {2021: 0, 2023: 2}, 60, "male"),
+    # First code 998; the later code 1 dates nothing (no_valid_seed_age).
+    (_PERSON_BASE - 17, {2017: 998, 2019: 1}, 30, "female"),
+)
+_SEED_BIRTH_KEPT_MEMBERS = (
+    # 2012 - 123 = 1889: the support's first year.
+    (_PERSON_BASE - 14, {2013: 123}, 50, "male"),
+    # 2018 - 2 = 2016: the support's last year (later waves agree).
+    (_PERSON_BASE - 15, {2019: 2, 2021: 4, 2023: 6}, 60, "female"),
+    # First code 0, then 66 in 2017: re-seeded, born 1950, a U1 target
+    # observed in 2017 and 2019.
+    (_PERSON_BASE - 18, {2015: 0, 2017: 66, 2019: 68}, 40, "female"),
+    # First code 998 in 2013, then 68 in 2015: re-seeded, born 1946, a U1
+    # target observed in both waves, the one with the refused code too.
+    (_PERSON_BASE - 19, {2013: 998, 2015: 68}, 40, "male"),
+)
+
+
+def _with_members(
+    base: cohort.U2Inputs, members: tuple[tuple[Any, ...], ...]
+) -> cohort.U2Inputs:
+    changed = base
+    for person_id, ages, relationship, sex in members:
+        changed = _added_member(
+            changed,
+            person_id,
+            host=_host(base, tuple(sorted(ages))),
+            ages=ages,
+            relationship=relationship,
+            sex=sex,
+        )
+    return changed
+
+
+def _seed_births_counted_out(base: cohort.U2Inputs) -> cohort.U2Inputs:
+    return _with_members(base, _SEED_BIRTH_COUNTED_OUT_MEMBERS)
+
+
+def _seed_births_every_case(base: cohort.U2Inputs) -> cohort.U2Inputs:
+    return _with_members(
+        base, _SEED_BIRTH_COUNTED_OUT_MEMBERS + _SEED_BIRTH_KEPT_MEMBERS
+    )
+
+
 # Appended in order, so every earlier variant is unchanged.
 _VARIANT_BUILDERS = {
     "code_88_first_year_cohabitor": _code_88_first_year_cohabitor,
@@ -1601,6 +1778,11 @@ _VARIANT_BUILDERS = {
     "code_88_target_with_ofum_income_2019": (
         _code_88_target_with_ofum_income_2019
     ),
+    "second_trigger_in_excluded_unit_2019": (
+        _second_trigger_in_excluded_unit_2019
+    ),
+    "seed_births_counted_out": _seed_births_counted_out,
+    "seed_births_every_case": _seed_births_every_case,
 }
 _VARIANT_NOTES: dict[str, str] = {
     "code_88_first_year_cohabitor": (
@@ -1661,8 +1843,9 @@ _VARIANT_NOTES: dict[str, str] = {
     ),
     "sex_unknown_target_in_excluded_unit_2019": (
         "the target of U0's first 2019 observation that the B2 exclusion "
-        "removes has unknown sex: it keeps its sex-unknown disposition "
-        "(section 16c precedence)"
+        "removes has unknown sex: it keeps its sex-unknown disposition, "
+        "and a unit that supplies no other observation adds nothing to "
+        "B2's person count (section 16c precedence; d1242)"
     ),
     "spouse_slot_occupant_without_family_spouse_2019": (
         "the family file of U0's first 2019 observation with a code-20 or "
@@ -1677,6 +1860,34 @@ _VARIANT_NOTES: dict[str, str] = {
         "target whose own observation has the OFUM role under amendment "
         "1c (the family income basis in U4 and the OFUM SSI cap), keeps "
         "its recorded marital history and is no spouse-slot occupant"
+    ),
+    "second_trigger_in_excluded_unit_2019": (
+        "a second code-92 member, aged 40 and of unknown recorded sex, "
+        "joins the 2019 unit of U0's first observation that the B2 "
+        "exclusion removes: the unit stays excluded and every observation "
+        "and disposition is unchanged, but B2's person count (d1242) rises "
+        "by one, since it counts persons, not family units, of any sex"
+    ),
+    "seed_births_counted_out": (
+        "five OFUM members with no marriage history or earnings join, in "
+        "their first wave, families that supply a U1 observation in that "
+        "wave; under d1724 (section 16d) the birth law cannot date any of "
+        "them, so each is counted out before it runs: a grandchild aged 3 "
+        "in 2021 (implied 2017) and a child aged 2 in 2023 (2020), after "
+        "2016; a parent aged 124 in 2013 (1888), before 1889; a grandchild "
+        "first coded 0 whose later age implies 2020 (seed_age_0); and a "
+        "child first coded 998, then 1 (no_valid_seed_age).  Every "
+        "observation, disposition and other count is unchanged"
+    ),
+    "seed_births_every_case": (
+        "the five counted-out members of seed_births_counted_out, plus four "
+        "kept under d1724 (section 16d): a parent aged 123 in 2013 (born "
+        "1889) and a grandchild aged 2 in 2019 (born 2016), at the ends of "
+        "the birth law's derived-age support; and two siblings whose "
+        "earliest presence carries an age code the law refuses (0 in 2015; "
+        "998 in 2013) and whose later age dates them, re-seeded: U1 "
+        "targets born 1950 and 1946, each with its own observations.  The "
+        "law completes on every case"
     ),
 }
 #: The generator's named variants (see :data:`_VARIANT_NOTES`).
