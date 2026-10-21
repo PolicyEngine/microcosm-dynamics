@@ -26,7 +26,9 @@ from populace_dynamics.track_b import ret_grace as grace
 from populace_dynamics.track_b import ret_ledger as ret
 from tests.test_track_b_gross_benefits_fix_round_10_api import (
     FUNCTION_ARGUMENTS,
+    INHERITED_METHOD_ARGUMENTS,
     METHOD_ARGUMENTS,
+    _assert_inherited_reader_control,
     _world,
 )
 from tests.test_track_b_gross_benefits_fix_round_12_contract import (
@@ -796,6 +798,19 @@ def _assert_call_binding_matches_inspect(function, seed):
 @example(seed=0)
 @given(seed=st.integers(0, 1000))
 def test_every_public_argument_and_declaration_field_declares_a_schema(seed):
+    # Runtime wrappers remain variadic for hostile keyword names, while
+    # constructor introspection retains every declared field and default.
+    for cls in (
+        provenance._DECLARATION_TYPES
+        | provenance._RESULT_TYPES
+        | {g.SavingsClauseGuard}
+    ):
+        initializer = inspect.signature(cls.__init__)
+        expected = initializer.replace(
+            parameters=tuple(initializer.parameters.values())[1:]
+        )
+        assert inspect.signature(cls) == expected
+        assert str(inspect.signature(cls)) == str(expected)
     for _, _, function in PUBLIC_FUNCTIONS:
         schemas = provenance._argument_schemas(inspect.unwrap(function))
         assert set(schemas) == set(inspect.signature(function).parameters)
@@ -1192,8 +1207,13 @@ def test_all_valid_public_argument_controls_still_compute(pia):
             if not inspect.isfunction(reader):
                 continue
             arguments = set(inspect.signature(reader).parameters) - {"self"}
-            assert arguments <= {"beneficiary_id"}
-            kwargs = {key: "nh" for key in arguments}
+            inherited = INHERITED_METHOD_ARGUMENTS.get(cls.__name__, {})
+            if name in inherited:
+                assert arguments == set(inherited[name])
+                kwargs = inherited[name]
+            else:
+                assert arguments <= {"beneficiary_id"}
+                kwargs = {key: "nh" for key in arguments}
             for receiver in (
                 PretendDeclaration(cls),
                 MetaclassSpoof(),
@@ -1203,6 +1223,26 @@ def test_all_valid_public_argument_controls_still_compute(pia):
                 with pytest.raises(g.InvalidFamilyInput):
                     emitted.append(reader(receiver, **kwargs))
                 assert g.count_family_outcomes(emitted).rows == 0
+    protocol_values = {
+        type(value).__name__: value
+        for value in (
+            EVALUATE[layer](
+                "protocol refusal",
+                1,
+                lambda layer=layer: COMPUTE[layer](refused=True),
+            ).unsupported
+            for layer in LAYERS
+        )
+    }
+    protocol_values["PartialPaymentAllocation"] = ret.partial_payments(
+        **_arguments(ret, "partial_payments", world)
+    )
+    assert set(protocol_values) == set(INHERITED_METHOD_ARGUMENTS)
+    for cls_name, readers in INHERITED_METHOD_ARGUMENTS.items():
+        for name, arguments in readers.items():
+            _assert_inherited_reader_control(
+                protocol_values[cls_name], name, arguments
+            )
     assert not repeated
 
 

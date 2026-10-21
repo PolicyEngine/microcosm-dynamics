@@ -42,11 +42,16 @@ denominator counts every layer's sealed rows;
 RET money aggregation accepts only RETOutcome and RETLedger values.
 Beneficiary identities and partial-payment keys are nonempty built-in
 strings, so caller-defined hashing cannot change sealed ledger lookups.
+Ordered monthly arrays and outcome collections admit tuple/list only and
+become tuples without dropping elements. Month memberships become
+frozensets. Evaluators check provenance, layer and integrity, not freshness
+or family attribution. A callback may return an earlier genuine result or
+re-raise a genuine refusal; attribution, key and weight remain declarations.
 """
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable, Mapping
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from enum import Enum
 from fractions import Fraction
@@ -1194,13 +1199,13 @@ RETDenominator = FamilyDenominator
 
 
 @_validated_entry
-def count_ret_outcomes(outcomes: Iterable[_SealedOutcome]) -> RETDenominator:
+def count_ret_outcomes(outcomes: Sequence[_SealedOutcome]) -> RETDenominator:
     """Use Track B's single denominator for every registered layer."""
     return _count_family_outcomes_validated(outcomes)
 
 
 @_validated_entry
-def weighted_ret_total(outcomes: Iterable[RETOutcome]) -> Fraction:
+def weighted_ret_total(outcomes: Sequence[RETOutcome]) -> Fraction:
     rows = tuple(
         _checked_result(outcome, RETOutcome, "RET outcome")
         for outcome in outcomes

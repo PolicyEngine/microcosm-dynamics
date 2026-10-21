@@ -34,6 +34,7 @@ from populace_dynamics.track_b.ret_params import load_ret_parameters
 from tests.test_track_b_gross_benefits_fix_round_10_api import (
     CLASS_ERRORS,
     FUNCTION_ARGUMENTS,
+    INHERITED_METHOD_ARGUMENTS,
     METHOD_ARGUMENTS,
     READ_MEMBERS,
     _world,
@@ -176,7 +177,9 @@ def test_cross_layer_public_names_and_members_have_explicit_audit_coverage():
                 if not key.startswith("_")
                 and (inspect.isfunction(value) or isinstance(value, property))
             }
-            expected = READ_MEMBERS.get(name, PUBLIC_MEMBERS.get(name, set()))
+            expected = READ_MEMBERS.get(
+                name, PUBLIC_MEMBERS.get(name, set())
+            ) | set(INHERITED_METHOD_ARGUMENTS.get(name, {}))
             if cls is g.SavingsClauseGuard:
                 expected = expected | set(METHOD_ARGUMENTS)
             assert observed == expected, name

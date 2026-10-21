@@ -33,6 +33,9 @@ GraceYearDecision is a computed result sealed by the package-private
 provenance capability. Its nested carried state is copied and validated;
 RET money inputs accept only unaltered computed decisions. GraceYearState
 remains an explicit, constructible declaration of initial history.
+Monthly and termination histories admit tuple/list only and become tuples
+without dropping events. Benefit-type and month memberships become
+frozensets after every raw element has passed its schema.
 """
 
 from __future__ import annotations

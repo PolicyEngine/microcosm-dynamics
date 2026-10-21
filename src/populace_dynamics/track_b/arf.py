@@ -19,8 +19,9 @@ persists, without new credits, until FRA (RS 00615.582; CFR 404.412(b)).
 The month of age attainment precedes the birth month for a first-day
 birthday; a January 1 birth also uses the preceding FRA cohort.
 
-Built-in collection inputs are validated and snapshotted into immutable
-frozensets at construction; arbitrary iterators are input errors. Scalar
+Month and condition membership inputs become immutable frozensets. Ordered
+collections admit tuple/list only and become tuples without losing events;
+arbitrary iterators and unordered event containers are input errors. Scalar
 money, dates and canonical enum members are checked immediately. Repeated original-claim
 evaluation preserves both dollar amounts and coverage refusals. Contents
 are validated before coverage is decided, without consuming caller state.
@@ -34,6 +35,9 @@ construction, replacement, copying and serialization are invalid. Persist
 declared inputs and recompute; no bytes restore trusted derived state.
 Evaluators and apply_arf require unchanged ARF results, while the common
 denominator admits every sealed layer outcome.
+Evaluators check provenance, layer and integrity, not freshness or family
+attribution. Returning an earlier genuine result or re-raising a genuine
+refusal is caller composition; attribution, key and weight are declarations.
 Invalid inputs, including G's statutory rate bundle,
 are checked before coverage and benefit arithmetic. Non-finite numeric
 rates, benefit shares and brackets are rejected locally before G's
@@ -45,7 +49,7 @@ This module does not assemble payments, deductions, or event histories.
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass, field
 from datetime import date
 from enum import Enum
@@ -289,27 +293,27 @@ class ARFClaim:
     birth_date: date
     first_reduction_month: MonthInput
     unreduced_benefit: Fraction
-    full_work_deduction_months: Iterable[MonthInput] = field(
+    full_work_deduction_months: frozenset[MonthInput] = field(
         default_factory=frozenset
     )
-    partial_work_deduction_months: Iterable[MonthInput] = field(
+    partial_work_deduction_months: frozenset[MonthInput] = field(
         default_factory=frozenset
     )
-    child_in_care_months: Iterable[MonthInput] = field(
+    child_in_care_months: frozenset[MonthInput] = field(
         default_factory=frozenset
     )
-    nonentitlement_months: Iterable[MonthInput] = field(
+    nonentitlement_months: frozenset[MonthInput] = field(
         default_factory=frozenset
     )
-    simultaneous_dib_months: Iterable[MonthInput] = field(
+    simultaneous_dib_months: frozenset[MonthInput] = field(
         default_factory=frozenset
     )
-    mother_father_rate_months: Iterable[MonthInput] = field(
+    mother_father_rate_months: frozenset[MonthInput] = field(
         default_factory=frozenset
     )
     death_date: date | None = None
     spouse_own: SpouseOwnBenefit | None = None
-    conditions: Iterable[ARFUnsupportedReason] = field(
+    conditions: frozenset[ARFUnsupportedReason] = field(
         default_factory=frozenset
     )
 
@@ -897,7 +901,7 @@ def evaluate_arf(
 
 @_validated_entry
 def count_arf_outcomes(
-    outcomes: Iterable[_SealedOutcome],
+    outcomes: Sequence[_SealedOutcome],
 ) -> FamilyDenominator:
     """Reuse the shared denominator, retaining every row and refused weight."""
     return _count_family_outcomes_validated(outcomes)

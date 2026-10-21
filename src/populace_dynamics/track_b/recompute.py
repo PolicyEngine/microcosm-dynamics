@@ -42,6 +42,11 @@ and serialization are invalid. Persist declared inputs and recompute.
 Evaluators and PIA aggregates require unchanged recomputation results.
 The shared counter admits every sealed layer outcome and keeps all refused
 weights.
+Ordered collections admit tuple/list only and become tuples, retaining all
+events and rows; membership conditions become frozensets. Evaluators check
+provenance, layer and integrity, not freshness or family attribution. A
+callback can return an earlier genuine result or re-raise a genuine refusal;
+the caller declares attribution, key and weight.
 Invalid inputs are validated before coverage refusals.
 History and required-parameter validation precede every coverage check;
 ordinary AIME indexing, selection and PIA arithmetic run only after it.
@@ -54,7 +59,7 @@ refused. No unavailable year is silently treated as zero.
 from __future__ import annotations
 
 import math
-from collections.abc import Callable, Iterable, Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from enum import Enum
 from fractions import Fraction
@@ -400,7 +405,7 @@ def evaluate_recomputation(
 
 @_validated_entry
 def weighted_recomputed_pia(
-    outcomes: Iterable[RecomputationOutcome],
+    outcomes: Sequence[RecomputationOutcome],
 ) -> Fraction:
     """PIA aggregate over all rows, blocked when any row was refused."""
     rows = tuple(outcomes)

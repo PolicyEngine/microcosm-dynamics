@@ -15,6 +15,11 @@ members by identity, exact declared classes, and exact built-in containers
 whose raw contents are checked before reconstruction or hashing. Numeric
 encodings become owned Fractions. Callbacks are checked with callable() and
 never reconstructed; their results must carry the proper computation seal.
+Ordered collections admit only tuple/list and become tuples, preserving
+every event and row. Membership collections become frozensets. Evaluators
+check provenance, layer and integrity, not freshness or attribution: a
+callback may return an earlier genuine result or re-raise a genuine refusal.
+The caller declares its family attribution, just as it declares key/weight.
 Each public call owns one snapshot; internal helpers consume that snapshot.
 This contract does not cover access to private names, monkeypatching modules,
 or another thread mutating an input during the call. It admits no broader
@@ -235,6 +240,7 @@ from datetime import date
 from decimal import Decimal
 from enum import Enum
 from fractions import Fraction
+from inspect import unwrap as _unwrap
 from types import MappingProxyType
 
 from populace_dynamics.ss.params import SSAParameters
@@ -246,6 +252,8 @@ from populace_dynamics.track_b._provenance import (
     _check_reason,
     _check_refusal,
     _check_seal,
+    _checked_instance_dict,
+    _checked_public_methods,
     _computed,
     _construct_declared,
     _declared_input,
@@ -486,9 +494,9 @@ def _exact(value, label):
 def _dimes(value: object, label: str) -> Fraction:
     """A nonnegative amount that the statute keeps in whole dimes."""
     amount = _exact(value, label)
-    if amount < 0:
+    if amount.numerator < 0:
         raise InvalidFamilyInput(f"{label} must be nonnegative")
-    if (amount * 10).denominator != 1:
+    if (amount.numerator * 10) % amount.denominator:
         raise InvalidFamilyInput(f"{label} must be a multiple of $0.10")
     return amount
 
@@ -511,7 +519,7 @@ def _input_text(value: object, label: str) -> None:
 
 
 def _input_sequence(value: object, label: str) -> None:
-    if not isinstance(value, Sequence) or isinstance(value, (str, bytes)):
+    if type(value) is not tuple and type(value) is not list:
         raise _InvalidInputType(f"{label} must be a sequence")
 
 
@@ -560,11 +568,15 @@ def _nonnegative_integer(value, label: str) -> None:
 def _result_money_fields(value, names: tuple[str, ...]) -> None:
     """Normalize exact nonnegative dime amounts in immutable results."""
     for name in names:
-        object.__setattr__(value, name, _dimes(getattr(value, name), name))
+        object.__setattr__(
+            value, name, _dimes(object.__getattribute__(value, name), name)
+        )
 
 
 def _optional_result_money(value, amount_name: str, whole_name: str) -> None:
-    amount, whole = getattr(value, amount_name), getattr(value, whole_name)
+    amount, whole = object.__getattribute__(
+        value, amount_name
+    ), object.__getattribute__(value, whole_name)
     if amount is None:
         if whole is not None:
             raise InvalidFamilyInput(f"{whole_name} needs {amount_name}")
@@ -584,78 +596,81 @@ def _validate_input_fields(value) -> None:
     years use datetime's 1..9999 domain. Parameter-dependent month bounds
     and family/household consistency run after cohort resolution.
     """
-    if isinstance(value, YearMonth):
-        _input_year(value.year, "year")
-        _input_type(value.month, int, "month")
-        if not 1 <= value.month <= 12:
+    kind = type(value)
+    # Public construction/snapshot already checked this exact declaration's
+    # storage. Internal validation does not redispatch public attribute APIs.
+    read = object.__getattribute__.__get__(value)
+    if kind is YearMonth:
+        _input_year(read("year"), "year")
+        _input_type(read("month"), int, "month")
+        if not 1 <= read("month") <= 12:
             raise InvalidFamilyInput("month must be 1-12")
         return
-    if isinstance(value, OwnBenefit):
-        _input_type(value.kind, OwnBenefitKind, "kind")
-        _dimes(value.pia, "own PIA")
+    if kind is OwnBenefit:
+        _input_type(read("kind"), OwnBenefitKind, "kind")
+        _dimes(read("pia"), "own PIA")
         for name in ("reduction_months", "delayed_credit_months"):
-            number = getattr(value, name)
+            number = read(name)
             _input_type(number, int, name)
             if number < 0:
                 raise InvalidFamilyInput(f"{name} must be nonnegative")
-        if value.birth_year is not None:
-            _input_year(value.birth_year, "birth_year")
+        if read("birth_year") is not None:
+            _input_year(read("birth_year"), "birth_year")
         return
-    if isinstance(value, Beneficiary):
-        _input_text(value.beneficiary_id, "beneficiary_id")
-        _input_type(value.role, Role, "role")
-        _input_type(value.reduction_months, int, "reduction_months")
-        if value.reduction_period_months is not None:
+    if kind is Beneficiary:
+        _input_text(read("beneficiary_id"), "beneficiary_id")
+        _input_type(read("role"), Role, "role")
+        _input_type(read("reduction_months"), int, "reduction_months")
+        if read("reduction_period_months") is not None:
             _input_type(
-                value.reduction_period_months, int, "reduction_period_months"
+                read("reduction_period_months"), int, "reduction_period_months"
             )
-        if value.birth_year is not None:
-            _input_year(value.birth_year, "birth_year")
-        _input_conditions(value.conditions, BeneficiaryCondition)
+        if read("birth_year") is not None:
+            _input_year(read("birth_year"), "birth_year")
+        _input_conditions(read("conditions"), BeneficiaryCondition)
         if (
-            value.child_in_care is not None
-            and value.child_in_care is not False
+            read("child_in_care") is not None
+            and read("child_in_care") is not False
         ):
-            _input_text(value.child_in_care, "child_in_care")
-        if value.own_benefit is not None:
+            _input_text(read("child_in_care"), "child_in_care")
+        if read("own_benefit") is not None:
             object.__setattr__(
                 value,
                 "own_benefit",
-                _checked_input(value.own_benefit, OwnBenefit, "own_benefit"),
+                _checked_input(read("own_benefit"), OwnBenefit, "own_benefit"),
             )
         for name in ("own_benefit_first", "first_entitlement_child_in_care"):
-            flag = getattr(value, name)
+            flag = read(name)
             if flag is not None:
                 _input_type(flag, bool, name)
         # Role-specific care and OB-basis checks are shared by __post_init__.
         return
-    if isinstance(value, (WorkerRecord, RecordState)):
-        _input_type(value.kind, FamilyKind, "kind")
-        if value.worker_birth_year is not None:
-            _input_year(value.worker_birth_year, "worker_birth_year")
-        if (
-            isinstance(value, WorkerRecord)
-            or value.eligibility_year is not None
-        ):
-            _input_year(value.eligibility_year, "eligibility_year")
-        _input_conditions(value.conditions, RecordCondition)
-        if value.first_dib_entitlement is not None:
+    if kind is WorkerRecord or kind is RecordState:
+        _input_type(read("kind"), FamilyKind, "kind")
+        if read("worker_birth_year") is not None:
+            _input_year(read("worker_birth_year"), "worker_birth_year")
+        if kind is WorkerRecord or read("eligibility_year") is not None:
+            _input_year(read("eligibility_year"), "eligibility_year")
+        _input_conditions(read("conditions"), RecordCondition)
+        if read("first_dib_entitlement") is not None:
             _checked_input(
-                value.first_dib_entitlement, YearMonth, "first_dib_entitlement"
+                read("first_dib_entitlement"),
+                YearMonth,
+                "first_dib_entitlement",
             )
-        if isinstance(value, WorkerRecord):
-            _input_sequence(value.cola_percents, "cola_percents")
-            for percent in value.cola_percents:
+        if kind is WorkerRecord:
+            _input_sequence(read("cola_percents"), "cola_percents")
+            for percent in read("cola_percents"):
                 if _exact(percent, "COLA percent") < 0:
                     raise InvalidFamilyInput(
                         "A COLA percent cannot be negative"
                     )
-            if value.aime is not None:
-                if not _has_declared_type(value.aime, (int, Fraction)):
+            if read("aime") is not None:
+                if not _has_declared_type(read("aime"), (int, Fraction)):
                     raise _InvalidInputType(
                         "AIME must be an int or an integral Fraction"
                     )
-                if value.aime < 0 or Fraction(value.aime).denominator != 1:
+                if read("aime") < 0 or Fraction(read("aime")).denominator != 1:
                     raise InvalidFamilyInput(
                         "AIME must be a nonnegative whole dollar"
                     )
@@ -663,48 +678,50 @@ def _validate_input_fields(value) -> None:
                 "worker_reduction_months",
                 "worker_delayed_credit_months",
             ):
-                number = getattr(value, name)
+                number = read(name)
                 _input_type(number, int, name)
                 if number < 0:
                     raise InvalidFamilyInput(f"{name} must be nonnegative")
         else:
-            _input_text(value.source, "source")
-            if value.worker is not None:
+            _input_text(read("source"), "source")
+            if read("worker") is not None:
                 object.__setattr__(
                     value,
                     "worker",
-                    _checked_input(value.worker, OwnBenefit, "worker"),
+                    _checked_input(read("worker"), OwnBenefit, "worker"),
                 )
-            if value.widow_drc_savings_clause is not None:
+            if read("widow_drc_savings_clause") is not None:
                 _input_type(
-                    value.widow_drc_savings_clause,
+                    read("widow_drc_savings_clause"),
                     bool,
                     "widow_drc_savings_clause",
                 )
-            if value.deferred_refusal is not None:
-                _input_type(value.deferred_refusal, tuple, "deferred_refusal")
-                if len(value.deferred_refusal) != 2:
+            if read("deferred_refusal") is not None:
+                _input_type(
+                    read("deferred_refusal"), tuple, "deferred_refusal"
+                )
+                if len(read("deferred_refusal")) != 2:
                     raise InvalidFamilyInput(
                         "deferred_refusal needs a reason and detail"
                     )
-                reason, detail = value.deferred_refusal
+                reason, detail = read("deferred_refusal")
                 _input_type(
                     reason, UnsupportedReason, "deferred_refusal reason"
                 )
                 _input_text(detail, "deferred_refusal detail")
         return
-    if isinstance(value, HouseholdRecord):
-        _input_text(value.worker_id, "worker_id")
+    if kind is HouseholdRecord:
+        _input_text(read("worker_id"), "worker_id")
         object.__setattr__(
-            value, "state", _checked_input(value.state, RecordState, "state")
+            value, "state", _checked_input(read("state"), RecordState, "state")
         )
-        _input_sequence(value.beneficiaries, "beneficiaries")
+        _input_sequence(read("beneficiaries"), "beneficiaries")
         object.__setattr__(
             value,
             "beneficiaries",
             tuple(
                 _checked_input(b, Beneficiary, "beneficiary")
-                for b in value.beneficiaries
+                for b in read("beneficiaries")
             ),
         )
         return
@@ -1044,12 +1061,13 @@ def disability_family_maximum(pia: object, aime: object) -> Fraction:
 
 
 @_validated_entry
-def increase_by_colas(amount: object, percents: Iterable[object]) -> Fraction:
+def increase_by_colas(amount: object, percents: Sequence[object]) -> Fraction:
     """215(i)(2)(A)(ii): apply each COLA in order, dime-floored each time.
 
     ``percents`` are percentages (``"2.8"`` for a 2.8 percent COLA), exact
     or float. A zero COLA leaves the amount unchanged; negative COLAs do
-    not exist under 215(i) and are refused.
+    not exist under 215(i) and are refused. Only tuple/list event sequences
+    are admitted; sets cannot express statutory order and multiplicity.
     """
     value = _dimes(amount, "amount")
     for index, percent in enumerate(_input_iterable(percents, "percents")):
@@ -1685,17 +1703,19 @@ class OwnBenefit:
 
     def __post_init__(self):
         _validate_input_fields(self)
-        object.__setattr__(self, "pia", _dimes(self.pia, "own PIA"))
+        # Public wrappers check caller fields; private construction owns them.
+        read = object.__getattribute__.__get__(self)
+        object.__setattr__(self, "pia", _dimes(read("pia"), "own PIA"))
         _months(
-            self.reduction_months,
+            read("reduction_months"),
             "reduction_months",
             _MAX_WORKER_REDUCTION_MONTHS,
         )
         _delayed_credit_months(
-            self.delayed_credit_months, self.birth_year, None
+            read("delayed_credit_months"), read("birth_year"), None
         )
-        if self.kind is OwnBenefitKind.DISABILITY:
-            if self.delayed_credit_months:
+        if read("kind") is OwnBenefitKind.DISABILITY:
+            if read("delayed_credit_months"):
                 raise InvalidFamilyInput("A DIB earns no delayed credits")
 
 
@@ -1796,79 +1816,87 @@ class Beneficiary:
 
     def __post_init__(self):
         _validate_input_fields(self)
-        if self.child_in_care is not None:
-            if self.role not in _WIDOW_ROLES | {Role.DIVORCED_SPOUSE}:
+        # Public wrappers check caller fields; private construction owns them.
+        read = object.__getattribute__.__get__(self)
+        if read("child_in_care") is not None:
+            if read("role") not in _WIDOW_ROLES | {Role.DIVORCED_SPOUSE}:
                 raise InvalidFamilyInput(
                     "child_in_care is an input for widow(er) or divorced "
                     "spouse benefits"
                 )
-            if self.child_in_care is not False and (
-                not isinstance(self.child_in_care, str)
-                or not self.child_in_care
+            if read("child_in_care") is not False and (
+                not isinstance(read("child_in_care"), str)
+                or not read("child_in_care")
             ):
                 raise InvalidFamilyInput(
                     "child_in_care must name an entitled child, or be "
                     "False or None"
                 )
-        if self.first_entitlement_child_in_care is not None:
-            if self.role is not Role.DIVORCED_SPOUSE:
+        if read("first_entitlement_child_in_care") is not None:
+            if read("role") is not Role.DIVORCED_SPOUSE:
                 raise InvalidFamilyInput(
                     "first_entitlement_child_in_care describes a divorced "
                     "spouse only"
                 )
-        object.__setattr__(self, "conditions", frozenset(self.conditions))
-        if self.original_benefit_basis is not None:
-            _check_role_arguments(self.role, basis=self.original_benefit_basis)
+        object.__setattr__(self, "conditions", frozenset(read("conditions")))
+        if read("original_benefit_basis") is not None:
+            _check_role_arguments(
+                read("role"), basis=read("original_benefit_basis")
+            )
             object.__setattr__(
                 self,
                 "original_benefit_basis",
-                _dimes(self.original_benefit_basis, "OB basis"),
+                _dimes(read("original_benefit_basis"), "OB basis"),
             )
-        if self.own_benefit_first is not None:
-            if self.own_benefit is None:
+        if read("own_benefit_first") is not None:
+            if read("own_benefit") is None:
                 raise InvalidFamilyInput(
                     "own_benefit_first describes an own benefit; there is "
                     "none"
                 )
         elif (
-            self.own_benefit is not None
-            and self.role
+            read("own_benefit") is not None
+            and read("role")
             in (
                 Role.SPOUSE,
                 Role.DIVORCED_SPOUSE,
             )
             and not (
-                self.role is Role.DIVORCED_SPOUSE
-                and isinstance(self.child_in_care, str)
-                and self.own_benefit.kind is OwnBenefitKind.OLD_AGE
+                read("role") is Role.DIVORCED_SPOUSE
+                and isinstance(read("child_in_care"), str)
+                and read("own_benefit").kind is OwnBenefitKind.OLD_AGE
             )
         ):
             raise InvalidFamilyInput(
-                f"A dually entitled {self.role.value} needs own_benefit_first"
+                f"A dually entitled {read('role').value} needs own_benefit_first"
                 ": method C (own benefit first, RS 00615.250) and method B "
                 "(spouse benefit first, RS 00615.240) pay different amounts"
             )
-        if self.reduction_months < 0:
+        if read("reduction_months") < 0:
             raise InvalidFamilyInput("reduction_months must be nonnegative")
         _months(
-            self.reduction_months,
+            read("reduction_months"),
             "reduction_months",
-            84 if self.role in _WIDOW_ROLES else _MAX_SPOUSE_REDUCTION_MONTHS,
+            (
+                84
+                if read("role") in _WIDOW_ROLES
+                else _MAX_SPOUSE_REDUCTION_MONTHS
+            ),
         )
-        if self.reduction_months and self.role not in _AGE_REDUCED_ROLES:
+        if read("reduction_months") and read("role") not in _AGE_REDUCED_ROLES:
             raise InvalidFamilyInput(
-                f"A {self.role.value} benefit is not reduced for age"
+                f"A {read('role').value} benefit is not reduced for age"
             )
-        if self.reduction_period_months is not None:
-            if self.role is Role.DISABLED_WIDOW:
+        if read("reduction_period_months") is not None:
+            if read("role") is Role.DISABLED_WIDOW:
                 raise InvalidFamilyInput(
                     "DWB uses a fixed reduction, not reduction months"
                 )
-            if self.role not in _WIDOW_ROLES:
+            if read("role") not in _WIDOW_ROLES:
                 raise InvalidFamilyInput(
                     "Only a widow(er) has a survivor reduction period"
                 )
-            _survivor_period(self.reduction_period_months)
+            _survivor_period(read("reduction_period_months"))
 
 
 @_declared_input
@@ -1916,38 +1944,43 @@ class WorkerRecord:
 
     def __post_init__(self):
         _validate_input_fields(self)
+        # Public wrappers check caller fields; private construction owns them.
+        read = object.__getattribute__.__get__(self)
         _months(
-            self.worker_reduction_months,
+            read("worker_reduction_months"),
             "worker_reduction_months",
             _MAX_WORKER_REDUCTION_MONTHS,
         )
         object.__setattr__(
-            self, "eligibility_pia", _dimes(self.eligibility_pia, "PIA")
+            self, "eligibility_pia", _dimes(read("eligibility_pia"), "PIA")
         )
         object.__setattr__(
             self,
             "cola_percents",
             tuple(
-                _exact(p, "COLA percent") for p in tuple(self.cola_percents)
+                _exact(p, "COLA percent") for p in tuple(read("cola_percents"))
             ),
         )
-        object.__setattr__(self, "conditions", frozenset(self.conditions))
-        if self.rib_lim_benefit is not None:
-            if self.kind is not FamilyKind.SURVIVOR:
+        object.__setattr__(self, "conditions", frozenset(read("conditions")))
+        if read("rib_lim_benefit") is not None:
+            if read("kind") is not FamilyKind.SURVIVOR:
                 raise InvalidFamilyInput("A RIB-LIM applies only to deaths")
             object.__setattr__(
                 self,
                 "rib_lim_benefit",
-                _dimes(self.rib_lim_benefit, "RIB-LIM benefit"),
+                _dimes(read("rib_lim_benefit"), "RIB-LIM benefit"),
             )
-        if self.kind is not FamilyKind.RETIREMENT and (
-            self.worker_reduction_months or self.worker_delayed_credit_months
+        if read("kind") is not FamilyKind.RETIREMENT and (
+            read("worker_reduction_months")
+            or read("worker_delayed_credit_months")
         ):
             raise InvalidFamilyInput(
                 "Own-RIB months describe a living retired worker only"
             )
         _delayed_credit_months(
-            self.worker_delayed_credit_months, self.worker_birth_year, None
+            read("worker_delayed_credit_months"),
+            read("worker_birth_year"),
+            None,
         )
 
 
@@ -4006,6 +4039,7 @@ class _PriorMonth:
     pia: Fraction | None  # None: unknown
 
 
+@_checked_public_methods
 class SavingsClauseGuard:
     """403(a)(5) for one insured worker's record, carried month to month.
 
@@ -4086,8 +4120,13 @@ class SavingsClauseGuard:
         self._refused_since: YearMonth | None = None
 
     def _check_initialized(self) -> None:
-        if type(self) is not SavingsClauseGuard or any(
-            not hasattr(self, name)
+        if type(self) is not SavingsClauseGuard:
+            raise InvalidFamilyInput(
+                "Expected an initialized savings-clause guard"
+            )
+        attributes = _checked_instance_dict(self)
+        if any(
+            name not in attributes
             for name in (
                 "_next",
                 "_prior",
@@ -4388,7 +4427,7 @@ def evaluate_family(
         benefits = compute()
     except FamilyConfigurationUnsupported as error:
         return _computed(FamilyOutcome, key, weight, None, error)
-    if not isinstance(benefits, (FamilyBenefits, HouseholdBenefits)):
+    if not _has_declared_type(benefits, (FamilyBenefits, HouseholdBenefits)):
         raise _InvalidInputType(
             "compute must return family or household benefits"
         )
@@ -4460,7 +4499,7 @@ class FamilyDenominator(_SealedResult):
 
 @_validated_entry
 def count_family_outcomes(
-    outcomes: Iterable[_SealedOutcome],
+    outcomes: Sequence[_SealedOutcome],
 ) -> FamilyDenominator:
     """Tabulate every layer's sealed outcomes; never drop refused rows.
 
@@ -4492,7 +4531,7 @@ def count_family_outcomes(
 
 
 def _checked_outcomes(
-    outcomes: Iterable[_SealedOutcome], *, common: bool = False
+    outcomes: Sequence[_SealedOutcome], *, common: bool = False
 ) -> tuple:
     """Validate every observation before coverage or denominator decisions."""
     outcomes = tuple(
@@ -4529,7 +4568,7 @@ def _require_all_supported(outcomes: Sequence[FamilyOutcome]) -> None:
 
 
 @_validated_entry
-def weighted_record_total(outcomes: Iterable[FamilyOutcome]) -> Fraction:
+def weighted_record_total(outcomes: Sequence[FamilyOutcome]) -> Fraction:
     """Weighted sum of record totals; blocked if any row is unsupported."""
     outcomes = _checked_outcomes(outcomes)
     _require_all_supported(outcomes)
@@ -4539,7 +4578,7 @@ def weighted_record_total(outcomes: Iterable[FamilyOutcome]) -> Fraction:
 
 
 @_validated_entry
-def weighted_mean_record_total(outcomes: Iterable[FamilyOutcome]) -> Fraction:
+def weighted_mean_record_total(outcomes: Sequence[FamilyOutcome]) -> Fraction:
     """Weighted mean over *all* rows; blocked if any row is unsupported."""
     outcomes = _checked_outcomes(outcomes)
     denominator = _count_family_outcomes_validated(outcomes)
@@ -4601,10 +4640,10 @@ _widow_reduction_period_months_validated = (
 _worker_age_adjusted_validated = worker_age_adjusted.__wrapped__
 _worker_reduction_fraction_validated = worker_reduction_fraction.__wrapped__
 
-_month_text_validated = YearMonth.__str__.__wrapped__
+# Reader guards add another public decorator. Private owned-value calls
+# retain the original one-boundary schema contract across all layers.
+_month_text_validated = _unwrap(YearMonth.__str__)
 
-SavingsClauseGuard._admit_validated = SavingsClauseGuard.admit.__wrapped__
-SavingsClauseGuard._evaluate_validated = (
-    SavingsClauseGuard.evaluate.__wrapped__
-)
-SavingsClauseGuard._skip_validated = SavingsClauseGuard.skip.__wrapped__
+SavingsClauseGuard._admit_validated = _unwrap(SavingsClauseGuard.admit)
+SavingsClauseGuard._evaluate_validated = _unwrap(SavingsClauseGuard.evaluate)
+SavingsClauseGuard._skip_validated = _unwrap(SavingsClauseGuard.skip)

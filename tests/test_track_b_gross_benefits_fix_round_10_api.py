@@ -275,6 +275,52 @@ METHOD_ARGUMENTS = {
 }
 
 
+# These inherited protocols already existed on the public values. Round 15
+# installs receiver-first wrappers on each exact class, so they now appear
+# in vars(cls) and need explicit names, arguments, and valid controls here.
+INHERITED_METHOD_ARGUMENTS = {
+    **{
+        name: {
+            "add_note": {"note": "invented audit note"},
+            "with_traceback": {"tb": None},
+        }
+        for name in (
+            "FamilyConfigurationUnsupported",
+            "RETConfigurationUnsupported",
+            "ARFConfigurationUnsupported",
+            "RecomputationConfigurationUnsupported",
+        )
+    },
+    "PartialPaymentAllocation": {
+        "get": {"key": "nh", "default": None},
+        "keys": {},
+        "items": {},
+        "values": {},
+    },
+}
+
+
+def _assert_inherited_reader_control(value, name, arguments):
+    reader = getattr(value, name)
+    assert tuple(signature(reader).parameters) == tuple(arguments)
+    before = (
+        tuple(getattr(value, "__notes__", ())) if name == "add_note" else ()
+    )
+    result = reader(*arguments.values())
+    if name == "add_note":
+        assert result is None
+        assert tuple(value.__notes__) == (*before, arguments["note"])
+    elif name == "with_traceback":
+        assert result is value
+        assert value.__traceback__ is arguments["tb"]
+    elif name == "get":
+        assert result == value.shares.get(*arguments.values())
+    elif name in ("keys", "items", "values"):
+        assert tuple(result) == tuple(getattr(value.shares, name)())
+    else:
+        raise AssertionError(f"Unclassified inherited reader: {name}")
+
+
 def _argument_errors(function, argument):
     if argument == "amount" and function in ("ceil_dime", "floor_dime"):
         # Signed intermediate arithmetic is part of these rounding helpers.
@@ -500,6 +546,11 @@ def test_public_api_has_no_unclassified_name_field_or_argument():
         assert set(catalog) == set(signature(cls).parameters), name
     objects, _, guard = _world(100)
     objects["SavingsClauseGuard"] = guard
+    objects["FamilyConfigurationUnsupported"] = g.evaluate_family(
+        "audit refusal",
+        1,
+        lambda: g.retirement_survivor_family_maximum(100, 1982, PARAMS),
+    ).unsupported
     for name in CLASS_ERRORS:
         cls = getattr(g, name)
         members = {
@@ -508,7 +559,9 @@ def test_public_api_has_no_unclassified_name_field_or_argument():
             if not member_name.startswith("_")
             and (isfunction(value) or isinstance(value, property))
         }
-        expected = READ_MEMBERS.get(name, set())
+        expected = READ_MEMBERS.get(name, set()) | set(
+            INHERITED_METHOD_ARGUMENTS.get(name, {})
+        )
         if name == "SavingsClauseGuard":
             expected = expected | set(METHOD_ARGUMENTS)
         assert members == expected, name
@@ -516,6 +569,12 @@ def test_public_api_has_no_unclassified_name_field_or_argument():
             value = getattr(objects[name], member_name)
             if callable(value):
                 value()
+        for member_name, arguments in INHERITED_METHOD_ARGUMENTS.get(
+            name, {}
+        ).items():
+            _assert_inherited_reader_control(
+                objects[name], member_name, arguments
+            )
     for name, arguments in FUNCTION_ARGUMENTS.items():
         assert set(signature(getattr(g, name)).parameters) == set(
             arguments

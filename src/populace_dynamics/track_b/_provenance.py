@@ -8,6 +8,10 @@ kinds and declaration types use identity, enum values must be canonical
 members, and containers must be exact built-ins. Raw container contents are
 checked before hashing or reconstruction. Callback slots are executable,
 not data. Each public call owns a fresh snapshot; private helpers reuse it.
+Ordered schemas admit tuple/list and retain every element in a tuple;
+membership schemas admit built-in collections and become frozensets.
+Evaluators establish provenance, layer and integrity, not freshness or
+caller-declared attribution of an earlier genuine result or refusal.
 The contract excludes code accessing private names, monkeypatching modules,
 or mutating an input from another thread during a call.
 One private capability seals every declared G, R2 and R3 result, refusal,
@@ -16,7 +20,7 @@ serialization is rejected. Persist declared inputs and recompute instead.
 """
 
 import math
-from collections.abc import Callable, Iterable, Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import MISSING, fields, is_dataclass
 from datetime import date
 from decimal import Decimal
@@ -24,7 +28,7 @@ from enum import Enum
 from fractions import Fraction
 from functools import cache, wraps
 from inspect import signature
-from types import MappingProxyType, UnionType
+from types import GenericAlias, MappingProxyType, UnionType
 from typing import Literal, Union, get_args, get_origin, get_type_hints
 
 __all__ = []
@@ -38,14 +42,55 @@ class _InvalidInputType(InvalidFamilyInput, TypeError):
     """An input error, also retaining the constructor's TypeError contract."""
 
 
+class _TypeRegistry(set):
+    """Trusted class metadata indexed without hashing an incoming class."""
+
+    def __init__(self):
+        super().__init__()
+        self.by_identity = {}
+
+    def add(self, cls):
+        super().add(cls)
+        self.by_identity[id(cls)] = cls
+
+
 _RESULT_SEAL = object()
-_RESULT_TYPES = set()
+_RESULT_TYPES = _TypeRegistry()
+_RESULT_ATTRIBUTE_NAMES = {}
+_RESULT_FIELD_NAMES = {}
 _REFUSAL_REASONS = {}
+_ENUM_TYPES = _TypeRegistry()
+_STATEFUL_TYPES = _TypeRegistry()
+_INITIALIZING = object()
+_MISSING_ARGUMENT = object()
 
 
 def _has_declared_type(value, types):
     """Do not let a user-defined metaclass spoof type membership."""
-    return any(type(value) is expected for expected in types)
+    actual = type(value)
+    if type(types) is _TypeRegistry:
+        return types.by_identity.get(id(actual)) is actual
+    for expected in types:
+        if actual is expected:
+            return True
+    return False
+
+
+def _register_annotation_enums(annotation):
+    """Register trusted declaration metadata, never an incoming value's type."""
+    if isinstance(annotation, type) and issubclass(annotation, Enum):
+        _ENUM_TYPES.add(annotation)
+    elif issubclass(type(annotation), Enum):
+        _ENUM_TYPES.add(type(annotation))
+    for part in get_args(annotation):
+        _register_annotation_enums(part)
+
+
+def _register_declaration_enums(cls):
+    for annotation in get_type_hints(
+        cls, localns={cls.__name__: cls}
+    ).values():
+        _register_annotation_enums(annotation)
 
 
 class _SealedResult:
@@ -80,13 +125,41 @@ class _SealedResult:
         return self.__reduce__()
 
 
+def _checked_instance_dict(value):
+    """Read instance storage without dispatching any instance-key protocol.
+
+    Callers first establish a registered exact receiver type. A custom
+    dictionary key can otherwise run equality even in a built-in attribute
+    lookup. Inert metadata with exact string keys remains permitted here.
+    """
+    attributes = object.__getattribute__(value, "__dict__")
+    if type(attributes) is not dict:
+        raise InvalidFamilyInput("Instance attributes need a built-in dict")
+    for name in attributes:
+        if type(name) is not str:
+            raise InvalidFamilyInput(
+                "Instance attribute names must be strings"
+            )
+    return attributes
+
+
 def _result_values(value):
-    names = (
-        [item.name for item in fields(value)]
-        if is_dataclass(value)
-        else ("reason", "detail", "beneficiary_id", "record_id")
-    )
-    return {name: getattr(value, name) for name in names}
+    # Private callers have established exact registered result type. Field
+    # names are class metadata; field values are read afresh every time.
+    return {
+        name: object.__getattribute__(value, name)
+        for name in _RESULT_FIELD_NAMES[type(value)]
+    }
+
+
+@cache
+def _dataclass_field_names(cls):
+    return tuple(item.name for item in fields(cls))
+
+
+@cache
+def _dataclass_init_field_names(cls):
+    return tuple(item.name for item in fields(cls) if item.init)
 
 
 def _seal_value(value):
@@ -100,11 +173,12 @@ def _seal_value(value):
         return cls, value
     if _has_declared_type(value, _RESULT_TYPES):
         _check_seal(value)
-        payload = value._g_seal[2]
+        payload = object.__getattribute__(value, "_g_seal")[2]
     elif _has_declared_type(value, _DECLARATION_TYPES):
+        _checked_instance_dict(value)
         payload = tuple(
-            (item.name, _seal_value(getattr(value, item.name)))
-            for item in fields(value)
+            (name, _seal_value(object.__getattribute__(value, name)))
+            for name in _dataclass_field_names(cls)
         )
     elif cls is dict or cls is MappingProxyType:
         if cls is MappingProxyType:
@@ -123,7 +197,7 @@ def _seal_value(value):
     elif cls is set or cls is frozenset:
         items = [_seal_value(item) for item in value]
         payload = frozenset(items)
-    elif isinstance(cls, type) and issubclass(cls, Enum):
+    elif _has_declared_type(value, _ENUM_TYPES):
         payload = _enum_schema(cls)(value, "sealed enum")
     else:
         raise _InvalidInputType("Undeclared computed-result field")
@@ -132,9 +206,13 @@ def _seal_value(value):
 
 def _seal_payload(value):
     try:
+        values = _result_values(value)
+        if _has_declared_type(value, _REFUSAL_REASONS):
+            # Exception string/repr readers consume args as well as the
+            # declared refusal fields. Tracebacks remain caller composition.
+            values["args"] = object.__getattribute__(value, "args")
         return type(value), tuple(
-            (key, _seal_value(item))
-            for key, item in _result_values(value).items()
+            (key, _seal_value(item)) for key, item in values.items()
         )
     except InvalidFamilyInput:
         raise
@@ -149,10 +227,27 @@ def _seal_payload(value):
 
 
 def _check_seal(value):
-    seal = getattr(value, "_g_seal", None)
+    if not _has_declared_type(value, _RESULT_TYPES):
+        raise InvalidFamilyInput(
+            "Expected an unaltered result computed by Track B"
+        )
+    attributes = _checked_instance_dict(value)
+    allowed_names = _RESULT_ATTRIBUTE_NAMES[type(value)]
+    if any(name not in allowed_names for name in attributes):
+        raise InvalidFamilyInput(
+            "Computed values cannot add instance attributes"
+        )
+    if "__notes__" in attributes:
+        notes = attributes["__notes__"]
+        if type(notes) is not list or any(
+            type(note) is not str for note in notes
+        ):
+            raise InvalidFamilyInput(
+                "Exception notes must be built-in strings"
+            )
+    seal = attributes.get("_g_seal")
     if (
-        not _has_declared_type(value, _RESULT_TYPES)
-        or not isinstance(seal, tuple)
+        type(seal) is not tuple
         or len(seal) != 3
         or seal[0] is not _RESULT_SEAL
         or seal[1] != id(value)
@@ -166,11 +261,26 @@ def _check_seal(value):
 def _sealed_result(cls):
     """Require the package capability, validate, and seal a declared result."""
     # A declared refusal subclass inherits the base validator, not its wrapper.
-    initialize = getattr(cls.__init__, "__wrapped__", cls.__init__)
+    initialize = _during_initialization(
+        getattr(cls.__init__, "__wrapped__", cls.__init__)
+    )
     _RESULT_TYPES.add(cls)
+    if is_dataclass(cls):
+        _register_declaration_enums(cls)
+    names = (
+        _dataclass_field_names(cls)
+        if is_dataclass(cls)
+        else ("reason", "detail", "beneficiary_id", "record_id")
+    )
+    _RESULT_FIELD_NAMES[cls] = names
+    _RESULT_ATTRIBUTE_NAMES[cls] = set(names) | {"_g_seal"}
+    if cls in _REFUSAL_REASONS:
+        _RESULT_ATTRIBUTE_NAMES[cls].add("__notes__")
 
     @wraps(initialize)
-    def initialize_computed(self, *args, _seal=None, **kwargs):
+    def initialize_computed(*arguments, **keywords):
+        self, args, kwargs = _public_receiver(arguments, keywords)
+        _seal = kwargs.pop("_seal", None)
         if _seal is not _RESULT_SEAL:
             raise InvalidFamilyInput(
                 "Track B results can only be created by their computation"
@@ -183,7 +293,7 @@ def _sealed_result(cls):
         )
 
     cls.__init__ = initialize_computed
-    return cls
+    return _checked_public_methods(cls)
 
 
 def _computed(cls, *args, **kwargs):
@@ -227,6 +337,7 @@ def _sealed_refusal(reason_type):
     """Bind one declared refusal class to exactly one layer's reason enum."""
 
     def declare(cls):
+        _ENUM_TYPES.add(reason_type)
         _REFUSAL_REASONS[cls] = reason_type
         return _sealed_result(cls)
 
@@ -248,7 +359,9 @@ def _check_refusal(value):
 
 
 def _check_outcome(value):
-    if not isinstance(value, _SealedOutcome):
+    if not _has_declared_type(value, _RESULT_TYPES) or not issubclass(
+        type(value), _SealedOutcome
+    ):
         raise InvalidFamilyInput("Expected a declared Track B outcome")
     _check_seal(value)
     return value
@@ -263,7 +376,419 @@ def _check_denominator_reason(reason):
         raise InvalidFamilyInput("Unknown Track B refusal reason enum")
 
 
-_DECLARATION_TYPES = set()
+def _public_reader_argument(value):
+    """Check protocol arguments without executing an undeclared protocol.
+
+    The dunder surface has no callback slots. Its values are the same
+    declared data as ordinary calls, plus Python's exact traceback type for
+    exception chaining. Attribute names and mapping keys are checked more
+    narrowly by their individual protocols.
+    """
+    from types import TracebackType
+
+    if _has_declared_type(value, _STATEFUL_TYPES):
+        value._check_initialized()
+        return value
+    if type(value) is TracebackType:
+        return value
+    if type(value) is dict or type(value) is MappingProxyType:
+        if type(value) is MappingProxyType:
+            from gc import get_referents
+
+            backing = get_referents(value)
+            if len(backing) != 1 or type(backing[0]) is not dict:
+                raise InvalidFamilyInput(
+                    "Reader mappings need a built-in dict"
+                )
+            value = backing[0]
+        pairs = [
+            (_public_reader_argument(key), _public_reader_argument(item))
+            for key, item in value.items()
+        ]
+        result = dict(pairs)
+        if len(result) != len(pairs):
+            raise InvalidFamilyInput("Reader mapping keys cannot collide")
+        return result
+    return _rebuild_declared(value)
+
+
+def _checked_keyword_names(keywords):
+    # Variadic wrappers let us reject before Python matches parameter names.
+    if any(type(name) is not str for name in keywords):
+        raise InvalidFamilyInput(
+            "Reader argument names must be built-in strings"
+        )
+
+
+def _public_receiver(arguments, keywords, receiver_name="self"):
+    if not keywords and arguments:
+        return arguments[0], arguments[1:], keywords
+    _checked_keyword_names(keywords)
+    if arguments:
+        if receiver_name in keywords:
+            raise _InvalidInputType("Receiver was supplied twice")
+        return arguments[0], arguments[1:], keywords
+    if receiver_name not in keywords:
+        raise _InvalidInputType("Missing Track B receiver")
+    keywords = dict(keywords)
+    return keywords.pop(receiver_name), (), keywords
+
+
+def _public_fixed_arguments(arguments, keywords, names):
+    if not keywords and len(arguments) == len(names):
+        return arguments
+    _checked_keyword_names(keywords)
+    if len(arguments) > len(names):
+        raise _InvalidInputType("Too many Track B protocol arguments")
+    supplied = dict(zip(names, arguments, strict=False))
+    for name, value in keywords.items():
+        if name not in names or name in supplied:
+            raise _InvalidInputType("Unknown or duplicate protocol argument")
+        supplied[name] = value
+    if len(supplied) != len(names):
+        raise _InvalidInputType("Missing Track B protocol argument")
+    return tuple(supplied[name] for name in names)
+
+
+def _public_class_argument(value):
+    """Metadata accepts class objects without consulting their protocols."""
+    if _has_declared_type(value, (type, type(Mapping), type(Enum))):
+        return value
+    if issubclass(type(value), type):
+        raise InvalidFamilyInput("Undeclared Track B metadata metaclass")
+    if value is Ellipsis:
+        return value
+    if type(value) is tuple:
+        return tuple(_public_class_argument(item) for item in value)
+    if type(value) is GenericAlias or type(value) is UnionType:
+        for item in object.__getattribute__(value, "__args__"):
+            _public_class_argument(item)
+        return value
+    return _public_reader_argument(value)
+
+
+def _checked_class_method(cls, method, name):
+    """Class metadata hooks use class receivers, including new subclasses."""
+    method = getattr(method, "_track_b_class_reader", method)
+
+    @wraps(method)
+    def checked(*arguments, **keywords):
+        receiver, args, kwargs = _public_receiver(arguments, keywords, "cls")
+        if type(receiver) is not type(cls) or not any(
+            base is cls for base in type.__getattribute__(receiver, "__mro__")
+        ):
+            raise InvalidFamilyInput("Undeclared Track B class receiver")
+        args = tuple(_public_class_argument(arg) for arg in args)
+        kwargs = {
+            key: _public_class_argument(arg) for key, arg in kwargs.items()
+        }
+        if name == "__class_getitem__":
+            if len(args) != 1 or kwargs:
+                raise _InvalidInputType("Expected one generic alias argument")
+            return GenericAlias(receiver, args[0])
+        return method(*args, **kwargs)
+
+    checked._track_b_class_reader = method
+    return classmethod(checked)
+
+
+def _during_initialization(initialize):
+    """Distinguish internal dataclass post-init from its public direct call."""
+    initialize = getattr(initialize, "_track_b_initializing", initialize)
+
+    @wraps(initialize)
+    def checked(self, *args, **kwargs):
+        object.__setattr__(self, "_g_initializing", _INITIALIZING)
+        try:
+            return initialize(self, *args, **kwargs)
+        finally:
+            object.__delattr__(self, "_g_initializing")
+
+    checked._track_b_initializing = initialize
+    return checked
+
+
+def _checked_public_methods(cls):
+    """Guard every instance API, including generated and inherited readers.
+
+    A direct ``Class.reader(foreign)`` or ``property.fget(foreign)`` must
+    reject before reading even ``foreign.__class__``. Attribute lookup is
+    deliberately only a type/name check: recursively checking a seal on
+    each field read would recurse into its own seal and repeat snapshots.
+    Ordinary decorated methods retain their full field/argument schemas.
+    """
+
+    if cls not in _RESULT_TYPES and cls not in _DECLARATION_TYPES:
+        _STATEFUL_TYPES.add(cls)
+
+    def guard(method, name):
+        # Inherited wrappers belong to their declaring class. Rewrap the
+        # underlying implementation for each exact registered subclass.
+        method = getattr(method, "_track_b_reader", method)
+        protocol_kind = {
+            "__format__": str,
+            "__reduce_ex__": int,
+            "__deepcopy__": dict,
+            "__setstate__": dict,
+            "__getitem__": str,
+            "__contains__": str,
+            "add_note": str,
+        }.get(name)
+
+        # This is immutable method metadata, never cached caller state.
+        is_post_init = name == "__post_init__"
+        is_get = name == "get"
+        is_traceback = name == "with_traceback"
+        snapshot_arguments = (
+            name.startswith("__")
+            or name
+            in {"get", "keys", "items", "values", "add_note", "with_traceback"}
+        ) and name != "__init__"
+        check_integrity = name in {
+            "__eq__",
+            "__ne__",
+            "__lt__",
+            "__le__",
+            "__gt__",
+            "__ge__",
+            "__repr__",
+            "__str__",
+            "__hash__",
+            "__format__",
+            "__iter__",
+            "__len__",
+            "__getitem__",
+            "__contains__",
+            "__getstate__",
+            "__dir__",
+            "__sizeof__",
+            "add_note",
+            "with_traceback",
+            "__reduce__",
+            "__reduce_ex__",
+            "get",
+            "keys",
+            "items",
+            "values",
+        }
+        sealed = cls in _RESULT_TYPES
+        declaration = cls in _DECLARATION_TYPES
+
+        @wraps(method)
+        def checked(*arguments, **keywords):
+            self, args, kwargs = _public_receiver(arguments, keywords)
+            if type(self) is not cls:
+                raise InvalidFamilyInput("Undeclared Track B reader receiver")
+            if protocol_kind is not None and any(
+                type(value) is not protocol_kind
+                for value in (*args, *kwargs.values())
+            ):
+                raise InvalidFamilyInput("Invalid Track B protocol argument")
+            if is_get and (
+                (args and type(args[0]) is not str)
+                or ("key" in kwargs and type(kwargs["key"]) is not str)
+            ):
+                raise InvalidFamilyInput("Mapping lookup keys must be strings")
+            if is_traceback:
+                from types import TracebackType
+
+                if any(
+                    value is not None and type(value) is not TracebackType
+                    for value in (*args, *kwargs.values())
+                ):
+                    raise InvalidFamilyInput("Expected a built-in traceback")
+            if snapshot_arguments:
+                if args:
+                    args = tuple(_public_reader_argument(arg) for arg in args)
+                if kwargs:
+                    kwargs = {
+                        key: _public_reader_argument(arg)
+                        for key, arg in kwargs.items()
+                    }
+            if is_post_init and (
+                getattr(self, "_g_initializing", None) is not _INITIALIZING
+            ):
+                if sealed:
+                    _check_seal(self)
+                else:
+                    self = _translate_input_error(
+                        lambda: _snapshot_declaration(self)
+                    )
+            if check_integrity:
+                if sealed:
+                    _check_seal(self)
+                elif declaration:
+                    self = _translate_input_error(
+                        lambda: _snapshot_declaration(self)
+                    )
+            return method(self, *args, **kwargs)
+
+        checked._track_b_reader = method
+        return checked
+
+    for name in dir(cls):
+        if name.startswith("_") and not (
+            name.startswith("__") and name.endswith("__")
+        ):
+            continue
+        if name in {
+            "__class__",
+            "__init__",
+            "__new__",
+            "__getattribute__",
+            "__setattr__",
+            "__delattr__",
+        }:
+            continue
+        member = getattr(cls, name)
+        if name in {
+            "__class_getitem__",
+            "__init_subclass__",
+            "__subclasshook__",
+        }:
+            setattr(cls, name, _checked_class_method(cls, member, name))
+        elif isinstance(member, property):
+            setattr(
+                cls,
+                name,
+                property(guard(member.fget, name), doc=member.__doc__),
+            )
+        elif callable(member):
+            setattr(cls, name, guard(member, name))
+
+    attribute_reader = getattr(
+        cls.__getattribute__, "_track_b_reader", cls.__getattribute__
+    )
+
+    def getattribute(
+        self=_MISSING_ARGUMENT,
+        name=_MISSING_ARGUMENT,
+        /,
+        *arguments,
+        **keywords,
+    ):
+        # Positional-only slots cannot match hostile keyword-name objects.
+        # The uncommon keyword spelling still uses the checked binder.
+        if (
+            arguments
+            or keywords
+            or self is _MISSING_ARGUMENT
+            or name is _MISSING_ARGUMENT
+        ):
+            supplied = (
+                tuple(
+                    value
+                    for value in (self, name)
+                    if value is not _MISSING_ARGUMENT
+                )
+                + arguments
+            )
+            self, name = _public_fixed_arguments(
+                supplied, keywords, ("self", "name")
+            )
+        if type(self) is not cls or type(name) is not str:
+            raise InvalidFamilyInput("Invalid Track B attribute reader")
+        _checked_instance_dict(self)
+        return attribute_reader(self, name)
+
+    getattribute._track_b_reader = attribute_reader
+    cls.__getattribute__ = getattribute
+
+    def attribute_writer(method, names):
+        method = getattr(method, "_track_b_reader", method)
+
+        def checked(*arguments, **keywords):
+            self, name, *args = _public_fixed_arguments(
+                arguments, keywords, names
+            )
+            if type(self) is not cls or type(name) is not str:
+                raise InvalidFamilyInput("Invalid Track B attribute writer")
+            # Private guard state is written by its own implementation.
+            # Access to private implementation names is outside this API.
+            private = name.startswith("_") and not (
+                name.startswith("__") and name.endswith("__")
+            )
+            if not private:
+                if name == "__notes__":
+                    # BaseException.add_note installs a list, then appends
+                    # to that same list. Validate its complete schema while
+                    # preserving this caller-owned metadata's identity.
+                    notes = args[0]
+                    if type(notes) is not list or any(
+                        type(note) is not str for note in notes
+                    ):
+                        raise InvalidFamilyInput(
+                            "Exception notes must be a built-in list of strings"
+                        )
+                else:
+                    args = tuple(_public_reader_argument(arg) for arg in args)
+            _checked_instance_dict(self)
+            return method(self, name, *args)
+
+        checked._track_b_reader = method
+        return checked
+
+    cls.__setattr__ = attribute_writer(
+        cls.__setattr__, ("self", "name", "value")
+    )
+    cls.__delattr__ = attribute_writer(cls.__delattr__, ("self", "name"))
+    construct = getattr(cls.__new__, "_track_b_reader", cls.__new__)
+
+    def new(*arguments, **keywords):
+        declared, args, kwargs = _public_receiver(
+            arguments, keywords, "declared"
+        )
+        if declared is not cls:
+            raise InvalidFamilyInput("Undeclared Track B constructor receiver")
+        # Reject foreign raw kinds even when __new__ is called directly.
+        # __init__ owns the field-by-field schema; no field is read here.
+        for value in (*args, *kwargs.values()):
+            if value is _RESULT_SEAL:
+                continue
+            if (
+                _has_declared_type(
+                    value,
+                    (
+                        int,
+                        float,
+                        str,
+                        bool,
+                        bytes,
+                        date,
+                        Decimal,
+                        Fraction,
+                        tuple,
+                        list,
+                        dict,
+                        set,
+                        frozenset,
+                        MappingProxyType,
+                        type(None),
+                    ),
+                )
+                or _has_declared_type(value, _RESULT_TYPES)
+                or _has_declared_type(value, _DECLARATION_TYPES)
+                or _has_declared_type(value, _external_declarations())
+                or _has_declared_type(value, _ENUM_TYPES)
+            ):
+                continue
+            raise InvalidFamilyInput("Undeclared Track B constructor argument")
+        # object.__new__ ignores constructor arguments when __init__ owns
+        # them. Exception.__new__ stores args; its public constructor still
+        # requires the private computation capability in __init__.
+        if construct is object.__new__:
+            return construct(declared)
+        return construct(declared, *args, **kwargs)
+
+    # Preserve the declared constructor API while the variadic runtime
+    # binder checks keyword kinds before Python can invoke their hooks.
+    new.__signature__ = signature(cls.__init__)
+    new._track_b_reader = construct
+    cls.__new__ = staticmethod(new)
+    return cls
+
+
+_DECLARATION_TYPES = _TypeRegistry()
 
 
 def _exact_number(value, label):
@@ -388,7 +913,7 @@ def _collection_schema(readers, *, pair=False, unordered=False):
             (readers[index] if pair else readers[0])(item, f"{label}[{index}]")
             for index, item in enumerate(value)
         ]
-        return type(value)(items)
+        return frozenset(items) if unordered else tuple(items)
 
     return read
 
@@ -437,7 +962,7 @@ def _external_declarations():
         SourcePin,
     )
 
-    return (
+    declarations = (
         SSAParameters,
         ParameterValue,
         ProjectionInputs,
@@ -445,6 +970,9 @@ def _external_declarations():
         RETYear,
         SourcePin,
     )
+    for cls in declarations:
+        _register_declaration_enums(cls)
+    return declarations
 
 
 def _schema(annotation, module, *, name="", owner=None):
@@ -478,13 +1006,13 @@ def _schema(annotation, module, *, name="", owner=None):
         return literal
     if origin is Callable or annotation is Callable:
         return _callback_schema
-    if origin in (tuple, list, set, frozenset, Iterable, Sequence):
+    if origin in (tuple, list, set, frozenset, Sequence):
         pair = origin is tuple and len(args) > 1 and args[-1] is not Ellipsis
         elements = args if pair else args[:1]
         return _collection_schema(
             tuple(_schema(a, module) for a in elements),
             pair=pair,
-            unordered=origin in (set, frozenset, Iterable),
+            unordered=origin in (set, frozenset),
         )
     if origin in (dict, Mapping):
         key, item = args
@@ -509,6 +1037,7 @@ def _schema(annotation, module, *, name="", owner=None):
             r1_proxy=owner in _external_declarations()[1:],
         )
     if isinstance(annotation, type) and issubclass(annotation, Enum):
+        _ENUM_TYPES.add(annotation)
         return _enum_schema(annotation)
     if (
         annotation in _DECLARATION_TYPES
@@ -616,8 +1145,14 @@ def _declaration_schemas(cls):
 
 def _snapshot_declaration(value):
     cls = type(value)
+    _checked_instance_dict(value)
+    read_attribute = (
+        object.__getattribute__
+        if _has_declared_type(value, _DECLARATION_TYPES)
+        else getattr
+    )
     values = {
-        name: read(getattr(value, name), name)
+        name: read(read_attribute(value, name), name)
         for name, read in _declaration_schemas(cls).items()
     }
     result = object.__new__(cls)
@@ -639,13 +1174,13 @@ def _construct_declared(cls, *args, **kwargs):
 
 def _replace_declared(value, **changes):
     """Replace fields of owned private data, retaining domain checks."""
+    cls = type(value)
     values = {
-        item.name: getattr(value, item.name)
-        for item in fields(value)
-        if item.init
+        name: object.__getattribute__(value, name)
+        for name in _dataclass_init_field_names(cls)
     }
     values.update(changes)
-    return _construct_declared(type(value), **values)
+    return _construct_declared(cls, **values)
 
 
 def _translate_input_error(action):
@@ -713,13 +1248,24 @@ def _call_binder(function, *, defaults):
 def _declared_input(cls):
     """Declare a field schema and validate each constructor exactly once."""
     _DECLARATION_TYPES.add(cls)
-    initialize = cls.__init__
+    _register_declaration_enums(cls)
+    initialize = _during_initialization(cls.__init__)
     _INITIALIZERS[cls] = initialize
     bind = _call_binder(initialize, defaults=False)
     defaults = {item.name: item for item in fields(cls)}
+    public_readers = frozenset(
+        name
+        for name in dir(cls)
+        if (not name.startswith("_") or name.startswith("__"))
+        and (
+            callable(getattr(cls, name))
+            or isinstance(getattr(cls, name), property)
+        )
+    )
 
     @wraps(initialize)
-    def initialize_declared(self, *args, **kwargs):
+    def initialize_declared(*arguments, **keywords):
+        self, args, kwargs = _public_receiver(arguments, keywords)
         if type(self) is not cls:
             raise InvalidFamilyInput("Undeclared Track B input subclass")
 
@@ -737,12 +1283,23 @@ def _declared_input(cls):
                         else item.default
                     )
                 values[name] = read(value, name)
+            # Reinitializing a declaration must not dispatch a caller's
+            # instance shadow of a generated/public constructor reader.
+            # Inert caller metadata remains outside the declaration schema.
+            attributes = object.__getattribute__(self, "__dict__")
+            if type(attributes) is not dict or any(
+                type(name) is not str or name in public_readers
+                for name in attributes
+            ):
+                raise InvalidFamilyInput(
+                    "Declaration methods cannot be shadowed"
+                )
             initialize(self, **values)
 
         _translate_input_error(construct)
 
     cls.__init__ = initialize_declared
-    return cls
+    return _checked_public_methods(cls)
 
 
 @cache
@@ -811,7 +1368,7 @@ def _rebuild_declared(value):
             value, (int, float, str, bool, bytes, date, type(None))
         ):
             return value
-        if isinstance(cls, type) and issubclass(cls, Enum):
+        if _has_declared_type(value, _ENUM_TYPES):
             return _enum_schema(cls)(value, "declared enum")
         if _has_declared_type(value, (tuple, list, set, frozenset)):
             items = [_rebuild_declared(item) for item in value]
