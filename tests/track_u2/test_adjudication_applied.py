@@ -1331,6 +1331,12 @@ D1090_ROWS = {
     "U7's 2015 spouse slot is the documented female spouse or partner "
     "slot, and B1's exclusion applies to U7 as to every other row |",
 }
+#: Section 20's status line, which section 20 step 5 rewrote from
+#: "**Pending.**" (review of 690a1276, finding 10).
+STATUS_20 = (
+    "**Steps 1\N{EN DASH}5 done; step 6 is this revision's merge; steps "
+    "7\N{EN DASH}12 pending.**"
+)
 #: The d1090 record, complete, by where it stands: every line of section
 #: 16c, the header lines, section 17 items 1, 2 and 8 and section 20's
 #: status and step 1.  Each must be a whole line there, exactly once, and
@@ -1555,7 +1561,7 @@ D1090_CLAUSES = {
         "of them.",
     ],
     "execution": [
-        "**Pending.**",
+        STATUS_20,
         "1. Resolve the proposed decisions and source-verification "
         "blockers. **Decisions: done (Max, d514, 2026-09-28, adopting every "
         "\N{SECTION SIGN}16 default).** Source-verification blockers remain "
@@ -1936,7 +1942,7 @@ D1090_MUTATIONS = [
     ),
     (
         "execution",
-        "**Pending.**",
+        STATUS_20,
         "**Registered and authorized for execution.**",
     ),
     ("record", "is not known", "is known to be none"),
@@ -2057,8 +2063,8 @@ D1090_MUTATIONS = [
     # Insertions after pinned lines (review of e7a558f, info finding 2).
     (
         "execution",
-        "**Pending.**",
-        "**Pending.**\n\n**Current status: registered and authorized.**",
+        STATUS_20,
+        STATUS_20 + "\n\n**Current status: registered and authorized.**",
     ),
     (
         "outstanding",

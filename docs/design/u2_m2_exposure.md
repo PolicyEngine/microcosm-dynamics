@@ -383,6 +383,9 @@ A Claude Code session (Claude Opus 5.5), started by the dynamics coordinator ses
 - `EV/RESTRICTED-FILES.md`, in full and first, through a saved copy of the tool output in this session's own transcript folder. No other session's file in that project folder was opened. The harness also auto-loaded that project's memory index (`MEMORY.md`, one-line pointers); no memory file was opened.
 - `EV/track-u2-step4-pass-20261021-run2/MANIFEST.md`, which the restricted list allows to be read and cited, and its SHA-256, which matched `acf5d8a4…e6d`. No other file in that folder and nothing in `EV/track-u2-step4-pass-20261019/` was opened or listed.
 - The chief-of-staff decision ledger's entries for d514, d637, d745, d1090, d1242, d1597, d1649 and d1724 (decision, ruling, ruling time and notes), selected by id, and the names in its folder.
+- On 2026-10-22, to check the review's finding 1: the field names of the d1597, d1649 and d1724 ledger records, and the d1649 `ruling` and d1724 `why` fields, which state that the first pass (2026-10-19, `640adccf`) passed d1597's U1 load.
+- The coordinating session's brief, the message that started this lane, and its later messages of 2026-10-21 and 2026-10-22. They carry value-free facts only: the step-4 outcomes this lane records, the evidence record's SHA-256 as its MANIFEST pins it, and the tier-slot queue.
+- The review lane's report, `EV/rulings-records-20261021-u2-step5/review-r1b-out.md`, and the names in the evidence folder that match `rulings-records` (names only).
 - The repository at `1e739d32`: `CLAUDE.md`; the specification in full; the U1 specification's header, §15 block and §20; the U2 package, scripts and tests named in the PR; `data/external/track_u2/u1_identity.json` and the registries' entry ids and fields; the U2 SSI capture's provenance fields and its source manifest's records; `tests/README-tiers.md`; Track M's `specification.py` header; `estimates/cola_age_profile.specification_unratified_fields`. Also `~/PolicyEngine/CLAUDE.md`.
 
 **Not opened:** any other evidence-folder path; any comparator folder, seal or Boomers Report copy; `runs/track_b_b2_*`, `docs/design/track_b_attempt_ledger.md` and `paper/paper.qmd`; other sessions' transcripts or scratchpads; `~/.subfleet/` other than this session's own review jobs; any PSID file or codebook.
@@ -390,3 +393,14 @@ A Claude Code session (Claude Opus 5.5), started by the dynamics coordinator ses
 **Ran:** the U2 and U1 test files, the specification tests and the birth-evidence artifact test, with `POPULACE_DYNAMICS_PSID_DIR` set to an empty directory, which stayed empty, so the checks that need PSID documentation skipped; Black and Ruff; the tier recount by collection; and the mutation checks listed in the PR. Every block, rulings and appendix check reads only the specification, the committed registries and the code.
 
 **Values:** it stated and inferred no 1946–55 value or direction. Every number it wrote is a hash, a commit, a CI run id, a date, a line number, a registry entry count, a test count or a constant of the code or the specification.
+
+**Review lanes.**
+- **Subfleet `20261021-104325-u2-step5-review-r1`.** It waited for capacity and was cancelled before it launched, so it read nothing.
+- **Subfleet `20261021-105010-u2-step5-review-r1b`.** It reviewed `690a1276` and returned REQUEST CHANGES. It ran on Claude Opus 5.5, in a standalone clone (`~/PolicyEngine/_clones/md-u2-step5-review-20261021`) with its own virtual environment.
+  - **What it read outside the clone:** `EV/RESTRICTED-FILES.md`, the run-2 `MANIFEST.md`, and the eight decision-ledger records selected by id.
+  - **Its runs:** the test suites with the empty PSID directory, which stayed empty, and its own U1 differential in clones under `/tmp/u2rev-diff`.
+  - **Its two disclosures:**
+    - One early command wrote git-ignored bytecode caches under the review clone's `src/`.
+    - Two `grep` searches over `docs/design/` scanned the bytes of `track_b_attempt_ledger.md` for fixed literals, with nothing from that file printed. That file is restricted for B2-successor work, not for U2; this record lists it for completeness.
+  - It opened no other evidence path, PSID file or comparator. Its findings were addressed in the next commit (§19).
+

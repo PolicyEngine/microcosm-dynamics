@@ -1038,7 +1038,7 @@ Changed source bytes, changed frame digests, duplicate identifiers, failed joins
 
 This is the final parameter contract, materialized under §20 step 5 (2026-10-21): every pin is resolved, the ratified amendments are applied and U2's rulings record is written under `decisions`. It uses U1’s key names where the concepts are inherited. Additional keys describe U2-specific identity and amendments.
 
-`rows.check_block_against_code` holds this block equal to the code in every key and value, and the registered run's preflight refuses any other block (§20 step 5). The block holds no `TO_VERIFY` value and no blocker. It does not by itself authorize execution: a registered run also needs the issue #42 registration and its binding, and the committed pre-registration evidence (§§14 and 20).
+`rows.check_block_against_code` holds this block equal to the code in every key and value, and the registered run's preflight refuses any other block (§20 step 5). The block holds no `TO_VERIFY` value and no blocker. It does not by itself authorize execution: a registered run also needs the issue #42 registration and its binding, and the committed pre-registration evidence (§§14 and 20). Its `decisions.ruled_on` is the date of d514, which adopted §16's rulings and ratification; every later entry carries its own `ruled_on`.
 
 ```json
 {
@@ -1592,14 +1592,23 @@ This is the final parameter contract, materialized under §20 step 5 (2026-10-21
       "ruled_on": "2026-10-16"
     },
     "u1_input_pin_check": {
-      "ruling": "run_the_optional_structure_only_u1_load_once",
+      "ruling": "run_the_optional_structure_only_u1_load_before_step_4",
       "u1_input_frames_sha256": "43c41f444128ecf72ce9f8c5e64a7cda61a6fccaa2a58ff60ae7ce91356c4271",
       "statistic_computed": null,
-      "authorization_used": {
-        "on": "2026-10-21",
-        "head": "1e739d328b73c99d259a72952b3452546721bfb8",
-        "result": "pin_matched"
-      },
+      "authorization_used": [
+        {
+          "on": "2026-10-19",
+          "head": "640adccf84f9f68c0fb893a834cfdfaca20e7888",
+          "before": "the_d1649_pass",
+          "result": "pin_matched"
+        },
+        {
+          "on": "2026-10-21",
+          "head": "1e739d328b73c99d259a72952b3452546721bfb8",
+          "before": "the_d1724_pass",
+          "result": "pin_matched"
+        }
+      ],
       "specification_section": "13",
       "decision_record": "d1597",
       "ruled_on": "2026-10-16"
@@ -1614,11 +1623,13 @@ This is the final parameter contract, materialized under §20 step 5 (2026-10-21
       ],
       "not_computed": ["income_concept", "poverty_threshold_assignment", "poverty_status"],
       "registered_run_frame_environment": "the_preregistration_evidence_pandas_version_and_string_inference_setting",
-      "authorization_used": {
-        "on": "2026-10-19",
-        "head": "640adccf84f9f68c0fb893a834cfdfaca20e7888",
-        "result": "stopped_in_the_birth_law_without_output"
-      },
+      "authorization_used": [
+        {
+          "on": "2026-10-19",
+          "head": "640adccf84f9f68c0fb893a834cfdfaca20e7888",
+          "result": "stopped_in_the_birth_law_without_output"
+        }
+      ],
       "specification_section": "20",
       "decision_record": "d1649",
       "ruled_on": "2026-10-16"
@@ -1631,12 +1642,14 @@ This is the final parameter contract, materialized under §20 step 5 (2026-10-21
       "count_decides": "nothing",
       "estimates_career": "unchanged",
       "widening_approved_on": "2026-10-20",
-      "authorization_used": {
-        "on": "2026-10-21",
-        "head": "1e739d328b73c99d259a72952b3452546721bfb8",
-        "tests_run": 39502262845,
-        "result": "completed"
-      },
+      "authorization_used": [
+        {
+          "on": "2026-10-21",
+          "head": "1e739d328b73c99d259a72952b3452546721bfb8",
+          "tests_run": 39502262845,
+          "result": "completed"
+        }
+      ],
       "specification_section": "16d",
       "decision_record": "d1724",
       "ruled_on": "2026-10-19"
@@ -2232,7 +2245,7 @@ Revision verification comprised the two touched test files and `tests/track_u2/t
 
 **`u2-draft-4`, §20 step 4 recorded (2026-10-21):**
 
-- §20 step 4 records both passes in value-free terms. The first, under d1649, ran once on 2026-10-19 at `640adccf` and stopped in the birth law without writing any output (§16d). The second, under d1724, ran once on 2026-10-21 at `1e739d32`, after master's Tests run 39502262845 passed there: the d1597 U1 pin check passed, both scripts completed with no refusal, failure or mapping failure, every income and WEALTH1 identity reconciles in all six support waves, and both rows carry §16d's disclosure keys. The record cites the outputs' `MANIFEST.md` by its SHA-256 and states no count, value or other statistic from them.
+- §20 step 4 records both passes in value-free terms. The first, under d1649, ran once on 2026-10-19 at `640adccf` and stopped in the birth law without writing any output (§16d). The second, under d1724, ran once on 2026-10-21 at `1e739d32`, after master's Tests run 39502262845 passed there: the d1597 U1 pin check passed, as it had before the first pass, both scripts completed with no refusal, failure or mapping failure, every income and WEALTH1 identity reconciles in all six support waves, and both rows carry §16d's disclosure keys. The record cites the outputs' `MANIFEST.md` by its SHA-256 and states no count, value or other statistic from them.
 - The record was written from the run-2 `MANIFEST.md`, which the restricted list allows to be read and cited, and from the coordinating session's value-free brief. No other file in either pass's folder was opened.
 - No count, statistic or outcome was computed, no model or estimator was run, no PSID file was read, and no file on the restricted list was opened for reading. Reading and exposure are recorded in `docs/design/u2_m2_exposure.md` (§20 steps 4–6 section).
 
@@ -2245,20 +2258,30 @@ Revision verification comprised the two touched test files and `tests/track_u2/t
 - Tests: the new `tests/track_u2/test_u2_specification_block.py` holds the committed block equal to the code, mutates every leaf and refuses each change, adds and drops keys, checks JSON types (`true` is not `1`, `1` is not `1.0`), holds the rulings record to every decision, and holds the TO VERIFY appendix complete. The employer-DC, identity and registered-script tests now expect the materialized block, and the specification-revision test holds lines before §15 to draft 3 (except the version and status lines), §15's lines through 1185 to draft 3 except where the block was materialized, and §16 to draft 3's text at its new position.
 - §17 items 5, 8, 9 and 10 and §20 steps 5 and 6 record the work; the header gives the new version and status; the new appendix maps each prose TO VERIFY item to its resolution.
 - No registry changed, so the step-4 evidence's `registries_sha256` still equals `sources.REGISTRY_SHA256`. No count, statistic or outcome was computed, no model or estimator was run on real data, no PSID file was read, and no file on the restricted list was opened for reading. Reading and exposure are recorded in `docs/design/u2_m2_exposure.md` (§20 steps 4–6 section).
+- After the independent review of `690a1276` (Claude Opus 5.5 on a review lane, Subfleet job `20261021-105010-u2-step5-review-r1b`, REQUEST CHANGES; records in `EV/rulings-records-20261021-u2-step5/`):
+  - **Finding 1 (blocking).** The d1597 entry now records both uses of the structure-only U1 load: before the first step-4 pass, on 2026-10-19 at `640adccf`, and before the second, on 2026-10-21 at `1e739d32`. Each matched the pin, as d1724's decision record states. §20 steps 4 and 5 say so, and every authorization's uses are now a list.
+  - **Finding 2.** The block reader refuses a JSON key repeated at any level, which `json.loads` would otherwise resolve silently to the last value.
+  - **Finding 3.** The block takes the employer-DC persons and previous plans from the reader (`sources.DC_PERSONS` and `DC_PLANS`), the two `overlap_2012` values from the parameter loaders, and refuses to name a script that does not exist.
+  - **Finding 4.** The reader's path resolves through a symlinked checkout.
+  - **Findings 5 and 7.** New tests cover the preflight's rulings check and the dry run's specification checks (now one helper, `specification_checks`), B2's person count (d1242), unresolved registry entries and `-0.0`.
+  - **Finding 6.** The U1 differential report is committed at this revision's last code change (§20 step 6).
+  - **Finding 8.** The appendix names the 2013 and 2015 code-92 entries, and its test checks every registry entry and `income_concept` path the appendix cites.
+  - **Finding 9.** The exposure record names the coordinating session's messages.
+  - **Finding 10.** §15 says which ruling `decisions.ruled_on` dates, and §20's status line names the steps done and pending.
 
 ## 20. Ratification and execution record
 
-**Pending.**
+**Steps 1–5 done; step 6 is this revision's merge; steps 7–12 pending.**
 
 1. Resolve the proposed decisions and source-verification blockers. **Decisions: done (Max, d514, 2026-09-28, adopting every §16 default).** Source-verification blockers remain for steps 2–5. **`u2-draft-4` amendments 1–6 (§16a): ruled by Max on 2026-09-30 (d637; §16b).** B3 is resolved by option 1. B1 and B2 were held until PSID answered; **Max ruled on them on 2026-10-10 (d1090; §16c)**: B1 by option 2 and B2 by option 1, each an exclusion under a named disposition. Max confirmed the reading of amendment 1's parts 1a–1c in §16b on 2026-10-12 (d745), so this step is done.
 2. Complete implementation, manifests and parameter capture. **Done (2026-10-16).** Implementation: milestone 2 (#487) and its three review rounds, the last landing as #525 (`f7a84d0b`); and #544, which records with the frame digest the pandas version and string inference setting it was taken under and refuses a frozen load or registered run under any other (`test_u2_loader.py::test_any_other_frame_environment_refuses_the_registered_check`, `::test_a_frozen_load_refuses_another_frame_environment`). Manifests: the documentary source records, 1,766 registry entries and 26 SSI and Census records, are all RESOLVED, none REFUSED or TO VERIFY (`test_adjudication_applied.py::test_status_counts_after_independent_adjudication`), and the loader's source preflight passes (`test_u2_mappings.py::test_source_preflight_passes_at_the_committed_registries`; #524, #540). A RESOLVED record is a documentary finding; reconciliation on real records is step 4's. Parameter capture: the U2 SSI capture, the Track M threshold capture and U1's inherited life tables, each pinned by hash in the code (§17 item 5; `test_u2_parameters.py::test_threshold_capture_is_the_pinned_track_m_file`; `parameters._LIFE_TABLE_PINS`). The final parameter block is step 5's.
 3. Complete independent mapping review, invented tests, historical-isolation checks and exact U1 differential evidence. **Done (2026-10-16).** Independent mapping review: the independent adjudication of milestone 1's registries (ERRORS FOUND); milestone 1b applied its corrections in #486, whose independent review requested changes on 11 findings and whose blind verifier then returned U2-M1B: VERIFIED (`test_adjudication_applied.py::test_dispositions_match_the_adjudication`; §17). Every later registry change had an independent review before it merged: the d1090 rounds (§19), ending in APPROVE at round 4 (`e7a558f`) and at #524's merged head (`742590b`; #524's merge audit); the d637 and d745 commit reviews, the last a delta review, APPROVE (§19); and #540's gating review, an Opus 5.5 review with a shell, APPROVE (#540's merge audit). Invented tests and historical isolation: the milestone-2 report's §13 and §14 audit (#487, #525), closed by three review rounds and a fourth-pass mutation run in which a test kills every mutant; §13's optional structure-only U1 load needs Max's approval and is not run. Exact U1 differential evidence: §17 item 7.
-4. Complete the authorized pre-registration structural, reconciliation and F17 component pass; resolve mapping failures. The pass reads real PSID records, so it needs Max's authorization, recorded as a chief-of-staff decision. `scripts/track_u2_structure.py` and `scripts/track_u2_component_diagnostics.py` refuse to run without `--authorized-by <decision id>`, exiting non-zero before any PSID path is resolved or opened, and the loader refuses an unfrozen load without the same record. The flag records the decision id, the git head and the UTC time in the pass's output; it only records the authorization and does not grant it. **First pass (d1649): stopped.** It ran once, on 2026-10-19 at `640adccf`, and stopped in the birth law without writing any output; the component diagnostics were not run (§16d). **Max's ruling of 2026-10-19 (d1724; §16d)** authorizes one more pass, structure and then component diagnostics, under d1649's scope with `--authorized-by d1724`, once the §16d change merges and master's Tests pass at the run head. **Second pass (d1724): completed.** It ran once, on 2026-10-21 at `1e739d32` (`1e739d328b73c99d259a72952b3452546721bfb8`, the merge of #552), after master's Tests run 39502262845 passed at that head. The d1597 structure-only U1 load (§13) ran first and passed: the staged inputs hash to U1's registered input-frame pin. `scripts/track_u2_structure.py` and then `scripts/track_u2_component_diagnostics.py`, each with `--authorized-by d1724`, exited 0, with no refusal, failure or mapping failure. Every family income identity and every WEALTH1 identity reconciles in all six support waves, so no reconciliation failure category is recorded, and the structural counts of rows U0 and U1 both carry §16d's disclosure keys (`n_seed_birth_year_counted_out`, with its four reasons, and `n_seed_birth_year_reseeded`). The outputs stay outside the repository, in `EV/track-u2-step4-pass-20261021-run2/`, restricted except its `MANIFEST.md` (SHA-256 `acf5d8a4252e88b3bbe51581943f1e3b25ba73f205a8240e8e45b9ca538b5e6d`); the first pass's record is `EV/track-u2-step4-pass-20261019/MANIFEST.md` (`1e91407b…a366fa`). This record states no count, value or other statistic from either pass. Under d1724 no further real-data run of either script is authorized. This step is done.
+4. Complete the authorized pre-registration structural, reconciliation and F17 component pass; resolve mapping failures. The pass reads real PSID records, so it needs Max's authorization, recorded as a chief-of-staff decision. `scripts/track_u2_structure.py` and `scripts/track_u2_component_diagnostics.py` refuse to run without `--authorized-by <decision id>`, exiting non-zero before any PSID path is resolved or opened, and the loader refuses an unfrozen load without the same record. The flag records the decision id, the git head and the UTC time in the pass's output; it only records the authorization and does not grant it. **First pass (d1649): stopped.** It ran once, on 2026-10-19 at `640adccf`, and stopped in the birth law without writing any output; the component diagnostics were not run (§16d). **Max's ruling of 2026-10-19 (d1724; §16d)** authorizes one more pass, structure and then component diagnostics, under d1649's scope with `--authorized-by d1724`, once the §16d change merges and master's Tests pass at the run head. **Second pass (d1724): completed.** It ran once, on 2026-10-21 at `1e739d32` (`1e739d328b73c99d259a72952b3452546721bfb8`, the merge of #552), after master's Tests run 39502262845 passed at that head. The d1597 structure-only U1 load (§13) ran first and passed: the staged inputs hash to U1's registered input-frame pin. It had also run, and passed, before the first pass, on 2026-10-19 at `640adccf`, as d1724's decision record states. `scripts/track_u2_structure.py` and then `scripts/track_u2_component_diagnostics.py`, each with `--authorized-by d1724`, exited 0, with no refusal, failure or mapping failure. Every family income identity and every WEALTH1 identity reconciles in all six support waves, so no reconciliation failure category is recorded, and the structural counts of rows U0 and U1 both carry §16d's disclosure keys (`n_seed_birth_year_counted_out`, with its four reasons, and `n_seed_birth_year_reseeded`). The outputs stay outside the repository, in `EV/track-u2-step4-pass-20261021-run2/`, restricted except its `MANIFEST.md` (SHA-256 `acf5d8a4252e88b3bbe51581943f1e3b25ba73f205a8240e8e45b9ca538b5e6d`); the first pass's record is `EV/track-u2-step4-pass-20261019/MANIFEST.md` (`1e91407b…a366fa`). This record states no count, value or other statistic from either pass. Under d1724 no further real-data run of either script is authorized. This step is done.
 5. Materialize the final parameter block and U2 rulings record; require exact code/specification agreement. **Done (2026-10-21).** §15's block is the final contract, version `u2-ratified-1` with status `ratified_frozen`, and `rows.expected_specification_block()` states the same block from the code: the identity, plans and support waves; each wave's weight, family-unit and WEALTH1 variables, read from the committed registries; the income-concept, annuity, threshold, cut and SSI parameters and their capture pins; the cells, floor, design and memo settings; the rows, entry points and labels; and the rulings record. `rows.check_block_against_code` refuses a block that differs at any key, list length, JSON type or value and names every differing path. The registered run's preflight and the dry run apply it, and `tests/track_u2/test_u2_specification_block.py` holds the committed block equal to the code and refuses a change to each of its leaves. In detail:
    - **The three `TO_VERIFY` keys.** `ssi.parameters.sha256` pins the U2 SSI capture, `a58d55c1…3762`, as the code already did (§17 item 5). `income_concept.employer_dc.reader` names the U2 adapter, `uniform_cut_track_u2/sources.py`, whose `employer_dc_balances` applies each wave's registry route (`dc_route`); U1's key names its own reader the same way. `later_wave_mapping_status` records that every pension-registry entry is RESOLVED under amendment 5, which the code checks before it states the block.
    - **Amendment 5's fragment.** `previous_routes` is the fragment §16a printed and d637 ratified, equal to `sources.DECLARED_PREVIOUS_ACCOUNT_ITEMS` and to the 2015 refused branch the pension registry records. The registries cite §15's lines 1173 and 1185, so both keep their draft-3 number and text: the fragment fills lines 1174–1184 in place of draft 3's generic route, and the four keys that stood there follow line 1185 unchanged except `later_wave_mapping_status`. `population.relationship_rules` now names amendment 1 with §3's role amendment.
    - **`blocked_by` is empty.** Each draft-3 blocker is resolved: later-wave component and role adjudication, and the mapping manifests and independent review, by the RESOLVED registries and their reviews (steps 2 and 3); 2015 male code 20 by d1090's B1 exclusion (§16c); code-90 and code-92 routing by amendment 1a and 1b (d637, confirmed by d745) and d1090's B2 exclusion; later-wave employer-DC routing by amendment 5 (d637); the SSI capture by its verification and this pin (§17 item 5); cohort isolation and identity guards, and the invented dry run and U1 differential, by milestone 2 (§17 items 6 and 7); the pre-registration pass by step 4; and ratification by this revision's merge (step 6). The fresh forecast and the registration, which that last blocker also named, are steps 7 and 8: the registered run's preflight refuses without the issue #42 registration and its binding, and without the committed pre-registration evidence, so an empty `blocked_by` authorizes no run.
-   - **U2's rulings record.** `decisions` holds `rows.U2_RULINGS` with `ruled_by` Max and `ruled_on` 2026-09-28: d514's eleven entries, unchanged, which adopt every §16 ruling; d637's entries for amendments 1a–1c (confirmed by d745), 2, 3, 4, 5a, 5b and 6 and for the three PSID questions; d1090's entries for B1, B2 and amendment 5c; and one entry each for d1242 (B2's counting unit), d1597 (the structure-only U1 load), d1649 (the step-4 pass) and d1724 (the birth law's support). Each registry-applied entry names the registry entries it governs and copies their ruling, built from the registry module's own scopes, and `rows.check_rulings_against_code` holds the record to the committed registries, the role rules and the cohort code. The d1597, d1649 and d1724 entries record that each authorization was used once, with the head, date and value-free result.
+   - **U2's rulings record.** `decisions` holds `rows.U2_RULINGS` with `ruled_by` Max and `ruled_on` 2026-09-28: d514's eleven entries, unchanged, which adopt every §16 ruling; d637's entries for amendments 1a–1c (confirmed by d745), 2, 3, 4, 5a, 5b and 6 and for the three PSID questions; d1090's entries for B1, B2 and amendment 5c; and one entry each for d1242 (B2's counting unit), d1597 (the structure-only U1 load), d1649 (the step-4 pass) and d1724 (the birth law's support). Each registry-applied entry names the registry entries it governs and copies their ruling, built from the registry module's own scopes, and `rows.check_rulings_against_code` holds the record to the committed registries, the role rules and the cohort code. The d1597, d1649 and d1724 entries record each use of their authorization, with the head, date and value-free result: d1597's load ran before each of the two passes, and d1649's and d1724's passes ran once each.
    - **The pre-registration evidence pin.** The step-4 pass wrote `track-u2-preregistration-evidence.json`, the record of PSID file and frame hashes that the registered run rechecks; the restricted list keeps it unopened here. The pass's `MANIFEST.md` pins its SHA-256, `7bc5c3c26ff014271061a8228068c6e71103430ec299048462570476a510b845`. §15's `preregistration_evidence` and `loader.PREREGISTRATION_EVIDENCE_SHA256` now pin the same value, so `loader.read_preregistration_evidence`, which the registered preflight and every frozen load call, refuses any file at `docs/design/u2_preregistration_evidence.json` whose bytes differ, before it parses it. A separate lane commits the file there, byte for byte, before step 8; this revision does not touch it.
    - **Prose `TO VERIFY` items.** §§2–14 keep their draft-3 text, which the registries cite by line number and the tests pin. Each line there that still says **TO VERIFY**, and §17's closing line, which §16a quotes as draft-3 line 1391, is listed with its resolution in the appendix "TO VERIFY item → where resolved", which a test holds complete. The registries' own notes that §15 keeps draft 3's text "until §20 step 5" stay as written, because changing a registry byte would change the `registries_sha256` the step-4 evidence records; this step supersedes them.
    - **No substance changes.** Every change pins a capture the code already pinned, records a ruling Max made, applies an amendment he ratified, or names code that already existed. No row, plan, cell, role rule, parameter value, statistic or comparison rule changes, no registry changes, and so the step-4 evidence's `registries_sha256` still equals `sources.REGISTRY_SHA256`. No count, statistic or outcome was computed to materialize the block, and no PSID file was read.
@@ -2349,14 +2372,14 @@ Registration must state that U0 observes five birth years at exact age 67; row U
 
 ## Appendix: TO VERIFY item → where resolved
 
-§§2–14 keep their draft-3 text and line numbers, because the registries cite those lines and the tests pin them. These are the lines there that still say **TO VERIFY**, with §17's closing line, and where each item was resolved (§20 step 5). Line numbers are this file's, which equal draft 3's below §15.
+§§2–14 keep their draft-3 text and line numbers, because the registries cite those lines and the tests pin them. These are the lines there that still say **TO VERIFY**, with §17's closing line, and where each item was resolved (§20 step 5). Line numbers are this file's; before §15 they equal draft 3's.
 
 | Line | Item left open in draft 3 | Resolution | Evidence |
 |---:|---|---|---|
 | 59 | Later SSI capture: not yet created | Created and pinned: `data/external/track_u2_ssi_parameters_2012_2022.json`, SHA-256 `a58d55c1…3762`, in `parameters.SSI_SHA256` and §15 `ssi.parameters.sha256` (§17 item 5) | `test_ssi_capture.py::test_capture_manifest_hashes_and_bytes`, `::test_capture_reproduces_exactly_offline` |
 | 60 | COLA notices: downloaded bytes and parameter cross-checks | 106 sources staged with URL, retrieval time, SHA-256 and path in `tests/data/track_u2/ssi_sources/manifest.json`; each year's federal benefit rates checked against its notice, and the CFR provisions against their historical editions | `test_ssi_capture.py::test_source_manifest_schema_and_hashes`, `::test_fbr_independently_matches_official_notice`, `::test_2017_actual_notice_and_2018_corrected_republication`, `::test_historical_cfr_verification_and_parameter_crosscheck` |
 | 64 | Unverified items block registration where required | All 1,766 registry entries are RESOLVED and the loader's source preflight passes (§20 step 2) | `test_adjudication_applied.py::test_status_counts_after_independent_adjudication`; `test_u2_mappings.py::test_source_preflight_passes_at_the_committed_registries` |
-| 152 | Code 92's OFUM income routing | 2017: documented route, amendment 1a (d637, confirmed by d745). 2019–2023: d1090's B2 exclusion (§16c). 2013 and 2015: the code is absent and refused as absent | `roles:2017.relationship.92`, `roles:2019.relationship.92` and the 2021 and 2023 entries; §15 `decisions.amendment_1a_documented_routes`, `.blocker_b2_codes_90_92_2019_2023` |
+| 152 | Code 92's OFUM income routing | 2017: documented route, amendment 1a (d637, confirmed by d745). 2019–2023: d1090's B2 exclusion (§16c). 2013 and 2015: the code is absent and refused as absent | `roles:2013.relationship.92` and `roles:2015.relationship.92` (both refuse the absent code), `roles:2017.relationship.92`, `roles:2019.relationship.92` and the 2021 and 2023 entries; §15 `decisions.amendment_1a_documented_routes`, `.blocker_b2_codes_90_92_2019_2023` |
 | 154 | Code 90's OFUM income routing | 2013: inherited meaning, amendment 1b. 2015 and 2017: documented routes, amendment 1a (d637, confirmed by d745). 2019–2023: d1090's B2 exclusion | `roles:<wave>.relationship.90`; §15 `decisions.amendment_1b_2013_inherited_meanings`, `.amendment_1a_documented_routes`, `.blocker_b2_codes_90_92_2019_2023` |
 | 160 | Family-file routing of a male code-20 person in 2015 (blocker B1) | d1090's B1 exclusion, `male code 20 in 2015 family unit`, ratified as an amendment to this line (§16c) | `roles:2015.relationship.20`; §15 `decisions.blocker_b1_male_code_20_2015` |
 | 190 | Code 88's routing and use beyond administrative birth support | Amendment 1c's first-year cohabitor convention (d637, confirmed by d745) | `roles:<wave>.relationship.88`; §15 `decisions.amendment_1c_first_year_cohabitor` |

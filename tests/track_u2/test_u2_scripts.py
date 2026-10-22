@@ -773,6 +773,45 @@ def test_preflight_passes_the_committed_specification(registered):
     }
 
 
+def test_preflight_refuses_rulings_the_code_does_not_make(
+    registered, monkeypatch
+):
+    """Review of 690a1276, mutant G2: the preflight applies
+    ``check_rulings_against_code``; without B2's person count (d1242)
+    the committed rulings record no longer agrees with the code."""
+    from populace_dynamics.uniform_cut_track_u2 import sources
+
+    monkeypatch.setattr(
+        sources, "PERSON_COUNTED_EXCLUSIONS", (sources.MALE_CODE_20_2015,)
+    )
+    with pytest.raises(ValueError, match="d1242"):
+        _preflight(registered)
+
+
+def test_the_dry_run_applies_the_specification_checks(monkeypatch):
+    """Review of 690a1276, mutants H and Q: the dry run's specification
+    checks pass the committed state and raise on a block or rulings
+    record that differs from the code."""
+    from populace_dynamics.uniform_cut_track_u2 import sources
+
+    module = _script("track_u2_dry_run")
+    registries = sources.RegistrySet.committed()
+    passed = module.specification_checks(registries)
+    assert passed["specification_block_against_code"]["block_equals_code"]
+    assert passed["u2_rulings_against_code"]["rulings_equal_the_code"]
+    changed = _ratified_block()
+    changed["threshold"]["poor_if"] = "income_at_or_below_threshold"
+    with monkeypatch.context() as patch:
+        patch.setattr(rows, "specification_block", lambda *a, **k: changed)
+        with pytest.raises(ValueError, match="threshold.poor_if"):
+            module.specification_checks(registries)
+    monkeypatch.setattr(
+        sources, "PERSON_COUNTED_EXCLUSIONS", (sources.MALE_CODE_20_2015,)
+    )
+    with pytest.raises(ValueError, match="d1242"):
+        module.specification_checks(registries)
+
+
 @pytest.mark.parametrize(
     "change, path",
     [

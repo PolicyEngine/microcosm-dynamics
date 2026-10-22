@@ -554,16 +554,27 @@ U2_RULINGS: dict[str, dict[str, Any]] = {
         "decision_record": "d1242",
         "ruled_on": "2026-10-16",
     },
-    # d1597 (2026-10-16): section 13's optional structure-only U1 load.
+    # d1597 (2026-10-16): section 13's optional structure-only U1 load,
+    # run before each step-4 pass (d1649's condition, which d1724's rerun
+    # keeps).
     "u1_input_pin_check": {
-        "ruling": "run_the_optional_structure_only_u1_load_once",
+        "ruling": "run_the_optional_structure_only_u1_load_before_step_4",
         "u1_input_frames_sha256": _U1_INPUT_FRAMES_SHA256,
         "statistic_computed": None,
-        "authorization_used": {
-            "on": "2026-10-21",
-            "head": _STEP_4_SECOND_HEAD,
-            "result": "pin_matched",
-        },
+        "authorization_used": [
+            {
+                "on": "2026-10-19",
+                "head": _STEP_4_FIRST_HEAD,
+                "before": "the_d1649_pass",
+                "result": "pin_matched",
+            },
+            {
+                "on": "2026-10-21",
+                "head": _STEP_4_SECOND_HEAD,
+                "before": "the_d1724_pass",
+                "result": "pin_matched",
+            },
+        ],
         "specification_section": "13",
         "decision_record": "d1597",
         "ruled_on": "2026-10-16",
@@ -586,11 +597,13 @@ U2_RULINGS: dict[str, dict[str, Any]] = {
             "the_preregistration_evidence_pandas_version_and_string_"
             "inference_setting"
         ),
-        "authorization_used": {
-            "on": "2026-10-19",
-            "head": _STEP_4_FIRST_HEAD,
-            "result": "stopped_in_the_birth_law_without_output",
-        },
+        "authorization_used": [
+            {
+                "on": "2026-10-19",
+                "head": _STEP_4_FIRST_HEAD,
+                "result": "stopped_in_the_birth_law_without_output",
+            }
+        ],
         "specification_section": "20",
         "decision_record": "d1649",
         "ruled_on": "2026-10-16",
@@ -607,12 +620,14 @@ U2_RULINGS: dict[str, dict[str, Any]] = {
         "count_decides": "nothing",
         "estimates_career": "unchanged",
         "widening_approved_on": "2026-10-20",
-        "authorization_used": {
-            "on": "2026-10-21",
-            "head": _STEP_4_SECOND_HEAD,
-            "tests_run": _STEP_4_SECOND_TESTS_RUN,
-            "result": "completed",
-        },
+        "authorization_used": [
+            {
+                "on": "2026-10-21",
+                "head": _STEP_4_SECOND_HEAD,
+                "tests_run": _STEP_4_SECOND_TESTS_RUN,
+                "result": "completed",
+            }
+        ],
         "specification_section": "16d",
         "decision_record": "d1724",
         "ruled_on": "2026-10-19",
@@ -633,12 +648,25 @@ RULING_DECISIONS: tuple[str, ...] = (
 _BLOCK_SECTION = "\n## 15. Machine-readable parameter block"
 
 
+def _no_repeated_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    """A JSON object, refused if it names a key twice: ``json.loads``
+    would keep the last silently, so an earlier draft value could stand
+    in the text while the check saw the later one."""
+
+    keys = [key for key, _ in pairs]
+    repeated = sorted({key for key in keys if keys.count(key) > 1})
+    if repeated:
+        raise ValueError(f"the section 15 block repeats keys {repeated}")
+    return dict(pairs)
+
+
 def specification_block(
     path: Path = identity.SPECIFICATION_PATH,
 ) -> dict[str, Any]:
     """The U2 specification's machine-readable JSON block (section 15).
 
-    Only section 15 is searched, and it must hold exactly one JSON block.
+    Only section 15 is searched, and it must hold exactly one JSON block,
+    in which no object may name a key twice.
     Other sections may quote JSON fragments (``u2-draft-4``'s section 16a
     proposes a replacement ``previous_routes`` fragment); a proposal is
     not the contract, so it is never read as the block.
@@ -659,7 +687,7 @@ def specification_block(
             f"{path} section 15 must hold exactly one JSON block, found "
             f"{len(blocks)}"
         )
-    block = json.loads(blocks[0])
+    block = json.loads(blocks[0], object_pairs_hook=_no_repeated_keys)
     identity.refuse_u1_identity(
         {"specification": block.get("specification")},
         what="the specification block",
@@ -878,6 +906,14 @@ def _relative(path: Path) -> str:
     return str(Path(path).resolve().relative_to(identity.ROOT))
 
 
+def _existing(relative: str) -> str:
+    """``relative``, refused unless it names a file in the repository."""
+
+    if not (identity.ROOT / relative).is_file():
+        raise ValueError(f"the block names {relative}, which does not exist")
+    return relative
+
+
 def _registry_variable(
     entries: Mapping[str, Mapping[str, Any]], entry_id: str
 ) -> str:
@@ -940,6 +976,8 @@ def expected_specification_block(
         entry["wave"] for entry in pension if entry["id"] in refused["entries"]
     }
     reader = inspect.getsourcefile(sources.employer_dc_balances)
+    thresholds = parameters.load_u2_thresholds()
+    ssi = parameters.load_u2_ssi_parameters()
     return {
         "specification": identity.SPECIFICATION_ID,
         "target_id": identity.TARGET_ID,
@@ -1053,16 +1091,16 @@ def expected_specification_block(
             "employer_dc": {
                 "row": "U7",
                 "reader": str(
-                    Path(reader).relative_to(
-                        identity.ROOT / "src" / "populace_dynamics"
-                    )
+                    Path(reader)
+                    .resolve()
+                    .relative_to(identity.ROOT / "src" / "populace_dynamics")
                 ),
-                "persons": ["head", "wife"],
+                "persons": list(sources.DC_PERSONS),
                 "role_meaning": (
                     "reference_person_and_designated_spouse_income_slot"
                 ),
                 "current_job": "account_amount_when_plan_type_has_an_account",
-                "previous_plans": [1, 2],
+                "previous_plans": list(sources.DC_PLANS),
                 "previous_routes": {
                     "both_items": ["both"],
                     "account_items_by_wave": {
@@ -1118,7 +1156,7 @@ def expected_specification_block(
                 "file": _relative(parameters.THRESHOLDS_PATH),
                 "sha256": parameters.THRESHOLDS_SHA256,
             },
-            "overlap_2012": "exact_equality_with_u1_capture",
+            "overlap_2012": thresholds.provenance["overlap_2012"],
             "poor_if": "income_below_threshold",
         },
         "cut": {
@@ -1138,7 +1176,7 @@ def expected_specification_block(
                 "years": list(parameters.SSI_YEARS),
                 "checked_against": "section_8_federal_register_cola_notices",
                 "revision_rule": "refuse_missing_empty_or_unknown",
-                "overlap_2012": "all_seven_parameters_equal_u1",
+                "overlap_2012": ssi.provenance["overlap_2012"],
             },
         },
         "statistic": {
@@ -1205,12 +1243,12 @@ def expected_specification_block(
             "wealth1_published": None,
         },
         "entry_points": {
-            "dry_run": "scripts/track_u2_dry_run.py",
-            "registered_run": "scripts/run_track_u2_registered.py",
+            "dry_run": _existing("scripts/track_u2_dry_run.py"),
+            "registered_run": _existing("scripts/run_track_u2_registered.py"),
             "registered_artifact": _relative(identity.ARTIFACT_PATH),
             "environment": _relative(identity.SIDECAR_PATH),
-            "structure": "scripts/track_u2_structure.py",
-            "component_diagnostics": (
+            "structure": _existing("scripts/track_u2_structure.py"),
+            "component_diagnostics": _existing(
                 "scripts/track_u2_component_diagnostics.py"
             ),
         },
@@ -1218,7 +1256,7 @@ def expected_specification_block(
             "file": _relative(loader.PREREGISTRATION_EVIDENCE_PATH),
             "sha256": loader.PREREGISTRATION_EVIDENCE_SHA256,
             "schema_version": loader.PREREGISTRATION_SCHEMA,
-            "written_by": "scripts/track_u2_structure.py",
+            "written_by": _existing("scripts/track_u2_structure.py"),
             "authorized_by": U2_RULINGS["seed_birth_year_support"][
                 "decision_record"
             ],

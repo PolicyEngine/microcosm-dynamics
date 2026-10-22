@@ -488,15 +488,16 @@ def test_the_to_verify_appendix_is_complete(spec_lines):
     assert table[-1][1].replace("TO VERIFY", "**TO VERIFY**") in closing
 
 
-def test_the_appendix_evidence_exists(spec_lines):
-    """Each test the appendix cites exists, and each ``decisions`` or
-    ``income_concept`` key it names is in the block."""
+def test_the_appendix_evidence_exists(spec_lines, registries):
+    """Each test the appendix cites exists; each ``decisions`` key and
+    ``income_concept`` path it names is in the block; and each registry
+    entry it names (``roles:2017.relationship.92``) is RESOLVED."""
     block = rows.specification_block()
     tests = {
         path.name: path.read_text(encoding="utf-8")
         for path in TESTS.glob("test_*.py")
     }
-    cited_tests = 0
+    cited_tests = cited_paths = cited_entries = 0
     for row in _appendix_rows(spec_lines):
         evidence = row[3]
         module = None
@@ -512,4 +513,163 @@ def test_the_appendix_evidence_exists(spec_lines):
         ):
             name = key[0] or key[1]
             assert name in block["decisions"], name
+        for path in re.findall(
+            r"`(income_concept(?:\.[a-z0-9_]+)+)`", evidence
+        ):
+            _at(block, tuple(path.split(".")))
+            cited_paths += 1
+        for name, entry_id in re.findall(
+            r"`([a-z]+):(\d{4}\.[a-z_]+(?:\.\d+)?)`", evidence
+        ):
+            (entry,) = (
+                e for e in registries.entries(name) if e["id"] == entry_id
+            )
+            assert entry["status"] == "RESOLVED", (name, entry_id)
+            cited_entries += 1
     assert cited_tests >= 14
+    assert cited_paths >= 1
+    assert cited_entries >= 5
+
+
+# ---------------------------------------------------------------------------
+# Review of 690a1276: the gaps its mutants and probes found
+# ---------------------------------------------------------------------------
+class _Altered:
+    """The committed registries with one entry's fields changed."""
+
+    def __init__(self, base, name: str, entry_id: str, **changes: Any):
+        self._base = base
+        self._name = name
+        self._id = entry_id
+        self._changes = changes
+
+    def entries(self, name: str) -> list[dict]:
+        out = [dict(entry) for entry in self._base.entries(name)]
+        if name == self._name:
+            (entry,) = (e for e in out if e["id"] == self._id)
+            entry.update(self._changes)
+        return out
+
+
+def test_a_repeated_key_is_refused(tmp_path):
+    """Finding 2: ``json.loads`` keeps the last of a repeated key, so a
+    draft value could stand in the text while the check saw the last."""
+    text = identity.SPECIFICATION_PATH.read_text(encoding="utf-8")
+    top = '  "version": "u2-ratified-1",'
+    nested = '      "unreported_amount": "zero_counted",'
+    for old, new, key in (
+        (top, '  "version": "u2-draft-4",\n' + top, "version"),
+        (
+            nested,
+            '      "unreported_amount": "not_counted",\n' + nested,
+            "unreported_amount",
+        ),
+    ):
+        assert text.count(old) == 1
+        path = tmp_path / f"spec-{key}.md"
+        path.write_text(text.replace(old, new), encoding="utf-8")
+        with pytest.raises(ValueError, match=f"repeats keys \\['{key}'\\]"):
+            rows.specification_block(path)
+
+
+def test_dc_persons_and_plans_are_the_readers(monkeypatch, block, registries):
+    """Finding 3: the block's employer-DC persons and previous plans are
+    the ones the reader walks."""
+    path = ("income_concept", "employer_dc")
+    monkeypatch.setattr(sources, "DC_PERSONS", ("head",))
+    _refused(block, registries, (*path, "persons"))
+    monkeypatch.setattr(sources, "DC_PERSONS", ("head", "wife"))
+    monkeypatch.setattr(sources, "DC_PLANS", (1, 2, 3))
+    _refused(block, registries, (*path, "previous_plans"))
+
+
+def test_the_reader_resolves_through_a_symlink(
+    tmp_path, monkeypatch, block, registries
+):
+    """Finding 4: a checkout reached through a symlink (macOS ``/tmp``)
+    names the same reader."""
+    link = tmp_path / "linked-src"
+    link.symlink_to(ROOT / "src", target_is_directory=True)
+    linked = link / "populace_dynamics" / "uniform_cut_track_u2" / "sources.py"
+    assert linked.resolve() == Path(sources.__file__).resolve()
+    monkeypatch.setattr(rows.inspect, "getsourcefile", lambda _: str(linked))
+    assert rows.check_block_against_code(block, registries)[
+        "block_equals_code"
+    ]
+
+
+def test_negative_zero_is_refused(block, registries):
+    """Finding 7: ``-0.0`` equals ``0.0`` under ``==`` but not as JSON."""
+    path = ("income_concept", "annuity", "load")
+    assert _at(block, path) == 0.0
+    _refused(_changed(block, path, -0.0), registries, path)
+
+
+def test_a_named_script_must_exist(monkeypatch):
+    with pytest.raises(ValueError, match="does not exist"):
+        rows._existing("scripts/no_such_u2_script.py")
+    assert rows._existing("scripts/track_u2_structure.py") == (
+        "scripts/track_u2_structure.py"
+    )
+
+
+@pytest.mark.parametrize(
+    "name, entry_id, message",
+    [
+        ("pension", "2015.route.respondent_slots", "pension registry entry"),
+        ("individual", "2017.weight", "2017.weight is not RESOLVED"),
+        ("wealth", "wealth.2019.wealth1", "wealth1 is not RESOLVED"),
+        ("design", "common.stratum", "stratum is not RESOLVED"),
+    ],
+)
+def test_the_block_needs_resolved_registry_entries(
+    registries, name, entry_id, message
+):
+    """Finding 5 (mutants M and N): the block is stated only from
+    RESOLVED registry entries."""
+    altered = _Altered(registries, name, entry_id, status="TO_VERIFY")
+    with pytest.raises(ValueError, match=message):
+        rows.expected_specification_block(altered)
+
+
+def test_the_rulings_need_resolved_registry_entries(registries):
+    """Finding 5 (mutant E): a named entry that is not RESOLVED refuses."""
+    altered = _Altered(
+        registries, "roles", "2017.relationship.92", status="TO_VERIFY"
+    )
+    with pytest.raises(ValueError, match="not a RESOLVED registry entry"):
+        rows.check_rulings_against_code(altered)
+
+
+def test_b2s_person_count_must_be_made(monkeypatch, registries):
+    """Finding 5 (mutant C): d1242 needs B2 among the person counts."""
+    monkeypatch.setattr(
+        sources, "PERSON_COUNTED_EXCLUSIONS", (sources.MALE_CODE_20_2015,)
+    )
+    with pytest.raises(ValueError, match="d1242"):
+        rows.check_rulings_against_code(registries)
+
+
+def test_each_authorization_records_every_use():
+    """Finding 1: d1597's load ran before each step-4 pass; d1649's and
+    d1724's passes ran once each."""
+    uses = {
+        key: rows.U2_RULINGS[key]["authorization_used"]
+        for key in (
+            "u1_input_pin_check",
+            "preregistration_pass",
+            "seed_birth_year_support",
+        )
+    }
+    assert [(u["on"], u["head"]) for u in uses["u1_input_pin_check"]] == [
+        ("2026-10-19", rows._STEP_4_FIRST_HEAD),
+        ("2026-10-21", rows._STEP_4_SECOND_HEAD),
+    ]
+    assert {u["result"] for u in uses["u1_input_pin_check"]} == {"pin_matched"}
+    assert [u["head"] for u in uses["preregistration_pass"]] == [
+        rows._STEP_4_FIRST_HEAD
+    ]
+    assert [u["head"] for u in uses["seed_birth_year_support"]] == [
+        rows._STEP_4_SECOND_HEAD
+    ]
+    assert not rows.U2_RULINGS["u1_input_pin_check"]["ruling"].endswith("once")

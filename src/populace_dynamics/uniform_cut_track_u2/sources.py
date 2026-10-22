@@ -151,6 +151,8 @@ __all__ = [
     "WEALTH_CONCEPTS",
     "DC_BALANCE_COLUMNS",
     "DC_CODE_DOMAINS",
+    "DC_PERSONS",
+    "DC_PLANS",
     "DcRoute",
     "FamilyUnitExclusion",
     "FieldSpec",
@@ -393,8 +395,10 @@ DECLARED_PREVIOUS_ACCOUNT_ITEMS: dict[int, tuple[str, ...]] = {
 _SLOT_FLAG_CONCEPTS = frozenset({"wife_age"})
 _COUNTED_DISPOSITION = 3
 _EXCLUDED_IRA_DISPOSITION = 2
-_DC_PERSONS = ("head", "wife")
-_DC_PLANS = (1, 2)
+#: The employer-DC persons and previous-employer plans the reader walks
+#: (section 15 ``employer_dc.persons`` and ``previous_plans``).
+DC_PERSONS: tuple[str, ...] = ("head", "wife")
+DC_PLANS: tuple[int, ...] = (1, 2)
 _AGE_ACTUAL = (14, 120)
 _AGE_NA = 999
 _NO_SPOUSE = 0
@@ -1315,9 +1319,9 @@ def pension_field_specs(wave: int, gate: SourceGate) -> list[FieldSpec]:
     """Fixed-width specs of the employer-DC items (row U7)."""
 
     specs = []
-    for person in _DC_PERSONS:
+    for person in DC_PERSONS:
         names = [f"{person}_current_type", f"{person}_current_amount"]
-        for plan in _DC_PLANS:
+        for plan in DC_PLANS:
             names += [
                 f"{person}_prev{plan}_type",
                 f"{person}_prev{plan}_combo_disposition",
@@ -1819,7 +1823,7 @@ def employer_dc_balances(
         value = np.where(reported, amount, 0).astype(np.int64)
         return amount, value, reported, dk, amount == codes["top"]
 
-    for person in _DC_PERSONS:
+    for person in DC_PERSONS:
         amount, value, reported, dk, topped = decoded(
             f"{person}_current_amount"
         )
@@ -1830,7 +1834,7 @@ def employer_dc_balances(
         unreported += account & dk
         top += account & topped
         off_route += ~account & (amount != 0)
-        for plan in _DC_PLANS:
+        for plan in DC_PLANS:
             plan_type = raw[f"{person}_prev{plan}_type"].to_numpy(
                 dtype=np.int64
             )
