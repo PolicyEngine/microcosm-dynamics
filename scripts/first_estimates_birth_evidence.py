@@ -323,6 +323,10 @@ POST_REVIEW_SOURCE_EXCLUSIONS = (
     # by B2's floor builder, comparator and scorer; nothing in the
     # historical projection imports it.
     Path("src/populace_dynamics/track_b/b2.py"),
+    # The held-out data registry's checks read only the registry, git and
+    # committed run artifacts; nothing in the historical projection
+    # imports them.
+    Path("src/populace_dynamics/track_b/holdout_registry.py"),
     # U2 documentary metadata stays outside the historical projection.
     Path("src/populace_dynamics/data/u2_source_registry.py"),
     Path("scripts/capture_track_u2_income_wealth.py"),
