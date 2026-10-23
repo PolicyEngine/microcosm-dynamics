@@ -425,4 +425,4 @@ A Claude Code session (Claude Opus 5.5), started by the dynamics coordinator ses
   - **What it read outside its worktree:** `EV/RESTRICTED-FILES.md`, the run-2 `MANIFEST.md`, the round-2 report, the eight decision-ledger records selected by id, and a review-workflow skill file (`~/.agents/skills/gitnexus-pr-review/SKILL.md`). It also listed the empty PSID directory, which was empty.
   - **Its runs:** the full related suites with the empty PSID root, after the PSID hold was lifted. They read committed artifacts as CI does, and it printed no value from them.
   - It opened no PSID record or codebook and computed nothing from PSID records.
-
+- **Subfleet `20261023-073938-u2-step5-review-r4`.** It ran on GPT-6.1 Sol and delta-reviewed `ac808d4a` against `a2e2d688`. It returned APPROVE, with one nit about the order of §19's entries, answered in the next commit. It read the round-3 reports, and in the clone it ran the specification tests with the empty PSID root. It opened no PSID file.
