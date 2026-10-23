@@ -398,7 +398,7 @@ A Claude Code session (Claude Opus 5.5), started by the dynamics coordinator ses
 - **The U1 differential** (`scripts/u2_u1_differential.py`, invented data only, with the empty PSID directory and this lane's virtual environment). Its two checkouts are worktrees of this repository: the base, `~/PolicyEngine/_clones/md-u2-diff-base-9cee2423`, detached at `9cee2423`, and the candidate, `~/PolicyEngine/_clones/md-u2-diff-cand`, detached at the head under test.
   - **Trial at `690a1276`** (2026-10-21): equal in every check.
   - **At `1742efb1`** (2026-10-22): equal in every check; report committed as `docs/design/u2_m2_u1_differential_1742efb.json`.
-  - **At FINAL_CODE_HEAD**, the revision's last code change: see §20 step 6.
+  - **At `14d9576a`** (2026-10-23), the revision's last code change: equal in every check; report committed as `docs/design/u2_m2_u1_differential_14d9576.json`. This run and every later one used the relocated virtual environment and empty PSID directory.
   - Each run's dry run wrote only to a temporary directory the harness made and removed.
 
 **Values:** it stated and inferred no 1946–55 value or direction. Every number it wrote is a hash, a commit, a CI run id, a date, a line number, a registry entry count, a test count or a constant of the code or the specification.
