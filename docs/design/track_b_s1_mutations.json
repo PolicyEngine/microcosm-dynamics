@@ -115,5 +115,93 @@
       "restored": true,
       "restored_source_sha256": "84db6734c23c82145bf1db69331edff102e2965c6b2d6db283ac2f039accb515"
     }
+  ],
+  "supplemental_mutation_method": "Execute each single production-line replacement in the imported module namespace before the targeted pytest run; restore original module definitions in finally. Production source files are never written. Assert source bytes are identical before and after each run.",
+  "supplemental_runner": "import hashlib\n\nimport pytest\n\nfrom populace_dynamics.engine import forward_earnings_s1_v1 as s1\n\ncheck = next(c for c in record[\"supplemental_checks\"] if c[\"check_id\"] == sys.argv[1])\nsource = Path(check[\"source\"])\noriginal = source.read_bytes()\nassert hashlib.sha256(original).hexdigest() == check[\"restored_source_sha256\"]\nold = check[\"old\"].encode()\nassert original.count(old) == 1\nmutated = original.replace(old, check[\"new\"].encode(), 1)\ntry:\n    exec(compile(mutated, str(source) + \"::<supplemental_mutant>\", \"exec\"), s1.__dict__)\n    exit_code = pytest.main([\n        \"-p\", \"no:cacheprovider\", \"-q\", \"-s\",\n        \"--basetemp=/private/tmp/s1-supplemental-mutation-\" + check[\"check_id\"],\n        check[\"failed_tests\"][0],\n    ])\nfinally:\n    exec(compile(original, str(source), \"exec\"), s1.__dict__)\n    assert source.read_bytes() == original\nraise SystemExit(exit_code)\n",
+  "supplemental_checks": [
+    {
+      "check_id": "S_ratio_fit_clip",
+      "mutation": "clip fitting-view ratios at 100",
+      "old": "frame[\"earnings\"].to_numpy(dtype=np.float64) / source_index",
+      "new": "np.minimum(frame[\"earnings\"].to_numpy(dtype=np.float64) / source_index, 100.0)",
+      "classification": "supplemental; outside the frozen T1-T7 declaration",
+      "source": "src/populace_dynamics/engine/forward_earnings_s1_v1.py",
+      "command": "env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-s1/bin/python -c 'import json, sys; from pathlib import Path; record = json.loads(Path(\"docs/design/track_b_s1_mutations.json\").read_text()); exec(record[\"supplemental_runner\"])' S_ratio_fit_clip",
+      "failed_tests": [
+        "tests/test_track_b_s1_invariants.py::test_supplemental_ratio_domain_fitting_view_and_query"
+      ],
+      "restored_source_sha256": "84db6734c23c82145bf1db69331edff102e2965c6b2d6db283ac2f039accb515",
+      "exit_code": 1,
+      "summary": "1 failed in 73.26s (0:01:13)",
+      "final_lines": [
+        "FAILED tests/test_track_b_s1_invariants.py::test_supplemental_ratio_domain_fitting_view_and_query",
+        "1 failed in 73.26s (0:01:13)"
+      ],
+      "restored": true,
+      "source_file_written": false
+    },
+    {
+      "check_id": "S_ratio_query_clip",
+      "mutation": "clip query-path ratios at 100",
+      "old": "self.fitted, current_level / source_index, target_age, uniforms",
+      "new": "self.fitted, np.minimum(current_level / source_index, 100.0), target_age, uniforms",
+      "classification": "supplemental; outside the frozen T1-T7 declaration",
+      "source": "src/populace_dynamics/engine/forward_earnings_s1_v1.py",
+      "command": "env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-s1/bin/python -c 'import json, sys; from pathlib import Path; record = json.loads(Path(\"docs/design/track_b_s1_mutations.json\").read_text()); exec(record[\"supplemental_runner\"])' S_ratio_query_clip",
+      "failed_tests": [
+        "tests/test_track_b_s1_invariants.py::test_supplemental_ratio_domain_fitting_view_and_query"
+      ],
+      "restored_source_sha256": "84db6734c23c82145bf1db69331edff102e2965c6b2d6db283ac2f039accb515",
+      "exit_code": 1,
+      "summary": "1 failed in 45.78s",
+      "final_lines": [
+        "FAILED tests/test_track_b_s1_invariants.py::test_supplemental_ratio_domain_fitting_view_and_query",
+        "1 failed in 45.78s"
+      ],
+      "restored": true,
+      "source_file_written": false
+    },
+    {
+      "check_id": "S_ratio_query_year_minus_1",
+      "mutation": "query using year - 1 instead of year - 2",
+      "old": "normalization_index(int(self.year) - 2)",
+      "new": "normalization_index(int(self.year) - 1)",
+      "classification": "supplemental; outside the frozen T1-T7 declaration",
+      "source": "src/populace_dynamics/engine/forward_earnings_s1_v1.py",
+      "command": "env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-s1/bin/python -c 'import json, sys; from pathlib import Path; record = json.loads(Path(\"docs/design/track_b_s1_mutations.json\").read_text()); exec(record[\"supplemental_runner\"])' S_ratio_query_year_minus_1",
+      "failed_tests": [
+        "tests/test_track_b_s1_invariants.py::test_supplemental_ratio_domain_fitting_view_and_query"
+      ],
+      "restored_source_sha256": "84db6734c23c82145bf1db69331edff102e2965c6b2d6db283ac2f039accb515",
+      "exit_code": 1,
+      "summary": "1 failed in 31.77s",
+      "final_lines": [
+        "FAILED tests/test_track_b_s1_invariants.py::test_supplemental_ratio_domain_fitting_view_and_query",
+        "1 failed in 31.77s"
+      ],
+      "restored": true,
+      "source_file_written": false
+    },
+    {
+      "check_id": "S_ratio_fit_period_plus_2",
+      "mutation": "fit using destination-period NAWI",
+      "old": "float(nawi[int(year)])",
+      "new": "float(nawi[int(year) + 2])",
+      "classification": "supplemental; outside the frozen T1-T7 declaration",
+      "source": "src/populace_dynamics/engine/forward_earnings_s1_v1.py",
+      "command": "env OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-s1/bin/python -c 'import json, sys; from pathlib import Path; record = json.loads(Path(\"docs/design/track_b_s1_mutations.json\").read_text()); exec(record[\"supplemental_runner\"])' S_ratio_fit_period_plus_2",
+      "failed_tests": [
+        "tests/test_track_b_s1_invariants.py::test_supplemental_ratio_domain_fitting_view_and_query"
+      ],
+      "restored_source_sha256": "84db6734c23c82145bf1db69331edff102e2965c6b2d6db283ac2f039accb515",
+      "exit_code": 1,
+      "summary": "1 failed in 25.51s",
+      "final_lines": [
+        "FAILED tests/test_track_b_s1_invariants.py::test_supplemental_ratio_domain_fitting_view_and_query",
+        "1 failed in 25.51s"
+      ],
+      "restored": true,
+      "source_file_written": false
+    }
   ]
 }

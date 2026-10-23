@@ -557,3 +557,78 @@ def test_s1_refit_every_non_gate_field_equals_v1_for_identical_inputs():
             _assert_exact_state(before, after)
     assert new.engine_candidate_id == old.engine_candidate_id
     assert new.engine_candidate_spec_sha256 == old.engine_candidate_spec_sha256
+
+
+@settings(max_examples=32, deadline=None, database=None, derandomize=True)
+@given(
+    earnings=st.lists(
+        st.floats(0.0, 1e9, allow_nan=False, allow_infinity=False),
+        min_size=1,
+        max_size=8,
+    ),
+    nawi_tenths=st.integers(10, 1_000_000),
+)
+def test_supplemental_ratio_domain_fitting_view_and_query(
+    earnings, nawi_tenths
+):
+    """Supplemental to T1-T7: exact ratios across a wide invented domain."""
+    levels = np.asarray([0.0, 0.01, 202.0, 1e9, *earnings], dtype=np.float64)
+    indices = [1.0, 1.1, 3.7, nawi_tenths / 10.0, 99_999.9, 100_000.0]
+    periods = [BOUNDARY - 4 * i for i in range(len(indices))]
+    # Valid, distinct adjacent indices make wrong-year lookups observable.
+    nawi = {
+        year + offset: value + offset
+        for year, value in zip(periods, indices, strict=True)
+        for offset in range(3)
+    }
+    size = len(levels) * len(periods)
+    frame = pd.DataFrame(
+        {
+            "person_id": np.arange(size),
+            "period": np.repeat(periods, len(levels)),
+            "period_tp2": np.repeat(periods, len(levels)) + 2,
+            "earnings": np.tile(levels, len(periods)),
+            "earnings_tp2": np.tile(levels[::-1], len(periods)),
+            "age_tp2": 42.0,
+            "weight_tp2": 1.3,
+            "label": "unchanged",
+        },
+        index=pd.Index(np.arange(size)[::-1] * 3, name="row"),
+    )
+    untouched = frame.copy(deep=True)
+    expected = frame.copy(deep=True)
+    expected["earnings"] = np.divide(
+        np.asarray(frame["earnings"], dtype=np.float64),
+        np.asarray([nawi[int(p)] for p in frame["period"]], dtype=np.float64),
+    )
+    _assert_frames(s1.gate_fitting_view(frame, nawi), expected)
+    _assert_frames(frame, untouched)
+
+    calls = []
+    ages = np.full(len(levels), 42.0)
+    uniforms = np.linspace(0.0, 1.0, len(levels))
+    signs = np.ones(len(levels), dtype=np.int64)
+
+    class RecordingGate:
+        def draw_sign(self, level, age, uniforms):
+            calls.append((level.copy(), age, uniforms))
+            return signs
+
+    fitted = RecordingGate()
+    wage_index = v1.ProjectedWageIndex(
+        actual=nawi, intercept=0.0, slope=0.0, boundary_year=BOUNDARY + 2
+    )
+    for source_year in periods:
+        calls.clear()
+        year = source_year + 2
+        query = s1._GateQuery(fitted, wage_index, year)
+        expected_level = np.divide(
+            levels, np.float64(wage_index.normalization_index(year - 2))
+        )
+        np.testing.assert_array_equal(
+            query.draw_sign(levels, ages, uniforms), signs, strict=True
+        )
+        assert len(calls) == 1
+        np.testing.assert_array_equal(calls[0][0], expected_level, strict=True)
+        assert calls[0][1] is ages
+        assert calls[0][2] is uniforms
