@@ -412,7 +412,7 @@ A Claude Code session (Claude Opus 5.5), started by the dynamics coordinator ses
     - One early command wrote git-ignored bytecode caches under the review clone's `src/`.
     - Two `grep` searches over `docs/design/` scanned the bytes of `track_b_attempt_ledger.md` for fixed literals, with nothing from that file printed. That file is restricted for B2-successor work, not for U2; this record lists it for completeness.
   - It opened no other evidence path, PSID file or comparator. Its findings were addressed in the next commit (§19).
-- **Subfleet `20261021-214735-u2-step5-review-r2`.** It ran on GPT-6.1 Sol and reviewed `9f79818a` in full. It returned REQUEST CHANGES: one blocking finding (§20 step 6 dated the merge) and should-fix and nit findings, all answered in the next commit (§19).
+- **Subfleet `20261021-214735-u2-step5-review-r2`.** It ran on GPT-6.1 Sol and reviewed `9f79818a` in full. It returned REQUEST CHANGES: one blocking finding (§20 step 6 dated the merge) and should-fix and nit findings, all answered in the following commits (§19).
   - **What it read outside its worktree:** `EV/RESTRICTED-FILES.md`, the run-2 `MANIFEST.md`, the round-1 report and the eight decision-ledger records selected by id.
   - **Where it worked:** in its own Subfleet worktree, writing nothing into the review clone.
   - **Its three disclosures:**
@@ -420,3 +420,9 @@ A Claude Code session (Claude Opus 5.5), started by the dynamics coordinator ses
     - A `git archive` copy it started under `/tmp/r2rev/mut` may have included restricted files. It deleted the copy unopened.
     - It loaded U1's artifact in memory to compare one hash, printing a boolean.
   - It opened no PSID file, codebook or comparator, and the empty PSID directory stayed empty.
+- **Subfleet `20261023-062935-u2-step5-review-r3`.** It waited for capacity and was cancelled before it launched, so that one review could also cover finding 6's commit. It read nothing.
+- **Subfleet `20261023-063829-u2-step5-review-r3b`.** It ran on GPT-6.1 Sol and delta-reviewed `a2e2d688` against `9f79818a`. It returned APPROVE, with one nit about this record's wording, answered in the next commit.
+  - **What it read outside its worktree:** `EV/RESTRICTED-FILES.md`, the run-2 `MANIFEST.md`, the round-2 report, the eight decision-ledger records selected by id, and a review-workflow skill file (`~/.agents/skills/gitnexus-pr-review/SKILL.md`). It also listed the empty PSID directory, which was empty.
+  - **Its runs:** the full related suites with the empty PSID root, after the PSID hold was lifted. They read committed artifacts as CI does, and it printed no value from them.
+  - It opened no PSID record or codebook and computed nothing from PSID records.
+
