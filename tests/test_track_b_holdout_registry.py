@@ -1028,6 +1028,155 @@ def test_a_score_committed_anywhere_before_registration_is_refused(
     assert any("already committed" in p for p in problems), problems
 
 
+def test_a_shallow_clone_cannot_prove_a_score_was_not_committed(
+    tmp_path, no_ci_env
+):
+    """A shallow clone that keeps the registry's history but not the
+    score's first commit must not read an empty search as absence."""
+    repository = init_repository(tmp_path)
+    listed = run_path("s0")
+    write(repository, listed, SCORE)
+    commit_all(repository, "score")
+    (repository / listed).unlink()
+    commit_all(repository, "score deleted")
+    commit_registry(repository, registered(["candidate"]), "register")
+    commit_registry(repository, registered(["candidate", "frozen"]), "freeze")
+    write(repository, listed, SCORE)
+    commit_all(repository, "score restored")
+    used = registered(["candidate", "frozen", "used"])
+    commit_registry(repository, used, "used")
+    shallow = tmp_path / "shallow"
+    subprocess.run(
+        ["git", "clone", "-q", "--depth", "5", repository.as_uri(), shallow],
+        check=True,
+        capture_output=True,
+    )
+    assert git(shallow, "rev-parse", "--is-shallow-repository").strip() == (
+        "true"
+    )
+    assert any(
+        "already committed" in p
+        for p in validate(used, repository, pin(SCORE))
+    )
+    problems = validate(used, shallow, pin(SCORE))
+    assert any("cannot tell whether" in p for p in problems), problems
+
+
+def test_a_replacement_ref_cannot_hide_a_committed_score(tmp_path, no_ci_env):
+    """`git replace` can graft a parentless copy over a commit and hide
+    its ancestors from ordinary log walks; the search ignores it."""
+    repository = init_repository(tmp_path)
+    listed = run_path("s0")
+    write(repository, listed, SCORE)
+    commit_all(repository, "score")
+    (repository / listed).unlink()
+    deleted = commit_all(repository, "score deleted")
+    orphan = git(
+        repository, "commit-tree", f"{deleted}^{{tree}}", "-m", "orphan"
+    ).strip()
+    git(repository, "replace", deleted, orphan)
+    commit_registry(repository, registered(["candidate"]), "register")
+    commit_registry(repository, registered(["candidate", "frozen"]), "freeze")
+    write(repository, listed, SCORE)
+    commit_all(repository, "score restored")
+    used = registered(["candidate", "frozen", "used"])
+    commit_registry(repository, used, "used")
+    problems = validate(used, repository, pin(SCORE))
+    assert any("already committed" in p for p in problems), problems
+
+
+def test_a_score_added_only_in_a_merge_resolution_is_refused(
+    tmp_path, no_ci_env
+):
+    """A score that enters only through a merge commit's own resolution,
+    before the registration, was committed before it."""
+    repository = init_repository(tmp_path)
+    git(repository, "checkout", "-q", "-b", "side")
+    write(repository, "docs/side.md", "side\n")
+    commit_all(repository, "side work")
+    git(repository, "checkout", "-q", "master")
+    write(repository, "docs/main.md", "main\n")
+    commit_all(repository, "main work")
+    git(repository, "merge", "-q", "--no-ff", "--no-commit", "side")
+    write(repository, run_path("s0"), SCORE)
+    git(repository, "add", "-A")
+    git(repository, "commit", "-q", "-m", "merge, adding the score")
+    commit_registry(repository, registered(["candidate"]), "register")
+    commit_registry(repository, registered(["candidate", "frozen"]), "freeze")
+    used = registered(["candidate", "frozen", "used"])
+    commit_registry(repository, used, "used")
+    problems = validate(used, repository, pin(SCORE))
+    assert any("already committed" in p for p in problems), problems
+
+
+def test_subprocess_failures_are_reported_not_raised(
+    tmp_path, no_ci_env, monkeypatch
+):
+    repository = init_repository(tmp_path)
+    huge = "a" * 3_000_000
+    current = registered(["candidate"])
+    current.update(completion_record=huge, complete=True)
+    assert isinstance(validate(current, repository), list)
+    for commit in (None, huge):
+        with pytest.raises(LookupError):
+            registry.registry_at(repository, commit)
+    with pytest.raises(LookupError):
+        registry.history_problems(repository, huge, imports={})
+    monkeypatch.setenv("PATH", str(tmp_path / "no-git-here"))
+    with pytest.raises(LookupError):
+        registry.registry_at(repository, "HEAD")
+    assert validate(imported(), repository, pin(SCORE))
+
+
+@pytest.mark.parametrize(
+    "imports, message",
+    [
+        (None, "must be a mapping"),
+        ({"H001": {}}, "needs a gate"),
+        (
+            {"H001": {"gate": "g", "unit_keys": [1], "scored_runs": []}},
+            "needs",
+        ),
+    ],
+)
+def test_malformed_authorizations_are_reported_not_raised(imports, message):
+    problems = registry.validate(
+        imported(), vocabulary=VOCABULARY, imports=imports
+    )
+    assert any(message in p for p in problems), problems
+
+
+def test_sha256_object_ids_bound_histories(tmp_path, no_ci_env, monkeypatch):
+    repository = tmp_path / "repo256"
+    repository.mkdir()
+    git(repository, "init", "-q", "-b", "master", "--object-format=sha256")
+    git(repository, "config", "user.email", "t@example.com")
+    git(repository, "config", "user.name", "t")
+    first = registered(["candidate"])
+    before = commit_registry(repository, first, "registry")
+    assert len(before) == 64
+    changed = copy.deepcopy(first)
+    changed["entries"][0]["unit_keys"] = ["s_c:2199"]
+    commit_registry(repository, changed, "an immutable key changes")
+    commit_registry(repository, first, "and is restored")
+    commit_all(repository, "an unchanged tip")
+    event = tmp_path / "event.json"
+    event.write_text(
+        json.dumps(
+            {"before": before, "pull_request": {"head": {"sha": before}}}
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("GITHUB_EVENT_PATH", str(event))
+    monkeypatch.setenv("GITHUB_EVENT_NAME", "push")
+    assert registry.base_commit(repository) == before
+    assert registry.history_problems(
+        repository, registry.base_commit(repository), imports={}
+    )
+    monkeypatch.setenv("GITHUB_EVENT_NAME", "pull_request")
+    assert registry.pull_request_head() == before
+
+
 def test_an_unanswerable_timing_check_fails_closed(
     tmp_path, no_ci_env, monkeypatch
 ):

@@ -358,7 +358,8 @@ CITATION_RX = re.compile(
     r"(?:-(?P<end>[0-9]{1,7}))?"
 )
 URL_RX = re.compile(r"https://\S+")
-SHA_RX = re.compile(r"[0-9a-f]{40}")
+#: A full object id: SHA-1 (40 hex digits) or SHA-256 (64).
+SHA_RX = re.compile(r"[0-9a-f]{40}(?:[0-9a-f]{24})?")
 
 
 def load(repository: Path) -> dict[str, Any]:
@@ -432,14 +433,15 @@ def lookup(document: Any, dotted: str) -> Any:
 
 
 def _git(repository: Path, *args: str) -> subprocess.CompletedProcess:
-    """Run git; an argument git cannot take (a NUL byte) fails like a git
-    error rather than raising."""
+    """Run git. An argument git cannot take (a NUL byte, ``None``, an
+    argument list too long) or a missing git fails like a git error
+    rather than raising."""
     command = ["git", "-C", str(repository), *args]
     try:
         return subprocess.run(
             command, capture_output=True, text=True, check=False
         )
-    except ValueError as error:
+    except (ValueError, TypeError, OSError) as error:
         return subprocess.CompletedProcess(command, 128, "", str(error))
 
 
@@ -453,7 +455,7 @@ def _git_bytes(
             capture_output=True,
             check=False,
         )
-    except ValueError:
+    except (ValueError, TypeError, OSError):
         return None
     return found.stdout if found.returncode == 0 else None
 
@@ -578,7 +580,10 @@ class Committed:
     def committed_by(self, content: bytes, commit: str) -> bool | None:
         """Whether a file with exactly ``content`` was committed, at any
         path and whether or not it was later moved or deleted, in
-        ``commit`` or any of its ancestors. ``None`` when git cannot say."""
+        ``commit`` or any of its ancestors. ``None`` when git cannot say,
+        including when a shallow clone hides ancestors: an empty search
+        proves nothing there. Replacement refs are ignored, so the search
+        reads the recorded history."""
         name = _git_bytes(
             self.repository, "hash-object", "--stdin", stdin=content
         )
@@ -586,6 +591,7 @@ class Committed:
             return None
         found = _git(
             self.repository,
+            "--no-replace-objects",
             "log",
             "-m",
             "-1",
@@ -595,7 +601,12 @@ class Committed:
         )
         if found.returncode != 0:
             return None
-        return bool(found.stdout.strip())
+        if found.stdout.strip():
+            return True
+        shallow = _git(self.repository, "rev-parse", "--is-shallow-repository")
+        if shallow.returncode != 0 or shallow.stdout.strip() != "false":
+            return None
+        return False
 
 
 def _decode(content: bytes | None) -> str | None:
@@ -605,6 +616,27 @@ def _decode(content: bytes | None) -> str | None:
         return content.decode("utf-8")
     except UnicodeDecodeError:
         return None
+
+
+def _authorization_problems(imports: Any) -> list[str]:
+    """Problems with the shape of the historical-import authorizations."""
+    if not isinstance(imports, Mapping):
+        return ["imports: the authorizations must be a mapping"]
+    problems = []
+    for name, authorized in imports.items():
+        if not (
+            isinstance(authorized, Mapping)
+            and isinstance(authorized.get("gate"), str)
+            and all(
+                isinstance(authorized.get(key), (list, tuple))
+                and all(isinstance(item, str) for item in authorized[key])
+                for key in ("unit_keys", "scored_runs")
+            )
+        ):
+            problems.append(
+                f"imports: {name!r} needs a gate, unit_keys and scored_runs"
+            )
+    return problems
 
 
 def _import_problems(
@@ -950,6 +982,7 @@ def validate(
     if not isinstance(registry["complete"], bool):
         problems.append("registry: complete must be true or false")
     problems.extend(_vocabulary_problems(vocabulary))
+    problems.extend(_authorization_problems(imports))
     if not isinstance(vocabulary, Mapping) or registry["sources"] != dict(
         vocabulary
     ):
@@ -1190,7 +1223,7 @@ def registry_at(repository: Path, commit: str) -> Any:
     ``ValueError`` when the registry there is not JSON."""
     listed = _git(repository, "ls-tree", "--name-only", commit, REGISTRY)
     if listed.returncode != 0:
-        raise LookupError(f"cannot list {REGISTRY} at {commit}")
+        raise LookupError(f"cannot list {REGISTRY} at {str(commit)[:80]}")
     if not listed.stdout.strip():
         return None
     document = _parse_registry(
