@@ -46,7 +46,12 @@ that file.
   open-population lane's OP0.2 registers its picks for OP12 before it
   freezes them; no unit is held out by two gates silently. B0.2's
   mechanical exposure inventory, `docs/design/track_b_b0_2_exposure_inventory.json`,
-  completes it.
+  completes it. That inventory must cover every gate with a committed
+  scored run, not only the five the registry seeds. #560's round-4
+  review found four more with committed scored outputs: `gate_1`,
+  `gate_2`, `gate_2b` and `gate_2c`. Each becomes an authorized
+  historical import in the registry module, or is recorded as holding
+  out nothing that a Track B or open-population gate could use.
 - **Pricing of the still-unpriced items** (§3.3, line 198; Q13, line
   618): data access, loaders and gate work for I's observational timing
   gate; the HRS loader and access; linked-withholding data access and
