@@ -397,11 +397,11 @@ case or removed from a denominator.
 | Deceased RIB number holder | Hypothetical adjustment at would-have-been FRA, final RIB deductions before death month; RS 00615.598. The result is a survivor-limit component, never payment to the deceased |
 | Ordinary AIME RIB recomputation | Supported eligibility from 1983, complete original basis and histories, continuous declared entitlement; 415(f)(2), CFR 404.284 |
 | Death-year recomputation at or after FRA | Supported, effective death month, COLAs cut off at that month; 415(f)(2)(D)(ii) |
-| Earlier reentitled spouse adjustment | `arf_spouse_reentitlement_before_fra`; RS 00615.201A.1 conflicts with RS 00615.491A on whether nonentitlement months are removed at FRA or on earlier reentitlement. Both readings are quoted below. A known prior terminating month automatically triggers this refusal before FRA; neither reading is silently admitted |
+| Spouse reentitled before FRA | Supported: the original reduction months apply until FRA, and the ARF at FRA removes the terminated months; 402(q)(1)(B), (q)(7)(C); RS 00615.201A.1 (reading below; RS 00615.491A's earlier removal is not followed) |
 | Own entitlement after spouse but before ARF | `arf_spouse_own_after_spouse_before_arf`; sequence not settled by the captured .500 procedures |
 | Disabled widow and widow dual DIB or RIB | `arf_disabled_widow`, `arf_widow_dual_dib`, `arf_widow_dual_rib`; .590/.595 conversion and earlier reduction histories require additional state |
 | RIB-LIM widow | `arf_widow_rib_limit`; .585 requires its separate cap and sometimes no increase despite ARF |
-| Nonbinding widow child-in-care floor | `arf_widow_child_care_without_rate_increase`; conflicting readings below |
+| Nonbinding widow child-in-care floor | `arf_widow_child_care_without_rate_increase`; refused pending Max (below) |
 | Historical widow FRA | `arf_widow_fra_before_1911` or `arf_historical_widow_fra_conflict`; old FRA 62 lies outside G's survivor surface; disputed 1911 cohort below |
 | Historical ARF rounding or other suspensions | `arf_initial_entitlement_before_1978`, `arf_payment_before_1983`, `arf_other_suspension`; historical reduction-ratio/rounding rules and nonwork suspensions require separate procedures |
 | Historical recomputation eligibility | `recompute_eligibility_before_1983`; CFR .284's historical upward rounding differs from the shared modern helpers |
@@ -633,13 +633,16 @@ need correction.
 Tests also assert the derived whole-dollar amounts: 429 initially,
 448/512/569 for the candidate and 471/539/599 for the original after COLAs.
 
-## Findings and readings requiring judgment
+## Readings taken and refusals kept
 
-**Ruling d1418 (Max, 2026-10-12): keep the current defaults, and reopen any
-one when a population target needs it.** The three readings below that
-change money (survivor FRA for births 1911-01-02 to 1912-01-01, nonbinding
-widow(er) child-in-care credits, and the timing of a reentitled spouse's
-termination credits) stay refused by name and counted in denominators.
+Ruling d1418 (Max, 2026-10-12) kept the three money-changing readings below
+as named refusals until a population target needed them. Max's 2026-10-20
+delegation makes each single reading the session's call under his
+principles (P1 statute first; P2 regulations are law; P3 the agency breaks
+true ties), logged in the source-conflict rulings; patterns and collisions
+between principles go to him. This section records that pass (October 23,
+2026). Each reading below names its basis; every remaining refusal keeps its
+row and weight in the denominators.
 
 RS 00615.015 says "In 2/1998 Demi has 37 RF." Its table and the same
 example's payment text say "Demi - $1122 starting 2/2000". Tests pin both;
@@ -654,55 +657,105 @@ cent-valued example summing $24 was found. This intended oracle divergence
 is named `test_minimized_cent_earnings_float_aime_boundary_is_intended_correction`.
 Python's ties-to-even bend-point rounding also differs from the statute at
 an exact half dollar; the named tie test pins the statutory upward result.
-These are arithmetic diagnostics, not competing statutory interpretations.
+These are arithmetic diagnostics, not competing statutory interpretations:
+the Act's own rounding rules decide both.
 
-Three source readings change money and require Max's judgment:
+### Reading taken: spouse reentitlement before FRA
 
-1. **Historical widow cohort.** Source conflict
-   `us:oasdi-survivor-fra-1911-births`. RS 00615.003 says "People Born Before
-   1/2/1911" and "FRA for widow(er)'s benefits was age 62", then "People
-   Born from 1/2/1911 Through 1/1/40" at age 65. CFR 404.409 says "Before
-   1/2/1912 62 years." and "1/2/1912—1/1/1940 65 years." Births
-   January 2, 1911 through January 1, 1912 are refused, including the
-   public FRA helper. An invented January 2, 1911 birth claiming January
-   1973 with PIA $1,000 gives $829 under FRA 65 (36/60 of 28.5 percent)
-   versus $1,000 under FRA 62: $171 per month. Neither reading is silently
-   admitted.
-2. **Nonbinding widow child-in-care floor.** Source conflict
-   `us:oasdi-arf-widow-child-in-care-credits`. CFR 404.412(a)(4) credits
-   "any month in which she or he had in her or his care a child of the
-   deceased insured individual and for which the child was entitled to
-   child's benefits". RS 00615.482 instead specifies "widow(er)'s
-   benefits were increased to the mother or father's rate." The Act
-   402(q)(7)(D) refers to "any month in which the reduction in the amount
-   of such benefit was determined under paragraph (5)(D)". The supported
-   input certifies actual mother/father-rate months. Nonbinding caregiving
-   histories require the named refusal flag. At age 64, FRA 67, PIA $1,000,
-   36/84 of 28.5 percent gives $877.80. Crediting six nonbinding caregiving
-   months under the broader CFR reading gives $898.20: $20.40 per month.
-   Both counterfactual amounts and the explicit refusal are tested.
-3. **Spouse reentitlement before FRA.** Source conflict
-   `us:oasdi-arf-spouse-reentitlement-credits`. RS 00615.201A.1 says "After
-   12/72 a spouse reentitled prior to FRA as a spouse on the same earnings
-   is reduced the same number of months as the earlier entitlement. An
-   ARF at FRA will remove all months of nonentitlement." RS 00615.491A
-   says "Beginning in 1/78, if a reduced spouse is terminated and then
-   reentitled, (months in which the spouse's benefits were terminated will
-   be eliminated from the reduction factor when the spouse is reentitled."
-   The unmatched parenthesis is present in the captured .491 text. The
-   first reading keeps the original reduction months until FRA; the second
-   removes terminated months on reentitlement. For an invented birth on
-   January 2, 1960, first reduced entitlement in January 2022, termination
-   in February 2022 and reentitlement in March 2022, unreduced benefit
-   $650 and FRA in January 2027 give 60 original reduction months.
-   Keeping all 60 under .201 gives $422.50 and whole-dollar $422.
-   Removing February under .491 leaves 59 months and gives $425.20 and
-   whole-dollar $425, a $2.70 monthly benefit difference and $3 difference
-   after whole-dollar rounding. The named refusal
-   `arf_spouse_reentitlement_before_fra` remains in force for the March
-   2022 claim. Both counterfactual amounts and the refusal are pinned by
-   `test_spouse_reentitlement_counterfactual_readings_keep_named_refusal`;
-   the source and documentation quote test keeps both readings visible.
+Source conflict `us:oasdi-arf-spouse-reentitlement-credits` (P1, statute
+first). RS 00615.201A.1 says "After 12/72 a spouse reentitled prior to FRA
+as a spouse on the same earnings is reduced the same number of months as
+the earlier entitlement. An ARF at FRA will remove all months of
+nonentitlement." RS 00615.491A says "Beginning in 1/78, if a reduced spouse
+is terminated and then reentitled, (months in which the spouse's benefits
+were terminated will be eliminated from the reduction factor when the
+spouse is reentitled." The unmatched parenthesis is present in the captured
+.491 text.
+
+The Act settles the timing. Section 402(q)(1)(B)(i) reduces each month
+before retirement age by "the number of months in the reduction period for
+such benefit (determined under paragraph (6)), if such benefit is for a
+month before the month in which such individual attains retirement age".
+Clause (ii) substitutes the adjusted reduction period, which (q)(7)(C)
+shortens by "any month for which such individual was not entitled to such
+benefits because of the occurrence of an event that terminated her or his
+entitlement to such benefits", only "if such benefit is (I) for the month
+in which such individual attains age 62, or (II) for the month in which
+such individual attains retirement age". A spouse's reduction period begins
+with the first month of the original certificate ((q)(6)(A)(ii)), which
+remains effective "for the month in which it is filed and for any month
+thereafter" ((q)(5)(B)(i)). RS 00615.201A.1 states this timing; .491A's
+removal at reentitlement departs from it and is not followed.
+
+For an invented birth on January 2, 1960, first reduced entitlement in
+January 2022, termination in February 2022, reentitlement in March 2022,
+unreduced benefit $650 and FRA in January 2027, the reduction period has 60
+months. March 2022 through December 2026 pay $422.50 ($422). The January
+2027 ARF removes February 2022, leaving 59 months and $425.20 ($425). The
+.491A reading would pay $425.20 from March 2022, $2.70 a month more. The
+former refusal `arf_spouse_reentitlement_before_fra` is withdrawn, with its
+reason value. `test_spouse_reentitlement_takes_the_statutory_timing` pins
+the statutory quotes and both amounts;
+`test_spouse_reentitled_before_fra_keeps_original_months_until_fra` pins the
+public API; the Hypothesis property
+`test_reentitled_spouse_keeps_original_months_until_fra` checks, for any
+terminated history and any pre-FRA month, that the payment equals the
+never-terminated claim and G's 60-month spouse reduction with zero
+tolerance, and that the FRA adjustment credits exactly the terminated
+months, so the benefit cannot fall at FRA.
+
+### Refused: widow(er) FRA for births January 2, 1911 through January 1, 1912
+
+Source conflict `us:oasdi-survivor-fra-1911-births` (refusal kept; it cannot
+change a computed amount). RS 00615.003 says "People Born Before 1/2/1911"
+and "FRA for widow(er)'s benefits was age 62", then "People Born from
+1/2/1911 Through 1/1/40" at age 65. CFR 404.409 says "Before 1/2/1912 62
+years." and "1/2/1912—1/1/1940 65 years."
+
+A widow(er) of this cohort has a reduced benefit only if first entitled
+before full retirement age: before January 1973 under FRA 62, before
+January 1976 under FRA 65. Both precede January 1978, which
+`arf_initial_entitlement_before_1978` refuses independently; entitlement
+from 1978 falls after both ages and has no reduction months. The FRA helper
+must return one month, so it still refuses the cohort by name, and
+`apply_arf` keeps the same reason. Should a pre-1978 path ever be built, the
+Act points to POMS's boundary: Pub. L. 92-603 §102(i) applies the 1972
+widow amendments "with respect to monthly benefits ... for months after
+December 1972", and a birth on January 2, 1911 attains 62 on January 1,
+1973. (The provision is printed in the statutory notes of the LII 42
+U.S.C. 402 page whose served body this module's manifest pins, SHA-256
+`e5bb977c3ab381c2c3bd4f6bb320b86f25e2f0ad2b629e01333be56727d3823b`; the
+excerpt file quotes only 402(q).) The regulation's January 2, 1912 boundary would then be a regulation
+at odds with its statute, which P2 returns to Max. An invented January 2,
+1911 birth claiming January 1973 with PIA $1,000 gives $829 under FRA 65
+(36/60 of 28.5 percent) versus $1,000 under FRA 62; that claim is outside
+the supported window under either reading.
+
+### Refused pending Max: nonbinding widow(er) child-in-care months
+
+Source conflict `us:oasdi-arf-widow-child-in-care-credits`. CFR
+404.412(a)(4) credits "any month in which she or he had in her or his care
+a child of the deceased insured individual and for which the child was
+entitled to child's benefits". RS 00615.482 instead specifies "widow(er)'s
+benefits were increased to the mother or father's rate." The Act
+402(q)(7)(D) refers to "any month in which the reduction in the amount of
+such benefit was determined under paragraph (5)(D)", the mother/father
+floor, while (q)(7)(B) gives wife's and husband's benefits the plainer test
+"any month in which such individual had in his or her care ... a child of
+such person entitled to child's insurance benefits". Congress used
+different words for widows, so the Act and SSA's manual credit only months
+in which the floor set the benefit; the regulation copies the wife's
+wording and credits every caregiving month.
+
+That is a regulation reaching past its statute. P2 returns such a case to
+Max, and whether P2 covers SSA's 20 CFR at all (it names Treasury
+regulations) is itself unruled, so both are queued together as decision
+d1920, recommending the statute. Until he rules, the supported input
+certifies actual mother/father-rate months and a nonbinding caregiving
+history keeps the named refusal. At age 64, FRA 67, PIA $1,000, 36/84 of
+28.5 percent gives $877.80; crediting six nonbinding caregiving months
+under the regulation gives $898.20, $20.40 a month more. Both
+counterfactual amounts and the explicit refusal are tested.
 
 The $1-after-COLAs rule is settled expressly by RS 00605.501. Historical
 upward rounding is different law, not a source erratum. No choice between
