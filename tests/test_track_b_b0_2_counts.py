@@ -23,7 +23,7 @@ import track_b_b0_2_counts as script  # noqa: E402
 from scripts import track_b_b0_1_counts as b01  # noqa: E402
 
 PROTOCOL_SHA256 = (
-    "94e22e3fff7b8ec541f87abe9890270a9893e0ec1653ce7b91fb0170b2732cb9"
+    "f2fd0a3eaf7cbfd99da21d7f885ca05e9e6b62764fe4db895b0f28b84ccd4bc6"
 )
 WAVES = tuple(range(1999, 2024, 2))
 SENTINEL = 9_999_998
@@ -191,6 +191,7 @@ def test_protocol_block_is_pinned():
     end = b"<!-- protocol:end -->"
     block = text[text.index(begin) : text.index(end) + len(end)]
     assert hashlib.sha256(block).hexdigest() == PROTOCOL_SHA256
+    assert script.PROTOCOL_SHA256 == PROTOCOL_SHA256
 
 
 def test_b01_helpers_are_imported_unchanged():
@@ -359,14 +360,14 @@ def test_rosters_and_age_30_proxy_boundary_use_their_own_weights_and_ages():
         "households": 3,
         "design_strata": 2,
         "design_clusters": 3,
-        "kish_n_eff": 4.091,
-        "household_cluster_worst_n_eff": 2.922,
-        "design_cluster_worst_n_eff": 2.711,
+        "kish_n_eff": pytest.approx(225 / 55),
+        "household_cluster_worst_n_eff": pytest.approx(225 / 77),
+        "design_cluster_worst_n_eff": pytest.approx(225 / 83),
     }
     assert {
         band: count["persons"] for band, count in full["by_age_band"].items()
     } == {
-        "0_24": 0,
+        "1_24": 0,
         "25_44": 2,
         "45_61": 0,
         "62_64": 1,
@@ -382,7 +383,7 @@ def test_rosters_and_age_30_proxy_boundary_use_their_own_weights_and_ages():
     assert b2["household_cluster_worst_n_eff"] == 1.0
     proxy = counts["R_TA_PROXY"]
     assert proxy["overall"]["persons"] == 3
-    assert proxy["overall"]["kish_n_eff"] == 2.711
+    assert proxy["overall"]["kish_n_eff"] == pytest.approx(225 / 83)
     assert proxy["overall"]["household_cluster_worst_n_eff"] == 1.8
     assert proxy["by_age_band"]["25_44"]["persons"] == 1
     assert proxy["by_age_band"]["62_64"]["persons"] == 0
@@ -390,7 +391,7 @@ def test_rosters_and_age_30_proxy_boundary_use_their_own_weights_and_ages():
 
 
 def test_band_edges_and_b3_support_are_hand_counted():
-    ages = [0, 24, 25, 44, 45, 61, 62, 64, 65, 66, 67, 69, 70, 79, 80]
+    ages = [1, 24, 25, 44, 45, 61, 62, 64, 65, 66, 67, 69, 70, 79, 80, 81, 125]
     people, labor, anchor, design = _inputs(
         [_row(i, age=age) for i, age in enumerate(ages, 1)],
         accuracy={(2011, 7, "head"), (2011, 9, "head")},
@@ -398,14 +399,14 @@ def test_band_edges_and_b3_support_are_hand_counted():
     counts = script.structural_counts(people, _validity(labor), anchor, design)
     roster_bands = counts["rosters"]["R_FULL"]["by_age_band"]
     assert {key: value["persons"] for key, value in roster_bands.items()} == {
-        "0_24": 2,
+        "1_24": 2,
         "25_44": 2,
         "45_61": 2,
         "62_64": 2,
         "65_66": 2,
         "67_69": 2,
         "70_79": 2,
-        "80_plus": 1,
+        "80_plus": 3,
     }
     support = counts["b3"]["by_wave"]["2011"]
     for band in ("62_64", "65_66", "67_69"):
@@ -528,9 +529,9 @@ def test_outside_b2_excludes_entire_anchor_households_and_counts_later_units():
         "households": 2,
         "design_strata": 1,
         "design_clusters": 2,
-        "kish_n_eff": 1.976,
-        "household_cluster_worst_n_eff": 1.976,
-        "design_cluster_worst_n_eff": 1.976,
+        "kish_n_eff": pytest.approx(81 / 41),
+        "household_cluster_worst_n_eff": pytest.approx(81 / 41),
+        "design_cluster_worst_n_eff": pytest.approx(81 / 41),
     }
     assert counts["by_age_band"]["62_64"]["persons"] == 0
     assert counts["by_age_band"]["65_66"]["persons"] == 1
@@ -550,7 +551,7 @@ def test_effective_sizes_match_hand_formulas_and_composite_design_clusters():
     full = counts["rosters"]["R_FULL"]["overall"]
     # Cluster label 10 occurs in two different strata: three design units.
     assert full["design_clusters"] == 3
-    assert full["design_cluster_worst_n_eff"] == round(225 / 83, 3)
+    assert full["design_cluster_worst_n_eff"] == pytest.approx(225 / 83)
 
 
 def test_zero_weight_sets_have_zero_effective_size():
@@ -571,256 +572,456 @@ def test_zero_weight_sets_have_zero_effective_size():
     }
 
 
+def test_b3_lag_pairs_keep_nonempty_2009_origins():
+    people, labor, _, design = _inputs(
+        [
+            _row(1, 2007, 60),
+            _row(1, 2009, 62),
+            _row(1, 2011, 64),
+            _row(1, 2013, 66),
+            _row(2, 2009, 63),
+            _row(2, 2011, 65),
+            _row(2, 2013, 67),
+        ]
+    )
+    pairs = script.b3_counts(people, _validity(labor), design)["lag_pairs"]
+    assert pairs["2"]["2007_2009"] == {"62_64": 1, "65_66": 0, "67_69": 0}
+    assert pairs["2"]["2009_2011"] == {"62_64": 1, "65_66": 1, "67_69": 0}
+    assert pairs["4"]["2009_2013"] == {"62_64": 0, "65_66": 1, "67_69": 1}
+
+
+def test_known_age_partition_and_reader_maximum_are_hand_counted():
+    ages = [0, 999, -1, 125.5, 126, float("nan"), 1, 24, 80, 81, 125]
+    counts = _counts(
+        _inputs([_row(i, age=age) for i, age in enumerate(ages, 1)])
+    )
+    roster = counts["rosters"]["R_FULL"]
+    assert roster["overall"]["persons"] == 11
+    assert roster["unknown_age"]["persons"] == 6
+    assert roster["by_age_band"]["1_24"]["persons"] == 2
+    assert roster["by_age_band"]["80_plus"]["persons"] == 3
+    assert (
+        sum(item["persons"] for item in roster["by_age_band"].values())
+        + roster["unknown_age"]["persons"]
+        == 11
+    )
+    proxy = counts["rosters"]["R_TA_PROXY"]
+    assert proxy["overall"]["persons"] == 3
+    assert proxy["unknown_age"]["persons"] == 0
+    assert script.age67._MAX_AGE_CODE == 125
+    assert script.ROSTER_BANDS[-1][2] == script.age67._MAX_AGE_CODE
+
+
+def test_effective_sizes_are_coarsened_from_their_own_unrounded_values():
+    inputs = _inputs(
+        [_row(i, age=29, weight=1.02 if i == 15 else 1) for i in range(1, 16)]
+    )
+    counts = _counts(inputs)
+    kish = counts["rosters"]["R_FULL"]["overall"]["kish_n_eff"]
+    assert 14.999 < kish < 15
+    assert script.coarsen(kish, 10) == 10
+    assert script.coarsen(round(kish, 3), 10) == 20
+
+
 # --------------------------------------------------------------------------
 # Disclosure, using invented counts and structural frames only
 # --------------------------------------------------------------------------
-@pytest.mark.parametrize("count", range(11))
-def test_disclosure_suppresses_counts_one_through_nine(count):
-    raw = {"table": {"persons": count}}
-    published, disclosure = script.suppress_counts(raw)
-    expected = "<10" if 1 <= count <= 9 else count
-    assert published == {"table": {"persons": expected}}
-    assert raw == {"table": {"persons": count}}
-    assert disclosure["threshold"] == 10
-    assert disclosure["primary_suppressed"] == int(1 <= count <= 9)
-    assert disclosure["complementary_suppressed"] == 0
-    assert not any(disclosure["complementary_passes"])
-
-
-@pytest.mark.parametrize("support", ["persons", "valid_rows"])
-@pytest.mark.parametrize("effective_size", [0.0, 8.125, 12.0])
-def test_disclosure_suppresses_effective_sizes_on_small_nonempty_sets(
-    support, effective_size
-):
-    raw = {
-        "table": {
-            support: 9,
-            "kish_n_eff": effective_size,
-            "household_cluster_worst_n_eff": effective_size,
-            "design_cluster_worst_n_eff": effective_size,
-        }
-    }
-    published, disclosure = script.suppress_counts(raw)
-    assert all(value == "<10" for value in published["table"].values())
-    assert disclosure["primary_suppressed"] == 4
-    assert raw["table"][support] == 9
-    assert raw["table"]["kish_n_eff"] == effective_size
-
-
-def test_disclosure_keeps_empty_effective_sizes_and_suppresses_small_values():
-    published, _ = script.suppress_counts(
-        {
-            "empty": {"persons": 0, "kish_n_eff": 0.0},
-            "large": {"persons": 10, "kish_n_eff": 10.0},
-            "unequal_weights": {"persons": 20, "kish_n_eff": 9.001},
-            "origin_wave": 2007,
-        }
-    )
-    assert published == {
-        "empty": {"persons": 0, "kish_n_eff": 0.0},
-        "large": {"persons": 10, "kish_n_eff": 10.0},
-        "unequal_weights": {"persons": 20, "kish_n_eff": "<10"},
-        "origin_wave": 2007,
-    }
-
-
-def test_disclosure_complements_the_smallest_remaining_published_part():
-    raw = {"total": 40, "small": 5, "larger": 20, "smallest": 15}
-    relations = [(("total",), (("small",), ("larger",), ("smallest",)))]
-    published, disclosure = script.suppress_counts(raw, relations)
-    assert published == {
-        "total": 40,
-        "small": "<10",
-        "larger": 20,
-        "smallest": "<10",
-    }
-    assert disclosure["primary_suppressed"] == 1
-    assert disclosure["complementary_suppressed"] == 1
-    assert sum(disclosure["complementary_passes"]) == 1
-    assert raw["smallest"] == 15
-
-
-def test_disclosure_repeats_complementary_passes_until_chain_is_safe():
-    raw = {
-        "outer_total": 60,
-        "inner_total": 30,
-        "small": 5,
-        "shared": 25,
-        "other": 35,
-    }
-    # Outer is visited before the inner relation hides its shared part.
-    relations = [
-        (("outer_total",), (("shared",), ("other",))),
-        (("inner_total",), (("small",), ("shared",))),
-    ]
-    published, disclosure = script.suppress_counts(raw, relations)
-    assert published == {
-        "outer_total": 60,
-        "inner_total": 30,
-        "small": "<10",
-        "shared": "<10",
-        "other": "<10",
-    }
-    assert disclosure["complementary_suppressed"] == 2
-    assert len([n for n in disclosure["complementary_passes"] if n]) >= 2
-    assert sum(disclosure["complementary_passes"]) == 2
-
-
-def test_disclosure_hides_effective_sizes_when_support_is_complemented():
-    raw = {
-        "total": 25,
-        "small": {"persons": 5, "kish_n_eff": 5.0},
-        "large": {"persons": 20, "kish_n_eff": 20.0},
-    }
-    relations = [(("total",), (("small", "persons"), ("large", "persons")))]
-    published, _ = script.suppress_counts(raw, relations)
-    assert published["small"] == {"persons": "<10", "kish_n_eff": "<10"}
-    assert published["large"] == {"persons": "<10", "kish_n_eff": "<10"}
-
-
 def _path_value(value, path):
     for key in path:
         value = value[key]
     return value
 
 
-def test_disclosure_relations_are_exact_structural_identities():
-    from collections.abc import Mapping
+def _table_registry(sets, *, unit_type="persons"):
+    registry = script.SetRegistry()
+    counts = {}
+    for name, members in sets.items():
+        registry.add((name,), unit_type, members)
+        counts[name] = len(members)
+    return counts, registry
 
-    inputs = _worked_rosters()
-    people, labor, anchor, design = inputs
-    validity = _validity(labor)
-    counts = _counts(inputs)
-    relations = script.disclosure_relations(people, validity, anchor, design)
-    assert relations
-    for relation in relations:
-        if isinstance(relation, Mapping):
-            assert (
-                sum(
-                    coefficient * _path_value(counts, path)
-                    for path, coefficient in relation.items()
-                )
-                == 0
-            )
-        else:
-            total, parts = relation
-            assert _path_value(counts, total) == sum(
-                _path_value(counts, path) for path in parts
-            )
-    expected = (
-        ("rosters", "R_FULL", "overall", "persons"),
-        tuple(
-            ("rosters", "R_FULL", "by_age_band", band, "persons")
-            for band, _, _ in script.ROSTER_BANDS
+
+@pytest.mark.parametrize(
+    ("base", "values", "expected"),
+    [
+        (
+            10,
+            [0, 1, 9, 10, 14, 15, 24, 25],
+            [0, "<10", "<10", 10, 10, 20, 20, 30],
         ),
+        (
+            50,
+            [0, 1, 49, 50, 74, 75, 124, 125],
+            [0, "<50", "<50", 50, 50, 100, 100, 150],
+        ),
+    ],
+)
+def test_coarsening_boundaries_round_halves_up(base, values, expected):
+    assert [script.coarsen(value, base) for value in values] == expected
+    assert script.coarsen(base + base / 2 - 0.001, base) == base
+    assert script.coarsen(base + base / 2, base) == 2 * base
+    assert script.count_interval(0, base) == (0, 0)
+    assert script.count_interval(f"<{base}", base) == (1, base - 1)
+    assert script.count_interval(2 * base, base) == (
+        2 * base - base // 2,
+        2 * base + base // 2 - 1,
     )
-    assert expected in relations
+    assert script.count_interval(base, base) == (base, base + base // 2 - 1)
 
 
-def test_disclosure_published_counts_have_no_positive_value_below_ten():
+@pytest.mark.parametrize("base", script.DISCLOSURE_BASES)
+def test_count_intervals_are_exact_preimages_of_coarsening(base):
+    """Each interval is exactly the integers that coarsen to its value,
+    found by enumeration rather than from the interval rule."""
+    preimages = {}
+    for value in range(0, 4 * base):
+        preimages.setdefault(script.coarsen(value, base), []).append(value)
+    for published, values in preimages.items():
+        if published != 4 * base:
+            low, high = script.count_interval(published, base)
+            assert values == list(range(low, high + 1)), published
+
+
+def test_a_published_base_bounds_its_effective_count_from_base(
+    monkeypatch,
+):
+    """An effective size published as B means the size is at least B,
+    so its count is at least B, not B/2. A remainder of 7 inside a set
+    of 12 whose Kish size is 10 therefore has a minimum of 1."""
+    counts, registry = _table_registry(
+        {"persons": set(range(12)), "part": set(range(5))}
+    )
+    counts["kish_n_eff"] = 10.0
+    registry.effective(("kish_n_eff",), ("persons",))
+    original = script.count_interval
+    # Broaden the count intervals so only the effective bound can lift
+    # the remainder's minimum above 0.
+    monkeypatch.setattr(
+        script,
+        "count_interval",
+        lambda value, base: (0, original(value, base)[1]),
+    )
+    audit = script.audit_counts(counts, registry, 10)
+    remainder = [q for q in audit["quantities"] if q["true_size"] == 7]
+    assert remainder and remainder[0]["minimum"] == 1
+
+
+@pytest.mark.parametrize("size", range(11))
+def test_sensitive_atom_threshold_includes_one_through_nine(size):
+    counts, registry = _table_registry({"persons": set(range(size))})
+    audit = script.audit_counts(counts, registry, 10)
+    assert audit["audited"] == int(1 <= size <= 9)
+    assert audit["failed"] == 0
+
+
+def test_disclosure_registry_covers_all_statistics_and_correct_unit_types():
     people, labor, anchor, design = _invariance_inputs()
     validity = _validity(labor)
-    raw = script.structural_counts(people, validity, anchor, design)
-    relations = script.disclosure_relations(people, validity, anchor, design)
-    published, _ = script.suppress_counts(raw, relations)
-
-    def check(value, path=()):
-        if isinstance(value, dict):
-            for key, item in value.items():
-                check(item, (*path, key))
-        elif isinstance(value, (int, float)) and path[-1] != "origin_wave":
-            assert value == 0 or value >= 10, (path, value)
-
-    check(published)
-
-
-def test_disclosure_closes_recovery_from_coupled_equations():
-    raw = {"a": 5, "b": 5, "c": 6, "ab": 10, "bc": 11, "ac": 11}
-    relations = [
-        (("ab",), (("a",), ("b",))),
-        (("bc",), (("b",), ("c",))),
-        (("ac",), (("a",), ("c",))),
-    ]
-    primary, _ = script.suppress_counts(raw)
-    primary_hidden = {
-        (name,) for name, value in primary.items() if value == "<10"
-    }
-    equations = [script._equation(relation) for relation in relations]
-    assert all(len(primary_hidden.intersection(eq)) == 2 for eq in equations)
-    # Each pair hides two cells, but together the three equations solve a,b,c.
-    assert set(script._recoverable(equations, primary_hidden)) == {
-        ("a",),
-        ("b",),
-        ("c",),
-    }
-    published, disclosure = script.suppress_counts(raw, relations)
-    assert published["ab"] == "<10"
-    assert published["bc"] == published["ac"] == 11
-    assert disclosure["complementary_suppressed"] == 1
-    hidden = {(name,) for name, value in published.items() if value == "<10"}
-    assert not script._recoverable(equations, hidden)
-    # Independently check every hidden coordinate remains underdetermined.
-    columns = sorted(hidden)
-    matrix = np.array(
-        [[float(eq.get(path, 0)) for path in columns] for eq in equations]
+    counts = script.structural_counts(people, validity, anchor, design)
+    registry = script.disclosure_registry(people, validity, anchor, design)
+    leaves = dict(script._leaves(counts))
+    assert set(leaves) == set(registry.sets) | set(registry.effective_bounds)
+    for path, (_, units) in registry.sets.items():
+        assert leaves[path] == len(units), path
+    prefix = ("rosters", "R_FULL", "overall")
+    assert registry.sets[(*prefix, "persons")][0] == "persons"
+    assert registry.sets[(*prefix, "households")][0] == "households_2011"
+    assert registry.sets[(*prefix, "design_strata")][0] == "strata"
+    assert registry.sets[(*prefix, "design_clusters")][0] == "clusters"
+    assert registry.effective_bounds[(*prefix, "kish_n_eff")] == (
+        *prefix,
+        "persons",
     )
-    rank = np.linalg.matrix_rank(matrix)
-    for column in range(len(columns)):
-        assert np.linalg.matrix_rank(np.delete(matrix, column, axis=1)) == rank
+    assert registry.effective_bounds[
+        (*prefix, "household_cluster_worst_n_eff")
+    ] == (*prefix, "households")
+    assert registry.effective_bounds[
+        (*prefix, "design_cluster_worst_n_eff")
+    ] == (*prefix, "design_clusters")
+    clusters = registry.sets[(*prefix, "design_clusters")][1]
+    assert all(
+        isinstance(cluster, tuple) and len(cluster) == 2
+        for cluster in clusters
+    )
 
 
-def test_disclosure_handles_overlapping_wave_pool_and_lag_intersection():
-    # Five persons are in both waves; ten more occur only in each wave.
+def test_disclosure_integer_hidden_band_attack_is_blocked_on_full_release():
     inputs = _inputs(
         [
-            *[_row(person, 2011, age=62) for person in range(1, 16)],
-            *[
-                _row(person, 2013, age=64)
-                for person in [*range(1, 6), *range(16, 26)]
-            ],
+            *[_row(person, age=29) for person in range(1, 19)],
+            _row(19, age=63),
+            _row(20, age=66),
         ]
     )
     people, labor, anchor, design = inputs
-    validity = _validity(labor)
     raw = _counts(inputs)
-    relations = script.disclosure_relations(people, validity, anchor, design)
-    first = ("b3", "by_wave", "2011", "62_64", "persons")
-    second = ("b3", "by_wave", "2013", "62_64", "persons")
-    pooled = ("b3", "distinct_persons_by_band", "62_64")
-    overlap = ("b3", "lag_pairs", "2", "2011_2013", "62_64")
-    assert [
-        _path_value(raw, path) for path in (first, second, pooled, overlap)
-    ] == [15, 15, 25, 5]
-    # A distinct-person union must not be treated as a sum of overlapping waves.
-    incorrect_addition = (
-        pooled,
-        tuple(
-            ("b3", "by_wave", str(wave), "62_64", "persons") for wave in WAVES
-        ),
+    assert raw["rosters"]["R_FULL"]["overall"]["persons"] == 20
+    assert raw["rosters"]["R_FULL"]["by_age_band"]["25_44"]["persons"] == 18
+    registry = script.disclosure_registry(
+        people, _validity(labor), anchor, design
     )
-    assert incorrect_addition not in relations
-    equations = [script._equation(relation) for relation in relations]
+    published, disclosure, private = script.release_counts(raw, registry)
+    assert published and disclosure["base"] in (10, 50, 100, 500)
+    assert private["audits"][-1]["failed"] == 0
+    assert all(
+        item["maximum"] - item["minimum"] >= 4
+        for item in private["audits"][-1]["quantities"]
+    )
+    assert (
+        published["rosters"]["R_FULL"]["by_age_band"]["25_44"]["persons"] != 18
+    )
 
-    def hidden_paths(value, prefix=()):
-        if isinstance(value, dict):
-            return set().union(
-                *(
-                    hidden_paths(item, (*prefix, key))
-                    for key, item in value.items()
-                )
-            )
-        return {prefix} if value == "<10" else set()
 
-    primary, _ = script.suppress_counts(raw)
-    # Wave1 + wave2 - pooled would otherwise recover the hidden overlap.
-    assert overlap in script._recoverable(equations, hidden_paths(primary))
-    published, _ = script.suppress_counts(raw, relations)
-    assert _path_value(published, overlap) == "<10"
+def test_disclosure_unpublished_coresident_remainder_is_audited():
+    inputs = _inputs(
+        [
+            *[_row(person, age=40) for person in range(1, 21)],
+            _row(21, age=40, relationship=30, interview=1),
+        ]
+    )
+    people, labor, anchor, design = inputs
+    raw = _counts(inputs)
+    assert raw["rosters"]["R_FULL"]["overall"]["persons"] == 21
+    assert raw["rosters"]["R_B2"]["overall"]["persons"] == 20
+    assert raw["outside_b2"]["overall"]["persons"] == 0
+    registry = script.disclosure_registry(
+        people, _validity(labor), anchor, design
+    )
+    full = registry.sets[("rosters", "R_FULL", "overall", "persons")][1]
+    domain = registry.sets[("rosters", "R_B2", "overall", "persons")][1]
+    assert full - domain == {21}
+    published, _, private = script.release_counts(raw, registry)
+    assert published
+    sensitive = [
+        q
+        for q in private["audits"][-1]["quantities"]
+        if q["unit_type"] == "persons" and q["true_size"] == 1
+    ]
+    assert sensitive and all(q["protected"] for q in sensitive)
+
+
+def test_disclosure_audits_multi_atom_published_subset_differences():
+    counts, registry = _table_registry(
+        {
+            "total": set(range(15)),
+            "subset": set(range(10)),
+            "distinguish": {10, 11},
+        }
+    )
+    audit = script.audit_counts(counts, registry, 10)
+    differences = [q for q in audit["quantities"] if q["kind"] == "difference"]
     assert any(
-        _path_value(published, path) == "<10"
-        for path in (first, second, pooled)
+        q["true_size"] == 5 and len(q["atoms"]) == 2 for q in differences
     )
-    assert not script._recoverable(equations, hidden_paths(published))
+
+
+def test_effective_size_attack_registers_household_and_design_lower_bounds():
+    inputs = _inputs(
+        [
+            _row(
+                person,
+                age=20 if person <= 10 else 25,
+                relationship=30,
+                interview=(person + 1) // 2 if person <= 10 else person - 5,
+            )
+            for person in range(1, 31)
+        ]
+    )
+    people, labor, anchor, design = inputs
+    design["stratum"] = design["person_id"]
+    counts = _counts(inputs)
+    registry = script.disclosure_registry(
+        people, _validity(labor), anchor, design
+    )
+    prefix = ("rosters", "R_FULL", "by_age_band", "25_44")
+    assert _path_value(counts, (*prefix, "households")) == 20
+    assert (
+        _path_value(counts, (*prefix, "household_cluster_worst_n_eff")) == 20
+    )
+    assert registry.effective_bounds[
+        (*prefix, "household_cluster_worst_n_eff")
+    ] == (*prefix, "households")
+    published, _, private = script.release_counts(counts, registry)
+    assert published and private["audits"][-1]["failed"] == 0
+
+
+def test_audit_applies_effective_bound_independently_of_count_interval(
+    monkeypatch,
+):
+    counts, registry = _table_registry({"persons": set(range(5))})
+    counts["kish_n_eff"] = 5.0
+    registry.effective(("kish_n_eff",), ("persons",))
+    original = script.count_interval
+    # With identical monotone coarsening, a valid effective bound is
+    # redundant with its count's lower bound. Broaden only that count
+    # interval to exercise the required effective-size constraint itself.
+    monkeypatch.setattr(
+        script,
+        "count_interval",
+        lambda value, base: (0, original(value, base)[1]),
+    )
+    audit = script.audit_counts(counts, registry, 10)
+    assert audit["quantities"][0]["minimum"] == 1
+
+
+def _singleton_table(size, *, partial=None):
+    sets = {"total": set(range(size))}
+    sets.update({f"cell_{i}": {i} for i in range(size)})
+    if partial is not None:
+        for size_part in (partial,) if isinstance(partial, int) else partial:
+            sets[f"partial_{size_part}"] = set(range(size_part))
+    return _table_registry(sets)
+
+
+def test_disclosure_ladder_reaches_50_and_requires_width_four():
+    counts, registry = _singleton_table(21)
+    initial = script.audit_counts(counts, registry, 10)
+    assert initial["failed"] == 21
+    assert all(q["maximum"] - q["minimum"] == 3 for q in initial["quantities"])
+    published, disclosure, private = script.release_counts(counts, registry)
+    assert disclosure["base"] == 50
+    assert [attempt["base"] for attempt in disclosure["attempts"]] == [10, 50]
+    assert private["audits"][-1]["failed"] == 0
+    assert set(published.values()) == {"<50"}
+
+
+def test_disclosure_no_base_passes_and_names_no_failing_quantity():
+    # Positive cells in the 14/74/149 subsets fill their count upper
+    # bounds at B=10/50/100; at B=500 the 499-person total does so.
+    counts, registry = _singleton_table(499, partial=(14, 74, 149))
+    published, disclosure, private = script.release_counts(counts, registry)
+    assert published == {}
+    assert disclosure["base"] is None
+    assert [attempt["base"] for attempt in disclosure["attempts"]] == [
+        10,
+        50,
+        100,
+        500,
+    ]
+    assert all(attempt["failed"] for attempt in disclosure["attempts"])
+    assert all(
+        set(attempt) == {"base", "audited", "failed"}
+        for attempt in disclosure["attempts"]
+    )
+    assert private["audits"][0]["atom_sizes"]["persons"] == [1] * 499
+    assert "cell_" not in json.dumps(disclosure)
+    assert "atoms" not in json.dumps(disclosure)
+
+
+def test_disclosure_public_has_no_small_values_sets_or_atom_fields():
+    people, labor, anchor, design = _invariance_inputs()
+    validity = _validity(labor)
+    raw = script.structural_counts(people, validity, anchor, design)
+    registry = script.disclosure_registry(people, validity, anchor, design)
+    published, disclosure, private = script.release_counts(raw, registry)
+    base = disclosure["base"]
+    assert base is not None
+    for path, value in script._leaves(published):
+        assert not isinstance(value, (set, frozenset))
+        if isinstance(value, (int, float)):
+            assert value == 0 or value >= base, (path, value)
+    public_bytes = _bytes({"counts": published, "disclosure": disclosure})
+    for forbidden in (
+        b'"sets"',
+        b'"atoms"',
+        b'"atom_sizes"',
+        b'"true_size"',
+        b'"minimum"',
+        b'"maximum"',
+    ):
+        assert forbidden not in public_bytes
+    assert "atom_sizes" in private["audits"][0]
+
+
+@pytest.mark.parametrize(
+    "sizes", [(1, 1, 1), (1, 2, 3), (3, 3, 4), (3, 7, 8), (1, 2, 10)]
+)
+def test_integer_audit_extrema_agree_with_bruteforce(sizes):
+    from itertools import product
+
+    a, b, c = (
+        set(range(sum(sizes[:i]), sum(sizes[: i + 1]))) for i in range(3)
+    )
+    counts, registry = _table_registry({"ab": a | b, "ac": a | c, "bc": b | c})
+    model = script.build_atom_models(registry)["persons"]
+    matrix = model["matrix"].toarray().astype(int)
+
+    def preimage(published):
+        values = [
+            v for v in range(0, 60) if script.coarsen(v, 10) == published
+        ]
+        return min(values), max(values)
+
+    bounds = [preimage(script.coarsen(count, 10)) for count in counts.values()]
+    maximum = max(upper for _, upper in bounds)
+    feasible = [
+        np.array(candidate)
+        for candidate in product(range(maximum + 1), repeat=3)
+        if all(
+            low <= observed <= high
+            for observed, (low, high) in zip(
+                matrix @ candidate, bounds, strict=True
+            )
+        )
+    ]
+    assert feasible
+    audit = script.audit_counts(counts, registry, 10)
+    for quantity in audit["quantities"]:
+        values = [
+            int(candidate[quantity["atoms"]].sum()) for candidate in feasible
+        ]
+        assert quantity["minimum"] == min(values)
+        assert quantity["maximum"] == max(values)
+    if sizes == (1, 1, 1):
+        # Continuous relaxation has maximum 8.5, attained at (8.5,.5,.5).
+        assert {q["maximum"] for q in audit["quantities"]} == {8}
+
+
+def test_atom_grouping_and_sparse_matrix_on_test_sized_population():
+    from scipy.sparse import issparse
+
+    groups = [set(range(30 * i, 30 * (i + 1))) for i in range(6)]
+    groups[0] = {0, 1, 2}
+    sets = {
+        f"set_{i}": set().union(
+            *(groups[j] for j in range(6) if ((i % 20) >> j) & 1)
+        )
+        for i in range(40)
+    }
+    counts, registry = _table_registry(sets)
+    model = script.build_atom_models(registry)["persons"]
+    assert issparse(model["matrix"])
+    assert len(model["sizes"]) <= len(groups)
+    assert model["matrix"].shape[0] < len(sets)  # duplicate sets share rows
+    published, disclosure, _ = script.release_counts(counts, registry)
+    assert published and disclosure["attempts"][-1]["failed"] == 0
+    assert disclosure["attempts"][-1]["audited"] > 0
+
+
+def test_audit_requires_proven_optimum_and_sixty_second_integer_programs(
+    monkeypatch,
+):
+    from types import SimpleNamespace
+
+    calls = []
+
+    def no_optimum(objective, **kwargs):
+        calls.append(kwargs)
+        return SimpleNamespace(status=1, success=False, fun=None)
+
+    monkeypatch.setattr(script, "milp", no_optimum)
+    counts, registry = _table_registry({"persons": {1}})
+    published, disclosure, private = script.release_counts(counts, registry)
+    assert published == {}
+    assert len(calls) == 8
+    assert all(np.all(call["integrality"] == 1) for call in calls)
+    assert all(call["options"]["time_limit"] == 60 for call in calls)
+    assert all(attempt["failed"] == 1 for attempt in disclosure["attempts"])
+    assert all(
+        q["minimum"] is None and q["maximum"] is None
+        for audit in private["audits"]
+        for q in audit["quantities"]
+    )
 
 
 # --------------------------------------------------------------------------
@@ -887,6 +1088,11 @@ def test_main_refuses_local_copy_inside_repository_before_read(
         pytest.fail("local-copy refusal must happen before input reads")
 
     monkeypatch.setattr(script.psid, "_resolve_data_dir", no_read)
+    # Isolate repository exclusion from the independent evidence-folder
+    # guard, and stop before any attempt file can be created by a mutant.
+    monkeypatch.setattr(script, "EVIDENCE_DIR", ROOT)
+    monkeypatch.setattr(script, "_check_runtime", lambda: None)
+    monkeypatch.setattr(script, "_start_attempt", no_read)
     local = Path("invented_private_counts.json")
     if not relative:
         local = ROOT / local
@@ -912,6 +1118,9 @@ def test_main_refuses_local_copy_through_repository_symlink_before_read(
         pytest.fail("local-copy refusal must happen before input reads")
 
     monkeypatch.setattr(script.psid, "_resolve_data_dir", no_read)
+    monkeypatch.setattr(script, "EVIDENCE_DIR", ROOT)
+    monkeypatch.setattr(script, "_check_runtime", lambda: None)
+    monkeypatch.setattr(script, "_start_attempt", no_read)
     with pytest.raises(SystemExit, match="outside.*repository"):
         script.main(
             [
@@ -992,6 +1201,14 @@ def invented_main(tmp_path, monkeypatch):
     baseline = tmp_path / "b01.json"
     baseline.write_text(json.dumps({"counts": {"domain_persons": 2}}))
     monkeypatch.setattr(script, "B0_1_COUNTS", baseline)
+    monkeypatch.setattr(script, "EVIDENCE_DIR", tmp_path)
+    protocol = tmp_path / "protocol.md"
+    protocol.write_text(
+        (ROOT / "docs/design/track_b_b0_2_protocol.md")
+        .read_text()
+        .replace("version 1, DRAFT,", "version 1, FROZEN,", 1)
+    )
+    monkeypatch.setattr(script, "PROTOCOL_PATH", protocol)
     for name in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS"):
         monkeypatch.setenv(name, "1")
     monkeypatch.setenv("OMP_WAIT_POLICY", "PASSIVE")
@@ -1023,20 +1240,18 @@ def test_main_records_provenance_and_checks_b01_size(tmp_path, invented_main):
     assert record["psid_files_opened_sha256"] == {"invented.txt": "a" * 64}
     assert record["requested_label_allowlist"] == supplied[-1]
     raw_counts = script.structural_counts(*supplied[:-1])
-    relations = script.disclosure_relations(*supplied[:-1])
-    suppressed, disclosure = script.suppress_counts(raw_counts, relations)
-    assert record["counts"] == suppressed
-    assert record["disclosure"] == disclosure
-    assert disclosure["threshold"] == 10
-    assert isinstance(disclosure["rule"], str) and disclosure["rule"]
-    assert disclosure["primary_suppressed"] > 0
-    assert disclosure["complementary_suppressed"] >= 0
-    assert (
-        sum(disclosure["complementary_passes"])
-        == disclosure["complementary_suppressed"]
+    registry = script.disclosure_registry(*supplied[:-1])
+    coarsened, disclosure, local_audit = script.release_counts(
+        raw_counts, registry
     )
+    assert record["counts"] == coarsened
+    assert record["disclosure"] == disclosure
+    assert disclosure["base"] in (10, 50, 100, 500)
+    assert disclosure["attempts"][-1]["failed"] == 0
+    assert "disclosure_audit" not in record
     local_record = json.loads((tmp_path / "local.json").read_text())
     assert local_record["counts"] == raw_counts
+    assert local_record["disclosure_audit"] == local_audit
     assert local_record["repository_head"] == record["repository_head"]
     assert record["geometry"]["collection_waves"] == list(WAVES)
     assert record["geometry"]["reference_years"] == [
@@ -1152,6 +1367,137 @@ def test_runtime_rejects_dirty_worktree_before_read(
             ]
         )
     assert not calls
+
+
+@pytest.mark.parametrize("failure", ["draft", "pin"])
+def test_main_requires_frozen_pinned_protocol_before_any_input(
+    failure, tmp_path, monkeypatch, invented_main
+):
+    _, _, calls = invented_main
+    text = script.PROTOCOL_PATH.read_text()
+    if failure == "draft":
+        text = text.replace("version 1, FROZEN,", "version 1, DRAFT,", 1)
+        message = "FROZEN"
+    else:
+        text = text.replace("### Scope", "### Revised scope", 1)
+        message = "SHA-256"
+    script.PROTOCOL_PATH.write_text(text)
+    with pytest.raises(SystemExit, match=message):
+        script.main(
+            [
+                "--out",
+                str(tmp_path / "counts.json"),
+                "--local-copy",
+                str(tmp_path / "local.json"),
+            ]
+        )
+    assert not calls
+    assert not script._attempt_path(tmp_path / "local.json").exists()
+
+
+def test_attempt_record_survives_failed_start_and_refuses_retry(
+    tmp_path, monkeypatch, invented_main
+):
+    _, _, calls = invented_main
+    local = tmp_path / "local.json"
+    out = tmp_path / "counts.json"
+    attempted = []
+
+    def failed_resolve(_):
+        record = json.loads(script._attempt_path(local).read_text())
+        attempted.append(record)
+        assert record["repository_head"] == "b" * 40
+        assert (
+            record["script_sha256"]
+            == hashlib.sha256(Path(script.__file__).read_bytes()).hexdigest()
+        )
+        from datetime import datetime
+
+        assert (
+            datetime.fromisoformat(record["started_at"])
+            .utcoffset()
+            .total_seconds()
+            == 0
+        )
+        raise RuntimeError("invented pre-read failure")
+
+    monkeypatch.setattr(script.psid, "_resolve_data_dir", failed_resolve)
+    with pytest.raises(RuntimeError, match="invented pre-read failure"):
+        script.main(["--out", str(out), "--local-copy", str(local)])
+    assert len(attempted) == 1
+    assert not calls and not out.exists() and not local.exists()
+    with pytest.raises(SystemExit, match="attempt record"):
+        script.main(
+            [
+                "--out",
+                str(out),
+                "--local-copy",
+                str(tmp_path / "other-local.json"),
+            ]
+        )
+    assert len(attempted) == 1
+
+
+def test_main_refuses_attempt_record_through_existing_symlink(
+    tmp_path, invented_main
+):
+    local = tmp_path / "local.json"
+    attempt = script._attempt_path(local)
+    attempt.symlink_to(tmp_path / "absent-attempt.json")
+    with pytest.raises(SystemExit, match="attempt record"):
+        script.main(
+            [
+                "--out",
+                str(tmp_path / "counts.json"),
+                "--local-copy",
+                str(local),
+            ]
+        )
+    assert attempt.is_symlink()
+    assert not (tmp_path / "absent-attempt.json").exists()
+
+
+def test_main_refuses_local_copy_outside_fixed_evidence_folder(
+    tmp_path, invented_main
+):
+    _, _, calls = invented_main
+    local = tmp_path / "other-folder" / "local.json"
+    with pytest.raises(SystemExit, match="B0.2 evidence folder"):
+        script.main(
+            [
+                "--out",
+                str(tmp_path / "counts.json"),
+                "--local-copy",
+                str(local),
+            ]
+        )
+    assert not calls and not local.exists()
+
+
+def test_main_failed_disclosure_writes_only_disclosure_block(
+    tmp_path, monkeypatch, invented_main
+):
+    disclosure = {
+        "base": None,
+        "coarsening_rule": "fixture",
+        "protection_rule": "fixture",
+        "attempts": [
+            {"base": base, "audited": 1, "failed": 1}
+            for base in (10, 50, 100, 500)
+        ],
+    }
+    monkeypatch.setattr(
+        script,
+        "release_counts",
+        lambda counts, registry: ({}, disclosure, {"audits": []}),
+    )
+    out = tmp_path / "counts.json"
+    local = tmp_path / "local.json"
+    assert script.main(["--out", str(out), "--local-copy", str(local)]) == 0
+    assert json.loads(out.read_text()) == {"disclosure": disclosure}
+    assert json.loads(local.read_text())["counts"] == script.structural_counts(
+        *invented_main[0][:-1]
+    )
 
 
 def test_module_stays_in_unit_tier(tier_policy_collection):
@@ -1563,3 +1909,108 @@ def test_readers_request_the_pinned_allowlist(monkeypatch, tmp_path):
             "spouse_acc_flag",
         ]
         assert frame.iloc[0].tolist() == [1, True, True, True, True]
+
+
+def _write_invented_product(directory, labels, rows, stem):
+    """Generate fixed-width bytes and matching labels solely from fixtures."""
+    directory.mkdir(parents=True, exist_ok=True)
+    names = list(labels)
+    width = 12
+    layout = "\n".join(
+        f"{name} {i * width + 1} - {(i + 1) * width}"
+        for i, name in enumerate(names)
+    )
+    variables = "\n".join(f'{name} "{labels[name]}"' for name in names)
+    (directory / f"{stem}.sps").write_text(
+        "DATA LIST FILE = INVENTED /\n"
+        + layout
+        + "\n.\nVARIABLE LABELS\n"
+        + variables
+        + "\n.\n"
+    )
+    (directory / f"{stem}.txt").write_text(
+        "\n".join(
+            "".join(str(row.get(name, 0)).rjust(width) for name in names)
+            for row in rows
+        )
+        + "\n"
+    )
+
+
+def test_missing_999_and_zero_ages_through_actual_named_readers(tmp_path):
+    labels, family_labels, expected = _reader_metadata()
+    source = tmp_path / "invented_reader_inputs"
+    ages = [999, 0, 29, 80, 81, 125]
+    rows = []
+    for person, age in enumerate(ages, 1):
+        row = {
+            "ER30001": 1,
+            "ER30002": person,
+            "ER34106": 1950,
+            "ER31996": 5,
+            "ER31997": 7,
+            "FORBIDDEN_INDIVIDUAL": 999,
+        }
+        for entries in expected["individual"]["by_wave"].values():
+            values = {
+                "age": age,
+                "sequence": 1,
+                "relationship": 10,
+                "weight": 2,
+                "interview": person,
+            }
+            row.update(
+                {
+                    entry["variable"]: values[concept]
+                    for concept, entry in entries.items()
+                }
+            )
+        rows.append(row)
+    _write_invented_product(source / "ind2023er", labels, rows, "IND2023ER")
+    for wave in WAVES:
+        entries = expected["family"][str(wave)]
+        records = []
+        for person in range(1, len(ages) + 1):
+            record = {
+                entries["interview"]["variable"]: person,
+                entries["head_labor"]["variable"]: 0,
+                entries["spouse_labor"]["variable"]: 0,
+                "FORBIDDEN_FAMILY": 999,
+            }
+            record.update(
+                {
+                    entry["variable"]: 0
+                    for entry in entries["head_accuracy"]
+                    + entries["spouse_accuracy"]
+                }
+            )
+            records.append(record)
+        _write_invented_product(
+            source / "family" / str(wave),
+            family_labels[wave],
+            records,
+            "INVENTED",
+        )
+    people, validity, anchor, design, _ = script.read_inputs(source)
+    assert anchor["age"].tolist() == ages
+    counts = script.structural_counts(people, validity, anchor, design)
+    for section in (counts["rosters"], counts["b3l"]["rosters"]):
+        for roster in section.values():
+            expected_unknown = (
+                0 if roster is counts["rosters"]["R_TA_PROXY"] else 2
+            )
+            assert roster["unknown_age"]["persons"] == expected_unknown
+            assert roster["by_age_band"]["80_plus"]["persons"] == 3
+            assert (
+                sum(item["persons"] for item in roster["by_age_band"].values())
+                + roster["unknown_age"]["persons"]
+                == roster["overall"]["persons"]
+            )
+    assert counts["rosters"]["R_TA_PROXY"]["overall"]["persons"] == 3
+    registry = script.disclosure_registry(people, validity, anchor, design)
+    unknown = ("rosters", "R_FULL", "unknown_age", "persons")
+    old = ("rosters", "R_FULL", "by_age_band", "80_plus", "persons")
+    assert registry.sets[unknown][1] == {1001, 1002}
+    assert registry.sets[unknown][1].isdisjoint(registry.sets[old][1])
+    published, _, private = script.release_counts(counts, registry)
+    assert published and private["audits"][-1]["failed"] == 0

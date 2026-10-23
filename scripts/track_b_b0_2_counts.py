@@ -14,13 +14,19 @@ import hashlib
 import json
 import os
 import subprocess
+import warnings
+from collections import Counter
 from collections.abc import Mapping
 from copy import deepcopy
-from fractions import Fraction
+from datetime import datetime, timezone
+from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import pandas as pd
+from scipy.optimize import Bounds, LinearConstraint, milp
+from scipy.sparse import csc_matrix
 
 from populace_dynamics.cohorts import age67, psid2010
 from populace_dynamics.data import family, panels, psid
@@ -37,11 +43,19 @@ ROOT = Path(__file__).resolve().parents[1]
 RUNS_DIR = ROOT / "runs"
 DEFAULT_OUT = ROOT / "docs/design/track_b_b0_2_counts.json"
 B0_1_COUNTS = ROOT / "docs/design/track_b_b0_1_counts.json"
+EVIDENCE_DIR = (
+    Path.home()
+    / "microcosm-launch-evidence/dynasim-parity-20260909/trackb-b0-2-20261021"
+)
+PROTOCOL_PATH = ROOT / "docs/design/track_b_b0_2_protocol.md"
+PROTOCOL_SHA256 = (
+    "f2fd0a3eaf7cbfd99da21d7f885ca05e9e6b62764fe4db895b0f28b84ccd4bc6"
+)
 SCHEMA = "track_b_b0_2_counts.v1"
 DISCLOSURE_THRESHOLD = 10
-SUPPRESSED = "<10"
+DISCLOSURE_BASES = (10, 50, 100, 500)
+PROTECTION_WIDTH = 4
 CellPath = tuple[str, ...]
-Relation = tuple[CellPath, tuple[CellPath, ...]] | Mapping[CellPath, int]
 WAVES = tuple(range(1999, 2024, 2))
 LAGS = (2, 4)
 ANCHOR_WAVE = 2011
@@ -49,11 +63,11 @@ B3L_ORIGIN_WAVE = 2007
 OLDER_BANDS = (("62_64", 62, 64), ("65_66", 65, 66), ("67_69", 67, 69))
 CONTEXT_BANDS = (("25_44", 25, 44), ("45_61", 45, 61))
 ROSTER_BANDS = (
-    ("0_24", 0, 24),
+    ("1_24", 1, 24),
     *CONTEXT_BANDS,
     *OLDER_BANDS,
     ("70_79", 70, 79),
-    ("80_plus", 80, float("inf")),
+    ("80_plus", 80, age67._MAX_AGE_CODE),
 )
 PERSON_COLUMNS = (
     "person_id",
@@ -115,6 +129,19 @@ def _with_design(frame: pd.DataFrame, design: pd.DataFrame) -> pd.DataFrame:
     )
 
 
+def _known_age(ages: pd.Series) -> pd.Series:
+    """Readers' accepted integer ages; sentinels and fractions are unknown."""
+    numeric = pd.to_numeric(ages, errors="coerce")
+    return (
+        numeric.between(1, age67._MAX_AGE_CODE) & numeric.mod(1).eq(0)
+    ).fillna(False)
+
+
+def _age_band(ages: pd.Series, low: int, high: int) -> pd.Series:
+    numeric = pd.to_numeric(ages, errors="coerce")
+    return _known_age(ages) & numeric.between(low, high)
+
+
 def _summary(frame: pd.DataFrame) -> dict[str, Any]:
     """Count persons and units; effective sizes use positive weights only.
 
@@ -134,13 +161,12 @@ def _summary(frame: pd.DataFrame) -> dict[str, Any]:
         "design_clusters": int(
             len(frame[["stratum", "cluster"]].drop_duplicates())
         ),
-        "kish_n_eff": round(kish_n_eff(weights), 3),
-        "household_cluster_worst_n_eff": round(
-            cluster_worst_n_eff(weights, positive["interview"].to_numpy()),
-            3,
+        "kish_n_eff": kish_n_eff(weights),
+        "household_cluster_worst_n_eff": cluster_worst_n_eff(
+            weights, positive["interview"].to_numpy()
         ),
-        "design_cluster_worst_n_eff": round(
-            cluster_worst_n_eff(weights, design_clusters), 3
+        "design_cluster_worst_n_eff": cluster_worst_n_eff(
+            weights, design_clusters
         ),
     }
 
@@ -149,9 +175,10 @@ def _roster_summary(frame: pd.DataFrame) -> dict[str, Any]:
     return {
         "overall": _summary(frame),
         "by_age_band": {
-            name: _summary(frame[frame["age"].between(low, high)])
+            name: _summary(frame[_age_band(frame["age"], low, high)])
             for name, low, high in ROSTER_BANDS
         },
+        "unknown_age": _summary(frame[~_known_age(frame["age"])]),
     }
 
 
@@ -175,7 +202,7 @@ def roster_counts(
     proxy = _present(
         anchor[[column for column in PERSON_COLUMNS if column != "period"]]
     )
-    proxy = proxy[proxy["age"] >= 30]
+    proxy = proxy[_known_age(proxy["age"]) & (proxy["age"] >= 30)]
     frames = {
         "R_FULL": _full(person_wave, ANCHOR_WAVE),
         "R_B2": _b2_roster(person_wave, validity_by_wave),
@@ -199,7 +226,7 @@ def b3_counts(
         by_band = {}
         for name, low, high in OLDER_BANDS:
             cell = rows[
-                (rows["period"] == wave) & rows["age"].between(low, high)
+                (rows["period"] == wave) & _age_band(rows["age"], low, high)
             ]
             by_band[name] = {
                 **_summary(cell),
@@ -221,7 +248,7 @@ def b3_counts(
             by_pair[f"{wave}_{later}"] = {
                 name: int(
                     both.loc[
-                        both["age"].between(low, high), "person_id"
+                        _age_band(both["age"], low, high), "person_id"
                     ].nunique()
                 )
                 for name, low, high in OLDER_BANDS
@@ -231,7 +258,9 @@ def b3_counts(
         "by_wave": by_wave,
         "distinct_persons_by_band": {
             name: int(
-                rows.loc[rows["age"].between(low, high), "person_id"].nunique()
+                rows.loc[
+                    _age_band(rows["age"], low, high), "person_id"
+                ].nunique()
             )
             for name, low, high in OLDER_BANDS
         },
@@ -261,13 +290,11 @@ def b3l_counts(
         for name, low, high in (*CONTEXT_BANDS, *OLDER_BANDS):
             cell = later_rows[
                 (later_rows["period"] == wave)
-                & later_rows["age"].between(low, high)
+                & _age_band(later_rows["age"], low, high)
             ]
             support[str(wave)][name] = {
                 "persons": int(cell["person_id"].nunique()),
-                "kish_n_eff": round(
-                    kish_n_eff(cell["weight"].to_numpy(dtype=float)), 3
-                ),
+                "kish_n_eff": kish_n_eff(cell["weight"].to_numpy(dtype=float)),
             }
     return {
         "origin_wave": B3L_ORIGIN_WAVE,
@@ -320,7 +347,7 @@ def structural_counts(
 
 
 # --------------------------------------------------------------------------
-# Disclosure, applied only after all raw counts have been computed
+# Disclosure: unit sets stay in memory; only counts and audit sizes go local
 # --------------------------------------------------------------------------
 def _cell(record: dict, path: CellPath) -> Any:
     for key in path:
@@ -343,274 +370,316 @@ def _leaves(record: dict, prefix: CellPath = ()):
             yield path, value
 
 
-def _subtract(row: dict, other: dict, scale: Fraction) -> None:
-    for key, value in other.items():
-        result = row.get(key, 0) - scale * value
-        if result:
-            row[key] = result
-        else:
-            row.pop(key, None)
+class SetRegistry:
+    """Every count's private unit set and effective-size count bound."""
+
+    def __init__(self):
+        self.sets: dict[CellPath, tuple[str, frozenset]] = {}
+        self.effective_bounds: dict[CellPath, CellPath] = {}
+
+    def add(self, path: CellPath, unit_type: str, units) -> None:
+        if path in self.sets or path in self.effective_bounds:
+            raise ValueError(f"duplicate registry path: {path}")
+        self.sets[path] = (unit_type, frozenset(units))
+
+    def effective(self, path: CellPath, count_path: CellPath) -> None:
+        if path in self.sets or path in self.effective_bounds:
+            raise ValueError(f"duplicate registry path: {path}")
+        if count_path not in self.sets:
+            raise ValueError("effective-size bound needs a registered count")
+        self.effective_bounds[path] = count_path
 
 
-def _equation(relation: Relation) -> dict[CellPath, Fraction]:
-    if isinstance(relation, Mapping):
-        return {path: Fraction(c) for path, c in relation.items() if c}
-    total, parts = relation
-    result = {total: Fraction(1)}
-    for part in parts:
-        result[part] = result.get(part, 0) - 1
-    return {path: c for path, c in result.items() if c}
+def coarsen(value: int | float, base: int) -> int | str:
+    """Round halves up, preserving zero and hiding positive values below B."""
+    if value < 0 or not np.isfinite(value):
+        raise ValueError(
+            "counts and effective sizes must be finite and nonnegative"
+        )
+    if value == 0:
+        return 0
+    if value < base:
+        return f"<{base}"
+    return int((Decimal(str(value)) / base + Decimal("0.5")) // 1) * base
 
 
-def _recoverable(equations: list[dict], hidden: set) -> dict[CellPath, dict]:
-    """Find hidden cells determined even by combinations of equations.
+def count_interval(value: int | str, base: int) -> tuple[int, int]:
+    """The integers whose coarsening at ``base`` is ``value``. A published
+    multiple covers the half-open band around it, except that ``base``
+    itself starts at ``base``: smaller values are written ``"<B"``."""
+    if value == 0:
+        return 0, 0
+    if value == f"<{base}":
+        return 1, base - 1
+    return max(int(value - base // 2), base), int(value + base // 2 - 1)
 
-    Exact rational elimination avoids both floating-point rank decisions
-    and the assumption that two hidden cells in every equation suffice.
+
+def build_atom_models(registry: SetRegistry) -> dict[str, dict]:
+    """Group identical sets, then identical unit memberships, using sparse A.
+
+    Atoms partition the union of registered sets for each unit type. No
+    unit identifiers or memberships are serialized. scipy's milp API has
+    no initial-solution argument; the true sizes are retained and checked
+    as a feasible witness before solving instead.
     """
-    basis = {}
-    for equation in equations:
-        row = {path: c for path, c in equation.items() if path in hidden}
-        witness = equation.copy()
-        while row:
-            pivot = min(row)
-            if pivot not in basis:
-                scale = row[pivot]
-                basis[pivot] = (
-                    {key: c / scale for key, c in row.items()},
-                    {key: c / scale for key, c in witness.items()},
-                )
-                break
-            other_row, other_witness = basis[pivot]
-            scale = row[pivot]
-            _subtract(row, other_row, scale)
-            _subtract(witness, other_witness, scale)
-    for pivot in sorted(basis, reverse=True):
-        row, witness = basis[pivot]
-        for key in sorted(set(row) - {pivot}):
-            if key in basis and key in row:
-                other_row, other_witness = basis[key]
-                scale = row[key]
-                _subtract(row, other_row, scale)
-                _subtract(witness, other_witness, scale)
+    grouped = {}
+    for path, (unit_type, units) in registry.sets.items():
+        grouped.setdefault(unit_type, {}).setdefault(units, []).append(path)
+    models = {}
+    for unit_type, groups in grouped.items():
+        sets = list(groups)
+        paths = [groups[units][0] for units in sets]
+        path_rows = {
+            path: i for i, units in enumerate(sets) for path in groups[units]
+        }
+        memberships = {}
+        for i, units in enumerate(sets):
+            for unit in units:
+                memberships.setdefault(unit, []).append(i)
+        sizes = Counter(tuple(signature) for signature in memberships.values())
+        signatures = sorted(sizes)
+        row_indices = []
+        col_indices = []
+        for column, signature in enumerate(signatures):
+            row_indices.extend(signature)
+            col_indices.extend([column] * len(signature))
+        matrix = csc_matrix(
+            (np.ones(len(row_indices)), (row_indices, col_indices)),
+            shape=(len(sets), len(signatures)),
+        )
+        targets = {}
+        true_sizes = np.array([sizes[s] for s in signatures], dtype=int)
+        for i, size in enumerate(true_sizes):
+            if 1 <= size < DISCLOSURE_THRESHOLD:
+                targets[(i,)] = {"kind": "atom"}
+        # Identical objectives denote the same sensitive unit set and are
+        # audited once, including differences that are themselves atoms.
+        for i, superset in enumerate(sets):
+            for j, subset in enumerate(sets):
+                if not 1 <= len(superset) - len(subset) < DISCLOSURE_THRESHOLD:
+                    continue
+                if subset.issubset(superset):
+                    objective = tuple(
+                        k
+                        for k, signature in enumerate(signatures)
+                        if i in signature and j not in signature
+                    )
+                    targets.setdefault(
+                        objective,
+                        {
+                            "kind": "difference",
+                            "superset": list(paths[i]),
+                            "subset": list(paths[j]),
+                        },
+                    )
+        models[unit_type] = {
+            "paths": paths,
+            "path_rows": path_rows,
+            "signatures": signatures,
+            "sizes": true_sizes,
+            "matrix": matrix,
+            "targets": targets,
+        }
+    return models
+
+
+def _audit_models(
+    counts: dict, registry: SetRegistry, models: dict, base: int
+) -> dict:
+    quantities = []
+    for unit_type, model in models.items():
+        matrix = model["matrix"]
+        lower, upper = np.array(
+            [
+                count_interval(coarsen(_cell(counts, path), base), base)
+                for path in model["paths"]
+            ],
+            dtype=float,
+        ).T
+        for path, count_path in registry.effective_bounds.items():
+            if registry.sets[count_path][0] != unit_type:
+                continue
+            effective = coarsen(_cell(counts, path), base)
+            # An effective size never exceeds its count, so the count is
+            # at least the smallest effective size that coarsens to the
+            # published value: 1 under "<B", B for B itself.
+            if effective == f"<{base}":
+                bound = 1
+            elif effective == 0:
+                bound = 0
+            else:
+                bound = max(base, effective - base / 2)
+            row = model["path_rows"][count_path]
+            lower[row] = max(lower[row], bound)
+        actual = matrix @ model["sizes"]
+        if np.any(actual < lower) or np.any(actual > upper):
+            raise ValueError(
+                "true atom sizes violate the published constraints"
+            )
+        constraints = LinearConstraint(matrix, lower, upper)
+        for atoms, detail in model["targets"].items():
+            objective = np.zeros(matrix.shape[1])
+            objective[list(atoms)] = 1
+            extrema = []
+            statuses = []
+            for sign in (1, -1):
+                # HiGHS receives threads verbatim. Both its internal
+                # threads and the required BLAS environment stay at one.
+                with warnings.catch_warnings():
+                    warnings.filterwarnings(
+                        "ignore",
+                        message="Unrecognized options detected.*",
+                        category=RuntimeWarning,
+                    )
+                    result = milp(
+                        sign * objective,
+                        integrality=np.ones(matrix.shape[1]),
+                        bounds=Bounds(0, np.inf),
+                        constraints=constraints,
+                        options={
+                            "time_limit": 60.0,
+                            "mip_rel_gap": 0.0,
+                            "threads": 1,
+                        },
+                    )
+                optimal = result.status == 0 and result.success
+                statuses.append(int(result.status))
+                extrema.append(float(sign * result.fun) if optimal else None)
+            minimum, maximum = extrema
+            protected = (
+                minimum is not None
+                and maximum is not None
+                and maximum - minimum >= PROTECTION_WIDTH
+            )
+            quantities.append(
+                {
+                    "unit_type": unit_type,
+                    "atoms": list(atoms),
+                    **detail,
+                    "true_size": int(model["sizes"][list(atoms)].sum()),
+                    "minimum": minimum,
+                    "maximum": maximum,
+                    "solver_status": statuses,
+                    "protected": protected,
+                }
+            )
     return {
-        pivot: witness
-        for pivot, (row, witness) in basis.items()
-        if len(row) == 1
+        "base": base,
+        "quantities": quantities,
+        "audited": len(quantities),
+        "failed": sum(not quantity["protected"] for quantity in quantities),
+        "atom_sizes": {
+            kind: model["sizes"].tolist() for kind, model in models.items()
+        },
     }
 
 
-def suppress_counts(
-    counts: dict[str, Any], relations: tuple[Relation, ...] = ()
-) -> tuple[dict[str, Any], dict[str, Any]]:
-    """Return publishable counts and an audit of each suppression pass.
-
-    Relations are exact total/parts identities or signed count equations.
-    They stay private: neither unit sets nor residual counts are emitted.
-    Effective sizes below ten are conservatively suppressed even when
-    their supporting set is larger. Empty-set zeros remain zero.
-    """
-    published = deepcopy(counts)
-    values = dict(_leaves(counts))
-    hidden = set()
-
-    def suppress(path):
-        hidden.add(path)
-        _put(published, path, SUPPRESSED)
-
-    for path, value in values.items():
-        parent = _cell(counts, path[:-1])
-        support = parent.get("valid_rows", parent.get("persons", 0))
-        small_support = (
-            path[-1].endswith("_n_eff") and 0 < support < DISCLOSURE_THRESHOLD
+def _validate_registry(counts: dict, registry: SetRegistry) -> None:
+    if set(dict(_leaves(counts))) != set(registry.sets) | set(
+        registry.effective_bounds
+    ):
+        raise ValueError(
+            "every published statistic must be registered exactly once"
         )
-        if 0 < value < DISCLOSURE_THRESHOLD or small_support:
-            suppress(path)
-    primary = len(hidden)
-    equations = [_equation(relation) for relation in relations]
+    for path, (_, units) in registry.sets.items():
+        if _cell(counts, path) != len(units):
+            raise ValueError(
+                f"registered set size disagrees with count: {path}"
+            )
 
-    def smallest(equation):
-        available = [
-            path
-            for path in equation
-            if path not in hidden and values[path] > 0
-        ]
-        parts = [path for path in available if equation[path] < 0]
-        candidates = parts or available
-        return min(
-            candidates, key=lambda path: (values[path], path), default=None
-        )
 
-    passes = []
-    while True:
-        extra = set()
-        for equation in equations:
-            if len(hidden.intersection(equation)) == 1:
-                candidate = smallest(equation)
-                if candidate is not None:
-                    extra.add(candidate)
-        # Coupled tables can disclose a cell without any single equation
-        # having just one hidden term. Close those paths as well.
-        if not extra:
-            proposals = []
-            for witness in _recoverable(equations, hidden).values():
-                candidate = smallest(witness)
-                if candidate is not None:
-                    proposals.append(candidate)
-            if proposals:
-                # One complement can close several recovery equations;
-                # recompute before choosing another cell.
-                extra.add(
-                    min(proposals, key=lambda path: (values[path], path))
-                )
-        # A complementary person-count suppression must not be undone by
-        # a published Kish size (equal to n for constant weights).
-        for path in values:
-            if path not in hidden and path[-1].endswith("_n_eff"):
-                parent = _cell(published, path[:-1])
-                if parent.get("persons") == SUPPRESSED:
-                    extra.add(path)
-        if not extra:
+def audit_counts(counts: dict, registry: SetRegistry, base: int) -> dict:
+    """Run both integer optimizations for every sensitive quantity at B."""
+    _validate_registry(counts, registry)
+    return _audit_models(counts, registry, build_atom_models(registry), base)
+
+
+def release_counts(
+    counts: dict, registry: SetRegistry
+) -> tuple[dict, dict, dict]:
+    """Use the first passing base; public metadata never names a quantity."""
+    _validate_registry(counts, registry)
+    models = build_atom_models(registry)
+    audits = []
+    published = {}
+    selected = None
+    for base in DISCLOSURE_BASES:
+        audit = _audit_models(counts, registry, models, base)
+        audits.append(audit)
+        if audit["failed"] == 0:
+            selected = base
+            published = deepcopy(counts)
+            for path, value in _leaves(counts):
+                _put(published, path, coarsen(value, base))
             break
-        for path in extra:
-            suppress(path)
-        passes.append(len(extra))
-    return published, {
-        "threshold": DISCLOSURE_THRESHOLD,
-        "rule": (
-            "1-9 and statistics on nonempty sets below 10: <10; empty "
-            "zeros retained; positive effective sizes below 10 also hidden. "
-            "Complementary: hide the smallest remaining positive part, "
-            "or its total if no positive part remains; repeat to a fixed "
-            "point, including aliases and coupled subtraction identities."
-        ),
-        "primary_suppressed": primary,
-        "complementary_suppressed": sum(passes),
-        "complementary_passes": passes,
+    disclosure = {
+        "base": selected,
+        "coarsening_rule": "0 stays 0; 1 to B-1 is <B; otherwise nearest multiple of B, halves up; applies also to effective sizes",
+        "protection_rule": "integer maximum minus minimum >= 4; both proven optimal within 60 seconds per program",
+        "attempts": [
+            {key: audit[key] for key in ("base", "audited", "failed")}
+            for audit in audits
+        ],
     }
+    return published, disclosure, {"audits": audits}
 
 
-def _incidence_relations(cells: dict[CellPath, frozenset]) -> list[dict]:
-    """All exact additive identities among these private unit sets.
-
-    Units with identical cell membership share one incidence column.
-    Reducing its rows yields a basis of every cardinality identity,
-    including disjoint partitions, aliases and inclusion/exclusion when
-    intersections are present. Overlapping unions are never just summed.
-    Only coefficients on existing output cells leave this function.
-    """
-    memberships = {}
-    paths = list(cells)
-    for index, units in enumerate(cells.values()):
-        for unit in units:
-            memberships.setdefault(unit, []).append(index)
-    columns = sorted({tuple(indices) for indices in memberships.values()})
-    vectors = {path: {} for path in paths}
-    for column in columns:
-        for index in column:
-            vectors[paths[index]][column] = Fraction(1)
-    basis = {}
-    relations = []
-    for path, row in vectors.items():
-        if not row:  # zero counts are public; no useful suppression alias
-            continue
-        terms = {path: Fraction(1)}
-        while row:
-            pivot = min(row)
-            if pivot not in basis:
-                scale = row[pivot]
-                basis[pivot] = (
-                    {key: c / scale for key, c in row.items()},
-                    {key: c / scale for key, c in terms.items()},
-                )
-                break
-            other_row, other_terms = basis[pivot]
-            scale = row[pivot]
-            _subtract(row, other_row, scale)
-            _subtract(terms, other_terms, scale)
-        if not row and terms:
-            relations.append(terms)
-    return relations
-
-
-def disclosure_relations(
+def disclosure_registry(
     person_wave: pd.DataFrame,
     validity_by_wave: Mapping[int, pd.DataFrame],
     anchor: pd.DataFrame,
     design: pd.DataFrame,
-) -> tuple[Relation, ...]:
-    """Explicitly register every output table and its unit-set relations.
-
-    Person IDs link waves, rosters, lag intersections and pooled unions.
-    Household IDs are wave-specific; design clusters include stratum.
-    No earnings value, new statistic or unreported remainder is computed.
-    """
-    cells = {}
-    partitions = []
+) -> SetRegistry:
+    """Register every count by persons, wave households, strata or clusters."""
+    registry = SetRegistry()
 
     def register(prefix, frame, wave):
         def clean(value):
             return None if pd.isna(value) else value
 
         units = {
-            "persons": frozenset(
-                ("person", value) for value in frame["person_id"].dropna()
-            ),
-            "households": frozenset(
-                ("household", wave, value)
-                for value in frame["interview"].dropna()
-            ),
-            "design_strata": frozenset(
-                ("stratum", value) for value in frame["stratum"].dropna()
-            ),
-            "design_clusters": frozenset(
-                ("cluster", clean(stratum), clean(cluster))
-                for stratum, cluster in frame[["stratum", "cluster"]]
-                .drop_duplicates()
-                .itertuples(index=False, name=None)
+            "persons": ("persons", frame["person_id"].dropna()),
+            "households": (f"households_{wave}", frame["interview"].dropna()),
+            "design_strata": ("strata", frame["stratum"].dropna()),
+            "design_clusters": (
+                "clusters",
+                [
+                    (clean(stratum), clean(cluster))
+                    for stratum, cluster in frame[["stratum", "cluster"]]
+                    .drop_duplicates()
+                    .itertuples(index=False, name=None)
+                ],
             ),
         }
-        for metric, members in units.items():
-            cells[(*prefix, metric)] = members
-
-    def partition(total, parts):
-        # A union is additive only with exhaustive, disjoint parts.
-        members = set()
-        for part in parts:
-            if members.intersection(cells[part]):
-                return
-            members.update(cells[part])
-        if members == cells[total]:
-            partitions.append((total, tuple(parts)))
+        for metric, (unit_type, members) in units.items():
+            registry.add((*prefix, metric), unit_type, members)
+        for effective, count in (
+            ("kish_n_eff", "persons"),
+            ("household_cluster_worst_n_eff", "households"),
+            ("design_cluster_worst_n_eff", "design_clusters"),
+        ):
+            registry.effective((*prefix, effective), (*prefix, count))
 
     def roster(prefix, frame, wave):
         register((*prefix, "overall"), frame, wave)
         for name, low, high in ROSTER_BANDS:
             register(
                 (*prefix, "by_age_band", name),
-                frame[frame["age"].between(low, high)],
+                frame[_age_band(frame["age"], low, high)],
                 wave,
             )
-        for metric in (
-            "persons",
-            "households",
-            "design_strata",
-            "design_clusters",
-        ):
-            partition(
-                (*prefix, "overall", metric),
-                [
-                    (*prefix, "by_age_band", name, metric)
-                    for name, _, _ in ROSTER_BANDS
-                ],
-            )
+        register(
+            (*prefix, "unknown_age"), frame[~_known_age(frame["age"])], wave
+        )
 
     full = _with_design(_full(person_wave, ANCHOR_WAVE), design)
     domain = _with_design(_b2_roster(person_wave, validity_by_wave), design)
     proxy = _present(
         anchor[[column for column in PERSON_COLUMNS if column != "period"]]
     )
-    proxy = _with_design(proxy[proxy["age"] >= 30], design)
+    proxy = _with_design(
+        proxy[_known_age(proxy["age"]) & (proxy["age"] >= 30)], design
+    )
     for name, frame in (
         ("R_FULL", full),
         ("R_B2", domain),
@@ -621,24 +690,23 @@ def disclosure_relations(
     for wave in WAVES:
         for name, low, high in OLDER_BANDS:
             frame = rows[
-                (rows["period"] == wave) & rows["age"].between(low, high)
+                (rows["period"] == wave) & _age_band(rows["age"], low, high)
             ]
             prefix = ("b3", "by_wave", str(wave), name)
             register(prefix, frame, wave)
-            cells[(*prefix, "valid_rows")] = cells[(*prefix, "persons")]
-            cells[(*prefix, "accuracy_positive_rows")] = frozenset(
-                ("person", value)
-                for value in frame.loc[frame["acc_flag"], "person_id"]
+            registry.add(
+                (*prefix, "valid_rows"), "persons", frame["person_id"]
+            )
+            registry.add(
+                (*prefix, "accuracy_positive_rows"),
+                "persons",
+                frame.loc[frame["acc_flag"], "person_id"],
             )
     for name, low, high in OLDER_BANDS:
-        total = ("b3", "distinct_persons_by_band", name)
-        cells[total] = frozenset(
-            ("person", value)
-            for value in rows.loc[rows["age"].between(low, high), "person_id"]
-        )
-        partition(
-            total,
-            [("b3", "by_wave", str(wave), name, "persons") for wave in WAVES],
+        registry.add(
+            ("b3", "distinct_persons_by_band", name),
+            "persons",
+            rows.loc[_age_band(rows["age"], low, high), "person_id"],
         )
     for lag in LAGS:
         for wave in WAVES:
@@ -650,13 +718,10 @@ def disclosure_relations(
                 (rows["period"] == later) & rows["person_id"].isin(earlier)
             ]
             for name, low, high in OLDER_BANDS:
-                cells[
-                    ("b3", "lag_pairs", str(lag), f"{wave}_{later}", name)
-                ] = frozenset(
-                    ("person", value)
-                    for value in both.loc[
-                        both["age"].between(low, high), "person_id"
-                    ]
+                registry.add(
+                    ("b3", "lag_pairs", str(lag), f"{wave}_{later}", name),
+                    "persons",
+                    both.loc[_age_band(both["age"], low, high), "person_id"],
                 )
     origin = _with_design(_full(person_wave, B3L_ORIGIN_WAVE), design)
     origin_ids = rows.loc[rows["period"] == B3L_ORIGIN_WAVE, "person_id"]
@@ -670,11 +735,11 @@ def disclosure_relations(
             frame = rows[
                 (rows["period"] == wave)
                 & rows["person_id"].isin(origin_domain["person_id"])
-                & rows["age"].between(low, high)
+                & _age_band(rows["age"], low, high)
             ]
-            cells[("b3l", "later_support", str(wave), name, "persons")] = (
-                frozenset(("person", value) for value in frame["person_id"])
-            )
+            prefix = ("b3l", "later_support", str(wave), name)
+            registry.add((*prefix, "persons"), "persons", frame["person_id"])
+            registry.effective((*prefix, "kish_n_eff"), (*prefix, "persons"))
     outside = full[~full["interview"].isin(domain["interview"])]
     roster(("outside_b2",), outside, ANCHOR_WAVE)
     for wave in (2013, 2015):
@@ -683,17 +748,12 @@ def disclosure_relations(
             & person_wave["sequence"].between(1, 20)
             & person_wave["person_id"].isin(domain["person_id"])
         ]
-        cells[("outside_b2", "b2_households_by_wave", str(wave))] = frozenset(
-            ("household", wave, value) for value in frame["interview"].dropna()
+        registry.add(
+            ("outside_b2", "b2_households_by_wave", str(wave)),
+            f"households_{wave}",
+            frame["interview"].dropna(),
         )
-    partition(
-        ("rosters", "R_FULL", "overall", "households"),
-        [
-            ("rosters", "R_B2", "overall", "households"),
-            ("outside_b2", "overall", "households"),
-        ],
-    )
-    return tuple([*partitions, *_incidence_relations(cells)])
+    return registry
 
 
 # --------------------------------------------------------------------------
@@ -778,6 +838,56 @@ def _git(*arguments: str) -> str:
     ).stdout.strip()
 
 
+def _check_protocol() -> None:
+    """Require the reviewed block and an explicit version-1 freeze."""
+    protocol = PROTOCOL_PATH.read_bytes()
+    status = [
+        line
+        for line in protocol.decode("utf-8").splitlines()
+        if line.startswith("**Status:")
+    ]
+    if (
+        len(status) != 1
+        or len(status[0].split(",")) < 2
+        or status[0].split(",")[1].strip() != "FROZEN"
+    ):
+        raise SystemExit("B0.2 requires protocol status FROZEN")
+    begin = b"<!-- protocol:begin -->"
+    end = b"<!-- protocol:end -->"
+    if protocol.count(begin) != 1 or protocol.count(end) != 1:
+        raise SystemExit("B0.2 protocol block does not match its SHA-256 pin")
+    start, stop = protocol.index(begin), protocol.index(end) + len(end)
+    if stop <= start or hashlib.sha256(protocol[start:stop]).hexdigest() != (
+        PROTOCOL_SHA256
+    ):
+        raise SystemExit("B0.2 protocol block does not match its SHA-256 pin")
+
+
+def _attempt_path(local_copy: Path) -> Path:
+    """One name per protocol version, independent of output filenames."""
+    return local_copy.parent / f"{SCHEMA}.attempt.json"
+
+
+def _start_attempt(
+    local_copy: Path, repository_head: str, script_sha256: str
+) -> None:
+    attempt = _attempt_path(local_copy)
+    record = {
+        "repository_head": repository_head,
+        "script_sha256": script_sha256,
+        "started_at": datetime.now(timezone.utc).isoformat(),
+    }
+    try:
+        with attempt.open("x", encoding="utf-8") as stream:
+            stream.write(json.dumps(record, indent=2, sort_keys=True) + "\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+    except FileExistsError as error:
+        raise SystemExit(
+            f"B0.2 protocol version already has an attempt record: {attempt}"
+        ) from error
+
+
 def _check_runtime() -> None:
     if _git("status", "--porcelain"):
         raise SystemExit("B0.2 requires a clean protocol-freezing worktree")
@@ -790,6 +900,7 @@ def _check_runtime() -> None:
             raise SystemExit(f"set {name} to an integer from 1 to 4")
     if os.environ.get("OMP_WAIT_POLICY") != "PASSIVE":
         raise SystemExit("set OMP_WAIT_POLICY=PASSIVE")
+    _check_protocol()
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -822,8 +933,17 @@ def main(argv: list[str] | None = None) -> int:
             or "runs" in destination.resolve().parts
         ):
             raise SystemExit("B0.2 writes no file under runs/")
+    if local.parent.resolve() != EVIDENCE_DIR.resolve():
+        raise SystemExit("local copy must be in B0.2 evidence folder")
+    attempt = _attempt_path(local)
+    if attempt.exists() or attempt.is_symlink():
+        raise SystemExit(
+            f"B0.2 protocol version already has an attempt record: {attempt}"
+        )
     _check_runtime()
     repository_head = _git("rev-parse", "HEAD")
+    script_sha256 = _sha256_file(Path(__file__))
+    _start_attempt(local, repository_head, script_sha256)
     data_dir = psid._resolve_data_dir(None).resolve()
     with psid2010.record_files_read(data_dir) as opened:
         person_wave, validity, anchor, design, allowlist = read_inputs(
@@ -840,7 +960,7 @@ def main(argv: list[str] | None = None) -> int:
         "schema": SCHEMA,
         "repository_head": repository_head,
         "worktree_clean": True,
-        "script_sha256": _sha256_file(Path(__file__)),
+        "script_sha256": script_sha256,
         "psid_files_opened_sha256": dict(sorted(opened.items())),
         "b0_1_counts_sha256": _sha256_file(B0_1_COUNTS),
         "requested_label_allowlist": allowlist,
@@ -852,13 +972,20 @@ def main(argv: list[str] | None = None) -> int:
         },
         "counts": counts,
     }
-    relations = disclosure_relations(person_wave, validity, anchor, design)
-    suppressed, disclosure = suppress_counts(counts, relations)
-    public_payload = {
-        **payload,
-        "counts": suppressed,
-        "disclosure": disclosure,
-    }
+    registry = disclosure_registry(person_wave, validity, anchor, design)
+    coarsened, disclosure, local_audit = release_counts(counts, registry)
+    payload["disclosure_audit"] = local_audit
+    public_payload = {"disclosure": disclosure}
+    if coarsened:
+        public_payload = {
+            **{
+                key: value
+                for key, value in payload.items()
+                if key != "disclosure_audit"
+            },
+            "counts": coarsened,
+            "disclosure": disclosure,
+        }
     # Reserve both paths exclusively before writing either payload. If the
     # second reservation fails, remove only the first file we just created.
     with out.open("x", encoding="utf-8") as stream:

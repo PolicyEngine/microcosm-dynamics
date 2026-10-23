@@ -1,122 +1,138 @@
-Track B B0.2 counts: disclosure revision, protocol version 1
+Track B B0.2 counts: revised protocol version 1, review round 1
 
-Changes
-  Updated the four pre-existing uncommitted files: count script, tests,
-  mutations JSON, and this report. Raw structural definitions/readers and
-  existing tests are retained. No commit or push was made.
-  After counting, counts 1-9 and effective sizes on nonempty sets below
-  ten are replaced by "<10". Positive effective sizes below ten are also
-  suppressed conservatively even on larger sets. Zero counts and empty-set
-  effective sizes remain zero. Complementary person suppression also hides
-  that set's effective sizes, which could otherwise reveal its count.
-  Complementary suppression repeats to a fixed point. Exact rational
-  elimination also checks recovery from combined equations; it chooses
-  one smallest relevant published cell before recomputing that closure.
-  The public payload has only suppressed counts, plus a disclosure block
-  with threshold, rule, primary cell count, each complementary pass's cell
-  count, and the complementary total. It contains no private unit sets,
-  unsuppressed copy, or local path.
-  Default public destination: docs/design/track_b_b0_2_counts.json.
-  Required --local-copy supplies an external evidence-folder destination
-  for unsuppressed JSON. Repository-local paths (including symlink aliases)
-  are refused before input resolution. Relative external paths work.
-  Both files use exclusive creation, refusing existing files and dangling
-  symlinks. If the local path appears during reading, its bytes survive
-  and the newly reserved empty public file is removed.
+Changes and review findings
+  Known ages are integers 1..cohorts.age67._MAX_AGE_CODE. Ages 0, 999,
+  fractions and other invalid values enter unknown_age, never an age band
+  or R_TA_PROXY. Roster bands plus unknown_age partition persons; the
+  youngest band is now 1_24. Tests use the actual named readers on invented
+  fixed-width products and hand-count ages 81/125 and 2009 lag origins.
+  Integer-bounds recovery and the unpublished co-resident remainder are
+  addressed by a complete set registry, membership-signature atoms, and
+  every sensitive published-set/subset difference. Wave households have
+  separate types; design clusters include stratum. Identical sets and
+  objectives share rows/audits. Sparse matrices feed two scipy.optimize.milp
+  programs per distinct sensitive quantity, with integer nonnegative atom
+  sizes, 60 seconds per program, zero MIP gap and one HiGHS thread. Both
+  proven optima and width >=4 are required. No optimum means unprotected.
+  Effective sizes supply the specified person/household/design-cluster
+  lower bounds. Intermediate rounding was removed before coarsening.
+  All counts/effective sizes use halves-up coarsening and the 10/50/100/500
+  ladder. If no base passes, only the disclosure block is published. Public
+  metadata never names a quantity; sets/memberships are never serialized.
+  Unsuppressed counts, atom sizes and audit results go only to the local
+  copy. scipy.milp has no initial-solution argument; true atom sizes are
+  checked as a feasible witness instead.
+  Frozen status and the block pin are mandatory before input resolution.
+  An exclusive, fsynced version-specific attempt record holds head, script
+  SHA-256 and UTC start time before any PSID file can open. Its name is
+  independent of output filenames; the fixed B0.2 evidence folder prevents
+  changing the parent directory to bypass the version lock. Existing clean,
+  thread, path, symlink and exclusive-output protections remain in place.
 
-Encoded total/parts and duplicate-cell relations
-  Every output count is registered as a private set of its counting units.
-  Exact incidence identities encode all additive relations among these
-  cells; unit sets and coefficients are never written to either output.
-  Explicit table registrations cover:
-  - Overall versus eight age bands for R_FULL, R_B2, R_TA_PROXY,
-    R2006_FULL, D2006, and outside-B2. A sum partition is recorded only
-    when parts cover the total without overlap. This applies to persons,
-    households, strata and composite design clusters; missing ages do not
-    create an assumed exhaustive partition.
-  - R_FULL overall households = R_B2 overall households + outside-B2
-    overall households, at the 2011 anchor. Persons are not assumed to
-    have that partition: non-B2 co-residents can occupy B2 households.
-  - B3 pooled distinct persons versus the union of wave counts for each
-    older band, together with lag intersections. Overlaps use exact
-    inclusion/exclusion identities, never an assumed sum across waves.
-  - Roster/subset overlaps, accuracy-positive subsets of valid rows,
-    both lag sets, origin/later D2006 support, and later B2-household
-    counts. No unreported remainder count is added to the output.
-  - B3 valid_rows = persons; R_B2 older-band unit counts = B3 2011;
-    D2006 older-band unit counts = B3 2007; D2006 support at 2009 and
-    2011 = the respective 2007-origin lag-2 and lag-4 person counts.
-  Household identities include collection wave, and design clusters
-  include stratum. Distinct unit unions may overlap. Effective sizes
-  are not added across cells, and differing weight definitions remain
-  separate.
+Protocol pin (block unchanged; status remains DRAFT)
+  f2fd0a3eaf7cbfd99da21d7f885ca05e9e6b62764fe4db895b0f28b84ccd4bc6
+  Exact bytes from <!-- protocol:begin --> through <!-- protocol:end -->,
+  excluding the following newline. No freeze or real-data run occurred.
 
-Protocol pin
-  94e22e3fff7b8ec541f87abe9890270a9893e0ec1653ce7b91fb0170b2732cb9
-  SHA-256 covers exact bytes from <!-- protocol:begin --> through
-  <!-- protocol:end --> inclusive, excluding the following newline.
-  The protocol itself is unchanged. No freeze or real-data run occurred.
+Invented realistic-size timing
+  30,000 persons; 415 person sets; six effective sizes;
+  413 membership atoms; sparse matrix 271 x 413 with 13,298 nonzeros.
+  Thirteen collection waves, age bands, retention/validity profiles,
+  accuracy subsets, lag intersections and origin/later support, plus rare
+  singleton cells to exercise the ladder. This is the measured invented
+  fixture, not a worst-case bound for all possible membership patterns.
+  B=10: 22 quantities audited, 21 failed. B=50: 22 audited, none failed.
+  All 88 integer programs reached proven optima. Construction plus the
+  complete audit/ladder: 132.475925s (2m12.48s), under 60 minutes;
+  audit/ladder alone: 132.240612s. MILPs dominated model construction.
+  OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python /tmp/b02-r1-mutations-timing/benchmark.py > /tmp/b02-r1-mutations-timing/benchmark.log 2>&1
+    INVENTED REALISTIC-SIZE AUDIT PASS
 
-Validation (serial; commands omit log-only tee wrappers)
-  OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py tests/test_track_b_b0_1_counts.py
-    81 passed in 200.55s (0:03:20)
-    59 B0.2 cases and 22 unchanged B0.1 cases, exit 0.
-    Includes threshold boundaries, small/empty effective sizes, smallest
-    complement, second-pass chain, combined-equation recovery, overlapping
-    pools, exact identities, no positive published statistic below ten,
-    path guards, exclusive-file races, and the revised protocol pin.
+Validation (serial; exact commands, with final lines)
+  OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py tests/test_track_b_b0_1_counts.py > /tmp/b02-r1-tests.log 2>&1
+    95 passed in 885.84s (0:14:45)
+  OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_1_counts.py > /tmp/b02-r1-b01.log 2>&1
+    22 passed in 142.04s (0:02:22)
   OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m black --version
     python -m black, 26.5.1 (compiled: yes)
-  OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m black --check -l 79 scripts/track_b_b0_2_counts.py tests/test_track_b_b0_2_counts.py
+    Python (CPython) 3.14.7
+  OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m black --check -l 79 scripts/track_b_b0_2_counts.py tests/test_track_b_b0_2_counts.py > /tmp/b02-r1-black.log 2>&1
     2 files would be left unchanged.
-  OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m ruff check scripts/track_b_b0_2_counts.py tests/test_track_b_b0_2_counts.py
+  OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m ruff check scripts/track_b_b0_2_counts.py tests/test_track_b_b0_2_counts.py > /tmp/b02-r1-ruff.log 2>&1
     All checks passed!
 
-Mutation checks (six existing plus four disclosure mutations)
-  1. band edges: detected, exit 1.
-     OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_band_edges_and_b3_support_are_hand_counted
-       1 failed in 26.99s
-  2. lag set: detected, exit 1.
-     OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_b3_lag_pairs_use_exact_lags_and_later_wave_band
-       1 failed in 8.08s
-  3. R_TA_PROXY age threshold: detected, exit 1.
-     OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_rosters_and_age_30_proxy_boundary_use_their_own_weights_and_ages
-       1 failed in 7.17s
-  4. outside-B2 household exclusion: detected, exit 1.
-     OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_outside_b2_excludes_entire_anchor_households_and_counts_later_units
-       1 failed in 15.74s
-  5. valid-row rule: detected, exit 1.
-     OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_valid_rows_require_present_role_positive_weight_and_role_validity
-       1 failed in 8.79s
-  6. B3L origin wave: detected, exit 1.
-     OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_b3l_uses_2007_origin_and_fixed_origin_weights_for_later_support
-       1 failed in 14.51s
-  7. disclosure threshold changed from 10 to 9: detected, exit 1.
-     OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q 'tests/test_track_b_b0_2_counts.py::test_disclosure_suppresses_counts_one_through_nine[9]'
-       1 failed in 7.53s
-  8. complementary suppression skipped: detected, exit 1.
-     OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_disclosure_complements_the_smallest_remaining_published_part
-       1 failed in 26.43s
-  9. effective sizes on small sets left unsuppressed: detected, exit 1.
-     OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_disclosure_suppresses_effective_sizes_on_small_nonempty_sets
-       6 failed in 32.28s
-  10. local copy allowed inside repository: detected, exit 1.
-     OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_main_refuses_local_copy_inside_repository_before_read
-       2 failed in 13.59s
-  Final runner line: 10/10 mutations killed
-  Every mutation restored the exact production bytes, SHA-256 verified:
-    15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb
-  The effective-size mutation leaves effective sizes raw in the final
-  published payload. The local-copy mutation reaches only mocked refusal
-  tests. Old/new text, failed nodes, exit codes, commands, final lines and
-  restoration digests are recorded in the mutations JSON.
+Mutations
+  OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python /tmp/b02-r1-mutations-timing/run_fork_mutations.py /private/tmp/b02-r1-mutations-timing/specs.json > /tmp/b02-r1-mutations-timing/fork-mutations.log 2>&1
+    20/20 mutations killed
+    FORK MUTATION REPORT RECORDED; SOURCE RESTORED
+  Six original structural mutations remain; threshold, raw-effective-size
+  and path mutations were adapted. The old subtraction-complement check
+  is replaced by the published-subset-difference audit mutation.
+  Serial fresh child processes reuse parent-cached dependency imports;
+  the parent never runs an optimizer. Every child evicts and reloads the
+  script and test module before its targeted pytest.main invocation.
+  Four pytest import-rewrite warnings per child concern cached Hypothesis
+  and AnyIO plugins, not the reloaded script or tests.
+  Exact pytest invocations and equivalent reproduction commands, old/new
+  source text, exit codes, failed nodes, final lines and restoration
+  digests are recorded in
+  docs/design/track_b_b0_2_counts_mutations.json.
+  1. band edges: 1 failed, 4 warnings in 16.28s (killed).
+  2. lag set: 1 failed, 4 warnings in 14.20s (killed).
+  3. R_TA_PROXY age threshold: 1 failed, 4 warnings in 4.23s (killed).
+  4. outside-B2 household exclusion: 1 failed, 4 warnings in 6.66s (killed).
+  5. valid-row rule: 1 failed, 4 warnings in 6.47s (killed).
+  6. B3L origin wave: 1 failed, 4 warnings in 16.08s (killed).
+  7. sensitive-quantity threshold changed from 10 to 9: 1 failed, 10 passed, 4 warnings in 16.72s (killed).
+  8. effective sizes left uncoarsened: 1 failed, 4 warnings in 30.49s (killed).
+  9. local copy allowed inside repository: 2 failed, 4 warnings in 8.21s (killed).
+  10. coarsening rounds halves down: 2 failed, 4 warnings in 4.89s (killed).
+  11. atom audit skips published subset differences: 1 failed, 4 warnings in 7.31s (killed).
+  12. effective-size lower bounds omitted: 1 failed, 4 warnings in 6.15s (killed).
+  13. continuous relaxation replaces integer programs: 4 failed, 1 passed, 4 warnings in 6.39s (killed).
+  14. protection width reduced to 3: 1 failed, 4 warnings in 2.77s (killed).
+  15. disclosure ladder skipped: 1 failed, 4 warnings in 8.36s (killed).
+  16. unknown age counted in 80 and over: 1 failed, 4 warnings in 33.10s (killed).
+  17. frozen check removed: 2 failed, 4 warnings in 89.67s (0:01:29) (killed).
+  18. attempt record not checked, allowing a silent retry: 1 failed, 4 warnings in 30.99s (killed).
+  19. 80-and-over band ends at 80: 1 failed, 4 warnings in 27.70s (killed).
+  20. 2009 lag origins dropped: 1 failed, 4 warnings in 31.88s (killed).
+  The silent-retry mutant disables both the early attempt check and
+  exclusive attempt creation; removing only one leaves the other defense.
+  Because valid effective sizes cannot exceed their associated published
+  count, identical monotone coarsening makes their lower bounds redundant
+  in ordinary valid tables. The omission mutation is tested by broadening
+  only the count interval in a unit test, isolating the required effective
+  bound; the true invented table remains valid. The independent household
+  effective-size attack and complete structural release also pass.
+  Every mutation restored the production bytes and verified SHA-256:
+    fd3e2b177e5da09482501dffbadd5c6ab347712dc5efc372fbaa59dedf207322
 
 No-data and integrity declaration
-  No data file or codebook was opened. No real-data count, power quantity,
-  or default counts JSON was generated. All numerical tests used invented
-  frames; reader IO and B0.1 consistency counts were mocked.
-  No restricted evidence directory, restricted file, or other Track B
-  workspace was opened. No package was installed. No protocol, gates.yaml,
-  runs/, tests/tier_counts.json, existing src/ file, or other tracked file
-  was edited. The assigned branch remains trackb-b0-2-20261021 at
-  6e6deb9356e5e346ef87b52ece9089ee9e8e9713. All four files remain uncommitted.
+  No real data file or codebook was opened. All numerical fixtures and
+  fixed-width reader products were invented. No real-data count, power
+  calculation, default counts JSON or real evidence-folder attempt was
+  created.
+  No package was installed. The protocol, gates.yaml, runs/,
+  tests/tier_counts.json and existing src/ files were not edited. Only the
+  requested script, tests, mutation JSON and report changed. Branch
+  trackb-b0-2-20261021 remains at f5d22c1d21f4ec92dbd6239672ce98e33fc06d4e.
+  No commit or push was made, following the task's explicit no-commit rule.
+
+Post-build correction (main session, before review round 2)
+  count_interval gave a published multiple equal to B the interval
+  B/2..3B/2-1. Under the coarsening rule, "B" covers B..3B/2-1, because
+  smaller values are written "<B". The effective-size lower bound for a
+  published B had the same flaw (B/2 rather than B). Both under-constrained
+  the audit, which could then pass a release that an attacker could
+  narrow further. Both now start at B.
+  The brute-force differential test took its oracle from count_interval,
+  so it could not see this; its oracle is now each published value's
+  preimage under coarsen, by enumeration. New tests:
+  test_count_intervals_are_exact_preimages_of_coarsening (every base in
+  the ladder) and test_a_published_base_bounds_its_effective_count_from_base.
+  Both fail on the build's code and pass on the fix.
+  Tests: 100 passed (B0.2 and B0.1 count tests), 70.4s serial.
+  Mutations: 22/22 killed, the build's 20 plus "published B interval
+  starts at B/2" and "effective bound for a published B starts at B/2";
+  record rewritten in docs/design/track_b_b0_2_counts_mutations.json.

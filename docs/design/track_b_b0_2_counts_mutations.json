@@ -2,12 +2,12 @@
   "schema_version": 1,
   "verification_class": "structural-count protocol conformance",
   "admitted_scope": "Invented frames only; no real-data run.",
-  "mutation_method": "One deliberate production-source change per check; targeted pytest run serially; original source bytes restored and SHA-256 verified after every check, including failures. No mutated implementation is committed.",
-  "protocol_sha256": "94e22e3fff7b8ec541f87abe9890270a9893e0ec1653ce7b91fb0170b2732cb9",
+  "mutation_method": "One deliberate production behavior change per check; serial fresh forked pytest children after parent-only dependency imports. Parent never invokes milp/HiGHS. Each child evicts and reimports the count script and test module, then invokes pytest.main with the recorded arguments. Original source bytes are restored and SHA-256 verified after every check, including failures. No mutated implementation is committed.",
+  "protocol_sha256": "f2fd0a3eaf7cbfd99da21d7f885ca05e9e6b62764fe4db895b0f28b84ccd4bc6",
   "restored_source_sha256": {
-    "scripts/track_b_b0_2_counts.py": "15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb"
+    "scripts/track_b_b0_2_counts.py": "02780b98f9ec1bf5991757eddd17527ebc0e2a04118898849877a61e0dadb391"
   },
-  "result": "10/10 mutations killed",
+  "result": "22/22 mutations killed",
   "checks": [
     {
       "mutation": "band edges",
@@ -15,17 +15,26 @@
       "new": "OLDER_BANDS = ((\"62_64\", 63, 64), (\"65_66\", 65, 66), (\"67_69\", 67, 69))",
       "anchor_occurrences": 1,
       "replacement_occurrence": 1,
-      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_band_edges_and_b3_support_are_hand_counted",
       "exit_code": 1,
       "failed_tests": [
         "tests/test_track_b_b0_2_counts.py::test_band_edges_and_b3_support_are_hand_counted"
       ],
-      "summary": "1 failed in 26.99s",
+      "summary": "1 failed, 4 warnings in 0.79s",
       "status": "killed",
       "restored": true,
-      "restored_source_sha256": "15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb",
-      "log_path": "/private/tmp/b02-disclosure-revision/mutation-01.log",
-      "elapsed_seconds": 41.794
+      "restored_source_sha256": "02780b98f9ec1bf5991757eddd17527ebc0e2a04118898849877a61e0dadb391",
+      "log_path": "/private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/mutation-01.log",
+      "elapsed_seconds": 1.064,
+      "reproduction_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_band_edges_and_b3_support_are_hand_counted",
+      "pytest_main_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_b0_2_counts.py::test_band_edges_and_b3_support_are_hand_counted"
+      ],
+      "invocation": "pytest.main(pytest_main_arguments) in a fresh source-reloading fork"
     },
     {
       "mutation": "lag set",
@@ -33,71 +42,107 @@
       "new": "LAGS = (2, 6)",
       "anchor_occurrences": 1,
       "replacement_occurrence": 1,
-      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_b3_lag_pairs_use_exact_lags_and_later_wave_band",
       "exit_code": 1,
       "failed_tests": [
         "tests/test_track_b_b0_2_counts.py::test_b3_lag_pairs_use_exact_lags_and_later_wave_band"
       ],
-      "summary": "1 failed in 8.08s",
+      "summary": "1 failed, 4 warnings in 0.38s",
       "status": "killed",
       "restored": true,
-      "restored_source_sha256": "15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb",
-      "log_path": "/private/tmp/b02-disclosure-revision/mutation-02.log",
-      "elapsed_seconds": 11.5
+      "restored_source_sha256": "02780b98f9ec1bf5991757eddd17527ebc0e2a04118898849877a61e0dadb391",
+      "log_path": "/private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/mutation-02.log",
+      "elapsed_seconds": 0.668,
+      "reproduction_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_b3_lag_pairs_use_exact_lags_and_later_wave_band",
+      "pytest_main_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_b0_2_counts.py::test_b3_lag_pairs_use_exact_lags_and_later_wave_band"
+      ],
+      "invocation": "pytest.main(pytest_main_arguments) in a fresh source-reloading fork"
     },
     {
       "mutation": "R_TA_PROXY age threshold",
-      "old": "    proxy = proxy[proxy[\"age\"] >= 30]",
-      "new": "    proxy = proxy[proxy[\"age\"] > 30]",
+      "old": "proxy = proxy[_known_age(proxy[\"age\"]) & (proxy[\"age\"] >= 30)]",
+      "new": "proxy = proxy[_known_age(proxy[\"age\"]) & (proxy[\"age\"] > 30)]",
       "anchor_occurrences": 1,
       "replacement_occurrence": 1,
-      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_rosters_and_age_30_proxy_boundary_use_their_own_weights_and_ages",
       "exit_code": 1,
       "failed_tests": [
         "tests/test_track_b_b0_2_counts.py::test_rosters_and_age_30_proxy_boundary_use_their_own_weights_and_ages"
       ],
-      "summary": "1 failed in 7.17s",
+      "summary": "1 failed, 4 warnings in 0.42s",
       "status": "killed",
       "restored": true,
-      "restored_source_sha256": "15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb",
-      "log_path": "/private/tmp/b02-disclosure-revision/mutation-03.log",
-      "elapsed_seconds": 9.096
+      "restored_source_sha256": "02780b98f9ec1bf5991757eddd17527ebc0e2a04118898849877a61e0dadb391",
+      "log_path": "/private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/mutation-03.log",
+      "elapsed_seconds": 0.663,
+      "reproduction_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_rosters_and_age_30_proxy_boundary_use_their_own_weights_and_ages",
+      "pytest_main_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_b0_2_counts.py::test_rosters_and_age_30_proxy_boundary_use_their_own_weights_and_ages"
+      ],
+      "invocation": "pytest.main(pytest_main_arguments) in a fresh source-reloading fork"
     },
     {
       "mutation": "outside-B2 household exclusion",
-      "old": "    outside = full[~full[\"interview\"].isin(domain[\"interview\"])]",
-      "new": "    outside = full[~full[\"person_id\"].isin(domain[\"person_id\"])]",
+      "old": "outside = full[~full[\"interview\"].isin(domain[\"interview\"])]",
+      "new": "outside = full[~full[\"person_id\"].isin(domain[\"person_id\"])]",
       "anchor_occurrences": 2,
       "replacement_occurrence": 1,
-      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_outside_b2_excludes_entire_anchor_households_and_counts_later_units",
       "exit_code": 1,
       "failed_tests": [
         "tests/test_track_b_b0_2_counts.py::test_outside_b2_excludes_entire_anchor_households_and_counts_later_units"
       ],
-      "summary": "1 failed in 15.74s",
+      "summary": "1 failed, 4 warnings in 0.34s",
       "status": "killed",
       "restored": true,
-      "restored_source_sha256": "15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb",
-      "log_path": "/private/tmp/b02-disclosure-revision/mutation-04.log",
-      "elapsed_seconds": 19.557
+      "restored_source_sha256": "02780b98f9ec1bf5991757eddd17527ebc0e2a04118898849877a61e0dadb391",
+      "log_path": "/private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/mutation-04.log",
+      "elapsed_seconds": 0.594,
+      "reproduction_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_outside_b2_excludes_entire_anchor_households_and_counts_later_units",
+      "pytest_main_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_b0_2_counts.py::test_outside_b2_excludes_entire_anchor_households_and_counts_later_units"
+      ],
+      "invocation": "pytest.main(pytest_main_arguments) in a fresh source-reloading fork"
     },
     {
       "mutation": "valid-row rule",
-      "old": "        rows[\"valid\"], [\"person_id\", \"reference_year\", \"acc_flag\"]",
-      "new": "        rows[\"weight_positive\"], [\"person_id\", \"reference_year\", \"acc_flag\"]",
+      "old": "rows[\"valid\"], [\"person_id\", \"reference_year\", \"acc_flag\"]",
+      "new": "rows[\"weight_positive\"], [\"person_id\", \"reference_year\", \"acc_flag\"]",
       "anchor_occurrences": 1,
       "replacement_occurrence": 1,
-      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_valid_rows_require_present_role_positive_weight_and_role_validity",
       "exit_code": 1,
       "failed_tests": [
         "tests/test_track_b_b0_2_counts.py::test_valid_rows_require_present_role_positive_weight_and_role_validity"
       ],
-      "summary": "1 failed in 8.79s",
+      "summary": "1 failed, 4 warnings in 0.35s",
       "status": "killed",
       "restored": true,
-      "restored_source_sha256": "15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb",
-      "log_path": "/private/tmp/b02-disclosure-revision/mutation-05.log",
-      "elapsed_seconds": 10.805
+      "restored_source_sha256": "02780b98f9ec1bf5991757eddd17527ebc0e2a04118898849877a61e0dadb391",
+      "log_path": "/private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/mutation-05.log",
+      "elapsed_seconds": 0.597,
+      "reproduction_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_valid_rows_require_present_role_positive_weight_and_role_validity",
+      "pytest_main_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_b0_2_counts.py::test_valid_rows_require_present_role_positive_weight_and_role_validity"
+      ],
+      "invocation": "pytest.main(pytest_main_arguments) in a fresh source-reloading fork"
     },
     {
       "mutation": "B3L origin wave",
@@ -105,76 +150,80 @@
       "new": "B3L_ORIGIN_WAVE = 2009",
       "anchor_occurrences": 1,
       "replacement_occurrence": 1,
-      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_b3l_uses_2007_origin_and_fixed_origin_weights_for_later_support",
       "exit_code": 1,
       "failed_tests": [
         "tests/test_track_b_b0_2_counts.py::test_b3l_uses_2007_origin_and_fixed_origin_weights_for_later_support"
       ],
-      "summary": "1 failed in 14.51s",
+      "summary": "1 failed, 4 warnings in 0.37s",
       "status": "killed",
       "restored": true,
-      "restored_source_sha256": "15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb",
-      "log_path": "/private/tmp/b02-disclosure-revision/mutation-06.log",
-      "elapsed_seconds": 20.153
+      "restored_source_sha256": "02780b98f9ec1bf5991757eddd17527ebc0e2a04118898849877a61e0dadb391",
+      "log_path": "/private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/mutation-06.log",
+      "elapsed_seconds": 0.594,
+      "reproduction_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_b3l_uses_2007_origin_and_fixed_origin_weights_for_later_support",
+      "pytest_main_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_b0_2_counts.py::test_b3l_uses_2007_origin_and_fixed_origin_weights_for_later_support"
+      ],
+      "invocation": "pytest.main(pytest_main_arguments) in a fresh source-reloading fork"
     },
     {
-      "mutation": "disclosure threshold changed from 10 to 9",
+      "mutation": "sensitive-quantity threshold changed from 10 to 9",
       "old": "DISCLOSURE_THRESHOLD = 10",
       "new": "DISCLOSURE_THRESHOLD = 9",
       "anchor_occurrences": 1,
       "replacement_occurrence": 1,
-      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q 'tests/test_track_b_b0_2_counts.py::test_disclosure_suppresses_counts_one_through_nine[9]'",
       "exit_code": 1,
       "failed_tests": [
-        "tests/test_track_b_b0_2_counts.py::test_disclosure_suppresses_counts_one_through_nine[9]"
+        "tests/test_track_b_b0_2_counts.py::test_sensitive_atom_threshold_includes_one_through_nine[9]"
       ],
-      "summary": "1 failed in 7.53s",
+      "summary": "1 failed, 10 passed, 4 warnings in 0.35s",
       "status": "killed",
       "restored": true,
-      "restored_source_sha256": "15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb",
-      "log_path": "/private/tmp/b02-disclosure-revision/mutation-07.log",
-      "elapsed_seconds": 8.845
+      "restored_source_sha256": "02780b98f9ec1bf5991757eddd17527ebc0e2a04118898849877a61e0dadb391",
+      "log_path": "/private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/mutation-07.log",
+      "elapsed_seconds": 0.543,
+      "reproduction_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_sensitive_atom_threshold_includes_one_through_nine",
+      "pytest_main_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_b0_2_counts.py::test_sensitive_atom_threshold_includes_one_through_nine"
+      ],
+      "invocation": "pytest.main(pytest_main_arguments) in a fresh source-reloading fork"
     },
     {
-      "mutation": "complementary suppression skipped",
-      "old": "    equations = [_equation(relation) for relation in relations]",
-      "new": "    equations = [_equation(relation) for relation in relations]\n    equations = []  # Deliberately skip complements.",
+      "mutation": "effective sizes left uncoarsened",
+      "old": "_put(published, path, coarsen(value, base))",
+      "new": "_put(published, path, value if path[-1].endswith(\"_n_eff\") else coarsen(value, base))",
       "anchor_occurrences": 1,
       "replacement_occurrence": 1,
-      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_disclosure_complements_the_smallest_remaining_published_part",
       "exit_code": 1,
       "failed_tests": [
-        "tests/test_track_b_b0_2_counts.py::test_disclosure_complements_the_smallest_remaining_published_part"
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_public_has_no_small_values_sets_or_atom_fields"
       ],
-      "summary": "1 failed in 26.43s",
+      "summary": "1 failed, 4 warnings in 1.18s",
       "status": "killed",
       "restored": true,
-      "restored_source_sha256": "15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb",
-      "log_path": "/private/tmp/b02-disclosure-revision/mutation-08.log",
-      "elapsed_seconds": 42.835
-    },
-    {
-      "mutation": "effective sizes on small sets left unsuppressed",
-      "old": "elif key != \"origin_wave\":  # geometry, not a count",
-      "new": "elif key != \"origin_wave\" and not key.endswith(\"_n_eff\"):  # MUTANT",
-      "anchor_occurrences": 1,
-      "replacement_occurrence": 1,
-      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_disclosure_suppresses_effective_sizes_on_small_nonempty_sets",
-      "exit_code": 1,
-      "failed_tests": [
-        "tests/test_track_b_b0_2_counts.py::test_disclosure_suppresses_effective_sizes_on_small_nonempty_sets[0.0-persons]",
-        "tests/test_track_b_b0_2_counts.py::test_disclosure_suppresses_effective_sizes_on_small_nonempty_sets[0.0-valid_rows]",
-        "tests/test_track_b_b0_2_counts.py::test_disclosure_suppresses_effective_sizes_on_small_nonempty_sets[8.125-persons]",
-        "tests/test_track_b_b0_2_counts.py::test_disclosure_suppresses_effective_sizes_on_small_nonempty_sets[8.125-valid_rows]",
-        "tests/test_track_b_b0_2_counts.py::test_disclosure_suppresses_effective_sizes_on_small_nonempty_sets[12.0-persons]",
-        "tests/test_track_b_b0_2_counts.py::test_disclosure_suppresses_effective_sizes_on_small_nonempty_sets[12.0-valid_rows]"
+      "restored_source_sha256": "02780b98f9ec1bf5991757eddd17527ebc0e2a04118898849877a61e0dadb391",
+      "log_path": "/private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/mutation-08.log",
+      "elapsed_seconds": 1.41,
+      "reproduction_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_disclosure_public_has_no_small_values_sets_or_atom_fields",
+      "pytest_main_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_public_has_no_small_values_sets_or_atom_fields"
       ],
-      "summary": "6 failed in 32.28s",
-      "status": "killed",
-      "restored": true,
-      "restored_source_sha256": "15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb",
-      "log_path": "/private/tmp/b02-disclosure-revision/mutation-09.log",
-      "elapsed_seconds": 35.882
+      "invocation": "pytest.main(pytest_main_arguments) in a fresh source-reloading fork"
     },
     {
       "mutation": "local copy allowed inside repository",
@@ -182,18 +231,403 @@
       "new": "pass  # Deliberately permit repository-local copies.",
       "anchor_occurrences": 1,
       "replacement_occurrence": 1,
-      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_main_refuses_local_copy_inside_repository_before_read",
       "exit_code": 1,
       "failed_tests": [
         "tests/test_track_b_b0_2_counts.py::test_main_refuses_local_copy_inside_repository_before_read[False]",
         "tests/test_track_b_b0_2_counts.py::test_main_refuses_local_copy_inside_repository_before_read[True]"
       ],
-      "summary": "2 failed in 13.59s",
+      "summary": "2 failed, 4 warnings in 2.12s",
       "status": "killed",
       "restored": true,
-      "restored_source_sha256": "15faf990bc1645c3a48968b111f2a46a0bedec3eb671a79d55fe6764695794eb",
-      "log_path": "/private/tmp/b02-disclosure-revision/mutation-10.log",
-      "elapsed_seconds": 16.765
+      "restored_source_sha256": "02780b98f9ec1bf5991757eddd17527ebc0e2a04118898849877a61e0dadb391",
+      "log_path": "/private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/mutation-09.log",
+      "elapsed_seconds": 2.368,
+      "reproduction_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_main_refuses_local_copy_inside_repository_before_read",
+      "pytest_main_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_b0_2_counts.py::test_main_refuses_local_copy_inside_repository_before_read"
+      ],
+      "invocation": "pytest.main(pytest_main_arguments) in a fresh source-reloading fork"
+    },
+    {
+      "mutation": "coarsening rounds halves down",
+      "old": "return int((Decimal(str(value)) / base + Decimal(\"0.5\")) // 1) * base",
+      "new": "return int((Decimal(str(value)) / base + Decimal(\"0.5\")).to_integral_value(rounding=\"ROUND_CEILING\") - 1) * base",
+      "anchor_occurrences": 1,
+      "replacement_occurrence": 1,
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_coarsening_boundaries_round_halves_up[10-values0-expected0]",
+        "tests/test_track_b_b0_2_counts.py::test_coarsening_boundaries_round_halves_up[50-values1-expected1]"
+      ],
+      "summary": "2 failed, 4 warnings in 0.36s",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "02780b98f9ec1bf5991757eddd17527ebc0e2a04118898849877a61e0dadb391",
+      "log_path": "/private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/mutation-10.log",
+      "elapsed_seconds": 0.601,
+      "reproduction_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_coarsening_boundaries_round_halves_up",
+      "pytest_main_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_b0_2_counts.py::test_coarsening_boundaries_round_halves_up"
+      ],
+      "invocation": "pytest.main(pytest_main_arguments) in a fresh source-reloading fork"
+    },
+    {
+      "mutation": "atom audit skips published subset differences",
+      "old": "if subset.issubset(superset):",
+      "new": "if False and subset.issubset(superset):",
+      "anchor_occurrences": 1,
+      "replacement_occurrence": 1,
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_audits_multi_atom_published_subset_differences"
+      ],
+      "summary": "1 failed, 4 warnings in 0.25s",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "02780b98f9ec1bf5991757eddd17527ebc0e2a04118898849877a61e0dadb391",
+      "log_path": "/private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/mutation-11.log",
+      "elapsed_seconds": 0.482,
+      "reproduction_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_disclosure_audits_multi_atom_published_subset_differences",
+      "pytest_main_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_audits_multi_atom_published_subset_differences"
+      ],
+      "invocation": "pytest.main(pytest_main_arguments) in a fresh source-reloading fork"
+    },
+    {
+      "mutation": "effective-size lower bounds omitted",
+      "old": "for path, count_path in registry.effective_bounds.items():",
+      "new": "for path, count_path in ():  # Deliberately omit effective bounds.",
+      "anchor_occurrences": 1,
+      "replacement_occurrence": 1,
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_audit_applies_effective_bound_independently_of_count_interval"
+      ],
+      "summary": "1 failed, 4 warnings in 0.45s",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "02780b98f9ec1bf5991757eddd17527ebc0e2a04118898849877a61e0dadb391",
+      "log_path": "/private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/mutation-12.log",
+      "elapsed_seconds": 0.693,
+      "reproduction_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_audit_applies_effective_bound_independently_of_count_interval",
+      "pytest_main_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_b0_2_counts.py::test_audit_applies_effective_bound_independently_of_count_interval"
+      ],
+      "invocation": "pytest.main(pytest_main_arguments) in a fresh source-reloading fork"
+    },
+    {
+      "mutation": "continuous relaxation replaces integer programs",
+      "old": "integrality=np.ones(matrix.shape[1]),",
+      "new": "integrality=np.zeros(matrix.shape[1]),",
+      "anchor_occurrences": 1,
+      "replacement_occurrence": 1,
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_integer_audit_extrema_agree_with_bruteforce[sizes0]",
+        "tests/test_track_b_b0_2_counts.py::test_integer_audit_extrema_agree_with_bruteforce[sizes1]",
+        "tests/test_track_b_b0_2_counts.py::test_integer_audit_extrema_agree_with_bruteforce[sizes2]",
+        "tests/test_track_b_b0_2_counts.py::test_integer_audit_extrema_agree_with_bruteforce[sizes3]",
+        "tests/test_track_b_b0_2_counts.py::test_integer_audit_extrema_agree_with_bruteforce[sizes4]"
+      ],
+      "summary": "5 failed, 4 warnings in 0.39s",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "02780b98f9ec1bf5991757eddd17527ebc0e2a04118898849877a61e0dadb391",
+      "log_path": "/private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/mutation-13.log",
+      "elapsed_seconds": 0.644,
+      "reproduction_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_integer_audit_extrema_agree_with_bruteforce",
+      "pytest_main_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_b0_2_counts.py::test_integer_audit_extrema_agree_with_bruteforce"
+      ],
+      "invocation": "pytest.main(pytest_main_arguments) in a fresh source-reloading fork"
+    },
+    {
+      "mutation": "protection width reduced to 3",
+      "old": "PROTECTION_WIDTH = 4",
+      "new": "PROTECTION_WIDTH = 3",
+      "anchor_occurrences": 1,
+      "replacement_occurrence": 1,
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_ladder_reaches_50_and_requires_width_four"
+      ],
+      "summary": "1 failed, 4 warnings in 0.27s",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "02780b98f9ec1bf5991757eddd17527ebc0e2a04118898849877a61e0dadb391",
+      "log_path": "/private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/mutation-14.log",
+      "elapsed_seconds": 0.487,
+      "reproduction_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_disclosure_ladder_reaches_50_and_requires_width_four",
+      "pytest_main_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_ladder_reaches_50_and_requires_width_four"
+      ],
+      "invocation": "pytest.main(pytest_main_arguments) in a fresh source-reloading fork"
+    },
+    {
+      "mutation": "disclosure ladder skipped",
+      "old": "for base in DISCLOSURE_BASES:",
+      "new": "for base in DISCLOSURE_BASES[:1]:",
+      "anchor_occurrences": 1,
+      "replacement_occurrence": 1,
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_ladder_reaches_50_and_requires_width_four"
+      ],
+      "summary": "1 failed, 4 warnings in 0.36s",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "02780b98f9ec1bf5991757eddd17527ebc0e2a04118898849877a61e0dadb391",
+      "log_path": "/private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/mutation-15.log",
+      "elapsed_seconds": 0.826,
+      "reproduction_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_disclosure_ladder_reaches_50_and_requires_width_four",
+      "pytest_main_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_b0_2_counts.py::test_disclosure_ladder_reaches_50_and_requires_width_four"
+      ],
+      "invocation": "pytest.main(pytest_main_arguments) in a fresh source-reloading fork"
+    },
+    {
+      "mutation": "unknown age counted in 80 and over",
+      "old": "return _known_age(ages) & numeric.between(low, high)",
+      "new": "return (_known_age(ages) & numeric.between(low, high)) | (~_known_age(ages) & (low == 80))",
+      "anchor_occurrences": 1,
+      "replacement_occurrence": 1,
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_known_age_partition_and_reader_maximum_are_hand_counted"
+      ],
+      "summary": "1 failed, 4 warnings in 0.90s",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "02780b98f9ec1bf5991757eddd17527ebc0e2a04118898849877a61e0dadb391",
+      "log_path": "/private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/mutation-16.log",
+      "elapsed_seconds": 1.138,
+      "reproduction_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_known_age_partition_and_reader_maximum_are_hand_counted",
+      "pytest_main_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_b0_2_counts.py::test_known_age_partition_and_reader_maximum_are_hand_counted"
+      ],
+      "invocation": "pytest.main(pytest_main_arguments) in a fresh source-reloading fork"
+    },
+    {
+      "mutation": "frozen check removed",
+      "old": "    _check_protocol()\n",
+      "new": "    pass  # Deliberately omit frozen protocol validation.\n",
+      "anchor_occurrences": 1,
+      "replacement_occurrence": 1,
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_main_requires_frozen_pinned_protocol_before_any_input[draft]",
+        "tests/test_track_b_b0_2_counts.py::test_main_requires_frozen_pinned_protocol_before_any_input[pin]"
+      ],
+      "summary": "2 failed, 4 warnings in 1.60s",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "02780b98f9ec1bf5991757eddd17527ebc0e2a04118898849877a61e0dadb391",
+      "log_path": "/private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/mutation-17.log",
+      "elapsed_seconds": 1.812,
+      "reproduction_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_main_requires_frozen_pinned_protocol_before_any_input",
+      "pytest_main_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_b0_2_counts.py::test_main_requires_frozen_pinned_protocol_before_any_input"
+      ],
+      "invocation": "pytest.main(pytest_main_arguments) in a fresh source-reloading fork"
+    },
+    {
+      "mutation": "attempt record not checked, allowing a silent retry",
+      "replacements": [
+        {
+          "old": "if attempt.exists() or attempt.is_symlink():",
+          "new": "if False and (attempt.exists() or attempt.is_symlink()):",
+          "anchor_occurrences": 1,
+          "replacement_occurrence": 1
+        },
+        {
+          "old": "with attempt.open(\"x\", encoding=\"utf-8\") as stream:",
+          "new": "with attempt.open(\"w\", encoding=\"utf-8\") as stream:",
+          "anchor_occurrences": 1,
+          "replacement_occurrence": 1
+        }
+      ],
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_attempt_record_survives_failed_start_and_refuses_retry"
+      ],
+      "summary": "1 failed, 4 warnings in 0.29s",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "02780b98f9ec1bf5991757eddd17527ebc0e2a04118898849877a61e0dadb391",
+      "log_path": "/private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/mutation-18.log",
+      "elapsed_seconds": 0.491,
+      "reproduction_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_attempt_record_survives_failed_start_and_refuses_retry",
+      "pytest_main_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_b0_2_counts.py::test_attempt_record_survives_failed_start_and_refuses_retry"
+      ],
+      "invocation": "pytest.main(pytest_main_arguments) in a fresh source-reloading fork"
+    },
+    {
+      "mutation": "published B interval starts at B/2",
+      "old": "return max(int(value - base // 2), base), int(value + base // 2 - 1)",
+      "new": "return int(value - base // 2), int(value + base // 2 - 1)",
+      "anchor_occurrences": 1,
+      "replacement_occurrence": 1,
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_count_intervals_are_exact_preimages_of_coarsening[10]",
+        "tests/test_track_b_b0_2_counts.py::test_count_intervals_are_exact_preimages_of_coarsening[50]",
+        "tests/test_track_b_b0_2_counts.py::test_count_intervals_are_exact_preimages_of_coarsening[100]",
+        "tests/test_track_b_b0_2_counts.py::test_count_intervals_are_exact_preimages_of_coarsening[500]"
+      ],
+      "summary": "4 failed, 4 warnings in 0.25s",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "02780b98f9ec1bf5991757eddd17527ebc0e2a04118898849877a61e0dadb391",
+      "log_path": "/private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/mutation-19.log",
+      "elapsed_seconds": 0.44,
+      "reproduction_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_count_intervals_are_exact_preimages_of_coarsening",
+      "pytest_main_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_b0_2_counts.py::test_count_intervals_are_exact_preimages_of_coarsening"
+      ],
+      "invocation": "pytest.main(pytest_main_arguments) in a fresh source-reloading fork"
+    },
+    {
+      "mutation": "effective bound for a published B starts at B/2",
+      "old": "bound = max(base, effective - base / 2)",
+      "new": "bound = max(0, effective - base / 2)",
+      "anchor_occurrences": 1,
+      "replacement_occurrence": 1,
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_a_published_base_bounds_its_effective_count_from_base"
+      ],
+      "summary": "1 failed, 4 warnings in 0.19s",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "02780b98f9ec1bf5991757eddd17527ebc0e2a04118898849877a61e0dadb391",
+      "log_path": "/private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/mutation-20.log",
+      "elapsed_seconds": 0.381,
+      "reproduction_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_a_published_base_bounds_its_effective_count_from_base",
+      "pytest_main_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_b0_2_counts.py::test_a_published_base_bounds_its_effective_count_from_base"
+      ],
+      "invocation": "pytest.main(pytest_main_arguments) in a fresh source-reloading fork"
+    },
+    {
+      "mutation": "80-and-over band ends at 80",
+      "old": "(\"80_plus\", 80, age67._MAX_AGE_CODE),",
+      "new": "(\"80_plus\", 80, 80),",
+      "anchor_occurrences": 1,
+      "replacement_occurrence": 1,
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_band_edges_and_b3_support_are_hand_counted"
+      ],
+      "summary": "1 failed, 4 warnings in 0.41s",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "02780b98f9ec1bf5991757eddd17527ebc0e2a04118898849877a61e0dadb391",
+      "log_path": "/private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/mutation-21.log",
+      "elapsed_seconds": 0.596,
+      "reproduction_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_band_edges_and_b3_support_are_hand_counted",
+      "pytest_main_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_b0_2_counts.py::test_band_edges_and_b3_support_are_hand_counted"
+      ],
+      "invocation": "pytest.main(pytest_main_arguments) in a fresh source-reloading fork"
+    },
+    {
+      "mutation": "2009 lag origins dropped",
+      "old": "if later not in WAVES:",
+      "new": "if later not in WAVES or wave == 2009:",
+      "anchor_occurrences": 2,
+      "replacement_occurrence": 1,
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_b0_2_counts.py::test_b3_lag_pairs_keep_nonempty_2009_origins"
+      ],
+      "summary": "1 failed, 4 warnings in 0.28s",
+      "status": "killed",
+      "restored": true,
+      "restored_source_sha256": "02780b98f9ec1bf5991757eddd17527ebc0e2a04118898849877a61e0dadb391",
+      "log_path": "/private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/mutation-22.log",
+      "elapsed_seconds": 0.451,
+      "reproduction_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_b0_2_counts.py::test_b3_lag_pairs_keep_nonempty_2009_origins",
+      "pytest_main_arguments": [
+        "-p",
+        "no:xdist",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "tests/test_track_b_b0_2_counts.py::test_b3_lag_pairs_keep_nonempty_2009_origins"
+      ],
+      "invocation": "pytest.main(pytest_main_arguments) in a fresh source-reloading fork"
     }
+  ],
+  "runner_command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE PYTHONPATH=$PWD/src:$PWD PYTHONDONTWRITEBYTECODE=1 /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python /private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/run_fork_mutations.py /private/tmp/claude-501/-Users-maxghenis-PolicyEngine-microcosm-dynamics--claude-worktrees-friendly-cannon-6a8f1e/cf246eec-cf04-4090-ba24-bf4bc201e839/scratchpad/b02mut/specs.json > /tmp/b02-r1-mutations-timing/fork-mutations.log 2>&1",
+  "module_evictions_in_each_child": [
+    "tests.test_track_b_b0_2_counts",
+    "track_b_b0_2_counts",
+    "scripts.track_b_b0_2_counts"
   ]
 }
