@@ -12,7 +12,6 @@ import pandas as pd
 import pytest
 from hypothesis import Phase, given, settings
 from hypothesis import strategies as st
-from populace.fit.qrf import DEFAULT_ZERO_ATOL, RegimeGatedQRF
 
 from populace_dynamics.engine import forward_earnings as v1
 from populace_dynamics.engine import forward_earnings_s1_v1 as s1
@@ -26,6 +25,13 @@ from populace_dynamics.engine.refit import (
     refit_earnings_chained_generator,
 )
 from populace_dynamics.engine.steps import apply_earnings
+
+# S1 refits through populace-fit, which pins scikit-learn below 1.9 and
+# lives in its own environment; without it these tests skip, as the other
+# populace-fit tests do.
+qrf = pytest.importorskip("populace.fit.qrf")
+DEFAULT_ZERO_ATOL = qrf.DEFAULT_ZERO_ATOL
+RegimeGatedQRF = qrf.RegimeGatedQRF
 
 BOUNDARY = 2000
 YEARS = tuple(range(1988, BOUNDARY + 1, 2))

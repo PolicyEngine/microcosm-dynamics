@@ -11,9 +11,14 @@ import json
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from populace_dynamics.engine import forward_earnings as v1
 from populace_dynamics.engine import forward_earnings_s1_v1 as s1
+
+# The experiments fit through populace-fit, which lives in its own
+# environment; without it they skip, as the other populace-fit tests do.
+pytest.importorskip("populace.fit")
 
 BOUNDARY = 2020
 SOURCE_YEARS = (2000, 2004, 2008)
