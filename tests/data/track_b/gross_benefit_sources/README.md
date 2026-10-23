@@ -99,3 +99,20 @@ These instructions pin the existing maximum, rounding, dual-entitlement and
 refusal boundaries. A completeness test requires all 58 retained captures
 to have a quoted rule or a registered worked figure as well as a byte-count
 and SHA-256 check.
+
+## Deduction-before-reduction source references
+
+The G part 2 manifest also references six existing captures in
+`../ret_ledger_sources/`: GN 02603.020, .040 and .090 and RS 02501.130,
+.155 and .160. Their original retrieval times, byte counts, hashes and
+transmittals are preserved; bytes are not duplicated. The source tests
+quote a rule from each and hash every relative reference. These establish
+deduction priority, the number holder's work exception, household facts,
+no-child-in-care deductions, full and partial auxiliary work deductions,
+and the temporary/permanent separate-household distinction. The G manifest
+now covers 64 captures, including these six shared references.
+
+The dispatch's `_new_*` capture logs and `lii_usc_402k_excerpt.txt` are not
+present in this checkout. No uncaptured material is asserted or fetched.
+Combined maximums and multiple auxiliary records remain refused under the
+existing captured authorities.

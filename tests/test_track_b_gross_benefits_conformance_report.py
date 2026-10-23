@@ -188,11 +188,11 @@ def test_every_retained_refusal_has_an_executed_named_witness(reason):
 
 def test_named_witness_denominator_is_separate_from_the_lattice(regenerated):
     witnesses = regenerated["supplemental_refusal_witnesses"]
-    assert len(g.UnsupportedReason) == 28
+    assert len(g.UnsupportedReason) == 37
     assert witnesses["denominator"] == {
-        "rows": 28,
+        "rows": 37,
         "supported": 0,
-        "refused": 28,
+        "refused": 37,
         "invalid": 0,
     }
     expected = {reason.value for reason in g.UnsupportedReason}
@@ -223,6 +223,20 @@ def test_pre_1978_auxiliary_history_has_an_executed_refusal_witness():
     with pytest.raises(g.FamilyConfigurationUnsupported) as caught:
         compute()
     assert caught.value.reason.value == "reduced_benefit_history_before_1978"
+
+
+def test_deduction_extension_has_its_own_complete_denominator():
+    extension = report.deduction_conformance()
+    assert extension["denominator"] == {
+        "rows": 16,
+        "supported": 16,
+        "refused": 0,
+        "invalid": 0,
+    }
+    assert len({row["id"] for row in extension["rows"]}) == 16
+    assert all(row["status"] == "supported" for row in extension["rows"])
+    assert "no historical lattice row" in extension["scope"]
+    assert report.deduction_conformance() == extension
 
 
 def test_pre_1978_own_rib_history_is_outside_the_1946_lattice(regenerated):

@@ -543,8 +543,11 @@ adds that a saving clause, once established, "will continue in effect
 until the table or formula maximum becomes larger", and may become payable
 again.
 
-G computes one month and does not compute the raise. It refuses instead.
-`SavingsClauseGuard` carries the protection across one record's months:
+The following describes the explicit `LITERAL_REFUSAL` alternative retained
+from G v2. The default is now `SSA_OPERATIONAL`, implementing d1338 and the
+RS 00630.400 procedures detailed in "Operational saving clause, October 23,
+2026" below. `SavingsClauseGuard` carries the chosen reading across one
+record's months:
 
 - **It protects the total of a qualifying month.** A qualifying month has
   two or more persons entitled, a binding maximum, and a higher PIA the next
@@ -671,7 +674,9 @@ G never falls back to a single-worker computation.
 | `parisi_before_october_1999` | A binding maximum with dual entitlement before 10/99 |
 | `independently_entitled_divorced_spouse` | IEDS before January 1985 or a WEP-affected worker record before January 2024 (RS 00202.100) |
 | `non_aime_formula_pia` | Old-start, special-minimum and frozen-minimum PIAs (RS 00615.740B.1) |
-| `savings_clause_403a5` | A governed month whose total fell below a 403(a)(5) protected total, and every later governed month |
+| `savings_clause_403a5` | Under explicit `LITERAL_REFUSAL`, a governed month whose total fell below a 403(a)(5) protected total, and every later governed month |
+| `savings_clause_membership_change` | Membership or record kind changes during a carried operational protection; the capture supplies no successor protection rule |
+| `savings_clause_rate_procedure` | An operational raise needs an uncaptured survivor/dual/deduction/reduced-auxiliary allocation, a simultaneous age-factor change or declining FMAX prevents causal attribution, or the protected rate exceeds OB; the captured procedure does not settle these payments |
 | `savings_clause_history_unknown` | A month for which a protected total G cannot see may exist (a path not started at entitlement, or a month G did not compute) |
 | `widow_drc_savings_clause` | A May 1978 beneficiary protected from widow(er) deceased-worker DRC reductions (RS 00615.712) |
 | `widow_drc_savings_clause_history_unknown` | A widow(er) subject to the maximum has an OB that may include deceased-worker delayed credits, another beneficiary is subject to the maximum, and neither an explicit exclusion nor complete first-ever DIB history rules out May 1978 protection (RS 00615.712; .736B.2b) |
@@ -2600,3 +2605,398 @@ to be a set cannot drop a condition between validation and construction.
 The existing `test_declaration_subclasses_cannot_override_constructor_validation`
 cases for `Beneficiary`, `WorkerRecord` and `RecordState` retain their original
 subclass assertions and additionally pin this changing-iterator attack.
+
+## Deduction before reduction
+
+Verification class remains statutory conformance on invented and published
+cases. `family_benefits_after_deductions(state, beneficiaries, *,
+payment_month, params, deductions, households, standalone,
+worker_deductions=None)` and `household_benefits_after_deductions(records,
+*, payment_month, params, deductions, households, worker_deductions=None)`
+implement Act 203(a)(4), first sentence, and GN 02603.020/.040/.050.
+Both return the existing sealed family or household result. `deductions`
+is a dictionary keyed by beneficiary ID, with `BenefitDeduction(reason,
+payable=0, permanent=True)` values. `payable` is an exact nonnegative
+`Fraction` after the deduction. `households` maps beneficiary IDs to
+nonempty household IDs for the month; every beneficiary must be supplied
+when an event is temporary. Ordered beneficiary lists retain their order;
+dictionaries retain associations. Types, enum identities and every raw
+container entry follow the existing public schema. `worker_deductions`
+optionally reserves the number holder's charges against auxiliaries; those
+charges do not release room (GN 02603.040B; RS 02501.155B.3.c).
+
+| Configuration | Result |
+|---|---|
+| No deductions | Exactly the existing family or household result |
+| Auxiliary or survivor own earnings deduction, full or partial | Supported |
+| Permanent deduction | GN 02603.050C redistribution |
+| Estimated own earnings deduction | Same-household increase; other households retain their previous rate |
+| No child in care, full deduction | Supported for spouse or mother/father |
+| Dual entitlement | Existing Parisi computation, including zero technical rates |
+| Workers' compensation offset | `workers_compensation_offset` |
+| Prisoner suspension | `prisoner_suspension` |
+| Drug-addiction suspension | `drug_addiction_suspension` |
+| Foreign work | `foreign_work_deduction` |
+| Penalty | `penalty_deduction` |
+| Maritime tax | `maritime_deduction` |
+| Missing election certificate | `election_certificate_suspension` |
+| Concurrent number-holder reservations and age reductions | `deduction_age_work_interaction` |
+| Combined maxima; multiple auxiliary records | Existing named refusals remain |
+
+The computation first obtains the ordinary G maximum-adjusted rates and
+Parisi deductees. For each non-deductee it removes permanent deductees and
+same-household temporary deductees from the original-benefit denominator.
+The numerator is the available maximum less the applicable deductees'
+partial payables and age reductions. The resulting proportional share is
+capped at the original benefit and dime-floored before age reduction. A
+zero dual rate remains disregarded regardless of another deduction
+(GN 02603.050A.2). Explicit dual markers must match the existing own-benefit
+declaration and computed payable; they do not apply a second offset.
+
+`BeneficiaryBenefit.deduction` records the amount withheld from that row's
+age-adjusted gross amount after its own-benefit offset, and
+`deduction_reason` records the explicit event. For a number-holder partial
+month, `reserved_work_deduction` preserves a non-deductee's prior NH charge
+beside its resulting rate. R2 retains the NH amount in its ledger. Exact
+partial payables and counted reserves can be fractions of a dime because
+R2's pro-rata allocation precedes final whole-dollar check rounding. The
+original and redistributed rates remain exact dime multiples. No-deduction
+results have zero deduction and reserve fields.
+
+Fixed dual and outside-maximum beneficiaries still bear their NH charges.
+Their gross rates stay fixed; their exact `deduction` equals their
+`reserved_work_deduction`, with no qualifying `deduction_reason`. The
+sealed result permits this equality explicitly. Subject dual payables
+reserve the amount remaining after NH charging, because the same NH amount
+is already in the global reserve. Outside-maximum NH deductions never enter
+that reserve. An outside-maximum own-work event likewise releases no
+subject maximum room (403(a)(3)(C); GN 02603.040B; RS 02501.155B.3.c).
+
+The R2 NH-reservation Hypothesis test covers two minimized counterexamples.
+PIA $600/max $900, a spouse with own RIB $10 and two children gives ordinary
+auxiliary rates $90/$105/$105. NH excess $600 leaves each auxiliary $60;
+a child's own $30 deduction raises the other child to $90 and leaves the
+spouse $60. A divorced spouse outside the maximum with three children has
+ordinary rates $300/$100/$100/$100. NH excess $600 leaves each auxiliary
+$100; one child's own $30 deduction leaves it $70 and raises the other
+children to $115 each. The divorced spouse remains $100. Earlier draft
+code refunded the fixed beneficiaries' NH charges and incorrectly included
+the divorced spouse's NH charge in the subject pool. These were arithmetic
+integration errors, not alternative statutory readings.
+
+Executed invariants in `test_track_b_gross_benefits_deductions.py` are:
+
+- `test_no_deductions_is_exact_family_and_household_differential`: exact
+  equality to ordinary G for both public forms, including Parisi families.
+- `test_formula_bounds_monotonicity_households_order_and_determinism`:
+  non-deductee rates do not fall when the first own-earnings deduction is
+  added in the generated unreduced survivor families; rates do not exceed original benefits,
+  subject totals do not exceed the maximum, separate-household temporary
+  rates equal their prior rates, permanent rates equal GN 02603.050C,
+  determinism and order independence. Hypothesis varies PIA, family size,
+  partial amount and permanence.
+- `test_unsupported_deductions_keep_named_denominator`: every named event
+  refusal remains in the denominator and invalid IDs are input errors.
+- `test_fields_remain_sealed_and_exact`: fractional partial payables remain
+  exact and results cannot be constructed through their public class.
+- `test_nh_partial_reservation_cannot_redistribute_original_rounding_slack`:
+  a partial NH month does not release the preexisting unused dime-rounding
+  balance. RS 02501.155B.3.c permits only the auxiliary's actual deduction
+  to increase the other auxiliaries' partial benefits.
+
+GN 02603.060 A.1 produces $182.80 for each child after E's full deduction;
+A.2 caps E and C1 at $225.30; B.1 leaves E $37.20 and each child $170.40.
+C.1 leaves separate-household C1 $137.10 while C2 and C3 receive $182.80.
+C.2 keeps the zero dual C2 rate, pays C3 $225.30 and initially pays C1
+$182.80; permanence raises C1 to $225.30. Existing A.5, A.8, A.9 and B.2
+Parisi cases enter unchanged through the new path. A.6 and A.7 require
+combined family maxima and remain refused by the declared lane scope.
+Workers' compensation examples A.3, A.4 and B.3 remain refused.
+
+RS 02501.130's no-care months pay the children $83.50 each.
+RS 02501.160's full month pays same-household C2 $132 while E and C1 remain
+at $99; June's partial C3 payment of $39 gives C2 $119. At permanence E
+and C1 receive the same $132 or $119 rates. The captures' original
+benefits round upward: PIA $213.10 has quoted OB $159.90 and PIA $242.30 has
+quoted spouse OB $121.20. G's post-1982 dime flooring instead yields
+$159.80 and $121.10. Equal OB weights make every stated adjusted payment
+identical; tests pin both quoted OBs and modern OBs rather than overriding
+the arithmetic or claiming historical rounding coverage. The captures do
+not date these examples or establish why they used upward rounding.
+
+### Readings needing judgment
+
+GN 02603.050D.2 says "there are no partial deductions for temporary work
+deductions". RS 02501.160 Example 2 nevertheless instructs immediate
+same-household redistribution in June with C3 $39 and C2 $119, while E and
+C1 remain $99 until permanence. This implementation follows the explicit
+payment example and the dispatch's authorization of estimated partial
+amounts. The literal GN sentence would refuse that temporary partial case;
+it would withhold C2's $20 June increase. The source assertions pin both
+sentences. No switch invents a different benefit amount.
+
+The interaction of NH reservations and age reductions is not established
+by a captured worked example. The implementation refuses that new mixed
+configuration by name; ordinary G/R2 age-reduced supported inputs remain
+unchanged. No population processing, combined maximum determination,
+multiple auxiliary-record selection or annual earnings determination is
+in scope here.
+
+
+## Operational saving clause, October 23, 2026
+
+Verification class: statutory conformance on invented cases and captured
+SSA rules. This extension admits no population, behavioral or forecast
+claim. Max's d1338 selects SSA's operational interpretation of 203(a)(5)
+(42 U.S.C. 403(a)(5)); d1802 authorizes its implementation here. This section
+supersedes earlier descriptions of the default as a refusal.
+
+### Declared interface and payment meaning
+
+`SavingsClauseGuard(first_month, *, earlier_months_unknown,
+reading=SavingsClauseReading.SSA_OPERATIONAL)` takes an exact `YearMonth`,
+a built-in Boolean, and a canonical enum. Its read-only `reading` accessor
+returns that enum. `LITERAL_REFUSAL` retains the G v2 behavior, and all
+existing tests of that reading select it explicitly. `admit` returns a
+sealed `FamilyBenefits`, including a protected result when needed;
+`evaluate` returns that result in a sealed outcome. Validation happens once
+at each public boundary; provenance and integrity checks do not claim
+freshness or caller attribution.
+
+`BeneficiaryBenefit.age_reduction_factor` retains the exact 402(q)
+multiplier before money rounding (Fraction, zero through one).
+`FamilyBenefits.worker_reduced_for_age` is a built-in Boolean derived from
+the worker's declared reduction months; `worker_age_reduction_factor` stores
+the exact Fraction multiplier and must agree with that flag. Rounded money cannot reconstruct
+that factor or reliably identify an age reduction at very small amounts.
+The established formula maximum, available room, proportional shares and
+counted amounts do not change when the saving clause raises payment.
+`age_adjusted_rate`, `auxiliary_payable`, and their exact and whole-dollar
+totals contain the protected payment; the beneficiary note identifies it.
+This implements RS 00630.400's statement: "The established FMAX will not
+change—only total benefits payable are affected."
+
+### Conditions and supported procedures
+
+Under `SSA_OPERATIONAL`, the prior month must have two or more entitled
+persons, a binding maximum, and at least one age-reduced beneficiary. The
+next month's PIA must rise and its family total must fall. These are the
+four requirements in RS 00630.400's "1972 Family Payment Saving Clause".
+Membership and exact worker/auxiliary age factors must be unchanged for the supported
+payment computation. A membership-driven decline starts no protection.
+A simultaneous change of age factors or a declining formula maximum with
+a qualifying overall fall refuses by name because the snapshots do not
+isolate the PIA effect. For example, PIA/FMAX $100/$150 with an unreduced
+worker, a spouse reduced 36 months and two children pays $145.60. PIA/FMAX
+$101/$140 pays $136.70, but the PIA increase alone with FMAX $150 pays
+$145.80. The simultaneous maximum decline is therefore not admitted as a
+PIA-caused loss.
+A later departure without a PIA increase starts no
+protection. The guard carries an established protected total under RS
+00615.801B.2, also retaining it while the ordinary formula payment overtakes
+it because the source says it may become payable again. A change of
+entitled identities, roles, worker entitlement or record kind during that
+carried protection refuses, including later months after the change.
+
+| Configuration | Result |
+|---|---|
+| Life case, only the worker reduced for age, stable auxiliaries | Subtract the new worker rate from the protected family payment, divide by the number of auxiliaries and round to equal dime rates (RS 00630.400) |
+| Life case, one reduced spouse and at least one other auxiliary | Divide the family-payment loss by the auxiliary count; apply the spouse's exact RF to that increase and add it to the spouse's ordinary reduced rate; divide the remaining protected amount after the new worker and spouse rates among the other auxiliaries (RS 00630.400) |
+| No qualifying age reduction, no PIA increase, or no immediate fall | No operational protection starts |
+| Later raw payment is below an established protection | Reapply the captured procedure without changing formula FMAX (RS 00615.801B.2) |
+| Entitlement membership changes during carried protection | `savings_clause_membership_change`; the captured 1972 procedure does not say how protection survives the change |
+| Survivor, own-benefit offset, deduction, multiple reduced auxiliaries, lone reduced spouse, simultaneous age-factor change or declining FMAX with a qualifying fall, or a protected rate above OB | `savings_clause_rate_procedure`; the captured life-case allocation does not settle these rates |
+| Prior history is unknown or a skipped month may hide protection | `savings_clause_history_unknown`, retained in every denominator |
+| Explicit literal alternative reaches any later lower governed total | Existing `savings_clause_403a5` refusal; the original broad interpretation remains testable |
+
+### Invented worked calculations and source integrity
+
+The capture contains a procedure, not worked dollar figures. These invented
+calculations therefore make no claim that their figures are quoted SSA
+examples. `test_operational_source_rules_are_quoted_from_captures` checks
+every cited rule verbatim against the existing SHA-pinned RS 00630.400 and
+RS 00615.801 captures; the original manifest test recomputes their SHA-256.
+
+1. Only worker reduced: PIA $1,000, FMAX $1,500, worker reduced 60 months
+   to $700, two children $250 each: $1,200 total. PIA rises to $1,010,
+   FMAX unchanged, worker $707 and children $245: $1,197. Protection pays
+   each child ($1,200 − $707)/2 = $246.50, restoring $1,200 exact and
+   $1,199 after separate whole-dollar floors. Formula FMAX stays $1,500.
+2. Worker and spouse reduced: the same initial worker and FMAX, spouse
+   and two children receive $108.20, $166.60, $166.60: $1,141.40 total.
+   PIA $1,010 yields worker $707, spouse $106.10, children $163.30 each:
+   $1,139.70. Loss $1.70 divided by three rounds up to $0.60; the
+   spouse's 65 percent factor gives $0.39, floored to $0.30. Spouse
+   $106.40 leaves ($1,141.40 − $707 − $106.40)/2 = $164 per child.
+   Exact and whole-dollar totals are $1,141.40 and $1,141.
+3. Rounding boundary: first case with PIA rising to $1,001 gives worker
+   $700.70. Equal protected children need $249.65 each; $249.70 each
+   pays $1,200.10. Rounding each down to $249.60 instead pays $1,199.90.
+   This ten-cent shortfall is the explicit reading question below.
+4. The actual round-11 COLA witness is retained: survivor PIA $4.40,
+   formula maximum $6.60, two unreduced widows $2.40 each and a
+   mother/father $1.80, total $6.60. A 2.3 percent COLA yields PIA
+   $4.50, maximum $6.70, and shares $2.40, $2.40, $1.70: $6.50.
+   The operational age condition fails, so no protection starts; the
+   explicit literal reading refuses. There is no assertion that a COLA
+   alone cannot lower payment.
+
+### Executed invariants
+
+- Each reading starts on exactly its own declared conditions:
+  `test_both_readings_start_exactly_on_their_conditions` (Hypothesis).
+- Protected supported payment is at least the protected total; equal-dime
+  rounding excess is strictly less than the number of remaining auxiliaries
+  times one dime. Formula FMAX and counted subject total remain unchanged:
+  the same property and the worker/spouse/rounding example tests. The
+  deterministic property also checks every protected rate against OB; the
+  carry property refuses a later lower PIA when its protected rate would
+  exceed OB (203(a)(4); the capture does not settle above-OB payment).
+- Allocation and protection are deterministic and independent of beneficiary
+  order: `test_operational_is_deterministic_order_independent_and_sealed`
+  (Hypothesis).
+- Carried protection can become payable again:
+  `test_operational_carries_and_can_become_payable_again` and Hypothesis
+  `test_operational_carry_membership_refusal_and_denominator_properties`.
+- Every named operational refusal preserves the full row and weight:
+  `test_operational_named_refusals_stay_in_denominator` and the preceding
+  Hypothesis carry/membership/denominator property.
+- Membership-driven declines without PIA increases start no protection:
+  `test_operational_child_departure_never_starts_without_pia_increase` and
+  Hypothesis `test_membership_declines_without_pia_increases_never_start_protection`.
+- Concurrent changes of exact worker or auxiliary age factors cannot be
+  silently attributed to a PIA increase or silently treated as unprotected:
+  Hypothesis `test_simultaneous_basis_change_refuses_ambiguous_fall`
+  keeps each qualifying mixed-change fall as a named refusal. An improving
+  worker factor is included: PIA $100/RF60 gives $120; PIA $102/RF59
+  gives $119.80, even though changing RF alone raises payment to $120.40.
+- Invalid enum values and forged protected outputs are input errors:
+  `test_default_is_operational_and_literal_is_explicit` and
+  `test_operational_worker_reduction_protects_payment_not_maximum`.
+- The literal alternative retains the original paths and denominator rules
+  in the pre-existing guard property suite, now explicitly selected.
+
+### Reading taken: the direction of the operational rounding
+
+This is the session's reading under Max's 2026-10-20 delegation, logged in
+the source-conflict rulings as
+`us:oasdi-saving-clause-operational-rate-rounding` (P1: the Act's "assure
+... will not be less" fixes the direction the procedure leaves open).
+The captured rate procedure says "Difference ÷ By the Number of Auxiliaries
+(rounded) = Auxiliary Rate;" and "Difference ÷ the Number of Auxiliaries
+Rounded = Increase." It does not state the direction. Act 203(a)(5) says
+"smallest amount that would have been required in order to assure that
+the total of monthly benefits payable on the basis of such wages and
+self-employment income for any such subsequent month will not be less";
+ordinary modern rates under RS 00615.201 round down. The implementation
+uses the smallest equal dime rates that meet the protected total (round
+up), while still flooring the spouse's age-reduced increase. The boundary
+above changes total payment by $0.20 versus flooring equal child rates,
+and prevents a $0.10 shortfall. `LITERAL_REFUSAL` is the conservative
+alternative when a protected raise would be required. No rounding choice
+is hidden; the example and mutation check pin it. A carried protection that
+would require an auxiliary rate above OB refuses with
+`savings_clause_rate_procedure`: 203(a)(4) describes decreases, while the
+captured .400 procedure does not state its OB cap. The minimized executed
+case has PIA/maximum $0.40/$0.60, then $0.50/$0.60, then $0.10/$0.10,
+a worker reduced 60 months and two children. Before this check the final
+children would each receive $0.20 despite dime-rounded OB $0; that is now
+an explicit refusal, not an admitted above-OB interpretation.
+
+RS 00615.801B.2 says "until the table or formula maximum becomes larger"
+and immediately adds that "it is possible that the savings clause maximum
+may again become payable". The guard retains its protected history through
+an intervening larger ordinary payment and refuses membership changes
+while that history is carried. This deliberately conservative membership
+boundary may refuse a change during an otherwise dormant protection.
+The invented case in
+`test_operational_carry_membership_refusal_and_denominator_properties`
+starts at PIA $1,000, maximum $1,500, a worker reduced for 60 months and
+two children: January pays $1,200. February PIA $1,001 establishes the
+$1,200 protected floor and pays $1,200.10 after rounding. March's maximum
+$1,600 allows the ordinary $1,299.70, while the $1,200 floor and its
+January origin remain recorded. Removing one child in April would allow
+an ordinary $1,201.20, above that floor, but the dormant-history membership
+boundary refuses it. Extinguishing the history in March would instead
+admit that $1,201.20. The existing Hypothesis property executes this
+boundary and preserves the refused row and weight in the denominator;
+the source-quote test pins the complete "may again become payable" rule.
+
+### Deduction history and protected payment totals
+
+The saving-clause guard must inspect deduction metadata in both the current
+and prior month. Deduction results retain a deductee's pre-offset
+`age_adjusted_rate` while changing `auxiliary_payable` and other members'
+maximum shares. Those rates therefore cannot establish an operational
+family payment without an additional captured rule. Numeric `deduction`
+and `reserved_work_deduction` count even when `deduction_reason` is absent
+for an NH-only reservation. These fields remain part of each sealed result.
+
+Executed counterexample: January PIA $1,000, FMAX $1,500, a worker reduced
+60 months to $700, and two children. One child's full permanent own-work
+deduction leaves the other child $500; actual record payment is $1,200.
+The deductee retains a diagnostic $250 age rate, making the pre-offset
+saving-clause total $1,450. With PIA $1,010 and no deduction in February,
+ordinary payment is $1,197. A guard looking only at February's deduction
+flags formerly raised that payment to the spurious $1,450 floor. Candidate
+protections now refuse as `savings_clause_rate_procedure` if either month
+has a subject deduction. An already carried protection also refuses that
+interaction even when the diagnostic pre-offset total is above its floor.
+The uncertain history is retained for later months. A month with no active
+or candidate protection still returns its genuine result unchanged.
+
+The existing Hypothesis
+`test_operational_carry_membership_refusal_and_denominator_properties`
+executes both historical and current-deduction controls, including this
+$1,000 example. The gap belongs to RS 00630.400's uncaptured interaction
+with GN 02603.050, not to input validity. No protected amount is inferred
+from a diagnostic pre-offset total, and every refusal retains its row and
+weight. Completing this combined payment procedure remains outside scope.
+
+### Not in scope
+
+No combined family maximum, multiple auxiliary records, survivor allocation
+extension, unknown-history reconstruction, population application or
+empirical claim is added by this saving-clause implementation.
+
+GN 02603.050A.1 expressly excepts a single full permanent deduction with
+no other deduction: "disregard that beneficiary when distributing the
+family maximum". Accordingly the implementation reserves no age reduction
+for that one row. The invented regression
+`test_single_full_permanent_exception_disregards_age_reduction` uses a
+$400 PIA, $650 maximum and age-reduced spouse with two children. The children
+receive $125 each. Blind application of C's age-reserve formula would retain
+$20.90 and pay $114.50 each. This is an intended exception to the general
+permanent-formula identity, rather than an alternate default interpretation.
+The requested absolute non-deductee monotonicity invariant cannot hold
+together with A.1 and C. A.1 says "and no other deduction is involved for
+any beneficiary"; C includes "Age reduction amount for all workers or
+deductees". Thus adding a second deductee ends the exception and restores
+the first deductee's age reserve. The same test pins and property-tests
+this intended discontinuity over integer scales 1 through 20. The
+minimized invented case has PIA $48, maximum $78, a spouse reduced for 60
+months and three children. Baseline child rates are $7.50 and the spouse's
+age reserve is $2.70. A full permanent spouse deduction pays the children
+$10 each. Adding a child's $0.10 own deduction leaves that child $7.40
+and gives each other child floor(($30 − $2.70 − $7.40) / 2) = $9.90.
+Extending the disregard despite the second deductee would instead pay
+$11.30 each, but contradicts A.1's explicit no-other-deduction condition.
+The $48 case was minimized on the original maximum/PIA ratio of 13/8,
+with dime-aligned amounts and a $0.10 additional deduction, after reducing
+the child count from five to three. This is a qualified invariant, not a
+silently changed payment rule.
+`test_all_dual_beneficiaries_do_not_gain_from_another_deduction` preserves
+GN 02603.045's exclusion of dually entitled recipients from increases.
+
+`test_impossible_payable_precedes_statutory_refusal` property-tests the
+input-before-coverage invariant in both new public forms: a payable plus
+number-holder reservation above the original benefit is invalid even when
+the record carries an otherwise refused workers' compensation offset. Such
+an input creates no denominator row. Exact post-reduction bounds are checked
+when the ordinary G computation admits that configuration.
+
+GN 02603.060 A.2's narrative says "That is $548.40 divided by 2
+individuals = 225.30." Its displayed formula correctly gives $274.20
+before the original-benefit cap of $225.30. The existing A.2 test pins the
+literal narrative, raw quotient and capped payment side by side. This is
+an omitted cap in the narrative, not an alternate arithmetic rule.

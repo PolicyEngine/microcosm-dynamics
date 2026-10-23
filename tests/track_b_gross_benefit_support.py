@@ -122,7 +122,11 @@ def computed_refusal(reason):
         ),
     )
     if reason is g.UnsupportedReason.SAVINGS_CLAUSE:
-        guard = g.SavingsClauseGuard(month, earlier_months_unknown=False)
+        guard = g.SavingsClauseGuard(
+            month,
+            earlier_months_unknown=False,
+            reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+        )
         members = tuple(
             g.Beneficiary(f"child-{index}", g.Role.CHILD) for index in range(3)
         )

@@ -87,7 +87,11 @@ def _run(style, entry, member, *, pia=F(1000)):
         return g.household_benefits(records, payment_month=NOW, params=PARAMS)
 
     if entry == "household-month-outcome":
-        guard = g.SavingsClauseGuard(NOW, earlier_months_unknown=False)
+        guard = g.SavingsClauseGuard(
+            NOW,
+            earlier_months_unknown=False,
+            reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+        )
         try:
             result = g.household_month_outcome(
                 records,

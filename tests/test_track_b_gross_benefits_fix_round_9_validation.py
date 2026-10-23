@@ -77,7 +77,11 @@ def test_review_malformed_inputs_precede_refusal_and_guard(
     route, malformation
 ):
     guards = {
-        "record": g.SavingsClauseGuard(NOW, earlier_months_unknown=False),
+        "record": g.SavingsClauseGuard(
+            NOW,
+            earlier_months_unknown=False,
+            reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+        ),
     }
 
     def compute():
@@ -341,7 +345,9 @@ def test_malformed_field_never_counts_or_advances_any_entry(
         for route in _applicable_routes(cls):
             guards = {
                 "record": g.SavingsClauseGuard(
-                    NOW, earlier_months_unknown=False
+                    NOW,
+                    earlier_months_unknown=False,
+                    reading=g.SavingsClauseReading.LITERAL_REFUSAL,
                 ),
             }
             _assert_invalid(
@@ -392,7 +398,11 @@ def test_guard_constructor_rejects_malformed_public_arguments(
     first_month, unknown
 ):
     with pytest.raises(g.InvalidFamilyInput):
-        g.SavingsClauseGuard(first_month, earlier_months_unknown=unknown)
+        g.SavingsClauseGuard(
+            first_month,
+            earlier_months_unknown=unknown,
+            reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+        )
 
 
 @pytest.mark.parametrize("name,bad", (("year", True), ("month", 13)))
@@ -400,7 +410,11 @@ def test_guard_revalidates_nested_first_month(name, bad):
     first = g.YearMonth(2023, 12)
     object.__setattr__(first, name, bad)
     with pytest.raises(g.InvalidFamilyInput):
-        g.SavingsClauseGuard(first, earlier_months_unknown=False)
+        g.SavingsClauseGuard(
+            first,
+            earlier_months_unknown=False,
+            reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+        )
 
 
 CROSS_FIELD_CASES = (
@@ -508,7 +522,11 @@ def test_cross_field_errors_precede_refusal_in_every_entry(case, pia, cohort):
     )
     for route in routes:
         guards = {
-            "record": g.SavingsClauseGuard(NOW, earlier_months_unknown=False),
+            "record": g.SavingsClauseGuard(
+                NOW,
+                earlier_months_unknown=False,
+                reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+            ),
         }
         _assert_invalid(
             partial(
@@ -525,7 +543,11 @@ def test_terminal_calendar_month_errors_leave_every_guard_unchanged(
     refusing, route
 ):
     month = g.YearMonth(9999, 12)
-    guard = g.SavingsClauseGuard(month, earlier_months_unknown=False)
+    guard = g.SavingsClauseGuard(
+        month,
+        earlier_months_unknown=False,
+        reading=g.SavingsClauseReading.LITERAL_REFUSAL,
+    )
     _, state, beneficiary = _valid_inputs(1000, 1940, refusing)
     guards = {"record": guard}
 
