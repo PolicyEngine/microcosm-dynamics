@@ -1,18 +1,17 @@
-"""The held-out data registry keeps its rules on every commit.
+"""The held-out data registry's rules, on invented registries.
 
-``docs/design/track_b_holdout_registry.json`` is the single registry of
-the data that Track B's gates and the open-population lane's gates hold
-out (dynamics coordinator, 2026-10-21).
-``populace_dynamics.track_b.holdout_registry`` states the rules; these
-tests run them on the committed registry, against its base commit, and as
-properties over invented registries.
+``populace_dynamics.track_b.holdout_registry`` states the rules of the
+single held-out data registry (dynamics coordinator, 2026-10-21). These
+tests exercise them on invented registries and invented git repositories,
+with the expected families and overlaps worked out here, independently
+of the module. The committed registry itself is checked in
+``test_track_b_holdout_registry_committed.py``.
 """
 
 from __future__ import annotations
 
 import copy
 import json
-import os
 import subprocess
 from pathlib import Path
 
@@ -21,8 +20,6 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from populace_dynamics.track_b import holdout_registry as registry
-
-ROOT = Path(__file__).resolve().parents[1]
 
 #: Specified here, independently of the module, so that dropping a field
 #: from the module's lists fails a test.
@@ -43,70 +40,13 @@ EXPECTED_EXTENDING = (
     "overlap_review",
     "history",
 )
-
-
-def committed() -> dict:
-    return registry.load(ROOT)
-
-
-def by_id(current: dict) -> dict:
-    return {entry["id"]: entry for entry in current["entries"]}
-
-
-# The committed registry ----------------------------------------------------
-
-
-def test_the_committed_registry_keeps_its_rules():
-    assert registry.validate(committed(), ROOT) == []
-
-
-def test_the_committed_registry_only_appends_to_its_base():
-    try:
-        base = registry.base_registry(ROOT)
-    except LookupError as error:
-        if os.environ.get("GITHUB_ACTIONS") == "true":
-            pytest.fail(f"CI must resolve the base registry: {error}")
-        pytest.skip(f"no base commit here: {error}")
-    if base is None:
-        return
-    assert registry.validate(base) == []
-    assert registry.append_only_problems(base, committed()) == []
-
-
-def test_the_registry_stays_incomplete_until_the_inventory_lands():
-    current = committed()
-    assert current["schema"] == registry.SCHEMA
-    if not (ROOT / current["completion_record"]).is_file():
-        assert current["complete"] is False
-        assert any("incomplete" in rule for rule in current["rules"])
-
-
-@pytest.mark.parametrize(
-    "a, b",
-    [("H001", "H002"), ("H001", "H004"), ("H002", "H004"), ("H004", "H005")],
-)
-def test_the_seeded_shared_units_are_disclosed_both_ways(a, b):
-    entries = by_id(committed())
-    assert registry.entries_overlap(entries[a], entries[b])
-    assert b in entries[a]["disclosed_overlaps"]
-    assert a in entries[b]["disclosed_overlaps"]
-
-
-def test_the_field_lists_are_as_specified():
-    assert registry.IMMUTABLE == EXPECTED_IMMUTABLE
-    assert registry.EXTENDING == EXPECTED_EXTENDING
-    assert set(EXPECTED_IMMUTABLE) | set(EXPECTED_EXTENDING) | {
-        "status",
-    } == set(registry.ENTRY_KEYS)
-
-
-# Invented registries -------------------------------------------------------
-
-SOURCES = {
+VOCABULARY = {
     "s_a": {"family": "f1", "title": "A", "catalog": "cat a", "key_year": "y"},
     "s_b": {"family": "f1", "title": "B", "catalog": "cat b", "key_year": "y"},
     "s_c": {"family": "f2", "title": "C", "catalog": "cat c", "key_year": "y"},
 }
+#: The family of each invented source, independently of the module.
+FAMILY = {"s_a": "f1", "s_b": "f1", "s_c": "f2"}
 KEY_POOL = (
     "s_a:2020",
     "s_a:2020-2022:x",
@@ -123,14 +63,43 @@ PATHS = {
     ("registration", "used"): ["candidate", "frozen", "used"],
     ("registration", "withdrawn"): ["candidate", "withdrawn"],
     ("historical_import", "used"): ["used"],
-    ("historical_import", "frozen"): ["frozen"],
-    ("historical_import", "frozen_used"): ["frozen", "used"],
 }
+REASON = (
+    "The two units come from different years of separate sources, so no "
+    "observation is shared."
+)
 
 
-def make_entry(
-    index: int, keys: list[str], path=("registration", "candidate")
-):
+def run_path(name: str) -> str:
+    return f"{registry.RUNS_DIR}/{name}.json"
+
+
+def key_years(key: str):
+    """The source and the inclusive year range of an invented key."""
+    source, years = key.split(":")[:2]
+    if years == "undated":
+        return source, None
+    start, _, end = years.partition("-")
+    return source, (int(start), int(end or start))
+
+
+def share_unit(a: dict, b: dict) -> bool:
+    """Whether two entries share a unit, worked out independently."""
+    for x in a["unit_keys"]:
+        for y in b["unit_keys"]:
+            (sx, yx), (sy, yy) = key_years(x), key_years(y)
+            if sx != sy:
+                continue
+            if yx is None or yy is None or (yx[0] <= yy[1] and yy[0] <= yx[1]):
+                return True
+    return False
+
+
+def family_of(entry: dict) -> set[str]:
+    return {FAMILY[key_years(key)[0]] for key in entry["unit_keys"]}
+
+
+def make_entry(index: int, keys, path=("registration", "candidate")):
     statuses = PATHS[path]
     gate = f"gate_{index}"
     return {
@@ -145,13 +114,7 @@ def make_entry(
         "unit_keys": list(keys),
         "evidence": [f"evidence {index}"],
         "scored_evidence": (
-            [
-                {
-                    "path": f"scores/s{index}.json",
-                    "field": "gate",
-                    "equals": gate,
-                }
-            ]
+            [{"path": run_path(f"s{index}"), "field": "gate", "equals": gate}]
             if statuses[-1] == "used"
             else []
         ),
@@ -164,13 +127,22 @@ def make_entry(
     }
 
 
-def settle(entries: list[dict], sources=SOURCES) -> None:
-    """Disclose every shared unit both ways, and review every unshared
+def review(entry_id: str) -> dict:
+    return {
+        "id": entry_id,
+        "outcome": "disjoint",
+        "reason": REASON,
+        "evidence": ["https://example.org/catalog"],
+    }
+
+
+def settle(entries: list[dict]) -> None:
+    """Disclose every shared unit both ways and review every unshared
     same-family relation, as a careful registrant would."""
     live = [entry for entry in entries if entry["status"] != "withdrawn"]
     for index, entry in enumerate(live):
         for other in live[index + 1 :]:
-            if registry.entries_overlap(entry, other):
+            if share_unit(entry, other):
                 if other["id"] not in entry["disclosed_overlaps"]:
                     entry["disclosed_overlaps"].append(other["id"])
                 if entry["id"] not in other["disclosed_overlaps"]:
@@ -182,15 +154,12 @@ def settle(entries: list[dict], sources=SOURCES) -> None:
         for other in entries[:index]:
             if (
                 other["status"] != "withdrawn"
-                and registry.families(entry, sources)
-                & registry.families(other, sources)
-                and not registry.entries_overlap(entry, other)
+                and family_of(entry) & family_of(other)
+                and not share_unit(entry, other)
                 and other["id"] not in entry["disclosed_overlaps"]
                 and other["id"] not in reviewed
             ):
-                entry["overlap_review"].append(
-                    {"id": other["id"], "reason": "different years"}
-                )
+                entry["overlap_review"].append(review(other["id"]))
 
 
 def make_registry(entries: list[dict], complete=False) -> dict:
@@ -200,11 +169,15 @@ def make_registry(entries: list[dict], complete=False) -> dict:
         "purpose": "invented",
         "rules": ["rule one", "the registry is incomplete"],
         "status_values": {status: status for status in registry.STATUSES},
-        "sources": copy.deepcopy(SOURCES),
+        "sources": copy.deepcopy(VOCABULARY),
         "complete": complete,
         "completion_record": "docs/design/inventory.json",
         "entries": entries,
     }
+
+
+def validate(current, repository=None):
+    return registry.validate(current, repository, vocabulary=VOCABULARY)
 
 
 entry_specs = st.lists(
@@ -214,12 +187,10 @@ entry_specs = st.lists(
         ),
         st.sampled_from(sorted(PATHS)),
     ),
-    min_size=0,
     max_size=6,
 )
 registration_specs = st.lists(
     st.lists(st.sampled_from(KEY_POOL), min_size=1, max_size=3, unique=True),
-    min_size=0,
     max_size=4,
 )
 
@@ -232,20 +203,28 @@ def build(specs, complete=False) -> dict:
     return make_registry(entries, complete)
 
 
-def shared_pairs(entries):
-    live = [e for e in entries if e["status"] != "withdrawn"]
-    return [
-        (a, b)
-        for i, a in enumerate(live)
-        for b in live[i + 1 :]
-        if registry.entries_overlap(a, b)
-    ]
+def test_the_field_lists_are_as_specified():
+    assert registry.IMMUTABLE == EXPECTED_IMMUTABLE
+    assert registry.EXTENDING == EXPECTED_EXTENDING
+    assert set(EXPECTED_IMMUTABLE) | set(EXPECTED_EXTENDING) | {
+        "status",
+    } == set(registry.ENTRY_KEYS)
 
 
 @settings(max_examples=200, deadline=None)
 @given(entry_specs)
 def test_settled_registries_are_valid(specs):
-    assert registry.validate(build(specs)) == []
+    assert validate(build(specs)) == []
+
+
+@settings(max_examples=200, deadline=None)
+@given(entry_specs)
+def test_shared_units_match_the_independent_rule(specs):
+    current = build(specs)
+    entries = current["entries"]
+    for i, a in enumerate(entries):
+        for b in entries[i + 1 :]:
+            assert registry.entries_overlap(a, b) == share_unit(a, b)
 
 
 @settings(max_examples=200, deadline=None)
@@ -256,7 +235,7 @@ def test_a_one_way_disclosure_is_refused(specs, data):
     if not disclosing:
         return
     data.draw(st.sampled_from(disclosing))["disclosed_overlaps"].pop()
-    problems = registry.validate(current)
+    problems = validate(current)
     assert any(
         "does not disclose it back" in p or "without disclosing" in p
         for p in problems
@@ -269,42 +248,79 @@ def test_a_silent_shared_unit_is_refused(specs):
     current = build(specs)
     for entry in current["entries"]:
         entry["disclosed_overlaps"] = []
+        entry["overlap_review"] = []
     settle_reviews_only(current["entries"])
-    problems = registry.validate(current)
-    shared = bool(shared_pairs(current["entries"]))
+    live = [e for e in current["entries"] if e["status"] != "withdrawn"]
+    shared = any(
+        share_unit(a, b) for i, a in enumerate(live) for b in live[i + 1 :]
+    )
+    problems = validate(current)
     assert any("without disclosing" in p for p in problems) == shared
 
 
 def settle_reviews_only(entries):
-    for entry in entries:
-        entry["overlap_review"] = []
     for index, entry in enumerate(entries):
         if entry["status"] == "withdrawn":
             continue
         for other in entries[:index]:
             if (
                 other["status"] != "withdrawn"
-                and registry.families(entry, SOURCES)
-                & registry.families(other, SOURCES)
-                and not registry.entries_overlap(entry, other)
+                and family_of(entry) & family_of(other)
+                and not share_unit(entry, other)
             ):
-                entry["overlap_review"].append(
-                    {"id": other["id"], "reason": "different years"}
-                )
+                entry["overlap_review"].append(review(other["id"]))
 
 
 @settings(max_examples=200, deadline=None)
 @given(entry_specs)
 def test_an_unreviewed_family_relation_is_refused(specs):
     current = build(specs)
-    entries = current["entries"]
-    needed = any(entry["overlap_review"] for entry in entries)
-    for entry in entries:
+    needed = any(entry["overlap_review"] for entry in current["entries"])
+    for entry in current["entries"]:
         entry["overlap_review"] = []
-    problems = registry.validate(current)
+    problems = validate(current)
     assert any("neither discloses nor reviews" in p for p in problems) == (
         needed
     )
+
+
+def test_fixed_family_cases_follow_the_rule():
+    # s_a and s_b share family f1 but no unit; s_c is another family.
+    same = [make_entry(0, ["s_a:2020"]), make_entry(1, ["s_b:2025"])]
+    assert any(
+        "neither discloses nor reviews" in p
+        for p in validate(make_registry(copy.deepcopy(same)))
+    )
+    reviewed = copy.deepcopy(same)
+    reviewed[1]["overlap_review"].append(review("H001"))
+    assert validate(make_registry(reviewed)) == []
+    disclosed = copy.deepcopy(same)
+    disclosed[0]["disclosed_overlaps"].append("H002")
+    disclosed[1]["disclosed_overlaps"].append("H001")
+    assert validate(make_registry(disclosed)) == []
+    other = [make_entry(0, ["s_a:2020"]), make_entry(1, ["s_c:2025"])]
+    assert validate(make_registry(other)) == []
+
+
+@pytest.mark.parametrize(
+    "change, message",
+    [
+        ({"outcome": "unresolved"}, "is disclosed"),
+        (
+            {"reason": "TODO: check later, once the inventory has landed."},
+            "substantive",
+        ),
+        ({"reason": "short"}, "substantive"),
+        ({"evidence": []}, "cites nothing"),
+        ({"evidence": ["somewhere"]}, "not path:line or a URL"),
+        ({"evidence": ["docs/x.md:0"]}, "bad line range"),
+    ],
+)
+def test_a_review_needs_an_outcome_a_reason_and_citations(change, message):
+    entries = [make_entry(0, ["s_a:2020"]), make_entry(1, ["s_b:2025"])]
+    entries[1]["overlap_review"].append(dict(review("H001"), **change))
+    problems = validate(make_registry(entries))
+    assert any(message in p for p in problems)
 
 
 @settings(max_examples=200, deadline=None)
@@ -316,7 +332,7 @@ def test_appending_lone_candidates_keeps_every_rule(base_specs, more):
     for offset, keys in enumerate(more):
         current["entries"].append(make_entry(start + offset, keys))
     settle(current["entries"])
-    assert registry.validate(current) == []
+    assert validate(current) == []
     assert registry.append_only_problems(base, current) == []
 
 
@@ -334,7 +350,7 @@ def test_a_registration_cannot_arrive_already_frozen(base_specs, path):
         make_entry(len(current["entries"]), ["s_c:2099"], path)
     )
     settle(current["entries"])
-    assert registry.validate(current) == []
+    assert validate(current) == []
     assert any(
         "lone candidate" in p
         for p in registry.append_only_problems(base, current)
@@ -439,14 +455,19 @@ def test_sources_rules_and_completeness_only_move_forward():
     assert registry.append_only_problems(base, renamed)
 
 
-def test_an_alias_source_is_refused():
+def test_the_registry_must_carry_the_controlled_vocabulary():
     current = make_registry([])
-    current["sources"]["s_d"] = dict(SOURCES["s_a"], catalog="  CAT   A ")
-    assert any("alias" in p for p in registry.validate(current))
+    current["sources"]["s_d"] = dict(VOCABULARY["s_c"], catalog="cat d")
+    assert any("controlled vocabulary" in p for p in validate(current))
+    aliased = dict(VOCABULARY, s_d=dict(VOCABULARY["s_a"], catalog=" CAT  A"))
+    problems = registry.validate(
+        dict(current, sources=aliased), vocabulary=aliased
+    )
+    assert any("alias" in p for p in problems)
 
 
 @given(
-    st.sampled_from(sorted(SOURCES)),
+    st.sampled_from(sorted(VOCABULARY)),
     st.integers(1900, 2100),
     st.integers(0, 5),
     st.integers(1900, 2100),
@@ -480,12 +501,12 @@ def test_keys_overlap_on_source_and_intersecting_years(s, y1, n1, y2, n2, x):
 def test_malformed_unit_keys_are_refused(key):
     entry = make_entry(0, ["s_a:2020"])
     entry["unit_keys"] = [key]
-    assert registry.validate(make_registry([entry]))
+    assert validate(make_registry([entry]))
 
 
 def test_a_key_naming_no_source_is_refused():
     entry = make_entry(0, ["s_z:2020"])
-    problems = registry.validate(make_registry([entry]))
+    problems = validate(make_registry([entry]))
     assert any("names no source" in p for p in problems)
 
 
@@ -494,6 +515,7 @@ def test_a_key_naming_no_source_is_refused():
     [
         ("registration", ["frozen"], "frozen", "starts as one of"),
         ("historical_import", ["candidate"], "candidate", "starts as one of"),
+        ("historical_import", ["frozen"], "frozen", "starts as one of"),
         ("registration", ["candidate", "used"], "used", "not a legal"),
         ("historical_import", ["used", "frozen"], "frozen", "not a legal"),
         ("registration", ["candidate", "frozen"], "candidate", "last status"),
@@ -508,45 +530,51 @@ def test_status_follows_a_legal_history(provenance, statuses, last, message):
     entry["status"] = last
     if last == "used":
         entry["scored_evidence"] = [
-            {"path": "s.json", "field": "gate", "equals": "gate_0"}
+            {"path": run_path("s"), "field": "gate", "equals": "gate_0"}
         ]
-    assert any(message in p for p in registry.validate(make_registry([entry])))
+    assert any(message in p for p in validate(make_registry([entry])))
 
 
 @pytest.mark.parametrize("date", ["2026-10-01", "2026-99-99", "yesterday"])
 def test_history_dates_are_real_and_never_go_back(date):
     entry = make_entry(0, ["s_a:2020"], ("registration", "frozen"))
     entry["history"][1]["date"] = date
-    assert registry.validate(make_registry([entry]))
+    assert validate(make_registry([entry]))
 
 
 def test_repeated_ids_and_shared_gate_identifiers_are_refused():
     current = build([(["s_a:2020"], ("registration", "candidate"))] * 2)
     current["entries"][1]["id"] = "H001"
-    assert any("ids repeat" in p for p in registry.validate(current))
+    assert any("ids repeat" in p for p in validate(current))
     current = build([(["s_a:2020"], ("registration", "candidate"))] * 2)
     current["entries"][1]["gate_identifiers"].append("gate_0")
-    assert any("already identifies" in p for p in registry.validate(current))
+    assert any("already identifies" in p for p in validate(current))
 
 
-def test_scored_evidence_must_name_this_gate():
+@pytest.mark.parametrize(
+    "change, message",
+    [
+        ({"equals": "gate_other"}, "does not identify this gate"),
+        ({"field": "title"}, "not an identity field"),
+        ({"path": "docs/design/registry.json"}, "is not runs/"),
+        ({"path": "../outside.json"}, "is not runs/"),
+    ],
+)
+def test_scored_evidence_must_be_a_run_artifact_naming_this_gate(
+    change, message
+):
     entry = make_entry(0, ["s_a:2020"], ("historical_import", "used"))
-    entry["scored_evidence"][0]["equals"] = "gate_other"
-    problems = registry.validate(make_registry([entry]))
-    assert any("not this gate" in p for p in problems)
+    entry["scored_evidence"][0].update(change)
+    assert any(message in p for p in validate(make_registry([entry])))
     entry["scored_evidence"] = []
-    problems = registry.validate(make_registry([entry]))
+    problems = validate(make_registry([entry]))
     assert any("needs scored_evidence" in p for p in problems)
 
 
 def test_a_review_must_name_an_earlier_entry():
-    current = build(
-        [(["s_a:2020"], ("registration", "candidate"))]
-        + [(["s_b:2025"], ("registration", "candidate"))]
-    )
-    first = current["entries"][0]
-    first["overlap_review"].append({"id": "H002", "reason": "later"})
-    problems = registry.validate(current)
+    entries = [make_entry(0, ["s_a:2020"]), make_entry(1, ["s_c:2025"])]
+    entries[0]["overlap_review"].append(review("H002"))
+    problems = validate(make_registry(entries))
     assert any("not an earlier entry" in p for p in problems)
 
 
@@ -578,7 +606,7 @@ def test_malformed_fields_are_reported_not_raised(path, value):
         for part in path[:-1]:
             target = target[part]
         target[path[-1]] = value
-    problems = registry.validate(current)
+    problems = validate(current)
     assert isinstance(problems, list) and problems
 
 
@@ -591,19 +619,27 @@ json_values = st.recursive(
 
 
 @settings(max_examples=200, deadline=None)
-@given(st.sampled_from(sorted(registry.ENTRY_KEYS) + ["entries"]), json_values)
-def test_any_json_in_any_field_is_reported_not_raised(key, value):
+@given(
+    st.sampled_from(sorted(registry.ENTRY_KEYS) + ["entries"]),
+    json_values,
+    st.booleans(),
+)
+def test_any_json_in_any_field_is_reported_not_raised(key, value, append):
     base = build([(["s_a:2020"], ("historical_import", "used"))])
     current = copy.deepcopy(base)
     if key == "entries":
         current["entries"] = value
+    elif append:
+        added = make_entry(1, ["s_c:2099"])
+        added[key] = value
+        current["entries"].append(added)
     else:
         current["entries"][0][key] = value
-    assert isinstance(registry.validate(current), list)
+    assert isinstance(validate(current), list)
     assert isinstance(registry.append_only_problems(base, current), list)
 
 
-# Committed files and base commits, through git ----------------------------
+# Committed trees and base commits, through git ----------------------------
 
 
 def git(repository: Path, *args: str) -> str:
@@ -622,8 +658,13 @@ def init_repository(tmp_path: Path) -> Path:
     git(repository, "init", "-q", "-b", "master")
     git(repository, "config", "user.email", "t@example.com")
     git(repository, "config", "user.name", "t")
-    (repository / "README").write_text("r", encoding="utf-8")
-    git(repository, "add", "README")
+    write(
+        repository,
+        registry.GATES,
+        "gates:\n  gate_0:\n    id: zero_gate\n"
+        "    registration_id: reg-zero\n",
+    )
+    git(repository, "add", "-A")
     git(repository, "commit", "-q", "-m", "start")
     return repository
 
@@ -635,77 +676,145 @@ def write(repository: Path, relative: str, document) -> None:
     path.write_text(text, encoding="utf-8")
 
 
+def commit_all(repository: Path, message: str) -> str:
+    git(repository, "add", "-A")
+    git(repository, "commit", "-q", "-m", message)
+    return git(repository, "rev-parse", "HEAD").strip()
+
+
 @pytest.fixture
 def no_ci_env(monkeypatch):
     for name in ("GITHUB_BASE_REF", "GITHUB_EVENT_NAME", "GITHUB_EVENT_PATH"):
         monkeypatch.delenv(name, raising=False)
 
 
-def test_scored_evidence_must_be_committed_and_identify_the_gate(
-    tmp_path, no_ci_env
-):
-    repository = init_repository(tmp_path)
+def scored_registry() -> dict:
     entry = make_entry(0, ["s_a:2020"], ("historical_import", "used"))
-    current = make_registry([entry])
-    evidence = entry["scored_evidence"][0]
+    entry["gate_identifiers"] = ["gate_0", "zero_gate", "reg-zero"]
+    return make_registry([entry])
+
+
+def test_scored_evidence_is_read_from_the_committed_tree(tmp_path, no_ci_env):
+    repository = init_repository(tmp_path)
+    current = scored_registry()
+    evidence = current["entries"][0]["scored_evidence"][0]
     write(repository, evidence["path"], {"gate": "gate_0"})
     assert any(
-        "not committed" in p for p in registry.validate(current, repository)
+        "not a committed file" in p for p in validate(current, repository)
     )
     git(repository, "add", "-A")
-    git(repository, "commit", "-q", "-m", "score")
-    assert registry.validate(current, repository) == []
-    write(repository, "scores/other.json", {"gate": "gate_9"})
-    git(repository, "add", "-A")
-    git(repository, "commit", "-q", "-m", "other")
-    evidence["path"] = "scores/other.json"
     assert any(
-        "does not have gate" in p
-        for p in registry.validate(current, repository)
+        "not a committed file" in p for p in validate(current, repository)
     )
-    write(repository, "scores/text.json", "not json")
-    git(repository, "add", "-A")
-    git(repository, "commit", "-q", "-m", "text")
-    evidence["path"] = "scores/text.json"
-    assert any("not JSON" in p for p in registry.validate(current, repository))
+    git(repository, "commit", "-q", "-m", "score")
+    assert validate(current, repository) == []
+    write(repository, evidence["path"], {"gate": "gate_9"})
+    assert validate(current, repository) == []
+    for field, equals in (
+        ("registration_id", "reg-zero"),
+        ("gate", "zero_gate"),
+    ):
+        evidence.update(field=field, equals=equals)
+        assert any("does not have" in p for p in validate(current, repository))
+
+
+def test_identifiers_must_be_authoritative(tmp_path, no_ci_env):
+    repository = init_repository(tmp_path)
+    current = scored_registry()
+    entry = current["entries"][0]
+    write(repository, entry["scored_evidence"][0]["path"], {"title": "x"})
+    commit_all(repository, "score")
+    entry["gate_identifiers"].append("x")
+    entry["scored_evidence"][0].update(field="gate", equals="x")
+    assert any(
+        "does not identify this gate" in p
+        for p in validate(current, repository)
+    )
+    entry["gate"] = "gate_unknown"
+    entry["gate_identifiers"] = ["gate_unknown"]
+    entry["scored_evidence"][0]["equals"] = "gate_unknown"
+    assert any(
+        "neither a gates.yaml gate" in p for p in validate(current, repository)
+    )
+
+
+def test_a_symlinked_or_non_json_artifact_is_refused(tmp_path, no_ci_env):
+    repository = init_repository(tmp_path)
+    current = scored_registry()
+    evidence = current["entries"][0]["scored_evidence"][0]
     outside = tmp_path / "outside.json"
     outside.write_text(json.dumps({"gate": "gate_0"}), encoding="utf-8")
-    (repository / "scores" / "link.json").symlink_to(outside)
-    git(repository, "add", "-A")
-    git(repository, "commit", "-q", "-m", "link")
-    evidence["path"] = "scores/link.json"
-    assert any("symlink" in p for p in registry.validate(current, repository))
-    for path in ("../outside.json", "/etc/hosts", "~/x.json"):
-        evidence["path"] = path
-        assert any(
-            "outside the repository" in p
-            for p in registry.validate(current, repository)
-        )
+    link = repository / evidence["path"]
+    link.parent.mkdir(parents=True)
+    link.symlink_to(outside)
+    commit_all(repository, "link")
+    assert any(
+        "not a committed file" in p for p in validate(current, repository)
+    )
+    link.unlink()
+    write(repository, evidence["path"], "not json")
+    commit_all(repository, "text")
+    assert any("not JSON" in p for p in validate(current, repository))
 
 
-def test_complete_needs_its_completion_record(tmp_path, no_ci_env):
+def test_imports_need_evidence_older_than_the_registry(tmp_path, no_ci_env):
+    repository = init_repository(tmp_path)
+    current = scored_registry()
+    evidence = current["entries"][0]["scored_evidence"][0]
+    write(repository, evidence["path"], {"gate": "gate_0"})
+    commit_all(repository, "score before the registry")
+    write(repository, registry.REGISTRY, current)
+    commit_all(repository, "registry")
+    assert validate(current, repository) == []
+    late = make_entry(1, ["s_c:2099"], ("historical_import", "used"))
+    late["gate"] = "gate_0"
+    late["gate_identifiers"] = ["gate_0"]
+    late["scored_evidence"][0].update(path=run_path("late"), equals="gate_0")
+    write(repository, late["scored_evidence"][0]["path"], {"gate": "gate_0"})
+    commit_all(repository, "score after the registry")
+    current["entries"].append(late)
+    assert any(
+        "after the registry existed" in p
+        for p in validate(current, repository)
+    )
+
+
+def test_review_citations_must_name_committed_lines(tmp_path, no_ci_env):
+    repository = init_repository(tmp_path)
+    write(repository, "docs/note.md", "one\ntwo\nthree\n")
+    commit_all(repository, "note")
+    entries = [make_entry(0, ["s_a:2020"]), make_entry(1, ["s_b:2025"])]
+    entries[1]["overlap_review"].append(review("H001"))
+    current = make_registry(entries)
+    for citation, ok in (
+        ("docs/note.md:2", True),
+        ("docs/note.md:2-3", True),
+        ("docs/note.md:4", False),
+        ("docs/missing.md:1", False),
+    ):
+        entries[1]["overlap_review"][0]["evidence"] = [citation]
+        assert (validate(current, repository) == []) == ok, citation
+
+
+def test_complete_needs_its_committed_record(tmp_path, no_ci_env):
     repository = init_repository(tmp_path)
     current = make_registry([], complete=True)
-    assert any(
-        "does not exist" in p for p in registry.validate(current, repository)
-    )
+    assert any("not committed" in p for p in validate(current, repository))
     write(repository, current["completion_record"], {})
-    assert registry.validate(current, repository) == []
+    commit_all(repository, "inventory")
+    assert validate(current, repository) == []
 
 
 def commit_registry(repository: Path, current: dict, message: str) -> str:
     write(repository, registry.REGISTRY, current)
-    git(repository, "add", "-A")
-    git(repository, "commit", "-q", "-m", message)
-    return git(repository, "rev-parse", "HEAD").strip()
+    return commit_all(repository, message)
 
 
 def test_a_pull_request_compares_with_its_merge_base(tmp_path, no_ci_env):
     repository = init_repository(tmp_path)
     git(repository, "checkout", "-q", "-b", "feature")
     write(repository, "notes.txt", "a commit of the branch's own")
-    git(repository, "add", "-A")
-    git(repository, "commit", "-q", "-m", "feature work")
+    commit_all(repository, "feature work")
     assert registry.base_registry(repository) is None
     git(repository, "checkout", "-q", "master")
     first = build([(["s_a:2020"], ("historical_import", "used"))])
@@ -751,6 +860,35 @@ def test_a_push_compares_with_its_before_commit(
     )
     event.write_text(json.dumps({"before": "0" * 40}), encoding="utf-8")
     assert registry.base_registry(repository) == middle
+
+
+@pytest.mark.parametrize("undo", ["append_then_remove", "edit_then_restore"])
+def test_a_push_cannot_hide_a_change_a_later_commit_undoes(
+    tmp_path, no_ci_env, undo
+):
+    repository = init_repository(tmp_path)
+    first = build([(["s_a:2020"], ("historical_import", "used"))])
+    base = commit_registry(repository, first, "registry")
+    changed = copy.deepcopy(first)
+    if undo == "append_then_remove":
+        changed["entries"].append(make_entry(1, ["s_c:2099"]))
+        commit_registry(repository, changed, "append")
+    else:
+        changed["entries"][0]["unit_keys"] = ["s_c:2199"]
+        commit_registry(repository, changed, "edit a key")
+    commit_registry(repository, first, "undo")
+    assert registry.append_only_problems(first, first) == []
+    assert registry.history_problems(repository, base)
+
+
+def test_a_clean_history_has_no_problems(tmp_path, no_ci_env):
+    repository = init_repository(tmp_path)
+    first = build([(["s_a:2020"], ("historical_import", "used"))])
+    base = commit_registry(repository, first, "registry")
+    second = copy.deepcopy(first)
+    second["entries"].append(make_entry(1, ["s_c:2099"]))
+    commit_registry(repository, second, "append a candidate")
+    assert registry.history_problems(repository, base) == []
 
 
 def test_no_base_raises_rather_than_passing(tmp_path, monkeypatch):

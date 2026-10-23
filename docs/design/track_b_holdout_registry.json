@@ -5,13 +5,13 @@
   "rules": [
     "A gate registers what it holds out here, as a lone candidate entry in a commit of its own, before its record freezes. It moves to frozen, used or withdrawn only in later commits.",
     "J's candidate holdouts are registered first, because J is on Track B's critical path. OP0.2 registers its picks for OP12's gate_ssa_totals here before it freezes them, and picks from the years J has not taken.",
-    "Every unit key names a declared source, then its years (a year, an inclusive range, or 'undated'), then optional scope segments. Each source declares a family, a title, a catalog reference no other source shares, and what its key year means. A new source is added only if it is not another name for a declared one.",
-    "Two unit keys share a unit when their source is the same and their years intersect; scope segments describe the unit and never narrow the overlap. Live entries that share a unit list each other in disclosed_overlaps, and both gates' registrations name the overlap. No unit is held out by two gates silently.",
-    "The overlap rule cannot see two sources that share underlying data, or two editions of a publication that report the same data years. So an entry lists in overlap_review, with a reason, every earlier live entry of the same source family that it neither shares a unit with nor discloses.",
-    "Reference years are recorded separately from interview or publication availability (design section 5.2, element 10): a unit key's year is what its source declares (for PSID, the interview wave), and each entry's units state the reference or event years.",
-    "An entry whose gate has scored has status 'used'. Its scored_evidence cites committed artifacts of that run, each with a field whose value identifies the gate. Its units are exposure for every later gate and never again an unused holdout (design section 5.2).",
-    "Entries are only appended. An entry's id, provenance, gate, lane, source, units and unit_keys never change; its gate identifiers, evidence, scored evidence, disclosures, reviews and history only extend. Ids are never reused.",
-    "A historical import records a gate that froze or scored before this registry existed. Imports are allowed only while the registry is incomplete.",
+    "Every unit key names a source from the controlled vocabulary in src/populace_dynamics/track_b/holdout_registry.py (SOURCES), then its years (a year, an inclusive range, or 'undated'), then optional scope segments. The registry's sources must equal that vocabulary. Each source declares a family, a title, a catalog reference no other source shares, and what its key year means. Adding a source is a reviewed code change, and a new source must not be another name for a declared one.",
+    "Two unit keys share a unit when their source is the same and their years intersect; scope segments describe the unit and never narrow the overlap. Live entries that share a unit, or whose relation is unresolved, list each other in disclosed_overlaps, and both gates' registrations name the overlap. No unit is held out by two gates silently.",
+    "The overlap rule cannot see two sources that share underlying data, or two editions of a publication that report the same data years. So an entry reviews every earlier live entry of the same source family that it neither shares a unit with nor discloses. A review records the outcome 'disjoint', a substantive reason and citations (path:line or https URLs); an unresolved relation is disclosed instead.",
+    "Reference years are recorded separately from interview or publication availability (design section 5.2, element 10): a unit key's year is what its source declares (for PSID, the interview wave; for EPUF, the file's vintage year), and each entry's units state the reference or event years.",
+    "An entry whose gate has scored has status 'used'. Its scored_evidence cites committed scored-run artifacts under runs/, each with an identity field (gate, gate.name or registration_id) whose value identifies the gate in gates.yaml or in the module's REGISTRATIONS_OUTSIDE_GATES_YAML. Its units are exposure for every later gate and never again an unused holdout (design section 5.2).",
+    "Entries are only appended. An entry's id, provenance, gate, lane, source, units and unit_keys never change; its gate identifiers, evidence, scored evidence, disclosures, reviews and history only extend. Ids are never reused. These rules hold against the base commit and between every pair of consecutive first-parent commits since it.",
+    "A historical import records a gate that scored before this registry existed: it starts as used, and its scored evidence must have been committed before the registry was. Imports are allowed only while the registry is incomplete.",
     "The registry is incomplete until completion_record, B0.2's mechanical exposure inventory, exists. It starts with the prior uses verified below; the inventory adds the rest before any B0.2 gate record freezes."
   ],
   "status_values": {
@@ -31,7 +31,7 @@
       "family": "ssa_administrative",
       "title": "SSA Earnings Public-Use File",
       "catalog": "SSA Office of Research, Evaluation, and Statistics: Earnings Public-Use File",
-      "key_year": "file release year"
+      "key_year": "the vintage year in the file's title: the 2006 file holds earnings through 2006 and was released in August 2011"
     },
     "ssa_supplement": {
       "family": "ssa_administrative",
@@ -47,7 +47,7 @@
     },
     "census_cps_tables": {
       "family": "us_cross_section",
-      "title": "U.S. Census Bureau Current Population Survey published tables",
+      "title": "U.S. Census Bureau Current Population Survey tables",
       "catalog": "U.S. Census Bureau: Current Population Survey published tables",
       "key_year": "table reference year"
     },
@@ -223,13 +223,16 @@
           "equals": "2026-10-03-epuf-career-fill"
         }
       ],
-      "disclosed_overlaps": [],
+      "disclosed_overlaps": [
+        "H004",
+        "H005"
+      ],
       "overlap_review": [],
       "history": [
         {
           "date": "2026-10-21",
           "status": "used",
-          "note": "seeded from gates.yaml at 1e739d32; open_population.md rev 2 plans gate_young_earn on a new salt of the same file, which shares this unit and must disclose it"
+          "note": "seeded from gates.yaml at 1e739d32; its relation to the DI ASR 2023 (H004, H005) is unresolved and disclosed; open_population.md rev 2 plans gate_young_earn on a new salt of the same file, which shares this unit and must disclose it"
         }
       ]
     },
@@ -277,19 +280,15 @@
       "disclosed_overlaps": [
         "H001",
         "H002",
+        "H003",
         "H005"
       ],
-      "overlap_review": [
-        {
-          "id": "H003",
-          "reason": "EPUF 2006 is a person-level extract of earnings through 2006 (src/populace_dynamics/data/epuf.py:15); gate_m4 holds out tables of the DI ASR's 2023 edition. They share no edition or file year. Whether a DI ASR 2023 table reports data years before 2007 is for B0.2's inventory to itemize."
-        }
-      ],
+      "overlap_review": [],
       "history": [
         {
           "date": "2026-10-21",
           "status": "used",
-          "note": "seeded from gates.yaml at 1e739d32; its PSID panel shares waves with gate_m6 (H001) and B2 (H002), and the DI ASR 2023 edition with gate_w1 (H005)"
+          "note": "seeded from gates.yaml at 1e739d32; its PSID panel shares waves with gate_m6 (H001) and B2 (H002), and the DI ASR 2023 edition with gate_w1 (H005); whether a DI ASR 2023 table reports data years that EPUF 2006 also covers (H003) is unresolved, so it is disclosed"
         }
       ]
     },
@@ -357,19 +356,15 @@
         }
       ],
       "disclosed_overlaps": [
+        "H003",
         "H004"
       ],
-      "overlap_review": [
-        {
-          "id": "H003",
-          "reason": "EPUF 2006 is a person-level extract of earnings through 2006 (src/populace_dynamics/data/epuf.py:15); gate_w1 used tables of the Supplement's and the DI ASR's 2023 editions. They share no edition or file year. The data years those tables report are for B0.2's inventory to itemize."
-        }
-      ],
+      "overlap_review": [],
       "history": [
         {
           "date": "2026-10-21",
           "status": "used",
-          "note": "seeded from gates.yaml at 1e739d32; shares the DI ASR 2023 edition with gate_m4 (H004)"
+          "note": "seeded from gates.yaml at 1e739d32; shares the DI ASR 2023 edition with gate_m4 (H004); whether its 2023 Supplement and DI ASR tables report data years that EPUF 2006 also covers (H003) is unresolved, so it is disclosed"
         }
       ]
     }
