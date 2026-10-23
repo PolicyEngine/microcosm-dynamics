@@ -244,8 +244,9 @@ class RETBeneficiary:
     on this NH's ledger. An ordinary child's Act 203(b)(1) age facts need
     explicit ``deemed_child_age_18_months``; such a married non-disabled
     child is entitled only if 402(d)(5) kept the benefit through a marriage
-    made while disabled, or disabled in the third month before it
-    (402(s)(2)), a residual case CFR .420 omits, so it stays refused. Own
+    in whose month, or in the third month before which, the child was
+    under a disability (402(s)(2)); recovery may come before or after the
+    marriage. CFR .420 omits that residual case, so it stays refused. Own
     two-record excess is still refused.
     ``own_work_exempt_months`` must stay empty: Act 203(f)(1)(C) reaches
     only a child under a disability that month or three months before

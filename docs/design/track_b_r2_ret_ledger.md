@@ -828,7 +828,7 @@ not a reconstruction of monetary RET under pre-1978 law.
 | Refusal of vocational rehabilitation | `VOCATIONAL_REHABILITATION` / `vocational_rehabilitation_refusal` | RS 02501.130 |
 | Another deduction event on the record | `OTHER_DEDUCTION` / `other_deduction_event` | Act 203(c)/(d); RS 02501.130; GN 02603.040 |
 | Unmarried purported deemed entitlement | `InvalidFamilyInput`: not on this NH's ledger | Act 203(b)(1) and 20 CFR 404.420 require marriage; RS 02501.140's broader wording yields (P1) |
-| Ordinary deemed adult CHILD with asserted marriage and age facts | `DEEMED_ENTITLEMENT_BASIS` / `deemed_entitlement_marriage_basis` | Entitled only through 402(d)(5) for a marriage made while disabled or within three months of disability (402(s)(2)); CFR .420 omits that residual case |
+| Ordinary deemed adult CHILD with asserted marriage and age facts | `DEEMED_ENTITLEMENT_BASIS` / `deemed_entitlement_marriage_basis` | Entitled only through 402(d)(5), which needs disability in the month of marriage or in the third month before it (402(s)(2)); the child may have recovered before or after the marriage. CFR .420 omits that residual case |
 
 The monthly G context establishes maximum membership, original age
 reduction and dual entitlement. Its declared baseline must match the R2
@@ -1484,8 +1484,10 @@ and 402(d)(5)'s exception for marrying a beneficiary applies only if the
 child "at the time of the marriage ... was under a disability ... or had
 been under such a disability in the third month before the month in which
 such marriage occurred" (402(s)(2)). So a married, non-disabled adult
-child keeps child's benefits only in the residual case of such a marriage
-followed by recovery, which the regulation omits. That configuration stays refused as
+child keeps child's benefits only in the residual case of a marriage that
+qualified under (s)(2) (disability in the marriage month or in the third
+month before it), with recovery before or after the marriage, which the
+regulation omits. That configuration stays refused as
 `DEEMED_ENTITLEMENT_BASIS`, with its row and weight kept;
 `test_deemed_ordinary_child_requires_explicit_adult_age_facts` pins
 invalid missing-age facts and the refusal, and the married CDB benchmark
