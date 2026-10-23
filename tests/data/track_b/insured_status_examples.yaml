@@ -702,15 +702,21 @@ examples:
   coverage: table_differential
   test_node: tests/test_track_b_insured_status.py::test_fully_requirement_differential_cfr_404_115_every_captured_row
 - id: poms_800_exhibit
-  source: poms_rs_00301_800
+  source: poms_rs_00301_800_exhibit
   quotes:
-  - Quarters of Coverage Requirements - Exhibit
-  - View In PDF
-  expected: {}
-  coverage: missing_attachment
-  note: Staged HTML links to two GIFs and a PDF; their bytes are not staged. CFR
-    404.115 supplies an independent text cohort chart; do not claim the unavailable
-    RS 00301.800 exhibit is reproduced.
+  - 1889 or prior 1892 1954 or prior 6
+  - 1910-1913 1913 1975 24
+  - 1929 or later 1991 or later 40
+  expected:
+    first_row: 1889 or prior
+    last_row: 1929 or later
+    rows: 38
+  coverage: table_differential
+  test_node: tests/test_track_b_insured_status.py::test_fully_requirement_differential_poms_rs_00301_800_exhibit
+  note: Text extracted from the exhibit PDF (pdftotext), with the PDF and both
+    GIF renderings pinned in served_bodies. Every row is checked by birth cohort,
+    by the January 1 footnote and by year of death. The PDF's footnote misprints
+    the male age-65 cohort as 1/2/31; the GIF and 20 CFR 404.132(b) say 1913.
 - id: poms_102_1_lucinda
   source: poms_rs_00301_102
   quotes:

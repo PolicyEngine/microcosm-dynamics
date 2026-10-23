@@ -202,6 +202,75 @@ def test_fully_requirement_differential_cfr_404_115_every_captured_row():
     assert tested >= 140
 
 
+def _rs00301_800_exhibit_rows():
+    text = (SOURCES / "poms_rs_00301_800_exhibit_pdftotext.txt").read_text(
+        encoding="utf-8"
+    )
+    rows = re.findall(
+        r"^\s*(\d{4}(?: or prior|-\d{4}| or later)?)\s+(\d{4})?\s*"
+        r"(\d{4}(?: or prior| or later)?)\s+(\d{1,2})\b",
+        text,
+        re.M,
+    )
+    assert len(rows) == 38
+    return rows
+
+
+def test_fully_requirement_differential_poms_rs_00301_800_exhibit():
+    """Every row of the RS 00301.800 exhibit, by birth cohort and death year.
+
+    Men born before January 2, 1913 use age 65 and women age 62; from 1914
+    one row serves both. Footnote 1: a January 1 birth takes the prior
+    year's row. The death-year column is checked for a worker who attained
+    21 before 1951 (born July 1, 1929) and dies that year.
+    """
+    tested = 0
+    for men, women, event, required in _rs00301_800_exhibit_rows():
+        required = int(required)
+        years_in_cell = [int(y) for y in re.findall(r"\d{4}", men)]
+        first, last = years_in_cell[0], years_in_cell[-1]
+        cohorts = [
+            (i.Sex.MALE, date(year, 7, 1) if year < 1913 else date(1913, 1, 1))
+            for year in range(first, last + 1)
+            if year <= 1913
+        ]
+        if first >= 1914:
+            cohorts.append((i.Sex.MALE, date(first, 7, 1)))
+        female_year = int(women) if women else first
+        cohorts += [
+            (i.Sex.FEMALE, date(female_year, 7, 1)),
+            (i.Sex.FEMALE, date(female_year + 1, 1, 1)),
+        ]
+        for sex, birth in cohorts:
+            age = 65 if sex is i.Sex.MALE and birth < date(1913, 1, 2) else 62
+            month = date(birth.year + age + 1, 12, 1)
+            person = i.Person(birth, sex=sex)
+            assert i.fully_insured_requirement(person, month) == required, (
+                men,
+                women,
+                sex,
+                birth,
+            )
+            tested += 1
+        years = [int(event[:4])]
+        if "or prior" in event:
+            years.append(int(event[:4]) - 2)
+        if "or later" in event:
+            years.append(int(event[:4]) + 14)
+        for year in years:
+            person = i.Person(
+                date(1929, 7, 1),
+                sex=i.Sex.FEMALE,
+                death_date=date(year, 7, 1),
+            )
+            assert (
+                i.fully_insured_requirement(person, date(year, 12, 1))
+                == required
+            ), (event, year)
+            tested += 1
+    assert tested >= 150
+
+
 def test_elapsed_years_from_birth_not_projection_entry():
     person = i.Person(date(1980, 2, 2))
     assert i.fully_insured_requirement(person, date(2026, 1, 1)) == 24

@@ -300,11 +300,16 @@ needs 14 for fully insured in 1990, and has DLI June 30, 1990 by assigning
 1986; the sixth in Q1 is insufficient and the seventh makes him insured
 April 1, 1986. These calculations are pinned directly in the public tests.
 
-RS .800's capture is an HTML shell linking uncaptured GIF/PDF exhibits.
-The claimed all-cohort POMS differential cannot be performed offline.
-Instead the tests compare every captured CFR 404.115 cohort row, including
-January 1/January 2 boundaries and sex distinctions. RS .149 similarly links
-an uncaptured worksheet. Neither missing attachment is represented as read.
+RS .800's exhibit is a PDF and two GIF renderings of the same table. Its
+text was extracted from the PDF with pdftotext; the PDF and both GIFs are
+pinned by hash. The tests compare every one of its 38 rows: by birth cohort
+(men before January 2, 1913 at age 65, women at 62), by footnote 1's
+January 1 rule, and by year of death for a worker who attained 21 before
+1951. They also compare every CFR 404.115 cohort row, including January
+1/January 2 boundaries and sex distinctions. The PDF's footnote misprints
+the male age-65 cohort as "born before 1/2/31"; its GIF rendering, its own
+table and 20 CFR 404.132(b) say January 2, 1913, which the rule follows.
+RS .149 links an uncaptured worksheet, which is not represented as read.
 
 RS .340 prints $10,900 in SEI but allocates $3,600 to each of three
 quarters. Literal covered SEI divides as $10,900/3. An unstated application

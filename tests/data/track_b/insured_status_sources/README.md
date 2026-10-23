@@ -4,7 +4,7 @@ Verification class: statutory conformance. These public statutory sources
 support invented cases and published examples only. They admit no
 population, behavioral or forecast claim.
 
-`manifest.json` pins all 44 staged captures with their URL, UTC retrieval
+`manifest.json` pins all 45 captures with their URL, UTC retrieval
 time, byte count, SHA-256 and capture format. POMS entries additionally
 retain the exact transmittal and page date. The staging log was removed
 only after all original byte counts and hashes were verified. The source
@@ -14,7 +14,7 @@ or documentary-purpose quote from every capture. The example registry at
 its source and distinguishes computations, refusals, errata and unavailable
 attachments.
 
-The three capture formats follow the gross-benefit manifest:
+The capture formats follow the gross-benefit manifest, with one addition:
 
 - `http_body`: complete decoded HTTP response, unchanged. This includes
   all 37 POMS sections, their table of contents and eCFR subpart B as of
@@ -27,6 +27,10 @@ The three capture formats follow the gross-benefit manifest:
   response's byte count and hash under `served_bodies`. Excerpts retain
   42 USC 413(a)-(d), 414(a)-(c), 416(i)(1)-(3) and (l), and 423(c)(1).
   No replacement response was fetched.
+- `pdf_text`: the RS 00301.800 exhibit's text, extracted from its PDF with
+  pdftotext 26.09.0 (`-layout -enc UTF-8`) and kept unchanged.
+  `served_bodies` pins the PDF and both GIF renderings of the same table
+  (fetched 2026-10-23 from the POMS image store).
 
 | Source | Use |
 | --- | --- |
@@ -40,7 +44,7 @@ The three capture formats follow the gross-benefit manifest:
 | RS 00301.200-.250 | Annual QCs, flexible assignment, exclusions, fiscal SE allocation and every 1978-2026 increment |
 | RS 00301.301-.350 | Quarterly wages, agriculture, calendar/fiscal self-employment and maximum-earnings gift QCs; railroad and simplified-method boundaries |
 | RS 00301.470, .475, .480, .600 | Deemed veterans, earned-basis wages, pre-1956 alternative test and vow-of-poverty refusals |
-| RS 00301.800 | Exhibit shell and explicit record of missing linked images/PDF |
+| RS 00301.800 and its exhibit | Exhibit shell, plus the exhibit's 38-row cohort table, checked row by row |
 | 20 CFR 404 subpart B | Statutory rules, worked examples and the 404.115 cohort chart |
 | 42 USC 413, 414, 416, 423 | Act 213, 214, 216(i)/(l), 223(c)(1) |
 | SSA OACT QC page | Independent 1978-2027 chart and 2027 determination |
@@ -55,12 +59,13 @@ OACT agree on all 49 shared years, including POMS's joint 2010-2011 row.
 
 ## Source limitations and findings
 
-RS 00301.800 contains links to two GIF images and one PDF, but their
-response bodies were not staged. Its cohort chart cannot be reconstructed
-from this capture, and no external source was fetched. CFR 404.115 does
-contain a complete text cohort chart, which is used as an explicitly
-identified alternative differential. RS 00301.149 likewise only points
-to the SSA-1164 worksheet; no worksheet reproduction is claimed.
+RS 00301.800 links to two GIF images and one PDF of its exhibit. The PDF's
+text is captured as `pdf_text`, and all three bodies are pinned by hash.
+Every exhibit row is compared, as is every row of CFR 404.115's cohort
+chart. The PDF's footnote misprints the male age-65 cohort as "born before
+1/2/31"; the GIF rendering, the exhibit's own table and 20 CFR 404.132(b)
+say January 2, 1913. RS 00301.149 only points to the SSA-1164 worksheet;
+no worksheet reproduction is claimed.
 
 RS 00301.340's short-year example states $10,900 of self-employment
 income but allocates $3,600 to each of three quarters, totaling $10,800.

@@ -4,7 +4,8 @@
   "capture_formats": {
     "http_body": "Complete decoded HTTP response body, unchanged from the staged capture.",
     "browser_text": "Rendered document text checked against the served page during staging; served_bodies pins the complete HTTP response.",
-    "http_text_excerpt": "Cited paragraphs of staged LII HTTP bodies after stripping tags, decoding entities, collapsing whitespace and straightening apostrophes; served_bodies pins each original complete response."
+    "http_text_excerpt": "Cited paragraphs of staged LII HTTP bodies after stripping tags, decoding entities, collapsing whitespace and straightening apostrophes; served_bodies pins each original complete response.",
+    "pdf_text": "Text of a published PDF extracted with the named extractor, unchanged; served_bodies pins the PDF and any image renderings of the same pages."
   },
   "sources": [
     {
@@ -594,6 +595,37 @@
           "url": "https://www.ssa.gov/oact/cola/QC.html",
           "bytes": 39454,
           "sha256": "1e864536eb0b975f8f4d82d1ac806f57c285ab1dc2d8f9f03d34976caa02b6e7"
+        }
+      ]
+    },
+    {
+      "file": "poms_rs_00301_800_exhibit_pdftotext.txt",
+      "bytes": 6401,
+      "sha256": "4459a0bccfc9d025973f3c9183042375780d6ee3f1a9f7e91b603490ba5a3a79",
+      "id": "poms_rs_00301_800_exhibit",
+      "citation": "POMS RS 00301.800 exhibit, Quarters of Coverage Requirements (G-RS_00301.800-1.pdf)",
+      "url": "https://secure.ssa.gov/apps10/public/pomsimages.nsf/gfx_num/G-RS_00301.800-1/$File/G-RS_00301.800-1.pdf",
+      "retrieved_at_utc": "2026-10-23T14:12:14Z",
+      "capture": "pdf_text",
+      "extractor": "pdftotext 26.09.0 (Poppler), options -layout -enc UTF-8",
+      "poms_transmittal": "TN 14 (04-89)",
+      "page_date": "08/10/2012",
+      "title": "RS 00301.800 - Quarters of Coverage Requirements - Exhibit - 08/10/2012",
+      "served_bodies": [
+        {
+          "url": "https://secure.ssa.gov/apps10/public/pomsimages.nsf/gfx_num/G-RS_00301.800-1/$File/G-RS_00301.800-1.pdf",
+          "bytes": 222133,
+          "sha256": "9dcf53be30f06978b50e109ace88265ac38753700bb0093cb6213e01920af22f"
+        },
+        {
+          "url": "https://secure.ssa.gov/apps10/public/pomsimages.nsf/gfx_num/G-RS_00301.800-1/$File/G-RS_00301.800-1.gif",
+          "bytes": 31188,
+          "sha256": "5e25a2e1dd124aa218af34b93f284049e9516612955ae1326ceff19160bd28bc"
+        },
+        {
+          "url": "https://secure.ssa.gov/apps10/public/pomsimages.nsf/gfx_num/G-RS_00301.800-2/$File/G-RS_00301.800-2.gif",
+          "bytes": 48757,
+          "sha256": "65d94bae34becf54cf40e361cb6fb5668883f164efdff371122e8d2b9717efe3"
         }
       ]
     }

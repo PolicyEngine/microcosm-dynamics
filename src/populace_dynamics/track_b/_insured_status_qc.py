@@ -198,6 +198,7 @@ def _allowed_quarters(
         for value in (through_quarter, death_quarter, coverage_end_quarter)
         if value is not None
     )
+    # Source conflict us:oasdi-insured-disability-period-endpoint-quarters
     return tuple(
         quarter
         for quarter in _year_quarters(year)

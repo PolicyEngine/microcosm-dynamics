@@ -48,7 +48,7 @@ def source_text(source_id):
 
 
 # Each retained capture has a specific rule or documentary-purpose quote.
-# The two exhibit shells are retained to pin exactly what is unavailable.
+# The RS 00301.149 worksheet shell is retained to pin what is unavailable.
 RULE_QUOTES = {
     "poms_rs_00301_000_toc": [
         "Retirement, Survivors and Disability Requirements",
@@ -252,6 +252,14 @@ RULE_QUOTES = {
         "when the number of quarters in any period is an odd number, "
         "such number shall be reduced by one",
     ],
+    "poms_rs_00301_800_exhibit": [
+        "Quarters of Coverage Requirements For Benefits Under Title II "
+        "of the Social Security Act",
+        "(If No Prior Period of Disability Established)",
+        "If birth on 1/1, use prior year.",
+        "If birth after 1/1/30, one QC needed for each year after the "
+        "year age 21 attained.",
+    ],
     "ssa_oact_qc": [
         "No matter how high your earnings may be, you can not earn "
         "more than 4 QC's in one year.",
@@ -263,7 +271,7 @@ def test_manifest_pins_every_capture():
     document = manifest()
     assert document["schema_version"] == 1
     sources = document["sources"]
-    assert len(sources) == 44
+    assert len(sources) == 45
     assert len({source["id"] for source in sources}) == len(sources)
     for source in sources:
         data = (SOURCES / source["file"]).read_bytes()
@@ -519,13 +527,44 @@ def test_cfr_cohort_chart_is_complete_and_has_male_transition_rows():
     assert [row[1] for row in chart if "Jan. 2, 191" in row[0]][:4] == [24] * 4
 
 
-def test_rs00301_800_chart_attachment_is_explicitly_unavailable():
+def test_rs00301_800_exhibit_text_pins_every_linked_attachment():
     raw = (SOURCES / "poms_rs_00301_800.html").read_text()
-    assert "G-RS_00301.800-1.gif" in raw
-    assert "G-RS_00301.800-2.gif" in raw
-    assert "G-RS_00301.800-1.pdf" in raw
+    exhibit = next(
+        s
+        for s in manifest()["sources"]
+        if s["id"] == "poms_rs_00301_800_exhibit"
+    )
+    served = {
+        body["url"].rsplit("/", 1)[-1] for body in exhibit["served_bodies"]
+    }
+    assert served == {
+        "G-RS_00301.800-1.pdf",
+        "G-RS_00301.800-1.gif",
+        "G-RS_00301.800-2.gif",
+    }
+    for name in served:
+        assert name in raw
     assert not tuple(SOURCES.glob("*.gif"))
+    assert not tuple(SOURCES.glob("*.pdf"))
     case = next(
         e for e in registry()["examples"] if e["id"] == "poms_800_exhibit"
     )
-    assert case["coverage"] == "missing_attachment"
+    assert case["coverage"] == "table_differential"
+
+
+def test_rs00301_800_pdf_footnote_misprints_the_1913_male_age_65_cohort():
+    """The PDF's footnote says 1/2/31; its GIF rendering and the CFR say 1913.
+
+    The image rendering (G-RS_00301.800-2.gif, pinned in served_bodies)
+    prints "born before 1/2/13", and the exhibit's own table splits its male
+    and female columns at 1913. 20 CFR 404.132(b) ties the male rule to men
+    born before January 2, 1913. The implementation follows the CFR.
+    """
+    assert (
+        "The determining age for men born before 1/2/31 is age 65."
+        in source_text("poms_rs_00301_800_exhibit")
+    )
+    assert "1910-1913 1913 1975 24" in source_text("poms_rs_00301_800_exhibit")
+    assert "If you are a man born before January 2, 1913" in source_text(
+        "ecfr_20cfr404_subpart_b"
+    )

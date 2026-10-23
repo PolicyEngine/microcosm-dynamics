@@ -621,6 +621,7 @@ def _assignment(rows, window, boundary):
 def _witness(person, credits, at, exit_month, kind, *, onset=True):
     end = _qid(at)
     best = None
+    # Source conflict us:oasdi-insured-prior-disability-favorable-disregard
     # CFR404.130(f): consider all prior periods or disregard all, favorably.
     for use_periods in (
         (True, False) if person.prior_disability_periods else (True,)
