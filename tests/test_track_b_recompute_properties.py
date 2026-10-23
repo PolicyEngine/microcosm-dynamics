@@ -251,10 +251,10 @@ def test_earnings_mapping_order_independent_and_deterministic(values):
     st.lists(st.sampled_from(list(r.RecomputationCondition))),
     st.lists(st.integers(0, 100_000), min_size=3, max_size=3),
 )
-def test_iterator_conditions_preserve_repeated_results_and_outcomes(
+def test_collection_conditions_preserve_repeated_results_and_outcomes(
     conditions, values
 ):
-    original = basis(conditions=iter(conditions))
+    original = basis(conditions=list(conditions))
     history = dict(zip(range(2018, 2021), values, strict=True))
     outcomes = [
         r.evaluate_recomputation(
@@ -298,7 +298,7 @@ def test_all_coverage_refusals_precede_ordinary_arithmetic(
     if isinstance(refusal, r.PIAFormula):
         original = basis(formula=refusal)
     elif isinstance(refusal, r.RecomputationCondition):
-        original = basis(conditions=iter([refusal]))
+        original = basis(conditions=list([refusal]))
     elif refusal == "pre1983":
         original = basis(
             eligibility_year=1979,
@@ -327,7 +327,9 @@ def test_all_coverage_refusals_precede_ordinary_arithmetic(
             "aime_with_computation_years",
             wraps=r.aime_with_computation_years,
         ) as aime,
-        patch.object(r, "exact_pia", wraps=r.exact_pia) as pia,
+        patch.object(
+            r, "_exact_pia_validated", wraps=r._exact_pia_validated
+        ) as pia,
     ):
         with pytest.raises(FamilyConfigurationUnsupported):
             if sequence:
@@ -379,7 +381,9 @@ def test_invalid_required_parameters_precede_refusal_without_arithmetic(
         patch.object(
             r, "_aime_from_prefix", wraps=r._aime_from_prefix
         ) as adapter,
-        patch.object(r, "exact_pia", wraps=r.exact_pia) as pia,
+        patch.object(
+            r, "_exact_pia_validated", wraps=r._exact_pia_validated
+        ) as pia,
     ):
         with pytest.raises(InvalidFamilyInput):
             if sequence:
