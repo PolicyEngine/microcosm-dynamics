@@ -326,6 +326,9 @@ def test_historical_scope_and_earliest_ages_are_quoted_from_captures():
     assert not historical.supported
     assert historical.unsupported.reason.value == REASON
     assert g.spouse_age_reduced(F(500) - F(400), 1, PARAMS) == F("99.30")
+    # Method B, if the unreduced RIB began after the spouse benefit
+    # (402(q)(3)(A)(i) admits method C only for an early RIB or a DIB).
+    assert g.spouse_age_reduced(F(500), 1, PARAMS) - F(400) == F("96.50")
     modern = _outcome(state, [replace(member, birth_year=1916)], "family")
     assert modern.benefits.by_id()["member"].auxiliary_payable == F("99.30")
 

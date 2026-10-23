@@ -2866,7 +2866,7 @@ def _is_entitled(
     pia: Fraction,
     own_mba: Fraction | None,
     *,
-    parent_ob: Fraction | None = None,
+    parent_threshold: Fraction | None = None,
 ) -> tuple[bool, str]:
     own = beneficiary.own_benefit
     if own is None:
@@ -2886,9 +2886,11 @@ def _is_entitled(
     if (
         beneficiary.role is Role.PARENT
         and own.kind is OwnBenefitKind.OLD_AGE
-        and own_mba >= parent_ob
+        and own_mba >= parent_threshold
     ):
-        return False, "own RIB not less than parent's OB (RS 00209.001)"
+        return False, (
+            "own RIB not less than the 402(h)(1)(D) share of the PIA"
+        )
     if (
         beneficiary.role is Role.MOTHER_FATHER
         and own.kind is OwnBenefitKind.OLD_AGE
@@ -2990,9 +2992,9 @@ def _parisi_counted(
 
     The own-RIB reduction is not an auxiliary age reduction (GN
     02603.060B.2: $2.40 payable + $0.90 reduction, not the $16 own-RIB
-    reduction). Together they are the .045 amount "before any applicable
-    reduction for age"; GN 02603.050A.2 disregards a dual rate whose
-    before-age amount is zero. Own delayed credits and redistribution with an actually limiting
+    reduction). GN 02603.050A.2 disregards a dual rate that is zero before
+    age reduction; a zero reached only after it counts the age reduction.
+    Own delayed credits and redistribution with an actually limiting
     RIB-LIM remain refused: none of the captured worked cases settles
     those interacting amounts. A considered but nonlimiting RIB-LIM
     changes no rate (RS 00615.320A.3).
@@ -3034,13 +3036,14 @@ def _parisi_counted(
     )
     if payable == 0:
         before_age = row.standard - (own.pia if method_c else row.own_mba)
+        # GN 02603.050A.2 disregards a rate that dual entitlement, considered
+        # first, reduces to zero (.045; .060 A.8). A zero reached only after
+        # the auxiliary's age reduction keeps that reduction in PTAP: only
+        # the amount withheld for dual entitlement in 402(k)(3)(A)'s order is
+        # redistributed (20 CFR 404.403(a)(5), 404.407(a); .060 B.2).
         # Source conflict us:oasdi-dual-entitlement-zero-after-age-reduction
-        # GN 02603.050A applies its exceptions 2 and 3 under .045, which
-        # counts the dual rate "before any applicable reduction for age".
-        # A before-age zero is disregarded (.050A.2); a positive before-age
-        # amount is a partial rate (.050A.3), counted whole as the age term.
-        # A positive payable below counts the same total.
-        return Fraction(0), max(Fraction(0), before_age)
+        if before_age <= 0:
+            return Fraction(0), Fraction(0)
     if method_c:
         excess = max(Fraction(0), row.standard - own.pia)
         age_reduction = excess - _spouse_age_reduced_validated(
@@ -3365,6 +3368,11 @@ def _check_family_inputs(
     return beneficiaries
 
 
+def _parent_entitlement_thresholds(pia: Fraction) -> tuple[Fraction, Fraction]:
+    """402(h)(1)(D): 82.5 and 75 percent of the PIA, unrounded."""
+    return pia * Fraction(165, 200), pia * Fraction(3, 4)
+
+
 def _entitled_parent_count(
     state: RecordState,
     beneficiaries: Sequence[Beneficiary],
@@ -3377,9 +3385,11 @@ def _entitled_parent_count(
     75 percent "in any other case". The entitled set must satisfy that test
     for every parent at once: each entitled parent at its own rate, and
     each excluded potential parent at the rate it would share. RS
-    00209.015 counts an own-DIB parent as technically entitled. Returns
-    the count and the ids excluded at the two-parent rate. More than two
-    declared parents needs a separate rule.
+    00209.015 counts an own-DIB parent as technically entitled. The
+    thresholds are the unrounded percentages of the PIA that (h)(1)(D)
+    names, not the dime-floored OBs. Returns the count and the ids excluded
+    at the two-parent rate. More than two declared parents needs a
+    separate rule.
     """
     parents = [b for b in beneficiaries if b.role is Role.PARENT]
     if len(parents) > 2:
@@ -3389,12 +3399,7 @@ def _entitled_parent_count(
             "more than two declared parents is outside the one/two-parent "
             "rates settled by 402(h)(2) and RS 00209.015",
         )
-    one_ob = _original_benefit_validated(
-        Role.PARENT, FamilyKind.SURVIVOR, state.pia
-    )
-    two_ob = _original_benefit_validated(
-        Role.PARENT, FamilyKind.SURVIVOR, state.pia, parent_count=2
-    )
+    one_rate, two_rate = _parent_entitlement_thresholds(state.pia)
     potential = []
     for parent in parents:
         own = parent.own_benefit
@@ -3404,7 +3409,7 @@ def _entitled_parent_count(
             else _own_monthly_benefit_validated(own, params)[1]
         )
         if own is not None and own.kind is OwnBenefitKind.OLD_AGE:
-            if own_mba >= one_ob:
+            if own_mba >= one_rate:
                 continue
         potential.append((parent, own_mba))
     in_band = [
@@ -3412,7 +3417,7 @@ def _entitled_parent_count(
         for parent, own_mba in potential
         if parent.own_benefit is not None
         and parent.own_benefit.kind is OwnBenefitKind.OLD_AGE
-        and own_mba >= two_ob
+        and own_mba >= two_rate
     ]
     if len(potential) < 2 or not in_band:
         return max(1, len(potential)), frozenset()
@@ -3424,7 +3429,7 @@ def _entitled_parent_count(
         raise _computed(
             FamilyConfigurationUnsupported,
             UnsupportedReason.PARENT_BENEFIT,
-            "two parents with own RIB between the 75% and 82.5% OBs: "
+            "two parents with own RIB between 75% and 82.5% of the PIA: "
             "402(h)(1)(D) is satisfied by either parent alone",
             beneficiary_id=in_band[0].beneficiary_id,
         )
@@ -3564,13 +3569,8 @@ def _family_benefits(
     parent_count, excluded_parents = _entitled_parent_count(
         state, beneficiaries, params
     )
-    two_parent_ob = (
-        _original_benefit_validated(
-            Role.PARENT, FamilyKind.SURVIVOR, state.pia, parent_count=2
-        )
-        if excluded_parents
-        else None
-    )
+    one_rate, two_rate = _parent_entitlement_thresholds(state.pia)
+    parent_threshold = two_rate if parent_count == 2 else one_rate
     life_case = state.kind is not FamilyKind.SURVIVOR and not ieds
     worker_benefit = None
     if state.kind is FamilyKind.RETIREMENT and not ieds:
@@ -3600,10 +3600,10 @@ def _family_benefits(
             beneficiary,
             state.pia,
             own_mba,
-            parent_ob=(
-                two_parent_ob
+            parent_threshold=(
+                two_rate
                 if beneficiary.beneficiary_id in excluded_parents
-                else ob
+                else parent_threshold
             ),
         )
         rows.append(

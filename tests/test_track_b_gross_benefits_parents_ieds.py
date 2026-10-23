@@ -206,13 +206,23 @@ def test_parent_entitlement_compares_the_reduced_rib_not_its_pia():
     assert row.auxiliary_payable == F(25)
 
 
-def test_parent_entitlement_threshold_is_the_dime_rounded_original_benefit():
+def test_parent_entitlement_threshold_is_the_unrounded_statutory_share():
+    """402(h)(1)(D) compares with 82.5 percent of the PIA, not the OB.
+
+    PIA $1,000.10: 82.5 percent is $825.0825 and the dime-floored OB is
+    $825.00. A lone parent with own RIB $825.00 is entitled (technically,
+    $0 payable). Beside another entitled parent the test is 75 percent
+    ($750.075), which $825 reaches, so the other parent alone is paid.
+    """
     own = g.OwnBenefit(g.OwnBenefitKind.OLD_AGE, F(825))
-    result = _family(
-        _survivor(F("1000.1"), F(1750)),
-        [_parent("high", own_benefit=own), _parent("other")],
+    state = _survivor(F("1000.1"), F(1750))
+    alone = _rows(_family(state, [_parent("high", own_benefit=own)]))
+    assert alone["high"].entitled
+    assert alone["high"].original_benefit == F(825)
+    assert alone["high"].auxiliary_payable == 0
+    rows = _rows(
+        _family(state, [_parent("high", own_benefit=own), _parent("other")])
     )
-    rows = _rows(result)
     assert not rows["high"].entitled
     assert rows["high"].auxiliary_payable == 0
     assert rows["other"].original_benefit == F(825)
@@ -240,6 +250,11 @@ def test_parent_original_benefit_uses_the_entitled_count_and_dime_floor(
     )
 
 
+def _statutory_band_dimes(dimes):
+    """Own-RIB dimes in [75%, 82.5%) of a PIA of ``dimes`` tenths."""
+    return -(-dimes * 3 // 4), -(-dimes * 33 // 40)
+
+
 @given(st.integers(100, 1_000_000), st.integers(0, 100))
 @settings(deadline=None)
 def test_one_parent_in_the_band_yields_to_the_other_parent(dimes, position):
@@ -250,7 +265,9 @@ def test_one_parent_in_the_band_yields_to_the_other_parent(dimes, position):
     entitled either way, so the only entitled set satisfying (h)(1)(D) for
     both parents is the other parent alone, paid at 82.5 percent.
     """
-    low, high = dimes * 750 // 1000, dimes * 825 // 1000
+    low, high = _statutory_band_dimes(dimes)
+    if high <= low:
+        return
     own_dimes = low + (high - low - 1) * position // 100
     own = g.OwnBenefit(g.OwnBenefitKind.OLD_AGE, F(own_dimes, 10))
     rows = _rows(
@@ -259,12 +276,13 @@ def test_one_parent_in_the_band_yields_to_the_other_parent(dimes, position):
             [_parent("p1", own_benefit=own), _parent("p2")],
         )
     )
+    one_ob = F(dimes * 825 // 1000, 10)
     assert not rows["p1"].entitled
     assert rows["p1"].auxiliary_payable == 0
     assert rows["p1"].own_benefit == F(own_dimes, 10)
     assert rows["p2"].entitled
-    assert rows["p2"].original_benefit == F(high, 10)
-    assert rows["p2"].auxiliary_payable == F(high, 10)
+    assert rows["p2"].original_benefit == one_ob
+    assert rows["p2"].auxiliary_payable == one_ob
 
 
 @given(st.integers(100, 1_000_000), st.integers(0, 100), st.integers(0, 100))
@@ -272,7 +290,9 @@ def test_one_parent_in_the_band_yields_to_the_other_parent(dimes, position):
 def test_two_parents_in_the_band_refuse_because_either_alone_qualifies(
     dimes, first, second
 ):
-    low, high = dimes * 750 // 1000, dimes * 825 // 1000
+    low, high = _statutory_band_dimes(dimes)
+    if high <= low:
+        return
     members = [
         _parent(
             bid,
@@ -295,8 +315,8 @@ def _consistent_parent_sets(pia, own):
     A member's RIB must be below the rate of the set; an excluded parent's
     RIB must reach the rate it would share by joining the set.
     """
-    one = g.floor_dime(pia * F(825, 1000))
-    two = g.floor_dime(pia * F(3, 4))
+    one = pia * F(825, 1000)
+    two = pia * F(3, 4)
     ids = sorted(own)
     found = []
     for size in range(len(ids) + 1):

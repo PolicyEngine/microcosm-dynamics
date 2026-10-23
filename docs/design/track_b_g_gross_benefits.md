@@ -486,9 +486,12 @@ Reading taken (October 23, 2026), logged as
 regulation competes. The Act rounds the regular maximum "to the next lower
 multiple of $0.10" (403(a)(2)) and dime-floors every later increase of this
 maximum (215(i)(2)(A)(ii)), so an undimed initial maximum would be the only
-one of its kind; SSA's own description, the Bulletin, floors it. That is
-consistent usage within the Act, with the agency's reading breaking what
-remains of the tie (P3).
+one of its kind; SSA's own description, the Bulletin, floors it. Where the
+statute is silent, P1 lets the agency's published reading fill the gap.
+A blind adjudication preferred leaving the maximum unrounded, reading the
+contrast with 403(a)(1) and 20 CFR 404.403(c) as deliberate; the stakes are
+at most $0.10 a month per auxiliary, and only after a COLA (the pre-COLA
+shares floor to the same dimes), so the published agency reading is kept.
 
 ## Households and the entry point
 
@@ -1195,42 +1198,48 @@ interaction with the PTAP age-reduction and partial-payable terms.
 ### Reading taken: zero reached after auxiliary age reduction
 
 Source conflict `us:oasdi-dual-entitlement-zero-after-age-reduction`,
-decided October 23, 2026 (definitions control; P3). Ruling d1418 had kept
-it refused. GN 02603.045 says the counted amount is "before any applicable
+decided October 23, 2026 (the regulation's definition of the redistributed
+amount, with the agency's worked accounting; P3). Ruling d1418 had kept it
+refused. GN 02603.045 says the counted amount is "before any applicable
 reduction for age". GN 02603.050C requires the "Age reduction amount for
 all workers or deductees". GN 02603.050A.2 says "If dual entitlement
 reduces a beneficiary's rate to $0.00 (technically entitled)" to disregard
-that beneficiary, and A.3 says to "subtract the partial payable rate" when
-the rate is partial. A method-B spouse with PIA $500, maximum $750, own RIB
+that beneficiary. A method-B spouse with PIA $500, maximum $750, own RIB
 $64 and 36 auxiliary reduction months has standard rate $83.30,
 age-adjusted $62.40, and zero auxiliary payable.
 
-GN 02603.050A states that "exceptions 2 and 3 apply only for cases
-processed under the new rule as explained in GN 02603.045", so A.2 and A.3
-measure the dual rate as .045 defines it, before age reduction. Before age
-reduction the spouse's rate is $83.30 minus $64, or $19.30: a partial rate,
-not zero. G counts it whole (A.3), paying the children $115.30 each, a
-record total of $730.60. This is also the amount G already counts whenever
-the dual payable is positive: payable plus age reduction is $83.30 minus
-the own benefit. The count therefore runs continuously from a positive
-payable through the zero clamp to A.2's disregard, which applies exactly
-when the own benefit reaches the standard rate (and covers A.5 and A.8,
-where the zero arises before age reduction). It is consistent with 20 CFR
-404.403(a)(5) and with every captured SSA example (A.5, A.8, A.9, B.2).
+Act 402(k)(3)(A) applies the own-benefit offset "after any reduction under
+subsection (q)", so in a method-B case the $83.30 share divides into $20.90
+withheld for age and $62.40 withheld for dual entitlement. 20 CFR
+404.403(a)(5) excludes from the total "any amount not paid because of that
+person's entitlement on another earnings record (see § 404.407)", and
+404.407(a) measures that offset after the 202(q) reduction. GN 02603.060
+B.2 states the same accounting ("In order to redistribute only the amount
+being withheld because of dual entitlement we must account for the entire
+$83.30 due B"), keeping the age slice in PTAP. So only the $62.40 is
+redistributed: PTAP is $750 − $500 − $20.90 − $0 = $229.10, and each child
+receives $114.50, a record total of $729. GN 02603.050A.2's disregard
+applies, as in A.5, A.8 and A.9, when dual entitlement considered first
+(.045's before-age measure; A.8: "we consider their dual entitlement
+first") leaves nothing; here it leaves $83.30 − $64 = $19.30, so A.2 does
+not apply.
 
-The two rejected readings stay pinned as diagnostics. Disregarding the
-spouse here (A.2 applied to the after-age rate) pays $125 each. Retaining
-the full $20.90 age term under C pays $114.50 each; it would count less
-than the before-age amount and, extended to an own benefit at or above the
-standard rate, would contradict the supported A.2 disregard.
-`test_method_b_zero_only_after_age_counts_the_before_age_amount` pins the
-quotes and all three amounts; the Hypothesis property
-`test_method_b_counted_amount_is_the_before_age_amount` checks the counted
-amount equals max(0, standard minus own benefit) for every own benefit and
-reduction period, matches payable plus age reduction whenever the payable
-is positive, and never lowers the children as the own benefit rises. The
-method-C property now also executes a positive excess that rounds to zero
-after age reduction.
+The rejected readings stay pinned as diagnostics: disregarding the spouse
+pays $125 each (it would also pass the $20.90 age reduction to the
+children), and counting only .045's before-age amount ($19.30) pays $115.30
+each, total $730.60 (it would treat $1.60 of the age reduction as withheld
+for dual entitlement). Two blind adjudications on October 23 reached
+$114.50; an intermediate draft of this pass had preferred $115.30 for its
+continuity and was revised.
+`test_method_b_zero_only_after_age_keeps_the_age_reduction_in_ptap` pins
+the quotes and all three amounts; the Hypothesis property
+`test_method_b_counts_payable_plus_age_reduction_until_a2` checks that a
+method-B spouse counts its payable plus its own age reduction, that is
+standard − min(own benefit, age-adjusted rate), until the own benefit
+reaches the standard rate and A.2 disregards it, and that the children
+never fall as the own benefit rises. The method-C property also executes a
+positive excess that rounds to zero after age reduction, which counts the
+whole excess under either reading.
 
 
 ## Disabled widow(er) benefits
@@ -1337,7 +1346,10 @@ order ends with one parent paid at the two-parent rate, which (h)(2)(A)
 contradicts. With two parents whose own RIBs both lie in the band, either
 parent alone satisfies the test for both, so `parent_benefit` still
 refuses that configuration by name (filing order, which the inputs omit,
-might settle it).
+might settle it). The thresholds are the unrounded 82½ and 75 percent of
+the PIA that (h)(1)(D) names, not the dime-floored OBs RS 00209.001 speaks
+of (P1): at PIA $1,000.10 a lone parent with own RIB $825.00 is entitled
+(below $825.0825), with $0 payable.
 
 `test_parent_entitlement_count_counterfactual_changes_payment_by_75`
 executes both one-pass orders with a test-only exact helper and asserts
@@ -1982,7 +1994,11 @@ own-first sequence.
 
 For an invented cohort-1912 spouse with unreduced own RIB $400, spouse OB
 $500 and auxiliary RF1, the current method-C reading pays auxiliary
-$99.30 ($99 whole dollars), with own $400. The conservative implementation
+$99.30 ($99 whole dollars), with own $400. Method C applies only if the own
+benefit was a DIB or an early RIB when the spouse benefit began
+(402(q)(3)(A)); an unreduced RIB that began after the spouse benefit is
+method B, $496.50 − $400 = $96.50 ($96), which the inputs cannot tell
+apart either. The conservative implementation
 refuses `reduced_benefit_history_before_1978`, retaining the row and weight;
 it does not assign a different historical dollar amount. The source-quote
 test executes that alternative and the cohort-1916 control side by side
@@ -3102,12 +3118,12 @@ row and weight in the denominators.
 | 403(a)(5) literal or operational | `us:oasdi-family-maximum-saving-clause` | Operational default, literal behind a switch | Max, d1338 |
 | Operational rounding direction | `us:oasdi-saving-clause-operational-rate-rounding` | Round equal rates up | P1 |
 | Gaps in the operational procedure | `us:oasdi-saving-clause-procedure-gaps` | Refused | Sources silent |
-| Zero reached only after auxiliary age reduction | `us:oasdi-dual-entitlement-zero-after-age-reduction` | Count the .045 before-age amount: children $115.30 each, was refused | Definitions control (.050A ties A.2-A.3 to .045); P3 |
-| Circular parent count | `us:oasdi-parent-entitlement-count-interval` | The set satisfying 402(h)(1)(D) for both parents: other parent $825, was refused; two parents in the band stay refused | P1 |
+| Zero reached only after auxiliary age reduction | `us:oasdi-dual-entitlement-zero-after-age-reduction` | Keep the age reduction in PTAP, redistribute only the dual-entitlement amount: children $114.50 each, was refused | 20 CFR 404.403(a)(5), 404.407(a); GN .060 B.2; P3 |
+| Circular parent count | `us:oasdi-parent-entitlement-count-interval` | The set satisfying 402(h)(1)(D) for both parents, at the unrounded percentages: other parent $825, was refused; two parents in the band stay refused | P1 |
 | DWB from January 1984, pre-1978-capable cohorts | `us:oasdi-dwb-1984-pre-1978-history` | Under 60: .715 of the unreduced WIB ($715, was refused); from 60: refused | Specific over general |
 | Historical dual entitlement | `us:oasdi-dual-entitlement-pre-1978-history` | Refused | Sources silent |
 | Exact fractions or float reuse | `us:oasdi-reduction-exact-fractions` | Exact fractions | Not a conflict (Act and RS 00615.005B agree) |
-| Disability-maximum rounding | `us:oasdi-disability-family-maximum-rounding` | Floor to the dime | Act's consistent usage; P3 |
+| Disability-maximum rounding | `us:oasdi-disability-family-maximum-rounding` | Floor to the dime (contrary blind view recorded) | P1's gap-filling clause; the agency's published reading |
 | Temporary partial deduction | `us:oasdi-ret-temporary-partial-deduction` | Follow the RS 02501.160 example in G | Specific over general; P3 |
 | NH reservations with age reductions | `us:oasdi-nh-charge-age-reduction-interaction` | Refused | Sources silent |
 

@@ -504,17 +504,17 @@ def test_method_c_own_rib_age_reduction_does_not_change_redistributed_rates(
     )
 
 
-def test_method_b_zero_only_after_age_counts_the_before_age_amount():
+def test_method_b_zero_only_after_age_keeps_the_age_reduction_in_ptap():
     """Source conflict us:oasdi-dual-entitlement-zero-after-age-reduction.
 
     Invented PIA500/max750; B36months ownRIB64, method B. Share83.30
-    reduces to62.40, then offsets to0. GN 02603.050A applies its
-    exceptions under .045, which counts the dual rate before age
-    reduction: 83.30-64=19.30 is a partial rate (.050A.3), so the
-    children receive115.30 each and the record total is730.60. The
-    rejected readings stay pinned as diagnostics: A.2's disregard
-    (125 each, total750) and the full20.90 age term under C (114.50
-    each, total729).
+    reduces to62.40 for age, then offsets to0. Dual entitlement considered
+    first leaves83.30-64=19.30, so GN .050A.2's disregard does not apply.
+    In 402(k)(3)(A)'s order the offset withholds62.40 and age20.90;
+    20 CFR 404.403(a)(5) excludes only the former and .060 B.2 keeps the
+    age slice in PTAP: children114.50 each, record total729. Rejected
+    diagnostics: A.2's disregard (125 each, total750) and .045's
+    before-age amount alone (115.30 each, total730.60).
     """
     spouse = g.Beneficiary(
         "B",
@@ -532,11 +532,11 @@ def test_method_b_zero_only_after_age_counts_the_before_age_amount():
     rows = _family(state, members).by_id()
     assert rows["B"].age_adjusted_rate == F("62.40")
     assert rows["B"].auxiliary_payable == 0
-    assert rows["B"].counted_against_maximum == F("19.30")
+    assert rows["B"].counted_against_maximum == F("20.90")
     assert rows["C1"].auxiliary_payable == rows["C2"].auxiliary_payable
-    assert rows["C1"].auxiliary_payable == F("115.30")
+    assert rows["C1"].auxiliary_payable == F("114.50")
     total = sum((row.auxiliary_payable for row in rows.values()), F(0))
-    assert F(500) + total == F("730.60")
+    assert F(500) + total == 729
     zero_rate_exception = g.maximum_redistribution_rates(
         {"B": F(250), "C1": F(250), "C2": F(250)},
         F(250),
@@ -544,34 +544,38 @@ def test_method_b_zero_only_after_age_counts_the_before_age_amount():
     )
     assert dict(zero_rate_exception) == {"C1": F(125), "C2": F(125)}
     assert F(500) + sum(zero_rate_exception.values(), F(0)) == 750
-    full_age_term = g.maximum_redistribution_rates(
+    before_age_only = g.maximum_redistribution_rates(
         {"B": F(250), "C1": F(250), "C2": F(250)},
         F(250),
-        deductee_payables={"B": F(0)},
-        age_reductions={"B": F("20.90")},
+        deductee_payables={"B": F("19.30")},
     )
-    assert dict(full_age_term) == {"C1": F("114.50"), "C2": F("114.50")}
-    assert F(500) + sum(full_age_term.values(), F(0)) == 729
+    assert dict(before_age_only) == {"C1": F("115.30"), "C2": F("115.30")}
+    assert F(500) + sum(before_age_only.values(), F(0)) == F("730.60")
     assert (
         "The benefit payable to the dually entitled person is the amount before any applicable reduction for age"
         in source_text("poms_gn_02603_045")
     )
     rule = " ".join(source_text("poms_gn_02603_050").split())
     for quote in (
-        "exceptions 2 and 3 apply only for cases processed under the new "
-        "rule as explained in GN 02603.045",
         "If dual entitlement reduces a beneficiary's rate to $0.00 "
         "(technically entitled)",
-        "If dual entitlement reduces a beneficiary's rate to a partial "
-        "payable rate and no other deduction is involved for any other "
-        "beneficiary, subtract the partial payable rate",
         "Age reduction amount for all workers or deductees",
+        "Partial benefit payable to any worker or deductee",
     ):
         assert quote in rule
+    examples = " ".join(source_text("poms_gn_02603_060").split())
+    for quote in (
+        "In order to redistribute only the amount being withheld because "
+        "of dual entitlement we must account for the entire $83.30 due B.",
+        "This example shows that B's age reduction has no effect because "
+        "we consider their dual entitlement first.",
+    ):
+        assert quote in examples
 
 
 @settings(deadline=None)
 @example(F(64), 36)
+@example(F("62.40"), 36)
 @example(F("83.20"), 36)
 @example(F("83.30"), 36)
 @example(F(50), 60)
@@ -579,13 +583,13 @@ def test_method_b_zero_only_after_age_counts_the_before_age_amount():
     st.integers(1, 1000).map(lambda dimes: F(dimes, 10)),
     st.integers(0, 60),
 )
-def test_method_b_counted_amount_is_the_before_age_amount(own, months):
-    """Method B counts max(0, standard - own) whether or not age zeroes it.
+def test_method_b_counts_payable_plus_age_reduction_until_a2(own, months):
+    """Method B counts what dual entitlement does not withhold.
 
-    The counted amount is continuous and nonincreasing in the own benefit,
-    meets GN 02603.050A.2's disregard exactly when the own benefit reaches
-    the standard rate, and equals payable plus age reduction whenever the
-    payable is positive. Children never fall when the own benefit rises.
+    Counted = payable + the auxiliary's own age reduction, which is
+    standard - min(own, age-adjusted rate), until the own benefit reaches
+    the standard rate and GN 02603.050A.2 disregards the spouse. Children
+    never fall when the own benefit rises.
     """
     spouse = g.Beneficiary(
         "B",
@@ -598,14 +602,11 @@ def test_method_b_counted_amount_is_the_before_age_amount(own, months):
     children = [g.Beneficiary(key, g.Role.CHILD) for key in ("C1", "C2")]
     rows = _family(state, [spouse, *children]).by_id()
     standard = F("83.30")
-    before_age = max(F(0), standard - own)
-    assert rows["B"].counted_against_maximum == before_age
-    if rows["B"].auxiliary_payable:
-        assert rows["B"].auxiliary_payable == rows["B"].age_adjusted_rate - own
-        assert before_age == rows["B"].auxiliary_payable + (
-            standard - rows["B"].age_adjusted_rate
-        )
-    child = min(F(250), _floor_dime((F(250) - before_age) / 2))
+    age_adjusted = rows["B"].age_adjusted_rate
+    counted = F(0) if own >= standard else standard - min(own, age_adjusted)
+    assert rows["B"].counted_against_maximum == counted
+    assert rows["B"].auxiliary_payable == max(F(0), age_adjusted - own)
+    child = min(F(250), _floor_dime((F(250) - counted) / 2))
     assert rows["C1"].auxiliary_payable == rows["C2"].auxiliary_payable
     assert rows["C1"].auxiliary_payable == child
     richer = _family(

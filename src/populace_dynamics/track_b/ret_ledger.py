@@ -246,12 +246,12 @@ class RETBeneficiary:
     child is entitled only if 402(d)(5) kept the benefit through a marriage
     made while disabled (402(s)(2)), a residual case CFR .420 omits, so it
     stays refused. Own two-record excess is still refused.
-    ``own_work_exempt_months`` supplies other Act
-    203(f)(1)(C)-(D) protections (entitled child who has attained 18 /
-    widow(er) entitled before 60). It defaults to empty under the CFR's
-    disability-type wording. Selecting this Act-clause alternative
-    asserts lawful entitlement, age facts and any 202(s) condition; the
-    ledger does not infer those facts or adjudicate that condition.
+    ``own_work_exempt_months`` must stay empty: Act 203(f)(1)(C) reaches
+    only a child under a disability that month or three months before
+    (202(s)(3)), and (D)'s widow(er) entitled before 60 is a disabled
+    widow(er) whose entitlement ends at the termination month (402(e)(1)),
+    so every month the Act exempts is a CDB or DWB month, which the ledger
+    exempts automatically.
     """
 
     beneficiary_id: str
@@ -338,12 +338,10 @@ class RETBeneficiary:
             raise InvalidFamilyInput(
                 "Divorce exception months need divorced-spouse benefits"
             )
-        if any(
-            types[m - 1] not in (BenefitType.CHILD, BenefitType.WIDOW)
-            for m in self.own_work_exempt_months
-        ):
+        if self.own_work_exempt_months:
             raise InvalidFamilyInput(
-                "Child or widow benefits are required for other own-work exemptions"
+                "Act 203(f)(1)(C)-(D) exempt only disability-based months "
+                "(202(s)(3); 402(e)(1)); declare them as CDB or DWB"
             )
         if self.deemed_entitled:
             # Act 203(b)(1) and 20 CFR 404.420 deem only a recipient married
@@ -1010,7 +1008,6 @@ def _protected(
         or (b.fra_month is not None and month >= b.fra_month)
         # Source conflict us:oasdi-ret-own-work-age-exemptions
         or b.benefit_types[month - 1] in DISABILITY_TYPES
-        or month in b.own_work_exempt_months
         or (
             grace is not None
             and grace.applies

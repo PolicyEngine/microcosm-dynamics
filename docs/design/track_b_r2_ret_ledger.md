@@ -474,10 +474,9 @@ error (that recipient is not on this NH's ledger). An ordinary deemed
 child's age-18 months must be explicit, and that residual adult-child case
 is refused even with those facts established.
 Deemed entitlement requires a different NH with RIB entitlement in each
-applicable month. `own_work_exempt_months` accepts only CHILD or WIDOW
-payment months and asserts respectively attainment of age 18 or initial
-widow(er) entitlement before 60 (Act 203(f)(1)(C)-(D)); it cannot
-arbitrarily protect a RIB or spouse payment.
+applicable month. `own_work_exempt_months` must stay empty: the Act
+203(f)(1)(C)-(D) exemptions reach only CDB and DWB months (202(s)(3);
+402(e)(1)), which the ledger exempts by type.
 
 Input errors raise `InvalidFamilyInput` before a coverage refusal. These
 include floats, invalid months, negative or non-dime rates, nonzero gross
@@ -900,7 +899,7 @@ In the table, unqualified property test names are in
 | Under the default 202(k)(4) reading, only eligible elected RIB NSMs receive grace protection; the explicit CFR technical-entitlement alternative supplies none during concurrent disability entitlement | readings `test_property_explicit_poms_election_protects_only_eligible_rib_months`; `test_simultaneous_dib_rib_source_readings_change_4200_dollars` |
 | Actual and estimated grace statuses are distinct; changed service facts can require recovery even when annual earnings coincide | readings `test_estimated_initial_grace_and_actual_grace_are_separate`; `test_property_changed_grace_estimate_can_require_recovery` |
 | Zero payable caps retain their original shares and count toward the three-beneficiary sub-dollar stop; exact net shares plus the residual conserve the pool | `test_zero_cap_participants_preserve_total_and_trigger_source_stop`; unit `test_entitled_zero_rate_auxiliary_keeps_its_original_partial_share` |
-| Explicit Act 203(f)(1)(C)-(D) protections exempt only the recipient's own work in asserted CHILD/WIDOW months | readings `test_property_other_statutory_own_exemptions_protect_only_that_workers_excess`; `test_own_work_exempt_flag_requires_a_statutory_benefit_type` |
+| Act 203(f)(1)(C)-(D) protections are the CDB/DWB types themselves; any asserted own-work exemption month is an input error | readings `test_own_work_exempt_months_are_never_a_lawful_assertion`; `test_optional_act_age_exemptions_are_an_explicit_600_dollar_reading` |
 | The test-only broader deemed-CDB reading agrees exactly with the supported married full-family charge; the Act/CFR reading preserves the unrelated record, while the public unmarried input is always an input error | readings `test_property_deemed_counterfactual_matches_full_married_charge`; `test_unmarried_deemed_entitlement_counterfactual_changes_200_dollars` |
 
 The `ss/benefits.py` float oracle has no earnings-test ledger implementation,
@@ -1355,14 +1354,20 @@ the cents” supports truncation toward zero, while “round down” supports
 mathematical floor. The two readings agree on the published positive
 NESE examples.
 
-Kept: `NESEProrationPolicy.FLOOR` (one meaning per section; P3). Act
+Kept: `NESEProrationPolicy.FLOOR` (one meaning per section; P3; a close
+call). Act
 203(f)(3) leaves the proration to the agency ("prorated in an equitable
 manner under regulations of the Commissioner of Social Security"), and no
 captured regulation fixes its rounding, so SSA's instruction governs.
 Within RS 02501.080, "round down" means "round down to the next lower
 dollar" (B.1.d, B.2.a); applied after the cents are dropped, only the floor
-gives that step any work, while truncation would leave it surplus.
-`DROP_CENTS` remains an explicit alternative. In an invented June FRA year,
+gives that step any work, while truncation would leave it surplus; and
+for positive amounts the instruction's direction lowers countable
+earnings, which the floor keeps for a loss. A blind adjudication read
+"drop the cents" as truncating to whole dollars (leaving "round down"
+idle) and preferred `DROP_CENTS`, which here matches exact proration's $2
+excess; the stake is at most a dollar's worth of countable earnings per
+month of loss. `DROP_CENTS` remains an explicit alternative. In an invented June FRA year,
 annual NESE loss −$13 over twelve months becomes monthly −$2 and
 five-month −$10 under floor, versus monthly −$1 and five-month −$5
 under dropping cents. With pre-FRA wages equal to R1's higher exempt
@@ -1429,15 +1434,14 @@ ends that entitlement with "the termination month" ("the third month
 following the month in which her disability ceases") unless retirement age
 comes first, so clause (D)'s months are months of a benefit based on
 disability. The automatic exemptions therefore follow the explicit
-disability types, which is the Act's own scope. The documented
-`own_work_exempt_months` parameter defaults to empty; it is not a broader
-lawful reading for an ordinary CHILD or WIDOW month, and remains only as a
-caller's explicit assertion of facts the ledger does not adjudicate. In
-invented $200 monthly ordinary CHILD and WIDOW cases, earnings equal R1's
-lower amount plus $1,200. Default own deductions total $600; the asserted
-exemption pays the additional $600. Both cases are executed by
-`test_optional_act_age_exemptions_are_an_explicit_600_dollar_reading`,
-with the general selected-exemption property in the invariant table.
+disability types, which is the Act's own scope. The former
+`own_work_exempt_months` assertion had no lawful use (every month the Act
+exempts is a CDB or DWB month), so any non-empty value is now
+`InvalidFamilyInput`. In invented $200 monthly ordinary CHILD and WIDOW
+cases, earnings equal R1's lower amount plus $1,200, and own deductions
+total $600; the former assertion would have paid that $600.
+`test_optional_act_age_exemptions_are_an_explicit_600_dollar_reading` and
+`test_own_work_exempt_months_are_never_a_lawful_assertion` execute both.
 
 ### Reading taken: deemed entitlement requires marriage to the NH
 

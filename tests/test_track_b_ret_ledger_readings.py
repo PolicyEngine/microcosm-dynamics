@@ -28,6 +28,9 @@ from tests.test_track_b_ret_ledger import (
     earnings,
     record,
 )
+from tests.track_b_gross_benefit_support import (
+    source_text as gross_source_text,
+)
 from tests.track_b_ret_ledger_support import source_text
 
 
@@ -311,82 +314,28 @@ def test_invalid_sequences_and_infinite_numbers_are_input_errors(make_input):
         make_input()
 
 
-@pytest.mark.parametrize("benefit_type", [BenefitType.RIB, BenefitType.SPOUSE])
-def test_own_work_exempt_flag_requires_a_statutory_benefit_type(benefit_type):
-    with pytest.raises(r.InvalidFamilyInput, match="Child or widow"):
-        record(
-            beneficiary(
-                benefit_type=benefit_type,
-                own_work_exempt_months={1},
-            ),
-            fiscal_year=True,
-        )
-
-
-@settings(max_examples=75, deadline=None)
-@given(
-    st.sampled_from([BenefitType.CHILD, BenefitType.WIDOW]),
-    st.frozensets(st.integers(1, 12), max_size=12),
-    st.integers(0, 10_000),
+@pytest.mark.parametrize(
+    "benefit_type",
+    [
+        BenefitType.RIB,
+        BenefitType.SPOUSE,
+        BenefitType.CHILD,
+        BenefitType.WIDOW,
+    ],
 )
-def test_property_other_statutory_own_exemptions_protect_only_that_workers_excess(
-    benefit_type, protected, excess
-):
-    nh = beneficiary()
-    auxiliary = beneficiary(
-        "aux",
-        benefit_type=benefit_type,
-        own_work_exempt_months=protected,
-        work=earnings(
-            PARAMS.for_year(YEAR).lower_exempt_amount.value + 2 * excess
-        ),
+def test_own_work_exempt_months_are_never_a_lawful_assertion(benefit_type):
+    """Source conflict us:oasdi-ret-own-work-age-exemptions.
+
+    202(s)(3) limits Act 203(f)(1)(C) to a child under a disability that
+    month or three months before, and 402(e)(1) ends a pre-60 widow(er)'s
+    entitlement at the termination month, so the Act exempts only CDB and
+    DWB months, which the ledger exempts by type.
+    """
+    with pytest.raises(r.InvalidFamilyInput, match="disability-based"):
+        beneficiary(benefit_type=benefit_type, own_work_exempt_months={1})
+    assert "subsection (f)(1)(C) of section 403 of this title" in " ".join(
+        gross_source_text("lii_usc_402_415").split()
     )
-    case = (
-        r.RecordYear(
-            YEAR,
-            "deceased",
-            kind=r.RecordKind.DECEASED,
-            beneficiaries=(auxiliary,),
-        )
-        if benefit_type is BenefitType.WIDOW
-        else record(nh, auxiliary)
-    )
-    result = r.apply_ret_year(case, PARAMS)
-    assert all(
-        m.deduction == 0
-        for m in result.for_beneficiary("aux")
-        if m.month in protected
-    )
-    assert all(m.deduction == 0 for m in result.for_beneficiary("nh"))
-    assert sum(m.deduction for m in result.for_beneficiary("aux")) == min(
-        excess, 600 * (12 - len(protected))
-    )
-    if benefit_type is BenefitType.CHILD:
-        # A child's asserted own-work exemption must not protect that
-        # child's benefit from the NH's independently chargeable excess.
-        nh_worked = replace(
-            nh,
-            earnings=earnings(
-                PARAMS.for_year(YEAR).lower_exempt_amount.value + 2 * excess
-            ),
-        )
-        protected_result = r.apply_ret_year(
-            record(nh_worked, auxiliary), PARAMS
-        )
-        reference = r.apply_ret_year(
-            record(
-                nh_worked,
-                replace(
-                    auxiliary,
-                    own_work_exempt_months=frozenset(),
-                    earnings=earnings(),
-                ),
-            ),
-            PARAMS,
-        )
-        assert [m.nh_deduction for m in protected_result.months] == [
-            m.nh_deduction for m in reference.months
-        ]
 
 
 @pytest.mark.parametrize("benefit_type", [BenefitType.SPOUSE, BenefitType.RIB])
@@ -610,6 +559,12 @@ def test_missing_supported_year_is_not_hidden_by_a_coverage_refusal():
 def test_optional_act_age_exemptions_are_an_explicit_600_dollar_reading(
     benefit_type,
 ):
+    """Ordinary CHILD and WIDOW months are charged; no override exists.
+
+    The former Act-clause assertion would have paid the $600; under
+    202(s)(3) and 402(e)(1) it is not a lawful reading, so it is now an
+    input error and the charged $600 is the only answer.
+    """
     person = beneficiary(
         "aux",
         rate=200,
@@ -630,14 +585,6 @@ def test_optional_act_age_exemptions_are_an_explicit_600_dollar_reading(
         )
 
     conservative = r.apply_ret_year(case(person), PARAMS)
-    act = r.apply_ret_year(
-        case(replace(person, own_work_exempt_months=frozenset(range(1, 13)))),
-        PARAMS,
-    )
+    with pytest.raises(r.InvalidFamilyInput, match="disability-based"):
+        replace(person, own_work_exempt_months=frozenset(range(1, 13)))
     assert sum(m.deduction for m in conservative.months) == 600
-    assert sum(m.deduction for m in act.months) == 0
-    assert (
-        sum(m.payment for m in act.months)
-        - sum(m.payment for m in conservative.months)
-        == 600
-    )
