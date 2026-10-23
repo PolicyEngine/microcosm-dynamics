@@ -740,7 +740,7 @@
         "status": "refused"
       },
       {
-        "description": "Two potential parents; one own RIB 780 lies between 75% and 82.5% of PIA 1000",
+        "description": "Two potential parents; own RIBs 780 and 790 both lie between 75% and 82.5% of PIA 1000",
         "id": "parent_benefit",
         "reason": "parent_benefit",
         "status": "refused"

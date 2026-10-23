@@ -1782,7 +1782,11 @@ def _unsupported_cases():
                     g.Role.PARENT,
                     own_benefit=g.OwnBenefit(OLD_AGE, F(780)),
                 ),
-                g.Beneficiary("P2", g.Role.PARENT),
+                g.Beneficiary(
+                    "P2",
+                    g.Role.PARENT,
+                    own_benefit=g.OwnBenefit(OLD_AGE, F(790)),
+                ),
             ],
         ),
         g.UnsupportedReason.DISABLED_WIDOW_UNDER_60: lambda: _family(
@@ -2341,7 +2345,11 @@ def test_unsupported_rows_stay_in_the_denominator_and_block_totals():
                     g.Role.PARENT,
                     own_benefit=g.OwnBenefit(OLD_AGE, F(780)),
                 ),
-                g.Beneficiary("P2", g.Role.PARENT),
+                g.Beneficiary(
+                    "P2",
+                    g.Role.PARENT,
+                    own_benefit=g.OwnBenefit(OLD_AGE, F(790)),
+                ),
             ],
         ),
     )

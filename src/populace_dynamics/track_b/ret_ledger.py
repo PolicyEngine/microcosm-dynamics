@@ -239,16 +239,21 @@ class RETBeneficiary:
     least two years since divorce; prior NH RIB entitlement is the other
     Act 203(b)(2) exception. ``deemed_entitled`` and
     ``deemed_married_to_nh`` assert the married recipient in Act 203(b)(1)
-    / CFR .420. An ordinary child's Act 203(b)(1) age facts need explicit
-    ``deemed_child_age_18_months``; that Act/CFR coverage difference is
-    refused pending judgment. Broader unmarried-child wording in
-    RS 02501.140 is also refused. Own two-record excess is still refused.
-    ``own_work_exempt_months`` supplies other Act
-    203(f)(1)(C)-(D) protections (entitled child who has attained 18 /
-    widow(er) entitled before 60). It defaults to empty under the CFR's
-    disability-type wording. Selecting this Act-clause alternative
-    asserts lawful entitlement, age facts and any 202(s) condition; the
-    ledger does not infer those facts or adjudicate that condition.
+    / CFR .420; both require the marriage, so an unmarried deemed recipient
+    (RS 02501.140's broader wording) is an input error: that person is not
+    on this NH's ledger. An ordinary child's Act 203(b)(1) age facts need
+    explicit ``deemed_child_age_18_months``; such a married non-disabled
+    child is entitled only if 402(d)(5) kept the benefit through a marriage
+    in whose month, or in the third month before which, the child was
+    under a disability (402(s)(2)); recovery may come before or after the
+    marriage. CFR .420 omits that residual case, so it stays refused. Own
+    two-record excess is still refused.
+    ``own_work_exempt_months`` must stay empty: Act 203(f)(1)(C) reaches
+    only a child under a disability that month or three months before
+    (202(s)(3)), and (D)'s widow(er) entitled before 60 is a disabled
+    widow(er) whose entitlement ends at the termination month (402(e)(1)),
+    so every month the Act exempts is a CDB or DWB month, which the ledger
+    exempts automatically.
     """
 
     beneficiary_id: str
@@ -335,14 +340,20 @@ class RETBeneficiary:
             raise InvalidFamilyInput(
                 "Divorce exception months need divorced-spouse benefits"
             )
-        if any(
-            types[m - 1] not in (BenefitType.CHILD, BenefitType.WIDOW)
-            for m in self.own_work_exempt_months
-        ):
+        if self.own_work_exempt_months:
             raise InvalidFamilyInput(
-                "Child or widow benefits are required for other own-work exemptions"
+                "Act 203(f)(1)(C)-(D) exempt only disability-based months "
+                "(202(s)(3); 402(e)(1)); declare them as CDB or DWB"
             )
         if self.deemed_entitled:
+            # Act 203(b)(1) and 20 CFR 404.420 deem only a recipient married
+            # to the NH; RS 02501.140's broader wording yields to them.
+            # Source conflict us:oasdi-ret-deemed-entitlement-basis
+            if not self.deemed_married_to_nh:
+                raise InvalidFamilyInput(
+                    "Deemed entitlement requires marriage to the NH "
+                    "(Act 203(b)(1); 20 CFR 404.420)"
+                )
             if any(
                 types[m - 1]
                 not in (
@@ -999,7 +1010,6 @@ def _protected(
         or (b.fra_month is not None and month >= b.fra_month)
         # Source conflict us:oasdi-ret-own-work-age-exemptions
         or b.benefit_types[month - 1] in DISABILITY_TYPES
-        or month in b.own_work_exempt_months
         or (
             grace is not None
             and grace.applies
@@ -1126,6 +1136,7 @@ def apply_ret_year(
             record.vocational_rehabilitation_refusal,
             UnsupportedReason.VOCATIONAL_REHABILITATION,
         ),
+        # Source conflict us:oasdi-ret-other-deductee-scope
         (
             bool(record.other_deduction_months),
             UnsupportedReason.OTHER_DEDUCTION,
@@ -1140,14 +1151,6 @@ def apply_ret_year(
             )
     for b in record.beneficiaries:
         # Source conflict us:oasdi-ret-deemed-entitlement-basis
-        if b.deemed_entitled and not b.deemed_married_to_nh:
-            raise _computed(
-                RETConfigurationUnsupported,
-                UnsupportedReason.DEEMED_ENTITLEMENT_BASIS,
-                "Unmarried deemed entitlement: RS .140 is broader than Act 203(b)(1) / CFR .420",
-                beneficiary_id=b.beneficiary_id,
-            )
-        # Source conflict us:oasdi-ret-deemed-entitlement-basis
         if b.deemed_entitled and any(
             b.benefit_types[m - 1] is BenefitType.CHILD
             for m in b.entitled_months
@@ -1155,7 +1158,8 @@ def apply_ret_year(
             raise _computed(
                 RETConfigurationUnsupported,
                 UnsupportedReason.DEEMED_ENTITLEMENT_BASIS,
-                "Act adult-child basis versus CFR .420 disability basis needs judgment",
+                "A married non-disabled adult child keeps CIB only through "
+                "402(d)(5) and 402(s)(2); CFR .420 omits that residual case",
                 beneficiary_id=b.beneficiary_id,
             )
     people = {

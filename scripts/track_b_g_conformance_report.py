@@ -393,7 +393,7 @@ def refusal_witnesses() -> dict[g.UnsupportedReason, tuple[str, Callable]]:
             ),
         ),
         reasons.PARENT_BENEFIT: (
-            "Two potential parents; one own RIB 780 lies between 75% and 82.5% of PIA 1000",
+            "Two potential parents; own RIBs 780 and 790 both lie between 75% and 82.5% of PIA 1000",
             lambda: _family(
                 _survivor(),
                 [
@@ -402,7 +402,11 @@ def refusal_witnesses() -> dict[g.UnsupportedReason, tuple[str, Callable]]:
                         g.Role.PARENT,
                         own_benefit=g.OwnBenefit(rib, F(780)),
                     ),
-                    g.Beneficiary("p2", g.Role.PARENT),
+                    g.Beneficiary(
+                        "p2",
+                        g.Role.PARENT,
+                        own_benefit=g.OwnBenefit(rib, F(790)),
+                    ),
                 ],
             ),
         ),

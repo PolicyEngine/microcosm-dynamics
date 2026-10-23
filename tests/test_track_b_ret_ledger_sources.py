@@ -47,9 +47,9 @@ def test_source_conflict_ids_are_linked_at_the_decision_lines():
             "or b.benefit_types[month - 1] in DISABILITY_TYPES",
         ),
         (
-            r.apply_ret_year,
+            r.RETBeneficiary.__post_init__,
             "us:oasdi-ret-deemed-entitlement-basis",
-            "if b.deemed_entitled and not b.deemed_married_to_nh:",
+            "if not self.deemed_married_to_nh:",
         ),
         (
             r.apply_ret_year,
