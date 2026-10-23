@@ -34,7 +34,8 @@ from populace_dynamics.models import disability_hazard_sim as m4
 from populace_dynamics.models import family_transitions as ft
 from populace_dynamics.models import household_composition as hc
 
-from .candidates import CandidateSpec
+from . import forward_earnings_s1_v1 as s1
+from .candidates import PARTICIPATION_GATE_OPERATION_KIND, CandidateSpec
 from .forward_earnings import (
     ForwardEarningsGenerator,
     fit_forward_earnings,
@@ -796,7 +797,13 @@ def refit_earnings_chained_generator(
     candidate_spec: CandidateSpec | None = None,
 ) -> EarningsChainedRefit:
     """Refit the pinned forward conditional-rank law on ``<=T*`` rows."""
-    fitted = fit_forward_earnings(
+    s1_selected = (
+        candidate_spec is not None
+        and candidate_spec.operation(PARTICIPATION_GATE_OPERATION_KIND)
+        is not None
+    )
+    fitter = s1.fit_forward_earnings if s1_selected else fit_forward_earnings
+    fitted = fitter(
         panel,
         nawi,
         seed=seed,
@@ -832,8 +839,14 @@ def refit_earnings_chained_generator(
         n_zero_anchor_pairs=fitted.n_zero_anchor_pairs,
         u_w_diagnostics=fitted.u_w_diagnostics,
         seed=int(seed),
-        spec_registration=EARNINGS_SPEC_REGISTRATION,
-        adapter_spec_sha256=EARNINGS_SPEC_SHA256,
+        spec_registration=(
+            s1.SPEC_REGISTRATION if s1_selected else EARNINGS_SPEC_REGISTRATION
+        ),
+        adapter_spec_sha256=(
+            s1.adapter_spec_sha256(EARNINGS_SPEC_SHA256)
+            if s1_selected
+            else EARNINGS_SPEC_SHA256
+        ),
         provenance=provenance,
         engine_candidate_id=(
             None if candidate_spec is None else candidate_spec.candidate_id
