@@ -1,0 +1,418 @@
+{
+  "verification_class": "statutory_conformance",
+  "scope": "Invented and captured statutory cases only; no population, behavioral or forecast claim.",
+  "qc_mutations": [
+    {
+      "name": "qc_cap_4_to_3",
+      "before": "return min(4, (wages + self_employment) // QC_AMOUNTS[year])",
+      "after": "return min(3, (wages + self_employment) // QC_AMOUNTS[year])",
+      "command": "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary",
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-1978]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-1979]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-1980]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-1981]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-1982]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-1983]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-1984]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-1985]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-1986]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-1987]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-1988]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-1989]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-1990]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-1991]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-1992]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-1993]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-1994]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-1995]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-1996]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-1997]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-1998]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-1999]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2000]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2001]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2002]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2003]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2004]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2005]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2006]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2007]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2008]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2009]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2010]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2011]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2012]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2013]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2014]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2015]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2016]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2017]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2018]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2019]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2020]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2021]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2022]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2023]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2024]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2025]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2026]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_published_increment_exact_boundary[4-2027]"
+      ],
+      "summary": [
+        "50 failed, 150 passed in 15.27s"
+      ],
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/track-b-insured-psid",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/track-b-insured-epuf",
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "restored": true
+    },
+    {
+      "name": "round_drop_half_tie",
+      "before": "rounded = ((indexed + 5) // 10) * 10",
+      "after": "rounded = ((indexed + 0) // 10) * 10",
+      "command": "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status_qc.py::test_qc_amount_ties_round_up",
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_qc.py::test_qc_amount_ties_round_up[delta1-260]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_qc_amount_ties_round_up[delta2-260]"
+      ],
+      "summary": [
+        "2 failed, 1 passed in 6.57s"
+      ],
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/track-b-insured-psid",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/track-b-insured-epuf",
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "restored": true
+    },
+    {
+      "name": "wage_50_inclusive_to_strict",
+      "before": "if wages >= 50",
+      "after": "if wages > 50",
+      "command": "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary",
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1937]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1938]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1939]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1940]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1941]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1942]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1943]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1944]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1945]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1946]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1947]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1948]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1949]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1950]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1951]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1952]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1953]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1954]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1955]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1956]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1957]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1958]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1959]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1960]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1961]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1962]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1963]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1964]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1965]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1966]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1967]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1968]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1969]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1970]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1971]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1972]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1973]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1974]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1975]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1976]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_fifty_dollar_quarter_boundary[1977]"
+      ],
+      "summary": [
+        "41 failed in 16.30s"
+      ],
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/track-b-insured-psid",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/track-b-insured-epuf",
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "restored": true
+    },
+    {
+      "name": "sei_400_inclusive_to_strict",
+      "before": "or self_employment >= 400",
+      "after": "or self_employment > 400",
+      "command": "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary",
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1951]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1952]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1953]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1954]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1955]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1956]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1957]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1958]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1959]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1960]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1961]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1962]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1963]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1964]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1965]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1966]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1967]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1968]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1969]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1970]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1971]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1972]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1973]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1974]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1975]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1976]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_pre1978_calendar_sei_four_hundred_boundary[1977]"
+      ],
+      "summary": [
+        "27 failed in 9.66s"
+      ],
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/track-b-insured-psid",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/track-b-insured-epuf",
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "restored": true
+    },
+    {
+      "name": "disability_exclude_first_endpoint",
+      "before": "start < quarter < end",
+      "after": "start <= quarter < end",
+      "command": "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status_qc.py::test_death_future_exit_and_disability_endpoint_exclusions",
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_qc.py::test_death_future_exit_and_disability_endpoint_exclusions"
+      ],
+      "summary": [
+        "1 failed in 7.23s"
+      ],
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/track-b-insured-psid",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/track-b-insured-epuf",
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "restored": true
+    },
+    {
+      "name": "assignment_maximize_to_minimize",
+      "before": "-len(target.intersection(candidate))",
+      "after": "len(target.intersection(candidate))",
+      "command": "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status_qc.py::test_rs00301_230_henry_and_325_john_retroactive_assignment",
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_qc.py::test_rs00301_230_henry_and_325_john_retroactive_assignment"
+      ],
+      "summary": [
+        "1 failed in 6.27s"
+      ],
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/track-b-insured-psid",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/track-b-insured-epuf",
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "restored": true
+    },
+    {
+      "name": "agricultural_increment_100_to_200",
+      "before": "agricultural_wages // 100",
+      "after": "agricultural_wages // 200",
+      "command": "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status_qc.py::test_rs00301_320_jane_agricultural_example",
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_qc.py::test_rs00301_320_jane_agricultural_example"
+      ],
+      "summary": [
+        "1 failed in 5.11s"
+      ],
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/track-b-insured-psid",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/track-b-insured-epuf",
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "restored": true
+    },
+    {
+      "name": "gift_maximum_inclusive_to_strict",
+      "before": "wages + self_employment >= _annual_wage_limit(year)",
+      "after": "wages + self_employment > _annual_wage_limit(year)",
+      "command": "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status_qc.py::test_maximum_taxable_wages_give_four_gift_qcs",
+      "returncode": 1,
+      "failed_tests": [
+        "FAILED tests/test_track_b_insured_status_qc.py::test_maximum_taxable_wages_give_four_gift_qcs[1937-1950-3000]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_maximum_taxable_wages_give_four_gift_qcs[1951-1954-3600]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_maximum_taxable_wages_give_four_gift_qcs[1955-1958-4200]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_maximum_taxable_wages_give_four_gift_qcs[1959-1965-4800]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_maximum_taxable_wages_give_four_gift_qcs[1966-1967-6600]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_maximum_taxable_wages_give_four_gift_qcs[1968-1971-7800]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_maximum_taxable_wages_give_four_gift_qcs[1972-1972-9000]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_maximum_taxable_wages_give_four_gift_qcs[1973-1973-10800]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_maximum_taxable_wages_give_four_gift_qcs[1974-1974-13200]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_maximum_taxable_wages_give_four_gift_qcs[1975-1975-14100]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_maximum_taxable_wages_give_four_gift_qcs[1976-1976-15300]",
+        "FAILED tests/test_track_b_insured_status_qc.py::test_maximum_taxable_wages_give_four_gift_qcs[1977-1977-16500]"
+      ],
+      "summary": [
+        "12 failed in 3.60s"
+      ],
+      "environment": {
+        "OMP_NUM_THREADS": "1",
+        "POLARS_MAX_THREADS": "1",
+        "POPULACE_DYNAMICS_PSID_DIR": "/nonexistent/track-b-insured-psid",
+        "POPULACE_DYNAMICS_EPUF_DIR": "/nonexistent/track-b-insured-epuf",
+        "PYTHONPATH": "$PWD/src:$PWD",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "restored": true
+    }
+  ],
+  "status_mutations": {
+    "file": "src/populace_dynamics/track_b/insured_status.py",
+    "sha256_before": "b6bf989787bd465e080a435d77a178cee9ef861535eac190ab7fca9bd1033fc8",
+    "mutations": [
+      {
+        "name": "fully_minimum_6_to_5",
+        "before": "return min(40, max(6, elapsed))",
+        "after": "return min(40, max(5, elapsed))",
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent POPULACE_DYNAMICS_EPUF_DIR=/nonexistent PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status.py -k test_fully_six_qcs_minimum",
+        "exit_code": 1,
+        "seconds": 49.08,
+        "failed_tests": [
+          "FAILED tests/test_track_b_insured_status.py::test_fully_six_qcs_minimum[5-False]",
+          "FAILED tests/test_track_b_insured_status.py::test_fully_six_qcs_minimum[6-True]"
+        ],
+        "output": "FF                                                                       [100%]\n=================================== FAILURES ===================================\n_____________________ test_fully_six_qcs_minimum[5-False] ______________________\n\ncount = 5, expected = False\n\n    @pytest.mark.parametrize(\"count,expected\", [(5, False), (6, True)])\n    def test_fully_six_qcs_minimum(count, expected):\n        person = i.Person(date(2000, 2, 2))\n        result = compute(\n            person,\n            date(2026, 12, 1),\n            {2025: 4, 2026: count - 4},\n            test=i.InsuredTest.FULLY,\n        )\n>       assert result.fully.required == 6\nE       AssertionError: assert 5 == 6\nE        +  where 5 = StatusDecision(insured=True, qc_count_lower=5, qc_count_upper=5, required=5, window=(8000, 8001, 8002, 8003, 8004, 800... 8101, 8102, 8103, 8104, 8105, 8106, 8107), upper_assigned_quarters=(8100, 8101, 8102, 8103, 8104), upper_rule='fully').required\nE        +    where StatusDecision(insured=True, qc_count_lower=5, qc_count_upper=5, required=5, window=(8000, 8001, 8002, 8003, 8004, 800... 8101, 8102, 8103, 8104, 8105, 8106, 8107), upper_assigned_quarters=(8100, 8101, 8102, 8103, 8104), upper_rule='fully') = InsuredStatus(version='track-b-insured-v1', month=datetime.date(2026, 12, 1), fully=StatusDecision(insured=True, qc_co...101, 8102, 8103), 2026: (8104,)}), unknown_years=(), convention_years=mappingproxy({}), decided_despite_unknowns=False).fully\n\ntests/test_track_b_insured_status.py:767: AssertionError\n______________________ test_fully_six_qcs_minimum[6-True] ______________________\n\ncount = 6, expected = True\n\n    @pytest.mark.parametrize(\"count,expected\", [(5, False), (6, True)])\n    def test_fully_six_qcs_minimum(count, expected):\n        person = i.Person(date(2000, 2, 2))\n        result = compute(\n            person,\n            date(2026, 12, 1),\n            {2025: 4, 2026: count - 4},\n            test=i.InsuredTest.FULLY,\n        )\n>       assert result.fully.required == 6\nE       AssertionError: assert 5 == 6\nE        +  where 5 = StatusDecision(insured=True, qc_count_lower=6, qc_count_upper=6, required=5, window=(8000, 8001, 8002, 8003, 8004, 800... 8102, 8103, 8104, 8105, 8106, 8107), upper_assigned_quarters=(8100, 8101, 8102, 8103, 8104, 8105), upper_rule='fully').required\nE        +    where StatusDecision(insured=True, qc_count_lower=6, qc_count_upper=6, required=5, window=(8000, 8001, 8002, 8003, 8004, 800... 8102, 8103, 8104, 8105, 8106, 8107), upper_assigned_quarters=(8100, 8101, 8102, 8103, 8104, 8105), upper_rule='fully') = InsuredStatus(version='track-b-insured-v1', month=datetime.date(2026, 12, 1), fully=StatusDecision(insured=True, qc_co...8102, 8103), 2026: (8104, 8105)}), unknown_years=(), convention_years=mappingproxy({}), decided_despite_unknowns=False).fully\n\ntests/test_track_b_insured_status.py:767: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_track_b_insured_status.py::test_fully_six_qcs_minimum[5-False]\nFAILED tests/test_track_b_insured_status.py::test_fully_six_qcs_minimum[6-True]\n2 failed, 46 deselected in 23.71s\n",
+        "restored": true
+      },
+      {
+        "name": "currently_requirement_6_to_5",
+        "before": "_window(end, 13, periods, boundary),\n                        6,",
+        "after": "_window(end, 13, periods, boundary),\n                        5,",
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent POPULACE_DYNAMICS_EPUF_DIR=/nonexistent PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status.py -k test_currently_six_qcs_boundary",
+        "exit_code": 1,
+        "seconds": 46.04,
+        "failed_tests": [
+          "FAILED tests/test_track_b_insured_status.py::test_currently_six_qcs_boundary[5-False]",
+          "FAILED tests/test_track_b_insured_status.py::test_currently_six_qcs_boundary[6-True]"
+        ],
+        "output": "FF                                                                       [100%]\n=================================== FAILURES ===================================\n___________________ test_currently_six_qcs_boundary[5-False] ___________________\n\ncount = 5, expected = False\n\n    @pytest.mark.parametrize(\"count,expected\", [(5, False), (6, True)])\n    def test_currently_six_qcs_boundary(count, expected):\n        person = i.Person(date(1990, 2, 2))\n        result = compute(\n            person,\n            date(2026, 12, 1),\n            {2025: 4, 2026: count - 4},\n            test=i.InsuredTest.CURRENTLY,\n        )\n>       assert result.currently.required == 6\nE       AssertionError: assert 5 == 6\nE        +  where 5 = StatusDecision(insured=True, qc_count_lower=5, qc_count_upper=5, required=5, window=(8095, 8096, 8097, 8098, 8099, 810... 8103, 8104, 8105, 8106, 8107), upper_assigned_quarters=(8100, 8101, 8102, 8103, 8104), upper_rule='currently_6_of_13').required\nE        +    where StatusDecision(insured=True, qc_count_lower=5, qc_count_upper=5, required=5, window=(8095, 8096, 8097, 8098, 8099, 810... 8103, 8104, 8105, 8106, 8107), upper_assigned_quarters=(8100, 8101, 8102, 8103, 8104), upper_rule='currently_6_of_13') = InsuredStatus(version='track-b-insured-v1', month=datetime.date(2026, 12, 1), fully=None, currently=StatusDecision(ins...101, 8102, 8103), 2026: (8104,)}), unknown_years=(), convention_years=mappingproxy({}), decided_despite_unknowns=False).currently\n\ntests/test_track_b_insured_status.py:744: AssertionError\n___________________ test_currently_six_qcs_boundary[6-True] ____________________\n\ncount = 6, expected = True\n\n    @pytest.mark.parametrize(\"count,expected\", [(5, False), (6, True)])\n    def test_currently_six_qcs_boundary(count, expected):\n        person = i.Person(date(1990, 2, 2))\n        result = compute(\n            person,\n            date(2026, 12, 1),\n            {2025: 4, 2026: count - 4},\n            test=i.InsuredTest.CURRENTLY,\n        )\n>       assert result.currently.required == 6\nE       AssertionError: assert 5 == 6\nE        +  where 5 = StatusDecision(insured=True, qc_count_lower=6, qc_count_upper=6, required=5, window=(8095, 8096, 8097, 8098, 8099, 810... 8104, 8105, 8106, 8107), upper_assigned_quarters=(8100, 8101, 8102, 8103, 8104, 8105), upper_rule='currently_6_of_13').required\nE        +    where StatusDecision(insured=True, qc_count_lower=6, qc_count_upper=6, required=5, window=(8095, 8096, 8097, 8098, 8099, 810... 8104, 8105, 8106, 8107), upper_assigned_quarters=(8100, 8101, 8102, 8103, 8104, 8105), upper_rule='currently_6_of_13') = InsuredStatus(version='track-b-insured-v1', month=datetime.date(2026, 12, 1), fully=None, currently=StatusDecision(ins...8102, 8103), 2026: (8104, 8105)}), unknown_years=(), convention_years=mappingproxy({}), decided_despite_unknowns=False).currently\n\ntests/test_track_b_insured_status.py:744: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_track_b_insured_status.py::test_currently_six_qcs_boundary[5-False]\nFAILED tests/test_track_b_insured_status.py::test_currently_six_qcs_boundary[6-True]\n2 failed, 46 deselected in 17.67s\n",
+        "restored": true
+      },
+      {
+        "name": "regular_disability_20_to_19",
+        "before": "_window(end, 40, periods, boundary),\n                        20,",
+        "after": "_window(end, 40, periods, boundary),\n                        19,",
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent POPULACE_DYNAMICS_EPUF_DIR=/nonexistent PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status.py -k test_disability_twenty_qcs_boundary",
+        "exit_code": 1,
+        "seconds": 75.26,
+        "failed_tests": [
+          "FAILED tests/test_track_b_insured_status.py::test_disability_twenty_qcs_boundary[19-False]",
+          "FAILED tests/test_track_b_insured_status.py::test_disability_twenty_qcs_boundary[20-True]"
+        ],
+        "output": "FF                                                                       [100%]\n=================================== FAILURES ===================================\n________________ test_disability_twenty_qcs_boundary[19-False] _________________\n\ncount = 19, expected = False\n\n    @pytest.mark.parametrize(\"count,expected\", [(19, False), (20, True)])\n    def test_disability_twenty_qcs_boundary(count, expected):\n        person = i.Person(date(1990, 2, 2))\n        counts = {2021: 4, 2022: 4, 2023: 4, 2024: 4, 2025: count - 16}\n        result = compute(person, date(2026, 12, 1), counts)\n        assert result.fully.insured\n>       assert result.disability.required == 20\nE       AssertionError: assert 19 == 20\nE        +  where 19 = StatusDecision(insured=True, qc_count_lower=19, qc_count_upper=19, required=19, window=(8068, 8069, 8070, 8071, 8072, ... 8089, 8090, 8091, 8092, 8093, 8094, 8095, 8096, 8097, 8098, 8099, 8100, 8101, 8102), upper_rule='disability_20_of_40').required\nE        +    where StatusDecision(insured=True, qc_count_lower=19, qc_count_upper=19, required=19, window=(8068, 8069, 8070, 8071, 8072, ... 8089, 8090, 8091, 8092, 8093, 8094, 8095, 8096, 8097, 8098, 8099, 8100, 8101, 8102), upper_rule='disability_20_of_40') = InsuredStatus(version='track-b-insured-v1', month=datetime.date(2026, 12, 1), fully=StatusDecision(insured=True, qc_co...5: (8100, 8101, 8102), 2026: ()}), unknown_years=(), convention_years=mappingproxy({}), decided_despite_unknowns=False).disability\n\ntests/test_track_b_insured_status.py:754: AssertionError\n_________________ test_disability_twenty_qcs_boundary[20-True] _________________\n\ncount = 20, expected = True\n\n    @pytest.mark.parametrize(\"count,expected\", [(19, False), (20, True)])\n    def test_disability_twenty_qcs_boundary(count, expected):\n        person = i.Person(date(1990, 2, 2))\n        counts = {2021: 4, 2022: 4, 2023: 4, 2024: 4, 2025: count - 16}\n        result = compute(person, date(2026, 12, 1), counts)\n        assert result.fully.insured\n>       assert result.disability.required == 20\nE       AssertionError: assert 19 == 20\nE        +  where 19 = StatusDecision(insured=True, qc_count_lower=20, qc_count_upper=20, required=19, window=(8068, 8069, 8070, 8071, 8072, ... 8090, 8091, 8092, 8093, 8094, 8095, 8096, 8097, 8098, 8099, 8100, 8101, 8102, 8103), upper_rule='disability_20_of_40').required\nE        +    where StatusDecision(insured=True, qc_count_lower=20, qc_count_upper=20, required=19, window=(8068, 8069, 8070, 8071, 8072, ... 8090, 8091, 8092, 8093, 8094, 8095, 8096, 8097, 8098, 8099, 8100, 8101, 8102, 8103), upper_rule='disability_20_of_40') = InsuredStatus(version='track-b-insured-v1', month=datetime.date(2026, 12, 1), fully=StatusDecision(insured=True, qc_co...00, 8101, 8102, 8103), 2026: ()}), unknown_years=(), convention_years=mappingproxy({}), decided_despite_unknowns=False).disability\n\ntests/test_track_b_insured_status.py:754: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_track_b_insured_status.py::test_disability_twenty_qcs_boundary[19-False]\nFAILED tests/test_track_b_insured_status.py::test_disability_twenty_qcs_boundary[20-True]\n2 failed, 46 deselected in 44.47s\n",
+        "restored": true
+      },
+      {
+        "name": "young_half_quarters_to_one_third",
+        "before": "max(6, len(elapsed) // 2)",
+        "after": "max(6, len(elapsed) // 3)",
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent POPULACE_DYNAMICS_EPUF_DIR=/nonexistent PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status.py -k test_fred_brown_35_quarters_require_17_poms_140_example_1",
+        "exit_code": 1,
+        "seconds": 38.1,
+        "failed_tests": [
+          "FAILED tests/test_track_b_insured_status.py::test_fred_brown_35_quarters_require_17_poms_140_example_1"
+        ],
+        "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n__________ test_fred_brown_35_quarters_require_17_poms_140_example_1 ___________\n\n    def test_fred_brown_35_quarters_require_17_poms_140_example_1():\n        person = i.Person(date(1958, 5, 13), disability_onset=date(1988, 1, 15))\n        result = compute(\n            person,\n            date(1988, 1, 1),\n            {1980: 4, 1981: 4, 1982: 4, 1983: 4, 1984: 1},\n        )\n>       assert result.disability.required == 17\nE       AssertionError: assert 11 == 17\nE        +  where 11 = StatusDecision(insured=True, qc_count_lower=17, qc_count_upper=17, required=11, window=(7918, 7919, 7920, 7921, 7922, ...922, 7923, 7924, 7925, 7926, 7927, 7928, 7929, 7930, 7931, 7932, 7933, 7934, 7935, 7936), upper_rule='under31_special').required\nE        +    where StatusDecision(insured=True, qc_count_lower=17, qc_count_upper=17, required=11, window=(7918, 7919, 7920, 7921, 7922, ...922, 7923, 7924, 7925, 7926, 7927, 7928, 7929, 7930, 7931, 7932, 7933, 7934, 7935, 7936), upper_rule='under31_special') = InsuredStatus(version='track-b-insured-v1', month=datetime.date(1988, 1, 1), fully=StatusDecision(insured=True, qc_cou...), 1986: (), 1987: (), 1988: ()}), unknown_years=(), convention_years=mappingproxy({}), decided_despite_unknowns=False).disability\n\ntests/test_track_b_insured_status.py:91: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_track_b_insured_status.py::test_fred_brown_35_quarters_require_17_poms_140_example_1\n1 failed, 47 deselected in 22.15s\n",
+        "restored": true
+      }
+    ],
+    "sha256_after": "b6bf989787bd465e080a435d77a178cee9ef861535eac190ab7fca9bd1033fc8",
+    "restored": true,
+    "verification": [
+      {
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent POPULACE_DYNAMICS_EPUF_DIR=/nonexistent PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status.py -x",
+        "result": "Initial suite:30passed234.26s; after DLI/world optimization and subsequent examples:42passed32.10s."
+      },
+      {
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent POPULACE_DYNAMICS_EPUF_DIR=/nonexistent PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status.py",
+        "result": "46passed34.70s before finaltwo registry tests; initial48-case run47passed1failed (FRAcompletionhad39ratherthan40QCs beforeFRAquarter; fixedinventedcompletionadds2009)."
+      },
+      {
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent POPULACE_DYNAMICS_EPUF_DIR=/nonexistent PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_insured_status.py -k \"dli_fra_cap or age_attainment\"",
+        "result": "2passed46deselected29.92s aftercorrectedcompletion."
+      },
+      {
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent POPULACE_DYNAMICS_EPUF_DIR=/nonexistent PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/estimates/test_birth_evidence_artifact.py -k \"not test_artifact_rebuild_reproduces\"",
+        "result": "13passed92.91s."
+      },
+      {
+        "command": "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m black -l 79 --check tests/test_track_b_insured_status.py scripts/first_estimates_birth_evidence.py tests/estimates/test_birth_evidence_artifact.py",
+        "result": "3files would be left unchanged."
+      },
+      {
+        "command": "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m ruff check tests/test_track_b_insured_status.py scripts/first_estimates_birth_evidence.py tests/estimates/test_birth_evidence_artifact.py",
+        "result": "Allchecks passed."
+      },
+      {
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent POPULACE_DYNAMICS_EPUF_DIR=/nonexistent PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q tests/test_track_b_gross_benefits_fix_round_15_collections.py tests/test_track_b_gross_benefits_fix_round_15_arguments.py",
+        "result": "575 passed,36 failed in96.03s; all failures were missing insured_status COMPUTE/EVALUATE fixture map entries, fixed locally in arguments test."
+      },
+      {
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent POPULACE_DYNAMICS_EPUF_DIR=/nonexistent PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_gross_benefits_fix_round_15_arguments.py -k \"insured_status or CoverageYear or DisabilityPeriod or Person\"",
+        "result": "36 passed,272 deselected in11.03s."
+      },
+      {
+        "command": "OMP_NUM_THREADS=1 POLARS_MAX_THREADS=1 POPULACE_DYNAMICS_PSID_DIR=/nonexistent POPULACE_DYNAMICS_EPUF_DIR=/nonexistent PYTHONPATH=$PWD/src:$PWD /Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m pytest -p no:xdist -p no:cacheprovider -q --tb=short tests/test_track_b_gross_benefits_fix_round_15_collections.py tests/test_track_b_gross_benefits_fix_round_15_arguments.py",
+        "result": "611 passed in52.69s."
+      },
+      {
+        "command": "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m black -l79 tests/test_track_b_gross_benefits_fix_round_15_arguments.py",
+        "result": "1 file unchanged."
+      },
+      {
+        "command": "/Users/maxghenis/PolicyEngine/microcosm-dynamics/.venv/bin/python -m ruff check tests/test_track_b_gross_benefits_fix_round_15_arguments.py",
+        "result": "All checks passed."
+      }
+    ]
+  }
+}
