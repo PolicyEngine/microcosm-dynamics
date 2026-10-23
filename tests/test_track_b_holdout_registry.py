@@ -177,12 +177,35 @@ def make_registry(entries: list[dict], complete=False) -> dict:
     }
 
 
-#: The invented scored runs and historical-import gates, in place of the
-#: module's controlled lists. Without a repository no pin is checked.
+#: The invented scored runs, in place of the module's controlled list.
+#: Without a repository no pin is checked.
 SCORED_RUNS = {
     run_path(f"s{index}"): (f"gate_{index}", "0" * 64) for index in range(12)
 }
-IMPORT_GATES = frozenset(f"gate_{index}" for index in range(12))
+
+
+def authorize(current) -> dict:
+    """Authorize every well-formed historical import ``current`` holds as
+    it stands, for tests about other rules; the authorization rule itself
+    is tested against fixed authorizations."""
+    entries = current.get("entries") if isinstance(current, dict) else None
+    imports = {}
+    for entry in entries if isinstance(entries, list) else []:
+        try:
+            if entry["provenance"] != "historical_import":
+                continue
+            imports[entry["id"]] = {
+                "gate": entry["gate"],
+                "unit_keys": tuple(entry["unit_keys"]),
+                "scored_runs": tuple(
+                    item["path"] for item in entry["scored_evidence"]
+                ),
+            }
+        except (KeyError, TypeError):
+            continue
+    return imports
+
+
 #: The legal transitions, specified independently of the module.
 EXPECTED_TRANSITIONS = {
     "candidate": {"frozen", "withdrawn"},
@@ -192,14 +215,16 @@ EXPECTED_TRANSITIONS = {
 }
 
 
-def validate(current, repository=None, scored_runs=None, commit="HEAD"):
+def validate(
+    current, repository=None, scored_runs=None, commit="HEAD", imports=None
+):
     return registry.validate(
         current,
         repository,
         vocabulary=VOCABULARY,
         commit=commit,
         scored_runs=SCORED_RUNS if scored_runs is None else scored_runs,
-        import_gates=IMPORT_GATES,
+        imports=authorize(current) if imports is None else imports,
     )
 
 
@@ -625,12 +650,70 @@ def test_terminal_and_repeated_statuses_are_refused(statuses):
     )
 
 
-def test_only_listed_gates_may_be_imported():
+#: One fixed authorization: H001 imports gate_0's s_a:2020 with run s0.
+AUTHORIZED = {
+    "H001": {
+        "gate": "gate_0",
+        "unit_keys": ("s_a:2020",),
+        "scored_runs": (run_path("s0"),),
+    }
+}
+
+
+def import_with(change) -> dict:
+    """gate_0's authorized import, then ``change`` applied to its entry."""
     entry = make_entry(0, ["s_a:2020"], ("historical_import", "used"))
-    entry["gate"] = "gate_99"
-    entry["gate_identifiers"] = ["gate_99"]
-    problems = validate(make_registry([entry]))
-    assert any("scored before the registry existed" in p for p in problems)
+    change(entry)
+    return make_registry([entry])
+
+
+def _rename(entry):
+    entry["id"] = "H002"
+
+
+def _regate(entry):
+    entry.update(gate="gate_1", gate_identifiers=["gate_1"])
+    entry["scored_evidence"][0].update(path=run_path("s1"), equals="gate_1")
+
+
+def _more_units(entry):
+    entry["unit_keys"].append("s_c:2099")
+
+
+def _other_units(entry):
+    entry["unit_keys"] = ["s_c:2099"]
+
+
+def _more_runs(entry):
+    entry["scored_evidence"].append(dict(entry["scored_evidence"][0]))
+
+
+@pytest.mark.parametrize(
+    "change, message",
+    [
+        (_rename, "not an authorized historical import"),
+        (_regate, "is authorized for 'gate_0'"),
+        (_more_units, "unit keys differ"),
+        (_other_units, "unit keys differ"),
+        (_more_runs, "differs from its authorized runs"),
+    ],
+)
+def test_imports_must_match_their_authorization(change, message):
+    assert validate(import_with(lambda entry: None), imports=AUTHORIZED) == []
+    problems = validate(import_with(change), imports=AUTHORIZED)
+    assert any(message in p for p in problems), problems
+
+
+def test_an_authorization_admits_one_import_only():
+    first = make_entry(0, ["s_a:2020"], ("historical_import", "used"))
+    again = make_entry(0, ["s_a:2020"], ("historical_import", "used"))
+    again["id"] = "H002"
+    entries = [first, again]
+    settle(entries)
+    problems = validate(make_registry(entries), imports=AUTHORIZED)
+    assert any(
+        "H002: is not an authorized historical import" in p for p in problems
+    )
 
 
 def test_a_review_must_name_an_earlier_entry():
@@ -892,7 +975,75 @@ def test_a_registration_must_precede_its_scored_run(
     if registered_first:
         assert problems == []
     else:
-        assert any("already committed when" in p for p in problems)
+        assert any("already committed" in p for p in problems)
+
+
+def git_rename(repository: Path, old: str, new: str) -> None:
+    (repository / new).parent.mkdir(parents=True, exist_ok=True)
+    git(repository, "mv", old, new)
+
+
+@pytest.mark.parametrize(
+    "scenario", ["moved", "deleted_and_restored", "same_commit", "side_branch"]
+)
+def test_a_score_committed_anywhere_before_registration_is_refused(
+    tmp_path, no_ci_env, scenario
+):
+    """The score's bytes were committed before the registration in every
+    scenario: at another path then moved, at its path then deleted and
+    restored, in the registering commit itself, or on the base branch
+    while the registration waited on a side branch merged afterwards."""
+    repository = init_repository(tmp_path)
+    listed, elsewhere = run_path("s0"), run_path("original")
+    if scenario == "moved":
+        write(repository, elsewhere, SCORE)
+        commit_all(repository, "score at another path")
+    elif scenario == "deleted_and_restored":
+        write(repository, listed, SCORE)
+        commit_all(repository, "score")
+        (repository / listed).unlink()
+        commit_all(repository, "score deleted")
+    if scenario == "same_commit":
+        write(repository, listed, SCORE)
+        commit_registry(repository, registered(["candidate"]), "both")
+    elif scenario == "side_branch":
+        git(repository, "checkout", "-q", "-b", "side")
+        commit_registry(repository, registered(["candidate"]), "register")
+        git(repository, "checkout", "-q", "master")
+        write(repository, listed, SCORE)
+        commit_all(repository, "score")
+        git(repository, "merge", "-q", "--no-ff", "-m", "merge side", "side")
+    else:
+        commit_registry(repository, registered(["candidate"]), "register")
+    commit_registry(repository, registered(["candidate", "frozen"]), "freeze")
+    if scenario == "moved":
+        git_rename(repository, elsewhere, listed)
+        commit_all(repository, "moved to its listed path")
+    elif scenario == "deleted_and_restored":
+        write(repository, listed, SCORE)
+        commit_all(repository, "score restored")
+    used = registered(["candidate", "frozen", "used"])
+    commit_registry(repository, used, "used")
+    problems = validate(used, repository, pin(SCORE))
+    assert any("already committed" in p for p in problems), problems
+
+
+def test_an_unanswerable_timing_check_fails_closed(
+    tmp_path, no_ci_env, monkeypatch
+):
+    repository = init_repository(tmp_path)
+    commit_registry(repository, registered(["candidate"]), "register")
+    commit_registry(repository, registered(["candidate", "frozen"]), "freeze")
+    write(repository, run_path("s0"), SCORE)
+    commit_all(repository, "score")
+    used = registered(["candidate", "frozen", "used"])
+    commit_registry(repository, used, "used")
+    assert validate(used, repository, pin(SCORE)) == []
+    monkeypatch.setattr(
+        registry.Committed, "committed_by", lambda self, content, at: None
+    )
+    problems = validate(used, repository, pin(SCORE))
+    assert any("cannot tell whether" in p for p in problems)
 
 
 def test_a_used_registration_must_already_be_registered(tmp_path, no_ci_env):
@@ -916,7 +1067,7 @@ def test_each_snapshot_is_validated_against_its_own_tree(tmp_path, no_ci_env):
     runs = pin(SCORE)
     assert validate(used, repository, runs) == []
     problems = registry.history_problems(
-        repository, base, scored_runs=runs, import_gates=IMPORT_GATES
+        repository, base, scored_runs=runs, imports={}
     )
     assert any("not a committed file" in p for p in problems)
 
@@ -927,9 +1078,7 @@ def test_a_new_registry_is_admitted_against_an_empty_one(tmp_path, no_ci_env):
     commit_registry(
         repository, registered(["candidate", "frozen"]), "arrives frozen"
     )
-    problems = registry.history_problems(
-        repository, base, import_gates=IMPORT_GATES
-    )
+    problems = registry.history_problems(repository, base, imports={})
     assert any("lone candidate" in p for p in problems)
 
 
@@ -948,7 +1097,7 @@ def test_a_clean_history_has_no_problems(tmp_path, no_ci_env):
             repository,
             base,
             scored_runs=pin(SCORE),
-            import_gates=IMPORT_GATES,
+            imports={},
         )
         == []
     )
@@ -970,9 +1119,7 @@ def test_a_run_of_commits_cannot_hide_a_change_it_undoes(
     commit_registry(repository, changed, "change")
     commit_registry(repository, first, "undo")
     assert registry.append_only_problems(first, first) == []
-    assert registry.history_problems(
-        repository, base, full=full, import_gates=IMPORT_GATES
-    )
+    assert registry.history_problems(repository, base, full=full, imports={})
 
 
 def test_a_pull_request_head_is_read_from_its_event(tmp_path, monkeypatch):
@@ -999,11 +1146,41 @@ def test_malformed_snapshots_are_reported_not_raised(tmp_path, no_ci_env):
         )
         commit_all(repository, "a malformed snapshot")
     commit_registry(repository, registered(["candidate"]), "repaired")
-    problems = registry.history_problems(
-        repository, base, import_gates=IMPORT_GATES
-    )
+    problems = registry.history_problems(repository, base, imports={})
     assert len(problems) >= 3
     assert registry.append_only_problems(registered(["candidate"]), None)
+
+
+def test_malformed_predecessors_and_parser_limits_are_reported(
+    tmp_path, no_ci_env
+):
+    no_id = {"entries": [{}]}
+    assert registry.append_only_problems(
+        no_id, {"entries": [{"units": {"years": [2020]}}]}
+    )
+    repository = init_repository(tmp_path)
+    base = commit_registry(repository, no_id, "a malformed predecessor")
+    commit_registry(repository, registered(["candidate"]), "repaired")
+    for full in (True, False):
+        problems = registry.history_problems(
+            repository, base, full=full, imports={}
+        )
+        assert isinstance(problems, list)
+    huge = "9" * 5000
+    write(repository, registry.GATES, f"gates:\n  gate_0:\n    id: {huge}\n")
+    write(repository, run_path("s0"), SCORE)
+    commit_all(repository, "an identifier past Python's integer limit")
+    assert isinstance(validate(imported(), repository, pin(SCORE)), list)
+    write(repository, registry.REGISTRY, '{"entries": [' + huge + "]}")
+    huge_json = commit_all(repository, "a registry past the integer limit")
+    with pytest.raises(ValueError, match="is not JSON"):
+        registry.registry_at(repository, huge_json)
+    nul = "HEAD\x00"
+    assert validate(imported(), repository, pin(SCORE), commit=nul)
+    with pytest.raises(LookupError):
+        registry.registry_at(repository, nul)
+    with pytest.raises(LookupError):
+        registry.history_problems(repository, nul, imports={})
 
 
 def test_review_citations_must_name_committed_text_lines(tmp_path, no_ci_env):

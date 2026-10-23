@@ -4,7 +4,7 @@
   "admitted_scope": "The held-out data registry's rules on invented registries, temporary git repositories and the committed registry; no population, behavioral or forecast claim.",
   "mutation_method": "One deliberate production-line change per check; both registry test modules run in full and are expected to fail; original bytes restored before the next check. No mutated implementation is committed.",
   "restored_source_sha256": {
-    "src/populace_dynamics/track_b/holdout_registry.py": "aae22b1de559901fd563897bf6f7ce7296f1cc00caa46e32163cbe89ab6997f6"
+    "src/populace_dynamics/track_b/holdout_registry.py": "0d82ef49bae6458c00e7c5386779ddad521b3eab60f63105600fb5c0f5bfec1b"
   },
   "checks": [
     {
@@ -64,7 +64,6 @@
       "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
       "exit_code": 1,
       "failed_tests": [
-        "tests/test_track_b_holdout_registry.py::test_a_silent_shared_unit_is_refused",
         "tests/test_track_b_holdout_registry.py::test_keys_overlap_on_source_and_intersecting_years",
         "tests/test_track_b_holdout_registry.py::test_shared_units_match_the_independent_rule",
         "tests/test_track_b_holdout_registry_committed.py::test_the_seeded_disclosures_are_as_specified"
@@ -91,13 +90,60 @@
       ]
     },
     {
-      "mutation": "any gate may be imported",
-      "old": "and entry[\"gate\"] not in import_gates",
-      "new": "and False",
+      "mutation": "any id may be imported",
+      "old": "return [f\"{name}: is not an authorized historical import\"]",
+      "new": "return []",
       "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
       "exit_code": 1,
       "failed_tests": [
-        "tests/test_track_b_holdout_registry.py::test_only_listed_gates_may_be_imported"
+        "tests/test_track_b_holdout_registry.py::test_an_authorization_admits_one_import_only",
+        "tests/test_track_b_holdout_registry.py::test_imports_must_match_their_authorization[_rename-not an authorized historical import]"
+      ]
+    },
+    {
+      "mutation": "imports need no authorization",
+      "old": "problems.extend(_import_problems(entry, imports))",
+      "new": "pass",
+      "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_an_authorization_admits_one_import_only",
+        "tests/test_track_b_holdout_registry.py::test_imports_must_match_their_authorization[_more_runs-differs from its authorized runs]",
+        "tests/test_track_b_holdout_registry.py::test_imports_must_match_their_authorization[_more_units-unit keys differ]",
+        "tests/test_track_b_holdout_registry.py::test_imports_must_match_their_authorization[_other_units-unit keys differ]",
+        "tests/test_track_b_holdout_registry.py::test_imports_must_match_their_authorization[_regate-is authorized for 'gate_0']",
+        "tests/test_track_b_holdout_registry.py::test_imports_must_match_their_authorization[_rename-not an authorized historical import]"
+      ]
+    },
+    {
+      "mutation": "imports may change gate",
+      "old": "if entry[\"gate\"] != authorized[\"gate\"]:",
+      "new": "if False:",
+      "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_imports_must_match_their_authorization[_regate-is authorized for 'gate_0']"
+      ]
+    },
+    {
+      "mutation": "imports may change units",
+      "old": "if sorted(entry[\"unit_keys\"]) != sorted(authorized[\"unit_keys\"]):",
+      "new": "if False:",
+      "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_imports_must_match_their_authorization[_more_units-unit keys differ]",
+        "tests/test_track_b_holdout_registry.py::test_imports_must_match_their_authorization[_other_units-unit keys differ]"
+      ]
+    },
+    {
+      "mutation": "imports may cite other runs",
+      "old": "if cited != sorted(authorized[\"scored_runs\"]):",
+      "new": "if False:",
+      "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_imports_must_match_their_authorization[_more_runs-differs from its authorized runs]"
       ]
     },
     {
@@ -196,12 +242,90 @@
     },
     {
       "mutation": "registration may follow its score",
-      "old": "if earlier is not None and (",
-      "new": "if False and (",
+      "old": "elif earlier:",
+      "new": "elif False:",
       "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
       "exit_code": 1,
       "failed_tests": [
-        "tests/test_track_b_holdout_registry.py::test_a_registration_must_precede_its_scored_run[False]"
+        "tests/test_track_b_holdout_registry.py::test_a_registration_must_precede_its_scored_run[False]",
+        "tests/test_track_b_holdout_registry.py::test_a_score_committed_anywhere_before_registration_is_refused[deleted_and_restored]",
+        "tests/test_track_b_holdout_registry.py::test_a_score_committed_anywhere_before_registration_is_refused[moved]",
+        "tests/test_track_b_holdout_registry.py::test_a_score_committed_anywhere_before_registration_is_refused[same_commit]",
+        "tests/test_track_b_holdout_registry.py::test_a_score_committed_anywhere_before_registration_is_refused[side_branch]"
+      ]
+    },
+    {
+      "mutation": "an unanswerable timing check passes",
+      "old": "if earlier is None:",
+      "new": "if False:",
+      "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_an_unanswerable_timing_check_fails_closed"
+      ]
+    },
+    {
+      "mutation": "scores never found in history",
+      "old": "return bool(found.stdout.strip())",
+      "new": "return False",
+      "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_a_registration_must_precede_its_scored_run[False]",
+        "tests/test_track_b_holdout_registry.py::test_a_score_committed_anywhere_before_registration_is_refused[deleted_and_restored]",
+        "tests/test_track_b_holdout_registry.py::test_a_score_committed_anywhere_before_registration_is_refused[moved]",
+        "tests/test_track_b_holdout_registry.py::test_a_score_committed_anywhere_before_registration_is_refused[same_commit]",
+        "tests/test_track_b_holdout_registry.py::test_a_score_committed_anywhere_before_registration_is_refused[side_branch]"
+      ]
+    },
+    {
+      "mutation": "registration order ignores the first parent",
+      "old": "\"log\",\n                \"--first-parent\",",
+      "new": "\"log\",\n                \"--topo-order\",",
+      "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_a_score_committed_anywhere_before_registration_is_refused[side_branch]"
+      ]
+    },
+    {
+      "mutation": "entries without ids reach diagnostics",
+      "old": "isinstance(entry, Mapping) and isinstance(entry.get(\"id\"), str)",
+      "new": "isinstance(entry, Mapping)",
+      "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_malformed_predecessors_and_parser_limits_are_reported"
+      ]
+    },
+    {
+      "mutation": "JSON parser limits raise",
+      "old": "except (ValueError, RecursionError):\n        return None",
+      "new": "except json.JSONDecodeError:\n        return None",
+      "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_malformed_predecessors_and_parser_limits_are_reported"
+      ]
+    },
+    {
+      "mutation": "YAML parser limits raise",
+      "old": "except (yaml.YAMLError, ValueError, RecursionError):",
+      "new": "except yaml.YAMLError:",
+      "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_malformed_predecessors_and_parser_limits_are_reported"
+      ]
+    },
+    {
+      "mutation": "NUL arguments raise",
+      "old": "except ValueError as error:\n        return subprocess.CompletedProcess(command, 128, \"\", str(error))",
+      "new": "except OSError as error:\n        return subprocess.CompletedProcess(command, 128, \"\", str(error))",
+      "command": "PYTHONPATH=$PWD/src OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE python -m pytest -q -p no:cacheprovider -rf tests/test_track_b_holdout_registry.py tests/test_track_b_holdout_registry_committed.py",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_track_b_holdout_registry.py::test_malformed_predecessors_and_parser_limits_are_reported"
       ]
     },
     {
@@ -472,7 +596,6 @@
         "tests/test_track_b_holdout_registry.py::test_a_push_compares_with_its_before_commit",
         "tests/test_track_b_holdout_registry.py::test_a_run_of_commits_cannot_hide_a_change_it_undoes[False-append_then_remove]",
         "tests/test_track_b_holdout_registry.py::test_a_run_of_commits_cannot_hide_a_change_it_undoes[True-append_then_remove]",
-        "tests/test_track_b_holdout_registry.py::test_any_json_in_any_field_is_reported_not_raised",
         "tests/test_track_b_holdout_registry.py::test_removing_or_reordering_entries_is_refused",
         "tests/test_track_b_holdout_registry.py::test_the_base_branch_compares_with_its_parent"
       ]

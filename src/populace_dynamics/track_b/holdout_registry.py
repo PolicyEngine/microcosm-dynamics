@@ -25,10 +25,11 @@ This module enforces its rules:
 - unique entry ids, which are never removed, reordered or reused;
 - histories with legal transitions only. A registration starts as a lone
   ``candidate`` in a commit of its own, so it reaches the base branch
-  before its gate freezes, and its scored run must not yet be committed
-  when it is registered. A historical import is a gate that scored before
-  the registry existed: it starts as ``used``, and its gate must be in
-  :data:`HISTORICAL_IMPORT_GATES`;
+  before its gate freezes, and its scored run's bytes must not yet have
+  been committed, at any path, when it is registered. A historical import
+  is a gate that scored before the registry existed: it starts as
+  ``used``, and its id, gate, unit keys and scored runs must match an
+  authorization in :data:`HISTORICAL_IMPORTS`;
 - a ``used`` entry cites scored-run artifacts listed in
   :data:`SCORED_RUNS`, which pins each one's gate and the SHA-256 of its
   bytes, read from the committed tree; each citation's identity field
@@ -210,11 +211,74 @@ SCORED_RUNS: Mapping[str, tuple[str, str]] = MappingProxyType(
         ),
     }
 )
-#: The gates that scored before the registry existed and may enter it as
-#: historical imports. B0.2's mechanical inventory adds any it finds, as a
-#: reviewed code change; no other gate can import itself.
-HISTORICAL_IMPORT_GATES = frozenset(
-    {"gate_m6", "B2", "gate_epuf_fill", "gate_m4", "gate_w1"}
+#: The historical imports this module authorizes: gates that scored before
+#: the registry existed. Each binds one entry id to its gate, its unit keys
+#: and its scored runs, so the exception to preregistration covers exactly
+#: the exposure reviewed here. B0.2's mechanical inventory adds any import
+#: it finds, or a correction to an existing one, as a new authorized entry
+#: in a reviewed code change; nothing else can enter as an import.
+HISTORICAL_IMPORTS: Mapping[str, Mapping[str, Any]] = MappingProxyType(
+    {
+        "H001": MappingProxyType(
+            {
+                "gate": "gate_m6",
+                "unit_keys": ("psid:2015-2023:held_out_window",),
+                "scored_runs": (
+                    "runs/gate_m6_candidate1_v1.json",
+                    "runs/gate_m6_candidate2_v1.json",
+                    "runs/gate_m6_candidate3_v1.json",
+                ),
+            }
+        ),
+        "H002": MappingProxyType(
+            {
+                "gate": "B2",
+                "unit_keys": ("psid:2013:fam2013er", "psid:2015:fam2015er"),
+                "scored_runs": ("runs/track_b_b2_score.json",),
+            }
+        ),
+        "H003": MappingProxyType(
+            {
+                "gate": "gate_epuf_fill",
+                "unit_keys": ("ssa_epuf:2006:test_partition",),
+                "scored_runs": ("runs/epuf_fill_gate_test_v1.json",),
+            }
+        ),
+        "H004": MappingProxyType(
+            {
+                "gate": "gate_m4",
+                "unit_keys": (
+                    "psid:1982:employment_status",
+                    "psid:1983:employment_status",
+                    "psid:1993-1997:employment_status",
+                    "psid:1999-2023:employment_status",
+                    "ssa_di_asr:2023",
+                ),
+                "scored_runs": ("runs/gate_m4_hazard_v1.json",),
+            }
+        ),
+        "H005": MappingProxyType(
+            {
+                "gate": "gate_w1",
+                "unit_keys": (
+                    "ssa_supplement:2023:6.b5.1",
+                    "ssa_supplement:2023:6.b4",
+                    "ssa_supplement:2023:6.b3",
+                    "ssa_di_asr:2023:table_19",
+                    "census_cps_tables:2023:hh-4",
+                    "census_cps_tables:2023:ad-3",
+                    "populace_us_frame:2024:certified",
+                    "mermin_smith_anchors:undated",
+                ),
+                "scored_runs": (
+                    "runs/gate_w1_candidate1_v1.json",
+                    "runs/gate_w1_candidate2_v1.json",
+                    "runs/gate_w1_candidate3_v1.json",
+                    "runs/gate_w1_candidate4_v1.json",
+                ),
+            }
+        ),
+    }
 )
 STATUSES = ("candidate", "frozen", "used", "withdrawn")
 TRANSITIONS = {
@@ -368,20 +432,29 @@ def lookup(document: Any, dotted: str) -> Any:
 
 
 def _git(repository: Path, *args: str) -> subprocess.CompletedProcess:
-    return subprocess.run(
-        ["git", "-C", str(repository), *args],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    """Run git; an argument git cannot take (a NUL byte) fails like a git
+    error rather than raising."""
+    command = ["git", "-C", str(repository), *args]
+    try:
+        return subprocess.run(
+            command, capture_output=True, text=True, check=False
+        )
+    except ValueError as error:
+        return subprocess.CompletedProcess(command, 128, "", str(error))
 
 
-def _git_bytes(repository: Path, *args: str) -> bytes | None:
-    found = subprocess.run(
-        ["git", "-C", str(repository), *args],
-        capture_output=True,
-        check=False,
-    )
+def _git_bytes(
+    repository: Path, *args: str, stdin: bytes | None = None
+) -> bytes | None:
+    try:
+        found = subprocess.run(
+            ["git", "-C", str(repository), *args],
+            input=stdin,
+            capture_output=True,
+            check=False,
+        )
+    except ValueError:
+        return None
     return found.stdout if found.returncode == 0 else None
 
 
@@ -400,7 +473,7 @@ def _parse_registry(text: str | None) -> Any:
         return None
     try:
         return json.loads(text)
-    except json.JSONDecodeError:
+    except (ValueError, RecursionError):
         return None
 
 
@@ -451,7 +524,7 @@ class Committed:
             text = self.text(GATES)
             try:
                 document = yaml.safe_load(text) if text else {}
-            except yaml.YAMLError:
+            except (yaml.YAMLError, ValueError, RecursionError):
                 document = {}
             gates = (
                 document.get("gates") if isinstance(document, dict) else None
@@ -502,6 +575,28 @@ class Committed:
                         self._registered.setdefault(name, commit)
         return self._registered.get(entry_id)
 
+    def committed_by(self, content: bytes, commit: str) -> bool | None:
+        """Whether a file with exactly ``content`` was committed, at any
+        path and whether or not it was later moved or deleted, in
+        ``commit`` or any of its ancestors. ``None`` when git cannot say."""
+        name = _git_bytes(
+            self.repository, "hash-object", "--stdin", stdin=content
+        )
+        if not name or not name.strip():
+            return None
+        found = _git(
+            self.repository,
+            "log",
+            "-m",
+            "-1",
+            "--format=%H",
+            f"--find-object={name.decode().strip()}",
+            commit,
+        )
+        if found.returncode != 0:
+            return None
+        return bool(found.stdout.strip())
+
 
 def _decode(content: bytes | None) -> str | None:
     if content is None:
@@ -512,24 +607,42 @@ def _decode(content: bytes | None) -> str | None:
         return None
 
 
+def _import_problems(
+    entry: Mapping[str, Any], imports: Mapping[str, Mapping[str, Any]]
+) -> list[str]:
+    """Problems with a historical import against its authorization."""
+    name = entry["id"]
+    authorized = imports.get(name)
+    if authorized is None:
+        return [f"{name}: is not an authorized historical import"]
+    problems = []
+    if entry["gate"] != authorized["gate"]:
+        problems.append(
+            f"{name}: is authorized for {authorized['gate']!r}, not "
+            f"{entry['gate']!r}"
+        )
+    if sorted(entry["unit_keys"]) != sorted(authorized["unit_keys"]):
+        problems.append(f"{name}: unit keys differ from its authorization")
+    cited = sorted(item["path"] for item in entry["scored_evidence"])
+    if cited != sorted(authorized["scored_runs"]):
+        problems.append(
+            f"{name}: scored evidence differs from its authorized runs"
+        )
+    return problems
+
+
 def _evidence_problems(
     entry: Mapping[str, Any],
     committed: Committed | None,
     scored_runs: Mapping[str, tuple[str, str]],
-    import_gates: frozenset[str],
+    imports: Mapping[str, Mapping[str, Any]],
 ) -> list[str]:
     """Problems with an entry's scored-evidence citations and, for a
-    historical import, with its gate."""
+    historical import, with its authorization."""
     name = entry["id"]
     problems: list[str] = []
-    if (
-        entry["provenance"] == "historical_import"
-        and entry["gate"] not in import_gates
-    ):
-        problems.append(
-            f"{name}: {entry['gate']!r} is not a gate that scored before the "
-            "registry existed"
-        )
+    if entry["provenance"] == "historical_import":
+        problems.extend(_import_problems(entry, imports))
     if not entry["scored_evidence"]:
         return problems
     allowed = set(entry["gate_identifiers"])
@@ -594,13 +707,16 @@ def _evidence_problems(
             )
             continue
         if registered is not None:
-            earlier = committed.blob(path, registered)
-            if earlier is not None and (
-                hashlib.sha256(earlier).hexdigest() == run[1]
-            ):
+            earlier = committed.committed_by(content, registered)
+            if earlier is None:
                 problems.append(
-                    f"{name}: its scored run {path!r} was already committed "
-                    "when the entry was registered"
+                    f"{name}: cannot tell whether its scored run {path!r} "
+                    "was committed before it was registered"
+                )
+            elif earlier:
+                problems.append(
+                    f"{name}: its scored run {path!r} was already committed, "
+                    "at some path, when the entry was registered"
                 )
     return problems
 
@@ -700,7 +816,7 @@ def _entry_problems(
     sources: Mapping[str, Any],
     committed: Committed | None,
     scored_runs: Mapping[str, tuple[str, str]],
-    import_gates: frozenset[str],
+    imports: Mapping[str, Mapping[str, Any]],
 ) -> list[str]:
     """Problems inside one well-shaped entry."""
     name = entry["id"]
@@ -760,9 +876,7 @@ def _entry_problems(
         )
     if entry["status"] == "used" and not entry["scored_evidence"]:
         problems.append(f"{name}: a used entry needs scored_evidence")
-    problems.extend(
-        _evidence_problems(entry, committed, scored_runs, import_gates)
-    )
+    problems.extend(_evidence_problems(entry, committed, scored_runs, imports))
     problems.extend(_review_problems(entry, committed))
     return problems
 
@@ -799,12 +913,12 @@ def validate(
     *,
     commit: str = "HEAD",
     scored_runs: Mapping[str, tuple[str, str]] = SCORED_RUNS,
-    import_gates: frozenset[str] = HISTORICAL_IMPORT_GATES,
+    imports: Mapping[str, Mapping[str, Any]] = HISTORICAL_IMPORTS,
 ) -> list[str]:
     """Every rule one registry must keep on its own. ``vocabulary`` is the
     controlled source list the registry's copy must equal;
-    ``scored_runs`` and ``import_gates`` are the controlled lists of
-    scored runs and historical-import gates. With ``repository``, scored
+    ``scored_runs`` and ``imports`` are the controlled lists of scored
+    runs and authorized historical imports. With ``repository``, scored
     evidence, citations and the completion record are checked against its
     ``commit``."""
     if not isinstance(registry, Mapping):
@@ -867,9 +981,7 @@ def validate(
         )
     for entry in entries:
         problems.extend(
-            _entry_problems(
-                entry, vocabulary, committed, scored_runs, import_gates
-            )
+            _entry_problems(entry, vocabulary, committed, scored_runs, imports)
         )
     if problems:
         return problems
@@ -985,7 +1097,8 @@ def append_only_problems(
     new = current.get("entries")
     for entries in (old, new):
         if not isinstance(entries, list) or not all(
-            isinstance(entry, Mapping) for entry in entries
+            isinstance(entry, Mapping) and isinstance(entry.get("id"), str)
+            for entry in entries
         ):
             return [*problems, "registry: entries are malformed"]
     old_ids = [entry.get("id") for entry in old]
@@ -1117,7 +1230,7 @@ def history_problems(
     *,
     full: bool = True,
     scored_runs: Mapping[str, tuple[str, str]] = SCORED_RUNS,
-    import_gates: frozenset[str] = HISTORICAL_IMPORT_GATES,
+    imports: Mapping[str, Mapping[str, Any]] = HISTORICAL_IMPORTS,
 ) -> list[str]:
     """Problems across every first-parent commit from ``base`` to
     ``head``, so a run of commits cannot hide a change a later commit
@@ -1169,7 +1282,7 @@ def history_problems(
                 vocabulary=sources if isinstance(sources, Mapping) else {},
                 commit=commit,
                 scored_runs=scored_runs,
-                import_gates=import_gates,
+                imports=imports,
             )
             if shape:
                 problems.extend(f"{label}: {p}" for p in shape)

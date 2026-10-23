@@ -79,12 +79,15 @@ EXPECTED_SCORED_RUN_GATES = {
     "runs/gate_w1_candidate3_v1.json": "gate_w1",
     "runs/gate_w1_candidate4_v1.json": "gate_w1",
 }
+#: The authorized historical imports: each id's gate. Its unit keys are
+#: the seeded keys above, and its scored runs are all of its gate's listed
+#: runs.
 EXPECTED_IMPORT_GATES = {
-    "gate_m6",
-    "B2",
-    "gate_epuf_fill",
-    "gate_m4",
-    "gate_w1",
+    "H001": "gate_m6",
+    "H002": "B2",
+    "H003": "gate_epuf_fill",
+    "H004": "gate_m4",
+    "H005": "gate_w1",
 }
 
 
@@ -187,11 +190,30 @@ def test_the_vocabulary_and_registrations_are_as_specified():
     }
 
 
-def test_the_scored_runs_and_import_gates_are_as_specified():
+def test_the_scored_runs_and_imports_are_as_specified():
     assert {
         path: gate for path, (gate, _) in registry.SCORED_RUNS.items()
     } == EXPECTED_SCORED_RUN_GATES
-    assert set(registry.HISTORICAL_IMPORT_GATES) == EXPECTED_IMPORT_GATES
+    expected = {
+        name: {
+            "gate": gate,
+            "unit_keys": sorted(EXPECTED_SEED_KEYS[name]),
+            "scored_runs": sorted(
+                path
+                for path, owner in EXPECTED_SCORED_RUN_GATES.items()
+                if owner == gate
+            ),
+        }
+        for name, gate in EXPECTED_IMPORT_GATES.items()
+    }
+    assert {
+        name: {
+            "gate": authorized["gate"],
+            "unit_keys": sorted(authorized["unit_keys"]),
+            "scored_runs": sorted(authorized["scored_runs"]),
+        }
+        for name, authorized in registry.HISTORICAL_IMPORTS.items()
+    } == expected
     for path, (_, digest) in registry.SCORED_RUNS.items():
         content = (ROOT / path).read_bytes()
         assert hashlib.sha256(content).hexdigest() == digest, path
