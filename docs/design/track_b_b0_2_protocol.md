@@ -186,11 +186,38 @@ stay byte-identical.
   B0.1's `kish_n_eff` and `cluster_worst_n_eff`, imported unchanged. A
   set with no positive weight reports 0.
 
+### Disclosure rule
+
+PSID's Conditions of Use, as agreed at the July 2026 download, allow
+"aggregate statistical reporting" only. Max's ruling d1899 adds "no
+small-cell counts on GitHub". So the committed output follows these
+rules:
+
+- **Suppression.** Any count from 1 to 9 is written as the string `"<10"`.
+  So is every effective size computed on a set whose row or person count
+  is below 10. A count of 0 is written as 0.
+- **Complementary suppression.** Where a total and all but one of its
+  parts are published, a suppressed part could be recovered by
+  subtraction. In that case the smallest remaining published part of
+  the same total is also suppressed, and this is repeated until no
+  suppressed cell can be recovered from published cells of the same
+  table.
+- **Local copy.** The unsuppressed counts are written to a second file,
+  outside the repository, in B0.2's evidence folder. That file is never
+  committed.
+- **Tests.** Unit tests check both rules on invented tables, including a
+  table where subtraction would reveal a suppressed cell.
+
+The threshold of 10 is version 1's. If Max or the coordinator sets
+another before the freeze, this section changes before it freezes; after
+the freeze, a change is a new version.
+
 ### Output and stop rules
 
 - **The output.** The script writes one exclusive file,
   `docs/design/track_b_b0_2_counts.json`, with schema
-  `track_b_b0_2_counts.v1`. It refuses to overwrite a file, or to write
+  `track_b_b0_2_counts.v1`. It holds the suppressed counts, under the
+  disclosure rule. The unsuppressed copy goes outside the repository. It refuses to overwrite a file, or to write
   under `runs/`. The record carries:
   - the repository head;
   - the script's SHA-256;
