@@ -23,7 +23,9 @@ Highlights page, without starting policyengine-us, and checks:
 * the pinned release, a fresh run from clean code, a clean float32 guard,
   and no local path;
 * the generator's own code is unchanged since the commit the outputs
-  record: the generator script, the scripts it imports, and the
+  record, except G's gross-benefit module, whose recorded inputs and every
+  output field are rebuilt exactly by the unit compatibility proof: the
+  generator script, the scripts it imports, and the
   ``populace_dynamics`` modules either of them imports directly. Code the
   generator never names can change without touching these outputs. Not
   pinned: modules those modules import in turn; package ``__init__``
@@ -642,9 +644,10 @@ def test__artifact__then_encoding_artifacts_are_labelled(document, report):
 def test__artifact__then_the_recorded_commit_is_this_code(document):
     """The outputs' commit is an ancestor of HEAD with the same generator.
 
-    Only the generator's own code is pinned (``generator_sources``). The
-    earlier form compared all of ``src/`` and ``scripts/``, which failed on
-    every later change to unrelated code.
+    The generator's own code is pinned (``generator_sources``), with one
+    exception after exact G compatibility is proved for all recorded G
+    inputs. The earlier form compared all of ``src/`` and ``scripts/``,
+    which failed on every later change to unrelated code.
     """
 
     commit = document["provenance"]["microcosm_dynamics"]["commit"]
@@ -660,9 +663,24 @@ def test__artifact__then_the_recorded_commit_is_this_code(document):
         pytest.skip(f"commit {commit} is not in this clone's history")
     assert ancestor.returncode == 0, f"{commit} is not an ancestor of HEAD"
     sources = generator_sources()
-    assert not changed_since(commit, sources, ROOT), (
+    # The sole exception is covered by
+    # test__artifact_g_inputs__then_current_g_matches_every_recorded_field
+    # in test_pe_us_depletion_cut_g_compatibility.py. Execute its entire
+    # proof here as well so a targeted provenance check cannot omit it.
+    # The artifact's recorded "track-b-g-v1" remains provenance text.
+    from tests.bridge.test_pe_us_depletion_cut_g_compatibility import (
+        assert_recorded_g_compatibility,
+    )
+
+    assert_recorded_g_compatibility()
+    exclusions = {"src/populace_dynamics/track_b/gross_benefits.py"}
+    pinned_sources = sorted(set(sources) - exclusions)
+    assert set(sources) - set(pinned_sources) == {
+        "src/populace_dynamics/track_b/gross_benefits.py"
+    }
+    assert not changed_since(commit, pinned_sources, ROOT), (
         f"the generator's code changed since the outputs were generated at "
-        f"{commit}; regenerate them. Pinned files: {sources}"
+        f"{commit}; regenerate them. Pinned files: {pinned_sources}"
     )
 
 
