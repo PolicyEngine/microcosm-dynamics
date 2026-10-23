@@ -1,0 +1,296 @@
+{
+  "schema_version": 1,
+  "verification_class": "frozen P2 invented-panel conformance",
+  "admitted_scope": "Development only; no real-data evaluation or registration.",
+  "mutation_method": "One frozen mutation per check; original bytes restored in finally before the next mutation.",
+  "restored_source_sha256": {
+    "tests/test_forward_earnings_p2_recovery.py": "7ca6710e813066d56d5dc5bb1d68669f4a1c8544bab728f1bf53d6cc60e8995f",
+    "src/populace_dynamics/engine/forward_earnings_p2_v1.py": "58fbb3d58847d1ab168fa7b2b33c013694bcf8c680c6b37f48e8c8067e3bf234"
+  },
+  "checks": [
+    {
+      "mutation": "T1 change strict threshold > to >=",
+      "path": "src/populace_dynamics/engine/forward_earnings_p2_v1.py",
+      "old": "positive = older > 1e-6",
+      "new": "positive = older >= 1e-6",
+      "additional_replacements": [],
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-p2/bin/python -m pytest -p no:cacheprovider --basetemp=/private/tmp/track_b_p2_mutation_4 -q tests/test_forward_earnings_p2_exact.py::test_t1_exact_feature_table",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_forward_earnings_p2_exact.py::test_t1_exact_feature_table[1e-06-0.0-0.0]"
+      ],
+      "summary": "1 failed, 4 passed in 15.64s",
+      "restored": true,
+      "restored_source_sha256": "58fbb3d58847d1ab168fa7b2b33c013694bcf8c680c6b37f48e8c8067e3bf234",
+      "log": "/private/tmp/track_b_p2_mutation_4.log",
+      "designated_check_failed": true
+    },
+    {
+      "mutation": "T1 encode missing history as (0,0)",
+      "path": "src/populace_dynamics/engine/forward_earnings_p2_v1.py",
+      "old": "return positive.astype(np.float64), missing.astype(np.float64)",
+      "new": "return positive.astype(np.float64), np.zeros_like(missing, dtype=np.float64)",
+      "additional_replacements": [],
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-p2/bin/python -m pytest -p no:cacheprovider --basetemp=/private/tmp/track_b_p2_mutation_2 -q tests/test_forward_earnings_p2_exact.py::test_t1_exact_feature_table",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_forward_earnings_p2_exact.py::test_t1_exact_feature_table[nan-0.0-1.0]"
+      ],
+      "summary": "1 failed, 4 passed in 11.12s",
+      "restored": true,
+      "restored_source_sha256": "58fbb3d58847d1ab168fa7b2b33c013694bcf8c680c6b37f48e8c8067e3bf234",
+      "log": "/private/tmp/track_b_p2_mutation_2.log",
+      "designated_check_failed": true
+    },
+    {
+      "mutation": "T1 inner-join prior history",
+      "path": "src/populace_dynamics/engine/forward_earnings_p2_v1.py",
+      "old": "how=\"left\",",
+      "new": "how=\"inner\",",
+      "additional_replacements": [],
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-p2/bin/python -m pytest -p no:cacheprovider --basetemp=/private/tmp/track_b_p2_mutation_1 -q tests/test_forward_earnings_p2_exact.py::test_t1_every_absent_history_reason_retains_pair",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_forward_earnings_p2_exact.py::test_t1_every_absent_history_reason_retains_pair[before_supplied_panel]",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_every_absent_history_reason_retains_pair[absent_collection_wave]",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_every_absent_history_reason_retains_pair[intermittent_nonresponse]",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_every_absent_history_reason_retains_pair[irregular_gap]",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_every_absent_history_reason_retains_pair[no_prior_person]",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_every_absent_history_reason_retains_pair[upstream_sequence_rule]",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_every_absent_history_reason_retains_pair[no_family_record]",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_every_absent_history_reason_retains_pair[excluded_relationship]",
+        "tests/test_forward_earnings_p2_exact.py::test_t1_every_absent_history_reason_retains_pair[upstream_missing_sentinel]"
+      ],
+      "summary": "9 failed in 35.24s",
+      "restored": true,
+      "restored_source_sha256": "58fbb3d58847d1ab168fa7b2b33c013694bcf8c680c6b37f48e8c8067e3bf234",
+      "log": "/private/tmp/track_b_p2_mutation_1.log",
+      "designated_check_failed": true
+    },
+    {
+      "mutation": "T1 use age-filtered history",
+      "path": "src/populace_dynamics/engine/forward_earnings_p2_v1.py",
+      "old": "history = cutoff_panel.loc[:, [\"person_id\", \"period\", \"earnings\"]].rename(",
+      "new": "history = cutoff_panel.loc[cutoff_panel[\"age\"].between(AGE_MIN, AGE_MAX), [\"person_id\", \"period\", \"earnings\"]].rename(",
+      "additional_replacements": [],
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-p2/bin/python -m pytest -p no:cacheprovider --basetemp=/private/tmp/track_b_p2_mutation_3 -q tests/test_forward_earnings_p2_exact.py::test_t1_weight_exclusion_and_outside_age_history",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_forward_earnings_p2_exact.py::test_t1_weight_exclusion_and_outside_age_history"
+      ],
+      "summary": "1 failed in 10.17s",
+      "restored": true,
+      "restored_source_sha256": "58fbb3d58847d1ab168fa7b2b33c013694bcf8c680c6b37f48e8c8067e3bf234",
+      "log": "/private/tmp/track_b_p2_mutation_3.log",
+      "designated_check_failed": true
+    },
+    {
+      "mutation": "T2 remove older participation and zero its query position",
+      "path": "src/populace_dynamics/engine/forward_earnings_p2_v1.py",
+      "old": "P2_FIT_PREDICTORS = P2_FEATURES",
+      "new": "P2_FIT_PREDICTORS = tuple(name for name in P2_FEATURES if name != \"prior_positive\")",
+      "additional_replacements": [
+        {
+          "old": "\"prior_positive\": positive,",
+          "new": "\"prior_positive\": np.zeros_like(positive),"
+        }
+      ],
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-p2/bin/python -m pytest -p no:cacheprovider --basetemp=/private/tmp/track_b_p2_mutation_5 -q tests/test_forward_earnings_p2_recovery.py::test_t2_second_order_recovery_and_exact_v1_distinction",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_forward_earnings_p2_recovery.py::test_t2_second_order_recovery_and_exact_v1_distinction"
+      ],
+      "summary": "1 failed in 222.64s (0:03:42)",
+      "restored": true,
+      "restored_source_sha256": "58fbb3d58847d1ab168fa7b2b33c013694bcf8c680c6b37f48e8c8067e3bf234",
+      "log": "/private/tmp/track_b_p2_mutation_5.log",
+      "designated_check_failed": true
+    },
+    {
+      "mutation": "T3 fit and route P2 only on zero-anchor persons",
+      "path": "src/populace_dynamics/engine/forward_earnings_p2_v1.py",
+      "old": "rows = gate_view\n",
+      "new": "rows = gate_view.loc[gate_view[\"anchor_zero\"]]\n",
+      "additional_replacements": [],
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-p2/bin/python -m pytest -p no:cacheprovider --basetemp=/private/tmp/track_b_p2_mutation_6 -q 'tests/test_forward_earnings_p2_recovery.py::test_t3_retrospective_selection_recovery[4]'",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_forward_earnings_p2_recovery.py::test_t3_retrospective_selection_recovery[4]"
+      ],
+      "summary": "1 failed in 181.06s (0:03:01)",
+      "restored": true,
+      "restored_source_sha256": "58fbb3d58847d1ab168fa7b2b33c013694bcf8c680c6b37f48e8c8067e3bf234",
+      "log": "/private/tmp/track_b_p2_mutation_6.log",
+      "designated_check_failed": true
+    },
+    {
+      "mutation": "T4 force missing-history nonparticipation",
+      "path": "src/populace_dynamics/engine/forward_earnings_p2_v1.py",
+      "old": "return classes[selected]",
+      "new": "signs = classes[selected].copy()\n    signs[np.isnan(older)] = 0\n    return signs",
+      "additional_replacements": [],
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-p2/bin/python -m pytest -p no:cacheprovider --basetemp=/private/tmp/track_b_p2_mutation_7 -q 'tests/test_forward_earnings_p2_exact.py::test_t4_always_positive_direct_law_neutrality[6200]'",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_forward_earnings_p2_exact.py::test_t4_always_positive_direct_law_neutrality[6200]"
+      ],
+      "summary": "1 failed in 53.50s",
+      "restored": true,
+      "restored_source_sha256": "58fbb3d58847d1ab168fa7b2b33c013694bcf8c680c6b37f48e8c8067e3bf234",
+      "log": "/private/tmp/track_b_p2_mutation_7_initial.log",
+      "designated_check_failed": false,
+      "execution_note": "Initial execution failed before the designated assertion with an empty re-entry donor pool; retained, not counted as a successful mutation check. Reordered existing direct-reference sign/probability assertions before P2 path generation, with fixtures and exact criteria unchanged; see track_b_p2_test_execution.md."
+    },
+    {
+      "mutation": "T4 force missing-history nonparticipation",
+      "path": "src/populace_dynamics/engine/forward_earnings_p2_v1.py",
+      "old": "return classes[selected]",
+      "new": "signs = classes[selected].copy()\n    signs[np.isnan(older)] = 0\n    return signs",
+      "additional_replacements": [],
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-p2/bin/python -m pytest -p no:cacheprovider --basetemp=/private/tmp/track_b_p2_mutation_7 -q 'tests/test_forward_earnings_p2_exact.py::test_t4_always_positive_direct_law_neutrality[6200]'",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_forward_earnings_p2_exact.py::test_t4_always_positive_direct_law_neutrality[6200]"
+      ],
+      "summary": "1 failed in 48.82s",
+      "restored": true,
+      "restored_source_sha256": "58fbb3d58847d1ab168fa7b2b33c013694bcf8c680c6b37f48e8c8067e3bf234",
+      "log": "/private/tmp/track_b_p2_mutation_7.log",
+      "designated_check_failed": true,
+      "execution_note": "Reordered existing independent-reference probability/sign assertions before P2 path generation; first-step positive-sign assertion now fails as prescribed."
+    },
+    {
+      "mutation": "T5 build donors from history-complete gate rows",
+      "path": "src/populace_dynamics/engine/forward_earnings_p2_v1.py",
+      "old": "    pools = v1._build_donor_pools(\n        estimation,\n        pairs,",
+      "new": "    donor_pairs = pairs.loc[gate_view[\"prior_missing\"] == 0.0].reset_index(drop=True)\n    pools = v1._build_donor_pools(\n        estimation,\n        donor_pairs,",
+      "additional_replacements": [
+        {
+          "old": "            pairs, pools[\"pairs\"]",
+          "new": "            donor_pairs, pools[\"pairs\"]"
+        }
+      ],
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-p2/bin/python -m pytest -p no:cacheprovider --basetemp=/private/tmp/track_b_p2_mutation_8 -q tests/test_forward_earnings_p2_exact.py::test_t5_exact_all_non_gate_components",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_forward_earnings_p2_exact.py::test_t5_exact_all_non_gate_components"
+      ],
+      "summary": "1 failed in 21.10s",
+      "restored": true,
+      "restored_source_sha256": "58fbb3d58847d1ab168fa7b2b33c013694bcf8c680c6b37f48e8c8067e3bf234",
+      "log": "/private/tmp/track_b_p2_mutation_8.log",
+      "designated_check_failed": true
+    },
+    {
+      "mutation": "T6 admit post-boundary gate-fit rows",
+      "path": "src/populace_dynamics/engine/forward_earnings_p2_v1.py",
+      "old": "gate_view = construct_gate_view(pairs, cutoff_panel)",
+      "new": "gate_view = construct_gate_view(\n        v1._forward_pairs(panel.loc[(panel[\"weight\"] > 0) & panel[\"age\"].between(AGE_MIN, AGE_MAX)].sort_values([\"person_id\", \"period\"]).reset_index(drop=True)),\n        panel.loc[panel[\"weight\"] > 0],\n    )",
+      "additional_replacements": [],
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-p2/bin/python -m pytest -p no:cacheprovider --basetemp=/private/tmp/track_b_p2_mutation_10 -q 'tests/test_forward_earnings_p2_exact.py::test_t6_no_look_ahead_fitted_state_and_complete_paths[alter_future_earnings]'",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_forward_earnings_p2_exact.py::test_t6_no_look_ahead_fitted_state_and_complete_paths[alter_future_earnings]"
+      ],
+      "summary": "1 failed in 56.06s",
+      "restored": true,
+      "restored_source_sha256": "58fbb3d58847d1ab168fa7b2b33c013694bcf8c680c6b37f48e8c8067e3bf234",
+      "log": "/private/tmp/track_b_p2_mutation_10.log",
+      "designated_check_failed": true
+    },
+    {
+      "mutation": "T6 admit realized future NAWI",
+      "path": "src/populace_dynamics/engine/forward_earnings_p2_v1.py",
+      "old": "wage_projection = fit_projected_wage_index(\n        nawi, boundary_year=boundary_year\n    )",
+      "new": "wage_projection = fit_projected_wage_index(\n        nawi, boundary_year=max(nawi)\n    )",
+      "additional_replacements": [],
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-p2/bin/python -m pytest -p no:cacheprovider --basetemp=/private/tmp/track_b_p2_mutation_11 -q 'tests/test_forward_earnings_p2_exact.py::test_t6_no_look_ahead_fitted_state_and_complete_paths[future_realized_nawi]'",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_forward_earnings_p2_exact.py::test_t6_no_look_ahead_fitted_state_and_complete_paths[future_realized_nawi]"
+      ],
+      "summary": "1 failed in 53.27s",
+      "restored": true,
+      "restored_source_sha256": "58fbb3d58847d1ab168fa7b2b33c013694bcf8c680c6b37f48e8c8067e3bf234",
+      "log": "/private/tmp/track_b_p2_mutation_11.log",
+      "designated_check_failed": true
+    },
+    {
+      "mutation": "T6 omit gen_earn_w4 at restart",
+      "path": "src/populace_dynamics/engine/forward_earnings_p2_v1.py",
+      "old": "frame = materialized_frame.copy(deep=True)",
+      "new": "frame = materialized_frame.drop(columns=[\"gen_earn_w4\"]).copy(deep=True)",
+      "additional_replacements": [],
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-p2/bin/python -m pytest -p no:cacheprovider --basetemp=/private/tmp/track_b_p2_mutation_12 -q 'tests/test_forward_earnings_p2_exact.py::test_t6_clock_features_interfaces_and_restart[6200]'",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_forward_earnings_p2_exact.py::test_t6_clock_features_interfaces_and_restart[6200]"
+      ],
+      "summary": "1 failed in 64.81s (0:01:04)",
+      "restored": true,
+      "restored_source_sha256": "58fbb3d58847d1ab168fa7b2b33c013694bcf8c680c6b37f48e8c8067e3bf234",
+      "log": "/private/tmp/track_b_p2_mutation_12.log",
+      "designated_check_failed": true,
+      "execution_note": "Required-state refusal for omitted gen_earn_w4, expressly permitted by amendment 1 mutation audit."
+    },
+    {
+      "mutation": "T6 read gen_earn_w2 as older history",
+      "path": "src/populace_dynamics/engine/forward_earnings_p2_v1.py",
+      "old": "prior_level = sorted_frame[\"gen_earn_w4\"]",
+      "new": "prior_level = sorted_frame[\"gen_earn_w2\"]",
+      "additional_replacements": [],
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-p2/bin/python -m pytest -p no:cacheprovider --basetemp=/private/tmp/track_b_p2_mutation_9 -q 'tests/test_forward_earnings_p2_exact.py::test_t6_clock_features_interfaces_and_restart[6200]'",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_forward_earnings_p2_exact.py::test_t6_clock_features_interfaces_and_restart[6200]"
+      ],
+      "summary": "1 failed in 83.51s (0:01:23)",
+      "restored": true,
+      "restored_source_sha256": "58fbb3d58847d1ab168fa7b2b33c013694bcf8c680c6b37f48e8c8067e3bf234",
+      "log": "/private/tmp/track_b_p2_mutation_9.log",
+      "designated_check_failed": true
+    },
+    {
+      "mutation": "T6 reset resumed period indices",
+      "path": "src/populace_dynamics/engine/forward_earnings_p2_v1.py",
+      "old": "registry.generator(\n            period_index, ProjectionModule.EARNINGS\n        )",
+      "new": "registry.generator(\n            period_index - completed_period, ProjectionModule.EARNINGS\n        )",
+      "additional_replacements": [
+        {
+          "old": "period_index=period_index,\n            year=generator.boundary_year",
+          "new": "period_index=period_index - completed_period,\n            year=generator.boundary_year"
+        }
+      ],
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-p2/bin/python -m pytest -p no:cacheprovider --basetemp=/private/tmp/track_b_p2_mutation_13 -q 'tests/test_forward_earnings_p2_exact.py::test_t6_clock_features_interfaces_and_restart[6200]'",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_forward_earnings_p2_exact.py::test_t6_clock_features_interfaces_and_restart[6200]"
+      ],
+      "summary": "1 failed in 79.00s (0:01:19)",
+      "restored": true,
+      "restored_source_sha256": "58fbb3d58847d1ab168fa7b2b33c013694bcf8c680c6b37f48e8c8067e3bf234",
+      "log": "/private/tmp/track_b_p2_mutation_13.log",
+      "designated_check_failed": true
+    },
+    {
+      "mutation": "T7 route v1 zero anchors to its shared gate",
+      "path": "tests/test_forward_earnings_p2_recovery.py",
+      "old": "gate = zero_gate if anchor_zero else shared_gate",
+      "new": "gate = shared_gate",
+      "additional_replacements": [],
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 OMP_WAIT_POLICY=PASSIVE .venv-p2/bin/python -m pytest -p no:cacheprovider --basetemp=/private/tmp/track_b_p2_mutation_14 -q tests/test_forward_earnings_p2_recovery.py::test_t7_persistent_heterogeneity_counterexample",
+      "exit_code": 1,
+      "failed_tests": [
+        "tests/test_forward_earnings_p2_recovery.py::test_t7_persistent_heterogeneity_counterexample"
+      ],
+      "summary": "1 failed in 230.42s (0:03:50)",
+      "restored": true,
+      "restored_source_sha256": "7ca6710e813066d56d5dc5bb1d68669f4a1c8544bab728f1bf53d6cc60e8995f",
+      "log": "/private/tmp/track_b_p2_mutation_14.log",
+      "designated_check_failed": true
+    }
+  ],
+  "total_mutation_executions": 15,
+  "successful_designated_checks": 14,
+  "unsuccessful_initial_checks": 1
+}
