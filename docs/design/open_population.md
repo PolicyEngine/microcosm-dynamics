@@ -1,4 +1,4 @@
-# Open population design, revision 10: births, migration, alignment and the long horizon
+# Open population design, revision 11: births, migration, alignment and the long horizon
 
 **Status:** design for approval, 23 October 2026. Nothing in it is built or registered. Max authorized this lane on 21 October 2026 (decision d1802); the coordinator walks him through approval, and no code is written before he approves. Every registration it names goes to issue #42 only through the coordinator, on Max's go.
 
@@ -13,6 +13,7 @@
 - *Revision 8* (23 October 2026) reverts revision 7. No milestone is blocked, and no estimate changes.
 - *Revision 9* (23 October 2026) answers the independent review of revision 6 (Subfleet job `20261023-062751-openpop-review-r6`, GPT-6.1 Sol, verdict REVISE): ten of revision 5's twelve findings resolved, two partly, and four major and five minor new findings. §12 maps each new finding to its resolution. The main changes: §214(c)'s requirements apply only to noncitizens whose first Social Security number was assigned on or after 1 January 2004, or who have none yet (POMS RS 00301.102, checked), and that date becomes an input with provenance; candidate-side uncertainty is set per gate rather than by resampling OP5's start; `gate_young_earn` admits earnings at 18–24 only, leaving the hand-off at 25 open; OP12 and OP11b respect the Microcosm start's hold on spouse and survivor results; OP9 waits for OP8. No estimate changes.
 - *Revision 10* (23 October 2026) answers review r7 (Subfleet job `20261023-064644-openpop-review-r7`, verdict REVISE, one major and four minor findings; it found r6's findings 2–9 resolved and 1 partly resolved). The original Social Security number assignment date stays `UNKNOWN` under both pre-entry conventions; the POMS citation covers B.1–B.5 and workers not yet assigned a number; the summary and §8 state OP0's dependence on J's reservation and OP0.2's earlier finish; the widowhood invariant is qualified to surviving spouses; and OP11b's withheld outputs are limited to spouse and survivor types. No estimate changes.
+- *Revision 11* (23 October 2026) adds, verbatim, the two clarifications that review r8 (Subfleet job `20261023-071323-openpop-review-r8`) asked for when it returned **APPROVE** on revision 10: §3.4's economic schedule assumes Track B's I and any required observational timing gate are ready; OP11b's estimate covers beneficiaries, benefits and Social Security income only. Nothing else changes.
 
 ## In brief
 
@@ -166,7 +167,7 @@ Milestones OP0.1 to OP7, OP10a and OP11a form the demographic phase; OP0.2, OP8,
 | **OP10a** | The demographic horizon to 2100: declared rules for every demographic component outside its fitted support (fertility birth decades, marital decades, migration controls); a Leslie-matrix differential test; demographic sensitivity surfaces on the TR2026 intermediate, low-cost and high-cost paths and CBO's | Mechanics and sensitivity only. The horizon record (§5.2) labels every year past 2030 "conditional on named assumptions" | 6–9 / 1.5–2.25 | OP6, OP7 | OP11a |
 | **OP10b** | The economic horizon and its license record: declared rules for every economic component past its fitted support (the earnings law's wage normalization to the baseline AWI, DI rates, the claim table); an open-population sibling of Track B's B3L backtest; economic sensitivity surfaces | Retrospective regression evidence and sensitivity. The license record admits a year past 2030 only as a conditional projection, never a validated one | 8–12 / 2–3 | OP8, OP9, Track B's J | OP11b |
 | **OP11a** | Registered, report-only comparisons of the projected population in 2050, 2065 and 2070, each on the dimensions its publisher releases: OACT's V.A3 by its three age groups (it has no nativity); CBO's and the Census Bureau's 2023 projections by age, and by nativity where they publish it (confirmed at OP0.1) | Registered cross-model comparison; agreement or disagreement only | 4–6 / 1–1.5 | OP10a | None |
-| **OP11b** | Registered comparisons in 2050, 2065 and 2070 of beneficiaries, benefits and the income measures DYNASIM and MINT publish, with OACT and CBO first and DYNASIM one of several (d660); DYNASIM comparisons follow Track B's B7 blind protocol | Registered comparison with a sealed comparator where DYNASIM or MINT is involved; not a validation gate. When a comparison uses the Microcosm start, its spouse and survivor outputs remain subject to that start's T2 marital-makeup publication condition, as for OP12 | 10–20 / 2.5–5, only after target-specific prerequisites pass | OP10b, Track B's J | None |
+| **OP11b** | Registered comparisons in 2050, 2065 and 2070 of beneficiaries, benefits and the income measures DYNASIM and MINT publish, with OACT and CBO first and DYNASIM one of several (d660); DYNASIM comparisons follow Track B's B7 blind protocol. This estimate covers beneficiaries, benefits and Social Security income. Comparisons requiring other income measures need separately priced inputs | Registered comparison with a sealed comparator where DYNASIM or MINT is involved; not a validation gate. When a comparison uses the Microcosm start, its spouse and survivor outputs remain subject to that start's T2 marital-makeup publication condition, as for OP12 | 10–20 / 2.5–5, only after target-specific prerequisites pass | OP10b, Track B's J | None |
 | **OP12** | `gate_ssa_totals`: unaligned SSA beneficiary counts and benefit and payment totals by type, on the open population started from Microcosm, through the unaligned-only facade; the aligned totals are published beside them, report-only | `gate_ssa_totals` on held-out years of SSA's Annual Statistical Supplement chosen at OP0.2 from the shared registry (§4, §5.2), under §5.3's administrative tolerance class. Admits aggregate totals by type only; it does not establish entrants' benefit receipt separately. OP12's spouse and survivor outputs, including report-only companions, remain subject to the Microcosm start's T2 marital-makeup publication condition (`microcosm-start.md:452`); until that condition is cleared, OP12's published scope excludes those types | 8–12 / 2–3 | OP0.2, OP8, Track B's J, I and G (v2 and part 2), the Microcosm start's gate 3, Track B's insured-status rule; OP6 and OP9 for the aligned companion; the Microcosm start's T2 marital-makeup publication condition for spouse and survivor types | M7; Track B's B7 targets that need open coverage, for aggregate totals only |
 
 ### 3.2 Verification class and admitted scope per milestone
@@ -226,6 +227,8 @@ The arithmetic, from the §3.1 cells:
 - OP10a starts when OP6 and OP7 are both done (36–54) and finishes after 42–63; OP11a finishes after **46–69 engineer-day equivalents**.
 
 **Economic phase, measured from T, the day a B2 successor passes its registered gate.** T itself is unknown: ruling d1659 requires the successor's design to come to Max first. Track B's B0.2 is already under way (draft PR #554), so this schedule assumes its record, and J's candidate years in the shared registry, are frozen by T. It also assumes the demographic phase's OP2, OP3 and OP6 are done by T; otherwise each start below is the later of its OP and Track B prerequisites. Track B's chain after T, from its §3.1 cells and ignoring queues, is then: H (done at T+6–9), B3 (T+14–21), B3L (T+19–29), B4 (T+31–47), B5 (T+36–55), B6a (T+42–65) and J (T+50–77).
+
+These dates also assume I's mechanics and any required observational timing gate are ready before the corresponding B5, B6a or J admission. Track B leaves the timing gate's data work unpriced; any delay there moves this path and is outside these estimates.
 - OP0.2 follows Track B's B0.2 record, so it can finish before T and is off the path.
 - E1: OP8(c), covered-work histories, follows H: T+6–9 to T+8–13. OP8(e) and `gate_young_earn` follow B3: T+14–21 to T+24–36.
 - E2: OP8(a), starting states in B4's schemas, runs once B4 starts (after B3L): T+19–29 to T+22–34, so B4 can prepare its open-coverage interface; it cannot claim open coverage until the required entrant initialization is admitted.
@@ -545,6 +548,15 @@ Track B's cumulative attempt ledger applies by mechanism and gate family: open-p
 - Reading `data/external/nchs_asfr_2024.json`'s keys printed the years of its annual series, not its rates.
 
 ## 12. Review findings and where they are resolved
+
+### Review of revision 10 (r8)
+
+Subfleet job `20261023-071323-openpop-review-r8` (GPT-6.1 Sol), at `~/reviews/open-population-20261021/review-r8/review.md`, returned **APPROVE**: no blocking or major finding remained, and all five r7 findings were resolved. It asked for two minor clarifications, which revision 11 adds in its words.
+
+| Finding | Severity | Resolution in revision 11 |
+|---|---|---|
+| 1. The economic schedule omits a readiness assumption for monthly timing validation | Minor | §3.4 adds the review's sentence on I's mechanics and the observational timing gate |
+| 2. OP11b's income scope is ambiguous | Minor | OP11b's row adds the review's sentence limiting the estimate to beneficiaries, benefits and Social Security income |
 
 ### Review of revision 9 (r7)
 
