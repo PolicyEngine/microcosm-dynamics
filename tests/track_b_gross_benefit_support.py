@@ -17,11 +17,13 @@ from __future__ import annotations
 import html
 import json
 import re
+from dataclasses import fields
 from fractions import Fraction as F
 from functools import cache
 from pathlib import Path
 
 from populace_dynamics.ss.params import SSAParameters
+from populace_dynamics.track_b import gross_benefits as g
 
 TRACK_B_DATA = Path(__file__).with_name("data") / "track_b"
 SOURCES = TRACK_B_DATA / "gross_benefit_sources"
@@ -88,6 +90,85 @@ def ssa_params(**overrides) -> SSAParameters:
     )
     values.update(overrides)
     return SSAParameters(**values)
+
+
+def result_fields(result, **overrides):
+    """Compare every public result field without constructing another result."""
+    return {
+        **{item.name: getattr(result, item.name) for item in fields(result)},
+        **overrides,
+    }
+
+
+def computed_refusal(reason):
+    """Produce a refusal through G's computation on an invented family."""
+    month = g.YearMonth(2023, 12)
+    state = g.RecordState(
+        g.FamilyKind.RETIREMENT,
+        F(0),
+        F(0),
+        worker=g.OwnBenefit(g.OwnBenefitKind.OLD_AGE, F(0)),
+        conditions=(
+            {g.RecordCondition.ADMINISTRATIVE_FINALITY}
+            if reason is g.UnsupportedReason.ADMINISTRATIVE_FINALITY
+            else set()
+        ),
+    )
+    members = (
+        g.Beneficiary(
+            "spouse",
+            g.Role.SPOUSE,
+            conditions={g.BeneficiaryCondition.GOVERNMENT_PENSION_OFFSET},
+        ),
+    )
+    if reason is g.UnsupportedReason.SAVINGS_CLAUSE:
+        guard = g.SavingsClauseGuard(month, earlier_months_unknown=False)
+        members = tuple(
+            g.Beneficiary(f"child-{index}", g.Role.CHILD) for index in range(3)
+        )
+        state = g.RecordState(
+            g.FamilyKind.SURVIVOR,
+            F(1000),
+            F(1500),
+            widow_drc_savings_clause=False,
+        )
+        guard.admit(
+            g.family_benefits(
+                state,
+                members,
+                payment_month=month,
+                params=ssa_params(),
+                standalone=True,
+            )
+        )
+        state = g.RecordState(
+            g.FamilyKind.SURVIVOR,
+            F("1000.1"),
+            F("1500.1"),
+            widow_drc_savings_clause=False,
+        )
+        month = g.YearMonth(2024, 1)
+        members = members[:1]
+        evaluate = guard.evaluate
+    else:
+        assert reason in {
+            g.UnsupportedReason.ADMINISTRATIVE_FINALITY,
+            g.UnsupportedReason.GOVERNMENT_PENSION_OFFSET,
+        }
+        evaluate = g.evaluate_family
+    outcome = evaluate(
+        "invented-refusal",
+        F(1),
+        lambda: g.family_benefits(
+            state,
+            members,
+            payment_month=month,
+            params=ssa_params(),
+            standalone=True,
+        ),
+    )
+    assert outcome.unsupported.reason is reason
+    return outcome.unsupported
 
 
 @cache

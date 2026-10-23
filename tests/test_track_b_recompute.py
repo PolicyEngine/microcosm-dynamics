@@ -330,7 +330,9 @@ def test_later_death_refuses_entire_sequence_before_any_arithmetic():
             "aime_with_computation_years",
             wraps=r.aime_with_computation_years,
         ) as aime,
-        patch.object(r, "exact_pia", wraps=r.exact_pia) as pia,
+        patch.object(
+            r, "_exact_pia_validated", wraps=r._exact_pia_validated
+        ) as pia,
     ):
         with pytest.raises(FamilyConfigurationUnsupported) as error:
             r.recompute_sequence(
@@ -415,7 +417,9 @@ def test_refused_formula_never_calculates_ordinary_aime_or_pia(
             "aime_with_computation_years",
             wraps=r.aime_with_computation_years,
         ) as aime,
-        patch.object(r, "exact_pia", wraps=r.exact_pia) as pia,
+        patch.object(
+            r, "_exact_pia_validated", wraps=r._exact_pia_validated
+        ) as pia,
     ):
         with pytest.raises(FamilyConfigurationUnsupported) as error:
             if sequence:
@@ -474,7 +478,9 @@ def test_refused_formula_validates_all_parameters_without_calculation(
         patch.object(
             r, "_aime_from_prefix", wraps=r._aime_from_prefix
         ) as adapter,
-        patch.object(r, "exact_pia", wraps=r.exact_pia) as pia,
+        patch.object(
+            r, "_exact_pia_validated", wraps=r._exact_pia_validated
+        ) as pia,
     ):
         with pytest.raises(InvalidFamilyInput):
             if sequence:
@@ -520,8 +526,8 @@ def test_refused_formula_validates_complete_histories_before_calculation(
 @pytest.mark.parametrize(
     "conditions", [[], [r.RecomputationCondition.ADMINISTRATIVE_FINALITY]]
 )
-def test_iterator_conditions_are_frozen_for_repeated_evaluation(conditions):
-    original = basis(conditions=iter(conditions))
+def test_collection_conditions_are_frozen_for_repeated_evaluation(conditions):
+    original = basis(conditions=list(conditions))
     assert original.conditions == frozenset(conditions)
     assert isinstance(original.conditions, frozenset)
     first = r.evaluate_recomputation(
@@ -805,3 +811,10 @@ def test_no_earnings_cannot_trigger_an_earlier_candidate():
 
 def test_cola_rounding_occurs_after_each_increase():
     assert increase_by_colas(F("90.9"), [12, 10]) == F("111.9")
+
+
+def test_recomputation_iterator_conditions_reject_without_consumption():
+    values = iter([r.RecomputationCondition.ADMINISTRATIVE_FINALITY])
+    with pytest.raises(InvalidFamilyInput):
+        basis(conditions=values)
+    assert next(values) is r.RecomputationCondition.ADMINISTRATIVE_FINALITY
