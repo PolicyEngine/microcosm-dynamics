@@ -1,0 +1,52 @@
+{
+    "added": "2026-10-23",
+    "q6_exclusions": [
+        {
+            "lines": null,
+            "path": "docs/design/track_b_b0_2_counts.json",
+            "scope": "whole_file"
+        },
+        {
+            "lines": null,
+            "path": "docs/design/track_b_b0_2_counts_mutations.json",
+            "scope": "whole_file"
+        },
+        {
+            "lines": null,
+            "path": "docs/design/track_b_b0_2_counts_report.txt",
+            "scope": "whole_file"
+        },
+        {
+            "lines": null,
+            "path": "docs/design/track_b_b0_2_exposure_inventory.json",
+            "scope": "whole_file"
+        },
+        {
+            "lines": null,
+            "path": "docs/design/track_b_b0_2_landscape.md",
+            "scope": "whole_file"
+        },
+        {
+            "lines": null,
+            "path": "docs/design/track_b_b0_2_plan.md",
+            "scope": "whole_file"
+        },
+        {
+            "lines": null,
+            "path": "docs/design/track_b_b0_2_protocol.md",
+            "scope": "whole_file"
+        },
+        {
+            "lines": null,
+            "path": "scripts/track_b_b0_2_counts.py",
+            "scope": "whole_file"
+        },
+        {
+            "lines": null,
+            "path": "tests/test_track_b_b0_2_counts.py",
+            "scope": "whole_file"
+        }
+    ],
+    "reason": "The dynamics coordinator separated B0.2 from the B2 successor design on 2026-10-21: successor-design roles may not read B0.2's work (PR #554 beyond its title). These are B0.2's files, including the structural counts and exposure inventory it will add; the counts must be listed here before they reach master. No exposure-inventory scan lists them, so this standing record excludes them from every blinded review root that scripts/track_b_b0_1_review_root.py builds.",
+    "schema": "track_b_b0_2_exclusions.v1"
+}
